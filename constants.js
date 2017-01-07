@@ -1,5 +1,5 @@
 var log = true;
-var width = 260;
+var width = 240;
 var height = 160;
 var transitions = {
 	"up" : {

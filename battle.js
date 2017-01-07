@@ -21,6 +21,14 @@ var first_party_char;
 var last_party_char;
 var first_enemy_char;
 var last_enemy_char;
+var FULL_ROUND = 2*Math.PI;
+var old_camera_angle;
+var bg_spin_speed;
+var pos_x_party;
+var pos_y_party;
+var pos_x_enemy;
+var pos_y_enemy;
+var scale;
 
 var game = new Phaser.Game(
 	width,
@@ -55,18 +63,20 @@ function create() {
 		}  
 	});
 
-	battle_bg = game.add.tileSprite(0, 15, width, 122, 'colosso');
-	battle_bg2 = game.add.tileSprite(0, 15, width, 122, 'colosso');
+	battle_bg = game.add.tileSprite(0, 17, width, 113, 'colosso');
+	battle_bg2 = game.add.tileSprite(0, 17, width, 113, 'colosso');
 
 	spining = false;
-	default_scale = 0.85;
+	default_scale = 0.9;
 	center_x = width/2;
-	center_y = height - 30;
+	center_y = height - 35;
 	a = width/2 - 30;
 	b = height/30;
 	camera_angle = {rad : 0};
+	old_camera_angle = camera_angle.rad;
 	camera_speed = 0.009 * Math.PI;
 	bg_speed = 2.4;
+	bg_spin_speed = 0.4;
 	party_count = 3;
 	enemy_count = 3;
 	players_number = party_count + enemy_count;
@@ -125,6 +135,8 @@ function create() {
 	cursors = game.input.keyboard.createCursorKeys();
 }
 
+
+//active spin effect
 function spin(angle, easing, duration){
 	if(!spining){
 		spining = true;
@@ -138,6 +150,7 @@ function spin(angle, easing, duration){
 function update() {
 	if (cursors.left.isDown || cursors.right.isDown || spining){
 
+		//angle change and bg x position change
 		if(!cursors.left.isDown && cursors.right.isDown && !spining){
 			camera_angle.rad -= camera_speed;
 			battle_bg.x -= bg_speed
@@ -146,39 +159,48 @@ function update() {
 			battle_bg.x += bg_speed
 		}
 
-		if(!spining){
-			if(camera_angle.rad >= 2*Math.PI) camera_angle.rad -= 2*Math.PI;
-			if(camera_angle.rad < 0) camera_angle.rad += 2*Math.PI;
-		} else
-			battle_bg.x = bg_speed * width * camera_angle.rad/(2*Math.PI);
+		if(!spining){ //let spin effect do its work freely
+			if(camera_angle.rad >= FULL_ROUND) camera_angle.rad -= FULL_ROUND;
+			if(camera_angle.rad < 0) camera_angle.rad += FULL_ROUND;
+		} else //tie bg x position with camera angle when spining
+			battle_bg.x += bg_spin_speed * width * (camera_angle.rad - old_camera_angle);
+		old_camera_angle = camera_angle.rad;
 
+		//check bg x position surplus
 		if(battle_bg.x > width)
 			battle_bg.x -= Math.abs(Math.floor(battle_bg.x/width)) * width;
 		else if(battle_bg.x < -width)
 			battle_bg.x += Math.abs(Math.floor(battle_bg.x/width)) * width;
 
+		//make mirrored bg follow default bg
 		if(battle_bg.x > 0 && battle_bg.x < width)
 			battle_bg2.x = battle_bg.x - width;
 		else if(battle_bg.x < 0 && battle_bg.x > -width)
 			battle_bg2.x = battle_bg.x + width;
 
+		//get equidistant arc lenghts from camera angle
 		party_angle = get_angle(camera_angle.rad);
 		enemy_angle = get_angle(camera_angle.rad + Math.PI);
-		var pos_x_party = center_x + ellipse(party_angle)*Math.cos(party_angle);
-		var pos_y_party = center_y + ellipse(party_angle)*Math.sin(party_angle);
-		var pos_x_enemy  = center_x + ellipse(enemy_angle)*Math.cos(enemy_angle);
-		var pos_y_enemy  = center_y + ellipse(enemy_angle)*Math.sin(enemy_angle);
 
+		//calculate party and enemy base position
+		pos_x_party = center_x + ellipse(party_angle)*Math.cos(party_angle);
+		pos_y_party = center_y + ellipse(party_angle)*Math.sin(party_angle);
+		pos_x_enemy  = center_x + ellipse(enemy_angle)*Math.cos(enemy_angle);
+		pos_y_enemy  = center_y + ellipse(enemy_angle)*Math.sin(enemy_angle);
+
+		//check party and enemy z index
 		if(Math.sin(camera_angle.rad) > 0 && game.world.getChildIndex(group_party) < game.world.getChildIndex(group_enemy))
 			game.world.swapChildren(group_enemy, group_party);
 		else if(Math.sin(camera_angle.rad) < 0 && game.world.getChildIndex(group_party) > game.world.getChildIndex(group_enemy))
 			game.world.swapChildren(group_enemy, group_party);
 
+		//check party z index order
 		if(Math.cos(camera_angle.rad) < 0 && first_party_char.z > last_party_char.z)
 			group_party.reverse();
 		else if(Math.cos(camera_angle.rad) > 0 && first_party_char.z < last_party_char.z)
 			group_party.reverse();
 
+		//check enemy z index order
 		if(Math.cos(camera_angle.rad) < 0 && first_enemy_char.z < last_enemy_char.z)
 			group_enemy.reverse();
 		else if(Math.cos(camera_angle.rad) > 0 && first_enemy_char.z > last_enemy_char.z)
@@ -186,16 +208,19 @@ function update() {
 
 		for(var i = 0; i < players_number; i++){
 			relative_angle = i < party_count ? camera_angle.rad : camera_angle.rad + Math.PI;
-			if(i < party_count){
+			if(i < party_count){ //shift party players from base point
 				players[i].x = pos_x_party + ((spacing_distance*i - middle_shift_party) + (spacing_distance >> 1))*Math.sin(relative_angle);
 				players[i].y = pos_y_party;
-			} else{
+			} else {  //shift enemy players from base point
 				players[i].x = pos_x_enemy + ((spacing_distance*(i-party_count) - middle_shift_enemy) + (spacing_distance >> 1))*Math.sin(relative_angle);
 				players[i].y = pos_y_enemy;
 			}
-			var scale = get_scale(relative_angle);
+
+			//set scale
+			scale = get_scale(relative_angle);
 			players[i].scale.setTo(scale, scale);
 
+			//change texture in function to position
 			if(i < party_count){
 				if(Math.sin(relative_angle) > 0 && players[i].key != 'felix_back')
 					players[i].loadTexture('felix_back');
@@ -208,6 +233,7 @@ function update() {
 					players[i].loadTexture('mino_front');
 			}
 
+			//change side in function to position
 			if(Math.cos(relative_angle) > 0 && players[i].scale.x < 0)
 				players[i].scale.setTo(players[i].scale.x, players[i].scale.y);
 			else if(Math.cos(relative_angle) <= 0 && players[i].scale.x > 0)
@@ -216,14 +242,14 @@ function update() {
 	}
 }
 
-function ellipse(angle){
+function ellipse(angle){ //ellipse formula
 	return a*b/Math.sqrt(Math.pow(b*Math.cos(angle), 2) + Math.pow(a*Math.sin(angle), 2));
 }
 
-function get_angle(angle){
+function get_angle(angle){ //equidistant ellipse angle formula
 	return angle + Math.atan(( (b-a)*Math.tan(angle) )/( a + b*Math.pow(Math.tan(angle), 2) ));
 }
 
-function get_scale(angle){
+function get_scale(angle){ //scale formula
 	return (Math.sin(angle)/6 + 0.8334) * default_scale;
 }
