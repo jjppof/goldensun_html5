@@ -1,0 +1,132 @@
+{"frames": {
+
+"climb/climb/00":
+{
+	"frame": {"x":77,"y":2,"w":21,"h":30},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":2,"w":21,"h":30},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/climb/01":
+{
+	"frame": {"x":102,"y":2,"w":20,"h":30},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":2,"w":20,"h":30},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/climb/02":
+{
+	"frame": {"x":27,"y":2,"w":21,"h":29},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":3,"w":21,"h":29},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/climb/03":
+{
+	"frame": {"x":102,"y":2,"w":20,"h":30},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":2,"w":20,"h":30},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/end/00":
+{
+	"frame": {"x":52,"y":2,"w":21,"h":29},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":3,"w":21,"h":29},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/end/01":
+{
+	"frame": {"x":27,"y":35,"w":22,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":0,"w":22,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/end/02":
+{
+	"frame": {"x":2,"y":2,"w":21,"h":25},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":7,"w":21,"h":25},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/idle/00":
+{
+	"frame": {"x":102,"y":2,"w":20,"h":30},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":2,"w":20,"h":30},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/start/00":
+{
+	"frame": {"x":53,"y":35,"w":20,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":0,"w":20,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/start/01":
+{
+	"frame": {"x":77,"y":36,"w":18,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":0,"w":18,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/start/02":
+{
+	"frame": {"x":99,"y":36,"w":20,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":0,"w":20,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/start/03":
+{
+	"frame": {"x":2,"y":31,"w":21,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":1,"w":21,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/start/04":
+{
+	"frame": {"x":2,"y":2,"w":21,"h":25},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":7,"w":21,"h":25},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/start/05":
+{
+	"frame": {"x":27,"y":35,"w":22,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":0,"w":22,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"climb/start/06":
+{
+	"frame": {"x":52,"y":2,"w":21,"h":29},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":3,"w":21,"h":29},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "isaac_climb.png",
+	"format": "RGBA8888",
+	"size": {"w":124,"h":70},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:e1073725b0f40290d7365154e1b94f4c:c07607174ef0843d8f9ea40f709d6e1e:192002e98e0925cf65ad56bf2498b6d4$"
+}
+}
