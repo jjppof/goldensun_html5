@@ -220,7 +220,7 @@ function update() {
 			scale = get_scale(relative_angle);
 			players[i].scale.setTo(scale, scale);
 
-			//change texture in function to position
+			//change texture in function of position
 			if(i < party_count){
 				if(Math.sin(relative_angle) > 0 && players[i].key != 'felix_back')
 					players[i].loadTexture('felix_back');
@@ -233,7 +233,7 @@ function update() {
 					players[i].loadTexture('mino_front');
 			}
 
-			//change side in function to position
+			//change side in function of position
 			if(Math.cos(relative_angle) > 0 && players[i].scale.x < 0)
 				players[i].scale.setTo(players[i].scale.x, players[i].scale.y);
 			else if(Math.cos(relative_angle) <= 0 && players[i].scale.x > 0)

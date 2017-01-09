@@ -16,6 +16,11 @@ var event_activation_process;
 var event_timer;
 var on_event;
 var climbing;
+var extra_speed;
+var map_collider;
+var mapCollisionGroup;
+var heroCollisionGroup;
+var move_down_count;
 
 var game = new Phaser.Game(
 	width,	//width
@@ -52,12 +57,13 @@ var map;
 function create() {
 	actual_action = 'idle';
 	actual_direction = 'down';
+	extra_speed = 0;
 
 	shadow = game.add.sprite(0, 0, 'shadow');
 	shadow.anchor.setTo(0.5, 0.0);
     hero = game.add.sprite(0, 0, u([hero_name, actual_action]));
 
-    var move_down_count = 2;
+    move_down_count = 2;
 
     maps[map_name].setLayers(move_down_count);
 
@@ -141,7 +147,7 @@ function fireEvent(){
 	    		main_char_list[hero_name].setAnimation(hero, "climb");
 	    		hero.animations.play(u(["climb", "idle"]));
 	    		var out_time = Phaser.Timer.QUARTER/2;
-				game.add.tween(hero.body).to( { y: hero.y - 15 }, out_time, Phaser.Easing.Bounce.In, true);
+				game.add.tween(hero.body).to( { y: hero.y - 15 }, out_time, Phaser.Easing.Exponential.InOut, true);
 				game.time.events.add(out_time + 50, function(){
 					on_event = false;
 	    			climbing = true;
@@ -154,10 +160,12 @@ function fireEvent(){
 		} else if(current_event.type == "stair" && climbing){
 			if(current_event.activation_direction == "up"){
 				on_event = true;
+				game.physics.p2.pause();
 				event_activation_process = false;
-				hero.animations.play(u(["climb", "end"]), 9, false, true);
+				hero.animations.play(u(["climb", "end"]), 4, false, false);
 				shadow.visible = false;
-				game.add.tween(hero.body).to( { y: hero.y - 25 }, Phaser.Timer.HALF, Phaser.Easing.Linear.None, true);
+				var time = Phaser.Timer.HALF + Phaser.Timer.QUARTER;
+				game.add.tween(hero.body).to( { y: hero.y - 7 }, time, Phaser.Easing.Exponential.InOut, true);
 			} else if(current_event.activation_direction == "down"){
 				on_event = true;
 				event_activation_process = false;
@@ -165,7 +173,7 @@ function fireEvent(){
 	    		main_char_list[hero_name].setAnimation(hero, "idle");
 	    		hero.animations.play(u(["idle", "up"]));
 	    		var out_time = Phaser.Timer.QUARTER/2;
-				game.add.tween(hero.body).to( { y: hero.y + 15 }, out_time, Phaser.Easing.Bounce.In, true);
+				game.add.tween(hero.body).to( { y: hero.y + 15 }, out_time, Phaser.Easing.Exponential.InOut, true);
 				game.time.events.add(out_time + 50, function(){
 					on_event = false;
 	    			climbing = false;
@@ -175,6 +183,58 @@ function fireEvent(){
 	    		shadow.visible = true;
 	    		actual_action = "idle";
 	    		actual_direction = "up";
+			}
+		} else if(current_event.type == "door"){
+			if(current_event.avance_effect){
+				on_event = true;
+				event_activation_process = false;
+				hero.loadTexture(u([hero_name, "walk"]));
+	    		main_char_list[hero_name].setAnimation(hero, "walk");
+	    		hero.animations.play(u(["walk", "up"]));
+	    		open_door();
+	    		game.physics.p2.pause();
+	    		var time = Phaser.Timer.HALF;
+	    		game.add.tween(hero.body).to( { y: hero.y - 15 }, time, Phaser.Easing.Linear.None, true);
+	    		game.add.tween(shadow).to( { y: hero.y - 15 }, time, Phaser.Easing.Linear.None, true);
+	    		game.time.events.add(time + 50, function(){
+		    		hero.loadTexture(u([hero_name, "idle"]));
+		    		main_char_list[hero_name].setAnimation(hero, "idle");
+		    		hero.animations.play(u(["idle", "up"]));
+		    		game.add.tween(game.world).to( { alpha: 0 }, Phaser.Timer.HALF, Phaser.Easing.Linear.None, true).onComplete.addOnce(function(){
+		    			var layers2remove = [];
+		    			for(var i = 0; i < game.world.children.length; i++){
+		    				if(game.world.children[i] instanceof Phaser.TilemapLayer)
+								layers2remove.push(game.world.children[i]);
+		    			}
+		    			for(var i = 0; i < layers2remove.length; i++){
+		    				game.world.remove(layers2remove[i]);
+		    			}
+		    			delete layers2remove;
+		    			map_name = current_event.target;
+		    			maps[map_name].setLayers(move_down_count);
+		    			hero.body.x = current_event.x_target * maps[map_name].sprite.tileWidth;
+		    			hero.body.y = current_event.y_target * maps[map_name].sprite.tileHeight;
+		    			shadow.x = hero.x;
+		    			shadow.y = hero.y;
+
+						game.physics.p2.resume();		    			
+		    			map_collider.body.clearShapes();
+    					map_collider.body.loadPolygon(maps[map_name].key_name, maps[map_name].key_name);
+						mapCollisionGroup = game.physics.p2.createCollisionGroup();
+						map_collider.body.setCollisionGroup(mapCollisionGroup);
+						map_collider.body.setZeroDamping();
+						map_collider.body.setZeroRotation();
+						hero.body.collides(mapCollisionGroup);
+						map_collider.body.collides(heroCollisionGroup);
+						game.physics.p2.updateBoundsCollisionGroup();
+
+		    			game.add.tween(game.world).to( { alpha: 1 }, Phaser.Timer.HALF, Phaser.Easing.Linear.None, true).onComplete.addOnce(function(){
+		    				on_event = false;
+	    					current_event = null;
+		    			});
+		    		})
+		    		
+		    	}, this);
 			}
 		}
 	}
@@ -200,7 +260,13 @@ function update() {
 				} else if(event_activation_process && (climb_direction != current_event.activation_direction ||  actual_direction == "idle"))
 					event_activation_process = false;
 			}
-		}
+
+			if(current_event.type == "speed"){
+				if(extra_speed != current_event.speed)
+					extra_speed = current_event.speed;
+			}
+		} else if(extra_speed != 0)
+			extra_speed = 0;
 
 		if(!climbing){
 			if (cursors.up.isDown && !cursors.left.isDown && !cursors.right.isDown && !cursors.down.isDown && actual_direction != "up"){
@@ -266,11 +332,11 @@ function update() {
 		}
 
 		if(actual_action == "dash") {
-			hero.body.velocity.x = x_speed * main_char_list[hero_name].dash_speed;
-			hero.body.velocity.y = y_speed * main_char_list[hero_name].dash_speed;
+			hero.body.velocity.x = x_speed * (main_char_list[hero_name].dash_speed + extra_speed);
+			hero.body.velocity.y = y_speed * (main_char_list[hero_name].dash_speed + extra_speed);
 		} else if(actual_action == "walk") {
-			hero.body.velocity.x = x_speed * main_char_list[hero_name].walk_speed;
-			hero.body.velocity.y = y_speed * main_char_list[hero_name].walk_speed;
+			hero.body.velocity.x = x_speed * (main_char_list[hero_name].walk_speed + extra_speed);
+			hero.body.velocity.y = y_speed * (main_char_list[hero_name].walk_speed + extra_speed);
 		} else if(actual_action == "climb") {
 			hero.body.velocity.x = x_speed * main_char_list[hero_name].climb_speed;
 			hero.body.velocity.y = y_speed * main_char_list[hero_name].climb_speed;
@@ -304,28 +370,37 @@ function update() {
 	    	shadow.x = hero.x;
 	    if(shadow.y != hero.y)
 	    	shadow.y = hero.y;
+	    map_collider.body.velocity.y = map_collider.body.velocity.x = 0;
+	    
 	} else{
 		if(current_event.type == "stair"){
 			if(hero.animations.frameName == "climb/start/03"){
 				shadow.visible = false;
-				game.add.tween(hero.body).to( { y: hero.y + 25 }, 500, Phaser.Easing.Linear.None, true);
+				game.add.tween(hero.body).to( { y: hero.y + 25 }, 500, Phaser.Easing.Exponential.InOut, true);
 			} else if(hero.animations.frameName == "climb/start/06"){
 	    		hero.animations.play(u(["climb", "idle"]), 9);
 	    		on_event = false;
 	    		climbing = true;
 	    		actual_action = "climb";
 	    		current_event = null;
-			} else if(hero.animations.frameName == "climb/end/02"){
-				hero.loadTexture(u([hero_name, "idle"]));
-	    		main_char_list[hero_name].setAnimation(hero, "idle");
-	    		hero.animations.play(u(["idle", "up"]));
-	    		shadow.y = hero.y;
-	    		shadow.visible = true;
-	    		on_event = false;
-	    		climbing = false;
-	    		actual_action = "idle";
-	    		actual_direction = "up";
-	    		current_event = null;
+			} 
+			else if(hero.animations.frameName == "climb/end/02"){
+				game.time.events.add(150, function(){
+					game.add.tween(hero.body).to( { y: hero.y - 6 }, 70, Phaser.Easing.Linear.None, true);
+					hero.loadTexture(u([hero_name, "idle"]));
+		    		main_char_list[hero_name].setAnimation(hero, "idle");
+		    		hero.animations.play(u(["idle", "up"]));
+		    		game.time.events.add(120, function(){
+		    			shadow.y = hero.y;
+			    		shadow.visible = true;
+			    		on_event = false;
+			    		climbing = false;
+			    		actual_action = "idle";
+			    		actual_direction = "up";
+			    		current_event = null;
+			    		game.physics.p2.resume();
+		    		}, this);
+		    	}, this);
 			} 
 		}
 		hero.body.velocity.y = hero.body.velocity.x = 0;
@@ -335,4 +410,24 @@ function update() {
 
 function getTransitionDirection(actual_direction, desired_direction){
 	return transitions[desired_direction][actual_direction];
+}
+
+function open_door(){
+	var layer = _.findWhere(maps.madra.sprite.layers, {name : maps.madra.sprite.properties.door_layer});
+	var sample_tile = maps[map_name].sprite.getTile(current_event.x, current_event.y - 1, layer.name);
+	var door_type_index = sample_tile.properties.door_type;
+	var tiles = _.filter(maps.madra.sprite.tilesets[0].tileProperties, function(key){
+		return key.door_type == door_type_index && "close_door" in key && key.id == sample_tile.properties.id;
+	})
+	var tile; var source_index; var close_door_index; var offsets; var base_x; var base_y; var target_index;
+	for(var i = 0; i < tiles.length; i++){
+		tile = tiles[i];
+		source_index = parseInt(tile.index) + 1;
+		close_door_index = tile.close_door;
+		offsets = tile.base_offset.split(",");
+		base_x = current_event.x + parseInt(offsets[0]);
+		base_y = current_event.y + parseInt(offsets[1]) - 1;
+		target_index = parseInt(_.findKey(maps.madra.sprite.tilesets[0].tileProperties, {open_door : close_door_index})) + 1;
+		maps.madra.sprite.replace(source_index, target_index, base_x, base_y, 1, 1, layer.name);
+	}
 }

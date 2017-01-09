@@ -243,12 +243,32 @@
      "Name":"madra",
      "Stair_00":"10,14,10,15,0",
      "Stair_01":"33,9,33,10,0",
+     "door_layer":"buildings_00",
      "event_01":"stair,33,8,down",
      "event_02":"stair,33,9,up",
      "event_03":"stair,10,13,down",
      "event_04":"stair,10,14,up",
      "event_05":"stair,33,10,down",
-     "event_06":"stair,33,11,up"
+     "event_06":"stair,33,11,up",
+     "event_07":"speed,29,27,15",
+     "event_08":"speed,30,27,15",
+     "event_09":"speed,29,26,15",
+     "event_10":"speed,30,26,15",
+     "event_11":"speed,29,25,15",
+     "event_12":"speed,30,25,15",
+     "event_13":"speed,29,24,15",
+     "event_14":"speed,30,24,15",
+     "event_15":"speed,29,22,15",
+     "event_16":"speed,30,22,15",
+     "event_17":"speed,29,21,15",
+     "event_18":"speed,30,21,15",
+     "event_19":"speed,29,20,15",
+     "event_20":"speed,30,20,15",
+     "event_21":"speed,29,19,15",
+     "event_22":"speed,30,19,15",
+     "event_23":"stair,10,16,up",
+     "event_24":"stair,10,15,down",
+     "event_25":"door,28,12,madra_inn,up,28.5,7,1"
     },
  "propertytypes":
     {
@@ -261,12 +281,32 @@
      "Name":"string",
      "Stair_00":"string",
      "Stair_01":"string",
+     "door_layer":"string",
      "event_01":"string",
      "event_02":"string",
      "event_03":"string",
      "event_04":"string",
      "event_05":"string",
-     "event_06":"string"
+     "event_06":"string",
+     "event_07":"string",
+     "event_08":"string",
+     "event_09":"string",
+     "event_10":"string",
+     "event_11":"string",
+     "event_12":"string",
+     "event_13":"string",
+     "event_14":"string",
+     "event_15":"string",
+     "event_16":"string",
+     "event_17":"string",
+     "event_18":"string",
+     "event_19":"string",
+     "event_20":"string",
+     "event_21":"string",
+     "event_22":"string",
+     "event_23":"string",
+     "event_24":"string",
+     "event_25":"string"
     },
  "renderorder":"right-down",
  "tileheight":16,
@@ -282,6 +322,96 @@
          "spacing":0,
          "tilecount":297,
          "tileheight":16,
+         "tileproperties":
+            {
+             "126":
+                {
+                 "base_offset":"0,-1",
+                 "door_type":"01",
+                 "id":3,
+                 "open_door":"02"
+                },
+             "129":
+                {
+                 "base_offset":"0,-1",
+                 "close_door":"02",
+                 "door_type":"01",
+                 "id":2
+                },
+             "137":
+                {
+                 "base_offset":"0,0",
+                 "door_type":"01",
+                 "id":3,
+                 "open_door":"01"
+                },
+             "140":
+                {
+                 "base_offset":"0,0",
+                 "close_door":"01",
+                 "door_type":"01",
+                 "id":2
+                },
+             "180":
+                {
+                 "base_offset":"0,-1",
+                 "close_door":"02",
+                 "door_type":"01",
+                 "id":1
+                },
+             "191":
+                {
+                 "base_offset":"0,0",
+                 "close_door":"01",
+                 "door_type":"01",
+                 "id":1
+                }
+            },
+         "tilepropertytypes":
+            {
+             "126":
+                {
+                 "base_offset":"string",
+                 "door_type":"string",
+                 "id":"int",
+                 "open_door":"string"
+                },
+             "129":
+                {
+                 "base_offset":"string",
+                 "close_door":"string",
+                 "door_type":"string",
+                 "id":"int"
+                },
+             "137":
+                {
+                 "base_offset":"string",
+                 "door_type":"string",
+                 "id":"int",
+                 "open_door":"string"
+                },
+             "140":
+                {
+                 "base_offset":"string",
+                 "close_door":"string",
+                 "door_type":"string",
+                 "id":"int"
+                },
+             "180":
+                {
+                 "base_offset":"string",
+                 "close_door":"string",
+                 "door_type":"string",
+                 "id":"int"
+                },
+             "191":
+                {
+                 "base_offset":"string",
+                 "close_door":"string",
+                 "door_type":"string",
+                 "id":"int"
+                }
+            },
          "tilewidth":16
         }],
  "tilewidth":16,

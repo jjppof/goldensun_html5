@@ -10,15 +10,83 @@
   <property name="Name" value="madra"/>
   <property name="Stair_00" value="10,14,10,15,0"/>
   <property name="Stair_01" value="33,9,33,10,0"/>
+  <property name="door_layer" value="buildings_00"/>
   <property name="event_01" value="stair,33,8,down"/>
   <property name="event_02" value="stair,33,9,up"/>
   <property name="event_03" value="stair,10,13,down"/>
   <property name="event_04" value="stair,10,14,up"/>
   <property name="event_05" value="stair,33,10,down"/>
   <property name="event_06" value="stair,33,11,up"/>
+  <property name="event_07" value="speed,29,27,15"/>
+  <property name="event_08" value="speed,30,27,15"/>
+  <property name="event_09" value="speed,29,26,15"/>
+  <property name="event_10" value="speed,30,26,15"/>
+  <property name="event_11" value="speed,29,25,15"/>
+  <property name="event_12" value="speed,30,25,15"/>
+  <property name="event_13" value="speed,29,24,15"/>
+  <property name="event_14" value="speed,30,24,15"/>
+  <property name="event_15" value="speed,29,22,15"/>
+  <property name="event_16" value="speed,30,22,15"/>
+  <property name="event_17" value="speed,29,21,15"/>
+  <property name="event_18" value="speed,30,21,15"/>
+  <property name="event_19" value="speed,29,20,15"/>
+  <property name="event_20" value="speed,30,20,15"/>
+  <property name="event_21" value="speed,29,19,15"/>
+  <property name="event_22" value="speed,30,19,15"/>
+  <property name="event_23" value="stair,10,16,up"/>
+  <property name="event_24" value="stair,10,15,down"/>
+  <property name="event_25" value="door,28,12,madra_inn,up,28.5,7,1"/>
  </properties>
  <tileset firstgid="1" name="madra" tilewidth="16" tileheight="16" tilecount="297" columns="11">
   <image source="madra.png" width="176" height="432"/>
+  <tile id="126">
+   <properties>
+    <property name="base_offset" value="0,-1"/>
+    <property name="door_type" value="01"/>
+    <property name="id" type="int" value="3"/>
+    <property name="open_door" value="02"/>
+   </properties>
+  </tile>
+  <tile id="129">
+   <properties>
+    <property name="base_offset" value="0,-1"/>
+    <property name="close_door" value="02"/>
+    <property name="door_type" value="01"/>
+    <property name="id" type="int" value="2"/>
+   </properties>
+  </tile>
+  <tile id="137">
+   <properties>
+    <property name="base_offset" value="0,0"/>
+    <property name="door_type" value="01"/>
+    <property name="id" type="int" value="3"/>
+    <property name="open_door" value="01"/>
+   </properties>
+  </tile>
+  <tile id="140">
+   <properties>
+    <property name="base_offset" value="0,0"/>
+    <property name="close_door" value="01"/>
+    <property name="door_type" value="01"/>
+    <property name="id" type="int" value="2"/>
+   </properties>
+  </tile>
+  <tile id="180">
+   <properties>
+    <property name="base_offset" value="0,-1"/>
+    <property name="close_door" value="02"/>
+    <property name="door_type" value="01"/>
+    <property name="id" type="int" value="1"/>
+   </properties>
+  </tile>
+  <tile id="191">
+   <properties>
+    <property name="base_offset" value="0,0"/>
+    <property name="close_door" value="01"/>
+    <property name="door_type" value="01"/>
+    <property name="id" type="int" value="1"/>
+   </properties>
+  </tile>
  </tileset>
  <layer name="ground_00" width="40" height="34">
   <properties>

@@ -27,15 +27,39 @@ class Map {
 		this.sprite = game.add.tilemap(this.key_name);
     	this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
+    	for(var tile_index in maps.madra.sprite.tilesets[0].tileProperties){
+    		maps.madra.sprite.tilesets[0].tileProperties[tile_index].index = tile_index;
+    	}
+
     	for(var property in this.sprite.properties){
     		if(property.startsWith("event")){
     			var property_info = this.sprite.properties[property].split(",");
-    			this.events[u([property_info[1], property_info[2]])] = {
-    				type : property_info[0],
-    				x : property_info[1],
-    				y : property_info[2],
-    				activation_direction : property_info[3]
-    			}
+    			if(property_info[0] == "stair"){
+	    			this.events[u([property_info[1], property_info[2]])] = {
+	    				type : property_info[0],
+	    				x : property_info[1],
+	    				y : property_info[2],
+	    				activation_direction : property_info[3]
+	    			}
+	    		} else if(property_info[0] == "speed"){
+	    			this.events[u([property_info[1], property_info[2]])] = {
+	    				type : property_info[0],
+	    				x : property_info[1],
+	    				y : property_info[2],
+	    				speed : parseFloat(property_info[3])
+	    			}
+	    		} else if(property_info[0] == "door"){
+	    			this.events[u([property_info[1], property_info[2]])] = {
+	    				type : property_info[0],
+	    				x : parseInt(property_info[1]),
+	    				y : parseInt(property_info[2]),
+	    				target : property_info[3],
+	    				activation_direction : property_info[4],
+	    				x_target : parseFloat(property_info[5]),
+	    				y_target : parseFloat(property_info[6]),
+	    				avance_effect: !!parseInt(property_info[7])
+	    			}
+	    		}
     		}
     	}
 
@@ -51,6 +75,7 @@ class Map {
 	    	var layer = this.sprite.createLayer(layers[i].name);
 	    	layer.resizeWorld();
 	    	layer.blendMode = PIXI.blendModes[layers[i].properties.blendMode];
+	    	layer.alpha = layers[i].alpha;
 	    	if(!over_occurrence){
 	    		for(var j = 0; j < move_down_count; j++){
 		    		layer.moveDown();
