@@ -171,7 +171,11 @@
      "Door_03":"30,18,madra,28,12,0,down",
      "Door_04":"17,6,madra_inn_up_stair,14,6,0,right",
      "Door_05":"17,7,madra_inn_up_stair,14,6,0,right",
-     "Name":"inn_down"
+     "Name":"inn_down",
+     "event_01":"door,27,19,madra,down,28.5,12,0",
+     "event_02":"door,28,19,madra,down,28.5,12,0",
+     "event_03":"door,29,19,madra,down,28.5,12,0",
+     "event_04":"door,30,19,madra,down,28.5,12,0"
     },
  "propertytypes":
     {
@@ -181,7 +185,11 @@
      "Door_03":"string",
      "Door_04":"string",
      "Door_05":"string",
-     "Name":"string"
+     "Name":"string",
+     "event_01":"string",
+     "event_02":"string",
+     "event_03":"string",
+     "event_04":"string"
     },
  "renderorder":"right-down",
  "tileheight":8,

@@ -35,7 +35,7 @@
   <property name="event_22" value="speed,30,19,15"/>
   <property name="event_23" value="stair,10,16,up"/>
   <property name="event_24" value="stair,10,15,down"/>
-  <property name="event_25" value="door,28,12,madra_inn,up,28.5,7,1"/>
+  <property name="event_25" value="door,28,12,madra_inn,up,29,17,1"/>
  </properties>
  <tileset firstgid="1" name="madra" tilewidth="16" tileheight="16" tilecount="297" columns="11">
   <image source="madra.png" width="176" height="432"/>

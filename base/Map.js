@@ -23,7 +23,7 @@ class Map {
 	    game.load.physics(this.key_name, this.physics_json_url);
 	}
 
-	setLayers(move_down_count){
+	setLayers(underlayer_group, overlayer_group){
 		this.sprite = game.add.tilemap(this.key_name);
     	this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
@@ -68,19 +68,16 @@ class Map {
 			if(a.properties.z != b.properties.z) return a - b;
 		});
 
-	    var over_occurrence = false;
 	    for(var i = 0; i < layers.length; i++){
-	    	if(layers[i].properties.over != 0 && !over_occurrence)
-	    		over_occurrence = true;
 	    	var layer = this.sprite.createLayer(layers[i].name);
 	    	layer.resizeWorld();
 	    	layer.blendMode = PIXI.blendModes[layers[i].properties.blendMode];
 	    	layer.alpha = layers[i].alpha;
-	    	if(!over_occurrence){
-	    		for(var j = 0; j < move_down_count; j++){
-		    		layer.moveDown();
-		    	}
-	    	}
+
+	    	if(layers[i].properties.over != 0)
+	    		overlayer_group.addChild(layer);
+	    	else
+	    		underlayer_group.addChild(layer);
 	    }
 	}
 }

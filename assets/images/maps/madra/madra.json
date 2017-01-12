@@ -268,7 +268,7 @@
      "event_22":"speed,30,19,15",
      "event_23":"stair,10,16,up",
      "event_24":"stair,10,15,down",
-     "event_25":"door,28,12,madra_inn,up,28.5,7,1"
+     "event_25":"door,28,12,madra_inn,up,29,17,1"
     },
  "propertytypes":
     {

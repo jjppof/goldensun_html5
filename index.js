@@ -20,7 +20,11 @@ var extra_speed;
 var map_collider;
 var mapCollisionGroup;
 var heroCollisionGroup;
-var move_down_count;
+var underlayer_group;
+var overlayer_group;
+var black_rect;
+var transtions_group;
+var npc_group;
 
 var game = new Phaser.Game(
 	width,	//width
@@ -59,16 +63,32 @@ function create() {
 	actual_direction = 'down';
 	extra_speed = 0;
 
-	shadow = game.add.sprite(0, 0, 'shadow');
-	shadow.anchor.setTo(0.5, 0.0);
-    hero = game.add.sprite(0, 0, u([hero_name, actual_action]));
+    underlayer_group = game.add.group();
+    npc_group = game.add.group();
+    overlayer_group = game.add.group();
+    transtions_group = game.add.group();
 
-    move_down_count = 2;
+    underlayer_group.depth = 1;
+    npc_group.depth = 2;
+    overlayer_group.depth = 3;
+    transtions_group.depth = 4;
 
-    maps[map_name].setLayers(move_down_count);
+    shadow = npc_group.create(0, 0, 'shadow');
+    hero = npc_group.create(0, 0, u([hero_name, actual_action]));
+
+    transtions_group.alpha = 0
+    black_rect = game.add.graphics(0, 0);
+    black_rect.lineStyle(0);
+    black_rect.beginFill(0x0, 1);
+    black_rect.drawRect(0, 0, width, height);
+    black_rect.endFill();
+    transtions_group.addChild(black_rect);
+
+    maps[map_name].setLayers(underlayer_group, overlayer_group);
 
 	game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
 
+	shadow.anchor.setTo(0.5, 0.0);
 	hero.centerX = 280;
 	hero.centerY = 210;
 	game.camera.follow(hero);	
@@ -185,68 +205,66 @@ function fireEvent(){
 	    		actual_direction = "up";
 			}
 		} else if(current_event.type == "door"){
+			on_event = true;
+			event_activation_process = false;
 			if(current_event.avance_effect){
-				on_event = true;
-				event_activation_process = false;
 				hero.loadTexture(u([hero_name, "walk"]));
 	    		main_char_list[hero_name].setAnimation(hero, "walk");
 	    		hero.animations.play(u(["walk", "up"]));
 	    		open_door();
 	    		game.physics.p2.pause();
 	    		var time = Phaser.Timer.HALF;
-	    		game.add.tween(hero.body).to( { y: hero.y - 15 }, time, Phaser.Easing.Linear.None, true);
 	    		game.add.tween(shadow).to( { y: hero.y - 15 }, time, Phaser.Easing.Linear.None, true);
-	    		game.time.events.add(time + 50, function(){
-		    		hero.loadTexture(u([hero_name, "idle"]));
-		    		main_char_list[hero_name].setAnimation(hero, "idle");
-		    		hero.animations.play(u(["idle", "up"]));
-		    		game.add.tween(game.world).to( { alpha: 0 }, Phaser.Timer.HALF, Phaser.Easing.Linear.None, true).onComplete.addOnce(function(){
-		    			var layers2remove = [];
-		    			for(var i = 0; i < game.world.children.length; i++){
-		    				if(game.world.children[i] instanceof Phaser.TilemapLayer)
-								layers2remove.push(game.world.children[i]);
-		    			}
-		    			for(var i = 0; i < layers2remove.length; i++){
-		    				game.world.remove(layers2remove[i]);
-		    			}
-		    			delete layers2remove;
-		    			map_name = current_event.target;
-		    			maps[map_name].setLayers(move_down_count);
-		    			hero.body.x = current_event.x_target * maps[map_name].sprite.tileWidth;
-		    			hero.body.y = current_event.y_target * maps[map_name].sprite.tileHeight;
-		    			shadow.x = hero.x;
-		    			shadow.y = hero.y;
-
-						game.physics.p2.resume();		    			
-		    			map_collider.body.clearShapes();
-    					map_collider.body.loadPolygon(maps[map_name].key_name, maps[map_name].key_name);
-						mapCollisionGroup = game.physics.p2.createCollisionGroup();
-						map_collider.body.setCollisionGroup(mapCollisionGroup);
-						map_collider.body.setZeroDamping();
-						map_collider.body.setZeroRotation();
-						hero.body.collides(mapCollisionGroup);
-						map_collider.body.collides(heroCollisionGroup);
-						game.physics.p2.updateBoundsCollisionGroup();
-
-		    			game.add.tween(game.world).to( { alpha: 1 }, Phaser.Timer.HALF, Phaser.Easing.Linear.None, true).onComplete.addOnce(function(){
-		    				on_event = false;
-	    					current_event = null;
-		    			});
-		    		})
-		    		
-		    	}, this);
-			}
+	    		game.add.tween(hero.body).to( { y: hero.y - 15 }, time, Phaser.Easing.Linear.None, true);
+	    		game.time.events.add(time + 50, teleport, this);
+			} else
+				teleport();
 		}
 	}
 }
 
+function teleport(){
+	hero.loadTexture(u([hero_name, "idle"]));
+	main_char_list[hero_name].setAnimation(hero, "idle");
+	hero.animations.play(u(["idle", current_event.activation_direction]));
+	black_rect.x = Math.abs(game.world.x);
+	black_rect.y = Math.abs(game.world.y);
+	game.add.tween(transtions_group).to( { alpha: 1.0 }, Phaser.Timer.HALF, Phaser.Easing.Linear.None, true);
+	game.time.events.add(Phaser.Timer.SECOND, function(){
+		underlayer_group.removeAll();
+		overlayer_group.removeAll();
+		map_name = current_event.target;
+		maps[map_name].setLayers(underlayer_group, overlayer_group);
+		hero.body.x = current_event.x_target * maps[map_name].sprite.tileWidth;
+		hero.body.y = current_event.y_target * maps[map_name].sprite.tileHeight;
+		shadow.x = hero.x;
+		shadow.y = hero.y;
+
+		game.physics.p2.resume();		    			
+		map_collider.body.clearShapes();
+		map_collider.body.loadPolygon(maps[map_name].key_name, maps[map_name].key_name);
+		mapCollisionGroup = game.physics.p2.createCollisionGroup();
+		map_collider.body.setCollisionGroup(mapCollisionGroup);
+		map_collider.body.setZeroDamping();
+		map_collider.body.setZeroRotation();
+		hero.body.collides(mapCollisionGroup);
+		map_collider.body.collides(heroCollisionGroup);
+		game.physics.p2.updateBoundsCollisionGroup();
+
+		game.add.tween(transtions_group).to( { alpha: 0.0 }, Phaser.Timer.HALF, Phaser.Easing.Linear.None, true).onComplete.addOnce(function(){
+			on_event = false;
+			current_event = null;
+		});
+	});
+}
+
 function update() {
 	if(!on_event) {
-		hero_tile_pos_x = Math.floor(hero.x/maps.madra.sprite.tileWidth);
-		hero_tile_pos_y = Math.floor(hero.y/maps.madra.sprite.tileHeight);
+		hero_tile_pos_x = Math.floor(hero.x/maps[map_name].sprite.tileWidth);
+		hero_tile_pos_y = Math.floor(hero.y/maps[map_name].sprite.tileHeight);
 
-		if(u([hero_tile_pos_x, hero_tile_pos_y]) in maps.madra.events){
-			current_event = maps.madra.events[u([hero_tile_pos_x, hero_tile_pos_y])];
+		if(u([hero_tile_pos_x, hero_tile_pos_y]) in maps[map_name].events){
+			current_event = maps[map_name].events[u([hero_tile_pos_x, hero_tile_pos_y])];
 			if(!climbing){
 				if(!event_activation_process && actual_direction == current_event.activation_direction && (actual_action == "walk" || actual_action == "dash")){
 					event_activation_process = true;
@@ -264,6 +282,13 @@ function update() {
 			if(current_event.type == "speed"){
 				if(extra_speed != current_event.speed)
 					extra_speed = current_event.speed;
+			}
+
+			if(current_event.type == "door"){
+				if(!current_event.avance_effect){
+					event_activation_process = true;
+					fireEvent();
+				}
 			}
 		} else if(extra_speed != 0)
 			extra_speed = 0;
@@ -405,7 +430,6 @@ function update() {
 		}
 		hero.body.velocity.y = hero.body.velocity.x = 0;
 	}
-	
 }
 
 function getTransitionDirection(actual_direction, desired_direction){
@@ -413,10 +437,10 @@ function getTransitionDirection(actual_direction, desired_direction){
 }
 
 function open_door(){
-	var layer = _.findWhere(maps.madra.sprite.layers, {name : maps.madra.sprite.properties.door_layer});
+	var layer = _.findWhere(maps[map_name].sprite.layers, {name : maps[map_name].sprite.properties.door_layer});
 	var sample_tile = maps[map_name].sprite.getTile(current_event.x, current_event.y - 1, layer.name);
 	var door_type_index = sample_tile.properties.door_type;
-	var tiles = _.filter(maps.madra.sprite.tilesets[0].tileProperties, function(key){
+	var tiles = _.filter(maps[map_name].sprite.tilesets[0].tileProperties, function(key){
 		return key.door_type == door_type_index && "close_door" in key && key.id == sample_tile.properties.id;
 	})
 	var tile; var source_index; var close_door_index; var offsets; var base_x; var base_y; var target_index;
@@ -427,7 +451,7 @@ function open_door(){
 		offsets = tile.base_offset.split(",");
 		base_x = current_event.x + parseInt(offsets[0]);
 		base_y = current_event.y + parseInt(offsets[1]) - 1;
-		target_index = parseInt(_.findKey(maps.madra.sprite.tilesets[0].tileProperties, {open_door : close_door_index})) + 1;
-		maps.madra.sprite.replace(source_index, target_index, base_x, base_y, 1, 1, layer.name);
+		target_index = parseInt(_.findKey(maps[map_name].sprite.tilesets[0].tileProperties, {open_door : close_door_index})) + 1;
+		maps[map_name].sprite.replace(source_index, target_index, base_x, base_y, 1, 1, layer.name);
 	}
 }
