@@ -8,10 +8,10 @@
   <property name="Door_04" value="17,6,madra_inn_up_stair,14,6,0,right"/>
   <property name="Door_05" value="17,7,madra_inn_up_stair,14,6,0,right"/>
   <property name="Name" value="inn_down"/>
-  <property name="event_01" value="door,27,19,madra,down,28.5,12,0"/>
-  <property name="event_02" value="door,28,19,madra,down,28.5,12,0"/>
-  <property name="event_03" value="door,29,19,madra,down,28.5,12,0"/>
-  <property name="event_04" value="door,30,19,madra,down,28.5,12,0"/>
+  <property name="event_01" value="door,27,19,madra,down,28.5,12.5,0"/>
+  <property name="event_02" value="door,28,19,madra,down,28.5,12.5,0"/>
+  <property name="event_03" value="door,29,19,madra,down,28.5,12.5,0"/>
+  <property name="event_04" value="door,30,19,madra,down,28.5,12.5,0"/>
  </properties>
  <tileset firstgid="1" name="Inside_town" tilewidth="8" tileheight="8" tilecount="1188" columns="22">
   <image source="Inside_town_00.png" width="176" height="432"/>

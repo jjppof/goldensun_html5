@@ -68,11 +68,6 @@ function create() {
     overlayer_group = game.add.group();
     transtions_group = game.add.group();
 
-    underlayer_group.depth = 1;
-    npc_group.depth = 2;
-    overlayer_group.depth = 3;
-    transtions_group.depth = 4;
-
     shadow = npc_group.create(0, 0, 'shadow');
     hero = npc_group.create(0, 0, u([hero_name, actual_action]));
 
@@ -229,33 +224,34 @@ function teleport(){
 	hero.animations.play(u(["idle", current_event.activation_direction]));
 	black_rect.x = Math.abs(game.world.x);
 	black_rect.y = Math.abs(game.world.y);
-	game.add.tween(transtions_group).to( { alpha: 1.0 }, Phaser.Timer.HALF, Phaser.Easing.Linear.None, true);
-	game.time.events.add(Phaser.Timer.SECOND, function(){
-		underlayer_group.removeAll();
-		overlayer_group.removeAll();
-		map_name = current_event.target;
-		maps[map_name].setLayers(underlayer_group, overlayer_group);
-		hero.body.x = current_event.x_target * maps[map_name].sprite.tileWidth;
-		hero.body.y = current_event.y_target * maps[map_name].sprite.tileHeight;
-		shadow.x = hero.x;
-		shadow.y = hero.y;
+	game.add.tween(transtions_group).to( { alpha: 1.0 }, Phaser.Timer.HALF, Phaser.Easing.Linear.None, true).onComplete.addOnce(function(){
+		game.time.events.add(Phaser.Timer.HALF, function(){
+			underlayer_group.removeAll();
+			overlayer_group.removeAll();
+			map_name = current_event.target;
+			maps[map_name].setLayers(underlayer_group, overlayer_group);
+			hero.body.x = current_event.x_target * maps[map_name].sprite.tileWidth;
+			hero.body.y = current_event.y_target * maps[map_name].sprite.tileHeight;
+			shadow.x = hero.x;
+			shadow.y = hero.y;
 
-		game.physics.p2.resume();		    			
-		map_collider.body.clearShapes();
-		map_collider.body.loadPolygon(maps[map_name].key_name, maps[map_name].key_name);
-		mapCollisionGroup = game.physics.p2.createCollisionGroup();
-		map_collider.body.setCollisionGroup(mapCollisionGroup);
-		map_collider.body.setZeroDamping();
-		map_collider.body.setZeroRotation();
-		hero.body.collides(mapCollisionGroup);
-		map_collider.body.collides(heroCollisionGroup);
-		game.physics.p2.updateBoundsCollisionGroup();
+			game.physics.p2.resume();		    			
+			map_collider.body.clearShapes();
+			map_collider.body.loadPolygon(maps[map_name].key_name, maps[map_name].key_name);
+			mapCollisionGroup = game.physics.p2.createCollisionGroup();
+			map_collider.body.setCollisionGroup(mapCollisionGroup);
+			map_collider.body.setZeroDamping();
+			map_collider.body.setZeroRotation();
+			hero.body.collides(mapCollisionGroup);
+			map_collider.body.collides(heroCollisionGroup);
+			game.physics.p2.updateBoundsCollisionGroup();
 
-		game.add.tween(transtions_group).to( { alpha: 0.0 }, Phaser.Timer.HALF, Phaser.Easing.Linear.None, true).onComplete.addOnce(function(){
-			on_event = false;
-			current_event = null;
-		});
-	});
+			game.add.tween(transtions_group).to( { alpha: 0.0 }, Phaser.Timer.HALF, Phaser.Easing.Linear.None, true).onComplete.addOnce(function(){
+				on_event = false;
+				current_event = null;
+			}, this);
+		}, this);
+	}, this);
 }
 
 function update() {

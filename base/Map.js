@@ -75,9 +75,9 @@ class Map {
 	    	layer.alpha = layers[i].alpha;
 
 	    	if(layers[i].properties.over != 0)
-	    		overlayer_group.addChild(layer);
+	    		overlayer_group.add(layer);
 	    	else
-	    		underlayer_group.addChild(layer);
+	    		underlayer_group.add(layer);
 	    }
 	}
 }
