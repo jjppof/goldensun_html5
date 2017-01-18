@@ -25,6 +25,9 @@ var overlayer_group;
 var black_rect;
 var transtions_group;
 var npc_group;
+var teleporting;
+var fading_out;
+var processing_teleport;
 
 var game = new Phaser.Game(
 	width,	//width
@@ -115,6 +118,8 @@ function create() {
 	map_collider.body.setCollisionGroup(mapCollisionGroup);
 	map_collider.body.setZeroDamping();
 	map_collider.body.setZeroRotation();
+	map_collider.body.dynamic = false;
+	map_collider.body.static = true;
 	
 	hero.body.collides(mapCollisionGroup);
 	map_collider.body.collides(heroCollisionGroup);
@@ -126,6 +131,9 @@ function create() {
 	event_activation_process = false;
 	on_event = false;
 	climbing = false;
+	teleporting = false;
+	fading_out = false;
+	processing_teleport = false;
 
 	game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(function(){
 		hero.body.debug = !hero.body.debug;
@@ -211,47 +219,11 @@ function fireEvent(){
 	    		var time = Phaser.Timer.HALF;
 	    		game.add.tween(shadow).to( { y: hero.y - 15 }, time, Phaser.Easing.Linear.None, true);
 	    		game.add.tween(hero.body).to( { y: hero.y - 15 }, time, Phaser.Easing.Linear.None, true);
-	    		game.time.events.add(time + 50, teleport, this);
+				game.time.events.add(time + 50, function(){ teleporting = true; }, this);
 			} else
-				teleport();
+				teleporting = true;
 		}
 	}
-}
-
-function teleport(){
-	hero.loadTexture(u([hero_name, "idle"]));
-	main_char_list[hero_name].setAnimation(hero, "idle");
-	hero.animations.play(u(["idle", current_event.activation_direction]));
-	black_rect.x = Math.abs(game.world.x);
-	black_rect.y = Math.abs(game.world.y);
-	game.add.tween(transtions_group).to( { alpha: 1.0 }, Phaser.Timer.HALF, Phaser.Easing.Linear.None, true).onComplete.addOnce(function(){
-		game.time.events.add(Phaser.Timer.HALF, function(){
-			underlayer_group.removeAll();
-			overlayer_group.removeAll();
-			map_name = current_event.target;
-			maps[map_name].setLayers(underlayer_group, overlayer_group);
-			hero.body.x = current_event.x_target * maps[map_name].sprite.tileWidth;
-			hero.body.y = current_event.y_target * maps[map_name].sprite.tileHeight;
-			shadow.x = hero.x;
-			shadow.y = hero.y;
-
-			game.physics.p2.resume();		    			
-			map_collider.body.clearShapes();
-			map_collider.body.loadPolygon(maps[map_name].key_name, maps[map_name].key_name);
-			mapCollisionGroup = game.physics.p2.createCollisionGroup();
-			map_collider.body.setCollisionGroup(mapCollisionGroup);
-			map_collider.body.setZeroDamping();
-			map_collider.body.setZeroRotation();
-			hero.body.collides(mapCollisionGroup);
-			map_collider.body.collides(heroCollisionGroup);
-			game.physics.p2.updateBoundsCollisionGroup();
-
-			game.add.tween(transtions_group).to( { alpha: 0.0 }, Phaser.Timer.HALF, Phaser.Easing.Linear.None, true).onComplete.addOnce(function(){
-				on_event = false;
-				current_event = null;
-			}, this);
-		}, this);
-	}, this);
 }
 
 function update() {
@@ -392,6 +364,7 @@ function update() {
 	    if(shadow.y != hero.y)
 	    	shadow.y = hero.y;
 	    map_collider.body.velocity.y = map_collider.body.velocity.x = 0;
+		map_collider.body.y = map_collider.body.x = 16;
 	    
 	} else{
 		if(current_event.type == "stair"){
@@ -422,7 +395,50 @@ function update() {
 			    		game.physics.p2.resume();
 		    		}, this);
 		    	}, this);
-			} 
+			}
+		} else if(current_event.type == "door"){ 
+			if(teleporting){
+				teleporting = false;
+				hero.loadTexture(u([hero_name, "idle"]));
+				main_char_list[hero_name].setAnimation(hero, "idle");
+				hero.animations.play(u(["idle", current_event.activation_direction]));
+				actual_direction = current_event.activation_direction;
+				actual_action = "idle";
+				game.camera.fade();
+				game.camera.onFadeComplete.add(function(){ processing_teleport = true;  }, this);
+			} else if(processing_teleport){
+				processing_teleport = false;
+				underlayer_group.removeAll();
+				overlayer_group.removeAll();
+				map_name = current_event.target;
+				maps[map_name].setLayers(underlayer_group, overlayer_group);
+				hero.body.x = current_event.x_target * maps[map_name].sprite.tileWidth;
+				hero.body.y = current_event.y_target * maps[map_name].sprite.tileHeight;
+
+				game.physics.p2.resume();		    			
+				map_collider.body.clearShapes();
+				map_collider.body.loadPolygon(maps[map_name].key_name, maps[map_name].key_name);
+				mapCollisionGroup = game.physics.p2.createCollisionGroup();
+				map_collider.body.setCollisionGroup(mapCollisionGroup);
+				map_collider.body.setZeroDamping();
+				map_collider.body.setZeroRotation();
+				hero.body.collides(mapCollisionGroup);
+				map_collider.body.collides(heroCollisionGroup);
+				map_collider.body.dynamic = false;
+				map_collider.body.static = true;
+				game.physics.p2.updateBoundsCollisionGroup();
+
+				fading_out = true;
+			} else if(fading_out){
+				fading_out = false;
+				game.camera.flash(0x0);
+				game.camera.onFlashComplete.add(function(){
+					on_event = false;
+					current_event = null;
+				}, this);
+			}
+			shadow.x = hero.body.x;
+			shadow.y = hero.body.y;
 		}
 		hero.body.velocity.y = hero.body.velocity.x = 0;
 	}

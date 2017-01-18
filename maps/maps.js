@@ -18,6 +18,15 @@ function initializeMaps(){
 		'assets/images/maps/madra/inn_down.json',
 		'assets/images/maps/madra/madra_physics_inn.json'
 	);
+
+	maps.madra_inn_up_stair = new Map(
+		'inn_up_stair',
+		'madra_inn_up_stair',
+		'Inside_town',
+		'assets/images/maps/madra/Inside_town_00.png',
+		'assets/images/maps/madra/inn_up_stair.json',
+		'assets/images/maps/madra/madra_physics_inn_up_stair.json'
+	);
 }
 
 function loadMaps(game){

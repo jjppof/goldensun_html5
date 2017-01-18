@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="36" height="21" tilewidth="8" tileheight="8" nextobjectid="1">
+ <properties>
+  <property name="Door_00" value="17,18,madra,28,8,1,down"/>
+  <property name="Door_01" value="18,18,madra,28,8,1,down"/>
+  <property name="Door_02" value="17,4,madra_inn_up_stair,14,12,0,up"/>
+  <property name="Door_03" value="18,4,madra_inn_up_stair,14,12,0,up"/>
+  <property name="Door_04" value="17,3,madra_inn_up_stair,14,12,0,up"/>
+  <property name="Door_05" value="18,3,madra_inn_up_stair,14,12,0,up"/>
+  <property name="Door_06" value="17,19,madra,28,8,1,down"/>
+  <property name="Door_07" value="18,19,madra,28,8,1,down"/>
+  <property name="Name" value="inn_up"/>
+ </properties>
+ <tileset firstgid="1" name="Inside_town_00" tilewidth="8" tileheight="8">
+  <image source="../Tilesets/Inside_town_00.png" width="176" height="432"/>
+ </tileset>
+ <layer name="Ground" width="36" height="21">
+  <properties>
+   <property name="Over" value="0"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztlNsNwjAMRcNrBh47tHQHaIeAIUDswGMIuh1T8MVFiiX3ym6jiA+E+Dhqg91rO7lkFkKY/fnzg4zAGEzAlNZncEz4pi8+lMvMwQIswcpY30FLmpIjtbim1uDcob4KUII1qIz1AezBDjwip5gjtXgGrVFQruR4/WzAFtSgMWZ+n9kzcgFXcItxqcUzaE1555xU/1gza/02xubqdx1nPXny3Cn+6ZuZ+/fifC7yzPGPN3Nj1PPi3Kc8c/zDWtb3Q/7kPtmXQ/uj81gr57z67p6U/fHuh9zz8vy8Uu99/y9v/73zKELX96l+rhL2RrDuB6/eJnR9n+rnxtDyKA19r57cBbpuSf1afk65e3KQ3nXd8sM1cvtaf0Ef2nP1h7Re2WxBBA==
+  </data>
+ </layer>
+ <layer name="Wall" width="36" height="21">
+  <properties>
+   <property name="Over" value="0"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt08tPE1EUx/Fpgjx88FYJKBTKoxUEebixtDyqQGHDU9gAGhNEETaigG5U3AACsuG1URPUHbAREsSdsAETlJ3yPyj+BXwXneQ6XO7QSGHDST7pZH7nnjmZSTVN04IRglCEIRwRiDRcR+EkTuE0zvhysScaMYZ8r1l6r1gJuICLSEQSUpGGdMN1Bqy4gxTYtN1lh0PIVbP0XrFykYd8FOAqrsGJQsO1C73owxM8lezjRpGQq2bpvWKVowJeVKIK1ahBreG6DiMYxWuMSfapR4OQq2bpvTfRiCY0owWtuIXbaMNdtBuu72EG7/EBHyX73EeHkKtm6b0P0IkuPEQ3HuExeiTPEGsJn7GML5L8GZ4rclnvC/TjJQYwiCG8wrDJjA18xw9sSvJxTChyWe8kpjCNN3iLdyZnA1mzmMM8PmEBi0e4z1esYBVrWMe3I9znJ35hS/P/e8VaNO0szuG8xf9cVv/zvVJ4hg1WJEueZ5bLSvxe/r6fQOwjvp80zqQjA3Y4TGYE+v04OVMIF9woOuR9fuMPtvEXNZypRR3q0XCI+wSRn0AwQhBq6Nf/E3GKOQe5Tzx5gqIni+wysn1yJL9XkIt8FEhmXeJepuXfWTkms/aqUjIPrvvckPyWoRxeVEpmFXOvxHffI5xTzTqu/dcONxN0yw==
+  </data>
+ </layer>
+ <layer name="Wall_obj" width="36" height="21">
+  <properties>
+   <property name="Over" value="0"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztkjcOAjEUBb1LuALxQIQ7EDpCS+gILaEjtISOcAfCcYhHYEpLeEGsFrxIftJIX9+y5xUW4v9ysoQ4w8V6PkvZQqQhA1lbff/KvRvcFffdxMJjQ0Dhy7HLQwGKDn2C7EMQdjj/NBHeiUJM8V6NXR0a0HTwxdknIOlRn1fp4ejDAIY/8L3LjA5zWMDSB32+kRL/vuzR33eTCu6q5G8xtzX26eDuSv4R81hjnwnuqeRfMa819tng3kr+HfNeY58D7qNGv4mJiYkf8wBRrRt2
+  </data>
+ </layer>
+ <layer name="Over" width="36" height="21">
+  <properties>
+   <property name="Over" value="1"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztycEJADAIA0Ddf2dbHcHS5x0JBBIBwIvqnhnZyf0PAD9cBRoEAQ==
+  </data>
+ </layer>
+ <layer name="Carpet" width="36" height="21">
+  <properties>
+   <property name="Over" value="0"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztz8cNgDAMQNHABtQVqPuvQV2BugL1MwBSUEBc/KV3dGIrJUmS9F6FpVSJCjUatNZ/+3T83WPAiAmz5j5f3LIwv2LDjuN6z9abNbnlLoe/XXjwESDU3Mfklrsi5mMkSJEh13zT5JYvMrlFkiTpSSdk9CHB
+  </data>
+ </layer>
+ <layer name="Ground_Obj_col_2" width="36" height="21">
+  <properties>
+   <property name="Over" value="0"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzLkRgmAUReGfosSlBXHJEQRRckRUxFwWW1DUSj0t8DKYd2a+8F5jNE3TtD7lWsZs4MHHFoHV/WfExsYYE0wxE/wkbI5IcUKGs+BnzsbBAkussBb8PNiUqFCjwVPwE7LZIcIeB8SCnxebN1p88MVP8HNhc0WOGwrcBT+apg2vP888FFk=
+  </data>
+ </layer>
+ <layer name="Ground_Col_obj" width="36" height="21">
+  <properties>
+   <property name="Over" value="0"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzjcOwlAURNFnex2wCTI9NCb1Njn0JqeeuAXiSrkd7fenQJbeSKec0YhoNMlKyhVJu/9+8U2GL1mDP0n9rdFofkvgiIRoo4Muek78nRydPAooooQyKp5I1TPfiehMMcMcCywt/vh0aqijgSZaCPgSxvhzoHPECWdccLX406czwBAjjDGx2LnRueOBJ154W+ys6KyxwRY77C12NBqTfABzAhb7
+  </data>
+ </layer>
+ <layer name="Blend" width="36" height="21">
+  <properties>
+   <property name="Blend" value="0.4"/>
+   <property name="Over" value="1"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt0ckJwlAURuFLstIogj0I9hCwAkewAkdIBWoUrMCpKacanGpw2ubsTAH6vIt74Vu9xX/gidjZ2dn976q+SA11NND0f7+59UR22OOAo/d567DfRQ99DBz0nNg/44IrbqmeEftjTBBj6qDnzv4DT7zwTvUs2F9ihTU2DnoybGQRIIe8g007nVfg74uK/r9ES1lRT0hLRVFPi5a2op4hLZGinhkt8y/1JJn8Gdw=
+  </data>
+ </layer>
+</map>
