@@ -8,6 +8,8 @@
   <property name="Name" value="inn_up_stair"/>
   <property name="event_01" value="door,13,6,madra_inn,left,16,8,0"/>
   <property name="event_02" value="door,13,7,madra_inn,left,16,8,0"/>
+  <property name="event_03" value="door,13,13,madra_inn_up,down,18,6,0"/>
+  <property name="event_04" value="door,14,13,madra_inn_up,down,18,6,0"/>
  </properties>
  <tileset firstgid="1" name="Inside_town" tilewidth="8" tileheight="8" tilecount="1188" columns="22">
   <image source="Inside_town_00.png" width="176" height="432"/>

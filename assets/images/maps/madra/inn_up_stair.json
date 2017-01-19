@@ -148,7 +148,9 @@
      "Door_04":"14,12,madra_inn_up,17,5,0,down",
      "Name":"inn_up_stair",
      "event_01":"door,13,6,madra_inn,left,16,8,0",
-     "event_02":"door,13,7,madra_inn,left,16,8,0"
+     "event_02":"door,13,7,madra_inn,left,16,8,0",
+     "event_03":"door,13,13,madra_inn_up,down,18,6,0",
+     "event_04":"door,14,13,madra_inn_up,down,18,6,0"
     },
  "propertytypes":
     {
@@ -158,7 +160,9 @@
      "Door_04":"string",
      "Name":"string",
      "event_01":"string",
-     "event_02":"string"
+     "event_02":"string",
+     "event_03":"string",
+     "event_04":"string"
     },
  "renderorder":"right-down",
  "tileheight":8,
