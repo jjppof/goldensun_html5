@@ -176,7 +176,7 @@
      "event_02":"door,28,19,madra,down,28.5,12.5,0",
      "event_03":"door,29,19,madra,down,28.5,12.5,0",
      "event_04":"door,30,19,madra,down,28.5,12.5,0",
-     "event_05":"door,17,7,madra_inn_up_stair,right,14,7,0"
+     "event_05":"door,17,7,madra_inn_up_stair,right,15,7,0"
     },
  "propertytypes":
     {

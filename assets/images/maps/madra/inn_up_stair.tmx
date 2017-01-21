@@ -6,10 +6,10 @@
   <property name="Door_03" value="13,12,madra_inn_up,17,5,0,down"/>
   <property name="Door_04" value="14,12,madra_inn_up,17,5,0,down"/>
   <property name="Name" value="inn_up_stair"/>
-  <property name="event_01" value="door,13,6,madra_inn,left,16,8,0"/>
-  <property name="event_02" value="door,13,7,madra_inn,left,16,8,0"/>
-  <property name="event_03" value="door,13,13,madra_inn_up,down,18,6,0"/>
-  <property name="event_04" value="door,14,13,madra_inn_up,down,18,6,0"/>
+  <property name="event_01" value="door,14,7,madra_inn,left,16,8,0"/>
+  <property name="event_02" value="door,13,13,madra_inn_up,down,18,6,0"/>
+  <property name="event_03" value="door,14,13,madra_inn_up,down,18,6,0"/>
+  <property name="event_04" value="door,14,6,madra_inn,left,16,8,0"/>
  </properties>
  <tileset firstgid="1" name="Inside_town" tilewidth="8" tileheight="8" tilecount="1188" columns="22">
   <image source="Inside_town_00.png" width="176" height="432"/>
@@ -1972,10 +1972,10 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="646"/>
-   <tile gid="647"/>
-   <tile gid="648"/>
-   <tile gid="649"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>

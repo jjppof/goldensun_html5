@@ -28,6 +28,7 @@ var npc_group;
 var teleporting;
 var fading_out;
 var processing_teleport;
+var delta_time;
 
 var game = new Phaser.Game(
 	width,	//width
@@ -66,6 +67,7 @@ function create() {
 	actual_action = 'idle';
 	actual_direction = 'down';
 	extra_speed = 0;
+	delta_time = 0;
 
     underlayer_group = game.add.group();
     npc_group = game.add.group();
@@ -146,6 +148,18 @@ function create() {
 			game.scale.startFullScreen(true);
 		}  
 	});
+	game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(function(){
+		game.scale.setupScale(width, height);
+		window.dispatchEvent(new Event('resize'));
+	}, this);
+	game.input.keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(function(){
+		game.scale.setupScale(2*width, 2*height);
+		window.dispatchEvent(new Event('resize'));
+	}, this);
+	game.input.keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(function(){
+		game.scale.setupScale(3*width, 3*height);
+		window.dispatchEvent(new Event('resize'));
+	}, this);
 
 	if(is_mobile){
 		game.vjoy = game.plugins.add(Phaser.Plugin.VJoy);
@@ -325,15 +339,17 @@ function update() {
 				actual_action = "walk";
 		}
 
+		delta_time = game.time.elapsedMS - (50/3);
+
 		if(actual_action == "dash") {
-			hero.body.velocity.x = x_speed * (main_char_list[hero_name].dash_speed + extra_speed);
-			hero.body.velocity.y = y_speed * (main_char_list[hero_name].dash_speed + extra_speed);
+			hero.body.velocity.x = delta_time + x_speed * (main_char_list[hero_name].dash_speed + extra_speed);
+			hero.body.velocity.y = delta_time + y_speed * (main_char_list[hero_name].dash_speed + extra_speed);
 		} else if(actual_action == "walk") {
-			hero.body.velocity.x = x_speed * (main_char_list[hero_name].walk_speed + extra_speed);
-			hero.body.velocity.y = y_speed * (main_char_list[hero_name].walk_speed + extra_speed);
+			hero.body.velocity.x = delta_time + x_speed * (main_char_list[hero_name].walk_speed + extra_speed);
+			hero.body.velocity.y = delta_time + y_speed * (main_char_list[hero_name].walk_speed + extra_speed);
 		} else if(actual_action == "climb") {
-			hero.body.velocity.x = x_speed * main_char_list[hero_name].climb_speed;
-			hero.body.velocity.y = y_speed * main_char_list[hero_name].climb_speed;
+			hero.body.velocity.x = delta_time + x_speed * main_char_list[hero_name].climb_speed;
+			hero.body.velocity.y = delta_time + y_speed * main_char_list[hero_name].climb_speed;
 		} else if(actual_action == "idle")
 			hero.body.velocity.y = hero.body.velocity.x = 0;
 
