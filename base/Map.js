@@ -3,16 +3,18 @@ class Map {
 		name,
 		key_name,
 		tileset_name,
+		physics_names,
 		tileset_image_url,
 		tileset_json_url,
-		physics_json_url
+		physics_jsons_url
 	){
 		this.name = name;
 		this.key_name = key_name;
 		this.tileset_name = tileset_name;
+		this.physics_names = physics_names;
 		this.tileset_image_url = tileset_image_url;
 		this.tileset_json_url = tileset_json_url;
-		this.physics_json_url = physics_json_url;
+		this.physics_jsons_url = physics_jsons_url;
 		this.sprite = null;
 		this.events = {};
 	}
@@ -20,10 +22,13 @@ class Map {
 	loadMapAssets(game){
 		game.load.tilemap(this.key_name, this.tileset_json_url, null, Phaser.Tilemap.TILED_JSON);
 	    game.load.image(this.key_name, this.tileset_image_url);
-	    game.load.physics(this.key_name, this.physics_json_url);
+		for(var i = 0; i < this.physics_names.length; i++){
+			game.load.physics(this.physics_names[i], this.physics_jsons_url[i]);
+		}
+	    
 	}
 
-	setLayers(underlayer_group, overlayer_group){
+	setLayers(underlayer_group, overlayer_group, collider_layer){
 		this.sprite = game.add.tilemap(this.key_name);
     	this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
@@ -57,7 +62,8 @@ class Map {
 	    				activation_direction : property_info[4],
 	    				x_target : parseFloat(property_info[5]),
 	    				y_target : parseFloat(property_info[6]),
-	    				avance_effect: !!parseInt(property_info[7])
+	    				avance_effect: !!parseInt(property_info[7]),
+						collider_layer: property_info.length == 9 ? parseInt(property_info[8]) : 0
 	    			}
 	    		}
     		}
@@ -74,7 +80,9 @@ class Map {
 	    	layer.blendMode = PIXI.blendModes[layers[i].properties.blendMode];
 	    	layer.alpha = layers[i].alpha;
 
-	    	if(layers[i].properties.over != 0)
+			var is_over = layers[i].properties.over.toString().split(",");
+			is_over = is_over.length > collider_layer ? parseInt(is_over[collider_layer]) : parseInt(is_over[0]);
+	    	if(is_over != 0)
 	    		overlayer_group.add(layer);
 	    	else
 	    		underlayer_group.add(layer);

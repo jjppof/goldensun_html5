@@ -47,6 +47,7 @@ function preload() {
 
 	hero_name = "isaac";
 	map_name = "madra";
+	map_collider_layer = 0;
 
 	game.load.image('shadow', 'assets/images/misc/shadow.png');
 
@@ -82,7 +83,7 @@ function create() {
     black_rect.endFill();
     transtions_group.addChild(black_rect);
 
-    maps[map_name].setLayers(underlayer_group, overlayer_group);
+    maps[map_name].setLayers(underlayer_group, overlayer_group, map_collider_layer);
 
 	game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
 
@@ -113,7 +114,7 @@ function create() {
 	map_collider = game.add.sprite(0, 0);
 	game.physics.p2.enable(map_collider, false);
 	map_collider.body.clearShapes();
-    map_collider.body.loadPolygon(maps[map_name].key_name, maps[map_name].key_name);
+	map_collider.body.loadPolygon(maps[map_name].physics_names[map_collider_layer], maps[map_name].physics_names[map_collider_layer]);
 	mapCollisionGroup = game.physics.p2.createCollisionGroup();
 	map_collider.body.setCollisionGroup(mapCollisionGroup);
 	map_collider.body.setZeroDamping();
@@ -411,13 +412,14 @@ function update() {
 				underlayer_group.removeAll();
 				overlayer_group.removeAll();
 				map_name = current_event.target;
-				maps[map_name].setLayers(underlayer_group, overlayer_group);
+				map_collider_layer = current_event.collider_layer;
+				maps[map_name].setLayers(underlayer_group, overlayer_group, map_collider_layer);
 				hero.body.x = current_event.x_target * maps[map_name].sprite.tileWidth;
 				hero.body.y = current_event.y_target * maps[map_name].sprite.tileHeight;
 
 				game.physics.p2.resume();		    			
 				map_collider.body.clearShapes();
-				map_collider.body.loadPolygon(maps[map_name].key_name, maps[map_name].key_name);
+				map_collider.body.loadPolygon(maps[map_name].physics_names[map_collider_layer], maps[map_name].physics_names[map_collider_layer]);
 				mapCollisionGroup = game.physics.p2.createCollisionGroup();
 				map_collider.body.setCollisionGroup(mapCollisionGroup);
 				map_collider.body.setZeroDamping();

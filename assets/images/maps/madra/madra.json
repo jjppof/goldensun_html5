@@ -192,13 +192,13 @@
          "properties":
             {
              "blendMode":"NORMAL",
-             "over":1,
+             "over":"1,0",
              "z":8
             },
          "propertytypes":
             {
              "blendMode":"string",
-             "over":"int",
+             "over":"string",
              "z":"int"
             },
          "type":"tilelayer",
@@ -268,7 +268,8 @@
      "event_22":"speed,30,19,15",
      "event_23":"stair,10,16,up",
      "event_24":"stair,10,15,down",
-     "event_25":"door,28,12,madra_inn,up,29,17,1"
+     "event_25":"door,28,12,madra_inn,up,29,17,1",
+     "event_26":"door,28,8,madra_inn_up,up,18,18,1"
     },
  "propertytypes":
     {
@@ -306,7 +307,8 @@
      "event_22":"string",
      "event_23":"string",
      "event_24":"string",
-     "event_25":"string"
+     "event_25":"string",
+     "event_26":"string"
     },
  "renderorder":"right-down",
  "tileheight":16,
