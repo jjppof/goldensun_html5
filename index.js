@@ -29,6 +29,7 @@ var teleporting;
 var fading_out;
 var processing_teleport;
 var delta_time;
+var jumping;
 
 var game = new Phaser.Game(
 	width,	//width
@@ -90,8 +91,8 @@ function create() {
 	game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
 
 	shadow.anchor.setTo(0.5, 0.0);
-	hero.centerX = 280;
-	hero.centerY = 210;
+	hero.centerX = 520;
+	hero.centerY = 170;
 	game.camera.follow(hero);	
 	main_char_list[hero_name].setAnimation(hero, actual_action);
 	hero.animations.play(u([actual_action, actual_direction]));
@@ -137,6 +138,7 @@ function create() {
 	teleporting = false;
 	fading_out = false;
 	processing_teleport = false;
+	jumping = false;
 
 	game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(function(){
 		hero.body.debug = !hero.body.debug;
@@ -200,10 +202,10 @@ function fireEvent(){
 				on_event = true;
 				game.physics.p2.pause();
 				event_activation_process = false;
-				hero.animations.play(u(["climb", "end"]), 4, false, false);
+				hero.animations.play(u(["climb", "end"]), 8, false, false);
 				shadow.visible = false;
-				var time = Phaser.Timer.HALF + Phaser.Timer.QUARTER;
-				game.add.tween(hero.body).to( { y: hero.y - 7 }, time, Phaser.Easing.Exponential.InOut, true);
+				var time = Phaser.Timer.QUARTER;
+				game.add.tween(hero.body).to( { y: hero.y - 12 }, time, Phaser.Easing.Linear.None, true);
 			} else if(current_event.activation_direction == "down"){
 				on_event = true;
 				event_activation_process = false;
@@ -237,6 +239,10 @@ function fireEvent(){
 				game.time.events.add(time + 50, function(){ teleporting = true; }, this);
 			} else
 				teleporting = true;
+		} else if(current_event.type = "jump"){
+			on_event = true;
+			event_activation_process = false;
+			jumping = true;
 		}
 	}
 }
@@ -339,17 +345,17 @@ function update() {
 				actual_action = "walk";
 		}
 
-		delta_time = game.time.elapsedMS - (50/3);
+		delta_time = game.time.elapsedMS/(50/3);
 
 		if(actual_action == "dash") {
-			hero.body.velocity.x = delta_time + x_speed * (main_char_list[hero_name].dash_speed + extra_speed);
-			hero.body.velocity.y = delta_time + y_speed * (main_char_list[hero_name].dash_speed + extra_speed);
+			hero.body.velocity.x = delta_time * x_speed * (main_char_list[hero_name].dash_speed + extra_speed);
+			hero.body.velocity.y = delta_time * y_speed * (main_char_list[hero_name].dash_speed + extra_speed);
 		} else if(actual_action == "walk") {
-			hero.body.velocity.x = delta_time + x_speed * (main_char_list[hero_name].walk_speed + extra_speed);
-			hero.body.velocity.y = delta_time + y_speed * (main_char_list[hero_name].walk_speed + extra_speed);
+			hero.body.velocity.x = delta_time * x_speed * (main_char_list[hero_name].walk_speed + extra_speed);
+			hero.body.velocity.y = delta_time * y_speed * (main_char_list[hero_name].walk_speed + extra_speed);
 		} else if(actual_action == "climb") {
-			hero.body.velocity.x = delta_time + x_speed * main_char_list[hero_name].climb_speed;
-			hero.body.velocity.y = delta_time + y_speed * main_char_list[hero_name].climb_speed;
+			hero.body.velocity.x = delta_time * x_speed * main_char_list[hero_name].climb_speed;
+			hero.body.velocity.y = delta_time * y_speed * main_char_list[hero_name].climb_speed;
 		} else if(actual_action == "idle")
 			hero.body.velocity.y = hero.body.velocity.x = 0;
 
@@ -387,7 +393,7 @@ function update() {
 		if(current_event.type == "stair"){
 			if(hero.animations.frameName == "climb/start/03"){
 				shadow.visible = false;
-				game.add.tween(hero.body).to( { y: hero.y + 25 }, 500, Phaser.Easing.Exponential.InOut, true);
+				game.add.tween(hero.body).to( { y: hero.y + 25 }, 500, Phaser.Easing.Linear.None, true);
 			} else if(hero.animations.frameName == "climb/start/06"){
 	    		hero.animations.play(u(["climb", "idle"]), 9);
 	    		on_event = false;
@@ -457,6 +463,37 @@ function update() {
 			}
 			shadow.x = hero.body.x;
 			shadow.y = hero.body.y;
+		} else if(jumping){
+			jumping = false;
+			var kill_jump = function(){
+				on_event = false;
+				current_event = null;
+				shadow.visible = true;
+			};
+			shadow.visible = false;
+			var jump_offset = 16;
+			var direction;
+			if(current_event.activation_direction == "left"){
+				jump_offset = -jump_offset;
+				direction = "x";
+			} else if(current_event.activation_direction == "right")
+				direction = "x";
+			else if(current_event.activation_direction == "up"){
+				jump_offset = -jump_offset;
+				direction = "y";
+			} else if(current_event.activation_direction == "down")
+				direction = "y";
+			var tween_obj = {};
+			shadow[direction] = hero[direction] + jump_offset;
+			tween_obj[direction] = hero[direction] + jump_offset;
+			if(direction == "x")
+				tween_obj.y = [hero.y - 5, hero.y + 5];
+			game.add.tween(hero.body).to( 
+				tween_obj, 
+				70, 
+				Phaser.Easing.Linear.None, 
+				true
+			).onComplete.addOnce(kill_jump, this);
 		}
 		hero.body.velocity.y = hero.body.velocity.x = 0;
 	}

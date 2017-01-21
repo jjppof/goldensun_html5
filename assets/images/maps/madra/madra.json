@@ -269,7 +269,11 @@
      "event_23":"stair,10,16,up",
      "event_24":"stair,10,15,down",
      "event_25":"door,28,12,madra_inn,up,29,17,1",
-     "event_26":"door,28,8,madra_inn_up,up,18,18,1"
+     "event_26":"door,28,8,madra_inn_up,up,18,18,1",
+     "event_27":"jump,16,7,left,1",
+     "event_28":"jump,16,6,left,1",
+     "event_29":"jump,14,7,right,1",
+     "event_30":"jump,14,6,right,1"
     },
  "propertytypes":
     {
@@ -308,7 +312,11 @@
      "event_23":"string",
      "event_24":"string",
      "event_25":"string",
-     "event_26":"string"
+     "event_26":"string",
+     "event_27":"string",
+     "event_28":"string",
+     "event_29":"string",
+     "event_30":"string"
     },
  "renderorder":"right-down",
  "tileheight":16,

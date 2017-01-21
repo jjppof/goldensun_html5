@@ -65,7 +65,15 @@ class Map {
 	    				avance_effect: !!parseInt(property_info[7]),
 						collider_layer: property_info.length == 9 ? parseInt(property_info[8]) : 0
 	    			}
-	    		}
+	    		} else if(property_info[0] == "jump"){
+	    			this.events[u([property_info[1], property_info[2]])] = {
+	    				type : property_info[0],
+	    				x : property_info[1],
+	    				y : property_info[2],
+	    				activation_direction : property_info[3],
+						collider_layer : property_info.length == 5 ? parseInt(property_info[4]) : 0
+	    			}
+	    		} 
     		}
     	}
 
