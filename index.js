@@ -69,6 +69,8 @@ function create() {
 	actual_direction = 'down';
 	extra_speed = 0;
 	delta_time = 0;
+	x_speed = 0;
+	y_speed = 0;
 
     underlayer_group = game.add.group();
     npc_group = game.add.group();
