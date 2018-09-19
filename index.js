@@ -468,7 +468,7 @@ function update() {
 		} else if(jumping){
 			jumping = false;
 			shadow.visible = false;
-			var jump_offset = 16;
+			var jump_offset = 30;
 			var direction;
 			if(current_event.activation_direction == "left"){
 				jump_offset = -jump_offset;
@@ -487,7 +487,7 @@ function update() {
 				tween_obj.y = [hero.y - 5, hero.y];
 			game.add.tween(hero.body).to( 
 				tween_obj, 
-				70, 
+				90, 
 				Phaser.Easing.Linear.None, 
 				true
 			).onComplete.addOnce(() => {
