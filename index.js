@@ -467,11 +467,6 @@ function update() {
 			shadow.y = hero.body.y;
 		} else if(jumping){
 			jumping = false;
-			var kill_jump = function(){
-				on_event = false;
-				current_event = null;
-				shadow.visible = true;
-			};
 			shadow.visible = false;
 			var jump_offset = 16;
 			var direction;
@@ -489,13 +484,17 @@ function update() {
 			shadow[direction] = hero[direction] + jump_offset;
 			tween_obj[direction] = hero[direction] + jump_offset;
 			if(direction == "x")
-				tween_obj.y = [hero.y - 5, hero.y + 5];
+				tween_obj.y = [hero.y - 5, hero.y];
 			game.add.tween(hero.body).to( 
 				tween_obj, 
 				70, 
 				Phaser.Easing.Linear.None, 
 				true
-			).onComplete.addOnce(kill_jump, this);
+			).onComplete.addOnce(() => {
+                            on_event = false;
+                            current_event = null;
+                            shadow.visible = true;
+			}, this);
 		}
 		hero.body.velocity.y = hero.body.velocity.x = 0;
 	}
