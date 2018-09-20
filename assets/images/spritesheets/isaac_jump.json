@@ -1,0 +1,44 @@
+{"frames": {
+
+"jump/down":
+{
+	"frame": {"x":29,"y":38,"w":19,"h":30},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":2,"w":19,"h":30},
+	"sourceSize": {"w":32,"h":32}
+},
+"jump/left":
+{
+	"frame": {"x":2,"y":2,"w":23,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":1,"w":23,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"jump/right":
+{
+	"frame": {"x":2,"y":37,"w":23,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":1,"w":23,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"jump/up":
+{
+	"frame": {"x":29,"y":2,"w":19,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":0,"w":19,"h":32},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "isaac_jump.png",
+	"format": "RGBA8888",
+	"size": {"w":50,"h":70},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:8e37891143402862722237130487d5f7:e0025f13f4bc6cfe49b092409f591430:e6cd917cd8d78e9c51e539750e910870$"
+}
+}

@@ -2,6 +2,10 @@ function u(array){
 	return array.join("_");
 }
 
+function b(array){
+	return array.join("/");
+}
+
 function checkMobile() { 
 	if(
 		navigator.userAgent.match(/Android/i)

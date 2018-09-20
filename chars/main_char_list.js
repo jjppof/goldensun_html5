@@ -3,7 +3,7 @@ main_char_list = {};
 function initializeMainChars(){
 	main_char_list.isaac = new MainChar(
 		'isaac',
-		['idle', 'walk', 'dash', 'climb'],
+		['idle', 'walk', 'dash', 'climb', 'jump'],
 		60,
 		85,
 		50
@@ -55,6 +55,15 @@ function initializeMainChars(){
 		'start'
 	], [3,2,0,6]);
 	main_char_list.isaac.setActionFrameRate('climb', 6);
+
+	main_char_list.isaac.setActionSpritesheet('jump', 'assets/images/spritesheets/isaac_jump.png', 'assets/images/spritesheets/isaac_jump.json');
+	main_char_list.isaac.setActionDirections('jump', [
+		'down', 
+		'up', 
+		'left', 
+		'right'
+	], [0,0,0,0]);
+	main_char_list.isaac.setActionFrameRate('jump', 1);
 
 	addAnimations();
 }
