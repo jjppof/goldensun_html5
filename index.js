@@ -7,7 +7,6 @@ var x_speed;
 var y_speed;
 var hero_name;
 var map_name;
-var is_mobile;
 var shadow;
 var hero_tile_pos_x;
 var hero_tile_pos_y;
@@ -30,15 +29,16 @@ var fading_out;
 var processing_teleport;
 var delta_time;
 var jumping;
+var map;
 
 var game = new Phaser.Game(
-    width,    //width
-    height,    //height
-    Phaser.AUTO,    //renderer
-    '',    //parent
-    { preload: preload, create: create, update: update },    //state
-    false,    //transparent
-    false    //antialias
+    GAME_WIDTH, //width
+    GAME_HEIGHT, //height
+    Phaser.AUTO, //renderer
+    '', //parent
+    { preload: preload, create: create, update: update }, //states
+    false, //transparent
+    false //antialias
 );
 
 function preload() {
@@ -47,93 +47,99 @@ function preload() {
     initializeMaps();
     loadMaps(game);
 
-    hero_name = "isaac";
-    map_name = "madra";
-    map_collider_layer = 0;
-
     game.load.image('shadow', 'assets/images/misc/shadow.png');
-
-    is_mobile = checkMobile();
-
-    if(is_mobile){
-        game.load.image('vjoy_base', 'assets/images/vjoy/base.png');
-        game.load.image('vjoy_body', 'assets/images/vjoy/body.png');
-        game.load.image('vjoy_cap', 'assets/images/vjoy/cap.png');
-    }
 }
 
-var map;
-
-function create() {
-    actual_action = 'idle';
-    actual_direction = 'down';
-    extra_speed = 0;
-    delta_time = 0;
-    x_speed = 0;
-    y_speed = 0;
-
+function config_groups_and_layers() {
+    //creating groups. Order here is important
     underlayer_group = game.add.group();
     npc_group = game.add.group();
     overlayer_group = game.add.group();
     transtions_group = game.add.group();
 
-    shadow = npc_group.create(0, 0, 'shadow');
-    hero = npc_group.create(0, 0, u([hero_name, actual_action]));
+    //configing map layers: creating sprites, listing events and setting the layers
+    maps[map_name].setLayers(underlayer_group, overlayer_group, map_collider_layer);
+}
 
+function config_transitions_group() {
+    //configing black rectangle properties and adding to transitions_group
     transtions_group.alpha = 0
     black_rect = game.add.graphics(0, 0);
     black_rect.lineStyle(0);
     black_rect.beginFill(0x0, 1);
-    black_rect.drawRect(0, 0, width, height);
+    black_rect.drawRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
     black_rect.endFill();
     transtions_group.addChild(black_rect);
+}
 
-    maps[map_name].setLayers(underlayer_group, overlayer_group, map_collider_layer);
-
-    game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-
-    shadow.anchor.setTo(0.5, 0.0);
-    hero.centerX = 520;
-    hero.centerY = 170;
-    game.camera.follow(hero);    
+function config_hero() {
+    //creating sprites and adding hero and its shadow to npc_group
+    shadow = npc_group.create(0, 0, 'shadow');
+    shadow.anchor.setTo(SHADOW_X_AP, SHADOW_Y_AP); //shadow anchor point
+    hero = npc_group.create(0, 0, u([hero_name, actual_action]));
+    hero.centerX = HERO_START_X; //hero x start position
+    hero.centerY = HERO_START_Y; //hero y start position
+    game.camera.follow(hero); //makes camera follow the hero
+    //config hero initial animation state
     main_char_list[hero_name].setAnimation(hero, actual_action);
     hero.animations.play(u([actual_action, actual_direction]));
+}
 
+function config_world_physics() {
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.setImpactEvents(true);
-    game.physics.p2.world.defaultContactMaterial.restitution = 0;
-    game.physics.p2.world.defaultContactMaterial.relaxation = 5;
-    game.physics.p2.world.defaultContactMaterial.friction = 0;
-    game.physics.p2.world.setGlobalStiffness(1e5);
-    game.physics.p2.restitution = 0;
+    game.physics.p2.world.defaultContactMaterial.restitution = WORLD_RESTITUTION;
+    game.physics.p2.world.defaultContactMaterial.relaxation = WORLD_RELAXION;
+    game.physics.p2.world.defaultContactMaterial.friction = WORLD_FRICTION;
+    game.physics.p2.world.setGlobalStiffness(WORLD_STIFFNESS);
+    game.physics.p2.restitution = WORLD_RESTITUTION;
+}
 
+function config_physics_for_hero() {
     game.physics.p2.enable(hero, false);
+    hero.anchor.y = HERO_Y_AP; //Important to be after the previous command
     hero.body.clearShapes();
-    hero.body.setCircle(7, 0, 0);
+    hero.body.setCircle(HERO_BODY_RADIUS, 0, 0);
     heroCollisionGroup = game.physics.p2.createCollisionGroup();
     hero.body.setCollisionGroup(heroCollisionGroup);
-    hero.body.mass = 0.1;
+    hero.body.mass = HERO_BODY_MASS;
     hero.body.setZeroDamping();
     hero.body.setZeroRotation();
+    hero.body.fixedRotation = true; //disalble hero collision body rotation
+}
 
+function config_physics_for_map() {
     map_collider = game.add.sprite(0, 0);
     game.physics.p2.enable(map_collider, false);
     map_collider.body.clearShapes();
-    map_collider.body.loadPolygon(maps[map_name].physics_names[map_collider_layer], maps[map_name].physics_names[map_collider_layer]);
+    map_collider.body.loadPolygon(
+        maps[map_name].physics_names[map_collider_layer], 
+        maps[map_name].physics_names[map_collider_layer]
+    );
     mapCollisionGroup = game.physics.p2.createCollisionGroup();
     map_collider.body.setCollisionGroup(mapCollisionGroup);
     map_collider.body.setZeroDamping();
     map_collider.body.setZeroRotation();
     map_collider.body.dynamic = false;
     map_collider.body.static = true;
-    
+}
+
+function config_map_hero_collision() {
     hero.body.collides(mapCollisionGroup);
     map_collider.body.collides(heroCollisionGroup);
-    hero.body.fixedRotation = true;
-    hero.anchor.y = 0.8;
+}
 
-    game.physics.p2.updateBoundsCollisionGroup();
-
+function create() {
+    // Initializing some vars
+    hero_name = "isaac";
+    map_name = "madra";
+    map_collider_layer = 0;
+    actual_action = 'idle';
+    actual_direction = 'down';
+    extra_speed = 0;
+    delta_time = 0;
+    x_speed = 0;
+    y_speed = 0;
     event_activation_process = false;
     on_event = false;
     climbing = false;
@@ -142,16 +148,31 @@ function create() {
     processing_teleport = false;
     jumping = false;
 
+    config_groups_and_layers();
+    config_transitions_group();
+    config_hero();
+    config_world_physics();
+    config_physics_for_hero();
+    config_physics_for_map();
+    config_map_hero_collision();
+
+    game.physics.p2.updateBoundsCollisionGroup();
+
+    //activate debug mode
     game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(function(){
         hero.body.debug = !hero.body.debug;
         map_collider.body.debug = !map_collider.body.debug; 
     }, this);
 
+    //enable full screen
+    game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.input.onTap.add(function(pointer, isDoubleClick) {  
         if(isDoubleClick) {    
             game.scale.startFullScreen(true);
         }  
     });
+
+    //enable zoom
     game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(function(){
         game.scale.setupScale(width, height);
         window.dispatchEvent(new Event('resize'));
@@ -165,12 +186,8 @@ function create() {
         window.dispatchEvent(new Event('resize'));
     }, this);
 
-    if(is_mobile){
-        game.vjoy = game.plugins.add(Phaser.Plugin.VJoy);
-        game.vjoy.inputEnable();
-        cursors = game.vjoy.cursors;
-    } else
-        cursors = game.input.keyboard.createCursorKeys();
+    //set keyboard cursors
+    cursors = game.input.keyboard.createCursorKeys();
 }
 
 function fireEvent(){
