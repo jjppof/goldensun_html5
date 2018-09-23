@@ -68,19 +68,19 @@ function initializeMainChars(){
 	addAnimations();
 }
 
-function addAnimations(){
-	for(var action in main_char_list.isaac.actions){
+function addAnimations() {
+	for (let action in main_char_list.isaac.actions) {
 		directions = main_char_list.isaac.actions[action].directions;
 		frame_counts = main_char_list.isaac.actions[action].frame_counts;
-		for(var key in directions){
+		for (let key in directions) {
 			direction = directions[key];
 			main_char_list.isaac.addAnimation(action, direction, 0, frame_counts[key], '', 2);
 		}
 	}
 }
 
-function loadSpriteSheets(game){
-	for(var char in main_char_list){
+function loadSpriteSheets(game) {
+	for (let char in main_char_list) {
 		main_char_list[char].loadSpritesheets(game);
 	}
 }

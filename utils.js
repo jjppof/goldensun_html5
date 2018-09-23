@@ -1,8 +1,8 @@
-function u(array){
+function u(array) {
 	return array.join("_");
 }
 
-function b(array){
+function b(array) {
 	return array.join("/");
 }
 
