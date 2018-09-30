@@ -17,6 +17,7 @@ class Map {
         this.physics_jsons_url = physics_jsons_url;
         this.sprite = null;
         this.events = {};
+        this.npcs = [];
     }
 
     loadMapAssets(game) {
@@ -27,7 +28,7 @@ class Map {
         }
     }
 
-    setLayers (underlayer_group, overlayer_group, collider_layer) {
+    setLayers (underlayer_group, overlayer_group, collider_layer, npc_group) {
         this.sprite = game.add.tilemap(this.key_name);
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
@@ -73,6 +74,19 @@ class Map {
                         collider_layer : property_info.length == 5 ? parseInt(property_info[4]) : 0
                     }
                 } 
+            } else if (property.startsWith("npc")) {
+                const property_info = this.sprite.properties[property].split(",");
+                this.npcs.push({
+                    type: property_info[0],
+                    key_name: property_info[1],
+                    initial_x: parseInt(property_info[2]),
+                    initial_y: parseInt(property_info[3]),
+                    npc_type: parseInt(property_info[4]), //0 - normal, 1- inn, 2 - weapon shop...
+                    movement_type: parseInt(property_info[5]), //0 - idle
+                    message: property_info[6],
+                    thought_message: property_info[7],
+                    trigger_event: property_info.length == 9 ? parseInt(property_info[8]) : 0
+                });
             }
         }
 
@@ -93,6 +107,10 @@ class Map {
                 overlayer_group.add(layer);
             else
                 underlayer_group.add(layer);
+        }
+
+        for (let i = 0; i < this.npcs.length; i++) {
+            const npc_info = this.npcs[i];
         }
     }
 }

@@ -1,6 +1,6 @@
 main_char_list = {};
 
-function initializeMainChars(){
+function initializeMainChars(chars) {
 	main_char_list.isaac = new MainChar(
 		'isaac',
 		['idle', 'walk', 'dash', 'climb', 'jump'],

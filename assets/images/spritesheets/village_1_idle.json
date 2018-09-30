@@ -1,0 +1,60 @@
+{"frames": {
+
+"village_1_idle_0":
+{
+	"frame": {"x":3,"y":3,"w":15,"h":27},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":27},
+	"sourceSize": {"w":15,"h":27}
+},
+"village_1_idle_1":
+{
+	"frame": {"x":23,"y":3,"w":15,"h":27},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":27},
+	"sourceSize": {"w":15,"h":27}
+},
+"village_1_idle_2":
+{
+	"frame": {"x":3,"y":3,"w":15,"h":27},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":27},
+	"sourceSize": {"w":15,"h":27}
+},
+"village_1_idle_3":
+{
+	"frame": {"x":23,"y":3,"w":15,"h":27},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":27},
+	"sourceSize": {"w":15,"h":27}
+},
+"village_1_idle_4":
+{
+	"frame": {"x":3,"y":3,"w":15,"h":27},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":27},
+	"sourceSize": {"w":15,"h":27}
+},
+"village_1_idle_5":
+{
+	"frame": {"x":43,"y":3,"w":14,"h":27},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":14,"h":27},
+	"sourceSize": {"w":15,"h":27}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "village_1_idle.png",
+	"format": "RGBA8888",
+	"size": {"w":60,"h":33},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:e712ac56c5729bc0346ac828dfd18c64:f73c217d5fa75ee1e99dcc6bd7e8ed12:52ff4b6955f4692fa1dd121eb84d9198$"
+}
+}

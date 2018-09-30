@@ -30,22 +30,25 @@ var processing_teleport;
 var delta_time;
 var jumping;
 var map;
+var show_fps;
 
 var game = new Phaser.Game(
     GAME_WIDTH, //width
     GAME_HEIGHT, //height
     Phaser.AUTO, //renderer
     '', //parent
-    { preload: preload, create: create, update: update }, //states
+    { preload: preload, create: create, update: update, render: render }, //states
     false, //transparent
     false //antialias
 );
 
 function preload() {
-    initializeMainChars();
+    initializeMainChars([]);
     loadSpriteSheets(game);
     initializeMaps();
     loadMaps(game);
+
+    game.time.advancedTiming = true;
 
     game.load.image('shadow', 'assets/images/misc/shadow.png');
 }
@@ -171,6 +174,12 @@ function create() {
             game.scale.startFullScreen(true);
         }  
     });
+
+    //enable fps show
+    show_fps = false;
+    game.input.keyboard.addKey(Phaser.Keyboard.F).onDown.add(function(){
+        show_fps = !show_fps;
+    }, this);
 
     //enable zoom
     game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(function(){
@@ -362,6 +371,13 @@ function update() {
         //disabling hero body movement
         hero.body.velocity.y = hero.body.velocity.x = 0;
     }
+}
+
+function render() {
+    if (show_fps)
+        game.debug.text('FPS: ' + game.time.fps || 'FPS: --', 5, 15, "#00ff00");
+    else
+        game.debug.text('', 0, 0);
 }
 
 function climb_event_animation_steps() {
