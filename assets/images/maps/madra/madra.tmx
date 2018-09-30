@@ -41,6 +41,7 @@
   <property name="event_28" value="jump,16,6,left,1"/>
   <property name="event_29" value="jump,14,7,right,1"/>
   <property name="event_30" value="jump,14,6,right,1"/>
+  <property name="event_31" value="door,23,20,madra_house_1,up,13,19,1"/>
  </properties>
  <tileset firstgid="1" name="madra" tilewidth="16" tileheight="16" tilecount="297" columns="11">
   <image source="madra.png" width="176" height="432"/>

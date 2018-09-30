@@ -273,7 +273,8 @@
      "event_27":"jump,16,7,left,1",
      "event_28":"jump,16,6,left,1",
      "event_29":"jump,14,7,right,1",
-     "event_30":"jump,14,6,right,1"
+     "event_30":"jump,14,6,right,1",
+     "event_31":"door,23,20,madra_house_1,up,13,19,1"
     },
  "propertytypes":
     {
@@ -316,7 +317,8 @@
      "event_27":"string",
      "event_28":"string",
      "event_29":"string",
-     "event_30":"string"
+     "event_30":"string",
+     "event_31":"string"
     },
  "renderorder":"right-down",
  "tileheight":16,
