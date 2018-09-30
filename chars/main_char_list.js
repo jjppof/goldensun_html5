@@ -1,6 +1,7 @@
 main_char_list = {};
 
-function initializeMainChars(chars) {
+function initializeMainChars() {
+	//the data below will come from a json file
 	main_char_list.isaac = new MainChar(
 		'isaac',
 		['idle', 'walk', 'dash', 'climb', 'jump'],
@@ -18,7 +19,7 @@ function initializeMainChars(chars) {
 		'down_right', 
 		'up_left', 
 		'up_right'
-	], [5,5,5,5,5,5,5,5]);
+	] /* available directions in this action */, [5,5,5,5,5,5,5,5] /* frame count for each direction */);
 	main_char_list.isaac.setActionFrameRate('idle', 1);
 
 	main_char_list.isaac.setActionSpritesheet('walk', 'assets/images/spritesheets/isaac_walk.png', 'assets/images/spritesheets/isaac_walk.json');
@@ -65,22 +66,6 @@ function initializeMainChars(chars) {
 	], [0,0,0,0]);
 	main_char_list.isaac.setActionFrameRate('jump', 1);
 
-	addAnimations();
-}
-
-function addAnimations() {
-	for (let action in main_char_list.isaac.actions) {
-		directions = main_char_list.isaac.actions[action].directions;
-		frame_counts = main_char_list.isaac.actions[action].frame_counts;
-		for (let key in directions) {
-			direction = directions[key];
-			main_char_list.isaac.addAnimation(action, direction, 0, frame_counts[key], '', 2);
-		}
-	}
-}
-
-function loadSpriteSheets(game) {
-	for (let char in main_char_list) {
-		main_char_list[char].loadSpritesheets(game);
-	}
+	main_char_list.isaac.addAnimations();
+	main_char_list.isaac.loadSpritesheets();
 }

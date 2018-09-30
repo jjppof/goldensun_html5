@@ -110,7 +110,41 @@ class Map {
         }
 
         for (let i = 0; i < this.npcs.length; i++) {
-            const npc_info = this.npcs[i];
+            let npc_info = this.npcs[i];
+            let actions = [];
+            if (npc_info.npc_type == NPC_IDLE)
+                actions = ['idle'];
+            let npc = new NPC(npc_info.key_name, actions);
+            for (let j = 0; j < actions.length; j++) {
+                const action = actions[j];
+                npc.setActionSpritesheet(
+                    action,
+                    `assets/images/spritesheets/${npc_info.key_name}_${action}.png`,
+                    `assets/images/spritesheets/${npc_info.key_name}_${action}.json`
+                );
+                npc.setActionDirections(
+                    action, 
+                    npc_db[npc_info.key_name].actions[action].directions,
+                    npc_db[npc_info.key_name].actions[action].frames_count
+                );
+                npc.setActionFrameRate(action, npc_db[npc_info.key_name].actions[action].frame_rate);
+            }
+            npc.addAnimations();
+            npc.loadSpritesheets(true, () => {
+                const initial_action = npc_db[npc_info.key_name].initial_action;
+                npc_info.npc_sprite = npc_group.create(0, 0, u([
+                    npc_info.key_name,
+                    initial_action
+                ]));
+                npc_info.npc_sprite.centerX = npc_info.initial_x * this.sprite.tileWidth;
+                npc_info.npc_sprite.centerY = npc_info.initial_y * this.sprite.tileWidth;
+                npc_info.npc_sprite.anchor.y = npc_db[npc_info.key_name].anchor_y;
+                npc.setAnimation(npc_info.npc_sprite, initial_action);
+                npc_info.npc_sprite.animations.play(u([
+                    initial_action,
+                    npc_db[npc_info.key_name].actions[initial_action].initial_direction
+                ]));
+            });
         }
     }
 }

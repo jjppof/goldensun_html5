@@ -31,6 +31,7 @@ var delta_time;
 var jumping;
 var map;
 var show_fps;
+var npc_db;
 
 var game = new Phaser.Game(
     GAME_WIDTH, //width
@@ -43,14 +44,20 @@ var game = new Phaser.Game(
 );
 
 function preload() {
-    initializeMainChars([]);
-    loadSpriteSheets(game);
+    initializeMainChars();
     initializeMaps();
     loadMaps(game);
+    get_npc_db().then(data => npc_db = data);
 
     game.time.advancedTiming = true;
 
     game.load.image('shadow', 'assets/images/misc/shadow.png');
+}
+
+async function get_npc_db() {
+    let response = await fetch("assets/dbs/npc_db.json");
+    let data = await response.json();
+    return data;
 }
 
 function config_groups_and_layers() {
@@ -61,7 +68,7 @@ function config_groups_and_layers() {
     transtions_group = game.add.group();
 
     //configing map layers: creating sprites, listing events and setting the layers
-    maps[map_name].setLayers(underlayer_group, overlayer_group, map_collider_layer);
+    maps[map_name].setLayers(underlayer_group, overlayer_group, map_collider_layer, npc_group);
 }
 
 function config_transitions_group() {
@@ -359,6 +366,7 @@ function update() {
 
         map_collider.body.velocity.y = map_collider.body.velocity.x = 0; //fix map body
         map_collider.body.y = map_collider.body.x = 16;
+        npc_group.sort('y', Phaser.Group.SORT_ASCENDING);
         
     } else {
         if (current_event.type == "stair")
@@ -582,7 +590,7 @@ function door_event_phases() {
         overlayer_group.removeAll();
         map_name = current_event.target;
         map_collider_layer = current_event.collider_layer;
-        maps[map_name].setLayers(underlayer_group, overlayer_group, map_collider_layer);
+        maps[map_name].setLayers(underlayer_group, overlayer_group, map_collider_layer, npc_group);
         hero.body.x = current_event.x_target * maps[map_name].sprite.tileWidth;
         hero.body.y = current_event.y_target * maps[map_name].sprite.tileHeight;
 

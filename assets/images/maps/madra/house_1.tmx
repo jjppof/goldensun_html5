@@ -4,6 +4,7 @@
   <property name="Name" value="house_1"/>
   <property name="event_01" value="door,12,20,madra,down,23.5,20.5,0"/>
   <property name="event_02" value="door,13,20,madra,down,23.5,20.5,0"/>
+  <property name="npc_01" value="npc,village_1,15,10,0,0,test,test_m"/>
  </properties>
  <tileset firstgid="1" name="Inside_town" tilewidth="8" tileheight="8" tilecount="1188" columns="22">
   <image source="Inside_town_00.png" width="176" height="432"/>

@@ -1,4 +1,5 @@
 const log = true;
+const NPC_IDLE = 0;
 const transitions = {
 	"up" : {
 		"up" : "up",
