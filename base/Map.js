@@ -28,7 +28,7 @@ class Map {
         }
     }
 
-    setLayers (underlayer_group, overlayer_group, collider_layer, npc_group) {
+    async setLayers (underlayer_group, overlayer_group, collider_layer, npc_group) {
         this.sprite = game.add.tilemap(this.key_name);
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
@@ -130,23 +130,27 @@ class Map {
                 npc.setActionFrameRate(action, npc_db[npc_info.key_name].actions[action].frame_rate);
             }
             npc.addAnimations();
-            loading_assets = true;
-            npc.loadSpritesheets(true, () => {
-                const initial_action = npc_db[npc_info.key_name].initial_action;
-                npc_info.npc_sprite = npc_group.create(0, 0, u([
-                    npc_info.key_name,
-                    initial_action
-                ]));
-                npc_info.npc_sprite.centerX = npc_info.initial_x * this.sprite.tileWidth;
-                npc_info.npc_sprite.centerY = npc_info.initial_y * this.sprite.tileWidth;
-                npc_info.npc_sprite.anchor.y = npc_db[npc_info.key_name].anchor_y;
-                npc.setAnimation(npc_info.npc_sprite, initial_action);
-                npc_info.npc_sprite.animations.play(u([
-                    initial_action,
-                    npc_db[npc_info.key_name].actions[initial_action].initial_direction
-                ]));
-                loading_assets = false;
+            //loading_assets = true;
+            await new Promise((resolve) => {
+                npc.loadSpritesheets(true, () => {
+                    const initial_action = npc_db[npc_info.key_name].initial_action;
+                    npc_info.npc_sprite = npc_group.create(0, 0, u([
+                        npc_info.key_name,
+                        initial_action
+                    ]));
+                    npc_info.npc_sprite.centerX = npc_info.initial_x * this.sprite.tileWidth;
+                    npc_info.npc_sprite.centerY = npc_info.initial_y * this.sprite.tileWidth;
+                    npc_info.npc_sprite.anchor.y = npc_db[npc_info.key_name].anchor_y;
+                    npc.setAnimation(npc_info.npc_sprite, initial_action);
+                    npc_info.npc_sprite.animations.play(u([
+                        initial_action,
+                        npc_db[npc_info.key_name].actions[initial_action].initial_direction
+                    ]));
+                    resolve();
+                    //loading_assets = false;
+                });
             });
+            
         }
     }
 }
