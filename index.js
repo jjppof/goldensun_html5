@@ -32,6 +32,7 @@ var jumping;
 var map;
 var show_fps;
 var npc_db;
+var loading_assets;
 
 var game = new Phaser.Game(
     GAME_WIDTH, //width
@@ -157,6 +158,7 @@ function create() {
     fading_out = false;
     processing_teleport = false;
     jumping = false;
+    loading_assets = false;
 
     config_groups_and_layers();
     config_transitions_group();
@@ -611,7 +613,7 @@ function door_event_phases() {
         game.physics.p2.updateBoundsCollisionGroup();
 
         fading_out = true;
-    } else if (fading_out) {
+    } else if (fading_out && !loading_assets) {
         fading_out = false;
         game.camera.flash(0x0);
         game.camera.onFlashComplete.add(() => {

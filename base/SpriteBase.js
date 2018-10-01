@@ -40,10 +40,9 @@ class SpriteBase {
 				spritesheet.spritesheet_json_url
             );
             if (force_load) {
-                loader.onLoadComplete.add(on_load_complete, this);
+                loader.onLoadComplete.addOnce(on_load_complete, this);
                 game.load.start();
             }
-            //while (loader.isLoading) {} //provisional. Bad solution.
 		}
 	}
 
