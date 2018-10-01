@@ -600,28 +600,29 @@ function door_event_phases() {
         }
         map_name = current_event.target;
         map_collider_layer = current_event.collider_layer;
-        maps[map_name].setLayers(underlayer_group, overlayer_group, map_collider_layer, npc_group);
-        hero.body.x = current_event.x_target * maps[map_name].sprite.tileWidth;
-        hero.body.y = current_event.y_target * maps[map_name].sprite.tileHeight;
+        maps[map_name].setLayers(underlayer_group, overlayer_group, map_collider_layer, npc_group).then(() => {
+            hero.body.x = current_event.x_target * maps[map_name].sprite.tileWidth;
+            hero.body.y = current_event.y_target * maps[map_name].sprite.tileHeight;
 
-        game.physics.p2.resume();                        
-        map_collider.body.clearShapes();
-        map_collider.body.loadPolygon(
-            maps[map_name].physics_names[map_collider_layer],
-            maps[map_name].physics_names[map_collider_layer]
-        );
-        mapCollisionGroup = game.physics.p2.createCollisionGroup();
-        map_collider.body.setCollisionGroup(mapCollisionGroup);
-        map_collider.body.setZeroDamping();
-        map_collider.body.setZeroRotation();
-        hero.body.collides(mapCollisionGroup);
-        map_collider.body.collides(heroCollisionGroup);
-        map_collider.body.dynamic = false;
-        map_collider.body.static = true;
-        game.physics.p2.updateBoundsCollisionGroup();
-
-        fading_out = true;
-    } else if (fading_out && !loading_assets) {
+            game.physics.p2.resume();                        
+            map_collider.body.clearShapes();
+            map_collider.body.loadPolygon(
+                maps[map_name].physics_names[map_collider_layer],
+                maps[map_name].physics_names[map_collider_layer]
+            );
+            mapCollisionGroup = game.physics.p2.createCollisionGroup();
+            map_collider.body.setCollisionGroup(mapCollisionGroup);
+            map_collider.body.setZeroDamping();
+            map_collider.body.setZeroRotation();
+            hero.body.collides(mapCollisionGroup);
+            map_collider.body.collides(heroCollisionGroup);
+            map_collider.body.dynamic = false;
+            map_collider.body.static = true;
+            game.physics.p2.updateBoundsCollisionGroup();
+            
+            fading_out = true;
+        });
+    } else if (fading_out /*&& !loading_assets*/) {
         fading_out = false;
         game.camera.flash(0x0);
         game.camera.onFlashComplete.add(() => {
