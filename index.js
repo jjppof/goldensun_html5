@@ -590,6 +590,14 @@ function door_event_phases() {
         processing_teleport = false;
         underlayer_group.removeAll();
         overlayer_group.removeAll();
+        let children_index = [];
+        for (let i = 0; i < npc_group.children.length; i++) {
+            if (npc_group.children[i] != hero && npc_group.children[i] != shadow)
+                children_index.push(npc_group.getChildIndex(npc_group.children[i]));
+        }
+        for (let i = 0; i < children_index.length; i++) {
+            npc_group.removeChildAt(children_index[i]);
+        }
         map_name = current_event.target;
         map_collider_layer = current_event.collider_layer;
         maps[map_name].setLayers(underlayer_group, overlayer_group, map_collider_layer, npc_group);
