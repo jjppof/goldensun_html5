@@ -32,7 +32,6 @@ var jumping;
 var map;
 var show_fps;
 var npc_db;
-var loading_assets;
 
 var game = new Phaser.Game(
     GAME_WIDTH, //width
@@ -158,7 +157,6 @@ function create() {
     fading_out = false;
     processing_teleport = false;
     jumping = false;
-    loading_assets = false;
 
     config_groups_and_layers();
     config_transitions_group();
@@ -600,7 +598,12 @@ function door_event_phases() {
         }
         map_name = current_event.target;
         map_collider_layer = current_event.collider_layer;
-        maps[map_name].setLayers(underlayer_group, overlayer_group, map_collider_layer, npc_group).then(() => {
+        maps[map_name].setLayers(
+            underlayer_group,
+            overlayer_group,
+            map_collider_layer,
+            npc_group
+        ).then(() => {
             hero.body.x = current_event.x_target * maps[map_name].sprite.tileWidth;
             hero.body.y = current_event.y_target * maps[map_name].sprite.tileHeight;
 
@@ -622,7 +625,7 @@ function door_event_phases() {
             
             fading_out = true;
         });
-    } else if (fading_out /*&& !loading_assets*/) {
+    } else if (fading_out) {
         fading_out = false;
         game.camera.flash(0x0);
         game.camera.onFlashComplete.add(() => {

@@ -130,7 +130,6 @@ class Map {
                 npc.setActionFrameRate(action, npc_db[npc_info.key_name].actions[action].frame_rate);
             }
             npc.addAnimations();
-            //loading_assets = true;
             await new Promise((resolve) => {
                 npc.loadSpritesheets(true, () => {
                     const initial_action = npc_db[npc_info.key_name].initial_action;
@@ -147,7 +146,6 @@ class Map {
                         npc_db[npc_info.key_name].actions[initial_action].initial_direction
                     ]));
                     resolve();
-                    //loading_assets = false;
                 });
             });
             
