@@ -588,14 +588,9 @@ function door_event_phases() {
         processing_teleport = false;
         underlayer_group.removeAll();
         overlayer_group.removeAll();
-        let children_index = [];
-        for (let i = 0; i < npc_group.children.length; i++) {
-            if (npc_group.children[i] != hero && npc_group.children[i] != shadow)
-                children_index.push(npc_group.getChildIndex(npc_group.children[i]));
-        }
-        for (let i = 0; i < children_index.length; i++) {
-            npc_group.removeChildAt(children_index[i]);
-        }
+        npc_group.removeAll();
+        npc_group.add(shadow);
+        npc_group.add(hero);
         map_name = current_event.target;
         map_collider_layer = current_event.collider_layer;
         maps[map_name].setLayers(
@@ -632,9 +627,9 @@ function door_event_phases() {
             on_event = false;
             current_event = null;
         }, this);
+        shadow.x = hero.body.x;
+        shadow.y = hero.body.y;
     }
-    shadow.x = hero.body.x;
-    shadow.y = hero.body.y;
 }
 
 function open_door() {
