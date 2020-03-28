@@ -1,4 +1,8 @@
-class Map {
+import { u } from "../utils.js";
+import { NPC_IDLE } from '../config.js';
+import { NPC } from './NPC.js';
+
+export class Map {
     constructor (
         name,
         key_name,
@@ -23,12 +27,12 @@ class Map {
     loadMapAssets(game) {
         game.load.tilemap(this.key_name, this.tileset_json_url, null, Phaser.Tilemap.TILED_JSON);
         game.load.image(this.key_name, this.tileset_image_url);
-        for (let i = 0; i < this.physics_names.length; i++) {
+        for (let i = 0; i < this.physics_names.length; ++i) {
             game.load.physics(this.physics_names[i], this.physics_jsons_url[i]);
         }
     }
 
-    async setLayers (underlayer_group, overlayer_group, collider_layer, npc_group) {
+    async setLayers(game, maps, npc_db, underlayer_group, overlayer_group, collider_layer, npc_group) {
         this.sprite = game.add.tilemap(this.key_name);
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
@@ -95,7 +99,7 @@ class Map {
             if (a.properties.z != b.properties.z) return a - b;
         });
 
-        for (let i = 0; i < layers.length; i++) {
+        for (let i = 0; i < layers.length; ++i) {
             let layer = this.sprite.createLayer(layers[i].name);
             layer.resizeWorld();
             layer.blendMode = PIXI.blendModes[layers[i].properties.blendMode];
@@ -109,7 +113,7 @@ class Map {
                 underlayer_group.add(layer);
         }
 
-        for (let i = 0; i < this.npcs.length; i++) {
+        for (let i = 0; i < this.npcs.length; ++i) {
             let npc_info = this.npcs[i];
             let actions = [];
             if (npc_info.npc_type == NPC_IDLE)
@@ -131,7 +135,7 @@ class Map {
             }
             npc.addAnimations();
             await new Promise((resolve) => {
-                npc.loadSpritesheets(true, () => {
+                npc.loadSpritesheets(game, true, () => {
                     const initial_action = npc_db[npc_info.key_name].initial_action;
                     npc_info.npc_sprite = npc_group.create(0, 0, u([
                         npc_info.key_name,

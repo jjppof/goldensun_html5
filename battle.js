@@ -1,4 +1,7 @@
+import * as numbers from './magic_numbers.js';
+
 var battle_bg;
+var battle_bg2;
 var players = [];
 var a;
 var b;
@@ -21,7 +24,6 @@ var first_party_char;
 var last_party_char;
 var first_enemy_char;
 var last_enemy_char;
-var FULL_ROUND = 2*Math.PI;
 var old_camera_angle;
 var bg_spin_speed;
 var pos_x_party;
@@ -29,10 +31,13 @@ var pos_y_party;
 var pos_x_enemy;
 var pos_y_enemy;
 var scale;
+var players_number;
+var middle_shift_enemy;
+var middle_shift_party;
 
 var game = new Phaser.Game (
-    GAME_WIDTH,
-    GAME_HEIGHT,
+    numbers.GAME_WIDTH,
+    numbers.GAME_HEIGHT,
     Phaser.AUTO,
     '',
     { preload: preload, create: create, update: update },
@@ -61,15 +66,15 @@ function create() {
         if (isDoubleClick) game.scale.startFullScreen(true);
     });
 
-    battle_bg = game.add.tileSprite(0, 17, GAME_WIDTH, 113, 'colosso');
-    battle_bg2 = game.add.tileSprite(0, 17, GAME_WIDTH, 113, 'colosso');
+    battle_bg = game.add.tileSprite(0, 17, numbers.GAME_WIDTH, 113, 'colosso');
+    battle_bg2 = game.add.tileSprite(0, 17, numbers.GAME_WIDTH, 113, 'colosso');
 
     spining = false;
     default_scale = 0.9;
-    center_x = GAME_WIDTH/2;
-    center_y = GAME_HEIGHT - 35;
-    a = GAME_WIDTH/2 - 30;
-    b = GAME_HEIGHT/30;
+    center_x = numbers.GAME_WIDTH/2;
+    center_y = numbers.GAME_HEIGHT - 35;
+    a = numbers.GAME_WIDTH/2 - 30;
+    b = numbers.GAME_HEIGHT/30;
     camera_angle = {rad : 0};
     old_camera_angle = camera_angle.rad;
     camera_speed = 0.009 * Math.PI;
@@ -85,7 +90,7 @@ function create() {
     group_enemy = game.add.group();
     group_party = game.add.group();
 
-    for (let i = 0; i < players_number; i++) {
+    for (let i = 0; i < players_number; ++i) {
         let p;
         if (i < party_count)
             p = group_party.create(0, 0, 'felix_back');
@@ -133,9 +138,8 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
 }
 
-
 //active spin effect
-function spin(angle, easing, duration) {
+window.spin = function(angle, easing, duration) {
     if (!spining) {
         spining = true;
         game.add.tween(camera_angle).to(
@@ -152,7 +156,6 @@ function spin(angle, easing, duration) {
 
 function update() {
     if (cursors.left.isDown || cursors.right.isDown || spining) {
-
         //angle change and bg x position change
         if (!cursors.left.isDown && cursors.right.isDown && !spining) {
             camera_angle.rad -= camera_speed;
@@ -163,23 +166,23 @@ function update() {
         }
 
         if (!spining) { //let spin effect do its work freely
-            if(camera_angle.rad >= FULL_ROUND) camera_angle.rad -= FULL_ROUND;
-            if(camera_angle.rad < 0) camera_angle.rad += FULL_ROUND;
+            if(camera_angle.rad >= numbers.FULL_ROUND) camera_angle.rad -= numbers.FULL_ROUND;
+            if(camera_angle.rad < 0) camera_angle.rad += numbers.FULL_ROUND;
         } else //tie bg x position with camera angle when spining
-            battle_bg.x += bg_spin_speed * GAME_WIDTH * (camera_angle.rad - old_camera_angle);
+            battle_bg.x += bg_spin_speed * numbers.GAME_WIDTH * (camera_angle.rad - old_camera_angle);
         old_camera_angle = camera_angle.rad;
 
         //check bg x position surplus
-        if (battle_bg.x > GAME_WIDTH)
-            battle_bg.x -= Math.abs(Math.floor(battle_bg.x/GAME_WIDTH)) * GAME_WIDTH;
-        else if (battle_bg.x < -GAME_WIDTH)
-            battle_bg.x += Math.abs(Math.floor(battle_bg.x/GAME_WIDTH)) * GAME_WIDTH;
+        if (battle_bg.x > numbers.GAME_WIDTH)
+            battle_bg.x -= Math.abs(Math.floor(battle_bg.x/numbers.GAME_WIDTH)) * numbers.GAME_WIDTH;
+        else if (battle_bg.x < -numbers.GAME_WIDTH)
+            battle_bg.x += Math.abs(Math.floor(battle_bg.x/numbers.GAME_WIDTH)) * numbers.GAME_WIDTH;
 
         //make mirrored bg follow default bg
-        if (battle_bg.x > 0 && battle_bg.x < GAME_WIDTH)
-            battle_bg2.x = battle_bg.x - GAME_WIDTH;
-        else if (battle_bg.x < 0 && battle_bg.x > -GAME_WIDTH)
-            battle_bg2.x = battle_bg.x + GAME_WIDTH;
+        if (battle_bg.x > 0 && battle_bg.x < numbers.GAME_WIDTH)
+            battle_bg2.x = battle_bg.x - numbers.GAME_WIDTH;
+        else if (battle_bg.x < 0 && battle_bg.x > -numbers.GAME_WIDTH)
+            battle_bg2.x = battle_bg.x + numbers.GAME_WIDTH;
 
         //get equidistant arc lenghts from camera angle
         party_angle = get_angle(camera_angle.rad);
@@ -209,8 +212,8 @@ function update() {
         else if (Math.cos(camera_angle.rad) > 0 && first_enemy_char.z > last_enemy_char.z)
             group_enemy.reverse();
 
-        for (let i = 0; i < players_number; i++) {
-            relative_angle = i < party_count ? camera_angle.rad : camera_angle.rad + Math.PI;
+        for (let i = 0; i < players_number; ++i) {
+            let relative_angle = i < party_count ? camera_angle.rad : camera_angle.rad + Math.PI;
             if (i < party_count) { //shift party players from base point
                 players[i].x = pos_x_party + ((spacing_distance*i - middle_shift_party) + (spacing_distance >> 1)) * Math.sin(relative_angle);
                 players[i].y = pos_y_party;

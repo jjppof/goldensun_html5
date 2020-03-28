@@ -1,37 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8" />
-	<title>Golden Sun</title>
-	<script type="text/javascript" src="phaser.js"></script>
-	<script type="text/javascript" src="plugins/underscore-min.js"></script>
-	<script type="text/javascript" src="utils.js"></script>
-	<script type="text/javascript" src="help_vars.js"></script>
-	<script type="text/javascript" src="magic_numbers.js"></script>
+    <meta charset="UTF-8" />
+    <title>Golden Sun</title>
+    <script type="text/javascript" src="phaser.js"></script>
+    <script type="text/javascript" src="plugins/underscore-min.js"></script>
 
-	<script type="text/javascript" src="base/SpriteBase.js"></script>
-	<script type="text/javascript" src="base/MainChar.js"></script>
-	<script type="text/javascript" src="base/NPC.js"></script>
-	<script type="text/javascript" src="chars/main_char_list.js"></script>
+    <script type="module" src="index.js"></script>
 
-	<script type="text/javascript" src="base/Map.js"></script>
-	<script type="text/javascript" src="maps/maps.js"></script>
-
-	<script type="text/javascript" src="index.js"></script>
-
-	<!-- <script>
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-		ga('create', 'UA-66229740-5', 'auto');
-		ga('send', 'pageview');
-	</script> -->
+    <style>
+        body {
+            margin: 0;
+            background-color: whitesmoke;
+        }
+        .intro {
+            margin: 1rem 20%;
+        }
+        #game {
+            padding: 2rem 20%;
+            background-color: black;
+        }
+	</style>
 </head>
 <body>
-	<a href="battle.html">Battle test</a><br>
-	<pre>
+    <div class="intro">
+        <pre>
 Use the arrows to move.
 Hold shift to dash.
 1,2 and 3 for zoom.
@@ -39,6 +32,10 @@ Double click on screen to fullscreen.
 D for debug colision. F for fps.
 You can only enter inside the Inn and another house.
 In the case of a initial bug, please soft refresh the page.
-	</pre>
+
+See <a href="battle.html">battle test</a>.
+        </pre>
+    </div>
+    <div id="game"></div>
 </body>
 </html>

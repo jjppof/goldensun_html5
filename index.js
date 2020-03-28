@@ -1,5 +1,11 @@
+import * as utils from './utils.js';
+import * as numbers from './magic_numbers.js';
+import { initializeMainChars, main_char_list } from './chars/main_char_list.js';
+import { initializeMaps, loadMaps, maps } from './maps/maps.js';
+
 var cursors;
 var hero;
+var map_collider_layer;
 var actual_action;
 var actual_direction;
 var climb_direction;
@@ -29,22 +35,21 @@ var fading_out;
 var processing_teleport;
 var delta_time;
 var jumping;
-var map;
 var show_fps;
 var npc_db;
 
 var game = new Phaser.Game(
-    GAME_WIDTH, //width
-    GAME_HEIGHT, //height
+    numbers.GAME_WIDTH, //width
+    numbers.GAME_HEIGHT, //height
     Phaser.AUTO, //renderer
-    '', //parent
+    "game", //parent
     { preload: preload, create: create, update: update, render: render }, //states
     false, //transparent
     false //antialias
 );
 
 function preload() {
-    initializeMainChars();
+    initializeMainChars(game);
     initializeMaps();
     loadMaps(game);
     get_npc_db().then(data => npc_db = data);
@@ -68,7 +73,7 @@ function config_groups_and_layers() {
     transtions_group = game.add.group();
 
     //configing map layers: creating sprites, listing events and setting the layers
-    maps[map_name].setLayers(underlayer_group, overlayer_group, map_collider_layer, npc_group);
+    maps[map_name].setLayers(game, maps, npc_db, underlayer_group, overlayer_group, map_collider_layer, npc_group);
 }
 
 function config_transitions_group() {
@@ -77,7 +82,7 @@ function config_transitions_group() {
     black_rect = game.add.graphics(0, 0);
     black_rect.lineStyle(0);
     black_rect.beginFill(0x0, 1);
-    black_rect.drawRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+    black_rect.drawRect(0, 0, numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
     black_rect.endFill();
     transtions_group.addChild(black_rect);
 }
@@ -85,34 +90,34 @@ function config_transitions_group() {
 function config_hero() {
     //creating sprites and adding hero and its shadow to npc_group
     shadow = npc_group.create(0, 0, 'shadow');
-    shadow.anchor.setTo(SHADOW_X_AP, SHADOW_Y_AP); //shadow anchor point
-    hero = npc_group.create(0, 0, u([hero_name, actual_action]));
-    hero.centerX = HERO_START_X; //hero x start position
-    hero.centerY = HERO_START_Y; //hero y start position
+    shadow.anchor.setTo(numbers.SHADOW_X_AP, numbers.SHADOW_Y_AP); //shadow anchor point
+    hero = npc_group.create(0, 0, utils.u([hero_name, actual_action]));
+    hero.centerX = numbers.HERO_START_X; //hero x start position
+    hero.centerY = numbers.HERO_START_Y; //hero y start position
     game.camera.follow(hero); //makes camera follow the hero
     //config hero initial animation state
     main_char_list[hero_name].setAnimation(hero, actual_action);
-    hero.animations.play(u([actual_action, actual_direction]));
+    hero.animations.play(utils.u([actual_action, actual_direction]));
 }
 
 function config_world_physics() {
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.setImpactEvents(true);
-    game.physics.p2.world.defaultContactMaterial.restitution = WORLD_RESTITUTION;
-    game.physics.p2.world.defaultContactMaterial.relaxation = WORLD_RELAXION;
-    game.physics.p2.world.defaultContactMaterial.friction = WORLD_FRICTION;
-    game.physics.p2.world.setGlobalStiffness(WORLD_STIFFNESS);
-    game.physics.p2.restitution = WORLD_RESTITUTION;
+    game.physics.p2.world.defaultContactMaterial.restitution = numbers.WORLD_RESTITUTION;
+    game.physics.p2.world.defaultContactMaterial.relaxation = numbers.WORLD_RELAXION;
+    game.physics.p2.world.defaultContactMaterial.friction = numbers.WORLD_FRICTION;
+    game.physics.p2.world.setGlobalStiffness(numbers.WORLD_STIFFNESS);
+    game.physics.p2.restitution = numbers.WORLD_RESTITUTION;
 }
 
 function config_physics_for_hero() {
     game.physics.p2.enable(hero, false);
-    hero.anchor.y = HERO_Y_AP; //Important to be after the previous command
+    hero.anchor.y = numbers.HERO_Y_AP; //Important to be after the previous command
     hero.body.clearShapes();
-    hero.body.setCircle(HERO_BODY_RADIUS, 0, 0);
+    hero.body.setCircle(numbers.HERO_BODY_RADIUS, 0, 0);
     heroCollisionGroup = game.physics.p2.createCollisionGroup();
     hero.body.setCollisionGroup(heroCollisionGroup);
-    hero.body.mass = HERO_BODY_MASS;
+    hero.body.mass = numbers.HERO_BODY_MASS;
     hero.body.setZeroDamping();
     hero.body.setZeroRotation();
     hero.body.fixedRotation = true; //disalble hero collision body rotation
@@ -190,7 +195,7 @@ function create() {
 
     //enable zoom
     game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(function(){
-        game.scale.setupScale(GAME_WIDTH, GAME_HEIGHT);
+        game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
     }, this);
     game.input.keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(function(){
@@ -211,15 +216,15 @@ function climbing_event() {
         if (current_event.activation_direction == "down") {
             on_event = true;
             event_activation_process = false;
-            hero.loadTexture(u([hero_name, "climb"]));
+            hero.loadTexture(utils.u([hero_name, "climb"]));
             main_char_list[hero_name].setAnimation(hero, "climb");
-            hero.animations.play(u(["climb", "start"]), 9, false, true);
+            hero.animations.play(utils.u(["climb", "start"]), 9, false, true);
         } else if (current_event.activation_direction == "up") {
             on_event = true;
             event_activation_process = false;
-            hero.loadTexture(u([hero_name, "climb"]));
+            hero.loadTexture(utils.u([hero_name, "climb"]));
             main_char_list[hero_name].setAnimation(hero, "climb");
-            hero.animations.play(u(["climb", "idle"]));
+            hero.animations.play(utils.u(["climb", "idle"]));
             const out_time = Phaser.Timer.QUARTER/2;
             game.add.tween(hero.body).to(
                 { y: hero.y - 15 },
@@ -241,7 +246,7 @@ function climbing_event() {
             on_event = true;
             game.physics.p2.pause();
             event_activation_process = false;
-            hero.animations.play(u(["climb", "end"]), 8, false, false);
+            hero.animations.play(utils.u(["climb", "end"]), 8, false, false);
             shadow.visible = false;
             const time = Phaser.Timer.QUARTER;
             game.add.tween(hero.body).to(
@@ -253,9 +258,9 @@ function climbing_event() {
         } else if (current_event.activation_direction == "down") {
             on_event = true;
             event_activation_process = false;
-            hero.loadTexture(u([hero_name, "idle"]));
+            hero.loadTexture(utils.u([hero_name, "idle"]));
             main_char_list[hero_name].setAnimation(hero, "idle");
-            hero.animations.play(u(["idle", "up"]));
+            hero.animations.play(utils.u(["idle", "up"]));
             const out_time = Phaser.Timer.QUARTER/2;
             game.add.tween(hero.body).to(
                 { y: hero.y + 15 },
@@ -284,9 +289,9 @@ function fire_event() {
             on_event = true;
             event_activation_process = false;
             if (current_event.avance_effect) {
-                hero.loadTexture(u([hero_name, "walk"]));
+                hero.loadTexture(utils.u([hero_name, "walk"]));
                 main_char_list[hero_name].setAnimation(hero, "walk");
-                hero.animations.play(u(["walk", "up"]));
+                hero.animations.play(utils.u(["walk", "up"]));
                 open_door();
                 game.physics.p2.pause();
                 const time = Phaser.Timer.HALF;
@@ -304,7 +309,7 @@ function fire_event() {
 }
 
 function event_triggering() {
-    current_event = maps[map_name].events[u([hero_tile_pos_x, hero_tile_pos_y])];
+    current_event = maps[map_name].events[utils.u([hero_tile_pos_x, hero_tile_pos_y])];
     if (!climbing) {
         if(!event_activation_process && actual_direction == current_event.activation_direction && (actual_action == "walk" || actual_action == "dash")){
             event_activation_process = true;
@@ -338,7 +343,7 @@ function update() {
         hero_tile_pos_y = Math.floor(hero.y/maps[map_name].sprite.tileHeight);
 
         //check if the actual tile has an event
-        if (u([hero_tile_pos_x, hero_tile_pos_y]) in maps[map_name].events)
+        if (utils.u([hero_tile_pos_x, hero_tile_pos_y]) in maps[map_name].events)
             event_triggering();
         else if (extra_speed != 0) //disabling speed event
             extra_speed = 0;
@@ -350,7 +355,7 @@ function update() {
         
         set_actual_action(); //choose which sprite the hero shall assume
 
-        delta_time = game.time.elapsedMS/DELTA_TIME_FACTOR;
+        delta_time = game.time.elapsedMS/numbers.DELTA_TIME_FACTOR;
 
         calculate_hero_speed();
 
@@ -398,7 +403,7 @@ function climb_event_animation_steps() {
             true
         );
     } else if (hero.animations.frameName == "climb/start/06") {
-        hero.animations.play(u(["climb", "idle"]), 9);
+        hero.animations.play(utils.u(["climb", "idle"]), 9);
         on_event = false;
         climbing = true;
         actual_action = "climb";
@@ -411,9 +416,9 @@ function climb_event_animation_steps() {
                 Phaser.Easing.Linear.None,
                 true
             );
-            hero.loadTexture(u([hero_name, "idle"]));
+            hero.loadTexture(utils.u([hero_name, "idle"]));
             main_char_list[hero_name].setAnimation(hero, "idle");
-            hero.animations.play(u(["idle", "up"]));
+            hero.animations.play(utils.u(["idle", "up"]));
             game.time.events.add(120, () => {
                 shadow.y = hero.y;
                 shadow.visible = true;
@@ -429,16 +434,16 @@ function climb_event_animation_steps() {
 }
 
 function collision_dealer() {
-    for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++){
-        var c = game.physics.p2.world.narrowphase.contactEquations[i];
+    for (let i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; ++i){
+        let c = game.physics.p2.world.narrowphase.contactEquations[i];
         if (c.bodyA === hero.body.data){
-            if(c.contactPointA[0] >= COLLISION_MARGIN && actual_direction == "left")
+            if(c.contactPointA[0] >= numbers.COLLISION_MARGIN && actual_direction == "left")
                 hero.body.velocity.x = 0;
-            if(c.contactPointA[0] <= -COLLISION_MARGIN && actual_direction == "right")
+            if(c.contactPointA[0] <= -numbers.COLLISION_MARGIN && actual_direction == "right")
                 hero.body.velocity.x = 0;
-            if(c.contactPointA[1] <= -COLLISION_MARGIN && actual_direction == "down")
+            if(c.contactPointA[1] <= -numbers.COLLISION_MARGIN && actual_direction == "down")
                 hero.body.velocity.y = 0;
-            if(c.contactPointA[1] >= COLLISION_MARGIN && actual_direction == "up")
+            if(c.contactPointA[1] >= numbers.COLLISION_MARGIN && actual_direction == "up")
                 hero.body.velocity.y = 0;
             break;
         }
@@ -446,12 +451,12 @@ function collision_dealer() {
 }
 
 function change_hero_sprite() {
-    if (hero.key != u([hero_name, actual_action])) {
-        hero.loadTexture(u([hero_name, actual_action]));
+    if (hero.key != utils.u([hero_name, actual_action])) {
+        hero.loadTexture(utils.u([hero_name, actual_action]));
         main_char_list[hero_name].setAnimation(hero, actual_action);
     }
-    if (hero.animations.currentAnim.name != u([actual_action, actual_direction]))
-        hero.animations.play(u([actual_action, actual_direction]));
+    if (hero.animations.currentAnim.name != utils.u([actual_action, actual_direction]))
+        hero.animations.play(utils.u([actual_action, actual_direction]));
 }
 
 function calculate_hero_speed() {
@@ -502,20 +507,20 @@ function set_speed_factors() {
         y_speed = 0;
     } else if (cursors.up.isDown && cursors.left.isDown && !cursors.right.isDown && !cursors.down.isDown && actual_direction != "up_left"){
         actual_direction = getTransitionDirection(actual_direction, "up_left");
-        x_speed = -INV_SQRT2;
-        y_speed = -INV_SQRT2;
+        x_speed = -numbers.INV_SQRT2;
+        y_speed = -numbers.INV_SQRT2;
     } else if (cursors.up.isDown && !cursors.left.isDown && cursors.right.isDown && !cursors.down.isDown && actual_direction != "up_right"){
         actual_direction = getTransitionDirection(actual_direction, "up_right");
-        x_speed = INV_SQRT2;
-        y_speed = -INV_SQRT2;
+        x_speed = numbers.INV_SQRT2;
+        y_speed = -numbers.INV_SQRT2;
     } else if (!cursors.up.isDown && cursors.left.isDown && !cursors.right.isDown && cursors.down.isDown && actual_direction != "down_left"){
         actual_direction = getTransitionDirection(actual_direction, "down_left");
-        x_speed = -INV_SQRT2;
-        y_speed = INV_SQRT2;
+        x_speed = -numbers.INV_SQRT2;
+        y_speed = numbers.INV_SQRT2;
     } else if (!cursors.up.isDown && !cursors.left.isDown && cursors.right.isDown && cursors.down.isDown && actual_direction != "down_right"){
         actual_direction = getTransitionDirection(actual_direction, "down_right");
-        x_speed = INV_SQRT2;
-        y_speed = INV_SQRT2;
+        x_speed = numbers.INV_SQRT2;
+        y_speed = numbers.INV_SQRT2;
     }
 }
 
@@ -538,7 +543,7 @@ function set_climbing_speed_factors() {
 function jump_event() {
     jumping = false;
     shadow.visible = false;
-    let jump_offset = JUMP_OFFSET;
+    let jump_offset = numbers.JUMP_OFFSET;
     let direction;
     if (current_event.activation_direction == "left") {
         jump_offset = -jump_offset;
@@ -555,12 +560,12 @@ function jump_event() {
     tween_obj[direction] = hero[direction] + jump_offset;
     if(direction == "x")
         tween_obj.y = [hero.y - 5, hero.y];
-    hero.loadTexture(u([hero_name, "jump"]));
+    hero.loadTexture(utils.u([hero_name, "jump"]));
     main_char_list[hero_name].setAnimation(hero, "jump");
-    hero.animations.frameName = b(["jump", current_event.activation_direction]);
+    hero.animations.frameName = utils.b(["jump", current_event.activation_direction]);
     game.add.tween(hero.body).to( 
         tween_obj, 
-        JUMP_DURATION, 
+        numbers.JUMP_DURATION, 
         Phaser.Easing.Linear.None, 
         true
     ).onComplete.addOnce(() => {
@@ -571,15 +576,15 @@ function jump_event() {
 }
 
 function getTransitionDirection(actual_direction, desired_direction){
-    return transitions[desired_direction][actual_direction];
+    return utils.transitions[desired_direction][actual_direction];
 }
 
 function door_event_phases() {
     if (teleporting) {
         teleporting = false;
-        hero.loadTexture(u([hero_name, "idle"]));
+        hero.loadTexture(utils.u([hero_name, "idle"]));
         main_char_list[hero_name].setAnimation(hero, "idle");
-        hero.animations.play(u(["idle", current_event.activation_direction]));
+        hero.animations.play(utils.u(["idle", current_event.activation_direction]));
         actual_direction = current_event.activation_direction;
         actual_action = "idle";
         game.camera.fade();
@@ -594,6 +599,9 @@ function door_event_phases() {
         map_name = current_event.target;
         map_collider_layer = current_event.collider_layer;
         maps[map_name].setLayers(
+            game,
+            maps,
+            npc_db,
             underlayer_group,
             overlayer_group,
             map_collider_layer,
@@ -633,14 +641,14 @@ function door_event_phases() {
 }
 
 function open_door() {
-    var layer = _.findWhere(maps[map_name].sprite.layers, {name : maps[map_name].sprite.properties.door_layer});
-    var sample_tile = maps[map_name].sprite.getTile(current_event.x, current_event.y - 1, layer.name);
-    var door_type_index = sample_tile.properties.door_type;
-    var tiles = _.filter(maps[map_name].sprite.tilesets[0].tileProperties, function(key){
+    let layer = _.findWhere(maps[map_name].sprite.layers, {name : maps[map_name].sprite.properties.door_layer});
+    let sample_tile = maps[map_name].sprite.getTile(current_event.x, current_event.y - 1, layer.name);
+    let door_type_index = sample_tile.properties.door_type;
+    let tiles = _.filter(maps[map_name].sprite.tilesets[0].tileProperties, function(key){
         return key.door_type == door_type_index && "close_door" in key && key.id == sample_tile.properties.id;
     })
-    var tile; var source_index; var close_door_index; var offsets; var base_x; var base_y; var target_index;
-    for(var i = 0; i < tiles.length; i++){
+    let tile, source_index, close_door_index, offsets, base_x, base_y, target_index;
+    for(let i = 0; i < tiles.length; ++i){
         tile = tiles[i];
         source_index = parseInt(tile.index) + 1;
         close_door_index = tile.close_door;
