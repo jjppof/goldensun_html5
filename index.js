@@ -195,15 +195,15 @@ function create() {
 
     //enable zoom
     game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(function(){
-        game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+        game.scale.setupScale(numbers.numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
     }, this);
     game.input.keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(function(){
-        game.scale.setupScale(2*GAME_WIDTH, 2*GAME_HEIGHT);
+        game.scale.setupScale(2*numbers.GAME_WIDTH, 2*numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
     }, this);
     game.input.keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(function(){
-        game.scale.setupScale(3*GAME_WIDTH, 3*GAME_HEIGHT);
+        game.scale.setupScale(3*numbers.GAME_WIDTH, 3*numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
     }, this);
 
