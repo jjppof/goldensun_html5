@@ -333,8 +333,16 @@ function fire_event() {
                 open_door();
                 game.physics.p2.pause();
                 const time = Phaser.Timer.HALF;
-                game.add.tween(shadow).to({y: hero.y - 15}, time, Phaser.Easing.Linear.None, true);
-                game.add.tween(hero.body).to({y: hero.y - 15}, time, Phaser.Easing.Linear.None, true);
+                const tween_x = maps[map_name].sprite.tileWidth*(parseFloat(current_event.x) + 1/2);
+                const tween_y = hero.y - 15;
+                game.add.tween(shadow).to({
+                    x: tween_x,
+                    y: tween_y
+                }, time, Phaser.Easing.Linear.None, true);
+                game.add.tween(hero.body).to({
+                    x: tween_x,
+                    y: tween_y
+                }, time, Phaser.Easing.Linear.None, true);
                 game.time.events.add(time + 50, () => { teleporting = true; }, this);
             } else
                 teleporting = true;
