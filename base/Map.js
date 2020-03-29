@@ -141,6 +141,7 @@ export class Map {
                         npc_info.key_name,
                         initial_action
                     ]));
+                    npc_info.npc_sprite.is_npc = true;
                     npc_info.npc_sprite.centerX = npc_info.initial_x * this.sprite.tileWidth;
                     npc_info.npc_sprite.centerY = npc_info.initial_y * this.sprite.tileWidth;
                     npc_info.npc_sprite.anchor.y = npc_db[npc_info.key_name].anchor_y;
@@ -152,7 +153,6 @@ export class Map {
                     resolve();
                 });
             });
-            
         }
     }
 }
