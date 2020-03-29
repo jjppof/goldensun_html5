@@ -74,7 +74,7 @@ function config_groups_and_layers() {
     transtions_group = game.add.group();
 
     //configing map layers: creating sprites, listing events and setting the layers
-    maps[map_name].setLayers(game, maps, npc_db, underlayer_group, overlayer_group, map_collider_layer, npc_group);
+    maps[map_name].setLayers(game, maps, npc_db, map_name, underlayer_group, overlayer_group, map_collider_layer, npc_group);
 }
 
 function config_transitions_group() {
@@ -324,28 +324,7 @@ function fire_event() {
         if (current_event.type === "stair")
             climbing_event();
         else if (current_event.type === "door") {
-            on_event = true;
-            event_activation_process = false;
-            if (current_event.avance_effect) {
-                hero.loadTexture(utils.u([hero_name, "walk"]));
-                main_char_list[hero_name].setAnimation(hero, "walk");
-                hero.animations.play(utils.u(["walk", "up"]));
-                open_door();
-                game.physics.p2.pause();
-                const time = Phaser.Timer.HALF;
-                const tween_x = maps[map_name].sprite.tileWidth*(parseFloat(current_event.x) + 1/2);
-                const tween_y = hero.y - 15;
-                game.add.tween(shadow).to({
-                    x: tween_x,
-                    y: tween_y
-                }, time, Phaser.Easing.Linear.None, true);
-                game.add.tween(hero.body).to({
-                    x: tween_x,
-                    y: tween_y
-                }, time, Phaser.Easing.Linear.None, true);
-                game.time.events.add(time + 50, () => { teleporting = true; }, this);
-            } else
-                teleporting = true;
+            set_door_event();
         } else if (current_event.type = "jump") {
             on_event = true;
             event_activation_process = false;
@@ -394,27 +373,23 @@ function update() {
         else if (extra_speed != 0) //disabling speed event
             extra_speed = 0;
 
-        if (!climbing)
+        if (!climbing) {
             set_speed_factors(); //dash or walk movement
-        else
+        } else {
             set_climbing_speed_factors(); //climbing movement
-        
+        }
+
         set_actual_action(); //choose which sprite the hero shall assume
-
         delta_time = game.time.elapsedMS/numbers.DELTA_TIME_FACTOR;
-
         calculate_hero_speed();
-
         change_hero_sprite();
-
         collision_dealer();
 
         //make the shadow follow the hero
-        if(shadow.x != hero.x)
-            shadow.x = hero.x;
-        if(shadow.y != hero.y)
-            shadow.y = hero.y;
+        shadow.x = hero.x;
+        shadow.y = hero.y;
 
+        //adjust bodies
         map_collider.body.velocity.y = map_collider.body.velocity.x = 0; //fix map body
         for (let i = 0; i < npc_group.children.length; ++i) {
             let sprite = npc_group.children[i];
@@ -422,8 +397,9 @@ function update() {
             sprite.body.velocity.y = sprite.body.velocity.x = 0; //fix npcs body
         }
         map_collider.body.y = map_collider.body.x = 16;
+
+        //organize layers on hero move
         npc_group.sort('y', Phaser.Group.SORT_ASCENDING);
-        
     } else {
         if (current_event.type === "stair")
             climb_event_animation_steps();
@@ -539,36 +515,36 @@ function set_actual_action() {
     }
 }
 
-function set_speed_factors() {
-    if (cursors.up.isDown && !cursors.left.isDown && !cursors.right.isDown && !cursors.down.isDown && actual_direction != "up"){
+function set_speed_factors(force = false) {
+    if (cursors.up.isDown && !cursors.left.isDown && !cursors.right.isDown && !cursors.down.isDown && (actual_direction != "up" || force)){
         actual_direction = getTransitionDirection(actual_direction, "up"); 
         x_speed = 0;
         y_speed = -1;
-    } else if (!cursors.up.isDown && !cursors.left.isDown && !cursors.right.isDown && cursors.down.isDown && actual_direction != "down"){
+    } else if (!cursors.up.isDown && !cursors.left.isDown && !cursors.right.isDown && cursors.down.isDown && (actual_direction != "down" || force)){
         actual_direction = getTransitionDirection(actual_direction, "down");
         x_speed = 0;
         y_speed = 1;
-    } else if (!cursors.up.isDown && cursors.left.isDown && !cursors.right.isDown && !cursors.down.isDown && actual_direction != "left"){
+    } else if (!cursors.up.isDown && cursors.left.isDown && !cursors.right.isDown && !cursors.down.isDown && (actual_direction != "left" || force)){
         actual_direction = getTransitionDirection(actual_direction, "left");
         x_speed = -1;
         y_speed = 0;
-    } else if (!cursors.up.isDown && !cursors.left.isDown && cursors.right.isDown && !cursors.down.isDown && actual_direction != "right"){
+    } else if (!cursors.up.isDown && !cursors.left.isDown && cursors.right.isDown && !cursors.down.isDown && (actual_direction != "right" || force)){
         actual_direction = getTransitionDirection(actual_direction, "right");
         x_speed = 1;
         y_speed = 0;
-    } else if (cursors.up.isDown && cursors.left.isDown && !cursors.right.isDown && !cursors.down.isDown && actual_direction != "up_left"){
+    } else if (cursors.up.isDown && cursors.left.isDown && !cursors.right.isDown && !cursors.down.isDown && (actual_direction != "up_left" || force)){
         actual_direction = getTransitionDirection(actual_direction, "up_left");
         x_speed = -numbers.INV_SQRT2;
         y_speed = -numbers.INV_SQRT2;
-    } else if (cursors.up.isDown && !cursors.left.isDown && cursors.right.isDown && !cursors.down.isDown && actual_direction != "up_right"){
+    } else if (cursors.up.isDown && !cursors.left.isDown && cursors.right.isDown && !cursors.down.isDown && (actual_direction != "up_right" || force)){
         actual_direction = getTransitionDirection(actual_direction, "up_right");
         x_speed = numbers.INV_SQRT2;
         y_speed = -numbers.INV_SQRT2;
-    } else if (!cursors.up.isDown && cursors.left.isDown && !cursors.right.isDown && cursors.down.isDown && actual_direction != "down_left"){
+    } else if (!cursors.up.isDown && cursors.left.isDown && !cursors.right.isDown && cursors.down.isDown && (actual_direction != "down_left" || force)){
         actual_direction = getTransitionDirection(actual_direction, "down_left");
         x_speed = -numbers.INV_SQRT2;
         y_speed = numbers.INV_SQRT2;
-    } else if (!cursors.up.isDown && !cursors.left.isDown && cursors.right.isDown && cursors.down.isDown && actual_direction != "down_right"){
+    } else if (!cursors.up.isDown && !cursors.left.isDown && cursors.right.isDown && cursors.down.isDown && (actual_direction != "down_right" || force)){
         actual_direction = getTransitionDirection(actual_direction, "down_right");
         x_speed = numbers.INV_SQRT2;
         y_speed = numbers.INV_SQRT2;
@@ -630,6 +606,31 @@ function getTransitionDirection(actual_direction, desired_direction){
     return utils.transitions[desired_direction][actual_direction];
 }
 
+function set_door_event() {
+    on_event = true;
+    event_activation_process = false;
+    if (current_event.avance_effect) {
+        hero.loadTexture(utils.u([hero_name, "walk"]));
+        main_char_list[hero_name].setAnimation(hero, "walk");
+        hero.animations.play(utils.u(["walk", "up"]));
+        open_door();
+        game.physics.p2.pause();
+        const time = Phaser.Timer.HALF;
+        const tween_x = maps[map_name].sprite.tileWidth*(parseFloat(current_event.x) + 1/2);
+        const tween_y = hero.y - 15;
+        game.add.tween(shadow).to({
+            x: tween_x,
+            y: tween_y
+        }, time, Phaser.Easing.Linear.None, true);
+        game.add.tween(hero.body).to({
+            x: tween_x,
+            y: tween_y
+        }, time, Phaser.Easing.Linear.None, true);
+        game.time.events.add(time + 50, () => { teleporting = true; }, this);
+    } else
+        teleporting = true;
+}
+
 function door_event_phases() {
     if (teleporting) {
         teleporting = false;
@@ -661,6 +662,7 @@ function door_event_phases() {
             game,
             maps,
             npc_db,
+            map_name,
             underlayer_group,
             overlayer_group,
             map_collider_layer,
@@ -688,6 +690,7 @@ function door_event_phases() {
         fading_out = false;
         game.camera.flash(0x0);
         game.camera.onFlashComplete.add(() => {
+            set_speed_factors(true);
             on_event = false;
             current_event = null;
         }, this);

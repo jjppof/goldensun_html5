@@ -32,12 +32,12 @@ export class Map {
         }
     }
 
-    async setLayers(game, maps, npc_db, underlayer_group, overlayer_group, collider_layer, npc_group) {
+    async setLayers(game, maps, npc_db, map_name, underlayer_group, overlayer_group, collider_layer, npc_group) {
         this.sprite = game.add.tilemap(this.key_name);
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
-        for (let tile_index in maps.madra.sprite.tilesets[0].tileProperties) {
-            maps.madra.sprite.tilesets[0].tileProperties[tile_index].index = tile_index;
+        for (let tile_index in maps[map_name].sprite.tilesets[0].tileProperties) {
+            maps[map_name].sprite.tilesets[0].tileProperties[tile_index].index = tile_index;
         }
 
         for (let property in this.sprite.properties) {
