@@ -111,12 +111,12 @@ function config_world_physics() {
     game.physics.p2.restitution = numbers.WORLD_RESTITUTION;
 }
 
-function config_physics_for_hero() {
+function config_physics_for_hero(initialize = true) {
+    if (initialize) heroCollisionGroup = game.physics.p2.createCollisionGroup();
     game.physics.p2.enable(hero, false);
     hero.anchor.y = numbers.HERO_Y_AP; //Important to be after the previous command
     hero.body.clearShapes();
     hero.body.setCircle(numbers.HERO_BODY_RADIUS, 0, 0);
-    heroCollisionGroup = game.physics.p2.createCollisionGroup();
     hero.body.setCollisionGroup(heroCollisionGroup);
     hero.body.mass = numbers.HERO_BODY_MASS;
     hero.body.damping = numbers.HERO_DAMPING;
@@ -125,8 +125,8 @@ function config_physics_for_hero() {
     hero.body.fixedRotation = true; //disalble hero collision body rotation
 }
 
-function config_physics_for_npcs() {
-    npcCollisionGroup = game.physics.p2.createCollisionGroup();
+function config_physics_for_npcs(initialize = true) {
+    if (initialize) npcCollisionGroup = game.physics.p2.createCollisionGroup();
     for (let i = 0; i < npc_group.children.length; ++i) {
         let sprite = npc_group.children[i];
         if (!sprite.is_npc) continue;
@@ -147,14 +147,14 @@ function config_physics_for_npcs() {
 function config_physics_for_map(initialize = true) {
     if (initialize) {
         map_collider = game.add.sprite(0, 0);
-        game.physics.p2.enable(map_collider, false);
+        mapCollisionGroup = game.physics.p2.createCollisionGroup();
     }
+    game.physics.p2.enable(map_collider, false);
     map_collider.body.clearShapes();
     map_collider.body.loadPolygon(
         maps[map_name].physics_names[map_collider_layer], 
         maps[map_name].physics_names[map_collider_layer]
     );
-    mapCollisionGroup = game.physics.p2.createCollisionGroup();
     map_collider.body.setCollisionGroup(mapCollisionGroup);
     map_collider.body.damping = numbers.MAP_DAMPING;
     map_collider.body.angularDamping = numbers.MAP_DAMPING;
@@ -165,15 +165,14 @@ function config_physics_for_map(initialize = true) {
 
 function config_collisions() {
     hero.body.collides(mapCollisionGroup);
-    hero.body.collides(npcCollisionGroup);
+    map_collider.body.collides(heroCollisionGroup);
 
+    hero.body.collides(npcCollisionGroup);
     for (let i = 0; i < npc_group.children.length; ++i) {
         let sprite = npc_group.children[i];
         if (!sprite.is_npc) continue;
         sprite.body.collides(heroCollisionGroup);
     }
-
-    map_collider.body.collides(heroCollisionGroup);
 }
 
 function create() {
@@ -680,7 +679,7 @@ function door_event_phases() {
 
             game.physics.p2.resume();
 
-            config_physics_for_npcs();
+            config_physics_for_npcs(false);
             config_physics_for_map(false);
             config_collisions();
             game.physics.p2.updateBoundsCollisionGroup();
