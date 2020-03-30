@@ -28,9 +28,8 @@ var heroCollisionGroup;
 var npcCollisionGroup;
 var underlayer_group;
 var overlayer_group;
-var black_rect;
-var transtions_group;
 var npc_group;
+var window_group;
 var teleporting;
 var fading_out;
 var processing_teleport;
@@ -71,21 +70,10 @@ function config_groups_and_layers() {
     underlayer_group = game.add.group();
     npc_group = game.add.group();
     overlayer_group = game.add.group();
-    transtions_group = game.add.group();
+    window_group = game.add.group();
 
     //configing map layers: creating sprites, listing events and setting the layers
     maps[map_name].setLayers(game, maps, npc_db, map_name, underlayer_group, overlayer_group, map_collider_layer, npc_group);
-}
-
-function config_transitions_group() {
-    //configing black rectangle properties and adding to transitions_group
-    transtions_group.alpha = 0
-    black_rect = game.add.graphics(0, 0);
-    black_rect.lineStyle(0);
-    black_rect.beginFill(0x0, 1);
-    black_rect.drawRect(0, 0, numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
-    black_rect.endFill();
-    transtions_group.addChild(black_rect);
 }
 
 function config_hero() {
@@ -195,7 +183,6 @@ function create() {
     jumping = false;
 
     config_groups_and_layers();
-    config_transitions_group();
     config_hero();
     config_world_physics();
     config_physics_for_hero();
@@ -403,6 +390,12 @@ function update() {
 
         //organize layers on hero move
         npc_group.sort('y', Phaser.Group.SORT_ASCENDING);
+
+        //adjust windows position
+        for (let i = 0; i < window_group.children.length; ++i) {
+            let window_obj = window_group.children[i].window_object;
+            if (window_obj.need_pos_update) window_obj.update();
+        }
     } else {
         if (current_event.type === "stair")
             climb_event_animation_steps();
