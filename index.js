@@ -57,6 +57,8 @@ function preload() {
 
     game.time.advancedTiming = true;
     game.stage.smoothed = false;
+    game.camera.roundPx = false;
+    game.renderer.renderSession.roundPixels = false;
 
     game.load.image('shadow', 'assets/images/misc/shadow.png');
 }
@@ -80,11 +82,12 @@ function config_groups_and_layers() {
 function config_hero() {
     //creating sprites and adding hero and its shadow to npc_group
     shadow = npc_group.create(0, 0, 'shadow');
+    shadow.blendMode = PIXI.blendModes.MULTIPLY;
     shadow.anchor.setTo(numbers.SHADOW_X_AP, numbers.SHADOW_Y_AP); //shadow anchor point
     hero = npc_group.create(0, 0, utils.u([hero_name, actual_action]));
     hero.centerX = numbers.HERO_START_X; //hero x start position
     hero.centerY = numbers.HERO_START_Y; //hero y start position
-    game.camera.follow(hero); //makes camera follow the hero
+    game.camera.follow(hero, Phaser.Camera.FOLLOW_LOCKON, 0.8, 0.8); //makes camera follow the hero
     //config hero initial animation state
     main_char_list[hero_name].setAnimation(hero, actual_action);
     hero.animations.play(utils.u([actual_action, actual_direction]));
@@ -485,16 +488,17 @@ function change_hero_sprite() {
 
 function calculate_hero_speed() {
     if (actual_action === "dash") {
-        hero.body.velocity.x = delta_time * x_speed * (main_char_list[hero_name].dash_speed + extra_speed);
-        hero.body.velocity.y = delta_time * y_speed * (main_char_list[hero_name].dash_speed + extra_speed);
+        hero.body.velocity.x = parseInt(delta_time * x_speed * (main_char_list[hero_name].dash_speed + extra_speed));
+        hero.body.velocity.y = parseInt(delta_time * y_speed * (main_char_list[hero_name].dash_speed + extra_speed));
     } else if(actual_action === "walk") {
-        hero.body.velocity.x = delta_time * x_speed * (main_char_list[hero_name].walk_speed + extra_speed);
-        hero.body.velocity.y = delta_time * y_speed * (main_char_list[hero_name].walk_speed + extra_speed);
+        hero.body.velocity.x = parseInt(delta_time * x_speed * (main_char_list[hero_name].walk_speed + extra_speed));
+        hero.body.velocity.y = parseInt(delta_time * y_speed * (main_char_list[hero_name].walk_speed + extra_speed));
     } else if(actual_action === "climb") {
-        hero.body.velocity.x = delta_time * x_speed * main_char_list[hero_name].climb_speed;
-        hero.body.velocity.y = delta_time * y_speed * main_char_list[hero_name].climb_speed;
+        hero.body.velocity.x = parseInt(delta_time * x_speed * main_char_list[hero_name].climb_speed);
+        hero.body.velocity.y = parseInt(delta_time * y_speed * main_char_list[hero_name].climb_speed);
     } else if(actual_action === "idle")
         hero.body.velocity.y = hero.body.velocity.x = 0;
+
 }
 
 function set_actual_action() {
