@@ -2,6 +2,7 @@ import * as utils from './utils.js';
 import * as numbers from './magic_numbers.js';
 import { initializeMainChars, main_char_list } from './chars/main_char_list.js';
 import { initializeMaps, loadMaps, maps } from './maps/maps.js';
+import { Window } from './base/Window.js';
 
 var cursors;
 var hero;
@@ -29,7 +30,6 @@ var npcCollisionGroup;
 var underlayer_group;
 var overlayer_group;
 var npc_group;
-var window_group;
 var teleporting;
 var fading_out;
 var processing_teleport;
@@ -47,6 +47,7 @@ var game = new Phaser.Game(
     false, //transparent
     false //antialias
 );
+window.game = game;
 
 function preload() {
     initializeMainChars(game);
@@ -55,6 +56,7 @@ function preload() {
     get_npc_db().then(data => npc_db = data);
 
     game.time.advancedTiming = true;
+    game.stage.smoothed = false;
 
     game.load.image('shadow', 'assets/images/misc/shadow.png');
 }
@@ -70,7 +72,6 @@ function config_groups_and_layers() {
     underlayer_group = game.add.group();
     npc_group = game.add.group();
     overlayer_group = game.add.group();
-    window_group = game.add.group();
 
     //configing map layers: creating sprites, listing events and setting the layers
     maps[map_name].setLayers(game, maps, npc_db, map_name, underlayer_group, overlayer_group, map_collider_layer, npc_group);
@@ -233,6 +234,9 @@ function create() {
 
     //set keyboard cursors
     cursors = game.input.keyboard.createCursorKeys();
+
+    let win = new Window(game, 15, 15, 90, 30);
+    window.win = win;
 }
 
 function climbing_event() {
@@ -390,12 +394,6 @@ function update() {
 
         //organize layers on hero move
         npc_group.sort('y', Phaser.Group.SORT_ASCENDING);
-
-        //adjust windows position
-        for (let i = 0; i < window_group.children.length; ++i) {
-            let window_obj = window_group.children[i].window_object;
-            if (window_obj.need_pos_update) window_obj.update();
-        }
     } else {
         if (current_event.type === "stair")
             climb_event_animation_steps();

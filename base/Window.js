@@ -1,53 +1,151 @@
 import * as numbers from '../magic_numbers.js';
 
 export class Window {
-    constructor(game, group, x, y, width, height, need_pos_update = true, color = numbers.DEFAULT_WINDOW_COLOR, ) {
+    constructor(game, x, y, width, height, need_pos_update = true, color = numbers.DEFAULT_WINDOW_COLOR) {
         this.game = game;
-        this.group = group;
+        this.group = game.add.group();
         this.x = x;
         this.y = y;
-        this.rectangle = this.game.add.graphics(0, 0);
-        this.rectangle.beginFill(color, 1);
         this.width = width;
         this.height = height;
-        this.rectangle.drawRect(0, 0, this.width, this.height);
-        this.rectangle.endFill();
-        this.rectangle.alpha = 0;
-        this.rectangle.width = 0;
-        this.rectangle.height = 0;
-        this.rectangle.window_object = this;
+        this.color = color;
+        this.graphics = this.game.add.graphics(0, 0);
+
+        this.draw_background();
+        this.draw_borders();
+        this.group.add(this.graphics);
+
+        this.group.alpha = 0;
+        this.group.width = 0;
+        this.group.height = 0;
+        this.group.window_object = this;
         this.need_pos_update = need_pos_update;
     }
 
-    show() {
-        this.group.add(this.rectangle);
-        this.rectangle.alpha = 1;
-        this.rectangle.x = this.game.camera.x + this.x;
-        this.rectangle.y = this.game.camera.y + this.y;
-        this.transition_time = Phaser.Timer.QUARTER/3;
-        this.game.add.tween(this.rectangle).to(
-            { width: this.width, height: this.height },
+    draw_background() {
+        this.graphics.beginFill(this.color, 1);
+        this.graphics.drawRect(2, 2, this.width, this.height);
+        this.graphics.endFill();
+    }
+
+    draw_borders() {
+        //left
+        this.graphics.lineStyle(1, 0x525252);
+        this.graphics.moveTo(0, 1)
+        this.graphics.lineTo(0, this.height + 1);
+
+        this.graphics.lineStyle(1, 0xFFFFFF)
+        this.graphics.moveTo(1, 1)
+        this.graphics.lineTo(1, this.height + 1);
+
+        this.graphics.lineStyle(1, 0xA5A5A5)
+        this.graphics.moveTo(2, 1)
+        this.graphics.lineTo(2, this.height);
+
+        this.graphics.lineStyle(1, 0x111111)
+        this.graphics.moveTo(3, 3)
+        this.graphics.lineTo(3, this.height - 1);
+
+        //right
+        this.graphics.lineStyle(1, 0x525252)
+        this.graphics.moveTo(this.width, 2)
+        this.graphics.lineTo(this.width, this.height);
+        
+        this.graphics.lineStyle(1, 0xA5A5A5)
+        this.graphics.moveTo(this.width + 2, 1)
+        this.graphics.lineTo(this.width + 2, this.height + 1);
+        
+        this.graphics.lineStyle(1, 0xFFFFFF)
+        this.graphics.moveTo(this.width + 1, 1)
+        this.graphics.lineTo(this.width + 1, this.height);
+        
+        this.graphics.lineStyle(1, 0x111111)
+        this.graphics.moveTo(this.width + 3, 1)
+        this.graphics.lineTo(this.width + 3, this.height + 1);
+
+        //up
+        this.graphics.lineStyle(1, 0x525252)
+        this.graphics.moveTo(2, 0)
+        this.graphics.lineTo(this.width + 2, 0);
+
+        this.graphics.lineStyle(1, 0xFFFFFF)
+        this.graphics.moveTo(2, 1)
+        this.graphics.lineTo(this.width + 2, 1);
+
+        this.graphics.lineStyle(1, 0xA5A5A5)
+        this.graphics.moveTo(3, 2)
+        this.graphics.lineTo(this.width + 1, 2);
+
+        this.graphics.lineStyle(1, 0x111111)
+        this.graphics.moveTo(3, 3)
+        this.graphics.lineTo(this.width, 3);
+
+        //down
+        this.graphics.lineStyle(1, 0x525252)
+        this.graphics.moveTo(3, this.height)
+        this.graphics.lineTo(this.width, this.height);
+
+        this.graphics.lineStyle(1, 0xFFFFFF)
+        this.graphics.moveTo(2, this.height + 1)
+        this.graphics.lineTo(this.width + 2, this.height + 1);
+
+        this.graphics.lineStyle(1, 0xA5A5A5)
+        this.graphics.moveTo(2, this.height + 2)
+        this.graphics.lineTo(this.width + 2, this.height + 2);
+
+        this.graphics.lineStyle(1, 0x111111)
+        this.graphics.moveTo(2, this.height + 3)
+        this.graphics.lineTo(this.width + 2, this.height + 3);
+
+        //corners
+        this.graphics.lineStyle(1, 0x525252);
+        this.graphics.moveTo(1, 1)
+        this.graphics.lineTo(2, 2);
+
+        this.graphics.lineStyle(1, 0x525252);
+        this.graphics.moveTo(1, this.height + 2)
+        this.graphics.lineTo(2, this.height + 3);
+
+        this.graphics.lineStyle(1, 0x525252);
+        this.graphics.moveTo(this.width + 2, this.height + 2)
+        this.graphics.lineTo(this.width + 3, this.height + 3);
+
+        this.graphics.lineStyle(1, 0x525252);
+        this.graphics.moveTo(this.width + 2, 1)
+        this.graphics.lineTo(this.width + 3, 2);
+    }
+
+    show(show_callback) {
+        this.group.alpha = 1;
+        this.group.x = this.game.camera.x + this.x;
+        this.group.y = this.game.camera.y + this.y;
+        this.transition_time = Phaser.Timer.QUARTER/4;
+        this.game.add.tween(this.group).to(
+            { width: this.graphics.width, height: this.graphics.height },
             this.transition_time,
             Phaser.Easing.Linear.None,
             true
         );
+        this.game.time.events.add(this.transition_time + 50, () => {
+            if (show_callback !== undefined) show_callback();
+        });
     }
 
     update() {
-        this.rectangle.x = this.game.camera.x + this.x;
-        this.rectangle.y = this.game.camera.y + this.y;
+        this.group.x = this.game.camera.x + this.x;
+        this.group.y = this.game.camera.y + this.y;
     }
 
-    destroy() {
-        this.game.add.tween(this.rectangle).to(
+    destroy(destroy_callback) {
+        this.game.add.tween(this.group).to(
             { width: 0, height: 0 },
             this.transition_time,
             Phaser.Easing.Linear.None,
             true
         );
         this.game.time.events.add(this.transition_time + 50, () => { 
-            this.group.removeChild(this.rectangle);
-            this.rectangle.destroy();
+            this.group.destroy();
+            if (destroy_callback !== undefined) destroy_callback();
         }, this);
         
     }

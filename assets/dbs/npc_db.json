@@ -9,6 +9,12 @@
                 "frames_count": [6],
                 "initial_direction": "down"
             }
+        },
+        "event": {
+            "type": "talk",
+            "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "avatar": "",
+            "voice_type": 0
         }
     }
 }
