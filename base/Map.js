@@ -40,9 +40,16 @@ export class Map {
             maps[map_name].sprite.tilesets[0].tileProperties[tile_index].index = tile_index;
         }
 
-        for (let property in this.sprite.properties) {
+        let properties = this.sprite.properties;
+        if (Array.isArray(properties)) { //dealing with newer versions of tiledmap editor
+            properties = properties.reduce((map, obj) => {
+                map[obj.name] = obj.value;
+                return map;
+            }, {});
+        }
+        for (let property in properties) {
             if (property.startsWith("event")) { //check for events
-                const property_info = this.sprite.properties[property].split(",");
+                const property_info = properties[property].split(",");
                 if (property_info[0] == "stair") {
                     this.events[u([property_info[1], property_info[2]])] = {
                         type : property_info[0],
@@ -78,18 +85,18 @@ export class Map {
                         collider_layer : property_info.length == 5 ? parseInt(property_info[4]) : 0
                     }
                 } 
-            } else if (property.startsWith("npc")) {
-                const property_info = this.sprite.properties[property].split(",");
+            } else if(property.startsWith("npc")) {
+                const property_info = JSON.parse(properties[property]);
                 this.npcs.push({
-                    type: property_info[0],
-                    key_name: property_info[1],
-                    initial_x: parseInt(property_info[2]),
-                    initial_y: parseInt(property_info[3]),
-                    npc_type: parseInt(property_info[4]), //0 - normal, 1- inn, 2 - weapon shop...
-                    movement_type: parseInt(property_info[5]), //0 - idle
-                    message: property_info[6],
-                    thought_message: property_info[7],
-                    trigger_event: property_info.length == 9 ? parseInt(property_info[8]) : 0
+                    type: property_info.type,
+                    key_name: property_info.key_name,
+                    initial_x: property_info.initial_x,
+                    initial_y: property_info.initial_y,
+                    npc_type: property_info.npc_type, //0 - normal, 1- inn, 2 - weapon shop...
+                    movement_type: property_info.movement_type, //0 - idle
+                    message: property_info.message,
+                    thought_message: property_info.thought_message,
+                    avatar: property_info.avatar ? property_info.avatar : null
                 });
             }
         }
@@ -101,11 +108,18 @@ export class Map {
 
         for (let i = 0; i < layers.length; ++i) {
             let layer = this.sprite.createLayer(layers[i].name);
+            let layer_properties = layers[i].properties;
+            if (Array.isArray(layer_properties)) { //dealing with newer versions of tiledmap editor
+                layer_properties = layer_properties.reduce((map, obj) => {
+                    map[obj.name] = obj.value;
+                    return map;
+                }, {});
+            }
             layer.resizeWorld();
-            layer.blendMode = PIXI.blendModes[layers[i].properties.blendMode];
+            layer.blendMode = PIXI.blendModes[layer_properties.blendMode];
             layer.alpha = layers[i].alpha;
 
-            let is_over = layers[i].properties.over.toString().split(",");
+            let is_over = layer_properties.over.toString().split(",");
             is_over = is_over.length > collider_layer ? parseInt(is_over[collider_layer]) : parseInt(is_over[0]);
             if (is_over != 0)
                 overlayer_group.add(layer);
