@@ -2,7 +2,8 @@ import * as utils from './utils.js';
 import * as numbers from './magic_numbers.js';
 import { initializeMainChars, main_char_list } from './chars/main_char_list.js';
 import { initializeMaps, loadMaps, maps } from './maps/maps.js';
-import { Window } from './base/Window.js';
+import { Window, DialogManager } from './base/Window.js';
+import { NPC }from './base/NPC.js';
 
 var cursors;
 var hero;
@@ -37,6 +38,11 @@ var delta_time;
 var jumping;
 var show_fps;
 var npc_db;
+var npc_event;
+var active_npc;
+var waiting_for_enter_press;
+var dialog_manager;
+var in_dialog;
 
 var game = new Phaser.Game(
     numbers.GAME_WIDTH, //width
@@ -167,6 +173,44 @@ function config_collisions() {
     }
 }
 
+function enter_key_event() {
+    if (!in_dialog) {
+        for (let i = 0; i < maps[map_name].npcs.length; ++i) {
+            let npc = maps[map_name].npcs[i];
+            let npc_tile_x = Math.floor(npc.npc_sprite.x/maps[map_name].sprite.tileWidth);
+            let npc_tile_y = Math.floor(npc.npc_sprite.y/maps[map_name].sprite.tileHeight);
+            let nearby_tiles = utils.get_nearby(
+                actual_direction,
+                hero_tile_pos_x,
+                hero_tile_pos_y,
+                maps[map_name].sprite.tileWidth,
+                maps[map_name].sprite.tileHeight,
+                numbers.NPC_TALK_RANGE
+            );
+            for (let j = 0; j < nearby_tiles.length; ++j) {
+                let pos = nearby_tiles[j];
+                if (pos.x === npc_tile_x && pos.y === npc_tile_y) {
+                    npc_event = true;
+                    active_npc = npc;
+                    break;
+                }
+                if (npc_event) break;
+            }
+        }
+    } else if (in_dialog && waiting_for_enter_press) {
+        waiting_for_enter_press = false;
+        dialog_manager.next(() => {
+            if (dialog_manager.finished) {
+                in_dialog = false;
+                dialog_manager = null;
+                npc_event = false;
+            } else {
+                waiting_for_enter_press = true;
+            }
+        });
+    }
+}
+
 function create() {
     // Initializing some vars
     hero_name = "isaac";
@@ -185,6 +229,11 @@ function create() {
     fading_out = false;
     processing_teleport = false;
     jumping = false;
+    npc_event = false;
+    active_npc = null;
+    waiting_for_enter_press = false;
+    dialog_manager = null;
+    in_dialog = false;
 
     config_groups_and_layers();
     config_hero();
@@ -235,11 +284,11 @@ function create() {
         window.dispatchEvent(new Event('resize'));
     }, this);
 
+    //enable enter event
+    game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(enter_key_event, this);
+
     //set keyboard cursors
     cursors = game.input.keyboard.createCursorKeys();
-
-    let win = new Window(game, 15, 15, 90, 30);
-    window.win = win;
 }
 
 function climbing_event() {
@@ -360,7 +409,7 @@ function event_triggering() {
 }
 
 function update() {
-    if (!on_event) {
+    if (!on_event && !npc_event) {
         hero_tile_pos_x = Math.floor(hero.x/maps[map_name].sprite.tileWidth);
         hero_tile_pos_y = Math.floor(hero.y/maps[map_name].sprite.tileHeight);
 
@@ -397,13 +446,18 @@ function update() {
 
         //organize layers on hero move
         npc_group.sort('y', Phaser.Group.SORT_ASCENDING);
-    } else {
+    } else if (on_event) {
         if (current_event.type === "stair")
             climb_event_animation_steps();
         else if (current_event.type === "door")
             door_event_phases();
         else if (jumping)
             jump_event();
+
+        //disabling hero body movement
+        hero.body.velocity.y = hero.body.velocity.x = 0;
+    } else if (npc_event) {
+        set_npc_event();
 
         //disabling hero body movement
         hero.body.velocity.y = hero.body.velocity.x = 0;
@@ -415,6 +469,21 @@ function render() {
         game.debug.text('FPS: ' + game.time.fps || 'FPS: --', 5, 15, "#00ff00");
     else
         game.debug.text('', 0, 0);
+}
+
+function set_npc_event () {
+    if (!waiting_for_enter_press) {
+        if (!in_dialog && active_npc.npc_type === NPC.types.NORMAL) {
+            const reg = new RegExp(`.{${numbers.MAX_CHARS_PER_WINDOW}}\w*|.*`, "g");
+            let parts = active_npc.message.match(reg).map(part => part.trim());
+            parts = parts.filter(part => part);
+            dialog_manager = new DialogManager(game, parts);
+            in_dialog = true;
+            dialog_manager.next(() => {
+                waiting_for_enter_press = true;
+            });
+        }
+    }
 }
 
 function climb_event_animation_steps() {

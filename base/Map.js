@@ -1,6 +1,6 @@
 import { u } from "../utils.js";
 import { NPC_IDLE } from '../config.js';
-import { NPC } from './NPC.js';
+import { NPC_Sprite, NPC } from './NPC.js';
 
 export class Map {
     constructor (
@@ -87,17 +87,17 @@ export class Map {
                 } 
             } else if(property.startsWith("npc")) {
                 const property_info = JSON.parse(properties[property]);
-                this.npcs.push({
-                    type: property_info.type,
-                    key_name: property_info.key_name,
-                    initial_x: property_info.initial_x,
-                    initial_y: property_info.initial_y,
-                    npc_type: property_info.npc_type, //0 - normal, 1- inn, 2 - weapon shop...
-                    movement_type: property_info.movement_type, //0 - idle
-                    message: property_info.message,
-                    thought_message: property_info.thought_message,
-                    avatar: property_info.avatar ? property_info.avatar : null
-                });
+                this.npcs.push(new NPC(
+                    property_info.type,
+                    property_info.key_name,
+                    property_info.initial_x,
+                    property_info.initial_y,
+                    property_info.npc_type,
+                    property_info.movement_type,
+                    property_info.message,
+                    property_info.thought_message,
+                    property_info.avatar ? property_info.avatar : null
+                ));
             }
         }
 
@@ -132,7 +132,7 @@ export class Map {
             let actions = [];
             if (npc_info.npc_type == NPC_IDLE)
                 actions = ['idle'];
-            let npc = new NPC(npc_info.key_name, actions);
+            let npc = new NPC_Sprite(npc_info.key_name, actions);
             for (let j = 0; j < actions.length; j++) {
                 const action = actions[j];
                 npc.setActionSpritesheet(
@@ -151,10 +151,11 @@ export class Map {
             await new Promise((resolve) => {
                 npc.loadSpritesheets(game, true, () => {
                     const initial_action = npc_db[npc_info.key_name].initial_action;
-                    npc_info.npc_sprite = npc_group.create(0, 0, u([
+                    let npc_sprite = npc_group.create(0, 0, u([
                         npc_info.key_name,
                         initial_action
                     ]));
+                    npc_info.set_sprite(npc_sprite);
                     npc_info.npc_sprite.is_npc = true;
                     npc_info.npc_sprite.centerX = npc_info.initial_x * this.sprite.tileWidth;
                     npc_info.npc_sprite.centerY = npc_info.initial_y * this.sprite.tileWidth;

@@ -20,6 +20,7 @@ export class Window {
         this.group.height = 0;
         this.group.window_object = this;
         this.need_pos_update = need_pos_update;
+        this.open = false;
     }
 
     draw_background() {
@@ -31,87 +32,87 @@ export class Window {
     draw_borders() {
         //left
         this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(0, 1)
+        this.graphics.moveTo(0, 1);
         this.graphics.lineTo(0, this.height + 1);
 
         this.graphics.lineStyle(1, 0xFFFFFF)
-        this.graphics.moveTo(1, 1)
+        this.graphics.moveTo(1, 1);
         this.graphics.lineTo(1, this.height + 1);
 
         this.graphics.lineStyle(1, 0xA5A5A5)
-        this.graphics.moveTo(2, 1)
+        this.graphics.moveTo(2, 1);
         this.graphics.lineTo(2, this.height);
 
         this.graphics.lineStyle(1, 0x111111)
-        this.graphics.moveTo(3, 3)
+        this.graphics.moveTo(3, 3);
         this.graphics.lineTo(3, this.height - 1);
 
         //right
         this.graphics.lineStyle(1, 0x525252)
-        this.graphics.moveTo(this.width, 2)
+        this.graphics.moveTo(this.width, 2);
         this.graphics.lineTo(this.width, this.height);
         
         this.graphics.lineStyle(1, 0xA5A5A5)
-        this.graphics.moveTo(this.width + 2, 1)
+        this.graphics.moveTo(this.width + 2, 1);
         this.graphics.lineTo(this.width + 2, this.height + 1);
         
         this.graphics.lineStyle(1, 0xFFFFFF)
-        this.graphics.moveTo(this.width + 1, 1)
+        this.graphics.moveTo(this.width + 1, 1);
         this.graphics.lineTo(this.width + 1, this.height);
         
         this.graphics.lineStyle(1, 0x111111)
-        this.graphics.moveTo(this.width + 3, 1)
+        this.graphics.moveTo(this.width + 3, 1);
         this.graphics.lineTo(this.width + 3, this.height + 1);
 
         //up
         this.graphics.lineStyle(1, 0x525252)
-        this.graphics.moveTo(2, 0)
+        this.graphics.moveTo(2, 0);
         this.graphics.lineTo(this.width + 2, 0);
 
         this.graphics.lineStyle(1, 0xFFFFFF)
-        this.graphics.moveTo(2, 1)
+        this.graphics.moveTo(2, 1);
         this.graphics.lineTo(this.width + 2, 1);
 
         this.graphics.lineStyle(1, 0xA5A5A5)
-        this.graphics.moveTo(3, 2)
+        this.graphics.moveTo(3, 2);
         this.graphics.lineTo(this.width + 1, 2);
 
         this.graphics.lineStyle(1, 0x111111)
-        this.graphics.moveTo(3, 3)
+        this.graphics.moveTo(3, 3);
         this.graphics.lineTo(this.width, 3);
 
         //down
         this.graphics.lineStyle(1, 0x525252)
-        this.graphics.moveTo(3, this.height)
+        this.graphics.moveTo(3, this.height);
         this.graphics.lineTo(this.width, this.height);
 
         this.graphics.lineStyle(1, 0xFFFFFF)
-        this.graphics.moveTo(2, this.height + 1)
+        this.graphics.moveTo(2, this.height + 1);
         this.graphics.lineTo(this.width + 2, this.height + 1);
 
         this.graphics.lineStyle(1, 0xA5A5A5)
-        this.graphics.moveTo(2, this.height + 2)
+        this.graphics.moveTo(2, this.height + 2);
         this.graphics.lineTo(this.width + 2, this.height + 2);
 
         this.graphics.lineStyle(1, 0x111111)
-        this.graphics.moveTo(2, this.height + 3)
+        this.graphics.moveTo(2, this.height + 3);
         this.graphics.lineTo(this.width + 2, this.height + 3);
 
         //corners
         this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(1, 1)
+        this.graphics.moveTo(1, 1);
         this.graphics.lineTo(2, 2);
 
         this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(1, this.height + 2)
+        this.graphics.moveTo(1, this.height + 2);
         this.graphics.lineTo(2, this.height + 3);
 
         this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(this.width + 2, this.height + 2)
+        this.graphics.moveTo(this.width + 2, this.height + 2);
         this.graphics.lineTo(this.width + 3, this.height + 3);
 
         this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(this.width + 2, 1)
+        this.graphics.moveTo(this.width + 2, 1);
         this.graphics.lineTo(this.width + 3, 2);
     }
 
@@ -120,6 +121,7 @@ export class Window {
         this.group.x = this.game.camera.x + this.x;
         this.group.y = this.game.camera.y + this.y;
         this.transition_time = Phaser.Timer.QUARTER/4;
+        this.open = true;
         this.game.add.tween(this.group).to(
             { width: this.graphics.width, height: this.graphics.height },
             this.transition_time,
@@ -136,17 +138,50 @@ export class Window {
         this.group.y = this.game.camera.y + this.y;
     }
 
-    destroy(destroy_callback) {
-        this.game.add.tween(this.group).to(
-            { width: 0, height: 0 },
-            this.transition_time,
-            Phaser.Easing.Linear.None,
-            true
-        );
-        this.game.time.events.add(this.transition_time + 50, () => { 
+    set_text(text) {
+        
+    }
+
+    destroy(animate, destroy_callback) {
+        let on_destroy = () => { 
             this.group.destroy();
             if (destroy_callback !== undefined) destroy_callback();
-        }, this);
+        }
+        if (animate) {
+            this.game.add.tween(this.group).to(
+                { width: 0, height: 0 },
+                this.transition_time,
+                Phaser.Easing.Linear.None,
+                true
+            );
+            this.game.time.events.add(this.transition_time + 50, on_destroy, this);
+        } else {
+            on_destroy();
+        }
         
+    }
+}
+
+export class DialogManager {
+    constructor(game, parts) {
+        this.game = game;
+        this.parts = parts;
+        this.step = 0;
+        this.finished = false;
+    }
+
+    next(callback) {
+        if (this.step >= this.parts.length) {
+            this.finished = true;
+            this.window.destroy(true, callback);
+            return;
+        }
+        if (this.window) {
+            this.window.destroy(false);
+        }
+        this.window = new Window(this.game, 10, 10, 100, 100, false);
+        this.window.set_text(this.parts[this.step]);
+        this.window.show(callback);
+        ++(this.step);
     }
 }

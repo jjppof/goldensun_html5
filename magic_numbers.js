@@ -23,3 +23,5 @@ export const HERO_DAMPING = 0;
 export const MAP_DAMPING = 1;
 export const NPC_DAMPING = 1;
 export const DEFAULT_WINDOW_COLOR = 0x006080;
+export const NPC_TALK_RANGE = 3.5;
+export const MAX_CHARS_PER_WINDOW = 57;
