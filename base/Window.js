@@ -1,4 +1,5 @@
 import * as numbers from '../magic_numbers.js';
+import * as utils from '../utils.js';
 
 export class Window {
     constructor(game, x, y, width, height, need_pos_update = true, color = numbers.DEFAULT_WINDOW_COLOR) {
@@ -139,7 +140,31 @@ export class Window {
     }
 
     set_text(text) {
+        const line_numbers = Math.ceil((text.length * numbers.CHAR_MAX_WIDTH)/(this.width - 2 * numbers.WINDOW_PADDING));
+        let lines = utils.array_split(text.split(' '), line_numbers).map(chunk => chunk.join(' '));
+        const x_pos = parseInt(Math.round(this.x + numbers.WINDOW_PADDING));
+        const y_pos = parseInt(Math.round(this.y));
+        let config = {
+            font: "golden_sunregular",
+            fontStyle: "italic",
+            fontVariant: "",
+            fontSize: numbers.FONT_SIZE,
+            fill: "white",
+            align: "left"
+        };
+        let text_sprite = this.game.add.text(x_pos, y_pos, lines.join('\n'), config);
+        config.fill = "black";
+        let text_sprite_shadow = this.game.add.text(x_pos+1, y_pos+1, lines.join('\n'), config);
+
+        text_sprite.smoothed = false;
+        text_sprite_shadow.smoothed = false;
+        text_sprite.autoRound = true;
+        text_sprite_shadow.autoRound = true;
+        text_sprite.texture.baseTexture.scaleMode = PIXI.scaleModes.NEAREST;
+        text_sprite_shadow.texture.baseTexture.scaleMode = PIXI.scaleModes.NEAREST;
         
+        this.group.add(text_sprite_shadow);
+        this.group.add(text_sprite);
     }
 
     destroy(animate, destroy_callback) {
@@ -179,7 +204,7 @@ export class DialogManager {
         if (this.window) {
             this.window.destroy(false);
         }
-        this.window = new Window(this.game, 10, 10, 100, 100, false);
+        this.window = new Window(this.game, 10, 10, 150, 70, false);
         this.window.set_text(this.parts[this.step]);
         this.window.show(callback);
         ++(this.step);

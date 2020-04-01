@@ -25,3 +25,6 @@ export const NPC_DAMPING = 1;
 export const DEFAULT_WINDOW_COLOR = 0x006080;
 export const NPC_TALK_RANGE = 3.5;
 export const MAX_CHARS_PER_WINDOW = 57;
+export const FONT_SIZE = "8px";
+export const CHAR_MAX_WIDTH = 7;
+export const WINDOW_PADDING = 4;
