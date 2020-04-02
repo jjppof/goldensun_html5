@@ -152,9 +152,8 @@ export class Window {
     }
 
     set_text(text) {
-        const line_numbers = Math.ceil((text.length * numbers.CHAR_MAX_WIDTH)/(this.width - 2 * numbers.WINDOW_PADDING));
-        let lines = utils.array_split(text.split(' '), line_numbers).map(chunk => chunk.join(' '));
-        const x_pos = parseInt(Math.round(this.x + numbers.WINDOW_PADDING));
+        let lines = utils.split_msg(this.game, text.split(' '), this.width).map(chunk => chunk.join(' '));
+        const x_pos = parseInt(Math.round(this.x + numbers.WINDOW_PADDING_H));
         let y_pos = parseInt(Math.round(this.y));
 
         for (let i = 0; i < lines.length; ++i) {
@@ -212,8 +211,10 @@ export class DialogManager {
         if (this.window) {
             this.window.destroy(false);
         }
-        this.window = new Window(this.game, 10, 10, 150, 70, false);
-        this.window.set_text(this.parts[this.step]);
+        let text = this.parts[this.step];
+        let hint = utils.get_window_size_hint(this.game, text);
+        this.window = new Window(this.game, numbers.WINDOW_PADDING_H, numbers.WINDOW_PADDING_V, hint.width, hint.height, false);
+        this.window.set_text(text);
         this.window.show(callback);
         ++(this.step);
     }

@@ -164,10 +164,39 @@ export const transitions = {
     },
 };
 
-export function array_split(array, parts) {
+export function split_msg(game, words, win_width) {
     let result = [];
-    for (let i = parts; i > 0; --i) {
-        result.push(array.splice(0, Math.ceil(array.length / i)));
+    let actual_width = win_width - 2 * numbers.WINDOW_PADDING_H - numbers.INSIDE_BORDER_WIDTH;
+    let bucket = [], width = 0;
+    for (let i = 0; i < words.length; ++i) {
+        let whitespace = i + 1 === words.length ? "" : " ";
+        let text = game.add.bitmapText(0, 0, 'gs-bmp-font', words[i] + whitespace, numbers.FONT_SIZE);
+        const this_width = text.width;
+        width += this_width;
+        text.destroy();
+        if (width >= actual_width && i + 1 < words.length) {
+            result.push(bucket);
+            bucket = [words[i]];
+            width = this_width;
+        } else {
+            bucket.push(words[i]);
+        }
     }
+    if (bucket.length) result.push(bucket);
     return result;
+}
+
+export function get_window_size_hint(game, text) {
+    let text_sprite = game.add.bitmapText(0, 0, 'gs-bmp-font', text, numbers.FONT_SIZE);
+    const text_width = text_sprite.width;
+    text_sprite.destroy();
+    const MAX_EFECTIVE_WIDTH = numbers.MAX_DIAG_WIN_WIDTH - 2 * numbers.WINDOW_PADDING_H - numbers.INSIDE_BORDER_WIDTH;
+    let actual_width;
+    if (text_width > MAX_EFECTIVE_WIDTH)
+        actual_width = numbers.MAX_DIAG_WIN_WIDTH;
+    else
+        actual_width = text_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH;
+    const line_number = split_msg(game, text.split(' '), actual_width).length;
+    const actual_height = 2 * numbers.WINDOW_PADDING_V + line_number * (numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES) - numbers.SPACE_BETWEEN_LINES;
+    return {width: actual_width, height: actual_height};
 }

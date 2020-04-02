@@ -475,8 +475,22 @@ function render() {
 function set_npc_event () {
     if (!waiting_for_enter_press) {
         if (!in_dialog && active_npc.npc_type === NPC.types.NORMAL) {
-            const reg = new RegExp(`.{${numbers.MAX_CHARS_PER_WINDOW}}\w*|.*`, "g");
-            let parts = active_npc.message.match(reg).map(part => part.trim());
+            let message = active_npc.message;
+            let parts = [];
+            while (true) {
+                if (message.length <= numbers.MAX_CHARS_PER_WINDOW) {
+                    parts.push(message.trim());
+                    break;
+                }
+                let sliced = message.slice(0, numbers.MAX_CHARS_PER_WINDOW);
+                let next = numbers.MAX_CHARS_PER_WINDOW;
+                while (next - 1 >= 0 && sliced[next - 1] !== " ") {
+                    --next;
+                }
+                sliced = message.slice(0, next).trim();
+                parts.push(sliced);
+                message = message.slice(next);
+            }
             parts = parts.filter(part => part);
             dialog_manager = new DialogManager(game, parts);
             in_dialog = true;
