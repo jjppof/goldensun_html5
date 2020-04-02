@@ -152,8 +152,8 @@ export class Window {
     }
 
     set_text(lines) {
-        const x_pos = parseInt(Math.round(this.x + numbers.WINDOW_PADDING_H));
-        let y_pos = parseInt(Math.round(this.y));
+        const x_pos = numbers.WINDOW_PADDING_H + 4;
+        let y_pos = numbers.WINDOW_PADDING_TOP;
         for (let i = 0; i < lines.length; ++i) {
             let line = lines[i];
             let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', line, numbers.FONT_SIZE);
@@ -193,11 +193,12 @@ export class Window {
 }
 
 export class DialogManager {
-    constructor(game, parts) {
+    constructor(game, parts, hero_direction) {
         this.game = game;
         this.parts = parts;
         this.step = 0;
         this.finished = false;
+        this.hero_direction = hero_direction;
     }
 
     next(callback) {
@@ -209,7 +210,12 @@ export class DialogManager {
         if (this.window) {
             this.window.destroy(false);
         }
-        this.window = new Window(this.game, numbers.WINDOW_PADDING_H, numbers.WINDOW_PADDING_TOP, this.parts[this.step].width, this.parts[this.step].height, false);
+        let x = Math.floor((numbers.GAME_WIDTH - this.parts[this.step].width)/2);
+        let y = Math.floor((numbers.MAX_DIAG_WIN_HEIGHT - this.parts[this.step].height)/2);
+        if (!this.hero_direction.includes('up')) {
+            y = numbers.GAME_HEIGHT - (numbers.MAX_DIAG_WIN_HEIGHT + 4) + y;
+        } 
+        this.window = new Window(this.game, x, y, this.parts[this.step].width, this.parts[this.step].height, false);
         this.window.set_text(this.parts[this.step].lines);
         this.window.show(callback);
         ++(this.step);

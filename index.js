@@ -476,7 +476,7 @@ function set_npc_event () {
     if (!waiting_for_enter_press) {
         if (!in_dialog && active_npc.npc_type === NPC.types.NORMAL) {
             let parts = utils.set_dialog(game, active_npc.message);
-            dialog_manager = new DialogManager(game, parts);
+            dialog_manager = new DialogManager(game, parts, actual_direction);
             in_dialog = true;
             dialog_manager.next(() => {
                 waiting_for_enter_press = true;
