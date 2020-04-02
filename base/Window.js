@@ -151,11 +151,9 @@ export class Window {
         this.group.y = this.game.camera.y + this.y;
     }
 
-    set_text(text) {
-        let lines = utils.split_msg(this.game, text.split(' '), this.width).map(chunk => chunk.join(' '));
+    set_text(lines) {
         const x_pos = parseInt(Math.round(this.x + numbers.WINDOW_PADDING_H));
         let y_pos = parseInt(Math.round(this.y));
-
         for (let i = 0; i < lines.length; ++i) {
             let line = lines[i];
             let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', line, numbers.FONT_SIZE);
@@ -211,10 +209,8 @@ export class DialogManager {
         if (this.window) {
             this.window.destroy(false);
         }
-        let text = this.parts[this.step];
-        let hint = utils.get_window_size_hint(this.game, text);
-        this.window = new Window(this.game, numbers.WINDOW_PADDING_H, numbers.WINDOW_PADDING_V, hint.width, hint.height, false);
-        this.window.set_text(text);
+        this.window = new Window(this.game, numbers.WINDOW_PADDING_H, numbers.WINDOW_PADDING_TOP, this.parts[this.step].width, this.parts[this.step].height, false);
+        this.window.set_text(this.parts[this.step].lines);
         this.window.show(callback);
         ++(this.step);
     }
