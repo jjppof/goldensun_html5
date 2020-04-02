@@ -67,6 +67,7 @@ function preload() {
     game.renderer.renderSession.roundPixels = false;
 
     game.load.image('shadow', 'assets/images/misc/shadow.png');
+    game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
 }
 
 async function get_npc_db() {

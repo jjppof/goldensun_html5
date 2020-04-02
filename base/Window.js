@@ -46,7 +46,7 @@ export class Window {
 
         this.graphics.lineStyle(1, 0x111111)
         this.graphics.moveTo(3, 3);
-        this.graphics.lineTo(3, this.height - 1);
+        this.graphics.lineTo(3, this.height);
 
         //right
         this.graphics.lineStyle(1, 0x525252)
@@ -84,7 +84,7 @@ export class Window {
 
         //down
         this.graphics.lineStyle(1, 0x525252)
-        this.graphics.moveTo(3, this.height);
+        this.graphics.moveTo(4, this.height);
         this.graphics.lineTo(this.width, this.height);
 
         this.graphics.lineStyle(1, 0xFFFFFF)
@@ -115,6 +115,18 @@ export class Window {
         this.graphics.lineStyle(1, 0x525252);
         this.graphics.moveTo(this.width + 2, 1);
         this.graphics.lineTo(this.width + 3, 2);
+
+        this.graphics.lineStyle(1, 0x111111);
+        this.graphics.moveTo(4, 4);
+        this.graphics.lineTo(5, 5);
+
+        this.graphics.lineStyle(1, 0x525252);
+        this.graphics.moveTo(3, 3);
+        this.graphics.lineTo(4, 4);
+
+        this.graphics.lineStyle(1, 0x525252);
+        this.graphics.moveTo(this.width - 1, this.height - 1);
+        this.graphics.lineTo(this.width, this.height);
     }
 
     show(show_callback) {
@@ -143,28 +155,24 @@ export class Window {
         const line_numbers = Math.ceil((text.length * numbers.CHAR_MAX_WIDTH)/(this.width - 2 * numbers.WINDOW_PADDING));
         let lines = utils.array_split(text.split(' '), line_numbers).map(chunk => chunk.join(' '));
         const x_pos = parseInt(Math.round(this.x + numbers.WINDOW_PADDING));
-        const y_pos = parseInt(Math.round(this.y));
-        let config = {
-            font: "golden_sunregular",
-            fontStyle: "italic",
-            fontVariant: "",
-            fontSize: numbers.FONT_SIZE,
-            fill: "white",
-            align: "left"
-        };
-        let text_sprite = this.game.add.text(x_pos, y_pos, lines.join('\n'), config);
-        config.fill = "black";
-        let text_sprite_shadow = this.game.add.text(x_pos+1, y_pos+1, lines.join('\n'), config);
+        let y_pos = parseInt(Math.round(this.y));
 
-        text_sprite.smoothed = false;
-        text_sprite_shadow.smoothed = false;
-        text_sprite.autoRound = true;
-        text_sprite_shadow.autoRound = true;
-        text_sprite.texture.baseTexture.scaleMode = PIXI.scaleModes.NEAREST;
-        text_sprite_shadow.texture.baseTexture.scaleMode = PIXI.scaleModes.NEAREST;
-        
-        this.group.add(text_sprite_shadow);
-        this.group.add(text_sprite);
+        for (let i = 0; i < lines.length; ++i) {
+            let line = lines[i];
+            let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', line, numbers.FONT_SIZE);
+            let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, 'gs-bmp-font', line, numbers.FONT_SIZE);
+
+            y_pos += numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES;
+
+            text_sprite.smoothed = false;
+            text_sprite.autoRound = true;
+            text_sprite_shadow.smoothed = false;
+            text_sprite_shadow.autoRound = true;
+            text_sprite_shadow.tint = 0x0;
+
+            this.group.add(text_sprite_shadow);
+            this.group.add(text_sprite);
+        }
     }
 
     destroy(animate, destroy_callback) {
