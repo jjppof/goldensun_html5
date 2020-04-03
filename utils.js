@@ -164,48 +164,13 @@ export const transitions = {
     },
 };
 
+export function get_transition_directions(actual_direction, desired_direction){
+    return transitions[desired_direction][actual_direction];
+}
+
 export function get_text_width(game, text) { //get text width in px
     let text_sprite = game.add.bitmapText(0, 0, 'gs-bmp-font', text, numbers.FONT_SIZE);
     const text_width = text_sprite.width;
     text_sprite.destroy();
     return text_width;
-}
-
-export function set_dialog(game, text) {
-    const max_efective_width = numbers.MAX_DIAG_WIN_WIDTH - 2 * numbers.WINDOW_PADDING_H - numbers.INSIDE_BORDER_WIDTH;
-    let words = text.split(' ');
-    let windows = [];
-    let lines = [];
-    let line = [];
-    let line_width = 0;
-    let window_width = max_efective_width;
-    for (let i = 0; i < words.length; ++i) {
-        const word = words[i];
-        line_width = get_text_width(game, line.join(' ') + word);
-        if (line_width >= window_width) { // check if it's the end of the line
-            lines.push(line.join(' '));
-            line = [];
-            line.push(word);
-            line_width = get_text_width(game, word);
-            if (lines.length === numbers.MAX_LINES_PER_DIAG_WIN) { // check if it's the end of the window
-                windows.push({
-                    lines: lines.slice(),
-                    width: window_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH,
-                    height: numbers.WINDOW_PADDING_TOP + numbers.WINDOW_PADDING_BOTTOM + lines.length * (numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES) - numbers.SPACE_BETWEEN_LINES
-                });
-                lines = [];
-            }
-        } else {
-            line.push(word);
-        }
-    }
-    if (line.length) { //deal with the last window that does not have 3 lines
-        lines.push(line.join(' '));
-        windows.push({
-            lines: lines.slice(),
-            width: line_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH + 2,
-            height: numbers.WINDOW_PADDING_TOP + numbers.WINDOW_PADDING_BOTTOM + lines.length * (numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES) - numbers.SPACE_BETWEEN_LINES
-        });
-    };
-    return windows;
 }

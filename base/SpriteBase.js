@@ -66,7 +66,7 @@ export class SpriteBase {
         for (let key in directions) {
             const direction = directions[key];
             sprite.animations.add(
-                u([action, direction]), 
+                action + "_" + direction, 
                 this.animations[action][direction], 
                 frame_rate, 
                 true, 
