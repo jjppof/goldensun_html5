@@ -39,6 +39,7 @@ export function config_physics_for_npcs(data, initialize = true) {
 export function config_physics_for_map(data, initialize = true) {
     if (initialize) {
         data.map_collider = game.add.sprite(0, 0);
+        data.map_collider.width = data.map_collider.height = 0;
         data.mapCollisionGroup = game.physics.p2.createCollisionGroup();
     }
     game.physics.p2.enable(data.map_collider, false);

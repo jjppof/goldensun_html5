@@ -68,31 +68,14 @@ function preload() {
     initializeMainChars(game);
     initializeMaps();
     loadMaps(game);
-    get_npc_db().then(npc_data => data.npc_db = npc_data);
+    game.load.json('npc_db', 'assets/dbs/npc_db.json');
+    game.load.image('shadow', 'assets/images/misc/shadow.png');
+    game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
 
     game.time.advancedTiming = true;
     game.stage.smoothed = false;
     game.camera.roundPx = false;
     game.renderer.renderSession.roundPixels = false;
-
-    game.load.image('shadow', 'assets/images/misc/shadow.png');
-    game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
-}
-
-async function get_npc_db() {
-    let response = await fetch("assets/dbs/npc_db.json");
-    let data = await response.json();
-    return data;
-}
-
-function config_groups_and_layers() {
-    //creating groups. Order here is important
-    data.underlayer_group = game.add.group();
-    data.npc_group = game.add.group();
-    data.overlayer_group = game.add.group();
-
-    //configing map layers: creating sprites, listing events and setting the layers
-    maps[data.map_name].setLayers(game, maps, data.npc_db, data.map_name, data.underlayer_group, data.overlayer_group, data.map_collider_layer, data.npc_group);
 }
 
 function config_hero() {
@@ -126,6 +109,8 @@ function enter_key_event() {
             for (let j = 0; j < nearby_tiles.length; ++j) {
                 let pos = nearby_tiles[j];
                 if (pos.x === npc_tile_x && pos.y === npc_tile_y) {
+                    data.actual_action = "idle";
+                    change_hero_sprite();
                     data.npc_event = true;
                     data.active_npc = npc;
                     break;
@@ -180,8 +165,16 @@ function create() {
     data.waiting_for_enter_press = false;
     data.dialog_manager = null;
     data.in_dialog = false;
+    data.npc_db = game.cache.getJSON('npc_db');
 
-    config_groups_and_layers();
+    //creating groups. Order here is important
+    data.underlayer_group = game.add.group();
+    data.npc_group = game.add.group();
+    data.overlayer_group = game.add.group();
+
+    //configing map layers: creating sprites, listing events and setting the layers
+    maps[data.map_name].setLayers(game, maps, data.npc_db, data.map_name, data.underlayer_group, data.overlayer_group, data.map_collider_layer, data.npc_group);
+
     config_hero();
     physics.config_world_physics(data);
     physics.config_physics_for_hero(data);
