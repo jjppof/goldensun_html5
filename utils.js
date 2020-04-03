@@ -23,7 +23,7 @@ export function checkMobile() {
         return false;
 }
 
-export function get_tiles_in_quadrant(quadrants, radius, range, x0, y0, tile_width, tile_height) {
+export function get_tiles_in_quadrants(quadrants, radius, range, x0, y0, tile_width, tile_height) {
     const range_radius = radius * range;
     let x1 = x0;
     let x2 = x0;
@@ -47,12 +47,16 @@ export function get_tiles_in_quadrant(quadrants, radius, range, x0, y0, tile_wid
     }
     const radius_squared = range_radius * range_radius;
     let result = [];
-    for (let x = Math.min(x1, x2); x < Math.max(x1, x2); ++x) {
-        for (let y = Math.min(y1, y2); y < Math.max(y1, y2); ++y) {
+    const min_x = Math.min(x1, x2);
+    const max_x = Math.max(x1, x2);
+    const min_y = Math.min(y1, y2);
+    const max_y = Math.max(y1, y2);
+    for (let x = min_x; x < max_x; ++x) { //iterate over the rectangular range
+        for (let y = min_y; y < max_y; ++y) {
             let dx = (x - x0) * tile_width - radius;
             let dy = (y - y0) * tile_height - radius;
             let distanceSquared = dx * dx + dy * dy;
-            if (distanceSquared <= radius_squared) {
+            if (distanceSquared <= radius_squared) { //check if it is inside the circle section
                 result.push({x: x, y: y});
             }
         }
@@ -63,21 +67,21 @@ export function get_tiles_in_quadrant(quadrants, radius, range, x0, y0, tile_wid
 export function get_nearby(actual_direction, x, y, tile_width, tile_height, range) {
     switch (actual_direction) {
         case "up":
-            return get_tiles_in_quadrant([1, 2], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return get_tiles_in_quadrants([1, 2], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
         case "up_right":
-            return get_tiles_in_quadrant([1], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return get_tiles_in_quadrants([1], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
         case "right":
-            return get_tiles_in_quadrant([1, 4], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return get_tiles_in_quadrants([1, 4], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
         case "down_right":
-            return get_tiles_in_quadrant([4], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return get_tiles_in_quadrants([4], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
         case "down":
-            return get_tiles_in_quadrant([3, 4], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return get_tiles_in_quadrants([3, 4], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
         case "down_left":
-            return get_tiles_in_quadrant([3], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return get_tiles_in_quadrants([3], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
         case "left":
-            return get_tiles_in_quadrant([2, 3], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return get_tiles_in_quadrants([2, 3], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
         case "up_left":
-            return get_tiles_in_quadrant([2], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return get_tiles_in_quadrants([2], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
     };
 }
 
@@ -168,7 +172,7 @@ export function get_transition_directions(actual_direction, desired_direction){
     return transitions[desired_direction][actual_direction];
 }
 
-export function get_text_width(game, text) { //get text width in px
+export function get_text_width(game, text) { //get text width in px (dirty way)
     let text_sprite = game.add.bitmapText(0, 0, 'gs-bmp-font', text, numbers.FONT_SIZE);
     const text_width = text_sprite.width;
     text_sprite.destroy();

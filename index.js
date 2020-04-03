@@ -8,6 +8,8 @@ import { set_npc_event } from './events/npc.js';
 import * as climb from './events/climb.js';
 import * as physics from './physics/physics.js';
 
+window.maps = maps;
+
 var data = {
     cursors: undefined,
     hero: undefined,
@@ -46,7 +48,8 @@ var data = {
     active_npc: undefined,
     waiting_for_enter_press: undefined,
     dialog_manager: undefined,
-    in_dialog: undefined
+    in_dialog: undefined,
+    created: false
 };
 window.data = data;
 
@@ -100,7 +103,7 @@ function config_hero() {
     data.hero = data.npc_group.create(0, 0, utils.u([data.hero_name, data.actual_action]));
     data.hero.centerX = numbers.HERO_START_X; //hero x start position
     data.hero.centerY = numbers.HERO_START_Y; //hero y start position
-    game.camera.follow(data.hero, Phaser.Camera.FOLLOW_LOCKON, 0.8, 0.8); //makes camera follow the data.hero
+    game.camera.follow(data.hero, Phaser.Camera.FOLLOW_LOCKON); //makes camera follow the data.hero
     //config data.hero initial animation state
     main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
     data.hero.animations.play(utils.u([data.actual_action, data.actual_direction]));
@@ -144,6 +147,16 @@ function enter_key_event() {
     }
 }
 
+function toggle_debug_physics() {
+    data.hero.body.debug = !data.hero.body.debug;
+    data.map_collider.body.debug = !data.map_collider.body.debug;
+    for (let i = 0; i < data.npc_group.children.length; ++i) {
+        let sprite = data.npc_group.children[i];
+        if (!sprite.is_npc) continue;
+        sprite.body.debug = !sprite.body.debug;
+    }
+}
+
 function create() {
     // Initializing some vars
     data.hero_name = "isaac";
@@ -175,19 +188,10 @@ function create() {
     physics.config_physics_for_npcs(data);
     physics.config_physics_for_map(data);
     physics.config_collisions(data);
-
     game.physics.p2.updateBoundsCollisionGroup();
 
     //activate debug mode
-    game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(function(){
-        data.hero.body.debug = !data.hero.body.debug;
-        data.map_collider.body.debug = !data.map_collider.body.debug;
-        for (let i = 0; i < data.npc_group.children.length; ++i) {
-            let sprite = data.npc_group.children[i];
-            if (!sprite.is_npc) continue;
-            sprite.body.debug = !sprite.body.debug;
-        }
-    }, this);
+    game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug_physics, this);
 
     //enable full screen
     game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -222,6 +226,8 @@ function create() {
 
     //set keyboard cursors
     data.cursors = game.input.keyboard.createCursorKeys();
+
+    data.created = true;
 }
 
 function fire_event() {
@@ -268,53 +274,54 @@ function event_triggering() {
 }
 
 function update() {
-    if (!data.on_event && !data.npc_event) {
-        data.hero_tile_pos_x = Math.floor(data.hero.x/maps[data.map_name].sprite.tileWidth);
-        data.hero_tile_pos_y = Math.floor(data.hero.y/maps[data.map_name].sprite.tileHeight);
+    if (data.created) {
+        if (!data.on_event && !data.npc_event) {
+            data.hero_tile_pos_x = Math.floor(data.hero.x/maps[data.map_name].sprite.tileWidth);
+            data.hero_tile_pos_y = Math.floor(data.hero.y/maps[data.map_name].sprite.tileHeight);
 
-        //check if the actual tile has an event
-        if (utils.u([data.hero_tile_pos_x, data.hero_tile_pos_y]) in maps[data.map_name].events)
-            event_triggering();
-        else if (data.extra_speed != 0) //disabling speed event
-            data.extra_speed = 0;
+            //check if the actual tile has an event
+            if (utils.u([data.hero_tile_pos_x, data.hero_tile_pos_y]) in maps[data.map_name].events)
+                event_triggering();
+            else if (data.extra_speed != 0) //disabling speed event
+                data.extra_speed = 0;
 
-        physics.set_speed_factors(data);
-        set_actual_action(); //choose which sprite the hero shall assume
-        data.delta_time = game.time.elapsedMS/numbers.DELTA_TIME_FACTOR;
-        physics.calculate_hero_speed(data);
-        change_hero_sprite();
-        physics.collision_dealer(data);
+            physics.set_speed_factors(data);
+            set_actual_action(); //choose which sprite the hero shall assume
+            data.delta_time = game.time.elapsedMS/numbers.DELTA_TIME_FACTOR;
+            physics.calculate_hero_speed(data);
+            change_hero_sprite();
+            physics.collision_dealer(data);
 
-        //make the shadow follow the hero
-        data.shadow.x = data.hero.x;
-        data.shadow.y = data.hero.y;
+            //make the shadow follow the hero
+            data.shadow.x = data.hero.x;
+            data.shadow.y = data.hero.y;
 
-        //adjust bodies
-        data.map_collider.body.velocity.y = data.map_collider.body.velocity.x = 0; //fix map body
-        for (let i = 0; i < data.npc_group.children.length; ++i) {
-            let sprite = data.npc_group.children[i];
-            if (!sprite.is_npc) continue;
-            sprite.body.velocity.y = sprite.body.velocity.x = 0; //fix npcs body
+            //adjust bodies
+            data.map_collider.body.velocity.y = data.map_collider.body.velocity.x = 0; //fix map body
+            for (let i = 0; i < data.npc_group.children.length; ++i) {
+                let sprite = data.npc_group.children[i];
+                if (!sprite.is_npc) continue;
+                sprite.body.velocity.y = sprite.body.velocity.x = 0; //fix npcs body
+            }
+
+            //organize layers on hero move
+            data.npc_group.sort('y', Phaser.Group.SORT_ASCENDING);
+        } else if (data.on_event) {
+            if (data.current_event.type === "stair")
+                climb.climb_event_animation_steps(data);
+            else if (data.current_event.type === "door")
+                door_event_phases(data);
+            else if (data.jumping)
+                jump_event(data);
+
+            //disabling hero body movement
+            data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
+        } else if (data.npc_event) {
+            set_npc_event(data);
+
+            //disabling hero body movement
+            data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
         }
-        data.map_collider.body.y = data.map_collider.body.x = 16;
-
-        //organize layers on hero move
-        data.npc_group.sort('y', Phaser.Group.SORT_ASCENDING);
-    } else if (data.on_event) {
-        if (data.current_event.type === "stair")
-            climb.climb_event_animation_steps(data);
-        else if (data.current_event.type === "door")
-            door_event_phases(data);
-        else if (data.jumping)
-            jump_event(data);
-
-        //disabling hero body movement
-        data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
-    } else if (data.npc_event) {
-        set_npc_event(data);
-
-        //disabling hero body movement
-        data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
     }
 }
 

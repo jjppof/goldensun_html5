@@ -146,9 +146,11 @@ export class Window {
         });
     }
 
-    update() {
-        this.group.x = this.game.camera.x + this.x;
-        this.group.y = this.game.camera.y + this.y;
+    update() { //updates the window position if necessary
+        if (this.need_pos_update) {
+            this.group.x = this.game.camera.x + this.x;
+            this.group.y = this.game.camera.y + this.y;
+        }
     }
 
     set_text(lines) {
@@ -192,22 +194,22 @@ export class Window {
     }
 }
 
-export class DialogManager {
+export class DialogManager { //the dialog can be divided in n windows. Each division has a step index
     constructor(game, parts, hero_direction) {
         this.game = game;
-        this.parts = parts;
-        this.step = 0;
+        this.parts = parts; //parts of the dialog text
+        this.step = 0; //step index
         this.finished = false;
         this.hero_direction = hero_direction;
     }
 
-    next(callback) {
-        if (this.step >= this.parts.length) {
+    next(callback) { //calls the next dialog window
+        if (this.step >= this.parts.length) { //finishes the dialog
             this.finished = true;
             this.window.destroy(true, callback);
             return;
         }
-        if (this.window) {
+        if (this.window) { //destroys the current window
             this.window.destroy(false);
         }
         const win_pos = get_dialog_window_position(this.parts[this.step].width, this.parts[this.step].height, this.hero_direction);
@@ -227,23 +229,23 @@ export function get_dialog_window_position(width, height, hero_direction) {
     return {x: x, y: y};
 }
 
-export function set_dialog(game, text) {
+export function set_dialog(game, text) { //divides the text into windows and, for each window, into lines
     const max_efective_width = numbers.MAX_DIAG_WIN_WIDTH - 2 * numbers.WINDOW_PADDING_H - numbers.INSIDE_BORDER_WIDTH;
     let words = text.split(' ');
-    let windows = [];
-    let lines = [];
-    let line = [];
-    let line_width = 0;
+    let windows = []; //array of lines
+    let lines = []; //array of strings
+    let line = []; //array of words
+    let line_width = 0; //in px
     let window_width = max_efective_width;
     for (let i = 0; i < words.length; ++i) {
         const word = words[i];
         line_width = utils.get_text_width(game, line.join(' ') + word);
-        if (line_width >= window_width) { // check if it's the end of the line
+        if (line_width >= window_width) { //check if it's the end of the line
             lines.push(line.join(' '));
             line = [];
             line.push(word);
             line_width = utils.get_text_width(game, word);
-            if (lines.length === numbers.MAX_LINES_PER_DIAG_WIN) { // check if it's the end of the window
+            if (lines.length === numbers.MAX_LINES_PER_DIAG_WIN) { //check if it's the end of the window
                 windows.push({
                     lines: lines.slice(),
                     width: window_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH,
@@ -256,10 +258,11 @@ export function set_dialog(game, text) {
         }
     }
     if (line.length) { //deal with the last window that does not have 3 lines
+        window_width = line_width > max_efective_width ? max_efective_width : line_width;
         lines.push(line.join(' '));
         windows.push({
             lines: lines.slice(),
-            width: line_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH + 2,
+            width: window_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH + 2,
             height: numbers.WINDOW_PADDING_TOP + numbers.WINDOW_PADDING_BOTTOM + lines.length * (numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES) - numbers.SPACE_BETWEEN_LINES
         });
     };
