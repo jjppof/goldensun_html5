@@ -99,11 +99,11 @@ export function open_door(data) {
     let layer = _.findWhere(maps[data.map_name].sprite.layers, {name : maps[data.map_name].sprite.properties.door_layer});
     let sample_tile = maps[data.map_name].sprite.getTile(data.current_event.x, data.current_event.y - 1, layer.name);
     let door_type_index = sample_tile.properties.door_type;
-    let tiles = _.filter(maps[data.map_name].sprite.tilesets[0].tileProperties, function(key){
+    let tiles = _.filter(maps[data.map_name].sprite.tilesets[0].tileProperties, key => {
         return key.door_type === door_type_index && "close_door" in key && key.id === sample_tile.properties.id;
     })
     let tile, source_index, close_door_index, offsets, base_x, base_y, target_index;
-    for(let i = 0; i < tiles.length; ++i){
+    for (let i = 0; i < tiles.length; ++i) {
         tile = tiles[i];
         source_index = parseInt(tile.index) + 1;
         close_door_index = tile.close_door;

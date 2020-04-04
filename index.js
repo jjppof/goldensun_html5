@@ -5,6 +5,7 @@ import { initializeMaps, loadMaps, maps } from './maps/maps.js';
 import { jump_event } from './events/jump.js';
 import { set_door_event, door_event_phases } from './events/door.js';
 import { set_npc_event } from './events/npc.js';
+import { config_step, do_step } from './events/step.js';
 import * as climb from './events/climb.js';
 import * as physics from './physics/physics.js';
 
@@ -49,7 +50,9 @@ var data = {
     waiting_for_enter_press: undefined,
     dialog_manager: undefined,
     in_dialog: undefined,
-    created: false
+    created: false,
+    wating_to_step: false,
+    step_event_data: {}
 };
 window.data = data;
 
@@ -91,13 +94,13 @@ function config_hero() {
     data.shadow = data.npc_group.create(0, 0, 'shadow');
     data.shadow.blendMode = PIXI.blendModes.MULTIPLY;
     data.shadow.anchor.setTo(numbers.SHADOW_X_AP, numbers.SHADOW_Y_AP); //shadow anchor point
-    data.hero = data.npc_group.create(0, 0, utils.u([data.hero_name, data.actual_action]));
+    data.hero = data.npc_group.create(0, 0, data.hero_name + "_" + data.actual_action);
     data.hero.centerX = numbers.HERO_START_X; //hero x start position
     data.hero.centerY = numbers.HERO_START_Y; //hero y start position
     game.camera.follow(data.hero, Phaser.Camera.FOLLOW_LOCKON); //makes camera follow the data.hero
     //config data.hero initial animation state
     main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
-    data.hero.animations.play(utils.u([data.actual_action, data.actual_direction]));
+    data.hero.animations.play(data.actual_action + "_" + data.actual_direction);
 }
 
 function enter_key_event() {
@@ -240,7 +243,7 @@ function fire_event() {
             climb.climbing_event(data);
         else if (data.current_event.type === "door") {
             set_door_event(data);
-        } else if (data.current_event.type = "jump") {
+        } else if (data.current_event.type === "jump") {
             data.on_event = true;
             data.event_activation_process = false;
             data.jumping = true;
@@ -249,45 +252,50 @@ function fire_event() {
 }
 
 function event_triggering() {
-    data.current_event = maps[data.map_name].events[utils.u([data.hero_tile_pos_x, data.hero_tile_pos_y])];
+    data.current_event = maps[data.map_name].events[data.hero_tile_pos_x + "_" + data.hero_tile_pos_y];
     if (!data.climbing) {
         if(!data.event_activation_process && data.actual_direction === data.current_event.activation_direction && (data.actual_action === "walk" || data.actual_action === "dash")){
             data.event_activation_process = true;
             data.event_timer = game.time.events.add(Phaser.Timer.HALF, fire_event, this);
-        } else if(data.event_activation_process && (data.actual_direction != data.current_event.activation_direction ||  data.actual_action === "idle"))
+        } else if(data.event_activation_process && (data.actual_direction !== data.current_event.activation_direction ||  data.actual_action === "idle"))
             data.event_activation_process = false;
     } else {
         if(!data.event_activation_process && data.climb_direction === data.current_event.activation_direction && (data.actual_direction === "climb")){
             data.event_activation_process = true;
             data.event_timer = game.time.events.add(Phaser.Timer.HALF, fire_event, this);
-        } else if(data.event_activation_process && (data.climb_direction != data.current_event.activation_direction ||  data.actual_direction === "idle"))
+        } else if(data.event_activation_process && (data.climb_direction !== data.current_event.activation_direction ||  data.actual_direction === "idle"))
             data.event_activation_process = false;
     }
 
     if (data.current_event.type === "speed") { //speed event activation
-        if(data.extra_speed != data.current_event.speed)
+        if(data.extra_speed !== data.current_event.speed)
             data.extra_speed = data.current_event.speed;
-    }
-
-    if (data.current_event.type === "door") { //door event activation
+    } else if (data.current_event.type === "door") { //door event activation
         if (!data.current_event.avance_effect) {
             data.event_activation_process = true;
             fire_event();
         }
+    } else if (data.current_event.type === "step" && !data.wating_to_step) {
+        config_step(data);
     }
 }
 
 function update() {
     if (data.created) {
         if (!data.on_event && !data.npc_event) {
-            data.hero_tile_pos_x = Math.floor(data.hero.x/maps[data.map_name].sprite.tileWidth);
-            data.hero_tile_pos_y = Math.floor(data.hero.y/maps[data.map_name].sprite.tileHeight);
+            data.hero_tile_pos_x = parseInt(data.hero.x/maps[data.map_name].sprite.tileWidth);
+            data.hero_tile_pos_y = parseInt(data.hero.y/maps[data.map_name].sprite.tileHeight);
 
             //check if the actual tile has an event
-            if (utils.u([data.hero_tile_pos_x, data.hero_tile_pos_y]) in maps[data.map_name].events)
+            if ((data.hero_tile_pos_x + "_" + data.hero_tile_pos_y) in maps[data.map_name].events) {
                 event_triggering();
-            else if (data.extra_speed != 0) //disabling speed event
+            } else if (data.extra_speed !== 0) { //disabling speed event
                 data.extra_speed = 0;
+            }
+
+            if (data.wating_to_step) {
+                do_step(data);
+            }
 
             physics.set_speed_factors(data);
             set_actual_action(); //choose which sprite the hero shall assume
@@ -341,27 +349,27 @@ function render() {
 function change_hero_sprite() {
     const key = data.hero_name + "_" + data.actual_action;
     const animation = data.actual_action + "_" + data.actual_direction;
-    if (data.hero.key != key) {
+    if (data.hero.key !== key) {
         data.hero.loadTexture(key);
         main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
         data.hero.animations.play(animation);
     }
-    if (data.hero.animations.currentAnim.name != animation) {
+    if (data.hero.animations.currentAnim.name !== animation) {
         data.hero.animations.play(animation);
     }
 }
 
 function set_actual_action() {
-    if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_action != "idle" && !data.climbing)
+    if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_action !== "idle" && !data.climbing)
         data.actual_action = "idle";
-    else if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_direction != "idle" && data.climbing)
+    else if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_direction !== "idle" && data.climbing)
         data.actual_direction = "idle";
-    else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && data.actual_direction != "climb" && data.climbing)
+    else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && data.actual_direction !== "climb" && data.climbing)
         data.actual_direction = "climb";
-    else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && (data.actual_action != "walk" || data.actual_action != "dash") && !data.climbing) {
-        if (game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action != "dash")
+    else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && (data.actual_action !== "walk" || data.actual_action !== "dash") && !data.climbing) {
+        if (game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "dash")
             data.actual_action = "dash";
-        else if (!game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action != "walk")
+        else if (!game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "walk")
             data.actual_action = "walk";
     }
 }

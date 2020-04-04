@@ -40,53 +40,73 @@ export class Map {
             maps[map_name].sprite.tilesets[0].tileProperties[tile_index].index = tile_index;
         }
 
-        let properties = this.sprite.properties;
-        if (Array.isArray(properties)) { //dealing with newer versions of tiledmap editor
-            properties = properties.reduce((map, obj) => {
+        for (let i = 0; i < this.sprite.tilesets.length; ++i) {
+            let tileset = this.sprite.tilesets[i];
+            if ("tiles" in tileset) { //dealing with newer versions of tiledmap editor
+                tileset.tileproperties = tileset.tiles.reduce((map, obj) => {
+                    map[obj.id] = obj.properties.reduce((map_p, obj_p) => {
+                        map_p[obj_p.name] = obj_p.value;
+                        return map_p;
+                    }, {});
+                    return map;
+                }, {});
+            }
+        }
+
+        if (Array.isArray(this.sprite.properties)) { //dealing with newer versions of tiledmap editor
+            this.sprite.properties = this.sprite.properties.reduce((map, obj) => {
                 map[obj.name] = obj.value;
                 return map;
             }, {});
         }
-        for (let property in properties) {
+        for (let property in this.sprite.properties) {
             if (property.startsWith("event")) { //check for events
-                const property_info = properties[property].split(",");
-                if (property_info[0] == "stair") {
-                    this.events[u([property_info[1], property_info[2]])] = {
-                        type : property_info[0],
-                        x : property_info[1],
-                        y : property_info[2],
-                        activation_direction : property_info[3]
+                const property_info = this.sprite.properties[property].split(",");
+                if (property_info[0] === "stair") {
+                    this.events[property_info[1] + "_" + property_info[2]] = {
+                        type: property_info[0],
+                        x: parseInt(property_info[1]),
+                        y: parseInt(property_info[2]),
+                        activation_direction: property_info[3]
                     }
-                } else if (property_info[0] == "speed") {
-                    this.events[u([property_info[1], property_info[2]])] = {
-                        type : property_info[0],
-                        x : property_info[1],
-                        y : property_info[2],
-                        speed : parseFloat(property_info[3])
+                } else if (property_info[0] === "speed") {
+                    this.events[property_info[1] + "_" + property_info[2]] = {
+                        type: property_info[0],
+                        x: parseInt(property_info[1]),
+                        y: parseInt(property_info[2]),
+                        speed: parseFloat(property_info[3])
                     }
-                } else if (property_info[0] == "door") {
-                    this.events[u([property_info[1], property_info[2]])] = {
-                        type : property_info[0],
-                        x : parseInt(property_info[1]),
-                        y : parseInt(property_info[2]),
-                        target : property_info[3],
-                        activation_direction : property_info[4],
-                        x_target : parseFloat(property_info[5]),
-                        y_target : parseFloat(property_info[6]),
+                } else if (property_info[0] === "door") {
+                    this.events[property_info[1] + "_" + property_info[2]] = {
+                        type: property_info[0],
+                        x: parseInt(property_info[1]),
+                        y: parseInt(property_info[2]),
+                        target: property_info[3],
+                        activation_direction: property_info[4],
+                        x_target: parseFloat(property_info[5]),
+                        y_target: parseFloat(property_info[6]),
                         avance_effect: !!parseInt(property_info[7]),
-                        collider_layer: property_info.length == 9 ? parseInt(property_info[8]) : 0
+                        collider_layer: property_info.length === 9 ? parseInt(property_info[8]) : 0
                     }
-                } else if (property_info[0] == "jump") {
-                    this.events[u([property_info[1], property_info[2]])] = {
-                        type : property_info[0],
-                        x : property_info[1],
-                        y : property_info[2],
-                        activation_direction : property_info[3],
-                        collider_layer : property_info.length == 5 ? parseInt(property_info[4]) : 0
+                } else if (property_info[0] === "jump") {
+                    this.events[property_info[1] + "_" + property_info[2]] = {
+                        type: property_info[0],
+                        x: parseInt(property_info[1]),
+                        y: parseInt(property_info[2]),
+                        activation_direction: property_info[3],
+                        collider_layer: property_info.length === 5 ? parseInt(property_info[4]) : 0
                     }
-                } 
+                } else if (property_info[0] === "step") {
+                    this.events[property_info[1] + "_" + property_info[2]] = {
+                        type: property_info[0],
+                        x: parseInt(property_info[1]),
+                        y: parseInt(property_info[2]),
+                        activation_direction: property_info[3],
+                        step_direction: property_info[4]
+                    }
+                }
             } else if(property.startsWith("npc")) {
-                const property_info = JSON.parse(properties[property]);
+                const property_info = JSON.parse(this.sprite.properties[property]);
                 this.npcs.push(new NPC(
                     property_info.type,
                     property_info.key_name,
@@ -108,18 +128,17 @@ export class Map {
 
         for (let i = 0; i < layers.length; ++i) {
             let layer = this.sprite.createLayer(layers[i].name);
-            let layer_properties = layers[i].properties;
-            if (Array.isArray(layer_properties)) { //dealing with newer versions of tiledmap editor
-                layer_properties = layer_properties.reduce((map, obj) => {
+            if (Array.isArray(layers[i].properties)) { //dealing with newer versions of tiledmap editor
+                layers[i].properties = layers[i].properties.reduce((map, obj) => {
                     map[obj.name] = obj.value;
                     return map;
                 }, {});
             }
             layer.resizeWorld();
-            layer.blendMode = PIXI.blendModes[layer_properties.blendMode];
+            layer.blendMode = PIXI.blendModes[layers[i].properties.blendMode];
             layer.alpha = layers[i].alpha;
 
-            let is_over = layer_properties.over.toString().split(",");
+            let is_over = layers[i].properties.over.toString().split(",");
             is_over = is_over.length > collider_layer ? parseInt(is_over[collider_layer]) : parseInt(is_over[0]);
             if (is_over != 0)
                 overlayer_group.add(layer);
