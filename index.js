@@ -58,7 +58,7 @@ var game = new Phaser.Game(
     numbers.GAME_HEIGHT, //height
     Phaser.WEBGL, //renderer
     "game", //parent
-    { preload: preload, create: create, update: update, render: render }, //states
+    { preload: preload, create: create, update: update, render: render, loadRender: loadRender }, //states
     false, //transparent
     false //antialias
 );
@@ -76,6 +76,14 @@ function preload() {
     game.stage.smoothed = false;
     game.camera.roundPx = false;
     game.renderer.renderSession.roundPixels = false;
+}
+
+function render_loading() {
+    game.debug.text('Loading...', 5, 15, "#00ff00");
+}
+
+function loadRender() {
+    render_loading();
 }
 
 function config_hero() {
@@ -143,6 +151,8 @@ function toggle_debug_physics() {
 }
 
 function create() {
+    game.camera.fade(0x0, 0);
+
     // Initializing some vars
     data.hero_name = "isaac";
     data.map_name = "madra";
@@ -221,6 +231,7 @@ function create() {
     data.cursors = game.input.keyboard.createCursorKeys();
 
     data.created = true;
+    game.camera.resetFX();
 }
 
 function fire_event() {
@@ -315,6 +326,8 @@ function update() {
             //disabling hero body movement
             data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
         }
+    } else {
+        render_loading();
     }
 }
 
