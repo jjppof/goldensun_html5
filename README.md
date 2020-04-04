@@ -6,7 +6,7 @@ A Golden Sun Engine built in HTML5 with Phaser.
 Feel free to help :)
 
 ## Tech stack
-- [PhaserJS 2](http://phaser.io/)
-- [TexturePacker](https://www.codeandweb.com/texturepacker)
-- [PhysicsEditor](https://www.codeandweb.com/physicseditor)
-- [Tiledmap Editor](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579))
+- [PhaserJS CE 2.15.0](http://phaser.io/)
+- [TexturePacker 4.6.1](https://www.codeandweb.com/texturepacker)
+- [PhysicsEditor 1.6.3](https://www.codeandweb.com/physicseditor)
+- [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579))
