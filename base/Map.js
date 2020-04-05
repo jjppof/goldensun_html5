@@ -1,5 +1,4 @@
 import { u } from "../utils.js";
-import { NPC_IDLE } from '../config.js';
 import { NPC_Sprite, NPC } from './NPC.js';
 
 export class Map {
@@ -151,7 +150,7 @@ export class Map {
         for (let i = 0; i < this.npcs.length; ++i) {
             let npc_info = this.npcs[i];
             let actions = [];
-            if (npc_info.npc_type == NPC_IDLE) {
+            if (npc_info.npc_type == NPC.movement_types.IDLE) {
                 actions = ['idle'];
             }
             let npc = new NPC_Sprite(npc_info.key_name, actions);

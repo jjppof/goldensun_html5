@@ -48,6 +48,7 @@ export function door_event_phases(data) {
             sprite.body.destroy()
         }
 
+        maps[data.map_name].npcs = [];
         data.npc_group.removeAll();
         data.npc_group.add(data.shadow);
         data.npc_group.add(data.hero);

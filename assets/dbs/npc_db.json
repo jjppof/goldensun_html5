@@ -5,8 +5,8 @@
         "actions": {
             "idle": {
                 "frame_rate": 1,
-                "directions": ["down"],
-                "frames_count": [6],
+                "directions": ["down", "up", "left", "right"],
+                "frames_count": [5, 5, 5, 5],
                 "initial_direction": "down"
             }
         }
