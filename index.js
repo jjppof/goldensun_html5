@@ -298,22 +298,21 @@ function update() {
             }
 
             physics.set_speed_factors(data);
-            set_actual_action(); //choose which sprite the hero shall assume
+            set_actual_action(); //chooses which sprite the hero shall assume
             data.delta_time = game.time.elapsedMS/numbers.DELTA_TIME_FACTOR;
             physics.calculate_hero_speed(data);
             change_hero_sprite();
             physics.collision_dealer(data);
 
-            //make the shadow follow the hero
+            //makes the shadow follow the hero
             data.shadow.x = data.hero.x;
             data.shadow.y = data.hero.y;
 
-            //adjust bodies
-            data.map_collider.body.velocity.y = data.map_collider.body.velocity.x = 0; //fix map body
-            for (let i = 0; i < data.npc_group.children.length; ++i) {
-                let sprite = data.npc_group.children[i];
-                if (!sprite.is_npc) continue;
-                sprite.body.velocity.y = sprite.body.velocity.x = 0; //fix npcs body
+            data.map_collider.body.velocity.y = data.map_collider.body.velocity.x = 0; //fixes map body
+
+            for (let i = 0; i < maps[data.map_name].npcs.length; ++i) { //updates npcs' movement
+                let npc = maps[data.map_name].npcs[i];
+                npc.update();
             }
 
             //organize layers on hero move

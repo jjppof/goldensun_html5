@@ -112,6 +112,8 @@ export class Map {
                     property_info.key_name,
                     property_info.initial_x,
                     property_info.initial_y,
+                    property_info.shadow_anchor_point.x,
+                    property_info.shadow_anchor_point.y,
                     property_info.npc_type,
                     property_info.movement_type,
                     property_info.message,
@@ -149,8 +151,9 @@ export class Map {
         for (let i = 0; i < this.npcs.length; ++i) {
             let npc_info = this.npcs[i];
             let actions = [];
-            if (npc_info.npc_type == NPC_IDLE)
+            if (npc_info.npc_type == NPC_IDLE) {
                 actions = ['idle'];
+            }
             let npc = new NPC_Sprite(npc_info.key_name, actions);
             for (let j = 0; j < actions.length; j++) {
                 const action = actions[j];
@@ -170,10 +173,14 @@ export class Map {
             await new Promise((resolve) => {
                 npc.loadSpritesheets(game, true, () => {
                     const initial_action = npc_db[npc_info.key_name].initial_action;
+                    let npc_shadow_sprite = npc_group.create(0, 0, 'shadow');
+                    npc_shadow_sprite.blendMode = PIXI.blendModes.MULTIPLY;
+                    npc_shadow_sprite.anchor.setTo(npc_info.ac_x, npc_info.ac_y);
                     let npc_sprite = npc_group.create(0, 0, u([
                         npc_info.key_name,
                         initial_action
                     ]));
+                    npc_info.set_shadow_sprite(npc_shadow_sprite);
                     npc_info.set_sprite(npc_sprite);
                     npc_info.npc_sprite.is_npc = true;
                     npc_info.npc_sprite.centerX = npc_info.initial_x * this.sprite.tileWidth;

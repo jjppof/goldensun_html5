@@ -15,6 +15,8 @@ export class NPC {
         key_name,
         initial_x,
         initial_y,
+        ac_x,
+        ac_y,
         npc_type,
         movement_type,
         message,
@@ -25,6 +27,8 @@ export class NPC {
         this.key_name = key_name,
         this.initial_x = initial_x,
         this.initial_y = initial_y,
+        this.ac_x = ac_x,
+        this.ac_y = ac_y,
         this.npc_type = npc_type,
         this.movement_type = movement_type,
         this.message = message,
@@ -34,6 +38,18 @@ export class NPC {
 
     set_sprite(sprite) {
         this.npc_sprite = sprite;
+    }
+
+    set_shadow_sprite(sprite) {
+        this.npc_shadow_sprite = sprite;
+    }
+
+    update() {
+        if (this.movement_type === NPC.movement_types.IDLE) {
+            this.npc_sprite.body.velocity.x = this.npc_sprite.body.velocity.y = 0;
+        }
+        this.npc_shadow_sprite.x = this.npc_sprite.x;
+        this.npc_shadow_sprite.y = this.npc_sprite.y;
     }
 }
 NPC.movement_types = {
