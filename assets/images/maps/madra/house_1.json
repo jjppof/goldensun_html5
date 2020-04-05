@@ -15,22 +15,18 @@
          "id":1,
          "name":"Ground",
          "opacity":1,
-         "properties":[
-                {
-                 "name":"blendMode",
-                 "type":"string",
-                 "value":"NORMAL"
-                }, 
-                {
-                 "name":"over",
-                 "type":"int",
-                 "value":0
-                }, 
-                {
-                 "name":"z",
-                 "type":"int",
-                 "value":0
-                }],
+         "properties":
+            {
+             "blendMode":"NORMAL",
+             "over":0,
+             "z":0
+            },
+         "propertytypes":
+            {
+             "blendMode":"string",
+             "over":"int",
+             "z":"int"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":25,
@@ -43,22 +39,18 @@
          "id":2,
          "name":"Obj",
          "opacity":1,
-         "properties":[
-                {
-                 "name":"blendMode",
-                 "type":"string",
-                 "value":"NORMAL"
-                }, 
-                {
-                 "name":"over",
-                 "type":"int",
-                 "value":0
-                }, 
-                {
-                 "name":"z",
-                 "type":"int",
-                 "value":1
-                }],
+         "properties":
+            {
+             "blendMode":"NORMAL",
+             "over":0,
+             "z":1
+            },
+         "propertytypes":
+            {
+             "blendMode":"string",
+             "over":"int",
+             "z":"int"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":25,
@@ -71,22 +63,18 @@
          "id":3,
          "name":"Walls",
          "opacity":1,
-         "properties":[
-                {
-                 "name":"blendMode",
-                 "type":"string",
-                 "value":"NORMAL"
-                }, 
-                {
-                 "name":"over",
-                 "type":"int",
-                 "value":0
-                }, 
-                {
-                 "name":"z",
-                 "type":"int",
-                 "value":2
-                }],
+         "properties":
+            {
+             "blendMode":"NORMAL",
+             "over":0,
+             "z":2
+            },
+         "propertytypes":
+            {
+             "blendMode":"string",
+             "over":"int",
+             "z":"int"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":25,
@@ -99,22 +87,18 @@
          "id":4,
          "name":"Col_Objs",
          "opacity":1,
-         "properties":[
-                {
-                 "name":"blendMode",
-                 "type":"string",
-                 "value":"NORMAL"
-                }, 
-                {
-                 "name":"over",
-                 "type":"int",
-                 "value":0
-                }, 
-                {
-                 "name":"z",
-                 "type":"int",
-                 "value":3
-                }],
+         "properties":
+            {
+             "blendMode":"NORMAL",
+             "over":0,
+             "z":3
+            },
+         "propertytypes":
+            {
+             "blendMode":"string",
+             "over":"int",
+             "z":"int"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":25,
@@ -127,22 +111,18 @@
          "id":5,
          "name":"Blend_overlay",
          "opacity":0.699999988079071,
-         "properties":[
-                {
-                 "name":"blendMode",
-                 "type":"string",
-                 "value":"SCREEN"
-                }, 
-                {
-                 "name":"over",
-                 "type":"int",
-                 "value":1
-                }, 
-                {
-                 "name":"z",
-                 "type":"int",
-                 "value":6
-                }],
+         "properties":
+            {
+             "blendMode":"SCREEN",
+             "over":1,
+             "z":6
+            },
+         "propertytypes":
+            {
+             "blendMode":"string",
+             "over":"int",
+             "z":"int"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":25,
@@ -152,27 +132,20 @@
  "nextlayerid":6,
  "nextobjectid":1,
  "orientation":"orthogonal",
- "properties":[
-        {
-         "name":"Name",
-         "type":"string",
-         "value":"house_1"
-        }, 
-        {
-         "name":"event_01",
-         "type":"string",
-         "value":"door,12,20,madra,down,23.5,20.5,0"
-        }, 
-        {
-         "name":"event_02",
-         "type":"string",
-         "value":"door,13,20,madra,down,23.5,20.5,0"
-        }, 
-        {
-         "name":"npc_01",
-         "type":"string",
-         "value":"{\n    \"type\": \"npc\",\n    \"key_name\": \"village_1\",\n    \"initial_x\": 15,\n    \"initial_y\": 10,\n    \"npc_type\": 0,\n    \"movement_type\": 0,\n    \"message\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.\",\n    \"thought_message\": \"Nothing to think about.\",\n    \"avatar\": \"\"\n}"
-        }],
+ "properties":
+    {
+     "Name":"house_1",
+     "event_01":"door,12,20,madra,down,23.5,20.5,0",
+     "event_02":"door,13,20,madra,down,23.5,20.5,0",
+     "npc_01":"{\n    \"type\": \"npc\",\n    \"key_name\": \"village_1\",\n    \"initial_x\": 15,\n    \"initial_y\": 10,\n    \"npc_type\": 0,\n    \"movement_type\": 0,\n    \"message\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.\",\n    \"thought_message\": \"Nothing to think about.\",\n    \"avatar\": \"\"\n}"
+    },
+ "propertytypes":
+    {
+     "Name":"string",
+     "event_01":"string",
+     "event_02":"string",
+     "npc_01":"string"
+    },
  "renderorder":"right-down",
  "tiledversion":"1.3.3",
  "tileheight":8,
@@ -192,6 +165,6 @@
         }],
  "tilewidth":8,
  "type":"map",
- "version":1.2,
+ "version":1.1,
  "width":25
 }

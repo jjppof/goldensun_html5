@@ -72,7 +72,7 @@ function preload() {
     initializeMaps();
     loadMaps(game);
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
-    game.load.image('shadow', 'assets/images/misc/shadow.png');
+    game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
 
     game.time.advancedTiming = true;
@@ -97,7 +97,7 @@ function config_hero() {
     data.hero = data.npc_group.create(0, 0, data.hero_name + "_" + data.actual_action);
     data.hero.centerX = numbers.HERO_START_X; //hero x start position
     data.hero.centerY = numbers.HERO_START_Y; //hero y start position
-    game.camera.follow(data.hero, Phaser.Camera.FOLLOW_LOCKON); //makes camera follow the data.hero
+    game.camera.follow(data.hero, Phaser.Camera.FOLLOW_LOCKON, 0.9, 0.9); //makes camera follow the data.hero
     //config data.hero initial animation state
     main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
     data.hero.animations.play(data.actual_action + "_" + data.actual_direction);
