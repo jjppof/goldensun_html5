@@ -109,26 +109,20 @@ function enter_key_event() {
     if (!data.in_dialog) {
         for (let i = 0; i < maps[data.map_name].npcs.length; ++i) {
             let npc = maps[data.map_name].npcs[i];
-            let npc_tile_x = Math.floor(npc.npc_sprite.x/maps[data.map_name].sprite.tileWidth);
-            let npc_tile_y = Math.floor(npc.npc_sprite.y/maps[data.map_name].sprite.tileHeight);
-            let nearby_tiles = utils.get_nearby(
+            let is_close = utils.is_close(
                 data.actual_direction,
-                data.hero_tile_pos_x,
-                data.hero_tile_pos_y,
-                maps[data.map_name].sprite.tileWidth,
-                maps[data.map_name].sprite.tileHeight,
+                data.hero.x,
+                data.hero.y,
+                npc.npc_sprite.x,
+                npc.npc_sprite.y,
                 numbers.NPC_TALK_RANGE
             );
-            for (let j = 0; j < nearby_tiles.length; ++j) {
-                let pos = nearby_tiles[j];
-                if (pos.x === npc_tile_x && pos.y === npc_tile_y) {
-                    data.actual_action = "idle";
-                    change_hero_sprite();
-                    data.npc_event = true;
-                    data.active_npc = npc;
-                    break;
-                }
-                if (data.npc_event) break;
+            if (is_close) {
+                data.actual_action = "idle";
+                change_hero_sprite();
+                data.npc_event = true;
+                data.active_npc = npc;
+                break;
             }
         }
     } else if (data.in_dialog && data.waiting_for_enter_press) {
@@ -357,11 +351,11 @@ function render() {
     if (data.grid) {
         const tile_width = maps[data.map_name].sprite.tileWidth;
         for (let x = 0; x < game.world.width; x += tile_width) {
-            game.debug.geom(new Phaser.Line(x, 0, x, game.world.height), 'rgba(0,255,255,0.5)', false, 4);
+            game.debug.geom(new Phaser.Line(x, 0, x, game.world.height), 'rgba(0,255,255,0.35)', false, 4);
         }
         const tile_height = maps[data.map_name].sprite.tileHeight;
         for (let y = 0; y < game.world.height; y += tile_height) {
-            game.debug.geom(new Phaser.Line(0, y, game.world.width, y), 'rgba(0,255,255,0.5)', false, 4);
+            game.debug.geom(new Phaser.Line(0, y, game.world.width, y), 'rgba(0,255,255,0.35)', false, 4);
         }
         let x_pos = data.hero_tile_pos_x*tile_width;
         let y_pos = data.hero_tile_pos_y*tile_height;

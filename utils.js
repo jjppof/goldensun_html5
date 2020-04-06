@@ -23,65 +23,43 @@ export function checkMobile() {
         return false;
 }
 
-export function get_tiles_in_quadrants(quadrants, radius, range, x0, y0, tile_width, tile_height) {
-    const range_radius = radius * range;
-    let x1 = x0;
-    let x2 = x0;
-    let y1 = y0;
-    let y2 = y0;
-    if (quadrants.includes(1)) {
-        x2 = x0 + Math.round(range_radius/tile_width);
-        y2 = y0 - Math.round(range_radius/tile_height);
+export function is_inside_sector(quadrants, radius, range_factor, x, y, target_x, target_y) {
+    const range_radius_squared = (radius * range_factor) * (radius * range_factor);
+    const target_radius_quared = Math.pow(target_x - x, 2) + Math.pow(target_y - y, 2);
+
+    let target_angle = Math.atan2(y - target_y, target_x - x);
+    target_angle = (target_angle + (2*Math.PI))%(2*Math.PI);
+    const angles = [0, Math.PI/2.0, Math.PI, 3.0*Math.PI/2.0, 2.0*Math.PI];
+    let between_angles = false;
+    for (let i = 0; i < quadrants.length; ++i) {
+        let quadrant = quadrants[i];
+        let start_angle = angles[quadrant - 1];
+        let end_angle = angles[quadrant];
+        between_angles = end_angle >= target_angle && target_angle >= start_angle;
+        if (between_angles) break;
     }
-    if (quadrants.includes(2)) {
-        x1 = x0 - Math.round(range_radius/tile_width);
-        y2 = y0 - Math.round(range_radius/tile_height);
-    }
-    if (quadrants.includes(3)) {
-        x1 = x0 - Math.round(range_radius/tile_width);
-        y1 = y0 + Math.round(range_radius/tile_height);
-    }
-    if (quadrants.includes(4)) {
-        x2 = x0 + Math.round(range_radius/tile_width);
-        y1 = y0 + Math.round(range_radius/tile_height);
-    }
-    const radius_squared = range_radius * range_radius;
-    let result = [];
-    const min_x = Math.min(x1, x2);
-    const max_x = Math.max(x1, x2);
-    const min_y = Math.min(y1, y2);
-    const max_y = Math.max(y1, y2);
-    for (let x = min_x; x < max_x; ++x) { //iterate over the rectangular range
-        for (let y = min_y; y < max_y; ++y) {
-            let dx = (x - x0) * tile_width - radius;
-            let dy = (y - y0) * tile_height - radius;
-            let distanceSquared = dx * dx + dy * dy;
-            if (distanceSquared <= radius_squared) { //check if it is inside the circle section
-                result.push({x: x, y: y});
-            }
-        }
-    }
-    return result;
+
+    return target_radius_quared <= range_radius_squared && between_angles;
 }
 
-export function get_nearby(actual_direction, x, y, tile_width, tile_height, range) {
+export function is_close(actual_direction, x, y, target_x, target_y, range_factor) {
     switch (actual_direction) {
         case "up":
-            return get_tiles_in_quadrants([1, 2], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return is_inside_sector([1, 2], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
         case "up_right":
-            return get_tiles_in_quadrants([1], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return is_inside_sector([1], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
         case "right":
-            return get_tiles_in_quadrants([1, 4], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return is_inside_sector([1, 4], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
         case "down_right":
-            return get_tiles_in_quadrants([4], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return is_inside_sector([4], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
         case "down":
-            return get_tiles_in_quadrants([3, 4], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return is_inside_sector([3, 4], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
         case "down_left":
-            return get_tiles_in_quadrants([3], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return is_inside_sector([3], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
         case "left":
-            return get_tiles_in_quadrants([2, 3], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return is_inside_sector([2, 3], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
         case "up_left":
-            return get_tiles_in_quadrants([2], numbers.HERO_BODY_RADIUS, range, x, y, tile_width, tile_height);
+            return is_inside_sector([2], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
     };
 }
 
