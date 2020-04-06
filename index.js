@@ -52,7 +52,9 @@ var data = {
     in_dialog: undefined,
     created: false,
     wating_to_step: false,
-    step_event_data: {}
+    step_event_data: {},
+    debug: false,
+    grid: false,
 };
 window.data = data;
 
@@ -143,7 +145,7 @@ function enter_key_event() {
     }
 }
 
-function toggle_debug_physics() {
+function toggle_debug() {
     data.hero.body.debug = !data.hero.body.debug;
     data.map_collider.body.debug = !data.map_collider.body.debug;
     for (let i = 0; i < data.npc_group.children.length; ++i) {
@@ -151,6 +153,11 @@ function toggle_debug_physics() {
         if (!sprite.is_npc) continue;
         sprite.body.debug = !sprite.body.debug;
     }
+    data.debug = !data.debug;
+}
+
+function toggle_grid() {
+    data.grid = !data.grid;
 }
 
 function create() {
@@ -197,7 +204,10 @@ function create() {
     game.physics.p2.updateBoundsCollisionGroup();
 
     //activate debug mode
-    game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug_physics, this);
+    game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug, this);
+    
+    //activate grid mode
+    game.input.keyboard.addKey(Phaser.Keyboard.G).onDown.add(toggle_grid, this);
 
     //enable full screen
     game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -343,6 +353,21 @@ function render() {
         game.debug.text('FPS: ' + game.time.fps || 'FPS: --', 5, 15, "#00ff00");
     else
         game.debug.text('', 0, 0);
+
+    if (data.grid) {
+        const tile_width = maps[data.map_name].sprite.tileWidth;
+        for (let x = 0; x < game.world.width; x += tile_width) {
+            game.debug.geom(new Phaser.Line(x, 0, x, game.world.height), 'rgba(0,255,255,0.5)', false, 4);
+        }
+        const tile_height = maps[data.map_name].sprite.tileHeight;
+        for (let y = 0; y < game.world.height; y += tile_height) {
+            game.debug.geom(new Phaser.Line(0, y, game.world.width, y), 'rgba(0,255,255,0.5)', false, 4);
+        }
+        let x_pos = data.hero_tile_pos_x*tile_width;
+        let y_pos = data.hero_tile_pos_y*tile_height;
+        game.debug.geom(new Phaser.Rectangle(x_pos, y_pos, tile_width, tile_height), 'rgba(255,0,0,0.5)');
+        game.debug.geom(new Phaser.Circle(data.hero.x, data.hero.y, 5), 'rgba(20,75,0,1.0)');
+    }
 }
 
 function change_hero_sprite() {
