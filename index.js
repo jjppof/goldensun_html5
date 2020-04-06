@@ -290,15 +290,15 @@ function update() {
             data.hero_tile_pos_x = parseInt(data.hero.x/maps[data.map_name].sprite.tileWidth);
             data.hero_tile_pos_y = parseInt(data.hero.y/maps[data.map_name].sprite.tileHeight);
 
+            if (data.wating_to_step) {
+                do_step(data);
+            }
+
             //check if the actual tile has an event
             if ((data.hero_tile_pos_x + "_" + data.hero_tile_pos_y) in maps[data.map_name].events) {
                 event_triggering();
             } else if (data.extra_speed !== 0) { //disabling speed event
                 data.extra_speed = 0;
-            }
-
-            if (data.wating_to_step) {
-                do_step(data);
             }
 
             physics.set_speed_factors(data);
@@ -361,6 +361,10 @@ function render() {
         let y_pos = data.hero_tile_pos_y*tile_height;
         game.debug.geom(new Phaser.Rectangle(x_pos, y_pos, tile_width, tile_height), 'rgba(255,0,0,0.5)');
         game.debug.geom(new Phaser.Circle(data.hero.x, data.hero.y, 5), 'rgba(20,75,0,1.0)');
+        for (let point in maps[data.map_name].events) {
+            let pos = point.split('_');
+            game.debug.geom(new Phaser.Rectangle(pos[0]*tile_width, pos[1]*tile_height, tile_width, tile_height), 'rgba(255,255,60,0.7)');
+        }
     }
 }
 
