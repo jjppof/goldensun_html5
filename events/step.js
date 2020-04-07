@@ -13,7 +13,7 @@ export function config_step(data) {
     } else if (data.current_event.activation_direction === "right") {
         next_x = data.current_event.x + 1;
     }
-    data.wating_to_step = true;
+    data.waiting_to_step = true;
     data.step_event_data = {
         x: data.current_event.x,
         y: data.current_event.y,
@@ -26,8 +26,8 @@ export function config_step(data) {
 export function do_step(data) {
     if (data.hero_tile_pos_x === data.step_event_data.next_x && data.hero_tile_pos_y === data.step_event_data.next_y) {
         data.hero.body.y += data.step_event_data.shift_y;
-        data.wating_to_step = false;
+        data.waiting_to_step = false;
     } else if (data.hero_tile_pos_x !== data.current_event.x || data.hero_tile_pos_y !== data.current_event.y) {
-        data.wating_to_step = false;
+        data.waiting_to_step = false;
     }
 }

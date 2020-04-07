@@ -5,7 +5,7 @@ import { config_physics_for_npcs, config_physics_for_map, config_collisions, set
 export function set_door_event(data) {
     data.on_event = true;
     data.event_activation_process = false;
-    if (data.current_event.avance_effect) {
+    if (data.current_event.advance_effect) {
         data.hero.loadTexture(data.hero_name + "_walk");
         main_char_list[data.hero_name].setAnimation(data.hero, "walk");
         data.hero.animations.play("walk_up");
@@ -53,7 +53,7 @@ export function door_event_phases(data) {
         data.npc_group.add(data.shadow);
         data.npc_group.add(data.hero);
         data.map_name = data.current_event.target;
-        data.map_collider_layer = data.current_event.collider_layer;
+        data.map_collider_layer = data.current_event.dest_collider_layer;
 
         maps[data.map_name].setLayers(
             game,

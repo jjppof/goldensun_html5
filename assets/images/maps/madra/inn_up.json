@@ -188,30 +188,14 @@
  "orientation":"orthogonal",
  "properties":
     {
-     "Door_00":"17,18,madra,28,8,1,down",
-     "Door_01":"18,18,madra,28,8,1,down",
-     "Door_02":"17,4,madra_inn_up_stair,14,12,0,up",
-     "Door_03":"18,4,madra_inn_up_stair,14,12,0,up",
-     "Door_04":"17,3,madra_inn_up_stair,14,12,0,up",
-     "Door_05":"18,3,madra_inn_up_stair,14,12,0,up",
-     "Door_06":"17,19,madra,28,8,1,down",
-     "Door_07":"18,19,madra,28,8,1,down",
      "Name":"inn_up",
-     "event_01":"door,17,4,madra_inn_up_stair,up,14,12,0",
-     "event_02":"door,18,4,madra_inn_up_stair,up,14,12,0",
-     "event_03":"door,17,20,madra,down,28.5,8.5,0,1",
-     "event_04":"door,18,20,madra,down,28.5,8.5,0,1"
+     "event_01":"{\"type\": \"door\", \"x\": 17, \"y\": 4, \"target\": \"madra_inn_up_stair\", \"activation_direction\": \"up\", \"x_target\": 14, \"y_target\": 12, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layer\": 0}",
+     "event_02":"{\"type\": \"door\", \"x\": 18, \"y\": 4, \"target\": \"madra_inn_up_stair\", \"activation_direction\": \"up\", \"x_target\": 14, \"y_target\": 12, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layer\": 0}",
+     "event_03":"{\"type\": \"door\", \"x\": 17, \"y\": 20, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 28.5, \"y_target\": 8.5, \"advance_effect\": false, \"dest_collider_layer\": 1, \"activation_collision_layer\": 0}",
+     "event_04":"{\"type\": \"door\", \"x\": 18, \"y\": 20, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 28.5, \"y_target\": 8.5, \"advance_effect\": false, \"dest_collider_layer\": 1, \"activation_collision_layer\": 0}"
     },
  "propertytypes":
     {
-     "Door_00":"string",
-     "Door_01":"string",
-     "Door_02":"string",
-     "Door_03":"string",
-     "Door_04":"string",
-     "Door_05":"string",
-     "Door_06":"string",
-     "Door_07":"string",
      "Name":"string",
      "event_01":"string",
      "event_02":"string",

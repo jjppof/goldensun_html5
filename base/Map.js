@@ -60,48 +60,61 @@ export class Map {
         }
         for (let property in this.sprite.properties) {
             if (property.startsWith("event")) { //check for events
-                const property_info = this.sprite.properties[property].split(",");
-                if (property_info[0] === "stair") {
-                    this.events[property_info[1] + "_" + property_info[2]] = {
-                        type: property_info[0],
-                        x: parseInt(property_info[1]),
-                        y: parseInt(property_info[2]),
-                        activation_direction: property_info[3]
+                const property_info = JSON.parse(this.sprite.properties[property]);
+                if (property_info.type === "stair") {
+                    this.events[property_info.x + "_" + property_info.y] = {
+                        type: property_info.type,
+                        x: property_info.x,
+                        y: property_info.y,
+                        activation_direction: property_info.activation_direction,
+                        activation_collision_layer: property_info.activation_collision_layer ? property_info.activation_collision_layer : 0,
                     }
-                } else if (property_info[0] === "speed") {
-                    this.events[property_info[1] + "_" + property_info[2]] = {
-                        type: property_info[0],
-                        x: parseInt(property_info[1]),
-                        y: parseInt(property_info[2]),
-                        speed: parseFloat(property_info[3])
+                } else if (property_info.type === "speed") {
+                    this.events[property_info.x + "_" + property_info.y] = {
+                        type: property_info.type,
+                        x: property_info.x,
+                        y: property_info.y,
+                        speed: property_info.speed,
+                        activation_collision_layer: property_info.activation_collision_layer ? property_info.activation_collision_layer : 0,
                     }
-                } else if (property_info[0] === "door") {
-                    this.events[property_info[1] + "_" + property_info[2]] = {
-                        type: property_info[0],
-                        x: parseInt(property_info[1]),
-                        y: parseInt(property_info[2]),
-                        target: property_info[3],
-                        activation_direction: property_info[4],
-                        x_target: parseFloat(property_info[5]),
-                        y_target: parseFloat(property_info[6]),
-                        avance_effect: !!parseInt(property_info[7]),
-                        collider_layer: property_info.length === 9 ? parseInt(property_info[8]) : 0
+                } else if (property_info.type === "door") {
+                    this.events[property_info.x + "_" + property_info.y] = {
+                        type: property_info.type,
+                        x: property_info.x,
+                        y: property_info.y,
+                        target: property_info.target,
+                        activation_direction: property_info.activation_direction,
+                        x_target: property_info.x_target,
+                        y_target: property_info.y_target,
+                        advance_effect: property_info.advance_effect,
+                        dest_collider_layer: property_info.dest_collider_layer ? property_info.dest_collider_layer : 0,
+                        activation_collision_layer: property_info.activation_collision_layer ? property_info.activation_collision_layer : 0,
                     }
-                } else if (property_info[0] === "jump") {
-                    this.events[property_info[1] + "_" + property_info[2]] = {
-                        type: property_info[0],
-                        x: parseInt(property_info[1]),
-                        y: parseInt(property_info[2]),
-                        activation_direction: property_info[3],
-                        collider_layer: property_info.length === 5 ? parseInt(property_info[4]) : 0
+                } else if (property_info.type === "jump") {
+                    this.events[property_info.x + "_" + property_info.y] = {
+                        type: property_info.type,
+                        x: property_info.x,
+                        y: property_info.y,
+                        activation_direction: property_info.activation_direction,
+                        activation_collision_layer: property_info.activation_collision_layer ? property_info.activation_collision_layer : 0,
                     }
-                } else if (property_info[0] === "step") {
-                    this.events[property_info[1] + "_" + property_info[2]] = {
-                        type: property_info[0],
-                        x: parseInt(property_info[1]),
-                        y: parseInt(property_info[2]),
-                        activation_direction: property_info[3],
-                        step_direction: property_info[4]
+                } else if (property_info.type === "step") {
+                    this.events[property_info.x + "_" + property_info.y] = {
+                        type: property_info.type,
+                        x: property_info.x,
+                        y: property_info.y,
+                        activation_direction: property_info.activation_direction,
+                        step_direction: property_info.step_direction,
+                        activation_collision_layer: property_info.activation_collision_layer ? property_info.activation_collision_layer : 0,
+                    }
+                } else if (property_info.type === "collision") {
+                    this.events[property_info.x + "_" + property_info.y] = {
+                        type: property_info.type,
+                        x: property_info.x,
+                        y: property_info.y,
+                        activation_direction: property_info.activation_direction,
+                        activation_collision_layer: property_info.activation_collision_layer,
+                        dest_collider_layer: property_info.dest_collider_layer
                     }
                 }
             } else if(property.startsWith("npc")) {

@@ -165,27 +165,15 @@
  "orientation":"orthogonal",
  "properties":
     {
-     "Door_00":"27,18,madra,28,12,0,down",
-     "Door_01":"28,18,madra,28,12,0,down",
-     "Door_02":"29,18,madra,28,12,0,down",
-     "Door_03":"30,18,madra,28,12,0,down",
-     "Door_04":"17,6,madra_inn_up_stair,14,6,0,right",
-     "Door_05":"17,7,madra_inn_up_stair,14,6,0,right",
      "Name":"inn_down",
-     "event_01":"door,27,19,madra,down,28.5,12.5,0",
-     "event_02":"door,28,19,madra,down,28.5,12.5,0",
-     "event_03":"door,29,19,madra,down,28.5,12.5,0",
-     "event_04":"door,30,19,madra,down,28.5,12.5,0",
-     "event_05":"door,17,7,madra_inn_up_stair,right,15,7,0"
+     "event_01":"{\"type\": \"door\", \"x\": 27, \"y\": 19, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 28.5, \"y_target\": 12.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layer\": 0}",
+     "event_02":"{\"type\": \"door\", \"x\": 28, \"y\": 19, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 28.5, \"y_target\": 12.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layer\": 0}",
+     "event_03":"{\"type\": \"door\", \"x\": 29, \"y\": 19, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 28.5, \"y_target\": 12.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layer\": 0}",
+     "event_04":"{\"type\": \"door\", \"x\": 30, \"y\": 19, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 28.5, \"y_target\": 12.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layer\": 0}",
+     "event_05":"{\"type\": \"door\", \"x\": 17, \"y\": 7, \"target\": \"madra_inn_up_stair\", \"activation_direction\": \"right\", \"x_target\": 15, \"y_target\": 7, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layer\": 0}"
     },
  "propertytypes":
     {
-     "Door_00":"string",
-     "Door_01":"string",
-     "Door_02":"string",
-     "Door_03":"string",
-     "Door_04":"string",
-     "Door_05":"string",
      "Name":"string",
      "event_01":"string",
      "event_02":"string",

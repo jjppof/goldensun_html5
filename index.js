@@ -6,6 +6,7 @@ import { jump_event } from './events/jump.js';
 import { set_door_event, door_event_phases } from './events/door.js';
 import { set_npc_event } from './events/npc.js';
 import { config_step, do_step } from './events/step.js';
+import { config_collision_change, do_collision_change } from './events/collision.js';
 import * as climb from './events/climb.js';
 import * as physics from './physics/physics.js';
 
@@ -51,10 +52,12 @@ var data = {
     dialog_manager: undefined,
     in_dialog: undefined,
     created: false,
-    wating_to_step: false,
+    waiting_to_step: false,
     step_event_data: {},
     debug: false,
     grid: false,
+    waiting_to_change_collision: false,
+    collision_event_data: {},
 };
 window.data = data;
 
@@ -261,6 +264,7 @@ function fire_event() {
 
 function event_triggering() {
     data.current_event = maps[data.map_name].events[data.hero_tile_pos_x + "_" + data.hero_tile_pos_y];
+    if (data.map_collider_layer !== data.current_event.activation_collision_layer) return;
     if (!data.climbing) {
         if(!data.event_activation_process && data.actual_direction === data.current_event.activation_direction && (data.actual_action === "walk" || data.actual_action === "dash")){
             data.event_activation_process = true;
@@ -279,12 +283,14 @@ function event_triggering() {
         if(data.extra_speed !== data.current_event.speed)
             data.extra_speed = data.current_event.speed;
     } else if (data.current_event.type === "door") { //door event activation
-        if (!data.current_event.avance_effect) {
+        if (!data.current_event.advance_effect) {
             data.event_activation_process = true;
             fire_event();
         }
-    } else if (data.current_event.type === "step" && !data.wating_to_step) {
+    } else if (data.current_event.type === "step" && !data.waiting_to_step) {
         config_step(data);
+    } else if (data.current_event.type === "collision" && !data.waiting_to_change_collision) {
+        config_collision_change(data);
     }
 }
 
@@ -294,8 +300,11 @@ function update() {
             data.hero_tile_pos_x = parseInt(data.hero.x/maps[data.map_name].sprite.tileWidth);
             data.hero_tile_pos_y = parseInt(data.hero.y/maps[data.map_name].sprite.tileHeight);
 
-            if (data.wating_to_step) {
+            if (data.waiting_to_step) {
                 do_step(data);
+            }
+            if (data.waiting_to_change_collision) {
+                do_collision_change(data);
             }
 
             //check if the actual tile has an event

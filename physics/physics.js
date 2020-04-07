@@ -35,7 +35,7 @@ export function config_physics_for_npcs(data, initialize = true) {
     }
 }
 
-export function config_physics_for_map(data, initialize = true) {
+export function config_physics_for_map(data, initialize = true, collision_layer = undefined) {
     if (initialize) {
         data.map_collider = game.add.sprite(0, 0);
         data.map_collider.width = data.map_collider.height = 0;
@@ -44,8 +44,8 @@ export function config_physics_for_map(data, initialize = true) {
     game.physics.p2.enable(data.map_collider, false);
     data.map_collider.body.clearShapes();
     data.map_collider.body.loadPolygon(
-        maps[data.map_name].physics_names[data.map_collider_layer], 
-        maps[data.map_name].physics_names[data.map_collider_layer]
+        maps[data.map_name].physics_names[collision_layer !== undefined ? collision_layer : data.map_collider_layer], 
+        maps[data.map_name].physics_names[collision_layer !== undefined ? collision_layer : data.map_collider_layer]
     );
     data.map_collider.body.setCollisionGroup(data.mapCollisionGroup);
     data.map_collider.body.damping = numbers.MAP_DAMPING;

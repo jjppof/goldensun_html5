@@ -142,22 +142,14 @@
  "orientation":"orthogonal",
  "properties":
     {
-     "Door_01":"13,6,madra_inn_down,16,7,0,left",
-     "Door_02":"13,7,madra_inn_down,16,7,0,left",
-     "Door_03":"13,12,madra_inn_up,17,5,0,down",
-     "Door_04":"14,12,madra_inn_up,17,5,0,down",
      "Name":"inn_up_stair",
-     "event_01":"door,14,7,madra_inn,left,16,8,0",
-     "event_02":"door,13,13,madra_inn_up,down,18,6,0",
-     "event_03":"door,14,13,madra_inn_up,down,18,6,0",
-     "event_04":"door,14,6,madra_inn,left,16,8,0"
+     "event_01":"{\"type\": \"door\", \"x\": 14, \"y\": 7, \"target\": \"madra_inn\", \"activation_direction\": \"left\", \"x_target\": 16, \"y_target\": 8, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layer\": 0}",
+     "event_02":"{\"type\": \"door\", \"x\": 13, \"y\": 13, \"target\": \"madra_inn_up\", \"activation_direction\": \"down\", \"x_target\": 18, \"y_target\": 6, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layer\": 0}",
+     "event_03":"{\"type\": \"door\", \"x\": 14, \"y\": 13, \"target\": \"madra_inn_up\", \"activation_direction\": \"down\", \"x_target\": 18, \"y_target\": 6, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layer\": 0}",
+     "event_04":"{\"type\": \"door\", \"x\": 14, \"y\": 6, \"target\": \"madra_inn\", \"activation_direction\": \"left\", \"x_target\": 16, \"y_target\": 8, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layer\": 0}"
     },
  "propertytypes":
     {
-     "Door_01":"string",
-     "Door_02":"string",
-     "Door_03":"string",
-     "Door_04":"string",
      "Name":"string",
      "event_01":"string",
      "event_02":"string",

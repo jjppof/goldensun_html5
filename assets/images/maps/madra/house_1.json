@@ -135,8 +135,8 @@
  "properties":
     {
      "Name":"house_1",
-     "event_01":"door,12,20,madra,down,23.5,20.5,0",
-     "event_02":"door,13,20,madra,down,23.5,20.5,0",
+     "event_01":"{\"type\": \"door\", \"x\": 12, \"y\": 20, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 23.5, \"y_target\": 20.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layer\": 0}",
+     "event_02":"{\"type\": \"door\", \"x\": 13, \"y\": 20, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 23.5, \"y_target\": 20.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layer\": 0}",
      "npc_01":"{\n    \"type\": \"npc\",\n    \"key_name\": \"village_1\",\n    \"initial_x\": 15,\n    \"initial_y\": 10,\n    \"shadow_anchor_point\": {\"x\": 0.5, \"y\": 0.0},\n    \"npc_type\": 0,\n    \"movement_type\": 0,\n    \"message\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.\",\n    \"thought_message\": \"Nothing to think about.\",\n    \"avatar\": \"\"\n}"
     },
  "propertytypes":
