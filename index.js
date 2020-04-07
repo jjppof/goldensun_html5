@@ -132,6 +132,10 @@ function enter_key_event() {
                 data.in_dialog = false;
                 data.dialog_manager = null;
                 data.npc_event = false;
+                data.active_npc.npc_sprite.animations.play([
+                    data.npc_db[data.active_npc.key_name].initial_action,
+                    data.npc_db[data.active_npc.key_name].actions[data.npc_db[data.active_npc.key_name].initial_action].initial_direction
+                ].join("_"));
             } else {
                 data.waiting_for_enter_press = true;
             }

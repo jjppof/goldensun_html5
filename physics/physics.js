@@ -19,20 +19,19 @@ export function config_physics_for_hero(data, initialize = true) {
 
 export function config_physics_for_npcs(data, initialize = true) {
     if (initialize) data.npcCollisionGroup = game.physics.p2.createCollisionGroup();
-    for (let i = 0; i < data.npc_group.children.length; ++i) {
-        let sprite = data.npc_group.children[i];
-        if (!sprite.is_npc) continue;
-        game.physics.p2.enable(sprite, false);
-        sprite.anchor.y = numbers.NPC_Y_AP; //Important to be after the previous command
-        sprite.body.clearShapes();
-        sprite.body.setCircle(numbers.NPC_BODY_RADIUS, 0, 0);
-        sprite.body.setCollisionGroup(data.npcCollisionGroup);
-        sprite.body.damping = numbers.NPC_DAMPING;
-        sprite.body.angularDamping = numbers.NPC_DAMPING;
-        sprite.body.setZeroRotation();
-        sprite.body.fixedRotation = true; //disalble npm collision body rotation
-        sprite.body.dynamic = false;
-        sprite.body.static = true;
+    for (let i = 0; i < maps[data.map_name].npcs.length; ++i) {
+        let npc = maps[data.map_name].npcs[i];
+        game.physics.p2.enable(npc.npc_sprite, false);
+        npc.npc_sprite.anchor.y = data.npc_db[npc.key_name].anchor_y; //Important to be after the previous command
+        npc.npc_sprite.body.clearShapes();
+        npc.npc_sprite.body.setCircle(data.npc_db[npc.key_name].body_radius, 0, 0);
+        npc.npc_sprite.body.setCollisionGroup(data.npcCollisionGroup);
+        npc.npc_sprite.body.damping = numbers.NPC_DAMPING;
+        npc.npc_sprite.body.angularDamping = numbers.NPC_DAMPING;
+        npc.npc_sprite.body.setZeroRotation();
+        npc.npc_sprite.body.fixedRotation = true; //disalble npm collision body rotation
+        npc.npc_sprite.body.dynamic = false;
+        npc.npc_sprite.body.static = true;
     }
 }
 
