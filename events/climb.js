@@ -1,8 +1,12 @@
 import { maps } from '../maps/maps.js';
 import { main_char_list } from '../chars/main_char_list.js';
+import * as collision from '../events/collision.js';
 
 export function climbing_event(data) {
     game.physics.p2.pause();
+    if (data.current_event.change_to_collision_layer !== null) {
+        collision.change_map_body(data, data.current_event.change_to_collision_layer);
+    }
     if (!data.climbing) {
         if (data.current_event.activation_direction === "down") {
             data.on_event = true;

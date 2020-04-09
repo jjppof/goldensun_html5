@@ -125,35 +125,35 @@ export function set_speed_factors(data, force = false) {
             data.climb_direction = "idle";
         }
     } else {
-        if (data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction != "up" || force)){
+        if (data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "up" || force)){
             data.actual_direction = get_transition_directions(data.actual_direction, "up"); 
             data.x_speed = 0;
             data.y_speed = -1;
-        } else if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction != "down" || force)){
+        } else if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction !== "down" || force)){
             data.actual_direction = get_transition_directions(data.actual_direction, "down");
             data.x_speed = 0;
             data.y_speed = 1;
-        } else if (!data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction != "left" || force)){
+        } else if (!data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "left" || force)){
             data.actual_direction = get_transition_directions(data.actual_direction, "left");
             data.x_speed = -1;
             data.y_speed = 0;
-        } else if (!data.cursors.up.isDown && !data.cursors.left.isDown && data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction != "right" || force)){
+        } else if (!data.cursors.up.isDown && !data.cursors.left.isDown && data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "right" || force)){
             data.actual_direction = get_transition_directions(data.actual_direction, "right");
             data.x_speed = 1;
             data.y_speed = 0;
-        } else if (data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction != "up_left" || force)){
+        } else if (data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "up_left" || force)){
             data.actual_direction = get_transition_directions(data.actual_direction, "up_left");
             data.x_speed = -numbers.INV_SQRT2;
             data.y_speed = -numbers.INV_SQRT2;
-        } else if (data.cursors.up.isDown && !data.cursors.left.isDown && data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction != "up_right" || force)){
+        } else if (data.cursors.up.isDown && !data.cursors.left.isDown && data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "up_right" || force)){
             data.actual_direction = get_transition_directions(data.actual_direction, "up_right");
             data.x_speed = numbers.INV_SQRT2;
             data.y_speed = -numbers.INV_SQRT2;
-        } else if (!data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction != "down_left" || force)){
+        } else if (!data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction !== "down_left" || force)){
             data.actual_direction = get_transition_directions(data.actual_direction, "down_left");
             data.x_speed = -numbers.INV_SQRT2;
             data.y_speed = numbers.INV_SQRT2;
-        } else if (!data.cursors.up.isDown && !data.cursors.left.isDown && data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction != "down_right" || force)){
+        } else if (!data.cursors.up.isDown && !data.cursors.left.isDown && data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction !== "down_right" || force)){
             data.actual_direction = get_transition_directions(data.actual_direction, "down_right");
             data.x_speed = numbers.INV_SQRT2;
             data.y_speed = numbers.INV_SQRT2;

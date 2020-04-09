@@ -1,4 +1,5 @@
 import * as physics from '../physics/physics.js';
+import { maps } from '../maps/maps.js';
 
 export function config_collision_change(data) {
     let next_x = data.current_event.x, next_y = data.current_event.y;
@@ -21,9 +22,50 @@ export function config_collision_change(data) {
     };
 }
 
+export function change_map_body(data, new_collider_layer_index) {
+    if (data.map_collider_layer === new_collider_layer_index) return;
+    data.map_collider_layer = new_collider_layer_index;
+    physics.config_physics_for_map(data, false, new_collider_layer_index);
+    let layers = maps[data.map_name].layers;
+    for (let i = 0; i < layers.length; ++i) {
+        let layer = layers[i];
+        let is_over = layer.properties.over.toString().split(",");
+        if (is_over.length > new_collider_layer_index) {
+            is_over = is_over.length > new_collider_layer_index ? parseInt(is_over[new_collider_layer_index]) : parseInt(is_over[0]);
+            if (is_over !== 0) {
+                data.underlayer_group.remove(layer.sprite, false, true);
+                let index = 0;
+                for (index = 0; index < data.overlayer_group.children.length; ++index) {
+                    let child = data.overlayer_group.children[index];
+                    if (child.layer_z > layer.z) {
+                        data.overlayer_group.addAt(layer.sprite, index, true);
+                        break;
+                    }
+                }
+                if (index === data.overlayer_group.children.length) {
+                    data.overlayer_group.add(layer.sprite, true);
+                }
+            } else {
+                data.overlayer_group.remove(layer.sprite, false, true);
+                let index = 0;
+                for (index = 0; index < data.underlayer_group.children.length; ++index) {
+                    let child = data.underlayer_group.children[index];
+                    if (child.layer_z > layer.z) {
+                        data.underlayer_group.addAt(layer.sprite, index, true);
+                        break;
+                    }
+                }
+                if (index === data.underlayer_group.children.length) {
+                    data.underlayer_group.add(layer.sprite, true);
+                }
+            }
+        }
+    }
+}
+
 export function do_collision_change(data) {
     if (data.hero_tile_pos_x === data.collision_event_data.next_x && data.hero_tile_pos_y === data.collision_event_data.next_y) {
-        physics.config_physics_for_map(data, false, data.collision_event_data.dest_collider_layer)
+        change_map_body(data, data.collision_event_data.dest_collider_layer);
         data.waiting_to_change_collision = false;
     } else if (data.hero_tile_pos_x !== data.current_event.x || data.hero_tile_pos_y !== data.current_event.y) {
         data.waiting_to_change_collision = false;

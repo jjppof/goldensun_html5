@@ -52,6 +52,16 @@ export function initializeMaps(){
         'assets/images/maps/madra/house_1.json',
         ['assets/images/maps/madra/madra_physics_house_1.json']
     );
+
+    maps.madra_side = new Map(
+        'Madra', //name
+        'madra_side', //key_name
+        'madra', //tileset_name
+        ['madra_side', 'madra_side_2'], //physics_names
+        'assets/images/maps/madra/madra.png', //tileset_image_url
+        'assets/images/maps/madra/madra_side.json', //tileset_json_url
+        ['assets/images/maps/madra/madra_physics_side.json', 'assets/images/maps/madra/madra_physics_side_2.json'] //physics_jsons_url
+    );
 }
 
 export function loadMaps(game){

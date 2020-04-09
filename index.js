@@ -244,6 +244,21 @@ function create() {
     //set keyboard cursors
     data.cursors = game.input.keyboard.createCursorKeys();
 
+    //set initial speed factors
+    if (data.actual_direction === "up") {
+        data.x_speed = 0;
+        data.y_speed = -1;
+    } else if (data.actual_direction === "down") {
+        data.x_speed = 0;
+        data.y_speed = 1;
+    } else if (data.actual_direction === "left") {
+        data.x_speed = -1;
+        data.y_speed = 0;
+    } else if (data.actual_direction === "right") {
+        data.x_speed = 1;
+        data.y_speed = 0;
+    }
+
     data.created = true;
     game.camera.resetFX();
 }
@@ -264,7 +279,7 @@ function fire_event() {
 
 function event_triggering() {
     data.current_event = maps[data.map_name].events[data.hero_tile_pos_x + "_" + data.hero_tile_pos_y];
-    if (data.map_collider_layer !== data.current_event.activation_collision_layer) return;
+    if (!data.current_event.activation_collision_layers.includes(data.map_collider_layer)) return;
     if (!data.climbing) {
         if(!data.event_activation_process && data.actual_direction === data.current_event.activation_direction && (data.actual_action === "walk" || data.actual_action === "dash")){
             data.event_activation_process = true;

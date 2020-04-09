@@ -67,7 +67,8 @@ export class Map {
                         x: property_info.x,
                         y: property_info.y,
                         activation_direction: property_info.activation_direction,
-                        activation_collision_layer: property_info.activation_collision_layer ? property_info.activation_collision_layer : 0,
+                        activation_collision_layers: property_info.activation_collision_layers ? property_info.activation_collision_layers : 0,
+                        change_to_collision_layer: property_info.change_to_collision_layer === undefined ? null : property_info.change_to_collision_layer,
                     }
                 } else if (property_info.type === "speed") {
                     this.events[property_info.x + "_" + property_info.y] = {
@@ -75,7 +76,7 @@ export class Map {
                         x: property_info.x,
                         y: property_info.y,
                         speed: property_info.speed,
-                        activation_collision_layer: property_info.activation_collision_layer ? property_info.activation_collision_layer : 0,
+                        activation_collision_layers: property_info.activation_collision_layers ? property_info.activation_collision_layers : 0,
                     }
                 } else if (property_info.type === "door") {
                     this.events[property_info.x + "_" + property_info.y] = {
@@ -88,7 +89,7 @@ export class Map {
                         y_target: property_info.y_target,
                         advance_effect: property_info.advance_effect,
                         dest_collider_layer: property_info.dest_collider_layer ? property_info.dest_collider_layer : 0,
-                        activation_collision_layer: property_info.activation_collision_layer ? property_info.activation_collision_layer : 0,
+                        activation_collision_layers: property_info.activation_collision_layers ? property_info.activation_collision_layers : 0,
                     }
                 } else if (property_info.type === "jump") {
                     this.events[property_info.x + "_" + property_info.y] = {
@@ -96,7 +97,8 @@ export class Map {
                         x: property_info.x,
                         y: property_info.y,
                         activation_direction: property_info.activation_direction,
-                        activation_collision_layer: property_info.activation_collision_layer ? property_info.activation_collision_layer : 0,
+                        activation_collision_layers: property_info.activation_collision_layers ? property_info.activation_collision_layers : 0,
+                        initially_active: property_info.initially_active === undefined ? true : property_info.initially_active, 
                     }
                 } else if (property_info.type === "step") {
                     this.events[property_info.x + "_" + property_info.y] = {
@@ -105,7 +107,7 @@ export class Map {
                         y: property_info.y,
                         activation_direction: property_info.activation_direction,
                         step_direction: property_info.step_direction,
-                        activation_collision_layer: property_info.activation_collision_layer ? property_info.activation_collision_layer : 0,
+                        activation_collision_layers: property_info.activation_collision_layers ? property_info.activation_collision_layers : 0,
                     }
                 } else if (property_info.type === "collision") {
                     this.events[property_info.x + "_" + property_info.y] = {
@@ -113,7 +115,7 @@ export class Map {
                         x: property_info.x,
                         y: property_info.y,
                         activation_direction: property_info.activation_direction,
-                        activation_collision_layer: property_info.activation_collision_layer,
+                        activation_collision_layers: property_info.activation_collision_layers,
                         dest_collider_layer: property_info.dest_collider_layer
                     }
                 }
@@ -135,26 +137,28 @@ export class Map {
             }
         }
 
-        const layers = this.sprite.layers.sort(function(a, b) {
+        this.layers = this.sprite.layers.sort(function(a, b) {
             if (a.properties.over != b.properties.over) return a - b;
             if (a.properties.z != b.properties.z) return a - b;
         });
 
-        for (let i = 0; i < layers.length; ++i) {
-            let layer = this.sprite.createLayer(layers[i].name);
-            if (Array.isArray(layers[i].properties)) { //dealing with newer versions of tiledmap editor
-                layers[i].properties = layers[i].properties.reduce((map, obj) => {
+        for (let i = 0; i < this.layers.length; ++i) {
+            let layer = this.sprite.createLayer(this.layers[i].name);
+            this.layers[i].sprite = layer;
+            this.layers[i].sprite.layer_z = this.layers[i].properties.z;
+            if (Array.isArray(this.layers[i].properties)) { //dealing with newer versions of tiledmap editor
+                this.layers[i].properties = this.layers[i].properties.reduce((map, obj) => {
                     map[obj.name] = obj.value;
                     return map;
                 }, {});
             }
             layer.resizeWorld();
-            layer.blendMode = PIXI.blendModes[layers[i].properties.blendMode];
-            layer.alpha = layers[i].alpha;
+            layer.blendMode = PIXI.blendModes[this.layers[i].properties.blendMode];
+            layer.alpha = this.layers[i].alpha;
 
-            let is_over = layers[i].properties.over.toString().split(",");
+            let is_over = this.layers[i].properties.over.toString().split(",");
             is_over = is_over.length > collider_layer ? parseInt(is_over[collider_layer]) : parseInt(is_over[0]);
-            if (is_over != 0)
+            if (is_over !== 0)
                 overlayer_group.add(layer);
             else
                 underlayer_group.add(layer);
