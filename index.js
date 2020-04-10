@@ -432,17 +432,17 @@ function resizeGame()
 {
     if( currentWidth >= 1024 )
     {
-        game.scale.setupScale(GAME_WIDTH*3, GAME_HEIGHT*3);
+        game.scale.setupScale(numbers.GAME_WIDTH*3, numbers.GAME_HEIGHT*3);
         window.dispatchEvent(new Event('resize'));
     }
     else if( currentWidth >= 480 )
     {
-        game.scale.setupScale(GAME_WIDTH*2, GAME_HEIGHT*2);
+        game.scale.setupScale(numbers.GAME_WIDTH*2, numbers.GAME_HEIGHT*2);
         window.dispatchEvent(new Event('resize'));
     }
     else if( currentWidth >= 375 )
     {
-        game.scale.setupScale(GAME_WIDTH*1.5, GAME_HEIGHT*1.5);
+        game.scale.setupScale(numbers.GAME_WIDTH*1.5, numbers.GAME_HEIGHT*1.5);
         window.dispatchEvent(new Event('resize'));
     }
 }
