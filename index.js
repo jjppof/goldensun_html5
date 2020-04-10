@@ -12,6 +12,8 @@ import * as physics from './physics/physics.js';
 
 window.maps = maps;
 
+var currentWidth = window.innerWidth;
+
 var data = {
     cursors: undefined,
     hero: undefined,
