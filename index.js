@@ -204,18 +204,20 @@ function create() {
     physics.config_collisions(data);
     game.physics.p2.updateBoundsCollisionGroup();
 
+    resizeGame();
+
     //activate debug mode
     game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug, this);
-    
+
     //activate grid mode
     game.input.keyboard.addKey(Phaser.Keyboard.G).onDown.add(toggle_grid, this);
 
     //enable full screen
     game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-    game.input.onTap.add(function(pointer, isDoubleClick) {  
+    game.input.onTap.add(function(pointer, isDoubleClick) {
         if(isDoubleClick) {
             game.scale.startFullScreen(true);
-        }  
+        }
     });
 
     //enable fps show
@@ -421,5 +423,24 @@ function set_actual_action() {
             data.actual_action = "dash";
         else if (!game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "walk")
             data.actual_action = "walk";
+    }
+}
+
+function resizeGame()
+{
+    if( currentWidth >= 1024 )
+    {
+        game.scale.setupScale(GAME_WIDTH*3, GAME_HEIGHT*3);
+        window.dispatchEvent(new Event('resize'));
+    }
+    else if( currentWidth >= 480 )
+    {
+        game.scale.setupScale(GAME_WIDTH*2, GAME_HEIGHT*2);
+        window.dispatchEvent(new Event('resize'));
+    }
+    else if( currentWidth >= 375 )
+    {
+        game.scale.setupScale(GAME_WIDTH*1.5, GAME_HEIGHT*1.5);
+        window.dispatchEvent(new Event('resize'));
     }
 }
