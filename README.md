@@ -6,6 +6,11 @@
 
 Feel free to help :)
 
+Stuff I planned to do (WIP):
+- Add maps (Madra + the catacombs)
+- Add NPCs
+- Add some docs
+
 ## Tech stack
 - [PhaserJS CE 2.15.0](http://phaser.io/)
 - [TexturePacker 4.6.1](https://www.codeandweb.com/texturepacker)
