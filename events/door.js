@@ -59,6 +59,7 @@ export function door_event_phases(data) {
             game,
             maps,
             data.npc_db,
+            data.psynergy_items_db,
             data.map_name,
             data.underlayer_group,
             data.overlayer_group,

@@ -46,6 +46,7 @@ var data = {
     jumping: undefined,
     show_fps: undefined,
     npc_db: undefined,
+    psynergy_items_db: undefined,
     npc_event: undefined,
     active_npc: undefined,
     waiting_for_enter_press: undefined,
@@ -77,6 +78,7 @@ function preload() {
     initializeMaps();
     loadMaps(game);
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
+    game.load.json('psynergy_items_db', 'assets/dbs/psynergy_items_db.json');
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
 
@@ -187,6 +189,7 @@ function create() {
     data.dialog_manager = null;
     data.in_dialog = false;
     data.npc_db = game.cache.getJSON('npc_db');
+    data.psynergy_items_db = game.cache.getJSON('psynergy_items_db');
 
     //creating groups. Order here is important
     data.underlayer_group = game.add.group();
@@ -194,7 +197,7 @@ function create() {
     data.overlayer_group = game.add.group();
 
     //configing map layers: creating sprites, listing events and setting the layers
-    maps[data.map_name].setLayers(game, maps, data.npc_db, data.map_name, data.underlayer_group, data.overlayer_group, data.map_collider_layer, data.npc_group);
+    maps[data.map_name].setLayers(game, maps, data.npc_db, data.psynergy_items_db, data.map_name, data.underlayer_group, data.overlayer_group, data.map_collider_layer, data.npc_group);
 
     config_hero();
     physics.config_world_physics(data);

@@ -1,10 +1,7 @@
 import { SpriteBase } from './SpriteBase.js';
 
 export class NPC_Sprite extends SpriteBase {
-    constructor (
-        key_name,
-        actions
-    ) {
+    constructor (key_name, actions) {
         super(key_name, actions);
     }
 }

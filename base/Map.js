@@ -1,5 +1,6 @@
 import { u } from "../utils.js";
 import { NPC_Sprite, NPC } from './NPC.js';
+import { PsynergyItems, PsynergyItems_Sprite } from "./PsynergyItems.js";
 
 export class Map {
     constructor (
@@ -21,6 +22,7 @@ export class Map {
         this.sprite = null;
         this.events = {};
         this.npcs = [];
+        this.psynergy_items = [];
     }
 
     loadMapAssets(game) {
@@ -31,7 +33,7 @@ export class Map {
         }
     }
 
-    async setLayers(game, maps, npc_db, map_name, underlayer_group, overlayer_group, collider_layer, npc_group) {
+    async setLayers(game, maps, npc_db, psynergy_items_db, map_name, underlayer_group, overlayer_group, collider_layer, npc_group) {
         this.sprite = game.add.tilemap(this.key_name);
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
@@ -134,6 +136,13 @@ export class Map {
                     property_info.thought_message,
                     property_info.avatar ? property_info.avatar : null
                 ));
+            } else if(property.startsWith("psynergy_item")) {
+                const property_info = JSON.parse(this.sprite.properties[property]);
+                this.psynergy_items.push(new PsynergyItems(
+                    property_info.key_name,
+                    property_info.x,
+                    property_info.y
+                ));
             }
         }
 
@@ -164,6 +173,41 @@ export class Map {
                 underlayer_group.add(layer);
         }
 
+        for (let i = 0; i < this.psynergy_items.length; ++i) {
+            let psynergy_item_info = this.psynergy_items[i];
+            const action = psynergy_item_info.key_name;
+            let pynergy_item = new PsynergyItems_Sprite(
+                psynergy_item_info.key_name,
+                [action]
+            );
+            pynergy_item.setActionSpritesheet(
+                action,
+                `assets/images/spritesheets/psynergy_${psynergy_items_db[psynergy_item_info.key_name].type}.png`,
+                `assets/images/spritesheets/psynergy_${psynergy_items_db[psynergy_item_info.key_name].type}.json`
+            );
+            pynergy_item.setActionDirections(
+                action, 
+                psynergy_items_db[psynergy_item_info.key_name].actions.animations,
+                psynergy_items_db[psynergy_item_info.key_name].actions.frames_count
+            );
+            pynergy_item.setActionFrameRate(action, psynergy_items_db[psynergy_item_info.key_name].actions.frame_rate);
+            pynergy_item.addAnimations();
+            await new Promise(resolve => {
+                pynergy_item.loadSpritesheets(game, true, () => {
+                    let psynergy_item_sprite = npc_group.create(0, 0, psynergy_item_info.key_name + "_" + action); //npc_group??
+                    psynergy_item_info.set_sprite(psynergy_item_sprite);
+                    psynergy_item_info.psynergy_item_sprite.is_psynergy_item = true;
+                    psynergy_item_info.psynergy_item_sprite.centerX = psynergy_item_info.x * this.sprite.tileWidth;
+                    psynergy_item_info.psynergy_item_sprite.centerY = psynergy_item_info.y * this.sprite.tileWidth;
+                    psynergy_item_info.psynergy_item_sprite.anchor.y = psynergy_items_db[psynergy_item_info.key_name].anchor_y;
+                    pynergy_item.setAnimation(psynergy_item_info.psynergy_item_sprite, action);
+                    const initial_animation = psynergy_items_db[psynergy_item_info.key_name].initial_animation;
+                    psynergy_item_info.psynergy_item_sprite.animations.play(action + "_" + initial_animation);
+                    resolve();
+                });
+            });
+        }
+
         for (let i = 0; i < this.npcs.length; ++i) {
             let npc_info = this.npcs[i];
             let actions = [];
@@ -171,7 +215,7 @@ export class Map {
                 actions = ['idle'];
             }
             let npc = new NPC_Sprite(npc_info.key_name, actions);
-            for (let j = 0; j < actions.length; j++) {
+            for (let j = 0; j < actions.length; ++j) {
                 const action = actions[j];
                 npc.setActionSpritesheet(
                     action,
@@ -186,7 +230,7 @@ export class Map {
                 npc.setActionFrameRate(action, npc_db[npc_info.key_name].actions[action].frame_rate);
             }
             npc.addAnimations();
-            await new Promise((resolve) => {
+            await new Promise(resolve => {
                 npc.loadSpritesheets(game, true, () => {
                     const initial_action = npc_db[npc_info.key_name].initial_action;
                     let npc_shadow_sprite = npc_group.create(0, 0, 'shadow');
