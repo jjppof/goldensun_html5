@@ -97,20 +97,10 @@ export function initializeMaps(){
         'house_4',
         'madra_house_4',
         'house_4',
-        ['madra_house_test'],
+        ['madra_house_4'],
         'assets/images/maps/madra/house_4.png',
         'assets/images/maps/madra/house_4.json',
-        ['assets/images/maps/madra/madra_physics_house_test.json']
-    );
-
-    maps.madra_house_test = new Map( // à enlever ainsi que les fichiers correspondant...
-        'house_test',
-        'madra_house_test',
-        'Inside_town',
-        ['madra_house_test'],
-        'assets/images/maps/madra/Inside_town_00.png',
-        'assets/images/maps/madra/house_test.json',
-        ['assets/images/maps/madra/madra_physics_house_test.json']
+        ['assets/images/maps/madra/madra_physics_house_4.json']
     );
 
     maps.madra_priere = new Map(
@@ -126,10 +116,10 @@ export function initializeMaps(){
         'prison', //name: peu importe
         'madra_prison', //key_name: utilisé lors des events
         'prison', //le même nom que ds le json (champ tileset) tileset_name: si erreur, argument 1 of .... cannot be converted.....
-        ['madra_house_test'], //pr colisions: doit avoir le même nom que ds le physics_json physics_names: si erreur: data is null...
+        ['madra_prison'], //pr colisions: doit avoir le même nom que ds le physics_json physics_names: si erreur: data is null...
         'assets/images/maps/madra/prison.png', //tileset_image_url
         'assets/images/maps/madra/prison.json', //tileset_json_url
-        ['assets/images/maps/madra/madra_physics_house_test.json'] //physics_jsons_url
+        ['assets/images/maps/madra/madra_physics_prison.json'] //physics_jsons_url
     );
 
     maps.madra_side = new Map(
