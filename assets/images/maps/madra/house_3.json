@@ -41,10 +41,10 @@
     {
      "name":"house3_down",
      "event_01":"{\"type\": \"door\", \"x\": 26, \"y\": 4, \"target\": \"madra_house_3_up\", \"activation_direction\": \"left\", \"x_target\": 16, \"y_target\": 6, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_02":"{\"type\": \"door\", \"x\": 27, \"y\": 15, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 9.5, \"y_target\": 8.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_03":"{\"type\": \"door\", \"x\": 28, \"y\": 15, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 9.5, \"y_target\": 8.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_04":"{\"type\": \"door\", \"x\": 29, \"y\": 15, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 9.5, \"y_target\": 8.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_05":"{\"type\": \"door\", \"x\": 30, \"y\": 15, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 9.5, \"y_target\": 8.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
+     "event_02":"{\"type\": \"door\", \"x\": 27, \"y\": 14, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 9.5, \"y_target\": 8.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_03":"{\"type\": \"door\", \"x\": 28, \"y\": 14, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 9.5, \"y_target\": 8.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_04":"{\"type\": \"door\", \"x\": 29, \"y\": 14, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 9.5, \"y_target\": 8.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_05":"{\"type\": \"door\", \"x\": 30, \"y\": 14, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 9.5, \"y_target\": 8.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
     },
  "propertytypes":
     {
