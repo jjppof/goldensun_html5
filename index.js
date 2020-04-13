@@ -13,6 +13,8 @@ import * as physics from './physics/physics.js';
 window.maps = maps;
 
 var currentWidth = window.innerWidth;
+var music;
+var map_name="madra"; // hum... A CHANGER
 
 var data = {
     cursors: undefined,
@@ -81,6 +83,8 @@ function preload() {
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
+    game.load.audio('bg-music-'+map_name, 'assets/music/'+map_name+'/'+map_name+'.mp3');
+    game.load.audio('step', 'assets/music/se/door.wav');
 
     game.time.advancedTiming = true;
     game.stage.smoothed = false;
@@ -206,6 +210,7 @@ function create() {
     physics.config_collisions(data);
     game.physics.p2.updateBoundsCollisionGroup();
 
+    config_music();
     resizeGame();
 
     //activate debug mode
@@ -214,13 +219,14 @@ function create() {
     //activate grid mode
     game.input.keyboard.addKey(Phaser.Keyboard.G).onDown.add(toggle_grid, this);
 
+    /*
     //enable full screen
     game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.input.onTap.add(function(pointer, isDoubleClick) {
         if(isDoubleClick) {
             game.scale.startFullScreen(true);
         }
-    });
+    });*/
 
     //enable fps show
     data.show_fps = false;
@@ -229,15 +235,17 @@ function create() {
     }, this);
 
     //enable zoom
-    game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(function(){
+    game.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_1).onDown.add(function(){
         game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
     }, this);
-    game.input.keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(function(){
+
+    game.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_2).onDown.add(function(){
         game.scale.setupScale(2*numbers.GAME_WIDTH, 2*numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
     }, this);
-    game.input.keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(function(){
+
+    game.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_3).onDown.add(function(){
         game.scale.setupScale(3*numbers.GAME_WIDTH, 3*numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
     }, this);
@@ -426,6 +434,13 @@ function set_actual_action() {
         else if (!game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "walk")
             data.actual_action = "walk";
     }
+}
+
+function config_music(){
+    music = game.add.audio('bg-music-'+map_name);
+    music.loopFull();
+    music.volume=0.1;
+    music.play();
 }
 
 function resizeGame()

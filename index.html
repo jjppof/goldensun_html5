@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Cache-Control" content="no-cache" />
     <title>Golden Sun</title>
     <script type="text/javascript" src="phaser.js"></script>
     <script type="text/javascript" src="plugins/underscore-min.js"></script>
@@ -10,24 +12,32 @@
     <style>
         body {
             margin: 0;
-            background-color: whitesmoke;
+            background-color: black;
         }
         .intro {
             margin: 1rem 20%;
         }
-        #game {
+        /*#game {
             padding: 2rem 20%;
-            background-color: black;
-        }
+        }*/
         canvas {
             image-rendering: -moz-crisp-edges;
             image-rendering: -webkit-crisp-edges;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
+            padding: 0;
+            margin: auto;
+            display: block;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
         }
 	</style>
 </head>
 <body>
+    <!--
     <div class="intro">
         <pre>
 Use the arrows to move.
@@ -41,6 +51,7 @@ Use the enter key to talk to npc.
 See <a href="battle.html">battle test</a>.
         </pre>
     </div>
+    !-->
     <div id="game"></div>
 </body>
 </html>
