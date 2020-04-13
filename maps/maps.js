@@ -17,7 +17,7 @@ export function initializeMaps(){
         'inn_down',
         'madra_inn_down',
         'Inside_town',
-        ['madra_inn_down'],
+        ['inn_down_col'],
         'assets/images/maps/madra/Inside_town_00.png',
         'assets/images/maps/madra/inn_down.json',
         ['assets/images/maps/madra/madra_physics_inn.json']
@@ -57,40 +57,40 @@ export function initializeMaps(){
         'house_2',
         'madra_house_2',
         'house_2',
-        ['madra_house_test'],
+        ['madra_house_2'],
         'assets/images/maps/madra/house_2.png',
         'assets/images/maps/madra/house_2.json',
-        ['assets/images/maps/madra/madra_physics_house_test.json']
+        ['assets/images/maps/madra/madra_physics_house_2.json']
     );
 
     maps.madra_house_2_up = new Map(
         'house_2_up',
         'madra_house_2_up',
         'house_2_up',
-        ['madra_house_test'],
+        ['madra_house_2_up'],
         'assets/images/maps/madra/house_2_up.png',
         'assets/images/maps/madra/house_2_up.json',
-        ['assets/images/maps/madra/madra_physics_house_test.json']
+        ['assets/images/maps/madra/madra_physics_house_2_up.json']
     );
 
     maps.madra_house_3 = new Map(
         'house_3',
         'madra_house_3',
         'house_3',
-        ['madra_house_test'],
+        ['madra_house_3'],
         'assets/images/maps/madra/house_3.png',
         'assets/images/maps/madra/house_3.json',
-        ['assets/images/maps/madra/madra_physics_house_test.json']
+        ['assets/images/maps/madra/madra_physics_house_3.json']
     );
 
     maps.madra_house_3_up = new Map(
         'house_3_up',
         'madra_house_3_up',
         'house_3_up',
-        ['madra_house_test'],
+        ['madra_house_3_up'],
         'assets/images/maps/madra/house_3_up.png',
         'assets/images/maps/madra/house3_up.json',
-        ['assets/images/maps/madra/madra_physics_house_test.json']
+        ['assets/images/maps/madra/madra_physics_house_3_up.json']
     );
 
     maps.madra_house_4 = new Map(
@@ -103,7 +103,7 @@ export function initializeMaps(){
         ['assets/images/maps/madra/madra_physics_house_test.json']
     );
 
-    maps.madra_house_test = new Map(
+    maps.madra_house_test = new Map( // à enlever ainsi que les fichiers correspondant...
         'house_test',
         'madra_house_test',
         'Inside_town',
