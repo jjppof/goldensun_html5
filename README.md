@@ -5,6 +5,8 @@ A Golden Sun Engine built in HTML5 with Phaser.
 
 Feel free to help :)
 
+I'm avoiding making some docs for now because I'm constantly changing things.
+
 ## Tech stack
 - [PhaserJS CE 2.15.0](http://phaser.io/)
 - [TexturePacker 4.6.1](https://www.codeandweb.com/texturepacker)
