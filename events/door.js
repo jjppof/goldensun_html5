@@ -44,7 +44,7 @@ export function door_event_phases(data) {
 
         for (let i = 0; i < data.npc_group.children.length; ++i) {
             let sprite = data.npc_group.children[i];
-            if (!sprite.is_npc) continue;
+            if (!sprite.is_npc && !sprite.is_psynergy_item) continue;
             sprite.body.destroy()
         }
 
