@@ -35,6 +35,24 @@ export function config_physics_for_npcs(data, initialize = true) {
     }
 }
 
+export function config_physics_for_psynergy_items(data, initialize = true) {
+    if (initialize) data.psynergyItemCollisionGroup = game.physics.p2.createCollisionGroup();
+    for (let i = 0; i < maps[data.map_name].psynergy_items.length; ++i) {
+        let psynergy_item = maps[data.map_name].psynergy_items[i];
+        game.physics.p2.enable(psynergy_item.psynergy_item_sprite, false);
+        psynergy_item.psynergy_item_sprite.anchor.y = data.psynergy_items_db[psynergy_item.key_name].anchor_y; //Important to be after the previous command
+        psynergy_item.psynergy_item_sprite.body.clearShapes();
+        psynergy_item.psynergy_item_sprite.body.setCircle(data.psynergy_items_db[psynergy_item.key_name].body_radius, 0, 0);
+        psynergy_item.psynergy_item_sprite.body.setCollisionGroup(data.psynergyItemCollisionGroup);
+        psynergy_item.psynergy_item_sprite.body.damping = numbers.PSYNERGY_ITEM_DAMPING;
+        psynergy_item.psynergy_item_sprite.body.angularDamping = numbers.PSYNERGY_ITEM_DAMPING;
+        psynergy_item.psynergy_item_sprite.body.setZeroRotation();
+        psynergy_item.psynergy_item_sprite.body.fixedRotation = true; //disalble npm collision body rotation
+        psynergy_item.psynergy_item_sprite.body.dynamic = false;
+        psynergy_item.psynergy_item_sprite.body.static = true;
+    }
+}
+
 export function config_physics_for_map(data, initialize = true, collision_layer = undefined) {
     if (initialize) {
         data.map_collider = game.add.sprite(0, 0);
@@ -55,7 +73,7 @@ export function config_physics_for_map(data, initialize = true, collision_layer 
     data.map_collider.body.static = true;
 }
 
-export function config_world_physics(data) {
+export function config_world_physics() {
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.setImpactEvents(true);
     game.physics.p2.world.defaultContactMaterial.restitution = numbers.WORLD_RESTITUTION;
@@ -70,9 +88,10 @@ export function config_collisions(data) {
     data.map_collider.body.collides(data.heroCollisionGroup);
 
     data.hero.body.collides(data.npcCollisionGroup);
+    data.hero.body.collides(data.psynergyItemCollisionGroup);
     for (let i = 0; i < data.npc_group.children.length; ++i) {
         let sprite = data.npc_group.children[i];
-        if (!sprite.is_npc) continue;
+        if (!sprite.is_npc && !sprite.is_psynergy_item) continue;
         sprite.body.collides(data.heroCollisionGroup);
     }
 }
@@ -80,16 +99,23 @@ export function config_collisions(data) {
 export function collision_dealer(data) {
     for (let i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; ++i){
         let c = game.physics.p2.world.narrowphase.contactEquations[i];
-        if (c.bodyA === data.hero.body.data){
-            if(c.contactPointA[0] >= numbers.COLLISION_MARGIN && data.actual_direction === "left")
+        if (c.bodyA === data.hero.body.data) {
+            if (c.contactPointA[0] >= numbers.COLLISION_MARGIN && data.actual_direction === "left")
                 data.hero.body.velocity.x = 0;
-            if(c.contactPointA[0] <= -numbers.COLLISION_MARGIN && data.actual_direction === "right")
+            if (c.contactPointA[0] <= -numbers.COLLISION_MARGIN && data.actual_direction === "right")
                 data.hero.body.velocity.x = 0;
-            if(c.contactPointA[1] <= -numbers.COLLISION_MARGIN && data.actual_direction === "down")
+            if (c.contactPointA[1] <= -numbers.COLLISION_MARGIN && data.actual_direction === "down")
                 data.hero.body.velocity.y = 0;
-            if(c.contactPointA[1] >= numbers.COLLISION_MARGIN && data.actual_direction === "up")
+            if (c.contactPointA[1] >= numbers.COLLISION_MARGIN && data.actual_direction === "up")
                 data.hero.body.velocity.y = 0;
-            break;
+        }
+        for (let j = 0; j < maps[data.map_name].psynergy_items.length; ++j) {
+            let psynergy_item_body = maps[data.map_name].psynergy_items[j].psynergy_item_sprite.body.data;
+            if (c.bodyA === psynergy_item_body || c.bodyB === psynergy_item_body) {
+                if (c.bodyA === data.hero.body.data || c.bodyB === data.hero.body.data) {
+                    console.log("pillar touched!");
+                }
+            }
         }
     }
 }

@@ -36,6 +36,7 @@ var data = {
     mapCollisionGroup: undefined,
     heroCollisionGroup: undefined,
     npcCollisionGroup: undefined,
+    psynergyItemCollisionGroup: undefined,
     underlayer_group: undefined,
     overlayer_group: undefined,
     npc_group: undefined,
@@ -153,7 +154,7 @@ function toggle_debug() {
     data.map_collider.body.debug = !data.map_collider.body.debug;
     for (let i = 0; i < data.npc_group.children.length; ++i) {
         let sprite = data.npc_group.children[i];
-        if (!sprite.is_npc) continue;
+        if (!sprite.is_npc && !sprite.is_psynergy_item) continue;
         sprite.body.debug = !sprite.body.debug;
     }
     data.debug = !data.debug;
@@ -200,9 +201,10 @@ function create() {
     maps[data.map_name].setLayers(game, maps, data.npc_db, data.psynergy_items_db, data.map_name, data.underlayer_group, data.overlayer_group, data.map_collider_layer, data.npc_group);
 
     config_hero();
-    physics.config_world_physics(data);
+    physics.config_world_physics();
     physics.config_physics_for_hero(data);
     physics.config_physics_for_npcs(data);
+    physics.config_physics_for_psynergy_items(data);
     physics.config_physics_for_map(data);
     physics.config_collisions(data);
     game.physics.p2.updateBoundsCollisionGroup();
