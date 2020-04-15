@@ -4,7 +4,7 @@ import { get_transition_directions } from '../utils.js';
 import { main_char_list } from '../chars/main_char_list.js';
 
 export function config_physics_for_hero(data, initialize = true) {
-    if (initialize) data.heroCollisionGroup = game.physics.p2.createCollisionGroup();
+    if (initialize) data.heroCollisionGroup = game.physics.p2.createCollisionGroup(); //groups only need to be created once
     game.physics.p2.enable(data.hero, false);
     data.hero.anchor.y = numbers.HERO_Y_AP; //Important to be after the previous command
     data.hero.body.clearShapes();
@@ -18,7 +18,7 @@ export function config_physics_for_hero(data, initialize = true) {
 }
 
 export function config_physics_for_npcs(data, initialize = true) {
-    if (initialize) data.npcCollisionGroup = game.physics.p2.createCollisionGroup();
+    if (initialize) data.npcCollisionGroup = game.physics.p2.createCollisionGroup(); //groups only need to be created once
     for (let i = 0; i < maps[data.map_name].npcs.length; ++i) {
         let npc = maps[data.map_name].npcs[i];
         game.physics.p2.enable(npc.npc_sprite, false);
@@ -36,7 +36,7 @@ export function config_physics_for_npcs(data, initialize = true) {
 }
 
 export function config_physics_for_psynergy_items(data, initialize = true) {
-    if (initialize) data.psynergyItemCollisionGroup = game.physics.p2.createCollisionGroup();
+    if (initialize) data.psynergyItemCollisionGroup = game.physics.p2.createCollisionGroup(); //groups only need to be created once
     for (let i = 0; i < maps[data.map_name].psynergy_items.length; ++i) {
         let psynergy_item = maps[data.map_name].psynergy_items[i];
         game.physics.p2.enable(psynergy_item.psynergy_item_sprite, false);
@@ -54,14 +54,14 @@ export function config_physics_for_psynergy_items(data, initialize = true) {
 }
 
 export function config_physics_for_map(data, initialize = true, collision_layer = undefined) {
-    if (initialize) {
+    if (initialize) { //groups only need to be created once
         data.map_collider = game.add.sprite(0, 0);
         data.map_collider.width = data.map_collider.height = 0;
         data.mapCollisionGroup = game.physics.p2.createCollisionGroup();
     }
     game.physics.p2.enable(data.map_collider, false);
     data.map_collider.body.clearShapes();
-    data.map_collider.body.loadPolygon(
+    data.map_collider.body.loadPolygon( //load map physics data json files
         maps[data.map_name].physics_names[collision_layer !== undefined ? collision_layer : data.map_collider_layer], 
         maps[data.map_name].physics_names[collision_layer !== undefined ? collision_layer : data.map_collider_layer]
     );
@@ -83,7 +83,7 @@ export function config_world_physics() {
     game.physics.p2.restitution = numbers.WORLD_RESTITUTION;
 }
 
-export function config_collisions(data) {
+export function config_collisions(data) { //make the world bodies interact with hero body
     data.hero.body.collides(data.mapCollisionGroup);
     data.map_collider.body.collides(data.heroCollisionGroup);
 
@@ -99,7 +99,7 @@ export function config_collisions(data) {
 export function collision_dealer(data) {
     for (let i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; ++i){
         let c = game.physics.p2.world.narrowphase.contactEquations[i];
-        if (c.bodyA === data.hero.body.data) {
+        if (c.bodyA === data.hero.body.data) { //check if hero collided with something then make it stops
             if (c.contactPointA[0] >= numbers.COLLISION_MARGIN && data.actual_direction === "left")
                 data.hero.body.velocity.x = 0;
             if (c.contactPointA[0] <= -numbers.COLLISION_MARGIN && data.actual_direction === "right")
@@ -109,7 +109,7 @@ export function collision_dealer(data) {
             if (c.contactPointA[1] >= numbers.COLLISION_MARGIN && data.actual_direction === "up")
                 data.hero.body.velocity.y = 0;
         }
-        for (let j = 0; j < maps[data.map_name].psynergy_items.length; ++j) {
+        for (let j = 0; j < maps[data.map_name].psynergy_items.length; ++j) { //check if hero is colliding with any psynergy item
             let psynergy_item_body = maps[data.map_name].psynergy_items[j].psynergy_item_sprite.body.data;
             if (c.bodyA === psynergy_item_body || c.bodyB === psynergy_item_body) {
                 if (c.bodyA === data.hero.body.data || c.bodyB === data.hero.body.data) {
