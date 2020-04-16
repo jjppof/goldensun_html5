@@ -335,10 +335,10 @@ function update() {
             data.hero_tile_pos_x = parseInt(data.hero.x/maps[data.map_name].sprite.tileWidth);
             data.hero_tile_pos_y = parseInt(data.hero.y/maps[data.map_name].sprite.tileHeight);
 
-            if (data.waiting_to_step) {
+            if (data.waiting_to_step) { //step event
                 do_step(data);
             }
-            if (data.waiting_to_change_collision) {
+            if (data.waiting_to_change_collision) { //change collision pattern layer event
                 do_collision_change(data);
             }
 
@@ -439,9 +439,10 @@ function set_actual_action() {
     else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && data.actual_direction !== "climb" && data.climbing)
         data.actual_direction = "climb";
     else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && (data.actual_action !== "walk" || data.actual_action !== "dash") && !data.climbing) {
-        if (game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "dash")
+        if (game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "dash") {
             data.actual_action = "dash";
-        else if (!game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "walk")
+        } else if (!game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "walk") {
             data.actual_action = "walk";
+        }
     }
 }
