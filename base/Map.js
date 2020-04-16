@@ -194,7 +194,7 @@ export class Map {
             pynergy_item.addAnimations();
             await new Promise(resolve => {
                 pynergy_item.loadSpritesheets(game, true, () => {
-                    let psynergy_item_sprite = npc_group.create(0, 0, psynergy_item_info.key_name + "_" + action); //npc_group??
+                    let psynergy_item_sprite = npc_group.create(0, 0, psynergy_item_info.key_name + "_" + action);
                     psynergy_item_info.set_sprite(psynergy_item_sprite);
                     psynergy_item_info.psynergy_item_sprite.is_psynergy_item = true;
                     psynergy_item_info.psynergy_item_sprite.centerX = psynergy_item_info.x * this.sprite.tileWidth;

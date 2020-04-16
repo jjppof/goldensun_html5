@@ -60,6 +60,10 @@ var data = {
     grid: false,
     waiting_to_change_collision: false,
     collision_event_data: {},
+    trying_to_push: false,
+    trying_to_push_direction: "",
+    push_timer: null,
+    pushing: false
 };
 window.data = data;
 
@@ -169,7 +173,7 @@ function create() {
 
     // Initializing some vars
     data.hero_name = "isaac";
-    data.map_name = "madra";
+    data.map_name = "madra_side";
     data.map_collider_layer = 0;
     data.actual_action = 'idle';
     data.actual_direction = 'down';
@@ -197,75 +201,86 @@ function create() {
     data.npc_group = game.add.group();
     data.overlayer_group = game.add.group();
 
-    //configing map layers: creating sprites, listing events and setting the layers
-    maps[data.map_name].setLayers(game, maps, data.npc_db, data.psynergy_items_db, data.map_name, data.underlayer_group, data.overlayer_group, data.map_collider_layer, data.npc_group);
+    //configuring map layers: creating sprites, listing events and setting the layers
+    maps[data.map_name].setLayers(
+        game,
+        maps,
+        data.npc_db,
+        data.psynergy_items_db,
+        data.map_name,
+        data.underlayer_group,
+        data.overlayer_group,
+        data.map_collider_layer,
+        data.npc_group
+    ).then(() => {
 
-    config_hero();
-    physics.config_world_physics();
-    physics.config_physics_for_hero(data);
-    physics.config_physics_for_npcs(data);
-    physics.config_physics_for_psynergy_items(data);
-    physics.config_physics_for_map(data);
-    physics.config_collisions(data);
-    game.physics.p2.updateBoundsCollisionGroup();
+        config_hero();
+        physics.config_world_physics();
+        physics.config_physics_for_hero(data);
+        physics.config_physics_for_npcs(data);
+        physics.config_physics_for_psynergy_items(data);
+        physics.config_physics_for_map(data);
+        physics.config_collisions(data);
+        game.physics.p2.updateBoundsCollisionGroup();
 
-    //activate debug mode
-    game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug, this);
-    
-    //activate grid mode
-    game.input.keyboard.addKey(Phaser.Keyboard.G).onDown.add(toggle_grid, this);
+        //activate debug mode
+        game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug, this);
+        
+        //activate grid mode
+        game.input.keyboard.addKey(Phaser.Keyboard.G).onDown.add(toggle_grid, this);
 
-    //enable full screen
-    game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-    game.input.onTap.add(function(pointer, isDoubleClick) {  
-        if(isDoubleClick) {
-            game.scale.startFullScreen(true);
-        }  
+        //enable full screen
+        game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+        game.input.onTap.add(function(pointer, isDoubleClick) {  
+            if(isDoubleClick) {
+                game.scale.startFullScreen(true);
+            }  
+        });
+
+        //enable fps show
+        data.show_fps = false;
+        game.input.keyboard.addKey(Phaser.Keyboard.F).onDown.add(function(){
+            data.show_fps = !data.show_fps;
+        }, this);
+
+        //enable zoom
+        game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(function(){
+            game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+            window.dispatchEvent(new Event('resize'));
+        }, this);
+        game.input.keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(function(){
+            game.scale.setupScale(2*numbers.GAME_WIDTH, 2*numbers.GAME_HEIGHT);
+            window.dispatchEvent(new Event('resize'));
+        }, this);
+        game.input.keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(function(){
+            game.scale.setupScale(3*numbers.GAME_WIDTH, 3*numbers.GAME_HEIGHT);
+            window.dispatchEvent(new Event('resize'));
+        }, this);
+
+        //enable enter event
+        game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(enter_key_event, this);
+
+        //set keyboard cursors
+        data.cursors = game.input.keyboard.createCursorKeys();
+
+        //set initial speed factors
+        if (data.actual_direction === "up") {
+            data.x_speed = 0;
+            data.y_speed = -1;
+        } else if (data.actual_direction === "down") {
+            data.x_speed = 0;
+            data.y_speed = 1;
+        } else if (data.actual_direction === "left") {
+            data.x_speed = -1;
+            data.y_speed = 0;
+        } else if (data.actual_direction === "right") {
+            data.x_speed = 1;
+            data.y_speed = 0;
+        }
+
+        data.created = true;
+        game.camera.resetFX();
     });
-
-    //enable fps show
-    data.show_fps = false;
-    game.input.keyboard.addKey(Phaser.Keyboard.F).onDown.add(function(){
-        data.show_fps = !data.show_fps;
-    }, this);
-
-    //enable zoom
-    game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(function(){
-        game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
-        window.dispatchEvent(new Event('resize'));
-    }, this);
-    game.input.keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(function(){
-        game.scale.setupScale(2*numbers.GAME_WIDTH, 2*numbers.GAME_HEIGHT);
-        window.dispatchEvent(new Event('resize'));
-    }, this);
-    game.input.keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(function(){
-        game.scale.setupScale(3*numbers.GAME_WIDTH, 3*numbers.GAME_HEIGHT);
-        window.dispatchEvent(new Event('resize'));
-    }, this);
-
-    //enable enter event
-    game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(enter_key_event, this);
-
-    //set keyboard cursors
-    data.cursors = game.input.keyboard.createCursorKeys();
-
-    //set initial speed factors
-    if (data.actual_direction === "up") {
-        data.x_speed = 0;
-        data.y_speed = -1;
-    } else if (data.actual_direction === "down") {
-        data.x_speed = 0;
-        data.y_speed = 1;
-    } else if (data.actual_direction === "left") {
-        data.x_speed = -1;
-        data.y_speed = 0;
-    } else if (data.actual_direction === "right") {
-        data.x_speed = 1;
-        data.y_speed = 0;
-    }
-
-    data.created = true;
-    game.camera.resetFX();
 }
 
 function fire_event() {
@@ -316,7 +331,7 @@ function event_triggering() {
 
 function update() {
     if (data.created) {
-        if (!data.on_event && !data.npc_event) {
+        if (!data.on_event && !data.npc_event && !data.pushing) {
             data.hero_tile_pos_x = parseInt(data.hero.x/maps[data.map_name].sprite.tileWidth);
             data.hero_tile_pos_y = parseInt(data.hero.y/maps[data.map_name].sprite.tileHeight);
 
@@ -369,6 +384,8 @@ function update() {
 
             //disabling hero body movement
             data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
+        } else if (data.pushing) {
+            change_hero_sprite();
         }
     } else {
         render_loading();

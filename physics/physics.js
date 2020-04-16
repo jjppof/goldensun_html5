@@ -2,6 +2,7 @@ import { maps } from '../maps/maps.js';
 import * as numbers from '../magic_numbers.js';
 import { get_transition_directions } from '../utils.js';
 import { main_char_list } from '../chars/main_char_list.js';
+import { fire_push_movement } from '../psynergy_items/push.js';
 
 export function config_physics_for_hero(data, initialize = true) {
     if (initialize) data.heroCollisionGroup = game.physics.p2.createCollisionGroup();
@@ -42,7 +43,8 @@ export function config_physics_for_psynergy_items(data, initialize = true) {
         game.physics.p2.enable(psynergy_item.psynergy_item_sprite, false);
         psynergy_item.psynergy_item_sprite.anchor.y = data.psynergy_items_db[psynergy_item.key_name].anchor_y; //Important to be after the previous command
         psynergy_item.psynergy_item_sprite.body.clearShapes();
-        psynergy_item.psynergy_item_sprite.body.setCircle(data.psynergy_items_db[psynergy_item.key_name].body_radius, 0, 0);
+        const width = data.psynergy_items_db[psynergy_item.key_name].body_radius * 2;
+        psynergy_item.psynergy_item_sprite.body.setRectangle(width, width, 0, 0);
         psynergy_item.psynergy_item_sprite.body.setCollisionGroup(data.psynergyItemCollisionGroup);
         psynergy_item.psynergy_item_sprite.body.damping = numbers.PSYNERGY_ITEM_DAMPING;
         psynergy_item.psynergy_item_sprite.body.angularDamping = numbers.PSYNERGY_ITEM_DAMPING;
@@ -109,13 +111,24 @@ export function collision_dealer(data) {
             if (c.contactPointA[1] >= numbers.COLLISION_MARGIN && data.actual_direction === "up")
                 data.hero.body.velocity.y = 0;
         }
-        for (let j = 0; j < maps[data.map_name].psynergy_items.length; ++j) {
+        let j = 0;
+        for (j = 0; j < maps[data.map_name].psynergy_items.length; ++j) {
             let psynergy_item_body = maps[data.map_name].psynergy_items[j].psynergy_item_sprite.body.data;
             if (c.bodyA === psynergy_item_body || c.bodyB === psynergy_item_body) {
                 if (c.bodyA === data.hero.body.data || c.bodyB === data.hero.body.data) {
-                    console.log("pillar touched!");
+                    if (["walk", "dash"].includes(data.actual_action)) {
+                        data.trying_to_push = true;
+                        if (data.push_timer === null) {
+                            data.trying_to_push_direction = data.actual_direction;
+                            data.push_timer = game.time.events.add(Phaser.Timer.QUARTER, fire_push_movement.bind(this, data, maps[data.map_name].psynergy_items[j]));
+                        }
+                        break;
+                    }
                 }
             }
+        }
+        if (j === maps[data.map_name].psynergy_items.length) {
+            data.trying_to_push = false;
         }
     }
 }
