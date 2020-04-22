@@ -99,7 +99,7 @@ export function config_collisions(data) { //make the world bodies interact with 
 }
 
 export function collision_dealer(data) {
-    for (let i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; ++i){
+    for (let i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; ++i) {
         let c = game.physics.p2.world.narrowphase.contactEquations[i];
         if (c.bodyA === data.hero.body.data) { //check if hero collided with something then make it stops
             if (c.contactPointA[0] >= numbers.COLLISION_MARGIN && data.actual_direction === "left")
@@ -113,14 +113,32 @@ export function collision_dealer(data) {
         }
         let j = 0;
         for (j = 0; j < maps[data.map_name].psynergy_items.length; ++j) {  //check if hero is colliding with any psynergy item
-            let psynergy_item_body = maps[data.map_name].psynergy_items[j].psynergy_item_sprite.body.data;
-            if (c.bodyA === psynergy_item_body || c.bodyB === psynergy_item_body) {
+            let psynergy_item_body = maps[data.map_name].psynergy_items[j].psynergy_item_sprite.body;
+            if (c.bodyA === psynergy_item_body.data || c.bodyB === psynergy_item_body.data) {
                 if (c.bodyA === data.hero.body.data || c.bodyB === data.hero.body.data) {
                     if (["walk", "dash"].includes(data.actual_action)) {
                         data.trying_to_push = true;
                         if (data.push_timer === null) {
                             data.trying_to_push_direction = data.actual_direction;
-                            data.push_timer = game.time.events.add(Phaser.Timer.QUARTER, fire_push_movement.bind(this, data, maps[data.map_name].psynergy_items[j]));
+                            let psynergy_item = maps[data.map_name].psynergy_items[j];
+                            let item_position = psynergy_item.get_current_position(data);
+                            switch (data.trying_to_push_direction) {
+                                case "up":
+                                    item_position.y -= 1;
+                                    break;
+                                case "down":
+                                    item_position.y += 1;
+                                    break;
+                                case "left":
+                                    item_position.x -= 1;
+                                    break;
+                                case "right":
+                                    item_position.x += 1;
+                                    break;
+                            }
+                            if (psynergy_item.position_allowed(item_position.x, item_position.y)) {
+                                data.push_timer = game.time.events.add(Phaser.Timer.QUARTER, fire_push_movement.bind(this, data, psynergy_item));
+                            }
                         }
                         break;
                     }

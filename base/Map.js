@@ -66,6 +66,7 @@ export class Map {
                 if (property_info.type === "stair") {
                     this.events[property_info.x + "_" + property_info.y] = {
                         type: property_info.type,
+                        dynamic: false,
                         x: property_info.x,
                         y: property_info.y,
                         activation_direction: property_info.activation_direction,
@@ -75,6 +76,7 @@ export class Map {
                 } else if (property_info.type === "speed") {
                     this.events[property_info.x + "_" + property_info.y] = {
                         type: property_info.type,
+                        dynamic: false,
                         x: property_info.x,
                         y: property_info.y,
                         speed: property_info.speed,
@@ -83,6 +85,7 @@ export class Map {
                 } else if (property_info.type === "door") {
                     this.events[property_info.x + "_" + property_info.y] = {
                         type: property_info.type,
+                        dynamic: false,
                         x: property_info.x,
                         y: property_info.y,
                         target: property_info.target,
@@ -96,6 +99,7 @@ export class Map {
                 } else if (property_info.type === "jump") {
                     this.events[property_info.x + "_" + property_info.y] = {
                         type: property_info.type,
+                        dynamic: false,
                         x: property_info.x,
                         y: property_info.y,
                         activation_direction: property_info.activation_direction,
@@ -105,6 +109,7 @@ export class Map {
                 } else if (property_info.type === "step") {
                     this.events[property_info.x + "_" + property_info.y] = {
                         type: property_info.type,
+                        dynamic: false,
                         x: property_info.x,
                         y: property_info.y,
                         activation_direction: property_info.activation_direction,
@@ -114,6 +119,7 @@ export class Map {
                 } else if (property_info.type === "collision") {
                     this.events[property_info.x + "_" + property_info.y] = {
                         type: property_info.type,
+                        dynamic: false,
                         x: property_info.x,
                         y: property_info.y,
                         activation_direction: property_info.activation_direction,
@@ -141,7 +147,8 @@ export class Map {
                 this.psynergy_items.push(new PsynergyItems(
                     property_info.key_name,
                     property_info.x,
-                    property_info.y
+                    property_info.y,
+                    property_info.allowed_tiles
                 ));
             }
         }
@@ -197,9 +204,10 @@ export class Map {
                     let psynergy_item_sprite = npc_group.create(0, 0, psynergy_item_info.key_name + "_" + action);
                     psynergy_item_info.set_sprite(psynergy_item_sprite);
                     psynergy_item_info.psynergy_item_sprite.is_psynergy_item = true;
-                    psynergy_item_info.psynergy_item_sprite.centerX = psynergy_item_info.x * this.sprite.tileWidth;
-                    psynergy_item_info.psynergy_item_sprite.centerY = psynergy_item_info.y * this.sprite.tileWidth;
                     psynergy_item_info.psynergy_item_sprite.anchor.y = psynergy_items_db[psynergy_item_info.key_name].anchor_y;
+                    psynergy_item_info.psynergy_item_sprite.centerX = (psynergy_item_info.x + 1) * this.sprite.tileWidth;
+                    const anchor_shift = psynergy_items_db[psynergy_item_info.key_name].anchor_y * this.sprite.tileWidth * 0.5;
+                    psynergy_item_info.psynergy_item_sprite.centerY = psynergy_item_info.y * this.sprite.tileWidth - anchor_shift;
                     pynergy_item.setAnimation(psynergy_item_info.psynergy_item_sprite, action);
                     const initial_animation = psynergy_items_db[psynergy_item_info.key_name].initial_animation;
                     psynergy_item_info.psynergy_item_sprite.animations.play(action + "_" + initial_animation);
@@ -243,9 +251,10 @@ export class Map {
                     npc_info.set_shadow_sprite(npc_shadow_sprite);
                     npc_info.set_sprite(npc_sprite);
                     npc_info.npc_sprite.is_npc = true;
-                    npc_info.npc_sprite.centerX = npc_info.initial_x * this.sprite.tileWidth;
-                    npc_info.npc_sprite.centerY = npc_info.initial_y * this.sprite.tileWidth;
                     npc_info.npc_sprite.anchor.y = npc_db[npc_info.key_name].anchor_y;
+                    npc_info.npc_sprite.centerX = (npc_info.initial_x + 1) * this.sprite.tileWidth;
+                    const anchor_shift = npc_db[npc_info.key_name].anchor_y * this.sprite.tileWidth * 0.5;
+                    npc_info.npc_sprite.centerY = npc_info.initial_y * this.sprite.tileWidth - anchor_shift;
                     npc.setAnimation(npc_info.npc_sprite, initial_action);
                     npc_info.npc_sprite.animations.play(u([
                         initial_action,

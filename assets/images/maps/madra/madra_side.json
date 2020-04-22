@@ -273,7 +273,7 @@
      "event_16":"{\n\"type\": \"door\",\n\"x_target\": 38,\n\"y_target\": 21,\n\"target\": \"madra\",\n\"activation_direction\": \"left\",\n\"x\": 0,\n\"y\": 17,\n\"advance_effect\": false,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
      "event_17":"{\n\"type\": \"door\",\n\"x_target\": 38,\n\"y_target\": 21,\n\"target\": \"madra\",\n\"activation_direction\": \"left\",\n\"x\": 0,\n\"y\": 18,\n\"advance_effect\": false,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
      "event_18":"{\n\"type\": \"door\",\n\"x_target\": 38,\n\"y_target\": 21,\n\"target\": \"madra\",\n\"activation_direction\": \"left\",\n\"x\": 0,\n\"y\": 19,\n\"advance_effect\": false,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
-     "psynergy_item_01":"{\n\"key_name\": \"entangled_pillar\",\n\"x\": 15,\n\"y\": 12\n}"
+     "psynergy_item_01":"{\n\"key_name\": \"entangled_pillar\",\n\"x\": 14,\n\"y\": 11,\n\"allowed_tiles\": [\n{\"x\": 13, \"y\": 8},\n{\"x\": 14, \"y\": 8},\n{\"x\": 13, \"y\": 9},\n{\"x\": 14, \"y\": 9},\n{\"x\": 13, \"y\": 10},\n{\"x\": 14, \"y\": 10},\n{\"x\": 13, \"y\": 11},\n{\"x\": 14, \"y\": 11}\n]\n}"
     },
  "propertytypes":
     {
