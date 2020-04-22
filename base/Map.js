@@ -33,7 +33,7 @@ export class Map {
         }
     }
 
-    async setLayers(game, maps, npc_db, psynergy_items_db, map_name, underlayer_group, overlayer_group, collider_layer, npc_group) {
+    async setLayers(game, data, maps, npc_db, psynergy_items_db, map_name, underlayer_group, overlayer_group, collider_layer, npc_group) {
         this.sprite = game.add.tilemap(this.key_name);
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
@@ -104,7 +104,7 @@ export class Map {
                         y: property_info.y,
                         activation_direction: property_info.activation_direction,
                         activation_collision_layers: property_info.activation_collision_layers ? property_info.activation_collision_layers : 0,
-                        initially_active: property_info.initially_active === undefined ? true : property_info.initially_active, 
+                        active: property_info.initially_active === undefined ? true : property_info.initially_active, 
                     }
                 } else if (property_info.type === "step") {
                     this.events[property_info.x + "_" + property_info.y] = {
@@ -148,7 +148,8 @@ export class Map {
                     property_info.key_name,
                     property_info.x,
                     property_info.y,
-                    property_info.allowed_tiles
+                    property_info.allowed_tiles,
+                    property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer
                 ));
             }
         }
@@ -211,6 +212,22 @@ export class Map {
                     pynergy_item.setAnimation(psynergy_item_info.psynergy_item_sprite, action);
                     const initial_animation = psynergy_items_db[psynergy_item_info.key_name].initial_animation;
                     psynergy_item_info.psynergy_item_sprite.animations.play(action + "_" + initial_animation);
+                    const position = psynergy_item_info.get_current_position(data);
+                    const x_pos = position.x;
+                    const y_pos = position.y + psynergy_items_db[psynergy_item_info.key_name].jump_y_shift;
+                    if (psynergy_items_db[psynergy_item_info.key_name].events.includes("jump")) {
+                        const event_key = x_pos + "_" + y_pos;
+                        this.events[event_key] = {
+                            type: "jump",
+                            dynamic: true,
+                            x: x_pos,
+                            y: y_pos,
+                            activation_direction: ["up", "down", "right", "left"],
+                            activation_collision_layers: [psynergy_item_info.base_collider_layer + psynergy_items_db[psynergy_item_info.key_name].jump_collide_layer_shift],
+                            initially_active: true, 
+                        }
+                        psynergy_item_info.insert_event(event_key);
+                    }
                     resolve();
                 });
             });

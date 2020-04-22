@@ -58,6 +58,7 @@ export function door_event_phases(data) {
 
         maps[data.map_name].setLayers(
             game,
+            data,
             maps,
             data.npc_db,
             data.psynergy_items_db,

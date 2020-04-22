@@ -6,16 +6,31 @@ export function jump_event(data) {
     data.shadow.visible = false;
     let jump_offset = numbers.JUMP_OFFSET;
     let direction;
-    if (data.current_event.activation_direction === "left") {
-        jump_offset = -jump_offset;
-        direction = "x";
-    } else if (data.current_event.activation_direction === "right")
-        direction = "x";
-    else if (data.current_event.activation_direction === "up") {
-        jump_offset = -jump_offset;
-        direction = "y";
-    } else if (data.current_event.activation_direction === "down")
-        direction = "y";
+    if (Array.isArray(data.current_event.activation_direction)) {
+        if (data.actual_direction === "left") {
+            jump_offset = -jump_offset;
+            direction = "x";
+        } else if (data.actual_direction === "right") {
+            direction = "x";
+        } else if (data.actual_direction === "up") {
+            jump_offset = -jump_offset;
+            direction = "y";
+        } else if (data.actual_direction === "down") {
+            direction = "y";
+        }
+    } else {
+        if (data.current_event.activation_direction === "left") {
+            jump_offset = -jump_offset;
+            direction = "x";
+        } else if (data.current_event.activation_direction === "right") {
+            direction = "x";
+        } else if (data.current_event.activation_direction === "up") {
+            jump_offset = -jump_offset;
+            direction = "y";
+        } else if (data.current_event.activation_direction === "down") {
+            direction = "y";
+        }
+    }
     let tween_obj = {};
     data.shadow[direction] = data.hero[direction] + jump_offset;
     tween_obj[direction] = data.hero[direction] + jump_offset;

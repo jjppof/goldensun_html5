@@ -273,7 +273,10 @@
      "event_16":"{\n\"type\": \"door\",\n\"x_target\": 38,\n\"y_target\": 21,\n\"target\": \"madra\",\n\"activation_direction\": \"left\",\n\"x\": 0,\n\"y\": 17,\n\"advance_effect\": false,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
      "event_17":"{\n\"type\": \"door\",\n\"x_target\": 38,\n\"y_target\": 21,\n\"target\": \"madra\",\n\"activation_direction\": \"left\",\n\"x\": 0,\n\"y\": 18,\n\"advance_effect\": false,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
      "event_18":"{\n\"type\": \"door\",\n\"x_target\": 38,\n\"y_target\": 21,\n\"target\": \"madra\",\n\"activation_direction\": \"left\",\n\"x\": 0,\n\"y\": 19,\n\"advance_effect\": false,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
-     "psynergy_item_01":"{\n\"key_name\": \"entangled_pillar\",\n\"x\": 14,\n\"y\": 11,\n\"allowed_tiles\": [\n{\"x\": 13, \"y\": 8},\n{\"x\": 14, \"y\": 8},\n{\"x\": 13, \"y\": 9},\n{\"x\": 14, \"y\": 9},\n{\"x\": 13, \"y\": 10},\n{\"x\": 14, \"y\": 10},\n{\"x\": 13, \"y\": 11},\n{\"x\": 14, \"y\": 11}\n]\n}"
+     "event_19":"{\n\"type\": \"jump\",\n\"x\": 12,\n\"y\": 6,\n\"activation_direction\": \"right\",\n\"activation_collision_layers\": [1],\n\"initially_active\": false\n}",
+     "event_20":"{\n\"type\": \"jump\",\n\"x\": 12,\n\"y\": 7,\n\"activation_direction\": \"right\",\n\"activation_collision_layers\": [1],\n\"initially_active\": false\n}",
+     "event_21":"{\n\"type\": \"jump\",\n\"x\": 16,\n\"y\": 7,\n\"activation_direction\": \"left\",\n\"activation_collision_layers\": [1],\n\"initially_active\": false\n}",
+     "psynergy_item_01":"{\n\"key_name\": \"entangled_pillar\",\n\"x\": 14,\n\"y\": 11,\n\"allowed_tiles\": [\n{\"x\": 13, \"y\": 8},\n{\"x\": 14, \"y\": 8},\n{\"x\": 13, \"y\": 9},\n{\"x\": 14, \"y\": 9},\n{\"x\": 13, \"y\": 10},\n{\"x\": 14, \"y\": 10},\n{\"x\": 13, \"y\": 11},\n{\"x\": 14, \"y\": 11}\n],\n\"base_collider_layer\": 0\n}"
     },
  "propertytypes":
     {
@@ -296,6 +299,9 @@
      "event_16":"string",
      "event_17":"string",
      "event_18":"string",
+     "event_19":"string",
+     "event_20":"string",
+     "event_21":"string",
      "psynergy_item_01":"string"
     },
  "renderorder":"right-down",

@@ -204,6 +204,7 @@ function create() {
     //configuring map layers: creating sprites, listing events and setting the layers
     maps[data.map_name].setLayers(
         game,
+        data,
         maps,
         data.npc_db,
         data.psynergy_items_db,
@@ -290,6 +291,7 @@ function fire_event() {
         else if (data.current_event.type === "door") {
             set_door_event(data);
         } else if (data.current_event.type === "jump") {
+            if (!data.current_event.active) return;
             data.on_event = true;
             data.event_activation_process = false;
             data.jumping = true;
@@ -300,8 +302,14 @@ function fire_event() {
 function event_triggering() {
     data.current_event = maps[data.map_name].events[data.hero_tile_pos_x + "_" + data.hero_tile_pos_y];
     if (!data.current_event.activation_collision_layers.includes(data.map_collider_layer)) return;
+    let right_direction;
+    if (Array.isArray(data.current_event.activation_direction)) {
+        right_direction = data.current_event.activation_direction.includes(data.actual_direction);
+    } else {
+        right_direction = data.actual_direction === data.current_event.activation_direction;
+    }
     if (!data.climbing) {
-        if(!data.event_activation_process && data.actual_direction === data.current_event.activation_direction && (data.actual_action === "walk" || data.actual_action === "dash")){
+        if (!data.event_activation_process && right_direction && (data.actual_action === "walk" || data.actual_action === "dash")) {
             data.event_activation_process = true;
             data.event_timer = game.time.events.add(Phaser.Timer.HALF, fire_event, this);
         } else if(data.event_activation_process && (data.actual_direction !== data.current_event.activation_direction ||  data.actual_action === "idle"))
