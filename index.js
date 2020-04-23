@@ -13,6 +13,7 @@ import * as physics from './physics/physics.js';
 window.maps = maps;
 
 var data = {
+    game: undefined,
     cursors: undefined,
     hero: undefined,
     map_collider_layer: undefined,
@@ -37,6 +38,7 @@ var data = {
     heroCollisionGroup: undefined,
     npcCollisionGroup: undefined,
     psynergyItemCollisionGroup: undefined,
+    dynamicEventsCollisionGroup: undefined,
     underlayer_group: undefined,
     overlayer_group: undefined,
     npc_group: undefined,
@@ -63,7 +65,8 @@ var data = {
     trying_to_push: false,
     trying_to_push_direction: "",
     push_timer: null,
-    pushing: false
+    pushing: false,
+    dynamic_events_bodies: []
 };
 window.data = data;
 
@@ -77,6 +80,7 @@ var game = new Phaser.Game(
     false //antialias
 );
 window.game = game;
+data.game = game;
 
 function preload() {
     initializeMainChars(game);
@@ -161,6 +165,9 @@ function toggle_debug() {
         if (!sprite.is_npc && !sprite.is_psynergy_item) continue;
         sprite.body.debug = !sprite.body.debug;
     }
+    for (let i = 0; i < data.dynamic_events_bodies.length; ++i) {
+        data.dynamic_events_bodies[i].debug = !data.dynamic_events_bodies[i].debug;
+    }
     data.debug = !data.debug;
 }
 
@@ -220,6 +227,7 @@ function create() {
         physics.config_physics_for_hero(data);
         physics.config_physics_for_npcs(data);
         physics.config_physics_for_psynergy_items(data);
+        data.dynamicEventsCollisionGroup = game.physics.p2.createCollisionGroup();
         physics.config_physics_for_map(data);
         physics.config_collisions(data);
         game.physics.p2.updateBoundsCollisionGroup();

@@ -88,7 +88,6 @@ export function config_world_physics() {
 export function config_collisions(data) { //make the world bodies interact with hero body
     data.hero.body.collides(data.mapCollisionGroup);
     data.map_collider.body.collides(data.heroCollisionGroup);
-
     data.hero.body.collides(data.npcCollisionGroup);
     data.hero.body.collides(data.psynergyItemCollisionGroup);
     for (let i = 0; i < data.npc_group.children.length; ++i) {
@@ -96,6 +95,7 @@ export function config_collisions(data) { //make the world bodies interact with 
         if (!sprite.is_npc && !sprite.is_psynergy_item) continue;
         sprite.body.collides(data.heroCollisionGroup);
     }
+    data.hero.body.collides(data.dynamicEventsCollisionGroup);
 }
 
 export function collision_dealer(data) {

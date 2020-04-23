@@ -224,7 +224,7 @@ export class Map {
                             y: y_pos,
                             activation_direction: ["up", "down", "right", "left"],
                             activation_collision_layers: [psynergy_item_info.base_collider_layer + psynergy_items_db[psynergy_item_info.key_name].jump_collide_layer_shift],
-                            initially_active: true, 
+                            active: true, 
                         }
                         psynergy_item_info.insert_event(event_key);
                     }
