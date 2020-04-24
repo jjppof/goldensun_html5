@@ -3,6 +3,7 @@
 -> This is a fork of the project of @jjppof a Golden Sun Engine built in HTML5 with Phaser.
 
 [DEMO](https://tashiro-gyori.github.io/goldensun_html5/)
+[DEMO (battle)](https://tashiro-gyori.github.io/goldensun_html5/battle.html)
 
 Feel free to help :)
 
