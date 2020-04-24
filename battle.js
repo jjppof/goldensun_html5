@@ -45,7 +45,7 @@ var psynergies_wind=['ray','ray storm','plasma'];
 var psynergies_water=['pray','pray well','ice','ice horn'];
 
 var touche = 0; //idem
-var ui =['Attack','Psynergy','Djiin','Summon','Item','Defend']; //idem
+var ui =['Attack','Psynergy','Djinn','Summon','Item','Defend']; //idem
 
 var game = new Phaser.Game (
     numbers.GAME_WIDTH,
@@ -69,6 +69,8 @@ function preload() {
     game.load.image('vault', 'assets/images/battle_backgrounds/Vault_Inn.gif');
     game.load.image('venus', 'assets/images/battle_backgrounds/Venus_Lighthouse.gif');
 
+    game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
+
     var i;
     // characters
     for(i=0; i< party.length;i++){
@@ -91,8 +93,13 @@ function preload() {
     //ui
     game.load.image('ui-battle-up', 'assets/images/ui/ui_battle.png');
     game.load.image('ui-battle-down', 'assets/images/ui/ui_battle2.png');
+    for(i=0; i< ui.length;i++){
+      var string= ui[i].charAt(0).toLowerCase() + ui[i].slice(1); // lowerCase the first letter
+      game.load.image('ui-'+string, 'assets/images/ui/'+ui[i]+'.png');
+    }
 
     game.load.audio('bg-battle', 'assets/music/battle/battle_jenna.mp3');
+    game.load.audio('option', 'assets/music/se/battle_option.wav');
 }
 
 function create() {
@@ -111,11 +118,46 @@ function create() {
     var ui_down = game.add.image(33, 136, 'ui-battle-down');
     var ui_char = game.add.image(0, 128, party[0]);
 
-    //var ui_down = game.add.tileSprite(33, 136, 207, 160, 'ui-battle-down');
-    //var ui_char = game.add.tileSprite(0, 128, 32, 160, party[0]);
+    var img= game.add.image(33, 130, 'ui-attack');
+    var txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[0], numbers.FONT_SIZE);
 
-    //where does the numbers come from? an example-----> y= numbers.GAME_HEIGHT-24
+    game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
+        txt.destroy();
+        img.destroy();
+        music = game.add.audio('option');
+        music.volume=0.3;
+        music.play();
+        if(touche-1< 0 )
+          touche= ui.length -1;
+        else
+          touche -= 1;
+        txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE);
+        if (touche== ui.length -1)
+          img= this.game.add.image(147, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+        else
+          img= this.game.add.image(33+ 24*touche, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+    }, this);
+
+    game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
+        txt.destroy();
+        img.destroy();
+        music = game.add.audio('option');
+        music.volume=0.3;
+        music.play();
+        if(touche+1>  ui.length -1)
+          touche= 0;
+        else
+          touche += 1;
+        txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE);
+        if (touche== ui.length -1)
+          img= this.game.add.image(147, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+        else
+          img= this.game.add.image(33+ 24*touche, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+    }, this);
+
+    //where does the numbers come from? an example-----> y= numbers.GAME_HEIGHT-24 (size of the image)
     // game.add.tileSprite(): x,y, repeat_to_x,repeat_to_y
+    // ...not equal to game.add.image()!
 
     spining = false;
     default_scale = 0.9;
@@ -145,7 +187,6 @@ function create() {
         else{
           var number= Math.floor(Math.random() * monsters.length  ); // between 0 and 2
           p = group_enemy.create(0, 0, monsters[number]+'_back');
-          console.log(monsters[number]+'_back');
         }
         p.anchor.setTo(0.5, 1);
         p.scale.setTo(default_scale, default_scale);
@@ -156,8 +197,6 @@ function create() {
     last_party_char = group_party.children[party_count - 1];
     first_enemy_char = group_enemy.children[0];
     last_enemy_char = group_enemy.children[enemy_count - 1];
-
-    console.log(group_enemy);
 
     game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(() => {
         battle_bg.loadTexture('colosso');
