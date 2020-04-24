@@ -10,6 +10,7 @@ Stuff I planned to do (WIP):
 - Add maps (Madra + the catacombs)
 - Add NPCs
 - Add some docs
+- Code: focus on some parts, UI especially (battle engine and the menu system)
 
 ## Tech stack
 - [PhaserJS CE 2.15.0](http://phaser.io/)
