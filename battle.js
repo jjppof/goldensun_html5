@@ -35,6 +35,17 @@ var players_number;
 var middle_shift_enemy;
 var middle_shift_party;
 
+var party=['isaac','garet','ivan','mia','felix','jenna','sheba','picard']; // switch: permet de changer ordre équipe?
+var monsters=['mino','goblin','demon']; // à compléter et à utiliser!
+
+var psynergies_earth=['ragnarok','quake','earth quake','spire','cure']; //idem
+var psynergies_fire=['flare','flare wall','fire','fireball','volcano'];
+var psynergies_wind=['ray','ray storm','plasma'];
+var psynergies_water=['pray','pray well','ice','ice horn'];
+
+var touche = 0; //idem
+var ui =['Attack','Psynergy','Djiin','Summon','Item','Defend']; //idem
+
 var game = new Phaser.Game (
     numbers.GAME_WIDTH,
     numbers.GAME_HEIGHT,
@@ -45,6 +56,9 @@ var game = new Phaser.Game (
     false
 );
 
+var currentWidth = window.innerWidth;
+var music;
+
 function preload() {
     game.load.image('colosso', 'assets/images/battle_backgrounds/colosso.gif');
     game.load.image('kolima', 'assets/images/battle_backgrounds/Kolima_Forest.gif');
@@ -54,20 +68,49 @@ function preload() {
     game.load.image('vault', 'assets/images/battle_backgrounds/Vault_Inn.gif');
     game.load.image('venus', 'assets/images/battle_backgrounds/Venus_Lighthouse.gif');
 
-    game.load.image('felix_back', 'assets/images/spritesheets/felix_back.png');
-    game.load.image('felix_front', 'assets/images/spritesheets/felix_front.png');
-    game.load.image('mino_back', 'assets/images/spritesheets/mino_back.png');
-    game.load.image('mino_front', 'assets/images/spritesheets/mino_front.png');
+    var i;
+    // characters
+    for(i=0; i< party.length;i++){
+      game.load.image(party[i]+'_back', 'assets/images/spritesheets/'+party[i]+'_back.png');
+      game.load.image(party[i]+'_front', 'assets/images/spritesheets/'+party[i]+'_front.png');
+    }
+
+    // characters facesets
+    for(i=0; i< party.length;i++){
+      var string= party[i].charAt(0).toUpperCase() + party[i].slice(1); // upperCase the first letter
+      game.load.image(party[i], 'assets/images/icons/'+string+'.png');
+    }
+
+    // monsters
+    for(i=0; i< party.length;i++){
+      game.load.image(monsters[i]+'_back', 'assets/images/spritesheets/'+monsters[i]+'_back.png');
+      game.load.image(monsters[i]+'_front', 'assets/images/spritesheets/'+monsters[i]+'_front.png');
+    }
+
+    //ui
+    game.load.image('ui-battle-up', 'assets/images/ui/ui_battle.png');
+    game.load.image('ui-battle-down', 'assets/images/ui/ui_battle2.png');
+
+    game.load.audio('bg-battle', 'assets/music/battle/battle_jenna.mp3');
 }
 
 function create() {
-    game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-    game.input.onTap.add(function(pointer, isDoubleClick) {  
-        if (isDoubleClick) game.scale.startFullScreen(true);
-    });
 
-    battle_bg = game.add.tileSprite(0, 17, numbers.GAME_WIDTH, 113, 'colosso');
-    battle_bg2 = game.add.tileSprite(0, 17, numbers.GAME_WIDTH, 113, 'colosso');
+    resizeGame();
+    config_music();
+    /*game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+    game.input.onTap.add(function(pointer, isDoubleClick) {
+        if (isDoubleClick) game.scale.startFullScreen(true);
+    });*/
+
+    battle_bg = game.add.tileSprite(0, 27, 240, 113, 'colosso');
+    battle_bg2 = game.add.tileSprite(0, 27, 240, 113, 'colosso');
+
+    var ui_up = game.add.tileSprite(0, 0, 240, 27, 'ui-battle-up');
+    var ui_down = game.add.tileSprite(33, 136, 207, 160, 'ui-battle-down');
+    var ui_char = game.add.tileSprite(0, 128, 32, 160, party[0]);
+    //where does the numbers come from? an example-----> y= numbers.GAME_HEIGHT-24
+    // game.add.tileSprite(): x,y, repeat_to_x,repeat_to_y
 
     spining = false;
     default_scale = 0.9;
@@ -80,8 +123,8 @@ function create() {
     camera_speed = 0.009 * Math.PI;
     bg_speed = 2.4;
     bg_spin_speed = 0.4;
-    party_count = 3;
-    enemy_count = 3;
+    party_count = 4;
+    enemy_count = Math.floor(Math.random() * 4 + 1); // between 1 and 4
     players_number = party_count + enemy_count;
     spacing_distance = 35;
     middle_shift_enemy = spacing_distance*enemy_count/2;
@@ -93,9 +136,11 @@ function create() {
     for (let i = 0; i < players_number; ++i) {
         let p;
         if (i < party_count)
-            p = group_party.create(0, 0, 'felix_back');
-        else
-            p = group_enemy.create(0, 0, 'mino_back');
+            p = group_party.create(0, 0, party[i]+'_back');
+        else{
+          var number= Math.floor(Math.random() * 4); // between 0 and 3
+          p = group_enemy.create(0, 0, monsters[number]+'_back');
+        }
         p.anchor.setTo(0.5, 1);
         p.scale.setTo(default_scale, default_scale);
         players.push(p);
@@ -104,7 +149,9 @@ function create() {
     first_party_char = group_party.children[0];
     last_party_char = group_party.children[party_count - 1];
     first_enemy_char = group_enemy.children[0];
-    last_enemy_char = group_enemy.children[party_count - 1];
+    last_enemy_char = group_enemy.children[enemy_count - 1];
+
+    console.log(group_enemy);
 
     game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(() => {
         battle_bg.loadTexture('colosso');
@@ -161,7 +208,7 @@ function update() {
             camera_angle.rad -= camera_speed;
             battle_bg.x -= bg_speed
         } else if (cursors.left.isDown && !cursors.right.isDown && !spining) {
-            camera_angle.rad += camera_speed; 
+            camera_angle.rad += camera_speed;
             battle_bg.x += bg_speed
         }
 
@@ -228,13 +275,13 @@ function update() {
 
             //change texture in function of position
             if (i < party_count) {
-                if (Math.sin(relative_angle) > 0 && players[i].key != 'felix_back')
-                    players[i].loadTexture('felix_back');
-                else if (Math.sin(relative_angle) <= 0 && players[i].key != 'felix_front')
-                    players[i].loadTexture('felix_front');
+                  if (Math.sin(relative_angle) > 0 && players[i].key != party[i]+'_back')
+                      players[i].loadTexture(party[i]+'_back');
+                  else if (Math.sin(relative_angle) <= 0 && players[i].key != party[i]+'_front')
+                      players[i].loadTexture(party[i]+'_front');
             } else {
-                if (Math.sin(relative_angle) > 0 && players[i].key != 'mino_back')
-                    players[i].loadTexture('mino_back');
+                if (Math.sin(relative_angle) > 0 && players[i].key != 'mino_back' ) // à modif
+                    players[i].loadTexture( 'mino_back' );
                 else if (Math.sin(relative_angle) <= 0 && players[i].key != 'mino_front')
                     players[i].loadTexture('mino_front');
             }
@@ -258,4 +305,30 @@ function get_angle(angle) { //equidistant ellipse angle formula
 
 function get_scale(angle) { //scale formula
     return (Math.sin(angle)/6 + 0.8334) * default_scale;
+}
+
+function resizeGame()
+{
+    if( currentWidth >= 1024 )
+    {
+        game.scale.setupScale(numbers.GAME_WIDTH*3, numbers.GAME_HEIGHT*3);
+        window.dispatchEvent(new Event('resize'));
+    }
+    else if( currentWidth >= 480 )
+    {
+        game.scale.setupScale(numbers.GAME_WIDTH*2, numbers.GAME_HEIGHT*2);
+        window.dispatchEvent(new Event('resize'));
+    }
+    else if( currentWidth >= 375 )
+    {
+        game.scale.setupScale(numbers.GAME_WIDTH*1.5, numbers.GAME_HEIGHT*1.5);
+        window.dispatchEvent(new Event('resize'));
+    }
+}
+
+function config_music(){
+    music = game.add.audio('bg-battle');
+    music.loopFull();
+    music.volume=0.3;
+    music.play();
 }

@@ -14,7 +14,7 @@ window.maps = maps;
 
 var currentWidth = window.innerWidth;
 var music;
-var map_name="madra"; // hum... A CHANGER
+var map_name="madra"; // hum...prob on écrit en dur map_name et data.map_name :(
 
 var data = {
     cursors: undefined,
@@ -83,6 +83,7 @@ function preload() {
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
+
     game.load.audio('bg-music-'+map_name, 'assets/music/'+map_name+'/'+map_name+'.mp3');
     game.load.audio('step', 'assets/music/se/door.wav');
 
