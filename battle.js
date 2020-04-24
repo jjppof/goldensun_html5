@@ -107,9 +107,13 @@ function create() {
     battle_bg = game.add.tileSprite(0, 27, 240, 113, 'colosso');
     battle_bg2 = game.add.tileSprite(0, 27, 240, 113, 'colosso');
 
-    var ui_up = game.add.tileSprite(0, 0, 240, 27, 'ui-battle-up');
-    var ui_down = game.add.tileSprite(33, 136, 207, 160, 'ui-battle-down');
-    var ui_char = game.add.tileSprite(0, 128, 32, 160, party[0]);
+    var ui_up = game.add.image(0, 0, 'ui-battle-up');
+    var ui_down = game.add.image(33, 136, 'ui-battle-down');
+    var ui_char = game.add.image(0, 128, party[0]);
+
+    //var ui_down = game.add.tileSprite(33, 136, 207, 160, 'ui-battle-down');
+    //var ui_char = game.add.tileSprite(0, 128, 32, 160, party[0]);
+
     //where does the numbers come from? an example-----> y= numbers.GAME_HEIGHT-24
     // game.add.tileSprite(): x,y, repeat_to_x,repeat_to_y
 
