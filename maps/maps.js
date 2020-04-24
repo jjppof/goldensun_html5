@@ -122,6 +122,16 @@ export function initializeMaps(){
         ['assets/images/maps/madra/madra_physics_prison.json'] //physics_jsons_url
     );
 
+    maps.madra_catacombes = new Map(
+        'catacombes', //name: peu importe
+        'madra_catacombes', //key_name: utilisé lors des events
+        'catacombes', //le même nom que ds le json (champ tileset) tileset_name: si erreur, argument 1 of .... cannot be converted.....
+        ['madra_catacombes'], //pr colisions: doit avoir le même nom que ds le physics_json physics_names: si erreur: data is null...
+        'assets/images/maps/catacombes_madra/catacombes.png', //tileset_image_url
+        'assets/images/maps/catacombes_madra/catacombes.json', //tileset_json_url
+        ['assets/images/maps/catacombes_madra/madra_physics_catacombes.json'] //physics_jsons_url
+    );
+
     maps.madra_side = new Map(
         'Madra', //name
         'madra_side', //key_name
