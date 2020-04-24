@@ -1,0 +1,42 @@
+	{ 
+		
+		"madra_catacombes": [
+			
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   64.75, 106.75  ,  80.0595245361328, 144.952380955219  ,  50.25, 136.75  ,  49.75, 114.5  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   33.5, 72.5  ,  15.5, 86.8333320617676  ,  0.150000005960464, 0  ,  34.75, 0.75  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   32.75, 135.5  ,  0.150000005960464, 144.050000000745  ,  17.25, 104.75  ,  32.25, 114.75  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   79.75, 0.5  ,  64.5, 86.5  ,  47.5, 71.75  ,  48.25, 0  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   80.0595245361328, 144.952380955219  ,  64.75, 106.75  ,  64.5, 86.5  ,  79.75, 0.5  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   15.5, 86.8333320617676  ,  17.25, 104.75  ,  0.150000005960464, 144.050000000745  ,  0.150000005960464, 0  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   32.75, 135.5  ,  50.25, 136.75  ,  80.0595245361328, 144.952380955219  ,  0.150000005960464, 144.050000000745  ]
+				}  
+		]
+		
+	}
