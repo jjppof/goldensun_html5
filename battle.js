@@ -37,6 +37,7 @@ var middle_shift_party;
 
 var party=['isaac','garet','ivan','mia','felix','jenna','sheba','picard']; // switch: permet de changer ordre équipe?
 var monsters=['mino','goblin','demon']; // à compléter et à utiliser!
+var monsters_in_battle=[];
 
 var psynergies_earth=['ragnarok','quake','earth quake','spire','cure']; //idem
 var psynergies_fire=['flare','flare wall','fire','fireball','volcano'];
@@ -82,7 +83,7 @@ function preload() {
     }
 
     // monsters
-    for(i=0; i< party.length;i++){
+    for(i=0; i< monsters.length;i++){
       game.load.image(monsters[i]+'_back', 'assets/images/spritesheets/'+monsters[i]+'_back.png');
       game.load.image(monsters[i]+'_front', 'assets/images/spritesheets/'+monsters[i]+'_front.png');
     }
@@ -138,8 +139,9 @@ function create() {
         if (i < party_count)
             p = group_party.create(0, 0, party[i]+'_back');
         else{
-          var number= Math.floor(Math.random() * 4); // between 0 and 3
+          var number= Math.floor(Math.random() * monsters.length  ); // between 0 and 2
           p = group_enemy.create(0, 0, monsters[number]+'_back');
+          console.log(monsters[number]+'_back');
         }
         p.anchor.setTo(0.5, 1);
         p.scale.setTo(default_scale, default_scale);
@@ -280,10 +282,13 @@ function update() {
                   else if (Math.sin(relative_angle) <= 0 && players[i].key != party[i]+'_front')
                       players[i].loadTexture(party[i]+'_front');
             } else {
-                if (Math.sin(relative_angle) > 0 && players[i].key != 'mino_back' ) // à modif
-                    players[i].loadTexture( 'mino_back' );
-                else if (Math.sin(relative_angle) <= 0 && players[i].key != 'mino_front')
-                    players[i].loadTexture('mino_front');
+                if (Math.sin(relative_angle) > 0 && players[i].key != 'mino_back' ) { // by default, compare to mino sprite
+                    players[i].loadTexture( players[i].key.replace('front','back') ); // -> in players: players.push (_back only)
+                }
+                else if (Math.sin(relative_angle) <= 0 && players[i].key != 'mino_front'){
+                    players[i].loadTexture( players[i].key.replace('back','front') );
+                }
+
             }
 
             //change side in function of position
