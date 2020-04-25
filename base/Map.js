@@ -140,7 +140,8 @@ export class Map {
                     property_info.movement_type,
                     property_info.message,
                     property_info.thought_message,
-                    property_info.avatar ? property_info.avatar : null
+                    property_info.avatar ? property_info.avatar : null,
+                    property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer
                 ));
             } else if(property.startsWith("psynergy_item")) {
                 const property_info = JSON.parse(this.sprite.properties[property]);
@@ -205,6 +206,7 @@ export class Map {
                     let psynergy_item_sprite = npc_group.create(0, 0, psynergy_item_info.key_name + "_" + action);
                     psynergy_item_info.set_sprite(psynergy_item_sprite);
                     psynergy_item_info.psynergy_item_sprite.is_psynergy_item = true;
+                    psynergy_item_info.psynergy_item_sprite.base_collider_layer = psynergy_item_info.base_collider_layer;
                     psynergy_item_info.psynergy_item_sprite.anchor.y = psynergy_items_db[psynergy_item_info.key_name].anchor_y;
                     psynergy_item_info.psynergy_item_sprite.centerX = (psynergy_item_info.x + 1) * this.sprite.tileWidth;
                     const anchor_shift = psynergy_items_db[psynergy_item_info.key_name].anchor_y * this.sprite.tileWidth * 0.5;
@@ -261,6 +263,7 @@ export class Map {
                     let npc_shadow_sprite = npc_group.create(0, 0, 'shadow');
                     npc_shadow_sprite.blendMode = PIXI.blendModes.MULTIPLY;
                     npc_shadow_sprite.anchor.setTo(npc_info.ac_x, npc_info.ac_y);
+                    npc_shadow_sprite.base_collider_layer = npc_info.base_collider_layer;
                     let npc_sprite = npc_group.create(0, 0, u([
                         npc_info.key_name,
                         initial_action
@@ -268,6 +271,7 @@ export class Map {
                     npc_info.set_shadow_sprite(npc_shadow_sprite);
                     npc_info.set_sprite(npc_sprite);
                     npc_info.npc_sprite.is_npc = true;
+                    npc_info.npc_sprite.base_collider_layer = npc_info.base_collider_layer;
                     npc_info.npc_sprite.anchor.y = npc_db[npc_info.key_name].anchor_y;
                     npc_info.npc_sprite.centerX = (npc_info.initial_x + 1) * this.sprite.tileWidth;
                     const anchor_shift = npc_db[npc_info.key_name].anchor_y * this.sprite.tileWidth * 0.5;

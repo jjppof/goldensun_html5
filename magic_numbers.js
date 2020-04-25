@@ -36,3 +36,4 @@ export const MAX_DIAG_WIN_HEIGHT = FONT_SIZE*MAX_LINES_PER_DIAG_WIN+SPACE_BETWEE
 export const STEP_SHIFT_FACTOR = 4;
 export const PUSH_SHIFT = 16;
 export const PUSH_TIME = 800;
+export const EVENT_TIME = 400;

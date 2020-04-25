@@ -60,6 +60,11 @@ export function jump_event(data) {
         if (maps[data.map_name].events[next_pos_key].type === "jump" && !maps[data.map_name].events[next_pos_key].dynamic) {
             unset_set_jump_collision(data);
         }
+    } else if (data.current_event.dynamic && !(next_pos_key in maps[data.map_name].events)) {
+        data.on_event = false;
+        data.current_event = null;
+        data.shadow.visible = true;
+        return;
     }
     let tween_obj = {};
     data.shadow[direction] = data.hero[direction] + jump_offset;

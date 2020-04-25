@@ -55,6 +55,9 @@ export function door_event_phases(data) {
         data.npc_group.add(data.hero);
         data.map_name = data.current_event.target;
         data.map_collider_layer = data.current_event.dest_collider_layer;
+        data.shadow.base_collider_layer = data.map_collider_layer;
+        data.hero.base_collider_layer = data.map_collider_layer;
+
 
         maps[data.map_name].setLayers(
             game,
