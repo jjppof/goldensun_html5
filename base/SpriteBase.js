@@ -1,5 +1,10 @@
+import { u } from "../utils.js";
+
 export class SpriteBase {
-    constructor (key_name, actions) {
+    constructor (
+        key_name,
+        actions
+    ) {
         this.key_name = key_name;
         this.actions = {};
         for (let i = 0; i < actions.length; ++i) {
@@ -32,7 +37,7 @@ export class SpriteBase {
         for(let action in this.actions){
             const spritesheet = this.actions[action].spritesheet;
             let loader = game.load.atlasJSONHash(
-                this.key_name + "_" + action,
+                u([this.key_name, action]),
                 spritesheet.spritesheet_image_url,
                 spritesheet.spritesheet_json_url
             );

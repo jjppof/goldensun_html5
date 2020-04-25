@@ -1,6 +1,6 @@
 import { main_char_list } from '../chars/main_char_list.js';
 import { maps } from '../maps/maps.js';
-import { config_physics_for_npcs, config_physics_for_map, config_collisions, set_speed_factors, config_physics_for_psynergy_items } from '../physics/physics.js';
+import { config_physics_for_npcs, config_physics_for_map, config_collisions, set_speed_factors } from '../physics/physics.js';
 
 export function set_door_event(data) {
     data.on_event = true;
@@ -44,27 +44,21 @@ export function door_event_phases(data) {
 
         for (let i = 0; i < data.npc_group.children.length; ++i) {
             let sprite = data.npc_group.children[i];
-            if (!sprite.is_npc && !sprite.is_psynergy_item) continue;
+            if (!sprite.is_npc) continue;
             sprite.body.destroy()
         }
 
         maps[data.map_name].npcs = [];
-        maps[data.map_name].psynergy_items = [];
         data.npc_group.removeAll();
         data.npc_group.add(data.shadow);
         data.npc_group.add(data.hero);
         data.map_name = data.current_event.target;
         data.map_collider_layer = data.current_event.dest_collider_layer;
-        data.shadow.base_collider_layer = data.map_collider_layer;
-        data.hero.base_collider_layer = data.map_collider_layer;
-
 
         maps[data.map_name].setLayers(
             game,
-            data,
             maps,
             data.npc_db,
-            data.psynergy_items_db,
             data.map_name,
             data.underlayer_group,
             data.overlayer_group,
@@ -77,14 +71,13 @@ export function door_event_phases(data) {
             game.physics.p2.resume();
 
             config_physics_for_npcs(data, false);
-            config_physics_for_psynergy_items(data, false);
             config_physics_for_map(data, false);
             config_collisions(data);
             game.physics.p2.updateBoundsCollisionGroup();
 
             for (let i = 0; i < data.npc_group.children.length; ++i) {
                 let sprite = data.npc_group.children[i];
-                if (!sprite.is_npc && !sprite.is_psynergy_item) continue;
+                if (!sprite.is_npc) continue;
                 sprite.body.debug = data.hero.body.debug;
             }
 

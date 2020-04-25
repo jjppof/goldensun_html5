@@ -1,4 +1,5 @@
 import * as numbers from './magic_numbers.js';
+import * as utils from './utils.js';
 
 var battle_bg;
 var battle_bg2;
@@ -36,16 +37,22 @@ var middle_shift_enemy;
 var middle_shift_party;
 
 var party=['isaac','garet','ivan','mia','felix','jenna','sheba','picard']; // switch: permet de changer ordre équipe?
-var monsters=['mino','goblin','demon']; // à compléter et à utiliser!
-var monsters_in_battle=[];
+var monsters=['mino','goblin','demon'];
 
-var psynergies_earth=['ragnarok','quake','earth quake','spire','cure']; //idem
+//put all the stuffs (psynergies, djinns etc.) in a database (json var)????
+var psynergies_earth=['ragnarok','quake','earth quake','spire','cure'];
 var psynergies_fire=['flare','flare wall','fire','fireball','volcano'];
 var psynergies_wind=['ray','ray storm','plasma'];
 var psynergies_water=['pray','pray well','ice','ice horn'];
 
-var touche = 0; //idem
-var ui =['Attack','Psynergy','Djinn','Summon','Item','Defend']; //idem
+var djinn_earth=[];
+var djinn_fire=[];
+var djinn_wind=[];
+var djinn_water=[];
+
+var touche = 0;
+var ui =['Attack','Psynergy','Djinn','Summon','Item','Defend'];
+var elements= ["venus","mars","jupiter","mercury"];
 
 var game = new Phaser.Game (
     numbers.GAME_WIDTH,
@@ -90,12 +97,15 @@ function preload() {
       game.load.image(monsters[i]+'_front', 'assets/images/spritesheets/'+monsters[i]+'_front.png');
     }
 
-    //ui
+    //ui (top and bottom ui + "big icons" + elemental stars)
     game.load.image('ui-battle-up', 'assets/images/ui/ui_battle.png');
     game.load.image('ui-battle-down', 'assets/images/ui/ui_battle2.png');
     for(i=0; i< ui.length;i++){
       var string= ui[i].charAt(0).toLowerCase() + ui[i].slice(1); // lowerCase the first letter
       game.load.image('ui-'+string, 'assets/images/ui/'+ui[i]+'.png');
+    }
+    for(i=0; i< elements.length;i++){
+      game.load.image('ui-'+elements[i], 'assets/images/ui/'+elements[i]+'_star.png');
     }
 
     game.load.audio('bg-battle', 'assets/music/battle/battle_jenna.mp3');
@@ -118,9 +128,56 @@ function create() {
     var ui_down = game.add.image(33, 136, 'ui-battle-down');
     var ui_char = game.add.image(0, 128, party[0]);
 
+    // prob: numbers...
+    game.add.image(8, 8, 'ui-venus');
+    this.game.add.bitmapText(16, 8, 'gs-bmp-font', "o" , numbers.FONT_SIZE);
+    game.add.image(8, 16, 'ui-mars');
+    this.game.add.bitmapText(16, 16, 'gs-bmp-font', "o" , numbers.FONT_SIZE);
+    game.add.image(24, 8, 'ui-jupiter');
+    this.game.add.bitmapText(32, 8, 'gs-bmp-font', "o" , numbers.FONT_SIZE);
+    game.add.image(24, 16, 'ui-mercury');
+    this.game.add.bitmapText(32, 16, 'gs-bmp-font', "o" , numbers.FONT_SIZE);
+
+    for(var i=0; i< ui.length;i++){
+      var string= party[i].charAt(0).toUpperCase() + party[i].slice(1); // upperCase the first letter
+
+      var drawnObject;
+      var width = utils.get_text_width(this.game, string);
+      var height = 8;
+      var char_rect_bg = game.add.bitmapData(width, height);
+      char_rect_bg.ctx.beginPath();
+      char_rect_bg.ctx.rect(0, 0, width, height);
+      char_rect_bg.ctx.fillStyle = '#006088';
+      char_rect_bg.ctx.fill();
+      drawnObject = game.add.sprite(48 + 48*i, 0, char_rect_bg);
+
+      var hp_bar = game.add.bitmapData(40, 3);
+      hp_bar.ctx.beginPath();
+      hp_bar.ctx.rect(0, 0, 40, 3);
+      hp_bar.ctx.fillStyle = '#0000f8';
+      hp_bar.ctx.fill();
+      drawnObject = game.add.sprite(48 + 48*i, 12, hp_bar);
+
+      var pp_bar = game.add.bitmapData(40, 3);
+      pp_bar.ctx.beginPath();
+      pp_bar.ctx.rect(0, 0, 40, 3);
+      pp_bar.ctx.fillStyle = '#0000f8';
+      pp_bar.ctx.fill();
+      drawnObject = game.add.sprite(48 + 48*i, 20, pp_bar);
+
+
+      this.game.add.bitmapText(48 + 48*i, 0, 'gs-bmp-font', string, 8 );
+      this.game.add.bitmapText(48 + 48*i, 8, 'gs-bmp-font', "HP", 8 );
+      this.game.add.bitmapText(48 + 48*i, 16, 'gs-bmp-font', "PP", 8 );
+
+    }
+
     var img= game.add.image(33, 130, 'ui-attack');
+    this.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+    this.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
     var txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[0], numbers.FONT_SIZE);
 
+    // maintenir touche?
     game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
         txt.destroy();
         img.destroy();
@@ -134,8 +191,19 @@ function create() {
         txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE);
         if (touche== ui.length -1)
           img= this.game.add.image(147, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+        else if (touche== 0)
+          img= this.game.add.image(33, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
         else
-          img= this.game.add.image(33+ 24*touche, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+          img= this.game.add.image(31+ 24*touche, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+
+        if (touche== ui.length -1){ // deals with last icon (add 2 more pixels the "right side kept its position")
+          this.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+          this.add.tween(img).to({x: 149, y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+        }
+        else{
+          this.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+          this.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+        }
     }, this);
 
     game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
@@ -151,8 +219,19 @@ function create() {
         txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE);
         if (touche== ui.length -1)
           img= this.game.add.image(147, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+        else if (touche== 0)
+          img= this.game.add.image(33, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
         else
-          img= this.game.add.image(33+ 24*touche, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+          img= this.game.add.image(31+ 24*touche, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+
+        if (touche== ui.length -1){ // deals with last icon (add 2 more pixels the "right side kept its position")
+          this.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+          this.add.tween(img).to({x: 149, y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+        }
+        else{
+          this.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+          this.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+        }
     }, this);
 
     //where does the numbers come from? an example-----> y= numbers.GAME_HEIGHT-24 (size of the image)
