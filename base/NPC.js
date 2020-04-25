@@ -1,10 +1,7 @@
 import { SpriteBase } from './SpriteBase.js';
 
 export class NPC_Sprite extends SpriteBase {
-    constructor (
-        key_name,
-        actions
-    ) {
+    constructor (key_name, actions) {
         super(key_name, actions);
     }
 }
@@ -21,7 +18,8 @@ export class NPC {
         movement_type,
         message,
         thought_message,
-        avatar
+        avatar,
+        base_collider_layer
     ) {
         this.type = type;
         this.key_name = key_name;
@@ -34,6 +32,7 @@ export class NPC {
         this.message = message;
         this.thought_message = thought_message;
         this.avatar = avatar;
+        this.base_collider_layer = base_collider_layer;
     }
 
     set_sprite(sprite) {

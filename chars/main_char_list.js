@@ -6,10 +6,8 @@ export function initializeMainChars(game) {
     //the data below will come from a json file
     main_char_list.isaac = new MainChar(
         'isaac',
-        ['idle', 'walk', 'dash', 'climb', 'jump'],
-        60,
-        85,
-        50
+        ['idle', 'walk', 'dash', 'climb', 'jump', 'push'],
+        60, 85, 50, 50
     );
     main_char_list.isaac.setActionSpritesheet('idle', 'assets/images/spritesheets/isaac_idle.png', 'assets/images/spritesheets/isaac_idle.json');
     main_char_list.isaac.setActionDirections('idle', [
@@ -67,6 +65,15 @@ export function initializeMainChars(game) {
         'right'
     ], [0,0,0,0]);
     main_char_list.isaac.setActionFrameRate('jump', 1);
+
+    main_char_list.isaac.setActionSpritesheet('push', 'assets/images/spritesheets/isaac_push.png', 'assets/images/spritesheets/isaac_push.json');
+    main_char_list.isaac.setActionDirections('push', [
+        'down', 
+        'up', 
+        'left', 
+        'right'
+    ], [3,3,3,3]);
+    main_char_list.isaac.setActionFrameRate('push', 4);
 
     main_char_list.isaac.addAnimations();
     main_char_list.isaac.loadSpritesheets(game);

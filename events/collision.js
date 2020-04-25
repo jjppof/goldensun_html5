@@ -25,6 +25,8 @@ export function config_collision_change(data) {
 export function change_map_body(data, new_collider_layer_index) {
     if (data.map_collider_layer === new_collider_layer_index) return;
     data.map_collider_layer = new_collider_layer_index;
+    data.shadow.base_collider_layer = data.map_collider_layer;
+    data.hero.base_collider_layer = data.map_collider_layer;
     physics.config_physics_for_map(data, false, new_collider_layer_index);
     let layers = maps[data.map_name].layers;
     for (let i = 0; i < layers.length; ++i) {

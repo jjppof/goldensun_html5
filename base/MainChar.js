@@ -6,11 +6,13 @@ export class MainChar extends SpriteBase {
         actions,
         walk_speed,
         dash_speed,
-        climb_speed
+        climb_speed,
+        push_speed
     ) {
         super(key_name, actions);
         this.walk_speed = walk_speed;
         this.dash_speed = dash_speed;
         this.climb_speed = climb_speed;
+        this.push_speed = push_speed;
     }
 }
