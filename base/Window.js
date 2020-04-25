@@ -258,7 +258,11 @@ export function set_dialog(game, text) { //divides the text into windows and, fo
         }
     }
     if (line.length) { //deal with the last window that does not have 3 lines
-        window_width = line_width > max_efective_width ? max_efective_width : line_width;
+        let width_to_consider = line_width;
+        if (lines.length) {
+            width_to_consider = Math.max(window_width, line_width);
+        }
+        window_width = width_to_consider > max_efective_width ? max_efective_width : width_to_consider;
         lines.push(line.join(' '));
         windows.push({
             lines: lines.slice(),
