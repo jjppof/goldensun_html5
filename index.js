@@ -17,6 +17,7 @@ var music;
 var map_name="madra"; // hum...prob on écrit en dur map_name et data.map_name :(
 
 var data = {
+    game: undefined,
     cursors: undefined,
     hero: undefined,
     map_collider_layer: undefined,
@@ -40,6 +41,8 @@ var data = {
     mapCollisionGroup: undefined,
     heroCollisionGroup: undefined,
     npcCollisionGroup: undefined,
+    psynergyItemCollisionGroup: undefined,
+    dynamicEventsCollisionGroup: undefined,
     underlayer_group: undefined,
     overlayer_group: undefined,
     npc_group: undefined,
@@ -50,6 +53,7 @@ var data = {
     jumping: undefined,
     show_fps: undefined,
     npc_db: undefined,
+    psynergy_items_db: undefined,
     npc_event: undefined,
     active_npc: undefined,
     waiting_for_enter_press: undefined,
@@ -62,6 +66,11 @@ var data = {
     grid: false,
     waiting_to_change_collision: false,
     collision_event_data: {},
+    trying_to_push: false,
+    trying_to_push_direction: "",
+    push_timer: null,
+    pushing: false,
+    dynamic_events_bodies: []
 };
 window.data = data;
 
@@ -75,12 +84,14 @@ var game = new Phaser.Game(
     false //antialias
 );
 window.game = game;
+data.game = game;
 
 function preload() {
     initializeMainChars(game);
     initializeMaps();
     loadMaps(game);
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
+    game.load.json('psynergy_items_db', 'assets/dbs/psynergy_items_db.json');
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
 
@@ -106,9 +117,11 @@ function config_hero() {
     data.shadow = data.npc_group.create(0, 0, 'shadow');
     data.shadow.blendMode = PIXI.blendModes.MULTIPLY;
     data.shadow.anchor.setTo(numbers.SHADOW_X_AP, numbers.SHADOW_Y_AP); //shadow anchor point
+    data.shadow.base_collider_layer = data.map_collider_layer;
     data.hero = data.npc_group.create(0, 0, data.hero_name + "_" + data.actual_action);
     data.hero.centerX = numbers.HERO_START_X; //hero x start position
     data.hero.centerY = numbers.HERO_START_Y; //hero y start position
+    data.hero.base_collider_layer = data.map_collider_layer;
     game.camera.follow(data.hero, Phaser.Camera.FOLLOW_LOCKON, 0.9, 0.9); //makes camera follow the data.hero
     //config data.hero initial animation state
     main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
@@ -158,8 +171,11 @@ function toggle_debug() {
     data.map_collider.body.debug = !data.map_collider.body.debug;
     for (let i = 0; i < data.npc_group.children.length; ++i) {
         let sprite = data.npc_group.children[i];
-        if (!sprite.is_npc) continue;
+        if (!sprite.is_npc && !sprite.is_psynergy_item) continue;
         sprite.body.debug = !sprite.body.debug;
+    }
+    for (let i = 0; i < data.dynamic_events_bodies.length; ++i) {
+        data.dynamic_events_bodies[i].debug = !data.dynamic_events_bodies[i].debug;
     }
     data.debug = !data.debug;
 }
@@ -173,7 +189,7 @@ function create() {
 
     // Initializing some vars
     data.hero_name = "isaac";
-    data.map_name = "madra";
+    data.map_name = "madra_side";
     data.map_collider_layer = 0;
     data.actual_action = 'idle';
     data.actual_direction = 'down';
@@ -194,6 +210,7 @@ function create() {
     data.dialog_manager = null;
     data.in_dialog = false;
     data.npc_db = game.cache.getJSON('npc_db');
+    data.psynergy_items_db = game.cache.getJSON('psynergy_items_db');
 
     //creating groups. Order here is important
     data.underlayer_group = game.add.group();
@@ -272,8 +289,9 @@ function create() {
         data.y_speed = 0;
     }
 
-    data.created = true;
-    game.camera.resetFX();
+        data.created = true;
+        game.camera.resetFX();
+    });
 }
 
 function fire_event() {
@@ -283,6 +301,7 @@ function fire_event() {
         else if (data.current_event.type === "door") {
             set_door_event(data);
         } else if (data.current_event.type === "jump") {
+            if (!data.current_event.active) return;
             data.on_event = true;
             data.event_activation_process = false;
             data.jumping = true;
@@ -293,18 +312,32 @@ function fire_event() {
 function event_triggering() {
     data.current_event = maps[data.map_name].events[data.hero_tile_pos_x + "_" + data.hero_tile_pos_y];
     if (!data.current_event.activation_collision_layers.includes(data.map_collider_layer)) return;
-    if (!data.climbing) {
-        if(!data.event_activation_process && data.actual_direction === data.current_event.activation_direction && (data.actual_action === "walk" || data.actual_action === "dash")){
-            data.event_activation_process = true;
-            data.event_timer = game.time.events.add(Phaser.Timer.HALF, fire_event, this);
-        } else if(data.event_activation_process && (data.actual_direction !== data.current_event.activation_direction ||  data.actual_action === "idle"))
-            data.event_activation_process = false;
+    let right_direction;
+    if (Array.isArray(data.current_event.activation_direction)) {
+        right_direction = data.current_event.activation_direction.includes(data.actual_direction);
     } else {
-        if(!data.event_activation_process && data.climb_direction === data.current_event.activation_direction && (data.actual_direction === "climb")){
+        right_direction = data.actual_direction === data.current_event.activation_direction;
+    }
+    if (!data.climbing) {
+        if (!data.event_activation_process && right_direction && (data.actual_action === "walk" || data.actual_action === "dash")) {
+            if (data.event_timer && !data.event_timer.timer.expired) {
+                return;
+            }
             data.event_activation_process = true;
-            data.event_timer = game.time.events.add(Phaser.Timer.HALF, fire_event, this);
-        } else if(data.event_activation_process && (data.climb_direction !== data.current_event.activation_direction ||  data.actual_direction === "idle"))
+            data.event_timer = game.time.events.add(numbers.EVENT_TIME, fire_event, this);
+        } else if (data.event_activation_process && (!right_direction ||  data.actual_action === "idle")) {
             data.event_activation_process = false;
+        }
+    } else {
+        if (!data.event_activation_process && data.climb_direction === data.current_event.activation_direction && (data.actual_direction === "climb")) {
+            if (data.event_timer && !data.event_timer.timer.expired) {
+                return;
+            }
+            data.event_activation_process = true;
+            data.event_timer = game.time.events.add(numbers.EVENT_TIME, fire_event, this);
+        } else if (data.event_activation_process && (data.climb_direction !== data.current_event.activation_direction ||  data.actual_direction === "idle")) {
+            data.event_activation_process = false;
+        }
     }
 
     if (data.current_event.type === "speed") { //speed event activation
@@ -324,14 +357,14 @@ function event_triggering() {
 
 function update() {
     if (data.created) {
-        if (!data.on_event && !data.npc_event) {
+        if (!data.on_event && !data.npc_event && !data.pushing) {
             data.hero_tile_pos_x = parseInt(data.hero.x/maps[data.map_name].sprite.tileWidth);
             data.hero_tile_pos_y = parseInt(data.hero.y/maps[data.map_name].sprite.tileHeight);
 
-            if (data.waiting_to_step) {
+            if (data.waiting_to_step) { //step event
                 do_step(data);
             }
-            if (data.waiting_to_change_collision) {
+            if (data.waiting_to_change_collision) { //change collision pattern layer event
                 do_collision_change(data);
             }
 
@@ -361,7 +394,10 @@ function update() {
             }
 
             //organize layers on hero move
-            data.npc_group.sort('y', Phaser.Group.SORT_ASCENDING);
+            data.npc_group.children.forEach(sprite => {
+                sprite.y_sort = parseInt(sprite.base_collider_layer.toString() + sprite.y.toString());
+            });
+            data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
         } else if (data.on_event) {
             if (data.current_event.type === "stair")
                 climb.climb_event_animation_steps(data);
@@ -377,6 +413,8 @@ function update() {
 
             //disabling hero body movement
             data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
+        } else if (data.pushing) {
+            change_hero_sprite();
         }
     } else {
         render_loading();
@@ -430,10 +468,11 @@ function set_actual_action() {
     else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && data.actual_direction !== "climb" && data.climbing)
         data.actual_direction = "climb";
     else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && (data.actual_action !== "walk" || data.actual_action !== "dash") && !data.climbing) {
-        if (game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "dash")
+        if (game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "dash") {
             data.actual_action = "dash";
-        else if (!game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "walk")
+        } else if (!game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "walk") {
             data.actual_action = "walk";
+        }
     }
 }
 
