@@ -2,7 +2,7 @@ import * as utils from './utils.js';
 import * as numbers from './magic_numbers.js';
 import { initializeMainChars, main_char_list } from './chars/main_char_list.js';
 import { initializeMaps, loadMaps, maps } from './maps/maps.js';
-import { jump_event } from './events/jump.js';
+import { jump_event, jump_near_collision } from './events/jump.js';
 import { set_door_event, door_event_phases } from './events/door.js';
 import { set_npc_event } from './events/npc.js';
 import { config_step, do_step } from './events/step.js';
@@ -66,7 +66,9 @@ var data = {
     trying_to_push_direction: "",
     push_timer: null,
     pushing: false,
-    dynamic_events_bodies: []
+    dynamic_events_bodies: [],
+    walking_on_pillars_tiles: new Set(),
+    walking_on_pillars_bodies: []
 };
 window.data = data;
 
@@ -115,7 +117,7 @@ function config_hero() {
     data.hero.centerX = numbers.HERO_START_X; //hero x start position
     data.hero.centerY = numbers.HERO_START_Y; //hero y start position
     data.hero.base_collider_layer = data.map_collider_layer;
-    game.camera.follow(data.hero, Phaser.Camera.FOLLOW_LOCKON, 0.9, 0.9); //makes camera follow the data.hero
+    game.camera.follow(data.hero, Phaser.Camera.FOLLOW_LOCKON); //makes camera follow the data.hero
     //config data.hero initial animation state
     main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
     data.hero.animations.play(data.actual_action + "_" + data.actual_direction);
@@ -169,6 +171,9 @@ function toggle_debug() {
     }
     for (let i = 0; i < data.dynamic_events_bodies.length; ++i) {
         data.dynamic_events_bodies[i].debug = !data.dynamic_events_bodies[i].debug;
+    }
+    for (let i = 0; i < data.walking_on_pillars_bodies.length; ++i) {
+        data.walking_on_pillars_bodies[i].debug = !data.walking_on_pillars_bodies[i].debug;
     }
     data.debug = !data.debug;
 }
@@ -312,6 +317,9 @@ function fire_event() {
 function event_triggering() {
     data.current_event = maps[data.map_name].events[data.hero_tile_pos_x + "_" + data.hero_tile_pos_y];
     if (!data.current_event.activation_collision_layers.includes(data.map_collider_layer)) return;
+    if (data.current_event.type === "jump") {
+        jump_near_collision(data);
+    }
     let right_direction;
     if (Array.isArray(data.current_event.activation_direction)) {
         right_direction = data.current_event.activation_direction.includes(data.actual_direction);
