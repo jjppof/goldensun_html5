@@ -16,6 +16,9 @@ var currentWidth = window.innerWidth;
 var music;
 var map_name="madra"; // hum...prob on écrit en dur map_name et data.map_name :(
 
+var menu_open= false;
+var menu;
+
 var data = {
     cursors: undefined,
     hero: undefined,
@@ -83,6 +86,8 @@ function preload() {
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
+
+    game.load.image('menu', 'assets/images/ui/ui_menu.png');
 
     game.load.audio('bg-music-'+map_name, 'assets/music/'+map_name+'/'+map_name+'.mp3');
     game.load.audio('step', 'assets/music/se/door.wav');
@@ -213,6 +218,24 @@ function create() {
 
     config_music();
     resizeGame();
+
+
+    game.input.keyboard.addKey(Phaser.Keyboard.Z).onDown.add(() => {
+      if(menu_open) {
+        menu_open= false;
+        menu.destroy();
+        game.physics.p2.resume();
+      }
+      else{
+        menu_open= true;
+        menu = game.add.image(this.game.camera.x + 30, this.game.camera.y + 136, 'menu' );
+        data.hero.animations.play("walk_up");
+        game.physics.p2.pause();
+        console.log(data.actual_direction);
+        data.hero.animations.play("idle_" + data.actual_direction);
+        }
+
+    }, this);
 
     //activate debug mode
     game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug, this);
@@ -423,7 +446,7 @@ function change_hero_sprite() {
 }
 
 function set_actual_action() {
-    if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_action !== "idle" && !data.climbing)
+    if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_action !== "idle" && !data.climbing || menu_open == true)
         data.actual_action = "idle";
     else if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_direction !== "idle" && data.climbing)
         data.actual_direction = "idle";
