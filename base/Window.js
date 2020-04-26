@@ -52,15 +52,15 @@ export class Window {
         this.graphics.lineStyle(1, 0x525252)
         this.graphics.moveTo(this.width, 2);
         this.graphics.lineTo(this.width, this.height);
-        
+
         this.graphics.lineStyle(1, 0xA5A5A5)
         this.graphics.moveTo(this.width + 2, 1);
         this.graphics.lineTo(this.width + 2, this.height + 1);
-        
+
         this.graphics.lineStyle(1, 0xFFFFFF)
         this.graphics.moveTo(this.width + 1, 1);
         this.graphics.lineTo(this.width + 1, this.height);
-        
+
         this.graphics.lineStyle(1, 0x111111)
         this.graphics.moveTo(this.width + 3, 1);
         this.graphics.lineTo(this.width + 3, this.height + 1);
@@ -175,7 +175,7 @@ export class Window {
     }
 
     destroy(animate, destroy_callback) {
-        let on_destroy = () => { 
+        let on_destroy = () => {
             this.group.destroy();
             if (destroy_callback !== undefined) destroy_callback();
         }
@@ -190,7 +190,7 @@ export class Window {
         } else {
             on_destroy();
         }
-        
+
     }
 }
 
@@ -258,7 +258,11 @@ export function set_dialog(game, text) { //divides the text into windows and, fo
         }
     }
     if (line.length) { //deal with the last window that does not have 3 lines
-        window_width = line_width > max_efective_width ? max_efective_width : line_width;
+        let width_to_consider = line_width;
+        if (lines.length) {
+            width_to_consider = Math.max(window_width, line_width);
+        }
+        window_width = width_to_consider > max_efective_width ? max_efective_width : width_to_consider;
         lines.push(line.join(' '));
         windows.push({
             lines: lines.slice(),
