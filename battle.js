@@ -1,5 +1,6 @@
 import * as numbers from './magic_numbers.js';
 import * as utils from './utils.js';
+import { DialogManager, set_dialog } from './base/Window.js';
 
 var battle_bg;
 var battle_bg2;
@@ -51,6 +52,7 @@ var djinn_wind=[];
 var djinn_water=[];
 
 var touche = 0;
+var tour= 0;
 var ui =['Attack','Psynergy','Djinn','Summon','Item','Defend'];
 var elements= ["venus","mars","jupiter","mercury"];
 
@@ -87,7 +89,7 @@ function preload() {
 
     // characters facesets
     for(i=0; i< party.length;i++){
-      var string= party[i].charAt(0).toUpperCase() + party[i].slice(1); // upperCase the first letter
+      var string= utils.upperCaseFirstLetter(party[i]); 
       game.load.image(party[i], 'assets/images/icons/'+string+'.png');
     }
 
@@ -101,7 +103,7 @@ function preload() {
     game.load.image('ui-battle-up', 'assets/images/ui/ui_battle.png');
     game.load.image('ui-battle-down', 'assets/images/ui/ui_battle2.png');
     for(i=0; i< ui.length;i++){
-      var string= ui[i].charAt(0).toLowerCase() + ui[i].slice(1); // lowerCase the first letter
+      var string= utils.lowerCaseFirstLetter(ui[i]);
       game.load.image('ui-'+string, 'assets/images/ui/'+ui[i]+'.png');
     }
     for(i=0; i< elements.length;i++){
@@ -110,6 +112,8 @@ function preload() {
 
     game.load.audio('bg-battle', 'assets/music/battle/battle_jenna.mp3');
     game.load.audio('option', 'assets/music/se/battle_option.wav');
+    game.load.audio('option-enter', 'assets/music/se/battle_option_enter.wav');
+    game.load.audio('option-confirm', 'assets/music/se/battle_option_confirm.wav');
 }
 
 function create() {
@@ -139,7 +143,7 @@ function create() {
     this.game.add.bitmapText(32, 16, 'gs-bmp-font',djinn_water.length.toString() , numbers.FONT_SIZE);
 
     for(var i=0; i< ui.length;i++){
-      var string= party[i].charAt(0).toUpperCase() + party[i].slice(1); // upperCase the first letter
+      var string= utils.upperCaseFirstLetter(party[i]); // characters name
 
       var drawnObject;
       var width = utils.get_text_width(this.game, string);
@@ -190,11 +194,11 @@ function create() {
           touche -= 1;
         txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE);
         if (touche== ui.length -1)
-          img= this.game.add.image(147, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+          img= this.game.add.image(147, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
         else if (touche== 0)
-          img= this.game.add.image(33, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+          img= this.game.add.image(33, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
         else
-          img= this.game.add.image(31+ 24*touche, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+          img= this.game.add.image(31+ 24*touche, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
 
         if (touche== ui.length -1){ // deals with last icon (add 2 more pixels the "right side kept its position")
           this.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
@@ -218,11 +222,11 @@ function create() {
           touche += 1;
         txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE);
         if (touche== ui.length -1)
-          img= this.game.add.image(147, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+          img= this.game.add.image(147, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
         else if (touche== 0)
-          img= this.game.add.image(33, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+          img= this.game.add.image(33, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
         else
-          img= this.game.add.image(31+ 24*touche, 130, 'ui-'+ui[touche].charAt(0).toLowerCase() + ui[touche].slice(1) );
+          img= this.game.add.image(31+ 24*touche, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
 
         if (touche== ui.length -1){ // deals with last icon (add 2 more pixels the "right side kept its position")
           this.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
@@ -271,6 +275,27 @@ function create() {
         p.scale.setTo(default_scale, default_scale);
         players.push(p);
     }
+
+    game.input.keyboard.addKey(Phaser.Keyboard.Z).onDown.add(() => {
+      // problem if not summon option -> partial solution: if no summon , write "no summon available"? :S
+      if (ui[touche] != 'Defend'){
+        music = game.add.audio('option-enter');
+        music.volume=0.3;
+        music.play();
+
+        // problem: idk how to create a window using the dialogmanager
+        /*let parts = set_dialog(game, "test");
+        var dialog_manager = new DialogManager(game, parts, "left");
+        console.log(dialog_manager);
+        game.add.image(0, 0, dialog_manager);*/
+      }
+      else{
+        music = game.add.audio('option-confirm');
+        music.volume=0.3;
+        music.play();
+      }
+    }, this);
+    //console.log(group_party.children.length); // array composed of 'isaac_back' etc.
 
     first_party_char = group_party.children[0];
     last_party_char = group_party.children[party_count - 1];

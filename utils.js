@@ -8,7 +8,7 @@ export function b(array) {
     return array.join("/");
 }
 
-export function checkMobile() { 
+export function checkMobile() {
     if(
         navigator.userAgent.match(/Android/i)
         || navigator.userAgent.match(/webOS/i)
@@ -155,4 +155,12 @@ export function get_text_width(game, text) { //get text width in px (dirty way)
     const text_width = text_sprite.width;
     text_sprite.destroy();
     return text_width;
+}
+
+export function lowerCaseFirstLetter(text){ // lowerCase the first letter
+  return text.charAt(0).toLowerCase() + text.slice(1);
+}
+
+export function upperCaseFirstLetter(text){ // upperCase the first letter
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
