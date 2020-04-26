@@ -38,7 +38,7 @@ var middle_shift_enemy;
 var middle_shift_party;
 
 var party=['isaac','garet','ivan','mia','felix','jenna','sheba','picard']; // switch: permet de changer ordre équipe?
-var monsters=['mino','goblin','demon'];
+var monsters=['minotaur','goblin','demon'];
 
 //put all the stuffs (psynergies, djinns etc.) in a database (json var)????
 var psynergies_earth=['ragnarok','quake','earth quake','spire','cure'];
@@ -89,7 +89,7 @@ function preload() {
 
     // characters facesets
     for(i=0; i< party.length;i++){
-      var string= utils.upperCaseFirstLetter(party[i]); 
+      var string= utils.upperCaseFirstLetter(party[i]);
       game.load.image(party[i], 'assets/images/icons/'+string+'.png');
     }
 
@@ -132,7 +132,8 @@ function create() {
     var ui_down = game.add.image(33, 136, 'ui-battle-down');
     var ui_char = game.add.image(0, 128, party[0]);
 
-    // prob: numbers...
+    /* ------------------ UI ---------------------------- */
+
     game.add.image(8, 8, 'ui-venus');
     this.game.add.bitmapText(16, 8, 'gs-bmp-font', djinn_earth.length.toString() , numbers.FONT_SIZE);
     game.add.image(8, 16, 'ui-mars');
@@ -242,6 +243,8 @@ function create() {
     // game.add.tileSprite(): x,y, repeat_to_x,repeat_to_y
     // ...not equal to game.add.image()!
 
+    /* ----------------------------  */
+
     spining = false;
     default_scale = 0.9;
     center_x = numbers.GAME_WIDTH/2;
@@ -274,7 +277,19 @@ function create() {
         p.anchor.setTo(0.5, 1);
         p.scale.setTo(default_scale, default_scale);
         players.push(p);
+        console.log(players);
+        console.log(players.length);
     }
+
+    /* ------------------- Battle text beginning ----------------------- */
+
+    for (let i= party_count; i< players.length; i++){
+      var string= utils.upperCaseFirstLetter(players[i].key.replace('_back','') );
+      this.game.add.bitmapText(6, 140+8*(i-party_count), 'gs-bmp-font', string +' appeared' , numbers.FONT_SIZE);
+    }
+
+
+    /* -------------------- Menu ----------------------------------------*/
 
     game.input.keyboard.addKey(Phaser.Keyboard.Z).onDown.add(() => {
       // problem if not summon option -> partial solution: if no summon , write "no summon available"? :S
@@ -429,10 +444,10 @@ function update() {
                   else if (Math.sin(relative_angle) <= 0 && players[i].key != party[i]+'_front')
                       players[i].loadTexture(party[i]+'_front');
             } else {
-                if (Math.sin(relative_angle) > 0 && players[i].key != 'mino_back' ) { // by default, compare to mino sprite
+                if (Math.sin(relative_angle) > 0 && players[i].key != 'minotaur_back' ) { // by default, compare to mino sprite
                     players[i].loadTexture( players[i].key.replace('front','back') ); // -> in players: players.push (_back only)
                 }
-                else if (Math.sin(relative_angle) <= 0 && players[i].key != 'mino_front'){
+                else if (Math.sin(relative_angle) <= 0 && players[i].key != 'minotaur_front'){
                     players[i].loadTexture( players[i].key.replace('back','front') );
                 }
 
