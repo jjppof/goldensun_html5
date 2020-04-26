@@ -103,6 +103,26 @@ export function initializeMaps(){
         ['assets/images/maps/madra/madra_physics_house_4.json']
     );
 
+    maps.madra_house_5 = new Map(
+      'house_5',
+      'madra_house_5',
+      'house_5',
+      ['madra_house_test'],
+      'assets/images/maps/madra/house_5.png',
+      'assets/images/maps/madra/house_5.json',
+      ['assets/images/maps/madra/madra_physics_house_test.json']
+    );
+
+    maps.madra_house_6 = new Map(
+        'house_6',
+        'madra_house_6',
+        'house_6',
+        ['madra_house_test'],
+        'assets/images/maps/madra/house_6.png',
+        'assets/images/maps/madra/house_6.json',
+        ['assets/images/maps/madra/madra_physics_house_test.json']
+    );
+
     maps.madra_priere = new Map(
         'priere',
         'madra_priere',
