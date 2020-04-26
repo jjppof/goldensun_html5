@@ -300,10 +300,10 @@
      "event_41":"{\n\"type\": \"door\",\n\"x\": 19,\n\"y\": 26,\n\"target\": \"madra_priere\",\n\"activation_direction\": \"up\",\n\"x_target\": 15,\n\"y_target\": 25,\n\"advance_effect\": true,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
      "event_42":"{\n\"type\": \"door\",\n\"x\": 9,\n\"y\": 8,\n\"target\": \"madra_house_3\",\n\"activation_direction\": \"up\",\n\"x_target\": 29,\n\"y_target\": 12,\n\"advance_effect\": true,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
      "event_43":"{\n\"type\": \"door\",\n\"x\": 6,\n\"y\": 18,\n\"target\": \"madra_prison\",\n\"activation_direction\": \"up\",\n\"x_target\": 9,\n\"y_target\": 23,\n\"advance_effect\": true,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
-     "event_44":"{\n\"type\": \"door\",\n\"x\": 17,\n\"y\": 5,\n\"target\": \"madra_priere\",\n\"activation_direction\": \"up\",\n\"x_target\": 15,\n\"y_target\": 25,\n\"advance_effect\": true,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
-     "event_45":"{\n\"type\": \"door\",\n\"x\": 20,\n\"y\": 5,\n\"target\": \"madra_priere\",\n\"activation_direction\": \"up\",\n\"x_target\": 15,\n\"y_target\": 25,\n\"advance_effect\": true,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
-     "event_46":"{\n\"type\": \"door\",\n\"x\": 13,\n\"y\": 25,\n\"target\": \"madra_house_4\",\n\"activation_direction\": \"up\",\n\"x_target\": 7,\n\"y_target\": 21,\n\"advance_effect\": true,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
-     "event_47":"{\"type\": \"door\", \"x\": 33, \"y\": 12, \"target\": \"madra_catacombes\", \"activation_direction\": \"down\", \"x_target\": 2.5, \"y_target\": 5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
+     "event_44":"{\n\"type\": \"door\",\n\"x\": 13,\n\"y\": 25,\n\"target\": \"madra_house_4\",\n\"activation_direction\": \"up\",\n\"x_target\": 7,\n\"y_target\": 21,\n\"advance_effect\": true,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
+     "event_45":"{\"type\": \"door\", \"x\": 33, \"y\": 12, \"target\": \"madra_catacombes\", \"activation_direction\": \"down\", \"x_target\": 2.5, \"y_target\": 5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_46":"{\"type\": \"door\", \"x\": 17, \"y\": 5, \"target\": \"madra_house_5\", \"activation_direction\": \"up\", \"x_target\": 9, \"y_target\": 23, \"advance_effect\": true, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_47":"{\"type\": \"door\", \"x\": 20, \"y\": 5, \"target\": \"madra_house_6\", \"activation_direction\": \"up\", \"x_target\": 11, \"y_target\": 19, \"advance_effect\": true, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
     },
  "propertytypes":
     {
@@ -374,6 +374,20 @@
          "tileheight":16,
          "tileproperties":
             {
+              "61":
+                 {
+                  "base_offset":"0,-1",
+                  "close_door":"04",
+                  "door_type":"01",
+                  "id":4
+                 },
+               "72":
+                  {
+                   "base_offset":"0,0",
+                   "close_door":"03",
+                   "door_type":"01",
+                   "id":4
+                  },
              "126":
                 {
                  "base_offset":"0,-1",
@@ -415,10 +429,38 @@
                  "close_door":"01",
                  "door_type":"01",
                  "id":1
-                }
-            },
+                },
+            "284":
+               {
+                "base_offset":"0,-1",
+                "door_type":"01",
+                "id":5,
+                "open_door":"04"
+               },
+             "295":
+                {
+                 "base_offset":"0,0",
+                 "door_type":"01",
+                 "id":5,
+                 "open_door":"03"
+               }
+          },
          "tilepropertytypes":
             {
+              "61":
+                 {
+                  "base_offset":"string",
+                  "close_door":"string",
+                  "door_type":"string",
+                  "id":"int"
+                 },
+               "72":
+                  {
+                   "base_offset":"string",
+                   "close_door":"string",
+                   "door_type":"string",
+                   "id":"int"
+                  },
              "126":
                 {
                  "base_offset":"string",
@@ -460,7 +502,21 @@
                  "close_door":"string",
                  "door_type":"string",
                  "id":"int"
-                }
+               },
+               "284":
+                  {
+                   "base_offset":"string",
+                   "door_type":"string",
+                   "id":"int",
+                   "open_door":"string"
+                  },
+                "295":
+                   {
+                    "base_offset":"string",
+                    "door_type":"string",
+                    "id":"int",
+                    "open_door":"string"
+                   }
             },
          "tilewidth":16
         }],
