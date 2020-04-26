@@ -130,13 +130,13 @@ function create() {
 
     // prob: numbers...
     game.add.image(8, 8, 'ui-venus');
-    this.game.add.bitmapText(16, 8, 'gs-bmp-font', "o" , numbers.FONT_SIZE);
+    this.game.add.bitmapText(16, 8, 'gs-bmp-font', djinn_earth.length.toString() , numbers.FONT_SIZE);
     game.add.image(8, 16, 'ui-mars');
-    this.game.add.bitmapText(16, 16, 'gs-bmp-font', "o" , numbers.FONT_SIZE);
+    this.game.add.bitmapText(16, 16, 'gs-bmp-font', djinn_fire.length.toString() , numbers.FONT_SIZE);
     game.add.image(24, 8, 'ui-jupiter');
-    this.game.add.bitmapText(32, 8, 'gs-bmp-font', "o" , numbers.FONT_SIZE);
+    this.game.add.bitmapText(32, 8, 'gs-bmp-font', djinn_wind.length.toString() , numbers.FONT_SIZE);
     game.add.image(24, 16, 'ui-mercury');
-    this.game.add.bitmapText(32, 16, 'gs-bmp-font', "o" , numbers.FONT_SIZE);
+    this.game.add.bitmapText(32, 16, 'gs-bmp-font',djinn_water.length.toString() , numbers.FONT_SIZE);
 
     for(var i=0; i< ui.length;i++){
       var string= party[i].charAt(0).toUpperCase() + party[i].slice(1); // upperCase the first letter
