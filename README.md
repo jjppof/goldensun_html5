@@ -11,6 +11,7 @@ Feel free to help :)
 
 Stuff I planned to do or that I'm doing so far (WIP):
 - Add maps (Madra + the catacombs) ~~DONE :D
+
 whoops... I'm gonna add the world map and try to link with the battle test mode :D 
 - Add NPCs
 - Add some docs DONE :D
