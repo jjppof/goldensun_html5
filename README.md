@@ -1,7 +1,7 @@
 # Golden Sun - HTML5
 
 -> This is a fork of the project of @jjppof a Golden Sun Engine built in HTML5 with Phaser.
-# Documentation here:  https://github.com/Tashiro-Gyori/goldensun_html5/wiki
+#### Documentation here:  https://github.com/Tashiro-Gyori/goldensun_html5/wiki
 
 [DEMO](https://tashiro-gyori.github.io/goldensun_html5/)
 
