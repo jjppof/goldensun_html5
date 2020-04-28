@@ -67,7 +67,8 @@ var data = {
     push_timer: null,
     pushing: false,
     walking_on_pillars_tiles: new Set(),
-    dynamic_jump_events_bodies: []
+    dynamic_jump_events_bodies: [],
+    scale_factor: 1
 };
 window.data = data;
 
@@ -257,14 +258,17 @@ function create() {
 
         //enable zoom
         game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(function(){
+            data.scale_factor = 1;
             game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
             window.dispatchEvent(new Event('resize'));
         }, this);
         game.input.keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(function(){
+            data.scale_factor = 2;
             game.scale.setupScale(2*numbers.GAME_WIDTH, 2*numbers.GAME_HEIGHT);
             window.dispatchEvent(new Event('resize'));
         }, this);
         game.input.keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(function(){
+            data.scale_factor = 3;
             game.scale.setupScale(3*numbers.GAME_WIDTH, 3*numbers.GAME_HEIGHT);
             window.dispatchEvent(new Event('resize'));
         }, this);
@@ -426,10 +430,11 @@ function update() {
 }
 
 function render() {
-    if (data.show_fps)
+    game.debug.text('', 0, 0);
+
+    if (data.show_fps) {
         game.debug.text('FPS: ' + game.time.fps || 'FPS: --', 5, 15, "#00ff00");
-    else
-        game.debug.text('', 0, 0);
+    }
 
     if (data.grid) {
         const tile_width = maps[data.map_name].sprite.tileWidth;
@@ -447,6 +452,14 @@ function render() {
         for (let point in maps[data.map_name].events) {
             let pos = point.split('_');
             game.debug.geom(new Phaser.Rectangle(pos[0]*tile_width, pos[1]*tile_height, tile_width, tile_height), 'rgba(255,255,60,0.7)');
+        }
+
+        if (game.input.mousePointer.withinGame) {
+            const mouse_x = parseInt((game.camera.x + game.input.mousePointer.x/data.scale_factor)/maps[data.map_name].sprite.tileWidth);
+            const mouse_y = parseInt((game.camera.y + game.input.mousePointer.y/data.scale_factor)/maps[data.map_name].sprite.tileHeight);
+            game.debug.text(`x: ${mouse_x}, y: ${mouse_y}`, 140, 15, "#00ff00");
+        } else {
+            game.debug.text(`x: --, y: --`, 140, 15, "#00ff00");
         }
     }
 }
