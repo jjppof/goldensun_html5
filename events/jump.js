@@ -157,52 +157,58 @@ export function jump_near_collision(data) {
         right_direction = data.actual_direction.includes(data.current_event.activation_direction);
     }
 
+    let clear_bodies = () => {
+        data.hero.body.collides(data.mapCollisionGroup);
+        data.map_collider.body.collides(data.heroCollisionGroup);
+        for (let j = 0; j < data.walking_on_pillars_bodies.length; ++j) {
+            data.walking_on_pillars_bodies[j].destroy();
+        }
+        data.walking_on_pillars_bodies = [];
+    };
+    let concat_keys = current_pos_key;
+    let side_surroundings = [];
     for (let i = 0; i < surroundings.length; ++i) {
         const surrounding_key = surroundings[i].x + "_" + surroundings[i].y;
         if (surrounding_key in maps[data.map_name].events) {
-            let event = maps[data.map_name].events[surrounding_key];
-            const pair_key = current_pos_key + "-" + surrounding_key;
-            if (event.type === "jump" && (event.dynamic || data.current_event.dynamic) && right_direction) {
-                if (!data.walking_on_pillars_tiles.has(pair_key)) {
-                    data.walking_on_pillars_tiles.add(pair_key);
-                    let side_event_surroundings = get_surroundings(surroundings[i].x, surroundings[i].y);
-                    let bodies_position = new Set((surroundings.concat(side_event_surroundings)).map(pos => pos.x + "_" + pos.y));
-                    bodies_position.delete(current_pos_key);
-                    bodies_position.delete(surrounding_key);
-                    data.hero.body.removeCollisionGroup(data.mapCollisionGroup, true);
-                    data.map_collider.body.removeCollisionGroup(data.heroCollisionGroup, true);
-                    bodies_position.forEach(position => {
-                        const pos_array = position.split("_");
-                        let x_pos = (parseInt(pos_array[0]) + .5) * maps[data.map_name].sprite.tileWidth;
-                        let y_pos = (parseInt(pos_array[1]) + .5) * maps[data.map_name].sprite.tileHeight;
-                        let body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
-                        body.clearShapes();
-                        body.setRectangle(maps[data.map_name].sprite.tileWidth, maps[data.map_name].sprite.tileHeight, 0, 0);
-                        body.setCollisionGroup(data.dynamicEventsCollisionGroup);
-                        body.damping = numbers.MAP_DAMPING;
-                        body.angularDamping = numbers.MAP_DAMPING;
-                        body.setZeroRotation();
-                        body.fixedRotation = true;
-                        body.dynamic = false;
-                        body.static = true;
-                        body.debug = data.hero.body.debug;
-                        body.collides(data.heroCollisionGroup);
-                        data.walking_on_pillars_bodies.push(body);
-                    });
-                    break;
-                }
-            } else if (event.type === "jump" && (event.dynamic || data.current_event.dynamic) && !right_direction) {
-                if (data.walking_on_pillars_tiles.has(pair_key)) {
-                    data.walking_on_pillars_tiles.delete(pair_key);
-                    data.hero.body.collides(data.mapCollisionGroup);
-                    data.map_collider.body.collides(data.heroCollisionGroup);
-                    for (let j = 0; j < data.walking_on_pillars_bodies.length; ++j) {
-                        data.walking_on_pillars_bodies[j].destroy();
-                    }
-                    data.walking_on_pillars_bodies = [];
-                    break;
-                }
+            let surrounding_event = maps[data.map_name].events[surrounding_key];
+            if (surrounding_event.type === "jump" && (surrounding_event.dynamic || data.current_event.dynamic) && right_direction) {
+                const side_event_surroundings = get_surroundings(surroundings[i].x, surroundings[i].y);
+                side_surroundings.push(side_event_surroundings);
+                concat_keys += "-" + surrounding_key;
             }
         }
+    }
+    if (!data.walking_on_pillars_tiles.has(concat_keys) && concat_keys !== current_pos_key) {
+        data.walking_on_pillars_tiles.clear();
+        clear_bodies();
+        data.walking_on_pillars_tiles.add(concat_keys);
+        let bodies_position = new Set((surroundings.concat(...side_surroundings)).map(pos => pos.x + "_" + pos.y));
+        concat_keys.split("-").forEach(key => {
+            bodies_position.delete(key);
+        });
+        data.hero.body.removeCollisionGroup(data.mapCollisionGroup, true);
+        data.map_collider.body.removeCollisionGroup(data.heroCollisionGroup, true);
+        bodies_position.forEach(position => {
+            const pos_array = position.split("_");
+            let x_pos = (parseInt(pos_array[0]) + .5) * maps[data.map_name].sprite.tileWidth;
+            let y_pos = (parseInt(pos_array[1]) + .5) * maps[data.map_name].sprite.tileHeight;
+            let body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
+            body.clearShapes();
+            body.setRectangle(maps[data.map_name].sprite.tileWidth, maps[data.map_name].sprite.tileHeight, 0, 0);
+            body.setCollisionGroup(data.dynamicEventsCollisionGroup);
+            body.damping = numbers.MAP_DAMPING;
+            body.angularDamping = numbers.MAP_DAMPING;
+            body.setZeroRotation();
+            body.fixedRotation = true;
+            body.dynamic = false;
+            body.static = true;
+            body.debug = data.hero.body.debug;
+            body.collides(data.heroCollisionGroup);
+            data.walking_on_pillars_bodies.push(body);
+        });
+    }
+    if (!data.current_event.dynamic && !right_direction && data.walking_on_pillars_tiles.size) {
+        data.walking_on_pillars_tiles.clear();
+        clear_bodies();
     }
 }
