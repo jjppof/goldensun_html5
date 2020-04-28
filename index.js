@@ -66,9 +66,8 @@ var data = {
     trying_to_push_direction: "",
     push_timer: null,
     pushing: false,
-    dynamic_events_bodies: [],
     walking_on_pillars_tiles: new Set(),
-    walking_on_pillars_bodies: []
+    dynamic_jump_events_bodies: []
 };
 window.data = data;
 
@@ -169,11 +168,8 @@ function toggle_debug() {
         if (!sprite.is_npc && !sprite.is_psynergy_item) continue;
         sprite.body.debug = !sprite.body.debug;
     }
-    for (let i = 0; i < data.dynamic_events_bodies.length; ++i) {
-        data.dynamic_events_bodies[i].debug = !data.dynamic_events_bodies[i].debug;
-    }
-    for (let i = 0; i < data.walking_on_pillars_bodies.length; ++i) {
-        data.walking_on_pillars_bodies[i].debug = !data.walking_on_pillars_bodies[i].debug;
+    for (let i = 0; i < data.dynamic_jump_events_bodies.length; ++i) {
+        data.dynamic_jump_events_bodies[i].debug = !data.dynamic_jump_events_bodies[i].debug;
     }
     data.debug = !data.debug;
 }

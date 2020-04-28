@@ -120,7 +120,7 @@ export function set_jump_collision(data) {
                 body.static = true;
                 body.debug = data.hero.body.debug;
                 body.collides(data.heroCollisionGroup);
-                data.dynamic_events_bodies.push(body);
+                data.dynamic_jump_events_bodies.push(body);
             }
         }
     }
@@ -129,10 +129,10 @@ export function set_jump_collision(data) {
 export function unset_set_jump_collision(data) {
     data.hero.body.collides(data.mapCollisionGroup);
     data.map_collider.body.collides(data.heroCollisionGroup);
-    for (let i = 0; i < data.dynamic_events_bodies.length; ++i) {
-        data.dynamic_events_bodies[i].destroy();
+    for (let i = 0; i < data.dynamic_jump_events_bodies.length; ++i) {
+        data.dynamic_jump_events_bodies[i].destroy();
     }
-    data.dynamic_events_bodies = [];
+    data.dynamic_jump_events_bodies = [];
 }
 
 export function jump_near_collision(data) {
@@ -160,10 +160,10 @@ export function jump_near_collision(data) {
     let clear_bodies = () => {
         data.hero.body.collides(data.mapCollisionGroup);
         data.map_collider.body.collides(data.heroCollisionGroup);
-        for (let j = 0; j < data.walking_on_pillars_bodies.length; ++j) {
-            data.walking_on_pillars_bodies[j].destroy();
+        for (let j = 0; j < data.dynamic_jump_events_bodies.length; ++j) {
+            data.dynamic_jump_events_bodies[j].destroy();
         }
-        data.walking_on_pillars_bodies = [];
+        data.dynamic_jump_events_bodies = [];
     };
     let concat_keys = current_pos_key;
     let side_surroundings = [];
@@ -204,7 +204,7 @@ export function jump_near_collision(data) {
             body.static = true;
             body.debug = data.hero.body.debug;
             body.collides(data.heroCollisionGroup);
-            data.walking_on_pillars_bodies.push(body);
+            data.dynamic_jump_events_bodies.push(body);
         });
     }
     if (!data.current_event.dynamic && !right_direction && data.walking_on_pillars_tiles.size) {
