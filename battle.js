@@ -1,6 +1,6 @@
 import * as numbers from './magic_numbers.js';
 import * as utils from './utils.js';
-import { DialogManager, set_dialog } from './base/Window.js';
+import { Window, DialogManager, set_dialog } from './base/Window.js';
 
 var battle_bg;
 var battle_bg2;
@@ -51,10 +51,15 @@ var djinn_fire=[];
 var djinn_wind=[];
 var djinn_water=[];
 
+var txt_begin=true; // if true, means the beginning txt is still beginning
+var fight= false; // if true, means fight mode
 var touche = 0;
 var tour= 0;
-var ui =['Attack','Psynergy','Djinn','Summon','Item','Defend'];
+var ui =['Fight','Flee','Status','Attack','Psynergy','Djinn','Summon','Item','Defend'];
 var elements= ["venus","mars","jupiter","mercury"];
+
+var img;
+var txt;
 
 var game = new Phaser.Game (
     numbers.GAME_WIDTH,
@@ -104,8 +109,7 @@ function preload() {
     game.load.image('ui-battle-down', 'assets/images/ui/ui_battle2.png');
     game.load.image('ui-battle-down-prev', 'assets/images/ui/ui_battle3.png');
     for(i=0; i< ui.length;i++){
-      var string= utils.lowerCaseFirstLetter(ui[i]);
-      game.load.image('ui-'+string, 'assets/images/ui/'+ui[i]+'.png');
+      game.load.image('ui-'+ utils.lowerCaseFirstLetter(ui[i]), 'assets/images/ui/'+ui[i]+'.png');
     }
     for(i=0; i< elements.length;i++){
       game.load.image('ui-'+elements[i], 'assets/images/ui/'+elements[i]+'_star.png');
@@ -166,8 +170,6 @@ function create() {
         p.anchor.setTo(0.5, 1);
         p.scale.setTo(default_scale, default_scale);
         players.push(p);
-        console.log(players);
-        console.log(players.length);
     }
 
     /* ------------------- Battle text beginning ----------------------- */
@@ -176,7 +178,6 @@ function create() {
     var string= utils.upperCaseFirstLetter(players[i].key.replace('_back','') );
     var tab_txt=[];
     var elm= this.game.add.bitmapText(6, 141, 'gs-bmp-font', string +' appeared!' , numbers.FONT_SIZE); //ajout txt!
-    // add arrow right to the text
     tab_txt.push(elm);
     var width = utils.get_text_width(game, string+ ' appeared!');
     var cursor= this.game.add.image(16 + width, 138, 'ui-cursor'); // draw the red right cursor
@@ -184,28 +185,68 @@ function create() {
     i++;
 
     game.input.keyboard.addKey(Phaser.Keyboard.Z).onDown.add(() => {
-      if(i< players.length){
-        string= utils.upperCaseFirstLetter(players[i].key.replace('_back','') );
-        elm= this.game.add.bitmapText(6, 151, 'gs-bmp-font', string +' appeared!' , numbers.FONT_SIZE); // add the txt
-        tab_txt.push(elm); // put in tab_txt
-        width = utils.get_text_width(game, string+ ' appeared!');
-        cursor.position.x = 16 + width;
-        cursor.position.y = 154;
-        this.add.tween(cursor).to({y: 151 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+            // problem if no djiin then no summon option -> partial solution: if no summon , write "no summon available"? :S
+            if (ui[touche] != 'Defend' && fight || !txt_begin){
+              music = game.add.audio('option-enter');
+              music.volume=0.3;
+              music.play();
 
-        if(tab_txt.length >= 3){ //if more than 3 elements (txt) in tab_txt
-          console.log(tab_txt.length);
-          tab_txt[i-party_count-2].destroy(); //destroy the old txt
-          tab_txt[i-party_count-1].position.y-=10; //put back up the previous txt
-        }
-        i++;
-        if(i==players.length){
-          tab_txt[i-party_count-2].destroy();
-          tab_txt[i-party_count-1].destroy();
-          this.game.add.image(105, 136, 'ui-battle-down-prev');
-        }
-      }
-    }, this);
+              // creates a window
+              //var win = new Window(game, 0, 0, 100, 100, false);
+              //win.show();
+            }
+            else if(fight){
+              music = game.add.audio('option-confirm');
+              music.volume=0.3;
+              music.play();
+            }
+          // group_party.children-> array composed of 'isaac_back' etc.
+
+          if (!txt_begin && i>=players.length && ui[touche]== 'Fight'){ // prob touche= 0 pr ui_prev et ui
+            img.destroy();
+            fight= true;
+            draw_ui_down();
+          }
+
+          if(i< players.length){
+            string= utils.upperCaseFirstLetter(players[i].key.replace('_back','') );
+            elm= this.game.add.bitmapText(6, 151, 'gs-bmp-font', string +' appeared!' , numbers.FONT_SIZE); // add the txt
+            tab_txt.push(elm); // put in tab_txt
+            width = utils.get_text_width(game, string+ ' appeared!');
+            cursor.position.x = 16 + width;
+            cursor.position.y = 154;
+            this.add.tween(cursor).to({y: 151 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+
+            if(tab_txt.length >= 3){ //if more than 3 elements (txt) in tab_txt
+              tab_txt[i-party_count-2].destroy(); //destroy the old txt
+              tab_txt[i-party_count-1].position.y-=10; //put back up the previous txt
+            }
+            i++;
+            console.log("i: " + i);
+            if(i==players.length){
+              txt_begin=false;
+              cursor.destroy();
+              tab_txt[i-party_count-2].destroy();
+              tab_txt[i-party_count-1].destroy();
+
+              var ui_battle_down_prev= this.game.add.image(105, 136, 'ui-battle-down-prev');
+              img= this.game.add.image(105, 130, 'ui-fight');
+              txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[0], numbers.FONT_SIZE);
+              game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+              game.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+
+              //touche=0;
+              game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
+                key_left_not_fight();
+              }, this);
+              game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
+                key_right_not_fight();
+              }, this);
+              i++;
+            }
+
+          }
+      }, this);
 
 
     first_party_char = group_party.children[0];
@@ -409,7 +450,7 @@ function draw_ui_top(){
   game.add.image(24, 16, 'ui-mercury');
   game.add.bitmapText(32, 16, 'gs-bmp-font',djinn_water.length.toString() , numbers.FONT_SIZE);
 
-  for(var i=0; i< ui.length;i++){
+  for(var i=0; i< 4;i++){
     var string= utils.upperCaseFirstLetter(party[i]); // characters name
 
     var drawnObject;
@@ -445,94 +486,142 @@ function draw_ui_top(){
 }
 
 function draw_ui_down(){
+  touche=3;
   var ui_down = game.add.image(33, 136, 'ui-battle-down');
   var ui_char = game.add.image(0, 128, party[0]);
-  var img= game.add.image(33, 130, 'ui-attack');
-  this.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
-  this.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
-  var txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[0], numbers.FONT_SIZE);
+  img= game.add.image(33, 130, 'ui-attack'); //OH! may be confused by the generic img
+  game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+  game.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+  txt= game.add.bitmapText(185, 144, 'gs-bmp-font', ui[0], numbers.FONT_SIZE);
 
   // maintenir touche?
   game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
-      txt.destroy();
-      img.destroy();
-      music = game.add.audio('option');
-      music.volume=0.3;
-      music.play();
-      if(touche-1< 0 )
-        touche= ui.length -1;
-      else
-        touche -= 1;
-      txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE);
-      if (touche== ui.length -1)
-        img= this.game.add.image(147, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
-      else if (touche== 0)
-        img= this.game.add.image(33, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
-      else
-        img= this.game.add.image(31+ 24*touche, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
-
-      if (touche== ui.length -1){ // deals with last icon (add 2 more pixels the "right side kept its position")
-        this.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
-        this.add.tween(img).to({x: 149, y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
-      }
-      else{
-        this.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
-        this.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
-      }
+      key_left_fight();
   }, this);
 
   game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
-      txt.destroy();
-      img.destroy();
-      music = game.add.audio('option');
-      music.volume=0.3;
-      music.play();
-      if(touche+1>  ui.length -1)
-        touche= 0;
-      else
-        touche += 1;
-      txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE);
-      if (touche== ui.length -1)
-        img= this.game.add.image(147, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
-      else if (touche== 0)
-        img= this.game.add.image(33, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
-      else
-        img= this.game.add.image(31+ 24*touche, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
-
-      if (touche== ui.length -1){ // deals with last icon (add 2 more pixels the "right side kept its position")
-        this.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
-        this.add.tween(img).to({x: 149, y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
-      }
-      else{
-        this.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
-        this.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
-      }
+      key_right_fight();
   }, this);
 
-  //where does the numbers come from? an example-----> y= numbers.GAME_HEIGHT-24 (size of the image)
-  // game.add.tileSprite(): x,y, repeat_to_x,repeat_to_y
-  // ...not equal to game.add.image()!
+}
 
-  /* -------------------- Menu ----------------------------------------*/
+function key_left_not_fight(){
 
-  game.input.keyboard.addKey(Phaser.Keyboard.Z).onDown.add(() => {
-    // problem if not summon option -> partial solution: if no summon , write "no summon available"? :S
-    if (ui[touche] != 'Defend'){
-      music = game.add.audio('option-enter');
-      music.volume=0.3;
-      music.play();
+  if(!fight){
+    img.destroy();
+    txt.destroy();
+    music = game.add.audio('option');
+    music.volume=0.3;
+    music.play();
+    if(touche-1< 0 )
+      touche= 2;
+    else
+      touche -= 1;
+    txt= game.add.bitmapText(185, 144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE);
+    if (touche== 2)
+      img= game.add.image(147, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
+    else if (touche== 0)
+      img= game.add.image(105, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
+    else
+      img= game.add.image(103+ 24*touche, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
 
-      // problem: idk how to create a window using the dialogmanager
-      /*let parts = set_dialog(game, "test");
-      var dialog_manager = new DialogManager(game, parts, "left");
-      console.log(dialog_manager);
-      game.add.image(0, 0, dialog_manager);*/
+    if (touche== 2){ // deals with last icon (add 2 more pixels the "right side kept its position")
+      game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+      game.add.tween(img).to({x: 149, y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
     }
     else{
-      music = game.add.audio('option-confirm');
-      music.volume=0.3;
-      music.play();
+      game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+      game.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
     }
-  }, this);
-  //console.log(group_party.children.length); // array composed of 'isaac_back' etc.
+  }
+}
+
+function key_right_not_fight(){
+
+  if(!fight){
+    img.destroy();
+    txt.destroy();
+    music = game.add.audio('option');
+    music.volume=0.3;
+    music.play();
+    if(touche+1>  ui_prev.length -1)
+      touche= 0;
+    else
+      touche += 1;
+    txt= game.add.bitmapText(185, 144, 'gs-bmp-font', ui_prev[touche], numbers.FONT_SIZE);
+    if (touche== ui_prev.length -1)
+      img= game.add.image(147, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui_prev[touche]) );
+    else if (touche== 0)
+      img= game.add.image(105, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui_prev[touche]) );
+    else
+      img= game.add.image(103+ 24*touche, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui_prev[touche]) );
+
+    if (touche== ui_prev.length -1){ // deals with last icon (add 2 more pixels the "right side kept its position")
+      game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+      game.add.tween(img).to({x: 149, y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+    }
+    else{
+      game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+      game.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+    }
+  }
+}
+
+function key_left_fight(){
+  if (fight){
+    txt.destroy();
+    img.destroy();
+    music = game.add.audio('option');
+    music.volume=0.3;
+    music.play();
+    if(touche-1< 3 )
+      touche= ui.length -1;
+    else
+      touche -= 1;
+    txt= game.add.bitmapText(185, 144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE);
+    if (touche== ui.length -1)
+      img= game.add.image(147, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
+    else if (touche== 3)
+      img= game.add.image(33, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
+    else
+      img= game.add.image(31+ 24*(touche-3), 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
+
+    if (touche== ui.length -1){ // deals with last icon (add 2 more pixels the "right side kept its position")
+      game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+      game.add.tween(img).to({x: 149, y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+    }
+    else{
+      game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+      game.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+    }
+  }
+}
+
+function key_right_fight(){
+  txt.destroy();
+  img.destroy();
+  music = game.add.audio('option');
+  music.volume=0.3;
+  music.play();
+  if(touche+1>  ui.length -1)
+    touche= 3;
+  else
+    touche += 1;
+  txt= game.add.bitmapText(185, 144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE);
+  if (touche== ui.length -1)
+    img= game.add.image(147, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
+  else if (touche== 3)
+    img= game.add.image(33, 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
+  else
+    img= game.add.image(31+ 24*(touche-3), 130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) );
+
+  if (touche== ui.length -1){ // deals with last icon (add 2 more pixels the "right side kept its position")
+    game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+    game.add.tween(img).to({x: 149, y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+  }
+  else{
+    game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+    game.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+  }
+
 }
