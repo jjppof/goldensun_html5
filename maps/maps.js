@@ -162,6 +162,16 @@ export function initializeMaps(){
         ['assets/images/maps/madra/madra_physics_side.json', 'assets/images/maps/madra/madra_physics_side_2.json'] //physics_jsons_url
     );
 
+    maps.world_map = new Map(
+        'world_map', //name
+        'world_map', //key_name
+        'world_map', //tileset_name
+        ['world_map'], //physics_names
+        'assets/images/maps/world/world_map.png', //tileset_image_url
+        'assets/images/maps/world/world_map_madra.json', //tileset_json_url
+        ['assets/images/maps/world/world_physics.json'] //physics_jsons_url
+    );
+
 }
 
 export function loadMaps(game){
