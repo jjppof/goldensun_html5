@@ -102,6 +102,7 @@ function preload() {
     //ui (top and bottom ui + "big icons" + elemental stars)
     game.load.image('ui-battle-up', 'assets/images/ui/ui_battle.png');
     game.load.image('ui-battle-down', 'assets/images/ui/ui_battle2.png');
+    game.load.image('ui-battle-down-prev', 'assets/images/ui/ui_battle3.png');
     for(i=0; i< ui.length;i++){
       var string= utils.lowerCaseFirstLetter(ui[i]);
       game.load.image('ui-'+string, 'assets/images/ui/'+ui[i]+'.png');
@@ -198,6 +199,11 @@ function create() {
           tab_txt[i-party_count-1].position.y-=10; //put back up the previous txt
         }
         i++;
+        if(i==players.length){
+          tab_txt[i-party_count-2].destroy();
+          tab_txt[i-party_count-1].destroy();
+          this.game.add.image(105, 136, 'ui-battle-down-prev');
+        }
       }
     }, this);
 
