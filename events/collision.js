@@ -28,6 +28,9 @@ export function change_map_body(data, new_collider_layer_index) {
     data.shadow.base_collider_layer = data.map_collider_layer;
     data.hero.base_collider_layer = data.map_collider_layer;
     physics.config_physics_for_map(data, false, new_collider_layer_index);
+    physics.config_physics_for_psynergy_items(data, false, true);
+    physics.config_physics_for_npcs(data, false, true);
+    physics.config_collisions(data);
     let layers = maps[data.map_name].layers;
     for (let i = 0; i < layers.length; ++i) {
         let layer = layers[i];
