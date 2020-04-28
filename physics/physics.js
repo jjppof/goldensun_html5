@@ -136,7 +136,7 @@ export function collision_dealer(data) {
                                     item_position.x += 1;
                                     break;
                             }
-                            if (psynergy_item.position_allowed(item_position.x, item_position.y)) {
+                            if (psynergy_item.position_allowed(data, item_position.x, item_position.y)) {
                                 data.push_timer = game.time.events.add(Phaser.Timer.QUARTER, fire_push_movement.bind(this, data, psynergy_item));
                             }
                         }

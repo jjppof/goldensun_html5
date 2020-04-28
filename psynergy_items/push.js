@@ -81,6 +81,8 @@ export function fire_push_movement(data, psynergy_item) {
                 }
             }
             let sprites = [data.shadow, data.hero.body, psynergy_item.psynergy_item_sprite.body];
+            psynergy_item.current_x += event_shift_x; 
+            psynergy_item.current_y += event_shift_y; 
             for (let i = 0; i < sprites.length; ++i) {
                 let body = sprites[i];
                 game.add.tween(body).to({

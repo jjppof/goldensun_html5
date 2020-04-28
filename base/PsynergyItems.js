@@ -15,13 +15,20 @@ export class PsynergyItems {
         this.allowed_tiles = allowed_tiles;
         this.base_collider_layer = base_collider_layer;
         this.events = new Set();
+        this.current_x = x;
+        this.current_y = y;
     }
 
     set_sprite(sprite) {
         this.psynergy_item_sprite = sprite;
     }
 
-    position_allowed(x, y) {
+    position_allowed(data, x, y) {
+        if (maps[data.map_name].psynergy_items.filter(item => {
+            return item.current_x === x && item.current_y === y;
+        }).length) {
+            return false;
+        }
         for (let i = 0; i < this.allowed_tiles.length; ++i) {
             const tile = this.allowed_tiles[i];
             if (tile.x === x && tile.y === y) return true;
