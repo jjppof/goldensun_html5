@@ -14,7 +14,8 @@ window.maps = maps;
 
 var currentWidth = window.innerWidth;
 var music;
-var map_name="madra"; // hum...prob on écrit en dur map_name et data.map_name :(
+var map_name="madra"; // hum...prob on écrit en dur map_name et aussi pr data.map_name :(
+var maps_name=["world","madra","madra_catacombes"];
 
 var menu_open= false;
 var menu;
@@ -89,7 +90,11 @@ function preload() {
 
     game.load.image('menu', 'assets/images/ui/ui_menu.png');
 
-    game.load.audio('bg-music-'+map_name, 'assets/music/'+map_name+'/'+map_name+'.mp3');
+    for (let i=0; i< maps_name.length; i++){
+      game.load.audio('bg-music-'+ maps_name[i], 'assets/music/bg/'+ maps_name[i] + '.mp3');
+    }
+
+    //se
     game.load.audio('step', 'assets/music/se/door.wav');
 
     game.time.advancedTiming = true;
@@ -216,23 +221,21 @@ function create() {
     physics.config_collisions(data);
     game.physics.p2.updateBoundsCollisionGroup();
 
-    config_music();
+    init_music();
     resizeGame();
+
 
 
     game.input.keyboard.addKey(Phaser.Keyboard.Z).onDown.add(() => {
       if(menu_open) {
         menu_open= false;
         menu.destroy();
-        game.physics.p2.resume();
       }
       else{
         menu_open= true;
-        menu = game.add.image(this.game.camera.x + 30, this.game.camera.y + 136, 'menu' );
-        data.hero.animations.play("walk_up");
-        game.physics.p2.pause();
-        console.log(data.actual_direction);
-        data.hero.animations.play("idle_" + data.actual_direction);
+        menu = game.add.image(this.game.camera.x + 49, this.game.camera.y + 136, 'menu' );
+        data.hero.animations.play("idle_" + data.actual_direction); // we block in idle state
+        // tiny problem: if press key, it saves it and show when resume : IL Y A 1 autre fonction?
         }
 
     }, this);
@@ -304,6 +307,18 @@ function fire_event() {
         if (data.current_event.type === "stair")
             climb.climbing_event(data);
         else if (data.current_event.type === "door") {
+
+            for (let i=0; i< maps_name.length; i++){
+              if(data.current_event.target.startsWith(maps_name[i]) && music.key != 'bg-music-'+ maps_name[i] ){
+                music.destroy();
+                music = game.add.audio('bg-music-'+ maps_name[i]);
+                music.loopFull();
+                music.volume=0.2;
+                music.play();
+                i= maps_name.length;
+              }
+            }
+
             set_door_event(data);
         } else if (data.current_event.type === "jump") {
             data.on_event = true;
@@ -440,13 +455,13 @@ function change_hero_sprite() {
         main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
         data.hero.animations.play(animation);
     }
-    if (data.hero.animations.currentAnim.name !== animation) {
+    if (data.hero.animations.currentAnim.name !== animation && !menu_open) {
         data.hero.animations.play(animation);
     }
 }
 
 function set_actual_action() {
-    if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_action !== "idle" && !data.climbing || menu_open == true)
+    if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_action !== "idle" && !data.climbing || menu_open)
         data.actual_action = "idle";
     else if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_direction !== "idle" && data.climbing)
         data.actual_direction = "idle";
@@ -460,11 +475,11 @@ function set_actual_action() {
     }
 }
 
-function config_music(){
-    music = game.add.audio('bg-music-'+map_name);
-    music.loopFull();
-    music.volume=0.1;
-    music.play();
+function init_music(){
+      music = game.add.audio('bg-music-'+map_name);
+      music.loopFull();
+      music.volume=0.2;
+      music.play();
 }
 
 function resizeGame()
