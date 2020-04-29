@@ -28,8 +28,8 @@ var data = {
     hero_tile_pos_x: undefined,
     hero_tile_pos_y: undefined,
     current_event: undefined,
-    event_activation_process: undefined,
-    event_timer: undefined,
+    event_activation_process: false,
+    event_timers: {},
     on_event: undefined,
     climbing: undefined,
     extra_speed: undefined,
@@ -46,7 +46,6 @@ var data = {
     fading_out: undefined,
     processing_teleport: undefined,
     delta_time: undefined,
-    jumping: undefined,
     show_fps: undefined,
     npc_db: undefined,
     psynergy_items_db: undefined,
@@ -192,13 +191,11 @@ function create() {
     data.delta_time = 0;
     data.x_speed = 0;
     data.y_speed = 0;
-    data.event_activation_process = false;
     data.on_event = false;
     data.climbing = false;
     data.teleporting = false;
     data.fading_out = false;
     data.processing_teleport = false;
-    data.jumping = false;
     data.npc_event = false;
     data.active_npc = null;
     data.waiting_for_enter_press = false;
@@ -299,26 +296,27 @@ function create() {
     });
 }
 
-function fire_event() {
+function fire_event(event_key = undefined) {
     if(data.event_activation_process){
         if (data.current_event.type === "stair")
-            climb.climbing_event(data);
+            climb.climbing_event(data, event_key);
         else if (data.current_event.type === "door") {
             set_door_event(data);
         } else if (data.current_event.type === "jump") {
             if (!data.current_event.active) return;
             data.on_event = true;
             data.event_activation_process = false;
-            data.jumping = true;
+            jump_event(data, event_key);
         }
     }
 }
 
 function event_triggering() {
-    data.current_event = maps[data.map_name].events[data.hero_tile_pos_x + "_" + data.hero_tile_pos_y];
+    const event_key = data.hero_tile_pos_x + "_" + data.hero_tile_pos_y;
+    data.current_event = maps[data.map_name].events[event_key];
     if (!data.current_event.activation_collision_layers.includes(data.map_collider_layer)) return;
     if (data.current_event.type === "jump") {
-        jump_near_collision(data);
+        jump_near_collision(data, event_key);
     }
     let right_direction;
     if (Array.isArray(data.current_event.activation_direction)) {
@@ -328,21 +326,21 @@ function event_triggering() {
     }
     if (!data.climbing) {
         if (!data.event_activation_process && right_direction && (data.actual_action === "walk" || data.actual_action === "dash")) {
-            if (data.event_timer && !data.event_timer.timer.expired) {
+            if (data.event_timers[event_key] && !data.event_timers[event_key].timer.expired) {
                 return;
             }
             data.event_activation_process = true;
-            data.event_timer = game.time.events.add(numbers.EVENT_TIME, fire_event, this);
-        } else if (data.event_activation_process && (!right_direction ||  data.actual_action === "idle")) {
+            data.event_timers[event_key] = game.time.events.add(numbers.EVENT_TIME, fire_event.bind(null, event_key), this);
+        } else if (data.event_activation_process && (!right_direction || data.actual_action === "idle")) {
             data.event_activation_process = false;
         }
     } else {
         if (!data.event_activation_process && data.climb_direction === data.current_event.activation_direction && (data.actual_direction === "climb")) {
-            if (data.event_timer && !data.event_timer.timer.expired) {
+            if (data.event_timers[event_key] && !data.event_timers[event_key].timer.expired) {
                 return;
             }
             data.event_activation_process = true;
-            data.event_timer = game.time.events.add(numbers.EVENT_TIME, fire_event, this);
+            data.event_timers[event_key] = game.time.events.add(numbers.EVENT_TIME, fire_event.bind(null, event_key), this);
         } else if (data.event_activation_process && (data.climb_direction !== data.current_event.activation_direction ||  data.actual_direction === "idle")) {
             data.event_activation_process = false;
         }
@@ -407,12 +405,11 @@ function update() {
             });
             data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
         } else if (data.on_event) {
-            if (data.current_event.type === "stair")
+            if (data.current_event.type === "stair") {
                 climb.climb_event_animation_steps(data);
-            else if (data.current_event.type === "door")
+            } else if (data.current_event.type === "door") {
                 door_event_phases(data);
-            else if (data.jumping)
-                jump_event(data);
+            }
 
             //disabling hero body movement
             data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
