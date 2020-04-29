@@ -32,8 +32,13 @@ export function door_event_phases(data) {
         data.teleporting = false;
         data.hero.loadTexture(data.hero_name + "_idle");
         main_char_list[data.hero_name].setAnimation(data.hero, "idle");
-        data.hero.animations.play("idle_" + data.current_event.activation_direction);
-        data.actual_direction = data.current_event.activation_direction;
+        if(data.current_event.activation_direction!="all"){
+          data.hero.animations.play("idle_" + data.current_event.activation_direction);
+          data.actual_direction = data.current_event.activation_direction;
+        }
+        else{
+          data.hero.animations.play("idle_" + data.actual_direction); // to correct
+        }
         data.actual_action = "idle";
         game.camera.fade();
         game.camera.onFadeComplete.add(() => { data.processing_teleport = true; }, this);
@@ -70,6 +75,7 @@ export function door_event_phases(data) {
 
             game.physics.p2.resume();
 
+
             config_physics_for_npcs(data, false);
             config_physics_for_map(data, false);
             config_collisions(data);
@@ -96,7 +102,8 @@ export function door_event_phases(data) {
     }
 }
 
-export function open_door(data) {
+
+export function open_door(data) { // when the door opens, uses tileset custom properties
     var se= game.add.audio('step');
     se.volume=0.05;
     se.play();
@@ -115,6 +122,7 @@ export function open_door(data) {
         offsets = tile.base_offset.split(",");
         base_x = data.current_event.x + parseInt(offsets[0]);
         base_y = data.current_event.y + parseInt(offsets[1]) - 1;
+        // this finds the corresponding open_door tile
         target_index = parseInt(_.findKey(maps[data.map_name].sprite.tilesets[0].tileProperties, {open_door : close_door_index})) + 1;
         maps[data.map_name].sprite.replace(source_index, target_index, base_x, base_y, 1, 1, layer.name);
     }
