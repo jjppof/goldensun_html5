@@ -41,7 +41,7 @@
             }
         }
     },
-    "villager_4": {
+    "villager-4": {
         "anchor_y": 0.8,
         "initial_action": "idle",
         "interaction_pattern": 1,
@@ -55,7 +55,7 @@
             }
         }
     },
-    "villager_5": {
+    "villager-5": {
         "anchor_y": 0.8,
         "initial_action": "idle",
         "interaction_pattern": 1,
@@ -69,7 +69,7 @@
             }
         }
     },
-    "villager_6": {
+    "villager-6": {
         "anchor_y": 0.8,
         "initial_action": "idle",
         "interaction_pattern": 1,
@@ -83,7 +83,7 @@
             }
         }
     },
-    "villager_7": {
+    "villager-7": {
         "anchor_y": 0.8,
         "initial_action": "idle",
         "interaction_pattern": 1,
@@ -97,7 +97,7 @@
             }
         }
     },
-    "villager_8": {
+    "villager-8": {
         "anchor_y": 0.8,
         "initial_action": "idle",
         "interaction_pattern": 1,
@@ -111,7 +111,7 @@
             }
         }
     },
-    "villager_9": {
+    "villager-9": {
         "anchor_y": 0.8,
         "initial_action": "idle",
         "interaction_pattern": 1,
@@ -125,7 +125,7 @@
             }
         }
     },
-    "villager_10": {
+    "villager-10": {
         "anchor_y": 0.8,
         "initial_action": "idle",
         "interaction_pattern": 1,
