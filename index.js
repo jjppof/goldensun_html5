@@ -450,6 +450,7 @@ function render() {
 function change_hero_sprite() {
     const key = data.hero_name + "_" + data.actual_action;
     const animation = data.actual_action + "_" + data.actual_direction;
+
     if (data.hero.key !== key) {
         data.hero.loadTexture(key);
         main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
