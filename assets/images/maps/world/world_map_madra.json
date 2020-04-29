@@ -40,18 +40,12 @@
  "properties":
     {
      "Name":"world_map",
-     "event_01":"{\"type\": \"door\", \"x\": 123, \"y\": 23, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 29, \"y_target\": 29, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_02":"{\"type\": \"door\", \"x\": 123, \"y\": 23, \"target\": \"madra\", \"activation_direction\": \"up\", \"x_target\": 29, \"y_target\": 29, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_03":"{\"type\": \"door\", \"x\": 123, \"y\": 23, \"target\": \"madra\", \"activation_direction\": \"left\", \"x_target\": 29, \"y_target\": 29, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_04":"{\"type\": \"door\", \"x\": 123, \"y\": 23, \"target\": \"madra\", \"activation_direction\": \"right\", \"x_target\": 29, \"y_target\": 29, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
+     "event_01":"{\"type\": \"door\", \"x\": 123, \"y\": 23, \"target\": \"madra\", \"activation_direction\": \"all\", \"x_target\": 29.5, \"y_target\": 30, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
     },
  "propertytypes":
     {
      "Name":"string",
-     "event_01":"string",
-     "event_02":"string",
-     "event_03":"string",
-     "event_04":"string"
+     "event_01":"string"
     },
  "renderorder":"right-down",
  "tiledversion":"1.3.3",
