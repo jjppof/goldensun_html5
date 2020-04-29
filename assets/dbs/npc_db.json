@@ -12,5 +12,159 @@
                 "initial_direction": "down"
             }
         }
+    },
+    "village_2": {
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "interaction_pattern": 1,
+        "body_radius": 7.0,
+        "actions": {
+            "idle": {
+                "frame_rate": 1,
+                "directions": ["down", "up", "left", "right"],
+                "frames_count": [5, 5, 5, 5],
+                "initial_direction": "down"
+            }
+        }
+    },
+    "village_3": {
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "interaction_pattern": 1,
+        "body_radius": 7.0,
+        "actions": {
+            "idle": {
+                "frame_rate": 1,
+                "directions": ["down", "up", "left", "right"],
+                "frames_count": [5, 5, 5, 5],
+                "initial_direction": "down"
+            }
+        }
+    },
+    "villager_4": {
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "interaction_pattern": 1,
+        "body_radius": 7.0,
+        "actions": {
+            "idle": {
+                "frame_rate": 1,
+                "directions": ["down", "up", "left", "right"],
+                "frames_count": [5, 5, 5, 5],
+                "initial_direction": "down"
+            }
+        }
+    },
+    "villager_5": {
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "interaction_pattern": 1,
+        "body_radius": 7.0,
+        "actions": {
+            "idle": {
+                "frame_rate": 1,
+                "directions": ["down", "up", "left", "right"],
+                "frames_count": [5, 5, 5, 5],
+                "initial_direction": "down"
+            }
+        }
+    },
+    "villager_6": {
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "interaction_pattern": 1,
+        "body_radius": 7.0,
+        "actions": {
+            "idle": {
+                "frame_rate": 1,
+                "directions": ["down", "up", "left", "right"],
+                "frames_count": [5, 5, 5, 5],
+                "initial_direction": "down"
+            }
+        }
+    },
+    "villager_7": {
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "interaction_pattern": 1,
+        "body_radius": 7.0,
+        "actions": {
+            "idle": {
+                "frame_rate": 1,
+                "directions": ["down", "up", "left", "right"],
+                "frames_count": [5, 5, 5, 5],
+                "initial_direction": "down"
+            }
+        }
+    },
+    "villager_8": {
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "interaction_pattern": 1,
+        "body_radius": 7.0,
+        "actions": {
+            "idle": {
+                "frame_rate": 1,
+                "directions": ["down", "up", "left", "right"],
+                "frames_count": [5, 5, 5, 5],
+                "initial_direction": "down"
+            }
+        }
+    },
+    "villager_9": {
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "interaction_pattern": 1,
+        "body_radius": 7.0,
+        "actions": {
+            "idle": {
+                "frame_rate": 1,
+                "directions": ["down", "up", "left", "right"],
+                "frames_count": [5, 5, 5, 5],
+                "initial_direction": "down"
+            }
+        }
+    },
+    "villager_10": {
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "interaction_pattern": 1,
+        "body_radius": 7.0,
+        "actions": {
+            "idle": {
+                "frame_rate": 1,
+                "directions": ["down", "up", "left", "right"],
+                "frames_count": [5, 5, 5, 5],
+                "initial_direction": "down"
+            }
+        }
+    },
+    "npc-madra-mayor": {
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "interaction_pattern": 1,
+        "body_radius": 7.0,
+        "actions": {
+            "idle": {
+                "frame_rate": 1,
+                "directions": ["down", "up", "left", "right"],
+                "frames_count": [5, 5, 5, 5],
+                "initial_direction": "down"
+            }
+        }
+    },
+    "npc-madra-1": {
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "interaction_pattern": 1,
+        "body_radius": 7.0,
+        "actions": {
+            "idle": {
+                "frame_rate": 1,
+                "directions": ["down", "up", "left", "right"],
+                "frames_count": [5, 5, 5, 5],
+                "initial_direction": "down"
+            }
+        }
     }
 }
