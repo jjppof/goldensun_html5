@@ -304,7 +304,17 @@
      "event_45":"{\"type\": \"door\", \"x\": 33, \"y\": 12, \"target\": \"madra_catacombes\", \"activation_direction\": \"down\", \"x_target\": 2.5, \"y_target\": 5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
      "event_46":"{\"type\": \"door\", \"x\": 17, \"y\": 5, \"target\": \"madra_house_5\", \"activation_direction\": \"up\", \"x_target\": 9, \"y_target\": 23, \"advance_effect\": true, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
      "event_47":"{\"type\": \"door\", \"x\": 20, \"y\": 5, \"target\": \"madra_house_6\", \"activation_direction\": \"up\", \"x_target\": 11, \"y_target\": 19, \"advance_effect\": true, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_48":"{\"type\": \"door\", \"x\": 29, \"y\": 31, \"target\": \"world_map\", \"activation_direction\": \"down\", \"x_target\": 123.5, \"y_target\": 25.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
+     "event_48":"{\"type\": \"door\", \"x\": 26, \"y\": 31, \"target\": \"world_map\", \"activation_direction\": \"down\", \"x_target\": 123.5, \"y_target\": 25.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_49":"{\"type\": \"door\", \"x\": 27, \"y\": 31, \"target\": \"world_map\", \"activation_direction\": \"down\", \"x_target\": 123.5, \"y_target\": 25.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_50":"{\"type\": \"door\", \"x\": 28, \"y\": 31, \"target\": \"world_map\", \"activation_direction\": \"down\", \"x_target\": 123.5, \"y_target\": 25.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_51":"{\"type\": \"door\", \"x\": 29, \"y\": 31, \"target\": \"world_map\", \"activation_direction\": \"down\", \"x_target\": 123.5, \"y_target\": 25.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_52":"{\"type\": \"door\", \"x\": 30, \"y\": 31, \"target\": \"world_map\", \"activation_direction\": \"down\", \"x_target\": 123.5, \"y_target\": 25.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_53":"{\"type\": \"door\", \"x\": 31, \"y\": 31, \"target\": \"world_map\", \"activation_direction\": \"down\", \"x_target\": 123.5, \"y_target\": 25.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_54":"{\"type\": \"door\", \"x\": 32, \"y\": 31, \"target\": \"world_map\", \"activation_direction\": \"down\", \"x_target\": 123.5, \"y_target\": 25.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_55":"{\"type\": \"door\", \"x\": 33, \"y\": 31, \"target\": \"world_map\", \"activation_direction\": \"down\", \"x_target\": 123.5, \"y_target\": 25.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_56":"{\"type\": \"door\", \"x\": 34, \"y\": 31, \"target\": \"world_map\", \"activation_direction\": \"down\", \"x_target\": 123.5, \"y_target\": 25.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_57":"{\"type\": \"door\", \"x\": 35, \"y\": 31, \"target\": \"world_map\", \"activation_direction\": \"down\", \"x_target\": 123.5, \"y_target\": 25.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_58":"{\"type\": \"door\", \"x\": 36, \"y\": 31, \"target\": \"world_map\", \"activation_direction\": \"down\", \"x_target\": 123.5, \"y_target\": 25.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
     },
  "propertytypes":
     {
@@ -357,7 +367,17 @@
      "event_45":"string",
      "event_46":"string",
      "event_47":"string",
-     "event_48":"string"
+     "event_48":"string",
+     "event_49":"string",
+     "event_50":"string",
+     "event_51":"string",
+     "event_52":"string",
+     "event_53":"string",
+     "event_54":"string",
+     "event_55":"string",
+     "event_56":"string",
+     "event_57":"string",
+     "event_58":"string"
     },
  "renderorder":"right-down",
  "tiledversion":"1.3.3",
