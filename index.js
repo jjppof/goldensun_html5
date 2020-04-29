@@ -94,8 +94,10 @@ function preload() {
 
     game.time.advancedTiming = true;
     game.stage.smoothed = false;
-    game.camera.roundPx = false;
-    game.renderer.renderSession.roundPixels = false;
+    game.camera.roundPx = true;
+    game.renderer.renderSession.roundPixels = true;
+
+    game.camera.fade(0x0, 1);
 }
 
 function render_loading() {
@@ -116,7 +118,7 @@ function config_hero() {
     data.hero.centerX = numbers.HERO_START_X; //hero x start position
     data.hero.centerY = numbers.HERO_START_Y; //hero y start position
     data.hero.base_collider_layer = data.map_collider_layer;
-    game.camera.follow(data.hero, Phaser.Camera.FOLLOW_LOCKON); //makes camera follow the data.hero
+    game.camera.follow(data.hero, Phaser.Camera.FOLLOW_LOCKON, 0.2, 0.2); //makes camera follow the data.hero
     //config data.hero initial animation state
     main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
     data.hero.animations.play(data.actual_action + "_" + data.actual_direction);
@@ -179,8 +181,6 @@ function toggle_grid() {
 }
 
 function create() {
-    game.camera.fade(0x0, 0);
-
     // Initializing some vars
     data.hero_name = "isaac";
     data.map_name = "madra_side";
@@ -209,6 +209,7 @@ function create() {
     data.npc_group = game.add.group();
     data.overlayer_group = game.add.group();
 
+
     //configuring map layers: creating sprites, listing events and setting the layers
     maps[data.map_name].setLayers(
         game,
@@ -222,7 +223,6 @@ function create() {
         data.map_collider_layer,
         data.npc_group
     ).then(() => {
-
         config_hero();
         physics.config_world_physics();
         physics.config_physics_for_hero(data);
@@ -232,6 +232,8 @@ function create() {
         physics.config_physics_for_map(data);
         physics.config_collisions(data);
         game.physics.p2.updateBoundsCollisionGroup();
+
+        
 
         //activate debug mode
         game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug, this);
