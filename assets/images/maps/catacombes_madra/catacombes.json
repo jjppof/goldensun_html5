@@ -34,14 +34,17 @@
      "Name":"catacombes",
      "event_01":"{\"type\": \"door\", \"x\": 2, \"y\": 0, \"target\": \"madra\", \"activation_direction\": \"up\", \"x_target\": 33, \"y_target\": 11, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
      "event_02":"{\"type\": \"stair\", \"x\": 2, \"y\": 4, \"activation_direction\": \"up\", \"activation_collision_layers\": [0]}",
-     "event_03":"{\"type\": \"stair\", \"x\": 2, \"y\": 3, \"activation_direction\": \"down\", \"activation_collision_layers\": [0]}"
+     "event_03":"{\"type\": \"stair\", \"x\": 2, \"y\": 3, \"activation_direction\": \"down\", \"activation_collision_layers\": [0]}",
+     "event_04":"{\"type\": \"stair\", \"x\": 2, \"y\": 1, \"activation_direction\": \"up\", \"activation_collision_layers\": [0]}"
+
     },
  "propertytypes":
     {
      "Name":"string",
      "event_01":"string",
      "event_02":"string",
-     "event_03":"string"
+     "event_03":"string",
+     "event_04":"string"
     },
  "renderorder":"right-down",
  "tiledversion":"1.3.3",
