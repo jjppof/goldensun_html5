@@ -69,7 +69,13 @@ export function jump_event(data, event_key) {
         }
     }
     let next_pos_key = next_position.x + "_" + next_position.y;
-    if (!current_event.dynamic && next_pos_key in maps[data.map_name].events) {
+    if (next_pos_key in maps[data.map_name].events) {
+        if (maps[data.map_name].events[next_pos_key].type !== "jump") {
+            data.on_event = false;
+            data.current_event = null;
+            data.shadow.visible = true;
+            return;
+        }
         if (maps[data.map_name].events[next_pos_key].type === "jump" && maps[data.map_name].events[next_pos_key].dynamic) {
             set_jump_collision(data);
         }
@@ -106,6 +112,11 @@ export function jump_event(data, event_key) {
 }
 
 export function set_jump_collision(data) {
+    for (let i = 0; i < data.dynamic_jump_events_bodies.length; ++i) {
+        data.dynamic_jump_events_bodies[i].destroy();
+    }
+    data.dynamic_jump_events_bodies = [];
+    data.walking_on_pillars_tiles.clear();
     data.hero.body.removeCollisionGroup(data.mapCollisionGroup, true);
     data.map_collider.body.removeCollisionGroup(data.heroCollisionGroup, true);
     for (let event_key in maps[data.map_name].events) {

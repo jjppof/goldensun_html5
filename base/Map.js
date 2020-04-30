@@ -273,8 +273,8 @@ export class Map {
                     npc_info.npc_sprite.is_npc = true;
                     npc_info.npc_sprite.base_collider_layer = npc_info.base_collider_layer;
                     npc_info.npc_sprite.anchor.y = npc_db[npc_info.key_name].anchor_y;
-                    npc_info.npc_sprite.centerX = (npc_info.initial_x + 1) * this.sprite.tileWidth;
-                    const anchor_shift = npc_db[npc_info.key_name].anchor_y * this.sprite.tileWidth * 0.5;
+                    npc_info.npc_sprite.centerX = (npc_info.initial_x + 1.5) * this.sprite.tileWidth;
+                    const anchor_shift = npc_db[npc_info.key_name].anchor_y;
                     npc_info.npc_sprite.centerY = npc_info.initial_y * this.sprite.tileWidth - anchor_shift;
                     npc.setAnimation(npc_info.npc_sprite, initial_action);
                     npc_info.npc_sprite.animations.play(u([
