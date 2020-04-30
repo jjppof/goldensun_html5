@@ -13,6 +13,15 @@ I'm avoiding making some docs for now because I'm constantly changing things.
 - [PhysicsEditor 1.6.3](https://www.codeandweb.com/physicseditor)
 - [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579))
 
+## Development environment
+
+GSHTML5 has no external dependency, so there's no `npm install` or packages on CDN, etc. It's a standalone. Just clone the project and run it into a http server. I would recommend these steps:
+- Clone the project;
+- Download [node.js](https://nodejs.org/en/download/) and isntall it (make sure you add node.js in the system path);
+- In the terminal, install a quick http server using `npm install http-server -g`;
+- In the terminal, go to the root folder of the GSHTML5 you cloned and then run `http-server`;
+- Go to your browser and access the address shown in the terminal (it's probably `http://localhost:8080/`).
+
 ## Texture Packer configs
 - Use *Phaser (JSONHash)* as *Data Format*.
 - Check *Trim sprite names*.
