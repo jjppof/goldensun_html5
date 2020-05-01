@@ -287,10 +287,10 @@ function create() {
           var win_psynergies = new Window(game, game.camera.x+72, game.camera.y+74, 164, 82, false);
           tab_menu_display.push(win_psynergies);*/
 
-          for (let i=0; i<tab_menu_display.length; i++){
+          /*for (let i=0; i<tab_menu_display.length; i++){
             tab_menu_display[i].show(); // et si btxt? il faut faire game.add.bitmaptext
             // c plus utile pr les imgs du coup :S (ya que 2 win ou 3 pr les djiins)
-          }
+          }*/
         }
 
       }
