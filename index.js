@@ -9,6 +9,7 @@ import { config_step, do_step } from './events/step.js';
 import { config_collision_change, do_collision_change } from './events/collision.js';
 import * as climb from './events/climb.js';
 import * as physics from './physics/physics.js';
+import { Window } from './base/Window.js';
 
 window.maps = maps;
 
@@ -18,7 +19,12 @@ var map_name="madra"; // hum...prob on écrit en dur map_name et aussi pr data.m
 var maps_name=["world","madra","madra_catacombes"];
 
 var menu_open= false;
-var menu;
+var option= false;
+var ui =['Psynergy','Djinn','Item','Status'];
+var touche = 0;
+var ui_display=[];
+
+var party=['isaac','garet','ivan','mia','felix','jenna','sheba','picard'];
 
 var data = {
     cursors: undefined,
@@ -88,7 +94,11 @@ function preload() {
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
 
+    game.load.image('menu-top', 'assets/images/ui/ui_top.png');
     game.load.image('menu', 'assets/images/ui/ui_menu.png');
+    for (let i=0; i< ui.length; i++){
+      game.load.image('ui-'+ utils.lowerCaseFirstLetter(ui[i]), 'assets/images/ui/'+ui[i]+'.png');
+    }
 
     for (let i=0; i< maps_name.length; i++){
       game.load.audio('bg-music-'+ maps_name[i], 'assets/music/bg/'+ maps_name[i] + '.mp3');
@@ -96,6 +106,9 @@ function preload() {
 
     //se
     game.load.audio('step', 'assets/music/se/door.wav');
+    game.load.audio('option', 'assets/music/se/battle_option.wav');
+    game.load.audio('option-enter', 'assets/music/se/battle_option_enter.wav');
+    game.load.audio('menu-cancel', 'assets/music/se/menu_cancel.wav');
 
     game.time.advancedTiming = true;
     game.stage.smoothed = false;
@@ -178,6 +191,7 @@ function toggle_grid() {
     data.grid = !data.grid;
 }
 
+
 function create() {
     game.camera.fade(0x0, 0);
 
@@ -224,18 +238,82 @@ function create() {
     init_music();
     resizeGame();
 
+    game.input.keyboard.addKey(Phaser.Keyboard.H).onDown.add(() => {
+      if (document.getElementById('intro').style.display == "none")
+        document.getElementById('intro').style.display= "block";
+      else
+        document.getElementById('intro').style.display= "none";
+    }, this);
 
+    game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
+      if(menu_open && !option)
+        key_ui (0, 3, game.camera.x + 153, game.camera.x + 49, "left");
+    }, this);
 
-    game.input.keyboard.addKey(Phaser.Keyboard.Z).onDown.add(() => {
+    game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
+      if(menu_open && !option)
+        key_ui (0, 3, game.camera.x + 153, game.camera.x + 49, "right");
+    }, this);
+
+    game.input.keyboard.addKey(Phaser.Keyboard.X).onDown.add(() => {
       if(menu_open) {
         menu_open= false;
-        menu.destroy();
+        music = game.add.audio('menu-cancel');
+        music.volume=0.3;
+        music.play();
+
+        clear_ui();
+
+      }
+    }, this);
+
+    game.input.keyboard.addKey(Phaser.Keyboard.Z).onDown.add(() => {
+      if(menu_open){
+        music = game.add.audio('option-enter');
+        music.volume=0.3;
+        music.play();
+
+        //faire les quatres options
+        if(ui[touche]=='Psynergy'){
+          option=true;
+          clear_ui(); // à faire TJRS au début de chaque option
+
+          // doesn't display o_O?
+          var win_description = new Window(game, game.camera.x, game.camera.y, 104, 40, false);
+          win_description.show();
+          /*var tab_menu_display=[];
+          var win_description = new Window(game, game.camera.x, game.camera.y+40, numbers.GAME_WIDTH-4, 31, false); // va jusqu'à 75 mais... le même pixel
+          tab_menu_display.push(win_description);
+          var win_psynergies = new Window(game, game.camera.x+72, game.camera.y+74, 164, 82, false);
+          tab_menu_display.push(win_psynergies);*/
+
+          for (let i=0; i<tab_menu_display.length; i++){
+            tab_menu_display[i].show(); // et si btxt? il faut faire game.add.bitmaptext
+            // c plus utile pr les imgs du coup :S (ya que 2 win ou 3 pr les djiins)
+          }
+        }
+
       }
       else{
         menu_open= true;
-        menu = game.add.image(this.game.camera.x + 49, this.game.camera.y + 136, 'menu' );
+        music = game.add.audio('option');
+        music.volume=0.3;
+        music.play();
+
+        draw_ui_top();
+        ui_display.push (game.add.image(game.camera.x + 49, game.camera.y + 136, 'menu' ) );
         data.hero.animations.play("idle_" + data.actual_direction); // we block in idle state
-        // tiny problem: if press key, it saves it and show when resume : IL Y A 1 autre fonction?
+        // tiny problem: if press key, it saves it and show when resume
+
+
+        ui_display.push( game.add.image(game.camera.x + 49, game.camera.y +130, 'ui-psynergy') );
+        // pas besoin ajouter tween??? -> c vrai que c inutile...
+        game.add.tween(ui_display[ui_display.length-1].scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+        game.add.tween(ui_display[ui_display.length-1]).to({y: game.camera.y + 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+
+        // x= 153 -> 8 px to the right (little box)
+        ui_display.push(game.add.bitmapText(game.camera.x + 153, game.camera.y + 144, 'gs-bmp-font', ui[0], numbers.FONT_SIZE) );
+        touche=0;
         }
 
     }, this);
@@ -448,6 +526,7 @@ function render() {
 }
 
 function change_hero_sprite() {
+
     const key = data.hero_name + "_" + data.actual_action;
     const animation = data.actual_action + "_" + data.actual_direction;
 
@@ -500,4 +579,79 @@ function resizeGame()
         game.scale.setupScale(numbers.GAME_WIDTH*1.5, numbers.GAME_HEIGHT*1.5);
         window.dispatchEvent(new Event('resize'));
     }
+}
+
+function key_ui (touche_debut, touche_fin, txt_pos_x, img_pos_x, key)
+{
+  console.log("je suis ds la fonction key_ui");
+    ui_display[ui_display.length-2].destroy();
+    ui_display[ui_display.length-1].destroy();
+    ui_display.splice(ui_display.length-2, 2);
+  music = game.add.audio('option');
+  music.volume=0.3;
+  music.play();
+
+  if(key=="right"){
+    if(touche+1>  touche_fin)
+      touche= touche_debut;
+    else
+      touche += 1;
+  }
+  if(key=="left"){
+    if(touche -1< touche_debut )
+      touche= touche_fin;
+    else
+      touche -= 1;
+  }
+
+
+  ui_display.push( game.add.bitmapText(txt_pos_x, game.camera.y +144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE) );
+  if (touche== touche_fin)
+    ui_display.push (game.add.image(img_pos_x + 24*(touche-touche_debut)-6, game.camera.y +130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) ) );
+  else if (touche== touche_debut)
+    ui_display.push (game.add.image(img_pos_x, game.camera.y +130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) ) );
+  else
+    ui_display.push (game.add.image(img_pos_x-2 + 24*(touche-touche_debut), game.camera.y +130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) ) );
+
+    game.add.tween(ui_display[ui_display.length-1].scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+    if (touche== touche_fin){
+      game.add.tween(ui_display[ui_display.length-1]).to({x: img_pos_x + 24*(touche-touche_debut)-4, y: game.camera.y + 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+    }
+    else{
+      game.add.tween(ui_display[ui_display.length-1]).to({y: game.camera.y +132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+    }
+}
+
+function draw_ui_top(){
+  ui_display.push( game.add.image(game.camera.x + 40, game.camera.y, 'menu-top') );
+
+  for(var i=0; i< 4;i++){
+    var hp_bar = game.add.bitmapData(40, 3); //hp
+    hp_bar.ctx.beginPath();
+    hp_bar.ctx.rect(0, 0, 40, 3);
+    hp_bar.ctx.fillStyle = '#0000f8';
+    hp_bar.ctx.fill();
+    ui_display.push( game.add.sprite(game.camera.x +48 + 48*i, game.camera.y +21, hp_bar) );
+
+    var pp_bar = game.add.bitmapData(40, 3); //pp
+    pp_bar.ctx.beginPath();
+    pp_bar.ctx.rect(0, 0, 40, 3);
+    pp_bar.ctx.fillStyle = '#0000f8';
+    pp_bar.ctx.fill();
+    ui_display.push( game.add.sprite(game.camera.x +48 + 48*i, game.camera.y +29, pp_bar) );
+
+    var string= utils.upperCaseFirstLetter(party[i]); // characters name
+    ui_display.push( game.add.bitmapText(game.camera.x +48 + 48*i, game.camera.y +8, 'gs-bmp-font', string, 8 ) );
+    ui_display.push( game.add.bitmapText(game.camera.x +48 + 48*i, game.camera.y +16, 'gs-bmp-font', "HP", 8 ) );
+    ui_display.push( game.add.bitmapText(game.camera.x +48 + 48*i, game.camera.y +24, 'gs-bmp-font', "PP", 8 ) );
+
+  }
+}
+
+function clear_ui(){
+  console.log("effacé");
+  for (let i=0; i<ui_display.length; i++){
+    ui_display[i].destroy();
+  }
+  ui_display=[];
 }
