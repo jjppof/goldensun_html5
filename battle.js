@@ -58,8 +58,9 @@ var tour= 0;
 var ui =['Fight','Flee','Status','Attack','Psynergy','Djinn','Summon','Item','Defend'];
 var elements= ["venus","mars","jupiter","mercury"];
 
-var img;
+var img; // à renommer en big_icon...
 var txt;
+var ui_battle_down;
 
 var game = new Phaser.Game (
     numbers.GAME_WIDTH,
@@ -120,13 +121,14 @@ function preload() {
     game.load.audio('bg-battle', 'assets/music/battle/battle_jenna.mp3');
     game.load.audio('option', 'assets/music/se/battle_option.wav');
     game.load.audio('option-enter', 'assets/music/se/battle_option_enter.wav');
-    game.load.audio('option-confirm', 'assets/music/se/battle_option_confirm.wav');
+    game.load.audio('option-confirm', 'assets/music/se/battle_option_confirm.mp3');
 }
 
 function create() {
 
     resizeGame();
     config_music();
+    keypress_events();
     /*game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.input.onTap.add(function(pointer, isDoubleClick) {
         if (isDoubleClick) game.scale.startFullScreen(true);
@@ -186,16 +188,12 @@ function create() {
 
     game.input.keyboard.addKey(Phaser.Keyboard.A).onDown.add(() => {
         if(fight){
-          txt.destroy(); //bruh fail...
+          touche=0;
           img.destroy();
+          txt.destroy();
+          ui_battle_down.destroy();
           fight=false;
-          var ui_battle_down_prev= this.game.add.image(105, 136, 'ui-battle-down-prev');
-          img= this.game.add.image(105, 130, 'ui-fight');
-          txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[0], numbers.FONT_SIZE);
-          game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
-          game.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
-
-
+          ui_battle_down_prev();
         }
     }, this);
 
@@ -238,29 +236,18 @@ function create() {
               tab_txt[i-party_count-1].position.y-=10; //put back up the previous txt
             }
             i++;
-            console.log("i: " + i);
-            if(i==players.length){ // we verify if we finished the beginning text
+
+            if(i==players.length){ // we finished the beginning text
               txt_begin=false;
               cursor.destroy();
               tab_txt[i-party_count-2].destroy();
               tab_txt[i-party_count-1].destroy();
 
-              var ui_battle_down_prev= this.game.add.image(105, 136, 'ui-battle-down-prev');
-              img= this.game.add.image(105, 130, 'ui-fight');
-              txt= this.game.add.bitmapText(185, 144, 'gs-bmp-font', ui[0], numbers.FONT_SIZE);
-              game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
-              game.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+              ui_battle_down_prev();
 
-              //touche=0;
-              game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
-                if(!fight)
-                  key_ui (0, 2, 185, 105, "left");
-              }, this);
-              game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
-                if(!fight)
-                  key_ui (0, 2, 185, 105, "right");
-              }, this);
+              i++; // so it never re-enter in this part because we already but the listeners
             }
+
 
           }
       }, this);
@@ -320,6 +307,7 @@ window.spin = function(angle, easing, duration) {
 }
 
 function update() {
+
     if (cursors.left.isDown || cursors.right.isDown || spining) {
         //angle change and bg x position change
         if (!cursors.left.isDown && cursors.right.isDown && !spining) {
@@ -504,21 +492,12 @@ function draw_ui_top(){
 
 function init_ui_down(){
   touche=3;
-  var ui_down = game.add.image(33, 136, 'ui-battle-down');
+  ui_battle_down = game.add.image(33, 136, 'ui-battle-down');
   var ui_char = game.add.image(0, 128, party[0]);
   img= game.add.image(33, 130, 'ui-attack'); //OH! may be confused by the generic img
   game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
   game.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
   txt= game.add.bitmapText(185, 144, 'gs-bmp-font', ui[0], numbers.FONT_SIZE);
-
-  // maintenir touche?
-  game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
-      key_ui (3, ui.length -1, 185, 33, "left");
-  }, this);
-
-  game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
-      key_ui (3, ui.length -1, 185, 33, "right");
-  }, this);
 
 }
 
@@ -559,4 +538,36 @@ function key_ui (touche_debut, touche_fin, txt_pos_x, img_pos_x, key)
   else{
     game.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
   }
+}
+
+function ui_battle_down_prev(){
+  var ui_battle_down_prev= game.add.image(105, 136, 'ui-battle-down-prev'); // créer var globale?
+  img= game.add.image(105, 130, 'ui-fight');
+  txt= game.add.bitmapText(185, 144, 'gs-bmp-font', ui[0], numbers.FONT_SIZE);
+  game.add.tween(img.scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+  game.add.tween(img).to({y: 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+}
+
+function keypress_events(){
+  // problem: what if the user keep pressing???
+  // we always need a condition when we do a keypress event
+  game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
+    if(fight)
+      key_ui (3, ui.length -1, 185, 33, "left");
+  }, this);
+
+  game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
+    if(fight)
+      key_ui (3, ui.length -1, 185, 33, "right");
+  }, this);
+
+  game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
+    if(!fight)
+      key_ui (0, 2, 185, 105, "left");
+  }, this);
+
+  game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
+    if(!fight)
+      key_ui (0, 2, 185, 105, "right");
+  }, this);
 }
