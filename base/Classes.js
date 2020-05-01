@@ -1,20 +1,5 @@
-import { classes_list } from '../chars/main_chars.js';
+import { classes_list, class_table } from '../chars/main_chars.js';
 import { elements } from './MainChar.js';
-
-export const CLASS_TYPES_TABLE = {
-    [elements.VENUS]: {
-        [elements.VENUS]: 1, [elements.MERCURY]: 3, [elements.MARS]: 4, [elements.JUPITER]: 5
-    },
-    [elements.MERCURY]: {
-        [elements.VENUS]: 8, [elements.MERCURY]: 6, [elements.MARS]: 9, [elements.JUPITER]: 10
-    },
-    [elements.MARS]: {
-        [elements.VENUS]: 4, [elements.MERCURY]: 3, [elements.MARS]: 2, [elements.JUPITER]: 5
-    },
-    [elements.JUPITER]: {
-        [elements.VENUS]: 8, [elements.MERCURY]: 10, [elements.MARS]: 9, [elements.JUPITER]: 7
-    }
-}
 
 export class Classes {
     constructor(
@@ -64,7 +49,7 @@ export function choose_right_class(element_afinity, venus_lvl, mercury_lvl, mars
     } else {
         secondary_afinity = _.max(secondary_elements, element => element.level).element;
     }
-    const class_type = CLASS_TYPES_TABLE[element_afinity][secondary_afinity];
+    const class_type = class_table[element_afinity][secondary_afinity];
     let classes = _.where(Object.values(classes_list), {class_type: class_type});
     classes = classes.filter(this_class => {
         return this_class.required_venus_level <= venus_lvl &&

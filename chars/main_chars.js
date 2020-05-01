@@ -3,10 +3,12 @@ import { MainChar } from '../base/MainChar.js';
 
 export let main_char_list = {};
 export let classes_list = {};
+export let class_table;
 
 export function initialize_classes(classes_db) {
-    for (let i = 0; i < classes_db.length; ++i) {
-        const class_data = classes_db[i];
+    class_table = classes_db.class_table;
+    for (let i = 0; i < classes_db.classes.length; ++i) {
+        const class_data = classes_db.classes[i];
         classes_list[class_data.key_name] = new Classes(
             class_data.key_name,
             class_data.name,
