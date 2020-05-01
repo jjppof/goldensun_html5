@@ -1,4 +1,4 @@
-import { main_char_list } from '../chars/main_char_list.js';
+import { main_char_list } from '../chars/main_chars.js';
 import { maps } from '../maps/maps.js';
 import { config_physics_for_npcs, config_physics_for_map, config_collisions, set_speed_factors, config_physics_for_psynergy_items } from '../physics/physics.js';
 

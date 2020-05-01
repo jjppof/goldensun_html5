@@ -1,6 +1,6 @@
 import * as utils from './utils.js';
 import * as numbers from './magic_numbers.js';
-import { initializeMainChars, main_char_list } from './chars/main_char_list.js';
+import { initialize_main_chars, main_char_list } from './chars/main_chars.js';
 import { initializeMaps, loadMaps, maps } from './maps/maps.js';
 import { jump_event, jump_near_collision } from './events/jump.js';
 import { set_door_event, door_event_phases } from './events/door.js';
@@ -11,9 +11,11 @@ import * as climb from './events/climb.js';
 import * as physics from './physics/physics.js';
 
 window.maps = maps;
+window.main_char_list = main_char_list;
 
 var data = {
     game: undefined,
+    load_promise: undefined,
     cursors: undefined,
     hero: undefined,
     map_collider_layer: undefined,
@@ -84,13 +86,21 @@ window.game = game;
 data.game = game;
 
 function preload() {
-    initializeMainChars(game);
     initializeMaps();
     loadMaps(game);
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
     game.load.json('psynergy_items_db', 'assets/dbs/psynergy_items_db.json');
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
+
+    let load_promise_resolve;
+    data.load_promise = new Promise(resolve => {
+        load_promise_resolve = resolve;
+    })
+    game.load.json('main_chars_db', 'assets/dbs/main_chars.json').onLoadComplete.addOnce(() => {
+        data.main_chars_db = game.cache.getJSON('main_chars_db');
+        initialize_main_chars(game, data.main_chars_db, load_promise_resolve);
+    });
 
     game.time.advancedTiming = true;
     game.stage.smoothed = false;
@@ -180,10 +190,10 @@ function toggle_grid() {
     data.grid = !data.grid;
 }
 
-function create() {
+async function create() {
     // Initializing some vars
     data.hero_name = "isaac";
-    data.map_name = "madra_side";
+    data.map_name = "madra";
     data.map_collider_layer = 0;
     data.actual_action = 'idle';
     data.actual_direction = 'down';
@@ -203,6 +213,8 @@ function create() {
     data.in_dialog = false;
     data.npc_db = game.cache.getJSON('npc_db');
     data.psynergy_items_db = game.cache.getJSON('psynergy_items_db');
+
+    await data.load_promise;
 
     //creating groups. Order here is important
     data.underlayer_group = game.add.group();

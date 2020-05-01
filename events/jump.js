@@ -1,5 +1,5 @@
 import * as numbers from '../magic_numbers.js';
-import { main_char_list } from '../chars/main_char_list.js';
+import { main_char_list } from '../chars/main_chars.js';
 import { maps } from '../maps/maps.js';
 
 export function jump_event(data, event_key) {

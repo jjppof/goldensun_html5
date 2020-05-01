@@ -1,7 +1,7 @@
 import { maps } from '../maps/maps.js';
 import * as numbers from '../magic_numbers.js';
 import { get_transition_directions } from '../utils.js';
-import { main_char_list } from '../chars/main_char_list.js';
+import { main_char_list } from '../chars/main_chars.js';
 import { fire_push_movement } from '../psynergy_items/push.js';
 
 export function config_physics_for_hero(data, initialize = true) {

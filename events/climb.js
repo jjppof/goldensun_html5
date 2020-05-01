@@ -1,5 +1,5 @@
 import { maps } from '../maps/maps.js';
-import { main_char_list } from '../chars/main_char_list.js';
+import { main_char_list } from '../chars/main_chars.js';
 import * as collision from '../events/collision.js';
 
 export function climbing_event(data, event_key) {
