@@ -1,10 +1,17 @@
 import { SpriteBase } from './SpriteBase.js';
+import { choose_right_class } from './Classes.js';
 
 export const STATUS = {
     NORMAL: {
         name: "Normal"
     }
-}
+};
+export const elements = {
+    VENUS: "venus",
+    MERCURY: "mercury",
+    MARS: "mars",
+    JUPITER: "jupiter"
+};
 
 export class MainChar extends SpriteBase {
     constructor (
@@ -16,7 +23,6 @@ export class MainChar extends SpriteBase {
         push_speed,
         avatar_image_path,
         name,
-        base_class_key_name,
         hp_curve,
         pp_curve,
         atk_curve,
@@ -46,7 +52,6 @@ export class MainChar extends SpriteBase {
         this.push_speed = push_speed;
         this.avatar_image_path = avatar_image_path;
         this.name = name;
-        this.base_class_key_name = base_class_key_name;
         this.status = STATUS.NORMAL;
         this.starting_level = starting_level;
         this.level = this.starting_level;
@@ -75,6 +80,13 @@ export class MainChar extends SpriteBase {
         this.mercury_level_base = mercury_level_base;
         this.mars_level_base = mars_level_base;
         this.jupiter_level_base = jupiter_level_base;
+        this.element_afinity = _.max([
+            {element: elements.VENUS, level: this.venus_level_base},
+            {element: elements.MERCURY, level: this.mercury_level_base},
+            {element: elements.MARS, level: this.mars_level_base},
+            {element: elements.JUPITER, level: this.jupiter_level_base},
+        ], element => element.level).element;
+        this.class = choose_right_class(this.element_afinity, this.venus_level_base, this.mercury_level_base, this.mars_level_base, this.jupiter_level_base);
         this.venus_power_base = venus_power_base;
         this.mercury_power_base = mercury_power_base;
         this.mars_power_base = mars_power_base;

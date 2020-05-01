@@ -1,6 +1,30 @@
+import { Classes } from '../base/Classes.js';
 import { MainChar } from '../base/MainChar.js';
 
 export let main_char_list = {};
+export let classes_list = {};
+
+export function initialize_classes(classes_db) {
+    for (let i = 0; i < classes_db.length; ++i) {
+        const class_data = classes_db[i];
+        classes_list[class_data.key_name] = new Classes(
+            class_data.key_name,
+            class_data.name,
+            class_data.required_venus_level,
+            class_data.required_mercury_level,
+            class_data.required_mars_level,
+            class_data.required_jupiter_level,
+            class_data.hp_boost,
+            class_data.pp_boost,
+            class_data.atk_boost,
+            class_data.def_boost,
+            class_data.agi_boost,
+            class_data.luk_boost,
+            class_data.ability_level_pairs,
+            class_data.class_type
+        );
+    }
+}
 
 export function initialize_main_chars(game, main_chars_db, load_promise_resolve) {
     let load_promises = [];
@@ -15,7 +39,6 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
             char_data.push_speed,
             char_data.avatar_image_path,
             char_data.name,
-            char_data.base_class_key_name,
             char_data.hp_curve,
             char_data.pp_curve,
             char_data.atk_curve,

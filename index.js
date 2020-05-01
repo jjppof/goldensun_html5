@@ -1,6 +1,6 @@
 import * as utils from './utils.js';
 import * as numbers from './magic_numbers.js';
-import { initialize_main_chars, main_char_list } from './chars/main_chars.js';
+import { initialize_main_chars, main_char_list, initialize_classes } from './chars/main_chars.js';
 import { initializeMaps, loadMaps, maps } from './maps/maps.js';
 import { jump_event, jump_near_collision } from './events/jump.js';
 import { set_door_event, door_event_phases } from './events/door.js';
@@ -88,19 +88,11 @@ data.game = game;
 function preload() {
     initializeMaps();
     loadMaps(game);
+    game.load.json('classes_db', 'assets/dbs/classes_db.json');
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
     game.load.json('psynergy_items_db', 'assets/dbs/psynergy_items_db.json');
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
-
-    let load_promise_resolve;
-    data.load_promise = new Promise(resolve => {
-        load_promise_resolve = resolve;
-    })
-    game.load.json('main_chars_db', 'assets/dbs/main_chars.json').onLoadComplete.addOnce(() => {
-        data.main_chars_db = game.cache.getJSON('main_chars_db');
-        initialize_main_chars(game, data.main_chars_db, load_promise_resolve);
-    });
 
     game.time.advancedTiming = true;
     game.stage.smoothed = false;
@@ -213,6 +205,19 @@ async function create() {
     data.in_dialog = false;
     data.npc_db = game.cache.getJSON('npc_db');
     data.psynergy_items_db = game.cache.getJSON('psynergy_items_db');
+    data.classes_db = game.cache.getJSON('classes_db');
+
+    initialize_classes(data.classes_db);
+
+    let load_promise_resolve;
+    data.load_promise = new Promise(resolve => {
+        load_promise_resolve = resolve;
+    });
+    game.load.json('main_chars_db', 'assets/dbs/main_chars.json').onLoadComplete.addOnce(() => {
+        data.main_chars_db = game.cache.getJSON('main_chars_db');
+        initialize_main_chars(game, data.main_chars_db, load_promise_resolve);
+    });
+    game.load.start();
 
     await data.load_promise;
 
