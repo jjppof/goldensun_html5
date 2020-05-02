@@ -22,7 +22,9 @@ var menu_open= false;
 var option= false;
 var ui =['Psynergy','Djinn','Item','Status'];
 var touche = 0;
+var curseur = 0; //for the options
 var ui_display=[];
+var ui_windows=[];
 
 var party=['isaac','garet','ivan','mia','felix','jenna','sheba','picard'];
 
@@ -94,6 +96,7 @@ function preload() {
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
 
+    game.load.image('cursor', 'assets/images/ui/cursor.png');
     game.load.image('menu-top', 'assets/images/ui/ui_top.png');
     game.load.image('menu', 'assets/images/ui/ui_menu.png');
     for (let i=0; i< ui.length; i++){
@@ -102,6 +105,13 @@ function preload() {
 
     for (let i=0; i< maps_name.length; i++){
       game.load.audio('bg-music-'+ maps_name[i], 'assets/music/bg/'+ maps_name[i] + '.mp3');
+    }
+
+    for (let i=0; i< party.length; i++){ //faceset
+      game.load.image('ui-'+ party[i] , 'assets/images/ui/'+utils.upperCaseFirstLetter(party[i])+'.png');
+    }
+    for (let i=0; i< ui.length; i++){ // characters img as npc
+      game.load.image('ui-faceset-'+ party[i], 'assets/images/icons/'+utils.upperCaseFirstLetter(party[i])+'.png');
     }
 
     //se
@@ -238,6 +248,7 @@ function create() {
     init_music();
     resizeGame();
 
+
     game.input.keyboard.addKey(Phaser.Keyboard.H).onDown.add(() => {
       if (document.getElementById('intro').style.display == "none")
         document.getElementById('intro').style.display= "block";
@@ -248,23 +259,94 @@ function create() {
     game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
       if(menu_open && !option)
         key_ui (0, 3, game.camera.x + 153, game.camera.x + 49, "left");
+
+      if(option && ui[touche]=="Psynergy"){
+        if(curseur-1 < 0){
+          clear_ui();
+          ui_display.push(game.add.image(game.camera.x , game.camera.y+24, 'cursor' ) );
+          curseur= party.length -1;
+          for (let i=4; i<8; i++ ){
+              ui_display.push(game.add.image(game.camera.x + 24*(i-4) , game.camera.y, 'ui-'+ party[i] ) );
+          }
+        }
+        else if (curseur-1 ==3){
+          clear_ui();
+          ui_display.push(game.add.image(game.camera.x , game.camera.y+24, 'cursor' ) );
+          for (let i=0; i<4; i++ ){
+              ui_display.push(game.add.image(game.camera.x + 24*i , game.camera.y, 'ui-'+ party[i] ) );
+          }
+          curseur--;
+        }
+        else
+          curseur--;
+
+        if(curseur >3)
+            ui_display[0].position.x= game.camera.x +(curseur-4)* 24; // représente le curseur: 1er élem pushed
+        else
+            ui_display[0].position.x= game.camera.x + curseur*24;
+      }
+
     }, this);
 
     game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
       if(menu_open && !option)
         key_ui (0, 3, game.camera.x + 153, game.camera.x + 49, "right");
+
+
+      if(option && ui[touche]=="Psynergy"){
+
+        if(curseur+1 > party.length-1){
+          clear_ui();
+          ui_display.push(game.add.image(game.camera.x , game.camera.y+24, 'cursor' ) );
+          curseur=0;
+          for (let i=0; i<4; i++ ){
+              ui_display.push(game.add.image(game.camera.x + 24*i , game.camera.y, 'ui-'+ party[i] ) );
+          }
+        }
+        else if (curseur+1 ==4){
+          clear_ui();
+          ui_display.push(game.add.image(game.camera.x , game.camera.y+24, 'cursor' ) );
+          for (let i=4; i<8; i++ ){
+              ui_display.push(game.add.image(game.camera.x + 24*(i-4) , game.camera.y, 'ui-'+ party[i] ) );
+          }
+          curseur++;
+
+        }
+        else
+          curseur++;
+
+        if(curseur >3)
+            ui_display[0].position.x= game.camera.x +(curseur-4)* 24; // représente le curseur
+        else
+            ui_display[0].position.x= game.camera.x + curseur*24;
+      }
     }, this);
 
     game.input.keyboard.addKey(Phaser.Keyboard.X).onDown.add(() => {
-      if(menu_open) {
+      if(menu_open && !option) {
         menu_open= false;
         music = game.add.audio('menu-cancel');
         music.volume=0.3;
         music.play();
 
         clear_ui();
+      }
+      else if(!menu_open && option){
+        menu_open= false;
+        music = game.add.audio('menu-cancel');
+        music.volume=0.3;
+        music.play();
+
+        clear_ui();
+        clear_windows();
+        menu_open=true;
+        console.log(touche);
+        draw_ui_top();
+        draw_ui_down (0, 3, game.camera.x + 153, game.camera.x + 49, "left");
+        option=false;
 
       }
+
     }, this);
 
     game.input.keyboard.addKey(Phaser.Keyboard.Z).onDown.add(() => {
@@ -273,24 +355,35 @@ function create() {
         music.volume=0.3;
         music.play();
 
-        //faire les quatres options
-        if(ui[touche]=='Psynergy'){
+        if(ui[touche]=='Psynergy' || ui[touche]=='Item' || ui[touche]=='Djinn' || ui[touche]=='Status'){
+          menu_open=false;
           option=true;
           clear_ui(); // à faire TJRS au début de chaque option
 
-          // doesn't display o_O?
-          var win_description = new Window(game, game.camera.x, game.camera.y, 104, 40, false);
-          win_description.show();
-          /*var tab_menu_display=[];
-          var win_description = new Window(game, game.camera.x, game.camera.y+40, numbers.GAME_WIDTH-4, 31, false); // va jusqu'à 75 mais... le même pixel
-          tab_menu_display.push(win_description);
-          var win_psynergies = new Window(game, game.camera.x+72, game.camera.y+74, 164, 82, false);
-          tab_menu_display.push(win_psynergies);*/
+          //faire les quatres options
+          if(ui[touche]=='Psynergy' || ui[touche]=='Item'){
+            ui_windows.push(new Window(game, 0, 0, 100, 36, false) ); // win_char
+            ui_windows.push(new Window(game, 0, 40, 100, 92, false) ); // win_char_info
+            ui_windows.push(new Window(game, 0, 136, 236, 20, false) ); // win_coin
+            ui_windows.push(new Window(game, 104, 0, 132, 20, false) ); // win_question
+            ui_windows.push(new Window(game, 104, 24, 132, 76, false) ); // win_psynergy/item
+            ui_windows.push(new Window(game, 104, 104, 132, 28, false) ); // win_cmd
 
-          /*for (let i=0; i<tab_menu_display.length; i++){
-            tab_menu_display[i].show(); // et si btxt? il faut faire game.add.bitmaptext
-            // c plus utile pr les imgs du coup :S (ya que 2 win ou 3 pr les djiins)
-          }*/
+            ui_display.push(game.add.image(game.camera.x , game.camera.y+24, 'cursor' ) );
+            for (let i=0; i<4; i++ ){
+                ui_display.push(game.add.image(game.camera.x + 24*i , game.camera.y, 'ui-'+ party[i] ) );
+            }
+
+          }
+          if(ui[touche]=='Djinn' || ui[touche]=='Status'){
+            ui_windows.push(new Window(game, 0, 0, 100, 36, false) ); // win_char
+            ui_windows.push(new Window(game, 104, 0, 132, 36, false) ); // win_cmd
+            ui_windows.push(new Window(game, 0, 40, 236, 116, false) ); // win_djinn/status
+          }
+
+          for (let i=0; i<ui_windows.length; i++){
+              ui_windows[i].show();
+          }
         }
 
       }
@@ -301,19 +394,8 @@ function create() {
         music.play();
 
         draw_ui_top();
-        ui_display.push (game.add.image(game.camera.x + 49, game.camera.y + 136, 'menu' ) );
-        data.hero.animations.play("idle_" + data.actual_direction); // we block in idle state
-        // tiny problem: if press key, it saves it and show when resume
+        draw_ui_down (0, 3, game.camera.x + 153, game.camera.x + 49, "left");
 
-
-        ui_display.push( game.add.image(game.camera.x + 49, game.camera.y +130, 'ui-psynergy') );
-        // pas besoin ajouter tween??? -> c vrai que c inutile...
-        game.add.tween(ui_display[ui_display.length-1].scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
-        game.add.tween(ui_display[ui_display.length-1]).to({y: game.camera.y + 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
-
-        // x= 153 -> 8 px to the right (little box)
-        ui_display.push(game.add.bitmapText(game.camera.x + 153, game.camera.y + 144, 'gs-bmp-font', ui[0], numbers.FONT_SIZE) );
-        touche=0;
         }
 
     }, this);
@@ -541,7 +623,7 @@ function change_hero_sprite() {
 }
 
 function set_actual_action() {
-    if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_action !== "idle" && !data.climbing || menu_open)
+    if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_action !== "idle" && !data.climbing || menu_open || option)
         data.actual_action = "idle";
     else if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_direction !== "idle" && data.climbing)
         data.actual_direction = "idle";
@@ -604,7 +686,6 @@ function key_ui (touche_debut, touche_fin, txt_pos_x, img_pos_x, key)
       touche -= 1;
   }
 
-
   ui_display.push( game.add.bitmapText(txt_pos_x, game.camera.y +144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE) );
   if (touche== touche_fin)
     ui_display.push (game.add.image(img_pos_x + 24*(touche-touche_debut)-6, game.camera.y +130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) ) );
@@ -613,13 +694,14 @@ function key_ui (touche_debut, touche_fin, txt_pos_x, img_pos_x, key)
   else
     ui_display.push (game.add.image(img_pos_x-2 + 24*(touche-touche_debut), game.camera.y +130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) ) );
 
-    game.add.tween(ui_display[ui_display.length-1].scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
-    if (touche== touche_fin){
-      game.add.tween(ui_display[ui_display.length-1]).to({x: img_pos_x + 24*(touche-touche_debut)-4, y: game.camera.y + 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
-    }
-    else{
-      game.add.tween(ui_display[ui_display.length-1]).to({y: game.camera.y +132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
-    }
+  game.add.tween(ui_display[ui_display.length-1].scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+  if (touche== touche_fin){
+    game.add.tween(ui_display[ui_display.length-1]).to({x: img_pos_x + 24*(touche-touche_debut)-4, y: game.camera.y + 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+  }
+  else{
+    game.add.tween(ui_display[ui_display.length-1]).to({y: game.camera.y +132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+  }
+
 }
 
 function draw_ui_top(){
@@ -648,10 +730,50 @@ function draw_ui_top(){
   }
 }
 
+function draw_ui_down(touche_debut, touche_fin, txt_pos_x, img_pos_x, key){
+  ui_display.push (game.add.image(game.camera.x + 49, game.camera.y + 136, 'menu' ) );
+  data.hero.animations.play("idle_" + data.actual_direction); // we block in idle state
+  // tiny problem: if press key, it saves it and show when resume
+
+  if (!option){
+    ui_display.push( game.add.image(game.camera.x + 49, game.camera.y +130, 'ui-psynergy') );
+    game.add.tween(ui_display[ui_display.length-1].scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+    game.add.tween(ui_display[ui_display.length-1]).to({y: game.camera.y + 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+
+    // x= 153 -> 8 px to the right (little box)
+    ui_display.push(game.add.bitmapText(game.camera.x + 153, game.camera.y + 144, 'gs-bmp-font', ui[0], numbers.FONT_SIZE) );
+  }
+  else{ // we have in memory touche
+    ui_display.push( game.add.bitmapText(txt_pos_x, game.camera.y +144, 'gs-bmp-font', ui[touche], numbers.FONT_SIZE) );
+    if (touche== touche_fin)
+      ui_display.push (game.add.image(img_pos_x + 24*(touche-touche_debut)-6, game.camera.y +130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) ) );
+    else if (touche== touche_debut)
+      ui_display.push (game.add.image(img_pos_x, game.camera.y +130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) ) );
+    else
+      ui_display.push (game.add.image(img_pos_x-2 + 24*(touche-touche_debut), game.camera.y +130, 'ui-'+ utils.lowerCaseFirstLetter(ui[touche]) ) );
+
+    game.add.tween(ui_display[ui_display.length-1].scale).to({ x: 14/15, y: 14/15  }, 200, Phaser.Easing.Back.Out, true, 0, -1, true);
+    if (touche== touche_fin){
+      game.add.tween(ui_display[ui_display.length-1]).to({x: img_pos_x + 24*(touche-touche_debut)-4, y: game.camera.y + 132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+    }
+    else{
+      game.add.tween(ui_display[ui_display.length-1]).to({y: game.camera.y +132 }, 200, Phaser.Easing.Back.Out, true, 0, -1,true);
+    }
+  }
+
+}
+
 function clear_ui(){
   console.log("effacé");
   for (let i=0; i<ui_display.length; i++){
     ui_display[i].destroy();
   }
   ui_display=[];
+}
+
+function clear_windows(){
+  for (let i=0; i<ui_windows.length; i++){
+    ui_windows[i].destroy();
+  }
+  ui_windows=[];
 }
