@@ -186,6 +186,21 @@ export class Window {
 
         this.group.add(text_sprite_shadow);
         this.group.add(text_sprite);
+
+        return {text: text_sprite, shadow: text_sprite_shadow};
+    }
+
+    update_text(new_text, text_shadow_pair, new_x, new_y) {
+        text_shadow_pair.text.setText(new_text);
+        text_shadow_pair.shadow.setText(new_text);
+        if (new_x !== undefined) {
+            text_shadow_pair.text.x = new_x;
+            text_shadow_pair.shadow.x = new_x;
+        }
+        if (new_y !== undefined) {
+            text_shadow_pair.text.y = new_y;
+            text_shadow_pair.shadow.y = new_y;
+        }
     }
 
     destroy(animate, destroy_callback) {
