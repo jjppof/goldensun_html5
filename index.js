@@ -9,7 +9,7 @@ import { config_step, do_step } from './events/step.js';
 import { config_collision_change, do_collision_change } from './events/collision.js';
 import * as climb from './events/climb.js';
 import * as physics from './physics/physics.js';
-import { MenuScreen } from './screens/menu.js';
+import { initialize_menu } from './screens/menu.js';
 
 window.maps = maps;
 window.main_char_list = main_char_list;
@@ -97,8 +97,8 @@ function preload() {
 
     game.time.advancedTiming = true;
     game.stage.smoothed = false;
-    game.camera.roundPx = false;
-    game.renderer.renderSession.roundPixels = false;
+    game.camera.roundPx = true;
+    game.renderer.renderSession.roundPixels = true;
 
     game.camera.fade(0x0, 1);
 }
@@ -227,6 +227,11 @@ async function create() {
     data.npc_group = game.add.group();
     data.overlayer_group = game.add.group();
 
+    //initialize screens
+    data.menu_screen = initialize_menu();
+    game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(() => {
+        data.menu_screen.open_menu();
+    }, this);
 
     //configuring map layers: creating sprites, listing events and setting the layers
     maps[data.map_name].setLayers(
@@ -250,8 +255,6 @@ async function create() {
         physics.config_physics_for_map(data);
         physics.config_collisions(data);
         game.physics.p2.updateBoundsCollisionGroup();
-
-        
 
         //activate debug mode
         game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug, this);

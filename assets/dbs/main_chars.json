@@ -115,5 +115,53 @@
         "mars_resist_base": 86,
         "jupiter_resist_base": 87,
         "innate_abilities": ["move", "retreat"]
+    },{
+        "key_name": "garet",
+        "name": "Garet",
+        "actions": [
+            {
+                "key": "idle",
+                "spritesheet": "assets/images/spritesheets/garet_idle.json",
+                "spritesheet_img": "assets/images/spritesheets/garet_idle.png",
+                "directions": [
+                    "down", 
+                    "up", 
+                    "left", 
+                    "right", 
+                    "down_left", 
+                    "down_right", 
+                    "up_left", 
+                    "up_right"
+                ],
+                "directions_frames_number": [5,5,5,5,5,5,5,5],
+                "frame_rate": 1
+            }
+        ],
+        "walk_speed": 60,
+        "dash_speed": 85,
+        "climb_speed": 50,
+        "push_speed": 50,
+        "avatar_image_path": "assets/images/avatars/garet.gif",
+        "hp_curve": [38, 45, 53, 60, 68, 76, 83, 91, 98, 106, 114, 121, 129, 136, 144, 152, 159, 167, 174, 182, 190, 197, 205, 212, 220, 228, 235, 243, 250, 258, 266],
+        "pp_curve": [32, 35, 38, 40, 42, 45, 48, 50, 52, 55, 58, 60, 62, 65, 68, 70, 72, 75, 78, 80, 82, 85, 88, 90, 92, 95, 98, 100, 102, 105, 108],
+        "atk_curve": [14, 18, 21, 25, 29, 33, 37, 40, 44, 48, 52, 56, 59, 63, 67, 71, 75, 78, 82, 86, 90, 94, 97, 101, 105, 109, 113, 116, 120, 124, 128],
+        "def_curve": [9, 10, 12, 13, 15, 16, 18, 19, 21, 22, 24, 26, 27, 29, 30, 32, 33, 35, 36, 38, 40, 41, 43, 44, 46, 47, 49, 50, 52, 54, 55],
+        "agi_curve": [13, 17, 21, 24, 28, 32, 36, 40, 44, 47, 51, 55, 59, 63, 67, 71, 74, 78, 82, 86, 90, 94, 98, 101, 105, 109, 113, 117, 121, 124, 128],
+        "luk_curve": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        "exp_curve": [0, 24, 67, 144, 283, 519, 873, 1369, 2039, 2910, 3999, 5306, 6861, 8696, 10843, 13334, 16224, 19548, 23371, 27767, 32778, 38491, 45004, 52429, 60893, 70457, 81264, 93476, 107276, 122732],
+        "starting_level": 10,
+        "venus_level_base": 0,
+        "mercury_level_base": 0,
+        "mars_level_base": 5,
+        "jupiter_level_base": 0,
+        "venus_power_base": 76,
+        "mercury_power_base": 77,
+        "mars_power_base": 104,
+        "jupiter_power_base": 78,
+        "venus_resist_base": 86,
+        "mercury_resist_base": 87,
+        "mars_resist_base": 114,
+        "jupiter_resist_base": 88,
+        "innate_abilities": ["move"]
     }
 ]

@@ -41,3 +41,10 @@ export class MenuScreen {
         this.status_window.show();
     }
 }
+
+let menu_screen;
+
+export function initialize_menu() {
+    menu_screen = new MenuScreen(game);
+    return menu_screen;
+}
