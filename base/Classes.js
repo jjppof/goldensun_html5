@@ -57,7 +57,7 @@ export function choose_right_class(element_afinity, venus_lvl, mercury_lvl, mars
         this_class.required_mars_level <= mars_lvl &&
         this_class.required_jupiter_level <= jupiter_lvl;
     });
-    return _.sortBy(classes).reverse(this_class => {
+    return _.sortBy(classes, this_class => {
         return this_class.required_venus_level + this_class.required_mercury_level + this_class.required_mars_level + this_class.required_jupiter_level;
-    })[0];
+    }).reverse()[0];
 }

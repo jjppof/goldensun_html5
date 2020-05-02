@@ -26,6 +26,7 @@ export const NPC_TALK_RANGE = 3.0;
 export const MAX_CHARS_PER_WINDOW = 85;
 export const FONT_SIZE = 8;
 export const INSIDE_BORDER_WIDTH = 3;
+export const OUTSIDE_BORDER_WIDTH = 1;
 export const WINDOW_PADDING_H = 4;
 export const WINDOW_PADDING_TOP = 8;
 export const WINDOW_PADDING_BOTTOM = 4;

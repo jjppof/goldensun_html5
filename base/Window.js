@@ -174,6 +174,20 @@ export class Window {
         }
     }
 
+    set_text_in_position(text, x_pos, y_pos) {
+        let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', text, numbers.FONT_SIZE);
+        let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, 'gs-bmp-font', text, numbers.FONT_SIZE);
+
+        text_sprite.smoothed = false;
+        text_sprite.autoRound = true;
+        text_sprite_shadow.smoothed = false;
+        text_sprite_shadow.autoRound = true;
+        text_sprite_shadow.tint = 0x0;
+
+        this.group.add(text_sprite_shadow);
+        this.group.add(text_sprite);
+    }
+
     destroy(animate, destroy_callback) {
         let on_destroy = () => { 
             this.group.destroy();

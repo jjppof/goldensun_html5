@@ -17,6 +17,7 @@ export class MainChar extends SpriteBase {
     constructor (
         key_name,
         actions,
+        index,
         walk_speed,
         dash_speed,
         climb_speed,
@@ -46,6 +47,7 @@ export class MainChar extends SpriteBase {
         innate_abilities
     ) {
         super(key_name, actions);
+        this.index = index;
         this.walk_speed = walk_speed;
         this.dash_speed = dash_speed;
         this.climb_speed = climb_speed;

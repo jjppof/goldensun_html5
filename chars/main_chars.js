@@ -35,6 +35,7 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
         main_char_list[char_data.key_name] = new MainChar(
             char_data.key_name,
             char_data.actions.map(action => action.key),
+            i,
             char_data.walk_speed,
             char_data.dash_speed,
             char_data.climb_speed,

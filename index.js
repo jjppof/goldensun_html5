@@ -9,6 +9,7 @@ import { config_step, do_step } from './events/step.js';
 import { config_collision_change, do_collision_change } from './events/collision.js';
 import * as climb from './events/climb.js';
 import * as physics from './physics/physics.js';
+import { MenuScreen } from './screens/menu.js';
 
 window.maps = maps;
 window.main_char_list = main_char_list;
