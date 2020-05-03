@@ -203,6 +203,15 @@ export class Window {
         }
     }
 
+    close(callback) {
+        this.game.add.tween(this.group).to(
+            { width: 0, height: 0 },
+            this.transition_time,
+            Phaser.Easing.Linear.None,
+            true
+        ).onComplete.addOnce(callback ? callback : () => {});
+    }
+
     destroy(animate, destroy_callback) {
         let on_destroy = () => { 
             this.group.destroy();
@@ -219,7 +228,6 @@ export class Window {
         } else {
             on_destroy();
         }
-        
     }
 }
 

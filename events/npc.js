@@ -1,5 +1,46 @@
 import { DialogManager, set_dialog } from '../base/Window.js';
 import { NPC } from '../base/NPC.js';
+import * as utils from '../utils.js';
+import * as numbers from '../magic_numbers.js';
+import { change_hero_sprite } from '../chars/hero_control.js';
+
+export function trigger_npc_dialog(data) {
+    if (!data.in_dialog && !data.menu_open) {
+        for (let i = 0; i < maps[data.map_name].npcs.length; ++i) {
+            let npc = maps[data.map_name].npcs[i];
+            let is_close = utils.is_close(
+                data.actual_direction,
+                data.hero.x,
+                data.hero.y,
+                npc.npc_sprite.x,
+                npc.npc_sprite.y,
+                numbers.NPC_TALK_RANGE
+            );
+            if (is_close) {
+                data.actual_action = "idle";
+                change_hero_sprite(data);
+                data.npc_event = true;
+                data.active_npc = npc;
+                break;
+            }
+        }
+    } else if (data.in_dialog && data.waiting_for_enter_press) {
+        data.waiting_for_enter_press = false;
+        data.dialog_manager.next(() => {
+            if (data.dialog_manager.finished) {
+                data.in_dialog = false;
+                data.dialog_manager = null;
+                data.npc_event = false;
+                data.active_npc.npc_sprite.animations.play([
+                    data.npc_db[data.active_npc.key_name].initial_action,
+                    data.npc_db[data.active_npc.key_name].actions[data.npc_db[data.active_npc.key_name].initial_action].initial_direction
+                ].join("_"));
+            } else {
+                data.waiting_for_enter_press = true;
+            }
+        });
+    }
+}
 
 export function set_npc_event (data) {
     if (!data.waiting_for_enter_press) {

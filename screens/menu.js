@@ -103,6 +103,10 @@ export class MenuScreen {
         this.update_chars_info();
         this.status_window.show();
     }
+
+    close_menu() {
+        this.status_window.close();
+    }
 }
 
 let menu_screen;
