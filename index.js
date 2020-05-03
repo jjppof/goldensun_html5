@@ -88,6 +88,13 @@ var game = new Phaser.Game(
 window.game = game;
 data.game = game;
 
+function load_buttons() {
+    game.load.image('psynergy_button', 'assets/images/buttons/psynergy.gif');
+    game.load.image('djinni_button', 'assets/images/buttons/djinni.gif');
+    game.load.image('item_button', 'assets/images/buttons/item.gif');
+    game.load.image('status_button', 'assets/images/buttons/status.gif');
+}
+
 function preload() {
     initializeMaps();
     loadMaps(game);
@@ -96,6 +103,7 @@ function preload() {
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
     game.load.json('psynergy_items_db', 'assets/dbs/psynergy_items_db.json');
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
+    load_buttons();
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
 
     game.time.advancedTiming = true;

@@ -129,6 +129,29 @@ export class Window {
         this.graphics.lineTo(this.width, this.height);
     }
 
+    update_size(new_size) {
+        if (new_size.width !== undefined) {
+            this.width = new_size.width;
+        }
+        if (new_size.height !== undefined) {
+            this.height = new_size.height;
+        }
+        this.graphics.clear();
+        this.draw_background();
+        this.draw_borders();
+    }
+
+    update_position(new_position, relative = true) {
+        if (new_position.x !== undefined) {
+            this.x = new_position.x;
+        }
+        if (new_position.y !== undefined) {
+            this.y = new_position.y;
+        }
+        this.group.x = (relative ? this.game.camera.x : 0) + this.x;
+        this.group.y = (relative ? this.game.camera.y : 0) + this.y;
+    }
+
     show(show_callback) {
         this.group.alpha = 1;
         this.group.x = this.game.camera.x + this.x;
