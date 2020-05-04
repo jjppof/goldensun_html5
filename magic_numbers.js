@@ -38,3 +38,5 @@ export const STEP_SHIFT_FACTOR = 4;
 export const PUSH_SHIFT = 16;
 export const PUSH_TIME = 800;
 export const EVENT_TIME = 400;
+export const BUTTON_WIDTH = 24;
+export const BUTTON_HEIGHT = 24;

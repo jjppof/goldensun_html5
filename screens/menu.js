@@ -2,6 +2,7 @@ import { Window } from '../base/Window.js';
 import { main_char_list } from '../chars/main_chars.js';
 import * as numbers from '../magic_numbers.js';
 import { get_text_width } from '../utils.js';
+import { HorizontalMenu } from '../base/HorizontalMenu.js';
 
 const WIDTH_PER_CHAR = 50;
 const STATUS_WIN_HEIGHT = 35;
@@ -19,6 +20,7 @@ export class MenuScreen {
         this.status_window = new Window(this.game, this.status_win_x, 0, this.status_win_width, STATUS_WIN_HEIGHT, false);
         this.status_header_width = get_text_width(this.game, "HP ");
         this.info_sprites = {};
+        this.horizontal_menu = new HorizontalMenu(this.game, ["psynergy", "djinni", "item", "status"], ["Psynergy", "Djinn", "Item", "Status"]);
         this.set_chars_info();
     }
 
@@ -134,12 +136,14 @@ export class MenuScreen {
     }
 
     open_menu() {
+        this.horizontal_menu.open();
         this.status_window.update();
         this.update_chars_info();
         this.status_window.show();
     }
 
     close_menu() {
+        this.horizontal_menu.close();
         this.status_window.close();
     }
 }

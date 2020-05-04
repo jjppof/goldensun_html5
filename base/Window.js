@@ -22,6 +22,7 @@ export class Window {
         this.group.window_object = this;
         this.need_pos_update = need_pos_update;
         this.open = false;
+        this.lines_sprites = [];
     }
 
     draw_background() {
@@ -177,6 +178,11 @@ export class Window {
     }
 
     set_text(lines) {
+        for (let i = 0; i < this.lines_sprites.length; ++i) {
+            this.lines_sprites[i].text.destroy();
+            this.lines_sprites[i].shadow.destroy();
+        }
+        this.lines_sprites = [];
         const x_pos = numbers.WINDOW_PADDING_H + 4;
         let y_pos = numbers.WINDOW_PADDING_TOP;
         for (let i = 0; i < lines.length; ++i) {
@@ -194,6 +200,7 @@ export class Window {
 
             this.group.add(text_sprite_shadow);
             this.group.add(text_sprite);
+            this.lines_sprites.push({text: text_sprite, shadow: text_sprite_shadow});
         }
     }
 

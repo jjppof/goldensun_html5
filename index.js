@@ -177,6 +177,7 @@ async function create() {
         if (!data.menu_open) {
             data.menu_open = true;
             stop_hero(data);
+            update_shadow(data);
             data.menu_screen.open_menu();
         } else {
             data.menu_open = false;
