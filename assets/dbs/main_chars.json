@@ -114,7 +114,8 @@
         "mercury_resist_base": 88,
         "mars_resist_base": 86,
         "jupiter_resist_base": 87,
-        "innate_abilities": ["move", "retreat"]
+        "innate_abilities": ["move", "retreat"],
+        "in_party": true
     },{
         "key_name": "garet",
         "name": "Garet",
@@ -162,6 +163,7 @@
         "mercury_resist_base": 87,
         "mars_resist_base": 114,
         "jupiter_resist_base": 88,
-        "innate_abilities": ["move"]
+        "innate_abilities": ["move"],
+        "in_party": true
     }
 ]

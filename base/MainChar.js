@@ -45,7 +45,8 @@ export class MainChar extends SpriteBase {
         mercury_resist_base,
         mars_resist_base,
         jupiter_resist_base,
-        innate_abilities
+        innate_abilities,
+        in_party
     ) {
         super(key_name, actions);
         this.index = index;
@@ -93,6 +94,7 @@ export class MainChar extends SpriteBase {
         this.mars_resist_base = mars_resist_base;
         this.jupiter_resist_base = jupiter_resist_base;
         this.innate_abilities = innate_abilities;
+        this.in_party = in_party;
         this.venus_djinni = [];
         this.mercury_djinni = [];
         this.mars_djinni = [];

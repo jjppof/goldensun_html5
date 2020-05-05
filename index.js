@@ -1,5 +1,5 @@
 import * as numbers from './magic_numbers.js';
-import { initialize_main_chars, main_char_list, initialize_classes } from './chars/main_chars.js';
+import { initialize_main_chars, main_char_list, initialize_classes, party } from './chars/main_chars.js';
 import { initializeMaps, loadMaps, maps } from './maps/maps.js';
 import { jump_event, jump_near_collision } from './events/jump.js';
 import { set_door_event, door_event_phases } from './events/door.js';
@@ -74,6 +74,7 @@ var data = {
 //debugging porpouses
 window.maps = maps;
 window.main_char_list = main_char_list;
+window.party = party;
 window.data = data;
 
 var game = new Phaser.Game(
@@ -95,14 +96,21 @@ function load_buttons() {
     game.load.image('status_button', 'assets/images/buttons/status.gif');
 }
 
+function load_misc() {
+    game.load.image('shadow', 'assets/images/misc/shadow.jpg');
+    game.load.image('cursor', 'assets/images/misc/cursor.gif');
+    game.load.image('green_arrow', 'assets/images/misc/green_arrow.gif');
+}
+
 function preload() {
     initializeMaps();
     loadMaps(game);
     game.load.json('init_db', 'init.json');
     game.load.json('classes_db', 'assets/dbs/classes_db.json');
+    game.load.json('abilities_db', 'assets/dbs/abilities_db.json');
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
     game.load.json('psynergy_items_db', 'assets/dbs/psynergy_items_db.json');
-    game.load.image('shadow', 'assets/images/misc/shadow.jpg');
+    load_misc();
     load_buttons();
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
 
@@ -146,6 +154,7 @@ async function create() {
     data.npc_db = game.cache.getJSON('npc_db');
     data.psynergy_items_db = game.cache.getJSON('psynergy_items_db');
     data.classes_db = game.cache.getJSON('classes_db');
+    data.abilities_db = game.cache.getJSON('abilities_db');
 
     data.hero_name = data.init_db.hero_key_name;
     data.actual_direction = data.init_db.initial_direction;

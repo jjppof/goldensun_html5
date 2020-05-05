@@ -29,6 +29,7 @@ export class HorizontalMenu {
         }
         this.selected_button_index = 0;
         this.menu_open = false;
+        this.menu_active = false;
         this.group.width = 0;
         this.group.height = 0;
         this.selected_button_tween = null;
@@ -45,11 +46,11 @@ export class HorizontalMenu {
 
     set_control() {
         game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onUp.add(() => {
-            if (!this.menu_open) return;
+            if (!this.menu_open || !this.menu_active) return;
             this.on_choose(this.selected_button_index);
         });
         game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
-            if (!this.menu_open) return;
+            if (!this.menu_open || !this.menu_active) return;
             if (this.left_pressed) {
                 this.left_pressed = false;
                 this.stop_timers();
@@ -58,12 +59,12 @@ export class HorizontalMenu {
             this.set_change_timers(1);
         });
         game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onUp.add(() => {
-            if (!this.menu_open || !this.right_pressed) return;
+            if (!this.menu_open || !this.menu_active || !this.right_pressed) return;
             this.right_pressed = false;
             this.stop_timers();
         });
         game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
-            if (!this.menu_open) return;
+            if (!this.menu_open || !this.menu_active) return;
             if (this.right_pressed) {
                 this.right_pressed = false;
                 this.stop_timers();
@@ -72,7 +73,7 @@ export class HorizontalMenu {
             this.set_change_timers(-1);
         });
         game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onUp.add(() => {
-            if (!this.menu_open || !this.left_pressed) return;
+            if (!this.menu_open || !this.menu_active || !this.left_pressed) return;
             this.left_pressed = false;
             this.stop_timers();
         });
@@ -128,9 +129,10 @@ export class HorizontalMenu {
         this.group.y = this.game.camera.y + this.y;
     }
 
-    open(callback, select_index) {
+    open(callback, select_index, start_active = true) {
         this.right_pressed = false;
         this.left_pressed = false;
+        this.menu_active = start_active;
         this.group.alpha = 1;
         this.selected_button_index = select_index === undefined ? 0 : select_index;
         this.update_position();
@@ -173,5 +175,19 @@ export class HorizontalMenu {
             true
         ).onComplete.addOnce(buttons_resolve);
         Promise.all([window_promise, buttons_promise]).then(callback !== undefined ? callback : () => {});
+    }
+
+    activate() {
+        this.right_pressed = false;
+        this.left_pressed = false;
+        this.menu_active = true;
+        this.title_window.set_text([[this.buttons[this.selected_button_index].title]]);
+        this.set_button();
+    }
+
+    deactivate() {
+        this.menu_active = false;
+        this.stop_timers();
+        this.reset_button();
     }
 }

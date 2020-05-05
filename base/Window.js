@@ -153,21 +153,26 @@ export class Window {
         this.group.y = (relative ? this.game.camera.y : 0) + this.y;
     }
 
-    show(show_callback) {
+    show(show_callback, animate = true) {
         this.group.alpha = 1;
         this.group.x = this.game.camera.x + this.x;
         this.group.y = this.game.camera.y + this.y;
-        this.transition_time = Phaser.Timer.QUARTER/4;
         this.open = true;
-        this.game.add.tween(this.group).to(
-            { width: this.graphics.width, height: this.graphics.height },
-            this.transition_time,
-            Phaser.Easing.Linear.None,
-            true
-        );
-        this.game.time.events.add(this.transition_time + 50, () => {
+        if (animate) {
+            this.transition_time = Phaser.Timer.QUARTER/4;
+            this.game.add.tween(this.group).to(
+                { width: this.graphics.width, height: this.graphics.height },
+                this.transition_time,
+                Phaser.Easing.Linear.None,
+                true
+            ).onComplete.addOnce(() => {
+                if (show_callback !== undefined) show_callback();
+            });
+        } else {
+            this.group.width = this.graphics.width;
+            this.group.height = this.graphics.height;
             if (show_callback !== undefined) show_callback();
-        });
+        }
     }
 
     update() { //updates the window position if necessary
@@ -233,13 +238,24 @@ export class Window {
         }
     }
 
-    close(callback) {
-        this.game.add.tween(this.group).to(
-            { width: 0, height: 0 },
-            this.transition_time,
-            Phaser.Easing.Linear.None,
-            true
-        ).onComplete.addOnce(callback ? callback : () => {});
+    close(callback, animate = true) {
+        if (animate) {
+            this.game.add.tween(this.group).to(
+                { width: 0, height: 0 },
+                this.transition_time,
+                Phaser.Easing.Linear.None,
+                true
+            ).onComplete.addOnce(() => {
+                this.group.alpha = 0;
+                if (callback !== undefined) {
+                    callback();
+                }
+            });
+        } else {
+            this.group.alpha = 0;
+            this.group.width = 0;
+            this.group.height = 0;
+        }
     }
 
     destroy(animate, destroy_callback) {

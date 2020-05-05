@@ -3,6 +3,7 @@ import { MainChar } from '../base/MainChar.js';
 
 export let main_char_list = {};
 export let classes_list = {};
+export let party = [];
 export let class_table;
 
 export function initialize_classes(classes_db) {
@@ -62,8 +63,12 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
             char_data.mercury_resist_base,
             char_data.mars_resist_base,
             char_data.jupiter_resist_base,
-            char_data.innate_abilities
+            char_data.innate_abilities,
+            char_data.in_party
         );
+        if (char_data.in_party) {
+            party.push(main_char_list[char_data.key_name]);
+        }
         for (let j = 0; j < char_data.actions.length; ++j) {
             const action = char_data.actions[j];
             main_char_list[char_data.key_name].setActionSpritesheet(action.key, action.spritesheet_img, action.spritesheet);

@@ -1,5 +1,5 @@
 import { Window } from '../base/Window.js';
-import { main_char_list } from '../chars/main_chars.js';
+import { main_char_list, party } from '../chars/main_chars.js';
 import * as numbers from '../magic_numbers.js';
 import { get_text_width } from '../utils.js';
 import { HorizontalMenu } from '../base/HorizontalMenu.js';
@@ -89,21 +89,18 @@ export class MenuScreen {
     }
 
     update_chars_info() {
-        let sorted_chars_list = _.sortBy(Object.values(main_char_list), char => {
-            return char.index;
-        });
-        this.status_win_width = sorted_chars_list.length * WIDTH_PER_CHAR;
+        this.status_win_width = party.length * WIDTH_PER_CHAR;
         this.status_win_x = numbers.GAME_WIDTH - this.status_win_width - numbers.INSIDE_BORDER_WIDTH - numbers.OUTSIDE_BORDER_WIDTH;
         this.status_window.update_size({width: this.status_win_width});
         this.status_window.update_position({x: this.status_win_x});
         let current_chars = [];
-        for (let i = 0; i < sorted_chars_list.length; ++i) {
-            let char = sorted_chars_list[i];
+        for (let i = 0; i < party.length; ++i) {
+            let char = party[i];
             current_chars.push(char.key_name);
             let info_sprite = this.info_sprites[char.key_name];
             if (!info_sprite.visible) {
                 this.toggle_char_info(info_sprite);
-                info_sprite.name.visible = true;
+                info_sprite.visible = true;
             }
             this.status_window.update_text(char.name, info_sprite.name);
             const base_x_pos =  i * WIDTH_PER_CHAR + numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH + numbers.OUTSIDE_BORDER_WIDTH;
