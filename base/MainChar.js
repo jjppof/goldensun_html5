@@ -10,7 +10,8 @@ export const elements = {
     VENUS: "venus",
     MERCURY: "mercury",
     MARS: "mars",
-    JUPITER: "jupiter"
+    JUPITER: "jupiter",
+    NO_ELEMENT: "no_element"
 };
 
 export class MainChar extends SpriteBase {
