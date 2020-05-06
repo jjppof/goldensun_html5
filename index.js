@@ -68,7 +68,8 @@ var data = {
     walking_on_pillars_tiles: new Set(),
     dynamic_jump_events_bodies: [],
     scale_factor: 1,
-    menu_open: false
+    menu_open: false,
+    esc_input: null
 };
 
 //debugging porpouses
@@ -181,7 +182,7 @@ async function create() {
     data.overlayer_group = game.add.group();
 
     //initialize screens
-    data.menu_screen = initialize_menu();
+    data.menu_screen = initialize_menu(data);
     game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(() => {
         if (!data.menu_open) {
             data.menu_open = true;
@@ -193,7 +194,7 @@ async function create() {
             data.menu_screen.close_menu();
         }
     }, this);
-    game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
+    data.esc_input = game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
         if (data.menu_open) {
             data.menu_open = false;
             data.menu_screen.close_menu();

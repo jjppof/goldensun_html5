@@ -2,7 +2,8 @@ import { Window } from '../base/Window.js';
 import { main_char_list, party } from '../chars/main_chars.js';
 import * as numbers from '../magic_numbers.js';
 import { get_text_width } from '../utils.js';
-import { HorizontalMenu } from '../base/HorizontalMenu.js';
+import { HorizontalMenu } from '../base/menus/HorizontalMenu.js';
+import { PsynergyMenuScreen } from './psynergy_menu.js';
 
 const WIDTH_PER_CHAR = 50;
 const STATUS_WIN_HEIGHT = 35;
@@ -13,15 +14,35 @@ const STATUS_BAR_COLOR_GOOD = 0x0000f8;
 const STATUS_BAR_COLOR_BAD = 0xf80000;
 
 export class MenuScreen {
-    constructor(game) {
+    constructor(game, data) {
         this.game = game;
+        this.data = data;
         this.status_win_width = Object.keys(main_char_list).length * WIDTH_PER_CHAR;
         this.status_win_x = numbers.GAME_WIDTH - this.status_win_width - numbers.INSIDE_BORDER_WIDTH - numbers.OUTSIDE_BORDER_WIDTH;
         this.status_window = new Window(this.game, this.status_win_x, 0, this.status_win_width, STATUS_WIN_HEIGHT, false);
         this.status_header_width = get_text_width(this.game, "HP ");
         this.info_sprites = {};
-        this.horizontal_menu = new HorizontalMenu(this.game, ["psynergy", "djinni", "item", "status"], ["Psynergy", "Djinn", "Item", "Status"]);
+        this.buttons_keys = ["psynergy", "djinni", "item", "status"];
+        this.horizontal_menu = new HorizontalMenu(
+            this.game,
+            this.buttons_keys,
+            ["Psynergy", "Djinn", "Item", "Status"],
+            this.button_press.bind(this)
+        );
+        this.esc_propagation_priority = 0;
+        this.psynergy_menu = new PsynergyMenuScreen(this.game, this.data, this.esc_propagation_priority);
         this.set_chars_info();
+    }
+
+    button_press(index) {
+        switch(this.buttons_keys[index]) {
+            case "psynergy":
+                this.horizontal_menu.deactivate();
+                this.psynergy_menu.open_menu(() => {
+                    this.horizontal_menu.activate();
+                });
+                break;
+        }
     }
 
     set_chars_info() {
@@ -140,6 +161,7 @@ export class MenuScreen {
     }
 
     close_menu() {
+        if (!this.horizontal_menu.menu_active) return;
         this.horizontal_menu.close();
         this.status_window.close();
     }
@@ -147,7 +169,7 @@ export class MenuScreen {
 
 let menu_screen;
 
-export function initialize_menu() {
-    menu_screen = new MenuScreen(game);
+export function initialize_menu(data) {
+    menu_screen = new MenuScreen(game, data);
     return menu_screen;
 }

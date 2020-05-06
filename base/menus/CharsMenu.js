@@ -1,17 +1,18 @@
-import { Window } from './Window.js';
-import { party } from '../chars/main_chars.js';
-import * as numbers from '../magic_numbers.js';
+import { Window } from '../Window.js';
+import { party } from '../../chars/main_chars.js';
+import * as numbers from '../../magic_numbers.js';
 
-const BASE_WIN_WIDTH = 102;
-const BASE_WIN_HEIGHT = 38;
+const BASE_WIN_WIDTH = 100;
+const BASE_WIN_HEIGHT = 36;
 const WORKING_WIDTH = BASE_WIN_WIDTH - 2 * (numbers.OUTSIDE_BORDER_WIDTH + numbers.INSIDE_BORDER_WIDTH);
 const SLOT_WIDTH = parseInt(WORKING_WIDTH/4);
 const SLOT_WIDTH_CENTER = parseInt(WORKING_WIDTH/8);
 
 export class CharsMenu {
-    constructor(game, on_choose) {
+    constructor(game, on_choose, on_change) {
         this.game = game;
         this.on_choose = on_choose === undefined ? () => {} : on_choose;
+        this.on_change = on_change === undefined ? () => {} : on_change;
         this.base_window = new Window(this.game, 0, 0, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
         this.group = game.add.group();
         this.group.alpha = 0;
@@ -142,6 +143,7 @@ export class CharsMenu {
         if (this.selected_button_index < 0) {
             this.selected_button_index = this.buttons_number - 1;
         }
+        this.on_change(this.selected_button_index);
         this.set_button();
     }
 

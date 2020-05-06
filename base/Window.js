@@ -209,9 +209,13 @@ export class Window {
         }
     }
 
-    set_text_in_position(text, x_pos, y_pos) {
+    set_text_in_position(text, x_pos, y_pos, right_align = false) {
         let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', text, numbers.FONT_SIZE);
         let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, 'gs-bmp-font', text, numbers.FONT_SIZE);
+        if (right_align) {
+            text_sprite.x -= text_sprite.width;
+            text_sprite_shadow.x -= text_sprite_shadow.width;
+        }
 
         text_sprite.smoothed = false;
         text_sprite.autoRound = true;
@@ -222,7 +226,7 @@ export class Window {
         this.group.add(text_sprite_shadow);
         this.group.add(text_sprite);
 
-        return {text: text_sprite, shadow: text_sprite_shadow};
+        return {text: text_sprite, shadow: text_sprite_shadow, right_align: right_align, initial_x: x_pos};
     }
 
     update_text(new_text, text_shadow_pair, new_x, new_y) {
@@ -231,10 +235,15 @@ export class Window {
         if (new_x !== undefined) {
             text_shadow_pair.text.x = new_x;
             text_shadow_pair.shadow.x = new_x;
+            text_shadow_pair.initial_x = new_x;
         }
         if (new_y !== undefined) {
             text_shadow_pair.text.y = new_y;
             text_shadow_pair.shadow.y = new_y;
+        }
+        if (text_shadow_pair.right_align) {
+            text_shadow_pair.text.x = text_shadow_pair.initial_x - text_shadow_pair.text.width;
+            text_shadow_pair.shadow.x = text_shadow_pair.initial_x - text_shadow_pair.shadow.width + 1;
         }
     }
 
