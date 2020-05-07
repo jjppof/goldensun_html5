@@ -23,6 +23,8 @@ export class Window {
         this.need_pos_update = need_pos_update;
         this.open = false;
         this.lines_sprites = [];
+
+        this.extra_sprites = [];
     }
 
     draw_background() {
@@ -187,6 +189,22 @@ export class Window {
         if (this.need_pos_update) {
             this.group.x = this.game.camera.x + this.x;
             this.group.y = this.game.camera.y + this.y;
+        }
+    }
+
+    create_at_group(x, y, key) {
+        let sprite = this.group.create(x, y, key);
+        this.extra_sprites.push(sprite);
+        return sprite;
+    }
+
+    remove_from_group(sprite, destroy = true) {
+        if (sprite !== undefined) {
+            this.group.remove(sprite, destroy);
+        } else {
+            for (let i = 0; i < this.extra_sprites.length; ++i) {
+                this.group.remove(this.extra_sprites[i], destroy);
+            }
         }
     }
 

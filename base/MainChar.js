@@ -99,6 +99,8 @@ export class MainChar extends SpriteBase {
         this.mercury_djinni = [];
         this.mars_djinni = [];
         this.jupiter_djinni = [];
+        this.abilities = [];
+        this.set_abilities();
     }
 
     load_assets(game, load_callback) {
@@ -158,5 +160,11 @@ export class MainChar extends SpriteBase {
         } else {
             this.current_luk *= parseInt(this.class.luk_boost);
         }
+    }
+
+    set_abilities() {
+        this.abilities = this.innate_abilities.concat(this.class.ability_level_pairs.filter(pair => {
+            return pair.level <= this.level;
+        }).map(pair => pair.ability));
     }
 }
