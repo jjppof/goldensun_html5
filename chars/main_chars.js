@@ -92,7 +92,7 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
             load_other_assets_promise_resolve = resolve;
         });
         load_promises.push(load_other_assets_promise);
-        main_char_list[char_data.key_name].load_assets(load_other_assets_promise_resolve);
+        main_char_list[char_data.key_name].load_assets(game, load_other_assets_promise_resolve);
     }
     Promise.all(load_promises).then(load_promise_resolve);
 }

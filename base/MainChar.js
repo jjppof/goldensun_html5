@@ -101,7 +101,7 @@ export class MainChar extends SpriteBase {
         this.jupiter_djinni = [];
     }
 
-    load_assets(load_callback) {
+    load_assets(game, load_callback) {
         game.load.image(this.key_name + '_avatar', this.avatar_image_path).onLoadComplete.addOnce(load_callback);
         game.load.start();
     }

@@ -8,7 +8,7 @@
         "battle_target": "no_target",
         "range": 1,
         "pp_cost": 2,
-        "element_power": 0,
+        "ability_power": 0,
         "effects_outside_battle": false,
         "in_battle": false,
         "ability_effect_key": "nothing",

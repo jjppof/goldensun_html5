@@ -1,5 +1,6 @@
 import * as numbers from './magic_numbers.js';
 import { initialize_main_chars, main_char_list, initialize_classes, party_data } from './chars/main_chars.js';
+import { initialize_abilities, abilities_list } from './chars/abilities.js';
 import { initializeMaps, loadMaps, maps } from './maps/maps.js';
 import { jump_event, jump_near_collision } from './events/jump.js';
 import { set_door_event, door_event_phases } from './events/door.js';
@@ -13,7 +14,6 @@ import { config_hero, change_hero_sprite, set_actual_action, update_shadow, stop
 
 var data = {
     game: undefined,
-    load_promise: undefined,
     cursors: undefined,
     hero: undefined,
     map_collider_layer: undefined,
@@ -69,12 +69,15 @@ var data = {
     dynamic_jump_events_bodies: [],
     scale_factor: 1,
     menu_open: false,
-    esc_input: null
+    esc_input: null,
+    classes_db: null,
+    abilities_db: null
 };
 
 //debugging porpouses
 window.maps = maps;
 window.main_char_list = main_char_list;
+window.abilities_list = abilities_list;
 window.party_data = party_data;
 window.data = data;
 
@@ -165,17 +168,23 @@ async function create() {
 
     initialize_classes(data.classes_db);
 
-    let load_promise_resolve;
-    data.load_promise = new Promise(resolve => {
-        load_promise_resolve = resolve;
+    let load_abilities_promise_resolve;
+    let load_abilities_promise = new Promise(resolve => {
+        load_abilities_promise_resolve = resolve;
+    });
+    initialize_abilities(game, data.abilities_db, load_abilities_promise_resolve);
+    await load_abilities_promise;
+
+    let load_chars_promise_resolve;
+    let load_chars_promise = new Promise(resolve => {
+        load_chars_promise_resolve = resolve;
     });
     game.load.json('main_chars_db', 'assets/dbs/main_chars.json').onLoadComplete.addOnce(() => {
         data.main_chars_db = game.cache.getJSON('main_chars_db');
-        initialize_main_chars(game, data.main_chars_db, load_promise_resolve);
+        initialize_main_chars(game, data.main_chars_db, load_chars_promise_resolve);
     });
     game.load.start();
-
-    await data.load_promise;
+    await load_chars_promise;
 
     //creating groups. Order here is important
     data.underlayer_group = game.add.group();
