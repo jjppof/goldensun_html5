@@ -1,5 +1,5 @@
 import { Window } from '../Window.js';
-import { party } from '../../chars/main_chars.js';
+import { party_data } from '../../chars/main_chars.js';
 import * as numbers from '../../magic_numbers.js';
 
 const BASE_WIN_WIDTH = 100;
@@ -45,10 +45,10 @@ export class CharsMenu {
             this.char_buttons[key_name].destroy();
         }
         this.char_buttons = {};
-        for (let i = 0; i < party.length; ++i) {
-            const char = party[i];
+        for (let i = 0; i < party_data.members.length; ++i) {
+            const char = party_data.members[i];
             this.char_buttons[char.key_name] = this.group.create(0, 0, char.key_name + "_idle");
-            party[i].setAnimation(this.char_buttons[char.key_name], "idle");
+            party_data.members[i].setAnimation(this.char_buttons[char.key_name], "idle");
             this.char_buttons[char.key_name].animations.play("idle_down");
         }
     }
@@ -105,8 +105,8 @@ export class CharsMenu {
     update_position() {
         this.group.x = this.game.camera.x + this.x;
         this.group.y = this.game.camera.y + this.y;
-        for (let i = 0; i < party.length; ++i) {
-            const char = party[i];
+        for (let i = 0; i < party_data.members.length; ++i) {
+            const char = party_data.members[i];
             this.char_buttons[char.key_name].centerX = i * SLOT_WIDTH + SLOT_WIDTH_CENTER + numbers.OUTSIDE_BORDER_WIDTH + numbers.INSIDE_BORDER_WIDTH;
             this.char_buttons[char.key_name].y = this.unselected_y;
         }
@@ -114,7 +114,7 @@ export class CharsMenu {
 
     init_cursor_tween() {
         const cursor_delta = 4;
-        const selected_char = this.char_buttons[party[this.selected_button_index].key_name];
+        const selected_char = this.char_buttons[party_data.members[this.selected_button_index].key_name];
         this.cursor_tween.to(
             { x: selected_char.x - cursor_delta, y: this.cursor_base_y + cursor_delta},
             this.cursor_tween_time,
@@ -127,7 +127,7 @@ export class CharsMenu {
     }
 
     set_cursor_tween() {
-        const selected_char = this.char_buttons[party[this.selected_button_index].key_name];
+        const selected_char = this.char_buttons[party_data.members[this.selected_button_index].key_name];
         if (this.cursor_tween.isRunning && this.cursor_tween.isPaused) {
             this.cursor_tween.resume();
         } else if (!this.cursor_tween.isRunning) {
@@ -148,14 +148,14 @@ export class CharsMenu {
     }
 
     set_button() {
-        let selected_char = this.char_buttons[party[this.selected_button_index].key_name];
+        let selected_char = this.char_buttons[party_data.members[this.selected_button_index].key_name];
         selected_char.y = this.selected_y;
         this.cursor_group.x = selected_char.x;
         this.set_cursor_tween();
     }
 
     reset_button() {
-        let selected_char = this.char_buttons[party[this.selected_button_index].key_name];
+        let selected_char = this.char_buttons[party_data.members[this.selected_button_index].key_name];
         selected_char.y = this.unselected_y;
         this.cursor_tween.pause();
     }
@@ -163,10 +163,10 @@ export class CharsMenu {
     open(select_index, start_active = true) {
         this.right_pressed = false;
         this.left_pressed = false;
-        if (Object.keys(this.char_buttons).length != party.length) {
+        if (Object.keys(this.char_buttons).length != party_data.members.length) {
             this.set_chars();
         }
-        this.buttons_number = party.length;
+        this.buttons_number = party_data.members.length;
         this.selected_button_index = select_index === undefined ? 0 : select_index;
         this.update_position();
         this.set_button();

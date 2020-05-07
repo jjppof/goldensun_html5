@@ -1,5 +1,5 @@
 import * as numbers from './magic_numbers.js';
-import { initialize_main_chars, main_char_list, initialize_classes, party, party_data } from './chars/main_chars.js';
+import { initialize_main_chars, main_char_list, initialize_classes, party_data } from './chars/main_chars.js';
 import { initializeMaps, loadMaps, maps } from './maps/maps.js';
 import { jump_event, jump_near_collision } from './events/jump.js';
 import { set_door_event, door_event_phases } from './events/door.js';
@@ -75,7 +75,7 @@ var data = {
 //debugging porpouses
 window.maps = maps;
 window.main_char_list = main_char_list;
-window.party = party;
+window.party_data = party_data;
 window.data = data;
 
 var game = new Phaser.Game(

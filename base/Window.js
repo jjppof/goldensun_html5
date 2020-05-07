@@ -47,7 +47,7 @@ export class Window {
 
         this.graphics.lineStyle(1, 0x111111)
         this.graphics.moveTo(3, 3);
-        this.graphics.lineTo(3, this.height);
+        this.graphics.lineTo(3, this.height - 1);
 
         //right
         this.graphics.lineStyle(1, 0x525252)
@@ -85,7 +85,7 @@ export class Window {
 
         //down
         this.graphics.lineStyle(1, 0x525252)
-        this.graphics.moveTo(4, this.height);
+        this.graphics.moveTo(3, this.height);
         this.graphics.lineTo(this.width, this.height);
 
         this.graphics.lineStyle(1, 0xFFFFFF)
@@ -128,6 +128,14 @@ export class Window {
         this.graphics.lineStyle(1, 0x525252);
         this.graphics.moveTo(this.width - 1, this.height - 1);
         this.graphics.lineTo(this.width, this.height);
+
+        this.graphics.lineStyle(1, 0x111111);
+        this.graphics.moveTo(this.width - 1, 4);
+        this.graphics.lineTo(this.width, 5);
+
+        this.graphics.lineStyle(1, 0x111111);
+        this.graphics.moveTo(4, this.height - 1);
+        this.graphics.lineTo(5, this.height);
     }
 
     update_size(new_size) {

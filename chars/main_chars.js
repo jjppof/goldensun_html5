@@ -3,9 +3,9 @@ import { MainChar } from '../base/MainChar.js';
 
 export let main_char_list = {};
 export let classes_list = {};
-export let party = [];
 export let class_table;
 export let party_data = {
+    members: [],
     coins: 0
 };
 
@@ -70,7 +70,7 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
             char_data.in_party
         );
         if (char_data.in_party) {
-            party.push(main_char_list[char_data.key_name]);
+            party_data.members.push(main_char_list[char_data.key_name]);
         }
         for (let j = 0; j < char_data.actions.length; ++j) {
             const action = char_data.actions[j];

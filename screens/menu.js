@@ -1,5 +1,5 @@
 import { Window } from '../base/Window.js';
-import { main_char_list, party } from '../chars/main_chars.js';
+import { main_char_list, party_data } from '../chars/main_chars.js';
 import * as numbers from '../magic_numbers.js';
 import { get_text_width } from '../utils.js';
 import { HorizontalMenu } from '../base/menus/HorizontalMenu.js';
@@ -110,13 +110,13 @@ export class MenuScreen {
     }
 
     update_chars_info() {
-        this.status_win_width = party.length * WIDTH_PER_CHAR;
+        this.status_win_width = party_data.members.length * WIDTH_PER_CHAR;
         this.status_win_x = numbers.GAME_WIDTH - this.status_win_width - numbers.INSIDE_BORDER_WIDTH - numbers.OUTSIDE_BORDER_WIDTH;
         this.status_window.update_size({width: this.status_win_width});
         this.status_window.update_position({x: this.status_win_x});
         let current_chars = [];
-        for (let i = 0; i < party.length; ++i) {
-            let char = party[i];
+        for (let i = 0; i < party_data.members.length; ++i) {
+            let char = party_data.members[i];
             current_chars.push(char.key_name);
             let info_sprite = this.info_sprites[char.key_name];
             if (!info_sprite.visible) {
