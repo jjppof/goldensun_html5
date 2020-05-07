@@ -182,6 +182,11 @@ export class Window {
         }
     }
 
+    remove_smooth(text_sprite) {
+        text_sprite.smoothed = false;
+        text_sprite.autoRound = true
+    }
+
     set_text(lines) {
         for (let i = 0; i < this.lines_sprites.length; ++i) {
             this.lines_sprites[i].text.destroy();
@@ -197,16 +202,34 @@ export class Window {
 
             y_pos += numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES;
 
-            text_sprite.smoothed = false;
-            text_sprite.autoRound = true;
-            text_sprite_shadow.smoothed = false;
-            text_sprite_shadow.autoRound = true;
+            this.remove_smooth(text_sprite);
+            this.remove_smooth(text_sprite_shadow);
             text_sprite_shadow.tint = 0x0;
 
             this.group.add(text_sprite_shadow);
             this.group.add(text_sprite);
             this.lines_sprites.push({text: text_sprite, shadow: text_sprite_shadow});
         }
+    }
+
+    set_single_line_text(text, right_align = false) {
+        const x_pos = numbers.WINDOW_PADDING_H + 4;
+        let y_pos = numbers.WINDOW_PADDING_TOP;
+        let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', text, numbers.FONT_SIZE);
+        let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, 'gs-bmp-font', text, numbers.FONT_SIZE);
+        if (right_align) {
+            text_sprite.x -= text_sprite.width;
+            text_sprite_shadow.x -= text_sprite_shadow.width;
+        }
+
+        this.remove_smooth(text_sprite);
+        this.remove_smooth(text_sprite_shadow);
+        text_sprite_shadow.tint = 0x0;
+
+        this.group.add(text_sprite_shadow);
+        this.group.add(text_sprite);
+
+        return {text: text_sprite, shadow: text_sprite_shadow, right_align: right_align, initial_x: x_pos};
     }
 
     set_text_in_position(text, x_pos, y_pos, right_align = false) {
@@ -217,10 +240,8 @@ export class Window {
             text_sprite_shadow.x -= text_sprite_shadow.width;
         }
 
-        text_sprite.smoothed = false;
-        text_sprite.autoRound = true;
-        text_sprite_shadow.smoothed = false;
-        text_sprite_shadow.autoRound = true;
+        this.remove_smooth(text_sprite);
+        this.remove_smooth(text_sprite_shadow);
         text_sprite_shadow.tint = 0x0;
 
         this.group.add(text_sprite_shadow);

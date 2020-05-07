@@ -1,5 +1,5 @@
 import * as numbers from './magic_numbers.js';
-import { initialize_main_chars, main_char_list, initialize_classes, party } from './chars/main_chars.js';
+import { initialize_main_chars, main_char_list, initialize_classes, party, party_data } from './chars/main_chars.js';
 import { initializeMaps, loadMaps, maps } from './maps/maps.js';
 import { jump_event, jump_near_collision } from './events/jump.js';
 import { set_door_event, door_event_phases } from './events/door.js';
@@ -161,6 +161,7 @@ async function create() {
     data.actual_direction = data.init_db.initial_direction;
     data.map_name = data.init_db.map_key_name;
     data.map_collider_layer = data.init_db.map_z_index;
+    party_data.coins = data.init_db.coins;
 
     initialize_classes(data.classes_db);
 
@@ -189,7 +190,7 @@ async function create() {
             stop_hero(data);
             update_shadow(data);
             data.menu_screen.open_menu();
-        } else {
+        } else if (data.menu_screen.is_active()) {
             data.menu_open = false;
             data.menu_screen.close_menu();
         }

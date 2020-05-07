@@ -153,6 +153,10 @@ export class MenuScreen {
         }
     }
 
+    is_active() {
+        return this.horizontal_menu.menu_active;
+    }
+
     open_menu() {
         this.horizontal_menu.open();
         this.status_window.update();
@@ -161,7 +165,7 @@ export class MenuScreen {
     }
 
     close_menu() {
-        if (!this.horizontal_menu.menu_active) return;
+        if (!this.is_active()) return;
         this.horizontal_menu.close();
         this.status_window.close();
     }

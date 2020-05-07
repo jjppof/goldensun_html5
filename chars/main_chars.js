@@ -5,6 +5,9 @@ export let main_char_list = {};
 export let classes_list = {};
 export let party = [];
 export let class_table;
+export let party_data = {
+    coins: 0
+};
 
 export function initialize_classes(classes_db) {
     class_table = classes_db.class_table;
