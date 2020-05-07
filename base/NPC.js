@@ -19,7 +19,8 @@ export class NPC {
         message,
         thought_message,
         avatar,
-        base_collider_layer
+        base_collider_layer,
+        talk_range_factor
     ) {
         this.type = type;
         this.key_name = key_name;
@@ -33,6 +34,7 @@ export class NPC {
         this.thought_message = thought_message;
         this.avatar = avatar;
         this.base_collider_layer = base_collider_layer;
+        this.talk_range_factor = talk_range_factor;
     }
 
     set_sprite(sprite) {

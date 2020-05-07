@@ -14,7 +14,7 @@ export function trigger_npc_dialog(data) {
                 data.hero.y,
                 npc.npc_sprite.x,
                 npc.npc_sprite.y,
-                numbers.NPC_TALK_RANGE
+                npc.talk_range_factor
             );
             if (is_close) {
                 data.actual_action = "idle";

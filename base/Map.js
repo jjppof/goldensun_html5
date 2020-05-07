@@ -1,6 +1,7 @@
 import { u } from "../utils.js";
 import { NPC_Sprite, NPC } from './NPC.js';
 import { PsynergyItems, PsynergyItems_Sprite } from "./PsynergyItems.js";
+import * as numbers from '../magic_numbers.js';
 
 export class Map {
     constructor (
@@ -141,7 +142,8 @@ export class Map {
                     property_info.message,
                     property_info.thought_message,
                     property_info.avatar ? property_info.avatar : null,
-                    property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer
+                    property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer,
+                    property_info.talk_range_factor === undefined ? numbers.NPC_TALK_RANGE : property_info.talk_range_factor
                 ));
             } else if(property.startsWith("psynergy_item")) {
                 const property_info = JSON.parse(this.sprite.properties[property]);
