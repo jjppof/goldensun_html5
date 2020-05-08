@@ -23,19 +23,23 @@ export class MenuScreen {
         this.status_header_width = get_text_width(this.game, "HP ");
         this.info_sprites = {};
         this.buttons_keys = ["psynergy", "djinni", "item", "status"];
+        let esc_propagation_priority = 0;
+        let enter_propagation_priority = 0;
         this.horizontal_menu = new HorizontalMenu(
             this.game,
+            this.data,
             this.buttons_keys,
             ["Psynergy", "Djinn", "Item", "Status"],
-            this.button_press.bind(this)
+            this.button_press.bind(this),
+            enter_propagation_priority
         );
-        this.esc_propagation_priority = 0;
-        this.psynergy_menu = new PsynergyMenuScreen(this.game, this.data, this.esc_propagation_priority);
+        ++enter_propagation_priority;
+        this.psynergy_menu = new PsynergyMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
         this.set_chars_info();
     }
 
     button_press(index) {
-        switch(this.buttons_keys[index]) {
+        switch (this.buttons_keys[index]) {
             case "psynergy":
                 this.horizontal_menu.deactivate();
                 this.psynergy_menu.open_menu(() => {

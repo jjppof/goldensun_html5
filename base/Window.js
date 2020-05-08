@@ -192,8 +192,11 @@ export class Window {
         }
     }
 
-    create_at_group(x, y, key) {
+    create_at_group(x, y, key, color) {
         let sprite = this.group.create(x, y, key);
+        if (color !== undefined) {
+            sprite.tint = color;
+        }
         this.extra_sprites.push(sprite);
         return sprite;
     }
@@ -213,20 +216,20 @@ export class Window {
         text_sprite.autoRound = true
     }
 
-    set_text(lines) {
+    set_text(lines, padding_x, padding_y, space_between_lines) {
         for (let i = 0; i < this.lines_sprites.length; ++i) {
             this.lines_sprites[i].text.destroy();
             this.lines_sprites[i].shadow.destroy();
         }
         this.lines_sprites = [];
-        const x_pos = numbers.WINDOW_PADDING_H + 4;
-        let y_pos = numbers.WINDOW_PADDING_TOP;
+        const x_pos = padding_x === undefined ? numbers.WINDOW_PADDING_H + 4 : padding_x;
+        let y_pos = padding_y === undefined ? numbers.WINDOW_PADDING_TOP : padding_y;
         for (let i = 0; i < lines.length; ++i) {
             let line = lines[i];
             let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', line, numbers.FONT_SIZE);
             let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, 'gs-bmp-font', line, numbers.FONT_SIZE);
 
-            y_pos += numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES;
+            y_pos += numbers.FONT_SIZE + (space_between_lines === undefined ? numbers.SPACE_BETWEEN_LINES : space_between_lines);
 
             this.remove_smooth(text_sprite);
             this.remove_smooth(text_sprite_shadow);
@@ -311,6 +314,9 @@ export class Window {
             this.group.alpha = 0;
             this.group.width = 0;
             this.group.height = 0;
+            if (callback !== undefined) {
+                callback();
+            }
         }
     }
 

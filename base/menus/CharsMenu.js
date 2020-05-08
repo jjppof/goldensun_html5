@@ -9,8 +9,10 @@ const SLOT_WIDTH = parseInt(WORKING_WIDTH/4);
 const SLOT_WIDTH_CENTER = parseInt(WORKING_WIDTH/8);
 
 export class CharsMenu {
-    constructor(game, on_choose, on_change) {
+    constructor(game, data, on_choose, on_change, enter_propagation_priority) {
         this.game = game;
+        this.data = data;
+        this.enter_propagation_priority = enter_propagation_priority;
         this.on_choose = on_choose === undefined ? () => {} : on_choose;
         this.on_change = on_change === undefined ? () => {} : on_change;
         this.base_window = new Window(this.game, 0, 0, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
@@ -56,8 +58,9 @@ export class CharsMenu {
     set_control() {
         game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onUp.add(() => {
             if (!this.menu_open || !this.menu_active) return;
+            this.data.enter_input.getSignal().halt();
             this.on_choose(this.selected_button_index);
-        });
+        }, this, this.enter_propagation_priority);
         game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
             if (!this.menu_open || !this.menu_active) return;
             if (this.left_pressed) {
@@ -189,11 +192,15 @@ export class CharsMenu {
         this.left_pressed = false;
         this.menu_active = true;
         this.set_button();
+        this.cursor.alpha = 1;
+        this.cursor_tween.resume();
     }
 
     deactivate() {
         this.menu_active = false;
         this.stop_timers();
         this.reset_button();
+        this.cursor.alpha = 0;
+        this.cursor_tween.pause();
     }
 }

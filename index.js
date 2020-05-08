@@ -98,12 +98,16 @@ function load_buttons() {
     game.load.image('djinni_button', 'assets/images/buttons/djinni.gif');
     game.load.image('item_button', 'assets/images/buttons/item.gif');
     game.load.image('status_button', 'assets/images/buttons/status.gif');
+
+    game.load.image('shift_keyboard', 'assets/images/keyboard/shift.png');
+    game.load.image('tab_keyboard', 'assets/images/keyboard/tab.png');
 }
 
 function load_misc() {
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.image('cursor', 'assets/images/misc/cursor.gif');
     game.load.image('green_arrow', 'assets/images/misc/green_arrow.gif');
+    game.load.image('green_arrow', 'assets/images/misc/page_arrow.png');
 }
 
 function preload() {
@@ -274,7 +278,7 @@ async function create() {
         }, this);
 
         //enable enter event
-        game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(enter_key_event, this);
+        data.enter_input = game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(enter_key_event, this);
 
         //set keyboard cursors
         data.cursors = game.input.keyboard.createCursorKeys();

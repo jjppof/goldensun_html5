@@ -3,9 +3,11 @@ import * as numbers from '../../magic_numbers.js';
 import { Window } from '../Window.js';
 
 export class HorizontalMenu {
-    constructor(game, buttons, titles, on_choose) {
+    constructor(game, data, buttons, titles, on_choose, enter_propagation_priority) {
         this.game = game;
+        this.data = data;
         this.buttons_number = buttons.length;
+        this.enter_propagation_priority = enter_propagation_priority;
         this.max_title_width = get_text_width(this.game, _.max(titles, title => title.length));
         const total_width = numbers.BUTTON_WIDTH * this.buttons_number + this.max_title_width +
             2 * (numbers.INSIDE_BORDER_WIDTH + numbers.OUTSIDE_BORDER_WIDTH + numbers.WINDOW_PADDING_H);
@@ -47,8 +49,9 @@ export class HorizontalMenu {
     set_control() {
         game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onUp.add(() => {
             if (!this.menu_open || !this.menu_active) return;
+            this.data.enter_input.getSignal().halt();
             this.on_choose(this.selected_button_index);
-        });
+        }, this, this.enter_propagation_priority);
         game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
             if (!this.menu_open || !this.menu_active) return;
             if (this.left_pressed) {

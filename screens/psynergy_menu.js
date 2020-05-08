@@ -1,5 +1,6 @@
 import { CharsMenu } from '../base/menus/CharsMenu.js';
 import { BasicInfoWindow } from '../base/windows/BasicInfoWindow.js';
+import { ItemPsynergyChooseWindow } from '../base/windows/ItemPsynergyChooseWindow.js';
 import { party_data } from '../chars/main_chars.js';
 import { abilities_list } from '../chars/abilities.js';
 import { Window } from '../base/Window.js';
@@ -33,15 +34,16 @@ const PSY_OVERVIEW_WIN_SPACE_BETWN_ICO = ((PSY_OVERVIEW_WIN_WIDTH - 2*(numbers.I
     (PSY_OVERVIEW_WIN_ICONS_PER_LINE * PSY_OVERVIEW_WIN_ICON_WIDTH))/(PSY_OVERVIEW_WIN_ICONS_PER_LINE - 1);
 
 export class PsynergyMenuScreen {
-    constructor(game, data, esc_propagation_priority) {
+    constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
-        this.chars_menu = new CharsMenu(this.game, undefined, this.char_change.bind(this));
+        this.esc_propagation_priority = esc_propagation_priority + 1;
+        this.enter_propagation_priority = enter_propagation_priority + 1;
+        this.chars_menu = new CharsMenu(this.game, this.data, this.char_choose.bind(this), this.char_change.bind(this), this.enter_propagation_priority);
         this.basic_info_window = new BasicInfoWindow(this.game);
         this.selected_char_index = 0;
         this.is_open = false;
         this.close_callback = null;
-        this.esc_propagation_priority = esc_propagation_priority + 1;
         this.set_control();
         this.guide_window = new Window(this.game, GUIDE_WINDOW_X, GUIDE_WINDOW_Y, GUIDE_WINDOW_WIDTH, GUIDE_WINDOW_HEIGHT);
         this.guide_window_text = this.guide_window.set_single_line_text("");
@@ -54,7 +56,15 @@ export class PsynergyMenuScreen {
         this.description_window_text = this.description_window.set_single_line_text("");
         this.psynergy_overview_window = new Window(this.game, PSY_OVERVIEW_WIN_X, PSY_OVERVIEW_WIN_Y, PSY_OVERVIEW_WIN_WIDTH, PSY_OVERVIEW_WIN_HEIGHT);
         this.shortcuts_window = new Window(this.game, SHORTCUTS_WINDOW_X, SHORTCUTS_WINDOW_Y, SHORTCUTS_WINDOW_WIDTH, SHORTCUTS_WINDOW_HEIGHT);
-        this.shortcuts_window_text = this.shortcuts_window.set_single_line_text("Shortcuts...");
+        this.shortcuts_window_text = this.shortcuts_window.set_text(["Use a keyboard number", "to set a shorcut."], undefined, 7, 3);
+        this.psynergy_choose_window = new ItemPsynergyChooseWindow(
+            this.game,
+            this.data,
+            true,
+            this.psynergy_change.bind(this),
+            this.psynergy_choose.bind(this),
+            this.esc_propagation_priority
+        );
     }
 
     set_control() {
@@ -66,9 +76,31 @@ export class PsynergyMenuScreen {
     }
 
     char_change(party_index) {
+        if (!this.is_open) return;
         this.selected_char_index = party_index;
         this.basic_info_window.set_char(party_data.members[party_index]);
         this.set_psynergy_icons();
+    }
+
+    char_choose(party_index) {
+        if (!this.is_open) return;
+        this.chars_menu.deactivate();
+        this.choosing_psynergy = true;
+        this.set_guide_window_text();
+        this.psynergy_choose_window.open(party_index, () => {
+            this.choosing_psynergy = false;
+            this.chars_menu.activate();
+            this.set_guide_window_text();
+            this.set_description_window_text();
+        });
+    }
+
+    psynergy_change(ability) {
+        this.set_description_window_text(ability.description);
+    }
+
+    psynergy_choose(ability) {
+
     }
 
     set_guide_window_text() {
@@ -79,9 +111,9 @@ export class PsynergyMenuScreen {
         }
     }
 
-    set_description_window_text() {
+    set_description_window_text(description) {
         if (this.choosing_psynergy) {
-
+            this.description_window.update_text(description, this.description_window_text);
         } else {
             this.description_window.update_text(party_data.coins + "    Coins", this.description_window_text);
         }
@@ -105,7 +137,6 @@ export class PsynergyMenuScreen {
     }
 
     open_menu(close_callback) {
-        this.is_open = true;
         this.close_callback = close_callback;
         this.chars_menu.open(this.selected_char_index);
         this.basic_info_window.open(party_data.members[this.selected_char_index]);
@@ -116,6 +147,7 @@ export class PsynergyMenuScreen {
         this.description_window.show(undefined, false);
         this.psynergy_overview_window.show(undefined, false);
         this.shortcuts_window.show(undefined, false);
+        this.is_open = true;
     }
 
     close_menu() {
