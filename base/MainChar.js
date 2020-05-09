@@ -26,6 +26,10 @@ export const elements = {
     NO_ELEMENT: "no_element"
 };
 
+const ELEM_LV_DELTA = 1;
+const ELEM_POWER_DELTA = 5;
+const ELEM_RESIST_DELTA = 5;
+
 export class MainChar extends SpriteBase {
     constructor (
         key_name,
@@ -80,25 +84,6 @@ export class MainChar extends SpriteBase {
         this.mercury_level_base = mercury_level_base;
         this.mars_level_base = mars_level_base;
         this.jupiter_level_base = jupiter_level_base;
-        this.element_afinity = _.max([
-            {element: elements.VENUS, level: this.venus_level_base},
-            {element: elements.MERCURY, level: this.mercury_level_base},
-            {element: elements.MARS, level: this.mars_level_base},
-            {element: elements.JUPITER, level: this.jupiter_level_base},
-        ], element => element.level).element;
-        this.class = choose_right_class(this.element_afinity, this.venus_level_base, this.mercury_level_base, this.mars_level_base, this.jupiter_level_base);
-        this.venus_djinni = new Set();
-        this.mercury_djinni = new Set();
-        this.mars_djinni = new Set();
-        this.jupiter_djinni = new Set();
-        this.init_djinni(djinni);
-        this.hp_curve = hp_curve;
-        this.pp_curve = pp_curve;
-        this.atk_curve = atk_curve;
-        this.def_curve = def_curve;
-        this.agi_curve = agi_curve;
-        this.luk_curve = luk_curve;
-        this.update_attributes();
         this.venus_power_base = venus_power_base;
         this.mercury_power_base = mercury_power_base;
         this.mars_power_base = mars_power_base;
@@ -107,6 +92,26 @@ export class MainChar extends SpriteBase {
         this.mercury_resist_base = mercury_resist_base;
         this.mars_resist_base = mars_resist_base;
         this.jupiter_resist_base = jupiter_resist_base;
+        this.init_elemental_attributes();
+        this.element_afinity = _.max([
+            {element: elements.VENUS, level: this.venus_level_base},
+            {element: elements.MERCURY, level: this.mercury_level_base},
+            {element: elements.MARS, level: this.mars_level_base},
+            {element: elements.JUPITER, level: this.jupiter_level_base},
+        ], element => element.level).element;
+        this.venus_djinni = new Set();
+        this.mercury_djinni = new Set();
+        this.mars_djinni = new Set();
+        this.jupiter_djinni = new Set();
+        this.init_djinni(djinni);
+        this.class = choose_right_class(this.element_afinity, this.venus_level_base, this.mercury_level_base, this.mars_level_base, this.jupiter_level_base);
+        this.hp_curve = hp_curve;
+        this.pp_curve = pp_curve;
+        this.atk_curve = atk_curve;
+        this.def_curve = def_curve;
+        this.agi_curve = agi_curve;
+        this.luk_curve = luk_curve;
+        this.update_attributes();
         this.innate_abilities = innate_abilities;
         this.in_party = in_party;
         this.abilities = [];
@@ -140,6 +145,7 @@ export class MainChar extends SpriteBase {
                     break;
             }
         }
+        this.update_elemental_attributes();
     }
 
     set_max_hp() {
@@ -233,6 +239,49 @@ export class MainChar extends SpriteBase {
         this.set_max_def();
         this.set_max_agi();
         this.set_max_luk();
+    }
+
+    init_elemental_attributes() {
+        this.venus_level_current = this.venus_level_base;
+        this.mercury_level_current = this.mercury_level_base;
+        this.mars_level_current = this.mars_level_base;
+        this.jupiter_level_current = this.jupiter_level_base;
+        this.venus_power_current = this.venus_power_base;
+        this.mercury_power_current = this.mercury_power_base;
+        this.mars_power_current = this.mars_power_base;
+        this.jupiter_power_current = this.jupiter_power_base;
+        this.venus_resist_current = this.venus_resist_base;
+        this.mercury_resist_current = this.mercury_resist_base;
+        this.mars_resist_current = this.mars_resist_base;
+        this.jupiter_resist_current = this.jupiter_resist_base;
+    }
+
+    update_elemental_attributes() {
+        for (let i = 0; i < this.djinni.length; ++i) {
+            let djinn = djinni_list[djinni[i]];
+            switch (djinn.element) {
+                case elements.VENUS:
+                    this.venus_level_current = this.venus_level_base + ELEM_LV_DELTA;
+                    this.venus_power_current = this.venus_power_base + ELEM_POWER_DELTA;
+                    this.venus_resist_current = this.venus_resist_base + ELEM_RESIST_DELTA;
+                    break;
+                case elements.MERCURY:
+                    this.mercury_level_current = this.mercury_level_base + ELEM_LV_DELTA;
+                    this.mercury_power_current = this.mercury_power_base + ELEM_POWER_DELTA;
+                    this.mercury_resist_current = this.mercury_resist_base + ELEM_RESIST_DELTA;
+                    break;
+                case elements.MARS:
+                    this.mars_level_current = this.mars_level_base + ELEM_LV_DELTA;
+                    this.mars_power_current = this.mars_power_base + ELEM_POWER_DELTA;
+                    this.mars_resist_current = this.mars_resist_base + ELEM_RESIST_DELTA;
+                    break;
+                case elements.JUPITER:
+                    this.jupiter_level_current = this.jupiter_level_base + ELEM_LV_DELTA;
+                    this.jupiter_power_current = this.jupiter_power_base + ELEM_POWER_DELTA;
+                    this.jupiter_resist_current = this.jupiter_resist_base + ELEM_RESIST_DELTA;
+                    break;
+            }
+        }
     }
 
     set_abilities() {
