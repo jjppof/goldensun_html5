@@ -1,12 +1,14 @@
 import { Window } from '../Window.js';
 import { party_data } from '../../chars/main_chars.js';
 import * as numbers from '../../magic_numbers.js';
+import { CursorControl } from '../CursorControl.js';
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 36;
+const MAX_PER_LINE = 4;
 const WORKING_WIDTH = BASE_WIN_WIDTH - 2 * (numbers.OUTSIDE_BORDER_WIDTH + numbers.INSIDE_BORDER_WIDTH);
-const SLOT_WIDTH = parseInt(WORKING_WIDTH/4);
-const SLOT_WIDTH_CENTER = parseInt(WORKING_WIDTH/8);
+const SLOT_WIDTH = parseInt(WORKING_WIDTH/MAX_PER_LINE);
+const SLOT_WIDTH_CENTER = parseInt(WORKING_WIDTH/MAX_PER_LINE/2);
 
 export class CharsMenu {
     constructor(game, data, on_choose, on_change, enter_propagation_priority) {
@@ -22,24 +24,44 @@ export class CharsMenu {
         this.y = 0;
         this.selected_y = 0;
         this.unselected_y = -4;
-        this.cursor_base_y = 22;
         this.set_chars();
-        this.cursor_group = game.add.group();
-        this.cursor = this.cursor_group.create(0, 0, "cursor"),
-        this.group.add(this.cursor_group);
-        this.cursor.y = this.cursor_base_y;
         this.selected_button_index = 0;
         this.menu_open = false;
         this.menu_active = false;
-        this.right_pressed = false;
-        this.left_pressed = false;
-        this.choose_timer_repeat = this.game.time.create(false);
-        this.choose_timer_start = this.game.time.create(false);
-        this.button_change_time = Phaser.Timer.QUARTER/2;
         this.set_control();
-        this.cursor_tween = game.tweens.create(this.cursor);
-        this.cursor_tween_time = Phaser.Timer.QUARTER/2;
-        this.init_cursor_tween();
+        this.cursor_control = new CursorControl(this.game, true, false, this.get_max_per_line.bind(this), undefined, this.group,
+            this.change_button.bind(this), undefined, this.get_selected_button_index.bind(this), this.set_selected_button_index.bind(this),
+            undefined, undefined, this.is_open.bind(this), this.is_activated.bind(this), this.get_cursor_x.bind(this),
+            this.get_cursor_y.bind(this)
+        );
+    }
+
+    get_cursor_x() {
+        return this.char_buttons[party_data.members[this.selected_button_index].key_name].x;
+    }
+
+    get_cursor_y() {
+        return 22;
+    }
+
+    get_max_per_line() {
+        return MAX_PER_LINE;
+    }
+
+    get_selected_button_index() {
+        return this.selected_button_index;
+    }
+
+    set_selected_button_index(index) {
+        this.selected_button_index = index;
+    }
+
+    is_open() {
+        return this.menu_open;
+    }
+
+    is_activated() {
+        return this.menu_active;
     }
 
     set_chars() {
@@ -61,48 +83,6 @@ export class CharsMenu {
             this.data.enter_input.getSignal().halt();
             this.on_choose(this.selected_button_index);
         }, this, this.enter_propagation_priority);
-        game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
-            if (!this.menu_open || !this.menu_active) return;
-            if (this.left_pressed) {
-                this.left_pressed = false;
-                this.stop_timers();
-            }
-            this.right_pressed = true;
-            this.set_change_timers(1);
-        });
-        game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onUp.add(() => {
-            if (!this.menu_open || !this.menu_active || !this.right_pressed) return;
-            this.right_pressed = false;
-            this.stop_timers();
-        });
-        game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
-            if (!this.menu_open || !this.menu_active) return;
-            if (this.right_pressed) {
-                this.right_pressed = false;
-                this.stop_timers();
-            }
-            this.left_pressed = true;
-            this.set_change_timers(-1);
-        });
-        game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onUp.add(() => {
-            if (!this.menu_open || !this.menu_active || !this.left_pressed) return;
-            this.left_pressed = false;
-            this.stop_timers();
-        });
-    }
-
-    set_change_timers(step) {
-        this.change_button(step);
-        this.choose_timer_start.add(Phaser.Timer.QUARTER, () => {
-            this.choose_timer_repeat.loop(this.button_change_time, this.change_button.bind(this, step));
-            this.choose_timer_repeat.start();
-        });
-        this.choose_timer_start.start();
-    }
-
-    stop_timers() {
-        this.choose_timer_start.stop();
-        this.choose_timer_repeat.stop();
     }
 
     update_position() {
@@ -115,90 +95,52 @@ export class CharsMenu {
         }
     }
 
-    init_cursor_tween() {
-        const cursor_delta = 4;
-        const selected_char = this.char_buttons[party_data.members[this.selected_button_index].key_name];
-        this.cursor_tween.to(
-            { x: selected_char.x - cursor_delta, y: this.cursor_base_y + cursor_delta},
-            this.cursor_tween_time,
-            Phaser.Easing.Linear.None,
-            false,
-            0,
-            -1,
-            true
-        );
+    change_button(old_index, new_index) {
+        this.reset_button(old_index);
+        this.on_change(new_index);
+        this.set_button(new_index);
     }
 
-    set_cursor_tween() {
-        const selected_char = this.char_buttons[party_data.members[this.selected_button_index].key_name];
-        if (this.cursor_tween.isRunning && this.cursor_tween.isPaused) {
-            this.cursor_tween.resume();
-        } else if (!this.cursor_tween.isRunning) {
-            this.cursor_tween.start();
-            return;
-        }
-        this.cursor_group.x = selected_char.x;
-    }
-
-    change_button(step) {
-        this.reset_button();
-        this.selected_button_index = (this.selected_button_index + step) % this.buttons_number;
-        if (this.selected_button_index < 0) {
-            this.selected_button_index = this.buttons_number - 1;
-        }
-        this.on_change(this.selected_button_index);
-        this.set_button();
-    }
-
-    set_button() {
-        let selected_char = this.char_buttons[party_data.members[this.selected_button_index].key_name];
+    set_button(index) {
+        let selected_char = this.char_buttons[party_data.members[index].key_name];
         selected_char.y = this.selected_y;
-        this.cursor_group.x = selected_char.x;
-        this.set_cursor_tween();
     }
 
-    reset_button() {
-        let selected_char = this.char_buttons[party_data.members[this.selected_button_index].key_name];
+    reset_button(index) {
+        let selected_char = this.char_buttons[party_data.members[index].key_name];
         selected_char.y = this.unselected_y;
-        this.cursor_tween.pause();
     }
 
     open(select_index, start_active = true) {
-        this.right_pressed = false;
-        this.left_pressed = false;
         if (Object.keys(this.char_buttons).length != party_data.members.length) {
             this.set_chars();
         }
         this.buttons_number = party_data.members.length;
         this.selected_button_index = select_index === undefined ? 0 : select_index;
         this.update_position();
-        this.set_button();
+        this.set_button(this.selected_button_index);
         this.base_window.show(undefined, false);
         this.group.alpha = 1;
         this.menu_active = start_active;
+        this.cursor_control.activate();
         this.menu_open = true;
     }
 
     close() {
         this.menu_open = false;
-        this.stop_timers();
-        this.reset_button();
+        this.reset_button(this.selected_button_index);
         this.group.alpha = 0;
+        this.cursor_control.deactivate();
         this.base_window.close(undefined, false);
     }
 
     activate() {
-        this.right_pressed = false;
-        this.left_pressed = false;
         this.menu_active = true;
-        this.cursor.alpha = 1;
-        this.cursor_tween.resume();
+        this.cursor_control.activate();
     }
 
     deactivate() {
         this.menu_active = false;
-        this.stop_timers();
-        this.cursor.alpha = 0;
-        this.cursor_tween.pause();
+        this.cursor_control.deactivate();
     }
 }

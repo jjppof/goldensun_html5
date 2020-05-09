@@ -192,6 +192,10 @@ export class Window {
         }
     }
 
+    add_srpite_to_group(sprite) {
+        this.group.add(sprite);
+    }
+
     create_at_group(x, y, key, color) {
         let sprite = this.group.create(x, y, key);
         if (color !== undefined) {
