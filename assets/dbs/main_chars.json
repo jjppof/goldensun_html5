@@ -115,7 +115,8 @@
         "mars_resist_base": 86,
         "jupiter_resist_base": 87,
         "innate_abilities": ["move", "retreat"],
-        "in_party": true
+        "in_party": true,
+        "djinni": ["flint", "granite"]
     },{
         "key_name": "garet",
         "name": "Garet",
@@ -164,6 +165,7 @@
         "mars_resist_base": 114,
         "jupiter_resist_base": 88,
         "innate_abilities": ["move"],
-        "in_party": true
+        "in_party": true,
+        "djinni": ["forge", "fever"]
     }
 ]

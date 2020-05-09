@@ -1,6 +1,7 @@
 import * as numbers from './magic_numbers.js';
 import { initialize_main_chars, main_char_list, initialize_classes, party_data } from './chars/main_chars.js';
 import { initialize_abilities, abilities_list } from './chars/abilities.js';
+import { initialize_djinni, djinni_list } from './chars/djinni.js';
 import { initializeMaps, loadMaps, maps } from './maps/maps.js';
 import { jump_event, jump_near_collision } from './events/jump.js';
 import { set_door_event, door_event_phases } from './events/door.js';
@@ -78,6 +79,7 @@ var data = {
 window.maps = maps;
 window.main_char_list = main_char_list;
 window.abilities_list = abilities_list;
+window.djinni_list = djinni_list;
 window.party_data = party_data;
 window.data = data;
 
@@ -118,6 +120,7 @@ function preload() {
     game.load.json('abilities_db', 'assets/dbs/abilities_db.json');
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
     game.load.json('psynergy_items_db', 'assets/dbs/psynergy_items_db.json');
+    game.load.json('djinni_db', 'assets/dbs/djinni_db.json');
     load_misc();
     load_buttons();
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
@@ -163,6 +166,7 @@ async function create() {
     data.psynergy_items_db = game.cache.getJSON('psynergy_items_db');
     data.classes_db = game.cache.getJSON('classes_db');
     data.abilities_db = game.cache.getJSON('abilities_db');
+    data.djinni_db = game.cache.getJSON('djinni_db');
 
     data.hero_name = data.init_db.hero_key_name;
     data.actual_direction = data.init_db.initial_direction;
@@ -171,6 +175,7 @@ async function create() {
     party_data.coins = data.init_db.coins;
 
     initialize_classes(data.classes_db);
+    initialize_djinni(data.djinni_db);
 
     let load_abilities_promise_resolve;
     let load_abilities_promise = new Promise(resolve => {

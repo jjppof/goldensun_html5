@@ -1,0 +1,51 @@
+[
+    {
+        "key_name": "flint",
+        "name": "Flint",
+        "description": "Strike a blow that can cleave stone.",
+        "element": "venus",
+        "ability_key_name": "flint",
+        "hp_boost": 8,
+        "pp_boost": 4,
+        "atk_boost": 3,
+        "def_boost": 0,
+        "agi_boost": 0,
+        "luk_boost": 0
+    },{
+        "key_name": "granite",
+        "name": "Granite",
+        "description": "Create a mighty earthen barrier.",
+        "element": "venus",
+        "ability_key_name": "granite",
+        "hp_boost": 9,
+        "pp_boost": 0,
+        "atk_boost": 0,
+        "def_boost": 2,
+        "agi_boost": 2,
+        "luk_boost": 1
+    },{
+        "key_name": "forge",
+        "name": "Forge",
+        "description": "Boost party Attack with flame's fury.",
+        "element": "mars",
+        "ability_key_name": "forge",
+        "hp_boost": 10,
+        "pp_boost": 0,
+        "atk_boost": 2,
+        "def_boost": 0,
+        "agi_boost": 2,
+        "luk_boost": 2
+    },{
+        "key_name": "fever",
+        "name": "Fever",
+        "description": "Wrap a foe in feverish delusion.",
+        "element": "mars",
+        "ability_key_name": "fever",
+        "hp_boost": 8,
+        "pp_boost": 0,
+        "atk_boost": 3,
+        "def_boost": 0,
+        "agi_boost": 2,
+        "luk_boost": 0
+    }
+]

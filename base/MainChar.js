@@ -1,11 +1,23 @@
 import { SpriteBase } from './SpriteBase.js';
 import { choose_right_class } from './Classes.js';
+import { djinni_list } from '../chars/djinni.js';
+import { djinn_status } from './Djinn.js';
 
-export const STATUS = {
-    NORMAL: {
-        name: "Normal"
-    }
+export const temporary_status = {
+    DELUSION: "delusion",
+    STUN: "stun",
+    SLEEP: "sleep",
+    SEAL: "seal",
+    DEATH_CURSE: "death_curse"
 };
+
+export const permanent_status = {
+    DOWNED: "downed",
+    POISON: "poison",
+    EQUIP_CURSE: "equip_curse",
+    HAUNT: "haunt"
+}
+
 export const elements = {
     VENUS: "venus",
     MERCURY: "mercury",
@@ -46,7 +58,8 @@ export class MainChar extends SpriteBase {
         mars_resist_base,
         jupiter_resist_base,
         innate_abilities,
-        in_party
+        in_party,
+        djinni
     ) {
         super(key_name, actions);
         this.index = index;
@@ -56,7 +69,8 @@ export class MainChar extends SpriteBase {
         this.push_speed = push_speed;
         this.avatar_image_path = avatar_image_path;
         this.name = name;
-        this.status = STATUS.NORMAL;
+        this.temporary_status = new Set();
+        this.permanent_status = new Set();
         this.starting_level = starting_level;
         this.level = this.starting_level;
         this.exp_curve = exp_curve;
@@ -73,18 +87,18 @@ export class MainChar extends SpriteBase {
             {element: elements.JUPITER, level: this.jupiter_level_base},
         ], element => element.level).element;
         this.class = choose_right_class(this.element_afinity, this.venus_level_base, this.mercury_level_base, this.mars_level_base, this.jupiter_level_base);
+        this.venus_djinni = new Set();
+        this.mercury_djinni = new Set();
+        this.mars_djinni = new Set();
+        this.jupiter_djinni = new Set();
+        this.init_djinni(djinni);
         this.hp_curve = hp_curve;
-        this.set_max_hp();
         this.pp_curve = pp_curve;
-        this.set_max_pp();
         this.atk_curve = atk_curve;
-        this.set_max_atk();
         this.def_curve = def_curve;
-        this.set_max_def();
         this.agi_curve = agi_curve;
-        this.set_max_agi();
         this.luk_curve = luk_curve;
-        this.set_max_luk();
+        this.update_attributes();
         this.venus_power_base = venus_power_base;
         this.mercury_power_base = mercury_power_base;
         this.mars_power_base = mars_power_base;
@@ -95,12 +109,12 @@ export class MainChar extends SpriteBase {
         this.jupiter_resist_base = jupiter_resist_base;
         this.innate_abilities = innate_abilities;
         this.in_party = in_party;
-        this.venus_djinni = [];
-        this.mercury_djinni = [];
-        this.mars_djinni = [];
-        this.jupiter_djinni = [];
         this.abilities = [];
         this.set_abilities();
+    }
+
+    get djinni() {
+        return new Set([...this.venus_djinni, ...this.mercury_djinni, ...this.mercury_djinni, ...this.jupiter_djinni]);
     }
 
     load_assets(game, load_callback) {
@@ -108,8 +122,33 @@ export class MainChar extends SpriteBase {
         game.load.start();
     }
 
+    init_djinni(djinni) {
+        for (let i = 0; i < djinni.length; ++i) {
+            let djinn = djinni_list[djinni[i]];
+            switch (djinn.element) {
+                case elements.VENUS:
+                    this.venus_djinni.add(djinn.key_name);
+                    break;
+                case elements.MERCURY:
+                    this.mercury_djinni.add(djinn.key_name);
+                    break;
+                case elements.MARS:
+                    this.mars_djinni.add(djinn.key_name);
+                    break;
+                case elements.JUPITER:
+                    this.jupiter_djinni.add(djinn.key_name);
+                    break;
+            }
+        }
+    }
+
     set_max_hp() {
         this.max_hp = parseInt(this.hp_curve[this.starting_level] * this.class.hp_boost);
+        for (let djinn_key_name of this.djinni) {
+            let djinn = djinni_list[djinn_key_name];
+            if (djinn.status !== djinn_status.SET) continue;
+            this.max_hp += djinn.hp_boost;
+        }
         if (this.current_hp === undefined) {
             this.current_hp = this.max_hp;
         } else {
@@ -119,6 +158,11 @@ export class MainChar extends SpriteBase {
 
     set_max_pp() {
         this.max_pp = parseInt(this.pp_curve[this.starting_level] * this.class.pp_boost);
+        for (let djinn_key_name of this.djinni) {
+            let djinn = djinni_list[djinn_key_name];
+            if (djinn.status !== djinn_status.SET) continue;
+            this.max_pp += djinn.pp_boost;
+        }
         if (this.current_pp === undefined) {
             this.current_pp = this.max_pp;
         } else {
@@ -128,6 +172,11 @@ export class MainChar extends SpriteBase {
 
     set_max_atk() {
         this.atk = parseInt(this.atk_curve[this.starting_level] * this.class.atk_boost);
+        for (let djinn_key_name of this.djinni) {
+            let djinn = djinni_list[djinn_key_name];
+            if (djinn.status !== djinn_status.SET) continue;
+            this.atk += djinn.atk_boost;
+        }
         if (this.current_atk === undefined) {
             this.current_atk = this.atk;
         } else {
@@ -137,6 +186,11 @@ export class MainChar extends SpriteBase {
 
     set_max_def() {
         this.def = parseInt(this.def_curve[this.starting_level] * this.class.def_boost);
+        for (let djinn_key_name of this.djinni) {
+            let djinn = djinni_list[djinn_key_name];
+            if (djinn.status !== djinn_status.SET) continue;
+            this.def += djinn.def_boost;
+        }
         if (this.current_def === undefined) {
             this.current_def = this.def;
         } else {
@@ -146,6 +200,11 @@ export class MainChar extends SpriteBase {
 
     set_max_agi() {
         this.agi = parseInt(this.agi_curve[this.starting_level] * this.class.agi_boost);
+        for (let djinn_key_name of this.djinni) {
+            let djinn = djinni_list[djinn_key_name];
+            if (djinn.status !== djinn_status.SET) continue;
+            this.agi += djinn.agi_boost;
+        }
         if (this.current_agi === undefined) {
             this.current_agi = this.agi;
         } else {
@@ -155,11 +214,25 @@ export class MainChar extends SpriteBase {
 
     set_max_luk() {
         this.luk = parseInt(this.luk_curve[this.starting_level] * this.class.luk_boost);
+        for (let djinn_key_name of this.djinni) {
+            let djinn = djinni_list[djinn_key_name];
+            if (djinn.status !== djinn_status.SET) continue;
+            this.luk += djinn.luk_boost;
+        }
         if (this.current_luk === undefined) {
             this.current_luk = this.luk;
         } else {
             this.current_luk *= parseInt(this.class.luk_boost);
         }
+    }
+
+    update_attributes() {
+        this.set_max_hp();
+        this.set_max_pp();
+        this.set_max_atk();
+        this.set_max_def();
+        this.set_max_agi();
+        this.set_max_luk();
     }
 
     set_abilities() {
