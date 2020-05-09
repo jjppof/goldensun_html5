@@ -96,7 +96,7 @@ export class ItemPsynergyChooseWindow {
     }
 
     get_page_number() {
-        return this.elements.length;
+        return parseInt(this.elements.length/ELEM_PER_PAGE) + 1;
     }
 
     update_position() {

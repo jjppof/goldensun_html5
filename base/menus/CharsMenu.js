@@ -26,6 +26,7 @@ export class CharsMenu {
         this.unselected_y = -4;
         this.set_chars();
         this.selected_button_index = 0;
+        this.line_index = 0;
         this.menu_open = false;
         this.menu_active = false;
         this.set_control();
@@ -45,7 +46,7 @@ export class CharsMenu {
     }
 
     get_max_per_line() {
-        return MAX_PER_LINE;
+        return party_data.members.slice(this.line_index * MAX_PER_LINE, (this.line_index + 1) * MAX_PER_LINE).length;
     }
 
     get_selected_button_index() {
@@ -117,6 +118,7 @@ export class CharsMenu {
         }
         this.buttons_number = party_data.members.length;
         this.selected_button_index = select_index === undefined ? 0 : select_index;
+        this.line_index = 0;
         this.update_position();
         this.set_button(this.selected_button_index);
         this.base_window.show(undefined, false);
