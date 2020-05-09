@@ -40,3 +40,5 @@ export const PUSH_TIME = 800;
 export const EVENT_TIME = 400;
 export const BUTTON_WIDTH = 24;
 export const BUTTON_HEIGHT = 24;
+export const ICON_WIDTH = 14;
+export const ICON_HEIGHT = 14;

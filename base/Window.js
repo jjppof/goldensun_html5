@@ -297,6 +297,11 @@ export class Window {
         }
     }
 
+    remove_text(text_shadow_pair) {
+        text_shadow_pair.text.destroy();
+        text_shadow_pair.shadow.destroy();
+    }
+
     close(callback, animate = true) {
         if (animate) {
             this.game.add.tween(this.group).to(

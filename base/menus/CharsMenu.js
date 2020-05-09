@@ -191,7 +191,6 @@ export class CharsMenu {
         this.right_pressed = false;
         this.left_pressed = false;
         this.menu_active = true;
-        this.set_button();
         this.cursor.alpha = 1;
         this.cursor_tween.resume();
     }
@@ -199,7 +198,6 @@ export class CharsMenu {
     deactivate() {
         this.menu_active = false;
         this.stop_timers();
-        this.reset_button();
         this.cursor.alpha = 0;
         this.cursor_tween.pause();
     }

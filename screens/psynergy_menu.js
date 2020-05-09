@@ -28,10 +28,8 @@ const PSY_OVERVIEW_WIN_INSIDE_PADDING_H = 1;
 const PSY_OVERVIEW_WIN_INSIDE_PADDING_V = 5;
 const PSY_OVERVIEW_WIN_ICONS_PER_LINE = 8;
 const PSY_OVERVIEW_WIN_SPACE_BETWN_LINE = 3;
-const PSY_OVERVIEW_WIN_ICON_WIDTH = 15;
-const PSY_OVERVIEW_WIN_ICON_HEIGHT = 15;
 const PSY_OVERVIEW_WIN_SPACE_BETWN_ICO = ((PSY_OVERVIEW_WIN_WIDTH - 2*(numbers.INSIDE_BORDER_WIDTH + PSY_OVERVIEW_WIN_INSIDE_PADDING_H)) -
-    (PSY_OVERVIEW_WIN_ICONS_PER_LINE * PSY_OVERVIEW_WIN_ICON_WIDTH))/(PSY_OVERVIEW_WIN_ICONS_PER_LINE - 1);
+    (PSY_OVERVIEW_WIN_ICONS_PER_LINE * numbers.ICON_WIDTH))/(PSY_OVERVIEW_WIN_ICONS_PER_LINE - 1);
 
 export class PsynergyMenuScreen {
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
@@ -127,8 +125,8 @@ export class PsynergyMenuScreen {
             if (ability_key_name in abilities_list) {
                 const ability = abilities_list[ability_key_name];
                 if (!ability.in_battle || ability.effects_outside_battle) {
-                    const x = TOTAL_BORDER + PSY_OVERVIEW_WIN_INSIDE_PADDING_H + Math.round((counter%PSY_OVERVIEW_WIN_ICONS_PER_LINE) * (PSY_OVERVIEW_WIN_SPACE_BETWN_ICO + PSY_OVERVIEW_WIN_ICON_WIDTH));
-                    const y = TOTAL_BORDER + PSY_OVERVIEW_WIN_INSIDE_PADDING_V + parseInt(counter/PSY_OVERVIEW_WIN_ICONS_PER_LINE) * (PSY_OVERVIEW_WIN_SPACE_BETWN_LINE + PSY_OVERVIEW_WIN_ICON_HEIGHT);
+                    const x = TOTAL_BORDER + PSY_OVERVIEW_WIN_INSIDE_PADDING_H + Math.ceil((counter%PSY_OVERVIEW_WIN_ICONS_PER_LINE) * (PSY_OVERVIEW_WIN_SPACE_BETWN_ICO + numbers.ICON_WIDTH));
+                    const y = TOTAL_BORDER + PSY_OVERVIEW_WIN_INSIDE_PADDING_V + parseInt(counter/PSY_OVERVIEW_WIN_ICONS_PER_LINE) * (PSY_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
                     this.psynergy_overview_window.create_at_group(x, y, ability_key_name + "_ability_icon");
                     ++counter;
                 }
