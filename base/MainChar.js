@@ -103,18 +103,24 @@ export class MainChar extends SpriteBase {
         this.mars_djinni = [];
         this.jupiter_djinni = [];
         this.init_djinni(djinni);
-        this.class = choose_right_class(this.element_afinity, this.venus_level_base, this.mercury_level_base, this.mars_level_base, this.jupiter_level_base);
+        this.update_class();
         this.hp_curve = hp_curve;
         this.pp_curve = pp_curve;
         this.atk_curve = atk_curve;
         this.def_curve = def_curve;
         this.agi_curve = agi_curve;
         this.luk_curve = luk_curve;
+        this.hp_extra = 0;
+        this.pp_extra = 0;
+        this.atk_extra = 0;
+        this.def_extra = 0;
+        this.agi_extra = 0;
+        this.luk_extra = 0;
         this.update_attributes();
         this.innate_abilities = innate_abilities;
         this.in_party = in_party;
         this.abilities = [];
-        this.set_abilities();
+        this.update_abilities();
     }
 
     get djinni() {
@@ -127,6 +133,10 @@ export class MainChar extends SpriteBase {
     load_assets(game, load_callback) {
         game.load.image(this.key_name + '_avatar', this.avatar_image_path).onLoadComplete.addOnce(load_callback);
         game.load.start();
+    }
+
+    update_class() {
+        this.class = choose_right_class(this.element_afinity, this.venus_level_current, this.mercury_level_curvenus_level_current, this.mars_level_curvenus_level_current, this.jupiter_level_curvenus_level_current);
     }
 
     init_djinni(djinni) {
@@ -167,6 +177,9 @@ export class MainChar extends SpriteBase {
                 break;
         }
         this.update_elemental_attributes();
+        this.update_class();
+        this.update_attributes();
+        this.update_abilities();
     }
 
     remove_djinn(djinn_key_name) {
@@ -189,6 +202,9 @@ export class MainChar extends SpriteBase {
         const index = this_djinni_list.indexOf(djinn_key_name);
         if (index !== -1) this_djinni_list.splice(index, 1);
         this.update_elemental_attributes();
+        this.update_class();
+        this.update_attributes();
+        this.update_abilities();
     }
 
     replace_djinn(old_djinn_key_name, new_djinn_key_name) {
@@ -197,7 +213,7 @@ export class MainChar extends SpriteBase {
     }
 
     set_max_hp() {
-        this.max_hp = parseInt(this.hp_curve[this.starting_level] * this.class.hp_boost);
+        this.max_hp = parseInt(this.hp_curve[this.starting_level] * this.class.hp_boost + this.hp_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
             if (djinn.status !== djinn_status.SET) continue;
@@ -211,7 +227,7 @@ export class MainChar extends SpriteBase {
     }
 
     set_max_pp() {
-        this.max_pp = parseInt(this.pp_curve[this.starting_level] * this.class.pp_boost);
+        this.max_pp = parseInt(this.pp_curve[this.starting_level] * this.class.pp_boost + this.pp_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
             if (djinn.status !== djinn_status.SET) continue;
@@ -225,7 +241,7 @@ export class MainChar extends SpriteBase {
     }
 
     set_max_atk() {
-        this.atk = parseInt(this.atk_curve[this.starting_level] * this.class.atk_boost);
+        this.atk = parseInt(this.atk_curve[this.starting_level] * this.class.atk_boost + this.atk_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
             if (djinn.status !== djinn_status.SET) continue;
@@ -239,7 +255,7 @@ export class MainChar extends SpriteBase {
     }
 
     set_max_def() {
-        this.def = parseInt(this.def_curve[this.starting_level] * this.class.def_boost);
+        this.def = parseInt(this.def_curve[this.starting_level] * this.class.def_boost + this.def_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
             if (djinn.status !== djinn_status.SET) continue;
@@ -253,7 +269,7 @@ export class MainChar extends SpriteBase {
     }
 
     set_max_agi() {
-        this.agi = parseInt(this.agi_curve[this.starting_level] * this.class.agi_boost);
+        this.agi = parseInt(this.agi_curve[this.starting_level] * this.class.agi_boost + this.agi_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
             if (djinn.status !== djinn_status.SET) continue;
@@ -267,7 +283,7 @@ export class MainChar extends SpriteBase {
     }
 
     set_max_luk() {
-        this.luk = parseInt(this.luk_curve[this.starting_level] * this.class.luk_boost);
+        this.luk = parseInt(this.luk_curve[this.starting_level] * this.class.luk_boost + this.luk_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
             if (djinn.status !== djinn_status.SET) continue;
@@ -287,6 +303,30 @@ export class MainChar extends SpriteBase {
         this.set_max_def();
         this.set_max_agi();
         this.set_max_luk();
+    }
+
+    add_extra_max_hp(amount) {
+        this.hp_extra += amount;
+    }
+
+    add_extra_max_pp(amount) {
+        this.pp_extra += amount;
+    }
+
+    add_extra_max_atk(amount) {
+        this.atk_extra += amount;
+    }
+
+    add_extra_max_def(amount) {
+        this.def_extra += amount;
+    }
+
+    add_extra_max_agi(amount) {
+        this.agi_extra += amount;
+    }
+
+    add_extra_max_luk(amount) {
+        this.luk_extra += amount;
     }
 
     init_elemental_attributes() {
@@ -333,9 +373,25 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    set_abilities() {
+    update_abilities() {
         this.abilities = this.innate_abilities.concat(this.class.ability_level_pairs.filter(pair => {
             return pair.level <= this.level;
         }).map(pair => pair.ability));
+    }
+
+    add_permanent_status(status) {
+        this.permanent_status.add(status);
+    }
+
+    remove_permanent_status(status) {
+        this.permanent_status.delete(status);
+    }
+
+    add_temporary_status(status) {
+        this.temporary_status.add(status);
+    }
+
+    remove_temporary_status(status) {
+        this.temporary_status.delete(status);
     }
 }
