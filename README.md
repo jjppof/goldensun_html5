@@ -1,7 +1,7 @@
 # Golden Sun - HTML5
 An online Golden Sun Engine built in HTML5 with Phaser.
 
-See the [DEMO](https://jjppof.github.io/goldensun_html5/index)
+See the [DEMO](https://jjppof.github.io/goldensun_html5/index).
 
 Feel free to help! Please, reach me if you want to do so.
 
