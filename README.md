@@ -21,6 +21,7 @@ GSHTML5 has no external dependency, so there's no `npm install` or packages on C
 - In the terminal, install a quick http server using `npm install http-server -g`;
 - In the terminal, go to the root folder of the GSHTML5 you cloned and then run `http-server`;
 - Go to your browser and access the address shown in the terminal (it's probably `http://localhost:8080/`).
+- I strongly reccomend using [Visual Studio Code](https://code.visualstudio.com/download) to develop.
 
 ## Texture Packer configs
 - Use *Phaser (JSONHash)* as *Data Format*.
