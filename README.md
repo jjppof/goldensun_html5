@@ -30,3 +30,8 @@ GSHTML5 has no external dependency, so there's no `npm install` or packages on C
 - Folder organization to generate the sheet: `[sprite name (ex.: felix)]` -> `[action type (ex.: idle)]` -> `[direction (ex.: down)]` -> `[files: frame_index.ext (ex.: 03.png)]`.
 - Move the action folder into the Texture Packer.
 - The sheets are per action.
+
+## Credits
+- http://www.goldensunhacking.net/
+- https://gamefaqs.gamespot.com/gba/561356-golden-sun-the-lost-age/faqs
+- Golden Sun franchise
