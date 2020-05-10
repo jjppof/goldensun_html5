@@ -132,6 +132,10 @@ export class ItemPsynergyChooseWindow {
 
     page_change(before_index, after_index) {
         this.set_elements();
+        if (after_index >= this.elements.length) {
+            this.selected_element_index = this.elements.length - 1;
+            this.cursor_control.set_cursor_position();
+        }
     }
 
     clear_sprites() {

@@ -128,7 +128,7 @@ export class CursorControl {
         if (getter() < 0) {
             setter(max() - 1);
         }
-        this.set_cursor_tween();
+        this.set_cursor_position();
         on_change(before_index, getter());
     }
 
@@ -164,7 +164,7 @@ export class CursorControl {
         );
     }
 
-    set_cursor_tween() {
+    set_cursor_position() {
         if (this.cursor_tween.isRunning && this.cursor_tween.isPaused) {
             this.cursor_tween.resume();
         } else if (!this.cursor_tween.isRunning) {
@@ -179,7 +179,7 @@ export class CursorControl {
         this.up_pressed = false;
         this.down_pressed = false;
         this.cursor_group.alpha = 1;
-        this.set_cursor_tween();
+        this.set_cursor_position();
     }
 
     deactivate() {
