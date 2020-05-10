@@ -85,8 +85,7 @@ export class ItemPsynergyChooseWindow {
         this.page_number_bar_highlight.drawRect(0, 0, PAGE_NUMBER_WIDTH, PAGE_NUMBER_HEIGHT);
         this.page_number_bar_highlight.endFill();
         this.page_indicators = [];
-        this.page_indicator_arrow_right_timer = this.game.time.create(false);
-        this.page_indicator_arrow_left_timer = this.game.time.create(false);
+        this.page_indicator_arrow_timer = this.game.time.create(false);
         this.page_indicator_right_arrow = this.window.create_at_group(PAGE_INDICATOR_RIGHT_ARROW_X, PAGE_INDICATOR_ARROW_Y, "page_arrow");
         this.page_indicator_right_arrow.scale.x = -1;
         this.page_indicator_right_arrow.x -= this.page_indicator_right_arrow.width;
@@ -168,22 +167,15 @@ export class ItemPsynergyChooseWindow {
         this.page_indicator_right_arrow.alpha = 1;
         const left_x = PSY_OVERVIEW_WIN_WIDTH - 5 - this.get_page_number() * PAGE_NUMBER_WIDTH - this.page_indicator_left_arrow.width - 2;
         this.page_indicator_left_arrow.x = left_x;
-        if (this.page_indicator_arrow_left_timer.running && this.page_indicator_arrow_left_timer.paused) {
-            this.page_indicator_arrow_left_timer.resume();
+        if (this.page_indicator_arrow_timer.running && this.page_indicator_arrow_timer.paused) {
+            this.page_indicator_arrow_timer.resume();
         } else {
-            this.page_indicator_arrow_left_timer.loop(Phaser.Timer.QUARTER >> 1, () => {
+            this.page_indicator_arrow_timer.loop(Phaser.Timer.QUARTER >> 1, () => {
                 this.page_indicator_left_arrow.x = left_x + ~(-this.page_indicator_left_arrow.x%2);
-            });
-            this.page_indicator_arrow_left_timer.start();
-        }
-        if (this.page_indicator_arrow_right_timer.running && this.page_indicator_arrow_right_timer.paused) {
-            this.page_indicator_arrow_right_timer.resume();
-        } else {
-            this.page_indicator_arrow_right_timer.loop(Phaser.Timer.QUARTER >> 1, () => {
                 this.page_indicator_right_arrow.x = PAGE_INDICATOR_RIGHT_ARROW_X - ~(-this.page_indicator_right_arrow.x%2);
                 this.page_indicator_right_arrow.x -= this.page_indicator_right_arrow.width;
             });
-            this.page_indicator_arrow_right_timer.start();
+            this.page_indicator_arrow_timer.start();
         }
     }
 
@@ -196,8 +188,7 @@ export class ItemPsynergyChooseWindow {
             this.window.remove_text(this.page_indicators[i]);
         }
         this.page_indicators = [];
-        this.page_indicator_arrow_right_timer.pause();
-        this.page_indicator_arrow_left_timer.pause();
+        this.page_indicator_arrow_timer.pause();
     }
 
     update_position() {
