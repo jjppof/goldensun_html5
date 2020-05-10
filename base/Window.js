@@ -192,7 +192,7 @@ export class Window {
         }
     }
 
-    add_srpite_to_group(sprite) {
+    add_sprite_to_group(sprite) {
         this.group.add(sprite);
     }
 

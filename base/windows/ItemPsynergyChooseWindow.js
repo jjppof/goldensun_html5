@@ -14,6 +14,8 @@ const ELEM_PADDING_LEFT = 8;
 const ELEM_PER_PAGE = 5;
 const PSY_PP_X = 125;
 const ELEM_NAME_ICON_SHIFT = 4;
+const HIGHLIGHT_WIDTH = 114;
+const HIGHLIGHT_HEIGHT = numbers.FONT_SIZE;
 
 export class ItemPsynergyChooseWindow {
     constructor(game, data, is_psynergy_window, on_change, on_choose, esc_propagation_priority, enter_propagation_priority) {
@@ -50,6 +52,12 @@ export class ItemPsynergyChooseWindow {
             this.get_cursor_x.bind(this), this.get_cursor_y.bind(this)
         );
         this.selected_element_tween = null;
+        this.highlight_bar = this.game.add.graphics(0, 0);
+        this.highlight_bar.blendMode = PIXI.blendModes.SCREEN;
+        this.window.add_sprite_to_group(this.highlight_bar);
+        this.highlight_bar.beginFill(this.window.color, 1);
+        this.highlight_bar.drawRect(ELEM_PADDING_LEFT + (numbers.ICON_WIDTH >> 1), 0, HIGHLIGHT_WIDTH, HIGHLIGHT_HEIGHT);
+        this.highlight_bar.endFill();
     }
 
     set_control() {
@@ -127,6 +135,10 @@ export class ItemPsynergyChooseWindow {
         }
     }
 
+    set_highlight_bar() {
+        this.highlight_bar.y = ELEM_PADDING_TOP + this.selected_element_index * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS) + 4;
+    }
+
     set_element_tween(before_index) {
         if (this.selected_button_tween) {
             this.selected_button_tween.stop();
@@ -143,8 +155,14 @@ export class ItemPsynergyChooseWindow {
         );
     }
 
+    unset_element_tween() {
+        this.selected_button_tween.stop();
+        this.selected_button_tween = null;
+    }
+
     element_change(before_index, after_index) {
         this.set_element_tween(before_index);
+        this.set_highlight_bar();
     }
 
     page_change(before_index, after_index) {
@@ -154,6 +172,7 @@ export class ItemPsynergyChooseWindow {
             this.cursor_control.set_cursor_position();
         }
         this.set_element_tween(before_index);
+        this.set_highlight_bar();
     }
 
     clear_sprites() {
@@ -178,6 +197,7 @@ export class ItemPsynergyChooseWindow {
         this.set_elements();
         this.cursor_control.activate();
         this.set_element_tween();
+        this.set_highlight_bar();
         this.window_open = true;
         this.window_activated = true;
     }
@@ -187,6 +207,7 @@ export class ItemPsynergyChooseWindow {
         this.group.alpha = 1;
         this.clear_sprites();
         this.cursor_control.deactivate();
+        this.unset_element_tween();
         this.window_open = false;
         this.window_activated = false;
     }
