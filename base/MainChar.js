@@ -124,7 +124,7 @@ export class MainChar extends SpriteBase {
     }
 
     get djinni() {
-        let this_djinni_list = this.venus_djinni.concat(this.mercury_djinni, this.mercury_djinni, this.jupiter_djinni);
+        let this_djinni_list = this.venus_djinni.concat(this.mercury_djinni, this.mars_djinni, this.jupiter_djinni);
         return this_djinni_list.sort((a, b) => {
             return djinni_list[a].index - djinni_list[b].index;
         })
@@ -136,7 +136,7 @@ export class MainChar extends SpriteBase {
     }
 
     update_class() {
-        this.class = choose_right_class(this.element_afinity, this.venus_level_current, this.mercury_level_curvenus_level_current, this.mars_level_curvenus_level_current, this.jupiter_level_curvenus_level_current);
+        this.class = choose_right_class(this.element_afinity, this.venus_level_current, this.mercury_level_current, this.mars_level_current, this.jupiter_level_current);
     }
 
     init_djinni(djinni) {
