@@ -16,7 +16,8 @@ export class Djinn {
         atk_boost,
         def_boost,
         agi_boost,
-        luk_boost
+        luk_boost,
+        index
     ) {
         this.key_name = key_name;
         this.name = name;
@@ -30,6 +31,7 @@ export class Djinn {
         this.agi_boost = agi_boost;
         this.luk_boost = luk_boost;
         this.status = djinn_status.SET;
+        this.index = index;
     }
 
     set_status(status) {

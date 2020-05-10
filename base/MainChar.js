@@ -92,17 +92,16 @@ export class MainChar extends SpriteBase {
         this.mercury_resist_base = mercury_resist_base;
         this.mars_resist_base = mars_resist_base;
         this.jupiter_resist_base = jupiter_resist_base;
-        this.init_elemental_attributes();
         this.element_afinity = _.max([
             {element: elements.VENUS, level: this.venus_level_base},
             {element: elements.MERCURY, level: this.mercury_level_base},
             {element: elements.MARS, level: this.mars_level_base},
             {element: elements.JUPITER, level: this.jupiter_level_base},
         ], element => element.level).element;
-        this.venus_djinni = new Set();
-        this.mercury_djinni = new Set();
-        this.mars_djinni = new Set();
-        this.jupiter_djinni = new Set();
+        this.venus_djinni = [];
+        this.mercury_djinni = [];
+        this.mars_djinni = [];
+        this.jupiter_djinni = [];
         this.init_djinni(djinni);
         this.class = choose_right_class(this.element_afinity, this.venus_level_base, this.mercury_level_base, this.mars_level_base, this.jupiter_level_base);
         this.hp_curve = hp_curve;
@@ -119,7 +118,10 @@ export class MainChar extends SpriteBase {
     }
 
     get djinni() {
-        return new Set([...this.venus_djinni, ...this.mercury_djinni, ...this.mercury_djinni, ...this.jupiter_djinni]);
+        let this_djinni_list = this.venus_djinni.concat(this.mercury_djinni, this.mercury_djinni, this.jupiter_djinni);
+        return this_djinni_list.sort((a, b) => {
+            return djinni_list[a].index - djinni_list[b].index;
+        })
     }
 
     load_assets(game, load_callback) {
@@ -132,20 +134,66 @@ export class MainChar extends SpriteBase {
             let djinn = djinni_list[djinni[i]];
             switch (djinn.element) {
                 case elements.VENUS:
-                    this.venus_djinni.add(djinn.key_name);
+                    this.venus_djinni.push(djinn.key_name);
                     break;
                 case elements.MERCURY:
-                    this.mercury_djinni.add(djinn.key_name);
+                    this.mercury_djinni.push(djinn.key_name);
                     break;
                 case elements.MARS:
-                    this.mars_djinni.add(djinn.key_name);
+                    this.mars_djinni.push(djinn.key_name);
                     break;
                 case elements.JUPITER:
-                    this.jupiter_djinni.add(djinn.key_name);
+                    this.jupiter_djinni.push(djinn.key_name);
                     break;
             }
         }
         this.update_elemental_attributes();
+    }
+
+    add_djinn(djinn_key_name) {
+        let djinn = djinni_list[djinn_key_name];
+        switch (djinn.element) {
+            case elements.VENUS:
+                this.venus_djinni.push(djinn.key_name);
+                break;
+            case elements.MERCURY:
+                this.mercury_djinni.push(djinn.key_name);
+                break;
+            case elements.MARS:
+                this.mars_djinni.push(djinn.key_name);
+                break;
+            case elements.JUPITER:
+                this.jupiter_djinni.push(djinn.key_name);
+                break;
+        }
+        this.update_elemental_attributes();
+    }
+
+    remove_djinn(djinn_key_name) {
+        let djinn = djinni_list[djinn_key_name];
+        let this_djinni_list;
+        switch (djinn.element) {
+            case elements.VENUS:
+                this_djinni_list = this.venus_djinni;
+                break;
+            case elements.MERCURY:
+                this_djinni_list = this.mercury_djinni;
+                break;
+            case elements.MARS:
+                this_djinni_list = this.mars_djinni;
+                break;
+            case elements.JUPITER:
+                this_djinni_list = this.jupiter_djinni;
+                break;
+        }
+        const index = this_djinni_list.indexOf(djinn_key_name);
+        if (index !== -1) this_djinni_list.splice(index, 1);
+        this.update_elemental_attributes();
+    }
+
+    replace_djinn(old_djinn_key_name, new_djinn_key_name) {
+        this.remove_djinn(old_djinn_key_name);
+        this.add_djinn(new_djinn_key_name);
     }
 
     set_max_hp() {
@@ -257,28 +305,29 @@ export class MainChar extends SpriteBase {
     }
 
     update_elemental_attributes() {
+        this.init_elemental_attributes();
         for (let i = 0; i < this.djinni.length; ++i) {
-            let djinn = djinni_list[djinni[i]];
+            let djinn = djinni_list[this.djinni[i]];
             switch (djinn.element) {
                 case elements.VENUS:
-                    this.venus_level_current = this.venus_level_base + ELEM_LV_DELTA;
-                    this.venus_power_current = this.venus_power_base + ELEM_POWER_DELTA;
-                    this.venus_resist_current = this.venus_resist_base + ELEM_RESIST_DELTA;
+                    this.venus_level_current += ELEM_LV_DELTA;
+                    this.venus_power_current += ELEM_POWER_DELTA;
+                    this.venus_resist_current += ELEM_RESIST_DELTA;
                     break;
                 case elements.MERCURY:
-                    this.mercury_level_current = this.mercury_level_base + ELEM_LV_DELTA;
-                    this.mercury_power_current = this.mercury_power_base + ELEM_POWER_DELTA;
-                    this.mercury_resist_current = this.mercury_resist_base + ELEM_RESIST_DELTA;
+                    this.mercury_level_current += ELEM_LV_DELTA;
+                    this.mercury_power_current += ELEM_POWER_DELTA;
+                    this.mercury_resist_current += ELEM_RESIST_DELTA;
                     break;
                 case elements.MARS:
-                    this.mars_level_current = this.mars_level_base + ELEM_LV_DELTA;
-                    this.mars_power_current = this.mars_power_base + ELEM_POWER_DELTA;
-                    this.mars_resist_current = this.mars_resist_base + ELEM_RESIST_DELTA;
+                    this.mars_level_current += ELEM_LV_DELTA;
+                    this.mars_power_current += ELEM_POWER_DELTA;
+                    this.mars_resist_current += ELEM_RESIST_DELTA;
                     break;
                 case elements.JUPITER:
-                    this.jupiter_level_current = this.jupiter_level_base + ELEM_LV_DELTA;
-                    this.jupiter_power_current = this.jupiter_power_base + ELEM_POWER_DELTA;
-                    this.jupiter_resist_current = this.jupiter_resist_base + ELEM_RESIST_DELTA;
+                    this.jupiter_level_current += ELEM_LV_DELTA;
+                    this.jupiter_power_current += ELEM_POWER_DELTA;
+                    this.jupiter_resist_current += ELEM_RESIST_DELTA;
                     break;
             }
         }

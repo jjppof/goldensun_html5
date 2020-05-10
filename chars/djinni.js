@@ -16,7 +16,8 @@ export function initialize_djinni(djinni_db) {
             djinn_data.atk_boost,
             djinn_data.def_boost,
             djinn_data.agi_boost,
-            djinn_data.luk_boost
+            djinn_data.luk_boost,
+            i
         );
     }
 }
