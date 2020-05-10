@@ -49,6 +49,7 @@ export class ItemPsynergyChooseWindow {
             this.get_element_index.bind(this), this.set_element_index.bind(this), this.is_open.bind(this), this.is_activated.bind(this),
             this.get_cursor_x.bind(this), this.get_cursor_y.bind(this)
         );
+        this.selected_element_tween = null;
     }
 
     set_control() {
@@ -106,7 +107,6 @@ export class ItemPsynergyChooseWindow {
 
     set_elements() {
         this.clear_sprites();
-        let counter = 0;
         if (this.is_psynergy_window) {
             this.elements = this.char.abilities.filter(elem_key_name => {
                 return (elem_key_name in this.element_list) && (!this.element_list[elem_key_name].in_battle || this.element_list[elem_key_name].effects_outside_battle);
@@ -114,20 +114,37 @@ export class ItemPsynergyChooseWindow {
         }
         for (let i = 0; i < this.elements.length; ++i) {
             const elem_key_name = this.elements[i];
-            const y = ELEM_PADDING_TOP + counter * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS);
-            this.icon_sprites_in_window.push(this.window.create_at_group(ELEM_PADDING_LEFT, y, elem_key_name + this.element_sprite_sufix));
+            const x = ELEM_PADDING_LEFT;
+            const y = ELEM_PADDING_TOP + i * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS);
+            this.icon_sprites_in_window.push(this.window.create_at_group(x + (numbers.ICON_WIDTH >> 1), y + (numbers.ICON_HEIGHT >> 1), elem_key_name + this.element_sprite_sufix));
+            this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
             const x_elem_name = ELEM_PADDING_LEFT + numbers.ICON_WIDTH + 2;
             this.text_sprites_in_window.push(this.window.set_text_in_position(this.element_list[elem_key_name].name, x_elem_name, y + ELEM_NAME_ICON_SHIFT));
             if (this.is_psynergy_window) {
                 const x_elem_pp_cost = PSY_PP_X;
                 this.text_sprites_in_window.push(this.window.set_text_in_position(this.element_list[elem_key_name].pp_cost, x_elem_pp_cost, y + ELEM_NAME_ICON_SHIFT, true));
             }
-            ++counter;
         }
     }
 
-    element_change(before_index, after_index) {
+    set_element_tween(before_index) {
+        if (this.selected_button_tween) {
+            this.selected_button_tween.stop();
+            this.icon_sprites_in_window[before_index].scale.setTo(1, 1);
+        }
+        this.selected_button_tween = this.game.add.tween(this.icon_sprites_in_window[this.selected_element_index].scale).to(
+            { x: 1.6, y: 1.6 },
+            Phaser.Timer.QUARTER,
+            Phaser.Easing.Linear.None,
+            true,
+            0,
+            -1,
+            true
+        );
+    }
 
+    element_change(before_index, after_index) {
+        this.set_element_tween(before_index);
     }
 
     page_change(before_index, after_index) {
@@ -136,6 +153,7 @@ export class ItemPsynergyChooseWindow {
             this.selected_element_index = this.elements.length - 1;
             this.cursor_control.set_cursor_position();
         }
+        this.set_element_tween(before_index);
     }
 
     clear_sprites() {
@@ -159,6 +177,7 @@ export class ItemPsynergyChooseWindow {
         this.page_index = 0;
         this.set_elements();
         this.cursor_control.activate();
+        this.set_element_tween();
         this.window_open = true;
         this.window_activated = true;
     }
