@@ -8,14 +8,20 @@ const PSY_OVERVIEW_WIN_X = 104;
 const PSY_OVERVIEW_WIN_Y = 24;
 const PSY_OVERVIEW_WIN_WIDTH = 132;
 const PSY_OVERVIEW_WIN_HEIGHT = 108;
-const SPACE_BETWEEN_ITEMS = 2;
-const ELEM_PADDING_TOP = 10;
+const SPACE_BETWEEN_ITEMS = 1;
+const ELEM_PADDING_TOP = 12;
 const ELEM_PADDING_LEFT = 8;
 const ELEM_PER_PAGE = 5;
 const PSY_PP_X = 125;
+const PSY_PP_COST_X = 102;
+const PSY_PP_COST_Y = 8;
 const ELEM_NAME_ICON_SHIFT = 4;
 const HIGHLIGHT_WIDTH = 114;
 const HIGHLIGHT_HEIGHT = numbers.FONT_SIZE;
+const PAGE_NUMBER_WIDTH = 8;
+const PAGE_NUMBER_HEIGHT = 8;
+const PAGE_INDICATOR_ARROW_Y = 0;
+const PAGE_INDICATOR_RIGHT_ARROW_X = 129;
 
 export class ItemPsynergyChooseWindow {
     constructor(game, data, is_psynergy_window, on_change, on_choose, esc_propagation_priority, enter_propagation_priority) {
@@ -58,6 +64,35 @@ export class ItemPsynergyChooseWindow {
         this.highlight_bar.beginFill(this.window.color, 1);
         this.highlight_bar.drawRect(ELEM_PADDING_LEFT + (numbers.ICON_WIDTH >> 1), 0, HIGHLIGHT_WIDTH, HIGHLIGHT_HEIGHT);
         this.highlight_bar.endFill();
+        if (this.is_psynergy_window) {
+            this.window.set_text_in_position("PP", PSY_PP_COST_X, PSY_PP_COST_Y);
+        }
+        this.init_page_indicator_bar();
+    }
+
+    init_page_indicator_bar() {
+        this.page_number_bar = this.game.add.graphics(0, 0);
+        this.page_number_bar.alpha = 0;
+        this.window.add_sprite_to_group(this.page_number_bar);
+        this.page_number_bar.beginFill(this.window.color, 1);
+        this.page_number_bar.drawRect(0, 0, PAGE_NUMBER_WIDTH, PAGE_NUMBER_HEIGHT);
+        this.page_number_bar.endFill();
+        this.page_number_bar_highlight = this.game.add.graphics(0, 0);
+        this.page_number_bar_highlight.blendMode = PIXI.blendModes.SCREEN;
+        this.page_number_bar_highlight.alpha = 0;
+        this.window.add_sprite_to_group(this.page_number_bar_highlight);
+        this.page_number_bar_highlight.beginFill(this.window.color, 1);
+        this.page_number_bar_highlight.drawRect(0, 0, PAGE_NUMBER_WIDTH, PAGE_NUMBER_HEIGHT);
+        this.page_number_bar_highlight.endFill();
+        this.page_indicators = [];
+        this.page_indicator_arrow_right_timer = this.game.time.create(false);
+        this.page_indicator_arrow_left_timer = this.game.time.create(false);
+        this.page_indicator_right_arrow = this.window.create_at_group(PAGE_INDICATOR_RIGHT_ARROW_X, PAGE_INDICATOR_ARROW_Y, "page_arrow");
+        this.page_indicator_right_arrow.scale.x = -1;
+        this.page_indicator_right_arrow.x -= this.page_indicator_right_arrow.width;
+        this.page_indicator_right_arrow.alpha = 0;
+        this.page_indicator_left_arrow = this.window.create_at_group(0, PAGE_INDICATOR_ARROW_Y, "page_arrow");
+        this.page_indicator_left_arrow.alpha = 0;
     }
 
     set_control() {
@@ -108,6 +143,63 @@ export class ItemPsynergyChooseWindow {
         return parseInt(this.elements.length/ELEM_PER_PAGE) + 1;
     }
 
+    set_page_indicator() {
+        const page_number = this.get_page_number();
+        if (page_number <= 1) return;
+        this.page_number_bar.width = page_number * PAGE_NUMBER_WIDTH;
+        this.page_number_bar.x = PSY_OVERVIEW_WIN_WIDTH - this.page_number_bar.width - 5;
+        this.page_number_bar.alpha = 1;
+        for (let i = 1; i <= page_number; ++i) {
+            const x = this.page_number_bar.x + PAGE_NUMBER_WIDTH * (i - 1) + (PAGE_NUMBER_WIDTH >> 1);
+            const y = PAGE_NUMBER_HEIGHT >> 1;
+            this.page_indicators.push(this.window.set_text_in_position(i.toString(), x, y, false, true));
+        }
+        this.page_number_bar_highlight.alpha = 1;
+        this.set_page_indicator_highlight();
+        this.set_page_indicator_arrow();
+    }
+
+    set_page_indicator_highlight() {
+        this.page_number_bar_highlight.x = PSY_OVERVIEW_WIN_WIDTH - 5 - this.get_page_number() * PAGE_NUMBER_WIDTH;
+    }
+
+    set_page_indicator_arrow() {
+        this.page_indicator_left_arrow.alpha = 1;
+        this.page_indicator_right_arrow.alpha = 1;
+        const left_x = PSY_OVERVIEW_WIN_WIDTH - 5 - this.get_page_number() * PAGE_NUMBER_WIDTH - this.page_indicator_left_arrow.width - 2;
+        this.page_indicator_left_arrow.x = left_x;
+        if (this.page_indicator_arrow_left_timer.running && this.page_indicator_arrow_left_timer.paused) {
+            this.page_indicator_arrow_left_timer.resume();
+        } else {
+            this.page_indicator_arrow_left_timer.loop(Phaser.Timer.QUARTER >> 1, () => {
+                this.page_indicator_left_arrow.x = left_x + ~(-this.page_indicator_left_arrow.x%2);
+            });
+            this.page_indicator_arrow_left_timer.start();
+        }
+        if (this.page_indicator_arrow_right_timer.running && this.page_indicator_arrow_right_timer.paused) {
+            this.page_indicator_arrow_right_timer.resume();
+        } else {
+            this.page_indicator_arrow_right_timer.loop(Phaser.Timer.QUARTER >> 1, () => {
+                this.page_indicator_right_arrow.x = PAGE_INDICATOR_RIGHT_ARROW_X - ~(-this.page_indicator_right_arrow.x%2);
+                this.page_indicator_right_arrow.x -= this.page_indicator_right_arrow.width;
+            });
+            this.page_indicator_arrow_right_timer.start();
+        }
+    }
+
+    unset_page_indicator() {
+        this.page_number_bar.alpha = 0;
+        this.page_number_bar_highlight.alpha = 0;
+        this.page_indicator_left_arrow.alpha = 0;
+        this.page_indicator_right_arrow.alpha = 0;
+        for (let i = 0; i < this.page_indicators.length; ++i) {
+            this.window.remove_text(this.page_indicators[i]);
+        }
+        this.page_indicators = [];
+        this.page_indicator_arrow_right_timer.pause();
+        this.page_indicator_arrow_left_timer.pause();
+    }
+
     update_position() {
         this.group.x = this.game.camera.x + PSY_OVERVIEW_WIN_X;
         this.group.y = this.game.camera.y + PSY_OVERVIEW_WIN_Y;
@@ -140,11 +232,11 @@ export class ItemPsynergyChooseWindow {
     }
 
     set_element_tween(before_index) {
-        if (this.selected_button_tween) {
-            this.selected_button_tween.stop();
+        if (this.selected_element_tween) {
+            this.selected_element_tween.stop();
             this.icon_sprites_in_window[before_index].scale.setTo(1, 1);
         }
-        this.selected_button_tween = this.game.add.tween(this.icon_sprites_in_window[this.selected_element_index].scale).to(
+        this.selected_element_tween = this.game.add.tween(this.icon_sprites_in_window[this.selected_element_index].scale).to(
             { x: 1.6, y: 1.6 },
             Phaser.Timer.QUARTER,
             Phaser.Easing.Linear.None,
@@ -156,8 +248,8 @@ export class ItemPsynergyChooseWindow {
     }
 
     unset_element_tween() {
-        this.selected_button_tween.stop();
-        this.selected_button_tween = null;
+        this.selected_element_tween.stop();
+        this.selected_element_tween = null;
     }
 
     element_change(before_index, after_index) {
@@ -173,6 +265,7 @@ export class ItemPsynergyChooseWindow {
         }
         this.set_element_tween(before_index);
         this.set_highlight_bar();
+        this.set_page_indicator_highlight();
     }
 
     clear_sprites() {
@@ -195,6 +288,7 @@ export class ItemPsynergyChooseWindow {
         this.selected_element_index = 0;
         this.page_index = 0;
         this.set_elements();
+        this.set_page_indicator();
         this.cursor_control.activate();
         this.set_element_tween();
         this.set_highlight_bar();
@@ -206,6 +300,7 @@ export class ItemPsynergyChooseWindow {
         this.window.close(this.close_callback, false);
         this.group.alpha = 1;
         this.clear_sprites();
+        this.unset_page_indicator();
         this.cursor_control.deactivate();
         this.unset_element_tween();
         this.window_open = false;

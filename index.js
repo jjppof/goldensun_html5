@@ -109,7 +109,7 @@ function load_misc() {
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.image('cursor', 'assets/images/misc/cursor.gif');
     game.load.image('green_arrow', 'assets/images/misc/green_arrow.gif');
-    game.load.image('green_arrow', 'assets/images/misc/page_arrow.png');
+    game.load.image('page_arrow', 'assets/images/misc/page_arrow.png');
 }
 
 function preload() {

@@ -265,9 +265,15 @@ export class Window {
         return {text: text_sprite, shadow: text_sprite_shadow, right_align: right_align, initial_x: x_pos};
     }
 
-    set_text_in_position(text, x_pos, y_pos, right_align = false) {
+    set_text_in_position(text, x_pos, y_pos, right_align = false, is_center_pos = false) {
         let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', text, numbers.FONT_SIZE);
         let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, 'gs-bmp-font', text, numbers.FONT_SIZE);
+        if (is_center_pos) {
+            text_sprite.centerX = x_pos;
+            text_sprite.centerY = y_pos;
+            text_sprite_shadow.centerX = x_pos + 1;
+            text_sprite_shadow.centerY = y_pos + 1;
+        }
         if (right_align) {
             text_sprite.x -= text_sprite.width;
             text_sprite_shadow.x -= text_sprite_shadow.width;
