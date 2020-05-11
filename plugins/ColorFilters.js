@@ -23,25 +23,19 @@ Phaser.Filter.ColorFilters = function (game) {
 
         "void main(void) {",
             "gl_FragColor = texture2D(uSampler, vTextureCoord);",
-            "gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.2126 * gl_FragColor.r + 0.7152 * gl_FragColor.g + 0.0722 * gl_FragColor.b), gray);",
-            "gl_FragColor.rgb = vec3(r_colorize * gl_FragColor.r, g_colorize * gl_FragColor.g, b_colorize * gl_FragColor.b);",
+            "if (gray != 0.0) {",
+                "gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.2126 * gl_FragColor.r + 0.7152 * gl_FragColor.g + 0.0722 * gl_FragColor.b), gray);",
+            "}",
 
-            "const vec3  kRGBToYPrime = vec3 (0.299, 0.587, 0.114);",
-            "const vec3  kRGBToI      = vec3 (0.596, -0.275, -0.321);",
-            "const vec3  kRGBToQ      = vec3 (0.212, -0.523, 0.311);",
-            "const vec3  kYIQToR     = vec3 (1.0, 0.956, 0.621);",
-            "const vec3  kYIQToG     = vec3 (1.0, -0.272, -0.647);",
-            "const vec3  kYIQToB     = vec3 (1.0, -1.107, 1.704);",
-            "float   YPrime  = dot (gl_FragColor.rgb, kRGBToYPrime);",
-            "float   I       = dot (gl_FragColor.rgb, kRGBToI);",
-            "float   Q       = dot (gl_FragColor.rgb, kRGBToQ);",
-            "float   hue     = atan (Q, I);",
-            "float   chroma  = sqrt (I * I + Q * Q);",
-            "hue += hue_adjust;",
-            "Q = chroma * sin (hue);",
-            "I = chroma * cos (hue);",
-            "vec3    yIQ   = vec3 (YPrime, I, Q);",
-            "gl_FragColor.rgb = vec3( dot (yIQ, kYIQToR), dot (yIQ, kYIQToG), dot (yIQ, kYIQToB) );",
+            "if (r_colorize != 1.0 || g_colorize != 1.0 || b_colorize != 1.0) {",
+                "gl_FragColor.rgb = vec3(r_colorize * gl_FragColor.r, g_colorize * gl_FragColor.g, b_colorize * gl_FragColor.b);",
+            "}",
+
+            "if (hue_adjust != 0.0) {",
+                "const vec3 k = vec3(0.57735, 0.57735, 0.57735);",
+                "float cosAngle = cos(hue_adjust);",
+                "gl_FragColor.rgb = vec3(gl_FragColor.rgb * cosAngle + cross(k, gl_FragColor.rgb) * sin(hue_adjust) + k * dot(k, gl_FragColor.rgb) * (1.0 - cosAngle));",
+            "}",
         "}"
     ];
 };
