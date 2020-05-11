@@ -3,11 +3,14 @@ Phaser.Filter.ColorFilters = function (game) {
 
     this.uniforms.gray = { type: '1f', value: 0.0 };
     this.uniforms.colorize = { type: '1f', value: -1.0 };
-    this.uniforms.colorize_intensity = { type: '1f', value: 1.0 };
+    this.uniforms.colorize_intensity = { type: '1f', value: 0.0 };
     this.uniforms.r_colorize = { type: '1f', value: 1.0 };
     this.uniforms.g_colorize = { type: '1f', value: 1.0 };
     this.uniforms.b_colorize = { type: '1f', value: 1.0 };
     this.uniforms.hue_adjust = { type: '1f', value: 0.0 };
+    this.uniforms.r_tint = { type: '1f', value: -1.0 };
+    this.uniforms.g_tint = { type: '1f', value: -1.0 };
+    this.uniforms.b_tint = { type: '1f', value: -1.0 };
 
     this.fragmentSrc = [
         "precision mediump float;",
@@ -16,10 +19,14 @@ Phaser.Filter.ColorFilters = function (game) {
         "varying vec4       vColor;",
         "uniform sampler2D  uSampler;",
         "uniform float      gray;",
+        "uniform float      colorize_intensity;",
         "uniform float      r_colorize;",
         "uniform float      g_colorize;",
         "uniform float      b_colorize;",
         "uniform float      hue_adjust;",
+        "uniform float      r_tint;",
+        "uniform float      g_tint;",
+        "uniform float      b_tint;",
 
         "void main(void) {",
             "gl_FragColor = texture2D(uSampler, vTextureCoord);",
@@ -27,8 +34,12 @@ Phaser.Filter.ColorFilters = function (game) {
                 "gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.2126 * gl_FragColor.r + 0.7152 * gl_FragColor.g + 0.0722 * gl_FragColor.b), gray);",
             "}",
 
+            "if (r_tint != -1.0 && g_tint != -1.0 && b_tint != -1.0) {",
+                "gl_FragColor.rgb = vec3(r_tint * gl_FragColor.a, g_tint * gl_FragColor.a, b_tint * gl_FragColor.a);",
+            "}",
+
             "if (r_colorize != 1.0 || g_colorize != 1.0 || b_colorize != 1.0) {",
-                "gl_FragColor.rgb = vec3(r_colorize * gl_FragColor.r, g_colorize * gl_FragColor.g, b_colorize * gl_FragColor.b);",
+                "gl_FragColor.rgb = vec3(colorize_intensity * r_colorize * gl_FragColor.r + gl_FragColor.r * (1.0 - colorize_intensity), colorize_intensity * g_colorize * gl_FragColor.g + gl_FragColor.g * (1.0 - colorize_intensity), colorize_intensity * b_colorize * gl_FragColor.b + gl_FragColor.b * (1.0 - colorize_intensity));",
             "}",
 
             "if (hue_adjust != 0.0) {",
@@ -44,29 +55,29 @@ Phaser.Filter.ColorFilters.prototype = Object.create(Phaser.Filter.prototype);
 Phaser.Filter.ColorFilters.prototype.constructor = Phaser.Filter.ColorFilters;
 Phaser.Filter.ColorFilters.prototype.set_colorize_values = function(value) {
     if (value >= 0 && value < 1/6) {
-        this.uniforms.r_colorize.value = (value*6).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
-        this.uniforms.g_colorize.value = (0).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
-        this.uniforms.b_colorize.value = (1).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
+        this.uniforms.r_colorize.value = value*6;
+        this.uniforms.g_colorize.value = 0;
+        this.uniforms.b_colorize.value = 1;
     } else if (value >= 1/6 && value < 2/6) {
-        this.uniforms.r_colorize.value = (1).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
-        this.uniforms.g_colorize.value = (0).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
-        this.uniforms.b_colorize.value = (-value*6 + 2).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
+        this.uniforms.r_colorize.value = 1;
+        this.uniforms.g_colorize.value = 0;
+        this.uniforms.b_colorize.value = -value*6 + 2;
     } else if (value >= 2/6 && value < 3/6) {
-        this.uniforms.r_colorize.value = (1).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
-        this.uniforms.g_colorize.value = (value*6 - 2).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
-        this.uniforms.b_colorize.value = (0).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
+        this.uniforms.r_colorize.value = 1;
+        this.uniforms.g_colorize.value = value*6 - 2;
+        this.uniforms.b_colorize.value = 0;
     } else if (value >= 3/6 && value < 4/6) {
-        this.uniforms.r_colorize.value = (-value*6 + 4).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
-        this.uniforms.g_colorize.value = (1).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
-        this.uniforms.b_colorize.value = (0).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
+        this.uniforms.r_colorize.value = -value*6 + 4;
+        this.uniforms.g_colorize.value = 1;
+        this.uniforms.b_colorize.value = 0;
     } else if (value >= 4/6 && value < 5/6) {
-        this.uniforms.r_colorize.value = (0).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
-        this.uniforms.g_colorize.value = (1).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
-        this.uniforms.b_colorize.value = (value*6 - 4).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
+        this.uniforms.r_colorize.value = 0;
+        this.uniforms.g_colorize.value = 1;
+        this.uniforms.b_colorize.value = value*6 - 4;
     }  else if (value >= 5/6 && value <= 1) {
-        this.uniforms.r_colorize.value = (0).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
-        this.uniforms.g_colorize.value = (-value*6 + 6).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
-        this.uniforms.b_colorize.value = (1).clamp(1 - this.uniforms.colorize_intensity.value, this.uniforms.colorize_intensity.value);
+        this.uniforms.r_colorize.value = 0;
+        this.uniforms.g_colorize.value = -value*6 + 6;
+        this.uniforms.b_colorize.value = 1;
     }
 }
 
@@ -115,5 +126,15 @@ Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'hue_adjust', {
     },
     set: function(value) {
         this.uniforms.hue_adjust.value = value;
+    }
+});
+Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'tint', {
+    get: function() {
+        return [this.uniforms.r_tint.value, this.uniforms.g_tint.value, this.uniforms.b_tint.value];
+    },
+    set: function(value) {
+        this.uniforms.r_tint.value = value[0];
+        this.uniforms.g_tint.value = value[1];
+        this.uniforms.b_tint.value = value[2];
     }
 });

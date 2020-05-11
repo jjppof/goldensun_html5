@@ -1,11 +1,14 @@
-export function init_cast_aura(game, sprite, group, destroy_callback) {
+export function init_cast_aura(game, sprite, group, filter, after_init, after_destroy, before_destroy) {
     const ring_up_time = 750;
     const ring_up_time_half = ring_up_time >> 1;
     const step_time = parseInt(ring_up_time/3);
+    sprite.filters = [filter];
     const auras_number = 2;
     let tweens = [];
     let fronts = [];
     let backs = [];
+    let stop_asked = false;
+    let promises = [];
     for (let j = 0; j < auras_number; ++j) {
         let back_aura = group.create(0, 0, "psynergy_aura");
         let front_aura = group.create(0, 0, "psynergy_aura");
@@ -51,10 +54,16 @@ export function init_cast_aura(game, sprite, group, destroy_callback) {
                 step_time,
                 Phaser.Easing.Linear.None
             );
+            let promise_resolve;
+            promises.push(new Promise(resolve => { promise_resolve = resolve; }));
             tween_c.onComplete.add(() => {
                 aura.y = initial_y;
-                tween_a.start();
-                tween_aa.start();
+                if (!stop_asked) {
+                    tween_a.start();
+                    tween_aa.start();
+                } else {
+                    promise_resolve();
+                }
             });
             let tween_aa = game.add.tween(aura.scale).to(
                 { x: scale_factor, y: scale_factor },
@@ -88,7 +97,41 @@ export function init_cast_aura(game, sprite, group, destroy_callback) {
             }
         }
     }
-    return () => {
+    let blink_counter = 16;
+    let blink_timer = game.time.create(false);
+    let hue_timer = game.time.create(false);
+    blink_timer.loop(50, () => {
+        if (blink_counter%2 === 0) {
+            filter.tint = [1,1,1];
+        } else {
+            filter.tint = [-1,-1,-1];
+        }
+        --blink_counter;
+        if (blink_counter === 0) {
+            filter.gray = 0.4;
+            blink_timer.stop();
+            if (after_init !== undefined) {
+                after_init();
+            }
+            hue_timer.start();
+        }
+    });
+    hue_timer.loop(100, () => {
+        filter.hue_adjust = Math.random() * 2 * Math.PI;
+    });
+    blink_timer.start();
+    return async () => {
+        if (before_destroy !== undefined) {
+            before_destroy();
+        }
+        stop_asked = true;
+        hue_timer.stop();
+        blink_timer.stop();
+        filter.tint = [-1,-1,-1];
+        filter.gray = 0;
+        filter.hue_adjust = 0;
+        sprite.filters = undefined;
+        await Promise.all(promises);
         for (let i = 0; i < tweens.length; ++i) {
             for (let j = 0; j < tweens[i].length; ++j) {
                 tweens[i][j].tween_a.stop();
@@ -99,8 +142,39 @@ export function init_cast_aura(game, sprite, group, destroy_callback) {
                 group.remove(tweens[i][j].aura, true);
             }
         }
-        if (destroy_callback !== undefined) {
-            destroy_callback();
+        if (after_destroy !== undefined) {
+            after_destroy();
         }
+    };
+}
+
+export function tint_map_layers(map, filter, after_destroy) {
+    filter.colorize_intensity = 0;
+    filter.gray = 0;
+    filter.colorize = Math.random();
+    for (let i = 0; i < map.layers.length; ++i) {
+        map.layers[i].sprite.filters = [filter];
     }
+    game.add.tween(filter).to(
+        { colorize_intensity: 1, gray: 1 },
+        Phaser.Timer.QUARTER,
+        Phaser.Easing.Linear.None,
+        true
+    );
+    return () => {
+        game.add.tween(filter).to(
+            { colorize_intensity: 0, gray: 0 },
+            Phaser.Timer.QUARTER,
+            Phaser.Easing.Linear.None,
+            true
+        ).onComplete.addOnce(() => {
+            filter.colorize = -1;
+            for (let i = 0; i < map.layers.length; ++i) {
+                map.layers[i].sprite.filters = undefined;
+            }
+            if (after_destroy !== undefined) {
+                after_destroy();
+            }
+        });
+    };
 }

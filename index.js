@@ -73,7 +73,9 @@ var data = {
     esc_input: null,
     classes_db: null,
     abilities_db: null,
-    casting_psynergy: false
+    casting_psynergy: false,
+    hero_color_filters: undefined,
+    map_color_filters: undefined,
 };
 
 //debugging porpouses
@@ -170,6 +172,8 @@ async function create() {
     data.classes_db = game.cache.getJSON('classes_db');
     data.abilities_db = game.cache.getJSON('abilities_db');
     data.djinni_db = game.cache.getJSON('djinni_db');
+    data.hero_color_filters = game.add.filter('ColorFilters');
+    data.map_color_filters = game.add.filter('ColorFilters');
 
     data.hero_name = data.init_db.hero_key_name;
     data.actual_direction = data.init_db.initial_direction;
