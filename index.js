@@ -72,7 +72,8 @@ var data = {
     menu_open: false,
     esc_input: null,
     classes_db: null,
-    abilities_db: null
+    abilities_db: null,
+    casting_psynergy: false
 };
 
 //debugging porpouses
@@ -110,6 +111,7 @@ function load_misc() {
     game.load.image('cursor', 'assets/images/misc/cursor.gif');
     game.load.image('green_arrow', 'assets/images/misc/green_arrow.gif');
     game.load.image('page_arrow', 'assets/images/misc/page_arrow.png');
+    game.load.image('psynergy_aura', 'assets/images/misc/psynergy_aura.png');
 }
 
 function preload() {
@@ -121,6 +123,7 @@ function preload() {
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
     game.load.json('psynergy_items_db', 'assets/dbs/psynergy_items_db.json');
     game.load.json('djinni_db', 'assets/dbs/djinni_db.json');
+    game.load.script('hue', 'plugins/Hue.js');
     load_misc();
     load_buttons();
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
@@ -362,7 +365,7 @@ function event_triggering() {
 
 function update() {
     if (data.created) {
-        if (!data.on_event && !data.npc_event && !data.pushing && !data.menu_open) {
+        if (!data.on_event && !data.npc_event && !data.pushing && !data.menu_open && !data.casting_psynergy) {
             data.hero_tile_pos_x = parseInt(data.hero.x/maps[data.map_name].sprite.tileWidth);
             data.hero_tile_pos_y = parseInt(data.hero.y/maps[data.map_name].sprite.tileHeight);
 
