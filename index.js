@@ -123,7 +123,7 @@ function preload() {
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
     game.load.json('psynergy_items_db', 'assets/dbs/psynergy_items_db.json');
     game.load.json('djinni_db', 'assets/dbs/djinni_db.json');
-    game.load.script('hue', 'plugins/Hue.js');
+    game.load.script('color_filters', 'plugins/ColorFilters.js');
     load_misc();
     load_buttons();
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
