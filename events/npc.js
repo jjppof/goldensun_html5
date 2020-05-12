@@ -1,7 +1,6 @@
 import { DialogManager, set_dialog } from '../base/Window.js';
 import { NPC } from '../base/NPC.js';
 import * as utils from '../utils.js';
-import * as numbers from '../magic_numbers.js';
 import { change_hero_sprite } from '../chars/hero_control.js';
 
 export function trigger_npc_dialog(data) {

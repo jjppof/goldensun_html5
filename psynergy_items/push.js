@@ -81,19 +81,22 @@ export function fire_push_movement(data, psynergy_item) {
                 }
             }
             let sprites = [data.shadow, data.hero.body, psynergy_item.psynergy_item_sprite.body];
-            psynergy_item.current_x += event_shift_x; 
-            psynergy_item.current_y += event_shift_y; 
+            psynergy_item.current_x += event_shift_x;
+            psynergy_item.current_y += event_shift_y;
+            let promises = [];
             for (let i = 0; i < sprites.length; ++i) {
                 let body = sprites[i];
+                let promise_resolve;
+                promises.push(new Promise(resolve => { promise_resolve = resolve; }))
                 game.add.tween(body).to({
                     x: body.x + tween_x,
                     y: body.y + tween_y
-                }, numbers.PUSH_TIME, Phaser.Easing.Linear.None, true);
+                }, numbers.PUSH_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(promise_resolve);
             }
-            game.time.events.add(numbers.PUSH_TIME + 50, () => {
+            Promise.all(promises).then(() => {
                 data.pushing = false;
                 game.physics.p2.resume();
-            }, this);
+            });
         }
     }
     data.trying_to_push = false;

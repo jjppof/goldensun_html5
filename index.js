@@ -149,6 +149,7 @@ function loadRender() {
 }
 
 function enter_key_event() {
+    if (data.casting_psynergy) return;
     trigger_npc_dialog(data);
 }
 
@@ -212,6 +213,7 @@ async function create() {
     //initialize screens
     data.menu_screen = initialize_menu(data);
     game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(() => {
+        if (data.casting_psynergy) return;
         if (!data.menu_open) {
             data.menu_open = true;
             stop_hero(data);
