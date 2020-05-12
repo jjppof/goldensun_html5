@@ -1,6 +1,8 @@
 import { Ability } from '../base/Ability.js';
+import { MoveFieldPsynergy } from '../field_abilities/move.js';
 
 export let abilities_list = {};
+export let field_abilities_list = {};
 
 export function initialize_abilities(game, abilities_db, load_promise_resolve) {
     let load_promises = [];
@@ -32,4 +34,8 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
         abilities_list[ability_data.key_name].load_assets(game, load_assets_promise_resolve);
     }
     Promise.all(load_promises).then(load_promise_resolve);
+}
+
+export function initialize_field_abilities(game, data) {
+    field_abilities_list.move = new MoveFieldPsynergy(game, data);
 }

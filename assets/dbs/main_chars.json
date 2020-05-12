@@ -87,6 +87,22 @@
                 ],
                 "directions_frames_number": [3,3,3,3],
                 "frame_rate": 4
+            },{
+                "key": "cast",
+                "spritesheet": "assets/images/spritesheets/isaac_cast.json",
+                "spritesheet_img": "assets/images/spritesheets/isaac_cast.png",
+                "directions": [
+                    "down", 
+                    "up", 
+                    "left", 
+                    "right", 
+                    "down_left", 
+                    "down_right", 
+                    "up_left", 
+                    "up_right"
+                ],
+                "directions_frames_number": [2,2,2,2,2,2,2,2],
+                "frame_rate": 4
             }
         ],
         "walk_speed": 60,

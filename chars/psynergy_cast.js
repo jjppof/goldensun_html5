@@ -156,7 +156,7 @@ export function tint_map_layers(map, filter, after_destroy) {
         map.layers[i].sprite.filters = [filter];
     }
     game.add.tween(filter).to(
-        { colorize_intensity: 1, gray: 1 },
+        { colorize_intensity: 0.4, gray: 1 },
         Phaser.Timer.QUARTER,
         Phaser.Easing.Linear.None,
         true

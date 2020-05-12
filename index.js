@@ -1,6 +1,6 @@
 import * as numbers from './magic_numbers.js';
 import { initialize_main_chars, main_char_list, initialize_classes, party_data } from './chars/main_chars.js';
-import { initialize_abilities, abilities_list } from './chars/abilities.js';
+import { initialize_abilities, abilities_list, initialize_field_abilities, field_abilities_list } from './chars/abilities.js';
 import { initialize_djinni, djinni_list } from './chars/djinni.js';
 import { initializeMaps, loadMaps, maps } from './maps/maps.js';
 import { jump_event, jump_near_collision } from './events/jump.js';
@@ -82,6 +82,7 @@ var data = {
 window.maps = maps;
 window.main_char_list = main_char_list;
 window.abilities_list = abilities_list;
+window.field_abilities_list = field_abilities_list;
 window.djinni_list = djinni_list;
 window.party_data = party_data;
 window.data = data;
@@ -129,6 +130,7 @@ function preload() {
     load_misc();
     load_buttons();
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
+    initialize_field_abilities(game, data);
 
     game.time.advancedTiming = true;
     game.stage.smoothed = false;
@@ -287,6 +289,11 @@ async function create() {
             data.scale_factor = 3;
             game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
             window.dispatchEvent(new Event('resize'));
+        }, this);
+
+        //enable psynergies shortcuts
+        game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(function(){
+            field_abilities_list.move.cast(data.hero_name);
         }, this);
 
         //enable enter event
