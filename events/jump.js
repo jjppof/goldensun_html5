@@ -4,6 +4,11 @@ import { maps } from '../maps/maps.js';
 
 export function jump_event(data, event_key) {
     let current_event = maps[data.map_name].events[event_key];
+    if (!current_event.active) {
+        data.on_event = false;
+        data.current_event = null;
+        return;
+    }
     data.shadow.visible = false;
     let jump_offset = numbers.JUMP_OFFSET;
     let direction;
