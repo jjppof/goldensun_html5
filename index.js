@@ -76,6 +76,7 @@ var data = {
     casting_psynergy: false,
     hero_color_filters: undefined,
     map_color_filters: undefined,
+    pasynergy_item_color_filters: undefined
 };
 
 //debugging porpouses
@@ -178,6 +179,7 @@ async function create() {
     data.djinni_db = game.cache.getJSON('djinni_db');
     data.hero_color_filters = game.add.filter('ColorFilters');
     data.map_color_filters = game.add.filter('ColorFilters');
+    data.pasynergy_item_color_filters = game.add.filter('ColorFilters');
 
     data.hero_name = data.init_db.hero_key_name;
     data.actual_direction = data.init_db.initial_direction;

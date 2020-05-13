@@ -184,6 +184,12 @@ export class MoveFieldPsynergy extends SpriteBase {
         ).onComplete.addOnce(() => {
             this.hand_sprite.animations.play(this.action_key_name + "_" + this.cast_direction);
             if (this.target_found) {
+                this.target_item.psynergy_item_sprite.filters = [this.data.pasynergy_item_color_filters];
+                this.target_hueshift_timer = this.game.time.create(false);
+                this.target_hueshift_timer.loop(5, () => {
+                    this.data.pasynergy_item_color_filters.hue_adjust = Math.random() * 2 * Math.PI;
+                });
+                this.target_hueshift_timer.start();
                 this.controls_active = true;
             } else {
                 game.time.events.add(700, () => {
@@ -195,7 +201,7 @@ export class MoveFieldPsynergy extends SpriteBase {
     }
 
     finish_hand() {
-        let flip_timer = game.time.create(false);
+        let flip_timer = this.game.time.create(false);
         let fake_hand_scale = {x : 1};
         flip_timer.loop(30, () => {
             this.hand_sprite.scale.x = this.hand_sprite.scale.x > 0 ? -fake_hand_scale.x : fake_hand_scale.x;
@@ -378,6 +384,10 @@ export class MoveFieldPsynergy extends SpriteBase {
             data.casting_psynergy = false;
             this.target_item = null;
         }, () => {
+            if (this.target_found) {
+                this.target_item.psynergy_item_sprite.filters = undefined;
+                this.target_hueshift_timer.stop();
+            }
             reset_map();
         });
     
