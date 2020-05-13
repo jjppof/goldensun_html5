@@ -115,6 +115,7 @@ function load_misc() {
     game.load.image('green_arrow', 'assets/images/misc/green_arrow.gif');
     game.load.image('page_arrow', 'assets/images/misc/page_arrow.png');
     game.load.image('psynergy_aura', 'assets/images/misc/psynergy_aura.png');
+    game.load.atlasJSONHash('psynergy_particle', 'assets/images/spritesheets/psynergy_particle.png', 'assets/images/spritesheets/psynergy_particle.json');
 }
 
 function preload() {

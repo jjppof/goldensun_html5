@@ -34,6 +34,8 @@ export class MoveFieldPsynergy extends SpriteBase {
         this.target_found = false;
         this.target_item = null;
         this.stop_casting = null;
+        this.emitter = null;
+        this.final_emitter = null;
     }
 
     set_hero_cast_anim() {
@@ -124,9 +126,11 @@ export class MoveFieldPsynergy extends SpriteBase {
             Phaser.Easing.Linear.None,
             true
         ).onComplete.addOnce(() => {
+            this.start_final_emitter(this.hand_sprite.x, this.hand_sprite.y);
             this.stop_casting();
             flip_timer.stop();
             this.data.npc_group.remove(this.hand_sprite, true);
+            this.unset_emitter();
         });
         
     }
@@ -185,6 +189,75 @@ export class MoveFieldPsynergy extends SpriteBase {
         }
     }
 
+    set_emitter() {
+        let x_shift = 0;
+        let y_shift = 0;
+        switch(this.cast_direction) {
+            case "up":
+                y_shift = -MAX_HAND_TRANSLATE;
+                break;
+            case "down":
+                y_shift = MAX_HAND_TRANSLATE;
+                break;
+            case "left":
+                x_shift = -MAX_HAND_TRANSLATE;
+                break;
+            case "right":
+                x_shift = MAX_HAND_TRANSLATE;
+                break;
+        }
+        this.emitter = this.game.add.emitter(this.data.hero.centerX + x_shift, this.data.hero.centerY + y_shift, 150);
+        this.emitter.makeParticles("psynergy_particle");
+        this.emitter.minParticleSpeed.setTo(-15, -15);
+        this.emitter.maxParticleSpeed.setTo(15, 15);
+        this.emitter.gravity = 0;
+        this.emitter.width = 2 * MOVE_MAX_RANGE;
+        this.emitter.height = 2 * MOVE_MAX_RANGE;
+        this.emitter.forEach(particle => {
+            particle.animations.add('vanish', null, 4, true, false);
+        });
+    }
+
+    start_emitter() {
+        this.emitter.start(false, Phaser.Timer.QUARTER, 15, 0);
+        this.emitter.forEach(particle => {
+            particle.animations.play('vanish');
+            particle.animations.currentAnim.setFrame(parseInt(Math.random()*particle.animations.frameTotal));
+        });
+    }
+
+    unset_emitter() {
+        this.emitter.destroy();
+    }
+
+    set_final_emitter() {
+        this.final_emitter_particles_count = 8;
+        this.final_emitter = this.game.add.emitter(0, 0, this.final_emitter_particles_count);
+        this.final_emitter.makeParticles("psynergy_particle");
+        this.final_emitter.gravity = 300;
+        this.final_emitter.forEach(particle => {
+            particle.animations.add('vanish', null, 4, true, false);
+        });
+    }
+
+    start_final_emitter(x, y) {
+        this.final_emitter.x = x;
+        this.final_emitter.y = y;
+        let lifetime = Phaser.Timer.QUARTER;
+        this.final_emitter.start(true, lifetime, null, this.final_emitter_particles_count);
+        this.final_emitter.forEach(particle => {
+            particle.animations.play('vanish');
+            particle.animations.currentAnim.setFrame(parseInt(Math.random()*particle.animations.frameTotal));
+        });
+        this.game.time.events.add(lifetime, () => {
+            this.unset_final_emitter();
+        });
+    }
+
+    unset_final_emitter() {
+        this.final_emitter.destroy();
+    }
+
     cast(caster_key_name) {
         if (this.data.casting_psynergy) return;
         let caster = main_char_list[caster_key_name];
@@ -196,6 +269,8 @@ export class MoveFieldPsynergy extends SpriteBase {
         data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
         caster.current_pp -= ability.pp_cost;
         this.set_cast_direction();
+        this.set_emitter();
+        this.set_final_emitter();
         this.search_for_target();
         this.set_hero_cast_anim();
         let reset_map;
@@ -203,6 +278,7 @@ export class MoveFieldPsynergy extends SpriteBase {
             reset_map = tint_map_layers(maps[this.data.map_name], this.data.map_color_filters);
             this.set_hand();
             this.translate_hand();
+            this.start_emitter();
         }, () => {
             data.casting_psynergy = false;
         }, () => {
