@@ -2,7 +2,7 @@ import { CharsMenu } from '../base/menus/CharsMenu.js';
 import { BasicInfoWindow } from '../base/windows/BasicInfoWindow.js';
 import { ItemPsynergyChooseWindow } from '../base/windows/ItemPsynergyChooseWindow.js';
 import { party_data } from '../chars/main_chars.js';
-import { abilities_list } from '../chars/abilities.js';
+import { abilities_list, field_abilities_list } from '../chars/abilities.js';
 import { Window } from '../base/Window.js';
 import * as numbers from '../magic_numbers.js';
 
@@ -98,7 +98,10 @@ export class PsynergyMenuScreen {
     }
 
     psynergy_choose(ability) {
-
+        if (ability.key_name in field_abilities_list) {
+            this.close_menu(true);
+            field_abilities_list[ability.key_name].cast(party_data.members[this.selected_char_index].key_name);
+        }
     }
 
     set_guide_window_text() {
@@ -148,7 +151,7 @@ export class PsynergyMenuScreen {
         this.is_open = true;
     }
 
-    close_menu() {
+    close_menu(close_menu_below = false) {
         this.chars_menu.close();
         this.basic_info_window.close();
         this.is_open = false;
@@ -157,7 +160,7 @@ export class PsynergyMenuScreen {
         this.psynergy_overview_window.close(undefined, false);
         this.shortcuts_window.close(undefined, false);
         if (this.close_callback !== null) {
-            this.close_callback();
+            this.close_callback(close_menu_below);
         }
     }
 }

@@ -100,6 +100,16 @@ export class ItemPsynergyChooseWindow {
             this.data.esc_input.getSignal().halt();
             this.close();
         }, this, this.esc_propagation_priority);
+        game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
+            if (!this.window_open) return;
+            this.data.enter_input.getSignal().halt();
+            if (!abilities_list[this.elements[this.selected_element_index]].in_battle) {
+                this.close();
+            }
+            this.on_choose(abilities_list[this.elements[this.selected_element_index]]);
+        }, this, this.enter_propagation_priority);
+
+        
     }
 
     is_open() {

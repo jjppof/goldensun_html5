@@ -42,8 +42,12 @@ export class MenuScreen {
         switch (this.buttons_keys[index]) {
             case "psynergy":
                 this.horizontal_menu.deactivate();
-                this.psynergy_menu.open_menu(() => {
+                this.psynergy_menu.open_menu(close_this_menu => {
                     this.horizontal_menu.activate();
+                    if (close_this_menu) {
+                        this.data.menu_open = false;
+                        this.close_menu();
+                    }
                 });
                 break;
         }
