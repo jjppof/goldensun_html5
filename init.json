@@ -1,9 +1,9 @@
 {
     "hero_key_name": "isaac",
     "initial_direction": "down",
-    "map_key_name": "madra",
-    "x_tile_position": 20,
-    "y_tile_position": 12,
+    "map_key_name": "madra_side",
+    "x_tile_position": 13,
+    "y_tile_position": 13,
     "map_z_index": 0,
     "coins": 350
 }

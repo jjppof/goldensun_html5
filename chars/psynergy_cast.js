@@ -5,15 +5,13 @@ export function init_cast_aura(game, sprite, group, filter, after_init, after_de
     sprite.filters = [filter];
     const auras_number = 2;
     let tweens = [];
-    let fronts = [];
-    let backs = [];
     let stop_asked = false;
     let promises = [];
     for (let j = 0; j < auras_number; ++j) {
         let back_aura = group.create(0, 0, "psynergy_aura");
         let front_aura = group.create(0, 0, "psynergy_aura");
-        backs.push(back_aura);
-        fronts.push(front_aura);
+        group.setChildIndex(back_aura, group.getChildIndex(sprite));
+        group.setChildIndex(front_aura, group.getChildIndex(sprite) + 1);
         const height = sprite.height + front_aura.height - 8;
         const step_height = parseInt(height/3);
         front_aura.anchor.setTo(0.5, 0);
@@ -30,10 +28,6 @@ export function init_cast_aura(game, sprite, group, filter, after_init, after_de
             {aura: front_aura, initial_y: initial_front_y, scale_factor: 1},
             {aura: back_aura, initial_y: initial_back_y, scale_factor: -1},
         ];
-        if (fronts.length > 1) {
-            group.swapChildren(back_aura, fronts[0]);
-        }
-        group.swapChildren(back_aura, sprite);
         tweens.push([]);
         for (let i = 0; i < auras.length; ++i) {
             let aura = auras[i].aura;

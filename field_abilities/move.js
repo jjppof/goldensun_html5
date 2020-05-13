@@ -4,11 +4,12 @@ import { abilities_list } from "../chars/abilities.js";
 import { init_cast_aura, tint_map_layers } from  '../chars/psynergy_cast.js';
 import { maps } from  '../maps/maps.js';
 import * as numbers from '../magic_numbers.js';
+import { target_only_push } from '../psynergy_items/push.js';
 
 const KEY_NAME = "move_psynergy_hand";
 const ACTION_KEY_NAME = "cast";
 const MAX_HAND_TRANSLATE = 16;
-const MOVE_MAX_RANGE = 32;
+const MOVE_MAX_RANGE = 26;
 
 export class MoveFieldPsynergy extends SpriteBase {
     constructor(game, data) {
@@ -36,6 +37,83 @@ export class MoveFieldPsynergy extends SpriteBase {
         this.stop_casting = null;
         this.emitter = null;
         this.final_emitter = null;
+        this.set_controls();
+        this.controls_active = false;
+    }
+
+    set_controls() {
+        game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
+            if (!this.controls_active) return;
+            this.data.trying_to_push_direction = "right";
+            this.fire_push();
+        });
+        game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
+            if (!this.controls_active) return;
+            this.data.trying_to_push_direction = "left";
+            this.fire_push();
+        });
+        game.input.keyboard.addKey(Phaser.Keyboard.UP).onDown.add(() => {
+            if (!this.controls_active) return;
+            this.data.trying_to_push_direction = "up";
+            this.fire_push();
+        });
+        game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onDown.add(() => {
+            if (!this.controls_active) return;
+            this.data.trying_to_push_direction = "down";
+            this.fire_push();
+        });
+        game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
+            if (!this.controls_active) return;
+            this.controls_active = false;
+            this.finish_hand();
+            this.unset_hero_cast_anim();
+        });
+    }
+
+    fire_push() {
+        if (this.data.map_collider_layer === this.target_item.base_collider_layer) {
+            let item_position = this.target_item.get_current_position(this.data);
+            switch (this.data.trying_to_push_direction) {
+                case "up":
+                    item_position.y -= 1;
+                    break;
+                case "down":
+                    item_position.y += 1;
+                    break;
+                case "left":
+                    item_position.x -= 1;
+                    break;
+                case "right":
+                    item_position.x += 1;
+                    break;
+            }
+            let position_allowed = this.target_item.position_allowed(this.data, item_position.x, item_position.y);
+            if (position_allowed && !(this.data.hero_tile_pos_x === item_position.x && this.data.hero_tile_pos_y === item_position.y)) {
+                this.controls_active = false;
+                target_only_push(this.data, this.target_item, (x_shift, y_shift) => {
+                    const x_target = this.hand_sprite.x + x_shift;
+                    const y_target = this.hand_sprite.y + y_shift;
+                    game.add.tween(this.hand_sprite).to(
+                        {x: x_target, y: y_target},
+                        numbers.PUSH_TIME,
+                        Phaser.Easing.Linear.None,
+                        true
+                    );
+                }, () => {
+                    const pos_sqr_distance = Math.pow(this.data.hero.body.x - this.target_item.psynergy_item_sprite.body.x, 2) + Math.pow(this.data.hero.body.y - this.target_item.psynergy_item_sprite.body.y, 2);
+                    const rad_sqr_distance = Math.pow(numbers.HERO_BODY_RADIUS + this.data.psynergy_items_db[this.target_item.key_name].body_radius, 2);
+                    if (pos_sqr_distance <= rad_sqr_distance) {
+                        this.data.hero.body.x = (this.data.hero_tile_pos_x + 0.5) * maps[this.data.map_name].sprite.tileWidth;
+                        this.data.hero.body.y = (this.data.hero_tile_pos_y + 0.5) * maps[this.data.map_name].sprite.tileHeight;
+                        this.data.shadow.x = this.data.hero.body.x;
+                        this.data.shadow.y = this.data.hero.body.y;
+                    }
+                    this.data.hero.body.velocity.x = this.data.hero.body.velocity.y = 0;
+                    this.finish_hand();
+                    this.unset_hero_cast_anim();
+                });
+            }
+        }
     }
 
     set_hero_cast_anim() {
@@ -66,31 +144,47 @@ export class MoveFieldPsynergy extends SpriteBase {
     }
 
     translate_hand() {
-        let translate_x = this.hand_sprite.x;
-        let translate_y = this.hand_sprite.y;
+        let translate_x = this.hand_sprite.centerX;
+        let translate_y = this.hand_sprite.centerY;
         switch (this.cast_direction) {
             case "up":
-                translate_y -= MAX_HAND_TRANSLATE;
+                if (this.target_found) {
+                    translate_y = this.target_item.psynergy_item_sprite.y;
+                } else {
+                    translate_y -= MAX_HAND_TRANSLATE;
+                }
                 break;
             case "down":
-                translate_y += MAX_HAND_TRANSLATE;
+                if (this.target_found) {
+                    translate_y = this.target_item.psynergy_item_sprite.y - this.target_item.psynergy_item_sprite.height + this.data.psynergy_items_db[this.target_item.key_name].body_radius;
+                } else {
+                    translate_y += MAX_HAND_TRANSLATE;
+                }
                 break;
             case "right":
-                translate_x += MAX_HAND_TRANSLATE;
+                if (this.target_found) {
+                    translate_x = this.target_item.psynergy_item_sprite.x - 2 * this.data.psynergy_items_db[this.target_item.key_name].body_radius;
+                } else {
+                    translate_x += MAX_HAND_TRANSLATE;
+                }
                 break;
             case "left":
-                translate_x -= MAX_HAND_TRANSLATE;
+                if (this.target_found) {
+                    translate_x = this.target_item.psynergy_item_sprite.x + 2 * this.data.psynergy_items_db[this.target_item.key_name].body_radius;
+                } else {
+                    translate_x -= MAX_HAND_TRANSLATE;
+                }
                 break;
         }
         game.add.tween(this.hand_sprite).to(
-            {x: translate_x, y: translate_y},
+            {centerX: translate_x, centerY: translate_y},
             Phaser.Timer.QUARTER >> 1,
             Phaser.Easing.Linear.None,
             true
         ).onComplete.addOnce(() => {
             this.hand_sprite.animations.play(this.action_key_name + "_" + this.cast_direction);
             if (this.target_found) {
-
+                this.controls_active = true;
             } else {
                 game.time.events.add(700, () => {
                     this.finish_hand();
@@ -148,6 +242,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         }
         this.data.actual_direction = this.cast_direction;
     }
+
     search_for_target() {
         this.target_found = false;
         let min_x, max_x, min_y, max_y;
@@ -281,6 +376,7 @@ export class MoveFieldPsynergy extends SpriteBase {
             this.start_emitter();
         }, () => {
             data.casting_psynergy = false;
+            this.target_item = null;
         }, () => {
             reset_map();
         });
