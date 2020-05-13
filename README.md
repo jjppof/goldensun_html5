@@ -34,4 +34,7 @@ GSHTML5 has no external dependency, so there's no `npm install` or packages on C
 ## Credits
 - http://www.goldensunhacking.net/
 - https://gamefaqs.gamespot.com/gba/561356-golden-sun-the-lost-age/faqs
+- http://www.goldensun-syndicate.net/sprites/
+- https://www.spriters-resource.com/game_boy_advance/gs/
+- https://www.spriters-resource.com/game_boy_advance/gs2/
 - Golden Sun franchise
