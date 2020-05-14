@@ -1,6 +1,7 @@
 import { main_char_list } from '../chars/main_chars.js';
 import { maps } from '../maps/maps.js';
 import { config_physics_for_npcs, config_physics_for_map, config_collisions, set_speed_factors, config_physics_for_psynergy_items } from '../physics/physics.js';
+import * as numbers from '../magic_numbers.js';
 
 export function set_door_event(data) {
     data.on_event = true;
@@ -72,6 +73,13 @@ export function door_event_phases(data) {
             data.npc_group
         ).then(() => {
             game.camera.setBoundsToWorld();
+            if (game.camera.bounds.width < numbers.GAME_WIDTH) {
+                game.camera.bounds.width = numbers.GAME_WIDTH;
+            }
+            if (game.camera.bounds.height < numbers.GAME_HEIGHT) {
+                game.camera.bounds.height = numbers.GAME_HEIGHT;
+            }
+
             data.hero.body.x = data.current_event.x_target * maps[data.map_name].sprite.tileWidth;
             data.hero.body.y = data.current_event.y_target * maps[data.map_name].sprite.tileHeight;
 
