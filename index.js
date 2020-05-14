@@ -17,6 +17,7 @@ var data = {
     game: undefined,
     cursors: undefined,
     hero: undefined,
+    camera_type: undefined,
     map_collider_layer: undefined,
     actual_action: "idle",
     actual_direction: undefined,
@@ -76,7 +77,8 @@ var data = {
     casting_psynergy: false,
     hero_color_filters: undefined,
     map_color_filters: undefined,
-    pasynergy_item_color_filters: undefined
+    pasynergy_item_color_filters: undefined,
+    stop_by_colliding: false
 };
 
 //debugging porpouses

@@ -71,6 +71,7 @@ export function door_event_phases(data) {
             data.map_collider_layer,
             data.npc_group
         ).then(() => {
+            game.camera.setBoundsToWorld();
             data.hero.body.x = data.current_event.x_target * maps[data.map_name].sprite.tileWidth;
             data.hero.body.y = data.current_event.y_target * maps[data.map_name].sprite.tileHeight;
 

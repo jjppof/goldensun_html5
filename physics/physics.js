@@ -111,17 +111,11 @@ export function config_collisions(data) { //make the world bodies interact with 
 }
 
 export function collision_dealer(data) {
+    let normals = [];
     for (let i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; ++i) {
         let c = game.physics.p2.world.narrowphase.contactEquations[i];
-        if (c.bodyA === data.hero.body.data) { //check if hero collided with something then make it stops
-            if (c.contactPointA[0] >= numbers.COLLISION_MARGIN && data.actual_direction === "left")
-                data.hero.body.velocity.x = 0;
-            if (c.contactPointA[0] <= -numbers.COLLISION_MARGIN && data.actual_direction === "right")
-                data.hero.body.velocity.x = 0;
-            if (c.contactPointA[1] <= -numbers.COLLISION_MARGIN && data.actual_direction === "down")
-                data.hero.body.velocity.y = 0;
-            if (c.contactPointA[1] >= numbers.COLLISION_MARGIN && data.actual_direction === "up")
-                data.hero.body.velocity.y = 0;
+        if (c.bodyA === data.hero.body.data) { //check if hero collided with something
+            normals.push(c.normalA);
         }
         let j = 0;
         for (j = 0; j < maps[data.map_name].psynergy_items.length; ++j) {  //check if hero is colliding with any psynergy item
@@ -159,6 +153,50 @@ export function collision_dealer(data) {
         }
         if (j === maps[data.map_name].psynergy_items.length) {
             data.trying_to_push = false;
+        }
+    }
+    if (normals.length) {
+        let resultant_normal = normals.reduce((accumulator, current) => {
+            accumulator[0] += current[0];
+            accumulator[1] += current[1];
+            return accumulator;
+        }, [0, 0]);
+        let conditions_to_stop = [];
+        if (data.actual_direction.includes("down") && resultant_normal[1] < 0) {
+            if (Math.abs(resultant_normal[1]) > 0.9) {
+                conditions_to_stop.push(true);
+            } else {
+                conditions_to_stop.push(false);
+            }
+        }
+        if (data.actual_direction.includes("up") && resultant_normal[1] > 0) {
+            if (Math.abs(resultant_normal[1]) > 0.9) {
+                conditions_to_stop.push(true);
+            } else {
+                conditions_to_stop.push(false);
+            }
+        }
+        if (data.actual_direction.includes("left") && resultant_normal[0] > 0) {
+            if (Math.abs(resultant_normal[0]) > 0.9) {
+                conditions_to_stop.push(true);
+            } else {
+                conditions_to_stop.push(false);
+            }
+        }
+        if (data.actual_direction.includes("right") && resultant_normal[0] < 0) {
+            if (Math.abs(resultant_normal[0]) > 0.9) {
+                conditions_to_stop.push(true);
+            } else {
+                conditions_to_stop.push(false);
+            }
+        }
+        if (conditions_to_stop.length === 1 && data.actual_direction.includes("_")) {
+            data.stop_by_colliding = false;
+        } else if (conditions_to_stop.length && conditions_to_stop.every(cond => cond)) {
+            data.hero.body.velocity.x = data.hero.body.velocity.y = 0;
+            data.stop_by_colliding = true;
+        } else {
+            data.stop_by_colliding = false;
         }
     }
 }
