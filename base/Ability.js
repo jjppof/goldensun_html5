@@ -10,7 +10,8 @@ export class Ability {
         pp_cost,
         ability_power,
         effects_outside_battle,
-        in_battle,
+        is_battle_psynergy,
+        is_field_psynergy,
         ability_effect_key,
         ability_type_key,
         battle_animation_key,
@@ -26,7 +27,8 @@ export class Ability {
         this.pp_cost = pp_cost;
         this.ability_power = ability_power;
         this.effects_outside_battle = effects_outside_battle;
-        this.in_battle = in_battle;
+        this.is_battle_psynergy = is_battle_psynergy;
+        this.is_field_psynergy = is_field_psynergy;
         this.ability_effect_key = ability_effect_key;
         this.ability_type_key = ability_type_key;
         this.battle_animation_key = battle_animation_key;

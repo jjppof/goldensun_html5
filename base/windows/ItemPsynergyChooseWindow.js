@@ -210,7 +210,7 @@ export class ItemPsynergyChooseWindow {
         this.clear_sprites();
         if (this.is_psynergy_window) {
             this.elements = this.char.abilities.filter(elem_key_name => {
-                return (elem_key_name in this.element_list) && (!this.element_list[elem_key_name].in_battle || this.element_list[elem_key_name].effects_outside_battle);
+                return (elem_key_name in this.element_list) && (this.element_list[elem_key_name].is_field_psynergy || this.element_list[elem_key_name].effects_outside_battle);
             }).slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
         }
         for (let i = 0; i < this.elements.length; ++i) {
