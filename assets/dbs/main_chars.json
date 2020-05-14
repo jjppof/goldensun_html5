@@ -73,8 +73,8 @@
                     "left", 
                     "right"
                 ],
-                "directions_frames_number": [0,0,0,0],
-                "frame_rate": 1
+                "directions_frames_number": [2,2,2,2],
+                "frame_rate": 16
             },{
                 "key": "push",
                 "spritesheet": "assets/images/spritesheets/isaac_push.json",

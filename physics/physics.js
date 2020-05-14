@@ -18,18 +18,18 @@ export function config_physics_for_hero(data, initialize = true) {
     data.hero.body.fixedRotation = true; //disalble hero collision body rotation
 }
 
-export function config_physics_for_npcs(data, initialize = true, only_set_groups = false) {
-    if (initialize || !(data.map_collider_layer in data.npcCollisionGroups)) {
-        data.npcCollisionGroups[data.map_collider_layer] = game.physics.p2.createCollisionGroup(); //groups only need to be created once
-    }
-    if (only_set_groups) return;
+export function config_physics_for_npcs(data, only_set_groups = false) {
     for (let i = 0; i < maps[data.map_name].npcs.length; ++i) {
         let npc = maps[data.map_name].npcs[i];
+        if (!(npc.base_collider_layer in data.npcCollisionGroups)) {
+            data.npcCollisionGroups[npc.base_collider_layer] = game.physics.p2.createCollisionGroup(); //groups only need to be created once
+        }
+        if (only_set_groups) continue;
         game.physics.p2.enable(npc.npc_sprite, false);
         npc.npc_sprite.anchor.y = data.npc_db[npc.key_name].anchor_y; //Important to be after the previous command
         npc.npc_sprite.body.clearShapes();
         npc.npc_sprite.body.setCircle(data.npc_db[npc.key_name].body_radius, 0, 0);
-        npc.npc_sprite.body.setCollisionGroup(data.npcCollisionGroups[data.map_collider_layer]);
+        npc.npc_sprite.body.setCollisionGroup(data.npcCollisionGroups[npc.base_collider_layer]);
         npc.npc_sprite.body.damping = numbers.NPC_DAMPING;
         npc.npc_sprite.body.angularDamping = numbers.NPC_DAMPING;
         npc.npc_sprite.body.setZeroRotation();
@@ -39,19 +39,19 @@ export function config_physics_for_npcs(data, initialize = true, only_set_groups
     }
 }
 
-export function config_physics_for_psynergy_items(data, initialize = true, only_set_groups = false) {
-    if (initialize || !(data.map_collider_layer in data.psynergyItemCollisionGroups)) {
-        data.psynergyItemCollisionGroups[data.map_collider_layer] = game.physics.p2.createCollisionGroup(); //groups only need to be created once
-    }
-    if (only_set_groups) return;
+export function config_physics_for_psynergy_items(data, only_set_groups = false) {
     for (let i = 0; i < maps[data.map_name].psynergy_items.length; ++i) {
         let psynergy_item = maps[data.map_name].psynergy_items[i];
+        if (!(psynergy_item.base_collider_layer in data.psynergyItemCollisionGroups)) {
+            data.psynergyItemCollisionGroups[psynergy_item.base_collider_layer] = game.physics.p2.createCollisionGroup(); //groups only need to be created once
+        }
+        if (only_set_groups) continue;
         game.physics.p2.enable(psynergy_item.psynergy_item_sprite, false);
         psynergy_item.psynergy_item_sprite.anchor.y = data.psynergy_items_db[psynergy_item.key_name].anchor_y; //Important to be after the previous command
         psynergy_item.psynergy_item_sprite.body.clearShapes();
         const width = data.psynergy_items_db[psynergy_item.key_name].body_radius * 2;
         psynergy_item.psynergy_item_sprite.body.setRectangle(width, width, 0, 0);
-        psynergy_item.psynergy_item_sprite.body.setCollisionGroup(data.psynergyItemCollisionGroups[data.map_collider_layer]);
+        psynergy_item.psynergy_item_sprite.body.setCollisionGroup(data.psynergyItemCollisionGroups[psynergy_item.base_collider_layer]);
         psynergy_item.psynergy_item_sprite.body.damping = numbers.PSYNERGY_ITEM_DAMPING;
         psynergy_item.psynergy_item_sprite.body.angularDamping = numbers.PSYNERGY_ITEM_DAMPING;
         psynergy_item.psynergy_item_sprite.body.setZeroRotation();
@@ -94,14 +94,21 @@ export function config_world_physics() {
 export function config_collisions(data) { //make the world bodies interact with hero body
     data.hero.body.collides(data.mapCollisionGroup);
     data.map_collider.body.collides(data.heroCollisionGroup);
+
     for (let collide_index in data.npcCollisionGroups) {
         data.hero.body.removeCollisionGroup(data.npcCollisionGroups[collide_index], true);
     }
-    data.hero.body.collides(data.npcCollisionGroups[data.map_collider_layer]);
+    if (data.map_collider_layer in data.npcCollisionGroups) {
+        data.hero.body.collides(data.npcCollisionGroups[data.map_collider_layer]);
+    }
+
     for (let collide_index in data.psynergyItemCollisionGroups) {
         data.hero.body.removeCollisionGroup(data.psynergyItemCollisionGroups[collide_index], true);
     }
-    data.hero.body.collides(data.psynergyItemCollisionGroups[data.map_collider_layer]);
+    if (data.map_collider_layer in data.psynergyItemCollisionGroups) {
+        data.hero.body.collides(data.psynergyItemCollisionGroups[data.map_collider_layer]);
+    }
+
     for (let i = 0; i < data.npc_group.children.length; ++i) {
         let sprite = data.npc_group.children[i];
         if (!sprite.is_npc && !sprite.is_psynergy_item) continue;
@@ -198,6 +205,8 @@ export function collision_dealer(data) {
         } else {
             data.stop_by_colliding = false;
         }
+    } else {
+        data.stop_by_colliding = false;
     }
 }
 

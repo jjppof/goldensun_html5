@@ -77,8 +77,8 @@ export function door_event_phases(data) {
 
             game.physics.p2.resume();
 
-            config_physics_for_npcs(data, false);
-            config_physics_for_psynergy_items(data, false);
+            config_physics_for_npcs(data);
+            config_physics_for_psynergy_items(data);
             config_physics_for_map(data, false);
             config_collisions(data);
             game.physics.p2.updateBoundsCollisionGroup();

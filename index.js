@@ -186,8 +186,12 @@ async function create() {
     data.hero_name = data.init_db.hero_key_name;
     data.actual_direction = data.init_db.initial_direction;
     data.map_name = data.init_db.map_key_name;
+    data.scale_factor = data.init_db.initial_scale_factor;
     data.map_collider_layer = data.init_db.map_z_index;
     party_data.coins = data.init_db.coins;
+
+    game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
+    window.dispatchEvent(new Event('resize'));
 
     initialize_classes(data.classes_db);
     initialize_djinni(data.djinni_db);

@@ -9,7 +9,6 @@ export function jump_event(data, event_key) {
         data.current_event = null;
         return;
     }
-    data.shadow.visible = false;
     let jump_offset = numbers.JUMP_OFFSET;
     let direction;
     let jump_direction;
@@ -96,24 +95,34 @@ export function jump_event(data, event_key) {
         return;
     }
     let tween_obj = {};
-    data.shadow[direction] = data.hero[direction] + jump_offset;
     tween_obj[direction] = data.hero[direction] + jump_offset;
+    const hero_y = data.hero.body.y;
     if (direction === "x") {
-        tween_obj.y = [data.hero.y - 5, data.hero.y];
+        tween_obj.y = [hero_y - 5, hero_y - 8, hero_y - 5, hero_y];
     }
+    game.physics.p2.pause();
     data.hero.loadTexture(data.hero_name + "_jump");
     main_char_list[data.hero_name].setAnimation(data.hero, "jump");
-    data.hero.animations.frameName = "jump/" + jump_direction;
-    game.add.tween(data.hero.body).to( 
-        tween_obj, 
-        numbers.JUMP_DURATION, 
-        Phaser.Easing.Linear.None, 
-        true
-    ).onComplete.addOnce(() => {
-        data.on_event = false;
-        data.current_event = null;
-        data.shadow.visible = true;
-    }, this);
+    data.hero.animations.play("jump_" + jump_direction, main_char_list[data.hero_name].actions["jump"].frame_rate, false);
+    data.hero.animations.currentAnim.onComplete.addOnce(() => {
+        data.shadow.visible = false;
+        data.shadow[direction] = data.hero[direction] + jump_offset;
+        game.add.tween(data.hero.body).to( 
+            tween_obj,
+            numbers.JUMP_DURATION,
+            Phaser.Easing.Linear.None,
+            true
+        ).onComplete.addOnce(() => {
+            data.shadow.visible = true;
+            data.hero.animations.currentAnim.reverseOnce();
+            data.hero.animations.play("jump_" + jump_direction, main_char_list[data.hero_name].actions["jump"].frame_rate, false);
+            data.hero.animations.currentAnim.onComplete.addOnce(() => {
+                game.physics.p2.resume();
+                data.on_event = false;
+                data.current_event = null;
+            });
+        }, this);
+    });
 }
 
 export function set_jump_collision(data) {
