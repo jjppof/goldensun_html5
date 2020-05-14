@@ -78,7 +78,8 @@ var data = {
     hero_color_filters: undefined,
     map_color_filters: undefined,
     pasynergy_item_color_filters: undefined,
-    stop_by_colliding: false
+    stop_by_colliding: false,
+    force_direction: false
 };
 
 //debugging porpouses
