@@ -47,3 +47,4 @@ export const degree90 = Math.PI/2;
 export const degree180 = Math.PI;
 export const degree270 = 3 * Math.PI/2;
 export const degree360 = 2 * Math.PI;
+export const SPEED_LIMIT_TO_STOP = 6;
