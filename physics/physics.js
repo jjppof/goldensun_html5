@@ -162,95 +162,62 @@ export function collision_dealer(data) {
             data.trying_to_push = false;
         }
     }
-    if (normals.length) {
-        let resultant_normal = normals.reduce((accumulator, current) => {
-            accumulator[0] += current[0];
-            accumulator[1] += current[1];
-            return accumulator;
-        }, [0, 0]);
-        let conditions_to_stop = [];
-        if (data.actual_direction.includes("down") && resultant_normal[1] < 0) {
-            if (Math.abs(resultant_normal[1]) > 0.9) {
-                conditions_to_stop.push(true);
-            } else {
-                conditions_to_stop.push(false);
-            }
-        }
-        if (data.actual_direction.includes("up") && resultant_normal[1] > 0) {
-            if (Math.abs(resultant_normal[1]) > 0.9) {
-                conditions_to_stop.push(true);
-            } else {
-                conditions_to_stop.push(false);
-            }
-        }
-        if (data.actual_direction.includes("left") && resultant_normal[0] > 0) {
-            if (Math.abs(resultant_normal[0]) > 0.9) {
-                conditions_to_stop.push(true);
-            } else {
-                conditions_to_stop.push(false);
-            }
-        }
-        if (data.actual_direction.includes("right") && resultant_normal[0] < 0) {
-            if (Math.abs(resultant_normal[0]) > 0.9) {
-                conditions_to_stop.push(true);
-            } else {
-                conditions_to_stop.push(false);
-            }
-        }
-        let not_colliding_to_stop = () => {
-            data.stop_by_colliding = false;
-            const normal_angle = (Math.atan2(resultant_normal[1], -resultant_normal[0]) + numbers.degree360) % numbers.degree360;
-            if (normal_angle >= numbers.degree15 && normal_angle < numbers.degree90 - numbers.degree15) {
-                if (data.actual_direction === "up") {
-                    data.force_direction = true;
-                    data.actual_direction = "up_left";
-                } else if (data.actual_direction == "right") {
-                    data.force_direction = true;
-                    data.actual_direction = "down_right";
-                } else if (data.actual_direction !== "up_left" && data.actual_direction !== "down_right"){
-                    data.force_direction = false;
-                }
-            } else if (normal_angle >= numbers.degree90 + numbers.degree15 && normal_angle < Math.PI - numbers.degree15) {
-                if (data.actual_direction === "up") {
-                    data.force_direction = true;
-                    data.actual_direction = "up_right";
-                } else if (data.actual_direction == "left") {
-                    data.force_direction = true;
-                    data.actual_direction = "down_left";
-                } else if (data.actual_direction !== "up_right" && data.actual_direction !== "down_left"){
-                    data.force_direction = false;
-                }
-            } else if (normal_angle >= Math.PI + numbers.degree15 && normal_angle < numbers.degree270 - numbers.degree15) {
-                if (data.actual_direction === "left") {
-                    data.force_direction = true;
-                    data.actual_direction = "up_left";
-                } else if (data.actual_direction == "down") {
-                    data.force_direction = true;
-                    data.actual_direction = "down_right";
-                } else if (data.actual_direction !== "up_left" && data.actual_direction !== "down_right"){
-                    data.force_direction = false;
-                }
-            } else if (normal_angle >= numbers.degree270 + numbers.degree15 && normal_angle < numbers.degree360 - numbers.degree15) {
-                if (data.actual_direction === "right") {
-                    data.force_direction = true;
-                    data.actual_direction = "up_right";
-                } else if (data.actual_direction == "down") {
-                    data.force_direction = true;
-                    data.actual_direction = "down_left";
-                } else if (data.actual_direction !== "up_right" && data.actual_direction !== "down_left"){
-                    data.force_direction = false;
-                }
-            } else {
-                data.force_direction = false;
-            }
-        };
-        if (conditions_to_stop.length === 1 && data.actual_direction.includes("_")) {
-            not_colliding_to_stop();
-        } else if (conditions_to_stop.length && conditions_to_stop.every(cond => cond)) {
-            data.hero.body.velocity.x = data.hero.body.velocity.y = 0;
+    if (normals.length && ["walk", "dash"].includes(data.actual_action)) {
+        if (Math.abs(data.hero.body.velocity.x) < 5 && Math.abs(data.hero.body.velocity.y) < 5) {
             data.stop_by_colliding = true;
         } else {
-            not_colliding_to_stop();
+            data.stop_by_colliding = false;
+            if (normals.length === 1) {
+                let resultant_normal = normals.reduce((accumulator, current) => {
+                    accumulator[0] += current[0];
+                    accumulator[1] += current[1];
+                    return accumulator;
+                }, [0, 0]);
+                const normal_angle = (Math.atan2(resultant_normal[1], -resultant_normal[0]) + numbers.degree360) % numbers.degree360;
+                if (normal_angle >= numbers.degree15 && normal_angle < numbers.degree90 - numbers.degree15) {
+                    if (data.cursors.up.isDown) {
+                        data.force_direction = true;
+                        data.actual_direction = "up_left";
+                    } else if (data.cursors.right.isDown) {
+                        data.force_direction = true;
+                        data.actual_direction = "down_right";
+                    } else if (data.actual_direction !== "up_left" && data.actual_direction !== "down_right") {
+                        data.force_direction = false;
+                    }
+                } else if (normal_angle >= numbers.degree90 + numbers.degree15 && normal_angle < Math.PI - numbers.degree15) {
+                    if (data.cursors.up.isDown) {
+                        data.force_direction = true;
+                        data.actual_direction = "up_right";
+                    } else if (data.cursors.left.isDown) {
+                        data.force_direction = true;
+                        data.actual_direction = "down_left";
+                    } else if (data.actual_direction !== "up_right" && data.actual_direction !== "down_left") {
+                        data.force_direction = false;
+                    }
+                } else if (normal_angle >= Math.PI + numbers.degree15 && normal_angle < numbers.degree270 - numbers.degree15) {
+                    if (data.cursors.left.isDown) {
+                        data.force_direction = true;
+                        data.actual_direction = "up_left";
+                    } else if (data.cursors.down.isDown) {
+                        data.force_direction = true;
+                        data.actual_direction = "down_right";
+                    } else if (data.actual_direction !== "up_left" && data.actual_direction !== "down_right") {
+                        data.force_direction = false;
+                    }
+                } else if (normal_angle >= numbers.degree270 + numbers.degree15 && normal_angle < numbers.degree360 - numbers.degree15) {
+                    if (data.cursors.right.isDown) {
+                        data.force_direction = true;
+                        data.actual_direction = "up_right";
+                    } else if (data.cursors.down.isDown) {
+                        data.force_direction = true;
+                        data.actual_direction = "down_left";
+                    } else if (data.actual_direction !== "up_right" && data.actual_direction !== "down_left") {
+                        data.force_direction = false;
+                    }
+                } else {
+                    data.force_direction = false;
+                }
+            }
         }
     } else {
         data.stop_by_colliding = false;
@@ -313,25 +280,25 @@ export function set_speed_factors(data, force = false) {
             }
             data.x_speed = 1;
             data.y_speed = 0;
-        } else if (data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "up_left" || force)){
+        } else if (data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "up_left" || force || data.force_direction)){
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "up_left");
             }
             data.x_speed = -numbers.INV_SQRT2;
             data.y_speed = -numbers.INV_SQRT2;
-        } else if (data.cursors.up.isDown && !data.cursors.left.isDown && data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "up_right" || force)){
+        } else if (data.cursors.up.isDown && !data.cursors.left.isDown && data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "up_right" || force || data.force_direction)){
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "up_right");
             }
             data.x_speed = numbers.INV_SQRT2;
             data.y_speed = -numbers.INV_SQRT2;
-        } else if (!data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction !== "down_left" || force)){
+        } else if (!data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction !== "down_left" || force || data.force_direction)){
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "down_left");
             }
             data.x_speed = -numbers.INV_SQRT2;
             data.y_speed = numbers.INV_SQRT2;
-        } else if (!data.cursors.up.isDown && !data.cursors.left.isDown && data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction !== "down_right" || force)){
+        } else if (!data.cursors.up.isDown && !data.cursors.left.isDown && data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction !== "down_right" || force || data.force_direction)){
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "down_right");
             }
