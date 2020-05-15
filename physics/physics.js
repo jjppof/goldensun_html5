@@ -123,6 +123,14 @@ export function collision_dealer(data) {
         let c = game.physics.p2.world.narrowphase.contactEquations[i];
         if (c.bodyA === data.hero.body.data) { //check if hero collided with something
             normals.push(c.normalA);
+            if (c.contactPointA[0] >= numbers.COLLISION_MARGIN && data.actual_direction === "left")
+                data.hero.body.velocity.x = 0;
+            if (c.contactPointA[0] <= -numbers.COLLISION_MARGIN && data.actual_direction === "right")
+                data.hero.body.velocity.x = 0;
+            if (c.contactPointA[1] <= -numbers.COLLISION_MARGIN && data.actual_direction === "down")
+                data.hero.body.velocity.y = 0;
+            if (c.contactPointA[1] >= numbers.COLLISION_MARGIN && data.actual_direction === "up")
+                data.hero.body.velocity.y = 0;
         }
         let j = 0;
         for (j = 0; j < maps[data.map_name].psynergy_items.length; ++j) {  //check if hero is colliding with any psynergy item
