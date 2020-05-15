@@ -290,7 +290,6 @@ export function set_speed_factors(data, force = false) {
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "up_right");
             }
-            console.log(123)
             data.x_speed = numbers.INV_SQRT2;
             data.y_speed = -numbers.INV_SQRT2;
         } else if ((!data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction !== "down_left" || force)) || (data.actual_direction === "down_left" && data.force_direction)){
