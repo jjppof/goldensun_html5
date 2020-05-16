@@ -21,7 +21,7 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
             ability_data.effects_outside_battle,
             ability_data.is_battle_psynergy,
             ability_data.is_field_psynergy,
-            ability_data.ability_effect_key,
+            ability_data.effects,
             ability_data.ability_type_key,
             ability_data.battle_animation_key,
             ability_data.icon_path

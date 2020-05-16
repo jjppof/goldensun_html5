@@ -26,7 +26,7 @@ export class Ability {
         effects_outside_battle,
         is_battle_psynergy,
         is_field_psynergy,
-        ability_effect_key,
+        effects,
         ability_type_key,
         battle_animation_key,
         icon_path
@@ -43,7 +43,7 @@ export class Ability {
         this.effects_outside_battle = effects_outside_battle;
         this.is_battle_psynergy = is_battle_psynergy;
         this.is_field_psynergy = is_field_psynergy;
-        this.ability_effect_key = ability_effect_key;
+        this.effects = effects;
         this.ability_type_key = ability_type_key;
         this.battle_animation_key = battle_animation_key;
         this.icon_path = icon_path;

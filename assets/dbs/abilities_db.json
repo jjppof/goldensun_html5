@@ -12,7 +12,7 @@
         "effects_outside_battle": false,
         "is_battle_psynergy": false,
         "is_field_psynergy": true,
-        "ability_effect_key": "nothing",
+        "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "no_animation",
         "icon_path": "assets/images/icons/psynergy/move.gif"
@@ -29,7 +29,7 @@
         "effects_outside_battle": false,
         "is_battle_psynergy": false,
         "is_field_psynergy": true,
-        "ability_effect_key": "nothing",
+        "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "no_animation",
         "icon_path": "assets/images/icons/psynergy/retreat.gif"
@@ -46,7 +46,7 @@
         "effects_outside_battle": true,
         "is_battle_psynergy": true,
         "is_field_psynergy": false,
-        "ability_effect_key": "nothing",
+        "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "cure",
         "icon_path": "assets/images/icons/psynergy/cure.gif"
@@ -63,7 +63,7 @@
         "effects_outside_battle": true,
         "is_battle_psynergy": true,
         "is_field_psynergy": false,
-        "ability_effect_key": "nothing",
+        "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "cure_well",
         "icon_path": "assets/images/icons/psynergy/cure_well.gif"
@@ -80,7 +80,7 @@
         "effects_outside_battle": true,
         "is_battle_psynergy": true,
         "is_field_psynergy": false,
-        "ability_effect_key": "nothing",
+        "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "potent_cure",
         "icon_path": "assets/images/icons/psynergy/potent_cure.gif"
@@ -97,7 +97,7 @@
         "effects_outside_battle": true,
         "is_battle_psynergy": true,
         "is_field_psynergy": false,
-        "ability_effect_key": "revive",
+        "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "revive",
         "icon_path": "assets/images/icons/psynergy/revive.gif"
@@ -114,7 +114,7 @@
         "effects_outside_battle": false,
         "is_battle_psynergy": true,
         "is_field_psynergy": false,
-        "ability_effect_key": "nothing",
+        "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "flare",
         "icon_path": "assets/images/icons/psynergy/flare.gif"
@@ -131,7 +131,7 @@
         "effects_outside_battle": false,
         "is_battle_psynergy": true,
         "is_field_psynergy": false,
-        "ability_effect_key": "nothing",
+        "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "quake",
         "icon_path": "assets/images/icons/psynergy/quake.gif"
@@ -148,7 +148,7 @@
         "effects_outside_battle": false,
         "is_battle_psynergy": true,
         "is_field_psynergy": false,
-        "ability_effect_key": "nothing",
+        "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "spire",
         "icon_path": "assets/images/icons/psynergy/spire.gif"
@@ -165,7 +165,7 @@
         "effects_outside_battle": false,
         "is_battle_psynergy": true,
         "is_field_psynergy": false,
-        "ability_effect_key": "nothing",
+        "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "volcano",
         "icon_path": "assets/images/icons/psynergy/volcano.gif"

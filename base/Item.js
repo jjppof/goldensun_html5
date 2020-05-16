@@ -21,6 +21,7 @@ export const use_types = {
 
 export class Item {
     constructor(
+        key_name,
         name,
         type,
         description,
@@ -30,13 +31,14 @@ export class Item {
         rare_item,
         imporant_item,
         carry_up_to_30,
-        effects_keys,
+        effects,
         attribute,
         unleash_ability,
         unleash_rate,
         use_ability,
         equipable_chars
     ) {
+        this.key_name = key_name;
         this.name = name;
         this.type = type;
         this.description = description;
@@ -46,7 +48,7 @@ export class Item {
         this.rare_item = rare_item;
         this.imporant_item = imporant_item;
         this.carry_up_to_30 = carry_up_to_30;
-        this.effects_keys = effects_keys;
+        this.effects = effects;
         this.attribute = attribute;
         this.unleash_ability = unleash_ability;
         this.unleash_rate = unleash_rate;
