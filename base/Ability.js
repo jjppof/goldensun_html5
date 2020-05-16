@@ -1,3 +1,17 @@
+export const ability_types = {
+    HEALING: "healing",
+    EFFECT_ONLY: "effect_only",
+    ADDED_DAMAGE: "added_damage",
+    MULTIPLIER: "multiplier",
+    BASE_DAMAGE: "base_damage",
+    BASE_DAMAGE_DIMIN: "base_damage_dmin",
+    ALWAYS_FIRST: "always_first",
+    SUMMON: "summon",
+    UTILITY: "utility",
+    PSYNERGY_DRAIN: "psynergy_drain",
+    PSYNERGY_RECOVERY: "psynergy_recovery"
+}
+
 export class Ability {
     constructor(
         key_name,
