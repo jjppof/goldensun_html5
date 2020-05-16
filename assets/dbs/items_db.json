@@ -42,11 +42,13 @@
             },{
                 "type": "power",
                 "quantity": 20,
-                "operator": "plus"
+                "operator": "plus",
+                "attribute": "venus"
             },{
                 "type": "resist",
                 "quantity": 20,
-                "operator": "plus"
+                "operator": "plus",
+                "attribute": "venus"
             }
         ],
         "attribute": "venus",

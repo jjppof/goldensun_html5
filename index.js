@@ -1,6 +1,7 @@
 import * as numbers from './magic_numbers.js';
 import { initialize_main_chars, main_char_list, initialize_classes, party_data } from './chars/main_chars.js';
 import { initialize_abilities, abilities_list, initialize_field_abilities, field_abilities_list } from './chars/abilities.js';
+import { initialize_items, items_list } from './chars/items.js';
 import { initialize_djinni, djinni_list } from './chars/djinni.js';
 import { initializeMaps, loadMaps, maps } from './maps/maps.js';
 import { jump_event, jump_near_collision } from './events/jump.js';
@@ -74,6 +75,7 @@ var data = {
     esc_input: null,
     classes_db: null,
     abilities_db: null,
+    items_db: null,
     casting_psynergy: false,
     hero_color_filters: undefined,
     map_color_filters: undefined,
@@ -86,6 +88,7 @@ var data = {
 window.maps = maps;
 window.main_char_list = main_char_list;
 window.abilities_list = abilities_list;
+window.items_list = items_list;
 window.field_abilities_list = field_abilities_list;
 window.djinni_list = djinni_list;
 window.party_data = party_data;
@@ -128,6 +131,7 @@ function preload() {
     game.load.json('init_db', 'init.json');
     game.load.json('classes_db', 'assets/dbs/classes_db.json');
     game.load.json('abilities_db', 'assets/dbs/abilities_db.json');
+    game.load.json('items_db', 'assets/dbs/items_db.json');
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
     game.load.json('psynergy_items_db', 'assets/dbs/psynergy_items_db.json');
     game.load.json('djinni_db', 'assets/dbs/djinni_db.json');
@@ -179,6 +183,7 @@ async function create() {
     data.psynergy_items_db = game.cache.getJSON('psynergy_items_db');
     data.classes_db = game.cache.getJSON('classes_db');
     data.abilities_db = game.cache.getJSON('abilities_db');
+    data.items_db = game.cache.getJSON('items_db');
     data.djinni_db = game.cache.getJSON('djinni_db');
     data.hero_color_filters = game.add.filter('ColorFilters');
     data.map_color_filters = game.add.filter('ColorFilters');
@@ -203,6 +208,13 @@ async function create() {
     });
     initialize_abilities(game, data.abilities_db, load_abilities_promise_resolve);
     await load_abilities_promise;
+    
+    let load_items_promise_resolve;
+    let load_items_promise = new Promise(resolve => {
+        load_items_promise_resolve = resolve;
+    });
+    initialize_items(game, data.items_db, load_items_promise_resolve);
+    await load_items_promise;
 
     let load_chars_promise_resolve;
     let load_chars_promise = new Promise(resolve => {
@@ -278,6 +290,10 @@ async function create() {
             if (isDoubleClick) {
                 game.scale.startFullScreen(true);
             }  
+        });
+        game.scale.onFullScreenChange.add(() => {
+            game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+            window.dispatchEvent(new Event('resize'));
         });
 
         //enable fps show

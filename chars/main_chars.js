@@ -68,7 +68,8 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
             char_data.jupiter_resist_base,
             char_data.innate_abilities,
             char_data.in_party,
-            char_data.djinni
+            char_data.djinni,
+            char_data.items
         );
         if (char_data.in_party) {
             party_data.members.push(main_char_list[char_data.key_name]);

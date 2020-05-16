@@ -132,7 +132,29 @@
         "jupiter_resist_base": 87,
         "innate_abilities": ["move", "retreat"],
         "in_party": true,
-        "djinni": ["flint", "granite"]
+        "djinni": ["flint", "granite"],
+        "items": [
+            {
+                "key_name": "gaia_blade",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "knights_shield",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "knights_helm",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "steel_armor",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "herb",
+                "quantity": 13
+            }
+        ]
     },{
         "key_name": "garet",
         "name": "Garet",
@@ -182,6 +204,31 @@
         "jupiter_resist_base": 88,
         "innate_abilities": ["move"],
         "in_party": true,
-        "djinni": ["forge", "fever"]
+        "djinni": ["forge", "fever"],
+        "items": [
+            {
+                "key_name": "great_sword",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "knights_shield",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "knights_helm",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "steel_armor",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "cookie",
+                "quantity": 2
+            },{
+                "key_name": "frost_jewel",
+                "quantity": 1
+            }
+        ]
     }
 ]

@@ -2,6 +2,9 @@ import { SpriteBase } from './SpriteBase.js';
 import { choose_right_class } from './Classes.js';
 import { djinni_list } from '../chars/djinni.js';
 import { djinn_status } from './Djinn.js';
+import { Effect } from './Effect.js';
+import { item_types } from './Item.js';
+import { items_list } from '../chars/items.js';
 
 export const temporary_status = {
     DELUSION: "delusion",
@@ -63,7 +66,8 @@ export class MainChar extends SpriteBase {
         jupiter_resist_base,
         innate_abilities,
         in_party,
-        djinni
+        djinni,
+        items
     ) {
         super(key_name, actions);
         this.index = index;
@@ -120,8 +124,11 @@ export class MainChar extends SpriteBase {
         this.innate_abilities = innate_abilities;
         this.in_party = in_party;
         this.abilities = [];
+        this.equipped_abilities = [];
         this.update_abilities();
+        this.items = items;
         this.effects = [];
+        this.init_items();
     }
 
     get djinni() {
@@ -138,6 +145,90 @@ export class MainChar extends SpriteBase {
 
     update_class() {
         this.class = choose_right_class(this.element_afinity, this.venus_level_current, this.mercury_level_current, this.mars_level_current, this.jupiter_level_current);
+    }
+
+    init_items() {
+        this.items.forEach(item_obj => {
+            if (item_obj.equipped) {
+                this.equip_item(items_list[item_obj.key_name]);
+            }
+        });
+    }
+
+    add_item(item_key_name, quantity, equip) {
+        this.items.push({
+            key_name: item_key_name,
+            quantity: quantity,
+            equipped: equip
+        });
+        if (equip) {
+            this.equip_item(items_list[item_key_name]);
+        }
+    }
+
+    remove_item(item_key_name, quantity) {
+        this.items = this.items.filter(item_obj => {
+            if (item_key_name === item_obj.key_name && item_obj.equipped) {
+                this.unequip_item(items_list[item_key_name]);
+            }
+            if (item_obj.quantity - quantity >= 1) {
+                item_obj.quantity = item_obj.quantity - quantity;
+                return true;
+            }
+            return item_key_name !== item_obj.key_name;
+        });
+    }
+
+    equip_item(item) {
+        for (let i = 0; i < item.effects.length; ++i) {
+            this.add_effect(item.effects[i], item);
+        }
+        if (item.type === item_types.ABILITY_GRANTOR) {
+            this.equipped_abilities.push(item.granted_ability);
+            this.update_abilities();
+        }
+    }
+
+    unequip_item(item) {
+        this.effects.forEach(effect => {
+            if (effect.effect_owner_instance === item) {
+                this.remove_effect(effect);
+            }
+        });
+        if (item.type === item_types.ABILITY_GRANTOR) {
+            this.equipped_abilities = this.equipped_abilities.filter(ability => {
+                return ability !== item.granted_ability;
+            });
+            this.update_abilities();
+        }
+    }
+
+    add_effect(effect_obj, effect_owner_instance) {
+        let effect = new Effect(
+            effect_obj.type,
+            effect_obj.quantity,
+            effect_obj.operator,
+            effect_owner_instance,
+            effect_obj.quantity_is_absolute,
+            effect_obj.rate,
+            effect_obj.chance,
+            effect_obj.attribute,
+            effect_obj.add_status,
+            effect_obj.status_key_name,
+            effect_obj.turns_quantity,
+            effect_obj.variation_on_final_result,
+            effect_obj.damage_formula_key_name,
+            this
+        );
+        effect.apply_effect();
+        this.effects.push(effect);
+    }
+
+    remove_effect(effect_to_remove) {
+        this.effects = this.effects.filter(effect => {
+            effect.remove_effect();
+            return effect !== effect_to_remove;
+        });
     }
 
     init_djinni(djinni) {
@@ -377,7 +468,7 @@ export class MainChar extends SpriteBase {
     update_abilities() {
         this.abilities = this.innate_abilities.concat(this.class.ability_level_pairs.filter(pair => {
             return pair.level <= this.level;
-        }).map(pair => pair.ability));
+        }).map(pair => pair.ability), this.equipped_abilities);
     }
 
     add_permanent_status(status) {
