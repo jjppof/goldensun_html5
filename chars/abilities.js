@@ -34,6 +34,7 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
         load_promises.push(load_assets_promise);
         abilities_list[ability_data.key_name].load_assets(game, load_assets_promise_resolve);
     }
+    game.load.start();
     Promise.all(load_promises).then(load_promise_resolve);
 }
 

@@ -256,6 +256,7 @@ export class ItemPsynergyChooseWindow {
     element_change(before_index, after_index) {
         this.set_element_tween(before_index);
         this.set_highlight_bar();
+        this.on_change(abilities_list[this.elements[after_index]]);
     }
 
     page_change(before_index, after_index) {
@@ -266,6 +267,7 @@ export class ItemPsynergyChooseWindow {
         }
         this.set_element_tween(before_index);
         this.set_highlight_bar();
+        this.on_change(abilities_list[this.elements[this.selected_element_index]]);
         this.set_page_indicator_highlight();
     }
 
@@ -293,6 +295,7 @@ export class ItemPsynergyChooseWindow {
         this.cursor_control.activate();
         this.set_element_tween();
         this.set_highlight_bar();
+        this.on_change(abilities_list[this.elements[this.selected_element_index]]);
         this.window_open = true;
         this.window_activated = true;
     }

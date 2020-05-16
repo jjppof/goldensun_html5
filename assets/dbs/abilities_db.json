@@ -169,5 +169,44 @@
         "ability_type_key": "normal",
         "battle_animation_key": "volcano",
         "icon_path": "assets/images/icons/psynergy/volcano.gif"
+    },{
+        "key_name": "herb",
+        "name": "Herb",
+        "description": "",
+        "type": "healing",
+        "element": "no_element",
+        "battle_target": "ally",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 50,
+        "effects_outside_battle": true,
+        "is_battle_psynergy": true,
+        "is_field_psynergy": false,
+        "effects": [],
+        "ability_type_key": "normal",
+        "battle_animation_key": "ply",
+        "icon_path": ""
+    },{
+        "key_name": "cookie",
+        "name": "Cookie",
+        "description": "",
+        "type": "utility",
+        "element": "no_element",
+        "battle_target": "ally",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 0,
+        "effects_outside_battle": true,
+        "is_battle_psynergy": false,
+        "is_field_psynergy": false,
+        "effects": [{
+            "type": "max_pp",
+            "quantity": 6,
+            "operator": "plus",
+            "variation_on_final_result": true
+        }],
+        "ability_type_key": "normal",
+        "battle_animation_key": "",
+        "icon_path": ""
     }
 ]

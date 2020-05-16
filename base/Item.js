@@ -36,7 +36,10 @@ export class Item {
         unleash_ability,
         unleash_rate,
         use_ability,
-        equipable_chars
+        equipable_chars,
+        price,
+        granted_ability,
+        icon_path
     ) {
         this.key_name = key_name;
         this.name = name;
@@ -54,5 +57,12 @@ export class Item {
         this.unleash_rate = unleash_rate;
         this.use_ability = use_ability;
         this.equipable_chars = equipable_chars;
+        this.price = price;
+        this.granted_ability = granted_ability;
+        this.icon_path = icon_path;
+    }
+
+    load_assets(game, load_callback) {
+        game.load.image(this.key_name + '_item_icon', this.icon_path).onLoadComplete.addOnce(load_callback);
     }
 }

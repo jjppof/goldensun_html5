@@ -1,3 +1,5 @@
+import { elements } from "./MainChar.js";
+
 export const effect_types = {
     MAX_HP: "max_hp",
     HP_RECOVERY: "hp_recovery",
@@ -32,22 +34,30 @@ export class Effect {
     constructor(
         type,
         quantity,
-        quantity_is_absolute,
         operator,
-        rate_or_chance,
-        attribute,
-        is_inflict_effect,
+        effect_owner_instance,
+        quantity_is_absolute, //default: false
+        rate, //default: 1.0
+        chance, //default: 1.0
+        attribute, //default: no_element
+        add_status,
         status_key_name,
         turns_quantity,
+        variation_on_final_result,
+        damage_formula_key_name
     ) {
         this.type = type;
         this.quantity = quantity;
-        this.quantity_is_absolute = quantity_is_absolute;
         this.operator = operator;
-        this.rate_or_chance = rate_or_chance;
-        this.attribute = attribute;
-        this.is_inflict_effect = is_inflict_effect;
+        this.quantity_is_absolute = quantity_is_absolute === undefined ? false : quantity_is_absolute;
+        this.rate = rate === undefined ? 1.0 : rate;
+        this.chance = chance === undefined ? 1.0 : chance;
+        this.attribute = attribute === undefined ? elements.NO_ELEMENT : attribute;
+        this.add_status = add_status;
         this.status_key_name = status_key_name;
         this.turns_quantity = turns_quantity;
+        this.effect_owner_instance = effect_owner_instance;
+        this.variation_on_final_result = variation_on_final_result === undefined ? false : variation_on_final_result;
+        this.damage_formula_key_name = damage_formula_key_name;
     }
 }

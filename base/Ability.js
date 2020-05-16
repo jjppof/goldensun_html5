@@ -50,7 +50,10 @@ export class Ability {
     }
 
     load_assets(game, load_callback) {
-        game.load.image(this.key_name + '_ability_icon', this.icon_path).onLoadComplete.addOnce(load_callback);
-        game.load.start();
+        if (this.icon_path === "") {
+            load_callback();
+        } else {
+            game.load.image(this.key_name + '_ability_icon', this.icon_path).onLoadComplete.addOnce(load_callback);
+        }
     }
 }

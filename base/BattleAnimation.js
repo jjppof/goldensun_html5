@@ -4,6 +4,7 @@ export class BattleAnimation {
     //sprite_index: "target" is the target, "caster" is the caster, 0... is the sprites_key_names index
     //values can be "target", "caster" or an actual value
     constructor(
+        game,
         key_name,
         sprites, //{key_name: string, per_target: bool}
         x_sequence, //{start_at: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
@@ -21,6 +22,7 @@ export class BattleAnimation {
         blend_mode_sequence, //{start_at: value, mode: type}
         is_party_animation
     ) {
+        this.game = game;
         this.key_name = key_name;
         this.sprites = sprites;
         this.x_sequence = x_sequence;
