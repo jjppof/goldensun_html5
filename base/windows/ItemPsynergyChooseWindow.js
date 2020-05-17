@@ -23,6 +23,8 @@ const PAGE_NUMBER_WIDTH = 8;
 const PAGE_NUMBER_HEIGHT = 8;
 const PAGE_INDICATOR_ARROW_Y = 0;
 const PAGE_INDICATOR_RIGHT_ARROW_X = 129;
+const SUB_ICON_X = 0;
+const SUB_ICON_Y = 0;
 
 export class ItemPsynergyChooseWindow {
     constructor(game, data, is_psynergy_window, on_change, on_choose, esc_propagation_priority, enter_propagation_priority) {
@@ -227,21 +229,44 @@ export class ItemPsynergyChooseWindow {
 
     set_elements() {
         this.clear_sprites();
+        let item_objs;
         if (this.is_psynergy_window) {
             this.elements = this.char.abilities.filter(elem_key_name => {
                 return (elem_key_name in this.element_list) && (this.element_list[elem_key_name].is_field_psynergy || this.element_list[elem_key_name].effects_outside_battle);
             }).slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
         } else {
+            item_objs = [];
             this.elements = this.char.items.filter(item_obj => {
-                return item_obj.key_name in this.element_list;
+                if (item_obj.key_name in this.element_list) {
+                    item_objs.push(item_obj);
+                    return true;
+                }
+                return false;
             }).slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
+            item_objs = item_objs.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
         }
         for (let i = 0; i < this.elements.length; ++i) {
             const elem_key_name = this.get_element_key_name(i);
             const x = ELEM_PADDING_LEFT;
             const y = ELEM_PADDING_TOP + i * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS);
-            this.icon_sprites_in_window.push(this.window.create_at_group(x + (numbers.ICON_WIDTH >> 1), y + (numbers.ICON_HEIGHT >> 1), elem_key_name + this.element_sprite_sufix));
-            this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
+            const icon_x = x + (numbers.ICON_WIDTH >> 1);
+            const icon_y = y + (numbers.ICON_HEIGHT >> 1);
+            const icon_key = elem_key_name + this.element_sprite_sufix;
+            if (this.is_psynergy_window) {
+                this.icon_sprites_in_window.push(this.window.create_at_group(icon_x, icon_y, icon_key));
+                this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
+            } else {
+                let icon_group = game.add.group();
+                let icon_sprite = icon_group.create(0, 0, icon_key);
+                icon_sprite.anchor.setTo(0.5, 0.5);
+                if (item_objs[i].equipped) {
+                    icon_group.create(SUB_ICON_X, SUB_ICON_Y, "equipped");
+                }
+                this.window.add_sprite_to_group(icon_group);
+                icon_group.x = icon_x;
+                icon_group.y = icon_y;
+                this.icon_sprites_in_window.push(icon_group);
+            }
             const x_elem_name = ELEM_PADDING_LEFT + numbers.ICON_WIDTH + (this.is_psynergy_window ? 2 : 4);
             this.text_sprites_in_window.push(this.window.set_text_in_position(this.element_list[elem_key_name].name, x_elem_name, y + ELEM_NAME_ICON_SHIFT));
             if (this.is_psynergy_window) {
