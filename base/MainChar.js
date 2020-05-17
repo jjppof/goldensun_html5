@@ -2,7 +2,7 @@ import { SpriteBase } from './SpriteBase.js';
 import { choose_right_class } from './Classes.js';
 import { djinni_list } from '../chars/djinni.js';
 import { djinn_status } from './Djinn.js';
-import { Effect } from './Effect.js';
+import { Effect, effect_types } from './Effect.js';
 import { item_types } from './Item.js';
 import { items_list } from '../chars/items.js';
 
@@ -120,15 +120,17 @@ export class MainChar extends SpriteBase {
         this.def_extra = 0;
         this.agi_extra = 0;
         this.luk_extra = 0;
+        this.hp_recovery = 0;
+        this.pp_recovery = 0;
+        this.items = items;
+        this.effects = [];
+        this.init_items();
         this.update_attributes();
         this.innate_abilities = innate_abilities;
         this.in_party = in_party;
         this.abilities = [];
         this.equipped_abilities = [];
         this.update_abilities();
-        this.items = items;
-        this.effects = [];
-        this.init_items();
     }
 
     get djinni() {
@@ -148,9 +150,9 @@ export class MainChar extends SpriteBase {
     }
 
     init_items() {
-        this.items.forEach(item_obj => {
+        this.items.forEach((item_obj, index) => {
             if (item_obj.equipped) {
-                this.equip_item(items_list[item_obj.key_name]);
+                this.equip_item(index, true);
             }
         });
     }
@@ -162,14 +164,14 @@ export class MainChar extends SpriteBase {
             equipped: equip
         });
         if (equip) {
-            this.equip_item(items_list[item_key_name]);
+            this.equip_item(this.items.length - 1);
         }
     }
 
     remove_item(item_key_name, quantity) {
-        this.items = this.items.filter(item_obj => {
+        this.items = this.items.filter((item_obj, index) => {
             if (item_key_name === item_obj.key_name && item_obj.equipped) {
-                this.unequip_item(items_list[item_key_name]);
+                this.unequip_item(index);
             }
             if (item_obj.quantity - quantity >= 1) {
                 item_obj.quantity = item_obj.quantity - quantity;
@@ -179,22 +181,32 @@ export class MainChar extends SpriteBase {
         });
     }
 
-    equip_item(item) {
+    equip_item(index, initialize = false) {
+        let item_obj = this.items[index];
+        if (item_obj.equipped && !initialize) return;
+        item_obj.equipped = true;
+        const item = items_list[item_obj.key_name];
         for (let i = 0; i < item.effects.length; ++i) {
             this.add_effect(item.effects[i], item);
         }
+        this.update_attributes();
         if (item.type === item_types.ABILITY_GRANTOR) {
             this.equipped_abilities.push(item.granted_ability);
             this.update_abilities();
         }
     }
 
-    unequip_item(item) {
+    unequip_item(index) {
+        let item_obj = this.items[index];
+        if (!item_obj.equipped) return;
+        item_obj.equipped = false;
+        const item = items_list[item_obj.key_name];
         this.effects.forEach(effect => {
             if (effect.effect_owner_instance === item) {
                 this.remove_effect(effect);
             }
         });
+        this.update_attributes();
         if (item.type === item_types.ABILITY_GRANTOR) {
             this.equipped_abilities = this.equipped_abilities.filter(ability => {
                 return ability !== item.granted_ability;
@@ -220,13 +232,11 @@ export class MainChar extends SpriteBase {
             effect_obj.damage_formula_key_name,
             this
         );
-        effect.apply_effect();
         this.effects.push(effect);
     }
 
     remove_effect(effect_to_remove) {
         this.effects = this.effects.filter(effect => {
-            effect.remove_effect();
             return effect !== effect_to_remove;
         });
     }
@@ -311,6 +321,11 @@ export class MainChar extends SpriteBase {
             if (djinn.status !== djinn_status.SET) continue;
             this.max_hp += djinn.hp_boost;
         }
+        this.effects.forEach(effect => {
+            if (effect.type === effect_types.MAX_HP) {
+                effect.apply_effect();
+            }
+        });
         if (this.current_hp === undefined) {
             this.current_hp = this.max_hp;
         } else {
@@ -325,6 +340,11 @@ export class MainChar extends SpriteBase {
             if (djinn.status !== djinn_status.SET) continue;
             this.max_pp += djinn.pp_boost;
         }
+        this.effects.forEach(effect => {
+            if (effect.type === effect_types.MAX_PP) {
+                effect.apply_effect();
+            }
+        });
         if (this.current_pp === undefined) {
             this.current_pp = this.max_pp;
         } else {
@@ -339,6 +359,11 @@ export class MainChar extends SpriteBase {
             if (djinn.status !== djinn_status.SET) continue;
             this.atk += djinn.atk_boost;
         }
+        this.effects.forEach(effect => {
+            if (effect.type === effect_types.ATTACK) {
+                effect.apply_effect();
+            }
+        });
         if (this.current_atk === undefined) {
             this.current_atk = this.atk;
         } else {
@@ -353,6 +378,11 @@ export class MainChar extends SpriteBase {
             if (djinn.status !== djinn_status.SET) continue;
             this.def += djinn.def_boost;
         }
+        this.effects.forEach(effect => {
+            if (effect.type === effect_types.DEFENSE) {
+                effect.apply_effect();
+            }
+        });
         if (this.current_def === undefined) {
             this.current_def = this.def;
         } else {
@@ -367,6 +397,11 @@ export class MainChar extends SpriteBase {
             if (djinn.status !== djinn_status.SET) continue;
             this.agi += djinn.agi_boost;
         }
+        this.effects.forEach(effect => {
+            if (effect.type === effect_types.AGILITY) {
+                effect.apply_effect();
+            }
+        });
         if (this.current_agi === undefined) {
             this.current_agi = this.agi;
         } else {
@@ -381,6 +416,11 @@ export class MainChar extends SpriteBase {
             if (djinn.status !== djinn_status.SET) continue;
             this.luk += djinn.luk_boost;
         }
+        this.effects.forEach(effect => {
+            if (effect.type === effect_types.LUCK) {
+                effect.apply_effect();
+            }
+        });
         if (this.current_luk === undefined) {
             this.current_luk = this.luk;
         } else {

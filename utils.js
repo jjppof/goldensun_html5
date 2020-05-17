@@ -8,6 +8,10 @@ export function b(array) {
     return array.join("/");
 }
 
+export function variation() {
+    return parseInt(Math.random() * 3);
+}
+
 export function is_inside_sector(quadrants, radius, range_factor, x, y, target_x, target_y) {
     const range_radius_squared = (radius * range_factor) * (radius * range_factor);
     const target_radius_quared = Math.pow(target_x - x, 2) + Math.pow(target_y - y, 2);

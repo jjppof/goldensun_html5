@@ -1,4 +1,5 @@
 import { elements } from "./MainChar.js";
+import { variation } from "../utils.js"
 
 export const effect_types = {
     MAX_HP: "max_hp",
@@ -63,7 +64,57 @@ export class Effect {
         this.char = char;
     }
 
-    apply_effect(char) {
+    apply_operator(a, b) {
+        switch (this.operator) {
+            case effect_operators.PLUS: return a + b;
+            case effect_operators.MINUS: return a - b;
+            case effect_operators.TIMES: return a * b;
+            case effect_operators.DIVIDE: return a / b;
+        }
+    }
 
+    apply_general_value(property) {
+        if (this.quantity_is_absolute) {
+            this.value = this.char[property];
+            this.char[property] = this.quantity;
+        } else {
+            let value = this.quantity;
+            value *= this.rate;
+            if (this.variation_on_final_result) {
+                value += variation();
+            }
+            value = parseInt(value);
+            this.value = this.apply_operator(this.char[property], value) - this.char[property];
+            this.char[property] += this.value;
+        }
+    }
+
+    apply_effect() {
+        switch (this.type) {
+            case effect_types.MAX_HP:
+                this.apply_general_value("max_hp");
+                break;
+            case effect_types.HP_RECOVERY:
+                this.apply_general_value("hp_recovery");
+                break;
+            case effect_types.MAX_PP:
+                this.apply_general_value("max_pp");
+                break;
+            case effect_types.PP_RECOVERY:
+                this.apply_general_value("pp_recovery");
+                break;
+            case effect_types.ATTACK:
+                this.apply_general_value("atk");
+                break;
+            case effect_types.DEFENSE:
+                this.apply_general_value("def");
+                break;
+            case effect_types.AGILITY:
+                this.apply_general_value("agi");
+                break;
+            case effect_types.LUCK:
+                this.apply_general_value("luk");
+                break;
+        }
     }
 }
