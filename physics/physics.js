@@ -176,12 +176,7 @@ export function collision_dealer(data) {
         } else {
             data.stop_by_colliding = false;
             if (normals.length === 1) {
-                let resultant_normal = normals.reduce((accumulator, current) => {
-                    accumulator[0] += current[0];
-                    accumulator[1] += current[1];
-                    return accumulator;
-                }, [0, 0]);
-                const normal_angle = (Math.atan2(resultant_normal[1], -resultant_normal[0]) + numbers.degree360) % numbers.degree360;
+                const normal_angle = (Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree360) % numbers.degree360;
                 if (normal_angle >= numbers.degree15 && normal_angle < numbers.degree90 - numbers.degree15) {
                     if (data.cursors.up.isDown) {
                         data.force_direction = true;

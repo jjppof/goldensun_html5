@@ -315,6 +315,7 @@ export class MainChar extends SpriteBase {
     }
 
     set_max_hp() {
+        let before_max_hp = this.max_hp;
         this.max_hp = parseInt(this.hp_curve[this.starting_level] * this.class.hp_boost + this.hp_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
@@ -329,11 +330,12 @@ export class MainChar extends SpriteBase {
         if (this.current_hp === undefined) {
             this.current_hp = this.max_hp;
         } else {
-            this.current_hp *= parseInt(this.class.hp_boost);
+            this.current_hp = parseInt(this.current_hp * this.max_hp/before_max_hp);
         }
     }
 
     set_max_pp() {
+        let before_max_pp = this.max_pp;
         this.max_pp = parseInt(this.pp_curve[this.starting_level] * this.class.pp_boost + this.pp_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
@@ -348,11 +350,12 @@ export class MainChar extends SpriteBase {
         if (this.current_pp === undefined) {
             this.current_pp = this.max_pp;
         } else {
-            this.current_pp *= parseInt(this.class.pp_boost);
+            this.current_pp = parseInt(this.current_pp * this.max_pp/before_max_pp);
         }
     }
 
     set_max_atk() {
+        let before_atk = this.atk;
         this.atk = parseInt(this.atk_curve[this.starting_level] * this.class.atk_boost + this.atk_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
@@ -367,11 +370,12 @@ export class MainChar extends SpriteBase {
         if (this.current_atk === undefined) {
             this.current_atk = this.atk;
         } else {
-            this.current_atk *= parseInt(this.class.atk_boost);
+            this.current_atk = parseInt(this.current_atk * this.atk/before_atk);
         }
     }
 
     set_max_def() {
+        let before_def = this.def;
         this.def = parseInt(this.def_curve[this.starting_level] * this.class.def_boost + this.def_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
@@ -386,11 +390,12 @@ export class MainChar extends SpriteBase {
         if (this.current_def === undefined) {
             this.current_def = this.def;
         } else {
-            this.current_def *= parseInt(this.class.def_boost);
+            this.current_def = parseInt(this.current_def * this.def/before_def);
         }
     }
 
     set_max_agi() {
+        let before_agi = this.agi;
         this.agi = parseInt(this.agi_curve[this.starting_level] * this.class.agi_boost + this.agi_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
@@ -405,11 +410,12 @@ export class MainChar extends SpriteBase {
         if (this.current_agi === undefined) {
             this.current_agi = this.agi;
         } else {
-            this.current_agi *= parseInt(this.class.agi_boost);
+            this.current_agi = parseInt(this.current_agi * this.agi/before_agi);
         }
     }
 
     set_max_luk() {
+        let before_luk = this.luk;
         this.luk = parseInt(this.luk_curve[this.starting_level] * this.class.luk_boost + this.luk_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
@@ -424,7 +430,7 @@ export class MainChar extends SpriteBase {
         if (this.current_luk === undefined) {
             this.current_luk = this.luk;
         } else {
-            this.current_luk *= parseInt(this.class.luk_boost);
+            this.current_luk = parseInt(this.current_luk * this.luk/before_luk);
         }
     }
 
