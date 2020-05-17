@@ -59,7 +59,6 @@ export function door_event_phases(data) {
         data.shadow.base_collider_layer = data.map_collider_layer;
         data.hero.base_collider_layer = data.map_collider_layer;
 
-
         maps[data.map_name].setLayers(
             game,
             data,

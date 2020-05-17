@@ -35,6 +35,7 @@ export class Map {
     }
 
     async setLayers(game, data, maps, npc_db, psynergy_items_db, map_name, underlayer_group, overlayer_group, collider_layer, npc_group) {
+        this.events = {};
         this.sprite = game.add.tilemap(this.key_name);
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
