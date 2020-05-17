@@ -4,6 +4,7 @@ import * as numbers from '../magic_numbers.js';
 import { get_text_width } from '../utils.js';
 import { HorizontalMenu } from '../base/menus/HorizontalMenu.js';
 import { PsynergyMenuScreen } from './psynergy_menu.js';
+import { ItemMenuScreen } from './item_menu.js';
 
 const WIDTH_PER_CHAR = 50;
 const STATUS_WIN_HEIGHT = 35;
@@ -35,6 +36,7 @@ export class MenuScreen {
         );
         ++enter_propagation_priority;
         this.psynergy_menu = new PsynergyMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
+        this.item_menu = new ItemMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
         this.set_chars_info();
     }
 
@@ -43,6 +45,16 @@ export class MenuScreen {
             case "psynergy":
                 this.horizontal_menu.deactivate();
                 this.psynergy_menu.open_menu(close_this_menu => {
+                    this.horizontal_menu.activate();
+                    if (close_this_menu) {
+                        this.data.menu_open = false;
+                        this.close_menu();
+                    }
+                });
+                break;
+            case "item":
+                this.horizontal_menu.deactivate();
+                this.item_menu.open_menu(close_this_menu => {
                     this.horizontal_menu.activate();
                     if (close_this_menu) {
                         this.data.menu_open = false;

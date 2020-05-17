@@ -2,6 +2,7 @@ import { Window } from "../Window.js";
 import { CursorControl } from "../CursorControl.js";
 import { party_data } from "../../chars/main_chars.js";
 import { abilities_list } from '../../chars/abilities.js';
+import { items_list } from '../../chars/items.js';
 import * as numbers from '../../magic_numbers.js';
 
 const PSY_OVERVIEW_WIN_X = 104;
@@ -28,8 +29,8 @@ export class ItemPsynergyChooseWindow {
         this.game = game;
         this.data = data;
         this.is_psynergy_window = is_psynergy_window;
-        this.element_list = this.is_psynergy_window ? abilities_list : [];
-        this.element_sprite_sufix = this.is_psynergy_window ? "_ability_icon" : "";
+        this.element_list = this.is_psynergy_window ? abilities_list : items_list;
+        this.element_sprite_sufix = this.is_psynergy_window ? "_ability_icon" : "_item_icon";
         this.on_choose = on_choose === undefined ? () => {} : on_choose;
         this.on_change = on_change === undefined ? () => {} : on_change;
         this.esc_propagation_priority = esc_propagation_priority + 1;
@@ -94,6 +95,10 @@ export class ItemPsynergyChooseWindow {
         this.page_indicator_left_arrow.alpha = 0;
     }
 
+    get_element_key_name(index) {
+        return this.is_psynergy_window ? this.elements[index] : this.elements[index].key_name;
+    }
+
     set_control() {
         game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
             if (!this.window_open) return;
@@ -103,10 +108,10 @@ export class ItemPsynergyChooseWindow {
         game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
             if (!this.window_open) return;
             this.data.enter_input.getSignal().halt();
-            if (!abilities_list[this.elements[this.selected_element_index]].in_battle) {
+            if (this.is_psynergy_window && this.element_list[this.elements[this.selected_element_index]].is_field_psynergy) {
                 this.close();
             }
-            this.on_choose(abilities_list[this.elements[this.selected_element_index]]);
+            this.on_choose(this.element_list[this.get_element_key_name(this.selected_element_index)]);
         }, this, this.enter_propagation_priority);
 
         
@@ -148,8 +153,22 @@ export class ItemPsynergyChooseWindow {
         return this.elements.length;
     }
 
+    set_page_number() {
+        let list_length;
+        if (this.is_psynergy_window) {
+            list_length = this.char.abilities.filter(elem_key_name => {
+                return (elem_key_name in this.element_list) && (this.element_list[elem_key_name].is_field_psynergy || this.element_list[elem_key_name].effects_outside_battle);
+            }).length;
+        } else {
+            list_length = this.char.items.filter(item_obj => {
+                return item_obj.key_name in this.element_list;
+            }).length;
+        }
+        this.page_number = parseInt((list_length - 1)/ELEM_PER_PAGE) + 1;
+    }
+
     get_page_number() {
-        return parseInt(this.elements.length/ELEM_PER_PAGE) + 1;
+        return this.page_number;
     }
 
     set_page_indicator() {
@@ -169,7 +188,7 @@ export class ItemPsynergyChooseWindow {
     }
 
     set_page_indicator_highlight() {
-        this.page_number_bar_highlight.x = PSY_OVERVIEW_WIN_WIDTH - 5 - this.get_page_number() * PAGE_NUMBER_WIDTH;
+        this.page_number_bar_highlight.x = PSY_OVERVIEW_WIN_WIDTH - 5 - (this.get_page_number() - this.get_page_index()) * PAGE_NUMBER_WIDTH;
     }
 
     set_page_indicator_arrow() {
@@ -212,14 +231,18 @@ export class ItemPsynergyChooseWindow {
             this.elements = this.char.abilities.filter(elem_key_name => {
                 return (elem_key_name in this.element_list) && (this.element_list[elem_key_name].is_field_psynergy || this.element_list[elem_key_name].effects_outside_battle);
             }).slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
+        } else {
+            this.elements = this.char.items.filter(item_obj => {
+                return item_obj.key_name in this.element_list;
+            }).slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
         }
         for (let i = 0; i < this.elements.length; ++i) {
-            const elem_key_name = this.elements[i];
+            const elem_key_name = this.get_element_key_name(i);
             const x = ELEM_PADDING_LEFT;
             const y = ELEM_PADDING_TOP + i * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS);
             this.icon_sprites_in_window.push(this.window.create_at_group(x + (numbers.ICON_WIDTH >> 1), y + (numbers.ICON_HEIGHT >> 1), elem_key_name + this.element_sprite_sufix));
             this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
-            const x_elem_name = ELEM_PADDING_LEFT + numbers.ICON_WIDTH + 2;
+            const x_elem_name = ELEM_PADDING_LEFT + numbers.ICON_WIDTH + (this.is_psynergy_window ? 2 : 4);
             this.text_sprites_in_window.push(this.window.set_text_in_position(this.element_list[elem_key_name].name, x_elem_name, y + ELEM_NAME_ICON_SHIFT));
             if (this.is_psynergy_window) {
                 const x_elem_pp_cost = PSY_PP_X;
@@ -256,7 +279,7 @@ export class ItemPsynergyChooseWindow {
     element_change(before_index, after_index) {
         this.set_element_tween(before_index);
         this.set_highlight_bar();
-        this.on_change(abilities_list[this.elements[after_index]]);
+        this.on_change(this.element_list[this.get_element_key_name(after_index)]);
     }
 
     page_change(before_index, after_index) {
@@ -267,7 +290,7 @@ export class ItemPsynergyChooseWindow {
         }
         this.set_element_tween(before_index);
         this.set_highlight_bar();
-        this.on_change(abilities_list[this.elements[this.selected_element_index]]);
+        this.on_change(this.element_list[this.get_element_key_name(this.selected_element_index)]);
         this.set_page_indicator_highlight();
     }
 
@@ -285,6 +308,7 @@ export class ItemPsynergyChooseWindow {
     open(char_index, close_callback, open_callback) {
         this.update_position();
         this.char = party_data.members[char_index];
+        this.set_page_number();
         this.group.alpha = 1;
         this.close_callback = close_callback;
         this.window.show(open_callback, false);
@@ -295,7 +319,7 @@ export class ItemPsynergyChooseWindow {
         this.cursor_control.activate();
         this.set_element_tween();
         this.set_highlight_bar();
-        this.on_change(abilities_list[this.elements[this.selected_element_index]]);
+        this.on_change(this.element_list[this.get_element_key_name(this.selected_element_index)]);
         this.window_open = true;
         this.window_activated = true;
     }
