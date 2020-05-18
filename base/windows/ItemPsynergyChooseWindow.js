@@ -45,11 +45,14 @@ export class ItemPsynergyChooseWindow {
         this.window_activated = false;
         this.close_callback = undefined;
         this.char = null;
-        this.window.create_at_group(9, 97, "shift_keyboard", 0x0);
-        this.window.create_at_group(8, 96, "shift_keyboard");
-        this.window.create_at_group(32, 97, "tab_keyboard", 0x0);
-        this.window.create_at_group(31, 96, "tab_keyboard");
-        this.window.set_text_in_position(": Change Char", 49, 96);
+        this.char_select_controls_sprites = [
+            this.window.create_at_group(9, 97, "shift_keyboard", 0x0),
+            this.window.create_at_group(8, 96, "shift_keyboard"),
+            this.window.create_at_group(32, 97, "tab_keyboard", 0x0),
+            this.window.create_at_group(31, 96, "tab_keyboard")
+        ];
+        const sprite_pair = this.window.set_text_in_position(": Change Char", 49, 96);
+        this.char_select_controls_sprites.push(sprite_pair.text, sprite_pair.shadow);
         this.page_index = 0;
         this.text_sprites_in_window = [];
         this.icon_sprites_in_window = [];
@@ -103,20 +106,24 @@ export class ItemPsynergyChooseWindow {
 
     set_control() {
         game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
-            if (!this.window_open) return;
+            if (!this.window_open || !this.window_activated) return;
             this.data.esc_input.getSignal().halt();
             this.close();
         }, this, this.esc_propagation_priority);
         game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
-            if (!this.window_open) return;
+            if (!this.window_open || !this.window_activated) return;
             this.data.enter_input.getSignal().halt();
             if (this.is_psynergy_window && this.element_list[this.elements[this.selected_element_index]].is_field_psynergy) {
                 this.close();
             }
-            this.on_choose(this.element_list[this.get_element_key_name(this.selected_element_index)]);
+            if (!this.is_psynergy_window) {
+                this.deactivate();
+            }
+            this.on_choose(
+                this.element_list[this.get_element_key_name(this.selected_element_index)],
+                this.is_psynergy_window ? undefined : this.item_objs[this.selected_element_index]
+            );
         }, this, this.enter_propagation_priority);
-
-        
     }
 
     is_open() {
@@ -229,21 +236,20 @@ export class ItemPsynergyChooseWindow {
 
     set_elements() {
         this.clear_sprites();
-        let item_objs;
+        this.item_objs = [];
         if (this.is_psynergy_window) {
             this.elements = this.char.abilities.filter(elem_key_name => {
                 return (elem_key_name in this.element_list) && (this.element_list[elem_key_name].is_field_psynergy || this.element_list[elem_key_name].effects_outside_battle);
             }).slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
         } else {
-            item_objs = [];
             this.elements = this.char.items.filter(item_obj => {
                 if (item_obj.key_name in this.element_list) {
-                    item_objs.push(item_obj);
+                    this.item_objs.push(item_obj);
                     return true;
                 }
                 return false;
             }).slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
-            item_objs = item_objs.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
+            this.item_objs = this.item_objs.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
         }
         for (let i = 0; i < this.elements.length; ++i) {
             const elem_key_name = this.get_element_key_name(i);
@@ -259,7 +265,7 @@ export class ItemPsynergyChooseWindow {
                 let icon_group = game.add.group();
                 let icon_sprite = icon_group.create(0, 0, icon_key);
                 icon_sprite.anchor.setTo(0.5, 0.5);
-                if (item_objs[i].equipped) {
+                if (this.item_objs[i].equipped) {
                     icon_group.create(SUB_ICON_X, SUB_ICON_Y, "equipped");
                 }
                 this.window.add_sprite_to_group(icon_group);
@@ -277,7 +283,12 @@ export class ItemPsynergyChooseWindow {
     }
 
     set_highlight_bar() {
+        this.highlight_bar.alpha = 1;
         this.highlight_bar.y = ELEM_PADDING_TOP + this.selected_element_index * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS) + 4;
+    }
+
+    unset_highlight_bar() {
+        this.highlight_bar.alpha = 0;
     }
 
     set_element_tween(before_index) {
@@ -358,5 +369,30 @@ export class ItemPsynergyChooseWindow {
         this.unset_element_tween();
         this.window_open = false;
         this.window_activated = false;
+    }
+
+    activate() {
+        this.set_page_number();
+        this.set_elements();
+        this.set_page_indicator();
+        this.cursor_control.activate();
+        this.set_element_tween();
+        this.set_highlight_bar();
+        this.window_activated = true;
+        this.char_select_controls_sprites.forEach(sprite => {
+            sprite.alpha = 1;
+        });
+    }
+
+    deactivate() {
+        this.clear_sprites();
+        this.unset_page_indicator();
+        this.cursor_control.deactivate();
+        this.unset_element_tween();
+        this.unset_highlight_bar();
+        this.window_activated = false;
+        this.char_select_controls_sprites.forEach(sprite => {
+            sprite.alpha = 0;
+        });
     }
 }

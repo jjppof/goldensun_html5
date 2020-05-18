@@ -5,6 +5,7 @@ import { party_data } from '../chars/main_chars.js';
 import { items_list } from '../chars/items.js';
 import { Window } from '../base/Window.js';
 import * as numbers from '../magic_numbers.js';
+import { ItemOptionsWindow } from '../base/windows/ItemOptions.js';
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;
@@ -65,6 +66,7 @@ export class ItemMenuScreen {
             this.item_choose.bind(this),
             this.esc_propagation_priority
         );
+        this.item_options_window = new ItemOptionsWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
     }
 
     set_control() {
@@ -99,8 +101,10 @@ export class ItemMenuScreen {
         this.set_description_window_text(item.description);
     }
 
-    item_choose(item) {
-        
+    item_choose(item, item_obj) {
+        this.item_options_window.open(item_obj, item, party_data.members[this.selected_char_index], () => {
+            this.item_choose_window.activate();
+        });
     }
 
     set_guide_window_text() {

@@ -60,6 +60,8 @@ export class Item {
         this.price = price;
         this.granted_ability = granted_ability;
         this.icon_path = icon_path;
+        this.broken = false;
+        this.equipable = this.type === item_types.GENERAL_ITEM ? false : true;
     }
 
     load_assets(game, load_callback) {
