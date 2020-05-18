@@ -151,6 +151,7 @@ export class MainChar extends SpriteBase {
 
     init_items() {
         this.items.forEach((item_obj, index) => {
+            item_obj.index = index;
             if (item_obj.equipped) {
                 this.equip_item(index, true);
             }
@@ -161,7 +162,8 @@ export class MainChar extends SpriteBase {
         this.items.push({
             key_name: item_key_name,
             quantity: quantity,
-            equipped: equip
+            equipped: equip,
+            index: this.items.length
         });
         if (equip) {
             this.equip_item(this.items.length - 1);

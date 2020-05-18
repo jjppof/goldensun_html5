@@ -94,6 +94,7 @@ export class ItemMenuScreen {
             this.chars_menu.activate();
             this.set_guide_window_text();
             this.set_description_window_text();
+            this.set_item_icons();
         });
     }
 

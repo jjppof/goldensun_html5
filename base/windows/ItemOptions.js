@@ -45,13 +45,21 @@ export class ItemOptionsWindow {
             give: this.base_window.set_text_in_position("Give", OPTION_TEXT_HORIZONTAL_PADDING, OPTION_TEXT_Y_POS + numbers.FONT_SIZE),
             remove: this.base_window.set_text_in_position("Remove", OPTION_TEXT_HORIZONTAL_PADDING + OPTION_TEXT_MAX_WIDHT, OPTION_TEXT_Y_POS + numbers.FONT_SIZE),
             drop: this.base_window.set_text_in_position("Drop", OPTION_TEXT_HORIZONTAL_PADDING + 2 * OPTION_TEXT_MAX_WIDHT, OPTION_TEXT_Y_POS + numbers.FONT_SIZE)
-        }
+        };
+        this.option_active = {
+            use: true,
+            equip: true,
+            details: true,
+            give: true,
+            remove: true,
+            drop: true
+        };
         this.horizontal_index = 0;
         this.vertical_index = 0;
         this.esc_propagation_priority = esc_propagation_priority + 1;
         this.enter_propagation_priority = enter_propagation_priority + 1;
         this.cursor_control = new CursorControl(this.game, true, true, () => MAX_HORIZONTAL, () => MAX_VERTICAL, this.group,
-            this.on_choose.bind(this), this.on_choose.bind(this), this.get_horizontal_index.bind(this), this.set_horizontal_index.bind(this),
+            this.on_change.bind(this), this.on_change.bind(this), this.get_horizontal_index.bind(this), this.set_horizontal_index.bind(this),
             this.get_vertical_index.bind(this), this.set_vertical_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),
             this.get_cursor_x.bind(this), this.get_cursor_y.bind(this));
         this.set_control();
@@ -105,28 +113,38 @@ export class ItemOptionsWindow {
     set_available_options() {
         if (!this.item.use_ability || this.item.broken) {
             this.text_sprites.use.text.tint = DISABLE_COLOR;
+            this.option_active.use = false;
         } else {
             this.text_sprites.use.text.tint = ENABLE_COLOR;
+            this.option_active.use = true;
         }
         if (!this.item.equipable || this.item_obj.equipped || !this.item.equipable_chars.includes(this.char.key_name)) {
             this.text_sprites.equip.text.tint = DISABLE_COLOR;
+            this.option_active.equip = false;
         } else {
             this.text_sprites.equip.text.tint = ENABLE_COLOR;
+            this.option_active.equip = true;
         }
         if (party_data.members.length <= 1) {
             this.text_sprites.give.text.tint = DISABLE_COLOR;
+            this.option_active.give = false;
         } else {
             this.text_sprites.give.text.tint = ENABLE_COLOR;
+            this.option_active.give = true;
         }
         if (!this.item.equipable || !this.item_obj.equipped || !this.item.equipable_chars.includes(this.char.key_name)) {
             this.text_sprites.remove.text.tint = DISABLE_COLOR;
+            this.option_active.remove = false;
         } else {
             this.text_sprites.remove.text.tint = ENABLE_COLOR;
+            this.option_active.remove = true;
         }
         if (this.item.imporant_item) {
-            this.text_sprites.remove.text.tint = DISABLE_COLOR;
+            this.text_sprites.drop.text.tint = DISABLE_COLOR;
+            this.option_active.drop = false;
         } else {
-            this.text_sprites.remove.text.tint = ENABLE_COLOR;
+            this.text_sprites.drop.text.tint = ENABLE_COLOR;
+            this.option_active.drop = true;
         }
     }
 
@@ -155,7 +173,16 @@ export class ItemOptionsWindow {
     }
 
     on_choose() {
-
+        if (this.horizontal_index === 1) {
+            if (this.vertical_index === 0 && this.option_active.equip) {
+                this.char.equip_item(this.item_obj.index);
+                this.close(this.close_callback);
+            }
+            if (this.vertical_index === 1 && this.option_active.remove) {
+                this.char.unequip_item(this.item_obj.index);
+                this.close(this.close_callback);
+            }
+        }
     }
 
     on_change() {
