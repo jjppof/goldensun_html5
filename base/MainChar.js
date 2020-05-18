@@ -123,6 +123,12 @@ export class MainChar extends SpriteBase {
         this.hp_recovery = 0;
         this.pp_recovery = 0;
         this.items = items;
+        this.equip_slots = {
+            weapon: null,
+            head: null,
+            chest: null,
+            body: null
+        };
         this.effects = [];
         this.init_items();
         this.update_attributes();
@@ -186,8 +192,23 @@ export class MainChar extends SpriteBase {
     equip_item(index, initialize = false) {
         let item_obj = this.items[index];
         if (item_obj.equipped && !initialize) return;
-        item_obj.equipped = true;
         const item = items_list[item_obj.key_name];
+        if (item.type === item_types.WEAPONS && this.equip_slots.weapon !== null) {
+            this.unequip_item(this.equip_slots.weapon.index);
+        } else if (item.type === item_types.HEAD_PROTECTOR && this.equip_slots.head !== null) {
+            this.unequip_item(this.equip_slots.head.index);
+        } else if (item.type === item_types.CHEST_PROTECTOR && this.equip_slots.chest !== null) {
+            this.unequip_item(this.equip_slots.chest.index);
+        } else if (item.type === item_types.ARMOR && this.equip_slots.body !== null) {
+            this.unequip_item(this.equip_slots.body.index);
+        }
+        switch (item.type) {
+            case item_types.WEAPONS: this.equip_slots.weapon = item_obj; break;
+            case item_types.HEAD_PROTECTOR: this.equip_slots.head = item_obj; break;
+            case item_types.CHEST_PROTECTOR: this.equip_slots.chest = item_obj; break;
+            case item_types.ARMOR: this.equip_slots.body = item_obj; break;
+        }
+        item_obj.equipped = true;
         for (let i = 0; i < item.effects.length; ++i) {
             this.add_effect(item.effects[i], item);
         }
@@ -201,8 +222,17 @@ export class MainChar extends SpriteBase {
     unequip_item(index) {
         let item_obj = this.items[index];
         if (!item_obj.equipped) return;
-        item_obj.equipped = false;
         const item = items_list[item_obj.key_name];
+        if (item.type === item_types.WEAPONS && this.equip_slots.weapon !== null) {
+            this.equip_slots.weapon = null;
+        } else if (item.type === item_types.HEAD_PROTECTOR && this.equip_slots.head !== null) {
+            this.equip_slots.head = null;
+        } else if (item.type === item_types.CHEST_PROTECTOR && this.equip_slots.chest !== null) {
+            this.equip_slots.chest = null;
+        } else if (item.type === item_types.ARMOR && this.equip_slots.body !== null) {
+            this.equip_slots.body = null;
+        }
+        item_obj.equipped = false;
         this.effects.forEach(effect => {
             if (effect.effect_owner_instance === item) {
                 this.remove_effect(effect);

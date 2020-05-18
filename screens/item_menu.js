@@ -6,6 +6,8 @@ import { items_list } from '../chars/items.js';
 import { Window } from '../base/Window.js';
 import * as numbers from '../magic_numbers.js';
 import { ItemOptionsWindow } from '../base/windows/ItemOptions.js';
+import { StatsCheckWithItemWindow } from '../base/windows/StatsCheckWithItemWindow.js';
+import { item_types } from '../base/Item.js';
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;
@@ -42,6 +44,7 @@ export class ItemMenuScreen {
         this.enter_propagation_priority = enter_propagation_priority + 1;
         this.chars_menu = new CharsMenu(this.game, this.data, this.char_choose.bind(this), this.char_change.bind(this), this.enter_propagation_priority);
         this.basic_info_window = new BasicInfoWindow(this.game);
+        this.item_change_stats_window = new StatsCheckWithItemWindow(this.game);
         this.selected_char_index = 0;
         this.is_open = false;
         this.close_callback = null;
@@ -95,15 +98,27 @@ export class ItemMenuScreen {
             this.set_guide_window_text();
             this.set_description_window_text();
             this.set_item_icons();
+            if (this.item_change_stats_window.window_open) {
+                this.item_change_stats_window.close();
+            }
         });
     }
 
     item_change(item) {
         this.set_description_window_text(item.description);
+        if (this.item_change_stats_window.window_open) {
+            this.item_change_stats_window.close();
+        }
+        if (item.type === item_types.ABILITY_GRANTOR) {
+
+        } else if (item.type !== item_types.GENERAL_ITEM) {
+            this.item_change_stats_window.open(party_data.members[this.selected_char_index], item);
+        }
     }
 
     item_choose(item, item_obj) {
         this.item_options_window.open(item_obj, item, party_data.members[this.selected_char_index], () => {
+            this.item_change_stats_window.update_info();
             this.item_choose_window.activate();
         });
     }

@@ -120,6 +120,8 @@ function load_misc() {
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.image('cursor', 'assets/images/misc/cursor.gif');
     game.load.image('green_arrow', 'assets/images/misc/green_arrow.gif');
+    game.load.image('up_arrow', 'assets/images/misc/up_arrow.gif');
+    game.load.image('down_arrow', 'assets/images/misc/down_arrow.gif');
     game.load.image('page_arrow', 'assets/images/misc/page_arrow.png');
     game.load.image('psynergy_aura', 'assets/images/misc/psynergy_aura.png');
     game.load.image('equipped', 'assets/images/misc/equipped.gif');

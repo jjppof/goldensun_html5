@@ -2,7 +2,7 @@
     {
         "key_name": "great_sword",
         "name": "Great Sword",
-        "type": "weapon",
+        "type": "weapons",
         "description": "Long Sword",
         "use_type": "no_use",
         "curses_when_equipped": false,
@@ -26,7 +26,7 @@
     },{
         "key_name": "gaia_blade",
         "name": "Gaia Blade",
-        "type": "weapon",
+        "type": "weapons",
         "description": "Long Sword: Unleashes Titan Blade",
         "use_type": "no_use",
         "curses_when_equipped": false,
@@ -59,6 +59,32 @@
         "price": 17000,
         "granted_ability": "",
         "icon_path": "assets/images/icons/items/gaia_blade.gif"
+    },{
+        "key_name": "elven_rapier",
+        "name": "Elven Rapier",
+        "type": "weapons",
+        "description": "Light Blade: Unleashes Vorpal Slash",
+        "use_type": "no_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": true,
+        "imporant_item": false,
+        "carry_up_to_30": false,
+        "effects": [
+            {
+                "type": "attack",
+                "quantity": 44,
+                "operator": "plus"
+            }
+        ],
+        "attribute": "jupiter",
+        "unleash_ability": "vorpal_slash",
+        "unleash_rate": 0.35,
+        "use_ability": "",
+        "equipable_chars": ["isaac", "garet"],
+        "price": 2200,
+        "granted_ability": "",
+        "icon_path": "assets/images/icons/items/elven_rapier.gif"
     },{
         "key_name": "knights_shield",
         "name": "Knight's Shield",
