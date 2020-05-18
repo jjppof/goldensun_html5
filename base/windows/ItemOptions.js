@@ -24,6 +24,10 @@ const SUB_ICON_X = 7;
 const SUB_ICON_Y = 8;
 const DISABLE_COLOR = 0x606060;
 const ENABLE_COLOR = 0xFFFFFF;
+const ACTION_WINDOW_MSG_X = 122;
+const ACTION_WINDOW_MSG_Y = 66;
+const ACTION_WINDOW_MSG_WIDTH = 67;
+const ACTION_WINDOW_MSG_HEIGHT = 20;
 
 export class ItemOptionsWindow {
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
@@ -62,6 +66,7 @@ export class ItemOptionsWindow {
             this.on_change.bind(this), this.on_change.bind(this), this.get_horizontal_index.bind(this), this.set_horizontal_index.bind(this),
             this.get_vertical_index.bind(this), this.set_vertical_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),
             this.get_cursor_x.bind(this), this.get_cursor_y.bind(this));
+        this.action_message_window = new Window(this.game, ACTION_WINDOW_MSG_X, ACTION_WINDOW_MSG_Y, ACTION_WINDOW_MSG_WIDTH, ACTION_WINDOW_MSG_HEIGHT);
         this.set_control();
     }
 
@@ -101,12 +106,20 @@ export class ItemOptionsWindow {
         game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
             if (!this.window_open) return;
             this.data.esc_input.getSignal().halt();
-            this.close(this.close_callback);
+            if (this.action_message_window.open) {
+                this.action_message_window.close();
+            } else {
+                this.close(this.close_callback);
+            }
         }, this, this.esc_propagation_priority);
         game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
             if (!this.window_open) return;
             this.data.enter_input.getSignal().halt();
-            this.on_choose();
+            if (this.action_message_window.open) {
+                this.action_message_window.close();
+            } else {
+                this.on_choose();
+            }
         }, this, this.enter_propagation_priority);
     }
 
@@ -172,15 +185,30 @@ export class ItemOptionsWindow {
         this.group.y = this.game.camera.y + this.y;
     }
 
+    open_action_message_window(text, close_callback) {
+        this.action_message_window.set_text([text]);
+        this.cursor_control.deactivate();
+        if (this.stats_update_callback !== undefined) {
+            this.stats_update_callback();
+        }
+        this.action_message_window.show(undefined, true, () => {
+            close_callback();
+        });
+    }
+
     on_choose() {
         if (this.horizontal_index === 1) {
             if (this.vertical_index === 0 && this.option_active.equip) {
                 this.char.equip_item(this.item_obj.index);
-                this.close(this.close_callback);
+                this.open_action_message_window("Equipped.", () => {
+                    this.close(this.close_callback);
+                });
             }
             if (this.vertical_index === 1 && this.option_active.remove) {
                 this.char.unequip_item(this.item_obj.index);
-                this.close(this.close_callback);
+                this.open_action_message_window("Removed.", () => {
+                    this.close(this.close_callback);
+                });
             }
         }
     }
@@ -189,12 +217,13 @@ export class ItemOptionsWindow {
 
     }
 
-    open(item_obj, item, char, close_callback, open_callback) {
+    open(item_obj, item, char, close_callback, stats_update_callback, open_callback) {
         this.item_obj = item_obj;
         this.item = item;
         this.char = char;
         this.cursor_control.activate();
         this.close_callback = close_callback;
+        this.stats_update_callback = stats_update_callback;
         this.update_position();
         this.set_header();
         this.set_available_options();

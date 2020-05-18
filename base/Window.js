@@ -163,11 +163,12 @@ export class Window {
         this.group.y = (relative ? this.game.camera.y : 0) + this.y;
     }
 
-    show(show_callback, animate = true) {
+    show(show_callback, animate = true, close_callback = undefined) {
         this.group.alpha = 1;
         this.group.x = this.game.camera.x + this.x;
         this.group.y = this.game.camera.y + this.y;
         this.open = true;
+        this.close_callback = close_callback;
         if (animate) {
             this.transition_time = Phaser.Timer.QUARTER/4;
             this.game.add.tween(this.group).to(
@@ -321,16 +322,24 @@ export class Window {
                 true
             ).onComplete.addOnce(() => {
                 this.group.alpha = 0;
+                this.open = false;
                 if (callback !== undefined) {
                     callback();
+                }
+                if (this.close_callback !== undefined) {
+                    this.close_callback();
                 }
             });
         } else {
             this.group.alpha = 0;
+            this.open = false;
             this.group.width = 0;
             this.group.height = 0;
             if (callback !== undefined) {
                 callback();
+            }
+            if (this.close_callback !== undefined) {
+                this.close_callback();
             }
         }
     }
