@@ -27,8 +27,8 @@ export class CursorControl {
         this.max_right_left_getter = max_right_left_getter;
         this.max_up_down_getter = max_up_down_getter;
         this.base_group = base_group;
-        this.on_right_left_change = on_right_left_change;
-        this.on_up_down_change = on_up_down_change;
+        this.on_right_left_change = on_right_left_change === undefined ? () => {} : on_right_left_change;
+        this.on_up_down_change = on_up_down_change === undefined ? () => {} : on_up_down_change;
         this.right_left_index_getter = right_left_index_getter;
         this.right_left_index_setter = right_left_index_setter;
         this.up_down_index_getter = up_down_index_getter;

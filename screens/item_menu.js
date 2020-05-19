@@ -5,7 +5,7 @@ import { party_data } from '../chars/main_chars.js';
 import { items_list } from '../chars/items.js';
 import { Window } from '../base/Window.js';
 import * as numbers from '../magic_numbers.js';
-import { ItemOptionsWindow } from '../base/windows/ItemOptions.js';
+import { ItemOptionsWindow } from '../base/windows/ItemOptionsWindow.js';
 import { StatsCheckWithItemWindow } from '../base/windows/StatsCheckWithItemWindow.js';
 import { item_types } from '../base/Item.js';
 

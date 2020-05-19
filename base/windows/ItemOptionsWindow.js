@@ -2,6 +2,7 @@ import { Window } from '../Window.js';
 import * as numbers from '../../magic_numbers.js';
 import { CursorControl } from '../CursorControl.js';
 import { party_data } from '../../chars/main_chars.js';
+import { DropItemWindow } from './DropItemWindow.js';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 52;
@@ -66,6 +67,7 @@ export class ItemOptionsWindow {
             this.on_change.bind(this), this.on_change.bind(this), this.get_horizontal_index.bind(this), this.set_horizontal_index.bind(this),
             this.get_vertical_index.bind(this), this.set_vertical_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),
             this.get_cursor_x.bind(this), this.get_cursor_y.bind(this));
+        this.drop_item_window = new DropItemWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
         this.action_message_window = new Window(this.game, ACTION_WINDOW_MSG_X, ACTION_WINDOW_MSG_Y, ACTION_WINDOW_MSG_WIDTH, ACTION_WINDOW_MSG_HEIGHT);
         this.set_control();
     }
@@ -209,6 +211,18 @@ export class ItemOptionsWindow {
                 this.open_action_message_window("Removed.", () => {
                     this.close(this.close_callback);
                 });
+            }
+        } else if (this.horizontal_index === 2) {
+            if (this.vertical_index === 1 && this.option_active.drop) {
+                this.drop_item_window.open(this.item_obj, this.item, this.char, dropped => {
+                    if (dropped) {
+                        this.open_action_message_window("Dropped it.", () => {
+                            this.close(this.close_callback);
+                        });
+                    } else {
+                        this.close(this.close_callback);
+                    }
+                })
             }
         }
     }
