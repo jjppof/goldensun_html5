@@ -9,6 +9,7 @@ const BASE_WIN_X = 0;
 const BASE_WIN_Y = 40;
 const ARROW_X = 53;
 const ARROW_Y_SHIFT = 2;
+const PREVIEW_TEXT_X = 94;
 
 export class StatsCheckWithItemWindow {
     constructor(game) {
@@ -33,6 +34,11 @@ export class StatsCheckWithItemWindow {
             [effect_types.ATTACK]: this.base_window.create_at_group(ARROW_X, 48 - ARROW_Y_SHIFT, "down_arrow"),
             [effect_types.DEFENSE]: this.base_window.create_at_group(ARROW_X, 64 - ARROW_Y_SHIFT, "down_arrow"),
             [effect_types.AGILITY]: this.base_window.create_at_group(ARROW_X, 80 - ARROW_Y_SHIFT, "down_arrow")
+        };
+        this.preview_stats_texts =  {
+            [effect_types.ATTACK]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 48, true),
+            [effect_types.DEFENSE]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 64, true),
+            [effect_types.AGILITY]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 80, true)
         };
         this.hide_arrows();
 
@@ -70,8 +76,14 @@ export class StatsCheckWithItemWindow {
 
     set_compare_arrows(effect_type, equip_slot_property, current_stats_property) {
         let effect_obj = _.findWhere(this.item.effects, {type: effect_type});
+        let preview_stats;
+        if (effect_obj !== undefined) {
+            const equip_slot_key_name = this.char.equip_slots[equip_slot_property] === null ? null : this.char.equip_slots[equip_slot_property].key_name;
+            preview_stats = this.char.preview_stats(effect_type, effect_obj, equip_slot_key_name);
+        }
         if (this.char.equip_slots[equip_slot_property] === null) {
             if (effect_obj === undefined) return;
+            this.update_preview_text(preview_stats, effect_type);
             this.up_arrows[effect_type].alpha = 1;
         } else {
             const equipped_effect_obj = _.findWhere(items_list[this.char.equip_slots[equip_slot_property].key_name].effects, {type: effect_type});
@@ -82,21 +94,31 @@ export class StatsCheckWithItemWindow {
                     quantity: 0,
                     operator: effect_operators.PLUS
                 };
+                preview_stats = this.char.preview_stats(effect_type, effect_obj, this.char.equip_slots[equip_slot_property].key_name);
             }
-            const preview_stats = this.char.preview_stats(effect_type, effect_obj, this.char.equip_slots[equip_slot_property].key_name);
             const current_stats = this.char[current_stats_property];
             if (preview_stats > current_stats) {
                 this.up_arrows[effect_type].alpha = 1;
+                this.update_preview_text(preview_stats, effect_type);
             } else if (preview_stats < current_stats) {
                 this.down_arrows[effect_type].alpha = 1;
+                this.update_preview_text(preview_stats, effect_type);
             }
         }
+    }
+
+    update_preview_text(value, effect_type) {
+        this.preview_stats_texts[effect_type].text.alpha = 1;
+        this.preview_stats_texts[effect_type].shadow.alpha = 1;
+        this.base_window.update_text(value.toString(), this.preview_stats_texts[effect_type]);
     }
 
     hide_arrows() {
         for (let key in this.up_arrows) {
             this.up_arrows[key].alpha = 0;
             this.down_arrows[key].alpha = 0;
+            this.preview_stats_texts[key].text.alpha = 0;
+            this.preview_stats_texts[key].shadow.alpha = 0;
         }
     }
 

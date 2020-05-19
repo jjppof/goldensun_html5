@@ -106,6 +106,7 @@ export class MainChar extends SpriteBase {
         this.mercury_djinni = [];
         this.mars_djinni = [];
         this.jupiter_djinni = [];
+        this.effects = [];
         this.init_djinni(djinni);
         this.update_class();
         this.hp_curve = hp_curve;
@@ -129,9 +130,9 @@ export class MainChar extends SpriteBase {
             chest: null,
             body: null
         };
-        this.effects = [];
         this.init_items();
         this.update_attributes();
+        this.update_elemental_attributes();
         this.innate_abilities = innate_abilities;
         this.in_party = in_party;
         this.abilities = [];
@@ -213,6 +214,7 @@ export class MainChar extends SpriteBase {
             this.add_effect(item.effects[i], item);
         }
         this.update_attributes();
+        this.update_elemental_attributes();
         if (item.type === item_types.ABILITY_GRANTOR) {
             this.equipped_abilities.push(item.granted_ability);
             this.update_abilities();
@@ -239,6 +241,7 @@ export class MainChar extends SpriteBase {
             }
         });
         this.update_attributes();
+        this.update_elemental_attributes();
         if (item.type === item_types.ABILITY_GRANTOR) {
             this.equipped_abilities = this.equipped_abilities.filter(ability => {
                 return ability !== item.granted_ability;
@@ -386,18 +389,18 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    preview_stats(effect_type, effect, item_key_name) {
+    preview_stats(effect_type, effect_obj, item_key_name) {
         switch (effect_type) {
             case effect_types.ATTACK:
-                return this.set_max_atk(true, effect, item_key_name);
+                return this.set_max_atk(true, effect_obj, item_key_name);
             case effect_types.DEFENSE:
-                return this.set_max_def(true, effect, item_key_name);
+                return this.set_max_def(true, effect_obj, item_key_name);
             case effect_types.AGILITY:
-                return this.set_max_agi(true, effect, item_key_name);
+                return this.set_max_agi(true, effect_obj, item_key_name);
         }
     }
 
-    set_max_atk(preview = false, effect = null, item_key_name = "") {
+    set_max_atk(preview = false, effect_obj = null, item_key_name = "") {
         let before_atk = this.atk;
         this.atk = parseInt(this.atk_curve[this.starting_level] * this.class.atk_boost + this.atk_extra);
         for (let djinn_key_name of this.djinni) {
@@ -412,7 +415,7 @@ export class MainChar extends SpriteBase {
             }
         });
         if (preview) {
-            const atk_preview = Effect.preview_value_applied(effect, this.atk);
+            const atk_preview = effect_obj !== null ? Effect.preview_value_applied(effect_obj, this.atk) : this.atk;
             this.atk = before_atk;
             return atk_preview;
         } 
@@ -423,7 +426,7 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    set_max_def(preview = false, effect = null, item_key_name = "") {
+    set_max_def(preview = false, effect_obj = null, item_key_name = "") {
         let before_def = this.def;
         this.def = parseInt(this.def_curve[this.starting_level] * this.class.def_boost + this.def_extra);
         for (let djinn_key_name of this.djinni) {
@@ -438,7 +441,7 @@ export class MainChar extends SpriteBase {
             }
         });
         if (preview) {
-            const def_preview = Effect.preview_value_applied(effect, this.def);
+            const def_preview = effect_obj !== null ? Effect.preview_value_applied(effect_obj, this.def) : this.def;
             this.def = before_def;
             return def_preview;
         }
@@ -449,7 +452,7 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    set_max_agi(preview = false, effect = null, item_key_name = "") {
+    set_max_agi(preview = false, effect_obj = null, item_key_name = "") {
         let before_agi = this.agi;
         this.agi = parseInt(this.agi_curve[this.starting_level] * this.class.agi_boost + this.agi_extra);
         for (let djinn_key_name of this.djinni) {
@@ -464,7 +467,7 @@ export class MainChar extends SpriteBase {
             }
         });
         if (preview) {
-            const agi_preview = Effect.preview_value_applied(effect, this.agi);
+            const agi_preview = effect_obj !== null ? Effect.preview_value_applied(effect_obj, this.agi) : this.agi;
             this.agi = before_agi;
             return agi_preview;
         }
@@ -570,6 +573,11 @@ export class MainChar extends SpriteBase {
                     break;
             }
         }
+        this.effects.forEach(effect => {
+            if (effect.type === effect_types.POWER || effect.type === effect_types.RESIST) {
+                effect.apply_effect();
+            }
+        });
     }
 
     update_abilities() {

@@ -129,6 +129,12 @@ export class Effect {
             case effect_types.LUCK:
                 this.apply_general_value("luk");
                 break;
+            case effect_types.POWER:
+                this.apply_general_value(this.attribute + "_power_current");
+                break;
+            case effect_types.RESIST:
+                this.apply_general_value(this.attribute + "_resist_current");
+                break;
         }
     }
 }
