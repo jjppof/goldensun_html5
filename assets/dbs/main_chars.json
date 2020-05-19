@@ -232,6 +232,12 @@
             },{
                 "key_name": "frost_jewel",
                 "quantity": 1
+            },{
+                "key_name": "asuras_armor",
+                "quantity": 1
+            },{
+                "key_name": "cotton_shirt",
+                "quantity": 1
             }
         ]
     }

@@ -315,18 +315,24 @@ export class ItemPsynergyChooseWindow {
     element_change(before_index, after_index) {
         this.set_element_tween(before_index);
         this.set_highlight_bar();
-        this.on_change(this.element_list[this.get_element_key_name(after_index)]);
+        this.on_change(
+            this.element_list[this.get_element_key_name(after_index)],
+            this.is_psynergy_window ? undefined : this.item_objs[after_index]
+        );
     }
 
     page_change(before_index, after_index) {
         this.set_elements();
-        if (after_index >= this.elements.length) {
+        if (this.selected_element_index >= this.elements.length) {
             this.selected_element_index = this.elements.length - 1;
             this.cursor_control.set_cursor_position();
         }
         this.set_element_tween(before_index);
         this.set_highlight_bar();
-        this.on_change(this.element_list[this.get_element_key_name(this.selected_element_index)]);
+        this.on_change(
+            this.element_list[this.get_element_key_name(this.selected_element_index)],
+            this.is_psynergy_window ? undefined : this.item_objs[this.selected_element_index]
+        );
         this.set_page_indicator_highlight();
     }
 
@@ -355,7 +361,10 @@ export class ItemPsynergyChooseWindow {
         this.cursor_control.activate();
         this.set_element_tween();
         this.set_highlight_bar();
-        this.on_change(this.element_list[this.get_element_key_name(this.selected_element_index)]);
+        this.on_change(
+            this.element_list[this.get_element_key_name(this.selected_element_index)],
+            this.is_psynergy_window ? undefined : this.item_objs[this.selected_element_index]
+        );
         this.window_open = true;
         this.window_activated = true;
     }

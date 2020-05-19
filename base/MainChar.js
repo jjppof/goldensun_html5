@@ -386,7 +386,18 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    set_max_atk() {
+    preview_stats(effect_type, effect, item_key_name) {
+        switch (effect_type) {
+            case effect_types.ATTACK:
+                return this.set_max_atk(true, effect, item_key_name);
+            case effect_types.DEFENSE:
+                return this.set_max_def(true, effect, item_key_name);
+            case effect_types.AGILITY:
+                return this.set_max_agi(true, effect, item_key_name);
+        }
+    }
+
+    set_max_atk(preview = false, effect = null, item_key_name = "") {
         let before_atk = this.atk;
         this.atk = parseInt(this.atk_curve[this.starting_level] * this.class.atk_boost + this.atk_extra);
         for (let djinn_key_name of this.djinni) {
@@ -395,10 +406,16 @@ export class MainChar extends SpriteBase {
             this.atk += djinn.atk_boost;
         }
         this.effects.forEach(effect => {
+            if (preview && item_key_name === effect.effect_owner_instance.key_name) return;
             if (effect.type === effect_types.ATTACK) {
                 effect.apply_effect();
             }
         });
+        if (preview) {
+            const atk_preview = Effect.preview_value_applied(effect, this.atk);
+            this.atk = before_atk;
+            return atk_preview;
+        } 
         if (this.current_atk === undefined) {
             this.current_atk = this.atk;
         } else {
@@ -406,7 +423,7 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    set_max_def() {
+    set_max_def(preview = false, effect = null, item_key_name = "") {
         let before_def = this.def;
         this.def = parseInt(this.def_curve[this.starting_level] * this.class.def_boost + this.def_extra);
         for (let djinn_key_name of this.djinni) {
@@ -415,10 +432,16 @@ export class MainChar extends SpriteBase {
             this.def += djinn.def_boost;
         }
         this.effects.forEach(effect => {
+            if (preview && item_key_name === effect.effect_owner_instance.key_name) return;
             if (effect.type === effect_types.DEFENSE) {
                 effect.apply_effect();
             }
         });
+        if (preview) {
+            const def_preview = Effect.preview_value_applied(effect, this.def);
+            this.def = before_def;
+            return def_preview;
+        }
         if (this.current_def === undefined) {
             this.current_def = this.def;
         } else {
@@ -426,7 +449,7 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    set_max_agi() {
+    set_max_agi(preview = false, effect = null, item_key_name = "") {
         let before_agi = this.agi;
         this.agi = parseInt(this.agi_curve[this.starting_level] * this.class.agi_boost + this.agi_extra);
         for (let djinn_key_name of this.djinni) {
@@ -435,10 +458,16 @@ export class MainChar extends SpriteBase {
             this.agi += djinn.agi_boost;
         }
         this.effects.forEach(effect => {
+            if (preview && item_key_name === effect.effect_owner_instance.key_name) return;
             if (effect.type === effect_types.AGILITY) {
                 effect.apply_effect();
             }
         });
+        if (preview) {
+            const agi_preview = Effect.preview_value_applied(effect, this.agi);
+            this.agi = before_agi;
+            return agi_preview;
+        }
         if (this.current_agi === undefined) {
             this.current_agi = this.agi;
         } else {

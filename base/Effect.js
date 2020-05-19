@@ -64,8 +64,8 @@ export class Effect {
         this.char = char;
     }
 
-    apply_operator(a, b) {
-        switch (this.operator) {
+    static apply_operator(a, b, operator) {
+        switch (operator) {
             case effect_operators.PLUS: return a + b;
             case effect_operators.MINUS: return a - b;
             case effect_operators.TIMES: return a * b;
@@ -84,8 +84,22 @@ export class Effect {
                 value += variation();
             }
             value = parseInt(value);
-            this.value = this.apply_operator(this.char[property], value) - this.char[property];
+            this.value = Effect.apply_operator(this.char[property], value, this.operator) - this.char[property];
             this.char[property] += this.value;
+        }
+    }
+
+    static preview_value_applied(effect_obj, base_value) {
+        if (effect_obj.quantity_is_absolute) {
+            return effect_obj.quantity;
+        } else {
+            let value = effect_obj.quantity;
+            if (!effect_obj.rate) {
+                effect_obj.rate = 1.0;
+            }
+            value *= effect_obj.rate;
+            value = parseInt(value);
+            return Effect.apply_operator(base_value, value, effect_obj.operator);
         }
     }
 

@@ -158,6 +158,64 @@
         "granted_ability": "",
         "icon_path": "assets/images/icons/items/steel_armor.gif"
     },{
+        "key_name": "cotton_shirt",
+        "name": "Cotton Shirt",
+        "type": "armor",
+        "description": "Clothing",
+        "use_type": "no_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": false,
+        "imporant_item": false,
+        "carry_up_to_30": false,
+        "effects": [{
+            "type": "defense",
+            "quantity": 3,
+            "operator": "plus"
+        }],
+        "attribute": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "",
+        "equipable_chars": ["isaac", "garet"],
+        "price": 20,
+        "granted_ability": "",
+        "icon_path": "assets/images/icons/items/cotton_shirt.gif"
+    },{
+        "key_name": "asuras_armor",
+        "name": "Asura's Armor",
+        "type": "armor",
+        "description": "Armor",
+        "use_type": "no_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": true,
+        "imporant_item": false,
+        "carry_up_to_30": false,
+        "effects": [
+            {
+                "type": "defense",
+                "quantity": 36,
+                "operator": "plus"
+            },{
+                "type": "attack",
+                "quantity": 5,
+                "operator": "plus"
+            },{
+                "type": "hp_recovery",
+                "quantity": 8,
+                "operator": "plus"
+            }
+        ],
+        "attribute": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "",
+        "equipable_chars": ["isaac", "garet"],
+        "price": 15000,
+        "granted_ability": "",
+        "icon_path": "assets/images/icons/items/asuras_armor.gif"
+    },{
         "key_name": "cookie",
         "name": "Cookie",
         "type": "general_item",

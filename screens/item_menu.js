@@ -104,7 +104,7 @@ export class ItemMenuScreen {
         });
     }
 
-    item_change(item) {
+    item_change(item, item_obj) {
         this.set_description_window_text(item.description);
         if (this.item_change_stats_window.window_open) {
             this.item_change_stats_window.close();
@@ -112,14 +112,19 @@ export class ItemMenuScreen {
         if (item.type === item_types.ABILITY_GRANTOR) {
 
         } else if (item.type !== item_types.GENERAL_ITEM) {
-            this.item_change_stats_window.open(party_data.members[this.selected_char_index], item);
+            this.item_change_stats_window.open(party_data.members[this.selected_char_index], item, item_obj);
         }
     }
 
     item_choose(item, item_obj) {
         this.item_options_window.open(item_obj, item, party_data.members[this.selected_char_index],
-            this.item_choose_window.activate.bind(this.item_choose_window),
-            this.item_change_stats_window.update_info.bind(this.item_change_stats_window)
+            () => {
+                this.item_choose_window.activate();
+                this.item_change_stats_window.compare_items();
+            }, () => {
+                this.item_change_stats_window.update_info(false);
+                this.item_change_stats_window.hide_arrows();
+            }
         );
     }
 
