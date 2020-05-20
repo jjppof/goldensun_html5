@@ -142,6 +142,7 @@ function preload() {
     load_misc();
     load_buttons();
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
+    game.load.bitmapFont('gs-item-bmp-font', 'assets/font/gs-item-font.png', 'assets/font/gs-item-font.fnt');
     initialize_field_abilities(game, data);
 
     game.time.advancedTiming = true;

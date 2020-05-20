@@ -15,9 +15,9 @@ const MAX_HORIZONTAL = 3;
 const MAX_VERTICAL = 2;
 const CURSOR_X_SHIFT = -15;
 const CURSOR_Y_SHIFT = 4;
-const CHAR_NAME_X = 24;
+const CHAR_NAME_X = 27;
 const CHAR_NAME_Y = 8;
-const ITEM_NAME_X = 24;
+const ITEM_NAME_X = 27;
 const ITEM_NAME_Y = CHAR_NAME_Y + numbers.FONT_SIZE;
 const ITEM_ICON_X = 8;
 const ITEM_ICON_Y = 8;
@@ -171,6 +171,11 @@ export class ItemOptionsWindow {
         if (this.item_obj.equipped) {
             this.equip_sprite = this.base_window.create_at_group(ITEM_ICON_X + SUB_ICON_X, ITEM_ICON_Y + SUB_ICON_Y, "equipped");
         }
+        this.item_count_sprite = null;
+        if (this.item_obj.quantity > 1) {
+            this.item_count_sprite = this.game.add.bitmapText(ITEM_ICON_X + SUB_ICON_X, ITEM_ICON_Y + SUB_ICON_Y, 'gs-item-bmp-font', this.item_obj.quantity.toString());
+            this.base_window.add_sprite_to_group(this.item_count_sprite);
+        }
     }
 
     unset_header() {
@@ -179,6 +184,9 @@ export class ItemOptionsWindow {
         this.base_window.remove_text(this.item_name);
         if (this.equip_sprite) {
             this.base_window.remove_from_group(this.equip_sprite);
+        }
+        if (this.item_count_sprite) {
+            this.base_window.remove_from_group(this.item_count_sprite);
         }
     }
 

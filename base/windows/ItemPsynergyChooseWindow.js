@@ -265,6 +265,8 @@ export class ItemPsynergyChooseWindow {
             const icon_x = x + (numbers.ICON_WIDTH >> 1);
             const icon_y = y + (numbers.ICON_HEIGHT >> 1);
             const icon_key = elem_key_name + this.element_sprite_sufix;
+            const x_elem_name = ELEM_PADDING_LEFT + numbers.ICON_WIDTH + (this.is_psynergy_window ? 2 : 4);
+            this.text_sprites_in_window.push(this.window.set_text_in_position(this.element_list[elem_key_name].name, x_elem_name, y + ELEM_NAME_ICON_SHIFT));
             if (this.is_psynergy_window) {
                 this.icon_sprites_in_window.push(this.window.create_at_group(icon_x, icon_y, icon_key));
                 this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
@@ -275,13 +277,15 @@ export class ItemPsynergyChooseWindow {
                 if (this.item_objs[i].equipped) {
                     icon_group.create(SUB_ICON_X, SUB_ICON_Y, "equipped");
                 }
+                if (this.item_objs[i].quantity > 1) {
+                    let item_count = this.game.add.bitmapText(SUB_ICON_X, SUB_ICON_Y, 'gs-item-bmp-font', this.item_objs[i].quantity.toString());
+                    icon_group.add(item_count);
+                }
                 this.window.add_sprite_to_group(icon_group);
                 icon_group.x = icon_x;
                 icon_group.y = icon_y;
                 this.icon_sprites_in_window.push(icon_group);
             }
-            const x_elem_name = ELEM_PADDING_LEFT + numbers.ICON_WIDTH + (this.is_psynergy_window ? 2 : 4);
-            this.text_sprites_in_window.push(this.window.set_text_in_position(this.element_list[elem_key_name].name, x_elem_name, y + ELEM_NAME_ICON_SHIFT));
             if (this.is_psynergy_window) {
                 const x_elem_pp_cost = PSY_PP_X;
                 this.text_sprites_in_window.push(this.window.set_text_in_position(this.element_list[elem_key_name].pp_cost, x_elem_pp_cost, y + ELEM_NAME_ICON_SHIFT, true));

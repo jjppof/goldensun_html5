@@ -159,6 +159,10 @@ export class ItemMenuScreen {
                 if (item_obj.equipped) {
                     this.item_overview_window.create_at_group(x + SUB_ICON_X, y + SUB_ICON_Y, "equipped");
                 }
+                if (item_obj.quantity > 1) {
+                    let item_count = this.game.add.bitmapText(x + SUB_ICON_X, y + SUB_ICON_Y, 'gs-item-bmp-font', item_obj.quantity.toString());
+                    this.item_overview_window.add_sprite_to_group(item_count);
+                }
                 ++counter;
             }
         }

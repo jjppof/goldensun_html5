@@ -195,6 +195,7 @@ export class Window {
 
     add_sprite_to_group(sprite) {
         this.group.add(sprite);
+        this.extra_sprites.push(sprite);
     }
 
     create_at_group(x, y, key, color) {
