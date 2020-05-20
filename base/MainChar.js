@@ -177,16 +177,24 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    remove_item(item_key_name, quantity) {
+    remove_item(item_obj_to_remove, quantity) {
+        let adjust_index = false;
         this.items = this.items.filter((item_obj, index) => {
-            if (item_key_name === item_obj.key_name && item_obj.equipped) {
-                this.unequip_item(index);
+            if (item_obj_to_remove.key_name === item_obj.key_name) {
+                if (item_obj.equipped) {
+                    this.unequip_item(index);
+                }
+                if (item_obj.quantity - quantity >= 1) {
+                    item_obj.quantity = item_obj.quantity - quantity;
+                    return true;
+                }
+                adjust_index = true;
+                return false;
             }
-            if (item_obj.quantity - quantity >= 1) {
-                item_obj.quantity = item_obj.quantity - quantity;
-                return true;
+            if (adjust_index) {
+                --item_obj.index;
             }
-            return item_key_name !== item_obj.key_name;
+            return true;
         });
     }
 

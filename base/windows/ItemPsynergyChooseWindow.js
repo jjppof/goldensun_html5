@@ -174,6 +174,9 @@ export class ItemPsynergyChooseWindow {
             }).length;
         }
         this.page_number = parseInt((list_length - 1)/ELEM_PER_PAGE) + 1;
+        if (this.page_index >= this.page_number) {
+            this.page_index = this.page_number - 1;
+        }
     }
 
     get_page_number() {
@@ -251,6 +254,10 @@ export class ItemPsynergyChooseWindow {
             }).slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
             this.item_objs = this.item_objs.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
         }
+        if (this.selected_element_index >= this.elements.length) {
+            this.selected_element_index = this.elements.length - 1;
+            this.cursor_control.set_cursor_position();
+        }
         for (let i = 0; i < this.elements.length; ++i) {
             const elem_key_name = this.get_element_key_name(i);
             const x = ELEM_PADDING_LEFT;
@@ -323,10 +330,6 @@ export class ItemPsynergyChooseWindow {
 
     page_change(before_index, after_index) {
         this.set_elements();
-        if (this.selected_element_index >= this.elements.length) {
-            this.selected_element_index = this.elements.length - 1;
-            this.cursor_control.set_cursor_position();
-        }
         this.set_element_tween(before_index);
         this.set_highlight_bar();
         this.on_change(
@@ -383,6 +386,10 @@ export class ItemPsynergyChooseWindow {
     activate() {
         this.set_page_number();
         this.set_elements();
+        this.on_change(
+            this.element_list[this.get_element_key_name(this.selected_element_index)],
+            this.is_psynergy_window ? undefined : this.item_objs[this.selected_element_index]
+        );
         this.set_page_indicator();
         this.cursor_control.activate();
         this.set_element_tween();

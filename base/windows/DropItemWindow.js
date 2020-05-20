@@ -97,7 +97,7 @@ export class DropItemWindow {
 
     on_choose() {
         if (this.answer_index === 0) {
-            this.char.remove_item(this.item.key_name, 1);
+            this.char.remove_item(this.item_obj, 1);
             this.dropped = true;
         }
         this.close(this.close_callback.bind(this, this.dropped));

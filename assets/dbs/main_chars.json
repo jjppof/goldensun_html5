@@ -139,10 +139,6 @@
                 "quantity": 1,
                 "equipped": true
             },{
-                "key_name": "elven_rapier",
-                "quantity": 1,
-                "equipped": false
-            },{
                 "key_name": "knights_shield",
                 "quantity": 1,
                 "equipped": true
@@ -157,6 +153,10 @@
             },{
                 "key_name": "herb",
                 "quantity": 13
+            },{
+                "key_name": "elven_rapier",
+                "quantity": 1,
+                "equipped": false
             }
         ]
     },{
