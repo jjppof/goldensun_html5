@@ -12,6 +12,7 @@ I'm avoiding making some docs for now because I'm constantly changing things.
 - [TexturePacker 4.6.1](https://www.codeandweb.com/texturepacker)
 - [PhysicsEditor 1.6.3](https://www.codeandweb.com/physicseditor)
 - [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579))
+- [Shoebox](https://renderhjs.net/shoebox/) (optional)
 
 ## Development environment
 
