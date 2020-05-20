@@ -59,6 +59,16 @@ export class StatsCheckWithItemWindow {
         this.avatar_group.y = this.game.camera.y + this.y_avatar;
     }
 
+    hide() {
+        this.base_window.group.alpha = 0;
+        this.avatar_group.alpha = 0;
+    }
+
+    show() {
+        this.base_window.group.alpha = 1;
+        this.avatar_group.alpha = 1;
+    }
+
     update_info(set_compare_arrows = true) {
         this.base_window.update_text(this.char.name, this.name_text);
         this.base_window.update_text(this.char.level.toString(), this.lv_text);
@@ -74,7 +84,7 @@ export class StatsCheckWithItemWindow {
         }
     }
 
-    set_compare_arrows(effect_type, equip_slot_property, current_stats_property) {
+    set_compare_arrows(effect_type, equip_slot_property, current_stats_property, compare_removing) {
         let effect_obj = _.findWhere(this.item.effects, {type: effect_type});
         let preview_stats;
         if (effect_obj !== undefined) {
@@ -88,7 +98,7 @@ export class StatsCheckWithItemWindow {
         } else {
             const equipped_effect_obj = _.findWhere(items_list[this.char.equip_slots[equip_slot_property].key_name].effects, {type: effect_type});
             if (equipped_effect_obj === undefined && effect_obj === undefined) return;
-            if (effect_obj === undefined) {
+            if (effect_obj === undefined || compare_removing) {
                 effect_obj = {
                     type: effect_type,
                     quantity: 0,
@@ -122,9 +132,9 @@ export class StatsCheckWithItemWindow {
         }
     }
 
-    compare_items() {
+    compare_items(compare_removing = false) {
         this.hide_arrows();
-        if (this.item_obj.equipped) return;
+        if (this.item_obj.equipped && !compare_removing) return;
         let equip_slot_property;
         switch (this.item.type) {
             case item_types.WEAPONS: equip_slot_property = "weapon"; break;
@@ -132,9 +142,9 @@ export class StatsCheckWithItemWindow {
             case item_types.CHEST_PROTECTOR: equip_slot_property = "chest"; break;
             case item_types.ARMOR: equip_slot_property = "body"; break;
         }
-        this.set_compare_arrows(effect_types.ATTACK, equip_slot_property, "current_atk");
-        this.set_compare_arrows(effect_types.DEFENSE, equip_slot_property, "current_def");
-        this.set_compare_arrows(effect_types.AGILITY, equip_slot_property, "current_agi");
+        this.set_compare_arrows(effect_types.ATTACK, equip_slot_property, "current_atk", compare_removing);
+        this.set_compare_arrows(effect_types.DEFENSE, equip_slot_property, "current_def", compare_removing);
+        this.set_compare_arrows(effect_types.AGILITY, equip_slot_property, "current_agi", compare_removing);
     }
 
     open(char, item, item_obj, callback) {

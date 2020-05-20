@@ -214,33 +214,55 @@ export class ItemOptionsWindow {
             }
         } else if (this.horizontal_index === 2) {
             if (this.vertical_index === 1 && this.option_active.drop) {
+                this.deactivate();
                 this.drop_item_window.open(this.item_obj, this.item, this.char, dropped => {
+                    this.activate();
                     if (dropped) {
                         this.open_action_message_window("Dropped it.", () => {
                             this.close(this.close_callback);
                         });
-                    } else {
-                        this.close(this.close_callback);
                     }
-                })
+                });
             }
         }
     }
 
     on_change() {
-
+        this.stats_window.hide_arrows();
+        this.stats_window.show();
+        if (this.horizontal_index === 0) {
+            if (this.vertical_index === 0 && this.option_active.use) {
+                this.stats_window.hide();
+            }
+            if (this.vertical_index === 1 && this.option_active.give && this.item_obj.equipped) {
+                this.stats_window.compare_items(true);
+            }
+        } else if (this.horizontal_index === 1) {
+            if (this.vertical_index === 0 && this.option_active.equip) {
+                this.stats_window.compare_items();
+            }
+            if (this.vertical_index === 1 && this.option_active.remove) {
+                this.stats_window.compare_items(true);
+            }
+        } else if (this.horizontal_index === 2) {
+            if (this.vertical_index === 1 && this.option_active.drop && this.item_obj.equipped) {
+                this.stats_window.compare_items(true);
+            }
+        }
     }
 
-    open(item_obj, item, char, close_callback, stats_update_callback, open_callback) {
+    open(item_obj, item, char, stats_window, close_callback, stats_update_callback, open_callback) {
         this.item_obj = item_obj;
         this.item = item;
         this.char = char;
+        this.stats_window = stats_window;
         this.cursor_control.activate();
         this.close_callback = close_callback;
         this.stats_update_callback = stats_update_callback;
         this.update_position();
         this.set_header();
         this.set_available_options();
+        this.on_change();
         this.base_window.show(() => {
             this.window_open = true;
             this.window_active = true;
@@ -260,5 +282,19 @@ export class ItemOptionsWindow {
                 callback();
             }
         }, false);
+    }
+
+    activate() {
+        this.set_header();
+        this.set_available_options();
+        this.on_change();
+        this.cursor_control.activate();
+        this.window_active = true;
+    }
+
+    deactivate() {
+        this.unset_header();
+        this.cursor_control.deactivate();
+        this.window_active = false;
     }
 }

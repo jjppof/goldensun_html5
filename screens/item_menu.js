@@ -118,6 +118,7 @@ export class ItemMenuScreen {
 
     item_choose(item, item_obj) {
         this.item_options_window.open(item_obj, item, party_data.members[this.selected_char_index],
+            this.item_change_stats_window,
             () => {
                 this.item_choose_window.activate();
                 this.item_change_stats_window.compare_items();
