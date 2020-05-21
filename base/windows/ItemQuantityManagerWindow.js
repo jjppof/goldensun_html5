@@ -36,6 +36,7 @@ export class ItemQuantityManagerWindow {
         this.y = WIN_Y;
         this.base_window = new Window(this.game, this.x, this.y, WIN_WIDTH, WIN_HEIGHT);
         this.group = this.game.add.group();
+        this.group.alpha = 0;
         this.base_window.set_text_in_position("How many?", QUESTION_TEXT_X, QUESTION_TEXT_Y);
         this.esc_propagation_priority = esc_propagation_priority + 1;
         this.enter_propagation_priority = enter_propagation_priority + 1;
