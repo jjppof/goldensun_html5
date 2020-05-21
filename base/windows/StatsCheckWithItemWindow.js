@@ -65,6 +65,7 @@ export class StatsCheckWithItemWindow {
     }
 
     show() {
+        if (!this.window_open) return;
         this.base_window.group.alpha = 1;
         this.avatar_group.alpha = 1;
     }
