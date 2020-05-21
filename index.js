@@ -3,6 +3,7 @@ import { initialize_main_chars, main_char_list, initialize_classes, party_data }
 import { initialize_abilities, abilities_list, initialize_field_abilities, field_abilities_list } from './chars/abilities.js';
 import { initialize_items, items_list } from './chars/items.js';
 import { initialize_djinni, djinni_list } from './chars/djinni.js';
+import { initialize_enemies, enemies_list } from './chars/enemies.js';
 import { initializeMaps, loadMaps, maps } from './maps/maps.js';
 import { jump_event, jump_near_collision } from './events/jump.js';
 import { set_door_event, door_event_phases } from './events/door.js';
@@ -81,7 +82,8 @@ var data = {
     map_color_filters: undefined,
     pasynergy_item_color_filters: undefined,
     stop_by_colliding: false,
-    force_direction: false
+    force_direction: false,
+    enemies_db: null
 };
 
 //debugging porpouses
@@ -91,6 +93,7 @@ window.abilities_list = abilities_list;
 window.items_list = items_list;
 window.field_abilities_list = field_abilities_list;
 window.djinni_list = djinni_list;
+window.enemies_list = enemies_list;
 window.party_data = party_data;
 window.data = data;
 
@@ -138,6 +141,7 @@ function preload() {
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
     game.load.json('psynergy_items_db', 'assets/dbs/psynergy_items_db.json');
     game.load.json('djinni_db', 'assets/dbs/djinni_db.json');
+    game.load.json('enemies_db', 'assets/dbs/enemies_db.json');
     game.load.script('color_filters', 'plugins/ColorFilters.js');
     load_misc();
     load_buttons();
@@ -189,6 +193,7 @@ async function create() {
     data.abilities_db = game.cache.getJSON('abilities_db');
     data.items_db = game.cache.getJSON('items_db');
     data.djinni_db = game.cache.getJSON('djinni_db');
+    data.enemies_db = game.cache.getJSON('enemies_db');
     data.hero_color_filters = game.add.filter('ColorFilters');
     data.map_color_filters = game.add.filter('ColorFilters');
     data.pasynergy_item_color_filters = game.add.filter('ColorFilters');
@@ -205,6 +210,7 @@ async function create() {
 
     initialize_classes(data.classes_db);
     initialize_djinni(data.djinni_db);
+    initialize_enemies(data.enemies_db);
 
     let load_abilities_promise_resolve;
     let load_abilities_promise = new Promise(resolve => {
