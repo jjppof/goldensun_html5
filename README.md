@@ -28,7 +28,11 @@ GSHTML5 has no external dependency, so there's no `npm install` or packages on C
 - Use *Phaser (JSONHash)* as *Data Format*.
 - Check *Trim sprite names*.
 - Check *Prepend folder names*.
-- Folder organization to generate the sheet: `[sprite name (ex.: felix)]` -> `[action type (ex.: idle)]` -> `[direction (ex.: down)]` -> `[files: frame_index.ext (ex.: 03.png)]`.
+- Folder organization to generate the sheet (ex.: `felix/idle/down/03.png`):
+  - `[sprite name (ex.: felix)]`:
+    - `[action type (ex.: idle)]`
+      - `[direction (ex.: down)]`
+        - `[files: frame_index.ext (ex.: 03.png)]`.
 - Move the action folder into the Texture Packer.
 - The sheets are per action.
 
