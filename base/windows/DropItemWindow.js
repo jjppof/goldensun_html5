@@ -1,5 +1,5 @@
 import { Window } from '../Window.js';
-import { CursorControl } from '../CursorControl.js';
+import { CursorControl } from '../utils/CursorControl.js';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 76;
@@ -16,6 +16,8 @@ const ICON_NAME_Y = 8;
 const POSSIBLE_ANSWERS_COUNT = 2;
 const CURSOR_X = 16;
 const CURSOR_Y_SHIFT = 5;
+const SUB_ICON_X = 7;
+const SUB_ICON_Y = 8;
 
 export class DropItemWindow {
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
@@ -34,6 +36,7 @@ export class DropItemWindow {
         this.base_window.set_text_in_position("No", ANSWER_X, NO_Y);
         this.icon_name = this.base_window.set_text_in_position("", ICON_NAME_X, ICON_NAME_Y);
         this.icon = null;
+        this.item_count_sprite = null;
         this.group = this.game.add.group();
         this.answer_index = 0;
         this.dropped = false;
@@ -89,24 +92,32 @@ export class DropItemWindow {
     set_info() {
         this.base_window.update_text(this.item.name, this.icon_name);
         this.icon = this.base_window.create_at_group(INFO_X, ICON_Y, this.item.key_name + "_item_icon");
+        if (this.quantity_to_remove > 1) {
+            this.item_count_sprite = this.game.add.bitmapText(INFO_X + SUB_ICON_X, ICON_Y + SUB_ICON_Y, 'gs-item-bmp-font', this.quantity_to_remove.toString());
+            this.base_window.add_sprite_to_group(this.item_count_sprite);
+        }
     }
 
     unset_info() {
         this.base_window.remove_from_group(this.icon);
+        if (this.item_count_sprite) {
+            this.base_window.remove_from_group(this.item_count_sprite);
+        }
     }
 
     on_choose() {
         if (this.answer_index === 0) {
-            this.char.remove_item(this.item_obj, 1);
+            this.char.remove_item(this.item_obj, this.quantity_to_remove);
             this.dropped = true;
         }
         this.close(this.close_callback.bind(this, this.dropped));
     }
 
-    open(item_obj, item, char, close_callback, open_callback) {
+    open(item_obj, item, char, quantity_to_remove, close_callback, open_callback) {
         this.item_obj = item_obj;
         this.item = item;
         this.char = char;
+        this.quantity_to_remove = quantity_to_remove;
         this.answer_index = 0;
         this.cursor_control.activate();
         this.set_info();

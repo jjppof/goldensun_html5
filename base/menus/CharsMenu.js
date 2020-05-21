@@ -1,7 +1,7 @@
 import { Window } from '../Window.js';
 import { party_data } from '../../chars/main_chars.js';
 import * as numbers from '../../magic_numbers.js';
-import { CursorControl } from '../CursorControl.js';
+import { CursorControl } from '../utils/CursorControl.js';
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 36;

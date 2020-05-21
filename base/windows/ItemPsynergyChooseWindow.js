@@ -1,5 +1,5 @@
 import { Window } from "../Window.js";
-import { CursorControl } from "../CursorControl.js";
+import { CursorControl } from "../utils/CursorControl.js";
 import { party_data } from "../../chars/main_chars.js";
 import { abilities_list } from '../../chars/abilities.js';
 import { items_list } from '../../chars/items.js';
