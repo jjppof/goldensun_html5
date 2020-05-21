@@ -7,6 +7,8 @@ Feel free to help! Please, reach me if you want to do so.
 
 I'm avoiding making some docs for now because I'm constantly changing things.
 
+I use [trello](https://trello.com/b/wPilgGBk/gshtml5) to write down things.
+
 ## Tech stack
 - [PhaserJS CE 2.15.0](http://phaser.io/)
 - [TexturePacker 4.6.1](https://www.codeandweb.com/texturepacker)
