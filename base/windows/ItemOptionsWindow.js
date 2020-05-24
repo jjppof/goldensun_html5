@@ -4,6 +4,7 @@ import { CursorControl } from '../utils/CursorControl.js';
 import { party_data } from '../../chars/main_chars.js';
 import { DropItemWindow } from './DropItemWindow.js';
 import { ItemQuantityManagerWindow } from './ItemQuantityManagerWindow.js';
+import { GiveItemOptionsWindow } from './GiveItemOptionsWindow.js';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 52;
@@ -71,6 +72,7 @@ export class ItemOptionsWindow {
         this.item_quantity_manager_window = new ItemQuantityManagerWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
         this.drop_item_window = new DropItemWindow(this.game, this.data, this.esc_propagation_priority + 1, this.enter_propagation_priority + 1);
         this.action_message_window = new Window(this.game, ACTION_WINDOW_MSG_X, ACTION_WINDOW_MSG_Y, ACTION_WINDOW_MSG_WIDTH, ACTION_WINDOW_MSG_HEIGHT);
+        this.give_item_options_window = new GiveItemOptionsWindow(this.game, this.data, this.esc_propagation_priority + 2, this.enter_propagation_priority + 2);
         this.set_control();
     }
 
@@ -108,7 +110,7 @@ export class ItemOptionsWindow {
     
     set_control() {
         game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
-            if (!this.window_open) return;
+            if (!this.window_open || !this.window_active) return;
             this.data.esc_input.getSignal().halt();
             if (this.action_message_window.open) {
                 this.action_message_window.close();
@@ -117,7 +119,7 @@ export class ItemOptionsWindow {
             }
         }, this, this.esc_propagation_priority);
         game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
-            if (!this.window_open) return;
+            if (!this.window_open || !this.window_active) return;
             this.data.enter_input.getSignal().halt();
             if (this.action_message_window.open) {
                 this.action_message_window.close();
@@ -209,7 +211,45 @@ export class ItemOptionsWindow {
     }
 
     on_choose() {
-        if (this.horizontal_index === 1) {
+        if (this.horizontal_index === 0) {
+            if (this.vertical_index === 1 && this.option_active.give) {
+                this.deactivate();
+                this.give_item_options_window.open(this.item_obj, this.item, this.char, true, false);
+                this.give_item_options_window.deactive();
+                this.on_give_callback((destination_char, after_choose_callback) => {
+                    if (destination_char === null) {
+                        this.give_item_options_window.close();
+                        this.activate();
+                    } else if (destination_char.key_name !== this.char.key_name) {
+                        this.give_item_options_window.close();
+                        const dest_item_obj = {
+                            key_name: this.item_obj.key_name,
+                            equipped: false,
+                            quantity: this.item_obj.quantity
+                        };
+                        if (this.item.equipable_chars.includes(destination_char.key_name)) {
+                            this.give_item_options_window.open(dest_item_obj, this.item, destination_char, false, true, (answer, equip) => {
+                                if (answer) {
+                                    this.activate();
+                                    this.char.remove_item(this.item_obj, this.item_obj.quantity);
+                                    destination_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, equip);
+                                    this.open_action_message_window("Given.", () => {
+                                        this.close(this.close_callback.bind(this, true));
+                                    });
+                                } else {
+                                    this.close(this.close_callback.bind(this, true));
+                                }
+                            });
+                        } else {
+                            this.char.remove_item(this.item_obj, this.item_obj.quantity);
+                            destination_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, false);
+                            this.close(this.close_callback.bind(this, true));
+                        }
+                        after_choose_callback();
+                    }
+                });
+            }
+        } else if (this.horizontal_index === 1) {
             if (this.vertical_index === 0 && this.option_active.equip) {
                 this.char.equip_item(this.item_obj.index);
                 this.open_action_message_window("Equipped.", () => {
@@ -274,12 +314,13 @@ export class ItemOptionsWindow {
         }
     }
 
-    open(item_obj, item, char, stats_window, close_callback, stats_update_callback, open_callback) {
+    open(item_obj, item, char, stats_window, on_give_callback, close_callback, stats_update_callback, open_callback) {
         this.item_obj = item_obj;
         this.item = item;
         this.char = char;
         this.stats_window = stats_window;
         this.cursor_control.activate();
+        this.on_give_callback = on_give_callback;
         this.close_callback = close_callback;
         this.stats_update_callback = stats_update_callback;
         this.update_position();

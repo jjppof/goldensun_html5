@@ -11,12 +11,14 @@ const SLOT_WIDTH = parseInt(WORKING_WIDTH/MAX_PER_LINE);
 const SLOT_WIDTH_CENTER = parseInt(WORKING_WIDTH/MAX_PER_LINE/2);
 
 export class CharsMenu {
-    constructor(game, data, on_choose, on_change, enter_propagation_priority) {
+    constructor(game, data, on_choose, on_change, on_cancel, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
         this.enter_propagation_priority = enter_propagation_priority;
+        this.esc_propagation_priority = esc_propagation_priority;
         this.on_choose = on_choose === undefined ? () => {} : on_choose;
         this.on_change = on_change === undefined ? () => {} : on_change;
+        this.on_cancel = on_cancel === undefined ? () => {} : on_cancel;
         this.base_window = new Window(this.game, 0, 0, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
         this.group = game.add.group();
         this.group.alpha = 0;
@@ -79,11 +81,16 @@ export class CharsMenu {
     }
 
     set_control() {
-        game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onUp.add(() => {
+        game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
             if (!this.menu_open || !this.menu_active) return;
             this.data.enter_input.getSignal().halt();
             this.on_choose(this.selected_button_index);
         }, this, this.enter_propagation_priority);
+        game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
+            if (!this.menu_open || !this.menu_active) return;
+            this.data.esc_input.getSignal().halt();
+            this.on_cancel();
+        }, this, this.esc_propagation_priority);
     }
 
     update_position() {
@@ -110,6 +117,12 @@ export class CharsMenu {
     reset_button(index) {
         let selected_char = this.char_buttons[party_data.members[index].key_name];
         selected_char.y = this.unselected_y;
+    }
+
+    set_char_by_index(party_index) {
+        this.reset_button(this.selected_button_index);
+        this.selected_button_index = party_index;
+        this.set_button(this.selected_button_index);
     }
 
     open(select_index, start_active = true) {

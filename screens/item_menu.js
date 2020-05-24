@@ -42,7 +42,15 @@ export class ItemMenuScreen {
         this.data = data;
         this.esc_propagation_priority = esc_propagation_priority + 1;
         this.enter_propagation_priority = enter_propagation_priority + 1;
-        this.chars_menu = new CharsMenu(this.game, this.data, this.char_choose.bind(this), this.char_change.bind(this), this.enter_propagation_priority);
+        this.chars_menu = new CharsMenu(
+            this.game,
+            this.data,
+            this.char_choose.bind(this),
+            this.char_change.bind(this),
+            this.char_choose_cancel.bind(this),
+            this.esc_propagation_priority,
+            this.enter_propagation_priority
+        );
         this.basic_info_window = new BasicInfoWindow(this.game);
         this.item_change_stats_window = new StatsCheckWithItemWindow(this.game);
         this.selected_char_index = 0;
@@ -70,6 +78,7 @@ export class ItemMenuScreen {
             this.esc_propagation_priority
         );
         this.item_options_window = new ItemOptionsWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
+        this.choosing_give_destination = false;
     }
 
     set_control() {
@@ -85,23 +94,62 @@ export class ItemMenuScreen {
         this.selected_char_index = party_index;
         this.basic_info_window.set_char(party_data.members[party_index]);
         this.set_item_icons();
+        if (this.choosing_give_destination) {
+            const preview_obj = Object.assign({}, this.item_options_window.item_obj, {equipped : false});
+            this.item_change_stats_window.open(
+                party_data.members[party_index],
+                this.item_options_window.item,
+                preview_obj
+            );
+            this.item_change_stats_window.compare_items();
+        }
     }
 
     char_choose(party_index) {
         if (!this.is_open) return;
-        this.chars_menu.deactivate();
-        this.choosing_item = true;
-        this.set_guide_window_text();
-        this.item_choose_window.open(party_index, () => {
-            this.choosing_item = false;
-            this.chars_menu.activate();
+        if (this.choosing_give_destination) {
+            this.chars_menu.deactivate();
+            this.after_char_choose_on_give(party_data.members[party_index], () => {
+                this.choosing_give_destination = false;
+            });
+        } else {
+            this.chars_menu.deactivate();
+            this.choosing_item = true;
             this.set_guide_window_text();
-            this.set_description_window_text();
-            this.set_item_icons();
-            if (this.item_change_stats_window.window_open) {
-                this.item_change_stats_window.close();
-            }
-        });
+            this.item_choose_window.open(party_index, () => {
+                this.on_item_choose_close();
+            });
+        }
+    }
+
+    on_item_choose_close() {
+        this.choosing_item = false;
+        this.chars_menu.activate();
+        this.set_guide_window_text();
+        this.set_description_window_text();
+        this.set_item_icons();
+        if (this.item_change_stats_window.window_open) {
+            this.item_change_stats_window.close();
+        }
+    }
+
+    char_choose_cancel() {
+        if (this.choosing_give_destination) {
+            this.chars_menu.deactivate();
+            this.choosing_give_destination = false;
+            this.after_char_choose_on_give(null);
+            this.char_change(this.item_choose_window.char_index);
+            this.item_change_stats_window.open(
+                party_data.members[this.item_choose_window.char_index],
+                this.item_options_window.item,
+                this.item_options_window.item_obj
+            );
+            this.item_change_stats_window.compare_items();
+            this.chars_menu.set_char_by_index(this.item_choose_window.char_index);
+            this.item_options_window.stats_window.compare_items(true);
+        } else {
+            this.close_menu();
+        }
     }
 
     item_change(item, item_obj) {
@@ -119,9 +167,17 @@ export class ItemMenuScreen {
     item_choose(item, item_obj) {
         this.item_options_window.open(item_obj, item, party_data.members[this.selected_char_index],
             this.item_change_stats_window,
-            () => {
+            after_char_choose_on_give => {
+                this.choosing_give_destination = true;
+                this.chars_menu.activate();
+                this.char_change(this.selected_char_index);
+                this.after_char_choose_on_give = after_char_choose_on_give;
+            }, close_item_choose => {
                 this.item_choose_window.activate();
                 this.item_change_stats_window.compare_items();
+                if (close_item_choose) {
+                    this.item_choose_window.close();
+                }
             }, () => {
                 this.item_change_stats_window.update_info(false);
                 this.item_change_stats_window.hide_arrows();

@@ -356,6 +356,7 @@ export class ItemPsynergyChooseWindow {
 
     open(char_index, close_callback, open_callback) {
         this.update_position();
+        this.char_index = char_index;
         this.char = party_data.members[char_index];
         this.set_page_number();
         this.group.alpha = 1;

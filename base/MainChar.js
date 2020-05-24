@@ -169,7 +169,7 @@ export class MainChar extends SpriteBase {
         this.items.push({
             key_name: item_key_name,
             quantity: quantity,
-            equipped: equip,
+            equipped: false,
             index: this.items.length
         });
         if (equip) {
