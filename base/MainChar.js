@@ -166,6 +166,16 @@ export class MainChar extends SpriteBase {
     }
 
     add_item(item_key_name, quantity, equip) {
+        let found = false;
+        if (items_list[item_key_name].type === item_types.GENERAL_ITEM) {
+            this.items.forEach(item_obj => {
+                if (item_obj.key_name === item_key_name) {
+                    found = true;
+                    item_obj.quantity += quantity;
+                }
+            });
+        }
+        if (found) return;
         this.items.push({
             key_name: item_key_name,
             quantity: quantity,

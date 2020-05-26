@@ -69,10 +69,10 @@ export class ItemOptionsWindow {
             this.on_change.bind(this), this.on_change.bind(this), this.get_horizontal_index.bind(this), this.set_horizontal_index.bind(this),
             this.get_vertical_index.bind(this), this.set_vertical_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),
             this.get_cursor_x.bind(this), this.get_cursor_y.bind(this));
+        this.give_item_options_window = new GiveItemOptionsWindow(this.game, this.data, this.esc_propagation_priority + 2, this.enter_propagation_priority + 2);
         this.item_quantity_manager_window = new ItemQuantityManagerWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
         this.drop_item_window = new DropItemWindow(this.game, this.data, this.esc_propagation_priority + 1, this.enter_propagation_priority + 1);
         this.action_message_window = new Window(this.game, ACTION_WINDOW_MSG_X, ACTION_WINDOW_MSG_Y, ACTION_WINDOW_MSG_WIDTH, ACTION_WINDOW_MSG_HEIGHT);
-        this.give_item_options_window = new GiveItemOptionsWindow(this.game, this.data, this.esc_propagation_priority + 2, this.enter_propagation_priority + 2);
         this.set_control();
     }
 
@@ -242,7 +242,7 @@ export class ItemOptionsWindow {
                         this.activate();
                     } else if (destination_char.key_name !== this.char.key_name) {
                         this.give_item_options_window.close();
-                        const dest_item_obj = {
+                        let dest_item_obj = {
                             key_name: this.item_obj.key_name,
                             equipped: false,
                             quantity: this.item_obj.quantity
@@ -263,10 +263,31 @@ export class ItemOptionsWindow {
                                 }
                             });
                         } else {
-                            this.char.remove_item(this.item_obj, this.item_obj.quantity);
-                            destination_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, false);
-                            this.close(this.close_callback.bind(this, true));
-                            unmount_give_window_set();
+                            if (this.item_obj.quantity > 1) {
+                                this.item_quantity_manager_window.open(dest_item_obj, this.item, this.char, quantity => {
+                                    if (quantity > 0) {
+                                        this.activate();
+                                        dest_item_obj.quantity = quantity;
+                                        this.char.remove_item(this.item_obj, quantity);
+                                        destination_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, false);
+                                        unmount_give_window_set();
+                                        this.open_action_message_window("Given.", () => {
+                                            this.close(this.close_callback.bind(this, true));
+                                        });
+                                    } else {
+                                        this.close(this.close_callback.bind(this, true));
+                                        unmount_give_window_set();
+                                    }
+                                });
+                            } else {
+                                this.activate();
+                                this.char.remove_item(this.item_obj, this.item_obj.quantity);
+                                destination_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, false);
+                                unmount_give_window_set();
+                                this.open_action_message_window("Given.", () => {
+                                    this.close(this.close_callback.bind(this, true));
+                                });
+                            }
                         }
                         after_choose_callback();
                     }

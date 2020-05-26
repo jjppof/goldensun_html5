@@ -206,13 +206,13 @@ export class ItemPsynergyChooseWindow {
     set_page_indicator_arrow() {
         this.page_indicator_left_arrow.alpha = 1;
         this.page_indicator_right_arrow.alpha = 1;
-        const left_x = PSY_OVERVIEW_WIN_WIDTH - 5 - this.get_page_number() * PAGE_NUMBER_WIDTH - this.page_indicator_left_arrow.width - 2;
-        this.page_indicator_left_arrow.x = left_x;
+        this.calculated_arrow_left_x = PSY_OVERVIEW_WIN_WIDTH - 5 - this.get_page_number() * PAGE_NUMBER_WIDTH - this.page_indicator_left_arrow.width - 2;
+        this.page_indicator_left_arrow.x = this.calculated_arrow_left_x;
         if (this.page_indicator_arrow_timer.running && this.page_indicator_arrow_timer.paused) {
             this.page_indicator_arrow_timer.resume();
         } else {
             this.page_indicator_arrow_timer.loop(Phaser.Timer.QUARTER >> 1, () => {
-                this.page_indicator_left_arrow.x = left_x + ~(-this.page_indicator_left_arrow.x%2);
+                this.page_indicator_left_arrow.x = this.calculated_arrow_left_x + ~(-this.page_indicator_left_arrow.x%2);
                 this.page_indicator_right_arrow.x = PAGE_INDICATOR_RIGHT_ARROW_X - ~(-this.page_indicator_right_arrow.x%2);
                 this.page_indicator_right_arrow.x -= this.page_indicator_right_arrow.width;
             });
@@ -334,7 +334,7 @@ export class ItemPsynergyChooseWindow {
 
     page_change(before_index, after_index) {
         this.set_elements();
-        this.set_element_tween(before_index);
+        this.set_element_tween(this.selected_element_index);
         this.set_highlight_bar();
         this.on_change(
             this.element_list[this.get_element_key_name(this.selected_element_index)],

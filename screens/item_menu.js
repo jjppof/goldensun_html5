@@ -105,13 +105,17 @@ export class ItemMenuScreen {
         this.basic_info_window.set_char(party_data.members[party_index]);
         this.set_item_icons();
         if (this.choosing_give_destination) {
-            const preview_obj = Object.assign({}, this.item_options_window.item_obj, {equipped : false});
-            this.item_change_stats_window.open(
-                party_data.members[party_index],
-                this.item_options_window.item,
-                preview_obj
-            );
-            this.item_change_stats_window.compare_items();
+            if (this.item_options_window.item.type === item_types.ABILITY_GRANTOR) {
+
+            } else if (this.item_options_window.item.type !== item_types.GENERAL_ITEM) {
+                const preview_obj = Object.assign({}, this.item_options_window.item_obj, {equipped : false});
+                this.item_change_stats_window.open(
+                    party_data.members[party_index],
+                    this.item_options_window.item,
+                    preview_obj
+                );
+                this.item_change_stats_window.compare_items();
+            }
         }
     }
 
@@ -198,13 +202,21 @@ export class ItemMenuScreen {
                 this.after_char_choose_on_give = after_char_choose_on_give;
             }, close_item_choose => {
                 this.item_choose_window.activate();
-                this.item_change_stats_window.compare_items();
+                if (item.type === item_types.ABILITY_GRANTOR) {
+
+                } else if (item.type !== item_types.GENERAL_ITEM) {
+                    this.item_change_stats_window.compare_items();
+                }
                 if (close_item_choose) {
                     this.item_choose_window.close();
                 }
             }, () => {
-                this.item_change_stats_window.update_info(false);
-                this.item_change_stats_window.hide_arrows();
+                if (item.type === item_types.ABILITY_GRANTOR) {
+
+                } else if (item.type !== item_types.GENERAL_ITEM) {
+                    this.item_change_stats_window.update_info(false);
+                    this.item_change_stats_window.hide_arrows();
+                }
             }
         );
     }
