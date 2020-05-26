@@ -35,6 +35,8 @@ const ITEM_OVERVIEW_WIN_SPACE_BETWN_ICO = ((ITEM_OVERVIEW_WIN_WIDTH - 2*(numbers
     (ITEM_OVERVIEW_WIN_ICONS_PER_LINE * numbers.ICON_WIDTH))/(ITEM_OVERVIEW_WIN_ICONS_PER_LINE - 1);
 const SUB_ICON_X = 7;
 const SUB_ICON_Y = 8;
+const ITEM_OVERVIEW_Y_SHIFT = 16;
+const ITEM_OVERVIEW_HEIGHT_SHIFT = 16;
 
 export class ItemMenuScreen {
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
@@ -66,9 +68,9 @@ export class ItemMenuScreen {
         }
         this.description_window = new Window(this.game, DESCRIPTION_WINDOW_X, DESCRIPTION_WINDOW_Y, DESCRIPTION_WINDOW_WIDTH, DESCRIPTION_WINDOW_HEIGHT);
         this.description_window_text = this.description_window.set_single_line_text("");
-        this.item_overview_window = new Window(this.game, ITEM_OVERVIEW_WIN_X, ITEM_OVERVIEW_WIN_Y, ITEM_OVERVIEW_WIN_WIDTH, ITEM_OVERVIEW_WIN_HEIGHT);
         this.arrange_window = new Window(this.game, ARRANGE_WINDOW_X, ARRANGE_WINDOW_Y, ARRANGE_WINDOW_WIDTH, ARRANGE_WINDOW_HEIGHT);
         this.arrange_window_text = this.arrange_window.set_text(["Arrange info here..."], undefined, 7, 3);
+        this.item_overview_window = new Window(this.game, ITEM_OVERVIEW_WIN_X, ITEM_OVERVIEW_WIN_Y, ITEM_OVERVIEW_WIN_WIDTH, ITEM_OVERVIEW_WIN_HEIGHT);
         this.item_choose_window = new ItemPsynergyChooseWindow(
             this.game,
             this.data,
@@ -87,6 +89,14 @@ export class ItemMenuScreen {
             this.data.esc_input.getSignal().halt();
             this.close_menu();
         }, this, this.esc_propagation_priority);
+    }
+
+    shift_item_overview(down) {
+        if (down) {
+            this.item_overview_window.group.y += ITEM_OVERVIEW_Y_SHIFT;
+        } else {
+            this.item_overview_window.group.y -= ITEM_OVERVIEW_Y_SHIFT;
+        }
     }
 
     char_change(party_index) {
@@ -108,9 +118,15 @@ export class ItemMenuScreen {
     char_choose(party_index) {
         if (!this.is_open) return;
         if (this.choosing_give_destination) {
+            if (party_data.members[party_index].key_name === this.item_options_window.char.key_name) return;
             this.chars_menu.deactivate();
             this.after_char_choose_on_give(party_data.members[party_index], () => {
                 this.choosing_give_destination = false;
+            }, () => {
+                this.shift_item_overview(false);
+                this.item_choose_window.show();
+                this.item_options_window.show();
+                this.item_overview_window.update_size({height: this.item_overview_window.height - ITEM_OVERVIEW_HEIGHT_SHIFT});
             });
         } else {
             this.chars_menu.deactivate();
@@ -137,6 +153,10 @@ export class ItemMenuScreen {
         if (this.choosing_give_destination) {
             this.chars_menu.deactivate();
             this.choosing_give_destination = false;
+            this.shift_item_overview(false);
+            this.item_choose_window.show();
+            this.item_options_window.show();
+            this.item_overview_window.update_size({height: this.item_overview_window.height - ITEM_OVERVIEW_HEIGHT_SHIFT});
             this.after_char_choose_on_give(null);
             this.char_change(this.item_choose_window.char_index);
             this.item_change_stats_window.open(
@@ -169,6 +189,10 @@ export class ItemMenuScreen {
             this.item_change_stats_window,
             after_char_choose_on_give => {
                 this.choosing_give_destination = true;
+                this.shift_item_overview(true);
+                this.item_overview_window.update_size({height: this.item_overview_window.height + ITEM_OVERVIEW_HEIGHT_SHIFT});
+                this.item_choose_window.hide();
+                this.item_options_window.hide();
                 this.chars_menu.activate();
                 this.char_change(this.selected_char_index);
                 this.after_char_choose_on_give = after_char_choose_on_give;

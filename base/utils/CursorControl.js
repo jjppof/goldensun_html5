@@ -169,6 +169,9 @@ export class CursorControl {
             this.cursor_tween.resume();
         } else if (!this.cursor_tween.isRunning) {
             this.cursor_tween.start();
+            if (this.cursor_tween.isPaused) {
+                this.cursor_tween.resume();
+            }
             return;
         }
         this.cursor_group.x = this.cursor_base_x_getter();

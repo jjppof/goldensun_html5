@@ -354,6 +354,14 @@ export class ItemPsynergyChooseWindow {
         this.text_sprites_in_window = [];
     }
 
+    hide() {
+        this.window.group.alpha = 0;
+    }
+
+    show() {
+        this.window.group.alpha = 1;
+    }
+
     open(char_index, close_callback, open_callback) {
         this.update_position();
         this.char_index = char_index;

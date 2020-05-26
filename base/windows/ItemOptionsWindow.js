@@ -76,6 +76,26 @@ export class ItemOptionsWindow {
         this.set_control();
     }
 
+    hide() {
+        this.base_window.group.alpha = 0;
+    }
+
+    show() {
+        this.base_window.group.alpha = 1;
+    }
+
+    hide_text() {
+        for (let key in this.text_sprites) {
+            this.text_sprites[key].text.alpha = this.text_sprites[key].shadow.alpha = 0;
+        }
+    }
+
+    show_text() {
+        for (let key in this.text_sprites) {
+            this.text_sprites[key].text.alpha = this.text_sprites[key].shadow.alpha = 1;
+        }
+    }
+
     is_open() {
         return this.window_open;
     }
@@ -216,7 +236,7 @@ export class ItemOptionsWindow {
                 this.deactivate();
                 this.give_item_options_window.open(this.item_obj, this.item, this.char, true, false);
                 this.give_item_options_window.deactive();
-                this.on_give_callback((destination_char, after_choose_callback) => {
+                this.on_give_callback((destination_char, after_choose_callback, unmount_give_window_set) => {
                     if (destination_char === null) {
                         this.give_item_options_window.close();
                         this.activate();
@@ -233,17 +253,20 @@ export class ItemOptionsWindow {
                                     this.activate();
                                     this.char.remove_item(this.item_obj, this.item_obj.quantity);
                                     destination_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, equip);
+                                    unmount_give_window_set();
                                     this.open_action_message_window("Given.", () => {
                                         this.close(this.close_callback.bind(this, true));
                                     });
                                 } else {
                                     this.close(this.close_callback.bind(this, true));
+                                    unmount_give_window_set();
                                 }
                             });
                         } else {
                             this.char.remove_item(this.item_obj, this.item_obj.quantity);
                             destination_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, false);
                             this.close(this.close_callback.bind(this, true));
+                            unmount_give_window_set();
                         }
                         after_choose_callback();
                     }
