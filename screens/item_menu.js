@@ -163,12 +163,16 @@ export class ItemMenuScreen {
             this.item_overview_window.update_size({height: this.item_overview_window.height - ITEM_OVERVIEW_HEIGHT_SHIFT});
             this.after_char_choose_on_give(null);
             this.char_change(this.item_choose_window.char_index);
-            this.item_change_stats_window.open(
-                party_data.members[this.item_choose_window.char_index],
-                this.item_options_window.item,
-                this.item_options_window.item_obj
-            );
-            this.item_change_stats_window.compare_items();
+            if (this.item_options_window.item.type === item_types.ABILITY_GRANTOR) {
+
+            } else if (this.item_options_window.item.type !== item_types.GENERAL_ITEM) {
+                this.item_change_stats_window.open(
+                    party_data.members[this.item_choose_window.char_index],
+                    this.item_options_window.item,
+                    this.item_options_window.item_obj
+                );
+                this.item_change_stats_window.compare_items();
+            }
             this.chars_menu.set_char_by_index(this.item_choose_window.char_index);
             this.item_options_window.stats_window.compare_items(true);
         } else {

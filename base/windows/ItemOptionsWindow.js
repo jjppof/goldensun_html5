@@ -278,7 +278,7 @@ export class ItemOptionsWindow {
                                         this.close(this.close_callback.bind(this, true));
                                         unmount_give_window_set();
                                     }
-                                });
+                                }, destination_char);
                             } else {
                                 this.activate();
                                 this.char.remove_item(this.item_obj, this.item_obj.quantity);

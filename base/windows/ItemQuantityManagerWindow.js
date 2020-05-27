@@ -11,6 +11,7 @@ const QUESTION_TEXT_Y = 8;
 const ITEM_NAME_X = 27;
 const ITEM_NAME_Y = 16;
 const CHAR_NAME_X = 27;
+const DEST_CHAR_NAME_X = 84;
 const CHAR_NAME_Y = ITEM_NAME_Y + numbers.FONT_SIZE;
 const ITEM_ICON_X = 8;
 const ITEM_ICON_Y = 8;
@@ -20,6 +21,7 @@ const ITEM_COUNTER_X = 56;
 const ITEM_COUNTER_Y = 40;
 const REMAIN_TEXT_CHAR_COUNT_X = 37;
 const REMAIN_TEXT_CHAR_COUNT_Y = CHAR_NAME_Y + numbers.FONT_SIZE;
+const REMAIN_TEXT_DEST_CHAR_COUNT_X = 94;
 const REMOVE_TEXT_COUNT_X = 53;
 const REMOVE_TEXT_COUNT_Y = ITEM_COUNTER_Y;
 
@@ -43,6 +45,7 @@ export class ItemQuantityManagerWindow {
         this.choosen_quantity = 1;
         this.item_counter = new ItemCounter(this.game, this.group, ITEM_COUNTER_X, ITEM_COUNTER_Y, this.on_change.bind(this));
         this.remaining_with_char_count = this.base_window.set_text_in_position("", REMAIN_TEXT_CHAR_COUNT_X, REMAIN_TEXT_CHAR_COUNT_Y, true);
+        this.new_amount_with_dest_char_count = this.base_window.set_text_in_position("", REMAIN_TEXT_DEST_CHAR_COUNT_X, REMAIN_TEXT_CHAR_COUNT_Y, true);
         this.to_remove_count = this.base_window.set_text_in_position("", REMOVE_TEXT_COUNT_X, REMOVE_TEXT_COUNT_Y, true);
         this.set_control();
     }
@@ -65,11 +68,17 @@ export class ItemQuantityManagerWindow {
         this.choosen_quantity = quantity;
         this.base_window.update_text(this.choosen_quantity.toString(), this.to_remove_count);
         this.base_window.update_text((this.item_obj.quantity - this.choosen_quantity).toString(), this.remaining_with_char_count);
+        if (this.destination_char) {
+            this.base_window.update_text((this.dest_item_obj.quantity + this.choosen_quantity).toString(), this.new_amount_with_dest_char_count);
+        }
     }
 
     set_header() {
         this.icon_sprite = this.base_window.create_at_group(ITEM_ICON_X, ITEM_ICON_Y, this.item.key_name + "_item_icon");
         this.char_name = this.base_window.set_text_in_position(this.char.name, CHAR_NAME_X, CHAR_NAME_Y);
+        if (this.destination_char) {
+            this.dest_char_name = this.base_window.set_text_in_position(this.destination_char.name, DEST_CHAR_NAME_X, CHAR_NAME_Y);
+        }
         this.item_name = this.base_window.set_text_in_position(this.item.name, ITEM_NAME_X, ITEM_NAME_Y);
         this.equip_sprite = null;
         if (this.item_obj.equipped) {
@@ -85,6 +94,10 @@ export class ItemQuantityManagerWindow {
     unset_header() {
         this.base_window.remove_from_group(this.icon_sprite);
         this.base_window.remove_text(this.char_name);
+        if (this.destination_char) {
+            this.base_window.remove_text(this.dest_char_name);
+            this.base_window.update_text("", this.new_amount_with_dest_char_count);
+        }
         this.base_window.remove_text(this.item_name);
         if (this.equip_sprite) {
             this.base_window.remove_from_group(this.equip_sprite);
@@ -99,10 +112,17 @@ export class ItemQuantityManagerWindow {
         this.group.y = this.game.camera.y + this.y;
     }
 
-    open(item_obj, item, char, close_callback, open_callback) {
+    open(item_obj, item, char, close_callback, destination_char, open_callback) {
         this.item_obj = item_obj;
         this.item = item;
         this.char = char;
+        this.destination_char = destination_char;
+        if (this.destination_char) {
+            const dest_item_obj = this.destination_char.items.filter(item => {
+                return item.key_name === item_obj.key_name;
+            });
+            this.dest_item_obj = dest_item_obj.length ? dest_item_obj[0] : { quantity: 0 };
+        }
         this.choosen_quantity = 1;
         this.close_callback = close_callback;
         this.update_position();
