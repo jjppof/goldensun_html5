@@ -600,7 +600,7 @@ export class MainChar extends SpriteBase {
 
     update_abilities() {
         this.abilities = this.innate_abilities.concat(this.class.ability_level_pairs.filter(pair => {
-            return pair.level <= this.level;
+            return pair.level <= this.level && !this.innate_abilities.includes(pair.ability);
         }).map(pair => pair.ability), this.equipped_abilities);
     }
 

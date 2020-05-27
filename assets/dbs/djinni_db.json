@@ -47,5 +47,29 @@
         "def_boost": 0,
         "agi_boost": 2,
         "luk_boost": 0
+    },{
+        "key_name": "gust",
+        "name": "Gust",
+        "description": "Attack with mighty wind gusts.",
+        "element": "jupiter",
+        "ability_key_name": "gust",
+        "hp_boost": 9,
+        "pp_boost": 0,
+        "atk_boost": 2,
+        "def_boost": 0,
+        "agi_boost": 2,
+        "luk_boost": 0
+    },{
+        "key_name": "breeze",
+        "name": "Breeze",
+        "description": "Boost party Resistance.",
+        "element": "jupiter",
+        "ability_key_name": "breeze",
+        "hp_boost": 12,
+        "pp_boost": 5,
+        "atk_boost": 0,
+        "def_boost": 2,
+        "agi_boost": 0,
+        "luk_boost": 1
     }
 ]

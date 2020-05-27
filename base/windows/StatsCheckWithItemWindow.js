@@ -136,6 +136,7 @@ export class StatsCheckWithItemWindow {
     compare_items(compare_removing = false) {
         this.hide_arrows();
         if (this.item_obj.equipped && !compare_removing) return;
+        if (!this.item.equipable_chars.includes(this.char.key_name)) return;
         let equip_slot_property;
         switch (this.item.type) {
             case item_types.WEAPONS: equip_slot_property = "weapon"; break;

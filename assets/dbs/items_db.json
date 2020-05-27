@@ -177,7 +177,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet"],
+        "equipable_chars": ["isaac", "garet", "sheba"],
         "price": 20,
         "granted_ability": "",
         "icon_path": "assets/images/icons/items/cotton_shirt.gif"
@@ -275,5 +275,31 @@
         "price": 0,
         "granted_ability": "frost",
         "icon_path": "assets/images/icons/items/frost_jewel.gif"
+    },{
+        "key_name": "wooden_stick",
+        "name": "Wooden Stick",
+        "type": "weapons",
+        "description": "Staff",
+        "use_type": "no_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": false,
+        "imporant_item": false,
+        "carry_up_to_30": false,
+        "effects": [
+            {
+                "type": "attack",
+                "quantity": 4,
+                "operator": "plus"
+            }
+        ],
+        "attribute": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "",
+        "equipable_chars": ["sheba"],
+        "price": 40,
+        "granted_ability": "",
+        "icon_path": "assets/images/icons/items/wooden_stick.gif"
     }
 ]
