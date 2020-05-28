@@ -1,0 +1,108 @@
+{"frames": {
+
+"set/down/00":
+{
+	"frame": {"x":1,"y":1,"w":23,"h":24},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":8,"w":23,"h":24},
+	"sourceSize": {"w":32,"h":32}
+},
+"set/down/01":
+{
+	"frame": {"x":1,"y":155,"w":21,"h":23},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":9,"w":21,"h":23},
+	"sourceSize": {"w":32,"h":32}
+},
+"set/down/02":
+{
+	"frame": {"x":1,"y":76,"w":22,"h":23},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":9,"w":22,"h":23},
+	"sourceSize": {"w":32,"h":32}
+},
+"set/down/03":
+{
+	"frame": {"x":1,"y":155,"w":21,"h":23},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":9,"w":21,"h":23},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/down/00":
+{
+	"frame": {"x":1,"y":52,"w":23,"h":22},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":8,"w":23,"h":22},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/down/01":
+{
+	"frame": {"x":1,"y":180,"w":21,"h":23},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":7,"w":21,"h":23},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/down/02":
+{
+	"frame": {"x":1,"y":101,"w":21,"h":25},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":6,"w":21,"h":25},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/down/03":
+{
+	"frame": {"x":1,"y":180,"w":21,"h":23},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":7,"w":21,"h":23},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/left/00":
+{
+	"frame": {"x":1,"y":205,"w":20,"h":23},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":8,"w":20,"h":23},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/left/01":
+{
+	"frame": {"x":1,"y":27,"w":23,"h":23},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":7,"w":23,"h":23},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/left/02":
+{
+	"frame": {"x":1,"y":128,"w":21,"h":25},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":6,"w":21,"h":25},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/left/03":
+{
+	"frame": {"x":1,"y":27,"w":23,"h":23},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":7,"w":23,"h":23},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "mars_djinn.png",
+	"format": "RGBA8888",
+	"size": {"w":25,"h":229},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:997dd8a66e48fd6bc47f68fca5adde12:5aa6df4034a66de75423b573b1f9e224:3f32ba2b012ae27fc11909dba633557e$"
+}
+}

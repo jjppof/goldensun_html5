@@ -128,6 +128,12 @@ function load_misc() {
     game.load.image('page_arrow', 'assets/images/misc/page_arrow.png');
     game.load.image('psynergy_aura', 'assets/images/misc/psynergy_aura.png');
     game.load.image('equipped', 'assets/images/misc/equipped.gif');
+    game.load.image('venus_star', 'assets/images/misc/venus_star.gif');
+    game.load.image('mercury_star', 'assets/images/misc/mercury_star.gif');
+    game.load.image('mars_star', 'assets/images/misc/mars_star.gif');
+    game.load.image('jupiter_star', 'assets/images/misc/jupiter_star.gif');
+    game.load.image('stat_up', 'assets/images/misc/stat_up.gif');
+    game.load.image('stat_down', 'assets/images/misc/stat_down.gif');
     game.load.atlasJSONHash('psynergy_particle', 'assets/images/spritesheets/psynergy_particle.png', 'assets/images/spritesheets/psynergy_particle.json');
 }
 

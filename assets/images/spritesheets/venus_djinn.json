@@ -1,0 +1,108 @@
+{"frames": {
+
+"set/down/00":
+{
+	"frame": {"x":1,"y":96,"w":23,"h":24},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":8,"w":23,"h":24},
+	"sourceSize": {"w":32,"h":32}
+},
+"set/down/01":
+{
+	"frame": {"x":1,"y":172,"w":21,"h":21},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":11,"w":21,"h":21},
+	"sourceSize": {"w":32,"h":32}
+},
+"set/down/02":
+{
+	"frame": {"x":1,"y":122,"w":23,"h":24},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":8,"w":23,"h":24},
+	"sourceSize": {"w":32,"h":32}
+},
+"set/down/03":
+{
+	"frame": {"x":1,"y":172,"w":21,"h":21},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":11,"w":21,"h":21},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/down/00":
+{
+	"frame": {"x":1,"y":148,"w":22,"h":22},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":10,"w":22,"h":22},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/down/01":
+{
+	"frame": {"x":1,"y":172,"w":21,"h":21},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":11,"w":21,"h":21},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/down/02":
+{
+	"frame": {"x":1,"y":1,"w":24,"h":22},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":10,"w":24,"h":22},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/down/03":
+{
+	"frame": {"x":1,"y":172,"w":21,"h":21},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":11,"w":21,"h":21},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/left/00":
+{
+	"frame": {"x":1,"y":25,"w":24,"h":22},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":24,"h":22},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/left/01":
+{
+	"frame": {"x":1,"y":73,"w":24,"h":21},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":11,"w":24,"h":21},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/left/02":
+{
+	"frame": {"x":1,"y":49,"w":24,"h":22},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":10,"w":24,"h":22},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/left/03":
+{
+	"frame": {"x":1,"y":73,"w":24,"h":21},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":11,"w":24,"h":21},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "venus_djinn.png",
+	"format": "RGBA8888",
+	"size": {"w":26,"h":194},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:dc6e9add61b2176245254a13a65f34f2:aeda850550494e2533f39a060a88d7c8:20b97efb2872b99086e9ff8185857974$"
+}
+}

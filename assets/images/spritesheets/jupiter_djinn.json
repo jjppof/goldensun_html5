@@ -1,0 +1,108 @@
+{"frames": {
+
+"set/down/00":
+{
+	"frame": {"x":1,"y":181,"w":16,"h":27},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":1,"w":16,"h":27},
+	"sourceSize": {"w":32,"h":32}
+},
+"set/down/01":
+{
+	"frame": {"x":1,"y":101,"w":23,"h":27},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":0,"w":23,"h":27},
+	"sourceSize": {"w":32,"h":32}
+},
+"set/down/02":
+{
+	"frame": {"x":1,"y":130,"w":22,"h":28},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":0,"w":22,"h":28},
+	"sourceSize": {"w":32,"h":32}
+},
+"set/down/03":
+{
+	"frame": {"x":1,"y":101,"w":23,"h":27},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":0,"w":23,"h":27},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/down/00":
+{
+	"frame": {"x":1,"y":160,"w":20,"h":19},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":13,"w":20,"h":19},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/down/01":
+{
+	"frame": {"x":1,"y":81,"w":24,"h":18},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":14,"w":24,"h":18},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/down/02":
+{
+	"frame": {"x":1,"y":1,"w":26,"h":17},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":15,"w":26,"h":17},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/down/03":
+{
+	"frame": {"x":1,"y":81,"w":24,"h":18},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":14,"w":24,"h":18},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/left/00":
+{
+	"frame": {"x":1,"y":60,"w":24,"h":19},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":13,"w":24,"h":19},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/left/01":
+{
+	"frame": {"x":1,"y":20,"w":25,"h":18},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":14,"w":25,"h":18},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/left/02":
+{
+	"frame": {"x":1,"y":40,"w":25,"h":18},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":14,"w":25,"h":18},
+	"sourceSize": {"w":32,"h":32}
+},
+"standby/left/03":
+{
+	"frame": {"x":1,"y":20,"w":25,"h":18},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":14,"w":25,"h":18},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "jupiter_djinn.png",
+	"format": "RGBA8888",
+	"size": {"w":28,"h":209},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:dcfa5eb10634007b9223bdda72c73f44:8da339fd31dcf384dce89b5798c6636a:34bd35b24aaf1be2a575057bde3d585f$"
+}
+}
