@@ -215,9 +215,15 @@ async function create() {
     window.dispatchEvent(new Event('resize'));
 
     initialize_classes(data.classes_db);
-    initialize_djinni(data.djinni_db);
     initialize_enemies(data.enemies_db);
 
+    let load_djinni_sprites_promise_resolve;
+    let load_djinni_sprites_promise = new Promise(resolve => {
+        load_djinni_sprites_promise_resolve = resolve;
+    });
+    initialize_djinni(game, data.djinni_db, load_djinni_sprites_promise_resolve);
+    await load_djinni_sprites_promise;
+    
     let load_abilities_promise_resolve;
     let load_abilities_promise = new Promise(resolve => {
         load_abilities_promise_resolve = resolve;
