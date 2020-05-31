@@ -21,6 +21,7 @@ const DJINN_NAME_Y_PADDING = 24;
 const STAR_X_PADDING = HIGHLIGHT_X_PADDING + 1;
 const STAR_Y_PADDING = HIGHLIGHT_Y_PADDING + 1;
 const DJINN_NAME_BETWEEN = 56;
+const MAX_DJINN_COUNT = 9;
 
 export class DjinnListWindow {
     constructor (game, data, esc_propagation_priority, enter_propagation_priority) {
@@ -39,6 +40,19 @@ export class DjinnListWindow {
         this.page_index = 0;
         this.close_callback = null;
         this.chars_sprites = {};
+        this.page_number_bar_highlight = this.game.add.graphics(0, 0);
+        this.page_number_bar_highlight.blendMode = PIXI.blendModes.SCREEN;
+        this.base_window.add_sprite_to_group(this.page_number_bar_highlight);
+        this.page_number_bar_highlight.beginFill(this.base_window.color, 1);
+        this.page_number_bar_highlight.drawRect(0, 0, HIGHLIGHT_WIDTH, HIGHLIGHT_HEIGHT);
+        this.page_number_bar_highlight.endFill();
+        this.cursor_control = new CursorControl(this.game, true, true, this.get_max_chars.bind(this),
+            this.get_max_djinn.bind(this), this.group, this.on_char_change.bind(this), this.on_djinn_change.bind(this),
+            this.get_char_index.bind(this), this.set_char_index.bind(this), this.get_djinn_index.bind(this),
+            this.set_djinn_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),
+            this.get_x_cursor.bind(this), this.get_y_cursor.bind(this)
+        );
+        this.sizes = [];
         this.set_control();
     }
 
@@ -60,6 +74,46 @@ export class DjinnListWindow {
         }, this, this.enter_propagation_priority);
     }
 
+    get_x_cursor() {
+        return HIGHLIGHT_X_PADDING + this.selected_char_index * DJINN_NAME_BETWEEN - 14;
+    }
+
+    get_y_cursor() {
+        return HIGHLIGHT_Y_PADDING + this.selected_djinn_index * numbers.FONT_SIZE + 3;
+    }
+
+    is_open() {
+        return this.window_open;
+    }
+
+    is_active() {
+        return this.window_active;
+    }
+
+    get_char_index() {
+        return this.selected_char_index;
+    }
+
+    set_char_index(index) {
+        this.selected_char_index = index;
+    }
+
+    get_djinn_index() {
+        return this.selected_djinn_index;
+    }
+
+    set_djinn_index(index) {
+        this.selected_djinn_index = index;
+    }
+
+    get_max_chars() {
+        return this.sizes.length;
+    }
+
+    get_max_djinn() {
+        return this.sizes[this.selected_char_index];
+    }
+
     load_page() {
         for (let i = 0; i < CHARS_PER_PAGE; ++i) {
             const party_index = this.page_index * CHARS_PER_PAGE + i;
@@ -73,6 +127,7 @@ export class DjinnListWindow {
             this.chars_sprites[char_key_name].animations.add(animation_key, this_char.animations.idle.down, this_char.actions.idle.frame_rate, true);
             this.chars_sprites[char_key_name].animations.play(animation_key, this_char.actions.idle.frame_rate, true);
             const char_djinni = this_char.djinni;
+            this.sizes.push(char_djinni.length);
             for (let j = 0; j < char_djinni.length; ++j) {
                 const this_djinn = djinni_list[char_djinni[j]];
                 const star_x = STAR_X_PADDING + i * DJINN_NAME_BETWEEN;
@@ -85,6 +140,21 @@ export class DjinnListWindow {
         }
     }
 
+    set_highlight_bar() {
+        this.page_number_bar_highlight.x = HIGHLIGHT_X_PADDING + this.selected_char_index * DJINN_NAME_BETWEEN;
+        this.page_number_bar_highlight.y = HIGHLIGHT_Y_PADDING + this.selected_djinn_index * numbers.FONT_SIZE;
+    }
+
+    on_char_change(before_index, after_index) {
+        this.selected_char_index = after_index;
+        this.set_highlight_bar();
+    }
+
+    on_djinn_change(before_index, after_index) {
+        this.selected_djinn_index = after_index;
+        this.set_highlight_bar();
+    }
+
     on_choose() {
 
     }
@@ -93,10 +163,13 @@ export class DjinnListWindow {
         this.selected_char_index = 0;
         this.selected_djinn_index = 0;
         this.page_index = 0;
+        this.sizes = [];
         this.load_page();
         this.update_position();
+        this.set_highlight_bar();
+        this.cursor_control.activate();
         this.window_open = true;
-        this.window_activated = true;
+        this.window_active = true;
         this.close_callback = close_callback;
         this.base_window.show(undefined, false);
         if (open_callback) {
@@ -106,7 +179,8 @@ export class DjinnListWindow {
 
     close(close_callback) {
         this.window_open = false;
-        this.window_activated = false;
+        this.window_active = false;
+        this.cursor_control.deactivate();
         this.base_window.close(undefined, false);
         if (close_callback) {
             close_callback();
@@ -114,10 +188,12 @@ export class DjinnListWindow {
     }
 
     activate() {
-        this.window_activated = true;
+        this.window_active = true;
+        this.cursor_control.activate();
     }
 
     deactivate() {
-        this.window_activated = false;
+        this.window_active = false;
+        this.cursor_control.deactivate();
     }
 }
