@@ -25,6 +25,8 @@ const DJINN_NAME_BETWEEN = 56;
 const RECOVERY_COLOR = 0xF8F840;
 const STANDBY_COLOR = 0xF80000;
 const SET_COLOR = numbers.DEFAULT_FONT_COLOR;
+const DJINN_DESCRIPTION_X = 8;
+const DJINN_DESCRIPTION_Y = 104;
 
 export class DjinnListWindow {
     constructor (game, data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority) {
@@ -46,6 +48,7 @@ export class DjinnListWindow {
         this.page_index = 0;
         this.close_callback = null;
         this.chars_sprites = {};
+        this.djinn_description = this.base_window.set_text_in_position("", DJINN_DESCRIPTION_X, DJINN_DESCRIPTION_Y);
         this.page_number_bar_highlight = this.game.add.graphics(0, 0);
         this.page_number_bar_highlight.blendMode = PIXI.blendModes.SCREEN;
         this.group.add(this.page_number_bar_highlight);
@@ -185,6 +188,18 @@ export class DjinnListWindow {
         this.page_number_bar_highlight.y = HIGHLIGHT_Y_PADDING + this.selected_djinn_index * numbers.FONT_SIZE;
     }
 
+    update_djinn_description() {
+        const this_char = party_data.members[this.selected_char_index];
+        const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
+        this.base_window.update_text(this_djinn.description, this.djinn_description);
+    }
+
+    set_action_text() {
+        const this_char = party_data.members[this.selected_char_index];
+        const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
+        this.djinn_action_window.set_action_text(this_djinn.status);
+    }
+
     on_char_change(before_index, after_index) {
         this.selected_char_index = after_index;
         if (this.selected_djinn_index >= this.sizes[this.selected_char_index]) {
@@ -192,12 +207,17 @@ export class DjinnListWindow {
             this.cursor_control.set_cursor_position();
         }
         this.set_highlight_bar();
-        this.chars_quick_info_window.set_char(party_data.members[this.selected_char_index]);
+        const this_char = party_data.members[this.selected_char_index];
+        this.chars_quick_info_window.set_char(this_char);
+        this.set_action_text();
+        this.update_djinn_description();
     }
 
     on_djinn_change(before_index, after_index) {
         this.selected_djinn_index = after_index;
         this.set_highlight_bar();
+        this.set_action_text();
+        this.update_djinn_description();
     }
 
     on_choose() {
@@ -211,22 +231,27 @@ export class DjinnListWindow {
             this_djinn.set_status(djinn_status.STANDBY, this_char);
             this.base_window.update_text_color(STANDBY_COLOR, this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
             this.chars_quick_info_window.update_text();
+            this.set_action_text();
         } else if (this_djinn.status === djinn_status.STANDBY) {
             this_djinn.set_status(djinn_status.SET, this_char);
             this.base_window.update_text_color(SET_COLOR, this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
             this.chars_quick_info_window.update_text();
+            this.set_action_text();
         }
     }
 
-    open(chars_quick_info_window, close_callback, open_callback) {
+    open(chars_quick_info_window, djinn_action_window, close_callback, open_callback) {
         this.selected_char_index = 0;
         this.selected_djinn_index = 0;
         this.page_index = 0;
         this.group.alpha = 1;
         this.chars_quick_info_window = chars_quick_info_window;
+        this.djinn_action_window = djinn_action_window;
         this.load_page();
         this.update_position();
         this.set_highlight_bar();
+        this.set_action_text();
+        this.update_djinn_description();
         this.cursor_control.activate();
         this.window_open = true;
         this.window_active = true;

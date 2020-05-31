@@ -5,6 +5,7 @@ import * as numbers from '../magic_numbers.js';
 import { elements } from '../base/MainChar.js';
 import { CharsQuickInfoDjinnWindow } from '../base/windows/djinn/CharsQuickInfoDjinnWindow.js';
 import { DjinnListWindow } from '../base/windows/djinn/DjinnListWindow.js';
+import { DjinnActionWindow } from '../base/windows/djinn/DjinnActionWindow.js';
 
 export class DjinnMenuScreen {
     constructor(game, data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority) {
@@ -18,6 +19,7 @@ export class DjinnMenuScreen {
         this.selected_char_index = 0;
         this.set_control();
         this.chars_quick_info_window = new CharsQuickInfoDjinnWindow(this.game);
+        this.djinn_action_window = new DjinnActionWindow(this.game);
         this.djinni_list_window = new DjinnListWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority, this.shift_propagation_priority);
     }
 
@@ -33,7 +35,8 @@ export class DjinnMenuScreen {
         this.close_callback = close_callback;
         this.selected_char_index = 0;
         this.chars_quick_info_window.open(party_data.members[this.selected_char_index]);
-        this.djinni_list_window.open(this.chars_quick_info_window);
+        this.djinni_list_window.open(this.chars_quick_info_window, this.djinn_action_window);
+        this.djinn_action_window.open();
         this.is_open = true;
     }
 
@@ -41,6 +44,7 @@ export class DjinnMenuScreen {
         this.is_open = false;
         this.chars_quick_info_window.close();
         this.djinni_list_window.close();
+        this.djinn_action_window.close();
         if (this.close_callback !== null) {
             this.close_callback(close_menu_below);
         }
