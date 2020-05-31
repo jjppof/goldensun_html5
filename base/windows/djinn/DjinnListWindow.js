@@ -32,6 +32,7 @@ export class DjinnListWindow {
         this.data = data;
         this.base_window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
         this.group = this.game.add.group();
+        this.group.alpha = 0;
         this.chars_sprites_group = this.game.add.group();
         this.group.add(this.chars_sprites_group);
         this.window_open = false;
@@ -47,7 +48,7 @@ export class DjinnListWindow {
         this.chars_sprites = {};
         this.page_number_bar_highlight = this.game.add.graphics(0, 0);
         this.page_number_bar_highlight.blendMode = PIXI.blendModes.SCREEN;
-        this.base_window.add_sprite_to_group(this.page_number_bar_highlight);
+        this.group.add(this.page_number_bar_highlight);
         this.page_number_bar_highlight.beginFill(this.base_window.color, 1);
         this.page_number_bar_highlight.drawRect(0, 0, HIGHLIGHT_WIDTH, HIGHLIGHT_HEIGHT);
         this.page_number_bar_highlight.endFill();
@@ -165,10 +166,17 @@ export class DjinnListWindow {
         }
     }
 
-    unset_char_sprites() {
+    unset_page() {
         for (let key in this.chars_sprites) {
             this.chars_sprites[key].animations.stop();
             this.chars_sprites[key].alpha = 0;
+        }
+        this.base_window.remove_from_group();
+        for (let i = 0; i < this.djinn_names.length; ++i) {
+            const names = this.djinn_names[i];
+            for (let j = 0; j < names.length; ++j) {
+                this.base_window.remove_text(names[j]);
+            }
         }
     }
 
@@ -214,6 +222,7 @@ export class DjinnListWindow {
         this.selected_char_index = 0;
         this.selected_djinn_index = 0;
         this.page_index = 0;
+        this.group.alpha = 1;
         this.chars_quick_info_window = chars_quick_info_window;
         this.load_page();
         this.update_position();
@@ -233,7 +242,8 @@ export class DjinnListWindow {
         this.window_open = false;
         this.window_active = false;
         this.cursor_control.deactivate();
-        this.unset_char_sprites();
+        this.unset_page();
+        this.group.alpha = 0;
         this.base_window.close(undefined, false);
         if (close_callback) {
             close_callback();
