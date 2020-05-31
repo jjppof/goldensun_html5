@@ -1,3 +1,7 @@
+//====================================================================//
+//=== THIS FILE IS JUST FOR TESTING. NOT PART OF THE MAIN PROJECT. ===//
+//====================================================================//
+
 import * as numbers from './magic_numbers.js';
 
 var battle_bg;
@@ -228,14 +232,14 @@ function update() {
 
             //change texture in function of position
             if (i < party_count) {
-                if (Math.sin(relative_angle) > 0 && players[i].key != 'felix_back')
+                if (Math.sin(relative_angle) > 0 && players[i].key !== 'felix_back')
                     players[i].loadTexture('felix_back');
-                else if (Math.sin(relative_angle) <= 0 && players[i].key != 'felix_front')
+                else if (Math.sin(relative_angle) <= 0 && players[i].key !== 'felix_front')
                     players[i].loadTexture('felix_front');
             } else {
-                if (Math.sin(relative_angle) > 0 && players[i].key != 'mino_back')
+                if (Math.sin(relative_angle) > 0 && players[i].key !== 'mino_back')
                     players[i].loadTexture('mino_back');
-                else if (Math.sin(relative_angle) <= 0 && players[i].key != 'mino_front')
+                else if (Math.sin(relative_angle) <= 0 && players[i].key !== 'mino_front')
                     players[i].loadTexture('mino_front');
             }
 

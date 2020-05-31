@@ -31,6 +31,15 @@ export const effect_operators = {
     DIVIDE: "divide"
 }
 
+export const usages = {
+    NOT_APPLY: "not_apply",
+    ON_USE: "on_use",
+    BATTLE_PHASE_START: "battle_phase_start",
+    BATTLE_PHASE_END: "battle_phase_end",
+    TURN_START: "turn_start",
+    TURN_END: "turn_end"
+}
+
 export class Effect {
     constructor(
         type,
@@ -41,11 +50,12 @@ export class Effect {
         rate, //default: 1.0
         chance, //default: 1.0
         attribute, //default: no_element
-        add_status,
+        add_status, //boolean
         status_key_name,
         turns_quantity,
         variation_on_final_result,
         damage_formula_key_name,
+        usage,
         char
     ) {
         this.type = type;
@@ -61,6 +71,7 @@ export class Effect {
         this.turns_quantity = turns_quantity;
         this.variation_on_final_result = variation_on_final_result === undefined ? false : variation_on_final_result;
         this.damage_formula_key_name = damage_formula_key_name;
+        this.usage = usage === undefined ? usages.NOT_APPLY : usage;
         this.char = char;
     }
 

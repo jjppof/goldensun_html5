@@ -283,6 +283,7 @@ export class MainChar extends SpriteBase {
             effect_obj.turns_quantity,
             effect_obj.variation_on_final_result,
             effect_obj.damage_formula_key_name,
+            effect_obj.usage,
             this
         );
         this.effects.push(effect);

@@ -203,7 +203,8 @@
             "type": "max_pp",
             "quantity": 6,
             "operator": "plus",
-            "variation_on_final_result": true
+            "variation_on_final_result": true,
+            "usage": "on_use"
         }],
         "ability_type_key": "normal",
         "battle_animation_key": "",
