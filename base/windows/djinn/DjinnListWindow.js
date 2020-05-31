@@ -184,6 +184,7 @@ export class DjinnListWindow {
             this.cursor_control.set_cursor_position();
         }
         this.set_highlight_bar();
+        this.chars_quick_info_window.set_char(party_data.members[this.selected_char_index]);
     }
 
     on_djinn_change(before_index, after_index) {
