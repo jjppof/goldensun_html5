@@ -83,7 +83,8 @@ var data = {
     pasynergy_item_color_filters: undefined,
     stop_by_colliding: false,
     force_direction: false,
-    enemies_db: null
+    enemies_db: null,
+    shift_input: null
 };
 
 //debugging porpouses
@@ -253,6 +254,8 @@ async function create() {
     data.underlayer_group = game.add.group();
     data.npc_group = game.add.group();
     data.overlayer_group = game.add.group();
+    
+    data.shift_input = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT).onDown;
 
     //initialize screens
     data.menu_screen = initialize_menu(data);

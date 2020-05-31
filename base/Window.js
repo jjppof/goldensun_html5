@@ -2,7 +2,7 @@ import * as numbers from '../magic_numbers.js';
 import * as utils from '../utils.js';
 
 export class Window {
-    constructor(game, x, y, width, height, need_pos_update = true, color = numbers.DEFAULT_WINDOW_COLOR) {
+    constructor(game, x, y, width, height, need_pos_update = true, color = numbers.DEFAULT_WINDOW_COLOR, font_color = numbers.DEFAULT_FONT_COLOR) {
         this.game = game;
         this.group = game.add.group();
         this.x = x;
@@ -10,6 +10,7 @@ export class Window {
         this.width = width;
         this.height = height;
         this.color = color;
+        this.font_color = font_color;
         this.graphics = this.game.add.graphics(0, 0);
 
         this.draw_background();
@@ -238,6 +239,7 @@ export class Window {
             y_pos += numbers.FONT_SIZE + (space_between_lines === undefined ? numbers.SPACE_BETWEEN_LINES : space_between_lines);
 
             this.remove_smooth(text_sprite);
+            text_sprite.tint = this.font_color;
             this.remove_smooth(text_sprite_shadow);
             text_sprite_shadow.tint = 0x0;
 
@@ -258,6 +260,7 @@ export class Window {
         }
 
         this.remove_smooth(text_sprite);
+        text_sprite.tint = this.font_color;
         this.remove_smooth(text_sprite_shadow);
         text_sprite_shadow.tint = 0x0;
 
@@ -267,7 +270,7 @@ export class Window {
         return {text: text_sprite, shadow: text_sprite_shadow, right_align: right_align, initial_x: x_pos};
     }
 
-    set_text_in_position(text, x_pos, y_pos, right_align = false, is_center_pos = false) {
+    set_text_in_position(text, x_pos, y_pos, right_align = false, is_center_pos = false, color = this.font_color) {
         let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', text, numbers.FONT_SIZE);
         let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, 'gs-bmp-font', text, numbers.FONT_SIZE);
         if (is_center_pos) {
@@ -282,6 +285,7 @@ export class Window {
         }
 
         this.remove_smooth(text_sprite);
+        text_sprite.tint = color;
         this.remove_smooth(text_sprite_shadow);
         text_sprite_shadow.tint = 0x0;
 
@@ -307,6 +311,10 @@ export class Window {
             text_shadow_pair.text.x = text_shadow_pair.initial_x - text_shadow_pair.text.width;
             text_shadow_pair.shadow.x = text_shadow_pair.initial_x - text_shadow_pair.shadow.width + 1;
         }
+    }
+
+    update_text_color(color, text_shadow_pair) {
+        text_shadow_pair.text.tint = color;
     }
 
     remove_text(text_shadow_pair) {

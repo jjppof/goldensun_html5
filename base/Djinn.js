@@ -34,7 +34,10 @@ export class Djinn {
         this.index = index;
     }
 
-    set_status(status) {
+    set_status(status, char) {
         this.status = status;
+        char.update_elemental_attributes();
+        char.update_class();
+        char.update_attributes();
     }
 }

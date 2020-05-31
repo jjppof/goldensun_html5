@@ -132,7 +132,7 @@
         "jupiter_resist_base": 87,
         "innate_abilities": ["move", "retreat"],
         "in_party": true,
-        "djinni": ["flint", "granite"],
+        "djinni": ["flint", "granite", "quartz"],
         "items": [
             {
                 "key_name": "gaia_blade",

@@ -24,6 +24,18 @@
         "agi_boost": 2,
         "luk_boost": 1
     },{
+        "key_name": "quartz",
+        "name": "Quartz",
+        "description": "Revive a downed ally.",
+        "element": "venus",
+        "ability_key_name": "quartz",
+        "hp_boost": 10,
+        "pp_boost": 3,
+        "atk_boost": 0,
+        "def_boost": 0,
+        "agi_boost": 3,
+        "luk_boost": 0
+    },{
         "key_name": "forge",
         "name": "Forge",
         "description": "Boost party Attack with flame's fury.",

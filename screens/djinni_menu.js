@@ -7,17 +7,18 @@ import { CharsQuickInfoDjinnWindow } from '../base/windows/djinn/CharsQuickInfoD
 import { DjinnListWindow } from '../base/windows/djinn/DjinnListWindow.js';
 
 export class DjinnMenuScreen {
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
+    constructor(game, data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority) {
         this.game = game;
         this.data = data;
         this.esc_propagation_priority = esc_propagation_priority + 1;
         this.enter_propagation_priority = enter_propagation_priority + 1;
+        this.shift_propagation_priority = shift_propagation_priority + 1;
         this.is_open = false;
         this.close_callback = null;
         this.selected_char_index = 0;
         this.set_control();
         this.chars_quick_info_window = new CharsQuickInfoDjinnWindow(this.game);
-        this.djinni_list_window = new DjinnListWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
+        this.djinni_list_window = new DjinnListWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority, this.shift_propagation_priority);
     }
 
     set_control() {
@@ -32,7 +33,7 @@ export class DjinnMenuScreen {
         this.close_callback = close_callback;
         this.selected_char_index = 0;
         this.chars_quick_info_window.open(party_data.members[this.selected_char_index]);
-        this.djinni_list_window.open();
+        this.djinni_list_window.open(this.chars_quick_info_window);
         this.is_open = true;
     }
 

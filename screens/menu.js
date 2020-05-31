@@ -27,6 +27,7 @@ export class MenuScreen {
         this.buttons_keys = ["psynergy", "djinni", "item", "status"];
         let esc_propagation_priority = 0;
         let enter_propagation_priority = 0;
+        let shift_propagation_priority = 0;
         this.horizontal_menu = new HorizontalMenu(
             this.game,
             this.data,
@@ -38,7 +39,7 @@ export class MenuScreen {
         ++enter_propagation_priority;
         this.psynergy_menu = new PsynergyMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
         this.item_menu = new ItemMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
-        this.djinn_menu = new DjinnMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
+        this.djinn_menu = new DjinnMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority);
         this.set_chars_info();
     }
 
@@ -48,6 +49,7 @@ export class MenuScreen {
                 this.horizontal_menu.deactivate();
                 this.psynergy_menu.open_menu(close_this_menu => {
                     this.horizontal_menu.activate();
+                    this.update_chars_info();
                     if (close_this_menu) {
                         this.data.menu_open = false;
                         this.close_menu();
@@ -58,6 +60,7 @@ export class MenuScreen {
                 this.horizontal_menu.deactivate();
                 this.djinn_menu.open_menu(close_this_menu => {
                     this.horizontal_menu.activate();
+                    this.update_chars_info();
                     if (close_this_menu) {
                         this.data.menu_open = false;
                         this.close_menu();
@@ -68,6 +71,7 @@ export class MenuScreen {
                 this.horizontal_menu.deactivate();
                 this.item_menu.open_menu(close_this_menu => {
                     this.horizontal_menu.activate();
+                    this.update_chars_info();
                     if (close_this_menu) {
                         this.data.menu_open = false;
                         this.close_menu();

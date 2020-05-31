@@ -568,6 +568,7 @@ export class MainChar extends SpriteBase {
         this.init_elemental_attributes();
         for (let i = 0; i < this.djinni.length; ++i) {
             let djinn = djinni_list[this.djinni[i]];
+            if (djinn.status !== djinn_status.SET) continue;
             switch (djinn.element) {
                 case elements.VENUS:
                     this.venus_level_current += ELEM_LV_DELTA;

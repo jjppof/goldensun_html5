@@ -22,6 +22,7 @@ export const MAP_DAMPING = 1;
 export const NPC_DAMPING = 1;
 export const PSYNERGY_ITEM_DAMPING = 1;
 export const DEFAULT_WINDOW_COLOR = 0x006080;
+export const DEFAULT_FONT_COLOR = 0xF8F8F8;
 export const NPC_TALK_RANGE = 3.0;
 export const MAX_CHARS_PER_WINDOW = 85;
 export const FONT_SIZE = 8;
