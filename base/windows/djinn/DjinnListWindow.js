@@ -142,13 +142,13 @@ export class DjinnListWindow {
                 const x = DJINN_SPRITE_X + i * CHAR_X_BETWEEN;
                 this.djinns_sprites[i][elem] = this.chars_sprites_group.create(x, CHAR_Y_PADDING, elem + "_djinn_set");
                 this.djinns_sprites[i][elem].anchor.setTo(0.5, 1.0);
+                this.djinns_sprites[i][elem].scale.x = -1;
                 this.djinns_sprites[i][elem].alpha = 0;
             }
         }
-        console.log(this.djinns_sprites)
     }
 
-    set_djinn_sprite() {
+    set_djinn_sprite(tween = true) {
         const this_char = party_data.members[this.selected_char_index];
         const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
         if (this.active_djinn_sprite !== null) {
@@ -157,6 +157,15 @@ export class DjinnListWindow {
         }
         const this_sprite = this.djinns_sprites[this.selected_char_index][this_djinn.element];
         this.active_djinn_sprite = this_sprite;
+        if (tween) {
+            this_sprite.scale.setTo(0, 0);
+            this.game.add.tween(this_sprite.scale).to(
+                { x: -1, y: 1 },
+                Phaser.Timer.QUARTER >> 1,
+                Phaser.Easing.Linear.None,
+                true
+            );
+        }
         this_sprite.alpha = 1;
         let action, direction;
         switch (this_djinn.status) {
@@ -280,13 +289,13 @@ export class DjinnListWindow {
             this.base_window.update_text_color(STANDBY_COLOR, this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
             this.chars_quick_info_window.update_text();
             this.set_action_text();
-            this.set_djinn_sprite();
+            this.set_djinn_sprite(false);
         } else if (this_djinn.status === djinn_status.STANDBY) {
             this_djinn.set_status(djinn_status.SET, this_char);
             this.base_window.update_text_color(SET_COLOR, this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
             this.chars_quick_info_window.update_text();
             this.set_action_text();
-            this.set_djinn_sprite();
+            this.set_djinn_sprite(false);
         }
     }
 
