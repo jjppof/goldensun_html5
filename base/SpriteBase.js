@@ -7,7 +7,7 @@ export class SpriteBase {
         }
         this.animations = {};
     }
-    
+
     setActionDirections(action, directions, frame_counts) {
         this.actions[action].directions = [];
         this.actions[action].frame_counts = [];

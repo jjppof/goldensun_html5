@@ -40,7 +40,7 @@ export function initialize_djinni(game, djinni_db, load_promise_resolve) {
         for (let j = 0; j < actions.length; ++j) {
             const action = actions[j];
             djinni_sprites[element].setActionSpritesheet(action, `${base_path}${element}_djinn.png`, `${base_path}${element}_djinn.json`);
-            djinni_sprites[element].setActionDirections(action, directions[action], frames_number);
+            djinni_sprites[element].setActionDirections(action, directions[action], new Array(directions[action].length).fill(frames_number));
             djinni_sprites[element].setActionFrameRate(action, frames_rate);
         }
         djinni_sprites[element].addAnimations();
