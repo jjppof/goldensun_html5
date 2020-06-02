@@ -271,6 +271,8 @@ window.cast_psynergy = function() {
         psynergy_animations_db[psy_key].y_sequence,
         psynergy_animations_db[psy_key].x_scale_sequence,
         psynergy_animations_db[psy_key].y_scale_sequence,
+        psynergy_animations_db[psy_key].x_anchor_sequence,
+        psynergy_animations_db[psy_key].y_anchor_sequence,
         psynergy_animations_db[psy_key].alpha_sequence,
         psynergy_animations_db[psy_key].rotation_sequence,
         psynergy_animations_db[psy_key].stage_angle_sequence,
@@ -282,7 +284,7 @@ window.cast_psynergy = function() {
         psynergy_animations_db[psy_key].blend_mode_sequence,
         psynergy_animations_db[psy_key].is_party_animation
     );
-    battle_anim.initialize(undefined, undefined, camera_angle);
+    battle_anim.initialize(undefined, group_party, group_enemy, game.world, camera_angle);
     battle_anim.play();
 }
 
