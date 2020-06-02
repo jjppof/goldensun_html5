@@ -1,0 +1,58 @@
+[
+    {
+        "key_name": "pyroclasm",
+        "sprites": [{
+            "key_name": "pyroclasm_psynergy_animation",
+            "per_target": false
+        }],
+        "x_sequence": [{
+            "to": 0,
+            "is_absolute": true,
+            "tween": "initial",
+            "sprite_index": 0
+        }],
+        "y_sequence": [{
+            "to": 16,
+            "is_absolute": true,
+            "tween": "initial",
+            "sprite_index": 0
+        }],
+        "x_scale_sequence": [],
+        "y_scale_sequence": [],
+        "alpha_sequence": [],
+        "rotation_sequence": [],
+        "stage_angle_sequence": [
+            {
+                "start_at": 0,
+                "to": 0.53093,
+                "is_absolute": false,
+                "tween": "Linear.None",
+                "duration": 500
+            },{
+                "start_at": 800,
+                "to": 2.0295,
+                "is_absolute": false,
+                "tween": "Linear.None",
+                "duration": 4000,
+                "direction": "clockwise"
+            }
+        ],
+        "hue_angle_sequence": [],
+        "tint_sequence": [],
+        "camera_shake_sequence": [],
+        "play_sequence": [{
+            "start_at": 0,
+            "sprite_index": 0,
+            "reverse": false,
+            "frame_rate": 12,
+            "repeat": false
+        }],
+        "set_frame_sequence": [],
+        "blend_mode_sequence": [{
+            "start_at": 0,
+            "mode": "screen",
+            "sprite_index": 0
+        }],
+        "is_party_animation": true
+    }
+]

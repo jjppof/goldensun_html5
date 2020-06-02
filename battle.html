@@ -5,10 +5,19 @@
     <title>Golden Sun</title>
     <script type="text/javascript" src="phaser.js"></script>
     <script type="module" src="battle.js"></script>
+    <style>
+        canvas {
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+	</style>
 </head>
 <body>
 <button type="button" onclick="window.spin(Math.PI*2, Phaser.Easing.Exponential.InOut, 900)">EXP InOut 360º 900 ms</button><br>
 <button type="button" onclick="window.spin(Math.PI*3/2, Phaser.Easing.Elastic.InOut, 3000)">ELASTIC InOut 270º 3000 ms</button><br>
+<button type="button" onclick="window.cast_psynergy()">Cast Pyroclasm</button><br>
 <pre>
 1-7 to change background.
 Use arrows to move the camera.

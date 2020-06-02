@@ -3,43 +3,45 @@
 //====================================================================//
 
 import * as numbers from './magic_numbers.js';
+import { BattleAnimation } from './base/battle/BattleAnimation.js';
 
-var battle_bg;
-var battle_bg2;
-var players = [];
-var a;
-var b;
-var camera_angle;
-var camera_speed;
-var cursors;
-var default_scale;
-var center_x;
-var center_y;
-var bg_speed;
-var spining;
-var party_count;
-var enemy_count;
-var spacing_distance;
-var party_angle;
-var enemy_angle;
-var group_party;
-var group_enemy;
-var first_party_char;
-var last_party_char;
-var first_enemy_char;
-var last_enemy_char;
-var old_camera_angle;
-var bg_spin_speed;
-var pos_x_party;
-var pos_y_party;
-var pos_x_enemy;
-var pos_y_enemy;
-var scale;
-var players_number;
-var middle_shift_enemy;
-var middle_shift_party;
+window.battle_bg = undefined;
+window.battle_bg2 = undefined;
+window.players = [];
+window.a = undefined;
+window.b = undefined;
+window.camera_angle = undefined;
+window.camera_speed = undefined;
+window.cursors = undefined;
+window.default_scale = undefined;
+window.center_x = undefined;
+window.center_y = undefined;
+window.bg_speed = undefined;
+window.party_count = undefined;
+window.enemy_count = undefined;
+window.spacing_distance = undefined;
+window.party_angle = undefined;
+window.enemy_angle = undefined;
+window.group_party = undefined;
+window.group_enemy = undefined;
+window.first_party_char = undefined;
+window.last_party_char = undefined;
+window.first_enemy_char = undefined;
+window.last_enemy_char = undefined;
+window.old_camera_angle = undefined;
+window.bg_spin_speed = undefined;
+window.pos_x_party = undefined;
+window.pos_y_party = undefined;
+window.pos_x_enemy = undefined;
+window.pos_y_enemy = undefined;
+window.scale = undefined;
+window.players_number = undefined;
+window.middle_shift_enemy = undefined;
+window.middle_shift_party = undefined;
+window.screen_scale_factor = undefined;
+window.psynergy_animations_db = undefined;
 
-var game = new Phaser.Game (
+window.game = new Phaser.Game (
     numbers.GAME_WIDTH,
     numbers.GAME_HEIGHT,
     Phaser.AUTO,
@@ -62,6 +64,9 @@ function preload() {
     game.load.image('felix_front', 'assets/images/spritesheets/felix_front.png');
     game.load.image('mino_back', 'assets/images/spritesheets/mino_back.png');
     game.load.image('mino_front', 'assets/images/spritesheets/mino_front.png');
+
+    game.load.atlasJSONHash('pyroclasm_psynergy_animation', 'assets/images/psynergy_animations/pyroclasm.png', 'assets/images/psynergy_animations/pyroclasm.json');
+    game.load.json('psynergy_animations_db', 'assets/dbs/psynergy_animations_db.json');
 }
 
 function create() {
@@ -70,16 +75,21 @@ function create() {
         if (isDoubleClick) game.scale.startFullScreen(true);
     });
 
+    screen_scale_factor = 2;
+    game.scale.setupScale(screen_scale_factor * numbers.GAME_WIDTH, screen_scale_factor * numbers.GAME_HEIGHT);
+    window.dispatchEvent(new Event('resize'));
+
     battle_bg = game.add.tileSprite(0, 17, numbers.GAME_WIDTH, 113, 'colosso');
     battle_bg2 = game.add.tileSprite(0, 17, numbers.GAME_WIDTH, 113, 'colosso');
 
-    spining = false;
+    psynergy_animations_db = game.cache.getJSON('psynergy_animations_db');
+
     default_scale = 0.9;
     center_x = numbers.GAME_WIDTH/2;
     center_y = numbers.GAME_HEIGHT - 35;
     a = numbers.GAME_WIDTH/2 - 30;
     b = numbers.GAME_HEIGHT/30;
-    camera_angle = {rad : 0};
+    camera_angle = {rad : 0, spining: false};
     old_camera_angle = camera_angle.rad;
     camera_speed = 0.009 * Math.PI;
     bg_speed = 2.4;
@@ -144,32 +154,31 @@ function create() {
 
 //active spin effect
 window.spin = function(angle, easing, duration) {
-    if (!spining) {
-        spining = true;
+    if (!camera_angle.spining) {
+        camera_angle.spining = true;
         game.add.tween(camera_angle).to(
             {rad: camera_angle.rad + angle},
             duration,
             easing,
             true
-        );
-        game.time.events.add(duration + 50, () => {
-            spining = false;
-        }, this);
+        ).onComplete.addOnce(() => {
+            camera_angle.spining = false;
+        });
     }
 }
 
 function update() {
-    if (cursors.left.isDown || cursors.right.isDown || spining) {
+    if (cursors.left.isDown || cursors.right.isDown || camera_angle.spining) {
         //angle change and bg x position change
-        if (!cursors.left.isDown && cursors.right.isDown && !spining) {
+        if (!cursors.left.isDown && cursors.right.isDown && !camera_angle.spining) {
             camera_angle.rad -= camera_speed;
             battle_bg.x -= bg_speed
-        } else if (cursors.left.isDown && !cursors.right.isDown && !spining) {
+        } else if (cursors.left.isDown && !cursors.right.isDown && !camera_angle.spining) {
             camera_angle.rad += camera_speed; 
             battle_bg.x += bg_speed
         }
 
-        if (!spining) { //let spin effect do its work freely
+        if (!camera_angle.spining) { //let spin effect do its work freely
             if(camera_angle.rad >= numbers.FULL_ROUND) camera_angle.rad -= numbers.FULL_ROUND;
             if(camera_angle.rad < 0) camera_angle.rad += numbers.FULL_ROUND;
         } else //tie bg x position with camera angle when spining
@@ -250,6 +259,31 @@ function update() {
                 players[i].scale.setTo(-players[i].scale.x, players[i].scale.y);
         }
     }
+}
+
+window.cast_psynergy = function() {
+    const psy_key = 0;
+    let battle_anim = new BattleAnimation(
+        game,
+        psynergy_animations_db[psy_key].key_name,
+        psynergy_animations_db[psy_key].sprites,
+        psynergy_animations_db[psy_key].x_sequence,
+        psynergy_animations_db[psy_key].y_sequence,
+        psynergy_animations_db[psy_key].x_scale_sequence,
+        psynergy_animations_db[psy_key].y_scale_sequence,
+        psynergy_animations_db[psy_key].alpha_sequence,
+        psynergy_animations_db[psy_key].rotation_sequence,
+        psynergy_animations_db[psy_key].stage_angle_sequence,
+        psynergy_animations_db[psy_key].hue_angle_sequence,
+        psynergy_animations_db[psy_key].tint_sequence,
+        psynergy_animations_db[psy_key].camera_shake_sequence,
+        psynergy_animations_db[psy_key].play_sequence,
+        psynergy_animations_db[psy_key].set_frame_sequence,
+        psynergy_animations_db[psy_key].blend_mode_sequence,
+        psynergy_animations_db[psy_key].is_party_animation
+    );
+    battle_anim.initialize(undefined, undefined, camera_angle);
+    battle_anim.play();
 }
 
 function ellipse(angle) { //ellipse formula
