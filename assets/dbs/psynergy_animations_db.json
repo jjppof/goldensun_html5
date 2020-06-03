@@ -47,6 +47,20 @@
             "tween": "Linear.None",
             "sprite_index": 0,
             "duration": 200
+        },{
+            "start_delay": 500,
+            "to": 0.8,
+            "is_absolute": true,
+            "tween": "Linear.None",
+            "sprite_index": "background",
+            "duration": 200
+        },{
+            "start_delay": 4200,
+            "to": 1.0,
+            "is_absolute": true,
+            "tween": "Linear.None",
+            "sprite_index": "background",
+            "duration": 200
         }],
         "rotation_sequence": [],
         "stage_angle_sequence": [

@@ -40,6 +40,8 @@ window.middle_shift_enemy = undefined;
 window.middle_shift_party = undefined;
 window.screen_scale_factor = undefined;
 window.psynergy_animations_db = undefined;
+window.battle_animation_executing = false;
+window.game_intialized = false;
 
 window.game = new Phaser.Game (
     numbers.GAME_WIDTH,
@@ -150,6 +152,8 @@ function create() {
     }, this);
 
     cursors = game.input.keyboard.createCursorKeys();
+
+    game_intialized = true;
 }
 
 //active spin effect
@@ -262,6 +266,8 @@ function update() {
 }
 
 window.cast_psynergy = function() {
+    if (battle_animation_executing || !game_intialized) return;
+    battle_animation_executing = true;
     const psy_key = 0;
     let battle_anim = new BattleAnimation(
         game,
@@ -284,8 +290,10 @@ window.cast_psynergy = function() {
         psynergy_animations_db[psy_key].blend_mode_sequence,
         psynergy_animations_db[psy_key].is_party_animation
     );
-    battle_anim.initialize(undefined, group_party, group_enemy, game.world, camera_angle);
-    battle_anim.play();
+    battle_anim.initialize(undefined, group_party, group_enemy, game.world, camera_angle, [battle_bg, battle_bg2]);
+    battle_anim.play(() => {
+        battle_animation_executing = false;
+    });
 }
 
 function ellipse(angle) { //ellipse formula
