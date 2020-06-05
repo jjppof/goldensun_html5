@@ -67,6 +67,8 @@ function preload() {
     game.load.image('mino_back', 'assets/images/spritesheets/mino_back.png');
     game.load.image('mino_front', 'assets/images/spritesheets/mino_front.png');
 
+    game.load.script('color_filters', 'plugins/ColorFilters.js');
+
     game.load.atlasJSONHash('pyroclasm_psynergy_animation', 'assets/images/psynergy_animations/pyroclasm.png', 'assets/images/psynergy_animations/pyroclasm.json');
     game.load.json('psynergy_animations_db', 'assets/dbs/psynergy_animations_db.json');
 }
@@ -284,13 +286,16 @@ window.cast_psynergy = function() {
         psynergy_animations_db[psy_key].stage_angle_sequence,
         psynergy_animations_db[psy_key].hue_angle_sequence,
         psynergy_animations_db[psy_key].tint_sequence,
+        psynergy_animations_db[psy_key].grayscale_sequence,
+        psynergy_animations_db[psy_key].colorize_sequence,
+        psynergy_animations_db[psy_key].custom_filter_sequence,
         psynergy_animations_db[psy_key].camera_shake_sequence,
         psynergy_animations_db[psy_key].play_sequence,
         psynergy_animations_db[psy_key].set_frame_sequence,
         psynergy_animations_db[psy_key].blend_mode_sequence,
         psynergy_animations_db[psy_key].is_party_animation
     );
-    battle_anim.initialize(undefined, group_party, group_enemy, game.world, camera_angle, [battle_bg, battle_bg2]);
+    battle_anim.initialize(group_party.children[0], group_enemy.children, group_party, group_enemy, game.world, camera_angle, [battle_bg, battle_bg2]);
     battle_anim.play(() => {
         battle_animation_executing = false;
     });

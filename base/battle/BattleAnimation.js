@@ -3,15 +3,15 @@ const tween_types = {
 };
 
 export class BattleAnimation {
-    //tween type can be 'Initial' for first position
-    //tween type can be 'NoTween' for immediately change
+    //tween type can be 'initial' for first position
     //sprite_index: "target" is the target, "caster" is the caster, "background" is the background sprite, 0...n is the sprites_key_names index
-    //values can be "target", "caster" or an actual value
+    //property "to" values can be "center_target", "caster" or an actual value. In the case of "center_target" or "caster", is the the corresponding property value 
     //values in rad can have direction set to "clockwise", "counter_clockwise" or "closest"
+    //in sprite_keys, position can be: "between", "over" or "behind"
     constructor(
         game,
         key_name,
-        sprites_keys, //{key_name: string, per_target: bool}
+        sprites_keys, //{key_name: string, per_target: bool, position: value}
         x_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
         y_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
         x_scale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
@@ -22,10 +22,13 @@ export class BattleAnimation {
         rotation_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value, direction: value}
         stage_angle_sequence, //{start_delay: value, to: value, is_absolute: bool, tween: type, duration: value, direction: value}
         hue_angle_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value, direction: value}
-        tint_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
+        tint_sequence, //{start_delay: value, sprite_index: index, value: %rgb array}
+        grayscale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
+        colorize_sequence, //{start_delay: value, sprite_index: index, value: value, colorize_intensity: value}
+        custom_filter_sequence, //{start_delay: value, sprite_index: index, filter: key, value: value}
         camera_shake_sequence, //{start_delay: value, intensity: value, duration: value: direction: direction_option}
         play_sequence, //{start_delay: value, sprite_index: index, reverse: bool, frame_rate: value, repeat: bool}
-        set_frame_sequence, //{start_delay: value, frame_key_name: string}
+        set_frame_sequence, //{start_delay: value, frame: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
         is_party_animation
     ) {
@@ -43,6 +46,9 @@ export class BattleAnimation {
         this.stage_angle_sequence = stage_angle_sequence;
         this.hue_angle_sequence = hue_angle_sequence;
         this.tint_sequence = tint_sequence;
+        this.grayscale_sequence = grayscale_sequence;
+        this.colorize_sequence = colorize_sequence;
+        this.custom_filter_sequence = custom_filter_sequence;
         this.camera_shake_sequence = camera_shake_sequence;
         this.play_sequence = play_sequence;
         this.set_frame_sequence = set_frame_sequence;
@@ -50,16 +56,17 @@ export class BattleAnimation {
         this.is_party_animation = is_party_animation;
     }
 
-    initialize(caster_sprite, group_caster, group_enemy, super_group, stage_camera, background_sprites) {
+    initialize(caster_sprite, takers_sprites, group_caster, group_enemy, super_group, stage_camera, background_sprites) {
         this.sprites = [];
         this.x0 = this.game.camera.x;
         this.y0 = this.game.camera.y;
         this.caster_sprite = caster_sprite;
+        this.takers_sprites = takers_sprites;
+        this.background_sprites = background_sprites;
         this.group_caster = group_caster;
         this.group_enemy = group_enemy;
         this.super_group = super_group;
         this.stage_camera = stage_camera;
-        this.background_sprites = background_sprites;
         for (let i = 0; i < this.sprites_keys.length; ++i) {
             const sprite_info = this.sprites_keys[i];
             if (!sprite_info.per_target) {
@@ -69,6 +76,25 @@ export class BattleAnimation {
                 this.sprites[i].animations.add('cast', Phaser.Animation.generateFrameNames('', 1, this.sprites[i].animations.frameTotal, '', 3));
             }
         }
+        this.set_filters();
+    }
+
+    set_filters() {
+        this.caster_filter = this.game.add.filter('ColorFilters');
+        this.takers_filter = this.game.add.filter('ColorFilters');
+        this.background_filter = this.game.add.filter('ColorFilters');
+        this.sprites_filters = [];
+        this.caster_sprite.filters = [this.caster_filter];
+        this.takers_sprites.forEach(sprite => {
+            sprite.filters = [this.takers_filter];
+        });
+        this.background_sprites.forEach(sprite => {
+            sprite.filters = [this.background_filter];
+        });
+        this.sprites.forEach((sprite, index) => {
+            this.sprites_filters.push(this.game.add.filter('ColorFilters'));
+            sprite.filters = [this.sprites_filters[index]];
+        });
     }
 
     play(finish_callback) {
@@ -81,10 +107,30 @@ export class BattleAnimation {
         this.play_number_property_sequence(this.y_scale_sequence, 'y', 'scale');
         this.play_number_property_sequence(this.x_anchor_sequence, 'x', 'anchor');
         this.play_number_property_sequence(this.y_anchor_sequence, 'y', 'anchor');
+        this.play_number_property_sequence(this.hue_angle_sequence, 'hue_adjust', 'filter');
+        this.play_number_property_sequence(this.grayscale_sequence, 'gray', 'filter');
         this.play_sprite_sequence();
         this.play_blend_modes();
+        this.play_filter_property(this.tint_sequence, 'tint');
+        this.play_filter_property(this.colorize_sequence, 'colorize', 'colorize_intensity');
+        this.play_filter_property(this.custom_filter_sequence);
         this.play_stage_angle_sequence();
+        this.unmount_animation(finish_callback);
+    }
+
+    unmount_animation(finish_callback) {
         Promise.all(this.promises).then(() => {
+            this.caster_filter = null;
+            this.takers_filter = null;
+            this.background_filter = null;
+            this.sprites_filters = [];
+            this.caster_sprite.filters = undefined;
+            this.takers_sprites.forEach(sprite => {
+                sprite.filters = undefined;
+            });
+            this.background_sprites.forEach(sprite => {
+                sprite.filters = undefined;
+            });
             this.sprites.forEach(sprite => {
                 sprite.destroy();
             });
@@ -92,6 +138,30 @@ export class BattleAnimation {
                 finish_callback();
             }
         });
+    }
+
+    get_sprites(seq, inner_property) {
+        if (inner_property) {
+            if (seq.sprite_index === "background") {
+                if (inner_property === "filter") {
+                    return [this.background_filter];
+                } else {
+                    return this.background_sprites.forEach(sprite => sprite[inner_property]);
+                }
+            } else {
+                if (inner_property === "filter") {
+                    return [this.sprites_filters[seq.sprite_index]];
+                } else {
+                    return [this.sprites[seq.sprite_index][inner_property]];
+                }
+            }
+        } else {
+            if (seq.sprite_index === "background") {
+                return this.background_sprites;
+            } else {
+                return [this.sprites[seq.sprite_index]];
+            }
+        }
     }
 
     play_number_property_sequence(sequence, target_property, inner_property) {
@@ -103,20 +173,7 @@ export class BattleAnimation {
             if (seq.sprite_index in chained_tweens) {
                 auto_start_tween[seq.sprite_index] = false;
             }
-            let sprites;
-            if (inner_property) {
-                if (seq.sprite_index === "background") {
-                    sprites = this.background_sprites.forEach(sprite => sprite[inner_property]);
-                } else {
-                    sprites = [this.sprites[seq.sprite_index][inner_property]];
-                }
-            } else {
-                if (seq.sprite_index === "background") {
-                    sprites = this.background_sprites;
-                } else {
-                    sprites = [this.sprites[seq.sprite_index]];
-                }
-            }
+            let sprites = this.get_sprites(seq, inner_property);
             let initial_value = 0;
             if (!['scale', 'anchor'].includes(inner_property)) {
                 switch (target_property) {
@@ -164,11 +221,14 @@ export class BattleAnimation {
             let this_promise = new Promise(resolve => { resolve_function = resolve; });
             this.promises.push(this_promise);
             game.time.events.add(play_seq.start_delay, () => {
-                if (play_seq.reverse) {
-                    this.sprites[play_seq.sprite_index].animations.currentAnim.reverse();
-                }
-                this.sprites[play_seq.sprite_index].animations.play('cast', play_seq.frame_rate, play_seq.repeat);
-                this.sprites[play_seq.sprite_index].animations.currentAnim.onComplete.addOnce(resolve_function);
+                let sprites = this.get_sprites(play_seq);
+                sprites.forEach(sprite => {
+                    if (play_seq.reverse) {
+                        sprite.animations.currentAnim.reverse();
+                    }
+                    sprite.animations.play('cast', play_seq.frame_rate, play_seq.repeat);
+                    sprite.animations.currentAnim.onComplete.addOnce(resolve_function);
+                });
             });
         }
     }
@@ -180,11 +240,36 @@ export class BattleAnimation {
             let this_promise = new Promise(resolve => { resolve_function = resolve; });
             this.promises.push(this_promise);
             game.time.events.add(blend_mode_seq.start_delay, () => {
-                switch (blend_mode_seq.mode) {
-                    case "screen":
-                        this.sprites[blend_mode_seq.sprite_index].blendMode = PIXI.blendModes.SCREEN;
-                        break;
-                }
+                let sprites = this.get_sprites(blend_mode_seq);
+                sprites.forEach(sprite => {
+                    switch (blend_mode_seq.mode) {
+                        case "screen":
+                            sprite.blendMode = PIXI.blendModes.SCREEN;
+                            break;
+                    }
+                });
+                resolve_function();
+            });
+        }
+    }
+
+    play_filter_property(sequence, property, ...secondary_properties) {
+        for (let i = 0; i < sequence.length; ++i) {
+            const filter_seq = sequence[i];
+            if (property === undefined) {
+                property = filter_seq.filter;
+            }
+            let resolve_function;
+            let this_promise = new Promise(resolve => { resolve_function = resolve; });
+            this.promises.push(this_promise);
+            game.time.events.add(filter_seq.start_delay, () => {
+                let sprites = this.get_sprites(filter_seq);
+                sprites.forEach(sprite => {
+                    sprite.filters[0][property] = filter_seq.value;
+                    secondary_properties.forEach(secondary_property => {
+                        sprite.filters[0][secondary_property] = filter_seq[secondary_property];
+                    });
+                });
                 resolve_function();
             });
         }

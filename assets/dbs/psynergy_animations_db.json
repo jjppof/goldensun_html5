@@ -81,6 +81,9 @@
         ],
         "hue_angle_sequence": [],
         "tint_sequence": [],
+        "grayscale_sequence": [],
+        "colorize_sequence": [],
+        "custom_filter_sequence": [],
         "camera_shake_sequence": [],
         "play_sequence": [{
             "start_delay": 500,

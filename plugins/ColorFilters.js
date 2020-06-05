@@ -11,6 +11,7 @@ Phaser.Filter.ColorFilters = function (game) {
     this.uniforms.r_tint = { type: '1f', value: -1.0 };
     this.uniforms.g_tint = { type: '1f', value: -1.0 };
     this.uniforms.b_tint = { type: '1f', value: -1.0 };
+    this.uniforms.flame = { type: '1f', value: 0.0 };
 
     this.fragmentSrc = [
         "precision mediump float;",
@@ -27,6 +28,7 @@ Phaser.Filter.ColorFilters = function (game) {
         "uniform float      r_tint;",
         "uniform float      g_tint;",
         "uniform float      b_tint;",
+        "uniform float      flame;",
 
         "void main(void) {",
             "gl_FragColor = texture2D(uSampler, vTextureCoord);",
@@ -36,6 +38,10 @@ Phaser.Filter.ColorFilters = function (game) {
 
             "if (r_tint != -1.0 && g_tint != -1.0 && b_tint != -1.0) {",
                 "gl_FragColor.rgb = vec3(r_tint * gl_FragColor.a, g_tint * gl_FragColor.a, b_tint * gl_FragColor.a);",
+            "}",
+
+            "if (flame == 1.0) {",
+                "gl_FragColor.rgb = vec3(gl_FragColor.a, (gl_FragColor.r + gl_FragColor.g + gl_FragColor.b)/3.0, 0);",
             "}",
 
             "if (r_colorize != 1.0 || g_colorize != 1.0 || b_colorize != 1.0) {",
@@ -136,5 +142,13 @@ Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'tint', {
         this.uniforms.r_tint.value = value[0];
         this.uniforms.g_tint.value = value[1];
         this.uniforms.b_tint.value = value[2];
+    }
+});
+Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'flame', {
+    get: function() {
+        return Boolean(this.uniforms.flame.value);
+    },
+    set: function(value) {
+        this.uniforms.flame.value = +value;
     }
 });
