@@ -64,7 +64,7 @@
 	"spriteSourceSize": {"x":17,"y":13,"w":40,"h":51},
 	"sourceSize": {"w":64,"h":64}
 },
-"battle/cast_back/01":
+"battle/cast_back/00":
 {
 	"frame": {"x":1,"y":67,"w":40,"h":64},
 	"rotated": false,
@@ -72,7 +72,7 @@
 	"spriteSourceSize": {"x":22,"y":0,"w":40,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
-"battle/cast_back/02":
+"battle/cast_back/01":
 {
 	"frame": {"x":1,"y":1,"w":41,"h":64},
 	"rotated": false,
@@ -80,7 +80,7 @@
 	"spriteSourceSize": {"x":22,"y":0,"w":41,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
-"battle/cast_front/01":
+"battle/cast_front/00":
 {
 	"frame": {"x":1,"y":193,"w":33,"h":64},
 	"rotated": false,
@@ -88,7 +88,7 @@
 	"spriteSourceSize": {"x":9,"y":0,"w":33,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
-"battle/cast_front/02":
+"battle/cast_front/01":
 {
 	"frame": {"x":1,"y":259,"w":32,"h":64},
 	"rotated": false,

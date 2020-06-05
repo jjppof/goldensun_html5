@@ -20,12 +20,28 @@
                 "duration": 1000
             }
         ],
-        "y_sequence": [{
-            "to": 17,
-            "is_absolute": true,
-            "tween": "initial",
-            "sprite_index": 0
-        }],
+        "y_sequence": [
+            {
+                "to": 17,
+                "is_absolute": true,
+                "tween": "initial",
+                "sprite_index": 0
+            },{
+                "start_delay": 1000,
+                "to": -20,
+                "is_absolute": false,
+                "tween": "Quadratic.Out",
+                "sprite_index": "targets",
+                "duration": 350
+            },{
+                "start_delay": 0,
+                "to": 20,
+                "is_absolute": false,
+                "tween": "Quadratic.Out",
+                "sprite_index": "targets",
+                "duration": 350
+            }
+        ],
         "x_scale_sequence": [{
             "to": 1.8,
             "is_absolute": true,
@@ -41,14 +57,14 @@
             "tween": "initial",
             "sprite_index": 0
         },{
-            "start_delay": 500,
+            "start_delay": 1000,
             "to": 1.0,
             "is_absolute": true,
             "tween": "Linear.None",
             "sprite_index": 0,
             "duration": 200
         },{
-            "start_delay": 500,
+            "start_delay": 1000,
             "to": 0.8,
             "is_absolute": true,
             "tween": "Linear.None",
@@ -80,18 +96,83 @@
             }
         ],
         "hue_angle_sequence": [],
-        "tint_sequence": [],
+        "tint_sequence": [
+            {
+                "start_delay": 1000, 
+                "sprite_index": "targets", 
+                "value": [1,1,1]
+            },{
+                "start_delay": 1125, 
+                "sprite_index": "targets", 
+                "value": [-1,-1,-1]
+            },{
+                "start_delay": 1250, 
+                "sprite_index": "targets", 
+                "value": [1,1,1]
+            },{
+                "start_delay": 1375, 
+                "sprite_index": "targets", 
+                "value": [-1,-1,-1]
+            }
+        ],
         "grayscale_sequence": [],
         "colorize_sequence": [],
-        "custom_filter_sequence": [],
+        "custom_filter_sequence": [
+            {
+                "start_delay": 1500, 
+                "sprite_index": "targets", 
+                "filter": "flame", 
+                "value": true
+            },{
+                "start_delay": 6000, 
+                "sprite_index": "targets", 
+                "filter": "flame", 
+                "value": false
+            }
+        ],
         "camera_shake_sequence": [],
-        "play_sequence": [{
-            "start_delay": 500,
-            "sprite_index": 0,
-            "reverse": false,
-            "frame_rate": 12,
-            "repeat": false
-        }],
+        "play_sequence": [
+            {
+                "animation_key": "cast",
+                "start_delay": 1000,
+                "sprite_index": 0,
+                "reverse": false,
+                "frame_rate": 12,
+                "repeat": false,
+                "wait": true
+            },{
+                "animation_key": "cast_init_back",
+                "start_delay": 1000,
+                "sprite_index": "caster",
+                "wait": false
+            },{
+                "animation_key": "cast_back",
+                "start_delay": 1500,
+                "sprite_index": "caster",
+                "wait": false
+            },{
+                "animation_key": "cast_init_back",
+                "reverse": true,
+                "start_delay": 5500,
+                "sprite_index": "caster",
+                "wait": false
+            },{
+                "animation_key": "back",
+                "start_delay": 6000,
+                "sprite_index": "caster",
+                "wait": false
+            },{
+                "animation_key": "damage_front",
+                "start_delay": 1000,
+                "sprite_index": "targets",
+                "wait": false
+            },{
+                "animation_key": "front",
+                "start_delay": 6500,
+                "sprite_index": "targets",
+                "wait": false
+            }
+        ],
         "set_frame_sequence": [],
         "blend_mode_sequence": [{
             "start_delay": 0,

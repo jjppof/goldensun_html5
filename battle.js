@@ -42,6 +42,7 @@ window.screen_scale_factor = undefined;
 window.psynergy_animations_db = undefined;
 window.battle_animation_executing = false;
 window.game_intialized = false;
+window.battle_anim = null;
 
 var sprites_db = {
     "isaac_battle_animation": [
@@ -68,22 +69,22 @@ var sprites_db = {
         },{
             action: "cast_back",
             frames_count: 2,
-            frame_rate: 8,
+            frame_rate: 10,
             loop: true
         },{
             action: "cast_front",
             frames_count: 2,
-            frame_rate: 8,
+            frame_rate: 10,
             loop: true
         },{
             action: "cast_init_back",
             frames_count: 3,
-            frame_rate: 3,
+            frame_rate: 6,
             loop: false
         },{
             action: "cast_init_front",
             frames_count: 3,
-            frame_rate: 3,
+            frame_rate: 6,
             loop: false
         },{
             action: "damage_back",
@@ -179,6 +180,7 @@ function set_animations(data) {
     data.db.forEach(action => {
         const frames = Phaser.Animation.generateFrameNames(`battle/${action.action}/`, 0, action.frames_count - 1, '', 2);
         data.sprite.animations.add(action.action, frames,action.frame_rate, action.loop);
+        data.sprite.animations.play(data.is_party ? 'back' : 'front');
     });
 }
 
@@ -191,6 +193,8 @@ function create() {
     screen_scale_factor = 2;
     game.scale.setupScale(screen_scale_factor * numbers.GAME_WIDTH, screen_scale_factor * numbers.GAME_HEIGHT);
     window.dispatchEvent(new Event('resize'));
+
+    game.stage.disableVisibilityChange = true;
 
     battle_bg = game.add.tileSprite(0, 17, numbers.GAME_WIDTH, 113, 'colosso');
     battle_bg2 = game.add.tileSprite(0, 17, numbers.GAME_WIDTH, 113, 'colosso');
@@ -217,6 +221,18 @@ function create() {
     group_enemy = game.add.group();
     group_party = game.add.group();
 
+    // ====== NEED REFAC ====== //
+    //get equidistant arc lenghts from camera angle
+    party_angle = get_angle(camera_angle.rad);
+    enemy_angle = get_angle(camera_angle.rad + Math.PI);
+    // ====== NEED REFAC END ====== //
+
+    //calculate party and enemy base position
+    pos_x_party = center_x + ellipse(party_angle)*Math.cos(party_angle);
+    pos_y_party = center_y + ellipse(party_angle)*Math.sin(party_angle);
+    pos_x_enemy = center_x + ellipse(enemy_angle)*Math.cos(enemy_angle);
+    pos_y_enemy = center_y + ellipse(enemy_angle)*Math.sin(enemy_angle);
+
     for (let i = 0; i < players_number; ++i) {
         let p;
         if (i < party_count)
@@ -226,7 +242,23 @@ function create() {
         p.anchor.setTo(0.5, 1);
         p.scale.setTo(default_scale, default_scale);
         players.push(p);
-        set_animations({ sprite: p, db: sprites_db[p.key]});
+        set_animations({ sprite: p, db: sprites_db[p.key], is_party: i < party_count});
+
+        // ====== NEED REFAC ====== //
+        //initialize position
+        let relative_angle = i < party_count ? camera_angle.rad : camera_angle.rad + Math.PI;
+        if (i < party_count) { //shift party players from base point
+            players[i].x = pos_x_party + ((spacing_distance*i - middle_shift_party) + (spacing_distance >> 1)) * Math.sin(relative_angle);
+            if (battle_anim === null || !battle_anim.moving_y) {
+                players[i].y = pos_y_party;
+            }
+        } else {  //shift enemy players from base point
+            players[i].x = pos_x_enemy + ((spacing_distance*(i-party_count) - middle_shift_enemy) + (spacing_distance >> 1)) * Math.sin(relative_angle);
+            if (battle_anim === null || !battle_anim.moving_y) {
+                players[i].y = pos_y_enemy;
+            }
+        }
+        // ====== NEED REFAC END ====== //
     }
 
     first_party_char = group_party.children[0];
@@ -345,10 +377,14 @@ function update() {
             let relative_angle = i < party_count ? camera_angle.rad : camera_angle.rad + Math.PI;
             if (i < party_count) { //shift party players from base point
                 players[i].x = pos_x_party + ((spacing_distance*i - middle_shift_party) + (spacing_distance >> 1)) * Math.sin(relative_angle);
-                players[i].y = pos_y_party;
+                if (!players[i].moving_y) {
+                    players[i].y = pos_y_party;
+                }
             } else {  //shift enemy players from base point
                 players[i].x = pos_x_enemy + ((spacing_distance*(i-party_count) - middle_shift_enemy) + (spacing_distance >> 1)) * Math.sin(relative_angle);
-                players[i].y = pos_y_enemy;
+                if (!players[i].moving_y) {
+                    players[i].y = pos_y_enemy;
+                }
             }
 
             //set scale
@@ -357,15 +393,17 @@ function update() {
 
             //change texture in function of position
             if (i < party_count) {
-                if (Math.sin(relative_angle) > 0 && players[i].animations.currentAnim.name !== 'back')
-                    players[i].animations.play('back');
-                else if (Math.sin(relative_angle) <= 0 && players[i].animations.currentAnim.name !== 'front')
-                    players[i].animations.play('front');
+                if (Math.sin(relative_angle) > 0 && !players[i].animations.currentAnim.name.endsWith('back')) {
+                    players[i].animations.play(players[i].animations.currentAnim.name.replace('front', 'back'));
+                } else if (Math.sin(relative_angle) <= 0 && !players[i].animations.currentAnim.name.endsWith('front')) {
+                    players[i].animations.play(players[i].animations.currentAnim.name.replace('back', 'front'));
+                } 
             } else {
-                if (Math.sin(relative_angle) > 0 && players[i].animations.currentAnim.name !== 'back')
-                    players[i].animations.play('back');
-                else if (Math.sin(relative_angle) <= 0 && players[i].animations.currentAnim.name !== 'front')
-                    players[i].animations.play('front');
+                if (Math.sin(relative_angle) > 0 && !players[i].animations.currentAnim.name.endsWith('back')) {
+                    players[i].animations.play(players[i].animations.currentAnim.name.replace('front', 'back'));
+                } else if (Math.sin(relative_angle) <= 0 && !players[i].animations.currentAnim.name.endsWith('front')) {
+                    players[i].animations.play(players[i].animations.currentAnim.name.replace('back', 'front'));
+                }
             }
 
             //change side in function of position
@@ -381,7 +419,7 @@ window.cast_psynergy = function() {
     if (battle_animation_executing || !game_intialized) return;
     battle_animation_executing = true;
     const psy_key = 0;
-    let battle_anim = new BattleAnimation(
+    battle_anim = new BattleAnimation(
         game,
         psynergy_animations_db[psy_key].key_name,
         psynergy_animations_db[psy_key].sprites,
