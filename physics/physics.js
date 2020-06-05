@@ -1,6 +1,6 @@
 import { maps } from '../maps/maps.js';
 import * as numbers from '../magic_numbers.js';
-import { get_transition_directions } from '../utils.js';
+import { get_transition_directions, check_isdown } from '../utils.js';
 import { main_char_list } from '../chars/main_chars.js';
 import { normal_push } from '../psynergy_items/push.js';
 
@@ -172,69 +172,150 @@ export function collision_dealer(data) {
     }
     if (normals.length && ["walk", "dash"].includes(data.actual_action)) {
         if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) {
+            normals.forEach(normal => {
+                if (Math.abs(normal[0]) < 0.1) normal[0] = 0;
+                if (Math.abs(normal[1]) < 0.1) normal[1] = 0;
+                if (Math.sign(-normal[0]) === Math.sign(data.hero.body.velocity.ask_x) && Math.sign(-normal[1]) === Math.sign(data.hero.body.velocity.ask_y)) {
+                    if (normal[0] !== 0) data.hero.body.velocity.ask_x = 0;
+                    if (normal[1] !== 0) data.hero.body.velocity.ask_y = 0;
+                    return;
+                }
+            });
             data.stop_by_colliding = true;
+            data.force_direction = false;
+            data.forcing_on_diagonal = false;
         } else {
             data.stop_by_colliding = false;
             if (normals.length === 1) {
                 const normal_angle = (Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree360) % numbers.degree360;
                 if (normal_angle >= numbers.degree15 && normal_angle < numbers.degree90 - numbers.degree15) {
-                    if (data.cursors.up.isDown) {
+                    if (check_isdown(data.cursors, "up")) {
                         data.force_direction = true;
+                        data.forcing_on_diagonal = true;
                         data.actual_direction = "up_left";
-                    } else if (data.cursors.right.isDown) {
+                    } else if (check_isdown(data.cursors, "right")) {
                         data.force_direction = true;
+                        data.forcing_on_diagonal = true;
                         data.actual_direction = "down_right";
-                    } else if (data.actual_direction !== "up_left" && data.actual_direction !== "down_right") {
+                    } else {
                         data.force_direction = false;
+                        data.forcing_on_diagonal = false;
                     }
                 } else if (normal_angle >= numbers.degree90 + numbers.degree15 && normal_angle < Math.PI - numbers.degree15) {
-                    if (data.cursors.up.isDown) {
+                    if (check_isdown(data.cursors, "up")) {
                         data.force_direction = true;
+                        data.forcing_on_diagonal = true;
                         data.actual_direction = "up_right";
-                    } else if (data.cursors.left.isDown) {
+                    } else if (check_isdown(data.cursors, "left")) {
                         data.force_direction = true;
+                        data.forcing_on_diagonal = true;
                         data.actual_direction = "down_left";
-                    } else if (data.actual_direction !== "up_right" && data.actual_direction !== "down_left") {
+                    } else {
                         data.force_direction = false;
+                        data.forcing_on_diagonal = false;
                     }
                 } else if (normal_angle >= Math.PI + numbers.degree15 && normal_angle < numbers.degree270 - numbers.degree15) {
-                    if (data.cursors.left.isDown) {
+                    if (check_isdown(data.cursors, "left")) {
                         data.force_direction = true;
+                        data.forcing_on_diagonal = true;
                         data.actual_direction = "up_left";
-                    } else if (data.cursors.down.isDown) {
+                    } else if (check_isdown(data.cursors, "down")) {
                         data.force_direction = true;
+                        data.forcing_on_diagonal = true;
                         data.actual_direction = "down_right";
-                    } else if (data.actual_direction !== "up_left" && data.actual_direction !== "down_right") {
+                    } else {
                         data.force_direction = false;
+                        data.forcing_on_diagonal = false;
                     }
                 } else if (normal_angle >= numbers.degree270 + numbers.degree15 && normal_angle < numbers.degree360 - numbers.degree15) {
-                    if (data.cursors.right.isDown) {
+                    if (check_isdown(data.cursors, "right")) {
                         data.force_direction = true;
+                        data.forcing_on_diagonal = true;
                         data.actual_direction = "up_right";
-                    } else if (data.cursors.down.isDown) {
+                    } else if (check_isdown(data.cursors, "down")) {
                         data.force_direction = true;
+                        data.forcing_on_diagonal = true;
                         data.actual_direction = "down_left";
-                    } else if (data.actual_direction !== "up_right" && data.actual_direction !== "down_left") {
+                    } else {
+                        data.force_direction = false;
+                        data.forcing_on_diagonal = false;
+                    }
+                } else if (normal_angle >= numbers.degree90 - numbers.degree15 && normal_angle < numbers.degree90 + numbers.degree15) {
+                    if (check_isdown(data.cursors, "up", "left")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.actual_direction = "left";
+                    } else if (check_isdown(data.cursors, "up", "right")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.actual_direction = "right";
+                    } else {
+                        data.force_direction = false;
+                    }
+                } else if (normal_angle >= Math.PI - numbers.degree15 && normal_angle < Math.PI + numbers.degree15) {
+                    if (check_isdown(data.cursors, "down", "left")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.actual_direction = "down";
+                    } else if (check_isdown(data.cursors, "up", "left")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.actual_direction = "up";
+                    } else {
+                        data.force_direction = false;
+                    }
+                } else if (normal_angle >= numbers.degree270 - numbers.degree15 && normal_angle < numbers.degree270 + numbers.degree15) {
+                    if (check_isdown(data.cursors, "left", "down")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.actual_direction = "left";
+                    } else if (check_isdown(data.cursors, "right", "down")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.actual_direction = "right";
+                    } else {
+                        data.force_direction = false;
+                    }
+                } else if (normal_angle >= numbers.degree360 - numbers.degree15 || normal_angle < numbers.degree15) {
+                    if (check_isdown(data.cursors, "down", "right")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.actual_direction = "down";
+                    } else if (check_isdown(data.cursors, "up", "right")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.actual_direction = "up";
+                    } else {
                         data.force_direction = false;
                     }
                 } else {
                     data.force_direction = false;
+                    data.forcing_on_diagonal = false;
                 }
+            } else {
+                data.force_direction = false;
+                data.forcing_on_diagonal = false;
             }
         }
     } else {
         data.stop_by_colliding = false;
         data.force_direction = false;
+        data.forcing_on_diagonal = false;
+    }
+
+    if (["walk", "dash"].includes(data.actual_action)) {
+        data.hero.body.velocity.x = data.hero.body.velocity.ask_x;
+        data.hero.body.velocity.y = data.hero.body.velocity.ask_y;
     }
 }
 
 export function calculate_hero_speed(data) {
     if (data.actual_action === "dash") {
-        data.hero.body.velocity.x = parseInt(data.delta_time * data.x_speed * (main_char_list[data.hero_name].dash_speed + data.extra_speed));
-        data.hero.body.velocity.y = parseInt(data.delta_time * data.y_speed * (main_char_list[data.hero_name].dash_speed + data.extra_speed));
+        data.hero.body.velocity.ask_x = parseInt(data.delta_time * data.x_speed * (main_char_list[data.hero_name].dash_speed + data.extra_speed));
+        data.hero.body.velocity.ask_y = parseInt(data.delta_time * data.y_speed * (main_char_list[data.hero_name].dash_speed + data.extra_speed));
     } else if(data.actual_action === "walk") {
-        data.hero.body.velocity.x = parseInt(data.delta_time * data.x_speed * (main_char_list[data.hero_name].walk_speed + data.extra_speed));
-        data.hero.body.velocity.y = parseInt(data.delta_time * data.y_speed * (main_char_list[data.hero_name].walk_speed + data.extra_speed));
+        data.hero.body.velocity.ask_x = parseInt(data.delta_time * data.x_speed * (main_char_list[data.hero_name].walk_speed + data.extra_speed));
+        data.hero.body.velocity.ask_y = parseInt(data.delta_time * data.y_speed * (main_char_list[data.hero_name].walk_speed + data.extra_speed));
     } else if(data.actual_action === "climb") {
         data.hero.body.velocity.x = parseInt(data.delta_time * data.x_speed * main_char_list[data.hero_name].climb_speed);
         data.hero.body.velocity.y = parseInt(data.delta_time * data.y_speed * main_char_list[data.hero_name].climb_speed);
@@ -259,41 +340,49 @@ export function set_speed_factors(data, force = false) {
             data.climb_direction = "idle";
         }
     } else {
-        if (!data.force_direction && data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "up" || force)){
-            data.actual_direction = get_transition_directions(data.actual_direction, "up"); 
+        if ((check_isdown(data.cursors, "up") && ((data.actual_direction !== "up" && !data.forcing_on_diagonal) || force)) || (data.actual_direction === "up" && data.force_direction)){
+            if (!data.force_direction) {
+                data.actual_direction = get_transition_directions(data.actual_direction, "up");
+            }
             data.x_speed = 0;
             data.y_speed = -1;
-        } else if (!data.force_direction && !data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction !== "down" || force)){
-            data.actual_direction = get_transition_directions(data.actual_direction, "down");
+        } else if ((check_isdown(data.cursors, "down") && ((data.actual_direction !== "down" && !data.forcing_on_diagonal) || force)) || (data.actual_direction === "down" && data.force_direction)){
+            if (!data.force_direction) {
+                data.actual_direction = get_transition_directions(data.actual_direction, "down");
+            }
             data.x_speed = 0;
             data.y_speed = 1;
-        } else if (!data.force_direction && !data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "left" || force)){
-            data.actual_direction = get_transition_directions(data.actual_direction, "left");
+        } else if ((check_isdown(data.cursors, "left") && ((data.actual_direction !== "left" && !data.forcing_on_diagonal) || force)) || (data.actual_direction === "left" && data.force_direction)){
+            if (!data.force_direction) {
+                data.actual_direction = get_transition_directions(data.actual_direction, "left");
+            }
             data.x_speed = -1;
             data.y_speed = 0;
-        } else if (!data.force_direction && !data.cursors.up.isDown && !data.cursors.left.isDown && data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "right" || force)){
-            data.actual_direction = get_transition_directions(data.actual_direction, "right");
+        } else if ((check_isdown(data.cursors, "right") && ((data.actual_direction !== "right" && !data.forcing_on_diagonal) || force)) || (data.actual_direction === "right" && data.force_direction)){
+            if (!data.force_direction) {
+                data.actual_direction = get_transition_directions(data.actual_direction, "right");
+            }
             data.x_speed = 1;
             data.y_speed = 0;
-        } else if ((data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "up_left" || force)) || (data.actual_direction === "up_left" && data.force_direction)){
+        } else if ((check_isdown(data.cursors, "up", "left") && (data.actual_direction !== "up_left" || force)) || (data.actual_direction === "up_left" && data.force_direction)){
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "up_left");
             }
             data.x_speed = -numbers.INV_SQRT2;
             data.y_speed = -numbers.INV_SQRT2;
-        } else if ((data.cursors.up.isDown && !data.cursors.left.isDown && data.cursors.right.isDown && !data.cursors.down.isDown && (data.actual_direction !== "up_right" || force)) || (data.actual_direction === "up_right" && data.force_direction)){
+        } else if ((check_isdown(data.cursors, "up", "right") && (data.actual_direction !== "up_right" || force)) || (data.actual_direction === "up_right" && data.force_direction)){
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "up_right");
             }
             data.x_speed = numbers.INV_SQRT2;
             data.y_speed = -numbers.INV_SQRT2;
-        } else if ((!data.cursors.up.isDown && data.cursors.left.isDown && !data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction !== "down_left" || force)) || (data.actual_direction === "down_left" && data.force_direction)){
+        } else if ((check_isdown(data.cursors, "down", "left") && (data.actual_direction !== "down_left" || force)) || (data.actual_direction === "down_left" && data.force_direction)){
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "down_left");
             }
             data.x_speed = -numbers.INV_SQRT2;
             data.y_speed = numbers.INV_SQRT2;
-        } else if ((!data.cursors.up.isDown && !data.cursors.left.isDown && data.cursors.right.isDown && data.cursors.down.isDown && (data.actual_direction !== "down_right" || force)) || (data.actual_direction === "down_right" && data.force_direction)){
+        } else if ((check_isdown(data.cursors, "down", "right") && (data.actual_direction !== "down_right" || force)) || (data.actual_direction === "down_right" && data.force_direction)){
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "down_right");
             }

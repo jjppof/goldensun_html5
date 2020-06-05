@@ -84,7 +84,8 @@ var data = {
     stop_by_colliding: false,
     force_direction: false,
     enemies_db: null,
-    shift_input: null
+    shift_input: null,
+    forcing_on_diagonal: false
 };
 
 //debugging porpouses

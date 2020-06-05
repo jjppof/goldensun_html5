@@ -145,3 +145,11 @@ export function get_text_width(game, text) { //get text width in px (dirty way)
     text_sprite.destroy();
     return text_width;
 }
+
+export function check_isdown(cursors, ...keys) {
+    let result = true;
+    ["up", "left", "down", "right"].forEach(direction => {
+        result = result && !(cursors[direction].isDown ^ keys.includes(direction));
+    });
+    return result;
+}
