@@ -43,6 +43,105 @@ window.psynergy_animations_db = undefined;
 window.battle_animation_executing = false;
 window.game_intialized = false;
 
+var sprites_db = {
+    "isaac_battle_animation": [
+        {
+            action: "attack_back",
+            frames_count: 2,
+            frame_rate: 1,
+            loop: false
+        },{
+            action: "attack_front",
+            frames_count: 2,
+            frame_rate: 1,
+            loop: false
+        },{
+            action: "back",
+            frames_count: 4,
+            frame_rate: 3,
+            loop: true
+        },{
+            action: "front",
+            frames_count: 4,
+            frame_rate: 3,
+            loop: true
+        },{
+            action: "cast_back",
+            frames_count: 2,
+            frame_rate: 8,
+            loop: true
+        },{
+            action: "cast_front",
+            frames_count: 2,
+            frame_rate: 8,
+            loop: true
+        },{
+            action: "cast_init_back",
+            frames_count: 3,
+            frame_rate: 3,
+            loop: false
+        },{
+            action: "cast_init_front",
+            frames_count: 3,
+            frame_rate: 3,
+            loop: false
+        },{
+            action: "damage_back",
+            frames_count: 1,
+            frame_rate: 1,
+            loop: false
+        },{
+            action: "damage_front",
+            frames_count: 1,
+            frame_rate: 1,
+            loop: false
+        },{
+            action: "downed_back",
+            frames_count: 1,
+            frame_rate: 1,
+            loop: false
+        },{
+            action: "downed_front",
+            frames_count: 1,
+            frame_rate: 1,
+            loop: false
+        }
+    ],
+    "mini_goblin_battle_animation": [
+        {
+            action: "attack_back",
+            frames_count: 2,
+            frame_rate: 1,
+            loop: false
+        },{
+            action: "attack_front",
+            frames_count: 2,
+            frame_rate: 1,
+            loop: false
+        },{
+            action: "back",
+            frames_count: 4,
+            frame_rate: 3,
+            loop: true
+        },{
+            action: "front",
+            frames_count: 4,
+            frame_rate: 3,
+            loop: true
+        },{
+            action: "damage_back",
+            frames_count: 1,
+            frame_rate: 1,
+            loop: false
+        },{
+            action: "damage_front",
+            frames_count: 1,
+            frame_rate: 1,
+            loop: false
+        }
+    ]
+}
+
 window.game = new Phaser.Game (
     numbers.GAME_WIDTH,
     numbers.GAME_HEIGHT,
@@ -67,10 +166,20 @@ function preload() {
     game.load.image('mino_back', 'assets/images/spritesheets/mino_back.png');
     game.load.image('mino_front', 'assets/images/spritesheets/mino_front.png');
 
+    game.load.atlasJSONHash('isaac_battle_animation', 'assets/images/spritesheets/battle/isaac_battle.png', 'assets/images/spritesheets/battle/isaac_battle.json');
+    game.load.atlasJSONHash('mini_goblin_battle_animation', 'assets/images/spritesheets/battle/mini_goblin_battle.png', 'assets/images/spritesheets/battle/mini_goblin_battle.json');
+
     game.load.script('color_filters', 'plugins/ColorFilters.js');
 
     game.load.atlasJSONHash('pyroclasm_psynergy_animation', 'assets/images/psynergy_animations/pyroclasm.png', 'assets/images/psynergy_animations/pyroclasm.json');
     game.load.json('psynergy_animations_db', 'assets/dbs/psynergy_animations_db.json');
+}
+
+function set_animations(data) {
+    data.db.forEach(action => {
+        const frames = Phaser.Animation.generateFrameNames(`battle/${action.action}/`, 0, action.frames_count - 1, '', 2);
+        data.sprite.animations.add(action.action, frames,action.frame_rate, action.loop);
+    });
 }
 
 function create() {
@@ -98,8 +207,8 @@ function create() {
     camera_speed = 0.009 * Math.PI;
     bg_speed = 2.4;
     bg_spin_speed = 0.4;
-    party_count = 3;
-    enemy_count = 3;
+    party_count = 1;
+    enemy_count = 1;
     players_number = party_count + enemy_count;
     spacing_distance = 35;
     middle_shift_enemy = spacing_distance*enemy_count/2;
@@ -111,12 +220,13 @@ function create() {
     for (let i = 0; i < players_number; ++i) {
         let p;
         if (i < party_count)
-            p = group_party.create(0, 0, 'felix_back');
+            p = group_party.create(0, 0, 'isaac_battle_animation');
         else
-            p = group_enemy.create(0, 0, 'mino_back');
+            p = group_enemy.create(0, 0, 'mini_goblin_battle_animation');
         p.anchor.setTo(0.5, 1);
         p.scale.setTo(default_scale, default_scale);
         players.push(p);
+        set_animations({ sprite: p, db: sprites_db[p.key]});
     }
 
     first_party_char = group_party.children[0];
@@ -247,15 +357,15 @@ function update() {
 
             //change texture in function of position
             if (i < party_count) {
-                if (Math.sin(relative_angle) > 0 && players[i].key !== 'felix_back')
-                    players[i].loadTexture('felix_back');
-                else if (Math.sin(relative_angle) <= 0 && players[i].key !== 'felix_front')
-                    players[i].loadTexture('felix_front');
+                if (Math.sin(relative_angle) > 0 && players[i].animations.currentAnim.name !== 'back')
+                    players[i].animations.play('back');
+                else if (Math.sin(relative_angle) <= 0 && players[i].animations.currentAnim.name !== 'front')
+                    players[i].animations.play('front');
             } else {
-                if (Math.sin(relative_angle) > 0 && players[i].key !== 'mino_back')
-                    players[i].loadTexture('mino_back');
-                else if (Math.sin(relative_angle) <= 0 && players[i].key !== 'mino_front')
-                    players[i].loadTexture('mino_front');
+                if (Math.sin(relative_angle) > 0 && players[i].animations.currentAnim.name !== 'back')
+                    players[i].animations.play('back');
+                else if (Math.sin(relative_angle) <= 0 && players[i].animations.currentAnim.name !== 'front')
+                    players[i].animations.play('front');
             }
 
             //change side in function of position
