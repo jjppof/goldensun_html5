@@ -258,6 +258,14 @@ function create() {
                 players[i].y = pos_y_enemy;
             }
         }
+        //set scale
+        scale = get_scale(relative_angle);
+        players[i].scale.setTo(scale, scale);
+        //change side in function of position
+        if (Math.cos(relative_angle) > 0 && players[i].scale.x < 0)
+            players[i].scale.setTo(players[i].scale.x, players[i].scale.y);
+        else if (Math.cos(relative_angle) <= 0 && players[i].scale.x > 0)
+            players[i].scale.setTo(-players[i].scale.x, players[i].scale.y);
         // ====== NEED REFAC END ====== //
     }
 
