@@ -27,7 +27,7 @@
                 "tween": "initial",
                 "sprite_index": 0
             },{
-                "start_delay": 1000,
+                "start_delay": 1300,
                 "to": -20,
                 "is_absolute": false,
                 "tween": "Quadratic.Out",
@@ -35,11 +35,47 @@
                 "duration": 350
             },{
                 "start_delay": 0,
-                "to": 20,
+                "to": 16,
                 "is_absolute": false,
                 "tween": "Quadratic.Out",
                 "sprite_index": "targets",
                 "duration": 350
+            }
+        ],
+        "x_ellipse_axis_factor_sequence": [
+            {
+                "start_delay": 1300,
+                "to": 50,
+                "is_absolute": false,
+                "tween": "Quadratic.Out",
+                "sprite_index": "targets",
+                "duration": 350
+            },{
+                "start_delay": 6000,
+                "to": -50,
+                "is_absolute": false,
+                "tween": "Quadratic.Out",
+                "sprite_index": "targets",
+                "duration": 200,
+                "force_stage_update": true
+            }
+        ],
+        "y_ellipse_axis_factor_sequence": [
+            {
+                "start_delay": 1300,
+                "to": 10,
+                "is_absolute": false,
+                "tween": "Quadratic.Out",
+                "sprite_index": "targets",
+                "duration": "instantly"
+            },{
+                "start_delay": 6800,
+                "to": -10,
+                "is_absolute": false,
+                "tween": "Quadratic.Out",
+                "sprite_index": "targets",
+                "duration": "instantly",
+                "force_stage_update": true
             }
         ],
         "x_scale_sequence": [{
@@ -57,14 +93,14 @@
             "tween": "initial",
             "sprite_index": 0
         },{
-            "start_delay": 1000,
+            "start_delay": 1300,
             "to": 1.0,
             "is_absolute": true,
             "tween": "Linear.None",
             "sprite_index": 0,
             "duration": 200
         },{
-            "start_delay": 1000,
+            "start_delay": 1300,
             "to": 0.8,
             "is_absolute": true,
             "tween": "Linear.None",
@@ -87,8 +123,8 @@
                 "tween": "Exponential.InOut",
                 "duration": 500
             },{
-                "start_delay": 0,
-                "to": 2.0295,
+                "start_delay": 800,
+                "to": 2.3295,
                 "is_absolute": false,
                 "tween": "Linear.None",
                 "duration": 4000,
@@ -98,19 +134,19 @@
         "hue_angle_sequence": [],
         "tint_sequence": [
             {
-                "start_delay": 1000, 
+                "start_delay": 1300, 
                 "sprite_index": "targets", 
                 "value": [1,1,1]
             },{
-                "start_delay": 1125, 
+                "start_delay": 1425, 
                 "sprite_index": "targets", 
                 "value": [-1,-1,-1]
             },{
-                "start_delay": 1250, 
+                "start_delay": 1550, 
                 "sprite_index": "targets", 
                 "value": [1,1,1]
             },{
-                "start_delay": 1375, 
+                "start_delay": 1675, 
                 "sprite_index": "targets", 
                 "value": [-1,-1,-1]
             }
@@ -119,12 +155,12 @@
         "colorize_sequence": [],
         "custom_filter_sequence": [
             {
-                "start_delay": 1500, 
+                "start_delay": 1800, 
                 "sprite_index": "targets", 
                 "filter": "flame", 
                 "value": true
             },{
-                "start_delay": 6000, 
+                "start_delay": 6800, 
                 "sprite_index": "targets", 
                 "filter": "flame", 
                 "value": false
@@ -134,7 +170,7 @@
         "play_sequence": [
             {
                 "animation_key": "cast",
-                "start_delay": 1000,
+                "start_delay": 1300,
                 "sprite_index": 0,
                 "reverse": false,
                 "frame_rate": 12,
@@ -163,12 +199,12 @@
                 "wait": false
             },{
                 "animation_key": "damage_front",
-                "start_delay": 1000,
+                "start_delay": 1300,
                 "sprite_index": "targets",
                 "wait": false
             },{
                 "animation_key": "front",
-                "start_delay": 6500,
+                "start_delay": 6800,
                 "sprite_index": "targets",
                 "wait": false
             }

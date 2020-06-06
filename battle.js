@@ -8,8 +8,8 @@ import { BattleAnimation } from './base/battle/BattleAnimation.js';
 window.battle_bg = undefined;
 window.battle_bg2 = undefined;
 window.players = [];
-window.a = undefined;
-window.b = undefined;
+window.base_a = numbers.GAME_WIDTH/2 - 30;
+window.base_b = numbers.GAME_HEIGHT/30;
 window.camera_angle = undefined;
 window.camera_speed = undefined;
 window.cursors = undefined;
@@ -179,6 +179,48 @@ function set_animations(data) {
     });
 }
 
+function update_stage() {
+    for (let i = 0; i < players_number; ++i) {
+        let relative_angle = i < party_count ? camera_angle.rad : camera_angle.rad + Math.PI;
+        if (i < party_count) { //shift party players from base point
+            pos_x_party = ellipse_position(players[i], party_angle, true);
+            pos_y_party = ellipse_position(players[i], party_angle, false);
+            players[i].x = pos_x_party + ((spacing_distance*i - middle_shift_party) + (spacing_distance >> 1)) * Math.sin(relative_angle);
+            players[i].y = pos_y_party;
+        } else {  //shift enemy players from base point
+            pos_x_enemy = ellipse_position(players[i], enemy_angle, true);
+            pos_y_enemy = ellipse_position(players[i], enemy_angle, false);
+            players[i].x = pos_x_enemy + ((spacing_distance*(i-party_count) - middle_shift_enemy) + (spacing_distance >> 1)) * Math.sin(relative_angle);
+            players[i].y = pos_y_enemy;
+        }
+
+        //set scale
+        scale = get_scale(relative_angle);
+        players[i].scale.setTo(scale, scale);
+
+        //change texture in function of position
+        if (i < party_count) {
+            if (Math.sin(relative_angle) > 0 && !players[i].animations.currentAnim.name.endsWith('back')) {
+                players[i].animations.play(players[i].animations.currentAnim.name.replace('front', 'back'));
+            } else if (Math.sin(relative_angle) <= 0 && !players[i].animations.currentAnim.name.endsWith('front')) {
+                players[i].animations.play(players[i].animations.currentAnim.name.replace('back', 'front'));
+            } 
+        } else {
+            if (Math.sin(relative_angle) > 0 && !players[i].animations.currentAnim.name.endsWith('back')) {
+                players[i].animations.play(players[i].animations.currentAnim.name.replace('front', 'back'));
+            } else if (Math.sin(relative_angle) <= 0 && !players[i].animations.currentAnim.name.endsWith('front')) {
+                players[i].animations.play(players[i].animations.currentAnim.name.replace('back', 'front'));
+            }
+        }
+
+        //change side in function of position
+        if (Math.cos(relative_angle) > 0 && players[i].scale.x < 0)
+            players[i].scale.setTo(players[i].scale.x, players[i].scale.y);
+        else if (Math.cos(relative_angle) <= 0 && players[i].scale.x > 0)
+            players[i].scale.setTo(-players[i].scale.x, players[i].scale.y);
+    }
+}
+
 function create() {
     game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.input.onTap.add(function(pointer, isDoubleClick) {  
@@ -199,9 +241,7 @@ function create() {
     default_scale = 0.9;
     center_x = numbers.GAME_WIDTH/2;
     center_y = numbers.GAME_HEIGHT - 35;
-    a = numbers.GAME_WIDTH/2 - 30;
-    b = numbers.GAME_HEIGHT/30;
-    camera_angle = {rad : 0, spining: false};
+    camera_angle = {rad : 0, spining: false, update: update_stage};
     old_camera_angle = camera_angle.rad;
     camera_speed = 0.009 * Math.PI;
     bg_speed = 2.4;
@@ -236,6 +276,8 @@ function create() {
             p = group_enemy.create(0, 0, 'mini_goblin_battle_animation');
         p.anchor.setTo(0.5, 1);
         p.scale.setTo(default_scale, default_scale);
+        p.ellipses_axis_factor_a = base_a;
+        p.ellipses_axis_factor_b = base_b;
         players.push(p);
         set_animations({ sprite: p, db: sprites_db[p.key], is_party: i < party_count});
 
@@ -352,12 +394,6 @@ function update() {
         party_angle = get_angle(camera_angle.rad);
         enemy_angle = get_angle(camera_angle.rad + Math.PI);
 
-        //calculate party and enemy base position
-        pos_x_party = center_x + ellipse(party_angle)*Math.cos(party_angle);
-        pos_y_party = center_y + ellipse(party_angle)*Math.sin(party_angle);
-        pos_x_enemy = center_x + ellipse(enemy_angle)*Math.cos(enemy_angle);
-        pos_y_enemy = center_y + ellipse(enemy_angle)*Math.sin(enemy_angle);
-
         //check party and enemy z index
         if (Math.sin(camera_angle.rad) > 0 && game.world.getChildIndex(group_party) < game.world.getChildIndex(group_enemy))
             game.world.swapChildren(group_enemy, group_party);
@@ -376,45 +412,7 @@ function update() {
         else if (Math.cos(camera_angle.rad) > 0 && first_enemy_char.z > last_enemy_char.z)
             group_enemy.reverse();
 
-        for (let i = 0; i < players_number; ++i) {
-            let relative_angle = i < party_count ? camera_angle.rad : camera_angle.rad + Math.PI;
-            if (i < party_count) { //shift party players from base point
-                players[i].x = pos_x_party + ((spacing_distance*i - middle_shift_party) + (spacing_distance >> 1)) * Math.sin(relative_angle);
-                if (!players[i].moving_y) {
-                    players[i].y = pos_y_party;
-                }
-            } else {  //shift enemy players from base point
-                players[i].x = pos_x_enemy + ((spacing_distance*(i-party_count) - middle_shift_enemy) + (spacing_distance >> 1)) * Math.sin(relative_angle);
-                if (!players[i].moving_y) {
-                    players[i].y = pos_y_enemy;
-                }
-            }
-
-            //set scale
-            scale = get_scale(relative_angle);
-            players[i].scale.setTo(scale, scale);
-
-            //change texture in function of position
-            if (i < party_count) {
-                if (Math.sin(relative_angle) > 0 && !players[i].animations.currentAnim.name.endsWith('back')) {
-                    players[i].animations.play(players[i].animations.currentAnim.name.replace('front', 'back'));
-                } else if (Math.sin(relative_angle) <= 0 && !players[i].animations.currentAnim.name.endsWith('front')) {
-                    players[i].animations.play(players[i].animations.currentAnim.name.replace('back', 'front'));
-                } 
-            } else {
-                if (Math.sin(relative_angle) > 0 && !players[i].animations.currentAnim.name.endsWith('back')) {
-                    players[i].animations.play(players[i].animations.currentAnim.name.replace('front', 'back'));
-                } else if (Math.sin(relative_angle) <= 0 && !players[i].animations.currentAnim.name.endsWith('front')) {
-                    players[i].animations.play(players[i].animations.currentAnim.name.replace('back', 'front'));
-                }
-            }
-
-            //change side in function of position
-            if (Math.cos(relative_angle) > 0 && players[i].scale.x < 0)
-                players[i].scale.setTo(players[i].scale.x, players[i].scale.y);
-            else if (Math.cos(relative_angle) <= 0 && players[i].scale.x > 0)
-                players[i].scale.setTo(-players[i].scale.x, players[i].scale.y);
-        }
+        update_stage();
     }
 }
 
@@ -428,6 +426,8 @@ window.cast_psynergy = function() {
         psynergy_animations_db[psy_key].sprites,
         psynergy_animations_db[psy_key].x_sequence,
         psynergy_animations_db[psy_key].y_sequence,
+        psynergy_animations_db[psy_key].x_ellipse_axis_factor_sequence,
+        psynergy_animations_db[psy_key].y_ellipse_axis_factor_sequence,
         psynergy_animations_db[psy_key].x_scale_sequence,
         psynergy_animations_db[psy_key].y_scale_sequence,
         psynergy_animations_db[psy_key].x_anchor_sequence,
@@ -452,12 +452,24 @@ window.cast_psynergy = function() {
     });
 }
 
-function ellipse(angle) { //ellipse formula
+function ellipse(angle, a, b) { //ellipse formula
+    a = a === undefined ? base_a : a;
+    b = b === undefined ? base_b : b;
     return a*b/Math.sqrt(Math.pow(b*Math.cos(angle), 2) + Math.pow(a*Math.sin(angle), 2));
 }
 
+function ellipse_position(sprite, angle, is_x) {
+    if (is_x) {
+        const a = sprite.ellipses_axis_factor_a;
+        return center_x + ellipse(angle, a, base_b)*Math.cos(angle);
+    } else {
+        const b = sprite.ellipses_axis_factor_b;
+        return center_y + ellipse(angle, base_a, b)*Math.sin(angle);
+    }
+}
+
 function get_angle(angle) { //equidistant ellipse angle formula
-    return angle + Math.atan(( (b-a)*Math.tan(angle) )/( a + b*Math.pow(Math.tan(angle), 2) ));
+    return angle + Math.atan(( (base_b-base_a)*Math.tan(angle) )/( base_a + base_b*Math.pow(Math.tan(angle), 2) ));
 }
 
 function get_scale(angle) { //scale formula

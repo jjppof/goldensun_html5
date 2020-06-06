@@ -8,12 +8,15 @@ export class BattleAnimation {
     //property "to" values can be "center_target", "caster" or an actual value. In the case of "center_target" or "caster", is the the corresponding property value 
     //values in rad can have direction set to "clockwise", "counter_clockwise" or "closest"
     //in sprite_keys, position can be: "between", "over" or "behind"
+    //"duration" set to "instantly" must have the "start_delay" value set as absolute
     constructor(
         game,
         key_name,
         sprites_keys, //{key_name: string, per_target: bool, position: value}
         x_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
         y_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
+        x_ellipse_axis_factor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value, force_stage_update: bool}
+        y_ellipse_axis_factor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value, force_stage_update: bool}
         x_scale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
         y_scale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
         x_anchor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
@@ -37,6 +40,8 @@ export class BattleAnimation {
         this.sprites_keys = sprites_keys;
         this.x_sequence = x_sequence;
         this.y_sequence = y_sequence;
+        this.x_ellipse_axis_factor_sequence = x_ellipse_axis_factor_sequence;
+        this.y_ellipse_axis_factor_sequence = y_ellipse_axis_factor_sequence;
         this.x_scale_sequence = x_scale_sequence;
         this.y_scale_sequence = y_scale_sequence;
         this.x_anchor_sequence = x_anchor_sequence;
@@ -54,10 +59,12 @@ export class BattleAnimation {
         this.set_frame_sequence = set_frame_sequence;
         this.blend_mode_sequence = blend_mode_sequence;
         this.is_party_animation = is_party_animation;
+        this.running = false;
     }
 
     initialize(caster_sprite, targets_sprites, group_caster, group_enemy, super_group, stage_camera, background_sprites) {
         this.sprites = [];
+        this.sprites_prev_properties = {};
         this.x0 = this.game.camera.x;
         this.y0 = this.game.camera.y;
         this.caster_sprite = caster_sprite;
@@ -98,9 +105,12 @@ export class BattleAnimation {
     }
 
     play(finish_callback) {
+        this.running = true;
         this.promises = [];
         this.play_number_property_sequence(this.x_sequence, 'x');
         this.play_number_property_sequence(this.y_sequence, 'y');
+        this.play_number_property_sequence(this.x_ellipse_axis_factor_sequence, 'ellipses_axis_factor_a');
+        this.play_number_property_sequence(this.y_ellipse_axis_factor_sequence, 'ellipses_axis_factor_b');
         this.play_number_property_sequence(this.alpha_sequence, 'alpha');
         this.play_number_property_sequence(this.rotation_sequence, 'rotation');
         this.play_number_property_sequence(this.x_scale_sequence, 'x', 'scale');
@@ -134,6 +144,7 @@ export class BattleAnimation {
             this.sprites.forEach(sprite => {
                 sprite.destroy();
             });
+            this.running = false;
             if (finish_callback !== undefined) {
                 finish_callback();
             }
@@ -199,44 +210,63 @@ export class BattleAnimation {
             }
             let promises_set = false;
             sprites.forEach((this_sprite, index) => {
-                if (this_sprite["prev_" + target_property] === undefined) {
-                    this_sprite["prev_" + target_property] = this_sprite[target_property];
+                if (this.sprites_prev_properties[this_sprite.key] === undefined) {
+                    this.sprites_prev_properties[this_sprite.key] = {};
                 }
-                const to_value = seq.is_absolute ? initial_value + seq.to : this_sprite["prev_" + target_property] + seq.to;
-                this_sprite["prev_" + target_property] = to_value;
+                if (this.sprites_prev_properties[this_sprite.key][target_property] === undefined) {
+                    this.sprites_prev_properties[this_sprite.key][target_property] = this_sprite[target_property];
+                }
+                const to_value = seq.is_absolute ? initial_value + seq.to : this.sprites_prev_properties[this_sprite.key][target_property] + seq.to;
+                this.sprites_prev_properties[this_sprite.key][target_property] = to_value;
                 if (seq.tween === tween_types.INITIAL) {
                     this_sprite[target_property] = to_value;
                 } else {
                     if (!(seq.sprite_index in chained_tweens)) chained_tweens[seq.sprite_index] = { [index]: [] };
                     if (!(index in chained_tweens[seq.sprite_index])) chained_tweens[seq.sprite_index][index] = [];
-                    const tween = game.add.tween(this_sprite).to(
-                        { [target_property]: to_value },
-                        seq.duration,
-                        seq.tween.split('.').reduce((p, prop) => p[prop], Phaser.Easing),
-                        auto_start_tween[seq.sprite_index],
-                        seq.start_delay
-                    );
-                    if (!promises_set) {
+                    if (seq.duration === "instantly") {
                         let resolve_function;
-                        let this_promise = new Promise(resolve => { resolve_function = resolve; });
-                        this.promises.push(this_promise);
-                        tween.onStart.addOnce(() => {
-                            if (target_property === 'y' && !inner_property) {
-                                this_sprite.moving_y = true;
-                            }
-                        });
-                        tween.onComplete.addOnce(() => {
-                            if (target_property === 'y' && !inner_property) {
-                                this_sprite.moving_y = false;
+                        if (!promises_set) {
+                            let this_promise = new Promise(resolve => { resolve_function = resolve; });
+                            this.promises.push(this_promise);
+                            promises_set = true;
+                        }
+                        this.game.time.events.add(seq.start_delay, () => {
+                            this_sprite[target_property] = to_value;
+                            if (seq.force_stage_update) {
+                                this.stage_camera.update();
                             }
                             resolve_function();
                         });
-                        promises_set = true;
+                    } else {
+                        const tween = this.game.add.tween(this_sprite).to(
+                            { [target_property]: to_value },
+                            seq.duration,
+                            seq.tween.split('.').reduce((p, prop) => p[prop], Phaser.Easing),
+                            auto_start_tween[seq.sprite_index],
+                            seq.start_delay
+                        );
+                        if (!promises_set) {
+                            let resolve_function;
+                            let this_promise = new Promise(resolve => { resolve_function = resolve; });
+                            this.promises.push(this_promise);
+                            tween.onStart.addOnce(() => {
+                                if (seq.force_stage_update) {
+                                    this.stage_camera.spining = true;
+                                }
+                            });
+                            tween.onComplete.addOnce(() => {
+                                resolve_function();
+                                if (seq.force_stage_update) {
+                                    this.stage_camera.spining = false;
+                                }
+                            });
+                            promises_set = true;
+                        }
+                        if (chained_tweens[seq.sprite_index][index].length) {
+                            chained_tweens[seq.sprite_index][index][chained_tweens[seq.sprite_index][index].length - 1].chain(tween);
+                        }
+                        chained_tweens[seq.sprite_index][index].push(tween);
                     }
-                    if (chained_tweens[seq.sprite_index][index].length) {
-                        chained_tweens[seq.sprite_index][index][chained_tweens[seq.sprite_index][index].length - 1].chain(tween);
-                    }
-                    chained_tweens[seq.sprite_index][index].push(tween);
                 }
             });
         }
@@ -248,7 +278,7 @@ export class BattleAnimation {
             let resolve_function;
             let this_promise = new Promise(resolve => { resolve_function = resolve; });
             this.promises.push(this_promise);
-            game.time.events.add(play_seq.start_delay, () => {
+            this.game.time.events.add(play_seq.start_delay, () => {
                 let sprites = this.get_sprites(play_seq);
                 sprites.forEach(sprite => {
                     if (play_seq.reverse) {
@@ -273,7 +303,7 @@ export class BattleAnimation {
             let resolve_function;
             let this_promise = new Promise(resolve => { resolve_function = resolve; });
             this.promises.push(this_promise);
-            game.time.events.add(blend_mode_seq.start_delay, () => {
+            this.game.time.events.add(blend_mode_seq.start_delay, () => {
                 let sprites = this.get_sprites(blend_mode_seq);
                 sprites.forEach(sprite => {
                     switch (blend_mode_seq.mode) {
@@ -296,7 +326,7 @@ export class BattleAnimation {
             let resolve_function;
             let this_promise = new Promise(resolve => { resolve_function = resolve; });
             this.promises.push(this_promise);
-            game.time.events.add(filter_seq.start_delay, () => {
+            this.game.time.events.add(filter_seq.start_delay, () => {
                 let sprites = this.get_sprites(filter_seq);
                 sprites.forEach(sprite => {
                     sprite.filters[0][property] = filter_seq.value;
@@ -320,7 +350,7 @@ export class BattleAnimation {
                     this.stage_camera.rad += stage_angle_seq.to;
                 }
             } else {
-                const tween = game.add.tween(this.stage_camera).to(
+                const tween = this.game.add.tween(this.stage_camera).to(
                     { rad: stage_angle_seq.to },
                     stage_angle_seq.duration,
                     stage_angle_seq.tween.split('.').reduce((p, prop) => p[prop], Phaser.Easing),
