@@ -162,11 +162,6 @@ function preload() {
     game.load.image('vault', 'assets/images/battle_backgrounds/Vault_Inn.gif');
     game.load.image('venus', 'assets/images/battle_backgrounds/Venus_Lighthouse.gif');
 
-    game.load.image('felix_back', 'assets/images/spritesheets/felix_back.png');
-    game.load.image('felix_front', 'assets/images/spritesheets/felix_front.png');
-    game.load.image('mino_back', 'assets/images/spritesheets/mino_back.png');
-    game.load.image('mino_front', 'assets/images/spritesheets/mino_front.png');
-
     game.load.atlasJSONHash('isaac_battle_animation', 'assets/images/spritesheets/battle/isaac_battle.png', 'assets/images/spritesheets/battle/isaac_battle.json');
     game.load.atlasJSONHash('mini_goblin_battle_animation', 'assets/images/spritesheets/battle/mini_goblin_battle.png', 'assets/images/spritesheets/battle/mini_goblin_battle.json');
 
