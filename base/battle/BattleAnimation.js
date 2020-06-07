@@ -1,12 +1,11 @@
-const tween_types = {
-    INITIAL: "initial"
-};
+import * as numbers from "../../magic_numbers.js";
+import { range_360 } from "../../utils.js";
 
 export class BattleAnimation {
     //tween type can be 'initial' for first position
     //sprite_index: "targets" is the target, "caster" is the caster, "background" is the background sprite, 0...n is the sprites_key_names index
     //property "to" values can be "center_target", "caster" or an actual value. In the case of "center_target" or "caster", is the the corresponding property value 
-    //values in rad can have direction set to "clockwise", "counter_clockwise" or "closest"
+    //values in rad can have "direction" set to "clockwise", "counter_clockwise" or "closest" if "absolute" is true
     //in sprite_keys, position can be: "between", "over" or "behind"
     //"duration" set to "instantly" must have the "start_delay" value set as absolute
     constructor(
@@ -65,6 +64,7 @@ export class BattleAnimation {
     initialize(caster_sprite, targets_sprites, group_caster, group_enemy, super_group, stage_camera, background_sprites) {
         this.sprites = [];
         this.sprites_prev_properties = {};
+        this.stage_prev_value = undefined;
         this.x0 = this.game.camera.x;
         this.y0 = this.game.camera.y;
         this.caster_sprite = caster_sprite;
@@ -216,9 +216,18 @@ export class BattleAnimation {
                 if (this.sprites_prev_properties[this_sprite.key][target_property] === undefined) {
                     this.sprites_prev_properties[this_sprite.key][target_property] = this_sprite[target_property];
                 }
-                const to_value = seq.is_absolute ? initial_value + seq.to : this.sprites_prev_properties[this_sprite.key][target_property] + seq.to;
+                let to_value = seq.to;
+                if (["rotation", "hue_adjust"].includes(target_property)) {
+                    this.sprites_prev_properties[this_sprite.key][target_property] = range_360(this.sprites_prev_properties[this_sprite.key][target_property]);
+                    this_sprite[target_property] = this.sprites_prev_properties[this_sprite.key][target_property];
+                    to_value = BattleAnimation.get_angle_by_direction(this.sprites_prev_properties[this_sprite.key][target_property], seq.to, seq.direction, target_property === "rotation");
+                    if (Math.abs(this.sprites_prev_properties[this_sprite.key][target_property] - to_value) > numbers.degree360) {
+                        to_value -= Math.sign(to_value) * numbers.degree360;
+                    }
+                }
+                to_value = seq.is_absolute ? initial_value + to_value : this.sprites_prev_properties[this_sprite.key][target_property] + seq.to;
                 this.sprites_prev_properties[this_sprite.key][target_property] = to_value;
-                if (seq.tween === tween_types.INITIAL) {
+                if (seq.tween === "initial") {
                     this_sprite[target_property] = to_value;
                 } else {
                     if (!(seq.sprite_index in chained_tweens)) chained_tweens[seq.sprite_index] = { [index]: [] };
@@ -234,6 +243,9 @@ export class BattleAnimation {
                             this_sprite[target_property] = to_value;
                             if (seq.force_stage_update) {
                                 this.stage_camera.update();
+                            }
+                            if (seq.is_absolute && ["rotation", "hue_adjust"].includes(target_property)) {
+                                this_sprite[target_property] = range_360(this_sprite[target_property]);
                             }
                             resolve_function();
                         });
@@ -255,6 +267,9 @@ export class BattleAnimation {
                                 }
                             });
                             tween.onComplete.addOnce(() => {
+                                if (seq.is_absolute && ["rotation", "hue_adjust"].includes(target_property)) {
+                                    this_sprite[target_property] = range_360(this_sprite[target_property]);
+                                }
                                 resolve_function();
                                 if (seq.force_stage_update) {
                                     this.stage_camera.spining = false;
@@ -343,15 +358,30 @@ export class BattleAnimation {
         let chained_tweens = [];
         for (let i = 0; i < this.stage_angle_sequence.length; ++i) {
             const stage_angle_seq = this.stage_angle_sequence[i];
-            if (stage_angle_seq.tween === tween_types.INITIAL) {
+            let to_value;
+            if (this.stage_prev_value === undefined) {
+                this.stage_prev_value = this.stage_camera.rad;
+            }
+            if (stage_angle_seq.is_absolute) {
+                this.stage_prev_value = range_360(this.stage_prev_value);
+                this.stage_camera.rad = this.stage_prev_value;
+                to_value = BattleAnimation.get_angle_by_direction(this.stage_prev_value, stage_angle_seq.to, stage_angle_seq.direction, true);
+                if (Math.abs(this.stage_prev_value - to_value) > numbers.degree360) {
+                    to_value -= Math.sign(to_value) * numbers.degree360;
+                }
+            } else {
+                to_value = this.stage_prev_value + stage_angle_seq.to;
+            }
+            this.stage_prev_value = to_value;
+            if (stage_angle_seq.tween === "initial") {
                 if (stage_angle_seq.is_absolute) {
-                    this.stage_camera.rad = stage_angle_seq.to;
+                    this.stage_camera.rad = to_value;
                 } else {
-                    this.stage_camera.rad += stage_angle_seq.to;
+                    this.stage_camera.rad += to_value;
                 }
             } else {
                 const tween = this.game.add.tween(this.stage_camera).to(
-                    { rad: stage_angle_seq.to },
+                    { rad: to_value },
                     stage_angle_seq.duration,
                     stage_angle_seq.tween.split('.').reduce((p, prop) => p[prop], Phaser.Easing),
                     chained_tweens.length === 0,
@@ -364,6 +394,9 @@ export class BattleAnimation {
                     this.stage_camera.spining = true;
                 });
                 tween.onComplete.addOnce(() => {
+                    if (stage_angle_seq.is_absolute) {
+                        this.stage_camera.rad = range_360(this.stage_camera.rad);
+                    }
                     this.stage_camera.spining = false;
                     resolve_function();
                 });
@@ -373,5 +406,37 @@ export class BattleAnimation {
                 chained_tweens.push(tween);
             }
         }
+    }
+
+    static get_angle_by_direction(current_angle, target_angle, direction, fourth_quadrant = false) {
+        let this_direction;
+        if (fourth_quadrant) {
+            target_angle = numbers.degree360 - target_angle;
+            this_direction = target_angle < current_angle ? "counter_clockwise" : "clockwise";
+        } else {
+            this_direction = target_angle > current_angle ? "counter_clockwise" : "clockwise";
+        }
+        if (this_direction === direction) {
+            return target_angle;
+        }
+        const diff = target_angle % numbers.degree360 - current_angle % numbers.degree360;
+        const shift = Math.sign(diff) * numbers.degree360 - diff;
+        const new_target = current_angle % numbers.degree360 - shift;
+        if (direction === "closest") {
+            let target_delta, new_target_delta;
+            if (new_target > 0) {
+                new_target_delta = new_target - range_360(current_angle);
+                target_delta = numbers.degree360 - new_target_delta;
+            } else {
+                target_delta = target_angle - range_360(current_angle);
+                new_target_delta = numbers.degree360 - target_delta;
+            }
+            if (Math.abs(target_delta) < Math.abs(new_target_delta)) {
+                return target_angle;
+            } else {
+                return new_target;
+            }
+        }
+        return new_target;
     }
 }

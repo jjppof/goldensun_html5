@@ -63,14 +63,14 @@
         "y_ellipse_axis_factor_sequence": [
             {
                 "start_delay": 1300,
-                "to": 10,
+                "to": 5,
                 "is_absolute": false,
                 "tween": "Quadratic.Out",
                 "sprite_index": "targets",
                 "duration": "instantly"
             },{
                 "start_delay": 6800,
-                "to": -10,
+                "to": -5,
                 "is_absolute": false,
                 "tween": "Quadratic.Out",
                 "sprite_index": "targets",
@@ -118,14 +118,15 @@
         "stage_angle_sequence": [
             {
                 "start_delay": 0,
-                "to": 0.53093,
-                "is_absolute": false,
+                "to": 5.752255,
+                "is_absolute": true,
                 "tween": "Exponential.InOut",
-                "duration": 500
+                "duration": 500,
+                "direction": "closest"
             },{
                 "start_delay": 800,
-                "to": 2.3295,
-                "is_absolute": false,
+                "to": 3.9537,
+                "is_absolute": true,
                 "tween": "Linear.None",
                 "duration": 4000,
                 "direction": "clockwise"
