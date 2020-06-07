@@ -4,6 +4,10 @@
         "sprites": [{
             "key_name": "pyroclasm_psynergy_animation",
             "per_target": false
+        },{
+            "key_name": "psynergy_cast_psynergy_animation",
+            "per_target": false,
+            "position": "over"
         }],
         "x_sequence": [
             {
@@ -11,6 +15,11 @@
                 "is_absolute": true,
                 "tween": "initial",
                 "sprite_index": 0
+            },{
+                "to": 45,
+                "is_absolute": true,
+                "tween": "initial",
+                "sprite_index": 1
             },{
                 "start_delay": 3500,
                 "to": 10,
@@ -132,7 +141,14 @@
                 "direction": "clockwise"
             }
         ],
-        "hue_angle_sequence": [],
+        "hue_angle_sequence": [
+            {
+                "to": 5.4,
+                "is_absolute": true,
+                "tween": "initial",
+                "sprite_index": 1
+            }
+        ],
         "tint_sequence": [
             {
                 "start_delay": 1300, 
@@ -178,6 +194,14 @@
                 "repeat": false,
                 "wait": true
             },{
+                "animation_key": "cast",
+                "start_delay": 800,
+                "sprite_index": 1,
+                "reverse": false,
+                "frame_rate": 20,
+                "repeat": false,
+                "wait": true
+            },{
                 "animation_key": "cast_init_back",
                 "start_delay": 1000,
                 "sprite_index": "caster",
@@ -215,6 +239,10 @@
             "start_delay": 0,
             "mode": "screen",
             "sprite_index": 0
+        },{
+            "start_delay": 0,
+            "mode": "screen",
+            "sprite_index": 1
         }],
         "is_party_animation": true
     }

@@ -78,7 +78,11 @@ export class BattleAnimation {
             const sprite_info = this.sprites_keys[i];
             if (!sprite_info.per_target) {
                 const psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_info.key_name);
-                super_group.addChildAt(psy_sprite, super_group.getChildIndex(group_caster));
+                if (sprite_info.position === "over") {
+                    super_group.addChild(psy_sprite);
+                } else {
+                    super_group.addChildAt(psy_sprite, super_group.getChildIndex(group_caster));
+                }
                 this.sprites.push(psy_sprite);
                 this.sprites[i].animations.add('cast', Phaser.Animation.generateFrameNames('', 1, this.sprites[i].animations.frameTotal, '', 3));
             }

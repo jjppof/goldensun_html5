@@ -168,6 +168,7 @@ function preload() {
     game.load.script('color_filters', 'plugins/ColorFilters.js');
 
     game.load.atlasJSONHash('pyroclasm_psynergy_animation', 'assets/images/psynergy_animations/pyroclasm.png', 'assets/images/psynergy_animations/pyroclasm.json');
+    game.load.atlasJSONHash('psynergy_cast_psynergy_animation', 'assets/images/psynergy_animations/psynergy_cast.png', 'assets/images/psynergy_animations/psynergy_cast.json');
     game.load.json('psynergy_animations_db', 'assets/dbs/psynergy_animations_db.json');
 }
 
