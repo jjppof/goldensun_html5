@@ -3,7 +3,8 @@
         "key_name": "pyroclasm",
         "sprites": [{
             "key_name": "pyroclasm_psynergy_animation",
-            "per_target": false
+            "per_target": false,
+            "position": "between"
         },{
             "key_name": "psynergy_cast_psynergy_animation",
             "per_target": false,
@@ -110,7 +111,7 @@
             "duration": 200
         },{
             "start_delay": 1300,
-            "to": 0.8,
+            "to": 0.75,
             "is_absolute": true,
             "tween": "Linear.None",
             "sprite_index": "background",

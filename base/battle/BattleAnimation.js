@@ -78,10 +78,20 @@ export class BattleAnimation {
             const sprite_info = this.sprites_keys[i];
             if (!sprite_info.per_target) {
                 const psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_info.key_name);
+                let back_group, front_group;
+                if (super_group.getChildIndex(group_caster) < super_group.getChildIndex(group_enemy)) {
+                    back_group = group_caster;
+                    front_group = group_enemy;
+                } else {
+                    back_group = group_enemy;
+                    front_group = group_caster;
+                }
                 if (sprite_info.position === "over") {
                     super_group.addChild(psy_sprite);
-                } else {
-                    super_group.addChildAt(psy_sprite, super_group.getChildIndex(group_caster));
+                } else if (sprite_info.position === "between") {
+                    super_group.addChildAt(psy_sprite, super_group.getChildIndex(front_group));
+                } else if (sprite_info.position === "behind") {
+                    super_group.addChildAt(psy_sprite, super_group.getChildIndex(back_group));
                 }
                 this.sprites.push(psy_sprite);
                 this.sprites[i].animations.add('cast', Phaser.Animation.generateFrameNames('', 1, this.sprites[i].animations.frameTotal, '', 3));
