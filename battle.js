@@ -287,14 +287,10 @@ function create() {
         let relative_angle = i < party_count ? camera_angle.rad : camera_angle.rad + Math.PI;
         if (i < party_count) { //shift party players from base point
             players[i].x = pos_x_party + ((spacing_distance*i - middle_shift_party) + (spacing_distance >> 1)) * Math.sin(relative_angle);
-            if (battle_anim === null || !battle_anim.moving_y) {
-                players[i].y = pos_y_party;
-            }
+            players[i].y = pos_y_party;
         } else {  //shift enemy players from base point
             players[i].x = pos_x_enemy + ((spacing_distance*(i-party_count) - middle_shift_enemy) + (spacing_distance >> 1)) * Math.sin(relative_angle);
-            if (battle_anim === null || !battle_anim.moving_y) {
-                players[i].y = pos_y_enemy;
-            }
+            players[i].y = pos_y_enemy;
         }
         //set scale
         scale = get_scale(relative_angle);
@@ -348,7 +344,7 @@ function create() {
 
 //active spin effect
 window.spin = function(angle, easing, duration) {
-    if (!camera_angle.spining) {
+    if (!camera_angle.spining && !battle_animation_executing) {
         camera_angle.spining = true;
         game.add.tween(camera_angle).to(
             {rad: camera_angle.rad + angle},
@@ -364,10 +360,10 @@ window.spin = function(angle, easing, duration) {
 function update() {
     if (cursors.left.isDown || cursors.right.isDown || camera_angle.spining) {
         //angle change and bg x position change
-        if (!cursors.left.isDown && cursors.right.isDown && !camera_angle.spining) {
+        if (!cursors.left.isDown && cursors.right.isDown && !camera_angle.spining && !battle_animation_executing) {
             camera_angle.rad -= camera_speed;
             battle_bg.x -= bg_speed
-        } else if (cursors.left.isDown && !cursors.right.isDown && !camera_angle.spining) {
+        } else if (cursors.left.isDown && !cursors.right.isDown && !camera_angle.spining && !battle_animation_executing) {
             camera_angle.rad += camera_speed; 
             battle_bg.x += bg_speed
         }
