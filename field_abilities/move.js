@@ -6,7 +6,7 @@ import { maps } from  '../maps/maps.js';
 import * as numbers from '../magic_numbers.js';
 import { target_only_push } from '../psynergy_items/push.js';
 
-const KEY_NAME = "move_psynergy_hand";
+const KEY_NAME = "move_psynergy";
 const ACTION_KEY_NAME = "cast";
 const MAX_HAND_TRANSLATE = 16;
 const MOVE_MAX_RANGE = 26;
@@ -176,7 +176,7 @@ export class MoveFieldPsynergy extends SpriteBase {
                 }
                 break;
         }
-        game.add.tween(this.hand_sprite).to(
+        this.game.add.tween(this.hand_sprite).to(
             {centerX: translate_x, centerY: translate_y},
             Phaser.Timer.QUARTER >> 1,
             Phaser.Easing.Linear.None,
@@ -192,7 +192,7 @@ export class MoveFieldPsynergy extends SpriteBase {
                 this.target_hueshift_timer.start();
                 this.controls_active = true;
             } else {
-                game.time.events.add(700, () => {
+                this.game.time.events.add(700, () => {
                     this.finish_hand();
                     this.unset_hero_cast_anim();
                 });
@@ -208,19 +208,19 @@ export class MoveFieldPsynergy extends SpriteBase {
         });
         flip_timer.start();
         let y_shift = this.hand_sprite.y - 10;
-        game.add.tween(this.hand_sprite).to(
+        this.game.add.tween(this.hand_sprite).to(
             { y: y_shift },
             Phaser.Timer.QUARTER,
             Phaser.Easing.Linear.None,
             true
         );
-        game.add.tween(fake_hand_scale).to(
+        this.game.add.tween(fake_hand_scale).to(
             { x: 0 },
             Phaser.Timer.QUARTER,
             Phaser.Easing.Linear.None,
             true
         );
-        game.add.tween(this.hand_sprite.scale).to(
+        this.game.add.tween(this.hand_sprite.scale).to(
             { y: 0 },
             Phaser.Timer.QUARTER,
             Phaser.Easing.Linear.None,
@@ -368,7 +368,8 @@ export class MoveFieldPsynergy extends SpriteBase {
             return;
         }
         this.data.casting_psynergy = true;
-        data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
+        this.game.physics.p2.pause();
+        this.data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
         caster.current_pp -= ability.pp_cost;
         this.set_cast_direction();
         this.set_emitter();
@@ -382,7 +383,8 @@ export class MoveFieldPsynergy extends SpriteBase {
             this.translate_hand();
             this.start_emitter();
         }, () => {
-            data.casting_psynergy = false;
+            this.game.physics.p2.resume();
+            this.data.casting_psynergy = false;
             this.target_item = null;
         }, () => {
             if (this.target_found) {
@@ -391,6 +393,5 @@ export class MoveFieldPsynergy extends SpriteBase {
             }
             reset_map();
         });
-    
     }
 }
