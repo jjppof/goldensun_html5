@@ -271,7 +271,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet"],
+        "equipable_chars": ["isaac", "garet", "sheba"],
         "price": 0,
         "granted_ability": "frost",
         "icon_path": "assets/images/icons/items/frost_jewel.gif"

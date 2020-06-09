@@ -4,7 +4,7 @@ import { maps } from '../maps/maps.js';
 
 export function jump_event(data, event_key) {
     let current_event = maps[data.map_name].events[event_key];
-    if (!current_event.active) {
+    if (!current_event.active || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y) {
         data.on_event = false;
         data.current_event = null;
         return;
@@ -227,7 +227,7 @@ export function jump_near_collision(data, event_key) {
             let surrounding_event = maps[data.map_name].events[surrounding_key];
             if (surrounding_event.type === "jump" && right_direction) {
                 if (surrounding_event.dynamic || current_event.dynamic) {
-                    at_least_one_dynamic = true;
+                    at_least_one_dynamic = true; //this should be true if the found events are only in diagonal
                 }
                 const side_event_surroundings = get_surroundings(surroundings[i].x, surroundings[i].y, false);
                 bodies_positions.push(side_event_surroundings);

@@ -20,8 +20,8 @@ export class MoveFieldPsynergy extends SpriteBase {
         this.action_key_name = ACTION_KEY_NAME;
         this.setActionSpritesheet(
             this.action_key_name,
-            "assets/images/spritesheets/move_psynergy.png",
-            "assets/images/spritesheets/move_psynergy.json"
+            "assets/images/spritesheets/psynergy_items/move_psynergy_hand.png",
+            "assets/images/spritesheets/psynergy_items/move_psynergy_hand.json"
         );
         this.setActionDirections(
             this.action_key_name, 
@@ -276,6 +276,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         let sqr_distance = Infinity;
         for (let i = 0; i < maps[this.data.map_name].psynergy_items.length; ++i) {
             let psynergy_item = maps[this.data.map_name].psynergy_items[i];
+            if (!this.data.psynergy_items_db[psynergy_item.key_name].psynergy_keys.includes(this.ability_key_name)) continue;
             const item_x_px = psynergy_item.current_x * maps[this.data.map_name].sprite.tileWidth + (maps[this.data.map_name].sprite.tileWidth >> 1);
             const item_y_px = psynergy_item.current_y * maps[this.data.map_name].sprite.tileHeight + (maps[this.data.map_name].sprite.tileHeight >> 1);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;

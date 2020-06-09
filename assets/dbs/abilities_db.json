@@ -226,5 +226,22 @@
         "ability_type_key": "normal",
         "battle_animation_key": "whirlwind",
         "icon_path": "assets/images/icons/psynergy/whirlwind.gif"
+    },{
+        "key_name": "frost",
+        "name": "Frost",
+        "description": "Attack with frigid blasts.",
+        "type": "base_damage",
+        "element": "mercury",
+        "battle_target": "enemy",
+        "range": 3,
+        "pp_cost": 5,
+        "ability_power": 20,
+        "effects_outside_battle": false,
+        "is_battle_psynergy": true,
+        "is_field_psynergy": true,
+        "effects": [],
+        "ability_type_key": "normal",
+        "battle_animation_key": "frost",
+        "icon_path": "assets/images/icons/psynergy/frost.gif"
     }
 ]

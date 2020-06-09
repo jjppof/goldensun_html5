@@ -30,5 +30,24 @@
             "animations": ["idle"],
             "frames_count": [1]
         }
+    },
+    "frost_pool": {
+        "type": "frost",
+        "shift_x": 8,
+        "shift_y": -8,
+        "anchor_y": 0.85,
+        "body_radius": 7.0,
+        "send_to_back": true,
+        "psynergy_keys": ["frost"],
+        "pushable": false,
+        "events": ["jump_around"],
+        "jump_y_shift": 0,
+        "jump_collide_layer_shift": 0,
+        "initial_animation": "pool",
+        "actions": {
+            "frame_rate": 5,
+            "animations": ["pool"],
+            "frames_count": [2]
+        }
     }
 }

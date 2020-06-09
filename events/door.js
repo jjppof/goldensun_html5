@@ -7,6 +7,10 @@ export function set_door_event(data) {
     data.on_event = true;
     data.event_activation_process = false;
     if (data.current_event.advance_effect) {
+        if (!data.stop_by_colliding) {
+            data.on_event = false;
+            return;
+        }
         data.hero.loadTexture(data.hero_name + "_walk");
         main_char_list[data.hero_name].setAnimation(data.hero, "walk");
         data.hero.animations.play("walk_up");

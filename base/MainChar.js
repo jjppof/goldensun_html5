@@ -130,13 +130,13 @@ export class MainChar extends SpriteBase {
             chest: null,
             body: null
         };
+        this.equipped_abilities = [];
+        this.innate_abilities = innate_abilities;
         this.init_items();
         this.update_attributes();
         this.update_elemental_attributes();
-        this.innate_abilities = innate_abilities;
         this.in_party = in_party;
         this.abilities = [];
-        this.equipped_abilities = [];
         this.update_abilities();
     }
 

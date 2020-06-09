@@ -136,7 +136,7 @@ function load_misc() {
     game.load.image('jupiter_star', 'assets/images/misc/jupiter_star.gif');
     game.load.image('stat_up', 'assets/images/misc/stat_up.gif');
     game.load.image('stat_down', 'assets/images/misc/stat_down.gif');
-    game.load.atlasJSONHash('psynergy_particle', 'assets/images/spritesheets/psynergy_particle.png', 'assets/images/spritesheets/psynergy_particle.json');
+    game.load.atlasJSONHash('psynergy_particle', 'assets/images/spritesheets/psynergy_items/psynergy_particle.png', 'assets/images/spritesheets/psynergy_items/psynergy_particle.json');
 }
 
 function preload() {
@@ -261,7 +261,7 @@ async function create() {
     //initialize screens
     data.menu_screen = initialize_menu(data);
     game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(() => {
-        if (data.casting_psynergy) return;
+        if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting) return;
         if (!data.menu_open) {
             data.menu_open = true;
             stop_hero(data);
@@ -347,6 +347,7 @@ async function create() {
 
         //enable psynergies shortcuts
         game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(function(){
+            if (data.climbing || data.menu_open || data.pushing || data.teleporting) return;
             field_abilities_list.move.cast(data.hero_name);
         }, this);
 
@@ -364,13 +365,14 @@ async function create() {
 }
 
 function fire_event(event_key = undefined) {
+    let current_event = maps[data.map_name].events[event_key];
     if(data.event_activation_process){
-        if (data.current_event.type === "stair")
+        if (current_event.type === "stair" && (data.stop_by_colliding || data.actual_action === "climb"))
             climb.climbing_event(data, event_key);
-        else if (data.current_event.type === "door") {
+        else if (current_event.type === "door") {
             set_door_event(data);
-        } else if (data.current_event.type === "jump") {
-            if (!data.current_event.active) return;
+        } else if (current_event.type === "jump") {
+            if (!current_event.active) return;
             data.on_event = true;
             data.event_activation_process = false;
             jump_event(data, event_key);
@@ -419,7 +421,7 @@ function event_triggering() {
     } else if (data.current_event.type === "door") { //door event activation
         if (!data.current_event.advance_effect) {
             data.event_activation_process = true;
-            fire_event();
+            fire_event(event_key);
         }
     } else if (data.current_event.type === "step" && !data.waiting_to_step) {
         config_step(data);
@@ -465,10 +467,19 @@ function update() {
             }
 
             //organize layers on hero move
-            data.npc_group.children.forEach(sprite => {
+            let send_to_back_list = new Array(data.npc_group.children.length);
+            data.npc_group.children.forEach((sprite, index) => {
                 sprite.y_sort = parseInt(sprite.base_collider_layer.toString() + sprite.y.toString());
+                if (sprite.send_to_back) {
+                    send_to_back_list[index] = sprite;
+                }
             });
             data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
+            send_to_back_list.forEach(sprite => {
+                if (sprite) {
+                    data.npc_group.sendChildToBack(sprite);
+                }
+            });
         } else if (data.on_event) {
             if (data.current_event.type === "stair") {
                 climb.climb_event_animation_steps(data);

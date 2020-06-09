@@ -159,3 +159,21 @@ export function check_isdown(cursors, ...keys) {
     });
     return result;
 }
+
+export function get_surroundings(x, y, with_diagonals = false) {
+    let surroundings = [
+        {x: x - 1, y: y},
+        {x: x + 1, y: y},
+        {x: x, y: y - 1},
+        {x: x, y: y + 1},
+    ];
+    if (with_diagonals) {
+        surroundings = surroundings.concat([
+            {x: x - 1, y: y - 1},
+            {x: x + 1, y: y - 1},
+            {x: x - 1, y: y + 1},
+            {x: x + 1, y: y + 1},
+        ]);
+    }
+    return surroundings;
+};

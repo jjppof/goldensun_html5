@@ -2,7 +2,7 @@ import * as numbers from  "../magic_numbers.js";
 import { maps } from '../maps/maps.js';
 
 export function normal_push(data, psynergy_item) {
-    if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.actual_direction) {
+    if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.actual_direction && !data.casting_psynergy) {
         fire_push_movement(data, psynergy_item);
     }
     data.trying_to_push = false;
@@ -84,13 +84,25 @@ export function fire_push_movement(data, psynergy_item, push_end, before_move, t
                 const old_key = old_surroundings[j].x + "_" + old_surroundings[j].y;
                 const new_key = new_surroundings[j].x + "_" + new_surroundings[j].y;
                 if (old_key in maps[data.map_name].events) {
-                    if (maps[data.map_name].events[old_key].dynamic === false) {
-                        maps[data.map_name].events[old_key].active = false;
+                    const old_surr_event = maps[data.map_name].events[old_key];
+                    if (old_surr_event.type === "jump") {
+                        const target_layer = data.psynergy_items_db[psynergy_item.key_name].jump_collide_layer_shift + psynergy_item.base_collider_layer;
+                        if (old_surr_event.activation_collision_layers.includes(target_layer)) {
+                            if (old_surr_event.dynamic === false) {
+                                old_surr_event.active = false;
+                            }
+                        }
                     }
                 }
                 if (new_key in maps[data.map_name].events) {
-                    if (maps[data.map_name].events[new_key].dynamic === false) {
-                        maps[data.map_name].events[new_key].active = true;
+                    const new_surr_event = maps[data.map_name].events[new_key];
+                    if (new_surr_event.type === "jump") {
+                        const target_layer = data.psynergy_items_db[psynergy_item.key_name].jump_collide_layer_shift + psynergy_item.base_collider_layer;
+                        if (new_surr_event.activation_collision_layers.includes(target_layer)) {
+                            if (new_surr_event.dynamic === false) {
+                                new_surr_event.active = true;
+                            }
+                        }
                     }
                 }
             }
