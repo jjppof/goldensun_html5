@@ -437,7 +437,6 @@ window.cast_psynergy = function() {
         psynergy_animations_db[psy_key].grayscale_sequence,
         psynergy_animations_db[psy_key].colorize_sequence,
         psynergy_animations_db[psy_key].custom_filter_sequence,
-        psynergy_animations_db[psy_key].camera_shake_sequence,
         psynergy_animations_db[psy_key].play_sequence,
         psynergy_animations_db[psy_key].set_frame_sequence,
         psynergy_animations_db[psy_key].blend_mode_sequence,

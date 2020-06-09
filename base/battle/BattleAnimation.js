@@ -12,23 +12,22 @@ export class BattleAnimation {
         game,
         key_name,
         sprites_keys, //{key_name: string, per_target: bool, position: value}
-        x_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
-        y_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
-        x_ellipse_axis_factor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value, force_stage_update: bool}
-        y_ellipse_axis_factor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value, force_stage_update: bool}
-        x_scale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
-        y_scale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
-        x_anchor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
-        y_anchor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
-        alpha_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
-        rotation_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value, direction: value}
+        x_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
+        y_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
+        x_ellipse_axis_factor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, force_stage_update: bool}
+        y_ellipse_axis_factor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, force_stage_update: bool}
+        x_scale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
+        y_scale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
+        x_anchor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
+        y_anchor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
+        alpha_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
+        rotation_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, direction: value}
         stage_angle_sequence, //{start_delay: value, to: value, is_absolute: bool, tween: type, duration: value, direction: value}
-        hue_angle_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value, direction: value}
+        hue_angle_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, direction: value}
         tint_sequence, //{start_delay: value, sprite_index: index, value: %rgb array}
-        grayscale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, duration: value}
+        grayscale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
         colorize_sequence, //{start_delay: value, sprite_index: index, value: value, colorize_intensity: value}
         custom_filter_sequence, //{start_delay: value, sprite_index: index, filter: key, value: value}
-        camera_shake_sequence, //{start_delay: value, intensity: value, duration: value: direction: direction_option}
         play_sequence, //{start_delay: value, sprite_index: index, reverse: bool, frame_rate: value, repeat: bool, animation_key: key, wait: bool}
         set_frame_sequence, //{start_delay: value, frame: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
@@ -53,7 +52,6 @@ export class BattleAnimation {
         this.grayscale_sequence = grayscale_sequence;
         this.colorize_sequence = colorize_sequence;
         this.custom_filter_sequence = custom_filter_sequence;
-        this.camera_shake_sequence = camera_shake_sequence;
         this.play_sequence = play_sequence;
         this.set_frame_sequence = set_frame_sequence;
         this.blend_mode_sequence = blend_mode_sequence;
@@ -240,7 +238,9 @@ export class BattleAnimation {
                     }
                 }
                 to_value = seq.is_absolute ? initial_value + to_value : this.sprites_prev_properties[this_sprite.key][target_property] + seq.to;
-                this.sprites_prev_properties[this_sprite.key][target_property] = to_value;
+                if (!seq.yoyo) {
+                    this.sprites_prev_properties[this_sprite.key][target_property] = to_value;
+                }
                 if (seq.tween === "initial") {
                     this_sprite[target_property] = to_value;
                 } else {
@@ -269,7 +269,9 @@ export class BattleAnimation {
                             seq.duration,
                             seq.tween.split('.').reduce((p, prop) => p[prop], Phaser.Easing),
                             auto_start_tween[seq.sprite_index],
-                            seq.start_delay
+                            seq.start_delay,
+                            0,
+                            seq.yoyo === undefined ? false: seq.yoyo
                         );
                         if (!promises_set) {
                             let resolve_function;
