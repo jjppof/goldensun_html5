@@ -9,7 +9,7 @@ window.battle_bg = undefined;
 window.battle_bg2 = undefined;
 window.players = [];
 window.base_a = numbers.GAME_WIDTH/2 - 30;
-window.base_b = numbers.GAME_HEIGHT/30;
+window.base_b = numbers.GAME_HEIGHT/40;
 window.camera_angle = undefined;
 window.camera_speed = undefined;
 window.cursors = undefined;
@@ -239,7 +239,7 @@ function create() {
 
     psynergy_animations_db = game.cache.getJSON('psynergy_animations_db');
 
-    default_scale = 0.9;
+    default_scale = 0.85;
     center_x = numbers.GAME_WIDTH/2;
     center_y = numbers.GAME_HEIGHT - 35;
     camera_angle = {rad : 0, spining: false, update: update_stage};
