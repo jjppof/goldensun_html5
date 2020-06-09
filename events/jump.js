@@ -73,6 +73,16 @@ export function jump_event(data, event_key) {
         }
     }
     let next_pos_key = next_position.x + "_" + next_position.y;
+    for (let i = 0; i < maps[data.map_name].psynergy_items.length; ++i) {
+        const next_psynergy_item = maps[data.map_name].psynergy_items[i];
+        if (next_psynergy_item.current_x !== next_position.x || next_psynergy_item.current_y !== next_position.y) continue;
+        if (data.psynergy_items_db[next_psynergy_item.key_name].type !== "move") continue;
+        if (data.map_collider_layer !== next_psynergy_item.base_collider_layer) continue;
+        data.on_event = false;
+        data.current_event = null;
+        data.shadow.visible = true;
+        return;
+    }
     if (next_pos_key in maps[data.map_name].events) {
         if (maps[data.map_name].events[next_pos_key].type !== "jump") {
             data.on_event = false;
