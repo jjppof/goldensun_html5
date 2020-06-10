@@ -6,5 +6,9 @@
     "x_tile_position": 9,
     "y_tile_position": 11,
     "map_z_index": 0,
-    "coins": 350
+    "coins": 350,
+    "initial_shortcuts": {
+        "move": "isaac",
+        "frost": "sheba"
+    }
 }

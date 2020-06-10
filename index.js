@@ -348,7 +348,11 @@ async function create() {
         //enable psynergies shortcuts
         game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(function(){
             if (data.climbing || data.menu_open || data.pushing || data.teleporting) return;
-            field_abilities_list.move.cast(data.hero_name);
+            field_abilities_list.move.cast(data.init_db.initial_shortcuts.move);
+        }, this);
+        game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(function(){
+            if (data.climbing || data.menu_open || data.pushing || data.teleporting) return;
+            field_abilities_list.frost.cast(data.init_db.initial_shortcuts.frost);
         }, this);
 
         //enable enter event

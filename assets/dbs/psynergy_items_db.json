@@ -46,8 +46,8 @@
         "initial_animation": "pool",
         "actions": {
             "frame_rate": 5,
-            "animations": ["pool"],
-            "frames_count": [2]
+            "animations": ["pool", "pillar"],
+            "frames_count": [2, 6]
         }
     }
 }

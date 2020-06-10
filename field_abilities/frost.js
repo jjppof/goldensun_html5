@@ -6,11 +6,15 @@ import * as numbers from '../magic_numbers.js';
 
 const KEY_NAME = "frost_psynergy";
 const ACTION_KEY_NAME = "cast";
-const FROST_MAX_RANGE = 26;
+const FROST_MAX_RANGE = 12;
+const SNOWFLAKES_COUNT = 15;
+const TOTAL_TURNS_SNOWFLAKES = Math.PI * 4.999;
+const POLAR_SLOPE = 0.2;
+const SPIRAL_INTENSITY = 4.25;
+const SNOWFLAKE_DURATION = 1500;
 
 export class FrostFieldPsynergy {
     constructor(game, data) {
-        super(KEY_NAME, [ACTION_KEY_NAME]);
         this.game = game;
         this.data = data;
         this.ability_key_name = "frost";
@@ -42,21 +46,21 @@ export class FrostFieldPsynergy {
             min_x = this.data.hero.x - numbers.HERO_BODY_RADIUS;
             max_x = this.data.hero.x + numbers.HERO_BODY_RADIUS;
             if (this.cast_direction === "up") {
-                min_y = this.data.hero.y - numbers.HERO_BODY_RADIUS - MOVE_MAX_RANGE;
+                min_y = this.data.hero.y - numbers.HERO_BODY_RADIUS - FROST_MAX_RANGE;
                 max_y = this.data.hero.y - numbers.HERO_BODY_RADIUS;
             } else {
                 min_y = this.data.hero.y + numbers.HERO_BODY_RADIUS;
-                max_y = this.data.hero.y + numbers.HERO_BODY_RADIUS + MOVE_MAX_RANGE;
+                max_y = this.data.hero.y + numbers.HERO_BODY_RADIUS + FROST_MAX_RANGE;
             }
         } else {
             min_y = this.data.hero.y - numbers.HERO_BODY_RADIUS;
             max_y = this.data.hero.y + numbers.HERO_BODY_RADIUS;
             if (this.cast_direction === "left") {
-                min_x = this.data.hero.x - numbers.HERO_BODY_RADIUS - MOVE_MAX_RANGE;
+                min_x = this.data.hero.x - numbers.HERO_BODY_RADIUS - FROST_MAX_RANGE;
                 max_x = this.data.hero.x - numbers.HERO_BODY_RADIUS;
             } else {
                 min_x = this.data.hero.x + numbers.HERO_BODY_RADIUS;
-                max_x = this.data.hero.x + numbers.HERO_BODY_RADIUS + MOVE_MAX_RANGE;
+                max_x = this.data.hero.x + numbers.HERO_BODY_RADIUS + FROST_MAX_RANGE;
             }
         }
         let sqr_distance = Infinity;
@@ -83,15 +87,78 @@ export class FrostFieldPsynergy {
         this.data.hero.animations.play(this.action_key_name + "_" + this.cast_direction, main_char_list[this.data.hero_name].actions[this.action_key_name].frame_rate, false);
     }
 
-    init_snowflakes() {
+    unset_hero_cast_anim() {
+        this.data.hero.animations.currentAnim.reverseOnce();
+        this.data.hero.animations.currentAnim.onComplete.addOnce(() => {
+            this.data.hero.loadTexture(this.data.hero_name + "_idle");
+            main_char_list[this.data.hero_name].setAnimation(this.data.hero, "idle");
+            this.data.hero.animations.frameName = `idle/${this.cast_direction}/00`;
+        });
+        this.data.hero.animations.play(this.action_key_name + "_" + this.cast_direction, main_char_list[this.data.hero_name].actions[this.action_key_name].frame_rate, false);
+    }
 
+    init_snowflakes() {
+        for (let i = 0; i < SNOWFLAKES_COUNT; ++i) {
+            let snowflake_sprite = this.data.npc_group.create(0, 0, "frost_snowflake");
+            snowflake_sprite.anchor.setTo(0.5, 0.5);
+            const scale_factor = _.random(5, 9)/10.0;
+            const rotation_factor = Math.random() * numbers.degree360;
+            snowflake_sprite.scale.setTo(scale_factor, scale_factor);
+            snowflake_sprite.rotation = rotation_factor;
+            let x_dest = this.data.hero.centerX;
+            let y_dest = this.data.hero.centerY + 12;
+            switch (this.cast_direction) {
+                case "left": x_dest -= 16; break;
+                case "right": x_dest += 16; break;
+                case "up": y_dest -= 14; break;
+                case "down": y_dest += 12; break;
+            }
+            let spiral_angle = {rad: TOTAL_TURNS_SNOWFLAKES};
+            const sign_x = Math.sign(Math.random() - 0.5);
+            const sign_y = Math.sign(Math.random() - 0.5);
+            const tween = this.game.add.tween(spiral_angle).to(
+                {rad: -Math.PI},
+                SNOWFLAKE_DURATION,
+                Phaser.Easing.Linear.None,
+                true,
+                i * (Phaser.Timer.QUARTER >> 1)
+            );
+            tween.onUpdateCallback(() => {
+                snowflake_sprite.centerX = sign_x * SPIRAL_INTENSITY * Math.exp(POLAR_SLOPE * spiral_angle.rad) * Math.cos(spiral_angle.rad) + x_dest;
+                snowflake_sprite.centerY = sign_y * SPIRAL_INTENSITY * Math.exp(POLAR_SLOPE * spiral_angle.rad) * Math.sin(spiral_angle.rad) + y_dest;
+            });
+            tween.onComplete.addOnce(() => {
+                snowflake_sprite.destroy();
+                if (i === SNOWFLAKES_COUNT - 1) {
+                    if (this.target_found) {
+                        this.init_pillar();
+                    } else {
+                        this.unset_hero_cast_anim();
+                        this.stop_casting();
+                    }
+                }
+            });
+        }
+    }
+
+    init_pillar() {
+        this.target_item.psynergy_item_sprite.send_to_back = false;
+        this.data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
+        this.target_item.events.forEach(event_key => {
+            maps[data.map_name].events[event_key].active = false;
+        });
+        this.target_item.psynergy_item_sprite.animations.play("frost_pool_pillar", 5, false);
+        this.target_item.psynergy_item_sprite.animations.currentAnim.onComplete.addOnce(() => {
+            this.unset_hero_cast_anim();
+            this.stop_casting();
+        });
     }
 
     cast(caster_key_name) {
         if (this.data.casting_psynergy) return;
         let caster = main_char_list[caster_key_name];
         let ability = abilities_list[this.ability_key_name];
-        if (caster.current_pp < ability.pp_cost) {
+        if (caster.current_pp < ability.pp_cost && caster.abilities.includes(this.ability_key_name)) {
             return;
         }
         this.data.casting_psynergy = true;

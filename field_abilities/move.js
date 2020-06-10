@@ -364,7 +364,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         if (this.data.casting_psynergy) return;
         let caster = main_char_list[caster_key_name];
         let ability = abilities_list[this.ability_key_name];
-        if (caster.current_pp < ability.pp_cost) {
+        if (caster.current_pp < ability.pp_cost && caster.abilities.includes(this.ability_key_name)) {
             return;
         }
         this.data.casting_psynergy = true;
