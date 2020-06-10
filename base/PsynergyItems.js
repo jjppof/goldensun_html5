@@ -15,6 +15,7 @@ export class PsynergyItems {
         this.allowed_tiles = allowed_tiles;
         this.base_collider_layer = base_collider_layer;
         this.events = new Set();
+        this.events_info = {};
         this.current_x = x;
         this.current_y = y;
     }

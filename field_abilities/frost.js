@@ -142,15 +142,55 @@ export class FrostFieldPsynergy {
     }
 
     init_pillar() {
+        this.target_item.events.forEach(event_key => {
+            if (maps[this.data.map_name].events[event_key].is_set) {
+                maps[this.data.map_name].events[event_key].active = false;
+                maps[this.data.map_name].events[event_key].is_set = false;
+            } else {
+                maps[this.data.map_name].events[event_key].active = true;
+                maps[this.data.map_name].events[event_key].is_set = true;
+            }
+        });
         this.target_item.psynergy_item_sprite.send_to_back = false;
         this.data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
-        this.target_item.events.forEach(event_key => {
-            maps[data.map_name].events[event_key].active = false;
+        this.target_item.psynergy_item_sprite.filters = [this.data.pasynergy_item_color_filters];
+        let blink_counter = 16;
+        let blink_timer = game.time.create(false);
+        blink_timer.loop(50, () => {
+            if (blink_counter%2 === 0) {
+                this.data.pasynergy_item_color_filters.tint = [1,1,1];
+            } else {
+                this.data.pasynergy_item_color_filters.tint = [-1,-1,-1];
+            }
+            --blink_counter;
+            if (blink_counter === 0) {
+                blink_timer.stop();
+                this.grow_pillar();
+            }
         });
+        blink_timer.start();
+    }
+
+    grow_pillar() {
         this.target_item.psynergy_item_sprite.animations.play("frost_pool_pillar", 5, false);
         this.target_item.psynergy_item_sprite.animations.currentAnim.onComplete.addOnce(() => {
+            this.set_permanent_blink();
             this.unset_hero_cast_anim();
             this.stop_casting();
+        });
+    }
+
+    set_permanent_blink() {
+        let blink_timer = game.time.create(false);
+        blink_timer.loop(150, () => {
+            this.data.pasynergy_item_color_filters.hue_adjust = 5.3;
+            game.time.events.add(20, () => {
+                this.data.pasynergy_item_color_filters.hue_adjust = 0;
+            });
+        });
+        blink_timer.start();
+        this.target_item.psynergy_item_sprite.events.onDestroy.add(() => {
+            blink_timer.destroy();
         });
     }
 

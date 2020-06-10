@@ -535,8 +535,16 @@ function render() {
             const mouse_x = parseInt((game.camera.x + game.input.mousePointer.x/data.scale_factor)/maps[data.map_name].sprite.tileWidth);
             const mouse_y = parseInt((game.camera.y + game.input.mousePointer.y/data.scale_factor)/maps[data.map_name].sprite.tileHeight);
             game.debug.text(`x: ${mouse_x}, y: ${mouse_y}`, 140, 15, "#00ff00");
+            const event_key = mouse_x + "_" + mouse_y;
+            if (event_key in maps[data.map_name].events) {
+                document.getElementById("object_inspector").innerText = JSON.stringify(maps[data.map_name].events[event_key], null, 4);
+            } else {
+                document.getElementById("object_inspector").innerText = "";
+            }
         } else {
             game.debug.text(`x: --, y: --`, 140, 15, "#00ff00");
         }
+    } else {
+        document.getElementById("object_inspector").innerText = "";
     }
 }

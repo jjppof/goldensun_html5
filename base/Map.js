@@ -106,7 +106,8 @@ export class Map {
                         y: property_info.y,
                         activation_direction: property_info.activation_direction,
                         activation_collision_layers: property_info.activation_collision_layers ? property_info.activation_collision_layers : 0,
-                        active: property_info.initially_active === undefined ? true : property_info.initially_active, 
+                        active: property_info.initially_active === undefined ? true : property_info.initially_active,
+                        is_set: property_info.is_set === undefined ? true : property_info.is_set,
                     }
                 } else if (property_info.type === "step") {
                     this.events[property_info.x + "_" + property_info.y] = {
@@ -226,34 +227,48 @@ export class Map {
                     const initial_animation = psynergy_items_db[psynergy_item_info.key_name].initial_animation;
                     psynergy_item_info.psynergy_item_sprite.animations.play(action + "_" + initial_animation);
                     const position = psynergy_item_info.get_current_position(data);
-                    const x_pos = position.x;
-                    const y_pos = position.y + psynergy_items_db[psynergy_item_info.key_name].jump_y_shift;
-                    if (psynergy_items_db[psynergy_item_info.key_name].events.includes("jump")) {
-                        const event_key = x_pos + "_" + y_pos;
-                        this.events[event_key] = {
-                            type: "jump",
-                            dynamic: true,
-                            x: x_pos,
-                            y: y_pos,
-                            activation_direction: ["up", "down", "right", "left"],
-                            activation_collision_layers: [psynergy_item_info.base_collider_layer + psynergy_items_db[psynergy_item_info.key_name].jump_collide_layer_shift],
-                            active: true, 
+                    let x_pos = position.x;
+                    let y_pos = position.y;
+                    for (let j = 0; j < psynergy_items_db[psynergy_item_info.key_name].events.length; ++j) {
+                        const event_info = psynergy_items_db[psynergy_item_info.key_name].events[j];
+                        x_pos += event_info.x_shift !== undefined ? event_info.x_shift : 0;
+                        y_pos += event_info.y_shift !== undefined ? event_info.y_shift : 0;
+                        const collide_layer_shift = event_info.collide_layer_shift !== undefined ? event_info.collide_layer_shift : 0;
+                        const active_event = event_info.active !== undefined ? event_info.active : true;
+                        switch (event_info.type) {
+                            case "jump":
+                                const event_key = x_pos + "_" + y_pos;
+                                this.events[event_key] = {
+                                    type: "jump",
+                                    dynamic: event_info.dynamic,
+                                    x: x_pos,
+                                    y: y_pos,
+                                    activation_direction: ["up", "down", "right", "left"],
+                                    activation_collision_layers: [psynergy_item_info.base_collider_layer + collide_layer_shift],
+                                    active: active_event,
+                                    is_set: event_info.is_set === undefined ? true: event_info.is_set
+                                }
+                                psynergy_item_info.insert_event(event_key);
+                                psynergy_item_info.events_info[event_info.type] = event_info;
+                                break;
+                            case "jump_around":
+                                get_surroundings(x_pos, y_pos).forEach((pos, index) => {
+                                    const event_key = pos.x + "_" + pos.y;
+                                    this.events[event_key] = {
+                                        type: "jump",
+                                        dynamic: event_info.dynamic,
+                                        x: pos.x,
+                                        y: pos.y,
+                                        activation_direction: ["right", "left", "down", "up"][index],
+                                        activation_collision_layers: [psynergy_item_info.base_collider_layer + collide_layer_shift],
+                                        active: active_event,
+                                        is_set: event_info.is_set === undefined ? true: event_info.is_set
+                                    }
+                                    psynergy_item_info.insert_event(event_key);
+                                });
+                                psynergy_item_info.events_info[event_info.type] = event_info;
+                                break;
                         }
-                        psynergy_item_info.insert_event(event_key);
-                    } else if (psynergy_items_db[psynergy_item_info.key_name].events.includes("jump_around")) {
-                        get_surroundings(x_pos, y_pos).forEach((pos, index) => {
-                            const event_key = pos.x + "_" + pos.y;
-                            this.events[event_key] = {
-                                type: "jump",
-                                dynamic: false,
-                                x: pos.x,
-                                y: pos.y,
-                                activation_direction: ["right", "left", "down", "up"][index],
-                                activation_collision_layers: [psynergy_item_info.base_collider_layer + psynergy_items_db[psynergy_item_info.key_name].jump_collide_layer_shift],
-                                active: true, 
-                            }
-                            psynergy_item_info.insert_event(event_key);
-                        });
                     }
                     resolve();
                 });

@@ -84,7 +84,7 @@ export function jump_event(data, event_key) {
         return;
     }
     if (next_pos_key in maps[data.map_name].events) {
-        if (maps[data.map_name].events[next_pos_key].type !== "jump") {
+        if (maps[data.map_name].events[next_pos_key].type !== "jump" || !maps[data.map_name].events[next_pos_key].active) {
             data.on_event = false;
             data.current_event = null;
             data.shadow.visible = true;

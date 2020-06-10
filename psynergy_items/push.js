@@ -86,7 +86,7 @@ export function fire_push_movement(data, psynergy_item, push_end, before_move, t
                 if (old_key in maps[data.map_name].events) {
                     const old_surr_event = maps[data.map_name].events[old_key];
                     if (old_surr_event.type === "jump") {
-                        const target_layer = data.psynergy_items_db[psynergy_item.key_name].jump_collide_layer_shift + psynergy_item.base_collider_layer;
+                        const target_layer = psynergy_item.events_info.jump.collide_layer_shift + psynergy_item.base_collider_layer;
                         if (old_surr_event.activation_collision_layers.includes(target_layer)) {
                             if (old_surr_event.dynamic === false) {
                                 old_surr_event.active = false;
@@ -97,9 +97,9 @@ export function fire_push_movement(data, psynergy_item, push_end, before_move, t
                 if (new_key in maps[data.map_name].events) {
                     const new_surr_event = maps[data.map_name].events[new_key];
                     if (new_surr_event.type === "jump") {
-                        const target_layer = data.psynergy_items_db[psynergy_item.key_name].jump_collide_layer_shift + psynergy_item.base_collider_layer;
+                        const target_layer = psynergy_item.events_info.jump.collide_layer_shift + psynergy_item.base_collider_layer;
                         if (new_surr_event.activation_collision_layers.includes(target_layer)) {
-                            if (new_surr_event.dynamic === false) {
+                            if (new_surr_event.dynamic === false && new_surr_event.is_set) {
                                 new_surr_event.active = true;
                             }
                         }

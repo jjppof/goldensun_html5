@@ -5,9 +5,14 @@
         "body_radius": 7.0,
         "psynergy_keys": ["move"],
         "pushable": true,
-        "events": ["jump"],
-        "jump_y_shift": -2,
-        "jump_collide_layer_shift": 1,
+        "events": [{
+            "type": "jump",
+            "active": true,
+            "collide_layer_shift": 1,
+            "x_shift": 0,
+            "y_shift": -2,
+            "dynamic": true
+        }],
         "initial_animation": "idle",
         "actions": {
             "frame_rate": 1,
@@ -21,9 +26,16 @@
         "body_radius": 7.0,
         "psynergy_keys": ["move"],
         "pushable": true,
-        "events": ["stair", "jump"],
-        "jump_y_shift": -2,
-        "jump_collide_layer_shift": 1,
+        "events": [{
+            "type": "stair"
+        }, {
+            "type": "jump",
+            "active": true,
+            "collide_layer_shift": 1,
+            "x_shift": 0,
+            "y_shift": -2,
+            "dynamic": true
+        }],
         "initial_animation": "idle",
         "actions": {
             "frame_rate": 1,
@@ -40,9 +52,20 @@
         "send_to_back": true,
         "psynergy_keys": ["frost"],
         "pushable": false,
-        "events": ["jump_around"],
-        "jump_y_shift": 0,
-        "jump_collide_layer_shift": 0,
+        "events": [{
+            "type": "jump_around",
+            "active": true,
+            "collide_layer_shift": 0,
+            "dynamic": false
+        }, {
+            "type": "jump",
+            "active": false,
+            "collide_layer_shift": 1,
+            "x_shift": 0,
+            "y_shift": -2,
+            "dynamic": true,
+            "is_set": false
+        }],
         "initial_animation": "pool",
         "actions": {
             "frame_rate": 5,
