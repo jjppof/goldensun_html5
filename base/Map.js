@@ -1,6 +1,6 @@
 import { u, get_surroundings } from "../utils.js";
 import { NPC_Sprite, NPC } from './NPC.js';
-import { PsynergyItems, PsynergyItems_Sprite } from "./PsynergyItems.js";
+import { InteractableObjects, InteractableObjects_Sprite } from "./InteractableObjects.js";
 import * as numbers from '../magic_numbers.js';
 
 export class Map {
@@ -23,7 +23,7 @@ export class Map {
         this.sprite = null;
         this.events = {};
         this.npcs = [];
-        this.psynergy_items = [];
+        this.interactable_objects = [];
     }
 
     loadMapAssets(game) {
@@ -34,7 +34,7 @@ export class Map {
         }
     }
 
-    async setLayers(game, data, maps, npc_db, psynergy_items_db, map_name, underlayer_group, overlayer_group, collider_layer, npc_group) {
+    async setLayers(game, data, maps, npc_db, interactable_objects_db, map_name, underlayer_group, overlayer_group, collider_layer, npc_group) {
         this.events = {};
         this.sprite = game.add.tilemap(this.key_name);
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
@@ -147,9 +147,9 @@ export class Map {
                     property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer,
                     property_info.talk_range_factor === undefined ? numbers.NPC_TALK_RANGE : property_info.talk_range_factor
                 ));
-            } else if(property.startsWith("psynergy_item")) {
+            } else if(property.startsWith("interactable_object")) {
                 const property_info = JSON.parse(this.sprite.properties[property]);
-                this.psynergy_items.push(new PsynergyItems(
+                this.interactable_objects.push(new InteractableObjects(
                     property_info.key_name,
                     property_info.x,
                     property_info.y,
@@ -186,51 +186,51 @@ export class Map {
                 underlayer_group.add(layer);
         }
 
-        for (let i = 0; i < this.psynergy_items.length; ++i) {
-            let psynergy_item_info = this.psynergy_items[i];
-            const action = psynergy_item_info.key_name;
-            let pynergy_item = new PsynergyItems_Sprite(
-                psynergy_item_info.key_name,
+        for (let i = 0; i < this.interactable_objects.length; ++i) {
+            let interactable_object_info = this.interactable_objects[i];
+            const action = interactable_object_info.key_name;
+            let pynergy_item = new InteractableObjects_Sprite(
+                interactable_object_info.key_name,
                 [action]
             );
             pynergy_item.setActionSpritesheet(
                 action,
-                `assets/images/spritesheets/psynergy_items/psynergy_${psynergy_items_db[psynergy_item_info.key_name].type}.png`,
-                `assets/images/spritesheets/psynergy_items/psynergy_${psynergy_items_db[psynergy_item_info.key_name].type}.json`
+                `assets/images/spritesheets/interactable_objects/psynergy_${interactable_objects_db[interactable_object_info.key_name].type}.png`,
+                `assets/images/spritesheets/interactable_objects/psynergy_${interactable_objects_db[interactable_object_info.key_name].type}.json`
             );
             pynergy_item.setActionDirections(
                 action, 
-                psynergy_items_db[psynergy_item_info.key_name].actions.animations,
-                psynergy_items_db[psynergy_item_info.key_name].actions.frames_count
+                interactable_objects_db[interactable_object_info.key_name].actions.animations,
+                interactable_objects_db[interactable_object_info.key_name].actions.frames_count
             );
-            pynergy_item.setActionFrameRate(action, psynergy_items_db[psynergy_item_info.key_name].actions.frame_rate);
+            pynergy_item.setActionFrameRate(action, interactable_objects_db[interactable_object_info.key_name].actions.frame_rate);
             pynergy_item.addAnimations();
             await new Promise(resolve => {
                 pynergy_item.loadSpritesheets(game, true, () => {
-                    let psynergy_item_sprite = npc_group.create(0, 0, psynergy_item_info.key_name + "_" + action);
-                    psynergy_item_info.set_sprite(psynergy_item_sprite);
-                    psynergy_item_info.psynergy_item_sprite.is_psynergy_item = true;
-                    psynergy_item_info.psynergy_item_sprite.base_collider_layer = psynergy_item_info.base_collider_layer;
-                    if (psynergy_items_db[psynergy_item_info.key_name].send_to_back !== undefined) { 
-                        psynergy_item_info.psynergy_item_sprite.send_to_back = psynergy_items_db[psynergy_item_info.key_name].send_to_back;
+                    let interactable_object_sprite = npc_group.create(0, 0, interactable_object_info.key_name + "_" + action);
+                    interactable_object_info.set_sprite(interactable_object_sprite);
+                    interactable_object_info.interactable_object_sprite.is_interactable_object = true;
+                    interactable_object_info.interactable_object_sprite.base_collider_layer = interactable_object_info.base_collider_layer;
+                    if (interactable_objects_db[interactable_object_info.key_name].send_to_back !== undefined) { 
+                        interactable_object_info.interactable_object_sprite.send_to_back = interactable_objects_db[interactable_object_info.key_name].send_to_back;
                     }
-                    if (psynergy_items_db[psynergy_item_info.key_name].anchor_x !== undefined) {
-                        psynergy_item_info.psynergy_item_sprite.anchor.x = psynergy_items_db[psynergy_item_info.key_name].anchor_x;
+                    if (interactable_objects_db[interactable_object_info.key_name].anchor_x !== undefined) {
+                        interactable_object_info.interactable_object_sprite.anchor.x = interactable_objects_db[interactable_object_info.key_name].anchor_x;
                     }
-                    psynergy_item_info.psynergy_item_sprite.anchor.y = psynergy_items_db[psynergy_item_info.key_name].anchor_y;
-                    const shift_x = psynergy_items_db[psynergy_item_info.key_name].shift_x !== undefined ? psynergy_items_db[psynergy_item_info.key_name].shift_x : 0;
-                    const shift_y = psynergy_items_db[psynergy_item_info.key_name].shift_y !== undefined ? psynergy_items_db[psynergy_item_info.key_name].shift_y : 0;
-                    psynergy_item_info.psynergy_item_sprite.centerX = (psynergy_item_info.x + 1) * this.sprite.tileWidth + shift_x;
-                    const anchor_shift = psynergy_items_db[psynergy_item_info.key_name].anchor_y * this.sprite.tileWidth * 0.5;
-                    psynergy_item_info.psynergy_item_sprite.centerY = psynergy_item_info.y * this.sprite.tileWidth - anchor_shift + shift_y;
-                    pynergy_item.setAnimation(psynergy_item_info.psynergy_item_sprite, action);
-                    const initial_animation = psynergy_items_db[psynergy_item_info.key_name].initial_animation;
-                    psynergy_item_info.psynergy_item_sprite.animations.play(action + "_" + initial_animation);
-                    const position = psynergy_item_info.get_current_position(data);
+                    interactable_object_info.interactable_object_sprite.anchor.y = interactable_objects_db[interactable_object_info.key_name].anchor_y;
+                    const shift_x = interactable_objects_db[interactable_object_info.key_name].shift_x !== undefined ? interactable_objects_db[interactable_object_info.key_name].shift_x : 0;
+                    const shift_y = interactable_objects_db[interactable_object_info.key_name].shift_y !== undefined ? interactable_objects_db[interactable_object_info.key_name].shift_y : 0;
+                    interactable_object_info.interactable_object_sprite.centerX = (interactable_object_info.x + 1) * this.sprite.tileWidth + shift_x;
+                    const anchor_shift = interactable_objects_db[interactable_object_info.key_name].anchor_y * this.sprite.tileWidth * 0.5;
+                    interactable_object_info.interactable_object_sprite.centerY = interactable_object_info.y * this.sprite.tileWidth - anchor_shift + shift_y;
+                    pynergy_item.setAnimation(interactable_object_info.interactable_object_sprite, action);
+                    const initial_animation = interactable_objects_db[interactable_object_info.key_name].initial_animation;
+                    interactable_object_info.interactable_object_sprite.animations.play(action + "_" + initial_animation);
+                    const position = interactable_object_info.get_current_position(data);
                     let x_pos = position.x;
                     let y_pos = position.y;
-                    for (let j = 0; j < psynergy_items_db[psynergy_item_info.key_name].events.length; ++j) {
-                        const event_info = psynergy_items_db[psynergy_item_info.key_name].events[j];
+                    for (let j = 0; j < interactable_objects_db[interactable_object_info.key_name].events.length; ++j) {
+                        const event_info = interactable_objects_db[interactable_object_info.key_name].events[j];
                         x_pos += event_info.x_shift !== undefined ? event_info.x_shift : 0;
                         y_pos += event_info.y_shift !== undefined ? event_info.y_shift : 0;
                         const collide_layer_shift = event_info.collide_layer_shift !== undefined ? event_info.collide_layer_shift : 0;
@@ -244,12 +244,12 @@ export class Map {
                                     x: x_pos,
                                     y: y_pos,
                                     activation_direction: ["up", "down", "right", "left"],
-                                    activation_collision_layers: [psynergy_item_info.base_collider_layer + collide_layer_shift],
+                                    activation_collision_layers: [interactable_object_info.base_collider_layer + collide_layer_shift],
                                     active: active_event,
                                     is_set: event_info.is_set === undefined ? true: event_info.is_set
                                 }
-                                psynergy_item_info.insert_event(event_key);
-                                psynergy_item_info.events_info[event_info.type] = event_info;
+                                interactable_object_info.insert_event(event_key);
+                                interactable_object_info.events_info[event_info.type] = event_info;
                                 break;
                             case "jump_around":
                                 get_surroundings(x_pos, y_pos).forEach((pos, index) => {
@@ -260,13 +260,13 @@ export class Map {
                                         x: pos.x,
                                         y: pos.y,
                                         activation_direction: ["right", "left", "down", "up"][index],
-                                        activation_collision_layers: [psynergy_item_info.base_collider_layer + collide_layer_shift],
+                                        activation_collision_layers: [interactable_object_info.base_collider_layer + collide_layer_shift],
                                         active: active_event,
                                         is_set: event_info.is_set === undefined ? true: event_info.is_set
                                     }
-                                    psynergy_item_info.insert_event(event_key);
+                                    interactable_object_info.insert_event(event_key);
                                 });
-                                psynergy_item_info.events_info[event_info.type] = event_info;
+                                interactable_object_info.events_info[event_info.type] = event_info;
                                 break;
                         }
                     }

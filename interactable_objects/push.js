@@ -1,23 +1,23 @@
 import * as numbers from  "../magic_numbers.js";
 import { maps } from '../maps/maps.js';
 
-export function normal_push(data, psynergy_item) {
+export function normal_push(data, interactable_object) {
     if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.actual_direction && !data.casting_psynergy) {
-        fire_push_movement(data, psynergy_item);
+        fire_push_movement(data, interactable_object);
     }
     data.trying_to_push = false;
     data.push_timer = null;
 }
 
-export function target_only_push(data, psynergy_item, before_move, push_end) {
-    fire_push_movement(data, psynergy_item, push_end, before_move, true);
+export function target_only_push(data, interactable_object, before_move, push_end) {
+    fire_push_movement(data, interactable_object, push_end, before_move, true);
 }
 
-export function fire_push_movement(data, psynergy_item, push_end, before_move, target_only = false) {
+export function fire_push_movement(data, interactable_object, push_end, before_move, target_only = false) {
     let expected_position;
     if (!target_only) {
-        let positive_limit = data.hero.x + (-psynergy_item.psynergy_item_sprite.y - psynergy_item.psynergy_item_sprite.x);
-        let negative_limit = -data.hero.x + (-psynergy_item.psynergy_item_sprite.y + psynergy_item.psynergy_item_sprite.x);
+        let positive_limit = data.hero.x + (-interactable_object.interactable_object_sprite.y - interactable_object.interactable_object_sprite.x);
+        let negative_limit = -data.hero.x + (-interactable_object.interactable_object_sprite.y + interactable_object.interactable_object_sprite.x);
         if (-data.hero.y >= positive_limit && -data.hero.y >= negative_limit) {
             expected_position = "down";
         } else if (-data.hero.y <= positive_limit && -data.hero.y >= negative_limit) {
@@ -54,7 +54,7 @@ export function fire_push_movement(data, psynergy_item, push_end, before_move, t
                 tween_x = numbers.PUSH_SHIFT;
                 break;
         }
-        let item_events = psynergy_item.get_events();
+        let item_events = interactable_object.get_events();
         for (let i = 0; i < item_events.length; ++i) {
             const event_key = item_events[i];
             let event = maps[data.map_name].events[event_key];
@@ -64,7 +64,7 @@ export function fire_push_movement(data, psynergy_item, push_end, before_move, t
             let new_x = old_x + event_shift_x;
             let new_y = old_y + event_shift_y;
             const new_event_key = new_x + "_" + new_y;
-            psynergy_item.update_event(event_key, new_event_key);
+            interactable_object.update_event(event_key, new_event_key);
             event.x = new_x;
             event.y = new_y;
             maps[data.map_name].events[new_event_key] = event;
@@ -86,7 +86,7 @@ export function fire_push_movement(data, psynergy_item, push_end, before_move, t
                 if (old_key in maps[data.map_name].events) {
                     const old_surr_event = maps[data.map_name].events[old_key];
                     if (old_surr_event.type === "jump") {
-                        const target_layer = psynergy_item.events_info.jump.collide_layer_shift + psynergy_item.base_collider_layer;
+                        const target_layer = interactable_object.events_info.jump.collide_layer_shift + interactable_object.base_collider_layer;
                         if (old_surr_event.activation_collision_layers.includes(target_layer)) {
                             if (old_surr_event.dynamic === false) {
                                 old_surr_event.active = false;
@@ -97,7 +97,7 @@ export function fire_push_movement(data, psynergy_item, push_end, before_move, t
                 if (new_key in maps[data.map_name].events) {
                     const new_surr_event = maps[data.map_name].events[new_key];
                     if (new_surr_event.type === "jump") {
-                        const target_layer = psynergy_item.events_info.jump.collide_layer_shift + psynergy_item.base_collider_layer;
+                        const target_layer = interactable_object.events_info.jump.collide_layer_shift + interactable_object.base_collider_layer;
                         if (new_surr_event.activation_collision_layers.includes(target_layer)) {
                             if (new_surr_event.dynamic === false && new_surr_event.is_set) {
                                 new_surr_event.active = true;
@@ -107,12 +107,12 @@ export function fire_push_movement(data, psynergy_item, push_end, before_move, t
                 }
             }
         }
-        let sprites = [psynergy_item.psynergy_item_sprite.body];
+        let sprites = [interactable_object.interactable_object_sprite.body];
         if (!target_only) {
             sprites.push(...[data.shadow, data.hero.body]);
         }
-        psynergy_item.current_x += event_shift_x;
-        psynergy_item.current_y += event_shift_y;
+        interactable_object.current_x += event_shift_x;
+        interactable_object.current_y += event_shift_y;
         let promises = [];
         if (before_move !== undefined) {
             before_move(tween_x, tween_y);

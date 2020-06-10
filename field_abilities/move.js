@@ -4,7 +4,7 @@ import { abilities_list } from "../chars/abilities.js";
 import { init_cast_aura, tint_map_layers } from  '../chars/psynergy_cast.js';
 import { maps } from  '../maps/maps.js';
 import * as numbers from '../magic_numbers.js';
-import { target_only_push } from '../psynergy_items/push.js';
+import { target_only_push } from '../interactable_objects/push.js';
 
 const KEY_NAME = "move_psynergy";
 const ACTION_KEY_NAME = "cast";
@@ -20,8 +20,8 @@ export class MoveFieldPsynergy extends SpriteBase {
         this.action_key_name = ACTION_KEY_NAME;
         this.setActionSpritesheet(
             this.action_key_name,
-            "assets/images/spritesheets/psynergy_items/move_psynergy_hand.png",
-            "assets/images/spritesheets/psynergy_items/move_psynergy_hand.json"
+            "assets/images/spritesheets/interactable_objects/move_psynergy_hand.png",
+            "assets/images/spritesheets/interactable_objects/move_psynergy_hand.json"
         );
         this.setActionDirections(
             this.action_key_name, 
@@ -100,8 +100,8 @@ export class MoveFieldPsynergy extends SpriteBase {
                         true
                     );
                 }, () => {
-                    const pos_sqr_distance = Math.pow(this.data.hero.body.x - this.target_item.psynergy_item_sprite.body.x, 2) + Math.pow(this.data.hero.body.y - this.target_item.psynergy_item_sprite.body.y, 2);
-                    const rad_sqr_distance = Math.pow(numbers.HERO_BODY_RADIUS + this.data.psynergy_items_db[this.target_item.key_name].body_radius, 2);
+                    const pos_sqr_distance = Math.pow(this.data.hero.body.x - this.target_item.interactable_object_sprite.body.x, 2) + Math.pow(this.data.hero.body.y - this.target_item.interactable_object_sprite.body.y, 2);
+                    const rad_sqr_distance = Math.pow(numbers.HERO_BODY_RADIUS + this.data.interactable_objects_db[this.target_item.key_name].body_radius, 2);
                     if (pos_sqr_distance <= rad_sqr_distance) {
                         this.data.hero.body.x = (this.data.hero_tile_pos_x + 0.5) * maps[this.data.map_name].sprite.tileWidth;
                         this.data.hero.body.y = (this.data.hero_tile_pos_y + 0.5) * maps[this.data.map_name].sprite.tileHeight;
@@ -149,28 +149,28 @@ export class MoveFieldPsynergy extends SpriteBase {
         switch (this.cast_direction) {
             case "up":
                 if (this.target_found) {
-                    translate_y = this.target_item.psynergy_item_sprite.y;
+                    translate_y = this.target_item.interactable_object_sprite.y;
                 } else {
                     translate_y -= MAX_HAND_TRANSLATE;
                 }
                 break;
             case "down":
                 if (this.target_found) {
-                    translate_y = this.target_item.psynergy_item_sprite.y - this.target_item.psynergy_item_sprite.height + this.data.psynergy_items_db[this.target_item.key_name].body_radius;
+                    translate_y = this.target_item.interactable_object_sprite.y - this.target_item.interactable_object_sprite.height + this.data.interactable_objects_db[this.target_item.key_name].body_radius;
                 } else {
                     translate_y += MAX_HAND_TRANSLATE;
                 }
                 break;
             case "right":
                 if (this.target_found) {
-                    translate_x = this.target_item.psynergy_item_sprite.x - 2 * this.data.psynergy_items_db[this.target_item.key_name].body_radius;
+                    translate_x = this.target_item.interactable_object_sprite.x - 2 * this.data.interactable_objects_db[this.target_item.key_name].body_radius;
                 } else {
                     translate_x += MAX_HAND_TRANSLATE;
                 }
                 break;
             case "left":
                 if (this.target_found) {
-                    translate_x = this.target_item.psynergy_item_sprite.x + 2 * this.data.psynergy_items_db[this.target_item.key_name].body_radius;
+                    translate_x = this.target_item.interactable_object_sprite.x + 2 * this.data.interactable_objects_db[this.target_item.key_name].body_radius;
                 } else {
                     translate_x -= MAX_HAND_TRANSLATE;
                 }
@@ -184,7 +184,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         ).onComplete.addOnce(() => {
             this.hand_sprite.animations.play(this.action_key_name + "_" + this.cast_direction);
             if (this.target_found) {
-                this.target_item.psynergy_item_sprite.filters = [this.data.pasynergy_item_color_filters];
+                this.target_item.interactable_object_sprite.filters = [this.data.pasynergy_item_color_filters];
                 this.target_hueshift_timer = this.game.time.create(false);
                 this.target_hueshift_timer.loop(5, () => {
                     this.data.pasynergy_item_color_filters.hue_adjust = Math.random() * 2 * Math.PI;
@@ -274,18 +274,18 @@ export class MoveFieldPsynergy extends SpriteBase {
             }
         }
         let sqr_distance = Infinity;
-        for (let i = 0; i < maps[this.data.map_name].psynergy_items.length; ++i) {
-            let psynergy_item = maps[this.data.map_name].psynergy_items[i];
-            if (!this.data.psynergy_items_db[psynergy_item.key_name].psynergy_keys.includes(this.ability_key_name)) continue;
-            const item_x_px = psynergy_item.current_x * maps[this.data.map_name].sprite.tileWidth + (maps[this.data.map_name].sprite.tileWidth >> 1);
-            const item_y_px = psynergy_item.current_y * maps[this.data.map_name].sprite.tileHeight + (maps[this.data.map_name].sprite.tileHeight >> 1);
+        for (let i = 0; i < maps[this.data.map_name].interactable_objects.length; ++i) {
+            let interactable_object = maps[this.data.map_name].interactable_objects[i];
+            if (!this.data.interactable_objects_db[interactable_object.key_name].psynergy_keys.includes(this.ability_key_name)) continue;
+            const item_x_px = interactable_object.current_x * maps[this.data.map_name].sprite.tileWidth + (maps[this.data.map_name].sprite.tileWidth >> 1);
+            const item_y_px = interactable_object.current_y * maps[this.data.map_name].sprite.tileHeight + (maps[this.data.map_name].sprite.tileHeight >> 1);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
             const y_condition = item_y_px >= min_y && item_y_px <= max_y;
             if (x_condition && y_condition) {
                 let this_sqr_distance = Math.pow(item_x_px - this.data.hero.x, 2) + Math.pow(item_y_px - this.data.hero.y, 2);
                 if (this_sqr_distance < sqr_distance) {
                     this.target_found = true;
-                    this.target_item = psynergy_item;
+                    this.target_item = interactable_object;
                 }
             }
         }
@@ -388,7 +388,7 @@ export class MoveFieldPsynergy extends SpriteBase {
             this.target_item = null;
         }, () => {
             if (this.target_found) {
-                this.target_item.psynergy_item_sprite.filters = undefined;
+                this.target_item.interactable_object_sprite.filters = undefined;
                 this.target_hueshift_timer.stop();
             }
             reset_map();

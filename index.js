@@ -41,7 +41,7 @@ var data = {
     mapCollisionGroup: undefined,
     heroCollisionGroup: undefined,
     npcCollisionGroups: {},
-    psynergyItemCollisionGroups: {},
+    interactableObjectCollisionGroups: {},
     dynamicEventsCollisionGroup: undefined,
     underlayer_group: undefined,
     overlayer_group: undefined,
@@ -52,7 +52,7 @@ var data = {
     delta_time: 0,
     show_fps: undefined,
     npc_db: undefined,
-    psynergy_items_db: undefined,
+    interactable_objects_db: undefined,
     npc_event: false,
     active_npc: null,
     waiting_for_enter_press: false,
@@ -136,7 +136,7 @@ function load_misc() {
     game.load.image('jupiter_star', 'assets/images/misc/jupiter_star.gif');
     game.load.image('stat_up', 'assets/images/misc/stat_up.gif');
     game.load.image('stat_down', 'assets/images/misc/stat_down.gif');
-    game.load.atlasJSONHash('psynergy_particle', 'assets/images/spritesheets/psynergy_items/psynergy_particle.png', 'assets/images/spritesheets/psynergy_items/psynergy_particle.json');
+    game.load.atlasJSONHash('psynergy_particle', 'assets/images/spritesheets/interactable_objects/psynergy_particle.png', 'assets/images/spritesheets/interactable_objects/psynergy_particle.json');
 }
 
 function preload() {
@@ -147,7 +147,7 @@ function preload() {
     game.load.json('abilities_db', 'assets/dbs/abilities_db.json');
     game.load.json('items_db', 'assets/dbs/items_db.json');
     game.load.json('npc_db', 'assets/dbs/npc_db.json');
-    game.load.json('psynergy_items_db', 'assets/dbs/psynergy_items_db.json');
+    game.load.json('interactable_objects_db', 'assets/dbs/interactable_objects_db.json');
     game.load.json('djinni_db', 'assets/dbs/djinni_db.json');
     game.load.json('enemies_db', 'assets/dbs/enemies_db.json');
     game.load.script('color_filters', 'plugins/ColorFilters.js');
@@ -183,7 +183,7 @@ function toggle_debug() {
     data.map_collider.body.debug = !data.map_collider.body.debug;
     for (let i = 0; i < data.npc_group.children.length; ++i) {
         let sprite = data.npc_group.children[i];
-        if (!sprite.is_npc && !sprite.is_psynergy_item) continue;
+        if (!sprite.is_npc && !sprite.is_interactable_object) continue;
         sprite.body.debug = !sprite.body.debug;
     }
     for (let i = 0; i < data.dynamic_jump_events_bodies.length; ++i) {
@@ -196,7 +196,7 @@ async function create() {
     // initializing some vars
     data.init_db = game.cache.getJSON('init_db'); 
     data.npc_db = game.cache.getJSON('npc_db');
-    data.psynergy_items_db = game.cache.getJSON('psynergy_items_db');
+    data.interactable_objects_db = game.cache.getJSON('interactable_objects_db');
     data.classes_db = game.cache.getJSON('classes_db');
     data.abilities_db = game.cache.getJSON('abilities_db');
     data.items_db = game.cache.getJSON('items_db');
@@ -285,7 +285,7 @@ async function create() {
         data,
         maps,
         data.npc_db,
-        data.psynergy_items_db,
+        data.interactable_objects_db,
         data.map_name,
         data.underlayer_group,
         data.overlayer_group,
@@ -296,7 +296,7 @@ async function create() {
         physics.config_world_physics();
         physics.config_physics_for_hero(data);
         physics.config_physics_for_npcs(data);
-        physics.config_physics_for_psynergy_items(data);
+        physics.config_physics_for_interactable_objects(data);
         data.dynamicEventsCollisionGroup = game.physics.p2.createCollisionGroup();
         physics.config_physics_for_map(data);
         physics.config_collisions(data);

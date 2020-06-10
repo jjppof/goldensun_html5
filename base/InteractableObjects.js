@@ -1,13 +1,13 @@
 import { SpriteBase } from "./SpriteBase.js";
 import { maps } from '../maps/maps.js';
 
-export class PsynergyItems_Sprite extends SpriteBase {
+export class InteractableObjects_Sprite extends SpriteBase {
     constructor (key_name, actions) {
         super(key_name, actions);
     }
 }
 
-export class PsynergyItems {
+export class InteractableObjects {
     constructor(key_name, x, y, allowed_tiles, base_collider_layer) {
         this.key_name = key_name;
         this.x = x;
@@ -21,11 +21,11 @@ export class PsynergyItems {
     }
 
     set_sprite(sprite) {
-        this.psynergy_item_sprite = sprite;
+        this.interactable_object_sprite = sprite;
     }
 
     position_allowed(data, x, y) {
-        if (maps[data.map_name].psynergy_items.filter(item => {
+        if (maps[data.map_name].interactable_objects.filter(item => {
             return item.current_x === x && item.current_y === y;
         }).length) {
             return false;
@@ -38,8 +38,8 @@ export class PsynergyItems {
     }
 
     get_current_position(data) {
-        const x = parseInt(this.psynergy_item_sprite.x/maps[data.map_name].sprite.tileWidth);
-        const y = parseInt(this.psynergy_item_sprite.y/maps[data.map_name].sprite.tileHeight);
+        const x = parseInt(this.interactable_object_sprite.x/maps[data.map_name].sprite.tileWidth);
+        const y = parseInt(this.interactable_object_sprite.y/maps[data.map_name].sprite.tileHeight);
         return { x: x, y: y };
     }
 

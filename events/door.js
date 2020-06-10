@@ -1,6 +1,6 @@
 import { main_char_list } from '../chars/main_chars.js';
 import { maps } from '../maps/maps.js';
-import { config_physics_for_npcs, config_physics_for_map, config_collisions, set_speed_factors, config_physics_for_psynergy_items } from '../physics/physics.js';
+import { config_physics_for_npcs, config_physics_for_map, config_collisions, set_speed_factors, config_physics_for_interactable_objects } from '../physics/physics.js';
 import * as numbers from '../magic_numbers.js';
 
 export function set_door_event(data) {
@@ -50,7 +50,7 @@ export function door_event_phases(data) {
         let sprites_to_remove = []
         for (let i = 0; i < data.npc_group.children.length; ++i) {
             let sprite = data.npc_group.children[i];
-            if (!sprite.is_npc && !sprite.is_psynergy_item) continue;
+            if (!sprite.is_npc && !sprite.is_interactable_object) continue;
             sprites_to_remove.push(sprite);
         }
         for (let i = 0; i < sprites_to_remove.length; ++i) {
@@ -59,7 +59,7 @@ export function door_event_phases(data) {
         }
 
         maps[data.map_name].npcs = [];
-        maps[data.map_name].psynergy_items = [];
+        maps[data.map_name].interactable_objects = [];
         data.npc_group.removeAll();
         data.npc_group.add(data.shadow);
         data.npc_group.add(data.hero);
@@ -73,7 +73,7 @@ export function door_event_phases(data) {
             data,
             maps,
             data.npc_db,
-            data.psynergy_items_db,
+            data.interactable_objects_db,
             data.map_name,
             data.underlayer_group,
             data.overlayer_group,
@@ -94,14 +94,14 @@ export function door_event_phases(data) {
             game.physics.p2.resume();
 
             config_physics_for_npcs(data);
-            config_physics_for_psynergy_items(data);
+            config_physics_for_interactable_objects(data);
             config_physics_for_map(data, false);
             config_collisions(data);
             game.physics.p2.updateBoundsCollisionGroup();
 
             for (let i = 0; i < data.npc_group.children.length; ++i) {
                 let sprite = data.npc_group.children[i];
-                if (!sprite.is_npc && !sprite.is_psynergy_item) continue;
+                if (!sprite.is_npc && !sprite.is_interactable_object) continue;
                 sprite.body.debug = data.hero.body.debug;
             }
 
