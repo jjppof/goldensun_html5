@@ -3,6 +3,8 @@ import { abilities_list } from "../initializers/abilities.js";
 import { init_cast_aura, tint_map_layers } from  '../initializers/psynergy_cast.js';
 import { maps } from  '../initializers/maps.js';
 import * as numbers from '../magic_numbers.js';
+import { event_types, JumpEvent } from "../base/TileEvent.js";
+import { get_surroundings } from "../utils.js";
 
 const KEY_NAME = "frost_psynergy";
 const ACTION_KEY_NAME = "cast";
@@ -149,6 +151,13 @@ export class FrostFieldPsynergy {
             } else {
                 event.activate();
                 event.is_set = true;
+                if (event.type === event_types.JUMP) {
+                    JumpEvent.active_jump_surroundings(
+                        data,
+                        get_surroundings(event.x, event.y, false, 2),
+                        this.target_object.events_info.jump.collide_layer_shift + this.target_object.base_collider_layer
+                    );
+                }
             }
         });
         this.target_object.interactable_object_sprite.send_to_back = false;

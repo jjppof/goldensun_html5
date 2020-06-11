@@ -43,11 +43,11 @@ export class TileEvent {
     }
 
     activate() {
-        this.active.map(() => true);
+        this.active = this.active.map(() => true);
     }
 
     deactivate() {
-        this.active.map(() => false);
+        this.active = this.active.map(() => false);
     }
 
     static get_location_key(x, y) {
@@ -99,6 +99,25 @@ export class JumpEvent extends TileEvent {
     constructor(x, y, activation_directions, activation_collision_layers, dynamic, active, is_set) {
         super(event_types.JUMP, x, y, activation_directions, activation_collision_layers, dynamic, active);
         this.is_set = is_set;
+    }
+
+    static active_jump_surroundings(data, surroundings, target_layer) {
+        for (let j = 0; j < surroundings.length; ++j) {
+            const surrounding = surroundings[j];
+            const this_key = TileEvent.get_location_key(surrounding.x, surrounding.y);
+            if (this_key in maps[data.map_name].events) {
+                for (let k = 0; k < maps[data.map_name].events[this_key].length; ++k) {
+                    const surr_event = maps[data.map_name].events[this_key][k];
+                    if (surr_event.type === event_types.JUMP) {
+                        if (surr_event.activation_collision_layers.includes(target_layer)) {
+                            if (surr_event.dynamic === false && surr_event.is_set) {
+                                surr_event.activate_at(get_opposite_direcion(surrounding.direction));
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     static get_surrounding_events_towards_this(data, event, target_collision_layer) {
