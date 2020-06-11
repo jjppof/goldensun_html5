@@ -36,7 +36,7 @@ export function config_hero(data) {
 
 export function change_hero_sprite(data) {
     let action = data.actual_action;
-    if (data.stop_by_colliding && !data.pushing) {
+    if (data.stop_by_colliding && !data.pushing && !data.climbing) {
         action = "idle";
     }
     let key = data.hero_name + "_" + action;
@@ -56,8 +56,6 @@ export function set_actual_action(data) {
         data.actual_action = "idle";
     else if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_direction !== "idle" && data.climbing)
         data.actual_direction = "idle";
-    else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && data.actual_direction !== "climb" && data.climbing)
-        data.actual_direction = "climb";
     else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && (data.actual_action !== "walk" || data.actual_action !== "dash") && !data.climbing) {
         if (game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "dash") {
             data.actual_action = "dash";

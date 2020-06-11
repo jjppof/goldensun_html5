@@ -25,7 +25,6 @@ var data = {
     map_collider_layer: undefined,
     actual_action: "idle",
     actual_direction: undefined,
-    climb_direction: undefined,
     x_speed: 0,
     y_speed: 0,
     hero_name: undefined,

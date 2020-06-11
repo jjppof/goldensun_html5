@@ -1,6 +1,7 @@
 import * as numbers from  "../magic_numbers.js";
 import { maps } from '../initializers/maps.js';
-import { TileEvent, event_types } from "../base/TileEvent.js";
+import { TileEvent, event_types, JumpEvent } from "../base/TileEvent.js";
+import { get_surroundings, get_opposite_direcion } from "../utils.js";
 
 export function normal_push(data, interactable_object) {
     if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.actual_direction && !data.casting_psynergy && !data.jumping) {
@@ -76,30 +77,20 @@ export function fire_push_movement(data, interactable_object, push_end, before_m
                 maps[data.map_name].events[new_event_location_key] = [];
             }
             maps[data.map_name].events[new_event_location_key].push(event);
-            let old_surroundings = [
-                {x: old_x - 2, y: old_y},
-                {x: old_x + 2, y: old_y},
-                {x: old_x, y: old_y - 2},
-                {x: old_x, y: old_y + 2},
-            ];
-            let new_surroundings = [
-                {x: new_x - 2, y: new_y},
-                {x: new_x + 2, y: new_y},
-                {x: new_x, y: new_y - 2},
-                {x: new_x, y: new_y + 2},
-            ];
+            const old_surroundings = get_surroundings(old_x, old_y, false, 2);
+            const new_surroundings = get_surroundings(new_x, new_y, false, 2);
             for (let j = 0; j < old_surroundings.length; ++j) {
-                const old_key = TileEvent.get_location_key(old_surroundings[j].x, old_surroundings[j].y);
-                const new_key = TileEvent.get_location_key(new_surroundings[j].x, new_surroundings[j].y);
+                const old_surrounding = old_surroundings[j];
+                const new_surrounding = new_surroundings[j];
+                const old_key = TileEvent.get_location_key(old_surrounding.x, old_surrounding.y);
+                const new_key = TileEvent.get_location_key(new_surrounding.x, new_surrounding.y);
                 if (old_key in maps[data.map_name].events) {
                     for (let k = 0; k < maps[data.map_name].events[old_key].length; ++k) {
                         const old_surr_event = maps[data.map_name].events[old_key][k];
                         if (old_surr_event.type === event_types.JUMP) {
                             const target_layer = interactable_object.events_info.jump.collide_layer_shift + interactable_object.base_collider_layer;
-                            if (old_surr_event.activation_collision_layers.includes(target_layer)) {
-                                if (old_surr_event.dynamic === false) {
-                                    old_surr_event.active = false;
-                                }
+                            if (old_surr_event.activation_collision_layers.includes(target_layer) && old_surr_event.dynamic === false) {
+                                old_surr_event.deactivate_at(get_opposite_direcion(old_surrounding.direction));
                             }
                         }
                     }
@@ -111,7 +102,7 @@ export function fire_push_movement(data, interactable_object, push_end, before_m
                             const target_layer = interactable_object.events_info.jump.collide_layer_shift + interactable_object.base_collider_layer;
                             if (new_surr_event.activation_collision_layers.includes(target_layer)) {
                                 if (new_surr_event.dynamic === false && new_surr_event.is_set) {
-                                    new_surr_event.active = true;
+                                    new_surr_event.activate_at(get_opposite_direcion(new_surrounding.direction));
                                 }
                             }
                         }

@@ -7,14 +7,14 @@ import * as numbers from '../magic_numbers.js';
 import { maps } from '../initializers/maps.js';
 import * as climb from './climb.js';
 
-export function fire_event(data, current_event) {
-    if (data.event_activation_process){
+export function fire_event(data, current_event, activation_direction) {
+    if (data.event_activation_process) {
+        if (!current_event.is_active(activation_direction)) return;
         if (current_event.type === event_types.STAIR && (data.stop_by_colliding || data.actual_action === "climb"))
-            climb.climbing_event(data, current_event);
+            climb.climbing_event(data, current_event, activation_direction);
         else if (current_event.type === event_types.DOOR) {
-            set_door_event(data, current_event);
+            set_door_event(data, current_event, activation_direction);
         } else if (current_event.type === event_types.JUMP) {
-            if (!current_event.active) return;
             data.on_event = true;
             data.event_activation_process = false;
             jump_event(data, current_event);
@@ -41,18 +41,18 @@ export function event_triggering(game, data, event_key) {
                     return;
                 }
                 data.event_activation_process = true;
-                data.event_timers[this_event.id] = game.time.events.add(numbers.EVENT_TIME, fire_event.bind(null, data, this_event), this);
+                data.event_timers[this_event.id] = game.time.events.add(numbers.EVENT_TIME, fire_event.bind(null, data, this_event, data.actual_direction), this);
             } else if (data.event_activation_process && (!right_direction || data.actual_action === "idle")) {
                 data.event_activation_process = false;
             }
         } else {
-            if (!data.event_activation_process && data.climb_direction === this_event.activation_directions && (data.actual_direction === "climb")) {
+            if (!data.event_activation_process && this_event.activation_directions.includes(data.actual_direction)) {
                 if (data.event_timers[this_event.id] && !data.event_timers[this_event.id].timer.expired) {
                     return;
                 }
                 data.event_activation_process = true;
-                data.event_timers[this_event.id] = game.time.events.add(numbers.EVENT_TIME, fire_event.bind(null, data, this_event), this);
-            } else if (data.event_activation_process && (data.climb_direction !== this_event.activation_directions || data.actual_direction === "idle")) {
+                data.event_timers[this_event.id] = game.time.events.add(numbers.EVENT_TIME, fire_event.bind(null, data, this_event, data.actual_direction), this);
+            } else if (data.event_activation_process && (!this_event.activation_directions.includes(data.actual_direction) || data.actual_direction === "idle")) {
                 data.event_activation_process = false;
             }
         }
@@ -64,7 +64,7 @@ export function event_triggering(game, data, event_key) {
         } else if (this_event.type === event_types.DOOR) { //door event activation
             if (!this_event.advance_effect) {
                 data.event_activation_process = true;
-                fire_event(data, this_event);
+                fire_event(data, this_event, data.actual_direction);
             }
         } else if (this_event.type === event_types.STEP && !data.waiting_to_step) {
             config_step(data, this_event);

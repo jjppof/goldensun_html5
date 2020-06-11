@@ -170,7 +170,13 @@ export function collision_dealer(data) {
             data.trying_to_push = false;
         }
     }
-    if (normals.length && ["walk", "dash"].includes(data.actual_action)) {
+    if (normals.length && data.actual_action === "climb") {
+        if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) {
+            data.stop_by_colliding = true;
+        } else {
+            data.stop_by_colliding = false;
+        }
+    } else if (normals.length && ["walk", "dash"].includes(data.actual_action)) {
         if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) {
             normals.forEach(normal => {
                 if (Math.abs(normal[0]) < 0.1) normal[0] = 0;
@@ -329,15 +335,15 @@ export function set_speed_factors(data, force = false) {
         if (!data.cursors.up.isDown && data.cursors.down.isDown) {
             data.x_speed = 0;
             data.y_speed = 1;
-            data.climb_direction = "down";
+            data.actual_direction = "down";
         } else if (data.cursors.up.isDown && !data.cursors.down.isDown) {
             data.x_speed = 0;
             data.y_speed = -1;
-            data.climb_direction = "up";
+            data.actual_direction = "up";
         } else if (!data.cursors.up.isDown && !data.cursors.down.isDown) {
             data.x_speed = 0;
             data.y_speed = 0;
-            data.climb_direction = "idle";
+            data.actual_direction = "idle";
         }
     } else {
         if ((check_isdown(data.cursors, "up") && ((data.actual_direction !== "up" && !data.forcing_on_diagonal) || force)) || (data.actual_direction === "up" && data.force_direction)){

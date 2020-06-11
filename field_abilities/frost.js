@@ -144,25 +144,26 @@ export class FrostFieldPsynergy {
     init_pillar() {
         this.target_object.get_events().forEach(event => {
             if (event.is_set) {
-                event.active = false;
+                event.deactivate();
                 event.is_set = false;
             } else {
-                event.active = true;
+                event.activate();
                 event.is_set = true;
             }
         });
         this.target_object.interactable_object_sprite.send_to_back = false;
         this.data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
-        this.target_object.interactable_object_sprite.filters = [this.data.pasynergy_item_color_filters];
-        this.data.pasynergy_item_color_filters.hue_adjust = 0;
-        this.data.pasynergy_item_color_filters.tint = [-1,-1,-1];
+        this.color_filters = this.game.add.filter('ColorFilters');
+        this.target_object.interactable_object_sprite.filters = [this.color_filters];
+        this.color_filters.hue_adjust = 0;
+        this.color_filters.tint = [-1,-1,-1];
         let blink_counter = 16;
         let blink_timer = game.time.create(false);
         blink_timer.loop(50, () => {
             if (blink_counter%2 === 0) {
-                this.data.pasynergy_item_color_filters.tint = [1,1,1];
+                this.color_filters.tint = [1,1,1];
             } else {
-                this.data.pasynergy_item_color_filters.tint = [-1,-1,-1];
+                this.color_filters.tint = [-1,-1,-1];
             }
             --blink_counter;
             if (blink_counter === 0) {
@@ -185,9 +186,9 @@ export class FrostFieldPsynergy {
     set_permanent_blink() {
         let blink_timer = game.time.create(false);
         blink_timer.loop(150, () => {
-            this.data.pasynergy_item_color_filters.hue_adjust = 5.3;
+            this.color_filters.hue_adjust = 5.3;
             game.time.events.add(20, () => {
-                this.data.pasynergy_item_color_filters.hue_adjust = 0;
+                this.color_filters.hue_adjust = 0;
             });
         });
         blink_timer.start();

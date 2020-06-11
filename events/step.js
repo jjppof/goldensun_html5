@@ -8,9 +8,9 @@ export function config_step(data, current_event) {
     } else if (current_event.step_direction === "down") {
         shift_y = parseInt(maps[data.map_name].sprite.tileHeight/numbers.STEP_SHIFT_FACTOR);
     }
-    if (current_event.activation_directions === "left") {
+    if (current_event.activation_directions[0] === "left") {
         next_x = current_event.x - 1;
-    } else if (current_event.activation_directions === "right") {
+    } else if (current_event.activation_directions[0] === "right") {
         next_x = current_event.x + 1;
     }
     data.waiting_to_step = true;

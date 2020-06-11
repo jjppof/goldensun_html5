@@ -3,13 +3,13 @@ import { maps } from '../initializers/maps.js';
 
 export function config_collision_change(data, current_event) {
     let next_x = current_event.x, next_y = current_event.y;
-    if (current_event.activation_directions === "left") {
+    if (current_event.activation_directions[0] === "left") {
         next_x = current_event.x - 1;
-    } else if (current_event.activation_directions === "right") {
+    } else if (current_event.activation_directions[0] === "right") {
         next_x = current_event.x + 1;
-    } else if (current_event.activation_directions === "up") {
+    } else if (current_event.activation_directions[0] === "up") {
         next_y = current_event.y - 1;
-    } else if (current_event.activation_directions === "down") {
+    } else if (current_event.activation_directions[0] === "down") {
         next_y = current_event.y + 1;
     }
     data.waiting_to_change_collision = true;

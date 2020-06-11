@@ -9,11 +9,12 @@ import {
 } from '../physics/physics.js';
 import * as numbers from '../magic_numbers.js';
 
-export function set_door_event(data, current_event) {
+export function set_door_event(data, current_event, activation_direction) {
     data.on_event = true;
     data.event_activation_process = false;
     data.door_event_data = {
-        event: current_event
+        event: current_event,
+        activation_direction: activation_direction
     };
     if (current_event.advance_effect) {
         if (!data.stop_by_colliding) {
@@ -50,8 +51,8 @@ export function door_event_phases(data) {
         data.teleporting = false;
         data.hero.loadTexture(data.hero_name + "_idle");
         main_char_list[data.hero_name].setAnimation(data.hero, "idle");
-        data.hero.animations.play("idle_" + current_event.activation_directions);
-        data.actual_direction = current_event.activation_directions;
+        data.actual_direction = current_event.activation_directions[0];
+        data.hero.animations.play("idle_" + data.actual_direction);
         data.actual_action = "idle";
         game.camera.fade();
         game.camera.onFadeComplete.addOnce(() => {

@@ -2,10 +2,10 @@ import * as numbers from '../magic_numbers.js';
 import { main_char_list } from '../initializers/main_chars.js';
 import { maps } from '../initializers/maps.js';
 import { event_types, TileEvent } from '../base/TileEvent.js';
-import { get_surroundings } from '../utils.js';
+import { get_surroundings, get_opposite_direcion } from '../utils.js';
 
 export function jump_event(data, current_event) {
-    if (!current_event.active || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y || data.casting_psynergy || data.pushing) {
+    if (data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y || data.casting_psynergy || data.pushing) {
         data.on_event = false;
         return;
     }
@@ -88,10 +88,11 @@ export function jump_event(data, current_event) {
         let active_jump_event_found = false;
         for (let i = 0; i < maps[data.map_name].events[next_pos_key].length; ++i) {
             const event = maps[data.map_name].events[next_pos_key][i];
-            if (event.type === event_types.JUMP && event.active && event.is_set && event.activation_collision_layers.includes(data.map_collider_layer)) {
+            if (event.type === event_types.JUMP && event.is_active(get_opposite_direcion(jump_direction)) && event.is_set && event.activation_collision_layers.includes(data.map_collider_layer)) {
                 active_jump_event_found = true;
                 if (event.dynamic) {
                     set_jump_collision(data);
+                    break;
                 } else if (current_event.dynamic) {
                     unset_set_jump_collision(data);
                 }

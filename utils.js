@@ -141,6 +141,15 @@ export const transitions = {
     },
 };
 
+export function get_opposite_direcion(direction) {
+    switch (direction) {
+        case "up": return "down";
+        case "down": return "up";
+        case "left": return "right";
+        case "right": return "left";
+    }
+}
+
 export function get_transition_directions(actual_direction, desired_direction){
     return transitions[desired_direction][actual_direction];
 }
@@ -160,19 +169,19 @@ export function check_isdown(cursors, ...keys) {
     return result;
 }
 
-export function get_surroundings(x, y, with_diagonals = false) {
+export function get_surroundings(x, y, with_diagonals = false, shift = 1) {
     let surroundings = [
-        {x: x - 1, y: y, diag: false},
-        {x: x + 1, y: y, diag: false},
-        {x: x, y: y - 1, diag: false},
-        {x: x, y: y + 1, diag: false},
+        {x: x - shift, y: y, diag: false, direction: "left"},
+        {x: x + shift, y: y, diag: false, direction: "right"},
+        {x: x, y: y - shift, diag: false, direction: "up"},
+        {x: x, y: y + shift, diag: false, direction: "down"},
     ];
     if (with_diagonals) {
         surroundings = surroundings.concat([
-            {x: x - 1, y: y - 1, diag: true},
-            {x: x + 1, y: y - 1, diag: true},
-            {x: x - 1, y: y + 1, diag: true},
-            {x: x + 1, y: y + 1, diag: true},
+            {x: x - shift, y: y - shift, diag: true, direction: "up_left"},
+            {x: x + shift, y: y - shift, diag: true, direction: "up_right"},
+            {x: x - shift, y: y + shift, diag: true, direction: "down_left"},
+            {x: x + shift, y: y + shift, diag: true, direction: "down_right"},
         ]);
     }
     return surroundings;

@@ -56,12 +56,13 @@
                 "spritesheet": "assets/images/spritesheets/isaac_climb.json",
                 "spritesheet_img": "assets/images/spritesheets/isaac_climb.png",
                 "directions": [
-                    "climb", 
+                    "up", 
+                    "down", 
                     "end", 
                     "idle", 
                     "start"
                 ],
-                "directions_frames_number": [3,2,0,6],
+                "directions_frames_number": [3,3,2,0,6],
                 "frame_rate": 6
             },{
                 "key": "jump",

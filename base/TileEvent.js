@@ -1,3 +1,6 @@
+import { get_surroundings, get_opposite_direcion } from "../utils.js";
+import { maps } from "../initializers/maps.js";
+
 export const event_types = {
     STAIR: "stair",
     SPEED: "speed",
@@ -15,10 +18,36 @@ export class TileEvent {
         this.location_key = this.x + "_" + this.y;
         this.id = TileEvent.id_incrementer++;
         this.activation_collision_layers = Array.isArray(activation_collision_layers) ? activation_collision_layers : [activation_collision_layers];
-        this.activation_directions = activation_directions;
+        this.activation_directions = Array.isArray(activation_directions) ? activation_directions : [activation_directions];
         this.dynamic = dynamic;
-        this.active = active;
+        this.active = Array.isArray(active) ? active : new Array(this.activation_directions.length).fill(active);
         TileEvent.events[this.id] = this;
+    }
+
+    is_active(direction) {
+        const possible_directions = direction.split("_");
+        for (let i = 0; i < possible_directions.length; ++i) {
+            if (this.active[this.activation_directions.indexOf(possible_directions[i])]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    activate_at(direction) {
+        this.active[this.activation_directions.indexOf(direction)] = true;
+    }
+
+    deactivate_at(direction) {
+        this.active[this.activation_directions.indexOf(direction)] = false;
+    }
+
+    activate() {
+        this.active.map(() => true);
+    }
+
+    deactivate() {
+        this.active.map(() => false);
     }
 
     static get_location_key(x, y) {
@@ -70,6 +99,27 @@ export class JumpEvent extends TileEvent {
     constructor(x, y, activation_directions, activation_collision_layers, dynamic, active, is_set) {
         super(event_types.JUMP, x, y, activation_directions, activation_collision_layers, dynamic, active);
         this.is_set = is_set;
+    }
+
+    static get_surrounding_events_towards_this(data, event, target_collision_layer) {
+        const surroundings = get_surroundings(event.x, event.y, false, 2);
+        let events = [];
+        for (let i = 0; i < surroundings.length; ++i) {
+            const surrounding = surroundings[i];
+            const location_key = TileEvent.get_location_key(surrounding.x, surrounding.y);
+            if (!(location_key in maps[data.map_name].events)) continue;
+            for (let j = 0; j < maps[data.map_name].events[location_key].length; ++j) {
+                const this_event = maps[data.map_name].events[location_key][j];
+                if (this_event.is_set && this_event.type === event_types.JUMP) {
+                    if (this_event.activation_collision_layers.includes(target_collision_layer)) {
+                        if (this_event.activation_directions.includes(get_opposite_direcion(surrounding.direction))) {
+                            events.push(this_event);
+                        }
+                    }
+                }
+            }
+        }
+        return events;
     }
 }
 
