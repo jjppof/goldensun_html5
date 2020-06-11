@@ -44,8 +44,6 @@ export function set_debug_info(game, data) {
             const event_key = mouse_x + "_" + mouse_y;
             if (event_key in maps[data.map_name].events) {
                 document.getElementById("object_inspector").innerText = JSON.stringify(maps[data.map_name].events[event_key], null, 4);
-            } else {
-                document.getElementById("object_inspector").innerText = "";
             }
         } else {
             game.debug.text(`x: --, y: --`, 140, 15, "#00ff00");
