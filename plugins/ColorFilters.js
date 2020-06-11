@@ -87,10 +87,6 @@ Phaser.Filter.ColorFilters.prototype.set_colorize_values = function(value) {
     }
 }
 
-Number.prototype.clamp = function(min, max) {
-    return Math.min(Math.max(this, min), max);
-};
-
 Object.defineProperty(Phaser.Filter.ColorFilters.prototype, 'gray', {
     get: function() {
         return this.uniforms.gray.value;
