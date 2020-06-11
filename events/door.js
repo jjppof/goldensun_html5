@@ -56,6 +56,7 @@ export function door_event_phases(data) {
         game.camera.fade();
         game.camera.onFadeComplete.addOnce(() => {
             data.processing_teleport = true;
+            game.camera.lerp.setTo(1, 1);
         }, this);
     } else if (data.processing_teleport) {
         data.processing_teleport = false;
@@ -127,6 +128,7 @@ export function door_event_phases(data) {
         game.camera.flash(0x0);
         game.camera.onFlashComplete.addOnce(() => {
             set_speed_factors(data, true);
+            game.camera.lerp.setTo(numbers.CAMERA_LERP, numbers.CAMERA_LERP);
             data.on_event = false;
             data.door_event_data = null;
         }, this);

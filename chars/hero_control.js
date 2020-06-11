@@ -28,7 +28,7 @@ export function config_hero(data) {
     data.hero.centerY = parseInt((data.init_db.y_tile_position + 1.5) * maps[data.map_name].sprite.tileHeight); //hero y start position
     data.hero.base_collider_layer = data.map_collider_layer;
     data.camera_type = Phaser.Camera.FOLLOW_LOCKON;
-    game.camera.follow(data.hero, data.camera_type); //makes camera follow the data.hero
+    game.camera.follow(data.hero, data.camera_type, numbers.CAMERA_LERP, numbers.CAMERA_LERP); //makes camera follow the data.hero
     //config data.hero initial animation state
     main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
     data.hero.animations.play(data.actual_action + "_" + data.actual_direction);

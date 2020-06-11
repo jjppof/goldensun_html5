@@ -50,3 +50,4 @@ export const degree270 = 3 * Math.PI/2;
 export const degree360 = 2 * Math.PI;
 export const degree540 = 3 * Math.PI;
 export const SPEED_LIMIT_TO_STOP = 6;
+export const CAMERA_LERP = 0.15;
