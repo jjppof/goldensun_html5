@@ -105,13 +105,14 @@ export function climb_event_animation_steps(data) {
                 45,
                 Phaser.Easing.Linear.None,
                 true
-            );
+            ).onComplete.addOnce(() => {
+                data.shadow.y = data.hero.y;
+                data.shadow.visible = true;
+            });
             data.hero.loadTexture(data.hero_name + "_idle");
             main_char_list[data.hero_name].setAnimation(data.hero, "idle");
             data.hero.animations.play("idle_up");
             game.time.events.add(250, () => {
-                data.shadow.y = data.hero.y;
-                data.shadow.visible = true;
                 data.on_event = false;
                 data.climbing_event_data = null;
                 data.climbing = false;
