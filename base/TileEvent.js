@@ -14,7 +14,7 @@ export class TileEvent {
         this.y = y;
         this.location_key = this.x + "_" + this.y;
         this.id = TileEvent.id_incrementer++;
-        this.activation_collision_layers = activation_collision_layers;
+        this.activation_collision_layers = Array.isArray(activation_collision_layers) ? activation_collision_layers : [activation_collision_layers];
         this.activation_directions = activation_directions;
         this.dynamic = dynamic;
         this.active = active;

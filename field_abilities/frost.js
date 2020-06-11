@@ -154,6 +154,8 @@ export class FrostFieldPsynergy {
         this.target_object.interactable_object_sprite.send_to_back = false;
         this.data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
         this.target_object.interactable_object_sprite.filters = [this.data.pasynergy_item_color_filters];
+        this.data.pasynergy_item_color_filters.hue_adjust = 0;
+        this.data.pasynergy_item_color_filters.tint = [-1,-1,-1];
         let blink_counter = 16;
         let blink_timer = game.time.create(false);
         blink_timer.loop(50, () => {
@@ -207,10 +209,10 @@ export class FrostFieldPsynergy {
         caster.current_pp -= ability.pp_cost;
         this.set_cast_direction();
         this.search_for_target();
-        if (this.target_object.custom_data.frost_casted) {
+        if (this.target_object && this.target_object.custom_data.frost_casted) {
             this.target_found = false;
             this.target_object = null;
-        } else {
+        } else if (this.target_found) {
             this.target_object.custom_data.frost_casted = true;
         }
         this.set_hero_cast_anim();
