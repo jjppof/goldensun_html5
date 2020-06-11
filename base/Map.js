@@ -1,7 +1,17 @@
 import { u, get_surroundings } from "../utils.js";
 import { NPC_Sprite, NPC } from './NPC.js';
-import { InteractableObjects, InteractableObjects_Sprite } from "./InteractableObjects.js";
+import { InteractableObjects, InteractableObjects_Sprite, interactable_object_types } from "./InteractableObjects.js";
 import * as numbers from '../magic_numbers.js';
+import {
+    TileEvent,
+    StairEvent,
+    SpeedEvent,
+    DoorEvent,
+    JumpEvent,
+    StepEvent,
+    CollisionEvent,
+    event_types
+} from './TileEvent.js';
 
 export class Map {
     constructor (
@@ -36,6 +46,7 @@ export class Map {
 
     async setLayers(game, data, maps, npc_db, interactable_objects_db, map_name, underlayer_group, overlayer_group, collider_layer, npc_group) {
         this.events = {};
+        TileEvent.reset();
         this.sprite = game.add.tilemap(this.key_name);
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
@@ -65,70 +76,80 @@ export class Map {
         for (let property in this.sprite.properties) {
             if (property.startsWith("event")) { //check for events
                 const property_info = JSON.parse(this.sprite.properties[property]);
-                if (property_info.type === "stair") {
-                    this.events[property_info.x + "_" + property_info.y] = {
-                        type: property_info.type,
-                        dynamic: false,
-                        x: property_info.x,
-                        y: property_info.y,
-                        activation_direction: property_info.activation_direction,
-                        activation_collision_layers: property_info.activation_collision_layers ? property_info.activation_collision_layers : 0,
-                        change_to_collision_layer: property_info.change_to_collision_layer === undefined ? null : property_info.change_to_collision_layer,
-                    }
-                } else if (property_info.type === "speed") {
-                    this.events[property_info.x + "_" + property_info.y] = {
-                        type: property_info.type,
-                        dynamic: false,
-                        x: property_info.x,
-                        y: property_info.y,
-                        speed: property_info.speed,
-                        activation_collision_layers: property_info.activation_collision_layers ? property_info.activation_collision_layers : 0,
-                    }
-                } else if (property_info.type === "door") {
-                    this.events[property_info.x + "_" + property_info.y] = {
-                        type: property_info.type,
-                        dynamic: false,
-                        x: property_info.x,
-                        y: property_info.y,
-                        target: property_info.target,
-                        activation_direction: property_info.activation_direction,
-                        x_target: property_info.x_target,
-                        y_target: property_info.y_target,
-                        advance_effect: property_info.advance_effect,
-                        dest_collider_layer: property_info.dest_collider_layer ? property_info.dest_collider_layer : 0,
-                        activation_collision_layers: property_info.activation_collision_layers ? property_info.activation_collision_layers : 0,
-                    }
-                } else if (property_info.type === "jump") {
-                    this.events[property_info.x + "_" + property_info.y] = {
-                        type: property_info.type,
-                        dynamic: false,
-                        x: property_info.x,
-                        y: property_info.y,
-                        activation_direction: property_info.activation_direction,
-                        activation_collision_layers: property_info.activation_collision_layers ? property_info.activation_collision_layers : 0,
-                        active: property_info.initially_active === undefined ? true : property_info.initially_active,
-                        is_set: property_info.is_set === undefined ? true : property_info.is_set,
-                    }
-                } else if (property_info.type === "step") {
-                    this.events[property_info.x + "_" + property_info.y] = {
-                        type: property_info.type,
-                        dynamic: false,
-                        x: property_info.x,
-                        y: property_info.y,
-                        activation_direction: property_info.activation_direction,
-                        step_direction: property_info.step_direction,
-                        activation_collision_layers: property_info.activation_collision_layers ? property_info.activation_collision_layers : 0,
-                    }
-                } else if (property_info.type === "collision") {
-                    this.events[property_info.x + "_" + property_info.y] = {
-                        type: property_info.type,
-                        dynamic: false,
-                        x: property_info.x,
-                        y: property_info.y,
-                        activation_direction: property_info.activation_direction,
-                        activation_collision_layers: property_info.activation_collision_layers,
-                        dest_collider_layer: property_info.dest_collider_layer
-                    }
+                const this_event_location_key = TileEvent.get_location_key(property_info.x, property_info.y);
+                if (!(this_event_location_key in this.events)) {
+                    this.events[this_event_location_key] = [];
+                }
+                if (property_info.type === event_types.STAIR) {
+                    const new_event = new StairEvent(
+                        property_info.x,
+                        property_info.y,
+                        property_info.activation_directions,
+                        property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
+                        false,
+                        property_info.active === undefined ? true : property_info.active,
+                        property_info.change_to_collision_layer === undefined ? null : property_info.change_to_collision_layer
+                    );
+                    this.events[this_event_location_key].push(new_event);
+                } else if (property_info.type === event_types.SPEED) {
+                    const new_event = new SpeedEvent(
+                        property_info.x,
+                        property_info.y,
+                        null,
+                        property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
+                        false,
+                        property_info.active === undefined ? true : property_info.active,
+                        property_info.speed
+                    );
+                    this.events[this_event_location_key].push(new_event);
+                } else if (property_info.type === event_types.DOOR) {
+                    const new_event = new DoorEvent(
+                        property_info.x,
+                        property_info.y,
+                        property_info.activation_directions,
+                        property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
+                        false,
+                        property_info.active === undefined ? true : property_info.active,
+                        property_info.target,
+                        property_info.x_target,
+                        property_info.y_target,
+                        property_info.advance_effect,
+                        property_info.dest_collider_layer ? property_info.dest_collider_layer : 0
+                    );
+                    this.events[this_event_location_key].push(new_event);
+                } else if (property_info.type === event_types.JUMP) {
+                    const new_event = new JumpEvent(
+                        property_info.x,
+                        property_info.y,
+                        property_info.activation_directions,
+                        property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
+                        false,
+                        property_info.initially_active === undefined ? true : property_info.initially_active,
+                        property_info.is_set === undefined ? true : property_info.is_set
+                    );
+                    this.events[this_event_location_key].push(new_event);
+                } else if (property_info.type === event_types.STEP) {
+                    const new_event = new StepEvent(
+                        property_info.x,
+                        property_info.y,
+                        property_info.activation_directions,
+                        property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
+                        false,
+                        property_info.active === undefined ? true : property_info.active,
+                        property_info.step_direction
+                    );
+                    this.events[this_event_location_key].push(new_event);
+                } else if (property_info.type === event_types.COLLISION) {
+                    const new_event = new CollisionEvent(
+                        property_info.x,
+                        property_info.y,
+                        property_info.activation_directions,
+                        property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
+                        false,
+                        property_info.active === undefined ? true : property_info.active,
+                        property_info.dest_collider_layer
+                    );
+                    this.events[this_event_location_key].push(new_event);
                 }
             } else if(property.startsWith("npc")) {
                 const property_info = JSON.parse(this.sprite.properties[property]);
@@ -236,35 +257,41 @@ export class Map {
                         const collide_layer_shift = event_info.collide_layer_shift !== undefined ? event_info.collide_layer_shift : 0;
                         const active_event = event_info.active !== undefined ? event_info.active : true;
                         switch (event_info.type) {
-                            case "jump":
-                                const event_key = x_pos + "_" + y_pos;
-                                this.events[event_key] = {
-                                    type: "jump",
-                                    dynamic: event_info.dynamic,
-                                    x: x_pos,
-                                    y: y_pos,
-                                    activation_direction: ["up", "down", "right", "left"],
-                                    activation_collision_layers: [interactable_object_info.base_collider_layer + collide_layer_shift],
-                                    active: active_event,
-                                    is_set: event_info.is_set === undefined ? true: event_info.is_set
+                            case interactable_object_types.JUMP:
+                                const this_event_location_key = TileEvent.get_location_key(x_pos, y_pos);
+                                if (!(this_event_location_key in this.events)) {
+                                    this.events[this_event_location_key] = [];
                                 }
-                                interactable_object_info.insert_event(event_key);
+                                const new_event = new JumpEvent(
+                                    x_pos,
+                                    y_pos,
+                                    ["up", "down", "right", "left"],
+                                    [interactable_object_info.base_collider_layer + collide_layer_shift],
+                                    event_info.dynamic,
+                                    active_event,
+                                    event_info.is_set === undefined ? true: event_info.is_set
+                                );
+                                this.events[this_event_location_key].push(new_event);
+                                interactable_object_info.insert_event(new_event.id);
                                 interactable_object_info.events_info[event_info.type] = event_info;
                                 break;
-                            case "jump_around":
+                            case interactable_object_types.JUMP_AROUND:
                                 get_surroundings(x_pos, y_pos).forEach((pos, index) => {
-                                    const event_key = pos.x + "_" + pos.y;
-                                    this.events[event_key] = {
-                                        type: "jump",
-                                        dynamic: event_info.dynamic,
-                                        x: pos.x,
-                                        y: pos.y,
-                                        activation_direction: ["right", "left", "down", "up"][index],
-                                        activation_collision_layers: [interactable_object_info.base_collider_layer + collide_layer_shift],
-                                        active: active_event,
-                                        is_set: event_info.is_set === undefined ? true: event_info.is_set
+                                    const this_event_location_key = TileEvent.get_location_key(pos.x, pos.y);
+                                    if (!(this_event_location_key in this.events)) {
+                                        this.events[this_event_location_key] = [];
                                     }
-                                    interactable_object_info.insert_event(event_key);
+                                    const new_event = new JumpEvent(
+                                        pos.x,
+                                        pos.y,
+                                        ["right", "left", "down", "up"][index],
+                                        [interactable_object_info.base_collider_layer + collide_layer_shift],
+                                        event_info.dynamic,
+                                        active_event,
+                                        event_info.is_set === undefined ? true: event_info.is_set
+                                    );
+                                    this.events[this_event_location_key].push(new_event);
+                                    interactable_object_info.insert_event(new_event.id);
                                 });
                                 interactable_object_info.events_info[event_info.type] = event_info;
                                 break;

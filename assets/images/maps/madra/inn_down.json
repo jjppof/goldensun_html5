@@ -166,11 +166,11 @@
  "properties":
     {
      "Name":"inn_down",
-     "event_01":"{\"type\": \"door\", \"x\": 27, \"y\": 19, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 28.5, \"y_target\": 12.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_02":"{\"type\": \"door\", \"x\": 28, \"y\": 19, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 28.5, \"y_target\": 12.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_03":"{\"type\": \"door\", \"x\": 29, \"y\": 19, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 28.5, \"y_target\": 12.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_04":"{\"type\": \"door\", \"x\": 30, \"y\": 19, \"target\": \"madra\", \"activation_direction\": \"down\", \"x_target\": 28.5, \"y_target\": 12.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_05":"{\"type\": \"door\", \"x\": 17, \"y\": 7, \"target\": \"madra_inn_up_stair\", \"activation_direction\": \"right\", \"x_target\": 15, \"y_target\": 7, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
+     "event_01":"{\"type\": \"door\", \"x\": 27, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28.5, \"y_target\": 12.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_02":"{\"type\": \"door\", \"x\": 28, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28.5, \"y_target\": 12.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_03":"{\"type\": \"door\", \"x\": 29, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28.5, \"y_target\": 12.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_04":"{\"type\": \"door\", \"x\": 30, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28.5, \"y_target\": 12.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_05":"{\"type\": \"door\", \"x\": 17, \"y\": 7, \"target\": \"madra_inn_up_stair\", \"activation_directions\": \"right\", \"x_target\": 15, \"y_target\": 7, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
     },
  "propertytypes":
     {

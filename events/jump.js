@@ -1,12 +1,12 @@
 import * as numbers from '../magic_numbers.js';
 import { main_char_list } from '../chars/main_chars.js';
 import { maps } from '../maps/maps.js';
+import { event_types, TileEvent } from '../base/TileEvent.js';
+import { get_surroundings } from '../utils.js';
 
-export function jump_event(data, event_key) {
-    let current_event = maps[data.map_name].events[event_key];
+export function jump_event(data, current_event) {
     if (!current_event.active || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y) {
         data.on_event = false;
-        data.current_event = null;
         return;
     }
     let jump_offset = numbers.JUMP_OFFSET;
@@ -14,7 +14,7 @@ export function jump_event(data, event_key) {
     let jump_direction;
     let next_position = {x: current_event.x, y: current_event.y};
     let side_position = {x: current_event.x, y: current_event.y};
-    if (Array.isArray(current_event.activation_direction)) {
+    if (Array.isArray(current_event.activation_directions)) {
         if (data.actual_direction === "left") {
             jump_offset = -jump_offset;
             direction = "x";
@@ -39,37 +39,39 @@ export function jump_event(data, event_key) {
             jump_direction = "down";
         }
     } else {
-        if (current_event.activation_direction === "left") {
+        if (current_event.activation_directions === "left") {
             jump_offset = -jump_offset;
             direction = "x";
             next_position.x -= 2;
             side_position.x -= 1;
             jump_direction = "left";
-        } else if (current_event.activation_direction === "right") {
+        } else if (current_event.activation_directions === "right") {
             direction = "x";
             next_position.x += 2;
             side_position.x += 1;
             jump_direction = "right";
-        } else if (current_event.activation_direction === "up") {
+        } else if (current_event.activation_directions === "up") {
             jump_offset = -jump_offset;
             direction = "y";
             next_position.y -= 2;
             side_position.y -= 1;
             jump_direction = "up";
-        } else if (current_event.activation_direction === "down") {
+        } else if (current_event.activation_directions === "down") {
             direction = "y";
             next_position.y += 2;
             side_position.y += 1;
             jump_direction = "down";
         }
     }
-    let side_pos_key = side_position.x + "_" + side_position.y;
+    let side_pos_key = TileEvent.get_location_key(side_position.x, side_position.y);
     if (side_pos_key in maps[data.map_name].events) {
-        if (maps[data.map_name].events[side_pos_key].type === "jump") {
-            data.on_event = false;
-            data.current_event = null;
-            data.shadow.visible = true;
-            return;
+        for (let i = 0; i < maps[data.map_name].events[side_pos_key].length; ++i) {
+            const event = maps[data.map_name].events[side_pos_key][i];
+            if (event.type === event_types.JUMP) {
+                data.on_event = false;
+                data.shadow.visible = true;
+                return;
+            }
         }
     }
     let next_pos_key = next_position.x + "_" + next_position.y;
@@ -79,28 +81,29 @@ export function jump_event(data, event_key) {
         if (data.interactable_objects_db[next_interactable_object.key_name].type !== "move") continue;
         if (data.map_collider_layer !== next_interactable_object.base_collider_layer) continue;
         data.on_event = false;
-        data.current_event = null;
         data.shadow.visible = true;
         return;
     }
     if (next_pos_key in maps[data.map_name].events) {
-        if (maps[data.map_name].events[next_pos_key].type !== "jump" || !maps[data.map_name].events[next_pos_key].active) {
+        let active_jump_event_found = false;
+        for (let i = 0; i < maps[data.map_name].events[next_pos_key].length; ++i) {
+            const event = maps[data.map_name].events[next_pos_key][i];
+            if (event.type === event_types.JUMP && event.active) {
+                active_jump_event_found = true;
+                if (event.dynamic) {
+                    set_jump_collision(data);
+                } else if (current_event.dynamic) {
+                    unset_set_jump_collision(data);
+                }
+            }
+        }
+        if (!active_jump_event_found) {
             data.on_event = false;
-            data.current_event = null;
             data.shadow.visible = true;
             return;
         }
-        if (maps[data.map_name].events[next_pos_key].type === "jump" && maps[data.map_name].events[next_pos_key].dynamic) {
-            set_jump_collision(data);
-        }
-    }
-    if (current_event.dynamic && next_pos_key in maps[data.map_name].events) {
-        if (maps[data.map_name].events[next_pos_key].type === "jump" && !maps[data.map_name].events[next_pos_key].dynamic) {
-            unset_set_jump_collision(data);
-        }
-    } else if (current_event.dynamic && !(next_pos_key in maps[data.map_name].events)) {
+    } else if (current_event.dynamic) {
         data.on_event = false;
-        data.current_event = null;
         data.shadow.visible = true;
         return;
     }
@@ -129,7 +132,6 @@ export function jump_event(data, event_key) {
             data.hero.animations.currentAnim.onComplete.addOnce(() => {
                 game.physics.p2.resume();
                 data.on_event = false;
-                data.current_event = null;
             });
         }, this);
     });
@@ -144,36 +146,43 @@ export function set_jump_collision(data) {
     data.hero.body.removeCollisionGroup(data.mapCollisionGroup, true);
     data.map_collider.body.removeCollisionGroup(data.heroCollisionGroup, true);
     for (let event_key in maps[data.map_name].events) {
-        let event = maps[data.map_name].events[event_key];
-        if (event.type === "jump" && event.dynamic) {
-            let surroundings = [
-                {x: event.x - 1, y: event.y},
-                {x: event.x + 1, y: event.y},
-                {x: event.x, y: event.y - 1},
-                {x: event.x, y: event.y + 1},
-            ];
-            for (let i = 0; i < surroundings.length; ++i) {
-                const surrounding_key = surroundings[i].x + "_" + surroundings[i].y;
-                if (surrounding_key in maps[data.map_name].events) {
-                    if (maps[data.map_name].events[surrounding_key].dynamic) {
-                        continue;
-                    }
-                } 
-                let x_pos = (surroundings[i].x + .5) * maps[data.map_name].sprite.tileWidth;
-                let y_pos = (surroundings[i].y + .5) * maps[data.map_name].sprite.tileHeight;
-                let body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
-                body.clearShapes();
-                body.setRectangle(maps[data.map_name].sprite.tileWidth, maps[data.map_name].sprite.tileHeight, 0, 0);
-                body.setCollisionGroup(data.dynamicEventsCollisionGroup);
-                body.damping = numbers.MAP_DAMPING;
-                body.angularDamping = numbers.MAP_DAMPING;
-                body.setZeroRotation();
-                body.fixedRotation = true;
-                body.dynamic = false;
-                body.static = true;
-                body.debug = data.hero.body.debug;
-                body.collides(data.heroCollisionGroup);
-                data.dynamic_jump_events_bodies.push(body);
+        for (let j = 0; j < maps[data.map_name].events[event_key].length; ++j) {
+            const event = maps[data.map_name].events[event_key][j];
+            if (event.type === event_types.JUMP && event.dynamic) {
+                let surroundings = [
+                    {x: event.x - 1, y: event.y},
+                    {x: event.x + 1, y: event.y},
+                    {x: event.x, y: event.y - 1},
+                    {x: event.x, y: event.y + 1},
+                ];
+                for (let i = 0; i < surroundings.length; ++i) {
+                    const surrounding_key = TileEvent.get_location_key(surroundings[i].x, surroundings[i].y);
+                    if (surrounding_key in maps[data.map_name].events) {
+                        let dynamic_found = false;
+                        for (let k = 0; k < maps[data.map_name].events[surrounding_key].length; ++k) {
+                            if (maps[data.map_name].events[surrounding_key][k].dynamic) {
+                                dynamic_found = true;
+                                break;
+                            }
+                        }
+                        if (dynamic_found) continue;
+                    } 
+                    let x_pos = (surroundings[i].x + .5) * maps[data.map_name].sprite.tileWidth;
+                    let y_pos = (surroundings[i].y + .5) * maps[data.map_name].sprite.tileHeight;
+                    let body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
+                    body.clearShapes();
+                    body.setRectangle(maps[data.map_name].sprite.tileWidth, maps[data.map_name].sprite.tileHeight, 0, 0);
+                    body.setCollisionGroup(data.dynamicEventsCollisionGroup);
+                    body.damping = numbers.MAP_DAMPING;
+                    body.angularDamping = numbers.MAP_DAMPING;
+                    body.setZeroRotation();
+                    body.fixedRotation = true;
+                    body.dynamic = false;
+                    body.static = true;
+                    body.debug = data.hero.body.debug;
+                    body.collides(data.heroCollisionGroup);
+                    data.dynamic_jump_events_bodies.push(body);
+                }
             }
         }
     }
@@ -188,36 +197,18 @@ export function unset_set_jump_collision(data) {
     data.dynamic_jump_events_bodies = [];
 }
 
-export function jump_near_collision(data, event_key) {
-    let current_event = maps[data.map_name].events[event_key];
+export function jump_near_collision(data, current_event) {
     const current_pos_key = data.hero_tile_pos_x + "_" + data.hero_tile_pos_y;
     let current_pos = {x: data.hero_tile_pos_x, y: data.hero_tile_pos_y};
-    let get_surroundings = (x, y, with_diagonals) => {
-        let surroundings = [
-            {x: x - 1, y: y},
-            {x: x + 1, y: y},
-            {x: x, y: y - 1},
-            {x: x, y: y + 1},
-        ];
-        if (with_diagonals) {
-            surroundings = surroundings.concat([
-                {x: x - 1, y: y - 1},
-                {x: x + 1, y: y - 1},
-                {x: x - 1, y: y + 1},
-                {x: x + 1, y: y + 1},
-            ]);
-        }
-        return surroundings;
-    };
     let surroundings = get_surroundings(current_pos.x, current_pos.y, true);
     let right_direction = false;
-    if (Array.isArray(current_event.activation_direction)) {
+    if (Array.isArray(current_event.activation_directions)) {
         let possible_directions = data.actual_direction.split("_");
         for (let i = 0; i < possible_directions.length; ++i) {
-            right_direction = right_direction || current_event.activation_direction.includes(possible_directions[i]);
+            right_direction = right_direction || current_event.activation_directions.includes(possible_directions[i]);
         }
     } else {
-        right_direction = data.actual_direction.includes(current_event.activation_direction);
+        right_direction = data.actual_direction.includes(current_event.activation_directions);
     }
 
     let clear_bodies = () => {
@@ -232,16 +223,18 @@ export function jump_near_collision(data, event_key) {
     let bodies_positions = [];
     let at_least_one_dynamic = false;
     for (let i = 0; i < surroundings.length; ++i) {
-        const surrounding_key = surroundings[i].x + "_" + surroundings[i].y;
+        const surrounding_key = TileEvent.get_location_key(surroundings[i].x, surroundings[i].y);
         if (surrounding_key in maps[data.map_name].events) {
-            let surrounding_event = maps[data.map_name].events[surrounding_key];
-            if (surrounding_event.type === "jump" && right_direction) {
-                if (surrounding_event.dynamic || current_event.dynamic) {
-                    at_least_one_dynamic = true; //this should be true if the found events are only in diagonal
+            for (let j = 0; j < maps[data.map_name].events[surrounding_key].length; ++j) {
+                const surrounding_event = maps[data.map_name].events[surrounding_key][j];
+                if (surrounding_event.type === event_types.JUMP && right_direction) {
+                    if ((surrounding_event.dynamic || current_event.dynamic) && !surroundings[i].diag && surrounding_event.is_set) {
+                        at_least_one_dynamic = true;
+                    }
+                    const side_event_surroundings = get_surroundings(surroundings[i].x, surroundings[i].y, false);
+                    bodies_positions.push(side_event_surroundings);
+                    concat_keys += "-" + surrounding_key;
                 }
-                const side_event_surroundings = get_surroundings(surroundings[i].x, surroundings[i].y, false);
-                bodies_positions.push(side_event_surroundings);
-                concat_keys += "-" + surrounding_key;
             }
         }
     }

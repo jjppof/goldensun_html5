@@ -1,5 +1,11 @@
 import { SpriteBase } from "./SpriteBase.js";
 import { maps } from '../maps/maps.js';
+import { TileEvent } from "./TileEvent.js";
+
+export const interactable_object_types = {
+    JUMP: "jump",
+    JUMP_AROUND: "jump_around",
+};
 
 export class InteractableObjects_Sprite extends SpriteBase {
     constructor (key_name, actions) {
@@ -43,16 +49,15 @@ export class InteractableObjects {
         return { x: x, y: y };
     }
 
-    insert_event(event_key) {
-        this.events.add(event_key);
+    insert_event(id) {
+        this.events.add(id);
     }
 
     get_events() {
-        return [...this.events];
+        return [...this.events].map(id => TileEvent.get_event(id));
     }
 
-    update_event(old_key, new_key) {
-        this.events.delete(old_key);
-        this.events.add(new_key);
+    remove_event(id) {
+        this.events.delete(id);
     }
 }

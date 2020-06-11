@@ -21,7 +21,7 @@ export class FrostFieldPsynergy {
         this.action_key_name = ACTION_KEY_NAME;
         this.game.load.image('frost_snowflake', 'assets/images/spritesheets/interactable_objects/snowflake.png');
         this.target_found = false;
-        this.target_item = null;
+        this.target_object = null;
         this.stop_casting = null;
     }
 
@@ -75,7 +75,7 @@ export class FrostFieldPsynergy {
                 let this_sqr_distance = Math.pow(item_x_px - this.data.hero.x, 2) + Math.pow(item_y_px - this.data.hero.y, 2);
                 if (this_sqr_distance < sqr_distance) {
                     this.target_found = true;
-                    this.target_item = interactable_object;
+                    this.target_object = interactable_object;
                 }
             }
         }
@@ -142,18 +142,18 @@ export class FrostFieldPsynergy {
     }
 
     init_pillar() {
-        this.target_item.events.forEach(event_key => {
-            if (maps[this.data.map_name].events[event_key].is_set) {
-                maps[this.data.map_name].events[event_key].active = false;
-                maps[this.data.map_name].events[event_key].is_set = false;
+        this.target_object.get_events().forEach(event => {
+            if (event.is_set) {
+                event.active = false;
+                event.is_set = false;
             } else {
-                maps[this.data.map_name].events[event_key].active = true;
-                maps[this.data.map_name].events[event_key].is_set = true;
+                event.active = true;
+                event.is_set = true;
             }
         });
-        this.target_item.interactable_object_sprite.send_to_back = false;
+        this.target_object.interactable_object_sprite.send_to_back = false;
         this.data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
-        this.target_item.interactable_object_sprite.filters = [this.data.pasynergy_item_color_filters];
+        this.target_object.interactable_object_sprite.filters = [this.data.pasynergy_item_color_filters];
         let blink_counter = 16;
         let blink_timer = game.time.create(false);
         blink_timer.loop(50, () => {
@@ -172,8 +172,8 @@ export class FrostFieldPsynergy {
     }
 
     grow_pillar() {
-        this.target_item.interactable_object_sprite.animations.play("frost_pool_pillar", 5, false);
-        this.target_item.interactable_object_sprite.animations.currentAnim.onComplete.addOnce(() => {
+        this.target_object.interactable_object_sprite.animations.play("frost_pool_pillar", 5, false);
+        this.target_object.interactable_object_sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.set_permanent_blink();
             this.unset_hero_cast_anim();
             this.stop_casting();
@@ -189,7 +189,7 @@ export class FrostFieldPsynergy {
             });
         });
         blink_timer.start();
-        this.target_item.interactable_object_sprite.events.onDestroy.add(() => {
+        this.target_object.interactable_object_sprite.events.onDestroy.add(() => {
             blink_timer.destroy();
         });
     }
@@ -215,7 +215,7 @@ export class FrostFieldPsynergy {
         }, () => {
             this.game.physics.p2.resume();
             this.data.casting_psynergy = false;
-            this.target_item = null;
+            this.target_object = null;
         }, () => {
             reset_map();
         });

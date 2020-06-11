@@ -162,17 +162,17 @@ export function check_isdown(cursors, ...keys) {
 
 export function get_surroundings(x, y, with_diagonals = false) {
     let surroundings = [
-        {x: x - 1, y: y},
-        {x: x + 1, y: y},
-        {x: x, y: y - 1},
-        {x: x, y: y + 1},
+        {x: x - 1, y: y, diag: false},
+        {x: x + 1, y: y, diag: false},
+        {x: x, y: y - 1, diag: false},
+        {x: x, y: y + 1, diag: false},
     ];
     if (with_diagonals) {
         surroundings = surroundings.concat([
-            {x: x - 1, y: y - 1},
-            {x: x + 1, y: y - 1},
-            {x: x - 1, y: y + 1},
-            {x: x + 1, y: y + 1},
+            {x: x - 1, y: y - 1, diag: true},
+            {x: x + 1, y: y - 1, diag: true},
+            {x: x - 1, y: y + 1, diag: true},
+            {x: x + 1, y: y + 1, diag: true},
         ]);
     }
     return surroundings;

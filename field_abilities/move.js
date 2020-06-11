@@ -33,7 +33,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         this.loadSpritesheets(this.game);
         this.hand_sprite = null;
         this.target_found = false;
-        this.target_item = null;
+        this.target_object = null;
         this.stop_casting = null;
         this.emitter = null;
         this.final_emitter = null;
@@ -71,8 +71,8 @@ export class MoveFieldPsynergy extends SpriteBase {
     }
 
     fire_push() {
-        if (this.data.map_collider_layer === this.target_item.base_collider_layer) {
-            let item_position = this.target_item.get_current_position(this.data);
+        if (this.data.map_collider_layer === this.target_object.base_collider_layer) {
+            let item_position = this.target_object.get_current_position(this.data);
             switch (this.data.trying_to_push_direction) {
                 case "up":
                     item_position.y -= 1;
@@ -87,10 +87,10 @@ export class MoveFieldPsynergy extends SpriteBase {
                     item_position.x += 1;
                     break;
             }
-            let position_allowed = this.target_item.position_allowed(this.data, item_position.x, item_position.y);
+            let position_allowed = this.target_object.position_allowed(this.data, item_position.x, item_position.y);
             if (position_allowed && !(this.data.hero_tile_pos_x === item_position.x && this.data.hero_tile_pos_y === item_position.y)) {
                 this.controls_active = false;
-                target_only_push(this.data, this.target_item, (x_shift, y_shift) => {
+                target_only_push(this.data, this.target_object, (x_shift, y_shift) => {
                     const x_target = this.hand_sprite.x + x_shift;
                     const y_target = this.hand_sprite.y + y_shift;
                     game.add.tween(this.hand_sprite).to(
@@ -100,8 +100,8 @@ export class MoveFieldPsynergy extends SpriteBase {
                         true
                     );
                 }, () => {
-                    const pos_sqr_distance = Math.pow(this.data.hero.body.x - this.target_item.interactable_object_sprite.body.x, 2) + Math.pow(this.data.hero.body.y - this.target_item.interactable_object_sprite.body.y, 2);
-                    const rad_sqr_distance = Math.pow(numbers.HERO_BODY_RADIUS + this.data.interactable_objects_db[this.target_item.key_name].body_radius, 2);
+                    const pos_sqr_distance = Math.pow(this.data.hero.body.x - this.target_object.interactable_object_sprite.body.x, 2) + Math.pow(this.data.hero.body.y - this.target_object.interactable_object_sprite.body.y, 2);
+                    const rad_sqr_distance = Math.pow(numbers.HERO_BODY_RADIUS + this.data.interactable_objects_db[this.target_object.key_name].body_radius, 2);
                     if (pos_sqr_distance <= rad_sqr_distance) {
                         this.data.hero.body.x = (this.data.hero_tile_pos_x + 0.5) * maps[this.data.map_name].sprite.tileWidth;
                         this.data.hero.body.y = (this.data.hero_tile_pos_y + 0.5) * maps[this.data.map_name].sprite.tileHeight;
@@ -149,28 +149,28 @@ export class MoveFieldPsynergy extends SpriteBase {
         switch (this.cast_direction) {
             case "up":
                 if (this.target_found) {
-                    translate_y = this.target_item.interactable_object_sprite.y;
+                    translate_y = this.target_object.interactable_object_sprite.y;
                 } else {
                     translate_y -= MAX_HAND_TRANSLATE;
                 }
                 break;
             case "down":
                 if (this.target_found) {
-                    translate_y = this.target_item.interactable_object_sprite.y - this.target_item.interactable_object_sprite.height + this.data.interactable_objects_db[this.target_item.key_name].body_radius;
+                    translate_y = this.target_object.interactable_object_sprite.y - this.target_object.interactable_object_sprite.height + this.data.interactable_objects_db[this.target_object.key_name].body_radius;
                 } else {
                     translate_y += MAX_HAND_TRANSLATE;
                 }
                 break;
             case "right":
                 if (this.target_found) {
-                    translate_x = this.target_item.interactable_object_sprite.x - 2 * this.data.interactable_objects_db[this.target_item.key_name].body_radius;
+                    translate_x = this.target_object.interactable_object_sprite.x - 2 * this.data.interactable_objects_db[this.target_object.key_name].body_radius;
                 } else {
                     translate_x += MAX_HAND_TRANSLATE;
                 }
                 break;
             case "left":
                 if (this.target_found) {
-                    translate_x = this.target_item.interactable_object_sprite.x + 2 * this.data.interactable_objects_db[this.target_item.key_name].body_radius;
+                    translate_x = this.target_object.interactable_object_sprite.x + 2 * this.data.interactable_objects_db[this.target_object.key_name].body_radius;
                 } else {
                     translate_x -= MAX_HAND_TRANSLATE;
                 }
@@ -184,7 +184,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         ).onComplete.addOnce(() => {
             this.hand_sprite.animations.play(this.action_key_name + "_" + this.cast_direction);
             if (this.target_found) {
-                this.target_item.interactable_object_sprite.filters = [this.data.pasynergy_item_color_filters];
+                this.target_object.interactable_object_sprite.filters = [this.data.pasynergy_item_color_filters];
                 this.target_hueshift_timer = this.game.time.create(false);
                 this.target_hueshift_timer.loop(5, () => {
                     this.data.pasynergy_item_color_filters.hue_adjust = Math.random() * 2 * Math.PI;
@@ -285,7 +285,7 @@ export class MoveFieldPsynergy extends SpriteBase {
                 let this_sqr_distance = Math.pow(item_x_px - this.data.hero.x, 2) + Math.pow(item_y_px - this.data.hero.y, 2);
                 if (this_sqr_distance < sqr_distance) {
                     this.target_found = true;
-                    this.target_item = interactable_object;
+                    this.target_object = interactable_object;
                 }
             }
         }
@@ -385,10 +385,10 @@ export class MoveFieldPsynergy extends SpriteBase {
         }, () => {
             this.game.physics.p2.resume();
             this.data.casting_psynergy = false;
-            this.target_item = null;
+            this.target_object = null;
         }, () => {
             if (this.target_found) {
-                this.target_item.interactable_object_sprite.filters = undefined;
+                this.target_object.interactable_object_sprite.filters = undefined;
                 this.target_hueshift_timer.stop();
             }
             reset_map();

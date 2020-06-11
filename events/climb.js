@@ -2,46 +2,47 @@ import { maps } from '../maps/maps.js';
 import { main_char_list } from '../chars/main_chars.js';
 import * as collision from '../events/collision.js';
 
-export function climbing_event(data, event_key) {
-    let current_event = maps[data.map_name].events[event_key];
+export function climbing_event(data, current_event) {
+    data.climbing_event_data = {
+        event: current_event
+    }
     game.physics.p2.pause();
     if (current_event.change_to_collision_layer !== null) {
         collision.change_map_body(data, current_event.change_to_collision_layer);
     }
     if (!data.climbing) {
-        if (current_event.activation_direction === "down") {
+        if (current_event.activation_directions === "down") {
             data.on_event = true;
             data.event_activation_process = false;
             data.hero.loadTexture(data.hero_name + "_climb");
             main_char_list[data.hero_name].setAnimation(data.hero, "climb");
             data.hero.animations.play("climb_start", 9, false, true);
-        } else if (current_event.activation_direction === "up") {
+        } else if (current_event.activation_directions === "up") {
             data.on_event = true;
             data.event_activation_process = false;
             data.hero.loadTexture(data.hero_name + "_climb");
             main_char_list[data.hero_name].setAnimation(data.hero, "climb");
             data.hero.animations.play("climb_idle");
             const out_time = Phaser.Timer.QUARTER/3;
-            const x_tween = maps[data.map_name].sprite.tileWidth*(parseFloat(current_event.x) + 1/2);
+            const x_tween = maps[data.map_name].sprite.tileWidth*(current_event.x + 0.5);
             const y_tween = data.hero.y - 15;
             game.add.tween(data.hero.body).to(
                 { x: x_tween, y: y_tween },
                 out_time,
                 Phaser.Easing.Linear.None,
                 true
-            );
-            game.time.events.add(out_time + 50, () => {
+            ).onComplete.addOnce(() => {
                 game.physics.p2.resume();
                 data.on_event = false;
+                data.climbing_event_data = null;
                 data.climbing = true;
-                data.current_event = null;
-            }, this);
+            });
             data.shadow.visible = false;
             data.actual_action = "climb";
             data.actual_direction = "idle";
         }
     } else if (data.climbing) {
-        if (current_event.activation_direction === "up") {
+        if (current_event.activation_directions === "up") {
             data.on_event = true;
             data.event_activation_process = false;
             data.hero.animations.play("climb_end", 8, false, false);
@@ -53,7 +54,7 @@ export function climbing_event(data, event_key) {
                 Phaser.Easing.Linear.None,
                 true
             );
-        } else if (current_event.activation_direction === "down") {
+        } else if (current_event.activation_directions === "down") {
             data.on_event = true;
             data.event_activation_process = false;
             data.hero.loadTexture(data.hero_name + "_idle");
@@ -65,13 +66,12 @@ export function climbing_event(data, event_key) {
                 out_time,
                 Phaser.Easing.Linear.None,
                 true
-            );
-            game.time.events.add(out_time + 50, () => {
+            ).onComplete.addOnce(() => {
                 game.physics.p2.resume();
                 data.on_event = false;
+                data.climbing_event_data = null;
                 data.climbing = false;
-                data.current_event = null;
-            }, this);
+            });
             data.shadow.y = data.hero.y;
             data.shadow.visible = true;
             data.actual_action = "idle";
@@ -83,7 +83,7 @@ export function climbing_event(data, event_key) {
 export function climb_event_animation_steps(data) {
     if (data.hero.animations.frameName === "climb/start/03") {
         data.shadow.visible = false;
-        const x_tween = maps[data.map_name].sprite.tileWidth*(parseFloat(data.current_event.x) + 1/2);
+        const x_tween = maps[data.map_name].sprite.tileWidth * (data.climbing_event_data.event.x + 0.5);
         const y_tween = data.hero.y + 25;
         game.add.tween(data.hero.body).to(
             { x: x_tween, y: y_tween },
@@ -94,9 +94,9 @@ export function climb_event_animation_steps(data) {
     } else if (data.hero.animations.frameName === "climb/start/06") {
         data.hero.animations.play("climb_idle", 9);
         data.on_event = false;
+        data.climbing_event_data = null;
         data.climbing = true;
         data.actual_action = "climb";
-        data.current_event = null;
         game.physics.p2.resume();
     } else if (data.hero.animations.frameName === "climb/end/02") {
         game.time.events.add(150, () => {
@@ -113,10 +113,10 @@ export function climb_event_animation_steps(data) {
                 data.shadow.y = data.hero.y;
                 data.shadow.visible = true;
                 data.on_event = false;
+                data.climbing_event_data = null;
                 data.climbing = false;
                 data.actual_action = "idle";
                 data.actual_direction = "up";
-                data.current_event = null;
                 game.physics.p2.resume();
             }, this);
         }, this);

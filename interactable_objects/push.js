@@ -1,5 +1,6 @@
 import * as numbers from  "../magic_numbers.js";
 import { maps } from '../maps/maps.js';
+import { TileEvent, event_types } from "../base/TileEvent.js";
 
 export function normal_push(data, interactable_object) {
     if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.actual_direction && !data.casting_psynergy) {
@@ -54,20 +55,27 @@ export function fire_push_movement(data, interactable_object, push_end, before_m
                 tween_x = numbers.PUSH_SHIFT;
                 break;
         }
-        let item_events = interactable_object.get_events();
-        for (let i = 0; i < item_events.length; ++i) {
-            const event_key = item_events[i];
-            let event = maps[data.map_name].events[event_key];
-            delete maps[data.map_name].events[event_key];
+        let object_events = interactable_object.get_events();
+        for (let i = 0; i < object_events.length; ++i) {
+            let event = object_events[i];
+            maps[data.map_name].events[event.location_key] = maps[data.map_name].events[event.location_key].filter(e => {
+                return e.id !== event.id;
+            });
+            if (maps[data.map_name].events[event.location_key].length === 0) {
+                delete maps[data.map_name].events[event.location_key];
+            }
             let old_x = event.x;
             let old_y = event.y;
             let new_x = old_x + event_shift_x;
             let new_y = old_y + event_shift_y;
-            const new_event_key = new_x + "_" + new_y;
-            interactable_object.update_event(event_key, new_event_key);
+            const new_event_location_key = TileEvent.get_location_key(new_x, new_y);
             event.x = new_x;
             event.y = new_y;
-            maps[data.map_name].events[new_event_key] = event;
+            event.location_key = new_event_location_key;
+            if (!(new_event_location_key in maps[data.map_name].events)) {
+                maps[data.map_name].events[new_event_location_key] = [];
+            }
+            maps[data.map_name].events[new_event_location_key].push(event);
             let old_surroundings = [
                 {x: old_x - 2, y: old_y},
                 {x: old_x + 2, y: old_y},
@@ -81,26 +89,30 @@ export function fire_push_movement(data, interactable_object, push_end, before_m
                 {x: new_x, y: new_y + 2},
             ];
             for (let j = 0; j < old_surroundings.length; ++j) {
-                const old_key = old_surroundings[j].x + "_" + old_surroundings[j].y;
-                const new_key = new_surroundings[j].x + "_" + new_surroundings[j].y;
+                const old_key = TileEvent.get_location_key(old_surroundings[j].x, old_surroundings[j].y);
+                const new_key = TileEvent.get_location_key(new_surroundings[j].x, new_surroundings[j].y);
                 if (old_key in maps[data.map_name].events) {
-                    const old_surr_event = maps[data.map_name].events[old_key];
-                    if (old_surr_event.type === "jump") {
-                        const target_layer = interactable_object.events_info.jump.collide_layer_shift + interactable_object.base_collider_layer;
-                        if (old_surr_event.activation_collision_layers.includes(target_layer)) {
-                            if (old_surr_event.dynamic === false) {
-                                old_surr_event.active = false;
+                    for (let k = 0; k < maps[data.map_name].events[old_key].length; ++k) {
+                        const old_surr_event = maps[data.map_name].events[old_key][k];
+                        if (old_surr_event.type === event_types.JUMP) {
+                            const target_layer = interactable_object.events_info.jump.collide_layer_shift + interactable_object.base_collider_layer;
+                            if (old_surr_event.activation_collision_layers.includes(target_layer)) {
+                                if (old_surr_event.dynamic === false) {
+                                    old_surr_event.active = false;
+                                }
                             }
                         }
                     }
                 }
                 if (new_key in maps[data.map_name].events) {
-                    const new_surr_event = maps[data.map_name].events[new_key];
-                    if (new_surr_event.type === "jump") {
-                        const target_layer = interactable_object.events_info.jump.collide_layer_shift + interactable_object.base_collider_layer;
-                        if (new_surr_event.activation_collision_layers.includes(target_layer)) {
-                            if (new_surr_event.dynamic === false && new_surr_event.is_set) {
-                                new_surr_event.active = true;
+                    for (let k = 0; k < maps[data.map_name].events[new_key].length; ++k) {
+                        const new_surr_event = maps[data.map_name].events[new_key][k];
+                        if (new_surr_event.type === event_types.JUMP) {
+                            const target_layer = interactable_object.events_info.jump.collide_layer_shift + interactable_object.base_collider_layer;
+                            if (new_surr_event.activation_collision_layers.includes(target_layer)) {
+                                if (new_surr_event.dynamic === false && new_surr_event.is_set) {
+                                    new_surr_event.active = true;
+                                }
                             }
                         }
                     }

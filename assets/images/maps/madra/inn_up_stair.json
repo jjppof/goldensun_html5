@@ -143,10 +143,10 @@
  "properties":
     {
      "Name":"inn_up_stair",
-     "event_01":"{\"type\": \"door\", \"x\": 14, \"y\": 7, \"target\": \"madra_inn\", \"activation_direction\": \"left\", \"x_target\": 16, \"y_target\": 8, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_02":"{\"type\": \"door\", \"x\": 13, \"y\": 13, \"target\": \"madra_inn_up\", \"activation_direction\": \"down\", \"x_target\": 18, \"y_target\": 6, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_03":"{\"type\": \"door\", \"x\": 14, \"y\": 13, \"target\": \"madra_inn_up\", \"activation_direction\": \"down\", \"x_target\": 18, \"y_target\": 6, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_04":"{\"type\": \"door\", \"x\": 14, \"y\": 6, \"target\": \"madra_inn\", \"activation_direction\": \"left\", \"x_target\": 16, \"y_target\": 8, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
+     "event_01":"{\"type\": \"door\", \"x\": 14, \"y\": 7, \"target\": \"madra_inn\", \"activation_directions\": \"left\", \"x_target\": 16, \"y_target\": 8, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_02":"{\"type\": \"door\", \"x\": 13, \"y\": 13, \"target\": \"madra_inn_up\", \"activation_directions\": \"down\", \"x_target\": 18, \"y_target\": 6, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_03":"{\"type\": \"door\", \"x\": 14, \"y\": 13, \"target\": \"madra_inn_up\", \"activation_directions\": \"down\", \"x_target\": 18, \"y_target\": 6, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_04":"{\"type\": \"door\", \"x\": 14, \"y\": 6, \"target\": \"madra_inn\", \"activation_directions\": \"left\", \"x_target\": 16, \"y_target\": 8, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
     },
  "propertytypes":
     {
