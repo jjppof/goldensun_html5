@@ -1,6 +1,6 @@
 import { u, get_surroundings } from "../utils.js";
 import { NPC_Sprite, NPC } from './NPC.js';
-import { InteractableObjects, InteractableObjects_Sprite, interactable_object_types } from "./InteractableObjects.js";
+import { InteractableObjects, InteractableObjects_Sprite, interactable_object_event_types, interactable_object_types } from "./InteractableObjects.js";
 import * as numbers from '../magic_numbers.js';
 import {
     TileEvent,
@@ -190,13 +190,17 @@ export class Map {
                 ));
             } else if(property.startsWith("interactable_object")) {
                 const property_info = JSON.parse(this.sprite.properties[property]);
-                this.interactable_objects.push(new InteractableObjects(
+                const interactable_object = new InteractableObjects(
                     property_info.key_name,
                     property_info.x,
                     property_info.y,
                     property_info.allowed_tiles === undefined ? [] : property_info.allowed_tiles,
                     property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer
-                ));
+                );
+                this.interactable_objects.push(interactable_object);
+                if (interactable_object.type === interactable_object_types.FROST) {
+                    interactable_object.custom_data.frost_casted = false;
+                }
             }
         }
 
@@ -277,7 +281,7 @@ export class Map {
                         const collide_layer_shift = event_info.collide_layer_shift !== undefined ? event_info.collide_layer_shift : 0;
                         const active_event = event_info.active !== undefined ? event_info.active : true;
                         switch (event_info.type) {
-                            case interactable_object_types.JUMP:
+                            case interactable_object_event_types.JUMP:
                                 const this_event_location_key = TileEvent.get_location_key(x_pos, y_pos);
                                 if (!(this_event_location_key in this.events)) {
                                     this.events[this_event_location_key] = [];
@@ -295,7 +299,7 @@ export class Map {
                                 interactable_object_info.insert_event(new_event.id);
                                 interactable_object_info.events_info[event_info.type] = event_info;
                                 break;
-                            case interactable_object_types.JUMP_AROUND:
+                            case interactable_object_event_types.JUMP_AROUND:
                                 get_surroundings(x_pos, y_pos).forEach((pos, index) => {
                                     const this_event_location_key = TileEvent.get_location_key(pos.x, pos.y);
                                     if (!(this_event_location_key in this.events)) {

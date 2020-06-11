@@ -90,7 +90,8 @@ var data = {
     forcing_on_diagonal: false,
     door_event_data: null,
     climbing_event_data: null,
-    maps_db: undefined
+    maps_db: undefined,
+    jumping: false
 };
 
 //debugging porpouses
@@ -258,7 +259,7 @@ async function create() {
     //initialize screens
     data.menu_screen = initialize_menu(data);
     game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(() => {
-        if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting) return;
+        if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting || data.jumping) return;
         if (!data.menu_open) {
             data.menu_open = true;
             stop_hero(data);
@@ -344,11 +345,11 @@ async function create() {
 
         //enable psynergies shortcuts
         game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(function(){
-            if (data.climbing || data.menu_open || data.pushing || data.teleporting) return;
+            if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping) return;
             field_abilities_list.move.cast(data.init_db.initial_shortcuts.move);
         }, this);
         game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(function(){
-            if (data.climbing || data.menu_open || data.pushing || data.teleporting) return;
+            if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping) return;
             field_abilities_list.frost.cast(data.init_db.initial_shortcuts.frost);
         }, this);
 

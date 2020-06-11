@@ -3,7 +3,7 @@ import { maps } from '../initializers/maps.js';
 import { TileEvent, event_types } from "../base/TileEvent.js";
 
 export function normal_push(data, interactable_object) {
-    if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.actual_direction && !data.casting_psynergy) {
+    if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.actual_direction && !data.casting_psynergy && !data.jumping) {
         fire_push_movement(data, interactable_object);
     }
     data.trying_to_push = false;

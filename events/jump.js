@@ -5,7 +5,7 @@ import { event_types, TileEvent } from '../base/TileEvent.js';
 import { get_surroundings } from '../utils.js';
 
 export function jump_event(data, current_event) {
-    if (!current_event.active || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y) {
+    if (!current_event.active || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y || data.casting_psynergy || data.pushing) {
         data.on_event = false;
         return;
     }
@@ -107,6 +107,7 @@ export function jump_event(data, current_event) {
         data.shadow.visible = true;
         return;
     }
+    data.jumping = true;
     let tween_obj = {};
     tween_obj[direction] = data.hero[direction] + jump_offset;
     const hero_y = data.hero.body.y;
@@ -131,6 +132,7 @@ export function jump_event(data, current_event) {
             data.hero.animations.play("jump_" + jump_direction, main_char_list[data.hero_name].actions["jump"].frame_rate, false);
             data.hero.animations.currentAnim.onComplete.addOnce(() => {
                 game.physics.p2.resume();
+                data.jumping = false;
                 data.on_event = false;
             });
         }, this);

@@ -198,7 +198,7 @@ export class FrostFieldPsynergy {
         if (this.data.casting_psynergy) return;
         let caster = main_char_list[caster_key_name];
         let ability = abilities_list[this.ability_key_name];
-        if (caster.current_pp < ability.pp_cost && caster.abilities.includes(this.ability_key_name)) {
+        if (caster.current_pp < ability.pp_cost || !caster.abilities.includes(this.ability_key_name)) {
             return;
         }
         this.data.casting_psynergy = true;
@@ -207,6 +207,12 @@ export class FrostFieldPsynergy {
         caster.current_pp -= ability.pp_cost;
         this.set_cast_direction();
         this.search_for_target();
+        if (this.target_object.custom_data.frost_casted) {
+            this.target_found = false;
+            this.target_object = null;
+        } else {
+            this.target_object.custom_data.frost_casted = true;
+        }
         this.set_hero_cast_anim();
         let reset_map;
         this.stop_casting = init_cast_aura(this.game, this.data.hero, this.data.npc_group, this.data.hero_color_filters, () => {

@@ -3,6 +3,11 @@ import { maps } from '../initializers/maps.js';
 import { TileEvent } from "./TileEvent.js";
 
 export const interactable_object_types = {
+    MOVE: "move",
+    FROST: "frost",
+};
+
+export const interactable_object_event_types = {
     JUMP: "jump",
     JUMP_AROUND: "jump_around",
 };
@@ -24,6 +29,7 @@ export class InteractableObjects {
         this.events_info = {};
         this.current_x = x;
         this.current_y = y;
+        this.custom_data = {};
     }
 
     set_sprite(sprite) {
