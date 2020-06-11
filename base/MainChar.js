@@ -1,10 +1,10 @@
 import { SpriteBase } from './SpriteBase.js';
 import { choose_right_class } from './Classes.js';
-import { djinni_list } from '../chars/djinni.js';
+import { djinni_list } from '../initializers/djinni.js';
 import { djinn_status } from './Djinn.js';
 import { Effect, effect_types } from './Effect.js';
 import { item_types } from './Item.js';
-import { items_list } from '../chars/items.js';
+import { items_list } from '../initializers/items.js';
 
 export const temporary_status = {
     DELUSION: "delusion",

@@ -1,8 +1,8 @@
 import { Window } from "../Window.js";
 import { CursorControl } from "../utils/CursorControl.js";
-import { party_data } from "../../chars/main_chars.js";
-import { abilities_list } from '../../chars/abilities.js';
-import { items_list } from '../../chars/items.js';
+import { party_data } from "../../initializers/main_chars.js";
+import { abilities_list } from '../../initializers/abilities.js';
+import { items_list } from '../../initializers/items.js';
 import * as numbers from '../../magic_numbers.js';
 
 const PSY_OVERVIEW_WIN_X = 104;

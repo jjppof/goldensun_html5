@@ -36,11 +36,31 @@ export class Map {
         this.interactable_objects = [];
     }
 
-    loadMapAssets(game) {
-        game.load.tilemap(this.key_name, this.tileset_json_url, null, Phaser.Tilemap.TILED_JSON);
-        game.load.image(this.key_name, this.tileset_image_url);
+    loadMapAssets(game, force_load, on_complete) {
+        let load_tilemap_promise_resolve;
+        let load_tilemap_promise = new Promise(resolve => {
+            load_tilemap_promise_resolve = resolve;
+        });
+        game.load.tilemap(this.key_name, this.tileset_json_url, null, Phaser.Tilemap.TILED_JSON).onLoadComplete.addOnce(load_tilemap_promise_resolve, this);
+
+        let load_image_promise_resolve;
+        let load_image_promise = new Promise(resolve => {
+            load_image_promise_resolve = resolve;
+        });
+        game.load.image(this.key_name, this.tileset_image_url).onLoadComplete.addOnce(load_image_promise_resolve, this);
+
+        let physics_promises = [];
         for (let i = 0; i < this.physics_names.length; ++i) {
-            game.load.physics(this.physics_names[i], this.physics_jsons_url[i]);
+            let load_physics_promise_resolve;
+            let load_physics_promise = new Promise(resolve => {
+                load_physics_promise_resolve = resolve;
+            });
+            physics_promises.push(load_physics_promise);
+            game.load.physics(this.physics_names[i], this.physics_jsons_url[i]).onLoadComplete.addOnce(load_physics_promise_resolve, this);
+        }
+        if (force_load) {
+            Promise.all([load_tilemap_promise, load_image_promise, ...physics_promises]).then(on_complete);
+            game.load.start();
         }
     }
 

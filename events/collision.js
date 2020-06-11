@@ -1,5 +1,5 @@
 import * as physics from '../physics/physics.js';
-import { maps } from '../maps/maps.js';
+import { maps } from '../initializers/maps.js';
 
 export function config_collision_change(data, current_event) {
     let next_x = current_event.x, next_y = current_event.y;

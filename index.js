@@ -1,21 +1,21 @@
 import * as numbers from './magic_numbers.js';
-import { initialize_main_chars, main_char_list, initialize_classes, party_data } from './chars/main_chars.js';
-import { initialize_abilities, abilities_list, initialize_field_abilities, field_abilities_list } from './chars/abilities.js';
-import { initialize_items, items_list } from './chars/items.js';
-import { initialize_djinni, djinni_list } from './chars/djinni.js';
-import { initialize_enemies, enemies_list } from './chars/enemies.js';
-import { initializeMaps, loadMaps, maps } from './maps/maps.js';
-import { jump_event, jump_near_collision } from './events/jump.js';
-import { set_door_event, door_event_phases } from './events/door.js';
+import { initialize_main_chars, main_char_list, initialize_classes, party_data } from './initializers/main_chars.js';
+import { initialize_abilities, abilities_list, initialize_field_abilities, field_abilities_list } from './initializers/abilities.js';
+import { initialize_items, items_list } from './initializers/items.js';
+import { initialize_djinni, djinni_list } from './initializers/djinni.js';
+import { initialize_enemies, enemies_list } from './initializers/enemies.js';
+import { initialize_maps, load_maps, maps } from './initializers/maps.js';
+import { door_event_phases } from './events/door.js';
 import { set_npc_event, trigger_npc_dialog } from './events/npc.js';
-import { config_step, do_step } from './events/step.js';
-import { config_collision_change, do_collision_change } from './events/collision.js';
+import { do_step } from './events/step.js';
+import { do_collision_change } from './events/collision.js';
 import * as climb from './events/climb.js';
 import * as physics from './physics/physics.js';
 import { initialize_menu } from './screens/menu.js';
-import { config_hero, change_hero_sprite, set_actual_action, update_shadow, stop_hero, init_speed_factors } from './chars/hero_control.js';
-import { TileEvent, event_types } from './base/TileEvent.js';
-import { set_debug_info } from './debug.js';
+import { config_hero, change_hero_sprite, set_actual_action, update_shadow, stop_hero, init_speed_factors } from './initializers/hero_control.js';
+import { TileEvent } from './base/TileEvent.js';
+import { set_debug_info, toggle_debug } from './debug.js';
+import { event_triggering } from './events/triggering.js';
 
 var data = {
     game: undefined,
@@ -89,7 +89,8 @@ var data = {
     shift_input: null,
     forcing_on_diagonal: false,
     door_event_data: null,
-    climbing_event_data: null
+    climbing_event_data: null,
+    maps_db: undefined
 };
 
 //debugging porpouses
@@ -144,8 +145,6 @@ function load_misc() {
 }
 
 function preload() {
-    initializeMaps();
-    loadMaps(game);
     game.load.json('init_db', 'init.json');
     game.load.json('classes_db', 'assets/dbs/classes_db.json');
     game.load.json('abilities_db', 'assets/dbs/abilities_db.json');
@@ -154,6 +153,8 @@ function preload() {
     game.load.json('interactable_objects_db', 'assets/dbs/interactable_objects_db.json');
     game.load.json('djinni_db', 'assets/dbs/djinni_db.json');
     game.load.json('enemies_db', 'assets/dbs/enemies_db.json');
+    game.load.json('maps_db', 'assets/dbs/maps_db.json');
+    game.load.json('main_chars_db', 'assets/dbs/main_chars.json');
     game.load.script('color_filters', 'plugins/ColorFilters.js');
     load_misc();
     load_buttons();
@@ -182,20 +183,6 @@ function enter_key_event() {
     trigger_npc_dialog(data);
 }
 
-function toggle_debug() {
-    data.hero.body.debug = !data.hero.body.debug;
-    data.map_collider.body.debug = !data.map_collider.body.debug;
-    for (let i = 0; i < data.npc_group.children.length; ++i) {
-        let sprite = data.npc_group.children[i];
-        if (!sprite.is_npc && !sprite.is_interactable_object) continue;
-        sprite.body.debug = !sprite.body.debug;
-    }
-    for (let i = 0; i < data.dynamic_jump_events_bodies.length; ++i) {
-        data.dynamic_jump_events_bodies[i].debug = !data.dynamic_jump_events_bodies[i].debug;
-    }
-    data.debug = !data.debug;
-}
-
 async function create() {
     // initializing some vars
     data.init_db = game.cache.getJSON('init_db'); 
@@ -206,6 +193,8 @@ async function create() {
     data.items_db = game.cache.getJSON('items_db');
     data.djinni_db = game.cache.getJSON('djinni_db');
     data.enemies_db = game.cache.getJSON('enemies_db');
+    data.maps_db = game.cache.getJSON('maps_db');
+    data.main_chars_db = game.cache.getJSON('main_chars_db');
     data.hero_color_filters = game.add.filter('ColorFilters');
     data.map_color_filters = game.add.filter('ColorFilters');
     data.pasynergy_item_color_filters = game.add.filter('ColorFilters');
@@ -216,6 +205,14 @@ async function create() {
     data.scale_factor = data.init_db.initial_scale_factor;
     data.map_collider_layer = data.init_db.map_z_index;
     party_data.coins = data.init_db.coins;
+
+    let load_maps_promise_resolve;
+    let load_maps_promise = new Promise(resolve => {
+        load_maps_promise_resolve = resolve;
+    });
+    initialize_maps(data.maps_db);
+    load_maps(game, load_maps_promise_resolve);
+    await load_maps_promise;
 
     game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
     window.dispatchEvent(new Event('resize'));
@@ -248,11 +245,7 @@ async function create() {
     let load_chars_promise = new Promise(resolve => {
         load_chars_promise_resolve = resolve;
     });
-    game.load.json('main_chars_db', 'assets/dbs/main_chars.json').onLoadComplete.addOnce(() => {
-        data.main_chars_db = game.cache.getJSON('main_chars_db');
-        initialize_main_chars(game, data.main_chars_db, load_chars_promise_resolve);
-    });
-    game.load.start();
+    initialize_main_chars(game, data.main_chars_db, load_chars_promise_resolve);
     await load_chars_promise;
 
     //creating groups. Order here is important
@@ -307,7 +300,7 @@ async function create() {
         game.physics.p2.updateBoundsCollisionGroup();
 
         //activate debug mode
-        game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug, this);
+        game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug.bind(this, data), this);
         
         //activate grid mode
         game.input.keyboard.addKey(Phaser.Keyboard.G).onDown.add(() => {
@@ -372,73 +365,6 @@ async function create() {
     });
 }
 
-function fire_event(current_event) {
-    if(data.event_activation_process){
-        if (current_event.type === event_types.STAIR && (data.stop_by_colliding || data.actual_action === "climb"))
-            climb.climbing_event(data, current_event);
-        else if (current_event.type === event_types.DOOR) {
-            set_door_event(data, current_event);
-        } else if (current_event.type === event_types.JUMP) {
-            if (!current_event.active) return;
-            data.on_event = true;
-            data.event_activation_process = false;
-            jump_event(data, current_event);
-        }
-    }
-}
-
-function event_triggering(event_key) {
-    for (let i = 0; i < maps[data.map_name].events[event_key].length; ++i) {
-        let this_event = maps[data.map_name].events[event_key][i];
-        if (!this_event.activation_collision_layers.includes(data.map_collider_layer)) return;
-        if (this_event.type === event_types.JUMP) {
-            jump_near_collision(data, this_event);
-        }
-        let right_direction;
-        if (Array.isArray(this_event.activation_directions)) {
-            right_direction = this_event.activation_directions.includes(data.actual_direction);
-        } else {
-            right_direction = data.actual_direction === this_event.activation_directions;
-        }
-        if (!data.climbing) {
-            if (!data.event_activation_process && right_direction && (data.actual_action === "walk" || data.actual_action === "dash")) {
-                if (data.event_timers[this_event.id] && !data.event_timers[this_event.id].timer.expired) {
-                    return;
-                }
-                data.event_activation_process = true;
-                data.event_timers[this_event.id] = game.time.events.add(numbers.EVENT_TIME, fire_event.bind(null, this_event), this);
-            } else if (data.event_activation_process && (!right_direction || data.actual_action === "idle")) {
-                data.event_activation_process = false;
-            }
-        } else {
-            if (!data.event_activation_process && data.climb_direction === this_event.activation_directions && (data.actual_direction === "climb")) {
-                if (data.event_timers[this_event.id] && !data.event_timers[this_event.id].timer.expired) {
-                    return;
-                }
-                data.event_activation_process = true;
-                data.event_timers[this_event.id] = game.time.events.add(numbers.EVENT_TIME, fire_event.bind(null, this_event), this);
-            } else if (data.event_activation_process && (data.climb_direction !== this_event.activation_directions || data.actual_direction === "idle")) {
-                data.event_activation_process = false;
-            }
-        }
-
-        if (this_event.type === event_types.SPEED) { //speed event activation
-            if(data.extra_speed !== this_event.speed) {
-                data.extra_speed = this_event.speed;
-            }
-        } else if (this_event.type === event_types.DOOR) { //door event activation
-            if (!this_event.advance_effect) {
-                data.event_activation_process = true;
-                fire_event(this_event);
-            }
-        } else if (this_event.type === event_types.STEP && !data.waiting_to_step) {
-            config_step(data, this_event);
-        } else if (this_event.type === event_types.COLLISION && !data.waiting_to_change_collision) {
-            config_collision_change(data, this_event);
-        }
-    }
-}
-
 function update() {
     if (data.created) {
         if (!data.on_event && !data.npc_event && !data.pushing && !data.menu_open && !data.casting_psynergy) {
@@ -455,7 +381,7 @@ function update() {
             //check if the actual tile has an event
             const event_location_key = TileEvent.get_location_key(data.hero_tile_pos_x, data.hero_tile_pos_y);
             if (event_location_key in maps[data.map_name].events) {
-                event_triggering(event_location_key);
+                event_triggering(game, data, event_location_key);
             } else if (data.extra_speed !== 0) { //disabling speed event
                 data.extra_speed = 0;
             }

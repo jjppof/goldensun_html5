@@ -1,4 +1,4 @@
-import { maps } from '../maps/maps.js';
+import { maps } from '../initializers/maps.js';
 import * as numbers from '../magic_numbers.js';
 
 export function config_step(data, current_event) {

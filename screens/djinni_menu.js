@@ -1,5 +1,5 @@
-import { party_data } from '../chars/main_chars.js';
-import { djinni_list } from '../chars/djinni.js';
+import { party_data } from '../initializers/main_chars.js';
+import { djinni_list } from '../initializers/djinni.js';
 import { Window } from '../base/Window.js';
 import * as numbers from '../magic_numbers.js';
 import { elements } from '../base/MainChar.js';

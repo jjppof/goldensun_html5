@@ -2,8 +2,8 @@ import { Window } from '../../Window.js';
 import { djinn_status } from '../../Djinn.js';
 import { CursorControl } from '../../utils/CursorControl.js';
 import * as numbers from '../../../magic_numbers.js';
-import { party_data } from '../../../chars/main_chars.js';
-import { djinni_list, djinni_sprites } from '../../../chars/djinni.js';
+import { party_data } from '../../../initializers/main_chars.js';
+import { djinni_list, djinni_sprites } from '../../../initializers/djinni.js';
 import { elements } from '../../MainChar.js';
 
 const WIN_WIDTH = 236;

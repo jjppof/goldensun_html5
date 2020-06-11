@@ -1,5 +1,5 @@
-import { main_char_list } from '../chars/main_chars.js';
-import { maps } from '../maps/maps.js';
+import { main_char_list } from '../initializers/main_chars.js';
+import { maps } from '../initializers/maps.js';
 import {
     config_physics_for_npcs,
     config_physics_for_map,

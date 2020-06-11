@@ -1,4 +1,4 @@
-import { classes_list, class_table } from '../chars/main_chars.js';
+import { classes_list, class_table } from '../initializers/main_chars.js';
 import { elements } from './MainChar.js';
 
 export class Classes {

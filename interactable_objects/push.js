@@ -1,5 +1,5 @@
 import * as numbers from  "../magic_numbers.js";
-import { maps } from '../maps/maps.js';
+import { maps } from '../initializers/maps.js';
 import { TileEvent, event_types } from "../base/TileEvent.js";
 
 export function normal_push(data, interactable_object) {

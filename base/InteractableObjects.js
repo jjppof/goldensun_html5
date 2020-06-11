@@ -1,5 +1,5 @@
 import { SpriteBase } from "./SpriteBase.js";
-import { maps } from '../maps/maps.js';
+import { maps } from '../initializers/maps.js';
 import { TileEvent } from "./TileEvent.js";
 
 export const interactable_object_types = {

@@ -1,7 +1,7 @@
 import { DialogManager, set_dialog } from '../base/Window.js';
 import { NPC } from '../base/NPC.js';
 import * as utils from '../utils.js';
-import { change_hero_sprite } from '../chars/hero_control.js';
+import { change_hero_sprite } from '../initializers/hero_control.js';
 
 export function trigger_npc_dialog(data) {
     if (!data.in_dialog && !data.menu_open) {

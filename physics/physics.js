@@ -1,7 +1,7 @@
-import { maps } from '../maps/maps.js';
+import { maps } from '../initializers/maps.js';
 import * as numbers from '../magic_numbers.js';
 import { get_transition_directions, check_isdown } from '../utils.js';
-import { main_char_list } from '../chars/main_chars.js';
+import { main_char_list } from '../initializers/main_chars.js';
 import { normal_push } from '../interactable_objects/push.js';
 
 export function config_physics_for_hero(data, initialize = true) {

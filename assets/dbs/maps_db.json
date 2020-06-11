@@ -1,0 +1,63 @@
+[
+    {
+        "name":"Madra",
+        "key_name":"madra",
+        "tileset_key_name":"madra",
+        "collision_key_names":["madra", "madra_2"],
+        "tileset_files": {
+            "image":"assets/images/maps/madra/madra.png",
+            "json":"assets/images/maps/madra/madra.json"
+        },
+        "collision_files":["assets/images/maps/madra/madra_physics.json", "assets/images/maps/madra/madra_2_physics.json"]
+    },{
+        "name":"inn_down",
+        "key_name":"madra_inn",
+        "tileset_key_name":"Inside_town",
+        "collision_key_names":["madra_inn_down"],
+        "tileset_files": {
+            "image":"assets/images/maps/madra/Inside_town_00.png",
+            "json":"assets/images/maps/madra/inn_down.json"
+        },
+        "collision_files":["assets/images/maps/madra/madra_physics_inn.json"]
+    },{
+        "name":"inn_up_stair",
+        "key_name":"madra_inn_up_stair",
+        "tileset_key_name":"Inside_town",
+        "collision_key_names":["madra_inn_up_stair"],
+        "tileset_files": {
+            "image":"assets/images/maps/madra/Inside_town_00.png",
+            "json":"assets/images/maps/madra/inn_up_stair.json"
+        },
+        "collision_files":["assets/images/maps/madra/madra_physics_inn_up_stair.json"]
+    },{
+        "name":"inn_up",
+        "key_name":"madra_inn_up",
+        "tileset_key_name":"Inside_town",
+        "collision_key_names":["madra_inn_up"],
+        "tileset_files": {
+            "image":"assets/images/maps/madra/Inside_town_00.png",
+            "json":"assets/images/maps/madra/inn_up.json"
+        },
+        "collision_files":["assets/images/maps/madra/madra_physics_inn_up.json"]
+    },{
+        "name":"house_1",
+        "key_name":"madra_house_1",
+        "tileset_key_name":"Inside_town",
+        "collision_key_names":["madra_house_1"],
+        "tileset_files": {
+            "image":"assets/images/maps/madra/Inside_town_00.png",
+            "json":"assets/images/maps/madra/house_1.json"
+        },
+        "collision_files":["assets/images/maps/madra/madra_physics_house_1.json"]
+    },{
+        "name":"Madra",
+        "key_name":"madra_side",
+        "tileset_key_name":"madra",
+        "collision_key_names":["madra_side", "madra_side_2"],
+        "tileset_files": {
+            "image":"assets/images/maps/madra/madra.png",
+            "json":"assets/images/maps/madra/madra_side.json"
+        },
+        "collision_files":["assets/images/maps/madra/madra_physics_side.json", "assets/images/maps/madra/madra_physics_side_2.json"]
+    }
+]

@@ -1,3 +1,17 @@
+export function toggle_debug(data) {
+    data.hero.body.debug = !data.hero.body.debug;
+    data.map_collider.body.debug = !data.map_collider.body.debug;
+    for (let i = 0; i < data.npc_group.children.length; ++i) {
+        let sprite = data.npc_group.children[i];
+        if (!sprite.is_npc && !sprite.is_interactable_object) continue;
+        sprite.body.debug = !sprite.body.debug;
+    }
+    for (let i = 0; i < data.dynamic_jump_events_bodies.length; ++i) {
+        data.dynamic_jump_events_bodies[i].debug = !data.dynamic_jump_events_bodies[i].debug;
+    }
+    data.debug = !data.debug;
+}
+
 export function set_debug_info(game, data) {
     game.debug.text('', 0, 0);
 

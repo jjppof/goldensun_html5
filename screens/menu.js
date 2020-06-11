@@ -1,5 +1,5 @@
 import { Window } from '../base/Window.js';
-import { main_char_list, party_data } from '../chars/main_chars.js';
+import { main_char_list, party_data } from '../initializers/main_chars.js';
 import * as numbers from '../magic_numbers.js';
 import { get_text_width } from '../utils.js';
 import { HorizontalMenu } from '../base/menus/HorizontalMenu.js';

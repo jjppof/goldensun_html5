@@ -1,6 +1,6 @@
 import * as numbers from '../magic_numbers.js';
-import { main_char_list } from '../chars/main_chars.js';
-import { maps } from '../maps/maps.js';
+import { main_char_list } from '../initializers/main_chars.js';
+import { maps } from '../initializers/maps.js';
 import { event_types, TileEvent } from '../base/TileEvent.js';
 import { get_surroundings } from '../utils.js';
 

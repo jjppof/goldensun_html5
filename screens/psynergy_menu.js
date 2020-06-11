@@ -1,8 +1,8 @@
 import { CharsMenu } from '../base/menus/CharsMenu.js';
 import { BasicInfoWindow } from '../base/windows/BasicInfoWindow.js';
 import { ItemPsynergyChooseWindow } from '../base/windows/ItemPsynergyChooseWindow.js';
-import { party_data } from '../chars/main_chars.js';
-import { abilities_list, field_abilities_list } from '../chars/abilities.js';
+import { party_data } from '../initializers/main_chars.js';
+import { abilities_list, field_abilities_list } from '../initializers/abilities.js';
 import { Window } from '../base/Window.js';
 import * as numbers from '../magic_numbers.js';
 

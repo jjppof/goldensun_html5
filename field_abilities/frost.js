@@ -1,7 +1,7 @@
-import { main_char_list } from "../chars/main_chars.js";
-import { abilities_list } from "../chars/abilities.js";
-import { init_cast_aura, tint_map_layers } from  '../chars/psynergy_cast.js';
-import { maps } from  '../maps/maps.js';
+import { main_char_list } from "../initializers/main_chars.js";
+import { abilities_list } from "../initializers/abilities.js";
+import { init_cast_aura, tint_map_layers } from  '../initializers/psynergy_cast.js';
+import { maps } from  '../initializers/maps.js';
 import * as numbers from '../magic_numbers.js';
 
 const KEY_NAME = "frost_psynergy";

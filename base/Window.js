@@ -364,8 +364,7 @@ export class Window {
                 this.transition_time,
                 Phaser.Easing.Linear.None,
                 true
-            );
-            this.game.time.events.add(this.transition_time + 50, on_destroy, this);
+            ).onComplete.addOnce(on_destroy);
         } else {
             on_destroy();
         }

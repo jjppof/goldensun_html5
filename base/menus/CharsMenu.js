@@ -1,5 +1,5 @@
 import { Window } from '../Window.js';
-import { party_data } from '../../chars/main_chars.js';
+import { party_data } from '../../initializers/main_chars.js';
 import * as numbers from '../../magic_numbers.js';
 import { CursorControl } from '../utils/CursorControl.js';
 
