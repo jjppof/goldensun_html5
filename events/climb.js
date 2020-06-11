@@ -47,7 +47,7 @@ export function climbing_event(data, current_event) {
             data.event_activation_process = false;
             data.hero.animations.play("climb_end", 8, false, false);
             data.shadow.visible = false;
-            const time = Phaser.Timer.QUARTER;
+            const time = Phaser.Timer.QUARTER >> 1;
             game.add.tween(data.hero.body).to(
                 { y: data.hero.y - 12 },
                 time,
@@ -87,7 +87,7 @@ export function climb_event_animation_steps(data) {
         const y_tween = data.hero.y + 25;
         game.add.tween(data.hero.body).to(
             { x: x_tween, y: y_tween },
-            500,
+            300,
             Phaser.Easing.Linear.None,
             true
         );
@@ -101,8 +101,8 @@ export function climb_event_animation_steps(data) {
     } else if (data.hero.animations.frameName === "climb/end/02") {
         game.time.events.add(150, () => {
             game.add.tween(data.hero.body).to(
-                { y: data.hero.y - 6 },
-                70,
+                { y: data.hero.y - 2 },
+                45,
                 Phaser.Easing.Linear.None,
                 true
             );
