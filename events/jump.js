@@ -5,8 +5,7 @@ import { event_types, TileEvent } from '../base/TileEvent.js';
 import { get_surroundings, get_opposite_direcion } from '../utils.js';
 
 export function jump_event(data, current_event) {
-    if (data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y || data.casting_psynergy || data.pushing) {
-        data.on_event = false;
+    if (!data.stop_by_colliding || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y || data.casting_psynergy || data.pushing || data.climbing || data.jumping) {
         return;
     }
     let jump_offset = numbers.JUMP_OFFSET;
@@ -14,74 +13,60 @@ export function jump_event(data, current_event) {
     let jump_direction;
     let next_position = {x: current_event.x, y: current_event.y};
     let side_position = {x: current_event.x, y: current_event.y};
-    if (Array.isArray(current_event.activation_directions)) {
-        if (data.actual_direction === "left") {
-            jump_offset = -jump_offset;
-            direction = "x";
-            next_position.x -= 2;
-            side_position.x -= 1;
-            jump_direction = "left";
-        } else if (data.actual_direction === "right") {
-            direction = "x";
-            next_position.x += 2;
-            side_position.x += 1;
-            jump_direction = "right";
-        } else if (data.actual_direction === "up") {
-            jump_offset = -jump_offset;
-            direction = "y";
-            next_position.y -= 2;
-            side_position.y -= 1;
-            jump_direction = "up";
-        } else if (data.actual_direction === "down") {
-            direction = "y";
-            next_position.y += 2;
-            side_position.y += 1;
-            jump_direction = "down";
-        }
-    } else {
-        if (current_event.activation_directions === "left") {
-            jump_offset = -jump_offset;
-            direction = "x";
-            next_position.x -= 2;
-            side_position.x -= 1;
-            jump_direction = "left";
-        } else if (current_event.activation_directions === "right") {
-            direction = "x";
-            next_position.x += 2;
-            side_position.x += 1;
-            jump_direction = "right";
-        } else if (current_event.activation_directions === "up") {
-            jump_offset = -jump_offset;
-            direction = "y";
-            next_position.y -= 2;
-            side_position.y -= 1;
-            jump_direction = "up";
-        } else if (current_event.activation_directions === "down") {
-            direction = "y";
-            next_position.y += 2;
-            side_position.y += 1;
-            jump_direction = "down";
-        }
+    if (data.actual_direction === "left") {
+        jump_offset = -jump_offset;
+        direction = "x";
+        next_position.x -= 2;
+        side_position.x -= 1;
+        jump_direction = "left";
+    } else if (data.actual_direction === "right") {
+        direction = "x";
+        next_position.x += 2;
+        side_position.x += 1;
+        jump_direction = "right";
+    } else if (data.actual_direction === "up") {
+        jump_offset = -jump_offset;
+        direction = "y";
+        next_position.y -= 2;
+        side_position.y -= 1;
+        jump_direction = "up";
+    } else if (data.actual_direction === "down") {
+        direction = "y";
+        next_position.y += 2;
+        side_position.y += 1;
+        jump_direction = "down";
+    }
+    if (jump_direction === undefined) {
+        return;
     }
     let side_pos_key = TileEvent.get_location_key(side_position.x, side_position.y);
     if (side_pos_key in maps[data.map_name].events) {
         for (let i = 0; i < maps[data.map_name].events[side_pos_key].length; ++i) {
             const event = maps[data.map_name].events[side_pos_key][i];
+            let interactable_object_found = false;
+            for (let j = 0; j < maps[data.map_name].interactable_objects.length; ++j) {
+                const interactable_object = maps[data.map_name].interactable_objects[j];
+                //if the side position has a interactable object, it does not cancel this jump event
+                if (data.map_collider_layer !== interactable_object.base_collider_layer) continue;
+                if (event.x === interactable_object.current_x && event.y === interactable_object.current_y) {
+                    interactable_object_found = true;
+                    break;
+                }
+            }
+            if (interactable_object_found) {
+                continue;
+            }
+            //cancel jumping if the next side event is also a jump
             if (event.type === event_types.JUMP && event.is_set && event.activation_collision_layers.includes(data.map_collider_layer)) {
-                data.on_event = false;
-                data.shadow.visible = true;
                 return;
             }
         }
     }
-    let next_pos_key = next_position.x + "_" + next_position.y;
+    let next_pos_key = TileEvent.get_location_key(next_position.x, next_position.y);
     for (let i = 0; i < maps[data.map_name].interactable_objects.length; ++i) {
         const next_interactable_object = maps[data.map_name].interactable_objects[i];
         if (next_interactable_object.current_x !== next_position.x || next_interactable_object.current_y !== next_position.y) continue;
-        if (data.interactable_objects_db[next_interactable_object.key_name].type !== "move") continue;
         if (data.map_collider_layer !== next_interactable_object.base_collider_layer) continue;
-        data.on_event = false;
-        data.shadow.visible = true;
         return;
     }
     if (next_pos_key in maps[data.map_name].events) {
@@ -99,16 +84,13 @@ export function jump_event(data, current_event) {
             }
         }
         if (!active_jump_event_found) {
-            data.on_event = false;
-            data.shadow.visible = true;
             return;
         }
     } else if (current_event.dynamic) {
-        data.on_event = false;
-        data.shadow.visible = true;
         return;
     }
     data.jumping = true;
+    data.on_event = true;
     let tween_obj = {};
     tween_obj[direction] = data.hero[direction] + jump_offset;
     const hero_y = data.hero.body.y;
@@ -225,7 +207,7 @@ export function jump_near_collision(data, current_event) {
     };
     let concat_keys = current_pos_key;
     let bodies_positions = [];
-    let at_least_one_dynamic = false;
+    let at_least_one_dynamic_and_not_diag = false;
     for (let i = 0; i < surroundings.length; ++i) {
         const surrounding_key = TileEvent.get_location_key(surroundings[i].x, surroundings[i].y);
         if (surrounding_key in maps[data.map_name].events) {
@@ -233,7 +215,7 @@ export function jump_near_collision(data, current_event) {
                 const surrounding_event = maps[data.map_name].events[surrounding_key][j];
                 if (surrounding_event.type === event_types.JUMP && right_direction && surrounding_event.is_set && surrounding_event.activation_collision_layers.includes(data.map_collider_layer)) {
                     if ((surrounding_event.dynamic || current_event.dynamic) && !surroundings[i].diag) {
-                        at_least_one_dynamic = true;
+                        at_least_one_dynamic_and_not_diag = true;
                     }
                     const side_event_surroundings = get_surroundings(surroundings[i].x, surroundings[i].y, false);
                     bodies_positions.push(side_event_surroundings);
@@ -242,7 +224,7 @@ export function jump_near_collision(data, current_event) {
             }
         }
     }
-    if (!data.walking_on_pillars_tiles.has(concat_keys) && at_least_one_dynamic) {
+    if (!data.walking_on_pillars_tiles.has(concat_keys) && at_least_one_dynamic_and_not_diag) {
         data.walking_on_pillars_tiles.clear();
         clear_bodies();
         data.walking_on_pillars_tiles.add(concat_keys);

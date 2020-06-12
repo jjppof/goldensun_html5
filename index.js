@@ -33,7 +33,6 @@ var data = {
     hero_tile_pos_x: undefined,
     hero_tile_pos_y: undefined,
     current_event: undefined,
-    event_activation_process: false,
     event_timers: {},
     on_event: false,
     climbing: false,

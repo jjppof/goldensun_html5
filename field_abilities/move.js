@@ -284,6 +284,7 @@ export class MoveFieldPsynergy extends SpriteBase {
             if (x_condition && y_condition) {
                 let this_sqr_distance = Math.pow(item_x_px - this.data.hero.x, 2) + Math.pow(item_y_px - this.data.hero.y, 2);
                 if (this_sqr_distance < sqr_distance) {
+                    sqr_distance = this_sqr_distance;
                     this.target_found = true;
                     this.target_object = interactable_object;
                 }

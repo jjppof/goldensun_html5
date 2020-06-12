@@ -162,17 +162,17 @@ export class FrostFieldPsynergy {
         });
         this.target_object.interactable_object_sprite.send_to_back = false;
         this.data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
-        this.color_filters = this.game.add.filter('ColorFilters');
-        this.target_object.interactable_object_sprite.filters = [this.color_filters];
-        this.color_filters.hue_adjust = 0;
-        this.color_filters.tint = [-1,-1,-1];
+        this.target_object.custom_data.color_filters = this.game.add.filter('ColorFilters');
+        this.target_object.interactable_object_sprite.filters = [this.target_object.custom_data.color_filters];
+        this.target_object.custom_data.color_filters.hue_adjust = 0;
+        this.target_object.custom_data.color_filters.tint = [-1,-1,-1];
         let blink_counter = 16;
         let blink_timer = game.time.create(false);
         blink_timer.loop(50, () => {
             if (blink_counter%2 === 0) {
-                this.color_filters.tint = [1,1,1];
+                this.target_object.custom_data.color_filters.tint = [1,1,1];
             } else {
-                this.color_filters.tint = [-1,-1,-1];
+                this.target_object.custom_data.color_filters.tint = [-1,-1,-1];
             }
             --blink_counter;
             if (blink_counter === 0) {
@@ -194,14 +194,15 @@ export class FrostFieldPsynergy {
 
     set_permanent_blink() {
         let blink_timer = game.time.create(false);
+        let target_object = this.target_object;
         blink_timer.loop(150, () => {
-            this.color_filters.hue_adjust = 5.3;
+            target_object.custom_data.color_filters.hue_adjust = 5.3;
             game.time.events.add(20, () => {
-                this.color_filters.hue_adjust = 0;
+                target_object.custom_data.color_filters.hue_adjust = 0;
             });
         });
         blink_timer.start();
-        this.target_object.interactable_object_sprite.events.onDestroy.add(() => {
+        target_object.interactable_object_sprite.events.onDestroy.add(() => {
             blink_timer.destroy();
         });
     }

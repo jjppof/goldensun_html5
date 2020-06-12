@@ -11,7 +11,6 @@ import * as numbers from '../magic_numbers.js';
 
 export function set_door_event(data, current_event, activation_direction) {
     data.on_event = true;
-    data.event_activation_process = false;
     data.door_event_data = {
         event: current_event,
         activation_direction: activation_direction

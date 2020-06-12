@@ -2,7 +2,10 @@ import { maps } from '../initializers/maps.js';
 import { main_char_list } from '../initializers/main_chars.js';
 import * as collision from '../events/collision.js';
 
-export function climbing_event(data, current_event, activation_direction) {
+export function climbing_event(game, data, current_event, activation_direction) {
+    if (!data.stop_by_colliding || data.jumping || data.pushing || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y) {
+        return;
+    }
     data.climbing_event_data = {
         event: current_event
     }
@@ -11,22 +14,13 @@ export function climbing_event(data, current_event, activation_direction) {
         collision.change_map_body(data, current_event.change_to_collision_layer);
     }
     if (!data.climbing) {
-        if (!data.stop_by_colliding) {
-            game.physics.p2.resume();
-            data.on_event = false;
-            data.climbing_event_data = null;
-            data.climbing = false;
-            return;
-        }
         if (activation_direction === "down") {
             data.on_event = true;
-            data.event_activation_process = false;
             data.hero.loadTexture(data.hero_name + "_climb");
             main_char_list[data.hero_name].setAnimation(data.hero, "climb");
             data.hero.animations.play("climb_start", 9, false, true);
         } else if (activation_direction === "up") {
             data.on_event = true;
-            data.event_activation_process = false;
             data.hero.loadTexture(data.hero_name + "_climb");
             main_char_list[data.hero_name].setAnimation(data.hero, "climb");
             data.hero.animations.play("climb_idle");
@@ -51,7 +45,6 @@ export function climbing_event(data, current_event, activation_direction) {
     } else if (data.climbing) {
         if (activation_direction === "up") {
             data.on_event = true;
-            data.event_activation_process = false;
             data.hero.animations.play("climb_end", 8, false, false);
             data.shadow.visible = false;
             const time = Phaser.Timer.QUARTER >> 1;
@@ -63,7 +56,6 @@ export function climbing_event(data, current_event, activation_direction) {
             );
         } else if (activation_direction === "down") {
             data.on_event = true;
-            data.event_activation_process = false;
             data.hero.loadTexture(data.hero_name + "_idle");
             main_char_list[data.hero_name].setAnimation(data.hero, "idle");
             data.hero.animations.play("idle_up");

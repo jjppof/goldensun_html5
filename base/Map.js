@@ -280,6 +280,7 @@ export class Map {
                         y_pos += event_info.y_shift !== undefined ? event_info.y_shift : 0;
                         const collide_layer_shift = event_info.collide_layer_shift !== undefined ? event_info.collide_layer_shift : 0;
                         const active_event = event_info.active !== undefined ? event_info.active : true;
+                        const target_layer = interactable_object_info.base_collider_layer + collide_layer_shift;
                         switch (event_info.type) {
                             case interactable_object_event_types.JUMP:
                                 const this_event_location_key = TileEvent.get_location_key(x_pos, y_pos);
@@ -290,7 +291,7 @@ export class Map {
                                     x_pos,
                                     y_pos,
                                     ["up", "down", "right", "left"],
-                                    [interactable_object_info.base_collider_layer + collide_layer_shift],
+                                    [target_layer],
                                     event_info.dynamic,
                                     active_event,
                                     event_info.is_set === undefined ? true: event_info.is_set
@@ -300,19 +301,30 @@ export class Map {
                                 interactable_object_info.events_info[event_info.type] = event_info;
                                 break;
                             case interactable_object_event_types.JUMP_AROUND:
+                                let is_set = event_info.is_set === undefined ? true: event_info.is_set;
                                 get_surroundings(x_pos, y_pos).forEach((pos, index) => {
                                     const this_event_location_key = TileEvent.get_location_key(pos.x, pos.y);
-                                    if (!(this_event_location_key in this.events)) {
+                                    if (this_event_location_key in this.events) {
+                                        //check if already theres a jump event in this place
+                                        for (let k = 0; k < this.events[this_event_location_key].length; ++k) {
+                                            const event = this.events[this_event_location_key][k];
+                                            if (event.type === event_types.JUMP && event.is_set) {
+                                                if (event.activation_collision_layers.includes(target_layer)) {
+                                                    is_set = false;
+                                                }
+                                            }
+                                        }
+                                    } else {
                                         this.events[this_event_location_key] = [];
                                     }
                                     const new_event = new JumpEvent(
                                         pos.x,
                                         pos.y,
                                         ["right", "left", "down", "up"][index],
-                                        [interactable_object_info.base_collider_layer + collide_layer_shift],
+                                        [target_layer],
                                         event_info.dynamic,
                                         active_event,
-                                        event_info.is_set === undefined ? true: event_info.is_set
+                                        is_set
                                     );
                                     this.events[this_event_location_key].push(new_event);
                                     interactable_object_info.insert_event(new_event.id);
