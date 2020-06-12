@@ -108,11 +108,20 @@ export function fire_push_movement(data, interactable_object, push_end, before_m
         }
         for (let i = 0; i < sprites.length; ++i) {
             let body = sprites[i];
+            let dest_x = body.x + tween_x;
+            let dest_y = body.y + tween_y;
+            if (body === data.shadow || body === data.hero.body) {
+                if (tween_x === 0) {
+                    dest_x = maps[data.map_name].sprite.tileWidth * (data.hero_tile_pos_x + event_shift_x + 0.5);
+                } else if (tween_y === 0) {
+                    dest_y = maps[data.map_name].sprite.tileHeight * (data.hero_tile_pos_y + event_shift_y + 0.5);
+                }
+            }
             let promise_resolve;
             promises.push(new Promise(resolve => { promise_resolve = resolve; }))
             game.add.tween(body).to({
-                x: body.x + tween_x,
-                y: body.y + tween_y
+                x: dest_x,
+                y: dest_y
             }, numbers.PUSH_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(promise_resolve);
         }
         Promise.all(promises).then(() => {

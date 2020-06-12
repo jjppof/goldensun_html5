@@ -93,7 +93,8 @@ export function jump_event(data, current_event) {
     data.on_event = true;
     let tween_obj = {};
     tween_obj[direction] = data.hero[direction] + jump_offset;
-    const hero_y = data.hero.body.y;
+    const hero_x = maps[data.map_name].sprite.tileWidth * (next_position.x + 0.5);
+    const hero_y = maps[data.map_name].sprite.tileHeight * (next_position.y + 0.5);
     if (direction === "x") {
         tween_obj.y = [hero_y - 5, hero_y - 8, hero_y - 5, hero_y];
     }
@@ -103,7 +104,8 @@ export function jump_event(data, current_event) {
     data.hero.animations.play("jump_" + jump_direction, main_char_list[data.hero_name].actions["jump"].frame_rate, false);
     data.hero.animations.currentAnim.onComplete.addOnce(() => {
         data.shadow.visible = false;
-        data.shadow[direction] = data.hero[direction] + jump_offset;
+        data.shadow.x = hero_x;
+        data.shadow.y = hero_y;
         game.add.tween(data.hero.body).to( 
             tween_obj,
             numbers.JUMP_DURATION,
