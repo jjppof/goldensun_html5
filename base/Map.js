@@ -196,7 +196,8 @@ export class Map {
                     property_info.y,
                     property_info.allowed_tiles === undefined ? [] : property_info.allowed_tiles,
                     property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer,
-                    property_info.collide_layer_shift
+                    property_info.collide_layer_shift,
+                    property_info.not_allowed_tiles
                 );
                 this.interactable_objects.push(interactable_object);
                 if (interactable_object.type === interactable_object_types.FROST) {
@@ -275,6 +276,15 @@ export class Map {
                     const position = interactable_object_info.get_current_position(data);
                     let x_pos = position.x;
                     let y_pos = position.y;
+                    const not_allowed_tile_test = (x, y) => {
+                        for (let k = 0; k < interactable_object_info.not_allowed_tiles.length; ++k) {
+                            const not_allowed_tile = interactable_object_info.not_allowed_tiles[k];
+                            if (not_allowed_tile.x === x && not_allowed_tile.y === y) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    };
                     for (let j = 0; j < interactable_objects_db[interactable_object_info.key_name].events.length; ++j) {
                         const event_info = interactable_objects_db[interactable_object_info.key_name].events[j];
                         x_pos += event_info.x_shift !== undefined ? event_info.x_shift : 0;
@@ -286,6 +296,7 @@ export class Map {
                         const target_layer = interactable_object_info.base_collider_layer + collide_layer_shift;
                         switch (event_info.type) {
                             case interactable_object_event_types.JUMP:
+                                if (not_allowed_tile_test(x_pos, y_pos)) continue;
                                 const this_event_location_key = TileEvent.get_location_key(x_pos, y_pos);
                                 if (!(this_event_location_key in this.events)) {
                                     this.events[this_event_location_key] = [];
@@ -306,6 +317,7 @@ export class Map {
                             case interactable_object_event_types.JUMP_AROUND:
                                 let is_set = event_info.is_set === undefined ? true: event_info.is_set;
                                 get_surroundings(x_pos, y_pos).forEach((pos, index) => {
+                                    if (not_allowed_tile_test(pos.x, pos.y)) return;
                                     const this_event_location_key = TileEvent.get_location_key(pos.x, pos.y);
                                     if (this_event_location_key in this.events) {
                                         //check if already theres a jump event in this place

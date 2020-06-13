@@ -19,13 +19,14 @@ export class InteractableObjects_Sprite extends SpriteBase {
 }
 
 export class InteractableObjects {
-    constructor(key_name, x, y, allowed_tiles, base_collider_layer, collide_layer_shift) {
+    constructor(key_name, x, y, allowed_tiles, base_collider_layer, collide_layer_shift, not_allowed_tiles) {
         this.key_name = key_name;
         this.x = x;
         this.y = y;
         this.allowed_tiles = allowed_tiles;
         this.base_collider_layer = base_collider_layer;
         this.collide_layer_shift = collide_layer_shift;
+        this.not_allowed_tiles = not_allowed_tiles === undefined ? [] : not_allowed_tiles;
         this.events = new Set();
         this.events_info = {};
         this.current_x = x;
