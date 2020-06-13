@@ -4,7 +4,7 @@ An online Golden Sun Engine built in HTML5 with Phaser.
 **See the [DEMO](https://jjppof.github.io/goldensun_html5/index).**
 
 - Feel free to help! Please, reach me if you want to do so.
-- I'm avoiding making some docs for now because I'm constantly changing things.
+- I'm avoiding making some docs for now because I'm constantly changing things. But see the [wiki](https://github.com/jjppof/goldensun_html5/wiki).
 - I use [trello](https://trello.com/b/wPilgGBk/gshtml5) to write down things.
 
 ## Tech stack
@@ -23,18 +23,6 @@ GSHTML5 has no external dependency, so there's no `npm install` or packages on C
 - In the terminal, go to the root folder of the GSHTML5 you cloned and then run `http-server`;
 - Go to your browser and access the address shown in the terminal (it's probably `http://localhost:8080/`).
 - I strongly reccomend using [Visual Studio Code](https://code.visualstudio.com/download) to develop.
-
-## Texture Packer configs
-- Use *Phaser (JSONHash)* as *Data Format*.
-- Check *Trim sprite names*.
-- Check *Prepend folder names*.
-- Folder organization to generate the sheet (ex.: `felix/idle/down/03.png`):
-  - `[sprite name (ex.: felix)]`:
-    - `[action type (ex.: idle)]`
-      - `[direction (ex.: down)]`
-        - `[files: frame_index.ext (ex.: 03.png)]`.
-- Move the action folder into the Texture Packer.
-- The sheets are per action.
 
 ## Credits
 - http://www.goldensunhacking.net/
