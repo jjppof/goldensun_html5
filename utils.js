@@ -186,3 +186,16 @@ export function get_surroundings(x, y, with_diagonals = false, shift = 1) {
     }
     return surroundings;
 };
+
+export function set_cast_direction(direction) {
+    if (direction === "down_left") {
+        direction = "left";
+    } else if (direction === "up_left") {
+        direction = "up";
+    } else if (direction === "up_right") {
+        direction = "right";
+    } else if (direction === "down_right") {
+        direction = "down";
+    }
+    return direction;
+}

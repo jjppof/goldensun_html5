@@ -5,6 +5,7 @@ import { init_cast_aura, tint_map_layers } from  '../initializers/psynergy_cast.
 import { maps } from  '../initializers/maps.js';
 import * as numbers from '../magic_numbers.js';
 import { target_only_push } from '../interactable_objects/push.js';
+import { set_cast_direction } from "../utils.js";
 
 const KEY_NAME = "move_psynergy";
 const ACTION_KEY_NAME = "cast";
@@ -235,20 +236,6 @@ export class MoveFieldPsynergy extends SpriteBase {
         
     }
 
-    set_cast_direction() {
-        this.cast_direction = this.data.actual_direction;
-        if (this.cast_direction === "down_left") {
-            this.cast_direction = "left";
-        } else if (this.cast_direction === "up_left") {
-            this.cast_direction = "up";
-        } else if (this.cast_direction === "up_right") {
-            this.cast_direction = "right";
-        } else if (this.cast_direction === "down_right") {
-            this.cast_direction = "down";
-        }
-        this.data.actual_direction = this.cast_direction;
-    }
-
     search_for_target() {
         this.target_found = false;
         let min_x, max_x, min_y, max_y;
@@ -372,7 +359,8 @@ export class MoveFieldPsynergy extends SpriteBase {
         this.game.physics.p2.pause();
         this.data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
         caster.current_pp -= ability.pp_cost;
-        this.set_cast_direction();
+        this.cast_direction = set_cast_direction(this.data.actual_direction);
+        this.data.actual_direction = this.cast_direction;
         this.set_emitter();
         this.set_final_emitter();
         this.search_for_target();

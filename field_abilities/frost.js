@@ -4,9 +4,8 @@ import { init_cast_aura, tint_map_layers } from  '../initializers/psynergy_cast.
 import { maps } from  '../initializers/maps.js';
 import * as numbers from '../magic_numbers.js';
 import { event_types, JumpEvent } from "../base/TileEvent.js";
-import { get_surroundings } from "../utils.js";
+import { get_surroundings, set_cast_direction } from "../utils.js";
 
-const KEY_NAME = "frost_psynergy";
 const ACTION_KEY_NAME = "cast";
 const FROST_MAX_RANGE = 12;
 const SNOWFLAKES_COUNT = 15;
@@ -25,20 +24,6 @@ export class FrostFieldPsynergy {
         this.target_found = false;
         this.target_object = null;
         this.stop_casting = null;
-    }
-
-    set_cast_direction() {
-        this.cast_direction = this.data.actual_direction;
-        if (this.cast_direction === "down_left") {
-            this.cast_direction = "left";
-        } else if (this.cast_direction === "up_left") {
-            this.cast_direction = "up";
-        } else if (this.cast_direction === "up_right") {
-            this.cast_direction = "right";
-        } else if (this.cast_direction === "down_right") {
-            this.cast_direction = "down";
-        }
-        this.data.actual_direction = this.cast_direction;
     }
 
     search_for_target() {
@@ -164,8 +149,6 @@ export class FrostFieldPsynergy {
         this.data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
         this.target_object.custom_data.color_filters = this.game.add.filter('ColorFilters');
         this.target_object.interactable_object_sprite.filters = [this.target_object.custom_data.color_filters];
-        this.target_object.custom_data.color_filters.hue_adjust = 0;
-        this.target_object.custom_data.color_filters.tint = [-1,-1,-1];
         let blink_counter = 16;
         let blink_timer = game.time.create(false);
         blink_timer.loop(50, () => {
@@ -218,7 +201,8 @@ export class FrostFieldPsynergy {
         this.game.physics.p2.pause();
         this.data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
         caster.current_pp -= ability.pp_cost;
-        this.set_cast_direction();
+        this.cast_direction = set_cast_direction(this.data.actual_direction);
+        this.data.actual_direction = this.cast_direction;
         this.search_for_target();
         if (this.target_object && this.target_object.custom_data.frost_casted) {
             this.target_found = false;
