@@ -155,7 +155,7 @@ export class FrostFieldPsynergy {
                     JumpEvent.active_jump_surroundings(
                         data,
                         get_surroundings(event.x, event.y, false, 2),
-                        this.target_object.events_info.jump.collide_layer_shift + this.target_object.base_collider_layer
+                        this.target_object.collide_layer_shift + this.target_object.base_collider_layer
                     );
                 }
             }

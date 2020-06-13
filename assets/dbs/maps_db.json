@@ -53,11 +53,11 @@
         "name":"Madra",
         "key_name":"madra_side",
         "tileset_key_name":"madra",
-        "collision_key_names":["madra_side", "madra_side_2"],
+        "collision_key_names":["madra_side", "madra_side_2", "madra_side_3"],
         "tileset_files": {
             "image":"assets/images/maps/madra/madra.png",
             "json":"assets/images/maps/madra/madra_side.json"
         },
-        "collision_files":["assets/images/maps/madra/madra_physics_side.json", "assets/images/maps/madra/madra_physics_side_2.json"]
+        "collision_files":["assets/images/maps/madra/madra_physics_side.json", "assets/images/maps/madra/madra_physics_side_2.json", "assets/images/maps/madra/madra_physics_side_3.json"]
     }
 ]

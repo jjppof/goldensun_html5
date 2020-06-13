@@ -195,7 +195,8 @@ export class Map {
                     property_info.x,
                     property_info.y,
                     property_info.allowed_tiles === undefined ? [] : property_info.allowed_tiles,
-                    property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer
+                    property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer,
+                    property_info.collide_layer_shift
                 );
                 this.interactable_objects.push(interactable_object);
                 if (interactable_object.type === interactable_object_types.FROST) {
@@ -278,7 +279,9 @@ export class Map {
                         const event_info = interactable_objects_db[interactable_object_info.key_name].events[j];
                         x_pos += event_info.x_shift !== undefined ? event_info.x_shift : 0;
                         y_pos += event_info.y_shift !== undefined ? event_info.y_shift : 0;
-                        const collide_layer_shift = event_info.collide_layer_shift !== undefined ? event_info.collide_layer_shift : 0;
+                        let collide_layer_shift = event_info.collide_layer_shift !== undefined ? event_info.collide_layer_shift : 0;
+                        collide_layer_shift = interactable_object_info.collide_layer_shift !== undefined ? interactable_object_info.collide_layer_shift : collide_layer_shift;
+                        interactable_object_info.collide_layer_shift = collide_layer_shift;
                         const active_event = event_info.active !== undefined ? event_info.active : true;
                         const target_layer = interactable_object_info.base_collider_layer + collide_layer_shift;
                         switch (event_info.type) {
@@ -321,7 +324,7 @@ export class Map {
                                         pos.x,
                                         pos.y,
                                         ["right", "left", "down", "up"][index],
-                                        [target_layer],
+                                        [interactable_object_info.base_collider_layer],
                                         event_info.dynamic,
                                         active_event,
                                         is_set
