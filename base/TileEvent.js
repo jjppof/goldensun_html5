@@ -1,4 +1,4 @@
-import { get_surroundings, get_opposite_direcion } from "../utils.js";
+import { get_surroundings, get_opposite_direcion, get_directions } from "../utils.js";
 import { maps } from "../initializers/maps.js";
 
 export const event_types = {
@@ -18,6 +18,9 @@ export class TileEvent {
         this.location_key = this.x + "_" + this.y;
         this.id = TileEvent.id_incrementer++;
         this.activation_collision_layers = Array.isArray(activation_collision_layers) ? activation_collision_layers : [activation_collision_layers];
+        if (activation_directions === undefined) {
+            activation_directions = get_directions(true);
+        }
         this.activation_directions = Array.isArray(activation_directions) ? activation_directions : [activation_directions];
         this.dynamic = dynamic;
         this.active = Array.isArray(active) ? active : new Array(this.activation_directions.length).fill(active);

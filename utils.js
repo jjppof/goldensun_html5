@@ -199,3 +199,11 @@ export function set_cast_direction(direction) {
     }
     return direction;
 }
+
+export function get_directions(with_diagonals = false) {
+    let directions = ["up", "down", "left", "right"];
+    if (with_diagonals) {
+        directions.push(...["up_left", "up_right", "down_left", "down_right"]);
+    }
+    return directions;
+}

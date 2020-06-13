@@ -96,7 +96,7 @@ export class Map {
                     const new_event = new SpeedEvent(
                         property_info.x,
                         property_info.y,
-                        null,
+                        property_info.activation_directions,
                         property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
                         false,
                         property_info.active === undefined ? true : property_info.active,
