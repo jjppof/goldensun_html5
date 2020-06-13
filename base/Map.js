@@ -74,25 +74,6 @@ export class Map {
             maps[map_name].sprite.tilesets[0].tileProperties[tile_index].index = tile_index;
         }
 
-        for (let i = 0; i < this.sprite.tilesets.length; ++i) {
-            let tileset = this.sprite.tilesets[i];
-            if ("tiles" in tileset) { //dealing with newer versions of tiledmap editor
-                tileset.tileproperties = tileset.tiles.reduce((map, obj) => {
-                    map[obj.id] = obj.properties.reduce((map_p, obj_p) => {
-                        map_p[obj_p.name] = obj_p.value;
-                        return map_p;
-                    }, {});
-                    return map;
-                }, {});
-            }
-        }
-
-        if (Array.isArray(this.sprite.properties)) { //dealing with newer versions of tiledmap editor
-            this.sprite.properties = this.sprite.properties.reduce((map, obj) => {
-                map[obj.name] = obj.value;
-                return map;
-            }, {});
-        }
         for (let property in this.sprite.properties) {
             if (property.startsWith("event")) { //check for events
                 const property_info = JSON.parse(this.sprite.properties[property]);
@@ -215,12 +196,6 @@ export class Map {
             let layer = this.sprite.createLayer(this.layers[i].name);
             this.layers[i].sprite = layer;
             this.layers[i].sprite.layer_z = this.layers[i].properties.z;
-            if (Array.isArray(this.layers[i].properties)) { //dealing with newer versions of tiledmap editor
-                this.layers[i].properties = this.layers[i].properties.reduce((map, obj) => {
-                    map[obj.name] = obj.value;
-                    return map;
-                }, {});
-            }
             layer.resizeWorld();
             layer.blendMode = PIXI.blendModes[this.layers[i].properties.blendMode];
             layer.alpha = this.layers[i].alpha;

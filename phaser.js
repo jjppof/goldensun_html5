@@ -104121,6 +104121,11 @@ Phaser.Tilemap = function (game, key, tileWidth, tileHeight, width, height)
     this.tilesets = data.tilesets;
 
     /**
+    * @property {array} tilesets - An object with animatedTiles information.
+    */
+    this.animatedTiles = data.animatedTiles;
+
+    /**
     * @property {array} imagecollections - An array of Image Collections.
     */
     this.imagecollections = data.imagecollections;
@@ -106363,9 +106368,60 @@ Phaser.TilemapLayer.ensureSharedCopyCanvas = function ()
 */
 Phaser.TilemapLayer.prototype.preUpdate = function ()
 {
+    const return_value = this.preUpdateCore();
+    this.map.animatedTiles.updated = false;
+    return return_value;
 
-    return this.preUpdateCore();
+};
 
+	/**
+* Automatically called by World.update. Handles animated tiles.
+*
+* @method Phaser.TilemapLayer#update
+* @protected
+*/
+Phaser.TilemapLayer.prototype.update = function () {
+    var tile;
+    // Update is called on all tilemap layers but only required, and wanted, once. Also skip if there is no defined animated tiles.
+    if(this.map.animatedTiles.updated || Object.keys(this.map.animatedTiles).length===1){
+        return;
+    }
+    this.map.animatedTiles.updated = true;
+
+    for (var gid in this.map.animatedTiles)
+    {
+        if(gid==="updated"){ continue; }
+
+        if (!this.map.animatedTiles[gid].msToNextFrame)
+        {
+            this.map.animatedTiles[gid].msToNextFrame = this.map.animatedTiles[gid].frames[this.map.animatedTiles[gid].currentFrame].duration;
+        }
+        else if ((this.map.animatedTiles[gid].msToNextFrame-=this.game.time.physicsElapsedMS)<=0)
+        {
+            this.map.animatedTiles[gid].currentFrame++;
+            if (this.map.animatedTiles[gid].currentFrame > (this.map.animatedTiles[gid].frames.length - 1))
+            {
+                this.map.animatedTiles[gid].currentFrame = 0;
+            }
+            this.map.animatedTiles[gid].currentGid = this.map.animatedTiles[gid].frames[this.map.animatedTiles[gid].currentFrame].gid;
+            this.map.animatedTiles[gid].msToNextFrame += this.map.animatedTiles[gid].frames[this.map.animatedTiles[gid].currentFrame].duration;
+            for (var layer in this.map.animatedTiles[gid].layers)
+            {
+                //Check if there is any animated tiles within camera view before setting dirty = true
+                if(this.map.layers[this.map.animatedTiles[gid].layers[layer]].dirty){continue;}
+                tileLoop:
+                for(var x2 = Math.ceil((this.game.camera.x+this.game.camera.width)/this.map.tileWidth), x = Math.floor(this.game.camera.x/this.map.tileWidth); x<x2; x+=1){
+                    for(var y2 = Math.ceil((this.game.camera.y+this.game.camera.height)/this.map.tileHeight), y = Math.floor(this.game.camera.y/this.map.tileHeight); y<y2; y+=1) {
+                        tile = this.map.getTile(x,y,this.map.layers[this.map.animatedTiles[gid].layers[layer]].name);
+                        if(tile && tile.index == gid){
+                            this.map.layers[this.map.animatedTiles[gid].layers[layer]].dirty = true;
+                            break tileLoop;
+                        }
+                    }
+                }
+            }
+        }
+    }
 };
 
 /**
@@ -107037,6 +107093,10 @@ Phaser.TilemapLayer.prototype.renderRegion = function (scrollX, scrollY, left, t
 
             if (set)
             {
+                if (this.map.animatedTiles.hasOwnProperty(index))
+                {
+                    index = this.map.animatedTiles[index].currentGid;
+                }
                 if (tile.rotation || tile.flipped)
                 {
                     context.save();
@@ -108087,10 +108147,56 @@ Phaser.TilemapParser = {
         var imagecollections = [];
         var lastSet = null;
 
+        // Array with animated tiles information
+        map.animatedTiles = {"updated": false};
+
         for (var i = 0; i < json.tilesets.length; i++)
         {
             //  name, firstgid, width, height, margin, spacing, properties
             var set = json.tilesets[i];
+
+            if (set.hasOwnProperty('tiles'))
+            {
+                var tileIndices = Object.keys(set.tiles);
+                for (var k in tileIndices)
+                {
+                    if (set.tiles[tileIndices[k]].hasOwnProperty('animation'))
+                    {
+                        gid = parseInt(tileIndices[k],10) + set.firstgid;
+                        map.animatedTiles[gid] = ({
+                            frames: [],
+                            currentFrame: 0,
+                            msToNextFrame: false //timestamp is set in first call to Phaser.TilemapLayer#update
+                        });
+                        for (var i2 in set.tiles[tileIndices[k]].animation)
+                        {
+                            map.animatedTiles[gid].frames[i2] = {};
+                            map.animatedTiles[gid].frames[i2].gid = set.tiles[tileIndices[k]].animation[i2].tileid + set.firstgid;
+                            map.animatedTiles[gid].frames[i2].duration = set.tiles[tileIndices[k]].animation[i2].duration;
+                        }
+                        // Keep track of layers with this particular animated tile
+                        var layersWithAnimatedTile = [];
+                        var tilelayerIndex = 0;
+                        for (var i2 = 0; i2 < json.layers.length; i2++)
+                        {
+                            if (json.layers[i2].type === 'tilelayer')
+                            {
+                                for (var t = 0, len = json.layers[i2].data.length; t < len; t++)
+                                {
+                                    if (json.layers[i2].data[t] === gid)
+                                    {
+                                        layersWithAnimatedTile.push(tilelayerIndex);
+                                        break;
+                                    }
+                                }
+                                tilelayerIndex++;
+                            }
+                        }
+                        map.animatedTiles[gid].currentGid = map.animatedTiles[gid].frames[0].gid;
+                        map.animatedTiles[gid].layers = layersWithAnimatedTile;
+                    }
+                }
+            }
 
             if (set.source)
             {

@@ -367,12 +367,12 @@
          "columns":11,
          "firstgid":1,
          "image":"madra.png",
-         "imageheight":448,
+         "imageheight":544,
          "imagewidth":176,
          "margin":0,
          "name":"madra",
          "spacing":0,
-         "tilecount":308,
+         "tilecount":374,
          "tileheight":16,
          "tileproperties":
             {
