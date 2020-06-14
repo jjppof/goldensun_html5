@@ -207,3 +207,7 @@ export function get_directions(with_diagonals = false) {
     }
     return directions;
 }
+
+export function capitalize(text) {
+    return text[0].toUpperCase() + text.slice(1);
+}

@@ -5,6 +5,7 @@ import * as numbers from '../../../magic_numbers.js';
 import { party_data } from '../../../initializers/main_chars.js';
 import { djinni_list, djinni_sprites } from '../../../initializers/djinni.js';
 import { elements } from '../../MainChar.js';
+import { capitalize } from '../../../utils.js';
 
 const WIN_WIDTH = 236;
 const WIN_HEIGHT = 116;
@@ -41,7 +42,6 @@ export class DjinnListWindow {
         this.group.add(this.chars_sprites_group);
         this.window_open = false;
         this.window_active = false;
-        this.changing_djinn_status = false;
         this.esc_propagation_priority = esc_propagation_priority + 1;
         this.enter_propagation_priority = enter_propagation_priority + 1;
         this.shift_propagation_priority = shift_propagation_priority + 1;
@@ -68,6 +68,7 @@ export class DjinnListWindow {
         this.djinn_names = [];
         this.active_djinn_sprite = null;
         this.init_djinn_sprites();
+        this.init_djinni_status_texts();
         this.set_control();
     }
 
@@ -78,8 +79,11 @@ export class DjinnListWindow {
 
     set_control() {
         this.game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
-            if (!this.window_open || !this.window_active || !this.changing_djinn_status) return;
-            this.data.esc_input.getSignal().halt();
+            if (!this.window_open || !this.window_active) return;
+            if (this.setting_djinn_status) {
+                this.cancel_djinn_status_set();
+                this.data.esc_input.getSignal().halt();
+            }
         }, this, this.esc_propagation_priority);
         this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
             if (!this.window_open || !this.window_active) return;
@@ -98,7 +102,11 @@ export class DjinnListWindow {
     }
 
     get_y_cursor() {
-        return HIGHLIGHT_Y_PADDING + this.selected_djinn_index * numbers.FONT_SIZE + 3;
+        if (this.setting_djinn_status && this.selected_char_index === this.setting_djinn_status_char_index) {
+            return HIGHLIGHT_Y_PADDING - numbers.FONT_SIZE;
+        } else {
+            return HIGHLIGHT_Y_PADDING + this.selected_djinn_index * numbers.FONT_SIZE + 3;
+        }
     }
 
     is_open() {
@@ -118,7 +126,11 @@ export class DjinnListWindow {
     }
 
     get_djinn_index() {
-        return this.selected_djinn_index;
+        if (this.setting_djinn_status && this.selected_char_index === this.setting_djinn_status_char_index) {
+            return this.setting_djinn_status_djinn_index;
+        } else { 
+            return this.selected_djinn_index;
+        }
     }
 
     set_djinn_index(index) {
@@ -130,7 +142,11 @@ export class DjinnListWindow {
     }
 
     get_max_djinn() {
-        return this.sizes[this.selected_char_index];
+        if (this.setting_djinn_status && this.selected_char_index === this.setting_djinn_status_char_index) {
+            return 1;
+        } else {
+            return this.sizes[this.selected_char_index];
+        }
     }
 
     init_djinn_sprites() {
@@ -145,6 +161,15 @@ export class DjinnListWindow {
                 this.djinns_sprites[i][elem].scale.x = -1;
                 this.djinns_sprites[i][elem].alpha = 0;
             }
+        }
+    }
+
+    init_djinni_status_texts() {
+        this.djinni_status_texts = [];
+        for (let i = 0; i < CHARS_PER_PAGE; ++i) {
+            const x = STAR_X_PADDING - 1 + i * DJINN_NAME_BETWEEN;
+            const y = 16
+            this.djinni_status_texts.push(this.base_window.set_text_in_position("", x, y));
         }
     }
 
@@ -257,9 +282,13 @@ export class DjinnListWindow {
 
     on_char_change(before_index, after_index) {
         this.selected_char_index = after_index;
-        if (this.selected_djinn_index >= this.sizes[this.selected_char_index]) {
-            this.selected_djinn_index = this.sizes[this.selected_char_index] - 1;
-            this.cursor_control.set_cursor_position();
+        if (this.setting_djinn_status && this.selected_char_index === this.setting_djinn_status_char_index) {
+            this.selected_djinn_index = this.setting_djinn_status_djinn_index;
+        } else {
+            if (this.selected_djinn_index >= this.sizes[this.selected_char_index]) {
+                this.selected_djinn_index = this.sizes[this.selected_char_index] - 1;
+                this.cursor_control.set_cursor_position();
+            }
         }
         this.set_highlight_bar();
         const this_char = party_data.members[this.selected_char_index];
@@ -278,7 +307,62 @@ export class DjinnListWindow {
     }
 
     on_choose() {
+        const this_char = party_data.members[this.selected_char_index];
+        const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
+        if (this.setting_djinn_status || this_djinn.status === djinn_status.RECOVERY) return; 
+        for (let key in this.chars_sprites) {
+            this.chars_sprites[key].y -= numbers.FONT_SIZE;
+        }
+        for (let i = 0; i < CHARS_PER_PAGE; ++i) {
+            for (let key in elements) {
+                const elem = elements[key];
+                if (elem === elements.NO_ELEMENT) continue;
+                this.djinns_sprites[i][elem].y -= numbers.FONT_SIZE;
+            }
+        }
+        for (let i = 0; i < CHARS_PER_PAGE; ++i) {
+            let status_text;
+            if (i === this.selected_char_index) {
+                switch (this_djinn.status) {
+                    case djinn_status.SET: status_text = capitalize(djinn_status.STANDBY); break;
+                    case djinn_status.STANDBY: status_text = capitalize(djinn_status.SET); break;
+                }
+            } else {
+                const other_char = party_data.members[i];
+                if (other_char === undefined) continue;
+                if (other_char.djinni.length < this_char.djinni.length) {
+                    status_text = "Give";
+                } else {
+                    status_text = "Trade";
+                }
+            }
+            this.base_window.update_text(status_text, this.djinni_status_texts[i]);
+        }
+        this.setting_djinn_status_char_index = this.selected_char_index;
+        this.setting_djinn_status_djinn_index = this.selected_djinn_index;
+        this.setting_djinn_status = true;
+        this.cursor_control.set_cursor_position();
+    }
 
+    cancel_djinn_status_set() {
+        if (!this.setting_djinn_status) return;
+        for (let key in this.chars_sprites) {
+            this.chars_sprites[key].y += numbers.FONT_SIZE;
+        }
+        for (let i = 0; i < CHARS_PER_PAGE; ++i) {
+            for (let key in elements) {
+                const elem = elements[key];
+                if (elem === elements.NO_ELEMENT) continue;
+                this.djinns_sprites[i][elem].y += numbers.FONT_SIZE;
+            }
+        }
+        for (let i = 0; i < CHARS_PER_PAGE; ++i) {
+            this.base_window.update_text("", this.djinni_status_texts[i]);
+        }
+        this.setting_djinn_status_char_index = -1;
+        this.setting_djinn_status_djinn_index = -1;
+        this.setting_djinn_status = false;
+        this.cursor_control.set_cursor_position();
     }
 
     change_djinn_status() {
@@ -304,6 +388,9 @@ export class DjinnListWindow {
         this.selected_djinn_index = 0;
         this.page_index = 0;
         this.group.alpha = 1;
+        this.setting_djinn_status_char_index = -1;
+        this.setting_djinn_status_djinn_index = -1;
+        this.setting_djinn_status = false;
         this.chars_quick_info_window = chars_quick_info_window;
         this.djinn_action_window = djinn_action_window;
         this.load_page();
