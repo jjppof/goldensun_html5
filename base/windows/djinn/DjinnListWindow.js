@@ -1,11 +1,12 @@
 import { Window } from '../../Window.js';
-import { djinn_status } from '../../Djinn.js';
+import { djinn_status, djinn_font_colors } from '../../Djinn.js';
 import { CursorControl } from '../../utils/CursorControl.js';
 import * as numbers from '../../../magic_numbers.js';
 import { party_data } from '../../../initializers/main_chars.js';
 import { djinni_list, djinni_sprites } from '../../../initializers/djinni.js';
 import { elements } from '../../MainChar.js';
 import { capitalize } from '../../../utils.js';
+import { DjinnModeHeaderWindow } from './DjinnModeHeaderWindow.js';
 
 const WIN_WIDTH = 236;
 const WIN_HEIGHT = 116;
@@ -24,9 +25,6 @@ const DJINN_NAME_Y_PADDING = 24;
 const STAR_X_PADDING = HIGHLIGHT_X_PADDING + 1;
 const STAR_Y_PADDING = HIGHLIGHT_Y_PADDING + 1;
 const DJINN_NAME_BETWEEN = 56;
-const RECOVERY_COLOR = 0xF8F840;
-const STANDBY_COLOR = 0xF80000;
-const SET_COLOR = numbers.DEFAULT_FONT_COLOR;
 const DJINN_DESCRIPTION_X = 8;
 const DJINN_DESCRIPTION_Y = 104;
 const DJINN_SPRITE_X = 50;
@@ -67,6 +65,7 @@ export class DjinnListWindow {
         this.sizes = [];
         this.djinn_names = [];
         this.active_djinn_sprite = null;
+        this.djinn_status_change_header_window = new DjinnModeHeaderWindow(this.game);
         this.init_djinn_sprites();
         this.init_djinni_status_texts();
         this.set_control();
@@ -81,14 +80,18 @@ export class DjinnListWindow {
         this.game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
             if (!this.window_open || !this.window_active) return;
             if (this.setting_djinn_status) {
-                this.cancel_djinn_status_set();
                 this.data.esc_input.getSignal().halt();
+                this.cancel_djinn_status_set();
             }
         }, this, this.esc_propagation_priority);
         this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
             if (!this.window_open || !this.window_active) return;
             this.data.enter_input.getSignal().halt();
-            this.on_choose();
+            if (this.setting_djinn_status) {
+                this.set_change_status_windows();
+            } else {
+                this.on_choose();
+            }
         }, this, this.enter_propagation_priority);
         data.shift_input.add(() => {
             if (!this.window_open || !this.window_active) return;
@@ -238,9 +241,9 @@ export class DjinnListWindow {
                 const djinn_y = DJINN_NAME_Y_PADDING + j * numbers.FONT_SIZE;
                 let color;
                 switch (this_djinn.status) {
-                    case djinn_status.SET: color = SET_COLOR; break;
-                    case djinn_status.STANDBY: color = STANDBY_COLOR; break;
-                    case djinn_status.RECOVERY: color = RECOVERY_COLOR; break;
+                    case djinn_status.SET: color = djinn_font_colors[djinn_status.SET]; break;
+                    case djinn_status.STANDBY: color = djinn_font_colors[djinn_status.STANDBY]; break;
+                    case djinn_status.RECOVERY: color = djinn_font_colors[djinn_status.RECOVERY]; break;
                 }
                 const djinn_name = this.base_window.set_text_in_position(this_djinn.name, djinn_x, djinn_y, false, false, color);
                 this_djinn_names.push(djinn_name);
@@ -365,18 +368,29 @@ export class DjinnListWindow {
         this.cursor_control.set_cursor_position();
     }
 
+    set_change_status_windows() {
+        const this_char = party_data.members[this.setting_djinn_status_char_index];
+        const this_djinn = djinni_list[this_char.djinni[this.setting_djinn_status_djinn_index]];
+        let next_status;
+        switch (this_djinn.status) {
+            case djinn_status.SET: next_status = djinn_status.STANDBY; break;
+            case djinn_status.STANDBY: next_status = djinn_status.SET; break;
+        }
+        this.djinn_status_change_header_window.open(this_char, this_djinn, next_status);
+    }
+
     change_djinn_status() {
         const this_char = party_data.members[this.selected_char_index];
         const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
         if (this_djinn.status === djinn_status.SET) {
             this_djinn.set_status(djinn_status.STANDBY, this_char);
-            this.base_window.update_text_color(STANDBY_COLOR, this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
+            this.base_window.update_text_color(djinn_font_colors[djinn_status.STANDBY], this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
             this.chars_quick_info_window.update_text();
             this.set_action_text();
             this.set_djinn_sprite(false);
         } else if (this_djinn.status === djinn_status.STANDBY) {
             this_djinn.set_status(djinn_status.SET, this_char);
-            this.base_window.update_text_color(SET_COLOR, this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
+            this.base_window.update_text_color(djinn_font_colors[djinn_status.SET], this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
             this.chars_quick_info_window.update_text();
             this.set_action_text();
             this.set_djinn_sprite(false);

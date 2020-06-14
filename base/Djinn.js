@@ -1,7 +1,15 @@
+import * as numbers from '../magic_numbers.js';
+
 export const djinn_status = {
     SET: "set",
     STANDBY: "standby",
     RECOVERY: "recovery"
+}
+
+export const djinn_font_colors= {
+    [djinn_status.RECOVERY]: 0xF8F840,
+    [djinn_status.STANDBY]: 0xF80000,
+    [djinn_status.SET]: numbers.DEFAULT_FONT_COLOR
 }
 
 export class Djinn {
