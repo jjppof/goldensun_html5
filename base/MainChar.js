@@ -372,6 +372,53 @@ export class MainChar extends SpriteBase {
         this.add_djinn(new_djinn_key_name);
     }
 
+    preview_djinn_change(stats, djinn_key_name, djinn_next_status) {
+        const before_class = this.class;
+        let venus_lv = this.venus_level_current;
+        let mercury_lv = this.mercury_level_current;
+        let mars_lv = this.mars_level_current;
+        let jupiter_lv = this.jupiter_level_current;
+        const djinn = djinni_list[djinn_key_name];
+        const lv_shift = djinn_next_status === djinn_status.SET ? ELEM_LV_DELTA : -ELEM_LV_DELTA;
+        switch (djinn.element) {
+            case elements.VENUS: venus_lv += lv_shift; break;
+            case elements.MERCURY: mercury_lv += lv_shift; break;
+            case elements.MARS: mars_lv += lv_shift; break;
+            case elements.JUPITER: jupiter_lv += lv_shift; break;
+        }
+        this.class = choose_right_class(this.element_afinity, venus_lv, mercury_lv, mars_lv, jupiter_lv);
+        let return_obj = {
+            class_name: this.class.name,
+            class_key_name: this.class.key_name
+        };
+        stats.forEach(stat => {
+            return_obj[stat] = this.preview_stats_by_djinn(stat, djinn_key_name, djinn_next_status);
+        });
+        this.class = before_class;
+        return return_obj;
+    }
+
+    preview_stats_by_djinn(stat, djinn_key_name, djinn_next_status) {
+        const preview_obj = {
+            djinn_key_name: djinn_key_name,
+            djinn_next_status: djinn_next_status
+        }
+        switch (stat) {
+            case "hp":
+                return this.set_max_hp(true, preview_obj);
+            case "pp":
+                return this.set_max_pp(true, preview_obj);
+            case "atk":
+                return this.set_max_atk(true, preview_obj);
+            case "def":
+                return this.set_max_def(true, preview_obj);
+            case "agi":
+                return this.set_max_agi(true, preview_obj);
+            case "luk":
+                return this.set_max_luk(true, preview_obj);
+        }
+    }
+
     preview_stats_by_effect(effect_type, effect_obj, item_key_name) {
         const preview_obj = {
             effect_obj: effect_obj,
@@ -393,27 +440,6 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    preview_stats_by_djinn(stat, djinn_key_name, djinn_status) {
-        const preview_obj = {
-            djinn_key_name: djinn_key_name,
-            djinn_status, djinn_status
-        }
-        switch (stat) {
-            case "hp":
-                return this.set_max_hp(true, preview_obj);
-            case "pp":
-                return this.set_max_pp(true, preview_obj);
-            case "atk":
-                return this.set_max_atk(true, preview_obj);
-            case "def":
-                return this.set_max_def(true, preview_obj);
-            case "agi":
-                return this.set_max_agi(true, preview_obj);
-            case "luk":
-                return this.set_max_luk(true, preview_obj);
-        }
-    }
-
     set_max_hp(preview = false, preview_obj = {}) {
         let before_max_hp = this.max_hp;
         this.max_hp = parseInt(this.hp_curve[this.starting_level] * this.class.hp_boost + this.hp_extra);
@@ -421,7 +447,7 @@ export class MainChar extends SpriteBase {
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && djinn_key_name === preview_obj.djinn_key_name) {
-                status = preview_obj.djinn_status;
+                status = preview_obj.djinn_next_status;
             }
             if (status !== djinn_status.SET) continue;
             this.max_hp += djinn.hp_boost;
@@ -451,7 +477,7 @@ export class MainChar extends SpriteBase {
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && djinn_key_name === preview_obj.djinn_key_name) {
-                status = preview_obj.djinn_status;
+                status = preview_obj.djinn_next_status;
             }
             if (status !== djinn_status.SET) continue;
             this.max_pp += djinn.pp_boost;
@@ -481,7 +507,7 @@ export class MainChar extends SpriteBase {
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && djinn_key_name === preview_obj.djinn_key_name) {
-                status = preview_obj.djinn_status;
+                status = preview_obj.djinn_next_status;
             }
             if (status !== djinn_status.SET) continue;
             this.atk += djinn.atk_boost;
@@ -511,7 +537,7 @@ export class MainChar extends SpriteBase {
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && djinn_key_name === preview_obj.djinn_key_name) {
-                status = preview_obj.djinn_status;
+                status = preview_obj.djinn_next_status;
             }
             if (status !== djinn_status.SET) continue;
             this.def += djinn.def_boost;
@@ -541,7 +567,7 @@ export class MainChar extends SpriteBase {
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && djinn_key_name === preview_obj.djinn_key_name) {
-                status = preview_obj.djinn_status;
+                status = preview_obj.djinn_next_status;
             }
             if (status !== djinn_status.SET) continue;
             this.agi += djinn.agi_boost;
@@ -571,7 +597,7 @@ export class MainChar extends SpriteBase {
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && djinn_key_name === preview_obj.djinn_key_name) {
-                status = preview_obj.djinn_status;
+                status = preview_obj.djinn_next_status;
             }
             if (status !== djinn_status.SET) continue;
             this.luk += djinn.luk_boost;

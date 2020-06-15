@@ -23,6 +23,8 @@ const DJINN_X = 32;
 const DJINN_Y = 31;
 const CHAR_X = 16;
 const CHAR_Y = 34;
+const ARROW_CHANGE_DJINN_X = 64;
+const ARROW_CHANGE_DJINN_Y = 16;
 
 export class DjinnModeHeaderWindow {
     constructor(game) {
@@ -36,6 +38,17 @@ export class DjinnModeHeaderWindow {
         this.djinn_name_before_text = this.base_window.set_text_in_position("", DJINN_NAME_BEFORE_X, DJINN_NAME_BEFORE_Y);
         this.djinn_name_after_text = this.base_window.set_text_in_position("", DJINN_NAME_AFTER_X, DJINN_NAME_AFTER_Y);
         this.sprites = [];
+        this.djinn_status_arrow = this.base_window.create_at_group(ARROW_CHANGE_DJINN_X, ARROW_CHANGE_DJINN_Y, "arrow_change");
+        this.init_arrow_blinks();
+    }
+
+    init_arrow_blinks() {
+        this.djinn_status_arrow_blink_timer = game.time.create(false);
+        this.djinn_status_arrow_blink_timer.loop(90, () => {
+            this.djinn_status_arrow.alpha = this.djinn_status_arrow.alpha ? 0 : 1;
+        });
+        this.djinn_status_arrow_blink_timer.start();
+        this.djinn_status_arrow_blink_timer.pause();
     }
 
     mount_window() {
@@ -47,6 +60,7 @@ export class DjinnModeHeaderWindow {
         this.base_window.update_text_color(djinn_font_colors[this.next_djinn_status], this.djinn_name_after_text);
         this.sprites.push(this.base_window.create_at_group(STAR_BEFORE_X, STAR_BEFORE_Y, this.djinn.element + "_star"));
         this.sprites.push(this.base_window.create_at_group(STAR_AFTER_X, STAR_AFTER_Y, this.djinn.element + "_star"));
+        this.djinn_status_arrow_blink_timer.resume();
         this.set_char_and_djinn_sprite();
     }
 
@@ -70,6 +84,7 @@ export class DjinnModeHeaderWindow {
         this.sprites.forEach(sprite => {
             sprite.destroy();
         });
+        this.djinn_status_arrow_blink_timer.pause();
     }
 
     open(char, djinn, next_djinn_status, callback) {

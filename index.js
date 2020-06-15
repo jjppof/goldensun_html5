@@ -153,6 +153,7 @@ function load_misc() {
     game.load.image('jupiter_star', 'assets/images/misc/jupiter_star.gif');
     game.load.image('stat_up', 'assets/images/misc/stat_up.gif');
     game.load.image('stat_down', 'assets/images/misc/stat_down.gif');
+    game.load.image('arrow_change', 'assets/images/misc/arrow_change.png');
     game.load.atlasJSONHash('psynergy_particle', 'assets/images/spritesheets/interactable_objects/psynergy_particle.png', 'assets/images/spritesheets/interactable_objects/psynergy_particle.json');
 }
 
