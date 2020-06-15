@@ -7,6 +7,7 @@ import { djinni_list, djinni_sprites } from '../../../initializers/djinni.js';
 import { elements } from '../../MainChar.js';
 import { capitalize } from '../../../utils.js';
 import { DjinnModeHeaderWindow } from './DjinnModeHeaderWindow.js';
+import { DjinnCharStatsWindow } from './DjinnCharStatsWindow.js';
 
 const WIN_WIDTH = 236;
 const WIN_HEIGHT = 116;
@@ -66,6 +67,7 @@ export class DjinnListWindow {
         this.djinn_names = [];
         this.active_djinn_sprite = null;
         this.djinn_status_change_header_window = new DjinnModeHeaderWindow(this.game);
+        this.djinn_char_stats_window = new DjinnCharStatsWindow(this.game);
         this.init_djinn_sprites();
         this.init_djinni_status_texts();
         this.set_control();
@@ -377,6 +379,7 @@ export class DjinnListWindow {
             case djinn_status.STANDBY: next_status = djinn_status.SET; break;
         }
         this.djinn_status_change_header_window.open(this_char, this_djinn, next_status);
+        this.djinn_char_stats_window.open(this_char, this_djinn, next_status);
     }
 
     change_djinn_status() {

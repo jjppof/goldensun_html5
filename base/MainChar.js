@@ -29,6 +29,10 @@ export const elements = {
     NO_ELEMENT: "no_element"
 };
 
+export const ordered_elements = [
+    elements.VENUS, elements.MERCURY, elements.MARS, elements.JUPITER
+];
+
 const ELEM_LV_DELTA = 1;
 const ELEM_POWER_DELTA = 5;
 const ELEM_RESIST_DELTA = 5;
@@ -368,19 +372,71 @@ export class MainChar extends SpriteBase {
         this.add_djinn(new_djinn_key_name);
     }
 
-    set_max_hp() {
+    preview_stats_by_effect(effect_type, effect_obj, item_key_name) {
+        const preview_obj = {
+            effect_obj: effect_obj,
+            item_key_name, item_key_name
+        }
+        switch (effect_type) {
+            case effect_types.MAX_HP:
+                return this.set_max_hp(true, preview_obj);
+            case effect_types.MAX_PP:
+                return this.set_max_pp(true, preview_obj);
+            case effect_types.ATTACK:
+                return this.set_max_atk(true, preview_obj);
+            case effect_types.DEFENSE:
+                return this.set_max_def(true, preview_obj);
+            case effect_types.AGILITY:
+                return this.set_max_agi(true, preview_obj);
+            case effect_types.LUCK:
+                return this.set_max_luk(true, preview_obj);
+        }
+    }
+
+    preview_stats_by_djinn(stat, djinn_key_name, djinn_status) {
+        const preview_obj = {
+            djinn_key_name: djinn_key_name,
+            djinn_status, djinn_status
+        }
+        switch (stat) {
+            case "hp":
+                return this.set_max_hp(true, preview_obj);
+            case "pp":
+                return this.set_max_pp(true, preview_obj);
+            case "atk":
+                return this.set_max_atk(true, preview_obj);
+            case "def":
+                return this.set_max_def(true, preview_obj);
+            case "agi":
+                return this.set_max_agi(true, preview_obj);
+            case "luk":
+                return this.set_max_luk(true, preview_obj);
+        }
+    }
+
+    set_max_hp(preview = false, preview_obj = {}) {
         let before_max_hp = this.max_hp;
         this.max_hp = parseInt(this.hp_curve[this.starting_level] * this.class.hp_boost + this.hp_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
-            if (djinn.status !== djinn_status.SET) continue;
+            let status = djinn.status;
+            if (preview && djinn_key_name === preview_obj.djinn_key_name) {
+                status = preview_obj.djinn_status;
+            }
+            if (status !== djinn_status.SET) continue;
             this.max_hp += djinn.hp_boost;
         }
         this.effects.forEach(effect => {
+            if (preview && preview_obj.item_key_name === effect.effect_owner_instance.key_name) return;
             if (effect.type === effect_types.MAX_HP) {
                 effect.apply_effect();
             }
         });
+        if (preview) {
+            const max_hp_preview = preview_obj.effect_obj ? Effect.preview_value_applied(preview_obj.effect_obj, this.max_hp) : this.max_hp;
+            this.max_hp = before_max_hp;
+            return max_hp_preview;
+        } 
         if (this.current_hp === undefined) {
             this.current_hp = this.max_hp;
         } else {
@@ -388,19 +444,29 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    set_max_pp() {
+    set_max_pp(preview = false, preview_obj = {}) {
         let before_max_pp = this.max_pp;
         this.max_pp = parseInt(this.pp_curve[this.starting_level] * this.class.pp_boost + this.pp_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
-            if (djinn.status !== djinn_status.SET) continue;
+            let status = djinn.status;
+            if (preview && djinn_key_name === preview_obj.djinn_key_name) {
+                status = preview_obj.djinn_status;
+            }
+            if (status !== djinn_status.SET) continue;
             this.max_pp += djinn.pp_boost;
         }
         this.effects.forEach(effect => {
+            if (preview && preview_obj.item_key_name === effect.effect_owner_instance.key_name) return;
             if (effect.type === effect_types.MAX_PP) {
                 effect.apply_effect();
             }
         });
+        if (preview) {
+            const max_pp_preview = preview_obj.effect_obj ? Effect.preview_value_applied(preview_obj.effect_obj, this.max_pp) : this.max_pp;
+            this.max_pp = before_max_pp;
+            return max_pp_preview;
+        } 
         if (this.current_pp === undefined) {
             this.current_pp = this.max_pp;
         } else {
@@ -408,33 +474,26 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    preview_stats(effect_type, effect_obj, item_key_name) {
-        switch (effect_type) {
-            case effect_types.ATTACK:
-                return this.set_max_atk(true, effect_obj, item_key_name);
-            case effect_types.DEFENSE:
-                return this.set_max_def(true, effect_obj, item_key_name);
-            case effect_types.AGILITY:
-                return this.set_max_agi(true, effect_obj, item_key_name);
-        }
-    }
-
-    set_max_atk(preview = false, effect_obj = null, item_key_name = "") {
+    set_max_atk(preview = false, preview_obj = {}) {
         let before_atk = this.atk;
         this.atk = parseInt(this.atk_curve[this.starting_level] * this.class.atk_boost + this.atk_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
-            if (djinn.status !== djinn_status.SET) continue;
+            let status = djinn.status;
+            if (preview && djinn_key_name === preview_obj.djinn_key_name) {
+                status = preview_obj.djinn_status;
+            }
+            if (status !== djinn_status.SET) continue;
             this.atk += djinn.atk_boost;
         }
         this.effects.forEach(effect => {
-            if (preview && item_key_name === effect.effect_owner_instance.key_name) return;
+            if (preview && preview_obj.item_key_name === effect.effect_owner_instance.key_name) return;
             if (effect.type === effect_types.ATTACK) {
                 effect.apply_effect();
             }
         });
         if (preview) {
-            const atk_preview = effect_obj !== null ? Effect.preview_value_applied(effect_obj, this.atk) : this.atk;
+            const atk_preview = preview_obj.effect_obj ? Effect.preview_value_applied(preview_obj.effect_obj, this.atk) : this.atk;
             this.atk = before_atk;
             return atk_preview;
         } 
@@ -445,22 +504,26 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    set_max_def(preview = false, effect_obj = null, item_key_name = "") {
+    set_max_def(preview = false, preview_obj = {}) {
         let before_def = this.def;
         this.def = parseInt(this.def_curve[this.starting_level] * this.class.def_boost + this.def_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
-            if (djinn.status !== djinn_status.SET) continue;
+            let status = djinn.status;
+            if (preview && djinn_key_name === preview_obj.djinn_key_name) {
+                status = preview_obj.djinn_status;
+            }
+            if (status !== djinn_status.SET) continue;
             this.def += djinn.def_boost;
         }
         this.effects.forEach(effect => {
-            if (preview && item_key_name === effect.effect_owner_instance.key_name) return;
+            if (preview && preview_obj.item_key_name === effect.effect_owner_instance.key_name) return;
             if (effect.type === effect_types.DEFENSE) {
                 effect.apply_effect();
             }
         });
         if (preview) {
-            const def_preview = effect_obj !== null ? Effect.preview_value_applied(effect_obj, this.def) : this.def;
+            const def_preview = preview_obj.effect_obj ? Effect.preview_value_applied(preview_obj.effect_obj, this.def) : this.def;
             this.def = before_def;
             return def_preview;
         }
@@ -471,22 +534,26 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    set_max_agi(preview = false, effect_obj = null, item_key_name = "") {
+    set_max_agi(preview = false, preview_obj = {}) {
         let before_agi = this.agi;
         this.agi = parseInt(this.agi_curve[this.starting_level] * this.class.agi_boost + this.agi_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
-            if (djinn.status !== djinn_status.SET) continue;
+            let status = djinn.status;
+            if (preview && djinn_key_name === preview_obj.djinn_key_name) {
+                status = preview_obj.djinn_status;
+            }
+            if (status !== djinn_status.SET) continue;
             this.agi += djinn.agi_boost;
         }
         this.effects.forEach(effect => {
-            if (preview && item_key_name === effect.effect_owner_instance.key_name) return;
+            if (preview && preview_obj.item_key_name === effect.effect_owner_instance.key_name) return;
             if (effect.type === effect_types.AGILITY) {
                 effect.apply_effect();
             }
         });
         if (preview) {
-            const agi_preview = effect_obj !== null ? Effect.preview_value_applied(effect_obj, this.agi) : this.agi;
+            const agi_preview = preview_obj.effect_obj ? Effect.preview_value_applied(preview_obj.effect_obj, this.agi) : this.agi;
             this.agi = before_agi;
             return agi_preview;
         }
@@ -497,19 +564,29 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    set_max_luk() {
+    set_max_luk(preview = false, preview_obj = {}) {
         let before_luk = this.luk;
         this.luk = parseInt(this.luk_curve[this.starting_level] * this.class.luk_boost + this.luk_extra);
         for (let djinn_key_name of this.djinni) {
             let djinn = djinni_list[djinn_key_name];
-            if (djinn.status !== djinn_status.SET) continue;
+            let status = djinn.status;
+            if (preview && djinn_key_name === preview_obj.djinn_key_name) {
+                status = preview_obj.djinn_status;
+            }
+            if (status !== djinn_status.SET) continue;
             this.luk += djinn.luk_boost;
         }
         this.effects.forEach(effect => {
+            if (preview && preview_obj.item_key_name === effect.effect_owner_instance.key_name) return;
             if (effect.type === effect_types.LUCK) {
                 effect.apply_effect();
             }
         });
+        if (preview) {
+            const luk_preview = preview_obj.effect_obj ? Effect.preview_value_applied(preview_obj.effect_obj, this.luk) : this.luk;
+            this.luk = before_luk;
+            return luk_preview;
+        }
         if (this.current_luk === undefined) {
             this.current_luk = this.luk;
         } else {

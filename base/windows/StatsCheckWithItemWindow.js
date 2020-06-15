@@ -90,7 +90,7 @@ export class StatsCheckWithItemWindow {
         let preview_stats;
         if (effect_obj !== undefined) {
             const equip_slot_key_name = this.char.equip_slots[equip_slot_property] === null ? null : this.char.equip_slots[equip_slot_property].key_name;
-            preview_stats = this.char.preview_stats(effect_type, effect_obj, equip_slot_key_name);
+            preview_stats = this.char.preview_stats_by_effect(effect_type, effect_obj, equip_slot_key_name);
         }
         if (this.char.equip_slots[equip_slot_property] === null) {
             if (effect_obj === undefined) return;
@@ -105,7 +105,7 @@ export class StatsCheckWithItemWindow {
                     quantity: 0,
                     operator: effect_operators.PLUS
                 };
-                preview_stats = this.char.preview_stats(effect_type, effect_obj, this.char.equip_slots[equip_slot_property].key_name);
+                preview_stats = this.char.preview_stats_by_effect(effect_type, effect_obj, this.char.equip_slots[equip_slot_property].key_name);
             }
             const current_stats = this.char[current_stats_property];
             if (preview_stats > current_stats) {

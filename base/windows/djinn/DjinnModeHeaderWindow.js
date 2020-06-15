@@ -1,5 +1,4 @@
 import { Window } from '../../Window.js';
-import * as numbers from '../../../magic_numbers.js';
 import { capitalize } from '../../../utils.js';
 import { djinn_font_colors } from '../../Djinn.js';
 import { djinni_sprites } from '../../../initializers/djinni.js';
@@ -28,7 +27,6 @@ const CHAR_Y = 34;
 export class DjinnModeHeaderWindow {
     constructor(game) {
         this.game = game;
-        this.char = null;
         this.window_open = false;
         this.x = BASE_WIN_X;
         this.y = BASE_WIN_Y;

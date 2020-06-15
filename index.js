@@ -125,6 +125,19 @@ function load_buttons() {
     game.load.image('tab_keyboard', 'assets/images/keyboard/tab.png');
 }
 
+function load_db_files() {
+    game.load.json('init_db', 'init.json');
+    game.load.json('classes_db', 'assets/dbs/classes_db.json');
+    game.load.json('abilities_db', 'assets/dbs/abilities_db.json');
+    game.load.json('items_db', 'assets/dbs/items_db.json');
+    game.load.json('npc_db', 'assets/dbs/npc_db.json');
+    game.load.json('interactable_objects_db', 'assets/dbs/interactable_objects_db.json');
+    game.load.json('djinni_db', 'assets/dbs/djinni_db.json');
+    game.load.json('enemies_db', 'assets/dbs/enemies_db.json');
+    game.load.json('maps_db', 'assets/dbs/maps_db.json');
+    game.load.json('main_chars_db', 'assets/dbs/main_chars.json');
+}
+
 function load_misc() {
     game.load.image('shadow', 'assets/images/misc/shadow.jpg');
     game.load.image('cursor', 'assets/images/misc/cursor.gif');
@@ -144,19 +157,10 @@ function load_misc() {
 }
 
 function preload() {
-    game.load.json('init_db', 'init.json');
-    game.load.json('classes_db', 'assets/dbs/classes_db.json');
-    game.load.json('abilities_db', 'assets/dbs/abilities_db.json');
-    game.load.json('items_db', 'assets/dbs/items_db.json');
-    game.load.json('npc_db', 'assets/dbs/npc_db.json');
-    game.load.json('interactable_objects_db', 'assets/dbs/interactable_objects_db.json');
-    game.load.json('djinni_db', 'assets/dbs/djinni_db.json');
-    game.load.json('enemies_db', 'assets/dbs/enemies_db.json');
-    game.load.json('maps_db', 'assets/dbs/maps_db.json');
-    game.load.json('main_chars_db', 'assets/dbs/main_chars.json');
-    game.load.script('color_filters', 'plugins/ColorFilters.js');
+    load_db_files();
     load_misc();
     load_buttons();
+    game.load.script('color_filters', 'plugins/ColorFilters.js');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
     game.load.bitmapFont('gs-item-bmp-font', 'assets/font/gs-item-font.png', 'assets/font/gs-item-font.fnt');
     initialize_field_abilities(game, data);
