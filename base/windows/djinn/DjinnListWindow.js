@@ -8,6 +8,7 @@ import { elements } from '../../MainChar.js';
 import { capitalize } from '../../../utils.js';
 import { DjinnModeHeaderWindow } from './DjinnModeHeaderWindow.js';
 import { DjinnCharStatsWindow } from './DjinnCharStatsWindow.js';
+import { DjinnPsynergyWindow } from './DjinnPsynergyWindow.js';
 
 const WIN_WIDTH = 236;
 const WIN_HEIGHT = 116;
@@ -68,6 +69,7 @@ export class DjinnListWindow {
         this.active_djinn_sprite = null;
         this.djinn_status_change_header_window = new DjinnModeHeaderWindow(this.game);
         this.djinn_char_stats_window = new DjinnCharStatsWindow(this.game);
+        this.djinn_psynergy_window = new DjinnPsynergyWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
         this.init_djinn_sprites();
         this.init_djinni_status_texts();
         this.set_control();
@@ -380,6 +382,14 @@ export class DjinnListWindow {
         }
         this.djinn_status_change_header_window.open(this_char, this_djinn, next_status);
         this.djinn_char_stats_window.open(this_char, this_djinn, next_status);
+        this.djinn_psynergy_window.open(this_char, this_djinn, next_status, (change_status) => {
+            this.djinn_status_change_header_window.close();
+            this.djinn_char_stats_window.close();
+            if (change_status) {
+                this.change_djinn_status();
+            }
+            this.cancel_djinn_status_set();
+        })
     }
 
     change_djinn_status() {
