@@ -16,6 +16,7 @@ export class DjinnPsynergyWindow {
         this.esc_propagation_priority = esc_propagation_priority + 1;
         this.enter_propagation_priority = enter_propagation_priority + 1;
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
+        this.base_window.init_page_indicator_bar();
         this.set_control();
     }
 

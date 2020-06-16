@@ -1,6 +1,10 @@
 import * as numbers from '../magic_numbers.js';
 import * as utils from '../utils.js';
 
+const PAGE_NUMBER_WIDTH = 8;
+const PAGE_NUMBER_HEIGHT = 8;
+const PAGE_INDICATOR_ARROW_Y = 0;
+
 export class Window {
     constructor(game, x, y, width, height, need_pos_update = true, color = numbers.DEFAULT_WINDOW_COLOR, font_color = numbers.DEFAULT_FONT_COLOR) {
         this.game = game;
@@ -170,6 +174,7 @@ export class Window {
         this.group.y = this.game.camera.y + this.y;
         this.open = true;
         this.close_callback = close_callback;
+        this.page_indicator_is_set = false;
         if (animate) {
             this.transition_time = Phaser.Timer.QUARTER/4;
             this.game.add.tween(this.group).to(
@@ -332,6 +337,9 @@ export class Window {
             ).onComplete.addOnce(() => {
                 this.group.alpha = 0;
                 this.open = false;
+                if (this.page_indicator_is_set) {
+                    this.unset_page_indicator();
+                }
                 if (callback !== undefined) {
                     callback();
                 }
@@ -342,6 +350,9 @@ export class Window {
         } else {
             this.group.alpha = 0;
             this.open = false;
+            if (this.page_indicator_is_set) {
+                this.unset_page_indicator();
+            }
             this.group.width = 0;
             this.group.height = 0;
             if (callback !== undefined) {
@@ -355,6 +366,9 @@ export class Window {
 
     destroy(animate, destroy_callback) {
         let on_destroy = () => { 
+            if (this.page_indicator_is_set) {
+                this.unset_page_indicator();
+            }
             this.group.destroy();
             if (destroy_callback !== undefined) destroy_callback();
         }
@@ -368,6 +382,78 @@ export class Window {
         } else {
             on_destroy();
         }
+    }
+
+    init_page_indicator_bar() {
+        this.page_number_bar = this.game.add.graphics(0, 0);
+        this.page_number_bar.alpha = 0;
+        this.add_sprite_to_group(this.page_number_bar);
+        this.page_number_bar.beginFill(this.color, 1);
+        this.page_number_bar.drawRect(0, 0, PAGE_NUMBER_WIDTH, PAGE_NUMBER_HEIGHT);
+        this.page_number_bar.endFill();
+        this.page_number_bar_highlight = this.game.add.graphics(0, 0);
+        this.page_number_bar_highlight.blendMode = PIXI.blendModes.SCREEN;
+        this.page_number_bar_highlight.alpha = 0;
+        this.add_sprite_to_group(this.page_number_bar_highlight);
+        this.page_number_bar_highlight.beginFill(this.color, 1);
+        this.page_number_bar_highlight.drawRect(0, 0, PAGE_NUMBER_WIDTH, PAGE_NUMBER_HEIGHT);
+        this.page_number_bar_highlight.endFill();
+        this.page_indicators = [];
+        this.page_indicator_arrow_timer = this.game.time.create(false);
+        this.page_indicator_right_arrow = this.create_at_group((this.width - 3), PAGE_INDICATOR_ARROW_Y, "page_arrow");
+        this.page_indicator_right_arrow.scale.x = -1;
+        this.page_indicator_right_arrow.x -= this.page_indicator_right_arrow.width;
+        this.page_indicator_right_arrow.alpha = 0;
+        this.page_indicator_left_arrow = this.create_at_group(0, PAGE_INDICATOR_ARROW_Y, "page_arrow");
+        this.page_indicator_left_arrow.alpha = 0;
+    }
+
+    set_page_indicator(page_number, page_index) {
+        if (page_number <= 1) return;
+        this.page_number_bar.width = page_number * PAGE_NUMBER_WIDTH;
+        this.page_number_bar.x = this.width - this.page_number_bar.width - 5;
+        this.page_number_bar.alpha = 1;
+        for (let i = 1; i <= page_number; ++i) {
+            const x = this.page_number_bar.x + PAGE_NUMBER_WIDTH * (i - 1) + (PAGE_NUMBER_WIDTH >> 1);
+            const y = PAGE_NUMBER_HEIGHT >> 1;
+            this.page_indicators.push(this.set_text_in_position(i.toString(), x, y, false, true));
+        }
+        this.page_number_bar_highlight.alpha = 1;
+        this.set_page_indicator_highlight(page_number, page_index);
+        this.set_page_indicator_arrow(page_number);
+    }
+
+    set_page_indicator_highlight(page_number, page_index) {
+        this.page_number_bar_highlight.x = this.width - 5 - (page_number - page_index) * PAGE_NUMBER_WIDTH;
+    }
+
+    set_page_indicator_arrow(page_number) {
+        this.page_indicator_left_arrow.alpha = 1;
+        this.page_indicator_right_arrow.alpha = 1;
+        this.calculated_arrow_left_x = this.width - 5 - page_number * PAGE_NUMBER_WIDTH - this.page_indicator_left_arrow.width - 2;
+        this.page_indicator_left_arrow.x = this.calculated_arrow_left_x;
+        if (this.page_indicator_arrow_timer.running && this.page_indicator_arrow_timer.paused) {
+            this.page_indicator_arrow_timer.resume();
+        } else {
+            this.page_indicator_arrow_timer.loop(Phaser.Timer.QUARTER >> 1, () => {
+                this.page_indicator_left_arrow.x = this.calculated_arrow_left_x + ~(-this.page_indicator_left_arrow.x%2);
+                this.page_indicator_right_arrow.x = (this.width - 3) - ~(-this.page_indicator_right_arrow.x%2);
+                this.page_indicator_right_arrow.x -= this.page_indicator_right_arrow.width;
+            });
+            this.page_indicator_arrow_timer.start();
+        }
+    }
+
+    unset_page_indicator() {
+        this.page_number_bar.alpha = 0;
+        this.page_number_bar_highlight.alpha = 0;
+        this.page_indicator_left_arrow.alpha = 0;
+        this.page_indicator_right_arrow.alpha = 0;
+        for (let i = 0; i < this.page_indicators.length; ++i) {
+            this.remove_text(this.page_indicators[i]);
+        }
+        this.page_indicators = [];
+        this.page_indicator_arrow_timer.pause();
     }
 }
 
