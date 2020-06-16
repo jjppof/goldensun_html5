@@ -7,8 +7,8 @@ export const djinn_status = {
 }
 
 export const djinn_font_colors= {
-    [djinn_status.RECOVERY]: 0xF8F840,
-    [djinn_status.STANDBY]: 0xF80000,
+    [djinn_status.RECOVERY]: numbers.YELLOW_FONT_COLOR,
+    [djinn_status.STANDBY]: numbers.RED_FONT_COLOR,
     [djinn_status.SET]: numbers.DEFAULT_FONT_COLOR
 }
 

@@ -391,6 +391,9 @@ export class MainChar extends SpriteBase {
             class_name: this.class.name,
             class_key_name: this.class.key_name
         };
+        return_obj.abilities = this.innate_abilities.concat(this.class.ability_level_pairs.filter(pair => {
+            return pair.level <= this.level && !this.innate_abilities.includes(pair.ability);
+        }).map(pair => pair.ability), this.equipped_abilities);
         stats.forEach(stat => {
             return_obj[stat] = this.preview_stats_by_djinn(stat, djinn_key_name, djinn_next_status);
         });

@@ -5,7 +5,7 @@
   <pages>
     <page id="0" file="golden-sun.png" />
   </pages>
-  <chars count="94">
+  <chars count="95">
     <char id="32" x="18" y="16" width="3" height="1" xoffset="-1" yoffset="7" xadvance="2" page="0" chnl="15" />
     <char id="33" x="89" y="8" width="1" height="7" xoffset="0" yoffset="0" xadvance="2" page="0" chnl="15" />
     <char id="34" x="223" y="8" width="5" height="3" xoffset="0" yoffset="0" xadvance="6" page="0" chnl="15" />
@@ -16,6 +16,7 @@
     <char id="39" x="244" y="8" width="2" height="3" xoffset="0" yoffset="0" xadvance="3" page="0" chnl="15" />
     <char id="40" x="85" y="8" width="3" height="7" xoffset="0" yoffset="0" xadvance="4" page="0" chnl="15" />
     <char id="41" x="252" y="0" width="3" height="7" xoffset="0" yoffset="0" xadvance="4" page="0" chnl="15" />
+	<char id="42" x="22" y="16" width="5" height="5" xoffset="0" yoffset="2" xadvance="7" page="0" chnl="15" />
     <char id="43" x="175" y="8" width="5" height="5" xoffset="0" yoffset="1" xadvance="6" page="0" chnl="15" />
     <char id="44" x="241" y="8" width="2" height="3" xoffset="0" yoffset="4" xadvance="3" page="0" chnl="15" />
     <char id="45" x="13" y="16" width="4" height="1" xoffset="0" yoffset="3" xadvance="5" page="0" chnl="15" />
