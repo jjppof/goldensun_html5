@@ -20,7 +20,7 @@ const DJINN_NUMBER_SLOT_WIDTH = 17;
 const DJINN_NUMBER_X = 110;
 const DJINN_NUMBER_Y = 48;
 const stats = ["HP", "PP", "Attack", "Defense", "Agility", "Luck"];
-const stats_keys = ["hp", "pp", "atk", "def", "agi", "luk"];
+const stats_keys = ["max_hp", "max_pp", "atk", "def", "agi", "luk"];
 const STATS_X = 8;
 const STATS_BASE_Y = 64;
 const STATS_CURRENT_X = 78;
@@ -94,7 +94,7 @@ export class DjinnCharStatsWindow {
             this.base_window.update_text("", this.new_class_text);
         }
         stats.forEach((stat, i) => {
-            const current_stat = this.char["current_" + stats_keys[i]];
+            const current_stat = this.char[stats_keys[i]];
             const next_stat = preview_values[stats_keys[i]];
             this.base_window.update_text(current_stat.toString(), this.stats_current_texts[stat]);
             this.base_window.update_text(next_stat.toString(), this.stats_next_texts[stat]);

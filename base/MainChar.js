@@ -407,9 +407,9 @@ export class MainChar extends SpriteBase {
             djinn_next_status: djinn_next_status
         }
         switch (stat) {
-            case "hp":
+            case "max_hp":
                 return this.set_max_hp(true, preview_obj);
-            case "pp":
+            case "max_pp":
                 return this.set_max_pp(true, preview_obj);
             case "atk":
                 return this.set_max_atk(true, preview_obj);
@@ -469,7 +469,7 @@ export class MainChar extends SpriteBase {
         if (this.current_hp === undefined) {
             this.current_hp = this.max_hp;
         } else {
-            this.current_hp = parseInt(this.current_hp * this.max_hp/before_max_hp);
+            this.current_hp = Math.round(this.current_hp * this.max_hp/before_max_hp);
         }
     }
 
@@ -499,7 +499,7 @@ export class MainChar extends SpriteBase {
         if (this.current_pp === undefined) {
             this.current_pp = this.max_pp;
         } else {
-            this.current_pp = parseInt(this.current_pp * this.max_pp/before_max_pp);
+            this.current_pp = Math.round(this.current_pp * this.max_pp/before_max_pp);
         }
     }
 
@@ -529,7 +529,7 @@ export class MainChar extends SpriteBase {
         if (this.current_atk === undefined) {
             this.current_atk = this.atk;
         } else {
-            this.current_atk = parseInt(this.current_atk * this.atk/before_atk);
+            this.current_atk = Math.round(this.current_atk * this.atk/before_atk);
         }
     }
 
@@ -559,7 +559,7 @@ export class MainChar extends SpriteBase {
         if (this.current_def === undefined) {
             this.current_def = this.def;
         } else {
-            this.current_def = parseInt(this.current_def * this.def/before_def);
+            this.current_def = Math.round(this.current_def * this.def/before_def);
         }
     }
 
@@ -589,7 +589,7 @@ export class MainChar extends SpriteBase {
         if (this.current_agi === undefined) {
             this.current_agi = this.agi;
         } else {
-            this.current_agi = parseInt(this.current_agi * this.agi/before_agi);
+            this.current_agi = Math.round(this.current_agi * this.agi/before_agi);
         }
     }
 
@@ -619,7 +619,7 @@ export class MainChar extends SpriteBase {
         if (this.current_luk === undefined) {
             this.current_luk = this.luk;
         } else {
-            this.current_luk = parseInt(this.current_luk * this.luk/before_luk);
+            this.current_luk = Math.round(this.current_luk * this.luk/before_luk);
         }
     }
 
