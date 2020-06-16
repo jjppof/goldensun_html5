@@ -37,8 +37,7 @@
                 {"ability": "stone_spire", "level": 42},
                 {"ability": "cure", "level": 1},
                 {"ability": "cure_well", "level": 10},
-                {"ability": "potent_cure", "level": 28},
-                {"ability": "revive", "level": 19}
+                {"ability": "potent_cure", "level": 28}
             ],
             "class_type": 1
         },{

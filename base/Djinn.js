@@ -47,5 +47,6 @@ export class Djinn {
         char.update_elemental_attributes();
         char.update_class();
         char.update_attributes();
+        char.update_abilities();
     }
 }

@@ -380,6 +380,7 @@ export class DjinnListWindow {
             case djinn_status.SET: next_status = djinn_status.STANDBY; break;
             case djinn_status.STANDBY: next_status = djinn_status.SET; break;
         }
+        this.deactivate();
         this.djinn_status_change_header_window.open(this_char, this_djinn, next_status);
         this.djinn_char_stats_window.open(this_char, this_djinn, next_status);
         this.djinn_psynergy_window.open(this_char, this_djinn, next_status, (change_status) => {
@@ -389,6 +390,7 @@ export class DjinnListWindow {
                 this.change_djinn_status();
             }
             this.cancel_djinn_status_set();
+            this.activate();
         })
     }
 
