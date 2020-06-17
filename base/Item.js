@@ -63,8 +63,4 @@ export class Item {
         this.broken = false;
         this.equipable = this.type === item_types.GENERAL_ITEM ? false : true;
     }
-
-    load_assets(game, load_callback) {
-        game.load.image(this.key_name + '_item_icon', this.icon_path).onLoadComplete.addOnce(load_callback);
-    }
 }

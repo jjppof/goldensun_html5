@@ -130,7 +130,7 @@ export class PsynergyMenuScreen {
                 if (ability.is_field_psynergy || ability.effects_outside_battle) {
                     const x = TOTAL_BORDER + PSY_OVERVIEW_WIN_INSIDE_PADDING_H + Math.ceil((counter%PSY_OVERVIEW_WIN_ICONS_PER_LINE) * (PSY_OVERVIEW_WIN_SPACE_BETWN_ICO + numbers.ICON_WIDTH));
                     const y = TOTAL_BORDER + PSY_OVERVIEW_WIN_INSIDE_PADDING_V + parseInt(counter/PSY_OVERVIEW_WIN_ICONS_PER_LINE) * (PSY_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
-                    this.psynergy_overview_window.create_at_group(x, y, ability_key_name + "_ability_icon");
+                    this.psynergy_overview_window.create_at_group(x, y, "abilities_icons", undefined, ability_key_name);
                     ++counter;
                 }
             }

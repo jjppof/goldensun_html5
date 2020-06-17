@@ -48,12 +48,4 @@ export class Ability {
         this.battle_animation_key = battle_animation_key;
         this.icon_path = icon_path;
     }
-
-    load_assets(game, load_callback) {
-        if (this.icon_path === "") {
-            load_callback();
-        } else {
-            game.load.image(this.key_name + '_ability_icon', this.icon_path).onLoadComplete.addOnce(load_callback);
-        }
-    }
 }

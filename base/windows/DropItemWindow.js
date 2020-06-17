@@ -91,7 +91,7 @@ export class DropItemWindow {
 
     set_info() {
         this.base_window.update_text(this.item.name, this.icon_name);
-        this.icon = this.base_window.create_at_group(INFO_X, ICON_Y, this.item.key_name + "_item_icon");
+        this.icon = this.base_window.create_at_group(INFO_X, ICON_Y, "items_icons", undefined, this.item.key_name);
         if (this.quantity_to_remove > 1) {
             this.item_count_sprite = this.game.add.bitmapText(INFO_X + SUB_ICON_X, ICON_Y + SUB_ICON_Y, 'gs-item-bmp-font', this.quantity_to_remove.toString());
             this.base_window.add_sprite_to_group(this.item_count_sprite);

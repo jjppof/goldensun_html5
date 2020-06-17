@@ -90,11 +90,10 @@ export class DjinnPsynergyWindow {
             const y = ELEM_PADDING_TOP + i * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS);
             const icon_x = x + (numbers.ICON_WIDTH >> 1);
             const icon_y = y + (numbers.ICON_HEIGHT >> 1);
-            const icon_key = key_name + "_ability_icon";
             const x_elem_name = ELEM_PADDING_LEFT + numbers.ICON_WIDTH + 2;
             const psynergy_name_sprite = this.base_window.set_text_in_position(abilities_list[key_name].name, x_elem_name, y + ELEM_NAME_ICON_SHIFT);
             this.text_sprites_in_window.push(psynergy_name_sprite);
-            this.icon_sprites_in_window.push(this.base_window.create_at_group(icon_x, icon_y, icon_key));
+            this.icon_sprites_in_window.push(this.base_window.create_at_group(icon_x, icon_y, "abilities_icons", undefined, key_name));
             this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
             const psynergy_cost_sprite = this.base_window.set_text_in_position(abilities_list[key_name].pp_cost, PSY_PP_X, y + ELEM_NAME_ICON_SHIFT, true);
             this.text_sprites_in_window.push(psynergy_cost_sprite);

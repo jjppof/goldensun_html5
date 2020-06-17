@@ -14,8 +14,7 @@
         "is_field_psynergy": true,
         "effects": [],
         "ability_type_key": "normal",
-        "battle_animation_key": "no_animation",
-        "icon_path": "assets/images/icons/psynergy/move.gif"
+        "battle_animation_key": "no_animation"
     },{
         "key_name": "retreat",
         "name": "Retreat",
@@ -31,8 +30,7 @@
         "is_field_psynergy": true,
         "effects": [],
         "ability_type_key": "normal",
-        "battle_animation_key": "no_animation",
-        "icon_path": "assets/images/icons/psynergy/retreat.gif"
+        "battle_animation_key": "no_animation"
     },{
         "key_name": "cure",
         "name": "Cure",
@@ -48,8 +46,7 @@
         "is_field_psynergy": false,
         "effects": [],
         "ability_type_key": "normal",
-        "battle_animation_key": "cure",
-        "icon_path": "assets/images/icons/psynergy/cure.gif"
+        "battle_animation_key": "cure"
     },{
         "key_name": "cure_well",
         "name": "Cure Well",
@@ -65,8 +62,7 @@
         "is_field_psynergy": false,
         "effects": [],
         "ability_type_key": "normal",
-        "battle_animation_key": "cure_well",
-        "icon_path": "assets/images/icons/psynergy/cure_well.gif"
+        "battle_animation_key": "cure_well"
     },{
         "key_name": "potent_cure",
         "name": "Potent Cure",
@@ -82,8 +78,7 @@
         "is_field_psynergy": false,
         "effects": [],
         "ability_type_key": "normal",
-        "battle_animation_key": "potent_cure",
-        "icon_path": "assets/images/icons/psynergy/potent_cure.gif"
+        "battle_animation_key": "potent_cure"
     },{
         "key_name": "revive",
         "name": "Revive",
@@ -99,8 +94,7 @@
         "is_field_psynergy": false,
         "effects": [],
         "ability_type_key": "normal",
-        "battle_animation_key": "revive",
-        "icon_path": "assets/images/icons/psynergy/revive.gif"
+        "battle_animation_key": "revive"
     },{
         "key_name": "flare",
         "name": "Flare",
@@ -116,8 +110,7 @@
         "is_field_psynergy": false,
         "effects": [],
         "ability_type_key": "normal",
-        "battle_animation_key": "flare",
-        "icon_path": "assets/images/icons/psynergy/flare.gif"
+        "battle_animation_key": "flare"
     },{
         "key_name": "quake",
         "name": "Quake",
@@ -133,8 +126,7 @@
         "is_field_psynergy": false,
         "effects": [],
         "ability_type_key": "normal",
-        "battle_animation_key": "quake",
-        "icon_path": "assets/images/icons/psynergy/quake.gif"
+        "battle_animation_key": "quake"
     },{
         "key_name": "spire",
         "name": "Spire",
@@ -150,8 +142,7 @@
         "is_field_psynergy": false,
         "effects": [],
         "ability_type_key": "normal",
-        "battle_animation_key": "spire",
-        "icon_path": "assets/images/icons/psynergy/spire.gif"
+        "battle_animation_key": "spire"
     },{
         "key_name": "volcano",
         "name": "Volcano",
@@ -167,8 +158,7 @@
         "is_field_psynergy": false,
         "effects": [],
         "ability_type_key": "normal",
-        "battle_animation_key": "volcano",
-        "icon_path": "assets/images/icons/psynergy/volcano.gif"
+        "battle_animation_key": "volcano"
     },{
         "key_name": "herb",
         "name": "Herb",
@@ -184,8 +174,7 @@
         "is_field_psynergy": false,
         "effects": [],
         "ability_type_key": "normal",
-        "battle_animation_key": "ply",
-        "icon_path": ""
+        "battle_animation_key": "ply"
     },{
         "key_name": "cookie",
         "name": "Cookie",
@@ -207,8 +196,7 @@
             "usage": "on_use"
         }],
         "ability_type_key": "normal",
-        "battle_animation_key": "",
-        "icon_path": ""
+        "battle_animation_key": ""
     },{
         "key_name": "whirlwind",
         "name": "Whirlwind",
@@ -224,8 +212,7 @@
         "is_field_psynergy": true,
         "effects": [],
         "ability_type_key": "normal",
-        "battle_animation_key": "whirlwind",
-        "icon_path": "assets/images/icons/psynergy/whirlwind.gif"
+        "battle_animation_key": "whirlwind"
     },{
         "key_name": "frost",
         "name": "Frost",
@@ -241,7 +228,6 @@
         "is_field_psynergy": true,
         "effects": [],
         "ability_type_key": "normal",
-        "battle_animation_key": "frost",
-        "icon_path": "assets/images/icons/psynergy/frost.gif"
+        "battle_animation_key": "frost"
     }
 ]

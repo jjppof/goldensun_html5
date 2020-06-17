@@ -204,8 +204,8 @@ export class Window {
         this.extra_sprites.push(sprite);
     }
 
-    create_at_group(x, y, key, color) {
-        let sprite = this.group.create(x, y, key);
+    create_at_group(x, y, key, color, frame) {
+        let sprite = this.group.create(x, y, key, frame);
         if (color !== undefined) {
             sprite.tint = color;
         }

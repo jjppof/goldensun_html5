@@ -1,0 +1,108 @@
+{"frames": {
+
+"asuras_armor":
+{
+	"frame": {"x":17,"y":18,"w":13,"h":13},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":1,"w":13,"h":13},
+	"sourceSize": {"w":16,"h":16}
+},
+"cookie":
+{
+	"frame": {"x":77,"y":16,"w":13,"h":12},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":1,"w":13,"h":12},
+	"sourceSize": {"w":16,"h":16}
+},
+"cotton_shirt":
+{
+	"frame": {"x":79,"y":1,"w":13,"h":11},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":2,"w":13,"h":11},
+	"sourceSize": {"w":16,"h":16}
+},
+"elven_rapier":
+{
+	"frame": {"x":35,"y":1,"w":14,"h":14},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":1,"w":14,"h":14},
+	"sourceSize": {"w":16,"h":16}
+},
+"frost_jewel":
+{
+	"frame": {"x":32,"y":18,"w":13,"h":13},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":1,"w":13,"h":13},
+	"sourceSize": {"w":16,"h":16}
+},
+"gaia_blade":
+{
+	"frame": {"x":1,"y":1,"w":15,"h":15},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":15},
+	"sourceSize": {"w":16,"h":16}
+},
+"great_sword":
+{
+	"frame": {"x":47,"y":17,"w":14,"h":14},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":1,"w":14,"h":14},
+	"sourceSize": {"w":16,"h":16}
+},
+"herb":
+{
+	"frame": {"x":18,"y":1,"w":15,"h":15},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":15},
+	"sourceSize": {"w":16,"h":16}
+},
+"knights_helm":
+{
+	"frame": {"x":66,"y":1,"w":11,"h":13},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":1,"w":11,"h":13},
+	"sourceSize": {"w":16,"h":16}
+},
+"knights_shield":
+{
+	"frame": {"x":63,"y":16,"w":12,"h":13},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":1,"w":12,"h":13},
+	"sourceSize": {"w":16,"h":16}
+},
+"steel_armor":
+{
+	"frame": {"x":1,"y":18,"w":14,"h":13},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":1,"w":14,"h":13},
+	"sourceSize": {"w":16,"h":16}
+},
+"wooden_stick":
+{
+	"frame": {"x":51,"y":1,"w":13,"h":13},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":2,"w":13,"h":13},
+	"sourceSize": {"w":16,"h":16}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "items_icons.png",
+	"format": "RGBA8888",
+	"size": {"w":93,"h":32},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:dcc5b5425b96f629d9a9080bba4742ee:309048b9693e24229a0d203d7416c446:8e0a9cab6bd555a369f372ff41f726d8$"
+}
+}

@@ -74,7 +74,7 @@ export class ItemQuantityManagerWindow {
     }
 
     set_header() {
-        this.icon_sprite = this.base_window.create_at_group(ITEM_ICON_X, ITEM_ICON_Y, this.item.key_name + "_item_icon");
+        this.icon_sprite = this.base_window.create_at_group(ITEM_ICON_X, ITEM_ICON_Y, "items_icons", undefined, this.item.key_name);
         this.char_name = this.base_window.set_text_in_position(this.char.name, CHAR_NAME_X, CHAR_NAME_Y);
         if (this.destination_char) {
             this.dest_char_name = this.base_window.set_text_in_position(this.destination_char.name, DEST_CHAR_NAME_X, CHAR_NAME_Y);

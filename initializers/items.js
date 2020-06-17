@@ -27,14 +27,8 @@ export function initialize_items(game, items_db, load_promise_resolve) {
             item_data.granted_ability,
             item_data.icon_path
         );
-
-        let load_assets_promise_resolve;
-        let load_assets_promise = new Promise(resolve => {
-            load_assets_promise_resolve = resolve;
-        });
-        load_promises.push(load_assets_promise);
-        items_list[item_data.key_name].load_assets(game, load_assets_promise_resolve);
     }
+    const loader = game.load.atlasJSONHash('items_icons', 'assets/images/icons/items/items_icons.png', 'assets/images/icons/items/items_icons.json');
+    loader.onLoadComplete.addOnce(load_promise_resolve);
     game.load.start();
-    Promise.all(load_promises).then(load_promise_resolve);
 }
