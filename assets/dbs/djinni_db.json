@@ -36,6 +36,30 @@
         "agi_boost": 3,
         "luk_boost": 0
     },{
+        "key_name": "vine",
+        "name": "Vine",
+        "description": "Tangle foes to drop Agility.",
+        "element": "venus",
+        "ability_key_name": "vine",
+        "hp_boost": 12,
+        "pp_boost": 4,
+        "atk_boost": 0,
+        "def_boost": 3,
+        "agi_boost": 0,
+        "luk_boost": 1
+    },{
+        "key_name": "sap",
+        "name": "Sap",
+        "description": "Attack a foe and steal HP.",
+        "element": "venus",
+        "ability_key_name": "sap",
+        "hp_boost": 10,
+        "pp_boost": 0,
+        "atk_boost": 3,
+        "def_boost": 0,
+        "agi_boost": 0,
+        "luk_boost": 1
+    },{
         "key_name": "forge",
         "name": "Forge",
         "description": "Boost party Attack with flame's fury.",
@@ -58,6 +82,30 @@
         "atk_boost": 3,
         "def_boost": 0,
         "agi_boost": 2,
+        "luk_boost": 0
+    },{
+        "key_name": "corona",
+        "name": "Corona",
+        "description": "Boost party Defense with a heat aura.",
+        "element": "mars",
+        "ability_key_name": "corona",
+        "hp_boost": 12,
+        "pp_boost": 3,
+        "atk_boost": 0,
+        "def_boost": 3,
+        "agi_boost": 0,
+        "luk_boost": 1
+    },{
+        "key_name": "scorch",
+        "name": "Scorch",
+        "description": "Stun a foe with a blast attack.",
+        "element": "mars",
+        "ability_key_name": "scorch",
+        "hp_boost": 8,
+        "pp_boost": 0,
+        "atk_boost": 3,
+        "def_boost": 0,
+        "agi_boost": 0,
         "luk_boost": 0
     },{
         "key_name": "gust",
@@ -83,5 +131,29 @@
         "def_boost": 2,
         "agi_boost": 0,
         "luk_boost": 1
+    },{
+        "key_name": "zephyr",
+        "name": "Zephyr",
+        "description": "Boost party Agility with swift wind.",
+        "element": "jupiter",
+        "ability_key_name": "zephyr",
+        "hp_boost": 11,
+        "pp_boost": 3,
+        "atk_boost": 0,
+        "def_boost": 0,
+        "agi_boost": 2,
+        "luk_boost": 1
+    },{
+        "key_name": "smog",
+        "name": "Smog",
+        "description": "Veil a foe's vision in smoke.",
+        "element": "jupiter",
+        "ability_key_name": "smog",
+        "hp_boost": 9,
+        "pp_boost": 0,
+        "atk_boost": 3,
+        "def_boost": 0,
+        "agi_boost": 0,
+        "luk_boost": 0
     }
 ]

@@ -160,7 +160,7 @@
 	"spriteSourceSize": {"x":0,"y":5,"w":14,"h":9},
 	"sourceSize": {"w":14,"h":14}
 },
-"gaurd":
+"guard":
 {
 	"frame": {"x":78,"y":64,"w":13,"h":13},
 	"rotated": false,

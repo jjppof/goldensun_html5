@@ -3,8 +3,10 @@ import { variation } from "../utils.js"
 
 export const effect_types = {
     MAX_HP: "max_hp",
+    CURRENT_HP: "current_hp",
     HP_RECOVERY: "hp_recovery",
     MAX_PP: "max_pp",
+    CURRENT_PP: "current_pp",
     PP_RECOVERY: "pp_recovery",
     ATTACK: "attack",
     DEFENSE: "defense",
@@ -40,6 +42,12 @@ export const usages = {
     TURN_END: "turn_end"
 }
 
+export const quantity_types = {
+    VALUE: "value",
+    TARGET: "target",
+    CASTER: "caster"
+}
+
 export class Effect {
     constructor(
         type,
@@ -50,12 +58,14 @@ export class Effect {
         rate, //default: 1.0
         chance, //default: 1.0
         attribute, //default: no_element
-        add_status, //boolean
+        add_status, //boolean. If false, remove status
         status_key_name,
         turns_quantity,
         variation_on_final_result,
-        damage_formula_key_name,
+        damage_formula_key_name, //instead of using the operator, uses a damage formula. Return value is not used.
         usage,
+        on_caster, //boolean. default false. If true, the caster will take the effect.
+        quantity_type, //default is value. If it's target or caster, the quantity arg must be an effect_type instead of a value
         char
     ) {
         this.type = type;
@@ -72,6 +82,8 @@ export class Effect {
         this.variation_on_final_result = variation_on_final_result === undefined ? false : variation_on_final_result;
         this.damage_formula_key_name = damage_formula_key_name;
         this.usage = usage === undefined ? usages.NOT_APPLY : usage;
+        this.on_caster = on_caster === undefined ? false : on_caster;
+        this.quantity_type = quantity_type === undefined ? quantity_types.VALUE : quantity_type;
         this.char = char;
     }
 

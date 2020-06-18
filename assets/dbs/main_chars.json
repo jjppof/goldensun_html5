@@ -118,7 +118,7 @@
         "agi_curve": [13, 17, 21, 24, 28, 32, 36, 40, 44, 47, 51, 55, 59, 63, 67, 71, 74, 78, 82, 86, 90, 94, 98, 101, 105, 109, 113, 117, 121, 124, 128],
         "luk_curve": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
         "exp_curve": [0, 24, 67, 144, 283, 519, 873, 1369, 2039, 2910, 3999, 5306, 6861, 8696, 10843, 13334, 16224, 19548, 23371, 27767, 32778, 38491, 45004, 52429, 60893, 70457, 81264, 93476, 107276, 122732],
-        "starting_level": 28,
+        "starting_level": 23,
         "venus_level_base": 5,
         "mercury_level_base": 0,
         "mars_level_base": 0,
@@ -133,7 +133,7 @@
         "jupiter_resist_base": 87,
         "innate_abilities": ["move", "retreat"],
         "in_party": true,
-        "djinni": ["flint", "granite", "quartz"],
+        "djinni": ["flint", "granite", "quartz", "vine", "sap"],
         "items": [
             {
                 "key_name": "gaia_blade",
@@ -194,7 +194,7 @@
         "agi_curve": [11, 15, 18, 22, 25, 28, 32, 35, 39, 42, 45, 49, 52, 56, 59, 62, 66, 69, 73, 76, 79, 83, 86, 90, 93, 96, 100, 103, 107, 110, 113],
         "luk_curve": [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
         "exp_curve": [0,30,84,176,332,582,957,1482,2191,3113,4265,5647,7292,9233,11504,14138,17193,20706,24746,29271,34339,40015,46372,53492,61894,71808,83308,96418,111232,127824],
-        "starting_level": 10,
+        "starting_level": 22,
         "venus_level_base": 0,
         "mercury_level_base": 0,
         "mars_level_base": 5,
@@ -209,7 +209,7 @@
         "jupiter_resist_base": 88,
         "innate_abilities": ["move"],
         "in_party": true,
-        "djinni": ["forge", "fever"],
+        "djinni": ["forge", "fever", "corona", "scorch"],
         "items": [
             {
                 "key_name": "great_sword",
@@ -272,7 +272,7 @@
         "agi_curve": [16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132],
         "luk_curve": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
         "exp_curve": [0,29,81,169,319,559,919,1423,2109,2987,4092,5473,7199,9270,11693,14504,17765,21515,25827,30656,36064,42121,48905,56639,65456,75507,86865,99700,114204,130448],
-        "starting_level": 20,
+        "starting_level": 22,
         "venus_level_base": 0,
         "mercury_level_base": 0,
         "mars_level_base": 0,
@@ -287,7 +287,7 @@
         "jupiter_resist_base": 114,
         "innate_abilities": ["whirlwind"],
         "in_party": true,
-        "djinni": ["gust", "breeze"],
+        "djinni": ["gust", "breeze", "zephyr", "smog"],
         "items": [
             {
                 "key_name": "wooden_stick",
