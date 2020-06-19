@@ -482,6 +482,7 @@ export class DjinnListWindow {
                 this.djinn_char_stats_window_left.close();
                 if (execute_operation) {
                     this.change_djinn_status(this.setting_djinn_status_char_index, this.setting_djinn_status_djinn_index);
+                    this.cancel_djinn_status_set();
                 }
                 this.activate();
             });
