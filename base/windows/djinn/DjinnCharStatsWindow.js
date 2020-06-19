@@ -85,7 +85,7 @@ export class DjinnCharStatsWindow {
             const star_sprite = this.base_window.create_at_group(x, DJINN_NUMBER_Y + 1, element + "_star");
             this.sprites.push(star_sprite);
         });
-        const preview_values = this.char.preview_djinn_change(stats_keys, this.djinni.map(d => d.key_name), this.next_djinni_status);
+        const preview_values = this.char.preview_djinn_change(stats_keys, this.djinni.map(d => d.key_name), this.next_djinni_status, this.action);
         if (preview_values.class_key_name !== this.char.class.key_name) {
             this.base_window.update_text(preview_values.class_name, this.new_class_text);
             this.class_name_arrow_blink_timer.resume();
@@ -119,10 +119,11 @@ export class DjinnCharStatsWindow {
         }
     }
 
-    open(char, djinni, next_djinni_status, callback) {
+    open(char, djinni, next_djinni_status, action, callback) {
         this.char = char;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;
+        this.action = action;
         this.mount_window();
         this.base_window.show(() => {
             this.window_open = true;

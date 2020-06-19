@@ -1,5 +1,4 @@
 import { Window } from '../../Window.js';
-import * as numbers from '../../../magic_numbers.js';
 import { djinn_status } from '../../Djinn.js';
 
 const BASE_WIN_WIDTH = 132;

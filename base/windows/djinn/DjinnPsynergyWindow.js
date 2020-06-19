@@ -119,7 +119,7 @@ export class DjinnPsynergyWindow {
         this.current_abilities = this.char.abilities.filter(key_name => {
             return key_name in abilities_list;
         });
-        const preview_values = this.char.preview_djinn_change([], this.djinni.map(d => d.key_name), this.next_djinni_status);
+        const preview_values = this.char.preview_djinn_change([], this.djinni.map(d => d.key_name), this.next_djinni_status, this.action);
         this.next_abilities = preview_values.abilities.filter(key_name => {
             return key_name in abilities_list;
         });
@@ -177,7 +177,7 @@ export class DjinnPsynergyWindow {
         this.mount_window();
     }
 
-    open(char, djinni, next_djinni_status, close_callback, hidden = false, shift_callback, callback = undefined) {
+    open(char, djinni, next_djinni_status, close_callback, hidden = false, shift_callback, action, callback = undefined) {
         this.char = char;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;
@@ -186,6 +186,7 @@ export class DjinnPsynergyWindow {
         this.page_index = 0;
         this.mount_window();
         this.shift_callback = shift_callback;
+        this.action = action;
         if (hidden) {
             this.window_open = true;
             return;

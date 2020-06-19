@@ -93,7 +93,7 @@ export class DjinnListWindow {
             if (!this.window_open || !this.window_active) return;
             if (this.setting_djinn_status) {
                 this.data.esc_input.getSignal().halt();
-                this.cancel_djinn_status_set();
+                this.cancel_djinn_status_set(true);
             }
         }, this, this.esc_propagation_priority);
         this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
@@ -118,6 +118,8 @@ export class DjinnListWindow {
 
     get_y_cursor() {
         if (this.setting_djinn_status && this.selected_char_index === this.setting_djinn_status_char_index) {
+            return HIGHLIGHT_Y_PADDING - numbers.FONT_SIZE;
+        } else if (this.setting_djinn_status && this.selected_djinn_index === party_data.members[this.selected_char_index].djinni.length) {
             return HIGHLIGHT_Y_PADDING - numbers.FONT_SIZE;
         } else {
             return HIGHLIGHT_Y_PADDING + this.selected_djinn_index * numbers.FONT_SIZE + 3;
@@ -190,6 +192,7 @@ export class DjinnListWindow {
 
     set_djinn_sprite(tween = true) {
         const this_char = party_data.members[this.selected_char_index];
+        if (this.setting_djinn_status && this.selected_djinn_index === this_char.djinni.length) return;
         const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
         if (this.active_djinn_sprite !== null) {
             this.active_djinn_sprite.alpha = 0;
@@ -295,20 +298,33 @@ export class DjinnListWindow {
     }
 
     set_highlight_bar() {
-        this.page_number_bar_highlight.x = HIGHLIGHT_X_PADDING + this.selected_char_index * DJINN_NAME_BETWEEN;
-        this.page_number_bar_highlight.y = HIGHLIGHT_Y_PADDING + this.selected_djinn_index * numbers.FONT_SIZE;
+        if (this.setting_djinn_status && this.selected_djinn_index === party_data.members[this.selected_char_index].djinni.length) {
+            this.page_number_bar_highlight.alpha = 0;
+        } else {
+            this.page_number_bar_highlight.alpha = 1;
+            this.page_number_bar_highlight.x = HIGHLIGHT_X_PADDING + this.selected_char_index * DJINN_NAME_BETWEEN;
+            this.page_number_bar_highlight.y = HIGHLIGHT_Y_PADDING + this.selected_djinn_index * numbers.FONT_SIZE;
+        }
     }
 
     update_djinn_description() {
-        const this_char = party_data.members[this.selected_char_index];
-        const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
-        this.base_window.update_text(this_djinn.description, this.djinn_description);
+        if (this.setting_djinn_status && this.selected_djinn_index === party_data.members[this.selected_char_index].djinni.length) {
+            this.base_window.update_text("", this.djinn_description);
+        } else {
+            const this_char = party_data.members[this.selected_char_index];
+            const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
+            this.base_window.update_text(this_djinn.description, this.djinn_description);
+        }
     }
 
     set_action_text() {
-        const this_char = party_data.members[this.selected_char_index];
-        const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
-        this.djinn_action_window.set_action_text(this_djinn.status);
+        if (this.setting_djinn_status) {
+
+        } else {
+            const this_char = party_data.members[this.selected_char_index];
+            const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
+            this.djinn_action_window.set_action_text(this_djinn.status);
+        }
     }
 
     on_char_change(before_index, after_index) {
@@ -363,6 +379,7 @@ export class DjinnListWindow {
                 if (other_char === undefined) continue;
                 if (other_char.djinni.length < this_char.djinni.length) {
                     status_text = "Give";
+                    ++this.sizes[i];
                 } else {
                     status_text = "Trade";
                 }
@@ -375,7 +392,7 @@ export class DjinnListWindow {
         this.cursor_control.set_cursor_position();
     }
 
-    cancel_djinn_status_set() {
+    cancel_djinn_status_set(reset_index = false) {
         if (!this.setting_djinn_status) return;
         for (let key in this.chars_sprites) {
             this.chars_sprites[key].y += numbers.FONT_SIZE;
@@ -386,13 +403,22 @@ export class DjinnListWindow {
                 if (elem === elements.NO_ELEMENT) continue;
                 this.djinns_sprites[i][elem].y += numbers.FONT_SIZE;
             }
-        }
-        for (let i = 0; i < CHARS_PER_PAGE; ++i) {
             this.base_window.update_text("", this.djinni_status_texts[i]);
+            const this_char = party_data.members[i];
+            if (this_char === undefined) continue;
+            this.sizes[i] = this_char.djinni.length;
+        }
+        if (reset_index) {
+            this.selected_char_index = this.setting_djinn_status_char_index;
+            this.selected_djinn_index = this.setting_djinn_status_djinn_index;
+            this.set_highlight_bar();
         }
         this.setting_djinn_status_char_index = -1;
         this.setting_djinn_status_djinn_index = -1;
         this.setting_djinn_status = false;
+        this.set_action_text();
+        this.update_djinn_description();
+        this.set_djinn_sprite();
         this.cursor_control.set_cursor_position();
     }
 
@@ -401,41 +427,61 @@ export class DjinnListWindow {
         const this_djinn = djinni_list[this_char.djinni[this.setting_djinn_status_djinn_index]];
         if (this.setting_djinn_status_char_index !== this.selected_char_index) {
             const next_char = party_data.members[this.selected_char_index];
-            const next_djinn = djinni_list[next_char.djinni[this.selected_djinn_index]];
-            const this_statuses = [
-                next_djinn.status === djinn_status.STANDBY ? "irrelevant" : next_djinn.status,
-                this_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY
-            ];
-            const next_statuses = [
-                this_djinn.status === djinn_status.STANDBY ? "irrelevant" : this_djinn.status,
-                next_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY
-            ];
+            let this_statuses, next_statuses, this_djinni, next_djinni, action_text, next_djinn;
+            if (this.selected_djinn_index === next_char.djinni.length) {
+                this_statuses = [this_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY];
+                next_statuses = [this_djinn.status === djinn_status.STANDBY ? "irrelevant" : this_djinn.status];
+                this_djinni = [this_djinn];
+                next_djinni = [this_djinn];
+                action_text = "Give";
+            } else {
+                next_djinn = djinni_list[next_char.djinni[this.selected_djinn_index]];
+                this_statuses = [
+                    next_djinn.status === djinn_status.STANDBY ? "irrelevant" : next_djinn.status,
+                    this_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY
+                ];
+                next_statuses = [
+                    this_djinn.status === djinn_status.STANDBY ? "irrelevant" : this_djinn.status,
+                    next_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY
+                ];
+                this_djinni = [next_djinn, this_djinn];
+                next_djinni = [this_djinn, next_djinn];
+                action_text = "Trade";
+            }
             this.djinn_char_stats_window_left.open(
                 this_char,
-                [next_djinn, this_djinn],
-                this_statuses
+                this_djinni,
+                this_statuses,
+                action_text
             );
             this.djinn_char_stats_window_right.open(
                 next_char,
-                [this_djinn, next_djinn],
-                next_statuses
+                next_djinni,
+                next_statuses,
+                action_text
             );
             this.djinn_char_stats_window_right.base_window.update_position({x: DJINN_CHAR_WIN_STATS_RIGHT_X});
             this.djinn_status_change_header_window.open(
                 [this_char, next_char],
-                [this_djinn, next_djinn],
+                next_djinni,
                 this_statuses,
-                "Trade"
+                action_text
             );
             this.deactivate();
             this.view_state = VIEW_STATES.STATS;
-            this.djinn_psynergy_window.open(this_char, [next_djinn, this_djinn], this_statuses, (execute_operation) => {
+            this.djinn_psynergy_window.open(this_char, this_djinni, this_statuses, (execute_operation) => {
                 this.djinn_status_change_header_window.close();
                 this.djinn_char_stats_window_left.close();
                 this.djinn_char_stats_window_right.close();
                 if (execute_operation) {
-                    this_char.replace_djinn(this_djinn.key_name, next_djinn.key_name);
-                    next_char.replace_djinn(next_djinn.key_name, this_djinn.key_name);
+                    if (action_text === "Trade") {
+                        this_char.replace_djinn(this_djinn.key_name, next_djinn.key_name);
+                        next_char.replace_djinn(next_djinn.key_name, this_djinn.key_name);
+                    } else if (action_text === "Give") {
+                        this_char.remove_djinn(this_djinn.key_name);
+                        next_char.add_djinn(this_djinn.key_name);
+                        this.selected_djinn_index = 0;
+                    }
                     this.update_djinn_list(this.selected_char_index);
                     this.update_djinn_list(this.setting_djinn_status_char_index);
                     this.cancel_djinn_status_set();
@@ -467,7 +513,7 @@ export class DjinnListWindow {
                         this.djinn_status_change_header_window.set_action_info_text(": Status");
                         break;
                 }
-            });
+            }, action_text);
         } else {
             let next_status;
             switch (this_djinn.status) {

@@ -2,6 +2,7 @@ import { Window } from '../../Window.js';
 import { capitalize } from '../../../utils.js';
 import { djinn_font_colors } from '../../Djinn.js';
 import { djinni_sprites } from '../../../initializers/djinni.js';
+import * as numbers from '../../../magic_numbers.js';
 
 const BASE_WIN_WIDTH = 236;
 const BASE_WIN_HEIGHT = 36;
@@ -84,6 +85,7 @@ export class DjinnModeHeaderWindow {
             this.base_window.update_text_position({x: OK_MSG_X, y: OK_MSG_Y}, this.ok_msg_text);
             this.base_window.update_text(this.djinni[0].name, this.djinn_name_before_text);
             this.base_window.update_text_color(djinn_font_colors[this.djinni[0].status], this.djinn_name_before_text);
+            this.base_window.update_text_position({y: DJINN_NAME_BEFORE_Y}, this.djinn_name_before_text);
             this.base_window.update_text(this.djinni[0].name, this.djinn_name_after_text);
             this.base_window.update_text_color(djinn_font_colors[this.next_djinni_status[0]], this.djinn_name_after_text);
             this.sprites.push(this.base_window.create_at_group(STAR_BEFORE_X, STAR_BEFORE_Y, this.djinni[0].element + "_star"));
@@ -97,10 +99,17 @@ export class DjinnModeHeaderWindow {
             this.base_window.update_text_position({x: OK_MSG_X_2, y: OK_MSG_Y_2}, this.ok_msg_text);
             this.base_window.update_text(this.djinni[0].name, this.djinn_name_before_text);
             this.base_window.update_text_color(djinn_font_colors[this.djinni[0].status], this.djinn_name_before_text);
-            this.base_window.update_text(this.djinni[1].name, this.djinn_name_after_text);
-            this.base_window.update_text_color(djinn_font_colors[this.djinni[1].status], this.djinn_name_after_text);
-            this.sprites.push(this.base_window.create_at_group(STAR_BEFORE_X, STAR_BEFORE_Y, this.djinni[0].element + "_star"));
-            this.sprites.push(this.base_window.create_at_group(STAR_AFTER_X, STAR_AFTER_Y, this.djinni[1].element + "_star"));
+            if (this.action_text === "Trade") {
+                this.sprites.push(this.base_window.create_at_group(STAR_BEFORE_X, STAR_BEFORE_Y, this.djinni[0].element + "_star"));
+                this.base_window.update_text(this.djinni[1].name, this.djinn_name_after_text);
+                this.base_window.update_text_color(djinn_font_colors[this.djinni[1].status], this.djinn_name_after_text);
+                this.sprites.push(this.base_window.create_at_group(STAR_AFTER_X, STAR_AFTER_Y, this.djinni[1].element + "_star"));
+                this.base_window.update_text_position({y: DJINN_NAME_BEFORE_Y}, this.djinn_name_before_text);
+            } else if (this.action_text === "Give") {
+                this.base_window.update_text("", this.djinn_name_after_text);
+                this.base_window.update_text_position({y: DJINN_NAME_BEFORE_Y + numbers.FONT_SIZE}, this.djinn_name_before_text);
+                this.sprites.push(this.base_window.create_at_group(STAR_BEFORE_X, STAR_BEFORE_Y + numbers.FONT_SIZE, this.djinni[0].element + "_star"));
+            }
             this.djinn_status_arrow.alpha = 0;
         }
         this.set_char_and_djinn_sprite();
@@ -118,6 +127,14 @@ export class DjinnModeHeaderWindow {
                 djinn_x = DJINN_X;
                 djinn_y = DJINN_Y;
             }
+            const char_sprite = this.base_window.create_at_group(CHARS_X[i], CHARS_Y[i], this_char.key_name + "_idle");
+            char_sprite.anchor.setTo(0.5, 1.0);
+            char_sprite.animations.add("idle_down", this_char.animations.idle.down, this_char.actions.idle.frame_rate, true);
+            char_sprite.animations.play("idle_down", this_char.actions.idle.frame_rate, true);
+            this.sprites.push(char_sprite);
+
+            if (this.action_text === "Give" && i === 1) break;
+
             const djinn_sprite = this.group.create(djinn_x, djinn_y, this_djinn.element + "_djinn_" + this_djinn.status);
             djinn_sprite.anchor.setTo(0.5, 1.0);
             djinn_sprite.scale.x = -0.8;
@@ -125,12 +142,6 @@ export class DjinnModeHeaderWindow {
             djinni_sprites[this_djinn.element].setAnimation(djinn_sprite, this_djinn.status);
             djinn_sprite.animations.play(this_djinn.status + "_down");
             this.djinn_sprites.push(djinn_sprite);
-
-            const char_sprite = this.base_window.create_at_group(CHARS_X[i], CHARS_Y[i], this_char.key_name + "_idle");
-            char_sprite.anchor.setTo(0.5, 1.0);
-            char_sprite.animations.add("idle_down", this_char.animations.idle.down, this_char.actions.idle.frame_rate, true);
-            char_sprite.animations.play("idle_down", this_char.actions.idle.frame_rate, true);
-            this.sprites.push(char_sprite);
         }
     }
 

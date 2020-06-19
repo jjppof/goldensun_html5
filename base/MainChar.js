@@ -374,7 +374,7 @@ export class MainChar extends SpriteBase {
         this.add_djinn(new_djinn_key_name);
     }
 
-    preview_djinn_change(stats, djinni_key_name, djinni_next_status) {
+    preview_djinn_change(stats, djinni_key_name, djinni_next_status, action) {
         const before_class = this.class;
         let venus_lv = this.venus_level_current;
         let mercury_lv = this.mercury_level_current;
@@ -405,16 +405,17 @@ export class MainChar extends SpriteBase {
         }).map(pair => pair.ability), this.equipped_abilities);
         djinni_next_status = djinni_next_status.map(status => status === "irrelevant" ? djinn_status.STANDBY : status);
         stats.forEach(stat => {
-            return_obj[stat] = this.preview_stats_by_djinn(stat, djinni_key_name, djinni_next_status);
+            return_obj[stat] = this.preview_stats_by_djinn(stat, djinni_key_name, djinni_next_status, action);
         });
         this.class = before_class;
         return return_obj;
     }
 
-    preview_stats_by_djinn(stat, djinni_key_name, djinni_next_status) {
+    preview_stats_by_djinn(stat, djinni_key_name, djinni_next_status, action) {
         const preview_obj = {
             djinni_key_name: djinni_key_name,
-            djinni_next_status: djinni_next_status
+            djinni_next_status: djinni_next_status,
+            action: action
         }
         switch (stat) {
             case "max_hp":
@@ -457,12 +458,16 @@ export class MainChar extends SpriteBase {
         let before_max_hp = this.max_hp;
         this.max_hp = parseInt(this.hp_curve[this.starting_level] * this.class.hp_boost + this.hp_extra);
         let this_djinni = this.djinni;
-        if (preview && preview_obj.djinni_key_name.length > 1) {
-            const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
-            if (first_index >= 0) {
-                this_djinni[first_index] = preview_obj.djinni_key_name[1];
-            } else {
-                this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+        if (preview) {
+            if (preview_obj.action === "Trade") {
+                const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
+                if (first_index >= 0) {
+                    this_djinni[first_index] = preview_obj.djinni_key_name[1];
+                } else {
+                    this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+                }
+            } else if (preview_obj.action === "Give") {
+                this_djinni.push(preview_obj.djinni_key_name[0]);
             }
         }
         for (let i = 0; i < this_djinni.length; ++i) {
@@ -497,12 +502,16 @@ export class MainChar extends SpriteBase {
         let before_max_pp = this.max_pp;
         this.max_pp = parseInt(this.pp_curve[this.starting_level] * this.class.pp_boost + this.pp_extra);
         let this_djinni = this.djinni;
-        if (preview && preview_obj.djinni_key_name.length > 1) {
-            const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
-            if (first_index >= 0) {
-                this_djinni[first_index] = preview_obj.djinni_key_name[1];
-            } else {
-                this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+        if (preview) {
+            if (preview_obj.action === "Trade") {
+                const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
+                if (first_index >= 0) {
+                    this_djinni[first_index] = preview_obj.djinni_key_name[1];
+                } else {
+                    this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+                }
+            } else if (preview_obj.action === "Give") {
+                this_djinni.push(preview_obj.djinni_key_name[0]);
             }
         }
         for (let i = 0; i < this_djinni.length; ++i) {
@@ -537,12 +546,16 @@ export class MainChar extends SpriteBase {
         let before_atk = this.atk;
         this.atk = parseInt(this.atk_curve[this.starting_level] * this.class.atk_boost + this.atk_extra);
         let this_djinni = this.djinni;
-        if (preview && preview_obj.djinni_key_name.length > 1) {
-            const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
-            if (first_index >= 0) {
-                this_djinni[first_index] = preview_obj.djinni_key_name[1];
-            } else {
-                this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+        if (preview) {
+            if (preview_obj.action === "Trade") {
+                const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
+                if (first_index >= 0) {
+                    this_djinni[first_index] = preview_obj.djinni_key_name[1];
+                } else {
+                    this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+                }
+            } else if (preview_obj.action === "Give") {
+                this_djinni.push(preview_obj.djinni_key_name[0]);
             }
         }
         for (let i = 0; i < this_djinni.length; ++i) {
@@ -577,12 +590,16 @@ export class MainChar extends SpriteBase {
         let before_def = this.def;
         this.def = parseInt(this.def_curve[this.starting_level] * this.class.def_boost + this.def_extra);
         let this_djinni = this.djinni;
-        if (preview && preview_obj.djinni_key_name.length > 1) {
-            const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
-            if (first_index >= 0) {
-                this_djinni[first_index] = preview_obj.djinni_key_name[1];
-            } else {
-                this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+        if (preview) {
+            if (preview_obj.action === "Trade") {
+                const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
+                if (first_index >= 0) {
+                    this_djinni[first_index] = preview_obj.djinni_key_name[1];
+                } else {
+                    this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+                }
+            } else if (preview_obj.action === "Give") {
+                this_djinni.push(preview_obj.djinni_key_name[0]);
             }
         }
         for (let i = 0; i < this_djinni.length; ++i) {
@@ -617,12 +634,16 @@ export class MainChar extends SpriteBase {
         let before_agi = this.agi;
         this.agi = parseInt(this.agi_curve[this.starting_level] * this.class.agi_boost + this.agi_extra);
         let this_djinni = this.djinni;
-        if (preview && preview_obj.djinni_key_name.length > 1) {
-            const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
-            if (first_index >= 0) {
-                this_djinni[first_index] = preview_obj.djinni_key_name[1];
-            } else {
-                this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+        if (preview) {
+            if (preview_obj.action === "Trade") {
+                const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
+                if (first_index >= 0) {
+                    this_djinni[first_index] = preview_obj.djinni_key_name[1];
+                } else {
+                    this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+                }
+            } else if (preview_obj.action === "Give") {
+                this_djinni.push(preview_obj.djinni_key_name[0]);
             }
         }
         for (let i = 0; i < this_djinni.length; ++i) {
@@ -657,12 +678,16 @@ export class MainChar extends SpriteBase {
         let before_luk = this.luk;
         this.luk = parseInt(this.luk_curve[this.starting_level] * this.class.luk_boost + this.luk_extra);
         let this_djinni = this.djinni;
-        if (preview && preview_obj.djinni_key_name.length > 1) {
-            const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
-            if (first_index >= 0) {
-                this_djinni[first_index] = preview_obj.djinni_key_name[1];
-            } else {
-                this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+        if (preview) {
+            if (preview_obj.action === "Trade") {
+                const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
+                if (first_index >= 0) {
+                    this_djinni[first_index] = preview_obj.djinni_key_name[1];
+                } else {
+                    this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+                }
+            } else if (preview_obj.action === "Give") {
+                this_djinni.push(preview_obj.djinni_key_name[0]);
             }
         }
         for (let i = 0; i < this_djinni.length; ++i) {
