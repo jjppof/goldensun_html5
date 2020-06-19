@@ -211,3 +211,36 @@ export function get_directions(with_diagonals = false) {
 export function capitalize(text) {
     return text[0].toUpperCase() + text.slice(1);
 }
+
+export function change_brightness(hex, percent) {
+    if (typeof hex === 'string') {
+        hex = hex.replace(/^\s*#|\s*$/g, '');
+    } else {
+        hex = hex.toString(16);
+    }
+    if (hex.length == 3) {
+        hex = hex.replace(/(.)/g, '$1$1');
+    }
+    let r = parseInt(hex.substr(0, 2), 16);
+    let g = parseInt(hex.substr(2, 2), 16);
+    let b = parseInt(hex.substr(4, 2), 16);
+
+    let h, s, v;
+    [h, s, v] = rgb2hsv(r, g, b);
+    v = parseInt(v * percent);
+    [r, g, b] = hsv2rgb(h, s, v);
+
+    hex = ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    return parseInt(hex, 16);
+}
+
+export function rgb2hsv(r,g,b) {
+    let v = Math.max(r,g,b), n = v-Math.min(r,g,b);
+    let h = n && ((v === r) ? (g-b)/n : ((v === g) ? 2+(b-r)/n : 4+(r-g)/n)); 
+    return [60*(h<0?h+6:h), v&&n/v, v];
+}
+
+export function hsv2rgb(h,s,v) {
+    let f = (n,k=(n+h/60)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0);
+    return [f(5),f(3),f(1)];
+}

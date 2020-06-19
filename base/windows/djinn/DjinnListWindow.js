@@ -5,7 +5,7 @@ import * as numbers from '../../../magic_numbers.js';
 import { party_data } from '../../../initializers/main_chars.js';
 import { djinni_list, djinni_sprites } from '../../../initializers/djinni.js';
 import { elements } from '../../MainChar.js';
-import { capitalize } from '../../../utils.js';
+import { capitalize, change_brightness } from '../../../utils.js';
 import { DjinnModeHeaderWindow } from './DjinnModeHeaderWindow.js';
 import { DjinnCharStatsWindow } from './DjinnCharStatsWindow.js';
 import { DjinnPsynergyWindow } from './DjinnPsynergyWindow.js';
@@ -389,7 +389,19 @@ export class DjinnListWindow {
         this.setting_djinn_status_char_index = this.selected_char_index;
         this.setting_djinn_status_djinn_index = this.selected_djinn_index;
         this.setting_djinn_status = true;
+        this.djinn_action_window.set_action_for_specific_djinn(this_char, this_djinn);
+        this.darken_font_color();
         this.cursor_control.set_cursor_position();
+    }
+
+    darken_font_color(darken = true) {
+        const this_char = party_data.members[this.setting_djinn_status_char_index];
+        for (let i = 0; i < this.djinn_names[this.setting_djinn_status_char_index].length; ++i) {
+            const this_djinn = djinni_list[this_char.djinni[i]];
+            const color = darken ? change_brightness(djinn_font_colors[this_djinn.status], 0.7) : djinn_font_colors[this_djinn.status];
+            if (darken && i === this.setting_djinn_status_djinn_index) continue;
+            this.base_window.update_text_color(color, this.djinn_names[this.setting_djinn_status_char_index][i]);
+        }
     }
 
     cancel_djinn_status_set(reset_index = false) {
@@ -413,6 +425,7 @@ export class DjinnListWindow {
             this.selected_djinn_index = this.setting_djinn_status_djinn_index;
             this.set_highlight_bar();
         }
+        this.darken_font_color(false);
         this.setting_djinn_status_char_index = -1;
         this.setting_djinn_status_djinn_index = -1;
         this.setting_djinn_status = false;
