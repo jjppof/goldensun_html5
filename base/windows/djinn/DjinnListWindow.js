@@ -224,7 +224,7 @@ export class DjinnListWindow {
     }
 
     load_page() {
-        this.sizes = new Array(CHARS_PER_PAGE);
+        this.sizes = new Array(party_data.members.length);
         this.djinn_names = [];
         this.stars = [];
         for (let i = 0; i < CHARS_PER_PAGE; ++i) {
@@ -402,8 +402,14 @@ export class DjinnListWindow {
         if (this.setting_djinn_status_char_index !== this.selected_char_index) {
             const next_char = party_data.members[this.selected_char_index];
             const next_djinn = djinni_list[next_char.djinni[this.selected_djinn_index]];
-            const this_statuses = [next_djinn.status === djinn_status.STANDBY ? "irrelevant" : next_djinn.status, djinn_status.STANDBY];
-            const next_statuses = [this_djinn.status === djinn_status.STANDBY ? "irrelevant" : this_djinn.status, djinn_status.STANDBY];
+            const this_statuses = [
+                next_djinn.status === djinn_status.STANDBY ? "irrelevant" : next_djinn.status,
+                this_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY
+            ];
+            const next_statuses = [
+                this_djinn.status === djinn_status.STANDBY ? "irrelevant" : this_djinn.status,
+                next_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY
+            ];
             this.djinn_char_stats_window_left.open(
                 this_char,
                 [next_djinn, this_djinn],
