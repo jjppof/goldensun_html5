@@ -500,13 +500,13 @@ export class DjinnListWindow {
                         this.djinn_status_change_header_window.set_action_info_text(`: ${this_char.name}'s Psy`);
                         break;
                     case VIEW_STATES.THIS_CHAR:
-                        this.djinn_psynergy_window.update_info(this_char, [next_djinn, this_djinn], this_statuses);
+                        this.djinn_psynergy_window.update_info(this_char, this_djinni, this_statuses);
                         this.djinn_psynergy_window.base_window.show(undefined, false);
                         this.djinn_char_stats_window_right.base_window.close(undefined, false);
                         this.djinn_status_change_header_window.set_action_info_text(`: ${next_char.name}'s Psy`);
                         break;
                     case VIEW_STATES.NEXT_CHAR:
-                        this.djinn_psynergy_window.update_info(next_char, [this_djinn, next_djinn], next_statuses);
+                        this.djinn_psynergy_window.update_info(next_char, next_djinni, next_statuses);
                         this.djinn_char_stats_window_left.base_window.close(undefined, false);
                         this.djinn_char_stats_window_right.base_window.show(undefined, false);
                         this.djinn_char_stats_window_right.base_window.update_position({x: 0});
