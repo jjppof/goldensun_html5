@@ -30,9 +30,15 @@ const DJINN_NAME_BETWEEN = 56;
 const DJINN_DESCRIPTION_X = 8;
 const DJINN_DESCRIPTION_Y = 104;
 const DJINN_SPRITE_X = 50;
+const DJINN_CHAR_WIN_STATS_RIGHT_X = 120;
+const VIEW_STATES = {
+    STATS: 0,
+    THIS_CHAR: 1,
+    NEXT_CHAR: 2
+}
 
 export class DjinnListWindow {
-    constructor (game, data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority) {
+    constructor (game, data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority, spacebar_propagation_priority) {
         this.game = game;
         this.data = data;
         this.base_window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
@@ -45,6 +51,7 @@ export class DjinnListWindow {
         this.esc_propagation_priority = esc_propagation_priority + 1;
         this.enter_propagation_priority = enter_propagation_priority + 1;
         this.shift_propagation_priority = shift_propagation_priority + 1;
+        this.spacebar_propagation_priority = spacebar_propagation_priority + 1;
         this.selected_char_index = 0;
         this.selected_djinn_index = 0;
         this.page_index = 0;
@@ -68,8 +75,9 @@ export class DjinnListWindow {
         this.djinn_names = [];
         this.active_djinn_sprite = null;
         this.djinn_status_change_header_window = new DjinnModeHeaderWindow(this.game);
-        this.djinn_char_stats_window = new DjinnCharStatsWindow(this.game);
-        this.djinn_psynergy_window = new DjinnPsynergyWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
+        this.djinn_char_stats_window_left = new DjinnCharStatsWindow(this.game);
+        this.djinn_char_stats_window_right = new DjinnCharStatsWindow(this.game, DJINN_CHAR_WIN_STATS_RIGHT_X);
+        this.djinn_psynergy_window = new DjinnPsynergyWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority, this.spacebar_propagation_priority);
         this.init_djinn_sprites();
         this.init_djinni_status_texts();
         this.set_control();
@@ -92,7 +100,7 @@ export class DjinnListWindow {
             if (!this.window_open || !this.window_active) return;
             this.data.enter_input.getSignal().halt();
             if (this.setting_djinn_status) {
-                this.set_change_status_windows();
+                this.set_djinn_operation();
             } else {
                 this.on_choose();
             }
@@ -100,7 +108,7 @@ export class DjinnListWindow {
         data.shift_input.add(() => {
             if (!this.window_open || !this.window_active) return;
             this.data.shift_input.halt();
-            this.change_djinn_status();
+            this.change_djinn_status(this.selected_char_index, this.selected_djinn_index);
         }, this, this.shift_propagation_priority);
     }
 
@@ -216,8 +224,9 @@ export class DjinnListWindow {
     }
 
     load_page() {
-        this.sizes = [];
+        this.sizes = new Array(CHARS_PER_PAGE);
         this.djinn_names = [];
+        this.stars = [];
         for (let i = 0; i < CHARS_PER_PAGE; ++i) {
             const party_index = this.page_index * CHARS_PER_PAGE + i;
             if (party_index >= party_data.members.length) continue;
@@ -233,27 +242,42 @@ export class DjinnListWindow {
             this.chars_sprites[char_key_name].x = x;
             this.chars_sprites[char_key_name].y = CHAR_Y_PADDING;
             this.chars_sprites[char_key_name].alpha = 1;
-            const char_djinni = this_char.djinni;
-            this.sizes.push(char_djinni.length);
-            let this_djinn_names = [];
-            for (let j = 0; j < char_djinni.length; ++j) {
-                const this_djinn = djinni_list[char_djinni[j]];
-                const star_x = STAR_X_PADDING + i * DJINN_NAME_BETWEEN;
-                const star_y = STAR_Y_PADDING + j * numbers.FONT_SIZE;
-                this.base_window.create_at_group(star_x, star_y, this_djinn.element + "_star");
-                const djinn_x = DJINN_NAME_X_PADDING + i * DJINN_NAME_BETWEEN;
-                const djinn_y = DJINN_NAME_Y_PADDING + j * numbers.FONT_SIZE;
-                let color;
-                switch (this_djinn.status) {
-                    case djinn_status.SET: color = djinn_font_colors[djinn_status.SET]; break;
-                    case djinn_status.STANDBY: color = djinn_font_colors[djinn_status.STANDBY]; break;
-                    case djinn_status.RECOVERY: color = djinn_font_colors[djinn_status.RECOVERY]; break;
-                }
-                const djinn_name = this.base_window.set_text_in_position(this_djinn.name, djinn_x, djinn_y, false, false, color);
-                this_djinn_names.push(djinn_name);
-            }
-            this.djinn_names.push(this_djinn_names);
+            this.djinn_names.push([]);
+            this.stars.push([]);
+            this.update_djinn_list(i);
         }
+    }
+
+    update_djinn_list(char_index) {
+        this.djinn_names[char_index].forEach(sprite => {
+            this.base_window.remove_text(sprite);
+        });
+        this.stars[char_index].forEach(sprite => {
+            this.base_window.remove_from_group(sprite, true);
+        });
+        const this_char = party_data.members[char_index];
+        const char_djinni = this_char.djinni;
+        let this_djinn_names = [];
+        let stars = [];
+        for (let j = 0; j < char_djinni.length; ++j) {
+            const this_djinn = djinni_list[char_djinni[j]];
+            const star_x = STAR_X_PADDING + char_index * DJINN_NAME_BETWEEN;
+            const star_y = STAR_Y_PADDING + j * numbers.FONT_SIZE;
+            stars.push(this.base_window.create_at_group(star_x, star_y, this_djinn.element + "_star"));
+            const djinn_x = DJINN_NAME_X_PADDING + char_index * DJINN_NAME_BETWEEN;
+            const djinn_y = DJINN_NAME_Y_PADDING + j * numbers.FONT_SIZE;
+            let color;
+            switch (this_djinn.status) {
+                case djinn_status.SET: color = djinn_font_colors[djinn_status.SET]; break;
+                case djinn_status.STANDBY: color = djinn_font_colors[djinn_status.STANDBY]; break;
+                case djinn_status.RECOVERY: color = djinn_font_colors[djinn_status.RECOVERY]; break;
+            }
+            const djinn_name = this.base_window.set_text_in_position(this_djinn.name, djinn_x, djinn_y, false, false, color);
+            this_djinn_names.push(djinn_name);
+        }
+        this.sizes[char_index] = char_djinni.length;
+        this.djinn_names[char_index] = this_djinn_names;
+        this.stars[char_index] = stars;
     }
 
     unset_page() {
@@ -372,40 +396,97 @@ export class DjinnListWindow {
         this.cursor_control.set_cursor_position();
     }
 
-    set_change_status_windows() {
+    set_djinn_operation() {
         const this_char = party_data.members[this.setting_djinn_status_char_index];
         const this_djinn = djinni_list[this_char.djinni[this.setting_djinn_status_djinn_index]];
-        let next_status;
-        switch (this_djinn.status) {
-            case djinn_status.SET: next_status = djinn_status.STANDBY; break;
-            case djinn_status.STANDBY: next_status = djinn_status.SET; break;
-        }
-        this.deactivate();
-        this.djinn_status_change_header_window.open(this_char, this_djinn, next_status);
-        this.djinn_char_stats_window.open(this_char, this_djinn, next_status);
-        this.djinn_psynergy_window.open(this_char, this_djinn, next_status, (change_status) => {
-            this.djinn_status_change_header_window.close();
-            this.djinn_char_stats_window.close();
-            if (change_status) {
-                this.change_djinn_status();
+        if (this.setting_djinn_status_char_index !== this.selected_char_index) {
+            const next_char = party_data.members[this.selected_char_index];
+            const next_djinn = djinni_list[next_char.djinni[this.selected_djinn_index]];
+            const this_statuses = [next_djinn.status === djinn_status.STANDBY ? "irrelevant" : next_djinn.status, djinn_status.STANDBY];
+            const next_statuses = [this_djinn.status === djinn_status.STANDBY ? "irrelevant" : this_djinn.status, djinn_status.STANDBY];
+            this.djinn_char_stats_window_left.open(
+                this_char,
+                [next_djinn, this_djinn],
+                this_statuses
+            );
+            this.djinn_char_stats_window_right.open(
+                next_char,
+                [this_djinn, next_djinn],
+                next_statuses
+            );
+            this.djinn_status_change_header_window.open(this_char, this_djinn, "set");
+            this.deactivate();
+            this.view_state = VIEW_STATES.STATS;
+            this.djinn_psynergy_window.open(this_char, [next_djinn, this_djinn], this_statuses, (execute_operation) => {
+                this.djinn_status_change_header_window.close();
+                this.djinn_char_stats_window_left.close();
+                this.djinn_char_stats_window_right.close();
+                if (execute_operation) {
+                    this_char.replace_djinn(this_djinn.key_name, next_djinn.key_name);
+                    next_char.replace_djinn(next_djinn.key_name, this_djinn.key_name);
+                    this.update_djinn_list(this.selected_char_index);
+                    this.update_djinn_list(this.setting_djinn_status_char_index);
+                    this.cancel_djinn_status_set();
+                }
+                this.cancel_djinn_status_set();
+                this.activate();
+            }, true, () => {
+                ++this.view_state;
+                if (this.view_state > VIEW_STATES.NEXT_CHAR) {
+                    this.view_state = VIEW_STATES.STATS;
+                }
+                switch (this.view_state) {
+                    case VIEW_STATES.STATS:
+                        this.djinn_psynergy_window.base_window.close(undefined, false);
+                        this.djinn_char_stats_window_left.base_window.show(undefined, false);
+                        this.djinn_char_stats_window_right.base_window.update_position({x: DJINN_CHAR_WIN_STATS_RIGHT_X});
+                        break;
+                    case VIEW_STATES.THIS_CHAR:
+                        this.djinn_psynergy_window.update_info(this_char, [next_djinn, this_djinn], this_statuses);
+                        this.djinn_psynergy_window.base_window.show(undefined, false);
+                        this.djinn_char_stats_window_right.base_window.close(undefined, false);
+                        break;
+                    case VIEW_STATES.NEXT_CHAR:
+                        this.djinn_psynergy_window.update_info(next_char, [this_djinn, next_djinn], next_statuses);
+                        this.djinn_char_stats_window_left.base_window.close(undefined, false);
+                        this.djinn_char_stats_window_right.base_window.show(undefined, false);
+                        this.djinn_char_stats_window_right.base_window.update_position({x: 0});
+                        break;
+                }
+            });
+        } else {
+            let next_status;
+            switch (this_djinn.status) {
+                case djinn_status.SET: next_status = djinn_status.STANDBY; break;
+                case djinn_status.STANDBY: next_status = djinn_status.SET; break;
             }
-            this.cancel_djinn_status_set();
-            this.activate();
-        })
+            this.deactivate();
+            this.djinn_status_change_header_window.open(this_char, this_djinn, next_status);
+            this.djinn_char_stats_window_left.open(this_char, [this_djinn], [next_status]);
+            this.djinn_psynergy_window.open(this_char, [this_djinn], [next_status], (execute_operation) => {
+                this.djinn_status_change_header_window.close();
+                this.djinn_char_stats_window_left.close();
+                if (execute_operation) {
+                    this.change_djinn_status(this.setting_djinn_status_char_index, this.setting_djinn_status_djinn_index);
+                }
+                this.cancel_djinn_status_set();
+                this.activate();
+            });
+        }
     }
 
-    change_djinn_status() {
-        const this_char = party_data.members[this.selected_char_index];
-        const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
+    change_djinn_status(char_index, djinn_index) {
+        const this_char = party_data.members[char_index];
+        const this_djinn = djinni_list[this_char.djinni[djinn_index]];
         if (this_djinn.status === djinn_status.SET) {
             this_djinn.set_status(djinn_status.STANDBY, this_char);
-            this.base_window.update_text_color(djinn_font_colors[djinn_status.STANDBY], this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
+            this.base_window.update_text_color(djinn_font_colors[djinn_status.STANDBY], this.djinn_names[char_index][djinn_index]);
             this.chars_quick_info_window.update_text();
             this.set_action_text();
             this.set_djinn_sprite(false);
         } else if (this_djinn.status === djinn_status.STANDBY) {
             this_djinn.set_status(djinn_status.SET, this_char);
-            this.base_window.update_text_color(djinn_font_colors[djinn_status.SET], this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
+            this.base_window.update_text_color(djinn_font_colors[djinn_status.SET], this.djinn_names[char_index][djinn_index]);
             this.chars_quick_info_window.update_text();
             this.set_action_text();
             this.set_djinn_sprite(false);

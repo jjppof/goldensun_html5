@@ -23,7 +23,7 @@ const PSY_INFO_X = 8;
 const PSY_INFO_2_Y = PSY_INFO_1_Y + 1 + numbers.FONT_SIZE;
 
 export class DjinnPsynergyWindow {
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
+    constructor(game, data, esc_propagation_priority, enter_propagation_priority, spacebar_propagation_priority) {
         this.game = game;
         this.data = data;
         this.window_open = false;
@@ -31,6 +31,7 @@ export class DjinnPsynergyWindow {
         this.icon_sprites_in_window = [];
         this.esc_propagation_priority = esc_propagation_priority + 1;
         this.enter_propagation_priority = enter_propagation_priority + 1;
+        this.spacebar_propagation_priority = spacebar_propagation_priority + 1;
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
         this.base_window.init_page_indicator_bar();
         this.base_window.set_text_in_position("PP", PSY_PP_COST_X, PSY_PP_COST_Y);
@@ -43,13 +44,13 @@ export class DjinnPsynergyWindow {
         this.game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
             if (!this.window_open) return;
             this.data.esc_input.getSignal().halt();
-            this.change_status = false;
+            this.execute_operation = false;
             this.close(this.close_callback);
         }, this, this.esc_propagation_priority);
         this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
             if (!this.window_open) return;
             this.data.enter_input.getSignal().halt();
-            this.change_status = true;
+            this.execute_operation = true;
             this.close(this.close_callback);
         }, this, this.enter_propagation_priority);
         this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
@@ -60,6 +61,13 @@ export class DjinnPsynergyWindow {
             if (!this.window_open) return;
             this.change_page(BACKWARD);
         });
+        data.spacebar_input.add(() => {
+            if (!this.window_open) return;
+            this.data.spacebar_input.halt();
+            if (this.shift_callback !== undefined) {
+                this.shift_callback();
+            }
+        }, this, this.spacebar_propagation_priority);
     }
 
     set_page_number() {
@@ -111,7 +119,7 @@ export class DjinnPsynergyWindow {
         this.current_abilities = this.char.abilities.filter(key_name => {
             return key_name in abilities_list;
         });
-        const preview_values = this.char.preview_djinn_change([], this.djinn.key_name, this.next_djinn_status);
+        const preview_values = this.char.preview_djinn_change([], this.djinni.map(d => d.key_name), this.next_djinni_status);
         this.next_abilities = preview_values.abilities.filter(key_name => {
             return key_name in abilities_list;
         });
@@ -159,14 +167,29 @@ export class DjinnPsynergyWindow {
         this.text_sprites_in_window = [];
     }
 
-    open(char, djinn, next_djinn_status, close_callback, callback) {
+    update_info(char, djinni, next_djinni_status) {
+        this.clear_sprites();
+        this.base_window.unset_page_indicator();
         this.char = char;
-        this.djinn = djinn;
-        this.next_djinn_status = next_djinn_status;
-        this.close_callback = close_callback;
-        this.change_status = false;
+        this.djinni = djinni;
+        this.next_djinni_status = next_djinni_status;
         this.page_index = 0;
         this.mount_window();
+    }
+
+    open(char, djinni, next_djinni_status, close_callback, hidden = false, shift_callback, callback = undefined) {
+        this.char = char;
+        this.djinni = djinni;
+        this.next_djinni_status = next_djinni_status;
+        this.close_callback = close_callback;
+        this.execute_operation = false;
+        this.page_index = 0;
+        this.mount_window();
+        this.shift_callback = shift_callback;
+        if (hidden) {
+            this.window_open = true;
+            return;
+        }
         this.base_window.show(() => {
             this.window_open = true;
             if (callback !== undefined) {
@@ -181,7 +204,7 @@ export class DjinnPsynergyWindow {
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {
-                callback(this.change_status);
+                callback(this.execute_operation);
             }
         }, false);
     }

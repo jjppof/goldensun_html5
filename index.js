@@ -123,6 +123,7 @@ function load_buttons() {
 
     game.load.image('shift_keyboard', 'assets/images/keyboard/shift.png');
     game.load.image('tab_keyboard', 'assets/images/keyboard/tab.png');
+    game.load.image('spacebar_keyboard', 'assets/images/keyboard/spacebar.png');
 }
 
 function load_db_files() {
@@ -258,10 +259,11 @@ async function create() {
     data.overlayer_group = game.add.group();
     
     data.shift_input = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT).onDown;
+    data.spacebar_input = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown;
 
     //initialize screens
     data.menu_screen = initialize_menu(data);
-    game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(() => {
+    data.spacebar_input.add(() => {
         if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting || data.jumping) return;
         if (!data.menu_open) {
             data.menu_open = true;

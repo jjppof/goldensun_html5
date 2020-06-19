@@ -693,7 +693,7 @@
                 {"ability": "curse", "level": 24},
                 {"ability": "condemn", "level": 29}
             ],
-            "class_type": 9
+            "class_type": 4
         },{
             "key_name": "ruffian",
             "name": "Ruffian",
@@ -719,7 +719,7 @@
                 {"ability": "curse", "level": 24},
                 {"ability": "condemn", "level": 29}
             ],
-            "class_type": 9
+            "class_type": 4
         },{
             "key_name": "savage",
             "name": "Savage",
@@ -751,7 +751,7 @@
                 {"ability": "curse", "level": 24},
                 {"ability": "condemn", "level": 29}
             ],
-            "class_type": 9
+            "class_type": 4
         },{
             "key_name": "seer",
             "name": "Seer",
@@ -779,7 +779,7 @@
                 {"ability": "drain", "level": 31},
                 {"ability": "psy_drain", "level": 39}
             ],
-            "class_type": 9
+            "class_type": 8
         },{
             "key_name": "diviner",
             "name": "Diviner",
@@ -807,7 +807,7 @@
                 {"ability": "drain", "level": 31},
                 {"ability": "psy_drain", "level": 39}
             ],
-            "class_type": 9
+            "class_type": 8
         },{
             "key_name": "shaman",
             "name": "Shaman",
@@ -838,7 +838,7 @@
                 {"ability": "drain", "level": 31},
                 {"ability": "psy_drain", "level": 39}
             ],
-            "class_type": 9
+            "class_type": 8
         }
     ]
 }

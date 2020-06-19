@@ -28,6 +28,7 @@ export class MenuScreen {
         let esc_propagation_priority = 0;
         let enter_propagation_priority = 0;
         let shift_propagation_priority = 0;
+        let spacebar_propagation_priority = 0;
         this.horizontal_menu = new HorizontalMenu(
             this.game,
             this.data,
@@ -39,7 +40,7 @@ export class MenuScreen {
         ++enter_propagation_priority;
         this.psynergy_menu = new PsynergyMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
         this.item_menu = new ItemMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
-        this.djinn_menu = new DjinnMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority);
+        this.djinn_menu = new DjinnMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority, spacebar_propagation_priority);
         this.set_chars_info();
     }
 
@@ -207,9 +208,6 @@ export class MenuScreen {
     }
 }
 
-let menu_screen;
-
 export function initialize_menu(data) {
-    menu_screen = new MenuScreen(game, data);
-    return menu_screen;
+    return new MenuScreen(game, data);
 }

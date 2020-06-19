@@ -4,7 +4,6 @@ import * as numbers from '../../../magic_numbers.js';
 
 const BASE_WIN_WIDTH = 116;
 const BASE_WIN_HEIGHT = 116;
-const BASE_WIN_X = 0;
 const BASE_WIN_Y = 40;
 const AVATAR_X = 8;
 const AVATAR_Y = 8;
@@ -32,11 +31,11 @@ const ARROW_CHANGE_CLASS_X = 24;
 const ARROW_CHANGE_CLASS_Y = 48;
 
 export class DjinnCharStatsWindow {
-    constructor(game) {
+    constructor(game, win_x = 0) {
         this.game = game;
         this.window_open = false;
         this.sprites = [];
-        this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
+        this.base_window = new Window(this.game, win_x, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
         this.char_name_text = this.base_window.set_text_in_position("", CHAR_NAME_X, CHAR_NAME_Y);
         this.base_window.set_text_in_position("Lv", LV_X, LV_Y);
         this.level_number_text = this.base_window.set_text_in_position("", LV_NUMBER_X, LV_NUMBER_Y, true);
@@ -86,7 +85,7 @@ export class DjinnCharStatsWindow {
             const star_sprite = this.base_window.create_at_group(x, DJINN_NUMBER_Y + 1, element + "_star");
             this.sprites.push(star_sprite);
         });
-        const preview_values = this.char.preview_djinn_change(stats_keys, this.djinn.key_name, this.next_djinn_status);
+        const preview_values = this.char.preview_djinn_change(stats_keys, this.djinni.map(d => d.key_name), this.next_djinni_status);
         if (preview_values.class_key_name !== this.char.class.key_name) {
             this.base_window.update_text(preview_values.class_name, this.new_class_text);
             this.class_name_arrow_blink_timer.resume();
@@ -120,10 +119,10 @@ export class DjinnCharStatsWindow {
         }
     }
 
-    open(char, djinn, next_djinn_status, callback) {
+    open(char, djinni, next_djinni_status, callback) {
         this.char = char;
-        this.djinn = djinn;
-        this.next_djinn_status = next_djinn_status;
+        this.djinni = djinni;
+        this.next_djinni_status = next_djinni_status;
         this.mount_window();
         this.base_window.show(() => {
             this.window_open = true;
