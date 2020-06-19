@@ -474,7 +474,7 @@ export class MainChar extends SpriteBase {
             let djinn_key_name = this_djinni[i];
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
-            if (preview && preview_obj.djinni_key_name.includes(djinn_key_name)) {
+            if (preview && preview_obj.djinni_key_name && preview_obj.djinni_key_name.includes(djinn_key_name)) {
                 status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
@@ -518,7 +518,7 @@ export class MainChar extends SpriteBase {
             let djinn_key_name = this_djinni[i];
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
-            if (preview && preview_obj.djinni_key_name.includes(djinn_key_name)) {
+            if (preview && preview_obj.djinni_key_name && preview_obj.djinni_key_name.includes(djinn_key_name)) {
                 status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
@@ -562,7 +562,7 @@ export class MainChar extends SpriteBase {
             let djinn_key_name = this_djinni[i];
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
-            if (preview && preview_obj.djinni_key_name.includes(djinn_key_name)) {
+            if (preview && preview_obj.djinni_key_name && preview_obj.djinni_key_name.includes(djinn_key_name)) {
                 status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
@@ -606,7 +606,7 @@ export class MainChar extends SpriteBase {
             let djinn_key_name = this_djinni[i];
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
-            if (preview && preview_obj.djinni_key_name.includes(djinn_key_name)) {
+            if (preview && preview_obj.djinni_key_name && preview_obj.djinni_key_name.includes(djinn_key_name)) {
                 status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
@@ -650,7 +650,7 @@ export class MainChar extends SpriteBase {
             let djinn_key_name = this_djinni[i];
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
-            if (preview && preview_obj.djinni_key_name.includes(djinn_key_name)) {
+            if (preview && preview_obj.djinni_key_name && preview_obj.djinni_key_name.includes(djinn_key_name)) {
                 status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
@@ -694,7 +694,7 @@ export class MainChar extends SpriteBase {
             let djinn_key_name = this_djinni[i];
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
-            if (preview && preview_obj.djinni_key_name.includes(djinn_key_name)) {
+            if (preview && preview_obj.djinni_key_name && preview_obj.djinni_key_name.includes(djinn_key_name)) {
                 status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
