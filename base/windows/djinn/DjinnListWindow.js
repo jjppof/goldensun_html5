@@ -420,6 +420,7 @@ export class DjinnListWindow {
                 [this_djinn, next_djinn],
                 next_statuses
             );
+            this.djinn_char_stats_window_right.base_window.update_position({x: DJINN_CHAR_WIN_STATS_RIGHT_X});
             this.djinn_status_change_header_window.open(
                 [this_char, next_char],
                 [this_djinn, next_djinn],
@@ -439,7 +440,6 @@ export class DjinnListWindow {
                     this.update_djinn_list(this.setting_djinn_status_char_index);
                     this.cancel_djinn_status_set();
                 }
-                this.cancel_djinn_status_set();
                 this.activate();
             }, true, () => {
                 ++this.view_state;
@@ -483,7 +483,6 @@ export class DjinnListWindow {
                 if (execute_operation) {
                     this.change_djinn_status(this.setting_djinn_status_char_index, this.setting_djinn_status_djinn_index);
                 }
-                this.cancel_djinn_status_set();
                 this.activate();
             });
         }
