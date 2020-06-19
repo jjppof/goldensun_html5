@@ -303,14 +303,18 @@ export class Window {
     update_text(new_text, text_shadow_pair, new_x, new_y) {
         text_shadow_pair.text.setText(new_text);
         text_shadow_pair.shadow.setText(new_text);
-        if (new_x !== undefined) {
-            text_shadow_pair.text.x = new_x;
-            text_shadow_pair.shadow.x = new_x;
-            text_shadow_pair.initial_x = new_x;
+        this.update_text_position({x: new_x, y: new_y}, text_shadow_pair);
+    }
+
+    update_text_position(new_position, text_shadow_pair) {
+        if (new_position.x !== undefined) {
+            text_shadow_pair.text.x = new_position.x;
+            text_shadow_pair.shadow.x = new_position.x + 1;
+            text_shadow_pair.initial_x = new_position.x;
         }
-        if (new_y !== undefined) {
-            text_shadow_pair.text.y = new_y;
-            text_shadow_pair.shadow.y = new_y;
+        if (new_position.y !== undefined) {
+            text_shadow_pair.text.y = new_position.y;
+            text_shadow_pair.shadow.y = new_position.y + 1;
         }
         if (text_shadow_pair.right_align) {
             text_shadow_pair.text.x = text_shadow_pair.initial_x - text_shadow_pair.text.width;

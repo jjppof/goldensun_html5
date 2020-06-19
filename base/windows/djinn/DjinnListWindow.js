@@ -420,7 +420,12 @@ export class DjinnListWindow {
                 [this_djinn, next_djinn],
                 next_statuses
             );
-            this.djinn_status_change_header_window.open(this_char, this_djinn, "set");
+            this.djinn_status_change_header_window.open(
+                [this_char, next_char],
+                [this_djinn, next_djinn],
+                this_statuses,
+                "Trade"
+            );
             this.deactivate();
             this.view_state = VIEW_STATES.STATS;
             this.djinn_psynergy_window.open(this_char, [next_djinn, this_djinn], this_statuses, (execute_operation) => {
@@ -446,17 +451,20 @@ export class DjinnListWindow {
                         this.djinn_psynergy_window.base_window.close(undefined, false);
                         this.djinn_char_stats_window_left.base_window.show(undefined, false);
                         this.djinn_char_stats_window_right.base_window.update_position({x: DJINN_CHAR_WIN_STATS_RIGHT_X});
+                        this.djinn_status_change_header_window.set_action_info_text(`: ${this_char.name}'s Psy`);
                         break;
                     case VIEW_STATES.THIS_CHAR:
                         this.djinn_psynergy_window.update_info(this_char, [next_djinn, this_djinn], this_statuses);
                         this.djinn_psynergy_window.base_window.show(undefined, false);
                         this.djinn_char_stats_window_right.base_window.close(undefined, false);
+                        this.djinn_status_change_header_window.set_action_info_text(`: ${next_char.name}'s Psy`);
                         break;
                     case VIEW_STATES.NEXT_CHAR:
                         this.djinn_psynergy_window.update_info(next_char, [this_djinn, next_djinn], next_statuses);
                         this.djinn_char_stats_window_left.base_window.close(undefined, false);
                         this.djinn_char_stats_window_right.base_window.show(undefined, false);
                         this.djinn_char_stats_window_right.base_window.update_position({x: 0});
+                        this.djinn_status_change_header_window.set_action_info_text(": Status");
                         break;
                 }
             });
@@ -467,7 +475,7 @@ export class DjinnListWindow {
                 case djinn_status.STANDBY: next_status = djinn_status.SET; break;
             }
             this.deactivate();
-            this.djinn_status_change_header_window.open(this_char, this_djinn, next_status);
+            this.djinn_status_change_header_window.open([this_char], [this_djinn], [next_status]);
             this.djinn_char_stats_window_left.open(this_char, [this_djinn], [next_status]);
             this.djinn_psynergy_window.open(this_char, [this_djinn], [next_status], (execute_operation) => {
                 this.djinn_status_change_header_window.close();

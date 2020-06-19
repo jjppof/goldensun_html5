@@ -456,13 +456,21 @@ export class MainChar extends SpriteBase {
     set_max_hp(preview = false, preview_obj = {}) {
         let before_max_hp = this.max_hp;
         this.max_hp = parseInt(this.hp_curve[this.starting_level] * this.class.hp_boost + this.hp_extra);
-        const this_djinni = this.djinni;
+        let this_djinni = this.djinni;
+        if (preview && preview_obj.djinni_key_name.length > 1) {
+            const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
+            if (first_index >= 0) {
+                this_djinni[first_index] = preview_obj.djinni_key_name[1];
+            } else {
+                this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+            }
+        }
         for (let i = 0; i < this_djinni.length; ++i) {
             let djinn_key_name = this_djinni[i];
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && preview_obj.djinni_key_name.includes(djinn_key_name)) {
-                status = preview_obj.djinn_next_status;
+                status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
             this.max_hp += djinn.hp_boost;
@@ -488,13 +496,21 @@ export class MainChar extends SpriteBase {
     set_max_pp(preview = false, preview_obj = {}) {
         let before_max_pp = this.max_pp;
         this.max_pp = parseInt(this.pp_curve[this.starting_level] * this.class.pp_boost + this.pp_extra);
-        const this_djinni = this.djinni;
+        let this_djinni = this.djinni;
+        if (preview && preview_obj.djinni_key_name.length > 1) {
+            const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
+            if (first_index >= 0) {
+                this_djinni[first_index] = preview_obj.djinni_key_name[1];
+            } else {
+                this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+            }
+        }
         for (let i = 0; i < this_djinni.length; ++i) {
             let djinn_key_name = this_djinni[i];
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && preview_obj.djinni_key_name.includes(djinn_key_name)) {
-                status = preview_obj.djinn_next_status;
+                status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
             this.max_pp += djinn.pp_boost;
@@ -520,13 +536,21 @@ export class MainChar extends SpriteBase {
     set_max_atk(preview = false, preview_obj = {}) {
         let before_atk = this.atk;
         this.atk = parseInt(this.atk_curve[this.starting_level] * this.class.atk_boost + this.atk_extra);
-        const this_djinni = this.djinni;
+        let this_djinni = this.djinni;
+        if (preview && preview_obj.djinni_key_name.length > 1) {
+            const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
+            if (first_index >= 0) {
+                this_djinni[first_index] = preview_obj.djinni_key_name[1];
+            } else {
+                this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+            }
+        }
         for (let i = 0; i < this_djinni.length; ++i) {
             let djinn_key_name = this_djinni[i];
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && preview_obj.djinni_key_name.includes(djinn_key_name)) {
-                status = preview_obj.djinn_next_status;
+                status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
             this.atk += djinn.atk_boost;
@@ -552,13 +576,21 @@ export class MainChar extends SpriteBase {
     set_max_def(preview = false, preview_obj = {}) {
         let before_def = this.def;
         this.def = parseInt(this.def_curve[this.starting_level] * this.class.def_boost + this.def_extra);
-        const this_djinni = this.djinni;
+        let this_djinni = this.djinni;
+        if (preview && preview_obj.djinni_key_name.length > 1) {
+            const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
+            if (first_index >= 0) {
+                this_djinni[first_index] = preview_obj.djinni_key_name[1];
+            } else {
+                this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+            }
+        }
         for (let i = 0; i < this_djinni.length; ++i) {
             let djinn_key_name = this_djinni[i];
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && preview_obj.djinni_key_name.includes(djinn_key_name)) {
-                status = preview_obj.djinn_next_status;
+                status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
             this.def += djinn.def_boost;
@@ -584,13 +616,21 @@ export class MainChar extends SpriteBase {
     set_max_agi(preview = false, preview_obj = {}) {
         let before_agi = this.agi;
         this.agi = parseInt(this.agi_curve[this.starting_level] * this.class.agi_boost + this.agi_extra);
-        const this_djinni = this.djinni;
+        let this_djinni = this.djinni;
+        if (preview && preview_obj.djinni_key_name.length > 1) {
+            const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
+            if (first_index >= 0) {
+                this_djinni[first_index] = preview_obj.djinni_key_name[1];
+            } else {
+                this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+            }
+        }
         for (let i = 0; i < this_djinni.length; ++i) {
             let djinn_key_name = this_djinni[i];
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && preview_obj.djinni_key_name.includes(djinn_key_name)) {
-                status = preview_obj.djinn_next_status;
+                status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
             this.agi += djinn.agi_boost;
@@ -616,13 +656,21 @@ export class MainChar extends SpriteBase {
     set_max_luk(preview = false, preview_obj = {}) {
         let before_luk = this.luk;
         this.luk = parseInt(this.luk_curve[this.starting_level] * this.class.luk_boost + this.luk_extra);
-        const this_djinni = this.djinni;
+        let this_djinni = this.djinni;
+        if (preview && preview_obj.djinni_key_name.length > 1) {
+            const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
+            if (first_index >= 0) {
+                this_djinni[first_index] = preview_obj.djinni_key_name[1];
+            } else {
+                this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+            }
+        }
         for (let i = 0; i < this_djinni.length; ++i) {
             let djinn_key_name = this_djinni[i];
             let djinn = djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && preview_obj.djinni_key_name.includes(djinn_key_name)) {
-                status = preview_obj.djinn_next_status;
+                status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
             this.luk += djinn.luk_boost;
