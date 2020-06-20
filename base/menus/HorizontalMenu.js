@@ -130,6 +130,7 @@ export class HorizontalMenu {
     update_position() {
         this.group.x = this.game.camera.x + this.x;
         this.group.y = this.game.camera.y + this.y;
+        this.title_window.update(true);
     }
 
     open(callback, select_index, start_active = true) {

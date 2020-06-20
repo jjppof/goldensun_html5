@@ -437,6 +437,8 @@ function update() {
             data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
         } else if (data.pushing) {
             change_hero_sprite(data);
+        } else if (data.menu_open && data.menu_screen.horizontal_menu.menu_active) {
+            data.menu_screen.update_position();
         }
     } else {
         render_loading();

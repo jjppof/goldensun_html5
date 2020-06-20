@@ -192,8 +192,8 @@ export class Window {
         }
     }
 
-    update() { //updates the window position if necessary
-        if (this.need_pos_update) {
+    update(force = false) { //updates the window position if necessary
+        if (this.need_pos_update || force) {
             this.group.x = this.game.camera.x + this.x;
             this.group.y = this.game.camera.y + this.y;
         }

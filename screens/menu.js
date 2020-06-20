@@ -82,6 +82,11 @@ export class MenuScreen {
         }
     }
 
+    update_position() {
+        this.status_window.update(true);
+        this.horizontal_menu.update_position();
+    }
+
     set_chars_info() {
         let sorted_chars_list = _.sortBy(Object.values(main_char_list), char => {
             return char.index;
