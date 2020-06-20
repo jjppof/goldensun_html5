@@ -48,6 +48,7 @@ export class DjinnModeHeaderWindow {
         this.djinn_name_after_text = this.base_window.set_text_in_position("", DJINN_NAME_AFTER_X, DJINN_NAME_AFTER_Y);
         this.sprites = [];
         this.djinn_sprites = [];
+        this.tweens = [];
         this.djinn_status_arrow = this.base_window.create_at_group(ARROW_CHANGE_DJINN_X, ARROW_CHANGE_DJINN_Y, "arrow_change");
         this.spacebar_key = {
             shadow: this.base_window.create_at_group(SPACEBAR_KEY_X + 1, SPACEBAR_KEY_Y + 1, "spacebar_keyboard", 0x0),
@@ -85,7 +86,8 @@ export class DjinnModeHeaderWindow {
             this.base_window.update_text_position({x: OK_MSG_X, y: OK_MSG_Y}, this.ok_msg_text);
             this.base_window.update_text(this.djinni[0].name, this.djinn_name_before_text);
             this.base_window.update_text_color(djinn_font_colors[this.djinni[0].status], this.djinn_name_before_text);
-            this.base_window.update_text_position({y: DJINN_NAME_BEFORE_Y}, this.djinn_name_before_text);
+            this.base_window.update_text_position({x: DJINN_NAME_BEFORE_X, y: DJINN_NAME_BEFORE_Y}, this.djinn_name_before_text);
+            this.base_window.update_text_position({x: DJINN_NAME_AFTER_X}, this.djinn_name_after_text);
             this.base_window.update_text(this.djinni[0].name, this.djinn_name_after_text);
             this.base_window.update_text_color(djinn_font_colors[this.next_djinni_status[0]], this.djinn_name_after_text);
             this.sprites.push(this.base_window.create_at_group(STAR_BEFORE_X, STAR_BEFORE_Y, this.djinni[0].element + "_star"));
@@ -100,15 +102,16 @@ export class DjinnModeHeaderWindow {
             this.base_window.update_text(this.djinni[0].name, this.djinn_name_before_text);
             this.base_window.update_text_color(djinn_font_colors[this.djinni[0].status], this.djinn_name_before_text);
             if (this.action_text === "Trade") {
-                this.sprites.push(this.base_window.create_at_group(STAR_BEFORE_X, STAR_BEFORE_Y, this.djinni[0].element + "_star"));
+                this.sprites.push(this.base_window.create_at_group(STAR_BEFORE_X - 5, STAR_BEFORE_Y, this.djinni[0].element + "_star"));
                 this.base_window.update_text(this.djinni[1].name, this.djinn_name_after_text);
                 this.base_window.update_text_color(djinn_font_colors[this.djinni[1].status], this.djinn_name_after_text);
-                this.sprites.push(this.base_window.create_at_group(STAR_AFTER_X, STAR_AFTER_Y, this.djinni[1].element + "_star"));
-                this.base_window.update_text_position({y: DJINN_NAME_BEFORE_Y}, this.djinn_name_before_text);
+                this.sprites.push(this.base_window.create_at_group(STAR_AFTER_X - 5, STAR_AFTER_Y, this.djinni[1].element + "_star"));
+                this.base_window.update_text_position({x: DJINN_NAME_AFTER_X - 5}, this.djinn_name_after_text);
+                this.base_window.update_text_position({x: DJINN_NAME_BEFORE_X - 5, y: DJINN_NAME_BEFORE_Y}, this.djinn_name_before_text);
             } else if (this.action_text === "Give") {
                 this.base_window.update_text("", this.djinn_name_after_text);
-                this.base_window.update_text_position({y: DJINN_NAME_BEFORE_Y + numbers.FONT_SIZE}, this.djinn_name_before_text);
-                this.sprites.push(this.base_window.create_at_group(STAR_BEFORE_X, STAR_BEFORE_Y + numbers.FONT_SIZE, this.djinni[0].element + "_star"));
+                this.base_window.update_text_position({x: DJINN_NAME_BEFORE_X - 5, y: DJINN_NAME_BEFORE_Y + numbers.FONT_SIZE}, this.djinn_name_before_text);
+                this.sprites.push(this.base_window.create_at_group(STAR_BEFORE_X - 5, STAR_BEFORE_Y + numbers.FONT_SIZE, this.djinni[0].element + "_star"));
             }
             this.djinn_status_arrow.alpha = 0;
         }
@@ -142,6 +145,26 @@ export class DjinnModeHeaderWindow {
             djinni_sprites[this_djinn.element].setAnimation(djinn_sprite, this_djinn.status);
             djinn_sprite.animations.play(this_djinn.status + "_down");
             this.djinn_sprites.push(djinn_sprite);
+
+            if (["Trade", "Give"].includes(this.action_text)) {
+                const sign = i === 0 ? 1 : -1;
+                const a = sign * 17, b = sign * 33;
+                const y_shift = -sign * 5;
+                const tween = this.game.add.tween(djinn_sprite).to(
+                    {
+                        y: [djinn_y, djinn_y + y_shift, djinn_y + y_shift, djinn_y],
+                        x: [djinn_x, djinn_x+a, djinn_x+a+b, djinn_x+a+b+a]
+                    },
+                    700,
+                    Phaser.Easing.Linear.None,
+                    true,
+                    0,
+                    -1,
+                    false
+                );
+                tween.repeatDelay(300);
+                this.tweens.push(tween);
+            }
         }
     }
 
@@ -152,8 +175,12 @@ export class DjinnModeHeaderWindow {
         this.djinn_sprites.forEach(sprite => {
             sprite.destroy();
         });
+        this.tweens.forEach(tween => {
+            tween.stop();
+        });
         this.sprites = [];
         this.djinn_sprites = [];
+        this.tweens = [];
         this.djinn_status_arrow.alpha = 0;
         if (!this.djinn_status_arrow_blink_timer.paused) {
             this.djinn_status_arrow_blink_timer.pause();

@@ -59,12 +59,9 @@ export class DjinnListWindow {
         this.chars_sprites = {};
         this.djinns_sprites = [];
         this.djinn_description = this.base_window.set_text_in_position("", DJINN_DESCRIPTION_X, DJINN_DESCRIPTION_Y);
-        this.page_number_bar_highlight = this.game.add.graphics(0, 0);
-        this.page_number_bar_highlight.blendMode = PIXI.blendModes.SCREEN;
-        this.group.add(this.page_number_bar_highlight);
-        this.page_number_bar_highlight.beginFill(this.base_window.color, 1);
-        this.page_number_bar_highlight.drawRect(0, 0, HIGHLIGHT_WIDTH, HIGHLIGHT_HEIGHT);
-        this.page_number_bar_highlight.endFill();
+        this.page_number_bar_highlight =  this.get_highlight_bar();
+        this.on_action_bar_highlight =  this.get_highlight_bar();
+        this.on_action_bar_highlight.alpha = 0;
         this.cursor_control = new CursorControl(this.game, true, true, this.get_max_chars.bind(this),
             this.get_max_djinn.bind(this), this.group, this.on_char_change.bind(this), this.on_djinn_change.bind(this),
             this.get_char_index.bind(this), this.set_char_index.bind(this), this.get_djinn_index.bind(this),
@@ -81,6 +78,16 @@ export class DjinnListWindow {
         this.init_djinn_sprites();
         this.init_djinni_status_texts();
         this.set_control();
+    }
+
+    get_highlight_bar() {
+        const bar_highlight = this.game.add.graphics(0, 0);
+        bar_highlight.blendMode = PIXI.blendModes.SCREEN;
+        this.group.add(bar_highlight);
+        bar_highlight.beginFill(this.base_window.color, 1);
+        bar_highlight.drawRect(0, 0, HIGHLIGHT_WIDTH, HIGHLIGHT_HEIGHT);
+        bar_highlight.endFill();
+        return bar_highlight;
     }
 
     update_position() {
@@ -106,7 +113,7 @@ export class DjinnListWindow {
             }
         }, this, this.enter_propagation_priority);
         data.shift_input.add(() => {
-            if (!this.window_open || !this.window_active) return;
+            if (!this.window_open || !this.window_active || this.setting_djinn_status) return;
             this.data.shift_input.halt();
             this.change_djinn_status(this.selected_char_index, this.selected_djinn_index);
         }, this, this.shift_propagation_priority);
@@ -305,6 +312,13 @@ export class DjinnListWindow {
             this.page_number_bar_highlight.x = HIGHLIGHT_X_PADDING + this.selected_char_index * DJINN_NAME_BETWEEN;
             this.page_number_bar_highlight.y = HIGHLIGHT_Y_PADDING + this.selected_djinn_index * numbers.FONT_SIZE;
         }
+        if (this.setting_djinn_status && this.selected_char_index !== this.setting_djinn_status_char_index) {
+            this.on_action_bar_highlight.alpha = 1;
+            this.on_action_bar_highlight.x = HIGHLIGHT_X_PADDING + this.setting_djinn_status_char_index * DJINN_NAME_BETWEEN;
+            this.on_action_bar_highlight.y = HIGHLIGHT_Y_PADDING + this.setting_djinn_status_djinn_index * numbers.FONT_SIZE;
+        } else {
+            this.on_action_bar_highlight.alpha = 0;
+        }
     }
 
     update_djinn_description() {
@@ -429,6 +443,7 @@ export class DjinnListWindow {
         this.setting_djinn_status_char_index = -1;
         this.setting_djinn_status_djinn_index = -1;
         this.setting_djinn_status = false;
+        this.set_highlight_bar();
         this.set_action_text();
         this.update_djinn_description();
         this.set_djinn_sprite();
