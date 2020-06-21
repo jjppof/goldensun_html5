@@ -11,7 +11,7 @@ export const event_types = {
 };
 
 export class TileEvent {
-    constructor(type, x, y, activation_directions, activation_collision_layers, dynamic, active) {
+    constructor(type, x, y, activation_directions, activation_collision_layers, dynamic, active, origin_interactable_object) {
         this.type = type;
         this.x = x;
         this.y = y;
@@ -24,6 +24,7 @@ export class TileEvent {
         this.activation_directions = Array.isArray(activation_directions) ? activation_directions : [activation_directions];
         this.dynamic = dynamic;
         this.active = Array.isArray(active) ? active : new Array(this.activation_directions.length).fill(active);
+        this.origin_interactable_object = origin_interactable_object === undefined ? null : origin_interactable_object;
         TileEvent.events[this.id] = this;
     }
 
@@ -74,22 +75,24 @@ export class TileEvent {
 TileEvent.reset();
 
 export class StairEvent extends TileEvent {
-    constructor(x, y, activation_directions, activation_collision_layers, dynamic, active, change_to_collision_layer) {
-        super(event_types.STAIR, x, y, activation_directions, activation_collision_layers, dynamic, active);
+    constructor(x, y, activation_directions, activation_collision_layers, dynamic, active, change_to_collision_layer, is_set, origin_interactable_object, climbing_only) {
+        super(event_types.STAIR, x, y, activation_directions, activation_collision_layers, dynamic, active, origin_interactable_object);
         this.change_to_collision_layer = change_to_collision_layer;
+        this.is_set = is_set === undefined ? true : is_set;
+        this.climbing_only = climbing_only === undefined ? false : climbing_only;
     }
 }
 
 export class SpeedEvent extends TileEvent {
     constructor(x, y, activation_directions, activation_collision_layers, dynamic, active, speed) {
-        super(event_types.SPEED, x, y, activation_directions, activation_collision_layers, dynamic, active);
+        super(event_types.SPEED, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
         this.speed = speed;
     }
 }
 
 export class DoorEvent extends TileEvent {
     constructor(x, y, activation_directions, activation_collision_layers, dynamic, active, target, x_target, y_target, advance_effect, dest_collider_layer) {
-        super(event_types.DOOR, x, y, activation_directions, activation_collision_layers, dynamic, active);
+        super(event_types.DOOR, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
         this.target = target;
         this.x_target = x_target;
         this.y_target = y_target;
@@ -100,7 +103,7 @@ export class DoorEvent extends TileEvent {
 
 export class JumpEvent extends TileEvent {
     constructor(x, y, activation_directions, activation_collision_layers, dynamic, active, is_set) {
-        super(event_types.JUMP, x, y, activation_directions, activation_collision_layers, dynamic, active);
+        super(event_types.JUMP, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
         this.is_set = is_set;
     }
 
@@ -147,14 +150,14 @@ export class JumpEvent extends TileEvent {
 
 export class StepEvent extends TileEvent {
     constructor(x, y, activation_directions, activation_collision_layers, dynamic, active, step_direction) {
-        super(event_types.STEP, x, y, activation_directions, activation_collision_layers, dynamic, active);
+        super(event_types.STEP, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
         this.step_direction = step_direction;
     }
 }
 
 export class CollisionEvent extends TileEvent {
     constructor(x, y, activation_directions, activation_collision_layers, dynamic, active, dest_collider_layer) {
-        super(event_types.COLLISION, x, y, activation_directions, activation_collision_layers, dynamic, active);
+        super(event_types.COLLISION, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
         this.dest_collider_layer = dest_collider_layer;
     }
 }

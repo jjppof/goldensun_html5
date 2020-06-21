@@ -10,6 +10,7 @@ export const interactable_object_types = {
 export const interactable_object_event_types = {
     JUMP: "jump",
     JUMP_AROUND: "jump_around",
+    STAIR: "stair"
 };
 
 export class InteractableObjects_Sprite extends SpriteBase {
@@ -31,7 +32,9 @@ export class InteractableObjects {
         this.events_info = {};
         this.current_x = x;
         this.current_y = y;
-        this.custom_data = {};
+        this.custom_data = {
+            collision_tiles_bodies: []
+        };
     }
 
     set_sprite(sprite) {
@@ -46,7 +49,7 @@ export class InteractableObjects {
         }
         for (let i = 0; i < this.allowed_tiles.length; ++i) {
             const tile = this.allowed_tiles[i];
-            if (tile.x === x && tile.y === y) return true;
+            if (tile.x === x && tile.y === y && tile.collision_layer === data.map_collider_layer) return true;
         }
         return false;
     }

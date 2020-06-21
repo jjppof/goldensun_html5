@@ -3,6 +3,7 @@ import * as numbers from '../magic_numbers.js';
 import { get_transition_directions, check_isdown } from '../utils.js';
 import { main_char_list } from '../initializers/main_chars.js';
 import { normal_push } from '../interactable_objects/push.js';
+import { TileEvent, event_types } from '../base/TileEvent.js';
 
 export function config_physics_for_hero(data, initialize = true) {
     if (initialize) data.heroCollisionGroup = game.physics.p2.createCollisionGroup(); //groups only need to be created once
@@ -142,23 +143,35 @@ export function collision_dealer(data) {
                         data.trying_to_push = true;
                         if (data.push_timer === null) {
                             data.trying_to_push_direction = data.actual_direction;
-                            let item_position = interactable_object.get_current_position(data);
-                            switch (data.trying_to_push_direction) {
-                                case "up":
-                                    item_position.y -= 1;
-                                    break;
-                                case "down":
-                                    item_position.y += 1;
-                                    break;
-                                case "left":
-                                    item_position.x -= 1;
-                                    break;
-                                case "right":
-                                    item_position.x += 1;
-                                    break;
+                            const events_in_pos = maps[data.map_name].events[TileEvent.get_location_key(data.hero_tile_pos_x, data.hero_tile_pos_y)];
+                            let has_stair = false;
+                            if (events_in_pos) {
+                                events_in_pos.forEach(event => {
+                                    if (event.type === event_types.STAIR && event.is_set && event.activation_directions.includes(data.trying_to_push_direction)) {
+                                        has_stair = true;
+                                        return;
+                                    }
+                                });
                             }
-                            if (interactable_object.position_allowed(data, item_position.x, item_position.y)) {
-                                data.push_timer = game.time.events.add(Phaser.Timer.QUARTER, normal_push.bind(this, data, interactable_object));
+                            if (!has_stair) {
+                                let item_position = interactable_object.get_current_position(data);
+                                switch (data.trying_to_push_direction) {
+                                    case "up":
+                                        item_position.y -= 1;
+                                        break;
+                                    case "down":
+                                        item_position.y += 1;
+                                        break;
+                                    case "left":
+                                        item_position.x -= 1;
+                                        break;
+                                    case "right":
+                                        item_position.x += 1;
+                                        break;
+                                }
+                                if (interactable_object.position_allowed(data, item_position.x, item_position.y)) {
+                                    data.push_timer = game.time.events.add(Phaser.Timer.QUARTER, normal_push.bind(this, data, interactable_object));
+                                }
                             }
                         }
                         break;

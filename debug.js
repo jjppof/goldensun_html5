@@ -43,7 +43,12 @@ export function set_debug_info(game, data) {
             game.debug.text(`x: ${mouse_x}, y: ${mouse_y}`, 140, 15, "#00ff00");
             const event_key = mouse_x + "_" + mouse_y;
             if (event_key in maps[data.map_name].events) {
-                document.getElementById("object_inspector").innerText = JSON.stringify(maps[data.map_name].events[event_key], null, 4);
+                const events = maps[data.map_name].events[event_key].map(event => {
+                    return Object.assign({}, event, {
+                        ...(event.origin_interactable_object && { origin_interactable_object: `[${event.origin_interactable_object.key_name}]` })
+                    });
+                });
+                document.getElementById("object_inspector").innerText = JSON.stringify(events, null, 4);
             }
         } else {
             game.debug.text(`x: --, y: --`, 140, 15, "#00ff00");

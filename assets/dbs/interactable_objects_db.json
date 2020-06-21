@@ -27,7 +27,19 @@
         "psynergy_keys": ["move"],
         "pushable": true,
         "events": [{
-            "type": "stair"
+            "type": "stair",
+            "active": true,
+            "dynamic": true,
+            "is_set": true,
+            "collision_tiles": [
+                {"x": -1, "y": 0},
+                {"x": -1, "y": -1},
+                {"x": 0, "y": -2},
+                {"x": 1, "y": -1},
+                {"x": 1, "y": 0},
+                {"x": 0, "y": 1}
+            ],
+            "last_y_shift": -2
         }, {
             "type": "jump",
             "active": true,

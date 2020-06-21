@@ -321,6 +321,58 @@ export class Map {
                                 });
                                 interactable_object_info.events_info[event_info.type] = event_info;
                                 break;
+                            case interactable_object_event_types.STAIR:
+                                const events_data = [
+                                    {
+                                        x: x_pos,
+                                        y: y_pos + 1,
+                                        activation_directions: ["up"],
+                                        activation_collision_layers: [interactable_object_info.base_collider_layer],
+                                        change_to_collision_layer: interactable_object_info.base_collider_layer,
+                                        climbing_only: false
+                                    },{
+                                        x: x_pos,
+                                        y: y_pos,
+                                        activation_directions: ["down"],
+                                        activation_collision_layers: [interactable_object_info.base_collider_layer],
+                                        change_to_collision_layer: interactable_object_info.base_collider_layer,
+                                        climbing_only: true
+                                    },{
+                                        x: x_pos,
+                                        y: y_pos + event_info.last_y_shift + 1,
+                                        activation_directions: ["up"],
+                                        activation_collision_layers: [interactable_object_info.base_collider_layer],
+                                        change_to_collision_layer: target_layer,
+                                        climbing_only: true
+                                    },{
+                                        x: x_pos,
+                                        y: y_pos + event_info.last_y_shift,
+                                        activation_directions: ["down"],
+                                        activation_collision_layers: [target_layer],
+                                        change_to_collision_layer: interactable_object_info.base_collider_layer,
+                                        climbing_only: false
+                                    }
+                                ];
+                                events_data.forEach(event_data => {
+                                    const this_location_key = TileEvent.get_location_key(event_data.x, event_data.y);
+                                    if (!(this_location_key in this.events)) {
+                                        this.events[this_location_key] = [];
+                                    }
+                                    const new_event = new StairEvent(event_data.x, event_data.y,
+                                        event_data.activation_directions,
+                                        event_data.activation_collision_layers,
+                                        event_info.dynamic,
+                                        active_event,
+                                        event_data.change_to_collision_layer,
+                                        event_info.is_set,
+                                        interactable_object_info,
+                                        event_data.climbing_only
+                                    );
+                                    this.events[this_location_key].push(new_event);
+                                    interactable_object_info.insert_event(new_event.id);
+                                });
+                                interactable_object_info.events_info[event_info.type] = event_info;
+                                break;
                         }
                     }
                     resolve();
