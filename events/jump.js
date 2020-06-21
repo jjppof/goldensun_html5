@@ -97,6 +97,8 @@ export function jump_event(data, current_event) {
     const hero_y = maps[data.map_name].sprite.tileHeight * (next_position.y + 0.5);
     if (direction === "x") {
         tween_obj.y = [hero_y - 5, hero_y - 8, hero_y - 5, hero_y];
+    } else {
+        tween_obj.x = hero_x;
     }
     game.physics.p2.pause();
     data.hero.loadTexture(data.hero_name + "_jump");
