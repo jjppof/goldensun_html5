@@ -170,7 +170,7 @@ function preload() {
     game.time.advancedTiming = true;
     game.stage.smoothed = false;
     game.camera.roundPx = true;
-    game.renderer.renderSession.roundPixels = false;
+    game.renderer.renderSession.roundPixels = true;
 
     game.camera.fade(0x0, 1);
 }
