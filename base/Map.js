@@ -178,7 +178,8 @@ export class Map {
                     property_info.allowed_tiles === undefined ? [] : property_info.allowed_tiles,
                     property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer,
                     property_info.collide_layer_shift,
-                    property_info.not_allowed_tiles
+                    property_info.not_allowed_tiles,
+                    property_info.object_drop_tiles
                 );
                 this.interactable_objects.push(interactable_object);
                 if (interactable_object.type === interactable_object_types.FROST) {
@@ -288,6 +289,9 @@ export class Map {
                                 this.events[this_event_location_key].push(new_event);
                                 interactable_object_info.insert_event(new_event.id);
                                 interactable_object_info.events_info[event_info.type] = event_info;
+                                interactable_object_info.collision_change_functions.push(() => {
+                                    new_event.activation_collision_layers = [interactable_object_info.base_collider_layer + interactable_object_info.collide_layer_shift];
+                                });
                                 break;
                             case interactable_object_event_types.JUMP_AROUND:
                                 let is_set = event_info.is_set === undefined ? true: event_info.is_set;
@@ -318,6 +322,9 @@ export class Map {
                                     );
                                     this.events[this_event_location_key].push(new_event);
                                     interactable_object_info.insert_event(new_event.id);
+                                    interactable_object_info.collision_change_functions.push(() => {
+                                        new_event.activation_collision_layers = [interactable_object_info.base_collider_layer];
+                                    });
                                 });
                                 interactable_object_info.events_info[event_info.type] = event_info;
                                 break;
@@ -329,28 +336,44 @@ export class Map {
                                         activation_directions: ["up"],
                                         activation_collision_layers: [interactable_object_info.base_collider_layer],
                                         change_to_collision_layer: interactable_object_info.base_collider_layer,
-                                        climbing_only: false
+                                        climbing_only: false,
+                                        collision_change_function: (event) => {
+                                            event.activation_collision_layers = [interactable_object_info.base_collider_layer];
+                                            event.change_to_collision_layer = interactable_object_info.base_collider_layer;
+                                        }
                                     },{
                                         x: x_pos,
                                         y: y_pos,
                                         activation_directions: ["down"],
                                         activation_collision_layers: [interactable_object_info.base_collider_layer],
                                         change_to_collision_layer: interactable_object_info.base_collider_layer,
-                                        climbing_only: true
+                                        climbing_only: true,
+                                        collision_change_function: (event) => {
+                                            event.activation_collision_layers = [interactable_object_info.base_collider_layer];
+                                            event.change_to_collision_layer = interactable_object_info.base_collider_layer;
+                                        }
                                     },{
                                         x: x_pos,
                                         y: y_pos + event_info.last_y_shift + 1,
                                         activation_directions: ["up"],
                                         activation_collision_layers: [interactable_object_info.base_collider_layer],
                                         change_to_collision_layer: target_layer,
-                                        climbing_only: true
+                                        climbing_only: true,
+                                        collision_change_function: (event) => {
+                                            event.activation_collision_layers = [interactable_object_info.base_collider_layer];
+                                            event.change_to_collision_layer = interactable_object_info.base_collider_layer + interactable_object_info.collide_layer_shift;
+                                        }
                                     },{
                                         x: x_pos,
                                         y: y_pos + event_info.last_y_shift,
                                         activation_directions: ["down"],
                                         activation_collision_layers: [target_layer],
                                         change_to_collision_layer: interactable_object_info.base_collider_layer,
-                                        climbing_only: false
+                                        climbing_only: false,
+                                        collision_change_function: (event) => {
+                                            event.activation_collision_layers = [interactable_object_info.base_collider_layer + interactable_object_info.collide_layer_shift];
+                                            event.change_to_collision_layer = interactable_object_info.base_collider_layer;
+                                        }
                                     }
                                 ];
                                 events_data.forEach(event_data => {
@@ -370,6 +393,7 @@ export class Map {
                                     );
                                     this.events[this_location_key].push(new_event);
                                     interactable_object_info.insert_event(new_event.id);
+                                    interactable_object_info.collision_change_functions.push(event_data.collision_change_function.bind(null, new_event));
                                 });
                                 interactable_object_info.events_info[event_info.type] = event_info;
                                 break;
