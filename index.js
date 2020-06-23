@@ -398,7 +398,7 @@ function update() {
             set_actual_action(data); //chooses which sprite the hero shall assume
             data.delta_time = game.time.elapsedMS/numbers.DELTA_TIME_FACTOR;
             physics.calculate_hero_speed(data);
-            physics.collision_dealer(data);
+            physics.collision_dealer(game, data);
             change_hero_sprite(data);
 
             update_shadow(data);

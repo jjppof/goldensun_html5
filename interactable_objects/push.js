@@ -3,19 +3,23 @@ import { maps } from '../initializers/maps.js';
 import { TileEvent, event_types, JumpEvent } from "../base/TileEvent.js";
 import { get_surroundings, get_opposite_direcion } from "../utils.js";
 
-export function normal_push(data, interactable_object) {
+const dust_count = 7;
+const dust_radius = 18;
+const frames = Phaser.Animation.generateFrameNames('dust/', 0, 7, '', 2);
+
+export function normal_push(game, data, interactable_object) {
     if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.actual_direction && !data.casting_psynergy && !data.jumping) {
-        fire_push_movement(data, interactable_object);
+        fire_push_movement(game, data, interactable_object);
     }
     data.trying_to_push = false;
     data.push_timer = null;
 }
 
-export function target_only_push(data, interactable_object, before_move, push_end) {
-    fire_push_movement(data, interactable_object, push_end, before_move, true);
+export function target_only_push(game, data, interactable_object, before_move, push_end) {
+    fire_push_movement(game, data, interactable_object, push_end, before_move, true);
 }
 
-export function fire_push_movement(data, interactable_object, push_end, before_move, target_only = false) {
+export function fire_push_movement(game, data, interactable_object, push_end, before_move, target_only = false) {
     let expected_position;
     if (!target_only) {
         let positive_limit = data.hero.x + (-interactable_object.interactable_object_sprite.y - interactable_object.interactable_object_sprite.x);
@@ -98,7 +102,17 @@ export function fire_push_movement(data, interactable_object, push_end, before_m
                         drop_tile.animation_duration,
                         Phaser.Easing.Quadratic.In,
                         true
-                        ).onComplete.addOnce(promise_resolve);
+                        ).onComplete.addOnce(() => {
+                            if (drop_tile.dust_animation) {
+                                data.actual_action = "idle";
+                                data.hero.loadTexture(data.hero_name + "_" + data.actual_action);
+                                main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
+                                data.hero.animations.play(data.actual_action + "_" + data.actual_direction);
+                                dust_animation(game, data, interactable_object, promise_resolve);
+                            } else {
+                                promise_resolve();
+                            }
+                        });
                         return;
                     }
                 });
@@ -158,4 +172,37 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
             }
         }
     }
+}
+
+function dust_animation(game, data, interactable_object, promise_resolve) {
+    let promises = new Array(dust_count);
+    let sprites = new Array(dust_count);
+    const origin_x = (interactable_object.current_x + 0.5) * maps[data.map_name].sprite.tileWidth;
+    const origin_y = (interactable_object.current_y + 0.5) * maps[data.map_name].sprite.tileHeight;
+    for (let i = 0; i < dust_count; ++i) {
+        const this_angle = (Math.PI + numbers.degree60) * i/(dust_count - 1) - numbers.degree30;
+        const x = origin_x + dust_radius * Math.cos(this_angle);
+        const y = origin_y + dust_radius * Math.sin(this_angle);
+        let dust_sprite = data.npc_group.create(origin_x, origin_y, 'dust');
+        if (this_angle < 0 || this_angle > Math.PI) {
+            data.npc_group.setChildIndex(dust_sprite, data.npc_group.getChildIndex(interactable_object.interactable_object_sprite));
+        }
+        dust_sprite.anchor.setTo(0.5, 0.5);
+        game.add.tween(dust_sprite).to({
+            x: x,
+            y: y
+        }, 400, Phaser.Easing.Linear.In, true);
+        sprites[i] = dust_sprite;
+        dust_sprite.animations.add('anim', frames, 12, false, false);
+        let resolve_func;
+        promises[i] = new Promise(resolve => { resolve_func = resolve; });
+        dust_sprite.animations.currentAnim.onComplete.addOnce(resolve_func);
+        dust_sprite.animations.play('anim');
+    }
+    Promise.all(promises).then(() => {
+        sprites.forEach(sprite => {
+            data.npc_group.remove(sprite, true);
+        });
+        promise_resolve();
+    });
 }

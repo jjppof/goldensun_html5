@@ -118,7 +118,7 @@ export function config_collisions(data) { //make the world bodies interact with 
     data.hero.body.collides(data.dynamicEventsCollisionGroup);
 }
 
-export function collision_dealer(data) {
+export function collision_dealer(game, data) {
     let normals = [];
     for (let i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; ++i) {
         let c = game.physics.p2.world.narrowphase.contactEquations[i];
@@ -170,7 +170,7 @@ export function collision_dealer(data) {
                                         break;
                                 }
                                 if (interactable_object.position_allowed(data, item_position.x, item_position.y)) {
-                                    data.push_timer = game.time.events.add(Phaser.Timer.QUARTER, normal_push.bind(this, data, interactable_object));
+                                    data.push_timer = game.time.events.add(Phaser.Timer.QUARTER, normal_push.bind(this, game, data, interactable_object));
                                 }
                             }
                         }

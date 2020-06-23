@@ -91,7 +91,7 @@ export class MoveFieldPsynergy extends SpriteBase {
             let position_allowed = this.target_object.position_allowed(this.data, item_position.x, item_position.y);
             if (position_allowed && !(this.data.hero_tile_pos_x === item_position.x && this.data.hero_tile_pos_y === item_position.y)) {
                 this.controls_active = false;
-                target_only_push(this.data, this.target_object, (x_shift, y_shift) => {
+                target_only_push(this.game, this.data, this.target_object, (x_shift, y_shift) => {
                     const x_target = this.hand_sprite.x + x_shift;
                     const y_target = this.hand_sprite.y + y_shift;
                     game.add.tween(this.hand_sprite).to(
