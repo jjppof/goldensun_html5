@@ -71,6 +71,10 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
         if (before_move !== undefined) {
             before_move(tween_x, tween_y);
         }
+        if (interactable_object.custom_data.blocking_stair_block) {
+            interactable_object.custom_data.blocking_stair_block.x += tween_x;
+            interactable_object.custom_data.blocking_stair_block.y += tween_y;
+        }
         for (let i = 0; i < sprites.length; ++i) {
             let body = sprites[i];
             let dest_x = body.x + tween_x;
@@ -154,7 +158,7 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
         }
         maps[data.map_name].events[new_event_location_key].push(event);
         const new_surroundings = get_surroundings(new_x, new_y, false, 2);
-        JumpEvent.active_jump_surroundings(data, new_surroundings, interactable_object.collide_layer_shift + interactable_object.base_collider_layer);
+        JumpEvent.active_jump_surroundings(data, new_surroundings, interactable_object.collider_layer_shift + interactable_object.base_collider_layer);
         const old_surroundings = get_surroundings(old_x, old_y, false, 2);
         for (let j = 0; j < old_surroundings.length; ++j) {
             const old_surrounding = old_surroundings[j];
@@ -163,7 +167,7 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
                 for (let k = 0; k < maps[data.map_name].events[old_key].length; ++k) {
                     const old_surr_event = maps[data.map_name].events[old_key][k];
                     if (old_surr_event.type === event_types.JUMP) {
-                        const target_layer = interactable_object.collide_layer_shift + interactable_object.base_collider_layer;
+                        const target_layer = interactable_object.collider_layer_shift + interactable_object.base_collider_layer;
                         if (old_surr_event.activation_collision_layers.includes(target_layer) && old_surr_event.dynamic === false) {
                             old_surr_event.deactivate_at(get_opposite_direcion(old_surrounding.direction));
                         }

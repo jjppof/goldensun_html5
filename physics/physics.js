@@ -43,6 +43,7 @@ export function config_physics_for_npcs(data, only_set_groups = false) {
 export function config_physics_for_interactable_objects(data, only_set_groups = false) {
     for (let i = 0; i < maps[data.map_name].interactable_objects.length; ++i) {
         let interactable_object = maps[data.map_name].interactable_objects[i];
+        if (data.interactable_objects_db[interactable_object.key_name].body_radius === 0) continue;
         if (!(interactable_object.base_collider_layer in data.interactableObjectCollisionGroups)) {
             data.interactableObjectCollisionGroups[interactable_object.base_collider_layer] = game.physics.p2.createCollisionGroup(); //groups only need to be created once
         }
@@ -59,6 +60,9 @@ export function config_physics_for_interactable_objects(data, only_set_groups = 
         interactable_object.interactable_object_sprite.body.fixedRotation = true; //disalble npm collision body rotation
         interactable_object.interactable_object_sprite.body.dynamic = false;
         interactable_object.interactable_object_sprite.body.static = true;
+        if (interactable_object.custom_data.block_stair_collider_layer_shift !== undefined) {
+            interactable_object.creating_blocking_stair_block(data);
+        }
     }
 }
 
@@ -113,6 +117,7 @@ export function config_collisions(data) { //make the world bodies interact with 
     for (let i = 0; i < data.npc_group.children.length; ++i) {
         let sprite = data.npc_group.children[i];
         if (!sprite.is_npc && !sprite.is_interactable_object) continue;
+        if (!sprite.body) continue;
         sprite.body.collides(data.heroCollisionGroup);
     }
     data.hero.body.collides(data.dynamicEventsCollisionGroup);
@@ -136,6 +141,7 @@ export function collision_dealer(game, data) {
         let j = 0;
         for (j = 0; j < maps[data.map_name].interactable_objects.length; ++j) {  //check if hero is colliding with any interactable object
             let interactable_object_body = maps[data.map_name].interactable_objects[j].interactable_object_sprite.body;
+            if (!interactable_object_body) continue;
             if (c.bodyA === interactable_object_body.data || c.bodyB === interactable_object_body.data) {
                 if (c.bodyA === data.hero.body.data || c.bodyB === data.hero.body.data) {
                     let interactable_object = maps[data.map_name].interactable_objects[j];

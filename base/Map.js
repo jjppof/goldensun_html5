@@ -172,18 +172,23 @@ export class Map {
             } else if(property.startsWith("interactable_object")) {
                 const property_info = JSON.parse(this.sprite.properties[property]);
                 const interactable_object = new InteractableObjects(
+                    game,
                     property_info.key_name,
                     property_info.x,
                     property_info.y,
                     property_info.allowed_tiles === undefined ? [] : property_info.allowed_tiles,
                     property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer,
-                    property_info.collide_layer_shift,
+                    property_info.collider_layer_shift,
                     property_info.not_allowed_tiles,
-                    property_info.object_drop_tiles
+                    property_info.object_drop_tiles,
+                    property_info.intermediate_collider_layer_shift
                 );
                 this.interactable_objects.push(interactable_object);
-                if (interactable_object.type === interactable_object_types.FROST) {
+                if (data.interactable_objects_db[property_info.key_name].type === interactable_object_types.FROST) {
                     interactable_object.custom_data.frost_casted = false;
+                }
+                if (data.interactable_objects_db[property_info.key_name].type === interactable_object_types.MOVE && property_info.block_stair_collider_layer_shift !== undefined) {
+                    interactable_object.custom_data.block_stair_collider_layer_shift = property_info.block_stair_collider_layer_shift;
                 }
             }
         }
@@ -265,11 +270,11 @@ export class Map {
                         const event_info = interactable_objects_db[interactable_object_info.key_name].events[j];
                         x_pos += event_info.x_shift !== undefined ? event_info.x_shift : 0;
                         y_pos += event_info.y_shift !== undefined ? event_info.y_shift : 0;
-                        let collide_layer_shift = event_info.collide_layer_shift !== undefined ? event_info.collide_layer_shift : 0;
-                        collide_layer_shift = interactable_object_info.collide_layer_shift !== undefined ? interactable_object_info.collide_layer_shift : collide_layer_shift;
-                        interactable_object_info.collide_layer_shift = collide_layer_shift;
+                        let collider_layer_shift = event_info.collider_layer_shift !== undefined ? event_info.collider_layer_shift : 0;
+                        collider_layer_shift = interactable_object_info.collider_layer_shift !== undefined ? interactable_object_info.collider_layer_shift : collider_layer_shift;
+                        interactable_object_info.collider_layer_shift = collider_layer_shift;
                         const active_event = event_info.active !== undefined ? event_info.active : true;
-                        const target_layer = interactable_object_info.base_collider_layer + collide_layer_shift;
+                        const target_layer = interactable_object_info.base_collider_layer + collider_layer_shift;
                         switch (event_info.type) {
                             case interactable_object_event_types.JUMP:
                                 if (not_allowed_tile_test(x_pos, y_pos)) continue;
@@ -290,7 +295,7 @@ export class Map {
                                 interactable_object_info.insert_event(new_event.id);
                                 interactable_object_info.events_info[event_info.type] = event_info;
                                 interactable_object_info.collision_change_functions.push(() => {
-                                    new_event.activation_collision_layers = [interactable_object_info.base_collider_layer + interactable_object_info.collide_layer_shift];
+                                    new_event.activation_collision_layers = [interactable_object_info.base_collider_layer + interactable_object_info.collider_layer_shift];
                                 });
                                 break;
                             case interactable_object_event_types.JUMP_AROUND:
@@ -335,44 +340,44 @@ export class Map {
                                         y: y_pos + 1,
                                         activation_directions: ["up"],
                                         activation_collision_layers: [interactable_object_info.base_collider_layer],
-                                        change_to_collision_layer: interactable_object_info.base_collider_layer,
+                                        change_to_collision_layer: interactable_object_info.base_collider_layer + interactable_object_info.intermediate_collider_layer_shift,
                                         climbing_only: false,
                                         collision_change_function: (event) => {
                                             event.activation_collision_layers = [interactable_object_info.base_collider_layer];
-                                            event.change_to_collision_layer = interactable_object_info.base_collider_layer;
+                                            event.change_to_collision_layer = interactable_object_info.base_collider_layer + interactable_object_info.intermediate_collider_layer_shift;
                                         }
                                     },{
                                         x: x_pos,
                                         y: y_pos,
                                         activation_directions: ["down"],
-                                        activation_collision_layers: [interactable_object_info.base_collider_layer],
+                                        activation_collision_layers: [interactable_object_info.base_collider_layer + interactable_object_info.intermediate_collider_layer_shift],
                                         change_to_collision_layer: interactable_object_info.base_collider_layer,
                                         climbing_only: true,
                                         collision_change_function: (event) => {
-                                            event.activation_collision_layers = [interactable_object_info.base_collider_layer];
+                                            event.activation_collision_layers = [interactable_object_info.base_collider_layer + interactable_object_info.intermediate_collider_layer_shift];
                                             event.change_to_collision_layer = interactable_object_info.base_collider_layer;
                                         }
                                     },{
                                         x: x_pos,
                                         y: y_pos + event_info.last_y_shift + 1,
                                         activation_directions: ["up"],
-                                        activation_collision_layers: [interactable_object_info.base_collider_layer],
+                                        activation_collision_layers: [interactable_object_info.base_collider_layer + interactable_object_info.intermediate_collider_layer_shift],
                                         change_to_collision_layer: target_layer,
                                         climbing_only: true,
                                         collision_change_function: (event) => {
-                                            event.activation_collision_layers = [interactable_object_info.base_collider_layer];
-                                            event.change_to_collision_layer = interactable_object_info.base_collider_layer + interactable_object_info.collide_layer_shift;
+                                            event.activation_collision_layers = [interactable_object_info.base_collider_layer + interactable_object_info.intermediate_collider_layer_shift];
+                                            event.change_to_collision_layer = interactable_object_info.base_collider_layer + interactable_object_info.collider_layer_shift;
                                         }
                                     },{
                                         x: x_pos,
                                         y: y_pos + event_info.last_y_shift,
                                         activation_directions: ["down"],
                                         activation_collision_layers: [target_layer],
-                                        change_to_collision_layer: interactable_object_info.base_collider_layer,
+                                        change_to_collision_layer: interactable_object_info.base_collider_layer + interactable_object_info.intermediate_collider_layer_shift,
                                         climbing_only: false,
                                         collision_change_function: (event) => {
-                                            event.activation_collision_layers = [interactable_object_info.base_collider_layer + interactable_object_info.collide_layer_shift];
-                                            event.change_to_collision_layer = interactable_object_info.base_collider_layer;
+                                            event.activation_collision_layers = [interactable_object_info.base_collider_layer + interactable_object_info.collider_layer_shift];
+                                            event.change_to_collision_layer = interactable_object_info.base_collider_layer + interactable_object_info.intermediate_collider_layer_shift;
                                         }
                                     }
                                 ];

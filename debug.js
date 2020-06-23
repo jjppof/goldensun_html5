@@ -4,10 +4,17 @@ export function toggle_debug(data) {
     for (let i = 0; i < data.npc_group.children.length; ++i) {
         let sprite = data.npc_group.children[i];
         if (!sprite.is_npc && !sprite.is_interactable_object) continue;
+        if (!sprite.body) continue;
         sprite.body.debug = !sprite.body.debug;
     }
     for (let i = 0; i < data.dynamic_jump_events_bodies.length; ++i) {
         data.dynamic_jump_events_bodies[i].debug = !data.dynamic_jump_events_bodies[i].debug;
+    }
+    for (let i = 0; i < maps[data.map_name].interactable_objects.length; ++i) {
+        const interactable_object = maps[data.map_name].interactable_objects[i];
+        if (interactable_object.custom_data.blocking_stair_block) {
+            interactable_object.custom_data.blocking_stair_block.debug = !interactable_object.custom_data.blocking_stair_block.debug;
+        }
     }
     data.debug = !data.debug;
 }

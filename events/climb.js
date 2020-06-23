@@ -52,10 +52,18 @@ export function climbing_event(game, data, current_event, activation_direction) 
             event: current_event
         }
         game.physics.p2.pause();
-        if (current_event.change_to_collision_layer !== null) {
-            collision.change_map_body(data, current_event.change_to_collision_layer);
-        }
         if (activation_direction === "up") {
+            for (let i = 0; i < maps[data.map_name].interactable_objects.length; ++i) {
+                const next_interactable_object = maps[data.map_name].interactable_objects[i];
+                if (next_interactable_object.current_x !== current_event.x || next_interactable_object.current_y !== current_event.y - 1) continue;
+                if (current_event.change_to_collision_layer !== next_interactable_object.base_collider_layer) continue;
+                data.climbing_event_data = null;
+                game.physics.p2.resume();
+                return;
+            }
+            if (current_event.change_to_collision_layer !== null) {
+                collision.change_map_body(data, current_event.change_to_collision_layer);
+            }
             data.on_event = true;
             data.hero.animations.play("climb_end", 8, false, false);
             data.shadow.visible = false;
@@ -67,6 +75,9 @@ export function climbing_event(game, data, current_event, activation_direction) 
                 true
             );
         } else if (activation_direction === "down") {
+            if (current_event.change_to_collision_layer !== null) {
+                collision.change_map_body(data, current_event.change_to_collision_layer);
+            }
             data.on_event = true;
             data.hero.loadTexture(data.hero_name + "_idle");
             main_char_list[data.hero_name].setAnimation(data.hero, "idle");

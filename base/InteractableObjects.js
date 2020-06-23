@@ -1,10 +1,12 @@
 import { SpriteBase } from "./SpriteBase.js";
 import { maps } from '../initializers/maps.js';
 import { TileEvent } from "./TileEvent.js";
+import * as numbers from '../magic_numbers.js';
 
 export const interactable_object_types = {
     MOVE: "move",
     FROST: "frost",
+    GROWTH: "growth"
 };
 
 export const interactable_object_event_types = {
@@ -20,13 +22,15 @@ export class InteractableObjects_Sprite extends SpriteBase {
 }
 
 export class InteractableObjects {
-    constructor(key_name, x, y, allowed_tiles, base_collider_layer, collide_layer_shift, not_allowed_tiles, object_drop_tiles) {
+    constructor(game, key_name, x, y, allowed_tiles, base_collider_layer, collider_layer_shift, not_allowed_tiles, object_drop_tiles, intermediate_collider_layer_shift) {
+        this.game = game;
         this.key_name = key_name;
         this.x = x;
         this.y = y;
         this.allowed_tiles = allowed_tiles;
         this.base_collider_layer = base_collider_layer;
-        this.collide_layer_shift = collide_layer_shift;
+        this.collider_layer_shift = collider_layer_shift;
+        this.intermediate_collider_layer_shift = intermediate_collider_layer_shift === undefined ? 0 : intermediate_collider_layer_shift;
         this.not_allowed_tiles = not_allowed_tiles === undefined ? [] : not_allowed_tiles;
         this.object_drop_tiles = object_drop_tiles === undefined ? [] : object_drop_tiles;
         this.events = new Set();
@@ -80,5 +84,28 @@ export class InteractableObjects {
 
     remove_event(id) {
         this.events.delete(id);
+    }
+
+    creating_blocking_stair_block(data) {
+        const target_layer = this.base_collider_layer + this.custom_data.block_stair_collider_layer_shift;
+        const x_pos = (this.current_x + .5) * maps[data.map_name].sprite.tileWidth;
+        const y_pos = (this.current_y + 1.5) * maps[data.map_name].sprite.tileHeight - 4;
+        let body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
+        body.clearShapes();
+        const width = data.interactable_objects_db[this.key_name].body_radius * 2;
+        body.setRectangle(width, width, 0, 0);
+        if (!(target_layer in data.interactableObjectCollisionGroups)) {
+            data.interactableObjectCollisionGroups[target_layer] = this.game.physics.p2.createCollisionGroup();
+        }
+        body.setCollisionGroup(data.interactableObjectCollisionGroups[target_layer]);
+        body.damping = numbers.MAP_DAMPING;
+        body.angularDamping = numbers.MAP_DAMPING;
+        body.setZeroRotation();
+        body.fixedRotation = true;
+        body.dynamic = false;
+        body.static = true;
+        body.debug = data.hero.body.debug;
+        body.collides(data.heroCollisionGroup);
+        this.custom_data.blocking_stair_block = body;
     }
 }

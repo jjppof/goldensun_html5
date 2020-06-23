@@ -8,7 +8,7 @@
         "events": [{
             "type": "jump",
             "active": true,
-            "collide_layer_shift": 1,
+            "collider_layer_shift": 1,
             "x_shift": 0,
             "y_shift": -2,
             "dynamic": true
@@ -43,7 +43,7 @@
         }, {
             "type": "jump",
             "active": true,
-            "collide_layer_shift": 1,
+            "collider_layer_shift": 1,
             "x_shift": 0,
             "y_shift": -2,
             "dynamic": true
@@ -67,12 +67,12 @@
         "events": [{
             "type": "jump_around",
             "active": true,
-            "collide_layer_shift": 0,
+            "collider_layer_shift": 0,
             "dynamic": false
         }, {
             "type": "jump",
             "active": false,
-            "collide_layer_shift": 1,
+            "collider_layer_shift": 1,
             "x_shift": 0,
             "y_shift": -2,
             "dynamic": true,
@@ -82,6 +82,30 @@
         "actions": {
             "frame_rate": 5,
             "animations": ["pool", "pillar"],
+            "frames_count": [2, 6]
+        }
+    },
+    "growth": {
+        "type": "growth",
+        "anchor_y": 0.8,
+        "anchor_x": 0.5,
+        "shift_x": -8,
+        "shift_y": -4,
+        "body_radius": 0,
+        "psynergy_keys": ["growth"],
+        "pushable": false,
+        "events": [{
+            "type": "stair",
+            "active": false,
+            "dynamic": false,
+            "is_set": true,
+            "collision_tiles": [],
+            "last_y_shift": -3
+        }],
+        "initial_animation": "sprout",
+        "actions": {
+            "frame_rate": 3,
+            "animations": ["sprout", "growing"],
             "frames_count": [2, 6]
         }
     }
