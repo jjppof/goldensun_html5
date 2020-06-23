@@ -20,7 +20,7 @@ An online Golden Sun Engine built in HTML5 with Phaser.
 GSHTML5 has no external dependency, so there's no `npm install` or packages on CDN, etc. It's a standalone. Just clone the project and run it into a http server. I would recommend these steps:
 - Clone the project;
 - Download [node.js](https://nodejs.org/en/download/) and install it (make sure you add node.js in the system path);
-- In the terminal, install a quick http server using `npm install http-server -g`;
+- In the terminal, install a light http server using `npm install http-server -g`;
 - In the terminal, go to the root folder of the GSHTML5 you cloned and then run `http-server`;
 - Go to your browser and access the address shown in the terminal (it's probably `http://localhost:8080/`).
 - I strongly reccomend using [Visual Studio Code](https://code.visualstudio.com/download) to develop.
