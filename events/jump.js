@@ -5,7 +5,7 @@ import { event_types, TileEvent } from '../base/TileEvent.js';
 import { get_surroundings, get_opposite_direcion } from '../utils.js';
 
 export function jump_event(data, current_event) {
-    if (!data.stop_by_colliding || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y || data.casting_psynergy || data.pushing || data.climbing || data.jumping) {
+    if (!data.stop_by_colliding || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y || data.casting_psynergy || data.pushing || data.climbing || data.jumping || data.menu_open) {
         return;
     }
     let jump_offset = numbers.JUMP_OFFSET;

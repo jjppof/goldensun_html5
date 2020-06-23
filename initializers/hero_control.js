@@ -72,8 +72,10 @@ export function update_shadow(data) {
     data.shadow.y = data.hero.y;
 }
 
-export function stop_hero(data) {
+export function stop_hero(data, change_sprite = true) {
     data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
-    data.actual_action = "idle";
-    change_hero_sprite(data);
+    if (change_sprite) {
+        data.actual_action = "idle";
+        change_hero_sprite(data);
+    }
 }

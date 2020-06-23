@@ -440,6 +440,7 @@ function update() {
         } else if (data.pushing) {
             change_hero_sprite(data);
         } else if (data.menu_open && data.menu_screen.horizontal_menu.menu_active) {
+            stop_hero(data, false);
             data.menu_screen.update_position();
         }
     } else {
