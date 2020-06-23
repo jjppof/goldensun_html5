@@ -12,7 +12,7 @@ An online Golden Sun Engine built in HTML5 with Phaser.
 - [PhaserJS CE 2.15.0](http://phaser.io/) (game engine)
 - [TexturePacker 4.6.1](https://www.codeandweb.com/texturepacker) (optional for creating spritesheets)
 - [PhysicsEditor 1.6.3](https://www.codeandweb.com/physicseditor) (optional for creating collision structures)
-- [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579))
+- [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579)) (for building maps)
 - [Shoebox](https://renderhjs.net/shoebox/) (optional for creating fonts)
 
 ## Development environment
