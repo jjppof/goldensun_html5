@@ -101266,8 +101266,13 @@ Phaser.Physics.P2.Body.prototype = {
     postUpdate: function ()
     {
 
-        this.sprite.x = this.world.mpxi(this.data.position[0]) + this.offset.x;
-        this.sprite.y = this.world.mpxi(this.data.position[1]) + this.offset.y;
+        if (this.sprite.roundPx) {
+            this.sprite.x = Math.floor(this.world.mpxi(this.data.position[0]) + this.offset.x);
+            this.sprite.y = Math.floor(this.world.mpxi(this.data.position[1]) + this.offset.y);
+        } else {
+            this.sprite.x = this.world.mpxi(this.data.position[0]) + this.offset.x;
+            this.sprite.y = this.world.mpxi(this.data.position[1]) + this.offset.y;
+        }
 
         if (!this.fixedRotation)
         {
