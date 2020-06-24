@@ -67,6 +67,10 @@ export function door_event_phases(data) {
         for (let i = 0; i < data.npc_group.children.length; ++i) {
             let sprite = data.npc_group.children[i];
             if (!sprite.is_npc && !sprite.is_interactable_object) continue;
+            if (sprite.is_interactable_object && sprite.interactable_object.custom_data.blocking_stair_block) {
+                sprite.interactable_object.custom_data.blocking_stair_block.destroy();
+                sprite.interactable_object.custom_data.blocking_stair_block = undefined;
+            }
             sprites_to_remove.push(sprite);
         }
         for (let i = 0; i < sprites_to_remove.length; ++i) {

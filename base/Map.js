@@ -240,6 +240,7 @@ export class Map {
                     interactable_object_info.interactable_object_sprite.is_interactable_object = true;
                     interactable_object_info.interactable_object_sprite.roundPx = true;
                     interactable_object_info.interactable_object_sprite.base_collider_layer = interactable_object_info.base_collider_layer;
+                    interactable_object_info.interactable_object_sprite.interactable_object = interactable_object_info;
                     if (interactable_objects_db[interactable_object_info.key_name].send_to_back !== undefined) { 
                         interactable_object_info.interactable_object_sprite.send_to_back = interactable_objects_db[interactable_object_info.key_name].send_to_back;
                     }
