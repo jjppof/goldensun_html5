@@ -202,15 +202,23 @@ export function collision_dealer(game, data) {
         }
     } else if (normals.length && ["walk", "dash"].includes(data.current_action)) {
         if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) { //speeds below SPEED_LIMIT_TO_STOP are not considered
+            let zero_at_0_pos = false;
+            let zero_at_1_pos = false;
             normals.forEach(normal => {
                 if (Math.abs(normal[0]) < numbers.MINIMAL_SLOPE) normal[0] = 0; //minimal slope to this direction be disregarded
                 if (Math.abs(normal[1]) < numbers.MINIMAL_SLOPE) normal[1] = 0;
+                zero_at_0_pos = zero_at_0_pos || Math.sign(-normal[0]) === Math.sign(data.hero.body.velocity.ask_x);
+                zero_at_1_pos = zero_at_1_pos || Math.sign(-normal[1]) === Math.sign(data.hero.body.velocity.ask_y);
                 if (Math.sign(-normal[0]) === Math.sign(data.hero.body.velocity.ask_x) && Math.sign(-normal[1]) === Math.sign(data.hero.body.velocity.ask_y)) { //check if hero is going against another body, if true, the hero stops
                     if (normal[0] !== 0) data.hero.body.velocity.ask_x = 0;
                     if (normal[1] !== 0) data.hero.body.velocity.ask_y = 0;
                     return;
                 }
             });
+            if (zero_at_0_pos && zero_at_1_pos) {
+                data.hero.body.velocity.ask_x = 0;
+                data.hero.body.velocity.ask_y = 0;
+            }
             data.stop_by_colliding = true;
             data.force_direction = false;
             data.forcing_on_diagonal = false;
