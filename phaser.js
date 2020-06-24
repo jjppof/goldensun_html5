@@ -19902,8 +19902,8 @@ PIXI.WebGLSpriteBatch.prototype.render = function (sprite, matrix)
     var b = wt.b / resolution;
     var c = wt.c / resolution;
     var d = wt.d / resolution;
-    var tx = sprite.roundPx ? wt.tx | 0 : wt.tx;
-    var ty = sprite.roundPx ? wt.ty | 0 : wt.ty;
+    var tx = sprite.roundPx ? Math.ceil(wt.tx) : wt.tx;
+    var ty = sprite.roundPx ? Math.ceil(wt.ty) : wt.ty;
 
     var ch = texture.crop.height;
 
@@ -101267,8 +101267,8 @@ Phaser.Physics.P2.Body.prototype = {
     {
 
         if (this.sprite.roundPx) {
-            this.sprite.x = Math.floor(this.world.mpxi(this.data.position[0]) + this.offset.x);
-            this.sprite.y = Math.floor(this.world.mpxi(this.data.position[1]) + this.offset.y);
+            this.sprite.x = (this.world.mpxi(this.data.position[0]) + this.offset.x) | 0;
+            this.sprite.y = (this.world.mpxi(this.data.position[1]) + this.offset.y) | 0;
         } else {
             this.sprite.x = this.world.mpxi(this.data.position[0]) + this.offset.x;
             this.sprite.y = this.world.mpxi(this.data.position[1]) + this.offset.y;

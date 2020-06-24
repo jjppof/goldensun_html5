@@ -204,12 +204,14 @@ export class MenuScreen {
         this.status_window.update();
         this.update_chars_info();
         this.status_window.show();
+        this.game.camera.roundPx = true;
     }
 
     close_menu() {
         if (!this.is_active()) return;
         this.horizontal_menu.close();
         this.status_window.close();
+        this.game.camera.roundPx = false;
     }
 }
 
