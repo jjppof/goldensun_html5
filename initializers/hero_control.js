@@ -23,7 +23,7 @@ export function config_hero(data) {
     data.shadow.blendMode = PIXI.blendModes.MULTIPLY;
     data.shadow.anchor.setTo(numbers.SHADOW_X_AP, numbers.SHADOW_Y_AP); //shadow anchor point
     data.shadow.base_collider_layer = data.map_collider_layer;
-    data.hero = data.npc_group.create(0, 0, data.hero_name + "_" + data.actual_action);
+    data.hero = data.npc_group.create(0, 0, data.hero_name + "_" + data.current_action);
     data.hero.centerX = parseInt((data.init_db.x_tile_position + 1.5) * maps[data.map_name].sprite.tileWidth); //hero x start position
     data.hero.centerY = parseInt((data.init_db.y_tile_position + 1.5) * maps[data.map_name].sprite.tileHeight); //hero y start position
     data.hero.base_collider_layer = data.map_collider_layer;
@@ -31,12 +31,12 @@ export function config_hero(data) {
     game.camera.follow(data.hero, data.camera_type, numbers.CAMERA_LERP, numbers.CAMERA_LERP); //makes camera follow the data.hero
     game.camera.focusOn(data.hero);
     //config data.hero initial animation state
-    main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
-    data.hero.animations.play(data.actual_action + "_" + data.current_direction);
+    main_char_list[data.hero_name].setAnimation(data.hero, data.current_action);
+    data.hero.animations.play(data.current_action + "_" + data.current_direction);
 }
 
 export function change_hero_sprite(data) {
-    let action = data.actual_action;
+    let action = data.current_action;
     if (data.stop_by_colliding && !data.pushing && !data.climbing) {
         action = "idle";
     }
@@ -52,16 +52,16 @@ export function change_hero_sprite(data) {
     }
 }
 
-export function set_actual_action(data) {
-    if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.actual_action !== "idle" && !data.climbing)
-        data.actual_action = "idle";
+export function set_current_action(data) {
+    if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.current_action !== "idle" && !data.climbing)
+        data.current_action = "idle";
     else if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.current_direction !== "idle" && data.climbing)
         data.current_direction = "idle";
-    else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && (data.actual_action !== "walk" || data.actual_action !== "dash") && !data.climbing) {
-        if (game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "dash") {
-            data.actual_action = "dash";
-        } else if (!game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.actual_action !== "walk") {
-            data.actual_action = "walk";
+    else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && (data.current_action !== "walk" || data.current_action !== "dash") && !data.climbing) {
+        if (game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.current_action !== "dash") {
+            data.current_action = "dash";
+        } else if (!game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.current_action !== "walk") {
+            data.current_action = "walk";
         }
     }
 }
@@ -75,7 +75,7 @@ export function update_shadow(data) {
 export function stop_hero(data, change_sprite = true) {
     data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
     if (change_sprite) {
-        data.actual_action = "idle";
+        data.current_action = "idle";
         change_hero_sprite(data);
     }
 }

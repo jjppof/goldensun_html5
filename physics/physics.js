@@ -149,7 +149,7 @@ export function collision_dealer(game, data) {
             if (c.bodyA === interactable_object_body.data || c.bodyB === interactable_object_body.data) {
                 if (c.bodyA === data.hero.body.data || c.bodyB === data.hero.body.data) {
                     let interactable_object = maps[data.map_name].interactable_objects[j];
-                    if (["walk", "dash"].includes(data.actual_action) && data.map_collider_layer === interactable_object.base_collider_layer) {
+                    if (["walk", "dash"].includes(data.current_action) && data.map_collider_layer === interactable_object.base_collider_layer) {
                         data.trying_to_push = true;
                         if (data.push_timer === null) {
                             data.trying_to_push_direction = data.current_direction;
@@ -194,13 +194,13 @@ export function collision_dealer(game, data) {
         }
     }
     //normals having length means collision happening
-    if (normals.length && data.actual_action === "climb") {
+    if (normals.length && data.current_action === "climb") {
         if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) {
             data.stop_by_colliding = true;
         } else {
             data.stop_by_colliding = false;
         }
-    } else if (normals.length && ["walk", "dash"].includes(data.actual_action)) {
+    } else if (normals.length && ["walk", "dash"].includes(data.current_action)) {
         if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) { //speeds below SPEED_LIMIT_TO_STOP are not considered
             normals.forEach(normal => {
                 if (Math.abs(normal[0]) < numbers.MINIMAL_SLOPE) normal[0] = 0; //minimal slope to this direction be disregarded
@@ -333,23 +333,23 @@ export function collision_dealer(game, data) {
         data.forcing_on_diagonal = false;
     }
 
-    if (["walk", "dash"].includes(data.actual_action)) { //sets the final velocity
+    if (["walk", "dash"].includes(data.current_action)) { //sets the final velocity
         data.hero.body.velocity.x = data.hero.body.velocity.ask_x;
         data.hero.body.velocity.y = data.hero.body.velocity.ask_y;
     }
 }
 
 export function calculate_hero_speed(data) { //when setting ask_x or ask_y, it means that these velocities will still be analyzed in collision_dealer function
-    if (data.actual_action === "dash") {
+    if (data.current_action === "dash") {
         data.hero.body.velocity.ask_x = parseInt(data.delta_time * data.x_speed * (main_char_list[data.hero_name].dash_speed + data.extra_speed));
         data.hero.body.velocity.ask_y = parseInt(data.delta_time * data.y_speed * (main_char_list[data.hero_name].dash_speed + data.extra_speed));
-    } else if(data.actual_action === "walk") {
+    } else if(data.current_action === "walk") {
         data.hero.body.velocity.ask_x = parseInt(data.delta_time * data.x_speed * (main_char_list[data.hero_name].walk_speed + data.extra_speed));
         data.hero.body.velocity.ask_y = parseInt(data.delta_time * data.y_speed * (main_char_list[data.hero_name].walk_speed + data.extra_speed));
-    } else if(data.actual_action === "climb") {
+    } else if(data.current_action === "climb") {
         data.hero.body.velocity.x = parseInt(data.delta_time * data.x_speed * main_char_list[data.hero_name].climb_speed);
         data.hero.body.velocity.y = parseInt(data.delta_time * data.y_speed * main_char_list[data.hero_name].climb_speed);
-    } else if(data.actual_action === "idle") {
+    } else if(data.current_action === "idle") {
         data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
     }
 }

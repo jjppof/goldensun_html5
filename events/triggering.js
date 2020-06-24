@@ -58,7 +58,7 @@ export function event_triggering(game, data, event_key) {
         }
         if (!this_event.is_active(data.current_direction)) continue;
         const right_direction = this_event.activation_directions.includes(data.current_direction);
-        if (right_direction && ["walk", "dash", "climb"].includes(data.actual_action)) {
+        if (right_direction && ["walk", "dash", "climb"].includes(data.current_action)) {
             if (data.event_timers[this_event.id] && !data.event_timers[this_event.id].timer.expired) {
                 continue;
             }

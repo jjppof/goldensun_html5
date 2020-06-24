@@ -37,7 +37,7 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
     if (target_only || expected_position === data.trying_to_push_direction) {
         if (!target_only) {
             data.pushing = true;
-            data.actual_action = "push";
+            data.current_action = "push";
         }
         game.physics.p2.pause();
         let tween_x = 0, tween_y = 0;
@@ -108,10 +108,10 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
                         true
                         ).onComplete.addOnce(() => {
                             if (drop_tile.dust_animation) {
-                                data.actual_action = "idle";
-                                data.hero.loadTexture(data.hero_name + "_" + data.actual_action);
-                                main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
-                                data.hero.animations.play(data.actual_action + "_" + data.current_direction);
+                                data.current_action = "idle";
+                                data.hero.loadTexture(data.hero_name + "_" + data.current_action);
+                                main_char_list[data.hero_name].setAnimation(data.hero, data.current_action);
+                                data.hero.animations.play(data.current_action + "_" + data.current_direction);
                                 dust_animation(game, data, interactable_object, promise_resolve);
                             } else {
                                 promise_resolve();

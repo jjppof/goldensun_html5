@@ -12,7 +12,7 @@ import { do_collision_change } from './events/collision.js';
 import * as climb from './events/climb.js';
 import * as physics from './physics/physics.js';
 import { initialize_menu } from './screens/menu.js';
-import { config_hero, change_hero_sprite, set_actual_action, update_shadow, stop_hero, init_speed_factors } from './initializers/hero_control.js';
+import { config_hero, change_hero_sprite, set_current_action, update_shadow, stop_hero, init_speed_factors } from './initializers/hero_control.js';
 import { TileEvent } from './base/TileEvent.js';
 import { set_debug_info, toggle_debug } from './debug.js';
 import { event_triggering } from './events/triggering.js';
@@ -23,7 +23,7 @@ var data = {
     hero: undefined,
     camera_type: undefined,
     map_collider_layer: undefined,
-    actual_action: "idle",
+    current_action: "idle",
     current_direction: undefined,
     x_speed: 0,
     y_speed: 0,
@@ -395,7 +395,7 @@ function update() {
             }
 
             physics.set_speed_factors(data);
-            set_actual_action(data); //chooses which sprite the hero shall assume
+            set_current_action(data); //chooses which sprite the hero shall assume
             data.delta_time = game.time.elapsedMS/numbers.DELTA_TIME_FACTOR;
             physics.calculate_hero_speed(data);
             physics.collision_dealer(game, data);

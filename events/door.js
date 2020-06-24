@@ -52,7 +52,7 @@ export function door_event_phases(data) {
         main_char_list[data.hero_name].setAnimation(data.hero, "idle");
         data.current_direction = current_event.activation_directions[0];
         data.hero.animations.play("idle_" + data.current_direction);
-        data.actual_action = "idle";
+        data.current_action = "idle";
         game.camera.fade();
         game.camera.onFadeComplete.addOnce(() => {
             data.processing_teleport = true;
