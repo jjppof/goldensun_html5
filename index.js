@@ -24,7 +24,7 @@ var data = {
     camera_type: undefined,
     map_collider_layer: undefined,
     actual_action: "idle",
-    actual_direction: undefined,
+    current_direction: undefined,
     x_speed: 0,
     y_speed: 0,
     hero_name: undefined,
@@ -207,7 +207,7 @@ async function create() {
     data.pasynergy_item_color_filters = game.add.filter('ColorFilters');
 
     data.hero_name = data.init_db.hero_key_name;
-    data.actual_direction = data.init_db.initial_direction;
+    data.current_direction = data.init_db.initial_direction;
     data.map_name = data.init_db.map_key_name;
     data.scale_factor = data.init_db.initial_scale_factor;
     data.map_collider_layer = data.init_db.map_z_index;

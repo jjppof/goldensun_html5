@@ -38,8 +38,8 @@ class EventQueue {
 }
 
 export function fire_event(game, data, current_event, this_activation_direction) {
-    if (data.actual_direction !== this_activation_direction) return;
-    if (current_event.type === event_types.STAIR && data.actual_direction !== "idle") {
+    if (data.current_direction !== this_activation_direction) return;
+    if (current_event.type === event_types.STAIR && data.current_direction !== "idle") {
         climbing_event(game, data, current_event, this_activation_direction);
     } else if (current_event.type === event_types.DOOR) {
         set_door_event(data, current_event, this_activation_direction);
@@ -56,17 +56,17 @@ export function event_triggering(game, data, event_key) {
         if (this_event.type === event_types.JUMP) {
             jump_near_collision(data, this_event);
         }
-        if (!this_event.is_active(data.actual_direction)) continue;
-        const right_direction = this_event.activation_directions.includes(data.actual_direction);
+        if (!this_event.is_active(data.current_direction)) continue;
+        const right_direction = this_event.activation_directions.includes(data.current_direction);
         if (right_direction && ["walk", "dash", "climb"].includes(data.actual_action)) {
             if (data.event_timers[this_event.id] && !data.event_timers[this_event.id].timer.expired) {
                 continue;
             }
             event_queue.add(
                 this_event,
-                data.actual_direction,
+                data.current_direction,
                 () => {
-                    data.event_timers[this_event.id] = game.time.events.add(numbers.EVENT_TIME, fire_event.bind(null, game, data, this_event, data.actual_direction), this);
+                    data.event_timers[this_event.id] = game.time.events.add(numbers.EVENT_TIME, fire_event.bind(null, game, data, this_event, data.current_direction), this);
                 }
             );
         }
@@ -74,7 +74,7 @@ export function event_triggering(game, data, event_key) {
             if (data.extra_speed !== this_event.speed) {
                 event_queue.add(
                     this_event,
-                    data.actual_direction,
+                    data.current_direction,
                     () => {
                         data.extra_speed = this_event.speed;
                     }
@@ -84,16 +84,16 @@ export function event_triggering(game, data, event_key) {
             if (!this_event.advance_effect) {
                 event_queue.add(
                     this_event,
-                    data.actual_direction,
+                    data.current_direction,
                     () => {
-                        fire_event(game, data, this_event, data.actual_direction);
+                        fire_event(game, data, this_event, data.current_direction);
                     }
                 );
             }
         } else if (this_event.type === event_types.STEP && !data.waiting_to_step) {
             event_queue.add(
                 this_event,
-                data.actual_direction,
+                data.current_direction,
                 () => {
                     config_step(data, this_event);
                 }
@@ -101,7 +101,7 @@ export function event_triggering(game, data, event_key) {
         } else if (this_event.type === event_types.COLLISION && !data.waiting_to_change_collision) {
             event_queue.add(
                 this_event,
-                data.actual_direction,
+                data.current_direction,
                 () => {
                     config_collision_change(data, this_event);
                 }

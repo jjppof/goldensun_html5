@@ -8,7 +8,7 @@ const dust_radius = 18;
 const frames = Phaser.Animation.generateFrameNames('dust/', 0, 7, '', 2);
 
 export function normal_push(game, data, interactable_object) {
-    if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.actual_direction && !data.casting_psynergy && !data.jumping) {
+    if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.current_direction && !data.casting_psynergy && !data.jumping) {
         fire_push_movement(game, data, interactable_object);
     }
     data.trying_to_push = false;
@@ -111,7 +111,7 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
                                 data.actual_action = "idle";
                                 data.hero.loadTexture(data.hero_name + "_" + data.actual_action);
                                 main_char_list[data.hero_name].setAnimation(data.hero, data.actual_action);
-                                data.hero.animations.play(data.actual_action + "_" + data.actual_direction);
+                                data.hero.animations.play(data.actual_action + "_" + data.current_direction);
                                 dust_animation(game, data, interactable_object, promise_resolve);
                             } else {
                                 promise_resolve();

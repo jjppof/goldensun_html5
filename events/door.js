@@ -50,8 +50,8 @@ export function door_event_phases(data) {
         data.teleporting = false;
         data.hero.loadTexture(data.hero_name + "_idle");
         main_char_list[data.hero_name].setAnimation(data.hero, "idle");
-        data.actual_direction = current_event.activation_directions[0];
-        data.hero.animations.play("idle_" + data.actual_direction);
+        data.current_direction = current_event.activation_directions[0];
+        data.hero.animations.play("idle_" + data.current_direction);
         data.actual_action = "idle";
         game.camera.fade();
         game.camera.onFadeComplete.addOnce(() => {

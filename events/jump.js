@@ -13,24 +13,24 @@ export function jump_event(data, current_event) {
     let jump_direction;
     let next_position = {x: current_event.x, y: current_event.y};
     let side_position = {x: current_event.x, y: current_event.y};
-    if (data.actual_direction === "left") {
+    if (data.current_direction === "left") {
         jump_offset = -jump_offset;
         direction = "x";
         next_position.x -= 2;
         side_position.x -= 1;
         jump_direction = "left";
-    } else if (data.actual_direction === "right") {
+    } else if (data.current_direction === "right") {
         direction = "x";
         next_position.x += 2;
         side_position.x += 1;
         jump_direction = "right";
-    } else if (data.actual_direction === "up") {
+    } else if (data.current_direction === "up") {
         jump_offset = -jump_offset;
         direction = "y";
         next_position.y -= 2;
         side_position.y -= 1;
         jump_direction = "up";
-    } else if (data.actual_direction === "down") {
+    } else if (data.current_direction === "down") {
         direction = "y";
         next_position.y += 2;
         side_position.y += 1;
@@ -193,12 +193,12 @@ export function jump_near_collision(data, current_event) {
     let surroundings = get_surroundings(current_pos.x, current_pos.y, true);
     let right_direction = false;
     if (Array.isArray(current_event.activation_directions)) {
-        let possible_directions = data.actual_direction.split("_");
+        let possible_directions = data.current_direction.split("_");
         for (let i = 0; i < possible_directions.length; ++i) {
             right_direction = right_direction || current_event.activation_directions.includes(possible_directions[i]);
         }
     } else {
-        right_direction = data.actual_direction.includes(current_event.activation_directions);
+        right_direction = data.current_direction.includes(current_event.activation_directions);
     }
 
     let clear_bodies = () => {

@@ -8,7 +8,7 @@ export function trigger_npc_dialog(data) {
         for (let i = 0; i < maps[data.map_name].npcs.length; ++i) {
             let npc = maps[data.map_name].npcs[i];
             let is_close = utils.is_close(
-                data.actual_direction,
+                data.current_direction,
                 data.hero.x,
                 data.hero.y,
                 npc.npc_sprite.x,
@@ -48,10 +48,10 @@ export function set_npc_event (data) {
             let npc_x = data.active_npc.npc_sprite.x;
             let npc_y = data.active_npc.npc_sprite.y;
             let interaction_directions = get_interaction_directions(data, data.hero.x, data.hero.y, npc_x, npc_y, data.active_npc.key_name);
-            data.actual_direction = interaction_directions.hero_direction;
+            data.current_direction = interaction_directions.hero_direction;
             data.hero.animations.play("idle_" + interaction_directions.hero_direction);
             data.active_npc.npc_sprite.animations.play("idle_" + interaction_directions.npc_direction);
-            data.dialog_manager = new DialogManager(game, parts, data.actual_direction);
+            data.dialog_manager = new DialogManager(game, parts, data.current_direction);
             data.in_dialog = true;
             data.dialog_manager.next(() => {
                 data.waiting_for_enter_press = true;

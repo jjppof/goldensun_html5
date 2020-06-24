@@ -37,8 +37,8 @@ export function is_inside_sector(quadrants, radius, range_factor, x, y, target_x
     return target_radius_quared <= range_radius_squared && between_angles;
 }
 
-export function is_close(actual_direction, x, y, target_x, target_y, range_factor) {
-    switch (actual_direction) {
+export function is_close(current_direction, x, y, target_x, target_y, range_factor) {
+    switch (current_direction) {
         case "up":
             return is_inside_sector([1, 2], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
         case "up_right":
@@ -150,8 +150,8 @@ export function get_opposite_direcion(direction) {
     }
 }
 
-export function get_transition_directions(actual_direction, desired_direction){
-    return transitions[desired_direction][actual_direction];
+export function get_transition_directions(current_direction, desired_direction){
+    return transitions[desired_direction][current_direction];
 }
 
 export function get_text_width(game, text) { //get text width in px (dirty way)

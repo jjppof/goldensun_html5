@@ -359,8 +359,8 @@ export class MoveFieldPsynergy extends SpriteBase {
         this.game.physics.p2.pause();
         this.data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
         caster.current_pp -= ability.pp_cost;
-        this.cast_direction = set_cast_direction(this.data.actual_direction);
-        this.data.actual_direction = this.cast_direction;
+        this.cast_direction = set_cast_direction(this.data.current_direction);
+        this.data.current_direction = this.cast_direction;
         this.set_emitter();
         this.set_final_emitter();
         this.search_for_target();

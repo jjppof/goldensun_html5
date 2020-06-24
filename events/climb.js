@@ -45,7 +45,7 @@ export function climbing_event(game, data, current_event, activation_direction) 
             });
             data.shadow.visible = false;
             data.actual_action = "climb";
-            data.actual_direction = "idle";
+            data.current_direction = "idle";
         }
     } else if ((data.climbing && !current_event.climbing_only) || (data.climbing && current_event.climbing_only)) {
         data.climbing_event_data = {
@@ -99,7 +99,7 @@ export function climbing_event(game, data, current_event, activation_direction) 
             data.shadow.y = data.hero.y;
             data.shadow.visible = true;
             data.actual_action = "idle";
-            data.actual_direction = "up";
+            data.current_direction = "up";
         }
     }
 }
@@ -147,7 +147,7 @@ export function climb_event_animation_steps(data) {
                 data.climbing_event_data = null;
                 data.climbing = false;
                 data.actual_action = "idle";
-                data.actual_direction = "up";
+                data.current_direction = "up";
                 game.physics.p2.resume();
             }, this);
         }, this);
