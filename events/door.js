@@ -118,6 +118,7 @@ export function door_event_phases(data) {
             for (let i = 0; i < data.npc_group.children.length; ++i) {
                 let sprite = data.npc_group.children[i];
                 if (!sprite.is_npc && !sprite.is_interactable_object) continue;
+                if (!sprite.body) continue;
                 sprite.body.debug = data.hero.body.debug;
             }
 
