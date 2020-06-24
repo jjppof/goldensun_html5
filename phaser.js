@@ -19902,8 +19902,8 @@ PIXI.WebGLSpriteBatch.prototype.render = function (sprite, matrix)
     var b = wt.b / resolution;
     var c = wt.c / resolution;
     var d = wt.d / resolution;
-    var tx = sprite.roundPx ? Math.floor(wt.tx) : wt.tx;
-    var ty = sprite.roundPx ? Math.floor(wt.ty) : wt.ty;
+    var tx = sprite.roundPx ? wt.tx | 0 : wt.tx;
+    var ty = sprite.roundPx ? wt.ty | 0 : wt.ty;
 
     var ch = texture.crop.height;
 
