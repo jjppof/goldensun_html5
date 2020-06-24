@@ -140,7 +140,7 @@ export function climb_event_animation_steps(data) {
             main_char_list[data.hero_name].setAnimation(data.hero, "idle");
             data.hero.animations.play("idle_up");
             if (data.climbing_event_data.event.dynamic) {
-                remove_climb_collision_bodies(data, data.climbing_event_data.event);
+                remove_climb_collision_bodies(data, data.climbing_event_data.event, false);
             }
             game.time.events.add(250, () => {
                 data.on_event = false;
@@ -184,11 +184,13 @@ function create_climb_collision_bodies(game, data, current_event) {
     }
 }
 
-function remove_climb_collision_bodies(data, current_event) {
+function remove_climb_collision_bodies(data, current_event, collide_with_map = true) {
     current_event.origin_interactable_object.interactable_object_sprite.send_to_back = false;
     set_jump_collision(data);
-    data.hero.body.collides(data.mapCollisionGroup);
-    data.map_collider.body.collides(data.heroCollisionGroup);
+    if (collide_with_map) {
+        data.hero.body.collides(data.mapCollisionGroup);
+        data.map_collider.body.collides(data.heroCollisionGroup);
+    }
     for (let collide_index in data.interactableObjectCollisionGroups) {
         data.hero.body.removeCollisionGroup(data.interactableObjectCollisionGroups[collide_index], true);
     }

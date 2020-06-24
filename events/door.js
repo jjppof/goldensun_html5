@@ -132,7 +132,7 @@ export function door_event_phases(data) {
         data.fading_out = false;
         game.camera.flash(0x0);
         game.camera.onFlashComplete.addOnce(() => {
-            set_speed_factors(data, true);
+            set_speed_factors(data);
             game.camera.lerp.setTo(numbers.CAMERA_LERP, numbers.CAMERA_LERP);
             data.on_event = false;
             data.door_event_data = null;

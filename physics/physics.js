@@ -129,14 +129,18 @@ export function collision_dealer(game, data) {
         let c = game.physics.p2.world.narrowphase.contactEquations[i];
         if (c.bodyA === data.hero.body.data) { //check if hero collided with something
             normals.push(c.normalA);
-            if (c.contactPointA[0] >= numbers.COLLISION_MARGIN && data.actual_direction === "left")
+            if (c.contactPointA[0] >= numbers.COLLISION_MARGIN && data.actual_direction === "left") {
                 data.hero.body.velocity.x = 0;
-            if (c.contactPointA[0] <= -numbers.COLLISION_MARGIN && data.actual_direction === "right")
+            }
+            if (c.contactPointA[0] <= -numbers.COLLISION_MARGIN && data.actual_direction === "right") {
                 data.hero.body.velocity.x = 0;
-            if (c.contactPointA[1] <= -numbers.COLLISION_MARGIN && data.actual_direction === "down")
+            }
+            if (c.contactPointA[1] <= -numbers.COLLISION_MARGIN && data.actual_direction === "down") {
                 data.hero.body.velocity.y = 0;
-            if (c.contactPointA[1] >= numbers.COLLISION_MARGIN && data.actual_direction === "up")
+            }
+            if (c.contactPointA[1] >= numbers.COLLISION_MARGIN && data.actual_direction === "up") {
                 data.hero.body.velocity.y = 0;
+            }
         }
         let j = 0;
         for (j = 0; j < maps[data.map_name].interactable_objects.length; ++j) {  //check if hero is colliding with any interactable object
@@ -189,6 +193,7 @@ export function collision_dealer(game, data) {
             data.trying_to_push = false;
         }
     }
+    //normals having length means collision happening
     if (normals.length && data.actual_action === "climb") {
         if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) {
             data.stop_by_colliding = true;
@@ -196,11 +201,11 @@ export function collision_dealer(game, data) {
             data.stop_by_colliding = false;
         }
     } else if (normals.length && ["walk", "dash"].includes(data.actual_action)) {
-        if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) {
+        if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) { //speeds below SPEED_LIMIT_TO_STOP are not considered
             normals.forEach(normal => {
-                if (Math.abs(normal[0]) < 0.1) normal[0] = 0;
-                if (Math.abs(normal[1]) < 0.1) normal[1] = 0;
-                if (Math.sign(-normal[0]) === Math.sign(data.hero.body.velocity.ask_x) && Math.sign(-normal[1]) === Math.sign(data.hero.body.velocity.ask_y)) {
+                if (Math.abs(normal[0]) < numbers.MINIMAL_SLOPE) normal[0] = 0; //minimal slope to this direction be disregarded
+                if (Math.abs(normal[1]) < numbers.MINIMAL_SLOPE) normal[1] = 0;
+                if (Math.sign(-normal[0]) === Math.sign(data.hero.body.velocity.ask_x) && Math.sign(-normal[1]) === Math.sign(data.hero.body.velocity.ask_y)) { //check if hero is going against another body, if true, the hero stops
                     if (normal[0] !== 0) data.hero.body.velocity.ask_x = 0;
                     if (normal[1] !== 0) data.hero.body.velocity.ask_y = 0;
                     return;
@@ -211,7 +216,7 @@ export function collision_dealer(game, data) {
             data.forcing_on_diagonal = false;
         } else {
             data.stop_by_colliding = false;
-            if (normals.length === 1) {
+            if (normals.length === 1) { //everything inside this if is to deal with direction changing when colliding
                 const normal_angle = (Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree360) % numbers.degree360;
                 if (normal_angle >= numbers.degree15 && normal_angle < numbers.degree90 - numbers.degree15) {
                     if (check_isdown(data.cursors, "up")) {
@@ -328,13 +333,13 @@ export function collision_dealer(game, data) {
         data.forcing_on_diagonal = false;
     }
 
-    if (["walk", "dash"].includes(data.actual_action)) {
+    if (["walk", "dash"].includes(data.actual_action)) { //sets the final velocity
         data.hero.body.velocity.x = data.hero.body.velocity.ask_x;
         data.hero.body.velocity.y = data.hero.body.velocity.ask_y;
     }
 }
 
-export function calculate_hero_speed(data) {
+export function calculate_hero_speed(data) { //when setting ask_x or ask_y, it means that these velocities will still be analyzed in collision_dealer function
     if (data.actual_action === "dash") {
         data.hero.body.velocity.ask_x = parseInt(data.delta_time * data.x_speed * (main_char_list[data.hero_name].dash_speed + data.extra_speed));
         data.hero.body.velocity.ask_y = parseInt(data.delta_time * data.y_speed * (main_char_list[data.hero_name].dash_speed + data.extra_speed));
@@ -349,7 +354,7 @@ export function calculate_hero_speed(data) {
     }
 }
 
-export function set_speed_factors(data, force = false) {
+export function set_speed_factors(data) {
     if (data.climbing) {
         if (!data.cursors.up.isDown && data.cursors.down.isDown) {
             data.x_speed = 0;
@@ -365,49 +370,53 @@ export function set_speed_factors(data, force = false) {
             data.actual_direction = "idle";
         }
     } else {
-        if ((check_isdown(data.cursors, "up") && ((data.actual_direction !== "up" && !data.forcing_on_diagonal) || force)) || (data.actual_direction === "up" && data.force_direction)){
+        if (!data.force_direction) { //makes no sense to force on diagonal if force_direction is false
+            data.forcing_on_diagonal = false;
+        }
+        //when force_direction is true, it means that the hero is going to face a different direction from the one specified in the keyboard arrows
+        if ((check_isdown(data.cursors, "up") && !data.forcing_on_diagonal) || (data.actual_direction === "up" && data.force_direction && !data.forcing_on_diagonal)) {
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "up");
             }
             data.x_speed = 0;
             data.y_speed = -1;
-        } else if ((check_isdown(data.cursors, "down") && ((data.actual_direction !== "down" && !data.forcing_on_diagonal) || force)) || (data.actual_direction === "down" && data.force_direction)){
+        } else if ((check_isdown(data.cursors, "down") && !data.forcing_on_diagonal) || (data.actual_direction === "down" && data.force_direction && !data.forcing_on_diagonal)) {
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "down");
             }
             data.x_speed = 0;
             data.y_speed = 1;
-        } else if ((check_isdown(data.cursors, "left") && ((data.actual_direction !== "left" && !data.forcing_on_diagonal) || force)) || (data.actual_direction === "left" && data.force_direction)){
+        } else if ((check_isdown(data.cursors, "left") && !data.forcing_on_diagonal) || (data.actual_direction === "left" && data.force_direction && !data.forcing_on_diagonal)) {
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "left");
             }
             data.x_speed = -1;
             data.y_speed = 0;
-        } else if ((check_isdown(data.cursors, "right") && ((data.actual_direction !== "right" && !data.forcing_on_diagonal) || force)) || (data.actual_direction === "right" && data.force_direction)){
+        } else if ((check_isdown(data.cursors, "right") && !data.forcing_on_diagonal) || (data.actual_direction === "right" && data.force_direction && !data.forcing_on_diagonal)) {
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "right");
             }
             data.x_speed = 1;
             data.y_speed = 0;
-        } else if ((check_isdown(data.cursors, "up", "left") && (data.actual_direction !== "up_left" || force)) || (data.actual_direction === "up_left" && data.force_direction)){
+        } else if (check_isdown(data.cursors, "up", "left") || (data.actual_direction === "up_left" && data.force_direction && data.forcing_on_diagonal)) {
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "up_left");
             }
             data.x_speed = -numbers.INV_SQRT2;
             data.y_speed = -numbers.INV_SQRT2;
-        } else if ((check_isdown(data.cursors, "up", "right") && (data.actual_direction !== "up_right" || force)) || (data.actual_direction === "up_right" && data.force_direction)){
+        } else if (check_isdown(data.cursors, "up", "right") || (data.actual_direction === "up_right" && data.force_direction && data.forcing_on_diagonal)) {
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "up_right");
             }
             data.x_speed = numbers.INV_SQRT2;
             data.y_speed = -numbers.INV_SQRT2;
-        } else if ((check_isdown(data.cursors, "down", "left") && (data.actual_direction !== "down_left" || force)) || (data.actual_direction === "down_left" && data.force_direction)){
+        } else if (check_isdown(data.cursors, "down", "left") || (data.actual_direction === "down_left" && data.force_direction && data.forcing_on_diagonal)) {
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "down_left");
             }
             data.x_speed = -numbers.INV_SQRT2;
             data.y_speed = numbers.INV_SQRT2;
-        } else if ((check_isdown(data.cursors, "down", "right") && (data.actual_direction !== "down_right" || force)) || (data.actual_direction === "down_right" && data.force_direction)){
+        } else if (check_isdown(data.cursors, "down", "right") || (data.actual_direction === "down_right" && data.force_direction && data.forcing_on_diagonal)) {
             if (!data.force_direction) {
                 data.actual_direction = get_transition_directions(data.actual_direction, "down_right");
             }
