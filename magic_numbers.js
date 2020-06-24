@@ -1,5 +1,5 @@
 export const SHADOW_X_AP = 0.5;
-export const SHADOW_Y_AP = 0.0;
+export const SHADOW_Y_AP = 0.1;
 export const GAME_WIDTH = 240;
 export const GAME_HEIGHT = 160;
 export const HERO_START_X = 350;

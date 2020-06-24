@@ -21,6 +21,7 @@ export function config_hero(data) {
     //creating sprites and adding hero and its shadow to npc_group
     data.shadow = data.npc_group.create(0, 0, 'shadow');
     data.shadow.blendMode = PIXI.blendModes.MULTIPLY;
+    data.shadow.roundPx = true;
     data.shadow.anchor.setTo(numbers.SHADOW_X_AP, numbers.SHADOW_Y_AP); //shadow anchor point
     data.shadow.base_collider_layer = data.map_collider_layer;
     data.hero = data.npc_group.create(0, 0, data.hero_name + "_" + data.current_action);
