@@ -19,6 +19,58 @@ export function toggle_debug(data) {
     data.debug = !data.debug;
 }
 
+export function toggle_keys(data) {
+    data.debug_keys = !data.debug_keys;
+    const toggler = (is_down, e) => {
+        let class_list;
+        switch (e.keyCode) {
+            case 38:
+                if (e.repeat) return;
+                class_list = document.querySelector("#key_debug .up").classList;
+                break;
+            case 40:
+                if (e.repeat) return;
+                class_list = document.querySelector("#key_debug .down").classList;
+                break;
+            case 39:
+                if (e.repeat) return;
+                class_list = document.querySelector("#key_debug .right").classList;
+                break;
+            case 37:
+                if (e.repeat) return;
+                class_list = document.querySelector("#key_debug .left").classList;
+                break;
+        };
+        if (class_list) {
+            if (is_down) {
+                class_list.add('pressed');
+            } else {
+                class_list.remove('pressed');
+            }
+        }
+    }
+    if (data.debug_keys) {
+        document.querySelector("#key_debug").style.display = "flex";
+        document.onkeydown = toggler.bind(null, true);
+        document.onkeyup = toggler.bind(null, false);
+    } else {
+        document.querySelector("#key_debug").style.display = "none";
+        document.onkeydown = undefined;
+        document.onkeyup = undefined;
+    }
+}
+
+export function fill_key_debug_table(data) {
+    if (!data.debug_keys) return;
+    document.querySelector("#key_debug table .direction").innerHTML = data.current_direction;
+    document.querySelector("#key_debug table .action").innerHTML = data.current_action;
+    document.querySelector("#key_debug table .x").innerHTML = data.hero.body.x.toFixed(3);
+    document.querySelector("#key_debug table .y").innerHTML = data.hero.body.y.toFixed(3);
+    document.querySelector("#key_debug table .speed_x").innerHTML = data.hero.body.velocity.x.toFixed(3);
+    document.querySelector("#key_debug table .speed_y").innerHTML = data.hero.body.velocity.y.toFixed(3);
+    document.querySelector("#key_debug table .force_direction").innerHTML = data.force_direction;
+}
+
 export function set_debug_info(game, data) {
     game.debug.text('', 0, 0);
 

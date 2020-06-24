@@ -1,0 +1,53 @@
+body {
+    margin: 0;
+    background-color: whitesmoke;
+}
+.intro {
+    margin: 1rem 20%;
+}
+#game {
+    padding: 2rem 20%;
+    background-color: black;
+}
+canvas {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+#key_debug {
+    display: none;
+    flex-direction: row;
+    margin: 1rem 20%;
+}
+#key_debug>* {
+    margin-right: 5px;
+}
+#key_debug .pressed img {
+    background-color: #ff7373;
+    border-radius: 10px;
+}
+#key_debug .up img {
+    transform: rotate(180deg);
+}
+#key_debug .right img {
+    transform: rotate(-90deg);
+}
+#key_debug .left img {
+    transform: rotate(90deg);
+}
+#key_debug table {
+    width: 235px;
+    table-layout: fixed;
+    font-family: monospace;
+    border-collapse: collapse;
+}
+#key_debug table tr {
+    border-bottom: 1px solid gray;
+}
+#key_debug table th {
+    text-align: left;
+}
+#key_debug table td {
+    text-align: right;
+}

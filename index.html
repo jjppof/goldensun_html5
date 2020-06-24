@@ -4,29 +4,10 @@
     <meta charset="UTF-8" />
     <title>Golden Sun</title>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="./styles.css">
     <script type="text/javascript" src="phaser.js"></script>
     <script type="text/javascript" src="plugins/underscore-min.js"></script>
     <script type="module" src="index.js"></script>
-
-    <style>
-        body {
-            margin: 0;
-            background-color: whitesmoke;
-        }
-        .intro {
-            margin: 1rem 20%;
-        }
-        #game {
-            padding: 2rem 20%;
-            background-color: black;
-        }
-        canvas {
-            image-rendering: -moz-crisp-edges;
-            image-rendering: -webkit-crisp-edges;
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
-        }
-	</style>
 </head>
 <body>
     <div class="intro">
@@ -47,6 +28,42 @@ See the <a href="https://github.com/jjppof/goldensun_html5">source code</a>.
         </pre>
     </div>
     <div id="game"></div>
+    <div id="key_debug">
+        <div class="up"><img src="./assets/images/debug/keyboard_arrow.png"/></div>
+        <div class="down"><img src="./assets/images/debug/keyboard_arrow.png"/></div>
+        <div class="left"><img src="./assets/images/debug/keyboard_arrow.png"/></div>
+        <div class="right"><img src="./assets/images/debug/keyboard_arrow.png"/></div>
+        <table>
+            <tr>
+                <th>Direction:</th>
+                <td class="direction"></td>
+            </tr>
+            <tr>
+                <th>Action:</th>
+                <td class="action"></td>
+            </tr>
+            <tr>
+                <th>x:</th>
+                <td class="x"></td>
+            </tr>
+            <tr>
+                <th>y:</th>
+                <td class="y"></td>
+            </tr>
+            <tr>
+                <th>speed_x:</th>
+                <td class="speed_x"></td>
+            </tr>
+            <tr>
+                <th>speed_y:</th>
+                <td class="speed_y"></td>
+            </tr>
+            <tr>
+                <th>Force direction:</th>
+                <td class="force_direction"></td>
+            </tr>
+        </table>
+    </div>
     <div><pre id="object_inspector"></pre></div>
 </body>
 </html>

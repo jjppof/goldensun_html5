@@ -14,7 +14,7 @@ import * as physics from './physics/physics.js';
 import { initialize_menu } from './screens/menu.js';
 import { config_hero, change_hero_sprite, set_current_action, update_shadow, stop_hero, init_speed_factors } from './initializers/hero_control.js';
 import { TileEvent } from './base/TileEvent.js';
-import { set_debug_info, toggle_debug } from './debug.js';
+import { set_debug_info, toggle_debug, toggle_keys, fill_key_debug_table } from './debug.js';
 import { event_triggering } from './events/triggering.js';
 
 var data = {
@@ -89,7 +89,9 @@ var data = {
     door_event_data: null,
     climbing_event_data: null,
     maps_db: undefined,
-    jumping: false
+    jumping: false,
+    debug_keys: false,
+    frame_counter: 0
 };
 
 //debugging porpouses
@@ -315,6 +317,11 @@ async function create() {
             data.grid = !data.grid;
         }, this);
 
+        //activate keys debug mode
+        game.input.keyboard.addKey(Phaser.Keyboard.K).onDown.add(() => {
+            toggle_keys(data);
+        }, this);
+
         //enable full screen
         game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.input.onTap.add(function(pointer, isDoubleClick) {  
@@ -443,6 +450,10 @@ function update() {
             stop_hero(data, false);
             data.menu_screen.update_position();
         }
+        ++data.frame_counter;
+        if (data.frame_counter%60 === 0) {
+            data.frame_counter = 0;
+        }
     } else {
         render_loading();
     }
@@ -450,4 +461,7 @@ function update() {
 
 function render() {
     set_debug_info(game, data);
+    if (data.frame_counter%8 === 0) {
+        fill_key_debug_table(data);
+    }
 }
