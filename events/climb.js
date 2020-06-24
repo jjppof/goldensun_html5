@@ -20,7 +20,7 @@ export function climbing_event(game, data, current_event, activation_direction) 
             data.on_event = true;
             data.hero.loadTexture(data.hero_name + "_climb");
             main_char_list[data.hero_name].setAnimation(data.hero, "climb");
-            data.hero.animations.play("climb_start", 9, false, true);
+            data.hero.animations.play("climb_start", 10, false, true);
         } else if (activation_direction === "up") {
             data.on_event = true;
             data.hero.loadTexture(data.hero_name + "_climb");
@@ -65,12 +65,11 @@ export function climbing_event(game, data, current_event, activation_direction) 
                 collision.change_map_body(data, current_event.change_to_collision_layer);
             }
             data.on_event = true;
-            data.hero.animations.play("climb_end", 8, false, false);
+            data.hero.animations.play("climb_end", 9, false, false);
             data.shadow.visible = false;
-            const time = Phaser.Timer.QUARTER >> 1;
             game.add.tween(data.hero.body).to(
-                { y: data.hero.y - 12 },
-                time,
+                { y: data.hero.y - 10 },
+                70,
                 Phaser.Easing.Linear.None,
                 true
             );
@@ -129,8 +128,8 @@ export function climb_event_animation_steps(data) {
     } else if (data.hero.animations.frameName === "climb/end/02") {
         game.time.events.add(150, () => {
             game.add.tween(data.hero.body).to(
-                { y: data.hero.y - 2 },
-                45,
+                { y: data.hero.y - 1 },
+                20,
                 Phaser.Easing.Linear.None,
                 true
             ).onComplete.addOnce(() => {
