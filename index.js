@@ -366,6 +366,10 @@ async function create() {
             if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping) return;
             field_abilities_list.frost.cast(data.init_db.initial_shortcuts.frost);
         }, this);
+        game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(function(){
+            if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping) return;
+            field_abilities_list.growth.cast(data.init_db.initial_shortcuts.growth);
+        }, this);
 
         //enable enter event
         data.enter_input = game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(enter_key_event, this);

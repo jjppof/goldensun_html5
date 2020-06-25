@@ -187,6 +187,9 @@ export class Map {
                 if (data.interactable_objects_db[property_info.key_name].type === interactable_object_types.FROST) {
                     interactable_object.custom_data.frost_casted = false;
                 }
+                if (data.interactable_objects_db[property_info.key_name].type === interactable_object_types.GROWTH) {
+                    interactable_object.custom_data.growth_casted = false;
+                }
                 if (data.interactable_objects_db[property_info.key_name].type === interactable_object_types.MOVE && property_info.block_stair_collider_layer_shift !== undefined) {
                     interactable_object.custom_data.block_stair_collider_layer_shift = property_info.block_stair_collider_layer_shift;
                 }

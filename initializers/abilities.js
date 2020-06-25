@@ -1,6 +1,7 @@
 import { Ability } from '../base/Ability.js';
 import { MoveFieldPsynergy } from '../field_abilities/move.js';
 import { FrostFieldPsynergy } from '../field_abilities/frost.js';
+import { GrowthFieldPsynergy } from '../field_abilities/growth.js';
 
 export let abilities_list = {};
 export let field_abilities_list = {};
@@ -36,4 +37,5 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
 export function initialize_field_abilities(game, data) {
     field_abilities_list.move = new MoveFieldPsynergy(game, data);
     field_abilities_list.frost = new FrostFieldPsynergy(game, data);
+    field_abilities_list.growth = new GrowthFieldPsynergy(game, data);
 }

@@ -54,11 +54,13 @@ export function change_hero_sprite(data) {
 }
 
 export function set_current_action(data) {
-    if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.current_action !== "idle" && !data.climbing)
+    if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.current_action !== "idle" && !data.climbing) {
         data.current_action = "idle";
-    else if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.current_direction !== "idle" && data.climbing)
+    } else if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.current_direction !== "idle" && data.climbing) {
         data.current_direction = "idle";
-    else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && (data.current_action !== "walk" || data.current_action !== "dash") && !data.climbing) {
+    } else if ((data.cursors.up.isDown && data.cursors.down.isDown) || (data.cursors.right.isDown && data.cursors.left.isDown) && !data.climbing) {
+        data.current_action = "idle";
+    } else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && (data.current_action !== "walk" || data.current_action !== "dash") && !data.climbing) {
         if (game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.current_action !== "dash") {
             data.current_action = "dash";
         } else if (!game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.current_action !== "walk") {

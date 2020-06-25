@@ -381,8 +381,11 @@ export function set_speed_factors(data) {
         if (!data.force_direction) { //makes no sense to force on diagonal if force_direction is false
             data.forcing_on_diagonal = false;
         }
+        if (check_isdown(data.cursors, "up", "down") || check_isdown(data.cursors, "right", "left")) {
+            data.x_speed = 0;
+            data.y_speed = 0;
         //when force_direction is true, it means that the hero is going to face a different direction from the one specified in the keyboard arrows
-        if ((check_isdown(data.cursors, "up") && !data.forcing_on_diagonal) || (data.current_direction === "up" && data.force_direction && !data.forcing_on_diagonal)) {
+        } else if ((check_isdown(data.cursors, "up") && !data.forcing_on_diagonal) || (data.current_direction === "up" && data.force_direction && !data.forcing_on_diagonal)) {
             if (!data.force_direction) {
                 data.current_direction = get_transition_directions(data.current_direction, "up");
             }

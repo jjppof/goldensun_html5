@@ -9,6 +9,7 @@
     "coins": 350,
     "initial_shortcuts": {
         "move": "isaac",
-        "frost": "sheba"
+        "frost": "sheba",
+        "growth": "isaac"
     }
 }
