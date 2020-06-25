@@ -90,7 +90,7 @@
         "anchor_y": 0.8,
         "anchor_x": 0.5,
         "shift_x": -8,
-        "shift_y": 1,
+        "shift_y": -6,
         "body_radius": 0,
         "psynergy_keys": ["growth"],
         "pushable": false,
@@ -100,7 +100,7 @@
             "dynamic": false,
             "is_set": true,
             "collision_tiles": [],
-            "last_y_shift": -3
+            "last_y_shift": -4
         }],
         "initial_animation": "sprout",
         "actions": {
