@@ -364,7 +364,11 @@ export function calculate_hero_speed(data) { //when setting ask_x or ask_y, it m
 
 export function set_speed_factors(data) {
     if (data.climbing) {
-        if (!data.cursors.up.isDown && data.cursors.down.isDown) {
+        if (check_isdown(data.cursors, "up", "down") || check_isdown(data.cursors, "right", "left")) {
+            data.x_speed = 0;
+            data.y_speed = 0;
+            data.current_direction = "idle";
+        } else if (!data.cursors.up.isDown && data.cursors.down.isDown) {
             data.x_speed = 0;
             data.y_speed = 1;
             data.current_direction = "down";
