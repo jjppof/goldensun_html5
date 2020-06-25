@@ -154,10 +154,22 @@ export class GrowthFieldPsynergy {
         });
         this.game.time.events.add(Phaser.Timer.SECOND, () => {
             if (this.target_found) {
-                
+                this.grow_sprout();
             } else {
                 this.miss_target();
             }
+        });
+    }
+
+    grow_sprout() {
+        this.emitter.destroy();
+        this.target_object.get_events().forEach(event => {
+            event.activate();
+        });
+        this.target_object.interactable_object_sprite.animations.play("growth_growing", 8, false);
+        this.target_object.interactable_object_sprite.animations.currentAnim.onComplete.addOnce(() => {
+            this.unset_hero_cast_anim();
+            this.stop_casting();
         });
     }
 

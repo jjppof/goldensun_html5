@@ -90,7 +90,7 @@
         "anchor_y": 0.8,
         "anchor_x": 0.5,
         "shift_x": -8,
-        "shift_y": -4,
+        "shift_y": 1,
         "body_radius": 0,
         "psynergy_keys": ["growth"],
         "pushable": false,
@@ -106,7 +106,7 @@
         "actions": {
             "frame_rate": 3,
             "animations": ["sprout", "growing"],
-            "frames_count": [2, 6]
+            "frames_count": [2, 8]
         }
     }
 }
