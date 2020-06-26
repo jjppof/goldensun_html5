@@ -14,6 +14,7 @@ An online Golden Sun Engine built in HTML5 with [Phaser 2](http://phaser.io/).
 - [PhysicsEditor 1.6.3](https://www.codeandweb.com/physicseditor) (optional for creating collision structures)
 - [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579)) (for building maps)
 - [Shoebox](https://renderhjs.net/shoebox/) (optional for creating fonts)
+- [Golden Sun Editor](http://forum.goldensunhacking.net/index.php?action=downloads;sa=view;down=124) (optional for game info)
 
 ## Development environment
 
