@@ -188,13 +188,13 @@ window.game = new Phaser.Game (
 );
 
 function preload() {
-    game.load.image('colosso', 'assets/images/battle_backgrounds/colosso.gif');
-    game.load.image('kolima', 'assets/images/battle_backgrounds/kolima_forest.gif');
-    game.load.image('mercury', 'assets/images/battle_backgrounds/mercury_lighthouse.gif');
-    game.load.image('desert', 'assets/images/battle_backgrounds/suhalla_desert.gif');
-    game.load.image('tunnel', 'assets/images/battle_backgrounds/tunnel_ruins.gif');
-    game.load.image('vault', 'assets/images/battle_backgrounds/vault_inn.gif');
-    game.load.image('venus', 'assets/images/battle_backgrounds/venus_lighthouse.gif');
+    game.load.image('colosso', 'assets/images/battle_backgrounds/bg_colosso.gif');
+    game.load.image('kolima', 'assets/images/battle_backgrounds/bg_kolima_forest.gif');
+    game.load.image('mercury', 'assets/images/battle_backgrounds/bg_mercury_lighthouse.gif');
+    game.load.image('desert', 'assets/images/battle_backgrounds/bg_suhalla_desert.gif');
+    game.load.image('tunnel', 'assets/images/battle_backgrounds/bg_tunnel_ruins.gif');
+    game.load.image('vault', 'assets/images/battle_backgrounds/bg_vault_inn.gif');
+    game.load.image('venus', 'assets/images/battle_backgrounds/bg_venus_lighthouse.gif');
 
     game.load.atlasJSONHash('isaac_battle_animation', 'assets/images/spritesheets/battle/isaac_battle.png', 'assets/images/spritesheets/battle/isaac_battle.json');
     game.load.atlasJSONHash('garet_battle_animation', 'assets/images/spritesheets/battle/garet_battle.png', 'assets/images/spritesheets/battle/garet_battle.json');
