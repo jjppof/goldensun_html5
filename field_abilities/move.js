@@ -150,6 +150,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         switch (this.cast_direction) {
             case "up":
                 if (this.target_found) {
+                    translate_x = this.target_object.interactable_object_sprite.centerX;
                     translate_y = this.target_object.interactable_object_sprite.y;
                 } else {
                     translate_y -= MAX_HAND_TRANSLATE;
@@ -157,6 +158,7 @@ export class MoveFieldPsynergy extends SpriteBase {
                 break;
             case "down":
                 if (this.target_found) {
+                    translate_x = this.target_object.interactable_object_sprite.centerX;
                     translate_y = this.target_object.interactable_object_sprite.y - this.target_object.interactable_object_sprite.height + this.data.interactable_objects_db[this.target_object.key_name].body_radius;
                 } else {
                     translate_y += MAX_HAND_TRANSLATE;
@@ -165,6 +167,7 @@ export class MoveFieldPsynergy extends SpriteBase {
             case "right":
                 if (this.target_found) {
                     translate_x = this.target_object.interactable_object_sprite.x - 2 * this.data.interactable_objects_db[this.target_object.key_name].body_radius;
+                    translate_y = this.target_object.interactable_object_sprite.centerY;
                 } else {
                     translate_x += MAX_HAND_TRANSLATE;
                 }
@@ -172,6 +175,7 @@ export class MoveFieldPsynergy extends SpriteBase {
             case "left":
                 if (this.target_found) {
                     translate_x = this.target_object.interactable_object_sprite.x + 2 * this.data.interactable_objects_db[this.target_object.key_name].body_radius;
+                    translate_y = this.target_object.interactable_object_sprite.centerY;
                 } else {
                     translate_x -= MAX_HAND_TRANSLATE;
                 }
@@ -179,7 +183,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         }
         this.game.add.tween(this.hand_sprite).to(
             {centerX: translate_x, centerY: translate_y},
-            Phaser.Timer.QUARTER >> 1,
+            200,
             Phaser.Easing.Linear.None,
             true
         ).onComplete.addOnce(() => {
@@ -204,26 +208,26 @@ export class MoveFieldPsynergy extends SpriteBase {
     finish_hand() {
         let flip_timer = this.game.time.create(false);
         let fake_hand_scale = {x : 1};
-        flip_timer.loop(30, () => {
+        flip_timer.loop(40, () => {
             this.hand_sprite.scale.x = this.hand_sprite.scale.x > 0 ? -fake_hand_scale.x : fake_hand_scale.x;
         });
         flip_timer.start();
         let y_shift = this.hand_sprite.y - 10;
         this.game.add.tween(this.hand_sprite).to(
             { y: y_shift },
-            Phaser.Timer.QUARTER,
+            350,
             Phaser.Easing.Linear.None,
             true
         );
         this.game.add.tween(fake_hand_scale).to(
             { x: 0 },
-            Phaser.Timer.QUARTER,
+            350,
             Phaser.Easing.Linear.None,
             true
         );
         this.game.add.tween(this.hand_sprite.scale).to(
             { y: 0 },
-            Phaser.Timer.QUARTER,
+            350,
             Phaser.Easing.Linear.None,
             true
         ).onComplete.addOnce(() => {
