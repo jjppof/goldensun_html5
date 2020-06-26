@@ -65,6 +65,8 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
         if (!target_only) {
             sprites.push(...[data.shadow, data.hero.body]);
         }
+        const prev_x = interactable_object.current_x;
+        const prev_y = interactable_object.current_y;
         interactable_object.current_x += event_shift_x;
         interactable_object.current_y += event_shift_y;
         let promises = [];
@@ -81,9 +83,9 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
             let dest_y = body.y + tween_y;
             if (body === data.shadow || body === data.hero.body) {
                 if (tween_x === 0) {
-                    dest_x = maps[data.map_name].sprite.tileWidth * (data.hero_tile_pos_x + event_shift_x + 0.5);
+                    dest_x = maps[data.map_name].sprite.tileWidth * (prev_x + event_shift_x + 0.5);
                 } else if (tween_y === 0) {
-                    dest_y = maps[data.map_name].sprite.tileHeight * (data.hero_tile_pos_y + event_shift_y + 0.5);
+                    dest_y = maps[data.map_name].sprite.tileHeight * (prev_y + event_shift_y + 0.5);
                 }
             }
             let promise_resolve;

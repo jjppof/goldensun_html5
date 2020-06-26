@@ -244,3 +244,17 @@ export function hsv2rgb(h,s,v) {
     let f = (n,k=(n+h/60)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0);
     return [f(5),f(3),f(1)];
 }
+
+export function mount_collision_polygon(width, shift, bevel) {
+    if (bevel === undefined) bevel = 0;
+    return [
+        [bevel + shift, shift],
+        ... bevel === 0 ? [] : [[width - bevel + shift, shift]],
+        [width + shift, bevel + shift],
+        ... bevel === 0 ? [] : [[width + shift, width - bevel + shift]],
+        [width - bevel + shift, width + shift],
+        ... bevel === 0 ? [] : [[bevel + shift, width + shift]],
+        [shift, width - bevel + shift],
+        ... bevel === 0 ? [] : [[shift, bevel + shift]]
+    ];
+}

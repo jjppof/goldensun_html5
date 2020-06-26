@@ -1,6 +1,6 @@
 import { maps } from '../initializers/maps.js';
 import * as numbers from '../magic_numbers.js';
-import { get_transition_directions, check_isdown } from '../utils.js';
+import { get_transition_directions, check_isdown, mount_collision_polygon } from '../utils.js';
 import { main_char_list } from '../initializers/main_chars.js';
 import { normal_push } from '../interactable_objects/push.js';
 import { TileEvent, event_types } from '../base/TileEvent.js';
@@ -52,7 +52,11 @@ export function config_physics_for_interactable_objects(data, only_set_groups = 
         interactable_object.interactable_object_sprite.anchor.y = data.interactable_objects_db[interactable_object.key_name].anchor_y; //Important to be after the previous command
         interactable_object.interactable_object_sprite.body.clearShapes();
         const width = data.interactable_objects_db[interactable_object.key_name].body_radius * 2;
-        interactable_object.interactable_object_sprite.body.setRectangle(width, width, 0, 0);
+        interactable_object.interactable_object_sprite.body.addPolygon({
+                optimalDecomp: false,
+                skipSimpleCheck: true,
+                removeCollinearPoints: false
+        }, mount_collision_polygon(width, -(width >> 1), data.interactable_objects_db[interactable_object.key_name].collision_body_bevel));
         interactable_object.interactable_object_sprite.body.setCollisionGroup(data.interactableObjectCollisionGroups[interactable_object.base_collider_layer]);
         interactable_object.interactable_object_sprite.body.damping = numbers.INTERACTABLE_OBJECT_DAMPING;
         interactable_object.interactable_object_sprite.body.angularDamping = numbers.INTERACTABLE_OBJECT_DAMPING;
