@@ -6,7 +6,7 @@ An online Golden Sun Engine built in HTML5 with Phaser.
 - Feel free to help! Please, reach me if you want to do so.
 - If you found any bug, please create an issue for it.
 - I'm avoiding making some docs for now because I'm constantly changing things. But see the [wiki](https://github.com/jjppof/goldensun_html5/wiki).
-- I use [trello](https://trello.com/b/wPilgGBk/gshtml5) to write down things.
+- I use [projects](https://github.com/jjppof/goldensun_html5/projects/1) to write down things.
 
 ## Tech stack
 - [PhaserJS CE 2.15.0](http://phaser.io/) (game engine)
