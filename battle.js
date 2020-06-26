@@ -9,7 +9,7 @@ window.battle_bg = undefined;
 window.battle_bg2 = undefined;
 window.players = [];
 window.base_a = numbers.GAME_WIDTH/2 - 30;
-window.base_b = numbers.GAME_HEIGHT/40;
+window.base_b = numbers.GAME_HEIGHT/50;
 window.camera_angle = undefined;
 window.camera_speed = undefined;
 window.cursors = undefined;
@@ -43,6 +43,7 @@ window.psynergy_animations_db = undefined;
 window.battle_animation_executing = false;
 window.game_intialized = false;
 window.battle_anim = null;
+window.test_hero = null;
 
 var sprites_db = {
     "isaac_battle_animation": [
@@ -108,6 +109,32 @@ var sprites_db = {
             loop: false
         }
     ],
+    "garet_battle_animation": [
+        {
+            action: "back",
+            frames_count: 4,
+            frame_rate: 3,
+            loop: true
+        },{
+            action: "front",
+            frames_count: 4,
+            frame_rate: 3,
+            loop: true
+        }
+    ],
+    "sheba_battle_animation": [
+        {
+            action: "back",
+            frames_count: 4,
+            frame_rate: 3,
+            loop: true
+        },{
+            action: "front",
+            frames_count: 4,
+            frame_rate: 3,
+            loop: true
+        }
+    ],
     "mini_goblin_battle_animation": [
         {
             action: "attack_back",
@@ -141,7 +168,14 @@ var sprites_db = {
             loop: false
         }
     ]
-}
+};
+
+const sprite_keys = [
+    {sprite: 'isaac_battle_animation', scale: 0.9},
+    {sprite: 'garet_battle_animation', scale: 1.05},
+    {sprite: 'sheba_battle_animation', scale: 0.85},
+    {sprite: 'mini_goblin_battle_animation', scale: 1.0}
+];
 
 window.game = new Phaser.Game (
     numbers.GAME_WIDTH,
@@ -155,14 +189,16 @@ window.game = new Phaser.Game (
 
 function preload() {
     game.load.image('colosso', 'assets/images/battle_backgrounds/colosso.gif');
-    game.load.image('kolima', 'assets/images/battle_backgrounds/Kolima_Forest.gif');
+    game.load.image('kolima', 'assets/images/battle_backgrounds/kolima_forest.gif');
     game.load.image('mercury', 'assets/images/battle_backgrounds/mercury_lighthouse.gif');
-    game.load.image('desert', 'assets/images/battle_backgrounds/Suhalla_Desert.gif');
-    game.load.image('tunnel', 'assets/images/battle_backgrounds/Tunnel_Ruins.gif');
-    game.load.image('vault', 'assets/images/battle_backgrounds/Vault_Inn.gif');
-    game.load.image('venus', 'assets/images/battle_backgrounds/Venus_Lighthouse.gif');
+    game.load.image('desert', 'assets/images/battle_backgrounds/suhalla_desert.gif');
+    game.load.image('tunnel', 'assets/images/battle_backgrounds/tunnel_ruins.gif');
+    game.load.image('vault', 'assets/images/battle_backgrounds/vault_inn.gif');
+    game.load.image('venus', 'assets/images/battle_backgrounds/venus_lighthouse.gif');
 
     game.load.atlasJSONHash('isaac_battle_animation', 'assets/images/spritesheets/battle/isaac_battle.png', 'assets/images/spritesheets/battle/isaac_battle.json');
+    game.load.atlasJSONHash('garet_battle_animation', 'assets/images/spritesheets/battle/garet_battle.png', 'assets/images/spritesheets/battle/garet_battle.json');
+    game.load.atlasJSONHash('sheba_battle_animation', 'assets/images/spritesheets/battle/sheba_battle.png', 'assets/images/spritesheets/battle/sheba_battle.json');
     game.load.atlasJSONHash('mini_goblin_battle_animation', 'assets/images/spritesheets/battle/mini_goblin_battle.png', 'assets/images/spritesheets/battle/mini_goblin_battle.json');
 
     game.load.script('color_filters', 'plugins/ColorFilters.js');
@@ -196,7 +232,7 @@ function update_stage() {
         }
 
         //set scale
-        scale = get_scale(relative_angle);
+        scale = get_scale(sprite_keys[i].scale, relative_angle);
         players[i].scale.setTo(scale, scale);
 
         //change texture in function of position
@@ -239,7 +275,7 @@ function create() {
 
     psynergy_animations_db = game.cache.getJSON('psynergy_animations_db');
 
-    default_scale = 0.85;
+    default_scale = 1;
     center_x = numbers.GAME_WIDTH/2;
     center_y = numbers.GAME_HEIGHT - 35;
     camera_angle = {rad : 0, spining: false, update: update_stage};
@@ -247,7 +283,7 @@ function create() {
     camera_speed = 0.009 * Math.PI;
     bg_speed = 2.4;
     bg_spin_speed = 0.4;
-    party_count = 1;
+    party_count = 3;
     enemy_count = 1;
     players_number = party_count + enemy_count;
     spacing_distance = 35;
@@ -271,12 +307,14 @@ function create() {
 
     for (let i = 0; i < players_number; ++i) {
         let p;
-        if (i < party_count)
-            p = group_party.create(0, 0, 'isaac_battle_animation');
-        else
-            p = group_enemy.create(0, 0, 'mini_goblin_battle_animation');
+        if (i < party_count) {
+            p = group_party.create(0, 0, sprite_keys[i].sprite);
+            if (i === 0) test_hero = p;
+        } else {
+            p = group_enemy.create(0, 0, sprite_keys[i].sprite);
+        }
         p.anchor.setTo(0.5, 1);
-        p.scale.setTo(default_scale, default_scale);
+        p.scale.setTo(sprite_keys[i].scale, sprite_keys[i].scale);
         p.ellipses_axis_factor_a = base_a;
         p.ellipses_axis_factor_b = base_b;
         players.push(p);
@@ -293,7 +331,7 @@ function create() {
             players[i].y = pos_y_enemy;
         }
         //set scale
-        scale = get_scale(relative_angle);
+        scale = get_scale(sprite_keys[i].scale, relative_angle);
         players[i].scale.setTo(scale, scale);
         //change side in function of position
         if (Math.cos(relative_angle) > 0 && players[i].scale.x < 0)
@@ -306,7 +344,7 @@ function create() {
     first_party_char = group_party.children[0];
     last_party_char = group_party.children[party_count - 1];
     first_enemy_char = group_enemy.children[0];
-    last_enemy_char = group_enemy.children[party_count - 1];
+    last_enemy_char = group_enemy.children[enemy_count - 1];
 
     game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(() => {
         battle_bg.loadTexture('colosso');
@@ -442,7 +480,7 @@ window.cast_psynergy = function() {
         psynergy_animations_db[psy_key].blend_mode_sequence,
         psynergy_animations_db[psy_key].is_party_animation
     );
-    battle_anim.initialize(group_party.children[0], group_enemy.children, group_party, group_enemy, game.world, camera_angle, [battle_bg, battle_bg2]);
+    battle_anim.initialize(test_hero, group_enemy.children, group_party, group_enemy, game.world, camera_angle, [battle_bg, battle_bg2]);
     battle_anim.play(() => {
         battle_animation_executing = false;
     });
@@ -468,6 +506,6 @@ function get_angle(angle) { //equidistant ellipse angle formula
     return angle + Math.atan(( (base_b-base_a)*Math.tan(angle) )/( base_a + base_b*Math.pow(Math.tan(angle), 2) ));
 }
 
-function get_scale(angle) { //scale formula
+function get_scale(default_scale, angle) { //scale formula
     return (Math.sin(angle)/6 + 0.8334) * default_scale;
 }

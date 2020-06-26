@@ -1,0 +1,76 @@
+{"frames": {
+
+"battle/back/00":
+{
+	"frame": {"x":1,"y":56,"w":29,"h":53},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":11,"w":29,"h":53},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/back/01":
+{
+	"frame": {"x":1,"y":1,"w":30,"h":53},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":11,"w":30,"h":53},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/back/02":
+{
+	"frame": {"x":32,"y":57,"w":30,"h":52},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":12,"w":30,"h":52},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/back/03":
+{
+	"frame": {"x":1,"y":1,"w":30,"h":53},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":11,"w":30,"h":53},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/front/00":
+{
+	"frame": {"x":33,"y":1,"w":28,"h":54},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":18,"y":10,"w":28,"h":54},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/front/01":
+{
+	"frame": {"x":63,"y":1,"w":29,"h":53},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":18,"y":11,"w":29,"h":53},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/front/02":
+{
+	"frame": {"x":64,"y":56,"w":27,"h":52},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":19,"y":12,"w":27,"h":52},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/front/03":
+{
+	"frame": {"x":63,"y":1,"w":29,"h":53},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":18,"y":11,"w":29,"h":53},
+	"sourceSize": {"w":64,"h":64}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "sheba_battle.png",
+	"format": "RGBA8888",
+	"size": {"w":93,"h":110},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:9f64aef78483cefc89ac3d0b7aab37a7:18ed0a15c0bdc75eca927cad5a208e74:74111571efa0b842d5eeb6d740493757$"
+}
+}
