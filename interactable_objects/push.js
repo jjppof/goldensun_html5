@@ -15,11 +15,11 @@ export function normal_push(game, data, interactable_object) {
     data.push_timer = null;
 }
 
-export function target_only_push(game, data, interactable_object, before_move, push_end) {
-    fire_push_movement(game, data, interactable_object, push_end, before_move, true);
+export function target_only_push(game, data, interactable_object, before_move, push_end, enable_physics_at_end = true) {
+    fire_push_movement(game, data, interactable_object, push_end, before_move, true, enable_physics_at_end);
 }
 
-export function fire_push_movement(game, data, interactable_object, push_end, before_move, target_only = false) {
+export function fire_push_movement(game, data, interactable_object, push_end, before_move, target_only = false, enable_physics_at_end = true) {
     let expected_position;
     if (!target_only) {
         let positive_limit = data.hero.x + (-interactable_object.interactable_object_sprite.y - interactable_object.interactable_object_sprite.x);
@@ -129,7 +129,9 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
         }
         Promise.all(promises).then(() => {
             data.pushing = false;
-            game.physics.p2.resume();
+            if (enable_physics_at_end) {
+                game.physics.p2.resume();
+            }
             if (push_end !== undefined) {
                 push_end();
             }

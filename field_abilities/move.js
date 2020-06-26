@@ -125,7 +125,7 @@ export class MoveFieldPsynergy extends SpriteBase {
                     this.data.hero.body.velocity.x = this.data.hero.body.velocity.y = 0;
                     this.finish_hand();
                     this.unset_hero_cast_anim();
-                });
+                }, false);
             }
         }
     }
