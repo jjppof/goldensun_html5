@@ -57,7 +57,7 @@ export class GrowthFieldPsynergy {
             const item_y_px = interactable_object.current_y * maps[this.data.map_name].sprite.tileHeight + (maps[this.data.map_name].sprite.tileHeight >> 1);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
             const y_condition = item_y_px >= min_y && item_y_px <= max_y;
-            if (x_condition && y_condition) {
+            if (x_condition && y_condition && this.data.map_collider_layer === interactable_object.base_collider_layer) {
                 let this_sqr_distance = Math.pow(item_x_px - this.data.hero.x, 2) + Math.pow(item_y_px - this.data.hero.y, 2);
                 if (this_sqr_distance < sqr_distance) {
                     this.target_found = true;

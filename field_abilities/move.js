@@ -100,6 +100,19 @@ export class MoveFieldPsynergy extends SpriteBase {
                         Phaser.Easing.Linear.None,
                         true
                     );
+                    this.game.time.events.add(numbers.PUSH_TIME >> 1, () => {
+                        let need_change = false;
+                        if (["up", "down"].includes(this.cast_direction) && ["left", "right"].includes(this.data.trying_to_push_direction)) {
+                            this.cast_direction = this.cast_direction + "_" + this.data.trying_to_push_direction;
+                            need_change = true;
+                        } else if (["up", "down"].includes(this.data.trying_to_push_direction) && ["left", "right"].includes(this.cast_direction)) {
+                            this.cast_direction = this.data.trying_to_push_direction + "_" + this.cast_direction;
+                            need_change = true;
+                        }
+                        if (!need_change) return;
+                        this.data.current_direction = this.cast_direction;
+                        this.data.hero.animations.play(this.action_key_name + "_" + this.cast_direction, main_char_list[this.data.hero_name].actions[this.action_key_name].frame_rate, false);
+                    });
                 }, () => {
                     const pos_sqr_distance = Math.pow(this.data.hero.body.x - this.target_object.interactable_object_sprite.body.x, 2) + Math.pow(this.data.hero.body.y - this.target_object.interactable_object_sprite.body.y, 2);
                     const rad_sqr_distance = Math.pow(numbers.HERO_BODY_RADIUS + this.data.interactable_objects_db[this.target_object.key_name].body_radius, 2);
@@ -272,7 +285,7 @@ export class MoveFieldPsynergy extends SpriteBase {
             const item_y_px = interactable_object.current_y * maps[this.data.map_name].sprite.tileHeight + (maps[this.data.map_name].sprite.tileHeight >> 1);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
             const y_condition = item_y_px >= min_y && item_y_px <= max_y;
-            if (x_condition && y_condition) {
+            if (x_condition && y_condition && this.data.map_collider_layer === interactable_object.base_collider_layer) {
                 let this_sqr_distance = Math.pow(item_x_px - this.data.hero.x, 2) + Math.pow(item_y_px - this.data.hero.y, 2);
                 if (this_sqr_distance < sqr_distance) {
                     sqr_distance = this_sqr_distance;
