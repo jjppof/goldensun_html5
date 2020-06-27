@@ -1,5 +1,5 @@
 # Golden Sun Engine - HTML5
-An online **Golden Sun Engine** built in HTML5 with [Phaser 2](http://phaser.io/).
+An online **Golden Sun Engine** built in HTML5 with [PhaserJS CE 2.15.0](http://phaser.io/).
 
 **See the [DEMO](https://jjppof.github.io/goldensun_html5/index).**
 
@@ -7,14 +7,6 @@ An online **Golden Sun Engine** built in HTML5 with [Phaser 2](http://phaser.io/
 - If you found any bug, please create an issue for it.
 - I'm avoiding making some docs for now because I'm constantly changing things. But see the [wiki](https://github.com/jjppof/goldensun_html5/wiki).
 - I use [projects](https://github.com/jjppof/goldensun_html5/projects/1) to write down things.
-
-## Tech stack
-- [PhaserJS CE 2.15.0](http://phaser.io/) (game engine)
-- [TexturePacker 4.6.1](https://www.codeandweb.com/texturepacker) (optional for creating spritesheets)
-- [PhysicsEditor 1.6.3](https://www.codeandweb.com/physicseditor) (optional for creating collision structures)
-- [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579)) (for building maps)
-- [Shoebox](https://renderhjs.net/shoebox/) (optional for creating fonts)
-- [Golden Sun Editor](http://forum.goldensunhacking.net/index.php?action=downloads;sa=view;down=124) (optional for game info)
 
 ## Development environment
 
@@ -25,6 +17,15 @@ GSHTML5 has no external dependency, so there's no `npm install` or packages on C
 - In the terminal, go to the root folder of the GSHTML5 you cloned and then run `http-server`;
 - Go to your browser and access the address shown in the terminal (it's probably `http://localhost:8080/`).
 - I strongly reccomend using [Visual Studio Code](https://code.visualstudio.com/download) to develop.
+
+## Utils
+- [TexturePacker 4.6.1](https://www.codeandweb.com/texturepacker) (for creating spritesheets)
+- [PhysicsEditor 1.6.3](https://www.codeandweb.com/physicseditor) (for creating collision structures)
+- [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579)) (for building maps)
+- [Shoebox](https://renderhjs.net/shoebox/) (for creating fonts)
+- [Golden Sun Editor](http://forum.goldensunhacking.net/index.php?action=downloads;sa=view;down=124) (for game info)
+- [Paint.NET](https://www.getpaint.net/) (for images editing)
+- [XnConvert](https://www.xnview.com/en/xnconvert/) (for batch image convertion)
 
 ## Credits
 - http://www.goldensunhacking.net/
