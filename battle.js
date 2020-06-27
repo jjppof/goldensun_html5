@@ -268,7 +268,7 @@ function create() {
     game.scale.setupScale(screen_scale_factor * numbers.GAME_WIDTH, screen_scale_factor * numbers.GAME_HEIGHT);
     window.dispatchEvent(new Event('resize'));
 
-    game.stage.disableVisibilityChange = true;
+    game.stage.disableVisibilityChange = false;
 
     battle_bg = game.add.tileSprite(0, 17, numbers.GAME_WIDTH, 113, 'colosso');
     battle_bg2 = game.add.tileSprite(0, 17, numbers.GAME_WIDTH, 113, 'colosso');
