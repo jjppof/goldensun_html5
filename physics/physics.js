@@ -1,6 +1,6 @@
 import { maps } from '../initializers/maps.js';
 import * as numbers from '../magic_numbers.js';
-import { get_transition_directions, check_isdown, mount_collision_polygon } from '../utils.js';
+import { get_transition_directions, check_isdown, mount_collision_polygon, range_360 } from '../utils.js';
 import { main_char_list } from '../initializers/main_chars.js';
 import { normal_push } from '../interactable_objects/push.js';
 import { TileEvent, event_types } from '../base/TileEvent.js';
@@ -132,7 +132,7 @@ export function collision_dealer(game, data) {
     for (let i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; ++i) {
         let c = game.physics.p2.world.narrowphase.contactEquations[i];
         if (c.bodyA === data.hero.body.data) { //check if hero collided with something
-            normals.push(c.normalA);
+            normals.push(c.normalA); //collision normals (one normal for each contact point)
             if (c.contactPointA[0] >= numbers.COLLISION_MARGIN && data.current_direction === "left") {
                 data.hero.body.velocity.x = 0;
             }
@@ -197,7 +197,7 @@ export function collision_dealer(game, data) {
             data.trying_to_push = false;
         }
     }
-    //normals having length means collision happening
+    //normals having length, means that a collision is happening
     if (normals.length && data.current_action === "climb") {
         if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) {
             data.stop_by_colliding = true;
@@ -206,17 +206,21 @@ export function collision_dealer(game, data) {
         }
     } else if (normals.length && ["walk", "dash"].includes(data.current_action)) {
         if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) { //speeds below SPEED_LIMIT_TO_STOP are not considered
-            let zero_at_0_pos = false;
-            let zero_at_1_pos = false;
-            normals.forEach(normal => {
-                if (Math.abs(normal[0]) < numbers.MINIMAL_SLOPE) normal[0] = 0; //minimal slope to this direction be disregarded
+            let contact_point_directions = new Array(normals.length); // a contact point direction is the opposite direction of the contact normal vector
+            normals.forEach((normal, index) => { //slopes outside the MINIMAL_SLOPE range will be desconsidered
+                if (Math.abs(normal[0]) < numbers.MINIMAL_SLOPE) normal[0] = 0; 
                 if (Math.abs(normal[1]) < numbers.MINIMAL_SLOPE) normal[1] = 0;
-                zero_at_0_pos = zero_at_0_pos || Math.sign(-normal[0]) === Math.sign(data.hero.body.velocity.ask_x);
-                zero_at_1_pos = zero_at_1_pos || Math.sign(-normal[1]) === Math.sign(data.hero.body.velocity.ask_y);
+                if (Math.abs(normal[0]) > 1 - numbers.MINIMAL_SLOPE) normal[0] = Math.sign(normal[0]); 
+                if (Math.abs(normal[1]) > 1 - numbers.MINIMAL_SLOPE) normal[1] = Math.sign(normal[1]);
+                contact_point_directions[index] = range_360(Math.atan2(normal[1], -normal[0])); //storing the angle as if it is in the 1st quadrant
             });
-            if (zero_at_0_pos && zero_at_1_pos) {
-                data.hero.body.velocity.ask_x = 0;
-                data.hero.body.velocity.ask_y = 0;
+            const desired_direction = range_360(Math.atan2(-data.hero.body.velocity.temp_y, data.hero.body.velocity.temp_x)); //storing the angle as if it is in the 1st quadrant
+            const aux = (arr, f) => arr.reduce((a, b) => a + f(b), 0)/arr.length;
+            const average_direction = range_360(Math.atan2(aux(contact_point_directions, Math.sin), aux(contact_point_directions, Math.cos))); //mean of circular quantities
+            if (Math.abs(desired_direction - average_direction) < numbers.degree30) { //check if the desired direction is going towards the average contact direction with a error margin of 30 degrees
+                //if true, it means that the hero is going the in the direction of the collision obejct, then it must stop
+                data.hero.body.velocity.temp_x = 0;
+                data.hero.body.velocity.temp_y = 0;
             }
             data.stop_by_colliding = true;
             data.force_direction = false;
@@ -341,18 +345,18 @@ export function collision_dealer(game, data) {
     }
 
     if (["walk", "dash"].includes(data.current_action)) { //sets the final velocity
-        data.hero.body.velocity.x = data.hero.body.velocity.ask_x;
-        data.hero.body.velocity.y = data.hero.body.velocity.ask_y;
+        data.hero.body.velocity.x = data.hero.body.velocity.temp_x;
+        data.hero.body.velocity.y = data.hero.body.velocity.temp_y;
     }
 }
 
-export function calculate_hero_speed(data) { //when setting ask_x or ask_y, it means that these velocities will still be analyzed in collision_dealer function
+export function calculate_hero_speed(data) { //when setting temp_x or temp_y, it means that these velocities will still be analyzed in collision_dealer function
     if (data.current_action === "dash") {
-        data.hero.body.velocity.ask_x = parseInt(data.delta_time * data.x_speed * (main_char_list[data.hero_name].dash_speed + data.extra_speed));
-        data.hero.body.velocity.ask_y = parseInt(data.delta_time * data.y_speed * (main_char_list[data.hero_name].dash_speed + data.extra_speed));
+        data.hero.body.velocity.temp_x = parseInt(data.delta_time * data.x_speed * (main_char_list[data.hero_name].dash_speed + data.extra_speed));
+        data.hero.body.velocity.temp_y = parseInt(data.delta_time * data.y_speed * (main_char_list[data.hero_name].dash_speed + data.extra_speed));
     } else if(data.current_action === "walk") {
-        data.hero.body.velocity.ask_x = parseInt(data.delta_time * data.x_speed * (main_char_list[data.hero_name].walk_speed + data.extra_speed));
-        data.hero.body.velocity.ask_y = parseInt(data.delta_time * data.y_speed * (main_char_list[data.hero_name].walk_speed + data.extra_speed));
+        data.hero.body.velocity.temp_x = parseInt(data.delta_time * data.x_speed * (main_char_list[data.hero_name].walk_speed + data.extra_speed));
+        data.hero.body.velocity.temp_y = parseInt(data.delta_time * data.y_speed * (main_char_list[data.hero_name].walk_speed + data.extra_speed));
     } else if(data.current_action === "climb") {
         data.hero.body.velocity.x = parseInt(data.delta_time * data.x_speed * main_char_list[data.hero_name].climb_speed);
         data.hero.body.velocity.y = parseInt(data.delta_time * data.y_speed * main_char_list[data.hero_name].climb_speed);
@@ -384,7 +388,7 @@ export function set_speed_factors(data) {
         if (!data.force_direction) { //makes no sense to force on diagonal if force_direction is false
             data.forcing_on_diagonal = false;
         }
-        if (check_isdown(data.cursors, "up", "down") || check_isdown(data.cursors, "right", "left")) {
+        if (check_isdown(data.cursors, "up", "down") || check_isdown(data.cursors, "right", "left")) { //opposite direction should not result in movement
             data.x_speed = 0;
             data.y_speed = 0;
         //when force_direction is true, it means that the hero is going to face a different direction from the one specified in the keyboard arrows
