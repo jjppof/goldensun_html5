@@ -30,7 +30,12 @@ export function config_physics_for_npcs(data, only_set_groups = false) {
         game.physics.p2.enable(npc.npc_sprite, false);
         npc.npc_sprite.anchor.y = data.npc_db[npc.key_name].anchor_y; //Important to be after the previous command
         npc.npc_sprite.body.clearShapes();
-        npc.npc_sprite.body.setCircle(data.npc_db[npc.key_name].body_radius, 0, 0);
+        const width = data.npc_db[npc.key_name].body_radius * 2;
+        npc.npc_sprite.body.addPolygon({
+                optimalDecomp: false,
+                skipSimpleCheck: true,
+                removeCollinearPoints: false
+        }, mount_collision_polygon(width, -(width >> 1), data.npc_db[npc.key_name].collision_body_bevel));
         npc.npc_sprite.body.setCollisionGroup(data.npcCollisionGroups[npc.base_collider_layer]);
         npc.npc_sprite.body.damping = numbers.NPC_DAMPING;
         npc.npc_sprite.body.angularDamping = numbers.NPC_DAMPING;

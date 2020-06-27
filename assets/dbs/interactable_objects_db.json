@@ -5,7 +5,7 @@
         "body_radius": 7.0,
         "psynergy_keys": ["move"],
         "pushable": true,
-        "collision_body_bevel": 4,
+        "collision_body_bevel": 3,
         "events": [{
             "type": "jump",
             "active": true,
@@ -27,7 +27,7 @@
         "body_radius": 7.0,
         "psynergy_keys": ["move"],
         "pushable": true,
-        "collision_body_bevel": 4,
+        "collision_body_bevel": 3,
         "events": [{
             "type": "stair",
             "active": true,

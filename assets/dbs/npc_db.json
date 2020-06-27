@@ -2,6 +2,7 @@
     "village_1": {
         "anchor_y": 0.8,
         "initial_action": "idle",
+        "collision_body_bevel": 3,
         "interaction_pattern": 1,
         "body_radius": 7.0,
         "actions": {
@@ -9,6 +10,21 @@
                 "frame_rate": 1,
                 "directions": ["down", "up", "left", "right"],
                 "frames_count": [5, 5, 5, 5],
+                "initial_direction": "down"
+            }
+        }
+    },
+    "briggs": {
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": 1,
+        "body_radius": 7.0,
+        "actions": {
+            "idle": {
+                "frame_rate": 2,
+                "directions": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": [11, 11, 11, 11],
                 "initial_direction": "down"
             }
         }
