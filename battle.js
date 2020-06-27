@@ -80,7 +80,7 @@ var sprites_db = {
         },{
             action: "cast_init_back",
             frames_count: 3,
-            frame_rate: 6,
+            frame_rate: 12,
             loop: false
         },{
             action: "cast_init_front",
