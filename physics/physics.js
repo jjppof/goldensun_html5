@@ -213,11 +213,6 @@ export function collision_dealer(game, data) {
                 if (Math.abs(normal[1]) < numbers.MINIMAL_SLOPE) normal[1] = 0;
                 zero_at_0_pos = zero_at_0_pos || Math.sign(-normal[0]) === Math.sign(data.hero.body.velocity.ask_x);
                 zero_at_1_pos = zero_at_1_pos || Math.sign(-normal[1]) === Math.sign(data.hero.body.velocity.ask_y);
-                if (Math.sign(-normal[0]) === Math.sign(data.hero.body.velocity.ask_x) && Math.sign(-normal[1]) === Math.sign(data.hero.body.velocity.ask_y)) { //check if hero is going against another body, if true, the hero stops
-                    if (normal[0] !== 0) data.hero.body.velocity.ask_x = 0;
-                    if (normal[1] !== 0) data.hero.body.velocity.ask_y = 0;
-                    return;
-                }
             });
             if (zero_at_0_pos && zero_at_1_pos) {
                 data.hero.body.velocity.ask_x = 0;
