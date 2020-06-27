@@ -28,6 +28,7 @@ export function config_hero(data) {
     data.hero.centerX = parseInt((data.init_db.x_tile_position + 1.5) * maps[data.map_name].sprite.tileWidth); //hero x start position
     data.hero.centerY = parseInt((data.init_db.y_tile_position + 1.5) * maps[data.map_name].sprite.tileHeight); //hero y start position
     data.hero.base_collider_layer = data.map_collider_layer;
+    data.hero.roundPx = true;
     data.camera_type = Phaser.Camera.FOLLOW_LOCKON;
     game.camera.follow(data.hero, data.camera_type, numbers.CAMERA_LERP, numbers.CAMERA_LERP); //makes camera follow the data.hero
     game.camera.focusOn(data.hero);
