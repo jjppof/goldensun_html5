@@ -15,6 +15,7 @@ export function config_physics_for_hero(data, initialize = true) {
     data.hero.body.mass = numbers.HERO_BODY_MASS;
     data.hero.body.damping = numbers.HERO_DAMPING;
     data.hero.body.angularDamping = numbers.HERO_DAMPING;
+    data.hero.body.inertia = numbers.INERTIA;
     data.hero.body.setZeroRotation();
     data.hero.body.fixedRotation = true; //disalble hero collision body rotation
 }
