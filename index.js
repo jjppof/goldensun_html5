@@ -300,18 +300,7 @@ async function create() {
     }, this);
 
     //configuring map layers: creating sprites, listing events and setting the layers
-    maps[data.map_name].setLayers(
-        game,
-        data,
-        maps,
-        data.npc_db,
-        data.interactable_objects_db,
-        data.map_name,
-        data.underlayer_group,
-        data.overlayer_group,
-        data.map_collider_layer,
-        data.npc_group
-    ).then(() => {
+    maps[data.map_name].mount_map(game, data).then(() => {
         config_hero(data);
         physics.config_world_physics();
         physics.config_physics_for_hero(data);

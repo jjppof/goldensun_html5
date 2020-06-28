@@ -19,6 +19,6 @@ export function initialize_maps(maps_db) {
 
 export function load_maps(game, resolve){
     for (let map in maps) {
-        maps[map].loadMapAssets(game, true, resolve);
+        maps[map].load_map_assets(game, true, resolve);
     }
 }

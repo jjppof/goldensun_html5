@@ -12,6 +12,7 @@ import {
     CollisionEvent,
     event_types
 } from './TileEvent.js';
+import { maps } from "../initializers/maps.js";
 
 export class Map {
     constructor (
@@ -36,7 +37,7 @@ export class Map {
         this.interactable_objects = [];
     }
 
-    loadMapAssets(game, force_load, on_complete) {
+    load_map_assets(game, force_load, on_complete) {
         let load_tilemap_promise_resolve;
         let load_tilemap_promise = new Promise(resolve => {
             load_tilemap_promise_resolve = resolve;
@@ -64,14 +65,14 @@ export class Map {
         }
     }
 
-    async setLayers(game, data, maps, npc_db, interactable_objects_db, map_name, underlayer_group, overlayer_group, collider_layer, npc_group) {
+    async mount_map(game, data) {
         this.events = {};
         TileEvent.reset();
         this.sprite = game.add.tilemap(this.key_name);
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
-        for (let tile_index in maps[map_name].sprite.tilesets[0].tileProperties) {
-            maps[map_name].sprite.tilesets[0].tileProperties[tile_index].index = tile_index;
+        for (let tile_index in maps[data.map_name].sprite.tilesets[0].tileProperties) {
+            maps[data.map_name].sprite.tilesets[0].tileProperties[tile_index].index = tile_index;
         }
 
         for (let property in this.sprite.properties) {
@@ -196,9 +197,9 @@ export class Map {
             }
         }
 
-        this.layers = this.sprite.layers.sort(function(a, b) {
-            if (a.properties.over != b.properties.over) return a - b;
-            if (a.properties.z != b.properties.z) return a - b;
+        this.layers = this.sprite.layers.sort((a, b) => {
+            if (a.properties.over !== b.properties.over) return a - b;
+            if (a.properties.z !== b.properties.z) return a - b;
         });
 
         for (let i = 0; i < this.layers.length; ++i) {
@@ -210,11 +211,12 @@ export class Map {
             layer.alpha = this.layers[i].alpha;
 
             let is_over = this.layers[i].properties.over.toString().split(",");
-            is_over = is_over.length > collider_layer ? parseInt(is_over[collider_layer]) : parseInt(is_over[0]);
-            if (is_over !== 0)
-                overlayer_group.add(layer);
-            else
-                underlayer_group.add(layer);
+            is_over = is_over.length > data.map_collider_layer ? parseInt(is_over[data.map_collider_layer]) : parseInt(is_over[0]);
+            if (is_over !== 0) {
+                data.overlayer_group.add(layer);
+            } else {
+                data.underlayer_group.add(layer);
+            }
         }
 
         for (let i = 0; i < this.interactable_objects.length; ++i) {
@@ -226,38 +228,38 @@ export class Map {
             );
             pynergy_item.setActionSpritesheet(
                 action,
-                `assets/images/spritesheets/interactable_objects/psynergy_${interactable_objects_db[interactable_object_info.key_name].type}.png`,
-                `assets/images/spritesheets/interactable_objects/psynergy_${interactable_objects_db[interactable_object_info.key_name].type}.json`
+                `assets/images/spritesheets/interactable_objects/psynergy_${data.interactable_objects_db[interactable_object_info.key_name].type}.png`,
+                `assets/images/spritesheets/interactable_objects/psynergy_${data.interactable_objects_db[interactable_object_info.key_name].type}.json`
             );
             pynergy_item.setActionDirections(
                 action, 
-                interactable_objects_db[interactable_object_info.key_name].actions.animations,
-                interactable_objects_db[interactable_object_info.key_name].actions.frames_count
+                data.interactable_objects_db[interactable_object_info.key_name].actions.animations,
+                data.interactable_objects_db[interactable_object_info.key_name].actions.frames_count
             );
-            pynergy_item.setActionFrameRate(action, interactable_objects_db[interactable_object_info.key_name].actions.frame_rate);
+            pynergy_item.setActionFrameRate(action, data.interactable_objects_db[interactable_object_info.key_name].actions.frame_rate);
             pynergy_item.addAnimations();
             await new Promise(resolve => {
                 pynergy_item.loadSpritesheets(game, true, () => {
-                    let interactable_object_sprite = npc_group.create(0, 0, interactable_object_info.key_name + "_" + action);
+                    let interactable_object_sprite = data.npc_group.create(0, 0, interactable_object_info.key_name + "_" + action);
                     interactable_object_info.set_sprite(interactable_object_sprite);
                     interactable_object_info.interactable_object_sprite.is_interactable_object = true;
                     interactable_object_info.interactable_object_sprite.roundPx = true;
                     interactable_object_info.interactable_object_sprite.base_collider_layer = interactable_object_info.base_collider_layer;
                     interactable_object_info.interactable_object_sprite.interactable_object = interactable_object_info;
-                    if (interactable_objects_db[interactable_object_info.key_name].send_to_back !== undefined) { 
-                        interactable_object_info.interactable_object_sprite.send_to_back = interactable_objects_db[interactable_object_info.key_name].send_to_back;
+                    if (data.interactable_objects_db[interactable_object_info.key_name].send_to_back !== undefined) { 
+                        interactable_object_info.interactable_object_sprite.send_to_back = data.interactable_objects_db[interactable_object_info.key_name].send_to_back;
                     }
-                    if (interactable_objects_db[interactable_object_info.key_name].anchor_x !== undefined) {
-                        interactable_object_info.interactable_object_sprite.anchor.x = interactable_objects_db[interactable_object_info.key_name].anchor_x;
+                    if (data.interactable_objects_db[interactable_object_info.key_name].anchor_x !== undefined) {
+                        interactable_object_info.interactable_object_sprite.anchor.x = data.interactable_objects_db[interactable_object_info.key_name].anchor_x;
                     }
-                    interactable_object_info.interactable_object_sprite.anchor.y = interactable_objects_db[interactable_object_info.key_name].anchor_y;
-                    const shift_x = interactable_objects_db[interactable_object_info.key_name].shift_x !== undefined ? interactable_objects_db[interactable_object_info.key_name].shift_x : 0;
-                    const shift_y = interactable_objects_db[interactable_object_info.key_name].shift_y !== undefined ? interactable_objects_db[interactable_object_info.key_name].shift_y : 0;
+                    interactable_object_info.interactable_object_sprite.anchor.y = data.interactable_objects_db[interactable_object_info.key_name].anchor_y;
+                    const shift_x = data.interactable_objects_db[interactable_object_info.key_name].shift_x !== undefined ? data.interactable_objects_db[interactable_object_info.key_name].shift_x : 0;
+                    const shift_y = data.interactable_objects_db[interactable_object_info.key_name].shift_y !== undefined ? data.interactable_objects_db[interactable_object_info.key_name].shift_y : 0;
                     interactable_object_info.interactable_object_sprite.centerX = (interactable_object_info.x + 1) * this.sprite.tileWidth + shift_x;
-                    const anchor_shift = interactable_objects_db[interactable_object_info.key_name].anchor_y * this.sprite.tileWidth * 0.5;
+                    const anchor_shift = data.interactable_objects_db[interactable_object_info.key_name].anchor_y * this.sprite.tileWidth * 0.5;
                     interactable_object_info.interactable_object_sprite.centerY = interactable_object_info.y * this.sprite.tileWidth - anchor_shift + shift_y;
                     pynergy_item.setAnimation(interactable_object_info.interactable_object_sprite, action);
-                    const initial_animation = interactable_objects_db[interactable_object_info.key_name].initial_animation;
+                    const initial_animation = data.interactable_objects_db[interactable_object_info.key_name].initial_animation;
                     interactable_object_info.interactable_object_sprite.animations.play(action + "_" + initial_animation);
                     const position = interactable_object_info.get_current_position(data);
                     let x_pos = position.x;
@@ -271,8 +273,8 @@ export class Map {
                         }
                         return false;
                     };
-                    for (let j = 0; j < interactable_objects_db[interactable_object_info.key_name].events.length; ++j) {
-                        const event_info = interactable_objects_db[interactable_object_info.key_name].events[j];
+                    for (let j = 0; j < data.interactable_objects_db[interactable_object_info.key_name].events.length; ++j) {
+                        const event_info = data.interactable_objects_db[interactable_object_info.key_name].events[j];
                         x_pos += event_info.x_shift !== undefined ? event_info.x_shift : 0;
                         y_pos += event_info.y_shift !== undefined ? event_info.y_shift : 0;
                         let collider_layer_shift = event_info.collider_layer_shift !== undefined ? event_info.collider_layer_shift : 0;
@@ -430,38 +432,34 @@ export class Map {
                 );
                 npc.setActionDirections(
                     action, 
-                    npc_db[npc_info.key_name].actions[action].directions,
-                    npc_db[npc_info.key_name].actions[action].frames_count
+                    data.npc_db[npc_info.key_name].actions[action].directions,
+                    data.npc_db[npc_info.key_name].actions[action].frames_count
                 );
-                npc.setActionFrameRate(action, npc_db[npc_info.key_name].actions[action].frame_rate);
+                npc.setActionFrameRate(action, data.npc_db[npc_info.key_name].actions[action].frame_rate);
             }
             npc.addAnimations();
             await new Promise(resolve => {
                 npc.loadSpritesheets(game, true, () => {
-                    const initial_action = npc_db[npc_info.key_name].initial_action;
-                    let npc_shadow_sprite = npc_group.create(0, 0, 'shadow');
+                    const initial_action = data.npc_db[npc_info.key_name].initial_action;
+                    let npc_shadow_sprite = data.npc_group.create(0, 0, 'shadow');
                     npc_shadow_sprite.roundPx = true;
                     npc_shadow_sprite.blendMode = PIXI.blendModes.MULTIPLY;
                     npc_shadow_sprite.anchor.setTo(npc_info.ac_x, npc_info.ac_y);
                     npc_shadow_sprite.base_collider_layer = npc_info.base_collider_layer;
-                    let npc_sprite = npc_group.create(0, 0, u([
-                        npc_info.key_name,
-                        initial_action
-                    ]));
+                    const sprite_key = npc_info.key_name + "_" + initial_action;
+                    let npc_sprite = data.npc_group.create(0, 0, sprite_key);
                     npc_info.set_shadow_sprite(npc_shadow_sprite);
                     npc_info.set_sprite(npc_sprite);
                     npc_info.npc_sprite.is_npc = true;
                     npc_info.npc_sprite.roundPx = true;
                     npc_info.npc_sprite.base_collider_layer = npc_info.base_collider_layer;
-                    npc_info.npc_sprite.anchor.y = npc_db[npc_info.key_name].anchor_y;
+                    npc_info.npc_sprite.anchor.y = data.npc_db[npc_info.key_name].anchor_y;
                     npc_info.npc_sprite.centerX = (npc_info.initial_x + 1.5) * this.sprite.tileWidth;
-                    const anchor_shift = npc_db[npc_info.key_name].anchor_y;
+                    const anchor_shift = data.npc_db[npc_info.key_name].anchor_y;
                     npc_info.npc_sprite.centerY = npc_info.initial_y * this.sprite.tileWidth - anchor_shift;
                     npc.setAnimation(npc_info.npc_sprite, initial_action);
-                    npc_info.npc_sprite.animations.play(u([
-                        initial_action,
-                        npc_db[npc_info.key_name].actions[initial_action].initial_direction
-                    ]));
+                    const anim_key = initial_action + "_" + data.npc_db[npc_info.key_name].actions[initial_action].initial_direction;
+                    npc_info.npc_sprite.animations.play(anim_key);
                     resolve();
                 });
             });

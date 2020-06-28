@@ -88,18 +88,7 @@ export function door_event_phases(data) {
         data.shadow.base_collider_layer = data.map_collider_layer;
         data.hero.base_collider_layer = data.map_collider_layer;
 
-        maps[data.map_name].setLayers(
-            game,
-            data,
-            maps,
-            data.npc_db,
-            data.interactable_objects_db,
-            data.map_name,
-            data.underlayer_group,
-            data.overlayer_group,
-            data.map_collider_layer,
-            data.npc_group
-        ).then(() => {
+        maps[data.map_name].mount_map(game, data).then(() => {
             game.camera.setBoundsToWorld();
             if (game.camera.bounds.width < numbers.GAME_WIDTH) {
                 game.camera.bounds.width = numbers.GAME_WIDTH;
