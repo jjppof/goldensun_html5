@@ -1,7 +1,7 @@
 import * as numbers from  "../magic_numbers.js";
 import { maps } from '../initializers/maps.js';
 import { TileEvent, event_types, JumpEvent } from "../base/TileEvent.js";
-import { get_surroundings, get_opposite_direcion } from "../utils.js";
+import { get_surroundings, get_opposite_direction } from "../utils.js";
 
 const dust_count = 7;
 const dust_radius = 18;
@@ -173,7 +173,7 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
                     if (old_surr_event.type === event_types.JUMP) {
                         const target_layer = interactable_object.collider_layer_shift + interactable_object.base_collider_layer;
                         if (old_surr_event.activation_collision_layers.includes(target_layer) && old_surr_event.dynamic === false) {
-                            old_surr_event.deactivate_at(get_opposite_direcion(old_surrounding.direction));
+                            old_surr_event.deactivate_at(get_opposite_direction(old_surrounding.direction));
                         }
                     }
                 }

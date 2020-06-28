@@ -1,4 +1,4 @@
-import { get_surroundings, get_opposite_direcion, get_directions } from "../utils.js";
+import { get_surroundings, get_opposite_direction, get_directions } from "../utils.js";
 import { maps } from "../initializers/maps.js";
 
 export const event_types = {
@@ -7,7 +7,7 @@ export const event_types = {
     DOOR: "door",
     JUMP: "jump",
     STEP: "step",
-    COLLISION: "collision",
+    COLLISION: "collision"
 };
 
 export class TileEvent {
@@ -117,7 +117,7 @@ export class JumpEvent extends TileEvent {
                     if (surr_event.type === event_types.JUMP) {
                         if (surr_event.activation_collision_layers.includes(target_layer)) {
                             if (surr_event.dynamic === false && surr_event.is_set) {
-                                surr_event.activate_at(get_opposite_direcion(surrounding.direction));
+                                surr_event.activate_at(get_opposite_direction(surrounding.direction));
                             }
                         }
                     }
@@ -137,7 +137,7 @@ export class JumpEvent extends TileEvent {
                 const this_event = maps[data.map_name].events[location_key][j];
                 if (this_event.is_set && this_event.type === event_types.JUMP) {
                     if (this_event.activation_collision_layers.includes(target_collision_layer)) {
-                        if (this_event.activation_directions.includes(get_opposite_direcion(surrounding.direction))) {
+                        if (this_event.activation_directions.includes(get_opposite_direction(surrounding.direction))) {
                             events.push(this_event);
                         }
                     }

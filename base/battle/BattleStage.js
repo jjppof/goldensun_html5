@@ -39,8 +39,12 @@ export class BattleStage {
     }
 
     initialize_sprites() {
-        this.battle_bg = game.add.tileSprite(this.x + BG_X, this.y + BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, "battle_backgrounds", this.background_key);
-        this.battle_bg2 = game.add.tileSprite(this.x + BG_X, this.y + BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, "battle_backgrounds", this.background_key);
+        this.black_bg = this.game.add.graphics(0, 0);
+        this.black_bg.beginFill(0x0, 1);
+        this.black_bg.drawRect(this.x, this.y, numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+        this.black_bg.endFill();
+        this.battle_bg = this.game.add.tileSprite(this.x + BG_X, this.y + BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, "battle_backgrounds", this.background_key);
+        this.battle_bg2 = this.game.add.tileSprite(this.x + BG_X, this.y + BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, "battle_backgrounds", this.background_key);
         const set_sprite = (group, info, is_ally, animation) => {
             const sprite = group.create(0, 0, info.sprite_key);
             sprite.anchor.setTo(0.5, 1);

@@ -10,9 +10,10 @@ import {
     JumpEvent,
     StepEvent,
     CollisionEvent,
-    event_types
+    event_types as tile_event_types
 } from './TileEvent.js';
 import { maps } from "../initializers/maps.js";
+import { GameEvent } from "./GameEvent.js";
 
 export class Map {
     constructor (
@@ -68,6 +69,7 @@ export class Map {
     async mount_map(game, data) {
         this.events = {};
         TileEvent.reset();
+        GameEvent.reset();
         this.sprite = game.add.tilemap(this.key_name);
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
@@ -82,7 +84,7 @@ export class Map {
                 if (!(this_event_location_key in this.events)) {
                     this.events[this_event_location_key] = [];
                 }
-                if (property_info.type === event_types.STAIR) {
+                if (property_info.type === tile_event_types.STAIR) {
                     const new_event = new StairEvent(
                         property_info.x,
                         property_info.y,
@@ -93,7 +95,7 @@ export class Map {
                         property_info.change_to_collision_layer === undefined ? null : property_info.change_to_collision_layer
                     );
                     this.events[this_event_location_key].push(new_event);
-                } else if (property_info.type === event_types.SPEED) {
+                } else if (property_info.type === tile_event_types.SPEED) {
                     const new_event = new SpeedEvent(
                         property_info.x,
                         property_info.y,
@@ -104,7 +106,7 @@ export class Map {
                         property_info.speed
                     );
                     this.events[this_event_location_key].push(new_event);
-                } else if (property_info.type === event_types.DOOR) {
+                } else if (property_info.type === tile_event_types.DOOR) {
                     const new_event = new DoorEvent(
                         property_info.x,
                         property_info.y,
@@ -119,7 +121,7 @@ export class Map {
                         property_info.dest_collider_layer ? property_info.dest_collider_layer : 0
                     );
                     this.events[this_event_location_key].push(new_event);
-                } else if (property_info.type === event_types.JUMP) {
+                } else if (property_info.type === tile_event_types.JUMP) {
                     const new_event = new JumpEvent(
                         property_info.x,
                         property_info.y,
@@ -130,7 +132,7 @@ export class Map {
                         property_info.is_set === undefined ? true : property_info.is_set
                     );
                     this.events[this_event_location_key].push(new_event);
-                } else if (property_info.type === event_types.STEP) {
+                } else if (property_info.type === tile_event_types.STEP) {
                     const new_event = new StepEvent(
                         property_info.x,
                         property_info.y,
@@ -141,7 +143,7 @@ export class Map {
                         property_info.step_direction
                     );
                     this.events[this_event_location_key].push(new_event);
-                } else if (property_info.type === event_types.COLLISION) {
+                } else if (property_info.type === tile_event_types.COLLISION) {
                     const new_event = new CollisionEvent(
                         property_info.x,
                         property_info.y,
@@ -168,7 +170,8 @@ export class Map {
                     property_info.thought_message,
                     property_info.avatar ? property_info.avatar : null,
                     property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer,
-                    property_info.talk_range_factor === undefined ? numbers.NPC_TALK_RANGE : property_info.talk_range_factor
+                    property_info.talk_range_factor === undefined ? numbers.NPC_TALK_RANGE : property_info.talk_range_factor,
+                    property_info.events === undefined ? [] : property_info.events
                 ));
             } else if(property.startsWith("interactable_object")) {
                 const property_info = JSON.parse(this.sprite.properties[property]);
@@ -314,7 +317,7 @@ export class Map {
                                         //check if already theres a jump event in this place
                                         for (let k = 0; k < this.events[this_event_location_key].length; ++k) {
                                             const event = this.events[this_event_location_key][k];
-                                            if (event.type === event_types.JUMP && event.is_set) {
+                                            if (event.type === tile_event_types.JUMP && event.is_set) {
                                                 if (event.activation_collision_layers.includes(target_layer)) {
                                                     is_set = false;
                                                 }

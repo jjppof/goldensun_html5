@@ -195,7 +195,7 @@ function loadRender() {
 
 function enter_key_event() {
     if (data.casting_psynergy) return;
-    trigger_npc_dialog(data);
+    trigger_npc_dialog(game, data);
 }
 
 async function create() {

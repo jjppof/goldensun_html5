@@ -141,7 +141,7 @@ export const transitions = {
     },
 };
 
-export function get_opposite_direcion(direction) {
+export function get_opposite_direction(direction) {
     switch (direction) {
         case "up": return "down";
         case "down": return "up";

@@ -3,7 +3,7 @@ import { NPC } from '../base/NPC.js';
 import * as utils from '../utils.js';
 import { change_hero_sprite } from '../initializers/hero_control.js';
 
-export function trigger_npc_dialog(data) {
+export function trigger_npc_dialog(game, data) {
     if (!data.in_dialog && !data.menu_open) {
         for (let i = 0; i < maps[data.map_name].npcs.length; ++i) {
             let npc = maps[data.map_name].npcs[i];
@@ -34,6 +34,9 @@ export function trigger_npc_dialog(data) {
                     data.npc_db[data.active_npc.key_name].initial_action,
                     data.npc_db[data.active_npc.key_name].actions[data.npc_db[data.active_npc.key_name].initial_action].initial_direction
                 ].join("_"));
+                data.active_npc.events.forEach(event => {
+                    event.fire(game, data);
+                })
             } else {
                 data.waiting_for_enter_press = true;
             }
@@ -41,7 +44,7 @@ export function trigger_npc_dialog(data) {
     }
 }
 
-export function set_npc_event (data) {
+export function set_npc_event(data) {
     if (!data.waiting_for_enter_press) {
         if (!data.in_dialog && data.active_npc.npc_type === NPC.types.NORMAL) {
             let parts = set_dialog(game, data.active_npc.message);

@@ -1,4 +1,8 @@
 import { SpriteBase } from './SpriteBase.js';
+import {
+    BattleEvent,
+    event_types as game_event_types
+} from "./GameEvent.js";
 
 export class NPC_Sprite extends SpriteBase {
     constructor (key_name, actions) {
@@ -20,7 +24,8 @@ export class NPC {
         thought_message,
         avatar,
         base_collider_layer,
-        talk_range_factor
+        talk_range_factor,
+        events_info
     ) {
         this.type = type;
         this.key_name = key_name;
@@ -35,6 +40,18 @@ export class NPC {
         this.avatar = avatar;
         this.base_collider_layer = base_collider_layer;
         this.talk_range_factor = talk_range_factor;
+        this.set_events(events_info);
+    }
+
+    set_events(events_info) {
+        this.events = [];
+        for (let i = 0; i < events_info.length; ++i) {
+            const event_info = events_info[i];
+            if (event_info.type === game_event_types.BATTLE) {
+                const event = new BattleEvent(event_info.background_key, event_info.enemy_party_key);
+                this.events.push(event);
+            }
+        }
     }
 
     set_sprite(sprite) {
