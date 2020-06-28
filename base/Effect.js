@@ -36,6 +36,7 @@ export const effect_operators = {
 export const usages = {
     NOT_APPLY: "not_apply",
     ON_USE: "on_use",
+    ON_TAKE: "on_take",
     BATTLE_PHASE_START: "battle_phase_start",
     BATTLE_PHASE_END: "battle_phase_end",
     TURN_START: "turn_start",

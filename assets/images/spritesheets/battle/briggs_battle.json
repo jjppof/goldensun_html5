@@ -1,0 +1,124 @@
+{"frames": {
+
+"battle/attack_back/00":
+{
+	"frame": {"x":1,"y":67,"w":46,"h":46},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":18,"w":46,"h":46},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_back/01":
+{
+	"frame": {"x":47,"y":1,"w":62,"h":63},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":1,"w":62,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_front/00":
+{
+	"frame": {"x":83,"y":66,"w":53,"h":45},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":17,"w":53,"h":45},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_front/01":
+{
+	"frame": {"x":1,"y":1,"w":44,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":13,"y":0,"w":44,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/back/00":
+{
+	"frame": {"x":197,"y":1,"w":31,"h":51},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":13,"w":31,"h":51},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/back/01":
+{
+	"frame": {"x":273,"y":1,"w":31,"h":50},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":14,"w":31,"h":50},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/back/02":
+{
+	"frame": {"x":49,"y":66,"w":32,"h":49},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":15,"w":32,"h":49},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/back/03":
+{
+	"frame": {"x":275,"y":53,"w":31,"h":50},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":17,"y":14,"w":31,"h":50},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/damage_back/00":
+{
+	"frame": {"x":138,"y":55,"w":46,"h":51},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":13,"w":46,"h":51},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/damage_front/00":
+{
+	"frame": {"x":229,"y":54,"w":44,"h":50},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":14,"w":44,"h":50},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/front/00":
+{
+	"frame": {"x":111,"y":1,"w":41,"h":52},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":14,"y":12,"w":41,"h":52},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/front/01":
+{
+	"frame": {"x":154,"y":1,"w":41,"h":51},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":14,"y":13,"w":41,"h":51},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/front/02":
+{
+	"frame": {"x":230,"y":1,"w":41,"h":50},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":14,"y":14,"w":41,"h":50},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/front/03":
+{
+	"frame": {"x":186,"y":54,"w":41,"h":51},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":14,"y":13,"w":41,"h":51},
+	"sourceSize": {"w":64,"h":64}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "briggs_battle.png",
+	"format": "RGBA8888",
+	"size": {"w":307,"h":116},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:9ae02a3996523344a08f78e1f0de7e13:6a237ef7cae4b87ecbf7262d4fd999c7:100264c52d9d3bf1f8a151426115f184$"
+}
+}

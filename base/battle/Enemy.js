@@ -1,4 +1,6 @@
-export class Enemy {
+import { SpriteBase } from "../SpriteBase.js";
+
+export class Enemy extends SpriteBase {
     constructor(
         key_name,
         name,
@@ -32,6 +34,7 @@ export class Enemy {
         mars_resist,
         jupiter_resist
     ) {
+        super(key_name, ["battle"]);
         this.key_name = key_name;
         this.name = name;
         this.level = level;

@@ -20,7 +20,7 @@ export class Battle {
             const qtd = _.random(member_info.min, member_info.max);
             for (let i = 0; i < qtd; ++i) {
                 this.enemies_info.push({
-                    sprite_key: member_info.key,
+                    sprite_key: member_info.key + "_battle",
                     scale: enemies_list[member_info.key].battle_scale
                 });
             }
