@@ -16,7 +16,7 @@ export class Battle {
         });
         const enemies_party_data = this.data.enemies_parties_db[enemy_party_key];
         this.enemies_info = [];
-        enemies_party_data.forEach(member_info => {
+        enemies_party_data.members.forEach(member_info => {
             const qtd = _.random(member_info.min, member_info.max);
             for (let i = 0; i < qtd; ++i) {
                 this.enemies_info.push({

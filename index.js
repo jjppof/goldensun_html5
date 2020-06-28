@@ -164,7 +164,7 @@ function load_misc() {
 }
 
 function load_battle_assets() {
-    game.load.atlasJSONHash('psynergy_particle', 'assets/images/battle_backgrounds/battle_backgrounds.png', 'assets/images/battle_backgrounds/battle_backgrounds.json');
+    game.load.atlasJSONHash('battle_backgrounds', 'assets/images/battle_backgrounds/battle_backgrounds.png', 'assets/images/battle_backgrounds/battle_backgrounds.json');
 }
 
 function preload() {

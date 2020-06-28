@@ -21,8 +21,9 @@ export class BattleStage {
         this.camera_angle = {
             rad : 0,
             spining: false,
-            update: update_sprite_properties.bind(this)
+            update: this.update_sprite_properties.bind(this)
         };
+        this.background_key = background_key;
         this.old_camera_angle = this.camera_angle.rad;
         this.group_enemies = this.game.add.group();
         this.group_allies = this.game.add.group();
@@ -33,11 +34,13 @@ export class BattleStage {
         this.shift_from_middle_enemy = SPACE_BETWEEN_CHARS * this.allies_count * 0.5;
         this.shift_from_middle_ally = SPACE_BETWEEN_CHARS * this.enemies_count * 0.5;
         this.sprites = [];
+        this.x = this.game.camera.x;
+        this.y = this.game.camera.y;
     }
 
     initialize_sprites() {
-        this.battle_bg = game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, background_key);
-        this.battle_bg2 = game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, background_key);
+        this.battle_bg = game.add.tileSprite(this.x + BG_X, this.y + BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, "battle_backgrounds", this.background_key);
+        this.battle_bg2 = game.add.tileSprite(this.x + BG_X, this.y + BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, "battle_backgrounds", this.background_key);
         const set_sprite = (group, info, is_ally, animation) => {
             const sprite = group.create(0, 0, info.sprite_key);
             sprite.anchor.setTo(0.5, 1);
@@ -136,7 +139,7 @@ export class BattleStage {
     }
 
     unset_stage() {
-        
+
     }
 
     static ellipse(angle, a, b) { //ellipse formula

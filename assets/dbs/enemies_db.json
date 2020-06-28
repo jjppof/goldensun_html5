@@ -56,5 +56,62 @@
         "mercury_resist": 72,
         "mars_resist": 72,
         "jupiter_resist": 72
+    },{
+        "key_name": "briggs",
+        "name": "Briggs",
+        "level": 21,
+        "turns": 1,
+        "max_hp": 984,
+        "max_pp": 0,
+        "hp_recovery": 0,
+        "pp_recovery": 0,
+        "atk": 129,
+        "def": 29,
+        "agi": 76,
+        "luk": 42,
+        "battle_scale": 1,
+        "items": [
+            {
+                "key_name": "oil_drop",
+                "quantity": 1,
+                "use_chance": 0.125
+            },{
+                "key_name": "herb",
+                "quantity": 1,
+                "use_chance": 0.125
+            },{
+                "key_name": "nut",
+                "quantity": 1,
+                "use_chance": 0.125
+            }
+        ],
+        "abilities": [
+            {
+                "key_name": "defend",
+                "use_chance": 0.125
+            },{
+                "key_name": "echo_cut",
+                "use_chance": 0.375
+            },{
+                "key_name": "attack",
+                "use_chance": 0.125
+            }
+        ],
+        "coins_reward": 891,
+        "item_reward": "vial",
+        "item_reward_chance": 1,
+        "exp_reward": 333,
+        "venus_level": 1,
+        "mercury_level": 1,
+        "mars_level": 1,
+        "jupiter_level": 1,
+        "venus_power": 100,
+        "mercury_power": 100,
+        "mars_power": 100,
+        "jupiter_power": 100,
+        "venus_resist": 100,
+        "mercury_resist": 100,
+        "mars_resist": 100,
+        "jupiter_resist": 100
     }
 ]

@@ -202,6 +202,17 @@
                 ],
                 "directions_frames_number": [5,5,5,5,5,5,5,5],
                 "frame_rate": 1
+            },{
+                "key": "battle",
+                "spritesheet": "assets/images/spritesheets/battle/garet_battle.json",
+                "spritesheet_img": "assets/images/spritesheets/battle/garet_battle.png",
+                "directions": [
+                    "back", 
+                    "front"
+                ],
+                "directions_frames_number": [4,4],
+                "frame_rate": [3,3],
+                "loop": [true,true]
             }
         ],
         "walk_speed": 60,
@@ -231,6 +242,7 @@
         "jupiter_resist_base": 88,
         "innate_abilities": ["move"],
         "in_party": true,
+        "battle_scale": 1.05,
         "djinni": ["forge", "fever", "corona", "scorch"],
         "items": [
             {
@@ -280,6 +292,17 @@
                 ],
                 "directions_frames_number": [5,5,5,5,5,5,5,5],
                 "frame_rate": 1
+            },{
+                "key": "battle",
+                "spritesheet": "assets/images/spritesheets/battle/sheba_battle.json",
+                "spritesheet_img": "assets/images/spritesheets/battle/sheba_battle.png",
+                "directions": [
+                    "back", 
+                    "front"
+                ],
+                "directions_frames_number": [4,4],
+                "frame_rate": [3,3],
+                "loop": [true,true]
             }
         ],
         "walk_speed": 60,
@@ -309,6 +332,7 @@
         "jupiter_resist_base": 114,
         "innate_abilities": ["whirlwind"],
         "in_party": true,
+        "battle_scale": 0.85,
         "djinni": ["gust", "breeze", "zephyr", "smog"],
         "items": [
             {
