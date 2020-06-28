@@ -1,0 +1,11 @@
+{
+    "briggs_party": {
+        "members": [
+            {
+                "key": "briggs",
+                "min": 1,
+                "max": 1
+            }
+        ]
+    }
+}

@@ -18,8 +18,6 @@ const SEMI_MINOR_AXIS = numbers.GAME_HEIGHT/50;
 export class BattleStage {
     constructor(game, background_key, allies_info, enemies_info) {
         this.game = game;
-        this.battle_bg = game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, background_key);
-        this.battle_bg2 = game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, background_key);
         this.camera_angle = {
             rad : 0,
             spining: false,
@@ -38,20 +36,23 @@ export class BattleStage {
     }
 
     initialize_sprites() {
-        const set_sprite = (group, info, is_ally) => {
+        this.battle_bg = game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, background_key);
+        this.battle_bg2 = game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, background_key);
+        const set_sprite = (group, info, is_ally, animation) => {
             const sprite = group.create(0, 0, info.sprite_key);
             sprite.anchor.setTo(0.5, 1);
             sprite.scale.setTo(info.scale, info.scale);
             sprite.ellipses_semi_major = SEMI_MAJOR_AXIS;
             sprite.ellipses_semi_minor = SEMI_MINOR_AXIS;
             sprite.is_ally = is_ally;
+            sprite.animations.play(animation);
             this.sprites.push(sprite);
         };
         this.allies_info.forEach(info => {
-            set_sprite(this.group_allies, info, true);
+            set_sprite(this.group_allies, info, true, "back");
         });
         this.enemies_info.forEach(info => {
-            set_sprite(this.group_enemies, info, false);
+            set_sprite(this.group_enemies, info, false, "front");
         });
         this.first_ally_char = this.group_allies.children[0];
         this.last_ally_char = this.group_allies.children[this.allies_count - 1];
@@ -60,7 +61,7 @@ export class BattleStage {
     }
 
     initialize_stage() {
-
+        this.initialize_sprites();
     }
 
     set_choosing_action_position() {
@@ -132,6 +133,10 @@ export class BattleStage {
                 sprite.scale.setTo(-sprite.scale.x, sprite.scale.y);
             }
         }
+    }
+
+    unset_stage() {
+        
     }
 
     static ellipse(angle, a, b) { //ellipse formula

@@ -56,6 +56,7 @@ export class MainChar extends SpriteBase {
         luk_curve,
         exp_curve,
         starting_level,
+        battle_scale,
         venus_level_base,
         mercury_level_base,
         mars_level_base,
@@ -85,6 +86,7 @@ export class MainChar extends SpriteBase {
         this.permanent_status = new Set();
         this.starting_level = starting_level;
         this.level = this.starting_level;
+        this.battle_scale = battle_scale;
         this.exp_curve = exp_curve;
         this.starting_exp = this.exp_curve[this.level];
         this.current_exp = this.starting_exp;

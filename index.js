@@ -137,6 +137,7 @@ function load_db_files() {
     game.load.json('interactable_objects_db', 'assets/dbs/interactable_objects_db.json');
     game.load.json('djinni_db', 'assets/dbs/djinni_db.json');
     game.load.json('enemies_db', 'assets/dbs/enemies_db.json');
+    game.load.json('enemies_parties_db', 'assets/dbs/enemies_parties_db.json');
     game.load.json('maps_db', 'assets/dbs/maps_db.json');
     game.load.json('main_chars_db', 'assets/dbs/main_chars.json');
 }
@@ -162,9 +163,14 @@ function load_misc() {
     game.load.atlasJSONHash('psynergy_ball', 'assets/images/spritesheets/interactable_objects/psynergy_ball.png', 'assets/images/spritesheets/interactable_objects/psynergy_ball.json');
 }
 
+function load_battle_assets() {
+    game.load.atlasJSONHash('psynergy_particle', 'assets/images/battle_backgrounds/battle_backgrounds.png', 'assets/images/battle_backgrounds/battle_backgrounds.json');
+}
+
 function preload() {
     load_db_files();
     load_misc();
+    load_battle_assets();
     load_buttons();
     game.load.script('color_filters', 'plugins/ColorFilters.js');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
@@ -202,6 +208,7 @@ async function create() {
     data.items_db = game.cache.getJSON('items_db');
     data.djinni_db = game.cache.getJSON('djinni_db');
     data.enemies_db = game.cache.getJSON('enemies_db');
+    data.enemies_parties_db = game.cache.getJSON('enemies_parties_db');
     data.maps_db = game.cache.getJSON('maps_db');
     data.main_chars_db = game.cache.getJSON('main_chars_db');
     data.hero_color_filters = game.add.filter('ColorFilters');

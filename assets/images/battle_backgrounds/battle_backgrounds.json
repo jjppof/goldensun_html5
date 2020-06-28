@@ -1,0 +1,76 @@
+{"frames": {
+
+"bg_cliffs":
+{
+	"frame": {"x":1,"y":1,"w":256,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":120},
+	"sourceSize": {"w":256,"h":120}
+},
+"bg_colosso":
+{
+	"frame": {"x":1,"y":123,"w":240,"h":113},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":240,"h":113},
+	"sourceSize": {"w":240,"h":113}
+},
+"bg_kolima_forest":
+{
+	"frame": {"x":243,"y":123,"w":240,"h":113},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":240,"h":113},
+	"sourceSize": {"w":240,"h":113}
+},
+"bg_mercury_lighthouse":
+{
+	"frame": {"x":259,"y":1,"w":240,"h":113},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":240,"h":113},
+	"sourceSize": {"w":240,"h":113}
+},
+"bg_suhalla_desert":
+{
+	"frame": {"x":485,"y":116,"w":240,"h":113},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":240,"h":113},
+	"sourceSize": {"w":240,"h":113}
+},
+"bg_tunnel_ruins":
+{
+	"frame": {"x":501,"y":1,"w":240,"h":113},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":240,"h":113},
+	"sourceSize": {"w":240,"h":113}
+},
+"bg_vault_inn":
+{
+	"frame": {"x":727,"y":116,"w":240,"h":113},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":240,"h":113},
+	"sourceSize": {"w":240,"h":113}
+},
+"bg_venus_lighthouse":
+{
+	"frame": {"x":743,"y":1,"w":240,"h":113},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":240,"h":113},
+	"sourceSize": {"w":240,"h":113}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "battle_backgrounds.png",
+	"format": "RGBA8888",
+	"size": {"w":984,"h":237},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:579b69d592a9ad7afdba112dc5bc86b8:5cae30d14dbc1cf3ab3c914c76ed5917:86ba059510f3c3b47da5c50a1445de84$"
+}
+}

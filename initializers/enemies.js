@@ -18,6 +18,7 @@ export function initialize_enemies(enemies_db) {
             enemy_data.def,
             enemy_data.agi,
             enemy_data.luk,
+            enemy_data.battle_scale,
             enemy_data.items,
             enemy_data.abilities,
             enemy_data.coins_reward,

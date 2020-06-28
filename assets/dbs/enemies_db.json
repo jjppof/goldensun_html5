@@ -12,6 +12,7 @@
         "def": 41,
         "agi": 98,
         "luk": 34,
+        "battle_scale": 1,
         "items": [
             {
                 "key_name": "sleep_bomb",

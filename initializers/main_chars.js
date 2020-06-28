@@ -54,6 +54,7 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
             char_data.luk_curve,
             char_data.exp_curve,
             char_data.starting_level,
+            char_data.battle_scale,
             char_data.venus_level_base,
             char_data.mercury_level_base,
             char_data.mars_level_base,
@@ -79,6 +80,7 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
             main_char_list[char_data.key_name].setActionSpritesheet(action.key, action.spritesheet_img, action.spritesheet);
             main_char_list[char_data.key_name].setActionDirections(action.key, action.directions, action.directions_frames_number);
             main_char_list[char_data.key_name].setActionFrameRate(action.key, action.frame_rate);
+            main_char_list[char_data.key_name].setActionLoop(action.key, action.loop);
         }
         main_char_list[char_data.key_name].addAnimations();
 

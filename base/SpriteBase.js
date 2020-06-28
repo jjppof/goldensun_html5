@@ -21,6 +21,10 @@ export class SpriteBase {
         this.actions[action].frame_rate = frame_rate;
     }
 
+    setActionLoop(action, loop) {
+        this.actions[action].loop = loop;
+    }
+
     setActionSpritesheet(action, spritesheet_image_url, spritesheet_json_url) {
         this.actions[action].spritesheet = {
             spritesheet_image_url : spritesheet_image_url,
@@ -58,13 +62,14 @@ export class SpriteBase {
     setAnimation(sprite, action) {
         const directions = this.actions[action].directions;
         const frame_rate = this.actions[action].frame_rate;
-        for (let key in directions) {
-            const direction = directions[key];
+        const loop = this.actions[action].loop === undefined ? true : this.actions[action].loop;
+        for (let i = 0; i < directions.length; ++i) {
+            const direction = directions[i];
             sprite.animations.add(
                 action + "_" + direction, 
                 this.animations[action][direction], 
-                frame_rate, 
-                true, 
+                Array.isArray(frame_rate) ? frame_rate[i] : frame_rate,
+                Array.isArray(loop) ? loop[i] : loop,
                 false
             );
         }
