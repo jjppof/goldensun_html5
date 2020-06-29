@@ -139,18 +139,6 @@ export function collision_dealer(game, data) {
         let c = game.physics.p2.world.narrowphase.contactEquations[i];
         if (c.bodyA === data.hero.body.data) { //check if hero collided with something
             normals.push(c.normalA); //collision normals (one normal for each contact point)
-            if (c.contactPointA[0] >= numbers.COLLISION_MARGIN && data.current_direction === "left") {
-                data.hero.body.velocity.x = 0;
-            }
-            if (c.contactPointA[0] <= -numbers.COLLISION_MARGIN && data.current_direction === "right") {
-                data.hero.body.velocity.x = 0;
-            }
-            if (c.contactPointA[1] <= -numbers.COLLISION_MARGIN && data.current_direction === "down") {
-                data.hero.body.velocity.y = 0;
-            }
-            if (c.contactPointA[1] >= numbers.COLLISION_MARGIN && data.current_direction === "up") {
-                data.hero.body.velocity.y = 0;
-            }
         }
         let j = 0;
         for (j = 0; j < maps[data.map_name].interactable_objects.length; ++j) {  //check if hero is colliding with any interactable object
@@ -204,13 +192,7 @@ export function collision_dealer(game, data) {
         }
     }
     //normals having length, means that a collision is happening
-    if (normals.length && data.current_action === "climb") {
-        if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) {
-            data.stop_by_colliding = true;
-        } else {
-            data.stop_by_colliding = false;
-        }
-    } else if (normals.length && ["walk", "dash"].includes(data.current_action)) {
+    if (normals.length && ["walk", "dash", "climb"].includes(data.current_action)) {
         if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) { //speeds below SPEED_LIMIT_TO_STOP are not considered
             let contact_point_directions = new Array(normals.length); // a contact point direction is the opposite direction of the contact normal vector
             normals.forEach((normal, index) => { //slopes outside the MINIMAL_SLOPE range will be desconsidered
@@ -221,17 +203,17 @@ export function collision_dealer(game, data) {
                 contact_point_directions[index] = range_360(Math.atan2(normal[1], -normal[0])); //storing the angle as if it is in the 1st quadrant
             });
             const desired_direction = range_360(Math.atan2(-data.hero.body.velocity.temp_y, data.hero.body.velocity.temp_x)); //storing the angle as if it is in the 1st quadrant
-            const aux = (arr, f) => arr.reduce((a, b) => a + f(b), 0)/arr.length;
-            const average_direction = range_360(Math.atan2(aux(contact_point_directions, Math.sin), aux(contact_point_directions, Math.cos))); //mean of circular quantities
-            if (Math.abs(desired_direction - average_direction) < numbers.degree30) { //check if the desired direction is going towards the average contact direction with a error margin of 30 degrees
-                //if true, it means that the hero is going the in the direction of the collision obejct, then it must stop
-                data.hero.body.velocity.temp_x = 0;
-                data.hero.body.velocity.temp_y = 0;
-            }
+            contact_point_directions.forEach(direction => { //check if the desired direction is going towards at least one contact direction with a error margin of 30 degrees
+                if (direction >= desired_direction - numbers.degree15 && direction <= desired_direction + numbers.degree15) { //if true, it means that the hero is going the in the direction of the collision obejct, then it must stop
+                    data.hero.body.velocity.temp_x = 0;
+                    data.hero.body.velocity.temp_y = 0;
+                    return;
+                }
+            });
             data.stop_by_colliding = true;
             data.force_direction = false;
             data.forcing_on_diagonal = false;
-        } else {
+        } else if (data.current_action !== "climb") {
             data.stop_by_colliding = false;
             if (normals.length === 1) { //everything inside this if is to deal with direction changing when colliding
                 const normal_angle = (Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree360) % numbers.degree360;
@@ -350,7 +332,7 @@ export function collision_dealer(game, data) {
         data.forcing_on_diagonal = false;
     }
 
-    if (["walk", "dash"].includes(data.current_action)) { //sets the final velocity
+    if (["walk", "dash", "climb"].includes(data.current_action)) { //sets the final velocity
         data.hero.body.velocity.x = data.hero.body.velocity.temp_x;
         data.hero.body.velocity.y = data.hero.body.velocity.temp_y;
     }
@@ -364,8 +346,8 @@ export function calculate_hero_speed(data) { //when setting temp_x or temp_y, it
         data.hero.body.velocity.temp_x = parseInt(data.delta_time * data.x_speed * (main_char_list[data.hero_name].walk_speed + data.extra_speed));
         data.hero.body.velocity.temp_y = parseInt(data.delta_time * data.y_speed * (main_char_list[data.hero_name].walk_speed + data.extra_speed));
     } else if(data.current_action === "climb") {
-        data.hero.body.velocity.x = parseInt(data.delta_time * data.x_speed * main_char_list[data.hero_name].climb_speed);
-        data.hero.body.velocity.y = parseInt(data.delta_time * data.y_speed * main_char_list[data.hero_name].climb_speed);
+        data.hero.body.velocity.temp_x = parseInt(data.delta_time * data.x_speed * main_char_list[data.hero_name].climb_speed);
+        data.hero.body.velocity.temp_y = parseInt(data.delta_time * data.y_speed * main_char_list[data.hero_name].climb_speed);
     } else if(data.current_action === "idle") {
         data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
     }
