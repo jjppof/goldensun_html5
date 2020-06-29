@@ -69,7 +69,7 @@
         "def": 29,
         "agi": 76,
         "luk": 42,
-        "battle_scale": 1,
+        "battle_scale": 1.35,
         "items": [
             {
                 "key_name": "oil_drop",

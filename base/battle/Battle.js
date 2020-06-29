@@ -25,7 +25,7 @@ export class Battle {
                 });
             }
         });
-        this.battle_stage = new BattleStage(this.game, background_key, this.allies_info, this.enemies_info);
+        this.battle_stage = new BattleStage(this.game, this.data, background_key, this.allies_info, this.enemies_info);
     }
 
     start_battle() {

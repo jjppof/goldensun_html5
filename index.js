@@ -91,7 +91,9 @@ var data = {
     maps_db: undefined,
     jumping: false,
     debug_keys: false,
-    frame_counter: 0
+    frame_counter: 0,
+    in_battle: false,
+    battle_stage: null
 };
 
 //debugging porpouses
@@ -388,7 +390,7 @@ async function create() {
 
 function update() {
     if (data.created) {
-        if (!data.on_event && !data.npc_event && !data.pushing && !data.menu_open && !data.casting_psynergy) {
+        if (!data.on_event && !data.npc_event && !data.pushing && !data.menu_open && !data.casting_psynergy && !data.in_battle) {
             data.hero_tile_pos_x = parseInt(data.hero.x/maps[data.map_name].sprite.tileWidth);
             data.hero_tile_pos_y = parseInt(data.hero.y/maps[data.map_name].sprite.tileHeight);
 
@@ -455,6 +457,8 @@ function update() {
         } else if (data.menu_open && data.menu_screen.horizontal_menu.menu_active) {
             stop_hero(data, false);
             data.menu_screen.update_position();
+        } else if (data.in_battle) {
+            data.battle_stage.update_stage();
         }
         ++data.frame_counter;
         if (data.frame_counter%60 === 0) {

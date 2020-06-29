@@ -3,8 +3,8 @@
     "initial_direction": "down",
     "map_key_name": "madra_side",
     "initial_scale_factor": 2,
-    "x_tile_position": 9,
-    "y_tile_position": 11,
+    "x_tile_position": 16,
+    "y_tile_position": 6,
     "map_z_index": 0,
     "coins": 350,
     "initial_shortcuts": {
