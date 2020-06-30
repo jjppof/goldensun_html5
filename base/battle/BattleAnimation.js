@@ -376,16 +376,14 @@ export class BattleAnimation {
     play_filter_property(sequence, property, ...secondary_properties) {
         for (let i = 0; i < sequence.length; ++i) {
             const filter_seq = sequence[i];
-            if (property === undefined) {
-                property = filter_seq.filter;
-            }
             let resolve_function;
             let this_promise = new Promise(resolve => { resolve_function = resolve; });
             this.promises.push(this_promise);
             this.game.time.events.add(filter_seq.start_delay, () => {
+                const this_property = filter_seq.filter !== undefined ? filter_seq.filter : property;
                 let sprites = this.get_sprites(filter_seq);
                 sprites.forEach(sprite => {
-                    sprite.filters[0][property] = filter_seq.value;
+                    sprite.filters[0][this_property] = filter_seq.value;
                     secondary_properties.forEach(secondary_property => {
                         sprite.filters[0][secondary_property] = filter_seq[secondary_property];
                     });

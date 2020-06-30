@@ -11,7 +11,7 @@
         "count": 16
     }],
     "x_sequence": [{
-        "to": [135,145,135,135,145,135,145,145,155,155,155,155,165,165,175,175],
+        "to": [135,145,135,135,145,135,145,145,155,175,175,155,165,165,155,155],
         "is_absolute": true,
         "tween": "initial",
         "sprite_index": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
@@ -134,13 +134,23 @@
     "custom_filter_sequence": [{
         "start_delay": 1700, 
         "sprite_index": "targets", 
-        "filter": "ice", 
-        "value": true
+        "filter": "color_bend", 
+        "value": [0.5, 0.6, 2.3]
     },{
         "start_delay": 3800, 
         "sprite_index": "targets", 
-        "filter": "ice", 
-        "value": false
+        "filter": "color_bend", 
+        "value": [-1, -1, -1]
+    },{
+        "start_delay": 1700, 
+        "sprite_index": "targets", 
+        "filter": "levels", 
+        "value": [0.1, 0.8, 0.7]
+    },{
+        "start_delay": 3800, 
+        "sprite_index": "targets", 
+        "filter": "levels", 
+        "value": [0.0, 1.0, 1.0]
     }],
     "play_sequence": [{
         "animation_key": "cast",
