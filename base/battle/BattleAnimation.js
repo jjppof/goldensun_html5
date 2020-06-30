@@ -328,9 +328,10 @@ export class BattleAnimation {
             let resolve_function;
             let this_promise = new Promise(resolve => { resolve_function = resolve; });
             this.promises.push(this_promise);
-            this.game.time.events.add(play_seq.start_delay, () => {
-                let sprites = this.get_sprites(play_seq);
-                sprites.forEach(sprite => {
+            let sprites = this.get_sprites(play_seq);
+            sprites.forEach((sprite, index) => {
+                const start_delay = Array.isArray(play_seq.start_delay) ? play_seq.start_delay[index] : play_seq.start_delay;
+                this.game.time.events.add(start_delay, () => {
                     if (play_seq.reverse) {
                         sprite.animations.getAnimation(play_seq.animation_key).reversed = true;
                     } else {
