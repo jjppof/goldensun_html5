@@ -1,0 +1,280 @@
+{
+    "key_name": "pyroclasm",
+    "sprites": [{
+        "key_name": "pyroclasm_psynergy_animation",
+        "per_target": false,
+        "position": "between"
+    },{
+        "key_name": "psynergy_cast_psynergy_animation",
+        "per_target": false,
+        "position": "over"
+    }],
+    "x_sequence": [
+        {
+            "to": 0,
+            "is_absolute": true,
+            "tween": "initial",
+            "sprite_index": 0
+        },{
+            "to": -9,
+            "is_absolute": true,
+            "tween": "initial",
+            "sprite_index": 1
+        },{
+            "start_delay": 3500,
+            "to": 10,
+            "is_absolute": false,
+            "tween": "Linear.None",
+            "sprite_index": 0,
+            "duration": 1000
+        }
+    ],
+    "y_sequence": [
+        {
+            "to": 17,
+            "is_absolute": true,
+            "tween": "initial",
+            "sprite_index": 0
+        },{
+            "to": 9,
+            "is_absolute": true,
+            "tween": "initial",
+            "sprite_index": 1
+        },{
+            "start_delay": 1300,
+            "to": -20,
+            "is_absolute": false,
+            "tween": "Quadratic.Out",
+            "sprite_index": "targets",
+            "duration": 350
+        },{
+            "start_delay": 0,
+            "to": 16,
+            "is_absolute": false,
+            "tween": "Quadratic.Out",
+            "sprite_index": "targets",
+            "duration": 350
+        },{
+            "start_delay": 1300,
+            "to": 6,
+            "is_absolute": false,
+            "tween": "Exponential.Out",
+            "sprite_index": "background",
+            "duration": 80,
+            "yoyo": true
+        },{
+            "start_delay": 550,
+            "to": 4,
+            "is_absolute": false,
+            "tween": "Exponential.Out",
+            "sprite_index": "background",
+            "duration": 80,
+            "yoyo": true
+        },{
+            "start_delay": 900,
+            "to": 6,
+            "is_absolute": false,
+            "tween": "Exponential.Out",
+            "sprite_index": "background",
+            "duration": 80,
+            "yoyo": true
+        }
+    ],
+    "x_ellipse_axis_factor_sequence": [
+        {
+            "start_delay": 1300,
+            "to": 50,
+            "is_absolute": false,
+            "tween": "Quadratic.Out",
+            "sprite_index": "targets",
+            "duration": 350
+        },{
+            "start_delay": 6000,
+            "to": -50,
+            "is_absolute": false,
+            "tween": "Quadratic.Out",
+            "sprite_index": "targets",
+            "duration": 200,
+            "force_stage_update": true
+        }
+    ],
+    "y_ellipse_axis_factor_sequence": [
+        {
+            "start_delay": 1300,
+            "to": 5,
+            "is_absolute": false,
+            "tween": "Quadratic.Out",
+            "sprite_index": "targets",
+            "duration": "instantly"
+        },{
+            "start_delay": 6800,
+            "to": -5,
+            "is_absolute": false,
+            "tween": "Quadratic.Out",
+            "sprite_index": "targets",
+            "duration": "instantly",
+            "force_stage_update": true
+        }
+    ],
+    "x_scale_sequence": [{
+        "to": 1.8,
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": 0
+    }],
+    "y_scale_sequence": [],
+    "x_anchor_sequence": [],
+    "y_anchor_sequence": [],
+    "alpha_sequence": [{
+        "to": 0.0,
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": 1
+    },{
+        "start_delay": 800,
+        "to": 1.0,
+        "is_absolute": true,
+        "duration": "instantly",
+        "sprite_index": 1
+    },{
+        "to": 0.0,
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": 0
+    },{
+        "start_delay": 1300,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": 0,
+        "duration": 200
+    },{
+        "start_delay": 1300,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    },{
+        "start_delay": 4200,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    }],
+    "rotation_sequence": [],
+    "stage_angle_sequence": [
+        {
+            "start_delay": 0,
+            "to": 5.752255,
+            "is_absolute": true,
+            "tween": "Exponential.InOut",
+            "duration": 500,
+            "direction": "closest"
+        },{
+            "start_delay": 800,
+            "to": 4.1537,
+            "is_absolute": true,
+            "tween": "Linear.None",
+            "duration": 4000,
+            "direction": "clockwise"
+        }
+    ],
+    "hue_angle_sequence": [],
+    "tint_sequence": [
+        {
+            "start_delay": 1300, 
+            "sprite_index": "targets", 
+            "value": [1,1,1]
+        },{
+            "start_delay": 1425, 
+            "sprite_index": "targets", 
+            "value": [-1,-1,-1]
+        },{
+            "start_delay": 1550, 
+            "sprite_index": "targets", 
+            "value": [1,1,1]
+        },{
+            "start_delay": 1675, 
+            "sprite_index": "targets", 
+            "value": [-1,-1,-1]
+        }
+    ],
+    "grayscale_sequence": [],
+    "colorize_sequence": [],
+    "custom_filter_sequence": [
+        {
+            "start_delay": 1800, 
+            "sprite_index": "targets", 
+            "filter": "flame", 
+            "value": true
+        },{
+            "start_delay": 6800, 
+            "sprite_index": "targets", 
+            "filter": "flame", 
+            "value": false
+        }
+    ],
+    "play_sequence": [
+        {
+            "animation_key": "cast",
+            "start_delay": 1300,
+            "sprite_index": 0,
+            "reverse": false,
+            "frame_rate": 15,
+            "repeat": false,
+            "wait": true
+        },{
+            "animation_key": "cast",
+            "start_delay": 800,
+            "sprite_index": 1,
+            "reverse": false,
+            "frame_rate": 65,
+            "repeat": false,
+            "wait": true
+        },{
+            "animation_key": "cast_init_back",
+            "start_delay": 800,
+            "sprite_index": "caster",
+            "wait": false
+        },{
+            "animation_key": "cast_back",
+            "start_delay": 1500,
+            "sprite_index": "caster",
+            "wait": false
+        },{
+            "animation_key": "cast_init_back",
+            "reverse": true,
+            "start_delay": 5500,
+            "sprite_index": "caster",
+            "wait": false
+        },{
+            "animation_key": "back",
+            "start_delay": 6000,
+            "sprite_index": "caster",
+            "wait": false
+        },{
+            "animation_key": "damage_front",
+            "start_delay": 1300,
+            "sprite_index": "targets",
+            "wait": false
+        },{
+            "animation_key": "front",
+            "start_delay": 6800,
+            "sprite_index": "targets",
+            "wait": false
+        }
+    ],
+    "set_frame_sequence": [],
+    "blend_mode_sequence": [{
+        "start_delay": 0,
+        "mode": "screen",
+        "sprite_index": 0
+    },{
+        "start_delay": 0,
+        "mode": "screen",
+        "sprite_index": 1
+    }],
+    "is_party_animation": true
+}

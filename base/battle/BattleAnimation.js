@@ -28,7 +28,7 @@ export class BattleAnimation {
         grayscale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
         colorize_sequence, //{start_delay: value, sprite_index: index, value: value, colorize_intensity: value}
         custom_filter_sequence, //{start_delay: value, sprite_index: index, filter: key, value: value}
-        play_sequence, //{start_delay: value, sprite_index: index, reverse: bool, frame_rate: value, repeat: bool, animation_key: key, wait: bool}
+        play_sequence, //{start_delay: value, sprite_index: index, reverse: bool, frame_rate: value, repeat: bool, animation_key: key, wait: bool, hide_on_complete: bool}
         set_frame_sequence, //{start_delay: value, frame: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
         is_party_animation
@@ -75,24 +75,28 @@ export class BattleAnimation {
         for (let i = 0; i < this.sprites_keys.length; ++i) {
             const sprite_info = this.sprites_keys[i];
             if (!sprite_info.per_target) {
-                const psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_info.key_name);
-                let back_group, front_group;
-                if (super_group.getChildIndex(group_caster) < super_group.getChildIndex(group_enemy)) {
-                    back_group = group_caster;
-                    front_group = group_enemy;
-                } else {
-                    back_group = group_enemy;
-                    front_group = group_caster;
+                const count = sprite_info.count ? sprite_info.count : 1;
+                for (let j = 0; j < count; ++j) {
+                    const psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_info.key_name);
+                    let back_group, front_group;
+                    if (super_group.getChildIndex(group_caster) < super_group.getChildIndex(group_enemy)) {
+                        back_group = group_caster;
+                        front_group = group_enemy;
+                    } else {
+                        back_group = group_enemy;
+                        front_group = group_caster;
+                    }
+                    if (sprite_info.position === "over") {
+                        super_group.addChild(psy_sprite);
+                    } else if (sprite_info.position === "between") {
+                        super_group.addChildAt(psy_sprite, super_group.getChildIndex(front_group));
+                    } else if (sprite_info.position === "behind") {
+                        super_group.addChildAt(psy_sprite, super_group.getChildIndex(back_group));
+                    }
+                    psy_sprite.animations.add('cast', Phaser.Animation.generateFrameNames('', 1, psy_sprite.animations.frameTotal, '', 3));
+                    psy_sprite.battle_index = this.sprites.length;
+                    this.sprites.push(psy_sprite);
                 }
-                if (sprite_info.position === "over") {
-                    super_group.addChild(psy_sprite);
-                } else if (sprite_info.position === "between") {
-                    super_group.addChildAt(psy_sprite, super_group.getChildIndex(front_group));
-                } else if (sprite_info.position === "behind") {
-                    super_group.addChildAt(psy_sprite, super_group.getChildIndex(back_group));
-                }
-                this.sprites.push(psy_sprite);
-                this.sprites[i].animations.add('cast', Phaser.Animation.generateFrameNames('', 1, this.sprites[i].animations.frameTotal, '', 3));
             }
         }
         this.set_filters();
@@ -185,9 +189,17 @@ export class BattleAnimation {
                 }
             } else {
                 if (inner_property === "filter") {
-                    return [this.sprites_filters[seq.sprite_index]];
+                    if (Array.isArray(seq.sprite_index)) {
+                        return seq.sprite_index.map(index => this.sprites_filters[index]);
+                    } else {
+                        return [this.sprites_filters[seq.sprite_index]];
+                    }
                 } else {
-                    return [this.sprites[seq.sprite_index][inner_property]];
+                    if (Array.isArray(seq.sprite_index)) {
+                        return seq.sprite_index.map(index => this.sprites_filters[index][inner_property]);
+                    } else {
+                        return [this.sprites[seq.sprite_index][inner_property]];
+                    }
                 }
             }
         } else {
@@ -197,6 +209,8 @@ export class BattleAnimation {
                 return [this.caster_sprite];
             } else if (seq.sprite_index === "targets") {
                 return this.targets_sprites;
+            } else if (Array.isArray(seq.sprite_index)) {
+                return seq.sprite_index.map(index => this.sprites[index]);
             } else {
                 return [this.sprites[seq.sprite_index]];
             }
@@ -222,30 +236,33 @@ export class BattleAnimation {
             }
             let promises_set = false;
             sprites.forEach((this_sprite, index) => {
-                if (this.sprites_prev_properties[this_sprite.key] === undefined) {
-                    this.sprites_prev_properties[this_sprite.key] = {};
+                const uniq_key = this_sprite.key + "_" + this_sprite.battle_index;
+                if (this.sprites_prev_properties[uniq_key] === undefined) {
+                    this.sprites_prev_properties[uniq_key] = {};
                 }
-                if (this.sprites_prev_properties[this_sprite.key][target_property] === undefined) {
-                    this.sprites_prev_properties[this_sprite.key][target_property] = this_sprite[target_property];
+                if (this.sprites_prev_properties[uniq_key][target_property] === undefined) {
+                    this.sprites_prev_properties[uniq_key][target_property] = this_sprite[target_property];
                 }
-                let to_value = seq.to;
+                const seq_to = Array.isArray(seq.to) ? seq.to[index] : seq.to;
+                let to_value = seq_to;
                 if (["rotation", "hue_adjust"].includes(target_property)) {
-                    this.sprites_prev_properties[this_sprite.key][target_property] = range_360(this.sprites_prev_properties[this_sprite.key][target_property]);
-                    this_sprite[target_property] = this.sprites_prev_properties[this_sprite.key][target_property];
-                    to_value = BattleAnimation.get_angle_by_direction(this.sprites_prev_properties[this_sprite.key][target_property], seq.to, seq.direction, target_property === "rotation");
-                    if (Math.abs(this.sprites_prev_properties[this_sprite.key][target_property] - to_value) > numbers.degree360) {
+                    this.sprites_prev_properties[uniq_key][target_property] = range_360(this.sprites_prev_properties[uniq_key][target_property]);
+                    this_sprite[target_property] = this.sprites_prev_properties[uniq_key][target_property];
+                    to_value = BattleAnimation.get_angle_by_direction(this.sprites_prev_properties[uniq_key][target_property], seq_to, seq.direction, target_property === "rotation");
+                    if (Math.abs(this.sprites_prev_properties[uniq_key][target_property] - to_value) > numbers.degree360) {
                         to_value -= Math.sign(to_value) * numbers.degree360;
                     }
                 }
-                to_value = seq.is_absolute ? initial_value + to_value : this.sprites_prev_properties[this_sprite.key][target_property] + seq.to;
+                to_value = seq.is_absolute ? initial_value + to_value : this.sprites_prev_properties[uniq_key][target_property] + seq_to;
                 if (!seq.yoyo) {
-                    this.sprites_prev_properties[this_sprite.key][target_property] = to_value;
+                    this.sprites_prev_properties[uniq_key][target_property] = to_value;
                 }
                 if (seq.tween === "initial") {
                     this_sprite[target_property] = to_value;
                 } else {
                     if (!(seq.sprite_index in chained_tweens)) chained_tweens[seq.sprite_index] = { [index]: [] };
                     if (!(index in chained_tweens[seq.sprite_index])) chained_tweens[seq.sprite_index][index] = [];
+                    const start_delay = Array.isArray(seq.start_delay) ? seq.start_delay[index] : seq.start_delay;
                     if (seq.duration === "instantly") {
                         let resolve_function;
                         if (!promises_set) {
@@ -253,7 +270,7 @@ export class BattleAnimation {
                             this.promises.push(this_promise);
                             promises_set = true;
                         }
-                        this.game.time.events.add(seq.start_delay, () => {
+                        this.game.time.events.add(start_delay, () => {
                             this_sprite[target_property] = to_value;
                             if (seq.force_stage_update) {
                                 this.stage_camera.update();
@@ -261,15 +278,17 @@ export class BattleAnimation {
                             if (seq.is_absolute && ["rotation", "hue_adjust"].includes(target_property)) {
                                 this_sprite[target_property] = range_360(this_sprite[target_property]);
                             }
-                            resolve_function();
+                            if (resolve_function !== undefined) {
+                                resolve_function();
+                            }
                         });
                     } else {
                         const tween = this.game.add.tween(this_sprite).to(
                             { [target_property]: to_value },
-                            seq.duration,
+                            Array.isArray(seq.duration) ? seq.duration[index] : seq.duration,
                             seq.tween.split('.').reduce((p, prop) => p[prop], Phaser.Easing),
                             auto_start_tween[seq.sprite_index],
-                            seq.start_delay,
+                            start_delay,
                             0,
                             seq.yoyo === undefined ? false: seq.yoyo
                         );
@@ -319,7 +338,12 @@ export class BattleAnimation {
                     }
                     sprite.animations.play(play_seq.animation_key, play_seq.frame_rate, play_seq.repeat);
                     if (play_seq.wait) {
-                        sprite.animations.currentAnim.onComplete.addOnce(resolve_function);
+                        sprite.animations.currentAnim.onComplete.addOnce(() => {
+                            if (play_seq.hide_on_complete) {
+                                sprite.alpha = 0;
+                            }
+                            resolve_function();
+                        });
                     } else {
                         resolve_function();
                     }

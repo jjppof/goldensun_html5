@@ -1,8 +1,33 @@
 import { party_data } from "../../initializers/main_chars.js";
 import { BattleStage } from "./BattleStage.js";
 import { enemies_list } from "../../initializers/enemies.js";
+import { BattleLog } from "./BattleLog.js";
 
 const MAX_CHAR_AT_BATTLE = 4;
+
+/* ACTIONS:
+- Attack
+- Psynergy
+- Djinni Use
+- Djinni Recovery
+- Item
+- Enemy Action
+- Defend
+- Total Defense (yes, this is defined differently from Defend for some reason)
+- Counterattack
+- Daedalus
+- Retreat
+*/
+
+const battle_phases = {
+    NONE: 0, // (not in a battle)
+    START: 1, // Start (camera pan, shows enemies, move to menu)
+    MENU: 2, // (includes submenus, this phase doesn't end until the player has entered their final command)
+    ROUND: 3, // Start (turn order is determined, enemies may commit to certain actions)
+    COMBAT: 4, // (all actions are queued and take place here, you could further break up combat actions into subactions, which should be governed by a separate sub-state variable)
+    ROUND: 5, // End (djinn recovery, status/buff/debuff timers decrement)
+    END: 6 // End (the last enemy has fallen, exp/gold/drops are awarded)
+};
 
 export class Battle {
     constructor(game, data, background_key, enemy_party_key) {
@@ -26,9 +51,23 @@ export class Battle {
             }
         });
         this.battle_stage = new BattleStage(this.game, this.data, background_key, this.allies_info, this.enemies_info);
+        this.battle_log = new BattleLog(this.game);
+        this.battle_phase = battle_phases.NONE;
     }
 
     start_battle() {
+        this.check_phases();
+    }
+
+    check_phases() {
+        switch (this.battle_phase) {
+            case battle_phases.NONE:
+                this.battle_phase_none();
+        }
+    }
+
+    battle_phase_none() {
+        this.battle_phase = battle_phases.START;
         this.battle_stage.initialize_stage();
     }
 }

@@ -225,7 +225,7 @@ export class Window {
 
     remove_smooth(text_sprite) {
         text_sprite.smoothed = false;
-        text_sprite.autoRound = true
+        text_sprite.autoRound = true;
     }
 
     set_text(lines, padding_x, padding_y, space_between_lines) {

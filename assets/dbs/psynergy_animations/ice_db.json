@@ -1,0 +1,200 @@
+{
+    "key_name": "ice",
+    "sprites": [{
+        "key_name": "psynergy_cast_psynergy_animation",
+        "per_target": false,
+        "position": "over"
+    },{
+        "key_name": "ice_psynergy_animation",
+        "per_target": false,
+        "position": "between",
+        "count": 16
+    }],
+    "x_sequence": [{
+        "to": [135,145,135,135,145,135,145,145,155,155,155,155,165,165,175,175],
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+    },{
+        "start_delay": [1300, 1340, 1400, 1470, 1500, 1500, 1600, 1650, 1700, 1750, 1800, 1800, 1900, 1950, 2000, 2050],
+        "to": [-110,-110,-110,-110,-110,-110,-110,-110,-110,-110,-110,-110,-110,-110,-110,-110],
+        "is_absolute": false,
+        "tween": "Linear.None",
+        "sprite_index": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
+        "duration": 400
+    },{
+        "to": -9,
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": 0
+    }],
+    "y_sequence": [{
+        "to": 9,
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": 0
+    },{
+        "start_delay": [1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050],
+        "to": [100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],
+        "is_absolute": false,
+        "tween": "Linear.None",
+        "sprite_index": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
+        "duration": 400
+    },{
+        "start_delay": 1700,
+        "to": 2,
+        "is_absolute": false,
+        "tween": "Elastic.Out",
+        "sprite_index": "background",
+        "duration": 350,
+        "yoyo": true
+    }],
+    "x_ellipse_axis_factor_sequence": [{
+        "start_delay": 1700,
+        "to": 20,
+        "is_absolute": false,
+        "tween": "Quadratic.Out",
+        "sprite_index": "targets",
+        "duration": 350,
+        "force_stage_update": true
+    },{
+        "start_delay": 2000,
+        "to": -20,
+        "is_absolute": false,
+        "tween": "Quadratic.Out",
+        "sprite_index": "targets",
+        "duration": 200,
+        "force_stage_update": true
+    }],
+    "y_ellipse_axis_factor_sequence": [],
+    "x_scale_sequence": [],
+    "y_scale_sequence": [],
+    "x_anchor_sequence": [],
+    "y_anchor_sequence": [],
+    "alpha_sequence": [{
+        "to": 0.0,
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": 0
+    },{
+        "start_delay": 800,
+        "to": 1.0,
+        "is_absolute": true,
+        "duration": "instantly",
+        "sprite_index": 0
+    },{
+        "to": 0.0,
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+    },{
+        "start_delay": 1300,
+        "to": 1.0,
+        "is_absolute": true,
+        "duration": "instantly",
+        "sprite_index": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+    },{
+        "start_delay": 900,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 400
+    },{
+        "start_delay": 1800,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    }],
+    "rotation_sequence": [],
+    "stage_angle_sequence": [{
+        "start_delay": 0,
+        "to": 5.752255,
+        "is_absolute": true,
+        "tween": "Exponential.InOut",
+        "duration": 500,
+        "direction": "closest"
+    }],
+    "hue_angle_sequence": [{
+        "sprite_index": 0,
+        "to": 3.14,
+        "is_absolute": true,
+        "tween": "initial"
+    }],
+    "tint_sequence": [],
+    "grayscale_sequence": [],
+    "colorize_sequence": [],
+    "custom_filter_sequence": [{
+        "start_delay": 1700, 
+        "sprite_index": "targets", 
+        "filter": "ice", 
+        "value": true
+    },{
+        "start_delay": 3800, 
+        "sprite_index": "targets", 
+        "filter": "ice", 
+        "value": false
+    }],
+    "play_sequence": [{
+        "animation_key": "cast",
+        "start_delay": 800,
+        "sprite_index": 0,
+        "reverse": false,
+        "frame_rate": 65,
+        "repeat": false,
+        "wait": true
+    },{
+        "animation_key": "cast",
+        "start_delay": 1900,
+        "sprite_index": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
+        "reverse": false,
+        "frame_rate": 10,
+        "repeat": false,
+        "wait": true,
+        "hide_on_complete": true
+    },{
+        "animation_key": "cast_init_back",
+        "start_delay": 800,
+        "sprite_index": "caster",
+        "wait": false
+    },{
+        "animation_key": "cast_back",
+        "start_delay": 1500,
+        "sprite_index": "caster",
+        "wait": false
+    },{
+        "animation_key": "cast_init_back",
+        "reverse": true,
+        "start_delay": 2500,
+        "sprite_index": "caster",
+        "wait": false
+    },{
+        "animation_key": "back",
+        "start_delay": 3000,
+        "sprite_index": "caster",
+        "wait": false
+    },{
+        "animation_key": "damage_front",
+        "start_delay": 1700,
+        "sprite_index": "targets",
+        "wait": false
+    },{
+        "animation_key": "front",
+        "start_delay": 3800,
+        "sprite_index": "targets",
+        "wait": false
+    }],
+    "set_frame_sequence": [],
+    "blend_mode_sequence": [{
+        "start_delay": 0,
+        "mode": "screen",
+        "sprite_index": 0
+    },{
+        "start_delay": 0,
+        "mode": "screen",
+        "sprite_index": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+    }],
+    "is_party_animation": true
+}

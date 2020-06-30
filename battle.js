@@ -8,7 +8,7 @@ import { BattleAnimation } from './base/battle/BattleAnimation.js';
 window.battle_bg = undefined;
 window.battle_bg2 = undefined;
 window.players = [];
-window.base_a = numbers.GAME_WIDTH/2 - 30;
+window.base_a = numbers.GAME_WIDTH/2 - 50;
 window.base_b = numbers.GAME_HEIGHT/50;
 window.camera_angle = undefined;
 window.camera_speed = undefined;
@@ -39,11 +39,13 @@ window.players_number = undefined;
 window.middle_shift_enemy = undefined;
 window.middle_shift_party = undefined;
 window.screen_scale_factor = undefined;
-window.psynergy_animations_db = undefined;
+window.pyroclasm_db = undefined;
+window.ice_db = undefined;
 window.battle_animation_executing = false;
 window.game_intialized = false;
 window.battle_anim = null;
 window.test_hero = null;
+window.psynergies = null;
 
 var sprites_db = {
     "isaac_battle_animation": [
@@ -204,8 +206,10 @@ function preload() {
     game.load.script('color_filters', 'plugins/ColorFilters.js');
 
     game.load.atlasJSONHash('pyroclasm_psynergy_animation', 'assets/images/psynergy_animations/pyroclasm.png', 'assets/images/psynergy_animations/pyroclasm.json');
+    game.load.atlasJSONHash('ice_psynergy_animation', 'assets/images/psynergy_animations/ice.png', 'assets/images/psynergy_animations/ice.json');
     game.load.atlasJSONHash('psynergy_cast_psynergy_animation', 'assets/images/psynergy_animations/psynergy_cast.png', 'assets/images/psynergy_animations/psynergy_cast.json');
-    game.load.json('psynergy_animations_db', 'assets/dbs/psynergy_animations_db.json');
+    game.load.json('pyroclasm_db', 'assets/dbs/psynergy_animations/pyroclasm_db.json');
+    game.load.json('ice_db', 'assets/dbs/psynergy_animations/ice_db.json');
 }
 
 function set_animations(data) {
@@ -273,7 +277,13 @@ function create() {
     battle_bg = game.add.tileSprite(0, 17, numbers.GAME_WIDTH, 113, 'colosso');
     battle_bg2 = game.add.tileSprite(0, 17, numbers.GAME_WIDTH, 113, 'colosso');
 
-    psynergy_animations_db = game.cache.getJSON('psynergy_animations_db');
+    pyroclasm_db = game.cache.getJSON('pyroclasm_db');
+    ice_db = game.cache.getJSON('ice_db');
+
+    psynergies = {
+        "pyroclasm" : pyroclasm_db,
+        "ice" : ice_db,
+    }
 
     default_scale = 1;
     center_x = numbers.GAME_WIDTH/2;
@@ -451,34 +461,33 @@ function update() {
     }
 }
 
-window.cast_psynergy = function() {
+window.cast_psynergy = function(key_name) {
     if (battle_animation_executing || !game_intialized) return;
     battle_animation_executing = true;
-    const psy_key = 0;
     battle_anim = new BattleAnimation(
         game,
-        psynergy_animations_db[psy_key].key_name,
-        psynergy_animations_db[psy_key].sprites,
-        psynergy_animations_db[psy_key].x_sequence,
-        psynergy_animations_db[psy_key].y_sequence,
-        psynergy_animations_db[psy_key].x_ellipse_axis_factor_sequence,
-        psynergy_animations_db[psy_key].y_ellipse_axis_factor_sequence,
-        psynergy_animations_db[psy_key].x_scale_sequence,
-        psynergy_animations_db[psy_key].y_scale_sequence,
-        psynergy_animations_db[psy_key].x_anchor_sequence,
-        psynergy_animations_db[psy_key].y_anchor_sequence,
-        psynergy_animations_db[psy_key].alpha_sequence,
-        psynergy_animations_db[psy_key].rotation_sequence,
-        psynergy_animations_db[psy_key].stage_angle_sequence,
-        psynergy_animations_db[psy_key].hue_angle_sequence,
-        psynergy_animations_db[psy_key].tint_sequence,
-        psynergy_animations_db[psy_key].grayscale_sequence,
-        psynergy_animations_db[psy_key].colorize_sequence,
-        psynergy_animations_db[psy_key].custom_filter_sequence,
-        psynergy_animations_db[psy_key].play_sequence,
-        psynergy_animations_db[psy_key].set_frame_sequence,
-        psynergy_animations_db[psy_key].blend_mode_sequence,
-        psynergy_animations_db[psy_key].is_party_animation
+        psynergies[key_name].key_name,
+        psynergies[key_name].sprites,
+        psynergies[key_name].x_sequence,
+        psynergies[key_name].y_sequence,
+        psynergies[key_name].x_ellipse_axis_factor_sequence,
+        psynergies[key_name].y_ellipse_axis_factor_sequence,
+        psynergies[key_name].x_scale_sequence,
+        psynergies[key_name].y_scale_sequence,
+        psynergies[key_name].x_anchor_sequence,
+        psynergies[key_name].y_anchor_sequence,
+        psynergies[key_name].alpha_sequence,
+        psynergies[key_name].rotation_sequence,
+        psynergies[key_name].stage_angle_sequence,
+        psynergies[key_name].hue_angle_sequence,
+        psynergies[key_name].tint_sequence,
+        psynergies[key_name].grayscale_sequence,
+        psynergies[key_name].colorize_sequence,
+        psynergies[key_name].custom_filter_sequence,
+        psynergies[key_name].play_sequence,
+        psynergies[key_name].set_frame_sequence,
+        psynergies[key_name].blend_mode_sequence,
+        psynergies[key_name].is_party_animation
     );
     battle_anim.initialize(test_hero, group_enemy.children, group_party, group_enemy, game.world, camera_angle, [battle_bg, battle_bg2]);
     battle_anim.play(() => {
