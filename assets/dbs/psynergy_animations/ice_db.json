@@ -150,7 +150,7 @@
         "start_delay": 3800, 
         "sprite_index": "targets", 
         "filter": "levels", 
-        "value": [0.0, 1.0, 1.0]
+        "value": [-1, -1, -1]
     }],
     "play_sequence": [{
         "animation_key": "cast",

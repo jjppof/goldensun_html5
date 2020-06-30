@@ -12,9 +12,9 @@ Phaser.Filter.ColorFilters = function (game) {
     this.uniforms.g_tint = { type: '1f', value: -1.0 };
     this.uniforms.b_tint = { type: '1f', value: -1.0 };
     this.uniforms.flame = { type: '1f', value: 0.0 };
-    this.uniforms.min_input = { type: '1f', value: 0.0 };
-    this.uniforms.max_input = { type: '1f', value: 1.0 };
-    this.uniforms.gamma = { type: '1f', value: 1.0 };
+    this.uniforms.min_input = { type: '1f', value: -1.0 };
+    this.uniforms.max_input = { type: '1f', value: -1.0 };
+    this.uniforms.gamma = { type: '1f', value: -1.0 };
     this.uniforms.r_bend = { type: '1f', value: -1.0 };
     this.uniforms.g_bend = { type: '1f', value: -1.0 };
     this.uniforms.b_bend = { type: '1f', value: -1.0 };
@@ -60,7 +60,9 @@ Phaser.Filter.ColorFilters = function (game) {
                 "gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.2126 * gl_FragColor.r + 0.7152 * gl_FragColor.g + 0.0722 * gl_FragColor.b), gray);",
             "}",
 
-            "gl_FragColor.rgb = finalLevels(gl_FragColor.rgb, min_input, gamma, max_input, gl_FragColor.a);",
+            "if (r_bend != -1.0 || g_bend != -1.0 || b_bend != -1.0) {",
+                "gl_FragColor.rgb = finalLevels(gl_FragColor.rgb, min_input, gamma, max_input, gl_FragColor.a);",
+            "}",
 
             "if (r_tint != -1.0 && g_tint != -1.0 && b_tint != -1.0) {",
                 "gl_FragColor.rgb = vec3(r_tint * gl_FragColor.a, g_tint * gl_FragColor.a, b_tint * gl_FragColor.a);",
