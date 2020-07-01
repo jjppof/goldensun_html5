@@ -28,7 +28,7 @@ GSHTML5 has no external dependency, so there's no `npm install` or packages on C
 - [XnConvert](https://www.xnview.com/en/xnconvert/) (for batch image convertion)
 
 ## Credits
-- **http://www.goldensunhacking.net/** (That would be impossible without these guys)
+- **http://www.goldensunhacking.net/** (This project would be impossible without these guys)
 - https://gamefaqs.gamespot.com/gba/561356-golden-sun-the-lost-age/faqs
 - http://www.goldensun-syndicate.net/sprites/
 - https://www.spriters-resource.com/game_boy_advance/gs/
