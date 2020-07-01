@@ -325,11 +325,11 @@ export class BattleAnimation {
     play_sprite_sequence() {
         for (let i = 0; i < this.play_sequence.length; ++i) {
             const play_seq = this.play_sequence[i];
-            let resolve_function;
-            let this_promise = new Promise(resolve => { resolve_function = resolve; });
-            this.promises.push(this_promise);
             let sprites = this.get_sprites(play_seq);
             sprites.forEach((sprite, index) => {
+                let resolve_function;
+                let this_promise = new Promise(resolve => { resolve_function = resolve; });
+                this.promises.push(this_promise);
                 const start_delay = Array.isArray(play_seq.start_delay) ? play_seq.start_delay[index] : play_seq.start_delay;
                 this.game.time.events.add(start_delay, () => {
                     if (play_seq.reverse) {
@@ -356,12 +356,13 @@ export class BattleAnimation {
     play_blend_modes() {
         for (let i = 0; i < this.blend_mode_sequence.length; ++i) {
             const blend_mode_seq = this.blend_mode_sequence[i];
-            let resolve_function;
-            let this_promise = new Promise(resolve => { resolve_function = resolve; });
-            this.promises.push(this_promise);
-            this.game.time.events.add(blend_mode_seq.start_delay, () => {
-                let sprites = this.get_sprites(blend_mode_seq);
-                sprites.forEach(sprite => {
+            let sprites = this.get_sprites(blend_mode_seq);
+            sprites.forEach((sprite, index) => {
+                let resolve_function;
+                let this_promise = new Promise(resolve => { resolve_function = resolve; });
+                this.promises.push(this_promise);
+                const start_delay = Array.isArray(blend_mode_seq.start_delay) ? blend_mode_seq.start_delay[index] : blend_mode_seq.start_delay;
+                this.game.time.events.add(start_delay, () => {
                     switch (blend_mode_seq.mode) {
                         case "screen":
                             sprite.blendMode = PIXI.blendModes.SCREEN;
@@ -376,13 +377,14 @@ export class BattleAnimation {
     play_filter_property(sequence, property, ...secondary_properties) {
         for (let i = 0; i < sequence.length; ++i) {
             const filter_seq = sequence[i];
-            let resolve_function;
-            let this_promise = new Promise(resolve => { resolve_function = resolve; });
-            this.promises.push(this_promise);
-            this.game.time.events.add(filter_seq.start_delay, () => {
+            let sprites = this.get_sprites(filter_seq);
+            sprites.forEach((sprite, index) => {
+                let resolve_function;
+                let this_promise = new Promise(resolve => { resolve_function = resolve; });
+                this.promises.push(this_promise);
+                const start_delay = Array.isArray(filter_seq.start_delay) ? filter_seq.start_delay[index] : filter_seq.start_delay;
+                this.game.time.events.add(start_delay, () => {
                 const this_property = filter_seq.filter !== undefined ? filter_seq.filter : property;
-                let sprites = this.get_sprites(filter_seq);
-                sprites.forEach(sprite => {
                     sprite.filters[0][this_property] = filter_seq.value;
                     secondary_properties.forEach(secondary_property => {
                         sprite.filters[0][secondary_property] = filter_seq[secondary_property];

@@ -140,22 +140,24 @@ export class BattleStage {
         if (!this.data.cursors.left.isDown && this.data.cursors.right.isDown) {
             this.camera_angle.rad -= CAMERA_SPEED;
             this.battle_bg.x -= BG_SPEED
+        } else if (this.data.cursors.left.isDown && !this.data.cursors.right.isDown) {
+            this.camera_angle.rad += CAMERA_SPEED;
+            this.battle_bg.x += BG_SPEED
         } else {
-            this.battle_bg.x += BG_SPIN_SPEED * numbers.GAME_WIDTH * (this.camera_angle.rad - this.old_camera_angle); //tie bg x position with camera angle when spining
+            const delta = range_360(this.camera_angle.rad) - range_360(this.old_camera_angle);
+            this.battle_bg.x += BG_SPIN_SPEED * numbers.GAME_WIDTH * delta; //tie bg x position with camera angle when spining
         }
 
         this.old_camera_angle = this.camera_angle.rad;
 
-        if (this.battle_bg.x > numbers.GAME_WIDTH) { //check bg x position surplus
-            this.battle_bg.x -= Math.abs(Math.floor(this.battle_bg.x/numbers.GAME_WIDTH)) * numbers.GAME_WIDTH;
-        } else if (this.battle_bg.x < numbers.GAME_WIDTH) {
-            this.battle_bg.x += Math.abs(Math.floor(this.battle_bg.x/numbers.GAME_WIDTH)) * numbers.GAME_WIDTH;
+        if (this.battle_bg.x > numbers.GAME_WIDTH || this.battle_bg.x < -numbers.GAME_WIDTH) { //check bg x position surplus
+            this.battle_bg.x = this.battle_bg2.x;
         }
 
-        if (this.battle_bg.x > 0 && this.battle_bg.x < numbers.GAME_WIDTH) { //make mirrored bg follow default bg
+        if (this.battle_bg.x > 0) { //make bg2 follow default bg
             this.battle_bg2.x = this.battle_bg.x - numbers.GAME_WIDTH;
-        } else if (this.battle_bg.x < 0 && this.battle_bg.x > numbers.GAME_WIDTH) {
-            this.battle_bg2.x = this.battle_bg.x + numbers.GAME_WIDTH;
+        } else if (this.battle_bg.x < 0) {
+            this.battle_bg2.x = this.battle_bg.x + numbers.GAME_WIDTH
         }
 
         if (Math.sin(this.camera_angle.rad) > 0 && this.battle_group.getChildIndex(this.group_allies) < this.battle_group.getChildIndex(this.group_enemies)) { //check party and enemy z index

@@ -4,6 +4,7 @@
 
 import * as numbers from './magic_numbers.js';
 import { BattleAnimation } from './base/battle/BattleAnimation.js';
+import { range_360 } from './utils.js';
 
 window.battle_bg = undefined;
 window.battle_bg2 = undefined;
@@ -420,20 +421,18 @@ function update() {
             if(camera_angle.rad >= numbers.FULL_ROUND) camera_angle.rad -= numbers.FULL_ROUND;
             if(camera_angle.rad < 0) camera_angle.rad += numbers.FULL_ROUND;
         } else //tie bg x position with camera angle when spining
-            battle_bg.x += bg_spin_speed * numbers.GAME_WIDTH * (camera_angle.rad - old_camera_angle);
+            battle_bg.x += bg_spin_speed * numbers.GAME_WIDTH * (range_360(camera_angle.rad) - range_360(old_camera_angle));
         old_camera_angle = camera_angle.rad;
 
-        //check bg x position surplus
-        if (battle_bg.x > numbers.GAME_WIDTH)
-            battle_bg.x -= Math.abs(Math.floor(battle_bg.x/numbers.GAME_WIDTH)) * numbers.GAME_WIDTH;
-        else if (battle_bg.x < -numbers.GAME_WIDTH)
-            battle_bg.x += Math.abs(Math.floor(battle_bg.x/numbers.GAME_WIDTH)) * numbers.GAME_WIDTH;
+        if (battle_bg.x > numbers.GAME_WIDTH || battle_bg.x < -numbers.GAME_WIDTH) { //check bg x position surplus
+            battle_bg.x = battle_bg2.x;
+        }
 
-        //make mirrored bg follow default bg
-        if (battle_bg.x > 0 && battle_bg.x < numbers.GAME_WIDTH)
+        if (battle_bg.x > 0) { //make bg2 follow default bg
             battle_bg2.x = battle_bg.x - numbers.GAME_WIDTH;
-        else if (battle_bg.x < 0 && battle_bg.x > -numbers.GAME_WIDTH)
-            battle_bg2.x = battle_bg.x + numbers.GAME_WIDTH;
+        } else if (battle_bg.x < 0) {
+            battle_bg2.x = battle_bg.x + numbers.GAME_WIDTH
+        }
 
         //get equidistant arc lenghts from camera angle
         party_angle = get_angle(camera_angle.rad);
