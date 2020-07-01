@@ -3,9 +3,10 @@ import { set_door_event } from './door.js';
 import { config_step } from './step.js';
 import { config_collision_change } from './collision.js';
 import { event_types } from '../base/TileEvent.js';
-import * as numbers from '../magic_numbers.js';
 import { maps } from '../initializers/maps.js';
 import { climbing_event } from './climb.js';
+
+const EVENT_TIME = 350;
 
 class EventQueue {
     constructor() {
@@ -66,7 +67,7 @@ export function event_triggering(game, data, event_key) {
                 this_event,
                 data.current_direction,
                 () => {
-                    data.event_timers[this_event.id] = game.time.events.add(numbers.EVENT_TIME, fire_event.bind(null, game, data, this_event, data.current_direction), this);
+                    data.event_timers[this_event.id] = game.time.events.add(EVENT_TIME, fire_event.bind(null, game, data, this_event, data.current_direction), this);
                 }
             );
         }

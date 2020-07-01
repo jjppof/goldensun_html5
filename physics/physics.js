@@ -7,18 +7,28 @@ import { TileEvent, event_types } from '../base/TileEvent.js';
 
 const SPEED_LIMIT_TO_STOP = 9;
 const MINIMAL_SLOPE = 0.1;
+const WORLD_RESTITUTION = 0;
+const WORLD_RELAXION = 5;
+const WORLD_FRICTION = 0;
+const WORLD_STIFFNESS = 1e5;
+const HERO_BODY_MASS = 1.0;
+const HERO_DAMPING = 0;
+const INERTIA = 0;
+const NPC_DAMPING = 1;
+const INTERACTABLE_OBJECT_DAMPING = 1;
+const HERO_Y_AP = 0.8;
 
 export function config_physics_for_hero(data, initialize = true) {
     if (initialize) data.heroCollisionGroup = game.physics.p2.createCollisionGroup(); //groups only need to be created once
     game.physics.p2.enable(data.hero, false);
-    data.hero.anchor.y = numbers.HERO_Y_AP; //Important to be after the previous command
+    data.hero.anchor.y = HERO_Y_AP; //Important to be after the previous command
     data.hero.body.clearShapes();
     data.hero.body.setCircle(numbers.HERO_BODY_RADIUS, 0, 0);
     data.hero.body.setCollisionGroup(data.heroCollisionGroup);
-    data.hero.body.mass = numbers.HERO_BODY_MASS;
-    data.hero.body.damping = numbers.HERO_DAMPING;
-    data.hero.body.angularDamping = numbers.HERO_DAMPING;
-    data.hero.body.inertia = numbers.INERTIA;
+    data.hero.body.mass = HERO_BODY_MASS;
+    data.hero.body.damping = HERO_DAMPING;
+    data.hero.body.angularDamping = HERO_DAMPING;
+    data.hero.body.inertia = INERTIA;
     data.hero.body.setZeroRotation();
     data.hero.body.fixedRotation = true; //disalble hero collision body rotation
 }
@@ -40,8 +50,8 @@ export function config_physics_for_npcs(data, only_set_groups = false) {
                 removeCollinearPoints: false
         }, mount_collision_polygon(width, -(width >> 1), data.npc_db[npc.key_name].collision_body_bevel));
         npc.npc_sprite.body.setCollisionGroup(data.npcCollisionGroups[npc.base_collider_layer]);
-        npc.npc_sprite.body.damping = numbers.NPC_DAMPING;
-        npc.npc_sprite.body.angularDamping = numbers.NPC_DAMPING;
+        npc.npc_sprite.body.damping = NPC_DAMPING;
+        npc.npc_sprite.body.angularDamping = NPC_DAMPING;
         npc.npc_sprite.body.setZeroRotation();
         npc.npc_sprite.body.fixedRotation = true; //disalble npm collision body rotation
         npc.npc_sprite.body.dynamic = false;
@@ -67,8 +77,8 @@ export function config_physics_for_interactable_objects(data, only_set_groups = 
                 removeCollinearPoints: false
         }, mount_collision_polygon(width, -(width >> 1), data.interactable_objects_db[interactable_object.key_name].collision_body_bevel));
         interactable_object.interactable_object_sprite.body.setCollisionGroup(data.interactableObjectCollisionGroups[interactable_object.base_collider_layer]);
-        interactable_object.interactable_object_sprite.body.damping = numbers.INTERACTABLE_OBJECT_DAMPING;
-        interactable_object.interactable_object_sprite.body.angularDamping = numbers.INTERACTABLE_OBJECT_DAMPING;
+        interactable_object.interactable_object_sprite.body.damping = INTERACTABLE_OBJECT_DAMPING;
+        interactable_object.interactable_object_sprite.body.angularDamping = INTERACTABLE_OBJECT_DAMPING;
         interactable_object.interactable_object_sprite.body.setZeroRotation();
         interactable_object.interactable_object_sprite.body.fixedRotation = true; //disalble npm collision body rotation
         interactable_object.interactable_object_sprite.body.dynamic = false;
@@ -102,11 +112,11 @@ export function config_physics_for_map(data, initialize = true, collision_layer 
 export function config_world_physics() {
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.setImpactEvents(true);
-    game.physics.p2.world.defaultContactMaterial.restitution = numbers.WORLD_RESTITUTION;
-    game.physics.p2.world.defaultContactMaterial.relaxation = numbers.WORLD_RELAXION;
-    game.physics.p2.world.defaultContactMaterial.friction = numbers.WORLD_FRICTION;
-    game.physics.p2.world.setGlobalStiffness(numbers.WORLD_STIFFNESS);
-    game.physics.p2.restitution = numbers.WORLD_RESTITUTION;
+    game.physics.p2.world.defaultContactMaterial.restitution = WORLD_RESTITUTION;
+    game.physics.p2.world.defaultContactMaterial.relaxation = WORLD_RELAXION;
+    game.physics.p2.world.defaultContactMaterial.friction = WORLD_FRICTION;
+    game.physics.p2.world.setGlobalStiffness(WORLD_STIFFNESS);
+    game.physics.p2.restitution = WORLD_RESTITUTION;
 }
 
 export function config_collisions(data) { //make the world bodies interact with hero body

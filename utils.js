@@ -1,13 +1,5 @@
 import * as numbers from './magic_numbers.js';
 
-export function u(array) {
-    return array.join("_");
-}
-
-export function b(array) {
-    return array.join("/");
-}
-
 export function variation() {
     return parseInt(Math.random() * 3);
 }

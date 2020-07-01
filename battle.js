@@ -418,8 +418,8 @@ function update() {
         }
 
         if (!camera_angle.spining) { //let spin effect do its work freely
-            if(camera_angle.rad >= numbers.FULL_ROUND) camera_angle.rad -= numbers.FULL_ROUND;
-            if(camera_angle.rad < 0) camera_angle.rad += numbers.FULL_ROUND;
+            if(camera_angle.rad >= numbers.degree360) camera_angle.rad -= numbers.degree360;
+            if(camera_angle.rad < 0) camera_angle.rad += numbers.degree360;
         } else //tie bg x position with camera angle when spining
             battle_bg.x += bg_spin_speed * numbers.GAME_WIDTH * (range_360(camera_angle.rad) - range_360(old_camera_angle));
         old_camera_angle = camera_angle.rad;

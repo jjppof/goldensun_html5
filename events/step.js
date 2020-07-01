@@ -1,12 +1,13 @@
 import { maps } from '../initializers/maps.js';
-import * as numbers from '../magic_numbers.js';
+
+const STEP_SHIFT_FACTOR = 4;
 
 export function config_step(data, current_event) {
     let next_x, next_y = current_event.y, shift_y;
     if (current_event.step_direction === "up") {
-        shift_y = -parseInt(maps[data.map_name].sprite.tileHeight/numbers.STEP_SHIFT_FACTOR);
+        shift_y = -parseInt(maps[data.map_name].sprite.tileHeight/STEP_SHIFT_FACTOR);
     } else if (current_event.step_direction === "down") {
-        shift_y = parseInt(maps[data.map_name].sprite.tileHeight/numbers.STEP_SHIFT_FACTOR);
+        shift_y = parseInt(maps[data.map_name].sprite.tileHeight/STEP_SHIFT_FACTOR);
     }
     if (current_event.activation_directions[0] === "left") {
         next_x = current_event.x - 1;

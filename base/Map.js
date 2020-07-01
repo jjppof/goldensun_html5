@@ -1,7 +1,6 @@
-import { u, get_surroundings } from "../utils.js";
+import { get_surroundings } from "../utils.js";
 import { NPC_Sprite, NPC } from './NPC.js';
 import { InteractableObjects, InteractableObjects_Sprite, interactable_object_event_types, interactable_object_types } from "./InteractableObjects.js";
-import * as numbers from '../magic_numbers.js';
 import {
     TileEvent,
     StairEvent,
@@ -14,6 +13,8 @@ import {
 } from './TileEvent.js';
 import { maps } from "../initializers/maps.js";
 import { GameEvent } from "./GameEvent.js";
+
+const NPC_TALK_RANGE = 3.0;
 
 export class Map {
     constructor (
@@ -170,7 +171,7 @@ export class Map {
                     property_info.thought_message,
                     property_info.avatar ? property_info.avatar : null,
                     property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer,
-                    property_info.talk_range_factor === undefined ? numbers.NPC_TALK_RANGE : property_info.talk_range_factor,
+                    property_info.talk_range_factor === undefined ? NPC_TALK_RANGE : property_info.talk_range_factor,
                     property_info.events === undefined ? [] : property_info.events
                 ));
             } else if(property.startsWith("interactable_object")) {

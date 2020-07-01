@@ -1,5 +1,8 @@
 import * as numbers from '../magic_numbers.js';
 
+const SHADOW_X_AP = 0.5;
+const SHADOW_Y_AP = 0.1;
+
 export function init_speed_factors(data) {
     //set initial speed factors
     if (data.current_direction === "up") {
@@ -22,7 +25,7 @@ export function config_hero(data) {
     data.shadow = data.npc_group.create(0, 0, 'shadow');
     data.shadow.blendMode = PIXI.blendModes.MULTIPLY;
     data.shadow.roundPx = true;
-    data.shadow.anchor.setTo(numbers.SHADOW_X_AP, numbers.SHADOW_Y_AP); //shadow anchor point
+    data.shadow.anchor.setTo(SHADOW_X_AP, SHADOW_Y_AP); //shadow anchor point
     data.shadow.base_collider_layer = data.map_collider_layer;
     data.hero = data.npc_group.create(0, 0, data.hero_name + "_" + data.current_action);
     data.hero.centerX = parseInt((data.init_db.x_tile_position + 1.5) * maps[data.map_name].sprite.tileWidth); //hero x start position

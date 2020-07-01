@@ -3,9 +3,10 @@ import { maps } from '../initializers/maps.js';
 import { TileEvent, event_types, JumpEvent } from "../base/TileEvent.js";
 import { get_surroundings, get_opposite_direction } from "../utils.js";
 
-const dust_count = 7;
-const dust_radius = 18;
-const frames = Phaser.Animation.generateFrameNames('dust/', 0, 7, '', 2);
+const DUST_COUNT = 7;
+const DUST_RADIUS = 18;
+const DUST_FRAMES = Phaser.Animation.generateFrameNames('dust/', 0, 7, '', 2);
+const PUSH_SHIFT = 16;
 
 export function normal_push(game, data, interactable_object) {
     if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.current_direction && !data.casting_psynergy && !data.jumping) {
@@ -45,19 +46,19 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
         switch (data.trying_to_push_direction) {
             case "up":
                 event_shift_y = -1;
-                tween_y = -numbers.PUSH_SHIFT;
+                tween_y = -PUSH_SHIFT;
                 break;
             case "down":
                 event_shift_y = 1;
-                tween_y = numbers.PUSH_SHIFT;
+                tween_y = PUSH_SHIFT;
                 break;
             case "left":
                 event_shift_x = -1;
-                tween_x = -numbers.PUSH_SHIFT;
+                tween_x = -PUSH_SHIFT;
                 break;
             case "right":
                 event_shift_x = 1;
-                tween_x = numbers.PUSH_SHIFT;
+                tween_x = PUSH_SHIFT;
                 break;
         }
         shift_events(data, interactable_object, event_shift_x, event_shift_y);
@@ -183,14 +184,14 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
 }
 
 function dust_animation(game, data, interactable_object, promise_resolve) {
-    let promises = new Array(dust_count);
-    let sprites = new Array(dust_count);
+    let promises = new Array(DUST_COUNT);
+    let sprites = new Array(DUST_COUNT);
     const origin_x = (interactable_object.current_x + 0.5) * maps[data.map_name].sprite.tileWidth;
     const origin_y = (interactable_object.current_y + 0.5) * maps[data.map_name].sprite.tileHeight;
-    for (let i = 0; i < dust_count; ++i) {
-        const this_angle = (Math.PI + numbers.degree60) * i/(dust_count - 1) - numbers.degree30;
-        const x = origin_x + dust_radius * Math.cos(this_angle);
-        const y = origin_y + dust_radius * Math.sin(this_angle);
+    for (let i = 0; i < DUST_COUNT; ++i) {
+        const this_angle = (Math.PI + numbers.degree60) * i/(DUST_COUNT - 1) - numbers.degree30;
+        const x = origin_x + DUST_RADIUS * Math.cos(this_angle);
+        const y = origin_y + DUST_RADIUS * Math.sin(this_angle);
         let dust_sprite = data.npc_group.create(origin_x, origin_y, 'dust');
         if (this_angle < 0 || this_angle > Math.PI) {
             data.npc_group.setChildIndex(dust_sprite, data.npc_group.getChildIndex(interactable_object.interactable_object_sprite));
@@ -201,7 +202,7 @@ function dust_animation(game, data, interactable_object, promise_resolve) {
             y: y
         }, 400, Phaser.Easing.Linear.In, true);
         sprites[i] = dust_sprite;
-        dust_sprite.animations.add('anim', frames, 12, false, false);
+        dust_sprite.animations.add('anim', DUST_FRAMES, 12, false, false);
         let resolve_func;
         promises[i] = new Promise(resolve => { resolve_func = resolve; });
         dust_sprite.animations.currentAnim.onComplete.addOnce(resolve_func);

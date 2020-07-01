@@ -4,11 +4,14 @@ import { maps } from '../initializers/maps.js';
 import { event_types, TileEvent } from '../base/TileEvent.js';
 import { get_surroundings, get_opposite_direction } from '../utils.js';
 
+const JUMP_OFFSET = 30;
+const JUMP_DURATION = 150;
+
 export function jump_event(data, current_event) {
     if (!data.stop_by_colliding || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y || data.casting_psynergy || data.pushing || data.climbing || data.jumping || data.menu_open) {
         return;
     }
-    let jump_offset = numbers.JUMP_OFFSET;
+    let jump_offset = JUMP_OFFSET;
     let direction;
     let jump_direction;
     let next_position = {x: current_event.x, y: current_event.y};
@@ -110,7 +113,7 @@ export function jump_event(data, current_event) {
         data.shadow.y = hero_y;
         game.add.tween(data.hero.body).to( 
             tween_obj,
-            numbers.JUMP_DURATION,
+            JUMP_DURATION,
             Phaser.Easing.Linear.None,
             true
         ).onComplete.addOnce(() => {
