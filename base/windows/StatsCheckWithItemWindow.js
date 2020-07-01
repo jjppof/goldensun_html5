@@ -86,7 +86,7 @@ export class StatsCheckWithItemWindow {
     }
 
     set_compare_arrows(effect_type, equip_slot_property, current_stats_property, compare_removing) {
-        let effect_obj = _.findWhere(this.item.effects, {type: effect_type});
+        let effect_obj = _.find(this.item.effects, {type: effect_type});
         let preview_stats;
         if (effect_obj !== undefined) {
             const equip_slot_key_name = this.char.equip_slots[equip_slot_property] === null ? null : this.char.equip_slots[equip_slot_property].key_name;
@@ -97,7 +97,7 @@ export class StatsCheckWithItemWindow {
             this.update_preview_text(preview_stats, effect_type);
             this.up_arrows[effect_type].alpha = 1;
         } else {
-            const equipped_effect_obj = _.findWhere(items_list[this.char.equip_slots[equip_slot_property].key_name].effects, {type: effect_type});
+            const equipped_effect_obj = _.find(items_list[this.char.equip_slots[equip_slot_property].key_name].effects, {type: effect_type});
             if (equipped_effect_obj === undefined && effect_obj === undefined) return;
             if (effect_obj === undefined || compare_removing) {
                 effect_obj = {

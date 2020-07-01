@@ -15,7 +15,7 @@ export class HorizontalMenu {
         this.data = data;
         this.buttons_number = buttons.length;
         this.enter_propagation_priority = enter_propagation_priority;
-        const max_title_width = get_text_width(this.game, _.max(titles, title => title.length));
+        const max_title_width = get_text_width(this.game, _.maxBy(titles, title => title.length));
         this.title_window_width = title_window_width !== undefined ? title_window_width : max_title_width + 2 * (numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH);
         const total_width = BUTTON_WIDTH * this.buttons_number + this.title_window_width + 2 * numbers.OUTSIDE_BORDER_WIDTH + 2;
         this.dock_right = dock_right;

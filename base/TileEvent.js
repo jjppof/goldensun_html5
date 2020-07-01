@@ -59,7 +59,7 @@ export class TileEvent {
     }
 
     static get_event_by_id(events, id) {
-        return _.findWhere(events, {id: id});
+        return _.find(events, {id: id});
     }
 
     static get_event(id) {

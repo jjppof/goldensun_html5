@@ -25,6 +25,7 @@ export const DEFAULT_WINDOW_COLOR = 0x006080;
 export const DEFAULT_FONT_COLOR = 0xF8F8F8;
 export const YELLOW_FONT_COLOR = 0xF8F840;
 export const RED_FONT_COLOR = 0xF80000;
+export const BLUE_FONT_COLOR = 0x0000F8;
 export const NPC_TALK_RANGE = 3.0;
 export const MAX_CHARS_PER_WINDOW = 85;
 export const FONT_SIZE = 8;

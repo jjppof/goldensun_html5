@@ -132,7 +132,7 @@ export function door_event_phases(data) {
 }
 
 export function open_door(data, current_event) {
-    let layer = _.findWhere(maps[data.map_name].sprite.layers, {name : maps[data.map_name].sprite.properties.door_layer});
+    let layer = _.find(maps[data.map_name].sprite.layers, {name : maps[data.map_name].sprite.properties.door_layer});
     let sample_tile = maps[data.map_name].sprite.getTile(current_event.x, current_event.y - 1, layer.name);
     let door_type_index = sample_tile.properties.door_type;
     let tiles = _.filter(maps[data.map_name].sprite.tilesets[0].tileProperties, key => {

@@ -102,7 +102,7 @@ export class MainChar extends SpriteBase {
         this.mercury_resist_base = mercury_resist_base;
         this.mars_resist_base = mars_resist_base;
         this.jupiter_resist_base = jupiter_resist_base;
-        this.element_afinity = _.max([
+        this.element_afinity = _.maxBy([
             {element: elements.VENUS, level: this.venus_level_base},
             {element: elements.MERCURY, level: this.mercury_level_base},
             {element: elements.MARS, level: this.mars_level_base},
