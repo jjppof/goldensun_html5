@@ -5,6 +5,9 @@ import { main_char_list } from '../initializers/main_chars.js';
 import { normal_push } from '../interactable_objects/push.js';
 import { TileEvent, event_types } from '../base/TileEvent.js';
 
+const SPEED_LIMIT_TO_STOP = 9;
+const MINIMAL_SLOPE = 0.1;
+
 export function config_physics_for_hero(data, initialize = true) {
     if (initialize) data.heroCollisionGroup = game.physics.p2.createCollisionGroup(); //groups only need to be created once
     game.physics.p2.enable(data.hero, false);
@@ -193,13 +196,13 @@ export function collision_dealer(game, data) {
     }
     //normals having length, means that a collision is happening
     if (normals.length && ["walk", "dash", "climb"].includes(data.current_action)) {
-        if (Math.abs(data.hero.body.velocity.x) < numbers.SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < numbers.SPEED_LIMIT_TO_STOP) { //speeds below SPEED_LIMIT_TO_STOP are not considered
+        if (Math.abs(data.hero.body.velocity.x) < SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < SPEED_LIMIT_TO_STOP) { //speeds below SPEED_LIMIT_TO_STOP are not considered
             let contact_point_directions = new Array(normals.length); // a contact point direction is the opposite direction of the contact normal vector
             normals.forEach((normal, index) => { //slopes outside the MINIMAL_SLOPE range will be desconsidered
-                if (Math.abs(normal[0]) < numbers.MINIMAL_SLOPE) normal[0] = 0; 
-                if (Math.abs(normal[1]) < numbers.MINIMAL_SLOPE) normal[1] = 0;
-                if (Math.abs(normal[0]) > 1 - numbers.MINIMAL_SLOPE) normal[0] = Math.sign(normal[0]); 
-                if (Math.abs(normal[1]) > 1 - numbers.MINIMAL_SLOPE) normal[1] = Math.sign(normal[1]);
+                if (Math.abs(normal[0]) < MINIMAL_SLOPE) normal[0] = 0; 
+                if (Math.abs(normal[1]) < MINIMAL_SLOPE) normal[1] = 0;
+                if (Math.abs(normal[0]) > 1 - MINIMAL_SLOPE) normal[0] = Math.sign(normal[0]); 
+                if (Math.abs(normal[1]) > 1 - MINIMAL_SLOPE) normal[1] = Math.sign(normal[1]);
                 contact_point_directions[index] = range_360(Math.atan2(normal[1], -normal[0])); //storing the angle as if it is in the 1st quadrant
             });
             const desired_direction = range_360(Math.atan2(-data.hero.body.velocity.temp_y, data.hero.body.velocity.temp_x)); //storing the angle as if it is in the 1st quadrant

@@ -120,10 +120,7 @@ window.game = game;
 data.game = game;
 
 function load_buttons() {
-    game.load.image('psynergy_button', 'assets/images/buttons/psynergy.gif');
-    game.load.image('djinni_button', 'assets/images/buttons/djinni.gif');
-    game.load.image('item_button', 'assets/images/buttons/item.gif');
-    game.load.image('status_button', 'assets/images/buttons/status.gif');
+    game.load.atlasJSONHash('buttons', 'assets/images/buttons/buttons.png', 'assets/images/buttons/buttons.json');
 
     game.load.image('shift_keyboard', 'assets/images/keyboard/shift.png');
     game.load.image('tab_keyboard', 'assets/images/keyboard/tab.png');
