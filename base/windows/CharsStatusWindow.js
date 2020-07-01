@@ -3,25 +3,38 @@ import { get_text_width } from '../../utils.js';
 import * as numbers from '../../magic_numbers.js';
 import { party_data } from '../../initializers/main_chars.js';
 
-const WIDTH_PER_CHAR = 50;
+const WIDTH_PER_CHAR = 52;
 const STATUS_WIN_HEIGHT = 35;
-const STATUS_NUMBER_MAX_WIDTH = 26;
-const STATUS_BAR_WIDTH = 40;
+const STATUS_WIN_HEIGHT_COMPRESSED = 24;
+const STATUS_BAR_WIDTH = 43;
 const STATUS_BAR_HEIGHT = 3;
 const STATUS_BAR_COLOR_GOOD = numbers.BLUE_FONT_COLOR;
 const STATUS_BAR_COLOR_BAD = numbers.RED_FONT_COLOR;
 const MAX_CHARS_NUMBER = 4;
+const STAT_X = 40;
+const NAME_Y = 8;
+const NAME_Y_COMPRESSED = 0;
 
 export class CharsStatusWindow {
-    constructor(game, data) {
+    constructor(game, data, compressed = false) {
         this.game = game;
         this.data = data;
+        this.compressed = compressed;
+        this.name_y = NAME_Y;
+        if (this.compressed) {
+            this.name_y = NAME_Y_COMPRESSED;
+        }
+        this.status_win_height = STATUS_WIN_HEIGHT;
+        if (this.compressed) {
+            this.status_win_height = STATUS_WIN_HEIGHT_COMPRESSED;
+        }
         this.chars_number = _.clamp(party_data.members.length, MAX_CHARS_NUMBER);
         this.status_win_width = this.chars_number * WIDTH_PER_CHAR;
         this.status_win_x = numbers.GAME_WIDTH - this.status_win_width - numbers.INSIDE_BORDER_WIDTH - numbers.OUTSIDE_BORDER_WIDTH;
-        this.status_window = new Window(this.game, this.status_win_x, 0, this.status_win_width, STATUS_WIN_HEIGHT, false);
+        this.status_window = new Window(this.game, this.status_win_x, 0, this.status_win_width, this.status_win_height, false);
         this.status_header_width = get_text_width(this.game, "HP ");
         this.info_sprites = {};
+        this.set_chars_info();
     }
 
     update_position(force = false) {
@@ -34,8 +47,8 @@ export class CharsStatusWindow {
             let info_sprites_obj = {};
             const char = chars_list[i];
             const base_x_pos =  i * WIDTH_PER_CHAR + numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH + numbers.OUTSIDE_BORDER_WIDTH;
-            info_sprites_obj.name = this.status_window.set_text_in_position(char.name, base_x_pos, numbers.WINDOW_PADDING_TOP);
-            let y_pos = numbers.WINDOW_PADDING_TOP + numbers.FONT_SIZE;
+            info_sprites_obj.name = this.status_window.set_text_in_position(char.name, base_x_pos, this.name_y, false, false, this.status_window.font_color, this.compressed);
+            let y_pos = this.name_y + numbers.FONT_SIZE;
 
             let y_pos_bar = y_pos + numbers.FONT_SIZE - STATUS_BAR_HEIGHT;
             info_sprites_obj.hp_bar_graphics = this.game.add.graphics(0, 0);
@@ -49,10 +62,10 @@ export class CharsStatusWindow {
             this.status_window.group.add(info_sprites_obj.hp_bar_damage_graphics);
 
             info_sprites_obj.hp_header = this.status_window.set_text_in_position("HP", base_x_pos, y_pos);
-            let x_number_pos = parseInt(base_x_pos + this.status_header_width + (4 - char.current_hp.toString().length) * STATUS_NUMBER_MAX_WIDTH/8);
-            info_sprites_obj.hp = this.status_window.set_text_in_position(char.current_hp.toString(), x_number_pos, y_pos);
+            const x_number_pos = base_x_pos + STAT_X;
+            info_sprites_obj.hp = this.status_window.set_text_in_position(char.current_hp.toString(), x_number_pos, y_pos, true);
 
-            y_pos = numbers.WINDOW_PADDING_TOP + 2 * numbers.FONT_SIZE;
+            y_pos = this.name_y + 2 * numbers.FONT_SIZE;
             y_pos_bar = y_pos + numbers.FONT_SIZE - STATUS_BAR_HEIGHT;
             info_sprites_obj.pp_bar_graphics = this.game.add.graphics(0, 0);
             info_sprites_obj.pp_bar_graphics.beginFill(STATUS_BAR_COLOR_GOOD, 1);
@@ -65,8 +78,7 @@ export class CharsStatusWindow {
             this.status_window.group.add(info_sprites_obj.pp_bar_damage_graphics);
 
             info_sprites_obj.pp_header = this.status_window.set_text_in_position("PP", base_x_pos, y_pos);
-            x_number_pos = parseInt(base_x_pos + this.status_header_width + (4 - char.current_pp.toString().length) * STATUS_NUMBER_MAX_WIDTH/8);
-            info_sprites_obj.pp = this.status_window.set_text_in_position(char.current_pp.toString(), x_number_pos, y_pos);
+            info_sprites_obj.pp = this.status_window.set_text_in_position(char.current_pp.toString(), x_number_pos, y_pos, true);
 
             info_sprites_obj.visible = true;
             this.info_sprites[char.key_name] = info_sprites_obj;
@@ -89,9 +101,8 @@ export class CharsStatusWindow {
             }
             this.status_window.update_text(char.name, info_sprite.name);
             const base_x_pos =  i * WIDTH_PER_CHAR + numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH + numbers.OUTSIDE_BORDER_WIDTH;
-            let x_number_pos = parseInt(base_x_pos + this.status_header_width + (4 - char.current_hp.toString().length) * STATUS_NUMBER_MAX_WIDTH/8);
+            const x_number_pos = base_x_pos + STAT_X;
             this.status_window.update_text(char.current_hp, info_sprite.hp, x_number_pos);
-            x_number_pos = parseInt(base_x_pos + this.status_header_width + (4 - char.current_pp.toString().length) * STATUS_NUMBER_MAX_WIDTH/8);
             this.status_window.update_text(char.current_pp, info_sprite.pp, x_number_pos);
 
             const hp_damage_bar_width = parseInt(STATUS_BAR_WIDTH * (1 - char.current_hp/char.max_hp));

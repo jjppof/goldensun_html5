@@ -275,7 +275,7 @@ export class Window {
         return {text: text_sprite, shadow: text_sprite_shadow, right_align: right_align, initial_x: x_pos};
     }
 
-    set_text_in_position(text, x_pos, y_pos, right_align = false, is_center_pos = false, color = this.font_color) {
+    set_text_in_position(text, x_pos, y_pos, right_align = false, is_center_pos = false, color = this.font_color, with_bg = false) {
         let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', text, numbers.FONT_SIZE);
         let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, 'gs-bmp-font', text, numbers.FONT_SIZE);
         if (is_center_pos) {
@@ -288,6 +288,14 @@ export class Window {
             text_sprite.x -= text_sprite.width;
             text_sprite_shadow.x -= text_sprite_shadow.width;
         }
+        let text_bg;
+        if (with_bg) {
+            text_bg = this.game.add.graphics(0, 0);
+            text_bg.beginFill(this.color, 1);
+            text_bg.drawRect(text_sprite.x - 1, text_sprite.y, text_sprite.width + 3, numbers.FONT_SIZE);
+            text_bg.endFill();
+            this.group.add(text_bg);
+        }
 
         this.remove_smooth(text_sprite);
         text_sprite.tint = color;
@@ -297,7 +305,7 @@ export class Window {
         this.group.add(text_sprite_shadow);
         this.group.add(text_sprite);
 
-        return {text: text_sprite, shadow: text_sprite_shadow, right_align: right_align, initial_x: x_pos};
+        return {text: text_sprite, shadow: text_sprite_shadow, right_align: right_align, initial_x: x_pos, text_bg: text_bg};
     }
 
     update_text(new_text, text_shadow_pair, new_x, new_y) {
@@ -311,14 +319,23 @@ export class Window {
             text_shadow_pair.text.x = new_position.x;
             text_shadow_pair.shadow.x = new_position.x + 1;
             text_shadow_pair.initial_x = new_position.x;
+            if (text_shadow_pair.text_bg) {
+                text_shadow_pair.text_bg.x = text_shadow_pair.text.x - 1;
+            }
         }
         if (new_position.y !== undefined) {
             text_shadow_pair.text.y = new_position.y;
             text_shadow_pair.shadow.y = new_position.y + 1;
+            if (text_shadow_pair.text_bg) {
+                text_shadow_pair.text_bg.y = text_shadow_pair.text.y;
+            }
         }
         if (text_shadow_pair.right_align) {
             text_shadow_pair.text.x = text_shadow_pair.initial_x - text_shadow_pair.text.width;
             text_shadow_pair.shadow.x = text_shadow_pair.initial_x - text_shadow_pair.shadow.width + 1;
+            if (text_shadow_pair.text_bg) {
+                text_shadow_pair.text_bg.x = text_shadow_pair.text.x - 1;
+            }
         }
     }
 
@@ -329,6 +346,9 @@ export class Window {
     remove_text(text_shadow_pair) {
         text_shadow_pair.text.destroy();
         text_shadow_pair.shadow.destroy();
+        if (text_shadow_pair.text_bg) {
+            text_shadow_pair.text_bg.destroy();
+        }
     }
 
     close(callback, animate = true) {
