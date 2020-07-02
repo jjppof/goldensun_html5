@@ -6,6 +6,7 @@ An online **Golden Sun Engine** built in HTML5 with [PhaserJS CE 2.15.0](http://
 - Feel free to help! Please, reach me if you want to do so.
 - If you found any bug, please create an issue for it.
 - I'm avoiding making some docs for now because I'm constantly changing things. But see the [wiki](https://github.com/jjppof/goldensun_html5/wiki).
+- This repository is just the engine. I'm not planning to do maps, animations, items etc. Content here is just enough to show the functionalities.
 - I use [projects](https://github.com/jjppof/goldensun_html5/projects/1) to write down things.
 
 ## Development environment
