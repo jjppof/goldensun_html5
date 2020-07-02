@@ -26,7 +26,7 @@ const STATS_CURRENT_X = 78;
 const STATS_NEXT_X = 110;
 const NEW_CLASS_X = 8;
 const NEW_CLASS_Y = 56;
-const elements_list = ordered_elements.reverse();
+const elements_list = ordered_elements.slice().reverse();
 const ARROW_CHANGE_CLASS_X = 24;
 const ARROW_CHANGE_CLASS_Y = 48;
 

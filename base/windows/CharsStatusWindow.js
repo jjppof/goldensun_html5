@@ -4,6 +4,7 @@ import * as numbers from '../../magic_numbers.js';
 import { party_data } from '../../initializers/main_chars.js';
 import { djinni_list } from '../../initializers/djinni.js';
 import { djinn_status } from '../Djinn.js';
+import { ordered_elements } from '../MainChar.js';
 
 const WIDTH_PER_CHAR = 47;
 const STATUS_WIN_HEIGHT = 35;
@@ -18,6 +19,10 @@ const NAME_Y = 8;
 const NAME_Y_COMPACT = 0;
 const INITIAL_PADDING_X = 8;
 const DJINN_INFO_WIDTH = 40;
+const STARS_X = [0, 16];
+const STARS_Y = [1, 9];
+const STANDBY_COUNT_X = [21, 37];
+const STANDBY_COUNT_SHIFT_Y = [8, 16];
 
 export class CharsStatusWindow {
     constructor(game, data, djinni_info = false, compact = false) {
@@ -40,6 +45,17 @@ export class CharsStatusWindow {
         this.status_header_width = get_text_width(this.game, "HP ");
         this.info_sprites = {};
         this.set_chars_info();
+        if (this.djinni_info) {
+            this.standby_count_text = {};
+            this.stars_group = this.game.add.group();
+            for (let i = 0; i < ordered_elements.length; ++i) {
+                const element = ordered_elements[i];
+                const x = i%2, y = +(i>1);
+                this.stars_group.create(STARS_X[x], STARS_Y[y], element + "_star");
+                this.standby_count_text[element] = this.status_window.set_text_in_position("", STANDBY_COUNT_X[x], this.name_y + STANDBY_COUNT_SHIFT_Y[y], true);
+            }
+            this.status_window.add_sprite_to_group(this.stars_group);
+        }
     }
 
     update_position(force = false) {
@@ -97,6 +113,22 @@ export class CharsStatusWindow {
                 return djinni_list[key].element;
             }), djinni_keys => djinni_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length);
             show_djinn_info = _.some(this.standby_djinni, Boolean);
+            if (show_djinn_info) {
+                this.stars_group.alpha = 1;
+                this.stars_group.x = INITIAL_PADDING_X;
+                this.stars_group.y = this.name_y + numbers.FONT_SIZE;
+                for (let i = 0; i < ordered_elements.length; ++i) {
+                    const element = ordered_elements[i];
+                    const text = element in this.standby_djinni ? this.standby_djinni[element].toString() : "0";
+                    this.status_window.update_text(text, this.standby_count_text[element], undefined, this.name_y + STANDBY_COUNT_SHIFT_Y[+(i>1)]);
+                }
+            } else {
+                for (let i = 0; i < ordered_elements.length; ++i) {
+                    const element = ordered_elements[i];
+                    this.status_window.update_text("", this.standby_count_text[element]);
+                }
+                this.stars_group.alpha = 0;
+            }
         }
         const chars_number = _.clamp(party_data.members.length, MAX_CHARS_NUMBER);
         this.status_win_width = chars_number * WIDTH_PER_CHAR + INITIAL_PADDING_X + (show_djinn_info ? DJINN_INFO_WIDTH : 0);
