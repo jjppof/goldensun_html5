@@ -290,9 +290,9 @@ export class Window {
         }
         let text_bg;
         if (with_bg) {
-            text_bg = this.game.add.graphics(0, 0);
+            text_bg = this.game.add.graphics(text_sprite.x - 1, text_sprite.y);
             text_bg.beginFill(this.color, 1);
-            text_bg.drawRect(text_sprite.x - 1, text_sprite.y, text_sprite.width + 3, numbers.FONT_SIZE);
+            text_bg.drawRect(0, 0, text_sprite.width + 3, numbers.FONT_SIZE);
             text_bg.endFill();
             this.group.add(text_bg);
         }
