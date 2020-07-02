@@ -170,7 +170,7 @@ export class CharsStatusWindow {
             info_sprite.pp_bar_damage_graphics.drawRect(pp_damage_bar_x, info_sprite.pp_bar_damage_graphics.default_y, pp_damage_bar_width, STATUS_BAR_HEIGHT);
             info_sprite.pp_bar_damage_graphics.endFill();
 
-            if (i !== 0) {
+            if (i !== 0 || show_djinn_info) {
                 this.status_window.draw_separator(base_x_pos - 3, 3, base_x_pos - 3, this.status_win_height - 1);
             }
         }

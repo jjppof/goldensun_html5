@@ -93,7 +93,8 @@ var data = {
     debug_keys: false,
     frame_counter: 0,
     in_battle: false,
-    battle_stage: null
+    battle_stage: null,
+    fullscreen: false
 };
 
 //debugging porpouses
@@ -331,6 +332,8 @@ async function create() {
             }  
         });
         game.scale.onFullScreenChange.add(() => {
+            data.fullscreen = !data.fullscreen;
+            data.scale_factor = 1;
             game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
             window.dispatchEvent(new Event('resize'));
         });
@@ -343,16 +346,19 @@ async function create() {
 
         //enable zoom
         game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(function(){
+            if (data.fullscreen) return;
             data.scale_factor = 1;
             game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
             window.dispatchEvent(new Event('resize'));
         }, this);
         game.input.keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(function(){
+            if (data.fullscreen) return;
             data.scale_factor = 2;
             game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
             window.dispatchEvent(new Event('resize'));
         }, this);
         game.input.keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(function(){
+            if (data.fullscreen) return;
             data.scale_factor = 3;
             game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
             window.dispatchEvent(new Event('resize'));
