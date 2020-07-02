@@ -2,6 +2,7 @@ import { party_data } from "../../initializers/main_chars.js";
 import { BattleStage } from "./BattleStage.js";
 import { enemies_list } from "../../initializers/enemies.js";
 import { BattleLog } from "./BattleLog.js";
+import { BattleMenuScreen } from "../../screens/battle_menus.js";
 
 const MAX_CHAR_AT_BATTLE = 4;
 
@@ -52,6 +53,7 @@ export class Battle {
         });
         this.battle_stage = new BattleStage(this.game, this.data, background_key, this.allies_info, this.enemies_info);
         this.battle_log = new BattleLog(this.game);
+        this.battle_menu = new BattleMenuScreen(this.game, this.data);
         this.battle_phase = battle_phases.NONE;
     }
 
@@ -63,11 +65,23 @@ export class Battle {
         switch (this.battle_phase) {
             case battle_phases.NONE:
                 this.battle_phase_none();
+                break;
+            case battle_phases.START:
+            case battle_phases.MENU:
+                this.battle_phase_menu();
+                break;
         }
     }
 
     battle_phase_none() {
         this.battle_phase = battle_phases.START;
-        this.battle_stage.initialize_stage();
+        this.battle_stage.initialize_stage(() => {
+            this.battle_phase = battle_phases.MENU;
+            this.check_phases();
+        });
+    }
+
+    battle_phase_menu() {
+        this.battle_menu.open_menu();
     }
 }

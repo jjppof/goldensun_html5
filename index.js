@@ -278,7 +278,7 @@ async function create() {
     data.spacebar_input = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown;
 
     //initialize screens
-    data.menu_screen = initialize_menu(data);
+    data.menu_screen = initialize_menu(game, data);
     data.spacebar_input.add(() => {
         if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting || data.jumping) return;
         if (!data.menu_open) {

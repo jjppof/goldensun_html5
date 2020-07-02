@@ -78,6 +78,6 @@ export class MenuScreen {
     }
 }
 
-export function initialize_menu(data) {
+export function initialize_menu(game, data) {
     return new MenuScreen(game, data);
 }
