@@ -16,10 +16,12 @@ export class Window {
         this.color = color;
         this.font_color = font_color;
         this.graphics = this.game.add.graphics(0, 0);
+        this.separators_graphics = this.game.add.graphics(0, 0);
 
         this.draw_background();
         this.draw_borders();
         this.group.add(this.graphics);
+        this.group.add(this.separators_graphics);
 
         this.group.alpha = 0;
         this.group.width = 0;
@@ -30,6 +32,24 @@ export class Window {
         this.lines_sprites = [];
 
         this.extra_sprites = [];
+    }
+
+    clear_separators() {
+        this.separators_graphics.clear();
+    }
+
+    draw_separator(x_0, y_0, x_1, y_1, vertical = true) {
+        const lighter = utils.change_brightness(this.color, 1.1);
+        const darker = utils.change_brightness(this.color, 0.85);
+        const medium = utils.change_brightness(this.color, 0.95);
+        const colors = [medium, darker, lighter];
+        for (let i = 0; i < colors.length; ++i) {
+            const color = colors[i];
+            const shift = i - 1;
+            this.separators_graphics.lineStyle(1, color);
+            this.separators_graphics.moveTo(x_0 + shift * +vertical, y_0 + shift * +(!vertical));
+            this.separators_graphics.lineTo(x_1 + shift * +vertical, y_1 + shift * +(!vertical));
+        }
     }
 
     draw_background() {

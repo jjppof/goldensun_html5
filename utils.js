@@ -212,6 +212,8 @@ export function change_brightness(hex, percent) {
     }
     if (hex.length == 3) {
         hex = hex.replace(/(.)/g, '$1$1');
+    } else {
+        hex = ("000000" + hex).slice(-6);
     }
     let r = parseInt(hex.substr(0, 2), 16);
     let g = parseInt(hex.substr(2, 2), 16);

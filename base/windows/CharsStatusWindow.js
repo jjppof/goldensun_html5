@@ -135,6 +135,7 @@ export class CharsStatusWindow {
         this.status_win_x = numbers.GAME_WIDTH - this.status_win_width - numbers.INSIDE_BORDER_WIDTH - numbers.OUTSIDE_BORDER_WIDTH;
         this.status_window.update_size({width: this.status_win_width});
         this.status_window.update_position({x: this.status_win_x});
+        this.status_window.clear_separators();
         let current_chars = [];
         for (let i = 0; i < chars_number; ++i) {
             let char = party_data.members[i];
@@ -168,6 +169,10 @@ export class CharsStatusWindow {
             info_sprite.pp_bar_damage_graphics.beginFill(STATUS_BAR_COLOR_BAD, 1);
             info_sprite.pp_bar_damage_graphics.drawRect(pp_damage_bar_x, info_sprite.pp_bar_damage_graphics.default_y, pp_damage_bar_width, STATUS_BAR_HEIGHT);
             info_sprite.pp_bar_damage_graphics.endFill();
+
+            if (i !== 0) {
+                this.status_window.draw_separator(base_x_pos - 3, 3, base_x_pos - 3, this.status_win_height - 1);
+            }
         }
         for (let key_name in this.info_sprites) {
             if (current_chars.includes(key_name)) continue;
