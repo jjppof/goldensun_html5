@@ -6,7 +6,7 @@ import { djinni_list } from '../../initializers/djinni.js';
 import { djinn_status } from '../Djinn.js';
 import { ordered_elements } from '../MainChar.js';
 
-const WIDTH_PER_CHAR = 47;
+const WIDTH_PER_CHAR = 46;
 const STATUS_WIN_HEIGHT = 35;
 const STATUS_WIN_HEIGHT_COMPACT = 24;
 const STATUS_BAR_WIDTH = 43;
@@ -18,11 +18,13 @@ const STAT_X = 40;
 const NAME_Y = 8;
 const NAME_Y_COMPACT = 0;
 const INITIAL_PADDING_X = 8;
-const DJINN_INFO_WIDTH = 40;
+const DJINN_INFO_WIDTH = 36;
 const STARS_X = [0, 16];
 const STARS_Y = [1, 9];
-const STANDBY_COUNT_X = [21, 37];
+const STANDBY_COUNT_X = [20, 36];
 const STANDBY_COUNT_SHIFT_Y = [8, 16];
+const SEPARATOR_WIDTH = 3;
+const INITIAL_PADDING__DJINNI_X = 7;
 
 export class CharsStatusWindow {
     constructor(game, data, djinni_info = false, compact = false) {
@@ -39,7 +41,7 @@ export class CharsStatusWindow {
             this.status_win_height = STATUS_WIN_HEIGHT_COMPACT;
         }
         const chars_number = _.clamp(party_data.members.length, MAX_CHARS_NUMBER);
-        this.status_win_width = chars_number * WIDTH_PER_CHAR + INITIAL_PADDING_X;
+        this.status_win_width = chars_number * (WIDTH_PER_CHAR + STATUS_BAR_HEIGHT) + (INITIAL_PADDING_X >> 1);
         this.status_win_x = numbers.GAME_WIDTH - this.status_win_width - numbers.INSIDE_BORDER_WIDTH - numbers.OUTSIDE_BORDER_WIDTH;
         this.status_window = new Window(this.game, this.status_win_x, 0, this.status_win_width, this.status_win_height, false);
         this.status_header_width = get_text_width(this.game, "HP ");
@@ -67,7 +69,7 @@ export class CharsStatusWindow {
         for (let i = 0; i < chars_list.length; ++i) {
             let info_sprites_obj = {};
             const char = chars_list[i];
-            const base_x_pos =  i * WIDTH_PER_CHAR + INITIAL_PADDING_X;
+            const base_x_pos =  i * (WIDTH_PER_CHAR + SEPARATOR_WIDTH) + INITIAL_PADDING_X;
             info_sprites_obj.name = this.status_window.set_text_in_position(char.name, base_x_pos, this.name_y, false, false, this.status_window.font_color, this.compact);
             let y_pos = this.name_y + numbers.FONT_SIZE;
 
@@ -115,7 +117,7 @@ export class CharsStatusWindow {
             show_djinn_info = _.some(this.standby_djinni, Boolean);
             if (show_djinn_info) {
                 this.stars_group.alpha = 1;
-                this.stars_group.x = INITIAL_PADDING_X;
+                this.stars_group.x = INITIAL_PADDING__DJINNI_X;
                 this.stars_group.y = this.name_y + numbers.FONT_SIZE;
                 for (let i = 0; i < ordered_elements.length; ++i) {
                     const element = ordered_elements[i];
@@ -131,7 +133,7 @@ export class CharsStatusWindow {
             }
         }
         const chars_number = _.clamp(party_data.members.length, MAX_CHARS_NUMBER);
-        this.status_win_width = chars_number * WIDTH_PER_CHAR + INITIAL_PADDING_X + (show_djinn_info ? DJINN_INFO_WIDTH : 0);
+        this.status_win_width = chars_number * (WIDTH_PER_CHAR + SEPARATOR_WIDTH) + (INITIAL_PADDING_X >> 1) + (show_djinn_info ? DJINN_INFO_WIDTH : 0);
         this.status_win_x = numbers.GAME_WIDTH - this.status_win_width - numbers.INSIDE_BORDER_WIDTH - numbers.OUTSIDE_BORDER_WIDTH;
         this.status_window.update_size({width: this.status_win_width});
         this.status_window.update_position({x: this.status_win_x});
@@ -145,7 +147,7 @@ export class CharsStatusWindow {
                 this.toggle_char_info(info_sprite);
                 info_sprite.visible = true;
             }
-            const base_x_pos =  i * WIDTH_PER_CHAR + INITIAL_PADDING_X + (show_djinn_info ? DJINN_INFO_WIDTH : 0);
+            const base_x_pos =  i * (WIDTH_PER_CHAR + SEPARATOR_WIDTH) + INITIAL_PADDING_X + (show_djinn_info ? DJINN_INFO_WIDTH : 0);
             this.status_window.update_text(char.name, info_sprite.name, base_x_pos);
             const x_number_pos = base_x_pos + STAT_X;
             this.status_window.update_text(char.current_hp, info_sprite.hp, x_number_pos);
@@ -171,7 +173,7 @@ export class CharsStatusWindow {
             info_sprite.pp_bar_damage_graphics.endFill();
 
             if (i !== 0 || show_djinn_info) {
-                this.status_window.draw_separator(base_x_pos - 3, 3, base_x_pos - 3, this.status_win_height - 1);
+                this.status_window.draw_separator(base_x_pos - 4, 3, base_x_pos - 4, this.status_win_height - 1);
             }
         }
         for (let key_name in this.info_sprites) {

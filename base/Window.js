@@ -39,9 +39,9 @@ export class Window {
     }
 
     draw_separator(x_0, y_0, x_1, y_1, vertical = true) {
-        const lighter = utils.change_brightness(this.color, 1.2);
-        const darker = utils.change_brightness(this.color, 0.85);
-        const medium = utils.change_brightness(this.color, 0.95);
+        const lighter = utils.change_brightness(this.color, 1.3);
+        const darker = utils.change_brightness(this.color, 0.80);
+        const medium = utils.change_brightness(this.color, 0.90);
         const colors = [medium, darker, lighter];
         for (let i = 0; i < colors.length; ++i) {
             const color = colors[i];
