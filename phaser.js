@@ -15210,7 +15210,7 @@ PIXI.DisplayObject.prototype = {
         var wt = this.worldTransform;
 
         // temporary matrix variables
-        var a, b, c, d, tx, ty;
+        var a, b, c, d, tx, ty, no_round_tx, no_round_ty;
 
         // so if rotation is between 0 then we can simplify the multiplication process..
         if (this.rotation % Phaser.Math.PI2)
@@ -15255,6 +15255,8 @@ PIXI.DisplayObject.prototype = {
             d = this.scale.y;
             tx = this.position.x - this.pivot.x * a;
             ty = this.position.y - this.pivot.y * d;
+            no_round_tx = this.position.no_round_x - this.pivot.x * a;
+            no_round_ty = this.position.no_round_y - this.pivot.y * d;
 
             wt.a = a * pt.a;
             wt.b = a * pt.b;
@@ -15262,6 +15264,8 @@ PIXI.DisplayObject.prototype = {
             wt.d = d * pt.d;
             wt.tx = tx * pt.a + ty * pt.c + pt.tx;
             wt.ty = tx * pt.b + ty * pt.d + pt.ty;
+            wt.no_round_tx = no_round_tx * pt.a + no_round_ty * pt.c + pt.tx;
+            wt.no_round_ty = no_round_tx * pt.b + no_round_ty * pt.d + pt.ty;
         }
 
         a = wt.a;
@@ -15297,6 +15301,8 @@ PIXI.DisplayObject.prototype = {
         this.worldAlpha = this.alpha * p.worldAlpha;
         this.worldPosition.x = wt.tx;
         this.worldPosition.y = wt.ty;
+        this.worldPosition.no_round_x = wt.no_round_tx;
+        this.worldPosition.no_round_y = wt.no_round_ty;
 
         // reset the bounds each time this is called!
         this._currentBounds = null;
@@ -19905,6 +19911,11 @@ PIXI.WebGLSpriteBatch.prototype.render = function (sprite, matrix)
     var tx = sprite.roundPx ? Math.ceil(wt.tx) : wt.tx;
     var ty = sprite.roundPx ? Math.ceil(wt.ty) : wt.ty;
 
+    if (sprite.disableRoundPx) {
+        tx = (sprite.position.x + sprite.game.world.worldTransform.no_round_tx)|0;
+        ty = (sprite.position.y + sprite.game.world.worldTransform.no_round_ty)|0;
+    }
+
     var ch = texture.crop.height;
 
     if (texture.rotated)
@@ -19942,7 +19953,7 @@ PIXI.WebGLSpriteBatch.prototype.render = function (sprite, matrix)
     var tint = sprite.tint;
     var color = (tint >> 16) + (tint & 0xff00) + ((tint & 0xff) << 16) + (sprite.worldAlpha * 255 << 24);
 
-    if (this.renderSession.roundPixels)
+    if (this.renderSession.roundPixels && !sprite.disableRoundPx)
     {
         positions[i++] = a * w1 + c * h1 + tx | 0;
         positions[i++] = d * h1 + b * w1 + ty | 0;
@@ -29849,6 +29860,8 @@ Phaser.Camera.prototype = {
 
         if (this.roundPx)
         {
+            this.view.no_round_x = this.view.x;
+            this.view.no_round_y = this.view.y;
             this.view.floor();
             this._shake.x = Math.floor(this._shake.x);
             this._shake.y = Math.floor(this._shake.y);
@@ -29856,6 +29869,8 @@ Phaser.Camera.prototype = {
 
         this.displayObject.position.x = -this.view.x;
         this.displayObject.position.y = -this.view.y;
+        this.displayObject.position.no_round_x = -this.view.no_round_x;
+        this.displayObject.position.no_round_y = -this.view.no_round_y;
 
     },
 
@@ -29938,6 +29953,8 @@ Phaser.Camera.prototype = {
 
         this._targetPosition.x = this.view.x + this.target.worldPosition.x;
         this._targetPosition.y = this.view.y + this.target.worldPosition.y;
+        this._targetPosition.no_round_x = this.view.no_round_x + this.target.body.x + this.target.parent.worldPosition.x;
+        this._targetPosition.no_round_y = this.view.no_round_y + this.target.body.y + this.target.parent.worldPosition.y;
 
         if (this.deadzone)
         {
@@ -29946,10 +29963,12 @@ Phaser.Camera.prototype = {
             if (this._edge < this.deadzone.left)
             {
                 this.view.x = this.game.math.linear(this.view.x, this._targetPosition.x - this.deadzone.left, this.lerp.x);
+                this.view.no_round_x = this.game.math.linear(this.view.no_round_x, this._targetPosition.no_round_x - this.deadzone.left, this.lerp.x);
             }
             else if (this._edge > this.deadzone.right)
             {
                 this.view.x = this.game.math.linear(this.view.x, this._targetPosition.x - this.deadzone.right, this.lerp.x);
+                this.view.no_round_x = this.game.math.linear(this.view.no_round_x, this._targetPosition.no_round_x - this.deadzone.right, this.lerp.x);
             }
 
             this._edge = this._targetPosition.y - this.view.y;
@@ -29957,22 +29976,29 @@ Phaser.Camera.prototype = {
             if (this._edge < this.deadzone.top)
             {
                 this.view.y = this.game.math.linear(this.view.y, this._targetPosition.y - this.deadzone.top, this.lerp.y);
+                this.view.no_round_y = this.game.math.linear(this.view.no_round_y, this._targetPosition.no_round_y - this.deadzone.top, this.lerp.y);
             }
             else if (this._edge > this.deadzone.bottom)
             {
                 this.view.y = this.game.math.linear(this.view.y, this._targetPosition.y - this.deadzone.bottom, this.lerp.y);
+                this.view.no_round_y = this.game.math.linear(this.view.no_round_y, this._targetPosition.no_round_y - this.deadzone.bottom, this.lerp.y);
             }
         }
         else
         {
             this.view.x = this.game.math.linear(this.view.x, this._targetPosition.x - this.view.halfWidth, this.lerp.x);
             this.view.y = this.game.math.linear(this.view.y, this._targetPosition.y - this.view.halfHeight, this.lerp.y);
+            this.view.no_round_x = this.game.math.linear(this.view.no_round_x, this._targetPosition.no_round_x - this.view.halfWidth, this.lerp.x);
+            this.view.no_round_y = this.game.math.linear(this.view.no_round_y, this._targetPosition.no_round_y - this.view.halfHeight, this.lerp.y);
         }
 
         if (this.bounds)
         {
             this.checkBounds();
         }
+
+        this.displayObject.position.no_round_x = -this.view.no_round_x;
+        this.displayObject.position.no_round_y = -this.view.no_round_y;
 
         if (this.roundPx)
         {
@@ -30022,6 +30048,7 @@ Phaser.Camera.prototype = {
         {
             this.atLimit.x = true;
             this.view.x = this.bounds.x * this.scale.x;
+            this.view.no_round_x = this.view.x;
 
             if (!this._shake.shakeBounds)
             {
@@ -30033,6 +30060,7 @@ Phaser.Camera.prototype = {
         {
             this.atLimit.x = true;
             this.view.x = (this.bounds.right * this.scale.x) - this.width;
+            this.view.no_round_x = this.view.x;
 
             if (!this._shake.shakeBounds)
             {
@@ -30045,6 +30073,7 @@ Phaser.Camera.prototype = {
         {
             this.atLimit.y = true;
             this.view.y = this.bounds.top * this.scale.y;
+            this.view.no_round_y = this.view.y;
 
             if (!this._shake.shakeBounds)
             {
@@ -30056,6 +30085,7 @@ Phaser.Camera.prototype = {
         {
             this.atLimit.y = true;
             this.view.y = (this.bounds.bottom * this.scale.y) - this.height;
+            this.view.no_round_y = this.view.y;
 
             if (!this._shake.shakeBounds)
             {
