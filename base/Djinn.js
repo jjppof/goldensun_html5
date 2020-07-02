@@ -1,4 +1,5 @@
 import * as numbers from '../magic_numbers.js';
+import { djinni_list } from '../initializers/djinni.js';
 
 export const djinn_status = {
     SET: "set",
@@ -48,5 +49,11 @@ export class Djinn {
         char.update_class();
         char.update_attributes();
         char.update_abilities();
+    }
+
+    static has_standby_djinn(max_char) {
+        return _.some(party_data.members.slice(0, max_char).map(c => c.djinni).map(djinn_keys => {
+            return djinn_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length;
+        }));
     }
 }

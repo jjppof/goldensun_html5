@@ -8,7 +8,7 @@ const JUMP_OFFSET = 30;
 const JUMP_DURATION = 150;
 
 export function jump_event(data, current_event) {
-    if (!data.stop_by_colliding || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y || data.casting_psynergy || data.pushing || data.climbing || data.jumping || data.menu_open) {
+    if (!data.stop_by_colliding || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y || data.casting_psynergy || data.pushing || data.climbing || data.jumping || data.menu_open || data.in_battle) {
         return;
     }
     let jump_offset = JUMP_OFFSET;

@@ -10,33 +10,27 @@ const BUTTON_Y = numbers.GAME_HEIGHT - BUTTON_HEIGHT;
 const TITLE_WINDOW_HEIGHT = BUTTON_HEIGHT - numbers.OUTSIDE_BORDER_WIDTH - numbers.INSIDE_BORDER_WIDTH;
 
 export class HorizontalMenu {
-    constructor(game, data, buttons, titles, on_choose, enter_propagation_priority, title_window_width, dock_right = false) {
+    constructor(game, data, buttons, titles, on_choose, enter_propagation_priority, on_cancel, esc_propagation_priority, title_window_width, dock_right = false) {
         this.game = game;
         this.data = data;
+        this.buttons_keys = buttons;
+        this.titles = titles;
         this.buttons_number = buttons.length;
         this.enter_propagation_priority = enter_propagation_priority;
+        this.esc_propagation_priority = esc_propagation_priority;
         const max_title_width = get_text_width(this.game, _.maxBy(titles, title => title.length));
         this.title_window_width = title_window_width !== undefined ? title_window_width : max_title_width + 2 * (numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH);
         const total_width = BUTTON_WIDTH * this.buttons_number + this.title_window_width + 2 * numbers.OUTSIDE_BORDER_WIDTH + 2;
         this.dock_right = dock_right;
         this.x = numbers.GAME_WIDTH - total_width;
-        if (!dock_right) {
+        if (!this.dock_right) {
             this.x = this.x >> 1;
         }
         this.y = BUTTON_Y;
         this.title_window = new Window(this.game, this.x + BUTTON_WIDTH * this.buttons_number, this.y, this.title_window_width, TITLE_WINDOW_HEIGHT);
         this.group = game.add.group();
         this.group.alpha = 0;
-        this.buttons = new Array(this.buttons_number);
-        for (let i = 0; i < this.buttons_number; ++i) {
-            this.buttons[i] = {
-                sprite: this.group.create(0, 0, "buttons", buttons[i]),
-                title: titles[i]
-            }
-            this.buttons[i].sprite.anchor.setTo(0.5, 1);
-            this.buttons[i].sprite.centerX = parseInt(BUTTON_WIDTH * (i + 0.5));
-            this.buttons[i].sprite.centerY = parseInt(BUTTON_HEIGHT * 0.5);
-        }
+        this.mount_buttons();
         this.selected_button_index = 0;
         this.menu_open = false;
         this.menu_active = false;
@@ -46,6 +40,7 @@ export class HorizontalMenu {
         this.choose_timer_repeat = this.game.time.create(false);
         this.choose_timer_start = this.game.time.create(false);
         this.on_choose = on_choose === undefined ? () => {} : on_choose;
+        this.on_cancel = on_cancel === undefined ? () => {} : on_cancel;
         this.right_pressed = false;
         this.left_pressed = false;
         this.set_control();
@@ -57,6 +52,11 @@ export class HorizontalMenu {
             this.data.enter_input.getSignal().halt();
             this.on_choose(this.selected_button_index);
         }, this, this.enter_propagation_priority);
+        this.game.input.keyboard.addKey(Phaser.Keyboard.ESC).onUp.add(() => {
+            if (!this.menu_open || !this.menu_active) return;
+            this.data.esc_input.getSignal().halt();
+            this.on_cancel();
+        }, this, this.esc_propagation_priority);
         this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
             if (!this.menu_open || !this.menu_active) return;
             if (this.left_pressed) {
@@ -85,6 +85,32 @@ export class HorizontalMenu {
             this.left_pressed = false;
             this.stop_timers();
         });
+    }
+
+    mount_buttons(filtered_buttons = []) {
+        const buttons = this.buttons_keys.filter(key => !filtered_buttons.includes(key));
+        this.buttons_number = buttons.length;
+        const total_width = BUTTON_WIDTH * this.buttons_number + this.title_window_width + 2 * numbers.OUTSIDE_BORDER_WIDTH + 2;
+        this.x = numbers.GAME_WIDTH - total_width;
+        if (!this.dock_right) {
+            this.x = this.x >> 1;
+        }
+        this.title_window.update_position({x: this.x + BUTTON_WIDTH * this.buttons_number});
+        if (this.buttons) {
+            this.buttons.forEach(obj => {
+                obj.sprite.destroy();
+            });
+        }
+        this.buttons = new Array(this.buttons_number);
+        for (let i = 0; i < this.buttons_number; ++i) {
+            this.buttons[i] = {
+                sprite: this.group.create(0, 0, "buttons", buttons[i]),
+                title: this.titles[i]
+            }
+            this.buttons[i].sprite.anchor.setTo(0.5, 1);
+            this.buttons[i].sprite.centerX = parseInt(BUTTON_WIDTH * (i + 0.5));
+            this.buttons[i].sprite.centerY = parseInt(BUTTON_HEIGHT * 0.5);
+        }
     }
 
     set_change_timers(step) {

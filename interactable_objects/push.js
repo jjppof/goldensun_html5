@@ -9,7 +9,7 @@ const DUST_FRAMES = Phaser.Animation.generateFrameNames('dust/', 0, 7, '', 2);
 const PUSH_SHIFT = 16;
 
 export function normal_push(game, data, interactable_object) {
-    if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.current_direction && !data.casting_psynergy && !data.jumping) {
+    if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.current_direction && !data.casting_psynergy && !data.jumping && !data.in_battle) {
         fire_push_movement(game, data, interactable_object);
     }
     data.trying_to_push = false;

@@ -194,7 +194,7 @@ function loadRender() {
 }
 
 function enter_key_event() {
-    if (data.casting_psynergy) return;
+    if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
     trigger_npc_dialog(game, data);
 }
 
@@ -281,7 +281,7 @@ async function create() {
     //initialize screens
     data.menu_screen = initialize_menu(game, data);
     data.spacebar_input.add(() => {
-        if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting || data.jumping) return;
+        if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
         if (!data.menu_open) {
             data.menu_open = true;
             stop_hero(data);
@@ -366,15 +366,15 @@ async function create() {
 
         //enable psynergies shortcuts
         game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(function(){
-            if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping) return;
+            if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
             field_abilities_list.move.cast(data.init_db.initial_shortcuts.move);
         }, this);
         game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(function(){
-            if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping) return;
+            if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
             field_abilities_list.frost.cast(data.init_db.initial_shortcuts.frost);
         }, this);
         game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(function(){
-            if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping) return;
+            if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
             field_abilities_list.growth.cast(data.init_db.initial_shortcuts.growth);
         }, this);
 

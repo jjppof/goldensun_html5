@@ -5,7 +5,7 @@ import * as numbers from '../magic_numbers.js';
 import { set_jump_collision, unset_set_jump_collision } from './jump.js';
 
 export function climbing_event(game, data, current_event, activation_direction) {
-    if (!data.stop_by_colliding || data.jumping || data.pushing || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y) {
+    if (!data.stop_by_colliding || data.jumping || data.pushing || data.in_battle || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y) {
         return;
     }
     if (!data.climbing && !current_event.climbing_only) {
