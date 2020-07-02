@@ -10,8 +10,16 @@ export function init_cast_aura(game, sprite, group, filter, after_init, after_de
     for (let j = 0; j < auras_number; ++j) {
         let back_aura = group.create(0, 0, "psynergy_aura");
         let front_aura = group.create(0, 0, "psynergy_aura");
-        group.setChildIndex(back_aura, group.getChildIndex(sprite));
-        group.setChildIndex(front_aura, group.getChildIndex(sprite) + 1);
+        back_aura.base_collider_layer = sprite.base_collider_layer;
+        front_aura.base_collider_layer = sprite.base_collider_layer;
+        back_aura.sort_function = () => {
+            group.setChildIndex(back_aura, group.getChildIndex(sprite));
+        };
+        back_aura.sort_function();
+        front_aura.sort_function = () => {
+            group.setChildIndex(front_aura, group.getChildIndex(sprite) + 1);
+        };
+        front_aura.sort_function();
         const height = sprite.height + front_aura.height - 8;
         const step_height = parseInt(height/3);
         front_aura.anchor.setTo(0.5, 0);

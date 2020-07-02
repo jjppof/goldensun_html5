@@ -126,7 +126,9 @@ export class MoveFieldPsynergy extends SpriteBase {
                     this.data.hero.body.velocity.x = this.data.hero.body.velocity.y = 0;
                     this.finish_hand();
                     this.unset_hero_cast_anim();
-                }, false);
+                }, false, () => {
+                    maps[data.map_name].sort_sprites(this.data);
+                });
             }
         }
     }
@@ -149,6 +151,8 @@ export class MoveFieldPsynergy extends SpriteBase {
 
     set_hand() {
         this.hand_sprite = this.data.npc_group.create(0, 0, this.key_name + "_" + this.action_key_name);
+        this.hand_sprite.send_to_front = true;
+        this.hand_sprite.base_collider_layer = this.data.map_collider_layer;
         this.hand_sprite.loadTexture(this.key_name + "_" + this.action_key_name);
         this.setAnimation(this.hand_sprite, this.action_key_name);
         this.hand_sprite.animations.frameName = `${this.action_key_name}/${this.cast_direction}/00`;

@@ -16,11 +16,11 @@ export function normal_push(game, data, interactable_object) {
     data.push_timer = null;
 }
 
-export function target_only_push(game, data, interactable_object, before_move, push_end, enable_physics_at_end = true) {
-    fire_push_movement(game, data, interactable_object, push_end, before_move, true, enable_physics_at_end);
+export function target_only_push(game, data, interactable_object, before_move, push_end, enable_physics_at_end = true, on_push_update = undefined) {
+    fire_push_movement(game, data, interactable_object, push_end, before_move, true, enable_physics_at_end, on_push_update);
 }
 
-export function fire_push_movement(game, data, interactable_object, push_end, before_move, target_only = false, enable_physics_at_end = true) {
+export function fire_push_movement(game, data, interactable_object, push_end, before_move, target_only = false, enable_physics_at_end = true, on_push_update = undefined) {
     let expected_position;
     if (!target_only) {
         let positive_limit = data.hero.x + (-interactable_object.interactable_object_sprite.y - interactable_object.interactable_object_sprite.x);
@@ -91,38 +91,44 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
             }
             let promise_resolve;
             promises.push(new Promise(resolve => { promise_resolve = resolve; }))
-            game.add.tween(body).to({
+            const this_tween = game.add.tween(body).to({
                 x: dest_x,
                 y: dest_y
-            }, numbers.PUSH_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
+            }, numbers.PUSH_TIME, Phaser.Easing.Linear.None, true);
+            if (on_push_update) {
+                this_tween.onUpdateCallback(on_push_update);
+            }
+            this_tween.onComplete.addOnce(() => {
                 let drop_found = false;
-                interactable_object.object_drop_tiles.forEach(drop_tile => {
-                    if (drop_tile.x === interactable_object.current_x && drop_tile.y === interactable_object.current_y) {
-                        drop_found = true;
-                        const dest_y_shift_px = (drop_tile.dest_y - interactable_object.current_y) * maps[data.map_name].sprite.tileHeight;
-                        shift_events(data, interactable_object, 0, drop_tile.dest_y - interactable_object.current_y);
-                        interactable_object.current_y = drop_tile.dest_y;
-                        interactable_object.change_collider_layer(data, drop_tile.destination_collider_layer);
-                        game.add.tween(interactable_object.interactable_object_sprite.body).to({
-                            y: interactable_object.interactable_object_sprite.body.y + dest_y_shift_px
-                        },
-                        drop_tile.animation_duration,
-                        Phaser.Easing.Quadratic.In,
-                        true
-                        ).onComplete.addOnce(() => {
-                            if (drop_tile.dust_animation) {
-                                data.current_action = "idle";
-                                data.hero.loadTexture(data.hero_name + "_" + data.current_action);
-                                main_char_list[data.hero_name].setAnimation(data.hero, data.current_action);
-                                data.hero.animations.play(data.current_action + "_" + data.current_direction);
-                                dust_animation(game, data, interactable_object, promise_resolve);
-                            } else {
-                                promise_resolve();
-                            }
-                        });
-                        return;
-                    }
-                });
+                if (i === sprites.length - 1) {
+                    interactable_object.object_drop_tiles.forEach(drop_tile => {
+                        if (drop_tile.x === interactable_object.current_x && drop_tile.y === interactable_object.current_y) {
+                            drop_found = true;
+                            const dest_y_shift_px = (drop_tile.dest_y - interactable_object.current_y) * maps[data.map_name].sprite.tileHeight;
+                            shift_events(data, interactable_object, 0, drop_tile.dest_y - interactable_object.current_y);
+                            interactable_object.current_y = drop_tile.dest_y;
+                            interactable_object.change_collider_layer(data, drop_tile.destination_collider_layer);
+                            game.add.tween(interactable_object.interactable_object_sprite.body).to({
+                                y: interactable_object.interactable_object_sprite.body.y + dest_y_shift_px
+                            },
+                            drop_tile.animation_duration,
+                            Phaser.Easing.Quadratic.In,
+                            true
+                            ).onComplete.addOnce(() => {
+                                if (drop_tile.dust_animation) {
+                                    data.current_action = "idle";
+                                    data.hero.loadTexture(data.hero_name + "_" + data.current_action);
+                                    main_char_list[data.hero_name].setAnimation(data.hero, data.current_action);
+                                    data.hero.animations.play(data.current_action + "_" + data.current_direction);
+                                    dust_animation(game, data, interactable_object, promise_resolve);
+                                } else {
+                                    promise_resolve();
+                                }
+                            });
+                            return;
+                        }
+                    });
+                }
                 if (!drop_found) {
                     promise_resolve();
                 }

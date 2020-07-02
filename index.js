@@ -428,20 +428,7 @@ function update() {
                 npc.update();
             }
 
-            //organize layers on hero move
-            let send_to_back_list = new Array(data.npc_group.children.length);
-            data.npc_group.children.forEach((sprite, index) => {
-                sprite.y_sort = parseInt(sprite.base_collider_layer.toString() + sprite.y.toString());
-                if (sprite.send_to_back) {
-                    send_to_back_list[index] = sprite;
-                }
-            });
-            data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
-            send_to_back_list.forEach(sprite => {
-                if (sprite) {
-                    data.npc_group.sendChildToBack(sprite);
-                }
-            });
+            maps[data.map_name].sort_sprites(data);
         } else if (data.on_event) {
             if (data.climbing_event_data !== null) {
                 climb.climb_event_animation_steps(data);

@@ -39,6 +39,41 @@ export class Map {
         this.interactable_objects = [];
     }
 
+    sort_sprites(data) {
+        let send_to_back_list = new Array(data.npc_group.children.length);
+        let send_to_front_list = new Array(data.npc_group.children.length);
+        let has_sort_function = new Array(data.npc_group.children.length);
+        data.npc_group.children.forEach((sprite, index) => {
+            sprite.y_sort = (sprite.base_collider_layer.toString() + sprite.y.toString()) | 0;
+            if (sprite.sort_function) {
+                has_sort_function[index] = sprite;
+                return;
+            } else if (sprite.send_to_back) {
+                send_to_back_list[index] = sprite;
+                return;
+            } else if (sprite.send_to_front) {
+                send_to_front_list[index] = sprite;
+                return;
+            }
+        });
+        data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
+        send_to_back_list.forEach(sprite => {
+            if (sprite) {
+                data.npc_group.sendChildToBack(sprite);
+            }
+        });
+        send_to_front_list.forEach(sprite => {
+            if (sprite) {
+                data.npc_group.bringChildToTop(sprite);
+            }
+        });
+        has_sort_function.forEach(sprite => {
+            if (sprite) {
+                sprite.sort_function();
+            }
+        });
+    }
+
     load_map_assets(game, force_load, on_complete) {
         let load_tilemap_promise_resolve;
         let load_tilemap_promise = new Promise(resolve => {
