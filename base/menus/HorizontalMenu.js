@@ -160,7 +160,9 @@ export class HorizontalMenu {
 
     reset_button() {
         this.buttons[this.selected_button_index].sprite.scale.setTo(1.0, 1.0);
-        this.selected_button_tween.stop();
+        if (this.selected_button_tween) {
+            this.selected_button_tween.stop();
+        }
     }
 
     update_position() {
@@ -170,6 +172,7 @@ export class HorizontalMenu {
     }
 
     open(callback, select_index, start_active = true) {
+        this.reset_button();
         this.right_pressed = false;
         this.left_pressed = false;
         this.menu_active = start_active;
@@ -197,24 +200,32 @@ export class HorizontalMenu {
         });
     }
 
-    close(callback) {
+    close(callback, animate = true) {
         this.menu_open = false;
         this.stop_timers();
         this.reset_button();
         this.group.alpha = 0;
-        let window_promise_resolve;
-        let window_promise = new Promise(resolve => { window_promise_resolve = resolve; })
-        this.title_window.close(window_promise_resolve);
-        const transition_time = Phaser.Timer.QUARTER/4;
-        let buttons_resolve;
-        let buttons_promise = new Promise(resolve => { buttons_resolve = resolve; })
-        this.game.add.tween(this.group).to(
-            { width: 0, height: 0 },
-            transition_time,
-            Phaser.Easing.Linear.None,
-            true
-        ).onComplete.addOnce(buttons_resolve);
-        Promise.all([window_promise, buttons_promise]).then(callback !== undefined ? callback : () => {});
+        if (animate) {
+            let window_promise_resolve;
+            let window_promise = new Promise(resolve => { window_promise_resolve = resolve; })
+            this.title_window.close(window_promise_resolve);
+            const transition_time = Phaser.Timer.QUARTER >> 2;
+            let buttons_resolve;
+            let buttons_promise = new Promise(resolve => { buttons_resolve = resolve; })
+            this.game.add.tween(this.group).to(
+                { width: 0, height: 0 },
+                transition_time,
+                Phaser.Easing.Linear.None,
+                true
+            ).onComplete.addOnce(buttons_resolve);
+            Promise.all([window_promise, buttons_promise]).then(callback !== undefined ? callback : () => {});
+        } else {
+            this.title_window.close(undefined, false);
+            this.group.width = this.group.height = 0;
+            if (callback) {
+                callback();
+            }
+        }
     }
 
     activate() {

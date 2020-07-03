@@ -96,7 +96,8 @@ export class BattleMenuScreen {
     change_char(step) {
         this.current_char_index += step;
         this.set_avatar();
-        this.inner_horizontal_menu.set_to_position(0);
+        this.inner_horizontal_menu.close(undefined, false);
+        this.inner_horizontal_menu.open();
     }
 
     set_avatar() {
