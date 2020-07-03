@@ -137,6 +137,13 @@ export class HorizontalMenu {
         this.set_button();
     }
 
+    set_to_position(index) {
+        this.reset_button();
+        this.selected_button_index = index;
+        this.title_window.set_text([[this.buttons[this.selected_button_index].title]]);
+        this.set_button();
+    }
+
     set_button() {
         this.buttons[this.selected_button_index].sprite.scale.setTo(1.2, 1.2);
         this.buttons[this.selected_button_index].sprite.bringToTop();

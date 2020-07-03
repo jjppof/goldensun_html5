@@ -9,11 +9,15 @@ const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
 const AVATAR_SIZE = 32;
 const MAX_CHARS_IN_BATTLE = 4;
+const FORWARD = 1;
+const BACKWARD = -1;
 
 export class BattleMenuScreen {
-    constructor(game, data) {
+    constructor(game, data, on_abilities_choose, choose_targets) {
         this.game = game;
         this.data = data;
+        this.on_abilities_choose = on_abilities_choose;
+        this.choose_targets = choose_targets;
         this.chars_status_window = new CharsStatusWindow(this.game, this.data, true, true);
         this.start_buttons_keys = ["fight", "flee", "status"];
         let esc_propagation_priority = 0;
@@ -59,15 +63,40 @@ export class BattleMenuScreen {
                 if (!Djinn.has_standby_djinn(MAX_CHARS_IN_BATTLE)) {
                     filtered_buttons.push("summon");
                 }
+                this.current_buttons = this.inner_buttons_keys.filter(key => !filtered_buttons.includes(key));
                 this.inner_horizontal_menu.mount_buttons(filtered_buttons);
+                this.abilities = {};
                 this.inner_horizontal_menu.open();
         }
     }
 
     inner_button_press(index) {
-        switch (this.inner_buttons_keys[index]) {
-
+        switch (this.current_buttons[index]) {
+            case "attack":
+                this.choose_targets("attack", targets => {
+                    if (targets) {
+                        this.abilities[party_data.members[this.current_char_index].key_name] = {
+                            key_name: "attack",
+                            targets: targets
+                        };
+                        this.change_char(FORWARD);
+                    }
+                });
+                break;
+            case "defend":
+                this.abilities[party_data.members[this.current_char_index].key_name] = {
+                    key_name: "defend",
+                    targets: null
+                };
+                this.change_char(FORWARD);
+                break
         }
+    }
+
+    change_char(step) {
+        this.current_char_index += step;
+        this.set_avatar();
+        this.inner_horizontal_menu.set_to_position(0);
     }
 
     set_avatar() {
@@ -80,9 +109,13 @@ export class BattleMenuScreen {
     }
 
     inner_menu_cancel() {
-        this.inner_horizontal_menu.close();
-        this.hide_avatar();
-        this.start_horizontal_menu.open();
+        if (this.current_char_index > 0) {
+            this.change_char(BACKWARD);
+        } else {
+            this.inner_horizontal_menu.close();
+            this.hide_avatar();
+            this.start_horizontal_menu.open();
+        }
     }
 
     update_position() {

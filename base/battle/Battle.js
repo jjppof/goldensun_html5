@@ -24,9 +24,9 @@ const battle_phases = {
     NONE: 0, // (not in a battle)
     START: 1, // Start (camera pan, shows enemies, move to menu)
     MENU: 2, // (includes submenus, this phase doesn't end until the player has entered their final command)
-    ROUND: 3, // Start (turn order is determined, enemies may commit to certain actions)
+    ROUND_START: 3, // Start (turn order is determined, enemies may commit to certain actions)
     COMBAT: 4, // (all actions are queued and take place here, you could further break up combat actions into subactions, which should be governed by a separate sub-state variable)
-    ROUND: 5, // End (djinn recovery, status/buff/debuff timers decrement)
+    ROUND_END: 5, // End (djinn recovery, status/buff/debuff timers decrement)
     END: 6 // End (the last enemy has fallen, exp/gold/drops are awarded)
 };
 
@@ -53,12 +53,22 @@ export class Battle {
         });
         this.battle_stage = new BattleStage(this.game, this.data, background_key, this.allies_info, this.enemies_info);
         this.battle_log = new BattleLog(this.game);
-        this.battle_menu = new BattleMenuScreen(this.game, this.data);
+        this.battle_menu = new BattleMenuScreen(this.game, this.data, this.on_abilities_choose.bind(this), this.choose_targets.bind(this));
         this.battle_phase = battle_phases.NONE;
     }
 
     start_battle() {
         this.check_phases();
+    }
+
+    on_abilities_choose(abilities) {
+        //...
+        this.battle_phase = battle_phases.ROUND_START;
+        this.check_phases();
+    }
+
+    choose_targets(ability_key, callback) {
+
     }
 
     check_phases() {
@@ -69,6 +79,9 @@ export class Battle {
             case battle_phases.START:
             case battle_phases.MENU:
                 this.battle_phase_menu();
+                break;
+            case battle_phases.ROUND_START:
+                this.battle_phase_round_start();
                 break;
         }
     }
@@ -83,5 +96,9 @@ export class Battle {
 
     battle_phase_menu() {
         this.battle_menu.open_menu();
+    }
+
+    battle_phase_round_start() {
+
     }
 }
