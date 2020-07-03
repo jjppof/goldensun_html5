@@ -1,8 +1,4 @@
 import { party_data } from '../initializers/main_chars.js';
-import { djinni_list } from '../initializers/djinni.js';
-import { Window } from '../base/Window.js';
-import * as numbers from '../magic_numbers.js';
-import { elements } from '../base/MainChar.js';
 import { CharsQuickInfoDjinnWindow } from '../base/windows/djinn/CharsQuickInfoDjinnWindow.js';
 import { DjinnListWindow } from '../base/windows/djinn/DjinnListWindow.js';
 import { DjinnActionWindow } from '../base/windows/djinn/DjinnActionWindow.js';

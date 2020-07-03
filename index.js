@@ -18,83 +18,59 @@ import { set_debug_info, toggle_debug, toggle_keys, fill_key_debug_table } from 
 import { event_triggering } from './events/triggering.js';
 
 var data = {
-    game: undefined,
-    cursors: undefined,
-    hero: undefined,
-    camera_type: undefined,
-    map_collider_layer: undefined,
-    current_action: "idle",
-    current_direction: undefined,
+    //movement
     x_speed: 0,
     y_speed: 0,
-    hero_name: undefined,
-    map_name: undefined,
-    shadow: undefined,
-    hero_tile_pos_x: undefined,
-    hero_tile_pos_y: undefined,
-    current_event: undefined,
+    extra_speed: 0,
+    delta_time: 0,
+    stop_by_colliding: false,
+    force_direction: false,
+    forcing_on_diagonal: false,
+
+    //events and game states
     event_timers: {},
     on_event: false,
     climbing: false,
-    extra_speed: 0,
-    map_collider: undefined,
-    mapCollisionGroup: undefined,
-    heroCollisionGroup: undefined,
-    npcCollisionGroups: {},
-    interactableObjectCollisionGroups: {},
-    dynamicEventsCollisionGroup: undefined,
-    underlayer_group: undefined,
-    overlayer_group: undefined,
-    npc_group: undefined,
     teleporting: false,
-    fading_out: false,
-    processing_teleport: false,
-    delta_time: 0,
-    show_fps: undefined,
-    npc_db: undefined,
-    interactable_objects_db: undefined,
-    npc_event: false,
-    active_npc: null,
-    waiting_for_enter_press: false,
-    dialog_manager: null,
-    in_dialog: false,
-    created: false,
+    trying_to_push: false,
     waiting_to_step: false,
     step_event_data: {},
-    debug: false,
-    grid: false,
     waiting_to_change_collision: false,
     collision_event_data: {},
-    trying_to_push: false,
     trying_to_push_direction: "",
     push_timer: null,
     pushing: false,
-    walking_on_pillars_tiles: new Set(),
-    dynamic_jump_events_bodies: [],
-    scale_factor: 1,
     menu_open: false,
-    esc_input: null,
-    classes_db: null,
-    abilities_db: null,
-    items_db: null,
     casting_psynergy: false,
-    hero_color_filters: undefined,
-    map_color_filters: undefined,
-    pasynergy_item_color_filters: undefined,
-    stop_by_colliding: false,
-    force_direction: false,
-    enemies_db: null,
-    shift_input: null,
-    forcing_on_diagonal: false,
     door_event_data: null,
     climbing_event_data: null,
-    maps_db: undefined,
     jumping: false,
-    debug_keys: false,
-    frame_counter: 0,
     in_battle: false,
     battle_stage: null,
-    fullscreen: false
+    created: false,
+    in_dialog: false,
+
+    //debug
+    debug: false,
+    grid: false,
+    debug_keys: false,
+    frame_counter: 0,
+
+    //screen
+    fullscreen: false,
+    scale_factor: 1,
+
+    //collision
+    npcCollisionGroups: {},
+    interactableObjectCollisionGroups: {},
+    walking_on_pillars_tiles: new Set(),
+    dynamic_jump_events_bodies: [],
+
+    //npc
+    npc_event: false,
+    active_npc: null,
+    waiting_for_enter_press: false,
+    dialog_manager: null
 };
 
 //debugging porpouses
@@ -227,6 +203,7 @@ async function create() {
     data.scale_factor = data.init_db.initial_scale_factor;
     data.map_collider_layer = data.init_db.map_z_index;
     party_data.coins = data.init_db.coins;
+    data.current_action = "idle";
 
     let load_maps_promise_resolve;
     let load_maps_promise = new Promise(resolve => {

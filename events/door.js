@@ -55,11 +55,11 @@ export function door_event_phases(data) {
         data.current_action = "idle";
         game.camera.fade();
         game.camera.onFadeComplete.addOnce(() => {
-            data.processing_teleport = true;
+            data.door_event_data.processing_teleport = true;
             game.camera.lerp.setTo(1, 1);
         }, this);
-    } else if (data.processing_teleport) {
-        data.processing_teleport = false;
+    } else if (data.door_event_data.processing_teleport) {
+        data.door_event_data.processing_teleport = false;
         data.underlayer_group.removeAll();
         data.overlayer_group.removeAll();
 
@@ -115,10 +115,10 @@ export function door_event_phases(data) {
                 sprite.body.debug = data.hero.body.debug;
             }
 
-            data.fading_out = true;
+            data.door_event_data.fading_out = true;
         });
-    } else if (data.fading_out) {
-        data.fading_out = false;
+    } else if (data.door_event_data.fading_out) {
+        data.door_event_data.fading_out = false;
         game.camera.flash(0x0);
         game.camera.onFlashComplete.addOnce(() => {
             set_speed_factors(data);
