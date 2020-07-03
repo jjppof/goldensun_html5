@@ -28,7 +28,7 @@ export function set_door_event(data, current_event, activation_direction) {
         data.hero.animations.play("walk_up");
         open_door(data, current_event);
         game.physics.p2.pause();
-        const time = Phaser.Timer.HALF;
+        const time = 400;
         const tween_x = maps[data.map_name].sprite.tileWidth * (current_event.x + 0.5);
         const tween_y = data.hero.y - 15;
         game.add.tween(data.shadow).to({
