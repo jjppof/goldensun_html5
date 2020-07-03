@@ -48,9 +48,9 @@ export class DropItemWindow {
     }
 
     set_control() {
-        game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
+        this.data.esc_input.add(() => {
             if (!this.window_open) return;
-            this.data.esc_input.getSignal().halt();
+            this.data.esc_input.halt();
             this.close(this.close_callback.bind(this, this.dropped));
         }, this, this.esc_propagation_priority);
         game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {

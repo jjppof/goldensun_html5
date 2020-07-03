@@ -175,6 +175,12 @@ function preload() {
     game.load.script('color_filters', 'plugins/ColorFilters.js');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
     game.load.bitmapFont('gs-item-bmp-font', 'assets/font/gs-item-font.png', 'assets/font/gs-item-font.fnt');
+
+    data.enter_input = game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown;
+    data.esc_input = game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown;
+    data.shift_input = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT).onDown;
+    data.spacebar_input = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown;
+
     initialize_field_abilities(game, data);
 
     game.time.advancedTiming = true;
@@ -274,9 +280,6 @@ async function create() {
     data.underlayer_group = game.add.group();
     data.npc_group = game.add.group();
     data.overlayer_group = game.add.group();
-    
-    data.shift_input = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT).onDown;
-    data.spacebar_input = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown;
 
     //initialize screens
     data.menu_screen = initialize_menu(game, data);
@@ -292,7 +295,7 @@ async function create() {
             data.menu_screen.close_menu();
         }
     }, this);
-    data.esc_input = game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
+    data.esc_input.add(() => {
         if (data.menu_open) {
             data.menu_open = false;
             data.menu_screen.close_menu();

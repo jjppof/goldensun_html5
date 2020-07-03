@@ -51,9 +51,9 @@ export class ItemQuantityManagerWindow {
     }
 
     set_control() {
-        this.game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
+        this.data.esc_input.add(() => {
             if (!this.window_open || !this.window_active) return;
-            this.data.esc_input.getSignal().halt();
+            this.data.esc_input.halt();
             this.choosen_quantity = 0;
             this.close(this.close_callback);
         }, this, this.esc_propagation_priority);

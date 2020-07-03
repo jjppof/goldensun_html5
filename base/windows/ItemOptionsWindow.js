@@ -129,9 +129,9 @@ export class ItemOptionsWindow {
     }
     
     set_control() {
-        game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
+        this.data.esc_input.add(() => {
             if (!this.window_open || !this.window_active) return;
-            this.data.esc_input.getSignal().halt();
+            this.data.esc_input.halt();
             if (this.action_message_window.open) {
                 this.action_message_window.close();
             } else {

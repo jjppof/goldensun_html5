@@ -84,9 +84,9 @@ export class ItemMenuScreen {
     }
 
     set_control() {
-        game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
+        this.data.esc_input.add(() => {
             if (!this.is_open) return;
-            this.data.esc_input.getSignal().halt();
+            this.data.esc_input.halt();
             this.close_menu();
         }, this, this.esc_propagation_priority);
     }

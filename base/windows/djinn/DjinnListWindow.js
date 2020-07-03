@@ -96,10 +96,10 @@ export class DjinnListWindow {
     }
 
     set_control() {
-        this.game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
+        this.data.esc_input.add(() => {
             if (!this.window_open || !this.window_active) return;
             if (this.setting_djinn_status) {
-                this.data.esc_input.getSignal().halt();
+                this.data.esc_input.halt();
                 this.cancel_djinn_status_set(true);
             }
         }, this, this.esc_propagation_priority);

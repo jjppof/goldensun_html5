@@ -54,7 +54,7 @@ export class HorizontalMenu {
         }, this, this.enter_propagation_priority);
         this.game.input.keyboard.addKey(Phaser.Keyboard.ESC).onUp.add(() => {
             if (!this.menu_open || !this.menu_active) return;
-            this.data.esc_input.getSignal().halt();
+            this.data.esc_input.halt();
             this.on_cancel();
         }, this, this.esc_propagation_priority);
         this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {

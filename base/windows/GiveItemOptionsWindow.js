@@ -53,9 +53,9 @@ export class GiveItemOptionsWindow {
     }
 
     set_control() {
-        game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
+        this.data.esc_input.add(() => {
             if (!this.window_open || !this.window_active) return;
-            this.data.esc_input.getSignal().halt();
+            this.data.esc_input.halt();
             this.close(this.close_callback.bind(this, false, false));
         }, this, this.esc_propagation_priority);
         game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {

@@ -63,7 +63,7 @@ export class MoveFieldPsynergy extends SpriteBase {
             this.data.trying_to_push_direction = "down";
             this.fire_push();
         });
-        game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown.add(() => {
+        this.data.esc_input.add(() => {
             if (!this.controls_active) return;
             this.controls_active = false;
             this.finish_hand();
