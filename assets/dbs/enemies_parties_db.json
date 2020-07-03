@@ -1,5 +1,7 @@
 {
     "briggs_party": {
+        "key_name": "briggs_party",
+        "name": "Briggs",
         "members": [
             {
                 "key": "briggs",

@@ -267,13 +267,6 @@ async function create() {
             hero_control.update_shadow(data);
             data.menu_screen.open_menu();
         } else if (data.menu_screen.is_active()) {
-            data.menu_open = false;
-            data.menu_screen.close_menu();
-        }
-    }, this);
-    data.esc_input.add(() => {
-        if (data.menu_open) {
-            data.menu_open = false;
             data.menu_screen.close_menu();
         }
     }, this);
@@ -425,7 +418,7 @@ function update() {
             hero_control.stop_hero(data, false);
             data.menu_screen.update_position();
         } else if (data.in_battle) {
-            data.battle_stage.update_stage();
+            data.battle_instance.update();
         }
         ++data.frame_counter;
         if (data.frame_counter%numbers.TARGET_FPS === 0) {

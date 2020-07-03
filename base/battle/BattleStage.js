@@ -112,8 +112,6 @@ export class BattleStage {
         this.battle_group.add(this.battle_bg2);
         this.battle_group.add(this.group_enemies);
         this.battle_group.add(this.group_allies);
-        this.data.battle_stage = this;
-        this.data.in_battle = true;
         this.game.add.tween(this.upper_rect).to({
             height: 0
         }, INIT_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {

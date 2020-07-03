@@ -40,9 +40,9 @@ export class Battle {
                 scale: char.battle_scale
             };
         });
-        const enemies_party_data = this.data.enemies_parties_db[enemy_party_key];
+        this.enemies_party_data = this.data.enemies_parties_db[enemy_party_key];
         this.enemies_info = [];
-        enemies_party_data.members.forEach(member_info => {
+        this.enemies_party_data.members.forEach(member_info => {
             const qtd = _.random(member_info.min, member_info.max);
             for (let i = 0; i < qtd; ++i) {
                 this.enemies_info.push({
@@ -51,10 +51,29 @@ export class Battle {
                 });
             }
         });
+        this.enter_propagation_priority = 0;
         this.battle_stage = new BattleStage(this.game, this.data, background_key, this.allies_info, this.enemies_info);
         this.battle_log = new BattleLog(this.game);
-        this.battle_menu = new BattleMenuScreen(this.game, this.data, this.on_abilities_choose.bind(this), this.choose_targets.bind(this));
+        this.battle_menu = new BattleMenuScreen(this.game, this.data, this.enter_propagation_priority, this.on_abilities_choose.bind(this), this.choose_targets.bind(this));
         this.battle_phase = battle_phases.NONE;
+        this.controls_enabled = false;
+        ++this.enter_propagation_priority;
+        this.set_controls();
+    }
+
+    set_controls() {
+        this.data.enter_input.add(() => {
+            if (!this.data.in_battle || !this.controls_enabled) return;
+            this.data.enter_input.halt();
+            this.controls_enabled = false;
+            switch (this.battle_phase) {
+                case battle_phases.START:
+                    this.battle_log.clear();
+                    this.battle_phase = battle_phases.MENU;
+                    this.check_phases();
+                    break;
+            }
+        }, this, this.enter_propagation_priority);
     }
 
     start_battle() {
@@ -88,9 +107,11 @@ export class Battle {
 
     battle_phase_none() {
         this.battle_phase = battle_phases.START;
+        this.data.in_battle = true;
+        this.data.battle_instance = this;
+        this.battle_log.add(this.enemies_party_data.name + " appeared!");
         this.battle_stage.initialize_stage(() => {
-            this.battle_phase = battle_phases.MENU;
-            this.check_phases();
+            this.controls_enabled = true;
         });
     }
 
@@ -100,5 +121,9 @@ export class Battle {
 
     battle_phase_round_start() {
 
+    }
+
+    update() {
+        this.battle_stage.update_stage()
     }
 }

@@ -21,8 +21,11 @@ export class MenuScreen {
             this.buttons_keys,
             this.buttons_keys.map(b => capitalize(b)),
             this.button_press.bind(this),
-            enter_propagation_priority
+            enter_propagation_priority,
+            this.close_menu.bind(this),
+            esc_propagation_priority
         );
+        ++esc_propagation_priority;
         ++enter_propagation_priority;
         this.psynergy_menu = new PsynergyMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
         this.item_menu = new ItemMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
@@ -49,7 +52,6 @@ export class MenuScreen {
             this.horizontal_menu.activate();
             this.chars_status_window.update_chars_info();
             if (close_this_menu) {
-                this.data.menu_open = false;
                 this.close_menu();
             }
         });
@@ -73,6 +75,7 @@ export class MenuScreen {
 
     close_menu() {
         if (!this.is_active()) return;
+        this.data.menu_open = false;
         this.horizontal_menu.close();
         this.chars_status_window.close();
     }

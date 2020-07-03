@@ -13,7 +13,7 @@ const FORWARD = 1;
 const BACKWARD = -1;
 
 export class BattleMenuScreen {
-    constructor(game, data, on_abilities_choose, choose_targets) {
+    constructor(game, data, enter_propagation_priority, on_abilities_choose, choose_targets) {
         this.game = game;
         this.data = data;
         this.on_abilities_choose = on_abilities_choose;
@@ -21,7 +21,7 @@ export class BattleMenuScreen {
         this.chars_status_window = new CharsStatusWindow(this.game, this.data, true, true);
         this.start_buttons_keys = ["fight", "flee", "status"];
         let esc_propagation_priority = 0;
-        let enter_propagation_priority = 0;
+        this.enter_propagation_priority = enter_propagation_priority;
         this.group = this.game.add.group();
         this.avatar_sprite = this.group.create(0, numbers.GAME_HEIGHT - AVATAR_SIZE);
         this.avatar_sprite.alpha = 0;
@@ -31,7 +31,7 @@ export class BattleMenuScreen {
             this.start_buttons_keys,
             this.start_buttons_keys.map(b => capitalize(b)),
             this.start_button_press.bind(this),
-            enter_propagation_priority,
+            this.enter_propagation_priority,
             undefined,
             undefined,
             START_TITLE_WINDOW_WIDTH,
@@ -39,14 +39,14 @@ export class BattleMenuScreen {
         );
         this.inner_buttons_keys = ["attack", "psynergy", "djinni", "summon", "item", "defend"];
         ++esc_propagation_priority;
-        ++enter_propagation_priority;
+        ++this.enter_propagation_priority;
         this.inner_horizontal_menu = new HorizontalMenu(
             this.game,
             this.data,
             this.inner_buttons_keys,
             this.inner_buttons_keys.map(b => capitalize(b)),
             this.inner_button_press.bind(this),
-            enter_propagation_priority,
+            this.enter_propagation_priority,
             this.inner_menu_cancel.bind(this),
             esc_propagation_priority,
             INNER_TITLE_WINDOW_WIDTH,
