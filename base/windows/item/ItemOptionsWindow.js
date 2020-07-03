@@ -1,7 +1,7 @@
-import { Window } from '../Window.js';
-import * as numbers from '../../magic_numbers.js';
-import { CursorControl } from '../utils/CursorControl.js';
-import { party_data } from '../../initializers/main_chars.js';
+import { Window } from '../../Window.js';
+import * as numbers from '../../../magic_numbers.js';
+import { CursorControl } from '../../utils/CursorControl.js';
+import { party_data } from '../../../initializers/main_chars.js';
 import { DropItemWindow } from './DropItemWindow.js';
 import { ItemQuantityManagerWindow } from './ItemQuantityManagerWindow.js';
 import { GiveItemOptionsWindow } from './GiveItemOptionsWindow.js';
@@ -138,9 +138,9 @@ export class ItemOptionsWindow {
                 this.close(this.close_callback);
             }
         }, this, this.esc_propagation_priority);
-        game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
+        this.data.enter_input.add(() => {
             if (!this.window_open || !this.window_active) return;
-            this.data.enter_input.getSignal().halt();
+            this.data.enter_input.halt();
             if (this.action_message_window.open) {
                 this.action_message_window.close();
             } else {

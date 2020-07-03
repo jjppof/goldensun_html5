@@ -4,9 +4,11 @@ import {
     config_physics_for_npcs,
     config_physics_for_map,
     config_collisions,
-    set_speed_factors,
     config_physics_for_interactable_objects
-} from '../physics/physics.js';
+} from '../physics/collision_bodies.js';
+import {
+    set_speed_factors,
+} from '../physics/movement.js';
 import * as numbers from '../magic_numbers.js';
 
 export function set_door_event(data, current_event, activation_direction) {

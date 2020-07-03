@@ -1,6 +1,6 @@
-import { Window } from '../Window.js';
-import * as numbers from '../../magic_numbers.js';
-import { CursorControl } from '../utils/CursorControl.js';
+import { Window } from '../../Window.js';
+import * as numbers from '../../../magic_numbers.js';
+import { CursorControl } from '../../utils/CursorControl.js';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 36;
@@ -58,9 +58,9 @@ export class GiveItemOptionsWindow {
             this.data.esc_input.halt();
             this.close(this.close_callback.bind(this, false, false));
         }, this, this.esc_propagation_priority);
-        game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
+        this.data.enter_input.add(() => {
             if (!this.window_open || !this.window_active) return;
-            this.data.enter_input.getSignal().halt();
+            this.data.enter_input.halt();
             this.close(this.close_callback.bind(this, true, this.answer_index === YES));
         }, this, this.enter_propagation_priority);
     }

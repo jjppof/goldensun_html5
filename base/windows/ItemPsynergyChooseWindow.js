@@ -110,9 +110,9 @@ export class ItemPsynergyChooseWindow {
             this.data.esc_input.halt();
             this.close();
         }, this, this.esc_propagation_priority);
-        game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
+        this.data.enter_input.add(() => {
             if (!this.window_open || !this.window_activated) return;
-            this.data.enter_input.getSignal().halt();
+            this.data.enter_input.halt();
             if (this.is_psynergy_window && this.element_list[this.elements[this.selected_element_index]].is_field_psynergy) {
                 this.close();
             }

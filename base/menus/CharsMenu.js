@@ -81,9 +81,9 @@ export class CharsMenu {
     }
 
     set_control() {
-        game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
+        this.data.enter_input.add(() => {
             if (!this.menu_open || !this.menu_active) return;
-            this.data.enter_input.getSignal().halt();
+            this.data.enter_input.halt();
             this.on_choose(this.selected_button_index);
         }, this, this.enter_propagation_priority);
         this.data.esc_input.add(() => {

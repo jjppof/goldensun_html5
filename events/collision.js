@@ -1,4 +1,4 @@
-import * as physics from '../physics/physics.js';
+import * as physics from '../physics/collision_bodies.js';
 import { maps } from '../initializers/maps.js';
 
 export function config_collision_change(data, current_event) {

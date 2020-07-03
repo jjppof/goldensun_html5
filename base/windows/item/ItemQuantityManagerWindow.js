@@ -1,6 +1,6 @@
-import { Window } from '../Window.js';
-import * as numbers from '../../magic_numbers.js';
-import { ItemCounter } from '../utils/ItemsCounter.js';
+import { Window } from '../../Window.js';
+import * as numbers from '../../../magic_numbers.js';
+import { ItemCounter } from '../../utils/ItemsCounter.js';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 52;
@@ -57,9 +57,9 @@ export class ItemQuantityManagerWindow {
             this.choosen_quantity = 0;
             this.close(this.close_callback);
         }, this, this.esc_propagation_priority);
-        this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
+        this.data.enter_input.add(() => {
             if (!this.window_open || !this.window_active) return;
-            this.data.enter_input.getSignal().halt();
+            this.data.enter_input.halt();
             this.close(this.close_callback);
         }, this, this.enter_propagation_priority);
     }

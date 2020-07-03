@@ -49,7 +49,7 @@ export class HorizontalMenu {
     set_control() {
         this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onUp.add(() => {
             if (!this.menu_open || !this.menu_active) return;
-            this.data.enter_input.getSignal().halt();
+            this.data.enter_input.halt();
             this.on_choose(this.selected_button_index);
         }, this, this.enter_propagation_priority);
         this.game.input.keyboard.addKey(Phaser.Keyboard.ESC).onUp.add(() => {

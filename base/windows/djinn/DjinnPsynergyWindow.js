@@ -47,9 +47,9 @@ export class DjinnPsynergyWindow {
             this.execute_operation = false;
             this.close(this.close_callback);
         }, this, this.esc_propagation_priority);
-        this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
+        this.data.enter_input.add(() => {
             if (!this.window_open) return;
-            this.data.enter_input.getSignal().halt();
+            this.data.enter_input.halt();
             this.execute_operation = true;
             this.close(this.close_callback);
         }, this, this.enter_propagation_priority);

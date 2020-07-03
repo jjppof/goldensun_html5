@@ -103,9 +103,9 @@ export class DjinnListWindow {
                 this.cancel_djinn_status_set(true);
             }
         }, this, this.esc_propagation_priority);
-        this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
+        this.data.enter_input.add(() => {
             if (!this.window_open || !this.window_active) return;
-            this.data.enter_input.getSignal().halt();
+            this.data.enter_input.halt();
             if (this.setting_djinn_status) {
                 this.set_djinn_operation();
             } else {

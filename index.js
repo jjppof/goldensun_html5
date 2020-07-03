@@ -10,13 +10,15 @@ import { set_npc_event, trigger_npc_dialog } from './events/npc.js';
 import { do_step } from './events/step.js';
 import { do_collision_change } from './events/collision.js';
 import * as climb from './events/climb.js';
-import * as physics from './physics/physics.js';
+import * as physics from './physics/collision_bodies.js';
+import * as movement from './physics/movement.js';
 import { initialize_menu } from './screens/menu.js';
-import { config_hero, change_hero_sprite, set_current_action, update_shadow, stop_hero, init_speed_factors } from './initializers/hero_control.js';
+import * as hero_control from './initializers/hero_control.js';
 import { TileEvent } from './base/TileEvent.js';
 import { set_debug_info, toggle_debug, toggle_keys, fill_key_debug_table } from './debug.js';
 import { event_triggering } from './events/triggering.js';
 
+//this variable contains important data used throughout the game
 var data = {
     //movement
     x_speed: 0,
@@ -85,10 +87,10 @@ window.party_data = party_data;
 window.data = data;
 
 var game = new Phaser.Game(
-    numbers.GAME_WIDTH, //width
-    numbers.GAME_HEIGHT, //height
+    numbers.GAME_WIDTH,
+    numbers.GAME_HEIGHT,
     Phaser.WEBGL, //renderer
-    "game", //parent
+    "game",
     { preload: preload, create: create, update: update, render: render, loadRender: loadRender }, //states
     false, //transparent
     false //antialias
@@ -213,9 +215,6 @@ async function create() {
     load_maps(game, load_maps_promise_resolve);
     await load_maps_promise;
 
-    game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
-    window.dispatchEvent(new Event('resize'));
-
     initialize_classes(data.classes_db);
 
     let load_enemies_sprites_promise_resolve;
@@ -264,8 +263,8 @@ async function create() {
         if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
         if (!data.menu_open) {
             data.menu_open = true;
-            stop_hero(data);
-            update_shadow(data);
+            hero_control.stop_hero(data);
+            hero_control.update_shadow(data);
             data.menu_screen.open_menu();
         } else if (data.menu_screen.is_active()) {
             data.menu_open = false;
@@ -280,95 +279,96 @@ async function create() {
     }, this);
 
     //configuring map layers: creating sprites, listing events and setting the layers
-    maps[data.map_name].mount_map(game, data).then(() => {
-        config_hero(data);
-        physics.config_world_physics();
-        physics.config_physics_for_hero(data);
-        physics.config_physics_for_npcs(data);
-        physics.config_physics_for_interactable_objects(data);
-        data.dynamicEventsCollisionGroup = game.physics.p2.createCollisionGroup();
-        physics.config_physics_for_map(data);
-        physics.config_collisions(data);
-        game.physics.p2.updateBoundsCollisionGroup();
+    await maps[data.map_name].mount_map(game, data);
+    hero_control.config_hero(data);
+    physics.config_world_physics();
+    physics.config_physics_for_hero(data);
+    physics.config_physics_for_npcs(data);
+    physics.config_physics_for_interactable_objects(data);
+    data.dynamicEventsCollisionGroup = game.physics.p2.createCollisionGroup();
+    physics.config_physics_for_map(data);
+    physics.config_collisions(data);
+    game.physics.p2.updateBoundsCollisionGroup();
 
-        //activate debug mode
-        game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug.bind(this, data), this);
-        
-        //activate grid mode
-        game.input.keyboard.addKey(Phaser.Keyboard.G).onDown.add(() => {
-            data.grid = !data.grid;
-        }, this);
+    //activate debug mode
+    game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug.bind(this, data), this);
+    
+    //activate grid mode
+    game.input.keyboard.addKey(Phaser.Keyboard.G).onDown.add(() => {
+        data.grid = !data.grid;
+    }, this);
 
-        //activate keys debug mode
-        game.input.keyboard.addKey(Phaser.Keyboard.K).onDown.add(() => {
-            toggle_keys(data);
-        }, this);
+    //activate keys debug mode
+    game.input.keyboard.addKey(Phaser.Keyboard.K).onDown.add(() => {
+        toggle_keys(data);
+    }, this);
 
-        //enable full screen
-        game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-        game.input.onTap.add(function(pointer, isDoubleClick) {  
-            if (isDoubleClick) {
-                game.scale.startFullScreen(true);
-            }  
-        });
-        game.scale.onFullScreenChange.add(() => {
-            data.fullscreen = !data.fullscreen;
-            data.scale_factor = 1;
-            game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
-            window.dispatchEvent(new Event('resize'));
-        });
+    //enable fps show
+    data.show_fps = false;
+    game.input.keyboard.addKey(Phaser.Keyboard.F).onDown.add(function(){
+        data.show_fps = !data.show_fps;
+    }, this);
 
-        //enable fps show
-        data.show_fps = false;
-        game.input.keyboard.addKey(Phaser.Keyboard.F).onDown.add(function(){
-            data.show_fps = !data.show_fps;
-        }, this);
+    //set initial zoom
+    game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
+    window.dispatchEvent(new Event('resize'));
 
-        //enable zoom
-        game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(function(){
-            if (data.fullscreen) return;
-            data.scale_factor = 1;
-            game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
-            window.dispatchEvent(new Event('resize'));
-        }, this);
-        game.input.keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(function(){
-            if (data.fullscreen) return;
-            data.scale_factor = 2;
-            game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
-            window.dispatchEvent(new Event('resize'));
-        }, this);
-        game.input.keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(function(){
-            if (data.fullscreen) return;
-            data.scale_factor = 3;
-            game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
-            window.dispatchEvent(new Event('resize'));
-        }, this);
-
-        //enable psynergies shortcuts
-        game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(function(){
-            if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
-            field_abilities_list.move.cast(data.init_db.initial_shortcuts.move);
-        }, this);
-        game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(function(){
-            if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
-            field_abilities_list.frost.cast(data.init_db.initial_shortcuts.frost);
-        }, this);
-        game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(function(){
-            if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
-            field_abilities_list.growth.cast(data.init_db.initial_shortcuts.growth);
-        }, this);
-
-        //enable enter event
-        data.enter_input = game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(enter_key_event, this);
-
-        //set keyboard cursors
-        data.cursors = game.input.keyboard.createCursorKeys();
-
-        init_speed_factors(data);
-
-        data.created = true;
-        game.camera.resetFX();
+    //enable full screen
+    game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+    game.input.onTap.add(function(pointer, isDoubleClick) {  
+        if (isDoubleClick) {
+            game.scale.startFullScreen(true);
+        }  
     });
+    game.scale.onFullScreenChange.add(() => {
+        data.fullscreen = !data.fullscreen;
+        data.scale_factor = 1;
+        game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+        window.dispatchEvent(new Event('resize'));
+    });
+
+    //enable zoom
+    game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(function(){
+        if (data.fullscreen) return;
+        data.scale_factor = 1;
+        game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+        window.dispatchEvent(new Event('resize'));
+    }, this);
+    game.input.keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(function(){
+        if (data.fullscreen) return;
+        data.scale_factor = 2;
+        game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
+        window.dispatchEvent(new Event('resize'));
+    }, this);
+    game.input.keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(function(){
+        if (data.fullscreen) return;
+        data.scale_factor = 3;
+        game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
+        window.dispatchEvent(new Event('resize'));
+    }, this);
+
+    //enable psynergies shortcuts
+    game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(function(){
+        if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
+        field_abilities_list.move.cast(data.init_db.initial_shortcuts.move);
+    }, this);
+    game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(function(){
+        if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
+        field_abilities_list.frost.cast(data.init_db.initial_shortcuts.frost);
+    }, this);
+    game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(function(){
+        if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
+        field_abilities_list.growth.cast(data.init_db.initial_shortcuts.growth);
+    }, this);
+
+    //enable enter event
+    data.enter_input.add(enter_key_event, this);
+
+    //set keyboard cursors
+    data.cursors = game.input.keyboard.createCursorKeys();
+
+    data.created = true;
+    game.camera.resetFX();
 }
 
 function update() {
@@ -392,14 +392,13 @@ function update() {
                 data.extra_speed = 0;
             }
 
-            physics.set_speed_factors(data);
-            set_current_action(data); //chooses which sprite the hero shall assume
+            movement.set_speed_factors(data);
+            hero_control.set_current_action(data); //chooses which sprite the hero shall assume
             data.delta_time = game.time.elapsedMS/numbers.DELTA_TIME_FACTOR;
-            physics.calculate_hero_speed(data);
-            physics.collision_dealer(game, data);
-            change_hero_sprite(data);
-
-            update_shadow(data);
+            movement.calculate_hero_speed(data);
+            movement.collision_dealer(game, data);
+            hero_control.change_hero_sprite(data);
+            hero_control.update_shadow(data);
 
             data.map_collider.body.velocity.y = data.map_collider.body.velocity.x = 0; //fixes map body
 
@@ -416,22 +415,20 @@ function update() {
             if (data.door_event_data !== null) {
                 door_event_phases(data);
             }
-            //disabling hero body movement
-            data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
+            hero_control.stop_hero(data, false);
         } else if (data.npc_event) {
             set_npc_event(data);
-            //disabling hero body movement
-            data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
+            hero_control.stop_hero(data, false);
         } else if (data.pushing) {
-            change_hero_sprite(data);
+            hero_control.change_hero_sprite(data);
         } else if (data.menu_open && data.menu_screen.horizontal_menu.menu_active) {
-            stop_hero(data, false);
+            hero_control.stop_hero(data, false);
             data.menu_screen.update_position();
         } else if (data.in_battle) {
             data.battle_stage.update_stage();
         }
         ++data.frame_counter;
-        if (data.frame_counter%60 === 0) {
+        if (data.frame_counter%numbers.TARGET_FPS === 0) {
             data.frame_counter = 0;
         }
     } else {

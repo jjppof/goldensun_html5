@@ -1,5 +1,5 @@
-import { Window } from '../Window.js';
-import { CursorControl } from '../utils/CursorControl.js';
+import { Window } from '../../Window.js';
+import { CursorControl } from '../../utils/CursorControl.js';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 76;
@@ -53,9 +53,9 @@ export class DropItemWindow {
             this.data.esc_input.halt();
             this.close(this.close_callback.bind(this, this.dropped));
         }, this, this.esc_propagation_priority);
-        game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(() => {
+        this.data.enter_input.add(() => {
             if (!this.window_open) return;
-            this.data.enter_input.getSignal().halt();
+            this.data.enter_input.halt();
             this.on_choose();
         }, this, this.enter_propagation_priority);
     }

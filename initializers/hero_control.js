@@ -3,23 +3,6 @@ import * as numbers from '../magic_numbers.js';
 const SHADOW_X_AP = 0.5;
 const SHADOW_Y_AP = 0.1;
 
-export function init_speed_factors(data) {
-    //set initial speed factors
-    if (data.current_direction === "up") {
-        data.x_speed = 0;
-        data.y_speed = -1;
-    } else if (data.current_direction === "down") {
-        data.x_speed = 0;
-        data.y_speed = 1;
-    } else if (data.current_direction === "left") {
-        data.x_speed = -1;
-        data.y_speed = 0;
-    } else if (data.current_direction === "right") {
-        data.x_speed = 1;
-        data.y_speed = 0;
-    }
-}
-
 export function config_hero(data) {
     //creating sprites and adding hero and its shadow to npc_group
     data.shadow = data.npc_group.create(0, 0, 'shadow');
