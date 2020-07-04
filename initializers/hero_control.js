@@ -1,7 +1,7 @@
 import * as numbers from '../magic_numbers.js';
 
-const SHADOW_X_AP = 0.5;
-const SHADOW_Y_AP = 0.1;
+const SHADOW_X_AP = 0.45;
+const SHADOW_Y_AP = 0.05;
 
 export function config_hero(data) {
     //creating sprites and adding hero and its shadow to npc_group
@@ -11,8 +11,8 @@ export function config_hero(data) {
     data.shadow.anchor.setTo(SHADOW_X_AP, SHADOW_Y_AP); //shadow anchor point
     data.shadow.base_collider_layer = data.map_collider_layer;
     data.hero = data.npc_group.create(0, 0, data.hero_name + "_" + data.current_action);
-    data.hero.centerX = parseInt((data.init_db.x_tile_position + 1.5) * maps[data.map_name].sprite.tileWidth); //hero x start position
-    data.hero.centerY = parseInt((data.init_db.y_tile_position + 1.5) * maps[data.map_name].sprite.tileHeight); //hero y start position
+    data.hero.centerX = ((data.init_db.x_tile_position + 1.5) * maps[data.map_name].sprite.tileWidth) | 0; //hero x start position
+    data.hero.centerY = ((data.init_db.y_tile_position + 1.5) * maps[data.map_name].sprite.tileHeight) | 0; //hero y start position
     data.hero.base_collider_layer = data.map_collider_layer;
     data.hero.roundPx = true;
     game.camera.follow(data.hero, Phaser.Camera.FOLLOW_LOCKON, numbers.CAMERA_LERP, numbers.CAMERA_LERP); //makes camera follow the data.hero

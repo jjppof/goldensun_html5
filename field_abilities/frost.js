@@ -146,7 +146,7 @@ export class FrostFieldPsynergy {
             }
         });
         this.target_object.interactable_object_sprite.send_to_back = false;
-        this.data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
+        maps[this.data.map_name].sort_sprites(this.data);
         this.target_object.custom_data.color_filters = this.game.add.filter('ColorFilters');
         this.target_object.interactable_object_sprite.filters = [this.target_object.custom_data.color_filters];
         let blink_counter = 16;
