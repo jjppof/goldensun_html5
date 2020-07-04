@@ -4,6 +4,8 @@ import { capitalize } from "../utils.js";
 import * as numbers from "../magic_numbers.js";
 import { party_data } from "../initializers/main_chars.js";
 import { Djinn } from "../base/Djinn.js";
+import { DescriptionWindow } from "../base/windows/battle/DescriptionWindow.js"
+import { PsynergyWindow } from "../base/windows/battle/PsynergyWindow.js"
 
 const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
@@ -20,7 +22,7 @@ export class BattleMenuScreen {
         this.choose_targets = choose_targets;
         this.chars_status_window = new CharsStatusWindow(this.game, this.data, true, true);
         this.start_buttons_keys = ["fight", "flee", "status"];
-        let esc_propagation_priority = 0;
+        this.esc_propagation_priority = 0;
         this.enter_propagation_priority = enter_propagation_priority;
         this.group = this.game.add.group();
         this.avatar_sprite = this.group.create(0, numbers.GAME_HEIGHT - AVATAR_SIZE);
@@ -38,7 +40,7 @@ export class BattleMenuScreen {
             true
         );
         this.inner_buttons_keys = ["attack", "psynergy", "djinni", "summon", "item", "defend"];
-        ++esc_propagation_priority;
+        ++this.esc_propagation_priority;
         ++this.enter_propagation_priority;
         this.inner_horizontal_menu = new HorizontalMenu(
             this.game,
@@ -48,10 +50,12 @@ export class BattleMenuScreen {
             this.inner_button_press.bind(this),
             this.enter_propagation_priority,
             this.inner_menu_cancel.bind(this),
-            esc_propagation_priority,
+            this.esc_propagation_priority,
             INNER_TITLE_WINDOW_WIDTH,
             true
         );
+        this.description_window = new DescriptionWindow(this.game);
+        this.psynergy_window = new PsynergyWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
     }
 
     start_button_press(index) {
@@ -82,6 +86,14 @@ export class BattleMenuScreen {
                         this.change_char(FORWARD);
                     }
                 });
+                break;
+            case "psynergy":
+                this.inner_horizontal_menu.deactivate();
+                this.description_window.open();
+                this.psynergy_window.open(party_data.members[this.current_char_index], null, null, ability => {
+                    this.description_window.close();
+                    this.inner_horizontal_menu.activate();
+                }, false);
                 break;
             case "defend":
                 this.abilities[party_data.members[this.current_char_index].key_name] = {

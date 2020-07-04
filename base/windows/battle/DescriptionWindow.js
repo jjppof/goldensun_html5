@@ -1,7 +1,7 @@
 import { Window } from "../../Window.js";
 
 const BASE_WIN_WIDTH = 236;
-const BASE_WIN_HEIGHT = 137;
+const BASE_WIN_HEIGHT = 28;
 const BASE_WIN_X = 0;
 const BASE_WIN_Y = 40;
 const DESCRIPTION_X = 8;
