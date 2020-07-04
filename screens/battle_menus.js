@@ -93,7 +93,16 @@ export class BattleMenuScreen {
                 this.psynergy_window.open(party_data.members[this.current_char_index], null, null, ability => {
                     this.description_window.close();
                     this.inner_horizontal_menu.activate();
-                }, false);
+                    this.choose_targets(ability, targets => {
+                        if (targets) {
+                            this.abilities[party_data.members[this.current_char_index].key_name] = {
+                                key_name: ability,
+                                targets: targets
+                            };
+                            this.change_char(FORWARD);
+                        }
+                    });
+                }, this.description_window.set_description.bind(this.description_window), false);
                 break;
             case "defend":
                 this.abilities[party_data.members[this.current_char_index].key_name] = {

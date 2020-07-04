@@ -155,7 +155,7 @@ export class ItemPsynergyChooseWindow {
     }
 
     get_cursor_y() {
-        return ELEM_PADDING_TOP + parseInt(numbers.ICON_HEIGHT/2) + this.selected_element_index * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS);
+        return ELEM_PADDING_TOP + ((numbers.ICON_HEIGHT >> 1)|0) + this.selected_element_index * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS);
     }
 
     get_elem_per_page() {

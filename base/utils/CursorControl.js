@@ -172,7 +172,6 @@ export class CursorControl {
             if (this.cursor_tween.isPaused) {
                 this.cursor_tween.resume();
             }
-            return;
         }
         this.cursor_group.x = this.cursor_base_x_getter();
         this.cursor_group.y = this.cursor_base_y_getter();
