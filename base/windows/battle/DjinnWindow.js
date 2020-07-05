@@ -1,4 +1,7 @@
 import { Window } from "../../Window.js";
+import * as numbers from '../../../magic_numbers.js';
+import { CursorControl } from '../../utils/CursorControl.js';
+import { djinni_list } from "../../../initializers/djinni.js";
 
 const BASE_WINDOW_X = 160;
 const BASE_WINDOW_Y = 72;
@@ -23,7 +26,7 @@ export class DjinnWindow {
         this.base_window = new Window(this.game, BASE_WINDOW_X, BASE_WINDOW_Y, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
         this.base_window.init_page_indicator_bar();
         this.group = this.game.add.group();
-        this.button = this.group.create(BUTTON_X, BUTTON_Y, "buttons", "djinn");
+        this.button = this.group.create(BUTTON_X, BUTTON_Y, "buttons", "djinni");
         this.group.alpha = 0;
         this.highlight_bar = this.game.add.graphics(0, 0);
         this.highlight_bar.blendMode = PIXI.blendModes.SCREEN;
@@ -57,7 +60,7 @@ export class DjinnWindow {
         this.highlight_bar.y = ELEM_PADDING_TOP + this.ability_index * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS) + 4;
     }
 
-    open(char, close_callback, set_description, callback = undefined) {
+    open(char, close_callback, set_description) {
         this.char = char;
         this.close_callback = close_callback;
         this.set_description = set_description;
@@ -69,9 +72,6 @@ export class DjinnWindow {
         this.set_highlight_bar();
         this.base_window.show(() => {
             this.window_open = true;
-            if (callback !== undefined) {
-                callback();
-            }
         }, false);
     }
 }

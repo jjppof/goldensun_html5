@@ -92,7 +92,7 @@ export class BattleMenuScreen {
             case "psynergy":
                 this.on_ability_choose(this.psynergy_window);
                 break;
-            case "djinn":
+            case "djinni":
                 this.on_ability_choose(this.djinn_window);
                 break
             case "defend":
@@ -108,7 +108,7 @@ export class BattleMenuScreen {
     on_ability_choose(window) {
         this.inner_horizontal_menu.deactivate();
         this.description_window.open();
-        window.open(party_data.members[this.current_char_index], null, null, ability => {
+        window.open(party_data.members[this.current_char_index], ability => {
             this.description_window.close();
             this.inner_horizontal_menu.activate();
             this.choose_targets(ability, targets => {
@@ -120,7 +120,7 @@ export class BattleMenuScreen {
                     this.change_char(FORWARD);
                 }
             });
-        }, this.description_window.set_description.bind(this.description_window), false);
+        }, this.description_window.set_description.bind(this.description_window));
     }
 
     change_char(step) {
