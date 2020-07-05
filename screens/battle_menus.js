@@ -106,7 +106,7 @@ export class BattleMenuScreen {
     }
 
     on_ability_choose(window) {
-        this.inner_horizontal_menu.deactivate();
+        this.inner_horizontal_menu.deactivate(true);
         this.description_window.open();
         window.open(party_data.members[this.current_char_index], ability => {
             this.description_window.close();

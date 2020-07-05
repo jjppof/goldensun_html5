@@ -232,13 +232,25 @@ export class HorizontalMenu {
         this.right_pressed = false;
         this.left_pressed = false;
         this.menu_active = true;
+        this.buttons.forEach(obj => {
+            obj.sprite.alpha = 1;
+        });
+        if (!this.title_window.open) {
+            this.title_window.show(undefined, false);
+        }
         this.title_window.set_text([[this.buttons[this.selected_button_index].title]]);
         this.set_button();
     }
 
-    deactivate() {
+    deactivate(hide = false) {
         this.menu_active = false;
         this.stop_timers();
         this.reset_button();
+        if (hide) {
+            this.buttons.forEach(obj => {
+                obj.sprite.alpha = 0;
+            });
+            this.title_window.close(undefined, false);
+        }
     }
 }
