@@ -6,6 +6,7 @@ import { party_data } from "../initializers/main_chars.js";
 import { Djinn } from "../base/Djinn.js";
 import { DescriptionWindow } from "../base/windows/battle/DescriptionWindow.js"
 import { PsynergyWindow } from "../base/windows/battle/PsynergyWindow.js"
+import { DjinnWindow } from "../base/windows/battle/DjinnWindow.js";
 
 const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
@@ -56,6 +57,7 @@ export class BattleMenuScreen {
         );
         this.description_window = new DescriptionWindow(this.game);
         this.psynergy_window = new PsynergyWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
+        this.djinn_window = new DjinnWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
     }
 
     start_button_press(index) {
@@ -88,22 +90,11 @@ export class BattleMenuScreen {
                 });
                 break;
             case "psynergy":
-                this.inner_horizontal_menu.deactivate();
-                this.description_window.open();
-                this.psynergy_window.open(party_data.members[this.current_char_index], null, null, ability => {
-                    this.description_window.close();
-                    this.inner_horizontal_menu.activate();
-                    this.choose_targets(ability, targets => {
-                        if (targets) {
-                            this.abilities[party_data.members[this.current_char_index].key_name] = {
-                                key_name: ability,
-                                targets: targets
-                            };
-                            this.change_char(FORWARD);
-                        }
-                    });
-                }, this.description_window.set_description.bind(this.description_window), false);
+                this.on_ability_choose(this.psynergy_window);
                 break;
+            case "djinn":
+                this.on_ability_choose(this.djinn_window);
+                break
             case "defend":
                 this.abilities[party_data.members[this.current_char_index].key_name] = {
                     key_name: "defend",
@@ -112,6 +103,24 @@ export class BattleMenuScreen {
                 this.change_char(FORWARD);
                 break
         }
+    }
+
+    on_ability_choose(window) {
+        this.inner_horizontal_menu.deactivate();
+        this.description_window.open();
+        window.open(party_data.members[this.current_char_index], null, null, ability => {
+            this.description_window.close();
+            this.inner_horizontal_menu.activate();
+            this.choose_targets(ability, targets => {
+                if (targets) {
+                    this.abilities[party_data.members[this.current_char_index].key_name] = {
+                        key_name: ability,
+                        targets: targets
+                    };
+                    this.change_char(FORWARD);
+                }
+            });
+        }, this.description_window.set_description.bind(this.description_window), false);
     }
 
     change_char(step) {

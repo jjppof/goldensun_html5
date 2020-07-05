@@ -264,7 +264,7 @@ export class PsynergyWindow {
         this.text_sprites_in_window = [];
     }
 
-    open(char, djinni, next_djinni_status, close_callback, set_description, expanded = false, hidden = false, callback = undefined) {
+    open(char, djinni, next_djinni_status, close_callback, set_description, expanded = false, callback = undefined) {
         this.char = char;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;
@@ -282,10 +282,6 @@ export class PsynergyWindow {
         this.cursor_control.activate();
         if (this.set_description) {
             this.set_description(abilities_list[this.abilities[this.ability_index]].description);
-        }
-        if (hidden) {
-            this.window_open = true;
-            return;
         }
         this.base_window.show(() => {
             this.window_open = true;
