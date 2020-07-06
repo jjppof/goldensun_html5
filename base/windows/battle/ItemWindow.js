@@ -16,10 +16,13 @@ const HIGHLIGHT_BAR_HEIGHT = 8;
 const HIGHLIGHT_BAR_X = 8;
 const BUTTON_X = 96;
 const BUTTON_Y = 136;
-const ITEM_NAME_X = 24;
+const ITEM_NAME_X = 26;
 const CURSOR_X = 116;
 const CURSOR_Y = 84;
 const CURSOR_SHIFT = 16;
+const ITEM_ICON_X = 8;
+const SUB_ICON_X = 7;
+const SUB_ICON_Y = 8;
 
 export class ItemWindow {
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
@@ -41,6 +44,7 @@ export class ItemWindow {
         this.highlight_bar.endFill();
         this.set_control();
         this.item_names = [];
+        this.other_sprites = [];
         this.cursor_control = new CursorControl(this.game, true, true, this.get_max_pages.bind(this), this.get_max_elem_on_page.bind(this),
             this.group, this.change_page.bind(this), this.change_item.bind(this), this.get_page_index.bind(this), this.set_page_index.bind(this),
             this.get_item_index.bind(this), this.set_item_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),
@@ -139,6 +143,16 @@ export class ItemWindow {
         for (let i = 0; i < this.items.length; ++i) {
             const item = items_list[this.items[i].key_name];
             const base_y = TOP_PADDING + i * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
+            const item_y = base_y - 4;
+            this.other_sprites.push(this.base_window.create_at_group(ITEM_ICON_X, item_y, "items_icons", undefined, this.items[i].key_name));
+            if (this.items[i].equipped) {
+                this.other_sprites.push(this.base_window.create_at_group(ITEM_ICON_X + SUB_ICON_X, item_y + SUB_ICON_Y, "equipped"));
+            }
+            if (this.items[i].quantity > 1) {
+                let item_count = this.game.add.bitmapText(ITEM_ICON_X + SUB_ICON_X, item_y + SUB_ICON_Y, 'gs-item-bmp-font', this.items[i].quantity.toString());
+                this.base_window.add_sprite_to_group(item_count);
+                this.other_sprites.push(item_count);
+            }
             let color = numbers.DEFAULT_FONT_COLOR;
             if (item.use_type === use_types.NO_USE) {
                 color = numbers.YELLOW_FONT_COLOR;
@@ -169,6 +183,9 @@ export class ItemWindow {
     clear_sprites() {
         this.item_names.forEach(text => {
             this.base_window.remove_text(text);
+        });
+        this.other_sprites.forEach(sprite => {
+            this.base_window.remove_from_group(sprite, true);
         });
     }
 
