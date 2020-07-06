@@ -60,8 +60,11 @@ export class DjinnWindow {
         this.data.enter_input.add(() => {
             if (!this.window_open) return;
             this.data.enter_input.halt();
-            this.choosen_djinn = djinni_list[this.djinni[this.djinn_index]].ability_key_name;
-            this.close(this.close_callback);
+            const this_djinn = djinni_list[this.djinni[this.djinn_index]];
+            if (this_djinn.status !== djinn_status.RECOVERY) {
+                this.choosen_ability = this_djinn.ability_key_name;
+                this.close(this.close_callback);
+            }
         }, this, this.enter_propagation_priority);
         this.data.shift_input.add(() => {
             if (!this.window_open || this.psynergy_window_open) return;
@@ -217,7 +220,7 @@ export class DjinnWindow {
         this.group.alpha = 1;
         this.djinn_index = 0;
         this.page_index = 0;
-        this.choosen_djinn = null;
+        this.choosen_ability = null;
         this.highlight_bar.alpha = 1;
         this.stats_window.open(this.char);
         this.update_position();
@@ -242,7 +245,7 @@ export class DjinnWindow {
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {
-                callback(this.choosen_djinn);
+                callback(this.choosen_ability);
             }
         }, false);
     }

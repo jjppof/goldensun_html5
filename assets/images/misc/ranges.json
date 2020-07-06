@@ -40,6 +40,14 @@
 	"spriteSourceSize": {"x":2,"y":0,"w":20,"h":8},
 	"sourceSize": {"w":24,"h":8}
 },
+"11":
+{
+	"frame": {"x":1,"y":10,"w":20,"h":8},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":0,"w":20,"h":8},
+	"sourceSize": {"w":24,"h":8}
+},
 "all":
 {
 	"frame": {"x":1,"y":1,"w":24,"h":7},

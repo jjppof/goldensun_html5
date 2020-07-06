@@ -118,6 +118,7 @@ function load_db_files() {
     game.load.json('enemies_parties_db', 'assets/dbs/enemies_parties_db.json');
     game.load.json('maps_db', 'assets/dbs/maps_db.json');
     game.load.json('main_chars_db', 'assets/dbs/main_chars.json');
+    game.load.json('summons_db', 'assets/dbs/summons_db.json');
 }
 
 function load_misc() {
@@ -196,6 +197,7 @@ async function create() {
     data.enemies_parties_db = game.cache.getJSON('enemies_parties_db');
     data.maps_db = game.cache.getJSON('maps_db');
     data.main_chars_db = game.cache.getJSON('main_chars_db');
+    data.summons_db = game.cache.getJSON('summons_db');
     data.hero_color_filters = game.add.filter('ColorFilters');
     data.map_color_filters = game.add.filter('ColorFilters');
     data.pasynergy_item_color_filters = game.add.filter('ColorFilters');

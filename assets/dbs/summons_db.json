@@ -1,0 +1,131 @@
+[
+    {
+        "key_name": "venus",
+        "requirements": {
+            "venus": 1,
+            "mercury": 0,
+            "mars": 0,
+            "jupiter": 0
+        }
+    },{
+        "key_name": "mercury",
+        "requirements": {
+            "venus": 0,
+            "mercury": 1,
+            "mars": 0,
+            "jupiter": 0
+        }
+    },{
+        "key_name": "mars",
+        "requirements": {
+            "venus": 0,
+            "mercury": 0,
+            "mars": 1,
+            "jupiter": 0
+        }
+    },{
+        "key_name": "jupiter",
+        "requirements": {
+            "venus": 0,
+            "mercury": 0,
+            "mars": 0,
+            "jupiter": 1
+        }
+    },{
+        "key_name": "ramses",
+        "requirements": {
+            "venus": 2,
+            "mercury": 0,
+            "mars": 0,
+            "jupiter": 0
+        }
+    },{
+        "key_name": "nereid",
+        "requirements": {
+            "venus": 0,
+            "mercury": 2,
+            "mars": 0,
+            "jupiter": 0
+        }
+    },{
+        "key_name": "kirin",
+        "requirements": {
+            "venus": 0,
+            "mercury": 0,
+            "mars": 2,
+            "jupiter": 0
+        }
+    },{
+        "key_name": "atalanta",
+        "requirements": {
+            "venus": 0,
+            "mercury": 0,
+            "mars": 0,
+            "jupiter": 2
+        }
+    },{
+        "key_name": "cybele",
+        "requirements": {
+            "venus": 3,
+            "mercury": 0,
+            "mars": 0,
+            "jupiter": 0
+        }
+    },{
+        "key_name": "neptune",
+        "requirements": {
+            "venus": 0,
+            "mercury": 3,
+            "mars": 0,
+            "jupiter": 0
+        }
+    },{
+        "key_name": "tiamat",
+        "requirements": {
+            "venus": 0,
+            "mercury": 0,
+            "mars": 3,
+            "jupiter": 0
+        }
+    },{
+        "key_name": "procne",
+        "requirements": {
+            "venus": 0,
+            "mercury": 0,
+            "mars": 0,
+            "jupiter": 3
+        }
+    },{
+        "key_name": "judgment",
+        "requirements": {
+            "venus": 4,
+            "mercury": 0,
+            "mars": 0,
+            "jupiter": 0
+        }
+    },{
+        "key_name": "boreas",
+        "requirements": {
+            "venus": 0,
+            "mercury": 4,
+            "mars": 0,
+            "jupiter": 0
+        }
+    },{
+        "key_name": "meteor",
+        "requirements": {
+            "venus": 0,
+            "mercury": 0,
+            "mars": 4,
+            "jupiter": 0
+        }
+    },{
+        "key_name": "thor",
+        "requirements": {
+            "venus": 0,
+            "mercury": 0,
+            "mars": 0,
+            "jupiter": 4
+        }
+    }
+]
