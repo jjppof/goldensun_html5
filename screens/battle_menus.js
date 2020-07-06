@@ -7,6 +7,7 @@ import { Djinn } from "../base/Djinn.js";
 import { DescriptionWindow } from "../base/windows/battle/DescriptionWindow.js"
 import { PsynergyWindow } from "../base/windows/battle/PsynergyWindow.js"
 import { DjinnWindow } from "../base/windows/battle/DjinnWindow.js";
+import { ItemWindow } from "../base/windows/battle/ItemWindow.js";
 
 const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
@@ -56,6 +57,7 @@ export class BattleMenuScreen {
         this.description_window = new DescriptionWindow(this.game);
         this.djinn_window = new DjinnWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority, this.shift_propagation_priority);
         this.psynergy_window = new PsynergyWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
+        this.item_window = new ItemWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
         this.group = this.game.add.group();
         this.avatar_sprite = this.group.create(0, numbers.GAME_HEIGHT - AVATAR_SIZE);
         this.avatar_sprite.alpha = 0;
@@ -95,6 +97,9 @@ export class BattleMenuScreen {
                 break;
             case "djinni":
                 this.on_ability_choose(this.djinn_window, true, this.psynergy_window);
+                break
+            case "item":
+                this.on_ability_choose(this.item_window, false);
                 break
             case "defend":
                 this.abilities[party_data.members[this.current_char_index].key_name] = {

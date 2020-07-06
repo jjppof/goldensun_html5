@@ -198,6 +198,7 @@ export class DjinnWindow {
     mount_window() {
         this.all_djinni = this.char.djinni;
         this.set_page_number();
+        this.base_window.set_page_indicator(this.page_number, this.page_index);
         this.config_page();
         this.update_stats();
     }
