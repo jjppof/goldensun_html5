@@ -89,7 +89,7 @@
         "key_name": "knights_shield",
         "name": "Knight's Shield",
         "type": "chest_protector",
-        "description": "Shiled",
+        "description": "Shield",
         "use_type": "no_use",
         "curses_when_equipped": false,
         "cant_be_removed": false,
