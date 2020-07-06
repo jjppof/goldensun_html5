@@ -37,7 +37,7 @@ canvas {
     transform: rotate(90deg);
 }
 #key_debug table {
-    width: 235px;
+    width: 270px;
     table-layout: fixed;
     font-family: monospace;
     border-collapse: collapse;

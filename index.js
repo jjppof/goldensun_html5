@@ -277,7 +277,7 @@ async function create() {
     //configuring map layers: creating sprites, listing events and setting the layers
     await maps[data.map_name].mount_map(game, data);
     hero_control.config_hero(data);
-    physics.config_world_physics();
+    physics.config_world_physics(game);
     physics.config_physics_for_hero(data);
     physics.config_physics_for_npcs(data);
     physics.config_physics_for_interactable_objects(data);

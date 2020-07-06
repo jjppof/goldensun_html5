@@ -69,6 +69,7 @@ export function fill_key_debug_table(data) {
     document.querySelector("#key_debug table .speed_x").innerHTML = data.hero.body.velocity.x.toFixed(3);
     document.querySelector("#key_debug table .speed_y").innerHTML = data.hero.body.velocity.y.toFixed(3);
     document.querySelector("#key_debug table .force_direction").innerHTML = data.force_direction;
+    document.querySelector("#key_debug table .stop_by_colliding").innerHTML = data.stop_by_colliding;
 }
 
 export function set_debug_info(game, data) {

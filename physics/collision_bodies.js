@@ -3,7 +3,7 @@ import * as numbers from '../magic_numbers.js';
 import { mount_collision_polygon } from '../utils.js';
 
 const WORLD_RESTITUTION = 0;
-const WORLD_RELAXION = 5;
+const WORLD_RELAXATION = 8;
 const WORLD_FRICTION = 0;
 const WORLD_STIFFNESS = 1e5;
 const HERO_BODY_MASS = 1.0;
@@ -12,6 +12,7 @@ const INERTIA = 0;
 const NPC_DAMPING = 1;
 const INTERACTABLE_OBJECT_DAMPING = 1;
 const HERO_Y_AP = 0.8;
+const CONTACT_SKIN_SIZE = 1e-3;
 
 export function config_physics_for_hero(data, initialize = true) {
     if (initialize) data.heroCollisionGroup = game.physics.p2.createCollisionGroup(); //groups only need to be created once
@@ -104,12 +105,13 @@ export function config_physics_for_map(data, initialize = true, collision_layer 
     data.map_collider.body.static = true;
 }
 
-export function config_world_physics() {
+export function config_world_physics(game) {
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.setImpactEvents(true);
     game.physics.p2.world.defaultContactMaterial.restitution = WORLD_RESTITUTION;
-    game.physics.p2.world.defaultContactMaterial.relaxation = WORLD_RELAXION;
+    game.physics.p2.world.defaultContactMaterial.relaxation = WORLD_RELAXATION;
     game.physics.p2.world.defaultContactMaterial.friction = WORLD_FRICTION;
+    game.physics.p2.world.defaultContactMaterial.contactSkinSize = CONTACT_SKIN_SIZE;
     game.physics.p2.world.setGlobalStiffness(WORLD_STIFFNESS);
     game.physics.p2.restitution = WORLD_RESTITUTION;
 }

@@ -24,11 +24,14 @@ export function config_hero(data) {
 
 export function change_hero_sprite(data) {
     let action = data.current_action;
+    let direction = data.current_direction;
     if (data.stop_by_colliding && !data.pushing && !data.climbing) {
         action = "idle";
+    } else if (data.stop_by_colliding && !data.pushing && data.climbing) {
+        direction = "idle";
     }
     let key = data.hero_name + "_" + action;
-    let animation = action + "_" + data.current_direction;
+    let animation = action + "_" + direction;
     if (data.hero.key !== key) {
         data.hero.loadTexture(key);
         main_char_list[data.hero_name].setAnimation(data.hero, action);
@@ -48,7 +51,7 @@ export function set_current_action(data) {
         data.current_action = "idle";
     } else if (((data.cursors.up.isDown && data.cursors.down.isDown) || (data.cursors.right.isDown && data.cursors.left.isDown)) && data.climbing) {
         data.current_direction = "idle";
-    } else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && (data.current_action !== "walk" || data.current_action !== "dash") && !data.climbing) {
+    } else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && !data.climbing && !data.pushing) {
         if (game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.current_action !== "dash") {
             data.current_action = "dash";
         } else if (!game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.current_action !== "walk") {

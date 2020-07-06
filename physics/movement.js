@@ -5,7 +5,7 @@ import { get_transition_directions, check_isdown, range_360 } from '../utils.js'
 import * as numbers from '../magic_numbers.js';
 import { maps } from '../initializers/maps.js';
 
-const SPEED_LIMIT_TO_STOP = 9;
+const SPEED_LIMIT_TO_STOP = 13;
 const MINIMAL_SLOPE = 0.1;
 
 export function collision_dealer(game, data) {
