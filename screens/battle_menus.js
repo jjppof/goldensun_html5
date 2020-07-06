@@ -24,10 +24,8 @@ export class BattleMenuScreen {
         this.chars_status_window = new CharsStatusWindow(this.game, this.data, true, true);
         this.start_buttons_keys = ["fight", "flee", "status"];
         this.esc_propagation_priority = 0;
+        this.shift_propagation_priority = 0;
         this.enter_propagation_priority = enter_propagation_priority;
-        this.group = this.game.add.group();
-        this.avatar_sprite = this.group.create(0, numbers.GAME_HEIGHT - AVATAR_SIZE);
-        this.avatar_sprite.alpha = 0;
         this.start_horizontal_menu = new HorizontalMenu(
             this.game,
             this.data,
@@ -56,8 +54,11 @@ export class BattleMenuScreen {
             true
         );
         this.description_window = new DescriptionWindow(this.game);
+        this.djinn_window = new DjinnWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority, this.shift_propagation_priority);
         this.psynergy_window = new PsynergyWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
-        this.djinn_window = new DjinnWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
+        this.group = this.game.add.group();
+        this.avatar_sprite = this.group.create(0, numbers.GAME_HEIGHT - AVATAR_SIZE);
+        this.avatar_sprite.alpha = 0;
     }
 
     start_button_press(index) {
@@ -90,10 +91,10 @@ export class BattleMenuScreen {
                 });
                 break;
             case "psynergy":
-                this.on_ability_choose(this.psynergy_window);
+                this.on_ability_choose(this.psynergy_window, false);
                 break;
             case "djinni":
-                this.on_ability_choose(this.djinn_window);
+                this.on_ability_choose(this.djinn_window, true, this.psynergy_window);
                 break
             case "defend":
                 this.abilities[party_data.members[this.current_char_index].key_name] = {
@@ -105,9 +106,9 @@ export class BattleMenuScreen {
         }
     }
 
-    on_ability_choose(window) {
+    on_ability_choose(window, description_on_top, ...args) {
         this.inner_horizontal_menu.deactivate(true);
-        this.description_window.open();
+        this.description_window.open(description_on_top);
         window.open(party_data.members[this.current_char_index], ability => {
             this.description_window.close();
             this.inner_horizontal_menu.activate();
@@ -120,7 +121,7 @@ export class BattleMenuScreen {
                     this.change_char(FORWARD);
                 }
             });
-        }, this.description_window.set_description.bind(this.description_window));
+        }, this.description_window.set_description.bind(this.description_window), ...args);
     }
 
     change_char(step) {

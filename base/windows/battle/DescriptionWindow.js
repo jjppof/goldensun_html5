@@ -4,6 +4,7 @@ const BASE_WIN_WIDTH = 236;
 const BASE_WIN_HEIGHT = 28;
 const BASE_WIN_X = 0;
 const BASE_WIN_Y = 40;
+const BASE_WIN_TOP_Y = 32;
 const DESCRIPTION_X = 8;
 const DESCRIPTION_Y = 12;
 
@@ -14,17 +15,21 @@ export class DescriptionWindow {
         this.description = this.base_window.set_text_in_position("", DESCRIPTION_X, DESCRIPTION_Y);
     }
 
-    update_position() {
-        this.base_window.update();
+    update_position(on_top) {
+        if (on_top) {
+            this.base_window.update_position({y: BASE_WIN_TOP_Y});
+        } else {
+            this.base_window.update_position({y: BASE_WIN_Y});
+        }
     }
 
     set_description(description) {
         this.base_window.update_text(description, this.description);
     }
 
-    open() {
+    open(on_top = false) {
         this.is_open = true;
-        this.update_position();
+        this.update_position(on_top);
         this.base_window.show(undefined, false);
     }
 

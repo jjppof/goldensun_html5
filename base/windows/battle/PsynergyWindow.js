@@ -157,7 +157,7 @@ export class PsynergyWindow {
     }
 
     set_abilities_list() {
-        this.clear_sprites();
+        this.clear_sprites(false);
         this.abilities = this.all_abilities.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
         for (let i = 0; i < this.abilities.length; ++i) {
             const key_name = this.abilities[i];
@@ -196,7 +196,7 @@ export class PsynergyWindow {
         if (this.expanded) {
             const preview_values = this.char.preview_djinn_change([], this.djinni.map(d => d.key_name), this.next_djinni_status);
             this.next_abilities = preview_values.abilities.filter(key_name => {
-                return key_name in abilities_list;
+                return key_name in abilities_list && abilities_list[key_name].is_battle_psynergy;
             });
             let current_set = new Set(this.current_abilities);
             let next_set = new Set(this.next_abilities);
@@ -241,7 +241,7 @@ export class PsynergyWindow {
         this.base_window.set_page_indicator(this.page_number, this.page_index);
     }
 
-    clear_sprites() {
+    clear_sprites(clear_psy_gain = true) {
         for (let i = 0; i < this.icon_sprites_in_window.length; ++i) {
             this.base_window.remove_from_group(this.icon_sprites_in_window[i]);
         }
@@ -253,21 +253,23 @@ export class PsynergyWindow {
         for (let i = 0; i < this.text_sprites_in_window.length; ++i) {
             this.base_window.remove_text(this.text_sprites_in_window[i]);
         }
-        if (this.psy_info_1_text) {
-            this.base_window.remove_text(this.psy_info_1_text);
-            this.psy_info_1_text = null;
-        }
-        if (this.psy_info_2_text) {
-            this.base_window.remove_text(this.psy_info_2_text);
-            this.psy_info_2_text = null;
+        if (clear_psy_gain) {
+            if (this.psy_info_1_text) {
+                this.base_window.remove_text(this.psy_info_1_text);
+                this.psy_info_1_text = null;
+            }
+            if (this.psy_info_2_text) {
+                this.base_window.remove_text(this.psy_info_2_text);
+                this.psy_info_2_text = null;
+            }
         }
         this.text_sprites_in_window = [];
     }
 
-    open(char, close_callback, set_description, expanded = false, djinni = null, next_djinni_status = null) {
+    open(char, close_callback, set_description, expanded = false, djinn = null, next_djinn_status = null) {
         this.char = char;
-        this.djinni = djinni;
-        this.next_djinni_status = next_djinni_status;
+        this.djinni = [djinn];
+        this.next_djinni_status = [next_djinn_status];
         this.close_callback = close_callback;
         this.choosen_ability = null;
         this.expanded = expanded;
@@ -279,7 +281,12 @@ export class PsynergyWindow {
         this.update_position();
         this.mount_window();
         this.set_highlight_bar();
-        this.cursor_control.activate();
+        if (!this.expanded) {
+            this.cursor_control.activate();
+            this.button.alpha = 1;
+        } else {
+            this.button.alpha = 0;
+        }
         if (this.set_description) {
             this.set_description(abilities_list[this.abilities[this.ability_index]].description);
         }
