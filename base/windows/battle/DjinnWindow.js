@@ -53,12 +53,12 @@ export class DjinnWindow {
 
     set_control() {
         this.data.esc_input.add(() => {
-            if (!this.window_open) return;
+            if (!this.window_open || this.psynergy_window_open) return;
             this.data.esc_input.halt();
             this.close(this.close_callback);
         }, this, this.esc_propagation_priority);
         this.data.enter_input.add(() => {
-            if (!this.window_open) return;
+            if (!this.window_open || this.psynergy_window_open) return;
             this.data.enter_input.halt();
             const this_djinn = djinni_list[this.djinni[this.djinn_index]];
             if (this_djinn.status !== djinn_status.RECOVERY) {

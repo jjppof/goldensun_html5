@@ -112,12 +112,12 @@ export class PsynergyWindow {
 
     set_control() {
         this.data.esc_input.add(() => {
-            if (!this.window_open) return;
+            if (!this.window_open || this.expanded) return;
             this.data.esc_input.halt();
             this.close(this.close_callback);
         }, this, this.esc_propagation_priority);
         this.data.enter_input.add(() => {
-            if (!this.window_open) return;
+            if (!this.window_open || this.expanded) return;
             this.data.enter_input.halt();
             this.choosen_ability = this.abilities[this.ability_index];
             this.close(this.close_callback);
@@ -180,9 +180,11 @@ export class PsynergyWindow {
                 if (this.gained_abilities.includes(key_name)) {
                     this.base_window.update_text_color(PSY_GAIN_COLOR, psynergy_name_sprite);
                     this.base_window.update_text_color(PSY_GAIN_COLOR, psynergy_cost_sprite);
+                    this.base_window.update_text_color(PSY_GAIN_COLOR, pp_sprite);
                 } else if (this.lost_abilities.includes(key_name)) {
                     this.base_window.update_text_color(PSY_LOST_COLOR, psynergy_name_sprite);
                     this.base_window.update_text_color(PSY_LOST_COLOR, psynergy_cost_sprite);
+                    this.base_window.update_text_color(PSY_LOST_COLOR, pp_sprite);
                 }
             }
         }
@@ -277,15 +279,16 @@ export class PsynergyWindow {
         this.ability_index = 0;
         this.set_description = set_description;
         this.group.alpha = 1;
-        this.highlight_bar.alpha = 1;
         this.update_position();
         this.mount_window();
         this.set_highlight_bar();
         if (!this.expanded) {
             this.cursor_control.activate();
             this.button.alpha = 1;
+            this.highlight_bar.alpha = 1;
         } else {
             this.button.alpha = 0;
+            this.highlight_bar.alpha = 0;
         }
         if (this.set_description) {
             this.set_description(abilities_list[this.abilities[this.ability_index]].description);
