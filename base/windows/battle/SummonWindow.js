@@ -6,6 +6,7 @@ import { party_data } from "../../../initializers/main_chars.js";
 import { djinni_list } from "../../../initializers/djinni.js";
 import { djinn_status } from "../../Djinn.js";
 import { ordered_elements } from "../../MainChar.js";
+import { SummonDjinnStandbyWindow } from "./SummonDjinnStandbyWindow.js";
 
 const BASE_WINDOW_X = 104;
 const BASE_WINDOW_Y = 88;
@@ -50,6 +51,7 @@ export class SummonWindow {
             this.group, this.change_page.bind(this), this.change_summon.bind(this), this.get_page_index.bind(this), this.set_page_index.bind(this),
             this.get_summon_index.bind(this), this.set_summon_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),
             this.get_cursor_x.bind(this), this.get_cursor_y.bind(this));
+        this.djinn_numbers_window = new SummonDjinnStandbyWindow(game);
     }
 
     set_control() {
@@ -122,6 +124,7 @@ export class SummonWindow {
         }
         this.set_highlight_bar();
         this.base_window.set_page_indicator_highlight(this.page_number, this.page_index);
+        this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
     }
 
     change_summon(before_index, after_index) {
@@ -129,6 +132,7 @@ export class SummonWindow {
             this.set_description(abilities_list[this.summons[this.summon_index].key_name].description);
         }
         this.set_highlight_bar();
+        this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
     }
 
     set_highlight_bar() {
@@ -202,9 +206,11 @@ export class SummonWindow {
         this.page_index = 0;
         this.choosen_ability = null;
         this.highlight_bar.alpha = 1;
+        this.djinn_numbers_window.open();
         this.update_position();
         this.set_highlight_bar();
         this.mount_window();
+        this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
         this.cursor_control.activate();
         if (this.set_description) {
             this.set_description(abilities_list[this.summons[this.summon_index].key_name].description);
@@ -220,6 +226,7 @@ export class SummonWindow {
         this.group.alpha = 0;
         this.highlight_bar.alpha = 0;
         this.cursor_control.deactivate();
+        this.djinn_numbers_window.close();
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {
