@@ -2,6 +2,10 @@ import { Window } from "../../Window.js";
 import { CursorControl } from '../../utils/CursorControl.js';
 import { abilities_list } from '../../../initializers/abilities.js';
 import * as numbers from "../../../magic_numbers.js"
+import { party_data } from "../../../initializers/main_chars.js";
+import { djinni_list } from "../../../initializers/djinni.js";
+import { djinn_status } from "../../Djinn.js";
+import { ordered_elements } from "../../MainChar.js";
 
 const BASE_WINDOW_X = 104;
 const BASE_WINDOW_Y = 88;
@@ -140,6 +144,9 @@ export class SummonWindow {
             const summon_y = base_y - 3;
             this.other_sprites.push(this.base_window.create_at_group(SUMMON_ICON_X, summon_y, "abilities_icons", undefined, this.summons[i].key_name));
             let color = numbers.DEFAULT_FONT_COLOR;
+            if (!this.summons[i].available) {
+                color = numbers.RED_FONT_COLOR;
+            }
             const name = this.base_window.set_text_in_position(ability.name, SUMMON_NAME_X, base_y, false, false, color);
             this.summon_names.push(name);
         }
@@ -154,7 +161,24 @@ export class SummonWindow {
     }
 
     mount_window() {
-        this.all_summons = this.data.summons_db;
+        this.standby_djinni = _.mapValues(_.groupBy(party_data.members.map(c => c.djinni).flat(), key => {
+            return djinni_list[key].element;
+        }), djinni_keys => djinni_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length);
+        for (let i = 0; i < ordered_elements.length; ++i) {
+            if (!(ordered_elements[i] in this.standby_djinni)) {
+                this.standby_djinni[ordered_elements[i]] = 0;
+            }
+        }
+        this.all_summons = this.data.summons_db.map((summon, index) => {
+            const available = _.every(summon.requirements, (value, elem) => value <= this.standby_djinni[elem]);
+            return Object.assign({}, summon, {
+                available: available,
+                index: available ? -index : index
+            });
+        });
+        this.all_summons = _.sortBy(this.all_summons, [summon => {
+            return summon.index;
+        }]);
         this.set_page_number();
         this.base_window.set_page_indicator(this.page_number, this.page_index);
         this.config_page();
