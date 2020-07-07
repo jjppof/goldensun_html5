@@ -1,4 +1,5 @@
 import { Battle } from "./battle/Battle.js";
+import { stop_hero } from "../initializers/hero_control.js";
 
 export const event_types = {
     BATTLE: "battle"
@@ -31,6 +32,8 @@ export class BattleEvent extends GameEvent {
     }
 
     fire(game, data) {
+        stop_hero(data, true);
+        game.physics.p2.pause();
         this.battle = new Battle(game, data, this.background_key, this.enemy_party_key);
         this.battle.start_battle();
     }
