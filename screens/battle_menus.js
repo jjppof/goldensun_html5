@@ -41,8 +41,14 @@ export class BattleMenuScreen {
             true
         );
         this.inner_buttons_keys = ["attack", "psynergy", "djinni", "summon", "item", "defend"];
-        ++this.esc_propagation_priority;
-        ++this.enter_propagation_priority;
+        this.description_window = new DescriptionWindow(this.game);
+        this.djinn_window = new DjinnWindow(this.game, this.data, this.esc_propagation_priority + 1, this.enter_propagation_priority + 1, this.shift_propagation_priority);
+        this.psynergy_window = new PsynergyWindow(this.game, this.data, this.esc_propagation_priority + 1, this.enter_propagation_priority + 1);
+        this.item_window = new ItemWindow(this.game, this.data, this.esc_propagation_priority + 1, this.enter_propagation_priority + 1);
+        this.summon_window = new SummonWindow(this.game, this.data, this.esc_propagation_priority + 1, this.enter_propagation_priority + 1);
+        this.group = this.game.add.group();
+        this.avatar_sprite = this.group.create(0, numbers.GAME_HEIGHT - AVATAR_SIZE);
+        this.avatar_sprite.alpha = 0;
         this.inner_horizontal_menu = new HorizontalMenu(
             this.game,
             this.data,
@@ -55,14 +61,6 @@ export class BattleMenuScreen {
             INNER_TITLE_WINDOW_WIDTH,
             true
         );
-        this.description_window = new DescriptionWindow(this.game);
-        this.djinn_window = new DjinnWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority, this.shift_propagation_priority);
-        this.psynergy_window = new PsynergyWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
-        this.item_window = new ItemWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
-        this.summon_window = new SummonWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
-        this.group = this.game.add.group();
-        this.avatar_sprite = this.group.create(0, numbers.GAME_HEIGHT - AVATAR_SIZE);
-        this.avatar_sprite.alpha = 0;
     }
 
     start_button_press(index) {
