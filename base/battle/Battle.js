@@ -116,6 +116,7 @@ export class Battle {
     }
 
     battle_phase_menu() {
+        this.battle_stage.set_choosing_action_position();
         this.battle_menu.open_menu();
     }
 

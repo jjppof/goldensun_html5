@@ -19,10 +19,14 @@ const INIT_TIME = 1500;
 const DEFAULT_POS_ANGLE = 0.7551327;
 const INITIAL_POS_ANGLE = -2.120575;
 const INITIAL_SCALE = 1.2;
-const BG_DEFAULT_SCALE = 1.05;
-const BG_DEFAULT_HEIGHT = 113;
-const BG_WIDTH = (numbers.GAME_WIDTH * BG_DEFAULT_SCALE) | 0;
-const BG_HEIGHT = (BG_DEFAULT_HEIGHT * BG_DEFAULT_SCALE) | 0;
+const BG_DEFAULT_SCALE = 1.0;
+const ACTION_POS_BG_SCALE = 2;
+const ACTION_POS_ALLY_X = 88;
+const ACTION_POS_ENEMY_CENTER_X = 106;
+const ACTION_ALLY_Y = 160;
+const ACTION_ENEMY_Y = 98;
+const ACTION_POS_SPACE_BETWEEN = 40;
+const ACTION_POS_SCALE_ADD = 0.2;
 
 export class BattleStage {
     constructor(game, data, background_key, allies_info, enemies_info) {
@@ -61,8 +65,9 @@ export class BattleStage {
         this.black_bg.beginFill(0x0, 1);
         this.black_bg.drawRect(0, 0, numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
         this.black_bg.endFill();
-        this.battle_bg = this.game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_DEFAULT_HEIGHT, "battle_backgrounds", this.background_key);
-        this.battle_bg2 = this.game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_DEFAULT_HEIGHT, "battle_backgrounds", this.background_key);
+        this.battle_bg = this.game.add.sprite(BG_X, BG_Y, "battle_backgrounds", this.background_key);
+        this.battle_bg2 = this.game.add.sprite(BG_X, BG_Y, "battle_backgrounds", this.background_key);
+        this.bg_height = this.battle_bg.height;
         this.battle_bg.scale.setTo(BG_DEFAULT_SCALE);
         this.battle_bg2.scale.setTo(BG_DEFAULT_SCALE);
         const set_sprite = (group, info, is_ally, animation, list) => {
@@ -88,24 +93,25 @@ export class BattleStage {
         this.last_enemy_char = this.group_enemies.children[this.enemies_count - 1];
     }
 
-    intialize_crop_rectangles() { //Phaser 2 has no crop for TileSprite nor Grpahics
+    intialize_crop_rectangles() {
         const upper_x = 0;
-        const upper_y = BG_Y;
+        const upper_y = 0;
         this.upper_rect = this.game.add.graphics(upper_x, upper_y);
         this.crop_group.add(this.upper_rect);
         this.upper_rect.beginFill(0x0, 1);
-        this.upper_rect.drawRect(0, 0, BG_WIDTH, BG_HEIGHT >> 1);
+        this.upper_rect.drawRect(0, 0, numbers.GAME_WIDTH, this.bg_height >> 1);
         this.upper_rect.endFill();
         const lower_x = 0;
-        const lower_y = BG_Y + (BG_HEIGHT >> 1) + 2;
+        const lower_y = BG_Y + (this.bg_height >> 1) + 2;
         this.lower_rect = this.game.add.graphics(lower_x, lower_y);
         this.crop_group.add(this.lower_rect);
         this.lower_rect.beginFill(0x0, 1);
-        this.lower_rect.drawRect(0, 0, BG_WIDTH, BG_HEIGHT >> 1);
+        this.lower_rect.drawRect(0, 0, numbers.GAME_WIDTH, this.bg_height >> 1);
         this.lower_rect.endFill();
     }
 
     initialize_stage(callback) {
+        this.choosing_actions = false;
         this.initialize_sprites();
         this.intialize_crop_rectangles();
         this.battle_group.add(this.battle_bg);
@@ -113,16 +119,12 @@ export class BattleStage {
         this.battle_group.add(this.group_enemies);
         this.battle_group.add(this.group_allies);
         this.game.add.tween(this.upper_rect).to({
-            height: 0
-        }, INIT_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
-            this.upper_rect.destroy();
-        });
+            height: BG_Y
+        }, INIT_TIME, Phaser.Easing.Linear.None, true);
         this.game.add.tween(this.lower_rect).to({
-            y: BG_Y + BG_HEIGHT + 2,
-            height: 0
-        }, INIT_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
-            this.lower_rect.destroy();
-        });
+            y: BG_Y + this.bg_height,
+            height: numbers.GAME_HEIGHT - this.bg_height - BG_Y
+        }, INIT_TIME, Phaser.Easing.Linear.None, true);
         this.game.add.tween(this.camera_angle).to({
             rad: DEFAULT_POS_ANGLE
         }, INIT_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
@@ -136,7 +138,32 @@ export class BattleStage {
     }
 
     set_choosing_action_position() {
+        this.choosing_actions = true;
+        this.battle_bg2.x = 0;
+        this.battle_bg2.scale.setTo(ACTION_POS_BG_SCALE, ACTION_POS_BG_SCALE);
+        this.battle_bg2.y = -this.battle_bg.height * (ACTION_POS_BG_SCALE - 1) + BG_Y;
+        for (let i = 0; i < this.sprites.length; ++i) {
+            const sprite = this.sprites[i];
+            const index_shifted = sprite.is_ally ? i : i - this.allies_count;
+            const x_shift = sprite.is_ally ? ACTION_POS_ALLY_X : ACTION_POS_ENEMY_CENTER_X + (this.enemies_count >> 1) * ACTION_POS_SPACE_BETWEEN;
+            const pos_x = x_shift + index_shifted * ACTION_POS_SPACE_BETWEEN;
+            const pos_y = sprite.is_ally ? ACTION_ALLY_Y : ACTION_ENEMY_Y;
+            sprite.x = pos_x;
+            sprite.y = pos_y;
+            const this_scale_x = sprite.scale.x + Math.sign(sprite.scale.x) * ACTION_POS_SCALE_ADD;
+            const this_scale_y = sprite.scale.y + Math.sign(sprite.scale.y) * ACTION_POS_SCALE_ADD;
+            sprite.scale.setTo(this_scale_x, this_scale_y);
+        }
+    }
 
+    reset_positions() {
+        this.battle_bg2.scale.setTo(BG_DEFAULT_SCALE, BG_DEFAULT_SCALE);
+        this.battle_bg2.y = BG_Y;
+        for (let i = 0; i < this.sprites.length; ++i) {
+            const this_scale_x = sprite.scale.x - Math.sign(sprite.scale.x) * ACTION_POS_SCALE_ADD;
+            const this_scale_y = sprite.scale.y - Math.sign(sprite.scale.y) * ACTION_POS_SCALE_ADD;
+            sprite.scale.setTo(this_scale_x, this_scale_y);
+        }
     }
 
     prevent_camera_angle_overflow() {
@@ -144,6 +171,7 @@ export class BattleStage {
     }
 
     update_stage() {
+        if (this.choosing_actions) return;
         // if (!this.data.cursors.left.isDown && this.data.cursors.right.isDown) {
         //     this.camera_angle.rad -= CAMERA_SPEED;
         //     this.battle_bg.x -= BG_SPEED
@@ -152,19 +180,19 @@ export class BattleStage {
         //     this.battle_bg.x += BG_SPEED
         // } else {
             const delta = range_360(this.camera_angle.rad) - range_360(this.old_camera_angle);
-            this.battle_bg.x += BG_SPIN_SPEED * BG_WIDTH * delta; //tie bg x position with camera angle when spining
+            this.battle_bg.x += BG_SPIN_SPEED * this.battle_bg.width * delta; //tie bg x position with camera angle when spining
         // }
 
         this.old_camera_angle = this.camera_angle.rad;
 
-        if (this.battle_bg.x > BG_WIDTH || this.battle_bg.x < -BG_WIDTH) { //check bg x position surplus
+        if (this.battle_bg.x > this.battle_bg.width || this.battle_bg.x < -this.battle_bg.width) { //check bg x position surplus
             this.battle_bg.x = this.battle_bg2.x;
         }
 
         if (this.battle_bg.x > 0) { //make bg2 follow default bg
-            this.battle_bg2.x = this.battle_bg.x - BG_WIDTH;
+            this.battle_bg2.x = this.battle_bg.x - this.battle_bg.width;
         } else if (this.battle_bg.x < 0) {
-            this.battle_bg2.x = this.battle_bg.x + BG_WIDTH;
+            this.battle_bg2.x = this.battle_bg.x + this.battle_bg.width;
         }
 
         if (Math.sin(this.camera_angle.rad) > 0 && this.battle_group.getChildIndex(this.group_allies) < this.battle_group.getChildIndex(this.group_enemies)) { //check party and enemy z index
