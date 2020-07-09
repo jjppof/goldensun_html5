@@ -3,6 +3,9 @@ import { BattleStage } from "./BattleStage.js";
 import { enemies_list } from "../../initializers/enemies.js";
 import { BattleLog } from "./BattleLog.js";
 import { BattleMenuScreen } from "../../screens/battle_menus.js";
+import { get_enemy_instance } from "./Enemy.js";
+import { abilities_list } from "../../initializers/abilities.js";
+import { ability_target_types } from "../Ability.js";
 
 const MAX_CHAR_AT_BATTLE = 4;
 
@@ -47,17 +50,20 @@ export class Battle {
             for (let i = 0; i < qtd; ++i) {
                 this.enemies_info.push({
                     sprite_key: member_info.key + "_battle",
-                    scale: enemies_list[member_info.key].battle_scale
+                    scale: enemies_list[member_info.key].battle_scale,
+                    enemy_instance: get_enemy_instance(member_info.key)
                 });
             }
         });
         this.enter_propagation_priority = 0;
-        this.battle_stage = new BattleStage(this.game, this.data, background_key, this.allies_info, this.enemies_info);
+        this.esc_propagation_priority = 0;
+        this.battle_stage = new BattleStage(this.game, this.data, background_key, this.allies_info, this.enemies_info, this.esc_propagation_priority++, this.enter_propagation_priority++);
         this.battle_log = new BattleLog(this.game);
-        this.battle_menu = new BattleMenuScreen(this.game, this.data, this.enter_propagation_priority, this.on_abilities_choose.bind(this), this.choose_targets.bind(this));
+        this.battle_menu = new BattleMenuScreen(this.game, this.data, ++this.enter_propagation_priority, ++this.esc_propagation_priority, this.on_abilities_choose.bind(this), this.choose_targets.bind(this));
         this.battle_phase = battle_phases.NONE;
         this.controls_enabled = false;
         ++this.enter_propagation_priority;
+        ++this.esc_propagation_priority;
         this.set_controls();
     }
 
@@ -86,8 +92,11 @@ export class Battle {
         this.check_phases();
     }
 
-    choose_targets(ability_key, callback) {
-
+    choose_targets(ability_key, button, callback) {
+        const this_ability = abilities_list[ability_key];
+        this.battle_stage.choose_targets(this_ability.range, this_ability.battle_target === ability_target_types.ALLY, targets => {
+            callback(targets);
+        });
     }
 
     check_phases() {

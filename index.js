@@ -100,7 +100,6 @@ data.game = game;
 
 function load_buttons() {
     game.load.atlasJSONHash('buttons', 'assets/images/buttons/buttons.png', 'assets/images/buttons/buttons.json');
-
     game.load.image('shift_keyboard', 'assets/images/keyboard/shift.png');
     game.load.image('tab_keyboard', 'assets/images/keyboard/tab.png');
     game.load.image('spacebar_keyboard', 'assets/images/keyboard/spacebar.png');
@@ -138,6 +137,7 @@ function load_misc() {
     game.load.image('stat_down', 'assets/images/misc/stat_down.gif');
     game.load.image('arrow_change', 'assets/images/misc/arrow_change.png');
     game.load.atlasJSONHash('dust', 'assets/images/misc/dust.png', 'assets/images/misc/dust.json');
+    game.load.atlasJSONHash('battle_cursor', 'assets/images/misc/battle_cursor.png', 'assets/images/misc/battle_cursor.json');
     game.load.atlasJSONHash('ranges', 'assets/images/misc/ranges.png', 'assets/images/misc/ranges.json');
     game.load.atlasJSONHash('psynergy_particle', 'assets/images/spritesheets/interactable_objects/psynergy_particle.png', 'assets/images/spritesheets/interactable_objects/psynergy_particle.json');
     game.load.atlasJSONHash('psynergy_ball', 'assets/images/spritesheets/interactable_objects/psynergy_ball.png', 'assets/images/spritesheets/interactable_objects/psynergy_ball.json');

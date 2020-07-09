@@ -18,15 +18,15 @@ const FORWARD = 1;
 const BACKWARD = -1;
 
 export class BattleMenuScreen {
-    constructor(game, data, enter_propagation_priority, on_abilities_choose, choose_targets) {
+    constructor(game, data, enter_propagation_priority, esc_propagation_priority, on_abilities_choose, choose_targets) {
         this.game = game;
         this.data = data;
         this.on_abilities_choose = on_abilities_choose;
         this.choose_targets = choose_targets;
         this.chars_status_window = new CharsStatusWindow(this.game, this.data, true, true);
         this.start_buttons_keys = ["fight", "flee", "status"];
-        this.esc_propagation_priority = 0;
         this.shift_propagation_priority = 0;
+        this.esc_propagation_priority = esc_propagation_priority;
         this.enter_propagation_priority = enter_propagation_priority;
         this.start_horizontal_menu = new HorizontalMenu(
             this.game,
@@ -82,27 +82,31 @@ export class BattleMenuScreen {
     inner_button_press(index) {
         switch (this.current_buttons[index]) {
             case "attack":
-                this.choose_targets("attack", targets => {
+                this.inner_horizontal_menu.deactivate(true);
+                this.choose_targets("attack", "attack", targets => {
                     if (targets) {
                         this.abilities[party_data.members[this.current_char_index].key_name] = {
                             key_name: "attack",
                             targets: targets
                         };
+                        this.inner_horizontal_menu.activate();
                         this.change_char(FORWARD);
+                    } else {
+                        this.inner_horizontal_menu.activate();
                     }
                 });
                 break;
             case "psynergy":
-                this.on_ability_choose(this.psynergy_window, false);
+                this.on_ability_choose(this.psynergy_window, false, "psynergy");
                 break;
             case "djinni":
-                this.on_ability_choose(this.djinn_window, true, this.psynergy_window);
+                this.on_ability_choose(this.djinn_window, true, "djinni", this.psynergy_window);
                 break
             case "summon":
-                this.on_ability_choose(this.summon_window, true);
+                this.on_ability_choose(this.summon_window, true, "summon");
                 break
             case "item":
-                this.on_ability_choose(this.item_window, false);
+                this.on_ability_choose(this.item_window, false, "item");
                 break
             case "defend":
                 this.abilities[party_data.members[this.current_char_index].key_name] = {
@@ -114,21 +118,30 @@ export class BattleMenuScreen {
         }
     }
 
-    on_ability_choose(window, description_on_top, ...args) {
+    on_ability_choose(window, description_on_top, button, ...args) {
         this.inner_horizontal_menu.deactivate(true);
         this.description_window.open(description_on_top);
         window.open(party_data.members[this.current_char_index], ability => {
-            this.description_window.close();
-            this.inner_horizontal_menu.activate();
-            this.choose_targets(ability, targets => {
-                if (targets) {
-                    this.abilities[party_data.members[this.current_char_index].key_name] = {
-                        key_name: ability,
-                        targets: targets
-                    };
-                    this.change_char(FORWARD);
-                }
-            });
+            if (ability) {
+                this.description_window.hide();
+                this.choose_targets(ability, button, targets => {
+                    if (targets) {
+                        this.abilities[party_data.members[this.current_char_index].key_name] = {
+                            key_name: ability,
+                            targets: targets
+                        };
+                        this.description_window.close();
+                        this.inner_horizontal_menu.activate();
+                        this.change_char(FORWARD);
+                    } else {
+                        this.description_window.show();
+                        //return to window
+                    }
+                });
+            } else {
+                this.description_window.close();
+                this.inner_horizontal_menu.activate();
+            }
         }, this.description_window.set_description.bind(this.description_window), ...args);
     }
 

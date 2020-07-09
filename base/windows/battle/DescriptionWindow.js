@@ -33,6 +33,14 @@ export class DescriptionWindow {
         this.base_window.show(undefined, false);
     }
 
+    show() {
+        this.base_window.show(undefined, false);
+    }
+
+    hide() {
+        this.base_window.close(undefined, false);
+    }
+
     close() {
         this.is_open = false;
         this.base_window.close(undefined, false);

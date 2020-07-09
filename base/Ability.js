@@ -12,6 +12,12 @@ export const ability_types = {
     PSYNERGY_RECOVERY: "psynergy_recovery"
 }
 
+export const ability_target_types = {
+    NO_TARGET: "no_target",
+    ALLY: "ally",
+    ENEMY: "enemy"
+}
+
 export class Ability {
     constructor(
         key_name,

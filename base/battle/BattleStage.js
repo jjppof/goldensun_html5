@@ -27,11 +27,18 @@ const ACTION_ALLY_Y = 160;
 const ACTION_ENEMY_Y = 98;
 const ACTION_POS_SPACE_BETWEEN = 40;
 const ACTION_POS_SCALE_ADD = 0.2;
+const CHOOSE_TARGET_ENEMY_SHIFT = 15;
+const CHOOSE_TARGET_ALLY_SHIFT = -5;
+const CHOOSE_TARGET_RIGHT = 1;
+const CHOOSE_TARGET_LEFT = -1;
+const RANGES = [11,9,7,5,3,1,3,5,7,9,11];
 
 export class BattleStage {
-    constructor(game, data, background_key, allies_info, enemies_info) {
+    constructor(game, data, background_key, allies_info, enemies_info, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
+        this.esc_propagation_priority = esc_propagation_priority;
+        this.enter_propagation_priority = enter_propagation_priority;
         this.camera_angle = {
             rad : INITIAL_POS_ANGLE,
             spining: false,
@@ -57,6 +64,57 @@ export class BattleStage {
         // this.battle_group.scale.setTo(INITIAL_SCALE, INITIAL_SCALE);
         this.crop_group.x = this.x;
         this.crop_group.y = this.y;
+        this.set_control();
+    }
+
+    set_control() {
+        this.data.enter_input.add(() => {
+            if (!this.choosing_targets) return;
+            this.data.enter_input.halt();
+            const party_count = this.target_is_ally ? this.allies_count : this.enemies_count;
+            const party_info = this.target_is_ally ? this.allies_info : this.enemies_info;
+            const targets = _.zipWith(
+                RANGES.slice(this.range_cursor_position - (party_count>>1), this.range_cursor_position + (party_count>>1) + 1).reverse(),
+                party_info,
+                (magnitude, target) => {
+                    return {magnitude: magnitude > this.ability_range ? null : magnitude, target: target};
+                }
+            );
+            this.choosing_targets_finished(targets);
+        }, this, this.enter_propagation_priority);
+        this.data.esc_input.add(() => {
+            if (!this.choosing_targets) return;
+            this.data.esc_input.halt();
+            this.choosing_targets_finished(null);
+        }, this, this.esc_propagation_priority);
+        this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
+            if (!this.choosing_targets) return;
+            if (this.left_pressed) {
+                this.left_pressed = false;
+                this.stop_timers();
+            }
+            this.right_pressed = true;
+            this.set_change_timers(CHOOSE_TARGET_RIGHT);
+        });
+        this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onUp.add(() => {
+            if (!this.choosing_targets || !this.right_pressed) return;
+            this.right_pressed = false;
+            this.stop_timers();
+        });
+        this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
+            if (!this.choosing_targets) return;
+            if (this.right_pressed) {
+                this.right_pressed = false;
+                this.stop_timers();
+            }
+            this.left_pressed = true;
+            this.set_change_timers(CHOOSE_TARGET_LEFT);
+        });
+        this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onUp.add(() => {
+            if (!this.choosing_targets || !this.left_pressed) return;
+            this.left_pressed = false;
+            this.stop_timers();
+        });
     }
 
     initialize_sprites() {
@@ -112,6 +170,9 @@ export class BattleStage {
 
     initialize_stage(callback) {
         this.choosing_actions = false;
+        this.choosing_targets = false;
+        this.right_pressed = false;
+        this.left_pressed = false;
         this.initialize_sprites();
         this.intialize_crop_rectangles();
         this.battle_group.add(this.battle_bg);
@@ -166,22 +227,42 @@ export class BattleStage {
         }
     }
 
+    choose_targets(range, target_is_ally, callback) {
+        this.choosing_targets_callback = callback;
+        this.range_cursor_position = RANGES.length >> 1;
+        this.ability_range = range === "all" ? RANGES[0] : range;
+        this.target_is_ally = target_is_ally;
+        this.game.add.tween(this.battle_group).to({
+            y: this.battle_group.y + (this.target_is_ally ? CHOOSE_TARGET_ALLY_SHIFT : CHOOSE_TARGET_ENEMY_SHIFT)
+        }, Phaser.Timer.QUARTER, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
+            this.choosing_targets = true;
+        });
+    }
+
+    choosing_targets_finished(targets) {
+        this.game.add.tween(this.battle_group).to({
+            y: this.battle_group.y - (this.target_is_ally ? CHOOSE_TARGET_ALLY_SHIFT : CHOOSE_TARGET_ENEMY_SHIFT)
+        }, Phaser.Timer.QUARTER, Phaser.Easing.Linear.None, true);
+        this.choosing_targets = false;
+        this.choosing_targets_callback(targets);
+    }
+
     prevent_camera_angle_overflow() {
         this.camera_angle.rad = range_360(this.camera_angle.rad);
     }
 
     update_stage() {
         if (this.choosing_actions) return;
-        // if (!this.data.cursors.left.isDown && this.data.cursors.right.isDown) {
-        //     this.camera_angle.rad -= CAMERA_SPEED;
-        //     this.battle_bg.x -= BG_SPEED
-        // } else if (this.data.cursors.left.isDown && !this.data.cursors.right.isDown) {
-        //     this.camera_angle.rad += CAMERA_SPEED;
-        //     this.battle_bg.x += BG_SPEED
-        // } else {
+        if (!this.game.input.keyboard.isDown(Phaser.Keyboard.PAGE_UP) && this.game.input.keyboard.isDown(Phaser.Keyboard.PAGE_DOWN)) {
+            this.camera_angle.rad -= CAMERA_SPEED;
+            this.battle_bg.x -= BG_SPEED
+        } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.PAGE_UP) && !this.game.input.keyboard.isDown(Phaser.Keyboard.PAGE_DOWN)) {
+            this.camera_angle.rad += CAMERA_SPEED;
+            this.battle_bg.x += BG_SPEED
+        } else {
             const delta = range_360(this.camera_angle.rad) - range_360(this.old_camera_angle);
             this.battle_bg.x += BG_SPIN_SPEED * this.battle_bg.width * delta; //tie bg x position with camera angle when spining
-        // }
+        }
 
         this.old_camera_angle = this.camera_angle.rad;
 

@@ -1,5 +1,21 @@
 [
     {
+        "key_name": "attack",
+        "name": "Attack",
+        "description": "",
+        "type": "added_damage",
+        "element": "no_element",
+        "battle_target": "enemy",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 0,
+        "effects_outside_battle": false,
+        "is_battle_psynergy": true,
+        "is_field_psynergy": false,
+        "effects": [],
+        "ability_type_key": "normal",
+        "battle_animation_key": "attack"
+    },{
         "key_name": "move",
         "name": "Move",
         "description": "Move an object on the ground.",
