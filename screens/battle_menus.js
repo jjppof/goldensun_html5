@@ -130,15 +130,19 @@ export class BattleMenuScreen {
                             key_name: ability,
                             targets: targets
                         };
+                        window.close();
                         this.description_window.close();
                         this.inner_horizontal_menu.activate();
                         this.change_char(FORWARD);
                     } else {
                         this.description_window.show();
-                        //return to window
+                        window.show();
                     }
                 });
             } else {
+                if (window.is_open()) {
+                    window.close();
+                }
                 this.description_window.close();
                 this.inner_horizontal_menu.activate();
             }

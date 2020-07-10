@@ -40,6 +40,7 @@ export class PsynergyWindow {
         this.game = game;
         this.data = data;
         this.window_open = false;
+        this.window_active = false;
         this.text_sprites_in_window = [];
         this.icon_sprites_in_window = [];
         this.misc_sprites_in_window = [];
@@ -78,7 +79,7 @@ export class PsynergyWindow {
     }
 
     is_active() {
-        return this.window_open;
+        return this.window_active;
     }
 
     get_page_index() {
@@ -112,15 +113,16 @@ export class PsynergyWindow {
 
     set_control() {
         this.data.esc_input.add(() => {
-            if (!this.window_open || this.expanded) return;
+            if (!this.window_open || !this.window_active || this.expanded) return;
             this.data.esc_input.halt();
+            this.choosen_ability = null;
             this.close(this.close_callback);
         }, this, this.esc_propagation_priority);
         this.data.enter_input.add(() => {
-            if (!this.window_open || this.expanded) return;
+            if (!this.window_open || !this.window_active || this.expanded) return;
             this.data.enter_input.halt();
             this.choosen_ability = this.abilities[this.ability_index];
-            this.close(this.close_callback);
+            this.hide(this.close_callback);
         }, this, this.enter_propagation_priority);
     }
 
@@ -295,6 +297,28 @@ export class PsynergyWindow {
         }
         this.base_window.show(() => {
             this.window_open = true;
+            this.window_active = true;
+        }, false);
+    }
+
+    show() {
+        this.group.alpha = 1;
+        this.highlight_bar.alpha = 1;
+        this.cursor_control.activate();
+        this.base_window.show(() => {
+            this.window_active = true;
+        }, false);
+    }
+
+    hide(callback) {
+        this.group.alpha = 0;
+        this.highlight_bar.alpha = 0;
+        this.cursor_control.deactivate();
+        this.base_window.close(() => {
+            this.window_active = false;
+            if (callback !== undefined) {
+                callback(this.choosen_ability);
+            }
         }, false);
     }
 
@@ -306,6 +330,7 @@ export class PsynergyWindow {
         this.cursor_control.deactivate();
         this.base_window.close(() => {
             this.window_open = false;
+            this.window_active = false;
             if (callback !== undefined) {
                 callback(this.choosen_ability);
             }

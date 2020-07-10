@@ -1369,5 +1369,21 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "thor"
+    },{
+        "key_name": "flint",
+        "name": "Flint",
+        "description": "Strike a blow that can cleave stone.",
+        "type": "multiplier",
+        "element": "venus",
+        "battle_target": "enemy",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 16,
+        "effects_outside_battle": false,
+        "is_battle_psynergy": true,
+        "is_field_psynergy": false,
+        "effects": [],
+        "ability_type_key": "normal",
+        "battle_animation_key": "flint"
     }
 ]

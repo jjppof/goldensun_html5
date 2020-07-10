@@ -56,15 +56,16 @@ export class SummonWindow {
 
     set_control() {
         this.data.esc_input.add(() => {
-            if (!this.window_open) return;
+            if (!this.window_open || !this.window_active) return;
             this.data.esc_input.halt();
+            this.choosen_ability = null;
             this.close(this.close_callback);
         }, this, this.esc_propagation_priority);
         this.data.enter_input.add(() => {
-            if (!this.window_open) return;
+            if (!this.window_open || !this.window_active) return;
             this.data.enter_input.halt();
             this.choosen_ability = this.summons[this.summon_index].key_name;
-            this.close(this.close_callback);
+            this.hide(this.close_callback);
         }, this, this.enter_propagation_priority);
     }
 
@@ -81,7 +82,7 @@ export class SummonWindow {
     }
 
     is_active() {
-        return this.window_open;
+        return this.window_active;
     }
 
     get_page_index() {
@@ -217,6 +218,30 @@ export class SummonWindow {
         }
         this.base_window.show(() => {
             this.window_open = true;
+            this.window_active = true;
+        }, false);
+    }
+
+    show() {
+        this.group.alpha = 1;
+        this.highlight_bar.alpha = 1;
+        this.cursor_control.activate();
+        this.djinn_numbers_window.open();
+        this.base_window.show(() => {
+            this.window_active = true;
+        }, false);
+    }
+
+    hide(callback) {
+        this.group.alpha = 0;
+        this.highlight_bar.alpha = 0;
+        this.cursor_control.deactivate();
+        this.djinn_numbers_window.close();
+        this.base_window.close(() => {
+            this.window_active = false;
+            if (callback !== undefined) {
+                callback(this.choosen_ability);
+            }
         }, false);
     }
 
@@ -229,6 +254,7 @@ export class SummonWindow {
         this.djinn_numbers_window.close();
         this.base_window.close(() => {
             this.window_open = false;
+            this.window_active = false;
             if (callback !== undefined) {
                 callback(this.choosen_ability);
             }

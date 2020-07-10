@@ -53,28 +53,29 @@ export class DjinnWindow {
 
     set_control() {
         this.data.esc_input.add(() => {
-            if (!this.window_open || this.psynergy_window_open) return;
+            if (!this.window_open || !this.window_active || this.psynergy_window_open) return;
             this.data.esc_input.halt();
+            this.choosen_ability = null;
             this.close(this.close_callback);
         }, this, this.esc_propagation_priority);
         this.data.enter_input.add(() => {
-            if (!this.window_open || this.psynergy_window_open) return;
+            if (!this.window_open || !this.window_active || this.psynergy_window_open) return;
             this.data.enter_input.halt();
             const this_djinn = djinni_list[this.djinni[this.djinn_index]];
             if (this_djinn.status !== djinn_status.RECOVERY) {
                 this.choosen_ability = this_djinn.ability_key_name;
-                this.close(this.close_callback);
+                this.hide(this.close_callback);
             }
         }, this, this.enter_propagation_priority);
         this.data.shift_input.add(() => {
-            if (!this.window_open || this.psynergy_window_open) return;
+            if (!this.window_open || !this.window_active || this.psynergy_window_open) return;
             this.data.shift_input.halt();
             this.cursor_control.deactivate();
             this.psynergy_window.open(this.char, undefined, undefined, true, djinni_list[this.djinni[this.djinn_index]], this.get_next_status());
             this.psynergy_window_open = true;
         }, this, this.shift_propagation_priority);
         this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT).onUp.add(() => {
-            if (!this.window_open || !this.psynergy_window_open) return;
+            if (!this.window_open || !this.window_active || !this.psynergy_window_open) return;
             this.cursor_control.activate();
             this.psynergy_window.close();
             this.psynergy_window_open = false;
@@ -94,7 +95,7 @@ export class DjinnWindow {
     }
 
     is_active() {
-        return this.window_open && !this.psynergy_window_open;
+        return this.window_active && !this.psynergy_window_open;
     }
 
     get_page_index() {
@@ -233,6 +234,31 @@ export class DjinnWindow {
         }
         this.base_window.show(() => {
             this.window_open = true;
+            this.window_active = true;
+        }, false);
+    }
+
+    show() {
+        this.group.alpha = 1;
+        this.highlight_bar.alpha = 1;
+        this.cursor_control.activate();
+        this.stats_window.open(this.char);
+        this.update_stats();
+        this.base_window.show(() => {
+            this.window_active = true;
+        }, false);
+    }
+
+    hide(callback) {
+        this.group.alpha = 0;
+        this.highlight_bar.alpha = 0;
+        this.stats_window.close();
+        this.cursor_control.deactivate();
+        this.base_window.close(() => {
+            this.window_active = false;
+            if (callback !== undefined) {
+                callback(this.choosen_ability);
+            }
         }, false);
     }
 
@@ -245,6 +271,7 @@ export class DjinnWindow {
         this.stats_window.close();
         this.base_window.close(() => {
             this.window_open = false;
+            this.window_active = false;
             if (callback !== undefined) {
                 callback(this.choosen_ability);
             }
