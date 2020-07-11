@@ -94,7 +94,11 @@ export class Battle {
 
     choose_targets(ability_key, button, callback) {
         const this_ability = abilities_list[ability_key];
-        this.battle_stage.choose_targets(this_ability.range, this_ability.battle_target === ability_target_types.ALLY, targets => {
+        this.battle_stage.choose_targets(
+            this_ability.range,
+            this_ability.battle_target === ability_target_types.ALLY,
+            this_ability.type,
+            targets => {
             callback(targets);
         });
     }

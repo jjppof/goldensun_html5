@@ -18,6 +18,11 @@ export const ability_target_types = {
     ENEMY: "enemy"
 }
 
+export const diminishing_ratios = {
+    STANDARD: [.1,.2,.4,.6,.8,1,.8,.6,.4,.2,.1],
+    SUMMON: [.1,.2,.3,.4,.7,1,.7,.4,.3,.2,.1]
+}
+
 export class Ability {
     constructor(
         key_name,
@@ -53,5 +58,12 @@ export class Ability {
         this.ability_type_key = ability_type_key;
         this.battle_animation_key = battle_animation_key;
         this.icon_path = icon_path;
+    }
+
+    static get_diminishing_ratios(ability_type) {
+        switch (ability_type) {
+            case ability_types.SUMMON: return diminishing_ratios.SUMMON;
+            default: return diminishing_ratios.STANDARD;
+        }
     }
 }
