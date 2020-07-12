@@ -274,12 +274,12 @@ export class BattleStage {
                     this.cursors_tweens[i].stop();
                 }
                 const dest_x = target_sprite.x;
-                const dest_y = target_sprite.y - target_sprite.height;
+                const dest_y = target_sprite.y - target_sprite.height - 5;
                 if (tween_to_pos) {
                     this.game.add.tween(cursor_sprite).to({
                         centerX: dest_x,
                         y: dest_y
-                    }, 125, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
+                    }, 85, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
                         this.cursors_tweens[i] = this.game.add.tween(cursor_sprite).to({
                             y: cursor_sprite.y - 4
                         }, 100, Phaser.Easing.Linear.None, true, 0, -1, true);
