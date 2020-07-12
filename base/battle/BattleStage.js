@@ -254,6 +254,7 @@ export class BattleStage {
         this.battle_bg2.scale.setTo(BG_DEFAULT_SCALE, BG_DEFAULT_SCALE);
         this.battle_bg2.y = BG_Y;
         for (let i = 0; i < this.sprites.length; ++i) {
+            const sprite = this.sprites[i];
             const this_scale_x = sprite.scale.x - Math.sign(sprite.scale.x) * ACTION_POS_SCALE_ADD;
             const this_scale_y = sprite.scale.y - Math.sign(sprite.scale.y) * ACTION_POS_SCALE_ADD;
             sprite.scale.setTo(this_scale_x, this_scale_y);

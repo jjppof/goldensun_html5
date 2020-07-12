@@ -151,9 +151,14 @@ export class BattleMenuScreen {
 
     change_char(step) {
         this.current_char_index += step;
-        this.set_avatar();
-        this.inner_horizontal_menu.close(undefined, false);
-        this.inner_horizontal_menu.open();
+        if (this.current_char_index >= MAX_CHARS_IN_BATTLE || this.current_char_index >= party_data.members.length) {
+            this.current_char_index = 0;
+            this.on_abilities_choose(this.abilities);
+        } else {
+            this.set_avatar();
+            this.inner_horizontal_menu.close(undefined, false);
+            this.inner_horizontal_menu.open();
+        }
     }
 
     set_avatar() {
@@ -197,6 +202,7 @@ export class BattleMenuScreen {
 
     close_menu() {
         if (!this.is_active()) return;
+        this.hide_avatar();
         this.start_horizontal_menu.close();
         this.inner_horizontal_menu.close();
         this.chars_status_window.close();

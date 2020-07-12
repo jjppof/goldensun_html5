@@ -87,7 +87,10 @@ export class Battle {
     }
 
     on_abilities_choose(abilities) {
-        //...
+        this.choosen_abilities = abilities;
+        this.battle_menu.close_menu();
+        this.battle_stage.reset_positions();
+        this.battle_stage.choosing_actions = false;
         this.battle_phase = battle_phases.ROUND_START;
         this.check_phases();
     }
