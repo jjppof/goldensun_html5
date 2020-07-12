@@ -3,7 +3,6 @@ import * as numbers from '../../magic_numbers.js';
 import { range_360 } from '../../utils.js';
 import { enemies_list } from '../../initializers/enemies.js';
 import { main_char_list } from '../../initializers/main_chars.js';
-import { Ability } from '../Ability.js';
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
@@ -33,6 +32,7 @@ const CHOOSE_TARGET_ALLY_SHIFT = -2;
 const CHOOSE_TARGET_RIGHT = 1;
 const CHOOSE_TARGET_LEFT = -1;
 const RANGES = [11,9,7,5,3,1,3,5,7,9,11];
+const BATTLE_CURSOR_SCALES = [.1,.2,.3,.4,.6,1,.6,.4,.3,.2,.1];
 const CHOOSING_TARGET_SCREEN_SHIFT_TIME = 150;
 
 export class BattleStage {
@@ -137,7 +137,8 @@ export class BattleStage {
             sprite.ellipses_semi_major = SEMI_MAJOR_AXIS;
             sprite.ellipses_semi_minor = SEMI_MINOR_AXIS;
             sprite.is_ally = is_ally;
-            list[info.sprite_key.split("_")[0]].setAnimation(sprite, "battle");
+            const key = info.sprite_key.slice(0, info.sprite_key.lastIndexOf("_"));
+            list[key].setAnimation(sprite, "battle");
             sprite.animations.play(animation);
             this.sprites.push(sprite);
         };
@@ -208,7 +209,7 @@ export class BattleStage {
         for (let i = 0; i < this.sprites.length; ++i) {
             const sprite = this.sprites[i];
             const index_shifted = sprite.is_ally ? i : i - this.allies_count;
-            const x_shift = sprite.is_ally ? ACTION_POS_ALLY_X : ACTION_POS_ENEMY_CENTER_X + (this.enemies_count >> 1) * ACTION_POS_SPACE_BETWEEN;
+            const x_shift = sprite.is_ally ? ACTION_POS_ALLY_X : ACTION_POS_ENEMY_CENTER_X - (this.enemies_count >> 1) * ACTION_POS_SPACE_BETWEEN;
             const pos_x = x_shift + index_shifted * ACTION_POS_SPACE_BETWEEN;
             const pos_y = sprite.is_ally ? ACTION_ALLY_Y : ACTION_ENEMY_Y;
             sprite.x = pos_x;
@@ -229,19 +230,39 @@ export class BattleStage {
         }
     }
 
-    set_battle_cursors_position() {
-        const groups = this.target_is_ally ? this.group_allies : this.group_enemies;
-        groups.children.forEach((sprite, i) => {
-            this.cursors[i].centerX = sprite.x;
-            this.cursors[i].y = sprite.y - sprite.height;
-            if (this.cursors_tweens[i]) {
-                this.cursors_tweens[i].stop();
+    set_battle_cursors_position(tween_to_pos = true) {
+        const group = this.target_is_ally ? this.group_allies : this.group_enemies;
+        const center_shift = this.range_cursor_position - (RANGES.length >> 1);
+        this.cursors.forEach((cursor_sprite, i) => {
+            const target_sprite_index = i - ((this.cursors.length >> 1) - (group.children.length >> 1)) - center_shift;
+            const target_sprite = group.children[target_sprite_index];
+            if (target_sprite) {
+                const this_scale = BATTLE_CURSOR_SCALES[this.range_cursor_position - (this.cursors.length >> 1) + i];
+                cursor_sprite.scale.setTo(this_scale, this_scale);
+                cursor_sprite.alpha = 1;
+                if (this.cursors_tweens[i]) {
+                    this.cursors_tweens[i].stop();
+                }
+                const up_down_tween = () => {
+                    this.cursors_tweens[i] = this.game.add.tween(cursor_sprite).to({
+                        y: cursor_sprite.y - 4
+                    }, 100, Phaser.Easing.Linear.None, true, 0, -1, true);
+                };
+                const dest_x = target_sprite.x;
+                const dest_y = target_sprite.y - target_sprite.height;
+                if (tween_to_pos) {
+                    this.game.add.tween(cursor_sprite).to({
+                        centerX: dest_x,
+                        y: dest_y
+                    }, 50, Phaser.Easing.Linear.None).onComplete.addOnce(up_down_tween);
+                } else {
+                    cursor_sprite.centerX = dest_x;
+                    cursor_sprite.y = dest_y;
+                    up_down_tween();
+                }
+            } else {
+                cursor_sprite.alpha = 0;
             }
-            this.cursors_tweens[i] = this.game.add.tween(this.cursors[i]).to({
-                y: this.cursors[i].y - 4
-            }, 100, Phaser.Easing.Linear.None, true, 0, -1, true);
-            const this_scale = Ability.get_diminishing_ratios(this.ability_type)[this.range_cursor_position - (groups.length >> 1) + i];
-            this.cursors[i].scale.setTo(this_scale, this_scale);
         });
     }
 
@@ -263,15 +284,16 @@ export class BattleStage {
         this.game.add.tween(this.battle_group).to({
             y: this.battle_group.y + (this.target_is_ally ? CHOOSE_TARGET_ALLY_SHIFT : CHOOSE_TARGET_ENEMY_SHIFT)
         }, CHOOSING_TARGET_SCREEN_SHIFT_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
-            const party_count = this.target_is_ally ? this.allies_count : this.enemies_count;
-            this.cursors = new Array(party_count).fill(this.battle_group.create(0, 0, "battle_cursor"));
-            this.cursors_tweens = new Array(party_count).fill(null);
-            this.cursors.forEach((sprite, i) => {
-                sprite.animations.add("anim");
-                sprite.animations.play("anim", 40, true);
-            });
+            const cursor_count = this.ability_range;
+            this.cursors = new Array(cursor_count);
+            this.cursors_tweens = new Array(cursor_count).fill(null);
+            for (let i = 0; i < cursor_count; ++i) {
+                this.cursors[i] = this.battle_group.create(0, 0, "battle_cursor");
+                this.cursors[i].animations.add("anim");
+                this.cursors[i].animations.play("anim", 40, true);
+            }
             this.choosing_targets = true;
-            this.set_battle_cursors_position();
+            this.set_battle_cursors_position(false);
         });
     }
 
