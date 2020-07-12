@@ -28,7 +28,7 @@ const ACTION_ENEMY_Y = 98;
 const ACTION_POS_SPACE_BETWEEN = 40;
 const ACTION_POS_SCALE_ADD = 0.2;
 const CHOOSE_TARGET_ENEMY_SHIFT = 15;
-const CHOOSE_TARGET_ALLY_SHIFT = -2;
+const CHOOSE_TARGET_ALLY_SHIFT = -3;
 const CHOOSE_TARGET_RIGHT = 1;
 const CHOOSE_TARGET_LEFT = -1;
 const RANGES = [11,9,7,5,3,1,3,5,7,9,11];
@@ -66,6 +66,8 @@ export class BattleStage {
         this.battle_group.scale.setTo(INITIAL_SCALE, INITIAL_SCALE);
         this.crop_group.x = this.x;
         this.crop_group.y = this.y;
+        this.choose_timer_repeat = this.game.time.create(false);
+        this.choose_timer_start = this.game.time.create(false);
         this.set_control();
     }
 
@@ -117,6 +119,34 @@ export class BattleStage {
             this.left_pressed = false;
             this.stop_timers();
         });
+    }
+
+    stop_timers() {
+        this.choose_timer_start.stop();
+        this.choose_timer_repeat.stop();
+    }
+
+    set_change_timers(step) {
+        this.change_target(step);
+        this.choose_timer_start.add(Phaser.Timer.QUARTER, () => {
+            this.choose_timer_repeat.loop(Phaser.Timer.QUARTER >> 1, this.change_target.bind(this, step));
+            this.choose_timer_repeat.start();
+        });
+        this.choose_timer_start.start();
+    }
+
+    change_target(step) {
+        this.range_cursor_position += step;
+        const center_shift = this.range_cursor_position - (RANGES.length >> 1);
+        const group = this.target_is_ally ? this.group_allies : this.group_enemies;
+        const group_children = this.target_is_ally ? this.group_allies.children.slice().reverse() : this.group_enemies.children;
+        const target_sprite_index = (group_children.length >> 1) + center_shift;
+        if (target_sprite_index >= group_children.length) {
+            this.range_cursor_position = (RANGES.length >> 1) - (group_children.length >> 1);
+        } else if (target_sprite_index < 0) {
+            this.range_cursor_position = (RANGES.length >> 1) + (group_children.length >> 1);
+        }
+        this.set_battle_cursors_position();
     }
 
     initialize_sprites() {
@@ -205,7 +235,7 @@ export class BattleStage {
         this.choosing_actions = true;
         this.battle_bg2.x = 0;
         this.battle_bg2.scale.setTo(ACTION_POS_BG_SCALE, ACTION_POS_BG_SCALE);
-        this.battle_bg2.y = -this.battle_bg.height * (ACTION_POS_BG_SCALE - 1) + BG_Y;
+        this.battle_bg2.y = -this.battle_bg.height * (ACTION_POS_BG_SCALE - 1) + BG_Y - CHOOSE_TARGET_ALLY_SHIFT;
         for (let i = 0; i < this.sprites.length; ++i) {
             const sprite = this.sprites[i];
             const index_shifted = sprite.is_ally ? i : i - this.allies_count;
@@ -231,37 +261,42 @@ export class BattleStage {
     }
 
     set_battle_cursors_position(tween_to_pos = true) {
-        const group = this.target_is_ally ? this.group_allies : this.group_enemies;
+        const group_children = this.target_is_ally ? this.group_allies.children.slice().reverse() : this.group_enemies.children;
         const center_shift = this.range_cursor_position - (RANGES.length >> 1);
         this.cursors.forEach((cursor_sprite, i) => {
-            const target_sprite_index = i - ((this.cursors.length >> 1) - (group.children.length >> 1)) - center_shift;
-            const target_sprite = group.children[target_sprite_index];
+            let target_sprite_index = i - ((this.cursors.length >> 1) - (group_children.length >> 1)) + center_shift;
+            let target_sprite = group_children[target_sprite_index];
             if (target_sprite) {
-                const this_scale = BATTLE_CURSOR_SCALES[this.range_cursor_position - (this.cursors.length >> 1) + i];
+                const this_scale = BATTLE_CURSOR_SCALES[this.range_cursor_position - center_shift - (this.cursors.length >> 1) + i];
                 cursor_sprite.scale.setTo(this_scale, this_scale);
                 cursor_sprite.alpha = 1;
                 if (this.cursors_tweens[i]) {
                     this.cursors_tweens[i].stop();
                 }
-                const up_down_tween = () => {
-                    this.cursors_tweens[i] = this.game.add.tween(cursor_sprite).to({
-                        y: cursor_sprite.y - 4
-                    }, 100, Phaser.Easing.Linear.None, true, 0, -1, true);
-                };
                 const dest_x = target_sprite.x;
                 const dest_y = target_sprite.y - target_sprite.height;
                 if (tween_to_pos) {
                     this.game.add.tween(cursor_sprite).to({
                         centerX: dest_x,
                         y: dest_y
-                    }, 50, Phaser.Easing.Linear.None).onComplete.addOnce(up_down_tween);
+                    }, 125, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
+                        this.cursors_tweens[i] = this.game.add.tween(cursor_sprite).to({
+                            y: cursor_sprite.y - 4
+                        }, 100, Phaser.Easing.Linear.None, true, 0, -1, true);
+                    });
                 } else {
                     cursor_sprite.centerX = dest_x;
                     cursor_sprite.y = dest_y;
-                    up_down_tween();
+                    this.cursors_tweens[i] = this.game.add.tween(cursor_sprite).to({
+                        y: cursor_sprite.y - 4
+                    }, 100, Phaser.Easing.Linear.None, true, 0, -1, true);
                 }
             } else {
                 cursor_sprite.alpha = 0;
+                target_sprite_index = target_sprite_index < 0 ? 0 : group_children.length - 1;
+                target_sprite = group_children[target_sprite_index];
+                cursor_sprite.centerX = target_sprite.x;
+                cursor_sprite.y = target_sprite.y - target_sprite.height;
             }
         });
     }
@@ -273,6 +308,7 @@ export class BattleStage {
                 this.cursors_tweens[i].stop();
             }
         });
+        this.stop_timers();
     }
 
     choose_targets(range, target_is_ally, ability_type, callback) {
