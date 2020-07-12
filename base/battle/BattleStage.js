@@ -63,7 +63,7 @@ export class BattleStage {
         this.y = this.game.camera.y;
         this.battle_group.x = this.x;
         this.battle_group.y = this.y;
-        // this.battle_group.scale.setTo(INITIAL_SCALE, INITIAL_SCALE);
+        this.battle_group.scale.setTo(INITIAL_SCALE, INITIAL_SCALE);
         this.crop_group.x = this.x;
         this.crop_group.y = this.y;
         this.set_control();
@@ -160,14 +160,14 @@ export class BattleStage {
         this.upper_rect = this.game.add.graphics(upper_x, upper_y);
         this.crop_group.add(this.upper_rect);
         this.upper_rect.beginFill(0x0, 1);
-        this.upper_rect.drawRect(0, 0, numbers.GAME_WIDTH, this.bg_height >> 1);
+        this.upper_rect.drawRect(0, 0, numbers.GAME_WIDTH, numbers.GAME_HEIGHT >> 1);
         this.upper_rect.endFill();
         const lower_x = 0;
         const lower_y = BG_Y + (this.bg_height >> 1) + 2;
         this.lower_rect = this.game.add.graphics(lower_x, lower_y);
         this.crop_group.add(this.lower_rect);
         this.lower_rect.beginFill(0x0, 1);
-        this.lower_rect.drawRect(0, 0, numbers.GAME_WIDTH, this.bg_height >> 1);
+        this.lower_rect.drawRect(0, 0, numbers.GAME_WIDTH, (numbers.GAME_HEIGHT >> 1) + 2);
         this.lower_rect.endFill();
     }
 
@@ -196,9 +196,9 @@ export class BattleStage {
                 callback();
             }
         });
-        // this.game.add.tween(this.battle_group.scale).to({
-        //     x: 1, y: 1
-        // }, INIT_TIME, Phaser.Easing.Linear.None, true);
+        this.game.add.tween(this.battle_group.scale).to({
+            x: 1, y: 1
+        }, INIT_TIME, Phaser.Easing.Linear.None, true);
     }
 
     set_choosing_action_position() {
