@@ -7,7 +7,7 @@ import { get_enemy_instance } from "./Enemy.js";
 import { abilities_list } from "../../initializers/abilities.js";
 import { ability_target_types } from "../Ability.js";
 
-const MAX_CHAR_AT_BATTLE = 4;
+export const MAX_CHARS_IN_BATTLE = 4;
 
 /* ACTIONS:
 - Attack
@@ -37,7 +37,7 @@ export class Battle {
     constructor(game, data, background_key, enemy_party_key) {
         this.game = game;
         this.data = data;
-        this.allies_info = party_data.members.slice(0, MAX_CHAR_AT_BATTLE).map(char => {
+        this.allies_info = party_data.members.slice(0, MAX_CHARS_IN_BATTLE).map(char => {
             return {
                 sprite_key: char.key_name + "_battle",
                 scale: char.battle_scale

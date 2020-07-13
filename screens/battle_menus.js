@@ -9,11 +9,11 @@ import { PsynergyWindow } from "../base/windows/battle/PsynergyWindow.js"
 import { DjinnWindow } from "../base/windows/battle/DjinnWindow.js";
 import { ItemWindow } from "../base/windows/battle/ItemWindow.js";
 import { SummonWindow } from "../base/windows/battle/SummonWindow.js";
+import { MAX_CHARS_IN_BATTLE } from "../base/battle/Battle.js";
 
 const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
 const AVATAR_SIZE = 32;
-const MAX_CHARS_IN_BATTLE = 4;
 const FORWARD = 1;
 const BACKWARD = -1;
 
