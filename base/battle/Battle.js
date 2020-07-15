@@ -97,13 +97,13 @@ export class Battle {
         this.check_phases();
     }
 
-    choose_targets(ability_key, action, callback) {
+    choose_targets(ability_key, action, callback, item_obj) {
         const this_ability = abilities_list[ability_key];
         let quantities;
         if (action === "psynergy") {
             quantities = [this_ability.pp_cost];
         }
-        this.target_window.open(action, this_ability.name, this_ability.element, ability_key, quantities);
+        this.target_window.open(action, this_ability.name, this_ability.element, ability_key, quantities, item_obj);
         this.battle_stage.choose_targets(
             this_ability.range,
             this_ability.battle_target === ability_target_types.ALLY,

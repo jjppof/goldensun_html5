@@ -1,5 +1,6 @@
 import { Window } from "../../Window.js";
 import { elements, ordered_elements } from "../../MainChar.js";
+import * as numbers from "../../../magic_numbers.js";
 
 const BASE_WIN_HEIGHT = 20;
 const BASE_WIN_Y = 136;
@@ -33,6 +34,9 @@ const PP_X = 123;
 const PP_Y = 8;
 const PP_TEXT_X = 96;
 
+const SUB_ICON_X = 0;
+const SUB_ICON_Y = 0;
+
 export class ChoosingTargetWindow {
     constructor(game, data) {
         this.game = game;
@@ -59,7 +63,7 @@ export class ChoosingTargetWindow {
             const star = this.base_window.create_at_group(this.star_x, STAR_Y, this.element + "_star");
             this.window_sprites.push(star);
         }
-        if (this.icon_sprite_sheet) {
+        if (this.icon_sprite_sheet && this.action !== "item") {
             const icon = this.base_window.create_at_group(ICON_X, ICON_Y, this.icon_sprite_sheet, undefined, this.ability_key_name);
             this.window_sprites.push(icon);
         }
@@ -80,10 +84,25 @@ export class ChoosingTargetWindow {
                 this.texts.push(req_text);
                 ++counter;
             });
+        } else if (this.action === "item") {
+            let icon_group = this.game.add.group();
+            let icon_sprite = icon_group.create(0, 0, this.icon_sprite_sheet, this.ability_key_name);
+            icon_sprite.anchor.setTo(0.5, 0.5);
+            if (this.item_obj.equipped) {
+                icon_group.create(SUB_ICON_X, SUB_ICON_Y, "equipped");
+            }
+            if (this.item_obj.quantity > 1) {
+                let item_count = this.game.add.bitmapText(SUB_ICON_X, SUB_ICON_Y, 'gs-item-bmp-font', this.item_obj.quantity.toString());
+                icon_group.add(item_count);
+            }
+            this.base_window.add_sprite_to_group(icon_group);
+            icon_group.x = ICON_X + (numbers.ICON_WIDTH >> 1);
+            icon_group.y = ICON_Y + (numbers.ICON_HEIGHT >> 1);
+            this.window_sprites.push(icon_group);
         }
     }
 
-    open(action, ability_name, element, ability_key_name, quantities) {
+    open(action, ability_name, element, ability_key_name, quantities, item_obj) {
         this.action = action;
         this.ability_name = ability_name;
         this.element = element;
@@ -119,6 +138,7 @@ export class ChoosingTargetWindow {
                 this.x = BASE_WIN_X_ITEM;
                 this.ability_name_x = ABILITY_NAME_ITEM_X;
                 this.icon_sprite_sheet = "items_icons";
+                this.item_obj = item_obj;
                 break;
         }
         this.base_window.update_size({width: this.width});

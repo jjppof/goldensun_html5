@@ -121,7 +121,7 @@ export class BattleMenuScreen {
     on_ability_choose(window, description_on_top, button, ...args) {
         this.inner_horizontal_menu.deactivate(true);
         this.description_window.open(description_on_top);
-        window.open(party_data.members[this.current_char_index], ability => {
+        window.open(party_data.members[this.current_char_index], (ability, item_obj) => {
             if (ability) {
                 this.description_window.hide();
                 this.choose_targets(ability, button, targets => {
@@ -138,7 +138,7 @@ export class BattleMenuScreen {
                         this.description_window.show();
                         window.show();
                     }
-                });
+                }, item_obj);
             } else {
                 if (window.is_open()) {
                     window.close();

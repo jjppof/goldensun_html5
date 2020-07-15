@@ -270,7 +270,7 @@ export class ItemPsynergyChooseWindow {
                 this.icon_sprites_in_window.push(this.window.create_at_group(icon_x, icon_y, this.element_sprite_key, undefined, elem_key_name));
                 this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
             } else {
-                let icon_group = game.add.group();
+                let icon_group = this.game.add.group();
                 let icon_sprite = icon_group.create(0, 0, this.element_sprite_key, elem_key_name);
                 icon_sprite.anchor.setTo(0.5, 0.5);
                 if (this.item_objs[i].equipped) {

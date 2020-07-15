@@ -3,6 +3,7 @@ import { CursorControl } from '../../utils/CursorControl.js';
 import { items_list } from "../../../initializers/items.js";
 import * as numbers from "../../../magic_numbers.js"
 import { use_types } from "../../Item.js";
+import { abilities_list } from "../../../initializers/abilities.js";
 
 const BASE_WINDOW_X = 120;
 const BASE_WINDOW_Y = 72;
@@ -56,14 +57,16 @@ export class ItemWindow {
             if (!this.window_open || !this.window_active) return;
             this.data.esc_input.halt();
             this.choosen_ability = null;
+            this.item_obj = null;
             this.close(this.close_callback);
         }, this, this.esc_propagation_priority);
         this.data.enter_input.add(() => {
             if (!this.window_open || !this.window_active) return;
             this.data.enter_input.halt();
             const this_item = items_list[this.items[this.item_index].key_name];
-            if (this_item.use_type !== use_types.NO_USE) {
+            if (this_item.use_type !== use_types.NO_USE && abilities_list[this_item.use_ability].is_battle_psynergy) {
                 this.choosen_ability = this_item.use_ability;
+                this.item_obj = this.items[this.item_index];
                 this.hide(this.close_callback);
             }
         }, this, this.enter_propagation_priority);
@@ -155,7 +158,7 @@ export class ItemWindow {
                 this.other_sprites.push(item_count);
             }
             let color = numbers.DEFAULT_FONT_COLOR;
-            if (item.use_type === use_types.NO_USE) {
+            if (item.use_type === use_types.NO_USE || !abilities_list[item.use_ability].is_battle_psynergy) {
                 color = numbers.YELLOW_FONT_COLOR;
             }
             const name = this.base_window.set_text_in_position(item.name, ITEM_NAME_X, base_y, false, false, color);
@@ -174,7 +177,7 @@ export class ItemWindow {
     mount_window() {
         this.all_items = this.char.items;
         this.all_items = _.sortBy(this.all_items, [item_obj => {
-            return items_list[item_obj.key_name].use_type === use_types.NO_USE;
+            return items_list[item_obj.key_name].use_type === use_types.NO_USE || !abilities_list[items_list[item_obj.key_name].use_ability].is_battle_psynergy;
         }]);
         this.set_page_number();
         this.base_window.set_page_indicator(this.page_number, this.page_index);
@@ -229,7 +232,7 @@ export class ItemWindow {
         this.base_window.close(() => {
             this.window_active = false;
             if (callback !== undefined) {
-                callback(this.choosen_ability);
+                callback(this.choosen_ability, this.item_obj);
             }
         }, false);
     }
@@ -244,7 +247,7 @@ export class ItemWindow {
             this.window_open = false;
             this.window_active = false;
             if (callback !== undefined) {
-                callback(this.choosen_ability);
+                callback(this.choosen_ability, this.item_obj);
             }
         }, false);
     }
