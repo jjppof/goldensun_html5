@@ -6,6 +6,7 @@ import { BattleMenuScreen } from "../../screens/battle_menus.js";
 import { get_enemy_instance } from "./Enemy.js";
 import { abilities_list } from "../../initializers/abilities.js";
 import { ability_target_types } from "../Ability.js";
+import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 
@@ -60,6 +61,7 @@ export class Battle {
         this.battle_stage = new BattleStage(this.game, this.data, background_key, this.allies_info, this.enemies_info, this.esc_propagation_priority++, this.enter_propagation_priority++);
         this.battle_log = new BattleLog(this.game);
         this.battle_menu = new BattleMenuScreen(this.game, this.data, ++this.enter_propagation_priority, ++this.esc_propagation_priority, this.on_abilities_choose.bind(this), this.choose_targets.bind(this));
+        this.target_window = new ChoosingTargetWindow(this.game, this.data);
         this.battle_phase = battle_phases.NONE;
         this.controls_enabled = false;
         ++this.enter_propagation_priority;
@@ -95,15 +97,22 @@ export class Battle {
         this.check_phases();
     }
 
-    choose_targets(ability_key, button, callback) {
+    choose_targets(ability_key, action, callback) {
         const this_ability = abilities_list[ability_key];
+        let quantities;
+        if (action === "psynergy") {
+            quantities = [this_ability.pp_cost];
+        }
+        this.target_window.open(action, this_ability.name, this_ability.element, ability_key, quantities);
         this.battle_stage.choose_targets(
             this_ability.range,
             this_ability.battle_target === ability_target_types.ALLY,
             this_ability.type,
             targets => {
-            callback(targets);
-        });
+                this.target_window.close();
+                callback(targets);
+            }
+        );
     }
 
     check_phases() {

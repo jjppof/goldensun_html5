@@ -216,8 +216,8 @@ export class BattleStage {
             height: BG_Y
         }, INIT_TIME, Phaser.Easing.Linear.None, true);
         this.game.add.tween(this.lower_rect).to({
-            y: BG_Y + this.bg_height,
-            height: numbers.GAME_HEIGHT - this.bg_height - BG_Y
+            y: BG_Y + this.bg_height - 1,
+            height: numbers.GAME_HEIGHT - this.bg_height - BG_Y + 1
         }, INIT_TIME, Phaser.Easing.Linear.None, true);
         this.game.add.tween(this.camera_angle).to({
             rad: DEFAULT_POS_ANGLE
