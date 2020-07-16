@@ -144,6 +144,7 @@ export class MainChar extends SpriteBase {
         this.in_party = in_party;
         this.abilities = [];
         this.update_abilities();
+        this.turns = 1;
     }
 
     get djinni() {

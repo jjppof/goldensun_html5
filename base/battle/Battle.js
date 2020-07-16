@@ -89,7 +89,7 @@ export class Battle {
     }
 
     on_abilities_choose(abilities) {
-        this.choosen_abilities = abilities;
+        this.player_abilities = abilities;
         this.battle_menu.close_menu();
         this.battle_stage.reset_positions();
         this.battle_stage.choosing_actions = false;
@@ -145,8 +145,19 @@ export class Battle {
         this.battle_menu.open_menu();
     }
 
+    /*
+    At round start, is calculated the players and enemies speeds.
+    If a certain player speed is the same of a enemy, player goes first.
+    If another tie, the most left char has priority.
+    At a specific enemy turn start, I roll an action for that turn.
+    The only thing needed to check about enemies actions at round start is:
+        - Roll their actions for each turn and see if an ability with priority move is rolled.
+        - If yes, this ability is fixed for that corresponding turn.
+    For the other turns, an action is re-roll in the turn start to be used on it.
+    Enemy target rolling: http://forum.goldensunhacking.net/index.php?topic=2793.0
+    */
     battle_phase_round_start() {
-
+        
     }
 
     update() {
