@@ -1,4 +1,4 @@
-import { party_data } from "../../initializers/main_chars.js";
+import { party_data, main_char_list } from "../../initializers/main_chars.js";
 import { BattleStage } from "./BattleStage.js";
 import { enemies_list } from "../../initializers/enemies.js";
 import { BattleLog } from "./BattleLog.js";
@@ -7,6 +7,8 @@ import { get_enemy_instance } from "./Enemy.js";
 import { abilities_list } from "../../initializers/abilities.js";
 import { ability_target_types } from "../Ability.js";
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
+import { EnemyAI } from "./EnemyAI.js";
+import { BattleFormulas } from "./BattleFormulas.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 
@@ -46,14 +48,30 @@ export class Battle {
         });
         this.enemies_party_data = this.data.enemies_parties_db[enemy_party_key];
         this.enemies_info = [];
+        this.this_enemies_list = {};
+        let battle_keys_count = {};
+        let counter = 0;
         this.enemies_party_data.members.forEach(member_info => {
             const qtd = _.random(member_info.min, member_info.max);
             for (let i = 0; i < qtd; ++i) {
                 this.enemies_info.push({
                     sprite_key: member_info.key + "_battle",
-                    scale: enemies_list[member_info.key].battle_scale,
-                    enemy_instance: get_enemy_instance(member_info.key)
+                    scale: enemies_list[member_info.key].battle_scale
                 });
+                if (this.enemies_info[counter].sprite_key in battle_keys_count) {
+                    battle_keys_count[this.enemies_info[counter].sprite_key] += 1;
+                } else {
+                    battle_keys_count[this.enemies_info[counter].sprite_key] = 1;
+                }
+                let battle_key_suffix = "", name_suffix = "";
+                if (battle_keys_count[this.enemies_info[counter].sprite_key] > 1) {
+                    battle_key_suffix = "_" + battle_keys_count[this.enemies_info[counter].sprite_key].toString();
+                    name_suffix = " " + battle_keys_count[this.enemies_info[counter].sprite_key].toString();
+                }
+                this.enemies_info[counter].enemy_instance = get_enemy_instance(member_info.key, name_suffix);
+                this.enemies_info[counter].battle_key = this.enemies_info[counter].sprite_key + battle_key_suffix;
+                this.this_enemies_list[this.enemies_info[counter].battle_key] = this.enemies_info[counter].enemy_instance;
+                ++counter;
             }
         });
         this.enter_propagation_priority = 0;
@@ -154,10 +172,22 @@ export class Battle {
         - Roll their actions for each turn and see if an ability with priority move is rolled.
         - If yes, this ability is fixed for that corresponding turn.
     For the other turns, an action is re-roll in the turn start to be used on it.
-    Enemy target rolling: http://forum.goldensunhacking.net/index.php?topic=2793.0
     */
     battle_phase_round_start() {
-        
+        const enemy_members = this.enemies_info.map(info => info.enemy_instance);
+        this.enemies_abilities = Object.fromEntries(enemy_members.map((enemy, index) => {
+            return [this.enemies_info[index].battle_key, EnemyAI.get_targets(enemy, party_data.members, enemy_members)];
+        }));
+        for (let char_key in this.player_abilities) {
+            const this_char = main_char_list[char_key];
+            const this_ability = abilities_list[this.player_abilities[char_key].key_name];
+            this.player_abilities[char_key].speed = BattleFormulas.player_turn_speed(this_char.current_agi, this_ability.priority_move);
+        }
+        for (let battle_key in this.enemies_abilities) {
+            const this_enemy = this.this_enemies_list[battle_key];
+            const this_ability = abilities_list[this.enemies_abilities[battle_key].key_name];
+            this.enemies_abilities[battle_key].speed = BattleFormulas.enemy_turn_speed(this_enemy.current_agi, 1, this_enemy.turns, this_ability.priority_move);
+        }
     }
 
     update() {

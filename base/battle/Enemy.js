@@ -69,6 +69,6 @@ export class EnemyBase extends SpriteBase {
     }
 }
 
-export function get_enemy_instance(key_name, name) {
-    return new Enemy(enemies_list[key_name].data, name);
+export function get_enemy_instance(key_name, suffix) {
+    return new Enemy(enemies_list[key_name].data, enemies_list[key_name].data.name + suffix);
 }
