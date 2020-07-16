@@ -4,7 +4,7 @@ import { range_360 } from "../../utils.js";
 export class BattleAnimation {
     //tween type can be 'initial' for first position
     //sprite_index: "targets" is the target, "caster" is the caster, "background" is the background sprite, 0...n is the sprites_key_names index
-    //property "to" values can be "center_target", "caster" or an actual value. In the case of "center_target" or "caster", is the the corresponding property value 
+    //property "to" value can be "target" or an actual value. In the case of "target" is the the corresponding property value. In the case of using "target", a "shift" property is available to be added to the resulting value
     //values in rad can have "direction" set to "clockwise", "counter_clockwise" or "closest" if "absolute" is true
     //in sprite_keys, position can be: "between", "over" or "behind"
     //"duration" set to "instantly" must have the "start_delay" value set as absolute
@@ -12,20 +12,20 @@ export class BattleAnimation {
         game,
         key_name,
         sprites_keys, //{key_name: string, per_target: bool, position: value}
-        x_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
-        y_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
-        x_ellipse_axis_factor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, force_stage_update: bool}
-        y_ellipse_axis_factor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, force_stage_update: bool}
-        x_scale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
-        y_scale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
-        x_anchor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
-        y_anchor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
-        alpha_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
-        rotation_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, direction: value}
+        x_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
+        y_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
+        x_ellipse_axis_factor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, force_stage_update: bool, shift: value}
+        y_ellipse_axis_factor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, force_stage_update: bool, shift: value}
+        x_scale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
+        y_scale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
+        x_anchor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
+        y_anchor_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
+        alpha_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
+        rotation_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, direction: value, shift: value}
         stage_angle_sequence, //{start_delay: value, to: value, is_absolute: bool, tween: type, duration: value, direction: value}
-        hue_angle_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, direction: value}
+        hue_angle_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, direction: value, shift: value}
         tint_sequence, //{start_delay: value, sprite_index: index, value: %rgb array}
-        grayscale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value}
+        grayscale_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
         colorize_sequence, //{start_delay: value, sprite_index: index, value: value, colorize_intensity: value}
         custom_filter_sequence, //{start_delay: value, sprite_index: index, filter: key, value: value}
         play_sequence, //{start_delay: value, sprite_index: index, reverse: bool, frame_rate: value, repeat: bool, animation_key: key, wait: bool, hide_on_complete: bool}
@@ -245,6 +245,10 @@ export class BattleAnimation {
                 }
                 const seq_to = Array.isArray(seq.to) ? seq.to[index] : seq.to;
                 let to_value = seq_to;
+                if (seq_to === "target") {
+                    const shift = Array.isArray(seq.shift) ? seq.shift[index] : seq.shift;
+                    to_value = this.targets_sprites[this.targets_sprites.length >> 1][target_property] + (shift === undefined ? 0 : shift);
+                }
                 if (["rotation", "hue_adjust"].includes(target_property)) {
                     this.sprites_prev_properties[uniq_key][target_property] = range_360(this.sprites_prev_properties[uniq_key][target_property]);
                     this_sprite[target_property] = this.sprites_prev_properties[uniq_key][target_property];
