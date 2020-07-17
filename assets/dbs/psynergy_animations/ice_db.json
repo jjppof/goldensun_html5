@@ -8,7 +8,10 @@
         "key_name": "ice_psynergy_animation",
         "per_target": false,
         "position": "between",
-        "count": 16
+        "count": 16,
+        "trails": true,
+        "trails_mode": "screen",
+        "trail_frame_diff": 3
     }],
     "x_sequence": [{
         "to": [135,145,135,135,145,135,145,145,155,175,175,155,165,165,155,155],

@@ -458,6 +458,9 @@ function update() {
 
         update_stage();
     }
+    if (battle_anim !== null) {
+        battle_anim.render();
+    }
 }
 
 window.cast_psynergy = function(key_name) {
@@ -491,6 +494,7 @@ window.cast_psynergy = function(key_name) {
     battle_anim.initialize(test_hero, group_enemy.children, group_party, group_enemy, game.world, camera_angle, [battle_bg, battle_bg2]);
     battle_anim.play(() => {
         battle_animation_executing = false;
+        battle_anim = null;
     });
 }
 

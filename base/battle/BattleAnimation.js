@@ -72,8 +72,13 @@ export class BattleAnimation {
         this.group_enemy = group_enemy;
         this.super_group = super_group;
         this.stage_camera = stage_camera;
+        this.trails_objs = [];
         for (let i = 0; i < this.sprites_keys.length; ++i) {
             const sprite_info = this.sprites_keys[i];
+            let trails_info;
+            if (sprite_info.trails) {
+                trails_info = this.initialize_trail_textures(sprite_info.trail_frame_diff, sprite_info.trails_mode);
+            }
             if (!sprite_info.per_target) {
                 const count = sprite_info.count ? sprite_info.count : 1;
                 for (let j = 0; j < count; ++j) {
@@ -95,11 +100,42 @@ export class BattleAnimation {
                     }
                     psy_sprite.animations.add('cast', Phaser.Animation.generateFrameNames('', 1, psy_sprite.animations.frameTotal, '', 3));
                     psy_sprite.battle_index = this.sprites.length;
+                    psy_sprite.trails = sprite_info.trails;
+                    psy_sprite.trails_info = trails_info;
+                    if (sprite_info.trails) {
+                        psy_sprite.x_history = new Array(trails_info.frame_diff + 1).fill(psy_sprite.x - this.game.camera.x);
+                        psy_sprite.y_history = new Array(trails_info.frame_diff + 1).fill(psy_sprite.y - this.game.camera.y);
+                    }
                     this.sprites.push(psy_sprite);
                 }
             }
         }
         this.set_filters();
+    }
+
+    initialize_trail_textures(frame_diff, blend_mode) {
+        switch (blend_mode) {
+            case "screen":
+                blend_mode = PIXI.blendModes.SCREEN;
+                break;
+            case "normal":
+                blend_mode = PIXI.blendModes.NORMAL;
+                break;
+        }
+        const trail_texture = this.game.add.renderTexture(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+        let trail_sprite = this.game.add.sprite(this.game.camera.x, this.game.camera.y, trail_texture);
+        trail_sprite.blendMode = blend_mode;
+        trail_sprite.alpha = 0.6;
+        const trail_texture_2 = this.game.add.renderTexture(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+        let trail_sprite_2 = this.game.add.sprite(this.game.camera.x, this.game.camera.y, trail_texture_2);
+        trail_sprite_2.blendMode = blend_mode;
+        trail_sprite_2.alpha = 0.4;
+        this.trails_objs = this.trails_objs.concat(trail_texture, trail_texture_2, trail_sprite, trail_sprite_2);
+        return {
+            texture_1: trail_texture,
+            texture_2: trail_texture_2,
+            frame_diff: frame_diff
+        };
     }
 
     set_filters() {
@@ -159,6 +195,9 @@ export class BattleAnimation {
             });
             this.sprites.forEach(sprite => {
                 sprite.destroy();
+            });
+            this.trails_objs.forEach(obj => {
+                obj.destroy();
             });
             this.running = false;
             if (finish_callback !== undefined) {
@@ -371,6 +410,9 @@ export class BattleAnimation {
                         case "screen":
                             sprite.blendMode = PIXI.blendModes.SCREEN;
                             break;
+                        case "normal":
+                            sprite.blendMode = PIXI.blendModes.NORMAL;
+                            break;
                     }
                 });
                 resolve_function();
@@ -451,6 +493,22 @@ export class BattleAnimation {
                 chained_tweens.push(tween);
             }
         }
+    }
+
+    render() {
+        let clear = true;
+        this.sprites.forEach(sprite => {
+            if (!sprite.trails) return;
+            sprite.x_history.unshift(sprite.x - this.game.camera.x);
+            sprite.y_history.unshift(sprite.y - this.game.camera.y);
+            if (clear) {
+                sprite.trails_info.texture_1.clear();
+                sprite.trails_info.texture_2.clear();
+                clear = false;
+            }
+            sprite.trails_info.texture_1.renderXY(sprite, sprite.x_history[sprite.trails_info.frame_diff >> 1], sprite.y_history[sprite.trails_info.frame_diff >> 1]);
+            sprite.trails_info.texture_2.renderXY(sprite, sprite.x_history.pop(), sprite.y_history.pop());
+        });
     }
 
     static get_angle_by_direction(current_angle, target_angle, direction, fourth_quadrant = false) {
