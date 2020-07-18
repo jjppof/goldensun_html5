@@ -1,5 +1,6 @@
 import { SpriteBase } from "../SpriteBase.js";
 import { enemies_list } from "../../initializers/enemies.js";
+import { fighter_types } from "./Battle.js";
 
 export class Enemy {
     constructor(enemy_data, name) {
@@ -53,6 +54,7 @@ export class Enemy {
         this.mars_resist_current = enemy_data.mars_resist;
         this.jupiter_resist = enemy_data.jupiter_resist;
         this.jupiter_resist_current = enemy_data.jupiter_resist;
+        this.fighter_type = fighter_types.ENEMY;
     }
 }
 

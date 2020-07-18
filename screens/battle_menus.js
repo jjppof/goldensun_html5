@@ -75,6 +75,9 @@ export class BattleMenuScreen {
                 this.current_buttons = this.inner_buttons_keys.filter(key => !filtered_buttons.includes(key));
                 this.inner_horizontal_menu.mount_buttons(filtered_buttons);
                 this.abilities = {};
+                party_data.members.slice(0, MAX_CHARS_IN_BATTLE).forEach(char => {
+                    this.abilities[char.key_name] = [];
+                });
                 this.inner_horizontal_menu.open();
         }
     }
@@ -85,10 +88,10 @@ export class BattleMenuScreen {
                 this.inner_horizontal_menu.deactivate(true);
                 this.choose_targets("attack", "attack", targets => {
                     if (targets) {
-                        this.abilities[party_data.members[this.current_char_index].key_name] = {
+                        this.abilities[party_data.members[this.current_char_index].key_name].push({
                             key_name: "attack",
                             targets: targets
-                        };
+                        });
                         this.inner_horizontal_menu.activate();
                         this.change_char(FORWARD);
                     } else {
@@ -109,10 +112,10 @@ export class BattleMenuScreen {
                 this.on_ability_choose(this.item_window, false, "item");
                 break
             case "defend":
-                this.abilities[party_data.members[this.current_char_index].key_name] = {
+                this.abilities[party_data.members[this.current_char_index].key_name].push({
                     key_name: "defend",
                     targets: null
-                };
+                });
                 this.change_char(FORWARD);
                 break
         }
@@ -126,10 +129,10 @@ export class BattleMenuScreen {
                 this.description_window.hide();
                 this.choose_targets(ability, button, targets => {
                     if (targets) {
-                        this.abilities[party_data.members[this.current_char_index].key_name] = {
+                        this.abilities[party_data.members[this.current_char_index].key_name].push({
                             key_name: ability,
                             targets: targets
-                        };
+                        });
                         window.close();
                         this.description_window.close();
                         this.inner_horizontal_menu.activate();
@@ -149,12 +152,18 @@ export class BattleMenuScreen {
         }, this.description_window.set_description.bind(this.description_window), ...args);
     }
 
-    change_char(step) {
-        this.current_char_index += step;
+    change_char(step, pop_ability = false) {
+        const before_char = party_data.members[this.current_char_index];
+        if (before_char.turns === this.abilities[party_data.members[this.current_char_index].key_name].length) {
+            this.current_char_index += step;
+        }
         if (this.current_char_index >= MAX_CHARS_IN_BATTLE || this.current_char_index >= party_data.members.length) {
             this.current_char_index = 0;
             this.on_abilities_choose(this.abilities);
         } else {
+            if (pop_ability) {
+                this.abilities[party_data.members[this.current_char_index].key_name].pop();
+            }
             this.set_avatar();
             this.inner_horizontal_menu.close(undefined, false);
             this.inner_horizontal_menu.open();
@@ -172,7 +181,7 @@ export class BattleMenuScreen {
 
     inner_menu_cancel() {
         if (this.current_char_index > 0) {
-            this.change_char(BACKWARD);
+            this.change_char(BACKWARD, true);
         } else {
             this.inner_horizontal_menu.close();
             this.hide_avatar();

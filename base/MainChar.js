@@ -5,6 +5,7 @@ import { djinn_status } from './Djinn.js';
 import { Effect, effect_types } from './Effect.js';
 import { item_types } from './Item.js';
 import { items_list } from '../initializers/items.js';
+import { fighter_types } from './battle/Battle.js';
 
 export const temporary_status = {
     DELUSION: "delusion",
@@ -145,6 +146,7 @@ export class MainChar extends SpriteBase {
         this.abilities = [];
         this.update_abilities();
         this.turns = 1;
+        this.fighter_type = fighter_types.ALLY;
     }
 
     get djinni() {

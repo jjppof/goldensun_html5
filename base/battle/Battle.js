@@ -11,6 +11,10 @@ import { EnemyAI } from "./EnemyAI.js";
 import { BattleFormulas } from "./BattleFormulas.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
+export const fighter_types = {
+    ALLY: 1,
+    ENEMY: 2,
+}
 
 /* ACTIONS:
 - Attack
@@ -145,6 +149,12 @@ export class Battle {
             case battle_phases.ROUND_START:
                 this.battle_phase_round_start();
                 break;
+            case battle_phases.COMBAT:
+                this.battle_phase_combat();
+                break;
+            case battle_phases.ROUND_END:
+                this.battle_phase_round_end();
+                break;
         }
     }
 
@@ -176,18 +186,49 @@ export class Battle {
     battle_phase_round_start() {
         const enemy_members = this.enemies_info.map(info => info.enemy_instance);
         this.enemies_abilities = Object.fromEntries(enemy_members.map((enemy, index) => {
-            return [this.enemies_info[index].battle_key, EnemyAI.get_targets(enemy, party_data.members, enemy_members)];
+            let abilities = new Array(enemy.turns);
+            for (let i = 0; i < enemy.turns; ++i) {
+                abilities[i] = EnemyAI.get_targets(enemy, party_data.members, enemy_members);
+            }
+            return [this.enemies_info[index].battle_key, abilities];
         }));
         for (let char_key in this.player_abilities) {
             const this_char = main_char_list[char_key];
-            const this_ability = abilities_list[this.player_abilities[char_key].key_name];
-            this.player_abilities[char_key].speed = BattleFormulas.player_turn_speed(this_char.current_agi, this_ability.priority_move);
+            for (let i = 0; i < this.player_abilities[char_key].length; ++i) {
+                const this_ability = abilities_list[this.player_abilities[char_key][i].key_name];
+                this.player_abilities[char_key][i].speed = BattleFormulas.player_turn_speed(this_char.current_agi, this_ability.priority_move, i > 0);
+                this.player_abilities[char_key][i].caster = this_char;
+            }
         }
         for (let battle_key in this.enemies_abilities) {
             const this_enemy = this.this_enemies_list[battle_key];
-            const this_ability = abilities_list[this.enemies_abilities[battle_key].key_name];
-            this.enemies_abilities[battle_key].speed = BattleFormulas.enemy_turn_speed(this_enemy.current_agi, 1, this_enemy.turns, this_ability.priority_move);
+            for (let i = 0; i < this.enemies_abilities[battle_key].length; ++i) {
+                const this_ability = abilities_list[this.enemies_abilities[battle_key][i].key_name];
+                this.enemies_abilities[battle_key][i].speed = BattleFormulas.enemy_turn_speed(this_enemy.current_agi, i + 1, this_enemy.turns, this_ability.priority_move);
+                this.enemies_abilities[battle_key][i].caster = this_enemy;
+            }
         }
+        this.turns_actions = _.sortBy(Object.values(this.player_abilities).flat().concat(Object.values(this.enemies_abilities).flat()), action => {
+            return action.speed; //still need to add left most and player preference criterias
+        });
+        this.battle_phase = battle_phases.COMBAT;
+        this.check_phases();
+    }
+
+    battle_phase_combat() {
+        if (!this.turns_actions.length) {
+            this.battle_phase = battle_phases.ROUND_END;
+            this.check_phases();
+            return;
+        }
+        let action = this.turns_actions.pop();
+        if (action.caster.fighter_type === fighter_types.ENEMY) {
+            Object.assign(action, EnemyAI.get_targets(enemy, party_data.members, this.enemies_info.map(info => info.enemy_instance)));
+        }
+    }
+
+    battle_phase_round_end() {
+
     }
 
     update() {
