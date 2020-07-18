@@ -222,7 +222,7 @@ export class Battle {
             return;
         }
         let action = this.turns_actions.pop();
-        if (action.caster.fighter_type === fighter_types.ENEMY) {
+        if (action.caster.fighter_type === fighter_types.ENEMY && !abilities_list[action.key_name].priority_move) {
             Object.assign(action, EnemyAI.get_targets(enemy, party_data.members, this.enemies_info.map(info => info.enemy_instance)));
         }
     }
