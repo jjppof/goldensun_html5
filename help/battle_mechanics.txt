@@ -1,0 +1,3079 @@
+THE LOST AGE BATTLE MECHANICS v1.05
+============================= =====
+
+by Terence Fergusson <tf_faq@dsl.pipex.com>
+
+Golden Sun is copyright 2001-2003 Nintendo / CAMELOT.
+
+This document is entirely my work, and was written and is owned by me,
+Terence Fergusson.  All copyrights and trademarks are acknowledged where not
+specifically mentioned.  If you wish to reproduce this document AS IS, you
+may do so without having to ask my permission, providing that the entire
+document including this copyright notice is left intact, and preferably in
+ASCII text format.
+
+Please do not e-mail me asking questions about Golden Sun that this document
+is not meant to address.  If you have found this file, you likely also have
+access to other FAQs on Golden Sun that could help you far more quickly than
+I check my mail.
+
+
+
+=====================
+== VERSION HISTORY ==
+=====================
+
+  v1.0  : 17/04/03 : Original Release
+  v1.01 : 22/04/03 : Fixed error with the Djinni Gale's damage (thanks to
+                       Yadotian Spy for pointing it out)
+                     Created extra Psynergy list for Tamer Upgrades to
+                       reduce confusion
+  v1.05 : 16/05/03 : Few more updates to Djinni effects, courtesy of
+                       Yadotian Spy
+                     Fixed a couple of errors that crept in (thanks to
+                       Cong Chen and Destruction Angel)
+                     More information about Weapon Unleash chances
+
+
+
+==============
+== FOREWORD ==
+==============
+  So, what's there to say?  The Lost Age is by far a sequel in every way,
+from the progression of plot, to the fact that everything about it is bigger
+and arguably better.  It's a more well rounded game than before.  And since
+nothing has changed (with the exception of a few retranslations of some
+names), we are left with the new stuff.  Each of which add their own simple
+mechanisms to the whole and contrive to make the whole thing that much more
+complicated.
+
+  I have to admit, I wasn't sure if I was going to write this or not.  But
+it was when I realised that I used my original guide as much for my own
+benefit as for others that I knew I had to do it.  How else would I be so
+sure about what classes I really should be using?
+
+  Forgive me for copying and pasting some explanation sections from my
+original guide.  Most of what holds true in Golden Sun also holds true for
+The Lost Age, so there really was no point in rewriting some of the old
+stuff.  The important changes are all in the data, which I *have* fully
+updated.
+
+  Note: Fair warning.  It is best to view this document in a non-proportional
+font.  Doing otherwise will severely mess up the tables to follow.  By
+default, your web browser will probably be using something like Courier New,
+so this won't be a problem.  But if the FAQ looks messed up, try messing with
+your browser's font options.
+
+  And Fair Warning Part Two: Although I've tried my best to be as accurate as
+possible, mistakes may have creeped in.  There's only so much testing you can
+do in so little time, and I have tried to get this out as fast as possible.
+However, the calculations behind much of what happens in battle are
+complicated, so before you decide you've found a mistake, be doubly sure that
+you've done everything as noted in the guide.
+
+
+
+=======================
+== TABLE OF CONTENTS ==
+=======================
+
+ Line
+   97 : The Class System
+  152 : Base Stats and Level Ups
+  433 : Djinni Bonuses
+  544 : Elemental Levels
+  587 : Class Bonuses And Reqs
+ 1049 : Class Abilities
+ 1381 : Damage Of Attacks
+ 1627 : Weapon Abilities
+ 1786 : Djinni Abilities
+ 1932 : Summons and Combo Tablets
+ 2075 : Psynergy Abilities
+ 2953 : Item Usage
+ 3055 : The End
+
+
+
+======================
+== THE CLASS SYSTEM ==
+======================
+  With the introduction of the new max of 9 Djinn per character, as well as
+the new Class Items, the rules for classes have got slightly more complex.
+However, the basics behind this remain the same.
+
+  The primary force behind the class system is the allocation of the Djinn to
+each character.  Through combinations of anywhere up to 9 Djinn at once, it
+is possible to unlock any of up to 34 classes per character.  In addition,
+with the various Class Items equipped, you can unlock a further 12 classes
+(3 Class Items each with 4 levels).  This leads to a total of 110 different
+classes, since certain characters share classes with others.
+
+  Becoming a new class adjusts your stats quite radically, as we shall see in
+the tables below.  However, before moving on, it is vital that a few concepts
+are explained.
+
+  First, each character has a hidden set of 'base stats'.  These stats are
+what are adjusted each time you gain a level or use a stat-enhancing item.
+These base stats are then further adjusted by the class you're at and the
+Djinni you have equipped.
+
+  The stat you actually see is worked out in the following manner:
+   (Base Stat + Djinni Bonuses + Equip Bonus) * Class Bonus
+
+  Your Base Stats can only be changed in the two ways already listed:
+levelling up and using stat up items.  Your current class will *NOT* affect
+how you level up.  We will look at how levelling up will affect your Base
+Stats in the next section.
+
+  The Djinni Bonuses are hardcoded and are the same for everyone, but they
+differ on the exact Djinni.  Because of this, it is often worth experimenting
+with which exact Djinni of the same element you should set on a character;
+Mist, for example, is ill-suited for a spellcasting character when compared
+to Fizz.
+
+  The Class Bonus is multiplied to all the other Bonuses applied to your
+Base Stat, and this includes the Djinni Bonus, so you are unlikely to see the
+exact bonuses shown below each time.  A Class with a 150% HP Bonus will see
+more benefit to HP from a Djinni than one with only a 100% HP Bonus.  The
+same follows with stat-enhancing items; since they affect the base stat only,
+characters with high Class Bonuses will see a better effect.
+
+  You may have also noticed that the Details section of weapons and armor
+doesn't seem to match the actual bonuses you receive.  This is, again, due to
+the Class Bonus.  Because of this, you will note that it is vital in the
+later stages of the game to pick the correct class, depending on your playing
+style.
+
+  With these basics out of the way, it's time for some actual data.  Let's
+continue.
+  
+
+
+==============================
+== BASE STATS AND LEVEL UPS ==
+==============================
+  At the start of Lost Age, your characters are given the following base
+stats:
+
+                    HP    PP    Att    Def    Agi    Lck
+  Isaac             30    20     13      6      8      3
+  Garet             33    18     11      8      6      2
+  Ivan              28    24      8      4     11      4
+  Mia               29    23      9      5      7      5
+
+  Felix             32    19     13      6      7      2
+  Jenna             29    21     10      5      8      4
+  Sheba             28    24      8      4     10      5
+  Piers             30    19     11      7      6      3
+
+
+  These are the characters' Level 0 stats.  The very base they start from.
+
+  As soon as you hit New Game, they are then levelled up to the following
+levels:
+
+                Isaac:  L28                Felix:  L 5
+                Garet:  L28                Jenna:  L 5
+                Ivan:   L28                Sheba:  L 5
+                Mia:    L28                Piers:  L18
+
+
+  The way characters' level up bears looking at at this point.  It is done
+via a Goal system; each character has a stat value at specified goal levels
+that gives them a rough path to follow.
+
+  However, there is a slight random variation to it.  Let us go through an
+example.
+
+  An L0 Isaac's last goal was his base, which was 30 HP.  His next goal
+target is at L19 is 182.  That's a difference of 152 HP.  This 152 is the
+magic number.
+
+  The game divides this difference over 20 levels (it doesn't matter that
+you only get 19 levels between L0 and L19, it's still divided by 20).  So,
+152 divided by 20 gives us 7.6 per level.
+
+  This is where the random variance comes in.  The fractional part of the
+division we did just a second ago is your percentage chance that you will
+actually round up instead of down.  You have a 60% chance of getting 8 during
+a level up during that period between L0 and L19.  It follows, of course,
+that you have a 40% chance of getting a 7 instead.
+
+  This goes for all the characters with all the stats.  You always have a
+percentage chance of either rounding up, or rounding down.
+
+  One slight technicality that should be mentioned is that although I said
+a percentage chance, this is actually a chance out of 256.  So it isn't
+*exactly* 60%.  Because of this, the chances are often slightly skewed one
+way or another.
+
+  Let's summarise through some formulas:
+
+    Let x = Last Goal
+    Let y = Next Goal
+
+    Difference            = d = (y - x)
+    Base Growth per Level = b = [d / 20]
+    Chance of gaining
+      additional +1       = c = (d - 20b) * 256 / 20, rounded to
+      out of 256                                         nearest integer
+
+
+  So, looking at our last example:
+
+    x =  30
+    y = 182
+
+    d = (182 - 30)
+      = 152
+    b = [152 / 20]
+      = [7.6]
+      = 7
+    c = ((152 - 20*7) * 256 / 20)
+      = (12 * 256 / 20)
+      = 153.6
+      = 154 after rounding to nearest integer
+
+  Thus, we discover there is exactly a 154/256 chance of getting a 8 rather
+than a 7 when Isaac levels up between L0-L19.
+
+
+  We shall now move on to the important data.  The first set of tables will
+show the goal points for *each* stat for all characters.  This could be said
+to be the *average* stat that character should have at that level.  (Note,
+however, that because the first section only covers levelling up to levels
+1-19, that the true average will be the goal value minus the average level
+up value from L0-19)
+
+  The second set of tables will be more focused on the actual levelling up,
+informing you of the minimum stat up and chance to hit the maximum for each
+stat for each character.
+
+  Luck will be absent from both the first and second tables, since the L0
+value was given above and it stays the same through all level ups.
+
+  The third and final set of tables will simply give the full range and
+average stat each character will have at the start of Lost Age.
+
+  Let's begin.
+
+
+GOAL VALUES
+===========
+
+ __HP________L__0_______L_19_______L_39_______L_59_______L_79_______L_99___
+ Isaac         30        182        334        486        638        790
+ Garet         33        191        351        510        670        830
+ Ivan          28        166        304        442        581        719
+ Mia___________29________173________317________462________606________751___
+ Felix         32        187        342        498        654        810
+ Jenna         29        177        326        474        622        770
+ Sheba         28        169        311        452        593        735
+ Piers         30        184        337        491        644        798
+ ==========================================================================
+
+
+ __PP________L__0_______L_19_______L_39_______L_59_______L_79_______L_99___
+ Isaac         20         80        130        170        210        250
+ Garet         18         76        124        162        200        238
+ Ivan          24         92        150        196        242        288
+ Mia___________23_________90________146________190________235________280___
+ Felix         19         78        127        166        205        244
+ Jenna         21         85        138        180        223        265
+ Sheba         24         91        148        193        238        284
+ Piers         19         79        129        168        208        248
+ ==========================================================================
+
+
+ _Att________L__0_______L_19_______L_39_______L_59_______L_79_______L_99___
+ Isaac         13         86        162        237        313        388
+ Garet         11         83        156        228        301        373
+ Ivan           8         76        144        211        277        344
+ Mia____________9_________79________150________220________289________359___
+ Felix         13         87        164        240        316        392
+ Jenna         10         81        153        224        295        366
+ Sheba          8         78        147        215        283        351
+ Piers         11         82        155        226        298        370
+ ==========================================================================
+
+
+ _Def________L__0_______L_19_______L_39_______L_59_______L_79_______L_99___
+ Isaac          6         38         69        102        134        166
+ Garet          8         41         75        110        144        179
+ Ivan           4         35         65         95        124        155
+ Mia____________5_________37_________68________100________131________163___
+ Felix          6         38         70        103        135        168
+ Jenna          5         37         69        101        132        165
+ Sheba          4         36         66         98        128        159
+ Piers          7         39         72        106        139        173
+ ==========================================================================
+
+
+ _Agi________L__0_______L_19_______L_39_______L_59_______L_79_______L_99___
+ Isaac          8         86        163        241        318        396
+ Garet          6         76        144        212        281        349
+ Ivan          11         91        173        255        337        419
+ Mia____________7_________80________152________224________296________369___
+ Felix          7         83        158        232        307        382
+ Jenna          8         85        162        238        315        392
+ Sheba         10         88        168        248        328        407
+ Piers          6         78        148        218        289        359
+ ==========================================================================
+
+
+
+LEVEL UP TABLES
+===============
+  Under each column, the leftmost number is the base growth (b), and the
+rightmost number is the chance out of 256 (c) of getting 'b+1' in this level
+range.  A row of dashes ('---') means that the chance of getting a higher
+value than the base growth is 0.
+
+
+ __HP___________L  0-19_____L 20-39_____L 40-59_____L 60-79_____L 80-99____
+ Isaac           7 (154)     7 (154)     7 (154)     7 (154)     7 (154)
+ Garet           7 (230)     8  ---      7 (243)     8  ---      8  --- 
+ Ivan            6 (230)     6 (230)     6 (230)     6 (243)     6 (230)
+ Mia_____________7_( 51)_____7_( 51)_____7_( 64)_____7_( 51)_____7_( 64)___
+ Felix           7 (192)     7 (192)     7 (205)     7 (205)     7 (205)
+ Jenna           7 (102)     7 (115)     7 (102)     7 (102)     7 (102)
+ Sheba           7 ( 13)     7 ( 26)     7 ( 13)     7 ( 13)     7 ( 26)
+ Piers           7 (179)     7 (166)     7 (179)     7 (166)     7 (179)
+ ==========================================================================
+
+
+ __PP___________L  0-19_____L 20-39_____L 40-59_____L 60-79_____L 80-99____
+ Isaac           3  ---      2 (128)     2  ---      2  ---      2  --- 
+ Garet           2 (230)     2 (102)     1 (230)     1 (230)     1 (230)
+ Ivan            3 (102)     2 (230)     2 ( 77)     2 ( 77)     2 ( 77)
+ Mia_____________3_( 90)_____2_(205)_____2_( 51)_____2_( 64)_____2_( 64)___
+ Felix           2 (243)     2 (115)     1 (243)     1 (243)     1 (243)
+ Jenna           3 ( 51)     2 (166)     2 ( 26)     2 ( 38)     2 ( 26)
+ Sheba           3 ( 90)     2 (218)     2 ( 64)     2 ( 64)     2 ( 77)
+ Piers           3  ---      2 (128)     1 (243)     2  ---      2  --- 
+ ==========================================================================
+
+
+ _Att___________L  0-19_____L 20-39_____L 40-59_____L 60-79_____L 80-99____
+ Isaac           3 (166)     3 (205)     3 (192)     3 (205)     3 (192)
+ Garet           3 (154)     3 (166)     3 (154)     3 (166)     3 (154)
+ Ivan            3 (102)     3 (102)     3 ( 90)     3 ( 77)     3 ( 90)
+ Mia_____________3_(128)_____3_(141)_____3_(128)_____3_(115)_____3_(128)___
+ Felix           3 (179)     3 (218)     3 (205)     3 (205)     3 (205)
+ Jenna           3 (141)     3 (154)     3 (141)     3 (141)     3 (141)
+ Sheba           3 (128)     3 (115)     3 (102)     3 (102)     3 (102)
+ Piers           3 (141)     3 (166)     3 (141)     3 (154)     3 (154)
+ ==========================================================================
+
+
+ _Def___________L  0-19_____L 20-39_____L 40-59_____L 60-79_____L 80-99____
+ Isaac           1 (154)     1 (141)     1 (166)     1 (154)     1 (154)
+ Garet           1 (166)     1 (179)     1 (192)     1 (179)     1 (192)
+ Ivan            1 (141)     1 (128)     1 (128)     1 (115)     1 (141)
+ Mia_____________1_(154)_____1_(141)_____1_(154)_____1_(141)_____1_(154)___
+ Felix           1 (154)     1 (154)     1 (166)     1 (154)     1 (166)
+ Jenna           1 (154)     1 (154)     1 (154)     1 (141)     1 (166)
+ Sheba           1 (154)     1 (128)     1 (154)     1 (128)     1 (141)
+ Piers           1 (154)     1 (166)     1 (179)     1 (166)     1 (179)
+ ==========================================================================
+
+
+ _Agi___________L  0-19_____L 20-39_____L 40-59_____L 60-79_____L 80-99____
+ Isaac           3 (230)     3 (218)     3 (230)     3 (218)     3 (230)
+ Garet           3 (128)     3 (102)     3 (102)     3 (115)     3 (102)
+ Ivan            4  ---      4 ( 26)     4 ( 26)     4 ( 26)     4 ( 26)
+ Mia_____________3_(166)_____3_(154)_____3_(154)_____3_(154)_____3_(166)___
+ Felix           3 (205)     3 (192)     3 (179)     3 (192)     3 (192)
+ Jenna           3 (218)     3 (218)     3 (205)     3 (218)     3 (218)
+ Sheba           3 (230)     4  ---      4  ---      4  ---      3 (243)
+ Piers           3 (154)     3 (128)     3 (128)     3 (141)     3 (128)
+ ==========================================================================
+
+
+
+LOST AGE STARTING STATS
+=======================
+
+          Start          HP               PP
+ _Name____Level_____Min_Max__Avg_____Min_Max__Avg________Luck______________
+ Isaac      28      226-254 (243)     95-104 (100)         3       
+ Garet      28      238-257 (255)     74-102 ( 95)         2
+ Ivan       28      196-224 (221)     99-127 (115)         4
+ Mia________28______225-253_(231)_____98-126_(112)_________5_______________
+ Felix       5       67- 72 ( 71)     29- 34 ( 34)         2
+ Jenna       5       64- 69 ( 66)     36- 41 ( 37)         4
+ Sheba       5       63- 68 ( 63)     39- 44 ( 41)         5
+ Piers      18      156-174 (169)     73- 73 ( 73)         3
+ ==========================================================================
+
+
+          Start        Attack          Defense          Agility
+ _Name____Level_____Min_Max__Avg_____Min_Max__Avg_____Min_Max__Avg_________
+ Isaac      28       97-125 (117)     34- 62 ( 50)     92-120 (117)
+ Garet      28       95-123 (112)     36- 64 ( 55)     90-118 (103)
+ Ivan       28       92-120 (103)     32- 60 ( 47)    123-132 (124)
+ Mia________28_______93-121_(107)____ 33- 61_( 49)_____91-119_(109)________
+ Felix       5       28- 33 ( 31)     11- 16 ( 14)     22- 27 ( 26)
+ Jenna       5       25- 30 ( 28)     10- 15 ( 13)     23- 28 ( 27)
+ Sheba       5       23- 28 ( 26)      9- 14 ( 12)     25- 30 ( 29)
+ Piers      18       65- 83 ( 75)     25- 43 ( 36)     60- 78 ( 71)
+ ==========================================================================
+
+
+
+  If you have transferred data from the original Golden Sun, then Isaac,
+Garet, Ivan and Mia will have stats reflecting exactly what you transferred
+over.  However, if you used a Bronze Password, note that Isaac's party will
+only have their *levels* updated.  Their stats will instead be within the
+ranges defined above.  This can have advantages or disadvantages, depending
+on what level your party was when you transferred.
+
+
+
+====================
+== DJINNI BONUSES ==
+====================
+  This section lists the slight bonuses each individual Djinni gives when
+set.  Again, Class Bonuses are by far the easiest way to upgrade stats, but
+with a full set of 9 Djinn on a character, these small bonuses can add up
+pretty nicely.
+
+  For each element, I have listed the Djinn in the order they are placed in
+the game: the original 7 first, followed by the new 11 in The Lost Age.
+
+  The following abbreviations are used both here and
+throughout this document:
+   HP: Hit Points
+   PP: Psynergy Points
+  Att: Attack
+  Def: Defense
+  Agi: Agility
+  Lck: Luck
+
+
+
+EARTH        HP  PP Att Def Agi Lck
+ Flint        8   4   3  --  --  --
+ Granite      9  --  --   2   2   1
+ Quartz      10   3  --  --   3  --
+ Vine        12   4  --   3  --   1
+ Sap         10  --   3  --  --   1
+ Ground       9   3  --  --   3  --
+ Bane        12  --   4  --  --  --
+
+ Echo         9   4   3  --  --  --
+ Iron        11  --  --   2   3  --
+ Steel        9  --   4   2  --   1
+ Mud         10   4  --  --   3  --
+ Flower      12   4  --  --  --  --
+ Meld         9  --  --  --   4   1
+ Petra       11  --  --   3  --  --
+ Salt         9   5  --  --  --   1
+ Geode       12  --   6  --  --  --
+ Mold         8  --   4  --   2   1
+ Crystal     10   5  --   2  --  --
+
+
+WATER        HP  PP Att Def Agi Lck
+ Fizz         9   4  --   3  --  --
+ Sleet       12  --   3  --  --   1
+ Mist        11  --   4  --  --  --
+ Spritz       8   4  --  --   3  --
+ Hail         9  --   4  --  --   1
+ Tonic        8   3  --   2  --   2
+ Dew         13   4  --  --   4  --
+
+ Fog          9  --  --   2   2   1
+ Sour         8   4   3  --  --  --
+ Spring      11   5  --  --  --  --
+ Shade        9  --  --   3  --   2
+ Chill       10   3  --   2  --  --
+ Steam       10  --   5  --  --  --
+ Rime        10   6  --  --  --  --
+ Gel          9  --   5  --   2  --
+ Eddy         9  --  --  --   3   2
+ Balm        13   4  --  --  --  --
+ Serac       12  --   3  --  --  --
+
+
+FIRE         HP  PP Att Def Agi Lck
+ Forge       10  --   2  --   2   2
+ Fever        8  --   3  --   2  --
+ Corona      12   3  --   3  --   1
+ Scorch       8  --   3  --  --  --
+ Ember        9   4  --   2   2  --
+ Flash       14   3  --   2  --  --
+ Torch        9  --   3  --  --   1
+
+ Cannon      10  --   3  --  --  --
+ Spark       11   6  --  --  --  --
+ Kindle       8  --   5  --  --   1
+ Char         9  --   2  --   2   1
+ Coal        11   3  --  --   3  --
+ Reflux       9  --  --   3  --   2
+ Core         8  --   4   2  --  --
+ Tinder      12   5  --  --  --  --
+ Shine        9  --   3   3   2  --
+ Fury        12   4  --  --  --  --
+ Fugue       11   4  --   2  --  --
+
+
+WIND         HP  PP Att Def Agi Lck
+ Gust         9  --   2  --   2  --
+ Breeze      12   5  --   2  --   1
+ Zephyr      11   3  --  --   2   1
+ Smog         9  --   3  --  --  --
+ Kite         8   4  --  --   3  --
+ Squall      10  --   5  --  --  --
+ Luff        11   5  --   2  --   1
+
+ Breath       9  --  --   3   4  --
+ Blitz       10   4   3  --  --  --
+ Ether        8   4  --  --   3   2
+ Waft        11  --   4  --  --  --
+ Haze        10  --  --   2   3   2
+ Wheeze       9   3   5  --  --  --
+ Aroma       11  --  --  --   3   2
+ Whorl        9  --   4   2  --  --
+ Gasp        12   5  --  --  --  --
+ Lull        11   6  --  --  --  --
+ Gale        10  --  --  --   5   3
+
+
+
+======================
+== ELEMENTAL LEVELS ==
+======================
+  Setting Djinn on a character not only allows you to unleash their unique
+effect in battle: it also changes your Elemental Levels.
+
+  Elemental Levels are a simple numerical representation of how aligned to a
+particular element a character is.  Each level in a particular element grants
+you an extra +5 Power and +5 Resist to that element.  In addition, elemental
+levels are *required* to use the different classes in the game.
+
+  All the characters start off with 5 levels in a particular element, and 0
+levels in all others.  The characters and their respective elements are:
+
+    Name     Element
+     Felix    Earth
+     Piers    Water
+     Jenna    Fire
+     Sheba    Wind
+
+     Isaac    Earth
+     Mia      Water
+     Garet    Fire
+     Ivan     Wind
+
+
+  The above table illustrates each character's *Primary* element, which will
+become important when we look at classes later.
+
+  In addition to having starting elemental levels, each character has the
+following base Power and Resist for each element, depending on their own
+primary element.  (Note that this does *not* include the +25 to Power and
+Resist the character gets for the element they have L5 in.)
+
+                 Earth        Water          Fire          Wind
+   Primary   Power Resist  Power Resist  Power Resist  Power Resist
+    Earth      79    89      78    88      76    86      77    87
+    Water      78    88      79    89      77    87      76    86
+    Fire       76    86      77    87      79    89      78    88
+    Wind       77    87      76    86      78    88      79    89
+
+
+
+============================
+== CLASS BONUSES AND REQS ==
+============================
+  A departure from my previous document.  To start with, I'm going to work
+to be slightly more accurate to the way the Lost Age actually works out
+classes.  This will have a major impact on the Class Requirements, but do
+not fear; I shall also have a clearer list regarding Djinni requirements
+afterwards.  You will see what I mean shortly.
+
+  All Class Bonuses are portrayed as a percentage.  100% means that there is
+no change to the Base Stats.  150% would indicate a multiplier of 1.5.
+Higher bonuses are thus highly desirable.  Keep in mind though that there are
+two parts to each class; the bonuses they grant, and the abilities they give.
+Sometimes, the abilities of one class can outweigh the bonuses of another
+class.
+
+  The Class Requirements are listed to the right of the Bonus Stats of each
+class in the following tables.  All classes require a minimum *Element Level*
+in one or more elements.  Each character has a basic Element Level of 5 in
+their primary element.  You gain an additional Element Level for each Djinni
+you equip of that element.
+
+  Furthermore, to achieve a class listed in any of the tables, an additional
+requirement is needed.  This requirement is usually Dominance: a measure of
+which element the character is currently best at.  We will discuss Dominance
+after the tables.
+
+  Finally, certain classes of the same name are in fact different classes.
+The following labels will be used to differentiate them:
+
+  (F): Fire Aligned
+  (E): Earth Aligned
+  (W): Water Aligned
+  (A): Wind(Air) Aligned
+  (D): Medium Upgrade Class Only
+  (I): Item Class Only
+
+
+
+  With those explanations out of the way, here are the actual stats.
+
+ ===================================================================
+ ==                      BASIC ELEMENT CLASSES                    ==
+ ===================================================================
+                   HP   PP  Att  Def  Agi  Lck      Eth Wtr Fre Wnd
+ -------------------------------------------------------------------
+  Squire          110%  80% 110% 100% 110% 100%       5   -   -   -
+  Knight          130%  90% 120% 110% 120% 100%       7   -   -   -
+  Gallant         150% 100% 130% 120% 130% 100%       9   -   -   -
+  Lord            170% 110% 140% 130% 140% 100%      11   -   -   -
+  Slayer          190% 120% 150% 140% 150% 100%      13   -   -   -
+ -------------------------------------------------------------------
+  Water Seer       90% 130%  90% 100%  80% 130%       -   5   -   -
+  Scribe          100% 140% 100% 110%  90% 130%       -   7   -   -
+  Cleric          120% 150% 110% 120% 100% 130%       -   9   -   -
+  Paragon         140% 160% 120% 130% 110% 130%       -  11   -   -
+  Angel           160% 170% 130% 140% 120% 130%       -  13   -   -
+ -------------------------------------------------------------------
+  Guard           110%  80% 100% 110%  70% 100%       -   -   5   -
+  Soldier         130%  90% 110% 120%  80% 100%       -   -   7   -
+  Warrior         150% 100% 120% 130%  90% 100%       -   -   9   -
+  Champion        170% 110% 130% 140% 100% 100%       -   -  11   -
+  Hero            190% 120% 140% 150% 110% 100%       -   -  13   -
+ -------------------------------------------------------------------
+  Wind Seer        80% 140%  80%  90% 130% 110%       -   -   -   5
+  Magician         90% 150%  90% 100% 140% 110%       -   -   -   7
+  Mage            110% 160% 100% 110% 150% 110%       -   -   -   9
+  Magister        130% 170% 110% 120% 160% 110%       -   -   -  11
+  Sorcerer        150% 180% 120% 130% 170% 110%       -   -   -  13
+ ===================================================================
+
+
+ ===================================================================
+ ==                      LOST AGE NEW CLASSES                     ==
+ ===================================================================
+                   HP   PP  Att  Def  Agi  Lck      Eth Wtr Fre Wnd
+ -------------------------------------------------------------------
+  Mariner         110%  90% 100% 100%  90% 120%       -   5   -   -
+  Privateer       130% 100% 110% 110% 100% 120%       -   7   -   -
+  Commander       150% 110% 120% 120% 110% 120%       -   9   -   -
+  Captain         170% 120% 130% 130% 120% 120%       -  11   -   -
+  Admiral         190% 130% 140% 140% 130% 120%       -  13   -   -
+ -------------------------------------------------------------------
+  Flame User      100% 120% 100% 100% 120%  90%       -   -   5   -
+  Witch           110% 130% 110% 110% 130%  90%       -   -   7   -
+  Hex             130% 140% 120% 120% 140%  90%       -   -   9   -
+  Fire Master     150% 150% 130% 130% 150%  90%       -   -  11   -
+  Justice         170% 160% 140% 140% 160%  90%       -   -  13   -
+ ===================================================================
+
+
+ ===================================================================
+ ==                     WATER ALIGNED CLASSES                     ==
+ ===================================================================
+                   HP   PP  Att  Def  Agi  Lck      Eth Wtr Fre Wnd
+ -------------------------------------------------------------------
+  Swordsman (E)   100%  90% 110% 110%  90% 120%       5   0   -   -
+  Defender (E)    120% 100% 120% 120% 100% 120%       5   2   -   -
+  Cavalier (E)    140% 110% 130% 130% 110% 120%       5   4   -   -
+  Guardian        170% 130% 140% 140% 130% 120%       6   6   -   -
+  Protector       190% 140% 150% 150% 140% 120%       7   7   -   -
+ -------------------------------------------------------------------
+  Swordsman (F)   100%  90% 110% 110%  90% 120%       -   0   5   -
+  Defender (F)    120% 100% 120% 120% 100% 120%       -   2   5   -
+  Cavalier (F)    140% 110% 130% 130% 110% 120%       -   4   5   -
+  Luminier        170% 130% 140% 140% 130% 120%       -   6   6   -
+  Radiant         190% 140% 150% 150% 140% 120%       -   7   7   -
+ -------------------------------------------------------------------
+  Dragoon         160% 130% 140% 140% 110% 130%       3   3   3   -
+  Templar         180% 140% 150% 150% 120% 130%       4   4   4   -
+  Paladin         200% 150% 160% 160% 130% 130%       4   5   4   -
+ ===================================================================
+
+
+ ===================================================================
+ ==                      WIND ALIGNED CLASSES                     ==
+ ===================================================================
+                   HP   PP  Att  Def  Agi  Lck      Eth Wtr Fre Wnd
+ -------------------------------------------------------------------
+  Apprentice      100% 120% 110% 100% 120%  90%       5   -   -   0
+  Illusionist (E) 120% 130% 120% 110% 130%  90%       5   -   -   2
+  Enchanter (E)   140% 140% 130% 120% 140%  90%       5   -   -   4
+  Conjurer (E)    170% 160% 140% 130% 160%  90%       6   -   -   6
+  War Adept (E)   190% 170% 150% 140% 170%  90%       7   -   -   7
+ -------------------------------------------------------------------
+  Page            100% 120% 110% 100% 120%  90%       -   -   5   0
+  Illusionist (F) 120% 130% 120% 110% 130%  90%       -   -   5   2
+  Enchanter (F)   140% 140% 130% 120% 140%  90%       -   -   5   4
+  Conjurer (F)    170% 160% 140% 130% 160%  90%       -   -   6   6
+  War Adept (F)   190% 170% 150% 140% 170%  90%       -   -   7   7
+ -------------------------------------------------------------------
+  Ninja           160% 140% 150% 120% 170%  80%       3   -   3   3
+  Disciple        180% 150% 160% 130% 180%  80%       4   -   4   4
+  Master          200% 160% 170% 140% 190%  80%       4   -   4   5
+ ===================================================================
+
+
+ ===================================================================
+ ==                     EARTH ALIGNED CLASSES                     ==
+ ===================================================================
+                   HP   PP  Att  Def  Agi  Lck      Eth Wtr Fre Wnd
+ -------------------------------------------------------------------
+  Seer (W)         90% 130%  90%  90% 110% 100%       0   5   -   -
+  Diviner (W)     110% 140% 100% 100% 120% 100%       2   5   -   -
+  Shaman (W)      120% 150% 110% 110% 130% 100%       4   5   -   -
+  Druid (W)       150% 170% 130% 130% 150% 100%       6   6   -   -
+  Oracle (W)      170% 180% 140% 140% 160% 100%       7   7   -   -
+ -------------------------------------------------------------------
+  Seer (A)         90% 130%  90%  90% 110% 100%       0   -   -   5
+  Diviner (A)     110% 140% 100% 100% 120% 100%       2   -   -   5
+  Shaman (A)      120% 150% 110% 110% 130% 100%       4   -   -   5
+  Druid (A)       150% 170% 130% 130% 150% 100%       6   -   -   6
+  Oracle (A)      170% 180% 140% 140% 160% 100%       7   -   -   7
+ -------------------------------------------------------------------
+  Medium          130% 170% 120% 120% 150%  90%       3   3   -   3
+  Conjurer (D)    150% 180% 130% 130% 160%  90%       4   4   -   4
+  Dark Mage (D)   170% 190% 140% 140% 170%  90%       5   4   -   4
+ ===================================================================
+
+
+ ===================================================================
+ ==                      FIRE ALIGNED CLASSES                     ==
+ ===================================================================
+                   HP   PP  Att  Def  Agi  Lck      Eth Wtr Fre Wnd
+ -------------------------------------------------------------------
+  Pilgrim (W)      90% 120%  90% 100% 120% 120%       -   5   0   -
+  Wanderer (W)    110% 130% 100% 110% 130% 120%       -   5   2   -
+  Ascetic (W)     120% 140% 110% 120% 140% 120%       -   5   4   -
+  Water Monk      150% 160% 130% 140% 160% 120%       -   6   6   -
+  Guru (W)        170% 170% 140% 150% 170% 120%       -   7   7   -
+ -------------------------------------------------------------------
+  Pilgrim (A)      90% 120%  90% 100% 120% 120%       -   -   0   5
+  Wanderer (A)    110% 130% 100% 110% 130% 120%       -   -   2   5
+  Ascetic (A)     120% 140% 110% 120% 140% 120%       -   -   4   5
+  Fire Monk       150% 160% 130% 140% 160% 120%       -   -   6   6
+  Guru (A)        170% 170% 140% 150% 170% 120%       -   -   7   7
+ -------------------------------------------------------------------
+  Ranger          130% 160% 120% 120% 160% 120%       -   3   3   3
+  Bard            150% 170% 130% 130% 170% 120%       -   4   4   4
+  Warlock         170% 180% 140% 140% 180% 120%       -   4   5   4
+ ===================================================================
+
+
+ ===================================================================
+ ==                   EARTH/FIRE ALIGNED CLASSES                  ==
+ ===================================================================
+                   HP   PP  Att  Def  Agi  Lck      Eth Wtr Fre Wnd
+ -------------------------------------------------------------------
+  Brute           100%  70% 120%  90% 110%  70%       1   -   1   -
+  Ruffian         120%  80% 130% 100% 120%  70%       2   -   2   -
+  Savage          140%  90% 140% 110% 130%  70%       4   -   4   -
+  Barbarian       160% 100% 150% 120% 140%  70%       5   -   5   -
+  Berserker       180% 110% 160% 130% 150%  70%       6   -   6   -
+  Chaos Lord      200% 120% 170% 140% 160%  70%       7   -   7   -
+ -------------------------------------------------------------------
+  Samurai         190% 130% 150% 140% 140%  90%       4   -   4   3
+  Ronin           210% 140% 160% 150% 150%  90%       5   -   5   4
+ ===================================================================
+
+
+ ===================================================================
+ ==                   WATER/WIND ALIGNED CLASSES                  ==
+ ===================================================================
+                   HP   PP  Att  Def  Agi  Lck      Eth Wtr Fre Wnd
+ -------------------------------------------------------------------
+  Hermit           80% 140%  80%  90% 130% 120%       -   1   -   1
+  Elder            90% 150%  90% 100% 140% 120%       -   2   -   2
+  Scholar         110% 160% 100% 110% 150% 120%       -   4   -   4
+  Savant          130% 170% 110% 120% 160% 120%       -   5   -   5
+  Sage            150% 180% 120% 130% 170% 120%       -   6   -   6
+  Wizard          170% 190% 130% 140% 180% 120%       -   7   -   7
+ -------------------------------------------------------------------
+  White Mage      150% 180% 130% 130% 150% 130%       3   4   -   4
+  Pure Mage       170% 190% 140% 140% 160% 130%       4   5   -   5
+ ===================================================================
+
+
+ ===================================================================
+ ==                      ITEM REQUIRED CLASSES                    ==
+ ===================================================================
+                   HP   PP  Att  Def  Agi  Lck      Eth Wtr Fre Wnd
+ -------------------------------------------------------------------
+  Pierrot         100%  80% 100% 110% 130% 120%       0   0   0   0
+  Harlequin       130% 100% 110% 120% 140% 120%       1   1   1   1
+  Punchinello     160% 110% 130% 130% 150% 120%       2   2   2   2
+  Acrobat         190% 120% 140% 140% 160% 120%       3   3   3   3
+ -------------------------------------------------------------------
+  Tamer           100%  70% 110% 120%  90%  80%       0   0   0   0
+  Trainer         130%  90% 120% 130% 100%  80%       1   1   1   1
+  Beastkeeper     160% 100% 140% 140% 110%  80%       2   2   2   2
+  Beast Lord      190% 110% 150% 150% 120%  80%       3   3   3   3
+ -------------------------------------------------------------------
+  Dark Mage (I)    80% 140%  80%  90% 140%  90%       0   0   0   0
+  Crypt Lord      100% 160% 100% 110% 150%  90%       1   1   1   1
+  Necrolyte       130% 170% 120% 120% 160%  90%       2   2   2   2
+  Necromage       160% 190% 130% 130% 170%  90%       3   3   3   3
+ ===================================================================
+
+
+  Now for Dominance.  First, we define each elements relationship with the
+others.  Please keep in mind though, that these are story-based
+relationships; they don't really have that much to do with actual damage,
+which we will be covering later:
+
+                 Primary   Neutral   Weakness  Affinity
+                  Earth     Water      Wind      Fire
+                  Water     Earth      Fire      Wind
+                   Fire      Wind     Water     Earth
+                   Wind      Fire     Earth     Water
+
+  Dominance is defined in the following order:
+     Primary dominates Neutral dominates Weakness dominates Affinity
+
+  You may notice that this is the same order your default Power and Resist
+stats are in (Primary: 79/89, Neutral: 78/88, Weakness: 77/87,
+Affinity: 76/86).
+
+  The above order means that if you have equal elemental level in two or more
+elements, whichever is most dominant is what you're 'aligned' with.  At any
+time, you will have two dominant elements: First Dominant and Second
+Dominant.  The element in which you have the highest Elemental Level is your
+First Dominant, and your second highest is your Second Dominant.  Ties are,
+of course, worked out by the above Dominance order.
+
+  With the above in mind, the tables that have been listed are used as such:
+
+ 1. If you have only Primary Djinn set, you will receive a class from the
+      Basic Element Classes.
+  a. Jenna and Piers are exceptions, and instead receive their class from the
+       Lost Age New Classes table.
+ 2. If the above doesn't hold (you have at least one non-Primary Djinni set)
+      then we check if your Affinity Element is either your First or Second
+      Dominant.  If it is, you will receive a class from the Earth/Fire Table
+      or the Wind/Water Table, depending on which group your Affinity is
+      from.
+ 3. Otherwise, we pick from the table aligned with your Secondary Dominant.
+      It is impossible for any character to be able to select a class from
+      the table aligned solely with their Affinity Element, as seen by the
+      rules above.
+    (Example: Felix with Wind as First Dominant and Earth as Second Dominant
+      would pick from the Earth Aligned Table)    
+
+  There is one final exception: if you have an Class Item equipped, then
+you will be forced into the relevant class from the Class Item Table.
+Mysterious Card pushes you into the Pierrot group, Trainer's Whip into the
+Tamer group, and Tomegathericon into the Dark Mage (I) group.
+
+  To summarise:
+    1. You will get an Item Required class if you have the relevant Class
+         Item equipped.
+    2. You will get a Basic Element class if you have only Primary Djinn set.
+    3. You will get a Primary/Affinity class if your Affinity is your First
+         or Second Dominant.
+    4. You will get a Second Dominant aligned class if all of the above is
+         false.
+
+
+  Once a table has been chosen, you will be assigned the one nearest the
+bottom of the table whose Elemental Level requirements you meet.  The lower
+it is listed in the table, the higher these requirements are, obviously.
+
+
+
+         ----------------------------------------------------------         
+
+
+
+  While that clears up the different class paths available in the game, it
+is not so clear when it comes to how many Djinn you should equip to any one
+character.  Fortunately, because of the way the requirements work, all
+characters can change into only 46 of the 110 classes available, and the
+formation of this can be defined via the following:
+
+
+  Using the Relationship table defined within the Dominance section, we can
+list each Class in the game with regards to what the character's primary
+element is, and how many of each type of Djinni they have equipped.
+
+  Thus, depending on how many of the above Djinni types a character has
+equipped, they will earn the following classes:
+
+  Prm Aff Wek Neu
+ (Ert/Fre/Wnd/Wtr)...Earth
+ (Wnd/Wtr/Ert/Fre)..........................Wind
+ =================================================================
+  0-1 --- --- ---     Squire                 Wind Seer
+  2-3 --- --- ---     Knight                 Magician
+  4-5 --- --- ---     Gallant                Mage
+  6-7 --- --- ---     Lord                   Magister
+  8-9 --- --- ---     Slayer                 Sorcerer
+ =================================================================
+  0-8  1  --- ---     Brute                  Hermit
+  0-7  2  0-1 0-1     Ruffian                Elder
+  0-6  3  0-2 0-2       ""                    "" 
+  0-5  4  0-2 0-3     Savage                 Scholar
+  0-4  5  0-2 0-4     Barbarian              Savant 
+  --- 6-9 0-2 0-3        ""                   ""
+  1-3 6,8 0-2 0-2     Berserker              Sage
+   1   7  0-1 0-1        ""                   ""
+   2   7  --- ---     Chaos Lord             Wizard
+ =================================================================
+  0-8 0-1  1  ---     Apprentice             Seer (A)
+  0-7 0-2  2  0-1     Illusionist (E)        Diviner (A)
+  0-6 0-2  3  0-2         ""                   ""
+  0-5 0-2  4  0-3     Enchanter (E)          Shaman (A)
+  0-4 0-2  5  0-4         ""                   ""
+  1-3 0-2  6  0-2     Conjurer (E)           Druid (A)
+   2  ---  7  ---     War Adept (E)          Oracle (A)
+ -----------------------------------------------------------------
+  --- 0-3  6  0-2     Shaman (A)             Enchanter (E)
+   1  0-1 7-8 0-1     Druid (A)              Conjurer (E)
+ =================================================================
+  0-8 0-1 0-1  1      Swordsman (E)          Pilgrim (A)
+  0-7 0-2 0-2  2      Defender (E)           Wanderer (A)
+  0-6 0-2 0-3  3         ""                     ""
+  0-5 0-2 0-4 4-5     Cavalier (E)           Ascetic (A)
+  1-3 0-2 0-2  6      Guardian               Fire Monk
+   2  --- ---  7      Protector              Guru (A)
+ -----------------------------------------------------------------
+  --- 0-3 0-2 6-9     Shaman (W)             Enchanter (F)
+   1  0-1 0-1 7-8     Druid (W)              Conjurer (F)
+ =================================================================
+  0-3  3  0-3 3-5     Dragoon                Ranger
+  0-1  4  0-1  4      Templar                Bard
+  ---  4  ---  5      Paladin                Warlock
+ -----------------------------------------------------------------
+  0-3  3  3-5 0-2     Ninja                  Medium
+  0-1  4   4  0-1     Disciple               Conjurer (D)
+  ---  4   5  ---     Master                 Dark Mage (D)
+ -----------------------------------------------------------------
+  0-2 4-6  3  0-2     Samurai                White Mage
+  ---  5   4  ---     Ronin                  Pure Mage
+ =================================================================
+  --- ---  6   3      Medium                 Ninja
+  --- ---  3   6        ""                    ""
+ =================================================================
+
+
+  Prm Aff Wek Neu
+ (Fre/Ert/Wtr/Wnd)...Fire
+ (Wtr/Wnd/Fre/Ert)..........................Water
+ =================================================================
+  0-1 --- --- ---     Guard                  Water Seer
+  2-3 --- --- ---     Soldier                Scribe
+  4-5 --- --- ---     Warrior                Cleric
+  6-7 --- --- ---     Champion               Paragon
+  8-9 --- --- ---     Hero                   Angel
+ =================================================================
+  0-8  1  --- ---     Brute                  Hermit
+  0-7  2  0-1 0-1     Ruffian                Elder
+  0-6  3  0-2 0-2       ""                    ""
+  0-5  4  0-3 0-2     Savage                 Scholar
+  0-4  5  0-4 0-2     Barbarian              Savant
+  --- 6-9 0-3 0-2        ""                    ""
+  1-3 6,8 0-2 0-2     Berserker              Sage
+   1   7  0-1 0-1        ""                   ""
+   2   7  --- ---     Chaos Lord             Wizard
+ =================================================================
+  0-8 0-1  1  ---     Swordsman (F)          Pilgrim (W)
+  0-7 0-2  2  0-1     Defender (F)           Wanderer (W)
+  0-6 0-2  3  0-2         ""                    ""
+  0-5 0-2  4  0-3     Cavalier (F)           Ascetic (W)
+  0-4 0-2  5  0-4         ""                   ""
+  1-3 0-2  6  0-2     Luminier               Water Monk
+   2  ---  7  ---     Radiant                Guru (W)
+ -----------------------------------------------------------------
+  --- 0-3  6  0-2     Ascetic (W)            Cavalier (F)
+   1  0-1 7-8 0-1     Water Monk             Luminier
+ =================================================================
+  0-8 0-1 0-1  1      Page                   Seer (W)
+  0-7 0-2 0-2  2      Illusionist (F)        Diviner (W)
+  0-6 0-2 0-3  3         ""                    ""
+  0-5 0-2 0-4 4-5     Enchanter (F)          Shaman (W)
+  1-3 0-2 0-2  6      Conjurer (F)           Druid (W)
+   2  --- ---  7      War Adept (F)          Oracle (W)
+ -----------------------------------------------------------------
+  --- 0-3 0-2 6-9     Ascetic (A)            Cavalier (E)
+   1  0-1 0-1 7-8     Fire Monk              Guardian
+ =================================================================
+  0-3  3  0-3 3-5     Ninja                  Medium
+  0-1  4  0-1  4      Disciple               Conjurer (D)
+  ---  4  ---  5      Master                 Dark Mage (D)
+ -----------------------------------------------------------------
+  0-3  3  3-5 0-2     Dragoon                Ranger
+  0-1  4   4  0-1     Templar                Bard
+  ---  4   5  ---     Paladin                Warlock
+ -----------------------------------------------------------------
+  0-2 4-6 0-2  3      Samurai                White Mage
+  ---  5  ---  4      Ronin                  Pure Mage
+ =================================================================
+  --- ---  6   3      Ranger                 Dragoon
+  --- ---  3   6        ""                     ""
+ =================================================================
+
+
+  In addition, as noted previously, Jenna and Piers have unique
+classes that are defined as such:
+
+  Prm Aff Wek Neu    Fire                   Water
+ =================================================================
+  0-1 --- --- ---     Flame User             Mariner
+  2-3 --- --- ---     Witch                  Privateer
+  4-5 --- --- ---     Hex                    Commander
+  6-7 --- --- ---     Fire Master            Captain
+  8-9 --- --- ---     Justice                Admiral
+ =================================================================
+
+
+  Finally, each of the classes that require an item (Pierrot, Tamer and Dark
+Mage (I)) will upgrade to:
+
+   2nd Level when you have 1 each of Affinity, Weakness and Neutral Djinn
+   3rd Level when you have 2 each of Affinity, Weakness and Neutral Djinn
+   4th Level when you have 3 each of Affinity, Weakness and Neutral Djinn
+
+
+  I apologise for the format of the tables and the moderate degree of working
+out you will have to do to find out exactly what you want.  However, it was
+the only sensible way to keep this document from overflowing from size alone.
+
+
+
+=====================
+== CLASS ABILITIES == 
+=====================
+  Class abilities work largely on the concept of inheritance.  In addition to
+inheritance, what abilities you can unlock is wholly dependant on your class
+and your level.
+
+  The concept of inheritance is simple to explain.  There are several
+categories of classes, and each of these classes start from a basic class
+which slowly upgrades through more advanced versions to a 'master' version.
+As an example, Knight is an upgrade from Squire.  Thus, Knight is considered
+to inherit Squire's abilities.  Knight thus learns everything Squire does at
+the exact same level Squire does.
+
+  A special concept of inheritance, new to Lost Age, is called Upgrading.
+This takes a previous lower level version of the spell from a lower level
+class, and upgrades it to a more powerful form.  Ragnarok, for instance, is
+Upgraded to Odyssey upon attaining the Lord class.  You thus gain the
+Psynergy Odyssey, yet lose Ragnarok.
+
+  It is also possible for a class to add more abilities on top of what it
+inherets.  Gallant is a good example; it learns everything Knight does, but
+adds Revive and the Gaia series of spells.  In addition to this, the
+characters themselves sometimes have Inherent Psynergies.  These are Psynergy
+that they know and learn regardless of which class they are in.
+
+  The other concept mentioned above was the place of level in learning
+abilities.  While your class unlocks the potential to learn better abilities,
+you will be unable to see or use many of them until you reach the level
+indicated by that ability.  As an example, Gallant learns Gaia at level 7,
+Revive at level 19, Mother Gaia at level 24 and Grand Gaia at level 54.  Not
+all classes learn the same ability at the same level either: Felix will learn
+Gaia sooner if he's an Apprentice than if he's a Gallant.  (We shall ignore
+the fact that you'll probably be long past level 7 by the time you get 4
+Earth Djinn....)
+
+  Note that you only require the level to have access to the ability.  You do
+not have to gain that level in any particular class.  If you gained L54 in
+Squire, for example, then you will still know all the spells in the game; it
+is just that you can only use the spells that your current class allows.
+This is why when you change classes, it will tell you what Psynergy you will
+lose and what Psynergy you will gain.
+
+  Psynergy gained will be displayed in level order against the class in the
+group that first earns it.  Any Psynergy that upgrades will be shown as
+[Old --> New] in the list.  All classes in the same group are assumed to
+inherit all the abilities from the previous classes in the group.  (An
+example group is Squire, Knight, Gallant, Lord, Slayer.)
+
+  In any case, on to the lists.
+
+  !!NOTE!!  There are two abilities called Blast in the game, each with
+different effects.  The Blast in the Blast/Nova/Supernova series will be
+identified as Blast(Nova).
+
+
+
+INHERENT PSYNERGY
+=================
+Felix            Retreat, Move, Sand (Learned in Gaia Rock)
+Piers            Douse, Parch (Learned in Aqua Rock)
+Jenna            Blaze (Learned in Magma Rock)
+Sheba            Mind Read, Reveal (Learned in Air's Rock)
+Isaac            Retreat, Move
+Mia              ---
+Garet            Move
+Ivan             Mind Read, Reveal
+ ==========================================================================
+
+
+BASIC ELEMENT CLASSES
+=====================
+Squire           1:Cure, 2:Quake, 4:Earthquake, 6:Spire, 10:Cure Well,
+                   13:Ragnarok, 14:Quake Sphere, 20:Clay Spire,
+                   26:Potent Cure, 42:Stone Spire
+Knight            ---
+Gallant          7:Gaia, 19:Revive, 24:Mother Gaia, 54:Grand Gaia
+Lord             [Ragnarok --> Odyssey]
+Slayer            ---
+ --------------------------------------------------------------------------
+Guard            1:Flare, 4:Fire, 6:Flare Wall, 8:Volcano, 12:Heat Wave,
+                   14:Fireball, 18:Flare Storm, 22:Eruption, 36:Inferno,
+                   48:Pyroclasm
+Soldier           ---
+Warrior          3:Guard, 9:Impair, 15:Protect, 26:Debilitate
+Champion         [Heat Wave --> Liquifier]
+Hero              ---
+ --------------------------------------------------------------------------
+Wind Seer        1:Whirlwind, 4:Ray, 8:Plasma, 12:Sleep, 14:Storm Ray,
+                   17:Bind, 18:Tornado, 26:Shine Plasma, 36:Destruct Ray,
+                   44:Tempest, 50:Spark Plasma
+Magician         5:Impact, 21:High Impact
+Mage             6:Ward, 22:Resist
+Magister          ---
+Sorcerer          ---
+ --------------------------------------------------------------------------
+Water Seer       1:Ply, 2:Frost, 4:Ice, 5:Cure Poison, 9:Tundra, 13:Restore,
+                   16:Ply Well, 17:Ice Horn, 24:Glacier, 30:Break,
+                   34:Pure Ply, 42:Ice Missile
+Scribe            ---
+Cleric           8:Wish, 22:Wish Well, 46:Pure Wish
+Paragon           ---
+Angel             ---
+ ==========================================================================
+
+
+LOST AGE NEW CLASSES
+====================
+Flame User       1:Flare, 5:Fume, 6:Flare Wall, 7:Beam, 10:Impair,
+                   18:Flare Storm, 21:Cycle Beam, 23:Debilitate,
+                   26:Serpent Fume, 41:Searing Beam, 47:Dragon Fume
+Witch             ---
+Hex              9:Aura, 16:Healing Aura, 33:Cool Aura
+Fire Master       ---
+Justice           ---
+ --------------------------------------------------------------------------
+Mariner          1:Frost, 2:Ply, 4:Cool, 5:Cure Poison, 8:Tundra,
+                   12:Diamond Dust, 13:Restore, 17:Ply Well, 21:Supercool,
+                   24:Glacier, 30:Break, 35:Pure Ply, 48:Megacool
+Privateer        6:Avoid
+Commander         ---
+Captain          [Diamond Dust --> Diamond Berg]
+Admiral           ---
+ ==========================================================================
+
+
+WATER ALIGNED CLASSES
+=====================
+Swordsman (E)    4:Thorn, 5:Cure Poison, 11:Cutting Edge, 13:Restore,
+                   14:Briar, 19:Revive, 30:Break, 36:Nettle
+Defender (E)     1:Ply, 6:Avoid, 16:Ply Well, 34:Pure Ply
+Cavalier (E)     8:Wish, 22:Wish Well, 46:Pure Wish
+Guardian         [Cutting Edge --> Plume Edge]
+Protector         ---
+ --------------------------------------------------------------------------
+Swordsman (F)    2:Blast, 3:Guard, 5:Cure Poison, 10:Mad Blast,
+                   11:Cutting Edge, 13:Restore, 15:Protect, 28:Fiery Blast,
+                   30:Break
+Defender (F)     1:Ply, 6:Avoid. 16:Ply Well, 34:Pure Ply
+Cavalier (F)     8:Wish, 22:Wish Well, 46:Pure Wish
+Luminier         [Cutting Edge --> Plume Edge]
+Radiant           ---
+ --------------------------------------------------------------------------
+Dragoon          1:Ply, 2:Blast, 4:Thorn, 5:Cure Poison, 6:Avoid, 8:Wish,
+                   10:Mad Blast, 11:Cutting Edge, 13:Restore, 16:Ply Well,
+                   17:Briar, 22:Wish Well, 27:Fiery Blast, 34:Pure Ply,
+                   36:Nettle, 46:Pure Wish
+Templar          [Cutting Edge --> Plume Edge]
+Paladin           ---
+ ==========================================================================
+
+
+WIND ALIGNED CLASSES
+====================
+Apprentice       1:Delude, 6:Gaia, 9:Weaken, 11:Astral Blast, 14:Sleep,
+                   17:Haunt, 20:Curse, 24:Mother Gaia, 25:Enfeeble, 31:Drain,
+                   39:Psy Drain, 54:Grand Gaia
+Illusionist (E)   ---
+Enchanter (E)    5:Impact, 6:Ward, 21:High Impact, 22:Resist
+Conjurer (E)     [Astral Blast --> Thunder Mine]
+War Adept (E)     ---
+ --------------------------------------------------------------------------
+Page             1:Delude, 6:Ward, 8:Volcano, 9:Weaken, 11:Astral Blast,
+                   14:Sleep, 22:Resist, 24:Eruption, 25:Enfeeble, 31:Drain,
+                   39:Psy Drain, 48:Pyroclasm
+Illusionist (F)   ---
+Enchanter (F)    3:Guard, 5:Impact, 15:Protect, 21:High Impact
+Conjurer (F)     [Astral Blast --> Thunder Mine]
+War Adept (F)     ---
+ --------------------------------------------------------------------------
+Ninja            1:Gale, 4:Punji, 6:Fire Bomb, 7:Mist, 8:Thunderclap,
+                   12:Death Plunge, 15:Punji Trap, 16:Cluster Bomb,
+                   18:Typhoon, 21:Shuriken, 26:Thunderbolt, 31:Annihilation,
+                   36:Punji Strike, 40:Carpet Bomb, 44:Hurricane,
+                   50:Thunderhead
+Disciple         [Death Plunge --> Death Leap]
+Master            ---
+ ==========================================================================
+
+
+EARTH ALIGNED CLASSES
+=====================
+Seer (W)         1:Cure, 2:Froth, 3:Growth, 5:Cure Poison, 10:Cure Well,
+                   12:Mad Growth, 13:Restore, 14:Froth Sphere,
+                   26:Potent Cure, 29:Wild Growth, 30:Break, 40:Froth Spiral
+Diviner (W)       ---
+Shaman (W)       8:Wish, 19:Revive, 22:Wish Well, 46:Pure Wish
+Druid (W)         ---
+Oracle (W)        ---
+ --------------------------------------------------------------------------
+Seer (A)         1:Cure, 2:Bolt, 3:Growth, 6:Flash Bolt, 10:Cure Well,
+                   12:Mad Growth, 18:Bind, 22:Blue Bolt, 26:Potent Cure,
+                   29:Wild Growth, 31:Drain, 39:Psy Drain
+Diviner (A)       ---
+Shaman (A)       7:Ward, 19:Revive, 23:Resist
+Druid (A)         ---
+Oracle (A)        ---
+ --------------------------------------------------------------------------
+Medium           1:Bolt, 2:Froth, 3:Cure, 6:Flash Bolt, 10:Cure Well,
+                   14:Froth Sphere, 17:Haunt, 19:Revive, 20:Curse,
+                   22:Blue Bolt, 26:Potent Cure, 29:Condemn, 31:Drain,
+                   36:Psy Drain, 40:Froth Spiral
+Conjurer (D)      ---
+Dark Mage (D)     ---
+ ==========================================================================
+
+
+FIRE ALIGNED CLASSES
+====================
+Pilgrim (W)      1:Douse, 5:Cure Poison, 6:Prism, 12:Drench, 13:Restore,
+                   20:Hail Prism, 30:Deluge, 34:Break, 52:Freeze Prism
+Wanderer (W)      ---
+Ascetic (W)      8:Volcano, 9:Wish, 22:Eruption, 24:Wish Well, 46:Pure Wish,
+                   48:Pyroclasm
+Water Monk        ---
+Guru (W)          ---
+ --------------------------------------------------------------------------
+Pilgrim (A)      1:Slash, 9:Plasma, 10:Wind Slash, 18:Bind, 26:Shine Plasma,
+                   30:Sonic Slash, 33:Drain, 41:Psy Drain, 50:Spark Plasma
+Wanderer (A)      ---
+Ascetic (A)      6:Ward, 8:Volcano, 22:Eruption, 24:Resist, 48:Pyroclasm
+Fire Monk         ---
+Guru (A)          ---
+ --------------------------------------------------------------------------
+Ranger           1:Slash, 2:Douse, 6:Ward, 8:Volcano, 10:Wind Slash,
+                   12:Drench, 18:Bind, 22:Eruption, 24:Resist,
+                   30:Sonic Slash, 30:Deluge, 33:Drain, 34:Break,
+                   41:Psy Drain, 48:Pyroclasm
+Bard              ---
+Warlock           ---
+ ==========================================================================
+
+
+EARTH/FIRE ALIGNED CLASSES
+==========================
+Brute            1:Growth, 6:Blast(Nova), 12:Mad Growth, 13:Planet Diver,
+                   16:Nova, 17:Haunt, 24:Curse, 28:Wild Growth, 29:Condemn,
+                   40:Supernova
+Ruffian           ---
+Savage           7:Spire, 9:Impair, 19:Revive, 20:Clay Spire, 23:Debilitate,
+                   42:Stone Spire
+Barbarian         ---
+Berserker        [Planet Diver --> Planetary]
+Chaos Lord        ---
+ --------------------------------------------------------------------------
+Samurai          3:Guardian, 5:Demon Spear, 6:Rockfall, 8:Lava Shower,
+                   10:Magic Shell, 12:Dragon Cloud, 15:Protector,
+                   18:Demon Night, 21:Angel Spear, 24:Rockslide,
+                   24:Molten Bath, 27:Magic Shield, 33:Helm Splitter,
+                   40:Quick Strike, 48:Magma Storm, 54:Avalanche
+Ronin            [Dragon Cloud --> Epicenter],
+                   [Demon Night --> Thorny Grave],
+                   [Helm Splitter --> Skull Splitter]
+ ==========================================================================
+
+
+WATER/WIND ALIGNED CLASSES
+==========================
+Hermit           1:Impact, 6:Prism, 8:Plasma, 18:Bind, 21:High Impact,
+                   22:Hail Prism, 26:Shine Plasma, 31:Drain, 30:Break,
+                   39:Psy Drain, 50:Spark Plasma, 52:Freeze Prism
+Elder             ---
+Scholar          12:Wish, 24:Wish Well, 46:Pure Wish
+Savant            ---
+Sage              ---
+Wizard            ---
+ --------------------------------------------------------------------------
+White Mage       1:Cure Poison, 6:Prism, 8:Plasma, 9:Ward, 11:Dull, 12:Wish,
+                   13:Restore, 17:Revive, 22:Hail Prism, 24:Wish Well,
+                   26:Shine Plasma, 31:Resist, 37:Blunt, 46:Spark Plasma,
+                   46:Pure Wish, 52:Freeze Prism
+Pure Mage         ---
+ ==========================================================================
+
+
+ITEM REQUIRED CLASSES
+=====================
+Pierrot          3:Baffle Card, 5:Juggle, 6:Avoid, 8:Sword Card,
+                   10:Sabre Dance, 13:Flame Card, 15:Sleep Card,
+                   17:Heat Juggle, 22:Fire Breath, 25:Thunder Card,
+                   27:Death Card, 33:Bramble Card, 37:Fiery Juggle,
+                   46:Frost Card
+Harlequin         ---
+Punchinello      29:Backstab 
+Acrobat           ---
+ --------------------------------------------------------------------------
+Tamer            1:Wild Wolf, 5:Cure Poison, 6:Impact, 10:Whiplash,
+                   10:Salamander, 13:Restore, 20:Emu, 22:High Impact, 45:Roc
+Trainer          [Wild Wolf --> Orc], [Salamander --> Cerberus],
+                   [Emu --> Harpy], [Roc --> Wyvern], 7:Pixie, 32:Grand Golem
+Beastkeeper      [Orc --> Dinox], [Pixie --> Faery], [Cerberus --> Chimera],
+                   [Harpy --> Gryphon], [Grand Golem --> Blue Dragon],
+                   [Wyvern --> Living Armor],
+                   15:Elder Wood, 28:Lich
+Beast Lord       [Dinox --> Troll], [Faery --> Weird Nymph],
+                   [Chimera --> Macetail], [Elder Wood --> Estre Wood],
+                   [Gryphon --> Minotaur], [Lich --> Phoenix],
+                   [Blue Dragon --> Fire Dragon],
+                   [Living Armor --> Ghost Soldier], 24:Succubus,
+                   38:Manticore
+ --------------------------------------------------------------------------
+Dark Mage (I)    1:Call Zombie, 9:Raging Heat, 17:Haunt, 19:Revive,
+                   20:Fire Puppet, 22:Fiery Abyss, 24:Curse, 29:Condemn,
+                   31:Drain, 33:Poison Flow, 39:Psy Drain, 53:Dire Inferno
+Crypt Lord        ---
+Necrolyte        26:Call Demon
+Necromage        47:Call Dullahan
+ ==========================================================================
+
+
+Because of the sheer number of upgrades, Tamer's superior classes are rather
+confusing to work through.  Because of this, I offer one final table that
+shows the attacks and level they learn Psynergy *WITHOUT* using the
+inheritance relations:
+
+ ==========================================================================
+Trainer          1:Orc, 5:Cure Poison, 6:Impact, 7:Pixie, 10:Whiplash,
+                   10:Cerberus, 13:Restore, 20:Harpy, 22:High Impact,
+                   32:Grand Golem, 45:Wyvern
+ --------------------------------------------------------------------------
+Beastkeeper      1:Dinox, 5:Cure Poison, 6:Impact, 7:Faery, 10:Whiplash,
+                   10:Chimera, 13:Restore, 15:Elder Wood, 20:Gryphon,
+                   22:High Impact, 28:Lich, 32:Blue Dragon, 45:Living Armor
+ --------------------------------------------------------------------------
+Beast Lord       1:Troll, 5:Cure Poison, 6:Impact, 7:Weird Nymph,
+                   10:Whiplash, 10:Macetail, 13:Restore, 15:Estre Wood,
+                   20:Minotaur, 22:High Impact, 24:Succubus, 28:Phoenix,
+                   32:Fire Dragon, 38:Manticore, 45:Ghost Soldier
+ ==========================================================================
+
+
+
+=======================
+== DAMAGE OF ATTACKS ==
+=======================
+  Damage hasn't changed one bit from Golden Sun to Lost Age, so again, allow
+me to just reiterate what has gone before.
+
+
+  The way damage works in Golden Sun is, again, relatively straightforward.
+While this document focuses on Djinn and Psynergy, a brief exploration on
+how normal damage work is useful for this section.
+
+
+  First, two variables must be defined: Relative Attack and Relative Power.
+Relative Attack is equal to (User's Attack - Target's Defense).  It has no
+upper limit, but cannot be less than 0.  Thus:
+    Relative Attack = (User's Attack - Target's Defense).
+    If (Relative Attack < 0), Relative Attack = 0.
+
+  Relative Power is equal to (User's Power - Target's Resist) for a specific
+element.  It cannot be greater than 200 and cannot be less than -200.  Thus:
+    Relative Power = (User's Power - Target's Resist).
+    If (Relative Power < -200), Relative Power = -200.
+    If (Relative Power > 200), Relative Power = 200.
+
+
+
+  Physical attacks are based on Relative Attack.  They have a Base Damage
+which is equal to (Relative Attack / 2).
+
+  A short explanation of random damage is now necessary.  In addition to any
+base damage you do, an extra 0 to 3 damage is always done with each attack.
+Thus, a base damage of 1000 will actually do between 1000 - 1003.  Similarly,
+a base damage of 0 will actually do between 0 - 3.  (Note: Any attack that
+ends up doing 0 damage will do 1 damage instead, unless the attack is
+evaded.)
+
+  Special physical attacks take this Base Damage and modify it with two
+variables: Mult Mod and Add Mod.  The formula used is:
+    Base Damage * Mult Mod + Add Mod
+
+  Critical hits have an inherent Mult Mod of 1.25.  In addition to this,
+they have a variable Add Mod that depends on the target's Level: the formula
+being Add Mod = Target's Level / 5 + 6.
+
+  As an example, if the Base Damage was 200, and the target's Level was 47,
+then the Add Mod would be 15, and the Critical Hit damage would be:
+200 * 1.25 + 15 = 265.  The random damage would then be applied to this,
+giving a final damage of 265 - 268.
+
+
+
+  Elemental Physical Attacks are dealt with in the same way, but have the
+following extra rule; once the Add Mod and Mult Mod have been applied,
+Relative Power is then used to determine the Elemental Damage.  A Power
+Multiplier is used for this, using the following formula:
+    Power Multiplier = 1 + Relative Power / 400
+
+  This Power Mutliplier is multiplied to the damage, giving a range of 50% to
+150% for the final value.  Weapon Specials, in addition to having their own
+Mult Mod and Add Mod, always have an element to go with it.  Also, some
+weapons also have their normal attack considered as an Elemental Physical
+Attack too; Gaia Blade and Crystal Rod being notable examples.  Also, certain
+spells are also considered to be Elemental Physical Attacks.
+
+  Naturally, any Elemental Physical Attack that does not have an attached
+element is simply a Special physical attack, as described in the previous
+section; they completely ignore Relative Power.
+
+  
+
+  Psynergy or Magical attacks are based on Relative Power, but also have an
+extra attribute: Base Damage.
+
+  The Base Damage is the most important value, and signifies the average
+damage the spell can do.  That spell is then modified according to the
+Relative Power.  Obviously, this Relative Power depends on the Element of the
+Psynergy ability.
+
+  The formula behind this is simple; we create a Power Multiplier from:
+    1 + Relative Power / 200
+
+  This Power Multiplier obviously cannot be below 0 or above 2.  The
+Multiplier is then applied to the Base Damage of the attack, which gives the
+final damage done to the target.
+
+  Psynergy Attacks are also subject to area attack reductions.  See the last
+part of this section for details of this.  This only affects Psynergy spells
+that use the Power Multiplier in their formulas, and it doesn't affect those
+abilities that hit A(ll) targets.
+
+  Once again, remember that random damage also applies to Psynergy Attacks,
+so a number between 0 - 3 is added to the final damage.
+
+
+
+  One more main category is Curative abilities.  They work similarly to
+Magical attacks, except that since the target's Resist isn't important, a
+different Power Multiplier is used:
+    Power Multiplier = User's Power / 100
+
+  This Power Multiplier cannot be greater than 2.  The amount healed is
+always Base Damage * Power Multiplier, regardless of Resist.  Random damage
+applies, as always.
+
+  Note, however, that Curative abilities used outside of battle do not add
+random damage and always have a Power Multiplier of 1.
+
+
+
+  Finally, as mentioned above, area spells have a damage reduction based on
+target placement.  The standard ratio is that the target chosen will take
+full 100% damage before random variation, and then for each space away from
+the centre of the blast, each target will take 20% less damage before random
+damage is added.  The minimum damage that will be taken is limited to 10%.
+
+  As a graphical example, here's the damage distribution for a Radius 6
+attack that hits 7 targets:
+                                   Centre  
+       10%   20%   40%   60%   80%  100%   80%   60%   40%   20%   10%
+
+
+  There are three exceptions to the above.
+
+  Attacks that I list as (D)iminishing have a different ratio which is as
+follows:
+                                   Centre  
+       10%   10%   10%   30%   50%  100%   50%   30%   10%   10%   10%
+
+
+  Summons use yet another diminishing ratio, using a Ratio 6 attack which is
+as follows:
+                                   Centre
+       10%   20%   30%   40%   70%  100%   70%   40%   30%   20%   10%
+
+
+
+  And the final exception is that none of the area reduction formulas affect
+any of the following:
+    1. Abilities that don't do normal damage.  Example: Blunt.
+    2. Elemental Physical Attacks.  Example: Shuriken.
+    3. A(ll) Target spells.
+
+
+  The three different reduction ratios can be graphically depicted like so:
+
+ 100%        :                        :                        :
+  80%        :                       .:.                      :::
+  60%       .:.                      :::                     :::::
+  40%      .:::.                   .:::::.                  :::::::
+  20%   ...:::::...              .:::::::::.              .:::::::::.
+             Ý                        Ý                        Ý
+        Diminishing                Summons                 Standard
+
+
+
+  One more thing, although this is seperate from the rest of what we've
+covered, but there's nowhere else it will fit.  There are three statuses in
+the game that can cause you damage: Poison, Deadly Poison and Haunt.
+
+  Poison causes you to take [Max HP / 10] damage at the end of your action.
+Deadly Poison is more powerful, and causes you to take [Max HP / 5] damage
+at the end of your action.  Be wary of these statuses.
+
+  And Haunt is difficult to get rid of, and although not as bad as Poison,
+it can be annoying.  It randomly takes effect when you damage an enemy, and
+if it does, you will automatically be dealt 25% of the damage you hit the
+enemy for.
+
+
+
+Let's summarise now.
+
+Relative Attack:
+    Relative Attack = (User's Attack - Target's Defense).
+    If (Relative Attack < 0), Relative Attack = 0.
+
+Relative Power: 
+    Relative Power = (User's Power - Target's Resist).
+    If (Relative Power < -200), Relative Power = -200.
+    If (Relative Power > 200), Relative Power = 200.
+
+Basic Physical Attack:
+    Base Damage = Relative Attack
+
+Critical Hits:
+    Damage = [Base Damage * 1.25] + [Target's Level / 5] + 6
+
+Special Physical Attacks:
+    Damage = [Base Damage * Mult Mod] + Add Mod
+    If Elemental, Damage = [Damage * (1 + Relative Power / 400)]
+
+Basic Psynergy Attacks:
+    Psynergy has own Base Damage
+    Damage = [Psynergy Base Damage * (1 + Relative Power / 200)]
+
+Curative Psynergy:
+    Psynergy has own Base Healing
+    Healing = [Psynergy Base Healing * Caster's Power / 100]
+
+Area Reduction:
+    Basic Area Psynergy is reduced by the ratio:
+      100%, 80%, 60%, 40%, 20%, 10%.
+    Diminishing Area Psynergy is reduced by the ratio:
+      100%, 50%, 30%, 10%, 10%, 10%.
+    Summons are reduced by the ratio:
+      100%, 70%, 40%, 30%, 20%, 10%.
+    Physical Attacks are never reduced.
+    A(ll) Target Psynergy is never reduced.
+    Abilities that don't do normal damage are never reduced.
+
+Random Damage:
+    All attacks with Random Damage have a number between 0 to 3 added to them
+
+Status Damage:
+    Poison deals 10% of Max HP in damage per turn
+    Deadly Poison deals 20% of Max HP in damage per turn
+    Haunt causes you to randomly take 25% of the damage you dealt an enemy
+      whenever you attack
+
+
+
+
+IMPORTANT NOTE:
+  Some fractions in this game are not used exactly as listed.  Instead,
+Lost Age converts these fractions into one that has a denominator of 256.
+As an example, 78/200 would be converted in this manner to:
+
+       [(78 * 256) / 200]
+     = [19968 / 200]
+     = [99.84]
+     =  99
+
+Thus becoming 99/256.  For most things, this difference is not noticable,
+especially after random damage.  However, for attacks like Summons against
+high HP enemies, this small rounding error can become noticable if you're
+bothering to try and estimate what you should be getting.
+
+It's near impossible to list with certainty *all* the places the Lost Age
+uses this rounding error.  Thus, no attempt will be made by this guide to do
+so.  Power Multipliers seem to use it in particular.
+
+You are thus warned to take this into account if you come across
+inaccuracies.
+
+
+
+======================
+== WEAPON ABILITIES ==
+======================
+  Lost Age adds quite a large number of new artifacts, and with them come
+new unleashes.  What follows is a list of every artifact weapon in the game,
+complete with their unleashes.
+
+  Each unleash has a base additional damage.  Damage listed in the form of
+'xxx' are unleashes that use a Mult Mod of 1.00, and an Add Mod of xxx.
+Damage listed in the form of 'mxxx%' are unleashes that use an Add Mod of 0
+and a Mult Mod of xxx%.  The Swift Sword is marked '---' in the Dam stat;
+this just means it has a Mult Mod of 1.00 and an Add Mod of 0.  All Weapon
+Specials are considered to be Elemental Physical Attacks.
+
+  The Rate of an unleash is the percentage chance it has of going off.  If
+the Rate is listed as '---', then it has the default chance of 35%.  This is
+worked out *BEFORE* chances for critical hits and other things are worked
+out.  A few rare weapons have more than the default chance of unleash.  In
+addition, the following equipment will add varying amounts to the percentage
+chance of an unleash:
+
+             Spiked Armor:     6%           Lucky Cap:        8%
+             Erinyes Tunic:   10%           Warrior's Helm:  10%
+             Mythril Clothes: 15%           Mythril Helm:    12%
+             Valkyrie Mail:   20%           Demon Circlet:   15%
+
+             Aegis Shield:    10%           Hyper Boots:     12%
+             Mythril Armlet:  10%          *Ninja Sandals:   15%
+             Riot Gloves:     20%
+
+ * Don't ask about where to get this.  It's currently suspected to not be
+   accessible in the game without a cheat device.
+
+  It is indeed possible to reach 100% chance to unleash.
+
+
+  Finally, some unleashes have a Special Effect, which is a random additional
+effect that *may* take place on top of the normal damage the attack does.
+
+
+
+
+GOLDEN SUN WEAPONS
+==================
+ Weapon            Attack Name    Elm  Dam  Rate   Special Effect
+  Grievous Mace    Terra Strike    E    20   ---   ---
+  Mystery Blade    Life Nourish    E    25   ---   Heal 100% Damage as HP
+  Assassin Blade   Mortal Danger   E    28   ---   Inflict 'Downed'
+  Demonic Staff    Bad Omen        E    43   ---   Inflict 'Haunt'
+  Wicked Mace      Poison Death    E    53   ---   Inflict 'Deadly Poison'
+  Demon Axe        Poison Cloud    E    55   ---   Inflict 'Poison'
+  Gaia Blade       Titan Blade     E    70   ---   ---
+
+  Arctic Blade     Blizzard        W    18   ---   -25% Attack : 50% Max
+  Psynergy Rod     Psy Leech       W    22   ---   Heal 10% Damage as PP
+  Frost Wand       Frost Bite      W    28   ---   Inflict 'Stun'
+  Angelic Ankh     Life Leech      W    29   ---   Heal 100% Damage as HP
+  Silver Blade     Aqua Sock       W    42   ---   ---
+  Crystal Rod      Drown           W    47   ---   Inflict 'Downed'
+
+  Vulcan Axe       Barrage         F    20   ---   Inflict 'Stun'
+  Dragon Axe       Heat Mirage     F    21   ---   Inflict 'Delusion'
+  Burning Axe      Broil           F    23   ---   ---
+  Shamshir         Acid Bath       F    34   ---   -25% Attack : 50% Max
+  Giant Axe        Meltdown        F    47   ---   -25% Defense : 50% Max
+  Muramasa         Demon Fire      F    60   ---   Inflict 'Haunt'
+                                       
+  Magic Rod        Murk            A    10   ---   Inflict 'Sleep'
+  Witch's Wand     Stun Voltage    A    12   ---   Inflict 'Stun'
+  Blessed Ankh     Psyphon Seal    A    14   ---   Inflict 'Psynergy Seal'
+  Elven Rapier     Vorpal Slash    A    16   ---   ---
+  Ninja Blade      Cyclone Slash   A    38   ---   -40 Resistance : 80 Max
+  Righteous Mace   Blinding Smog   A    49   ---   Inflict 'Delusion'
+  Zodiac Wand      Shining Star    A    57   ---   Inflict 'Delusion'
+  Kikuichimonji    Asura           A    64   ---   Sometimes Pierces 50% Def
+  Bandit's Sword   Rapid Smash     A  m 90%  ---   Sometimes Hits for 2x Dam
+  Swift Sword      Sonic Smash     A   ---   ---   Sometimes Hits for 3x Dam
+
+
+LOST AGE WEAPONS
+================
+ Weapon            Attack Name    Elm  Dam  Rate   Special Effect
+  Themis' Axe      Stone Justice   E    11   ---   -50% Agility : 50% Max
+  Staff of Anubis  Sarcophagus     E    30   ---   Inflict 'Haunt'
+  Demon Mace       Evil Eye        E    38   ---   Inflict 'Delusion'
+  Hagbone Mace     Wyrd Curse      E    41   ---   Inflict 'Haunt'
+  Thanatos Mace    Heartbreak      E    42   ---   Inflict 'Downed'
+  Tartarus Axe     Vein Tap        E    43   ---   Heal 100% Damage as HP
+  Tungsten Mace    Hammersphere    E    58   ---   Sometimes Pierces 50% Def
+  Gaia's Axe       Mother Earth    E    59   ---   Inflict 'Sleep'
+  Huge Sword       Heavy Divide    E    60   ---   -25% Defense : 50% Max
+  Tisiphone Edge   Vengeance       E    71   ---   Randomly does 1x/2x/3x Dam
+  Darksword        Acheron's Grief E    76   ---   Inflict 'Deadly Poison'
+  Sol Blade        Megiddo         E  m300%  ---   ---
+
+  Pirate's Sword   Dreamtide       W    12   ---   Inflict 'Sleep'
+  Storm Brand      Hurricane       W    21   ---   -25% Attack : 50% Max
+  Cloud Wand       Stun Cloud      W    31   ---   Inflict 'Stun'
+  Comet Mace       Ice Crush       W    34   ---   -25% Defense : 50% Max
+  Mist Sabre       Searing Fog     W    36   ---   Inflict 'Delusion'
+  Goblin's Rod     Sargasso        W    39   ---   Inflict 'Downed'
+  Glower Staff     Flash Force     W    44   ---   Inflict 'Psynergy Seal'
+  Mythril Blade    Lethe Albion    W    56   ---   Inflict 'Psynergy Seal'
+  Nebula Wand      Reverse Star    W    58   ---   Heal 10% Damage as PP
+  Masamune         Rising Dragon   W    62   40%   Sometimes Hits for 2x Dam
+
+  Blow Mace        Boost Hack      F    17   ---   ---
+  Disk Axe         Power Drive     F    24   ---   ---
+  Robber's Blade   Shred           F    33   ---   -25% Defense : 50% Max
+  Mighty Axe       Heat Smash      F    41   ---   -40 Resistance : 80 Max
+  Pirate's Sabre   Scorpionfish    F    43   ---   Inflict 'Deadly Poison'
+  Hestia Blade     Crucible Fire   F    48   ---   -50% Agility : 50% Max
+  Soul Brand       Soul Shatter    F    50   ---   Heal 10% Damage as PP
+  Salamander Rod   Fire Dance      F    51   ---   -25% Attack : 50% Max
+  Burning Sword    Blaze Rush      F    54   ---   -25% Defense : 50% Max
+  Apollo's Axe     Flare Burst     F    56   ---   Heal 100% Damage as HP
+  Levatine         Radiant Fire    F    66   ---   Sometimes Pierces 50% Def
+  Fire Brand       Purgatory       F    67   ---   Inflict 'Sleep'
+  Atropos' Rod     Life Shear      F   114   40%   Inflict 'Downed'
+
+  Hypnos' Sword    Moon Air        A    18   ---   Inflict 'Sleep'
+  Corsair's Edge   Lunar Slash     A    25   ---   -40 Resistance : 80 Max
+  Cloud Brand      Raiden's Wrath  A    39   40%   ALWAYS Pierces 100% Def
+  Sylph Rapier     Mad Zephyr      A    40   ---   Sometimes Hits for 2x Dam
+  Dracomace        Aging Gas       A    45   ---   Heal 100% Damage as HP
+  Lightning Sword  Flash Edge      A    46   ---   Inflict 'Delusion'
+  Viking Axe       Stun Bolt       A    47   ---   Inflict 'Stun'
+  Meditation Rod   Nirvana         A    50   ---   Heal 10% Damage as PP
+  Phaeton's Blade  Light Surge     A    51   ---   Inflict 'Delusion'
+  Rising Mace      High Vitals     A    52   ---   Heal 100% Damage as HP
+  Rune Blade       Void Beam       A    57   ---   Inflict 'Psynergy Seal'
+  Stellar Axe      Supernova       A    63   ---   Inflict 'Stun'
+  Excalibur        Legend          A    73   ---   Sometimes Hits for 3x Dam
+  Lachesis' Rule   Apocalypse      A   125   40%   Inflict 'Countdown'
+
+
+Finally, the following weapons have an elemental normal attack.  They have
+a Mult Mod of 100% and an Add Mod of 0.  The only thing that's applied is
+the Power Multiplier of '1 + (Relative Power / 400)'.
+
+ Weapon            Elm
+  Grevious Mace    Earth
+  Gaia Blade       Earth
+  Gaia's Axe       Earth
+  Huge Sword       Earth
+
+  Frost Wand       Water
+
+  Vulcan Axe       Fire
+  Burning Axe      Fire
+  Burning Sword    Fire
+  Apollo's Axe     Fire
+  Fire Brand       Fire
+
+  Elven Rapier     Wind
+  Sylph Rapier     Wind
+
+
+
+======================
+== DJINNI ABILITIES ==
+======================
+  As well as opening up advanced Classes and granting increased stats, Djinn
+can be unleashed for that little extra power.  Each of the individual Djinni
+abilities are listed here.
+
+  The following abbreviations are used in this section:
+
+  Elm: Element.  F=Fire, E=Earth, A=Air (Wind), W=Water.  
+  Dam: Damage of the attack.  This was explained previously.
+  Range: Radius of the attack.  A radius of 1 affects only the target it
+         hits; 2 affects one extra target either side, while 3 affects two
+         extra targets either side, or 5 targets altogether.  A radius of A
+         means it has been coded to have no limit.
+         A graphical indicator will also be shown to accurately reflect how
+         the spells grow in power.
+  Special: Any special effects the power has.
+
+  Further explanation of the Dam codes are given here.
+
+    xxx  : Damage follows normal Magical Attack rules.
+
+   axxx  : The ability is considered to be an Elemental Physical Attack with
+           a Mult Mod of 1 and an Add Mod equal to the number in the Dam
+           column.
+
+   mxxx% : The ability is considered to be an Elemental Physical Attack with
+           an Add Mod of 0 and a Mult Mod equal to the number in the Dam
+           column divided by 100; thus, 180% would be a Mult Mod of 1.8.
+
+
+  Remember that Elemental Physical Attacks use Relative Attack as their Base
+Damage, and have a range of 50% to 150%, instead of the 0% to 200% Magical
+Attacks have.
+
+
+Djinni   Elm  Dam    Range       Special            
+ Flint    E  m160%     1        ---
+ Granite  E   ---  ====A====    Shield Up : Damage -50% (except Curative)
+ Quartz   E   ---      1        Revive 'Downed' to 50% Max HP
+ Vine     E   ---  ====A====    -50% Agility : 50% Max
+ Sap      E  a 50      1        Heal 50% Damage as HP
+ Ground   E   ---      1        Inflict 'Paralyse'
+ Bane     E  a 60      1        Inflict 'Deadly Poison'
+ Echo     E  m160%     1        ---
+ Iron     E   ---  ====A====    +25% Defense : 50% Max
+ Steel    E  m130%     1        Heal 50% Damage as HP
+ Mud      E   ---  ====A====    -50% Agility : 50% Max
+ Flower   E   ---  ====A====    Restore 30% of Max HP
+ Meld     E  a  0      1        Aid Companion in Attack **See Below**
+ Petra    E   ---      1        Target cannot move for next Action
+ Salt     E   ---  ====A====    Remove temporary Statuses
+ Geode    E  m190%     1        ---
+ Mold     E  a 80      1        Force Enemy to Attack Comrade **See Below**
+ Crystal  E   ---  ====A====    Restore 50% of Max HP
+
+Djinni   Elm  Dam    Range       Special            
+ Fizz     W   ---      1        Restore 60% of Max HP
+ Sleet    W  a 30      1        -25% Attack : 50% Max
+ Mist     W  m130%     1        Inflict 'Sleep'
+ Spritz   W   ---  ====A====    Restore 30% of Max HP
+ Hail     W  a 40      1        -25% Defense : 50% Max
+ Tonic    W   ---  ====A====    Remove temporary Statuses
+ Dew      W   ---      1        Revive 'Downed' to 80% Max HP
+ Fog      W  a 30      1        Inflict 'Delusion'
+ Sour     W  m150%     1        -40 Resistance : 80 Max
+ Spring   W   ---      1        Restore 70% of Max HP
+ Shade    W   ---  ====A====    Shield Up : Damage -60% (except Curative)
+ Chill    W  a 40      1        -25% Defense : 50% Max
+ Steam    W   ---  ====A====    +40 Resistance : 80 Max
+ Rime     W   ---      1        Inflict 'Psynergy Seal'
+ Gel      W  m150%     1        -25% Attack : 50% Max
+ Eddy     W   ---  ====A====    All Djinn Recover by 1 Turn immediately
+ Balm     W   ---  ====A====    Revive 'Downed' to 60% Max HP
+ Serac    W  a 70      1        Inflict 'Downed'
+
+Djinni   Elm  Dam    Range       Special            
+ Forge    F   ---  ====A====    +25% Attack : 50% Max
+ Fever    F  a 30      1        Inflict 'Delusion' 
+ Corona   F   ---  ====A====    +25% Defense : 50% Max
+ Scorch   F  a 50      1        Inflict 'Stun'
+ Ember    F   ---  ====A====    Restore 7% of Max PP
+ Flash    F   ---  ====A====    Shield Up : Damage -90% (except Curative)
+ Torch    F  a 30      1        Pierce 50% Defense
+ Cannon   F  a 40      1        ---
+ Spark    F   ---      1        Revive 'Downed' to 60% Max HP
+ Kindle   F   ---  ====A====    +25% Attack : 50% Max
+ Char     F  a 50      1        Inflict 'Stun'
+ Coal     F   ---  ====A====    +100% Agility : 100% Max
+ Reflux   F   ---      1        Counterattack with Fire EPA (0 Add, 1.0 Mult)
+ Core     F  a 40      1        Pierce 50% Defense
+ Tinder   F   ---      1        Revive 'Downed' to 100% Max HP
+ Shine    F  a 60      1        Inflict 'Delusion' to All Enemies
+ Fury     F  a 70      1        Inflict 'Haunt'
+ Fugue    F    18  ====A====    Damage PP Instead : No Random Damage
+
+Djinni   Elm  Dam    Range       Special            
+ Gust     A  a 10      1        Sometimes Hits for 2x Damage
+ Breeze   A   ---  ====A====    +40 Resistance : 80 Max
+ Zephyr   A   ---  ====A====    +100% Agility : 100% Max
+ Smog     A  a 60      1        Inflict 'Delusion'
+ Kite     A   ---      1        Attacks Per Round Set to 2 for Next Turn
+ Squall   A  m140%     1        Inflict 'Stun'
+ Luff     A   ---      1        Inflict 'Psynergy Seal'
+ Breath   A   ---      1        Restore 40% of Max HP
+ Blitz    A  a 30      1        Inflict 'Stun'
+ Ether    A   ---      1        Restore 30% of Max PP
+ Waft     A  a 40      1        Inflict 'Sleep'
+ Haze     A   ---      1        Become Immune to all for Rest of Turn
+ Wheeze   A  a 50      1        Inflict 'Deadly Poison'
+ Aroma    A   ---  ====A====    Restore 10% of Max PP
+ Whorl    A  a 40      1        Inflict 'Downed'
+ Gasp     A   ---  ====A====    Inflict 'Countdown'
+ Lull     A   ---      1        End Current Turn Immediately
+ Gale     A  a 60      1        May Force Enemy to Escape
+  
+
+Before we finish this section, we should cover Meld in more detail.
+
+Meld selects your strongest companion out of the current active party to join
+you in a double attack.  This attack is worked out as if it came from them,
+not from the character unleashing Meld.
+
+Their Attack is increased by 25% of the Meld Character's Attack, and they
+then hit the target with an Elemental Physical Attack with 0 Add Mod and
+1.0 Mult Mod.  The chosen companion's Earth Power is used in elemental
+calculations.
+
+Other than the percentage of Attack, the character using Meld adds nothing
+more to the damage calculations.
+
+
+Mold is similar; instead, the target is an enemy, who is then forced to
+attack a random member of its team.  It uses an Earth Elemental Physical
+Attack with 80 Add Mod and 1.0 Mult Mod, just as described above.  The person
+unleashing the Djinni does no damage.
+
+
+To summarise, Meld is an Earth EPA coming from the strongest out of the three
+companions you have in battle, with their Attack given a bonus of 25% of the
+Meld Character's Attack.  And Mold is an Earth EPA coming from the targeted
+enemy, striking a random enemy.
+
+
+
+===============================
+== SUMMONS AND COMBO TABLETS ==
+===============================
+  Summons are essentially advanced Psynergy.  However, there's more to it
+than that.
+
+  By utilising combinations of Djinn that are on standby, you can unleash
+powerful attacks.  These attacks draw on two things.  The first is the exact
+combination of Djinn, which creates a basic Psynergy effect that applies as a
+bonus to the second more important property: the target's maximum HP.
+
+  The base damage of any Summon (with a few exceptions, as we'll see) can be
+expressed like so:
+
+    Base Damage = Summon Base + [Target's Max HP * 3 * Djinn Used / 100]
+
+
+  In otherwords, for each Djinni used in the Summon, 3% of the target's Max
+HP is added to the Base Damage.  This can really add up.
+
+
+
+  Of course, this alone would fail to cause much damage, which is why we
+return to the first factor: the actual Summon.
+
+  At the start of the game, you have access to four basic Summons of each
+element.  Naturally, you cannot use them until you have the Djinn to access
+them, but they are there.
+
+  Scattered around the game, however, are several combo tablets that open up
+advanced summons, which require Djinn from two elements at once.  I will not
+list their combinations and locations here; they are not really important for
+this.
+
+  In any case, depending on which combination you use, you will get one of
+the below Summons, each with their own added effect to the damage.
+
+  Once the Summon Base and element has been determined, we apply the
+finishing touched: random variance and the Psynergy Power Multiplier factor
+in, like all Magical damage.  In addition, they are all (with two exceptions)
+magical area attacks that use the *SUMMON* diminishing ratio.  Since they do
+not have a range of A(ll), they are subject to reduced damage against
+off-centre targets.
+
+  Having mentioned exceptions twice, we should take careful note of
+Coatlicue, which does not cause damage to the enemy, and instead heals you
+like a normal healing spell.  I have put the Damage Code of 'c' next to the
+Summon Base for that summon to make that more clear.  In addition, summoning
+Daedalus is another special case.  Although the actual Daedalus summon is a
+normal summon in all respects, it also causes a second attack at the end of
+the next turn, which I have, for the purposes of this guide, called
+<Missile>.  This attack cannot be gotten on its own, and has its own special
+rules that will be covered in its entry in the below table.
+
+
+
+  And now, the summon effects themselves.  Both Base (the additional damage)
+and HP% are displayed next to each summon, since those few exceptions who
+don't use the above HP% formula do exist.
+
+
+EARTH ELEMENT SUMMONS
+=====================
+              Elm Base HP%    Range     Special
+ Venus         E    30   3 |||||6||||| ---
+ Ramses        E    60   6 |||||6||||| ---
+ Cybele        E   120   9 |||||6||||| ---
+ Judgement     E   240  12 |||||6||||| ---
+ Zagan         E    50   6 |||||6||||| -25% Defense : 50% Max
+ Haures        E   270  15 |||||6||||| Inflict 'Deadly Poison'
+ Charon        E   500  30 |||||6||||| Inflict 'Downed'
+
+
+WATER ELEMENT SUMMONS
+=====================
+              Elm Base HP%    Range     Special
+ Mercury       W    30   3 |||||6||||| ---
+ Nereid        W    60   6 |||||6||||| ---
+ Neptune       W   120   9 |||||6||||| ---
+ Boreas        W   240  12 |||||6||||| ---
+ Moloch        W   100   9 |||||6||||| -50% Agility : 50% Max
+ Coatlicue     W  c 60 --- =====A===== *Curative Spell Only, Inflict 'Regen'
+ Azul          W   330  21 |||||6||||| Inflict 'Stun'
+
+ * Until Regen wears off, you will regain 60% of your Max HP at the end of
+   each turn.
+
+
+FIRE ELEMENT SUMMONS
+====================
+              Elm Base HP%    Range     Special
+ Mars          F    30   3 |||||6||||| ---
+ Kirin         F    60   6 |||||6||||| ---
+ Tiamat        F   120   9 |||||6||||| ---
+ Meteor        F   240  12 |||||6||||| ---
+ Megaera       F    40   6 |||||6||||| +12.5% Attack (Party Only) : 50% Max
+ Ulysses       F   160  12 |||||6||||| Target cannot move for next Action
+ Daedalus      F   100   7 |||||6||||| At End of Next Turn, Missile is used
+ <Missile>     F   250  15 =====A===== *Character's Power not used : Use 78
+ Iris          F   800  40 |||||6||||| **Revives all 'Downed' and Restores HP
+
+ * Missile is the second part of Daedalus' attack, which occurs at the end
+   of the turn *after* the one in which it was summoned.  Although it is
+   actually listed in the code as a Radius 6 attack, it does not suffer from
+   Area Reduction.  In addition, it uses its own Power of 78 in the Power
+   Multiplier.
+
+ ** Iris' special affects all eight characters, even the four not in your
+    active party.  It revives *any* 'Downed' members, restoring 100% Max HP
+    in the process.  To everyone else, it restores 9999 HP using Fire Element
+    and standard Curative formula.  The summoner's Fire Power applies to the
+    strength of this curative power as well, though you'll likely never
+    notice it unless you hack your Fire Power to something hideously low.
+
+
+WIND ELEMENT SUMMONS
+====================
+              Elm Base HP%    Range     Special
+ Jupiter       A    30   3 |||||6||||| ---
+ Atalanta      A    60   6 |||||6||||| ---
+ Procne        A   120   9 |||||6||||| ---
+ Thor          A   240  12 |||||6||||| ---
+ Flora         A    80   9 |||||6||||| Inflict 'Sleep'
+ Eclipse       A   300  15 |||||6||||| -25% Attack : 50% Max
+ Catastrophe   A   400  24 |||||6||||| Reduce Target's PP by 10% of Max PP
+
+
+
+  Finally, after a Summon, your Element Power is raised by a certain amount
+depending on the amount of Djinn of each type you used.  Using a Fire+Earth
+Combo Summon would, for example, raise your Fire Power and Earth Power by a
+predetermined amount, depending on the number of Fire and Earth Djinn
+respectively used.  The below table details the amount and effect of using a
+particular number of Djinn.
+
+         Number of Djinn                 Effect
+                1            Raises User's Power by  10 : 200 Max
+                2            Raises User's Power by  30 : 200 Max
+                3            Raises User's Power by  60 : 200 Max
+                4+           Raises User's Power by 100 : 200 Max
+
+
+
+========================
+== PSYNERGY ABILITIES ==
+========================
+  The format of the following tables should be explained.
+
+  In this section, the abilities able to be learned are displayed along with
+their elements, effects, type, and more importantly, who learns them and
+when.  It can be more useful to look through this list if you're looking for
+a particular ability.
+
+  The first part of each list details the effects and statistics of each
+ability.  The abbreviations mean the following:
+
+  Elm: Element.  F=Fire, E=Earth, A=Air (Wind), W=Water.  
+  Dam: Damage of the attack.  This was explained previously.
+  PP: Psynergy Point Cost.
+  Range: Radius of the Psynergy.  A radius of 1 affects only the target
+         it hits; 2 affects one extra target either side, while 3 affects two
+         extra targets either side, or 5 targets altogether.  A radius of A
+         means it has been coded to have no limit.
+         A graphical indicator will also be shown to accurately reflect how
+         the spells grow in power.
+  Used: Where the spell can be used.  T=Town, D=Dungeons, B=Battle.
+  Special: Any additional effects the Psynergy may have.
+  Desc: Description of the spell (for the Misc Psynergy only)
+
+  Further explanation of the Dam codes are given here.  If the figure in the
+Dam column is just a straight number, then that is the Base Damage of a
+Magical Attack.  Otherwise, the following codes are used:
+
+   axxx  : The spell is considered to be an Elemental Physical Attack with a
+           Mult Mod of 1 and an Add Mod equal to the number in the Dam
+           column.
+
+   mxxx% : The spell is considered to be an Elemental Physical Attack with an
+           Add Mod of 0 and a Mult Mod equal to the number in the Dam column
+           divided by 100; thus, 180% would be a Mult Mod of 1.8.
+
+   cxxx  : The spell is Curative, and thus follows the Curative formula.
+           The amount healed is thus Base Damage * User's Power / 100,
+           plus Random Damage.
+
+           Note: Curative abilities used outside of battle do not add Random
+           Damage and always have a Power Multiplier of 1.
+
+    xxxD : The spell is a standard Psynergy area attack, but follows the
+           increased Diminishing formula, meaning it does far less damage to
+           anything that is not the primary target of the spell.
+
+    xxxs : The spell uses standard Magical Psynergy attack formula, but is
+           part of a status spell.  As such, even the damage part may miss.
+           (This only applies to two Psynergy that are available to players
+            in the whole game, however)
+
+
+  Remember that Elemental Physical Attacks use Relative Attack as their Base
+Damage, and have a range of 50% to 150%, instead of the 0% to 200% Magical
+Attacks have.
+
+
+  In the second part of each ability list, the abilities will be listed one
+by one, and who learns them will be displayed to the right.  Let us take
+Revive as an example.
+
+  According to the list, Revive is learnt at level 19 by Earth characters
+(Isaac and Felix) as a Gallant, Savage, Shaman or Swordsman, or anything that
+inherits those classes.  Likewise, Fire characters (Garet and Jenna) learn it
+at level 19 in Savage, as do Wind and Water characters in Shaman and Medium.
+However, Wind/Water characters can also learn it at level 17 when in White
+Mage.
+
+  The jobs that learn it are split into five categories: the four main
+character elements, and Item.  The elements refer to the primary element of
+each character, so Earth means both Isaac and Felix, while Wind refers to
+Sheba and Ivan.  Item refers to classes that are only available through use
+of the three class-changing items that exist in the game.
+
+  If I do not specify which version of a job (example: Swordsman (E)) can
+learn an ability, then I mean all versions of that job within that primary
+element can learn it.  Earth characters, for example, cannot use
+Swordsman (F), so Swordsman obviously refers to Swordsman (E).  As another
+example, Wind characters can change into both Enchanter (E) and
+Enchanter (F), but some Psynergy are shared between these jobs and learnt at
+the same level.  For these, just Enchanter under the Wind category is enough
+to refer to both.
+
+  A great number of spells run in series; in this case, the series will use
+the name of the lowest spell in the series, and the levels required for all
+three spells follow the respective classes.  Taking Cure as an example, a
+Earth character Squire learns Cure at level 1, Cure Well at level 10 and
+Potent Cure at level 26.
+
+  Finally, abilities that are considered upgrades list which spell they
+upgrade in place of when you learn them.  The layout of the table should make
+it reasonably easy to derive when you should have them, in any case.
+
+
+  Please take care to remember that only the base class will be indicated
+when determining where a spell is found.  Any class that inherits that base
+class will not be shown in this list.
+
+  !!NOTE!!  There are two abilities called Blast in the game, each with
+different effects.  The Blast in the Blast/Nova/Supernova series will be
+identified as Blast(Nova).
+
+
+
+  RESTORATIVE ABILITIES
+  ---------------------
+              Elm Dam  PP   Range   Used  Special
+Aura           F c 50   7 ====A==== TDB   ---
+Healing Aura   F c100  11 ====A==== TDB   ---
+Cool Aura______F_c200__16_====A====_TDB___---
+Cure           E c 70   3     1     TDB   ---
+Cure Well      E c150   7     1     TDB   ---
+Potent Cure____E_c300__10_____1_____TDB___---
+Ply            W c100   4     1     TDB   ---
+Ply Well       W c200   8     1     TDB   ---
+Pure Ply_______Wc1000__12_____1_____TDB___---
+Wish           W c 80   9 ====A==== TDB   ---
+Wish Well      W c160  13 ====A==== TDB   ---
+Pure Wish______W_c400__20_====A====_TDB___---
+Cure Poison    W        2     1     TDB   Remove 'Poison/Deadly Poison'
+Restore        W        3     1       B   Remove temporary Statuses
+Revive         E       15     1     TDB   Revive 'Downed' to 100% Max HP
+
+
+ -----------------------------------------------------------
+Aura           Fire:  Hex                         (9, 16, 33)
+ SERIES
+ ---
+Cure           Earth: Squire/Shaman               (1, 10, 26)
+ SERIES               Medium                      (3, 10, 26)
+               Water: Seer                        (1, 10, 26)
+                      Medium                      (3, 10, 26)
+               Wind:  Seer                        (1, 10, 26)
+                      Medium                      (3, 10, 26)
+ ---
+Ply            Earth: Defender/Dragoon            (1, 16, 34)
+ SERIES        Water: Water Seer/Cavalier/Dragoon (1, 16, 34)
+                      Mariner                     (2, 17, 35)
+               Fire:  Defender/Dragoon            (1, 16, 34)
+ ---
+Wish           Earth: Cavalier/Shaman (W)/Dragoon (8, 22, 46)
+ SERIES        Water: Cleric/Cavalier             (8, 22, 46)
+                      Shaman/Dragoon              (8, 22, 46)
+                      Ascetic                     (9, 24, 46)
+                      Scholar/White Mage         (12, 24, 46)
+               Fire:  Cavalier/Dragoon            (8, 22, 46)
+                      Ascetic (W)                 (8, 24, 46)
+               Wind:  Scholar/White Mage         (12, 24, 46)
+ -----------------------------------------------------------
+Cure Poison    Earth: Swordsman/Shaman (W)/Dragoon    (5)
+               Water: White Mage                      (1)
+                      Water Seer/Pilgrim/Cavalier     (5)
+                      Seer/Mariner/Dragoon            (5)
+               Fire:  Swordsman/Ascetic (W)/Dragoon   (5)
+               Wind:  White Mage                      (1)
+               Item:  Tamer                           (5)
+ ---
+Restore        Earth: Swordsman/Shaman (W)/Dragoon   (13)
+               Water: Water Seer/Pilgrim/Cavalier    (13)
+                      Seer/White Mage/Mariner/Dragoon(13)
+               Fire:  Swordsman/Ascetic (W)/Dragoon  (13)
+               Wind:  White Mage                     (13)
+               Item:  Tamer                          (13)
+ ---
+Revive         Earth: Gallant/Savage/Shaman          (19)
+                      Swordsman/Medium               (19)
+               Water: White Mage                     (17)
+                      Shaman/Cavalier (E)/Medium     (19)
+               Fire:  Savage                         (19)
+               Wind:  White Mage                     (17)
+                      Shaman/Medium                  (19)
+               Item:  Dark Mage (I)                  (19)
+ -----------------------------------------------------------
+
+
+
+  BASIC ATTACK ABILITIES
+  ----------------------
+              Elm Dam  PP   Range   Used  Special
+Quake          E   12   4    /2\      B   ---
+Earthquake     E   35   7   /|3|\     B   ---
+Quake Sphere___E___65__15__/||4||\____B___---
+Growth         E   25   4     1     TDB   Puzzle Solving Psynergy
+Mad Growth     E   60  10    /2\      B   ---
+Wild Growth____E__110__19___/|3|\_____B___---
+Thorn          E   35   6    /2\      B   ---
+Briar          E   70  11    |2|      B   ---
+Nettle_________E__140__23___/|3|\_____B___---
+Spire          E   40   5     1       B   ---
+Clay Spire     E   85  13    /2\      B   ---
+Stone Spire____E__160__22____|2|______B___---
+Gaia           E   40   7    /2\      B   ---
+Mother Gaia    E  100  17   /|3|\     B   ---
+Grand Gaia     E  200  32   ||3||     B   ---
+
+Frost          W   20   5    /2\    TDB   Puzzle Solving Psynergy
+Tundra         W   45   8    |2|      B   ---
+Glacier________W__100__15____|2|______B___---
+Douse          W   25   5    /2\    TDB   Puzzle Solving Psynergy
+Drench         W   60  10    |2|      B   ---
+Deluge_________W__120__20___/|3|\_____B___---
+Froth          W   28   5    /2\      B   ---
+Froth Sphere   W   65  12   /|3|\     B   ---
+Froth Spiral___W__150__31__/||4||\____B___---
+Ice            W   35   5     1       B   ---
+Ice Horn       W   70  11    /2\      B   ---
+Ice Missile____W__160__23____|2|______B___---
+Cool           W   35   6    /2\      B   ---
+Supercool      W   80  14   /|3|\     B   ---
+Megacool_______W__180__33__/||4||\____B___---
+Prism          W   40   7    /2\      B   ---
+Hail Prism     W   90  16   /|3|\     B   ---
+Freeze Prism   W  190  32   ||3||     B   ---
+
+Flare          F   15   4    /2\      B   ---
+Flare Wall     F   40   7    |2|      B   ---
+Flare Storm____F___80__12____|2|______B___---
+Blast          F   25   5    /2\      B   ---
+Mad Blast      F   50   9    |2|      B   ---
+Fiery Blast____F__110__19___/|3|\_____B___---
+Fire           F   35   6    /2\      B   ---
+Fireball       F   65  12   /|3|\     B   ---
+Inferno________F__140__23___||3||_____B___---
+Blast(Nova)    F   40   7    /2\      B   ---
+Nova           F   70  13   /|3|\     B   ---
+Supernova______F__150__31__/||4||\____B___---
+Beam           F   45   7    /2\      B   ---
+Cycle Beam     F   80  14   /|3|\     B   ---
+Searing Beam___F__170__36__/||4||\____B___---
+Volcano        F   45   6     1       B   ---
+Eruption       F   90  14    /2\      B   ---
+Pyroclasm______F__180__29___/|3|\_____B___---
+Fume           F   50   6     1       B   ---
+Serpent Fume   F  130  14     1       B   ---
+Dragon Fume    F  230  35     1       B   ---
+
+Bolt           A   20   4     1       B   ---
+Flash Bolt     A   40   7    /2\      B   ---
+Blue Bolt______A___90__14____|2|______B___---
+Slash          A   25   4     1       B   ---
+Wind Slash     A   50   9    /2\      B   ---
+Sonic Slash____A__120__20___/|3|\_____B___---
+Ray            A   35   6    /2\      B   ---
+Storm Ray      A   65  10    |2|      B   ---
+Destruct Ray___A__150__21____|2|______B___---
+Whirlwind      A   20   5    /2\    TDB   Puzzle Solving Psynergy
+Tornado        A   80  14   /|3|\     B   ---
+Tempest________A__160__27___||3||_____B___---
+Plasma         A   45   8    /2\      B   ---
+Shine Plasma   A  100  18   /|3|\     B   ---
+Spark Plasma   A  180  37  /||4||\    B   ---
+
+                   
+ -----------------------------------------------------------
+Quake          Earth: Squire                      (2,  4, 14)
+ SERIES       
+ ---
+Growth         Earth: Brute                       (1, 12, 28)
+ SERIES               Shaman                      (3, 12, 29)
+               Water: Seer                        (3, 12, 29)
+               Fire:  Brute                       (1, 12, 28)
+               Wind:  Seer                        (3, 12, 29)
+ ---
+Thorn          Earth: Swordsman                   (4, 14, 36)
+ SERIES               Dragoon                     (4, 17, 36)
+               Water: Cavalier (E)                (4, 14, 36)
+                      Dragoon                     (4, 17, 36)
+               Fire:  Dragoon                     (4, 17, 36)
+ ---
+Spire          Earth: Squire                      (6, 20, 42)
+ SERIES               Savage                      (7, 20, 42)
+               Fire:  Savage                      (7, 20, 42)
+ ---
+Gaia           Earth: Apprentice                  (6, 24, 54)
+ SERIES               Gallant                     (7, 24, 54)
+               Wind:  Enchanter (E)               (6, 24, 54)
+ -----------------------------------------------------------
+Frost          Water: Mariner                     (1,  8, 24)
+ SERIES               Water Seer                  (2,  9, 24)
+                 Equip Frost Jewel for Frost only
+ ---
+Douse          Water: Pilgrim/Ranger              (1, 12, 30)
+ SERIES        Fire:  Ascetic (W)/Ranger          (1, 12, 30)
+               Wind:  Ranger                      (1, 12, 30)
+                 Piers Inherent (Douse only)
+                 Equip Douse Drop for Douse only
+ ---
+Froth          Earth: Shaman (W)/Medium           (2, 14, 40)
+ SERIES        Water: Seer/Medium                 (2, 14, 40)
+               Wind:  Medium                      (2, 14, 40)
+ ---
+Ice            Water: Water Seer                  (4, 17, 42)
+ SERIES
+ ---
+Cool           Water: Mariner                     (4, 21, 48)
+ SERIES
+ ---
+Prism          Water: Pilgrim                     (6, 20, 52)
+ SERIES               Hermit/White Mage           (6, 22, 52)
+               Fire:  Ascetic (W)                 (6, 20, 52)
+               Wind:  Hermit/White Mage           (6, 22, 52)
+ -----------------------------------------------------------
+Flare          Fire:  Guard                       (1,  6, 18)
+ SERIES
+ ---
+Blast          Earth: Dragoon                     (2, 10, 27)
+ SERIES        Water: Dragoon                     (2, 10, 27)
+                      Cavalier (F)                (2, 10, 28)
+               Fire:  Dragoon                     (2, 10, 27)
+                      Swordsman                   (2, 10, 28)
+ ---
+Fire           Fire:  Guard                       (4, 14, 36)
+ SERIES
+ ---
+Blast(Nova)    Earth: Brute                       (6, 16, 40)
+ SERIES        Fire:  Brute                       (6, 16, 40)
+ ---
+Beam           Fire:  Flame User                  (7, 21, 41)
+ SERIES
+ ---
+Volcano        Water: Ascetic/Ranger              (8, 22, 48)
+ SERIES        Fire:  Guard/Ascetic/Page/Ranger   (8, 22, 48)
+               Wind:  Ascetic/Enchanter (F)/Ranger(8, 22, 48)
+ ---
+Fume           Fire:  Flame User                  (5, 26, 47)
+ SERIES
+ -----------------------------------------------------------
+Bolt           Earth: Medium                      (1,  6, 22)
+ SERIES               Shaman (A)                  (2,  6, 22)
+               Water: Medium                      (1,  6, 22)
+               Wind:  Medium                      (1,  6, 22)
+                      Seer                        (2,  6, 22)
+               
+ ---
+Slash          Water: Ranger                      (1, 10, 30)
+ SERIES        Fire:  Ascetic (A)/Ranger          (1, 10, 30)
+               Wind:  Pilgrim/Ranger              (1, 10, 30)
+ ---
+Ray            Wind:  Wind Seer                   (4, 14, 36)
+ SERIES
+ ---
+Whirlwind      Wind:  Wind Seer                   (1, 18, 44)
+ SERIES
+ ---
+Plasma         Water: White Mage                  (8, 26, 46)
+ SERIES               Hermit                      (8, 26, 50)
+               Fire:  Ascetic (A)                 (9, 26, 50)
+               Wind:  White Mage                  (8, 26, 46)
+                      Wind Seer/Hermit            (8, 26, 50)
+                      Pilgrim                     (9, 26, 50)
+ -----------------------------------------------------------
+
+
+
+  STATUS ABILITIES
+  ----------------
+              Elm Dam  PP   Range   Used  Special
+Impact         A  ---   7     1       B   +25% Attack : 50% Max
+High Impact____A__---__12_||||A||||___B___+12.5% Attack : 50% Max
+Guard          F  ---   3     1       B   +25% Defense : 50% Max
+Protect________F__---___5_||||A||||___B___+12.5% Defense : 50% Max
+Ward           A  ---   3     1       B   +40 Resistance : 80 Max
+Resist_________A__---___5_||||A||||___B___+20 Resistance : 80 Max
+Dull           A  ---   6     1       B   -25% Attack : 50% Max
+Blunt__________A__---__11____/2\______B___-12.5% Attack : 50% Max
+Impair         F  ---   4     1       B   -25% Defense : 50% Max
+Debilitate_____F__---___6____/2\______B___-12.5% Defense : 50% Max
+Weaken         A  ---   4     1       B   -40 Resistance : 80 Max
+Enfeeble_______A__---___6____/2\______B___-20 Resistance : 80 Max
+Drain          A   50s  3     1       B   Heal 100% Damage as HP
+Psy Drain______A___15s__0_____1_______B___Drain 100% PP instead of HP
+Haunt          E  ---   5    |2|      B   Inflict 'Haunt'
+Curse          E  ---   6     1       B   Inflict 'Countdown'
+Condemn________E__---___8_____1_______B___Inflict 'Downed'
+Bind           A  ---   4     1       B   Inflict 'Psynergy Seal'
+Delude         A  ---   4    |2|      B   Inflict 'Delusion'
+Sleep          A  ---   5    |2|      B   Inflict 'Sleep'
+Break          W  ---   5 ||||A||||   B   Remove positive attributes
+
+
+ -----------------------------------------------------------
+Impact        Earth: Enchanter                       (5, 21)
+ SERIES       Water: Hermit                          (1, 21)
+              Fire:  Enchanter                       (5, 21)
+              Wind:  Hermit                          (1, 21)
+                     Magician/Enchanter              (5, 21)
+              Item:  Tamer                           (6, 22)
+ ---
+Guard         Water: Cavalier (F)                    (3, 15)
+ SERIES       Fire:  Soldier/Swordsman/Enchanter     (3, 15)
+              Wind:  Enchanter (F)                   (3, 15)
+ ---
+Ward          Earth: Enchanter                       (6, 22)
+ SERIES              Shaman (A)                      (7, 23)
+              Water: Ranger                          (6, 24)
+                     White Mage                      (9, 31)
+              Fire:  Enchanter                       (6, 22)
+                     Ascetic (A)/Ranger              (6, 24)
+              Wind:  Mage/Enchanter                  (6, 22)
+                     Shaman                          (7, 23)
+                     Ascetic (A)/Ranger              (6, 24)
+                     White Mage                      (9, 31)
+ ---
+Dull          Water: White Mage                     (11, 37)
+ SERIES       Wind:  White Mage                     (11, 37)
+ ---
+Impair        Earth: Savage                          (9, 23)
+ SERIES       Fire:  Savage                          (9, 23)
+                     Warrior                         (9, 26)
+                     Flame User                     (10, 23)
+ ---
+Weaken        Earth: Apprentice                      (9, 25)
+ SERIES       Fire:  Page                            (9, 25)
+              Wind:  Enchanter                       (9, 25)
+ ---
+Drain         Earth: Medium                         (31, 36)
+ SERIES              Apprentice/Shaman (A)          (31, 39)
+              Water: Medium                         (31, 36)
+                     Hermit                         (31, 39)
+                     Ranger                         (33, 41)
+              Fire:  Page                           (31, 39)
+                     Ascetic (A)/Ranger             (33, 41)
+              Wind:  Medium                         (31, 36)
+                     Hermit/Seer/Enchanter          (31, 39)
+                     Pilgrim/Ranger                 (33, 41)
+              Item:  Dark Mage (I)                  (31, 39)
+ ---
+Haunt         Earth: Apprentice                 (17, 20)
+ SERIES              Medium                     (17, 20, 29)
+                     Brute                      (17, 24, 29)
+              Water: Medium                     (17, 20, 29)
+              Fire:  Enchanter (E)              (17, 20)
+                     Brute                      (17, 24, 29)
+              Wind:  Medium                     (17, 20, 29)
+              Item:  Dark Mage (I)              (17, 24, 29)
+ -----------------------------------------------------------
+Bind          Earth: Shaman (A)                     (18)
+              Water: Hermit/Ranger                  (18)
+              Fire:  Ascetic (A)/Ranger             (18)
+              Wind:  Wind Seer                      (17)
+                     Hermit/Seer/Pilgrim/Ranger     (18)
+ ---
+Delude        Earth: Apprentice                      (1)
+              Fire:  Page                            (1)
+              Wind:  Enchanter                       (1)
+ ---
+Sleep         Earth: Apprentice                     (14)
+              Fire:  Page                           (14)
+              Wind:  Wind Seer                      (12)
+                     Enchanter                      (14)
+ ---
+Break         Earth: Swordsman/Shaman (W)           (30)
+              Water: Water Seer/Hermit/Cavalier     (30)
+                     Seer/Mariner                   (30)
+                     Pilgrim/Ranger                 (34)
+              Fire:  Swordsman                      (30)
+                     Ascetic (W)/Ranger             (34)
+              Wind:  Hermit                         (30)
+                     Ranger                         (34)
+ -----------------------------------------------------------
+
+
+
+  ADVANCED CLASS ABILITIES
+  ------------------------
+              Elm Dam  PP   Range   Used  Special
+Ragnarok       E a 35   7     1       B   ---
+Cutting Edge   W a 32   5     1       B   ---
+Diamond Dust   W a 34   6     1       B   ---
+Heat Wave      F a 33   6     1       B   ---
+Planet Diver   F a 36   7     1       B   ---
+Astral Blast___A_a_32___5_____1_______B___---
+Oddysey        E a 95  18     1       B   ---
+Plume Edge     W a 80  15     1       B   ---
+Diamond Berg   W a 92  17     1       B   ---
+Liquifier      F a 90  17     1       B   ---
+Planetary      F a 98  19     1       B   ---
+Thunder Mine   A a 85  16     1       B   ---
+
+Punji          E   45   7    /2\      B   ---
+Punji Trap     E   85  13    |2|      B   ---
+Punji Strike___E__150__24___/|3|\_____B___---
+Fire Bomb      F   35   5    /2\      B   ---
+Cluster Bomb   F   65  11   /|3|\     B   ---
+Carpet Bomb____F__130__29__/||4||\____B___---
+Gale           A   18   3    /2\    TDB   Puzzle Solving Psynergy
+Typhoon        A   75  12   /|3|\     B   ---
+Hurricane______A__150__25___||3||_____B___---
+Thunderclap    A   50   9    /2\      B   ---
+Thunderbolt    A  110  19   /|3|\     B   ---
+Thunderstorm___A__190__39__/||4||\____B___---
+Mist           A  ---   4    |2|      B   Inflict 'Delusion'
+Shuriken       A m 80%  8    |2|      B   ---
+Annihilation___E_m150%_18_____1_______B___Inflict 'Downed'
+Death Plunge   A a 40  14     1       B   Inflict 'Stun'
+Death Leap     A a110  22     1       B   Inflict 'Stun'
+
+Lava Shower    F   40   4     1       B   ---
+Molten Bath    F   70  12    /2\      B   ---
+Magma Storm____F__120__27___/|3|\_____B___---
+Rockfall       E   30   5    /2\      B   ---
+Rockslide      E   90  15   /|3|\     B   ---
+Avalanche______E__160__30___||3||_____B___---
+Demon Spear    A  ---   7     1       B   +25% Attack : 50% Max
+Angel Spear____A__---__12_||||A||||___B___+12.5% Attack : 50% Max
+Guardian       F  ---   3     1       B   +25% Defense : 50% Max
+Protector______F__---___5_||||A||||___B___+12.5% Defense : 50% Max
+Magic Shell    A  ---   3     1       B   +40 Resistance : 80 Max
+Magic Shield___A__---___5_||||A||||___B___+20 Resistance : 80 Max
+Quick Strike___A_m180%_12_____1_______B___---
+Dragon Cloud   F   80   6     1       B   ---
+Demon Night    E   60  12    |2|      B   Inflict 'Haunt'
+Helm Splitter__E_a_30___8_____1_______B___Inflict 'Downed'
+Epicenter      F  210  33     1       B   ---
+Thorny Grave   E  170  24    |2|      B   Inflict 'Haunt'
+Skull Splitter E a 30   8     1       B   Inflict 'Downed'
+
+              
+ -----------------------------------------------------------
+Ragnarok       Earth: Squire                         (13)
+ ---
+Cutting Edge   Earth: Swordsman/Dragoon              (11)
+               Water: Cavalier/Dragoon               (11)
+               Fire:  Swordsman/Dragoon              (11)
+ ---
+Diamond Dust   Water: Mariner                        (12)
+ ---
+Heat Wave      Fire:  Guard                          (12)
+ ---
+Planet Diver   Earth: Brute                          (13)
+               Fire:  Brute                          (13)
+ ---
+Astral Blast   Earth: Apprentice                     (11)
+               Fire:  Page                           (11)
+               Wind:  Enchanter                      (11)
+ -----------------------------------------------------------
+Odyssey        Earth: Lord                       [Ragnarok]
+ ---
+Plume Edge     Earth: Guardian/Templar           [Cutting Edge]
+               Water: Guardian/Luminier          [Cutting Edge]
+               Fire:  Luminier/Templar           [Cutting Edge]
+ ---
+Diamond Berg   Water: Captain                    [Diamond Dust]
+ ---
+Liquifier      Fire:  Champion                   [Heat Wave]
+ ---
+Planetary      Earth: Berserker                  [Planet Diver]
+               Fire:  Berserker                  [Planet Diver]
+ ---
+Thunder Mine   Earth: Conjurer (E)               [Astral Blast]
+               Fire:  Conjurer (F)               [Astral Blast]
+               Wind:  Conjurer (E)/Conjurer (F)  [Astral Blast]
+ -----------------------------------------------------------
+Punji          Earth: Ninja                      ( 4, 15, 36)
+ SERIES        Fire:  Ninja                      ( 4, 15, 36)
+               Wind:  Ninja                      ( 4, 15, 36)
+ ---
+Fire Bomb      Earth: Ninja                      ( 6, 16, 40)
+ SERIES        Fire:  Ninja                      ( 6, 16, 40)
+               Wind:  Ninja                      ( 6, 16, 40)
+ ---
+Gale           Earth: Ninja                      ( 1, 18, 44)
+ SERIES        Fire:  Ninja                      ( 1, 18, 44)
+               Wind:  Ninja                      ( 1, 18, 44)
+ ---
+Thunderclap    Earth: Ninja                      ( 8, 26, 50)
+ SERIES        Fire:  Ninja                      ( 8, 26, 50)
+               Wind:  Ninja                      ( 8, 26, 50)
+ ---
+Mist           Earth: Ninja                           (7)
+               Fire:  Ninja                           (7)
+               Wind:  Ninja                           (7)
+ ---
+Shuriken       Earth: Ninja                          (21)
+               Fire:  Ninja                          (21)
+               Wind:  Ninja                          (21)
+ ---
+Annihilation   Earth: Ninja                          (31)
+               Fire:  Ninja                          (31)
+               Wind:  Ninja                          (31)
+ ---
+Death Plunge   Earth: Ninja                          (12)
+               Fire:  Ninja                          (12)
+               Wind:  Ninja                          (12)
+ ---
+Death Leap     Earth: Disciple                   [Death Plunge]
+               Fire:  Disciple                   [Death Plunge]
+ -----------------------------------------------------------
+Lava Shower    Earth: Samurai                     (8, 22, 48)
+ SERIES        Fire:  Samurai                     (8, 22, 48)
+ ---
+Rockfall       Earth: Samurai                     (6, 24, 54)
+ SERIES        Fire:  Samurai                     (6, 24, 54)
+ ---
+Demon Spear    Earth: Samurai                         (5, 21)
+ SERIES        Fire:  Samurai                         (5, 21)
+ ---
+Guardian       Earth: Samurai                         (3, 15)
+ SERIES        Fire:  Samurai                         (3, 15)
+ ---
+Magic Shell    Earth: Samurai                        (10, 27)
+ SERIES        Fire:  Samurai                        (10, 27)
+ ---
+Quick Strike   Earth: Samurai                        (40)
+               Fire:  Samurai                        (40)
+ ---
+Dragon Cloud   Earth: Samurai                        (12)
+               Fire:  Samurai                        (12)
+ ---
+Demon Night    Earth: Samurai                        (18)
+               Fire:  Samurai                        (18)
+ ---
+Helm Splitter  Earth: Samurai                        (33)
+               Fire:  Samurai                        (33)
+ ---
+Epicenter      Earth: Ronin                       [Dragon Cloud]
+               Fire:  Ronin                       [Dragon Cloud]
+ ---
+Thorny Grave   Earth: Ronin                       [Demon Night]
+               Fire:  Ronin                       [Demon Night]
+ ---
+Skull Splitter Earth: Ronin                       [Helm Splitter]
+               Fire:  Ronin                       [Helm Splitter]
+ -----------------------------------------------------------
+
+
+
+  MYSTERIOUS CARD UNIQUE ABILITIES
+  --------------------------------
+              Elm Dam  PP   Range   Used  Special
+Sabre Dance    E m150%  7     1       B   ---
+Backstab_______A_a_35__16_____1_______B___Inflict 'Downed'
+Fire Breath____F___85D_13____|2|______B___---
+Juggle         F   40   7    /2\      B   ---
+Heat Juggle    F   75  13   /|3|\     B   ---
+Fiery Juggle___F__150__25___||3||_____B___---
+Flame Card     F   60  11    /2\      B   ---
+Thunder Card   A  100  17    |2|      B   ---
+Bramble Card   E  130  22    |2|      B   ---
+Frost Card_____W__175__28____|2|______B___---
+Baffle Card    A  ---   4    |2|      B   Inflict 'Delusion'
+Sword Card     F  ---   6     1       B   -25% Attack : 50% Max
+Sleep Card     A  ---   5    |2|      B   Inflict 'Sleep'
+Death Card     E  ---   8     1       B   Inflict 'Downed'
+
+
+ -----------------------------------------------------------
+Sabre Dance    Item: Pierrot                         (10)
+ ---
+Backstab       Item: Punchinello                     (29)
+ ---
+Fire Breath    Item: Pierrot                         (22)
+ ---
+Juggle         Item: Pierrot                     ( 5, 17, 37)
+ SERIES
+ ---
+Flame Card     Item: Pierrot                     (13, 25, 33, 46)
+ SERIES
+ ---
+Baffle Card    Item: Pierrot                     ( 3,  8, 15, 27)
+ SERIES
+ -----------------------------------------------------------
+
+
+
+  TRAINER'S WHIP UNIQUE ABILITIES
+  -------------------------------
+              Elm Dam  PP   Range   Used  Special
+Whiplash       A m140%  6     1       B   ---
+Wild Wolf     ---a 30   3     1       B   ---
+Salamander     F   45D  7    |2|      B   ---
+Emu            A a 75  10     1       B   ---
+Roc___________---a140__22_____1_______B___---
+Orc           ---a 35   3     1       B   ---
+Pixie          W c115   5     1       B   ---
+Cerberus       F   50D  7    |2|      B   ---
+Harpy          A a 80  10     1       B   ---
+Grand Golem    F  120D 17   ||3||     B   ---
+Wyvern_________E_a150__22_____1_______B___---
+Dinox          E a 40   3     1       B   ---
+Faery          W c120   5     1       B   ---
+Chimera        F   55D  7    |2|      B   ---
+Elder Wood     W c170  14 ====A====   B   ---
+Gryphon        A a 85  10     1       B   Sometimes Hits for 2x Damage
+Lich           E  ---  10     1       B   Revive 'Downed' to 100% Max HP
+Blue Dragon    W  130D 17   ||3||     B   ---
+Living Armor___E_a130__17_____1_______B___---
+Troll          E a 45   3     1       B   ---
+Weird Nymph    W c125   5     1       B   ---
+Macetail       F   60D  7    |2|      B   ---
+Estre Wood     W c180  14 ====A====   B   ---
+Minotaur       E a 90  10     1       B   ---
+Succubus       W c250   9     1       B   ---
+Phoenix        F  ---  10     1       B   Revive 'Downed' to 100% Max HP
+Fire Dragon    F  140D 17   ||3||     B   ---
+Manticore      F c300  18 ====A====   B   ---
+Ghost Soldier  A a170  22     1       B   Pierce 50% Defense
+
+
+ -----------------------------------------------------------
+Whiplash       Item: Tamer                           (10)
+ ---
+Wild Wolf      Item: Tamer                           ( 1)
+ ---
+Salamander     Item: Tamer                           (10)
+ ---
+Emu            Item: Tamer                           (20)
+ ---
+Roc            Item: Tamer                           (45)
+ -----------------------------------------------------------
+Orc            Item: Trainer                      [Wild Wolf]
+ ---
+Pixie          Item: Trainer                         ( 7)
+ ---
+Cerberus       Item: Trainer                      [Salamander]
+ ---
+Harpy          Item: Trainer                      [Emu]
+ ---
+Grand Golem    Item: Trainer                         (32)
+ ---
+Wyvern         Item: Trainer                      [Roc]
+ -----------------------------------------------------------
+Dinox          Item: Beastkeeper                  [Orc]
+ ---
+Faery          Item: Beastkeeper                  [Pixie]
+ ---
+Chimera        Item: Beastkeeper                  [Cerberus]
+ ---
+Elder Wood     Item: Beastkeeper                     (15)
+ ---
+Gryphon        Item: Beastkeeper                  [Harpy]
+ ---
+Lich           Item: Beastkeeper                     (28)
+ ---
+Blue Dragon    Item: Beastkeeper                  [Grand Golem]
+ ---
+Living Armor   Item: Beastkeeper                  [Wyvern]
+ -----------------------------------------------------------
+Troll          Item: Beast Lord                   [Dinox]
+ ---
+Weird Nymph    Item: Beast Lord                   [Faery]
+ ---
+Macetail       Item: Beast Lord                   [Chimera
+ ---
+Estre Wood     Item: Beast Lord                   [Elder Wood]
+ ---
+Minotaur       Item: Beast Lord                   [Gryphon]
+ ---
+Succubus       Item: Beast Lord                      (24)
+ ---
+Phoenix        Item: Beast Lord                   [Lich]
+ ---
+Fire Dragon    Item: Beast Lord                   [Blue Dragon]
+ ---
+Manticore      Item: Beast Lord                      (38)
+ ---
+Ghost Soldier  Item: Beast Lord                   [Living Armor]
+ -----------------------------------------------------------
+
+
+
+  TOMEGATHERICON UNIQUE ABILITIES
+  -------------------------------
+              Elm Dam  PP   Range   Used  Special
+Call Zombie    W a 40   5     1       B   ---
+Call Demon     E m190% 13     1       B   May do [Target's HP - 1] Dam instd.
+Call Dullahan__A_m300%_21_____1_______B___---
+Raging Heat    F   45   9   /|3|\     B   ---
+Fiery Abyss    F   90  18   ||3||     B   ---
+Dire Inferno___F__200__32__/||4||\____B___---
+Poison Flow    A  125  28   ||3||     B   Inflict 'Deadly Poison'
+Fire Puppet    E  ---   7    |2|      B   Inflict 'Stun'
+
+
+ -----------------------------------------------------------
+Call Zombie    Item: Dark Mage (I)                   ( 1)
+Call Demon     Item: Necrolyte                       (26)
+Call Dullahan  Item: Necromage                       (47)
+ ---
+Raging Heat    Item: Dark Mage (I)               ( 9, 22, 53)
+ SERIES
+ ---
+Poison Flow    Item: Dark Mage (I)                   (33)
+ ---
+Fire Puppet    Item: Dark Mage (I)                   (20)
+ -----------------------------------------------------------
+
+
+
+  MISCELLANEOUS ABILITIES
+  -----------------------
+              Elm  PP   Range   Used  Desc
+Avoid          W    5     1     TD    Encounter fewer monsters.
+Retreat        E    6     1     TD    Return to the dungeon's entrance.
+Move           F    2     1     TD    Move an object on the ground.
+Mind Read______A____1_____1_____TD____Read someone's mind.
+Reveal         A    1     1     TD    Perceive hidden truths.
+Parch          W    2     1     TD    Evaporate standing water.
+Sand           E    2     1     TD    Melt into sand.
+Blaze__________F____1_____1_____TD____Manipulate flames.
+Lash           A    1     1     TD    Lift and move very light objects.
+Pound          F    2     1     TD    Drive objects into the ground.
+Scoop          E    1     1     TD    Dig in soft ground.
+Tremor         E    1     1     TD    Shake objects left and right.
+Cyclone        A    2     1     TD    Conjure wind to scatter weeds.
+Burst          F    2     1     TD    Break cracked objects.
+Grind          E    2     1     TD    Pulverise large objects.
+Hover          A    2     1     TD    Hover in the air.
+Teleport_______A____3_____1_____TD____Teleport at will.
+Catch          E    1     1     TD    Grab light objects from afar.
+Force         ---   2     1     TD    Strike a distant object.
+Lift           W    2     1     TD    Lift an object vertically.
+Halt           A    2     1     TD    Stop a moving object.
+Cloak          W    1     1     TD    Hide away in shadows.
+Carry          E    2     1     TD    Lift and move light objects.
+
+
+ -----------------------------------------------------------
+Avoid         Earth: Defender/Dragoon                (6)
+              Water: Cavalier/Privateer/Dragoon      (6)
+              Fire:  Defender/Dragoon                (6)
+              Item:  Pierrot                         (6)
+ ---
+Retreat         Felix Inherent
+                Isaac Inherent
+ ---
+Move            Felix Inherent
+                Isaac Inherent
+                Garet Inherent
+ ---
+Mind Read       Sheba Inherent
+                Ivan Inherent
+ ---
+Reveal          Sheba Inherent   (Learned in Air's Rock)
+                Ivan Inherent
+ ---
+Parch           Piers Inherent   (Learned in Aqua Rock)
+ ---
+Sand            Felix Inherent   (Learned in Gaia Rock)
+ ---
+Blaze           Jenna Inherent   (Learned in Magma Rock)
+ ---
+Lash            Equip Lash Pebble
+ ---
+Pound           Equip Pound Cube
+ ---
+Scoop           Equip Scoop Gem
+ ---
+Tremor          Equip Tremor Bit
+ ---
+Cyclone         Equip Cyclone Chip
+ ---
+Burst           Equip Burst Brooch
+ ---
+Grind           Equip Grindstone (Only Felix and Isaac can equip)
+ ---
+Hover           Equip Hover Jade
+ ---
+Teleport        Equip Teleport Lapis
+ ---
+Catch           Equip Catch Beads
+ ---
+Force           Equip Orb of Force
+ ---
+Lift            Equip Lifting Gem
+ ---
+Halt            Equip Halt Gem
+ ---
+Cloak           Equip Cloak Ball
+ ---
+Carry           Equip Carry Stone
+ -----------------------------------------------------------
+
+
+
+================
+== ITEM USAGE ==
+================
+  Certain items may be used in or outside battle to create an effect.  Most
+duplicate the effect of an already existing Psynergy.  Some have unique
+effects.  Some items can only be used once before disappearing, while others
+may be used until they randomly break.  There are many differences between
+the various items in the game.  This section, however, will only focus on
+the used items' *effect*.
+
+  Item usage has one large difference from Psynergy in terms of damage
+mechanics.  If the item has an elemental effect, it will *not* use the
+character's Power in that element.  For all respects and purposes, the Power
+of the item is counted as 100.  The target's Resist may or may not be taken
+into account depending on the effect of the item.
+
+  Using the previous section's layout and codes, here are the details of all
+the usable items in the game.
+
+
+ONE USE ITEMS
+=============      Elm   Dam    Range    Used  Special
+Herb               --- c  50      1      TDB   ---
+Nut                --- c 200      1      TDB   ---
+Vial               --- c 500      1      TDB   ---
+Potion             --- c9999      1      TDB   ---
+Hermes' Water      --- c9999      1      TDB   Leaves Empty Bottle after use
+Psy Crystal        --- c9999      1      TDB   Restore PP instead
+Antidote           ---  ----      1      TDB   Remove 'Poison/Deadly Poison'
+Elixir             ---  ----      1      TDB   Remove temporary Statuses
+Water of Life      ---  ----      1      TDB   Revive 'Downed' to 100% Max HP
+Mist Potion        --- c 300  ====A====  TDB   ---
+
+Smoke Bomb          A   ----      1        B   Inflict 'Delusion'
+Sleep Bomb          A   ----      1        B   Inflict 'Sleep'
+Corn               --- c 100      1      TDB   ---
+Sacred Feather      W   ----      1      TD    Reduce Encounter Rate
+
+Bramble Seed        E    140    ||3||      B   ---
+Crystal Powder      W     90    ||3||      B   ---
+Oil Drop            F     80     |2|       B   ---
+Weasel's Claw       A    120    ||3||      B   ---
+
+Power Bread        ---  ----      1      TD    Increase Max HP by 7-9
+Cookie             ---  ----      1      TD    Increase Max PP by 5-7
+Apple              ---  ----      1      TD    Increase Attack by 4-6
+Hard Nut           ---  ----      1      TD    Increase Defense by 2-4
+Mint               ---  ----      1      TD    Increase Agility by 4-6
+Lucky Pepper       ---  ----      1      TD    Increase Luck by 2
+
+
+
+MULTI-USE ITEMS
+===============    Elm   Dam    Range    Used  Special
+Blessed Mace        W  c 200      1      TDB   ---
+Captain's Axe       F   ----      1        B   +25% Defense : 50% Max
+Fireman's Pole      A   ----  ||||A||||    B   +20 Resistance : 80 Max
+Clotho's Distaff    W  c1000      1      TDB   ---
+
+Mirrored Shield     A   ----     |2|       B   Inflict 'Delusion'
+Earth Shield        E  c 150      1      TDB   ---
+
+China Dress        ---  ----      1        B   -25% Attack : 50% Max
+Phantasmal Mail     A   ----     |2|       B   Inflict 'Delusion'
+Faery Vest          W  c 200      1      TDB   ---
+Floral Dress        A   ----     |2|       B   Inflict 'Sleep'
+
+Aura Gloves         A   ----      1        B   +40 Resistance : 80 Max
+Bone Armlet         E   ----     |2|       B   Inflict 'Haunt'
+Spirit Armlet       W   ----      1        B   Remove temporary Statuses
+Virtuous Armlet     W  c 100      1      TDB   ---
+Guardian Armlet     F   ----      1        B   +25% Defense : 50% Max
+
+Prophet's Hat       E   ----      1        B   Inflict 'Countdown'
+Glittering Tiara    A   ----     |2|       B   Inflict 'Delusion'
+Nurse's Cap         E  c  70      1      TDB   ---
+Otafuku Mask        W     50D    |2|       B   ---
+Hiotoko Mask        F     85D    |2|       B   ---
+Alastor's Hood      E   ----      1        B   Inflict 'Downed'
+
+*Herbed Shirt      --- c  50      1      TDB   ---
+
+Adept Ring         ---  ----      1      TDB   Restore 7 PP
+War Ring            A   ----      1        B   +25% Attack : 50% Max
+Sleep Ring          A   ----     |2|       B   Inflict 'Sleep'
+Healing Ring        E  c  70      1      TDB   ---
+Unicorn Ring        W   ----      1      TDB   Remove 'Poison/Deadly Poison'
+Fairy Ring          W   ----      1        B   Remove temporary Statuses
+Spirit Ring         W  c 160  ====A====  TDB   ---
+Stardust Ring       A   ----      1        B   Inflict 'Psynergy Seal'
+*Aroma Ring         F  c 100  ====A====  TDB   ---
+*Rainbow Ring       A   ----     |2|       B   Inflict 'Delusion'
+*Soul Ring          E   ----      1      TDB   Revive 'Downed' to 100% Max HP
+Golden Ring         A   ----  ||||A||||    B   +20 Resistance : 80 Max
+
+Trident             A  m 120%     1        B   Break Poseidon Forcefield
+
+ * Don't ask where to get the items marked with a star.  It's currently
+   suspected that they are impossible to get without a cheat device.
+
+
+
+=============
+== THE END ==
+=============
+  Sorry, no Further Analysis section for now.  Most of what was said in the
+previous Golden Sun guide still holds, of course, but I lack the time to
+update it for Lost Age at the moment, and besides, anything I write about
+strategy will soon be further refined and surpassed by the denizens of the
+GameFAQs message boards.
+
+  Just remember.  The important thing is not what the best setup ever is...
+it's to figure out what the best setup for *you* is.  Playing style is
+everything, whether you rely on weapons, Psynergy, special classes, summons,
+or sheer variety.
+
+  I hope this document's helped.
+
+
+
+=============================================================================
+
+
+
+
+
+The Lost Age Battle Mechanics, copyright 2001-2003 Terence Fergusson

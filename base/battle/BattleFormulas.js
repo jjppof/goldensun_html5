@@ -28,4 +28,46 @@ export class BattleFormulas {
         }
         return (agility >> 1) + priority;
     }
+
+    static base_damage(caster, target) {
+        return (caster.current_atk - target.current_def)/2.0;
+    }
+
+    static physical_attack(caster, target) {
+        return this.base_damage(caster, target);
+    }
+
+    static special_physical_attack(caster, target, mult_mod, add_mod) {
+        return this.base_damage(caster, target) * mult_mod + add_mod;
+    }
+
+    static critical_damage(caster, target, is_attack = true) {
+        const add_mod = 6.0 + target.level/5.0;
+        const mult_mod = is_attack ? 1.25 : 1.5;
+        return this.special_physical_attack(caster, target, mult_mod, add_mod)
+    }
+
+    static power_multiplier(caster, target, element, is_psynergy = true) {
+        const power_key = element + "_power_current";
+        const resist_key = element + "_resist_current";
+        let relative_power = _.clamp(caster[power_key] - target[resist_key], -200, 200);
+        return 1 + (relative_power)/(is_psynergy ? 200.0 : 400.0);
+    }
+
+    static elemental_physical_attack(caster, target, mult_mod, add_mod, element) {
+        return this.special_physical_attack(caster, target, mult_mod, add_mod) * this.power_multiplier(caster, target, element, false);
+    }
+
+    static psynergy_damage(caster, target, power, element) {
+        return power + this.power_multiplier(caster, target, element, true);
+    }
+
+    static psynergy_heal(caster, power, element) {
+        const power_key = element + "_power_current";
+        return power * caster[power_key]/100.0;
+    }
+
+    static summon_damage(target, power, djinni_used) {
+        return power + target.max_hp * djinni_used * 0.03;
+    }
 }

@@ -1,7 +1,7 @@
 import * as numbers from './magic_numbers.js';
 
 export function variation() {
-    return parseInt(Math.random() * 3);
+    return _.random(0, 4);
 }
 
 export function range_360(angle) {
