@@ -1,5 +1,7 @@
 //please check http://forum.goldensunhacking.net/index.php?topic=2460
 
+import { elements } from "../MainChar";
+
 export class BattleFormulas {
     static player_turn_speed(agility, priority_move = false, multi_turn = false) {
         return (agility + ((agility * _.random(0, 65535)) >> 20)) * (multi_turn ? 0.5 : 1) + (priority_move ? 1e4 : 0);
@@ -48,9 +50,16 @@ export class BattleFormulas {
     }
 
     static power_multiplier(caster, target, element, is_psynergy = true) {
-        const power_key = element + "_power_current";
-        const resist_key = element + "_resist_current";
-        let relative_power = _.clamp(caster[power_key] - target[resist_key], -200, 200);
+        let caster_power = 100.0, target_resist = 100.0;
+        if (element !== elements.NO_ELEMENT) {
+            const resist_key = element + "_resist_current";
+            target_resist = target[resist_key];
+            if (caster !== undefined) {
+                const power_key = element + "_power_current";
+                caster_power = caster[power_key];
+            }
+        }
+        const relative_power = _.clamp(caster_power - target_resist, -200.0, 200.0);
         return 1 + (relative_power)/(is_psynergy ? 200.0 : 400.0);
     }
 
@@ -62,9 +71,17 @@ export class BattleFormulas {
         return power + this.power_multiplier(caster, target, element, true);
     }
 
-    static psynergy_heal(caster, power, element) {
-        const power_key = element + "_power_current";
-        return power * caster[power_key]/100.0;
+    static item_damage(target, power, element) {
+        return power + this.power_multiplier(undefined, target, element, true);
+    }
+
+    static heal_ability(caster, power, element) {
+        let caster_power = 100.0;
+        if (element !== elements.NO_ELEMENT) {
+            const power_key = element + "_power_current";
+            caster_power = caster[power_key];
+        }
+        return power * caster_power/100.0;
     }
 
     static summon_damage(target, power, djinni_used) {
