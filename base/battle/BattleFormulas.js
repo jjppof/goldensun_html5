@@ -43,9 +43,8 @@ export class BattleFormulas {
         return this.base_damage(caster, target) * mult_mod + add_mod;
     }
 
-    static critical_damage(caster, target, is_attack = true) {
+    static critical_damage(caster, target, mult_mod = 1.25) {
         const add_mod = 6.0 + target.level/5.0;
-        const mult_mod = is_attack ? 1.25 : 1.5;
         return this.special_physical_attack(caster, target, mult_mod, add_mod)
     }
 
