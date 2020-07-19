@@ -154,11 +154,9 @@ export function get_text_width(game, text) { //get text width in px (dirty way)
 }
 
 export function check_isdown(cursors, ...keys) {
-    let result = true;
-    ["up", "left", "down", "right"].forEach(direction => {
-        result = result && !(cursors[direction].isDown ^ keys.includes(direction));
+    return ["up", "left", "down", "right"].every(direction => {
+        return !(cursors[direction].isDown ^ keys.includes(direction));
     });
-    return result;
 }
 
 export function get_surroundings(x, y, with_diagonals = false, shift = 1) {
