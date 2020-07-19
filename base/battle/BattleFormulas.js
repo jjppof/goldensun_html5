@@ -1,6 +1,6 @@
 //please check http://forum.goldensunhacking.net/index.php?topic=2460
 
-import { elements } from "../MainChar";
+import { elements } from "../MainChar.js";
 
 export class BattleFormulas {
     static player_turn_speed(agility, priority_move = false, multi_turn = false) {

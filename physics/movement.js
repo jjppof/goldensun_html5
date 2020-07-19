@@ -91,8 +91,20 @@ export function collision_dealer(game, data) {
         } else if (data.current_action !== "climb") {
             data.stop_by_colliding = false;
             if (normals.length === 1) { //everything inside this if is to deal with direction changing when colliding
-                const normal_angle = (Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree360) % numbers.degree360;
-                if (normal_angle >= numbers.degree15 && normal_angle < numbers.degree90 - numbers.degree15) {
+                const normal_angle = range_360(Math.atan2(normals[0][1], -normals[0][0]));
+                if (normal_angle < numbers.degree15 || normal_angle >= numbers.degree360 - numbers.degree15) {
+                    if (check_isdown(data.cursors, "down", "right")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.current_direction = "down";
+                    } else if (check_isdown(data.cursors, "up", "right")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.current_direction = "up";
+                    } else {
+                        data.force_direction = false;
+                    }
+                } else if (normal_angle < numbers.degree90 - numbers.degree15) {
                     if (check_isdown(data.cursors, "up")) {
                         data.force_direction = true;
                         data.forcing_on_diagonal = true;
@@ -105,7 +117,19 @@ export function collision_dealer(game, data) {
                         data.force_direction = false;
                         data.forcing_on_diagonal = false;
                     }
-                } else if (normal_angle >= numbers.degree90 + numbers.degree15 && normal_angle < Math.PI - numbers.degree15) {
+                } else if (normal_angle < numbers.degree90 + numbers.degree15) {
+                    if (check_isdown(data.cursors, "up", "left")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.current_direction = "left";
+                    } else if (check_isdown(data.cursors, "up", "right")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.current_direction = "right";
+                    } else {
+                        data.force_direction = false;
+                    }
+                } else if (normal_angle < Math.PI - numbers.degree15) {
                     if (check_isdown(data.cursors, "up")) {
                         data.force_direction = true;
                         data.forcing_on_diagonal = true;
@@ -118,7 +142,19 @@ export function collision_dealer(game, data) {
                         data.force_direction = false;
                         data.forcing_on_diagonal = false;
                     }
-                } else if (normal_angle >= Math.PI + numbers.degree15 && normal_angle < numbers.degree270 - numbers.degree15) {
+                } else if (normal_angle < Math.PI + numbers.degree15) {
+                    if (check_isdown(data.cursors, "down", "left")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.current_direction = "down";
+                    } else if (check_isdown(data.cursors, "up", "left")) {
+                        data.force_direction = true;
+                        data.forcing_on_diagonal = false;
+                        data.current_direction = "up";
+                    } else {
+                        data.force_direction = false;
+                    }
+                } else if (normal_angle < numbers.degree270 - numbers.degree15) {
                     if (check_isdown(data.cursors, "left")) {
                         data.force_direction = true;
                         data.forcing_on_diagonal = true;
@@ -131,44 +167,7 @@ export function collision_dealer(game, data) {
                         data.force_direction = false;
                         data.forcing_on_diagonal = false;
                     }
-                } else if (normal_angle >= numbers.degree270 + numbers.degree15 && normal_angle < numbers.degree360 - numbers.degree15) {
-                    if (check_isdown(data.cursors, "right")) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = true;
-                        data.current_direction = "up_right";
-                    } else if (check_isdown(data.cursors, "down")) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = true;
-                        data.current_direction = "down_left";
-                    } else {
-                        data.force_direction = false;
-                        data.forcing_on_diagonal = false;
-                    }
-                } else if (normal_angle >= numbers.degree90 - numbers.degree15 && normal_angle < numbers.degree90 + numbers.degree15) {
-                    if (check_isdown(data.cursors, "up", "left")) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = "left";
-                    } else if (check_isdown(data.cursors, "up", "right")) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = "right";
-                    } else {
-                        data.force_direction = false;
-                    }
-                } else if (normal_angle >= Math.PI - numbers.degree15 && normal_angle < Math.PI + numbers.degree15) {
-                    if (check_isdown(data.cursors, "down", "left")) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = "down";
-                    } else if (check_isdown(data.cursors, "up", "left")) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = "up";
-                    } else {
-                        data.force_direction = false;
-                    }
-                } else if (normal_angle >= numbers.degree270 - numbers.degree15 && normal_angle < numbers.degree270 + numbers.degree15) {
+                } else if (normal_angle < numbers.degree270 + numbers.degree15) {
                     if (check_isdown(data.cursors, "left", "down")) {
                         data.force_direction = true;
                         data.forcing_on_diagonal = false;
@@ -180,17 +179,18 @@ export function collision_dealer(game, data) {
                     } else {
                         data.force_direction = false;
                     }
-                } else if (normal_angle >= numbers.degree360 - numbers.degree15 || normal_angle < numbers.degree15) {
-                    if (check_isdown(data.cursors, "down", "right")) {
+                } else if (normal_angle < numbers.degree360 - numbers.degree15) {
+                    if (check_isdown(data.cursors, "right")) {
                         data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = "down";
-                    } else if (check_isdown(data.cursors, "up", "right")) {
+                        data.forcing_on_diagonal = true;
+                        data.current_direction = "up_right";
+                    } else if (check_isdown(data.cursors, "down")) {
                         data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = "up";
+                        data.forcing_on_diagonal = true;
+                        data.current_direction = "down_left";
                     } else {
                         data.force_direction = false;
+                        data.forcing_on_diagonal = false;
                     }
                 } else {
                     data.force_direction = false;

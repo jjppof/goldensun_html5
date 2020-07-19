@@ -57,7 +57,10 @@ export class Map {
             }
         });
         data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
-        data.npc_group.setChildIndex(data.shadow, data.npc_group.getChildIndex(data.hero) - 1); //making sure that shadow is always behind the hero
+        const shadow_index = data.npc_group.getChildIndex(data.hero) - 1;
+        if (shadow_index >= 0 && shadow_index < data.npc_group.children.length) {
+            data.npc_group.setChildIndex(data.shadow, data.npc_group.getChildIndex(data.hero) - 1); //making sure that shadow is always behind the hero
+        }
         send_to_back_list.forEach(sprite => {
             if (sprite) {
                 data.npc_group.sendChildToBack(sprite);
