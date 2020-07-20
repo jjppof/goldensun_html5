@@ -217,6 +217,16 @@ export class Battle {
         this.check_phases();
     }
 
+    /*
+    Standard attack:
+    1. Unleash check (followed by another check for unleash type if weapon has multiple unleashes)
+    2. Miss check
+    3. Crit check 1  (using brn % 32)
+    4. Crit check 2 (using total crit chance from equipment, ((equipment_chance/2)*rand(0,65535) >> 16)
+    5. Status effect check
+    6. Added 0-3 damage
+    If any of checks 1-4 succeed, it skips to 5
+    */
     battle_phase_combat() {
         if (!this.turns_actions.length) {
             this.battle_phase = battle_phases.ROUND_END;
