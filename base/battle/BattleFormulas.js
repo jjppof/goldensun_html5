@@ -2,6 +2,8 @@
 
 import { elements } from "../MainChar.js";
 
+export const CRITICAL_CHANCE = 1/32;
+
 export class BattleFormulas {
     static player_turn_speed(agility, priority_move = false, multi_turn = false) {
         return (agility + ((agility * _.random(0, 65535)) >> 20)) * (multi_turn ? 0.5 : 1) + (priority_move ? 1e4 : 0);
@@ -43,7 +45,8 @@ export class BattleFormulas {
         return this.base_damage(caster, target) * mult_mod + add_mod;
     }
 
-    static critical_damage(caster, target, mult_mod = 1.25) {
+    static critical_damage(caster, target, mult_mod) {
+        mult_mod = mult_mod === undefined ? 1.25 : mult_mod;
         const add_mod = 6.0 + target.level/5.0;
         return this.special_physical_attack(caster, target, mult_mod, add_mod)
     }

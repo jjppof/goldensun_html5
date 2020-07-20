@@ -15,7 +15,9 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "attack",
-        "priority_move": false
+        "priority_move": false,
+        "has_critical": true,
+        "multiplication_factor": 1.25
     },{
         "key_name": "move",
         "name": "Move",

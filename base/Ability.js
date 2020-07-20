@@ -40,7 +40,9 @@ export class Ability {
         effects,
         ability_type_key,
         battle_animation_key,
-        priority_move
+        priority_move,
+        has_critical,
+        multiplication_factor
     ) {
         this.key_name = key_name;
         this.name = name;
@@ -58,6 +60,8 @@ export class Ability {
         this.ability_type_key = ability_type_key;
         this.battle_animation_key = battle_animation_key;
         this.priority_move = priority_move ? priority_move : false;
+        this.has_critical = has_critical ? has_critical : false;
+        this.multiplication_factor = multiplication_factor !== undefined ? multiplication_factor : 1;
     }
 
     static get_diminishing_ratios(ability_type) {

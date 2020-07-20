@@ -8,7 +8,9 @@ import { abilities_list } from "../../initializers/abilities.js";
 import { ability_target_types } from "../Ability.js";
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
 import { EnemyAI } from "./EnemyAI.js";
-import { BattleFormulas } from "./BattleFormulas.js";
+import { BattleFormulas, CRITICAL_CHANCE } from "./BattleFormulas.js";
+import { effect_types, Effect } from "../Effect.js";
+import { variation } from "../../utils.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 export const fighter_types = {
@@ -72,9 +74,9 @@ export class Battle {
                     battle_key_suffix = "_" + battle_keys_count[this.enemies_info[counter].sprite_key].toString();
                     name_suffix = " " + battle_keys_count[this.enemies_info[counter].sprite_key].toString();
                 }
-                this.enemies_info[counter].enemy_instance = get_enemy_instance(member_info.key, name_suffix);
+                this.enemies_info[counter].instance = get_enemy_instance(member_info.key, name_suffix);
                 this.enemies_info[counter].battle_key = this.enemies_info[counter].sprite_key + battle_key_suffix;
-                this.this_enemies_list[this.enemies_info[counter].battle_key] = this.enemies_info[counter].enemy_instance;
+                this.this_enemies_list[this.enemies_info[counter].battle_key] = this.enemies_info[counter].instance;
                 ++counter;
             }
         });
@@ -184,7 +186,7 @@ export class Battle {
     For the other turns, an action is re-roll in the turn start to be used on it.
     */
     battle_phase_round_start() {
-        const enemy_members = this.enemies_info.map(info => info.enemy_instance);
+        const enemy_members = this.enemies_info.map(info => info.instance);
         this.enemies_abilities = Object.fromEntries(enemy_members.map((enemy, index) => {
             let abilities = new Array(enemy.turns);
             for (let i = 0; i < enemy.turns; ++i) {
@@ -223,7 +225,20 @@ export class Battle {
         }
         let action = this.turns_actions.pop();
         if (action.caster.fighter_type === fighter_types.ENEMY && !abilities_list[action.key_name].priority_move) {
-            Object.assign(action, EnemyAI.get_targets(enemy, party_data.members, this.enemies_info.map(info => info.enemy_instance)));
+            Object.assign(action, EnemyAI.get_targets(enemy, party_data.members, this.enemies_info.map(info => info.instance)));
+        }
+        const ability = abilities_list[action.key_name];
+        if (ability.has_critical) {
+            const increased_crit = action.caster.effects.filter(effect => effect.type === effect_types.CRITICALS).reduce((acc, effect) => {
+                return Effect.apply_operator(acc, effect.quantity, effect.operator);
+            }, 0);
+            if (Math.random() < CRITICAL_CHANCE || Math.random() < increased_crit/2) {
+                action.targets.forEach(target_info => {
+                    const target_instance = target_info.target.instance;
+                    let damage = BattleFormulas.critical_damage(action.caster, target_instance, ability.multiplication_factor);
+                    damage = damage * target_info.magnitude + variation();
+                });
+            }
         }
     }
 

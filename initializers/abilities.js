@@ -26,7 +26,9 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
             ability_data.effects,
             ability_data.ability_type_key,
             ability_data.battle_animation_key,
-            ability_data.priority_move
+            ability_data.priority_move,
+            ability_data.has_critical,
+            ability_data.multiplication_factor
         );
     }
     const loader = game.load.atlasJSONHash('abilities_icons', 'assets/images/icons/abilities/abilities_icons.png', 'assets/images/icons/abilities/abilities_icons.json');
