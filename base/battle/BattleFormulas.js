@@ -3,6 +3,8 @@
 import { elements } from "../MainChar.js";
 
 export const CRITICAL_CHANCE = 1/32;
+export const EVASION_CHANCE = 1/32;
+export const DELUSION_MISS_CHANCE = 66/100;
 
 export class BattleFormulas {
     static player_turn_speed(agility, priority_move = false, multi_turn = false) {
