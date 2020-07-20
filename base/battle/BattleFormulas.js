@@ -3,6 +3,8 @@
 import { elements } from "../MainChar.js";
 
 export const CRITICAL_CHANCE = 1/32;
+
+// 1/32 chance to miss with a standard attack, or a roughly 66% chance to miss with Delusion.
 export const EVASION_CHANCE = 1/32;
 export const DELUSION_MISS_CHANCE = 66/100;
 
