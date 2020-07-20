@@ -26,7 +26,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         );
         this.setActionDirections(
             this.action_key_name, 
-            [directions.up, directions.down, directions.left, directions.right],
+            [reverse_directions[directions.up], reverse_directions[directions.down], reverse_directions[directions.left], reverse_directions[directions.right]],
             [2, 2, 2, 2]
         );
         this.setActionFrameRate(this.action_key_name, 10);
