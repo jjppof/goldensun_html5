@@ -1,4 +1,5 @@
 import * as numbers from './magic_numbers.js';
+import { directions } from './utils.js';
 import { initialize_main_chars, main_char_list, initialize_classes, party_data } from './initializers/main_chars.js';
 import { initialize_abilities, abilities_list, initialize_field_abilities, field_abilities_list } from './initializers/abilities.js';
 import { initialize_items, items_list } from './initializers/items.js';
@@ -51,6 +52,7 @@ var data = {
     battle_stage: null,
     created: false,
     in_dialog: false,
+    idle_climbing: false,
 
     //debug
     debug: false,
@@ -203,7 +205,7 @@ async function create() {
     data.pasynergy_item_color_filters = game.add.filter('ColorFilters');
 
     data.hero_name = data.init_db.hero_key_name;
-    data.current_direction = data.init_db.initial_direction;
+    data.current_direction = directions[data.init_db.initial_direction];
     data.map_name = data.init_db.map_key_name;
     data.scale_factor = data.init_db.initial_scale_factor;
     data.map_collider_layer = data.init_db.map_z_index;

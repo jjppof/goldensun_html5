@@ -1,7 +1,7 @@
 import * as numbers from  "../magic_numbers.js";
 import { maps } from '../initializers/maps.js';
 import { TileEvent, event_types, JumpEvent } from "../base/TileEvent.js";
-import { get_surroundings, get_opposite_direction } from "../utils.js";
+import { get_surroundings, get_opposite_direction, directions, reverse_directions } from "../utils.js";
 
 const DUST_COUNT = 7;
 const DUST_RADIUS = 18;
@@ -9,7 +9,7 @@ const DUST_FRAMES = Phaser.Animation.generateFrameNames('dust/', 0, 7, '', 2);
 const PUSH_SHIFT = 16;
 
 export function normal_push(game, data, interactable_object) {
-    if (data.trying_to_push && ["up", "down", "left", "right"].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.current_direction && !data.casting_psynergy && !data.jumping && !data.in_battle) {
+    if (data.trying_to_push && [directions.up, directions.down, directions.left, directions.right].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.current_direction && !data.casting_psynergy && !data.jumping && !data.in_battle) {
         fire_push_movement(game, data, interactable_object);
     }
     data.trying_to_push = false;
@@ -26,13 +26,13 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
         let positive_limit = data.hero.x + (-interactable_object.interactable_object_sprite.y - interactable_object.interactable_object_sprite.x);
         let negative_limit = -data.hero.x + (-interactable_object.interactable_object_sprite.y + interactable_object.interactable_object_sprite.x);
         if (-data.hero.y >= positive_limit && -data.hero.y >= negative_limit) {
-            expected_position = "down";
+            expected_position = directions.down;
         } else if (-data.hero.y <= positive_limit && -data.hero.y >= negative_limit) {
-            expected_position = "left";
+            expected_position = directions.left;
         } else if (-data.hero.y <= positive_limit && -data.hero.y <= negative_limit) {
-            expected_position = "up";
+            expected_position = directions.up;
         } else if (-data.hero.y >= positive_limit && -data.hero.y <= negative_limit) {
-            expected_position = "right";
+            expected_position = directions.right;
         }
     }
     if (target_only || expected_position === data.trying_to_push_direction) {
@@ -44,19 +44,19 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
         let tween_x = 0, tween_y = 0;
         let event_shift_x = 0, event_shift_y = 0;
         switch (data.trying_to_push_direction) {
-            case "up":
+            case directions.up:
                 event_shift_y = -1;
                 tween_y = -PUSH_SHIFT;
                 break;
-            case "down":
+            case directions.down:
                 event_shift_y = 1;
                 tween_y = PUSH_SHIFT;
                 break;
-            case "left":
+            case directions.left:
                 event_shift_x = -1;
                 tween_x = -PUSH_SHIFT;
                 break;
-            case "right":
+            case directions.right:
                 event_shift_x = 1;
                 tween_x = PUSH_SHIFT;
                 break;
@@ -119,7 +119,7 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
                                     data.current_action = "idle";
                                     data.hero.loadTexture(data.hero_name + "_" + data.current_action);
                                     main_char_list[data.hero_name].setAnimation(data.hero, data.current_action);
-                                    data.hero.animations.play(data.current_action + "_" + data.current_direction);
+                                    data.hero.animations.play(data.current_action + "_" + reverse_directions[data.current_direction]);
                                     dust_animation(game, data, interactable_object, promise_resolve);
                                 } else {
                                     promise_resolve();

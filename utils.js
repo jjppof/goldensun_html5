@@ -1,5 +1,45 @@
 import * as numbers from './magic_numbers.js';
 
+export const directions = {
+    right: 1,
+    up_right: 2,
+    up: 4,
+    up_left: 8,
+    left: -1,
+    down_left: -2,
+    down: -4,
+    down_right: -8
+};
+
+export const reverse_directions = {
+    [directions.right]: "right",
+    [directions.up_right]: "up_right",
+    [directions.up]: "up",
+    [directions.up_left]: "up_left",
+    [directions.left]: "left",
+    [directions.down_left]: "down_left",
+    [directions.down]: "down",
+    [directions.down_right]: "down_right"
+};
+
+export function map_directions(arr) {
+    if (arr === undefined) return arr;
+    arr = Array.isArray(arr) ? arr : [arr];
+    return arr.map(key => directions[key]);
+}
+
+export function split_direction(direction) {
+    return reverse_directions[direction].split("_").map(key => directions[key]);
+}
+
+export function join_directions(dir_1, dir_2) {
+    if ([directions.up, directions.down].includes(dir_1)) {
+        return directions[reverse_directions[dir_1] + "_" + reverse_directions[dir_2]];
+    } else {
+        return directions[reverse_directions[dir_2] + "_" + reverse_directions[dir_1]];
+    }
+}
+
 export function variation() {
     return _.random(0, 4);
 }
@@ -13,10 +53,8 @@ export function range_360(angle) {
 export function is_inside_sector(quadrants, radius, range_factor, x, y, target_x, target_y) {
     const range_radius_squared = (radius * range_factor) * (radius * range_factor);
     const target_radius_quared = Math.pow(target_x - x, 2) + Math.pow(target_y - y, 2);
-
-    let target_angle = Math.atan2(y - target_y, target_x - x);
-    target_angle = (target_angle + (2*Math.PI))%(2*Math.PI);
-    const angles = [0, Math.PI/2.0, Math.PI, 3.0*Math.PI/2.0, 2.0*Math.PI];
+    const target_angle = range_360(Math.atan2(y - target_y, target_x - x));
+    const angles = [0, numbers.degree90, Math.PI, numbers.degree270, numbers.degree360];
     let between_angles = false;
     for (let i = 0; i < quadrants.length; ++i) {
         let quadrant = quadrants[i];
@@ -31,114 +69,114 @@ export function is_inside_sector(quadrants, radius, range_factor, x, y, target_x
 
 export function is_close(current_direction, x, y, target_x, target_y, range_factor) {
     switch (current_direction) {
-        case "up":
+        case directions.up:
             return is_inside_sector([1, 2], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case "up_right":
+        case directions.up_right:
             return is_inside_sector([1], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case "right":
+        case directions.right:
             return is_inside_sector([1, 4], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case "down_right":
+        case directions.down_right:
             return is_inside_sector([4], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case "down":
+        case directions.down:
             return is_inside_sector([3, 4], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case "down_left":
+        case directions.down_left:
             return is_inside_sector([3], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case "left":
+        case directions.left:
             return is_inside_sector([2, 3], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case "up_left":
+        case directions.up_left:
             return is_inside_sector([2], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
     };
 }
 
 export const transitions = {
-    "up" : {
-        "up" : "up",
-        "down" : "down_left",
-        "left" : "up_left",
-        "right" : "up_right",
-        "down_left" : "left",
-        "down_right" : "right",
-        "up_left" : "up",
-        "up_right" : "up"
+    [directions.up] : {
+        [directions.up] : directions.up,
+        [directions.down] : directions.down_left,
+        [directions.left] : directions.up_left,
+        [directions.right] : directions.up_right,
+        [directions.down_left] : directions.left,
+        [directions.down_right] : directions.right,
+        [directions.up_left] : directions.up,
+        [directions.up_right] : directions.up
     },
-    "down" : {
-        "up" : "up_left",
-        "down" : "down",
-        "left" : "down_left",
-        "right" : "down_right",
-        "down_left" : "down",
-        "down_right" : "down",
-        "up_left" : "left",
-        "up_right" : "right"
+    [directions.down] : {
+        [directions.up] : directions.up_left,
+        [directions.down] : directions.down,
+        [directions.left] : directions.down_left,
+        [directions.right] : directions.down_right,
+        [directions.down_left] : directions.down,
+        [directions.down_right] : directions.down,
+        [directions.up_left] : directions.left,
+        [directions.up_right] : directions.right
     },
-    "left" : {
-        "up" : "up_left",
-        "down" : "down_left",
-        "left" : "left",
-        "right" : "up_right",
-        "down_left" : "left",
-        "down_right" : "down",
-        "up_left" : "left",
-        "up_right" : "up"
+    [directions.left] : {
+        [directions.up] : directions.up_left,
+        [directions.down] : directions.down_left,
+        [directions.left] : directions.left,
+        [directions.right] : directions.up_right,
+        [directions.down_left] : directions.left,
+        [directions.down_right] : directions.down,
+        [directions.up_left] : directions.left,
+        [directions.up_right] : directions.up
     },
-    "right" : {
-        "up" : "up_right",
-        "down" : "down_right",
-        "left" : "up_left",
-        "right" : "right",
-        "down_left" : "down",
-        "down_right" : "right",
-        "up_left" : "up",
-        "up_right" : "right"
+    [directions.right] : {
+        [directions.up] : directions.up_right,
+        [directions.down] : directions.down_right,
+        [directions.left] : directions.up_left,
+        [directions.right] : directions.right,
+        [directions.down_left] : directions.down,
+        [directions.down_right] : directions.right,
+        [directions.up_left] : directions.up,
+        [directions.up_right] : directions.right
     },
-    "down_left" : {
-        "up" : "up_left",
-        "down" : "down_left",
-        "left" : "down_left",
-        "right" : "down_right",
-        "down_left" : "down_left",
-        "down_right" : "down",
-        "up_left" : "left",
-        "up_right" : "up"
+    [directions.down_left] : {
+        [directions.up] : directions.up_left,
+        [directions.down] : directions.down_left,
+        [directions.left] : directions.down_left,
+        [directions.right] : directions.down_right,
+        [directions.down_left] : directions.down_left,
+        [directions.down_right] : directions.down,
+        [directions.up_left] : directions.left,
+        [directions.up_right] : directions.up
     },
-    "down_right" : {
-        "up" : "up_right",
-        "down" : "down_right",
-        "left" : "down_left",
-        "right" : "down_right",
-        "down_left" : "down",
-        "down_right" : "down_right",
-        "up_left" : "left",
-        "up_right" : "right"
+    [directions.down_right] : {
+        [directions.up] : directions.up_right,
+        [directions.down] : directions.down_right,
+        [directions.left] : directions.down_left,
+        [directions.right] : directions.down_right,
+        [directions.down_left] : directions.down,
+        [directions.down_right] : directions.down_right,
+        [directions.up_left] : directions.left,
+        [directions.up_right] : directions.right
     },
-    "up_left" : {
-        "up" : "up_left",
-        "down" : "down_left",
-        "left" : "up_left",
-        "right" : "up_right",
-        "down_left" : "left",
-        "down_right" : "right",
-        "up_left" : "up_left",
-        "up_right" : "up"
+    [directions.up_left] : {
+        [directions.up] : directions.up_left,
+        [directions.down] : directions.down_left,
+        [directions.left] : directions.up_left,
+        [directions.right] : directions.up_right,
+        [directions.down_left] : directions.left,
+        [directions.down_right] : directions.right,
+        [directions.up_left] : directions.up_left,
+        [directions.up_right] : directions.up
     },
-    "up_right" : {
-        "up" : "up_right",
-        "down" : "down_right",
-        "left" : "up_left",
-        "right" : "up_right",
-        "down_left" : "left",
-        "down_right" : "right",
-        "up_left" : "up",
-        "up_right" : "up_right"
+    [directions.up_right] : {
+        [directions.up] : directions.up_right,
+        [directions.down] : directions.down_right,
+        [directions.left] : directions.up_left,
+        [directions.right] : directions.up_right,
+        [directions.down_left] : directions.left,
+        [directions.down_right] : directions.right,
+        [directions.up_left] : directions.up,
+        [directions.up_right] : directions.up_right
     },
 };
 
 export function get_opposite_direction(direction) {
     switch (direction) {
-        case "up": return "down";
-        case "down": return "up";
-        case "left": return "right";
-        case "right": return "left";
+        case directions.up: return directions.down;
+        case directions.down: return directions.up;
+        case directions.left: return directions.right;
+        case directions.right: return directions.left;
     }
 }
 
@@ -154,48 +192,48 @@ export function get_text_width(game, text) { //get text width in px (dirty way)
 }
 
 export function check_isdown(cursors, ...keys) {
-    return ["up", "left", "down", "right"].every(direction => {
-        return !(cursors[direction].isDown ^ keys.includes(direction));
+    return [directions.up, directions.left, directions.down, directions.right].every(direction => {
+        return !(cursors[reverse_directions[direction]].isDown ^ keys.includes(direction));
     });
 }
 
 export function get_surroundings(x, y, with_diagonals = false, shift = 1) {
     let surroundings = [
-        {x: x - shift, y: y, diag: false, direction: "left"},
-        {x: x + shift, y: y, diag: false, direction: "right"},
-        {x: x, y: y - shift, diag: false, direction: "up"},
-        {x: x, y: y + shift, diag: false, direction: "down"},
+        {x: x - shift, y: y, diag: false, direction: directions.left},
+        {x: x + shift, y: y, diag: false, direction: directions.right},
+        {x: x, y: y - shift, diag: false, direction: directions.up},
+        {x: x, y: y + shift, diag: false, direction: directions.down},
     ];
     if (with_diagonals) {
         surroundings = surroundings.concat([
-            {x: x - shift, y: y - shift, diag: true, direction: "up_left"},
-            {x: x + shift, y: y - shift, diag: true, direction: "up_right"},
-            {x: x - shift, y: y + shift, diag: true, direction: "down_left"},
-            {x: x + shift, y: y + shift, diag: true, direction: "down_right"},
+            {x: x - shift, y: y - shift, diag: true, direction: directions.up_left},
+            {x: x + shift, y: y - shift, diag: true, direction: directions.up_right},
+            {x: x - shift, y: y + shift, diag: true, direction: directions.down_left},
+            {x: x + shift, y: y + shift, diag: true, direction: directions.down_right},
         ]);
     }
     return surroundings;
 };
 
 export function set_cast_direction(direction) {
-    if (direction === "down_left") {
-        direction = "left";
-    } else if (direction === "up_left") {
-        direction = "up";
-    } else if (direction === "up_right") {
-        direction = "right";
-    } else if (direction === "down_right") {
-        direction = "down";
+    if (direction === directions.down_left) {
+        direction = directions.left;
+    } else if (direction === directions.up_left) {
+        direction = directions.up;
+    } else if (direction === directions.up_right) {
+        direction = directions.right;
+    } else if (direction === directions.down_right) {
+        direction = directions.down;
     }
     return direction;
 }
 
 export function get_directions(with_diagonals = false) {
-    let directions = ["up", "down", "left", "right"];
+    let dirs = [directions.up, directions.down, directions.left, directions.right];
     if (with_diagonals) {
-        directions.push(...["up_left", "up_right", "down_left", "down_right"]);
+        dirs.push(...[directions.up_left, directions.up_right, directions.down_left, directions.down_right]);
     }
-    return directions;
+    return dirs;
 }
 
 export function capitalize(text) {

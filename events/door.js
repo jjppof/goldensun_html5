@@ -10,6 +10,7 @@ import {
     set_speed_factors,
 } from '../physics/movement.js';
 import * as numbers from '../magic_numbers.js';
+import { reverse_directions } from '../utils.js';
 
 export function set_door_event(data, current_event, activation_direction) {
     data.on_event = true;
@@ -53,7 +54,7 @@ export function door_event_phases(data) {
         data.hero.loadTexture(data.hero_name + "_idle");
         main_char_list[data.hero_name].setAnimation(data.hero, "idle");
         data.current_direction = current_event.activation_directions[0];
-        data.hero.animations.play("idle_" + data.current_direction);
+        data.hero.animations.play("idle_" + reverse_directions[data.current_direction]);
         data.current_action = "idle";
         game.camera.fade();
         game.camera.onFadeComplete.addOnce(() => {

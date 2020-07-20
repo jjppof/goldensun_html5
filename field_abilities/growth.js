@@ -3,8 +3,7 @@ import { abilities_list } from "../initializers/abilities.js";
 import { init_cast_aura, tint_map_layers } from  '../initializers/psynergy_cast.js';
 import { maps } from  '../initializers/maps.js';
 import * as numbers from '../magic_numbers.js';
-import { event_types } from "../base/TileEvent.js";
-import { get_surroundings, set_cast_direction } from "../utils.js";
+import { set_cast_direction, directions, reverse_directions } from "../utils.js";
 
 const ACTION_KEY_NAME = "cast";
 const GROWTH_MAX_RANGE = 12;
@@ -28,10 +27,10 @@ export class GrowthFieldPsynergy {
     search_for_target() {
         this.target_found = false;
         let min_x, max_x, min_y, max_y;
-        if (this.cast_direction === "up" || this.cast_direction === "down") {
+        if (this.cast_direction === directions.up || this.cast_direction === directions.down) {
             min_x = this.data.hero.x - numbers.HERO_BODY_RADIUS;
             max_x = this.data.hero.x + numbers.HERO_BODY_RADIUS;
-            if (this.cast_direction === "up") {
+            if (this.cast_direction === directions.up) {
                 min_y = this.data.hero.y - numbers.HERO_BODY_RADIUS - GROWTH_MAX_RANGE;
                 max_y = this.data.hero.y - numbers.HERO_BODY_RADIUS;
             } else {
@@ -41,7 +40,7 @@ export class GrowthFieldPsynergy {
         } else {
             min_y = this.data.hero.y - numbers.HERO_BODY_RADIUS;
             max_y = this.data.hero.y + numbers.HERO_BODY_RADIUS;
-            if (this.cast_direction === "left") {
+            if (this.cast_direction === directions.left) {
                 min_x = this.data.hero.x - numbers.HERO_BODY_RADIUS - GROWTH_MAX_RANGE;
                 max_x = this.data.hero.x - numbers.HERO_BODY_RADIUS;
             } else {
@@ -70,7 +69,7 @@ export class GrowthFieldPsynergy {
     set_hero_cast_anim() {
         this.data.hero.loadTexture(this.data.hero_name + "_" + this.action_key_name);
         main_char_list[this.data.hero_name].setAnimation(this.data.hero, this.action_key_name);
-        this.data.hero.animations.play(this.action_key_name + "_" + this.cast_direction, main_char_list[this.data.hero_name].actions[this.action_key_name].frame_rate, false);
+        this.data.hero.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].actions[this.action_key_name].frame_rate, false);
     }
 
     unset_hero_cast_anim() {
@@ -78,9 +77,9 @@ export class GrowthFieldPsynergy {
         this.data.hero.animations.currentAnim.onComplete.addOnce(() => {
             this.data.hero.loadTexture(this.data.hero_name + "_idle");
             main_char_list[this.data.hero_name].setAnimation(this.data.hero, "idle");
-            this.data.hero.animations.frameName = `idle/${this.cast_direction}/00`;
+            this.data.hero.animations.frameName = `idle/${reverse_directions[this.cast_direction]}/00`;
         });
-        this.data.hero.animations.play(this.action_key_name + "_" + this.cast_direction, main_char_list[this.data.hero_name].actions[this.action_key_name].frame_rate, false);
+        this.data.hero.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].actions[this.action_key_name].frame_rate, false);
     }
 
     set_emitter() {
@@ -94,7 +93,7 @@ export class GrowthFieldPsynergy {
         let emitter_height = 0;
         this.increase_duration = 0;
         switch(this.cast_direction) {
-            case "up":
+            case directions.up:
                 max_y_speed = -MAX_PARTICLE_SPEED;
                 min_y_speed = -MIN_PARTICLE_SPEED;
                 max_x_speed = min_x_speed = X_PARTICLE_SPEED;
@@ -103,7 +102,7 @@ export class GrowthFieldPsynergy {
                 emitter_height = 1.5 * GROWTH_MAX_RANGE;
                 this.increase_duration = 80;
                 break;
-            case "down":
+            case directions.down:
                 max_y_speed = MAX_PARTICLE_SPEED;
                 min_y_speed = MIN_PARTICLE_SPEED;
                 max_x_speed = min_x_speed = X_PARTICLE_SPEED;
@@ -112,7 +111,7 @@ export class GrowthFieldPsynergy {
                 emitter_height = 1.5 * GROWTH_MAX_RANGE;
                 this.increase_duration = 80;
                 break;
-            case "left":
+            case directions.left:
                 max_x_speed = -MAX_PARTICLE_SPEED;
                 min_x_speed = -MIN_PARTICLE_SPEED;
                 max_y_speed = min_y_speed = Y_PARTICLE_SPEED;
@@ -120,7 +119,7 @@ export class GrowthFieldPsynergy {
                 emitter_width = 1.5 * GROWTH_MAX_RANGE;
                 emitter_height = GROWTH_MAX_RANGE;
                 break;
-            case "right":
+            case directions.right:
                 max_x_speed = MAX_PARTICLE_SPEED;
                 min_x_speed = MIN_PARTICLE_SPEED;
                 max_y_speed = min_y_speed = Y_PARTICLE_SPEED;
@@ -178,16 +177,16 @@ export class GrowthFieldPsynergy {
         let grow_center_x = this.data.hero.centerX; 
         let grow_center_y = this.data.hero.centerY + 17; 
         switch(this.cast_direction) {
-            case "up":
+            case directions.up:
                 grow_center_y -= 16;
                 break;
-            case "down":
+            case directions.down:
                 grow_center_y += 16;
                 break;
-            case "left":
+            case directions.left:
                 grow_center_x -= 16;
                 break;
-            case "right":
+            case directions.right:
                 grow_center_x += 16;
                 break;
         }

@@ -1,17 +1,18 @@
 import { maps } from '../initializers/maps.js';
+import { directions } from '../utils.js';
 
 const STEP_SHIFT_FACTOR = 4;
 
 export function config_step(data, current_event) {
     let next_x, next_y = current_event.y, shift_y;
-    if (current_event.step_direction === "up") {
+    if (current_event.step_direction === directions.up) {
         shift_y = -parseInt(maps[data.map_name].sprite.tileHeight/STEP_SHIFT_FACTOR);
-    } else if (current_event.step_direction === "down") {
+    } else if (current_event.step_direction === directions.down) {
         shift_y = parseInt(maps[data.map_name].sprite.tileHeight/STEP_SHIFT_FACTOR);
     }
-    if (current_event.activation_directions[0] === "left") {
+    if (current_event.activation_directions[0] === directions.left) {
         next_x = current_event.x - 1;
-    } else if (current_event.activation_directions[0] === "right") {
+    } else if (current_event.activation_directions[0] === directions.right) {
         next_x = current_event.x + 1;
     }
     data.waiting_to_step = true;

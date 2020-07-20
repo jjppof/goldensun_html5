@@ -2,7 +2,7 @@ import * as numbers from '../magic_numbers.js';
 import { main_char_list } from '../initializers/main_chars.js';
 import { maps } from '../initializers/maps.js';
 import { event_types, TileEvent } from '../base/TileEvent.js';
-import { get_surroundings, get_opposite_direction } from '../utils.js';
+import { get_surroundings, get_opposite_direction, directions, split_direction, reverse_directions } from '../utils.js';
 
 const JUMP_OFFSET = 30;
 const JUMP_DURATION = 150;
@@ -16,28 +16,28 @@ export function jump_event(data, current_event) {
     let jump_direction;
     let next_position = {x: current_event.x, y: current_event.y};
     let side_position = {x: current_event.x, y: current_event.y};
-    if (data.current_direction === "left") {
+    if (data.current_direction === directions.left) {
         jump_offset = -jump_offset;
         direction = "x";
         next_position.x -= 2;
         side_position.x -= 1;
-        jump_direction = "left";
-    } else if (data.current_direction === "right") {
+        jump_direction = directions.left;
+    } else if (data.current_direction === directions.right) {
         direction = "x";
         next_position.x += 2;
         side_position.x += 1;
-        jump_direction = "right";
-    } else if (data.current_direction === "up") {
+        jump_direction = directions.right;
+    } else if (data.current_direction === directions.up) {
         jump_offset = -jump_offset;
         direction = "y";
         next_position.y -= 2;
         side_position.y -= 1;
-        jump_direction = "up";
-    } else if (data.current_direction === "down") {
+        jump_direction = directions.up;
+    } else if (data.current_direction === directions.down) {
         direction = "y";
         next_position.y += 2;
         side_position.y += 1;
-        jump_direction = "down";
+        jump_direction = directions.down;
     }
     if (jump_direction === undefined) {
         return;
@@ -106,7 +106,7 @@ export function jump_event(data, current_event) {
     game.physics.p2.pause();
     data.hero.loadTexture(data.hero_name + "_jump");
     main_char_list[data.hero_name].setAnimation(data.hero, "jump");
-    data.hero.animations.play("jump_" + jump_direction, main_char_list[data.hero_name].actions["jump"].frame_rate, false);
+    data.hero.animations.play("jump_" + reverse_directions[jump_direction], main_char_list[data.hero_name].actions["jump"].frame_rate, false);
     data.hero.animations.currentAnim.onComplete.addOnce(() => {
         data.shadow.visible = false;
         data.shadow.x = hero_x;
@@ -119,7 +119,7 @@ export function jump_event(data, current_event) {
         ).onComplete.addOnce(() => {
             data.shadow.visible = true;
             data.hero.animations.currentAnim.reverseOnce();
-            data.hero.animations.play("jump_" + jump_direction, main_char_list[data.hero_name].actions["jump"].frame_rate, false);
+            data.hero.animations.play("jump_" + reverse_directions[jump_direction], main_char_list[data.hero_name].actions["jump"].frame_rate, false);
             data.hero.animations.currentAnim.onComplete.addOnce(() => {
                 game.physics.p2.resume();
                 data.jumping = false;
@@ -195,13 +195,9 @@ export function jump_near_collision(data, current_event) {
     let current_pos = {x: data.hero_tile_pos_x, y: data.hero_tile_pos_y};
     let surroundings = get_surroundings(current_pos.x, current_pos.y, true);
     let right_direction = false;
-    if (Array.isArray(current_event.activation_directions)) {
-        let possible_directions = data.current_direction.split("_");
-        for (let i = 0; i < possible_directions.length; ++i) {
-            right_direction = right_direction || current_event.activation_directions.includes(possible_directions[i]);
-        }
-    } else {
-        right_direction = data.current_direction.includes(current_event.activation_directions);
+    let possible_directions = split_direction(data.current_direction);
+    for (let i = 0; i < possible_directions.length; ++i) {
+        right_direction = right_direction || current_event.activation_directions.includes(possible_directions[i]);
     }
 
     let clear_bodies = () => {

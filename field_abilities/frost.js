@@ -4,7 +4,7 @@ import { init_cast_aura, tint_map_layers } from  '../initializers/psynergy_cast.
 import { maps } from  '../initializers/maps.js';
 import * as numbers from '../magic_numbers.js';
 import { event_types, JumpEvent } from "../base/TileEvent.js";
-import { get_surroundings, set_cast_direction } from "../utils.js";
+import { get_surroundings, set_cast_direction, directions, reverse_directions } from "../utils.js";
 
 const ACTION_KEY_NAME = "cast";
 const FROST_MAX_RANGE = 12;
@@ -29,10 +29,10 @@ export class FrostFieldPsynergy {
     search_for_target() {
         this.target_found = false;
         let min_x, max_x, min_y, max_y;
-        if (this.cast_direction === "up" || this.cast_direction === "down") {
+        if (this.cast_direction === directions.up || this.cast_direction === directions.down) {
             min_x = this.data.hero.x - numbers.HERO_BODY_RADIUS;
             max_x = this.data.hero.x + numbers.HERO_BODY_RADIUS;
-            if (this.cast_direction === "up") {
+            if (this.cast_direction === directions.up) {
                 min_y = this.data.hero.y - numbers.HERO_BODY_RADIUS - FROST_MAX_RANGE;
                 max_y = this.data.hero.y - numbers.HERO_BODY_RADIUS;
             } else {
@@ -42,7 +42,7 @@ export class FrostFieldPsynergy {
         } else {
             min_y = this.data.hero.y - numbers.HERO_BODY_RADIUS;
             max_y = this.data.hero.y + numbers.HERO_BODY_RADIUS;
-            if (this.cast_direction === "left") {
+            if (this.cast_direction === directions.left) {
                 min_x = this.data.hero.x - numbers.HERO_BODY_RADIUS - FROST_MAX_RANGE;
                 max_x = this.data.hero.x - numbers.HERO_BODY_RADIUS;
             } else {
@@ -71,7 +71,7 @@ export class FrostFieldPsynergy {
     set_hero_cast_anim() {
         this.data.hero.loadTexture(this.data.hero_name + "_" + this.action_key_name);
         main_char_list[this.data.hero_name].setAnimation(this.data.hero, this.action_key_name);
-        this.data.hero.animations.play(this.action_key_name + "_" + this.cast_direction, main_char_list[this.data.hero_name].actions[this.action_key_name].frame_rate, false);
+        this.data.hero.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].actions[this.action_key_name].frame_rate, false);
     }
 
     unset_hero_cast_anim() {
@@ -79,9 +79,9 @@ export class FrostFieldPsynergy {
         this.data.hero.animations.currentAnim.onComplete.addOnce(() => {
             this.data.hero.loadTexture(this.data.hero_name + "_idle");
             main_char_list[this.data.hero_name].setAnimation(this.data.hero, "idle");
-            this.data.hero.animations.frameName = `idle/${this.cast_direction}/00`;
+            this.data.hero.animations.frameName = `idle/${reverse_directions[this.cast_direction]}/00`;
         });
-        this.data.hero.animations.play(this.action_key_name + "_" + this.cast_direction, main_char_list[this.data.hero_name].actions[this.action_key_name].frame_rate, false);
+        this.data.hero.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].actions[this.action_key_name].frame_rate, false);
     }
 
     init_snowflakes() {
@@ -95,10 +95,10 @@ export class FrostFieldPsynergy {
             let x_dest = this.data.hero.centerX;
             let y_dest = this.data.hero.centerY + 12;
             switch (this.cast_direction) {
-                case "left": x_dest -= 16; break;
-                case "right": x_dest += 16; break;
-                case "up": y_dest -= 14; break;
-                case "down": y_dest += 12; break;
+                case directions.left: x_dest -= 16; break;
+                case directions.right: x_dest += 16; break;
+                case directions.up: y_dest -= 14; break;
+                case directions.down: y_dest += 12; break;
             }
             let spiral_angle = {rad: TOTAL_TURNS_SNOWFLAKES};
             const sign_x = Math.sign(Math.random() - 0.5);

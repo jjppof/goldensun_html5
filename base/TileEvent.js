@@ -1,4 +1,4 @@
-import { get_surroundings, get_opposite_direction, get_directions } from "../utils.js";
+import { get_surroundings, get_opposite_direction, get_directions, split_direction } from "../utils.js";
 import { maps } from "../initializers/maps.js";
 
 export const event_types = {
@@ -29,7 +29,7 @@ export class TileEvent {
     }
 
     is_active(direction) {
-        const possible_directions = direction.split("_");
+        const possible_directions = split_direction(direction);
         for (let i = 0; i < possible_directions.length; ++i) {
             if (this.active[this.activation_directions.indexOf(possible_directions[i])]) {
                 return true;

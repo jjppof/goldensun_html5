@@ -1,4 +1,5 @@
 import * as numbers from '../magic_numbers.js';
+import { reverse_directions } from '../utils.js';
 
 const SHADOW_X_AP = 0.45;
 const SHADOW_Y_AP = 0.05;
@@ -19,19 +20,20 @@ export function config_hero(data) {
     game.camera.focusOn(data.hero);
     //config data.hero initial animation state
     main_char_list[data.hero_name].setAnimation(data.hero, data.current_action);
-    data.hero.animations.play(data.current_action + "_" + data.current_direction);
+    data.hero.animations.play(data.current_action + "_" + reverse_directions[data.current_direction]);
 }
 
 export function change_hero_sprite(data) {
     let action = data.current_action;
     let direction = data.current_direction;
+    let idle_climbing = data.idle_climbing;
     if (data.stop_by_colliding && !data.pushing && !data.climbing) {
         action = "idle";
     } else if (data.stop_by_colliding && !data.pushing && data.climbing) {
-        direction = "idle";
+        idle_climbing = true;
     }
-    let key = data.hero_name + "_" + action;
-    let animation = action + "_" + direction;
+    const key = data.hero_name + "_" + action;
+    const animation = action + "_" + (idle_climbing ? "idle" : reverse_directions[direction]);
     if (data.hero.key !== key) {
         data.hero.loadTexture(key);
         main_char_list[data.hero_name].setAnimation(data.hero, action);
@@ -45,13 +47,13 @@ export function change_hero_sprite(data) {
 export function set_current_action(data) {
     if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.current_action !== "idle" && !data.climbing) {
         data.current_action = "idle";
-    } else if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.current_direction !== "idle" && data.climbing) {
+    } /*else if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.current_direction !== "idle" && data.climbing) {
         data.current_direction = "idle";
-    } else if (((data.cursors.up.isDown && data.cursors.down.isDown) || (data.cursors.right.isDown && data.cursors.left.isDown)) && !data.climbing) {
+    }*/ else if (((data.cursors.up.isDown && data.cursors.down.isDown) || (data.cursors.right.isDown && data.cursors.left.isDown)) && !data.climbing) {
         data.current_action = "idle";
-    } else if (((data.cursors.up.isDown && data.cursors.down.isDown) || (data.cursors.right.isDown && data.cursors.left.isDown)) && data.climbing) {
+    } /*else if (((data.cursors.up.isDown && data.cursors.down.isDown) || (data.cursors.right.isDown && data.cursors.left.isDown)) && data.climbing) {
         data.current_direction = "idle";
-    } else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && !data.climbing && !data.pushing) {
+    }*/ else if ((data.cursors.up.isDown || data.cursors.left.isDown || data.cursors.right.isDown || data.cursors.down.isDown) && !data.climbing && !data.pushing) {
         if (game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.current_action !== "dash") {
             data.current_action = "dash";
         } else if (!game.input.keyboard.isDown(Phaser.Keyboard.SHIFT) && data.current_action !== "walk") {

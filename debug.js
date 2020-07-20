@@ -1,3 +1,5 @@
+import { reverse_directions } from "./utils.js";
+
 export function toggle_debug(data) {
     data.hero.body.debug = !data.hero.body.debug;
     data.map_collider.body.debug = !data.map_collider.body.debug;
@@ -62,7 +64,7 @@ export function toggle_keys(data) {
 
 export function fill_key_debug_table(data) {
     if (!data.debug_keys) return;
-    document.querySelector("#key_debug table .direction").innerHTML = data.current_direction;
+    document.querySelector("#key_debug table .direction").innerHTML = reverse_directions[data.current_direction];
     document.querySelector("#key_debug table .action").innerHTML = data.current_action;
     document.querySelector("#key_debug table .x").innerHTML = data.hero.body.x.toFixed(3);
     document.querySelector("#key_debug table .y").innerHTML = data.hero.body.y.toFixed(3);

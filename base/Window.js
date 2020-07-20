@@ -530,7 +530,7 @@ export class DialogManager { //the dialog can be divided in n windows. Each divi
 export function get_dialog_window_position(width, height, hero_direction) {
     let x = Math.floor((numbers.GAME_WIDTH - width)/2);
     let y = Math.floor((numbers.MAX_DIAG_WIN_HEIGHT - height)/2);
-    if (!hero_direction.includes('up')) {
+    if (![utils.directions.up, utils.directions.up_left, utils.directions.up_right].includes(hero_direction)) {
         y = numbers.GAME_HEIGHT - (numbers.MAX_DIAG_WIN_HEIGHT + 4) + y;
     }
     return {x: x, y: y};

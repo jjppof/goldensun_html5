@@ -1,4 +1,4 @@
-import { get_surroundings } from "../utils.js";
+import { get_surroundings, directions, map_directions } from "../utils.js";
 import { NPC_Sprite, NPC } from './NPC.js';
 import { InteractableObjects, InteractableObjects_Sprite, interactable_object_event_types, interactable_object_types } from "./InteractableObjects.js";
 import {
@@ -128,7 +128,7 @@ export class Map {
                     const new_event = new StairEvent(
                         property_info.x,
                         property_info.y,
-                        property_info.activation_directions,
+                        map_directions(property_info.activation_directions),
                         property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
                         false,
                         property_info.active === undefined ? true : property_info.active,
@@ -139,7 +139,7 @@ export class Map {
                     const new_event = new SpeedEvent(
                         property_info.x,
                         property_info.y,
-                        property_info.activation_directions,
+                        map_directions(property_info.activation_directions),
                         property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
                         false,
                         property_info.active === undefined ? true : property_info.active,
@@ -150,7 +150,7 @@ export class Map {
                     const new_event = new DoorEvent(
                         property_info.x,
                         property_info.y,
-                        property_info.activation_directions,
+                        map_directions(property_info.activation_directions),
                         property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
                         false,
                         property_info.active === undefined ? true : property_info.active,
@@ -165,7 +165,7 @@ export class Map {
                     const new_event = new JumpEvent(
                         property_info.x,
                         property_info.y,
-                        property_info.activation_directions,
+                        map_directions(property_info.activation_directions),
                         property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
                         false,
                         property_info.initially_active === undefined ? true : property_info.initially_active,
@@ -176,18 +176,18 @@ export class Map {
                     const new_event = new StepEvent(
                         property_info.x,
                         property_info.y,
-                        property_info.activation_directions,
+                        map_directions(property_info.activation_directions),
                         property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
                         false,
                         property_info.active === undefined ? true : property_info.active,
-                        property_info.step_direction
+                        directions[property_info.step_direction]
                     );
                     this.events[this_event_location_key].push(new_event);
                 } else if (property_info.type === tile_event_types.COLLISION) {
                     const new_event = new CollisionEvent(
                         property_info.x,
                         property_info.y,
-                        property_info.activation_directions,
+                        map_directions(property_info.activation_directions),
                         property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
                         false,
                         property_info.active === undefined ? true : property_info.active,
@@ -335,7 +335,7 @@ export class Map {
                                 const new_event = new JumpEvent(
                                     x_pos,
                                     y_pos,
-                                    ["up", "down", "right", "left"],
+                                    [directions.up, directions.down, directions.right, directions.left],
                                     [target_layer],
                                     event_info.dynamic,
                                     active_event,
@@ -369,7 +369,7 @@ export class Map {
                                     const new_event = new JumpEvent(
                                         pos.x,
                                         pos.y,
-                                        ["right", "left", "down", "up"][index],
+                                        [directions.right, directions.left, directions.down, directions.up][index],
                                         [interactable_object_info.base_collider_layer],
                                         event_info.dynamic,
                                         active_event,
@@ -388,7 +388,7 @@ export class Map {
                                     {
                                         x: x_pos,
                                         y: y_pos + 1,
-                                        activation_directions: ["up"],
+                                        activation_directions: [directions.up],
                                         activation_collision_layers: [interactable_object_info.base_collider_layer],
                                         change_to_collision_layer: interactable_object_info.base_collider_layer + interactable_object_info.intermediate_collider_layer_shift,
                                         climbing_only: false,
@@ -399,7 +399,7 @@ export class Map {
                                     },{
                                         x: x_pos,
                                         y: y_pos,
-                                        activation_directions: ["down"],
+                                        activation_directions: [directions.down],
                                         activation_collision_layers: [interactable_object_info.base_collider_layer + interactable_object_info.intermediate_collider_layer_shift],
                                         change_to_collision_layer: interactable_object_info.base_collider_layer,
                                         climbing_only: true,
@@ -410,7 +410,7 @@ export class Map {
                                     },{
                                         x: x_pos,
                                         y: y_pos + event_info.last_y_shift + 1,
-                                        activation_directions: ["up"],
+                                        activation_directions: [directions.up],
                                         activation_collision_layers: [interactable_object_info.base_collider_layer + interactable_object_info.intermediate_collider_layer_shift],
                                         change_to_collision_layer: target_layer,
                                         climbing_only: true,
@@ -421,7 +421,7 @@ export class Map {
                                     },{
                                         x: x_pos,
                                         y: y_pos + event_info.last_y_shift,
-                                        activation_directions: ["down"],
+                                        activation_directions: [directions.down],
                                         activation_collision_layers: [target_layer],
                                         change_to_collision_layer: interactable_object_info.base_collider_layer + interactable_object_info.intermediate_collider_layer_shift,
                                         climbing_only: false,
