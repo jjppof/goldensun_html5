@@ -5,12 +5,13 @@ import { BattleLog } from "./BattleLog.js";
 import { BattleMenuScreen } from "../../screens/battle_menus.js";
 import { get_enemy_instance } from "./Enemy.js";
 import { abilities_list } from "../../initializers/abilities.js";
-import { ability_target_types } from "../Ability.js";
+import { ability_target_types, ability_types } from "../Ability.js";
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
 import { EnemyAI } from "./EnemyAI.js";
-import { BattleFormulas, CRITICAL_CHANCE } from "./BattleFormulas.js";
+import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
 import { effect_types, Effect } from "../Effect.js";
 import { variation } from "../../utils.js";
+import { temporary_status } from "../MainChar.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 export const fighter_types = {
@@ -190,7 +191,7 @@ export class Battle {
         this.enemies_abilities = Object.fromEntries(enemy_members.map((enemy, index) => {
             let abilities = new Array(enemy.turns);
             for (let i = 0; i < enemy.turns; ++i) {
-                abilities[i] = EnemyAI.get_targets(enemy, party_data.members, enemy_members);
+                abilities[i] = EnemyAI.roll_action(enemy, party_data.members, enemy_members);
             }
             return [this.enemies_info[index].battle_key, abilities];
         }));
@@ -233,11 +234,31 @@ export class Battle {
             this.check_phases();
             return;
         }
-        let action = this.turns_actions.pop();
+        const action = this.turns_actions.pop();
         if (action.caster.fighter_type === fighter_types.ENEMY && !abilities_list[action.key_name].priority_move) {
-            Object.assign(action, EnemyAI.get_targets(enemy, party_data.members, this.enemies_info.map(info => info.instance)));
+            Object.assign(action, EnemyAI.roll_action(enemy, party_data.members, this.enemies_info.map(info => info.instance)));
         }
         const ability = abilities_list[action.key_name];
+        if ([ability_types.ADDED_DAMAGE, ability_types.MULTIPLIER, ability_types.BASE_DAMAGE, ability_types.SUMMON].includes(ability.type)) {
+            this.harmful_abilities(action, ability);
+        } else {
+            
+        }
+    }
+
+    harmful_abilities(action, ability) {
+        if (ability.has_ability_unleash) {
+            if (action.caster.equip_slots.weapon && items_list[action.caster.equip_slots.weapon.key_name].unleash_ability) {
+                if (Math.random() < items_list[action.caster.equip_slots.weapon.key_name].unleash_rate) {
+                    ability = abilities_list[items_list[action.caster.equip_slots.weapon.key_name].unleash_ability];
+                }
+            }
+        }
+        if (ability.can_be_evaded) {
+            if (Math.random() < EVASION_CHANCE || (action.caster.temporary_status.has(temporary_status.DELUSION) && Math.random() < DELUSION_MISS_CHANCE)) {
+                return;
+            }
+        }
         if (ability.has_critical) {
             const increased_crit = action.caster.effects.filter(effect => effect.type === effect_types.CRITICALS).reduce((acc, effect) => {
                 return Effect.apply_operator(acc, effect.quantity, effect.operator);
@@ -245,10 +266,32 @@ export class Battle {
             if (Math.random() < CRITICAL_CHANCE || Math.random() < increased_crit/2) {
                 action.targets.forEach(target_info => {
                     const target_instance = target_info.target.instance;
-                    let damage = BattleFormulas.critical_damage(action.caster, target_instance, ability.multiplication_factor);
+                    let damage = BattleFormulas.critical_damage(action.caster, target_instance, ability.crit_mult_factor);
                     damage = damage * target_info.magnitude + variation();
                 });
+                return;
             }
+        }
+        for (let i = 0; i < action.targets.length; ++i) {
+            const target_info = action.targets[i];
+            const target_instance = target_info.target.instance;
+            let damage;
+            switch(ability.type) {
+                case ability_types.ADDED_DAMAGE:
+                    damage = BattleFormulas.physical_attack(action.caster, target_instance, 1.0, ability.ability_power, ability.element);
+                    break;
+                case ability_types.MULTIPLIER:
+                    damage = BattleFormulas.physical_attack(action.caster, target_instance, ability.ability_power/10.0, 0, ability.element);
+                    break;
+                case ability_types.BASE_DAMAGE:
+                    damage = BattleFormulas.psynergy_damage(action.caster, target_instance, ability.ability_power, ability.element);
+                    break;
+                case ability_types.SUMMON:
+                    const djinn_used = _.sum(_.values(_.find(this.data.summons_db, {key_name: ability.key_name}).requirements));
+                    damage = BattleFormulas.summon_damage(target_instance, ability.ability_power, djinn_used);
+                    break;
+            }
+            damage = damage * target_info.magnitude + variation();
         }
     }
 

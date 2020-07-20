@@ -2,7 +2,7 @@
 
 "asuras_armor":
 {
-	"frame": {"x":17,"y":18,"w":13,"h":13},
+	"frame": {"x":18,"y":1,"w":13,"h":13},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":1,"y":1,"w":13,"h":13},
@@ -10,7 +10,7 @@
 },
 "cookie":
 {
-	"frame": {"x":77,"y":16,"w":13,"h":12},
+	"frame": {"x":1,"y":67,"w":13,"h":12},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":1,"y":1,"w":13,"h":12},
@@ -18,7 +18,7 @@
 },
 "cotton_shirt":
 {
-	"frame": {"x":79,"y":1,"w":13,"h":11},
+	"frame": {"x":16,"y":77,"w":13,"h":11},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":1,"y":2,"w":13,"h":11},
@@ -26,7 +26,7 @@
 },
 "elven_rapier":
 {
-	"frame": {"x":35,"y":1,"w":14,"h":14},
+	"frame": {"x":1,"y":35,"w":14,"h":14},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":0,"y":1,"w":14,"h":14},
@@ -34,7 +34,7 @@
 },
 "frost_jewel":
 {
-	"frame": {"x":32,"y":18,"w":13,"h":13},
+	"frame": {"x":18,"y":16,"w":13,"h":13},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":2,"y":1,"w":13,"h":13},
@@ -50,7 +50,7 @@
 },
 "great_sword":
 {
-	"frame": {"x":47,"y":17,"w":14,"h":14},
+	"frame": {"x":17,"y":46,"w":14,"h":14},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":0,"y":1,"w":14,"h":14},
@@ -58,7 +58,7 @@
 },
 "herb":
 {
-	"frame": {"x":18,"y":1,"w":15,"h":15},
+	"frame": {"x":1,"y":18,"w":15,"h":15},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":15},
@@ -66,7 +66,7 @@
 },
 "knights_helm":
 {
-	"frame": {"x":66,"y":1,"w":11,"h":13},
+	"frame": {"x":15,"y":90,"w":11,"h":13},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":2,"y":1,"w":11,"h":13},
@@ -74,15 +74,23 @@
 },
 "knights_shield":
 {
-	"frame": {"x":63,"y":16,"w":12,"h":13},
+	"frame": {"x":1,"y":81,"w":12,"h":13},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":2,"y":1,"w":12,"h":13},
 	"sourceSize": {"w":16,"h":16}
 },
+"staff_of_anubis":
+{
+	"frame": {"x":1,"y":51,"w":14,"h":14},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":1,"w":14,"h":14},
+	"sourceSize": {"w":16,"h":16}
+},
 "steel_armor":
 {
-	"frame": {"x":1,"y":18,"w":14,"h":13},
+	"frame": {"x":17,"y":62,"w":14,"h":13},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":1,"y":1,"w":14,"h":13},
@@ -90,7 +98,7 @@
 },
 "wooden_stick":
 {
-	"frame": {"x":51,"y":1,"w":13,"h":13},
+	"frame": {"x":18,"y":31,"w":13,"h":13},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":1,"y":2,"w":13,"h":13},
@@ -101,8 +109,8 @@
 	"version": "1.0",
 	"image": "items_icons.png",
 	"format": "RGBA8888",
-	"size": {"w":93,"h":32},
+	"size": {"w":32,"h":104},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:dcc5b5425b96f629d9a9080bba4742ee:309048b9693e24229a0d203d7416c446:8e0a9cab6bd555a369f372ff41f726d8$"
+	"smartupdate": "$TexturePacker:SmartUpdate:f07a4ed63f1153f0750609d75406c265:988dcab355d1d13d5e861edf7ab35e49:8e0a9cab6bd555a369f372ff41f726d8$"
 }
 }

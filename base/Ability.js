@@ -4,8 +4,6 @@ export const ability_types = {
     ADDED_DAMAGE: "added_damage",
     MULTIPLIER: "multiplier",
     BASE_DAMAGE: "base_damage",
-    BASE_DAMAGE_DIMIN: "base_damage_dmin",
-    ALWAYS_FIRST: "always_first",
     SUMMON: "summon",
     UTILITY: "utility",
     PSYNERGY_DRAIN: "psynergy_drain",
@@ -42,7 +40,9 @@ export class Ability {
         battle_animation_key,
         priority_move,
         has_critical,
-        multiplication_factor
+        crit_mult_factor,
+        has_ability_unleash,
+        can_be_evaded
     ) {
         this.key_name = key_name;
         this.name = name;
@@ -61,7 +61,9 @@ export class Ability {
         this.battle_animation_key = battle_animation_key;
         this.priority_move = priority_move ? priority_move : false;
         this.has_critical = has_critical ? has_critical : false;
-        this.multiplication_factor = multiplication_factor !== undefined ? multiplication_factor : 1;
+        this.crit_mult_factor = crit_mult_factor !== undefined ? crit_mult_factor : 1;
+        this.has_ability_unleash = has_ability_unleash ? has_ability_unleash : false;
+        this.can_be_evaded = can_be_evaded ? can_be_evaded : false;
     }
 
     static get_diminishing_ratios(ability_type) {

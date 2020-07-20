@@ -7,7 +7,6 @@ export let abilities_list = {};
 export let field_abilities_list = {};
 
 export function initialize_abilities(game, abilities_db, load_promise_resolve) {
-    let load_promises = [];
     for (let i = 0; i < abilities_db.length; ++i) {
         const ability_data = abilities_db[i];
         abilities_list[ability_data.key_name] = new Ability(
@@ -28,7 +27,9 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
             ability_data.battle_animation_key,
             ability_data.priority_move,
             ability_data.has_critical,
-            ability_data.multiplication_factor
+            ability_data.crit_mult_factor,
+            ability_data.has_ability_unleash,
+            ability_data.can_be_evaded
         );
     }
     const loader = game.load.atlasJSONHash('abilities_icons', 'assets/images/icons/abilities/abilities_icons.png', 'assets/images/icons/abilities/abilities_icons.json');

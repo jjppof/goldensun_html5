@@ -338,13 +338,17 @@
             {
                 "key_name": "wooden_stick",
                 "quantity": 1,
-                "equipped": true
+                "equipped": false
             },{
                 "key_name": "cotton_shirt",
                 "quantity": 1,
                 "equipped": true
             },{
                 "key_name": "frost_jewel",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "staff_of_anubis",
                 "quantity": 1,
                 "equipped": true
             }

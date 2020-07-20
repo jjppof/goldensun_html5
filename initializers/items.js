@@ -3,7 +3,6 @@ import { Item } from '../base/Item.js';
 export let items_list = {};
 
 export function initialize_items(game, items_db, load_promise_resolve) {
-    let load_promises = [];
     for (let i = 0; i < items_db.length; ++i) {
         const item_data = items_db[i];
         items_list[item_data.key_name] = new Item(

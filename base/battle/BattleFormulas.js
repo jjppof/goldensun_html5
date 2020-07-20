@@ -41,10 +41,6 @@ export class BattleFormulas {
         return (caster.current_atk - target.current_def)/2.0;
     }
 
-    static physical_attack(caster, target) {
-        return this.base_damage(caster, target);
-    }
-
     static special_physical_attack(caster, target, mult_mod, add_mod) {
         return this.base_damage(caster, target) * mult_mod + add_mod;
     }
@@ -69,7 +65,7 @@ export class BattleFormulas {
         return 1 + (relative_power)/(is_psynergy ? 200.0 : 400.0);
     }
 
-    static elemental_physical_attack(caster, target, mult_mod, add_mod, element) {
+    static physical_attack(caster, target, mult_mod, add_mod, element) {
         return this.special_physical_attack(caster, target, mult_mod, add_mod) * this.power_multiplier(caster, target, element, false);
     }
 

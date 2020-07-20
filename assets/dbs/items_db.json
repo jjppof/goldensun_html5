@@ -21,8 +21,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet"],
         "price": 7000,
-        "granted_ability": "",
-        "icon_path": "assets/images/icons/items/great_sword.gif"
+        "granted_ability": ""
     },{
         "key_name": "gaia_blade",
         "name": "Gaia Blade",
@@ -57,8 +56,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet"],
         "price": 17000,
-        "granted_ability": "",
-        "icon_path": "assets/images/icons/items/gaia_blade.gif"
+        "granted_ability": ""
     },{
         "key_name": "elven_rapier",
         "name": "Elven Rapier",
@@ -83,8 +81,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet"],
         "price": 2200,
-        "granted_ability": "",
-        "icon_path": "assets/images/icons/items/elven_rapier.gif"
+        "granted_ability": ""
     },{
         "key_name": "knights_shield",
         "name": "Knight's Shield",
@@ -107,8 +104,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet"],
         "price": 3000,
-        "granted_ability": "",
-        "icon_path": "assets/images/icons/items/knights_shield.gif"
+        "granted_ability": ""
     },{
         "key_name": "knights_helm",
         "name": "Knight's Helm",
@@ -131,8 +127,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet"],
         "price": 4600,
-        "granted_ability": "",
-        "icon_path": "assets/images/icons/items/knights_helm.gif"
+        "granted_ability": ""
     },{
         "key_name": "steel_armor",
         "name": "Steel Armor",
@@ -155,8 +150,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet"],
         "price": 4900,
-        "granted_ability": "",
-        "icon_path": "assets/images/icons/items/steel_armor.gif"
+        "granted_ability": ""
     },{
         "key_name": "cotton_shirt",
         "name": "Cotton Shirt",
@@ -179,8 +173,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet", "sheba"],
         "price": 20,
-        "granted_ability": "",
-        "icon_path": "assets/images/icons/items/cotton_shirt.gif"
+        "granted_ability": ""
     },{
         "key_name": "asuras_armor",
         "name": "Asura's Armor",
@@ -213,8 +206,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet"],
         "price": 15000,
-        "granted_ability": "",
-        "icon_path": "assets/images/icons/items/asuras_armor.gif"
+        "granted_ability": ""
     },{
         "key_name": "cookie",
         "name": "Cookie",
@@ -233,8 +225,7 @@
         "use_ability": "cookie",
         "equipable_chars": [],
         "price": 500,
-        "granted_ability": "",
-        "icon_path": "assets/images/icons/items/cookie.gif"
+        "granted_ability": ""
     },{
         "key_name": "herb",
         "name": "Herb",
@@ -253,8 +244,7 @@
         "use_ability": "herb",
         "equipable_chars": [],
         "price": 10,
-        "granted_ability": "",
-        "icon_path": "assets/images/icons/items/herb.gif"
+        "granted_ability": ""
     },{
         "key_name": "frost_jewel",
         "name": "Frost Jewel",
@@ -273,8 +263,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet", "sheba"],
         "price": 0,
-        "granted_ability": "frost",
-        "icon_path": "assets/images/icons/items/frost_jewel.gif"
+        "granted_ability": "frost"
     },{
         "key_name": "wooden_stick",
         "name": "Wooden Stick",
@@ -299,7 +288,31 @@
         "use_ability": "",
         "equipable_chars": ["sheba"],
         "price": 40,
-        "granted_ability": "",
-        "icon_path": "assets/images/icons/items/wooden_stick.gif"
+        "granted_ability": ""
+    },{
+        "key_name": "staff_of_anubis",
+        "name": "Staff of Anubis",
+        "type": "weapons",
+        "description": "Staff: Unleashes Sarcophagus",
+        "use_type": "no_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": true,
+        "imporant_item": false,
+        "carry_up_to_30": false,
+        "effects": [
+            {
+                "type": "attack",
+                "quantity": 83,
+                "operator": "plus"
+            }
+        ],
+        "attribute": "no_element",
+        "unleash_ability": "sarcophagus",
+        "unleash_rate": 0.35,
+        "use_ability": "",
+        "equipable_chars": ["sheba"],
+        "price": 5500,
+        "granted_ability": ""
     }
 ]
