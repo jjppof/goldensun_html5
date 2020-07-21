@@ -247,7 +247,7 @@ export class Battle {
     }
 
     harmful_abilities(action, ability) {
-        if (ability.has_ability_unleash) {
+        if (ability.can_switch_to_unleash) {
             if (action.caster.equip_slots.weapon && items_list[action.caster.equip_slots.weapon.key_name].unleash_ability) {
                 if (Math.random() < items_list[action.caster.equip_slots.weapon.key_name].unleash_rate) {
                     ability = abilities_list[items_list[action.caster.equip_slots.weapon.key_name].unleash_ability];

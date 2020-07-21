@@ -71,7 +71,7 @@ export class Ability {
         priority_move,
         has_critical,
         crit_mult_factor,
-        has_ability_unleash,
+        can_switch_to_unleash,
         can_be_evaded,
         use_diminishing_ratio
     ) {
@@ -93,7 +93,7 @@ export class Ability {
         this.priority_move = priority_move ? priority_move : false;
         this.has_critical = has_critical ? has_critical : false;
         this.crit_mult_factor = crit_mult_factor !== undefined ? crit_mult_factor : 1;
-        this.has_ability_unleash = has_ability_unleash ? has_ability_unleash : false;
+        this.can_switch_to_unleash = can_switch_to_unleash ? can_switch_to_unleash : false;
         this.can_be_evaded = can_be_evaded ? can_be_evaded : false;
         this.use_diminishing_ratio = use_diminishing_ratio ? use_diminishing_ratio : false;
     }

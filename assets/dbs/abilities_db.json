@@ -18,7 +18,7 @@
         "priority_move": false,
         "has_critical": true,
         "crit_mult_factor": 1.25,
-        "has_ability_unleash": true,
+        "can_switch_to_unleash": true,
         "can_be_evaded": true
     },{
         "key_name": "move",
