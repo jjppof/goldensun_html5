@@ -40,7 +40,7 @@ export const rotation_key = [
     null,    //down, up, and right
     null,    //down, up, and left
     null,    //down, up, left, and right
-]
+];
 
 //rotation_normal converts from normal_angle region (floor((angle-15)/30)) to in-game rotation
 export const rotation_normal = [
@@ -56,14 +56,14 @@ export const rotation_normal = [
     2,    //255-285 degrees
     1,    //285-315 degrees
     1,    //315-345 degrees
-]
+];
 
 export function update_arrow_inputs(data) {
-    data.arrow_inputs = 
-        1 & data.cursors.right.isDown 
-        | 2 & data.cursors.left.isDown 
-        | 4 & data.cursors.up.isDown 
-        | 8 & data.cursors.down.isDown
+    data.arrow_inputs =
+        1 & data.cursors.right.isDown
+        | 2 & data.cursors.left.isDown
+        | 4 & data.cursors.up.isDown
+        | 8 & data.cursors.down.isDown;
 }
 
 export function map_directions(arr) {

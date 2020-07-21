@@ -73,7 +73,7 @@ export function collision_dealer(game, data) {
             normals.forEach((normal, index) => { //slopes outside the MINIMAL_SLOPE range will be desconsidered
                 if (Math.abs(normal[0]) < MINIMAL_SLOPE) normal[0] = 0; 
                 if (Math.abs(normal[1]) < MINIMAL_SLOPE) normal[1] = 0;
-                if (Math.abs(normal[0]) > 1 - MINIMAL_SLOPE) normal[0] = Math.sign(normal[0]); 
+                if (Math.abs(normal[0]) > 1 - MINIMAL_SLOPE) normal[0] = Math.sign(normal[0]);
                 if (Math.abs(normal[1]) > 1 - MINIMAL_SLOPE) normal[1] = Math.sign(normal[1]);
                 contact_point_directions[index] = range_360(Math.atan2(normal[1], -normal[0])); //storing the angle as if it is in the 1st quadrant
             });
@@ -93,13 +93,13 @@ export function collision_dealer(game, data) {
             if (normals.length === 1) { //everything inside this if is to deal with direction changing when colliding
                 const wall_direction = 
                     //finds which 30 degree sector the normal angle lies within, and converts to a direction
-                    rotation_normal[Math.floor(range_360(Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree15) / numbers.degree30)]
-                const relative_direction = (data.current_direction - wall_direction) & 7
+                    rotation_normal[Math.floor(range_360(Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree15) / numbers.degree30)];
+                const relative_direction = (data.current_direction - wall_direction) & 7;
                 //if player's direction is within 1 of wall_direction
                 if (relative_direction === 1 || relative_direction === 7) {
                     data.force_direction = true;
                     data.forcing_on_diagonal = wall_direction & 1 === 1;
-                    data.current_direction = (wall_direction + 2*relative_direction) & 7
+                    data.current_direction = (wall_direction + 2*relative_direction) & 7;
                 } else {
                     data.force_direction = false;
                     data.forcing_on_diagonal = false;
