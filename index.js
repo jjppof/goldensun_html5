@@ -372,8 +372,8 @@ async function create() {
 function update() {
     if (data.created) {
         if (!data.on_event && !data.npc_event && !data.pushing && !data.menu_open && !data.casting_psynergy && !data.in_battle) {
-            data.hero_tile_pos_x = parseInt(data.hero.x/maps[data.map_name].sprite.tileWidth);
-            data.hero_tile_pos_y = parseInt(data.hero.y/maps[data.map_name].sprite.tileHeight);
+            data.hero_tile_pos_x = (data.hero.x/maps[data.map_name].sprite.tileWidth) | 0;
+            data.hero_tile_pos_y = (data.hero.y/maps[data.map_name].sprite.tileHeight) | 0;
 
             if (data.waiting_to_step) { //step event
                 do_step(data);

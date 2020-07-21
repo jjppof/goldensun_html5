@@ -100,14 +100,17 @@ export function set_debug_info(game, data) {
         }
 
         if (game.input.mousePointer.withinGame) {
-            const mouse_x = parseInt((game.camera.x + game.input.mousePointer.x/data.scale_factor)/maps[data.map_name].sprite.tileWidth);
-            const mouse_y = parseInt((game.camera.y + game.input.mousePointer.y/data.scale_factor)/maps[data.map_name].sprite.tileHeight);
+            const mouse_x = ((game.camera.x + game.input.mousePointer.x/data.scale_factor)/maps[data.map_name].sprite.tileWidth) | 0;
+            const mouse_y = ((game.camera.y + game.input.mousePointer.y/data.scale_factor)/maps[data.map_name].sprite.tileHeight) | 0;
             game.debug.text(`x: ${mouse_x}, y: ${mouse_y}`, 140, 15, "#00ff00");
             const event_key = mouse_x + "_" + mouse_y;
             if (event_key in maps[data.map_name].events) {
                 const events = maps[data.map_name].events[event_key].map(event => {
                     return Object.assign({}, event, {
-                        ...(event.origin_interactable_object && { origin_interactable_object: `[${event.origin_interactable_object.key_name}]` })
+                        activation_directions: event.activation_directions.map(dir => reverse_directions[dir]),
+                        ...(event.origin_interactable_object && {
+                            origin_interactable_object: `[${event.origin_interactable_object.key_name}]`
+                        })
                     });
                 });
                 document.getElementById("object_inspector").innerText = JSON.stringify(events, null, 4);
