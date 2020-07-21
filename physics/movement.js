@@ -1,7 +1,7 @@
 import { main_char_list } from '../initializers/main_chars.js';
 import { normal_push } from '../interactable_objects/push.js';
 import { TileEvent, event_types } from '../base/TileEvent.js';
-import { get_transition_directions, check_isdown, range_360, directions } from '../utils.js';
+import { get_transition_directions, check_isdown, range_360, directions, rotation_normal } from '../utils.js';
 import * as numbers from '../magic_numbers.js';
 import { maps } from '../initializers/maps.js';
 
@@ -91,107 +91,15 @@ export function collision_dealer(game, data) {
         } else if (data.current_action !== "climb") {
             data.stop_by_colliding = false;
             if (normals.length === 1) { //everything inside this if is to deal with direction changing when colliding
-                const normal_angle = range_360(Math.atan2(normals[0][1], -normals[0][0]));
-                if (normal_angle < numbers.degree15 || normal_angle >= numbers.degree360 - numbers.degree15) {
-                    if (check_isdown(data.cursors, directions.down, directions.right)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = directions.down;
-                    } else if (check_isdown(data.cursors, directions.up, directions.right)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = directions.up;
-                    } else {
-                        data.force_direction = false;
-                    }
-                } else if (normal_angle < numbers.degree90 - numbers.degree15) {
-                    if (check_isdown(data.cursors, directions.up)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = true;
-                        data.current_direction = directions.up_left;
-                    } else if (check_isdown(data.cursors, directions.right)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = true;
-                        data.current_direction = directions.down_right;
-                    } else {
-                        data.force_direction = false;
-                        data.forcing_on_diagonal = false;
-                    }
-                } else if (normal_angle < numbers.degree90 + numbers.degree15) {
-                    if (check_isdown(data.cursors, directions.up, directions.left)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = directions.left;
-                    } else if (check_isdown(data.cursors, directions.up, directions.right)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = directions.right;
-                    } else {
-                        data.force_direction = false;
-                    }
-                } else if (normal_angle < Math.PI - numbers.degree15) {
-                    if (check_isdown(data.cursors, directions.up)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = true;
-                        data.current_direction = directions.up_right;
-                    } else if (check_isdown(data.cursors, directions.left)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = true;
-                        data.current_direction = directions.down_left;
-                    } else {
-                        data.force_direction = false;
-                        data.forcing_on_diagonal = false;
-                    }
-                } else if (normal_angle < Math.PI + numbers.degree15) {
-                    if (check_isdown(data.cursors, directions.down, directions.left)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = directions.down;
-                    } else if (check_isdown(data.cursors, directions.up, directions.left)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = directions.up;
-                    } else {
-                        data.force_direction = false;
-                    }
-                } else if (normal_angle < numbers.degree270 - numbers.degree15) {
-                    if (check_isdown(data.cursors, directions.left)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = true;
-                        data.current_direction = directions.up_left;
-                    } else if (check_isdown(data.cursors, directions.down)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = true;
-                        data.current_direction = directions.down_right;
-                    } else {
-                        data.force_direction = false;
-                        data.forcing_on_diagonal = false;
-                    }
-                } else if (normal_angle < numbers.degree270 + numbers.degree15) {
-                    if (check_isdown(data.cursors, directions.left, directions.down)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = directions.left;
-                    } else if (check_isdown(data.cursors, directions.right, directions.down)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = false;
-                        data.current_direction = directions.right;
-                    } else {
-                        data.force_direction = false;
-                    }
-                } else if (normal_angle < numbers.degree360 - numbers.degree15) {
-                    if (check_isdown(data.cursors, directions.right)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = true;
-                        data.current_direction = directions.up_right;
-                    } else if (check_isdown(data.cursors, directions.down)) {
-                        data.force_direction = true;
-                        data.forcing_on_diagonal = true;
-                        data.current_direction = directions.down_left;
-                    } else {
-                        data.force_direction = false;
-                        data.forcing_on_diagonal = false;
-                    }
+                const wall_direction = 
+                    //finds which 30 degree sector the normal angle lies within, and converts to a direction
+                    rotation_normal[Math.floor(range_360(Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree15) / numbers.degree30)]
+                const relative_direction = (data.current_direction - wall_direction) & 7
+                //if player's direction is within 1 of wall_direction
+                if (relative_direction === 1 || relative_direction === 7) {
+                    data.force_direction = true;
+                    data.forcing_on_diagonal = wall_direction & 1 === 1;
+                    data.current_direction = (wall_direction + 2*relative_direction) & 7
                 } else {
                     data.force_direction = false;
                     data.forcing_on_diagonal = false;
