@@ -251,9 +251,9 @@ export function change_brightness(hex, percent) {
     } else {
         hex = ("000000" + hex).slice(-6);
     }
-    let r = (hex.substr(0, 2), 16) | 0;
-    let g = (hex.substr(2, 2), 16) | 0;
-    let b = (hex.substr(4, 2), 16) | 0;
+    let r = parseInt(hex.substr(0, 2), 16);
+    let g = parseInt(hex.substr(2, 2), 16);
+    let b = parseInt(hex.substr(4, 2), 16);
 
     let h, s, v;
     [h, s, v] = rgb2hsv(r, g, b);
@@ -261,7 +261,7 @@ export function change_brightness(hex, percent) {
     [r, g, b] = hsv2rgb(h, s, v);
 
     hex = ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-    return (hex, 16) | 0;
+    return parseInt(hex, 16);
 }
 
 export function rgb2hsv(r,g,b) {
