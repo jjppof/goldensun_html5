@@ -154,7 +154,7 @@ function preload() {
     load_misc();
     load_battle_assets();
     load_buttons();
-    game.load.script('color_filters', 'plugins/ColorFilters.js');
+    game.load.script('color_filters', 'plugins/color_filters.js');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
     game.load.bitmapFont('gs-item-bmp-font', 'assets/font/gs-item-font.png', 'assets/font/gs-item-font.fnt');
 

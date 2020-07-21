@@ -112,7 +112,9 @@ export class MoveFieldPsynergy extends SpriteBase {
                         if (!need_change) return;
                         this.data.current_direction = this.cast_direction;
                         this.data.hero.animations.stop();
-                        this.data.hero.animations.frame = `cast/${reverse_directions[this.cast_direction]}/01`;
+                        const dest_direction = reverse_directions[this.cast_direction];
+                        this.data.hero.animations.play("cast_" + dest_direction, 0);
+                        this.data.hero.animations.frame = `cast/${dest_direction}/01`;
                     });
                 }, () => {
                     const pos_sqr_distance = Math.pow(this.data.hero.body.x - this.target_object.interactable_object_sprite.body.x, 2) + Math.pow(this.data.hero.body.y - this.target_object.interactable_object_sprite.body.y, 2);

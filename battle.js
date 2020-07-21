@@ -204,7 +204,7 @@ function preload() {
     game.load.atlasJSONHash('sheba_battle_animation', 'assets/images/spritesheets/battle/sheba_battle.png', 'assets/images/spritesheets/battle/sheba_battle.json');
     game.load.atlasJSONHash('mini_goblin_battle_animation', 'assets/images/spritesheets/battle/mini_goblin_battle.png', 'assets/images/spritesheets/battle/mini_goblin_battle.json');
 
-    game.load.script('color_filters', 'plugins/ColorFilters.js');
+    game.load.script('color_filters', 'plugins/color_filters.js');
 
     game.load.atlasJSONHash('pyroclasm_psynergy_animation', 'assets/images/psynergy_animations/pyroclasm.png', 'assets/images/psynergy_animations/pyroclasm.json');
     game.load.atlasJSONHash('ice_psynergy_animation', 'assets/images/psynergy_animations/ice.png', 'assets/images/psynergy_animations/ice.json');
