@@ -1,5 +1,5 @@
 import * as numbers from './magic_numbers.js';
-import { directions } from './utils.js';
+import { directions, update_arrow_inputs } from './utils.js';
 import { initialize_main_chars, main_char_list, initialize_classes, party_data } from './initializers/main_chars.js';
 import { initialize_abilities, abilities_list, initialize_field_abilities, field_abilities_list } from './initializers/abilities.js';
 import { initialize_items, items_list } from './initializers/items.js';
@@ -29,6 +29,7 @@ var data = {
     stop_by_colliding: false,
     force_direction: false,
     forcing_on_diagonal: false,
+    arrow_inputs: null,
 
     //events and game states
     event_timers: {},
@@ -371,6 +372,7 @@ async function create() {
 
 function update() {
     if (data.created) {
+        update_arrow_inputs(data)
         if (!data.on_event && !data.npc_event && !data.pushing && !data.menu_open && !data.casting_psynergy && !data.in_battle) {
             data.hero_tile_pos_x = (data.hero.x/maps[data.map_name].sprite.tileWidth) | 0;
             data.hero_tile_pos_y = (data.hero.y/maps[data.map_name].sprite.tileHeight) | 0;
