@@ -1,7 +1,7 @@
 import { main_char_list } from '../initializers/main_chars.js';
 import { normal_push } from '../interactable_objects/push.js';
 import { TileEvent, event_types } from '../base/TileEvent.js';
-import { get_transition_directions, check_isdown, range_360, directions, rotation_normal } from '../utils.js';
+import { get_transition_directions, check_isdown, range_360, directions, rotation_key, rotation_normal } from '../utils.js';
 import * as numbers from '../magic_numbers.js';
 import { maps } from '../initializers/maps.js';
 
@@ -94,7 +94,7 @@ export function collision_dealer(game, data) {
                 const wall_direction = 
                     //finds which 30 degree sector the normal angle lies within, and converts to a direction
                     rotation_normal[Math.floor(range_360(Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree15) / numbers.degree30)];
-                const relative_direction = (data.current_direction - wall_direction) & 7;
+                const relative_direction = (rotation_key[data.arrow_inputs] - wall_direction) & 7;
                 //if player's direction is within 1 of wall_direction
                 if (relative_direction === 1 || relative_direction === 7) {
                     data.force_direction = true;
