@@ -55,6 +55,24 @@ export class Enemy {
         this.jupiter_resist = enemy_data.jupiter_resist;
         this.jupiter_resist_current = enemy_data.jupiter_resist;
         this.fighter_type = fighter_types.ENEMY;
+        this.temporary_status = new Set();
+        this.permanent_status = new Set();
+    }
+
+    add_permanent_status(status) {
+        this.permanent_status.add(status);
+    }
+
+    remove_permanent_status(status) {
+        this.permanent_status.delete(status);
+    }
+
+    add_temporary_status(status) {
+        this.temporary_status.add(status);
+    }
+
+    remove_temporary_status(status) {
+        this.temporary_status.delete(status);
     }
 }
 

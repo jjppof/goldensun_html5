@@ -45,12 +45,6 @@ export class BattleFormulas {
         return this.base_damage(caster, target) * mult_mod + add_mod;
     }
 
-    static critical_damage(caster, target, mult_mod) {
-        mult_mod = mult_mod === undefined ? 1.25 : mult_mod;
-        const add_mod = 6.0 + target.level/5.0;
-        return this.special_physical_attack(caster, target, mult_mod, add_mod)
-    }
-
     static power_multiplier(caster, target, element, is_psynergy = true) {
         let caster_power = 100.0, target_resist = 100.0;
         if (element !== elements.NO_ELEMENT) {

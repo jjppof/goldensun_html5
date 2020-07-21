@@ -29,7 +29,8 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
             ability_data.has_critical,
             ability_data.crit_mult_factor,
             ability_data.has_ability_unleash,
-            ability_data.can_be_evaded
+            ability_data.can_be_evaded,
+            ability_data.use_diminishing_ratio
         );
     }
     const loader = game.load.atlasJSONHash('abilities_icons', 'assets/images/icons/abilities/abilities_icons.png', 'assets/images/icons/abilities/abilities_icons.json');

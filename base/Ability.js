@@ -17,8 +17,38 @@ export const ability_target_types = {
 }
 
 export const diminishing_ratios = {
-    STANDARD: [.1,.2,.4,.6,.8,1,.8,.6,.4,.2,.1],
-    SUMMON: [.1,.2,.3,.4,.7,1,.7,.4,.3,.2,.1]
+    STANDARD: {
+        11: .1,
+        9: .2,
+        7: .4,
+        5: .6,
+        3: .8,
+        1: 1
+    },
+    SUMMON: {
+        11: .1,
+        9: .2,
+        7: .3,
+        5: .4,
+        3: .7,
+        1: 1
+    },
+    DIMINISH: {
+        11: .1,
+        9: .1,
+        7: .1,
+        5: .3,
+        3: .5,
+        1: 1
+    },
+    STATUS: {
+        11: .3,
+        9: .3,
+        7: .3,
+        5: .3,
+        3: .6,
+        1: 1
+    }
 }
 
 export class Ability {
@@ -42,7 +72,8 @@ export class Ability {
         has_critical,
         crit_mult_factor,
         has_ability_unleash,
-        can_be_evaded
+        can_be_evaded,
+        use_diminishing_ratio
     ) {
         this.key_name = key_name;
         this.name = name;
@@ -64,9 +95,13 @@ export class Ability {
         this.crit_mult_factor = crit_mult_factor !== undefined ? crit_mult_factor : 1;
         this.has_ability_unleash = has_ability_unleash ? has_ability_unleash : false;
         this.can_be_evaded = can_be_evaded ? can_be_evaded : false;
+        this.use_diminishing_ratio = use_diminishing_ratio ? use_diminishing_ratio : false;
     }
 
-    static get_diminishing_ratios(ability_type) {
+    static get_diminishing_ratios(ability_type, use_diminishing_ratio) {
+        if (use_diminishing_ratio) {
+            return diminishing_ratios.DIMINISH;
+        }
         switch (ability_type) {
             case ability_types.SUMMON: return diminishing_ratios.SUMMON;
             default: return diminishing_ratios.STANDARD;
