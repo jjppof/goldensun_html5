@@ -64,7 +64,6 @@ export function update_arrow_inputs(data) {
         | 2 & data.cursors.LEFT.isDown 
         | 4 & data.cursors.UP.isDown 
         | 8 & data.cursors.DOWN.isDown
-    data.current_direction = (rotation_key[data.arrow_inputs] === null)? data.current_direction : new_inputs
 }
 
 export function map_directions(arr) {
