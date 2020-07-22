@@ -1,5 +1,5 @@
 import * as numbers from './magic_numbers.js';
-import { directions, update_arrow_inputs } from './utils.js';
+import { directions } from './utils.js';
 import { initialize_main_chars, main_char_list, initialize_classes, party_data } from './initializers/main_chars.js';
 import { initialize_abilities, abilities_list, initialize_field_abilities, field_abilities_list } from './initializers/abilities.js';
 import { initialize_items, items_list } from './initializers/items.js';
@@ -391,7 +391,7 @@ function update() {
                 data.extra_speed = 0;
             }
 
-            update_arrow_inputs(data);
+            movement.update_arrow_inputs(data);
             movement.set_speed_factors(data);
             hero_control.set_current_action(data); //chooses which sprite the hero shall assume
             data.delta_time = game.time.elapsedMS/numbers.DELTA_TIME_FACTOR;

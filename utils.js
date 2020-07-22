@@ -2,13 +2,13 @@ import * as numbers from './magic_numbers.js';
 
 export const directions = {
     right: 0,
-    up_right: 7,
-    up: 6,
-    up_left: 5,
-    left: 4,
-    down_left: 3,
+    down_right: 1,
     down: 2,
-    down_right: 1
+    down_left: 3,
+    left: 4,
+    up_left: 5,
+    up: 6,
+    up_right: 7
 };
 
 export const reverse_directions = {
@@ -21,50 +21,6 @@ export const reverse_directions = {
     [directions.down]: "down",
     [directions.down_right]: "down_right"
 };
-
-//rotation_key can convert from pressed_keys to the corresponding in-game rotation
-export const rotation_key = [
-    null,    //no keys pressed
-    0,       //right
-    4,       //left
-    null,    //right and left
-    6,       //up
-    7,       //up and right
-    5,       //up and left
-    null,    //up, left, and right
-    2,       //down
-    1,       //down and right
-    3,       //down and left
-    null,    //down, left, and right
-    null,    //down and up
-    null,    //down, up, and right
-    null,    //down, up, and left
-    null,    //down, up, left, and right
-];
-
-//rotation_normal converts from normal_angle region (floor((angle-15)/30)) to in-game rotation
-export const rotation_normal = [
-    0,    //345-15 degrees
-    7,    //15-45 degrees
-    7,    //45-75 degrees
-    6,    //75-105 degrees
-    5,    //105-135 degrees
-    5,    //135-165 degrees
-    4,    //165-195 degrees
-    3,    //195-225 degrees
-    3,    //225-255 degrees
-    2,    //255-285 degrees
-    1,    //285-315 degrees
-    1,    //315-345 degrees
-];
-
-export function update_arrow_inputs(data) {
-    data.arrow_inputs =
-        1 * data.cursors.right.isDown
-        | 2 * data.cursors.left.isDown
-        | 4 * data.cursors.up.isDown
-        | 8 * data.cursors.down.isDown;
-}
 
 export function map_directions(arr) {
     if (arr === undefined) return arr;

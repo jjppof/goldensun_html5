@@ -1,12 +1,56 @@
 import { main_char_list } from '../initializers/main_chars.js';
 import { normal_push } from '../interactable_objects/push.js';
 import { TileEvent, event_types } from '../base/TileEvent.js';
-import { get_transition_directions, check_isdown, range_360, directions, rotation_key, rotation_normal } from '../utils.js';
+import { get_transition_directions, check_isdown, range_360, directions } from '../utils.js';
 import * as numbers from '../magic_numbers.js';
 import { maps } from '../initializers/maps.js';
 
 const SPEED_LIMIT_TO_STOP = 13;
 const MINIMAL_SLOPE = 0.1;
+
+//rotation_key can convert from pressed_keys to the corresponding in-game rotation
+const rotation_key = [
+    null,                     //no keys pressed
+    directions.right,       //right
+    directions.left,        //left
+    null,                     //right and left
+    directions.up,          //up
+    directions.up_right,    //up and right
+    directions.up_left,     //up and left
+    null,                     //up, left, and right
+    directions.down,        //down
+    directions.down_right,  //down and right
+    directions.down_left,   //down and left
+    null,                     //down, left, and right
+    null,                     //down and up
+    null,                     //down, up, and right
+    null,                     //down, up, and left
+    null,                     //down, up, left, and right
+];
+
+//rotation_normal converts from normal_angle region (floor((angle-15)/30)) to in-game rotation
+const rotation_normal = [
+    directions.right,      //345-15 degrees
+    directions.up_right,   //15-45 degrees
+    directions.up_right,   //45-75 degrees
+    directions.up,         //75-105 degrees
+    directions.up_left,    //105-135 degrees
+    directions.up_left,    //135-165 degrees
+    directions.left,       //165-195 degrees
+    directions.down_left,  //195-225 degrees
+    directions.down_left,  //225-255 degrees
+    directions.down,       //255-285 degrees
+    directions.down_right, //285-315 degrees
+    directions.down_right, //315-345 degrees
+];
+
+export function update_arrow_inputs(data) {
+    data.arrow_inputs =
+          1 * data.cursors.right.isDown
+        | 2 * data.cursors.left.isDown
+        | 4 * data.cursors.up.isDown
+        | 8 * data.cursors.down.isDown;
+}
 
 export function collision_dealer(game, data) {
     let normals = [];
