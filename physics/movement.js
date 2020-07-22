@@ -10,22 +10,22 @@ const MINIMAL_SLOPE = 0.1;
 
 //rotation_key can convert from pressed_keys to the corresponding in-game rotation
 const rotation_key = [
-    null,                     //no keys pressed
+    null,                   //no keys pressed
     directions.right,       //right
     directions.left,        //left
-    null,                     //right and left
+    null,                   //right and left
     directions.up,          //up
     directions.up_right,    //up and right
     directions.up_left,     //up and left
-    null,                     //up, left, and right
+    null,                   //up, left, and right
     directions.down,        //down
     directions.down_right,  //down and right
     directions.down_left,   //down and left
-    null,                     //down, left, and right
-    null,                     //down and up
-    null,                     //down, up, and right
-    null,                     //down, up, and left
-    null,                     //down, up, left, and right
+    null,                   //down, left, and right
+    null,                   //down and up
+    null,                   //down, up, and right
+    null,                   //down, up, and left
+    null,                   //down, up, left, and right
 ];
 
 //rotation_normal converts from normal_angle region (floor((angle-15)/30)) to in-game rotation
