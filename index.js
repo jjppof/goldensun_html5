@@ -372,7 +372,6 @@ async function create() {
 
 function update() {
     if (data.created) {
-        update_arrow_inputs(data)
         if (!data.on_event && !data.npc_event && !data.pushing && !data.menu_open && !data.casting_psynergy && !data.in_battle) {
             data.hero_tile_pos_x = (data.hero.x/maps[data.map_name].sprite.tileWidth) | 0;
             data.hero_tile_pos_y = (data.hero.y/maps[data.map_name].sprite.tileHeight) | 0;
@@ -392,6 +391,7 @@ function update() {
                 data.extra_speed = 0;
             }
 
+            update_arrow_inputs(data);
             movement.set_speed_factors(data);
             hero_control.set_current_action(data); //chooses which sprite the hero shall assume
             data.delta_time = game.time.elapsedMS/numbers.DELTA_TIME_FACTOR;

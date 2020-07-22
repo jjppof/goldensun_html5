@@ -60,10 +60,10 @@ export const rotation_normal = [
 
 export function update_arrow_inputs(data) {
     data.arrow_inputs =
-        1 & data.cursors.right.isDown
-        | 2 & data.cursors.left.isDown
-        | 4 & data.cursors.up.isDown
-        | 8 & data.cursors.down.isDown;
+        1 * data.cursors.right.isDown
+        | 2 * data.cursors.left.isDown
+        | 4 * data.cursors.up.isDown
+        | 8 * data.cursors.down.isDown;
 }
 
 export function map_directions(arr) {

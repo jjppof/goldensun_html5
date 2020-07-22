@@ -91,8 +91,8 @@ export function collision_dealer(game, data) {
         } else if (data.current_action !== "climb") {
             data.stop_by_colliding = false;
             if (normals.length === 1) { //everything inside this if is to deal with direction changing when colliding
+                //finds which 30 degree sector the normal angle lies within, and converts to a direction
                 const wall_direction = 
-                    //finds which 30 degree sector the normal angle lies within, and converts to a direction
                     rotation_normal[Math.floor(range_360(Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree15) / numbers.degree30)];
                 const relative_direction = (rotation_key[data.arrow_inputs] - wall_direction) & 7;
                 //if player's direction is within 1 of wall_direction
