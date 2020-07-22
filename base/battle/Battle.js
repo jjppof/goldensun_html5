@@ -240,13 +240,13 @@ export class Battle {
         }
         const ability = abilities_list[action.key_name];
         if ([ability_types.ADDED_DAMAGE, ability_types.MULTIPLIER, ability_types.BASE_DAMAGE, ability_types.SUMMON].includes(ability.type)) {
-            this.harmful_abilities(action, ability);
-        } else {
-            
+            this.hp_related_abilities(action, ability);
+        } else if ([ability_types.PSYNERGY_DRAIN, ability_types.PSYNERGY_RECOVERY].includes(ability.type)) {
+            this.pp_related_abilities(action, ability);
         }
     }
 
-    harmful_abilities(action, ability) {
+    hp_related_abilities(action, ability) {
         if (ability.can_switch_to_unleash) {
             if (action.caster.equip_slots.weapon && items_list[action.caster.equip_slots.weapon.key_name].unleash_ability) {
                 if (Math.random() < items_list[action.caster.equip_slots.weapon.key_name].unleash_rate) {
@@ -285,6 +285,9 @@ export class Battle {
                     case ability_types.BASE_DAMAGE:
                         damage = BattleFormulas.psynergy_damage(action.caster, target_instance, ability.ability_power, ability.element);
                         break;
+                    case ability_types.HEALING:
+                        damage = -BattleFormulas.heal_ability(action.caster, ability.ability_power, ability.element);
+                        break;
                     case ability_types.SUMMON:
                         const djinn_used = _.sum(_.values(_.find(this.data.summons_db, {key_name: ability.key_name}).requirements));
                         damage = BattleFormulas.summon_damage(target_instance, ability.ability_power, djinn_used);
@@ -298,6 +301,27 @@ export class Battle {
             if (target_instance.current_hp === 0) {
                 target_instance.add_permanent_status(permanent_status.DOWNED);
             }
+        }
+    }
+
+    pp_related_abilities(action, ability) {
+        for (let i = 0; i < action.targets.length; ++i) {
+            const target_info = action.targets[i];
+            if (target_info.magnitude === null) continue;
+            const target_instance = target_info.target.instance;
+            let quantity = 0;
+            switch(ability.type) {
+                case ability_types.PSYNERGY_RECOVERY:
+                    quantity = BattleFormulas.heal_ability(action.caster, ability.ability_power, ability.element);
+                    break;
+                case ability_types.PSYNERGY_DRAIN:
+                    quantity = -BattleFormulas.psynergy_damage(action.caster, target_instance, ability.ability_power, ability.element);
+                    break;
+            }
+            const ratios = Ability.get_diminishing_ratios(ability.type, ability.use_diminishing_ratio);
+            quantity = (quantity * ratios[target_info.magnitude]) | 0;
+            quantity += variation();
+            target_instance.current_pp = _.clamp(target_instance.current_pp + quantity, 0, target_instance.max_pp);
         }
     }
 
