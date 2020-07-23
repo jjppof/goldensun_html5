@@ -336,8 +336,10 @@ export class Battle {
                 const target_instance = target_info.target.instance;
                 switch(effect.type) {
                     case effect_types.PERMANENT_STATUS:
+                        if (effect.add_status && target_instance.permanent_status.has(effect.status_key_name)) break;
                     case effect_types.TEMPORARY_STATUS:
                         if (effect.add_status) {
+                            if (target_instance.temporary_status.has(effect.status_key_name)) break;
                             let vulnerability = _.find(target_instance.class.vulnerabilities, {
                                 status_key_name: effect.status_key_name
                             });
@@ -354,11 +356,13 @@ export class Battle {
                                 const this_effect = _.find(target_instance.effects, {
                                     status_key_name: effect.status_key_name
                                 });
-                                target_instance.remove_effect(this_effect, true);
-                                if (this_effect.type === effect_types.TEMPORARY_STATUS) {
-                                    this.on_going_effects = this.on_going_effects.filter(effect => {
-                                        return effect !== this_effect;
-                                    });
+                                if (this_effect) {
+                                    target_instance.remove_effect(this_effect, true);
+                                    if (this_effect.type === effect_types.TEMPORARY_STATUS) {
+                                        this.on_going_effects = this.on_going_effects.filter(effect => {
+                                            return effect !== this_effect;
+                                        });
+                                    }
                                 }
                             }
                         }
