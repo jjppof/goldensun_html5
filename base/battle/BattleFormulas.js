@@ -1,6 +1,6 @@
 //please check http://forum.goldensunhacking.net/index.php?topic=2460
 
-import { elements } from "../MainChar.js";
+import { elements, permanent_status } from "../MainChar.js";
 
 export const CRITICAL_CHANCE = 1/32;
 
@@ -82,5 +82,27 @@ export class BattleFormulas {
 
     static summon_damage(target, power, djinni_used) {
         return power + target.max_hp * djinni_used * 0.03;
+    }
+
+    static ailment_success(caster, target, base_chance, magnitude, element, vulnerabity) {
+        const level_key = element + "_level_current";
+        const relative_level = caster[level_key] - target[level_key];
+        const luck_factor = target.current_luk >> 1;
+        vulnerabity = vulnerabity === undefined ? 0 : vulnerabity;
+        const chance = ((relative_level - luck_factor) * 3)/100 + base_chance + vulnerabity * magnitude;
+        return chance >= _.random(0, 100);
+    }
+
+    static ailment_recovery(player, turn_number, base_chance) {
+        return (((player.current_luk * 3) - (turn_number * 5) + base_chance) * 655) >= _.random(0, 0xFFFF);
+    }
+
+    static battle_poison_damage(player, poison_type) {
+        let poison_factor = 0;
+        switch (poison_type) {
+            case permanent_status.POISON: poison_factor = 1; break;
+            case permanent_status.VENOM: poison_factor = 2; break;
+        }
+        return (poison_factor * player.max_hp)/10;
     }
 }

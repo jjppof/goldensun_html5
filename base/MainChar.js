@@ -18,6 +18,7 @@ export const temporary_status = {
 export const permanent_status = {
     DOWNED: "downed",
     POISON: "poison",
+    VENOM: "venom",
     EQUIP_CURSE: "equip_curse",
     HAUNT: "haunt"
 }
@@ -277,7 +278,7 @@ export class MainChar extends SpriteBase {
         }
     }
 
-    add_effect(effect_obj, effect_owner_instance) {
+    add_effect(effect_obj, effect_owner_instance, apply = false) {
         let effect = new Effect(
             effect_obj.type,
             effect_obj.quantity,
@@ -298,12 +299,19 @@ export class MainChar extends SpriteBase {
             this
         );
         this.effects.push(effect);
+        if (apply) {
+            effect.apply_effect();
+        }
+        return effect;
     }
 
-    remove_effect(effect_to_remove) {
+    remove_effect(effect_to_remove, apply = false) {
         this.effects = this.effects.filter(effect => {
             return effect !== effect_to_remove;
         });
+        if (apply) {
+            effect_to_remove.apply_effect();
+        }
     }
 
     init_djinni(djinni) {

@@ -486,7 +486,8 @@
                 "type": "defense",
                 "quantity": 1.25,
                 "operator": "times",
-                "usage": "on_use"
+                "usage": "on_use",
+                "turns_quantity": 3
             }
         ],
         "ability_type_key": "normal",
@@ -510,7 +511,8 @@
                 "type": "defense",
                 "quantity": 1.125,
                 "operator": "times",
-                "usage": "on_use"
+                "usage": "on_use",
+                "turns_quantity": 3
             }
         ],
         "ability_type_key": "normal",
@@ -534,7 +536,8 @@
                 "type": "defense",
                 "quantity": 0.75,
                 "operator": "times",
-                "usage": "on_use"
+                "usage": "on_use",
+                "turns_quantity": 3
             }
         ],
         "ability_type_key": "normal",
@@ -643,7 +646,8 @@
                 "type": "attack",
                 "quantity": 1.25,
                 "operator": "times",
-                "usage": "on_use"
+                "usage": "on_use",
+                "turns_quantity": 3
             }
         ],
         "ability_type_key": "normal",
@@ -667,7 +671,8 @@
                 "type": "attack",
                 "quantity": 1.125,
                 "operator": "times",
-                "usage": "on_use"
+                "usage": "on_use",
+                "turns_quantity": 3
             }
         ],
         "ability_type_key": "normal",
@@ -692,7 +697,8 @@
                 "chance": 0.1,
                 "add_status": true,
                 "status_key_name": "sleep",
-                "usage": "on_use"
+                "usage": "on_use",
+                "turns_quantity": 7
             }
         ],
         "ability_type_key": "normal",
@@ -734,25 +740,29 @@
                 "quantity": 40,
                 "operator": "minus",
                 "usage": "on_use",
-                "attribute": "venus"
+                "attribute": "venus",
+                "turns_quantity": 3
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "minus",
                 "usage": "on_use",
-                "attribute": "mercury"
+                "attribute": "mercury",
+                "turns_quantity": 3
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "minus",
                 "usage": "on_use",
-                "attribute": "mars"
+                "attribute": "mars",
+                "turns_quantity": 3
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "minus",
                 "usage": "on_use",
-                "attribute": "jupiter"
+                "attribute": "jupiter",
+                "turns_quantity": 3
             }
         ],
         "ability_type_key": "normal",
@@ -777,25 +787,29 @@
                 "quantity": 20,
                 "operator": "minus",
                 "usage": "on_use",
-                "attribute": "venus"
+                "attribute": "venus",
+                "turns_quantity": 3
             },{
                 "type": "resist",
                 "quantity": 20,
                 "operator": "minus",
                 "usage": "on_use",
-                "attribute": "mercury"
+                "attribute": "mercury",
+                "turns_quantity": 3
             },{
                 "type": "resist",
                 "quantity": 20,
                 "operator": "minus",
                 "usage": "on_use",
-                "attribute": "mars"
+                "attribute": "mars",
+                "turns_quantity": 3
             },{
                 "type": "resist",
                 "quantity": 20,
                 "operator": "minus",
                 "usage": "on_use",
-                "attribute": "jupiter"
+                "attribute": "jupiter",
+                "turns_quantity": 3
             }
         ],
         "ability_type_key": "normal",
@@ -820,7 +834,8 @@
                 "chance": 0.1,
                 "add_status": true,
                 "status_key_name": "delusion",
-                "usage": "on_use"
+                "usage": "on_use",
+                "turns_quantity": 7
             }
         ],
         "ability_type_key": "normal",
@@ -897,25 +912,29 @@
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
-                "attribute": "venus"
+                "attribute": "venus",
+                "turns_quantity": 3
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
-                "attribute": "mercury"
+                "attribute": "mercury",
+                "turns_quantity": 3
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
-                "attribute": "mars"
+                "attribute": "mars",
+                "turns_quantity": 3
             },{
                 "type": "resist",
                 "quantity": 40,
                 "operator": "plus",
                 "usage": "on_use",
-                "attribute": "jupiter"
+                "attribute": "jupiter",
+                "turns_quantity": 3
             }
         ],
         "ability_type_key": "normal",
@@ -940,25 +959,29 @@
                 "quantity": 20,
                 "operator": "plus",
                 "usage": "on_use",
-                "attribute": "venus"
+                "attribute": "venus",
+                "turns_quantity": 3
             },{
                 "type": "resist",
                 "quantity": 20,
                 "operator": "plus",
                 "usage": "on_use",
-                "attribute": "mercury"
+                "attribute": "mercury",
+                "turns_quantity": 3
             },{
                 "type": "resist",
                 "quantity": 20,
                 "operator": "plus",
                 "usage": "on_use",
-                "attribute": "mars"
+                "attribute": "mars",
+                "turns_quantity": 3
             },{
                 "type": "resist",
                 "quantity": 20,
                 "operator": "plus",
                 "usage": "on_use",
-                "attribute": "jupiter"
+                "attribute": "jupiter",
+                "turns_quantity": 3
             }
         ],
         "ability_type_key": "normal",
@@ -1118,7 +1141,8 @@
                 "type": "defense",
                 "quantity": 0.875,
                 "operator": "times",
-                "usage": "on_use"
+                "usage": "on_use",
+                "turns_quantity": 3
             }
         ],
         "ability_type_key": "normal",

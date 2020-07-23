@@ -80,6 +80,7 @@ export class Effect {
         this.add_status = add_status;
         this.status_key_name = status_key_name;
         this.turns_quantity = turns_quantity;
+        this.turn_count = turns_quantity;
         this.variation_on_final_result = variation_on_final_result === undefined ? false : variation_on_final_result;
         this.damage_formula_key_name = damage_formula_key_name;
         this.usage = usage === undefined ? usages.NOT_APPLY : usage;
@@ -158,6 +159,20 @@ export class Effect {
                 break;
             case effect_types.RESIST:
                 this.apply_general_value(this.attribute + "_resist_current");
+                break;
+            case effect_types.PERMANENT_STATUS:
+                if (this.add_status) {
+                    this.char.add_permanent_status(this.status_key_name);
+                } else {
+                    this.char.remove_permanent_status(this.status_key_name);
+                }
+                break;
+            case effect_types.TEMPORARY_STATUS:
+                if (this.add_status) {
+                    this.char.add_temporary_status(this.status_key_name);
+                } else {
+                    this.char.remove_temporary_status(this.status_key_name);
+                }
                 break;
         }
     }

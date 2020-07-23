@@ -27,7 +27,8 @@ export function initialize_classes(classes_db) {
             class_data.agi_boost,
             class_data.luk_boost,
             class_data.ability_level_pairs,
-            class_data.class_type
+            class_data.class_type,
+            class_data.vulnerabilities
         );
     }
 }

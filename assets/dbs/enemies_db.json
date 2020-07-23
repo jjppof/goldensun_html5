@@ -97,19 +97,16 @@
                 "use_chance": 0.125
             }
         ],
-        "effects": [
+        "effects": [],
+        "vulnerabilities": [
             {
                 "type": "temporary_status",
-                "chance": 1.25,
-                "operator": "times",
-                "status_key_name": "delusion",
-                "usage": "on_take"
+                "chance": 0.25,
+                "status_key_name": "delusion"
             },{
                 "type": "temporary_status",
-                "chance": 1.25,
-                "operator": "times",
-                "status_key_name": "sleep",
-                "usage": "on_take"
+                "chance": 0.25,
+                "status_key_name": "sleep"
             }
         ],
         "coins_reward": 891,
@@ -182,19 +179,16 @@
                 "use_chance": 0.25
             }
         ],
-        "effects": [
+        "effects": [],
+        "vulnerabilities": [
             {
                 "type": "temporary_status",
-                "chance": 1.25,
-                "operator": "times",
-                "status_key_name": "delusion",
-                "usage": "on_take"
+                "chance": 0.25,
+                "status_key_name": "delusion"
             },{
                 "type": "temporary_status",
-                "chance": 1.25,
-                "operator": "times",
-                "status_key_name": "sleep",
-                "usage": "on_take"
+                "chance": 0.25,
+                "status_key_name": "sleep"
             }
         ],
         "coins_reward": 130,

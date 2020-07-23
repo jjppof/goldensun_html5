@@ -16,7 +16,8 @@ export class Classes {
         agi_boost,
         luk_boost,
         ability_level_pairs,
-        class_type
+        class_type,
+        vulnerabilities
     ) {
         this.key_name = key_name;
         this.name = name;
@@ -32,6 +33,7 @@ export class Classes {
         this.luk_boost = luk_boost;
         this.ability_level_pairs = ability_level_pairs;
         this.class_type = class_type;
+        this.vulnerabilities = vulnerabilities === undefined ? [] : vulnerabilities;
     }
 }
 

@@ -57,6 +57,9 @@ export class Enemy {
         this.fighter_type = fighter_types.ENEMY;
         this.temporary_status = new Set();
         this.permanent_status = new Set();
+        this.effects = enemy_data.effects === undefined ? [] : enemy_data.effects;
+        this.class = {};
+        this.class.vulnerabilities = enemy_data.vulnerabilities === undefined ? [] : enemy_data.vulnerabilities;
     }
 
     add_permanent_status(status) {
