@@ -20,7 +20,6 @@ export const effect_types = {
     TURNS: "turns",
     ENCOUNTERS: "encounters",
     FLEE: "flee",
-    SPEED: "speed",
     END_THE_ROUND: "end_the_round",
     ABILITY_POWER: "ability_power"
 }
@@ -32,14 +31,14 @@ export const effect_operators = {
     DIVIDE: "divide"
 }
 
-export const usages = {
+export const effect_usages = {
     NOT_APPLY: "not_apply",
     ON_USE: "on_use",
     ON_TAKE: "on_take",
-    BATTLE_PHASE_START: "battle_phase_start",
-    BATTLE_PHASE_END: "battle_phase_end",
-    TURN_START: "turn_start",
-    TURN_END: "turn_end"
+    BATTLE_ROUND_START: "battle_round_start",
+    BATTLE_ROUND_END: "battle_round_end",
+    PLAYER_TURN_START: "player_turn_start",
+    PLAYER_TURN_END: "player_turn_end"
 }
 
 export const quantity_types = {
@@ -82,7 +81,7 @@ export class Effect {
         this.turn_count = turns_quantity;
         this.variation_on_final_result = variation_on_final_result === undefined ? false : variation_on_final_result;
         this.damage_formula_key_name = damage_formula_key_name;
-        this.usage = usage === undefined ? usages.NOT_APPLY : usage;
+        this.usage = usage === undefined ? effect_usages.NOT_APPLY : usage;
         this.on_caster = on_caster === undefined ? false : on_caster;
         this.quantity_type = quantity_type === undefined ? quantity_types.VALUE : quantity_type;
         this.char = char;
@@ -98,6 +97,7 @@ export class Effect {
     }
 
     apply_general_value(property) {
+        if (Math.random >= this.chance) return;
         if (this.quantity_is_absolute) {
             this.value = this.char[property];
             this.char[property] = this.quantity;
@@ -158,6 +158,10 @@ export class Effect {
                 break;
             case effect_types.RESIST:
                 this.apply_general_value(this.attribute + "_resist_current");
+                break;
+            case effect_types.TURNS:
+                this.turn_count = 1;
+                this.apply_general_value("turns");
                 break;
             case effect_types.PERMANENT_STATUS:
                 if (this.add_status) {

@@ -9,7 +9,7 @@ import { ability_target_types, ability_types, Ability, diminishing_ratios } from
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
 import { EnemyAI } from "./EnemyAI.js";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
-import { effect_types, Effect } from "../Effect.js";
+import { effect_types, Effect, effect_usages } from "../Effect.js";
 import { variation } from "../../utils.js";
 import { permanent_status, temporary_status } from "../Player.js";
 
@@ -50,7 +50,8 @@ export class Battle {
         this.allies_info = party_data.members.slice(0, MAX_CHARS_IN_BATTLE).map(char => {
             return {
                 sprite_key: char.key_name + "_battle",
-                scale: char.battle_scale
+                scale: char.battle_scale,
+                instance: char
             };
         });
         this.enemies_party_data = this.data.enemies_parties_db[enemy_party_key];
@@ -245,7 +246,16 @@ export class Battle {
         } else if ([ability_types.PSYNERGY_DRAIN, ability_types.PSYNERGY_RECOVERY].includes(ability.type)) {
             this.pp_related_abilities(action, ability);
         }
-        this.apply_effects(action, ability);
+        for (let i = 0; i < ability.effects.length; ++i) {
+            const effect = ability.effects[i];
+            if (!effect_usages.ON_USE) continue;
+            const end_turn = this.apply_effects(action, ability, effect);
+            if (end_turn) {
+                this.battle_phase = battle_phases.ROUND_END;
+                this.check_phases();
+                return;
+            }
+        }
     }
 
     hp_related_abilities(action, ability) {
@@ -328,48 +338,56 @@ export class Battle {
         }
     }
 
-    apply_effects(action, ability) {
-        ability.effects.forEach(effect => {
-            for (let i = 0; i < action.targets.length; ++i) {
-                const target_info = action.targets[i];
-                if (target_info.magnitude === null) continue;
-                const target_instance = target_info.target.instance;
-                switch(effect.type) {
-                    case effect_types.PERMANENT_STATUS:
-                        if (effect.add_status && target_instance.permanent_status.has(effect.status_key_name)) break;
-                    case effect_types.TEMPORARY_STATUS:
-                        if (effect.add_status) {
-                            if (target_instance.temporary_status.has(effect.status_key_name)) break;
-                            let vulnerability = _.find(target_instance.class.vulnerabilities, {
+    apply_effects(action, ability, effect) {
+        for (let j = 0; j < action.targets.length; ++j) {
+            const target_info = action.targets[j];
+            if (target_info.magnitude === null) continue;
+            const target_instance = target_info.target.instance;
+            switch(effect.type) {
+                case effect_types.PERMANENT_STATUS:
+                    if (effect.add_status && target_instance.permanent_status.has(effect.status_key_name)) break;
+                case effect_types.TEMPORARY_STATUS:
+                    if (effect.add_status) {
+                        if (target_instance.temporary_status.has(effect.status_key_name)) break;
+                        let vulnerability = _.find(target_instance.class.vulnerabilities, {
+                            status_key_name: effect.status_key_name
+                        });
+                        vulnerability = vulnerability === undefined ? 0 : vulnerability.chance;
+                        const magnitude = diminishing_ratios.STATUS[target_info.magnitude];
+                        if (BattleFormulas.ailment_success(action.caster, target_instance, effect.chance, magnitude, ability.element, vulnerability)) {
+                            const this_effect = target_instance.add_effect(effect, ability, true);
+                            if (this_effect.type === effect_types.TEMPORARY_STATUS) {
+                                this.on_going_effects.push(this_effect);
+                            }
+                        }
+                    } else {
+                        if (Math.random() < effect.chance) {
+                            const this_effect = _.find(target_instance.effects, {
                                 status_key_name: effect.status_key_name
                             });
-                            vulnerability = vulnerability === undefined ? 0 : vulnerability.chance;
-                            const magnitude = diminishing_ratios.STATUS[target_info.magnitude];
-                            if (BattleFormulas.ailment_success(action.caster, target_instance, effect.chance, magnitude, ability.element, vulnerability)) {
-                                const this_effect = target_instance.add_effect(effect, true);
+                            if (this_effect) {
+                                target_instance.remove_effect(this_effect, true);
                                 if (this_effect.type === effect_types.TEMPORARY_STATUS) {
-                                    this.on_going_effects.push(this_effect);
-                                }
-                            }
-                        } else {
-                            if (Math.random() < effect.chance) {
-                                const this_effect = _.find(target_instance.effects, {
-                                    status_key_name: effect.status_key_name
-                                });
-                                if (this_effect) {
-                                    target_instance.remove_effect(this_effect, true);
-                                    if (this_effect.type === effect_types.TEMPORARY_STATUS) {
-                                        this.on_going_effects = this.on_going_effects.filter(effect => {
-                                            return effect !== this_effect;
-                                        });
-                                    }
+                                    this.on_going_effects = this.on_going_effects.filter(effect => {
+                                        return effect !== this_effect;
+                                    });
                                 }
                             }
                         }
-                        break;
-                }
+                    }
+                    break;
+                case effect_types.END_THE_ROUND:
+                    return true;
+                case effect_types.TURNS:
+                    this.on_going_effects.push(target_instance.add_effect(effect, ability, true));
+                    break;
+                case effect_types.COUNTER_STRIKE: break;
+                case effect_types.FLEE: break;
+                default:
+                    this.on_going_effects.push(target_instance.add_effect(effect, ability, true));
             }
-        });
+        }
+        return false;
     }
 
     battle_phase_round_end() {
