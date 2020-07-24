@@ -1,11 +1,11 @@
-import { SpriteBase } from "../SpriteBase.js";
-import { enemies_list } from "../../initializers/enemies.js";
-import { fighter_types } from "./Battle.js";
+import { SpriteBase } from "./SpriteBase.js";
+import { enemies_list } from "../initializers/enemies.js";
+import { fighter_types } from "./battle/Battle.js";
+import { Player } from "./Player.js";
 
-export class Enemy {
+export class Enemy extends Player {
     constructor(enemy_data, name) {
-        this.key_name = enemy_data.key_name;
-        this.name = name ? name : enemy_data.name;
+        super(enemy_data.key_name, name ? name : enemy_data.name);
         this.level = enemy_data.level;
         this.turns = enemy_data.turns;
         this.max_hp = enemy_data.max_hp;
@@ -55,27 +55,8 @@ export class Enemy {
         this.jupiter_resist = enemy_data.jupiter_resist;
         this.jupiter_resist_current = enemy_data.jupiter_resist;
         this.fighter_type = fighter_types.ENEMY;
-        this.temporary_status = new Set();
-        this.permanent_status = new Set();
-        this.effects = enemy_data.effects === undefined ? [] : enemy_data.effects;
         this.class = {};
         this.class.vulnerabilities = enemy_data.vulnerabilities === undefined ? [] : enemy_data.vulnerabilities;
-    }
-
-    add_permanent_status(status) {
-        this.permanent_status.add(status);
-    }
-
-    remove_permanent_status(status) {
-        this.permanent_status.delete(status);
-    }
-
-    add_temporary_status(status) {
-        this.temporary_status.add(status);
-    }
-
-    remove_temporary_status(status) {
-        this.temporary_status.delete(status);
     }
 }
 

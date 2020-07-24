@@ -105,8 +105,8 @@ export function jump_event(data, current_event) {
     }
     game.physics.p2.pause();
     data.hero.loadTexture(data.hero_name + "_jump");
-    main_char_list[data.hero_name].setAnimation(data.hero, "jump");
-    data.hero.animations.play("jump_" + reverse_directions[jump_direction], main_char_list[data.hero_name].actions["jump"].frame_rate, false);
+    main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, "jump");
+    data.hero.animations.play("jump_" + reverse_directions[jump_direction], main_char_list[data.hero_name].sprite_base.actions["jump"].frame_rate, false);
     data.hero.animations.currentAnim.onComplete.addOnce(() => {
         data.shadow.visible = false;
         data.shadow.x = hero_x;
@@ -119,7 +119,7 @@ export function jump_event(data, current_event) {
         ).onComplete.addOnce(() => {
             data.shadow.visible = true;
             data.hero.animations.currentAnim.reverseOnce();
-            data.hero.animations.play("jump_" + reverse_directions[jump_direction], main_char_list[data.hero_name].actions["jump"].frame_rate, false);
+            data.hero.animations.play("jump_" + reverse_directions[jump_direction], main_char_list[data.hero_name].sprite_base.actions["jump"].frame_rate, false);
             data.hero.animations.currentAnim.onComplete.addOnce(() => {
                 game.physics.p2.resume();
                 data.jumping = false;

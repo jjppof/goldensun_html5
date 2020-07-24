@@ -1,5 +1,5 @@
 import { Window } from "../../Window.js";
-import { ordered_elements } from "../../MainChar.js";
+import { ordered_elements } from "../../../utils.js";
 
 const BASE_WIN_X = 160;
 const BASE_WIN_Y = 64;

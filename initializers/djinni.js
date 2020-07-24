@@ -1,6 +1,6 @@
 import { Djinn } from '../base/Djinn.js';
-import { elements } from '../base/MainChar.js';
 import { SpriteBase } from '../base/SpriteBase.js';
+import { elements } from '../utils.js';
 
 export let djinni_list = {};
 export let djinni_sprites = {}

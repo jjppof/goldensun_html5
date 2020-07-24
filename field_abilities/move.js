@@ -137,18 +137,18 @@ export class MoveFieldPsynergy extends SpriteBase {
 
     set_hero_cast_anim() {
         this.data.hero.loadTexture(this.data.hero_name + "_" + this.action_key_name);
-        main_char_list[this.data.hero_name].setAnimation(this.data.hero, this.action_key_name);
-        this.data.hero.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].actions[this.action_key_name].frame_rate, false);
+        main_char_list[this.data.hero_name].sprite_base.setAnimation(this.data.hero, this.action_key_name);
+        this.data.hero.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].sprite_base.actions[this.action_key_name].frame_rate, false);
     }
 
     unset_hero_cast_anim() {
         data.hero.animations.currentAnim.reverseOnce();
         data.hero.animations.currentAnim.onComplete.addOnce(() => {
             this.data.hero.loadTexture(this.data.hero_name + "_idle");
-            main_char_list[this.data.hero_name].setAnimation(this.data.hero, "idle");
+            main_char_list[this.data.hero_name].sprite_base.setAnimation(this.data.hero, "idle");
             this.data.hero.animations.frameName = `idle/${reverse_directions[this.cast_direction]}/00`;
         });
-        this.data.hero.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].actions[this.action_key_name].frame_rate, false);
+        this.data.hero.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].sprite_base.actions[this.action_key_name].frame_rate, false);
     }
 
     set_hand() {

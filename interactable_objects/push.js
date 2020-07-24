@@ -118,7 +118,7 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
                                 if (drop_tile.dust_animation) {
                                     data.current_action = "idle";
                                     data.hero.loadTexture(data.hero_name + "_" + data.current_action);
-                                    main_char_list[data.hero_name].setAnimation(data.hero, data.current_action);
+                                    main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, data.current_action);
                                     data.hero.animations.play(data.current_action + "_" + reverse_directions[data.current_direction]);
                                     dust_animation(game, data, interactable_object, promise_resolve);
                                 } else {

@@ -25,7 +25,7 @@ export function set_door_event(data, current_event, activation_direction) {
             return;
         }
         data.hero.loadTexture(data.hero_name + "_walk");
-        main_char_list[data.hero_name].setAnimation(data.hero, "walk");
+        main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, "walk");
         data.hero.animations.play("walk_up");
         open_door(data, current_event);
         game.physics.p2.pause();
@@ -52,7 +52,7 @@ export function door_event_phases(data) {
     if (data.teleporting) {
         data.teleporting = false;
         data.hero.loadTexture(data.hero_name + "_idle");
-        main_char_list[data.hero_name].setAnimation(data.hero, "idle");
+        main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, "idle");
         data.current_direction = current_event.activation_directions[0];
         data.hero.animations.play("idle_" + reverse_directions[data.current_direction]);
         data.current_action = "idle";

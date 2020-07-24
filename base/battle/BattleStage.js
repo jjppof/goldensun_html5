@@ -173,7 +173,7 @@ export class BattleStage {
             this.sprites.push(sprite);
         };
         this.allies_info.forEach(info => {
-            set_sprite(this.group_allies, info, true, "battle_back", main_char_list);
+            set_sprite(this.group_allies, info, true, "battle_back", _.mapValues(main_char_list, char => char.sprite_base));
         });
         this.enemies_info.forEach(info => {
             set_sprite(this.group_enemies, info, false, "battle_front", enemies_list);

@@ -19,7 +19,7 @@ export function config_hero(data) {
     game.camera.follow(data.hero, Phaser.Camera.FOLLOW_LOCKON, numbers.CAMERA_LERP, numbers.CAMERA_LERP); //makes camera follow the data.hero
     game.camera.focusOn(data.hero);
     //config data.hero initial animation state
-    main_char_list[data.hero_name].setAnimation(data.hero, data.current_action);
+    main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, data.current_action);
     data.hero.animations.play(data.current_action + "_" + reverse_directions[data.current_direction]);
 }
 
@@ -36,7 +36,7 @@ export function change_hero_sprite(data) {
     const animation = action + "_" + (idle_climbing ? "idle" : reverse_directions[direction]);
     if (data.hero.key !== key) {
         data.hero.loadTexture(key);
-        main_char_list[data.hero_name].setAnimation(data.hero, action);
+        main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, action);
         data.hero.animations.play(animation);
     }
     if (data.hero.animations.currentAnim.name !== animation) {

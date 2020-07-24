@@ -20,12 +20,12 @@ export function climbing_event(game, data, current_event, activation_direction) 
         if (activation_direction === directions.down) {
             data.on_event = true;
             data.hero.loadTexture(data.hero_name + "_climb");
-            main_char_list[data.hero_name].setAnimation(data.hero, "climb");
+            main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, "climb");
             data.hero.animations.play("climb_start", 10, false, true);
         } else if (activation_direction === directions.up) {
             data.on_event = true;
             data.hero.loadTexture(data.hero_name + "_climb");
-            main_char_list[data.hero_name].setAnimation(data.hero, "climb");
+            main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, "climb");
             data.hero.animations.play("climb_idle");
             const out_time = Phaser.Timer.QUARTER/3;
             const x_tween = maps[data.map_name].sprite.tileWidth*(current_event.x + 0.5);
@@ -80,7 +80,7 @@ export function climbing_event(game, data, current_event, activation_direction) 
             }
             data.on_event = true;
             data.hero.loadTexture(data.hero_name + "_idle");
-            main_char_list[data.hero_name].setAnimation(data.hero, "idle");
+            main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, "idle");
             data.hero.animations.play("idle_up");
             const out_time = Phaser.Timer.QUARTER/3;
             game.add.tween(data.hero.body).to(
@@ -138,7 +138,7 @@ export function climb_event_animation_steps(data) {
                 data.shadow.visible = true;
             });
             data.hero.loadTexture(data.hero_name + "_idle");
-            main_char_list[data.hero_name].setAnimation(data.hero, "idle");
+            main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, "idle");
             data.hero.animations.play("idle_up");
             if (data.climbing_event_data.event.dynamic) {
                 remove_climb_collision_bodies(data, data.climbing_event_data.event, false);

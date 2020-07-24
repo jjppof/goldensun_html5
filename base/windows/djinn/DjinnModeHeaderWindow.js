@@ -132,8 +132,8 @@ export class DjinnModeHeaderWindow {
             }
             const char_sprite = this.base_window.create_at_group(CHARS_X[i], CHARS_Y[i], this_char.key_name + "_idle");
             char_sprite.anchor.setTo(0.5, 1.0);
-            char_sprite.animations.add("idle_down", this_char.animations.idle.down, this_char.actions.idle.frame_rate, true);
-            char_sprite.animations.play("idle_down", this_char.actions.idle.frame_rate, true);
+            char_sprite.animations.add("idle_down", this_char.sprite_base.animations.idle.down, this_char.sprite_base.actions.idle.frame_rate, true);
+            char_sprite.animations.play("idle_down", this_char.sprite_base.actions.idle.frame_rate, true);
             this.sprites.push(char_sprite);
 
             if (this.action_text === "Give" && i === 1) break;

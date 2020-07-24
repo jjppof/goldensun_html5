@@ -4,8 +4,7 @@ import { CursorControl } from '../../utils/CursorControl.js';
 import * as numbers from '../../../magic_numbers.js';
 import { party_data } from '../../../initializers/main_chars.js';
 import { djinni_list, djinni_sprites } from '../../../initializers/djinni.js';
-import { elements } from '../../MainChar.js';
-import { capitalize, change_brightness } from '../../../utils.js';
+import { capitalize, change_brightness, elements } from '../../../utils.js';
 import { DjinnModeHeaderWindow } from './DjinnModeHeaderWindow.js';
 import { DjinnCharStatsWindow } from './DjinnCharStatsWindow.js';
 import { DjinnPsynergyWindow } from './DjinnPsynergyWindow.js';
@@ -245,9 +244,9 @@ export class DjinnListWindow {
             if (!(char_key_name in this.chars_sprites)) {
                 this.chars_sprites[char_key_name] = this.chars_sprites_group.create(0, 0, char_key_name + "_idle");
                 this.chars_sprites[char_key_name].anchor.setTo(0.5, 1.0);
-                this.chars_sprites[char_key_name].animations.add("idle_down", this_char.animations.idle.down, this_char.actions.idle.frame_rate, true);
+                this.chars_sprites[char_key_name].animations.add("idle_down", this_char.sprite_base.animations.idle.down, this_char.sprite_base.actions.idle.frame_rate, true);
             }
-            this.chars_sprites[char_key_name].animations.play("idle_down", this_char.actions.idle.frame_rate, true);
+            this.chars_sprites[char_key_name].animations.play("idle_down", this_char.sprite_base.actions.idle.frame_rate, true);
             const x = CHAR_X_PADDING + i * CHAR_X_BETWEEN;
             this.chars_sprites[char_key_name].x = x;
             this.chars_sprites[char_key_name].y = CHAR_Y_PADDING;

@@ -1,5 +1,4 @@
-import { elements } from "./MainChar.js";
-import { variation } from "../utils.js"
+import { variation, elements } from "../utils.js"
 
 export const effect_types = {
     MAX_HP: "max_hp",

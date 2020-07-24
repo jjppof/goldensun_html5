@@ -1,6 +1,6 @@
 import { Window } from "../../Window.js";
-import { elements, ordered_elements } from "../../MainChar.js";
 import * as numbers from "../../../magic_numbers.js";
+import { elements, ordered_elements } from "../../../utils.js";
 
 const BASE_WIN_HEIGHT = 20;
 const BASE_WIN_Y = 136;

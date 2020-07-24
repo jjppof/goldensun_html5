@@ -1,5 +1,17 @@
 import * as numbers from './magic_numbers.js';
 
+export const elements = {
+    VENUS: "venus",
+    MERCURY: "mercury",
+    MARS: "mars",
+    JUPITER: "jupiter",
+    NO_ELEMENT: "no_element"
+};
+
+export const ordered_elements = [
+    elements.VENUS, elements.MERCURY, elements.MARS, elements.JUPITER
+];
+
 export const directions = {
     right: 0,
     down_right: 1,

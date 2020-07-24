@@ -1,4 +1,4 @@
-import { EnemyBase } from '../base/battle/Enemy.js';
+import { EnemyBase } from '../base/Enemy.js';
 
 export let enemies_list = {};
 

@@ -75,7 +75,7 @@ export class CharsMenu {
         for (let i = 0; i < party_data.members.length; ++i) {
             const char = party_data.members[i];
             this.char_buttons[char.key_name] = this.group.create(0, 0, char.key_name + "_idle");
-            party_data.members[i].setAnimation(this.char_buttons[char.key_name], "idle");
+            party_data.members[i].sprite_base.setAnimation(this.char_buttons[char.key_name], "idle");
             this.char_buttons[char.key_name].animations.play("idle_down");
         }
     }

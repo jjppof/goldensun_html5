@@ -1,5 +1,5 @@
 import { Classes } from '../base/Classes.js';
-import { MainChar } from '../base/MainChar.js';
+import { MainChar, MainCharBase } from '../base/MainChar.js';
 
 export let main_char_list = {};
 export let classes_list = {};
@@ -37,14 +37,17 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
     let load_promises = [];
     for (let i = 0; i < main_chars_db.length; ++i) {
         const char_data = main_chars_db[i];
-        main_char_list[char_data.key_name] = new MainChar(
+        const sprite_base = new MainCharBase(
             char_data.key_name,
             char_data.actions.map(action => action.key),
-            i,
             char_data.walk_speed,
             char_data.dash_speed,
             char_data.climb_speed,
             char_data.push_speed,
+        );
+        main_char_list[char_data.key_name] = new MainChar(
+            char_data.key_name,
+            sprite_base,
             char_data.avatar_image_path,
             char_data.name,
             char_data.hp_curve,
@@ -78,19 +81,19 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
         }
         for (let j = 0; j < char_data.actions.length; ++j) {
             const action = char_data.actions[j];
-            main_char_list[char_data.key_name].setActionSpritesheet(action.key, action.spritesheet_img, action.spritesheet);
-            main_char_list[char_data.key_name].setActionDirections(action.key, action.directions, action.directions_frames_number);
-            main_char_list[char_data.key_name].setActionFrameRate(action.key, action.frame_rate);
-            main_char_list[char_data.key_name].setActionLoop(action.key, action.loop);
+            sprite_base.setActionSpritesheet(action.key, action.spritesheet_img, action.spritesheet);
+            sprite_base.setActionDirections(action.key, action.directions, action.directions_frames_number);
+            sprite_base.setActionFrameRate(action.key, action.frame_rate);
+            sprite_base.setActionLoop(action.key, action.loop);
         }
-        main_char_list[char_data.key_name].addAnimations();
+        sprite_base.addAnimations();
 
         let load_spritesheet_promise_resolve;
         let load_spritesheet_promise = new Promise(resolve => {
             load_spritesheet_promise_resolve = resolve;
         });
         load_promises.push(load_spritesheet_promise);
-        main_char_list[char_data.key_name].loadSpritesheets(game, true, load_spritesheet_promise_resolve);
+        sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
 
         let load_other_assets_promise_resolve;
         let load_other_assets_promise = new Promise(resolve => {

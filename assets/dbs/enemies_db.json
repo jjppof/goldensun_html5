@@ -97,7 +97,6 @@
                 "use_chance": 0.125
             }
         ],
-        "effects": [],
         "vulnerabilities": [
             {
                 "type": "temporary_status",
@@ -179,7 +178,6 @@
                 "use_chance": 0.25
             }
         ],
-        "effects": [],
         "vulnerabilities": [
             {
                 "type": "temporary_status",

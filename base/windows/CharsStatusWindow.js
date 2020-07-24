@@ -1,10 +1,9 @@
 import { Window } from '../Window.js';
-import { get_text_width } from '../../utils.js';
+import { get_text_width, ordered_elements } from '../../utils.js';
 import * as numbers from '../../magic_numbers.js';
 import { party_data } from '../../initializers/main_chars.js';
 import { djinni_list } from '../../initializers/djinni.js';
 import { djinn_status } from '../Djinn.js';
-import { ordered_elements } from '../MainChar.js';
 
 const WIDTH_PER_CHAR = 46;
 const STATUS_WIN_HEIGHT = 35;

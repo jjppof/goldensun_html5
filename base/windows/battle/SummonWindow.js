@@ -5,8 +5,8 @@ import * as numbers from "../../../magic_numbers.js"
 import { party_data } from "../../../initializers/main_chars.js";
 import { djinni_list } from "../../../initializers/djinni.js";
 import { djinn_status } from "../../Djinn.js";
-import { ordered_elements } from "../../MainChar.js";
 import { SummonDjinnStandbyWindow } from "./SummonDjinnStandbyWindow.js";
+import { ordered_elements } from "../../../utils.js";
 
 const BASE_WINDOW_X = 104;
 const BASE_WINDOW_Y = 88;

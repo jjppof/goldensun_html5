@@ -3,7 +3,7 @@ import { BattleStage } from "./BattleStage.js";
 import { enemies_list } from "../../initializers/enemies.js";
 import { BattleLog } from "./BattleLog.js";
 import { BattleMenuScreen } from "../../screens/battle_menus.js";
-import { get_enemy_instance } from "./Enemy.js";
+import { get_enemy_instance } from "../Enemy.js";
 import { abilities_list } from "../../initializers/abilities.js";
 import { ability_target_types, ability_types, Ability, diminishing_ratios } from "../Ability.js";
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
@@ -11,7 +11,7 @@ import { EnemyAI } from "./EnemyAI.js";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
 import { effect_types, Effect } from "../Effect.js";
 import { variation } from "../../utils.js";
-import { temporary_status, permanent_status } from "../MainChar.js";
+import { permanent_status, temporary_status } from "../Player.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 export const fighter_types = {

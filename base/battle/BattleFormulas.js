@@ -1,6 +1,7 @@
 //please check http://forum.goldensunhacking.net/index.php?topic=2460
 
-import { elements, permanent_status } from "../MainChar.js";
+import { elements } from "../../utils.js";
+import { permanent_status } from "../Player.js";
 
 export const CRITICAL_CHANCE = 1/32;
 

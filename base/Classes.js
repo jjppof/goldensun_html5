@@ -1,5 +1,5 @@
 import { classes_list, class_table } from '../initializers/main_chars.js';
-import { elements } from './MainChar.js';
+import { elements } from '../utils.js';
 
 export class Classes {
     constructor(
