@@ -249,14 +249,21 @@ export class Battle {
         }
         let ability = abilities_list[action.key_name];
         let item_name = "";
-        if (action.caster.fighter_type === fighter_types.ALLY && ability.can_switch_to_unleash) {
+        if (action.caster.fighter_type === fighter_types.ALLY && ability !== undefined && ability.can_switch_to_unleash) {
             if (action.caster.equip_slots.weapon && items_list[action.caster.equip_slots.weapon.key_name].unleash_ability) {
                 const weapon = items_list[action.caster.equip_slots.weapon.key_name];
                 if (Math.random() < weapon.unleash_rate) {
                     item_name = weapon.name;
+                    action.key_name = weapon.unleash_ability;
                     ability = abilities_list[weapon.unleash_ability];
                 }
             }
+        }
+        if (ability === undefined) {
+            await this.battle_log.add(`${action.key_name} ability key not registered.`);
+            await new Promise(resolve => { this.advance_log_resolve = resolve; });
+            this.check_phases();
+            return;
         }
         await this.battle_log.add_ability(action.caster, ability, item_name);
         if ([ability_types.ADDED_DAMAGE, ability_types.MULTIPLIER, ability_types.BASE_DAMAGE, ability_types.SUMMON, ability_types.HEALING].includes(ability.type)) {
