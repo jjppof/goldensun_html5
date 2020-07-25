@@ -108,7 +108,7 @@ export class Ability {
         this.can_switch_to_unleash = can_switch_to_unleash ? can_switch_to_unleash : false;
         this.can_be_evaded = can_be_evaded ? can_be_evaded : false;
         this.use_diminishing_ratio = use_diminishing_ratio ? use_diminishing_ratio : false;
-        this.msg_type = msg_type === undefined ? ability_msg_types.CAST : ability_msg_types[msg_type];
+        this.msg_type = msg_type === undefined ? ability_msg_types.CAST : msg_type;
     }
 
     static get_diminishing_ratios(ability_type, use_diminishing_ratio) {

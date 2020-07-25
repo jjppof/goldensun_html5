@@ -1,4 +1,5 @@
 import * as numbers from '../../magic_numbers.js';
+import { ability_msg_types } from '../Ability.js';
 
 const LOG_X = 3;
 const LOG_1_Y = 139;
@@ -23,9 +24,41 @@ export class BattleLog {
         this.logs[key].autoRound = true;
     }
 
-    add(text) {
-        this.logs[LOG_2_KEY].setText(this.logs[LOG_1_KEY].text);
-        this.logs[LOG_1_KEY].setText(text);
+    add(text, top = false) {
+        if (top) {
+            this.logs[LOG_1_KEY].setText(text);
+            this.logs[LOG_2_KEY].setText("");
+        } else {
+            this.logs[LOG_1_KEY].setText(this.logs[LOG_2_KEY].text);
+            this.logs[LOG_2_KEY].setText(text);
+        }
+    }
+
+    add_ability(caster, ability, item_name) {
+        switch (ability.msg_type) {
+            case ability_msg_types.ATTACK:
+                this.add(`${caster.name} attacks!`);
+                break;
+            case ability_msg_types.CAST:
+                this.add(`${caster.name} casts ${ability.name}!`);
+                break;
+            case ability_msg_types.UNLEASH:
+                this.add(`${caster.name} unleashes ${ability.name}!`);
+                break;
+            case ability_msg_types.SUMMON:
+                this.add(`${caster.name} summons ${ability.name}!`);
+                break;
+            case ability_msg_types.USE:
+                this.add(`${caster.name} uses ${ability.name}!`);
+                break;
+            case ability_msg_types.DEFEND:
+                this.add(`${caster.name} is defending!`);
+                break;
+            case ability_msg_types.ITEM_UNLEASH:
+                this.add(`${caster.name}'s ${item_name}`);
+                this.add(`lets out a howl! ${ability.name}!`);
+                break;
+        }
     }
 
     clear() {

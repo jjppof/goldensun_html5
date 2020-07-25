@@ -100,12 +100,18 @@ export class Battle {
         this.data.enter_input.add(() => {
             if (!this.data.in_battle || !this.controls_enabled) return;
             this.data.enter_input.halt();
-            this.controls_enabled = false;
             switch (this.battle_phase) {
                 case battle_phases.START:
+                    this.controls_enabled = false;
                     this.battle_log.clear();
                     this.battle_phase = battle_phases.MENU;
                     this.check_phases();
+                    break;
+                case battle_phases.COMBAT:
+                    if (this.advance_log_resolve) {
+                        this.advance_log_resolve();
+                        this.advance_log_resolve = null;
+                    }
                     break;
             }
         }, this, this.enter_propagation_priority);
@@ -167,7 +173,7 @@ export class Battle {
         this.battle_phase = battle_phases.START;
         this.data.in_battle = true;
         this.data.battle_instance = this;
-        this.battle_log.add(this.enemies_party_data.name + " appeared!");
+        this.battle_log.add(this.enemies_party_data.name + " appeared!", true);
         this.battle_stage.initialize_stage(() => {
             this.controls_enabled = true;
         });
@@ -217,6 +223,7 @@ export class Battle {
             return action.speed; //still need to add left most and player preference criterias
         });
         this.battle_phase = battle_phases.COMBAT;
+        this.controls_enabled = true;
         this.check_phases();
     }
 
@@ -230,7 +237,7 @@ export class Battle {
     6. Added 0-3 damage
     If any of checks 1-4 succeed, it skips to 5
     */
-    battle_phase_combat() {
+    async battle_phase_combat() {
         if (!this.turns_actions.length) {
             this.battle_phase = battle_phases.ROUND_END;
             this.check_phases();
@@ -238,13 +245,24 @@ export class Battle {
         }
         const action = this.turns_actions.pop();
         if (action.caster.fighter_type === fighter_types.ENEMY && !abilities_list[action.key_name].priority_move) {
-            Object.assign(action, EnemyAI.roll_action(enemy, party_data.members, this.enemies_info.map(info => info.instance)));
+            Object.assign(action, EnemyAI.roll_action(action.caster, party_data.members, this.enemies_info.map(info => info.instance)));
         }
         let ability = abilities_list[action.key_name];
+        let item_name = "";
+        if (action.caster.fighter_type === fighter_types.ALLY && ability.can_switch_to_unleash) {
+            if (action.caster.equip_slots.weapon && items_list[action.caster.equip_slots.weapon.key_name].unleash_ability) {
+                const weapon = items_list[action.caster.equip_slots.weapon.key_name];
+                if (Math.random() < weapon.unleash_rate) {
+                    item_name = weapon.name;
+                    ability = abilities_list[weapon.unleash_ability];
+                }
+            }
+        }
+        this.battle_log.add_ability(action.caster, ability, item_name);
         if ([ability_types.ADDED_DAMAGE, ability_types.MULTIPLIER, ability_types.BASE_DAMAGE, ability_types.SUMMON, ability_types.HEALING].includes(ability.type)) {
-            ability = this.hp_related_abilities(action, ability);
+            await this.hp_related_abilities(action, ability);
         } else if ([ability_types.PSYNERGY_DRAIN, ability_types.PSYNERGY_RECOVERY].includes(ability.type)) {
-            this.pp_related_abilities(action, ability);
+            await this.pp_related_abilities(action, ability);
         }
         for (let i = 0; i < ability.effects.length; ++i) {
             const effect = ability.effects[i];
@@ -256,16 +274,10 @@ export class Battle {
                 return;
             }
         }
+        this.check_phases();
     }
 
-    hp_related_abilities(action, ability) {
-        if (ability.can_switch_to_unleash) {
-            if (action.caster.equip_slots.weapon && items_list[action.caster.equip_slots.weapon.key_name].unleash_ability) {
-                if (Math.random() < items_list[action.caster.equip_slots.weapon.key_name].unleash_rate) {
-                    ability = abilities_list[items_list[action.caster.equip_slots.weapon.key_name].unleash_ability];
-                }
-            }
-        }
+    async hp_related_abilities(action, ability) {
         if (ability.can_be_evaded) {
             if (Math.random() < EVASION_CHANCE || (action.caster.temporary_status.has(temporary_status.DELUSION) && Math.random() < DELUSION_MISS_CHANCE)) {
                 return;
@@ -309,15 +321,20 @@ export class Battle {
             const ratios = Ability.get_diminishing_ratios(ability.type, ability.use_diminishing_ratio);
             damage = (damage * ratios[target_info.magnitude]) | 0;
             damage += variation();
-            target_instance.current_hp = _.clamp(target_instance.current_hp - damage, 0, target_instance.max_hp);
+            if (damage > 0) {
+                this.battle_log.add(`${target_instance.name} takes ${damage.toString()} damage!`);
+            } else {
+                this.battle_log.add(`${target_instance.name} recovers ${damage.toString()} HP!`);
+            }
+            await new Promise(resolve => { this.advance_log_resolve = resolve; });
+            target_instance.current_hp = _.clamp(target_instance.current_hp - damage, 0, target_instance.max_hp);;
             if (target_instance.current_hp === 0) {
                 target_instance.add_permanent_status(permanent_status.DOWNED);
             }
         }
-        return ability;
     }
 
-    pp_related_abilities(action, ability) {
+    async pp_related_abilities(action, ability) {
         for (let i = 0; i < action.targets.length; ++i) {
             const target_info = action.targets[i];
             if (target_info.magnitude === null) continue;
