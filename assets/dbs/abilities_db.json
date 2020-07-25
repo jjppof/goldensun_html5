@@ -15,11 +15,12 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "attack",
-        "priority_move": false,
         "has_critical": true,
         "crit_mult_factor": 1.25,
         "can_switch_to_unleash": true,
-        "can_be_evaded": true
+        "can_be_evaded": true,
+        "priority_move": false,
+        "msg_type": "attack"
     },{
         "key_name": "move",
         "name": "Move",
@@ -36,7 +37,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "no_animation",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "no_msg"
     },{
         "key_name": "retreat",
         "name": "Retreat",
@@ -53,7 +55,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "no_animation",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "no_msg"
     },{
         "key_name": "cure",
         "name": "Cure",
@@ -70,7 +73,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "cure",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "cure_well",
         "name": "Cure Well",
@@ -87,7 +91,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "cure_well",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "potent_cure",
         "name": "Potent Cure",
@@ -104,7 +109,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "potent_cure",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "revive",
         "name": "Revive",
@@ -121,7 +127,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "revive",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "flare",
         "name": "Flare",
@@ -138,7 +145,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "flare",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "quake",
         "name": "Quake",
@@ -155,7 +163,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "quake",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "spire",
         "name": "Spire",
@@ -172,7 +181,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "spire",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "volcano",
         "name": "Volcano",
@@ -189,7 +199,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "volcano",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "herb",
         "name": "Herb",
@@ -206,7 +217,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "ply",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "use"
     },{
         "key_name": "cookie",
         "name": "Cookie",
@@ -229,7 +241,8 @@
         }],
         "ability_type_key": "normal",
         "battle_animation_key": "",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "use"
     },{
         "key_name": "whirlwind",
         "name": "Whirlwind",
@@ -246,7 +259,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "whirlwind",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "frost",
         "name": "Frost",
@@ -263,7 +277,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "frost",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "ragnarok",
         "name": "Ragnarok",
@@ -280,7 +295,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "ragnarok",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "earthquake",
         "name": "Earthquake",
@@ -297,7 +313,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "earthquake",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "quake_sphere",
         "name": "Quake Sphere",
@@ -314,7 +331,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "quake_sphere",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "clay_spire",
         "name": "Clay Spire",
@@ -331,7 +349,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "clay_spire",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "gaia",
         "name": "Gaia",
@@ -348,7 +367,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "gaia",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "mother_gaia",
         "name": "Mother Gaia",
@@ -365,7 +385,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "mother_gaia",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "heat_wave",
         "name": "Heat Wave",
@@ -382,7 +403,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "heat_wave",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "flare_wall",
         "name": "Flare Wall",
@@ -399,7 +421,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "flare_wall",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "flare_storm",
         "name": "Flare Storm",
@@ -416,7 +439,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "flare_storm",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "fire",
         "name": "Fire",
@@ -433,7 +457,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "fire",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "fireball",
         "name": "Fireball",
@@ -450,7 +475,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "fireball",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "eruption",
         "name": "Eruption",
@@ -467,7 +493,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "eruption",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "guard",
         "name": "Guard",
@@ -492,7 +519,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "guard",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "protect",
         "name": "Protect",
@@ -517,7 +545,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "protect",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "impair",
         "name": "Impair",
@@ -542,7 +571,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "impair",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "tornado",
         "name": "Tornado",
@@ -559,7 +589,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "tornado",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "ray",
         "name": "Ray",
@@ -576,7 +607,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "ray",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "storm_ray",
         "name": "Storm Ray",
@@ -593,7 +625,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "storm_ray",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "plasma",
         "name": "Plasma",
@@ -610,7 +643,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "plasma",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "shine_plasma",
         "name": "Shine Plasma",
@@ -627,7 +661,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "shine_plasma",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "impact",
         "name": "Impact",
@@ -652,7 +687,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "Impact",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "high_impact",
         "name": "High Impact",
@@ -677,7 +713,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "high_impact",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "sleep",
         "name": "Sleep",
@@ -703,7 +740,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "sleep",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "astral_blast",
         "name": "Astral Blast",
@@ -720,7 +758,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "astral_blast",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "weaken",
         "name": "Weaken",
@@ -767,7 +806,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "weaken",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "enfeeble",
         "name": "Enfeeble",
@@ -814,7 +854,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "enfeeble",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "delude",
         "name": "Delude",
@@ -840,7 +881,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "delude",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "drain",
         "name": "Drain",
@@ -866,7 +908,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "drain",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "psy_drain",
         "name": "Psy Drain",
@@ -892,7 +935,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "psy_drain",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "ward",
         "name": "Ward",
@@ -939,7 +983,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "ward",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "resist",
         "name": "Resist",
@@ -986,7 +1031,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "resist",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "slash",
         "name": "Slash",
@@ -1003,7 +1049,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "slash",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "wind_slash",
         "name": "Wind Slash",
@@ -1020,7 +1067,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "wind_slash",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "sonic_slash",
         "name": "Sonic Slash",
@@ -1037,7 +1085,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "sonic_slash",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "planet_diver",
         "name": "Planet Diver",
@@ -1054,7 +1103,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "planet_diver",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "growth",
         "name": "Growth",
@@ -1071,7 +1121,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "growth",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "mad_growth",
         "name": "Mad Growth",
@@ -1088,7 +1139,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "mad_growth",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "blast",
         "name": "Blast",
@@ -1105,7 +1157,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "blast",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "nova",
         "name": "Nova",
@@ -1122,7 +1175,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "nova",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "debilitate",
         "name": "Debilitate",
@@ -1147,7 +1201,8 @@
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "debilitate",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "bolt",
         "name": "Bolt",
@@ -1164,7 +1219,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "bolt",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "flash_bolt",
         "name": "Flash Bolt",
@@ -1181,7 +1237,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "flash_bolt",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "blue_bolt",
         "name": "Blue Bolt",
@@ -1198,7 +1255,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "blue_bolt",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "cast"
     },{
         "key_name": "venus",
         "name": "Venus",
@@ -1215,7 +1273,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "venus",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "mars",
         "name": "Mars",
@@ -1232,7 +1291,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "mars",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "mercury",
         "name": "Mercury",
@@ -1249,7 +1309,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "mercury",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "jupiter",
         "name": "Jupiter",
@@ -1266,7 +1327,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "jupiter",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "ramses",
         "name": "Ramses",
@@ -1283,7 +1345,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "ramses",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "kirin",
         "name": "Kirin",
@@ -1300,7 +1363,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "kirin",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "nereid",
         "name": "Nereid",
@@ -1317,7 +1381,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "nereid",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "atalanta",
         "name": "Atalanta",
@@ -1334,7 +1399,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "atalanta",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "cybele",
         "name": "Cybele",
@@ -1351,7 +1417,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "cybele",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "tiamat",
         "name": "Tiamat",
@@ -1368,7 +1435,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "tiamat",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "neptune",
         "name": "Neptune",
@@ -1385,7 +1453,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "neptune",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "procne",
         "name": "Procne",
@@ -1402,7 +1471,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "procne",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "judgment",
         "name": "Judgment",
@@ -1419,7 +1489,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "judgment",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "meteor",
         "name": "Meteor",
@@ -1436,7 +1507,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "meteor",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "boreas",
         "name": "Boreas",
@@ -1453,7 +1525,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "boreas",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "thor",
         "name": "Thor",
@@ -1470,7 +1543,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "thor",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "summon"
     },{
         "key_name": "flint",
         "name": "Flint",
@@ -1487,7 +1561,8 @@
         "effects": [],
         "ability_type_key": "normal",
         "battle_animation_key": "flint",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "unleash"
     },{
         "key_name": "sarcophagus",
         "name": "Sarcophagus",
@@ -1510,6 +1585,7 @@
         }],
         "ability_type_key": "normal",
         "battle_animation_key": "sarcophagus",
-        "priority_move": false
+        "priority_move": false,
+        "msg_type": "item_unleash"
     }
 ]

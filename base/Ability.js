@@ -10,6 +10,17 @@ export const ability_types = {
     PSYNERGY_RECOVERY: "psynergy_recovery"
 }
 
+export const ability_msg_types = {
+    CAST: "cast",
+    ATTACK: "attack",
+    USE: "use",
+    SUMMON: "summon",
+    UNLEASH: "unleash",
+    DEFEND: "defend",
+    ITEM_UNLEASH: "item_unleash",
+    NO_MSG: "no_msg"
+}
+
 export const ability_target_types = {
     NO_TARGET: "no_target",
     ALLY: "ally",
@@ -73,7 +84,8 @@ export class Ability {
         crit_mult_factor,
         can_switch_to_unleash,
         can_be_evaded,
-        use_diminishing_ratio
+        use_diminishing_ratio,
+        msg_type
     ) {
         this.key_name = key_name;
         this.name = name;
@@ -96,6 +108,7 @@ export class Ability {
         this.can_switch_to_unleash = can_switch_to_unleash ? can_switch_to_unleash : false;
         this.can_be_evaded = can_be_evaded ? can_be_evaded : false;
         this.use_diminishing_ratio = use_diminishing_ratio ? use_diminishing_ratio : false;
+        this.msg_type = msg_type === undefined ? ability_msg_types.CAST : ability_msg_types[msg_type];
     }
 
     static get_diminishing_ratios(ability_type, use_diminishing_ratio) {

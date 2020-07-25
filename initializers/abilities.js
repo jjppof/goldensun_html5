@@ -30,7 +30,8 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
             ability_data.crit_mult_factor,
             ability_data.can_switch_to_unleash,
             ability_data.can_be_evaded,
-            ability_data.use_diminishing_ratio
+            ability_data.use_diminishing_ratio,
+            ability_data.msg_type
         );
     }
     const loader = game.load.atlasJSONHash('abilities_icons', 'assets/images/icons/abilities/abilities_icons.png', 'assets/images/icons/abilities/abilities_icons.json');
