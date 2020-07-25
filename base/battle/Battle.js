@@ -173,7 +173,7 @@ export class Battle {
         this.battle_phase = battle_phases.START;
         this.data.in_battle = true;
         this.data.battle_instance = this;
-        this.battle_log.add(this.enemies_party_data.name + " appeared!", true);
+        this.battle_log.add(this.enemies_party_data.name + " appeared!");
         this.battle_stage.initialize_stage(() => {
             this.controls_enabled = true;
         });
@@ -258,7 +258,7 @@ export class Battle {
                 }
             }
         }
-        this.battle_log.add_ability(action.caster, ability, item_name);
+        await this.battle_log.add_ability(action.caster, ability, item_name);
         if ([ability_types.ADDED_DAMAGE, ability_types.MULTIPLIER, ability_types.BASE_DAMAGE, ability_types.SUMMON, ability_types.HEALING].includes(ability.type)) {
             await this.hp_related_abilities(action, ability);
         } else if ([ability_types.PSYNERGY_DRAIN, ability_types.PSYNERGY_RECOVERY].includes(ability.type)) {
@@ -278,11 +278,6 @@ export class Battle {
     }
 
     async hp_related_abilities(action, ability) {
-        if (ability.can_be_evaded) {
-            if (Math.random() < EVASION_CHANCE || (action.caster.temporary_status.has(temporary_status.DELUSION) && Math.random() < DELUSION_MISS_CHANCE)) {
-                return;
-            }
-        }
         let increased_crit;
         if (ability.has_critical) {
             increased_crit = action.caster.effects.filter(effect => effect.type === effect_types.CRITICALS).reduce((acc, effect) => {
@@ -293,6 +288,12 @@ export class Battle {
             const target_info = action.targets[i];
             if (target_info.magnitude === null) continue;
             const target_instance = target_info.target.instance;
+            if (ability.can_be_evaded) {
+                if (Math.random() < EVASION_CHANCE || (action.caster.temporary_status.has(temporary_status.DELUSION) && Math.random() < DELUSION_MISS_CHANCE)) {
+                    await this.battle_log.add(`${target_instance.name} nimbly dodges the blow!`);
+                    return new Promise(resolve => { this.advance_log_resolve = resolve; });
+                }
+            }
             let damage = 0;
             if (ability.has_critical && (Math.random() < CRITICAL_CHANCE || Math.random() < increased_crit/2)) {
                 const mult_mod = ability.crit_mult_factor === undefined ? 1.25 : ability.crit_mult_factor;
@@ -322,9 +323,9 @@ export class Battle {
             damage = (damage * ratios[target_info.magnitude]) | 0;
             damage += variation();
             if (damage > 0) {
-                this.battle_log.add(`${target_instance.name} takes ${damage.toString()} damage!`);
+                await this.battle_log.add(`${target_instance.name} takes ${damage.toString()} damage!`);
             } else {
-                this.battle_log.add(`${target_instance.name} recovers ${damage.toString()} HP!`);
+                await this.battle_log.add(`${target_instance.name} recovers ${damage.toString()} HP!`);
             }
             await new Promise(resolve => { this.advance_log_resolve = resolve; });
             target_instance.current_hp = _.clamp(target_instance.current_hp - damage, 0, target_instance.max_hp);;
