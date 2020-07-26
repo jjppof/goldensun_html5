@@ -253,6 +253,16 @@ export class Battle {
             return;
         }
         const action = this.turns_actions.pop();
+        if (action.caster.temporary_status.has(temporary_status.SLEEP) || action.caster.temporary_status.has(temporary_status.STUN)) {
+            if (action.caster.temporary_status.has(temporary_status.SLEEP)) {
+                await this.battle_log.add(`${action.caster.name} is asleep!`);
+            } else if (action.caster.temporary_status.has(temporary_status.STUN)) {
+                await this.battle_log.add(`${action.caster.name} is stunned!`);
+            }
+            await this.wait_for_key();
+            this.check_phases();
+            return;
+        }
         if (action.caster.fighter_type === fighter_types.ENEMY && !abilities_list[action.key_name].priority_move) {
             Object.assign(action, EnemyAI.roll_action(action.caster, party_data.members, this.enemies_info.map(info => info.instance)));
         }
