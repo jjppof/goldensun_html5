@@ -11,7 +11,7 @@ import { EnemyAI } from "./EnemyAI.js";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
 import { effect_types, Effect, effect_usages } from "../Effect.js";
 import { variation } from "../../utils.js";
-import { permanent_status, temporary_status } from "../Player.js";
+import { permanent_status, temporary_status, on_catch_status_msg } from "../Player.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 export const fighter_types = {
@@ -130,19 +130,24 @@ export class Battle {
         this.check_phases();
     }
 
-    choose_targets(ability_key, action, callback, item_obj) {
+    choose_targets(ability_key, action, callback, caster, item_obj) {
         const this_ability = abilities_list[ability_key];
         let quantities;
         if (action === "psynergy") {
             quantities = [this_ability.pp_cost];
         }
-        this.target_window.open(action, this_ability.name, this_ability.element, ability_key, quantities, item_obj);
+        if (action !== "defend") {
+            this.target_window.open(action, this_ability.name, this_ability.element, ability_key, quantities, item_obj);
+        }
         this.battle_stage.choose_targets(
             this_ability.range,
-            this_ability.battle_target === ability_target_types.ALLY,
+            this_ability.battle_target,
             this_ability.type,
+            caster,
             targets => {
-                this.target_window.close();
+                if (this.target_window.window_open) {
+                    this.target_window.close();
+                }
                 callback(targets);
             }
         );
@@ -227,6 +232,10 @@ export class Battle {
         this.check_phases();
     }
 
+    wait_for_key() {
+        return new Promise(resolve => { this.advance_log_resolve = resolve; });
+    }
+
     /*
     Standard attack:
     1. Unleash check (followed by another check for unleash type if weapon has multiple unleashes)
@@ -261,7 +270,7 @@ export class Battle {
         }
         if (ability === undefined) {
             await this.battle_log.add(`${action.key_name} ability key not registered.`);
-            await new Promise(resolve => { this.advance_log_resolve = resolve; });
+            await this.wait_for_key();
             this.check_phases();
             return;
         }
@@ -274,7 +283,7 @@ export class Battle {
         for (let i = 0; i < ability.effects.length; ++i) {
             const effect = ability.effects[i];
             if (!effect_usages.ON_USE) continue;
-            const end_turn = this.apply_effects(action, ability, effect);
+            const end_turn = await this.apply_effects(action, ability, effect);
             if (end_turn) {
                 this.battle_phase = battle_phases.ROUND_END;
                 this.check_phases();
@@ -298,7 +307,7 @@ export class Battle {
             if (ability.can_be_evaded) {
                 if (Math.random() < EVASION_CHANCE || (action.caster.temporary_status.has(temporary_status.DELUSION) && Math.random() < DELUSION_MISS_CHANCE)) {
                     await this.battle_log.add(`${target_instance.name} nimbly dodges the blow!`);
-                    return new Promise(resolve => { this.advance_log_resolve = resolve; });
+                    return this.wait_for_key();
                 }
             }
             let damage = 0;
@@ -334,10 +343,12 @@ export class Battle {
             } else {
                 await this.battle_log.add(`${target_instance.name} recovers ${damage.toString()} HP!`);
             }
-            await new Promise(resolve => { this.advance_log_resolve = resolve; });
+            await this.wait_for_key();
             target_instance.current_hp = _.clamp(target_instance.current_hp - damage, 0, target_instance.max_hp);;
             if (target_instance.current_hp === 0) {
                 target_instance.add_permanent_status(permanent_status.DOWNED);
+                await this.battle_log.add(on_catch_status_msg[effect.status_key_name](target_instance));
+                await this.wait_for_key();
             }
         }
     }
@@ -363,7 +374,20 @@ export class Battle {
         }
     }
 
-    apply_effects(action, ability, effect) {
+/*
+If a sleep is cast over a target that is already sleeping,
+it will recalculate the chance, and if it lands it will "top up" (read: replace) the effect's duration.
+So if a character is sleeping, the remaining duration is 6 rounds, and you cast Sleep on them again and it lands, it'll get bumped up to 7 rounds.
+When Sleep normally gets inflicted with a max duration of 7 anyway.
+
+Buffs and debuffs can stack values, but durations get overwritten every time and do not stack.
+
+Poison/Venom can't land again, although Venom can replace Poison (but not the other way around).
+And Candle Curse (countdown to death) can be "advanced".
+So, if a character will die after 5 turns and you land another Curse on them, it will drop the remaining count to 4.
+*/
+
+    async apply_effects(action, ability, effect) {
         for (let j = 0; j < action.targets.length; ++j) {
             const target_info = action.targets[j];
             if (target_info.magnitude === null) continue;
@@ -384,7 +408,11 @@ export class Battle {
                             if (this_effect.type === effect_types.TEMPORARY_STATUS) {
                                 this.on_going_effects.push(this_effect);
                             }
+                            await this.battle_log.add(on_catch_status_msg[effect.status_key_name](target_instance));
+                        } else {
+                            await this.battle_log.add(`But it has no effect on ${target_instance.name}!`);
                         }
+                        await this.wait_for_key();
                     } else {
                         if (Math.random() < effect.chance) {
                             const this_effect = _.find(target_instance.effects, {
@@ -402,8 +430,12 @@ export class Battle {
                     }
                     break;
                 case effect_types.END_THE_ROUND:
+                    await this.battle_log.add(`Everybody is resting!`);
+                    await this.wait_for_key();
                     return true;
                 case effect_types.TURNS:
+                    await this.battle_log.add(`${actionm.caster.name} readies for action!`);
+                    await this.wait_for_key(); 
                     this.on_going_effects.push(target_instance.add_effect(effect, ability, true));
                     break;
                 case effect_types.COUNTER_STRIKE: break;

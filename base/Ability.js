@@ -24,7 +24,8 @@ export const ability_msg_types = {
 export const ability_target_types = {
     NO_TARGET: "no_target",
     ALLY: "ally",
-    ENEMY: "enemy"
+    ENEMY: "enemy",
+    USER: "user"
 }
 
 export const diminishing_ratios = {

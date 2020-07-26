@@ -97,7 +97,7 @@ export class BattleMenuScreen {
                     } else {
                         this.inner_horizontal_menu.activate();
                     }
-                });
+                }, party_data.members[this.current_char_index]);
                 break;
             case "psynergy":
                 this.on_ability_choose(this.psynergy_window, false, "psynergy");
@@ -112,11 +112,19 @@ export class BattleMenuScreen {
                 this.on_ability_choose(this.item_window, false, "item");
                 break
             case "defend":
-                this.abilities[party_data.members[this.current_char_index].key_name].push({
-                    key_name: "defend",
-                    targets: null
-                });
-                this.change_char(FORWARD);
+                this.inner_horizontal_menu.deactivate(true);
+                this.choose_targets("defend", "defend", targets => {
+                    if (targets) {
+                        this.abilities[party_data.members[this.current_char_index].key_name].push({
+                            key_name: "defend",
+                            targets: targets
+                        });
+                        this.inner_horizontal_menu.activate();
+                        this.change_char(FORWARD);
+                    } else {
+                        this.inner_horizontal_menu.activate();
+                    }
+                }, party_data.members[this.current_char_index]);
                 break
         }
     }
@@ -141,7 +149,7 @@ export class BattleMenuScreen {
                         this.description_window.show();
                         window.show();
                     }
-                }, item_obj);
+                }, party_data.members[this.current_char_index], item_obj);
             } else {
                 if (window.is_open()) {
                     window.close();
@@ -154,7 +162,8 @@ export class BattleMenuScreen {
 
     change_char(step, pop_ability = false) {
         const before_char = party_data.members[this.current_char_index];
-        if (before_char.turns === this.abilities[party_data.members[this.current_char_index].key_name].length) {
+        const abilities_count = this.abilities[party_data.members[this.current_char_index].key_name].length;
+        if (before_char.turns === abilities_count || !abilities_count) {
             this.current_char_index += step;
         }
         if (this.current_char_index >= MAX_CHARS_IN_BATTLE || this.current_char_index >= party_data.members.length) {
@@ -180,7 +189,7 @@ export class BattleMenuScreen {
     }
 
     inner_menu_cancel() {
-        if (this.current_char_index > 0) {
+        if (this.current_char_index > 0 || this.abilities[party_data.members[this.current_char_index].key_name].length === 1) {
             this.change_char(BACKWARD, true);
         } else {
             this.inner_horizontal_menu.close();

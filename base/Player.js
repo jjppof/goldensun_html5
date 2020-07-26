@@ -1,4 +1,5 @@
 import { Effect } from "./Effect.js";
+import { fighter_types } from "./battle/Battle.js";
 
 export const temporary_status = {
     DELUSION: "delusion",
@@ -14,6 +15,20 @@ export const permanent_status = {
     VENOM: "venom",
     EQUIP_CURSE: "equip_curse",
     HAUNT: "haunt"
+}
+
+export const on_catch_status_msg = {
+    [temporary_status.DELUSION]: target => `${target.name} is wrapped in delusion!`,
+    [temporary_status.STUN]: target => `${target.name} has been stunned!`,
+    [temporary_status.SLEEP]: target => `${target.name} falls asleep!`,
+    [temporary_status.SEAL]: target => `${target.name}'s Psynergy has been sealed!`,
+    [temporary_status.DEATH_CURSE]: target => `The Spirit of Death embraces ${target.name}!`,
+    [permanent_status.DOWNED]: target => {
+        return target.fighter_type === fighter_types.ALLY ? `${target.name} was downed...` : `You felled ${target.name}!`;
+    },
+    [permanent_status.POISON]: target => `${target.name} is infected with poison!`,
+    [permanent_status.VENOM]: target => `${target.name} is infected with deadly poison!`,
+    [permanent_status.HAUNT]: target => `An evil spirit grips ${target.name}!`
 }
 
 export class Player {

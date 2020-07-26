@@ -3,6 +3,8 @@ import * as numbers from '../../magic_numbers.js';
 import { range_360 } from '../../utils.js';
 import { enemies_list } from '../../initializers/enemies.js';
 import { main_char_list } from '../../initializers/main_chars.js';
+import { ability_target_types } from '../Ability.js';
+import { fighter_types } from './Battle.js';
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
@@ -75,16 +77,7 @@ export class BattleStage {
         this.data.enter_input.add(() => {
             if (!this.choosing_targets) return;
             this.data.enter_input.halt();
-            const party_count = this.target_is_ally ? this.allies_count : this.enemies_count;
-            const party_info = this.target_is_ally ? this.allies_info : this.enemies_info;
-            const targets = _.zipWith(
-                RANGES.slice(this.range_cursor_position - (party_count>>1), this.range_cursor_position + (party_count>>1) + 1).reverse(),
-                party_info,
-                (magnitude, target) => {
-                    return {magnitude: magnitude > this.ability_range ? null : magnitude, target: target};
-                }
-            );
-            this.choosing_targets_finished(targets);
+            this.set_targets();
         }, this, this.enter_propagation_priority);
         this.data.esc_input.add(() => {
             if (!this.choosing_targets) return;
@@ -121,6 +114,36 @@ export class BattleStage {
         });
     }
 
+    set_targets() {
+        let party_count, party_info;
+        switch (this.target_type) {
+            case ability_target_types.ALLY:
+                party_count = this.allies_count;
+                party_info = this.allies_info;
+                break;
+            case ability_target_types.ENEMY:
+                party_count = this.enemies_count;
+                party_info = this.enemies_info;
+                break;
+            case ability_target_types.USER:
+                party_count = this.ability_caster.fighter_type === fighter_types.ALLY ? this.allies_count : this.enemies_count;
+                party_info = this.ability_caster.fighter_type === fighter_types.ENEMY ? this.allies_info : this.enemies_info;
+                break;
+        }
+        const targets = _.zipWith(
+            RANGES.slice(this.range_cursor_position - (party_count>>1), this.range_cursor_position + (party_count>>1) + 1).reverse(),
+            party_info,
+            (magnitude, target) => {
+                return {magnitude: magnitude > this.ability_range ? null : magnitude, target: target};
+            }
+        );
+        if (this.target_type === ability_target_types.USER) {
+            this.choosing_targets_callback(targets);
+        } else {
+            this.choosing_targets_finished(targets);
+        }
+    }
+
     stop_timers() {
         this.choose_timer_start.stop();
         this.choose_timer_repeat.stop();
@@ -138,8 +161,7 @@ export class BattleStage {
     change_target(step) {
         this.range_cursor_position += step;
         const center_shift = this.range_cursor_position - (RANGES.length >> 1);
-        const group = this.target_is_ally ? this.group_allies : this.group_enemies;
-        const group_children = this.target_is_ally ? this.group_allies.children.slice().reverse() : this.group_enemies.children;
+        const group_children = this.target_type === ability_target_types.ALLY ? this.group_allies.children.slice().reverse() : this.group_enemies.children;
         const target_sprite_index = (group_children.length >> 1) + center_shift;
         if (target_sprite_index >= group_children.length) {
             this.range_cursor_position = (RANGES.length >> 1) - (group_children.length >> 1);
@@ -262,7 +284,7 @@ export class BattleStage {
     }
 
     set_battle_cursors_position(tween_to_pos = true) {
-        const group_children = this.target_is_ally ? this.group_allies.children.slice().reverse() : this.group_enemies.children;
+        const group_children = this.target_type === ability_target_types.ALLY ? this.group_allies.children.slice().reverse() : this.group_enemies.children;
         const center_shift = this.range_cursor_position - (RANGES.length >> 1);
         this.cursors.forEach((cursor_sprite, i) => {
             let target_sprite_index = i - ((this.cursors.length >> 1) - (group_children.length >> 1)) + center_shift;
@@ -312,31 +334,36 @@ export class BattleStage {
         this.stop_timers();
     }
 
-    choose_targets(range, target_is_ally, ability_type, callback) {
+    choose_targets(range, target_type, ability_type, ability_caster, callback) {
         this.choosing_targets_callback = callback;
         this.range_cursor_position = RANGES.length >> 1;
         this.ability_range = range === "all" ? RANGES[0] : range;
-        this.target_is_ally = target_is_ally;
         this.ability_type = ability_type;
-        this.game.add.tween(this.battle_group).to({
-            y: this.battle_group.y + (this.target_is_ally ? CHOOSE_TARGET_ALLY_SHIFT : CHOOSE_TARGET_ENEMY_SHIFT)
-        }, CHOOSING_TARGET_SCREEN_SHIFT_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
-            const cursor_count = this.ability_range;
-            this.cursors = new Array(cursor_count);
-            this.cursors_tweens = new Array(cursor_count).fill(null);
-            for (let i = 0; i < cursor_count; ++i) {
-                this.cursors[i] = this.battle_group.create(0, 0, "battle_cursor");
-                this.cursors[i].animations.add("anim");
-                this.cursors[i].animations.play("anim", 40, true);
-            }
-            this.choosing_targets = true;
-            this.set_battle_cursors_position(false);
-        });
+        this.ability_caster = ability_caster;
+        this.target_type = target_type;
+        if (this.target_type === ability_target_types.USER) {
+            this.set_targets();
+        } else {
+            this.game.add.tween(this.battle_group).to({
+                y: this.battle_group.y + (this.target_type === ability_target_types.ALLY ? CHOOSE_TARGET_ALLY_SHIFT : CHOOSE_TARGET_ENEMY_SHIFT)
+            }, CHOOSING_TARGET_SCREEN_SHIFT_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
+                const cursor_count = this.ability_range;
+                this.cursors = new Array(cursor_count);
+                this.cursors_tweens = new Array(cursor_count).fill(null);
+                for (let i = 0; i < cursor_count; ++i) {
+                    this.cursors[i] = this.battle_group.create(0, 0, "battle_cursor");
+                    this.cursors[i].animations.add("anim");
+                    this.cursors[i].animations.play("anim", 40, true);
+                }
+                this.choosing_targets = true;
+                this.set_battle_cursors_position(false);
+            });
+        }
     }
 
     choosing_targets_finished(targets) {
         this.game.add.tween(this.battle_group).to({
-            y: this.battle_group.y - (this.target_is_ally ? CHOOSE_TARGET_ALLY_SHIFT : CHOOSE_TARGET_ENEMY_SHIFT)
+            y: this.battle_group.y - (this.target_type === ability_target_types.ALLY ? CHOOSE_TARGET_ALLY_SHIFT : CHOOSE_TARGET_ENEMY_SHIFT)
         }, CHOOSING_TARGET_SCREEN_SHIFT_TIME, Phaser.Easing.Linear.None, true);
         this.choosing_targets = false;
         this.unset_battle_cursors();
