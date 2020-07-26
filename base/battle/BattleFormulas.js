@@ -95,7 +95,7 @@ export class BattleFormulas {
     }
 
     static ailment_recovery(player, turn_number, base_chance) {
-        return (((player.current_luk * 3) - (turn_number * 5) + base_chance) * 655) >= _.random(0, 0xFFFF);
+        return (((player.current_luk * 3) - (turn_number * 5) + base_chance * 100) * 655) >= _.random(0, 0xFFFF);
     }
 
     static battle_poison_damage(player, poison_type) {
