@@ -354,10 +354,11 @@ export class Battle {
             if (damage > 0) {
                 await this.battle_log.add(`${target_instance.name} takes ${damage.toString()} damage!`);
             } else {
-                await this.battle_log.add(`${target_instance.name} recovers ${damage.toString()} HP!`);
+                await this.battle_log.add(`${target_instance.name} recovers ${Math.abs(damage).toString()} HP!`);
             }
+            target_instance.current_hp = _.clamp(target_instance.current_hp - damage, 0, target_instance.max_hp);
+            this.battle_menu.chars_status_window.update_chars_info();
             await this.wait_for_key();
-            target_instance.current_hp = _.clamp(target_instance.current_hp - damage, 0, target_instance.max_hp);;
             if (target_instance.current_hp === 0) {
                 target_instance.add_permanent_status(permanent_status.DOWNED);
                 await this.battle_log.add(on_catch_status_msg[effect.status_key_name](target_instance));
@@ -384,6 +385,7 @@ export class Battle {
             quantity = (quantity * ratios[target_info.magnitude]) | 0;
             quantity += variation();
             target_instance.current_pp = _.clamp(target_instance.current_pp + quantity, 0, target_instance.max_pp);
+            this.battle_menu.chars_status_window.update_chars_info();
         }
     }
 
@@ -461,7 +463,10 @@ So, if a character will die after 5 turns and you land another Curse on them, it
     }
 
     battle_phase_round_end() {
-
+        this.controls_enabled = false;
+        this.battle_log.clear();
+        this.battle_phase = battle_phases.MENU;
+        this.check_phases();
     }
 
     update() {

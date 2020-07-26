@@ -223,7 +223,6 @@ export class BattleMenuScreen {
         this.hide_avatar();
         this.start_horizontal_menu.close();
         this.inner_horizontal_menu.close();
-        this.chars_status_window.close();
     }
 
     destroy_menu() {
