@@ -285,6 +285,15 @@ export class Battle {
             return;
         }
         await this.battle_log.add_ability(action.caster, ability, item_name);
+        if (ability.pp_cost > action.caster.current_pp) {
+            await this.battle_log.add(`... But doesn't have enough PP!`);
+            await this.wait_for_key();
+            this.check_phases();
+            return;
+        } else {
+            action.caster.current_pp -= ability.pp_cost;
+        }
+        this.battle_menu.chars_status_window.update_chars_info();
         if (ability.type === ability_types.UTILITY) {
             await this.wait_for_key();
         }
