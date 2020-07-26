@@ -275,6 +275,9 @@ export class Battle {
             return;
         }
         await this.battle_log.add_ability(action.caster, ability, item_name);
+        if (ability.type === ability_types.UTILITY) {
+            await this.wait_for_key();
+        }
         if ([ability_types.ADDED_DAMAGE, ability_types.MULTIPLIER, ability_types.BASE_DAMAGE, ability_types.SUMMON, ability_types.HEALING].includes(ability.type)) {
             await this.hp_related_abilities(action, ability);
         } else if ([ability_types.PSYNERGY_DRAIN, ability_types.PSYNERGY_RECOVERY].includes(ability.type)) {

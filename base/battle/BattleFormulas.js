@@ -91,7 +91,7 @@ export class BattleFormulas {
         const luck_factor = target.current_luk >> 1;
         vulnerabity = vulnerabity === undefined ? 0 : vulnerabity;
         const chance = ((relative_level - luck_factor) * 3)/100 + base_chance + vulnerabity * magnitude;
-        return chance >= _.random(0, 100);
+        return chance >= Math.random();
     }
 
     static ailment_recovery(player, turn_number, base_chance) {
