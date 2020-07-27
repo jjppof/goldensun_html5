@@ -68,7 +68,6 @@ export class BattleMenuScreen {
         switch (this.start_buttons_keys[index]) {
             case "fight":
                 this.start_horizontal_menu.close();
-                this.set_avatar();
                 let filtered_buttons = [];
                 if (!Djinn.has_standby_djinn(MAX_CHARS_IN_BATTLE)) {
                     filtered_buttons.push("summon");
@@ -94,6 +93,7 @@ export class BattleMenuScreen {
                         break;
                     }
                 }
+                this.set_avatar();
         }
     }
 
@@ -184,7 +184,7 @@ export class BattleMenuScreen {
         if (this.current_char_index >= MAX_CHARS_IN_BATTLE || this.current_char_index >= party_data.members.length) {
             this.current_char_index = 0;
             this.on_abilities_choose(this.abilities);
-        } else {
+        } else if (this.current_char_index >= 0) {
             const next_char = party_data.members[this.current_char_index];
             if (pop_ability) {
                 this.abilities[next_char.key_name].pop();
@@ -196,6 +196,9 @@ export class BattleMenuScreen {
                 this.inner_horizontal_menu.close(undefined, false);
                 this.inner_horizontal_menu.open();
             }
+        } else {
+            this.current_char_index = 0;
+            this.inner_menu_cancel();
         }
     }
 

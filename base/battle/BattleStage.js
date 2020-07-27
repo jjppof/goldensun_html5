@@ -4,7 +4,7 @@ import { range_360 } from '../../utils.js';
 import { enemies_list } from '../../initializers/enemies.js';
 import { main_char_list } from '../../initializers/main_chars.js';
 import { ability_target_types } from '../Ability.js';
-import { fighter_types } from './Battle.js';
+import { fighter_types } from '../Player.js';
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;

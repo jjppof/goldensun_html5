@@ -1,5 +1,9 @@
 import { Effect } from "./Effect.js";
-import { fighter_types } from "./battle/Battle.js";
+
+export const fighter_types = {
+    ALLY: 1,
+    ENEMY: 2,
+};
 
 export const temporary_status = {
     DELUSION: "delusion",

@@ -1,3 +1,4 @@
+import { permanent_status, temporary_status, on_catch_status_msg, fighter_types } from "../Player.js";
 import { party_data, main_char_list } from "../../initializers/main_chars.js";
 import { BattleStage } from "./BattleStage.js";
 import { enemies_list } from "../../initializers/enemies.js";
@@ -5,19 +6,14 @@ import { BattleLog } from "./BattleLog.js";
 import { BattleMenuScreen } from "../../screens/battle_menus.js";
 import { get_enemy_instance } from "../Enemy.js";
 import { abilities_list } from "../../initializers/abilities.js";
-import { ability_target_types, ability_types, Ability, diminishing_ratios } from "../Ability.js";
+import { ability_types, Ability, diminishing_ratios } from "../Ability.js";
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
 import { EnemyAI } from "./EnemyAI.js";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
 import { effect_types, Effect, effect_usages } from "../Effect.js";
 import { variation } from "../../utils.js";
-import { permanent_status, temporary_status, on_catch_status_msg } from "../Player.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
-export const fighter_types = {
-    ALLY: 1,
-    ENEMY: 2,
-}
 
 /* ACTIONS:
 - Attack
@@ -153,6 +149,10 @@ export class Battle {
         );
     }
 
+    check_parties() {
+
+    }
+
     check_phases() {
         switch (this.battle_phase) {
             case battle_phases.NONE:
@@ -170,6 +170,9 @@ export class Battle {
                 break;
             case battle_phases.ROUND_END:
                 this.battle_phase_round_end();
+                break;
+            case battle_phases.END:
+                this.battle_phase_end();
                 break;
         }
     }
@@ -332,6 +335,7 @@ export class Battle {
             const target_info = action.targets[i];
             if (target_info.magnitude === null) continue;
             const target_instance = target_info.target.instance;
+            if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
             if (ability.can_be_evaded) {
                 if (Math.random() < EVASION_CHANCE || (action.caster.temporary_status.has(temporary_status.DELUSION) && Math.random() < DELUSION_MISS_CHANCE)) {
                     await this.battle_log.add(`${target_instance.name} nimbly dodges the blow!`);
@@ -376,7 +380,7 @@ export class Battle {
             await this.wait_for_key();
             if (target_instance.current_hp === 0) {
                 target_instance.add_permanent_status(permanent_status.DOWNED);
-                await this.battle_log.add(on_catch_status_msg[effect.status_key_name](target_instance));
+                await this.battle_log.add(on_catch_status_msg[permanent_status.DOWNED](target_instance));
                 await this.wait_for_key();
             }
         }
@@ -387,6 +391,7 @@ export class Battle {
             const target_info = action.targets[i];
             if (target_info.magnitude === null) continue;
             const target_instance = target_info.target.instance;
+            if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
             let quantity = 0;
             switch(ability.type) {
                 case ability_types.PSYNERGY_RECOVERY:
@@ -422,6 +427,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             const target_info = action.targets[j];
             if (target_info.magnitude === null) continue;
             const target_instance = target_info.target.instance;
+            if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
             switch(effect.type) {
                 case effect_types.PERMANENT_STATUS:
                     if (effect.add_status && target_instance.permanent_status.has(effect.status_key_name)) break;
@@ -478,13 +484,26 @@ So, if a character will die after 5 turns and you land another Curse on them, it
     }
 
     battle_phase_round_end() {
+        this.on_going_effects.filter(effect => {
+            --effect.turn_count;
+            if (effect.turn_count === 0) {
+                target_instance.remove_effect(effect);
+                return false;
+            } else {
+                return true;
+            }
+        });
         this.controls_enabled = false;
         this.battle_log.clear();
         this.battle_phase = battle_phases.MENU;
         this.check_phases();
     }
 
+    battle_phase_end() {
+
+    }
+
     update() {
-        this.battle_stage.update_stage()
+        this.battle_stage.update_stage();
     }
 }

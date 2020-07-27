@@ -1,7 +1,6 @@
 import { SpriteBase } from "./SpriteBase.js";
+import { Player, fighter_types } from "./Player.js";
 import { enemies_list } from "../initializers/enemies.js";
-import { fighter_types } from "./battle/Battle.js";
-import { Player } from "./Player.js";
 
 export class Enemy extends Player {
     constructor(enemy_data, name) {

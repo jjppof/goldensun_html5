@@ -5,8 +5,7 @@ import { djinn_status } from './Djinn.js';
 import { Effect, effect_types } from './Effect.js';
 import { item_types } from './Item.js';
 import { items_list } from '../initializers/items.js';
-import { fighter_types } from './battle/Battle.js';
-import { Player } from './Player.js';
+import { Player, fighter_types } from './Player.js';
 import { elements } from '../utils.js';
 
 const ELEM_LV_DELTA = 1;

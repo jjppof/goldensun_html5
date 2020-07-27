@@ -1,17 +1,18 @@
 import * as numbers from '../magic_numbers.js';
+import { permanent_status } from './Player.js';
 import { djinni_list } from '../initializers/djinni.js';
 
 export const djinn_status = {
     SET: "set",
     STANDBY: "standby",
     RECOVERY: "recovery"
-}
+};
 
 export const djinn_font_colors= {
     [djinn_status.RECOVERY]: numbers.YELLOW_FONT_COLOR,
     [djinn_status.STANDBY]: numbers.RED_FONT_COLOR,
     [djinn_status.SET]: numbers.DEFAULT_FONT_COLOR
-}
+};
 
 export class Djinn {
     constructor(
@@ -52,7 +53,10 @@ export class Djinn {
     }
 
     static has_standby_djinn(max_char) {
-        return _.some(party_data.members.slice(0, max_char).map(c => c.djinni).map(djinn_keys => {
+        const members = party_data.members.slice(0, max_char).filter(char => {
+            return !char.has_permanent_status(permanent_status.DOWNED);
+        });
+        return _.some(members.map(c => c.djinni).map(djinn_keys => {
             return djinn_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length;
         }));
     }
