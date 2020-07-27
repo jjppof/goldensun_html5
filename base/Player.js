@@ -84,11 +84,23 @@ export class Player {
         this.permanent_status.delete(status);
     }
 
+    has_permanent_status(status) {
+        return this.permanent_status.has(status);
+    }
+
     add_temporary_status(status) {
         this.temporary_status.add(status);
     }
 
     remove_temporary_status(status) {
         this.temporary_status.delete(status);
+    }
+
+    has_temporary_status(status) {
+        return this.temporary_status.has(status);
+    }
+
+    is_paralyzed() {
+        return this.temporary_status.has(temporary_status.SLEEP) || this.temporary_status.has(temporary_status.STUN);
     }
 }

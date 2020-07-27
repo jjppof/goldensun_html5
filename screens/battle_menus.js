@@ -10,6 +10,7 @@ import { DjinnWindow } from "../base/windows/battle/DjinnWindow.js";
 import { ItemWindow } from "../base/windows/battle/ItemWindow.js";
 import { SummonWindow } from "../base/windows/battle/SummonWindow.js";
 import { MAX_CHARS_IN_BATTLE } from "../base/battle/Battle.js";
+import { permanent_status } from "../base/Player.js";
 
 const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
@@ -79,6 +80,20 @@ export class BattleMenuScreen {
                     this.abilities[char.key_name] = [];
                 });
                 this.inner_horizontal_menu.open();
+                let this_char = party_data.members[this.current_char_index];
+                while (this_char.is_paralyzed() || this_char.has_permanent_status(permanent_status.DOWNED)) {
+                    this.abilities[party_data.members[this.current_char_index].key_name].push({
+                        key_name: "",
+                        targets: []
+                    });
+                    ++this.current_char_index;
+                    this_char = party_data.members[this.current_char_index];
+                    if (this.current_char_index >= MAX_CHARS_IN_BATTLE || this.current_char_index >= party_data.members.length) {
+                        this.current_char_index = 0;
+                        this.on_abilities_choose(this.abilities);
+                        break;
+                    }
+                }
         }
     }
 
@@ -162,7 +177,7 @@ export class BattleMenuScreen {
 
     change_char(step, pop_ability = false) {
         const before_char = party_data.members[this.current_char_index];
-        const abilities_count = this.abilities[party_data.members[this.current_char_index].key_name].length;
+        const abilities_count = this.abilities[before_char.key_name].length;
         if (before_char.turns === abilities_count || !abilities_count) {
             this.current_char_index += step;
         }
@@ -170,12 +185,17 @@ export class BattleMenuScreen {
             this.current_char_index = 0;
             this.on_abilities_choose(this.abilities);
         } else {
+            const next_char = party_data.members[this.current_char_index];
             if (pop_ability) {
-                this.abilities[party_data.members[this.current_char_index].key_name].pop();
+                this.abilities[next_char.key_name].pop();
             }
-            this.set_avatar();
-            this.inner_horizontal_menu.close(undefined, false);
-            this.inner_horizontal_menu.open();
+            if (next_char.is_paralyzed() || next_char.has_permanent_status(permanent_status.DOWNED)) {
+                this.change_char(step, pop_ability);
+            } else {
+                this.set_avatar();
+                this.inner_horizontal_menu.close(undefined, false);
+                this.inner_horizontal_menu.open();
+            }
         }
     }
 

@@ -212,7 +212,8 @@ export class Battle {
             const this_char = main_char_list[char_key];
             for (let i = 0; i < this.player_abilities[char_key].length; ++i) {
                 const this_ability = abilities_list[this.player_abilities[char_key][i].key_name];
-                this.player_abilities[char_key][i].speed = BattleFormulas.player_turn_speed(this_char.current_agi, this_ability.priority_move, i > 0);
+                const priority_move = this_ability !== undefined ? this_ability.priority_move : false;
+                this.player_abilities[char_key][i].speed = BattleFormulas.player_turn_speed(this_char.current_agi, priority_move, i > 0);
                 this.player_abilities[char_key][i].caster = this_char;
             }
         }
@@ -220,7 +221,8 @@ export class Battle {
             const this_enemy = this.this_enemies_list[battle_key];
             for (let i = 0; i < this.enemies_abilities[battle_key].length; ++i) {
                 const this_ability = abilities_list[this.enemies_abilities[battle_key][i].key_name];
-                this.enemies_abilities[battle_key][i].speed = BattleFormulas.enemy_turn_speed(this_enemy.current_agi, i + 1, this_enemy.turns, this_ability.priority_move);
+                const priority_move = this_ability !== undefined ? this_ability.priority_move : false;
+                this.enemies_abilities[battle_key][i].speed = BattleFormulas.enemy_turn_speed(this_enemy.current_agi, i + 1, this_enemy.turns, priority_move);
                 this.enemies_abilities[battle_key][i].caster = this_enemy;
             }
         }
@@ -253,7 +255,11 @@ export class Battle {
             return;
         }
         const action = this.turns_actions.pop();
-        if (action.caster.temporary_status.has(temporary_status.SLEEP) || action.caster.temporary_status.has(temporary_status.STUN)) {
+        if (action.caster.has_permanent_status(permanent_status.DOWNED)) {
+            this.check_phases();
+            return;
+        }
+        if (action.caster.is_paralyzed()) {
             if (action.caster.temporary_status.has(temporary_status.SLEEP)) {
                 await this.battle_log.add(`${action.caster.name} is asleep!`);
             } else if (action.caster.temporary_status.has(temporary_status.STUN)) {
