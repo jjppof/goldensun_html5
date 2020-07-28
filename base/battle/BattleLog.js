@@ -51,7 +51,7 @@ export class BattleLog {
         return promise;
     }
 
-    async add_ability(caster, ability, item_name) {
+    async add_ability(caster, ability, item_name, djinn_name) {
         switch (ability.msg_type) {
             case ability_msg_types.ATTACK:
                 await this.add(`${caster.name} attacks!`);
@@ -75,6 +75,8 @@ export class BattleLog {
                 await this.add(`${caster.name}'s ${item_name}`);
                 await this.add(`lets out a howl! ${ability.name}!`);
                 break;
+            case ability_msg_types.SET_DJINN:
+                await this.add(`${djinn_name} is set to ${caster.name}!`);
         }
     }
 

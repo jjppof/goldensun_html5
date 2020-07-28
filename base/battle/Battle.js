@@ -12,6 +12,8 @@ import { EnemyAI } from "./EnemyAI.js";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
 import { effect_types, Effect, effect_usages } from "../Effect.js";
 import { variation } from "../../utils.js";
+import { djinni_list } from "../../initializers/djinni.js";
+import { djinn_status } from "../Djinn.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 
@@ -87,6 +89,8 @@ export class Battle {
         this.battle_phase = battle_phases.NONE;
         this.controls_enabled = false;
         this.on_going_effects = [];
+        this.allies_defeated = false;
+        this.enemies_defeated = false;
         ++this.enter_propagation_priority;
         ++this.esc_propagation_priority;
         this.set_controls();
@@ -150,10 +154,15 @@ export class Battle {
     }
 
     check_parties() {
-
+        this.allies_defeated = this.allies_info.every(player => player.instance.has_permanent_status(permanent_status.DOWNED));
+        this.enemies_defeated = this.enemies_info.every(player => player.instance.has_permanent_status(permanent_status.DOWNED));
+        if (this.allies_defeated || this.enemies_defeated) {
+            this.battle_phase = battle_phases.END;
+        }
     }
 
     check_phases() {
+        this.check_parties();
         switch (this.battle_phase) {
             case battle_phases.NONE:
                 this.battle_phase_none();
@@ -293,7 +302,8 @@ export class Battle {
             this.check_phases();
             return;
         }
-        await this.battle_log.add_ability(action.caster, ability, item_name);
+        let djinn_name = action.djinn_key_name ? djinni_list[action.djinn_key_name].name : undefined;
+        await this.battle_log.add_ability(action.caster, ability, item_name, djinn_name);
         if (ability.pp_cost > action.caster.current_pp) {
             await this.battle_log.add(`... But doesn't have enough PP!`);
             await this.wait_for_key();
@@ -301,6 +311,13 @@ export class Battle {
             return;
         } else {
             action.caster.current_pp -= ability.pp_cost;
+        }
+        if (action.type === "djinni") {
+            if (ability.effects.some(effect => effect.type === effect_types.SET_DJINN)) {
+                djinni_list[action.djinn_key_name].set_status(djinn_status.SET, action.caster);
+            } else {
+                djinni_list[action.key_name].set_status(djinn_status.STANDBY, action.caster);
+            }
         }
         this.battle_menu.chars_status_window.update_chars_info();
         if (ability.type === ability_types.UTILITY) {
@@ -500,6 +517,15 @@ So, if a character will die after 5 turns and you land another Curse on them, it
     }
 
     battle_phase_end() {
+        if (this.allies_defeated) {
+            this.battle_log.add(this.allies_info[0].instance.name + "' party has been defeated!");
+        } else {
+            this.battle_log.add(this.enemies_party_data.name + " has been defeated!");
+        }
+        this.unset_battle();
+    }
+
+    unset_battle() {
 
     }
 

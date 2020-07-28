@@ -21,7 +21,8 @@ export const effect_types = {
     ENCOUNTERS: "encounters",
     FLEE: "flee",
     END_THE_ROUND: "end_the_round",
-    ABILITY_POWER: "ability_power"
+    ABILITY_POWER: "ability_power",
+    SET_DJINN: "set_djinn"
 }
 
 export const effect_operators = {

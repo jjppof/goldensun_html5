@@ -39,6 +39,26 @@
         "battle_animation_key": "no_animation",
         "msg_type": "defend"
     },{
+        "key_name": "set_djinn",
+        "name": "Set djinn",
+        "description": "",
+        "type": "utility",
+        "element": "no_element",
+        "battle_target": "user",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 0,
+        "effects_outside_battle": false,
+        "is_battle_psynergy": true,
+        "is_field_psynergy": false,
+        "effects": [{
+            "type": "set_djinn",
+            "usage": "on_use"
+        }],
+        "ability_type_key": "normal",
+        "battle_animation_key": "no_animation",
+        "msg_type": "set_djinn"
+    },{
         "key_name": "move",
         "name": "Move",
         "description": "Move an object on the ground.",

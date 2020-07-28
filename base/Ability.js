@@ -18,6 +18,7 @@ export const ability_msg_types = {
     UNLEASH: "unleash",
     DEFEND: "defend",
     ITEM_UNLEASH: "item_unleash",
+    SET_DJINN: "set_djinn",
     NO_MSG: "no_msg"
 }
 

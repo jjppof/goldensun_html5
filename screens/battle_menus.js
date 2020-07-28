@@ -3,7 +3,7 @@ import { HorizontalMenu } from "../base/menus/HorizontalMenu.js";
 import { capitalize } from "../utils.js";
 import * as numbers from "../magic_numbers.js";
 import { party_data } from "../initializers/main_chars.js";
-import { Djinn } from "../base/Djinn.js";
+import { Djinn, djinn_status } from "../base/Djinn.js";
 import { DescriptionWindow } from "../base/windows/battle/DescriptionWindow.js"
 import { PsynergyWindow } from "../base/windows/battle/PsynergyWindow.js"
 import { DjinnWindow } from "../base/windows/battle/DjinnWindow.js";
@@ -11,6 +11,7 @@ import { ItemWindow } from "../base/windows/battle/ItemWindow.js";
 import { SummonWindow } from "../base/windows/battle/SummonWindow.js";
 import { MAX_CHARS_IN_BATTLE } from "../base/battle/Battle.js";
 import { permanent_status } from "../base/Player.js";
+import { djinni_list } from "../initializers/djinni.js";
 
 const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
@@ -105,7 +106,8 @@ export class BattleMenuScreen {
                     if (targets) {
                         this.abilities[party_data.members[this.current_char_index].key_name].push({
                             key_name: "attack",
-                            targets: targets
+                            targets: targets,
+                            type: "attack"
                         });
                         this.inner_horizontal_menu.activate();
                         this.change_char(FORWARD);
@@ -132,7 +134,8 @@ export class BattleMenuScreen {
                     if (targets) {
                         this.abilities[party_data.members[this.current_char_index].key_name].push({
                             key_name: "defend",
-                            targets: targets
+                            targets: targets,
+                            type: "defend"
                         });
                         this.inner_horizontal_menu.activate();
                         this.change_char(FORWARD);
@@ -144,17 +147,24 @@ export class BattleMenuScreen {
         }
     }
 
-    on_ability_choose(window, description_on_top, button, ...args) {
+    on_ability_choose(window, description_on_top, action_type, ...args) {
         this.inner_horizontal_menu.deactivate(true);
         this.description_window.open(description_on_top);
         window.open(party_data.members[this.current_char_index], (ability, item_obj) => {
             if (ability) {
+                let djinn_key_name;
+                if (action_type === "djinni" && djinni_list[ability].status === djinn_status.STANDBY) {
+                    djinn_key_name = ability;
+                    ability = "set_djinn";
+                }
                 this.description_window.hide();
-                this.choose_targets(ability, button, targets => {
+                this.choose_targets(ability, action_type, targets => {
                     if (targets) {
                         this.abilities[party_data.members[this.current_char_index].key_name].push({
                             key_name: ability,
-                            targets: targets
+                            targets: targets,
+                            type: action_type,
+                            djinn_key_name: djinn_key_name
                         });
                         window.close();
                         this.description_window.close();
