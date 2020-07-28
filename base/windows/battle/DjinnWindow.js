@@ -21,6 +21,7 @@ const DJINN_NAME_X = 17;
 const CURSOR_X = 154;
 const CURSOR_Y = 84;
 const CURSOR_SHIFT = 16;
+const RECOVERY_NUMBER_X = 67;
 
 export class DjinnWindow {
     constructor(game, data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority) {
@@ -127,24 +128,37 @@ export class DjinnWindow {
         this.group.y = this.game.camera.y;
     }
 
+    call_set_description() {
+        const this_djinn = djinni_list[this.djinni[this.djinn_index]];
+        if (this.set_description) {
+            switch (this_djinn.status) {
+                case djinn_status.SET:
+                    this.set_description(this_djinn.description);
+                    break;
+                case djinn_status.STANDBY:
+                    this.set_description("Ready to summon. Choose to set it again.");
+                    break;
+                case djinn_status.RECOVERY:
+                    this.set_description("This Djinn is still recovering.");
+                    break;
+            }
+        }
+    }
+
     change_page(before_index, after_index) {
         this.config_page();
         if (this.djinn_index >= this.djinni.length) {
             this.djinn_index = this.djinni.length - 1;
             this.cursor_control.set_cursor_position();
         }
-        if (this.set_description) {
-            this.set_description(djinni_list[this.djinni[this.djinn_index]].description);
-        }
+        this.call_set_description();
         this.set_highlight_bar();
         this.base_window.set_page_indicator_highlight(this.page_number, this.page_index);
         this.update_stats();
     }
 
     change_djinn(before_index, after_index) {
-        if (this.set_description) {
-            this.set_description(djinni_list[this.djinni[this.djinn_index]].description);
-        }
+        this.call_set_description();
         this.set_highlight_bar();
         this.update_stats();
     }
@@ -169,6 +183,11 @@ export class DjinnWindow {
             }
             const name = this.base_window.set_text_in_position(djinn.name, DJINN_NAME_X, base_y, false, false, color);
             this.djinn_names.push(name);
+            if (djinn.status === djinn_status.RECOVERY) {
+                const rec_number = this.base_window.set_text_in_position(
+                    (djinn.recovery_turn + 1).toString(), RECOVERY_NUMBER_X, base_y, true, false, djinn_font_colors[djinn_status.RECOVERY]);
+                this.djinn_names.push(rec_number);
+            }
         }
     }
 
@@ -229,9 +248,7 @@ export class DjinnWindow {
         this.set_highlight_bar();
         this.mount_window();
         this.cursor_control.activate();
-        if (this.set_description) {
-            this.set_description(djinni_list[this.djinni[this.djinn_index]].description);
-        }
+        this.call_set_description();
         this.base_window.show(() => {
             this.window_open = true;
             this.window_active = true;

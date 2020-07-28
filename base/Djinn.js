@@ -1,6 +1,6 @@
 import * as numbers from '../magic_numbers.js';
-import { permanent_status } from './Player.js';
 import { djinni_list } from '../initializers/djinni.js';
+import { ordered_elements } from '../utils.js';
 
 export const djinn_status = {
     SET: "set",
@@ -42,6 +42,7 @@ export class Djinn {
         this.luk_boost = luk_boost;
         this.status = djinn_status.SET;
         this.index = index;
+        this.recovery_turn = 0;
     }
 
     set_status(status, char) {
@@ -52,12 +53,47 @@ export class Djinn {
         char.update_abilities();
     }
 
-    static has_standby_djinn(max_char) {
-        const members = party_data.members.slice(0, max_char).filter(char => {
-            return !char.has_permanent_status(permanent_status.DOWNED);
-        });
-        return _.some(members.map(c => c.djinni).map(djinn_keys => {
+    static has_standby_djinn(members) {
+        return _.some(members.map(char => char.djinni).map(djinn_keys => {
             return djinn_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length;
         }));
+    }
+
+    static get_standby_djinni(members) {
+        let standby_djinni = _.mapValues(_.groupBy(members.map(c => c.djinni).flat(), key => {
+            return djinni_list[key].element;
+        }), djinni_keys => djinni_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length);
+        for (let i = 0; i < ordered_elements.length; ++i) {
+            const element = ordered_elements[i];
+            if (!(element in standby_djinni)) {
+                standby_djinni[element] = 0;
+            }
+        }
+        return standby_djinni;
+    }
+
+    static set_to_recovery(members, requirements) {
+        let req_counter = Object.assign({}, requirements);
+        let done = false;
+        for (let i = 0; i < members.length; ++i) {
+            const player = members[i];
+            const player_djinni = player.djinni;
+            let recovery_counter = 1;
+            for (let j = 0; j < player_djinni.length; ++j) {
+                const djinn = djinni_list[player_djinni[j]];
+                if (djinn.status !== djinn_status.STANDBY) continue;
+                if (req_counter[djinn.element] > 0) {
+                    djinn.recovery_turn = recovery_counter;
+                    ++recovery_counter;
+                    djinn.set_status(djinn_status.RECOVERY, player);
+                    --req_counter[djinn.element];
+                    if (!_.some(req_counter, Boolean)) {
+                        done = true;
+                        break;
+                    }
+                }
+            }
+            if (done) break;
+        }
     }
 }

@@ -13,7 +13,7 @@ import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE }
 import { effect_types, Effect, effect_usages } from "../Effect.js";
 import { variation } from "../../utils.js";
 import { djinni_list } from "../../initializers/djinni.js";
-import { djinn_status } from "../Djinn.js";
+import { djinn_status, Djinn } from "../Djinn.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 
@@ -108,6 +108,7 @@ export class Battle {
                     this.check_phases();
                     break;
                 case battle_phases.COMBAT:
+                case battle_phases.ROUND_END:
                     if (this.advance_log_resolve) {
                         this.advance_log_resolve();
                         this.advance_log_resolve = null;
@@ -318,6 +319,21 @@ export class Battle {
             } else {
                 djinni_list[action.key_name].set_status(djinn_status.STANDBY, action.caster);
             }
+        } else if (action.type === "summon") {
+            const requirements = _.find(this.data.summons_db, {key_name: ability.key_name}).requirements;
+            const standby_djinni = Djinn.get_standby_djinni(party_data.members.slice(0, MAX_CHARS_IN_BATTLE));
+            const has_available_djinni = _.every(requirements, (requirement, element) => {
+                return standby_djinni[element] >= requirement;
+            });
+            if (!has_available_djinni) {
+                await this.battle_log.add(`${action.caster.name} summons ${ability.name} but`);
+                await this.battle_log.add(`doesn't have enough standby Djinn!`);
+                await this.wait_for_key();
+                this.check_phases();
+                return;
+            } else {
+                Djinn.set_to_recovery(party_data.members.slice(0, MAX_CHARS_IN_BATTLE), requirements);
+            }
         }
         this.battle_menu.chars_status_window.update_chars_info();
         if (ability.type === ability_types.UTILITY) {
@@ -487,7 +503,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     await this.wait_for_key();
                     return true;
                 case effect_types.TURNS:
-                    await this.battle_log.add(`${actionm.caster.name} readies for action!`);
+                    await this.battle_log.add(`${action.caster.name} readies for action!`);
                     await this.wait_for_key(); 
                     this.on_going_effects.push(target_instance.add_effect(effect, ability, true));
                     break;
@@ -500,7 +516,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
         return false;
     }
 
-    battle_phase_round_end() {
+    async battle_phase_round_end() {
         this.on_going_effects.filter(effect => {
             --effect.turn_count;
             if (effect.turn_count === 0) {
@@ -510,6 +526,24 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 return true;
             }
         });
+        for (let i = 0; i < MAX_CHARS_IN_BATTLE; ++i) {
+            const player = party_data.members[i];
+            if (player === undefined) continue;
+            const player_djinni = player.djinni;
+            for (let j = 0; j < player_djinni.length; ++j) {
+                const djinn_key = player_djinni[j];
+                const djinn = djinni_list[djinn_key];
+                if (djinn.status === djinn_status.RECOVERY) {
+                    if (djinn.recovery_turn === 0) {
+                        djinn.set_status(djinn_status.SET, player);
+                        await this.battle_log.add(`${djinn.name} is set to ${player.name}!`);
+                        await this.wait_for_key(); 
+                    } else {
+                        --djinn.recovery_turn;
+                    }
+                }
+            };
+        };
         this.controls_enabled = false;
         this.battle_log.clear();
         this.battle_phase = battle_phases.MENU;

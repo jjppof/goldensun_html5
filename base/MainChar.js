@@ -339,6 +339,7 @@ export class MainChar extends Player {
             let lv_shift;
             switch (djinni_next_status[i]) {
                 case djinn_status.SET: lv_shift = ELEM_LV_DELTA; break;
+                case djinn_status.RECOVERY:
                 case "irrelevant": lv_shift = 0; break;
                 default: lv_shift = -ELEM_LV_DELTA;
             }

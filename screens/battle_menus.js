@@ -70,7 +70,10 @@ export class BattleMenuScreen {
             case "fight":
                 this.start_horizontal_menu.close();
                 let filtered_buttons = [];
-                if (!Djinn.has_standby_djinn(MAX_CHARS_IN_BATTLE)) {
+                const members = party_data.members.slice(0, MAX_CHARS_IN_BATTLE).filter(char => {
+                    return !char.has_permanent_status(permanent_status.DOWNED);
+                });
+                if (!Djinn.has_standby_djinn(members)) {
                     filtered_buttons.push("summon");
                 }
                 this.current_buttons = this.inner_buttons_keys.filter(key => !filtered_buttons.includes(key));

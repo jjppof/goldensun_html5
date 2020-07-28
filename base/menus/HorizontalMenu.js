@@ -159,7 +159,9 @@ export class HorizontalMenu {
     }
 
     reset_button() {
-        this.buttons[this.selected_button_index].sprite.scale.setTo(1.0, 1.0);
+        if (this.buttons[this.selected_button_index]) {
+            this.buttons[this.selected_button_index].sprite.scale.setTo(1.0, 1.0);
+        }
         if (this.selected_button_tween) {
             this.selected_button_tween.stop();
         }

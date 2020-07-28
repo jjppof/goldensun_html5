@@ -2,8 +2,7 @@ import { Window } from '../Window.js';
 import { get_text_width, ordered_elements } from '../../utils.js';
 import * as numbers from '../../magic_numbers.js';
 import { party_data } from '../../initializers/main_chars.js';
-import { djinni_list } from '../../initializers/djinni.js';
-import { djinn_status } from '../Djinn.js';
+import { Djinn } from '../Djinn.js';
 
 const WIDTH_PER_CHAR = 46;
 const STATUS_WIN_HEIGHT = 35;
@@ -110,9 +109,7 @@ export class CharsStatusWindow {
     update_chars_info() {
         let show_djinn_info = false;
         if (this.djinni_info) {
-            this.standby_djinni = _.mapValues(_.groupBy(party_data.members.slice(0, MAX_CHARS_NUMBER).map(c => c.djinni).flat(), key => {
-                return djinni_list[key].element;
-            }), djinni_keys => djinni_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length);
+            this.standby_djinni = Djinn.get_standby_djinni(party_data.members.slice(0, MAX_CHARS_NUMBER));
             show_djinn_info = _.some(this.standby_djinni, Boolean);
             if (show_djinn_info) {
                 this.stars_group.alpha = 1;
