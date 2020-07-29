@@ -441,7 +441,7 @@ export class MainChar extends Player {
             this[stat_key] += djinn[boost_key];
         }
         this.effects.forEach(effect => {
-            if (preview && preview_obj.item_key_name === effect.effect_owner_instance.key_name) return;
+            if (preview && effect.effect_owner_instance && preview_obj.item_key_name === effect.effect_owner_instance.key_name) return;
             let effect_type;
             switch (stat) {
                 case "hp":
