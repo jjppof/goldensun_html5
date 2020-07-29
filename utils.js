@@ -12,6 +12,13 @@ export const ordered_elements = [
     elements.VENUS, elements.MERCURY, elements.MARS, elements.JUPITER
 ];
 
+export const element_names = {
+    [elements.VENUS]: "Earth",
+    [elements.MERCURY]: "Water",
+    [elements.MARS]: "Fire",
+    [elements.JUPITER]: "Wind"
+};
+
 export const directions = {
     right: 0,
     down_right: 1,

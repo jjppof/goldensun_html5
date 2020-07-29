@@ -11,7 +11,7 @@ import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js"
 import { EnemyAI } from "./EnemyAI.js";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
 import { effect_types, Effect, effect_usages } from "../Effect.js";
-import { variation } from "../../utils.js";
+import { variation, ordered_elements, element_names } from "../../utils.js";
 import { djinni_list } from "../../initializers/djinni.js";
 import { djinn_status, Djinn } from "../Djinn.js";
 
@@ -352,6 +352,23 @@ export class Battle {
                 this.battle_phase = battle_phases.ROUND_END;
                 this.check_phases();
                 return;
+            }
+        }
+        if (action.type === "summon") {
+            const requirements = _.find(this.data.summons_db, {key_name: ability.key_name}).requirements;
+            for (let i = 0; i < ordered_elements.length; ++i) {
+                const element = ordered_elements[i];
+                const power = BattleFormulas.summon_power(requirements[element]);
+                if (power > 0) {
+                    action.caster.add_effect({
+                        type: "power",
+                        quantity: power,
+                        operator: "plus",
+                        attribute: element
+                    }, null, true);
+                    await this.battle_log.add(`${action.caster.name}'s ${element_names[element]} Power rises by ${power.toString()}!`);
+                    await this.wait_for_key();
+                }
             }
         }
         this.check_phases();

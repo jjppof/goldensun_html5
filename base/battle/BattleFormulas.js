@@ -106,4 +106,9 @@ export class BattleFormulas {
         }
         return (poison_factor * player.max_hp)/10;
     }
+
+    static summon_power(djinn_number) {
+        djinn_number = _.clamp(djinn_number, 0, 4);
+        return ((djinn_number * djinn_number) + djinn_number) * 5;
+    }
 }
