@@ -13,7 +13,7 @@ An online **Golden Sun Engine** built in HTML5 with [PhaserJS CE 2.15.0](http://
 
 ## Development environment
 
-GSHTML5 has no external dependency, so there's no `npm install` or packages on CDN, etc. It's a standalone. Just clone the project and run it into a http server. I would recommend these steps:
+GSHTML5 has no external dependency, so there's no `npm install` or packages on CDN, etc. Just clone the project and run it into a http server. I would recommend these steps:
 - Clone the project (or download it and extract the files);
 - Download [node.js](https://nodejs.org/en/download/) and install it (make sure you add node.js in the system path);
 - In the terminal, install a light http server using `npm install http-server -g`;
