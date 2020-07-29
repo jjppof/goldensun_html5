@@ -12,6 +12,7 @@ import { SummonWindow } from "../base/windows/battle/SummonWindow.js";
 import { MAX_CHARS_IN_BATTLE } from "../base/battle/Battle.js";
 import { permanent_status } from "../base/Player.js";
 import { djinni_list } from "../initializers/djinni.js";
+import { MainChar } from "../base/MainChar.js";
 
 const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
@@ -70,10 +71,7 @@ export class BattleMenuScreen {
             case "fight":
                 this.start_horizontal_menu.close();
                 let filtered_buttons = [];
-                const members = party_data.members.slice(0, MAX_CHARS_IN_BATTLE).filter(char => {
-                    return !char.has_permanent_status(permanent_status.DOWNED);
-                });
-                if (!Djinn.has_standby_djinn(members)) {
+                if (!Djinn.has_standby_djinn(MainChar.get_active_players(MAX_CHARS_IN_BATTLE))) {
                     filtered_buttons.push("summon");
                 }
                 this.current_buttons = this.inner_buttons_keys.filter(key => !filtered_buttons.includes(key));

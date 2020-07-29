@@ -14,6 +14,7 @@ import { effect_types, Effect, effect_usages } from "../Effect.js";
 import { variation, ordered_elements, element_names } from "../../utils.js";
 import { djinni_list } from "../../initializers/djinni.js";
 import { djinn_status, Djinn } from "../Djinn.js";
+import { MainChar } from "../MainChar.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 
@@ -321,7 +322,7 @@ export class Battle {
             }
         } else if (action.type === "summon") {
             const requirements = _.find(this.data.summons_db, {key_name: ability.key_name}).requirements;
-            const standby_djinni = Djinn.get_standby_djinni(party_data.members.slice(0, MAX_CHARS_IN_BATTLE));
+            const standby_djinni = Djinn.get_standby_djinni(MainChar.get_active_players(MAX_CHARS_IN_BATTLE));
             const has_available_djinni = _.every(requirements, (requirement, element) => {
                 return standby_djinni[element] >= requirement;
             });
@@ -332,7 +333,7 @@ export class Battle {
                 this.check_phases();
                 return;
             } else {
-                Djinn.set_to_recovery(party_data.members.slice(0, MAX_CHARS_IN_BATTLE), requirements);
+                Djinn.set_to_recovery(MainChar.get_active_players(MAX_CHARS_IN_BATTLE), requirements);
             }
         }
         this.battle_menu.chars_status_window.update_chars_info();
@@ -521,7 +522,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     return true;
                 case effect_types.TURNS:
                     await this.battle_log.add(`${action.caster.name} readies for action!`);
-                    await this.wait_for_key(); 
+                    await this.wait_for_key();
                     this.on_going_effects.push(target_instance.add_effect(effect, ability, true));
                     break;
                 case effect_types.COUNTER_STRIKE: break;
@@ -538,6 +539,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             --effect.turn_count;
             if (effect.turn_count === 0) {
                 target_instance.remove_effect(effect);
+                target_instance.update_all();
                 return false;
             } else {
                 return true;

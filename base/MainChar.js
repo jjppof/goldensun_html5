@@ -5,8 +5,9 @@ import { djinn_status } from './Djinn.js';
 import { Effect, effect_types } from './Effect.js';
 import { item_types } from './Item.js';
 import { items_list } from '../initializers/items.js';
-import { Player, fighter_types } from './Player.js';
-import { elements } from '../utils.js';
+import { Player, fighter_types, permanent_status } from './Player.js';
+import { elements, ordered_elements } from '../utils.js';
+import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from '../magic_numbers.js';
 
 const ELEM_LV_DELTA = 1;
 const ELEM_POWER_DELTA = 5;
@@ -292,10 +293,7 @@ export class MainChar extends Player {
                 this.jupiter_djinni.push(djinn.key_name);
                 break;
         }
-        this.update_elemental_attributes();
-        this.update_class();
-        this.update_attributes();
-        this.update_abilities();
+        this.update_all();
     }
 
     remove_djinn(djinn_key_name) {
@@ -317,10 +315,7 @@ export class MainChar extends Player {
         }
         const index = this_djinni_list.indexOf(djinn_key_name);
         if (index !== -1) this_djinni_list.splice(index, 1);
-        this.update_elemental_attributes();
-        this.update_class();
-        this.update_attributes();
-        this.update_abilities();
+        this.update_all();
     }
 
     replace_djinn(old_djinn_key_name, new_djinn_key_name) {
@@ -526,39 +521,40 @@ export class MainChar extends Player {
         for (let i = 0; i < this.djinni.length; ++i) {
             let djinn = djinni_list[this.djinni[i]];
             if (djinn.status !== djinn_status.SET) continue;
-            switch (djinn.element) {
-                case elements.VENUS:
-                    this.venus_level_current += ELEM_LV_DELTA;
-                    this.venus_power_current += ELEM_POWER_DELTA;
-                    this.venus_resist_current += ELEM_RESIST_DELTA;
-                    break;
-                case elements.MERCURY:
-                    this.mercury_level_current += ELEM_LV_DELTA;
-                    this.mercury_power_current += ELEM_POWER_DELTA;
-                    this.mercury_resist_current += ELEM_RESIST_DELTA;
-                    break;
-                case elements.MARS:
-                    this.mars_level_current += ELEM_LV_DELTA;
-                    this.mars_power_current += ELEM_POWER_DELTA;
-                    this.mars_resist_current += ELEM_RESIST_DELTA;
-                    break;
-                case elements.JUPITER:
-                    this.jupiter_level_current += ELEM_LV_DELTA;
-                    this.jupiter_power_current += ELEM_POWER_DELTA;
-                    this.jupiter_resist_current += ELEM_RESIST_DELTA;
-                    break;
-            }
+            this[djinn.element + "_level_current"] += ELEM_LV_DELTA;
+            this[djinn.element + "_power_current"] += ELEM_POWER_DELTA;
+            this[djinn.element + "_resist_current"] += ELEM_RESIST_DELTA;
         }
         this.effects.forEach(effect => {
             if (effect.type === effect_types.POWER || effect.type === effect_types.RESIST) {
                 effect.apply_effect();
             }
         });
+        for (let i = 0; i < ordered_elements.length; ++i) {
+            const element = ordered_elements[i];
+            const power_key = element + "_power_current";
+            const resist_key = element + "_resist_current";
+            this[power_key] = _.clamp(this[power_key], ELEM_ATTR_MIN, ELEM_ATTR_MAX);
+            this[resist_key] = _.clamp(this[resist_key], ELEM_ATTR_MIN, ELEM_ATTR_MAX);
+        }
     }
 
     update_abilities() {
         this.abilities = this.innate_abilities.concat(this.class.ability_level_pairs.filter(pair => {
             return pair.level <= this.level && !this.innate_abilities.includes(pair.ability);
         }).map(pair => pair.ability), this.equipped_abilities);
+    }
+
+    update_all() {
+        this.update_elemental_attributes();
+        this.update_class();
+        this.update_attributes();
+        this.update_abilities();
+    }
+
+    static get_active_players(max) {
+        return party_data.members.slice(0, max).filter(char => {
+            return !char.has_permanent_status(permanent_status.DOWNED);
+        });
     }
 }

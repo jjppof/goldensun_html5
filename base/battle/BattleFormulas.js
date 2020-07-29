@@ -2,6 +2,7 @@
 
 import { elements } from "../../utils.js";
 import { permanent_status } from "../Player.js";
+import { ELEM_ATTR_MAX, ELEM_ATTR_MIN } from "../../magic_numbers.js";
 
 export const CRITICAL_CHANCE = 1/32;
 
@@ -56,7 +57,7 @@ export class BattleFormulas {
                 caster_power = caster[power_key];
             }
         }
-        const relative_power = _.clamp(caster_power - target_resist, -200.0, 200.0);
+        const relative_power = _.clamp(caster_power - target_resist, ELEM_ATTR_MIN, ELEM_ATTR_MAX);
         return 1 + (relative_power)/(is_psynergy ? 200.0 : 400.0);
     }
 

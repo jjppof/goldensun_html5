@@ -32,3 +32,5 @@ export const degree270 = 3 * Math.PI/2;
 export const degree360 = 2 * Math.PI;
 export const degree540 = 3 * Math.PI;
 export const CAMERA_LERP = 0.15;
+export const ELEM_ATTR_MIN = -200;
+export const ELEM_ATTR_MAX = 200;

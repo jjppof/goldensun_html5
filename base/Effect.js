@@ -2,10 +2,8 @@ import { variation, elements } from "../utils.js"
 
 export const effect_types = {
     MAX_HP: "max_hp",
-    CURRENT_HP: "current_hp",
     HP_RECOVERY: "hp_recovery",
     MAX_PP: "max_pp",
-    CURRENT_PP: "current_pp",
     PP_RECOVERY: "pp_recovery",
     ATTACK: "attack",
     DEFENSE: "defense",
