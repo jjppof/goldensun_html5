@@ -365,7 +365,7 @@ export class Battle {
                         quantity: power,
                         operator: "plus",
                         attribute: element
-                    }, null, true);
+                    }, ability, true);
                     await this.battle_log.add(`${action.caster.name}'s ${element_names[element]} Power rises by ${power.toString()}!`);
                     await this.wait_for_key();
                 }
