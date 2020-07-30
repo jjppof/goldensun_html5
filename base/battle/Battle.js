@@ -10,7 +10,7 @@ import { ability_types, Ability, diminishing_ratios } from "../Ability.js";
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
 import { EnemyAI } from "./EnemyAI.js";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
-import { effect_types, Effect, effect_usages } from "../Effect.js";
+import { effect_types, Effect, effect_usages, effect_names } from "../Effect.js";
 import { variation, ordered_elements, element_names } from "../../utils.js";
 import { djinni_list } from "../../initializers/djinni.js";
 import { djinn_status, Djinn } from "../Djinn.js";
@@ -491,7 +491,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         vulnerability = vulnerability === undefined ? 0 : vulnerability.chance;
                         const magnitude = diminishing_ratios.STATUS[target_info.magnitude];
                         if (BattleFormulas.ailment_success(action.caster, target_instance, effect.chance, magnitude, ability.element, vulnerability)) {
-                            const this_effect = target_instance.add_effect(effect, ability, true);
+                            const this_effect = target_instance.add_effect(effect, ability, true).effect;
                             if (this_effect.type === effect_types.TEMPORARY_STATUS) {
                                 this.on_going_effects.push(this_effect);
                             }
@@ -516,6 +516,25 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         }
                     }
                     break;
+                case effect_types.MAX_HP:
+                case effect_types.MAX_PP:
+                case effect_types.ATTACK:
+                case effect_types.DEFENSE:
+                case effect_types.AGILITY:
+                case effect_types.LUCK:
+                case effect_types.POWER:
+                case effect_types.RESIST:
+                    const effect_result = target_instance.add_effect(effect, ability, true);
+                    this.on_going_effects.push(effect_result.effect);
+                    const diff = effect_result.changes.after - effect_result.changes.before;
+                    const text = diff >= 0 ? "rises" : "drops";
+                    let element_info = "";
+                    if ([effect_types.POWER, effect_types.RESIST].includes(effect.type)) {
+                        element_info = element_names[effect_result.effect.attribute] + " ";
+                    }
+                    await this.battle_log.add(`${target_instance.name}'s ${element_info}${effect_names[effect.type]} ${text} by ${Math.abs(diff)}!`);
+                    await this.wait_for_key();
+                    break;
                 case effect_types.END_THE_ROUND:
                     await this.battle_log.add(`Everybody is resting!`);
                     await this.wait_for_key();
@@ -523,12 +542,12 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 case effect_types.TURNS:
                     await this.battle_log.add(`${action.caster.name} readies for action!`);
                     await this.wait_for_key();
-                    this.on_going_effects.push(target_instance.add_effect(effect, ability, true));
+                    this.on_going_effects.push(target_instance.add_effect(effect, ability, true).effect);
                     break;
                 case effect_types.COUNTER_STRIKE: break;
                 case effect_types.FLEE: break;
                 default:
-                    this.on_going_effects.push(target_instance.add_effect(effect, ability, true));
+                    this.on_going_effects.push(target_instance.add_effect(effect, ability, true).effect);
             }
         }
         return false;

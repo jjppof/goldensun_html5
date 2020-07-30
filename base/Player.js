@@ -65,10 +65,14 @@ export class Player {
             this
         );
         this.effects.push(effect);
+        let changes;
         if (apply) {
-            effect.apply_effect();
+            changes = effect.apply_effect();
         }
-        return effect;
+        return {
+            effect: effect,
+            changes: changes
+        };
     }
 
     remove_effect(effect_to_remove, apply = false) {

@@ -441,16 +441,22 @@ export class MainChar extends Player {
             switch (stat) {
                 case "hp":
                     effect_type = effect_types.MAX_HP;
+                    break;
                 case "pp":
                     effect_type = effect_types.MAX_PP;
+                    break;
                 case "atk":
                     effect_type = effect_types.ATTACK;
+                    break;
                 case "def":
                     effect_type = effect_types.DEFENSE;
+                    break;
                 case "agi":
                     effect_type = effect_types.AGILITY;
+                    break;
                 case "luk":
                     effect_type = effect_types.LUCK;
+                    break;
             }
             if (effect.type === effect_type) {
                 effect.apply_effect();

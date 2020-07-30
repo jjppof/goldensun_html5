@@ -23,6 +23,17 @@ export const effect_types = {
     SET_DJINN: "set_djinn"
 }
 
+export const effect_names = {
+    [effect_types.MAX_HP]: "HP",
+    [effect_types.MAX_PP]: "PP",
+    [effect_types.ATTACK]: "Attack",
+    [effect_types.DEFENSE]: "Defense",
+    [effect_types.AGILITY]: "Agility",
+    [effect_types.LUCK]: "Luck",
+    [effect_types.POWER]: "Power",
+    [effect_types.RESIST]: "Resist"
+}
+
 export const effect_operators = {
     PLUS: "plus",
     MINUS: "minus",
@@ -96,20 +107,30 @@ export class Effect {
     }
 
     apply_general_value(property) {
-        if (Math.random >= this.chance) return;
+        const before_value = this.char[property];
+        if (Math.random() >= this.chance) {
+            return {
+                before: before_value,
+                after: before_value
+            };
+        }
+        let after_value;
         if (this.quantity_is_absolute) {
-            this.value = this.char[property];
             this.char[property] = this.quantity;
+            after_value = this.quantity;
         } else {
             let value = this.quantity;
             value *= this.rate;
             if (this.variation_on_final_result) {
                 value += variation();
             }
-            value = parseInt(value);
-            this.value = Effect.apply_operator(this.char[property], value, this.operator) - this.char[property];
-            this.char[property] += this.value;
+            this.char[property] = Effect.apply_operator(this.char[property], value, this.operator) | 0;
+            after_value = this.char[property];
         }
+        return {
+            before: before_value,
+            after: after_value
+        };
     }
 
     static preview_value_applied(effect_obj, base_value) {
@@ -129,53 +150,42 @@ export class Effect {
     apply_effect() {
         switch (this.type) {
             case effect_types.MAX_HP:
-                this.apply_general_value("max_hp");
-                break;
+                return this.apply_general_value("max_hp");
             case effect_types.HP_RECOVERY:
-                this.apply_general_value("hp_recovery");
-                break;
+                return this.apply_general_value("hp_recovery");
             case effect_types.MAX_PP:
-                this.apply_general_value("max_pp");
-                break;
+                return this.apply_general_value("max_pp");
             case effect_types.PP_RECOVERY:
-                this.apply_general_value("pp_recovery");
-                break;
+                return this.apply_general_value("pp_recovery");
             case effect_types.ATTACK:
-                this.apply_general_value("atk");
-                break;
+                return this.apply_general_value("atk");
             case effect_types.DEFENSE:
-                this.apply_general_value("def");
-                break;
+                return this.apply_general_value("def");
             case effect_types.AGILITY:
-                this.apply_general_value("agi");
-                break;
+                return this.apply_general_value("agi");
             case effect_types.LUCK:
-                this.apply_general_value("luk");
-                break;
+                return this.apply_general_value("luk");
             case effect_types.POWER:
-                this.apply_general_value(this.attribute + "_power_current");
-                break;
+                return this.apply_general_value(this.attribute + "_power_current");
             case effect_types.RESIST:
-                this.apply_general_value(this.attribute + "_resist_current");
-                break;
+                return this.apply_general_value(this.attribute + "_resist_current");
             case effect_types.TURNS:
                 this.turn_count = 1;
-                this.apply_general_value("turns");
-                break;
+                return this.apply_general_value("turns");
             case effect_types.PERMANENT_STATUS:
                 if (this.add_status) {
                     this.char.add_permanent_status(this.status_key_name);
                 } else {
                     this.char.remove_permanent_status(this.status_key_name);
                 }
-                break;
+                return;
             case effect_types.TEMPORARY_STATUS:
                 if (this.add_status) {
                     this.char.add_temporary_status(this.status_key_name);
                 } else {
                     this.char.remove_temporary_status(this.status_key_name);
                 }
-                break;
+                return;
         }
     }
 }
