@@ -1,5 +1,5 @@
 # Golden Sun Engine - HTML5
-An online **Golden Sun Engine** built in HTML5 with [PhaserJS CE 2.15.0](http://phaser.io/).
+An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0](http://phaser.io/).
 
 **See the [DEMO](https://jjppof.github.io/goldensun_html5/index).**
 
