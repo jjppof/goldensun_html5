@@ -35,6 +35,16 @@ export const on_catch_status_msg = {
     [permanent_status.HAUNT]: target => `An evil spirit grips ${target.name}!`
 }
 
+export const on_remove_status_msg = {
+    [temporary_status.DELUSION]: target => `${target.name} sees clearly once again!`,
+    [temporary_status.STUN]: target => `${target.name} is no longer stunned!`,
+    [temporary_status.SLEEP]: target => `${target.name} wakes from slumber!`,
+    [temporary_status.SEAL]: target => `${target.name}'s Psynergy seal is gone!`,
+    [permanent_status.DOWNED]: target => `${target.name}'s has been revived!`,
+    [permanent_status.POISON]: target => `The poison is purged from ${target.name}!`,
+    [permanent_status.VENOM]: target => `The venom is purged from ${target.name}!`
+}
+
 export class Player {
     constructor(key_name, name) {
         this.key_name = key_name;

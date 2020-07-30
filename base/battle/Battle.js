@@ -277,7 +277,7 @@ export class Battle {
             if (action.caster.temporary_status.has(temporary_status.SLEEP)) {
                 await this.battle_log.add(`${action.caster.name} is asleep!`);
             } else if (action.caster.temporary_status.has(temporary_status.STUN)) {
-                await this.battle_log.add(`${action.caster.name} is stunned!`);
+                await this.battle_log.add(`${action.caster.name} is paralyzed and cannot move!`);
             }
             await this.wait_for_key();
             this.check_phases();
@@ -421,7 +421,7 @@ export class Battle {
             const ratios = Ability.get_diminishing_ratios(ability.type, ability.use_diminishing_ratio);
             damage = (damage * ratios[target_info.magnitude]) | 0;
             damage += variation();
-            if (damage > 0) {
+            if (damage >= 0) {
                 await this.battle_log.add(`${target_instance.name} takes ${damage.toString()} damage!`);
             } else {
                 await this.battle_log.add(`${target_instance.name} recovers ${Math.abs(damage).toString()} HP!`);
@@ -512,6 +512,8 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                                         return effect !== this_effect;
                                     });
                                 }
+                                this.battle_log.add_remove_effect(effect);
+                                await this.wait_for_key();
                             }
                         }
                     }
@@ -554,15 +556,20 @@ So, if a character will die after 5 turns and you land another Curse on them, it
     }
 
     async battle_phase_round_end() {
-        this.on_going_effects.filter(effect => {
+        let effects_to_remove = [];
+        for (let i = 0; i < this.on_going_effects.length; ++i) {
+            const effect = this.on_going_effects[i];
             --effect.turn_count;
             if (effect.turn_count === 0) {
-                target_instance.remove_effect(effect);
-                target_instance.update_all();
-                return false;
-            } else {
-                return true;
+                effect.char.remove_effect(effect);
+                effect.char.update_all();
+                effects_to_remove.push(i);
+                this.battle_log.add_remove_effect(effect);
+                await this.wait_for_key();
             }
+        }
+        this.on_going_effects = this.on_going_effects.filter((effect, index) => {
+            return !effects_to_remove.includes(index);
         });
         for (let i = 0; i < MAX_CHARS_IN_BATTLE; ++i) {
             const player = party_data.members[i];

@@ -40,7 +40,8 @@ export class BattleFormulas {
     }
 
     static base_damage(caster, target) {
-        return (caster.current_atk - target.current_def)/2.0;
+        const relative_atk = caster.current_atk - target.current_def;
+        return (relative_atk < 0 ? 0 : relative_atk)/2.0;
     }
 
     static special_physical_attack(caster, target, mult_mod, add_mod) {

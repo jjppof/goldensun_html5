@@ -1,5 +1,8 @@
 import * as numbers from '../../magic_numbers.js';
 import { ability_msg_types } from '../Ability.js';
+import { effect_names, effect_types } from '../Effect.js';
+import { element_names } from '../../utils.js';
+import { on_remove_status_msg } from '../Player.js';
 
 const LOG_X = 3;
 const LOG_OUT_Y = 127;
@@ -77,6 +80,28 @@ export class BattleLog {
                 break;
             case ability_msg_types.SET_DJINN:
                 await this.add(`${djinn_name} is set to ${caster.name}!`);
+        }
+    }
+
+    async add_remove_effect(effect) {
+        const player = effect.char;
+        switch(effect.type) {
+            case effect_types.MAX_HP:
+            case effect_types.MAX_PP:
+            case effect_types.ATTACK:
+            case effect_types.DEFENSE:
+            case effect_types.AGILITY:
+            case effect_types.LUCK:
+                await this.add(`${player.name}'s ${effect_names[effect.type]} returns to normal!`);
+                break;
+            case effect_types.POWER:
+            case effect_types.RESIST:
+                await this.add(`${player.name}'s ${element_names[effect.attribute]} ${effect_names[effect.type]} returns to normal!`);
+                break;
+            case effect_types.TEMPORARY_STATUS:
+            case effect_types.PERMANENT_STATUS:
+                await this.add(on_remove_status_msg[effect.status_key_name](player));
+                break;
         }
     }
 
