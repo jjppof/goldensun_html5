@@ -2,11 +2,10 @@ import { Window } from "../../Window.js";
 import { CursorControl } from '../../utils/CursorControl.js';
 import { abilities_list } from '../../../initializers/abilities.js';
 import * as numbers from "../../../magic_numbers.js"
-import { party_data } from "../../../initializers/main_chars.js";
-import { djinni_list } from "../../../initializers/djinni.js";
-import { djinn_status } from "../../Djinn.js";
+import { Djinn } from "../../Djinn.js";
 import { SummonDjinnStandbyWindow } from "./SummonDjinnStandbyWindow.js";
-import { ordered_elements } from "../../../utils.js";
+import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle.js";
+import { MainChar } from "../../MainChar.js";
 
 const BASE_WINDOW_X = 104;
 const BASE_WINDOW_Y = 88;
@@ -166,13 +165,9 @@ export class SummonWindow {
     }
 
     mount_window() {
-        this.standby_djinni = _.mapValues(_.groupBy(party_data.members.map(c => c.djinni).flat(), key => {
-            return djinni_list[key].element;
-        }), djinni_keys => djinni_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length);
-        for (let i = 0; i < ordered_elements.length; ++i) {
-            if (!(ordered_elements[i] in this.standby_djinni)) {
-                this.standby_djinni[ordered_elements[i]] = 0;
-            }
+        this.standby_djinni = Djinn.get_standby_djinni(MainChar.get_active_players(MAX_CHARS_IN_BATTLE));
+        for (let elem in this.standby_djinni) {
+            this.standby_djinni[elem] -= this.djinni_already_used[elem];
         }
         this.all_summons = this.data.summons_db.map((summon, index) => {
             const available = _.every(summon.requirements, (value, elem) => value <= this.standby_djinni[elem]);
@@ -198,10 +193,11 @@ export class SummonWindow {
         });
     }
 
-    open(char, close_callback, set_description) {
+    open(char, close_callback, set_description, djinni_already_used) {
         this.char = char;
         this.close_callback = close_callback;
         this.set_description = set_description;
+        this.djinni_already_used = djinni_already_used;
         this.group.alpha = 1;
         this.summon_index = 0;
         this.page_index = 0;

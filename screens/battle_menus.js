@@ -1,6 +1,6 @@
 import { CharsStatusWindow } from "../base/windows/CharsStatusWindow.js";
 import { HorizontalMenu } from "../base/menus/HorizontalMenu.js";
-import { capitalize } from "../utils.js";
+import { capitalize, ordered_elements } from "../utils.js";
 import * as numbers from "../magic_numbers.js";
 import { party_data } from "../initializers/main_chars.js";
 import { Djinn, djinn_status } from "../base/Djinn.js";
@@ -80,6 +80,7 @@ export class BattleMenuScreen {
                 party_data.members.slice(0, MAX_CHARS_IN_BATTLE).forEach(char => {
                     this.abilities[char.key_name] = [];
                 });
+                this.djinni_already_used = ordered_elements.reduce((a,b) => (a[b] = 0, a), {});
                 this.inner_horizontal_menu.open();
                 let this_char = party_data.members[this.current_char_index];
                 while (this_char.is_paralyzed() || this_char.has_permanent_status(permanent_status.DOWNED)) {
@@ -124,7 +125,7 @@ export class BattleMenuScreen {
                 this.on_ability_choose(this.djinn_window, true, "djinni", this.psynergy_window);
                 break
             case "summon":
-                this.on_ability_choose(this.summon_window, true, "summon");
+                this.on_ability_choose(this.summon_window, true, "summon", this.djinni_already_used);
                 break
             case "item":
                 this.on_ability_choose(this.item_window, false, "item");
@@ -157,6 +158,11 @@ export class BattleMenuScreen {
                 if (action_type === "djinni" && djinni_list[ability].status === djinn_status.STANDBY) {
                     djinn_key_name = ability;
                     ability = "set_djinn";
+                } else if (action_type === "summon") {
+                    const requirements = _.find(this.data.summons_db, {key_name: ability}).requirements;
+                    this.djinni_already_used = _.mapValues(this.djinni_already_used, (value, elem) => {
+                        return value + requirements[elem];
+                    });
                 }
                 this.description_window.hide();
                 this.choose_targets(ability, action_type, targets => {
@@ -198,7 +204,13 @@ export class BattleMenuScreen {
         } else if (this.current_char_index >= 0) {
             const next_char = party_data.members[this.current_char_index];
             if (pop_ability) {
-                this.abilities[next_char.key_name].pop();
+                const ability_info = this.abilities[next_char.key_name].pop();
+                if (ability_info.type === "summon") {
+                    const requirements = _.find(this.data.summons_db, {key_name: ability_info.key_name}).requirements;
+                    this.djinni_already_used = _.mapValues(this.djinni_already_used, (value, elem) => {
+                        return value - requirements[elem];
+                    });
+                }
             }
             if (next_char.is_paralyzed() || next_char.has_permanent_status(permanent_status.DOWNED)) {
                 this.change_char(step, pop_ability);
@@ -223,7 +235,8 @@ export class BattleMenuScreen {
     }
 
     inner_menu_cancel() {
-        if (this.current_char_index > 0 || this.abilities[party_data.members[this.current_char_index].key_name].length === 1) {
+        const char_key_name = party_data.members[this.current_char_index].key_name;
+        if (this.current_char_index > 0 || this.abilities[char_key_name].length === 1) {
             this.change_char(BACKWARD, true);
         } else {
             this.inner_horizontal_menu.close();
