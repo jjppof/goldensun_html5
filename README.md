@@ -37,3 +37,5 @@ GSHTML5 has no external dependency, so there's no `npm install` or packages on C
 - https://www.spriters-resource.com/game_boy_advance/gs/
 - https://www.spriters-resource.com/game_boy_advance/gs2/
 - Golden Sun is copyright 2001-2003 Nintendo / CAMELOT.
+
+All Golden Sun games and their media are property of Camelot Software Planning Ltd., Nintendo and/or Nintendo of America Inc., and are protected by United States and international copyright, trademark and other intellectual property laws.
