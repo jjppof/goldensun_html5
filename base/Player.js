@@ -19,7 +19,7 @@ export const permanent_status = {
     VENOM: "venom",
     EQUIP_CURSE: "equip_curse",
     HAUNT: "haunt"
-}
+};
 
 export const on_catch_status_msg = {
     [temporary_status.DELUSION]: target => `${target.name} is wrapped in delusion!`,
@@ -33,7 +33,7 @@ export const on_catch_status_msg = {
     [permanent_status.POISON]: target => `${target.name} is infected with poison!`,
     [permanent_status.VENOM]: target => `${target.name} is infected with deadly poison!`,
     [permanent_status.HAUNT]: target => `An evil spirit grips ${target.name}!`
-}
+};
 
 export const on_remove_status_msg = {
     [temporary_status.DELUSION]: target => `${target.name} sees clearly once again!`,
@@ -43,7 +43,7 @@ export const on_remove_status_msg = {
     [permanent_status.DOWNED]: target => `${target.name}'s has been revived!`,
     [permanent_status.POISON]: target => `The poison is purged from ${target.name}!`,
     [permanent_status.VENOM]: target => `The venom is purged from ${target.name}!`
-}
+};
 
 export class Player {
     constructor(key_name, name) {
@@ -72,6 +72,8 @@ export class Player {
             effect_obj.usage,
             effect_obj.on_caster,
             effect_obj.quantity_type,
+            effect_obj.relative_to_property,
+            effect_obj.effect_msg,
             this
         );
         this.effects.push(effect);

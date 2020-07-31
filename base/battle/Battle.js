@@ -10,7 +10,7 @@ import { ability_types, Ability, diminishing_ratios } from "../Ability.js";
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
 import { EnemyAI } from "./EnemyAI.js";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
-import { effect_types, Effect, effect_usages, effect_names } from "../Effect.js";
+import { effect_types, Effect, effect_usages, effect_names, effect_msg } from "../Effect.js";
 import { variation, ordered_elements, element_names } from "../../utils.js";
 import { djinni_list } from "../../initializers/djinni.js";
 import { djinn_status, Djinn } from "../Djinn.js";
@@ -422,6 +422,11 @@ export class Battle {
             damage = (damage * ratios[target_info.magnitude]) | 0;
             damage += variation();
             if (damage >= 0) {
+                target_instance.effects.forEach(effect => {
+                    if (effect.type === effect_types.DAMAGE_MODIFIER) {
+                        damage = effect.apply_effect(damage).after;
+                    }
+                });
                 await this.battle_log.add(`${target_instance.name} takes ${damage.toString()} damage!`);
             } else {
                 await this.battle_log.add(`${target_instance.name} recovers ${Math.abs(damage).toString()} HP!`);
@@ -546,6 +551,11 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     await this.wait_for_key();
                     this.on_going_effects.push(target_instance.add_effect(effect, ability, true).effect);
                     break;
+                case effect_types.DAMAGE_MODIFIER:
+                    await this.battle_log.add(effect_msg[effect.effect_msg](target_instance));
+                    await this.wait_for_key();
+                    this.on_going_effects.push(target_instance.add_effect(effect, ability, true).effect);
+                    break;
                 case effect_types.COUNTER_STRIKE: break;
                 case effect_types.FLEE: break;
                 default:
@@ -559,13 +569,15 @@ So, if a character will die after 5 turns and you land another Curse on them, it
         let effects_to_remove = [];
         for (let i = 0; i < this.on_going_effects.length; ++i) {
             const effect = this.on_going_effects[i];
-            --effect.turn_count;
-            if (effect.turn_count === 0) {
-                effect.char.remove_effect(effect);
-                effect.char.update_all();
-                effects_to_remove.push(i);
-                this.battle_log.add_remove_effect(effect);
-                await this.wait_for_key();
+            if (effect.turn_count !== undefined) {
+                --effect.turn_count;
+                if (effect.turn_count === 0) {
+                    effect.char.remove_effect(effect);
+                    effect.char.update_all();
+                    effects_to_remove.push(i);
+                    this.battle_log.add_remove_effect(effect);
+                    await this.wait_for_key();
+                }
             }
         }
         this.on_going_effects = this.on_going_effects.filter((effect, index) => {

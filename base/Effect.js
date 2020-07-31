@@ -2,15 +2,17 @@ import { variation, elements } from "../utils.js"
 
 export const effect_types = {
     MAX_HP: "max_hp",
-    HP_RECOVERY: "hp_recovery",
     MAX_PP: "max_pp",
-    PP_RECOVERY: "pp_recovery",
     ATTACK: "attack",
     DEFENSE: "defense",
     AGILITY: "agility",
     LUCK: "luck",
     POWER: "power",
     RESIST: "resist",
+    CURRENT_HP: "current_hp",
+    CURRENT_PP: "current_pp",
+    HP_RECOVERY: "hp_recovery",
+    PP_RECOVERY: "pp_recovery",
     CRITICALS: "criticals",
     COUNTER_STRIKE: "counter_strike",
     TEMPORARY_STATUS: "temporary_status",
@@ -20,8 +22,9 @@ export const effect_types = {
     FLEE: "flee",
     END_THE_ROUND: "end_the_round",
     ABILITY_POWER: "ability_power",
-    SET_DJINN: "set_djinn"
-}
+    SET_DJINN: "set_djinn",
+    DAMAGE_MODIFIER: "damage_modifier"
+};
 
 export const effect_names = {
     [effect_types.MAX_HP]: "HP",
@@ -32,14 +35,14 @@ export const effect_names = {
     [effect_types.LUCK]: "Luck",
     [effect_types.POWER]: "Power",
     [effect_types.RESIST]: "Resist"
-}
+};
 
 export const effect_operators = {
     PLUS: "plus",
     MINUS: "minus",
     TIMES: "times",
     DIVIDE: "divide"
-}
+};
 
 export const effect_usages = {
     NOT_APPLY: "not_apply",
@@ -49,13 +52,17 @@ export const effect_usages = {
     BATTLE_ROUND_END: "battle_round_end",
     PLAYER_TURN_START: "player_turn_start",
     PLAYER_TURN_END: "player_turn_end"
-}
+};
 
 export const quantity_types = {
     VALUE: "value",
     TARGET: "target",
     CASTER: "caster"
-}
+};
+
+export const effect_msg = {
+    aura: target => `A protective aura encircles ${target.name}!`
+};
 
 export class Effect {
     constructor(
@@ -74,7 +81,9 @@ export class Effect {
         damage_formula_key_name, //instead of using the operator, uses a damage formula. Return value is not used.
         usage,
         on_caster, //boolean. default false. If true, the caster will take the effect.
-        quantity_type, //default is value. If it's target or caster, the quantity arg must be an effect_type instead of a value
+        quantity_type, //default is "value". If it's target or caster, the "quantity" arg must be an effect_type instead of a value
+        relative_to_property, //make the calculation based on a player property
+        effect_msg,
         char
     ) {
         this.type = type;
@@ -94,6 +103,8 @@ export class Effect {
         this.usage = usage === undefined ? effect_usages.NOT_APPLY : usage;
         this.on_caster = on_caster === undefined ? false : on_caster;
         this.quantity_type = quantity_type === undefined ? quantity_types.VALUE : quantity_type;
+        this.relative_to_property = relative_to_property;
+        this.effect_msg = effect_msg;
         this.char = char;
     }
 
@@ -106,8 +117,8 @@ export class Effect {
         }
     }
 
-    apply_general_value(property) {
-        const before_value = this.char[property];
+    apply_general_value(property, direct_value) {
+        const before_value = property !== undefined ? this.char[property] : direct_value;
         if (Math.random() >= this.chance) {
             return {
                 before: before_value,
@@ -116,7 +127,9 @@ export class Effect {
         }
         let after_value;
         if (this.quantity_is_absolute) {
-            this.char[property] = this.quantity;
+            if (property !== undefined) {
+                this.char[property] = this.quantity;
+            }
             after_value = this.quantity;
         } else {
             let value = this.quantity;
@@ -124,8 +137,17 @@ export class Effect {
             if (this.variation_on_final_result) {
                 value += variation();
             }
-            this.char[property] = Effect.apply_operator(this.char[property], value, this.operator) | 0;
-            after_value = this.char[property];
+            let value_to_use;
+            if (property !== undefined) {
+                value_to_use = this.char[this.relative_to_property !== undefined ? this.relative_to_property : property];
+            } else {
+                value_to_use = direct_value;
+            }
+            const result = Effect.apply_operator(value_to_use, value, this.operator) | 0;
+            if (property !== undefined) {
+                this.char[property] = result;
+            }
+            after_value = result;
         }
         return {
             before: before_value,
@@ -147,7 +169,7 @@ export class Effect {
         }
     }
 
-    apply_effect() {
+    apply_effect(direct_value) {
         switch (this.type) {
             case effect_types.MAX_HP:
                 return this.apply_general_value("max_hp");
@@ -165,6 +187,10 @@ export class Effect {
                 return this.apply_general_value("agi");
             case effect_types.LUCK:
                 return this.apply_general_value("luk");
+            case effect_types.CURRENT_HP:
+                return this.apply_general_value("current_hp");
+            case effect_types.CURRENT_PP:
+                return this.apply_general_value("current_pp");
             case effect_types.POWER:
                 return this.apply_general_value(this.attribute + "_power_current");
             case effect_types.RESIST:
@@ -186,6 +212,8 @@ export class Effect {
                     this.char.remove_temporary_status(this.status_key_name);
                 }
                 return;
+            case effect_types.DAMAGE_MODIFIER:
+                return this.apply_general_value(undefined, direct_value);
         }
     }
 }
