@@ -83,7 +83,7 @@ export class BattleLog {
         }
     }
 
-    async add_remove_effect(effect) {
+    async add_recover_effect(effect) {
         const player = effect.char;
         switch(effect.type) {
             case effect_types.MAX_HP:
@@ -102,6 +102,21 @@ export class BattleLog {
             case effect_types.PERMANENT_STATUS:
                 await this.add(on_remove_status_msg[effect.status_key_name](player));
                 break;
+        }
+    }
+
+    async add_damage(damage, target) {
+        if (damage >= 0) {
+            if (target.current_hp - damage < 0) {
+                damage = target.current_hp;
+            }
+            await this.add(`${target.name} takes ${damage.toString()} damage!`);
+        } else {
+            if (target.current_hp >= target.max_hp) {
+                await this.add(`${target.name}'s HP is fully restored`);
+            } else {
+                await this.add(`${target.name} recovers ${Math.abs(damage).toString()} HP!`);
+            }
         }
     }
 

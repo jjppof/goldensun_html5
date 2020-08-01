@@ -23,7 +23,8 @@ export const effect_types = {
     END_THE_ROUND: "end_the_round",
     ABILITY_POWER: "ability_power",
     SET_DJINN: "set_djinn",
-    DAMAGE_MODIFIER: "damage_modifier"
+    DAMAGE_MODIFIER: "damage_modifier",
+    DAMAGE_INPUT: "damage_input"
 };
 
 export const effect_names = {
@@ -83,7 +84,9 @@ export class Effect {
         on_caster, //boolean. default false. If true, the caster will take the effect.
         quantity_type, //default is "value". If it's target or caster, the "quantity" arg must be an effect_type instead of a value
         relative_to_property, //make the calculation based on a player property
+        target_property, //apply calculated value in the given property
         effect_msg,
+        show_msg,
         char
     ) {
         this.type = type;
@@ -104,7 +107,9 @@ export class Effect {
         this.on_caster = on_caster === undefined ? false : on_caster;
         this.quantity_type = quantity_type === undefined ? quantity_types.VALUE : quantity_type;
         this.relative_to_property = relative_to_property;
+        this.target_property = target_property;
         this.effect_msg = effect_msg;
+        this.show_msg = show_msg === undefined ? true : show_msg;
         this.char = char;
     }
 
@@ -169,6 +174,20 @@ export class Effect {
         }
     }
 
+    check_caps(current_prop, max_prop, min_value, result_obj) {
+        if (this.char[current_prop] > this.char[max_prop]) {
+            if (result_obj) {
+                result_obj.after = this.char[max_prop];
+            }
+            this.char[current_prop] = this.char[max_prop];
+        } else if (this.char[current_prop] < min_value) {
+            if (result_obj) {
+                result_obj.after = min_value;
+            }
+            this.char[current_prop] = min_value;
+        }
+    }
+
     apply_effect(direct_value) {
         switch (this.type) {
             case effect_types.MAX_HP:
@@ -188,9 +207,13 @@ export class Effect {
             case effect_types.LUCK:
                 return this.apply_general_value("luk");
             case effect_types.CURRENT_HP:
-                return this.apply_general_value("current_hp");
+                const result_current_hp = this.apply_general_value("current_hp");
+                this.check_caps("current_hp", "max_hp", 0, result_current_hp);
+                return result_current_hp
             case effect_types.CURRENT_PP:
-                return this.apply_general_value("current_pp");
+                const result_current_pp = this.apply_general_value("current_pp");
+                this.check_caps("current_pp", "max_pp", 0, result_current_pp);
+                return result_current_pp
             case effect_types.POWER:
                 return this.apply_general_value(this.attribute + "_power_current");
             case effect_types.RESIST:
@@ -214,6 +237,18 @@ export class Effect {
                 return;
             case effect_types.DAMAGE_MODIFIER:
                 return this.apply_general_value(undefined, direct_value);
+            case effect_types.DAMAGE_INPUT:
+                const result = this.apply_general_value(undefined, direct_value);
+                this.char[this.target_property] += result.after;
+                switch(this.target_property) {
+                    case "current_hp":
+                        this.check_caps("current_hp", "max_hp", 0, result);
+                        break;
+                    case "current_pp":
+                        this.check_caps("current_pp", "max_pp", 0, result);
+                        break;
+                }
+                return result;
         }
     }
 }
