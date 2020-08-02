@@ -1729,11 +1729,253 @@
                 "operator": "times",
                 "usage": "on_use",
                 "on_caster": true,
-                "target_property": "current_hp"
+                "sub_effect": {
+                    "type": "current_hp",
+                    "operator": "plus"
+                }
             }
         ],
         "ability_type_key": "normal",
         "battle_animation_key": "sap",
+        "priority_move": false,
+        "msg_type": "unleash"
+    },{
+        "key_name": "forge",
+        "name": "Forge",
+        "description": "Boost party Attack with flame's fury.",
+        "type": "effect_only",
+        "element": "mars",
+        "battle_target": "ally",
+        "range": "all",
+        "pp_cost": 0,
+        "ability_power": 0,
+        "effects_outside_battle": false,
+        "is_battle_psynergy": true,
+        "is_field_psynergy": false,
+        "effects": [
+            {
+                "type": "attack",
+                "quantity": 1.25,
+                "operator": "times",
+                "usage": "on_use",
+                "turns_quantity": 3
+            }
+        ],
+        "ability_type_key": "normal",
+        "battle_animation_key": "forge",
+        "priority_move": false,
+        "msg_type": "unleash"
+    },{
+        "key_name": "fever",
+        "name": "Fever",
+        "description": "Wrap a foe in feverish delusion.",
+        "type": "added_damage",
+        "element": "mars",
+        "battle_target": "enemy",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 30,
+        "effects_outside_battle": false,
+        "is_battle_psynergy": true,
+        "is_field_psynergy": false,
+        "effects": [
+            {
+                "type": "temporary_status",
+                "chance": 0.1,
+                "add_status": true,
+                "status_key_name": "delusion",
+                "usage": "on_use",
+                "turns_quantity": 7
+            }
+        ],
+        "ability_type_key": "normal",
+        "battle_animation_key": "fever",
+        "priority_move": false,
+        "msg_type": "unleash"
+    },{
+        "key_name": "corona",
+        "name": "Corona",
+        "description": "Boost party Defense with a heat aura.",
+        "type": "effect_only",
+        "element": "mars",
+        "battle_target": "ally",
+        "range": "all",
+        "pp_cost": 0,
+        "ability_power": 0,
+        "effects_outside_battle": false,
+        "is_battle_psynergy": true,
+        "is_field_psynergy": false,
+        "effects": [
+            {
+                "type": "defense",
+                "quantity": 1.25,
+                "operator": "times",
+                "usage": "on_use",
+                "turns_quantity": 3
+            }
+        ],
+        "ability_type_key": "normal",
+        "battle_animation_key": "corona",
+        "priority_move": false,
+        "msg_type": "unleash"
+    },{
+        "key_name": "scorch",
+        "name": "Scorch",
+        "description": "Stun a foe with a blast attack.",
+        "type": "added_damage",
+        "element": "mars",
+        "battle_target": "enemy",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 50,
+        "effects_outside_battle": false,
+        "is_battle_psynergy": true,
+        "is_field_psynergy": false,
+        "effects": [
+            {
+                "type": "temporary_status",
+                "chance": 0.25,
+                "add_status": true,
+                "status_key_name": "stun",
+                "usage": "on_use",
+                "turns_quantity": 3
+            }
+        ],
+        "ability_type_key": "normal",
+        "battle_animation_key": "scorch",
+        "priority_move": false,
+        "msg_type": "unleash"
+    },{
+        "key_name": "gust",
+        "name": "Gust",
+        "description": "Attack with mighty wind gusts.",
+        "type": "added_damage",
+        "element": "jupiter",
+        "battle_target": "enemy",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 10,
+        "effects_outside_battle": false,
+        "is_battle_psynergy": true,
+        "is_field_psynergy": false,
+        "effects": [
+            {
+                "type": "damage_input",
+                "quantity": -1.0,
+                "operator": "times",
+                "usage": "on_use",
+                "on_caster": false,
+                "effect_msg": "double",
+                "sub_effect": {
+                    "type": "current_hp",
+                    "operator": "plus",
+                    "chance": 0.5
+                }
+            }
+        ],
+        "ability_type_key": "normal",
+        "battle_animation_key": "gust",
+        "priority_move": false,
+        "msg_type": "unleash"
+    },{
+        "key_name": "breeze",
+        "name": "Breeze",
+        "description": "Boost party Resistance.",
+        "type": "effect_only",
+        "element": "jupiter",
+        "battle_target": "ally",
+        "range": "all",
+        "pp_cost": 0,
+        "ability_power": 0,
+        "effects_outside_battle": false,
+        "is_battle_psynergy": true,
+        "is_field_psynergy": false,
+        "effects": [
+            {
+                "type": "resist",
+                "quantity": 40,
+                "operator": "plus",
+                "usage": "on_use",
+                "attribute": "venus",
+                "turns_quantity": 3
+            },{
+                "type": "resist",
+                "quantity": 40,
+                "operator": "plus",
+                "usage": "on_use",
+                "attribute": "mercury",
+                "turns_quantity": 3
+            },{
+                "type": "resist",
+                "quantity": 40,
+                "operator": "plus",
+                "usage": "on_use",
+                "attribute": "mars",
+                "turns_quantity": 3
+            },{
+                "type": "resist",
+                "quantity": 40,
+                "operator": "plus",
+                "usage": "on_use",
+                "attribute": "jupiter",
+                "turns_quantity": 3
+            }
+        ],
+        "ability_type_key": "normal",
+        "battle_animation_key": "breeze",
+        "priority_move": false,
+        "msg_type": "unleash"
+    },{
+        "key_name": "zephyr",
+        "name": "Zephyr",
+        "description": "Boost party Agility with swift wind.",
+        "type": "effect_only",
+        "element": "jupiter",
+        "battle_target": "ally",
+        "range": "all",
+        "pp_cost": 0,
+        "ability_power": 0,
+        "effects_outside_battle": false,
+        "is_battle_psynergy": true,
+        "is_field_psynergy": false,
+        "effects": [
+            {
+                "type": "agility",
+                "quantity": 1.5,
+                "operator": "times",
+                "usage": "on_use",
+                "turns_quantity": 1
+            }
+        ],
+        "ability_type_key": "normal",
+        "battle_animation_key": "zephyr",
+        "priority_move": false,
+        "msg_type": "unleash"
+    },{
+        "key_name": "smog",
+        "name": "Smog",
+        "description": "Veil a foe's vision in smoke.",
+        "type": "added_damage",
+        "element": "jupiter",
+        "battle_target": "enemy",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 60,
+        "effects_outside_battle": false,
+        "is_battle_psynergy": true,
+        "is_field_psynergy": false,
+        "effects": [
+            {
+                "type": "temporary_status",
+                "chance": 0.1,
+                "add_status": true,
+                "status_key_name": "delusion",
+                "usage": "on_use",
+                "turns_quantity": 7
+            }
+        ],
+        "ability_type_key": "normal",
+        "battle_animation_key": "smog",
         "priority_move": false,
         "msg_type": "unleash"
     }

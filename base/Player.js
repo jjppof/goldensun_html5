@@ -73,7 +73,7 @@ export class Player {
             effect_obj.on_caster,
             effect_obj.quantity_type,
             effect_obj.relative_to_property,
-            effect_obj.target_property,
+            effect_obj.sub_effect,
             effect_obj.effect_msg,
             effect_obj.show_msg,
             this

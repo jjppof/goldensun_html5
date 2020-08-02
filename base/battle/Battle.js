@@ -447,11 +447,17 @@ export class Battle {
                     const player = effect_obj.on_caster ? action.caster : target_instance;
                     const di_effect = player.add_effect(effect_obj, ability).effect;
                     const effect_result = di_effect.apply_effect(damage);
-                    if (di_effect.target_property === "current_hp") {
-                        const effect_damage = effect_result.after - effect_result.before;
-                        await this.battle_log.add_damage(effect_damage, player);
-                        this.battle_menu.chars_status_window.update_chars_info();
-                        await this.wait_for_key();
+                    if (di_effect.sub_effect.type === effect_types.CURRENT_HP) {
+                        const effect_damage = effect_result.before - effect_result.after;
+                        if (effect_damage !== 0) {
+                            if (di_effect.effect_msg) {
+                                await this.battle_log.add(effect_msg[di_effect.effect_msg](target_instance));
+                            } else {
+                                await this.battle_log.add_damage(effect_damage, player);
+                            }
+                            this.battle_menu.chars_status_window.update_chars_info();
+                            await this.wait_for_key();
+                        }
                         await this.check_downed(player);
                     }
                     player.remove_effect(di_effect);
@@ -544,7 +550,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     break;
                 case effect_types.CURRENT_HP:
                     effect_result = target_instance.add_effect(effect, ability, true);
-                    if (effect.show_msg) {
+                    if (effect_result.effect.show_msg) {
                         const damage = effect_result.changes.before - effect_result.changes.after;
                         await this.battle_log.add_damage(damage, target_instance);
                         this.battle_menu.chars_status_window.update_chars_info();
@@ -567,7 +573,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 case effect_types.RESIST:
                     effect_result = target_instance.add_effect(effect, ability, true);
                     this.on_going_effects.push(effect_result.effect);
-                    if (effect.show_msg) {
+                    if (effect_result.effect.show_msg) {
                         const diff = effect_result.changes.after - effect_result.changes.before;
                         const text = diff >= 0 ? "rises" : "drops";
                         let element_info = "";
@@ -580,23 +586,17 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     }
                     break;
                 case effect_types.END_THE_ROUND:
-                    if (effect.show_msg) {
-                        await this.battle_log.add(`Everybody is resting!`);
-                        await this.wait_for_key();
-                    }
+                    await this.battle_log.add(`Everybody is resting!`);
+                    await this.wait_for_key();
                     return true;
                 case effect_types.TURNS:
-                    if (effect.show_msg) {
-                        await this.battle_log.add(`${action.caster.name} readies for action!`);
-                        await this.wait_for_key();
-                    }
+                    await this.battle_log.add(`${action.caster.name} readies for action!`);
+                    await this.wait_for_key();
                     this.on_going_effects.push(target_instance.add_effect(effect, ability, true).effect);
                     break;
                 case effect_types.DAMAGE_MODIFIER:
-                    if (effect.show_msg) {
-                        await this.battle_log.add(effect_msg[effect.effect_msg](target_instance));
-                        await this.wait_for_key();
-                    }
+                    await this.battle_log.add(effect_msg[effect.effect_msg](target_instance));
+                    await this.wait_for_key();
                     this.on_going_effects.push(target_instance.add_effect(effect, ability, true).effect);
                     break;
                 case effect_types.COUNTER_STRIKE: break;

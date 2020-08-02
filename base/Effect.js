@@ -27,6 +27,17 @@ export const effect_types = {
     DAMAGE_INPUT: "damage_input"
 };
 
+export const effect_type_stat = {
+    [effect_types.MAX_HP]: "max_hp",
+    [effect_types.MAX_PP]: "max_pp",
+    [effect_types.ATTACK]: "atk",
+    [effect_types.DEFENSE]: "def",
+    [effect_types.AGILITY]: "agi",
+    [effect_types.LUCK]: "luk",
+    [effect_types.CURRENT_HP]: "current_hp",
+    [effect_types.CURRENT_PP]: "current_pp"
+}
+
 export const effect_names = {
     [effect_types.MAX_HP]: "HP",
     [effect_types.MAX_PP]: "PP",
@@ -62,7 +73,8 @@ export const quantity_types = {
 };
 
 export const effect_msg = {
-    aura: target => `A protective aura encircles ${target.name}!`
+    aura: target => `A protective aura encircles ${target.name}!`,
+    double: () => `And it got doubled!`,
 };
 
 export class Effect {
@@ -84,7 +96,7 @@ export class Effect {
         on_caster, //boolean. default false. If true, the caster will take the effect.
         quantity_type, //default is "value". If it's target or caster, the "quantity" arg must be an effect_type instead of a value
         relative_to_property, //make the calculation based on a player property
-        target_property, //apply calculated value in the given property
+        sub_effect,
         effect_msg,
         show_msg,
         char
@@ -107,10 +119,13 @@ export class Effect {
         this.on_caster = on_caster === undefined ? false : on_caster;
         this.quantity_type = quantity_type === undefined ? quantity_types.VALUE : quantity_type;
         this.relative_to_property = relative_to_property;
-        this.target_property = target_property;
         this.effect_msg = effect_msg;
         this.show_msg = show_msg === undefined ? true : show_msg;
         this.char = char;
+        this.sub_effect = sub_effect;
+        if (this.sub_effect !== undefined) {
+            this.init_sub_effect();
+        }
     }
 
     static apply_operator(a, b, operator) {
@@ -120,6 +135,16 @@ export class Effect {
             case effect_operators.TIMES: return a * b;
             case effect_operators.DIVIDE: return a / b;
         }
+    }
+
+    init_sub_effect() {
+        this.sub_effect.quantity_is_absolute = this.sub_effect.quantity_is_absolute === undefined ? false : this.sub_effect.quantity_is_absolute;
+        this.sub_effect.rate = this.sub_effect.rate === undefined ? 1.0 : this.sub_effect.rate;
+        this.sub_effect.chance = this.sub_effect.chance === undefined ? 1.0 : this.sub_effect.chance;
+        this.sub_effect.attribute = this.sub_effect.attribute === undefined ? elements.NO_ELEMENT : this.sub_effect.attribute;
+        this.sub_effect.variation_on_final_result = this.sub_effect.variation_on_final_result === undefined ? false : this.sub_effect.variation_on_final_result;
+        this.sub_effect.usage = this.sub_effect.usage === undefined ? effect_usages.NOT_APPLY : this.sub_effect.usage;
+        this.sub_effect.on_caster = this.sub_effect.on_caster === undefined ? false : this.sub_effect.on_caster;
     }
 
     apply_general_value(property, direct_value) {
@@ -160,6 +185,21 @@ export class Effect {
         };
     }
 
+    apply_subeffect(property, value) {
+        if (Math.random() < this.sub_effect.chance) {
+            if (this.sub_effect.quantity_is_absolute) {
+                this.char[property] = value;
+            } else {
+                value *= this.sub_effect.rate;
+                if (this.sub_effect.variation_on_final_result) {
+                    value += variation();
+                }
+                this.char[property] = Effect.apply_operator(this.char[property], value, this.sub_effect.operator) | 0;
+            }
+        }
+        return this.char[property];
+    }
+
     static preview_value_applied(effect_obj, base_value) {
         if (effect_obj.quantity_is_absolute) {
             return effect_obj.quantity;
@@ -191,21 +231,16 @@ export class Effect {
     apply_effect(direct_value) {
         switch (this.type) {
             case effect_types.MAX_HP:
-                return this.apply_general_value("max_hp");
+            case effect_types.MAX_PP:
+            case effect_types.ATTACK:
+            case effect_types.DEFENSE:
+            case effect_types.AGILITY:
+            case effect_types.LUCK:
+                return this.apply_general_value(effect_type_stat[this.type]);
             case effect_types.HP_RECOVERY:
                 return this.apply_general_value("hp_recovery");
-            case effect_types.MAX_PP:
-                return this.apply_general_value("max_pp");
             case effect_types.PP_RECOVERY:
                 return this.apply_general_value("pp_recovery");
-            case effect_types.ATTACK:
-                return this.apply_general_value("atk");
-            case effect_types.DEFENSE:
-                return this.apply_general_value("def");
-            case effect_types.AGILITY:
-                return this.apply_general_value("agi");
-            case effect_types.LUCK:
-                return this.apply_general_value("luk");
             case effect_types.CURRENT_HP:
                 const result_current_hp = this.apply_general_value("current_hp");
                 this.check_caps("current_hp", "max_hp", 0, result_current_hp);
@@ -238,13 +273,15 @@ export class Effect {
             case effect_types.DAMAGE_MODIFIER:
                 return this.apply_general_value(undefined, direct_value);
             case effect_types.DAMAGE_INPUT:
-                const result = this.apply_general_value(undefined, direct_value);
-                this.char[this.target_property] += result.after;
-                switch(this.target_property) {
-                    case "current_hp":
+                let result = this.apply_general_value(undefined, direct_value);
+                const stat = effect_type_stat[this.sub_effect.type];
+                result.before = this.char[stat];
+                result.after = this.apply_subeffect(stat, result.after);
+                switch(this.sub_effect.type) {
+                    case effect_types.CURRENT_HP:
                         this.check_caps("current_hp", "max_hp", 0, result);
                         break;
-                    case "current_pp":
+                    case effect_types.CURRENT_PP:
                         this.check_caps("current_pp", "max_pp", 0, result);
                         break;
                 }
