@@ -348,10 +348,8 @@ export class Battle {
         if (ability.type === ability_types.UTILITY) {
             await this.wait_for_key();
         }
-        if ([ability_types.ADDED_DAMAGE, ability_types.MULTIPLIER, ability_types.BASE_DAMAGE, ability_types.SUMMON, ability_types.HEALING].includes(ability.type)) {
-            await this.hp_related_abilities(action, ability);
-        } else if ([ability_types.PSYNERGY_DRAIN, ability_types.PSYNERGY_RECOVERY].includes(ability.type)) {
-            await this.pp_related_abilities(action, ability);
+        if (![ability_types.UTILITY, ability_types.EFFECT_ONLY].includes(ability.type)) {
+            await this.apply_damage(action, ability);
         }
         for (let i = 0; i < ability.effects.length; ++i) {
             const effect = ability.effects[i];
@@ -383,7 +381,7 @@ export class Battle {
         this.check_phases();
     }
 
-    async hp_related_abilities(action, ability) {
+    async apply_damage(action, ability) {
         let increased_crit;
         if (ability.has_critical) {
             increased_crit = action.caster.effects.filter(effect => effect.type === effect_types.CRITICALS).reduce((acc, effect) => {
@@ -424,6 +422,9 @@ export class Battle {
                         const djinn_used = _.sum(_.values(_.find(this.data.summons_db, {key_name: ability.key_name}).requirements));
                         damage = BattleFormulas.summon_damage(target_instance, ability.ability_power, djinn_used);
                         break;
+                    case ability_types.DIRECT_DAMAGE:
+                        damage = ability.ability_power;
+                        break;
                 }
             }
             const ratios = Ability.get_diminishing_ratios(ability.type, ability.use_diminishing_ratio);
@@ -436,8 +437,10 @@ export class Battle {
                     }
                 });
             }
-            await this.battle_log.add_damage(damage, target_instance);
-            target_instance.current_hp = _.clamp(target_instance.current_hp - damage, 0, target_instance.max_hp);
+            await this.battle_log.add_damage(damage, target_instance, ability.affects_pp);
+            const current_property = ability.affects_pp ? "current_pp" : "current_hp";
+            const max_property = ability.affects_pp ? "max_pp" : "max_hp";
+            target_instance.current_hp = _.clamp(target_instance[current_property] - damage, 0, target_instance[max_property]);
             this.battle_menu.chars_status_window.update_chars_info();
             await this.wait_for_key();
             await this.check_downed(target_instance);
@@ -447,13 +450,13 @@ export class Battle {
                     const player = effect_obj.on_caster ? action.caster : target_instance;
                     const di_effect = player.add_effect(effect_obj, ability).effect;
                     const effect_result = di_effect.apply_effect(damage);
-                    if (di_effect.sub_effect.type === effect_types.CURRENT_HP) {
+                    if ([effect_types.CURRENT_HP, effect_types.CURRENT_PP].includes(di_effect.sub_effect.type)) {
                         const effect_damage = effect_result.before - effect_result.after;
                         if (effect_damage !== 0) {
                             if (di_effect.effect_msg) {
                                 await this.battle_log.add(effect_msg[di_effect.effect_msg](target_instance));
                             } else {
-                                await this.battle_log.add_damage(effect_damage, player);
+                                await this.battle_log.add_damage(effect_damage, player, di_effect.sub_effect.type === effect_types.CURRENT_PP);
                             }
                             this.battle_menu.chars_status_window.update_chars_info();
                             await this.wait_for_key();
@@ -463,29 +466,6 @@ export class Battle {
                     player.remove_effect(di_effect);
                 }
             }
-        }
-    }
-
-    async pp_related_abilities(action, ability) {
-        for (let i = 0; i < action.targets.length; ++i) {
-            const target_info = action.targets[i];
-            if (target_info.magnitude === null) continue;
-            const target_instance = target_info.target.instance;
-            if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
-            let quantity = 0;
-            switch(ability.type) {
-                case ability_types.PSYNERGY_RECOVERY:
-                    quantity = BattleFormulas.heal_ability(action.caster, ability.ability_power, ability.element);
-                    break;
-                case ability_types.PSYNERGY_DRAIN:
-                    quantity = -BattleFormulas.psynergy_damage(action.caster, target_instance, ability.ability_power, ability.element);
-                    break;
-            }
-            const ratios = Ability.get_diminishing_ratios(ability.type, ability.use_diminishing_ratio);
-            quantity = (quantity * ratios[target_info.magnitude]) | 0;
-            quantity += variation();
-            target_instance.current_pp = _.clamp(target_instance.current_pp + quantity, 0, target_instance.max_pp);
-            this.battle_menu.chars_status_window.update_chars_info();
         }
     }
 

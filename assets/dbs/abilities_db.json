@@ -924,7 +924,7 @@
         "key_name": "drain",
         "name": "Drain",
         "description": "Drain enemy's HP into yourself.",
-        "type": "effect_only",
+        "type": "direct_damage",
         "element": "jupiter",
         "battle_target": "enemy",
         "range": 1,
@@ -935,12 +935,15 @@
         "is_field_psynergy": false,
         "effects": [
             {
-                "type": "current_hp",
-                "quantity": "current_hp",
-                "quantity_type": "target",
-                "damage_formula_key_name": "drain",
+                "type": "damage_input",
+                "quantity": 1.0,
+                "operator": "times",
+                "usage": "on_use",
                 "on_caster": true,
-                "usage": "on_use"
+                "sub_effect": {
+                    "type": "current_hp",
+                    "operator": "plus"
+                }
             }
         ],
         "ability_type_key": "normal",
@@ -951,7 +954,7 @@
         "key_name": "psy_drain",
         "name": "Psy Drain",
         "description": "Drain enemy's PP into yourself.",
-        "type": "effect_only",
+        "type": "direct_damage",
         "element": "jupiter",
         "battle_target": "enemy",
         "range": 1,
@@ -960,14 +963,18 @@
         "effects_outside_battle": false,
         "is_battle_psynergy": true,
         "is_field_psynergy": false,
+        "affects_pp": true,
         "effects": [
             {
-                "type": "current_pp",
-                "quantity": "current_pp",
-                "quantity_type": "target",
-                "damage_formula_key_name": "drain",
+                "type": "damage_input",
+                "quantity": 1.0,
+                "operator": "times",
+                "usage": "on_use",
                 "on_caster": true,
-                "usage": "on_use"
+                "sub_effect": {
+                    "type": "current_pp",
+                    "operator": "plus"
+                }
             }
         ],
         "ability_type_key": "normal",

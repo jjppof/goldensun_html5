@@ -105,17 +105,20 @@ export class BattleLog {
         }
     }
 
-    async add_damage(damage, target) {
+    async add_damage(damage, target, pp_damage = false) {
+        const stat_str = pp_damage ? "PP" : "HP";
+        const current_property = pp_damage ? "current_pp" : "current_hp";
+        const max_property = pp_damage ? "max_pp" : "max_hp";
         if (damage >= 0) {
-            if (target.current_hp - damage < 0) {
-                damage = target.current_hp;
+            if (target[current_property] - damage < 0) {
+                damage = target[current_property];
             }
             await this.add(`${target.name} takes ${damage.toString()} damage!`);
         } else {
-            if (target.current_hp >= target.max_hp) {
-                await this.add(`${target.name}'s HP is fully restored`);
+            if (target[current_property] >= target[max_property]) {
+                await this.add(`${target.name}'s ${stat_str} is fully restored`);
             } else {
-                await this.add(`${target.name} recovers ${Math.abs(damage).toString()} HP!`);
+                await this.add(`${target.name} recovers ${Math.abs(damage).toString()} ${stat_str}!`);
             }
         }
     }

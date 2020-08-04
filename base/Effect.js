@@ -66,12 +66,6 @@ export const effect_usages = {
     PLAYER_TURN_END: "player_turn_end"
 };
 
-export const quantity_types = {
-    VALUE: "value",
-    TARGET: "target",
-    CASTER: "caster"
-};
-
 export const effect_msg = {
     aura: target => `A protective aura encircles ${target.name}!`,
     double: () => `And it got doubled!`,
@@ -94,7 +88,6 @@ export class Effect {
         damage_formula_key_name, //instead of using the operator, uses a damage formula. Return value is not used.
         usage,
         on_caster, //boolean. default false. If true, the caster will take the effect.
-        quantity_type, //default is "value". If it's target or caster, the "quantity" arg must be an effect_type instead of a value
         relative_to_property, //make the calculation based on a player property
         sub_effect,
         effect_msg,
@@ -117,7 +110,6 @@ export class Effect {
         this.damage_formula_key_name = damage_formula_key_name;
         this.usage = usage === undefined ? effect_usages.NOT_APPLY : usage;
         this.on_caster = on_caster === undefined ? false : on_caster;
-        this.quantity_type = quantity_type === undefined ? quantity_types.VALUE : quantity_type;
         this.relative_to_property = relative_to_property;
         this.effect_msg = effect_msg;
         this.show_msg = show_msg === undefined ? true : show_msg;

@@ -71,7 +71,6 @@ export class Player {
             effect_obj.damage_formula_key_name,
             effect_obj.usage,
             effect_obj.on_caster,
-            effect_obj.quantity_type,
             effect_obj.relative_to_property,
             effect_obj.sub_effect,
             effect_obj.effect_msg,
