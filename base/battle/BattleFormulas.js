@@ -106,7 +106,7 @@ export class BattleFormulas {
             case permanent_status.POISON: poison_factor = 1; break;
             case permanent_status.VENOM: poison_factor = 2; break;
         }
-        return (poison_factor * player.max_hp)/10;
+        return ((poison_factor * player.max_hp)/10) | 0;
     }
 
     static summon_power(djinn_number) {

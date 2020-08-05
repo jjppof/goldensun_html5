@@ -6,7 +6,7 @@ import { BattleLog } from "./BattleLog.js";
 import { BattleMenuScreen } from "../../screens/battle_menus.js";
 import { get_enemy_instance } from "../Enemy.js";
 import { abilities_list } from "../../initializers/abilities.js";
-import { ability_types, Ability, diminishing_ratios } from "../Ability.js";
+import { ability_types, Ability, diminishing_ratios, ability_categories } from "../Ability.js";
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
 import { EnemyAI } from "./EnemyAI.js";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
@@ -314,6 +314,12 @@ export class Battle {
         }
         let djinn_name = action.djinn_key_name ? djinni_list[action.djinn_key_name].name : undefined;
         await this.battle_log.add_ability(action.caster, ability, item_name, djinn_name);
+        if (action.caster.has_temporary_status(temporary_status.SEAL)) {
+            await this.battle_log.add(`But the Psynergy was blocked!`);
+            await this.wait_for_key();
+            this.check_phases();
+            return;
+        }
         if (ability.pp_cost > action.caster.current_pp) {
             await this.battle_log.add(`... But doesn't have enough PP!`);
             await this.wait_for_key();
@@ -322,13 +328,13 @@ export class Battle {
         } else {
             action.caster.current_pp -= ability.pp_cost;
         }
-        if (action.type === "djinni") {
+        if (ability.ability_category === ability_categories.DJINN) {
             if (ability.effects.some(effect => effect.type === effect_types.SET_DJINN)) {
                 djinni_list[action.djinn_key_name].set_status(djinn_status.SET, action.caster);
             } else {
                 djinni_list[action.key_name].set_status(djinn_status.STANDBY, action.caster);
             }
-        } else if (action.type === "summon") {
+        } else if (ability.ability_category === ability_categories.SUMMON) {
             const requirements = _.find(this.data.summons_db, {key_name: ability.key_name}).requirements;
             const standby_djinni = Djinn.get_standby_djinni(MainChar.get_active_players(MAX_CHARS_IN_BATTLE));
             const has_available_djinni = _.every(requirements, (requirement, element) => {
@@ -361,7 +367,7 @@ export class Battle {
                 return;
             }
         }
-        if (action.type === "summon") {
+        if (ability.ability_category === ability_categories.SUMMON) {
             const requirements = _.find(this.data.summons_db, {key_name: ability.key_name}).requirements;
             for (let i = 0; i < ordered_elements.length; ++i) {
                 const element = ordered_elements[i];
@@ -377,6 +383,19 @@ export class Battle {
                     await this.wait_for_key();
                 }
             }
+        }
+        const poison_status = action.caster.is_poisoned();
+        if (poison_status) {
+            let damage = BattleFormulas.battle_poison_damage(action.caster, poison_status);
+            if (damage > action.caster.current_hp) {
+                damage = action.caster.current_hp;
+            }
+            action.caster.current_hp = _.clamp(action.caster.current_hp - damage, 0, action.caster.max_hp);
+            const poison_name = poison_status === permanent_status.POISON ? "poison" : "venom";
+            await this.battle_log.add(`The ${poison_name} does ${damage.toString()} damage to ${action.caster.name}!`);
+            this.battle_menu.chars_status_window.update_chars_info();
+            await this.wait_for_key();
+            await this.check_downed(action.caster);
         }
         this.check_phases();
     }

@@ -64,7 +64,7 @@ export class ItemWindow {
             if (!this.window_open || !this.window_active) return;
             this.data.enter_input.halt();
             const this_item = items_list[this.items[this.item_index].key_name];
-            if (this_item.use_type !== use_types.NO_USE && abilities_list[this_item.use_ability].is_battle_psynergy) {
+            if (this_item.use_type !== use_types.NO_USE && abilities_list[this_item.use_ability].is_battle_ability) {
                 this.choosen_ability = this_item.use_ability;
                 this.item_obj = this.items[this.item_index];
                 this.hide(this.close_callback);
@@ -158,7 +158,7 @@ export class ItemWindow {
                 this.other_sprites.push(item_count);
             }
             let color = numbers.DEFAULT_FONT_COLOR;
-            if (item.use_type === use_types.NO_USE || !abilities_list[item.use_ability].is_battle_psynergy) {
+            if (item.use_type === use_types.NO_USE || !abilities_list[item.use_ability].is_battle_ability) {
                 color = numbers.YELLOW_FONT_COLOR;
             }
             const name = this.base_window.set_text_in_position(item.name, ITEM_NAME_X, base_y, false, false, color);
@@ -177,7 +177,7 @@ export class ItemWindow {
     mount_window() {
         this.all_items = this.char.items;
         this.all_items = _.sortBy(this.all_items, [item_obj => {
-            return items_list[item_obj.key_name].use_type === use_types.NO_USE || !abilities_list[items_list[item_obj.key_name].use_ability].is_battle_psynergy;
+            return items_list[item_obj.key_name].use_type === use_types.NO_USE || !abilities_list[items_list[item_obj.key_name].use_ability].is_battle_ability;
         }]);
         this.set_page_number();
         this.base_window.set_page_indicator(this.page_number, this.page_index);

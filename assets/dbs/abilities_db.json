@@ -10,10 +10,10 @@
         "pp_cost": 0,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "normal",
         "battle_animation_key": "attack",
         "has_critical": true,
         "crit_mult_factor": 1.25,
@@ -32,10 +32,10 @@
         "pp_cost": 0,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "normal",
         "battle_animation_key": "no_animation",
         "msg_type": "defend"
     },{
@@ -49,13 +49,13 @@
         "pp_cost": 0,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [{
             "type": "set_djinn",
             "usage": "on_use"
         }],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "no_animation",
         "msg_type": "set_djinn"
     },{
@@ -69,10 +69,10 @@
         "pp_cost": 2,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": false,
+        "is_battle_ability": false,
         "is_field_psynergy": true,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "normal",
         "battle_animation_key": "no_animation",
         "priority_move": false,
         "msg_type": "no_msg"
@@ -87,10 +87,10 @@
         "pp_cost": 6,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": false,
+        "is_battle_ability": false,
         "is_field_psynergy": true,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "normal",
         "battle_animation_key": "no_animation",
         "priority_move": false,
         "msg_type": "no_msg"
@@ -105,10 +105,10 @@
         "pp_cost": 3,
         "ability_power": 70,
         "effects_outside_battle": true,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "cure",
         "priority_move": false,
         "msg_type": "cast"
@@ -123,10 +123,10 @@
         "pp_cost": 7,
         "ability_power": 150,
         "effects_outside_battle": true,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "cure_well",
         "priority_move": false,
         "msg_type": "cast"
@@ -141,10 +141,10 @@
         "pp_cost": 10,
         "ability_power": 300,
         "effects_outside_battle": true,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "potent_cure",
         "priority_move": false,
         "msg_type": "cast"
@@ -159,10 +159,10 @@
         "pp_cost": 15,
         "ability_power": 0,
         "effects_outside_battle": true,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "revive",
         "priority_move": false,
         "msg_type": "cast"
@@ -177,10 +177,10 @@
         "pp_cost": 4,
         "ability_power": 15,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "flare",
         "priority_move": false,
         "msg_type": "cast"
@@ -195,10 +195,10 @@
         "pp_cost": 4,
         "ability_power": 12,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "quake",
         "priority_move": false,
         "msg_type": "cast"
@@ -213,10 +213,10 @@
         "pp_cost": 5,
         "ability_power": 40,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "spire",
         "priority_move": false,
         "msg_type": "cast"
@@ -231,10 +231,10 @@
         "pp_cost": 6,
         "ability_power": 45,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "volcano",
         "priority_move": false,
         "msg_type": "cast"
@@ -249,10 +249,10 @@
         "pp_cost": 0,
         "ability_power": 50,
         "effects_outside_battle": true,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "item",
         "battle_animation_key": "ply",
         "priority_move": false,
         "msg_type": "use"
@@ -267,7 +267,7 @@
         "pp_cost": 0,
         "ability_power": 0,
         "effects_outside_battle": true,
-        "is_battle_psynergy": false,
+        "is_battle_ability": false,
         "is_field_psynergy": false,
         "effects": [{
             "type": "max_pp",
@@ -276,7 +276,7 @@
             "variation_on_final_result": true,
             "usage": "on_use"
         }],
-        "ability_type_key": "normal",
+        "ability_category": "item",
         "battle_animation_key": "",
         "priority_move": false,
         "msg_type": "use"
@@ -291,10 +291,10 @@
         "pp_cost": 5,
         "ability_power": 20,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": true,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "whirlwind",
         "priority_move": false,
         "msg_type": "cast"
@@ -309,10 +309,10 @@
         "pp_cost": 5,
         "ability_power": 20,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": true,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "frost",
         "priority_move": false,
         "msg_type": "cast"
@@ -327,10 +327,10 @@
         "pp_cost": 7,
         "ability_power": 35,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "ragnarok",
         "priority_move": false,
         "msg_type": "cast"
@@ -345,10 +345,10 @@
         "pp_cost": 7,
         "ability_power": 35,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "earthquake",
         "priority_move": false,
         "msg_type": "cast"
@@ -363,10 +363,10 @@
         "pp_cost": 15,
         "ability_power": 65,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "quake_sphere",
         "priority_move": false,
         "msg_type": "cast"
@@ -381,10 +381,10 @@
         "pp_cost": 13,
         "ability_power": 85,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "clay_spire",
         "priority_move": false,
         "msg_type": "cast"
@@ -399,10 +399,10 @@
         "pp_cost": 7,
         "ability_power": 40,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "gaia",
         "priority_move": false,
         "msg_type": "cast"
@@ -417,10 +417,10 @@
         "pp_cost": 17,
         "ability_power": 100,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "mother_gaia",
         "priority_move": false,
         "msg_type": "cast"
@@ -435,10 +435,10 @@
         "pp_cost": 6,
         "ability_power": 33,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "heat_wave",
         "priority_move": false,
         "msg_type": "cast"
@@ -453,10 +453,10 @@
         "pp_cost": 7,
         "ability_power": 40,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "flare_wall",
         "priority_move": false,
         "msg_type": "cast"
@@ -471,10 +471,10 @@
         "pp_cost": 12,
         "ability_power": 80,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "flare_storm",
         "priority_move": false,
         "msg_type": "cast"
@@ -489,10 +489,10 @@
         "pp_cost": 6,
         "ability_power": 35,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "fire",
         "priority_move": false,
         "msg_type": "cast"
@@ -507,10 +507,10 @@
         "pp_cost": 12,
         "ability_power": 65,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "fireball",
         "priority_move": false,
         "msg_type": "cast"
@@ -525,10 +525,10 @@
         "pp_cost": 14,
         "ability_power": 90,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "eruption",
         "priority_move": false,
         "msg_type": "cast"
@@ -543,7 +543,7 @@
         "pp_cost": 3,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -554,7 +554,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "guard",
         "priority_move": false,
         "msg_type": "cast"
@@ -569,7 +569,7 @@
         "pp_cost": 5,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -580,7 +580,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "protect",
         "priority_move": false,
         "msg_type": "cast"
@@ -595,7 +595,7 @@
         "pp_cost": 4,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -606,7 +606,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "impair",
         "priority_move": false,
         "msg_type": "cast"
@@ -621,10 +621,10 @@
         "pp_cost": 14,
         "ability_power": 80,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "tornado",
         "priority_move": false,
         "msg_type": "cast"
@@ -639,10 +639,10 @@
         "pp_cost": 6,
         "ability_power": 35,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "ray",
         "priority_move": false,
         "msg_type": "cast"
@@ -657,10 +657,10 @@
         "pp_cost": 10,
         "ability_power": 65,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "storm_ray",
         "priority_move": false,
         "msg_type": "cast"
@@ -675,10 +675,10 @@
         "pp_cost": 8,
         "ability_power": 45,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "plasma",
         "priority_move": false,
         "msg_type": "cast"
@@ -693,10 +693,10 @@
         "pp_cost": 18,
         "ability_power": 100,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "shine_plasma",
         "priority_move": false,
         "msg_type": "cast"
@@ -711,7 +711,7 @@
         "pp_cost": 7,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -722,7 +722,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "Impact",
         "priority_move": false,
         "msg_type": "cast"
@@ -737,7 +737,7 @@
         "pp_cost": 12,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -748,7 +748,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "high_impact",
         "priority_move": false,
         "msg_type": "cast"
@@ -763,7 +763,7 @@
         "pp_cost": 5,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -775,7 +775,7 @@
                 "turns_quantity": 7
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "sleep",
         "priority_move": false,
         "msg_type": "cast"
@@ -790,10 +790,10 @@
         "pp_cost": 5,
         "ability_power": 32,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "astral_blast",
         "priority_move": false,
         "msg_type": "cast"
@@ -808,7 +808,7 @@
         "pp_cost": 4,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -841,7 +841,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "weaken",
         "priority_move": false,
         "msg_type": "cast"
@@ -856,7 +856,7 @@
         "pp_cost": 6,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -889,7 +889,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "enfeeble",
         "priority_move": false,
         "msg_type": "cast"
@@ -904,7 +904,7 @@
         "pp_cost": 4,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -916,7 +916,7 @@
                 "turns_quantity": 7
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "delude",
         "priority_move": false,
         "msg_type": "cast"
@@ -931,7 +931,7 @@
         "pp_cost": 3,
         "ability_power": 50,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -946,7 +946,7 @@
                 }
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "drain",
         "priority_move": false,
         "msg_type": "cast"
@@ -961,7 +961,7 @@
         "pp_cost": 0,
         "ability_power": 15,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "affects_pp": true,
         "effects": [
@@ -977,7 +977,7 @@
                 }
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "psy_drain",
         "priority_move": false,
         "msg_type": "cast"
@@ -992,7 +992,7 @@
         "pp_cost": 3,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1025,7 +1025,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "ward",
         "priority_move": false,
         "msg_type": "cast"
@@ -1040,7 +1040,7 @@
         "pp_cost": 5,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1073,7 +1073,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "resist",
         "priority_move": false,
         "msg_type": "cast"
@@ -1088,10 +1088,10 @@
         "pp_cost": 4,
         "ability_power": 25,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "slash",
         "priority_move": false,
         "msg_type": "cast"
@@ -1106,10 +1106,10 @@
         "pp_cost": 9,
         "ability_power": 50,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "wind_slash",
         "priority_move": false,
         "msg_type": "cast"
@@ -1124,10 +1124,10 @@
         "pp_cost": 20,
         "ability_power": 120,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "sonic_slash",
         "priority_move": false,
         "msg_type": "cast"
@@ -1142,10 +1142,10 @@
         "pp_cost": 7,
         "ability_power": 36,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "planet_diver",
         "priority_move": false,
         "msg_type": "cast"
@@ -1160,10 +1160,10 @@
         "pp_cost": 4,
         "ability_power": 25,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": true,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "growth",
         "priority_move": false,
         "msg_type": "cast"
@@ -1178,10 +1178,10 @@
         "pp_cost": 10,
         "ability_power": 60,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "mad_growth",
         "priority_move": false,
         "msg_type": "cast"
@@ -1196,10 +1196,10 @@
         "pp_cost": 7,
         "ability_power": 40,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "blast",
         "priority_move": false,
         "msg_type": "cast"
@@ -1214,10 +1214,10 @@
         "pp_cost": 13,
         "ability_power": 70,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "nova",
         "priority_move": false,
         "msg_type": "cast"
@@ -1232,7 +1232,7 @@
         "pp_cost": 6,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1243,7 +1243,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "debilitate",
         "priority_move": false,
         "msg_type": "cast"
@@ -1258,10 +1258,10 @@
         "pp_cost": 4,
         "ability_power": 20,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "bolt",
         "priority_move": false,
         "msg_type": "cast"
@@ -1276,10 +1276,10 @@
         "pp_cost": 7,
         "ability_power": 40,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "flash_bolt",
         "priority_move": false,
         "msg_type": "cast"
@@ -1294,10 +1294,10 @@
         "pp_cost": 14,
         "ability_power": 90,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "psynergy",
         "battle_animation_key": "blue_bolt",
         "priority_move": false,
         "msg_type": "cast"
@@ -1312,10 +1312,10 @@
         "pp_cost": 0,
         "ability_power": 30,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "venus",
         "priority_move": false,
         "msg_type": "summon"
@@ -1330,10 +1330,10 @@
         "pp_cost": 0,
         "ability_power": 30,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "mars",
         "priority_move": false,
         "msg_type": "summon"
@@ -1348,10 +1348,10 @@
         "pp_cost": 0,
         "ability_power": 30,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "mercury",
         "priority_move": false,
         "msg_type": "summon"
@@ -1366,10 +1366,10 @@
         "pp_cost": 0,
         "ability_power": 30,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "jupiter",
         "priority_move": false,
         "msg_type": "summon"
@@ -1384,10 +1384,10 @@
         "pp_cost": 0,
         "ability_power": 60,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "ramses",
         "priority_move": false,
         "msg_type": "summon"
@@ -1402,10 +1402,10 @@
         "pp_cost": 0,
         "ability_power": 60,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "kirin",
         "priority_move": false,
         "msg_type": "summon"
@@ -1420,10 +1420,10 @@
         "pp_cost": 0,
         "ability_power": 60,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "nereid",
         "priority_move": false,
         "msg_type": "summon"
@@ -1438,10 +1438,10 @@
         "pp_cost": 0,
         "ability_power": 60,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "atalanta",
         "priority_move": false,
         "msg_type": "summon"
@@ -1456,10 +1456,10 @@
         "pp_cost": 0,
         "ability_power": 120,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "cybele",
         "priority_move": false,
         "msg_type": "summon"
@@ -1474,10 +1474,10 @@
         "pp_cost": 0,
         "ability_power": 120,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "tiamat",
         "priority_move": false,
         "msg_type": "summon"
@@ -1492,10 +1492,10 @@
         "pp_cost": 0,
         "ability_power": 120,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "neptune",
         "priority_move": false,
         "msg_type": "summon"
@@ -1510,10 +1510,10 @@
         "pp_cost": 0,
         "ability_power": 120,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "procne",
         "priority_move": false,
         "msg_type": "summon"
@@ -1528,10 +1528,10 @@
         "pp_cost": 0,
         "ability_power": 240,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "judgment",
         "priority_move": false,
         "msg_type": "summon"
@@ -1546,10 +1546,10 @@
         "pp_cost": 0,
         "ability_power": 240,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "meteor",
         "priority_move": false,
         "msg_type": "summon"
@@ -1564,10 +1564,10 @@
         "pp_cost": 0,
         "ability_power": 240,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "boreas",
         "priority_move": false,
         "msg_type": "summon"
@@ -1582,10 +1582,10 @@
         "pp_cost": 0,
         "ability_power": 240,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "summon",
         "battle_animation_key": "thor",
         "priority_move": false,
         "msg_type": "summon"
@@ -1600,10 +1600,10 @@
         "pp_cost": 0,
         "ability_power": 16,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "flint",
         "priority_move": false,
         "msg_type": "unleash"
@@ -1618,7 +1618,7 @@
         "pp_cost": 0,
         "ability_power": 30,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [{
             "type": "permanent_status",
@@ -1627,7 +1627,7 @@
             "status_key_name": "haunt",
             "usage": "on_use"
         }],
-        "ability_type_key": "normal",
+        "ability_category": "weapon_unleash",
         "battle_animation_key": "sarcophagus",
         "priority_move": false,
         "msg_type": "item_unleash"
@@ -1642,7 +1642,7 @@
         "pp_cost": 0,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1654,7 +1654,7 @@
                 "effect_msg": "aura"
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "granite",
         "priority_move": true,
         "msg_type": "unleash"
@@ -1669,7 +1669,7 @@
         "pp_cost": 0,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1686,7 +1686,7 @@
                 "show_msg": false
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "quartz",
         "priority_move": false,
         "msg_type": "unleash"
@@ -1701,7 +1701,7 @@
         "pp_cost": 0,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1712,7 +1712,7 @@
                 "turns_quantity": 1
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "vine",
         "priority_move": false,
         "msg_type": "unleash"
@@ -1727,7 +1727,7 @@
         "pp_cost": 0,
         "ability_power": 50,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1742,7 +1742,7 @@
                 }
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "sap",
         "priority_move": false,
         "msg_type": "unleash"
@@ -1757,7 +1757,7 @@
         "pp_cost": 0,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1768,7 +1768,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "forge",
         "priority_move": false,
         "msg_type": "unleash"
@@ -1783,7 +1783,7 @@
         "pp_cost": 0,
         "ability_power": 30,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1795,7 +1795,7 @@
                 "turns_quantity": 7
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "fever",
         "priority_move": false,
         "msg_type": "unleash"
@@ -1810,7 +1810,7 @@
         "pp_cost": 0,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1821,7 +1821,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "corona",
         "priority_move": false,
         "msg_type": "unleash"
@@ -1836,7 +1836,7 @@
         "pp_cost": 0,
         "ability_power": 50,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1848,7 +1848,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "scorch",
         "priority_move": false,
         "msg_type": "unleash"
@@ -1863,7 +1863,7 @@
         "pp_cost": 0,
         "ability_power": 10,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1880,7 +1880,7 @@
                 }
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "gust",
         "priority_move": false,
         "msg_type": "unleash"
@@ -1895,7 +1895,7 @@
         "pp_cost": 0,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1928,7 +1928,7 @@
                 "turns_quantity": 3
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "breeze",
         "priority_move": false,
         "msg_type": "unleash"
@@ -1943,7 +1943,7 @@
         "pp_cost": 0,
         "ability_power": 0,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1954,7 +1954,7 @@
                 "turns_quantity": 1
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "zephyr",
         "priority_move": false,
         "msg_type": "unleash"
@@ -1969,7 +1969,7 @@
         "pp_cost": 0,
         "ability_power": 60,
         "effects_outside_battle": false,
-        "is_battle_psynergy": true,
+        "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [
             {
@@ -1981,7 +1981,7 @@
                 "turns_quantity": 7
             }
         ],
-        "ability_type_key": "normal",
+        "ability_category": "djinn",
         "battle_animation_key": "smog",
         "priority_move": false,
         "msg_type": "unleash"

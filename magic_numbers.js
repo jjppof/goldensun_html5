@@ -10,6 +10,7 @@ export const DEFAULT_FONT_COLOR = 0xF8F8F8;
 export const YELLOW_FONT_COLOR = 0xF8F840;
 export const RED_FONT_COLOR = 0xF80000;
 export const BLUE_FONT_COLOR = 0x0000F8;
+export const PURPLE_FONT_COLOR = 0xE070B0;
 export const FONT_SIZE = 8;
 export const INSIDE_BORDER_WIDTH = 3;
 export const OUTSIDE_BORDER_WIDTH = 1;

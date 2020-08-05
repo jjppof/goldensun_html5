@@ -7,7 +7,7 @@ export const ability_types = {
     SUMMON: "summon",
     UTILITY: "utility",
     DIRECT_DAMAGE: "direct_damage"
-}
+};
 
 export const ability_msg_types = {
     CAST: "cast",
@@ -19,13 +19,22 @@ export const ability_msg_types = {
     ITEM_UNLEASH: "item_unleash",
     SET_DJINN: "set_djinn",
     NO_MSG: "no_msg"
-}
+};
 
 export const ability_target_types = {
     NO_TARGET: "no_target",
     ALLY: "ally",
     ENEMY: "enemy",
     USER: "user"
+};
+
+export const ability_categories = {
+    PSYNERGY: "psynergy",
+    DJINN: "djinn",
+    SUMMON: "summon",
+    ITEM: "item",
+    WEAPON_UNLEASH: "weapon_unleash",
+    NORMAL: "normal"
 }
 
 export const diminishing_ratios = {
@@ -75,10 +84,10 @@ export class Ability {
         pp_cost,
         ability_power,
         effects_outside_battle,
-        is_battle_psynergy,
+        is_battle_ability,
         is_field_psynergy,
         effects,
-        ability_type_key,
+        ability_category,
         battle_animation_key,
         priority_move,
         has_critical,
@@ -99,10 +108,10 @@ export class Ability {
         this.pp_cost = pp_cost;
         this.ability_power = ability_power;
         this.effects_outside_battle = effects_outside_battle;
-        this.is_battle_psynergy = is_battle_psynergy;
+        this.is_battle_ability = is_battle_ability;
         this.is_field_psynergy = is_field_psynergy;
         this.effects = effects;
-        this.ability_type_key = ability_type_key;
+        this.ability_category = ability_category;
         this.battle_animation_key = battle_animation_key;
         this.priority_move = priority_move ? priority_move : false;
         this.has_critical = has_critical ? has_critical : false;

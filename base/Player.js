@@ -124,4 +124,14 @@ export class Player {
     is_paralyzed() {
         return this.temporary_status.has(temporary_status.SLEEP) || this.temporary_status.has(temporary_status.STUN);
     }
+
+    is_poisoned() {
+        if (this.permanent_status.has(permanent_status.POISON)) {
+            return permanent_status.POISON;
+        } else if (this.permanent_status.has(permanent_status.VENOM)) {
+            return permanent_status.VENOM
+        } else {
+            return false;
+        }
+    }
 }
