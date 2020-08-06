@@ -1,4 +1,5 @@
 import { Effect } from "./Effect.js";
+import { ordered_elements } from "../utils.js";
 
 export const fighter_types = {
     ALLY: 1,
@@ -52,6 +53,28 @@ export class Player {
         this.temporary_status = new Set();
         this.permanent_status = new Set();
         this.effects = [];
+        this.init_effect_turns_count();
+    }
+
+    init_effect_turns_count() {
+        this.effect_turns_count = {
+            [temporary_status.DELUSION]: 0,
+            [temporary_status.STUN]: 0,
+            [temporary_status.SLEEP]: 0,
+            [temporary_status.SEAL]: 0,
+            [temporary_status.DEATH_CURSE]: 0,
+            "max_hp": 0,
+            "max_hp": 0,
+            "atk": 0,
+            "def": 0,
+            "agi": 0,
+            "luk": 0
+        };
+        for (let i = 0; i < ordered_elements.length; ++i) {
+            const element = ordered_elements[i];
+            this.effect_turns_count[element + "_power_current"] = 0;
+            this.effect_turns_count[element + "_resist_current"] = 0;
+        }
     }
 
     add_effect(effect_obj, effect_owner_instance, apply = false) {

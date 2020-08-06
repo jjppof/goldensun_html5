@@ -47,6 +47,7 @@ export class Battle {
         this.game = game;
         this.data = data;
         this.allies_info = party_data.members.slice(0, MAX_CHARS_IN_BATTLE).map(char => {
+            char.init_effect_turns_count();
             return {
                 sprite_key: char.key_name + "_battle",
                 scale: char.battle_scale,
@@ -277,11 +278,11 @@ export class Battle {
             return;
         }
         const action = this.turns_actions.pop();
-        if (action.caster.has_permanent_status(permanent_status.DOWNED)) {
+        if (action.caster.has_permanent_status(permanent_status.DOWNED)) { //check whether this char is downed
             this.check_phases();
             return;
         }
-        if (action.caster.is_paralyzed()) {
+        if (action.caster.is_paralyzed()) { //check whether this char is paralyzed
             if (action.caster.temporary_status.has(temporary_status.SLEEP)) {
                 await this.battle_log.add(`${action.caster.name} is asleep!`);
             } else if (action.caster.temporary_status.has(temporary_status.STUN)) {
@@ -291,12 +292,12 @@ export class Battle {
             this.check_phases();
             return;
         }
-        if (action.caster.fighter_type === fighter_types.ENEMY && !abilities_list[action.key_name].priority_move) {
+        if (action.caster.fighter_type === fighter_types.ENEMY && !abilities_list[action.key_name].priority_move) { //reroll enemy ability
             Object.assign(action, EnemyAI.roll_action(action.caster, party_data.members, this.enemies_info.map(info => info.instance)));
         }
         let ability = abilities_list[action.key_name];
         let item_name = "";
-        if (action.caster.fighter_type === fighter_types.ALLY && ability !== undefined && ability.can_switch_to_unleash) {
+        if (action.caster.fighter_type === fighter_types.ALLY && ability !== undefined && ability.can_switch_to_unleash) { //change the current ability to unleash ability from weapon
             if (action.caster.equip_slots.weapon && items_list[action.caster.equip_slots.weapon.key_name].unleash_ability) {
                 const weapon = items_list[action.caster.equip_slots.weapon.key_name];
                 if (Math.random() < weapon.unleash_rate) {
@@ -314,13 +315,13 @@ export class Battle {
         }
         let djinn_name = action.djinn_key_name ? djinni_list[action.djinn_key_name].name : undefined;
         await this.battle_log.add_ability(action.caster, ability, item_name, djinn_name);
-        if (action.caster.has_temporary_status(temporary_status.SEAL)) {
+        if (action.caster.has_temporary_status(temporary_status.SEAL)) { //check if is possible to cast ability due to seal
             await this.battle_log.add(`But the Psynergy was blocked!`);
             await this.wait_for_key();
             this.check_phases();
             return;
         }
-        if (ability.pp_cost > action.caster.current_pp) {
+        if (ability.pp_cost > action.caster.current_pp) { //check if char has enough pp to cast ability
             await this.battle_log.add(`... But doesn't have enough PP!`);
             await this.wait_for_key();
             this.check_phases();
@@ -334,19 +335,19 @@ export class Battle {
             } else {
                 djinni_list[action.key_name].set_status(djinn_status.STANDBY, action.caster);
             }
-        } else if (ability.ability_category === ability_categories.SUMMON) {
+        } else if (ability.ability_category === ability_categories.SUMMON) { //some summon checks
             const requirements = _.find(this.data.summons_db, {key_name: ability.key_name}).requirements;
             const standby_djinni = Djinn.get_standby_djinni(MainChar.get_active_players(MAX_CHARS_IN_BATTLE));
             const has_available_djinni = _.every(requirements, (requirement, element) => {
                 return standby_djinni[element] >= requirement;
             });
-            if (!has_available_djinni) {
+            if (!has_available_djinni) { //check if is possible to cast a summon
                 await this.battle_log.add(`${action.caster.name} summons ${ability.name} but`);
                 await this.battle_log.add(`doesn't have enough standby Djinn!`);
                 await this.wait_for_key();
                 this.check_phases();
                 return;
-            } else {
+            } else { //set djinni used in this summon to recovery mode
                 Djinn.set_to_recovery(MainChar.get_active_players(MAX_CHARS_IN_BATTLE), requirements);
             }
         }
@@ -354,9 +355,11 @@ export class Battle {
         if (ability.type === ability_types.UTILITY) {
             await this.wait_for_key();
         }
+        //apply ability damage
         if (![ability_types.UTILITY, ability_types.EFFECT_ONLY].includes(ability.type)) {
             await this.apply_damage(action, ability);
         }
+        //apply ability effects
         for (let i = 0; i < ability.effects.length; ++i) {
             const effect = ability.effects[i];
             if (!effect_usages.ON_USE) continue;
@@ -367,6 +370,7 @@ export class Battle {
                 return;
             }
         }
+        //summon after cast power buff
         if (ability.ability_category === ability_categories.SUMMON) {
             const requirements = _.find(this.data.summons_db, {key_name: ability.key_name}).requirements;
             for (let i = 0; i < ordered_elements.length; ++i) {
@@ -384,6 +388,7 @@ export class Battle {
                 }
             }
         }
+        //check for poison damage
         const poison_status = action.caster.is_poisoned();
         if (poison_status) {
             let damage = BattleFormulas.battle_poison_damage(action.caster, poison_status);
