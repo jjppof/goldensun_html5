@@ -1,4 +1,4 @@
-import { Effect } from "./Effect.js";
+import { Effect, effect_types } from "./Effect.js";
 import { ordered_elements } from "../utils.js";
 
 export const fighter_types = {
@@ -63,17 +63,54 @@ export class Player {
             [temporary_status.SLEEP]: 0,
             [temporary_status.SEAL]: 0,
             [temporary_status.DEATH_CURSE]: 0,
-            "max_hp": 0,
-            "max_hp": 0,
-            "atk": 0,
-            "def": 0,
-            "agi": 0,
-            "luk": 0
+            [effect_types.MAX_HP]: 0,
+            [effect_types.MAX_PP]: 0,
+            [effect_types.ATTACK]: 0,
+            [effect_types.DEFENSE]: 0,
+            [effect_types.AGILITY]: 0,
+            [effect_types.LUCK]: 0,
+            [effect_types.POWER]: {},
+            [effect_types.RESIST]: {},
         };
         for (let i = 0; i < ordered_elements.length; ++i) {
             const element = ordered_elements[i];
-            this.effect_turns_count[element + "_power_current"] = 0;
-            this.effect_turns_count[element + "_resist_current"] = 0;
+            this.effect_turns_count[effect_types.POWER][element] = 0;
+            this.effect_turns_count[effect_types.RESIST][element] = 0;
+        }
+    }
+
+    get_effect_turns_count(effect) {
+        switch (effect.type) {
+            case effect_types.TEMPORARY_STATUS:
+                return this.effect_turns_count[effect.status_key_name];
+            case effect_types.MAX_HP:
+            case effect_types.MAX_PP:
+            case effect_types.ATTACK:
+            case effect_types.DEFENSE:
+            case effect_types.AGILITY:
+            case effect_types.LUCK:
+                return this.effect_turns_count[effect.type];
+            case effect_types.POWER:
+            case effect_types.RESIST:
+                return this.effect_turns_count[effect.type][effect.attribute];
+        }
+        return null;
+    }
+
+    set_effect_turns_count(effect, value = -1, relative = true) {
+        switch (effect.type) {
+            case effect_types.TEMPORARY_STATUS:
+                this.effect_turns_count[effect.status_key_name] = relative ? this.effect_turns_count[effect.status_key_name] + value : value;
+            case effect_types.MAX_HP:
+            case effect_types.MAX_PP:
+            case effect_types.ATTACK:
+            case effect_types.DEFENSE:
+            case effect_types.AGILITY:
+            case effect_types.LUCK:
+                return this.effect_turns_count[effect.type] = relative ? this.effect_turns_count[effect.type] + value : value;;
+            case effect_types.POWER:
+            case effect_types.RESIST:
+                return this.effect_turns_count[effect.type][effect.attribute] = relative ? this.effect_turns_count[effect.type][effect.attribute] + value : value;;
         }
     }
 

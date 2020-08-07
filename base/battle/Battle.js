@@ -528,6 +528,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                             const this_effect = target_instance.add_effect(effect, ability, true).effect;
                             if (this_effect.type === effect_types.TEMPORARY_STATUS) {
                                 this.on_going_effects.push(this_effect);
+                                target_instance.set_effect_turns_count(this_effect, this_effect.turn_count, false);
                             }
                             await this.battle_log.add(on_catch_status_msg[effect.status_key_name](target_instance));
                         } else {
@@ -577,6 +578,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 case effect_types.RESIST:
                     effect_result = target_instance.add_effect(effect, ability, true);
                     this.on_going_effects.push(effect_result.effect);
+                    target_instance.set_effect_turns_count(effect_result.effect, effect_result.effect.turn_count, false);
                     if (effect_result.effect.show_msg) {
                         const diff = effect_result.changes.after - effect_result.changes.before;
                         const text = diff >= 0 ? "rises" : "drops";
@@ -617,7 +619,12 @@ So, if a character will die after 5 turns and you land another Curse on them, it
         for (let i = 0; i < this.on_going_effects.length; ++i) {
             const effect = this.on_going_effects[i];
             if (effect.turn_count !== undefined) {
-                --effect.turn_count;
+                if (effect.char.get_effect_turns_count(effect) !== null) {
+                    effect.char.set_effect_turns_count(effect);
+                    effect.turn_count = effect.char.get_effect_turns_count(effect);
+                } else {
+                    --effect.turn_count;
+                }
                 if (effect.turn_count === 0) {
                     effect.char.remove_effect(effect);
                     effect.char.update_all();
