@@ -634,12 +634,30 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
     async battle_phase_round_end() {
         let effects_to_remove = [];
+        let effect_groups = {};
         for (let i = 0; i < this.on_going_effects.length; ++i) {
             const effect = this.on_going_effects[i];
+            if (effect.char.has_permanent_status(permanent_status.DOWNED)) {
+                effect.char.remove_effect(effect);
+                effect.char.update_all();
+                effects_to_remove.push(i);
+                continue;
+            }
+            let avoid_msg = false;
             if (effect.turn_count !== undefined) {
                 if (effect.char.get_effect_turns_count(effect) !== null) {
-                    effect.char.set_effect_turns_count(effect);
+                    if (!(effect.char.key_name in effect_groups) || !(effect.char.get_effect_turns_key(effect) in effect_groups[effect.char.key_name])) {
+                        effect.char.set_effect_turns_count(effect);
+                    }
                     effect.turn_count = effect.char.get_effect_turns_count(effect);
+                    if (!effect_groups[effect.char.key_name]) {
+                        effect_groups[effect.char.key_name] = {
+                            [effect.char.get_effect_turns_key(effect)]: effect
+                        };
+                    } else {
+                        effect_groups[effect.char.key_name][effect.char.get_effect_turns_key(effect)] = effect;
+                    }
+                    avoid_msg = true;
                 } else {
                     --effect.turn_count;
                 }
@@ -647,6 +665,17 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     effect.char.remove_effect(effect);
                     effect.char.update_all();
                     effects_to_remove.push(i);
+                    if (!avoid_msg) {
+                        this.battle_log.add_recover_effect(effect);
+                        await this.wait_for_key();
+                    }
+                }
+            }
+        }
+        for (let char_key_name in effect_groups) {
+            for (let effect_turn_key in effect_groups[char_key_name]) {
+                const effect = effect_groups[char_key_name][effect_turn_key];
+                if (effect.turn_count === 0) {
                     this.battle_log.add_recover_effect(effect);
                     await this.wait_for_key();
                 }

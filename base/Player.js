@@ -79,6 +79,24 @@ export class Player {
         }
     }
 
+    get_effect_turns_key(effect) {
+        switch (effect.type) {
+            case effect_types.TEMPORARY_STATUS:
+                return effect.status_key_name;
+            case effect_types.MAX_HP:
+            case effect_types.MAX_PP:
+            case effect_types.ATTACK:
+            case effect_types.DEFENSE:
+            case effect_types.AGILITY:
+            case effect_types.LUCK:
+                return effect.type;
+            case effect_types.POWER:
+            case effect_types.RESIST:
+                return effect.type + "_" + effect.attribute;
+        }
+        return null;
+    }
+
     get_effect_turns_count(effect) {
         switch (effect.type) {
             case effect_types.TEMPORARY_STATUS:
