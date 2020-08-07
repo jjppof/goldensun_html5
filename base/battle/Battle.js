@@ -515,10 +515,12 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
             switch(effect.type) {
                 case effect_types.PERMANENT_STATUS:
-                    if (effect.add_status && target_instance.permanent_status.has(effect.status_key_name)) break;
+                    if (effect.add_status) {
+                        if (target_instance.has_permanent_status(effect.status_key_name)) break;
+                        if (effect.status_key_name === permanent_status.POISON && target_instance.has_permanent_status(permanent_status.VENOM)) break;
+                    }
                 case effect_types.TEMPORARY_STATUS:
                     if (effect.add_status) {
-                        if (target_instance.temporary_status.has(effect.status_key_name)) break;
                         let vulnerability = _.find(target_instance.class.vulnerabilities, {
                             status_key_name: effect.status_key_name
                         });
@@ -527,8 +529,19 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         if (BattleFormulas.ailment_success(action.caster, target_instance, effect.chance, magnitude, ability.element, vulnerability)) {
                             const this_effect = target_instance.add_effect(effect, ability, true).effect;
                             if (this_effect.type === effect_types.TEMPORARY_STATUS) {
-                                this.on_going_effects.push(this_effect);
-                                target_instance.set_effect_turns_count(this_effect, this_effect.turn_count, false);
+                                if (!target_instance.has_temporary_status(this_effect.status_key_name)) {
+                                    this.on_going_effects.push(this_effect);
+                                }
+                                if (this_effect.status_key_name === temporary_status.DEATH_CURSE && target_instance.has_temporary_status(temporary_status.DEATH_CURSE)) {
+                                    target_instance.set_effect_turns_count(this_effect);
+                                } else {
+                                    target_instance.set_effect_turns_count(this_effect, this_effect.turn_count, false);
+                                }
+                            } else if (this_effect.status_key_name === permanent_status.VENOM && target_instance.has_permanent_status(permanent_status.POISON)) {
+                                const poison_effect = _.find(target_instance.effects, {
+                                    status_key_name: permanent_status.POISON
+                                });
+                                target_instance.remove_effect(poison_effect, true);
                             }
                             await this.battle_log.add(on_catch_status_msg[effect.status_key_name](target_instance));
                         } else {
@@ -537,16 +550,21 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         await this.wait_for_key();
                     } else {
                         if (Math.random() < effect.chance) {
-                            const this_effect = _.find(target_instance.effects, {
-                                status_key_name: effect.status_key_name
-                            });
-                            if (this_effect) {
-                                target_instance.remove_effect(this_effect, true);
-                                if (this_effect.type === effect_types.TEMPORARY_STATUS) {
-                                    this.on_going_effects = this.on_going_effects.filter(effect => {
-                                        return effect !== this_effect;
-                                    });
-                                }
+                            let removed = false;
+                            while (true) {
+                                const this_effect = _.find(target_instance.effects, {
+                                    status_key_name: effect.status_key_name
+                                });
+                                if (this_effect) {
+                                    target_instance.remove_effect(this_effect, true);
+                                    if (this_effect.type === effect_types.TEMPORARY_STATUS) {
+                                        this.on_going_effects = this.on_going_effects.filter(effect => {
+                                            return effect !== this_effect;
+                                        });
+                                    }
+                                } else break;
+                            }
+                            if (removed) {
                                 this.battle_log.add_recover_effect(effect);
                                 await this.wait_for_key();
                             }
