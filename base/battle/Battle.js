@@ -402,6 +402,17 @@ export class Battle {
             await this.wait_for_key();
             await this.check_downed(action.caster);
         }
+        if (action.caster.has_temporary_status(temporary_status.DEATH_CURSE)) {
+            const this_effect = _.find(action.caster.effects, {
+                status_key_name: temporary_status.DEATH_CURSE
+            });
+            if (action.caster.get_effect_turns_count(this_effect) === 1) {
+                action.caster.current_hp = 0;
+                action.caster.add_permanent_status(permanent_status.DOWNED);
+                await this.battle_log.add(`The Grim Reaper calls out to ${action.caster.name}`);
+                await this.wait_for_key();
+            }
+        }
         this.check_phases();
     }
 
@@ -557,6 +568,9 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                                 });
                                 if (this_effect) {
                                     target_instance.remove_effect(this_effect, true);
+                                    if (this_effect.status_key_name === permanent_status.DOWNED) {
+                                        target_instance.init_effect_turns_count();
+                                    }
                                     if (this_effect.type === effect_types.TEMPORARY_STATUS) {
                                         this.on_going_effects = this.on_going_effects.filter(effect => {
                                             return effect !== this_effect;
