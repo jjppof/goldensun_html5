@@ -4,7 +4,7 @@ import { range_360 } from '../../utils.js';
 import { enemies_list } from '../../initializers/enemies.js';
 import { main_char_list } from '../../initializers/main_chars.js';
 import { ability_target_types } from '../Ability.js';
-import { fighter_types } from '../Player.js';
+import { fighter_types, permanent_status } from '../Player.js';
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
@@ -161,7 +161,13 @@ export class BattleStage {
     change_target(step) {
         this.range_cursor_position += step;
         const center_shift = this.range_cursor_position - (RANGES.length >> 1);
-        const group_children = this.target_type === ability_target_types.ALLY ? this.group_allies.children.slice().reverse() : this.group_enemies.children;
+        const group_info = this.target_type === ability_target_types.ALLY ? this.allies_info : this.enemies_info;
+        const group_children = group_info.flatMap(info => {
+            if (info.instance.has_permanent_status(permanent_status.DOWNED)) {
+                return [];
+            }
+            return [info.sprite];
+        });
         const target_sprite_index = (group_children.length >> 1) + center_shift;
         if (target_sprite_index >= group_children.length) {
             this.range_cursor_position = (RANGES.length >> 1) - (group_children.length >> 1);
@@ -193,12 +199,15 @@ export class BattleStage {
             list[key].setAnimation(sprite, "battle");
             sprite.animations.play(animation);
             this.sprites.push(sprite);
+            return sprite;
         };
         this.allies_info.forEach(info => {
-            set_sprite(this.group_allies, info, true, "battle_back", _.mapValues(main_char_list, char => char.sprite_base));
+            const sprite = set_sprite(this.group_allies, info, true, "battle_back", _.mapValues(main_char_list, char => char.sprite_base));
+            info.sprite = sprite;
         });
         this.enemies_info.forEach(info => {
-            set_sprite(this.group_enemies, info, false, "battle_front", enemies_list);
+            const sprite = set_sprite(this.group_enemies, info, false, "battle_front", enemies_list);
+            info.sprite = sprite;
         });
         this.first_ally_char = this.group_allies.children[0];
         this.last_ally_char = this.group_allies.children[this.allies_count - 1];
@@ -284,7 +293,13 @@ export class BattleStage {
     }
 
     set_battle_cursors_position(tween_to_pos = true) {
-        const group_children = this.target_type === ability_target_types.ALLY ? this.group_allies.children.slice().reverse() : this.group_enemies.children;
+        const group_info = this.target_type === ability_target_types.ALLY ? this.allies_info : this.enemies_info;
+        const group_children = group_info.flatMap(info => {
+            if (info.instance.has_permanent_status(permanent_status.DOWNED)) {
+                return [];
+            }
+            return [info.sprite];
+        });
         const center_shift = this.range_cursor_position - (RANGES.length >> 1);
         this.cursors.forEach((cursor_sprite, i) => {
             let target_sprite_index = i - ((this.cursors.length >> 1) - (group_children.length >> 1)) + center_shift;
