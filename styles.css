@@ -51,3 +51,10 @@ canvas {
 #key_debug table td {
     text-align: right;
 }
+.disclaimer {
+    font-size: small;
+    font-style: italic;
+    margin-left: 20%;
+    color: #757575;
+    font-family: monospace;
+}
