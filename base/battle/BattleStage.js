@@ -168,11 +168,12 @@ export class BattleStage {
             }
             return [info.sprite];
         });
-        const target_sprite_index = (group_children.length >> 1) + center_shift;
+        const group_half_length = group_children.length % 2 ? group_children.length >> 1 : (group_children.length >> 1) - 1;
+        const target_sprite_index = group_half_length + center_shift;
         if (target_sprite_index >= group_children.length) {
-            this.range_cursor_position = (RANGES.length >> 1) - (group_children.length >> 1);
+            this.range_cursor_position = (RANGES.length >> 1) - group_half_length;
         } else if (target_sprite_index < 0) {
-            this.range_cursor_position = (RANGES.length >> 1) + (group_children.length >> 1);
+            this.range_cursor_position = (RANGES.length >> 1) + group_half_length + !(group_children.length % 2);
         }
         this.set_battle_cursors_position();
     }
@@ -300,9 +301,10 @@ export class BattleStage {
             }
             return [info.sprite];
         });
+        const group_half_length = group_children.length % 2 ? group_children.length >> 1 : (group_children.length >> 1) - 1;
         const center_shift = this.range_cursor_position - (RANGES.length >> 1);
         this.cursors.forEach((cursor_sprite, i) => {
-            let target_sprite_index = i - ((this.cursors.length >> 1) - (group_children.length >> 1)) + center_shift;
+            let target_sprite_index = i - ((this.cursors.length >> 1) - group_half_length) + center_shift;
             let target_sprite = group_children[target_sprite_index];
             if (target_sprite) {
                 const this_scale = BATTLE_CURSOR_SCALES[this.range_cursor_position - center_shift - (this.cursors.length >> 1) + i];
