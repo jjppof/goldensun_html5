@@ -158,24 +158,27 @@ export class BattleStage {
         this.choose_timer_start.start();
     }
 
-    change_target(step) {
-        this.range_cursor_position += step;
-        const center_shift = this.range_cursor_position - (RANGES.length >> 1);
+    change_target(step, tween_to_pos = true) {
         const group_info = this.target_type === ability_target_types.ALLY ? this.allies_info : this.enemies_info;
-        const group_children = group_info.flatMap(info => {
-            if (info.instance.has_permanent_status(permanent_status.DOWNED)) {
-                return [];
+        const group_length = group_info.length;
+        const group_half_length = group_length % 2 ? group_length >> 1 : (group_length >> 1) - 1;
+
+        let target_sprite_index;
+        do {
+            this.range_cursor_position += step;
+            if (step === 0) step = CHOOSE_TARGET_LEFT;
+            const center_shift = this.range_cursor_position - (RANGES.length >> 1);
+            target_sprite_index = group_half_length + center_shift;
+            if (target_sprite_index >= group_length) {
+                this.range_cursor_position = (RANGES.length >> 1) - group_half_length;
+                target_sprite_index = 0;
+            } else if (target_sprite_index < 0) {
+                this.range_cursor_position = (RANGES.length >> 1) + group_half_length + !(group_length % 2);
+                target_sprite_index = group_length - 1;
             }
-            return [info.sprite];
-        });
-        const group_half_length = group_children.length % 2 ? group_children.length >> 1 : (group_children.length >> 1) - 1;
-        const target_sprite_index = group_half_length + center_shift;
-        if (target_sprite_index >= group_children.length) {
-            this.range_cursor_position = (RANGES.length >> 1) - group_half_length;
-        } else if (target_sprite_index < 0) {
-            this.range_cursor_position = (RANGES.length >> 1) + group_half_length + !(group_children.length % 2);
-        }
-        this.set_battle_cursors_position();
+        } while (group_info[target_sprite_index].instance.has_permanent_status(permanent_status.DOWNED));
+
+        this.set_battle_cursors_position(tween_to_pos);
     }
 
     initialize_sprites() {
@@ -295,18 +298,13 @@ export class BattleStage {
 
     set_battle_cursors_position(tween_to_pos = true) {
         const group_info = this.target_type === ability_target_types.ALLY ? this.allies_info : this.enemies_info;
-        const group_children = group_info.flatMap(info => {
-            if (info.instance.has_permanent_status(permanent_status.DOWNED)) {
-                return [];
-            }
-            return [info.sprite];
-        });
-        const group_half_length = group_children.length % 2 ? group_children.length >> 1 : (group_children.length >> 1) - 1;
+        const group_half_length = group_info.length % 2 ? group_info.length >> 1 : (group_info.length >> 1) - 1;
         const center_shift = this.range_cursor_position - (RANGES.length >> 1);
         this.cursors.forEach((cursor_sprite, i) => {
-            let target_sprite_index = i - ((this.cursors.length >> 1) - group_half_length) + center_shift;
-            let target_sprite = group_children[target_sprite_index];
-            if (target_sprite) {
+            let target_index = i - ((this.cursors.length >> 1) - group_half_length) + center_shift;
+            const target_info = group_info[target_index];
+            if (target_info && !target_info.instance.has_permanent_status(permanent_status.DOWNED)) {
+                const target_sprite = target_info.sprite;
                 const this_scale = BATTLE_CURSOR_SCALES[this.range_cursor_position - center_shift - (this.cursors.length >> 1) + i];
                 cursor_sprite.scale.setTo(this_scale, this_scale);
                 cursor_sprite.alpha = 1;
@@ -333,8 +331,8 @@ export class BattleStage {
                 }
             } else {
                 cursor_sprite.alpha = 0;
-                target_sprite_index = target_sprite_index < 0 ? 0 : group_children.length - 1;
-                target_sprite = group_children[target_sprite_index];
+                target_index = target_index < 0 ? 0 : group_info.length - 1;
+                const target_sprite = group_info[target_index].sprite;
                 cursor_sprite.centerX = target_sprite.x;
                 cursor_sprite.y = target_sprite.y - target_sprite.height;
             }
@@ -373,7 +371,7 @@ export class BattleStage {
                     this.cursors[i].animations.play("anim", 40, true);
                 }
                 this.choosing_targets = true;
-                this.set_battle_cursors_position(false);
+                this.change_target(0, false);
             });
         }
     }
