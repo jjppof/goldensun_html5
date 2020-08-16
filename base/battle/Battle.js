@@ -313,9 +313,7 @@ export class Battle {
             this.check_phases();
             return;
         }
-        let djinn_name = action.djinn_key_name ? djinni_list[action.djinn_key_name].name : undefined;
-        await this.battle_log.add_ability(action.caster, ability, item_name, djinn_name);
-        if (action.caster.has_temporary_status(temporary_status.SEAL)) { //check if is possible to cast ability due to seal
+        if (action.caster.has_temporary_status(temporary_status.SEAL) && ability.ability_category === ability_categories.PSYNERGY) { //check if is possible to cast ability due to seal
             await this.battle_log.add(`But the Psynergy was blocked!`);
             await this.wait_for_key();
             this.check_phases();
@@ -329,6 +327,8 @@ export class Battle {
         } else {
             action.caster.current_pp -= ability.pp_cost;
         }
+        let djinn_name = action.djinn_key_name ? djinni_list[action.djinn_key_name].name : undefined;
+        await this.battle_log.add_ability(action.caster, ability, item_name, djinn_name);
         if (ability.ability_category === ability_categories.DJINN) {
             if (ability.effects.some(effect => effect.type === effect_types.SET_DJINN)) {
                 djinni_list[action.djinn_key_name].set_status(djinn_status.SET, action.caster);

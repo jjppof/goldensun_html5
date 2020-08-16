@@ -36,20 +36,28 @@ canvas {
 #key_debug .left img {
     transform: rotate(90deg);
 }
-#key_debug table {
+#key_debug table, #stats_debug table {
     width: 270px;
     table-layout: fixed;
     font-family: monospace;
     border-collapse: collapse;
 }
-#key_debug table tr {
+#key_debug table tr, #stats_debug table tr {
     border-bottom: 1px solid gray;
 }
-#key_debug table th {
+#key_debug table th, #stats_debug table th {
     text-align: left;
 }
-#key_debug table td {
+#key_debug table td, #stats_debug table td {
     text-align: right;
+}
+#stats_debug {
+    display: none;
+    margin: 1rem 20%;
+}
+#stats_debug label, #stats_debug_select {
+    font-family: monospace;
+    margin-bottom: 1rem;
 }
 .disclaimer {
     font-size: small;

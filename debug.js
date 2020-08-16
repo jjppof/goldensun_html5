@@ -1,4 +1,4 @@
-import { reverse_directions } from "./utils.js";
+import { reverse_directions, ordered_elements } from "./utils.js";
 
 export function toggle_debug(data) {
     data.hero.body.debug = !data.hero.body.debug;
@@ -52,11 +52,11 @@ export function toggle_keys(data) {
         }
     }
     if (data.debug_keys) {
-        document.querySelector("#key_debug").style.display = "flex";
+        document.getElementById("key_debug").style.display = "flex";
         document.onkeydown = toggler.bind(null, true);
         document.onkeyup = toggler.bind(null, false);
     } else {
-        document.querySelector("#key_debug").style.display = "none";
+        document.getElementById("key_debug").style.display = "none";
         document.onkeydown = undefined;
         document.onkeyup = undefined;
     }
@@ -121,4 +121,81 @@ export function set_debug_info(game, data) {
     } else {
         document.getElementById("object_inspector").innerText = "";
     }
+}
+
+export function toggle_stats(data) {
+    if (!data.in_battle) {
+        data.debug_stats = false;
+    } else {
+        data.debug_stats = !data.debug_stats;
+    }
+    const select_element = document.getElementById("stats_debug_select");
+    if (data.debug_stats) {
+        data.debug_stats_info = {
+            chars: data.battle_instance.allies_info.concat(data.battle_instance.enemies_info).map(info => info.instance),
+            selected: 0,
+            listener: event => {
+                data.debug_stats_info.selected = event.target.value;
+            }
+        };
+        data.debug_stats_info.chars.forEach((char, index) => {
+            let option = document.createElement("option");
+            option.innerText = char.name;
+            option.setAttribute("value", index);
+            select_element.appendChild(option);
+        });
+        select_element.addEventListener('change', data.debug_stats_info.listener);
+        document.getElementById("stats_debug").style.display = "block";
+    } else {
+        if (data.debug_stats_info) {
+            select_element.removeEventListener('change', data.debug_stats_info.listener);
+            data.debug_stats_info = undefined;
+        }
+        document.getElementById("stats_debug_select").innerHTML = "";
+        document.getElementById("stats_debug").style.display = "none";
+    }
+}
+
+export function fill_stats_debug_table(data) {
+    if (!data.debug_stats || !data.in_battle) return;
+    const char = data.debug_stats_info.chars[data.debug_stats_info.selected];
+    document.querySelector("#stats_debug table .name").innerHTML = char.name;
+    document.querySelector("#stats_debug table .class").innerHTML = char.class.name;
+    document.querySelector("#stats_debug table .level").innerHTML = char.level;
+    document.querySelector("#stats_debug table .exp").innerHTML = char.current_exp;
+    document.querySelector("#stats_debug table .current_hp").innerHTML = char.current_hp;
+    document.querySelector("#stats_debug table .max_hp").innerHTML = char.max_hp;
+    document.querySelector("#stats_debug table .current_pp").innerHTML = char.current_pp;
+    document.querySelector("#stats_debug table .max_pp").innerHTML = char.max_pp;
+    document.querySelector("#stats_debug table .atk").innerHTML = char.current_atk;
+    document.querySelector("#stats_debug table .def").innerHTML = char.current_def;
+    document.querySelector("#stats_debug table .agi").innerHTML = char.current_agi;
+    document.querySelector("#stats_debug table .luk").innerHTML = char.current_luk;
+    document.querySelector("#stats_debug table .venus_power").innerHTML = char.venus_power_current;
+    document.querySelector("#stats_debug table .venus_resist").innerHTML = char.venus_resist_current;
+    document.querySelector("#stats_debug table .venus_level").innerHTML = char.venus_level_current;
+    document.querySelector("#stats_debug table .mercury_power").innerHTML = char.mercury_power_current;
+    document.querySelector("#stats_debug table .mercury_resist").innerHTML = char.mercury_resist_current;
+    document.querySelector("#stats_debug table .mercury_level").innerHTML = char.mercury_level_current;
+    document.querySelector("#stats_debug table .mars_power").innerHTML = char.mars_power_current;
+    document.querySelector("#stats_debug table .mars_resist").innerHTML = char.mars_resist_current;
+    document.querySelector("#stats_debug table .mars_level").innerHTML = char.mars_level_current;
+    document.querySelector("#stats_debug table .jupiter_power").innerHTML = char.jupiter_power_current;
+    document.querySelector("#stats_debug table .jupiter_resist").innerHTML = char.jupiter_resist_current;
+    document.querySelector("#stats_debug table .jupiter_level").innerHTML = char.jupiter_level_current;
+    document.querySelector("#stats_debug table .turns").innerHTML = char.turns;
+    document.querySelector("#stats_debug table .temp_statuses").innerHTML = [...char.temporary_status].join(" ");
+    document.querySelector("#stats_debug table .perm_statuses").innerHTML = [...char.permanent_status].join(" ");
+    let buff_html = "";
+    Object.keys(char.effect_turns_count).sort().forEach(effect => {
+        if (effect === "power" || effect === "resist") {
+            ordered_elements.forEach(element => {
+                buff_html += `${effect}[${element}]/${char.effect_turns_count[effect][element]} <br>`;
+            });
+        } else {
+            buff_html += `${effect}/${char.effect_turns_count[effect]} <br>`;
+        }
+    });
+    document.querySelector("#stats_debug table .buff").innerHTML = buff_html;
+    document.querySelector("#stats_debug table .effect_count").innerHTML = char.effects.length;
 }

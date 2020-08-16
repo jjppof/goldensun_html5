@@ -16,7 +16,7 @@ import * as movement from './physics/movement.js';
 import { initialize_menu } from './screens/menu.js';
 import * as hero_control from './initializers/hero_control.js';
 import { TileEvent } from './base/TileEvent.js';
-import { set_debug_info, toggle_debug, toggle_keys, fill_key_debug_table } from './debug.js';
+import { set_debug_info, toggle_debug, toggle_keys, fill_key_debug_table, toggle_stats, fill_stats_debug_table } from './debug.js';
 import { event_triggering } from './events/triggering.js';
 
 //this variable contains important data used throughout the game
@@ -59,6 +59,7 @@ var data = {
     debug: false,
     grid: false,
     debug_keys: false,
+    debug_stats: false,
     frame_counter: 0,
 
     //screen
@@ -302,6 +303,11 @@ async function create() {
         toggle_keys(data);
     }, this);
 
+    //activate stats debug mode
+    game.input.keyboard.addKey(Phaser.Keyboard.S).onDown.add(() => {
+        toggle_stats(data);
+    }, this);
+
     //enable fps show
     data.show_fps = false;
     game.input.keyboard.addKey(Phaser.Keyboard.F).onDown.add(function(){
@@ -440,5 +446,8 @@ function render() {
     set_debug_info(game, data);
     if (data.frame_counter%8 === 0) {
         fill_key_debug_table(data);
+    }
+    if (data.frame_counter%(numbers.TARGET_FPS >> 1) === 0) {
+        fill_stats_debug_table(data);
     }
 }

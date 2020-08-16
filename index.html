@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="description" content="An online Golden Sun Engine entirely built in HTML5 with Phaser 2." />
-    <meta name="keywords" content="golden sun, golden sun the lost age, golden sun engine, html5, phaser" />
+    <meta name="keywords" content="golden sun, golden sun the lost age, golden sun engine, html5, phaser, golden sun 4" />
     <meta name="google-site-verification" content="Gi0KXT6roJFNQGpBwhJA-j_AhEz1XVeke18qPG4dTF4" />
 
     <title>Golden Sun Engine - HTML5</title>
@@ -35,7 +35,7 @@ Use the arrows to move.
 Hold shift to dash.
 1,2 and 3 for zoom.
 Double click on screen to fullscreen.
-D for debug colision. F for fps. G for grid. K for keys debug.
+D for debug colision. F for fps. G for grid. K for keys debug. S for battle stats.
 Use the enter key to talk to npc.
 Use the spacebar to open the menu.
 Go to east for pillar test. Go west for Madra town.
@@ -84,6 +84,120 @@ See the <a href="https://github.com/jjppof/goldensun_html5">source code</a> on g
             <tr>
                 <th>Stop by colliding:</th>
                 <td class="stop_by_colliding"></td>
+            </tr>
+        </table>
+    </div>
+    <div id="stats_debug">
+        <label for="stats_debug_select">Choose a char:</label>
+        <select id="stats_debug_select"></select>
+        <table>
+            <tr>
+                <th>Name:</th>
+                <td class="name"></td>
+            </tr>
+            <tr>
+                <th>Class:</th>
+                <td class="class"></td>
+            </tr>
+            <tr>
+                <th>Level:</th>
+                <td class="level"></td>
+            </tr>
+            <tr>
+                <th>Exp:</th>
+                <td class="exp"></td>
+            </tr>
+            <tr>
+                <th>HP:</th>
+                <td><span class="current_hp"></span>/<span class="max_hp"></span></td>
+            </tr>
+            <tr>
+                <th>PP:</th>
+                <td><span class="current_pp"></span>/<span class="max_pp"></span></td>
+            </tr>
+            <tr>
+                <th>Attack:</th>
+                <td class="atk"></td>
+            </tr>
+            <tr>
+                <th>Defense:</th>
+                <td class="def"></td>
+            </tr>
+            <tr>
+                <th>Agility:</th>
+                <td class="agi"></td>
+            </tr>
+            <tr>
+                <th>Luck:</th>
+                <td class="luk"></td>
+            </tr>
+            <tr>
+                <th>Venus Level:</th>
+                <td class="venus_level"></td>
+            </tr>
+            <tr>
+                <th>Mercury Level:</th>
+                <td class="mercury_level"></td>
+            </tr>
+            <tr>
+                <th>Mars Level:</th>
+                <td class="mars_level"></td>
+            </tr>
+            <tr>
+                <th>Jupiter Level:</th>
+                <td class="jupiter_level"></td>
+            </tr>
+            <tr>
+                <th>Venus Power:</th>
+                <td class="venus_power"></td>
+            </tr>
+            <tr>
+                <th>Mercury Power:</th>
+                <td class="mercury_power"></td>
+            </tr>
+            <tr>
+                <th>Mars Power:</th>
+                <td class="mars_power"></td>
+            </tr>
+            <tr>
+                <th>Jupiter Power:</th>
+                <td class="jupiter_power"></td>
+            </tr>
+            <tr>
+                <th>Venus Resist:</th>
+                <td class="venus_resist"></td>
+            </tr>
+            <tr>
+                <th>Mercury Resist:</th>
+                <td class="mercury_resist"></td>
+            </tr>
+            <tr>
+                <th>Mars Resist:</th>
+                <td class="mars_resist"></td>
+            </tr>
+            <tr>
+                <th>Jupiter Resist:</th>
+                <td class="jupiter_resist"></td>
+            </tr>
+            <tr>
+                <th>Turns:</th>
+                <td class="turns"></td>
+            </tr>
+            <tr>
+                <th>Temp. statuses:</th>
+                <td class="temp_statuses"></td>
+            </tr>
+            <tr>
+                <th>Perm. statuses:</th>
+                <td class="perm_statuses"></td>
+            </tr>
+            <tr>
+                <th>Buff/Turn count</th>
+                <td class="buff"></td>
+            </tr>
+            <tr>
+                <th>Effects count</th>
+                <td class="effect_count"></td>
             </tr>
         </table>
     </div>

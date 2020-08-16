@@ -35,8 +35,11 @@ export class Enemy extends Player {
         this.mars_resist = enemy_data.mars_resist;
         this.jupiter_resist = enemy_data.jupiter_resist;
         this.fighter_type = fighter_types.ENEMY;
-        this.class = {};
-        this.class.vulnerabilities = enemy_data.vulnerabilities === undefined ? [] : enemy_data.vulnerabilities;
+        this.class = {
+            name: "No Class",
+            vulnerabilities: enemy_data.vulnerabilities === undefined ? [] : enemy_data.vulnerabilities
+        };
+        this.current_exp = -1;
         this.effects = [];
         this.set_base_attributes();
     }
