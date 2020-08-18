@@ -33,7 +33,6 @@ export class BattleEvent extends GameEvent {
 
     fire(game, data) {
         stop_hero(data, true);
-        game.physics.p2.pause();
         this.battle = new Battle(game, data, this.background_key, this.enemy_party_key);
         this.battle.start_battle();
     }

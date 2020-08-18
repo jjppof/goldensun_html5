@@ -461,8 +461,30 @@ export class BattleStage {
         }
     }
 
-    unset_stage() {
-
+    unset_stage(on_fade_complete, on_flash_complete) {
+        this.game.camera.fade();
+        this.game.camera.onFadeComplete.addOnce(() => {
+            if (on_fade_complete) {
+                on_fade_complete();
+            }
+            this.battle_group.destroy();
+            this.upper_rect.height = this.lower_rect.height = numbers.GAME_HEIGHT >> 1;
+            this.upper_rect.y = 0;
+            this.lower_rect.y = numbers.GAME_HEIGHT >> 1;
+            const fade_time = 300;
+            this.game.camera.resetFX();
+            this.game.add.tween(this.upper_rect).to({
+                height: 0
+            }, fade_time, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
+                if (on_flash_complete) {
+                    on_flash_complete();
+                }
+                this.crop_group.destroy();
+            });
+            this.game.add.tween(this.lower_rect).to({
+                height: 0, y: numbers.GAME_HEIGHT
+            }, fade_time, Phaser.Easing.Linear.None, true);
+        }, this);
     }
 
     static ellipse(angle, a, b) { //ellipse formula
