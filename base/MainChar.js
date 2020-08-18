@@ -69,8 +69,7 @@ export class MainChar extends Player {
         this.level = this.starting_level;
         this.battle_scale = battle_scale;
         this.exp_curve = exp_curve;
-        this.starting_exp = this.exp_curve[this.level];
-        this.current_exp = this.starting_exp;
+        this.current_exp = this.exp_curve[this.level - 1];
         this.venus_level_base = venus_level_base;
         this.mercury_level_base = mercury_level_base;
         this.mars_level_base = mars_level_base;
@@ -142,6 +141,39 @@ export class MainChar extends Player {
 
     update_class() {
         this.class = choose_right_class(this.element_afinity, this.venus_level_current, this.mercury_level_current, this.mars_level_current, this.jupiter_level_current);
+    }
+
+    add_exp(value) {
+        let return_data = {
+            before: {
+                level: this.level,
+                abilities: this.abilities.slice(),
+                stats: [
+                    {max_hp: this.max_hp},
+                    {max_pp: this.max_pp},
+                    {atk: this.atk},
+                    {def: this.def},
+                    {agi: this.agi},
+                    {luk: this.luk}
+                ]
+            }
+        };
+        this.current_exp += value;
+        this.level = _.findIndex(this.exp_curve, exp => exp > this.current_exp);
+        this.update_all();
+        return_data.after = {
+            level: this.level,
+            abilities: this.abilities.slice(),
+            stats: [
+                {max_hp: this.max_hp},
+                {max_pp: this.max_pp},
+                {atk: this.atk},
+                {def: this.def},
+                {agi: this.agi},
+                {luk: this.luk}
+            ]
+        };
+        return return_data;
     }
 
     init_items() {
@@ -411,7 +443,7 @@ export class MainChar extends Player {
         const curve_key = stat + "_curve";
         const extra_key = stat + "_extra";
         const previous_value = this[stat_key];
-        this[stat_key] = parseInt(this[curve_key][this.starting_level] * this.class[boost_key] + this[extra_key]);
+        this[stat_key] = parseInt(this[curve_key][this.level] * this.class[boost_key] + this[extra_key]);
         let this_djinni = this.djinni;
         if (preview) {
             if (preview_obj.action === "Trade") {

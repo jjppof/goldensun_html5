@@ -15,6 +15,7 @@ import { variation, ordered_elements, element_names } from "../../utils.js";
 import { djinni_list } from "../../initializers/djinni.js";
 import { djinn_status, Djinn } from "../Djinn.js";
 import { MainChar } from "../MainChar.js";
+import { items_list } from "../../initializers/items.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 
@@ -51,7 +52,8 @@ export class Battle {
             return {
                 sprite_key: char.key_name + "_battle",
                 scale: char.battle_scale,
-                instance: char
+                instance: char,
+                entered_in_battle: true
             };
         });
         this.enemies_party_data = this.data.enemies_parties_db[enemy_party_key];
@@ -111,6 +113,7 @@ export class Battle {
                     break;
                 case battle_phases.COMBAT:
                 case battle_phases.ROUND_END:
+                case battle_phases.END:
                     if (this.advance_log_resolve) {
                         this.advance_log_resolve();
                         this.advance_log_resolve = null;
@@ -722,11 +725,67 @@ So, if a character will die after 5 turns and you land another Curse on them, it
         this.check_phases();
     }
 
-    battle_phase_end() {
+// Everyone gets equal experience with no division, but:
+// - Characters who do not participate get half;
+// - Downed characters get none.
+
+    async battle_phase_end() {
         if (this.allies_defeated) {
             this.battle_log.add(this.allies_info[0].instance.name + "' party has been defeated!");
         } else {
             this.battle_log.add(this.enemies_party_data.name + " has been defeated!");
+            await this.wait_for_key();
+            const total_exp = this.enemies_info.map(info => info.instance.exp_reward).reduce((a, b) => a + b, 0);
+            this.battle_log.add(`You got ${total_exp.toString()} experience points.`);
+            await this.wait_for_key();
+            for (let i = 0; i < this.allies_info.length; ++i) {
+                const info = this.allies_info[i];
+                const char = info.instance;
+                if (!char.has_permanent_status(permanent_status.DOWNED)) {
+                    const change = char.add_exp(info.entered_in_battle ? total_exp : total_exp >> 1);
+                    if (change.before.level !== change.after.level) {
+                        this.battle_log.add(`${char.name} is now a level ${char.level} ${char.class.name}!`);
+                        await this.wait_for_key();
+                        const gained_abilities = _.difference(change.after.abilities, change.before.abilities);
+                        for (let j = 0; j < gained_abilities.length; ++j) {
+                            const ability = abilities_list[gained_abilities[j]];
+                            this.battle_log.add(`Mastered the ${char.class.name}'s ${ability.name}!`);
+                            await this.wait_for_key();
+                        }
+                        for (let j = 0; j < change.before.stats.length; ++j) {
+                            const stat = Object.keys(change.before.stats[j])[0];
+                            const diff = change.after.stats[j][stat] - change.before.stats[j][stat];
+                            if (diff !== 0) {
+                                let stat_text;
+                                switch (stat) {
+                                    case "max_hp": stat_text = "Maximum HP"; break;
+                                    case "max_pp": stat_text = "Maximum PP"; break;
+                                    case "atk": stat_text = "Attack"; break;
+                                    case "def": stat_text = "Defense"; break;
+                                    case "agi": stat_text = "Agility"; break;
+                                    case "luk": stat_text = "Luck"; break;
+                                }
+                                this.battle_log.add(`${stat_text} rises by ${diff.toString()}!`);
+                                await this.wait_for_key();
+                            }
+                        }
+                    }
+                }
+            }
+            const total_coins = this.enemies_info.map(info => info.instance.coins_reward).reduce((a, b) => a + b, 0);
+            this.battle_log.add(`You got ${total_coins.toString()} coins.`);
+            await this.wait_for_key();
+            for (let i = 0; i < this.enemies_info.length; ++i) {
+                const enemy = this.enemies_info[i].instance;
+                if (enemy.item_reward && Math.random() < enemy.item_reward_chance) {
+                    //add item
+                    const item = items_list[enemy.item_reward];
+                    if (item !== undefined) {
+                        this.battle_log.add(`You got a ${item.name}.`);
+                        await this.wait_for_key();
+                    }
+                }
+            }
         }
         this.unset_battle();
     }
