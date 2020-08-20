@@ -1,6 +1,8 @@
 const BACKWARD = -1;
 const FORWARD = 1;
 const CURSOR_DELTA = 4;
+const INDEX_CHANGE_TIME = Phaser.Timer.QUARTER >> 1;
+const CURSOR_TWEEN_TIME = Phaser.Timer.QUARTER >> 1;
 
 export class CursorControl {
     constructor(
@@ -43,76 +45,76 @@ export class CursorControl {
         this.down_pressed = false;
         this.choose_timer_repeat = this.game.time.create(false);
         this.choose_timer_start = this.game.time.create(false);
-        this.index_change_time = Phaser.Timer.QUARTER/2;
         this.init_cursor();
         this.init_cursor_tween();
-        this.set_control();
+        this.signal_bindings = this.set_control();
     }
 
     set_control() {
-        game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
-            if (!this.open_checker() || !this.active_checker() || !this.is_right_left) return;
-            if (this.left_pressed) {
-                this.left_pressed = false;
-                this.stop_timers();
-            }
-            this.right_pressed = true;
-            this.set_change_timers(FORWARD, true);
-        });
-        game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onUp.add(() => {
-            if (!this.open_checker() || !this.active_checker() || !this.right_pressed || !this.is_right_left) return;
-            this.right_pressed = false;
-            this.stop_timers();
-        });
-        game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
-            if (!this.open_checker() || !this.active_checker() || !this.is_right_left) return;
-            if (this.right_pressed) {
+        return [
+            this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
+                if (!this.open_checker() || !this.active_checker() || !this.is_right_left) return;
+                if (this.left_pressed) {
+                    this.left_pressed = false;
+                    this.stop_timers();
+                }
+                this.right_pressed = true;
+                this.set_change_timers(FORWARD, true);
+            }),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onUp.add(() => {
+                if (!this.open_checker() || !this.active_checker() || !this.right_pressed || !this.is_right_left) return;
                 this.right_pressed = false;
                 this.stop_timers();
-            }
-            this.left_pressed = true;
-            this.set_change_timers(BACKWARD, true);
-        });
-        game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onUp.add(() => {
-            if (!this.open_checker() || !this.active_checker() || !this.left_pressed || !this.is_right_left) return;
-            this.left_pressed = false;
-            this.stop_timers();
-        });
-
-        game.input.keyboard.addKey(Phaser.Keyboard.UP).onDown.add(() => {
-            if (!this.open_checker() || !this.active_checker() || !this.is_up_down) return;
-            if (this.down_pressed) {
-                this.down_pressed = false;
+            }),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
+                if (!this.open_checker() || !this.active_checker() || !this.is_right_left) return;
+                if (this.right_pressed) {
+                    this.right_pressed = false;
+                    this.stop_timers();
+                }
+                this.left_pressed = true;
+                this.set_change_timers(BACKWARD, true);
+            }),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onUp.add(() => {
+                if (!this.open_checker() || !this.active_checker() || !this.left_pressed || !this.is_right_left) return;
+                this.left_pressed = false;
                 this.stop_timers();
-            }
-            this.up_pressed = true;
-            this.set_change_timers(BACKWARD, false);
-        });
-        game.input.keyboard.addKey(Phaser.Keyboard.UP).onUp.add(() => {
-            if (!this.open_checker() || !this.active_checker() || !this.up_pressed || !this.is_up_down) return;
-            this.up_pressed = false;
-            this.stop_timers();
-        });
-        game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onDown.add(() => {
-            if (!this.open_checker() || !this.active_checker() || !this.is_up_down) return;
-            if (this.up_pressed) {
+            }),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.UP).onDown.add(() => {
+                if (!this.open_checker() || !this.active_checker() || !this.is_up_down) return;
+                if (this.down_pressed) {
+                    this.down_pressed = false;
+                    this.stop_timers();
+                }
+                this.up_pressed = true;
+                this.set_change_timers(BACKWARD, false);
+            }),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.UP).onUp.add(() => {
+                if (!this.open_checker() || !this.active_checker() || !this.up_pressed || !this.is_up_down) return;
                 this.up_pressed = false;
                 this.stop_timers();
-            }
-            this.down_pressed = true;
-            this.set_change_timers(FORWARD, false);
-        });
-        game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onUp.add(() => {
-            if (!this.open_checker() || !this.active_checker() || !this.down_pressed || !this.is_up_down) return;
-            this.down_pressed = false;
-            this.stop_timers();
-        });
+            }),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onDown.add(() => {
+                if (!this.open_checker() || !this.active_checker() || !this.is_up_down) return;
+                if (this.up_pressed) {
+                    this.up_pressed = false;
+                    this.stop_timers();
+                }
+                this.down_pressed = true;
+                this.set_change_timers(FORWARD, false);
+            }),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onUp.add(() => {
+                if (!this.open_checker() || !this.active_checker() || !this.down_pressed || !this.is_up_down) return;
+                this.down_pressed = false;
+                this.stop_timers();
+            })
+        ];
     }
 
     set_change_timers(step, right_left) {
         this.change_index(step, right_left);
         this.choose_timer_start.add(Phaser.Timer.QUARTER, () => {
-            this.choose_timer_repeat.loop(this.index_change_time, this.change_index.bind(this, step, right_left));
+            this.choose_timer_repeat.loop(INDEX_CHANGE_TIME, this.change_index.bind(this, step, right_left));
             this.choose_timer_repeat.start();
         });
         this.choose_timer_start.start();
@@ -139,14 +141,13 @@ export class CursorControl {
 
     init_cursor() {
         this.cursor_base_x = -5;
-        this.cursor_group = game.add.group();
+        this.cursor_group = this.game.add.group();
         this.cursor = this.cursor_group.create(0, 0, "cursor");
         this.cursor_group.alpha = 0;
         this.base_group.add(this.cursor_group);
         this.cursor_group.x = this.cursor_base_x_getter();
         this.cursor_group.y = this.cursor_base_y_getter();
-        this.cursor_tween = game.tweens.create(this.cursor);
-        this.cursor_tween_time = Phaser.Timer.QUARTER/2;
+        this.cursor_tween = this.game.tweens.create(this.cursor);
     }
 
     init_cursor_tween() {
@@ -155,7 +156,7 @@ export class CursorControl {
                 x: this.cursor.x - CURSOR_DELTA,
                 y: this.cursor.y + CURSOR_DELTA
             },
-            this.cursor_tween_time,
+            CURSOR_TWEEN_TIME,
             Phaser.Easing.Linear.None,
             false,
             0,
@@ -188,5 +189,15 @@ export class CursorControl {
         this.stop_timers();
         this.cursor_group.alpha = 0;
         this.cursor_tween.pause();
+    }
+
+    destroy() {
+        this.choose_timer_repeat.destroy();
+        this.choose_timer_start.destroy();
+        this.signal_bindings.forEach(signal_binding => {
+            signal_binding.detach();
+        });
+        this.cursor_tween.stop();
+        this.cursor_group.destroy();
     }
 }

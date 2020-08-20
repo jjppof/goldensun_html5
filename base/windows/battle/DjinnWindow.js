@@ -43,7 +43,7 @@ export class DjinnWindow {
         this.highlight_bar.beginFill(this.base_window.color, 1);
         this.highlight_bar.drawRect(HIGHLIGHT_BAR_X, 0, HIGHLIGHT_BAR_WIDTH, HIGHLIGHT_BAR_HEIGHT);
         this.highlight_bar.endFill();
-        this.set_control();
+        this.signal_bindings = this.set_control();
         this.djinn_names = [];
         this.stars_sprites = [];
         this.cursor_control = new CursorControl(this.game, true, true, this.get_max_pages.bind(this), this.get_max_elem_on_page.bind(this),
@@ -53,34 +53,36 @@ export class DjinnWindow {
     }
 
     set_control() {
-        this.data.esc_input.add(() => {
-            if (!this.window_open || !this.window_active || this.psynergy_window_open) return;
-            this.data.esc_input.halt();
-            this.choosen_ability = null;
-            this.close(this.close_callback);
-        }, this, this.esc_propagation_priority);
-        this.data.enter_input.add(() => {
-            if (!this.window_open || !this.window_active || this.psynergy_window_open) return;
-            this.data.enter_input.halt();
-            const this_djinn = djinni_list[this.djinni[this.djinn_index]];
-            if (this_djinn.status !== djinn_status.RECOVERY) {
-                this.choosen_ability = this_djinn.ability_key_name;
-                this.hide(this.close_callback);
-            }
-        }, this, this.enter_propagation_priority);
-        this.data.shift_input.add(() => {
-            if (!this.window_open || !this.window_active || this.psynergy_window_open) return;
-            this.data.shift_input.halt();
-            this.cursor_control.deactivate();
-            this.psynergy_window.open(this.char, undefined, undefined, true, djinni_list[this.djinni[this.djinn_index]], this.get_next_status());
-            this.psynergy_window_open = true;
-        }, this, this.shift_propagation_priority);
-        this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT).onUp.add(() => {
-            if (!this.window_open || !this.window_active || !this.psynergy_window_open) return;
-            this.cursor_control.activate();
-            this.psynergy_window.close();
-            this.psynergy_window_open = false;
-        });
+        return [
+            this.data.esc_input.add(() => {
+                if (!this.window_open || !this.window_active || this.psynergy_window_open) return;
+                this.data.esc_input.halt();
+                this.choosen_ability = null;
+                this.close(this.close_callback);
+            }, this, this.esc_propagation_priority),
+            this.data.enter_input.add(() => {
+                if (!this.window_open || !this.window_active || this.psynergy_window_open) return;
+                this.data.enter_input.halt();
+                const this_djinn = djinni_list[this.djinni[this.djinn_index]];
+                if (this_djinn.status !== djinn_status.RECOVERY) {
+                    this.choosen_ability = this_djinn.ability_key_name;
+                    this.hide(this.close_callback);
+                }
+            }, this, this.enter_propagation_priority),
+            this.data.shift_input.add(() => {
+                if (!this.window_open || !this.window_active || this.psynergy_window_open) return;
+                this.data.shift_input.halt();
+                this.cursor_control.deactivate();
+                this.psynergy_window.open(this.char, undefined, undefined, true, djinni_list[this.djinni[this.djinn_index]], this.get_next_status());
+                this.psynergy_window_open = true;
+            }, this, this.shift_propagation_priority),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT).onUp.add(() => {
+                if (!this.window_open || !this.window_active || !this.psynergy_window_open) return;
+                this.cursor_control.activate();
+                this.psynergy_window.close();
+                this.psynergy_window_open = false;
+            })
+        ];
     }
 
     get_cursor_x() {
@@ -293,5 +295,15 @@ export class DjinnWindow {
                 callback(this.choosen_ability);
             }
         }, false);
+    }
+
+    destroy() {
+        this.signal_bindings.forEach(signal_binding => {
+            signal_binding.detach();
+        });
+        this.base_window.destroy(false);
+        this.stats_window.destroy();
+        this.group.destroy();
+        this.cursor_control.destroy();
     }
 }

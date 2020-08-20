@@ -96,4 +96,8 @@ export class DjinnStatsWindow {
             this.window_open = false;
         }, false);
     }
+
+    destroy() {
+        this.base_window.destroy(false);
+    }
 }
