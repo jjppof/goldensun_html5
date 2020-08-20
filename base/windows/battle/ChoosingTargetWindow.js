@@ -85,20 +85,20 @@ export class ChoosingTargetWindow {
                 ++counter;
             });
         } else if (this.action === "item") {
-            let icon_group = this.game.add.group();
-            let icon_sprite = icon_group.create(0, 0, this.icon_sprite_sheet, this.ability_key_name);
+            this.icon_group = this.game.add.group();
+            let icon_sprite = this.icon_group.create(0, 0, this.icon_sprite_sheet, this.ability_key_name);
             icon_sprite.anchor.setTo(0.5, 0.5);
             if (this.item_obj.equipped) {
-                icon_group.create(SUB_ICON_X, SUB_ICON_Y, "equipped");
+                this.icon_group.create(SUB_ICON_X, SUB_ICON_Y, "equipped");
             }
             if (this.item_obj.quantity > 1) {
                 let item_count = this.game.add.bitmapText(SUB_ICON_X, SUB_ICON_Y, 'gs-item-bmp-font', this.item_obj.quantity.toString());
-                icon_group.add(item_count);
+                this.icon_group.add(item_count);
             }
-            this.base_window.add_sprite_to_group(icon_group);
-            icon_group.x = ICON_X + (numbers.ICON_WIDTH >> 1);
-            icon_group.y = ICON_Y + (numbers.ICON_HEIGHT >> 1);
-            this.window_sprites.push(icon_group);
+            this.base_window.add_sprite_to_group(this.icon_group);
+            this.icon_group.x = ICON_X + (numbers.ICON_WIDTH >> 1);
+            this.icon_group.y = ICON_Y + (numbers.ICON_HEIGHT >> 1);
+            this.window_sprites.push(this.icon_group);
         }
     }
 
@@ -167,8 +167,20 @@ export class ChoosingTargetWindow {
         this.window_sprites = [];
         this.texts = [];
         this.base_window.close(undefined, false);
+        if (this.icon_group) {
+            this.icon_group.destroy();
+            this.icon_group = null;
+        }
         this.window_open = false;
         this.element = undefined;
         this.icon_sprite_sheet = undefined;
+    }
+
+    destroy() {
+        this.base_window.destroy(false);
+        this.group.destroy();
+        if (this.icon_group) {
+            this.icon_group.destroy();
+        }
     }
 }

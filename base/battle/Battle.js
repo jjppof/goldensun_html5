@@ -98,30 +98,32 @@ export class Battle {
         ++this.enter_propagation_priority;
         ++this.esc_propagation_priority;
         this.battle_finishing = false;
-        this.set_controls();
+        this.signal_bindings = this.set_controls();
     }
 
     set_controls() {
-        this.data.enter_input.add(() => {
-            if (!this.data.in_battle || !this.controls_enabled) return;
-            this.data.enter_input.halt();
-            switch (this.battle_phase) {
-                case battle_phases.START:
-                    this.controls_enabled = false;
-                    this.battle_log.clear();
-                    this.battle_phase = battle_phases.MENU;
-                    this.check_phases();
-                    break;
-                case battle_phases.COMBAT:
-                case battle_phases.ROUND_END:
-                case battle_phases.END:
-                    if (this.advance_log_resolve) {
-                        this.advance_log_resolve();
-                        this.advance_log_resolve = null;
-                    }
-                    break;
-            }
-        }, this, this.enter_propagation_priority);
+        return [
+            this.data.enter_input.add(() => {
+                if (!this.data.in_battle || !this.controls_enabled) return;
+                this.data.enter_input.halt();
+                switch (this.battle_phase) {
+                    case battle_phases.START:
+                        this.controls_enabled = false;
+                        this.battle_log.clear();
+                        this.battle_phase = battle_phases.MENU;
+                        this.check_phases();
+                        break;
+                    case battle_phases.COMBAT:
+                    case battle_phases.ROUND_END:
+                    case battle_phases.END:
+                        if (this.advance_log_resolve) {
+                            this.advance_log_resolve();
+                            this.advance_log_resolve = null;
+                        }
+                        break;
+                }
+            }, this, this.enter_propagation_priority)
+        ];
     }
 
     start_battle() {
@@ -800,6 +802,10 @@ So, if a character will die after 5 turns and you land another Curse on them, it
         this.battle_stage.unset_stage(() => {
             this.battle_log.destroy();
             this.battle_menu.destroy_menu();
+            this.signal_bindings.forEach(signal_binding => {
+                signal_binding.detach();
+            });
+            this.target_window.destroy();
         }, () => {
             this.data.in_battle = false;
             this.data.battle_instance = undefined;
