@@ -43,7 +43,7 @@ export class SummonWindow {
         this.highlight_bar.beginFill(this.base_window.color, 1);
         this.highlight_bar.drawRect(HIGHLIGHT_BAR_X, 0, HIGHLIGHT_BAR_WIDTH, HIGHLIGHT_BAR_HEIGHT);
         this.highlight_bar.endFill();
-        this.set_control();
+        this.signal_bindings = this.set_control();
         this.summon_names = [];
         this.other_sprites = [];
         this.cursor_control = new CursorControl(this.game, true, true, this.get_max_pages.bind(this), this.get_max_elem_on_page.bind(this),
@@ -54,18 +54,20 @@ export class SummonWindow {
     }
 
     set_control() {
-        this.data.esc_input.add(() => {
-            if (!this.window_open || !this.window_active) return;
-            this.data.esc_input.halt();
-            this.choosen_ability = null;
-            this.close(this.close_callback);
-        }, this, this.esc_propagation_priority);
-        this.data.enter_input.add(() => {
-            if (!this.window_open || !this.window_active) return;
-            this.data.enter_input.halt();
-            this.choosen_ability = this.summons[this.summon_index].key_name;
-            this.hide(this.close_callback);
-        }, this, this.enter_propagation_priority);
+        return [
+            this.data.esc_input.add(() => {
+                if (!this.window_open || !this.window_active) return;
+                this.data.esc_input.halt();
+                this.choosen_ability = null;
+                this.close(this.close_callback);
+            }, this, this.esc_propagation_priority),
+            this.data.enter_input.add(() => {
+                if (!this.window_open || !this.window_active) return;
+                this.data.enter_input.halt();
+                this.choosen_ability = this.summons[this.summon_index].key_name;
+                this.hide(this.close_callback);
+            }, this, this.enter_propagation_priority)
+        ];
     }
 
     get_cursor_x() {
@@ -255,5 +257,15 @@ export class SummonWindow {
                 callback(this.choosen_ability);
             }
         }, false);
+    }
+
+    destroy() {
+        this.signal_bindings.forEach(signal_binding => {
+            signal_binding.detach();
+        });
+        this.base_window.destroy(false);
+        this.group.destroy();
+        this.cursor_control.destroy();
+        this.djinn_numbers_window.destroy();
     }
 }

@@ -56,7 +56,7 @@ export class PsynergyWindow {
             this.group, this.change_page.bind(this), this.change_ability.bind(this), this.get_page_index.bind(this), this.set_page_index.bind(this),
             this.get_ability_index.bind(this), this.set_ability_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),
             this.get_cursor_x.bind(this), this.get_cursor_y.bind(this));
-        this.set_control();
+        this.signal_bindings = this.set_control();
         this.highlight_bar = this.game.add.graphics(0, 0);
         this.highlight_bar.blendMode = PIXI.blendModes.SCREEN;
         this.highlight_bar.alpha = 0;
@@ -113,18 +113,20 @@ export class PsynergyWindow {
     }
 
     set_control() {
-        this.data.esc_input.add(() => {
-            if (!this.window_open || !this.window_active || this.expanded) return;
-            this.data.esc_input.halt();
-            this.choosen_ability = null;
-            this.close(this.close_callback);
-        }, this, this.esc_propagation_priority);
-        this.data.enter_input.add(() => {
-            if (!this.window_open || !this.window_active || this.expanded) return;
-            this.data.enter_input.halt();
-            this.choosen_ability = this.abilities[this.ability_index];
-            this.hide(this.close_callback);
-        }, this, this.enter_propagation_priority);
+        return [
+            this.data.esc_input.add(() => {
+                if (!this.window_open || !this.window_active || this.expanded) return;
+                this.data.esc_input.halt();
+                this.choosen_ability = null;
+                this.close(this.close_callback);
+            }, this, this.esc_propagation_priority),
+            this.data.enter_input.add(() => {
+                if (!this.window_open || !this.window_active || this.expanded) return;
+                this.data.enter_input.halt();
+                this.choosen_ability = this.abilities[this.ability_index];
+                this.hide(this.close_callback);
+            }, this, this.enter_propagation_priority)
+        ];
     }
 
     set_page_number() {
@@ -343,5 +345,14 @@ export class PsynergyWindow {
                 callback(this.choosen_ability);
             }
         }, false);
+    }
+
+    destroy() {
+        this.signal_bindings.forEach(signal_binding => {
+            signal_binding.detach();
+        });
+        this.base_window.destroy(false);
+        this.group.destroy();
+        this.cursor_control.destroy();
     }
 }

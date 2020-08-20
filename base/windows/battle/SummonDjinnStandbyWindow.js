@@ -77,4 +77,13 @@ export class SummonDjinnStandbyWindow {
             }
         }
     }
+
+    destroy() {
+        this.base_window.destroy(false);
+        for (let element in this.timers) {
+            if (this.timers[element]) {
+                this.timers[element].destroy();
+            }
+        }
+    }
 }

@@ -278,5 +278,9 @@ export class BattleMenuScreen {
         this.start_horizontal_menu.destroy();
         this.description_window.destroy();
         this.djinn_window.destroy();
+        this.psynergy_window.destroy();
+        this.item_window.destroy();
+        this.summon_window.destroy();
+        this.group.destroy();
     }
 }
