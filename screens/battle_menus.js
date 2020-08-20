@@ -273,6 +273,8 @@ export class BattleMenuScreen {
     }
 
     destroy_menu() {
-
+        this.chars_status_window.destroy();
+        this.inner_horizontal_menu.destroy();
+        this.start_horizontal_menu.destroy();
     }
 }

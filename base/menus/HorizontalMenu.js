@@ -43,48 +43,50 @@ export class HorizontalMenu {
         this.on_cancel = on_cancel === undefined ? () => {} : on_cancel;
         this.right_pressed = false;
         this.left_pressed = false;
-        this.set_control();
+        this.signal_bindings = this.set_control();
     }
 
     set_control() {
-        this.data.enter_input.add(() => {
-            if (!this.menu_open || !this.menu_active) return;
-            this.data.enter_input.halt();
-            this.on_choose(this.selected_button_index);
-        }, this, this.enter_propagation_priority);
-        this.data.esc_input.add(() => {
-            if (!this.menu_open || !this.menu_active) return;
-            this.data.esc_input.halt();
-            this.on_cancel();
-        }, this, this.esc_propagation_priority);
-        this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
-            if (!this.menu_open || !this.menu_active) return;
-            if (this.left_pressed) {
-                this.left_pressed = false;
-                this.stop_timers();
-            }
-            this.right_pressed = true;
-            this.set_change_timers(FORWARD);
-        });
-        this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onUp.add(() => {
-            if (!this.menu_open || !this.menu_active || !this.right_pressed) return;
-            this.right_pressed = false;
-            this.stop_timers();
-        });
-        this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
-            if (!this.menu_open || !this.menu_active) return;
-            if (this.right_pressed) {
+        return [
+            this.data.enter_input.add(() => {
+                if (!this.menu_open || !this.menu_active) return;
+                this.data.enter_input.halt();
+                this.on_choose(this.selected_button_index);
+            }, this, this.enter_propagation_priority),
+            this.data.esc_input.add(() => {
+                if (!this.menu_open || !this.menu_active) return;
+                this.data.esc_input.halt();
+                this.on_cancel();
+            }, this, this.esc_propagation_priority),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
+                if (!this.menu_open || !this.menu_active) return;
+                if (this.left_pressed) {
+                    this.left_pressed = false;
+                    this.stop_timers();
+                }
+                this.right_pressed = true;
+                this.set_change_timers(FORWARD);
+            }),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onUp.add(() => {
+                if (!this.menu_open || !this.menu_active || !this.right_pressed) return;
                 this.right_pressed = false;
                 this.stop_timers();
-            }
-            this.left_pressed = true;
-            this.set_change_timers(BACKWARD);
-        });
-        this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onUp.add(() => {
-            if (!this.menu_open || !this.menu_active || !this.left_pressed) return;
-            this.left_pressed = false;
-            this.stop_timers();
-        });
+            }),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
+                if (!this.menu_open || !this.menu_active) return;
+                if (this.right_pressed) {
+                    this.right_pressed = false;
+                    this.stop_timers();
+                }
+                this.left_pressed = true;
+                this.set_change_timers(BACKWARD);
+            }),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onUp.add(() => {
+                if (!this.menu_open || !this.menu_active || !this.left_pressed) return;
+                this.left_pressed = false;
+                this.stop_timers();
+            })
+        ];
     }
 
     mount_buttons(filtered_buttons = []) {
@@ -254,5 +256,15 @@ export class HorizontalMenu {
             });
             this.title_window.close(undefined, false);
         }
+    }
+
+    destroy() {
+        this.title_window.destroy(false);
+        this.group.destroy();
+        this.choose_timer_repeat.destroy();
+        this.choose_timer_start.destroy();
+        this.signal_bindings.forEach(signal_binding => {
+            signal_binding.detach();
+        });
     }
 }

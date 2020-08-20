@@ -70,48 +70,50 @@ export class BattleStage {
         this.crop_group.y = this.y;
         this.choose_timer_repeat = this.game.time.create(false);
         this.choose_timer_start = this.game.time.create(false);
-        this.set_control();
+        this.signal_bindings = this.set_control();
     }
 
     set_control() {
-        this.data.enter_input.add(() => {
-            if (!this.choosing_targets) return;
-            this.data.enter_input.halt();
-            this.set_targets();
-        }, this, this.enter_propagation_priority);
-        this.data.esc_input.add(() => {
-            if (!this.choosing_targets) return;
-            this.data.esc_input.halt();
-            this.choosing_targets_finished(null);
-        }, this, this.esc_propagation_priority);
-        this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
-            if (!this.choosing_targets) return;
-            if (this.left_pressed) {
-                this.left_pressed = false;
-                this.stop_timers();
-            }
-            this.right_pressed = true;
-            this.set_change_timers(CHOOSE_TARGET_RIGHT);
-        });
-        this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onUp.add(() => {
-            if (!this.choosing_targets || !this.right_pressed) return;
-            this.right_pressed = false;
-            this.stop_timers();
-        });
-        this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
-            if (!this.choosing_targets) return;
-            if (this.right_pressed) {
+        return [
+            this.data.enter_input.add(() => {
+                if (!this.choosing_targets) return;
+                this.data.enter_input.halt();
+                this.set_targets();
+            }, this, this.enter_propagation_priority),
+            this.data.esc_input.add(() => {
+                if (!this.choosing_targets) return;
+                this.data.esc_input.halt();
+                this.choosing_targets_finished(null);
+            }, this, this.esc_propagation_priority),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
+                if (!this.choosing_targets) return;
+                if (this.left_pressed) {
+                    this.left_pressed = false;
+                    this.stop_timers();
+                }
+                this.right_pressed = true;
+                this.set_change_timers(CHOOSE_TARGET_RIGHT);
+            }),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onUp.add(() => {
+                if (!this.choosing_targets || !this.right_pressed) return;
                 this.right_pressed = false;
                 this.stop_timers();
-            }
-            this.left_pressed = true;
-            this.set_change_timers(CHOOSE_TARGET_LEFT);
-        });
-        this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onUp.add(() => {
-            if (!this.choosing_targets || !this.left_pressed) return;
-            this.left_pressed = false;
-            this.stop_timers();
-        });
+            }),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
+                if (!this.choosing_targets) return;
+                if (this.right_pressed) {
+                    this.right_pressed = false;
+                    this.stop_timers();
+                }
+                this.left_pressed = true;
+                this.set_change_timers(CHOOSE_TARGET_LEFT);
+            }),
+            this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onUp.add(() => {
+                if (!this.choosing_targets || !this.left_pressed) return;
+                this.left_pressed = false;
+                this.stop_timers();
+            })
+        ];
     }
 
     set_targets() {
@@ -467,6 +469,11 @@ export class BattleStage {
             if (on_fade_complete) {
                 on_fade_complete();
             }
+            this.signal_bindings.forEach(signal_binding => {
+                signal_binding.detach();
+            });
+            this.choose_timer_repeat.destroy();
+            this.choose_timer_start.destroy();
             this.battle_group.destroy();
             this.upper_rect.height = this.lower_rect.height = numbers.GAME_HEIGHT >> 1;
             this.upper_rect.y = 0;

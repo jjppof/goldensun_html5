@@ -65,4 +65,5 @@ canvas {
     margin-left: 20%;
     color: #757575;
     font-family: monospace;
+    max-width: 500px;
 }

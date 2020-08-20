@@ -206,4 +206,8 @@ export class CharsStatusWindow {
     close() {
         this.status_window.close();
     }
+
+    destroy() {
+        this.status_window.destroy(false);
+    }
 }

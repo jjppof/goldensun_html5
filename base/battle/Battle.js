@@ -785,6 +785,9 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     if (item !== undefined) {
                         this.battle_log.add(`You got a ${item.name}.`);
                         await this.wait_for_key();
+                    } else {
+                        this.battle_log.add(`${enemy.item_reward} not registered...`);
+                        await this.wait_for_key();
                     }
                 }
             }
@@ -796,6 +799,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
         this.battle_finishing = true;
         this.battle_stage.unset_stage(() => {
             this.battle_log.destroy();
+            this.battle_menu.destroy_menu();
         }, () => {
             this.data.in_battle = false;
             this.data.battle_instance = undefined;
