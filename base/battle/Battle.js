@@ -734,6 +734,11 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 // - Downed characters get none.
 
     async battle_phase_end() {
+        for (let i = 0; i < this.on_going_effects.length; ++i) {
+            const effect = this.on_going_effects[i];
+            effect.char.remove_effect(effect);
+            effect.char.update_all();
+        }
         if (this.allies_defeated) {
             this.battle_log.add(this.allies_info[0].instance.name + "' party has been defeated!");
         } else {
