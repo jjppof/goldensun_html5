@@ -268,6 +268,15 @@ export class BattleStage {
         }, INIT_TIME, Phaser.Easing.Linear.None, true);
     }
 
+    async set_stage_default_position() {
+        let promise_resolve;
+        const promise = new Promise(resolve => { promise_resolve = resolve });
+        this.game.add.tween(this.camera_angle).to({
+            rad: DEFAULT_POS_ANGLE
+        }, 300, Phaser.Easing.Linear.None, true).onComplete.addOnce(promise_resolve);
+        await promise;
+    }
+
     set_choosing_action_position() {
         this.choosing_actions = true;
         this.battle_bg2.x = 0;

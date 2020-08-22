@@ -376,6 +376,8 @@ export class Battle {
             const group_caster = action.caster.fighter_type === fighter_types.ALLY ? this.battle_stage.group_allies : this.battle_stage.group_enemies;
             const group_taker = action.caster.fighter_type === fighter_types.ALLY ? this.battle_stage.group_enemies : this.battle_stage.group_allies;
             await this.animation_manager.play(ability.key_name, caster_sprite, target_sprites, group_caster, group_taker, this.battle_stage);
+            this.battle_stage.prevent_camera_angle_overflow();
+            this.battle_stage.set_stage_default_position();
         } else {
             await this.battle_log.add(`Animation for ${ability.key_name} not available...`);
             await this.wait_for_key();
