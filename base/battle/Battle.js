@@ -16,6 +16,7 @@ import { djinni_list } from "../../initializers/djinni.js";
 import { djinn_status, Djinn } from "../Djinn.js";
 import { MainChar } from "../MainChar.js";
 import { items_list } from "../../initializers/items.js";
+import { BattleAnimationManager } from "./BattleAnimationManager.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 
@@ -87,9 +88,12 @@ export class Battle {
         this.enter_propagation_priority = 0;
         this.esc_propagation_priority = 0;
         this.battle_stage = new BattleStage(this.game, this.data, background_key, this.allies_info, this.enemies_info, this.esc_propagation_priority++, this.enter_propagation_priority++);
+        this.allies_map_sprite = _.mapValues(_.keyBy(this.allies_info, 'instance.key_name'), info => info.sprite);
+        this.enemies_map_sprite = _.mapValues(_.keyBy(this.enemies_info, 'instance.key_name'), info => info.sprite);
         this.battle_log = new BattleLog(this.game);
         this.battle_menu = new BattleMenuScreen(this.game, this.data, ++this.enter_propagation_priority, ++this.esc_propagation_priority, this.on_abilities_choose.bind(this), this.choose_targets.bind(this));
         this.target_window = new ChoosingTargetWindow(this.game, this.data);
+        this.animation_manager = new BattleAnimationManager(this.game, this.data);
         this.battle_phase = battle_phases.NONE;
         this.controls_enabled = false;
         this.on_going_effects = [];
@@ -221,7 +225,7 @@ export class Battle {
         - If yes, this ability is fixed for that corresponding turn.
     For the other turns, an action is re-roll in the turn start to be used on it.
     */
-    battle_phase_round_start() {
+    async battle_phase_round_start() {
         const enemy_members = this.enemies_info.map(info => info.instance);
         this.enemies_abilities = Object.fromEntries(enemy_members.map((enemy, index) => {
             let abilities = new Array(enemy.turns);
@@ -251,6 +255,10 @@ export class Battle {
         this.turns_actions = _.sortBy(Object.values(this.player_abilities).flat().concat(Object.values(this.enemies_abilities).flat()), action => {
             return action.speed; //still need to add left most and player preference criterias
         });
+        for (let i = 0; i < this.turns_actions.length; ++i) {
+            const action = this.turns_actions[i];
+            await this.animation_manager.load_animation(action.key_name);
+        }
         this.battle_phase = battle_phases.COMBAT;
         this.controls_enabled = true;
         this.check_phases();
@@ -360,6 +368,16 @@ export class Battle {
         }
         this.battle_menu.chars_status_window.update_chars_info();
         if (ability.type === ability_types.UTILITY) {
+            await this.wait_for_key();
+        }
+        if (this.animation_manager.animation_available(ability.key_name)) {
+            const caster_sprite = action.caster.fighter_type === fighter_types.ALLY ? this.allies_map_sprite[action.caster.key_name] : this.enemies_map_sprite[action.caster.key_name];
+            const target_sprites = action.targets.map(info => info.target.sprite);
+            const group_caster = action.caster.fighter_type === fighter_types.ALLY ? this.battle_stage.group_allies : this.battle_stage.group_enemies;
+            const group_taker = action.caster.fighter_type === fighter_types.ALLY ? this.battle_stage.group_enemies : this.battle_stage.group_allies;
+            await this.animation_manager.play(ability.key_name, caster_sprite, target_sprites, group_caster, group_taker, this.battle_stage);
+        } else {
+            await this.battle_log.add(`Animation for ${ability.key_name} not available...`);
             await this.wait_for_key();
         }
         //apply ability damage
@@ -811,6 +829,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 signal_binding.detach();
             });
             this.target_window.destroy();
+            this.animation_manager.destroy();
         }, () => {
             this.data.in_battle = false;
             this.data.battle_instance = undefined;
