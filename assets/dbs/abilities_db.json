@@ -1985,5 +1985,23 @@
         "battle_animation_key": "smog",
         "priority_move": false,
         "msg_type": "unleash"
+    },{
+        "key_name": "ice",
+        "name": "Ice",
+        "description": "Attack with spikes of ice.",
+        "type": "base_damage",
+        "element": "mercury",
+        "battle_target": "enemy",
+        "range": 1,
+        "pp_cost": 5,
+        "ability_power": 35,
+        "effects_outside_battle": false,
+        "is_battle_ability": true,
+        "is_field_psynergy": false,
+        "effects": [],
+        "ability_category": "psynergy",
+        "battle_animation_key": "ice",
+        "priority_move": false,
+        "msg_type": "cast"
     }
 ]

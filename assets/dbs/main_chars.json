@@ -348,6 +348,10 @@
                 "quantity": 1,
                 "equipped": true
             },{
+                "key_name": "ice_crystal",
+                "quantity": 1,
+                "equipped": true
+            },{
                 "key_name": "staff_of_anubis",
                 "quantity": 1,
                 "equipped": true

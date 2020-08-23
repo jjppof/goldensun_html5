@@ -265,6 +265,25 @@
         "price": 0,
         "granted_ability": "frost"
     },{
+        "key_name": "ice_crystal",
+        "name": "Ice Crystal",
+        "type": "ability_grantor",
+        "description": "Bestows Ice when equipped",
+        "use_type": "no_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": false,
+        "imporant_item": true,
+        "carry_up_to_30": false,
+        "effects": [],
+        "attribute": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "",
+        "equipable_chars": ["isaac", "garet", "sheba"],
+        "price": 0,
+        "granted_ability": "ice"
+    },{
         "key_name": "wooden_stick",
         "name": "Wooden Stick",
         "type": "weapons",

@@ -59,7 +59,7 @@ export class BattleAnimation {
         this.running = false;
     }
 
-    initialize(caster_sprite, targets_sprites, group_caster, group_enemy, super_group, stage_camera, background_sprites) {
+    initialize(ability_key, caster_sprite, targets_sprites, group_caster, group_enemy, super_group, stage_camera, background_sprites) {
         this.sprites = [];
         this.sprites_prev_properties = {};
         this.stage_prev_value = undefined;
@@ -82,7 +82,8 @@ export class BattleAnimation {
             if (!sprite_info.per_target) {
                 const count = sprite_info.count ? sprite_info.count : 1;
                 for (let j = 0; j < count; ++j) {
-                    const psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_info.key_name);
+                    const sprite_key = ability_key + "_battle_animation";
+                    const psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_key);
                     let back_group, front_group;
                     if (super_group.getChildIndex(group_caster) < super_group.getChildIndex(group_enemy)) {
                         back_group = group_caster;
@@ -98,7 +99,9 @@ export class BattleAnimation {
                     } else if (sprite_info.position === "behind") {
                         super_group.addChildAt(psy_sprite, super_group.getChildIndex(back_group));
                     }
-                    psy_sprite.animations.add('cast', Phaser.Animation.generateFrameNames('', 1, psy_sprite.animations.frameTotal, '', 3));
+                    const frames = Phaser.Animation.generateFrameNames(sprite_info.key_name + '/', 1, psy_sprite.animations.frameTotal, '', 3);
+                    psy_sprite.animations.add(sprite_info.key_name, frames);
+                    psy_sprite.animations.frameName = frames[0];
                     psy_sprite.battle_index = this.sprites.length;
                     psy_sprite.trails = sprite_info.trails;
                     psy_sprite.trails_info = trails_info;
