@@ -9,7 +9,8 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0
 - I'm avoiding making some docs for now because I'm constantly changing things. But see the [wiki](https://github.com/jjppof/goldensun_html5/wiki).
 - This repository is just the engine. I'm not planning to do maps, animations, items etc. Content here is just enough to show the functionalities.
 - I use [projects](https://github.com/jjppof/goldensun_html5/projects/1) to write down things.
-- There's no production environment for now, but I'm planning to do it with webpack.
+- There's no production environment for now, but I'm planning to do it with webpack and embed most of the assets.
+- Check what I need help [here](https://github.com/jjppof/goldensun_html5/projects/2).
 
 ## Development environment
 
