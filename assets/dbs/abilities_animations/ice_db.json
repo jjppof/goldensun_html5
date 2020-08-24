@@ -10,22 +10,23 @@
         "trail_frame_diff": 3
     }],
     "x_sequence": [{
-        "to": [135,145,135,135,145,135,145,145,155,175,175,155,165,165,155,155],
+        "to": [175, 185, 175, 175, 185, 175, 185, 185, 195, 215, 215, 195, 205, 205, 195, 195],
         "is_absolute": true,
         "tween": "initial",
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     },{
         "start_delay": [1300, 1340, 1400, 1470, 1500, 1500, 1600, 1650, 1700, 1750, 1800, 1800, 1900, 1950, 2000, 2050],
-        "to": [-110,-110,-110,-110,-110,-110,-110,-110,-110,-110,-110,-110,-110,-110,-110,-110],
-        "is_absolute": false,
+        "to": ["target","target","target","target","target","target","target","target","target","target","target","target","target","target","target","target"],
+        "shift": [-20, -10, -20, -20, -10, -20, -10, -10, 0, 20, 20, 0, 10, 10, 0, 0],
+        "is_absolute": true,
         "tween": "Linear.None",
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
         "duration": 400
     }],
     "y_sequence": [{
         "start_delay": [1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050],
-        "to": [90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90],
-        "is_absolute": false,
+        "to": ["target","target","target","target","target","target","target","target","target","target","target","target","target","target","target","target"],
+        "is_absolute": true,
         "tween": "Linear.None",
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
         "duration": 400
@@ -58,8 +59,18 @@
     "y_ellipse_axis_factor_sequence": [],
     "x_scale_sequence": [],
     "y_scale_sequence": [],
-    "x_anchor_sequence": [],
-    "y_anchor_sequence": [],
+    "x_anchor_sequence": [{
+        "to": [0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6],
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    }],
+    "y_anchor_sequence": [{
+        "to": [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    }],
     "alpha_sequence": [{
         "to": 0.0,
         "is_absolute": true,

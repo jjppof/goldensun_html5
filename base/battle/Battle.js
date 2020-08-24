@@ -842,5 +842,6 @@ So, if a character will die after 5 turns and you land another Curse on them, it
     update() {
         if (this.battle_finishing) return;
         this.battle_stage.update_stage();
+        this.animation_manager.render();
     }
 }

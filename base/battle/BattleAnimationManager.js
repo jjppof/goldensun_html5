@@ -9,6 +9,7 @@ export class BattleAnimationManager {
         this.data = data;
         this.animations = {};
         this.not_available = new Set();
+        this.render_function = null;
     }
 
     async load_animation(ability_key) {
@@ -87,8 +88,16 @@ export class BattleAnimationManager {
         );
         let play_promise_resolve;
         const play_promise = new Promise(resolve => { play_promise_resolve = resolve });
+        this.render_function = this.animations[ability_key].render.bind(this.animations[ability_key]);
         this.animations[ability_key].play(play_promise_resolve);
         await play_promise;
+        this.render_function = null;
+    }
+
+    render() {
+        if (this.render_function) {
+            this.render_function();
+        }
     }
 
     destroy() {

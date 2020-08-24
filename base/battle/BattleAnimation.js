@@ -164,8 +164,8 @@ export class BattleAnimation {
         this.promises = [];
         this.play_number_property_sequence(this.x_sequence, 'x');
         this.play_number_property_sequence(this.y_sequence, 'y');
-        this.play_number_property_sequence(this.x_ellipse_axis_factor_sequence, 'ellipses_axis_factor_a');
-        this.play_number_property_sequence(this.y_ellipse_axis_factor_sequence, 'ellipses_axis_factor_b');
+        this.play_number_property_sequence(this.x_ellipse_axis_factor_sequence, 'ellipses_semi_major');
+        this.play_number_property_sequence(this.y_ellipse_axis_factor_sequence, 'ellipses_semi_minor');
         this.play_number_property_sequence(this.alpha_sequence, 'alpha');
         this.play_number_property_sequence(this.rotation_sequence, 'rotation');
         this.play_number_property_sequence(this.x_scale_sequence, 'x', 'scale');
@@ -238,7 +238,7 @@ export class BattleAnimation {
                     }
                 } else {
                     if (Array.isArray(seq.sprite_index)) {
-                        return seq.sprite_index.map(index => this.sprites_filters[index][inner_property]);
+                        return seq.sprite_index.map(index => this.sprites[index][inner_property]);
                     } else {
                         return [this.sprites[seq.sprite_index][inner_property]];
                     }
@@ -269,13 +269,6 @@ export class BattleAnimation {
                 auto_start_tween[seq.sprite_index] = false;
             }
             let sprites = this.get_sprites(seq, inner_property);
-            let initial_value = 0;
-            if (!['scale', 'anchor'].includes(inner_property)) {
-                switch (target_property) {
-                    case 'x': initial_value = this.x0; break;
-                    case 'y': initial_value = this.y0; break;
-                }
-            }
             let promises_set = false;
             sprites.forEach((this_sprite, index) => {
                 const uniq_key = this_sprite.key + "_" + this_sprite.battle_index;
@@ -299,7 +292,7 @@ export class BattleAnimation {
                         to_value -= Math.sign(to_value) * numbers.degree360;
                     }
                 }
-                to_value = seq.is_absolute ? initial_value + to_value : this.sprites_prev_properties[uniq_key][target_property] + seq_to;
+                to_value = seq.is_absolute ? to_value : this.sprites_prev_properties[uniq_key][target_property] + seq_to;
                 if (!seq.yoyo) {
                     this.sprites_prev_properties[uniq_key][target_property] = to_value;
                 }
@@ -502,8 +495,8 @@ export class BattleAnimation {
         let clear = true;
         this.sprites.forEach(sprite => {
             if (!sprite.trails) return;
-            sprite.x_history.unshift(sprite.x - this.game.camera.x);
-            sprite.y_history.unshift(sprite.y - this.game.camera.y);
+            sprite.x_history.unshift(sprite.x);
+            sprite.y_history.unshift(sprite.y);
             if (clear) {
                 sprite.trails_info.texture_1.clear();
                 sprite.trails_info.texture_2.clear();
