@@ -9,6 +9,7 @@ import { fighter_types, permanent_status } from '../Player.js';
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
 const BG_Y = 17;
+const BG_HEIGHT = 120;
 const CENTER_X = numbers.GAME_WIDTH >> 1;
 const CENTER_Y = numbers.GAME_HEIGHT - 35;
 const CAMERA_SPEED = 0.009 * Math.PI;
@@ -189,8 +190,8 @@ export class BattleStage {
         this.black_bg.beginFill(0x0, 1);
         this.black_bg.drawRect(0, 0, numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
         this.black_bg.endFill();
-        this.battle_bg = this.game.add.sprite(BG_X, BG_Y, "battle_backgrounds", this.background_key);
-        this.battle_bg2 = this.game.add.sprite(BG_X, BG_Y, "battle_backgrounds", this.background_key);
+        this.battle_bg = this.game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, "battle_backgrounds", this.background_key);
+        this.battle_bg2 = this.game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, "battle_backgrounds", this.background_key);
         this.bg_height = this.battle_bg.height;
         this.battle_bg.scale.setTo(BG_DEFAULT_SCALE);
         this.battle_bg2.scale.setTo(BG_DEFAULT_SCALE);

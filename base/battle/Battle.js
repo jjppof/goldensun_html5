@@ -372,7 +372,7 @@ export class Battle {
         }
         if (this.animation_manager.animation_available(ability.key_name)) {
             const caster_sprite = action.caster.fighter_type === fighter_types.ALLY ? this.allies_map_sprite[action.caster.key_name] : this.enemies_map_sprite[action.caster.key_name];
-            const target_sprites = action.targets.map(info => info.target.sprite);
+            const target_sprites = action.targets.flatMap(info => info.magnitude ? [info.target.sprite] : []);
             const group_caster = action.caster.fighter_type === fighter_types.ALLY ? this.battle_stage.group_allies : this.battle_stage.group_enemies;
             const group_taker = action.caster.fighter_type === fighter_types.ALLY ? this.battle_stage.group_enemies : this.battle_stage.group_allies;
             await this.animation_manager.play(ability.key_name, caster_sprite, target_sprites, group_caster, group_taker, this.battle_stage);

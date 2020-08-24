@@ -141,33 +141,33 @@
         "wait": true,
         "hide_on_complete": true
     },{
-        "animation_key": "cast_init_back",
+        "animation_key": "battle_cast_init_back",
         "start_delay": 800,
         "sprite_index": "caster",
         "wait": false
     },{
-        "animation_key": "cast_back",
+        "animation_key": "battle_cast_back",
         "start_delay": 1500,
         "sprite_index": "caster",
         "wait": false
     },{
-        "animation_key": "cast_init_back",
+        "animation_key": "battle_cast_init_back",
         "reverse": true,
         "start_delay": 2500,
         "sprite_index": "caster",
         "wait": false
     },{
-        "animation_key": "back",
+        "animation_key": "battle_back",
         "start_delay": 3000,
         "sprite_index": "caster",
         "wait": false
     },{
-        "animation_key": "damage_front",
+        "animation_key": "battle_damage_front",
         "start_delay": 1700,
         "sprite_index": "targets",
         "wait": false
     },{
-        "animation_key": "front",
+        "animation_key": "battle_front",
         "start_delay": 3800,
         "sprite_index": "targets",
         "wait": false
