@@ -377,7 +377,6 @@ export class Battle {
             const group_taker = action.caster.fighter_type === fighter_types.ALLY ? this.battle_stage.group_enemies : this.battle_stage.group_allies;
             await this.animation_manager.play(ability.key_name, caster_sprite, target_sprites, group_caster, group_taker, this.battle_stage);
             this.battle_stage.prevent_camera_angle_overflow();
-            this.battle_stage.set_stage_default_position();
         } else {
             await this.battle_log.add(`Animation for ${ability.key_name} not available...`);
             await this.wait_for_key();
@@ -397,6 +396,7 @@ export class Battle {
                 return;
             }
         }
+        await this.battle_stage.set_stage_default_position();
         //summon after cast power buff
         if (ability.ability_category === ability_categories.SUMMON) {
             const requirements = _.find(this.data.summons_db, {key_name: ability.key_name}).requirements;

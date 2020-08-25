@@ -280,7 +280,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet", "sheba"],
+        "equipable_chars": ["isaac"],
         "price": 0,
         "granted_ability": "ice"
     },{

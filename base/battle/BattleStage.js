@@ -162,6 +162,9 @@ export class BattleStage {
     }
 
     change_target(step, tween_to_pos = true) {
+        if (this.target_type === ability_target_types.ENEMY) {
+            step *= -1;
+        }
         const group_info = this.target_type === ability_target_types.ALLY ? this.allies_info : this.enemies_info;
         const group_length = group_info.length;
         const group_half_length = group_length % 2 ? group_length >> 1 : (group_length >> 1) - 1;
@@ -285,7 +288,7 @@ export class BattleStage {
         this.battle_bg2.y = -this.battle_bg.height * (ACTION_POS_BG_SCALE - 1) + BG_Y - CHOOSE_TARGET_ALLY_SHIFT;
         for (let i = 0; i < this.sprites.length; ++i) {
             const sprite = this.sprites[i];
-            const index_shifted = sprite.is_ally ? i : i - this.allies_count;
+            const index_shifted = sprite.is_ally ? i : (this.enemies_count - 1) - (i - this.allies_count);
             const x_shift = sprite.is_ally ? ACTION_POS_ALLY_X : ACTION_POS_ENEMY_CENTER_X - (this.enemies_count >> 1) * ACTION_POS_SPACE_BETWEEN;
             const pos_x = x_shift + index_shifted * ACTION_POS_SPACE_BETWEEN;
             const pos_y = sprite.is_ally ? ACTION_ALLY_Y : ACTION_ENEMY_Y;
