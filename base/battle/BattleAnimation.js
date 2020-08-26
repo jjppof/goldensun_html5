@@ -1,5 +1,6 @@
 import * as numbers from "../../magic_numbers.js";
 import { range_360 } from "../../utils.js";
+import { DEFAULT_POS_ANGLE } from "./BattleStage.js";
 
 export class BattleAnimation {
     //tween type can be 'initial' for first position
@@ -444,15 +445,19 @@ export class BattleAnimation {
             if (this.stage_prev_value === undefined) {
                 this.stage_prev_value = this.stage_camera.rad;
             }
-            if (stage_angle_seq.is_absolute) {
-                this.stage_prev_value = range_360(this.stage_prev_value);
-                this.stage_camera.rad = this.stage_prev_value;
-                to_value = BattleAnimation.get_angle_by_direction(this.stage_prev_value, stage_angle_seq.to, stage_angle_seq.direction, true);
-                if (Math.abs(this.stage_prev_value - to_value) > numbers.degree360) {
-                    to_value -= Math.sign(to_value) * numbers.degree360;
-                }
+            if (stage_angle_seq.to === "default") {
+                to_value = DEFAULT_POS_ANGLE;
             } else {
-                to_value = this.stage_prev_value + stage_angle_seq.to;
+                if (stage_angle_seq.is_absolute) {
+                    this.stage_prev_value = range_360(this.stage_prev_value);
+                    this.stage_camera.rad = this.stage_prev_value;
+                    to_value = BattleAnimation.get_angle_by_direction(this.stage_prev_value, stage_angle_seq.to, stage_angle_seq.direction, true);
+                    if (Math.abs(this.stage_prev_value - to_value) > numbers.degree360) {
+                        to_value -= Math.sign(to_value) * numbers.degree360;
+                    }
+                } else {
+                    to_value = this.stage_prev_value + stage_angle_seq.to;
+                }
             }
             this.stage_prev_value = to_value;
             if (stage_angle_seq.tween === "initial") {
