@@ -1,7 +1,10 @@
 import { BattleAnimation } from "./BattleAnimation.js";
+import { abilities_list } from "../../initializers/abilities.js";
 
 const ANIMATIONS_BASE_PATH = "assets/images/abilities_animations/";
 const ANIMATIONS_DB_PATH = "assets/dbs/abilities_animations/";
+const ANIMATION_SUFFIX = "_battle_animation";
+const RECIPE_SUFFIX = "_battle_recipe";
 
 export class BattleAnimationManager {
     constructor(game, data) {
@@ -12,12 +15,12 @@ export class BattleAnimationManager {
         this.render_function = null;
     }
 
-    async load_animation(ability_key) {
-        if ((ability_key in this.animations) || this.not_available.has(ability_key)) return;
-        const sprite_key = ability_key + "_battle_animation";
-        const recipe_key = ability_key + "_battle_recipe";
-        const sprite_loader = this.game.load.atlasJSONHash(sprite_key, `${ANIMATIONS_BASE_PATH}${ability_key}.png`, `${ANIMATIONS_BASE_PATH}${ability_key}.json`);
-        const recipe_loader = this.game.load.json(recipe_key, `${ANIMATIONS_DB_PATH}${ability_key}_db.json`);
+    async load_animation(battle_anim_key) {
+        if (battle_anim_key in this.animations || this.not_available.has(battle_anim_key) || battle_anim_key === "no_animation") return;
+        const sprite_key = battle_anim_key + ANIMATION_SUFFIX;
+        const recipe_key = battle_anim_key + RECIPE_SUFFIX;
+        const sprite_loader = this.game.load.atlasJSONHash(sprite_key, `${ANIMATIONS_BASE_PATH}${battle_anim_key}.png`, `${ANIMATIONS_BASE_PATH}${battle_anim_key}.json`);
+        const recipe_loader = this.game.load.json(recipe_key, `${ANIMATIONS_DB_PATH}${battle_anim_key}_db.json`);
 
         let all_succeed = true;
         let sprite_loader_promise_resolve;
@@ -39,8 +42,8 @@ export class BattleAnimationManager {
         this.game.load.start();
         await Promise.all([sprite_loader_promise, recipe_loader_promise, load_complete_promise]);
         if (all_succeed) {
-            const animation_recipe = this.game.cache.getJSON(ability_key + "_battle_recipe");
-            this.animations[ability_key] = new BattleAnimation(
+            const animation_recipe = this.game.cache.getJSON(battle_anim_key + RECIPE_SUFFIX);
+            this.animations[battle_anim_key] = new BattleAnimation(
                 this.game,
                 animation_recipe.key_name,
                 animation_recipe.sprites,
@@ -66,18 +69,19 @@ export class BattleAnimationManager {
                 animation_recipe.is_party_animation
             );
         } else {
-            this.not_available.add(ability_key);
+            this.not_available.add(battle_anim_key);
         }
     }
 
-    animation_available(ability_key) {
-        return ability_key in this.animations;
+    animation_available(battle_anim_key) {
+        return battle_anim_key in this.animations;
     }
 
-    async play(ability_key, caster_sprite, targets_sprites, group_caster, group_taker, battle_stage) {
-        if (!(ability_key in this.animations)) return;
-        this.animations[ability_key].initialize(
-            ability_key,
+    async play(battle_anim_key, caster_sprite, targets_sprites, group_caster, group_taker, battle_stage) {
+        if (!(battle_anim_key in this.animations)) return;
+        const sprite_key = battle_anim_key + ANIMATION_SUFFIX;
+        this.animations[battle_anim_key].initialize(
+            sprite_key,
             caster_sprite,
             targets_sprites,
             group_caster,
@@ -88,8 +92,8 @@ export class BattleAnimationManager {
         );
         let play_promise_resolve;
         const play_promise = new Promise(resolve => { play_promise_resolve = resolve });
-        this.render_function = this.animations[ability_key].render.bind(this.animations[ability_key]);
-        this.animations[ability_key].play(play_promise_resolve);
+        this.render_function = this.animations[battle_anim_key].render.bind(this.animations[battle_anim_key]);
+        this.animations[battle_anim_key].play(play_promise_resolve);
         await play_promise;
         this.render_function = null;
     }
@@ -101,9 +105,9 @@ export class BattleAnimationManager {
     }
 
     destroy() {
-        for (let ability_key in this.animations) {
-            this.game.cache.removeTextureAtlas(ability_key + "_battle_animation");
-            this.game.cache.removeJSON(ability_key + "_battle_recipe");
+        for (let battle_anim_key in this.animations) {
+            this.game.cache.removeTextureAtlas(battle_anim_key + ANIMATION_SUFFIX);
+            this.game.cache.removeJSON(battle_anim_key + RECIPE_SUFFIX);
         }
     }
 }

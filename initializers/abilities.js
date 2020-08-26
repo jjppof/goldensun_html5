@@ -32,7 +32,8 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
             ability_data.can_be_evaded,
             ability_data.use_diminishing_ratio,
             ability_data.msg_type,
-            ability_data.affects_pp
+            ability_data.affects_pp,
+            ability_data.has_animation_variation
         );
     }
     const loader = game.load.atlasJSONHash('abilities_icons', 'assets/images/icons/abilities/abilities_icons.png', 'assets/images/icons/abilities/abilities_icons.json');

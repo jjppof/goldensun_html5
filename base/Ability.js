@@ -96,7 +96,8 @@ export class Ability {
         can_be_evaded,
         use_diminishing_ratio,
         msg_type,
-        affects_pp
+        affects_pp,
+        has_animation_variation
     ) {
         this.key_name = key_name;
         this.name = name;
@@ -121,6 +122,7 @@ export class Ability {
         this.use_diminishing_ratio = use_diminishing_ratio ? use_diminishing_ratio : false;
         this.msg_type = msg_type === undefined ? ability_msg_types.CAST : msg_type;
         this.affects_pp = affects_pp === undefined ? false : affects_pp;
+        this.has_animation_variation = has_animation_variation === undefined ? false : has_animation_variation;
     }
 
     static get_diminishing_ratios(ability_type, use_diminishing_ratio) {

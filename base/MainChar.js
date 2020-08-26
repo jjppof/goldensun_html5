@@ -60,7 +60,8 @@ export class MainChar extends Player {
         innate_abilities,
         in_party,
         djinni,
-        items
+        items,
+        battle_animations_variations
     ) {
         super(key_name, name);
         this.sprite_base = sprite_base;
@@ -125,6 +126,7 @@ export class MainChar extends Player {
         this.update_abilities();
         this.turns = 1;
         this.fighter_type = fighter_types.ALLY;
+        this.battle_animations_variations = Object.assign({}, battle_animations_variations);
     }
 
     get djinni() {

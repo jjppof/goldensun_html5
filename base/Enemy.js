@@ -34,6 +34,7 @@ export class Enemy extends Player {
         this.mercury_resist = enemy_data.mercury_resist;
         this.mars_resist = enemy_data.mars_resist;
         this.jupiter_resist = enemy_data.jupiter_resist;
+        this.battle_animations_variations = Object.assign({}, enemy_data.battle_animations_variations);
         this.fighter_type = fighter_types.ENEMY;
         this.class = {
             name: "No Class",

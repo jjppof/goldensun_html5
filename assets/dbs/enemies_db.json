@@ -55,7 +55,10 @@
         "venus_resist": 72,
         "mercury_resist": 72,
         "mars_resist": 72,
-        "jupiter_resist": 72
+        "jupiter_resist": 72,
+        "battle_animations_variations": {
+            "attack": "attack"
+        }
     },{
         "key_name": "briggs",
         "name": "Briggs",
@@ -124,6 +127,9 @@
         "mercury_resist": 100,
         "mars_resist": 100,
         "jupiter_resist": 100,
+        "battle_animations_variations": {
+            "attack": "attack"
+        },
         "battle_spritesheet": {
             "key": "battle",
             "spritesheet": "assets/images/spritesheets/battle/briggs_battle.json",
@@ -205,6 +211,9 @@
         "mercury_resist": 100,
         "mars_resist": 100,
         "jupiter_resist": 100,
+        "battle_animations_variations": {
+            "attack": "attack"
+        },
         "battle_spritesheet": {
             "key": "battle",
             "spritesheet": "assets/images/spritesheets/battle/sea_fighter_battle.json",

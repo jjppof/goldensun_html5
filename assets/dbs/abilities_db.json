@@ -15,6 +15,7 @@
         "effects": [],
         "ability_category": "normal",
         "battle_animation_key": "attack",
+        "has_animation_variation": true,
         "has_critical": true,
         "crit_mult_factor": 1.25,
         "can_switch_to_unleash": true,

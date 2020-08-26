@@ -257,7 +257,13 @@ export class Battle {
         });
         for (let i = 0; i < this.turns_actions.length; ++i) {
             const action = this.turns_actions[i];
-            await this.animation_manager.load_animation(action.key_name);
+            const ability = abilities_list[action.key_name];
+            let battle_animation_key = abilities_list[action.key_name].battle_animation_key;
+            if (ability.has_animation_variation && action.key_name in action.caster.battle_animations_variations) {
+                battle_animation_key = action.caster.battle_animations_variations[action.key_name];
+            }
+            action.battle_animation_key = battle_animation_key;
+            await this.animation_manager.load_animation(battle_animation_key);
         }
         this.battle_phase = battle_phases.COMBAT;
         this.controls_enabled = true;
@@ -370,15 +376,15 @@ export class Battle {
         if (ability.type === ability_types.UTILITY) {
             await this.wait_for_key();
         }
-        if (this.animation_manager.animation_available(ability.key_name)) {
+        if (this.animation_manager.animation_available(action.battle_animation_key)) {
             const caster_sprite = action.caster.fighter_type === fighter_types.ALLY ? this.allies_map_sprite[action.caster.key_name] : this.enemies_map_sprite[action.caster.key_name];
             const target_sprites = action.targets.flatMap(info => info.magnitude ? [info.target.sprite] : []);
             const group_caster = action.caster.fighter_type === fighter_types.ALLY ? this.battle_stage.group_allies : this.battle_stage.group_enemies;
             const group_taker = action.caster.fighter_type === fighter_types.ALLY ? this.battle_stage.group_enemies : this.battle_stage.group_allies;
-            await this.animation_manager.play(ability.key_name, caster_sprite, target_sprites, group_caster, group_taker, this.battle_stage);
+            await this.animation_manager.play(action.battle_animation_key, caster_sprite, target_sprites, group_caster, group_taker, this.battle_stage);
             this.battle_stage.prevent_camera_angle_overflow();
         } else {
-            await this.battle_log.add(`Animation for ${ability.key_name} not available...`);
+            await this.battle_log.add(`Animation for ${ability.name} not available...`);
             await this.wait_for_key();
         }
         //apply ability damage

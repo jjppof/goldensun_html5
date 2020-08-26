@@ -59,7 +59,7 @@ export class BattleAnimation {
         this.running = false;
     }
 
-    initialize(ability_key, caster_sprite, targets_sprites, group_caster, group_enemy, super_group, stage_camera, background_sprites) {
+    initialize(sprite_key, caster_sprite, targets_sprites, group_caster, group_enemy, super_group, stage_camera, background_sprites) {
         this.sprites = [];
         this.sprites_prev_properties = {};
         this.stage_prev_value = undefined;
@@ -82,7 +82,6 @@ export class BattleAnimation {
             if (!sprite_info.per_target) {
                 const count = sprite_info.count ? sprite_info.count : 1;
                 for (let j = 0; j < count; ++j) {
-                    const sprite_key = ability_key + "_battle_animation";
                     const psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_key);
                     let back_group, front_group;
                     if (super_group.getChildIndex(group_caster) < super_group.getChildIndex(group_enemy)) {

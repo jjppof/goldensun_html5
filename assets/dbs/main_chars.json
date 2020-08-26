@@ -185,7 +185,10 @@
                 "quantity": 1,
                 "equipped": true
             }
-        ]
+        ],
+        "battle_animations_variations": {
+            "attack": "attack"
+        }
     },{
         "key_name": "garet",
         "name": "Garet",
@@ -275,7 +278,10 @@
                 "key_name": "cotton_shirt",
                 "quantity": 1
             }
-        ]
+        ],
+        "battle_animations_variations": {
+            "attack": "attack"
+        }
     },{
         "key_name": "sheba",
         "name": "Sheba",
@@ -356,6 +362,9 @@
                 "quantity": 1,
                 "equipped": true
             }
-        ]
+        ],
+        "battle_animations_variations": {
+            "attack": "attack"
+        }
     }
 ]
