@@ -124,12 +124,12 @@
     "custom_filter_sequence": [{
         "start_delay": 1700, 
         "sprite_index": "targets", 
-        "filter": "color_bend", 
+        "filter": "color_blend", 
         "value": [0.5, 0.6, 2.3]
     },{
         "start_delay": 3800, 
         "sprite_index": "targets", 
-        "filter": "color_bend", 
+        "filter": "color_blend", 
         "value": [-1, -1, -1]
     },{
         "start_delay": 1700, 

@@ -426,7 +426,7 @@ export class BattleAnimation {
                 this.promises.push(this_promise);
                 const start_delay = Array.isArray(filter_seq.start_delay) ? filter_seq.start_delay[index] : filter_seq.start_delay;
                 this.game.time.events.add(start_delay, () => {
-                const this_property = filter_seq.filter !== undefined ? filter_seq.filter : property;
+                    const this_property = filter_seq.filter !== undefined ? filter_seq.filter : property;
                     sprite.filters[0][this_property] = filter_seq.value;
                     secondary_properties.forEach(secondary_property => {
                         sprite.filters[0][secondary_property] = filter_seq[secondary_property];
