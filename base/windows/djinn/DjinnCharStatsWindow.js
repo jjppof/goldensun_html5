@@ -73,7 +73,7 @@ export class DjinnCharStatsWindow {
     }
 
     mount_window() {
-        const avatar_sprite = this.base_window.create_at_group(AVATAR_X, AVATAR_Y, this.char.key_name + "_avatar");
+        const avatar_sprite = this.base_window.create_at_group(AVATAR_X, AVATAR_Y, "avatars", undefined , this.char.key_name);
         this.sprites.push(avatar_sprite);
         this.base_window.update_text(this.char.name, this.char_name_text);
         this.base_window.update_text(this.char.level.toString(), this.level_number_text);

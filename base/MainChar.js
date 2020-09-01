@@ -34,7 +34,6 @@ export class MainChar extends Player {
     constructor (
         key_name,
         sprite_base,
-        avatar_image_path,
         name,
         hp_curve,
         pp_curve,
@@ -65,7 +64,6 @@ export class MainChar extends Player {
     ) {
         super(key_name, name);
         this.sprite_base = sprite_base;
-        this.avatar_image_path = avatar_image_path;
         this.starting_level = starting_level;
         this.level = this.starting_level;
         this.battle_scale = battle_scale;
@@ -134,11 +132,6 @@ export class MainChar extends Player {
         return this_djinni_list.sort((a, b) => {
             return djinni_list[a].index - djinni_list[b].index;
         })
-    }
-
-    load_assets(game, load_callback) {
-        game.load.image(this.key_name + '_avatar', this.avatar_image_path).onLoadComplete.addOnce(load_callback);
-        game.load.start();
     }
 
     update_class() {

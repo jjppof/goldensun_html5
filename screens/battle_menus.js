@@ -227,7 +227,7 @@ export class BattleMenuScreen {
 
     set_avatar() {
         this.avatar_sprite.alpha = 1;
-        this.avatar_sprite.loadTexture(party_data.members[this.current_char_index].key_name + "_avatar");
+        this.avatar_sprite.loadTexture("avatars", party_data.members[this.current_char_index].key_name);
     }
 
     hide_avatar() {

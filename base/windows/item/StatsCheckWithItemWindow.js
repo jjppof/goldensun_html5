@@ -79,7 +79,7 @@ export class StatsCheckWithItemWindow {
         if (this.avatar) {
             this.avatar.destroy();
         }
-        this.avatar = this.avatar_group.create(0, 0, this.char.key_name + "_avatar");
+        this.avatar = this.avatar_group.create(0, 0, "avatars", this.char.key_name);
         if (set_compare_arrows) {
             this.compare_items();
         }

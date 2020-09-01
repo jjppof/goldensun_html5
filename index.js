@@ -147,14 +147,15 @@ function load_misc() {
     game.load.atlasJSONHash('psynergy_ball', 'assets/images/spritesheets/interactable_objects/psynergy_ball.png', 'assets/images/spritesheets/interactable_objects/psynergy_ball.json');
 }
 
-function load_battle_assets() {
+function load_assets() {
     game.load.atlasJSONHash('battle_backgrounds', 'assets/images/battle_backgrounds/battle_backgrounds.png', 'assets/images/battle_backgrounds/battle_backgrounds.json');
+    game.load.atlasJSONHash('avatars', 'assets/images/avatars/avatars.png', 'assets/images/avatars/avatars.json');
 }
 
 function preload() {
     load_db_files();
     load_misc();
-    load_battle_assets();
+    load_assets();
     load_buttons();
     game.load.script('color_filters', 'plugins/color_filters.js');
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');

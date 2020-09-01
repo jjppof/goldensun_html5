@@ -48,7 +48,6 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
         main_char_list[char_data.key_name] = new MainChar(
             char_data.key_name,
             sprite_base,
-            char_data.avatar_image_path,
             char_data.name,
             char_data.hp_curve,
             char_data.pp_curve,
@@ -95,13 +94,7 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
         });
         load_promises.push(load_spritesheet_promise);
         sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
-
-        let load_other_assets_promise_resolve;
-        let load_other_assets_promise = new Promise(resolve => {
-            load_other_assets_promise_resolve = resolve;
-        });
-        load_promises.push(load_other_assets_promise);
-        main_char_list[char_data.key_name].load_assets(game, load_other_assets_promise_resolve);
     }
+    
     Promise.all(load_promises).then(load_promise_resolve);
 }
