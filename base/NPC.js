@@ -14,6 +14,8 @@ const NPC_TALK_RANGE = 3.0;
 
 export class NPC {
     constructor(
+        game,
+        data,
         type,
         key_name,
         initial_x,
@@ -29,6 +31,8 @@ export class NPC {
         talk_range_factor,
         events_info
     ) {
+        this.game = game;
+        this.data = data;
         this.type = type;
         this.key_name = key_name;
         this.initial_x = initial_x;
@@ -43,6 +47,29 @@ export class NPC {
         this.base_collider_layer = base_collider_layer;
         this.talk_range_factor = talk_range_factor === undefined ? NPC_TALK_RANGE : talk_range_factor;
         this.set_events(events_info);
+    }
+
+    initial_config(map_sprite) {
+        const initial_action = this.data.npc_db[this.key_name].initial_action;
+        let npc_shadow_sprite = this.data.npc_group.create(0, 0, 'shadow');
+        npc_shadow_sprite.roundPx = true;
+        npc_shadow_sprite.blendMode = PIXI.blendModes.MULTIPLY;
+        npc_shadow_sprite.anchor.setTo(this.ac_x, this.ac_y);
+        npc_shadow_sprite.base_collider_layer = this.base_collider_layer;
+        const sprite_key = this.key_name + "_" + initial_action;
+        const npc_sprite = this.data.npc_group.create(0, 0, sprite_key);
+        this.set_shadow_sprite(npc_shadow_sprite);
+        this.set_sprite(npc_sprite);
+        this.npc_sprite.is_npc = true;
+        this.npc_sprite.roundPx = true;
+        this.npc_sprite.base_collider_layer = this.base_collider_layer;
+        this.npc_sprite.anchor.y = this.data.npc_db[this.key_name].anchor_y;
+        this.npc_sprite.centerX = (this.initial_x + 1.5) * map_sprite.tileWidth;
+        const anchor_shift = this.data.npc_db[this.key_name].anchor_y;
+        this.npc_sprite.centerY = this.initial_y * map_sprite.tileWidth - anchor_shift;
+        this.sprite_info.setAnimation(this.npc_sprite, initial_action);
+        const anim_key = initial_action + "_" + this.data.npc_db[this.key_name].actions[initial_action].initial_direction;
+        this.npc_sprite.animations.play(anim_key);
     }
 
     set_events(events_info) {

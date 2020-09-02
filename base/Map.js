@@ -54,8 +54,11 @@ export class Map {
             }
         });
         data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
-        const shadow_index = data.npc_group.getChildIndex(data.hero) - 1;
-        if (shadow_index >= 0 && shadow_index < data.npc_group.children.length) {
+        let shadow_index = data.npc_group.getChildIndex(data.hero) - 1;
+        if (shadow_index >= -1 && shadow_index < data.npc_group.children.length) {
+            if (shadow_index === -1) {
+                shadow_index = 0;
+            }
             data.npc_group.setChildIndex(data.shadow, shadow_index); //making sure that shadow is always behind the hero
         }
         send_to_back_list.forEach(sprite => {
@@ -182,9 +185,11 @@ export class Map {
         }
     }
 
-    create_npcs(raw_property) {
+    create_npcs(game, data, raw_property) {
         const property_info = JSON.parse(raw_property);
         this.npcs.push(new NPC(
+            game,
+            data,
             property_info.type,
             property_info.key_name,
             property_info.initial_x,
@@ -260,36 +265,40 @@ export class Map {
         }
     }
 
-    async mount_map(game, data) {
-        this.events = {};
-        TileEvent.reset();
-        GameEvent.reset();
-        this.sprite = game.add.tilemap(this.key_name);
-        this.sprite.addTilesetImage(this.tileset_name, this.key_name);
-
-        for (let i = 0; i < this.sprite.tilesets.length; ++i) {
-            const tileset = this.sprite.tilesets[i];
-            for (let tile_index in tileset.tileProperties) {
-                tileset.tileProperties[tile_index].index = tile_index;
+    async config_npc(game, data) {
+        for (let i = 0; i < this.npcs.length; ++i) {
+            const npc = this.npcs[i];
+            let actions = [];
+            if (npc.npc_type == NPC.movement_types.IDLE) {
+                actions = ['idle'];
             }
-        }
-
-        for (let property in this.sprite.properties) {
-            const raw_property = this.sprite.properties[property];
-            if (property.startsWith("event")) {
-                this.create_tile_events(raw_property);
-            } else if(property.startsWith("npc")) {
-                this.create_npcs(raw_property);
-            } else if(property.startsWith("interactable_object")) {
-                this.create_interactable_objects(game, data, raw_property);
+            const npc_sprite_info = new NPC_Sprite(npc.key_name, actions);
+            npc.sprite_info = npc_sprite_info;
+            for (let j = 0; j < actions.length; ++j) {
+                const action = actions[j];
+                npc_sprite_info.setActionSpritesheet(
+                    action,
+                    `assets/images/spritesheets/${npc.key_name}_${action}.png`,
+                    `assets/images/spritesheets/${npc.key_name}_${action}.json`
+                );
+                npc_sprite_info.setActionDirections(
+                    action, 
+                    data.npc_db[npc.key_name].actions[action].directions,
+                    data.npc_db[npc.key_name].actions[action].frames_count
+                );
+                npc_sprite_info.setActionFrameRate(action, data.npc_db[npc.key_name].actions[action].frame_rate);
             }
+            npc_sprite_info.addAnimations();
+            await new Promise(resolve => {
+                npc_sprite_info.loadSpritesheets(game, true, () => {
+                    npc.initial_config(this.sprite);
+                    resolve();
+                });
+            });
         }
+    }
 
-        this.layers = this.sprite.layers.sort((a, b) => {
-            if (a.properties.over !== b.properties.over) return a - b;
-            if (a.properties.z !== b.properties.z) return a - b;
-        });
-
+    config_layers(data) {
         for (let i = 0; i < this.layers.length; ++i) {
             let layer = this.sprite.createLayer(this.layers[i].name);
             this.layers[i].sprite = layer;
@@ -310,56 +319,40 @@ export class Map {
                 data.underlayer_group.add(layer);
             }
         }
+    }
 
-        await this.config_interactable_object(game, data);
+    async mount_map(game, data) {
+        this.events = {};
+        TileEvent.reset();
+        GameEvent.reset();
+        this.sprite = game.add.tilemap(this.key_name);
+        this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
-        for (let i = 0; i < this.npcs.length; ++i) {
-            let npc_info = this.npcs[i];
-            let actions = [];
-            if (npc_info.npc_type == NPC.movement_types.IDLE) {
-                actions = ['idle'];
+        for (let i = 0; i < this.sprite.tilesets.length; ++i) {
+            const tileset = this.sprite.tilesets[i];
+            for (let tile_index in tileset.tileProperties) {
+                tileset.tileProperties[tile_index].index = tile_index;
             }
-            let npc = new NPC_Sprite(npc_info.key_name, actions);
-            for (let j = 0; j < actions.length; ++j) {
-                const action = actions[j];
-                npc.setActionSpritesheet(
-                    action,
-                    `assets/images/spritesheets/${npc_info.key_name}_${action}.png`,
-                    `assets/images/spritesheets/${npc_info.key_name}_${action}.json`
-                );
-                npc.setActionDirections(
-                    action, 
-                    data.npc_db[npc_info.key_name].actions[action].directions,
-                    data.npc_db[npc_info.key_name].actions[action].frames_count
-                );
-                npc.setActionFrameRate(action, data.npc_db[npc_info.key_name].actions[action].frame_rate);
-            }
-            npc.addAnimations();
-            await new Promise(resolve => {
-                npc.loadSpritesheets(game, true, () => {
-                    const initial_action = data.npc_db[npc_info.key_name].initial_action;
-                    let npc_shadow_sprite = data.npc_group.create(0, 0, 'shadow');
-                    npc_shadow_sprite.roundPx = true;
-                    npc_shadow_sprite.blendMode = PIXI.blendModes.MULTIPLY;
-                    npc_shadow_sprite.anchor.setTo(npc_info.ac_x, npc_info.ac_y);
-                    npc_shadow_sprite.base_collider_layer = npc_info.base_collider_layer;
-                    const sprite_key = npc_info.key_name + "_" + initial_action;
-                    let npc_sprite = data.npc_group.create(0, 0, sprite_key);
-                    npc_info.set_shadow_sprite(npc_shadow_sprite);
-                    npc_info.set_sprite(npc_sprite);
-                    npc_info.npc_sprite.is_npc = true;
-                    npc_info.npc_sprite.roundPx = true;
-                    npc_info.npc_sprite.base_collider_layer = npc_info.base_collider_layer;
-                    npc_info.npc_sprite.anchor.y = data.npc_db[npc_info.key_name].anchor_y;
-                    npc_info.npc_sprite.centerX = (npc_info.initial_x + 1.5) * this.sprite.tileWidth;
-                    const anchor_shift = data.npc_db[npc_info.key_name].anchor_y;
-                    npc_info.npc_sprite.centerY = npc_info.initial_y * this.sprite.tileWidth - anchor_shift;
-                    npc.setAnimation(npc_info.npc_sprite, initial_action);
-                    const anim_key = initial_action + "_" + data.npc_db[npc_info.key_name].actions[initial_action].initial_direction;
-                    npc_info.npc_sprite.animations.play(anim_key);
-                    resolve();
-                });
-            });
         }
+
+        for (let property in this.sprite.properties) {
+            const raw_property = this.sprite.properties[property];
+            if (property.startsWith("event")) {
+                this.create_tile_events(raw_property);
+            } else if(property.startsWith("npc")) {
+                this.create_npcs(game, data, raw_property);
+            } else if(property.startsWith("interactable_object")) {
+                this.create_interactable_objects(game, data, raw_property);
+            }
+        }
+
+        this.layers = this.sprite.layers.sort((a, b) => {
+            if (a.properties.over !== b.properties.over) return a - b;
+            if (a.properties.z !== b.properties.z) return a - b;
+        });
+
+        this.config_layers(data);
+        await this.config_interactable_object(game, data);
+        await this.config_npc(game, data);
     }
 }
