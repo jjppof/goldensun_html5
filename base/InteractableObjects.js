@@ -1,12 +1,12 @@
 import { SpriteBase } from "./SpriteBase.js";
 import { maps } from '../initializers/maps.js';
-import { TileEvent } from "./TileEvent.js";
+import { TileEvent, JumpEvent, StairEvent, event_types as tile_event_types } from "./TileEvent.js";
 import * as numbers from '../magic_numbers.js';
+import { directions, get_surroundings } from "../utils.js";
 
-export const interactable_object_types = {
-    MOVE: "move",
-    FROST: "frost",
-    GROWTH: "growth"
+export const interactable_object_interaction_types = {
+    ONCE: "once",
+    INFINITE: "infinite"
 };
 
 export const interactable_object_event_types = {
@@ -61,9 +61,9 @@ export class InteractableObjects {
         return false;
     }
 
-    get_current_position() {
-        const x = (this.interactable_object_sprite.x/maps[this.data.map_name].sprite.tileWidth) | 0;
-        const y = (this.interactable_object_sprite.y/maps[this.data.map_name].sprite.tileHeight) | 0;
+    get_current_position(map_key_name) {
+        const x = (this.interactable_object_sprite.x/maps[map_key_name].sprite.tileWidth) | 0;
+        const y = (this.interactable_object_sprite.y/maps[map_key_name].sprite.tileHeight) | 0;
         return { x: x, y: y };
     }
 
@@ -132,5 +132,169 @@ export class InteractableObjects {
         this.sprite_info.setAnimation(this.interactable_object_sprite, this.key_name);
         const initial_animation = this.data.interactable_objects_db[this.key_name].initial_animation;
         this.interactable_object_sprite.animations.play(this.key_name + "_" + initial_animation);
+    }
+
+    initialize_related_events(map_events, map_key_name) {
+        const position = this.get_current_position(map_key_name);
+        let x_pos = position.x;
+        let y_pos = position.y;
+        for (let i = 0; i < this.data.interactable_objects_db[this.key_name].events.length; ++i) {
+            const event_info = this.data.interactable_objects_db[this.key_name].events[i];
+            x_pos += event_info.x_shift !== undefined ? event_info.x_shift : 0;
+            y_pos += event_info.y_shift !== undefined ? event_info.y_shift : 0;
+            let collider_layer_shift = event_info.collider_layer_shift !== undefined ? event_info.collider_layer_shift : 0;
+            collider_layer_shift = this.collider_layer_shift !== undefined ? this.collider_layer_shift : collider_layer_shift;
+            this.collider_layer_shift = collider_layer_shift;
+            const active_event = event_info.active !== undefined ? event_info.active : true;
+            const target_layer = this.base_collider_layer + collider_layer_shift;
+            switch (event_info.type) {
+                case interactable_object_event_types.JUMP:
+                    this.set_jump_type_event(event_info, x_pos, y_pos, active_event, target_layer, map_events);
+                    break;
+                case interactable_object_event_types.JUMP_AROUND:
+                    this.set_jump_around_event(event_info, x_pos, y_pos, active_event, target_layer, map_events);
+                    break;
+                case interactable_object_event_types.STAIR:
+                    this.set_stair_event(event_info, x_pos, y_pos, active_event, target_layer, map_events);
+                    break
+            }
+        }
+    }
+
+    not_allowed_tile_test(x, y) {
+        for (let i = 0; i < this.not_allowed_tiles.length; ++i) {
+            const not_allowed_tile = this.not_allowed_tiles[i];
+            if (not_allowed_tile.x === x && not_allowed_tile.y === y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    set_jump_type_event(event_info, x_pos, y_pos, active_event, target_layer, map_events) {
+        if (this.not_allowed_tile_test(x_pos, y_pos)) return;
+        const this_event_location_key = TileEvent.get_location_key(x_pos, y_pos);
+        if (!(this_event_location_key in map_events)) {
+            map_events[this_event_location_key] = [];
+        }
+        const new_event = new JumpEvent(
+            x_pos,
+            y_pos,
+            [directions.up, directions.down, directions.right, directions.left],
+            [target_layer],
+            event_info.dynamic,
+            active_event,
+            event_info.is_set === undefined ? true: event_info.is_set
+        );
+        map_events[this_event_location_key].push(new_event);
+        this.insert_event(new_event.id);
+        this.events_info[event_info.type] = event_info;
+        this.collision_change_functions.push(() => {
+            new_event.activation_collision_layers = [this.base_collider_layer + this.collider_layer_shift];
+        });
+    }
+
+    set_jump_around_event(event_info, x_pos, y_pos, active_event, target_layer, map_events) {
+        let is_set = event_info.is_set === undefined ? true: event_info.is_set;
+        get_surroundings(x_pos, y_pos).forEach((pos, index) => {
+            if (this.not_allowed_tile_test(pos.x, pos.y)) return;
+            const this_event_location_key = TileEvent.get_location_key(pos.x, pos.y);
+            if (this_event_location_key in map_events) {
+                //check if already theres a jump event in this place
+                for (let k = 0; k < map_events[this_event_location_key].length; ++k) {
+                    const event = map_events[this_event_location_key][k];
+                    if (event.type === tile_event_types.JUMP && event.is_set) {
+                        if (event.activation_collision_layers.includes(target_layer)) {
+                            is_set = false;
+                        }
+                    }
+                }
+            } else {
+                map_events[this_event_location_key] = [];
+            }
+            const new_event = new JumpEvent(
+                pos.x,
+                pos.y,
+                [directions.right, directions.left, directions.down, directions.up][index],
+                [this.base_collider_layer],
+                event_info.dynamic,
+                active_event,
+                is_set
+            );
+            map_events[this_event_location_key].push(new_event);
+            this.insert_event(new_event.id);
+            this.collision_change_functions.push(() => {
+                new_event.activation_collision_layers = [this.base_collider_layer];
+            });
+        });
+        this.events_info[event_info.type] = event_info;
+    }
+
+    set_stair_event(event_info, x_pos, y_pos, active_event, target_layer, map_events) {
+        const events_data = [{
+            x: x_pos,
+            y: y_pos + 1,
+            activation_directions: [directions.up],
+            activation_collision_layers: [this.base_collider_layer],
+            change_to_collision_layer: this.base_collider_layer + this.intermediate_collider_layer_shift,
+            climbing_only: false,
+            collision_change_function: (event) => {
+                event.activation_collision_layers = [this.base_collider_layer];
+                event.change_to_collision_layer = this.base_collider_layer + this.intermediate_collider_layer_shift;
+            }
+        },{
+            x: x_pos,
+            y: y_pos,
+            activation_directions: [directions.down],
+            activation_collision_layers: [this.base_collider_layer + this.intermediate_collider_layer_shift],
+            change_to_collision_layer: this.base_collider_layer,
+            climbing_only: true,
+            collision_change_function: (event) => {
+                event.activation_collision_layers = [this.base_collider_layer + this.intermediate_collider_layer_shift];
+                event.change_to_collision_layer = this.base_collider_layer;
+            }
+        },{
+            x: x_pos,
+            y: y_pos + event_info.last_y_shift + 1,
+            activation_directions: [directions.up],
+            activation_collision_layers: [this.base_collider_layer + this.intermediate_collider_layer_shift],
+            change_to_collision_layer: target_layer,
+            climbing_only: true,
+            collision_change_function: (event) => {
+                event.activation_collision_layers = [this.base_collider_layer + this.intermediate_collider_layer_shift];
+                event.change_to_collision_layer = this.base_collider_layer + this.collider_layer_shift;
+            }
+        },{
+            x: x_pos,
+            y: y_pos + event_info.last_y_shift,
+            activation_directions: [directions.down],
+            activation_collision_layers: [target_layer],
+            change_to_collision_layer: this.base_collider_layer + this.intermediate_collider_layer_shift,
+            climbing_only: false,
+            collision_change_function: (event) => {
+                event.activation_collision_layers = [this.base_collider_layer + this.collider_layer_shift];
+                event.change_to_collision_layer = this.base_collider_layer + this.intermediate_collider_layer_shift;
+            }
+        }];
+        events_data.forEach(event_data => {
+            const this_location_key = TileEvent.get_location_key(event_data.x, event_data.y);
+            if (!(this_location_key in map_events)) {
+                map_events[this_location_key] = [];
+            }
+            const new_event = new StairEvent(event_data.x, event_data.y,
+                event_data.activation_directions,
+                event_data.activation_collision_layers,
+                event_info.dynamic,
+                active_event,
+                event_data.change_to_collision_layer,
+                event_info.is_set,
+                this,
+                event_data.climbing_only
+            );
+            map_events[this_location_key].push(new_event);
+            this.insert_event(new_event.id);
+            this.collision_change_functions.push(event_data.collision_change_function.bind(null, new_event));
+        });
+        this.events_info[event_info.type] = event_info;
     }
 }

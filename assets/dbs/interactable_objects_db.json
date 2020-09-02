@@ -2,7 +2,11 @@
     "pillar": {
         "anchor_y": 0.8,
         "body_radius": 7.0,
-        "psynergy_keys": ["move"],
+        "psynergy_keys": {
+            "move": {
+                "interaction_type": "infinite"
+            }
+        },
         "pushable": true,
         "collision_body_bevel": 3,
         "events": [{
@@ -27,7 +31,11 @@
     "entangled_pillar": {
         "anchor_y": 0.8,
         "body_radius": 7.0,
-        "psynergy_keys": ["move"],
+        "psynergy_keys": {
+            "move": {
+                "interaction_type": "infinite"
+            }
+        },
         "pushable": true,
         "collision_body_bevel": 3,
         "events": [{
@@ -69,7 +77,11 @@
         "anchor_y": 0.85,
         "body_radius": 7.0,
         "send_to_back": true,
-        "psynergy_keys": ["frost"],
+        "psynergy_keys": {
+            "frost": {
+                "interaction_type": "once"
+            }
+        },
         "pushable": false,
         "events": [{
             "type": "jump_around",
@@ -102,7 +114,11 @@
         "shift_x": -8,
         "shift_y": -6,
         "body_radius": 0,
-        "psynergy_keys": ["growth"],
+        "psynergy_keys": {
+            "growth": {
+                "interaction_type": "once"
+            }
+        },
         "pushable": false,
         "events": [{
             "type": "stair",

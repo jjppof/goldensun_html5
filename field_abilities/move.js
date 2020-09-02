@@ -73,7 +73,7 @@ export class MoveFieldPsynergy extends SpriteBase {
 
     fire_push() {
         if (this.data.map_collider_layer === this.target_object.base_collider_layer) {
-            let item_position = this.target_object.get_current_position();
+            let item_position = this.target_object.get_current_position(this.data.map_name);
             switch (this.data.trying_to_push_direction) {
                 case directions.up:
                     item_position.y -= 1;
@@ -287,7 +287,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         let sqr_distance = Infinity;
         for (let i = 0; i < maps[this.data.map_name].interactable_objects.length; ++i) {
             let interactable_object = maps[this.data.map_name].interactable_objects[i];
-            if (!this.data.interactable_objects_db[interactable_object.key_name].psynergy_keys.includes(this.ability_key_name)) continue;
+            if (!(this.ability_key_name in this.data.interactable_objects_db[interactable_object.key_name].psynergy_keys)) continue;
             const item_x_px = interactable_object.current_x * maps[this.data.map_name].sprite.tileWidth + (maps[this.data.map_name].sprite.tileWidth >> 1);
             const item_y_px = interactable_object.current_y * maps[this.data.map_name].sprite.tileHeight + (maps[this.data.map_name].sprite.tileHeight >> 1);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;

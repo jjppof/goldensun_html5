@@ -81,7 +81,7 @@ export function collision_dealer(game, data) {
                                 });
                             }
                             if (!has_stair) {
-                                let item_position = interactable_object.get_current_position();
+                                let item_position = interactable_object.get_current_position(data.map_name);
                                 switch (data.trying_to_push_direction) {
                                     case directions.up:
                                         item_position.y -= 1;

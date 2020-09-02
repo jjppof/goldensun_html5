@@ -10,6 +10,8 @@ export class NPC_Sprite extends SpriteBase {
     }
 }
 
+const NPC_TALK_RANGE = 3.0;
+
 export class NPC {
     constructor(
         type,
@@ -39,7 +41,7 @@ export class NPC {
         this.thought_message = thought_message;
         this.avatar = avatar;
         this.base_collider_layer = base_collider_layer;
-        this.talk_range_factor = talk_range_factor;
+        this.talk_range_factor = talk_range_factor === undefined ? NPC_TALK_RANGE : talk_range_factor;
         this.set_events(events_info);
     }
 
