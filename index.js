@@ -120,7 +120,7 @@ function load_db_files() {
     game.load.json('enemies_db', 'assets/dbs/enemies_db.json');
     game.load.json('enemies_parties_db', 'assets/dbs/enemies_parties_db.json');
     game.load.json('maps_db', 'assets/dbs/maps_db.json');
-    game.load.json('main_chars_db', 'assets/dbs/main_chars.json');
+    game.load.json('main_chars_db', 'assets/dbs/main_chars_db.json');
     game.load.json('summons_db', 'assets/dbs/summons_db.json');
 }
 
@@ -140,11 +140,12 @@ function load_misc() {
     game.load.image('stat_up', 'assets/images/misc/stat_up.gif');
     game.load.image('stat_down', 'assets/images/misc/stat_down.gif');
     game.load.image('arrow_change', 'assets/images/misc/arrow_change.png');
+    game.load.image('frost_snowflake', 'assets/images/interactable_objects/snowflake.png');
     game.load.atlasJSONHash('dust', 'assets/images/misc/dust.png', 'assets/images/misc/dust.json');
     game.load.atlasJSONHash('battle_cursor', 'assets/images/misc/battle_cursor.png', 'assets/images/misc/battle_cursor.json');
     game.load.atlasJSONHash('ranges', 'assets/images/misc/ranges.png', 'assets/images/misc/ranges.json');
-    game.load.atlasJSONHash('psynergy_particle', 'assets/images/spritesheets/interactable_objects/psynergy_particle.png', 'assets/images/spritesheets/interactable_objects/psynergy_particle.json');
-    game.load.atlasJSONHash('psynergy_ball', 'assets/images/spritesheets/interactable_objects/psynergy_ball.png', 'assets/images/spritesheets/interactable_objects/psynergy_ball.json');
+    game.load.atlasJSONHash('psynergy_particle', 'assets/images/interactable_objects/psynergy_particle.png', 'assets/images/interactable_objects/psynergy_particle.json');
+    game.load.atlasJSONHash('psynergy_ball', 'assets/images/interactable_objects/psynergy_ball.png', 'assets/images/interactable_objects/psynergy_ball.json');
 }
 
 function load_assets() {

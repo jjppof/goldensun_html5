@@ -21,8 +21,8 @@ export class MoveFieldPsynergy extends SpriteBase {
         this.action_key_name = ACTION_KEY_NAME;
         this.setActionSpritesheet(
             this.action_key_name,
-            "assets/images/spritesheets/interactable_objects/move_psynergy_hand.png",
-            "assets/images/spritesheets/interactable_objects/move_psynergy_hand.json"
+            "assets/images/interactable_objects/move_psynergy_hand.png",
+            "assets/images/interactable_objects/move_psynergy_hand.json"
         );
         this.setActionDirections(
             this.action_key_name, 
@@ -73,7 +73,7 @@ export class MoveFieldPsynergy extends SpriteBase {
 
     fire_push() {
         if (this.data.map_collider_layer === this.target_object.base_collider_layer) {
-            let item_position = this.target_object.get_current_position(this.data);
+            let item_position = this.target_object.get_current_position();
             switch (this.data.trying_to_push_direction) {
                 case directions.up:
                     item_position.y -= 1;

@@ -1,6 +1,5 @@
 {
     "pillar": {
-        "type": "move",
         "anchor_y": 0.8,
         "body_radius": 7.0,
         "psynergy_keys": ["move"],
@@ -19,10 +18,13 @@
             "frame_rate": 1,
             "animations": ["idle"],
             "frames_count": [1]
+        },
+        "spritesheet": {
+            "image": "assets/images/interactable_objects/psynergy_move.png",
+            "json": "assets/images/interactable_objects/psynergy_move.json"
         }
     },
     "entangled_pillar": {
-        "type": "move",
         "anchor_y": 0.8,
         "body_radius": 7.0,
         "psynergy_keys": ["move"],
@@ -55,10 +57,13 @@
             "frame_rate": 1,
             "animations": ["idle"],
             "frames_count": [1]
+        },
+        "spritesheet": {
+            "image": "assets/images/interactable_objects/psynergy_move.png",
+            "json": "assets/images/interactable_objects/psynergy_move.json"
         }
     },
     "frost_pool": {
-        "type": "frost",
         "shift_x": 8,
         "shift_y": -8,
         "anchor_y": 0.85,
@@ -85,10 +90,13 @@
             "frame_rate": 5,
             "animations": ["pool", "pillar"],
             "frames_count": [2, 6]
+        },
+        "spritesheet": {
+            "image": "assets/images/interactable_objects/psynergy_frost.png",
+            "json": "assets/images/interactable_objects/psynergy_frost.json"
         }
     },
     "growth": {
-        "type": "growth",
         "anchor_y": 0.8,
         "anchor_x": 0.5,
         "shift_x": -8,
@@ -109,6 +117,10 @@
             "frame_rate": 3,
             "animations": ["sprout", "growing"],
             "frames_count": [2, 8]
+        },
+        "spritesheet": {
+            "image": "assets/images/interactable_objects/psynergy_growth.png",
+            "json": "assets/images/interactable_objects/psynergy_growth.json"
         }
     }
 }

@@ -20,7 +20,6 @@ export class FrostFieldPsynergy {
         this.data = data;
         this.ability_key_name = "frost";
         this.action_key_name = ACTION_KEY_NAME;
-        this.game.load.image('frost_snowflake', 'assets/images/spritesheets/interactable_objects/snowflake.png');
         this.target_found = false;
         this.target_object = null;
         this.stop_casting = null;

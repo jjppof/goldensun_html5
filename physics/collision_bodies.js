@@ -80,7 +80,7 @@ export function config_physics_for_interactable_objects(data, only_set_groups = 
         interactable_object.interactable_object_sprite.body.dynamic = false;
         interactable_object.interactable_object_sprite.body.static = true;
         if (interactable_object.custom_data.block_stair_collider_layer_shift !== undefined) {
-            interactable_object.creating_blocking_stair_block(data);
+            interactable_object.creating_blocking_stair_block();
         }
     }
 }
