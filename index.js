@@ -421,7 +421,7 @@ function update() {
                 climb.climb_event_animation_steps(data);
             }
             if (data.door_event_data !== null) {
-                door_event_phases(data);
+                door_event_phases(game, data);
             }
             hero_control.stop_hero(data, false);
         } else if (data.npc_event) {

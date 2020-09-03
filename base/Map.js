@@ -355,4 +355,30 @@ export class Map {
         await this.config_interactable_object(game, data);
         await this.config_npc(game, data);
     }
+
+    unset_map(data) {
+        data.underlayer_group.removeAll();
+        data.overlayer_group.removeAll();
+
+        let sprites_to_remove = []
+        for (let i = 0; i < data.npc_group.children.length; ++i) {
+            let sprite = data.npc_group.children[i];
+            if (!sprite.is_npc && !sprite.is_interactable_object) continue;
+            if (sprite.is_interactable_object && sprite.interactable_object.custom_data.blocking_stair_block) {
+                sprite.interactable_object.custom_data.blocking_stair_block.destroy();
+                sprite.interactable_object.custom_data.blocking_stair_block = undefined;
+            }
+            sprites_to_remove.push(sprite);
+        }
+        for (let i = 0; i < sprites_to_remove.length; ++i) {
+            let sprite = sprites_to_remove[i];
+            data.npc_group.remove(sprite, true);
+        }
+
+        this.npcs = [];
+        this.interactable_objects = [];
+        data.npc_group.removeAll();
+        data.npc_group.add(data.shadow);
+        data.npc_group.add(data.hero);
+    }
 }
