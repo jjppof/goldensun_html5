@@ -74969,9 +74969,24 @@ Phaser.Animation = function (game, parent, name, frameData, frames, frameRate, l
     this._frames = this._frames.concat(frames);
 
     /**
+    * @property {number} _frameIndex
+    * @private
+    * @default
+    */
+   this._frameIndex = 0;
+
+    /**
     * @property {number} delay - The delay in ms between each frame of the Animation, based on the given frameRate.
     */
-    this.delay = 1000 / frameRate;
+    this.frameRate = frameRate;
+    if (Array.isArray(frameRate))
+    {
+        this.delay = 1000 / frameRate[this._frameIndex];
+    }
+    else
+    {
+        this.delay = 1000 / frameRate;
+    }
 
     /**
     * @property {boolean} loop - The loop state of the Animation.
@@ -75013,13 +75028,6 @@ Phaser.Animation = function (game, parent, name, frameData, frames, frameRate, l
     * @default
     */
     this._pauseStartTime = 0;
-
-    /**
-    * @property {number} _frameIndex
-    * @private
-    * @default
-    */
-    this._frameIndex = 0;
 
     /**
     * @property {number} _frameDiff
@@ -75094,11 +75102,18 @@ Phaser.Animation.prototype = {
     */
     play: function (frameRate, loop, killOnComplete)
     {
+        this._frameIndex = this.isReversed ? this._frames.length - 1 : 0;
 
         if (typeof frameRate === 'number')
         {
             //  If they set a new frame rate then use it, otherwise use the one set on creation
             this.delay = 1000 / frameRate;
+            this.frameRate = frameRate;
+        }
+        else if (Array.isArray(frameRate))
+        {
+            this.delay = 1000 / this.frameRate[this._frameIndex];
+            this.frameRate = frameRate;
         }
 
         if (typeof loop === 'boolean')
@@ -75121,7 +75136,8 @@ Phaser.Animation.prototype = {
         this._timeLastFrame = this.game.time.time;
         this._timeNextFrame = this.game.time.time + this.delay;
 
-        this._frameIndex = this.isReversed ? this._frames.length - 1 : 0;
+        this.updateDelay();
+
         this.updateCurrentFrame(false, true);
 
         this._parent.events.onAnimationStart$dispatch(this._parent, this);
@@ -75319,6 +75335,20 @@ Phaser.Animation.prototype = {
     },
 
     /**
+    * Updates this animation delay.
+    *
+    * @method Phaser.Animation#updateDelay
+    */
+    updateDelay: function ()
+    {
+        if (Array.isArray(this.frameRate))
+        {
+            const index = (this._frameIndex + (this.isReversed ? -1 : 1)) % this.frameRate.length;
+            this.delay = 1000 / this.frameRate[index < 0 ? this.frameRate.length - 1 : index];
+        }
+    },
+
+    /**
     * Updates this animation. Called automatically by the AnimationManager.
     *
     * @method Phaser.Animation#update
@@ -75359,6 +75389,8 @@ Phaser.Animation.prototype = {
                 this._frameIndex += this._frameSkip;
             }
 
+            this.updateDelay();
+
             if (!this.isReversed && this._frameIndex >= this._frames.length || this.isReversed && this._frameIndex <= -1)
             {
                 if (this.loop)
@@ -75386,7 +75418,6 @@ Phaser.Animation.prototype = {
                     if (this.onUpdate)
                     {
                         this.onUpdate.dispatch(this, this.currentFrame);
-
                         // False if the animation was destroyed from within a callback
                         return !!this._frameData;
                     }

@@ -244,9 +244,9 @@ export class DjinnListWindow {
             if (!(char_key_name in this.chars_sprites)) {
                 this.chars_sprites[char_key_name] = this.chars_sprites_group.create(0, 0, char_key_name + "_idle");
                 this.chars_sprites[char_key_name].anchor.setTo(0.5, 1.0);
-                this.chars_sprites[char_key_name].animations.add("idle_down", this_char.sprite_base.animations.idle.down, this_char.sprite_base.actions.idle.frame_rate, true);
+                this_char.sprite_base.setAnimation(this.chars_sprites[char_key_name], "idle");
             }
-            this.chars_sprites[char_key_name].animations.play("idle_down", this_char.sprite_base.actions.idle.frame_rate, true);
+            this.chars_sprites[char_key_name].animations.play("idle_down");
             const x = CHAR_X_PADDING + i * CHAR_X_BETWEEN;
             this.chars_sprites[char_key_name].x = x;
             this.chars_sprites[char_key_name].y = CHAR_Y_PADDING;

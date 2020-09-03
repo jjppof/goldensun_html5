@@ -18,7 +18,20 @@ export class SpriteBase {
     }
 
     setActionFrameRate(action, frame_rate) {
-        this.actions[action].frame_rate = frame_rate;
+        this.actions[action].frame_rate = {};
+        for (let i = 0; i < this.actions[action].directions.length; ++i) {
+            const direction = this.actions[action].directions[i];
+            if (Array.isArray(frame_rate)) {
+                if (frame_rate.length === 1) {
+                    frame_rate = frame_rate[0];
+                } else {
+                    frame_rate = frame_rate[i];
+                }
+            } else {
+                frame_rate = frame_rate;
+            }
+            this.actions[action].frame_rate[direction] = frame_rate;
+        }
     }
 
     setActionLoop(action, loop) {
@@ -61,14 +74,14 @@ export class SpriteBase {
 
     setAnimation(sprite, action) {
         const directions = this.actions[action].directions;
-        const frame_rate = this.actions[action].frame_rate;
         const loop = this.actions[action].loop === undefined ? true : this.actions[action].loop;
         for (let i = 0; i < directions.length; ++i) {
             const direction = directions[i];
+            const frame_rate = this.actions[action].frame_rate[direction];
             sprite.animations.add(
                 action + "_" + direction, 
                 this.animations[action][direction], 
-                Array.isArray(frame_rate) ? frame_rate[i] : frame_rate,
+                frame_rate,
                 Array.isArray(loop) ? loop[i] : loop,
                 false
             );

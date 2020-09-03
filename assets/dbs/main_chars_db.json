@@ -18,7 +18,7 @@
                     "up_right"
                 ],
                 "directions_frames_number": [5,5,5,5,5,5,5,5],
-                "frame_rate": 1
+                "frame_rate": [[0.1,1,1,7,1,1]]
             },{
                 "key": "walk",
                 "spritesheet": "assets/images/spritesheets/isaac_walk.json",

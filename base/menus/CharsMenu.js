@@ -72,7 +72,7 @@ export class CharsMenu {
             this.char_buttons[key_name].destroy();
         }
         this.char_buttons = {};
-        for (let i = 0; i < party_data.members.length; ++i) {
+        for (let i = 0; i < _.clamp(party_data.members.length, 0, MAX_PER_LINE); ++i) {
             const char = party_data.members[i];
             this.char_buttons[char.key_name] = this.group.create(0, 0, char.key_name + "_idle");
             party_data.members[i].sprite_base.setAnimation(this.char_buttons[char.key_name], "idle");
@@ -96,7 +96,7 @@ export class CharsMenu {
     update_position() {
         this.group.x = this.game.camera.x + this.x;
         this.group.y = this.game.camera.y + this.y;
-        for (let i = 0; i < party_data.members.length; ++i) {
+        for (let i = 0; i < _.clamp(party_data.members.length, 0, MAX_PER_LINE); ++i) {
             const char = party_data.members[i];
             this.char_buttons[char.key_name].centerX = i * SLOT_WIDTH + SLOT_WIDTH_CENTER + numbers.OUTSIDE_BORDER_WIDTH + numbers.INSIDE_BORDER_WIDTH;
             this.char_buttons[char.key_name].y = this.unselected_y;
@@ -126,10 +126,10 @@ export class CharsMenu {
     }
 
     open(select_index, start_active = true) {
-        if (Object.keys(this.char_buttons).length != party_data.members.length) {
+        if (Object.keys(this.char_buttons).length != _.clamp(party_data.members.length, 0, MAX_PER_LINE)) {
             this.set_chars();
         }
-        this.buttons_number = party_data.members.length;
+        this.buttons_number = _.clamp(party_data.members.length, 0, MAX_PER_LINE);
         this.selected_button_index = select_index === undefined ? 0 : select_index;
         this.line_index = 0;
         this.update_position();
