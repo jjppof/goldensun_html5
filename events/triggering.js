@@ -43,7 +43,7 @@ export function fire_event(game, data, current_event, this_activation_direction)
     if (current_event.type === event_types.STAIR && !data.idle_climbing) {
         climbing_event(game, data, current_event, this_activation_direction);
     } else if (current_event.type === event_types.DOOR) {
-        set_door_event(data, current_event, this_activation_direction);
+        set_door_event(game, data, current_event, this_activation_direction);
     } else if (current_event.type === event_types.JUMP) {
         jump_event(data, current_event);
     }
