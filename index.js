@@ -216,6 +216,8 @@ async function create() {
     party_data.coins = data.init_db.coins;
     data.current_action = "idle";
 
+    data.interactable_objects_db = _.mapKeys(data.interactable_objects_db, interactable_object_data => interactable_object_data.key_name);
+
     let load_maps_promise_resolve;
     let load_maps_promise = new Promise(resolve => {
         load_maps_promise_resolve = resolve;

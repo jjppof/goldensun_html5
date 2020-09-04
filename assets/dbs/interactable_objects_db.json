@@ -1,5 +1,6 @@
-{
-    "pillar": {
+[
+    {
+        "key_name": "pillar",
         "anchor_y": 0.8,
         "body_radius": 7.0,
         "psynergy_keys": {
@@ -27,8 +28,8 @@
             "image": "assets/images/interactable_objects/psynergy_move.png",
             "json": "assets/images/interactable_objects/psynergy_move.json"
         }
-    },
-    "entangled_pillar": {
+    },{
+        "key_name": "entangled_pillar",
         "anchor_y": 0.8,
         "body_radius": 7.0,
         "psynergy_keys": {
@@ -70,8 +71,8 @@
             "image": "assets/images/interactable_objects/psynergy_move.png",
             "json": "assets/images/interactable_objects/psynergy_move.json"
         }
-    },
-    "frost_pool": {
+    },{
+        "key_name": "frost_pool",
         "shift_x": 8,
         "shift_y": -8,
         "anchor_y": 0.85,
@@ -107,8 +108,8 @@
             "image": "assets/images/interactable_objects/psynergy_frost.png",
             "json": "assets/images/interactable_objects/psynergy_frost.json"
         }
-    },
-    "growth": {
+    },{
+        "key_name": "growth",
         "anchor_y": 0.8,
         "anchor_x": 0.5,
         "shift_x": -8,
@@ -139,4 +140,4 @@
             "json": "assets/images/interactable_objects/psynergy_growth.json"
         }
     }
-}
+]
