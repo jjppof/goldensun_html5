@@ -206,8 +206,8 @@
                     "up_left", 
                     "up_right"
                 ],
-                "directions_frames_number": [5,5,5,5,5,5,5,5],
-                "frame_rate": 1
+                "directions_frames_number": [4,4,4,4,4,4,4,4],
+                "frame_rate": [[0.1,3,1,1,1]]
             },{
                 "key": "battle",
                 "spritesheet": "assets/images/spritesheets/battle/garet_battle.json",
@@ -298,8 +298,8 @@
                     "up_left", 
                     "up_right"
                 ],
-                "directions_frames_number": [5,5,5,5,5,5,5,5],
-                "frame_rate": 1
+                "directions_frames_number": [4,4,4,4,4,4,4,4],
+                "frame_rate":  [[0.1,3,1,1,1]]
             },{
                 "key": "battle",
                 "spritesheet": "assets/images/spritesheets/battle/sheba_battle.json",
