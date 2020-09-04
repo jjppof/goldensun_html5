@@ -14,7 +14,7 @@ export function initialize_enemies(game, enemies_db, load_promise_resolve) {
             enemies_list[enemy_data.key_name].setActionDirections(action.key, action.directions, action.directions_frames_number);
             enemies_list[enemy_data.key_name].setActionFrameRate(action.key, action.frame_rate);
             enemies_list[enemy_data.key_name].setActionLoop(action.key, action.loop);
-            enemies_list[enemy_data.key_name].addAnimations();
+            enemies_list[enemy_data.key_name].generateAllFrames();
 
             let load_spritesheet_promise_resolve;
             let load_spritesheet_promise = new Promise(resolve => {

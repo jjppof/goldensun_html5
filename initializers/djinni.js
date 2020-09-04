@@ -46,7 +46,7 @@ export function initialize_djinni(game, djinni_db, load_promise_resolve) {
             djinni_sprites[element].setActionDirections(action, directions[action], new Array(directions[action].length).fill(frames_number));
             djinni_sprites[element].setActionFrameRate(action, frames_rate[action]);
         }
-        djinni_sprites[element].addAnimations();
+        djinni_sprites[element].generateAllFrames();
 
         let load_spritesheet_promise_resolve;
         let load_spritesheet_promise = new Promise(resolve => {

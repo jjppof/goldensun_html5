@@ -9,7 +9,7 @@
             "idle": {
                 "frame_rate": [[0.2,3,1,1,1]],
                 "directions": ["down", "up", "left", "right"],
-                "frames_count": [5, 5, 5, 5],
+                "frames_count": 6,
                 "initial_direction": "down"
             }
         }
@@ -24,7 +24,7 @@
             "idle": {
                 "frame_rate": [[0.2,5,0.3,1,1,1]],
                 "directions": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
-                "frames_count": [5, 5, 5, 5],
+                "frames_count": 6,
                 "initial_direction": "down"
             }
         }

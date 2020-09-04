@@ -17,7 +17,7 @@
                     "up_left", 
                     "up_right"
                 ],
-                "directions_frames_number": [5,5,5,5,5,5,5,5],
+                "directions_frames_number": 6,
                 "frame_rate": [[0.1,1,1,7,1,1]]
             },{
                 "key": "walk",
@@ -33,7 +33,7 @@
                     "up_left", 
                     "up_right"
                 ],
-                "directions_frames_number": [5,5,5,5,5,5,5,5],
+                "directions_frames_number": 6,
                 "frame_rate": 7
             },{
                 "key": "dash",
@@ -49,7 +49,7 @@
                     "up_left", 
                     "up_right"
                 ],
-                "directions_frames_number": [5,5,5,5,5,5,5,5],
+                "directions_frames_number": 6,
                 "frame_rate": 9
             },{
                 "key": "climb",
@@ -62,7 +62,7 @@
                     "idle", 
                     "start"
                 ],
-                "directions_frames_number": [3,3,2,0,6],
+                "directions_frames_number": [4,4,3,1,7],
                 "frame_rate": 6
             },{
                 "key": "jump",
@@ -74,7 +74,7 @@
                     "left", 
                     "right"
                 ],
-                "directions_frames_number": [2,2,2,2],
+                "directions_frames_number": 2,
                 "frame_rate": 16
             },{
                 "key": "push",
@@ -86,7 +86,7 @@
                     "left", 
                     "right"
                 ],
-                "directions_frames_number": [3,3,3,3],
+                "directions_frames_number": 4,
                 "frame_rate": 4
             },{
                 "key": "cast",
@@ -102,7 +102,7 @@
                     "up_left", 
                     "up_right"
                 ],
-                "directions_frames_number": [2,2,2,2,2,2,2,2],
+                "directions_frames_number": 2,
                 "frame_rate": 4
             },{
                 "key": "battle",

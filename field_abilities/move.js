@@ -30,7 +30,7 @@ export class MoveFieldPsynergy extends SpriteBase {
             [2, 2, 2, 2]
         );
         this.setActionFrameRate(this.action_key_name, 10);
-        this.addAnimations();
+        this.generateAllFrames();
         this.loadSpritesheets(this.game);
         this.hand_sprite = null;
         this.target_found = false;

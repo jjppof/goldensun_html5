@@ -86,7 +86,7 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
             sprite_base.setActionFrameRate(action.key, action.frame_rate);
             sprite_base.setActionLoop(action.key, action.loop);
         }
-        sprite_base.addAnimations();
+        sprite_base.generateAllFrames();
 
         let load_spritesheet_promise_resolve;
         let load_spritesheet_promise = new Promise(resolve => {

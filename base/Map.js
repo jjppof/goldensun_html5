@@ -254,7 +254,7 @@ export class Map {
                 data.interactable_objects_db[interactable_object.key_name].actions.frames_count
             );
             interactable_obj_sprite_info.setActionFrameRate(action, data.interactable_objects_db[interactable_object.key_name].actions.frame_rate);
-            interactable_obj_sprite_info.addAnimations();
+            interactable_obj_sprite_info.generateAllFrames();
             await new Promise(resolve => {
                 interactable_obj_sprite_info.loadSpritesheets(game, true, () => {
                     interactable_object.initial_config(this.sprite);
@@ -288,7 +288,7 @@ export class Map {
                 );
                 npc_sprite_info.setActionFrameRate(action, data.npc_db[npc.key_name].actions[action].frame_rate);
             }
-            npc_sprite_info.addAnimations();
+            npc_sprite_info.generateAllFrames();
             await new Promise(resolve => {
                 npc_sprite_info.loadSpritesheets(game, true, () => {
                     npc.initial_config(this.sprite);

@@ -21,7 +21,7 @@
         "actions": {
             "frame_rate": 1,
             "animations": ["idle"],
-            "frames_count": [1]
+            "frames_count": 1
         },
         "spritesheet": {
             "image": "assets/images/interactable_objects/psynergy_move.png",
@@ -64,7 +64,7 @@
         "actions": {
             "frame_rate": 1,
             "animations": ["idle"],
-            "frames_count": [1]
+            "frames_count": 1
         },
         "spritesheet": {
             "image": "assets/images/interactable_objects/psynergy_move.png",
@@ -130,9 +130,9 @@
         }],
         "initial_animation": "sprout",
         "actions": {
-            "frame_rate": 3,
+            "frame_rate": [[0.4, 2], 4],
             "animations": ["sprout", "growing"],
-            "frames_count": [2, 8]
+            "frames_count": [2, 6]
         },
         "spritesheet": {
             "image": "assets/images/interactable_objects/psynergy_growth.png",
