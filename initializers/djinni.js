@@ -33,8 +33,8 @@ export function initialize_djinni(game, djinni_db, load_promise_resolve) {
     const frames_rate = {
         set: 6,
         standby: 2
-    }
-    const base_path = "assets/images/spritesheets/";
+    };
+    const base_path = "assets/images/spritesheets/djinn/";
     let load_promises = [];
     for (let key in elements) {
         const element = elements[key];

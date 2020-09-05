@@ -1,65 +1,5 @@
 [
     {
-        "key_name": "bandit",
-        "name": "Bandit",
-        "level": 23,
-        "turns": 1,
-        "max_hp": 346,
-        "max_pp": 0,
-        "hp_recovery": 0,
-        "pp_recovery": 0,
-        "atk": 200,
-        "def": 41,
-        "agi": 98,
-        "luk": 34,
-        "battle_scale": 1,
-        "items": [
-            {
-                "key_name": "sleep_bomb",
-                "quantity": 1,
-                "use_chance": 0.1
-            },{
-                "key_name": "weasels_claw",
-                "quantity": 1,
-                "use_chance": 0.1
-            },{
-                "key_name": "nut",
-                "quantity": 2,
-                "use_chance": 0.1
-            }
-        ],
-        "abilities": [
-            {
-                "key_name": "slice",
-                "use_chance": 0.125
-            },{
-                "key_name": "threaten",
-                "use_chance": 0.125
-            },{
-                "key_name": "attack",
-                "use_chance": 0.45
-            }
-        ],
-        "coins_reward": 183,
-        "item_reward": "",
-        "item_reward_change": 0,
-        "exp_reward": 136,
-        "venus_level": 1,
-        "mercury_level": 1,
-        "mars_level": 1,
-        "jupiter_level": 1,
-        "venus_power": 80,
-        "mercury_power": 80,
-        "mars_power": 80,
-        "jupiter_power": 80,
-        "venus_resist": 72,
-        "mercury_resist": 72,
-        "mars_resist": 72,
-        "jupiter_resist": 72,
-        "battle_animations_variations": {
-            "attack": "attack"
-        }
-    },{
         "key_name": "briggs",
         "name": "Briggs",
         "level": 21,
@@ -77,27 +17,27 @@
             {
                 "key_name": "oil_drop",
                 "quantity": 1,
-                "use_chance": 0.125
+                "use_weight": 0.125
             },{
                 "key_name": "herb",
                 "quantity": 1,
-                "use_chance": 0.125
+                "use_weight": 0.125
             },{
                 "key_name": "nut",
                 "quantity": 1,
-                "use_chance": 0.125
+                "use_weight": 0.125
             }
         ],
         "abilities": [
             {
                 "key_name": "defend",
-                "use_chance": 0.125
+                "use_weight": 0.125
             },{
                 "key_name": "echo_cut",
-                "use_chance": 0.375
+                "use_weight": 0.375
             },{
                 "key_name": "attack",
-                "use_chance": 0.125
+                "use_weight": 0.125
             }
         ],
         "vulnerabilities": [
@@ -164,24 +104,24 @@
             {
                 "key_name": "oil_drop",
                 "quantity": 1,
-                "use_chance": 0.125
+                "use_weight": 0.125
             },{
                 "key_name": "herb",
                 "quantity": 1,
-                "use_chance": 0.125
+                "use_weight": 0.125
             },{
                 "key_name": "smoke_bomb",
                 "quantity": 1,
-                "use_chance": 0.125
+                "use_weight": 0.125
             }
         ],
         "abilities": [
             {
                 "key_name": "echo_cut",
-                "use_chance": 0.375
+                "use_weight": 0.375
             },{
                 "key_name": "attack",
-                "use_chance": 0.25
+                "use_weight": 0.25
             }
         ],
         "vulnerabilities": [

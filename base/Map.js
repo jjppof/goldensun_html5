@@ -278,8 +278,8 @@ export class Map {
                 const action = actions[j];
                 npc_sprite_info.setActionSpritesheet(
                     action,
-                    `assets/images/spritesheets/${npc.key_name}_${action}.png`,
-                    `assets/images/spritesheets/${npc.key_name}_${action}.json`
+                    `assets/images/spritesheets/npc/${npc.key_name}_${action}.png`,
+                    `assets/images/spritesheets/npc/${npc.key_name}_${action}.json`
                 );
                 npc_sprite_info.setActionDirections(
                     action, 

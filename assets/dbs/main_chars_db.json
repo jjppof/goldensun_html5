@@ -5,8 +5,8 @@
         "actions": [
             {
                 "key": "idle",
-                "spritesheet": "assets/images/spritesheets/isaac_idle.json",
-                "spritesheet_img": "assets/images/spritesheets/isaac_idle.png",
+                "spritesheet": "assets/images/spritesheets/main_chars/isaac_idle.json",
+                "spritesheet_img": "assets/images/spritesheets/main_chars/isaac_idle.png",
                 "directions": [
                     "down", 
                     "up", 
@@ -21,8 +21,8 @@
                 "frame_rate": [[0.1,1,1,7,1,1]]
             },{
                 "key": "walk",
-                "spritesheet": "assets/images/spritesheets/isaac_walk.json",
-                "spritesheet_img": "assets/images/spritesheets/isaac_walk.png",
+                "spritesheet": "assets/images/spritesheets/main_chars/isaac_walk.json",
+                "spritesheet_img": "assets/images/spritesheets/main_chars/isaac_walk.png",
                 "directions": [
                     "down", 
                     "up", 
@@ -37,8 +37,8 @@
                 "frame_rate": 7
             },{
                 "key": "dash",
-                "spritesheet": "assets/images/spritesheets/isaac_dash.json",
-                "spritesheet_img": "assets/images/spritesheets/isaac_dash.png",
+                "spritesheet": "assets/images/spritesheets/main_chars/isaac_dash.json",
+                "spritesheet_img": "assets/images/spritesheets/main_chars/isaac_dash.png",
                 "directions": [
                     "down", 
                     "up", 
@@ -53,8 +53,8 @@
                 "frame_rate": 9
             },{
                 "key": "climb",
-                "spritesheet": "assets/images/spritesheets/isaac_climb.json",
-                "spritesheet_img": "assets/images/spritesheets/isaac_climb.png",
+                "spritesheet": "assets/images/spritesheets/main_chars/isaac_climb.json",
+                "spritesheet_img": "assets/images/spritesheets/main_chars/isaac_climb.png",
                 "directions": [
                     "up", 
                     "down", 
@@ -66,8 +66,8 @@
                 "frame_rate": 6
             },{
                 "key": "jump",
-                "spritesheet": "assets/images/spritesheets/isaac_jump.json",
-                "spritesheet_img": "assets/images/spritesheets/isaac_jump.png",
+                "spritesheet": "assets/images/spritesheets/main_chars/isaac_jump.json",
+                "spritesheet_img": "assets/images/spritesheets/main_chars/isaac_jump.png",
                 "directions": [
                     "down", 
                     "up", 
@@ -78,8 +78,8 @@
                 "frame_rate": 16
             },{
                 "key": "push",
-                "spritesheet": "assets/images/spritesheets/isaac_push.json",
-                "spritesheet_img": "assets/images/spritesheets/isaac_push.png",
+                "spritesheet": "assets/images/spritesheets/main_chars/isaac_push.json",
+                "spritesheet_img": "assets/images/spritesheets/main_chars/isaac_push.png",
                 "directions": [
                     "down", 
                     "up", 
@@ -90,8 +90,8 @@
                 "frame_rate": 4
             },{
                 "key": "cast",
-                "spritesheet": "assets/images/spritesheets/isaac_cast.json",
-                "spritesheet_img": "assets/images/spritesheets/isaac_cast.png",
+                "spritesheet": "assets/images/spritesheets/main_chars/isaac_cast.json",
+                "spritesheet_img": "assets/images/spritesheets/main_chars/isaac_cast.png",
                 "directions": [
                     "down", 
                     "up", 
@@ -194,8 +194,8 @@
         "actions": [
             {
                 "key": "idle",
-                "spritesheet": "assets/images/spritesheets/garet_idle.json",
-                "spritesheet_img": "assets/images/spritesheets/garet_idle.png",
+                "spritesheet": "assets/images/spritesheets/main_chars/garet_idle.json",
+                "spritesheet_img": "assets/images/spritesheets/main_chars/garet_idle.png",
                 "directions": [
                     "down", 
                     "up", 
@@ -286,8 +286,8 @@
         "actions": [
             {
                 "key": "idle",
-                "spritesheet": "assets/images/spritesheets/sheba_idle.json",
-                "spritesheet_img": "assets/images/spritesheets/sheba_idle.png",
+                "spritesheet": "assets/images/spritesheets/main_chars/sheba_idle.json",
+                "spritesheet_img": "assets/images/spritesheets/main_chars/sheba_idle.png",
                 "directions": [
                     "down", 
                     "up", 
