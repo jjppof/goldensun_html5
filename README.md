@@ -1,7 +1,7 @@
 # Golden Sun Engine - HTML5
 An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0](http://phaser.io/).
 
-**See the [DEMO](https://jjppof.github.io/goldensun_html5/index).**
+**See the [DEMO](https://jjppof.github.io/goldensun_html5/index).** Prefer to use Chrome based browsers.
 
 - Feel free to help! Check what I need help [here](https://github.com/jjppof/goldensun_html5/projects/2). Please, reach me if you want to do so.
 - The goal of this project is not to do exactly the same engine as GS, but very similar.
