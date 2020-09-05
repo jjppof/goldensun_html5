@@ -171,11 +171,11 @@ export class SummonWindow {
         for (let elem in this.standby_djinni) {
             this.standby_djinni[elem] -= this.djinni_already_used[elem];
         }
-        this.all_summons = this.data.summons_db.map((summon, index) => {
+        this.all_summons = _.map(this.data.summons_db, summon => {
             const available = _.every(summon.requirements, (value, elem) => value <= this.standby_djinni[elem]);
             return Object.assign({}, summon, {
                 available: available,
-                index: available ? -index : index
+                index: available ? -summon.index : summon.index
             });
         });
         this.all_summons = _.sortBy(this.all_summons, [summon => {

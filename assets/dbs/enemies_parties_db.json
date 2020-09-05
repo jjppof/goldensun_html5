@@ -1,5 +1,5 @@
-{
-    "briggs_party": {
+[
+    {
         "key_name": "briggs_party",
         "name": "Briggs' party",
         "members": [
@@ -18,4 +18,4 @@
             }
         ]
     }
-}
+]

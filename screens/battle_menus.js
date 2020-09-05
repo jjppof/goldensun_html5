@@ -159,7 +159,7 @@ export class BattleMenuScreen {
                     djinn_key_name = ability;
                     ability = "set_djinn";
                 } else if (action_type === "summon") {
-                    const requirements = _.find(this.data.summons_db, {key_name: ability}).requirements;
+                    const requirements = this.data.summons_db[ability].requirements;
                     this.djinni_already_used = _.mapValues(this.djinni_already_used, (value, elem) => {
                         return value + requirements[elem];
                     });
@@ -206,7 +206,7 @@ export class BattleMenuScreen {
             if (pop_ability) {
                 const ability_info = this.abilities[next_char.key_name].pop();
                 if (ability_info.type === "summon") {
-                    const requirements = _.find(this.data.summons_db, {key_name: ability_info.key_name}).requirements;
+                    const requirements = this.data.summons_db[ability_info.key_name].requirements;
                     this.djinni_already_used = _.mapValues(this.djinni_already_used, (value, elem) => {
                         return value - requirements[elem];
                     });

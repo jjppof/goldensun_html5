@@ -217,6 +217,11 @@ async function create() {
     data.current_action = "idle";
 
     data.interactable_objects_db = _.mapKeys(data.interactable_objects_db, interactable_object_data => interactable_object_data.key_name);
+    data.enemies_parties_db = _.mapKeys(data.enemies_parties_db, enemy_party_data => enemy_party_data.key_name);
+    data.summons_db = _.mapKeys(data.summons_db, (summon_data, index) => {
+        summon_data.index = parseInt(index);
+        return summon_data.key_name;
+    });
 
     let load_maps_promise_resolve;
     let load_maps_promise = new Promise(resolve => {

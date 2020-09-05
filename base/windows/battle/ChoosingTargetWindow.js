@@ -73,7 +73,7 @@ export class ChoosingTargetWindow {
             const pp_text = this.base_window.set_text_in_position("PP", PP_TEXT_X, PP_Y);
             this.texts.push(pp_text);
         } else if (this.action === "summon") {
-            const reqs = _.pickBy(_.find(this.data.summons_db, {key_name: this.ability_key_name}).requirements, req => req);
+            const reqs = _.pickBy(this.data.summons_db[this.ability_key_name].requirements, req => req);
             let counter = 0;
             ordered_elements.forEach(element => {
                 if (!(element in reqs)) return;
