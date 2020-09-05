@@ -10,10 +10,10 @@ export function initialize_enemies(game, enemies_db, load_promise_resolve) {
 
         const action = enemy_data.battle_spritesheet;
         if (action !== undefined) {
-            enemies_list[enemy_data.key_name].setActionSpritesheet(action.key, action.spritesheet_img, action.spritesheet);
-            enemies_list[enemy_data.key_name].setActionDirections(action.key, action.directions, action.directions_frames_number);
-            enemies_list[enemy_data.key_name].setActionFrameRate(action.key, action.frame_rate);
-            enemies_list[enemy_data.key_name].setActionLoop(action.key, action.loop);
+            enemies_list[enemy_data.key_name].setActionSpritesheet("battle", action.spritesheet_img, action.spritesheet);
+            enemies_list[enemy_data.key_name].setActionDirections("battle", action.positions, action.frames_number);
+            enemies_list[enemy_data.key_name].setActionFrameRate("battle", action.frame_rate);
+            enemies_list[enemy_data.key_name].setActionLoop("battle", action.loop);
             enemies_list[enemy_data.key_name].generateAllFrames();
 
             let load_spritesheet_promise_resolve;

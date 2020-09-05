@@ -71,10 +71,9 @@
             "attack": "attack"
         },
         "battle_spritesheet": {
-            "key": "battle",
             "spritesheet": "assets/images/spritesheets/battle/briggs_battle.json",
             "spritesheet_img": "assets/images/spritesheets/battle/briggs_battle.png",
-            "directions": [
+            "positions": [
                 "back", 
                 "front",
                 "attack_back",
@@ -82,7 +81,7 @@
                 "damage_back",
                 "damage_front"
             ],
-            "directions_frames_number": [4,4,2,2,1,1],
+            "frames_number": [4,4,2,2,1,1],
             "frame_rate": [3,3,1,1,1,1],
             "loop": [true,true,false,false,false,false]
         }
@@ -155,10 +154,9 @@
             "attack": "attack"
         },
         "battle_spritesheet": {
-            "key": "battle",
             "spritesheet": "assets/images/spritesheets/battle/sea_fighter_battle.json",
             "spritesheet_img": "assets/images/spritesheets/battle/sea_fighter_battle.png",
-            "directions": [
+            "positions": [
                 "back", 
                 "front",
                 "attack_back",
@@ -166,7 +164,7 @@
                 "damage_back",
                 "damage_front"
             ],
-            "directions_frames_number": [4,4,2,2,1,1],
+            "frames_number": [4,4,2,2,1,1],
             "frame_rate": [3,3,1,1,1,1],
             "loop": [true,true,false,false,false,false]
         }
