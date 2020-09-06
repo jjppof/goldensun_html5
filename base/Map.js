@@ -1,5 +1,5 @@
 import { directions, map_directions } from "../utils.js";
-import { NPC_Sprite, NPC } from './NPC.js';
+import { NPC_Sprite, NPC, npc_movement_types } from './NPC.js';
 import { InteractableObjects, InteractableObjects_Sprite, interactable_object_interaction_types } from "./InteractableObjects.js";
 import {
     TileEvent,
@@ -190,7 +190,6 @@ export class Map {
         this.npcs.push(new NPC(
             game,
             data,
-            property_info.type,
             property_info.key_name,
             property_info.initial_x,
             property_info.initial_y,
@@ -269,7 +268,7 @@ export class Map {
         for (let i = 0; i < this.npcs.length; ++i) {
             const npc = this.npcs[i];
             let actions = [];
-            if (npc.npc_type == NPC.movement_types.IDLE) {
+            if (npc.movement_type === npc_movement_types.IDLE) {
                 actions = ['idle'];
             }
             const npc_sprite_info = new NPC_Sprite(npc.key_name, actions);

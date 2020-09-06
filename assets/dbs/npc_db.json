@@ -3,7 +3,7 @@
         "anchor_y": 0.8,
         "initial_action": "idle",
         "collision_body_bevel": 3,
-        "interaction_pattern": 1,
+        "interaction_pattern": "cross",
         "body_radius": 7.0,
         "actions": {
             "idle": {
@@ -18,7 +18,7 @@
         "anchor_y": 0.8,
         "initial_action": "idle",
         "collision_body_bevel": 3,
-        "interaction_pattern": 1,
+        "interaction_pattern": "cross",
         "body_radius": 7.0,
         "actions": {
             "idle": {

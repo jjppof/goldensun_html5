@@ -1,5 +1,5 @@
 import { DialogManager, set_dialog } from '../base/Window.js';
-import { NPC } from '../base/NPC.js';
+import { npc_types, npc_interaction_pattern } from '../base/NPC.js';
 import { change_hero_sprite } from '../initializers/hero_control.js';
 import { is_close, directions, reverse_directions } from '../utils.js';
 
@@ -46,7 +46,7 @@ export function trigger_npc_dialog(game, data) {
 
 export function set_npc_event(data) {
     if (!data.waiting_for_enter_press) {
-        if (!data.in_dialog && data.active_npc.npc_type === NPC.types.NORMAL) {
+        if (!data.in_dialog && data.active_npc.npc_type === npc_types.NORMAL) {
             let parts = set_dialog(game, data.active_npc.message);
             let npc_x = data.active_npc.npc_sprite.x;
             let npc_y = data.active_npc.npc_sprite.y;
@@ -66,7 +66,7 @@ export function set_npc_event(data) {
 export function get_interaction_directions(data, hero_x, hero_y, npc_x, npc_y, sprite_key) {
     let interaction_pattern = data.npc_db[sprite_key].interaction_pattern;
     let npc_direction;
-    if (interaction_pattern === NPC.interaction_pattern.CROSS) {
+    if (interaction_pattern === npc_interaction_pattern.CROSS) {
         let positive_limit = hero_x + (-npc_y - npc_x);
         let negative_limit = -hero_x + (-npc_y + npc_x);
         if (-hero_y >= positive_limit && -hero_y >= negative_limit) {
@@ -84,28 +84,28 @@ export function get_interaction_directions(data, hero_x, hero_y, npc_x, npc_y, s
     const radius = data.npc_db[sprite_key].body_radius;
     if (hero_x <= npc_x - radius && hero_y >= npc_y + radius) {
         hero_direction = directions.up_right;
-        npc_direction = interaction_pattern === NPC.interaction_pattern.TIK_TAK_TOE ? directions.down_left : npc_direction;
+        npc_direction = interaction_pattern === npc_interaction_pattern.TIK_TAK_TOE ? directions.down_left : npc_direction;
     } else if (hero_x <= npc_x - radius && hero_y >= npc_y - radius && hero_y <= npc_y + radius) {
         hero_direction = directions.right;
-        npc_direction = interaction_pattern === NPC.interaction_pattern.TIK_TAK_TOE ? directions.left : npc_direction;
+        npc_direction = interaction_pattern === npc_interaction_pattern.TIK_TAK_TOE ? directions.left : npc_direction;
     } else if (hero_x <= npc_x - radius && hero_y <= npc_y - radius) {
         hero_direction = directions.down_right;
-        npc_direction = interaction_pattern === NPC.interaction_pattern.TIK_TAK_TOE ? directions.up_left : npc_direction;
+        npc_direction = interaction_pattern === npc_interaction_pattern.TIK_TAK_TOE ? directions.up_left : npc_direction;
     } else if (hero_x >= npc_x - radius && hero_x <= npc_x + radius && hero_y <= npc_y - radius) {
         hero_direction = directions.down;
-        npc_direction = interaction_pattern === NPC.interaction_pattern.TIK_TAK_TOE ? directions.up : npc_direction;
+        npc_direction = interaction_pattern === npc_interaction_pattern.TIK_TAK_TOE ? directions.up : npc_direction;
     } else if (hero_x >= npc_x + radius && hero_y <= npc_y - radius) {
         hero_direction = directions.down_left;
-        npc_direction = interaction_pattern === NPC.interaction_pattern.TIK_TAK_TOE ? directions.up_right : npc_direction;
+        npc_direction = interaction_pattern === npc_interaction_pattern.TIK_TAK_TOE ? directions.up_right : npc_direction;
     } else if (hero_x >= npc_x + radius && hero_y >= npc_y - radius && hero_y <= npc_y + radius) {
         hero_direction = directions.left;
-        npc_direction = interaction_pattern === NPC.interaction_pattern.TIK_TAK_TOE ? directions.right : npc_direction;
+        npc_direction = interaction_pattern === npc_interaction_pattern.TIK_TAK_TOE ? directions.right : npc_direction;
     } else if (hero_x >= npc_x + radius && hero_y >= npc_y + radius) {
         hero_direction = directions.up_left;
-        npc_direction = interaction_pattern === NPC.interaction_pattern.TIK_TAK_TOE ? directions.down_right : npc_direction;
+        npc_direction = interaction_pattern === npc_interaction_pattern.TIK_TAK_TOE ? directions.down_right : npc_direction;
     } else if (hero_x >= npc_x - radius && hero_x <= npc_x + radius && hero_y >= npc_y + radius) {
         hero_direction = directions.up;
-        npc_direction = interaction_pattern === NPC.interaction_pattern.TIK_TAK_TOE ? directions.down : npc_direction;
+        npc_direction = interaction_pattern === npc_interaction_pattern.TIK_TAK_TOE ? directions.down : npc_direction;
     }
 
     return {hero_direction: hero_direction, npc_direction: npc_direction};

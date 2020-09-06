@@ -12,11 +12,28 @@ export class NPC_Sprite extends SpriteBase {
 
 const NPC_TALK_RANGE = 3.0;
 
+export const npc_movement_types = {
+    IDLE: "idle",
+    WALK_AROUND: "walk_around"
+};
+
+export const npc_types = {
+    NORMAL: "normal",
+    INN: "inn",
+    WEAPON_SHOP: "weapon_shop",
+    ARMOR_SHOP: "armor_shop",
+    MEDICINE_SHOP: "medicine_shop"
+};
+
+export const npc_interaction_pattern = {
+    TIK_TAK_TOE: "tik_tak_toe",
+    CROSS: "cross"
+};
+
 export class NPC {
     constructor(
         game,
         data,
-        type,
         key_name,
         initial_x,
         initial_y,
@@ -33,7 +50,6 @@ export class NPC {
     ) {
         this.game = game;
         this.data = data;
-        this.type = type;
         this.key_name = key_name;
         this.initial_x = initial_x;
         this.initial_y = initial_y;
@@ -92,28 +108,10 @@ export class NPC {
     }
 
     update() {
-        if (this.movement_type === NPC.movement_types.IDLE) {
+        if (this.movement_type === npc_movement_types.IDLE) {
             this.npc_sprite.body.velocity.x = this.npc_sprite.body.velocity.y = 0;
         }
         this.npc_shadow_sprite.x = this.npc_sprite.x;
         this.npc_shadow_sprite.y = this.npc_sprite.y;
     }
 }
-
-NPC.movement_types = {
-    IDLE: 0,
-    WALK_AROUND: 1
-};
-
-NPC.types = {
-    NORMAL: 0,
-    INN: 1,
-    WEAPON_SHOP: 2,
-    ARMOR_SHOP: 3,
-    MEDICINE_SHOP: 4
-};
-
-NPC.interaction_pattern = {
-    TIK_TAK_TOE: 0,
-    CROSS: 1
-};
