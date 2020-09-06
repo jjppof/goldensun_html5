@@ -1,5 +1,6 @@
-{
-    "village_1": {
+[
+    {
+        "key_name": "village_1",
         "anchor_y": 0.8,
         "initial_action": "idle",
         "collision_body_bevel": 3,
@@ -13,8 +14,8 @@
                 "initial_direction": "down"
             }
         }
-    },
-    "briggs": {
+    },{
+        "key_name": "briggs",
         "anchor_y": 0.8,
         "initial_action": "idle",
         "collision_body_bevel": 3,
@@ -29,4 +30,4 @@
             }
         }
     }
-}
+]

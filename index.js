@@ -216,8 +216,10 @@ async function create() {
     party_data.coins = data.init_db.coins;
     data.current_action = "idle";
 
+    //format some structures
     data.interactable_objects_db = _.mapKeys(data.interactable_objects_db, interactable_object_data => interactable_object_data.key_name);
     data.enemies_parties_db = _.mapKeys(data.enemies_parties_db, enemy_party_data => enemy_party_data.key_name);
+    data.npc_db = _.mapKeys(data.npc_db, npc_data => npc_data.key_name);
     data.summons_db = _.mapKeys(data.summons_db, (summon_data, index) => {
         summon_data.index = parseInt(index);
         return summon_data.key_name;
