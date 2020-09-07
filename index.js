@@ -16,7 +16,7 @@ import * as movement from './physics/movement.js';
 import { initialize_menu } from './screens/menu.js';
 import * as hero_control from './initializers/hero_control.js';
 import { TileEvent } from './base/TileEvent.js';
-import { set_debug_info, toggle_debug, toggle_keys, fill_key_debug_table, toggle_stats, fill_stats_debug_table } from './debug.js';
+import { Debug } from './debug.js';
 import { event_triggering } from './events/triggering.js';
 
 //this variable contains important data used throughout the game
@@ -53,12 +53,6 @@ var data = {
     created: false,
     in_dialog: false,
     idle_climbing: false,
-
-    //debug
-    debug: false,
-    grid: false,
-    debug_keys: false,
-    debug_stats: false,
     frame_counter: 0,
 
     //screen
@@ -224,6 +218,9 @@ async function create() {
         return summon_data.key_name;
     });
 
+    //init debug instance
+    data.debug = new Debug(game, data);
+
     let load_maps_promise_resolve;
     const load_maps_promise = new Promise(resolve => {
         load_maps_promise_resolve = resolve;
@@ -300,29 +297,7 @@ async function create() {
     physics.config_collisions(data);
     game.physics.p2.updateBoundsCollisionGroup();
 
-    //activate debug mode
-    game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(toggle_debug.bind(this, data), this);
-    
-    //activate grid mode
-    game.input.keyboard.addKey(Phaser.Keyboard.G).onDown.add(() => {
-        data.grid = !data.grid;
-    }, this);
-
-    //activate keys debug mode
-    game.input.keyboard.addKey(Phaser.Keyboard.K).onDown.add(() => {
-        toggle_keys(data);
-    }, this);
-
-    //activate stats debug mode
-    game.input.keyboard.addKey(Phaser.Keyboard.S).onDown.add(() => {
-        toggle_stats(data);
-    }, this);
-
-    //enable fps show
-    data.show_fps = false;
-    game.input.keyboard.addKey(Phaser.Keyboard.F).onDown.add(() => {
-        data.show_fps = !data.show_fps;
-    }, this);
+    data.debug.initialize_controls();
 
     //set initial zoom
     game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
@@ -333,7 +308,7 @@ async function create() {
     game.input.onTap.add((pointer, isDoubleClick) => {
         if (isDoubleClick) {
             game.scale.startFullScreen(true);
-        }  
+        }
     });
     game.scale.onFullScreenChange.add(() => {
         data.fullscreen = !data.fullscreen;
@@ -452,11 +427,11 @@ function update() {
 }
 
 function render() {
-    set_debug_info(game, data);
+    data.debug.set_debug_info();
     if (data.frame_counter%8 === 0) {
-        fill_key_debug_table(data);
+        data.debug.fill_key_debug_table();
     }
     if (data.frame_counter%(numbers.TARGET_FPS >> 1) === 0) {
-        fill_stats_debug_table(data);
+        data.debug.fill_stats_debug_table();
     }
 }
