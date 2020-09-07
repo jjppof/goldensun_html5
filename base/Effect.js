@@ -201,7 +201,7 @@ export class Effect {
                 effect_obj.rate = 1.0;
             }
             value *= effect_obj.rate;
-            value = parseInt(value);
+            value = value | 0;
             return Effect.apply_operator(base_value, value, effect_obj.operator);
         }
     }

@@ -1,7 +1,7 @@
 export function init_cast_aura(game, sprite, group, filter, after_init, after_destroy, before_destroy) {
     const ring_up_time = 750;
     const ring_up_time_half = ring_up_time >> 1;
-    const step_time = parseInt(ring_up_time/3);
+    const step_time = (ring_up_time / 3) | 0;
     sprite.filters = [filter];
     const auras_number = 2;
     let tweens = [];
@@ -21,7 +21,7 @@ export function init_cast_aura(game, sprite, group, filter, after_init, after_de
         };
         front_aura.sort_function();
         const height = sprite.height + front_aura.height - 8;
-        const step_height = parseInt(height/3);
+        const step_height = (height / 3) | 0;
         front_aura.anchor.setTo(0.5, 0);
         front_aura.centerX = sprite.centerX;
         front_aura.centerY = sprite.centerY + (sprite.height >> 1) + (front_aura.height >> 1);

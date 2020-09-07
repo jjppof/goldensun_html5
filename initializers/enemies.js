@@ -17,7 +17,7 @@ export function initialize_enemies(game, enemies_db, load_promise_resolve) {
             enemies_list[enemy_data.key_name].generateAllFrames();
 
             let load_spritesheet_promise_resolve;
-            let load_spritesheet_promise = new Promise(resolve => {
+            const load_spritesheet_promise = new Promise(resolve => {
                 load_spritesheet_promise_resolve = resolve;
             });
             load_promises.push(load_spritesheet_promise);

@@ -89,12 +89,11 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
         sprite_base.generateAllFrames();
 
         let load_spritesheet_promise_resolve;
-        let load_spritesheet_promise = new Promise(resolve => {
+        const load_spritesheet_promise = new Promise(resolve => {
             load_spritesheet_promise_resolve = resolve;
         });
         load_promises.push(load_spritesheet_promise);
         sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
     }
-    
     Promise.all(load_promises).then(load_promise_resolve);
 }

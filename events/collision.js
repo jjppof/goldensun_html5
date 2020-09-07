@@ -38,7 +38,7 @@ export function change_map_body(data, new_collider_layer_index) {
         let layer = layers[i];
         let is_over = layer.properties.over.toString().split(",");
         if (is_over.length > new_collider_layer_index) {
-            is_over = is_over.length > new_collider_layer_index ? parseInt(is_over[new_collider_layer_index]) : parseInt(is_over[0]);
+            is_over = is_over.length > new_collider_layer_index ? (is_over[new_collider_layer_index]) | 0 : (is_over[0]) | 0;
             if (is_over !== 0) {
                 data.underlayer_group.remove(layer.sprite, false, true);
                 let index = 0;

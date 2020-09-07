@@ -336,7 +336,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         this.emitter.start(false, Phaser.Timer.QUARTER, 15, 0);
         this.emitter.forEach(particle => {
             particle.animations.play('vanish');
-            particle.animations.currentAnim.setFrame(parseInt(Math.random()*particle.animations.frameTotal));
+            particle.animations.currentAnim.setFrame((Math.random() * particle.animations.frameTotal) | 0);
         });
     }
 
@@ -361,7 +361,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         this.final_emitter.start(true, lifetime, null, this.final_emitter_particles_count);
         this.final_emitter.forEach(particle => {
             particle.animations.play('vanish');
-            particle.animations.currentAnim.setFrame(parseInt(Math.random()*particle.animations.frameTotal));
+            particle.animations.currentAnim.setFrame((Math.random() * particle.animations.frameTotal) | 0);
         });
         this.game.time.events.add(lifetime, () => {
             this.unset_final_emitter();

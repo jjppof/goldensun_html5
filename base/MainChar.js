@@ -438,7 +438,7 @@ export class MainChar extends Player {
         const curve_key = stat + "_curve";
         const extra_key = stat + "_extra";
         const previous_value = this[stat_key];
-        this[stat_key] = parseInt(this[curve_key][this.level] * this.class[boost_key] + this[extra_key]);
+        this[stat_key] = (this[curve_key][this.level] * this.class[boost_key] + this[extra_key]) | 0;
         let this_djinni = this.djinni;
         if (preview) {
             if (preview_obj.action === "Trade") {

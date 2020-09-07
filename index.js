@@ -25,7 +25,6 @@ var data = {
     x_speed: 0,
     y_speed: 0,
     extra_speed: 0,
-    delta_time: 0,
     stop_by_colliding: false,
     force_direction: false,
     forcing_on_diagonal: false,
@@ -226,7 +225,7 @@ async function create() {
     });
 
     let load_maps_promise_resolve;
-    let load_maps_promise = new Promise(resolve => {
+    const load_maps_promise = new Promise(resolve => {
         load_maps_promise_resolve = resolve;
     });
     initialize_maps(data.maps_db);
@@ -236,35 +235,35 @@ async function create() {
     initialize_classes(data.classes_db);
 
     let load_enemies_sprites_promise_resolve;
-    let load_enemies_sprites_promise = new Promise(resolve => {
+    const load_enemies_sprites_promise = new Promise(resolve => {
         load_enemies_sprites_promise_resolve = resolve;
     });
     initialize_enemies(game, data.enemies_db, load_enemies_sprites_promise_resolve);
     await load_enemies_sprites_promise;
 
     let load_djinni_sprites_promise_resolve;
-    let load_djinni_sprites_promise = new Promise(resolve => {
+    const load_djinni_sprites_promise = new Promise(resolve => {
         load_djinni_sprites_promise_resolve = resolve;
     });
     initialize_djinni(game, data.djinni_db, load_djinni_sprites_promise_resolve);
     await load_djinni_sprites_promise;
     
     let load_abilities_promise_resolve;
-    let load_abilities_promise = new Promise(resolve => {
+    const load_abilities_promise = new Promise(resolve => {
         load_abilities_promise_resolve = resolve;
     });
     initialize_abilities(game, data.abilities_db, load_abilities_promise_resolve);
     await load_abilities_promise;
     
     let load_items_promise_resolve;
-    let load_items_promise = new Promise(resolve => {
+    const load_items_promise = new Promise(resolve => {
         load_items_promise_resolve = resolve;
     });
     initialize_items(game, data.items_db, load_items_promise_resolve);
     await load_items_promise;
 
     let load_chars_promise_resolve;
-    let load_chars_promise = new Promise(resolve => {
+    const load_chars_promise = new Promise(resolve => {
         load_chars_promise_resolve = resolve;
     });
     initialize_main_chars(game, data.main_chars_db, load_chars_promise_resolve);
@@ -321,7 +320,7 @@ async function create() {
 
     //enable fps show
     data.show_fps = false;
-    game.input.keyboard.addKey(Phaser.Keyboard.F).onDown.add(function(){
+    game.input.keyboard.addKey(Phaser.Keyboard.F).onDown.add(() => {
         data.show_fps = !data.show_fps;
     }, this);
 
@@ -331,7 +330,7 @@ async function create() {
 
     //enable full screen
     game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-    game.input.onTap.add(function(pointer, isDoubleClick) {  
+    game.input.onTap.add((pointer, isDoubleClick) => {
         if (isDoubleClick) {
             game.scale.startFullScreen(true);
         }  
@@ -344,35 +343,35 @@ async function create() {
     });
 
     //enable zoom
-    game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(function(){
+    game.input.keyboard.addKey(Phaser.Keyboard.ONE).onDown.add(() => {
         if (data.fullscreen) return;
         data.scale_factor = 1;
         game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
     }, this);
-    game.input.keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(function(){
+    game.input.keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(() => {
         if (data.fullscreen) return;
         data.scale_factor = 2;
         game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
     }, this);
-    game.input.keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(function(){
+    game.input.keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(() => {
         if (data.fullscreen) return;
         data.scale_factor = 3;
         game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
     }, this);
 
-    //enable psynergies shortcuts
-    game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(function(){
+    //enable psynergies shortcuts for testing
+    game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(() => {
         if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
         field_abilities_list.move.cast(data.init_db.initial_shortcuts.move);
     }, this);
-    game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(function(){
+    game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(() => {
         if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
         field_abilities_list.frost.cast(data.init_db.initial_shortcuts.frost);
     }, this);
-    game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(function(){
+    game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(() => {
         if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
         field_abilities_list.growth.cast(data.init_db.initial_shortcuts.growth);
     }, this);
@@ -411,8 +410,7 @@ function update() {
             movement.update_arrow_inputs(data);
             movement.set_speed_factors(data);
             hero_control.set_current_action(data); //chooses which sprite the hero shall assume
-            data.delta_time = game.time.elapsedMS/numbers.DELTA_TIME_FACTOR;
-            movement.calculate_hero_speed(data);
+            movement.calculate_hero_speed(game, data);
             movement.collision_dealer(game, data);
             hero_control.change_hero_sprite(data);
             hero_control.update_shadow(data);

@@ -6,9 +6,9 @@ const STEP_SHIFT_FACTOR = 4;
 export function config_step(data, current_event) {
     let next_x, next_y = current_event.y, shift_y;
     if (current_event.step_direction === directions.up) {
-        shift_y = -parseInt(maps[data.map_name].sprite.tileHeight/STEP_SHIFT_FACTOR);
+        shift_y = -((maps[data.map_name].sprite.tileHeight/STEP_SHIFT_FACTOR) | 0);
     } else if (current_event.step_direction === directions.down) {
-        shift_y = parseInt(maps[data.map_name].sprite.tileHeight/STEP_SHIFT_FACTOR);
+        shift_y = (maps[data.map_name].sprite.tileHeight/STEP_SHIFT_FACTOR) | 0;
     }
     if (current_event.activation_directions[0] === directions.left) {
         next_x = current_event.x - 1;

@@ -165,16 +165,17 @@ export function collision_dealer(game, data) {
     }
 }
 
-export function calculate_hero_speed(data) { //when setting temp_x or temp_y, it means that these velocities will still be analyzed in collision_dealer function
+export function calculate_hero_speed(game, data) { //when setting temp_x or temp_y, it means that these velocities will still be analyzed in collision_dealer function
+    const delta_time = game.time.elapsedMS / numbers.DELTA_TIME_FACTOR;
     if (data.current_action === "dash") {
-        data.hero.body.velocity.temp_x = (data.delta_time * data.x_speed * (main_char_list[data.hero_name].sprite_base.dash_speed + data.extra_speed)) | 0;
-        data.hero.body.velocity.temp_y = (data.delta_time * data.y_speed * (main_char_list[data.hero_name].sprite_base.dash_speed + data.extra_speed)) | 0;
+        data.hero.body.velocity.temp_x = (delta_time * data.x_speed * (main_char_list[data.hero_name].sprite_base.dash_speed + data.extra_speed)) | 0;
+        data.hero.body.velocity.temp_y = (delta_time * data.y_speed * (main_char_list[data.hero_name].sprite_base.dash_speed + data.extra_speed)) | 0;
     } else if(data.current_action === "walk") {
-        data.hero.body.velocity.temp_x = (data.delta_time * data.x_speed * (main_char_list[data.hero_name].sprite_base.walk_speed + data.extra_speed)) | 0;
-        data.hero.body.velocity.temp_y = (data.delta_time * data.y_speed * (main_char_list[data.hero_name].sprite_base.walk_speed + data.extra_speed)) | 0;
+        data.hero.body.velocity.temp_x = (delta_time * data.x_speed * (main_char_list[data.hero_name].sprite_base.walk_speed + data.extra_speed)) | 0;
+        data.hero.body.velocity.temp_y = (delta_time * data.y_speed * (main_char_list[data.hero_name].sprite_base.walk_speed + data.extra_speed)) | 0;
     } else if(data.current_action === "climb") {
-        data.hero.body.velocity.temp_x = (data.delta_time * data.x_speed * main_char_list[data.hero_name].sprite_base.climb_speed) | 0;
-        data.hero.body.velocity.temp_y = (data.delta_time * data.y_speed * main_char_list[data.hero_name].sprite_base.climb_speed) | 0;
+        data.hero.body.velocity.temp_x = (delta_time * data.x_speed * main_char_list[data.hero_name].sprite_base.climb_speed) | 0;
+        data.hero.body.velocity.temp_y = (delta_time * data.y_speed * main_char_list[data.hero_name].sprite_base.climb_speed) | 0;
     } else if(data.current_action === "idle") {
         data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
     }

@@ -239,8 +239,8 @@ export function jump_near_collision(data, current_event) {
         data.map_collider.body.removeCollisionGroup(data.heroCollisionGroup, true);
         bodies_position.forEach(position => {
             const pos_array = position.split("_");
-            let x_pos = (parseInt(pos_array[0]) + .5) * maps[data.map_name].sprite.tileWidth;
-            let y_pos = (parseInt(pos_array[1]) + .5) * maps[data.map_name].sprite.tileHeight;
+            const x_pos = ((pos_array[0] | 0) + .5) * maps[data.map_name].sprite.tileWidth;
+            const y_pos = ((pos_array[1] | 0) + .5) * maps[data.map_name].sprite.tileHeight;
             let body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
             body.clearShapes();
             body.setRectangle(maps[data.map_name].sprite.tileWidth, maps[data.map_name].sprite.tileHeight, 0, 0);
