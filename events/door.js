@@ -6,13 +6,14 @@ import {
     config_collisions,
     config_physics_for_interactable_objects
 } from '../physics/collision_bodies.js';
-import {
-    set_speed_factors,
-} from '../physics/movement.js';
 import * as numbers from '../magic_numbers.js';
 import { reverse_directions } from '../utils.js';
+import { stop_hero, update_shadow } from '../initializers/hero_control.js';
 
 export function set_door_event(game, data, current_event, activation_direction) {
+    if (data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y || data.casting_psynergy || data.pushing || data.climbing || data.jumping || data.menu_open || data.in_battle || data.on_event) {
+        return;
+    }
     data.on_event = true;
     data.door_event_data = {
         event: current_event,
@@ -41,9 +42,11 @@ export function set_door_event(game, data, current_event, activation_direction) 
             y: tween_y
         }, time, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
             data.teleporting = true;
+            door_event_phases(game, data);
         });
     } else {
         data.teleporting = true;
+        door_event_phases(game, data);
     }
 }
 
@@ -51,16 +54,15 @@ export function door_event_phases(game, data) {
     const current_event = data.door_event_data.event;
     if (data.teleporting) {
         data.teleporting = false;
-        data.hero.loadTexture(data.hero_name + "_idle");
-        main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, "idle");
+        stop_hero(data, true);
         data.current_direction = current_event.activation_directions[0];
         data.hero.animations.play("idle_" + reverse_directions[data.current_direction]);
-        data.current_action = "idle";
         game.camera.fade();
         game.camera.onFadeComplete.addOnce(() => {
             data.door_event_data.processing_teleport = true;
             game.camera.lerp.setTo(1, 1);
-        }, this);
+            door_event_phases(game, data);
+        });
     } else if (data.door_event_data.processing_teleport) {
         data.door_event_data.processing_teleport = false;
         maps[data.map_name].unset_map(data);
@@ -96,28 +98,27 @@ export function door_event_phases(game, data) {
             }
 
             data.door_event_data.fading_out = true;
+            door_event_phases(game, data);
         });
     } else if (data.door_event_data.fading_out) {
         data.door_event_data.fading_out = false;
+        update_shadow(data);
         game.camera.flash(0x0);
         game.camera.onFlashComplete.addOnce(() => {
-            set_speed_factors(data);
             game.camera.lerp.setTo(numbers.CAMERA_LERP, numbers.CAMERA_LERP);
             data.on_event = false;
             data.door_event_data = null;
-        }, this);
-        data.shadow.x = data.hero.body.x;
-        data.shadow.y = data.hero.body.y;
+        });
     }
 }
 
 export function open_door(data, current_event) {
-    let layer = _.find(maps[data.map_name].sprite.layers, {
+    const layer = _.find(maps[data.map_name].sprite.layers, {
         name : maps[data.map_name].sprite.properties.door_layer
     });
-    let sample_tile = maps[data.map_name].sprite.getTile(current_event.x, current_event.y - 1, layer.name);
-    let door_type_index = sample_tile.properties.door_type;
-    let tiles = _.filter(maps[data.map_name].sprite.tilesets[0].tileProperties, key => {
+    const sample_tile = maps[data.map_name].sprite.getTile(current_event.x, current_event.y - 1, layer.name);
+    const door_type_index = sample_tile.properties.door_type;
+    const tiles = _.filter(maps[data.map_name].sprite.tilesets[0].tileProperties, key => {
         return key.door_type === door_type_index && "close_door" in key && key.id === sample_tile.properties.id;
     });
     let tile, source_index, close_door_index, offsets, base_x, base_y, target_index;

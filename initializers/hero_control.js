@@ -23,7 +23,10 @@ export function config_hero(data) {
     data.hero.animations.play(data.current_action + "_" + reverse_directions[data.current_direction]);
 }
 
-export function change_hero_sprite(data) {
+export function change_hero_sprite(data, check_on_event = false) {
+    if (check_on_event && data.on_event) {
+        return;
+    }
     let action = data.current_action;
     let direction = data.current_direction;
     let idle_climbing = data.idle_climbing;
@@ -45,6 +48,9 @@ export function change_hero_sprite(data) {
 }
 
 export function set_current_action(data) {
+    if (data.on_event) {
+        return;
+    }
     if (!data.cursors.up.isDown && !data.cursors.left.isDown && !data.cursors.right.isDown && !data.cursors.down.isDown && data.current_action !== "idle" && !data.climbing) {
         data.current_action = "idle";
     } else if (((data.cursors.up.isDown && data.cursors.down.isDown) || (data.cursors.right.isDown && data.cursors.left.isDown)) && !data.climbing) {

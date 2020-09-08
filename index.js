@@ -383,11 +383,11 @@ function update() {
             }
 
             movement.update_arrow_inputs(data);
-            movement.set_speed_factors(data);
+            movement.set_speed_factors(data, true);
             hero_control.set_current_action(data); //chooses which sprite the hero shall assume
             movement.calculate_hero_speed(game, data);
             movement.collision_dealer(game, data);
-            hero_control.change_hero_sprite(data);
+            hero_control.change_hero_sprite(data, true);
             hero_control.update_shadow(data);
 
             data.map_collider.body.velocity.y = data.map_collider.body.velocity.x = 0; //fixes map body
@@ -401,9 +401,6 @@ function update() {
         } else if (data.on_event) {
             if (data.climbing_event_data !== null) {
                 climb.climb_event_animation_steps(data);
-            }
-            if (data.door_event_data !== null) {
-                door_event_phases(game, data);
             }
             hero_control.stop_hero(data, false);
         } else if (data.npc_event) {

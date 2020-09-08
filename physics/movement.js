@@ -184,7 +184,10 @@ export function calculate_hero_speed(game, data) { //when setting temp_x or temp
     }
 }
 
-export function set_speed_factors(data) {
+export function set_speed_factors(data, check_on_event = false) {
+    if (check_on_event && data.on_event) {
+        return;
+    }
     if (data.climbing) {
         if (check_isdown(data.cursors, directions.up, directions.down) || check_isdown(data.cursors, directions.right, directions.left)) {
             data.x_speed = 0;
