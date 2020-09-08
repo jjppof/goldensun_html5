@@ -41,78 +41,64 @@ export function set_door_event(game, data, current_event, activation_direction) 
             x: tween_x,
             y: tween_y
         }, time, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
-            data.teleporting = true;
-            door_event_phases(game, data);
+            camera_fade_in(game, data, current_event);
         });
     } else {
-        data.teleporting = true;
-        door_event_phases(game, data);
+        camera_fade_in(game, data, current_event);
     }
 }
 
-export function door_event_phases(game, data) {
-    const current_event = data.door_event_data.event;
-    if (data.teleporting) {
-        data.teleporting = false;
-        stop_hero(data, true);
-        data.current_direction = current_event.activation_directions[0];
-        data.hero.animations.play("idle_" + reverse_directions[data.current_direction]);
-        game.camera.fade();
-        game.camera.onFadeComplete.addOnce(() => {
-            data.door_event_data.processing_teleport = true;
-            game.camera.lerp.setTo(1, 1);
-            door_event_phases(game, data);
-        });
-    } else if (data.door_event_data.processing_teleport) {
-        data.door_event_data.processing_teleport = false;
-        maps[data.map_name].unset_map(data);
-        data.map_name = current_event.target;
-        data.map_collider_layer = current_event.dest_collider_layer;
-        data.shadow.base_collider_layer = data.map_collider_layer;
-        data.hero.base_collider_layer = data.map_collider_layer;
-        maps[data.map_name].mount_map(game, data).then(() => {
-            game.camera.setBoundsToWorld();
-            if (game.camera.bounds.width < numbers.GAME_WIDTH) {
-                game.camera.bounds.width = numbers.GAME_WIDTH;
-            }
-            if (game.camera.bounds.height < numbers.GAME_HEIGHT) {
-                game.camera.bounds.height = numbers.GAME_HEIGHT;
-            }
-
-            data.hero.body.x = current_event.x_target * maps[data.map_name].sprite.tileWidth;
-            data.hero.body.y = current_event.y_target * maps[data.map_name].sprite.tileHeight;
-
-            game.physics.p2.resume();
-
-            config_physics_for_npcs(data);
-            config_physics_for_interactable_objects(data);
-            config_physics_for_map(data, false);
-            config_collisions(data);
-            game.physics.p2.updateBoundsCollisionGroup();
-
-            for (let i = 0; i < data.npc_group.children.length; ++i) {
-                let sprite = data.npc_group.children[i];
-                if (!sprite.is_npc && !sprite.is_interactable_object) continue;
-                if (!sprite.body) continue;
-                sprite.body.debug = data.hero.body.debug;
-            }
-
-            data.door_event_data.fading_out = true;
-            door_event_phases(game, data);
-        });
-    } else if (data.door_event_data.fading_out) {
-        data.door_event_data.fading_out = false;
-        update_shadow(data);
-        game.camera.flash(0x0);
-        game.camera.onFlashComplete.addOnce(() => {
-            game.camera.lerp.setTo(numbers.CAMERA_LERP, numbers.CAMERA_LERP);
-            data.on_event = false;
-            data.door_event_data = null;
-        });
-    }
+function camera_fade_in(game, data, current_event) {
+    stop_hero(data, true);
+    data.current_direction = current_event.activation_directions[0];
+    data.hero.animations.play("idle_" + reverse_directions[data.current_direction]);
+    game.camera.fade();
+    game.camera.onFadeComplete.addOnce(() => {
+        game.camera.lerp.setTo(1, 1);
+        change_map(game, data, current_event);
+    });
 }
 
-export function open_door(data, current_event) {
+async function change_map(game, data, current_event) {
+    maps[data.map_name].unset_map(data);
+    data.map_name = current_event.target;
+    data.map_collider_layer = current_event.dest_collider_layer;
+    data.shadow.base_collider_layer = data.map_collider_layer;
+    data.hero.base_collider_layer = data.map_collider_layer;
+    await maps[data.map_name].mount_map(game, data);
+    game.camera.setBoundsToWorld();
+    if (game.camera.bounds.width < numbers.GAME_WIDTH) {
+        game.camera.bounds.width = numbers.GAME_WIDTH;
+    }
+    if (game.camera.bounds.height < numbers.GAME_HEIGHT) {
+        game.camera.bounds.height = numbers.GAME_HEIGHT;
+    }
+
+    data.hero.body.x = current_event.x_target * maps[data.map_name].sprite.tileWidth;
+    data.hero.body.y = current_event.y_target * maps[data.map_name].sprite.tileHeight;
+
+    game.physics.p2.resume();
+
+    config_physics_for_npcs(data);
+    config_physics_for_interactable_objects(data);
+    config_physics_for_map(data, false);
+    config_collisions(data);
+    game.physics.p2.updateBoundsCollisionGroup();
+    data.debug.update_debug_physics(data.hero.body.debug);
+    camera_fade_out(game, data);
+}
+
+function camera_fade_out(game, data) {
+    update_shadow(data);
+    game.camera.flash(0x0);
+    game.camera.onFlashComplete.addOnce(() => {
+        game.camera.lerp.setTo(numbers.CAMERA_LERP, numbers.CAMERA_LERP);
+        data.on_event = false;
+        data.door_event_data = null;
+    });
+}
+
+function open_door(data, current_event) {
     const layer = _.find(maps[data.map_name].sprite.layers, {
         name : maps[data.map_name].sprite.properties.door_layer
     });

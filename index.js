@@ -6,7 +6,6 @@ import { initialize_items, items_list } from './initializers/items.js';
 import { initialize_djinni, djinni_list } from './initializers/djinni.js';
 import { initialize_enemies, enemies_list } from './initializers/enemies.js';
 import { initialize_maps, load_maps, maps } from './initializers/maps.js';
-import { door_event_phases } from './events/door.js';
 import { set_npc_event, trigger_npc_dialog } from './events/npc.js';
 import { do_step } from './events/step.js';
 import { do_collision_change } from './events/collision.js';

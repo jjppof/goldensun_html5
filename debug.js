@@ -38,15 +38,19 @@ export class Debug {
         }, this);
     }
 
+    update_debug_physics(flag) {
+        for (let i = 0; i < data.npc_group.children.length; ++i) {
+            let sprite = data.npc_group.children[i];
+            if (!sprite.is_npc && !sprite.is_interactable_object) continue;
+            if (!sprite.body) continue;
+            sprite.body.debug = flag;
+        }
+    }
+
     toggle_debug_physics() {
         this.data.hero.body.debug = !this.data.hero.body.debug;
         this.data.map_collider.body.debug = !this.data.map_collider.body.debug;
-        for (let i = 0; i < this.data.npc_group.children.length; ++i) {
-            let sprite = this.data.npc_group.children[i];
-            if (!sprite.is_npc && !sprite.is_interactable_object) continue;
-            if (!sprite.body) continue;
-            sprite.body.debug = !sprite.body.debug;
-        }
+        this.update_debug_physics(this.data.hero.body.debug);
         for (let i = 0; i < this.data.dynamic_jump_events_bodies.length; ++i) {
             this.data.dynamic_jump_events_bodies[i].debug = !this.data.dynamic_jump_events_bodies[i].debug;
         }
