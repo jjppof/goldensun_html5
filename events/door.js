@@ -15,9 +15,11 @@ export function set_door_event(game, data, current_event) {
         return;
     }
     data.on_event = true;
+    data.teleporting = true;
     if (current_event.advance_effect) {
         if (!data.stop_by_colliding) {
             data.on_event = false;
+            data.teleporting = false;
             return;
         }
         data.hero.loadTexture(data.hero_name + "_walk");
@@ -68,27 +70,26 @@ async function change_map(game, data, current_event) {
     if (game.camera.bounds.height < numbers.GAME_HEIGHT) {
         game.camera.bounds.height = numbers.GAME_HEIGHT;
     }
-
-    data.hero.body.x = current_event.x_target * maps[data.map_name].sprite.tileWidth;
-    data.hero.body.y = current_event.y_target * maps[data.map_name].sprite.tileHeight;
-
-    game.physics.p2.resume();
-
     config_physics_for_npcs(data);
     config_physics_for_interactable_objects(data);
     config_physics_for_map(data, false);
     config_collisions(data);
     game.physics.p2.updateBoundsCollisionGroup();
     data.debug.update_debug_physics(data.hero.body.debug);
+    data.hero.body.x = current_event.x_target * maps[data.map_name].sprite.tileWidth;
+    data.hero.body.y = current_event.y_target * maps[data.map_name].sprite.tileHeight;
+    game.physics.p2.resume();
     camera_fade_out(game, data);
 }
 
 function camera_fade_out(game, data) {
     update_shadow(data);
+    maps[data.map_name].npcs.forEach(npc => npc.update());
     game.camera.flash(0x0);
     game.camera.onFlashComplete.addOnce(() => {
         game.camera.lerp.setTo(numbers.CAMERA_LERP, numbers.CAMERA_LERP);
         data.on_event = false;
+        data.teleporting = false;
     });
 }
 
