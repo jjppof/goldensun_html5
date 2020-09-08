@@ -44,7 +44,6 @@ var data = {
     pushing: false,
     menu_open: false,
     casting_psynergy: false,
-    door_event_data: null,
     climbing_event_data: null,
     jumping: false,
     in_battle: false,

@@ -10,19 +10,14 @@ import * as numbers from '../magic_numbers.js';
 import { reverse_directions } from '../utils.js';
 import { stop_hero, update_shadow } from '../initializers/hero_control.js';
 
-export function set_door_event(game, data, current_event, activation_direction) {
+export function set_door_event(game, data, current_event) {
     if (data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y || data.casting_psynergy || data.pushing || data.climbing || data.jumping || data.menu_open || data.in_battle || data.on_event) {
         return;
     }
     data.on_event = true;
-    data.door_event_data = {
-        event: current_event,
-        activation_direction: activation_direction
-    };
     if (current_event.advance_effect) {
         if (!data.stop_by_colliding) {
             data.on_event = false;
-            data.door_event_data = null;
             return;
         }
         data.hero.loadTexture(data.hero_name + "_walk");
@@ -94,7 +89,6 @@ function camera_fade_out(game, data) {
     game.camera.onFlashComplete.addOnce(() => {
         game.camera.lerp.setTo(numbers.CAMERA_LERP, numbers.CAMERA_LERP);
         data.on_event = false;
-        data.door_event_data = null;
     });
 }
 
