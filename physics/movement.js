@@ -52,70 +52,74 @@ export function update_arrow_inputs(data) {
         | 8 * data.cursors.down.isDown;
 }
 
-export function collision_dealer(game, data) {
-    let normals = [];
-    for (let i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; ++i) {
-        let c = game.physics.p2.world.narrowphase.contactEquations[i];
-        if (c.bodyA === data.hero.body.data) { //check if hero collided with something
-            normals.push(c.normalA); //collision normals (one normal for each contact point)
-        }
-        let j = 0;
-        for (j = 0; j < maps[data.map_name].interactable_objects.length; ++j) {  //check if hero is colliding with any interactable object
-            let interactable_object_body = maps[data.map_name].interactable_objects[j].interactable_object_sprite.body;
-            if (!interactable_object_body) continue;
-            if (c.bodyA === interactable_object_body.data || c.bodyB === interactable_object_body.data) {
-                if (c.bodyA === data.hero.body.data || c.bodyB === data.hero.body.data) {
-                    let interactable_object = maps[data.map_name].interactable_objects[j];
-                    if (["walk", "dash"].includes(data.current_action) && data.map_collider_layer === interactable_object.base_collider_layer) {
-                        data.trying_to_push = true;
-                        if (data.push_timer === null) {
-                            data.trying_to_push_direction = data.current_direction;
-                            const events_in_pos = maps[data.map_name].events[TileEvent.get_location_key(data.hero_tile_pos_x, data.hero_tile_pos_y)];
-                            let has_stair = false;
-                            if (events_in_pos) {
-                                events_in_pos.forEach(event => {
-                                    if (event.type === event_types.STAIR && event.is_set && event.activation_directions.includes(data.trying_to_push_direction)) {
-                                        has_stair = true;
-                                        return;
-                                    }
-                                });
+function check_interactable_objects(game, data, contact) {
+    let j = 0;
+    for (j = 0; j < maps[data.map_name].interactable_objects.length; ++j) { //check if hero is colliding with any interactable object
+        let interactable_object_body = maps[data.map_name].interactable_objects[j].interactable_object_sprite.body;
+        if (!interactable_object_body) continue;
+        if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
+            if (contact.bodyA === data.hero.body.data || contact.bodyB === data.hero.body.data) {
+                const interactable_object = maps[data.map_name].interactable_objects[j];
+                if (["walk", "dash"].includes(data.current_action) && data.map_collider_layer === interactable_object.base_collider_layer) {
+                    data.trying_to_push = true;
+                    if (data.push_timer === null) {
+                        data.trying_to_push_direction = data.current_direction;
+                        const events_in_pos = maps[data.map_name].events[TileEvent.get_location_key(data.hero_tile_pos_x, data.hero_tile_pos_y)];
+                        let has_stair = false;
+                        if (events_in_pos) {
+                            events_in_pos.forEach(event => {
+                                if (event.type === event_types.STAIR && event.is_set && event.activation_directions.includes(data.trying_to_push_direction)) {
+                                    has_stair = true;
+                                    return;
+                                }
+                            });
+                        }
+                        if (!has_stair) {
+                            let item_position = interactable_object.get_current_position(data.map_name);
+                            switch (data.trying_to_push_direction) {
+                                case directions.up:
+                                    item_position.y -= 1;
+                                    break;
+                                case directions.down:
+                                    item_position.y += 1;
+                                    break;
+                                case directions.left:
+                                    item_position.x -= 1;
+                                    break;
+                                case directions.right:
+                                    item_position.x += 1;
+                                    break;
                             }
-                            if (!has_stair) {
-                                let item_position = interactable_object.get_current_position(data.map_name);
-                                switch (data.trying_to_push_direction) {
-                                    case directions.up:
-                                        item_position.y -= 1;
-                                        break;
-                                    case directions.down:
-                                        item_position.y += 1;
-                                        break;
-                                    case directions.left:
-                                        item_position.x -= 1;
-                                        break;
-                                    case directions.right:
-                                        item_position.x += 1;
-                                        break;
-                                }
-                                if (interactable_object.position_allowed(data, item_position.x, item_position.y)) {
-                                    data.push_timer = game.time.events.add(Phaser.Timer.QUARTER, normal_push.bind(this, game, data, interactable_object));
-                                }
+                            if (interactable_object.position_allowed(data, item_position.x, item_position.y)) {
+                                data.push_timer = game.time.events.add(Phaser.Timer.QUARTER, normal_push.bind(this, game, data, interactable_object));
                             }
                         }
-                        break;
                     }
+                    break;
                 }
             }
         }
-        if (j === maps[data.map_name].interactable_objects.length) {
-            data.trying_to_push = false;
+    }
+    if (j === maps[data.map_name].interactable_objects.length) {
+        data.trying_to_push = false;
+    }
+}
+
+export function collision_dealer(game, data) {
+    let normals = [];
+    for (let i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; ++i) {
+        const contact = game.physics.p2.world.narrowphase.contactEquations[i];
+        if (contact.bodyA === data.hero.body.data) { //check if hero collided with something
+            normals.push(contact.normalA); //collision normals (one normal for each contact point)
         }
+        check_interactable_objects(game, data, contact);
     }
     //normals having length, means that a collision is happening
     if (normals.length && ["walk", "dash", "climb"].includes(data.current_action)) {
         if (Math.abs(data.hero.body.velocity.x) < SPEED_LIMIT_TO_STOP && Math.abs(data.hero.body.velocity.y) < SPEED_LIMIT_TO_STOP) { //speeds below SPEED_LIMIT_TO_STOP are not considered
             let contact_point_directions = new Array(normals.length); // a contact point direction is the opposite direction of the contact normal vector
             normals.forEach((normal, index) => { //slopes outside the MINIMAL_SLOPE range will be desconsidered
-                if (Math.abs(normal[0]) < MINIMAL_SLOPE) normal[0] = 0; 
+                if (Math.abs(normal[0]) < MINIMAL_SLOPE) normal[0] = 0;
                 if (Math.abs(normal[1]) < MINIMAL_SLOPE) normal[1] = 0;
                 if (Math.abs(normal[0]) > 1 - MINIMAL_SLOPE) normal[0] = Math.sign(normal[0]);
                 if (Math.abs(normal[1]) > 1 - MINIMAL_SLOPE) normal[1] = Math.sign(normal[1]);
@@ -136,14 +140,13 @@ export function collision_dealer(game, data) {
             data.stop_by_colliding = false;
             if (normals.length === 1) { //everything inside this if is to deal with direction changing when colliding
                 //finds which 30 degree sector the normal angle lies within, and converts to a direction
-                const wall_direction = 
-                    rotation_normal[Math.floor(range_360(Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree15) / numbers.degree30)];
+                const wall_direction = rotation_normal[(range_360(Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree15) / numbers.degree30) | 0];
                 const relative_direction = (rotation_key[data.arrow_inputs] - wall_direction) & 7;
                 //if player's direction is within 1 of wall_direction
                 if (relative_direction === 1 || relative_direction === 7) {
                     data.force_direction = true;
                     data.forcing_on_diagonal = wall_direction & 1 === 1;
-                    data.current_direction = (wall_direction + 2*relative_direction) & 7;
+                    data.current_direction = (wall_direction + (relative_direction << 1)) & 7;
                 } else {
                     data.force_direction = false;
                     data.forcing_on_diagonal = false;
