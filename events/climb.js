@@ -69,8 +69,8 @@ export function climbing_event(game, data, current_event, activation_direction) 
             data.hero.animations.play("climb_end", 9, false, false);
             data.shadow.visible = false;
             game.add.tween(data.hero.body).to(
-                { y: data.hero.y - 10 },
-                70,
+                { y: data.hero.y - 15 },
+                170,
                 Phaser.Easing.Linear.None,
                 true
             );
@@ -128,15 +128,8 @@ export function climb_event_animation_steps(data) {
         game.physics.p2.resume();
     } else if (data.hero.animations.frameName === "climb/end/02") {
         game.time.events.add(150, () => {
-            game.add.tween(data.hero.body).to(
-                { y: data.hero.y - 1 },
-                20,
-                Phaser.Easing.Linear.None,
-                true
-            ).onComplete.addOnce(() => {
-                data.shadow.y = data.hero.y;
-                data.shadow.visible = true;
-            });
+            data.shadow.y = data.hero.y;
+            data.shadow.visible = true;
             data.hero.loadTexture(data.hero_name + "_idle");
             main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, "idle");
             data.hero.animations.play("idle_up");
