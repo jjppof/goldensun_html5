@@ -17,6 +17,7 @@ import * as hero_control from './initializers/hero_control.js';
 import { TileEvent } from './base/TileEvent.js';
 import { Debug } from './debug.js';
 import { event_triggering } from './events/triggering.js';
+import { load_all } from './initializers/assets_loader.js';
 
 //this variable contains important data used throughout the game
 var data = {
@@ -93,65 +94,8 @@ var game = new Phaser.Game(
 window.game = game;
 data.game = game;
 
-function load_buttons() {
-    game.load.atlasJSONHash('buttons', 'assets/images/buttons/buttons.png', 'assets/images/buttons/buttons.json');
-    game.load.image('shift_keyboard', 'assets/images/keyboard/shift.png');
-    game.load.image('tab_keyboard', 'assets/images/keyboard/tab.png');
-    game.load.image('spacebar_keyboard', 'assets/images/keyboard/spacebar.png');
-}
-
-function load_db_files() {
-    game.load.json('init_db', 'init.json');
-    game.load.json('classes_db', 'assets/dbs/classes_db.json');
-    game.load.json('abilities_db', 'assets/dbs/abilities_db.json');
-    game.load.json('items_db', 'assets/dbs/items_db.json');
-    game.load.json('npc_db', 'assets/dbs/npc_db.json');
-    game.load.json('interactable_objects_db', 'assets/dbs/interactable_objects_db.json');
-    game.load.json('djinni_db', 'assets/dbs/djinni_db.json');
-    game.load.json('enemies_db', 'assets/dbs/enemies_db.json');
-    game.load.json('enemies_parties_db', 'assets/dbs/enemies_parties_db.json');
-    game.load.json('maps_db', 'assets/dbs/maps_db.json');
-    game.load.json('main_chars_db', 'assets/dbs/main_chars_db.json');
-    game.load.json('summons_db', 'assets/dbs/summons_db.json');
-}
-
-function load_misc() {
-    game.load.image('shadow', 'assets/images/misc/shadow.jpg');
-    game.load.image('cursor', 'assets/images/misc/cursor.gif');
-    game.load.image('green_arrow', 'assets/images/misc/green_arrow.gif');
-    game.load.image('up_arrow', 'assets/images/misc/up_arrow.gif');
-    game.load.image('down_arrow', 'assets/images/misc/down_arrow.gif');
-    game.load.image('page_arrow', 'assets/images/misc/page_arrow.png');
-    game.load.image('psynergy_aura', 'assets/images/misc/psynergy_aura.png');
-    game.load.image('equipped', 'assets/images/misc/equipped.gif');
-    game.load.image('venus_star', 'assets/images/misc/venus_star.gif');
-    game.load.image('mercury_star', 'assets/images/misc/mercury_star.gif');
-    game.load.image('mars_star', 'assets/images/misc/mars_star.gif');
-    game.load.image('jupiter_star', 'assets/images/misc/jupiter_star.gif');
-    game.load.image('stat_up', 'assets/images/misc/stat_up.gif');
-    game.load.image('stat_down', 'assets/images/misc/stat_down.gif');
-    game.load.image('arrow_change', 'assets/images/misc/arrow_change.png');
-    game.load.image('frost_snowflake', 'assets/images/interactable_objects/snowflake.png');
-    game.load.atlasJSONHash('dust', 'assets/images/misc/dust.png', 'assets/images/misc/dust.json');
-    game.load.atlasJSONHash('battle_cursor', 'assets/images/misc/battle_cursor.png', 'assets/images/misc/battle_cursor.json');
-    game.load.atlasJSONHash('ranges', 'assets/images/misc/ranges.png', 'assets/images/misc/ranges.json');
-    game.load.atlasJSONHash('psynergy_particle', 'assets/images/interactable_objects/psynergy_particle.png', 'assets/images/interactable_objects/psynergy_particle.json');
-    game.load.atlasJSONHash('psynergy_ball', 'assets/images/interactable_objects/psynergy_ball.png', 'assets/images/interactable_objects/psynergy_ball.json');
-}
-
-function load_assets() {
-    game.load.atlasJSONHash('battle_backgrounds', 'assets/images/battle_backgrounds/battle_backgrounds.png', 'assets/images/battle_backgrounds/battle_backgrounds.json');
-    game.load.atlasJSONHash('avatars', 'assets/images/avatars/avatars.png', 'assets/images/avatars/avatars.json');
-}
-
 function preload() {
-    load_db_files();
-    load_misc();
-    load_assets();
-    load_buttons();
-    game.load.script('color_filters', 'plugins/color_filters.js');
-    game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
-    game.load.bitmapFont('gs-item-bmp-font', 'assets/font/gs-item-font.png', 'assets/font/gs-item-font.fnt');
+    load_all(game);
 
     data.enter_input = game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown;
     data.esc_input = game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown;
@@ -174,11 +118,6 @@ function render_loading() {
 
 function loadRender() {
     render_loading();
-}
-
-function enter_key_event() {
-    if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
-    trigger_npc_dialog(game, data);
 }
 
 async function create() {
@@ -219,6 +158,7 @@ async function create() {
     //init debug instance
     data.debug = new Debug(game, data);
 
+    //intialize game objects
     let load_maps_promise_resolve;
     const load_maps_promise = new Promise(resolve => {
         load_maps_promise_resolve = resolve;
@@ -271,17 +211,6 @@ async function create() {
 
     //initialize screens
     data.menu_screen = initialize_menu(game, data);
-    data.spacebar_input.add(() => {
-        if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
-        if (!data.menu_open) {
-            data.menu_open = true;
-            hero_control.stop_hero(data);
-            hero_control.update_shadow(data);
-            data.menu_screen.open_menu();
-        } else if (data.menu_screen.is_active()) {
-            data.menu_screen.close_menu();
-        }
-    }, this);
 
     //configuring map layers: creating sprites, listing events and setting the layers
     await maps[data.map_name].mount_map(game, data);
@@ -321,36 +250,39 @@ async function create() {
         data.scale_factor = 1;
         game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
-    }, this);
+    });
     game.input.keyboard.addKey(Phaser.Keyboard.TWO).onDown.add(() => {
         if (data.fullscreen) return;
         data.scale_factor = 2;
         game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
-    }, this);
+    });
     game.input.keyboard.addKey(Phaser.Keyboard.THREE).onDown.add(() => {
         if (data.fullscreen) return;
         data.scale_factor = 3;
         game.scale.setupScale(data.scale_factor * numbers.GAME_WIDTH, data.scale_factor * numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
-    }, this);
+    });
 
     //enable psynergies shortcuts for testing
     game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(() => {
         if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
         field_abilities_list.move.cast(data.init_db.initial_shortcuts.move);
-    }, this);
+    });
     game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(() => {
         if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
         field_abilities_list.frost.cast(data.init_db.initial_shortcuts.frost);
-    }, this);
+    });
     game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(() => {
         if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
         field_abilities_list.growth.cast(data.init_db.initial_shortcuts.growth);
-    }, this);
+    });
 
-    //enable enter event
-    data.enter_input.add(enter_key_event, this);
+    //enable event trigger key
+    data.enter_input.add(() => {
+        if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting || data.jumping || data.in_battle || !data.created) return;
+        trigger_npc_dialog(game, data);
+    });
 
     //set keyboard cursors
     data.cursors = game.input.keyboard.createCursorKeys();
@@ -360,65 +292,63 @@ async function create() {
 }
 
 function update() {
-    if (data.created) {
-        if (!data.on_event && !data.npc_event && !data.pushing && !data.menu_open && !data.casting_psynergy && !data.in_battle) {
-            data.hero_tile_pos_x = (data.hero.x/maps[data.map_name].sprite.tileWidth) | 0;
-            data.hero_tile_pos_y = (data.hero.y/maps[data.map_name].sprite.tileHeight) | 0;
-
-            if (data.waiting_to_step) { //step event
-                do_step(data);
-            }
-            if (data.waiting_to_change_collision) { //change collision pattern layer event
-                do_collision_change(data);
-            }
-
-            //check if the actual tile has an event
-            const event_location_key = TileEvent.get_location_key(data.hero_tile_pos_x, data.hero_tile_pos_y);
-            if (event_location_key in maps[data.map_name].events) {
-                event_triggering(game, data, event_location_key);
-            } else if (data.extra_speed !== 0) { //disabling speed event
-                data.extra_speed = 0;
-            }
-
-            movement.update_arrow_inputs(data);
-            movement.set_speed_factors(data, true);
-            hero_control.set_current_action(data); //chooses which sprite the hero shall assume
-            movement.calculate_hero_speed(game, data);
-            movement.collision_dealer(game, data);
-            hero_control.change_hero_sprite(data, true);
-            hero_control.update_shadow(data);
-
-            data.map_collider.body.velocity.y = data.map_collider.body.velocity.x = 0; //fixes map body
-
-            for (let i = 0; i < maps[data.map_name].npcs.length; ++i) { //updates npcs' movement
-                let npc = maps[data.map_name].npcs[i];
-                npc.update();
-            }
-
-            maps[data.map_name].sort_sprites(data);
-        } else if (data.on_event) {
-            if (data.climbing_event_data !== null) {
-                climb.climb_event_animation_steps(data);
-            }
-            hero_control.stop_hero(data, false);
-        } else if (data.npc_event) {
-            set_npc_event(data);
-            hero_control.stop_hero(data, false);
-        } else if (data.pushing) {
-            hero_control.change_hero_sprite(data);
-        } else if (data.menu_open && data.menu_screen.horizontal_menu.menu_active) {
-            hero_control.stop_hero(data, false);
-            data.menu_screen.update_position();
-        } else if (data.in_battle) {
-            data.battle_instance.update();
-        }
-        ++data.frame_counter;
-        if (data.frame_counter%numbers.TARGET_FPS === 0) {
-            data.frame_counter = 0;
-        }
-    } else {
+    if (!data.created) {
         render_loading();
+        return;
     }
+    if (!data.on_event && !data.npc_event && !data.pushing && !data.menu_open && !data.casting_psynergy && !data.in_battle) {
+        data.hero_tile_pos_x = (data.hero.x/maps[data.map_name].sprite.tileWidth) | 0;
+        data.hero_tile_pos_y = (data.hero.y/maps[data.map_name].sprite.tileHeight) | 0;
+
+        if (data.waiting_to_step) { //step event
+            do_step(data);
+        }
+        if (data.waiting_to_change_collision) { //change collision pattern layer event
+            do_collision_change(data);
+        }
+
+        //check if the actual tile has an event
+        const event_location_key = TileEvent.get_location_key(data.hero_tile_pos_x, data.hero_tile_pos_y);
+        if (event_location_key in maps[data.map_name].events) {
+            event_triggering(game, data, event_location_key);
+        } else if (data.extra_speed !== 0) { //disabling speed event
+            data.extra_speed = 0;
+        }
+
+        movement.update_arrow_inputs(data);
+        movement.set_speed_factors(data, true); //sets the direction of the movement
+        hero_control.set_current_action(data); //chooses which sprite the hero shall assume
+        movement.calculate_hero_speed(game, data); //calculates the final speed
+        movement.collision_dealer(game, data); //check if the hero is colliding and its consequences
+        hero_control.change_hero_sprite(data, true); //sets the hero sprite
+        hero_control.update_shadow(data); //updates the hero's shadow position
+
+        data.map_collider.body.velocity.y = data.map_collider.body.velocity.x = 0; //fixes map body
+
+        for (let i = 0; i < maps[data.map_name].npcs.length; ++i) { //updates npcs' movement
+            let npc = maps[data.map_name].npcs[i];
+            npc.update();
+        }
+
+        maps[data.map_name].sort_sprites(data);
+    } else if (data.on_event) {
+        if (data.climbing_event_data !== null) {
+            climb.climb_event_animation_steps(data);
+        }
+        hero_control.stop_hero(data, false);
+    } else if (data.npc_event) {
+        set_npc_event(data);
+        hero_control.stop_hero(data, false);
+    } else if (data.pushing) {
+        hero_control.change_hero_sprite(data);
+    } else if (data.menu_open && data.menu_screen.horizontal_menu.menu_active) {
+        hero_control.stop_hero(data, false);
+        data.menu_screen.update_position();
+    } else if (data.in_battle) {
+        data.battle_instance.update();
+    }
+
+    data.frame_counter = (data.frame_counter + 1) % numbers.TARGET_FPS;
 }
 
 function render() {

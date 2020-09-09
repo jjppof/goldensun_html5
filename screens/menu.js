@@ -4,6 +4,7 @@ import { PsynergyMenuScreen } from './psynergy_menu.js';
 import { ItemMenuScreen } from './item_menu.js';
 import { DjinnMenuScreen } from './djinni_menu.js';
 import { CharsStatusWindow } from '../base/windows/CharsStatusWindow.js';
+import { stop_hero, update_shadow } from '../initializers/hero_control.js';
 
 export class MenuScreen {
     constructor(game, data) {
@@ -82,5 +83,16 @@ export class MenuScreen {
 }
 
 export function initialize_menu(game, data) {
+    data.spacebar_input.add(() => {
+        if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting || data.jumping || data.in_battle || !data.created) return;
+        if (!data.menu_open) {
+            data.menu_open = true;
+            stop_hero(data);
+            update_shadow(data);
+            data.menu_screen.open_menu();
+        } else if (data.menu_screen.is_active()) {
+            data.menu_screen.close_menu();
+        }
+    }, this);
     return new MenuScreen(game, data);
 }
