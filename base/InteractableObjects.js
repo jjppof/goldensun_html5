@@ -105,7 +105,7 @@ export class InteractableObjects {
         body.fixedRotation = true;
         body.dynamic = false;
         body.static = true;
-        body.debug = this.data.hero.body.debug;
+        body.debug = this.data.hero.sprite.body.debug;
         body.collides(this.data.heroCollisionGroup);
         this.custom_data.blocking_stair_block = body;
     }

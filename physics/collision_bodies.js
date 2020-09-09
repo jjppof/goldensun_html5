@@ -16,17 +16,17 @@ const CONTACT_SKIN_SIZE = 1e-3;
 
 export function config_physics_for_hero(data, initialize = true) {
     if (initialize) data.heroCollisionGroup = game.physics.p2.createCollisionGroup(); //groups only need to be created once
-    game.physics.p2.enable(data.hero, false);
-    data.hero.anchor.y = HERO_Y_AP; //Important to be after the previous command
-    data.hero.body.clearShapes();
-    data.hero.body.setCircle(numbers.HERO_BODY_RADIUS, 0, 0);
-    data.hero.body.setCollisionGroup(data.heroCollisionGroup);
-    data.hero.body.mass = HERO_BODY_MASS;
-    data.hero.body.damping = HERO_DAMPING;
-    data.hero.body.angularDamping = HERO_DAMPING;
-    data.hero.body.inertia = INERTIA;
-    data.hero.body.setZeroRotation();
-    data.hero.body.fixedRotation = true; //disalble hero collision body rotation
+    game.physics.p2.enable(data.hero.sprite, false);
+    data.hero.sprite.anchor.y = HERO_Y_AP; //Important to be after the previous command
+    data.hero.sprite.body.clearShapes();
+    data.hero.sprite.body.setCircle(numbers.HERO_BODY_RADIUS, 0, 0);
+    data.hero.sprite.body.setCollisionGroup(data.heroCollisionGroup);
+    data.hero.sprite.body.mass = HERO_BODY_MASS;
+    data.hero.sprite.body.damping = HERO_DAMPING;
+    data.hero.sprite.body.angularDamping = HERO_DAMPING;
+    data.hero.sprite.body.inertia = INERTIA;
+    data.hero.sprite.body.setZeroRotation();
+    data.hero.sprite.body.fixedRotation = true; //disalble hero collision body rotation
 }
 
 export function config_physics_for_npcs(data, only_set_groups = false) {
@@ -117,21 +117,21 @@ export function config_world_physics(game) {
 }
 
 export function config_collisions(data) { //make the world bodies interact with hero body
-    data.hero.body.collides(data.mapCollisionGroup);
+    data.hero.sprite.body.collides(data.mapCollisionGroup);
     data.map_collider.body.collides(data.heroCollisionGroup);
 
     for (let collide_index in data.npcCollisionGroups) {
-        data.hero.body.removeCollisionGroup(data.npcCollisionGroups[collide_index], true);
+        data.hero.sprite.body.removeCollisionGroup(data.npcCollisionGroups[collide_index], true);
     }
     if (data.map_collider_layer in data.npcCollisionGroups) {
-        data.hero.body.collides(data.npcCollisionGroups[data.map_collider_layer]);
+        data.hero.sprite.body.collides(data.npcCollisionGroups[data.map_collider_layer]);
     }
 
     for (let collide_index in data.interactableObjectCollisionGroups) {
-        data.hero.body.removeCollisionGroup(data.interactableObjectCollisionGroups[collide_index], true);
+        data.hero.sprite.body.removeCollisionGroup(data.interactableObjectCollisionGroups[collide_index], true);
     }
     if (data.map_collider_layer in data.interactableObjectCollisionGroups) {
-        data.hero.body.collides(data.interactableObjectCollisionGroups[data.map_collider_layer]);
+        data.hero.sprite.body.collides(data.interactableObjectCollisionGroups[data.map_collider_layer]);
     }
 
     for (let i = 0; i < data.npc_group.children.length; ++i) {
@@ -140,5 +140,5 @@ export function config_collisions(data) { //make the world bodies interact with 
         if (!sprite.body) continue;
         sprite.body.collides(data.heroCollisionGroup);
     }
-    data.hero.body.collides(data.dynamicEventsCollisionGroup);
+    data.hero.sprite.body.collides(data.dynamicEventsCollisionGroup);
 }

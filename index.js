@@ -1,5 +1,4 @@
 import * as numbers from './magic_numbers.js';
-import { directions } from './utils.js';
 import { initialize_main_chars, main_char_list, initialize_classes, party_data } from './initializers/main_chars.js';
 import { initialize_abilities, abilities_list, initialize_field_abilities, field_abilities_list } from './initializers/abilities.js';
 import { initialize_items, items_list } from './initializers/items.js';
@@ -13,44 +12,32 @@ import * as climb from './events/climb.js';
 import * as physics from './physics/collision_bodies.js';
 import * as movement from './physics/movement.js';
 import { initialize_menu } from './screens/menu.js';
-import * as hero_control from './initializers/hero_control.js';
 import { TileEvent } from './base/TileEvent.js';
 import { Debug } from './debug.js';
 import { event_triggering } from './events/triggering.js';
 import { load_all } from './initializers/assets_loader.js';
+import { config_hero } from './initializers/hero.js';
 
 //this variable contains important data used throughout the game
 var data = {
     //movement
-    x_speed: 0,
-    y_speed: 0,
-    extra_speed: 0,
-    stop_by_colliding: false,
-    force_direction: false,
     arrow_inputs: null,
 
     //events and game states
     event_timers: {},
     on_event: false,
-    climbing: false,
     teleporting: false,
-    trying_to_push: false,
     waiting_to_step: false,
     step_event_data: {},
     waiting_to_change_collision: false,
     collision_event_data: {},
-    trying_to_push_direction: "",
     push_timer: null,
-    pushing: false,
     menu_open: false,
-    casting_psynergy: false,
     climbing_event_data: null,
-    jumping: false,
     in_battle: false,
     battle_stage: null,
     created: false,
     in_dialog: false,
-    idle_climbing: false,
     frame_counter: 0,
 
     //screen
@@ -138,12 +125,10 @@ async function create() {
     data.pasynergy_item_color_filters = game.add.filter('ColorFilters');
 
     data.hero_name = data.init_db.hero_key_name;
-    data.current_direction = directions[data.init_db.initial_direction];
     data.map_name = data.init_db.map_key_name;
     data.scale_factor = data.init_db.initial_scale_factor;
     data.map_collider_layer = data.init_db.map_z_index;
     party_data.coins = data.init_db.coins;
-    data.current_action = "idle";
 
     //format some structures
     data.interactable_objects_db = _.mapKeys(data.interactable_objects_db, interactable_object_data => interactable_object_data.key_name);
@@ -213,7 +198,7 @@ async function create() {
 
     //configuring map layers: creating sprites, listing events and setting the layers
     await maps[data.map_name].mount_map(game, data);
-    hero_control.config_hero(data);
+    config_hero(game, data);
     physics.config_world_physics(game);
     physics.config_physics_for_hero(data);
     physics.config_physics_for_npcs(data);
@@ -265,21 +250,21 @@ async function create() {
 
     //enable psynergies shortcuts for testing
     game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(() => {
-        if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
+        if (data.hero.climbing || data.menu_open || data.hero.pushing || data.teleporting || data.hero.jumping || data.in_battle) return;
         field_abilities_list.move.cast(data.init_db.initial_shortcuts.move);
     });
     game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(() => {
-        if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
+        if (data.hero.climbing || data.menu_open || data.hero.pushing || data.teleporting || data.hero.jumping || data.in_battle) return;
         field_abilities_list.frost.cast(data.init_db.initial_shortcuts.frost);
     });
     game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(() => {
-        if (data.climbing || data.menu_open || data.pushing || data.teleporting || data.jumping || data.in_battle) return;
+        if (data.hero.climbing || data.menu_open || data.hero.pushing || data.teleporting || data.hero.jumping || data.in_battle) return;
         field_abilities_list.growth.cast(data.init_db.initial_shortcuts.growth);
     });
 
     //enable event trigger key
     data.enter_input.add(() => {
-        if (data.casting_psynergy || data.climbing || data.pushing || data.teleporting || data.jumping || data.in_battle || !data.created) return;
+        if (data.hero.casting_psynergy || data.hero.climbing || data.hero.pushing || data.teleporting || data.hero.jumping || data.in_battle || !data.created) return;
         trigger_npc_dialog(game, data);
     });
 
@@ -295,9 +280,8 @@ function update() {
         render_loading();
         return;
     }
-    if (!data.on_event && !data.npc_event && !data.pushing && !data.menu_open && !data.casting_psynergy && !data.in_battle) {
-        data.hero_tile_pos_x = (data.hero.x/maps[data.map_name].sprite.tileWidth) | 0;
-        data.hero_tile_pos_y = (data.hero.y/maps[data.map_name].sprite.tileHeight) | 0;
+    if (!data.on_event && !data.npc_event && !data.hero.pushing && !data.menu_open && !data.hero.casting_psynergy && !data.in_battle) {
+        data.hero.update_tile_position(maps[data.map_name].sprite);
 
         if (data.waiting_to_step) { //step event
             do_step(data);
@@ -307,20 +291,20 @@ function update() {
         }
 
         //check if the actual tile has an event
-        const event_location_key = TileEvent.get_location_key(data.hero_tile_pos_x, data.hero_tile_pos_y);
+        const event_location_key = TileEvent.get_location_key(data.hero.tile_x_pos, data.hero.tile_y_pos);
         if (event_location_key in maps[data.map_name].events) {
             event_triggering(game, data, event_location_key);
-        } else if (data.extra_speed !== 0) { //disabling speed event
-            data.extra_speed = 0;
+        } else if (data.hero.extra_speed !== 0) { //disabling speed event
+            data.hero.extra_speed = 0;
         }
 
         movement.update_arrow_inputs(data);
         movement.set_speed_factors(data, true); //sets the direction of the movement
-        hero_control.set_current_action(data); //chooses which sprite the hero shall assume
+        movement.set_current_action(data); //chooses which sprite the hero shall assume
         movement.calculate_hero_speed(game, data); //calculates the final speed
         movement.collision_dealer(game, data); //check if the hero is colliding and its consequences
-        hero_control.change_hero_sprite(data, true); //sets the hero sprite
-        hero_control.update_shadow(data); //updates the hero's shadow position
+        data.hero.change_sprite(true); //sets the hero sprite
+        data.hero.update_shadow(); //updates the hero's shadow position
 
         data.map_collider.body.velocity.y = data.map_collider.body.velocity.x = 0; //fixes map body
 
@@ -331,17 +315,17 @@ function update() {
 
         maps[data.map_name].sort_sprites(data);
     } else if (data.on_event) {
-        if (data.climbing_event_data !== null) {
+        if (data.hero.climbing_event_data !== null) {
             climb.climb_event_animation_steps(data);
         }
-        hero_control.stop_hero(data, false);
+        data.hero.stop_char(false);
     } else if (data.npc_event) {
         set_npc_event(data);
-        hero_control.stop_hero(data, false);
-    } else if (data.pushing) {
-        hero_control.change_hero_sprite(data);
+        data.hero.stop_char(false);
+    } else if (data.hero.pushing) {
+        data.hero.change_sprite();
     } else if (data.menu_open && data.menu_screen.horizontal_menu.menu_active) {
-        hero_control.stop_hero(data, false);
+        data.hero.stop_char(false);
         data.menu_screen.update_position();
     } else if (data.in_battle) {
         data.battle_instance.update();

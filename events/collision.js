@@ -27,8 +27,8 @@ export function config_collision_change(data, current_event) {
 export function change_map_body(data, new_collider_layer_index) {
     if (data.map_collider_layer === new_collider_layer_index) return;
     data.map_collider_layer = new_collider_layer_index;
-    data.shadow.base_collider_layer = data.map_collider_layer;
-    data.hero.base_collider_layer = data.map_collider_layer;
+    data.hero.shadow.base_collider_layer = data.map_collider_layer;
+    data.hero.sprite.base_collider_layer = data.map_collider_layer;
     physics.config_physics_for_map(data, false, new_collider_layer_index);
     physics.config_physics_for_interactable_objects(data, true);
     physics.config_physics_for_npcs(data, true);
@@ -71,10 +71,10 @@ export function change_map_body(data, new_collider_layer_index) {
 }
 
 export function do_collision_change(data) {
-    if (data.hero_tile_pos_x === data.collision_event_data.next_x && data.hero_tile_pos_y === data.collision_event_data.next_y) {
+    if (data.hero.tile_x_pos === data.collision_event_data.next_x && data.hero.tile_y_pos === data.collision_event_data.next_y) {
         change_map_body(data, data.collision_event_data.dest_collider_layer);
         data.waiting_to_change_collision = false;
-    } else if (data.hero_tile_pos_x !== data.collision_event_data.event.x || data.hero_tile_pos_y !== data.collision_event_data.event.y) {
+    } else if (data.hero.tile_x_pos !== data.collision_event_data.event.x || data.hero.tile_y_pos !== data.collision_event_data.event.y) {
         data.waiting_to_change_collision = false;
     }
 }

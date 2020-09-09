@@ -27,10 +27,10 @@ export function config_step(data, current_event) {
 }
 
 export function do_step(data) {
-    if (data.hero_tile_pos_x === data.step_event_data.next_x && data.hero_tile_pos_y === data.step_event_data.next_y) {
-        data.hero.body.y += data.step_event_data.shift_y;
+    if (data.hero.tile_x_pos === data.step_event_data.next_x && data.hero.tile_y_pos === data.step_event_data.next_y) {
+        data.hero.sprite.body.y += data.step_event_data.shift_y;
         data.waiting_to_step = false;
-    } else if (data.hero_tile_pos_x !== data.step_event_data.event.x || data.hero_tile_pos_y !== data.step_event_data.event.y) {
+    } else if (data.hero.tile_x_pos !== data.step_event_data.event.x || data.hero.tile_y_pos !== data.step_event_data.event.y) {
         data.waiting_to_step = false;
     }
 }

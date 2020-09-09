@@ -28,24 +28,24 @@ export class GrowthFieldPsynergy {
         this.target_found = false;
         let min_x, max_x, min_y, max_y;
         if (this.cast_direction === directions.up || this.cast_direction === directions.down) {
-            min_x = this.data.hero.x - numbers.HERO_BODY_RADIUS;
-            max_x = this.data.hero.x + numbers.HERO_BODY_RADIUS;
+            min_x = this.data.hero.sprite.x - numbers.HERO_BODY_RADIUS;
+            max_x = this.data.hero.sprite.x + numbers.HERO_BODY_RADIUS;
             if (this.cast_direction === directions.up) {
-                min_y = this.data.hero.y - numbers.HERO_BODY_RADIUS - GROWTH_MAX_RANGE;
-                max_y = this.data.hero.y - numbers.HERO_BODY_RADIUS;
+                min_y = this.data.hero.sprite.y - numbers.HERO_BODY_RADIUS - GROWTH_MAX_RANGE;
+                max_y = this.data.hero.sprite.y - numbers.HERO_BODY_RADIUS;
             } else {
-                min_y = this.data.hero.y + numbers.HERO_BODY_RADIUS;
-                max_y = this.data.hero.y + numbers.HERO_BODY_RADIUS + GROWTH_MAX_RANGE;
+                min_y = this.data.hero.sprite.y + numbers.HERO_BODY_RADIUS;
+                max_y = this.data.hero.sprite.y + numbers.HERO_BODY_RADIUS + GROWTH_MAX_RANGE;
             }
         } else {
-            min_y = this.data.hero.y - numbers.HERO_BODY_RADIUS;
-            max_y = this.data.hero.y + numbers.HERO_BODY_RADIUS;
+            min_y = this.data.hero.sprite.y - numbers.HERO_BODY_RADIUS;
+            max_y = this.data.hero.sprite.y + numbers.HERO_BODY_RADIUS;
             if (this.cast_direction === directions.left) {
-                min_x = this.data.hero.x - numbers.HERO_BODY_RADIUS - GROWTH_MAX_RANGE;
-                max_x = this.data.hero.x - numbers.HERO_BODY_RADIUS;
+                min_x = this.data.hero.sprite.x - numbers.HERO_BODY_RADIUS - GROWTH_MAX_RANGE;
+                max_x = this.data.hero.sprite.x - numbers.HERO_BODY_RADIUS;
             } else {
-                min_x = this.data.hero.x + numbers.HERO_BODY_RADIUS;
-                max_x = this.data.hero.x + numbers.HERO_BODY_RADIUS + GROWTH_MAX_RANGE;
+                min_x = this.data.hero.sprite.x + numbers.HERO_BODY_RADIUS;
+                max_x = this.data.hero.sprite.x + numbers.HERO_BODY_RADIUS + GROWTH_MAX_RANGE;
             }
         }
         let sqr_distance = Infinity;
@@ -57,7 +57,7 @@ export class GrowthFieldPsynergy {
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
             const y_condition = item_y_px >= min_y && item_y_px <= max_y;
             if (x_condition && y_condition && this.data.map_collider_layer === interactable_object.base_collider_layer) {
-                let this_sqr_distance = Math.pow(item_x_px - this.data.hero.x, 2) + Math.pow(item_y_px - this.data.hero.y, 2);
+                let this_sqr_distance = Math.pow(item_x_px - this.data.hero.sprite.x, 2) + Math.pow(item_y_px - this.data.hero.sprite.y, 2);
                 if (this_sqr_distance < sqr_distance) {
                     this.target_found = true;
                     this.target_object = interactable_object;
@@ -67,19 +67,19 @@ export class GrowthFieldPsynergy {
     }
 
     set_hero_cast_anim() {
-        this.data.hero.loadTexture(this.data.hero_name + "_" + this.action_key_name);
-        main_char_list[this.data.hero_name].sprite_base.setAnimation(this.data.hero, this.action_key_name);
-        this.data.hero.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].sprite_base.actions[this.action_key_name].frame_rate, false);
+        this.data.hero.sprite.loadTexture(this.data.hero_name + "_" + this.action_key_name);
+        main_char_list[this.data.hero_name].sprite_base.setAnimation(this.data.hero.sprite, this.action_key_name);
+        this.data.hero.sprite.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].sprite_base.actions[this.action_key_name].frame_rate, false);
     }
 
     unset_hero_cast_anim() {
-        this.data.hero.animations.currentAnim.reverseOnce();
-        this.data.hero.animations.currentAnim.onComplete.addOnce(() => {
-            this.data.hero.loadTexture(this.data.hero_name + "_idle");
-            main_char_list[this.data.hero_name].sprite_base.setAnimation(this.data.hero, "idle");
-            this.data.hero.animations.frameName = `idle/${reverse_directions[this.cast_direction]}/00`;
+        this.data.hero.sprite.animations.currentAnim.reverseOnce();
+        this.data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
+            this.data.hero.sprite.loadTexture(this.data.hero_name + "_idle");
+            main_char_list[this.data.hero_name].sprite_base.setAnimation(this.data.hero.sprite, "idle");
+            this.data.hero.sprite.animations.frameName = `idle/${reverse_directions[this.cast_direction]}/00`;
         });
-        this.data.hero.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].sprite_base.actions[this.action_key_name].frame_rate, false);
+        this.data.hero.sprite.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].sprite_base.actions[this.action_key_name].frame_rate, false);
     }
 
     set_emitter() {
@@ -87,8 +87,8 @@ export class GrowthFieldPsynergy {
         let max_y_speed = 0;
         let min_x_speed = 0;
         let min_y_speed = 0;
-        let x_dest = this.data.hero.centerX;
-        let y_dest = this.data.hero.centerY + 5;
+        let x_dest = this.data.hero.sprite.centerX;
+        let y_dest = this.data.hero.sprite.centerY + 5;
         let emitter_width = 0;
         let emitter_height = 0;
         this.increase_duration = 0;
@@ -174,8 +174,8 @@ export class GrowthFieldPsynergy {
 
     miss_target() {
         this.emitter.destroy();
-        let grow_center_x = this.data.hero.centerX; 
-        let grow_center_y = this.data.hero.centerY + 17; 
+        let grow_center_x = this.data.hero.sprite.centerX; 
+        let grow_center_y = this.data.hero.sprite.centerY + 17; 
         switch(this.cast_direction) {
             case directions.up:
                 grow_center_y -= 16;
@@ -214,18 +214,18 @@ export class GrowthFieldPsynergy {
     }
 
     cast(caster_key_name) {
-        if (this.data.casting_psynergy) return;
+        if (this.data.hero.casting_psynergy) return;
         let caster = main_char_list[caster_key_name];
         let ability = abilities_list[this.ability_key_name];
         if (caster.current_pp < ability.pp_cost || !caster.abilities.includes(this.ability_key_name)) {
             return;
         }
-        this.data.casting_psynergy = true;
+        this.data.hero.casting_psynergy = true;
         this.game.physics.p2.pause();
-        this.data.hero.body.velocity.y = data.hero.body.velocity.x = 0;
+        this.data.hero.sprite.body.velocity.y = data.hero.sprite.body.velocity.x = 0;
         caster.current_pp -= ability.pp_cost;
-        this.cast_direction = set_cast_direction(this.data.current_direction);
-        this.data.current_direction = this.cast_direction;
+        this.cast_direction = set_cast_direction(this.data.hero.current_direction);
+        this.data.hero.current_direction = this.cast_direction;
         this.search_for_target();
         if (this.target_object && this.target_object.custom_data.growth_casted) {
             this.target_found = false;
@@ -235,12 +235,12 @@ export class GrowthFieldPsynergy {
         }
         this.set_hero_cast_anim();
         let reset_map;
-        this.stop_casting = init_cast_aura(this.game, this.data.hero, this.data.npc_group, this.data.hero_color_filters, () => {
+        this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero_color_filters, () => {
             reset_map = tint_map_layers(maps[this.data.map_name], this.data.map_color_filters);
             this.init_bubbles();
         }, () => {
             this.game.physics.p2.resume();
-            this.data.casting_psynergy = false;
+            this.data.hero.casting_psynergy = false;
             this.target_object = null;
         }, () => {
             reset_map();

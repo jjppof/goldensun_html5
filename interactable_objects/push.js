@@ -9,10 +9,10 @@ const DUST_FRAMES = Phaser.Animation.generateFrameNames('dust/', 0, 7, '', 2);
 const PUSH_SHIFT = 16;
 
 export function normal_push(game, data, interactable_object) {
-    if (data.trying_to_push && [directions.up, directions.down, directions.left, directions.right].includes(data.trying_to_push_direction) && data.trying_to_push_direction === data.current_direction && !data.casting_psynergy && !data.jumping && !data.in_battle) {
+    if (data.hero.trying_to_push && [directions.up, directions.down, directions.left, directions.right].includes(data.hero.trying_to_push_direction) && data.hero.trying_to_push_direction === data.hero.current_direction && !data.hero.casting_psynergy && !data.hero.jumping && !data.in_battle) {
         fire_push_movement(game, data, interactable_object);
     }
-    data.trying_to_push = false;
+    data.hero.trying_to_push = false;
     data.push_timer = null;
 }
 
@@ -23,27 +23,27 @@ export function target_only_push(game, data, interactable_object, before_move, p
 export function fire_push_movement(game, data, interactable_object, push_end, before_move, target_only = false, enable_physics_at_end = true, on_push_update = undefined) {
     let expected_position;
     if (!target_only) {
-        let positive_limit = data.hero.x + (-interactable_object.interactable_object_sprite.y - interactable_object.interactable_object_sprite.x);
-        let negative_limit = -data.hero.x + (-interactable_object.interactable_object_sprite.y + interactable_object.interactable_object_sprite.x);
-        if (-data.hero.y >= positive_limit && -data.hero.y >= negative_limit) {
+        let positive_limit = data.hero.sprite.x + (-interactable_object.interactable_object_sprite.y - interactable_object.interactable_object_sprite.x);
+        let negative_limit = -data.hero.sprite.x + (-interactable_object.interactable_object_sprite.y + interactable_object.interactable_object_sprite.x);
+        if (-data.hero.sprite.y >= positive_limit && -data.hero.sprite.y >= negative_limit) {
             expected_position = directions.down;
-        } else if (-data.hero.y <= positive_limit && -data.hero.y >= negative_limit) {
+        } else if (-data.hero.sprite.y <= positive_limit && -data.hero.sprite.y >= negative_limit) {
             expected_position = directions.left;
-        } else if (-data.hero.y <= positive_limit && -data.hero.y <= negative_limit) {
+        } else if (-data.hero.sprite.y <= positive_limit && -data.hero.sprite.y <= negative_limit) {
             expected_position = directions.up;
-        } else if (-data.hero.y >= positive_limit && -data.hero.y <= negative_limit) {
+        } else if (-data.hero.sprite.y >= positive_limit && -data.hero.sprite.y <= negative_limit) {
             expected_position = directions.right;
         }
     }
-    if (target_only || expected_position === data.trying_to_push_direction) {
+    if (target_only || expected_position === data.hero.trying_to_push_direction) {
         if (!target_only) {
-            data.pushing = true;
-            data.current_action = "push";
+            data.hero.pushing = true;
+            data.hero.current_action = "push";
         }
         game.physics.p2.pause();
         let tween_x = 0, tween_y = 0;
         let event_shift_x = 0, event_shift_y = 0;
-        switch (data.trying_to_push_direction) {
+        switch (data.hero.trying_to_push_direction) {
             case directions.up:
                 event_shift_y = -1;
                 tween_y = -PUSH_SHIFT;
@@ -64,7 +64,7 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
         shift_events(data, interactable_object, event_shift_x, event_shift_y);
         let sprites = [interactable_object.interactable_object_sprite.body];
         if (!target_only) {
-            sprites.push(...[data.shadow, data.hero.body]);
+            sprites.push(...[data.hero.shadow, data.hero.sprite.body]);
         }
         const prev_x = interactable_object.current_x;
         const prev_y = interactable_object.current_y;
@@ -82,7 +82,7 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
             let body = sprites[i];
             let dest_x = body.x + tween_x;
             let dest_y = body.y + tween_y;
-            if (body === data.shadow || body === data.hero.body) {
+            if (body === data.hero.shadow || body === data.hero.sprite.body) {
                 if (tween_x === 0) {
                     dest_x = maps[data.map_name].sprite.tileWidth * (prev_x + event_shift_x + 0.5);
                 } else if (tween_y === 0) {
@@ -116,10 +116,10 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
                             true
                             ).onComplete.addOnce(() => {
                                 if (drop_tile.dust_animation) {
-                                    data.current_action = "idle";
-                                    data.hero.loadTexture(data.hero_name + "_" + data.current_action);
-                                    main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, data.current_action);
-                                    data.hero.animations.play(data.current_action + "_" + reverse_directions[data.current_direction]);
+                                    data.hero.current_action = "idle";
+                                    data.hero.sprite.loadTexture(data.hero_name + "_" + data.hero.current_action);
+                                    data.hero.sprite_info.setAnimation(data.hero.sprite, data.hero.current_action);
+                                    data.hero.sprite.animations.play(data.hero.current_action + "_" + reverse_directions[data.hero.current_direction]);
                                     dust_animation(game, data, interactable_object, promise_resolve);
                                 } else {
                                     promise_resolve();
@@ -135,7 +135,7 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
             });
         }
         Promise.all(promises).then(() => {
-            data.pushing = false;
+            data.hero.pushing = false;
             if (enable_physics_at_end) {
                 game.physics.p2.resume();
             }

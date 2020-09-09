@@ -48,9 +48,9 @@ export class Debug {
     }
 
     toggle_debug_physics() {
-        this.data.hero.body.debug = !this.data.hero.body.debug;
+        this.data.hero.sprite.body.debug = !this.data.hero.sprite.body.debug;
         this.data.map_collider.body.debug = !this.data.map_collider.body.debug;
-        this.update_debug_physics(this.data.hero.body.debug);
+        this.update_debug_physics(this.data.hero.sprite.body.debug);
         for (let i = 0; i < this.data.dynamic_jump_events_bodies.length; ++i) {
             this.data.dynamic_jump_events_bodies[i].debug = !this.data.dynamic_jump_events_bodies[i].debug;
         }
@@ -106,14 +106,14 @@ export class Debug {
 
     fill_key_debug_table() {
         if (!this.debug_keys) return;
-        document.querySelector("#key_debug table .direction").innerHTML = reverse_directions[this.data.current_direction];
-        document.querySelector("#key_debug table .action").innerHTML = this.data.current_action;
-        document.querySelector("#key_debug table .x").innerHTML = `${this.data.hero_tile_pos_x}/${this.data.hero.body.x.toFixed(3)}`;
-        document.querySelector("#key_debug table .y").innerHTML = `${this.data.hero_tile_pos_y}/${this.data.hero.body.y.toFixed(3)}`;
-        document.querySelector("#key_debug table .speed_x").innerHTML = this.data.hero.body.velocity.x.toFixed(3);
-        document.querySelector("#key_debug table .speed_y").innerHTML = this.data.hero.body.velocity.y.toFixed(3);
-        document.querySelector("#key_debug table .force_direction").innerHTML = this.data.force_direction;
-        document.querySelector("#key_debug table .stop_by_colliding").innerHTML = this.data.stop_by_colliding;
+        document.querySelector("#key_debug table .direction").innerHTML = reverse_directions[this.data.hero.current_direction];
+        document.querySelector("#key_debug table .action").innerHTML = this.data.hero.current_action;
+        document.querySelector("#key_debug table .x").innerHTML = `${this.data.hero.tile_x_pos}/${this.data.hero.sprite.body.x.toFixed(3)}`;
+        document.querySelector("#key_debug table .y").innerHTML = `${this.data.hero.tile_y_pos}/${this.data.hero.sprite.body.y.toFixed(3)}`;
+        document.querySelector("#key_debug table .speed_x").innerHTML = this.data.hero.sprite.body.velocity.x.toFixed(3);
+        document.querySelector("#key_debug table .speed_y").innerHTML = this.data.hero.sprite.body.velocity.y.toFixed(3);
+        document.querySelector("#key_debug table .force_direction").innerHTML = this.data.hero.force_direction;
+        document.querySelector("#key_debug table .stop_by_colliding").innerHTML = this.data.hero.stop_by_colliding;
     }
 
     toggle_fps() {
@@ -140,10 +140,10 @@ export class Debug {
             for (let y = 0; y < this.game.world.height; y += tile_height) {
                 this.game.debug.geom(new Phaser.Line(0, y, this.game.world.width, y), 'rgba(0,255,255,0.35)', false, 4);
             }
-            let x_pos = this.data.hero_tile_pos_x*tile_width;
-            let y_pos = this.data.hero_tile_pos_y*tile_height;
+            let x_pos = this.data.hero.tile_x_pos*tile_width;
+            let y_pos = this.data.hero.tile_y_pos*tile_height;
             this.game.debug.geom(new Phaser.Rectangle(x_pos, y_pos, tile_width, tile_height), 'rgba(255,0,0,0.5)');
-            this.game.debug.geom(new Phaser.Circle(this.data.hero.x, this.data.hero.y, 5), 'rgba(20,75,0,1.0)');
+            this.game.debug.geom(new Phaser.Circle(this.data.hero.sprite.x, this.data.hero.sprite.y, 5), 'rgba(20,75,0,1.0)');
             for (let point in maps[this.data.map_name].events) {
                 let pos = point.split('_');
                 this.game.debug.geom(new Phaser.Rectangle(pos[0]*tile_width, pos[1]*tile_height, tile_width, tile_height), 'rgba(255,255,60,0.7)');

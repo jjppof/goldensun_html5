@@ -54,12 +54,12 @@ export class Map {
             }
         });
         data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
-        let shadow_index = data.npc_group.getChildIndex(data.hero) - 1;
+        let shadow_index = data.npc_group.getChildIndex(data.hero.sprite) - 1;
         if (shadow_index >= -1 && shadow_index < data.npc_group.children.length) {
             if (shadow_index === -1) {
                 shadow_index = 0;
             }
-            data.npc_group.setChildIndex(data.shadow, shadow_index); //making sure that shadow is always behind the hero
+            data.npc_group.setChildIndex(data.hero.shadow, shadow_index); //making sure that shadow is always behind the hero
         }
         send_to_back_list.forEach(sprite => {
             if (sprite) {
@@ -377,7 +377,7 @@ export class Map {
         this.npcs = [];
         this.interactable_objects = [];
         data.npc_group.removeAll();
-        data.npc_group.add(data.shadow);
-        data.npc_group.add(data.hero);
+        data.npc_group.add(data.hero.shadow);
+        data.npc_group.add(data.hero.sprite);
     }
 }

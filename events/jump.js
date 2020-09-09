@@ -8,7 +8,7 @@ const JUMP_OFFSET = 30;
 const JUMP_DURATION = 150;
 
 export function jump_event(game, data, current_event) {
-    if (!data.stop_by_colliding || data.hero_tile_pos_x !== current_event.x || data.hero_tile_pos_y !== current_event.y || data.casting_psynergy || data.pushing || data.climbing || data.jumping || data.menu_open || data.in_battle) {
+    if (!data.hero.stop_by_colliding || data.hero.tile_x_pos !== current_event.x || data.hero.tile_y_pos !== current_event.y || data.hero.casting_psynergy || data.hero.pushing || data.hero.climbing || data.hero.jumping || data.menu_open || data.in_battle) {
         return;
     }
     let jump_offset = JUMP_OFFSET;
@@ -16,24 +16,24 @@ export function jump_event(game, data, current_event) {
     let jump_direction;
     let next_position = {x: current_event.x, y: current_event.y};
     let side_position = {x: current_event.x, y: current_event.y};
-    if (data.current_direction === directions.left) {
+    if (data.hero.current_direction === directions.left) {
         jump_offset = -jump_offset;
         direction = "x";
         next_position.x -= 2;
         side_position.x -= 1;
         jump_direction = directions.left;
-    } else if (data.current_direction === directions.right) {
+    } else if (data.hero.current_direction === directions.right) {
         direction = "x";
         next_position.x += 2;
         side_position.x += 1;
         jump_direction = directions.right;
-    } else if (data.current_direction === directions.up) {
+    } else if (data.hero.current_direction === directions.up) {
         jump_offset = -jump_offset;
         direction = "y";
         next_position.y -= 2;
         side_position.y -= 1;
         jump_direction = directions.up;
-    } else if (data.current_direction === directions.down) {
+    } else if (data.hero.current_direction === directions.down) {
         direction = "y";
         next_position.y += 2;
         side_position.y += 1;
@@ -92,10 +92,10 @@ export function jump_event(game, data, current_event) {
     } else if (current_event.dynamic) {
         return;
     }
-    data.jumping = true;
+    data.hero.jumping = true;
     data.on_event = true;
     let tween_obj = {};
-    tween_obj[direction] = data.hero[direction] + jump_offset;
+    tween_obj[direction] = data.hero.sprite[direction] + jump_offset;
     const hero_x = maps[data.map_name].sprite.tileWidth * (next_position.x + 0.5);
     const hero_y = maps[data.map_name].sprite.tileHeight * (next_position.y + 0.5);
     if (direction === "x") {
@@ -104,25 +104,25 @@ export function jump_event(game, data, current_event) {
         tween_obj.x = hero_x;
     }
     game.physics.p2.pause();
-    data.hero.loadTexture(data.hero_name + "_jump");
-    main_char_list[data.hero_name].sprite_base.setAnimation(data.hero, "jump");
-    data.hero.animations.play("jump_" + reverse_directions[jump_direction], main_char_list[data.hero_name].sprite_base.actions["jump"].frame_rate, false);
-    data.hero.animations.currentAnim.onComplete.addOnce(() => {
-        data.shadow.visible = false;
-        data.shadow.x = hero_x;
-        data.shadow.y = hero_y;
-        game.add.tween(data.hero.body).to( 
+    data.hero.sprite.loadTexture(data.hero_name + "_jump");
+    data.hero.sprite_info.setAnimation(data.hero.sprite, "jump");
+    data.hero.sprite.animations.play("jump_" + reverse_directions[jump_direction], data.hero.sprite_info.actions["jump"].frame_rate, false);
+    data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
+        data.hero.shadow.visible = false;
+        data.hero.shadow.x = hero_x;
+        data.hero.shadow.y = hero_y;
+        game.add.tween(data.hero.sprite.body).to( 
             tween_obj,
             JUMP_DURATION,
             Phaser.Easing.Linear.None,
             true
         ).onComplete.addOnce(() => {
-            data.shadow.visible = true;
-            data.hero.animations.currentAnim.reverseOnce();
-            data.hero.animations.play("jump_" + reverse_directions[jump_direction], main_char_list[data.hero_name].sprite_base.actions["jump"].frame_rate, false);
-            data.hero.animations.currentAnim.onComplete.addOnce(() => {
+            data.hero.shadow.visible = true;
+            data.hero.sprite.animations.currentAnim.reverseOnce();
+            data.hero.sprite.animations.play("jump_" + reverse_directions[jump_direction], data.hero.sprite_info.actions["jump"].frame_rate, false);
+            data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
                 game.physics.p2.resume();
-                data.jumping = false;
+                data.hero.jumping = false;
                 data.on_event = false;
             });
         }, this);
@@ -135,7 +135,7 @@ export function set_jump_collision(data) {
     }
     data.dynamic_jump_events_bodies = [];
     data.walking_on_pillars_tiles.clear();
-    data.hero.body.removeCollisionGroup(data.mapCollisionGroup, true);
+    data.hero.sprite.body.removeCollisionGroup(data.mapCollisionGroup, true);
     data.map_collider.body.removeCollisionGroup(data.heroCollisionGroup, true);
     for (let event_key in maps[data.map_name].events) {
         for (let j = 0; j < maps[data.map_name].events[event_key].length; ++j) {
@@ -172,7 +172,7 @@ export function set_jump_collision(data) {
                     body.fixedRotation = true;
                     body.dynamic = false;
                     body.static = true;
-                    body.debug = data.hero.body.debug;
+                    body.debug = data.hero.sprite.body.debug;
                     body.collides(data.heroCollisionGroup);
                     data.dynamic_jump_events_bodies.push(body);
                 }
@@ -182,7 +182,7 @@ export function set_jump_collision(data) {
 }
 
 export function unset_set_jump_collision(data) {
-    data.hero.body.collides(data.mapCollisionGroup);
+    data.hero.sprite.body.collides(data.mapCollisionGroup);
     data.map_collider.body.collides(data.heroCollisionGroup);
     for (let i = 0; i < data.dynamic_jump_events_bodies.length; ++i) {
         data.dynamic_jump_events_bodies[i].destroy();
@@ -191,17 +191,17 @@ export function unset_set_jump_collision(data) {
 }
 
 export function jump_near_collision(data, current_event) {
-    const current_pos_key = data.hero_tile_pos_x + "_" + data.hero_tile_pos_y;
-    let current_pos = {x: data.hero_tile_pos_x, y: data.hero_tile_pos_y};
+    const current_pos_key = data.hero.tile_x_pos + "_" + data.hero.tile_y_pos;
+    let current_pos = {x: data.hero.tile_x_pos, y: data.hero.tile_y_pos};
     let surroundings = get_surroundings(current_pos.x, current_pos.y, true);
     let right_direction = false;
-    let possible_directions = split_direction(data.current_direction);
+    let possible_directions = split_direction(data.hero.current_direction);
     for (let i = 0; i < possible_directions.length; ++i) {
         right_direction = right_direction || current_event.activation_directions.includes(possible_directions[i]);
     }
 
     let clear_bodies = () => {
-        data.hero.body.collides(data.mapCollisionGroup);
+        data.hero.sprite.body.collides(data.mapCollisionGroup);
         data.map_collider.body.collides(data.heroCollisionGroup);
         for (let j = 0; j < data.dynamic_jump_events_bodies.length; ++j) {
             data.dynamic_jump_events_bodies[j].destroy();
@@ -235,7 +235,7 @@ export function jump_near_collision(data, current_event) {
         concat_keys.split("-").forEach(key => {
             bodies_position.delete(key);
         });
-        data.hero.body.removeCollisionGroup(data.mapCollisionGroup, true);
+        data.hero.sprite.body.removeCollisionGroup(data.mapCollisionGroup, true);
         data.map_collider.body.removeCollisionGroup(data.heroCollisionGroup, true);
         bodies_position.forEach(position => {
             const pos_array = position.split("_");
@@ -251,7 +251,7 @@ export function jump_near_collision(data, current_event) {
             body.fixedRotation = true;
             body.dynamic = false;
             body.static = true;
-            body.debug = data.hero.body.debug;
+            body.debug = data.hero.sprite.body.debug;
             body.collides(data.heroCollisionGroup);
             data.dynamic_jump_events_bodies.push(body);
         });
