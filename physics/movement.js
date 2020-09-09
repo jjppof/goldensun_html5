@@ -44,6 +44,17 @@ const rotation_normal = [
     directions.down_right, //315-345 degrees
 ];
 
+const speeds = {
+    [directions.right]: {x: 1, y: 0},
+    [directions.left]: {x: -1, y: 0},
+    [directions.up]: {x: 0, y: -1},
+    [directions.up_right]: {x: numbers.INV_SQRT2, y: -numbers.INV_SQRT2},
+    [directions.up_left]: {x: -numbers.INV_SQRT2, y: -numbers.INV_SQRT2},
+    [directions.down]: {x: 0, y: 1},
+    [directions.down_right]: {x: numbers.INV_SQRT2, y: numbers.INV_SQRT2},
+    [directions.down_left]: {x: -numbers.INV_SQRT2, y: numbers.INV_SQRT2}
+};
+
 export function update_arrow_inputs(data) {
     data.arrow_inputs =
           1 * data.cursors.right.isDown
@@ -135,7 +146,6 @@ export function collision_dealer(game, data) {
             });
             data.stop_by_colliding = true;
             data.force_direction = false;
-            data.forcing_on_diagonal = false;
         } else if (data.current_action !== "climb") {
             data.stop_by_colliding = false;
             if (normals.length === 1) { //everything inside this if is to deal with direction changing when colliding
@@ -145,21 +155,17 @@ export function collision_dealer(game, data) {
                 //if player's direction is within 1 of wall_direction
                 if (relative_direction === 1 || relative_direction === 7) {
                     data.force_direction = true;
-                    data.forcing_on_diagonal = wall_direction & 1 === 1;
                     data.current_direction = (wall_direction + (relative_direction << 1)) & 7;
                 } else {
                     data.force_direction = false;
-                    data.forcing_on_diagonal = false;
                 }
             } else {
                 data.force_direction = false;
-                data.forcing_on_diagonal = false;
             }
         }
     } else {
         data.stop_by_colliding = false;
         data.force_direction = false;
-        data.forcing_on_diagonal = false;
     }
 
     if (["walk", "dash", "climb"].includes(data.current_action)) { //sets the final velocity
@@ -209,61 +215,18 @@ export function set_speed_factors(data, check_on_event = false) {
             data.idle_climbing = true;
         }
     } else {
-        if (!data.force_direction) { //makes no sense to force on diagonal if force_direction is false
-            data.forcing_on_diagonal = false;
-        }
-        if (check_isdown(data.cursors, directions.up, directions.down) || check_isdown(data.cursors, directions.right, directions.left)) { //opposite direction should not result in movement
-            data.x_speed = 0;
-            data.y_speed = 0;
+        let desired_direction = rotation_key[data.arrow_inputs];
         //when force_direction is true, it means that the hero is going to face a different direction from the one specified in the keyboard arrows
-        } else if ((check_isdown(data.cursors, directions.up) && !data.forcing_on_diagonal) || (data.current_direction === directions.up && data.force_direction && !data.forcing_on_diagonal)) {
+        if (desired_direction !== null || data.force_direction) {
             if (!data.force_direction) {
-                data.current_direction = get_transition_directions(data.current_direction, directions.up);
+                data.current_direction = get_transition_directions(data.current_direction, desired_direction);
+            } else {
+                desired_direction = data.current_direction;
             }
-            data.x_speed = 0;
-            data.y_speed = -1;
-        } else if ((check_isdown(data.cursors, directions.down) && !data.forcing_on_diagonal) || (data.current_direction === directions.down && data.force_direction && !data.forcing_on_diagonal)) {
-            if (!data.force_direction) {
-                data.current_direction = get_transition_directions(data.current_direction, directions.down);
-            }
-            data.x_speed = 0;
-            data.y_speed = 1;
-        } else if ((check_isdown(data.cursors, directions.left) && !data.forcing_on_diagonal) || (data.current_direction === directions.left && data.force_direction && !data.forcing_on_diagonal)) {
-            if (!data.force_direction) {
-                data.current_direction = get_transition_directions(data.current_direction, directions.left);
-            }
-            data.x_speed = -1;
-            data.y_speed = 0;
-        } else if ((check_isdown(data.cursors, directions.right) && !data.forcing_on_diagonal) || (data.current_direction === directions.right && data.force_direction && !data.forcing_on_diagonal)) {
-            if (!data.force_direction) {
-                data.current_direction = get_transition_directions(data.current_direction, directions.right);
-            }
-            data.x_speed = 1;
-            data.y_speed = 0;
-        } else if (check_isdown(data.cursors, directions.up, directions.left) || (data.current_direction === directions.up_left && data.force_direction && data.forcing_on_diagonal)) {
-            if (!data.force_direction) {
-                data.current_direction = get_transition_directions(data.current_direction, directions.up_left);
-            }
-            data.x_speed = -numbers.INV_SQRT2;
-            data.y_speed = -numbers.INV_SQRT2;
-        } else if (check_isdown(data.cursors, directions.up, directions.right) || (data.current_direction === directions.up_right && data.force_direction && data.forcing_on_diagonal)) {
-            if (!data.force_direction) {
-                data.current_direction = get_transition_directions(data.current_direction, directions.up_right);
-            }
-            data.x_speed = numbers.INV_SQRT2;
-            data.y_speed = -numbers.INV_SQRT2;
-        } else if (check_isdown(data.cursors, directions.down, directions.left) || (data.current_direction === directions.down_left && data.force_direction && data.forcing_on_diagonal)) {
-            if (!data.force_direction) {
-                data.current_direction = get_transition_directions(data.current_direction, directions.down_left);
-            }
-            data.x_speed = -numbers.INV_SQRT2;
-            data.y_speed = numbers.INV_SQRT2;
-        } else if (check_isdown(data.cursors, directions.down, directions.right) || (data.current_direction === directions.down_right && data.force_direction && data.forcing_on_diagonal)) {
-            if (!data.force_direction) {
-                data.current_direction = get_transition_directions(data.current_direction, directions.down_right);
-            }
-            data.x_speed = numbers.INV_SQRT2;
-            data.y_speed = numbers.INV_SQRT2;
+            data.x_speed = speeds[desired_direction].x;
+            data.y_speed = speeds[desired_direction].y;
+        } else {
+            data.x_speed = data.y_speed = 0;
         }
     }
 }

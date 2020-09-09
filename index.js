@@ -27,7 +27,6 @@ var data = {
     extra_speed: 0,
     stop_by_colliding: false,
     force_direction: false,
-    forcing_on_diagonal: false,
     arrow_inputs: null,
 
     //events and game states
