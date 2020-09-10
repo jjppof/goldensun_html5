@@ -14,7 +14,7 @@ const INTERACTABLE_OBJECT_DAMPING = 1;
 const HERO_Y_AP = 0.8;
 const CONTACT_SKIN_SIZE = 1e-3;
 
-export function config_physics_for_hero(data, initialize = true) {
+export function config_physics_for_hero(game, data, initialize = true) {
     if (initialize) data.heroCollisionGroup = game.physics.p2.createCollisionGroup(); //groups only need to be created once
     game.physics.p2.enable(data.hero.sprite, false);
     data.hero.sprite.anchor.y = HERO_Y_AP; //Important to be after the previous command
@@ -29,7 +29,7 @@ export function config_physics_for_hero(data, initialize = true) {
     data.hero.sprite.body.fixedRotation = true; //disalble hero collision body rotation
 }
 
-export function config_physics_for_npcs(data, only_set_groups = false) {
+export function config_physics_for_npcs(game, data, only_set_groups = false) {
     for (let i = 0; i < maps[data.map_name].npcs.length; ++i) {
         let npc = maps[data.map_name].npcs[i];
         if (!(npc.base_collider_layer in data.npcCollisionGroups)) {
@@ -55,7 +55,7 @@ export function config_physics_for_npcs(data, only_set_groups = false) {
     }
 }
 
-export function config_physics_for_interactable_objects(data, only_set_groups = false) {
+export function config_physics_for_interactable_objects(game, data, only_set_groups = false) {
     for (let i = 0; i < maps[data.map_name].interactable_objects.length; ++i) {
         let interactable_object = maps[data.map_name].interactable_objects[i];
         if (data.interactable_objects_db[interactable_object.key_name].body_radius === 0) continue;
@@ -85,7 +85,7 @@ export function config_physics_for_interactable_objects(data, only_set_groups = 
     }
 }
 
-export function config_physics_for_map(data, initialize = true, collision_layer = undefined) {
+export function config_physics_for_map(game, data, initialize = true, collision_layer = undefined) {
     if (initialize) { //groups only need to be created once
         data.map_collider = game.add.sprite(0, 0);
         data.map_collider.width = data.map_collider.height = 0;

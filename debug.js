@@ -39,8 +39,8 @@ export class Debug {
     }
 
     update_debug_physics(flag) {
-        for (let i = 0; i < data.npc_group.children.length; ++i) {
-            let sprite = data.npc_group.children[i];
+        for (let i = 0; i < this.data.npc_group.children.length; ++i) {
+            let sprite = this.data.npc_group.children[i];
             if (!sprite.is_npc && !sprite.is_interactable_object) continue;
             if (!sprite.body) continue;
             sprite.body.debug = flag;

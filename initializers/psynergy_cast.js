@@ -150,7 +150,7 @@ export function init_cast_aura(game, sprite, group, filter, after_init, after_de
     };
 }
 
-export function tint_map_layers(map, filter, after_destroy) {
+export function tint_map_layers(game, map, filter, after_destroy) {
     filter.colorize_intensity = 0;
     filter.gray = 0;
     filter.colorize = Math.random();

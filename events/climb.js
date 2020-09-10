@@ -1,5 +1,4 @@
 import { maps } from '../initializers/maps.js';
-import { main_char_list } from '../initializers/main_chars.js';
 import * as collision from '../events/collision.js';
 import * as numbers from '../magic_numbers.js';
 import { set_jump_collision, unset_set_jump_collision } from './jump.js';
@@ -15,7 +14,7 @@ export function climbing_event(game, data, current_event, activation_direction) 
         }
         game.physics.p2.pause();
         if (current_event.change_to_collision_layer !== null) {
-            collision.change_map_body(data, current_event.change_to_collision_layer);
+            collision.change_map_body(game, data, current_event.change_to_collision_layer);
         }
         if (activation_direction === directions.down) {
             data.on_event = true;
@@ -63,7 +62,7 @@ export function climbing_event(game, data, current_event, activation_direction) 
                 return;
             }
             if (current_event.change_to_collision_layer !== null) {
-                collision.change_map_body(data, current_event.change_to_collision_layer);
+                collision.change_map_body(game, data, current_event.change_to_collision_layer);
             }
             data.on_event = true;
             data.hero.sprite.animations.play("climb_end", 9, false, false);
@@ -76,7 +75,7 @@ export function climbing_event(game, data, current_event, activation_direction) 
             );
         } else if (activation_direction === directions.down) {
             if (current_event.change_to_collision_layer !== null) {
-                collision.change_map_body(data, current_event.change_to_collision_layer);
+                collision.change_map_body(game, data, current_event.change_to_collision_layer);
             }
             data.on_event = true;
             data.hero.sprite.loadTexture(data.hero_name + "_idle");
@@ -105,7 +104,7 @@ export function climbing_event(game, data, current_event, activation_direction) 
     }
 }
 
-export function climb_event_animation_steps(data) {
+export function climb_event_animation_steps(game, data) {
     if (data.hero.sprite.animations.frameName === "climb/start/03") {
         data.hero.shadow.visible = false;
         const x_tween = maps[data.map_name].sprite.tileWidth * (data.hero.climbing_event_data.event.x + 0.5);
@@ -180,7 +179,7 @@ function create_climb_collision_bodies(game, data, current_event) {
 
 function remove_climb_collision_bodies(data, current_event, collide_with_map = true) {
     current_event.origin_interactable_object.interactable_object_sprite.send_to_back = false;
-    set_jump_collision(data);
+    set_jump_collision(game, data);
     if (collide_with_map) {
         data.hero.sprite.body.collides(data.mapCollisionGroup);
         data.map_collider.body.collides(data.heroCollisionGroup);

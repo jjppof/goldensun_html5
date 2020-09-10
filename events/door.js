@@ -69,9 +69,9 @@ async function change_map(game, data, current_event) {
     if (game.camera.bounds.height < numbers.GAME_HEIGHT) {
         game.camera.bounds.height = numbers.GAME_HEIGHT;
     }
-    config_physics_for_npcs(data);
-    config_physics_for_interactable_objects(data);
-    config_physics_for_map(data, false);
+    config_physics_for_npcs(game, data);
+    config_physics_for_interactable_objects(game, data);
+    config_physics_for_map(game, data, false);
     config_collisions(data);
     game.physics.p2.updateBoundsCollisionGroup();
     data.debug.update_debug_physics(data.hero.sprite.body.debug);

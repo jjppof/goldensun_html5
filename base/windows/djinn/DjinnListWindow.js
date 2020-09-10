@@ -111,7 +111,7 @@ export class DjinnListWindow {
                 this.on_choose();
             }
         }, this, this.enter_propagation_priority);
-        data.shift_input.add(() => {
+        this.data.shift_input.add(() => {
             if (!this.window_open || !this.window_active || this.setting_djinn_status) return;
             this.data.shift_input.halt();
             this.change_djinn_status(this.selected_char_index, this.selected_djinn_index);

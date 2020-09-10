@@ -55,7 +55,7 @@ export function event_triggering(game, data, event_key) {
         const this_event = maps[data.map_name].events[event_key][i];
         if (!this_event.activation_collision_layers.includes(data.map_collider_layer)) continue;
         if (this_event.type === event_types.JUMP) {
-            jump_near_collision(data, this_event);
+            jump_near_collision(game, data, this_event);
         }
         if (!this_event.is_active(data.hero.current_direction)) continue;
         const right_direction = this_event.activation_directions.includes(data.hero.current_direction);

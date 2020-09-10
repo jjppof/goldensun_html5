@@ -79,7 +79,7 @@ export function jump_event(game, data, current_event) {
             if (event.type === event_types.JUMP && event.is_active(get_opposite_direction(jump_direction)) && event.is_set && event.activation_collision_layers.includes(data.map_collider_layer)) {
                 active_jump_event_found = true;
                 if (event.dynamic) {
-                    set_jump_collision(data);
+                    set_jump_collision(game, data);
                     break;
                 } else if (current_event.dynamic) {
                     unset_set_jump_collision(data);
@@ -129,7 +129,7 @@ export function jump_event(game, data, current_event) {
     });
 }
 
-export function set_jump_collision(data) {
+export function set_jump_collision(game, data) {
     for (let i = 0; i < data.dynamic_jump_events_bodies.length; ++i) {
         data.dynamic_jump_events_bodies[i].destroy();
     }
@@ -190,7 +190,7 @@ export function unset_set_jump_collision(data) {
     data.dynamic_jump_events_bodies = [];
 }
 
-export function jump_near_collision(data, current_event) {
+export function jump_near_collision(game, data, current_event) {
     const current_pos_key = data.hero.tile_x_pos + "_" + data.hero.tile_y_pos;
     let current_pos = {x: data.hero.tile_x_pos, y: data.hero.tile_y_pos};
     let surroundings = get_surroundings(current_pos.x, current_pos.y, true);

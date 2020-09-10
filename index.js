@@ -195,11 +195,11 @@ async function create() {
     await maps[data.map_name].mount_map(game, data);
     config_hero(game, data);
     physics.config_world_physics(game);
-    physics.config_physics_for_hero(data);
-    physics.config_physics_for_npcs(data);
-    physics.config_physics_for_interactable_objects(data);
+    physics.config_physics_for_hero(game, data);
+    physics.config_physics_for_npcs(game, data);
+    physics.config_physics_for_interactable_objects(game, data);
     data.dynamicEventsCollisionGroup = game.physics.p2.createCollisionGroup();
-    physics.config_physics_for_map(data);
+    physics.config_physics_for_map(game, data);
     physics.config_collisions(data);
     game.physics.p2.updateBoundsCollisionGroup();
 
@@ -282,7 +282,7 @@ function update() {
             do_step(data);
         }
         if (data.waiting_to_change_collision) { //change collision pattern layer event
-            do_collision_change(data);
+            do_collision_change(game, data);
         }
 
         //check if the actual tile has an event
@@ -311,11 +311,11 @@ function update() {
         maps[data.map_name].sort_sprites(data);
     } else if (data.on_event) {
         if (data.hero.climbing_event_data !== null) {
-            climb.climb_event_animation_steps(data);
+            climb.climb_event_animation_steps(game, data);
         }
         data.hero.stop_char(false);
     } else if (data.npc_event) {
-        set_npc_event(data);
+        set_npc_event(game, data);
         data.hero.stop_char(false);
     } else if (data.hero.pushing) {
         data.hero.change_sprite();

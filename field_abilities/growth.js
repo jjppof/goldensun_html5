@@ -222,7 +222,7 @@ export class GrowthFieldPsynergy {
         }
         this.data.hero.casting_psynergy = true;
         this.game.physics.p2.pause();
-        this.data.hero.sprite.body.velocity.y = data.hero.sprite.body.velocity.x = 0;
+        this.data.hero.sprite.body.velocity.y = this.data.hero.sprite.body.velocity.x = 0;
         caster.current_pp -= ability.pp_cost;
         this.cast_direction = set_cast_direction(this.data.hero.current_direction);
         this.data.hero.current_direction = this.cast_direction;
@@ -236,7 +236,7 @@ export class GrowthFieldPsynergy {
         this.set_hero_cast_anim();
         let reset_map;
         this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero_color_filters, () => {
-            reset_map = tint_map_layers(maps[this.data.map_name], this.data.map_color_filters);
+            reset_map = tint_map_layers(this.game, maps[this.data.map_name], this.data.map_color_filters);
             this.init_bubbles();
         }, () => {
             this.game.physics.p2.resume();

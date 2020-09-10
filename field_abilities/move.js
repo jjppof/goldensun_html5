@@ -43,22 +43,22 @@ export class MoveFieldPsynergy extends SpriteBase {
     }
 
     set_controls() {
-        game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
+        this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
             if (!this.controls_active) return;
             this.data.hero.trying_to_push_direction = directions.right;
             this.fire_push();
         });
-        game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
+        this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
             if (!this.controls_active) return;
             this.data.hero.trying_to_push_direction = directions.left;
             this.fire_push();
         });
-        game.input.keyboard.addKey(Phaser.Keyboard.UP).onDown.add(() => {
+        this.game.input.keyboard.addKey(Phaser.Keyboard.UP).onDown.add(() => {
             if (!this.controls_active) return;
             this.data.hero.trying_to_push_direction = directions.up;
             this.fire_push();
         });
-        game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onDown.add(() => {
+        this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onDown.add(() => {
             if (!this.controls_active) return;
             this.data.hero.trying_to_push_direction = directions.down;
             this.fire_push();
@@ -94,7 +94,7 @@ export class MoveFieldPsynergy extends SpriteBase {
                 target_only_push(this.game, this.data, this.target_object, (x_shift, y_shift) => {
                     const x_target = this.hand_sprite.x + x_shift;
                     const y_target = this.hand_sprite.y + y_shift;
-                    game.add.tween(this.hand_sprite).to(
+                    this.game.add.tween(this.hand_sprite).to(
                         {x: x_target, y: y_target},
                         numbers.PUSH_TIME,
                         Phaser.Easing.Linear.None,
@@ -129,7 +129,7 @@ export class MoveFieldPsynergy extends SpriteBase {
                     this.finish_hand();
                     this.unset_hero_cast_anim();
                 }, false, () => {
-                    maps[data.map_name].sort_sprites(this.data);
+                    maps[this.data.map_name].sort_sprites(this.data);
                 });
             }
         }
@@ -142,8 +142,8 @@ export class MoveFieldPsynergy extends SpriteBase {
     }
 
     unset_hero_cast_anim() {
-        data.hero.sprite.animations.currentAnim.reverseOnce();
-        data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
+        this.data.hero.sprite.animations.currentAnim.reverseOnce();
+        this.data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.data.hero.sprite.loadTexture(this.data.hero_name + "_idle");
             main_char_list[this.data.hero_name].sprite_base.setAnimation(this.data.hero.sprite, "idle");
             this.data.hero.sprite.animations.frameName = `idle/${reverse_directions[this.cast_direction]}/00`;
@@ -381,7 +381,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         }
         this.data.hero.casting_psynergy = true;
         this.game.physics.p2.pause();
-        this.data.hero.sprite.body.velocity.y = data.hero.sprite.body.velocity.x = 0;
+        this.data.hero.sprite.body.velocity.y = this.data.hero.sprite.body.velocity.x = 0;
         caster.current_pp -= ability.pp_cost;
         this.cast_direction = set_cast_direction(this.data.hero.current_direction);
         this.data.hero.current_direction = this.cast_direction;
@@ -391,7 +391,7 @@ export class MoveFieldPsynergy extends SpriteBase {
         this.set_hero_cast_anim();
         let reset_map;
         this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero_color_filters, () => {
-            reset_map = tint_map_layers(maps[this.data.map_name], this.data.map_color_filters);
+            reset_map = tint_map_layers(this.game, maps[this.data.map_name], this.data.map_color_filters);
             this.set_hand();
             this.translate_hand();
             this.start_emitter();

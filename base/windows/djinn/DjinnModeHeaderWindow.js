@@ -64,7 +64,7 @@ export class DjinnModeHeaderWindow {
     }
 
     init_arrow_blinks() {
-        this.djinn_status_arrow_blink_timer = game.time.create(false);
+        this.djinn_status_arrow_blink_timer = this.game.time.create(false);
         this.djinn_status_arrow_blink_timer.loop(90, () => {
             this.djinn_status_arrow.alpha = this.djinn_status_arrow.alpha ? 0 : 1;
         });

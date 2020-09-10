@@ -63,7 +63,7 @@ export class DjinnCharStatsWindow {
     }
 
     init_arrow_blinks() {
-        this.class_name_arrow_blink_timer = game.time.create(false);
+        this.class_name_arrow_blink_timer = this.game.time.create(false);
         this.class_name_arrow_blink_timer.loop(90, () => {
             this.class_name_arrow.alpha = this.class_name_arrow.alpha ? 0 : 1;
         });

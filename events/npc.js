@@ -43,7 +43,7 @@ export function trigger_npc_dialog(game, data) {
     }
 }
 
-export function set_npc_event(data) {
+export function set_npc_event(game, data) {
     if (!data.waiting_for_enter_press) {
         if (!data.in_dialog && data.active_npc.npc_type === npc_types.NORMAL) {
             let parts = set_dialog(game, data.active_npc.message);

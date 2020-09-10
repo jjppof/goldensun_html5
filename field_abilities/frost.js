@@ -137,7 +137,7 @@ export class FrostFieldPsynergy {
                 event.is_set = true;
                 if (event.type === event_types.JUMP) {
                     JumpEvent.active_jump_surroundings(
-                        data,
+                        this.data,
                         get_surroundings(event.x, event.y, false, 2),
                         this.target_object.collider_layer_shift + this.target_object.base_collider_layer
                     );
@@ -149,7 +149,7 @@ export class FrostFieldPsynergy {
         this.target_object.custom_data.color_filters = this.game.add.filter('ColorFilters');
         this.target_object.interactable_object_sprite.filters = [this.target_object.custom_data.color_filters];
         let blink_counter = 16;
-        let blink_timer = game.time.create(false);
+        let blink_timer = this.game.time.create(false);
         blink_timer.loop(50, () => {
             if (blink_counter%2 === 0) {
                 this.target_object.custom_data.color_filters.tint = [1,1,1];
@@ -175,11 +175,11 @@ export class FrostFieldPsynergy {
     }
 
     set_permanent_blink() {
-        let blink_timer = game.time.create(false);
+        let blink_timer = this.game.time.create(false);
         let target_object = this.target_object;
         blink_timer.loop(150, () => {
             target_object.custom_data.color_filters.hue_adjust = 5.3;
-            game.time.events.add(20, () => {
+            this.game.time.events.add(20, () => {
                 target_object.custom_data.color_filters.hue_adjust = 0;
             });
         });
@@ -198,7 +198,7 @@ export class FrostFieldPsynergy {
         }
         this.data.hero.casting_psynergy = true;
         this.game.physics.p2.pause();
-        this.data.hero.sprite.body.velocity.y = data.hero.sprite.body.velocity.x = 0;
+        this.data.hero.sprite.body.velocity.y = this.data.hero.sprite.body.velocity.x = 0;
         caster.current_pp -= ability.pp_cost;
         this.cast_direction = set_cast_direction(this.data.hero.current_direction);
         this.data.hero.current_direction = this.cast_direction;
@@ -212,7 +212,7 @@ export class FrostFieldPsynergy {
         this.set_hero_cast_anim();
         let reset_map;
         this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero_color_filters, () => {
-            reset_map = tint_map_layers(maps[this.data.map_name], this.data.map_color_filters);
+            reset_map = tint_map_layers(this.game, maps[this.data.map_name], this.data.map_color_filters);
             this.init_snowflakes();
         }, () => {
             this.game.physics.p2.resume();
