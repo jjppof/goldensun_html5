@@ -13,7 +13,7 @@ export function normal_push(game, data, interactable_object) {
         fire_push_movement(game, data, interactable_object);
     }
     data.hero.trying_to_push = false;
-    data.push_timer = null;
+    data.hero.push_timer = null;
 }
 
 export function target_only_push(game, data, interactable_object, before_move, push_end, enable_physics_at_end = true, on_push_update = undefined) {

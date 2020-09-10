@@ -46,7 +46,7 @@ export function climbing_event(game, data, current_event, activation_direction) 
             });
             data.hero.shadow.visible = false;
             data.hero.current_action = "climb";
-            data.idle_climbing = true;
+            data.hero.idle_climbing = true;
         }
     } else if ((data.hero.climbing && !current_event.climbing_only) || (data.hero.climbing && current_event.climbing_only)) {
         data.hero.climbing_event_data = {

@@ -20,8 +20,6 @@ export class ControllableChar {
         this.pushing = false;
         this.jumping = false;
         this.idle_climbing = false;
-        this.trying_to_push = false;
-        this.trying_to_push_direction = null;
         this.sprite_info = null;
         this.sprite = null;
         this.shadow = null;
@@ -106,5 +104,28 @@ export class ControllableChar {
     update_tile_position(map_sprite) {
         this.tile_x_pos = (this.sprite.x/map_sprite.tileWidth) | 0;
         this.tile_y_pos = (this.sprite.y/map_sprite.tileHeight) | 0;
+    }
+
+    calculate_speed() { //when setting temp_x or temp_y, it means that these velocities will still be analyzed in collision_dealer function
+        const delta_time = this.game.time.elapsedMS / numbers.DELTA_TIME_FACTOR;
+        if (this.current_action === "dash") {
+            this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * (this.sprite_info.dash_speed + this.extra_speed)) | 0;
+            this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * (this.sprite_info.dash_speed + this.extra_speed)) | 0;
+        } else if(this.current_action === "walk") {
+            this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * (this.sprite_info.walk_speed + this.extra_speed)) | 0;
+            this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * (this.sprite_info.walk_speed + this.extra_speed)) | 0;
+        } else if(this.current_action === "climb") {
+            this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * this.sprite_info.climb_speed) | 0;
+            this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * this.sprite_info.climb_speed) | 0;
+        } else if(this.current_action === "idle") {
+            this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
+        }
+    }
+
+    set_speed() {
+        if (["walk", "dash", "climb"].includes(this.current_action)) { //sets the final velocity
+            this.sprite.body.velocity.x = this.sprite.body.velocity.temp_x;
+            this.sprite.body.velocity.y = this.sprite.body.velocity.temp_y;
+        }
     }
 }

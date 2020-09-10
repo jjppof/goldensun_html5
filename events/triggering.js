@@ -40,7 +40,7 @@ class EventQueue {
 
 export function fire_event(game, data, current_event, this_activation_direction) {
     if (data.hero.current_direction !== this_activation_direction) return;
-    if (current_event.type === event_types.STAIR && !data.idle_climbing) {
+    if (current_event.type === event_types.STAIR && !data.hero.idle_climbing) {
         climbing_event(game, data, current_event, this_activation_direction);
     } else if (current_event.type === event_types.DOOR) {
         set_door_event(game, data, current_event);

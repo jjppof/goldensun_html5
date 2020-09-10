@@ -10,7 +10,6 @@ import { do_step } from './events/step.js';
 import { do_collision_change } from './events/collision.js';
 import * as climb from './events/climb.js';
 import * as physics from './physics/collision_bodies.js';
-import * as movement from './physics/movement.js';
 import { initialize_menu } from './screens/menu.js';
 import { TileEvent } from './base/TileEvent.js';
 import { Debug } from './debug.js';
@@ -20,9 +19,6 @@ import { config_hero } from './initializers/hero.js';
 
 //this variable contains important data used throughout the game
 var data = {
-    //movement
-    arrow_inputs: null,
-
     //events and game states
     event_timers: {},
     on_event: false,
@@ -31,7 +27,6 @@ var data = {
     step_event_data: {},
     waiting_to_change_collision: false,
     collision_event_data: {},
-    push_timer: null,
     menu_open: false,
     climbing_event_data: null,
     in_battle: false,
@@ -298,11 +293,11 @@ function update() {
             data.hero.extra_speed = 0;
         }
 
-        movement.update_arrow_inputs(data);
-        movement.set_speed_factors(data, true); //sets the direction of the movement
-        movement.set_current_action(data); //chooses which sprite the hero shall assume
-        movement.calculate_hero_speed(game, data); //calculates the final speed
-        movement.collision_dealer(game, data); //check if the hero is colliding and its consequences
+        data.hero.update_arrow_inputs();
+        data.hero.set_speed_factors(true); //sets the direction of the movement
+        data.hero.set_current_action(); //chooses which sprite the hero shall assume
+        data.hero.calculate_speed(); //calculates the final speed
+        data.hero.collision_dealer(maps[data.map_name]); //check if the hero is colliding and its consequences
         data.hero.change_sprite(true); //sets the hero sprite
         data.hero.update_shadow(); //updates the hero's shadow position
 

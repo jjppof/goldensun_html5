@@ -1,8 +1,8 @@
 import { directions } from '../utils.js';
-import { ControllableChar } from '../base/ControllableChar.js';
+import { Hero } from '../base/Hero.js';
 
 export function config_hero(game, data) {
-    data.hero = new ControllableChar(
+    data.hero = new Hero(
         game,
         data,
         data.hero_name,
