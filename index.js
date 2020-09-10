@@ -293,18 +293,12 @@ function update() {
             data.hero.extra_speed = 0;
         }
 
-        data.hero.update_arrow_inputs();
-        data.hero.set_speed_factors(true); //sets the direction of the movement
-        data.hero.set_current_action(); //chooses which sprite the hero shall assume
-        data.hero.calculate_speed(); //calculates the final speed
-        data.hero.collision_dealer(maps[data.map_name]); //check if the hero is colliding and its consequences
-        data.hero.change_sprite(true); //sets the hero sprite
-        data.hero.update_shadow(); //updates the hero's shadow position
+        data.hero.update(maps[data.map_name]); //update hero position/velocity/sprite
 
         data.map_collider.body.velocity.y = data.map_collider.body.velocity.x = 0; //fixes map body
 
         for (let i = 0; i < maps[data.map_name].npcs.length; ++i) { //updates npcs' movement
-            let npc = maps[data.map_name].npcs[i];
+            const npc = maps[data.map_name].npcs[i];
             npc.update();
         }
 

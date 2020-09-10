@@ -1,7 +1,7 @@
 import { ControllableChar } from "./ControllableChar.js";
 import * as numbers from '../magic_numbers.js';
 import { TileEvent, event_types } from "./TileEvent.js";
-import { get_transition_directions, check_isdown, range_360, directions } from '../utils.js';
+import { get_transition_directions, range_360, directions } from '../utils.js';
 import { normal_push } from "../interactable_objects/push.js";
 
 const SPEED_LIMIT_TO_STOP = 13;
@@ -92,28 +92,21 @@ export class Hero extends ControllableChar {
         if (check_on_event && this.data.on_event) {
             return;
         }
+        let desired_direction = rotation_key[this.arrow_inputs];
         if (this.climbing) {
-            if (check_isdown(this.data.cursors, directions.up, directions.down) || check_isdown(this.data.cursors, directions.right, directions.left)) {
-                this.x_speed = 0;
-                this.y_speed = 0;
+            if (desired_direction === null) {
+                this.x_speed = this.y_speed = 0;
                 this.idle_climbing = true;
-            } else if (!this.data.cursors.up.isDown && this.data.cursors.down.isDown) {
-                this.x_speed = 0;
-                this.y_speed = 1;
-                this.current_direction = directions.down;
+            } else {
+                if (desired_direction & 1 === 1) { //transforms diagonal movements in non-diagonal
+                    --desired_direction;
+                }
+                this.current_direction = desired_direction;
                 this.idle_climbing = false;
-            } else if (this.data.cursors.up.isDown && !this.data.cursors.down.isDown) {
-                this.x_speed = 0;
-                this.y_speed = -1;
-                this.current_direction = directions.up;
-                this.idle_climbing = false;
-            } else if (!this.data.cursors.up.isDown && !this.data.cursors.down.isDown) {
-                this.x_speed = 0;
-                this.y_speed = 0;
-                this.idle_climbing = true;
+                this.x_speed = speeds[desired_direction].x;
+                this.y_speed = speeds[desired_direction].y;
             }
         } else {
-            let desired_direction = rotation_key[this.arrow_inputs];
             //when force_direction is true, it means that the hero is going to face a different direction from the one specified in the keyboard arrows
             if (desired_direction !== null || this.force_direction) {
                 if (!this.force_direction) {
@@ -132,7 +125,7 @@ export class Hero extends ControllableChar {
     check_interactable_objects(map, contact) {
         let j = 0;
         for (j = 0; j < map.interactable_objects.length; ++j) { //check if hero is colliding with any interactable object
-            let interactable_object_body = map.interactable_objects[j].interactable_object_sprite.body;
+            const interactable_object_body = map.interactable_objects[j].interactable_object_sprite.body;
             if (!interactable_object_body) continue;
             if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
                 if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
@@ -228,11 +221,23 @@ export class Hero extends ControllableChar {
                 } else {
                     this.force_direction = false;
                 }
+            } else {
+                this.stop_by_colliding = false;
             }
         } else {
             this.stop_by_colliding = false;
             this.force_direction = false;
         }
         this.set_speed();
+    }
+
+    update(map) {
+        this.update_arrow_inputs(); //check which arrow keys are being pressed
+        this.set_speed_factors(true); //sets the direction of the movement
+        this.set_current_action(); //chooses which sprite the hero shall assume
+        this.calculate_speed(); //calculates the final speed
+        this.collision_dealer(map); //check if the hero is colliding and its consequences
+        this.change_sprite(true); //sets the hero sprite
+        this.update_shadow(); //updates the hero's shadow position
     }
 }
