@@ -7,31 +7,40 @@ import * as numbers from '../magic_numbers.js';
 import { target_only_push } from '../interactable_objects/push.js';
 import { set_cast_direction, directions, reverse_directions, join_directions } from "../utils.js";
 
+const ABILITY_KEY_NAME = "move";
 const KEY_NAME = "move_psynergy";
 const ACTION_KEY_NAME = "cast";
 const MAX_HAND_TRANSLATE = 16;
 const MOVE_MAX_RANGE = 26;
+const MOVE_HAND_ACTION_KEY = "cast";
+const MOVE_HAND_KEY_NAME = "move_hand";
 
-export class MoveFieldPsynergy extends SpriteBase {
+export class MoveFieldPsynergy {
     constructor(game, data) {
-        super(KEY_NAME, [ACTION_KEY_NAME]);
+        this.key_name = KEY_NAME;
         this.game = game;
         this.data = data;
-        this.ability_key_name = "move";
+        this.ability_key_name = ABILITY_KEY_NAME;
         this.action_key_name = ACTION_KEY_NAME;
-        this.setActionSpritesheet(
-            this.action_key_name,
+        this.hand_sprite_base = new SpriteBase(MOVE_HAND_KEY_NAME, [MOVE_HAND_ACTION_KEY]);
+        this.hand_sprite_base.setActionSpritesheet(
+            MOVE_HAND_ACTION_KEY,
             "assets/images/interactable_objects/move_psynergy_hand.png",
             "assets/images/interactable_objects/move_psynergy_hand.json"
         );
-        this.setActionDirections(
-            this.action_key_name, 
-            [reverse_directions[directions.up], reverse_directions[directions.down], reverse_directions[directions.left], reverse_directions[directions.right]],
-            [2, 2, 2, 2]
+        this.hand_sprite_base.setActionDirections(
+            MOVE_HAND_ACTION_KEY,
+            [
+                reverse_directions[directions.up],
+                reverse_directions[directions.down],
+                reverse_directions[directions.left],
+                reverse_directions[directions.right]
+            ],
+            2
         );
-        this.setActionFrameRate(this.action_key_name, 10);
-        this.generateAllFrames();
-        this.loadSpritesheets(this.game);
+        this.hand_sprite_base.setActionFrameRate(MOVE_HAND_ACTION_KEY, 10);
+        this.hand_sprite_base.generateAllFrames();
+        this.hand_sprite_base.loadSpritesheets(this.game);
         this.hand_sprite = null;
         this.target_found = false;
         this.target_object = null;
@@ -152,12 +161,13 @@ export class MoveFieldPsynergy extends SpriteBase {
     }
 
     set_hand() {
-        this.hand_sprite = this.data.npc_group.create(0, 0, this.key_name + "_" + this.action_key_name);
+        const texture_key = MOVE_HAND_KEY_NAME + "_" + MOVE_HAND_ACTION_KEY;
+        this.hand_sprite = this.data.npc_group.create(0, 0, texture_key);
         this.hand_sprite.send_to_front = true;
         this.hand_sprite.base_collider_layer = this.data.map_collider_layer;
-        this.hand_sprite.loadTexture(this.key_name + "_" + this.action_key_name);
-        this.setAnimation(this.hand_sprite, this.action_key_name);
-        this.hand_sprite.animations.frameName = `${this.action_key_name}/${reverse_directions[this.cast_direction]}/00`;
+        this.hand_sprite.loadTexture(texture_key);
+        this.hand_sprite_base.setAnimation(this.hand_sprite, MOVE_HAND_ACTION_KEY);
+        this.hand_sprite.animations.frameName = `${MOVE_HAND_ACTION_KEY}/${reverse_directions[this.cast_direction]}/00`;
         this.hand_sprite.anchor.x = 0.5;
         this.hand_sprite.centerX = this.data.hero.sprite.centerX;
         this.hand_sprite.centerY = this.data.hero.sprite.centerY;
