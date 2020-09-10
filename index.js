@@ -8,7 +8,6 @@ import { initialize_maps, load_maps, maps } from './initializers/maps.js';
 import { set_npc_event, trigger_npc_dialog } from './events/npc.js';
 import { do_step } from './events/step.js';
 import { do_collision_change } from './events/collision.js';
-import * as climb from './events/climb.js';
 import * as physics from './physics/collision_bodies.js';
 import { initialize_menu } from './screens/menu.js';
 import { TileEvent } from './base/TileEvent.js';
@@ -315,9 +314,6 @@ class GoldenSun {
 
             maps[this.map_name].sort_sprites(this);
         } else if (this.on_event) {
-            if (this.hero.climbing_event_data !== null) {
-                climb.climb_event_animation_steps(this.game, this);
-            }
             this.hero.stop_char(false);
         } else if (this.npc_event) {
             set_npc_event(this.game, this);

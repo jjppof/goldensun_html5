@@ -112,7 +112,7 @@
 	"spriteSourceSize": {"x":2,"y":3,"w":25,"h":28},
 	"sourceSize": {"w":32,"h":32}
 },
-"climb/start/00":
+"climb/turn/00":
 {
 	"frame": {"x":23,"y":31,"w":18,"h":32},
 	"rotated": false,
@@ -120,7 +120,7 @@
 	"spriteSourceSize": {"x":8,"y":0,"w":18,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"climb/start/01":
+"climb/turn/01":
 {
 	"frame": {"x":43,"y":31,"w":16,"h":32},
 	"rotated": false,
@@ -128,7 +128,7 @@
 	"spriteSourceSize": {"x":9,"y":0,"w":16,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"climb/start/02":
+"climb/turn/02":
 {
 	"frame": {"x":61,"y":31,"w":18,"h":31},
 	"rotated": false,
@@ -136,7 +136,7 @@
 	"spriteSourceSize": {"x":9,"y":1,"w":18,"h":31},
 	"sourceSize": {"w":32,"h":32}
 },
-"climb/start/03":
+"climb/turn/03":
 {
 	"frame": {"x":81,"y":32,"w":19,"h":30},
 	"rotated": false,
@@ -144,7 +144,7 @@
 	"spriteSourceSize": {"x":7,"y":2,"w":19,"h":30},
 	"sourceSize": {"w":32,"h":32}
 },
-"climb/start/04":
+"climb/start/00":
 {
 	"frame": {"x":123,"y":32,"w":19,"h":24},
 	"rotated": false,
@@ -152,7 +152,7 @@
 	"spriteSourceSize": {"x":7,"y":8,"w":19,"h":24},
 	"sourceSize": {"w":32,"h":32}
 },
-"climb/start/05":
+"climb/start/01":
 {
 	"frame": {"x":1,"y":31,"w":20,"h":32},
 	"rotated": false,
@@ -160,7 +160,7 @@
 	"spriteSourceSize": {"x":6,"y":0,"w":20,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"climb/start/06":
+"climb/start/02":
 {
 	"frame": {"x":102,"y":32,"w":19,"h":28},
 	"rotated": false,

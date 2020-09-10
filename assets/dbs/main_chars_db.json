@@ -62,10 +62,12 @@
                     "right",
                     "end",
                     "idle",
+                    "turn",
                     "start"
                 ],
-                "directions_frames_number": [4,4,3,3,3,1,7],
-                "frame_rate": [7,7,8,8,6,6,6]
+                "directions_frames_number": [4,4,3,3,3,1,4,3],
+                "frame_rate": [7,7,8,8,9,1,10,10],
+                "loop": [true,true,true,true,false,true,false,false]
             },{
                 "key": "jump",
                 "spritesheet": "assets/images/spritesheets/main_chars/isaac_jump.json",
