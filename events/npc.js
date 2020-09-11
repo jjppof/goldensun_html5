@@ -1,4 +1,4 @@
-import { DialogManager, set_dialog } from '../base/Window.js';
+import { DialogManager, set_dialog } from '../base/DialogManager.js';
 import { npc_types, npc_interaction_pattern } from '../base/NPC.js';
 import { is_close, directions, reverse_directions } from '../utils.js';
 

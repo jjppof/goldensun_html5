@@ -228,7 +228,7 @@ export class Hero extends ControllableChar {
             this.stop_by_colliding = false;
             this.force_direction = false;
         }
-        this.set_speed();
+        this.apply_speed();
     }
 
     update(map) {

@@ -122,10 +122,17 @@ export class ControllableChar {
         }
     }
 
-    set_speed() {
+    apply_speed() {
         if (["walk", "dash", "climb"].includes(this.current_action)) { //sets the final velocity
             this.sprite.body.velocity.x = this.sprite.body.velocity.temp_x;
             this.sprite.body.velocity.y = this.sprite.body.velocity.temp_y;
         }
+    }
+
+    set_speed(x_speed, y_speed) {
+        x_speed = x_speed === undefined ? this.x_speed : x_speed;
+        y_speed = y_speed === undefined ? this.y_speed : y_speed;
+        this.calculate_speed();
+        this.apply_speed();
     }
 }
