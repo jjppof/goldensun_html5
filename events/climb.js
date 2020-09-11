@@ -9,145 +9,133 @@ export function climbing_event(game, data, current_event, activation_direction) 
         return;
     }
     if (!data.hero.climbing && !current_event.climbing_only) {
-        data.hero.climbing_event_data = {
-            event: current_event
-        }
-        game.physics.p2.pause();
-        if (current_event.change_to_collision_layer !== null) {
-            collision.change_map_body(game, data, current_event.change_to_collision_layer);
-        }
-        if (activation_direction === directions.down) {
-            data.on_event = true;
-            data.hero.sprite.loadTexture(data.hero_name + "_climb");
-            data.hero.sprite_info.setAnimation(data.hero.sprite, "climb");
-            data.hero.sprite.animations.play("climb_turn");
-            data.hero.sprite.animations.getAnimation("climb_turn").onComplete.addOnce(() => {
-                data.hero.shadow.visible = false;
-                const x_tween = maps[data.map_name].sprite.tileWidth * (data.hero.climbing_event_data.event.x + 0.5);
-                const y_tween = data.hero.sprite.y + 25;
-                game.add.tween(data.hero.sprite.body).to(
-                    { x: x_tween, y: y_tween },
-                    300,
-                    Phaser.Easing.Linear.None,
-                    true
-                );
-                data.hero.sprite.animations.play("climb_start");
-                data.hero.sprite.animations.getAnimation("climb_start").onComplete.addOnce(() => {
-                    data.hero.sprite.animations.play("climb_idle");
-                    data.on_event = false;
-                    data.hero.climbing = true;
-                    data.hero.current_action = "climb";
-                    if (data.hero.climbing_event_data.event.dynamic) {
-                        create_climb_collision_bodies(game, data, data.hero.climbing_event_data.event);
-                    }
-                    data.hero.climbing_event_data = null;
-                    game.physics.p2.resume();
-                });
-            });
-        } else if (activation_direction === directions.up) {
-            data.on_event = true;
-            data.hero.sprite.loadTexture(data.hero_name + "_climb");
-            data.hero.sprite_info.setAnimation(data.hero.sprite, "climb");
-            data.hero.sprite.animations.play("climb_idle");
-            const out_time = Phaser.Timer.QUARTER/3;
-            const x_tween = maps[data.map_name].sprite.tileWidth*(current_event.x + 0.5);
-            const y_tween = data.hero.sprite.y - 15;
-            if (current_event.dynamic) {
-                create_climb_collision_bodies(game, data, current_event);
-            }
+        start_climbing(game, data, current_event, activation_direction);
+    } else if ((data.hero.climbing && !current_event.climbing_only) || (data.hero.climbing && current_event.climbing_only)) {
+        finish_climbing(game, data, current_event, activation_direction);
+    }
+}
+
+function start_climbing(game, data, current_event, activation_direction) {
+    game.physics.p2.pause();
+    if (current_event.change_to_collision_layer !== null) {
+        collision.change_map_body(game, data, current_event.change_to_collision_layer);
+    }
+    data.on_event = true;
+    if (activation_direction === directions.down) {
+        const turn_animation = data.hero.play("climb", "turn");
+        turn_animation.onComplete.addOnce(() => {
+            data.hero.shadow.visible = false;
+            const x_tween = maps[data.map_name].sprite.tileWidth * (current_event.x + 0.5);
+            const y_tween = data.hero.sprite.y + 25;
             game.add.tween(data.hero.sprite.body).to(
                 { x: x_tween, y: y_tween },
-                out_time,
-                Phaser.Easing.Linear.None,
-                true
-            ).onComplete.addOnce(() => {
-                game.physics.p2.resume();
-                data.on_event = false;
-                data.hero.climbing_event_data = null;
-                data.hero.climbing = true;
-            });
-            data.hero.shadow.visible = false;
-            data.hero.current_action = "climb";
-            data.hero.idle_climbing = true;
-        }
-    } else if ((data.hero.climbing && !current_event.climbing_only) || (data.hero.climbing && current_event.climbing_only)) {
-        data.hero.climbing_event_data = {
-            event: current_event
-        }
-        game.physics.p2.pause();
-        if (activation_direction === directions.up) {
-            for (let i = 0; i < maps[data.map_name].interactable_objects.length; ++i) {
-                const next_interactable_object = maps[data.map_name].interactable_objects[i];
-                if (next_interactable_object.current_x !== current_event.x || next_interactable_object.current_y !== current_event.y - 1) continue;
-                if (current_event.change_to_collision_layer !== next_interactable_object.base_collider_layer) continue;
-                data.hero.climbing_event_data = null;
-                game.physics.p2.resume();
-                return;
-            }
-            if (current_event.change_to_collision_layer !== null) {
-                collision.change_map_body(game, data, current_event.change_to_collision_layer);
-            }
-            data.on_event = true;
-            data.hero.sprite.animations.play("climb_end");
-            const final_shadow_pos = data.hero.sprite.y - 15;
-            game.time.events.add(170, () => {
-                data.hero.shadow.y = final_shadow_pos;
-                data.hero.shadow.visible = true;
-            });
-            data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
-                game.time.events.add(150, () => {
-                    data.hero.shadow.y = data.hero.sprite.y;
-                    data.hero.sprite.loadTexture(data.hero_name + "_idle");
-                    data.hero.sprite_info.setAnimation(data.hero.sprite, "idle");
-                    data.hero.sprite.animations.play("idle_up");
-                    if (data.hero.climbing_event_data.event.dynamic) {
-                        remove_climb_collision_bodies(data, data.hero.climbing_event_data.event, false);
-                    }
-                    game.time.events.add(250, () => {
-                        data.on_event = false;
-                        data.hero.climbing_event_data = null;
-                        data.hero.climbing = false;
-                        data.hero.current_action = "idle";
-                        data.hero.current_direction = directions.up;
-                        game.physics.p2.resume();
-                    }, this);
-                }, this);
-            });
-            data.hero.shadow.visible = false;
-            game.add.tween(data.hero.sprite.body).to(
-                { y: data.hero.sprite.y - 15 },
-                170,
+                300,
                 Phaser.Easing.Linear.None,
                 true
             );
-        } else if (activation_direction === directions.down) {
-            if (current_event.change_to_collision_layer !== null) {
-                collision.change_map_body(game, data, current_event.change_to_collision_layer);
-            }
-            data.on_event = true;
-            data.hero.sprite.loadTexture(data.hero_name + "_idle");
-            data.hero.sprite_info.setAnimation(data.hero.sprite, "idle");
-            data.hero.sprite.animations.play("idle_up");
-            const out_time = Phaser.Timer.QUARTER/3;
-            game.add.tween(data.hero.sprite.body).to(
-                { y: data.hero.sprite.y + 15 },
-                out_time,
-                Phaser.Easing.Linear.None,
-                true
-            ).onComplete.addOnce(() => {
-                game.physics.p2.resume();
+            const start_animation = data.hero.play("climb", "start");
+            start_animation.onComplete.addOnce(() => {
+                data.hero.play("climb", "idle");
                 data.on_event = false;
-                data.hero.climbing_event_data = null;
-                data.hero.climbing = false;
+                data.hero.climbing = true;
+                data.hero.current_action = "climb";
+                if (current_event.dynamic) {
+                    create_climb_collision_bodies(game, data, current_event);
+                }
+                game.physics.p2.resume();
             });
-            if (current_event.dynamic) {
-                remove_climb_collision_bodies(data, current_event);
-            }
-            data.hero.shadow.y = data.hero.sprite.y;
-            data.hero.shadow.visible = true;
-            data.hero.current_action = "idle";
-            data.hero.current_direction = directions.up;
+        });
+    } else if (activation_direction === directions.up) {
+        data.hero.play("climb", "idle");
+        const out_time = Phaser.Timer.QUARTER/3;
+        const x_tween = maps[data.map_name].sprite.tileWidth * (current_event.x + 0.5);
+        const y_tween = data.hero.sprite.y - 15;
+        if (current_event.dynamic) {
+            create_climb_collision_bodies(game, data, current_event);
         }
+        game.add.tween(data.hero.sprite.body).to(
+            { x: x_tween, y: y_tween },
+            out_time,
+            Phaser.Easing.Linear.None,
+            true
+        ).onComplete.addOnce(() => {
+            game.physics.p2.resume();
+            data.on_event = false;
+            data.hero.climbing = true;
+        });
+        data.hero.shadow.visible = false;
+        data.hero.current_action = "climb";
+        data.hero.idle_climbing = true;
+    }
+}
+
+function finish_climbing(game, data, current_event, activation_direction) {
+    game.physics.p2.pause();
+    if (activation_direction === directions.up) {
+        for (let i = 0; i < maps[data.map_name].interactable_objects.length; ++i) {
+            const next_interactable_object = maps[data.map_name].interactable_objects[i];
+            if (next_interactable_object.current_x !== current_event.x || next_interactable_object.current_y !== current_event.y - 1) continue;
+            if (current_event.change_to_collision_layer !== next_interactable_object.base_collider_layer) continue;
+            game.physics.p2.resume();
+            return;
+        }
+        if (current_event.change_to_collision_layer !== null) {
+            collision.change_map_body(game, data, current_event.change_to_collision_layer);
+        }
+        data.on_event = true;
+        const end_animation = data.hero.play("climb", "end");
+        data.hero.shadow.visible = false;
+        game.add.tween(data.hero.sprite.body).to(
+            { y: data.hero.sprite.y - 15 },
+            170,
+            Phaser.Easing.Linear.None,
+            true
+        );
+        const final_shadow_pos = data.hero.sprite.y - 15;
+        game.time.events.add(170, () => {
+            data.hero.shadow.y = final_shadow_pos;
+            data.hero.shadow.visible = true;
+        });
+        end_animation.onComplete.addOnce(() => {
+            game.time.events.add(150, () => {
+                data.hero.shadow.y = data.hero.sprite.y;
+                data.hero.play("idle", "up");
+                if (current_event.dynamic) {
+                    remove_climb_collision_bodies(data, current_event, false);
+                }
+                game.time.events.add(250, () => {
+                    data.on_event = false;
+                    data.hero.climbing = false;
+                    data.hero.current_action = "idle";
+                    data.hero.current_direction = directions.up;
+                    game.physics.p2.resume();
+                }, this);
+            }, this);
+        });
+    } else if (activation_direction === directions.down) {
+        if (current_event.change_to_collision_layer !== null) {
+            collision.change_map_body(game, data, current_event.change_to_collision_layer);
+        }
+        data.on_event = true;
+        data.hero.play("idle", "up");
+        const out_time = Phaser.Timer.QUARTER/3;
+        game.add.tween(data.hero.sprite.body).to(
+            { y: data.hero.sprite.y + 15 },
+            out_time,
+            Phaser.Easing.Linear.None,
+            true
+        ).onComplete.addOnce(() => {
+            game.physics.p2.resume();
+            data.on_event = false;
+            data.hero.climbing = false;
+        });
+        if (current_event.dynamic) {
+            remove_climb_collision_bodies(data, current_event);
+        }
+        data.hero.shadow.y = data.hero.sprite.y;
+        data.hero.shadow.visible = true;
+        data.hero.current_action = "idle";
+        data.hero.current_direction = directions.up;
     }
 }
 

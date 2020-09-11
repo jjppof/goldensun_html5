@@ -53,7 +53,6 @@ class GoldenSun {
         this.waiting_to_change_collision = false;
         this.collision_event_data = {};
         this.menu_open = false;
-        this.climbing_event_data = null;
         this.in_battle = false;
         this.battle_stage = null;
         this.created = false;
