@@ -57,11 +57,18 @@ export class ControllableChar {
         this.shadow.base_collider_layer = layer;
     }
 
-    play(action, direction) {
+    play(action, animation) {
         action = action === undefined ? this.current_action : action;
-        direction = direction === undefined ? this.current_direction : direction;
-        this.sprite_info.setAnimation(this.sprite, action);
-        this.sprite.animations.play(action + "_" + reverse_directions[direction]);
+        animation = animation === undefined ? reverse_directions[this.current_direction] : animation;
+        if (this.current_action !== action) {
+            this.sprite.loadTexture(this.key_name + "_" + action);
+        }
+        const animation_key = action + "_" + animation;
+        if (!this.sprite.animations.getAnimation(animation_key)) {
+            this.sprite_info.setAnimation(this.sprite, action);
+        }
+        this.sprite.animations.play(animation_key);
+        return this.sprite.animations.getAnimation(animation_key);
     }
 
     update_shadow() {
