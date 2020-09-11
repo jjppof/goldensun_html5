@@ -128,8 +128,8 @@ export class ControllableChar {
     }
 
     set_speed(x_speed, y_speed) {
-        x_speed = x_speed === undefined ? this.x_speed : x_speed;
-        y_speed = y_speed === undefined ? this.y_speed : y_speed;
+        this.x_speed = x_speed === undefined ? this.x_speed : x_speed;
+        this.y_speed = y_speed === undefined ? this.y_speed : y_speed;
         this.calculate_speed();
         this.apply_speed();
     }
