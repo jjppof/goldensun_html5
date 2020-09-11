@@ -318,7 +318,7 @@ class GoldenSun {
             set_npc_event(this.game, this);
             this.hero.stop_char(false);
         } else if (this.hero.pushing) {
-            this.hero.change_sprite();
+            this.hero.set_action();
         } else if (this.menu_open && this.menu_screen.horizontal_menu.menu_active) {
             this.hero.stop_char(false);
             this.menu_screen.update_position();

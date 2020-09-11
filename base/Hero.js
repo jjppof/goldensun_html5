@@ -237,7 +237,7 @@ export class Hero extends ControllableChar {
         this.set_current_action(); //chooses which sprite the hero shall assume
         this.calculate_speed(); //calculates the final speed
         this.collision_dealer(map); //check if the hero is colliding and its consequences
-        this.change_sprite(true); //sets the hero sprite
+        this.set_action(true); //sets the hero sprite
         this.update_shadow(); //updates the hero's shadow position
     }
 }

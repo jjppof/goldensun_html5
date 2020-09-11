@@ -16,7 +16,7 @@ export function trigger_npc_dialog(game, data) {
             );
             if (is_close_check) {
                 data.hero.current_action = "idle";
-                data.hero.change_sprite();
+                data.hero.set_action();
                 data.npc_event = true;
                 data.active_npc = npc;
                 break;

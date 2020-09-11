@@ -47,7 +47,7 @@ export class ControllableChar {
         this.shadow.base_collider_layer = layer;
     }
 
-    follow() {
+    camera_follow() {
         this.game.camera.follow(this.sprite, Phaser.Camera.FOLLOW_LOCKON, numbers.CAMERA_LERP, numbers.CAMERA_LERP);
         this.game.camera.focusOn(this.sprite);
     }
@@ -60,7 +60,7 @@ export class ControllableChar {
     play(action, animation) {
         action = action === undefined ? this.current_action : action;
         animation = animation === undefined ? reverse_directions[this.current_direction] : animation;
-        if (this.current_action !== action) {
+        if (this.sprite.key.split("_")[1] !== action) {
             this.sprite.loadTexture(this.key_name + "_" + action);
         }
         const animation_key = action + "_" + animation;
@@ -80,32 +80,23 @@ export class ControllableChar {
         this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         if (change_sprite) {
             this.current_action = "idle";
-            this.change_sprite();
+            this.set_action();
         }
     }
 
-    change_sprite(check_on_event = false) {
+    set_action(check_on_event = false) {
         if (check_on_event && this.data.on_event) {
             return;
         }
         let action = this.current_action;
-        let direction = this.current_direction;
         let idle_climbing = this.idle_climbing;
         if (this.stop_by_colliding && !this.pushing && !this.climbing) {
             action = "idle";
         } else if (this.stop_by_colliding && !this.pushing && this.climbing) {
             idle_climbing = true;
         }
-        const key = this.key_name + "_" + action;
-        const animation = action + "_" + (idle_climbing ? "idle" : reverse_directions[direction]);
-        if (this.sprite.key !== key) {
-            this.sprite.loadTexture(key);
-            this.sprite_info.setAnimation(this.sprite, action);
-            this.sprite.animations.play(animation);
-        }
-        if (this.sprite.animations.currentAnim.name !== animation) {
-            this.sprite.animations.play(animation);
-        }
+        const animation = idle_climbing ? "idle" : reverse_directions[this.current_direction];
+        this.play(action, animation);
     }
 
     update_tile_position(map_sprite) {

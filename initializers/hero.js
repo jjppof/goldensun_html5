@@ -13,6 +13,6 @@ export function config_hero(game, data) {
     );
     data.hero.set_sprite(data.npc_group, main_char_list[data.hero_name].sprite_base, maps[data.map_name].sprite, data.map_collider_layer);
     data.hero.set_shadow('shadow', data.npc_group, data.map_collider_layer);
-    data.hero.follow();
+    data.hero.camera_follow();
     data.hero.play();
 }
