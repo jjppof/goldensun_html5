@@ -25,6 +25,7 @@ GS-HTML5 has no external dependency, so there's no `npm install` or packages on 
 
 Some useful tools that I use to manage the resources:
 - [TexturePacker 4.6.1](https://www.codeandweb.com/texturepacker) (for creating spritesheets)
+- [Sprite Sheet Packer](https://www.codeandweb.com/free-sprite-sheet-packer) (free alternative for TexturePacker)
 - [PhysicsEditor 1.6.3](https://www.codeandweb.com/physicseditor) (for creating collision structures)
 - [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579)) (for building maps)
 - [Shoebox](https://renderhjs.net/shoebox/) (for creating fonts)
