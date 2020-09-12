@@ -5,6 +5,10 @@ const BASE_WIN_HEIGHT = 92;
 const BASE_WIN_X = 0;
 const BASE_WIN_Y = 40;
 
+/*A window template with character information
+Used for Psynergy and Item menus
+
+Input: game [Phaser:Game] - Reference to the running game object*/
 export class BasicInfoWindow {
     constructor(game) {
         this.game = game;
@@ -13,6 +17,7 @@ export class BasicInfoWindow {
         this.x = BASE_WIN_X;
         this.y = BASE_WIN_Y;
         this.base_window = new Window(this.game, this.x, this.y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
+
         this.avatar_group = game.add.group();
         this.avatar_group.alpha = 0;
         this.x_avatar = this.x + 8;
@@ -36,11 +41,16 @@ export class BasicInfoWindow {
         this.exp_text = this.base_window.set_text_in_position("0", 94, 80, true);
     }
 
+    /* Places the avatar group correctly on screen */
     update_position() {
         this.avatar_group.x = this.game.camera.x + this.x_avatar;
         this.avatar_group.y = this.game.camera.y + this.y_avatar;
     }
 
+    /*Sets the selected character
+    The character's avatar is loaded from cache
+
+    Input: char [string] - The selected character's name*/
     set_char(char) {
         if (char !== undefined) {
             this.char = char;
@@ -53,12 +63,17 @@ export class BasicInfoWindow {
         this.base_window.update_text(this.char.max_hp.toString(), this.max_hp_text);
         this.base_window.update_text(this.char.max_pp.toString(), this.max_pp_text);
         this.base_window.update_text(this.char.current_exp.toString(), this.exp_text);
+
         if (this.avatar) {
             this.avatar.destroy();
         }
         this.avatar = this.avatar_group.create(0, 0, "avatars", this.char.key_name);
     }
 
+    /*Opens the window with the selected party member
+
+    Input: initial_char [string] - The character selected by default
+           callback [function] - Callback function (Optional)*/
     open(initial_char, callback) {
         this.update_position();
         this.avatar_group.alpha = 1;
@@ -71,6 +86,9 @@ export class BasicInfoWindow {
         }, false);
     }
 
+    /*Closes the window
+
+    Input: callback [function] - Callback function (Optional)*/
     close(callback) {
         this.avatar_group.alpha = 0;
         this.base_window.close(() => {
