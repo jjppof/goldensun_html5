@@ -240,4 +240,18 @@ export class Hero extends ControllableChar {
         this.set_action(true); //sets the hero sprite
         this.update_shadow(); //updates the hero's shadow position
     }
+
+    config_body(collision_obj) {
+        this.game.physics.p2.enable(this.sprite, false);
+        data.hero.reset_anchor(); //Important to be after the previous command
+        data.hero.sprite.body.clearShapes();
+        data.hero.sprite.body.setCircle(numbers.HERO_BODY_RADIUS, 0, 0);
+        data.hero.sprite.body.setCollisionGroup(collision_obj.hero_collision_group);
+        data.hero.sprite.body.mass = 1.0;
+        data.hero.sprite.body.damping = 0;
+        data.hero.sprite.body.angularDamping = 0;
+        data.hero.sprite.body.inertia = 0;
+        data.hero.sprite.body.setZeroRotation();
+        data.hero.sprite.body.fixedRotation = true;
+    }
 }

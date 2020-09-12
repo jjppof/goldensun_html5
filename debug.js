@@ -1,4 +1,5 @@
 import { reverse_directions, ordered_elements } from "./utils.js";
+import { maps } from "./initializers/maps.js";
 
 export class Debug {
     constructor(game, data) {
@@ -39,6 +40,7 @@ export class Debug {
     }
 
     update_debug_physics(flag) {
+        maps[data.map_name].collision_sprite.body.debug = flag;
         for (let i = 0; i < this.data.npc_group.children.length; ++i) {
             let sprite = this.data.npc_group.children[i];
             if (!sprite.is_npc && !sprite.is_interactable_object) continue;
@@ -49,10 +51,9 @@ export class Debug {
 
     toggle_debug_physics() {
         this.data.hero.sprite.body.debug = !this.data.hero.sprite.body.debug;
-        this.data.map_collider.body.debug = !this.data.map_collider.body.debug;
         this.update_debug_physics(this.data.hero.sprite.body.debug);
-        for (let i = 0; i < this.data.dynamic_jump_events_bodies.length; ++i) {
-            this.data.dynamic_jump_events_bodies[i].debug = !this.data.dynamic_jump_events_bodies[i].debug;
+        for (let i = 0; i < this.data.collision.dynamic_jump_events_bodies.length; ++i) {
+            this.data.collision.dynamic_jump_events_bodies[i].debug = !this.data.collision.dynamic_jump_events_bodies[i].debug;
         }
         for (let i = 0; i < maps[this.data.map_name].interactable_objects.length; ++i) {
             const interactable_object = maps[this.data.map_name].interactable_objects[i];

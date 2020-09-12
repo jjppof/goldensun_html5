@@ -1,7 +1,6 @@
 import { jump_event, jump_near_collision } from './jump.js';
 import { set_door_event } from './door.js';
 import { config_step } from './step.js';
-import { config_collision_change } from './collision.js';
 import { event_types } from '../base/TileEvent.js';
 import { maps } from '../initializers/maps.js';
 import { climbing_event } from './climb.js';
@@ -99,12 +98,12 @@ export function event_triggering(game, data, event_key) {
                     config_step(data, this_event);
                 }
             );
-        } else if (this_event.type === event_types.COLLISION && !data.waiting_to_change_collision) {
+        } else if (this_event.type === event_types.COLLISION && !data.collision.waiting_to_change_collision) {
             event_queue.add(
                 this_event,
                 data.hero.current_direction,
                 () => {
-                    config_collision_change(data, this_event);
+                    data.collision.config_collision_change(this_event);
                 }
             );
         }

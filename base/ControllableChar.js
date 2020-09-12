@@ -3,8 +3,8 @@ import { reverse_directions } from "../utils.js";
 
 const DEFAULT_SHADOW_ANCHOR_X = 0.45;
 const DEFAULT_SHADOW_ANCHOR_Y = 0.05;
-const DEFAULT_SPRITE_ANCHOR_X = 0;
-const DEFAULT_SPRITE_ANCHOR_Y = 0.8;
+const DEFAULT_SPRITE_ANCHOR_X = 0.50;
+const DEFAULT_SPRITE_ANCHOR_Y = 0.80;
 
 export class ControllableChar {
     constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction) {
@@ -37,6 +37,11 @@ export class ControllableChar {
         this.sprite.base_collider_layer = layer;
         this.sprite.roundPx = true;
         this.sprite.anchor.setTo(anchor_x, anchor_y);
+    }
+
+    reset_anchor() {
+        this.sprite.anchor.x = DEFAULT_SPRITE_ANCHOR_X;
+        this.sprite.anchor.y = DEFAULT_SPRITE_ANCHOR_Y;
     }
 
     set_shadow(key_name, group, layer, shadow_anchor_x = DEFAULT_SHADOW_ANCHOR_X, shadow_anchor_y = DEFAULT_SHADOW_ANCHOR_Y) {

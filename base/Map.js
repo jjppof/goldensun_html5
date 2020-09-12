@@ -12,9 +12,11 @@ import {
     event_types as tile_event_types
 } from './TileEvent.js';
 import { GameEvent } from "./GameEvent.js";
+import * as numbers from "../magic_numbers.js";
 
 export class Map {
     constructor (
+        game,
         name,
         key_name,
         tileset_name,
@@ -23,6 +25,7 @@ export class Map {
         tileset_json_url,
         physics_jsons_url
     ) {
+        this.game = game;
         this.name = name;
         this.key_name = key_name;
         this.tileset_name = tileset_name;
@@ -34,6 +37,9 @@ export class Map {
         this.events = {};
         this.npcs = [];
         this.interactable_objects = [];
+        this.collision_layers_number = this.physics_names.length;
+        this.collision_sprite = this.game.add.sprite(0, 0);
+        this.collision_sprite.width = this.collision_sprite.height = 0;
     }
 
     sort_sprites(data) {
@@ -104,6 +110,27 @@ export class Map {
             Promise.all([load_tilemap_promise, load_image_promise, ...physics_promises]).then(on_complete);
             game.load.start();
         }
+    }
+
+    config_body(collision_obj, map_collider_layer) {
+        this.game.physics.p2.enable(this.collision_sprite, false);
+        this.collision_sprite.body.clearShapes();
+        this.collision_sprite.body.loadPolygon( //load map physics data json files
+            this.physics_names[map_collider_layer], 
+            this.physics_names[map_collider_layer]
+        );
+        this.collision_sprite.body.setCollisionGroup(collision_obj.map_collision_group);
+        this.collision_sprite.body.damping = numbers.MAP_DAMPING;
+        this.collision_sprite.body.angularDamping = numbers.MAP_DAMPING;
+        this.collision_sprite.body.setZeroRotation();
+        this.collision_sprite.body.dynamic = false;
+        this.collision_sprite.body.static = true;
+    }
+
+    config_all_bodies(collision_obj, map_collider_layer) {
+        this.npcs.forEach(npc => npc.config_body(collision_obj));
+        this.interactable_objects.forEach(interactable_obj => interactable_obj.config_body(collision_obj));
+        this.config_body(collision_obj, map_collider_layer);
     }
 
     create_tile_events(raw_property) {
@@ -358,6 +385,8 @@ export class Map {
     unset_map(data) {
         data.underlayer_group.removeAll();
         data.overlayer_group.removeAll();
+
+        this.collision_sprite.body.clearShapes();
 
         let sprites_to_remove = []
         for (let i = 0; i < data.npc_group.children.length; ++i) {

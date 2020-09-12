@@ -1,5 +1,4 @@
 import * as numbers from '../magic_numbers.js';
-import { main_char_list } from '../initializers/main_chars.js';
 import { maps } from '../initializers/maps.js';
 import { event_types, TileEvent } from '../base/TileEvent.js';
 import { get_surroundings, get_opposite_direction, directions, split_direction, reverse_directions } from '../utils.js';
@@ -130,13 +129,13 @@ export function jump_event(game, data, current_event) {
 }
 
 export function set_jump_collision(game, data) {
-    for (let i = 0; i < data.dynamic_jump_events_bodies.length; ++i) {
-        data.dynamic_jump_events_bodies[i].destroy();
+    for (let i = 0; i < data.collision.dynamic_jump_events_bodies.length; ++i) {
+        data.collision.dynamic_jump_events_bodies[i].destroy();
     }
-    data.dynamic_jump_events_bodies = [];
+    data.collision.dynamic_jump_events_bodies = [];
     data.walking_on_pillars_tiles.clear();
-    data.hero.sprite.body.removeCollisionGroup(data.mapCollisionGroup, true);
-    data.map_collider.body.removeCollisionGroup(data.heroCollisionGroup, true);
+    data.hero.sprite.body.removeCollisionGroup(data.collision.map_collision_group, true);
+    maps[data.map_name].collision_sprite.body.removeCollisionGroup(data.collision.hero_collision_group, true);
     for (let event_key in maps[data.map_name].events) {
         for (let j = 0; j < maps[data.map_name].events[event_key].length; ++j) {
             const event = maps[data.map_name].events[event_key][j];
@@ -165,7 +164,7 @@ export function set_jump_collision(game, data) {
                     let body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
                     body.clearShapes();
                     body.setRectangle(maps[data.map_name].sprite.tileWidth, maps[data.map_name].sprite.tileHeight, 0, 0);
-                    body.setCollisionGroup(data.dynamicEventsCollisionGroup);
+                    body.setCollisionGroup(data.collision.dynamic_events_collision_group);
                     body.damping = numbers.MAP_DAMPING;
                     body.angularDamping = numbers.MAP_DAMPING;
                     body.setZeroRotation();
@@ -173,8 +172,8 @@ export function set_jump_collision(game, data) {
                     body.dynamic = false;
                     body.static = true;
                     body.debug = data.hero.sprite.body.debug;
-                    body.collides(data.heroCollisionGroup);
-                    data.dynamic_jump_events_bodies.push(body);
+                    body.collides(data.collision.hero_collision_group);
+                    data.collision.dynamic_jump_events_bodies.push(body);
                 }
             }
         }
@@ -182,12 +181,12 @@ export function set_jump_collision(game, data) {
 }
 
 export function unset_set_jump_collision(data) {
-    data.hero.sprite.body.collides(data.mapCollisionGroup);
-    data.map_collider.body.collides(data.heroCollisionGroup);
-    for (let i = 0; i < data.dynamic_jump_events_bodies.length; ++i) {
-        data.dynamic_jump_events_bodies[i].destroy();
+    data.hero.sprite.body.collides(data.collision.map_collision_group);
+    maps[data.map_name].collision_sprite.body.collides(data.collision.hero_collision_group);
+    for (let i = 0; i < data.collision.dynamic_jump_events_bodies.length; ++i) {
+        data.collision.dynamic_jump_events_bodies[i].destroy();
     }
-    data.dynamic_jump_events_bodies = [];
+    data.collision.dynamic_jump_events_bodies = [];
 }
 
 export function jump_near_collision(game, data, current_event) {
@@ -201,12 +200,12 @@ export function jump_near_collision(game, data, current_event) {
     }
 
     let clear_bodies = () => {
-        data.hero.sprite.body.collides(data.mapCollisionGroup);
-        data.map_collider.body.collides(data.heroCollisionGroup);
-        for (let j = 0; j < data.dynamic_jump_events_bodies.length; ++j) {
-            data.dynamic_jump_events_bodies[j].destroy();
+        data.hero.sprite.body.collides(data.collision.map_collision_group);
+        maps[data.map_name].collision_sprite.body.collides(data.collision.hero_collision_group);
+        for (let j = 0; j < data.collision.dynamic_jump_events_bodies.length; ++j) {
+            data.collision.dynamic_jump_events_bodies[j].destroy();
         }
-        data.dynamic_jump_events_bodies = [];
+        data.collision.dynamic_jump_events_bodies = [];
     };
     let concat_keys = current_pos_key;
     let bodies_positions = [];
@@ -235,8 +234,8 @@ export function jump_near_collision(game, data, current_event) {
         concat_keys.split("-").forEach(key => {
             bodies_position.delete(key);
         });
-        data.hero.sprite.body.removeCollisionGroup(data.mapCollisionGroup, true);
-        data.map_collider.body.removeCollisionGroup(data.heroCollisionGroup, true);
+        data.hero.sprite.body.removeCollisionGroup(data.collision.map_collision_group, true);
+        maps[data.map_name].collision_sprite.body.removeCollisionGroup(data.collision.hero_collision_group, true);
         bodies_position.forEach(position => {
             const pos_array = position.split("_");
             const x_pos = ((pos_array[0] | 0) + .5) * maps[data.map_name].sprite.tileWidth;
@@ -244,7 +243,7 @@ export function jump_near_collision(game, data, current_event) {
             let body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
             body.clearShapes();
             body.setRectangle(maps[data.map_name].sprite.tileWidth, maps[data.map_name].sprite.tileHeight, 0, 0);
-            body.setCollisionGroup(data.dynamicEventsCollisionGroup);
+            body.setCollisionGroup(data.collision.dynamic_events_collision_group);
             body.damping = numbers.MAP_DAMPING;
             body.angularDamping = numbers.MAP_DAMPING;
             body.setZeroRotation();
@@ -252,8 +251,8 @@ export function jump_near_collision(game, data, current_event) {
             body.dynamic = false;
             body.static = true;
             body.debug = data.hero.sprite.body.debug;
-            body.collides(data.heroCollisionGroup);
-            data.dynamic_jump_events_bodies.push(body);
+            body.collides(data.collision.hero_collision_group);
+            data.collision.dynamic_jump_events_bodies.push(body);
         });
     }
     if (!current_event.dynamic && !right_direction && data.walking_on_pillars_tiles.size) {

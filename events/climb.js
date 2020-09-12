@@ -1,5 +1,4 @@
 import { maps } from '../initializers/maps.js';
-import * as collision from '../events/collision.js';
 import * as numbers from '../magic_numbers.js';
 import { set_jump_collision, unset_set_jump_collision } from './jump.js';
 import { directions } from '../utils.js';
@@ -18,7 +17,7 @@ export function climbing_event(game, data, current_event, activation_direction) 
 function start_climbing(game, data, current_event, activation_direction) {
     game.physics.p2.pause();
     if (current_event.change_to_collision_layer !== null) {
-        collision.change_map_body(game, data, current_event.change_to_collision_layer);
+        data.collision.change_map_body(data, current_event.change_to_collision_layer);
     }
     data.on_event = true;
     if (activation_direction === directions.down) {
@@ -80,7 +79,7 @@ function finish_climbing(game, data, current_event, activation_direction) {
             return;
         }
         if (current_event.change_to_collision_layer !== null) {
-            collision.change_map_body(game, data, current_event.change_to_collision_layer);
+            data.collision.change_map_body(data, current_event.change_to_collision_layer);
         }
         data.on_event = true;
         const end_animation = data.hero.play("climb", "end");
@@ -114,7 +113,7 @@ function finish_climbing(game, data, current_event, activation_direction) {
         });
     } else if (activation_direction === directions.down) {
         if (current_event.change_to_collision_layer !== null) {
-            collision.change_map_body(game, data, current_event.change_to_collision_layer);
+            data.collision.change_map_body(data, current_event.change_to_collision_layer);
         }
         data.on_event = true;
         data.hero.play("idle", "up");
@@ -145,10 +144,10 @@ function create_climb_collision_bodies(game, data, current_event) {
         return {x: current_event.origin_interactable_object.current_x + tile_shift.x, y: current_event.origin_interactable_object.current_y + tile_shift.y};
     });
     unset_set_jump_collision(data);
-    data.hero.sprite.body.removeCollisionGroup(data.mapCollisionGroup, true);
-    data.map_collider.body.removeCollisionGroup(data.heroCollisionGroup, true);
-    for (let collide_index in data.interactableObjectCollisionGroups) {
-        data.hero.sprite.body.removeCollisionGroup(data.interactableObjectCollisionGroups[collide_index], true);
+    data.hero.sprite.body.removeCollisionGroup(data.collision.map_collision_group, true);
+    maps[data.map_name].collision_sprite.body.removeCollisionGroup(data.collision.hero_collision_group, true);
+    for (let collide_index in data.collision.interactable_objs_collision_groups) {
+        data.hero.sprite.body.removeCollisionGroup(data.collision.interactable_objs_collision_groups[collide_index], true);
     }
     for (let i = 0; i < postions.length; ++i) {
         const x_pos = (postions[i].x + .5) * maps[data.map_name].sprite.tileWidth;
@@ -156,7 +155,7 @@ function create_climb_collision_bodies(game, data, current_event) {
         let body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
         body.clearShapes();
         body.setRectangle(maps[data.map_name].sprite.tileWidth, maps[data.map_name].sprite.tileHeight, 0, 0);
-        body.setCollisionGroup(data.dynamicEventsCollisionGroup);
+        body.setCollisionGroup(data.collision.dynamic_events_collision_group);
         body.damping = numbers.MAP_DAMPING;
         body.angularDamping = numbers.MAP_DAMPING;
         body.setZeroRotation();
@@ -164,7 +163,7 @@ function create_climb_collision_bodies(game, data, current_event) {
         body.dynamic = false;
         body.static = true;
         body.debug = data.hero.sprite.body.debug;
-        body.collides(data.heroCollisionGroup);
+        body.collides(data.collision.hero_collision_group);
         current_event.origin_interactable_object.custom_data.collision_tiles_bodies.push(body);
     }
 }
@@ -173,14 +172,14 @@ function remove_climb_collision_bodies(data, current_event, collide_with_map = t
     current_event.origin_interactable_object.interactable_object_sprite.send_to_back = false;
     set_jump_collision(game, data);
     if (collide_with_map) {
-        data.hero.sprite.body.collides(data.mapCollisionGroup);
-        data.map_collider.body.collides(data.heroCollisionGroup);
+        data.hero.sprite.body.collides(data.collision.map_collision_group);
+        maps[data.map_name].collision_sprite.body.collides(data.collision.hero_collision_group);
     }
-    for (let collide_index in data.interactableObjectCollisionGroups) {
-        data.hero.sprite.body.removeCollisionGroup(data.interactableObjectCollisionGroups[collide_index], true);
+    for (let collide_index in data.collision.interactable_objs_collision_groups) {
+        data.hero.sprite.body.removeCollisionGroup(data.collision.interactable_objs_collision_groups[collide_index], true);
     }
-    if (data.map_collider_layer in data.interactableObjectCollisionGroups) {
-        data.hero.sprite.body.collides(data.interactableObjectCollisionGroups[data.map_collider_layer]);
+    if (data.map_collider_layer in data.collision.interactable_objs_collision_groups) {
+        data.hero.sprite.body.collides(data.collision.interactable_objs_collision_groups[data.map_collider_layer]);
     }
     let bodies = current_event.origin_interactable_object.custom_data.collision_tiles_bodies;
     for (let i = 0; i < bodies.length; ++i) {

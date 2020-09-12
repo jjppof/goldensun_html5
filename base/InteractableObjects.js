@@ -2,7 +2,7 @@ import { SpriteBase } from "./SpriteBase.js";
 import { maps } from '../initializers/maps.js';
 import { TileEvent, JumpEvent, StairEvent, event_types as tile_event_types } from "./TileEvent.js";
 import * as numbers from '../magic_numbers.js';
-import { directions, get_surroundings } from "../utils.js";
+import { directions, get_surroundings, mount_collision_polygon } from "../utils.js";
 
 export const interactable_object_interaction_types = {
     ONCE: "once",
@@ -68,8 +68,8 @@ export class InteractableObjects {
     }
 
     change_collider_layer(data, destination_collider_layer) {
-        this.interactable_object_sprite.body.removeCollisionGroup(data.interactableObjectCollisionGroups[this.base_collider_layer]);
-        this.interactable_object_sprite.body.setCollisionGroup(data.interactableObjectCollisionGroups[destination_collider_layer]);
+        this.interactable_object_sprite.body.removeCollisionGroup(data.collision.interactable_objs_collision_groups[this.base_collider_layer]);
+        this.interactable_object_sprite.body.setCollisionGroup(data.collision.interactable_objs_collision_groups[destination_collider_layer]);
         this.base_collider_layer = destination_collider_layer;
         this.interactable_object_sprite.base_collider_layer = destination_collider_layer;
         this.collision_change_functions.forEach(f => { f(); });
@@ -87,7 +87,7 @@ export class InteractableObjects {
         this.events.delete(id);
     }
 
-    creating_blocking_stair_block() {
+    creating_blocking_stair_block(collision_obj) {
         const target_layer = this.base_collider_layer + this.custom_data.block_stair_collider_layer_shift;
         const x_pos = (this.current_x + .5) * maps[this.data.map_name].sprite.tileWidth;
         const y_pos = (this.current_y + 1.5) * maps[this.data.map_name].sprite.tileHeight - 4;
@@ -95,10 +95,10 @@ export class InteractableObjects {
         body.clearShapes();
         const width = this.data.interactable_objects_db[this.key_name].body_radius * 2;
         body.setRectangle(width, width, 0, 0);
-        if (!(target_layer in this.data.interactableObjectCollisionGroups)) {
-            this.data.interactableObjectCollisionGroups[target_layer] = this.game.physics.p2.createCollisionGroup();
+        if (!(target_layer in this.data.collision.interactable_objs_collision_groups)) {
+            this.data.collision.interactable_objs_collision_groups[target_layer] = this.game.physics.p2.createCollisionGroup();
         }
-        body.setCollisionGroup(this.data.interactableObjectCollisionGroups[target_layer]);
+        body.setCollisionGroup(this.data.collision.interactable_objs_collision_groups[target_layer]);
         body.damping = numbers.MAP_DAMPING;
         body.angularDamping = numbers.MAP_DAMPING;
         body.setZeroRotation();
@@ -106,7 +106,7 @@ export class InteractableObjects {
         body.dynamic = false;
         body.static = true;
         body.debug = this.data.hero.sprite.body.debug;
-        body.collides(this.data.heroCollisionGroup);
+        body.collides(collision_obj.hero_collision_group);
         this.custom_data.blocking_stair_block = body;
     }
 
@@ -296,5 +296,30 @@ export class InteractableObjects {
             this.collision_change_functions.push(event_data.collision_change_function.bind(null, new_event));
         });
         this.events_info[event_info.type] = event_info;
+    }
+
+    config_body(collision_obj) {
+        if (this.data.interactable_objects_db[this.key_name].body_radius === 0) return;
+        const collision_groups = collision_obj.interactable_objs_collision_groups;
+        this.game.physics.p2.enable(this.interactable_object_sprite, false);
+        this.interactable_object_sprite.anchor.y = this.data.interactable_objects_db[this.key_name].anchor_y; //Important to be after the previous command
+        this.interactable_object_sprite.body.clearShapes();
+        const width = this.data.interactable_objects_db[this.key_name].body_radius << 1;
+        const polygon = mount_collision_polygon(width, -(width >> 1), this.data.interactable_objects_db[this.key_name].collision_body_bevel);
+        this.interactable_object_sprite.body.addPolygon({
+                optimalDecomp: false,
+                skipSimpleCheck: true,
+                removeCollinearPoints: false
+        }, polygon);
+        this.interactable_object_sprite.body.setCollisionGroup(collision_groups[this.base_collider_layer]);
+        this.interactable_object_sprite.body.damping = 1;
+        this.interactable_object_sprite.body.angularDamping = 1;
+        this.interactable_object_sprite.body.setZeroRotation();
+        this.interactable_object_sprite.body.fixedRotation = true;
+        this.interactable_object_sprite.body.dynamic = false;
+        this.interactable_object_sprite.body.static = true;
+        if (this.custom_data.block_stair_collider_layer_shift !== undefined) {
+            this.creating_blocking_stair_block(collision_obj);
+        }
     }
 }

@@ -1,11 +1,4 @@
-import { main_char_list } from '../initializers/main_chars.js';
 import { maps } from '../initializers/maps.js';
-import {
-    config_physics_for_npcs,
-    config_physics_for_map,
-    config_collisions,
-    config_physics_for_interactable_objects
-} from '../physics/collision_bodies.js';
 import * as numbers from '../magic_numbers.js';
 import { reverse_directions } from '../utils.js';
 
@@ -69,10 +62,9 @@ async function change_map(game, data, current_event) {
     if (game.camera.bounds.height < numbers.GAME_HEIGHT) {
         game.camera.bounds.height = numbers.GAME_HEIGHT;
     }
-    config_physics_for_npcs(game, data);
-    config_physics_for_interactable_objects(game, data);
-    config_physics_for_map(game, data, false);
-    config_collisions(data);
+    data.collision.config_collision_groups(maps[data.map_name]);
+    maps[data.map_name].config_all_bodies(data.collision, data.map_collider_layer);
+    data.collision.config_collisions(maps[data.map_name], data.map_collider_layer, data.npc_group);
     game.physics.p2.updateBoundsCollisionGroup();
     data.debug.update_debug_physics(data.hero.sprite.body.debug);
     data.hero.sprite.body.x = current_event.x_target * maps[data.map_name].sprite.tileWidth;

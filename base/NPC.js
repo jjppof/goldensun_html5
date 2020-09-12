@@ -3,6 +3,7 @@ import {
     BattleEvent,
     event_types as game_event_types
 } from "./GameEvent.js";
+import { mount_collision_polygon } from '../utils.js';
 
 export class NPC_Sprite extends SpriteBase {
     constructor (key_name, actions) {
@@ -113,5 +114,25 @@ export class NPC {
         }
         this.npc_shadow_sprite.x = this.npc_sprite.x;
         this.npc_shadow_sprite.y = this.npc_sprite.y;
+    }
+
+    config_body(collision_obj) {
+        this.game.physics.p2.enable(this.npc_sprite, false);
+        this.npc_sprite.anchor.y = this.data.npc_db[this.key_name].anchor_y; //Important to be after the previous command
+        this.npc_sprite.body.clearShapes();
+        const width = this.data.npc_db[this.key_name].body_radius << 1;
+        const polygon = mount_collision_polygon(width, -(width >> 1), this.data.npc_db[this.key_name].collision_body_bevel);
+        this.npc_sprite.body.addPolygon({
+                optimalDecomp: false,
+                skipSimpleCheck: true,
+                removeCollinearPoints: false
+        }, polygon);
+        this.npc_sprite.body.setCollisionGroup(collision_obj.npc_collision_groups[this.base_collider_layer]);
+        this.npc_sprite.body.damping = 1;
+        this.npc_sprite.body.angularDamping = 1;
+        this.npc_sprite.body.setZeroRotation();
+        this.npc_sprite.body.fixedRotation = true;
+        this.npc_sprite.body.dynamic = false;
+        this.npc_sprite.body.static = true;
     }
 }

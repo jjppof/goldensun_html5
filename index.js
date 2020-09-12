@@ -7,14 +7,13 @@ import { initialize_enemies, enemies_list } from './initializers/enemies.js';
 import { initialize_maps, load_maps, maps } from './initializers/maps.js';
 import { set_npc_event, trigger_npc_dialog } from './events/npc.js';
 import { do_step } from './events/step.js';
-import { do_collision_change } from './events/collision.js';
-import * as physics from './physics/collision_bodies.js';
 import { initialize_menu } from './screens/menu.js';
 import { TileEvent } from './base/TileEvent.js';
 import { Debug } from './debug.js';
 import { event_triggering } from './events/triggering.js';
 import { load_all } from './initializers/assets_loader.js';
 import { config_hero } from './initializers/hero.js';
+import { Collision } from './base/Collision.js';
 
 //debugging porpouses
 window.maps = maps;
@@ -50,8 +49,6 @@ class GoldenSun {
         this.teleporting = false;
         this.waiting_to_step = false;
         this.step_event_data = {};
-        this.waiting_to_change_collision = false;
-        this.collision_event_data = {};
         this.menu_open = false;
         this.in_battle = false;
         this.battle_stage = null;
@@ -63,11 +60,8 @@ class GoldenSun {
         this.fullscreen = false;
         this.scale_factor = 1;
 
-        //collision
-        this.npcCollisionGroups = {};
-        this.interactableObjectCollisionGroups = {};
+        //jump
         this.walking_on_pillars_tiles = new Set();
-        this.dynamic_jump_events_bodies = [];
 
         //npc
         this.npc_event = false;
@@ -107,7 +101,7 @@ class GoldenSun {
         const load_maps_promise = new Promise(resolve => {
             load_maps_promise_resolve = resolve;
         });
-        initialize_maps(this.maps_db);
+        initialize_maps(this.game, this.maps_db);
         load_maps(this.game, load_maps_promise_resolve);
         await load_maps_promise;
 
@@ -201,13 +195,12 @@ class GoldenSun {
         await this.initialize_game_data();
 
         config_hero(this.game, this);
-        physics.config_world_physics(this.game);
-        physics.config_physics_for_hero(this.game, this);
-        physics.config_physics_for_npcs(this.game, this);
-        physics.config_physics_for_interactable_objects(this.game, this);
-        this.dynamicEventsCollisionGroup = this.game.physics.p2.createCollisionGroup();
-        physics.config_physics_for_map(this.game, this);
-        physics.config_collisions(this);
+
+        this.collision = new Collision(this.game, this.hero);
+        this.hero.config_body(this.collision);
+        this.collision.config_collision_groups(maps[data.map_name]);
+        maps[data.map_name].config_all_bodies(this.collision, this.map_collider_layer);
+        this.collision.config_collisions(maps[data.map_name], this.map_collider_layer, this.npc_group);
         this.game.physics.p2.updateBoundsCollisionGroup();
 
         this.initialize_game_main_controls();
@@ -290,8 +283,8 @@ class GoldenSun {
             if (this.waiting_to_step) { //step event
                 do_step(this);
             }
-            if (this.waiting_to_change_collision) { //change collision pattern layer event
-                do_collision_change(this.game, this);
+            if (this.collision.waiting_to_change_collision) { //change collision pattern layer event
+                this.collision.do_collision_change(this);
             }
 
             //check if the actual tile has an event
@@ -304,7 +297,7 @@ class GoldenSun {
 
             this.hero.update(maps[this.map_name]); //update hero position/velocity/sprite
 
-            this.map_collider.body.velocity.y = this.map_collider.body.velocity.x = 0; //fixes map body
+            maps[data.map_name].collision_sprite.body.velocity.y = maps[data.map_name].collision_sprite.body.velocity.x = 0; //fixes map body
 
             for (let i = 0; i < maps[this.map_name].npcs.length; ++i) { //updates npcs' movement
                 const npc = maps[this.map_name].npcs[i];

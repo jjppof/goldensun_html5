@@ -2,10 +2,11 @@ import { Map } from "../base/Map.js";
 
 export let maps = {};
 
-export function initialize_maps(maps_db) {
+export function initialize_maps(game, maps_db) {
     for (let i = 0; i < maps_db.length; ++i) {
         const map_data = maps_db[i];
         maps[map_data.key_name] = new Map(
+            game,
             map_data.name,
             map_data.key_name,
             map_data.tileset_key_name,
