@@ -25,6 +25,14 @@ const STANDBY_COUNT_SHIFT_Y = [8, 16];
 const SEPARATOR_WIDTH = 3;
 const INITIAL_PADDING__DJINNI_X = 7;
 
+/*A window displaying the character's name and HP/PP
+The normal version is used in the field menu
+The compacted version and Djinn information are displayed in battle
+
+Input: game [Phaser:Game] - Reference to the running game object
+       data [GoldenSun] - Reference to the main JS Class instance
+       djinn_info [boolean] - If true, will display Djinn on standby
+       compact [boolean] - If true, displays the compacted version*/
 export class CharsStatusWindow {
     constructor(game, data, djinni_info = false, compact = false) {
         this.game = game;
@@ -59,10 +67,14 @@ export class CharsStatusWindow {
         }
     }
 
+    /*Updates the window's position
+
+    Input: force [boolean] = If true, forces an update*/
     update_position(force = false) {
         this.status_window.update(force);
     }
 
+    /*Sets the characters' information and creates the graphics*/
     set_chars_info() {
         const chars_list = party_data.members.slice(0, MAX_CHARS_NUMBER);
         for (let i = 0; i < chars_list.length; ++i) {
@@ -107,6 +119,7 @@ export class CharsStatusWindow {
         }
     }
 
+    /*Updates the information displayed*/
     update_chars_info() {
         let show_djinn_info = false;
         if (this.djinni_info) {
@@ -182,6 +195,9 @@ export class CharsStatusWindow {
         }
     }
 
+    /*Toggles the visiblity for all information relative to a sprite
+
+    Input: info_sprite [object] - The sprite to change*/
     toggle_char_info(info_sprite) {
         info_sprite.name.text.visible = !info_sprite.name.text.visible;
         info_sprite.name.shadow.visible = !info_sprite.name.shadow.visible;
@@ -199,14 +215,17 @@ export class CharsStatusWindow {
         info_sprite.pp_bar_damage_graphics.visible = !info_sprite.pp_bar_damage_graphics.visible;
     }
 
+    /*Displays this window*/
     show() {
         this.status_window.show();
     }
 
+    /*Closes this window*/
     close() {
         this.status_window.close();
     }
 
+    /*Destroys this window*/
     destroy() {
         this.status_window.destroy(false);
     }
