@@ -74,7 +74,8 @@ export class CharsStatusWindow {
         this.status_window.update(force);
     }
 
-    /*Sets the characters' information and creates the graphics*/
+    /*Sets the characters' information and creates the graphics
+    Removes sprites from the Window group and gives them to the internal group*/
     set_chars_info() {
         const chars_list = party_data.members.slice(0, MAX_CHARS_NUMBER);
         for (let i = 0; i < chars_list.length; ++i) {
@@ -88,8 +89,11 @@ export class CharsStatusWindow {
             info_sprites_obj.name = this.status_window.set_text_in_position(char.name, base_x_pos, this.name_y, false, false, this.status_window.font_color, this.compact);
             let y_pos = this.name_y + numbers.FONT_SIZE;
             if(info_sprites_obj.name.text_bg){
+                this.status_window.group.remove(info_sprites_obj.name.text_bg,false,true);
                 info_sprites_obj.group.add(info_sprites_obj.name.text_bg);
             }
+            this.status_window.group.remove(info_sprites_obj.name.shadow,false,true);
+            this.status_window.group.remove(info_sprites_obj.name.text,false,true);
             info_sprites_obj.group.add(info_sprites_obj.name.shadow);
             info_sprites_obj.group.add(info_sprites_obj.name.text);
 
@@ -99,17 +103,17 @@ export class CharsStatusWindow {
             info_sprites_obj.hp_bar_graphics.beginFill(STATUS_BAR_COLOR_GOOD, 1);
             info_sprites_obj.hp_bar_graphics.drawRect(0, 0, STATUS_BAR_WIDTH, STATUS_BAR_HEIGHT);
             info_sprites_obj.hp_bar_graphics.endFill();
-            this.status_window.group.add(info_sprites_obj.hp_bar_graphics);
             info_sprites_obj.group.add(info_sprites_obj.hp_bar_graphics);
 
             info_sprites_obj.hp_bar_damage_graphics = this.game.add.graphics(0, 0);
             info_sprites_obj.hp_bar_damage_graphics.default_y = y_pos_bar;
-            this.status_window.group.add(info_sprites_obj.hp_bar_damage_graphics);
             info_sprites_obj.group.add(info_sprites_obj.hp_bar_damage_graphics);
 
             info_sprites_obj.hp_header = this.status_window.set_text_in_position("HP", base_x_pos, y_pos);
             const x_number_pos = base_x_pos + STAT_X;
             info_sprites_obj.hp = this.status_window.set_text_in_position(char.current_hp.toString(), x_number_pos, y_pos, true);
+            this.status_window.group.remove(info_sprites_obj.hp_header.shadow,false,true);
+            this.status_window.group.remove(info_sprites_obj.hp_header.text,false,true);
             info_sprites_obj.group.add(info_sprites_obj.hp_header.shadow);
             info_sprites_obj.group.add(info_sprites_obj.hp_header.text);
 
@@ -119,19 +123,23 @@ export class CharsStatusWindow {
             info_sprites_obj.pp_bar_graphics.beginFill(STATUS_BAR_COLOR_GOOD, 1);
             info_sprites_obj.pp_bar_graphics.drawRect(0, 0, STATUS_BAR_WIDTH, STATUS_BAR_HEIGHT);
             info_sprites_obj.pp_bar_graphics.endFill();
-            this.status_window.group.add(info_sprites_obj.pp_bar_graphics);
             info_sprites_obj.group.add(info_sprites_obj.pp_bar_graphics);
 
             info_sprites_obj.pp_bar_damage_graphics = this.game.add.graphics(0, 0);
             info_sprites_obj.pp_bar_damage_graphics.default_y = y_pos_bar;
-            this.status_window.group.add(info_sprites_obj.pp_bar_damage_graphics);
             info_sprites_obj.group.add(info_sprites_obj.pp_bar_damage_graphics);
 
             info_sprites_obj.pp_header = this.status_window.set_text_in_position("PP", base_x_pos, y_pos);
             info_sprites_obj.pp = this.status_window.set_text_in_position(char.current_pp.toString(), x_number_pos, y_pos, true);
+            this.status_window.group.remove(info_sprites_obj.pp_header.shadow,false,true);
+            this.status_window.group.remove(info_sprites_obj.pp_header.text,false,true);
             info_sprites_obj.group.add(info_sprites_obj.pp_header.shadow);
             info_sprites_obj.group.add(info_sprites_obj.pp_header.text);
 
+            this.status_window.group.remove(info_sprites_obj.hp.shadow,false,true);
+            this.status_window.group.remove(info_sprites_obj.hp.text,false,true);
+            this.status_window.group.remove(info_sprites_obj.hp.shadow,false,true);
+            this.status_window.group.remove(info_sprites_obj.hp.text,false,true);
             info_sprites_obj.group.add(info_sprites_obj.hp.shadow);
             info_sprites_obj.group.add(info_sprites_obj.hp.text);
             info_sprites_obj.group.add(info_sprites_obj.pp.shadow);
