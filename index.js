@@ -55,7 +55,6 @@ class GoldenSun {
         this.battle_stage = null;
         this.created = false;
         this.in_dialog = false;
-        this.frame_counter = 0;
 
         //game objects
         this.hero = null;
@@ -350,16 +349,14 @@ class GoldenSun {
         } else if (this.in_battle) {
             this.battle_instance.update();
         }
-
-        this.frame_counter = (this.frame_counter + 1) % numbers.TARGET_FPS;
     }
 
     render() {
         this.debug.set_debug_info();
-        if (this.frame_counter%8 === 0) {
+        if (this.game.time.frames%8 === 0) {
             this.debug.fill_key_debug_table();
         }
-        if (this.frame_counter%(numbers.TARGET_FPS >> 1) === 0) {
+        if (this.game.time.frames%(numbers.TARGET_FPS >> 1) === 0) {
             this.debug.fill_stats_debug_table();
         }
     }
