@@ -82,21 +82,12 @@ export class CharsStatusWindow {
             let info_sprites_obj = {};
             const char = chars_list[i];
             const base_x_pos =  i * (WIDTH_PER_CHAR + SEPARATOR_WIDTH) + INITIAL_PADDING_X;
+            const group_key = char.key_name + "_status";
 
-            info_sprites_obj.group = this.game.add.group();
-            this.status_window.group.add(info_sprites_obj.group)
+            info_sprites_obj.group = this.status_window.define_internal_group(group_key);
 
-            info_sprites_obj.name = this.status_window.set_text_in_position(char.name, base_x_pos, this.name_y, false, false, this.status_window.font_color, this.compact);
+            info_sprites_obj.name = this.status_window.set_text_in_position(char.name, base_x_pos, this.name_y, false, false, this.status_window.font_color, this.compact, group_key);
             let y_pos = this.name_y + numbers.FONT_SIZE;
-            if(info_sprites_obj.name.text_bg){
-                this.status_window.group.remove(info_sprites_obj.name.text_bg,false,true);
-                info_sprites_obj.group.add(info_sprites_obj.name.text_bg);
-            }
-            this.status_window.group.remove(info_sprites_obj.name.shadow,false,true);
-            this.status_window.group.remove(info_sprites_obj.name.text,false,true);
-            info_sprites_obj.group.add(info_sprites_obj.name.shadow);
-            info_sprites_obj.group.add(info_sprites_obj.name.text);
-
 
             let y_pos_bar = y_pos + numbers.FONT_SIZE - STATUS_BAR_HEIGHT;
             info_sprites_obj.hp_bar_graphics = this.game.add.graphics(base_x_pos, y_pos_bar);
@@ -109,13 +100,9 @@ export class CharsStatusWindow {
             info_sprites_obj.hp_bar_damage_graphics.default_y = y_pos_bar;
             info_sprites_obj.group.add(info_sprites_obj.hp_bar_damage_graphics);
 
-            info_sprites_obj.hp_header = this.status_window.set_text_in_position("HP", base_x_pos, y_pos);
+            info_sprites_obj.hp_header = this.status_window.set_text_in_position("HP", base_x_pos, y_pos, false, false, this.status_window.font_color, false, group_key);
             const x_number_pos = base_x_pos + STAT_X;
-            info_sprites_obj.hp = this.status_window.set_text_in_position(char.current_hp.toString(), x_number_pos, y_pos, true);
-            this.status_window.group.remove(info_sprites_obj.hp_header.shadow,false,true);
-            this.status_window.group.remove(info_sprites_obj.hp_header.text,false,true);
-            info_sprites_obj.group.add(info_sprites_obj.hp_header.shadow);
-            info_sprites_obj.group.add(info_sprites_obj.hp_header.text);
+            info_sprites_obj.hp = this.status_window.set_text_in_position(char.current_hp.toString(), x_number_pos, y_pos, true, false, this.status_window.font_color, false, group_key);
 
             y_pos = this.name_y + 2 * numbers.FONT_SIZE;
             y_pos_bar = y_pos + numbers.FONT_SIZE - STATUS_BAR_HEIGHT;
@@ -129,23 +116,10 @@ export class CharsStatusWindow {
             info_sprites_obj.pp_bar_damage_graphics.default_y = y_pos_bar;
             info_sprites_obj.group.add(info_sprites_obj.pp_bar_damage_graphics);
 
-            info_sprites_obj.pp_header = this.status_window.set_text_in_position("PP", base_x_pos, y_pos);
-            info_sprites_obj.pp = this.status_window.set_text_in_position(char.current_pp.toString(), x_number_pos, y_pos, true);
-            this.status_window.group.remove(info_sprites_obj.pp_header.shadow,false,true);
-            this.status_window.group.remove(info_sprites_obj.pp_header.text,false,true);
-            info_sprites_obj.group.add(info_sprites_obj.pp_header.shadow);
-            info_sprites_obj.group.add(info_sprites_obj.pp_header.text);
+            info_sprites_obj.pp_header = this.status_window.set_text_in_position("PP", base_x_pos, y_pos, false, false, this.status_window.font_color, false, group_key);
+            info_sprites_obj.pp = this.status_window.set_text_in_position(char.current_pp.toString(), x_number_pos, y_pos, true, false, this.status_window.font_color, false, group_key);
 
-            this.status_window.group.remove(info_sprites_obj.hp.shadow,false,true);
-            this.status_window.group.remove(info_sprites_obj.hp.text,false,true);
-            this.status_window.group.remove(info_sprites_obj.hp.shadow,false,true);
-            this.status_window.group.remove(info_sprites_obj.hp.text,false,true);
-            info_sprites_obj.group.add(info_sprites_obj.hp.shadow);
-            info_sprites_obj.group.add(info_sprites_obj.hp.text);
-            info_sprites_obj.group.add(info_sprites_obj.pp.shadow);
-            info_sprites_obj.group.add(info_sprites_obj.pp.text);
-
-            info_sprites_obj.visible = true;
+            info_sprites_obj.group.visible = true;
 
             this.info_sprites[char.key_name] = info_sprites_obj;
         }

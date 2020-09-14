@@ -224,6 +224,15 @@ export class Window {
         this.group.y = (relative ? this.game.camera.y : 0) + this.y;
     }
 
+    /*Creates an internal group
+    This is used to attach other sprite groups to the window
+    
+    Input: key [string] - The group's key
+           position [array] - Contains the new group's x and y (Optional)
+                x [number] - The new group's x
+                y [number] - The new group's y
+    
+    Output: [Phaser:Group]*/
     define_internal_group(key, position = {}) {
         let internal_group = this.game.add.group();
         this.destroy_internal_group(key);
@@ -235,12 +244,24 @@ export class Window {
             internal_group.y = position.y;
         }
         this.group.add(internal_group);
+        return internal_group;
     }
 
+    /*Returns the chosen internal group
+
+    Input: key [string] - The group's key
+    
+    Output: [Phaser:Group]*/
     get_internal_group(key) {
         return this.internal_groups[key];
     }
 
+    /*Adds a sprite to an internal group
+
+    Input: key [string] - The group's key
+           sprite [Phaser:Sprite] - The sprite to add
+           
+    Output: [boolean] - True if the group exists, false otherwise*/
     add_to_internal_group(key, sprite) {
         if (key in this.internal_groups) {
             this.internal_groups[key].add(sprite);
@@ -249,12 +270,20 @@ export class Window {
         return false;
     }
 
+    /*Destroys an internal group and its elements
+    
+    Input: key [string] - The group's keys*/
     destroy_internal_group(key) {
         if (key in this.internal_groups && this.internal_groups[key]) {
             this.internal_groups[key].destroy();
         }
     }
 
+    /*Displays this window
+
+    Input: show_callback [function] - Callback function (Optional)
+           animate [boolean] - If true, plays an animation
+           close_callback [function] - Callback function (Optional)*/
     show(show_callback, animate = true, close_callback = undefined) {
         this.group.alpha = 1;
         this.group.x = this.game.camera.x + this.x;
@@ -419,6 +448,7 @@ export class Window {
            is_center_pos [boolean] - If true, the text will be centered
            color [number] - The text's desired color
            with_bg [boolean] - If true, gives the text a background
+           internal_group_key [string] - If this exists, the text will belong to that group
 
     Output: text [Phaser:Sprite] - The text sprite
             shadow [Phaser:Sprite] - The text's shadow
