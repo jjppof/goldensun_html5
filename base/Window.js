@@ -42,6 +42,7 @@ export class Window {
         this.lines_sprites = [];
 
         this.extra_sprites = [];
+        this.internal_groups = {};
     }
 
     /*Removes existing separator graphics*/
@@ -223,6 +224,37 @@ export class Window {
         this.group.y = (relative ? this.game.camera.y : 0) + this.y;
     }
 
+    define_internal_group(key, position = {}) {
+        let internal_group = this.game.add.group();
+        this.destroy_internal_group(key);
+        this.internal_groups[key] = internal_group;
+        if (position.x !== undefined) {
+            internal_group.x = position.x;
+        }
+        if (position.y !== undefined) {
+            internal_group.y = position.y;
+        }
+        this.group.add(internal_group);
+    }
+
+    get_internal_group(key) {
+        return this.internal_groups[key];
+    }
+
+    add_to_internal_group(key, sprite) {
+        if (key in this.internal_groups) {
+            this.internal_groups[key].add(sprite);
+            return true;
+        }
+        return false;
+    }
+
+    destroy_internal_group(key) {
+        if (key in this.internal_groups && this.internal_groups[key]) {
+            this.internal_groups[key].destroy();
+        }
+    }
+
     show(show_callback, animate = true, close_callback = undefined) {
         this.group.alpha = 1;
         this.group.x = this.game.camera.x + this.x;
@@ -260,8 +292,15 @@ export class Window {
     /*Adds a sprite to the group
     
     Input: sprite [Phaser:Sprite] - The sprite to be added*/
-    add_sprite_to_group(sprite) {
-        this.group.add(sprite);
+    add_sprite_to_group(sprite, internal_group_key) {
+        let group = this.group;
+        if (internal_group_key !== undefined) {
+            const internal_group = this.get_internal_group(internal_group_key);
+            if (internal_group) {
+                group = internal_group;
+            }
+        }
+        group.add(sprite);
         this.extra_sprites.push(sprite);
     }
 
@@ -271,8 +310,15 @@ export class Window {
            key [string] = The key for the sprite
            color [number] = The color palette to be used
            frame [string|number] = The frame value (spritesheets only)*/
-    create_at_group(x, y, key, color, frame) {
-        let sprite = this.group.create(x, y, key, frame);
+    create_at_group(x, y, key, color, frame, internal_group_key) {
+        let group = this.group;
+        if (internal_group_key !== undefined) {
+            const internal_group = this.get_internal_group(internal_group_key);
+            if (internal_group) {
+                group = internal_group;
+            }
+        }
+        let sprite = group.create(x, y, key, frame);
         if (color !== undefined) {
             sprite.tint = color;
         }
@@ -379,7 +425,7 @@ export class Window {
             right_align [boolean] - The input value
             initial_x [number] - The text's x value
             text_bg [Phaser:Sprite] - The text's background*/
-    set_text_in_position(text, x_pos, y_pos, right_align = false, is_center_pos = false, color = this.font_color, with_bg = false) {
+    set_text_in_position(text, x_pos, y_pos, right_align = false, is_center_pos = false, color = this.font_color, with_bg = false, internal_group_key = undefined) {
         let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', text, numbers.FONT_SIZE);
         let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, 'gs-bmp-font', text, numbers.FONT_SIZE);
         if (is_center_pos) {
@@ -398,7 +444,9 @@ export class Window {
             text_bg.beginFill(this.color, 1);
             text_bg.drawRect(0, 0, text_sprite.width + 3, numbers.FONT_SIZE);
             text_bg.endFill();
-            this.group.add(text_bg);
+            if (internal_group_key === undefined || !this.add_to_internal_group(internal_group_key, text_bg)) {
+                this.group.add(text_bg);
+            }
         }
 
         this.remove_smooth(text_sprite);
@@ -406,8 +454,14 @@ export class Window {
         this.remove_smooth(text_sprite_shadow);
         text_sprite_shadow.tint = 0x0;
 
-        this.group.add(text_sprite_shadow);
-        this.group.add(text_sprite);
+        let added_to_internal = false;
+        if (internal_group_key !== undefined) {
+            added_to_internal = this.add_to_internal_group(internal_group_key, text_sprite_shadow) && this.add_to_internal_group(internal_group_key, text_sprite);
+        }
+        if (!added_to_internal) {
+            this.group.add(text_sprite_shadow);
+            this.group.add(text_sprite);
+        }
 
         return {text: text_sprite, shadow: text_sprite_shadow, right_align: right_align, initial_x: x_pos, text_bg: text_bg};
     }
@@ -522,7 +576,7 @@ export class Window {
         }
     }
 
-    /*Destroys an object in the window
+    /*Destroys the main group of the window
 
     Input: animate [boolean] - Plays a fading animation if true
            destroy_callbcak [function] - Callback function (Optional)*/
@@ -532,6 +586,7 @@ export class Window {
                 this.unset_page_indicator();
             }
             this.group.destroy();
+            this.internal_groups = {};
             if (destroy_callback !== undefined) destroy_callback();
         }
         if (animate) {
