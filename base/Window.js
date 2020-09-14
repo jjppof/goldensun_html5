@@ -235,6 +235,7 @@ export class Window {
             internal_group.y = position.y;
         }
         this.group.add(internal_group);
+        return internal_group;
     }
 
     get_internal_group(key) {
