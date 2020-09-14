@@ -84,6 +84,10 @@ export class Map {
         });
     }
 
+    freeze_body() {
+        this.collision_sprite.body.velocity.y = this.collision_sprite.body.velocity.x = 0; //fixes map body
+    }
+
     load_map_assets(game, force_load, on_complete) {
         let load_tilemap_promise_resolve;
         let load_tilemap_promise = new Promise(resolve => {
@@ -284,7 +288,7 @@ export class Map {
             await new Promise(resolve => {
                 interactable_obj_sprite_info.loadSpritesheets(game, true, () => {
                     interactable_object.initial_config(this.sprite);
-                    interactable_object.initialize_related_events(this.events, this.key_name);
+                    interactable_object.initialize_related_events(this.events, this);
                     resolve();
                 });
             });
@@ -380,6 +384,8 @@ export class Map {
         this.config_layers(data);
         await this.config_interactable_object(game, data);
         await this.config_npc(game, data);
+
+        return this;
     }
 
     unset_map(data) {

@@ -4,8 +4,8 @@ import { is_close, directions, reverse_directions } from '../utils.js';
 
 export function trigger_npc_dialog(game, data) {
     if (!data.in_dialog && !data.menu_open) {
-        for (let i = 0; i < maps[data.map_name].npcs.length; ++i) {
-            let npc = maps[data.map_name].npcs[i];
+        for (let i = 0; i < data.map.npcs.length; ++i) {
+            let npc = data.map.npcs[i];
             let is_close_check = is_close(
                 data.hero.current_direction,
                 data.hero.sprite.x,

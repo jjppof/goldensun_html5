@@ -2,7 +2,6 @@ import { jump_event, jump_near_collision } from './jump.js';
 import { set_door_event } from './door.js';
 import { config_step } from './step.js';
 import { event_types } from '../base/TileEvent.js';
-import { maps } from '../initializers/maps.js';
 import { climbing_event } from './climb.js';
 
 const EVENT_TIME = 350;
@@ -50,8 +49,8 @@ export function fire_event(game, data, current_event, this_activation_direction)
 
 export function event_triggering(game, data, event_key) {
     let event_queue = new EventQueue();
-    for (let i = 0; i < maps[data.map_name].events[event_key].length; ++i) {
-        const this_event = maps[data.map_name].events[event_key][i];
+    for (let i = 0; i < data.map.events[event_key].length; ++i) {
+        const this_event = data.map.events[event_key][i];
         if (!this_event.activation_collision_layers.includes(data.map_collider_layer)) continue;
         if (this_event.type === event_types.JUMP) {
             jump_near_collision(game, data, this_event);

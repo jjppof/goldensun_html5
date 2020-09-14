@@ -14,13 +14,11 @@ export function set_door_event(game, data, current_event) {
             data.teleporting = false;
             return;
         }
-        data.hero.sprite.loadTexture(data.hero_name + "_walk");
-        data.hero.sprite_info.setAnimation(data.hero.sprite, "walk");
-        data.hero.sprite.animations.play("walk_up");
+        data.hero.play("walk", "up");
         open_door(data, current_event);
         game.physics.p2.pause();
         const time = 400;
-        const tween_x = maps[data.map_name].sprite.tileWidth * (current_event.x + 0.5);
+        const tween_x = data.map.sprite.tileWidth * (current_event.x + 0.5);
         const tween_y = data.hero.sprite.y - 15;
         game.add.tween(data.hero.shadow).to({
             x: tween_x,
@@ -49,12 +47,12 @@ function camera_fade_in(game, data, current_event) {
 }
 
 async function change_map(game, data, current_event) {
-    maps[data.map_name].unset_map(data);
-    data.map_name = current_event.target;
+    data.map.unset_map(data);
+    const next_map_key_name = current_event.target;
     data.map_collider_layer = current_event.dest_collider_layer;
     data.hero.shadow.base_collider_layer = data.map_collider_layer;
     data.hero.sprite.base_collider_layer = data.map_collider_layer;
-    await maps[data.map_name].mount_map(game, data);
+    data.map = await maps[next_map_key_name].mount_map(game, data);
     game.camera.setBoundsToWorld();
     if (game.camera.bounds.width < numbers.GAME_WIDTH) {
         game.camera.bounds.width = numbers.GAME_WIDTH;
@@ -62,20 +60,20 @@ async function change_map(game, data, current_event) {
     if (game.camera.bounds.height < numbers.GAME_HEIGHT) {
         game.camera.bounds.height = numbers.GAME_HEIGHT;
     }
-    data.collision.config_collision_groups(maps[data.map_name]);
-    maps[data.map_name].config_all_bodies(data.collision, data.map_collider_layer);
-    data.collision.config_collisions(maps[data.map_name], data.map_collider_layer, data.npc_group);
+    data.collision.config_collision_groups(data.map);
+    data.map.config_all_bodies(data.collision, data.map_collider_layer);
+    data.collision.config_collisions(data.map, data.map_collider_layer, data.npc_group);
     game.physics.p2.updateBoundsCollisionGroup();
     data.debug.update_debug_physics(data.hero.sprite.body.debug);
-    data.hero.sprite.body.x = current_event.x_target * maps[data.map_name].sprite.tileWidth;
-    data.hero.sprite.body.y = current_event.y_target * maps[data.map_name].sprite.tileHeight;
+    data.hero.sprite.body.x = current_event.x_target * data.map.sprite.tileWidth;
+    data.hero.sprite.body.y = current_event.y_target * data.map.sprite.tileHeight;
     game.physics.p2.resume();
     camera_fade_out(game, data);
 }
 
 function camera_fade_out(game, data) {
     data.hero.update_shadow();
-    maps[data.map_name].npcs.forEach(npc => npc.update());
+    data.map.npcs.forEach(npc => npc.update());
     game.camera.flash(0x0);
     game.camera.onFlashComplete.addOnce(() => {
         game.camera.lerp.setTo(numbers.CAMERA_LERP, numbers.CAMERA_LERP);
@@ -85,12 +83,12 @@ function camera_fade_out(game, data) {
 }
 
 function open_door(data, current_event) {
-    const layer = _.find(maps[data.map_name].sprite.layers, {
-        name : maps[data.map_name].sprite.properties.door_layer
+    const layer = _.find(data.map.sprite.layers, {
+        name : data.map.sprite.properties.door_layer
     });
-    const sample_tile = maps[data.map_name].sprite.getTile(current_event.x, current_event.y - 1, layer.name);
+    const sample_tile = data.map.sprite.getTile(current_event.x, current_event.y - 1, layer.name);
     const door_type_index = sample_tile.properties.door_type;
-    const tiles = _.filter(maps[data.map_name].sprite.tilesets[0].tileProperties, key => {
+    const tiles = _.filter(data.map.sprite.tilesets[0].tileProperties, key => {
         return key.door_type === door_type_index && "close_door" in key && key.id === sample_tile.properties.id;
     });
     let tile, source_index, close_door_index, offsets, base_x, base_y, target_index;
@@ -101,7 +99,7 @@ function open_door(data, current_event) {
         offsets = tile.base_offset.split(",");
         base_x = current_event.x + (offsets[0] | 0);
         base_y = current_event.y + (offsets[1] | 0) - 1;
-        target_index = (_.findKey(maps[data.map_name].sprite.tilesets[0].tileProperties, {open_door : close_door_index}) | 0) + 1;
-        maps[data.map_name].sprite.replace(source_index, target_index, base_x, base_y, 1, 1, layer.name);
+        target_index = (_.findKey(data.map.sprite.tilesets[0].tileProperties, {open_door : close_door_index}) | 0) + 1;
+        data.map.sprite.replace(source_index, target_index, base_x, base_y, 1, 1, layer.name);
     }
 }

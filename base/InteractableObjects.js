@@ -1,5 +1,4 @@
 import { SpriteBase } from "./SpriteBase.js";
-import { maps } from '../initializers/maps.js';
 import { TileEvent, JumpEvent, StairEvent, event_types as tile_event_types } from "./TileEvent.js";
 import * as numbers from '../magic_numbers.js';
 import { directions, get_surroundings, mount_collision_polygon } from "../utils.js";
@@ -49,7 +48,7 @@ export class InteractableObjects {
     }
 
     position_allowed(data, x, y) {
-        if (maps[data.map_name].interactable_objects.filter(item => {
+        if (data.map.interactable_objects.filter(item => {
             return item.current_x === x && item.current_y === y;
         }).length) {
             return false;
@@ -61,9 +60,9 @@ export class InteractableObjects {
         return false;
     }
 
-    get_current_position(map_key_name) {
-        const x = (this.interactable_object_sprite.x/maps[map_key_name].sprite.tileWidth) | 0;
-        const y = (this.interactable_object_sprite.y/maps[map_key_name].sprite.tileHeight) | 0;
+    get_current_position(map) {
+        const x = (this.interactable_object_sprite.x/map.sprite.tileWidth) | 0;
+        const y = (this.interactable_object_sprite.y/map.sprite.tileHeight) | 0;
         return { x: x, y: y };
     }
 
@@ -89,8 +88,8 @@ export class InteractableObjects {
 
     creating_blocking_stair_block(collision_obj) {
         const target_layer = this.base_collider_layer + this.custom_data.block_stair_collider_layer_shift;
-        const x_pos = (this.current_x + .5) * maps[this.data.map_name].sprite.tileWidth;
-        const y_pos = (this.current_y + 1.5) * maps[this.data.map_name].sprite.tileHeight - 4;
+        const x_pos = (this.current_x + .5) * this.data.map.sprite.tileWidth;
+        const y_pos = (this.current_y + 1.5) * this.data.map.sprite.tileHeight - 4;
         let body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
         body.clearShapes();
         const width = this.data.interactable_objects_db[this.key_name].body_radius * 2;
@@ -134,8 +133,8 @@ export class InteractableObjects {
         this.interactable_object_sprite.animations.play(this.key_name + "_" + initial_animation);
     }
 
-    initialize_related_events(map_events, map_key_name) {
-        const position = this.get_current_position(map_key_name);
+    initialize_related_events(map_events, map) {
+        const position = this.get_current_position(map);
         let x_pos = position.x;
         let y_pos = position.y;
         for (let i = 0; i < this.data.interactable_objects_db[this.key_name].events.length; ++i) {

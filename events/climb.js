@@ -1,4 +1,3 @@
-import { maps } from '../initializers/maps.js';
 import * as numbers from '../magic_numbers.js';
 import { set_jump_collision, unset_set_jump_collision } from './jump.js';
 import { directions } from '../utils.js';
@@ -24,7 +23,7 @@ function start_climbing(game, data, current_event, activation_direction) {
         const turn_animation = data.hero.play("climb", "turn");
         turn_animation.onComplete.addOnce(() => {
             data.hero.shadow.visible = false;
-            const x_tween = maps[data.map_name].sprite.tileWidth * (current_event.x + 0.5);
+            const x_tween = data.map.sprite.tileWidth * (current_event.x + 0.5);
             const y_tween = data.hero.sprite.y + 25;
             game.add.tween(data.hero.sprite.body).to(
                 { x: x_tween, y: y_tween },
@@ -47,7 +46,7 @@ function start_climbing(game, data, current_event, activation_direction) {
     } else if (activation_direction === directions.up) {
         data.hero.play("climb", "idle");
         const out_time = Phaser.Timer.QUARTER/3;
-        const x_tween = maps[data.map_name].sprite.tileWidth * (current_event.x + 0.5);
+        const x_tween = data.map.sprite.tileWidth * (current_event.x + 0.5);
         const y_tween = data.hero.sprite.y - 15;
         if (current_event.dynamic) {
             create_climb_collision_bodies(game, data, current_event);
@@ -71,8 +70,8 @@ function start_climbing(game, data, current_event, activation_direction) {
 function finish_climbing(game, data, current_event, activation_direction) {
     game.physics.p2.pause();
     if (activation_direction === directions.up) {
-        for (let i = 0; i < maps[data.map_name].interactable_objects.length; ++i) {
-            const next_interactable_object = maps[data.map_name].interactable_objects[i];
+        for (let i = 0; i < data.map.interactable_objects.length; ++i) {
+            const next_interactable_object = data.map.interactable_objects[i];
             if (next_interactable_object.current_x !== current_event.x || next_interactable_object.current_y !== current_event.y - 1) continue;
             if (current_event.change_to_collision_layer !== next_interactable_object.base_collider_layer) continue;
             game.physics.p2.resume();
@@ -145,16 +144,16 @@ function create_climb_collision_bodies(game, data, current_event) {
     });
     unset_set_jump_collision(data);
     data.hero.sprite.body.removeCollisionGroup(data.collision.map_collision_group, true);
-    maps[data.map_name].collision_sprite.body.removeCollisionGroup(data.collision.hero_collision_group, true);
+    data.map.collision_sprite.body.removeCollisionGroup(data.collision.hero_collision_group, true);
     for (let collide_index in data.collision.interactable_objs_collision_groups) {
         data.hero.sprite.body.removeCollisionGroup(data.collision.interactable_objs_collision_groups[collide_index], true);
     }
     for (let i = 0; i < postions.length; ++i) {
-        const x_pos = (postions[i].x + .5) * maps[data.map_name].sprite.tileWidth;
-        const y_pos = (postions[i].y + .5) * maps[data.map_name].sprite.tileHeight;
+        const x_pos = (postions[i].x + .5) * data.map.sprite.tileWidth;
+        const y_pos = (postions[i].y + .5) * data.map.sprite.tileHeight;
         let body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
         body.clearShapes();
-        body.setRectangle(maps[data.map_name].sprite.tileWidth, maps[data.map_name].sprite.tileHeight, 0, 0);
+        body.setRectangle(data.map.sprite.tileWidth, data.map.sprite.tileHeight, 0, 0);
         body.setCollisionGroup(data.collision.dynamic_events_collision_group);
         body.damping = numbers.MAP_DAMPING;
         body.angularDamping = numbers.MAP_DAMPING;
@@ -173,7 +172,7 @@ function remove_climb_collision_bodies(data, current_event, collide_with_map = t
     set_jump_collision(game, data);
     if (collide_with_map) {
         data.hero.sprite.body.collides(data.collision.map_collision_group);
-        maps[data.map_name].collision_sprite.body.collides(data.collision.hero_collision_group);
+        data.map.collision_sprite.body.collides(data.collision.hero_collision_group);
     }
     for (let collide_index in data.collision.interactable_objs_collision_groups) {
         data.hero.sprite.body.removeCollisionGroup(data.collision.interactable_objs_collision_groups[collide_index], true);

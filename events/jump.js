@@ -1,5 +1,4 @@
 import * as numbers from '../magic_numbers.js';
-import { maps } from '../initializers/maps.js';
 import { event_types, TileEvent } from '../base/TileEvent.js';
 import { get_surroundings, get_opposite_direction, directions, split_direction, reverse_directions } from '../utils.js';
 
@@ -42,12 +41,12 @@ export function jump_event(game, data, current_event) {
         return;
     }
     let side_pos_key = TileEvent.get_location_key(side_position.x, side_position.y);
-    if (side_pos_key in maps[data.map_name].events) {
-        for (let i = 0; i < maps[data.map_name].events[side_pos_key].length; ++i) {
-            const event = maps[data.map_name].events[side_pos_key][i];
+    if (side_pos_key in data.map.events) {
+        for (let i = 0; i < data.map.events[side_pos_key].length; ++i) {
+            const event = data.map.events[side_pos_key][i];
             let interactable_object_found = false;
-            for (let j = 0; j < maps[data.map_name].interactable_objects.length; ++j) {
-                const interactable_object = maps[data.map_name].interactable_objects[j];
+            for (let j = 0; j < data.map.interactable_objects.length; ++j) {
+                const interactable_object = data.map.interactable_objects[j];
                 //if the side position has a interactable object, it does not cancel this jump event
                 if (data.map_collider_layer !== interactable_object.base_collider_layer) continue;
                 if (event.x === interactable_object.current_x && event.y === interactable_object.current_y) {
@@ -65,16 +64,16 @@ export function jump_event(game, data, current_event) {
         }
     }
     let next_pos_key = TileEvent.get_location_key(next_position.x, next_position.y);
-    for (let i = 0; i < maps[data.map_name].interactable_objects.length; ++i) {
-        const next_interactable_object = maps[data.map_name].interactable_objects[i];
+    for (let i = 0; i < data.map.interactable_objects.length; ++i) {
+        const next_interactable_object = data.map.interactable_objects[i];
         if (next_interactable_object.current_x !== next_position.x || next_interactable_object.current_y !== next_position.y) continue;
         if (data.map_collider_layer !== next_interactable_object.base_collider_layer) continue;
         return;
     }
-    if (next_pos_key in maps[data.map_name].events) {
+    if (next_pos_key in data.map.events) {
         let active_jump_event_found = false;
-        for (let i = 0; i < maps[data.map_name].events[next_pos_key].length; ++i) {
-            const event = maps[data.map_name].events[next_pos_key][i];
+        for (let i = 0; i < data.map.events[next_pos_key].length; ++i) {
+            const event = data.map.events[next_pos_key][i];
             if (event.type === event_types.JUMP && event.is_active(get_opposite_direction(jump_direction)) && event.is_set && event.activation_collision_layers.includes(data.map_collider_layer)) {
                 active_jump_event_found = true;
                 if (event.dynamic) {
@@ -95,17 +94,15 @@ export function jump_event(game, data, current_event) {
     data.on_event = true;
     let tween_obj = {};
     tween_obj[direction] = data.hero.sprite[direction] + jump_offset;
-    const hero_x = maps[data.map_name].sprite.tileWidth * (next_position.x + 0.5);
-    const hero_y = maps[data.map_name].sprite.tileHeight * (next_position.y + 0.5);
+    const hero_x = data.map.sprite.tileWidth * (next_position.x + 0.5);
+    const hero_y = data.map.sprite.tileHeight * (next_position.y + 0.5);
     if (direction === "x") {
         tween_obj.y = [hero_y - 5, hero_y - 8, hero_y - 5, hero_y];
     } else {
         tween_obj.x = hero_x;
     }
     game.physics.p2.pause();
-    data.hero.sprite.loadTexture(data.hero_name + "_jump");
-    data.hero.sprite_info.setAnimation(data.hero.sprite, "jump");
-    data.hero.sprite.animations.play("jump_" + reverse_directions[jump_direction], data.hero.sprite_info.actions["jump"].frame_rate, false);
+    data.hero.play("jump", reverse_directions[jump_direction]);
     data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
         data.hero.shadow.visible = false;
         data.hero.shadow.x = hero_x;
@@ -135,10 +132,10 @@ export function set_jump_collision(game, data) {
     data.collision.dynamic_jump_events_bodies = [];
     data.walking_on_pillars_tiles.clear();
     data.hero.sprite.body.removeCollisionGroup(data.collision.map_collision_group, true);
-    maps[data.map_name].collision_sprite.body.removeCollisionGroup(data.collision.hero_collision_group, true);
-    for (let event_key in maps[data.map_name].events) {
-        for (let j = 0; j < maps[data.map_name].events[event_key].length; ++j) {
-            const event = maps[data.map_name].events[event_key][j];
+    data.map.collision_sprite.body.removeCollisionGroup(data.collision.hero_collision_group, true);
+    for (let event_key in data.map.events) {
+        for (let j = 0; j < data.map.events[event_key].length; ++j) {
+            const event = data.map.events[event_key][j];
             if (event.type === event_types.JUMP && event.dynamic && event.is_set && event.activation_collision_layers.includes(data.map_collider_layer)) {
                 let surroundings = [
                     {x: event.x - 1, y: event.y},
@@ -148,10 +145,10 @@ export function set_jump_collision(game, data) {
                 ];
                 for (let i = 0; i < surroundings.length; ++i) {
                     const surrounding_key = TileEvent.get_location_key(surroundings[i].x, surroundings[i].y);
-                    if (surrounding_key in maps[data.map_name].events) {
+                    if (surrounding_key in data.map.events) {
                         let dynamic_found = false;
-                        for (let k = 0; k < maps[data.map_name].events[surrounding_key].length; ++k) {
-                            const this_event = maps[data.map_name].events[surrounding_key][k];
+                        for (let k = 0; k < data.map.events[surrounding_key].length; ++k) {
+                            const this_event = data.map.events[surrounding_key][k];
                             if (this_event.dynamic && this_event.type === event_types.JUMP && this_event.is_set && this_event.activation_collision_layers.includes(data.map_collider_layer)) {
                                 dynamic_found = true;
                                 break;
@@ -159,11 +156,11 @@ export function set_jump_collision(game, data) {
                         }
                         if (dynamic_found) continue;
                     }
-                    let x_pos = (surroundings[i].x + .5) * maps[data.map_name].sprite.tileWidth;
-                    let y_pos = (surroundings[i].y + .5) * maps[data.map_name].sprite.tileHeight;
+                    let x_pos = (surroundings[i].x + .5) * data.map.sprite.tileWidth;
+                    let y_pos = (surroundings[i].y + .5) * data.map.sprite.tileHeight;
                     let body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
                     body.clearShapes();
-                    body.setRectangle(maps[data.map_name].sprite.tileWidth, maps[data.map_name].sprite.tileHeight, 0, 0);
+                    body.setRectangle(data.map.sprite.tileWidth, data.map.sprite.tileHeight, 0, 0);
                     body.setCollisionGroup(data.collision.dynamic_events_collision_group);
                     body.damping = numbers.MAP_DAMPING;
                     body.angularDamping = numbers.MAP_DAMPING;
@@ -182,7 +179,7 @@ export function set_jump_collision(game, data) {
 
 export function unset_set_jump_collision(data) {
     data.hero.sprite.body.collides(data.collision.map_collision_group);
-    maps[data.map_name].collision_sprite.body.collides(data.collision.hero_collision_group);
+    data.map.collision_sprite.body.collides(data.collision.hero_collision_group);
     for (let i = 0; i < data.collision.dynamic_jump_events_bodies.length; ++i) {
         data.collision.dynamic_jump_events_bodies[i].destroy();
     }
@@ -201,7 +198,7 @@ export function jump_near_collision(game, data, current_event) {
 
     let clear_bodies = () => {
         data.hero.sprite.body.collides(data.collision.map_collision_group);
-        maps[data.map_name].collision_sprite.body.collides(data.collision.hero_collision_group);
+        data.map.collision_sprite.body.collides(data.collision.hero_collision_group);
         for (let j = 0; j < data.collision.dynamic_jump_events_bodies.length; ++j) {
             data.collision.dynamic_jump_events_bodies[j].destroy();
         }
@@ -212,9 +209,9 @@ export function jump_near_collision(game, data, current_event) {
     let at_least_one_dynamic_and_not_diag = false;
     for (let i = 0; i < surroundings.length; ++i) {
         const surrounding_key = TileEvent.get_location_key(surroundings[i].x, surroundings[i].y);
-        if (surrounding_key in maps[data.map_name].events) {
-            for (let j = 0; j < maps[data.map_name].events[surrounding_key].length; ++j) {
-                const surrounding_event = maps[data.map_name].events[surrounding_key][j];
+        if (surrounding_key in data.map.events) {
+            for (let j = 0; j < data.map.events[surrounding_key].length; ++j) {
+                const surrounding_event = data.map.events[surrounding_key][j];
                 if (surrounding_event.type === event_types.JUMP && right_direction && surrounding_event.is_set && surrounding_event.activation_collision_layers.includes(data.map_collider_layer)) {
                     if ((surrounding_event.dynamic || current_event.dynamic) && !surroundings[i].diag) {
                         at_least_one_dynamic_and_not_diag = true;
@@ -235,14 +232,14 @@ export function jump_near_collision(game, data, current_event) {
             bodies_position.delete(key);
         });
         data.hero.sprite.body.removeCollisionGroup(data.collision.map_collision_group, true);
-        maps[data.map_name].collision_sprite.body.removeCollisionGroup(data.collision.hero_collision_group, true);
+        data.map.collision_sprite.body.removeCollisionGroup(data.collision.hero_collision_group, true);
         bodies_position.forEach(position => {
             const pos_array = position.split("_");
-            const x_pos = ((pos_array[0] | 0) + .5) * maps[data.map_name].sprite.tileWidth;
-            const y_pos = ((pos_array[1] | 0) + .5) * maps[data.map_name].sprite.tileHeight;
+            const x_pos = ((pos_array[0] | 0) + .5) * data.map.sprite.tileWidth;
+            const y_pos = ((pos_array[1] | 0) + .5) * data.map.sprite.tileHeight;
             let body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
             body.clearShapes();
-            body.setRectangle(maps[data.map_name].sprite.tileWidth, maps[data.map_name].sprite.tileHeight, 0, 0);
+            body.setRectangle(data.map.sprite.tileWidth, data.map.sprite.tileHeight, 0, 0);
             body.setCollisionGroup(data.collision.dynamic_events_collision_group);
             body.damping = numbers.MAP_DAMPING;
             body.angularDamping = numbers.MAP_DAMPING;

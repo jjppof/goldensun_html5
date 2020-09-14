@@ -145,7 +145,7 @@ export class Hero extends ControllableChar {
                                 });
                             }
                             if (!has_stair) {
-                                let item_position = interactable_object.get_current_position(map.key_name);
+                                let item_position = interactable_object.get_current_position(map);
                                 switch (this.trying_to_push_direction) {
                                     case directions.up:
                                         item_position.y -= 1;
