@@ -444,7 +444,9 @@ export class Window {
             text_bg.beginFill(this.color, 1);
             text_bg.drawRect(0, 0, text_sprite.width + 3, numbers.FONT_SIZE);
             text_bg.endFill();
-            this.group.add(text_bg);
+            if (internal_group_key === undefined || !this.add_to_internal_group(internal_group_key, text_bg)) {
+                this.group.add(text_bg);
+            }
         }
 
         this.remove_smooth(text_sprite);
