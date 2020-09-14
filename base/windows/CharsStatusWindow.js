@@ -157,7 +157,7 @@ export class CharsStatusWindow {
             let char = party_data.members[i];
             current_chars.push(char.key_name);
             let info_sprite = this.info_sprites[char.key_name];
-            info_sprite.group.visible = true ? true : !info_sprite.group.visible;
+            info_sprite.group.visible = true;
             const base_x_pos =  i * (WIDTH_PER_CHAR + SEPARATOR_WIDTH) + INITIAL_PADDING_X + (show_djinn_info ? DJINN_INFO_WIDTH : 0);
             this.status_window.update_text(char.name, info_sprite.name, base_x_pos);
             const x_number_pos = base_x_pos + STAT_X;
@@ -190,7 +190,7 @@ export class CharsStatusWindow {
         for (let key_name in this.info_sprites) {
             if (current_chars.includes(key_name)) continue;
             let info_sprite = this.info_sprites[key_name];
-            info_sprite.group.visible = false ? false : !info_sprite.group.visible;
+            info_sprite.group.visible = false;
         }
     }
 
