@@ -119,8 +119,6 @@ export class CharsStatusWindow {
             info_sprites_obj.pp_header = this.status_window.set_text_in_position("PP", base_x_pos, y_pos, false, false, this.status_window.font_color, false, group_key);
             info_sprites_obj.pp = this.status_window.set_text_in_position(char.current_pp.toString(), x_number_pos, y_pos, true, false, this.status_window.font_color, false, group_key);
 
-            info_sprites_obj.group.visible = true;
-
             this.info_sprites[char.key_name] = info_sprites_obj;
         }
     }
