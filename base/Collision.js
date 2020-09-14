@@ -1,5 +1,4 @@
 import { directions } from "../utils.js";
-import { maps } from "../initializers/maps.js";
 
 export class Collision {
     constructor(game, hero) {
@@ -91,10 +90,10 @@ export class Collision {
         data.map_collider_layer = new_collider_layer_index;
         this.hero.shadow.base_collider_layer = data.map_collider_layer;
         this.hero.sprite.base_collider_layer = data.map_collider_layer;
-        maps[data.map_name].config_body(this, new_collider_layer_index);
-        this.config_collision_groups(maps[data.map_name]);
-        this.config_collisions(maps[data.map_name], data.map_collider_layer, data.npc_group);
-        let layers = maps[data.map_name].layers;
+        data.map.config_body(this, new_collider_layer_index);
+        this.config_collision_groups(data.map);
+        this.config_collisions(data.map, data.map_collider_layer, data.npc_group);
+        let layers = data.map.layers;
         for (let i = 0; i < layers.length; ++i) {
             let layer = layers[i];
             let is_over = layer.properties.over.toString().split(",");

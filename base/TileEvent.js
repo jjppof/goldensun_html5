@@ -1,5 +1,4 @@
 import { get_surroundings, get_opposite_direction, get_directions, split_direction } from "../utils.js";
-import { maps } from "../initializers/maps.js";
 
 export const event_types = {
     STAIR: "stair",
@@ -111,9 +110,9 @@ export class JumpEvent extends TileEvent {
         for (let j = 0; j < surroundings.length; ++j) {
             const surrounding = surroundings[j];
             const this_key = TileEvent.get_location_key(surrounding.x, surrounding.y);
-            if (this_key in maps[data.map_name].events) {
-                for (let k = 0; k < maps[data.map_name].events[this_key].length; ++k) {
-                    const surr_event = maps[data.map_name].events[this_key][k];
+            if (this_key in data.map.events) {
+                for (let k = 0; k < data.map.events[this_key].length; ++k) {
+                    const surr_event = data.map.events[this_key][k];
                     if (surr_event.type === event_types.JUMP) {
                         if (surr_event.activation_collision_layers.includes(target_layer)) {
                             if (surr_event.dynamic === false && surr_event.is_set) {
@@ -132,9 +131,9 @@ export class JumpEvent extends TileEvent {
         for (let i = 0; i < surroundings.length; ++i) {
             const surrounding = surroundings[i];
             const location_key = TileEvent.get_location_key(surrounding.x, surrounding.y);
-            if (!(location_key in maps[data.map_name].events)) continue;
-            for (let j = 0; j < maps[data.map_name].events[location_key].length; ++j) {
-                const this_event = maps[data.map_name].events[location_key][j];
+            if (!(location_key in data.map.events)) continue;
+            for (let j = 0; j < data.map.events[location_key].length; ++j) {
+                const this_event = data.map.events[location_key][j];
                 if (this_event.is_set && this_event.type === event_types.JUMP) {
                     if (this_event.activation_collision_layers.includes(target_collision_layer)) {
                         if (this_event.activation_directions.includes(get_opposite_direction(surrounding.direction))) {

@@ -1,5 +1,4 @@
 import * as numbers from  "../magic_numbers.js";
-import { maps } from '../initializers/maps.js';
 import { TileEvent, event_types, JumpEvent } from "../base/TileEvent.js";
 import { get_surroundings, get_opposite_direction, directions, reverse_directions } from "../utils.js";
 
@@ -84,9 +83,9 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
             let dest_y = body.y + tween_y;
             if (body === data.hero.shadow || body === data.hero.sprite.body) {
                 if (tween_x === 0) {
-                    dest_x = maps[data.map_name].sprite.tileWidth * (prev_x + event_shift_x + 0.5);
+                    dest_x = data.map.sprite.tileWidth * (prev_x + event_shift_x + 0.5);
                 } else if (tween_y === 0) {
-                    dest_y = maps[data.map_name].sprite.tileHeight * (prev_y + event_shift_y + 0.5);
+                    dest_y = data.map.sprite.tileHeight * (prev_y + event_shift_y + 0.5);
                 }
             }
             let promise_resolve;
@@ -104,7 +103,7 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
                     interactable_object.object_drop_tiles.forEach(drop_tile => {
                         if (drop_tile.x === interactable_object.current_x && drop_tile.y === interactable_object.current_y) {
                             drop_found = true;
-                            const dest_y_shift_px = (drop_tile.dest_y - interactable_object.current_y) * maps[data.map_name].sprite.tileHeight;
+                            const dest_y_shift_px = (drop_tile.dest_y - interactable_object.current_y) * data.map.sprite.tileHeight;
                             shift_events(data, interactable_object, 0, drop_tile.dest_y - interactable_object.current_y);
                             interactable_object.current_y = drop_tile.dest_y;
                             interactable_object.change_collider_layer(data, drop_tile.destination_collider_layer);
@@ -117,9 +116,7 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
                             ).onComplete.addOnce(() => {
                                 if (drop_tile.dust_animation) {
                                     data.hero.current_action = "idle";
-                                    data.hero.sprite.loadTexture(data.hero_name + "_" + data.hero.current_action);
-                                    data.hero.sprite_info.setAnimation(data.hero.sprite, data.hero.current_action);
-                                    data.hero.sprite.animations.play(data.hero.current_action + "_" + reverse_directions[data.hero.current_direction]);
+                                    data.hero.play(data.hero.current_action, reverse_directions[data.hero.current_direction]);
                                     dust_animation(game, data, interactable_object, promise_resolve);
                                 } else {
                                     promise_resolve();
@@ -150,11 +147,11 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
     let object_events = interactable_object.get_events();
     for (let i = 0; i < object_events.length; ++i) {
         let event = object_events[i];
-        maps[data.map_name].events[event.location_key] = maps[data.map_name].events[event.location_key].filter(e => {
+        data.map.events[event.location_key] = data.map.events[event.location_key].filter(e => {
             return e.id !== event.id;
         });
-        if (maps[data.map_name].events[event.location_key].length === 0) {
-            delete maps[data.map_name].events[event.location_key];
+        if (data.map.events[event.location_key].length === 0) {
+            delete data.map.events[event.location_key];
         }
         let old_x = event.x;
         let old_y = event.y;
@@ -164,19 +161,19 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
         event.x = new_x;
         event.y = new_y;
         event.location_key = new_event_location_key;
-        if (!(new_event_location_key in maps[data.map_name].events)) {
-            maps[data.map_name].events[new_event_location_key] = [];
+        if (!(new_event_location_key in data.map.events)) {
+            data.map.events[new_event_location_key] = [];
         }
-        maps[data.map_name].events[new_event_location_key].push(event);
+        data.map.events[new_event_location_key].push(event);
         const new_surroundings = get_surroundings(new_x, new_y, false, 2);
         JumpEvent.active_jump_surroundings(data, new_surroundings, interactable_object.collider_layer_shift + interactable_object.base_collider_layer);
         const old_surroundings = get_surroundings(old_x, old_y, false, 2);
         for (let j = 0; j < old_surroundings.length; ++j) {
             const old_surrounding = old_surroundings[j];
             const old_key = TileEvent.get_location_key(old_surrounding.x, old_surrounding.y);
-            if (old_key in maps[data.map_name].events) {
-                for (let k = 0; k < maps[data.map_name].events[old_key].length; ++k) {
-                    const old_surr_event = maps[data.map_name].events[old_key][k];
+            if (old_key in data.map.events) {
+                for (let k = 0; k < data.map.events[old_key].length; ++k) {
+                    const old_surr_event = data.map.events[old_key][k];
                     if (old_surr_event.type === event_types.JUMP) {
                         const target_layer = interactable_object.collider_layer_shift + interactable_object.base_collider_layer;
                         if (old_surr_event.activation_collision_layers.includes(target_layer) && old_surr_event.dynamic === false) {
@@ -192,8 +189,8 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
 function dust_animation(game, data, interactable_object, promise_resolve) {
     let promises = new Array(DUST_COUNT);
     let sprites = new Array(DUST_COUNT);
-    const origin_x = (interactable_object.current_x + 0.5) * maps[data.map_name].sprite.tileWidth;
-    const origin_y = (interactable_object.current_y + 0.5) * maps[data.map_name].sprite.tileHeight;
+    const origin_x = (interactable_object.current_x + 0.5) * data.map.sprite.tileWidth;
+    const origin_y = (interactable_object.current_y + 0.5) * data.map.sprite.tileHeight;
     for (let i = 0; i < DUST_COUNT; ++i) {
         const this_angle = (Math.PI + numbers.degree60) * i/(DUST_COUNT - 1) - numbers.degree30;
         const x = origin_x + DUST_RADIUS * Math.cos(this_angle);

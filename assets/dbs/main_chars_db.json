@@ -79,7 +79,8 @@
                     "right"
                 ],
                 "directions_frames_number": 2,
-                "frame_rate": 16
+                "frame_rate": 16,
+                "loop": false
             },{
                 "key": "push",
                 "spritesheet": "assets/images/spritesheets/main_chars/isaac_push.json",
@@ -107,7 +108,8 @@
                     "up_right"
                 ],
                 "directions_frames_number": 2,
-                "frame_rate": 4
+                "frame_rate": 4,
+                "loop": false
             },{
                 "key": "battle",
                 "spritesheet": "assets/images/spritesheets/battle/isaac_battle.json",

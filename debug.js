@@ -1,5 +1,4 @@
 import { reverse_directions, ordered_elements } from "./utils.js";
-import { maps } from "./initializers/maps.js";
 
 export class Debug {
     constructor(game, data) {
@@ -40,7 +39,7 @@ export class Debug {
     }
 
     update_debug_physics(flag) {
-        maps[data.map_name].collision_sprite.body.debug = flag;
+        data.map.collision_sprite.body.debug = flag;
         for (let i = 0; i < this.data.npc_group.children.length; ++i) {
             let sprite = this.data.npc_group.children[i];
             if (!sprite.is_npc && !sprite.is_interactable_object) continue;
@@ -55,8 +54,8 @@ export class Debug {
         for (let i = 0; i < this.data.collision.dynamic_jump_events_bodies.length; ++i) {
             this.data.collision.dynamic_jump_events_bodies[i].debug = !this.data.collision.dynamic_jump_events_bodies[i].debug;
         }
-        for (let i = 0; i < maps[this.data.map_name].interactable_objects.length; ++i) {
-            const interactable_object = maps[this.data.map_name].interactable_objects[i];
+        for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
+            const interactable_object = this.data.map.interactable_objects[i];
             if (interactable_object.custom_data.blocking_stair_block) {
                 interactable_object.custom_data.blocking_stair_block.debug = !interactable_object.custom_data.blocking_stair_block.debug;
             }
@@ -133,11 +132,11 @@ export class Debug {
         }
 
         if (this.grid) {
-            const tile_width = maps[this.data.map_name].sprite.tileWidth;
+            const tile_width = this.data.map.sprite.tileWidth;
             for (let x = 0; x < this.game.world.width; x += tile_width) {
                 this.game.debug.geom(new Phaser.Line(x, 0, x, this.game.world.height), 'rgba(0,255,255,0.35)', false, 4);
             }
-            const tile_height = maps[this.data.map_name].sprite.tileHeight;
+            const tile_height = this.data.map.sprite.tileHeight;
             for (let y = 0; y < this.game.world.height; y += tile_height) {
                 this.game.debug.geom(new Phaser.Line(0, y, this.game.world.width, y), 'rgba(0,255,255,0.35)', false, 4);
             }
@@ -145,18 +144,18 @@ export class Debug {
             let y_pos = this.data.hero.tile_y_pos*tile_height;
             this.game.debug.geom(new Phaser.Rectangle(x_pos, y_pos, tile_width, tile_height), 'rgba(255,0,0,0.5)');
             this.game.debug.geom(new Phaser.Circle(this.data.hero.sprite.x, this.data.hero.sprite.y, 5), 'rgba(20,75,0,1.0)');
-            for (let point in maps[this.data.map_name].events) {
+            for (let point in this.data.map.events) {
                 let pos = point.split('_');
                 this.game.debug.geom(new Phaser.Rectangle(pos[0]*tile_width, pos[1]*tile_height, tile_width, tile_height), 'rgba(255,255,60,0.7)');
             }
 
             if (this.game.input.mousePointer.withinGame) {
-                const mouse_x = ((this.game.camera.x + this.game.input.mousePointer.x/this.data.scale_factor)/maps[this.data.map_name].sprite.tileWidth) | 0;
-                const mouse_y = ((this.game.camera.y + this.game.input.mousePointer.y/this.data.scale_factor)/maps[this.data.map_name].sprite.tileHeight) | 0;
+                const mouse_x = ((this.game.camera.x + this.game.input.mousePointer.x/this.data.scale_factor)/this.data.map.sprite.tileWidth) | 0;
+                const mouse_y = ((this.game.camera.y + this.game.input.mousePointer.y/this.data.scale_factor)/this.data.map.sprite.tileHeight) | 0;
                 this.game.debug.text(`x: ${mouse_x}, y: ${mouse_y}`, 140, 15, "#00ff00");
                 const event_key = mouse_x + "_" + mouse_y;
-                if (event_key in maps[this.data.map_name].events) {
-                    const events = maps[this.data.map_name].events[event_key].map(event => {
+                if (event_key in this.data.map.events) {
+                    const events = this.data.map.events[event_key].map(event => {
                         return Object.assign({}, event, {
                             activation_directions: event.activation_directions.map(dir => reverse_directions[dir]),
                             ...(event.origin_interactable_object && {

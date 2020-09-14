@@ -1,7 +1,6 @@
 import { main_char_list } from "../initializers/main_chars.js";
 import { abilities_list } from "../initializers/abilities.js";
 import { init_cast_aura, tint_map_layers } from  '../initializers/psynergy_cast.js';
-import { maps } from  '../initializers/maps.js';
 import * as numbers from '../magic_numbers.js';
 import { set_cast_direction, directions, reverse_directions } from "../utils.js";
 
@@ -49,11 +48,11 @@ export class GrowthFieldPsynergy {
             }
         }
         let sqr_distance = Infinity;
-        for (let i = 0; i < maps[this.data.map_name].interactable_objects.length; ++i) {
-            let interactable_object = maps[this.data.map_name].interactable_objects[i];
+        for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
+            let interactable_object = this.data.map.interactable_objects[i];
             if (!(this.ability_key_name in this.data.interactable_objects_db[interactable_object.key_name].psynergy_keys)) continue;
-            const item_x_px = interactable_object.current_x * maps[this.data.map_name].sprite.tileWidth + (maps[this.data.map_name].sprite.tileWidth >> 1);
-            const item_y_px = interactable_object.current_y * maps[this.data.map_name].sprite.tileHeight + (maps[this.data.map_name].sprite.tileHeight >> 1);
+            const item_x_px = interactable_object.current_x * this.data.map.sprite.tileWidth + (this.data.map.sprite.tileWidth >> 1);
+            const item_y_px = interactable_object.current_y * this.data.map.sprite.tileHeight + (this.data.map.sprite.tileHeight >> 1);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
             const y_condition = item_y_px >= min_y && item_y_px <= max_y;
             if (x_condition && y_condition && this.data.map_collider_layer === interactable_object.base_collider_layer) {
@@ -67,19 +66,15 @@ export class GrowthFieldPsynergy {
     }
 
     set_hero_cast_anim() {
-        this.data.hero.sprite.loadTexture(this.data.hero_name + "_" + this.action_key_name);
-        main_char_list[this.data.hero_name].sprite_base.setAnimation(this.data.hero.sprite, this.action_key_name);
-        this.data.hero.sprite.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].sprite_base.actions[this.action_key_name].frame_rate, false);
+        this.data.hero.play(this.action_key_name, reverse_directions[this.cast_direction]);
     }
 
     unset_hero_cast_anim() {
         this.data.hero.sprite.animations.currentAnim.reverseOnce();
         this.data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
-            this.data.hero.sprite.loadTexture(this.data.hero_name + "_idle");
-            main_char_list[this.data.hero_name].sprite_base.setAnimation(this.data.hero.sprite, "idle");
-            this.data.hero.sprite.animations.frameName = `idle/${reverse_directions[this.cast_direction]}/00`;
+            this.data.hero.play("idle", reverse_directions[this.cast_direction]);
         });
-        this.data.hero.sprite.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction], main_char_list[this.data.hero_name].sprite_base.actions[this.action_key_name].frame_rate, false);
+        this.data.hero.play(this.action_key_name, reverse_directions[this.cast_direction]);
     }
 
     set_emitter() {
@@ -236,7 +231,7 @@ export class GrowthFieldPsynergy {
         this.set_hero_cast_anim();
         let reset_map;
         this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero_color_filters, () => {
-            reset_map = tint_map_layers(this.game, maps[this.data.map_name], this.data.map_color_filters);
+            reset_map = tint_map_layers(this.game, this.data.map, this.data.map_color_filters);
             this.init_bubbles();
         }, () => {
             this.game.physics.p2.resume();
