@@ -187,9 +187,6 @@ class GoldenSun {
         this.maps_db = this.game.cache.getJSON('maps_db');
         this.main_chars_db = this.game.cache.getJSON('main_chars_db');
         this.summons_db = this.game.cache.getJSON('summons_db');
-        this.hero_color_filters = this.game.add.filter('ColorFilters');
-        this.map_color_filters = this.game.add.filter('ColorFilters');
-        this.pasynergy_item_color_filters = this.game.add.filter('ColorFilters');
 
         this.scale_factor = this.init_db.initial_scale_factor;
         this.map_collider_layer = this.init_db.map_z_index;

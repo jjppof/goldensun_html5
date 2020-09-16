@@ -160,7 +160,7 @@ export class Hero extends ControllableChar {
                                         item_position.x += 1;
                                         break;
                                 }
-                                if (interactable_object.position_allowed(this.data, item_position.x, item_position.y)) {
+                                if (interactable_object.position_allowed(item_position.x, item_position.y)) {
                                     this.push_timer = this.game.time.events.add(Phaser.Timer.QUARTER, normal_push.bind(this, this.game, this.data, interactable_object));
                                 }
                             }

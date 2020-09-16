@@ -40,6 +40,7 @@ export class Map {
         this.collision_layers_number = this.physics_names.length;
         this.collision_sprite = this.game.add.sprite(0, 0);
         this.collision_sprite.width = this.collision_sprite.height = 0;
+        this.color_filter = this.game.add.filter('ColorFilters');
     }
 
     sort_sprites(data) {

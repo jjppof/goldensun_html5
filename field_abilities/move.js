@@ -96,7 +96,7 @@ export class MoveFieldPsynergy {
                     item_position.x += 1;
                     break;
             }
-            let position_allowed = this.target_object.position_allowed(this.data, item_position.x, item_position.y);
+            let position_allowed = this.target_object.position_allowed(item_position.x, item_position.y);
             if (position_allowed && !(this.data.hero.tile_x_pos === item_position.x && this.data.hero.tile_y_pos === item_position.y)) {
                 this.controls_active = false;
                 target_only_push(this.game, this.data, this.target_object, (x_shift, y_shift) => {
@@ -214,10 +214,10 @@ export class MoveFieldPsynergy {
         ).onComplete.addOnce(() => {
             this.hand_sprite.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction]);
             if (this.target_found) {
-                this.target_object.interactable_object_sprite.filters = [this.data.pasynergy_item_color_filters];
+                this.target_object.interactable_object_sprite.filters = [this.target_object.color_filter];
                 this.target_hueshift_timer = this.game.time.create(false);
                 this.target_hueshift_timer.loop(5, () => {
-                    this.data.pasynergy_item_color_filters.hue_adjust = Math.random() * 2 * Math.PI;
+                    this.target_object.color_filter.hue_adjust = Math.random() * 2 * Math.PI;
                 });
                 this.target_hueshift_timer.start();
                 this.controls_active = true;
@@ -395,8 +395,8 @@ export class MoveFieldPsynergy {
         this.search_for_target();
         this.set_hero_cast_anim();
         let reset_map;
-        this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero_color_filters, () => {
-            reset_map = tint_map_layers(this.game, this.data.map, this.data.map_color_filters);
+        this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero.color_filter, () => {
+            reset_map = tint_map_layers(this.game, this.data.map, this.data.map.color_filter);
             this.set_hand();
             this.translate_hand();
             this.start_emitter();

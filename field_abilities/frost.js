@@ -206,8 +206,8 @@ export class FrostFieldPsynergy {
         }
         this.set_hero_cast_anim();
         let reset_map;
-        this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero_color_filters, () => {
-            reset_map = tint_map_layers(this.game, this.data.map, this.data.map_color_filters);
+        this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero.color_filter, () => {
+            reset_map = tint_map_layers(this.game, this.data.map, this.data.map.color_filter);
             this.init_snowflakes();
         }, () => {
             this.game.physics.p2.resume();

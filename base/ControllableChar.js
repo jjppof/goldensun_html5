@@ -27,6 +27,7 @@ export class ControllableChar {
         this.tile_y_pos = initial_y;
         this.current_action = initial_action;
         this.current_direction = initial_direction;
+        this.color_filter = this.game.add.filter('ColorFilters');
     }
 
     set_sprite(group, sprite_info, map_sprite, layer, anchor_x = DEFAULT_SPRITE_ANCHOR_X, anchor_y = DEFAULT_SPRITE_ANCHOR_Y) {
