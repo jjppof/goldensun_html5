@@ -120,8 +120,8 @@ class GoldenSun {
         const load_maps_promise = new Promise(resolve => {
             load_maps_promise_resolve = resolve;
         });
-        initialize_maps(this.game, this.maps_db);
-        load_maps(this.game, load_maps_promise_resolve);
+        initialize_maps(this.game, this, this.maps_db);
+        load_maps(load_maps_promise_resolve);
         await load_maps_promise;
 
         initialize_classes(this.classes_db);
@@ -170,7 +170,7 @@ class GoldenSun {
         this.menu_screen = initialize_menu(this.game, this);
 
         //configuring map layers: creating sprites, listing events and setting the layers
-        this.map = await maps[this.init_db.map_key_name].mount_map(this.game, this, this.init_db.map_z_index);
+        this.map = await maps[this.init_db.map_key_name].mount_map(this.init_db.map_z_index);
     }
 
     async create() {
@@ -331,7 +331,7 @@ class GoldenSun {
                 npc.update();
             }
 
-            this.map.sort_sprites(this);
+            this.map.sort_sprites();
         } else if (this.on_event) {
             this.hero.stop_char(false);
         } else if (this.npc_event) {

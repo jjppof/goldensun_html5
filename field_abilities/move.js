@@ -137,7 +137,7 @@ export class MoveFieldPsynergy {
                     this.finish_hand();
                     this.unset_hero_cast_anim();
                 }, false, () => {
-                    this.data.map.sort_sprites(this.data);
+                    this.data.map.sort_sprites();
                 });
             }
         }

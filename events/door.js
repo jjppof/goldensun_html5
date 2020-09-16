@@ -47,12 +47,12 @@ function camera_fade_in(game, data, current_event) {
 }
 
 async function change_map(game, data, current_event) {
-    data.map.unset_map(data);
+    data.map.unset_map();
     const next_map_key_name = current_event.target;
     const target_collision_layer = current_event.dest_collider_layer;
     data.hero.shadow.base_collider_layer = target_collision_layer;
     data.hero.sprite.base_collider_layer = target_collision_layer;
-    data.map = await maps[next_map_key_name].mount_map(game, data, target_collision_layer);
+    data.map = await maps[next_map_key_name].mount_map(target_collision_layer);
     game.camera.setBoundsToWorld();
     if (game.camera.bounds.width < numbers.GAME_WIDTH) {
         game.camera.bounds.width = numbers.GAME_WIDTH;
