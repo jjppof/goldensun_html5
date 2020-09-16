@@ -177,8 +177,8 @@ function remove_climb_collision_bodies(data, current_event, collide_with_map = t
     for (let collide_index in data.collision.interactable_objs_collision_groups) {
         data.hero.sprite.body.removeCollisionGroup(data.collision.interactable_objs_collision_groups[collide_index], true);
     }
-    if (data.map_collider_layer in data.collision.interactable_objs_collision_groups) {
-        data.hero.sprite.body.collides(data.collision.interactable_objs_collision_groups[data.map_collider_layer]);
+    if (data.map.collision_layer in data.collision.interactable_objs_collision_groups) {
+        data.hero.sprite.body.collides(data.collision.interactable_objs_collision_groups[data.map.collision_layer]);
     }
     let bodies = current_event.origin_interactable_object.custom_data.collision_tiles_bodies;
     for (let i = 0; i < bodies.length; ++i) {

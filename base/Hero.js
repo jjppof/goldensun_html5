@@ -130,7 +130,7 @@ export class Hero extends ControllableChar {
             if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
                 if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
                     const interactable_object = map.interactable_objects[j];
-                    if (["walk", "dash"].includes(this.current_action) && this.data.map_collider_layer === interactable_object.base_collider_layer) {
+                    if (["walk", "dash"].includes(this.current_action) && this.data.map.collision_layer === interactable_object.base_collider_layer) {
                         this.trying_to_push = true;
                         if (this.push_timer === null) {
                             this.trying_to_push_direction = this.current_direction;

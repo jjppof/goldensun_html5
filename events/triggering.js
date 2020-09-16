@@ -51,7 +51,7 @@ export function event_triggering(game, data, event_key) {
     let event_queue = new EventQueue();
     for (let i = 0; i < data.map.events[event_key].length; ++i) {
         const this_event = data.map.events[event_key][i];
-        if (!this_event.activation_collision_layers.includes(data.map_collider_layer)) continue;
+        if (!this_event.activation_collision_layers.includes(data.map.collision_layer)) continue;
         if (this_event.type === event_types.JUMP) {
             jump_near_collision(game, data, this_event);
         }

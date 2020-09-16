@@ -49,10 +49,10 @@ function camera_fade_in(game, data, current_event) {
 async function change_map(game, data, current_event) {
     data.map.unset_map(data);
     const next_map_key_name = current_event.target;
-    data.map_collider_layer = current_event.dest_collider_layer;
-    data.hero.shadow.base_collider_layer = data.map_collider_layer;
-    data.hero.sprite.base_collider_layer = data.map_collider_layer;
-    data.map = await maps[next_map_key_name].mount_map(game, data);
+    const target_collision_layer = current_event.dest_collider_layer;
+    data.hero.shadow.base_collider_layer = target_collision_layer;
+    data.hero.sprite.base_collider_layer = target_collision_layer;
+    data.map = await maps[next_map_key_name].mount_map(game, data, target_collision_layer);
     game.camera.setBoundsToWorld();
     if (game.camera.bounds.width < numbers.GAME_WIDTH) {
         game.camera.bounds.width = numbers.GAME_WIDTH;
@@ -61,8 +61,8 @@ async function change_map(game, data, current_event) {
         game.camera.bounds.height = numbers.GAME_HEIGHT;
     }
     data.collision.config_collision_groups(data.map);
-    data.map.config_all_bodies(data.collision, data.map_collider_layer);
-    data.collision.config_collisions(data.map, data.map_collider_layer, data.npc_group);
+    data.map.config_all_bodies(data.collision, data.map.collision_layer);
+    data.collision.config_collisions(data.map, data.map.collision_layer, data.npc_group);
     game.physics.p2.updateBoundsCollisionGroup();
     data.debug.update_debug_physics(data.hero.sprite.body.debug);
     data.hero.sprite.body.x = current_event.x_target * data.map.sprite.tileWidth;

@@ -56,7 +56,7 @@ export class InteractableObjects {
         }
         for (let i = 0; i < this.allowed_tiles.length; ++i) {
             const tile = this.allowed_tiles[i];
-            if (tile.x === x && tile.y === y && tile.collision_layer === this.data.map_collider_layer) return true;
+            if (tile.x === x && tile.y === y && tile.collision_layer === this.data.map.collision_layer) return true;
         }
         return false;
     }

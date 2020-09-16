@@ -80,7 +80,7 @@ export class MoveFieldPsynergy {
     }
 
     fire_push() {
-        if (this.data.map_collider_layer === this.target_object.base_collider_layer) {
+        if (this.data.map.collision_layer === this.target_object.base_collider_layer) {
             let item_position = this.target_object.get_current_position(this.data.map);
             switch (this.data.hero.trying_to_push_direction) {
                 case directions.up:
@@ -159,7 +159,7 @@ export class MoveFieldPsynergy {
         const texture_key = MOVE_HAND_KEY_NAME + "_" + MOVE_HAND_ACTION_KEY;
         this.hand_sprite = this.data.npc_group.create(0, 0, texture_key);
         this.hand_sprite.send_to_front = true;
-        this.hand_sprite.base_collider_layer = this.data.map_collider_layer;
+        this.hand_sprite.base_collider_layer = this.data.map.collision_layer;
         this.hand_sprite.loadTexture(texture_key);
         this.hand_sprite_base.setAnimation(this.hand_sprite, MOVE_HAND_ACTION_KEY);
         this.hand_sprite.animations.frameName = `${MOVE_HAND_ACTION_KEY}/${reverse_directions[this.cast_direction]}/00`;
@@ -297,7 +297,7 @@ export class MoveFieldPsynergy {
             const item_y_px = interactable_object.current_y * this.data.map.sprite.tileHeight + (this.data.map.sprite.tileHeight >> 1);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
             const y_condition = item_y_px >= min_y && item_y_px <= max_y;
-            if (x_condition && y_condition && this.data.map_collider_layer === interactable_object.base_collider_layer) {
+            if (x_condition && y_condition && this.data.map.collision_layer === interactable_object.base_collider_layer) {
                 let this_sqr_distance = Math.pow(item_x_px - this.data.hero.sprite.x, 2) + Math.pow(item_y_px - this.data.hero.sprite.y, 2);
                 if (this_sqr_distance < sqr_distance) {
                     sqr_distance = this_sqr_distance;

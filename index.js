@@ -170,7 +170,7 @@ class GoldenSun {
         this.menu_screen = initialize_menu(this.game, this);
 
         //configuring map layers: creating sprites, listing events and setting the layers
-        this.map = await maps[this.init_db.map_key_name].mount_map(this.game, this);
+        this.map = await maps[this.init_db.map_key_name].mount_map(this.game, this, this.init_db.map_z_index);
     }
 
     async create() {
@@ -189,7 +189,6 @@ class GoldenSun {
         this.summons_db = this.game.cache.getJSON('summons_db');
 
         this.scale_factor = this.init_db.initial_scale_factor;
-        this.map_collider_layer = this.init_db.map_z_index;
         party_data.coins = this.init_db.coins;
 
         //format some db structures
@@ -218,8 +217,8 @@ class GoldenSun {
             this.init_db.initial_action,
             directions[this.init_db.initial_direction]
         );
-        this.hero.set_sprite(this.npc_group, main_char_list[this.hero.key_name].sprite_base, this.map.sprite, this.map_collider_layer);
-        this.hero.set_shadow('shadow', this.npc_group, this.map_collider_layer);
+        this.hero.set_sprite(this.npc_group, main_char_list[this.hero.key_name].sprite_base, this.map.sprite, this.map.collision_layer);
+        this.hero.set_shadow('shadow', this.npc_group, this.map.collision_layer);
         this.hero.camera_follow();
         this.hero.play();
 
@@ -227,8 +226,8 @@ class GoldenSun {
         this.collision = new Collision(this.game, this.hero);
         this.hero.config_body(this.collision);
         this.collision.config_collision_groups(this.map);
-        this.map.config_all_bodies(this.collision, this.map_collider_layer);
-        this.collision.config_collisions(this.map, this.map_collider_layer, this.npc_group);
+        this.map.config_all_bodies(this.collision, this.map.collision_layer);
+        this.collision.config_collisions(this.map, this.map.collision_layer, this.npc_group);
         this.game.physics.p2.updateBoundsCollisionGroup();
 
         this.initialize_game_main_controls();

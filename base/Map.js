@@ -41,6 +41,7 @@ export class Map {
         this.collision_sprite = this.game.add.sprite(0, 0);
         this.collision_sprite.width = this.collision_sprite.height = 0;
         this.color_filter = this.game.add.filter('ColorFilters');
+        this.collision_layer = null;
     }
 
     sort_sprites(data) {
@@ -117,12 +118,12 @@ export class Map {
         }
     }
 
-    config_body(collision_obj, map_collider_layer) {
+    config_body(collision_obj, collision_layer) {
         this.game.physics.p2.enable(this.collision_sprite, false);
         this.collision_sprite.body.clearShapes();
         this.collision_sprite.body.loadPolygon( //load map physics data json files
-            this.physics_names[map_collider_layer], 
-            this.physics_names[map_collider_layer]
+            this.physics_names[collision_layer], 
+            this.physics_names[collision_layer]
         );
         this.collision_sprite.body.setCollisionGroup(collision_obj.map_collision_group);
         this.collision_sprite.body.damping = numbers.MAP_DAMPING;
@@ -132,10 +133,10 @@ export class Map {
         this.collision_sprite.body.static = true;
     }
 
-    config_all_bodies(collision_obj, map_collider_layer) {
+    config_all_bodies(collision_obj, collision_layer) {
         this.npcs.forEach(npc => npc.config_body(collision_obj));
         this.interactable_objects.forEach(interactable_obj => interactable_obj.config_body(collision_obj));
-        this.config_body(collision_obj, map_collider_layer);
+        this.config_body(collision_obj, collision_layer);
     }
 
     create_tile_events(raw_property) {
@@ -343,7 +344,7 @@ export class Map {
             }
 
             let is_over = this.layers[i].properties.over.toString().split(",");
-            is_over = is_over.length > data.map_collider_layer ? is_over[data.map_collider_layer] | 0 : is_over[0] | 0;
+            is_over = is_over.length > this.collision_layer ? is_over[this.collision_layer] | 0 : is_over[0] | 0;
             if (is_over !== 0) {
                 data.overlayer_group.add(layer);
             } else {
@@ -352,7 +353,8 @@ export class Map {
         }
     }
 
-    async mount_map(game, data) {
+    async mount_map(game, data, collision_layer) {
+        this.collision_layer = collision_layer;
         this.events = {};
         TileEvent.reset();
         GameEvent.reset();
