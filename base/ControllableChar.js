@@ -91,7 +91,7 @@ export class ControllableChar {
     }
 
     set_action(check_on_event = false) {
-        if (check_on_event && this.data.on_event) {
+        if (check_on_event && this.data.tile_event_manager.on_event) {
             return;
         }
         let action = this.current_action;

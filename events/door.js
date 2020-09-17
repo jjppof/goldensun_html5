@@ -3,14 +3,14 @@ import * as numbers from '../magic_numbers.js';
 import { reverse_directions } from '../utils.js';
 
 export function set_door_event(game, data, current_event) {
-    if (data.hero.tile_x_pos !== current_event.x || data.hero.tile_y_pos !== current_event.y || data.hero.casting_psynergy || data.hero.pushing || data.hero.climbing || data.hero.jumping || data.menu_open || data.in_battle || data.on_event) {
+    if (data.hero.tile_x_pos !== current_event.x || data.hero.tile_y_pos !== current_event.y || data.hero.casting_psynergy || data.hero.pushing || data.hero.climbing || data.hero.jumping || data.menu_open || data.in_battle || data.tile_event_manager.on_event) {
         return;
     }
-    data.on_event = true;
+    data.tile_event_manager.on_event = true;
     data.teleporting = true;
     if (current_event.advance_effect) {
         if (!data.hero.stop_by_colliding) {
-            data.on_event = false;
+            data.tile_event_manager.on_event = false;
             data.teleporting = false;
             return;
         }
@@ -77,7 +77,7 @@ function camera_fade_out(game, data) {
     game.camera.flash(0x0);
     game.camera.onFlashComplete.addOnce(() => {
         game.camera.lerp.setTo(numbers.CAMERA_LERP, numbers.CAMERA_LERP);
-        data.on_event = false;
+        data.tile_event_manager.on_event = false;
         data.teleporting = false;
     });
 }

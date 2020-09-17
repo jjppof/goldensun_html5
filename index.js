@@ -45,7 +45,6 @@ class GoldenSun {
         );
 
         //events and game states
-        this.on_event = false;
         this.teleporting = false;
         this.waiting_to_step = false;
         this.step_event_data = {};
@@ -306,7 +305,7 @@ class GoldenSun {
             this.render_loading();
             return;
         }
-        if (!this.on_event && !this.npc_event && !this.hero.pushing && !this.menu_open && !this.hero.casting_psynergy && !this.in_battle) {
+        if (!this.tile_event_manager.on_event && !this.npc_event && !this.hero.pushing && !this.menu_open && !this.hero.casting_psynergy && !this.in_battle) {
             this.hero.update_tile_position(this.map.sprite);
 
             if (this.waiting_to_step) { //step event
@@ -334,7 +333,7 @@ class GoldenSun {
             }
 
             this.map.sort_sprites();
-        } else if (this.on_event) {
+        } else if (this.tile_event_manager.on_event) {
             this.hero.stop_char(false);
         } else if (this.npc_event) {
             set_npc_event(this.game, this);

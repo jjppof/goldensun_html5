@@ -18,7 +18,7 @@ function start_climbing(game, data, current_event, activation_direction) {
     if (current_event.change_to_collision_layer !== null) {
         data.collision.change_map_body(data, current_event.change_to_collision_layer);
     }
-    data.on_event = true;
+    data.tile_event_manager.on_event = true;
     if (activation_direction === directions.down) {
         const turn_animation = data.hero.play("climb", "turn");
         turn_animation.onComplete.addOnce(() => {
@@ -34,7 +34,7 @@ function start_climbing(game, data, current_event, activation_direction) {
             const start_animation = data.hero.play("climb", "start");
             start_animation.onComplete.addOnce(() => {
                 data.hero.play("climb", "idle");
-                data.on_event = false;
+                data.tile_event_manager.on_event = false;
                 data.hero.climbing = true;
                 data.hero.current_action = "climb";
                 if (current_event.dynamic) {
@@ -58,7 +58,7 @@ function start_climbing(game, data, current_event, activation_direction) {
             true
         ).onComplete.addOnce(() => {
             game.physics.p2.resume();
-            data.on_event = false;
+            data.tile_event_manager.on_event = false;
             data.hero.climbing = true;
         });
         data.hero.shadow.visible = false;
@@ -80,7 +80,7 @@ function finish_climbing(game, data, current_event, activation_direction) {
         if (current_event.change_to_collision_layer !== null) {
             data.collision.change_map_body(data, current_event.change_to_collision_layer);
         }
-        data.on_event = true;
+        data.tile_event_manager.on_event = true;
         const end_animation = data.hero.play("climb", "end");
         data.hero.shadow.visible = false;
         game.add.tween(data.hero.sprite.body).to(
@@ -102,7 +102,7 @@ function finish_climbing(game, data, current_event, activation_direction) {
                     remove_climb_collision_bodies(data, current_event, false);
                 }
                 game.time.events.add(250, () => {
-                    data.on_event = false;
+                    data.tile_event_manager.on_event = false;
                     data.hero.climbing = false;
                     data.hero.current_action = "idle";
                     data.hero.current_direction = directions.up;
@@ -114,7 +114,7 @@ function finish_climbing(game, data, current_event, activation_direction) {
         if (current_event.change_to_collision_layer !== null) {
             data.collision.change_map_body(data, current_event.change_to_collision_layer);
         }
-        data.on_event = true;
+        data.tile_event_manager.on_event = true;
         data.hero.play("idle", "up");
         const out_time = Phaser.Timer.QUARTER/3;
         game.add.tween(data.hero.sprite.body).to(
@@ -124,7 +124,7 @@ function finish_climbing(game, data, current_event, activation_direction) {
             true
         ).onComplete.addOnce(() => {
             game.physics.p2.resume();
-            data.on_event = false;
+            data.tile_event_manager.on_event = false;
             data.hero.climbing = false;
         });
         if (current_event.dynamic) {

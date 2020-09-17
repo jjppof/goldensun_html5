@@ -91,7 +91,7 @@ export function jump_event(game, data, current_event) {
         return;
     }
     data.hero.jumping = true;
-    data.on_event = true;
+    data.tile_event_manager.on_event = true;
     let tween_obj = {};
     tween_obj[direction] = data.hero.sprite[direction] + jump_offset;
     const hero_x = data.map.sprite.tileWidth * (next_position.x + 0.5);
@@ -119,7 +119,7 @@ export function jump_event(game, data, current_event) {
             data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
                 game.physics.p2.resume();
                 data.hero.jumping = false;
-                data.on_event = false;
+                data.tile_event_manager.on_event = false;
             });
         }, this);
     });

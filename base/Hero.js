@@ -72,7 +72,7 @@ export class Hero extends ControllableChar {
     }
 
     set_current_action() {
-        if (this.data.on_event) {
+        if (this.data.tile_event_manager.on_event) {
             return;
         }
         const movement_direction = rotation_key[this.arrow_inputs];
@@ -89,7 +89,7 @@ export class Hero extends ControllableChar {
     }
 
     set_speed_factors(check_on_event = false) {
-        if (check_on_event && this.data.on_event) {
+        if (check_on_event && this.data.tile_event_manager.on_event) {
             return;
         }
         let desired_direction = rotation_key[this.arrow_inputs];

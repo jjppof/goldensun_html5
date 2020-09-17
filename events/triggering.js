@@ -43,6 +43,7 @@ export class TileEventManager {
         this.hero = hero;
         this.collision = collision;
         this.event_timers = {};
+        this.on_event = false;
     }
 
     fire_event(current_event, this_activation_direction) {
