@@ -10,7 +10,7 @@ import { do_step } from './events/step.js';
 import { initialize_menu } from './screens/menu.js';
 import { TileEvent } from './base/TileEvent.js';
 import { Debug } from './debug.js';
-import { event_triggering } from './events/triggering.js';
+import { TileEventManager } from './events/triggering.js';
 import { load_all } from './initializers/assets_loader.js';
 import { Collision } from './base/Collision.js';
 import { directions } from './utils.js';
@@ -45,7 +45,6 @@ class GoldenSun {
         );
 
         //events and game states
-        this.event_timers = {};
         this.on_event = false;
         this.teleporting = false;
         this.waiting_to_step = false;
@@ -63,6 +62,7 @@ class GoldenSun {
         this.debug = null;
         this.menu_screen = null;
         this.map = null;
+        this.tile_event_manager = null;
 
         //common inputs
         this.enter_input = null;
@@ -230,6 +230,8 @@ class GoldenSun {
         this.collision.config_collisions(this.map, this.map.collision_layer, this.npc_group);
         this.game.physics.p2.updateBoundsCollisionGroup();
 
+        this.tile_event_manager = new TileEventManager(this.game, this, this.hero, this.collision);
+
         this.initialize_game_main_controls();
 
         //set keyboard cursors
@@ -317,7 +319,7 @@ class GoldenSun {
             //check if the actual tile has an event
             const event_location_key = TileEvent.get_location_key(this.hero.tile_x_pos, this.hero.tile_y_pos);
             if (event_location_key in this.map.events) {
-                event_triggering(this.game, this, event_location_key);
+                this.tile_event_manager.event_triggering(event_location_key, this.map);
             } else if (this.hero.extra_speed !== 0) { //disabling speed event
                 this.hero.extra_speed = 0;
             }
