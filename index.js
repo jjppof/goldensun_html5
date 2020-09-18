@@ -10,7 +10,7 @@ import { do_step } from './events/step.js';
 import { initialize_menu } from './screens/menu.js';
 import { TileEvent } from './base/TileEvent.js';
 import { Debug } from './debug.js';
-import { event_triggering } from './events/triggering.js';
+import { TileEventManager } from './events/triggering.js';
 import { load_all } from './initializers/assets_loader.js';
 import { Collision } from './base/Collision.js';
 import { directions } from './utils.js';
@@ -45,8 +45,6 @@ class GoldenSun {
         );
 
         //events and game states
-        this.event_timers = {};
-        this.on_event = false;
         this.teleporting = false;
         this.waiting_to_step = false;
         this.step_event_data = {};
@@ -63,6 +61,7 @@ class GoldenSun {
         this.debug = null;
         this.menu_screen = null;
         this.map = null;
+        this.tile_event_manager = null;
 
         //common inputs
         this.enter_input = null;
@@ -120,8 +119,8 @@ class GoldenSun {
         const load_maps_promise = new Promise(resolve => {
             load_maps_promise_resolve = resolve;
         });
-        initialize_maps(this.game, this.maps_db);
-        load_maps(this.game, load_maps_promise_resolve);
+        initialize_maps(this.game, this, this.maps_db);
+        load_maps(load_maps_promise_resolve);
         await load_maps_promise;
 
         initialize_classes(this.classes_db);
@@ -170,7 +169,7 @@ class GoldenSun {
         this.menu_screen = initialize_menu(this.game, this);
 
         //configuring map layers: creating sprites, listing events and setting the layers
-        this.map = await maps[this.init_db.map_key_name].mount_map(this.game, this);
+        this.map = await maps[this.init_db.map_key_name].mount_map(this.init_db.map_z_index);
     }
 
     async create() {
@@ -187,12 +186,8 @@ class GoldenSun {
         this.maps_db = this.game.cache.getJSON('maps_db');
         this.main_chars_db = this.game.cache.getJSON('main_chars_db');
         this.summons_db = this.game.cache.getJSON('summons_db');
-        this.hero_color_filters = this.game.add.filter('ColorFilters');
-        this.map_color_filters = this.game.add.filter('ColorFilters');
-        this.pasynergy_item_color_filters = this.game.add.filter('ColorFilters');
 
         this.scale_factor = this.init_db.initial_scale_factor;
-        this.map_collider_layer = this.init_db.map_z_index;
         party_data.coins = this.init_db.coins;
 
         //format some db structures
@@ -221,8 +216,8 @@ class GoldenSun {
             this.init_db.initial_action,
             directions[this.init_db.initial_direction]
         );
-        this.hero.set_sprite(this.npc_group, main_char_list[this.hero.key_name].sprite_base, this.map.sprite, this.map_collider_layer);
-        this.hero.set_shadow('shadow', this.npc_group, this.map_collider_layer);
+        this.hero.set_sprite(this.npc_group, main_char_list[this.hero.key_name].sprite_base, this.map.sprite, this.map.collision_layer);
+        this.hero.set_shadow('shadow', this.npc_group, this.map.collision_layer);
         this.hero.camera_follow();
         this.hero.play();
 
@@ -230,9 +225,11 @@ class GoldenSun {
         this.collision = new Collision(this.game, this.hero);
         this.hero.config_body(this.collision);
         this.collision.config_collision_groups(this.map);
-        this.map.config_all_bodies(this.collision, this.map_collider_layer);
-        this.collision.config_collisions(this.map, this.map_collider_layer, this.npc_group);
+        this.map.config_all_bodies(this.collision, this.map.collision_layer);
+        this.collision.config_collisions(this.map, this.map.collision_layer, this.npc_group);
         this.game.physics.p2.updateBoundsCollisionGroup();
+
+        this.tile_event_manager = new TileEventManager(this.game, this, this.hero, this.collision);
 
         this.initialize_game_main_controls();
 
@@ -308,7 +305,7 @@ class GoldenSun {
             this.render_loading();
             return;
         }
-        if (!this.on_event && !this.npc_event && !this.hero.pushing && !this.menu_open && !this.hero.casting_psynergy && !this.in_battle) {
+        if (!this.tile_event_manager.on_event && !this.npc_event && !this.hero.pushing && !this.menu_open && !this.hero.casting_psynergy && !this.in_battle) {
             this.hero.update_tile_position(this.map.sprite);
 
             if (this.waiting_to_step) { //step event
@@ -321,7 +318,7 @@ class GoldenSun {
             //check if the actual tile has an event
             const event_location_key = TileEvent.get_location_key(this.hero.tile_x_pos, this.hero.tile_y_pos);
             if (event_location_key in this.map.events) {
-                event_triggering(this.game, this, event_location_key);
+                this.tile_event_manager.event_triggering(event_location_key, this.map);
             } else if (this.hero.extra_speed !== 0) { //disabling speed event
                 this.hero.extra_speed = 0;
             }
@@ -335,8 +332,8 @@ class GoldenSun {
                 npc.update();
             }
 
-            this.map.sort_sprites(this);
-        } else if (this.on_event) {
+            this.map.sort_sprites();
+        } else if (this.tile_event_manager.on_event) {
             this.hero.stop_char(false);
         } else if (this.npc_event) {
             set_npc_event(this.game, this);

@@ -48,7 +48,7 @@ export function jump_event(game, data, current_event) {
             for (let j = 0; j < data.map.interactable_objects.length; ++j) {
                 const interactable_object = data.map.interactable_objects[j];
                 //if the side position has a interactable object, it does not cancel this jump event
-                if (data.map_collider_layer !== interactable_object.base_collider_layer) continue;
+                if (data.map.collision_layer !== interactable_object.base_collider_layer) continue;
                 if (event.x === interactable_object.current_x && event.y === interactable_object.current_y) {
                     interactable_object_found = true;
                     break;
@@ -58,7 +58,7 @@ export function jump_event(game, data, current_event) {
                 continue;
             }
             //cancel jumping if the next side event is also a jump
-            if (event.type === event_types.JUMP && event.is_set && event.activation_collision_layers.includes(data.map_collider_layer)) {
+            if (event.type === event_types.JUMP && event.is_set && event.activation_collision_layers.includes(data.map.collision_layer)) {
                 return;
             }
         }
@@ -67,14 +67,14 @@ export function jump_event(game, data, current_event) {
     for (let i = 0; i < data.map.interactable_objects.length; ++i) {
         const next_interactable_object = data.map.interactable_objects[i];
         if (next_interactable_object.current_x !== next_position.x || next_interactable_object.current_y !== next_position.y) continue;
-        if (data.map_collider_layer !== next_interactable_object.base_collider_layer) continue;
+        if (data.map.collision_layer !== next_interactable_object.base_collider_layer) continue;
         return;
     }
     if (next_pos_key in data.map.events) {
         let active_jump_event_found = false;
         for (let i = 0; i < data.map.events[next_pos_key].length; ++i) {
             const event = data.map.events[next_pos_key][i];
-            if (event.type === event_types.JUMP && event.is_active(get_opposite_direction(jump_direction)) && event.is_set && event.activation_collision_layers.includes(data.map_collider_layer)) {
+            if (event.type === event_types.JUMP && event.is_active(get_opposite_direction(jump_direction)) && event.is_set && event.activation_collision_layers.includes(data.map.collision_layer)) {
                 active_jump_event_found = true;
                 if (event.dynamic) {
                     set_jump_collision(game, data);
@@ -91,7 +91,7 @@ export function jump_event(game, data, current_event) {
         return;
     }
     data.hero.jumping = true;
-    data.on_event = true;
+    data.tile_event_manager.on_event = true;
     let tween_obj = {};
     tween_obj[direction] = data.hero.sprite[direction] + jump_offset;
     const hero_x = data.map.sprite.tileWidth * (next_position.x + 0.5);
@@ -119,7 +119,7 @@ export function jump_event(game, data, current_event) {
             data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
                 game.physics.p2.resume();
                 data.hero.jumping = false;
-                data.on_event = false;
+                data.tile_event_manager.on_event = false;
             });
         }, this);
     });
@@ -136,7 +136,7 @@ export function set_jump_collision(game, data) {
     for (let event_key in data.map.events) {
         for (let j = 0; j < data.map.events[event_key].length; ++j) {
             const event = data.map.events[event_key][j];
-            if (event.type === event_types.JUMP && event.dynamic && event.is_set && event.activation_collision_layers.includes(data.map_collider_layer)) {
+            if (event.type === event_types.JUMP && event.dynamic && event.is_set && event.activation_collision_layers.includes(data.map.collision_layer)) {
                 let surroundings = [
                     {x: event.x - 1, y: event.y},
                     {x: event.x + 1, y: event.y},
@@ -149,7 +149,7 @@ export function set_jump_collision(game, data) {
                         let dynamic_found = false;
                         for (let k = 0; k < data.map.events[surrounding_key].length; ++k) {
                             const this_event = data.map.events[surrounding_key][k];
-                            if (this_event.dynamic && this_event.type === event_types.JUMP && this_event.is_set && this_event.activation_collision_layers.includes(data.map_collider_layer)) {
+                            if (this_event.dynamic && this_event.type === event_types.JUMP && this_event.is_set && this_event.activation_collision_layers.includes(data.map.collision_layer)) {
                                 dynamic_found = true;
                                 break;
                             }
@@ -212,7 +212,7 @@ export function jump_near_collision(game, data, current_event) {
         if (surrounding_key in data.map.events) {
             for (let j = 0; j < data.map.events[surrounding_key].length; ++j) {
                 const surrounding_event = data.map.events[surrounding_key][j];
-                if (surrounding_event.type === event_types.JUMP && right_direction && surrounding_event.is_set && surrounding_event.activation_collision_layers.includes(data.map_collider_layer)) {
+                if (surrounding_event.type === event_types.JUMP && right_direction && surrounding_event.is_set && surrounding_event.activation_collision_layers.includes(data.map.collision_layer)) {
                     if ((surrounding_event.dynamic || current_event.dynamic) && !surroundings[i].diag) {
                         at_least_one_dynamic_and_not_diag = true;
                     }

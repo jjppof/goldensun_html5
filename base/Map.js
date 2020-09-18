@@ -17,6 +17,7 @@ import * as numbers from "../magic_numbers.js";
 export class Map {
     constructor (
         game,
+        data,
         name,
         key_name,
         tileset_name,
@@ -26,6 +27,7 @@ export class Map {
         physics_jsons_url
     ) {
         this.game = game;
+        this.data = data;
         this.name = name;
         this.key_name = key_name;
         this.tileset_name = tileset_name;
@@ -40,13 +42,15 @@ export class Map {
         this.collision_layers_number = this.physics_names.length;
         this.collision_sprite = this.game.add.sprite(0, 0);
         this.collision_sprite.width = this.collision_sprite.height = 0;
+        this.color_filter = this.game.add.filter('ColorFilters');
+        this.collision_layer = null;
     }
 
-    sort_sprites(data) {
-        let send_to_back_list = new Array(data.npc_group.children.length);
-        let send_to_front_list = new Array(data.npc_group.children.length);
-        let has_sort_function = new Array(data.npc_group.children.length);
-        data.npc_group.children.forEach((sprite, index) => {
+    sort_sprites() {
+        let send_to_back_list = new Array(this.data.npc_group.children.length);
+        let send_to_front_list = new Array(this.data.npc_group.children.length);
+        let has_sort_function = new Array(this.data.npc_group.children.length);
+        this.data.npc_group.children.forEach((sprite, index) => {
             sprite.y_sort = (sprite.base_collider_layer.toString() + sprite.y.toString()) | 0;
             if (sprite.sort_function) {
                 has_sort_function[index] = sprite;
@@ -59,22 +63,22 @@ export class Map {
                 return;
             }
         });
-        data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
-        let shadow_index = data.npc_group.getChildIndex(data.hero.sprite) - 1;
-        if (shadow_index >= -1 && shadow_index < data.npc_group.children.length) {
+        this.data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
+        let shadow_index = this.data.npc_group.getChildIndex(this.data.hero.sprite) - 1;
+        if (shadow_index >= -1 && shadow_index < this.data.npc_group.children.length) {
             if (shadow_index === -1) {
                 shadow_index = 0;
             }
-            data.npc_group.setChildIndex(data.hero.shadow, shadow_index); //making sure that shadow is always behind the hero
+            this.data.npc_group.setChildIndex(this.data.hero.shadow, shadow_index); //making sure that shadow is always behind the hero
         }
         send_to_back_list.forEach(sprite => {
             if (sprite) {
-                data.npc_group.sendChildToBack(sprite);
+                this.data.npc_group.sendChildToBack(sprite);
             }
         });
         send_to_front_list.forEach(sprite => {
             if (sprite) {
-                data.npc_group.bringChildToTop(sprite);
+                this.data.npc_group.bringChildToTop(sprite);
             }
         });
         has_sort_function.forEach(sprite => {
@@ -88,18 +92,18 @@ export class Map {
         this.collision_sprite.body.velocity.y = this.collision_sprite.body.velocity.x = 0; //fixes map body
     }
 
-    load_map_assets(game, force_load, on_complete) {
+    load_map_assets(force_load, on_complete) {
         let load_tilemap_promise_resolve;
         let load_tilemap_promise = new Promise(resolve => {
             load_tilemap_promise_resolve = resolve;
         });
-        game.load.tilemap(this.key_name, this.tileset_json_url, null, Phaser.Tilemap.TILED_JSON).onLoadComplete.addOnce(load_tilemap_promise_resolve, this);
+        this.game.load.tilemap(this.key_name, this.tileset_json_url, null, Phaser.Tilemap.TILED_JSON).onLoadComplete.addOnce(load_tilemap_promise_resolve);
 
         let load_image_promise_resolve;
         let load_image_promise = new Promise(resolve => {
             load_image_promise_resolve = resolve;
         });
-        game.load.image(this.key_name, this.tileset_image_url).onLoadComplete.addOnce(load_image_promise_resolve, this);
+        this.game.load.image(this.key_name, this.tileset_image_url).onLoadComplete.addOnce(load_image_promise_resolve);
 
         let physics_promises = [];
         for (let i = 0; i < this.physics_names.length; ++i) {
@@ -108,20 +112,20 @@ export class Map {
                 load_physics_promise_resolve = resolve;
             });
             physics_promises.push(load_physics_promise);
-            game.load.physics(this.physics_names[i], this.physics_jsons_url[i]).onLoadComplete.addOnce(load_physics_promise_resolve, this);
+            this.game.load.physics(this.physics_names[i], this.physics_jsons_url[i]).onLoadComplete.addOnce(load_physics_promise_resolve);
         }
         if (force_load) {
             Promise.all([load_tilemap_promise, load_image_promise, ...physics_promises]).then(on_complete);
-            game.load.start();
+            this.game.load.start();
         }
     }
 
-    config_body(collision_obj, map_collider_layer) {
+    config_body(collision_obj, collision_layer) {
         this.game.physics.p2.enable(this.collision_sprite, false);
         this.collision_sprite.body.clearShapes();
         this.collision_sprite.body.loadPolygon( //load map physics data json files
-            this.physics_names[map_collider_layer], 
-            this.physics_names[map_collider_layer]
+            this.physics_names[collision_layer], 
+            this.physics_names[collision_layer]
         );
         this.collision_sprite.body.setCollisionGroup(collision_obj.map_collision_group);
         this.collision_sprite.body.damping = numbers.MAP_DAMPING;
@@ -131,10 +135,10 @@ export class Map {
         this.collision_sprite.body.static = true;
     }
 
-    config_all_bodies(collision_obj, map_collider_layer) {
+    config_all_bodies(collision_obj, collision_layer) {
         this.npcs.forEach(npc => npc.config_body(collision_obj));
         this.interactable_objects.forEach(interactable_obj => interactable_obj.config_body(collision_obj));
-        this.config_body(collision_obj, map_collider_layer);
+        this.config_body(collision_obj, collision_layer);
     }
 
     create_tile_events(raw_property) {
@@ -216,11 +220,11 @@ export class Map {
         }
     }
 
-    create_npcs(game, data, raw_property) {
+    create_npcs(raw_property) {
         const property_info = JSON.parse(raw_property);
         this.npcs.push(new NPC(
-            game,
-            data,
+            this.game,
+            this.data,
             property_info.key_name,
             property_info.initial_x,
             property_info.initial_y,
@@ -237,11 +241,11 @@ export class Map {
         ));
     }
 
-    create_interactable_objects(game, data, raw_property) {
+    create_interactable_objects(raw_property) {
         const property_info = JSON.parse(raw_property);
         const interactable_object = new InteractableObjects(
-            game,
-            data,
+            this.game,
+            this.data,
             property_info.key_name,
             property_info.x,
             property_info.y,
@@ -264,7 +268,7 @@ export class Map {
         }
     }
 
-    async config_interactable_object(game, data) {
+    async config_interactable_object() {
         for (let i = 0; i < this.interactable_objects.length; ++i) {
             const interactable_object = this.interactable_objects[i];
             const action = interactable_object.key_name;
@@ -275,18 +279,18 @@ export class Map {
             interactable_object.sprite_info = interactable_obj_sprite_info;
             interactable_obj_sprite_info.setActionSpritesheet(
                 action,
-                data.interactable_objects_db[interactable_object.key_name].spritesheet.image,
-                data.interactable_objects_db[interactable_object.key_name].spritesheet.json
+                this.data.interactable_objects_db[interactable_object.key_name].spritesheet.image,
+                this.data.interactable_objects_db[interactable_object.key_name].spritesheet.json
             );
             interactable_obj_sprite_info.setActionDirections(
                 action, 
-                data.interactable_objects_db[interactable_object.key_name].actions.animations,
-                data.interactable_objects_db[interactable_object.key_name].actions.frames_count
+                this.data.interactable_objects_db[interactable_object.key_name].actions.animations,
+                this.data.interactable_objects_db[interactable_object.key_name].actions.frames_count
             );
-            interactable_obj_sprite_info.setActionFrameRate(action, data.interactable_objects_db[interactable_object.key_name].actions.frame_rate);
+            interactable_obj_sprite_info.setActionFrameRate(action, this.data.interactable_objects_db[interactable_object.key_name].actions.frame_rate);
             interactable_obj_sprite_info.generateAllFrames();
             await new Promise(resolve => {
-                interactable_obj_sprite_info.loadSpritesheets(game, true, () => {
+                interactable_obj_sprite_info.loadSpritesheets(this.game, true, () => {
                     interactable_object.initial_config(this.sprite);
                     interactable_object.initialize_related_events(this.events, this);
                     resolve();
@@ -295,7 +299,7 @@ export class Map {
         }
     }
 
-    async config_npc(game, data) {
+    async config_npc() {
         for (let i = 0; i < this.npcs.length; ++i) {
             const npc = this.npcs[i];
             let actions = [];
@@ -313,14 +317,14 @@ export class Map {
                 );
                 npc_sprite_info.setActionDirections(
                     action, 
-                    data.npc_db[npc.key_name].actions[action].directions,
-                    data.npc_db[npc.key_name].actions[action].frames_count
+                    this.data.npc_db[npc.key_name].actions[action].directions,
+                    this.data.npc_db[npc.key_name].actions[action].frames_count
                 );
-                npc_sprite_info.setActionFrameRate(action, data.npc_db[npc.key_name].actions[action].frame_rate);
+                npc_sprite_info.setActionFrameRate(action, this.data.npc_db[npc.key_name].actions[action].frame_rate);
             }
             npc_sprite_info.generateAllFrames();
             await new Promise(resolve => {
-                npc_sprite_info.loadSpritesheets(game, true, () => {
+                npc_sprite_info.loadSpritesheets(this.game, true, () => {
                     npc.initial_config(this.sprite);
                     resolve();
                 });
@@ -328,7 +332,7 @@ export class Map {
         }
     }
 
-    config_layers(data) {
+    config_layers(overlayer_group, underlayer_group) {
         for (let i = 0; i < this.layers.length; ++i) {
             let layer = this.sprite.createLayer(this.layers[i].name);
             this.layers[i].sprite = layer;
@@ -342,20 +346,21 @@ export class Map {
             }
 
             let is_over = this.layers[i].properties.over.toString().split(",");
-            is_over = is_over.length > data.map_collider_layer ? is_over[data.map_collider_layer] | 0 : is_over[0] | 0;
+            is_over = is_over.length > this.collision_layer ? is_over[this.collision_layer] | 0 : is_over[0] | 0;
             if (is_over !== 0) {
-                data.overlayer_group.add(layer);
+                overlayer_group.add(layer);
             } else {
-                data.underlayer_group.add(layer);
+                underlayer_group.add(layer);
             }
         }
     }
 
-    async mount_map(game, data) {
+    async mount_map(collision_layer) {
+        this.collision_layer = collision_layer;
         this.events = {};
         TileEvent.reset();
         GameEvent.reset();
-        this.sprite = game.add.tilemap(this.key_name);
+        this.sprite = this.game.add.tilemap(this.key_name);
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
 
         for (let i = 0; i < this.sprite.tilesets.length; ++i) {
@@ -370,9 +375,9 @@ export class Map {
             if (property.startsWith("event")) {
                 this.create_tile_events(raw_property);
             } else if(property.startsWith("npc")) {
-                this.create_npcs(game, data, raw_property);
+                this.create_npcs(raw_property);
             } else if(property.startsWith("interactable_object")) {
-                this.create_interactable_objects(game, data, raw_property);
+                this.create_interactable_objects(raw_property);
             }
         }
 
@@ -381,22 +386,22 @@ export class Map {
             if (a.properties.z !== b.properties.z) return a - b;
         });
 
-        this.config_layers(data);
-        await this.config_interactable_object(game, data);
-        await this.config_npc(game, data);
+        this.config_layers(this.data.overlayer_group, this.data.underlayer_group);
+        await this.config_interactable_object();
+        await this.config_npc();
 
         return this;
     }
 
-    unset_map(data) {
-        data.underlayer_group.removeAll();
-        data.overlayer_group.removeAll();
+    unset_map() {
+        this.data.underlayer_group.removeAll();
+        this.data.overlayer_group.removeAll();
 
         this.collision_sprite.body.clearShapes();
 
         let sprites_to_remove = []
-        for (let i = 0; i < data.npc_group.children.length; ++i) {
-            let sprite = data.npc_group.children[i];
+        for (let i = 0; i < this.data.npc_group.children.length; ++i) {
+            let sprite = this.data.npc_group.children[i];
             if (!sprite.is_npc && !sprite.is_interactable_object) continue;
             if (sprite.is_interactable_object && sprite.interactable_object.custom_data.blocking_stair_block) {
                 sprite.interactable_object.custom_data.blocking_stair_block.destroy();
@@ -406,13 +411,13 @@ export class Map {
         }
         for (let i = 0; i < sprites_to_remove.length; ++i) {
             let sprite = sprites_to_remove[i];
-            data.npc_group.remove(sprite, true);
+            this.data.npc_group.remove(sprite, true);
         }
 
         this.npcs = [];
         this.interactable_objects = [];
-        data.npc_group.removeAll();
-        data.npc_group.add(data.hero.shadow);
-        data.npc_group.add(data.hero.sprite);
+        this.data.npc_group.removeAll();
+        this.data.npc_group.add(this.data.hero.shadow);
+        this.data.npc_group.add(this.data.hero.sprite);
     }
 }

@@ -41,21 +41,22 @@ export class InteractableObjects {
             collision_tiles_bodies: []
         };
         this.collision_change_functions = [];
+        this.color_filter = this.game.add.filter('ColorFilters');
     }
 
     set_sprite(sprite) {
         this.interactable_object_sprite = sprite;
     }
 
-    position_allowed(data, x, y) {
-        if (data.map.interactable_objects.filter(item => {
+    position_allowed(x, y) {
+        if (this.data.map.interactable_objects.filter(item => {
             return item.current_x === x && item.current_y === y;
         }).length) {
             return false;
         }
         for (let i = 0; i < this.allowed_tiles.length; ++i) {
             const tile = this.allowed_tiles[i];
-            if (tile.x === x && tile.y === y && tile.collision_layer === data.map_collider_layer) return true;
+            if (tile.x === x && tile.y === y && tile.collision_layer === this.data.map.collision_layer) return true;
         }
         return false;
     }

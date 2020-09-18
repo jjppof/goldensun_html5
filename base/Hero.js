@@ -75,7 +75,7 @@ export class Hero extends ControllableChar {
     }
 
     set_current_action() {
-        if (this.data.on_event) {
+        if (this.data.tile_event_manager.on_event) {
             return;
         }
         const movement_direction = rotation_key[this.arrow_inputs];
@@ -96,7 +96,7 @@ export class Hero extends ControllableChar {
     }
 
     set_speed_factors(check_on_event = false) {
-        if (check_on_event && this.data.on_event) {
+        if (check_on_event && this.data.tile_event_manager.on_event) {
             return;
         }
         let desired_direction = rotation_key[this.arrow_inputs];
@@ -137,7 +137,7 @@ export class Hero extends ControllableChar {
             if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
                 if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
                     const interactable_object = map.interactable_objects[j];
-                    if (["walk", "dash"].includes(this.current_action) && this.data.map_collider_layer === interactable_object.base_collider_layer) {
+                    if (["walk", "dash"].includes(this.current_action) && this.data.map.collision_layer === interactable_object.base_collider_layer) {
                         this.trying_to_push = true;
                         if (this.push_timer === null) {
                             this.trying_to_push_direction = this.current_direction;
@@ -167,7 +167,7 @@ export class Hero extends ControllableChar {
                                         item_position.x += 1;
                                         break;
                                 }
-                                if (interactable_object.position_allowed(this.data, item_position.x, item_position.y)) {
+                                if (interactable_object.position_allowed(item_position.x, item_position.y)) {
                                     this.push_timer = this.game.time.events.add(Phaser.Timer.QUARTER, normal_push.bind(this, this.game, this.data, interactable_object));
                                 }
                             }

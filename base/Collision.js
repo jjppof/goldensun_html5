@@ -36,22 +36,22 @@ export class Collision {
         this.max_layers_created = Math.max(this.max_layers_created, map.collision_layers_number);
     }
 
-    config_collisions(map, map_collider_layer, npc_group) {
+    config_collisions(map, collision_layer, npc_group) {
         this.hero.sprite.body.collides(this.map_collision_group);
         map.collision_sprite.body.collides(this.hero_collision_group);
 
         for (let collide_index in this.npc_collision_groups) {
             this.hero.sprite.body.removeCollisionGroup(this.npc_collision_groups[collide_index], true);
         }
-        if (map_collider_layer in this.npc_collision_groups) {
-            this.hero.sprite.body.collides(this.npc_collision_groups[map_collider_layer]);
+        if (collision_layer in this.npc_collision_groups) {
+            this.hero.sprite.body.collides(this.npc_collision_groups[collision_layer]);
         }
 
         for (let collide_index in this.interactable_objs_collision_groups) {
             this.hero.sprite.body.removeCollisionGroup(this.interactable_objs_collision_groups[collide_index], true);
         }
-        if (map_collider_layer in this.interactable_objs_collision_groups) {
-            this.hero.sprite.body.collides(this.interactable_objs_collision_groups[map_collider_layer]);
+        if (collision_layer in this.interactable_objs_collision_groups) {
+            this.hero.sprite.body.collides(this.interactable_objs_collision_groups[collision_layer]);
         }
 
         for (let i = 0; i < npc_group.children.length; ++i) {
@@ -86,13 +86,13 @@ export class Collision {
     }
 
     change_map_body(data, new_collider_layer_index) {
-        if (data.map_collider_layer === new_collider_layer_index) return;
-        data.map_collider_layer = new_collider_layer_index;
-        this.hero.shadow.base_collider_layer = data.map_collider_layer;
-        this.hero.sprite.base_collider_layer = data.map_collider_layer;
+        if (data.map.collision_layer === new_collider_layer_index) return;
+        data.map.collision_layer = new_collider_layer_index;
+        this.hero.shadow.base_collider_layer = data.map.collision_layer;
+        this.hero.sprite.base_collider_layer = data.map.collision_layer;
         data.map.config_body(this, new_collider_layer_index);
         this.config_collision_groups(data.map);
-        this.config_collisions(data.map, data.map_collider_layer, data.npc_group);
+        this.config_collisions(data.map, data.map.collision_layer, data.npc_group);
         let layers = data.map.layers;
         for (let i = 0; i < layers.length; ++i) {
             let layer = layers[i];

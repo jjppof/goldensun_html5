@@ -56,7 +56,7 @@ export class FrostFieldPsynergy {
             const item_y_px = interactable_object.current_y * this.data.map.sprite.tileHeight + (this.data.map.sprite.tileHeight >> 1);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
             const y_condition = item_y_px >= min_y && item_y_px <= max_y;
-            if (x_condition && y_condition && this.data.map_collider_layer === interactable_object.base_collider_layer) {
+            if (x_condition && y_condition && this.data.map.collision_layer === interactable_object.base_collider_layer) {
                 let this_sqr_distance = Math.pow(item_x_px - this.data.hero.sprite.x, 2) + Math.pow(item_y_px - this.data.hero.sprite.y, 2);
                 if (this_sqr_distance < sqr_distance) {
                     this.target_found = true;
@@ -140,7 +140,7 @@ export class FrostFieldPsynergy {
             }
         });
         this.target_object.interactable_object_sprite.send_to_back = false;
-        this.data.map.sort_sprites(this.data);
+        this.data.map.sort_sprites();
         this.target_object.custom_data.color_filters = this.game.add.filter('ColorFilters');
         this.target_object.interactable_object_sprite.filters = [this.target_object.custom_data.color_filters];
         let blink_counter = 16;
@@ -206,8 +206,8 @@ export class FrostFieldPsynergy {
         }
         this.set_hero_cast_anim();
         let reset_map;
-        this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero_color_filters, () => {
-            reset_map = tint_map_layers(this.game, this.data.map, this.data.map_color_filters);
+        this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero.color_filter, () => {
+            reset_map = tint_map_layers(this.game, this.data.map, this.data.map.color_filter);
             this.init_snowflakes();
         }, () => {
             this.game.physics.p2.resume();

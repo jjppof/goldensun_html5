@@ -3,14 +3,14 @@ import * as numbers from '../magic_numbers.js';
 import { reverse_directions } from '../utils.js';
 
 export function set_door_event(game, data, current_event) {
-    if (data.hero.tile_x_pos !== current_event.x || data.hero.tile_y_pos !== current_event.y || data.hero.casting_psynergy || data.hero.pushing || data.hero.climbing || data.hero.jumping || data.menu_open || data.in_battle || data.on_event) {
+    if (data.hero.tile_x_pos !== current_event.x || data.hero.tile_y_pos !== current_event.y || data.hero.casting_psynergy || data.hero.pushing || data.hero.climbing || data.hero.jumping || data.menu_open || data.in_battle || data.tile_event_manager.on_event) {
         return;
     }
-    data.on_event = true;
+    data.tile_event_manager.on_event = true;
     data.teleporting = true;
     if (current_event.advance_effect) {
         if (!data.hero.stop_by_colliding) {
-            data.on_event = false;
+            data.tile_event_manager.on_event = false;
             data.teleporting = false;
             return;
         }
@@ -47,12 +47,12 @@ function camera_fade_in(game, data, current_event) {
 }
 
 async function change_map(game, data, current_event) {
-    data.map.unset_map(data);
+    data.map.unset_map();
     const next_map_key_name = current_event.target;
-    data.map_collider_layer = current_event.dest_collider_layer;
-    data.hero.shadow.base_collider_layer = data.map_collider_layer;
-    data.hero.sprite.base_collider_layer = data.map_collider_layer;
-    data.map = await maps[next_map_key_name].mount_map(game, data);
+    const target_collision_layer = current_event.dest_collider_layer;
+    data.hero.shadow.base_collider_layer = target_collision_layer;
+    data.hero.sprite.base_collider_layer = target_collision_layer;
+    data.map = await maps[next_map_key_name].mount_map(target_collision_layer);
     game.camera.setBoundsToWorld();
     if (game.camera.bounds.width < numbers.GAME_WIDTH) {
         game.camera.bounds.width = numbers.GAME_WIDTH;
@@ -61,8 +61,8 @@ async function change_map(game, data, current_event) {
         game.camera.bounds.height = numbers.GAME_HEIGHT;
     }
     data.collision.config_collision_groups(data.map);
-    data.map.config_all_bodies(data.collision, data.map_collider_layer);
-    data.collision.config_collisions(data.map, data.map_collider_layer, data.npc_group);
+    data.map.config_all_bodies(data.collision, data.map.collision_layer);
+    data.collision.config_collisions(data.map, data.map.collision_layer, data.npc_group);
     game.physics.p2.updateBoundsCollisionGroup();
     data.debug.update_debug_physics(data.hero.sprite.body.debug);
     data.hero.sprite.body.x = current_event.x_target * data.map.sprite.tileWidth;
@@ -77,7 +77,7 @@ function camera_fade_out(game, data) {
     game.camera.flash(0x0);
     game.camera.onFlashComplete.addOnce(() => {
         game.camera.lerp.setTo(numbers.CAMERA_LERP, numbers.CAMERA_LERP);
-        data.on_event = false;
+        data.tile_event_manager.on_event = false;
         data.teleporting = false;
     });
 }
