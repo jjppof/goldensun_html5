@@ -59,5 +59,15 @@
             "json":"assets/images/maps/madra/madra_side.json"
         },
         "collision_files":["assets/images/maps/madra/madra_physics_side.json", "assets/images/maps/madra/madra_physics_side_2.json", "assets/images/maps/madra/madra_physics_side_3.json"]
+    },{
+        "name":"Snowland",
+        "key_name":"snowland",
+        "tileset_key_name":"snowland",
+        "collision_key_names":["snowland_col"],
+        "tileset_files": {
+            "image":"assets/images/maps/snowland/snowland.png",
+            "json":"assets/images/maps/snowland/snowland.json"
+        },
+        "collision_files":["assets/images/maps/snowland/snowland_physics.json"]
     }
 ]
