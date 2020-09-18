@@ -3,6 +3,7 @@ import * as numbers from '../magic_numbers.js';
 import { TileEvent, event_types } from "./TileEvent.js";
 import { get_transition_directions, range_360, directions } from '../utils.js';
 import { normal_push } from "../interactable_objects/push.js";
+import { Footsteps } from "./Footsteps.js";
 
 const SPEED_LIMIT_TO_STOP = 13;
 const MINIMAL_SLOPE = 0.1;
@@ -61,6 +62,8 @@ export class Hero extends ControllableChar {
         this.trying_to_push = false;
         this.trying_to_push_direction = null;
         this.push_timer = null;
+        this.show_footsteps = true;
+        this.footsteps = new Footsteps(this.game,this.data,this.initial_action,this.initial_direction);
     }
 
     update_arrow_inputs() {
@@ -79,6 +82,10 @@ export class Hero extends ControllableChar {
         if (movement_direction === null && this.current_action !== "idle" && !this.climbing) {
             this.current_action = "idle";
         } else if (movement_direction !== null && !this.climbing && !this.pushing) {
+            if(this.footsteps.can_make_footprint == true && this.show_footsteps == true){
+                this.footsteps.create_step(this.current_direction,this.current_action);
+                this.footsteps.update_foot();
+            }
             const shift_pressed = this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT);
             if (shift_pressed && this.current_action !== "dash") {
                 this.current_action = "dash";

@@ -1,0 +1,19 @@
+[
+    {
+        "key_name": "footsteps",
+        "anchor_y": 0.5,
+        "anchor_x": 0.5,
+        "body_radius": 0,
+        "pushable": false,
+        "initial_animation": "single",
+        "actions": {
+            "frame_rate": [0.4, 0.4],
+            "animations": ["single", "double"],
+            "frames_count": [3, 3]
+        },
+        "spritesheet": {
+            "image": "assets/images/misc/footprints.png",
+            "json": "assets/images/misc/footprints.json"
+        }
+    }
+]
