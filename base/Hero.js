@@ -62,7 +62,7 @@ export class Hero extends ControllableChar {
         this.trying_to_push = false;
         this.trying_to_push_direction = null;
         this.push_timer = null;
-        this.show_footsteps = true;
+        this.make_footsteps = true;
         this.footsteps = new Footsteps(this.game,this.data,this.initial_action,this.initial_direction);
     }
 
@@ -74,6 +74,10 @@ export class Hero extends ControllableChar {
             | 8 * this.data.cursors.down.isDown;
     }
 
+    get_tile_properties(){
+        return this.data.map.get_current_tile(this)[0].properties;
+    }
+
     set_current_action() {
         if (this.data.tile_event_manager.on_event) {
             return;
@@ -82,7 +86,8 @@ export class Hero extends ControllableChar {
         if (movement_direction === null && this.current_action !== "idle" && !this.climbing) {
             this.current_action = "idle";
         } else if (movement_direction !== null && !this.climbing && !this.pushing) {
-            if(this.footsteps.can_make_footprint == true && this.show_footsteps == true){
+            this.make_footsteps = !this.get_tile_properties().disable_footprint;
+            if(this.footsteps.can_make_footprint == true && this.make_footsteps == true){
                 this.footsteps.create_step(this.current_direction,this.current_action);
             }
             const shift_pressed = this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT);
