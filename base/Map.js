@@ -416,7 +416,7 @@ export class Map {
 
         this.collision_sprite.body.clearShapes();
 
-        this.data.hero.footsteps.clean_all();
+        this.data.hero.footsteps.clean_all(this.data.hero.footsteps.active_steps);
 
         let sprites_to_remove = []
         for (let i = 0; i < this.data.npc_group.children.length; ++i) {
