@@ -24,8 +24,9 @@ export class Footsteps{
         this.anchor_y = this.animation_db.anchor_y;
         this.action_keys = this.animation_db.actions.animations;
 
-        this.active_steps = [];
-        this.dead_steps = [];
+        this.active_steps = {};
+        this.dead_steps = new Array(MAX_DEAD_SIZE);
+        this.dead_index = 0;
         this.foot_forward = "None";
         this.can_make_footprint = true;
         this.footsteps_type = 1;
@@ -36,14 +37,13 @@ export class Footsteps{
 
         this.footsteps_sprite_base = new SpriteBase(FOOTSTEPS_KEY_NAME, this.action_keys);
 
-        for (let i = 0; i<this.action_keys.length; i++){
+        for (let i = 0; i<this.action_keys.length; ++i){
             this.footsteps_sprite_base.setActionSpritesheet(this.action_keys[i], "assets/images/misc/footprints.png", "assets/images/misc/footprints.json");
             this.footsteps_sprite_base.setActionDirections(this.action_keys[i], [reverse_directions[directions.up]], this.animation_db.actions.frames_count[i]);
             this.footsteps_sprite_base.setActionFrameRate(this.action_keys[i], this.animation_db.actions.frame_rate[i]);
         }
 
         this.footsteps_sprite_base.generateAllFrames();
-        this.footsteps_sprite = null;
     }
 
     find_direction_angle(direction){
@@ -80,14 +80,14 @@ export class Footsteps{
         this.expire_timer.start();
     }
 
-    kill_oldest_step(){
-        let expired = this.active_steps.shift();
-        if(this.dead_steps.length>=MAX_DEAD_SIZE){
+    kill_step(expired, key){
+        delete this.active_steps[key];
+        if(this.dead_index === MAX_DEAD_SIZE){
             expired.destroy();
         }
         else{
             expired.kill();
-            this.dead_steps.push(expired);
+            this.dead_steps[this.dead_index++] = expired;
         }
     }
 
@@ -103,31 +103,29 @@ export class Footsteps{
         this.update_foot();
         this.footsteps_type = this.current_action == "idle" ?  1 : 0;
 
-        if(this.dead_steps.length == 0){
-            this.footsteps_sprite = this.data.npc_group.create(0, 0, FOOTSTEPS_KEY_NAME);
+        let footsteps_sprite;
+        if(this.dead_index === 0){
+            footsteps_sprite = this.data.npc_group.create(0, 0, FOOTSTEPS_KEY_NAME);
+            footsteps_sprite.anchor.setTo(this.anchor_x, this.anchor_y);
+            footsteps_sprite.send_to_back = true;
         }
         else{
-            this.footsteps_sprite = this.dead_steps.shift();
-            this.footsteps_sprite.reset(0, 0);
+            footsteps_sprite = this.dead_steps[--this.dead_index];
+            footsteps_sprite.reset(0, 0);
         }
 
-        this.footsteps_sprite.x = this.data.hero.shadow.x;
-        this.footsteps_sprite.y = this.data.hero.shadow.y;
-        this.footsteps_sprite.anchor.setTo(this.anchor_x, this.anchor_y);
-        this.footsteps_sprite.send_to_front = false;
-        this.footsteps_sprite.base_collider_layer = this.data.map.collision_layer;
-        this.footsteps_sprite.RoundPx = true;
+        footsteps_sprite.base_collider_layer = this.data.map.collision_layer;
+        footsteps_sprite.x = this.data.hero.shadow.x;
+        footsteps_sprite.y = this.data.hero.shadow.y;
+        this.position_footsteps(footsteps_sprite);
 
-        this.footsteps_sprite_base.setAnimation(this.footsteps_sprite,this.action_keys[this.footsteps_type]);
-
-        this.footsteps_sprite.animations.currentAnim.loop = false;
-        this.footsteps_sprite.animations.currentAnim.onComplete.add(this.kill_oldest_step.bind(this),this);
-        this.position_footsteps(this.footsteps_sprite);
-
-        this.footsteps_sprite.animations.frameName = `${this.action_keys[this.footsteps_type]}/up/00`;
-        this.footsteps_sprite.send_to_back = true;
-        this.active_steps.push(this.footsteps_sprite);
-        this.set_expire_timer(this.footsteps_sprite, this.footsteps_type);
+        this.footsteps_sprite_base.setAnimation(footsteps_sprite,this.action_keys[this.footsteps_type]);
+        footsteps_sprite.animations.currentAnim.loop = false;
+        const key = Object.keys(this.active_steps).length;
+        footsteps_sprite.animations.currentAnim.onComplete.addOnce(this.kill_step.bind(this, footsteps_sprite, key));
+        this.active_steps[key] = footsteps_sprite;
+        footsteps_sprite.animations.currentAnim.stop(true);
+        this.set_expire_timer(footsteps_sprite, this.footsteps_type);
 
         this.set_new_step_timer();
     }
@@ -142,18 +140,13 @@ export class Footsteps{
         }
     }
 
-    clean_all(kill_list){
-        console.log(kill_list);
-        this.new_step_timer.removeAll();
-        this.new_step_timer.stop();
-        this.expire_timer.removeAll();
-        this.expire_timer.stop();
-        
-        for(let i=0; i<kill_list.length; i++){
-            this.kill_oldest_step();
-        }
-
-        this.footsteps_sprite = null;
+    clean_all(){
+        this.new_step_timer.stop(true);
+        this.expire_timer.stop(true);
+        this.dead_index = 0;
+        Object.keys(this.active_steps).forEach(key => {
+            this.kill_step(this.active_steps[key], key);
+        });
     }
 
     destroy(){
