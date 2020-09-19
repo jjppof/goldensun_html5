@@ -144,7 +144,7 @@ export class Footsteps{
     }
 
     clean_all(kill_list){
-        console.log(kill_list.length);
+        console.log(this.active_steps);
         this.new_step_timer.removeAll();
         this.new_step_timer.stop();
         this.expire_timer.removeAll();
@@ -160,7 +160,7 @@ export class Footsteps{
     }
 
     destroy(){
-        this.clean_all();
+        this.clean_all(this.active_steps);
         for(let i=0; i<this.dead_steps.length; i++){
             this.data.npc_group.remove(this.dead_steps[i],true);
         }
