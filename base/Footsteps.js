@@ -24,6 +24,7 @@ export class Footsteps{
         this.action_keys = this.animation_db.actions.animations;
 
         this.active_steps = [];
+        this.dead_steps = [];
         this.foot_forward = "None";
         this.can_make_footprint = true;
         this.footsteps_type = 1;
@@ -41,7 +42,7 @@ export class Footsteps{
         }
 
         this.footsteps_sprite_base.generateAllFrames();
-        this.footsteps_sprite_sprite = null;
+        this.footsteps_sprite = null;
     }
 
     find_direction_angle(direction){
@@ -78,9 +79,10 @@ export class Footsteps{
         this.expire_timer.start();
     }
 
-    destroy_oldest_step(){
+    kill_oldest_step(){
         let expired = this.active_steps.shift();
-        this.data.npc_group.remove(expired,true);
+        expired.kill();
+        this.dead_steps.push(expired);
     }
 
     position_footsteps(sprite){
@@ -95,7 +97,14 @@ export class Footsteps{
         this.update_foot();
         this.footsteps_type = this.current_action == "idle" ?  1 : 0;
 
-        this.footsteps_sprite = this.data.npc_group.create(0, 0, FOOTSTEPS_KEY_NAME);
+        if(this.dead_steps.length == 0){
+            this.footsteps_sprite = this.data.npc_group.create(0, 0, FOOTSTEPS_KEY_NAME);
+        }
+        else{
+            this.footsteps_sprite = this.dead_steps.shift();
+            this.footsteps_sprite.reset(0, 0);
+        }
+
         this.footsteps_sprite.x = this.data.hero.shadow.x;
         this.footsteps_sprite.y = this.data.hero.shadow.y;
         this.footsteps_sprite.anchor.setTo(this.anchor_x, this.anchor_y);
@@ -106,7 +115,7 @@ export class Footsteps{
         this.footsteps_sprite_base.setAnimation(this.footsteps_sprite,this.action_keys[this.footsteps_type]);
 
         this.footsteps_sprite.animations.currentAnim.loop = false;
-        this.footsteps_sprite.animations.currentAnim.onComplete.add(this.destroy_oldest_step.bind(this),this);
+        this.footsteps_sprite.animations.currentAnim.onComplete.add(this.kill_oldest_step.bind(this),this);
         this.position_footsteps(this.footsteps_sprite);
 
         this.footsteps_sprite.animations.frameName = `${this.action_keys[this.footsteps_type]}/up/00`;
@@ -125,5 +134,23 @@ export class Footsteps{
         else{
             this.foot_forward == "Left" ? this.foot_forward = "Right" : this.foot_forward = "Left";
         }
+    }
+
+    clean_all(){
+        let steps = [].concat(this.active_steps,this.dead_steps);
+        for(let i=0; i<steps.length; i++){
+            this.data.npc_group.remove(steps[i],true);
+        }
+        this.new_step_timer.stop();
+        this.expire_timer.stop();
+        this.footsteps_sprite = null;
+    }
+
+    destroy(){
+        this.clean_all();
+        this.footsteps_sprite_base = null;
+        this.animation_db = null;
+        this.new_step_timer.destroy();
+        this.expire_timer.destroy();
     }
 }
