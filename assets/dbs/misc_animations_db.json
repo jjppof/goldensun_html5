@@ -5,9 +5,9 @@
         "anchor_x": 0.5,
         "body_radius": 0,
         "pushable": false,
-        "initial_animation": "single",
+        "initial_animation": "double",
         "actions": {
-            "frame_rate": [0.4, 0.4],
+            "frame_rate": [3, 3],
             "animations": ["single", "double"],
             "frames_count": [3, 3]
         },

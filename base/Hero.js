@@ -84,7 +84,6 @@ export class Hero extends ControllableChar {
         } else if (movement_direction !== null && !this.climbing && !this.pushing) {
             if(this.footsteps.can_make_footprint == true && this.show_footsteps == true){
                 this.footsteps.create_step(this.current_direction,this.current_action);
-                this.footsteps.update_foot();
             }
             const shift_pressed = this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT);
             if (shift_pressed && this.current_action !== "dash") {
