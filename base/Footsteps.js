@@ -98,6 +98,7 @@ export class Footsteps{
     }
 
     create_step(direction,action){
+        console.log("STEPPING");
         this.current_direction = direction;
         this.current_action = action;
         this.update_foot();
@@ -150,7 +151,7 @@ export class Footsteps{
     }
 
     destroy(){
-        this.clean_all();
+        this.clean_all(this.active_steps);
         for(let i=0; i<this.dead_steps.length; i++){
             this.data.npc_group.remove(this.dead_steps[i],true);
         }
