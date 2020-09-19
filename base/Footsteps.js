@@ -9,6 +9,7 @@ const INITIAL_ACTION = "idle";
 const INITIAL_DIRECTION = directions.down;
 
 const FOOTSTEPS_KEY_NAME = "footprints";
+const MAX_DEAD_SIZE = 20;
 
 export class Footsteps{
     constructor(game, data){
@@ -81,8 +82,13 @@ export class Footsteps{
 
     kill_oldest_step(){
         let expired = this.active_steps.shift();
-        expired.kill();
-        this.dead_steps.push(expired);
+        if(this.dead_steps.length>=MAX_DEAD_SIZE){
+            expired.destroy();
+        }
+        else{
+            expired.kill();
+            this.dead_steps.push(expired);
+        }
     }
 
     position_footsteps(sprite){
@@ -137,11 +143,15 @@ export class Footsteps{
     }
 
     clean_all(){
-        for(let i=0; i<this.active_steps.length; i++){
-            this.kill_oldest_step;
-        }
+        this.new_step_timer.removeAll();
         this.new_step_timer.stop();
+        this.expire_timer.removeAll();
         this.expire_timer.stop();
+        
+        for(let i=0; i<this.active_steps.length; i++){
+            this.kill_oldest_step();
+        }
+
         this.footsteps_sprite = null;
     }
 
