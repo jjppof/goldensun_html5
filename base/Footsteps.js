@@ -75,10 +75,10 @@ export class Footsteps{
         this.new_step_timer.start();
     }
 
-    set_expire_timer(sprite){
+    set_expire_timer(sprite, footsteps_type){
         console.log("SETTING TIMER");
         this.expire_timer.add(FOOTSTEPS_TTL,()=>{
-            sprite.animations.play(FOOTSTEPS_ACTION_KEYS[this.footsteps_type]+"_up");
+            sprite.animations.play(FOOTSTEPS_ACTION_KEYS[footsteps_type]+"_up");
         },this);
         this.expire_timer.start();
     }
@@ -139,7 +139,7 @@ export class Footsteps{
         sprite.animations.frameName = `${FOOTSTEPS_ACTION_KEYS[this.footsteps_type]}/up/00`;
         this.data.npc_group.sendToBack(sprite);
         this.active_steps.push(sprite);
-        this.set_expire_timer(sprite);
+        this.set_expire_timer(sprite, this.footsteps_type);
 
         this.set_new_step_timer();
     }
