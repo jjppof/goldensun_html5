@@ -141,6 +141,18 @@ export class Map {
         this.config_body(collision_obj, collision_layer);
     }
 
+    get_current_tile(hero, layer) {
+        if (layer !== undefined) {
+            return this.sprite.getTile(hero.tile_x_pos, hero.tile_y_pos, layer);
+        } else {
+            return this.layers.map(layer => this.sprite.getTile(hero.tile_x_pos, hero.tile_y_pos, layer.name)).filter(tile => tile);
+        }
+    }
+
+    get_layer(name) {
+        return _.find(this.layers, {name: name});
+    }
+
     create_tile_events(raw_property) {
         const property_info = JSON.parse(raw_property);
         const this_event_location_key = TileEvent.get_location_key(property_info.x, property_info.y);
