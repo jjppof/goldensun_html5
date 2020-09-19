@@ -204,6 +204,14 @@
  "nextlayerid":9,
  "nextobjectid":1,
  "orientation":"orthogonal",
+ "properties":
+    {
+     "footprint":true
+    },
+ "propertytypes":
+    {
+     "footprint":"bool"
+    },
  "renderorder":"right-down",
  "tiledversion":"1.3.3",
  "tileheight":16,

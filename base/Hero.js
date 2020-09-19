@@ -62,7 +62,7 @@ export class Hero extends ControllableChar {
         this.trying_to_push = false;
         this.trying_to_push_direction = null;
         this.push_timer = null;
-        this.show_footsteps = true;
+        this.enable_footsteps = true;
         this.footsteps = new Footsteps(this.game,this.data,this.initial_action,this.initial_direction);
     }
 
@@ -82,7 +82,7 @@ export class Hero extends ControllableChar {
         if (movement_direction === null && this.current_action !== "idle" && !this.climbing) {
             this.current_action = "idle";
         } else if (movement_direction !== null && !this.climbing && !this.pushing) {
-            if(this.footsteps.can_make_footprint == true && this.show_footsteps == true){
+            if(this.footsteps.can_make_footprint && this.data.map.show_footsteps && this.enable_footsteps){
                 this.footsteps.create_step(this.current_direction,this.current_action);
             }
             const shift_pressed = this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT);
