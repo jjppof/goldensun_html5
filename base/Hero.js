@@ -72,10 +72,6 @@ export class Hero extends ControllableChar {
         this.required_direction = rotation_key[this.arrow_inputs];
     }
 
-    get_tile_properties(){
-        return this.data.map.get_current_tile(this)[0].properties;
-    }
-
     set_speed_factors(check_on_event = false) {
         if (check_on_event && this.data.tile_event_manager.on_event) {
             return;

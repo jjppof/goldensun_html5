@@ -231,134 +231,134 @@
             {
              "395":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "396":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "397":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "398":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "411":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "412":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "413":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "414":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "427":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "428":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "429":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "430":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "443":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "444":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "445":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 },
              "446":
                 {
-                 "disable_footprint":true
+                 "disable_footprint":"0"
                 }
             },
          "tilepropertytypes":
             {
              "395":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "396":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "397":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "398":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "411":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "412":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "413":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "414":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "427":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "428":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "429":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "430":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "443":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "444":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "445":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 },
              "446":
                 {
-                 "disable_footprint":"bool"
+                 "disable_footprint":"string"
                 }
             },
          "tiles":

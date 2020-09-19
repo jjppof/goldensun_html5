@@ -109,6 +109,20 @@ export class ControllableChar {
         this.play(action, animation);
     }
 
+    tile_able_to_show_footprint() {
+        const tiles = this.data.map.get_current_tile(this);
+        for (let i = 0; i < tiles.length; ++i) {
+            const tile = tiles[i];
+            if (tile.properties.hasOwnProperty("disable_footprint")) {
+                const layers = tile.properties.disable_footprint.split(",").map(layer => parseInt(layer));
+                if (layers.includes(this.data.map.collision_layer)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     set_current_action() {
         if (this.data.tile_event_manager.on_event) {
             return;
@@ -116,7 +130,7 @@ export class ControllableChar {
         if (this.required_direction === null && this.current_action !== "idle" && !this.climbing) {
             this.current_action = "idle";
         } else if (this.required_direction !== null && !this.climbing && !this.pushing) {
-            const footsteps = !this.get_tile_properties().disable_footprint && this.data.map.show_footsteps && this.enable_footsteps;
+            const footsteps = this.enable_footsteps && this.data.map.show_footsteps && this.tile_able_to_show_footprint();
             if(this.footsteps.can_make_footprint && footsteps){
                 this.footsteps.create_step(this.current_direction,this.current_action);
             }
