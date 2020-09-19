@@ -38,7 +38,8 @@ function load_misc(game) {
     game.load.image('stat_down', 'assets/images/misc/stat_down.gif');
     game.load.image('arrow_change', 'assets/images/misc/arrow_change.png');
     game.load.image('frost_snowflake', 'assets/images/interactable_objects/snowflake.png');
-    game.load.atlasJSONHash('footprints','assets/images/misc/footprints.png','assets/images/misc/footprints.json')
+    game.load.atlasJSONHash('footprints_single','assets/images/misc/footprints_single.png','assets/images/misc/footprints_single.json')
+    game.load.atlasJSONHash('footprints_double','assets/images/misc/footprints_double.png','assets/images/misc/footprints_double.json')
     game.load.atlasJSONHash('dust', 'assets/images/misc/dust.png', 'assets/images/misc/dust.json');
     game.load.atlasJSONHash('battle_cursor', 'assets/images/misc/battle_cursor.png', 'assets/images/misc/battle_cursor.json');
     game.load.atlasJSONHash('ranges', 'assets/images/misc/ranges.png', 'assets/images/misc/ranges.json');
