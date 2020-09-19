@@ -177,6 +177,7 @@ class GoldenSun {
         this.init_db = this.game.cache.getJSON('init_db'); 
         this.npc_db = this.game.cache.getJSON('npc_db');
         this.interactable_objects_db = this.game.cache.getJSON('interactable_objects_db');
+        this.misc_animations_db = this.game.cache.getJSON('misc_animations_db');
         this.classes_db = this.game.cache.getJSON('classes_db');
         this.abilities_db = this.game.cache.getJSON('abilities_db');
         this.items_db = this.game.cache.getJSON('items_db');
@@ -191,6 +192,7 @@ class GoldenSun {
         party_data.coins = this.init_db.coins;
 
         //format some db structures
+        this.misc_animations_db = _.mapKeys(this.misc_animations_db, misc_animations_data => misc_animations_data.key_name);
         this.interactable_objects_db = _.mapKeys(this.interactable_objects_db, interactable_object_data => interactable_object_data.key_name);
         this.enemies_parties_db = _.mapKeys(this.enemies_parties_db, enemy_party_data => enemy_party_data.key_name);
         this.npc_db = _.mapKeys(this.npc_db, npc_data => npc_data.key_name);

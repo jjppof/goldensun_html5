@@ -1,36 +1,19 @@
 [
     {
-        "key_name": "footsteps_single",
-        "anchor_y": 0.5,
-        "anchor_x": 0.5,
-        "body_radius": 0,
-        "pushable": false,
-        "initial_animation": "single",
-        "actions": {
-            "frame_rate": 3,
-            "animations": ["single"],
-            "frames_count": 3
-        },
-        "spritesheet": {
-            "image": "assets/images/misc/footprints_single.png",
-            "json": "assets/images/misc/footprints_single.json"
-        }
-    },
-    {
-        "key_name": "footsteps",
+        "key_name": "footprints",
         "anchor_y": 0.5,
         "anchor_x": 0.5,
         "body_radius": 0,
         "pushable": false,
         "initial_animation": "double",
         "actions": {
-            "frame_rate": 3,
-            "animations": ["double"],
-            "frames_count": 3
+            "frame_rate": [10, 10],
+            "animations": ["single", "double"],
+            "frames_count": [10, 10]
         },
         "spritesheet": {
-            "image": "assets/images/misc/footprints_double.png",
-            "json": "assets/images/misc/footprints_double.json"
+            "image": "assets/images/misc/footprints.png",
+            "json": "assets/images/misc/footprints.json"
         }
     }
 ]
