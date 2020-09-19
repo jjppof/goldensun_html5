@@ -98,6 +98,7 @@ export class Footsteps{
     }
 
     create_step(direction,action){
+        console.log("STEPPING");
         this.current_direction = direction;
         this.current_action = action;
         this.update_foot();
@@ -143,13 +144,15 @@ export class Footsteps{
     }
 
     clean_all(kill_list){
-        console.log(kill_list);
+        console.log(kill_list.length);
         this.new_step_timer.removeAll();
         this.new_step_timer.stop();
         this.expire_timer.removeAll();
         this.expire_timer.stop();
         
-        for(let i=0; i<kill_list.length; i++){
+        let list_size = kill_list.length;
+        for(let i=0; i<list_size; i++){
+            console.log("killing");
             this.kill_oldest_step();
         }
 
