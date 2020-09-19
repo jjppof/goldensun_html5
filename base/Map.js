@@ -44,6 +44,7 @@ export class Map {
         this.collision_sprite.width = this.collision_sprite.height = 0;
         this.color_filter = this.game.add.filter('ColorFilters');
         this.collision_layer = null;
+        this.show_footsteps = false;
     }
 
     sort_sprites() {
@@ -401,6 +402,10 @@ export class Map {
         this.config_layers(this.data.overlayer_group, this.data.underlayer_group);
         await this.config_interactable_object();
         await this.config_npc();
+
+        if (this.sprite.properties.footprint) {
+            this.show_footsteps = true;
+        }
 
         return this;
     }
