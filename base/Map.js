@@ -142,11 +142,11 @@ export class Map {
         this.config_body(collision_obj, collision_layer);
     }
 
-    get_current_tile(hero, layer) {
+    get_current_tile(controllable_char, layer) {
         if (layer !== undefined) {
-            return this.sprite.getTile(hero.tile_x_pos, hero.tile_y_pos, layer);
+            return this.sprite.getTile(controllable_char.tile_x_pos, controllable_char.tile_y_pos, layer);
         } else {
-            return this.layers.map(layer => this.sprite.getTile(hero.tile_x_pos, hero.tile_y_pos, layer.name)).filter(tile => tile);
+            return this.layers.map(layer => this.sprite.getTile(controllable_char.tile_x_pos, controllable_char.tile_y_pos, layer.name)).filter(tile => tile);
         }
     }
 

@@ -1,5 +1,6 @@
 import * as numbers from "../magic_numbers.js";
 import { reverse_directions } from "../utils.js";
+import { Footsteps } from "./Footsteps.js";
 
 const DEFAULT_SHADOW_ANCHOR_X = 0.45;
 const DEFAULT_SHADOW_ANCHOR_Y = 0.05;
@@ -7,7 +8,7 @@ const DEFAULT_SPRITE_ANCHOR_X = 0.50;
 const DEFAULT_SPRITE_ANCHOR_Y = 0.80;
 
 export class ControllableChar {
-    constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction) {
+    constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps) {
         this.game = game;
         this.data = data;
         this.key_name = key_name;
@@ -27,7 +28,10 @@ export class ControllableChar {
         this.tile_y_pos = initial_y;
         this.current_action = initial_action;
         this.current_direction = initial_direction;
+        this.required_direction = 0;
         this.color_filter = this.game.add.filter('ColorFilters');
+        this.enable_footsteps = enable_footsteps === undefined ? false : enable_footsteps;
+        this.footsteps = new Footsteps(this.game, this.data);
     }
 
     set_sprite(group, sprite_info, map_sprite, layer, anchor_x = DEFAULT_SPRITE_ANCHOR_X, anchor_y = DEFAULT_SPRITE_ANCHOR_Y) {
@@ -103,6 +107,26 @@ export class ControllableChar {
         }
         const animation = idle_climbing ? "idle" : reverse_directions[this.current_direction];
         this.play(action, animation);
+    }
+
+    set_current_action() {
+        if (this.data.tile_event_manager.on_event) {
+            return;
+        }
+        if (this.required_direction === null && this.current_action !== "idle" && !this.climbing) {
+            this.current_action = "idle";
+        } else if (this.required_direction !== null && !this.climbing && !this.pushing) {
+            const footsteps = !this.get_tile_properties().disable_footprint && this.data.map.show_footsteps && this.enable_footsteps;
+            if(this.footsteps.can_make_footprint && footsteps){
+                this.footsteps.create_step(this.current_direction,this.current_action);
+            }
+            const shift_pressed = this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT);
+            if (shift_pressed && this.current_action !== "dash") {
+                this.current_action = "dash";
+            } else if (!shift_pressed && this.current_action !== "walk") {
+                this.current_action = "walk";
+            }
+        }
     }
 
     update_tile_position(map_sprite) {
