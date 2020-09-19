@@ -2,10 +2,10 @@
     "hero_key_name": "isaac",
     "initial_action": "idle",
     "initial_direction": "down",
-    "map_key_name": "snowland",
+    "map_key_name": "madra_side",
     "initial_scale_factor": 2,
-    "x_tile_position": 16,
-    "y_tile_position": 6,
+    "x_tile_position": 22,
+    "y_tile_position": 17,
     "map_z_index": 0,
     "coins": 350,
     "initial_shortcuts": {
