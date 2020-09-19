@@ -147,8 +147,8 @@ export class Footsteps{
 
     destroy(){
         this.clean_all();
-        for(let i=0; i<dead_steps.length; i++){
-            this.data.npc_group.remove(dead_steps[i],true);
+        for(let i=0; i<this.dead_steps.length; i++){
+            this.data.npc_group.remove(this.dead_steps[i],true);
         }
         this.footsteps_sprite_base = null;
         this.animation_db = null;
