@@ -142,13 +142,14 @@ export class Footsteps{
         }
     }
 
-    clean_all(){
+    clean_all(kill_list){
+        console.log(kill_list);
         this.new_step_timer.removeAll();
         this.new_step_timer.stop();
         this.expire_timer.removeAll();
         this.expire_timer.stop();
         
-        for(let i=0; i<this.active_steps.length; i++){
+        for(let i=0; i<kill_list.length; i++){
             this.kill_oldest_step();
         }
 
