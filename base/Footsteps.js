@@ -1,9 +1,9 @@
 import {SpriteBase} from "../base/SpriteBase.js";
 import {directions, reverse_directions, degrees_to_radians} from "../utils.js";
 
-const FOOTSTEPS_TTL = Phaser.Timer.SECOND*2;
-const WALKING_TIME_INTERVAL = Phaser.Timer.SECOND/3;
-const RUNNING_TIME_INTERVAL = Phaser.Timer.SECOND/3;
+const FOOTSTEPS_TTL = Phaser.Timer.SECOND << 1;
+const WALKING_TIME_INTERVAL = Phaser.Timer.QUARTER;
+const RUNNING_TIME_INTERVAL = Phaser.Timer.QUARTER;
 
 const INITIAL_ACTION = "idle";
 const INITIAL_DIRECTION = directions.down;
