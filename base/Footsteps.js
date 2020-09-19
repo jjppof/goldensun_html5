@@ -137,9 +137,8 @@ export class Footsteps{
     }
 
     clean_all(){
-        let steps = [].concat(this.active_steps,this.dead_steps);
-        for(let i=0; i<steps.length; i++){
-            this.data.npc_group.remove(steps[i],true);
+        for(let i=0; i<this.active_steps.length; i++){
+            this.kill_oldest_step;
         }
         this.new_step_timer.stop();
         this.expire_timer.stop();
@@ -148,6 +147,9 @@ export class Footsteps{
 
     destroy(){
         this.clean_all();
+        for(let i=0; i<dead_steps.length; i++){
+            this.data.npc_group.remove(dead_steps[i],true);
+        }
         this.footsteps_sprite_base = null;
         this.animation_db = null;
         this.new_step_timer.destroy();
