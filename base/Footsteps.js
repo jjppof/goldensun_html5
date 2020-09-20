@@ -1,5 +1,5 @@
 import {SpriteBase} from "../base/SpriteBase.js";
-import {directions, reverse_directions, degrees_to_radians} from "../utils.js";
+import {directions, directions_angles} from "../utils.js";
 
 const FOOTSTEPS_TTL = Phaser.Timer.SECOND << 1;
 const WALKING_TIME_INTERVAL = Phaser.Timer.QUARTER;
@@ -48,27 +48,6 @@ export class Footsteps{
         this.footsteps_sprite_base.generateAllFrames();
     }
 
-    find_direction_angle(direction){
-        switch(direction){
-            case directions.right:
-                return 90;
-            case directions.down_right:
-                return 135;
-            case directions.down:
-                return 180;
-            case directions.down_left:
-                return -135;
-            case directions.left:
-                return -90;
-            case directions.up_left:
-                return -45;
-            case directions.up:
-                return 0;
-            case directions.up_right:
-                return 45;
-        }
-    }
-
     set_new_step_timer(){
         this.can_make_footprint = false;
         this.new_step_timer.add(this.footsteps_time_interval,() => {this.can_make_footprint = true;})
@@ -94,9 +73,8 @@ export class Footsteps{
     }
 
     position_footsteps(sprite){
-        let angle = this.find_direction_angle(this.current_direction);
         sprite.scale.x = this.foot_forward === foot_forward_types.RIGHT ?  -1 : 1;
-        sprite.rotation = degrees_to_radians(angle);
+        sprite.rotation = directions_angles[this.current_direction] + (Math.PI/2);
     }
 
     create_step(direction,action){
