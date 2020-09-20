@@ -44,6 +44,7 @@ export class Map {
         this.collision_sprite.width = this.collision_sprite.height = 0;
         this.color_filter = this.game.add.filter('ColorFilters');
         this.collision_layer = null;
+        this.show_footsteps = false;
     }
 
     sort_sprites() {
@@ -139,6 +140,18 @@ export class Map {
         this.npcs.forEach(npc => npc.config_body(collision_obj));
         this.interactable_objects.forEach(interactable_obj => interactable_obj.config_body(collision_obj));
         this.config_body(collision_obj, collision_layer);
+    }
+
+    get_current_tile(controllable_char, layer) {
+        if (layer !== undefined) {
+            return this.sprite.getTile(controllable_char.tile_x_pos, controllable_char.tile_y_pos, layer);
+        } else {
+            return this.layers.map(layer => this.sprite.getTile(controllable_char.tile_x_pos, controllable_char.tile_y_pos, layer.name)).filter(tile => tile);
+        }
+    }
+
+    get_layer(name) {
+        return _.find(this.layers, {name: name});
     }
 
     create_tile_events(raw_property) {
@@ -390,6 +403,10 @@ export class Map {
         await this.config_interactable_object();
         await this.config_npc();
 
+        if (this.sprite.properties.footprint) {
+            this.show_footsteps = true;
+        }
+
         return this;
     }
 
@@ -398,6 +415,10 @@ export class Map {
         this.data.overlayer_group.removeAll();
 
         this.collision_sprite.body.clearShapes();
+
+        if (this.show_footsteps) {
+            this.data.hero.footsteps.clean_all();
+        }
 
         let sprites_to_remove = []
         for (let i = 0; i < this.data.npc_group.children.length; ++i) {

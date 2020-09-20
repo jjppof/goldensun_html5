@@ -41,6 +41,17 @@ export const reverse_directions = {
     [directions.down_right]: "down_right"
 };
 
+export const directions_angles = { //4th quadrant
+    [directions.right]: 0,
+    [directions.up_right]: 7*Math.PI/4,
+    [directions.up]: 3*Math.PI/2,
+    [directions.up_left]: 5*Math.PI/4,
+    [directions.left]: Math.PI,
+    [directions.down_left]: 3*Math.PI/4,
+    [directions.down]: Math.PI/2,
+    [directions.down_right]: Math.PI/4
+};
+
 export function map_directions(arr) {
     if (arr === undefined) return arr;
     arr = Array.isArray(arr) ? arr : [arr];

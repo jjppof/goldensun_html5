@@ -65,8 +65,8 @@ async function change_map(game, data, current_event) {
     data.collision.config_collisions(data.map, data.map.collision_layer, data.npc_group);
     game.physics.p2.updateBoundsCollisionGroup();
     data.debug.update_debug_physics(data.hero.sprite.body.debug);
-    data.hero.sprite.body.x = current_event.x_target * data.map.sprite.tileWidth;
-    data.hero.sprite.body.y = current_event.y_target * data.map.sprite.tileHeight;
+    data.hero.sprite.body.x = (current_event.x_target + 0.5) * data.map.sprite.tileWidth;
+    data.hero.sprite.body.y = (current_event.y_target + 0.5) * data.map.sprite.tileHeight;
     game.physics.p2.resume();
     camera_fade_out(game, data);
 }

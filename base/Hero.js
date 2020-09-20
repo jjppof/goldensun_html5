@@ -56,7 +56,7 @@ const speeds = {
 
 export class Hero extends ControllableChar {
     constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction) {
-        super(game, data, key_name, initial_x, initial_y, initial_action, initial_direction);
+        super(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, true);
         this.arrow_inputs = null;
         this.trying_to_push = false;
         this.trying_to_push_direction = null;
@@ -69,23 +69,7 @@ export class Hero extends ControllableChar {
             | 2 * this.data.cursors.left.isDown
             | 4 * this.data.cursors.up.isDown
             | 8 * this.data.cursors.down.isDown;
-    }
-
-    set_current_action() {
-        if (this.data.tile_event_manager.on_event) {
-            return;
-        }
-        const movement_direction = rotation_key[this.arrow_inputs];
-        if (movement_direction === null && this.current_action !== "idle" && !this.climbing) {
-            this.current_action = "idle";
-        } else if (movement_direction !== null && !this.climbing && !this.pushing) {
-            const shift_pressed = this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT);
-            if (shift_pressed && this.current_action !== "dash") {
-                this.current_action = "dash";
-            } else if (!shift_pressed && this.current_action !== "walk") {
-                this.current_action = "walk";
-            }
-        }
+        this.required_direction = rotation_key[this.arrow_inputs];
     }
 
     set_speed_factors(check_on_event = false) {
