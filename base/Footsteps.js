@@ -98,7 +98,6 @@ export class Footsteps{
     }
 
     create_step(direction,action){
-        console.log("STEPPING");
         this.current_direction = direction;
         this.current_action = action;
         this.update_foot();
