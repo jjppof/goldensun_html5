@@ -336,6 +336,9 @@ export function set_cast_direction(direction) {
     return direction === directions_count ? directions.right : direction;
 }
 
+/*Lists all directions, diagonals optional
+
+Input: with_diagonals [boolean] - If true, includes diagonals*/
 export function get_directions(with_diagonals = false) {
     let dirs = [directions.up, directions.down, directions.left, directions.right];
     if (with_diagonals) {
