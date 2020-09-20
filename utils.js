@@ -77,6 +77,8 @@ Input: direction [number] - Diagonal direction value
 
 Output: [array] - Array with split direction values*/
 export function split_direction(direction) {
+    if(direction%2===0) return [direction];
+    
     let vals = new Array(2);
     vals[0] = direction===directions.right ? direction.up_right : direction-1;
     vals[1] = direction===directions.up_right ? directions.right : direction+1;
