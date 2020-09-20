@@ -1,5 +1,5 @@
 import {SpriteBase} from "../base/SpriteBase.js";
-import {directions, directions_angles} from "../utils.js";
+import {directions} from "../utils.js";
 
 const FOOTSTEPS_TTL = Phaser.Timer.SECOND << 1;
 const WALKING_TIME_INTERVAL = Phaser.Timer.QUARTER;
@@ -17,6 +17,11 @@ const foot_forward_types = {
     LEFT: "left"
 };
 
+/*Generates and manages footprints
+Can be applied to any movable unit
+
+Input: game [Phaser:Game] - Reference to the running game object
+       data [GoldenSun] - Reference to the main JS Class instance*/
 export class Footsteps{
     constructor(game, data){
         this.game = game;
@@ -48,12 +53,14 @@ export class Footsteps{
         this.footsteps_sprite_base.generateAllFrames();
     }
 
+    /*Sets the footprint interval timer*/
     set_new_step_timer(){
         this.can_make_footprint = false;
         this.new_step_timer.add(this.footsteps_time_interval,() => {this.can_make_footprint = true;})
         this.new_step_timer.start();
     }
 
+    /*Sets the footprint expiration timer*/
     set_expire_timer(sprite, animation){
         this.expire_timer.add(FOOTSTEPS_TTL,()=>{
             sprite.animations.play(animation);
@@ -61,6 +68,12 @@ export class Footsteps{
         this.expire_timer.start();
     }
 
+    /*Either kills or destroys a given step
+    Killing leaves the sprite in memory to be recycled
+
+    Input: expired [Phaser:Sprite]: The step to be killed/destroyed
+           key [number]: The step's "active_steps" identifier 
+           force_destroy [boolean]: If true, the step is destroyed*/
     kill_step(expired, key, force_destroy = false){
         delete this.active_steps[key];
         if(this.dead_index === MAX_DEAD_SIZE || force_destroy){
@@ -72,11 +85,20 @@ export class Footsteps{
         }
     }
 
+    /*Rotates the step according the parent's direction
+    Also flips the sprite horizontally if necessary
+    
+    Input: sprite [Phaser:Sprite] - The sprite to be affected*/
     position_footsteps(sprite){
         sprite.scale.x = this.foot_forward === foot_forward_types.RIGHT ?  -1 : 1;
-        sprite.rotation = directions_angles[this.current_direction] + (Math.PI/2);
+        sprite.rotation = (this.current_direction + 2)*Math.PI/4;
     }
 
+    /*Displays a new step on screen
+    Will recycle dead sprites if available
+
+    Input: direction [number] = The parent's current direction
+           action [string] = The parent's current action*/
     create_step(direction,action){
         this.current_direction = direction;
         this.current_action = action;
@@ -112,6 +134,7 @@ export class Footsteps{
         this.set_new_step_timer();
     }
 
+    /*Updates the "foot_forward" property*/
     update_foot(){
         this.footsteps_time_interval = this.current_action === "walk" ? WALKING_TIME_INTERVAL : RUNNING_TIME_INTERVAL;
         if(this.current_action === "idle"){
@@ -122,6 +145,9 @@ export class Footsteps{
         }
     }
 
+    /*Kills all active steps and resets the timers
+    
+    Input: force_destroy [boolean] - If true, destroys steps instead*/
     clean_all(force_destroy){
         this.new_step_timer.stop(true);
         this.expire_timer.stop(true);
@@ -131,6 +157,7 @@ export class Footsteps{
         this.dead_index = 0;
     }
 
+    /*Destroys this object and its children*/
     destroy(){
         this.clean_all(true);
         this.footsteps_sprite_base = null;
