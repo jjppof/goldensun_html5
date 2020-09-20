@@ -96,14 +96,16 @@ export class Footsteps{
             footsteps_sprite.reset(0, 0);
         }
         const animation_obj = footsteps_sprite.animations.getAnimation(animation_name);
-        footsteps_sprite.frame = animation_obj.frame;
+        animation_obj.stop(true);
         footsteps_sprite.base_collider_layer = this.data.map.collision_layer;
         footsteps_sprite.x = this.data.hero.shadow.x;
         footsteps_sprite.y = this.data.hero.shadow.y;
         this.position_footsteps(footsteps_sprite);
 
         const key = Object.keys(this.active_steps).length;
-        animation_obj.onComplete.addOnce(this.kill_step.bind(this, footsteps_sprite, key));
+        animation_obj.onComplete.addOnce(() => {
+            this.kill_step(footsteps_sprite, key);
+        });
         this.active_steps[key] = footsteps_sprite;
         this.set_expire_timer(footsteps_sprite, animation_name);
 
@@ -123,14 +125,14 @@ export class Footsteps{
     clean_all(force_destroy){
         this.new_step_timer.stop(true);
         this.expire_timer.stop(true);
-        this.dead_index = 0;
         Object.keys(this.active_steps).forEach(key => {
             this.kill_step(this.active_steps[key], key, force_destroy);
         });
+        this.dead_index = 0;
     }
 
     destroy(){
-        this.clean_all(this.active_steps);
+        this.clean_all(true);
         this.footsteps_sprite_base = null;
         this.animation_db = null;
         this.new_step_timer.destroy();
