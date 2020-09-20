@@ -1,5 +1,6 @@
 import * as numbers from './magic_numbers.js';
 
+/*Element keys*/
 export const elements = {
     VENUS: "venus",
     MERCURY: "mercury",
@@ -8,10 +9,12 @@ export const elements = {
     NO_ELEMENT: "no_element"
 };
 
+/*Default elements order*/
 export const ordered_elements = [
     elements.VENUS, elements.MERCURY, elements.MARS, elements.JUPITER
 ];
 
+/*Element names*/
 export const element_names = {
     [elements.VENUS]: "Earth",
     [elements.MERCURY]: "Water",
@@ -19,6 +22,7 @@ export const element_names = {
     [elements.JUPITER]: "Wind"
 };
 
+/*8-Directional direction values*/
 export const directions = {
     right: 0,
     down_right: 1,
@@ -30,6 +34,10 @@ export const directions = {
     up_right: 7
 };
 
+/*Size of "directions" object*/
+export const directions_count = Object.keys(directions).length;
+
+/*8-Directional direction keys*/
 export const reverse_directions = {
     [directions.right]: "right",
     [directions.up_right]: "up_right",
@@ -41,48 +49,83 @@ export const reverse_directions = {
     [directions.down_right]: "down_right"
 };
 
-export const directions_angles = { //4th quadrant
-    [directions.right]: 0,
-    [directions.up_right]: 7*Math.PI/4,
-    [directions.up]: 3*Math.PI/2,
-    [directions.up_left]: 5*Math.PI/4,
-    [directions.left]: Math.PI,
-    [directions.down_left]: 3*Math.PI/4,
-    [directions.down]: Math.PI/2,
-    [directions.down_right]: Math.PI/4
-};
+/*Returns the angle for an 8-Directional value
+Works clockwise starting with "Right"
 
+Input: direction [number]: 0-7, clockwise starting with "Right"
+
+Output: [number] - Angle in radians*/
+export function directions_angles(direction){ //clockwise from "right"
+    return direction*Math.PI/4;
+}
+
+/*Maps direction keys to their values
+
+Input: arr [array] - Direction keys (array of string)
+
+Output: [array] - Direction values (array of number)*/
 export function map_directions(arr) {
     if (arr === undefined) return arr;
     arr = Array.isArray(arr) ? arr : [arr];
     return arr.map(key => directions[key]);
 }
 
+/*Returns the direction values for diagonal directions
+Example: Input: 7 (up_right) / Output: [6,0]
+
+Input: direction [number] - Diagonal direction value
+
+Output: [array] - Array with split direction values*/
 export function split_direction(direction) {
-    return reverse_directions[direction].split("_").map(key => directions[key]);
+    if(direction%2===0) return [direction];
+    
+    let vals = new Array(2);
+    vals[0] = direction===directions.right ? direction.up_right : direction-1;
+    vals[1] = direction===directions.up_right ? directions.right : direction+1;
+    return vals;
 }
 
+/*Returns the diagonal value for its component directions
+Example: Input: 6, 0 (up, right) / Output: 7 (up_right)
+
+Input: dir_1, dir_2 [number] - Direction values
+
+Output: [number] - Diagonal direction value
+*/
 export function join_directions(dir_1, dir_2) {
-    if ([directions.up, directions.down].includes(dir_1)) {
-        return directions[reverse_directions[dir_1] + "_" + reverse_directions[dir_2]];
-    } else {
-        return directions[reverse_directions[dir_2] + "_" + reverse_directions[dir_1]];
-    }
+    dir_2 = dir_1 === directions.up && dir_2 === directions.right ? directions_count : dir_2;
+    return Math.min(dir_1,dir_2)+1;
 }
 
+/*Returns a random number (0,4)
+
+Output: [number] - Random number from 0 to 4*/
 export function variation() {
     return _.random(0, 4);
 }
 
+/*Places the angle (radians) in the [0,2*PI] range
+
+Input: angle [number] - Angle in radians
+Output: [number] - Angle in the [0,2*PI] range*/
 export function range_360(angle) {
     angle = angle % numbers.degree360;
     angle = angle < 0 ? angle + numbers.degree360 : angle;
     return angle;
 }
 
+/*Checks proximity in given quadrants
+
+Input: quadrants [array] - Quadrants to check (array of number)
+       radius [number] - Radius of the body
+       range_factor [number] - Additional range factor
+       x, y [number] - The body's coordinates
+       target_x, target_y [number] - The target's coordinates
+
+Output: [boolean]*/
 export function is_inside_sector(quadrants, radius, range_factor, x, y, target_x, target_y) {
     const range_radius_squared = (radius * range_factor) * (radius * range_factor);
-    const target_radius_quared = Math.pow(target_x - x, 2) + Math.pow(target_y - y, 2);
+    const target_radius_squared = Math.pow(target_x - x, 2) + Math.pow(target_y - y, 2);
     const target_angle = range_360(Math.atan2(y - target_y, target_x - x));
     const angles = [0, numbers.degree90, Math.PI, numbers.degree270, numbers.degree360];
     let between_angles = false;
@@ -94,9 +137,17 @@ export function is_inside_sector(quadrants, radius, range_factor, x, y, target_x
         if (between_angles) break;
     }
 
-    return target_radius_quared <= range_radius_squared && between_angles;
+    return target_radius_squared <= range_radius_squared && between_angles;
 }
 
+/*Checks proximity based on current direction
+
+Input: current_direction [number] - The current direction
+       x, y [number] - The body's coordinates
+       target_x, target_y [number] - The target's coordinates
+       range_factor [number] - Additional range factor
+
+Output: [boolean]*/
 export function is_close(current_direction, x, y, target_x, target_y, range_factor) {
     switch (current_direction) {
         case directions.up:
@@ -118,6 +169,8 @@ export function is_close(current_direction, x, y, target_x, target_y, range_fact
     };
 }
 
+/*Direction transitions
+Used being forced to change directions*/
 export const transitions = {
     [directions.up] : {
         [directions.up] : directions.up,
@@ -201,6 +254,11 @@ export const transitions = {
     },
 };
 
+/*Returns the opposite of the given direction
+
+Input: direction [number] - Direction value
+
+Output: [number] - Opposite direction value*/
 export function get_opposite_direction(direction) {
     switch (direction) {
         case directions.up: return directions.down;
@@ -210,10 +268,21 @@ export function get_opposite_direction(direction) {
     }
 }
 
+/*Apply the transition directions
+Used when being forced to face a different direction
+
+Input: current_direction [number] - Current direction value
+       desired_direction [number] - Desired direction value
+
+Output: [number] - The direction value to apply*/
 export function get_transition_directions(current_direction, desired_direction){
     return transitions[desired_direction][current_direction];
 }
 
+/*Obtains the text width in pixels (INEFFICIENT)
+
+Input: game [Phaser:Game] - Reference to the running game object
+       text [string] - Text string*/
 export function get_text_width(game, text) { //get text width in px (dirty way)
     let text_sprite = game.add.bitmapText(0, 0, 'gs-bmp-font', text, numbers.FONT_SIZE);
     const text_width = text_sprite.width;
@@ -221,12 +290,23 @@ export function get_text_width(game, text) { //get text width in px (dirty way)
     return text_width;
 }
 
+/*Returns the pressed keys
+
+Input: cursor
+
+Output: [array]*/
 export function check_isdown(cursors, ...keys) {
     return [directions.up, directions.left, directions.down, directions.right].every(direction => {
         return !(cursors[reverse_directions[direction]].isDown ^ keys.includes(direction));
     });
 }
 
+/*Returns the surrounding positions
+Diagonals are optional
+
+Input: x,y [number] - The body's position
+       with_diagonals [boolean] - If true, includes diagonals
+       shift [number] - Distance to check*/
 export function get_surroundings(x, y, with_diagonals = false, shift = 1) {
     let surroundings = [
         {x: x - shift, y: y, diag: false, direction: directions.left},
@@ -245,19 +325,22 @@ export function get_surroundings(x, y, with_diagonals = false, shift = 1) {
     return surroundings;
 };
 
+/*Sets the psynergy cast direction
+For diagonals, pick the next clockwise non-diagonal
+
+Input: direction [number] - Current direction
+
+Output: [number] - Non-diagonal cast direction*/
 export function set_cast_direction(direction) {
-    if (direction === directions.down_left) {
-        direction = directions.left;
-    } else if (direction === directions.up_left) {
-        direction = directions.up;
-    } else if (direction === directions.up_right) {
-        direction = directions.right;
-    } else if (direction === directions.down_right) {
-        direction = directions.down;
-    }
-    return direction;
+    if(direction%2===0) return direction;
+    
+    direction++;
+    return direction === directions_count ? directions.right : direction;
 }
 
+/*Lists all directions, diagonals optional
+
+Input: with_diagonals [boolean] - If true, includes diagonals*/
 export function get_directions(with_diagonals = false) {
     let dirs = [directions.up, directions.down, directions.left, directions.right];
     if (with_diagonals) {
@@ -266,10 +349,21 @@ export function get_directions(with_diagonals = false) {
     return dirs;
 }
 
+/*Capitalizes the given text
+
+Input: text [string] - Text to change
+
+Output: [string] - Capitalized text*/
 export function capitalize(text) {
     return text[0].toUpperCase() + text.slice(1);
 }
 
+/*Changes the brightness of a given color code
+
+Input: hex [number] - Input color
+       percent [number] - Brightness factor
+
+Output [number] - Output color*/
 export function change_brightness(hex, percent) {
     if (typeof hex === 'string') {
         hex = hex.replace(/^\s*#|\s*$/g, '');
@@ -294,17 +388,34 @@ export function change_brightness(hex, percent) {
     return parseInt(hex, 16);
 }
 
+/*Transform RGB color into HSV color
+
+Input: r,g,b [number] - Red, Green, Blue channels
+
+Output [array] - Hue, Saturation, Value channels (array of number)*/
 export function rgb2hsv(r,g,b) {
     let v = Math.max(r,g,b), n = v-Math.min(r,g,b);
     let h = n && ((v === r) ? (g-b)/n : ((v === g) ? 2+(b-r)/n : 4+(r-g)/n)); 
     return [60*(h<0?h+6:h), v&&n/v, v];
 }
 
+/*Transform HSV color into RGB color
+
+Input: h,s,v [number] - Hue, Saturation, Value channels
+
+Output [array] - Red, Green, Blue (array of number)*/
 export function hsv2rgb(h,s,v) {
     let f = (n,k=(n+h/60)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0);
     return [f(5),f(3),f(1)];
 }
 
+/*Defines the collision polygon
+
+Input: width [number] - Width of the body
+       shift [number] - Shift value
+       bevel [number] - Body's bevel value
+
+Output: [array] - Multidimensional array with points*/
 export function mount_collision_polygon(width, shift, bevel) {
     if (bevel === undefined) bevel = 0;
     return [
