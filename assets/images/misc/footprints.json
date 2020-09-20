@@ -1,6 +1,6 @@
 {
 	"frames": {
-		"single/up/00": {
+		"footprints/single/00": {
 			"frame": {
 				"x": 0,
 				"y": 0,
@@ -20,7 +20,7 @@
 				"h": 16
 			}
 		},
-		"single/up/01": {
+		"footprints/single/01": {
 			"frame": {
 				"x": 16,
 				"y": 0,
@@ -40,7 +40,7 @@
 				"h": 16
 			}
 		},
-		"single/up/02": {
+		"footprints/single/02": {
 			"frame": {
 				"x": 0,
 				"y": 16,
@@ -60,7 +60,7 @@
 				"h": 16
 			}
 		},
-		"double/up/00": {
+		"footprints/double/00": {
 			"frame": {
 				"x": 16,
 				"y": 16,
@@ -80,7 +80,7 @@
 				"h": 16
 			}
 		},
-		"double/up/01": {
+		"footprints/double/01": {
 			"frame": {
 				"x": 32,
 				"y": 0,
@@ -100,7 +100,7 @@
 				"h": 16
 			}
 		},
-		"double/up/02": {
+		"footprints/double/02": {
 			"frame": {
 				"x": 32,
 				"y": 16,

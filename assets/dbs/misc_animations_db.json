@@ -7,9 +7,10 @@
         "pushable": false,
         "initial_animation": "double",
         "actions": {
-            "frame_rate": [10, 10],
+            "frame_rate": 10,
             "animations": ["single", "double"],
-            "frames_count": [3, 3]
+            "frames_count": 3,
+            "loop": false
         },
         "spritesheet": {
             "image": "assets/images/misc/footprints.png",
