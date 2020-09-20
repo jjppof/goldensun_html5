@@ -102,4 +102,8 @@ export class SpriteBase {
             }
         }
     }
+
+    getAnimationKey(action, direction) {
+        return action + "_" + direction;
+    }
 }
