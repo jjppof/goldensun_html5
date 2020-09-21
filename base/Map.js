@@ -313,6 +313,7 @@ export class Map {
                 this.data.interactable_objects_db[interactable_object.key_name].actions.frames_count
             );
             interactable_obj_sprite_info.setActionFrameRate(action, this.data.interactable_objects_db[interactable_object.key_name].actions.frame_rate);
+            interactable_obj_sprite_info.setActionLoop(action, this.data.interactable_objects_db[interactable_object.key_name].actions.loop)
             interactable_obj_sprite_info.generateAllFrames();
             await new Promise(resolve => {
                 interactable_obj_sprite_info.loadSpritesheets(this.game, true, () => {
