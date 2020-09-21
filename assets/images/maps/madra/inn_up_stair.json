@@ -159,10 +159,10 @@
  "properties":
     {
      "Name":"inn_up_stair",
-     "event_01":"{\"type\": \"door\", \"x\": 14, \"y\": 7, \"target\": \"madra_inn\", \"activation_directions\": \"left\", \"x_target\": 15.5, \"y_target\": 7.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_02":"{\"type\": \"door\", \"x\": 13, \"y\": 13, \"target\": \"madra_inn_up\", \"activation_directions\": \"down\", \"x_target\": 17.5, \"y_target\": 5.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_03":"{\"type\": \"door\", \"x\": 14, \"y\": 13, \"target\": \"madra_inn_up\", \"activation_directions\": \"down\", \"x_target\": 17.5, \"y_target\": 5.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_04":"{\"type\": \"door\", \"x\": 14, \"y\": 6, \"target\": \"madra_inn\", \"activation_directions\": \"left\", \"x_target\": 15.5, \"y_target\": 7.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
+     "event_01":"{\"type\": \"teleport\", \"x\": 14, \"y\": 7, \"target\": \"madra_inn\", \"activation_directions\": \"left\", \"x_target\": 15.5, \"y_target\": 7.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_02":"{\"type\": \"teleport\", \"x\": 13, \"y\": 13, \"target\": \"madra_inn_up\", \"activation_directions\": \"down\", \"x_target\": 17.5, \"y_target\": 5.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_03":"{\"type\": \"teleport\", \"x\": 14, \"y\": 13, \"target\": \"madra_inn_up\", \"activation_directions\": \"down\", \"x_target\": 17.5, \"y_target\": 5.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}",
+     "event_04":"{\"type\": \"teleport\", \"x\": 14, \"y\": 6, \"target\": \"madra_inn\", \"activation_directions\": \"left\", \"x_target\": 15.5, \"y_target\": 7.5, \"advance_effect\": false, \"dest_collider_layer\": 0, \"activation_collision_layers\": [0]}"
     },
  "propertytypes":
     {

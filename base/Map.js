@@ -5,7 +5,6 @@ import {
     TileEvent,
     StairEvent,
     SpeedEvent,
-    DoorEvent,
     StepEvent,
     CollisionEvent,
     event_types as tile_event_types
@@ -13,6 +12,7 @@ import {
 import { GameEvent } from "./GameEvent.js";
 import * as numbers from "../magic_numbers.js";
 import { JumpEvent } from "./tile_events/JumpEvent.js";
+import { TeleportEvent } from "./tile_events/TeleportEvent.js";
 
 export class Map {
     constructor (
@@ -186,8 +186,8 @@ export class Map {
                 property_info.speed
             );
             this.events[this_event_location_key].push(new_event);
-        } else if (property_info.type === tile_event_types.DOOR) {
-            const new_event = new DoorEvent(
+        } else if (property_info.type === tile_event_types.TELEPORT) {
+            const new_event = new TeleportEvent(
                 this.game,
                 this.data,
                 property_info.x,

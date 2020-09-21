@@ -83,7 +83,7 @@ export class MenuScreen {
 
 export function initialize_menu(game, data) {
     data.spacebar_input.add(() => {
-        if (data.hero.casting_psynergy || data.hero.climbing || data.hero.pushing || data.teleporting || data.hero.jumping || data.in_battle || !data.created) return;
+        if (data.hero.in_action() || data.in_battle || !data.created) return;
         if (!data.menu_open) {
             data.menu_open = true;
             data.hero.stop_char();

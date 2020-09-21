@@ -45,7 +45,6 @@ class GoldenSun {
         );
 
         //events and game states
-        this.teleporting = false;
         this.waiting_to_step = false;
         this.step_event_data = {};
         this.menu_open = false;
@@ -280,21 +279,21 @@ class GoldenSun {
 
         //enable psynergies shortcuts for testing
         this.game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(() => {
-            if (this.hero.climbing || this.menu_open || this.hero.pushing || this.teleporting || this.hero.jumping || this.in_battle) return;
+            if (this.hero.in_action() || this.menu_open || this.in_battle) return;
             field_abilities_list.move.cast(this.init_db.initial_shortcuts.move);
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(() => {
-            if (this.hero.climbing || this.menu_open || this.hero.pushing || this.teleporting || this.hero.jumping || this.in_battle) return;
+            if (this.hero.in_action() || this.menu_open || this.in_battle) return;
             field_abilities_list.frost.cast(this.init_db.initial_shortcuts.frost);
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(() => {
-            if (this.hero.climbing || this.menu_open || this.hero.pushing || this.teleporting || this.hero.jumping || this.in_battle) return;
+            if (this.hero.in_action() || this.menu_open || this.in_battle) return;
             field_abilities_list.growth.cast(this.init_db.initial_shortcuts.growth);
         });
 
         //enable event trigger key
         this.enter_input.add(() => {
-            if (this.hero.casting_psynergy || this.hero.climbing || this.hero.pushing || this.teleporting || this.hero.jumping || this.in_battle || !this.created) return;
+            if (this.hero.in_action() || this.in_battle || !this.created) return;
             trigger_npc_dialog(this.game, this);
         });
     }

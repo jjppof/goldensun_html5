@@ -3,7 +3,7 @@ import { get_directions, split_direction } from "../../utils.js";
 export const event_types = {
     STAIR: "stair",
     SPEED: "speed",
-    DOOR: "door",
+    TELEPORT: "teleport",
     JUMP: "jump",
     STEP: "step",
     COLLISION: "collision"
@@ -92,17 +92,6 @@ export class SpeedEvent extends TileEvent {
     constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, speed) {
         super(game, data, event_types.SPEED, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
         this.speed = speed;
-    }
-}
-
-export class DoorEvent extends TileEvent {
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, target, x_target, y_target, advance_effect, dest_collider_layer) {
-        super(game, data, event_types.DOOR, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
-        this.target = target;
-        this.x_target = x_target;
-        this.y_target = y_target;
-        this.advance_effect = advance_effect;
-        this.dest_collider_layer = dest_collider_layer;
     }
 }
 

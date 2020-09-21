@@ -12,7 +12,7 @@ export class JumpEvent extends TileEvent {
     }
 
     fire() {
-        if (!this.data.hero.stop_by_colliding || !this.check_position() || this.data.hero.in_action() || this.data.menu_open || this.data.in_battle) {
+        if (!this.data.hero.stop_by_colliding || !this.check_position() || this.data.hero.in_action() || this.data.menu_open || this.data.in_battle || this.data.tile_event_manager.on_event) {
             return;
         }
         let jump_offset = JUMP_OFFSET;

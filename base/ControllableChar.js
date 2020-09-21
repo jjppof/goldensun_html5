@@ -21,6 +21,7 @@ export class ControllableChar {
         this.pushing = false;
         this.jumping = false;
         this.casting_psynergy = false;
+        this.teleporting = false;
         this.idle_climbing = false;
         this.sprite_info = null;
         this.sprite = null;
@@ -36,7 +37,7 @@ export class ControllableChar {
     }
 
     in_action() {
-        return this.casting_psynergy || this.pushing || this.climbing || this.jumping;
+        return this.casting_psynergy || this.pushing || this.climbing || this.jumping || this.teleporting;
     }
 
     set_sprite(group, sprite_info, map_sprite, layer, anchor_x = DEFAULT_SPRITE_ANCHOR_X, anchor_y = DEFAULT_SPRITE_ANCHOR_Y) {

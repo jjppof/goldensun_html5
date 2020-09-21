@@ -1,4 +1,3 @@
-import { set_door_event } from '../../events/door.js';
 import { config_step } from '../../events/step.js';
 import { event_types } from './TileEvent.js';
 import { climbing_event } from '../../events/climb.js';
@@ -50,8 +49,8 @@ export class TileEventManager {
         if (this.hero.current_direction !== this_activation_direction) return;
         if (current_event.type === event_types.STAIR && !this.hero.idle_climbing) {
             climbing_event(this.game, this.data, current_event, this_activation_direction);
-        } else if (current_event.type === event_types.DOOR) {
-            set_door_event(this.game, this.data, current_event);
+        } else if (current_event.type === event_types.TELEPORT) {
+            current_event.fire();
         } else if (current_event.type === event_types.JUMP) {
             current_event.fire();
         }
@@ -89,7 +88,7 @@ export class TileEventManager {
                         }
                     );
                 }
-            } else if (this_event.type === event_types.DOOR) {
+            } else if (this_event.type === event_types.TELEPORT) {
                 if (!this_event.advance_effect) {
                     event_queue.add(
                         this_event,
