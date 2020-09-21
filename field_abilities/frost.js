@@ -14,6 +14,11 @@ const POLAR_SLOPE = 0.15;
 const SPIRAL_INTENSITY = 8; 
 const SNOWFLAKE_DURATION = 1650;
 
+/*Handles the "Frost" field psynergy
+Does not handle the in-battle command
+
+Input:game [Phaser:Game] - Reference to the running game object
+       data [GoldenSun] - Reference to the main JS Class instance*/
 export class FrostFieldPsynergy {
     constructor(game, data) {
         this.game = game;
@@ -25,6 +30,9 @@ export class FrostFieldPsynergy {
         this.stop_casting = null;
     }
 
+    /*Checks for a valid target
+    Requires a "Frost Pool" interactable object
+    Sets the "target_found" and "target_object" properties*/
     search_for_target() {
         this.target_found = false;
         let min_x, max_x, min_y, max_y;
@@ -67,10 +75,12 @@ export class FrostFieldPsynergy {
         }
     }
 
+    /*Starts the hero's "cast" animation*/
     set_hero_cast_anim() {
         this.data.hero.play(this.action_key_name, reverse_directions[this.cast_direction]);
     }
 
+    /*Stops the hero's "cast" animation*/
     unset_hero_cast_anim() {
         this.data.hero.sprite.animations.currentAnim.reverseOnce();
         this.data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
@@ -79,6 +89,8 @@ export class FrostFieldPsynergy {
         this.data.hero.play(this.action_key_name, reverse_directions[this.cast_direction]);
     }
 
+    /*Begins the snowflake effects
+    Upon finishing, triggers the pillar's growth*/
     init_snowflakes() {
         for (let i = 0; i < SNOWFLAKES_COUNT; ++i) {
             let snowflake_sprite = this.data.npc_group.create(0, 0, "frost_snowflake");
@@ -123,6 +135,8 @@ export class FrostFieldPsynergy {
         }
     }
 
+    /*Changes the pool into a pillar
+    Will change its properties and animation*/
     init_pillar() {
         this.target_object.get_events().forEach(event => {
             if (event.is_set) {
@@ -161,6 +175,7 @@ export class FrostFieldPsynergy {
         blink_timer.start();
     }
 
+    /*Plays the pillar's growing animation*/
     grow_pillar() {
         this.target_object.interactable_object_sprite.animations.play("frost_pool_pillar");
         this.target_object.interactable_object_sprite.animations.currentAnim.onComplete.addOnce(() => {
@@ -170,6 +185,7 @@ export class FrostFieldPsynergy {
         });
     }
 
+    /*Enables the pillar's blinking state*/
     set_permanent_blink() {
         let blink_timer = this.game.time.create(false);
         let target_object = this.target_object;
@@ -185,6 +201,9 @@ export class FrostFieldPsynergy {
         });
     }
 
+    /*Handles the cast command for this ability
+
+    Input: caster_key_name [string] - The caster's identifier*/
     cast(caster_key_name) {
         if (this.data.hero.casting_psynergy) return;
         let caster = main_char_list[caster_key_name];
