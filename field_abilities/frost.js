@@ -162,8 +162,7 @@ export class FrostFieldPsynergy {
     }
 
     grow_pillar() {
-        let actions = this.data.interactable_objects_db[this.ability_key_name+"_pool"].actions;
-        this.target_object.interactable_object_sprite.animations.play("frost_pool_pillar", actions.frame_rate[1], actions.loop[1]);
+        this.target_object.interactable_object_sprite.animations.play("frost_pool_pillar");
         this.target_object.interactable_object_sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.set_permanent_blink();
             this.unset_hero_cast_anim();
