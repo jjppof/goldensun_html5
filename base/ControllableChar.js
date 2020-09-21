@@ -36,8 +36,8 @@ export class ControllableChar {
         this.footsteps = new Footsteps(this.game, this.data);
     }
 
-    in_action() {
-        return this.casting_psynergy || this.pushing || this.climbing || this.jumping || this.teleporting;
+    in_action(allow_climbing = false) {
+        return this.casting_psynergy || this.pushing || (this.climbing && !allow_climbing) || this.jumping || this.teleporting;
     }
 
     set_sprite(group, sprite_info, map_sprite, layer, anchor_x = DEFAULT_SPRITE_ANCHOR_X, anchor_y = DEFAULT_SPRITE_ANCHOR_Y) {

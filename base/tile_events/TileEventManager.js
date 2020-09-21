@@ -1,20 +1,19 @@
 import { config_step } from '../../events/step.js';
 import { event_types } from './TileEvent.js';
-import { climbing_event } from '../../events/climb.js';
 
 const EVENT_TIME = 350;
 
 class EventQueue {
     constructor() {
-        this.stair_event = false;
+        this.climb_event = false;
         this.queue = [];
     }
 
     add(event, this_activation_direction, fire_function) {
         switch(event.type) {
-            case event_types.STAIR:
+            case event_types.CLIMB:
                 if (event.active && event.is_set && event.activation_directions.includes(this_activation_direction)) {
-                    this.stair_event = true;
+                    this.climb_event = true;
                 }
                 break;
         }
@@ -25,7 +24,7 @@ class EventQueue {
     }
 
     process_queue() {
-        if (this.stair_event) {
+        if (this.climb_event) {
             this.queue = this.queue.filter(item => item.event.type !== event_types.JUMP);
         }
         this.queue.forEach(item => {
@@ -47,11 +46,9 @@ export class TileEventManager {
 
     fire_event(current_event, this_activation_direction) {
         if (this.hero.current_direction !== this_activation_direction) return;
-        if (current_event.type === event_types.STAIR && !this.hero.idle_climbing) {
-            climbing_event(this.game, this.data, current_event, this_activation_direction);
-        } else if (current_event.type === event_types.TELEPORT) {
-            current_event.fire();
-        } else if (current_event.type === event_types.JUMP) {
+        if (current_event.type === event_types.CLIMB && !this.hero.idle_climbing) {
+            current_event.fire(this_activation_direction);
+        } else if ([event_types.TELEPORT, event_types.JUMP].includes(current_event.type)) {
             current_event.fire();
         }
     }

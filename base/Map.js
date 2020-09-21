@@ -3,7 +3,6 @@ import { NPC_Sprite, NPC, npc_movement_types } from './NPC.js';
 import { InteractableObjects, InteractableObjects_Sprite, interactable_object_interaction_types } from "./InteractableObjects.js";
 import {
     TileEvent,
-    StairEvent,
     SpeedEvent,
     StepEvent,
     CollisionEvent,
@@ -13,6 +12,7 @@ import { GameEvent } from "./GameEvent.js";
 import * as numbers from "../magic_numbers.js";
 import { JumpEvent } from "./tile_events/JumpEvent.js";
 import { TeleportEvent } from "./tile_events/TeleportEvent.js";
+import { ClimbEvent } from "./tile_events/ClimbEvent.js";
 
 export class Map {
     constructor (
@@ -160,8 +160,8 @@ export class Map {
         if (!(this_event_location_key in this.events)) {
             this.events[this_event_location_key] = [];
         }
-        if (property_info.type === tile_event_types.STAIR) {
-            const new_event = new StairEvent(
+        if (property_info.type === tile_event_types.CLIMB) {
+            const new_event = new ClimbEvent(
                 this.game,
                 this.data,
                 property_info.x,

@@ -9,7 +9,7 @@ import { JumpEvent } from "../base/tile_events/JumpEvent.js";
 const ACTION_KEY_NAME = "cast";
 const FROST_MAX_RANGE = 12;
 const SNOWFLAKES_COUNT = 16; 
-const TOTAL_TURNS_SNOWFLAKES = Math.PI * 7; 
+const TOTAL_TURNS_SNOWFLAKES = Math.PI * 7;
 const POLAR_SLOPE = 0.15; 
 const SPIRAL_INTENSITY = 8; 
 const SNOWFLAKE_DURATION = 1650;

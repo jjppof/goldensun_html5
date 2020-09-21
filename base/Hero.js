@@ -122,7 +122,7 @@ export class Hero extends ControllableChar {
                             let has_stair = false;
                             if (events_in_pos) {
                                 events_in_pos.forEach(event => {
-                                    if (event.type === event_types.STAIR && event.is_set && event.activation_directions.includes(this.trying_to_push_direction)) {
+                                    if (event.type === event_types.CLIMB && event.is_set && event.activation_directions.includes(this.trying_to_push_direction)) {
                                         has_stair = true;
                                         return;
                                     }
