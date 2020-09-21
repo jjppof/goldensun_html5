@@ -355,6 +355,11 @@ export class Window {
         return sprite;
     }
 
+    /*Sends this window to the front of the screen*/
+    send_to_front(){
+        this.group.parent.bringToTop(this.group);
+    }
+
     /*Removes a sprite from the group
     
     Input: sprite [Phaser:Sprite] - The sprite to be removed

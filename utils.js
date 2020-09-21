@@ -352,10 +352,11 @@ export function get_directions(with_diagonals = false) {
 /*Capitalizes the given text
 
 Input: text [string] - Text to change
+       lower [boolean] - Whether the full text should be lowercased
 
 Output: [string] - Capitalized text*/
-export function capitalize(text) {
-    return text[0].toUpperCase() + text.slice(1);
+export function capitalize(text, lower = false){
+    return (lower ? text.toLowerCase() : text).replace(/(?:^|\s|["'([{])+\S/g, match => match.toUpperCase());
 }
 
 /*Changes the brightness of a given color code
