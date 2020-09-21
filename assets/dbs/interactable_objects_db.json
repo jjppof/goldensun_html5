@@ -100,9 +100,10 @@
         }],
         "initial_animation": "pool",
         "actions": {
-            "frame_rate": 5,
+            "frame_rate": [5, 8],
             "animations": ["pool", "pillar"],
-            "frames_count": [2, 6]
+            "frames_count": [2, 6],
+            "loop": [true, false]
         },
         "spritesheet": {
             "image": "assets/images/interactable_objects/psynergy_frost.png",
