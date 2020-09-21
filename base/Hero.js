@@ -1,6 +1,6 @@
 import { ControllableChar } from "./ControllableChar.js";
 import * as numbers from '../magic_numbers.js';
-import { TileEvent, event_types } from "./TileEvent.js";
+import { TileEvent, event_types } from "./tile_events/TileEvent.js";
 import { get_transition_directions, range_360, directions } from '../utils.js';
 import { normal_push } from "../interactable_objects/push.js";
 

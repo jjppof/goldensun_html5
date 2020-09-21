@@ -1,6 +1,7 @@
 import * as numbers from  "../magic_numbers.js";
-import { TileEvent, event_types, JumpEvent } from "../base/TileEvent.js";
+import { TileEvent, event_types } from "../base/tile_events/TileEvent.js";
 import { get_surroundings, get_opposite_direction, directions, reverse_directions } from "../utils.js";
+import { JumpEvent } from "../base/tile_events/JumpEvent.js";
 
 const DUST_COUNT = 7;
 const DUST_RADIUS = 18;

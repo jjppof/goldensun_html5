@@ -8,13 +8,13 @@ import { initialize_maps, load_maps, maps } from './initializers/maps.js';
 import { set_npc_event, trigger_npc_dialog } from './events/npc.js';
 import { do_step } from './events/step.js';
 import { initialize_menu } from './screens/menu.js';
-import { TileEvent } from './base/TileEvent.js';
+import { TileEvent } from './base/tile_events/TileEvent.js';
 import { Debug } from './debug.js';
-import { TileEventManager } from './events/triggering.js';
 import { load_all } from './initializers/assets_loader.js';
 import { Collision } from './base/Collision.js';
 import { directions } from './utils.js';
 import { Hero } from './base/Hero.js';
+import { TileEventManager } from './base/tile_events/TileEventManager.js';
 
 //debugging porpouses
 window.maps = maps;
@@ -72,9 +72,6 @@ class GoldenSun {
         //screen
         this.fullscreen = false;
         this.scale_factor = 1;
-
-        //jump
-        this.walking_on_pillars_tiles = new Set();
 
         //npc
         this.npc_event = false;

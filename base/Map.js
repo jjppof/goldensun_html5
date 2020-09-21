@@ -6,13 +6,13 @@ import {
     StairEvent,
     SpeedEvent,
     DoorEvent,
-    JumpEvent,
     StepEvent,
     CollisionEvent,
     event_types as tile_event_types
-} from './TileEvent.js';
+} from './tile_events/TileEvent.js';
 import { GameEvent } from "./GameEvent.js";
 import * as numbers from "../magic_numbers.js";
+import { JumpEvent } from "./tile_events/JumpEvent.js";
 
 export class Map {
     constructor (
@@ -162,6 +162,8 @@ export class Map {
         }
         if (property_info.type === tile_event_types.STAIR) {
             const new_event = new StairEvent(
+                this.game,
+                this.data,
                 property_info.x,
                 property_info.y,
                 map_directions(property_info.activation_directions),
@@ -173,6 +175,8 @@ export class Map {
             this.events[this_event_location_key].push(new_event);
         } else if (property_info.type === tile_event_types.SPEED) {
             const new_event = new SpeedEvent(
+                this.game,
+                this.data,
                 property_info.x,
                 property_info.y,
                 map_directions(property_info.activation_directions),
@@ -184,6 +188,8 @@ export class Map {
             this.events[this_event_location_key].push(new_event);
         } else if (property_info.type === tile_event_types.DOOR) {
             const new_event = new DoorEvent(
+                this.game,
+                this.data,
                 property_info.x,
                 property_info.y,
                 map_directions(property_info.activation_directions),
@@ -199,6 +205,8 @@ export class Map {
             this.events[this_event_location_key].push(new_event);
         } else if (property_info.type === tile_event_types.JUMP) {
             const new_event = new JumpEvent(
+                this.game,
+                this.data,
                 property_info.x,
                 property_info.y,
                 map_directions(property_info.activation_directions),
@@ -210,6 +218,8 @@ export class Map {
             this.events[this_event_location_key].push(new_event);
         } else if (property_info.type === tile_event_types.STEP) {
             const new_event = new StepEvent(
+                this.game,
+                this.data,
                 property_info.x,
                 property_info.y,
                 map_directions(property_info.activation_directions),
@@ -221,6 +231,8 @@ export class Map {
             this.events[this_event_location_key].push(new_event);
         } else if (property_info.type === tile_event_types.COLLISION) {
             const new_event = new CollisionEvent(
+                this.game,
+                this.data,
                 property_info.x,
                 property_info.y,
                 map_directions(property_info.activation_directions),

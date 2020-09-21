@@ -1,7 +1,8 @@
 import { SpriteBase } from "./SpriteBase.js";
-import { TileEvent, JumpEvent, StairEvent, event_types as tile_event_types } from "./TileEvent.js";
+import { TileEvent, StairEvent, event_types as tile_event_types } from "./tile_events/TileEvent.js";
 import * as numbers from '../magic_numbers.js';
 import { directions, get_surroundings, mount_collision_polygon } from "../utils.js";
+import { JumpEvent } from "./tile_events/JumpEvent.js";
 
 export const interactable_object_interaction_types = {
     ONCE: "once",
@@ -178,6 +179,8 @@ export class InteractableObjects {
             map_events[this_event_location_key] = [];
         }
         const new_event = new JumpEvent(
+            this.game,
+            this.data,
             x_pos,
             y_pos,
             [directions.up, directions.down, directions.right, directions.left],
@@ -213,6 +216,8 @@ export class InteractableObjects {
                 map_events[this_event_location_key] = [];
             }
             const new_event = new JumpEvent(
+                this.game,
+                this.data,
                 pos.x,
                 pos.y,
                 [directions.right, directions.left, directions.down, directions.up][index],
@@ -281,7 +286,11 @@ export class InteractableObjects {
             if (!(this_location_key in map_events)) {
                 map_events[this_location_key] = [];
             }
-            const new_event = new StairEvent(event_data.x, event_data.y,
+            const new_event = new StairEvent(
+                this.game,
+                this.data,
+                event_data.x,
+                event_data.y,
                 event_data.activation_directions,
                 event_data.activation_collision_layers,
                 event_info.dynamic,

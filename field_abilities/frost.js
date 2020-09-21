@@ -2,8 +2,9 @@ import { main_char_list } from "../initializers/main_chars.js";
 import { abilities_list } from "../initializers/abilities.js";
 import { init_cast_aura, tint_map_layers } from  '../initializers/psynergy_cast.js';
 import * as numbers from '../magic_numbers.js';
-import { event_types, JumpEvent } from "../base/TileEvent.js";
+import { event_types } from "../base/tile_events/TileEvent.js";
 import { get_surroundings, set_cast_direction, directions, reverse_directions } from "../utils.js";
+import { JumpEvent } from "../base/tile_events/JumpEvent.js";
 
 const ACTION_KEY_NAME = "cast";
 const FROST_MAX_RANGE = 12;

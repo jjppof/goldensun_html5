@@ -1,6 +1,6 @@
 import * as numbers from '../magic_numbers.js';
-import { set_jump_collision, unset_set_jump_collision } from './jump.js';
 import { directions } from '../utils.js';
+import { JumpEvent } from '../base/tile_events/JumpEvent.js';
 
 export function climbing_event(game, data, current_event, activation_direction) {
     if (!data.hero.stop_by_colliding || data.hero.jumping || data.hero.pushing || data.in_battle || data.hero.tile_x_pos !== current_event.x || data.hero.tile_y_pos !== current_event.y) {
@@ -142,7 +142,7 @@ function create_climb_collision_bodies(game, data, current_event) {
     const postions = current_event.origin_interactable_object.events_info.stair.collision_tiles.map(tile_shift => {
         return {x: current_event.origin_interactable_object.current_x + tile_shift.x, y: current_event.origin_interactable_object.current_y + tile_shift.y};
     });
-    unset_set_jump_collision(data);
+    JumpEvent.unset_set_jump_collision(data);
     data.hero.sprite.body.removeCollisionGroup(data.collision.map_collision_group, true);
     data.map.collision_sprite.body.removeCollisionGroup(data.collision.hero_collision_group, true);
     for (let collide_index in data.collision.interactable_objs_collision_groups) {
@@ -169,7 +169,7 @@ function create_climb_collision_bodies(game, data, current_event) {
 
 function remove_climb_collision_bodies(data, current_event, collide_with_map = true) {
     current_event.origin_interactable_object.interactable_object_sprite.send_to_back = false;
-    set_jump_collision(game, data);
+    JumpEvent.set_jump_collision(game, data);
     if (collide_with_map) {
         data.hero.sprite.body.collides(data.collision.map_collision_group);
         data.map.collision_sprite.body.collides(data.collision.hero_collision_group);

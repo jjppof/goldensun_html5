@@ -1,8 +1,7 @@
-import { jump_event, jump_near_collision } from './jump.js';
-import { set_door_event } from './door.js';
-import { config_step } from './step.js';
-import { event_types } from '../base/TileEvent.js';
-import { climbing_event } from './climb.js';
+import { set_door_event } from '../../events/door.js';
+import { config_step } from '../../events/step.js';
+import { event_types } from './TileEvent.js';
+import { climbing_event } from '../../events/climb.js';
 
 const EVENT_TIME = 350;
 
@@ -44,6 +43,7 @@ export class TileEventManager {
         this.collision = collision;
         this.event_timers = {};
         this.on_event = false;
+        this.walking_on_pillars_tiles = new Set();
     }
 
     fire_event(current_event, this_activation_direction) {
@@ -53,7 +53,7 @@ export class TileEventManager {
         } else if (current_event.type === event_types.DOOR) {
             set_door_event(this.game, this.data, current_event);
         } else if (current_event.type === event_types.JUMP) {
-            jump_event(this.game, this.data, current_event);
+            current_event.fire();
         }
     }
     
@@ -63,7 +63,7 @@ export class TileEventManager {
             const this_event = map.events[event_key][i];
             if (!this_event.activation_collision_layers.includes(map.collision_layer)) continue;
             if (this_event.type === event_types.JUMP) {
-                jump_near_collision(this.game, this.data, this_event);
+                this_event.jump_near_collision();
             }
             if (!this_event.is_active(this.hero.current_direction)) continue;
             const right_direction = this_event.activation_directions.includes(this.hero.current_direction);

@@ -157,6 +157,8 @@ export class Debug {
                 if (event_key in this.data.map.events) {
                     const events = this.data.map.events[event_key].map(event => {
                         return Object.assign({}, event, {
+                            game: "[Phaser.Game]",
+                            data: "[GoldenSun]",
                             activation_directions: event.activation_directions.map(dir => reverse_directions[dir]),
                             ...(event.origin_interactable_object && {
                                 origin_interactable_object: `[${event.origin_interactable_object.key_name}]`
