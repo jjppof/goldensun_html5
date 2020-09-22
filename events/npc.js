@@ -50,7 +50,7 @@ export function set_npc_event(game, data) {
             let npc_x = data.active_npc.npc_sprite.x;
             let npc_y = data.active_npc.npc_sprite.y;
             let interaction_directions = get_interaction_directions(data, data.hero.sprite.x, data.hero.sprite.y, npc_x, npc_y, data.active_npc.key_name);
-            data.hero.current_direction = interaction_directions.hero_direction;
+            data.hero.set_direction(interaction_directions.hero_direction);
             data.hero.sprite.animations.play("idle_" + reverse_directions[interaction_directions.hero_direction]);
             data.active_npc.npc_sprite.animations.play("idle_" + reverse_directions[interaction_directions.npc_direction]);
             data.dialog_manager = new DialogManager(game, parts, data.hero.current_direction);

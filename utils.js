@@ -205,7 +205,7 @@ export const transitions = {
     [directions.right] : {
         [directions.up] : directions.up_right,
         [directions.down] : directions.down_right,
-        [directions.left] : directions.up_left,
+        [directions.left] : directions.down_left,
         [directions.right] : directions.right,
         [directions.down_left] : directions.down,
         [directions.down_right] : directions.right,

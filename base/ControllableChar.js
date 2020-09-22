@@ -31,6 +31,7 @@ export class ControllableChar {
         this.current_action = initial_action;
         this.current_direction = initial_direction;
         this.required_direction = 0;
+        this.desired_direction = initial_direction;
         this.color_filter = this.game.add.filter('ColorFilters');
         this.enable_footsteps = enable_footsteps === undefined ? false : enable_footsteps;
         this.footsteps = new Footsteps(this.game, this.data);
@@ -100,6 +101,10 @@ export class ControllableChar {
         }
     }
 
+    set_direction(direction) {
+        this.current_direction = this.desired_direction = direction;
+    }
+
     set_action(check_on_event = false) {
         if (check_on_event && this.data.tile_event_manager.on_event) {
             return;
@@ -111,7 +116,7 @@ export class ControllableChar {
         } else if (this.stop_by_colliding && !this.pushing && this.climbing) {
             idle_climbing = true;
         }
-        const animation = idle_climbing ? "idle" : reverse_directions[this.current_direction];
+        const animation = idle_climbing ? "idle" : reverse_directions[this.desired_direction];
         this.play(action, animation);
     }
 

@@ -90,16 +90,12 @@ export class TileEventManager {
                         }
                     );
                 }
-            } else if (this_event.type === event_types.TELEPORT) {
-                if (!this_event.advance_effect) {
+            } else if (this_event.type === event_types.TELEPORT && !this_event.advance_effect) {
                     event_queue.add(
                         this_event,
                         this.hero.current_direction,
-                        () => {
-                            this.fire_event(this_event, this.hero.current_direction);
-                        }
+                        this.fire_event.bind(this, this_event, this.hero.current_direction)
                     );
-                }
             } else if (this_event.type === event_types.STEP && !this.event_triggered(this_event)) {
                 event_queue.add(
                     this_event,

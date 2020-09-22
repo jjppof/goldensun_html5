@@ -220,7 +220,7 @@ export class GrowthFieldPsynergy {
         this.data.hero.sprite.body.velocity.y = this.data.hero.sprite.body.velocity.x = 0;
         caster.current_pp -= ability.pp_cost;
         this.cast_direction = set_cast_direction(this.data.hero.current_direction);
-        this.data.hero.current_direction = this.cast_direction;
+        this.data.hero.set_direction(this.cast_direction);
         this.search_for_target();
         if (this.target_object && this.target_object.custom_data.growth_casted) {
             this.target_found = false;
