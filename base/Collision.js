@@ -1,5 +1,3 @@
-import { directions } from "../utils.js";
-
 export class Collision {
     constructor(game, hero) {
         this.game = game;

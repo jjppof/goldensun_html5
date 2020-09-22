@@ -1,6 +1,6 @@
 import { event_types } from './TileEvent.js';
 
-const EVENT_TIME = 350;
+const EVENT_INIT_DELAY = 350;
 
 class EventQueue {
     constructor() {
@@ -8,7 +8,7 @@ class EventQueue {
         this.queue = [];
     }
 
-    add(event, this_activation_direction, fire_function) {
+    add(event, this_activation_direction, fire_function, fire = false) {
         switch(event.type) {
             case event_types.CLIMB:
                 if (event.active && event.is_set && event.activation_directions.includes(this_activation_direction)) {
@@ -16,19 +16,21 @@ class EventQueue {
                 }
                 break;
         }
-        this.queue.push({
-            event: event,
-            fire_function: fire_function
-        });
+        if (fire) {
+            fire_function();
+        } else {
+            this.queue.push({
+                event: event,
+                fire_function: fire_function
+            });
+        }
     }
 
     process_queue() {
         if (this.climb_event) {
             this.queue = this.queue.filter(item => item.event.type !== event_types.JUMP);
         }
-        this.queue.forEach(item => {
-            item.fire_function();
-        });
+        this.queue.forEach(item => item.fire_function());
     }
 }
 
@@ -57,8 +59,14 @@ export class TileEventManager {
     }
 
     fire_triggered_events() {
+        this.hero.extra_speed = 0;
         Object.keys(this.triggered_events).forEach(id => {
-            this.triggered_events[id].fire();
+            const this_event = this.triggered_events[id];
+            if (this_event.type === event_types.SPEED) {
+                this_event.unset();
+            } else {
+                this_event.fire();
+            }
         });
     }
 
@@ -85,9 +93,8 @@ export class TileEventManager {
                     event_queue.add(
                         this_event,
                         this.hero.current_direction,
-                        () => {
-                            this.hero.extra_speed = this_event.speed;
-                        }
+                        this_event.fire.bind(this_event),
+                        true
                     );
                 }
             } else if (this_event.type === event_types.TELEPORT && !this_event.advance_effect) {
@@ -112,7 +119,7 @@ export class TileEventManager {
                         this_event,
                         this.hero.current_direction,
                         () => {
-                            this.event_timers[this_event.id] = this.game.time.events.add(EVENT_TIME, this.fire_event.bind(this, this_event, this.hero.current_direction));
+                            this.event_timers[this_event.id] = this.game.time.events.add(EVENT_INIT_DELAY, this.fire_event.bind(this, this_event, this.hero.current_direction));
                         }
                     );
                 }

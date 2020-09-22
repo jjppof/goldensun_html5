@@ -1,4 +1,4 @@
-import { TileEvent, event_types } from "./TileEvent";
+import { TileEvent, event_types } from "./TileEvent.js";
 
 export class CollisionEvent extends TileEvent {
     constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, dest_collider_layer) {

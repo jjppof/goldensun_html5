@@ -309,8 +309,6 @@ class GoldenSun {
             const location_key = TileEvent.get_location_key(this.hero.tile_x_pos, this.hero.tile_y_pos);
             if (location_key in this.map.events) {
                 this.tile_event_manager.check_tile_events(location_key, this.map);
-            } else if (this.hero.extra_speed !== 0) { //disabling speed event
-                this.hero.extra_speed = 0;
             }
 
             this.hero.update(this.map); //update hero position/velocity/sprite

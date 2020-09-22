@@ -78,10 +78,3 @@ export class TileEvent {
 }
 
 TileEvent.reset();
-
-export class SpeedEvent extends TileEvent {
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, speed) {
-        super(game, data, event_types.SPEED, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
-        this.speed = speed;
-    }
-}
