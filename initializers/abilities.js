@@ -49,7 +49,7 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
             ],
             2
         );
-        hand_sprite_base.setActionFrameRate("cast");
+        hand_sprite_base.setActionFrameRate("cast", 10);
         hand_sprite_base.generateAllFrames();
 
         let load_spritesheet_promise_resolve;
@@ -59,7 +59,7 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
         load_promises.push(load_spritesheet_promise);
         hand_sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
     }
-    const loader = game.load.atlasJSONHash('abilities_icons', 'assets/images/icons/abilities/abilities_icons.png', 'assets/images/icons/abilities/abilities_icons.json');
+    game.load.atlasJSONHash('abilities_icons', 'assets/images/icons/abilities/abilities_icons.png', 'assets/images/icons/abilities/abilities_icons.json');
     Promise.all(load_promises).then(load_promise_resolve);
     game.load.start();
 }
