@@ -11,8 +11,6 @@ export class Collision {
         this.npc_collision_groups = {};
         this.interactable_objs_collision_groups = {};
         this.max_layers_created = 0;
-        this.collision_event_data = {};
-        this.waiting_to_change_collision = false;
         this.dynamic_jump_events_bodies = [];
     }
 
@@ -63,28 +61,6 @@ export class Collision {
         this.hero.sprite.body.collides(this.dynamic_events_collision_group);
     }
 
-    config_collision_change(current_event) {
-        let next_x = current_event.x, next_y = current_event.y;
-        if (current_event.activation_directions[0] === directions.left) {
-            next_x = current_event.x - 1;
-        } else if (current_event.activation_directions[0] === directions.right) {
-            next_x = current_event.x + 1;
-        } else if (current_event.activation_directions[0] === directions.up) {
-            next_y = current_event.y - 1;
-        } else if (current_event.activation_directions[0] === directions.down) {
-            next_y = current_event.y + 1;
-        }
-        this.waiting_to_change_collision = true;
-        this.collision_event_data = {
-            x: current_event.x,
-            y: current_event.y,
-            next_x: next_x,
-            next_y: next_y,
-            dest_collider_layer: current_event.dest_collider_layer,
-            event: current_event
-        };
-    }
-
     change_map_body(data, new_collider_layer_index) {
         if (data.map.collision_layer === new_collider_layer_index) return;
         data.map.collision_layer = new_collider_layer_index;
@@ -127,15 +103,6 @@ export class Collision {
                     }
                 }
             }
-        }
-    }
-
-    do_collision_change(data) {
-        if (data.hero.tile_x_pos === this.collision_event_data.next_x && data.hero.tile_y_pos === this.collision_event_data.next_y) {
-            this.change_map_body(data, this.collision_event_data.dest_collider_layer);
-            this.waiting_to_change_collision = false;
-        } else if (data.hero.tile_x_pos !== this.collision_event_data.event.x || data.hero.tile_y_pos !== this.collision_event_data.event.y) {
-            this.waiting_to_change_collision = false;
         }
     }
 }

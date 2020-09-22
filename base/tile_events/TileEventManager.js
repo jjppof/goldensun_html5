@@ -56,7 +56,7 @@ export class TileEventManager {
         return event.id in this.triggered_events;
     }
 
-    trigger_events() {
+    fire_triggered_events() {
         Object.keys(this.triggered_events).forEach(id => {
             this.triggered_events[id].fire();
         });
@@ -96,19 +96,11 @@ export class TileEventManager {
                         this.hero.current_direction,
                         this.fire_event.bind(this, this_event, this.hero.current_direction)
                     );
-            } else if (this_event.type === event_types.STEP && !this.event_triggered(this_event)) {
+            } else if ([event_types.STEP, event_types.COLLISION].includes(this_event.type) && !this.event_triggered(this_event)) {
                 event_queue.add(
                     this_event,
                     this.hero.current_direction,
                     this_event.set.bind(this_event)
-                );
-            } else if (this_event.type === event_types.COLLISION && !this.collision.waiting_to_change_collision) {
-                event_queue.add(
-                    this_event,
-                    this.hero.current_direction,
-                    () => {
-                        this.collision.config_collision_change(this_event);
-                    }
                 );
             } else {
                 const right_direction = this_event.activation_directions.includes(this.hero.current_direction);

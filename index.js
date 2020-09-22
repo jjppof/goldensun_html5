@@ -303,15 +303,12 @@ class GoldenSun {
         if (!this.tile_event_manager.on_event && !this.npc_event && !this.hero.pushing && !this.menu_open && !this.hero.casting_psynergy && !this.in_battle) {
             this.hero.update_tile_position(this.map.sprite);
 
-            this.tile_event_manager.trigger_events();
-            if (this.collision.waiting_to_change_collision) { //change collision pattern layer event
-                this.collision.do_collision_change(this);
-            }
+            this.tile_event_manager.fire_triggered_events();
 
             //check if the actual tile has an event
-            const event_location_key = TileEvent.get_location_key(this.hero.tile_x_pos, this.hero.tile_y_pos);
-            if (event_location_key in this.map.events) {
-                this.tile_event_manager.check_tile_events(event_location_key, this.map);
+            const location_key = TileEvent.get_location_key(this.hero.tile_x_pos, this.hero.tile_y_pos);
+            if (location_key in this.map.events) {
+                this.tile_event_manager.check_tile_events(location_key, this.map);
             } else if (this.hero.extra_speed !== 0) { //disabling speed event
                 this.hero.extra_speed = 0;
             }

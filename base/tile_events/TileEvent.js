@@ -85,10 +85,3 @@ export class SpeedEvent extends TileEvent {
         this.speed = speed;
     }
 }
-
-export class CollisionEvent extends TileEvent {
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, dest_collider_layer) {
-        super(game, data, event_types.COLLISION, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
-        this.dest_collider_layer = dest_collider_layer;
-    }
-}
