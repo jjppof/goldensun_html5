@@ -59,7 +59,6 @@ export class TileEventManager {
     }
 
     fire_triggered_events() {
-        this.hero.extra_speed = 0;
         Object.keys(this.triggered_events).forEach(id => {
             const this_event = this.triggered_events[id];
             if (this_event.type === event_types.SPEED) {
