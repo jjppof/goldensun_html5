@@ -34,8 +34,10 @@ export class Footsteps{
         this.anchor_x = this.animation_db.anchor_x;
         this.anchor_y = this.animation_db.anchor_y;
         this.animations = this.animation_db.actions.animations;
+        this.group = this.game.add.group();
+        this.group.send_to_back = true;
+        this.group.base_collider_layer = 0;
 
-        this.active_steps = {};
         this.dead_steps = new Array(MAX_DEAD_SIZE);
         this.dead_index = 0;
         this.foot_forward = foot_forward_types.NONE;
@@ -71,12 +73,9 @@ export class Footsteps{
     /*Either kills or destroys a given step
     Killing leaves the sprite in memory to be recycled
 
-    Input: expired [Phaser:Sprite]: The step to be killed/destroyed
-           key [number]: The step's "active_steps" identifier 
-           force_destroy [boolean]: If true, the step is destroyed*/
-    kill_step(expired, key, force_destroy = false){
-        delete this.active_steps[key];
-        if(this.dead_index === MAX_DEAD_SIZE || force_destroy){
+    Input: expired [Phaser:Sprite]: The step to be killed/destroyed*/
+    kill_step(expired){
+        if(this.dead_index === MAX_DEAD_SIZE){
             expired.destroy();
         }
         else{
@@ -100,6 +99,9 @@ export class Footsteps{
     Input: direction [number] = The parent's current direction
            action [string] = The parent's current action*/
     create_step(direction,action){
+        if (this.data.npc_group.getIndex(this.group) < 0) {
+            this.data.npc_group.add(this.group);
+        }
         this.current_direction = direction;
         this.current_action = action;
         this.update_foot();
@@ -108,9 +110,8 @@ export class Footsteps{
 
         let footsteps_sprite;
         if(this.dead_index === 0){
-            footsteps_sprite = this.data.npc_group.create(0, 0, FOOTSTEPS_KEY_NAME);
+            footsteps_sprite = this.group.create(0, 0, FOOTSTEPS_KEY_NAME);
             footsteps_sprite.anchor.setTo(this.anchor_x, this.anchor_y);
-            footsteps_sprite.send_to_back = true;
             this.footsteps_sprite_base.setAnimation(footsteps_sprite,FOOTSTEPS_KEY_NAME);
         }
         else{
@@ -119,16 +120,14 @@ export class Footsteps{
         }
         const animation_obj = footsteps_sprite.animations.getAnimation(animation_name);
         animation_obj.stop(true);
-        footsteps_sprite.base_collider_layer = this.data.map.collision_layer;
+        this.group.base_collider_layer = this.data.map.collision_layer;
         footsteps_sprite.x = this.data.hero.shadow.x;
         footsteps_sprite.y = this.data.hero.shadow.y;
         this.position_footsteps(footsteps_sprite);
 
-        const key = Object.keys(this.active_steps).length;
         animation_obj.onComplete.addOnce(() => {
-            this.kill_step(footsteps_sprite, key);
+            this.kill_step(footsteps_sprite);
         });
-        this.active_steps[key] = footsteps_sprite;
         this.set_expire_timer(footsteps_sprite, animation_name);
 
         this.set_new_step_timer();
@@ -145,16 +144,23 @@ export class Footsteps{
         }
     }
 
-    /*Kills all active steps and resets the timers
-    
+    /*Kills all sprites and resets the timers
+
     Input: force_destroy [boolean] - If true, destroys steps instead*/
     clean_all(force_destroy){
         this.new_step_timer.stop(true);
         this.expire_timer.stop(true);
-        Object.keys(this.active_steps).forEach(key => {
-            this.kill_step(this.active_steps[key], key, force_destroy);
+        this.group.children.forEach(sprite => {
+            if (force_destroy) {
+                sprite.destroy();
+            } else {
+                sprite.animations.currentAnim.stop(true);
+                sprite.animations.currentAnim.onComplete.removeAll();
+                sprite.kill();
+            }
         });
-        this.dead_index = 0;
+        this.dead_steps = this.group.children.slice();
+        this.dead_index = this.group.children.length;
     }
 
     /*Destroys this object and its children*/
