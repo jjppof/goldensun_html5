@@ -26,7 +26,7 @@ export class FieldPsynergyWindow {
     Output: [number] - The vertical offset to apply*/
     vertical_adjust(){
         let diff = this.data.hero.sprite.y - this.game.camera.y;
-        return diff > DIFF_THRESHOLD ? -DIFF_CORRECTION+(diff-DIFF_THRESHOLD) : 0
+        return diff > DIFF_THRESHOLD ? -DIFF_CORRECTION+(diff-DIFF_THRESHOLD) : 0;
     }
 
     /*Opens the window with the psynergy name
