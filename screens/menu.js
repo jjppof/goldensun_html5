@@ -4,6 +4,7 @@ import { PsynergyMenuScreen } from './psynergy_menu.js';
 import { ItemMenuScreen } from './item_menu.js';
 import { DjinnMenuScreen } from './djinni_menu.js';
 import { CharsStatusWindow } from '../base/windows/CharsStatusWindow.js';
+import { FieldPsynergyWindow } from '../base/windows/FieldPsynergyWindow.js';
 
 export class MenuScreen {
     constructor(game, data) {

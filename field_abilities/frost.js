@@ -5,8 +5,6 @@ import * as numbers from '../magic_numbers.js';
 import { event_types } from "../base/tile_events/TileEvent.js";
 import { get_surroundings, set_cast_direction, directions, reverse_directions} from "../utils.js";
 import { JumpEvent } from "../base/tile_events/JumpEvent.js";
-import { Window } from "../base/Window.js";
-import { capitalize } from "../utils.js";
 
 const ACTION_KEY_NAME = "cast";
 const FROST_MAX_RANGE = 12;
@@ -15,11 +13,6 @@ const TOTAL_TURNS_SNOWFLAKES = Math.PI * 7;
 const POLAR_SLOPE = 0.15; 
 const SPIRAL_INTENSITY = 8; 
 const SNOWFLAKE_DURATION = 1650;
-
-const NAME_BOX_WIDTH = 28 + numbers.WINDOW_PADDING_H*2 + 8;
-const NAME_BOX_HEIGHT = 20;
-const NAME_BOX_X = numbers.GAME_WIDTH/2 - NAME_BOX_WIDTH/2;
-const NAME_BOX_Y = numbers.GAME_HEIGHT/2 + numbers.HERO_BODY_RADIUS + 5;
 
 /*Handles the "Frost" field psynergy
 Does not handle the in-battle command
@@ -35,8 +28,6 @@ export class FrostFieldPsynergy {
         this.target_found = false;
         this.target_object = null;
         this.stop_casting = null;
-        this.name_box = new Window(this.game, NAME_BOX_X, NAME_BOX_Y, NAME_BOX_WIDTH, NAME_BOX_HEIGHT);
-        this.name_text = null;
     }
 
     /*Checks for a valid target
@@ -101,7 +92,7 @@ export class FrostFieldPsynergy {
     /*Begins the snowflake effects
     Upon finishing, triggers the pillar's growth*/
     init_snowflakes() {
-        this.name_box.close(); 
+        this.data.field_psynergy_window.close();
         for (let i = 0; i < SNOWFLAKES_COUNT; ++i) {
             let snowflake_sprite = this.data.npc_group.create(0, 0, "frost_snowflake");
             snowflake_sprite.anchor.setTo(0.5, 0.5);
@@ -222,10 +213,8 @@ export class FrostFieldPsynergy {
             return;
         }
 
-        if(!this.name_text) this.name_text = this.name_box.set_single_line_text(capitalize(this.ability_key_name));
-        this.name_box.send_to_front();
-        if(this.data.hero.sprite.y )
-        this.name_box.show();
+        this.data.field_psynergy_window.window.send_to_front();
+        this.data.field_psynergy_window.open(this.ability_key_name);
 
         this.data.hero.casting_psynergy = true;
         this.game.physics.p2.pause();

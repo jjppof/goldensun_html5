@@ -1,12 +1,10 @@
 import { Ability } from '../base/Ability.js';
-import { MoveFieldPsynergy } from '../field_abilities/move.js';
-import { FrostFieldPsynergy } from '../field_abilities/frost.js';
-import { GrowthFieldPsynergy } from '../field_abilities/growth.js';
+import { SpriteBase } from '../base/SpriteBase.js';
 
 export let abilities_list = {};
-export let field_abilities_list = {};
 
 export function initialize_abilities(game, abilities_db, load_promise_resolve) {
+    let load_promises = []
     for (let i = 0; i < abilities_db.length; ++i) {
         const ability_data = abilities_db[i];
         abilities_list[ability_data.key_name] = new Ability(
@@ -35,14 +33,33 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
             ability_data.affects_pp,
             ability_data.has_animation_variation
         );
+        const hand_sprite_base = new SpriteBase("move_hand", ["cast"]);
+        hand_sprite_base.setActionSpritesheet(
+            "cast",
+            "assets/images/interactable_objects/move_psynergy_hand.png",
+            "assets/images/interactable_objects/move_psynergy_hand.json"
+        );
+        hand_sprite_base.setActionDirections(
+            "cast",
+            [
+                6,
+                2,
+                4,
+                0
+            ],
+            2
+        );
+        hand_sprite_base.setActionFrameRate("cast");
+        hand_sprite_base.generateAllFrames();
+
+        let load_spritesheet_promise_resolve;
+        const load_spritesheet_promise = new Promise(resolve => {
+            load_spritesheet_promise_resolve = resolve;
+        });
+        load_promises.push(load_spritesheet_promise);
+        hand_sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
     }
     const loader = game.load.atlasJSONHash('abilities_icons', 'assets/images/icons/abilities/abilities_icons.png', 'assets/images/icons/abilities/abilities_icons.json');
-    loader.onLoadComplete.addOnce(load_promise_resolve);
+    Promise.all(load_promises).then(load_promise_resolve);
     game.load.start();
-}
-
-export function initialize_field_abilities(game, data) {
-    field_abilities_list.move = new MoveFieldPsynergy(game, data);
-    field_abilities_list.frost = new FrostFieldPsynergy(game, data);
-    field_abilities_list.growth = new GrowthFieldPsynergy(game, data);
 }

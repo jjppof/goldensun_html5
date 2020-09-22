@@ -192,7 +192,7 @@ export class Window {
 
     /*Changes the window's size and redraws it
 
-    Input: new_size [array] - Contains the width and height parameters
+    Input: new_size [object] - Contains the width and height parameters
                 width [number] - The new width
                 height [number] - The new height*/
     update_size(new_size) {

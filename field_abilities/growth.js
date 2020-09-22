@@ -141,6 +141,7 @@ export class GrowthFieldPsynergy {
     }
 
     init_bubbles() {
+        this.data.field_psynergy_window.close();
         this.set_emitter();
         this.emitter.start(false, 100 + this.increase_duration, 8, 0);
         this.emitter.forEach(particle => {
@@ -215,19 +216,26 @@ export class GrowthFieldPsynergy {
         if (caster.current_pp < ability.pp_cost || !caster.abilities.includes(this.ability_key_name)) {
             return;
         }
+
+        this.data.field_psynergy_window.window.send_to_front();
+        this.data.field_psynergy_window.open(this.ability_key_name);
+
         this.data.hero.casting_psynergy = true;
         this.game.physics.p2.pause();
         this.data.hero.sprite.body.velocity.y = this.data.hero.sprite.body.velocity.x = 0;
         caster.current_pp -= ability.pp_cost;
+
         this.cast_direction = set_cast_direction(this.data.hero.current_direction);
         this.data.hero.current_direction = this.cast_direction;
         this.search_for_target();
+
         if (this.target_object && this.target_object.custom_data.growth_casted) {
             this.target_found = false;
             this.target_object = null;
         } else if (this.target_found) {
             this.target_object.custom_data.growth_casted = true;
         }
+
         this.set_hero_cast_anim();
         let reset_map;
         this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero.color_filter, () => {
