@@ -1,4 +1,3 @@
-import { SpriteBase } from "../base/SpriteBase.js";
 import { main_char_list } from "../initializers/main_chars.js";
 import { abilities_list } from "../initializers/abilities.js";
 import { init_cast_aura, tint_map_layers } from  '../initializers/psynergy_cast.js';
@@ -143,7 +142,8 @@ export class MoveFieldPsynergy {
         this.hand_sprite.send_to_front = true;
         this.hand_sprite.base_collider_layer = this.data.map.collision_layer;
         this.hand_sprite.loadTexture(texture_key);
-        this.hand_sprite.animations.add(MOVE_HAND_KEY_NAME+"_"+reverse_directions[this.cast_direction], reverse_directions[this.cast_direction], 10, false, false);
+        let frame_rate = this.data.interactable_objects_db[MOVE_HAND_KEY_NAME].actions.frame_rate;
+        this.hand_sprite.animations.add(MOVE_HAND_KEY_NAME+"_"+reverse_directions[this.cast_direction], reverse_directions[this.cast_direction], frame_rate, false, false);
         this.hand_sprite.animations.frameName = `${MOVE_HAND_ACTION_KEY}/${reverse_directions[this.cast_direction]}/00`;
         this.hand_sprite.anchor.x = 0.5;
         this.hand_sprite.centerX = this.data.hero.sprite.centerX;

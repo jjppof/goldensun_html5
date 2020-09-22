@@ -140,5 +140,28 @@
             "image": "assets/images/interactable_objects/psynergy_growth.png",
             "json": "assets/images/interactable_objects/psynergy_growth.json"
         }
+    },
+    {
+        "key_name": "move_hand",
+        "anchor_y": 0.5,
+        "anchor_x": 0.5,
+        "body_radius": 0,
+        "initial_animation": "cast",
+        "actions": {
+            "directions": [
+                "down", 
+                "up", 
+                "left", 
+                "right"
+            ],
+            "frame_rate": 10,
+            "animations": ["cast"],
+            "frames_count": 2
+        },
+        "spritesheet": {
+            "image": "assets/images/interactable_objects/move_psynergy_hand.png",
+            "json": "assets/images/interactable_objects/move_psynergy_hand.json"
+            
+        }
     }
 ]

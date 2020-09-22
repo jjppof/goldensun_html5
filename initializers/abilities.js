@@ -3,7 +3,7 @@ import { SpriteBase } from '../base/SpriteBase.js';
 
 export let abilities_list = {};
 
-export function initialize_abilities(game, abilities_db, load_promise_resolve) {
+export function initialize_abilities(game, abilities_db, interactible_objects_db, load_promise_resolve) {
     let load_promises = []
     for (let i = 0; i < abilities_db.length; ++i) {
         const ability_data = abilities_db[i];
@@ -33,31 +33,32 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
             ability_data.affects_pp,
             ability_data.has_animation_variation
         );
-        const hand_sprite_base = new SpriteBase("move_hand", ["cast"]);
-        hand_sprite_base.setActionSpritesheet(
-            "cast",
-            "assets/images/interactable_objects/move_psynergy_hand.png",
-            "assets/images/interactable_objects/move_psynergy_hand.json"
-        );
-        hand_sprite_base.setActionDirections(
-            "cast",
-            [
-                6,
-                2,
-                4,
-                0
-            ],
-            2
-        );
-        hand_sprite_base.setActionFrameRate("cast", 10);
-        hand_sprite_base.generateAllFrames();
+        const import_keys = ["move_hand"];
+        for(let i=0; i<import_keys.length; i++){
+            const db_data = interactible_objects_db[import_keys[i]];
+            const sprite_base = new SpriteBase(db_data.key_name, [db_data.actions.animations]);
+            for(let n=0; n<db_data.actions.animations.length; n++){
+                sprite_base.setActionSpritesheet(
+                    db_data.actions.animations[n],
+                    db_data.spritesheet.image,
+                    db_data.spritesheet.json
+                );
+                sprite_base.setActionDirections(
+                    db_data.actions.animations[n],
+                    db_data.actions.directions,
+                    db_data.frames_count
+                );
+                sprite_base.setActionFrameRate(db_data.actions.animations[n], db_data.frame_rate);
+            }
+            sprite_base.generateAllFrames();
 
-        let load_spritesheet_promise_resolve;
-        const load_spritesheet_promise = new Promise(resolve => {
-            load_spritesheet_promise_resolve = resolve;
-        });
-        load_promises.push(load_spritesheet_promise);
-        hand_sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
+            let load_spritesheet_promise_resolve;
+            const load_spritesheet_promise = new Promise(resolve => {
+                load_spritesheet_promise_resolve = resolve;
+            });
+            load_promises.push(load_spritesheet_promise);
+            sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
+        }
     }
     game.load.atlasJSONHash('abilities_icons', 'assets/images/icons/abilities/abilities_icons.png', 'assets/images/icons/abilities/abilities_icons.json');
     Promise.all(load_promises).then(load_promise_resolve);
