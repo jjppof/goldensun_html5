@@ -190,7 +190,7 @@ export class GrowthFieldPsynergy {
         let promises = new Array(NO_TARGET_SPROUT_COUNT);
         const variation = 13;
         for (let i = 0; i < NO_TARGET_SPROUT_COUNT; ++i) {
-            let miss_target_sprite = this.data.npc_group.create(grow_center_x + _.random(-variation, variation), grow_center_y + _.random(-variation, variation), "growth_growth");
+            let miss_target_sprite = this.data.overlayer_group.create(grow_center_x + _.random(-variation, variation), grow_center_y + _.random(-variation, variation), "growth_growth");
             miss_target_sprite.anchor.setTo(0.5, 1);
             miss_target_sprite.animations.add("no_target", frames, 10, false, false);
             let resolve_func;

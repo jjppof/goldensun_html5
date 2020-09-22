@@ -138,7 +138,7 @@ export class MoveFieldPsynergy {
     set_hand() {
         this.data.field_psynergy_window.close();
         const texture_key = MOVE_HAND_KEY_NAME + "_" + MOVE_HAND_ACTION_KEY;
-        this.hand_sprite = this.data.npc_group.create(0, 0, texture_key);
+        this.hand_sprite = this.data.overlayer_group.create(0, 0, texture_key);
         this.hand_sprite.send_to_front = true;
         this.hand_sprite.base_collider_layer = this.data.map.collision_layer;
         this.hand_sprite.loadTexture(texture_key);
@@ -148,7 +148,7 @@ export class MoveFieldPsynergy {
         this.hand_sprite.anchor.x = 0.5;
         this.hand_sprite.centerX = this.data.hero.sprite.centerX;
         this.hand_sprite.centerY = this.data.hero.sprite.centerY;
-        this.data.npc_group.bringToTop(this.hand_sprite);
+        this.data.overlayer_group.bringToTop(this.hand_sprite);
     }
 
     translate_hand() {
@@ -241,7 +241,7 @@ export class MoveFieldPsynergy {
             this.start_final_emitter(this.hand_sprite.x, this.hand_sprite.y);
             this.stop_casting();
             flip_timer.stop();
-            this.data.npc_group.remove(this.hand_sprite, true);
+            this.data.overlayer_group.remove(this.hand_sprite, true);
             this.unset_emitter();
         });
         

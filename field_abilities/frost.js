@@ -94,7 +94,7 @@ export class FrostFieldPsynergy {
     init_snowflakes() {
         this.data.field_psynergy_window.close();
         for (let i = 0; i < SNOWFLAKES_COUNT; ++i) {
-            let snowflake_sprite = this.data.npc_group.create(0, 0, "frost_snowflake");
+            let snowflake_sprite = this.data.overlayer_group.create(0, 0, "frost_snowflake");
             snowflake_sprite.anchor.setTo(0.5, 0.5);
             const scale_factor = _.random(5, 8)/10.0;
             const rotation_factor = Math.random() * numbers.degree360;
