@@ -4,7 +4,6 @@ import { InteractableObjects, InteractableObjects_Sprite, interactable_object_in
 import {
     TileEvent,
     SpeedEvent,
-    StepEvent,
     CollisionEvent,
     event_types as tile_event_types
 } from './tile_events/TileEvent.js';
@@ -13,6 +12,7 @@ import * as numbers from "../magic_numbers.js";
 import { JumpEvent } from "./tile_events/JumpEvent.js";
 import { TeleportEvent } from "./tile_events/TeleportEvent.js";
 import { ClimbEvent } from "./tile_events/ClimbEvent.js";
+import { StepEvent } from "./tile_events/StepEvent.js";
 
 export class Map {
     constructor (

@@ -86,13 +86,6 @@ export class SpeedEvent extends TileEvent {
     }
 }
 
-export class StepEvent extends TileEvent {
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, step_direction) {
-        super(game, data, event_types.STEP, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
-        this.step_direction = step_direction;
-    }
-}
-
 export class CollisionEvent extends TileEvent {
     constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, dest_collider_layer) {
         super(game, data, event_types.COLLISION, x, y, activation_directions, activation_collision_layers, dynamic, active, null);

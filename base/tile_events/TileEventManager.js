@@ -1,4 +1,3 @@
-import { config_step } from '../../events/step.js';
 import { event_types } from './TileEvent.js';
 
 const EVENT_TIME = 350;
@@ -42,6 +41,25 @@ export class TileEventManager {
         this.event_timers = {};
         this.on_event = false;
         this.walking_on_pillars_tiles = new Set();
+        this.triggered_events = {};
+    }
+
+    set_triggered_event(event) {
+        this.triggered_events[event.id] = event;
+    }
+
+    unset_triggered_event(event) {
+        delete this.triggered_events[event.id];
+    }
+
+    event_triggered(event) {
+        return event.id in this.triggered_events;
+    }
+
+    trigger_events() {
+        Object.keys(this.triggered_events).forEach(id => {
+            this.triggered_events[id].fire();
+        });
     }
 
     fire_event(current_event, this_activation_direction) {
@@ -52,8 +70,8 @@ export class TileEventManager {
             current_event.fire();
         }
     }
-    
-    event_triggering(event_key, map) {
+
+    check_tile_events(event_key, map) {
         let event_queue = new EventQueue();
         for (let i = 0; i < map.events[event_key].length; ++i) {
             const this_event = map.events[event_key][i];
@@ -62,19 +80,6 @@ export class TileEventManager {
                 this_event.jump_near_collision();
             }
             if (!this_event.is_active(this.hero.current_direction)) continue;
-            const right_direction = this_event.activation_directions.includes(this.hero.current_direction);
-            if (right_direction && ["walk", "dash", "climb"].includes(this.hero.current_action)) {
-                if (this.event_timers[this_event.id] && !this.event_timers[this_event.id].timer.expired) {
-                    continue;
-                }
-                event_queue.add(
-                    this_event,
-                    this.hero.current_direction,
-                    () => {
-                        this.event_timers[this_event.id] = this.game.time.events.add(EVENT_TIME, this.fire_event.bind(this, this_event, this.hero.current_direction));
-                    }
-                );
-            }
             if (this_event.type === event_types.SPEED) {
                 if (this.hero.extra_speed !== this_event.speed) {
                     event_queue.add(
@@ -95,13 +100,11 @@ export class TileEventManager {
                         }
                     );
                 }
-            } else if (this_event.type === event_types.STEP && !this.data.waiting_to_step) {
+            } else if (this_event.type === event_types.STEP && !this.event_triggered(this_event)) {
                 event_queue.add(
                     this_event,
                     this.hero.current_direction,
-                    () => {
-                        config_step(this.data, this_event);
-                    }
+                    this_event.set.bind(this_event)
                 );
             } else if (this_event.type === event_types.COLLISION && !this.collision.waiting_to_change_collision) {
                 event_queue.add(
@@ -111,6 +114,20 @@ export class TileEventManager {
                         this.collision.config_collision_change(this_event);
                     }
                 );
+            } else {
+                const right_direction = this_event.activation_directions.includes(this.hero.current_direction);
+                if (right_direction && ["walk", "dash", "climb"].includes(this.hero.current_action)) {
+                    if (this.event_timers[this_event.id] && !this.event_timers[this_event.id].timer.expired) {
+                        continue;
+                    }
+                    event_queue.add(
+                        this_event,
+                        this.hero.current_direction,
+                        () => {
+                            this.event_timers[this_event.id] = this.game.time.events.add(EVENT_TIME, this.fire_event.bind(this, this_event, this.hero.current_direction));
+                        }
+                    );
+                }
             }
         }
         event_queue.process_queue();
