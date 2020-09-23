@@ -92,7 +92,7 @@ export class FrostFieldPsynergy {
     /*Begins the snowflake effects
     Upon finishing, triggers the pillar's growth*/
     init_snowflakes() {
-        this.data.field_psynergy_window.close();
+        this.data.field_abilities.field_psynergy_window.close();
         for (let i = 0; i < SNOWFLAKES_COUNT; ++i) {
             let snowflake_sprite = this.data.overlayer_group.create(0, 0, "frost_snowflake");
             snowflake_sprite.anchor.setTo(0.5, 0.5);
@@ -213,8 +213,8 @@ export class FrostFieldPsynergy {
             return;
         }
 
-        this.data.field_psynergy_window.window.send_to_front();
-        this.data.field_psynergy_window.open(this.ability_key_name);
+        this.data.field_abilities.field_psynergy_window.window.send_to_front();
+        this.data.field_abilities.field_psynergy_window.open(this.ability_key_name);
 
         this.data.hero.casting_psynergy = true;
         this.game.physics.p2.pause();

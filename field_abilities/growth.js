@@ -141,7 +141,7 @@ export class GrowthFieldPsynergy {
     }
 
     init_bubbles() {
-        this.data.field_psynergy_window.close();
+        this.data.field_abilities.field_psynergy_window.close();
         this.set_emitter();
         this.emitter.start(false, 100 + this.increase_duration, 8, 0);
         this.emitter.forEach(particle => {
@@ -217,8 +217,8 @@ export class GrowthFieldPsynergy {
             return;
         }
 
-        this.data.field_psynergy_window.window.send_to_front();
-        this.data.field_psynergy_window.open(this.ability_key_name);
+        this.data.field_abilities.field_psynergy_window.window.send_to_front();
+        this.data.field_abilities.field_psynergy_window.open(this.ability_key_name);
 
         this.data.hero.casting_psynergy = true;
         this.game.physics.p2.pause();

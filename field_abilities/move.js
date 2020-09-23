@@ -136,7 +136,7 @@ export class MoveFieldPsynergy {
     }
 
     set_hand() {
-        this.data.field_psynergy_window.close();
+        this.data.field_abilities.field_psynergy_window.close();
         const texture_key = MOVE_HAND_KEY_NAME + "_" + MOVE_HAND_ACTION_KEY;
         this.hand_sprite = this.data.overlayer_group.create(0, 0, texture_key);
         this.hand_sprite.send_to_front = true;
@@ -367,8 +367,8 @@ export class MoveFieldPsynergy {
             return;
         }
 
-        this.data.field_psynergy_window.window.send_to_front();
-        this.data.field_psynergy_window.open(this.ability_key_name);
+        this.data.field_abilities.field_psynergy_window.window.send_to_front();
+        this.data.field_abilities.field_psynergy_window.open(this.ability_key_name);
 
         this.data.hero.casting_psynergy = true;
         this.game.physics.p2.pause();

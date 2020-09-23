@@ -61,6 +61,7 @@ export class Hero extends ControllableChar {
         this.trying_to_push = false;
         this.trying_to_push_direction = null;
         this.push_timer = null;
+        this.field_abilities_list = this.data.field_abilities.grant_abilities();
     }
 
     update_arrow_inputs() {

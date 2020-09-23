@@ -14,7 +14,7 @@ import { Collision } from './base/Collision.js';
 import { directions } from './utils.js';
 import { Hero } from './base/Hero.js';
 import { TileEventManager } from './base/tile_events/TileEventManager.js';
-import { FieldPsynergyWindow } from './base/windows/FieldPsynergyWindow.js';
+import { FieldAbilities } from './base/FieldAbilities.js';
 
 //debugging porpouses
 window.maps = maps;
@@ -58,6 +58,7 @@ class GoldenSun {
         this.menu_screen = null;
         this.map = null;
         this.tile_event_manager = null;
+        this.field_abilities = null;
 
         //common inputs
         this.enter_input = null;
@@ -158,7 +159,7 @@ class GoldenSun {
 
         //initialize screens
         this.menu_screen = initialize_menu(this.game, this);
-        this.field_psynergy_window = new FieldPsynergyWindow(this.game, this);
+        this.field_abilities = new FieldAbilities(this.game, this);
 
         //configuring map layers: creating sprites, listing events and setting the layers
         this.map = await maps[this.init_db.map_key_name].mount_map(this.init_db.map_z_index);
@@ -210,7 +211,6 @@ class GoldenSun {
             this.init_db.initial_action,
             directions[this.init_db.initial_direction]
         );
-        this.hero.set_field_psynergies();
         this.hero.set_sprite(this.npc_group, main_char_list[this.hero.key_name].sprite_base, this.map.sprite, this.map.collision_layer);
         this.hero.set_shadow('shadow', this.npc_group, this.map.collision_layer);
         this.hero.camera_follow();
@@ -277,15 +277,15 @@ class GoldenSun {
         //enable psynergies shortcuts for testing
         this.game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
-            this.hero.field_abilities_list.move.cast(this.init_db.initial_shortcuts.move);
+            this.hero.field_abilities_list["move"].object.cast(this.init_db.initial_shortcuts.move);
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
-            this.hero.field_abilities_list.frost.cast(this.init_db.initial_shortcuts.frost);
+            this.hero.field_abilities_list["frost"].object.cast(this.init_db.initial_shortcuts.frost);
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
-            this.hero.field_abilities_list.growth.cast(this.init_db.initial_shortcuts.growth);
+            this.hero.field_abilities_list["growth"].object.cast(this.init_db.initial_shortcuts.growth);
         });
 
         //enable event trigger key
