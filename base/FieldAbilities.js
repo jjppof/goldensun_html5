@@ -1,46 +1,159 @@
-import { FieldPsynergyWindow } from './windows/FieldPsynergyWindow.js';
-import { MoveFieldPsynergy } from '../field_abilities/move.js';
-import { FrostFieldPsynergy } from '../field_abilities/frost.js';
-import { GrowthFieldPsynergy } from '../field_abilities/growth.js';
+import { abilities_list } from "../initializers/abilities.js";
+import { main_char_list } from "../initializers/main_chars.js";
+import { init_cast_aura, tint_map_layers } from "../initializers/psynergy_cast.js";
+import { directions, reverse_directions } from "../utils.js";
+import { interactable_object_interaction_types } from "./InteractableObjects.js";
+import { FieldPsynergyWindow } from "./windows/FieldPsynergyWindow.js";
 
 /*Defines and manages the usage of field psynergy
 
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
-export class FieldAbilities{
-    constructor(game, data) {
-    this.game = game;
-    this.data = data;
-
-    this.field_psynergy_window = new FieldPsynergyWindow(this.game, this.data);
-    this.field_abilities_list = [];
-    this.set_field_abilities();
+export class FieldAbilities {
+    constructor(game, data, ability_key_name, target_max_range, action_key_name, need_target) {
+        this.game = game;
+        this.ability_key_name = ability_key_name;
+        this.data = data;
+        this.target_max_range = target_max_range;
+        this.action_key_name = action_key_name;
+        this.need_target = need_target;
+        this.bootstrap_method = () => {};
+        this.cast_finisher = () => {};
+        this.controllable_char = null;
+        this.target_found = false;
+        this.target_object = null;
+        this.stop_casting = null;
+        this.field_psynergy_window = new FieldPsynergyWindow(this.game, this.data);
     }
 
-    /*Sets up the complete field ability list*/
-    set_field_abilities(){
-        this.field_abilities_list.push({key: "move", object: new MoveFieldPsynergy(this.game, this.data)});
-        this.field_abilities_list.push({key: "frost", object: new FrostFieldPsynergy(this.game, this.data)});
-        this.field_abilities_list.push({key: "growth", object: new GrowthFieldPsynergy(this.game, this.data)});
+    /*Sets the psynergy cast direction
+    For diagonals, pick the next clockwise non-diagonal
 
-        this.field_abilities_list = _.mapKeys(this.field_abilities_list, field_ability_data => field_ability_data.key);
+    Input: direction [number] - Current direction
+
+    Output: [number] - Non-diagonal cast direction*/
+    get_cast_direction(direction) {
+        if(direction%2===0) return direction;
+        direction++;
+        return direction === directions_count ? directions.right : direction;
     }
 
-    /*Returns the field abilities according to the list
-    
-    Input: abilitiy_list [array] = List of abilities to return (array of string)
-    Output: [array] = Array of abilities*/
-    get_abilities(ability_list=undefined){
-        let abilities = [];
-        if(ability_list === undefined){
-            return this.field_abilities_list;
-        }
-        else{
-            for(let i=0; i<ability_list.length; i++){
-                if(this.field_abilities_list[ability_list[i]]) abilities.push(this.field_abilities_list[ability_list[i]]);
+    set_hero_cast_anim() {
+        this.controllable_char.play(this.action_key_name, reverse_directions[this.cast_direction]);
+    }
+
+    unset_hero_cast_anim() {
+        this.controllable_char.sprite.animations.currentAnim.reverseOnce();
+        this.controllable_char.sprite.animations.currentAnim.onComplete.addOnce(() => {
+            this.controllable_char.play("idle", reverse_directions[this.cast_direction]);
+        });
+        this.controllable_char.play(this.action_key_name, reverse_directions[this.cast_direction]);
+    }
+
+    set_bootstrap_method(method) {
+        this.bootstrap_method = method;
+    }
+
+    set_cast_finisher_method(method) {
+        this.cast_finisher = method;
+    }
+
+    search_for_target() {
+        this.target_found = false;
+        let min_x, max_x, min_y, max_y;
+        if (this.cast_direction === directions.up || this.cast_direction === directions.down) {
+            min_x = this.controllable_char.sprite.x - this.controllable_char.body_radius;
+            max_x = this.controllable_char.sprite.x + this.controllable_char.body_radius;
+            if (this.cast_direction === directions.up) {
+                min_y = this.controllable_char.sprite.y - this.controllable_char.body_radius - this.target_max_range;
+                max_y = this.controllable_char.sprite.y - this.controllable_char.body_radius;
+            } else {
+                min_y = this.controllable_char.sprite.y + this.controllable_char.body_radius;
+                max_y = this.controllable_char.sprite.y + this.controllable_char.body_radius + this.target_max_range;
+            }
+        } else {
+            min_y = this.controllable_char.sprite.y - this.controllable_char.body_radius;
+            max_y = this.controllable_char.sprite.y + this.controllable_char.body_radius;
+            if (this.cast_direction === directions.left) {
+                min_x = this.controllable_char.sprite.x - this.controllable_char.body_radius - this.target_max_range;
+                max_x = this.controllable_char.sprite.x - this.controllable_char.body_radius;
+            } else {
+                min_x = this.controllable_char.sprite.x + this.controllable_char.body_radius;
+                max_x = this.controllable_char.sprite.x + this.controllable_char.body_radius + this.target_max_range;
             }
         }
-        abilities = _.mapKeys(abilities, data => data.key);
-        return abilities;
+        let sqr_distance = Infinity;
+        for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
+            let interactable_object = this.data.map.interactable_objects[i];
+            if (!(this.ability_key_name in this.data.interactable_objects_db[interactable_object.key_name].psynergy_keys)) continue;
+            const item_x_px = interactable_object.current_x * this.data.map.sprite.tileWidth + (this.data.map.sprite.tileWidth >> 1);
+            const item_y_px = interactable_object.current_y * this.data.map.sprite.tileHeight + (this.data.map.sprite.tileHeight >> 1);
+            const x_condition = item_x_px >= min_x && item_x_px <= max_x;
+            const y_condition = item_y_px >= min_y && item_y_px <= max_y;
+            if (x_condition && y_condition && this.data.map.collision_layer === interactable_object.base_collider_layer) {
+                let this_sqr_distance = Math.pow(item_x_px - this.controllable_char.sprite.x, 2) + Math.pow(item_y_px - this.controllable_char.sprite.y, 2);
+                if (this_sqr_distance < sqr_distance) {
+                    sqr_distance = this_sqr_distance;
+                    this.target_found = true;
+                    this.target_object = interactable_object;
+                }
+            }
+        }
+    }
+
+    set_target_casted() {
+        if (this.target_object) {
+            const psynergy_properties = this.data.interactable_objects_db[this.target_object.key_name].psynergy_keys[this.ability_key_name];
+            if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
+                const casted_property = this.ability_key_name + "_casted";
+                if (this.target_object.custom_data[casted_property]) {
+                    this.target_found = false;
+                    this.target_object = null;
+                } else if (this.target_found) {
+                    this.target_object.custom_data[casted_property] = true;
+                }
+            }
+        }
+    }
+
+    cast(controllable_char, caster_key_name) {
+        this.controllable_char = controllable_char;
+        if (this.controllable_char.casting_psynergy) return;
+        if (caster_key_name !== undefined && caster_key_name in main_char_list) {
+            const caster = main_char_list[caster_key_name];
+            const ability = abilities_list[this.ability_key_name];
+            if (caster.current_pp < ability.pp_cost || !caster.abilities.includes(this.ability_key_name)) {
+                return;
+            }
+            caster.current_pp -= ability.pp_cost;
+        }
+
+        this.field_psynergy_window.window.send_to_front();
+        this.field_psynergy_window.open(this.ability_key_name);
+
+        this.controllable_char.casting_psynergy = true;
+        this.game.physics.p2.pause();
+        this.controllable_char.stop_char(false);
+
+        this.cast_direction = this.get_cast_direction(this.controllable_char.current_direction);
+        this.controllable_char.set_direction(this.cast_direction);
+        if (this.need_target) {
+            this.search_for_target();
+            this.set_target_casted();
+        }
+
+        this.set_hero_cast_anim();
+        let reset_map;
+        this.stop_casting = init_cast_aura(this.game, this.controllable_char.sprite, this.data.npc_group, this.controllable_char.color_filter, () => {
+            reset_map = tint_map_layers(this.game, this.data.map, this.data.map.color_filter);
+            this.bootstrap_method();
+        }, () => {
+            this.game.physics.p2.resume();
+            this.controllable_char.casting_psynergy = false;
+            this.target_object = null;
+        }, () => {
+            this.cast_finisher();
+            reset_map();
+        });
     }
 }

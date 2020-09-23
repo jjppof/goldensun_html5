@@ -1,10 +1,12 @@
 import { Ability } from '../base/Ability.js';
-import { SpriteBase } from '../base/SpriteBase.js';
+import { MoveFieldPsynergy } from '../field_abilities/move.js';
+import { FrostFieldPsynergy } from '../field_abilities/frost.js';
+import { GrowthFieldPsynergy } from '../field_abilities/growth.js';
 
 export let abilities_list = {};
+export let field_abilities_list = {};
 
-export function initialize_abilities(game, abilities_db, misc_animations_db, load_promise_resolve) {
-    let load_promises = []
+export function initialize_abilities(game, abilities_db, load_promise_resolve) {
     for (let i = 0; i < abilities_db.length; ++i) {
         const ability_data = abilities_db[i];
         abilities_list[ability_data.key_name] = new Ability(
@@ -33,34 +35,14 @@ export function initialize_abilities(game, abilities_db, misc_animations_db, loa
             ability_data.affects_pp,
             ability_data.has_animation_variation
         );
-        const import_keys = ["move_hand"];
-        for(let i=0; i<import_keys.length; i++){
-            const db_data = misc_animations_db[import_keys[i]];
-            const sprite_base = new SpriteBase(db_data.key_name, [db_data.actions.animations]);
-            for(let n=0; n<db_data.actions.animations.length; n++){
-                sprite_base.setActionSpritesheet(
-                    db_data.actions.animations[n],
-                    db_data.spritesheet.image,
-                    db_data.spritesheet.json
-                );
-                sprite_base.setActionDirections(
-                    db_data.actions.animations[n],
-                    db_data.actions.directions,
-                    db_data.frames_count
-                );
-                sprite_base.setActionFrameRate(db_data.actions.animations[n], db_data.frame_rate);
-            }
-            sprite_base.generateAllFrames();
-
-            let load_spritesheet_promise_resolve;
-            const load_spritesheet_promise = new Promise(resolve => {
-                load_spritesheet_promise_resolve = resolve;
-            });
-            load_promises.push(load_spritesheet_promise);
-            sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
-        }
     }
-    game.load.atlasJSONHash('abilities_icons', 'assets/images/icons/abilities/abilities_icons.png', 'assets/images/icons/abilities/abilities_icons.json');
-    Promise.all(load_promises).then(load_promise_resolve);
+    const loader = game.load.atlasJSONHash('abilities_icons', 'assets/images/icons/abilities/abilities_icons.png', 'assets/images/icons/abilities/abilities_icons.json');
+    loader.onLoadComplete.addOnce(load_promise_resolve);
     game.load.start();
+}
+
+export function initialize_field_abilities(game, data) {
+    field_abilities_list.move = new MoveFieldPsynergy(game, data);
+    field_abilities_list.frost = new FrostFieldPsynergy(game, data);
+    field_abilities_list.growth = new GrowthFieldPsynergy(game, data);
 }

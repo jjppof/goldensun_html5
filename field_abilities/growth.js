@@ -1,9 +1,7 @@
-import { main_char_list } from "../initializers/main_chars.js";
-import { abilities_list } from "../initializers/abilities.js";
-import { init_cast_aura, tint_map_layers } from  '../initializers/psynergy_cast.js';
-import * as numbers from '../magic_numbers.js';
-import { set_cast_direction, directions, reverse_directions } from "../utils.js";
+import { directions } from "../utils.js";
+import { FieldAbilities } from "../base/FieldAbilities.js";
 
+const ABILITY_KEY_NAME = "growth";
 const ACTION_KEY_NAME = "cast";
 const GROWTH_MAX_RANGE = 12;
 const MAX_PARTICLE_SPEED = 60;
@@ -12,69 +10,10 @@ const X_PARTICLE_SPEED = 35;
 const Y_PARTICLE_SPEED = 35;
 const NO_TARGET_SPROUT_COUNT = 5;
 
-export class GrowthFieldPsynergy {
+export class GrowthFieldPsynergy extends FieldAbilities {
     constructor(game, data) {
-        this.game = game;
-        this.data = data;
-        this.ability_key_name = "growth";
-        this.action_key_name = ACTION_KEY_NAME;
-        this.target_found = false;
-        this.target_object = null;
-        this.stop_casting = null;
-    }
-
-    search_for_target() {
-        this.target_found = false;
-        let min_x, max_x, min_y, max_y;
-        if (this.cast_direction === directions.up || this.cast_direction === directions.down) {
-            min_x = this.data.hero.sprite.x - numbers.HERO_BODY_RADIUS;
-            max_x = this.data.hero.sprite.x + numbers.HERO_BODY_RADIUS;
-            if (this.cast_direction === directions.up) {
-                min_y = this.data.hero.sprite.y - numbers.HERO_BODY_RADIUS - GROWTH_MAX_RANGE;
-                max_y = this.data.hero.sprite.y - numbers.HERO_BODY_RADIUS;
-            } else {
-                min_y = this.data.hero.sprite.y + numbers.HERO_BODY_RADIUS;
-                max_y = this.data.hero.sprite.y + numbers.HERO_BODY_RADIUS + GROWTH_MAX_RANGE;
-            }
-        } else {
-            min_y = this.data.hero.sprite.y - numbers.HERO_BODY_RADIUS;
-            max_y = this.data.hero.sprite.y + numbers.HERO_BODY_RADIUS;
-            if (this.cast_direction === directions.left) {
-                min_x = this.data.hero.sprite.x - numbers.HERO_BODY_RADIUS - GROWTH_MAX_RANGE;
-                max_x = this.data.hero.sprite.x - numbers.HERO_BODY_RADIUS;
-            } else {
-                min_x = this.data.hero.sprite.x + numbers.HERO_BODY_RADIUS;
-                max_x = this.data.hero.sprite.x + numbers.HERO_BODY_RADIUS + GROWTH_MAX_RANGE;
-            }
-        }
-        let sqr_distance = Infinity;
-        for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
-            let interactable_object = this.data.map.interactable_objects[i];
-            if (!(this.ability_key_name in this.data.interactable_objects_db[interactable_object.key_name].psynergy_keys)) continue;
-            const item_x_px = interactable_object.current_x * this.data.map.sprite.tileWidth + (this.data.map.sprite.tileWidth >> 1);
-            const item_y_px = interactable_object.current_y * this.data.map.sprite.tileHeight + (this.data.map.sprite.tileHeight >> 1);
-            const x_condition = item_x_px >= min_x && item_x_px <= max_x;
-            const y_condition = item_y_px >= min_y && item_y_px <= max_y;
-            if (x_condition && y_condition && this.data.map.collision_layer === interactable_object.base_collider_layer) {
-                let this_sqr_distance = Math.pow(item_x_px - this.data.hero.sprite.x, 2) + Math.pow(item_y_px - this.data.hero.sprite.y, 2);
-                if (this_sqr_distance < sqr_distance) {
-                    this.target_found = true;
-                    this.target_object = interactable_object;
-                }
-            }
-        }
-    }
-
-    set_hero_cast_anim() {
-        this.data.hero.play(this.action_key_name, reverse_directions[this.cast_direction]);
-    }
-
-    unset_hero_cast_anim() {
-        this.data.hero.sprite.animations.currentAnim.reverseOnce();
-        this.data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
-            this.data.hero.play("idle", reverse_directions[this.cast_direction]);
-        });
-        this.data.hero.play(this.action_key_name, reverse_directions[this.cast_direction]);
+        super(game, data, ABILITY_KEY_NAME, GROWTH_MAX_RANGE, ACTION_KEY_NAME, true);
+        this.set_bootstrap_method(this.init_bubbles.bind(this));
     }
 
     set_emitter() {
@@ -141,7 +80,7 @@ export class GrowthFieldPsynergy {
     }
 
     init_bubbles() {
-        this.data.field_abilities.field_psynergy_window.close();
+        this.field_psynergy_window.close();
         this.set_emitter();
         this.emitter.start(false, 100 + this.increase_duration, 8, 0);
         this.emitter.forEach(particle => {
@@ -206,47 +145,6 @@ export class GrowthFieldPsynergy {
         Promise.all(promises).then(() => {
             this.unset_hero_cast_anim();
             this.stop_casting();
-        });
-    }
-
-    cast(caster_key_name) {
-        if (this.data.hero.casting_psynergy) return;
-        let caster = main_char_list[caster_key_name];
-        let ability = abilities_list[this.ability_key_name];
-        if (caster.current_pp < ability.pp_cost || !caster.abilities.includes(this.ability_key_name)) {
-            return;
-        }
-
-        this.data.field_abilities.field_psynergy_window.window.send_to_front();
-        this.data.field_abilities.field_psynergy_window.open(this.ability_key_name);
-
-        this.data.hero.casting_psynergy = true;
-        this.game.physics.p2.pause();
-        this.data.hero.sprite.body.velocity.y = this.data.hero.sprite.body.velocity.x = 0;
-        caster.current_pp -= ability.pp_cost;
-
-        this.cast_direction = set_cast_direction(this.data.hero.current_direction);
-        this.data.hero.set_direction(this.cast_direction);
-        this.search_for_target();
-
-        if (this.target_object && this.target_object.custom_data.growth_casted) {
-            this.target_found = false;
-            this.target_object = null;
-        } else if (this.target_found) {
-            this.target_object.custom_data.growth_casted = true;
-        }
-
-        this.set_hero_cast_anim();
-        let reset_map;
-        this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero.color_filter, () => {
-            reset_map = tint_map_layers(this.game, this.data.map, this.data.map.color_filter);
-            this.init_bubbles();
-        }, () => {
-            this.game.physics.p2.resume();
-            this.data.hero.casting_psynergy = false;
-            this.target_object = null;
-        }, () => {
-            reset_map();
         });
     }
 }
