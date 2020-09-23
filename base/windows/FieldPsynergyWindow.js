@@ -36,7 +36,7 @@ export class FieldPsynergyWindow {
     open(text, callback) {
         let text_size = get_text_width(this.game,text);
         this.window.update_size({width: BASE_WIDTH+text_size, height: BASE_HEIGHT});
-        this.window.update_position({x: POS_X - (text_size >> 1), y:POS_Y + this.vertical_adjust()});
+        this.window.update_position({x: (POS_X - (text_size >> 1)) | 0, y: (POS_Y + this.vertical_adjust()) | 0});
         this.window.update_text(capitalize(text),this.text);
 
         this.window.show(() => {
