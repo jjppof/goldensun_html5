@@ -26,10 +26,13 @@ export class FieldAbilities{
         this.field_abilities_list = _.mapKeys(this.field_abilities_list, field_ability_data => field_ability_data.key);
     }
 
-    /*Grants some or all abilities to a character*/
-    grant_abilities(ability_list=undefined, all=true){
+    /*Returns the field abilities according to the list
+    
+    Input: abilitiy_list [array] = List of abilities to return (array of string)
+    Output: [array] = Array of abilities*/
+    get_abilities(ability_list=undefined){
         let abilities = [];
-        if(ability_list === undefined || all === true){
+        if(ability_list === undefined){
             return this.field_abilities_list;
         }
         else{
