@@ -35,8 +35,8 @@ export class FrostFieldPsynergy extends FieldAbilities {
             const rotation_factor = Math.random() * numbers.degree360;
             snowflake_sprite.scale.setTo(scale_factor, scale_factor);
             snowflake_sprite.rotation = rotation_factor;
-            let x_dest = this.data.hero.sprite.centerX;
-            let y_dest = this.data.hero.sprite.centerY + 12;
+            let x_dest = this.controllable_char.sprite.centerX;
+            let y_dest = this.controllable_char.sprite.centerY + 12;
             switch (this.cast_direction) {
                 case directions.left: x_dest -= 16; break;
                 case directions.right: x_dest += 16; break;

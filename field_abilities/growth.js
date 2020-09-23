@@ -21,8 +21,8 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         let max_y_speed = 0;
         let min_x_speed = 0;
         let min_y_speed = 0;
-        let x_dest = this.data.hero.sprite.centerX;
-        let y_dest = this.data.hero.sprite.centerY + 5;
+        let x_dest = this.controllable_char.sprite.centerX;
+        let y_dest = this.controllable_char.sprite.centerY + 5;
         let emitter_width = 0;
         let emitter_height = 0;
         this.increase_duration = 0;
@@ -109,8 +109,8 @@ export class GrowthFieldPsynergy extends FieldAbilities {
 
     miss_target() {
         this.emitter.destroy();
-        let grow_center_x = this.data.hero.sprite.centerX; 
-        let grow_center_y = this.data.hero.sprite.centerY + 17; 
+        let grow_center_x = this.controllable_char.sprite.centerX; 
+        let grow_center_y = this.controllable_char.sprite.centerY + 17; 
         switch(this.cast_direction) {
             case directions.up:
                 grow_center_y -= 16;
