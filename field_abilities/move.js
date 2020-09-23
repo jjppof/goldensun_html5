@@ -1,29 +1,29 @@
-import { main_char_list } from "../initializers/main_chars.js";
-import { abilities_list } from "../initializers/abilities.js";
-import { init_cast_aura, tint_map_layers } from  '../initializers/psynergy_cast.js';
 import * as numbers from '../magic_numbers.js';
 import { target_only_push } from '../interactable_objects/push.js';
-import { set_cast_direction, directions, reverse_directions, join_directions } from "../utils.js";
+import { directions, reverse_directions, join_directions } from "../utils.js";
+import { FieldAbilities } from "../base/FieldAbilities.js";
+import { SpriteBase } from '../base/SpriteBase.js';
 
 const ABILITY_KEY_NAME = "move";
-const KEY_NAME = "move_psynergy";
 const ACTION_KEY_NAME = "cast";
 const MAX_HAND_TRANSLATE = 16;
 const MOVE_MAX_RANGE = 26;
-const MOVE_HAND_ACTION_KEY = "cast";
 const MOVE_HAND_KEY_NAME = "move_hand";
 
-export class MoveFieldPsynergy {
+export class MoveFieldPsynergy extends FieldAbilities {
     constructor(game, data) {
-        this.key_name = KEY_NAME;
-        this.game = game;
-        this.data = data;
-        this.ability_key_name = ABILITY_KEY_NAME;
-        this.action_key_name = ACTION_KEY_NAME;
-        this.hand_sprite = null;
-        this.target_found = false;
-        this.target_object = null;
-        this.stop_casting = null;
+        super(game, data, ABILITY_KEY_NAME, MOVE_MAX_RANGE, ACTION_KEY_NAME, true);
+        this.set_bootstrap_method(this.init_move.bind(this));
+        this.set_cast_finisher_method(this.unset_hue_shifter.bind(this));
+        this.hand_sprite = this.game.add.sprite(0, 0, MOVE_HAND_KEY_NAME);
+        const anim_db = this.data.misc_animations_db[MOVE_HAND_KEY_NAME];
+        this.hand_sprite_base = new SpriteBase(MOVE_HAND_KEY_NAME, [MOVE_HAND_KEY_NAME]);
+        this.hand_sprite_base.setActionDirections(MOVE_HAND_KEY_NAME, anim_db.actions.animations, anim_db.actions.frames_count);
+        this.hand_sprite_base.setActionFrameRate(MOVE_HAND_KEY_NAME, anim_db.actions.frame_rate);
+        this.hand_sprite_base.setActionLoop(MOVE_HAND_KEY_NAME, anim_db.actions.loop);
+        this.hand_sprite_base.generateAllFrames();
+        this.hand_sprite_base.setAnimation(this.hand_sprite, MOVE_HAND_KEY_NAME);
+
         this.emitter = null;
         this.final_emitter = null;
         this.set_controls();
@@ -33,22 +33,22 @@ export class MoveFieldPsynergy {
     set_controls() {
         this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
             if (!this.controls_active) return;
-            this.data.hero.trying_to_push_direction = directions.right;
+            this.controllable_char.trying_to_push_direction = directions.right;
             this.fire_push();
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
             if (!this.controls_active) return;
-            this.data.hero.trying_to_push_direction = directions.left;
+            this.controllable_char.trying_to_push_direction = directions.left;
             this.fire_push();
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.UP).onDown.add(() => {
             if (!this.controls_active) return;
-            this.data.hero.trying_to_push_direction = directions.up;
+            this.controllable_char.trying_to_push_direction = directions.up;
             this.fire_push();
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onDown.add(() => {
             if (!this.controls_active) return;
-            this.data.hero.trying_to_push_direction = directions.down;
+            this.controllable_char.trying_to_push_direction = directions.down;
             this.fire_push();
         });
         this.data.esc_input.add(() => {
@@ -62,7 +62,7 @@ export class MoveFieldPsynergy {
     fire_push() {
         if (this.data.map.collision_layer === this.target_object.base_collider_layer) {
             let item_position = this.target_object.get_current_position(this.data.map);
-            switch (this.data.hero.trying_to_push_direction) {
+            switch (this.controllable_char.trying_to_push_direction) {
                 case directions.up:
                     item_position.y -= 1;
                     break;
@@ -77,7 +77,7 @@ export class MoveFieldPsynergy {
                     break;
             }
             let position_allowed = this.target_object.position_allowed(item_position.x, item_position.y);
-            if (position_allowed && !(this.data.hero.tile_x_pos === item_position.x && this.data.hero.tile_y_pos === item_position.y)) {
+            if (position_allowed && !(this.controllable_char.tile_x_pos === item_position.x && this.controllable_char.tile_y_pos === item_position.y)) {
                 this.controls_active = false;
                 target_only_push(this.game, this.data, this.target_object, (x_shift, y_shift) => {
                     const x_target = this.hand_sprite.x + x_shift;
@@ -90,30 +90,30 @@ export class MoveFieldPsynergy {
                     );
                     this.game.time.events.add(numbers.PUSH_TIME >> 1, () => {
                         let need_change = false;
-                        if ([directions.up, directions.down].includes(this.cast_direction) && [directions.left, directions.right].includes(this.data.hero.trying_to_push_direction)) {
-                            this.cast_direction = join_directions(this.cast_direction, this.data.hero.trying_to_push_direction);
+                        if ([directions.up, directions.down].includes(this.cast_direction) && [directions.left, directions.right].includes(this.controllable_char.trying_to_push_direction)) {
+                            this.cast_direction = join_directions(this.cast_direction, this.controllable_char.trying_to_push_direction);
                             need_change = true;
-                        } else if ([directions.up, directions.down].includes(this.data.hero.trying_to_push_direction) && [directions.left, directions.right].includes(this.cast_direction)) {
-                            this.cast_direction = join_directions(this.data.hero.trying_to_push_direction, this.cast_direction);
+                        } else if ([directions.up, directions.down].includes(this.controllable_char.trying_to_push_direction) && [directions.left, directions.right].includes(this.cast_direction)) {
+                            this.cast_direction = join_directions(this.controllable_char.trying_to_push_direction, this.cast_direction);
                             need_change = true;
                         }
                         if (!need_change) return;
-                        this.data.hero.set_direction(this.cast_direction);
-                        this.data.hero.sprite.animations.stop();
+                        this.controllable_char.set_direction(this.cast_direction);
+                        this.controllable_char.sprite.animations.stop();
                         const dest_direction = reverse_directions[this.cast_direction];
-                        this.data.hero.sprite.animations.play("cast_" + dest_direction, 0);
-                        this.data.hero.sprite.animations.frame = `cast/${dest_direction}/01`;
+                        this.controllable_char.sprite.animations.play("cast_" + dest_direction, 0);
+                        this.controllable_char.sprite.animations.frameName = `cast/${dest_direction}/01`;
                     });
                 }, () => {
-                    const pos_sqr_distance = Math.pow(this.data.hero.sprite.body.x - this.target_object.interactable_object_sprite.body.x, 2) + Math.pow(this.data.hero.sprite.body.y - this.target_object.interactable_object_sprite.body.y, 2);
+                    const pos_sqr_distance = Math.pow(this.controllable_char.sprite.body.x - this.target_object.interactable_object_sprite.body.x, 2) + Math.pow(this.controllable_char.sprite.body.y - this.target_object.interactable_object_sprite.body.y, 2);
                     const rad_sqr_distance = Math.pow(numbers.HERO_BODY_RADIUS + this.data.interactable_objects_db[this.target_object.key_name].body_radius, 2);
                     if (pos_sqr_distance <= rad_sqr_distance) {
-                        this.data.hero.sprite.body.x = (this.data.hero.tile_x_pos + 0.5) * this.data.map.sprite.tileWidth;
-                        this.data.hero.sprite.body.y = (this.data.hero.tile_y_pos + 0.5) * this.data.map.sprite.tileHeight;
-                        this.data.hero.shadow.x = this.data.hero.sprite.body.x;
-                        this.data.hero.shadow.y = this.data.hero.sprite.body.y;
+                        this.controllable_char.sprite.body.x = (this.controllable_char.tile_x_pos + 0.5) * this.data.map.sprite.tileWidth;
+                        this.controllable_char.sprite.body.y = (this.controllable_char.tile_y_pos + 0.5) * this.data.map.sprite.tileHeight;
+                        this.controllable_char.shadow.x = this.controllable_char.sprite.body.x;
+                        this.controllable_char.shadow.y = this.controllable_char.sprite.body.y;
                     }
-                    this.data.hero.sprite.body.velocity.x = this.data.hero.sprite.body.velocity.y = 0;
+                    this.controllable_char.sprite.body.velocity.x = this.controllable_char.sprite.body.velocity.y = 0;
                     this.finish_hand();
                     this.unset_hero_cast_anim();
                 }, false, () => {
@@ -123,32 +123,17 @@ export class MoveFieldPsynergy {
         }
     }
 
-    set_hero_cast_anim() {
-        this.data.hero.play(this.action_key_name, reverse_directions[this.cast_direction]);
-    }
-
-    unset_hero_cast_anim() {
-        this.data.hero.sprite.animations.currentAnim.reverseOnce();
-        this.data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
-            this.data.hero.play("idle", reverse_directions[this.cast_direction]);
-        });
-        this.data.hero.play(this.action_key_name, reverse_directions[this.cast_direction]);
-    }
-
     set_hand() {
-        this.data.field_abilities.field_psynergy_window.close();
-        const texture_key = MOVE_HAND_KEY_NAME + "_" + MOVE_HAND_ACTION_KEY;
-        this.hand_sprite = this.data.overlayer_group.create(0, 0, texture_key);
+        this.data.overlayer_group.add(this.hand_sprite);
+        this.data.overlayer_group.bringToTop(this.hand_sprite);
+        this.hand_sprite.scale.setTo(1, 1);
         this.hand_sprite.send_to_front = true;
         this.hand_sprite.base_collider_layer = this.data.map.collision_layer;
-        this.hand_sprite.loadTexture(texture_key);
-        let frame_rate = this.data.misc_animations_db[MOVE_HAND_KEY_NAME].actions.frame_rate;
-        this.hand_sprite.animations.add(MOVE_HAND_KEY_NAME+"_"+reverse_directions[this.cast_direction], reverse_directions[this.cast_direction], frame_rate, false, false);
-        this.hand_sprite.animations.frameName = `${MOVE_HAND_ACTION_KEY}/${reverse_directions[this.cast_direction]}/00`;
+        this.hand_sprite.animations.currentAnim.stop(true);
+        this.hand_sprite.frameName = this.hand_sprite_base.getFrameName(MOVE_HAND_KEY_NAME, reverse_directions[this.cast_direction], 0);
         this.hand_sprite.anchor.x = 0.5;
-        this.hand_sprite.centerX = this.data.hero.sprite.centerX;
-        this.hand_sprite.centerY = this.data.hero.sprite.centerY;
-        this.data.overlayer_group.bringToTop(this.hand_sprite);
+        this.hand_sprite.centerX = this.controllable_char.sprite.centerX;
+        this.hand_sprite.centerY = this.controllable_char.sprite.centerY;
     }
 
     translate_hand() {
@@ -194,7 +179,8 @@ export class MoveFieldPsynergy {
             Phaser.Easing.Linear.None,
             true
         ).onComplete.addOnce(() => {
-            this.hand_sprite.animations.play(this.action_key_name + "_" + reverse_directions[this.cast_direction]);
+            const anim_key = this.hand_sprite_base.getAnimationKey(MOVE_HAND_KEY_NAME, reverse_directions[this.cast_direction]);
+            this.hand_sprite.animations.play(anim_key);
             if (this.target_found) {
                 this.target_object.interactable_object_sprite.filters = [this.target_object.color_filter];
                 this.target_hueshift_timer = this.game.time.create(false);
@@ -241,53 +227,10 @@ export class MoveFieldPsynergy {
             this.start_final_emitter(this.hand_sprite.x, this.hand_sprite.y);
             this.stop_casting();
             flip_timer.stop();
-            this.data.overlayer_group.remove(this.hand_sprite, true);
+            this.data.overlayer_group.remove(this.hand_sprite, false);
             this.unset_emitter();
         });
         
-    }
-
-    search_for_target() {
-        this.target_found = false;
-        let min_x, max_x, min_y, max_y;
-        if (this.cast_direction === directions.up || this.cast_direction === directions.down) {
-            min_x = this.data.hero.sprite.x - numbers.HERO_BODY_RADIUS;
-            max_x = this.data.hero.sprite.x + numbers.HERO_BODY_RADIUS;
-            if (this.cast_direction === directions.up) {
-                min_y = this.data.hero.sprite.y - numbers.HERO_BODY_RADIUS - MOVE_MAX_RANGE;
-                max_y = this.data.hero.sprite.y - numbers.HERO_BODY_RADIUS;
-            } else {
-                min_y = this.data.hero.sprite.y + numbers.HERO_BODY_RADIUS;
-                max_y = this.data.hero.sprite.y + numbers.HERO_BODY_RADIUS + MOVE_MAX_RANGE;
-            }
-        } else {
-            min_y = this.data.hero.sprite.y - numbers.HERO_BODY_RADIUS;
-            max_y = this.data.hero.sprite.y + numbers.HERO_BODY_RADIUS;
-            if (this.cast_direction === directions.left) {
-                min_x = this.data.hero.sprite.x - numbers.HERO_BODY_RADIUS - MOVE_MAX_RANGE;
-                max_x = this.data.hero.sprite.x - numbers.HERO_BODY_RADIUS;
-            } else {
-                min_x = this.data.hero.sprite.x + numbers.HERO_BODY_RADIUS;
-                max_x = this.data.hero.sprite.x + numbers.HERO_BODY_RADIUS + MOVE_MAX_RANGE;
-            }
-        }
-        let sqr_distance = Infinity;
-        for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
-            let interactable_object = this.data.map.interactable_objects[i];
-            if (!(this.ability_key_name in this.data.interactable_objects_db[interactable_object.key_name].psynergy_keys)) continue;
-            const item_x_px = interactable_object.current_x * this.data.map.sprite.tileWidth + (this.data.map.sprite.tileWidth >> 1);
-            const item_y_px = interactable_object.current_y * this.data.map.sprite.tileHeight + (this.data.map.sprite.tileHeight >> 1);
-            const x_condition = item_x_px >= min_x && item_x_px <= max_x;
-            const y_condition = item_y_px >= min_y && item_y_px <= max_y;
-            if (x_condition && y_condition && this.data.map.collision_layer === interactable_object.base_collider_layer) {
-                let this_sqr_distance = Math.pow(item_x_px - this.data.hero.sprite.x, 2) + Math.pow(item_y_px - this.data.hero.sprite.y, 2);
-                if (this_sqr_distance < sqr_distance) {
-                    sqr_distance = this_sqr_distance;
-                    this.target_found = true;
-                    this.target_object = interactable_object;
-                }
-            }
-        }
     }
 
     set_emitter() {
@@ -307,7 +250,7 @@ export class MoveFieldPsynergy {
                 x_shift = MAX_HAND_TRANSLATE;
                 break;
         }
-        this.emitter = this.game.add.emitter(this.data.hero.sprite.centerX + x_shift, this.data.hero.sprite.centerY + y_shift, 150);
+        this.emitter = this.game.add.emitter(this.controllable_char.sprite.centerX + x_shift, this.controllable_char.sprite.centerY + y_shift, 150);
         this.emitter.makeParticles("psynergy_particle");
         this.emitter.minParticleSpeed.setTo(-15, -15);
         this.emitter.maxParticleSpeed.setTo(15, 15);
@@ -359,45 +302,20 @@ export class MoveFieldPsynergy {
         this.final_emitter.destroy();
     }
 
-    cast(caster_key_name) {
-        if (this.data.hero.casting_psynergy) return;
-        let caster = main_char_list[caster_key_name];
-        let ability = abilities_list[this.ability_key_name];
-        if (caster.current_pp < ability.pp_cost || !caster.abilities.includes(this.ability_key_name)) {
-            return;
+    unset_hue_shifter() {
+        if (this.target_found) {
+            this.target_object.interactable_object_sprite.filters = undefined;
+            this.target_hueshift_timer.stop();
         }
+    }
 
-        this.data.field_abilities.field_psynergy_window.window.send_to_front();
-        this.data.field_abilities.field_psynergy_window.open(this.ability_key_name);
-
-        this.data.hero.casting_psynergy = true;
-        this.game.physics.p2.pause();
-        this.data.hero.sprite.body.velocity.y = this.data.hero.sprite.body.velocity.x = 0;
-        caster.current_pp -= ability.pp_cost;
-
-        this.cast_direction = set_cast_direction(this.data.hero.current_direction);
-        this.data.hero.set_direction(this.cast_direction);
+    init_move() {
         this.set_emitter();
         this.set_final_emitter();
         this.search_for_target();
-
-        this.set_hero_cast_anim();
-        let reset_map;
-        this.stop_casting = init_cast_aura(this.game, this.data.hero.sprite, this.data.npc_group, this.data.hero.color_filter, () => {
-            reset_map = tint_map_layers(this.game, this.data.map, this.data.map.color_filter);
-            this.set_hand();
-            this.translate_hand();
-            this.start_emitter();
-        }, () => {
-            this.game.physics.p2.resume();
-            this.data.hero.casting_psynergy = false;
-            this.target_object = null;
-        }, () => {
-            if (this.target_found) {
-                this.target_object.interactable_object_sprite.filters = undefined;
-                this.target_hueshift_timer.stop();
-            }
-            reset_map();
-        });
+        this.set_hand();
+        this.field_psynergy_window.close();
+        this.translate_hand();
+        this.start_emitter();
     }
 }

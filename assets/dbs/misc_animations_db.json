@@ -22,17 +22,17 @@
         "anchor_y": 0.5,
         "anchor_x": 0.5,
         "body_radius": 0,
-        "initial_animation": "cast",
+        "initial_animation": "down",
         "actions": {
-            "directions": [
+            "frame_rate": 10,
+            "animations": [
                 "down", 
                 "up", 
                 "left", 
                 "right"
             ],
-            "frame_rate": 10,
-            "animations": ["cast"],
-            "frames_count": 2
+            "frames_count": 2,
+            "loop": true
         },
         "spritesheet": {
             "image": "assets/images/misc/move_psynergy_hand.png",

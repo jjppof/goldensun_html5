@@ -1,6 +1,6 @@
 import * as numbers from './magic_numbers.js';
 import { initialize_main_chars, main_char_list, initialize_classes, party_data } from './initializers/main_chars.js';
-import { initialize_abilities, abilities_list} from './initializers/abilities.js';
+import { initialize_abilities, abilities_list, initialize_field_abilities, field_abilities_list } from './initializers/abilities.js';
 import { initialize_items, items_list } from './initializers/items.js';
 import { initialize_djinni, djinni_list } from './initializers/djinni.js';
 import { initialize_enemies, enemies_list } from './initializers/enemies.js';
@@ -14,7 +14,6 @@ import { Collision } from './base/Collision.js';
 import { directions } from './utils.js';
 import { Hero } from './base/Hero.js';
 import { TileEventManager } from './base/tile_events/TileEventManager.js';
-import { FieldAbilities } from './base/FieldAbilities.js';
 
 //debugging porpouses
 window.maps = maps;
@@ -22,6 +21,7 @@ window.main_char_list = main_char_list;
 window.abilities_list = abilities_list;
 window.items_list = items_list;
 window.djinni_list = djinni_list;
+window.field_abilities_list = field_abilities_list;
 window.enemies_list = enemies_list;
 window.party_data = party_data;
 
@@ -135,7 +135,7 @@ class GoldenSun {
         const load_abilities_promise = new Promise(resolve => {
             load_abilities_promise_resolve = resolve;
         });
-        initialize_abilities(this.game, this.abilities_db, this.misc_animations_db, load_abilities_promise_resolve);
+        initialize_abilities(this.game, this.abilities_db, load_abilities_promise_resolve);
         await load_abilities_promise;
         
         let load_items_promise_resolve;
@@ -157,9 +157,11 @@ class GoldenSun {
         this.npc_group = this.game.add.group();
         this.overlayer_group = this.game.add.group();
 
+        //initialize field abilities
+        initialize_field_abilities(this.game, this);
+
         //initialize screens
         this.menu_screen = initialize_menu(this.game, this);
-        this.field_abilities = new FieldAbilities(this.game, this);
 
         //configuring map layers: creating sprites, listing events and setting the layers
         this.map = await maps[this.init_db.map_key_name].mount_map(this.init_db.map_z_index);
@@ -277,15 +279,15 @@ class GoldenSun {
         //enable psynergies shortcuts for testing
         this.game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
-            this.hero.field_abilities_list["move"].object.cast(this.init_db.initial_shortcuts.move);
+            field_abilities_list.move.cast(this.hero, this.init_db.initial_shortcuts.move);
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
-            this.hero.field_abilities_list["frost"].object.cast(this.init_db.initial_shortcuts.frost);
+            field_abilities_list.frost.cast(this.hero, this.init_db.initial_shortcuts.frost);
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
-            this.hero.field_abilities_list["growth"].object.cast(this.init_db.initial_shortcuts.growth);
+            field_abilities_list.growth.cast(this.hero, this.init_db.initial_shortcuts.growth);
         });
 
         //enable event trigger key

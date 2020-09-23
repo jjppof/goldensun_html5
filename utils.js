@@ -325,19 +325,6 @@ export function get_surroundings(x, y, with_diagonals = false, shift = 1) {
     return surroundings;
 };
 
-/*Sets the psynergy cast direction
-For diagonals, pick the next clockwise non-diagonal
-
-Input: direction [number] - Current direction
-
-Output: [number] - Non-diagonal cast direction*/
-export function set_cast_direction(direction) {
-    if(direction%2===0) return direction;
-    
-    direction++;
-    return direction === directions_count ? directions.right : direction;
-}
-
 /*Lists all directions, diagonals optional
 
 Input: with_diagonals [boolean] - If true, includes diagonals*/

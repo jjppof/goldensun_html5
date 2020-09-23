@@ -2,7 +2,7 @@ import { CharsMenu } from '../base/menus/CharsMenu.js';
 import { BasicInfoWindow } from '../base/windows/BasicInfoWindow.js';
 import { ItemPsynergyChooseWindow } from '../base/windows/ItemPsynergyChooseWindow.js';
 import { party_data } from '../initializers/main_chars.js';
-import { abilities_list } from '../initializers/abilities.js';
+import { abilities_list, field_abilities_list } from '../initializers/abilities.js';
 import { Window } from '../base/Window.js';
 import * as numbers from '../magic_numbers.js';
 
@@ -98,10 +98,9 @@ export class PsynergyMenuScreen {
     }
 
     psynergy_choose(ability) {
-        let field_abilities_list = this.data.hero.field_abilities_list;
         if (ability.key_name in field_abilities_list) {
             this.close_menu(true);
-            field_abilities_list[ability.key_name].cast(party_data.members[this.selected_char_index].key_name);
+            field_abilities_list[ability.key_name].cast(this.data.hero, party_data.members[this.selected_char_index].key_name);
         }
     }
 

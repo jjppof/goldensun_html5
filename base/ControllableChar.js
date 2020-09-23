@@ -26,6 +26,7 @@ export class ControllableChar {
         this.sprite_info = null;
         this.sprite = null;
         this.shadow = null;
+        this.body_radius = 0;
         this.tile_x_pos = initial_x;
         this.tile_y_pos = initial_y;
         this.current_action = initial_action;
@@ -35,7 +36,6 @@ export class ControllableChar {
         this.color_filter = this.game.add.filter('ColorFilters');
         this.enable_footsteps = enable_footsteps === undefined ? false : enable_footsteps;
         this.footsteps = new Footsteps(this.game, this.data);
-        this.field_abilities_list = null;
     }
 
     in_action(allow_climbing = false) {
