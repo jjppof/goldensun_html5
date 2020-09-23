@@ -26,6 +26,16 @@ const PAGE_INDICATOR_RIGHT_ARROW_X = 129;
 const SUB_ICON_X = 0;
 const SUB_ICON_Y = 0;
 
+/*Displays the character's Psynergy or Items
+Used in a selection-type menu, referring to the above
+
+Input: game [Phaser:Game] - Reference to the running game object
+       data [GoldenSun] - Reference to the main JS Class instance
+       is_psynergy_window [boolean] - Whether this window shows psynergy or items
+       on_choose [function] - Callback executed on "Choose" option
+       on_change [function] - Callback executed on a "Change" event
+       esc_propagation_priority [number] - Counts parent-child status for ESC key (Cancel/Back)
+       enter_propagation_priority [number] - Counts parent-child status for Enter key (Choose/Select)*/
 export class ItemPsynergyChooseWindow {
     constructor(game, data, is_psynergy_window, on_change, on_choose, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
@@ -76,6 +86,7 @@ export class ItemPsynergyChooseWindow {
         this.init_page_indicator_bar();
     }
 
+    /*Sets up the indicator bar for the pages*/
     init_page_indicator_bar() {
         this.page_number_bar = this.game.add.graphics(0, 0);
         this.page_number_bar.alpha = 0;
@@ -100,6 +111,11 @@ export class ItemPsynergyChooseWindow {
         this.page_indicator_left_arrow.alpha = 0;
     }
 
+    /*Returns the name of the Psynergy/Item
+
+    Input: index [number] : The element's index
+
+    Output: [string]*/
     get_element_key_name(index) {
         return this.is_psynergy_window ? this.elements[index] : this.elements[index].key_name;
     }
@@ -126,42 +142,70 @@ export class ItemPsynergyChooseWindow {
         }, this, this.enter_propagation_priority);
     }
 
+    /*Checks "open" state
+
+    Output: [boolean] - True if "open"*/
     is_open() {
         return this.window_open;
     }
 
+    /*Checks "activated" state
+
+    Output: [boolean] - True if "activated"*/
     is_activated() {
         return this.window_activated;
     }
 
+    /*Returns the currently selected element's index
+
+    Output: [number]*/
     get_element_index() {
         return this.selected_element_index;
     }
 
+    /*Selects a new element
+
+    Input: index [number] - The new element's index*/
     set_element_index(index) {
         this.selected_element_index = index;
     }
 
+    /*Returns the current page's index
+
+    Output: [number]*/
     get_page_index() {
         return this.page_index;
     }
 
+    /*Selects a new page
+
+    Input: index [number] - The new page's index*/
     set_page_index(index) {
         this.page_index = index;
     }
 
+    /*Returns the cursor's x value
+
+    Output: [number]*/
     get_cursor_x() {
         return -5;
     }
 
+    /*Returns the cursor's y value
+
+    Output: [number]*/
     get_cursor_y() {
         return ELEM_PADDING_TOP + ((numbers.ICON_HEIGHT >> 1)|0) + this.selected_element_index * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS);
     }
 
+    /*Returns the number of elements in this page
+    
+    Output: [number]*/
     get_elem_per_page() {
         return this.elements.length;
     }
 
+    /*Sets the total page number*/
     set_page_number() {
         let list_length;
         if (this.is_psynergy_window) {
@@ -179,10 +223,15 @@ export class ItemPsynergyChooseWindow {
         }
     }
 
+    /*Returns the total page number
+    
+    Output: [number]*/
     get_page_number() {
         return this.page_number;
     }
 
+    /*Sets up the page indicator
+    Includes arrows and highlightning*/
     set_page_indicator() {
         const page_number = this.get_page_number();
         if (page_number <= 1) return;
@@ -199,10 +248,12 @@ export class ItemPsynergyChooseWindow {
         this.set_page_indicator_arrow();
     }
 
+    /*Updates the highlight's position*/
     set_page_indicator_highlight() {
         this.page_number_bar_highlight.x = PSY_OVERVIEW_WIN_WIDTH - 5 - (this.get_page_number() - this.get_page_index()) * PAGE_NUMBER_WIDTH;
     }
 
+    /*Displays the page indicator arrows*/
     set_page_indicator_arrow() {
         this.page_indicator_left_arrow.alpha = 1;
         this.page_indicator_right_arrow.alpha = 1;
@@ -220,6 +271,7 @@ export class ItemPsynergyChooseWindow {
         }
     }
 
+    /*Hides the page indicator arrows*/
     unset_page_indicator() {
         this.page_number_bar.alpha = 0;
         this.page_number_bar_highlight.alpha = 0;
@@ -232,11 +284,13 @@ export class ItemPsynergyChooseWindow {
         this.page_indicator_arrow_timer.pause();
     }
 
+    /*Updates this window's position*/
     update_position() {
         this.group.x = this.game.camera.x + PSY_OVERVIEW_WIN_X;
         this.group.y = this.game.camera.y + PSY_OVERVIEW_WIN_Y;
     }
 
+    /*Adds the items/psynergies to the window*/
     set_elements() {
         this.clear_sprites();
         this.item_objs = [];
@@ -292,15 +346,18 @@ export class ItemPsynergyChooseWindow {
         }
     }
 
+    /*Shows and positions the highlight bar*/
     set_highlight_bar() {
         this.highlight_bar.alpha = 1;
         this.highlight_bar.y = ELEM_PADDING_TOP + this.selected_element_index * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS) + 4;
     }
 
+    /*Hides the highlight bar*/
     unset_highlight_bar() {
         this.highlight_bar.alpha = 0;
     }
 
+    /*Sets the scaling effect for the selected item*/
     set_element_tween(before_index) {
         if (this.selected_element_tween) {
             this.selected_element_tween.stop();
@@ -317,11 +374,16 @@ export class ItemPsynergyChooseWindow {
         );
     }
 
+    /*Stops the scaling effect*/
     unset_element_tween() {
         this.selected_element_tween.stop();
         this.selected_element_tween = null;
     }
 
+    /*Selects a new element
+    
+    Input: before_index [number] - Previous element
+           after_index [number] - Next element*/
     element_change(before_index, after_index) {
         this.set_element_tween(before_index);
         this.set_highlight_bar();
@@ -331,7 +393,8 @@ export class ItemPsynergyChooseWindow {
         );
     }
 
-    page_change(before_index, after_index) {
+    /*Displays a new page*/
+    page_change() {
         this.set_elements();
         this.set_element_tween(this.selected_element_index);
         this.set_highlight_bar();
@@ -341,7 +404,8 @@ export class ItemPsynergyChooseWindow {
         );
         this.set_page_indicator_highlight();
     }
-
+    
+    /*Removes all sprites from this window*/
     clear_sprites() {
         for (let i = 0; i < this.icon_sprites_in_window.length; ++i) {
             this.window.remove_from_group(this.icon_sprites_in_window[i]);
@@ -353,14 +417,21 @@ export class ItemPsynergyChooseWindow {
         this.text_sprites_in_window = [];
     }
 
+    /*Hides this window*/
     hide() {
         this.window.group.alpha = 0;
     }
 
+    /*Shows this window*/
     show() {
         this.window.group.alpha = 1;
     }
 
+    /*Opens this window
+
+    Input: char_index [number] = The selected character's party index
+           close_callback [function] = Closing callback (Optional)
+           open_callback [function] = Opening callback (Optional)*/
     open(char_index, close_callback, open_callback) {
         this.update_position();
         this.char_index = char_index;
@@ -384,6 +455,7 @@ export class ItemPsynergyChooseWindow {
         this.window_activated = true;
     }
 
+    /*Closes this window*/
     close() {
         this.window.close(this.close_callback, false);
         this.group.alpha = 1;
@@ -395,6 +467,8 @@ export class ItemPsynergyChooseWindow {
         this.window_activated = false;
     }
 
+    /*Sets this window's state as "activated"
+    Enables several UI elements*/
     activate() {
         this.set_page_number();
         this.set_elements();
@@ -412,6 +486,8 @@ export class ItemPsynergyChooseWindow {
         });
     }
 
+    /*Disables this window's "activated" state
+    Disables several UI elements*/
     deactivate() {
         this.clear_sprites();
         this.unset_page_indicator();
