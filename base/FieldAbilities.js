@@ -30,9 +30,7 @@ export class FieldAbilities{
     grant_abilities(ability_list=undefined, all=true){
         let abilities = [];
         if(ability_list === undefined || all === true){
-            for(let key in this.data.field_abilities.field_abilities_list){
-                abilities.push(this.data.field_abilities.field_abilities_list[key])
-            }
+            return this.field_abilities_list;
         }
         else{
             for(let i=0; i<ability_list.length; i++){
