@@ -1,6 +1,9 @@
 import * as numbers from "../magic_numbers.js";
 import { reverse_directions } from "../utils.js";
 import { Footsteps } from "./Footsteps.js";
+import { MoveFieldPsynergy } from '../field_abilities/move.js';
+import { FrostFieldPsynergy } from '../field_abilities/frost.js';
+import { GrowthFieldPsynergy } from '../field_abilities/growth.js';
 
 const DEFAULT_SHADOW_ANCHOR_X = 0.45;
 const DEFAULT_SHADOW_ANCHOR_Y = 0.05;
@@ -35,6 +38,13 @@ export class ControllableChar {
         this.color_filter = this.game.add.filter('ColorFilters');
         this.enable_footsteps = enable_footsteps === undefined ? false : enable_footsteps;
         this.footsteps = new Footsteps(this.game, this.data);
+        this.field_abilities_list = {};
+    }
+
+    set_field_psynergies(){
+        this.field_abilities_list.move = new MoveFieldPsynergy(game, data);
+        this.field_abilities_list.frost = new FrostFieldPsynergy(game, data);
+        this.field_abilities_list.growth = new GrowthFieldPsynergy(game, data);
     }
 
     in_action(allow_climbing = false) {

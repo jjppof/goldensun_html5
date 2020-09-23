@@ -3,7 +3,7 @@ import { SpriteBase } from '../base/SpriteBase.js';
 
 export let abilities_list = {};
 
-export function initialize_abilities(game, abilities_db, interactible_objects_db, load_promise_resolve) {
+export function initialize_abilities(game, abilities_db, misc_animations_db, load_promise_resolve) {
     let load_promises = []
     for (let i = 0; i < abilities_db.length; ++i) {
         const ability_data = abilities_db[i];
@@ -35,7 +35,7 @@ export function initialize_abilities(game, abilities_db, interactible_objects_db
         );
         const import_keys = ["move_hand"];
         for(let i=0; i<import_keys.length; i++){
-            const db_data = interactible_objects_db[import_keys[i]];
+            const db_data = misc_animations_db[import_keys[i]];
             const sprite_base = new SpriteBase(db_data.key_name, [db_data.actions.animations]);
             for(let n=0; n<db_data.actions.animations.length; n++){
                 sprite_base.setActionSpritesheet(

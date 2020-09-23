@@ -134,7 +134,7 @@ class GoldenSun {
         const load_abilities_promise = new Promise(resolve => {
             load_abilities_promise_resolve = resolve;
         });
-        initialize_abilities(this.game, this.abilities_db, this.interactable_objects_db, load_abilities_promise_resolve);
+        initialize_abilities(this.game, this.abilities_db, this.misc_animations_db, load_abilities_promise_resolve);
         await load_abilities_promise;
         
         let load_items_promise_resolve;

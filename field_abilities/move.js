@@ -142,7 +142,7 @@ export class MoveFieldPsynergy {
         this.hand_sprite.send_to_front = true;
         this.hand_sprite.base_collider_layer = this.data.map.collision_layer;
         this.hand_sprite.loadTexture(texture_key);
-        let frame_rate = this.data.interactable_objects_db[MOVE_HAND_KEY_NAME].actions.frame_rate;
+        let frame_rate = this.data.misc_animations_db[MOVE_HAND_KEY_NAME].actions.frame_rate;
         this.hand_sprite.animations.add(MOVE_HAND_KEY_NAME+"_"+reverse_directions[this.cast_direction], reverse_directions[this.cast_direction], frame_rate, false, false);
         this.hand_sprite.animations.frameName = `${MOVE_HAND_ACTION_KEY}/${reverse_directions[this.cast_direction]}/00`;
         this.hand_sprite.anchor.x = 0.5;

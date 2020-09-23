@@ -3,9 +3,6 @@ import * as numbers from '../magic_numbers.js';
 import { TileEvent, event_types } from "./tile_events/TileEvent.js";
 import { get_transition_directions, range_360, directions } from '../utils.js';
 import { normal_push } from "../interactable_objects/push.js";
-import { MoveFieldPsynergy } from '../field_abilities/move.js';
-import { FrostFieldPsynergy } from '../field_abilities/frost.js';
-import { GrowthFieldPsynergy } from '../field_abilities/growth.js';
 
 const SPEED_LIMIT_TO_STOP = 13;
 const MINIMAL_SLOPE = 0.1;
@@ -64,13 +61,6 @@ export class Hero extends ControllableChar {
         this.trying_to_push = false;
         this.trying_to_push_direction = null;
         this.push_timer = null;
-        this.field_abilities_list = {};
-    }
-
-    set_field_psynergies(){
-        this.field_abilities_list.move = new MoveFieldPsynergy(game, data);
-        this.field_abilities_list.frost = new FrostFieldPsynergy(game, data);
-        this.field_abilities_list.growth = new GrowthFieldPsynergy(game, data);
     }
 
     update_arrow_inputs() {
