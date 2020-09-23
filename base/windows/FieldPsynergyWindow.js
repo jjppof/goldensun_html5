@@ -2,10 +2,10 @@ import { Window } from '../Window.js';
 import { capitalize, get_text_width } from "../../utils.js";
 import * as numbers from '../../magic_numbers.js';
 
-const BASE_WIDTH = numbers.WINDOW_PADDING_H*2 + 8;
+const BASE_WIDTH = (numbers.WINDOW_PADDING_H << 1) + 8;
 const BASE_HEIGHT = 20;
-const POS_X = numbers.GAME_WIDTH/2 - BASE_WIDTH/2;
-const POS_Y = numbers.GAME_HEIGHT/2 + numbers.HERO_BODY_RADIUS + 6;
+const POS_X = (numbers.GAME_WIDTH >> 1) - (BASE_WIDTH >> 1);
+const POS_Y = (numbers.GAME_HEIGHT >> 1) + numbers.HERO_BODY_RADIUS + 6;
 const DIFF_THRESHOLD = 90;
 const DIFF_CORRECTION = 56;
 
@@ -36,7 +36,7 @@ export class FieldPsynergyWindow {
     open(text, callback) {
         let text_size = get_text_width(this.game,text);
         this.window.update_size({width: BASE_WIDTH+text_size, height: BASE_HEIGHT});
-        this.window.update_position({x: POS_X-text_size/2, y:POS_Y+this.vertical_adjust()});
+        this.window.update_position({x: POS_X - (text_size >> 1), y:POS_Y + this.vertical_adjust()});
         this.window.update_text(capitalize(text),this.text);
 
         this.window.show(() => {
