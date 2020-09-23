@@ -1,9 +1,109 @@
 {
 	"frames": {
-		"felix": {
+		"agatio": {
 			"frame": {
 				"x": 0,
 				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"alex": {
+			"frame": {
+				"x": 32,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"armor_shopkeeper": {
+			"frame": {
+				"x": 64,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"briggs": {
+			"frame": {
+				"x": 96,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"elder_healer": {
+			"frame": {
+				"x": 128,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"felix": {
+			"frame": {
+				"x": 0,
+				"y": 32,
 				"w": 32,
 				"h": 32
 			},
@@ -23,7 +123,67 @@
 		"garet": {
 			"frame": {
 				"x": 32,
+				"y": 32,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
 				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"healer": {
+			"frame": {
+				"x": 64,
+				"y": 32,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"innkeeper": {
+			"frame": {
+				"x": 96,
+				"y": 32,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"innkeeper_wife": {
+			"frame": {
+				"x": 128,
+				"y": 32,
 				"w": 32,
 				"h": 32
 			},
@@ -43,7 +203,7 @@
 		"isaac": {
 			"frame": {
 				"x": 0,
-				"y": 32,
+				"y": 64,
 				"w": 32,
 				"h": 32
 			},
@@ -63,7 +223,7 @@
 		"ivan": {
 			"frame": {
 				"x": 32,
-				"y": 32,
+				"y": 64,
 				"w": 32,
 				"h": 32
 			},
@@ -83,7 +243,127 @@
 		"jenna": {
 			"frame": {
 				"x": 64,
+				"y": 64,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
 				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"jupiter_djinni": {
+			"frame": {
+				"x": 96,
+				"y": 64,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"karst": {
+			"frame": {
+				"x": 128,
+				"y": 64,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"kraden": {
+			"frame": {
+				"x": 0,
+				"y": 96,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"mars_djinni": {
+			"frame": {
+				"x": 32,
+				"y": 96,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"menardi": {
+			"frame": {
+				"x": 64,
+				"y": 96,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"mercury_djinni": {
+			"frame": {
+				"x": 96,
+				"y": 96,
 				"w": 32,
 				"h": 32
 			},
@@ -102,8 +382,8 @@
 		},
 		"mia": {
 			"frame": {
-				"x": 64,
-				"y": 32,
+				"x": 128,
+				"y": 96,
 				"w": 32,
 				"h": 32
 			},
@@ -123,7 +403,47 @@
 		"piers": {
 			"frame": {
 				"x": 0,
-				"y": 64,
+				"y": 128,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"potion_shopkeeper": {
+			"frame": {
+				"x": 32,
+				"y": 128,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"saturos": {
+			"frame": {
+				"x": 64,
+				"y": 128,
 				"w": 32,
 				"h": 32
 			},
@@ -142,8 +462,48 @@
 		},
 		"sheba": {
 			"frame": {
-				"x": 32,
-				"y": 64,
+				"x": 96,
+				"y": 128,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"venus": {
+			"frame": {
+				"x": 128,
+				"y": 128,
+				"w": 32,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 32,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 32,
+				"h": 32
+			}
+		},
+		"weapon_shopkeeper": {
+			"frame": {
+				"x": 160,
+				"y": 0,
 				"w": 32,
 				"h": 32
 			},
@@ -167,8 +527,8 @@
 		"image": "spritesheet.png",
 		"format": "RGBA8888",
 		"size": {
-			"w": 96,
-			"h": 96
+			"w": 192,
+			"h": 160
 		},
 		"scale": "1"
 	}

@@ -100,7 +100,7 @@ export class PsynergyMenuScreen {
     psynergy_choose(ability) {
         if (ability.key_name in field_abilities_list) {
             this.close_menu(true);
-            field_abilities_list[ability.key_name].cast(party_data.members[this.selected_char_index].key_name);
+            field_abilities_list[ability.key_name].cast(this.data.hero, party_data.members[this.selected_char_index].key_name);
         }
     }
 

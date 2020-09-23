@@ -82,7 +82,7 @@ export class Hero extends ControllableChar {
                 this.x_speed = this.y_speed = 0;
                 this.idle_climbing = true;
             } else {
-                if (desired_direction & 1 === 1) { //transforms diagonal movements in non-diagonal
+                if ((desired_direction & 1) === 1) { //transforms diagonal movements in non-diagonal
                     --desired_direction;
                 }
                 this.set_direction(desired_direction);
@@ -230,15 +230,16 @@ export class Hero extends ControllableChar {
 
     config_body(collision_obj) {
         this.game.physics.p2.enable(this.sprite, false);
-        data.hero.reset_anchor(); //Important to be after the previous command
-        data.hero.sprite.body.clearShapes();
-        data.hero.sprite.body.setCircle(numbers.HERO_BODY_RADIUS, 0, 0);
-        data.hero.sprite.body.setCollisionGroup(collision_obj.hero_collision_group);
-        data.hero.sprite.body.mass = 1.0;
-        data.hero.sprite.body.damping = 0;
-        data.hero.sprite.body.angularDamping = 0;
-        data.hero.sprite.body.inertia = 0;
-        data.hero.sprite.body.setZeroRotation();
-        data.hero.sprite.body.fixedRotation = true;
+        this.reset_anchor(); //Important to be after the previous command
+        this.sprite.body.clearShapes();
+        this.body_radius = numbers.HERO_BODY_RADIUS;
+        this.sprite.body.setCircle(this.body_radius, 0, 0);
+        this.sprite.body.setCollisionGroup(collision_obj.hero_collision_group);
+        this.sprite.body.mass = 1.0;
+        this.sprite.body.damping = 0;
+        this.sprite.body.angularDamping = 0;
+        this.sprite.body.inertia = 0;
+        this.sprite.body.setZeroRotation();
+        this.sprite.body.fixedRotation = true;
     }
 }

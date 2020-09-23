@@ -16,5 +16,28 @@
             "image": "assets/images/misc/footprints.png",
             "json": "assets/images/misc/footprints.json"
         }
+    },
+    {
+        "key_name": "move_hand",
+        "anchor_y": 0.5,
+        "anchor_x": 0.5,
+        "body_radius": 0,
+        "initial_animation": "down",
+        "actions": {
+            "frame_rate": 10,
+            "animations": [
+                "down", 
+                "up", 
+                "left", 
+                "right"
+            ],
+            "frames_count": 2,
+            "loop": true
+        },
+        "spritesheet": {
+            "image": "assets/images/misc/move_psynergy_hand.png",
+            "json": "assets/images/misc/move_psynergy_hand.json"
+            
+        }
     }
 ]

@@ -103,6 +103,11 @@ export class SpriteBase {
         }
     }
 
+    getFrameName(action, direction, index) {
+        const formatted_index = index.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
+        return `${action}/${direction}/${formatted_index}`;
+    }
+
     getAnimationKey(action, direction) {
         return action + "_" + direction;
     }

@@ -20,8 +20,8 @@ window.maps = maps;
 window.main_char_list = main_char_list;
 window.abilities_list = abilities_list;
 window.items_list = items_list;
-window.field_abilities_list = field_abilities_list;
 window.djinni_list = djinni_list;
+window.field_abilities_list = field_abilities_list;
 window.enemies_list = enemies_list;
 window.party_data = party_data;
 
@@ -58,6 +58,7 @@ class GoldenSun {
         this.menu_screen = null;
         this.map = null;
         this.tile_event_manager = null;
+        this.field_abilities = null;
 
         //common inputs
         this.enter_input = null;
@@ -88,8 +89,6 @@ class GoldenSun {
         this.esc_input = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown;
         this.shift_input = this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT).onDown;
         this.spacebar_input = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown;
-
-        initialize_field_abilities(this.game, this);
 
         this.game.time.advancedTiming = true;
         this.game.stage.smoothed = false;
@@ -157,6 +156,9 @@ class GoldenSun {
         this.underlayer_group = this.game.add.group();
         this.npc_group = this.game.add.group();
         this.overlayer_group = this.game.add.group();
+
+        //initialize field abilities
+        initialize_field_abilities(this.game, this);
 
         //initialize screens
         this.menu_screen = initialize_menu(this.game, this);
@@ -277,15 +279,15 @@ class GoldenSun {
         //enable psynergies shortcuts for testing
         this.game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
-            field_abilities_list.move.cast(this.init_db.initial_shortcuts.move);
+            field_abilities_list.move.cast(this.hero, this.init_db.initial_shortcuts.move);
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
-            field_abilities_list.frost.cast(this.init_db.initial_shortcuts.frost);
+            field_abilities_list.frost.cast(this.hero, this.init_db.initial_shortcuts.frost);
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
-            field_abilities_list.growth.cast(this.init_db.initial_shortcuts.growth);
+            field_abilities_list.growth.cast(this.hero, this.init_db.initial_shortcuts.growth);
         });
 
         //enable event trigger key

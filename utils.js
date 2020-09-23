@@ -325,19 +325,6 @@ export function get_surroundings(x, y, with_diagonals = false, shift = 1) {
     return surroundings;
 };
 
-/*Sets the psynergy cast direction
-For diagonals, pick the next clockwise non-diagonal
-
-Input: direction [number] - Current direction
-
-Output: [number] - Non-diagonal cast direction*/
-export function set_cast_direction(direction) {
-    if(direction%2===0) return direction;
-    
-    direction++;
-    return direction === directions_count ? directions.right : direction;
-}
-
 /*Lists all directions, diagonals optional
 
 Input: with_diagonals [boolean] - If true, includes diagonals*/
@@ -352,10 +339,11 @@ export function get_directions(with_diagonals = false) {
 /*Capitalizes the given text
 
 Input: text [string] - Text to change
+       lower [boolean] - Whether the full text should be lowercased
 
 Output: [string] - Capitalized text*/
-export function capitalize(text) {
-    return text[0].toUpperCase() + text.slice(1);
+export function capitalize(text, lower = false){
+    return (lower ? text.toLowerCase() : text).replace(/(?:^|\s|["'([{])+\S/g, match => match.toUpperCase());
 }
 
 /*Changes the brightness of a given color code

@@ -26,6 +26,7 @@ export class ControllableChar {
         this.sprite_info = null;
         this.sprite = null;
         this.shadow = null;
+        this.body_radius = 0;
         this.tile_x_pos = initial_x;
         this.tile_y_pos = initial_y;
         this.current_action = initial_action;
