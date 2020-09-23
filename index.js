@@ -6,7 +6,6 @@ import { initialize_djinni, djinni_list } from './initializers/djinni.js';
 import { initialize_enemies, enemies_list } from './initializers/enemies.js';
 import { initialize_maps, load_maps, maps } from './initializers/maps.js';
 import { set_npc_event, trigger_npc_dialog } from './events/npc.js';
-import { do_step } from './events/step.js';
 import { initialize_menu } from './screens/menu.js';
 import { TileEvent } from './base/tile_events/TileEvent.js';
 import { Debug } from './debug.js';
@@ -45,11 +44,9 @@ class GoldenSun {
         );
 
         //events and game states
-        this.waiting_to_step = false;
-        this.step_event_data = {};
         this.menu_open = false;
         this.in_battle = false;
-        this.battle_stage = null;
+        this.battle_instance = null;
         this.created = false;
         this.in_dialog = false;
 
@@ -306,19 +303,12 @@ class GoldenSun {
         if (!this.tile_event_manager.on_event && !this.npc_event && !this.hero.pushing && !this.menu_open && !this.hero.casting_psynergy && !this.in_battle) {
             this.hero.update_tile_position(this.map.sprite);
 
-            if (this.waiting_to_step) { //step event
-                do_step(this);
-            }
-            if (this.collision.waiting_to_change_collision) { //change collision pattern layer event
-                this.collision.do_collision_change(this);
-            }
+            this.tile_event_manager.fire_triggered_events();
 
             //check if the actual tile has an event
-            const event_location_key = TileEvent.get_location_key(this.hero.tile_x_pos, this.hero.tile_y_pos);
-            if (event_location_key in this.map.events) {
-                this.tile_event_manager.event_triggering(event_location_key, this.map);
-            } else if (this.hero.extra_speed !== 0) { //disabling speed event
-                this.hero.extra_speed = 0;
+            const location_key = TileEvent.get_location_key(this.hero.tile_x_pos, this.hero.tile_y_pos);
+            if (location_key in this.map.events) {
+                this.tile_event_manager.check_tile_events(location_key, this.map);
             }
 
             this.hero.update(this.map); //update hero position/velocity/sprite

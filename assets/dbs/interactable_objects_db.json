@@ -40,7 +40,7 @@
         "pushable": true,
         "collision_body_bevel": 3,
         "events": [{
-            "type": "stair",
+            "type": "climb",
             "active": true,
             "dynamic": true,
             "is_set": true,
@@ -123,7 +123,7 @@
         },
         "pushable": false,
         "events": [{
-            "type": "stair",
+            "type": "climb",
             "active": false,
             "dynamic": false,
             "is_set": true,

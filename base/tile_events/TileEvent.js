@@ -1,7 +1,7 @@
 import { get_directions, split_direction } from "../../utils.js";
 
 export const event_types = {
-    STAIR: "stair",
+    CLIMB: "climb",
     SPEED: "speed",
     TELEPORT: "teleport",
     JUMP: "jump",
@@ -78,33 +78,3 @@ export class TileEvent {
 }
 
 TileEvent.reset();
-
-export class StairEvent extends TileEvent {
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, change_to_collision_layer, is_set, origin_interactable_object, climbing_only) {
-        super(game, data, event_types.STAIR, x, y, activation_directions, activation_collision_layers, dynamic, active, origin_interactable_object);
-        this.change_to_collision_layer = change_to_collision_layer;
-        this.is_set = is_set === undefined ? true : is_set;
-        this.climbing_only = climbing_only === undefined ? false : climbing_only;
-    }
-}
-
-export class SpeedEvent extends TileEvent {
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, speed) {
-        super(game, data, event_types.SPEED, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
-        this.speed = speed;
-    }
-}
-
-export class StepEvent extends TileEvent {
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, step_direction) {
-        super(game, data, event_types.STEP, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
-        this.step_direction = step_direction;
-    }
-}
-
-export class CollisionEvent extends TileEvent {
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, dest_collider_layer) {
-        super(game, data, event_types.COLLISION, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
-        this.dest_collider_layer = dest_collider_layer;
-    }
-}

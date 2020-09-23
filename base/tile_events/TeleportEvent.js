@@ -47,7 +47,7 @@ export class TeleportEvent extends TileEvent {
 
     camera_fade_in() {
         this.data.hero.stop_char(true);
-        this.data.hero.current_direction = this.activation_directions[0];
+        this.data.hero.set_direction(this.activation_directions[0]);
         this.data.hero.play("idle", reverse_directions[this.data.hero.current_direction]);
         this.game.camera.fade();
         this.game.camera.onFadeComplete.addOnce(() => {

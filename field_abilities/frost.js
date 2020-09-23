@@ -9,7 +9,7 @@ import { JumpEvent } from "../base/tile_events/JumpEvent.js";
 const ACTION_KEY_NAME = "cast";
 const FROST_MAX_RANGE = 12;
 const SNOWFLAKES_COUNT = 16; 
-const TOTAL_TURNS_SNOWFLAKES = Math.PI * 7; 
+const TOTAL_TURNS_SNOWFLAKES = Math.PI * 7;
 const POLAR_SLOPE = 0.15; 
 const SPIRAL_INTENSITY = 8; 
 const SNOWFLAKE_DURATION = 1650;
@@ -222,7 +222,7 @@ export class FrostFieldPsynergy {
         caster.current_pp -= ability.pp_cost;
 
         this.cast_direction = set_cast_direction(this.data.hero.current_direction);
-        this.data.hero.current_direction = this.cast_direction;
+        this.data.hero.set_direction(this.cast_direction);
         this.search_for_target();
 
         if (this.target_object && this.target_object.custom_data.frost_casted) {

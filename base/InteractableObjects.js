@@ -1,8 +1,9 @@
 import { SpriteBase } from "./SpriteBase.js";
-import { TileEvent, StairEvent, event_types as tile_event_types } from "./tile_events/TileEvent.js";
+import { TileEvent, event_types as tile_event_types } from "./tile_events/TileEvent.js";
 import * as numbers from '../magic_numbers.js';
 import { directions, get_surroundings, mount_collision_polygon } from "../utils.js";
 import { JumpEvent } from "./tile_events/JumpEvent.js";
+import { ClimbEvent } from "./tile_events/ClimbEvent.js";
 
 export const interactable_object_interaction_types = {
     ONCE: "once",
@@ -12,7 +13,7 @@ export const interactable_object_interaction_types = {
 export const interactable_object_event_types = {
     JUMP: "jump",
     JUMP_AROUND: "jump_around",
-    STAIR: "stair"
+    CLIMB: "climb"
 };
 
 export class InteractableObjects_Sprite extends SpriteBase {
@@ -155,7 +156,7 @@ export class InteractableObjects {
                 case interactable_object_event_types.JUMP_AROUND:
                     this.set_jump_around_event(event_info, x_pos, y_pos, active_event, target_layer, map_events);
                     break;
-                case interactable_object_event_types.STAIR:
+                case interactable_object_event_types.CLIMB:
                     this.set_stair_event(event_info, x_pos, y_pos, active_event, target_layer, map_events);
                     break
             }
@@ -286,7 +287,7 @@ export class InteractableObjects {
             if (!(this_location_key in map_events)) {
                 map_events[this_location_key] = [];
             }
-            const new_event = new StairEvent(
+            const new_event = new ClimbEvent(
                 this.game,
                 this.data,
                 event_data.x,

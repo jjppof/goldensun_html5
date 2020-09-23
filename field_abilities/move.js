@@ -98,7 +98,7 @@ export class MoveFieldPsynergy {
                             need_change = true;
                         }
                         if (!need_change) return;
-                        this.data.hero.current_direction = this.cast_direction;
+                        this.data.hero.set_direction(this.cast_direction);
                         this.data.hero.sprite.animations.stop();
                         const dest_direction = reverse_directions[this.cast_direction];
                         this.data.hero.sprite.animations.play("cast_" + dest_direction, 0);
@@ -376,7 +376,7 @@ export class MoveFieldPsynergy {
         caster.current_pp -= ability.pp_cost;
 
         this.cast_direction = set_cast_direction(this.data.hero.current_direction);
-        this.data.hero.current_direction = this.cast_direction;
+        this.data.hero.set_direction(this.cast_direction);
         this.set_emitter();
         this.set_final_emitter();
         this.search_for_target();

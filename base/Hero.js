@@ -95,7 +95,7 @@ export class Hero extends ControllableChar {
                 if (desired_direction & 1 === 1) { //transforms diagonal movements in non-diagonal
                     --desired_direction;
                 }
-                this.current_direction = desired_direction;
+                this.set_direction(desired_direction);
                 this.idle_climbing = false;
                 this.x_speed = speeds[desired_direction].x;
                 this.y_speed = speeds[desired_direction].y;
@@ -104,7 +104,10 @@ export class Hero extends ControllableChar {
             //when force_direction is true, it means that the hero is going to face a different direction from the one specified in the keyboard arrows
             if (desired_direction !== null || this.force_direction) {
                 if (!this.force_direction) {
-                    this.current_direction = get_transition_directions(this.current_direction, desired_direction);
+                    this.current_direction = desired_direction;
+                    if (this.game.time.frames & 1) { //turn time frame rate
+                        this.desired_direction = get_transition_directions(this.desired_direction, desired_direction);
+                    }
                 } else {
                     desired_direction = this.current_direction;
                 }
@@ -132,7 +135,7 @@ export class Hero extends ControllableChar {
                             let has_stair = false;
                             if (events_in_pos) {
                                 events_in_pos.forEach(event => {
-                                    if (event.type === event_types.STAIR && event.is_set && event.activation_directions.includes(this.trying_to_push_direction)) {
+                                    if (event.type === event_types.CLIMB && event.is_set && event.activation_directions.includes(this.trying_to_push_direction)) {
                                         has_stair = true;
                                         return;
                                     }
@@ -208,7 +211,7 @@ export class Hero extends ControllableChar {
                     //if player's direction is within 1 of wall_direction
                     if (relative_direction === 1 || relative_direction === 7) {
                         this.force_direction = true;
-                        this.current_direction = (wall_direction + (relative_direction << 1)) & 7;
+                        this.set_direction((wall_direction + (relative_direction << 1)) & 7);
                     } else {
                         this.force_direction = false;
                     }
