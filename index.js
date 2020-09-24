@@ -15,6 +15,7 @@ import { directions } from './utils.js';
 import { Hero } from './base/Hero.js';
 import { TileEventManager } from './base/tile_events/TileEventManager.js';
 import { initialize_misc_data } from './initializers/misc_data.js';
+import { ShopMenuScreen } from './screens/shop_menu.js';
 
 //debugging porpouses
 window.maps = maps;
@@ -57,6 +58,7 @@ class GoldenSun {
         this.cursors = null;
         this.debug = null;
         this.menu_screen = null;
+        this.shop_screen;
         this.map = null;
         this.tile_event_manager = null;
         this.field_abilities = null;
@@ -170,6 +172,7 @@ class GoldenSun {
 
         //initialize screens
         this.menu_screen = initialize_menu(this.game, this);
+        this.shop_screen = new ShopMenuScreen(this.game, this, "madra_medicine_shop");
 
         //configuring map layers: creating sprites, listing events and setting the layers
         this.map = await maps[this.init_db.map_key_name].mount_map(this.init_db.map_z_index);
@@ -190,11 +193,15 @@ class GoldenSun {
         this.maps_db = this.game.cache.getJSON('maps_db');
         this.main_chars_db = this.game.cache.getJSON('main_chars_db');
         this.summons_db = this.game.cache.getJSON('summons_db');
+        this.shopkeep_dialog_db = this.game.cache.getJSON('shopkeep_dialog_db');
+        this.shops_db = this.game.cache.getJSON('shops_db');
 
         this.scale_factor = this.init_db.initial_scale_factor;
         party_data.coins = this.init_db.coins;
 
         //format some db structures
+        this.shops_db = _.mapKeys(this.shops_db, shop => shop.key_name);
+        this.shopkeep_dialog_db = _.mapKeys(this.shopkeep_dialog_db, shopkeep_dialog => shopkeep_dialog.key_name);
         this.interactable_objects_db = _.mapKeys(this.interactable_objects_db, interactable_object_data => interactable_object_data.key_name);
         this.enemies_parties_db = _.mapKeys(this.enemies_parties_db, enemy_party_data => enemy_party_data.key_name);
         this.npc_db = _.mapKeys(this.npc_db, npc_data => npc_data.key_name);
