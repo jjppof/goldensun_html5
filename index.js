@@ -58,7 +58,7 @@ class GoldenSun {
         this.cursors = null;
         this.debug = null;
         this.menu_screen = null;
-        this.shop_screen;
+        this.shop_screen = null;
         this.map = null;
         this.tile_event_manager = null;
         this.field_abilities = null;
@@ -302,6 +302,10 @@ class GoldenSun {
         this.game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
             field_abilities_list.growth.cast(this.hero, this.init_db.initial_shortcuts.growth);
+        });
+        this.game.input.keyboard.addKey(Phaser.Keyboard.S).onDown.add(() => {
+            if (this.hero.in_action() || this.menu_open || this.in_battle) return;
+            this.shop_screen.open_menu("madra_medicine_shop");
         });
 
         //enable event trigger key

@@ -3,14 +3,22 @@ import { ShopkeepDialog } from '../base/windows/shop/ShopkeepDialog.js';
 import { BuyArtifactsMenu } from '../base/windows/shop/BuyArtifactsMenu.js';
 import { SellRepairMenu } from '../base/windows/shop/SellRepairMenu.js';
 import { capitalize } from '../utils.js';
+import { YesNoMenu } from '../base/windows/YesNoMenu.js';
 
 export class ShopMenuScreen{
-    constructor(game, data, shop_key){
+    constructor(game, data){
         this.game = game;
         this.data = data;
-        this.shop_key = shop_key;
+        this.shop_key = null;
         let esc_propagation_priority = 0;
         let enter_propagation_priority = 0;
+
+        this.items_db = _.mapKeys(this.data.items_db, item_data => item_data.key_name);
+        this.shops_db = this.data.shops_db;
+        this.shopkeep_dialog_db = this.data.shopkeep_dialog_db;
+
+        this.normal_item_list = [];
+        this.artifact_list = [];
 
         this.buttons_keys = ["buy", "sell", "artifacts", "repair"];
         this.horizontal_menu = new HorizontalMenu(
@@ -27,13 +35,35 @@ export class ShopMenuScreen{
         ++enter_propagation_priority;
 
         this.npc_dialog = new ShopkeepDialog(this.game, this.data);
-        this.buy_menu = new BuyArtifactsMenu(this.game, this.data);
-        this.sell_menu = new SellRepairMenu(this.game, this.data);
-        this.artifacts_menu = new BuyArtifactsMenu(this.game, this.data);
-        this.repair_menu = new SellRepairMenu(this.game, this.data);
+
+        let yes_callback = () => {console.log("yes")};
+        let no_callback = () => {console.log("no")};
+        this.yesno = new YesNoMenu(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority, yes_callback, no_callback);
+        /*
+        this.buy_menu = new BuyArtifactsMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
+        this.sell_menu = new SellRepairMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
+        this.artifacts_menu = new BuyArtifactsMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
+        this.repair_menu = new SellRepairMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);*/
+    }
+
+    set_item_lists(){
+        this.normal_item_list = [];
+        this.artifact_list = [];
+
+        let item_list = this.shops_db[this.shop_key].item_list;
+        for(let i=0; i<item_list.length; i++){
+            let item = this.items_db[item_list[i]];
+
+            if(item.rare_item === true) this.artifact_list.push(item);
+            else this.normal_item_list.push(item);
+        }
+
+        this.normal_item_list = _.mapKeys(this.normal_item_list, item => item.key_name);
+        this.artifact_list = _.mapKeys(this.artifact_list, item => item.key_name);
     }
 
     button_press(index) {
+        /*
         switch (this.buttons_keys[index]) {
             case "buy":
                 this.button_press_action(this.buy_menu);
@@ -47,7 +77,7 @@ export class ShopMenuScreen{
             case "repair":
                 this.button_press_action(this.repair_menu);
                 break;
-        }
+        }*/
     }
 
     button_press_action(menu) {
@@ -58,8 +88,7 @@ export class ShopMenuScreen{
             if (close_this_menu) {
                 this.close_menu();
             }
-        });
-        */
+        });*/
     }
 
     update_position() {
@@ -71,33 +100,42 @@ export class ShopMenuScreen{
         return this.horizontal_menu.menu_active;
     }
 
-    open_menu() {
+    open_menu(shop_key) {
+        this.shop_key = shop_key;
         this.data.in_dialog = true;
-        this.npc_dialog.open(this.shop_key);
+        this.npc_dialog.open(shop_key);
 
+        if(this.data.hero.in_action()){
+            this.data.hero.stop_char();
+            this.data.hero.update_shadow();
+        }
+
+        this.set_item_lists();
         this.data.menu_open = true;
         this.horizontal_menu.open();
         
     }
 
+    end_dialog() {
+        this.shop_key = null;
+        this.npc_dialog.close();
+        this.data.in_dialog = false;
+        this.data.menu_open = false;
+    }
+
     close_menu() {
         if (!this.is_active()) return;
-        this.data.menu_open = false;
         this.horizontal_menu.close();
 
         this.npc_dialog.current_message = this.npc_dialog.get_message("goodbye");
         this.npc_dialog.update_dialog(this.npc_dialog.current_message.text); 
 
+        this.normal_item_list = [];
+        this.artifact_list = [];
+
         data.enter_input.add(() => {
-            if (data.hero.in_action() || data.in_battle || !data.created) return;
-            if (!data.menu_open) {
-                data.menu_open = true;
-                data.hero.stop_char();
-                data.hero.update_shadow();
-                data.menu_screen.open_menu();
-            } else if (data.menu_screen.is_active()) {
-                data.in_dialog = false;
-                data.shop_screen.npc_dialog.close();
+            if (data.shop_screen.is_active()) {
+                data.shop_screen.end_dialog();
             }
         }, this);
     }
