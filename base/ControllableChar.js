@@ -43,8 +43,9 @@ export class ControllableChar {
     }
 
     set_sprite(group, sprite_info, map_sprite, layer, anchor_x = DEFAULT_SPRITE_ANCHOR_X, anchor_y = DEFAULT_SPRITE_ANCHOR_Y) {
-        this.sprite = group.create(0, 0, this.key_name + "_" + this.current_action);
         this.sprite_info = sprite_info;
+        const action_key = this.sprite_info.getActionKey(this.current_action);
+        this.sprite = group.create(0, 0, action_key);
         this.sprite.centerX = ((this.tile_x_pos + 1.5) * map_sprite.tileWidth) | 0;
         this.sprite.centerY = ((this.tile_y_pos + 1.5) * map_sprite.tileHeight) | 0;
         this.sprite.base_collider_layer = layer;
@@ -78,10 +79,11 @@ export class ControllableChar {
     play(action, animation) {
         action = action === undefined ? this.current_action : action;
         animation = animation === undefined ? reverse_directions[this.current_direction] : animation;
-        if (this.sprite.key.split("_")[1] !== action) {
-            this.sprite.loadTexture(this.key_name + "_" + action);
+        if (this.sprite_info.getSpriteAction(this.sprite) !== action) {
+            const action_key = this.sprite_info.getActionKey(action);
+            this.sprite.loadTexture(action_key);
         }
-        const animation_key = action + "_" + animation;
+        const animation_key = this.sprite_info.getAnimationKey(action, animation);
         if (!this.sprite.animations.getAnimation(animation_key)) {
             this.sprite_info.setAnimation(this.sprite, action);
         }
