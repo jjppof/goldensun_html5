@@ -84,7 +84,7 @@ export class SpriteBase {
             const frame_rate = this.actions[action].frame_rate[direction];
             sprite.animations.add(
                 action + "_" + direction,
-                this.animations[action][direction], 
+                this.animations[action][direction],
                 frame_rate,
                 Array.isArray(loop) ? loop[i] : loop,
                 false
@@ -106,6 +106,10 @@ export class SpriteBase {
     getFrameName(action, direction, index) {
         const formatted_index = index.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
         return `${action}/${direction}/${formatted_index}`;
+    }
+
+    getActionKey(action) {
+        return this.key_name + "_" + action;
     }
 
     getAnimationKey(action, direction) {

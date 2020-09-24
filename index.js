@@ -14,6 +14,7 @@ import { Collision } from './base/Collision.js';
 import { directions } from './utils.js';
 import { Hero } from './base/Hero.js';
 import { TileEventManager } from './base/tile_events/TileEventManager.js';
+import { initialize_misc_data } from './initializers/misc_data.js';
 
 //debugging porpouses
 window.maps = maps;
@@ -152,6 +153,13 @@ class GoldenSun {
         initialize_main_chars(this.game, this.main_chars_db, load_chars_promise_resolve);
         await load_chars_promise;
 
+        let load_misc_promise_resolve;
+        const load_misc_promise = new Promise(resolve => {
+            load_misc_promise_resolve = resolve;
+        });
+        initialize_misc_data(this.game, this.misc_animations_db, load_misc_promise_resolve);
+        await load_misc_promise;
+
         //creating groups. Order here is important
         this.underlayer_group = this.game.add.group();
         this.npc_group = this.game.add.group();
@@ -187,7 +195,6 @@ class GoldenSun {
         party_data.coins = this.init_db.coins;
 
         //format some db structures
-        this.misc_animations_db = _.mapKeys(this.misc_animations_db, misc_animations_data => misc_animations_data.key_name);
         this.interactable_objects_db = _.mapKeys(this.interactable_objects_db, interactable_object_data => interactable_object_data.key_name);
         this.enemies_parties_db = _.mapKeys(this.enemies_parties_db, enemy_party_data => enemy_party_data.key_name);
         this.npc_db = _.mapKeys(this.npc_db, npc_data => npc_data.key_name);

@@ -1,43 +1,37 @@
 [
     {
         "key_name": "footprints",
-        "anchor_y": 0.5,
-        "anchor_x": 0.5,
-        "body_radius": 0,
-        "pushable": false,
         "initial_animation": "double",
-        "actions": {
+        "actions": [{
+            "key_name": "footprints",
             "frame_rate": 10,
             "animations": ["single", "double"],
             "frames_count": 3,
-            "loop": false
-        },
-        "spritesheet": {
-            "image": "assets/images/misc/footprints.png",
-            "json": "assets/images/misc/footprints.json"
-        }
+            "loop": false,
+            "spritesheet": {
+                "image": "assets/images/misc/footprints.png",
+                "json": "assets/images/misc/footprints.json"
+            }
+        }]
     },
     {
         "key_name": "move_hand",
-        "anchor_y": 0.5,
-        "anchor_x": 0.5,
-        "body_radius": 0,
         "initial_animation": "down",
-        "actions": {
+        "actions": [{
+            "key_name": "move_hand",
             "frame_rate": 10,
             "animations": [
-                "down", 
-                "up", 
-                "left", 
+                "down",
+                "up",
+                "left",
                 "right"
             ],
             "frames_count": 2,
-            "loop": true
-        },
-        "spritesheet": {
-            "image": "assets/images/misc/move_psynergy_hand.png",
-            "json": "assets/images/misc/move_psynergy_hand.json"
-            
-        }
+            "loop": true,
+            "spritesheet": {
+                "image": "assets/images/misc/move_psynergy_hand.png",
+                "json": "assets/images/misc/move_psynergy_hand.json"
+            }
+        }]
     }
 ]

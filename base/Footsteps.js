@@ -1,4 +1,4 @@
-import {SpriteBase} from "../base/SpriteBase.js";
+import { misc_sprite_base_list } from "../initializers/misc_data.js";
 import {directions} from "../utils.js";
 
 const FOOTSTEPS_TTL = Phaser.Timer.SECOND << 1;
@@ -9,6 +9,7 @@ const INITIAL_ACTION = "idle";
 const INITIAL_DIRECTION = directions.down;
 
 const FOOTSTEPS_KEY_NAME = "footprints";
+const FOOTSTEPS_ANCHOR = 0.5;
 const MAX_DEAD_SIZE = 20;
 
 const foot_forward_types = {
@@ -31,9 +32,8 @@ export class Footsteps{
         this.current_action = INITIAL_ACTION;
         this.current_direction = INITIAL_DIRECTION;
         this.animation_db = this.data.misc_animations_db[FOOTSTEPS_KEY_NAME];
-        this.anchor_x = this.animation_db.anchor_x;
-        this.anchor_y = this.animation_db.anchor_y;
-        this.animations = this.animation_db.actions.animations;
+        this.anchor_x = FOOTSTEPS_ANCHOR;
+        this.anchor_y = FOOTSTEPS_ANCHOR;
         this.group = this.game.add.group();
         this.group.send_to_back = true;
         this.group.base_collider_layer = 0;
@@ -48,11 +48,7 @@ export class Footsteps{
         this.new_step_timer = this.game.time.create(false);
         this.expire_timer = this.game.time.create(false);
 
-        this.footsteps_sprite_base = new SpriteBase(FOOTSTEPS_KEY_NAME, [FOOTSTEPS_KEY_NAME]);
-        this.footsteps_sprite_base.setActionDirections(FOOTSTEPS_KEY_NAME, this.animation_db.actions.animations, this.animation_db.actions.frames_count);
-        this.footsteps_sprite_base.setActionFrameRate(FOOTSTEPS_KEY_NAME, this.animation_db.actions.frame_rate);
-        this.footsteps_sprite_base.setActionLoop(FOOTSTEPS_KEY_NAME, this.animation_db.actions.loop);
-        this.footsteps_sprite_base.generateAllFrames();
+        this.footsteps_sprite_base = misc_sprite_base_list[FOOTSTEPS_KEY_NAME];
     }
 
     /*Sets the footprint interval timer*/
@@ -89,7 +85,7 @@ export class Footsteps{
     
     Input: sprite [Phaser:Sprite] - The sprite to be affected*/
     position_footsteps(sprite){
-        sprite.scale.x = this.foot_forward === foot_forward_types.RIGHT ?  -1 : 1;
+        sprite.scale.x = this.foot_forward === foot_forward_types.RIGHT ? -1 : 1;
         sprite.rotation = (this.current_direction + 2)*Math.PI/4;
     }
 
@@ -105,12 +101,13 @@ export class Footsteps{
         this.current_direction = direction;
         this.current_action = action;
         this.update_foot();
-        this.footsteps_type = this.current_action === "idle" ?  1 : 0;
-        const animation_name = this.footsteps_sprite_base.getAnimationKey(FOOTSTEPS_KEY_NAME, this.animations[this.footsteps_type]);
+        this.footsteps_type = this.current_action === "idle" ? "double" : "single";
+        const animation_name = this.footsteps_sprite_base.getAnimationKey(FOOTSTEPS_KEY_NAME, this.footsteps_type);
 
         let footsteps_sprite;
         if(this.dead_index === 0){
-            footsteps_sprite = this.group.create(0, 0, FOOTSTEPS_KEY_NAME);
+            const sprite_key = this.footsteps_sprite_base.getActionKey(FOOTSTEPS_KEY_NAME);
+            footsteps_sprite = this.group.create(0, 0, sprite_key);
             footsteps_sprite.anchor.setTo(this.anchor_x, this.anchor_y);
             this.footsteps_sprite_base.setAnimation(footsteps_sprite,FOOTSTEPS_KEY_NAME);
         }
@@ -166,8 +163,6 @@ export class Footsteps{
     /*Destroys this object and its children*/
     destroy(){
         this.clean_all(true);
-        this.footsteps_sprite_base = null;
-        this.animation_db = null;
         this.new_step_timer.destroy();
         this.expire_timer.destroy();
     }
