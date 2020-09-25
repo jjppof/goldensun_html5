@@ -2,10 +2,17 @@ import * as numbers from "../magic_numbers.js";
 import { reverse_directions } from "../utils.js";
 import { Footsteps } from "./Footsteps.js";
 
+const DEFAULT_SHADOW_KEYNAME = "shadow";
+
 const DEFAULT_SHADOW_ANCHOR_X = 0.45;
 const DEFAULT_SHADOW_ANCHOR_Y = 0.05;
 const DEFAULT_SPRITE_ANCHOR_X = 0.50;
 const DEFAULT_SPRITE_ANCHOR_Y = 0.80;
+
+const default_anchor = {
+    x: DEFAULT_SPRITE_ANCHOR_X,
+    y: DEFAULT_SPRITE_ANCHOR_Y
+};
 
 export class ControllableChar {
     constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps) {
@@ -42,7 +49,9 @@ export class ControllableChar {
         return this.casting_psynergy || this.pushing || (this.climbing && !allow_climbing) || this.jumping || this.teleporting;
     }
 
-    set_sprite(group, sprite_info, map_sprite, layer, anchor_x = DEFAULT_SPRITE_ANCHOR_X, anchor_y = DEFAULT_SPRITE_ANCHOR_Y) {
+    set_sprite(group, sprite_info, map_sprite, layer, anchor_x, anchor_y) {
+        anchor_x = anchor_x === undefined ? default_anchor.x : anchor_x;
+        anchor_y = anchor_y === undefined ? default_anchor.y : anchor_y;
         this.sprite_info = sprite_info;
         const action_key = this.sprite_info.getActionKey(this.current_action);
         this.sprite = group.create(0, 0, action_key);
@@ -53,12 +62,19 @@ export class ControllableChar {
         this.sprite.anchor.setTo(anchor_x, anchor_y);
     }
 
-    reset_anchor() {
-        this.sprite.anchor.x = DEFAULT_SPRITE_ANCHOR_X;
-        this.sprite.anchor.y = DEFAULT_SPRITE_ANCHOR_Y;
+    reset_anchor(property) {
+        if (property !== undefined && ['x', 'y'].includes(property)) {
+            this.sprite.anchor[property] = default_anchor[property];
+        } else {
+            this.sprite.anchor.x = default_anchor.x;
+            this.sprite.anchor.y = default_anchor.y;
+        }
     }
 
-    set_shadow(key_name, group, layer, shadow_anchor_x = DEFAULT_SHADOW_ANCHOR_X, shadow_anchor_y = DEFAULT_SHADOW_ANCHOR_Y) {
+    set_shadow(key_name, group, layer, shadow_anchor_x, shadow_anchor_y) {
+        key_name = key_name === undefined ? DEFAULT_SHADOW_KEYNAME : key_name;
+        shadow_anchor_x = shadow_anchor_x === undefined ? DEFAULT_SHADOW_ANCHOR_X : shadow_anchor_x;
+        shadow_anchor_y = shadow_anchor_y === undefined ? DEFAULT_SHADOW_ANCHOR_Y : shadow_anchor_y;
         this.shadow = group.create(0, 0, key_name);
         this.shadow.blendMode = PIXI.blendModes.MULTIPLY;
         this.shadow.disableRoundPx = true;

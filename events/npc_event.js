@@ -10,8 +10,8 @@ export function trigger_npc_dialog(game, data) {
                 data.hero.current_direction,
                 data.hero.sprite.x,
                 data.hero.sprite.y,
-                npc.npc_sprite.x,
-                npc.npc_sprite.y,
+                npc.sprite.x,
+                npc.sprite.y,
                 npc.talk_range_factor
             );
             if (is_close_check) {
@@ -29,10 +29,9 @@ export function trigger_npc_dialog(game, data) {
                 data.in_dialog = false;
                 data.dialog_manager = null;
                 data.npc_event = false;
-                data.active_npc.npc_sprite.animations.play([
-                    data.npc_db[data.active_npc.key_name].initial_action,
-                    data.npc_db[data.active_npc.key_name].actions[data.npc_db[data.active_npc.key_name].initial_action].initial_direction
-                ].join("_"));
+                const initial_action = data.npc_db[data.active_npc.key_name].initial_action;
+                const initial_direction = data.npc_db[data.active_npc.key_name].actions[initial_action].initial_direction;
+                data.active_npc.play(initial_action, initial_direction);
                 data.active_npc.events.forEach(event => {
                     event.fire(game, data);
                 })
@@ -47,12 +46,12 @@ export function set_npc_event(game, data) {
     if (!data.waiting_for_enter_press) {
         if (!data.in_dialog && data.active_npc.npc_type === npc_types.NORMAL) {
             let parts = set_dialog(game, data.active_npc.message);
-            let npc_x = data.active_npc.npc_sprite.x;
-            let npc_y = data.active_npc.npc_sprite.y;
+            let npc_x = data.active_npc.sprite.x;
+            let npc_y = data.active_npc.sprite.y;
             let interaction_directions = get_interaction_directions(data, data.hero.sprite.x, data.hero.sprite.y, npc_x, npc_y, data.active_npc.key_name);
             data.hero.set_direction(interaction_directions.hero_direction);
-            data.hero.sprite.animations.play("idle_" + reverse_directions[interaction_directions.hero_direction]);
-            data.active_npc.npc_sprite.animations.play("idle_" + reverse_directions[interaction_directions.npc_direction]);
+            data.hero.play("idle", reverse_directions[interaction_directions.hero_direction]);
+            data.active_npc.play("idle", reverse_directions[interaction_directions.npc_direction]);
             data.dialog_manager = new DialogManager(game, parts, data.hero.current_direction);
             data.in_dialog = true;
             data.dialog_manager.next(() => {
