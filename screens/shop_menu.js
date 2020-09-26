@@ -3,7 +3,8 @@ import { ShopkeepDialog } from '../base/windows/shop/ShopkeepDialog.js';
 import { BuyArtifactsMenu } from '../base/windows/shop/BuyArtifactsMenu.js';
 import { SellRepairMenu } from '../base/windows/shop/SellRepairMenu.js';
 import { capitalize } from '../utils.js';
-import { YesNoMenu } from '../base/windows/YesNoMenu.js';
+import { items_list } from '../initializers/items.js';
+import { InventoryWindow } from '../base/windows/shop/InventoryWindow.js';
 
 export class ShopMenuScreen{
     constructor(game, data){
@@ -13,7 +14,7 @@ export class ShopMenuScreen{
         let esc_propagation_priority = 0;
         let enter_propagation_priority = 0;
 
-        this.items_db = _.mapKeys(this.data.items_db, item_data => item_data.key_name);
+        this.items_db = items_list;
         this.shops_db = this.data.shops_db;
         this.shopkeep_dialog_db = this.data.shopkeep_dialog_db;
 
@@ -36,9 +37,7 @@ export class ShopMenuScreen{
 
         this.npc_dialog = new ShopkeepDialog(this.game, this.data);
 
-        let yes_callback = () => {console.log("yes")};
-        let no_callback = () => {console.log("no")};
-        this.yesno = new YesNoMenu(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority, yes_callback, no_callback);
+        this.inv_win = new InventoryWindow(this.game, this.data);
         /*
         this.buy_menu = new BuyArtifactsMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
         this.sell_menu = new SellRepairMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);

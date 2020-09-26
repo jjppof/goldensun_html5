@@ -15,7 +15,7 @@ export class YesNoMenu{
         this.callback = no_callback;
         this.buttons_keys = ["yes", "no"];
 
-        this.menu_state = null;
+        this.was_in_dialog = null;
 
         this.menu = new HorizontalMenu(
             this.game,
@@ -62,8 +62,8 @@ export class YesNoMenu{
     }
 
     open_menu(){
-        this.menu_state = this.data.menu_open;
-        this.data.menu_open = this.menu_state === true ? this.menu_state : true;
+        this.was_in_dialog = this.data.in_dialog;
+        this.data.in_dialog = this.was_in_dialog === true ? this.was_in_dialog : true;
         if(this.data.hero.in_action()){
             this.data.hero.stop_char();
             this.data.hero.update_shadow();
@@ -75,7 +75,7 @@ export class YesNoMenu{
     close_menu() {
         if (!this.is_active()) return;
         this.menu.close();
-        this.data.menu_open = this.menu_state;
+        this.data.in_dialog = this.was_in_dialog;
         this.callback();
     }
 }
