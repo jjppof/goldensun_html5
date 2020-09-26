@@ -14,11 +14,8 @@ import { directions } from './utils.js';
 import { Hero } from './base/Hero.js';
 import { TileEventManager } from './base/tile_events/TileEventManager.js';
 import { initialize_misc_data } from './initializers/misc_data.js';
-<<<<<<< HEAD
 import { ShopMenuScreen } from './screens/shop_menu.js';
-=======
 import { GameEventManager } from './base/game_events/GameEventManager.js';
->>>>>>> master
 
 //debugging porpouses
 window.maps = maps;
@@ -300,19 +297,10 @@ class GoldenSun {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
             field_abilities_list.growth.cast(this.hero, this.init_db.initial_shortcuts.growth);
         });
-<<<<<<< HEAD
         this.game.input.keyboard.addKey(Phaser.Keyboard.S).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
             this.shop_screen.open_menu("madra_medicine_shop");
         });
-
-        //enable event trigger key
-        this.enter_input.add(() => {
-            if (this.hero.in_action() || this.in_battle || !this.created) return;
-            trigger_npc_dialog(this.game, this);
-        });
-=======
->>>>>>> master
     }
 
     update() {
