@@ -3,6 +3,7 @@ import { party_data } from "../../../initializers/main_chars.js";
 import { items_list } from '../../../initializers/items.js';
 
 const MAX_PER_LINE = 5;
+const ICON_SIZE = 16;
 
 const MESSAGE_HAVE_ITEM = "You have ";
 const MESSAGE_NO_ITEM = "None in stock";
@@ -65,14 +66,14 @@ export class InventoryWindow{
             let col = i % MAX_PER_LINE;
             let line = (i / MAX_PER_LINE) | 0;
 
-            this.sprites.push(this.window.create_at_group(col*16, line*16, "item_border", undefined, undefined, "sprites"));
-            this.sprites.push(this.window.create_at_group(col*16, line*16, "items_icons", undefined, this_item.key_name, "sprites"));
+            this.sprites.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "item_border", undefined, undefined, "sprites"));
+            this.sprites.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "items_icons", undefined, this_item.key_name, "sprites"));
 
             if (this.items[i].equipped) {
-                this.icons.push(this.window.create_at_group(col*16, line*16, "equipped", undefined,undefined, "icons"));
+                this.icons.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "equipped", undefined,undefined, "icons"));
             }
             if (this.items[i].quantity > 1) {
-                let item_count = this.game.add.bitmapText(col*16, line*16, 'gs-item-bmp-font', this.items[i].quantity.toString());
+                let item_count = this.game.add.bitmapText(col*ICON_SIZE, line*ICON_SIZE, 'gs-item-bmp-font', this.items[i].quantity.toString());
                 this.icons.push(item_count);
                 this.window.add_to_internal_group("icons", item_count);
             }
