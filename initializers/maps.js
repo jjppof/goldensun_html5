@@ -14,13 +14,15 @@ export function initialize_maps(game, data, maps_db) {
             map_data.collision_key_names,
             map_data.tileset_files.image,
             map_data.tileset_files.json,
-            map_data.collision_files
+            map_data.collision_files,
+            map_data.lazy_load
         );
     }
 }
 
 export function load_maps(resolve){
     for (let map in maps) {
+        if (maps[map].lazy_load) continue;
         maps[map].load_map_assets(true, resolve);
     }
 }

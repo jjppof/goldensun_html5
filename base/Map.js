@@ -2,7 +2,6 @@ import { directions, map_directions } from "../utils.js";
 import { NPC_Sprite, NPC, npc_movement_types } from './NPC.js';
 import { InteractableObjects, InteractableObjects_Sprite, interactable_object_interaction_types } from "./InteractableObjects.js";
 import { TileEvent, event_types as tile_event_types } from './tile_events/TileEvent.js';
-import { GameEvent } from "./GameEvent.js";
 import * as numbers from "../magic_numbers.js";
 import { JumpEvent } from "./tile_events/JumpEvent.js";
 import { TeleportEvent } from "./tile_events/TeleportEvent.js";
@@ -10,6 +9,7 @@ import { ClimbEvent } from "./tile_events/ClimbEvent.js";
 import { StepEvent } from "./tile_events/StepEvent.js";
 import { CollisionEvent } from "./tile_events/CollisionEvent.js";
 import { SpeedEvent } from "./tile_events/SpeedEvent.js";
+import { GameEvent } from "./game_events/GameEvent.js";
 
 export class Map {
     constructor (
@@ -21,7 +21,8 @@ export class Map {
         physics_names,
         tileset_image_url,
         tileset_json_url,
-        physics_jsons_url
+        physics_jsons_url,
+        lazy_load
     ) {
         this.game = game;
         this.data = data;
@@ -42,6 +43,8 @@ export class Map {
         this.color_filter = this.game.add.filter('ColorFilters');
         this.collision_layer = null;
         this.show_footsteps = false;
+        this.assets_loaded = false;
+        this.lazy_load = lazy_load === undefined ? false : lazy_load;
     }
 
     sort_sprites() {
@@ -90,6 +93,12 @@ export class Map {
         this.collision_sprite.body.velocity.y = this.collision_sprite.body.velocity.x = 0; //fixes map body
     }
 
+    update() {
+        this.freeze_body();
+        this.npcs.forEach(npc => npc.update());
+        this.sort_sprites();
+    }
+
     load_map_assets(force_load, on_complete) {
         let load_tilemap_promise_resolve;
         let load_tilemap_promise = new Promise(resolve => {
@@ -113,7 +122,10 @@ export class Map {
             this.game.load.physics(this.physics_names[i], this.physics_jsons_url[i]).onLoadComplete.addOnce(load_physics_promise_resolve);
         }
         if (force_load) {
-            Promise.all([load_tilemap_promise, load_image_promise, ...physics_promises]).then(on_complete);
+            Promise.all([load_tilemap_promise, load_image_promise, ...physics_promises]).then(() => {
+                this.assets_loaded = true;
+                on_complete();
+            });
             this.game.load.start();
         }
     }
@@ -244,14 +256,16 @@ export class Map {
 
     create_npcs(raw_property) {
         const property_info = JSON.parse(raw_property);
+        const initial_action = this.data.npc_db[property_info.key_name].initial_action;
         this.npcs.push(new NPC(
             this.game,
             this.data,
             property_info.key_name,
             property_info.initial_x,
             property_info.initial_y,
-            property_info.shadow_anchor_point.x,
-            property_info.shadow_anchor_point.y,
+            initial_action,
+            this.data.npc_db[property_info.key_name].actions[initial_action].initial_direction,
+            property_info.enable_footsteps,
             property_info.npc_type,
             property_info.movement_type,
             property_info.message,
@@ -325,12 +339,12 @@ export class Map {
     async config_npc() {
         for (let i = 0; i < this.npcs.length; ++i) {
             const npc = this.npcs[i];
+            const npc_db = this.data.npc_db[npc.key_name];
             let actions = [];
             if (npc.movement_type === npc_movement_types.IDLE) {
                 actions = ['idle'];
             }
             const npc_sprite_info = new NPC_Sprite(npc.key_name, actions);
-            npc.sprite_info = npc_sprite_info;
             for (let j = 0; j < actions.length; ++j) {
                 const action = actions[j];
                 npc_sprite_info.setActionSpritesheet(
@@ -339,16 +353,20 @@ export class Map {
                     `assets/images/spritesheets/npc/${npc.key_name}_${action}.json`
                 );
                 npc_sprite_info.setActionDirections(
-                    action, 
-                    this.data.npc_db[npc.key_name].actions[action].directions,
-                    this.data.npc_db[npc.key_name].actions[action].frames_count
+                    action,
+                    npc_db.actions[action].directions,
+                    npc_db.actions[action].frames_count
                 );
-                npc_sprite_info.setActionFrameRate(action, this.data.npc_db[npc.key_name].actions[action].frame_rate);
+                npc_sprite_info.setActionFrameRate(action, npc_db.actions[action].frame_rate);
+                npc_sprite_info.setActionLoop(action, npc_db.actions[action].loop);
             }
             npc_sprite_info.generateAllFrames();
             await new Promise(resolve => {
                 npc_sprite_info.loadSpritesheets(this.game, true, () => {
-                    npc.initial_config(this.sprite);
+                    npc.set_shadow(npc_db.shadow_key, this.data.npc_group, npc.base_collider_layer, npc_db.shadow_anchor_x, npc_db.shadow_anchor_y);
+                    npc.set_sprite(this.data.npc_group, npc_sprite_info, this.sprite, npc.base_collider_layer, npc_db.anchor_x, npc_db.anchor_y);
+                    npc.set_sprite_as_npc();
+                    npc.play();
                     resolve();
                 });
             });
@@ -379,6 +397,12 @@ export class Map {
     }
 
     async mount_map(collision_layer) {
+        if (!this.assets_loaded) {
+            let load_promise_resolve;
+            const load_promise = new Promise(resolve => load_promise_resolve = resolve);
+            this.load_map_assets(true, load_promise_resolve);
+            await load_promise;
+        }
         this.collision_layer = collision_layer;
         this.events = {};
         TileEvent.reset();

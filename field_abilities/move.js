@@ -18,6 +18,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
         this.hand_sprite_base = misc_sprite_base_list[MOVE_HAND_KEY_NAME];
         const sprite_key = this.hand_sprite_base.getActionKey(MOVE_HAND_KEY_NAME);
         this.hand_sprite = this.game.add.sprite(0, 0, sprite_key);
+        this.hand_sprite.visible = false;
         this.hand_sprite_base.setAnimation(this.hand_sprite, MOVE_HAND_KEY_NAME);
         this.emitter = null;
         this.final_emitter = null;
@@ -121,6 +122,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
     set_hand() {
         this.data.overlayer_group.add(this.hand_sprite);
         this.data.overlayer_group.bringToTop(this.hand_sprite);
+        this.hand_sprite.visible = true;
         this.hand_sprite.scale.setTo(1, 1);
         this.hand_sprite.send_to_front = true;
         this.hand_sprite.base_collider_layer = this.data.map.collision_layer;

@@ -115,4 +115,8 @@ export class SpriteBase {
     getAnimationKey(action, direction) {
         return action + "_" + direction;
     }
+
+    getSpriteAction(sprite) {
+        return sprite.key.split("_")[1];
+    }
 }

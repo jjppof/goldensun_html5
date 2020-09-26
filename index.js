@@ -5,7 +5,6 @@ import { initialize_items, items_list } from './initializers/items.js';
 import { initialize_djinni, djinni_list } from './initializers/djinni.js';
 import { initialize_enemies, enemies_list } from './initializers/enemies.js';
 import { initialize_maps, load_maps, maps } from './initializers/maps.js';
-import { set_npc_event, trigger_npc_dialog } from './events/npc_event.js';
 import { initialize_menu } from './screens/menu.js';
 import { TileEvent } from './base/tile_events/TileEvent.js';
 import { Debug } from './debug.js';
@@ -15,7 +14,11 @@ import { directions } from './utils.js';
 import { Hero } from './base/Hero.js';
 import { TileEventManager } from './base/tile_events/TileEventManager.js';
 import { initialize_misc_data } from './initializers/misc_data.js';
+<<<<<<< HEAD
 import { ShopMenuScreen } from './screens/shop_menu.js';
+=======
+import { GameEventManager } from './base/game_events/GameEventManager.js';
+>>>>>>> master
 
 //debugging porpouses
 window.maps = maps;
@@ -45,12 +48,10 @@ class GoldenSun {
             false //antialias
         );
 
-        //events and game states
+        //game states
         this.menu_open = false;
         this.in_battle = false;
-        this.battle_instance = null;
         this.created = false;
-        this.in_dialog = false;
 
         //game objects
         this.hero = null;
@@ -61,7 +62,8 @@ class GoldenSun {
         this.shop_screen = null;
         this.map = null;
         this.tile_event_manager = null;
-        this.field_abilities = null;
+        this.game_event_manager = null;
+        this.battle_instance = null;
 
         //common inputs
         this.enter_input = null;
@@ -72,12 +74,6 @@ class GoldenSun {
         //screen
         this.fullscreen = false;
         this.scale_factor = 1;
-
-        //npc
-        this.npc_event = false;
-        this.active_npc = null;
-        this.waiting_for_enter_press = false;
-        this.dialog_manager = null;
 
         //groups
         this.underlayer_group = null;
@@ -240,9 +236,10 @@ class GoldenSun {
         this.collision.config_collisions(this.map, this.map.collision_layer, this.npc_group);
         this.game.physics.p2.updateBoundsCollisionGroup();
 
-        this.tile_event_manager = new TileEventManager(this.game, this, this.hero, this.collision);
-
         this.initialize_game_main_controls();
+
+        this.tile_event_manager = new TileEventManager(this.game, this, this.hero, this.collision);
+        this.game_event_manager = new GameEventManager(this.game, this);
 
         //set keyboard cursors
         this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -303,6 +300,7 @@ class GoldenSun {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
             field_abilities_list.growth.cast(this.hero, this.init_db.initial_shortcuts.growth);
         });
+<<<<<<< HEAD
         this.game.input.keyboard.addKey(Phaser.Keyboard.S).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
             this.shop_screen.open_menu("madra_medicine_shop");
@@ -313,6 +311,8 @@ class GoldenSun {
             if (this.hero.in_action() || this.in_battle || !this.created) return;
             trigger_npc_dialog(this.game, this);
         });
+=======
+>>>>>>> master
     }
 
     update() {
@@ -320,39 +320,26 @@ class GoldenSun {
             this.render_loading();
             return;
         }
-        if (!this.tile_event_manager.on_event && !this.npc_event && !this.hero.pushing && !this.menu_open && !this.hero.casting_psynergy && !this.in_battle) {
+        if (!this.tile_event_manager.on_event && !this.game_event_manager.on_event && !this.hero.pushing && !this.menu_open && !this.hero.casting_psynergy && !this.in_battle) {
             this.hero.update_tile_position(this.map.sprite);
 
             this.tile_event_manager.fire_triggered_events();
-
-            //check if the actual tile has an event
             const location_key = TileEvent.get_location_key(this.hero.tile_x_pos, this.hero.tile_y_pos);
-            if (location_key in this.map.events) {
+            if (location_key in this.map.events) { //check if the actual tile has an event
                 this.tile_event_manager.check_tile_events(location_key, this.map);
             }
 
             this.hero.update(this.map); //update hero position/velocity/sprite
-
-            this.map.freeze_body();
-
-            for (let i = 0; i < this.map.npcs.length; ++i) { //updates npcs' movement
-                const npc = this.map.npcs[i];
-                npc.update();
+            this.map.update(); //update map and its objects position/velocity/sprite
+        } else {
+            this.hero.stop_char(false);
+            if (this.hero.pushing) {
+                this.hero.set_action();
+            }else if (this.menu_open && this.menu_screen.horizontal_menu.menu_active) {
+                this.menu_screen.update_position();
+            } else if (this.in_battle) {
+                this.battle_instance.update();
             }
-
-            this.map.sort_sprites();
-        } else if (this.tile_event_manager.on_event) {
-            this.hero.stop_char(false);
-        } else if (this.npc_event) {
-            set_npc_event(this.game, this);
-            this.hero.stop_char(false);
-        } else if (this.hero.pushing) {
-            this.hero.set_action();
-        } else if (this.menu_open && this.menu_screen.horizontal_menu.menu_active) {
-            this.hero.stop_char(false);
-            this.menu_screen.update_position();
-        } else if (this.in_battle) {
-            this.battle_instance.update();
         }
     }
 
