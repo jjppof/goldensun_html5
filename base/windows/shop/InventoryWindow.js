@@ -27,8 +27,8 @@ export class InventoryWindow{
     constructor(game, data){
         this.game = game;
         this.data = data;
-        
         this.close_callback = null;
+        this.expanded = false;
 
         this.window = new Window(this.game, BASE_X, BASE_Y, BASE_WIDTH, BASE_HEIGHT);
         this.text = this.window.set_text_in_position("", TEXT_X, TEXT_Y);
@@ -36,7 +36,7 @@ export class InventoryWindow{
         this.text.shadow.alpha = 0;
         
         this.char = null;
-        this.items = [];
+        this.char_items = [];
         this.selected_item = null;
         this.sprite_group = this.window.define_internal_group("sprites", {x: ITEM_X, y: ITEM_Y});
         this.icon_group = this.window.define_internal_group("icons", {x: ITEM_X + SUB_ICON_X, y: ITEM_Y + SUB_ICON_Y});
@@ -44,18 +44,22 @@ export class InventoryWindow{
         this.icons = [];
     }
 
-    expand(){
-        this.window.update_size({height: BASE_HEIGHT + EXPAND_DIFF});
-        this.window.update_position({y: BASE_Y - EXPAND_DIFF});
-        this.sprite_group.y = this.sprite_group.y + EXPAND_DIFF;
-        this.icon_group.y = this.icon_group.y + EXPAND_DIFF;
+    check_expand(expand){
+        if(expand) this.set_text();
+        if(this.expanded === expand) return;
+        this.expanded = expand;
+
+        let modifier = expand ? 1 : -1;
+
+        this.window.update_size({height: BASE_HEIGHT + modifier * EXPAND_DIFF});
+        this.window.update_position({y: BASE_Y - modifier * EXPAND_DIFF});
+        this.sprite_group.y = this.sprite_group.y + modifier * EXPAND_DIFF;
+        this.icon_group.y = this.icon_group.y + modifier * EXPAND_DIFF;
         this.window.update();
-        
-        this.set_text();
     }
 
     set_text(){
-        let item_match = this.items.filter(item_obj => { return item_obj.key_name === this.selected_item; });
+        let item_match = this.char_items.filter(item_obj => { return item_obj.key_name === this.selected_item; });
 
         if(item_match.length === 0) this.window.update_text(MESSAGE_NO_ITEM, this.text);
         else this.window.update_text(MESSAGE_HAVE_ITEM + item_match[0].quantity, this.text);
@@ -66,16 +70,16 @@ export class InventoryWindow{
 
     change_character(index){
         this.char = party_data.members[index];
-        this.items = this.char.items.filter(item_obj => {return item_obj.key_name in items_list;});
+        this.char_items = this.char.items.filter(item_obj => {return item_obj.key_name in items_list;});
 
         this.clean_sprites();
-        this.set_text();
+        if(this.expanded) this.set_text();
         this.get_sprites();
     }
 
     get_sprites(){
-        for(let i=0; i<this.items.length; i++){
-            let this_item = items_list[this.items[i].key_name];
+        for(let i=0; i<this.char_items.length; i++){
+            let this_item = items_list[this.char_items[i].key_name];
             let col = i % MAX_PER_LINE;
             let line = (i / MAX_PER_LINE) | 0;
 
@@ -94,7 +98,7 @@ export class InventoryWindow{
                 this.sprites.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "items_icons", undefined, this_item.key_name, "sprites"));
             }
 
-            if (this.items[i].equipped) {
+            if (this.char_items[i].equipped) {
                 let dead_icons = this.icons.filter(e => { return (e.alive === false && e.text === undefined); });
                 if(dead_icons.length>0){
                     let icn = dead_icons[0];
@@ -102,15 +106,15 @@ export class InventoryWindow{
                 }
                 else this.icons.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "equipped", undefined,undefined, "icons"));
             }
-            if (this.items[i].quantity > 1) {
+            if (this.char_items[i].quantity > 1) {
                 let dead_text = this.icons.filter(e => { return (e.alive === false && e.text !== undefined); });
                 if(dead_text.length>0){
                     let txt = dead_text[0];
-                    txt.text = this.items[i].quantity.toString();
+                    txt.text = this.char_items[i].quantity.toString();
                     txt.reset(col*ICON_SIZE, line*ICON_SIZE);
                 }
                 else{
-                    let item_count = this.game.add.bitmapText(col*ICON_SIZE, line*ICON_SIZE, 'gs-item-bmp-font', this.items[i].quantity.toString());
+                    let item_count = this.game.add.bitmapText(col*ICON_SIZE, line*ICON_SIZE, 'gs-item-bmp-font', this.char_items[i].quantity.toString());
                     this.icons.push(item_count);
                     this.window.add_to_internal_group("icons", item_count);
                 }
@@ -123,9 +127,9 @@ export class InventoryWindow{
         this.char = party_data.members[char_index];
         this.selected_item = item;
 
-        this.items = this.char.items.filter(item_obj => {return item_obj.key_name in items_list;});
+        this.char_items = this.char.items.filter(item_obj => {return item_obj.key_name in items_list;});
 
-        if(expand) this.expand();
+        this.check_expand(expand);
         this.get_sprites();
 
         this.close_callback = close_callback;
@@ -153,9 +157,9 @@ export class InventoryWindow{
         this.text.text.alpha = 0;
         this.text.shadow.alpha = 0;
         this.char = null;
-        this.items = [];
+        this.char_items = [];
         this.selected_item = null;
-        
+
         this.window.close(this.close_callback, false);
         this.close_callback = null;
     }
