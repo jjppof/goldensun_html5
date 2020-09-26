@@ -50,7 +50,11 @@ export class InventoryWindow{
         this.sprite_group.y = this.sprite_group.y + EXPAND_DIFF;
         this.icon_group.y = this.icon_group.y + EXPAND_DIFF;
         this.window.update();
+        
+        this.set_text();
+    }
 
+    set_text(){
         let item_match = this.items.filter(item_obj => { return item_obj.key_name === this.selected_item; });
 
         if(item_match.length === 0) this.window.update_text(MESSAGE_NO_ITEM, this.text);
@@ -60,22 +64,56 @@ export class InventoryWindow{
         this.text.shadow.alpha = 1;
     }
 
+    change_character(index){
+        this.char = party_data.members[index];
+        this.items = this.char.items.filter(item_obj => {return item_obj.key_name in items_list;});
+
+        this.clean_sprites();
+        this.set_text();
+        this.get_sprites();
+    }
+
     get_sprites(){
         for(let i=0; i<this.items.length; i++){
             let this_item = items_list[this.items[i].key_name];
             let col = i % MAX_PER_LINE;
             let line = (i / MAX_PER_LINE) | 0;
 
-            this.sprites.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "item_border", undefined, undefined, "sprites"));
-            this.sprites.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "items_icons", undefined, this_item.key_name, "sprites"));
+            let dead_items = this.sprites.filter(s => { return (s.alive === false && s.key === "items_icons"); });
+            let dead_backgrounds = this.sprites.filter(s => { return (s.alive === false && s.key === "item_border"); });
+
+            if(dead_items.length>0 && dead_backgrounds.length>0){
+                let bg = dead_backgrounds[0];
+                let itm = dead_items[0];
+                itm.frameName = this_item.key_name;
+                bg.reset(col*ICON_SIZE, line*ICON_SIZE);
+                itm.reset(col*ICON_SIZE, line*ICON_SIZE);
+            }
+            else{
+                this.sprites.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "item_border", undefined, undefined, "sprites"));
+                this.sprites.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "items_icons", undefined, this_item.key_name, "sprites"));
+            }
 
             if (this.items[i].equipped) {
-                this.icons.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "equipped", undefined,undefined, "icons"));
+                let dead_icons = this.icons.filter(e => { return (e.alive === false && e.text === undefined); });
+                if(dead_icons.length>0){
+                    let icn = dead_icons[0];
+                    icn.reset(col*ICON_SIZE, line*ICON_SIZE);
+                }
+                else this.icons.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "equipped", undefined,undefined, "icons"));
             }
             if (this.items[i].quantity > 1) {
-                let item_count = this.game.add.bitmapText(col*ICON_SIZE, line*ICON_SIZE, 'gs-item-bmp-font', this.items[i].quantity.toString());
-                this.icons.push(item_count);
-                this.window.add_to_internal_group("icons", item_count);
+                let dead_text = this.icons.filter(e => { return (e.alive === false && e.text !== undefined); });
+                if(dead_text.length>0){
+                    let txt = dead_text[0];
+                    txt.text = this.items[i].quantity.toString();
+                    txt.reset(col*ICON_SIZE, line*ICON_SIZE);
+                }
+                else{
+                    let item_count = this.game.add.bitmapText(col*ICON_SIZE, line*ICON_SIZE, 'gs-item-bmp-font', this.items[i].quantity.toString());
+                    this.icons.push(item_count);
+                    this.window.add_to_internal_group("icons", item_count);
+                }
             }
         }
         this.sprite_group.alpha = 1;
@@ -94,22 +132,30 @@ export class InventoryWindow{
         this.window.show(open_callback, false);
     }
 
-    close(){
+    clean_sprites(destroy = false){
         for(let i=0; i<this.sprites.length; i++){
-            this.sprite_group.remove(sprite[i],true);
+            if(destroy) this.sprite_group.remove(this.sprites[i],true);
+            else this.sprites[i].kill();
         }
         for(let i=0; i<this.icons.length; i++){
-            this.icon_group.remove(icon[i],true);
+            if(destroy) this.icon_group.remove(this.icons[i],true);
+            else this.icons[i].kill();
         }
+        if(destroy){
+            this.sprites = [];
+            this.icons = [];
+        }
+    }
+
+    close(destroy = false){
+        this.clean_sprites(destroy);
 
         this.text.text.alpha = 0;
         this.text.shadow.alpha = 0;
         this.char = null;
         this.items = [];
         this.selected_item = null;
-        this.sprites = [];
-        this.icons = [];
-
+        
         this.window.close(this.close_callback, false);
         this.close_callback = null;
     }
