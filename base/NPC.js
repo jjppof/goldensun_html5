@@ -1,10 +1,8 @@
 import { SpriteBase } from './SpriteBase.js';
-import {
-    BattleEvent,
-    event_types as game_event_types
-} from "./GameEvent.js";
+import { event_types as game_event_types } from "./game_events/GameEvent.js";
 import { mount_collision_polygon } from '../utils.js';
 import { ControllableChar } from './ControllableChar.js';
+import { BattleEvent } from './game_events/BattleEvent.js';
 
 export class NPC_Sprite extends SpriteBase {
     constructor (key_name, actions) {
@@ -25,11 +23,6 @@ export const npc_types = {
     WEAPON_SHOP: "weapon_shop",
     ARMOR_SHOP: "armor_shop",
     MEDICINE_SHOP: "medicine_shop"
-};
-
-export const npc_interaction_pattern = {
-    TIK_TAK_TOE: "tik_tak_toe",
-    CROSS: "cross"
 };
 
 export class NPC extends ControllableChar {
@@ -70,9 +63,10 @@ export class NPC extends ControllableChar {
     set_events(events_info) {
         for (let i = 0; i < events_info.length; ++i) {
             const event_info = events_info[i];
-            if (event_info.type === game_event_types.BATTLE) {
-                const event = new BattleEvent(event_info.background_key, event_info.enemy_party_key);
-                this.events.push(event);
+            switch (event_info.type) {
+                case game_event_types.BATTLE:
+                    this.events.push(new BattleEvent(this.game, this.data, event_info.background_key, event_info.enemy_party_key));
+                    break;
             }
         }
     }
@@ -98,8 +92,8 @@ export class NPC extends ControllableChar {
             this.reset_anchor('y');
         }
         this.sprite.body.clearShapes();
-        const width = this.data.npc_db[this.key_name].body_radius << 1;
-        this.body_radius = width >> 1;
+        this.body_radius = this.data.npc_db[this.key_name].body_radius;
+        const width = this.body_radius << 1;
         const polygon = mount_collision_polygon(width, -(width >> 1), this.data.npc_db[this.key_name].collision_body_bevel);
         this.sprite.body.addPolygon({
                 optimalDecomp: false,
