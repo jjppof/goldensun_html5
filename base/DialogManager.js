@@ -29,14 +29,14 @@ export class DialogManager { //the dialog can be divided in n windows. Each divi
             this.window.destroy(false);
         }
         let win_pos = this.get_dialog_window_position(this.parts[this.step].width, this.parts[this.step].height, hero_direction);
-        if (custom_pos.x !== undefined) {
+        if (custom_pos && custom_pos.x !== undefined) {
             win_pos.x = custom_pos.x;
         }
-        if (custom_pos.y !== undefined) {
+        if (custom_pos && custom_pos.y !== undefined) {
             win_pos.y = custom_pos.y;
         }
         this.window = new Window(this.game, win_pos.x, win_pos.y, this.parts[this.step].width, this.parts[this.step].height, false);
-        this.window.set_text(this.parts[this.step].lines);
+        this.window.set_text(this.parts[this.step].lines, undefined, undefined, undefined , true);
         this.window.show(callback);
         ++this.step;
     }
@@ -51,12 +51,12 @@ export class DialogManager { //the dialog can be divided in n windows. Each divi
         let window_width = max_efective_width;
         for (let i = 0; i < words.length; ++i) {
             const word = words[i];
-            line_width = utils.get_text_width(this.game, line.join(' ') + word);
+            line_width = utils.get_text_width(this.game, line.join(' ') + word, true);
             if (line_width >= window_width) { //check if it's the end of the line
                 lines.push(line.join(' '));
                 line = [];
                 line.push(word);
-                line_width = utils.get_text_width(this.game, word);
+                line_width = utils.get_text_width(this.game, word, true);
                 if (lines.length === numbers.MAX_LINES_PER_DIAG_WIN) { //check if it's the end of the window
                     windows.push({
                         lines: lines.slice(),

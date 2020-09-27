@@ -52,6 +52,7 @@ function load_assets(game) {
 
 function load_fonts(game) {
     game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
+    game.load.bitmapFont('gs-italic-bmp-font', 'assets/font/golden-sun-italic.png', 'assets/font/golden-sun-italic.fnt');
     game.load.bitmapFont('gs-item-bmp-font', 'assets/font/gs-item-font.png', 'assets/font/gs-item-font.fnt');
     game.load.bitmapFont('gs-shop-bmp-font', 'assets/font/gs-shop-font.png', 'assets/font/gs-shop-font.fnt');
 }
