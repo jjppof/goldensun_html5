@@ -388,18 +388,20 @@ export class Window {
            padding_x [number] - Padding on the x axis
            padding_y [number] - Padding on the y axis
            space_bewteen lines [number] - Offset between lines*/
-    set_text(lines, padding_x, padding_y, space_between_lines) {
+    set_text(lines, padding_x, padding_y, space_between_lines, italic = false) {
         for (let i = 0; i < this.lines_sprites.length; ++i) {
             this.lines_sprites[i].text.destroy();
             this.lines_sprites[i].shadow.destroy();
         }
         this.lines_sprites = [];
+        const top_shift = italic ? -2 : 0;
         const x_pos = padding_x === undefined ? numbers.WINDOW_PADDING_H + 4 : padding_x;
-        let y_pos = padding_y === undefined ? numbers.WINDOW_PADDING_TOP : padding_y;
+        let y_pos = padding_y === undefined ? numbers.WINDOW_PADDING_TOP + top_shift : padding_y;
+        const font_name = italic ? 'gs-italic-bmp-font' : 'gs-bmp-font';
         for (let i = 0; i < lines.length; ++i) {
             let line = lines[i];
-            let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', line, numbers.FONT_SIZE);
-            let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, 'gs-bmp-font', line, numbers.FONT_SIZE);
+            let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, line, numbers.FONT_SIZE);
+            let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, font_name, line, numbers.FONT_SIZE);
 
             y_pos += numbers.FONT_SIZE + (space_between_lines === undefined ? numbers.SPACE_BETWEEN_LINES : space_between_lines);
 
@@ -424,11 +426,12 @@ export class Window {
             shadow [Phaser:Sprite] - The text's shadow
             right_align [boolean] - The input value
             initial_x [number] - The text's x value*/
-    set_single_line_text(text, right_align = false) {
+    set_single_line_text(text, right_align = false, italic = false) {
         const x_pos = numbers.WINDOW_PADDING_H + 4;
         let y_pos = numbers.WINDOW_PADDING_TOP;
-        let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', text, numbers.FONT_SIZE);
-        let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, 'gs-bmp-font', text, numbers.FONT_SIZE);
+        const font_name = italic ? 'gs-italic-bmp-font' : 'gs-bmp-font';
+        let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, text, numbers.FONT_SIZE);
+        let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, font_name, text, numbers.FONT_SIZE);
         if (right_align) {
             text_sprite.x -= text_sprite.width;
             text_sprite_shadow.x -= text_sprite_shadow.width;
@@ -460,9 +463,10 @@ export class Window {
             right_align [boolean] - The input value
             initial_x [number] - The text's x value
             text_bg [Phaser:Sprite] - The text's background*/
-    set_text_in_position(text, x_pos, y_pos, right_align = false, is_center_pos = false, color = this.font_color, with_bg = false, internal_group_key = undefined) {
-        let text_sprite = this.game.add.bitmapText(x_pos, y_pos, 'gs-bmp-font', text, numbers.FONT_SIZE);
-        let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, 'gs-bmp-font', text, numbers.FONT_SIZE);
+    set_text_in_position(text, x_pos, y_pos, right_align = false, is_center_pos = false, color = this.font_color, with_bg = false, internal_group_key = undefined, italic = false) {
+        const font_name = italic ? 'gs-italic-bmp-font' : 'gs-bmp-font';
+        let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, text, numbers.FONT_SIZE);
+        let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, font_name, text, numbers.FONT_SIZE);
         if (is_center_pos) {
             text_sprite.centerX = x_pos;
             text_sprite.centerY = y_pos;

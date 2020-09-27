@@ -283,8 +283,9 @@ export function get_transition_directions(current_direction, desired_direction){
 
 Input: game [Phaser:Game] - Reference to the running game object
        text [string] - Text string*/
-export function get_text_width(game, text) { //get text width in px (dirty way)
-    let text_sprite = game.add.bitmapText(0, 0, 'gs-bmp-font', text, numbers.FONT_SIZE);
+export function get_text_width(game, text, italic = false) { //get text width in px (dirty way)
+    const font_name = italic ? 'gs-italic-bmp-font' : 'gs-bmp-font';
+    let text_sprite = game.add.bitmapText(0, 0, font_name, text, numbers.FONT_SIZE);
     const text_width = text_sprite.width;
     text_sprite.destroy();
     return text_width;
