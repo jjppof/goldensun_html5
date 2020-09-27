@@ -50,12 +50,17 @@ function load_assets(game) {
     game.load.atlasJSONHash('avatars', 'assets/images/avatars/avatars.png', 'assets/images/avatars/avatars.json');
 }
 
+function load_fonts(game) {
+    game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
+    game.load.bitmapFont('gs-item-bmp-font', 'assets/font/gs-item-font.png', 'assets/font/gs-item-font.fnt');
+    game.load.bitmapFont('gs-shop-bmp-font', 'assets/font/gs-shop-font.png', 'assets/font/gs-shop-font.fnt');
+}
+
 export function load_all(game) {
     load_db_files(game);
     load_misc(game);
     load_assets(game);
     load_buttons(game);
+    load_fonts(game);
     game.load.script('color_filters', 'plugins/color_filters.js');
-    game.load.bitmapFont('gs-bmp-font', 'assets/font/golden-sun.png', 'assets/font/golden-sun.fnt');
-    game.load.bitmapFont('gs-item-bmp-font', 'assets/font/gs-item-font.png', 'assets/font/gs-item-font.fnt');
 }
