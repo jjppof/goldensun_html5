@@ -23,10 +23,13 @@ const SUB_ICON_Y = 8;
 const TEXT_X = 8;
 const TEXT_Y = 8;
 
+/*Displays a character's inventory through icons
+Used in shop menus. Can display the amout of an item in the inventory
+
+Input: game [Phaser:Game] - Reference to the running game object*/
 export class InventoryWindow{
-    constructor(game, data){
+    constructor(game){
         this.game = game;
-        this.data = data;
         this.close_callback = null;
         this.expanded = false;
 
@@ -44,10 +47,12 @@ export class InventoryWindow{
         this.icons = [];
     }
 
+    /*Checks and manages the expanded state of the window
+
+    Input: expand [boolean]: If true, the window be in expanded state*/
     check_expand(expand){
         if(expand) this.set_text();
         if(this.expanded === expand) return;
-        this.expanded = expand;
 
         let modifier = expand ? 1 : -1;
 
@@ -56,8 +61,11 @@ export class InventoryWindow{
         this.sprite_group.y = this.sprite_group.y + modifier * EXPAND_DIFF;
         this.icon_group.y = this.icon_group.y + modifier * EXPAND_DIFF;
         this.window.update();
+
+        this.expanded = expand;
     }
 
+    /*Sets and displays the text relative to the selected item*/
     set_text(){
         let item_match = this.char_items.filter(item_obj => { return item_obj.key_name === this.selected_item; });
 
@@ -68,16 +76,21 @@ export class InventoryWindow{
         this.text.shadow.alpha = 1;
     }
 
+    /*Changes the character whose inventory is being shown
+
+    Input: index [number] - Party index of the character*/
     change_character(index){
         this.char = party_data.members[index];
         this.char_items = this.char.items.filter(item_obj => {return item_obj.key_name in items_list;});
 
         this.clean_sprites();
         if(this.expanded) this.set_text();
-        this.get_sprites();
+        this.set_sprites();
     }
 
-    get_sprites(){
+    /*Displays the sprites for the window
+    Includes icons and quantity text*/
+    set_sprites(){
         for(let i=0; i<this.char_items.length; i++){
             let this_item = items_list[this.char_items[i].key_name];
             let col = i % MAX_PER_LINE;
@@ -107,7 +120,7 @@ export class InventoryWindow{
                 else this.icons.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "equipped", undefined,undefined, "icons"));
             }
             if (this.char_items[i].quantity > 1) {
-                let dead_text = this.icons.filter(e => { return (e.alive === false && e.text !== undefined); });
+                let dead_text = this.icons.filter(t => { return (t.alive === false && t.text !== undefined); });
                 if(dead_text.length>0){
                     let txt = dead_text[0];
                     txt.text = this.char_items[i].quantity.toString();
@@ -123,6 +136,13 @@ export class InventoryWindow{
         this.sprite_group.alpha = 1;
     }
 
+    /*Opens this window for a given character
+
+    Input: char_index [number] - The character's party index
+           item [string] - The item to check against
+           expand [boolean] - If true, the window will be in expanded state
+           close_callback [function] - Callback function (Optional)
+           open_callback [function] - Callback function (Optional)*/
     open(char_index, item, expand, close_callback, open_callback){
         this.char = party_data.members[char_index];
         this.selected_item = item;
@@ -130,12 +150,15 @@ export class InventoryWindow{
         this.char_items = this.char.items.filter(item_obj => {return item_obj.key_name in items_list;});
 
         this.check_expand(expand);
-        this.get_sprites();
+        this.set_sprites();
 
         this.close_callback = close_callback;
         this.window.show(open_callback, false);
     }
 
+    /*Kills or destroys all sprites
+
+    Input: destroy [boolean] - Destroys sprites instead of killing*/
     clean_sprites(destroy = false){
         for(let i=0; i<this.sprites.length; i++){
             if(destroy) this.sprite_group.remove(this.sprites[i],true);
@@ -151,6 +174,9 @@ export class InventoryWindow{
         }
     }
 
+    /*Clears information and closes the window
+
+    Input: destroy [boolean] - If true, sprites are destroyed*/
     close(destroy = false){
         this.clean_sprites(destroy);
 

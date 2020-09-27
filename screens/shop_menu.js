@@ -5,6 +5,8 @@ import { SellRepairMenu } from '../base/windows/shop/SellRepairMenu.js';
 import { capitalize } from '../utils.js';
 import { items_list } from '../initializers/items.js';
 import { InventoryWindow } from '../base/windows/shop/InventoryWindow.js';
+import { YesNoMenu } from '../base/windows/YesNoMenu.js';
+import { BuySelectMenu } from '../base/windows/shop/BuySelectMenu.js';
 
 export class ShopMenuScreen{
     constructor(game, data){
@@ -37,7 +39,8 @@ export class ShopMenuScreen{
 
         this.npc_dialog = new ShopkeepDialog(this.game, this.data);
 
-        this.inv_win = new InventoryWindow(this.game, this.data);
+        this.inv_win = new InventoryWindow(this.game);
+        this.buy_select = new BuySelectMenu(this.game, this.data);
         /*
         this.buy_menu = new BuyArtifactsMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
         this.sell_menu = new SellRepairMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
