@@ -57,7 +57,7 @@ export class Battle {
                 entered_in_battle: true
             };
         });
-        this.enemies_party_data = this.data.enemies_parties_db[enemy_party_key];
+        this.enemies_party_data = this.data.dbs.enemies_parties_db[enemy_party_key];
         this.enemies_info = [];
         this.this_enemies_list = {};
         let battle_keys_count = {};
@@ -357,7 +357,7 @@ export class Battle {
                 djinni_list[action.key_name].set_status(djinn_status.STANDBY, action.caster);
             }
         } else if (ability.ability_category === ability_categories.SUMMON) { //some summon checks
-            const requirements = this.data.summons_db[ability.key_name].requirements;
+            const requirements = this.data.dbs.summons_db[ability.key_name].requirements;
             const standby_djinni = Djinn.get_standby_djinni(MainChar.get_active_players(MAX_CHARS_IN_BATTLE));
             const has_available_djinni = _.every(requirements, (requirement, element) => {
                 return standby_djinni[element] >= requirement;
@@ -405,7 +405,7 @@ export class Battle {
         await this.battle_stage.set_stage_default_position();
         //summon after cast power buff
         if (ability.ability_category === ability_categories.SUMMON) {
-            const requirements = this.data.summons_db[ability.key_name].requirements;
+            const requirements = this.data.dbs.summons_db[ability.key_name].requirements;
             for (let i = 0; i < ordered_elements.length; ++i) {
                 const element = ordered_elements[i];
                 const power = BattleFormulas.summon_power(requirements[element]);
@@ -487,7 +487,7 @@ export class Battle {
                         damage = -BattleFormulas.heal_ability(action.caster, ability.ability_power, ability.element);
                         break;
                     case ability_types.SUMMON:
-                        const djinn_used = _.sum(_.values(this.data.summons_db[ability.key_name].requirements));
+                        const djinn_used = _.sum(_.values(this.data.dbs.summons_db[ability.key_name].requirements));
                         damage = BattleFormulas.summon_damage(target_instance, ability.ability_power, djinn_used);
                         break;
                     case ability_types.DIRECT_DAMAGE:

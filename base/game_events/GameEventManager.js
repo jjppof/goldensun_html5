@@ -57,7 +57,7 @@ export class GameEventManager {
                 dialog_manager.set_dialog(npc.message)
                 const npc_x = npc.sprite.x;
                 const npc_y = npc.sprite.y;
-                const interaction_pattern = this.data.npc_db[npc.key_name].interaction_pattern;
+                const interaction_pattern = this.data.dbs.npc_db[npc.key_name].interaction_pattern;
                 const interaction_directions = GameEventManager.get_interaction_directions(
                     this.data.hero.sprite.x, this.data.hero.sprite.y, npc_x, npc_y, interaction_pattern, npc.body_radius);
                 this.data.hero.set_direction(interaction_directions.hero_direction);
@@ -66,8 +66,8 @@ export class GameEventManager {
                 this.fire_next_step = dialog_manager.next.bind(dialog_manager, () => {
                     if (dialog_manager.finished) {
                         this.on_event = false;
-                        const initial_action = this.data.npc_db[npc.key_name].initial_action;
-                        const initial_direction = this.data.npc_db[npc.key_name].actions[initial_action].initial_direction;
+                        const initial_action = this.data.dbs.npc_db[npc.key_name].initial_action;
+                        const initial_direction = this.data.dbs.npc_db[npc.key_name].actions[initial_action].initial_direction;
                         npc.play(initial_action, initial_direction);
                         this.fire_npc_events(npc);
                     }

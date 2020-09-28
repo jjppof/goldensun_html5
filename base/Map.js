@@ -256,7 +256,7 @@ export class Map {
 
     create_npcs(raw_property) {
         const property_info = JSON.parse(raw_property);
-        const initial_action = this.data.npc_db[property_info.key_name].initial_action;
+        const initial_action = this.data.dbs.npc_db[property_info.key_name].initial_action;
         this.npcs.push(new NPC(
             this.game,
             this.data,
@@ -264,7 +264,7 @@ export class Map {
             property_info.initial_x,
             property_info.initial_y,
             initial_action,
-            this.data.npc_db[property_info.key_name].actions[initial_action].initial_direction,
+            this.data.dbs.npc_db[property_info.key_name].actions[initial_action].initial_direction,
             property_info.enable_footsteps,
             property_info.npc_type,
             property_info.movement_type,
@@ -293,13 +293,13 @@ export class Map {
             property_info.intermediate_collider_layer_shift
         );
         this.interactable_objects.push(interactable_object);
-        for (let psynergy_key in data.interactable_objects_db[property_info.key_name].psynergy_keys) {
-            const psynergy_properties = data.interactable_objects_db[property_info.key_name].psynergy_keys[psynergy_key];
+        for (let psynergy_key in data.dbs.interactable_objects_db[property_info.key_name].psynergy_keys) {
+            const psynergy_properties = data.dbs.interactable_objects_db[property_info.key_name].psynergy_keys[psynergy_key];
             if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
                 interactable_object.custom_data[psynergy_key + "_casted"] = false;
             }
         }
-        if (data.interactable_objects_db[property_info.key_name].pushable && property_info.block_stair_collider_layer_shift !== undefined) {
+        if (data.dbs.interactable_objects_db[property_info.key_name].pushable && property_info.block_stair_collider_layer_shift !== undefined) {
             interactable_object.custom_data.block_stair_collider_layer_shift = property_info.block_stair_collider_layer_shift;
         }
     }
@@ -315,16 +315,16 @@ export class Map {
             interactable_object.sprite_info = interactable_obj_sprite_info;
             interactable_obj_sprite_info.setActionSpritesheet(
                 action,
-                this.data.interactable_objects_db[interactable_object.key_name].spritesheet.image,
-                this.data.interactable_objects_db[interactable_object.key_name].spritesheet.json
+                this.data.dbs.interactable_objects_db[interactable_object.key_name].spritesheet.image,
+                this.data.dbs.interactable_objects_db[interactable_object.key_name].spritesheet.json
             );
             interactable_obj_sprite_info.setActionDirections(
                 action, 
-                this.data.interactable_objects_db[interactable_object.key_name].actions.animations,
-                this.data.interactable_objects_db[interactable_object.key_name].actions.frames_count
+                this.data.dbs.interactable_objects_db[interactable_object.key_name].actions.animations,
+                this.data.dbs.interactable_objects_db[interactable_object.key_name].actions.frames_count
             );
-            interactable_obj_sprite_info.setActionFrameRate(action, this.data.interactable_objects_db[interactable_object.key_name].actions.frame_rate);
-            interactable_obj_sprite_info.setActionLoop(action, this.data.interactable_objects_db[interactable_object.key_name].actions.loop)
+            interactable_obj_sprite_info.setActionFrameRate(action, this.data.dbs.interactable_objects_db[interactable_object.key_name].actions.frame_rate);
+            interactable_obj_sprite_info.setActionLoop(action, this.data.dbs.interactable_objects_db[interactable_object.key_name].actions.loop)
             interactable_obj_sprite_info.generateAllFrames();
             await new Promise(resolve => {
                 interactable_obj_sprite_info.loadSpritesheets(this.game, true, () => {
@@ -339,7 +339,7 @@ export class Map {
     async config_npc() {
         for (let i = 0; i < this.npcs.length; ++i) {
             const npc = this.npcs[i];
-            const npc_db = this.data.npc_db[npc.key_name];
+            const npc_db = this.data.dbs.npc_db[npc.key_name];
             let actions = [];
             if (npc.movement_type === npc_movement_types.IDLE) {
                 actions = ['idle'];

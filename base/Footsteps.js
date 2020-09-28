@@ -31,7 +31,6 @@ export class Footsteps{
         this.y_pos = 0;
         this.current_action = INITIAL_ACTION;
         this.current_direction = INITIAL_DIRECTION;
-        this.animation_db = this.data.misc_animations_db[FOOTSTEPS_KEY_NAME];
         this.anchor_x = FOOTSTEPS_ANCHOR;
         this.anchor_y = FOOTSTEPS_ANCHOR;
         this.group = this.game.add.group();

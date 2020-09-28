@@ -85,7 +85,7 @@ export class FieldAbilities {
         let sqr_distance = Infinity;
         for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
             let interactable_object = this.data.map.interactable_objects[i];
-            if (!(this.ability_key_name in this.data.interactable_objects_db[interactable_object.key_name].psynergy_keys)) continue;
+            if (!(this.ability_key_name in this.data.dbs.interactable_objects_db[interactable_object.key_name].psynergy_keys)) continue;
             const item_x_px = interactable_object.current_x * this.data.map.sprite.tileWidth + (this.data.map.sprite.tileWidth >> 1);
             const item_y_px = interactable_object.current_y * this.data.map.sprite.tileHeight + (this.data.map.sprite.tileHeight >> 1);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
@@ -103,7 +103,7 @@ export class FieldAbilities {
 
     set_target_casted() {
         if (this.target_object) {
-            const psynergy_properties = this.data.interactable_objects_db[this.target_object.key_name].psynergy_keys[this.ability_key_name];
+            const psynergy_properties = this.data.dbs.interactable_objects_db[this.target_object.key_name].psynergy_keys[this.ability_key_name];
             if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
                 const casted_property = this.ability_key_name + "_casted";
                 if (this.target_object.custom_data[casted_property]) {

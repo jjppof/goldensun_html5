@@ -95,7 +95,7 @@ export class InteractableObjects {
         const y_pos = (this.current_y + 1.5) * this.data.map.sprite.tileHeight - 4;
         let body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
         body.clearShapes();
-        const width = this.data.interactable_objects_db[this.key_name].body_radius * 2;
+        const width = this.data.dbs.interactable_objects_db[this.key_name].body_radius * 2;
         body.setRectangle(width, width, 0, 0);
         if (!(target_layer in this.data.collision.interactable_objs_collision_groups)) {
             this.data.collision.interactable_objs_collision_groups[target_layer] = this.game.physics.p2.createCollisionGroup();
@@ -119,20 +119,20 @@ export class InteractableObjects {
         this.interactable_object_sprite.roundPx = true;
         this.interactable_object_sprite.base_collider_layer = this.base_collider_layer;
         this.interactable_object_sprite.interactable_object = this;
-        if (this.data.interactable_objects_db[this.key_name].send_to_back !== undefined) { 
-            this.interactable_object_sprite.send_to_back = this.data.interactable_objects_db[this.key_name].send_to_back;
+        if (this.data.dbs.interactable_objects_db[this.key_name].send_to_back !== undefined) { 
+            this.interactable_object_sprite.send_to_back = this.data.dbs.interactable_objects_db[this.key_name].send_to_back;
         }
-        if (this.data.interactable_objects_db[this.key_name].anchor_x !== undefined) {
-            this.interactable_object_sprite.anchor.x = this.data.interactable_objects_db[this.key_name].anchor_x;
+        if (this.data.dbs.interactable_objects_db[this.key_name].anchor_x !== undefined) {
+            this.interactable_object_sprite.anchor.x = this.data.dbs.interactable_objects_db[this.key_name].anchor_x;
         }
-        this.interactable_object_sprite.anchor.y = this.data.interactable_objects_db[this.key_name].anchor_y;
-        const shift_x = this.data.interactable_objects_db[this.key_name].shift_x !== undefined ? this.data.interactable_objects_db[this.key_name].shift_x : 0;
-        const shift_y = this.data.interactable_objects_db[this.key_name].shift_y !== undefined ? this.data.interactable_objects_db[this.key_name].shift_y : 0;
+        this.interactable_object_sprite.anchor.y = this.data.dbs.interactable_objects_db[this.key_name].anchor_y;
+        const shift_x = this.data.dbs.interactable_objects_db[this.key_name].shift_x !== undefined ? this.data.dbs.interactable_objects_db[this.key_name].shift_x : 0;
+        const shift_y = this.data.dbs.interactable_objects_db[this.key_name].shift_y !== undefined ? this.data.dbs.interactable_objects_db[this.key_name].shift_y : 0;
         this.interactable_object_sprite.centerX = (this.x + 1) * map_sprite.tileWidth + shift_x;
-        const anchor_shift = this.data.interactable_objects_db[this.key_name].anchor_y * map_sprite.tileWidth * 0.5;
+        const anchor_shift = this.data.dbs.interactable_objects_db[this.key_name].anchor_y * map_sprite.tileWidth * 0.5;
         this.interactable_object_sprite.centerY = this.y * map_sprite.tileWidth - anchor_shift + shift_y;
         this.sprite_info.setAnimation(this.interactable_object_sprite, this.key_name);
-        const initial_animation = this.data.interactable_objects_db[this.key_name].initial_animation;
+        const initial_animation = this.data.dbs.interactable_objects_db[this.key_name].initial_animation;
         this.interactable_object_sprite.animations.play(this.key_name + "_" + initial_animation);
     }
 
@@ -140,8 +140,8 @@ export class InteractableObjects {
         const position = this.get_current_position(map);
         let x_pos = position.x;
         let y_pos = position.y;
-        for (let i = 0; i < this.data.interactable_objects_db[this.key_name].events.length; ++i) {
-            const event_info = this.data.interactable_objects_db[this.key_name].events[i];
+        for (let i = 0; i < this.data.dbs.interactable_objects_db[this.key_name].events.length; ++i) {
+            const event_info = this.data.dbs.interactable_objects_db[this.key_name].events[i];
             x_pos += event_info.x_shift !== undefined ? event_info.x_shift : 0;
             y_pos += event_info.y_shift !== undefined ? event_info.y_shift : 0;
             let collider_layer_shift = event_info.collider_layer_shift !== undefined ? event_info.collider_layer_shift : 0;
@@ -309,13 +309,13 @@ export class InteractableObjects {
     }
 
     config_body(collision_obj) {
-        if (this.data.interactable_objects_db[this.key_name].body_radius === 0) return;
+        if (this.data.dbs.interactable_objects_db[this.key_name].body_radius === 0) return;
         const collision_groups = collision_obj.interactable_objs_collision_groups;
         this.game.physics.p2.enable(this.interactable_object_sprite, false);
-        this.interactable_object_sprite.anchor.y = this.data.interactable_objects_db[this.key_name].anchor_y; //Important to be after the previous command
+        this.interactable_object_sprite.anchor.y = this.data.dbs.interactable_objects_db[this.key_name].anchor_y; //Important to be after the previous command
         this.interactable_object_sprite.body.clearShapes();
-        const width = this.data.interactable_objects_db[this.key_name].body_radius << 1;
-        const polygon = mount_collision_polygon(width, -(width >> 1), this.data.interactable_objects_db[this.key_name].collision_body_bevel);
+        const width = this.data.dbs.interactable_objects_db[this.key_name].body_radius << 1;
+        const polygon = mount_collision_polygon(width, -(width >> 1), this.data.dbs.interactable_objects_db[this.key_name].collision_body_bevel);
         this.interactable_object_sprite.body.addPolygon({
                 optimalDecomp: false,
                 skipSimpleCheck: true,
