@@ -1,8 +1,7 @@
-import * as numbers from '../magic_numbers.js';
-import { target_only_push } from '../interactable_objects/push.js';
-import { directions, reverse_directions, join_directions } from "../utils.js";
-import { FieldAbilities } from "../base/FieldAbilities.js";
-import { misc_sprite_base_list } from '../initializers/misc_data.js';
+import * as numbers from '../../magic_numbers.js';
+import { target_only_push } from '../../interactable_objects/push.js';
+import { directions, reverse_directions, join_directions } from "../../utils.js";
+import { FieldAbilities } from "./FieldAbilities.js";
 
 const ABILITY_KEY_NAME = "move";
 const ACTION_KEY_NAME = "cast";
@@ -15,7 +14,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
         super(game, data, ABILITY_KEY_NAME, MOVE_MAX_RANGE, ACTION_KEY_NAME, true);
         this.set_bootstrap_method(this.init_move.bind(this));
         this.set_cast_finisher_method(this.unset_hue_shifter.bind(this));
-        this.hand_sprite_base = misc_sprite_base_list[MOVE_HAND_KEY_NAME];
+        this.hand_sprite_base = this.data.info.misc_sprite_base_list[MOVE_HAND_KEY_NAME];
         const sprite_key = this.hand_sprite_base.getActionKey(MOVE_HAND_KEY_NAME);
         this.hand_sprite = this.game.add.sprite(0, 0, sprite_key);
         this.hand_sprite.visible = false;

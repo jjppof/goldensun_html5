@@ -1,9 +1,7 @@
-import { abilities_list } from "../initializers/abilities.js";
-import { main_char_list } from "../initializers/main_chars.js";
-import { init_cast_aura, tint_map_layers } from "../initializers/psynergy_cast.js";
-import { directions, reverse_directions } from "../utils.js";
-import { interactable_object_interaction_types } from "./InteractableObjects.js";
-import { FieldPsynergyWindow } from "./windows/FieldPsynergyWindow.js";
+import { init_cast_aura, tint_map_layers } from "../field_abilities/psynergy_cast.js";
+import { directions, reverse_directions } from "../../utils.js";
+import { interactable_object_interaction_types } from "../InteractableObjects.js";
+import { FieldPsynergyWindow } from "../windows/FieldPsynergyWindow.js";
 
 /*Defines and manages the usage of field psynergy
 
@@ -119,9 +117,9 @@ export class FieldAbilities {
     cast(controllable_char, caster_key_name) {
         this.controllable_char = controllable_char;
         if (this.controllable_char.casting_psynergy) return;
-        if (caster_key_name !== undefined && caster_key_name in main_char_list) {
-            const caster = main_char_list[caster_key_name];
-            const ability = abilities_list[this.ability_key_name];
+        if (caster_key_name !== undefined && caster_key_name in this.data.info.main_char_list) {
+            const caster = this.data.info.main_char_list[caster_key_name];
+            const ability = this.data.info.abilities_list[this.ability_key_name];
             if (caster.current_pp < ability.pp_cost || !caster.abilities.includes(this.ability_key_name)) {
                 return;
             }

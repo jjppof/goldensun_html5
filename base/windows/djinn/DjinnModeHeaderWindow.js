@@ -1,7 +1,6 @@
 import { Window } from '../../Window.js';
 import { capitalize } from '../../../utils.js';
 import { djinn_font_colors } from '../../Djinn.js';
-import { djinni_sprites } from '../../../initializers/djinni.js';
 import * as numbers from '../../../magic_numbers.js';
 
 const BASE_WIN_WIDTH = 236;
@@ -35,8 +34,9 @@ const SPACEBAR_KEY_X = 132;
 const SPACEBAR_KEY_Y = 24;
 
 export class DjinnModeHeaderWindow {
-    constructor(game) {
+    constructor(game, data) {
         this.game = game;
+        this.data = data;
         this.window_open = false;
         this.x = BASE_WIN_X;
         this.y = BASE_WIN_Y;
@@ -142,7 +142,7 @@ export class DjinnModeHeaderWindow {
             djinn_sprite.anchor.setTo(0.5, 1.0);
             djinn_sprite.scale.x = -0.8;
             djinn_sprite.scale.y = 0.8;
-            djinni_sprites[this_djinn.element].setAnimation(djinn_sprite, this_djinn.status);
+            this.data.info.djinni_sprites[this_djinn.element].setAnimation(djinn_sprite, this_djinn.status);
             djinn_sprite.animations.play(this_djinn.status + "_down");
             this.djinn_sprites.push(djinn_sprite);
 

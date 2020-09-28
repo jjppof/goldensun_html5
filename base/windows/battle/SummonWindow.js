@@ -1,6 +1,5 @@
 import { Window } from "../../Window.js";
 import { CursorControl } from '../../utils/CursorControl.js';
-import { abilities_list } from '../../../initializers/abilities.js';
 import * as numbers from "../../../magic_numbers.js"
 import { Djinn } from "../../Djinn.js";
 import { SummonDjinnStandbyWindow } from "./SummonDjinnStandbyWindow.js";
@@ -122,7 +121,7 @@ export class SummonWindow {
             this.cursor_control.set_cursor_position();
         }
         if (this.set_description) {
-            this.set_description(abilities_list[this.summons[this.summon_index].key_name].description);
+            this.set_description(this.data.info.abilities_list[this.summons[this.summon_index].key_name].description);
         }
         this.set_highlight_bar();
         this.base_window.set_page_indicator_highlight(this.page_number, this.page_index);
@@ -131,7 +130,7 @@ export class SummonWindow {
 
     change_summon(before_index, after_index) {
         if (this.set_description) {
-            this.set_description(abilities_list[this.summons[this.summon_index].key_name].description);
+            this.set_description(this.data.info.abilities_list[this.summons[this.summon_index].key_name].description);
         }
         this.set_highlight_bar();
         this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
@@ -145,7 +144,7 @@ export class SummonWindow {
         this.clear_sprites();
         this.summons = this.all_summons.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
         for (let i = 0; i < this.summons.length; ++i) {
-            const ability = abilities_list[this.summons[i].key_name];
+            const ability = this.data.info.abilities_list[this.summons[i].key_name];
             const base_y = TOP_PADDING + i * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
             const summon_y = base_y - 3;
             this.other_sprites.push(this.base_window.create_at_group(SUMMON_ICON_X, summon_y, "abilities_icons", undefined, this.summons[i].key_name));
@@ -167,7 +166,7 @@ export class SummonWindow {
     }
 
     mount_window() {
-        this.standby_djinni = Djinn.get_standby_djinni(MainChar.get_active_players(MAX_CHARS_IN_BATTLE));
+        this.standby_djinni = Djinn.get_standby_djinni(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE));
         for (let elem in this.standby_djinni) {
             this.standby_djinni[elem] -= this.djinni_already_used[elem];
         }
@@ -212,7 +211,7 @@ export class SummonWindow {
         this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
         this.cursor_control.activate();
         if (this.set_description) {
-            this.set_description(abilities_list[this.summons[this.summon_index].key_name].description);
+            this.set_description(this.data.info.abilities_list[this.summons[this.summon_index].key_name].description);
         }
         this.base_window.show(() => {
             this.window_open = true;

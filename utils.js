@@ -291,17 +291,6 @@ export function get_text_width(game, text, italic = false) { //get text width in
     return text_width;
 }
 
-/*Returns the pressed keys
-
-Input: cursor
-
-Output: [array]*/
-export function check_isdown(cursors, ...keys) {
-    return [directions.up, directions.left, directions.down, directions.right].every(direction => {
-        return !(cursors[reverse_directions[direction]].isDown ^ keys.includes(direction));
-    });
-}
-
 /*Returns the surrounding positions
 Diagonals are optional
 

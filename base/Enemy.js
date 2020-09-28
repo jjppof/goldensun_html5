@@ -1,6 +1,5 @@
 import { SpriteBase } from "./SpriteBase.js";
 import { Player, fighter_types } from "./Player.js";
-import { enemies_list } from "../initializers/enemies.js";
 import { ordered_elements } from "../utils.js";
 
 export class Enemy extends Player {
@@ -107,6 +106,6 @@ export class EnemyBase extends SpriteBase {
     }
 }
 
-export function get_enemy_instance(key_name, suffix) {
+export function get_enemy_instance(enemies_list, key_name, suffix) {
     return new Enemy(enemies_list[key_name].data, enemies_list[key_name].data.name + suffix);
 }

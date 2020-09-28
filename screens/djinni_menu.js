@@ -1,4 +1,3 @@
-import { party_data } from '../initializers/main_chars.js';
 import { CharsQuickInfoDjinnWindow } from '../base/windows/djinn/CharsQuickInfoDjinnWindow.js';
 import { DjinnListWindow } from '../base/windows/djinn/DjinnListWindow.js';
 import { DjinnActionWindow } from '../base/windows/djinn/DjinnActionWindow.js';
@@ -31,7 +30,7 @@ export class DjinnMenuScreen {
     open_menu(close_callback) {
         this.close_callback = close_callback;
         this.selected_char_index = 0;
-        this.chars_quick_info_window.open(party_data.members[this.selected_char_index]);
+        this.chars_quick_info_window.open(this.data.info.party_data.members[this.selected_char_index]);
         this.djinni_list_window.open(this.chars_quick_info_window, this.djinn_action_window);
         this.djinn_action_window.open();
         this.is_open = true;

@@ -1,8 +1,6 @@
 
 import * as numbers from '../../magic_numbers.js';
 import { range_360 } from '../../utils.js';
-import { enemies_list } from '../../initializers/enemies.js';
-import { main_char_list } from '../../initializers/main_chars.js';
 import { ability_target_types } from '../Ability.js';
 import { fighter_types, permanent_status } from '../Player.js';
 
@@ -212,11 +210,11 @@ export class BattleStage {
             return sprite;
         };
         this.allies_info.forEach(info => {
-            const sprite = set_sprite(this.group_allies, info, true, "battle_back", _.mapValues(main_char_list, char => char.sprite_base));
+            const sprite = set_sprite(this.group_allies, info, true, "battle_back", _.mapValues(this.data.info.main_char_list, char => char.sprite_base));
             info.sprite = sprite;
         });
         this.enemies_info.forEach(info => {
-            const sprite = set_sprite(this.group_enemies, info, false, "battle_front", enemies_list);
+            const sprite = set_sprite(this.group_enemies, info, false, "battle_front", this.data.info.enemies_list);
             info.sprite = sprite;
         });
         this.first_ally_char = this.group_allies.children[0];

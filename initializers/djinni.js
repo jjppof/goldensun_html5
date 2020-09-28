@@ -2,10 +2,8 @@ import { Djinn } from '../base/Djinn.js';
 import { SpriteBase } from '../base/SpriteBase.js';
 import { elements } from '../utils.js';
 
-export let djinni_list = {};
-export let djinni_sprites = {}
-
-export function initialize_djinni(game, djinni_db, load_promise_resolve) {
+export function initialize_djinni(djinni_db) {
+    let djinni_list = {};
     for (let i = 0; i < djinni_db.length; ++i) {
         const djinn_data = djinni_db[i];
         djinni_list[djinn_data.key_name] = new Djinn(
@@ -23,7 +21,10 @@ export function initialize_djinni(game, djinni_db, load_promise_resolve) {
             i
         );
     }
+    return djinni_list;
+}
 
+export function initialize_djinni_sprites(game, load_promise_resolve) {
     const actions = ["set", "standby"];
     const directions = {
         set: ["down"],
@@ -36,6 +37,7 @@ export function initialize_djinni(game, djinni_db, load_promise_resolve) {
     };
     const base_path = "assets/images/spritesheets/djinn/";
     let load_promises = [];
+    let djinni_sprites = {};
     for (let key in elements) {
         const element = elements[key];
         if (element === elements.NO_ELEMENT) continue;
@@ -56,4 +58,5 @@ export function initialize_djinni(game, djinni_db, load_promise_resolve) {
         djinni_sprites[element].loadSpritesheets(game, true, load_spritesheet_promise_resolve);
     }
     Promise.all(load_promises).then(load_promise_resolve);
+    return djinni_sprites;
 }

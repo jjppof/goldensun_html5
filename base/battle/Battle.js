@@ -1,21 +1,16 @@
 import { permanent_status, temporary_status, on_catch_status_msg, fighter_types } from "../Player.js";
-import { party_data, main_char_list } from "../../initializers/main_chars.js";
 import { BattleStage } from "./BattleStage.js";
-import { enemies_list } from "../../initializers/enemies.js";
 import { BattleLog } from "./BattleLog.js";
 import { BattleMenuScreen } from "../../screens/battle_menus.js";
 import { get_enemy_instance } from "../Enemy.js";
-import { abilities_list } from "../../initializers/abilities.js";
 import { ability_types, Ability, diminishing_ratios, ability_categories } from "../Ability.js";
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
 import { EnemyAI } from "./EnemyAI.js";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
 import { effect_types, Effect, effect_usages, effect_names, effect_msg } from "../Effect.js";
 import { variation, ordered_elements, element_names } from "../../utils.js";
-import { djinni_list } from "../../initializers/djinni.js";
 import { djinn_status, Djinn } from "../Djinn.js";
 import { MainChar } from "../MainChar.js";
-import { items_list } from "../../initializers/items.js";
 import { BattleAnimationManager } from "./BattleAnimationManager.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
@@ -48,7 +43,7 @@ export class Battle {
     constructor(game, data, background_key, enemy_party_key) {
         this.game = game;
         this.data = data;
-        this.allies_info = party_data.members.slice(0, MAX_CHARS_IN_BATTLE).map(char => {
+        this.allies_info = this.data.info.party_data.members.slice(0, MAX_CHARS_IN_BATTLE).map(char => {
             char.init_effect_turns_count();
             return {
                 sprite_key: char.key_name + "_battle",
@@ -67,7 +62,7 @@ export class Battle {
             for (let i = 0; i < qtd; ++i) {
                 this.enemies_info.push({
                     sprite_key: member_info.key + "_battle",
-                    scale: enemies_list[member_info.key].battle_scale
+                    scale: this.data.info.enemies_list[member_info.key].battle_scale
                 });
                 if (this.enemies_info[counter].sprite_key in battle_keys_count) {
                     battle_keys_count[this.enemies_info[counter].sprite_key] += 1;
@@ -79,7 +74,7 @@ export class Battle {
                     battle_key_suffix = "_" + battle_keys_count[this.enemies_info[counter].sprite_key].toString();
                     name_suffix = " " + battle_keys_count[this.enemies_info[counter].sprite_key].toString();
                 }
-                this.enemies_info[counter].instance = get_enemy_instance(member_info.key, name_suffix);
+                this.enemies_info[counter].instance = get_enemy_instance(this.data.info.enemies_list, member_info.key, name_suffix);
                 this.enemies_info[counter].battle_key = this.enemies_info[counter].sprite_key + battle_key_suffix;
                 this.this_enemies_list[this.enemies_info[counter].battle_key] = this.enemies_info[counter].instance;
                 ++counter;
@@ -142,7 +137,7 @@ export class Battle {
     }
 
     choose_targets(ability_key, action, callback, caster, item_obj) {
-        const this_ability = abilities_list[ability_key];
+        const this_ability = this.data.info.abilities_list[ability_key];
         let quantities;
         if (action === "psynergy") {
             quantities = [this_ability.pp_cost];
@@ -230,14 +225,14 @@ export class Battle {
         this.enemies_abilities = Object.fromEntries(enemy_members.map((enemy, index) => {
             let abilities = new Array(enemy.turns);
             for (let i = 0; i < enemy.turns; ++i) {
-                abilities[i] = EnemyAI.roll_action(enemy, party_data.members, enemy_members);
+                abilities[i] = EnemyAI.roll_action(enemy, this.data.info.party_data.members, enemy_members);
             }
             return [this.enemies_info[index].battle_key, abilities];
         }));
         for (let char_key in this.player_abilities) {
-            const this_char = main_char_list[char_key];
+            const this_char = this.data.info.main_char_list[char_key];
             for (let i = 0; i < this.player_abilities[char_key].length; ++i) {
-                const this_ability = abilities_list[this.player_abilities[char_key][i].key_name];
+                const this_ability = this.data.info.abilities_list[this.player_abilities[char_key][i].key_name];
                 const priority_move = this_ability !== undefined ? this_ability.priority_move : false;
                 this.player_abilities[char_key][i].speed = BattleFormulas.player_turn_speed(this_char.current_agi, priority_move, i > 0);
                 this.player_abilities[char_key][i].caster = this_char;
@@ -246,7 +241,7 @@ export class Battle {
         for (let battle_key in this.enemies_abilities) {
             const this_enemy = this.this_enemies_list[battle_key];
             for (let i = 0; i < this.enemies_abilities[battle_key].length; ++i) {
-                const this_ability = abilities_list[this.enemies_abilities[battle_key][i].key_name];
+                const this_ability = this.data.info.abilities_list[this.enemies_abilities[battle_key][i].key_name];
                 const priority_move = this_ability !== undefined ? this_ability.priority_move : false;
                 this.enemies_abilities[battle_key][i].speed = BattleFormulas.enemy_turn_speed(this_enemy.current_agi, i + 1, this_enemy.turns, priority_move);
                 this.enemies_abilities[battle_key][i].caster = this_enemy;
@@ -257,8 +252,8 @@ export class Battle {
         });
         for (let i = 0; i < this.turns_actions.length; ++i) {
             const action = this.turns_actions[i];
-            const ability = abilities_list[action.key_name];
-            let battle_animation_key = abilities_list[action.key_name].battle_animation_key;
+            const ability = this.data.info.abilities_list[action.key_name];
+            let battle_animation_key = this.data.info.abilities_list[action.key_name].battle_animation_key;
             if (ability.has_animation_variation && action.key_name in action.caster.battle_animations_variations) {
                 battle_animation_key = action.caster.battle_animations_variations[action.key_name];
             }
@@ -313,18 +308,18 @@ export class Battle {
             this.check_phases();
             return;
         }
-        if (action.caster.fighter_type === fighter_types.ENEMY && !abilities_list[action.key_name].priority_move) { //reroll enemy ability
-            Object.assign(action, EnemyAI.roll_action(action.caster, party_data.members, this.enemies_info.map(info => info.instance)));
+        if (action.caster.fighter_type === fighter_types.ENEMY && !this.data.info.abilities_list[action.key_name].priority_move) { //reroll enemy ability
+            Object.assign(action, EnemyAI.roll_action(action.caster, this.data.info.party_data.members, this.enemies_info.map(info => info.instance)));
         }
-        let ability = abilities_list[action.key_name];
+        let ability = this.data.info.abilities_list[action.key_name];
         let item_name = "";
         if (action.caster.fighter_type === fighter_types.ALLY && ability !== undefined && ability.can_switch_to_unleash) { //change the current ability to unleash ability from weapon
-            if (action.caster.equip_slots.weapon && items_list[action.caster.equip_slots.weapon.key_name].unleash_ability) {
-                const weapon = items_list[action.caster.equip_slots.weapon.key_name];
+            if (action.caster.equip_slots.weapon && this.data.info.items_list[action.caster.equip_slots.weapon.key_name].unleash_ability) {
+                const weapon = this.data.info.items_list[action.caster.equip_slots.weapon.key_name];
                 if (Math.random() < weapon.unleash_rate) {
                     item_name = weapon.name;
                     action.key_name = weapon.unleash_ability;
-                    ability = abilities_list[weapon.unleash_ability];
+                    ability = this.data.info.abilities_list[weapon.unleash_ability];
                 }
             }
         }
@@ -348,17 +343,17 @@ export class Battle {
         } else {
             action.caster.current_pp -= ability.pp_cost;
         }
-        let djinn_name = action.djinn_key_name ? djinni_list[action.djinn_key_name].name : undefined;
+        let djinn_name = action.djinn_key_name ? this.data.info.djinni_list[action.djinn_key_name].name : undefined;
         await this.battle_log.add_ability(action.caster, ability, item_name, djinn_name);
         if (ability.ability_category === ability_categories.DJINN) {
             if (ability.effects.some(effect => effect.type === effect_types.SET_DJINN)) {
-                djinni_list[action.djinn_key_name].set_status(djinn_status.SET, action.caster);
+                this.data.info.djinni_list[action.djinn_key_name].set_status(djinn_status.SET, action.caster);
             } else {
-                djinni_list[action.key_name].set_status(djinn_status.STANDBY, action.caster);
+                this.data.info.djinni_list[action.key_name].set_status(djinn_status.STANDBY, action.caster);
             }
         } else if (ability.ability_category === ability_categories.SUMMON) { //some summon checks
             const requirements = this.data.dbs.summons_db[ability.key_name].requirements;
-            const standby_djinni = Djinn.get_standby_djinni(MainChar.get_active_players(MAX_CHARS_IN_BATTLE));
+            const standby_djinni = Djinn.get_standby_djinni(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE));
             const has_available_djinni = _.every(requirements, (requirement, element) => {
                 return standby_djinni[element] >= requirement;
             });
@@ -369,7 +364,7 @@ export class Battle {
                 this.check_phases();
                 return;
             } else { //set djinni used in this summon to recovery mode
-                Djinn.set_to_recovery(MainChar.get_active_players(MAX_CHARS_IN_BATTLE), requirements);
+                Djinn.set_to_recovery(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE), requirements);
             }
         }
         this.battle_menu.chars_status_window.update_chars_info();
@@ -732,12 +727,12 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             return !effects_to_remove.includes(index);
         });
         for (let i = 0; i < MAX_CHARS_IN_BATTLE; ++i) {
-            const player = party_data.members[i];
+            const player = this.data.info.party_data.members[i];
             if (player === undefined) continue;
             const player_djinni = player.djinni;
             for (let j = 0; j < player_djinni.length; ++j) {
                 const djinn_key = player_djinni[j];
-                const djinn = djinni_list[djinn_key];
+                const djinn = this.data.info.djinni_list[djinn_key];
                 if (djinn.status === djinn_status.RECOVERY) {
                     if (djinn.recovery_turn === 0) {
                         djinn.set_status(djinn_status.SET, player);
@@ -783,7 +778,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         await this.wait_for_key();
                         const gained_abilities = _.difference(change.after.abilities, change.before.abilities);
                         for (let j = 0; j < gained_abilities.length; ++j) {
-                            const ability = abilities_list[gained_abilities[j]];
+                            const ability = this.data.info.abilities_list[gained_abilities[j]];
                             this.battle_log.add(`Mastered the ${char.class.name}'s ${ability.name}!`);
                             await this.wait_for_key();
                         }
@@ -814,7 +809,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 const enemy = this.enemies_info[i].instance;
                 if (enemy.item_reward && Math.random() < enemy.item_reward_chance) {
                     //add item
-                    const item = items_list[enemy.item_reward];
+                    const item = this.data.info.items_list[enemy.item_reward];
                     if (item !== undefined) {
                         this.battle_log.add(`You got a ${item.name}.`);
                         await this.wait_for_key();

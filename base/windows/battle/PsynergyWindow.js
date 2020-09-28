@@ -1,5 +1,4 @@
 import { Window } from '../../Window.js';
-import { abilities_list } from '../../../initializers/abilities.js';
 import * as numbers from '../../../magic_numbers.js';
 import { CursorControl } from '../../utils/CursorControl.js';
 import { temporary_status } from '../../Player.js';
@@ -144,7 +143,7 @@ export class PsynergyWindow {
             this.cursor_control.set_cursor_position();
         }
         if (this.set_description) {
-            this.set_description(abilities_list[this.abilities[this.ability_index]].description);
+            this.set_description(this.data.info.abilities_list[this.abilities[this.ability_index]].description);
         }
         this.set_highlight_bar();
         this.base_window.set_page_indicator_highlight(this.page_number, this.page_index);
@@ -152,7 +151,7 @@ export class PsynergyWindow {
 
     change_ability(before_index, after_index) {
         if (this.set_description) {
-            this.set_description(abilities_list[this.abilities[this.ability_index]].description);
+            this.set_description(this.data.info.abilities_list[this.abilities[this.ability_index]].description);
         }
         this.set_highlight_bar();
     }
@@ -174,18 +173,18 @@ export class PsynergyWindow {
             let font_color = numbers.DEFAULT_FONT_COLOR;
             if (this.psy_sealed) {
                 font_color = numbers.PURPLE_FONT_COLOR;
-            } else if (this.char.current_pp < abilities_list[key_name].pp_cost) {
+            } else if (this.char.current_pp < this.data.info.abilities_list[key_name].pp_cost) {
                 font_color = numbers.RED_FONT_COLOR;
             }
-            const psynergy_name_sprite = this.base_window.set_text_in_position(abilities_list[key_name].name, x_elem_name, y + ELEM_NAME_ICON_SHIFT, false, false, font_color);
+            const psynergy_name_sprite = this.base_window.set_text_in_position(this.data.info.abilities_list[key_name].name, x_elem_name, y + ELEM_NAME_ICON_SHIFT, false, false, font_color);
             this.text_sprites_in_window.push(psynergy_name_sprite);
             const pp_sprite = this.base_window.set_text_in_position("PP", PP_X, y + ELEM_NAME_ICON_SHIFT, false, false, font_color);
             this.text_sprites_in_window.push(pp_sprite);
             this.icon_sprites_in_window.push(this.base_window.create_at_group(icon_x, icon_y, "abilities_icons", undefined, key_name));
             this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
-            this.misc_sprites_in_window.push(this.base_window.create_at_group(START_X, y + 5, abilities_list[key_name].element + "_star"));
-            this.misc_sprites_in_window.push(this.base_window.create_at_group(RANGE_X, y + 4, "ranges", undefined, abilities_list[key_name].range.toString()));
-            const psynergy_cost_sprite = this.base_window.set_text_in_position(abilities_list[key_name].pp_cost, PSY_PP_X, y + ELEM_NAME_ICON_SHIFT, true, false, font_color);
+            this.misc_sprites_in_window.push(this.base_window.create_at_group(START_X, y + 5, this.data.info.abilities_list[key_name].element + "_star"));
+            this.misc_sprites_in_window.push(this.base_window.create_at_group(RANGE_X, y + 4, "ranges", undefined, this.data.info.abilities_list[key_name].range.toString()));
+            const psynergy_cost_sprite = this.base_window.set_text_in_position(this.data.info.abilities_list[key_name].pp_cost, PSY_PP_X, y + ELEM_NAME_ICON_SHIFT, true, false, font_color);
             this.text_sprites_in_window.push(psynergy_cost_sprite);
             if (this.expanded) {
                 if (this.gained_abilities.includes(key_name)) {
@@ -203,13 +202,13 @@ export class PsynergyWindow {
 
     set_abilities() {
         this.current_abilities = this.char.abilities.filter(key_name => {
-            return key_name in abilities_list && abilities_list[key_name].is_battle_ability;
+            return key_name in this.data.info.abilities_list && this.data.info.abilities_list[key_name].is_battle_ability;
         });
         this.all_abilities = this.current_abilities;
         if (this.expanded) {
             const preview_values = this.char.preview_djinn_change([], this.djinni.map(d => d.key_name), this.next_djinni_status);
             this.next_abilities = preview_values.abilities.filter(key_name => {
-                return key_name in abilities_list && abilities_list[key_name].is_battle_ability;
+                return key_name in this.data.info.abilities_list && this.data.info.abilities_list[key_name].is_battle_ability;
             });
             let current_set = new Set(this.current_abilities);
             let next_set = new Set(this.next_abilities);
@@ -303,7 +302,7 @@ export class PsynergyWindow {
             this.highlight_bar.alpha = 0;
         }
         if (this.set_description) {
-            this.set_description(abilities_list[this.abilities[this.ability_index]].description);
+            this.set_description(this.data.info.abilities_list[this.abilities[this.ability_index]].description);
         }
         this.base_window.show(() => {
             this.window_open = true;

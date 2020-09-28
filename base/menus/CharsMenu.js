@@ -1,5 +1,4 @@
 import { Window } from '../Window.js';
-import { party_data } from '../../initializers/main_chars.js';
 import * as numbers from '../../magic_numbers.js';
 import { CursorControl } from '../utils/CursorControl.js';
 
@@ -53,7 +52,7 @@ export class CharsMenu {
     
     Output: [number]*/
     get_cursor_x() {
-        return this.char_buttons[party_data.members[this.selected_button_index].key_name].x;
+        return this.char_buttons[this.data.info.party_data.members[this.selected_button_index].key_name].x;
     }
 
     /*Returns the cursor's y value
@@ -67,7 +66,7 @@ export class CharsMenu {
     
     Output: [number]*/
     get_max_per_line() {
-        return party_data.members.slice(this.line_index * MAX_PER_LINE, (this.line_index + 1) * MAX_PER_LINE).length;
+        return this.data.info.party_data.members.slice(this.line_index * MAX_PER_LINE, (this.line_index + 1) * MAX_PER_LINE).length;
     }
 
     /*Returns the index for the selected character button
@@ -105,10 +104,10 @@ export class CharsMenu {
             this.char_buttons[key_name].destroy();
         }
         this.char_buttons = {};
-        for (let i = 0; i < _.clamp(party_data.members.length, 0, MAX_PER_LINE); ++i) {
-            const char = party_data.members[i];
+        for (let i = 0; i < _.clamp(this.data.info.party_data.members.length, 0, MAX_PER_LINE); ++i) {
+            const char = this.data.info.party_data.members[i];
             this.char_buttons[char.key_name] = this.group.create(0, 0, char.key_name + "_idle");
-            party_data.members[i].sprite_base.setAnimation(this.char_buttons[char.key_name], "idle");
+            this.data.info.party_data.members[i].sprite_base.setAnimation(this.char_buttons[char.key_name], "idle");
             this.char_buttons[char.key_name].animations.play("idle_down");
         }
     }
@@ -132,8 +131,8 @@ export class CharsMenu {
     update_position() {
         this.group.x = this.game.camera.x + this.x;
         this.group.y = this.game.camera.y + this.y;
-        for (let i = 0; i < _.clamp(party_data.members.length, 0, MAX_PER_LINE); ++i) {
-            const char = party_data.members[i];
+        for (let i = 0; i < _.clamp(this.data.info.party_data.members.length, 0, MAX_PER_LINE); ++i) {
+            const char = this.data.info.party_data.members[i];
             this.char_buttons[char.key_name].centerX = i * SLOT_WIDTH + SLOT_WIDTH_CENTER + numbers.OUTSIDE_BORDER_WIDTH + numbers.INSIDE_BORDER_WIDTH;
             this.char_buttons[char.key_name].y = this.unselected_y;
         }
@@ -152,14 +151,14 @@ export class CharsMenu {
     /*Shows the character as "selected"
     Moves the character down on scree n*/
     set_button(index) {
-        let selected_char = this.char_buttons[party_data.members[index].key_name];
+        let selected_char = this.char_buttons[this.data.info.party_data.members[index].key_name];
         selected_char.y = this.selected_y;
     }
 
     /*Resets the character's "selected" state
     Moves the character back in line with the remaining unselected members*/
     reset_button(index) {
-        let selected_char = this.char_buttons[party_data.members[index].key_name];
+        let selected_char = this.char_buttons[this.data.info.party_data.members[index].key_name];
         selected_char.y = this.unselected_y;
     }
 
@@ -177,10 +176,10 @@ export class CharsMenu {
     Input: select_index [number] - Default character selected index
            start_active [boolean] - If true, the menu starts in "active" state*/
     open(select_index, start_active = true) {
-        if (Object.keys(this.char_buttons).length != _.clamp(party_data.members.length, 0, MAX_PER_LINE)) {
+        if (Object.keys(this.char_buttons).length != _.clamp(this.data.info.party_data.members.length, 0, MAX_PER_LINE)) {
             this.set_chars();
         }
-        this.buttons_number = _.clamp(party_data.members.length, 0, MAX_PER_LINE);
+        this.buttons_number = _.clamp(this.data.info.party_data.members.length, 0, MAX_PER_LINE);
         this.selected_button_index = select_index === undefined ? 0 : select_index;
         this.line_index = 0;
         this.update_position();

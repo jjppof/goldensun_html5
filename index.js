@@ -1,11 +1,4 @@
 import * as numbers from './magic_numbers.js';
-import { initialize_main_chars, main_char_list, initialize_classes, party_data } from './initializers/main_chars.js';
-import { initialize_abilities, abilities_list, initialize_field_abilities, field_abilities_list } from './initializers/abilities.js';
-import { initialize_items, items_list } from './initializers/items.js';
-import { initialize_djinni, djinni_list } from './initializers/djinni.js';
-import { initialize_enemies, enemies_list } from './initializers/enemies.js';
-import { initialize_maps, load_maps, maps } from './initializers/maps.js';
-import { initialize_menu } from './screens/menu.js';
 import { TileEvent } from './base/tile_events/TileEvent.js';
 import { Debug } from './debug.js';
 import { load_all } from './initializers/assets_loader.js';
@@ -13,19 +6,9 @@ import { Collision } from './base/Collision.js';
 import { directions } from './utils.js';
 import { Hero } from './base/Hero.js';
 import { TileEventManager } from './base/tile_events/TileEventManager.js';
-import { initialize_misc_data } from './initializers/misc_data.js';
 import { GameEventManager } from './base/game_events/GameEventManager.js';
 import { load_databases } from './initializers/databases_loader.js';
-
-//debugging porpouses
-window.maps = maps;
-window.main_char_list = main_char_list;
-window.abilities_list = abilities_list;
-window.items_list = items_list;
-window.djinni_list = djinni_list;
-window.field_abilities_list = field_abilities_list;
-window.enemies_list = enemies_list;
-window.party_data = party_data;
+import { initialize_game_data } from './initializers/initialize_info.js';
 
 class GoldenSun {
     constructor() {
@@ -45,6 +28,7 @@ class GoldenSun {
             false //antialias
         );
         this.dbs = {};
+        this.info = {};
 
         //game states
         this.menu_open = false;
@@ -97,74 +81,6 @@ class GoldenSun {
         this.render_loading();
     }
 
-    async initialize_game_data() {
-        let load_maps_promise_resolve;
-        const load_maps_promise = new Promise(resolve => {
-            load_maps_promise_resolve = resolve;
-        });
-        initialize_maps(this.game, this, this.dbs.maps_db);
-        load_maps(load_maps_promise_resolve);
-        await load_maps_promise;
-
-        initialize_classes(this.dbs.classes_db);
-
-        let load_enemies_sprites_promise_resolve;
-        const load_enemies_sprites_promise = new Promise(resolve => {
-            load_enemies_sprites_promise_resolve = resolve;
-        });
-        initialize_enemies(this.game, this.dbs.enemies_db, load_enemies_sprites_promise_resolve);
-        await load_enemies_sprites_promise;
-
-        let load_djinni_sprites_promise_resolve;
-        const load_djinni_sprites_promise = new Promise(resolve => {
-            load_djinni_sprites_promise_resolve = resolve;
-        });
-        initialize_djinni(this.game, this.dbs.djinni_db, load_djinni_sprites_promise_resolve);
-        await load_djinni_sprites_promise;
-        
-        let load_abilities_promise_resolve;
-        const load_abilities_promise = new Promise(resolve => {
-            load_abilities_promise_resolve = resolve;
-        });
-        initialize_abilities(this.game, this.dbs.abilities_db, load_abilities_promise_resolve);
-        await load_abilities_promise;
-        
-        let load_items_promise_resolve;
-        const load_items_promise = new Promise(resolve => {
-            load_items_promise_resolve = resolve;
-        });
-        initialize_items(this.game, this.dbs.items_db, load_items_promise_resolve);
-        await load_items_promise;
-
-        let load_chars_promise_resolve;
-        const load_chars_promise = new Promise(resolve => {
-            load_chars_promise_resolve = resolve;
-        });
-        initialize_main_chars(this.game, this.dbs.main_chars_db, load_chars_promise_resolve);
-        await load_chars_promise;
-
-        let load_misc_promise_resolve;
-        const load_misc_promise = new Promise(resolve => {
-            load_misc_promise_resolve = resolve;
-        });
-        initialize_misc_data(this.game, this.dbs.misc_animations_db, load_misc_promise_resolve);
-        await load_misc_promise;
-
-        //creating groups. Order here is important
-        this.underlayer_group = this.game.add.group();
-        this.npc_group = this.game.add.group();
-        this.overlayer_group = this.game.add.group();
-
-        //initialize field abilities
-        initialize_field_abilities(this.game, this);
-
-        //initialize screens
-        this.menu_screen = initialize_menu(this.game, this);
-
-        //configuring map layers: creating sprites, listing events and setting the layers
-        this.map = await maps[this.dbs.init_db.map_key_name].mount_map(this.dbs.init_db.map_z_index);
-    }
-
     async create() {
         load_databases(this.game, this.dbs);
 
@@ -174,14 +90,13 @@ class GoldenSun {
         this.spacebar_input = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown;
 
         this.scale_factor = this.dbs.init_db.initial_scale_factor;
-        party_data.coins = this.dbs.init_db.coins;
 
         //init debug instance
         this.debug = new Debug(this.game, this);
         //init debug controls
         this.debug.initialize_controls();
 
-        await this.initialize_game_data();
+        await initialize_game_data(this.game, this);
 
         //initializes the controllable hero
         this.hero = new Hero(
@@ -193,7 +108,7 @@ class GoldenSun {
             this.dbs.init_db.initial_action,
             directions[this.dbs.init_db.initial_direction]
         );
-        this.hero.set_sprite(this.npc_group, main_char_list[this.hero.key_name].sprite_base, this.map.sprite, this.map.collision_layer);
+        this.hero.set_sprite(this.npc_group, this.info.main_char_list[this.hero.key_name].sprite_base, this.map.sprite, this.map.collision_layer);
         this.hero.set_shadow('shadow', this.npc_group, this.map.collision_layer);
         this.hero.camera_follow();
         this.hero.play();
@@ -260,15 +175,15 @@ class GoldenSun {
         //enable psynergies shortcuts for testing
         this.game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
-            field_abilities_list.move.cast(this.hero, this.dbs.init_db.initial_shortcuts.move);
+            this.info.field_abilities_list.move.cast(this.hero, this.dbs.init_db.initial_shortcuts.move);
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
-            field_abilities_list.frost.cast(this.hero, this.dbs.init_db.initial_shortcuts.frost);
+            this.info.field_abilities_list.frost.cast(this.hero, this.dbs.init_db.initial_shortcuts.frost);
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
-            field_abilities_list.growth.cast(this.hero, this.dbs.init_db.initial_shortcuts.growth);
+            this.info.field_abilities_list.growth.cast(this.hero, this.dbs.init_db.initial_shortcuts.growth);
         });
     }
 
@@ -314,5 +229,4 @@ class GoldenSun {
 var golden_sun = new GoldenSun();
 
 //debugging porpouses
-window.game = golden_sun.game;
 window.data = golden_sun;

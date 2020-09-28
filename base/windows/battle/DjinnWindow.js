@@ -1,6 +1,5 @@
 import { Window } from "../../Window.js";
 import { CursorControl } from '../../utils/CursorControl.js';
-import { djinni_list } from "../../../initializers/djinni.js";
 import { djinn_status, djinn_font_colors } from "../../Djinn.js";
 import { DjinnStatsWindow } from "./DjinnStatsWindow.js";
 
@@ -63,7 +62,7 @@ export class DjinnWindow {
             this.data.enter_input.add(() => {
                 if (!this.window_open || !this.window_active || this.psynergy_window_open) return;
                 this.data.enter_input.halt();
-                const this_djinn = djinni_list[this.djinni[this.djinn_index]];
+                const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
                 if (this_djinn.status !== djinn_status.RECOVERY) {
                     this.choosen_ability = this_djinn.ability_key_name;
                     this.hide(this.close_callback);
@@ -73,7 +72,7 @@ export class DjinnWindow {
                 if (!this.window_open || !this.window_active || this.psynergy_window_open) return;
                 this.data.shift_input.halt();
                 this.cursor_control.deactivate();
-                this.psynergy_window.open(this.char, undefined, undefined, true, djinni_list[this.djinni[this.djinn_index]], this.get_next_status());
+                this.psynergy_window.open(this.char, undefined, undefined, true, this.data.info.djinni_list[this.djinni[this.djinn_index]], this.get_next_status());
                 this.psynergy_window_open = true;
             }, this, this.shift_propagation_priority),
             this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT).onUp.add(() => {
@@ -131,7 +130,7 @@ export class DjinnWindow {
     }
 
     call_set_description() {
-        const this_djinn = djinni_list[this.djinni[this.djinn_index]];
+        const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
         if (this.set_description) {
             switch (this_djinn.status) {
                 case djinn_status.SET:
@@ -173,7 +172,7 @@ export class DjinnWindow {
         this.clear_sprites();
         this.djinni = this.all_djinni.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
         for (let i = 0; i < this.djinni.length; ++i) {
-            const djinn = djinni_list[this.djinni[i]];
+            const djinn = this.data.info.djinni_list[this.djinni[i]];
             const base_y = TOP_PADDING + i * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
             const star = this.base_window.create_at_group(STAR_X, base_y + 1, djinn.element + "_star");
             this.stars_sprites.push(star);
@@ -202,7 +201,7 @@ export class DjinnWindow {
     }
 
     get_next_status() {
-        const this_djinn = djinni_list[this.djinni[this.djinn_index]];
+        const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
         let next_status;
         switch (this_djinn.status) {
             case djinn_status.SET: next_status = djinn_status.STANDBY; break;
@@ -213,7 +212,7 @@ export class DjinnWindow {
     }
     
     update_stats() {
-        const this_djinn = djinni_list[this.djinni[this.djinn_index]];
+        const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
         this.stats_window.set_djinn(this_djinn, this.get_next_status());
     }
 

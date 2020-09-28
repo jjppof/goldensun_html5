@@ -1,5 +1,4 @@
 import * as numbers from '../magic_numbers.js';
-import { djinni_list } from '../initializers/djinni.js';
 import { ordered_elements } from '../utils.js';
 
 export const djinn_status = {
@@ -53,13 +52,13 @@ export class Djinn {
         char.update_abilities();
     }
 
-    static has_standby_djinn(members) {
+    static has_standby_djinn(djinni_list, members) {
         return _.some(members.map(char => char.djinni).map(djinn_keys => {
             return djinn_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length;
         }));
     }
 
-    static get_standby_djinni(members) {
+    static get_standby_djinni(djinni_list, members) {
         let standby_djinni = _.mapValues(_.groupBy(members.map(c => c.djinni).flat(), key => {
             return djinni_list[key].element;
         }), djinni_keys => djinni_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length);
@@ -72,7 +71,7 @@ export class Djinn {
         return standby_djinni;
     }
 
-    static set_to_recovery(members, requirements) {
+    static set_to_recovery(djinni_list, members, requirements) {
         let req_counter = Object.assign({}, requirements);
         let done = false;
         for (let i = 0; i < members.length; ++i) {

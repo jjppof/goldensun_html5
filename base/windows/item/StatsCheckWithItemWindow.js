@@ -1,7 +1,6 @@
 import { Window } from '../../Window.js';
 import { item_types } from '../../Item.js';
 import { effect_types, effect_operators } from '../../Effect.js';
-import { items_list } from '../../../initializers/items.js';
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;
@@ -12,8 +11,9 @@ const ARROW_Y_SHIFT = 2;
 const PREVIEW_TEXT_X = 94;
 
 export class StatsCheckWithItemWindow {
-    constructor(game) {
+    constructor(game, data) {
         this.game = game;
+        this.data = data;
         this.char = null;
         this.window_open = false;
         this.x = BASE_WIN_X;
@@ -97,7 +97,7 @@ export class StatsCheckWithItemWindow {
             this.update_preview_text(preview_stats, effect_type);
             this.up_arrows[effect_type].alpha = 1;
         } else {
-            const equipped_effect_obj = _.find(items_list[this.char.equip_slots[equip_slot_property].key_name].effects, {type: effect_type});
+            const equipped_effect_obj = _.find(this.data.info.items_list[this.char.equip_slots[equip_slot_property].key_name].effects, {type: effect_type});
             if (equipped_effect_obj === undefined && effect_obj === undefined) return;
             if (effect_obj === undefined || compare_removing) {
                 effect_obj = {

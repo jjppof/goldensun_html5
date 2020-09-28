@@ -1,8 +1,7 @@
 import { SpriteBase } from '../base/SpriteBase.js';
 
-export let misc_sprite_base_list = {};
-
 export function initialize_misc_data(game, misc_db, load_promise_resolve) {
+    let misc_sprite_base_list = {};
     let load_promises = [];
     for (let i = 0; i < misc_db.length; ++i) {
         const misc_data = misc_db[i];
@@ -24,4 +23,5 @@ export function initialize_misc_data(game, misc_db, load_promise_resolve) {
         sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
     }
     Promise.all(load_promises).then(load_promise_resolve);
+    return misc_sprite_base_list;
 }

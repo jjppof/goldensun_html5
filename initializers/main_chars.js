@@ -1,16 +1,8 @@
 import { Classes } from '../base/Classes.js';
 import { MainChar, MainCharBase } from '../base/MainChar.js';
 
-export let main_char_list = {};
-export let classes_list = {};
-export let class_table;
-export let party_data = {
-    members: [],
-    coins: 0
-};
-
 export function initialize_classes(classes_db) {
-    class_table = classes_db.class_table;
+    let classes_list = {};
     for (let i = 0; i < classes_db.classes.length; ++i) {
         const class_data = classes_db.classes[i];
         classes_list[class_data.key_name] = new Classes(
@@ -31,10 +23,12 @@ export function initialize_classes(classes_db) {
             class_data.vulnerabilities
         );
     }
+    return classes_list;
 }
 
-export function initialize_main_chars(game, main_chars_db, load_promise_resolve) {
+export function initialize_main_chars(game, info, main_chars_db, classes_db, load_promise_resolve) {
     let load_promises = [];
+    let main_char_list = {};
     for (let i = 0; i < main_chars_db.length; ++i) {
         const char_data = main_chars_db[i];
         const sprite_base = new MainCharBase(
@@ -47,6 +41,7 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
         );
         main_char_list[char_data.key_name] = new MainChar(
             char_data.key_name,
+            info,
             sprite_base,
             char_data.name,
             char_data.hp_curve,
@@ -57,6 +52,7 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
             char_data.luk_curve,
             char_data.exp_curve,
             char_data.starting_level,
+            classes_db.class_table,
             char_data.battle_scale,
             char_data.venus_level_base,
             char_data.mercury_level_base,
@@ -77,7 +73,7 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
             char_data.battle_animations_variations
         );
         if (char_data.in_party) {
-            party_data.members.push(main_char_list[char_data.key_name]);
+            info.party_data.members.push(main_char_list[char_data.key_name]);
         }
         for (let j = 0; j < char_data.actions.length; ++j) {
             const action = char_data.actions[j];
@@ -96,4 +92,5 @@ export function initialize_main_chars(game, main_chars_db, load_promise_resolve)
         sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
     }
     Promise.all(load_promises).then(load_promise_resolve);
+    return main_char_list;
 }
