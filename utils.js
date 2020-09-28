@@ -291,6 +291,17 @@ export function get_text_width(game, text, italic = false) { //get text width in
     return text_width;
 }
 
+/*Either kills or destroys each sprite in the group
+
+Input: group [Phaser:Group] - The parent group
+       destroy [boolean] - If true, child is destroyed instead.*/
+export function kill_all_sprites(group, destroy=false){
+    group.children.forEach(child =>{
+        if(destroy) child.parent.remove(child,true);
+        else child.kill();
+    })
+}
+
 /*Returns the pressed keys
 
 Input: cursor

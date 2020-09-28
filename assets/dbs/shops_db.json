@@ -4,6 +4,7 @@
         "shop_type": "medicine_shop",
         "dialog_key": "female_medicine_shopkeep_00",
         "avatar_key": "potion_shopkeeper",
-        "item_list": ["herb","cookie","great_sword","elven_rapier","knights_shield","steel_armor","asuras_armor"]
+        "item_list": ["herb","cookie","great_sword","elven_rapier","knights_shield","knights_helm","steel_armor",
+            "cotton_shirt","wooden_stick","asuras_armor"]
     }
 ]

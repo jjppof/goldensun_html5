@@ -1,6 +1,7 @@
 import { Window } from '../../Window.js';
 import { party_data } from "../../../initializers/main_chars.js";
 import { items_list } from '../../../initializers/items.js';
+import { kill_all_sprites } from '../../../utils.js';
 
 const MAX_PER_LINE = 5;
 const ICON_SIZE = 16;
@@ -43,8 +44,6 @@ export class InventoryWindow{
         this.selected_item = null;
         this.sprite_group = this.window.define_internal_group("sprites", {x: ITEM_X, y: ITEM_Y});
         this.icon_group = this.window.define_internal_group("icons", {x: ITEM_X + SUB_ICON_X, y: ITEM_Y + SUB_ICON_Y});
-        this.sprites = [];
-        this.icons = [];
     }
 
     /*Checks and manages the expanded state of the window
@@ -83,7 +82,8 @@ export class InventoryWindow{
         this.char = party_data.members[index];
         this.char_items = this.char.items.filter(item_obj => {return item_obj.key_name in items_list;});
 
-        this.clean_sprites();
+        kill_all_sprites(this.sprite_group);
+        kill_all_sprites(this.icon_group);
         if(this.expanded) this.set_text();
         this.set_sprites();
     }
@@ -96,39 +96,32 @@ export class InventoryWindow{
             let col = i % MAX_PER_LINE;
             let line = (i / MAX_PER_LINE) | 0;
 
-            let dead_items = this.sprites.filter(s => { return (s.alive === false && s.key === "items_icons"); });
-            let dead_backgrounds = this.sprites.filter(s => { return (s.alive === false && s.key === "item_border"); });
+            let dead_items = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === "items_icons"); });
+            let dead_backgrounds = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === "item_border"); });
 
             if(dead_items.length>0 && dead_backgrounds.length>0){
-                let bg = dead_backgrounds[0];
-                let itm = dead_items[0];
-                itm.frameName = this_item.key_name;
-                bg.reset(col*ICON_SIZE, line*ICON_SIZE);
-                itm.reset(col*ICON_SIZE, line*ICON_SIZE);
+                dead_backgrounds[0].reset(col*ICON_SIZE, line*ICON_SIZE);
+                dead_items[0].reset(col*ICON_SIZE, line*ICON_SIZE);
+                dead_items[0].frameName = this_item.key_name;
             }
             else{
-                this.sprites.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "item_border", undefined, undefined, "sprites"));
-                this.sprites.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "items_icons", undefined, this_item.key_name, "sprites"));
+                this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "item_border", undefined, undefined, "sprites");
+                this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "items_icons", undefined, this_item.key_name, "sprites");
             }
 
             if (this.char_items[i].equipped) {
-                let dead_icons = this.icons.filter(e => { return (e.alive === false && e.text === undefined); });
-                if(dead_icons.length>0){
-                    let icn = dead_icons[0];
-                    icn.reset(col*ICON_SIZE, line*ICON_SIZE);
-                }
-                else this.icons.push(this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "equipped", undefined,undefined, "icons"));
+                let dead_icons = this.icon_group.children.filter(e => { return (e.alive === false && e.text === undefined); });
+                if(dead_icons.length>0) dead_icons[0].reset(col*ICON_SIZE, line*ICON_SIZE);
+                else this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "equipped", undefined,undefined, "icons");
             }
             if (this.char_items[i].quantity > 1) {
-                let dead_text = this.icons.filter(t => { return (t.alive === false && t.text !== undefined); });
+                let dead_text = this.icon_group.children.filter(t => { return (t.alive === false && t.text !== undefined); });
                 if(dead_text.length>0){
-                    let txt = dead_text[0];
-                    txt.text = this.char_items[i].quantity.toString();
-                    txt.reset(col*ICON_SIZE, line*ICON_SIZE);
+                    dead_text[0].text = this.char_items[i].quantity.toString();
+                    dead_text[0].reset(col*ICON_SIZE, line*ICON_SIZE);
                 }
                 else{
                     let item_count = this.game.add.bitmapText(col*ICON_SIZE, line*ICON_SIZE, 'gs-item-bmp-font', this.char_items[i].quantity.toString());
-                    this.icons.push(item_count);
                     this.window.add_to_internal_group("icons", item_count);
                 }
             }
@@ -143,7 +136,7 @@ export class InventoryWindow{
            expand [boolean] - If true, the window will be in expanded state
            close_callback [function] - Callback function (Optional)
            open_callback [function] - Callback function (Optional)*/
-    open(char_index, item, expand, close_callback, open_callback){
+    open(char_index, item, expand=false, close_callback, open_callback){
         this.char = party_data.members[char_index];
         this.selected_item = item;
 
@@ -156,29 +149,12 @@ export class InventoryWindow{
         this.window.show(open_callback, false);
     }
 
-    /*Kills or destroys all sprites
-
-    Input: destroy [boolean] - Destroys sprites instead of killing*/
-    clean_sprites(destroy = false){
-        for(let i=0; i<this.sprites.length; i++){
-            if(destroy) this.sprite_group.remove(this.sprites[i],true);
-            else this.sprites[i].kill();
-        }
-        for(let i=0; i<this.icons.length; i++){
-            if(destroy) this.icon_group.remove(this.icons[i],true);
-            else this.icons[i].kill();
-        }
-        if(destroy){
-            this.sprites = [];
-            this.icons = [];
-        }
-    }
-
     /*Clears information and closes the window
 
     Input: destroy [boolean] - If true, sprites are destroyed*/
     close(destroy = false){
-        this.clean_sprites(destroy);
+        kill_all_sprites(this.sprite_group, destroy);
+        kill_all_sprites(this.icon_group, destroy);
 
         this.text.text.alpha = 0;
         this.text.shadow.alpha = 0;
