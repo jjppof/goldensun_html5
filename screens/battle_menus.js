@@ -14,7 +14,6 @@ import { MainChar } from "../base/MainChar.js";
 
 const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
-const AVATAR_SIZE = 32;
 const FORWARD = 1;
 const BACKWARD = -1;
 
@@ -48,7 +47,7 @@ export class BattleMenuScreen {
         this.item_window = new ItemWindow(this.game, this.data, this.esc_propagation_priority + 1, this.enter_propagation_priority + 1);
         this.summon_window = new SummonWindow(this.game, this.data, this.esc_propagation_priority + 1, this.enter_propagation_priority + 1);
         this.group = this.game.add.group();
-        this.avatar_sprite = this.group.create(0, numbers.GAME_HEIGHT - AVATAR_SIZE);
+        this.avatar_sprite = this.group.create(0, numbers.GAME_HEIGHT - numbers.AVATAR_SIZE);
         this.avatar_sprite.alpha = 0;
         this.inner_horizontal_menu = new HorizontalMenu(
             this.game,

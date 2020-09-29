@@ -20,8 +20,8 @@ export class GameEventManager {
     set_controls() {
         this.data.enter_input.add(() => {
             if (this.data.hero.in_action() || this.data.in_battle || !this.control_enable) return;
-            this.control_enable = false;
             if (this.on_event) {
+                this.control_enable = false;
                 this.fire_next_step();
             } else {
                 this.search_for_npc();
@@ -54,7 +54,7 @@ export class GameEventManager {
         if (npc.npc_type === npc_types.NORMAL) {
             if (npc.message) {
                 const dialog_manager = new DialogManager(this.game);
-                dialog_manager.set_dialog(npc.message)
+                dialog_manager.set_dialog(npc.message, npc.avatar);
                 const npc_x = npc.sprite.x;
                 const npc_y = npc.sprite.y;
                 const interaction_pattern = this.data.dbs.npc_db[npc.key_name].interaction_pattern;
