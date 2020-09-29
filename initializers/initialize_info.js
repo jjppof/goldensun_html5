@@ -66,17 +66,9 @@ export async function initialize_game_data(game, data) {
     data.info.misc_sprite_base_list = initialize_misc_data(game, data.dbs.misc_animations_db, load_misc_promise_resolve);
     await load_misc_promise;
 
-    //creating groups. Order here is important
-    data.underlayer_group = game.add.group();
-    data.npc_group = game.add.group();
-    data.overlayer_group = game.add.group();
-
     //initialize field abilities
     data.info.field_abilities_list = initialize_field_abilities(game, data);
 
     //initialize screens
     data.menu_screen = initialize_menu(game, data);
-
-    //configuring map layers: creating sprites, listing events and setting the layers
-    data.map = await data.info.maps_list[data.dbs.init_db.map_key_name].mount_map(data.dbs.init_db.map_z_index);
 }

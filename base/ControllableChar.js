@@ -1,5 +1,5 @@
 import * as numbers from "../magic_numbers.js";
-import { reverse_directions } from "../utils.js";
+import { reverse_directions, base_actions } from "../utils.js";
 import { Footsteps } from "./Footsteps.js";
 
 const DEFAULT_SHADOW_KEYNAME = "shadow";
@@ -115,7 +115,7 @@ export class ControllableChar {
     stop_char(change_sprite = true) {
         this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         if (change_sprite) {
-            this.current_action = "idle";
+            this.current_action = base_actions.IDLE;
             this.set_action();
         }
     }
@@ -131,11 +131,11 @@ export class ControllableChar {
         let action = this.current_action;
         let idle_climbing = this.idle_climbing;
         if (this.stop_by_colliding && !this.pushing && !this.climbing) {
-            action = "idle";
+            action = base_actions.IDLE;
         } else if (this.stop_by_colliding && !this.pushing && this.climbing) {
             idle_climbing = true;
         }
-        const animation = idle_climbing ? "idle" : reverse_directions[this.desired_direction];
+        const animation = idle_climbing ? base_actions.IDLE : reverse_directions[this.desired_direction];
         this.play(action, animation);
     }
 
@@ -157,18 +157,18 @@ export class ControllableChar {
         if (this.data.tile_event_manager.on_event) {
             return;
         }
-        if (this.required_direction === null && this.current_action !== "idle" && !this.climbing) {
-            this.current_action = "idle";
+        if (this.required_direction === null && this.current_action !== base_actions.IDLE && !this.climbing) {
+            this.current_action = base_actions.IDLE;
         } else if (this.required_direction !== null && !this.climbing && !this.pushing) {
             const footsteps = this.enable_footsteps && this.data.map.show_footsteps && this.tile_able_to_show_footprint();
             if(this.footsteps.can_make_footprint && footsteps){
                 this.footsteps.create_step(this.current_direction,this.current_action);
             }
             const shift_pressed = this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT);
-            if (shift_pressed && this.current_action !== "dash") {
-                this.current_action = "dash";
-            } else if (!shift_pressed && this.current_action !== "walk") {
-                this.current_action = "walk";
+            if (shift_pressed && this.current_action !== base_actions.DASH) {
+                this.current_action = base_actions.DASH;
+            } else if (!shift_pressed && this.current_action !== base_actions.WALK) {
+                this.current_action = base_actions.WALK;
             }
         }
     }
@@ -180,22 +180,22 @@ export class ControllableChar {
 
     calculate_speed() { //when setting temp_x or temp_y, it means that these velocities will still be analyzed in collision_dealer function
         const delta_time = this.game.time.elapsedMS / numbers.DELTA_TIME_FACTOR;
-        if (this.current_action === "dash") {
+        if (this.current_action === base_actions.DASH) {
             this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * (this.sprite_info.dash_speed + this.extra_speed)) | 0;
             this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * (this.sprite_info.dash_speed + this.extra_speed)) | 0;
-        } else if(this.current_action === "walk") {
+        } else if(this.current_action === base_actions.WALK) {
             this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * (this.sprite_info.walk_speed + this.extra_speed)) | 0;
             this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * (this.sprite_info.walk_speed + this.extra_speed)) | 0;
-        } else if(this.current_action === "climb") {
+        } else if(this.current_action === base_actions.CLIMB) {
             this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * this.sprite_info.climb_speed) | 0;
             this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * this.sprite_info.climb_speed) | 0;
-        } else if(this.current_action === "idle") {
+        } else if(this.current_action === base_actions.IDLE) {
             this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         }
     }
 
     apply_speed() {
-        if (["walk", "dash", "climb"].includes(this.current_action)) { //sets the final velocity
+        if ([base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action)) { //sets the final velocity
             this.sprite.body.velocity.x = this.sprite.body.velocity.temp_x;
             this.sprite.body.velocity.y = this.sprite.body.velocity.temp_y;
         }

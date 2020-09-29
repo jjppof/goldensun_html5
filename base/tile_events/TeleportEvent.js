@@ -1,4 +1,4 @@
-import { reverse_directions } from "../../utils.js";
+import { base_actions, directions, reverse_directions } from "../../utils.js";
 import { event_types, TileEvent } from "./TileEvent.js";
 import * as numbers from "../../magic_numbers.js";
 
@@ -24,7 +24,7 @@ export class TeleportEvent extends TileEvent {
                 this.data.hero.teleporting = false;
                 return;
             }
-            this.data.hero.play("walk", "up");
+            this.data.hero.play(base_actions.WALK, reverse_directions[directions.up]);
             this.open_door();
             this.game.physics.p2.pause();
             const time = 400;
@@ -48,7 +48,7 @@ export class TeleportEvent extends TileEvent {
     camera_fade_in() {
         this.data.hero.stop_char(true);
         this.data.hero.set_direction(this.activation_directions[0]);
-        this.data.hero.play("idle", reverse_directions[this.data.hero.current_direction]);
+        this.data.hero.play(base_actions.IDLE, reverse_directions[this.data.hero.current_direction]);
         this.game.camera.fade();
         this.game.camera.onFadeComplete.addOnce(() => {
             this.game.camera.lerp.setTo(1, 1);

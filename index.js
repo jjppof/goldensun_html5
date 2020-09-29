@@ -96,7 +96,15 @@ class GoldenSun {
         //init debug controls
         this.debug.initialize_controls();
 
+        //creating groups. Order here is important
+        this.underlayer_group = this.game.add.group();
+        this.npc_group = this.game.add.group();
+        this.overlayer_group = this.game.add.group();
+
         await initialize_game_data(this.game, this);
+
+        //configuring map layers: creating sprites, listing events and setting the layers
+        this.map = await this.info.maps_list[this.dbs.init_db.map_key_name].mount_map(this.dbs.init_db.map_z_index);
 
         //initializes the controllable hero
         this.hero = new Hero(
@@ -220,7 +228,7 @@ class GoldenSun {
         if (this.game.time.frames%8 === 0) {
             this.debug.fill_key_debug_table();
         }
-        if (this.game.time.frames%(numbers.TARGET_FPS >> 1) === 0) {
+        if (this.game.time.frames%30 === 0) {
             this.debug.fill_stats_debug_table();
         }
     }

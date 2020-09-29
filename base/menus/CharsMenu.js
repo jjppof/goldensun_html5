@@ -1,6 +1,7 @@
 import { Window } from '../Window.js';
 import * as numbers from '../../magic_numbers.js';
 import { CursorControl } from '../utils/CursorControl.js';
+import { base_actions, directions, reverse_directions } from '../../utils.js';
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 36;
@@ -106,9 +107,9 @@ export class CharsMenu {
         this.char_buttons = {};
         for (let i = 0; i < _.clamp(this.data.info.party_data.members.length, 0, MAX_PER_LINE); ++i) {
             const char = this.data.info.party_data.members[i];
-            this.char_buttons[char.key_name] = this.group.create(0, 0, char.key_name + "_idle");
-            this.data.info.party_data.members[i].sprite_base.setAnimation(this.char_buttons[char.key_name], "idle");
-            this.char_buttons[char.key_name].animations.play("idle_down");
+            this.char_buttons[char.key_name] = this.group.create(0, 0, char.sprite_base.getActionKey(base_actions.IDLE));
+            this.data.info.party_data.members[i].sprite_base.setAnimation(this.char_buttons[char.key_name], base_actions.IDLE);
+            this.char_buttons[char.key_name].animations.play(char.sprite_base.getAnimationKey(base_actions.IDLE, reverse_directions[directions.down]));
         }
     }
 

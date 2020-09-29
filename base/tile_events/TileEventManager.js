@@ -1,3 +1,4 @@
+import { base_actions } from '../../utils.js';
 import { event_types } from './TileEvent.js';
 
 const EVENT_INIT_DELAY = 350;
@@ -110,7 +111,7 @@ export class TileEventManager {
                 );
             } else {
                 const right_direction = this_event.activation_directions.includes(this.hero.current_direction);
-                if (right_direction && ["walk", "dash", "climb"].includes(this.hero.current_action)) {
+                if (right_direction && [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.hero.current_action)) {
                     if (this.event_timers[this_event.id] && !this.event_timers[this_event.id].timer.expired) {
                         continue;
                     }

@@ -1,4 +1,4 @@
-import { directions } from "../../utils.js";
+import { base_actions, directions, reverse_directions } from "../../utils.js";
 import { JumpEvent } from "./JumpEvent.js";
 import { TileEvent, event_types } from "./TileEvent.js";
 import * as numbers from "../../magic_numbers.js";
@@ -29,7 +29,7 @@ export class ClimbEvent extends TileEvent {
         }
         this.data.tile_event_manager.on_event = true;
         if (activation_direction === directions.down) {
-            const turn_animation = this.data.hero.play("climb", "turn");
+            const turn_animation = this.data.hero.play(base_actions.CLIMB, "turn");
             turn_animation.onComplete.addOnce(() => {
                 this.data.hero.shadow.visible = false;
                 const x_tween = this.data.map.sprite.tileWidth * (this.x + 0.5);
@@ -40,12 +40,12 @@ export class ClimbEvent extends TileEvent {
                     Phaser.Easing.Linear.None,
                     true
                 );
-                const start_animation = this.data.hero.play("climb", "start");
+                const start_animation = this.data.hero.play(base_actions.CLIMB, "start");
                 start_animation.onComplete.addOnce(() => {
-                    this.data.hero.play("climb", "idle");
+                    this.data.hero.play(base_actions.CLIMB, base_actions.IDLE);
                     this.data.tile_event_manager.on_event = false;
                     this.data.hero.climbing = true;
-                    this.data.hero.current_action = "climb";
+                    this.data.hero.current_action = base_actions.CLIMB;
                     if (this.dynamic) {
                         this.create_climb_collision_bodies();
                     }
@@ -53,7 +53,7 @@ export class ClimbEvent extends TileEvent {
                 });
             });
         } else if (activation_direction === directions.up) {
-            this.data.hero.play("climb", "idle");
+            this.data.hero.play(base_actions.CLIMB, base_actions.IDLE);
             const out_time = Phaser.Timer.QUARTER/3;
             const x_tween = this.data.map.sprite.tileWidth * (this.x + 0.5);
             const y_tween = this.data.hero.sprite.y - 15;
@@ -71,7 +71,7 @@ export class ClimbEvent extends TileEvent {
                 this.data.hero.climbing = true;
             });
             this.data.hero.shadow.visible = false;
-            this.data.hero.current_action = "climb";
+            this.data.hero.current_action = base_actions.CLIMB;
             this.data.hero.idle_climbing = true;
         }
     }
@@ -90,7 +90,7 @@ export class ClimbEvent extends TileEvent {
                 this.data.collision.change_map_body(this.data, this.change_to_collision_layer);
             }
             this.data.tile_event_manager.on_event = true;
-            const end_animation = this.data.hero.play("climb", "end");
+            const end_animation = this.data.hero.play(base_actions.CLIMB, "end");
             this.data.hero.shadow.visible = false;
             this.game.add.tween(this.data.hero.sprite.body).to(
                 { y: this.data.hero.sprite.y - 15 },
@@ -106,14 +106,14 @@ export class ClimbEvent extends TileEvent {
             end_animation.onComplete.addOnce(() => {
                 this.game.time.events.add(150, () => {
                     this.data.hero.shadow.y = this.data.hero.sprite.y;
-                    this.data.hero.play("idle", "up");
+                    this.data.hero.play(base_actions.IDLE, reverse_directions[directions.up]);
                     if (this.dynamic) {
                         this.remove_climb_collision_bodies(false);
                     }
                     this.game.time.events.add(250, () => {
                         this.data.tile_event_manager.on_event = false;
                         this.data.hero.climbing = false;
-                        this.data.hero.current_action = "idle";
+                        this.data.hero.current_action = base_actions.IDLE;
                         this.data.hero.set_direction(directions.up);
                         this.game.physics.p2.resume();
                     }, this);
@@ -124,7 +124,7 @@ export class ClimbEvent extends TileEvent {
                 this.data.collision.change_map_body(this.data, this.change_to_collision_layer);
             }
             this.data.tile_event_manager.on_event = true;
-            this.data.hero.play("idle", "up");
+            this.data.hero.play(base_actions.IDLE, reverse_directions[directions.up]);
             const out_time = Phaser.Timer.QUARTER/3;
             this.game.add.tween(this.data.hero.sprite.body).to(
                 { y: this.data.hero.sprite.y + 15 },
@@ -141,7 +141,7 @@ export class ClimbEvent extends TileEvent {
             }
             this.data.hero.shadow.y = this.data.hero.sprite.y;
             this.data.hero.shadow.visible = true;
-            this.data.hero.current_action = "idle";
+            this.data.hero.current_action = base_actions.IDLE;
             this.data.hero.set_direction(directions.up);
         }
     }

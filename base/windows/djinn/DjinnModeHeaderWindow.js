@@ -1,5 +1,5 @@
 import { Window } from '../../Window.js';
-import { capitalize } from '../../../utils.js';
+import { base_actions, capitalize, directions, reverse_directions } from '../../../utils.js';
 import { djinn_font_colors } from '../../Djinn.js';
 import * as numbers from '../../../magic_numbers.js';
 
@@ -130,10 +130,12 @@ export class DjinnModeHeaderWindow {
                 djinn_x = DJINN_X;
                 djinn_y = DJINN_Y;
             }
-            const char_sprite = this.base_window.create_at_group(CHARS_X[i], CHARS_Y[i], this_char.key_name + "_idle");
+            const action_key = this_char.sprite_base.getActionKey(base_actions.IDLE);
+            const char_sprite = this.base_window.create_at_group(CHARS_X[i], CHARS_Y[i], action_key);
             char_sprite.anchor.setTo(0.5, 1.0);
-            char_sprite.animations.add("idle_down", this_char.sprite_base.animations.idle.down, this_char.sprite_base.actions.idle.frame_rate, true);
-            char_sprite.animations.play("idle_down", this_char.sprite_base.actions.idle.frame_rate, true);
+            const animation_key = this_char.sprite_base.getAnimationKey(base_actions.IDLE, reverse_directions[directions.down]);
+            char_sprite.animations.add(animation_key, this_char.sprite_base.animations.idle.down, this_char.sprite_base.actions.idle.frame_rate, true);
+            char_sprite.animations.play(animation_key, this_char.sprite_base.actions.idle.frame_rate, true);
             this.sprites.push(char_sprite);
 
             if (this.action_text === "Give" && i === 1) break;

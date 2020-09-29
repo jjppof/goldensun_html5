@@ -1,4 +1,4 @@
-import { directions, is_close, reverse_directions } from "../../utils.js";
+import { base_actions, directions, is_close, reverse_directions } from "../../utils.js";
 import { DialogManager } from "../DialogManager.js";
 import { npc_types } from "../NPC.js";
 
@@ -61,8 +61,8 @@ export class GameEventManager {
                 const interaction_directions = GameEventManager.get_interaction_directions(
                     this.data.hero.sprite.x, this.data.hero.sprite.y, npc_x, npc_y, interaction_pattern, npc.body_radius);
                 this.data.hero.set_direction(interaction_directions.hero_direction);
-                this.data.hero.play("idle", reverse_directions[interaction_directions.hero_direction]);
-                npc.play("idle", reverse_directions[interaction_directions.target_direction]);
+                this.data.hero.play(base_actions.IDLE, reverse_directions[interaction_directions.hero_direction]);
+                npc.play(base_actions.IDLE, reverse_directions[interaction_directions.target_direction]);
                 this.fire_next_step = dialog_manager.next.bind(dialog_manager, () => {
                     if (dialog_manager.finished) {
                         this.on_event = false;

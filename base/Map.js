@@ -1,4 +1,4 @@
-import { directions, map_directions } from "../utils.js";
+import { base_actions, directions, map_directions } from "../utils.js";
 import { NPC_Sprite, NPC, npc_movement_types } from './NPC.js';
 import { InteractableObjects, InteractableObjects_Sprite, interactable_object_interaction_types } from "./InteractableObjects.js";
 import { TileEvent, event_types as tile_event_types } from './tile_events/TileEvent.js';
@@ -342,7 +342,7 @@ export class Map {
             const npc_db = this.data.dbs.npc_db[npc.key_name];
             let actions = [];
             if (npc.movement_type === npc_movement_types.IDLE) {
-                actions = ['idle'];
+                actions = [base_actions.IDLE];
             }
             const npc_sprite_info = new NPC_Sprite(npc.key_name, actions);
             for (let j = 0; j < actions.length; ++j) {

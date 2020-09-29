@@ -1,5 +1,5 @@
 import { init_cast_aura, tint_map_layers } from "../field_abilities/psynergy_cast.js";
-import { directions, reverse_directions } from "../../utils.js";
+import { base_actions, directions, reverse_directions } from "../../utils.js";
 import { interactable_object_interaction_types } from "../InteractableObjects.js";
 import { FieldPsynergyWindow } from "../windows/FieldPsynergyWindow.js";
 
@@ -43,7 +43,7 @@ export class FieldAbilities {
     unset_hero_cast_anim() {
         this.controllable_char.sprite.animations.currentAnim.reverseOnce();
         this.controllable_char.sprite.animations.currentAnim.onComplete.addOnce(() => {
-            this.controllable_char.play("idle", reverse_directions[this.cast_direction]);
+            this.controllable_char.play(base_actions.IDLE, reverse_directions[this.cast_direction]);
         });
         this.controllable_char.play(this.action_key_name, reverse_directions[this.cast_direction]);
     }

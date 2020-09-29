@@ -1,7 +1,7 @@
 import { ControllableChar } from "./ControllableChar.js";
 import * as numbers from '../magic_numbers.js';
 import { TileEvent, event_types } from "./tile_events/TileEvent.js";
-import { get_transition_directions, range_360, directions } from '../utils.js';
+import { get_transition_directions, range_360, directions, base_actions } from '../utils.js';
 import { normal_push } from "../interactable_objects/push.js";
 
 const SPEED_LIMIT_TO_STOP = 13;
@@ -117,7 +117,7 @@ export class Hero extends ControllableChar {
             if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
                 if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
                     const interactable_object = map.interactable_objects[j];
-                    if (["walk", "dash"].includes(this.current_action) && this.data.map.collision_layer === interactable_object.base_collider_layer) {
+                    if ([base_actions.WALK, base_actions.DASH].includes(this.current_action) && this.data.map.collision_layer === interactable_object.base_collider_layer) {
                         this.trying_to_push = true;
                         if (this.push_timer === null) {
                             this.trying_to_push_direction = this.current_direction;
@@ -172,7 +172,7 @@ export class Hero extends ControllableChar {
             this.check_interactable_objects(map, contact);
         }
         //normals having length, means that a collision is happening
-        if (normals.length && ["walk", "dash", "climb"].includes(this.current_action)) {
+        if (normals.length && [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action)) {
             if (Math.abs(this.sprite.body.velocity.x) < SPEED_LIMIT_TO_STOP && Math.abs(this.sprite.body.velocity.y) < SPEED_LIMIT_TO_STOP) { //speeds below SPEED_LIMIT_TO_STOP are not considered
                 let contact_point_directions = new Array(normals.length); // a contact point direction is the opposite direction of the contact normal vector
                 normals.forEach((normal, index) => { //slopes outside the MINIMAL_SLOPE range will be desconsidered
@@ -192,7 +192,7 @@ export class Hero extends ControllableChar {
                 });
                 this.stop_by_colliding = true;
                 this.force_direction = false;
-            } else if (this.current_action !== "climb") {
+            } else if (this.current_action !== base_actions.CLIMB) {
                 this.stop_by_colliding = false;
                 if (normals.length === 1) { //everything inside this if is to deal with direction changing when colliding
                     //finds which 30 degree sector the normal angle lies within, and converts to a direction

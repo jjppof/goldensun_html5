@@ -1,10 +1,10 @@
-import {directions} from "../utils.js";
+import {base_actions, directions} from "../utils.js";
 
 const FOOTSTEPS_TTL = Phaser.Timer.SECOND << 1;
 const WALKING_TIME_INTERVAL = Phaser.Timer.QUARTER;
 const RUNNING_TIME_INTERVAL = Phaser.Timer.QUARTER;
 
-const INITIAL_ACTION = "idle";
+const INITIAL_ACTION = base_actions.IDLE;
 const INITIAL_DIRECTION = directions.down;
 
 const FOOTSTEPS_KEY_NAME = "footprints";
@@ -99,7 +99,7 @@ export class Footsteps{
         this.current_direction = direction;
         this.current_action = action;
         this.update_foot();
-        this.footsteps_type = this.current_action === "idle" ? "double" : "single";
+        this.footsteps_type = this.current_action === base_actions.IDLE ? "double" : "single";
         const animation_name = this.footsteps_sprite_base.getAnimationKey(FOOTSTEPS_KEY_NAME, this.footsteps_type);
 
         let footsteps_sprite;
@@ -130,8 +130,8 @@ export class Footsteps{
 
     /*Updates the "foot_forward" property*/
     update_foot(){
-        this.footsteps_time_interval = this.current_action === "walk" ? WALKING_TIME_INTERVAL : RUNNING_TIME_INTERVAL;
-        if(this.current_action === "idle"){
+        this.footsteps_time_interval = this.current_action === base_actions.WALK ? WALKING_TIME_INTERVAL : RUNNING_TIME_INTERVAL;
+        if(this.current_action === base_actions.IDLE){
             this.foot_forward = foot_forward_types.NONE;
         }
         else{

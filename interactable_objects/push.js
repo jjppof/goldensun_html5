@@ -1,6 +1,6 @@
 import * as numbers from  "../magic_numbers.js";
 import { TileEvent, event_types } from "../base/tile_events/TileEvent.js";
-import { get_surroundings, get_opposite_direction, directions, reverse_directions } from "../utils.js";
+import { get_surroundings, get_opposite_direction, directions, reverse_directions, base_actions } from "../utils.js";
 import { JumpEvent } from "../base/tile_events/JumpEvent.js";
 
 const DUST_COUNT = 7;
@@ -38,7 +38,7 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
     if (target_only || expected_position === data.hero.trying_to_push_direction) {
         if (!target_only) {
             data.hero.pushing = true;
-            data.hero.current_action = "push";
+            data.hero.current_action = base_actions.PUSH;
         }
         game.physics.p2.pause();
         let tween_x = 0, tween_y = 0;
@@ -116,7 +116,7 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
                             true
                             ).onComplete.addOnce(() => {
                                 if (drop_tile.dust_animation) {
-                                    data.hero.current_action = "idle";
+                                    data.hero.current_action = base_actions.IDLE;
                                     data.hero.play(data.hero.current_action, reverse_directions[data.hero.current_direction]);
                                     dust_animation(game, data, interactable_object, promise_resolve);
                                 } else {

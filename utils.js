@@ -49,6 +49,17 @@ export const reverse_directions = {
     [directions.down_right]: "down_right"
 };
 
+
+export const base_actions = {
+    IDLE: "idle",
+    WALK: "walk",
+    DASH: "dash",
+    PUSH: "push",
+    CLIMB: "climb",
+    CAST: "cast"
+};
+
+
 /*Returns the angle for an 8-Directional value
 Works clockwise starting with "Right"
 
