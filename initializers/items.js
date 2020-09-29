@@ -1,8 +1,7 @@
 import { Item } from '../base/Item.js';
 
-export let items_list = {};
-
 export function initialize_items(game, items_db, load_promise_resolve) {
+    let items_list = {};
     for (let i = 0; i < items_db.length; ++i) {
         const item_data = items_db[i];
         items_list[item_data.key_name] = new Item(
@@ -30,4 +29,5 @@ export function initialize_items(game, items_db, load_promise_resolve) {
     const loader = game.load.atlasJSONHash('items_icons', 'assets/images/icons/items/items_icons.png', 'assets/images/icons/items/items_icons.json');
     loader.onLoadComplete.addOnce(load_promise_resolve);
     game.load.start();
+    return items_list;
 }

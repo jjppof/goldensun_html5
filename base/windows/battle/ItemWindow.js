@@ -1,9 +1,7 @@
 import { Window } from "../../Window.js";
 import { CursorControl } from '../../utils/CursorControl.js';
-import { items_list } from "../../../initializers/items.js";
 import * as numbers from "../../../magic_numbers.js"
 import { use_types } from "../../Item.js";
-import { abilities_list } from "../../../initializers/abilities.js";
 
 const BASE_WINDOW_X = 120;
 const BASE_WINDOW_Y = 72;
@@ -64,8 +62,8 @@ export class ItemWindow {
             this.data.enter_input.add(() => {
                 if (!this.window_open || !this.window_active) return;
                 this.data.enter_input.halt();
-                const this_item = items_list[this.items[this.item_index].key_name];
-                if (this_item.use_type !== use_types.NO_USE && abilities_list[this_item.use_ability].is_battle_ability) {
+                const this_item = this.data.info.items_list[this.items[this.item_index].key_name];
+                if (this_item.use_type !== use_types.NO_USE && this.data.info.abilities_list[this_item.use_ability].is_battle_ability) {
                     this.choosen_ability = this_item.use_ability;
                     this.item_obj = this.items[this.item_index];
                     this.hide(this.close_callback);
@@ -126,7 +124,7 @@ export class ItemWindow {
             this.cursor_control.set_cursor_position();
         }
         if (this.set_description) {
-            this.set_description(items_list[this.items[this.item_index].key_name].description);
+            this.set_description(this.data.info.items_list[this.items[this.item_index].key_name].description);
         }
         this.set_highlight_bar();
         this.base_window.set_page_indicator_highlight(this.page_number, this.page_index);
@@ -134,7 +132,7 @@ export class ItemWindow {
 
     change_item(before_index, after_index) {
         if (this.set_description) {
-            this.set_description(items_list[this.items[this.item_index].key_name].description);
+            this.set_description(this.data.info.items_list[this.items[this.item_index].key_name].description);
         }
         this.set_highlight_bar();
     }
@@ -147,7 +145,7 @@ export class ItemWindow {
         this.clear_sprites();
         this.items = this.all_items.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
         for (let i = 0; i < this.items.length; ++i) {
-            const item = items_list[this.items[i].key_name];
+            const item = this.data.info.items_list[this.items[i].key_name];
             const base_y = TOP_PADDING + i * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
             const item_y = base_y - 4;
             this.other_sprites.push(this.base_window.create_at_group(ITEM_ICON_X, item_y, "items_icons", undefined, this.items[i].key_name));
@@ -160,7 +158,7 @@ export class ItemWindow {
                 this.other_sprites.push(item_count);
             }
             let color = numbers.DEFAULT_FONT_COLOR;
-            if (item.use_type === use_types.NO_USE || !abilities_list[item.use_ability].is_battle_ability) {
+            if (item.use_type === use_types.NO_USE || !this.data.info.abilities_list[item.use_ability].is_battle_ability) {
                 color = numbers.YELLOW_FONT_COLOR;
             }
             const name = this.base_window.set_text_in_position(item.name, ITEM_NAME_X, base_y, false, false, color);
@@ -179,7 +177,8 @@ export class ItemWindow {
     mount_window() {
         this.all_items = this.char.items;
         this.all_items = _.sortBy(this.all_items, [item_obj => {
-            return items_list[item_obj.key_name].use_type === use_types.NO_USE || !abilities_list[items_list[item_obj.key_name].use_ability].is_battle_ability;
+            return this.data.info.items_list[item_obj.key_name].use_type === use_types.NO_USE ||
+                !this.data.info.abilities_list[this.data.info.items_list[item_obj.key_name].use_ability].is_battle_ability;
         }]);
         this.set_page_number();
         this.base_window.set_page_indicator(this.page_number, this.page_index);
@@ -209,7 +208,7 @@ export class ItemWindow {
         this.mount_window();
         this.cursor_control.activate();
         if (this.set_description) {
-            this.set_description(items_list[this.items[this.item_index].key_name].description);
+            this.set_description(this.data.info.items_list[this.items[this.item_index].key_name].description);
         }
         this.base_window.show(() => {
             this.window_open = true;

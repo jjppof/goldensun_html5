@@ -1,8 +1,6 @@
 import { CharsMenu } from '../base/menus/CharsMenu.js';
 import { BasicInfoWindow } from '../base/windows/BasicInfoWindow.js';
 import { ItemPsynergyChooseWindow } from '../base/windows/ItemPsynergyChooseWindow.js';
-import { party_data } from '../initializers/main_chars.js';
-import { items_list } from '../initializers/items.js';
 import { Window } from '../base/Window.js';
 import * as numbers from '../magic_numbers.js';
 import { ItemOptionsWindow } from '../base/windows/item/ItemOptionsWindow.js';
@@ -54,7 +52,7 @@ export class ItemMenuScreen {
             this.enter_propagation_priority
         );
         this.basic_info_window = new BasicInfoWindow(this.game);
-        this.item_change_stats_window = new StatsCheckWithItemWindow(this.game);
+        this.item_change_stats_window = new StatsCheckWithItemWindow(this.game, this.data);
         this.selected_char_index = 0;
         this.is_open = false;
         this.close_callback = null;
@@ -102,7 +100,7 @@ export class ItemMenuScreen {
     char_change(party_index) {
         if (!this.is_open) return;
         this.selected_char_index = party_index;
-        this.basic_info_window.set_char(party_data.members[party_index]);
+        this.basic_info_window.set_char(this.data.info.party_data.members[party_index]);
         this.set_item_icons();
         if (this.choosing_give_destination) {
             if (this.item_options_window.item.type === item_types.ABILITY_GRANTOR) {
@@ -110,7 +108,7 @@ export class ItemMenuScreen {
             } else if (this.item_options_window.item.type !== item_types.GENERAL_ITEM) {
                 const preview_obj = Object.assign({}, this.item_options_window.item_obj, {equipped : false});
                 this.item_change_stats_window.open(
-                    party_data.members[party_index],
+                    this.data.info.party_data.members[party_index],
                     this.item_options_window.item,
                     preview_obj
                 );
@@ -122,9 +120,9 @@ export class ItemMenuScreen {
     char_choose(party_index) {
         if (!this.is_open) return;
         if (this.choosing_give_destination) {
-            if (party_data.members[party_index].key_name === this.item_options_window.char.key_name) return;
+            if (this.data.info.party_data.members[party_index].key_name === this.item_options_window.char.key_name) return;
             this.chars_menu.deactivate();
-            this.after_char_choose_on_give(party_data.members[party_index], () => {
+            this.after_char_choose_on_give(this.data.info.party_data.members[party_index], () => {
                 this.choosing_give_destination = false;
             }, () => {
                 this.shift_item_overview(false);
@@ -167,7 +165,7 @@ export class ItemMenuScreen {
 
             } else if (this.item_options_window.item.type !== item_types.GENERAL_ITEM) {
                 this.item_change_stats_window.open(
-                    party_data.members[this.item_choose_window.char_index],
+                    this.data.info.party_data.members[this.item_choose_window.char_index],
                     this.item_options_window.item,
                     this.item_options_window.item_obj
                 );
@@ -188,12 +186,12 @@ export class ItemMenuScreen {
         if (item.type === item_types.ABILITY_GRANTOR) {
 
         } else if (item.type !== item_types.GENERAL_ITEM) {
-            this.item_change_stats_window.open(party_data.members[this.selected_char_index], item, item_obj);
+            this.item_change_stats_window.open(this.data.info.party_data.members[this.selected_char_index], item, item_obj);
         }
     }
 
     item_choose(item, item_obj) {
-        this.item_options_window.open(item_obj, item, party_data.members[this.selected_char_index],
+        this.item_options_window.open(item_obj, item, this.data.info.party_data.members[this.selected_char_index],
             this.item_change_stats_window,
             after_char_choose_on_give => {
                 this.choosing_give_destination = true;
@@ -237,18 +235,17 @@ export class ItemMenuScreen {
         if (this.choosing_item) {
             this.description_window.update_text(description, this.description_window_text);
         } else {
-            this.description_window.update_text(party_data.coins + "    Coins", this.description_window_text);
+            this.description_window.update_text(this.data.info.party_data.coins + "    Coins", this.description_window_text);
         }
     }
 
     set_item_icons() {
         this.item_overview_window.remove_from_group();
         let counter = 0;
-        for (let i = 0; i < party_data.members[this.selected_char_index].items.length; ++i) {
-            const item_obj = party_data.members[this.selected_char_index].items[i];
+        for (let i = 0; i < this.data.info.party_data.members[this.selected_char_index].items.length; ++i) {
+            const item_obj = this.data.info.party_data.members[this.selected_char_index].items[i];
             const item_key_name = item_obj.key_name;
-            if (item_key_name in items_list) {
-                const item = items_list[item_key_name];
+            if (item_key_name in this.data.info.items_list) {
                 const x = TOTAL_BORDER + ITEM_OVERVIEW_WIN_INSIDE_PADDING_H + Math.ceil((counter%ITEM_OVERVIEW_WIN_ICONS_PER_LINE) * (ITEM_OVERVIEW_WIN_SPACE_BETWN_ICO + numbers.ICON_WIDTH));
                 const y = TOTAL_BORDER + ITEM_OVERVIEW_WIN_INSIDE_PADDING_V + parseInt(counter/ITEM_OVERVIEW_WIN_ICONS_PER_LINE) * (ITEM_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
                 this.item_overview_window.create_at_group(x, y, "items_icons", undefined, item_key_name);
@@ -267,7 +264,7 @@ export class ItemMenuScreen {
     open_menu(close_callback) {
         this.close_callback = close_callback;
         this.chars_menu.open(this.selected_char_index);
-        this.basic_info_window.open(party_data.members[this.selected_char_index]);
+        this.basic_info_window.open(this.data.info.party_data.members[this.selected_char_index]);
         this.set_item_icons();
         this.set_guide_window_text();
         this.set_description_window_text();

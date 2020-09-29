@@ -2,7 +2,6 @@ import { CharsStatusWindow } from "../base/windows/CharsStatusWindow.js";
 import { HorizontalMenu } from "../base/menus/HorizontalMenu.js";
 import { capitalize, ordered_elements } from "../utils.js";
 import * as numbers from "../magic_numbers.js";
-import { party_data } from "../initializers/main_chars.js";
 import { Djinn, djinn_status } from "../base/Djinn.js";
 import { DescriptionWindow } from "../base/windows/battle/DescriptionWindow.js"
 import { PsynergyWindow } from "../base/windows/battle/PsynergyWindow.js"
@@ -11,7 +10,6 @@ import { ItemWindow } from "../base/windows/battle/ItemWindow.js";
 import { SummonWindow } from "../base/windows/battle/SummonWindow.js";
 import { MAX_CHARS_IN_BATTLE } from "../base/battle/Battle.js";
 import { permanent_status } from "../base/Player.js";
-import { djinni_list } from "../initializers/djinni.js";
 import { MainChar } from "../base/MainChar.js";
 
 const START_TITLE_WINDOW_WIDTH = 76;
@@ -71,26 +69,26 @@ export class BattleMenuScreen {
             case "fight":
                 this.start_horizontal_menu.close();
                 let filtered_buttons = [];
-                if (!Djinn.has_standby_djinn(MainChar.get_active_players(MAX_CHARS_IN_BATTLE))) {
+                if (!Djinn.has_standby_djinn(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE))) {
                     filtered_buttons.push("summon");
                 }
                 this.current_buttons = this.inner_buttons_keys.filter(key => !filtered_buttons.includes(key));
                 this.inner_horizontal_menu.mount_buttons(filtered_buttons);
                 this.abilities = {};
-                party_data.members.slice(0, MAX_CHARS_IN_BATTLE).forEach(char => {
+                this.data.info.party_data.members.slice(0, MAX_CHARS_IN_BATTLE).forEach(char => {
                     this.abilities[char.key_name] = [];
                 });
                 this.djinni_already_used = ordered_elements.reduce((a,b) => (a[b] = 0, a), {});
                 this.inner_horizontal_menu.open();
-                let this_char = party_data.members[this.current_char_index];
+                let this_char = this.data.info.party_data.members[this.current_char_index];
                 while (this_char.is_paralyzed() || this_char.has_permanent_status(permanent_status.DOWNED)) {
-                    this.abilities[party_data.members[this.current_char_index].key_name].push({
+                    this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
                         key_name: "",
                         targets: []
                     });
                     ++this.current_char_index;
-                    this_char = party_data.members[this.current_char_index];
-                    if (this.current_char_index >= MAX_CHARS_IN_BATTLE || this.current_char_index >= party_data.members.length) {
+                    this_char = this.data.info.party_data.members[this.current_char_index];
+                    if (this.current_char_index >= MAX_CHARS_IN_BATTLE || this.current_char_index >= this.data.info.party_data.members.length) {
                         this.current_char_index = 0;
                         this.on_abilities_choose(this.abilities);
                         break;
@@ -106,7 +104,7 @@ export class BattleMenuScreen {
                 this.inner_horizontal_menu.deactivate(true);
                 this.choose_targets("attack", "attack", targets => {
                     if (targets) {
-                        this.abilities[party_data.members[this.current_char_index].key_name].push({
+                        this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
                             key_name: "attack",
                             targets: targets,
                             type: "attack"
@@ -116,7 +114,7 @@ export class BattleMenuScreen {
                     } else {
                         this.inner_horizontal_menu.activate();
                     }
-                }, party_data.members[this.current_char_index]);
+                }, this.data.info.party_data.members[this.current_char_index]);
                 break;
             case "psynergy":
                 this.on_ability_choose(this.psynergy_window, false, "psynergy");
@@ -134,7 +132,7 @@ export class BattleMenuScreen {
                 this.inner_horizontal_menu.deactivate(true);
                 this.choose_targets("defend", "defend", targets => {
                     if (targets) {
-                        this.abilities[party_data.members[this.current_char_index].key_name].push({
+                        this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
                             key_name: "defend",
                             targets: targets,
                             type: "defend"
@@ -144,7 +142,7 @@ export class BattleMenuScreen {
                     } else {
                         this.inner_horizontal_menu.activate();
                     }
-                }, party_data.members[this.current_char_index]);
+                }, this.data.info.party_data.members[this.current_char_index]);
                 break
         }
     }
@@ -152,14 +150,14 @@ export class BattleMenuScreen {
     on_ability_choose(window, description_on_top, action_type, ...args) {
         this.inner_horizontal_menu.deactivate(true);
         this.description_window.open(description_on_top);
-        window.open(party_data.members[this.current_char_index], (ability, item_obj) => {
+        window.open(this.data.info.party_data.members[this.current_char_index], (ability, item_obj) => {
             if (ability) {
                 let djinn_key_name;
-                if (action_type === "djinni" && djinni_list[ability].status === djinn_status.STANDBY) {
+                if (action_type === "djinni" && this.data.info.djinni_list[ability].status === djinn_status.STANDBY) {
                     djinn_key_name = ability;
                     ability = "set_djinn";
                 } else if (action_type === "summon") {
-                    const requirements = this.data.summons_db[ability].requirements;
+                    const requirements = this.data.dbs.summons_db[ability].requirements;
                     this.djinni_already_used = _.mapValues(this.djinni_already_used, (value, elem) => {
                         return value + requirements[elem];
                     });
@@ -167,7 +165,7 @@ export class BattleMenuScreen {
                 this.description_window.hide();
                 this.choose_targets(ability, action_type, targets => {
                     if (targets) {
-                        this.abilities[party_data.members[this.current_char_index].key_name].push({
+                        this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
                             key_name: ability,
                             targets: targets,
                             type: action_type,
@@ -181,7 +179,7 @@ export class BattleMenuScreen {
                         this.description_window.show();
                         window.show();
                     }
-                }, party_data.members[this.current_char_index], item_obj);
+                }, this.data.info.party_data.members[this.current_char_index], item_obj);
             } else {
                 if (window.is_open()) {
                     window.close();
@@ -193,20 +191,20 @@ export class BattleMenuScreen {
     }
 
     change_char(step, pop_ability = false) {
-        const before_char = party_data.members[this.current_char_index];
+        const before_char = this.data.info.party_data.members[this.current_char_index];
         const abilities_count = this.abilities[before_char.key_name].length;
         if (before_char.turns === abilities_count || !abilities_count) {
             this.current_char_index += step;
         }
-        if (this.current_char_index >= MAX_CHARS_IN_BATTLE || this.current_char_index >= party_data.members.length) {
+        if (this.current_char_index >= MAX_CHARS_IN_BATTLE || this.current_char_index >= this.data.info.party_data.members.length) {
             this.current_char_index = 0;
             this.on_abilities_choose(this.abilities);
         } else if (this.current_char_index >= 0) {
-            const next_char = party_data.members[this.current_char_index];
+            const next_char = this.data.info.party_data.members[this.current_char_index];
             if (pop_ability) {
                 const ability_info = this.abilities[next_char.key_name].pop();
                 if (ability_info.type === "summon") {
-                    const requirements = this.data.summons_db[ability_info.key_name].requirements;
+                    const requirements = this.data.dbs.summons_db[ability_info.key_name].requirements;
                     this.djinni_already_used = _.mapValues(this.djinni_already_used, (value, elem) => {
                         return value - requirements[elem];
                     });
@@ -227,7 +225,7 @@ export class BattleMenuScreen {
 
     set_avatar() {
         this.avatar_sprite.alpha = 1;
-        this.avatar_sprite.loadTexture("avatars", party_data.members[this.current_char_index].key_name);
+        this.avatar_sprite.loadTexture("avatars", this.data.info.party_data.members[this.current_char_index].key_name);
     }
 
     hide_avatar() {
@@ -235,7 +233,7 @@ export class BattleMenuScreen {
     }
 
     inner_menu_cancel() {
-        const char_key_name = party_data.members[this.current_char_index].key_name;
+        const char_key_name = this.data.info.party_data.members[this.current_char_index].key_name;
         if (this.current_char_index > 0 || this.abilities[char_key_name].length === 1) {
             this.change_char(BACKWARD, true);
         } else {

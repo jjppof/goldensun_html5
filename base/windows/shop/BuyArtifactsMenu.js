@@ -1,4 +1,3 @@
-import { party_data } from '../../../initializers/main_chars.js';
 import { CharsMenu } from '../../menus/CharsMenu.js';
 import { Window } from '../../Window.js';
 import { InventoryWindow } from './InventoryWindow.js';

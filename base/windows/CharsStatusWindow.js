@@ -1,7 +1,6 @@
 import { Window } from '../Window.js';
 import { get_text_width, ordered_elements } from '../../utils.js';
 import * as numbers from '../../magic_numbers.js';
-import { party_data } from '../../initializers/main_chars.js';
 import { Djinn } from '../Djinn.js';
 import { MainChar } from '../MainChar.js';
 
@@ -47,7 +46,7 @@ export class CharsStatusWindow {
         if (this.compact) {
             this.status_win_height = STATUS_WIN_HEIGHT_COMPACT;
         }
-        const chars_number = _.clamp(party_data.members.length, MAX_CHARS_NUMBER);
+        const chars_number = _.clamp(this.data.info.party_data.members.length, MAX_CHARS_NUMBER);
         this.status_win_width = chars_number * (WIDTH_PER_CHAR + STATUS_BAR_HEIGHT) + (INITIAL_PADDING_X >> 1);
         this.status_win_x = numbers.GAME_WIDTH - this.status_win_width - numbers.INSIDE_BORDER_WIDTH - numbers.OUTSIDE_BORDER_WIDTH;
         this.status_window = new Window(this.game, this.status_win_x, 0, this.status_win_width, this.status_win_height, false);
@@ -77,7 +76,7 @@ export class CharsStatusWindow {
     /*Sets the characters' information and creates the graphics
     Removes sprites from the Window group and gives them to the internal group*/
     set_chars_info() {
-        const chars_list = party_data.members.slice(0, MAX_CHARS_NUMBER);
+        const chars_list = this.data.info.party_data.members.slice(0, MAX_CHARS_NUMBER);
         for (let i = 0; i < chars_list.length; ++i) {
             let info_sprites_obj = {};
             const char = chars_list[i];
@@ -127,7 +126,7 @@ export class CharsStatusWindow {
     update_chars_info() {
         let show_djinn_info = false;
         if (this.djinni_info) {
-            this.standby_djinni = Djinn.get_standby_djinni(MainChar.get_active_players(MAX_CHARS_NUMBER));
+            this.standby_djinni = Djinn.get_standby_djinni(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_NUMBER));
             show_djinn_info = _.some(this.standby_djinni, Boolean);
             if (show_djinn_info) {
                 this.stars_group.alpha = 1;
@@ -146,7 +145,7 @@ export class CharsStatusWindow {
                 this.stars_group.alpha = 0;
             }
         }
-        const chars_number = _.clamp(party_data.members.length, MAX_CHARS_NUMBER);
+        const chars_number = _.clamp(this.data.info.party_data.members.length, MAX_CHARS_NUMBER);
         this.status_win_width = chars_number * (WIDTH_PER_CHAR + SEPARATOR_WIDTH) + (INITIAL_PADDING_X >> 1) + (show_djinn_info ? DJINN_INFO_WIDTH : 0);
         this.status_win_x = numbers.GAME_WIDTH - this.status_win_width - numbers.INSIDE_BORDER_WIDTH - numbers.OUTSIDE_BORDER_WIDTH;
         this.status_window.update_size({width: this.status_win_width});
@@ -154,7 +153,7 @@ export class CharsStatusWindow {
         this.status_window.clear_separators();
         let current_chars = [];
         for (let i = 0; i < chars_number; ++i) {
-            let char = party_data.members[i];
+            let char = this.data.info.party_data.members[i];
             current_chars.push(char.key_name);
             let info_sprite = this.info_sprites[char.key_name];
             info_sprite.group.visible = true;

@@ -1,9 +1,8 @@
 import { EnemyBase } from '../base/Enemy.js';
 
-export let enemies_list = {};
-
 export function initialize_enemies(game, enemies_db, load_promise_resolve) {
     let load_promises = [];
+    let enemies_list = {};
     for (let i = 0; i < enemies_db.length; ++i) {
         const enemy_data = enemies_db[i];
         enemies_list[enemy_data.key_name] = new EnemyBase(enemy_data.key_name, enemy_data.battle_scale, enemy_data);
@@ -25,4 +24,5 @@ export function initialize_enemies(game, enemies_db, load_promise_resolve) {
         }
     }
     Promise.all(load_promises).then(load_promise_resolve);
+    return enemies_list;
 }

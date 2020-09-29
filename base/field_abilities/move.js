@@ -1,8 +1,7 @@
-import * as numbers from '../magic_numbers.js';
-import { target_only_push } from '../interactable_objects/push.js';
-import { directions, reverse_directions, join_directions } from "../utils.js";
-import { FieldAbilities } from "../base/FieldAbilities.js";
-import { misc_sprite_base_list } from '../initializers/misc_data.js';
+import * as numbers from '../../magic_numbers.js';
+import { target_only_push } from '../../interactable_objects/push.js';
+import { directions, reverse_directions, join_directions } from "../../utils.js";
+import { FieldAbilities } from "./FieldAbilities.js";
 
 const ABILITY_KEY_NAME = "move";
 const ACTION_KEY_NAME = "cast";
@@ -15,7 +14,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
         super(game, data, ABILITY_KEY_NAME, MOVE_MAX_RANGE, ACTION_KEY_NAME, true);
         this.set_bootstrap_method(this.init_move.bind(this));
         this.set_cast_finisher_method(this.unset_hue_shifter.bind(this));
-        this.hand_sprite_base = misc_sprite_base_list[MOVE_HAND_KEY_NAME];
+        this.hand_sprite_base = this.data.info.misc_sprite_base_list[MOVE_HAND_KEY_NAME];
         const sprite_key = this.hand_sprite_base.getActionKey(MOVE_HAND_KEY_NAME);
         this.hand_sprite = this.game.add.sprite(0, 0, sprite_key);
         this.hand_sprite.visible = false;
@@ -102,7 +101,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                     });
                 }, () => {
                     const pos_sqr_distance = Math.pow(this.controllable_char.sprite.body.x - this.target_object.interactable_object_sprite.body.x, 2) + Math.pow(this.controllable_char.sprite.body.y - this.target_object.interactable_object_sprite.body.y, 2);
-                    const rad_sqr_distance = Math.pow(numbers.HERO_BODY_RADIUS + this.data.interactable_objects_db[this.target_object.key_name].body_radius, 2);
+                    const rad_sqr_distance = Math.pow(numbers.HERO_BODY_RADIUS + this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius, 2);
                     if (pos_sqr_distance <= rad_sqr_distance) {
                         this.controllable_char.sprite.body.x = (this.controllable_char.tile_x_pos + 0.5) * this.data.map.sprite.tileWidth;
                         this.controllable_char.sprite.body.y = (this.controllable_char.tile_y_pos + 0.5) * this.data.map.sprite.tileHeight;
@@ -148,14 +147,14 @@ export class MoveFieldPsynergy extends FieldAbilities {
             case directions.down:
                 if (this.target_found) {
                     translate_x = this.target_object.interactable_object_sprite.centerX;
-                    translate_y = this.target_object.interactable_object_sprite.y - this.target_object.interactable_object_sprite.height + this.data.interactable_objects_db[this.target_object.key_name].body_radius;
+                    translate_y = this.target_object.interactable_object_sprite.y - this.target_object.interactable_object_sprite.height + this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
                 } else {
                     translate_y += MAX_HAND_TRANSLATE;
                 }
                 break;
             case directions.right:
                 if (this.target_found) {
-                    translate_x = this.target_object.interactable_object_sprite.x - 2 * this.data.interactable_objects_db[this.target_object.key_name].body_radius;
+                    translate_x = this.target_object.interactable_object_sprite.x - 2 * this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
                     translate_y = this.target_object.interactable_object_sprite.centerY;
                 } else {
                     translate_x += MAX_HAND_TRANSLATE;
@@ -163,7 +162,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                 break;
             case directions.left:
                 if (this.target_found) {
-                    translate_x = this.target_object.interactable_object_sprite.x + 2 * this.data.interactable_objects_db[this.target_object.key_name].body_radius;
+                    translate_x = this.target_object.interactable_object_sprite.x + 2 * this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
                     translate_y = this.target_object.interactable_object_sprite.centerY;
                 } else {
                     translate_x -= MAX_HAND_TRANSLATE;

@@ -1,8 +1,8 @@
-import * as numbers from '../magic_numbers.js';
-import { event_types } from "../base/tile_events/TileEvent.js";
-import { get_surroundings, directions} from "../utils.js";
-import { JumpEvent } from "../base/tile_events/JumpEvent.js";
-import { FieldAbilities } from "../base/FieldAbilities.js";
+import * as numbers from '../../magic_numbers.js';
+import { event_types } from "../tile_events/TileEvent.js";
+import { get_surroundings, directions} from "../../utils.js";
+import { JumpEvent } from "../tile_events/JumpEvent.js";
+import { FieldAbilities } from "./FieldAbilities.js";
 
 const ABILITY_KEY_NAME = "frost";
 const ACTION_KEY_NAME = "cast";

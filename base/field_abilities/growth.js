@@ -1,5 +1,5 @@
-import { directions } from "../utils.js";
-import { FieldAbilities } from "../base/FieldAbilities.js";
+import { directions } from "../../utils.js";
+import { FieldAbilities } from "./FieldAbilities.js";
 
 const ABILITY_KEY_NAME = "growth";
 const ACTION_KEY_NAME = "cast";

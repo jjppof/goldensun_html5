@@ -1,4 +1,3 @@
-import { party_data } from '../../../initializers/main_chars.js';
 import { ItemQuantityManagerWindow } from '../item/ItemQuantityManagerWindow.js';
 
 const REPAIR_MULTIPLIER = 1/4;

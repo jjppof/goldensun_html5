@@ -1,5 +1,4 @@
 import { Window } from '../../Window.js';
-import { items_list } from '../../../initializers/items.js';
 import { kill_all_sprites } from '../../../utils.js';
 
 const MAX_PER_PAGE = 7;
@@ -28,8 +27,9 @@ Supports multiple item pages
 
 Input: game [Phaser:Game] - Reference to the running game object*/
 export class BuySelectMenu{
-    constructor(game){
+    constructor(game, data){
         this.game = game;
+        this.data = data;
         this.close_callback = null;
 
         this.window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
@@ -152,7 +152,7 @@ export class BuySelectMenu{
             if(dead_tags.length>0) dead_tags[0].reset(i*LINE_SHIFT, 0); 
             else this.tag_group.create(i*LINE_SHIFT, 0, "price_tag");
             
-            let price = items_list[this.pages[page][i].key_name].price;
+            let price = this.data.info.items_list[this.pages[page][i].key_name].price;
             this.set_text(price.toString(), i);
         }
     }

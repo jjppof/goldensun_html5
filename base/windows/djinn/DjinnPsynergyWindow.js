@@ -1,5 +1,4 @@
 import { Window } from '../../Window.js';
-import { abilities_list } from '../../../initializers/abilities.js';
 import * as numbers from '../../../magic_numbers.js';
 
 const BASE_WIN_WIDTH = 116;
@@ -99,11 +98,11 @@ export class DjinnPsynergyWindow {
             const icon_x = x + (numbers.ICON_WIDTH >> 1);
             const icon_y = y + (numbers.ICON_HEIGHT >> 1);
             const x_elem_name = ELEM_PADDING_LEFT + numbers.ICON_WIDTH + 2;
-            const psynergy_name_sprite = this.base_window.set_text_in_position(abilities_list[key_name].name, x_elem_name, y + ELEM_NAME_ICON_SHIFT);
+            const psynergy_name_sprite = this.base_window.set_text_in_position(this.data.info.abilities_list[key_name].name, x_elem_name, y + ELEM_NAME_ICON_SHIFT);
             this.text_sprites_in_window.push(psynergy_name_sprite);
             this.icon_sprites_in_window.push(this.base_window.create_at_group(icon_x, icon_y, "abilities_icons", undefined, key_name));
             this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
-            const psynergy_cost_sprite = this.base_window.set_text_in_position(abilities_list[key_name].pp_cost, PSY_PP_X, y + ELEM_NAME_ICON_SHIFT, true);
+            const psynergy_cost_sprite = this.base_window.set_text_in_position(this.data.info.abilities_list[key_name].pp_cost, PSY_PP_X, y + ELEM_NAME_ICON_SHIFT, true);
             this.text_sprites_in_window.push(psynergy_cost_sprite);
             if (this.gained_abilities.includes(key_name)) {
                 this.base_window.update_text_color(PSY_GAIN_COLOR, psynergy_name_sprite);
@@ -117,11 +116,11 @@ export class DjinnPsynergyWindow {
 
     set_abilities() {
         this.current_abilities = this.char.abilities.filter(key_name => {
-            return key_name in abilities_list;
+            return key_name in this.data.info.abilities_list;
         });
         const preview_values = this.char.preview_djinn_change([], this.djinni.map(d => d.key_name), this.next_djinni_status, this.action);
         this.next_abilities = preview_values.abilities.filter(key_name => {
-            return key_name in abilities_list;
+            return key_name in this.data.info.abilities_list;
         });
         let current_set = new Set(this.current_abilities);
         let next_set = new Set(this.next_abilities);

@@ -1,7 +1,6 @@
 import { Window } from '../../Window.js';
 import * as numbers from '../../../magic_numbers.js';
 import { CursorControl } from '../../utils/CursorControl.js';
-import { party_data } from '../../../initializers/main_chars.js';
 import { DropItemWindow } from './DropItemWindow.js';
 import { ItemQuantityManagerWindow } from './ItemQuantityManagerWindow.js';
 import { GiveItemOptionsWindow } from './GiveItemOptionsWindow.js';
@@ -164,7 +163,7 @@ export class ItemOptionsWindow {
             this.text_sprites.equip.text.tint = ENABLE_COLOR;
             this.option_active.equip = true;
         }
-        if (party_data.members.length <= 1) {
+        if (this.data.info.party_data.members.length <= 1) {
             this.text_sprites.give.text.tint = DISABLE_COLOR;
             this.option_active.give = false;
         } else {

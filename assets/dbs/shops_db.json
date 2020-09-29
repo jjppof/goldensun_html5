@@ -1,10 +1,50 @@
 [
     {
-        "key_name": "madra_medicine_shop",
-        "shop_type": "medicine_shop",
+        "key_name": "madra_test_shop",
+        "shop_type": "general_shop",
         "dialog_key": "female_medicine_shopkeep_00",
         "avatar_key": "potion_shopkeeper",
-        "item_list": ["herb","cookie","great_sword","elven_rapier","knights_shield","knights_helm","steel_armor",
-            "cotton_shirt","wooden_stick","asuras_armor"]
+        "item_list": [
+            {
+                "key_name":"herb",
+                "quantity": -1
+            },
+            {
+                "key_name":"cookie",
+                "quantity": 1
+            },
+            {
+                "key_name":"great_sword",
+                "quantity": -1
+            },
+            {
+                "key_name":"elven_rapier",
+                "quantity": 1
+            },
+            {
+                "key_name":"knights_shield",
+                "quantity": -1
+            },
+            {
+                "key_name":"knights_helm",
+                "quantity": -1
+            },
+            {
+                "key_name":"steel_armor",
+                "quantity": -1
+            },
+            {
+                "key_name":"cotton_shirt",
+                "quantity": -1
+            },
+            {
+                "key_name":"wooden_stick",
+                "quantity": -1
+            },
+            {
+                "key_name":"asuras_armor",
+                "quantity": 1
+            }
+        ]
     }
 ]

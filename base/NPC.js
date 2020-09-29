@@ -81,20 +81,20 @@ export class NPC extends ControllableChar {
     config_body(collision_obj) {
         this.game.physics.p2.enable(this.sprite, false);
         //Important to be after the previous command
-        if (this.data.npc_db[this.key_name].anchor_x !== undefined) {
-            this.sprite.anchor.x = this.data.npc_db[this.key_name].anchor_x;
+        if (this.data.dbs.npc_db[this.key_name].anchor_x !== undefined) {
+            this.sprite.anchor.x = this.data.dbs.npc_db[this.key_name].anchor_x;
         } else {
             this.reset_anchor('x');
         }
-        if (this.data.npc_db[this.key_name].anchor_y !== undefined) {
-            this.sprite.anchor.y = this.data.npc_db[this.key_name].anchor_y;
+        if (this.data.dbs.npc_db[this.key_name].anchor_y !== undefined) {
+            this.sprite.anchor.y = this.data.dbs.npc_db[this.key_name].anchor_y;
         } else {
             this.reset_anchor('y');
         }
         this.sprite.body.clearShapes();
-        this.body_radius = this.data.npc_db[this.key_name].body_radius;
+        this.body_radius = this.data.dbs.npc_db[this.key_name].body_radius;
         const width = this.body_radius << 1;
-        const polygon = mount_collision_polygon(width, -(width >> 1), this.data.npc_db[this.key_name].collision_body_bevel);
+        const polygon = mount_collision_polygon(width, -(width >> 1), this.data.dbs.npc_db[this.key_name].collision_body_bevel);
         this.sprite.body.addPolygon({
                 optimalDecomp: false,
                 skipSimpleCheck: true,

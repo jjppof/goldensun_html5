@@ -1,8 +1,5 @@
 import { Window } from "../Window.js";
 import { CursorControl } from "../utils/CursorControl.js";
-import { party_data } from "../../initializers/main_chars.js";
-import { abilities_list } from '../../initializers/abilities.js';
-import { items_list } from '../../initializers/items.js';
 import * as numbers from '../../magic_numbers.js';
 
 const PSY_OVERVIEW_WIN_X = 104;
@@ -41,7 +38,7 @@ export class ItemPsynergyChooseWindow {
         this.game = game;
         this.data = data;
         this.is_psynergy_window = is_psynergy_window;
-        this.element_list = this.is_psynergy_window ? abilities_list : items_list;
+        this.element_list = this.is_psynergy_window ? this.data.info.abilities_list : this.data.info.items_list;
         this.element_sprite_key = this.is_psynergy_window ? "abilities_icons" : "items_icons";
         this.on_choose = on_choose === undefined ? () => {} : on_choose;
         this.on_change = on_change === undefined ? () => {} : on_change;
@@ -435,7 +432,7 @@ export class ItemPsynergyChooseWindow {
     open(char_index, close_callback, open_callback) {
         this.update_position();
         this.char_index = char_index;
-        this.char = party_data.members[char_index];
+        this.char = this.data.info.party_data.members[char_index];
         this.set_page_number();
         this.group.alpha = 1;
         this.close_callback = close_callback;

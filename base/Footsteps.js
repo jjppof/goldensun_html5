@@ -1,4 +1,3 @@
-import { misc_sprite_base_list } from "../initializers/misc_data.js";
 import {directions} from "../utils.js";
 
 const FOOTSTEPS_TTL = Phaser.Timer.SECOND << 1;
@@ -31,7 +30,6 @@ export class Footsteps{
         this.y_pos = 0;
         this.current_action = INITIAL_ACTION;
         this.current_direction = INITIAL_DIRECTION;
-        this.animation_db = this.data.misc_animations_db[FOOTSTEPS_KEY_NAME];
         this.anchor_x = FOOTSTEPS_ANCHOR;
         this.anchor_y = FOOTSTEPS_ANCHOR;
         this.group = this.game.add.group();
@@ -48,7 +46,7 @@ export class Footsteps{
         this.new_step_timer = this.game.time.create(false);
         this.expire_timer = this.game.time.create(false);
 
-        this.footsteps_sprite_base = misc_sprite_base_list[FOOTSTEPS_KEY_NAME];
+        this.footsteps_sprite_base = this.data.info.misc_sprite_base_list[FOOTSTEPS_KEY_NAME];
     }
 
     /*Sets the footprint interval timer*/

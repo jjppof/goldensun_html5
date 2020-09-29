@@ -1,6 +1,4 @@
 import { Window } from '../../Window.js';
-import { items_list } from '../../../initializers/items.js';
-import { party_data } from '../../../initializers/main_chars.js';
 import { kill_all_sprites } from '../../../utils.js';
 
 const BASE_X = 128;
@@ -30,8 +28,9 @@ const SEPARATOR_LENGTH = 104;
 const SEPARATOR_COUNT = 3;
 
 export class EquipCompare {
-    constructor(game) {
+    constructor(game, data) {
         this.game = game;
+        this.data = data;
         this.close_callback = null;
 
         this.selected_item = null;
@@ -83,8 +82,8 @@ export class EquipCompare {
     }
 
     compare_items(equipped, new_item, stat){
-        let eq_effects = _.mapKeys(items_list[equipped].effects, effect => effect.type);
-        let nitem_effects = _.mapKeys(items_list[new_item].effects, effect => effect.type);
+        let eq_effects = _.mapKeys(this.data.info.items_list[equipped].effects, effect => effect.type);
+        let nitem_effects = _.mapKeys(this.data.info.items_list[new_item].effects, effect => effect.type);
 
         let eq_stat = 0;
         let nitem_stat = 0;
@@ -135,7 +134,8 @@ export class EquipCompare {
     }
 
     show_stat_compare(){
-        if(!items_list[this.selected_item].equipable_chars.includes(party_data.members[this.selected_char].key_name)){
+        let this_char = this.data.info.party_data.members[this.selected_char];
+        if(!this.data.info.items_list[this.selected_item].equipable_chars.includes(this_char.key_name)){
             this.show_cant_equip();
             return;
         }
@@ -143,10 +143,9 @@ export class EquipCompare {
         this.cant_equip_text.text.alpha = 0;
         this.cant_equip_text.shadow.alpha = 0;
 
-        let selected_item_type = items_list[this.selected_item].type;
-        let this_char = party_data.members[this.selected_char];
+        let selected_item_type = this.data.info.items_list[this.selected_item].type;
         
-        let char_current_item = this_char.items.filter(itm => {return (itm.equipped === true && items_list[itm.key_name].type === selected_item_type)})[0].key_name; 
+        let char_current_item = this_char.items.filter(itm => {return (itm.equipped === true && this.data.info.items_list[itm.key_name].type === selected_item_type)})[0].key_name; 
 
         let atk_diff = this.compare_items(char_current_item, this.selected_item, "attack");
         let def_diff = this.compare_items(char_current_item, this.selected_item, "defense");
@@ -156,7 +155,7 @@ export class EquipCompare {
         this.display_stat("defense", this_char.current_def, def_diff);
         this.display_stat("agility", this_char.current_agi, agi_diff);
 
-        this.window.update_text(items_list[char_current_item].name, this.item_name_text);
+        this.window.update_text(this.data.info.items_list[char_current_item].name, this.item_name_text);
 
         for(let i=0; i<SEPARATOR_COUNT; i++){
             this.window.draw_separator(SEPARATOR_X, SEPARATOR_Y+LINE_SHIFT*i, SEPARATOR_X+SEPARATOR_LENGTH , SEPARATOR_Y+LINE_SHIFT*i, false);

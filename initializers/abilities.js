@@ -1,12 +1,10 @@
 import { Ability } from '../base/Ability.js';
-import { MoveFieldPsynergy } from '../field_abilities/move.js';
-import { FrostFieldPsynergy } from '../field_abilities/frost.js';
-import { GrowthFieldPsynergy } from '../field_abilities/growth.js';
-
-export let abilities_list = {};
-export let field_abilities_list = {};
+import { MoveFieldPsynergy } from '../base/field_abilities/move.js';
+import { FrostFieldPsynergy } from '../base/field_abilities/frost.js';
+import { GrowthFieldPsynergy } from '../base/field_abilities/growth.js';
 
 export function initialize_abilities(game, abilities_db, load_promise_resolve) {
+    let abilities_list = {};
     for (let i = 0; i < abilities_db.length; ++i) {
         const ability_data = abilities_db[i];
         abilities_list[ability_data.key_name] = new Ability(
@@ -39,10 +37,13 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
     const loader = game.load.atlasJSONHash('abilities_icons', 'assets/images/icons/abilities/abilities_icons.png', 'assets/images/icons/abilities/abilities_icons.json');
     loader.onLoadComplete.addOnce(load_promise_resolve);
     game.load.start();
+    return abilities_list;
 }
 
 export function initialize_field_abilities(game, data) {
-    field_abilities_list.move = new MoveFieldPsynergy(game, data);
-    field_abilities_list.frost = new FrostFieldPsynergy(game, data);
-    field_abilities_list.growth = new GrowthFieldPsynergy(game, data);
+    return {
+        move: new MoveFieldPsynergy(game, data),
+        frost: new FrostFieldPsynergy(game, data),
+        growth: new GrowthFieldPsynergy(game, data)
+    };
 }

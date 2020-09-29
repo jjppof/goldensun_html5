@@ -2,8 +2,6 @@ import { Window } from '../../Window.js';
 import { djinn_status, djinn_font_colors } from '../../Djinn.js';
 import { CursorControl } from '../../utils/CursorControl.js';
 import * as numbers from '../../../magic_numbers.js';
-import { party_data } from '../../../initializers/main_chars.js';
-import { djinni_list, djinni_sprites } from '../../../initializers/djinni.js';
 import { capitalize, change_brightness, elements } from '../../../utils.js';
 import { DjinnModeHeaderWindow } from './DjinnModeHeaderWindow.js';
 import { DjinnCharStatsWindow } from './DjinnCharStatsWindow.js';
@@ -70,7 +68,7 @@ export class DjinnListWindow {
         this.sizes = [];
         this.djinn_names = [];
         this.active_djinn_sprite = null;
-        this.djinn_status_change_header_window = new DjinnModeHeaderWindow(this.game);
+        this.djinn_status_change_header_window = new DjinnModeHeaderWindow(this.game, this.data);
         this.djinn_char_stats_window_left = new DjinnCharStatsWindow(this.game);
         this.djinn_char_stats_window_right = new DjinnCharStatsWindow(this.game, DJINN_CHAR_WIN_STATS_RIGHT_X);
         this.djinn_psynergy_window = new DjinnPsynergyWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority, this.spacebar_propagation_priority);
@@ -125,7 +123,7 @@ export class DjinnListWindow {
     get_y_cursor() {
         if (this.setting_djinn_status && this.selected_char_index === this.setting_djinn_status_char_index) {
             return HIGHLIGHT_Y_PADDING - numbers.FONT_SIZE;
-        } else if (this.setting_djinn_status && this.selected_djinn_index === party_data.members[this.selected_char_index].djinni.length) {
+        } else if (this.setting_djinn_status && this.selected_djinn_index === this.data.info.party_data.members[this.selected_char_index].djinni.length) {
             return HIGHLIGHT_Y_PADDING - numbers.FONT_SIZE;
         } else {
             return HIGHLIGHT_Y_PADDING + this.selected_djinn_index * numbers.FONT_SIZE + 3;
@@ -197,9 +195,9 @@ export class DjinnListWindow {
     }
 
     set_djinn_sprite(tween = true) {
-        const this_char = party_data.members[this.selected_char_index];
+        const this_char = this.data.info.party_data.members[this.selected_char_index];
         if (this.setting_djinn_status && this.selected_djinn_index === this_char.djinni.length) return;
-        const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
+        const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
         if (this.active_djinn_sprite !== null) {
             this.active_djinn_sprite.alpha = 0;
             this.active_djinn_sprite.animations.stop();
@@ -228,18 +226,18 @@ export class DjinnListWindow {
                 direction = "down";
                 action = "set";
         }
-        djinni_sprites[this_djinn.element].setAnimation(this_sprite, action);
+        this.data.info.djinni_sprites[this_djinn.element].setAnimation(this_sprite, action);
         this_sprite.animations.play(action + "_" + direction);
     }
 
     load_page() {
-        this.sizes = new Array(party_data.members.length);
+        this.sizes = new Array(this.data.info.party_data.members.length);
         this.djinn_names = [];
         this.stars = [];
         for (let i = 0; i < CHARS_PER_PAGE; ++i) {
             const party_index = this.page_index * CHARS_PER_PAGE + i;
-            if (party_index >= party_data.members.length) continue;
-            const this_char = party_data.members[party_index];
+            if (party_index >= this.data.info.party_data.members.length) continue;
+            const this_char = this.data.info.party_data.members[party_index];
             const char_key_name = this_char.key_name;
             if (!(char_key_name in this.chars_sprites)) {
                 this.chars_sprites[char_key_name] = this.chars_sprites_group.create(0, 0, char_key_name + "_idle");
@@ -264,12 +262,12 @@ export class DjinnListWindow {
         this.stars[char_index].forEach(sprite => {
             this.base_window.remove_from_group(sprite, true);
         });
-        const this_char = party_data.members[char_index];
+        const this_char = this.data.info.party_data.members[char_index];
         const char_djinni = this_char.djinni;
         let this_djinn_names = [];
         let stars = [];
         for (let j = 0; j < char_djinni.length; ++j) {
-            const this_djinn = djinni_list[char_djinni[j]];
+            const this_djinn = this.data.info.djinni_list[char_djinni[j]];
             const star_x = STAR_X_PADDING + char_index * DJINN_NAME_BETWEEN;
             const star_y = STAR_Y_PADDING + j * numbers.FONT_SIZE;
             stars.push(this.base_window.create_at_group(star_x, star_y, this_djinn.element + "_star"));
@@ -304,7 +302,7 @@ export class DjinnListWindow {
     }
 
     set_highlight_bar() {
-        if (this.setting_djinn_status && this.selected_djinn_index === party_data.members[this.selected_char_index].djinni.length) {
+        if (this.setting_djinn_status && this.selected_djinn_index === this.data.info.party_data.members[this.selected_char_index].djinni.length) {
             this.page_number_bar_highlight.alpha = 0;
         } else {
             this.page_number_bar_highlight.alpha = 1;
@@ -321,11 +319,11 @@ export class DjinnListWindow {
     }
 
     update_djinn_description() {
-        if (this.setting_djinn_status && this.selected_djinn_index === party_data.members[this.selected_char_index].djinni.length) {
+        if (this.setting_djinn_status && this.selected_djinn_index === this.data.info.party_data.members[this.selected_char_index].djinni.length) {
             this.base_window.update_text("", this.djinn_description);
         } else {
-            const this_char = party_data.members[this.selected_char_index];
-            const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
+            const this_char = this.data.info.party_data.members[this.selected_char_index];
+            const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
             this.base_window.update_text(this_djinn.description, this.djinn_description);
         }
     }
@@ -334,8 +332,8 @@ export class DjinnListWindow {
         if (this.setting_djinn_status) {
 
         } else {
-            const this_char = party_data.members[this.selected_char_index];
-            const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
+            const this_char = this.data.info.party_data.members[this.selected_char_index];
+            const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
             this.djinn_action_window.set_action_text(this_djinn.status);
         }
     }
@@ -351,7 +349,7 @@ export class DjinnListWindow {
             }
         }
         this.set_highlight_bar();
-        const this_char = party_data.members[this.selected_char_index];
+        const this_char = this.data.info.party_data.members[this.selected_char_index];
         this.chars_quick_info_window.set_char(this_char);
         this.set_action_text();
         this.update_djinn_description();
@@ -367,8 +365,8 @@ export class DjinnListWindow {
     }
 
     on_choose() {
-        const this_char = party_data.members[this.selected_char_index];
-        const this_djinn = djinni_list[this_char.djinni[this.selected_djinn_index]];
+        const this_char = this.data.info.party_data.members[this.selected_char_index];
+        const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
         if (this.setting_djinn_status || this_djinn.status === djinn_status.RECOVERY) return; 
         for (let key in this.chars_sprites) {
             this.chars_sprites[key].y -= numbers.FONT_SIZE;
@@ -388,7 +386,7 @@ export class DjinnListWindow {
                     case djinn_status.STANDBY: status_text = capitalize(djinn_status.SET); break;
                 }
             } else {
-                const other_char = party_data.members[i];
+                const other_char = this.data.info.party_data.members[i];
                 if (other_char === undefined) continue;
                 if (other_char.djinni.length < this_char.djinni.length) {
                     status_text = "Give";
@@ -408,9 +406,9 @@ export class DjinnListWindow {
     }
 
     darken_font_color(darken = true) {
-        const this_char = party_data.members[this.setting_djinn_status_char_index];
+        const this_char = this.data.info.party_data.members[this.setting_djinn_status_char_index];
         for (let i = 0; i < this.djinn_names[this.setting_djinn_status_char_index].length; ++i) {
-            const this_djinn = djinni_list[this_char.djinni[i]];
+            const this_djinn = this.data.info.djinni_list[this_char.djinni[i]];
             const color = darken ? change_brightness(djinn_font_colors[this_djinn.status], 0.7) : djinn_font_colors[this_djinn.status];
             if (darken && i === this.setting_djinn_status_djinn_index) continue;
             this.base_window.update_text_color(color, this.djinn_names[this.setting_djinn_status_char_index][i]);
@@ -429,7 +427,7 @@ export class DjinnListWindow {
                 this.djinns_sprites[i][elem].y += numbers.FONT_SIZE;
             }
             this.base_window.update_text("", this.djinni_status_texts[i]);
-            const this_char = party_data.members[i];
+            const this_char = this.data.info.party_data.members[i];
             if (this_char === undefined) continue;
             this.sizes[i] = this_char.djinni.length;
         }
@@ -450,10 +448,10 @@ export class DjinnListWindow {
     }
 
     set_djinn_operation() {
-        const this_char = party_data.members[this.setting_djinn_status_char_index];
-        const this_djinn = djinni_list[this_char.djinni[this.setting_djinn_status_djinn_index]];
+        const this_char = this.data.info.party_data.members[this.setting_djinn_status_char_index];
+        const this_djinn = this.data.info.djinni_list[this_char.djinni[this.setting_djinn_status_djinn_index]];
         if (this.setting_djinn_status_char_index !== this.selected_char_index) {
-            const next_char = party_data.members[this.selected_char_index];
+            const next_char = this.data.info.party_data.members[this.selected_char_index];
             let this_statuses, next_statuses, this_djinni, next_djinni, action_text, next_djinn;
             if (this.selected_djinn_index === next_char.djinni.length) {
                 this_statuses = [this_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY];
@@ -462,7 +460,7 @@ export class DjinnListWindow {
                 next_djinni = [this_djinn];
                 action_text = "Give";
             } else {
-                next_djinn = djinni_list[next_char.djinni[this.selected_djinn_index]];
+                next_djinn = this.data.info.djinni_list[next_char.djinni[this.selected_djinn_index]];
                 this_statuses = [
                     next_djinn.status === djinn_status.STANDBY ? "irrelevant" : next_djinn.status,
                     this_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY
@@ -563,8 +561,8 @@ export class DjinnListWindow {
     }
 
     change_djinn_status(char_index, djinn_index) {
-        const this_char = party_data.members[char_index];
-        const this_djinn = djinni_list[this_char.djinni[djinn_index]];
+        const this_char = this.data.info.party_data.members[char_index];
+        const this_djinn = this.data.info.djinni_list[this_char.djinni[djinn_index]];
         if (this_djinn.status === djinn_status.SET) {
             this_djinn.set_status(djinn_status.STANDBY, this_char);
             this.base_window.update_text_color(djinn_font_colors[djinn_status.STANDBY], this.djinn_names[char_index][djinn_index]);

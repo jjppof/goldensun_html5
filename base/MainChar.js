@@ -1,10 +1,8 @@
 import { SpriteBase } from './SpriteBase.js';
 import { choose_right_class } from './Classes.js';
-import { djinni_list } from '../initializers/djinni.js';
 import { djinn_status } from './Djinn.js';
 import { Effect, effect_types } from './Effect.js';
 import { item_types } from './Item.js';
-import { items_list } from '../initializers/items.js';
 import { Player, fighter_types, permanent_status } from './Player.js';
 import { elements, ordered_elements } from '../utils.js';
 import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from '../magic_numbers.js';
@@ -33,6 +31,7 @@ export class MainCharBase extends SpriteBase {
 export class MainChar extends Player {
     constructor (
         key_name,
+        info,
         sprite_base,
         name,
         hp_curve,
@@ -43,6 +42,7 @@ export class MainChar extends Player {
         luk_curve,
         exp_curve,
         starting_level,
+        class_table,
         battle_scale,
         venus_level_base,
         mercury_level_base,
@@ -63,9 +63,11 @@ export class MainChar extends Player {
         battle_animations_variations
     ) {
         super(key_name, name);
+        this.info = info;
         this.sprite_base = sprite_base;
         this.starting_level = starting_level;
         this.level = this.starting_level;
+        this.class_table = class_table;
         this.battle_scale = battle_scale;
         this.exp_curve = exp_curve;
         this.current_exp = this.exp_curve[this.level - 1];
@@ -130,12 +132,20 @@ export class MainChar extends Player {
     get djinni() {
         let this_djinni_list = this.venus_djinni.concat(this.mercury_djinni, this.mars_djinni, this.jupiter_djinni);
         return this_djinni_list.sort((a, b) => {
-            return djinni_list[a].index - djinni_list[b].index;
-        })
+            return this.info.djinni_list[a].index - this.info.djinni_list[b].index;
+        });
     }
 
     update_class() {
-        this.class = choose_right_class(this.element_afinity, this.venus_level_current, this.mercury_level_current, this.mars_level_current, this.jupiter_level_current);
+        this.class = choose_right_class(
+            this.info.classes_list,
+            this.class_table,
+            this.element_afinity,
+            this.venus_level_current,
+            this.mercury_level_current,
+            this.mars_level_current,
+            this.jupiter_level_current
+        );
     }
 
     add_exp(value) {
@@ -182,7 +192,7 @@ export class MainChar extends Player {
 
     add_item(item_key_name, quantity, equip) {
         let found = false;
-        if (items_list[item_key_name].type === item_types.GENERAL_ITEM) {
+        if (this.info.items_list[item_key_name].type === item_types.GENERAL_ITEM) {
             this.items.forEach(item_obj => {
                 if (item_obj.key_name === item_key_name) {
                     found = true;
@@ -226,7 +236,7 @@ export class MainChar extends Player {
     equip_item(index, initialize = false) {
         let item_obj = this.items[index];
         if (item_obj.equipped && !initialize) return;
-        const item = items_list[item_obj.key_name];
+        const item = this.info.items_list[item_obj.key_name];
         if (item.type === item_types.WEAPONS && this.equip_slots.weapon !== null) {
             this.unequip_item(this.equip_slots.weapon.index);
         } else if (item.type === item_types.HEAD_PROTECTOR && this.equip_slots.head !== null) {
@@ -257,7 +267,7 @@ export class MainChar extends Player {
     unequip_item(index) {
         let item_obj = this.items[index];
         if (!item_obj.equipped) return;
-        const item = items_list[item_obj.key_name];
+        const item = this.info.items_list[item_obj.key_name];
         if (item.type === item_types.WEAPONS && this.equip_slots.weapon !== null) {
             this.equip_slots.weapon = null;
         } else if (item.type === item_types.HEAD_PROTECTOR && this.equip_slots.head !== null) {
@@ -285,7 +295,7 @@ export class MainChar extends Player {
 
     init_djinni(djinni) {
         for (let i = 0; i < djinni.length; ++i) {
-            let djinn = djinni_list[djinni[i]];
+            let djinn = this.info.djinni_list[djinni[i]];
             switch (djinn.element) {
                 case elements.VENUS:
                     this.venus_djinni.push(djinn.key_name);
@@ -305,7 +315,7 @@ export class MainChar extends Player {
     }
 
     add_djinn(djinn_key_name) {
-        let djinn = djinni_list[djinn_key_name];
+        let djinn = this.info.djinni_list[djinn_key_name];
         switch (djinn.element) {
             case elements.VENUS:
                 this.venus_djinni.push(djinn.key_name);
@@ -324,7 +334,7 @@ export class MainChar extends Player {
     }
 
     remove_djinn(djinn_key_name) {
-        let djinn = djinni_list[djinn_key_name];
+        let djinn = this.info.djinni_list[djinn_key_name];
         let this_djinni_list;
         switch (djinn.element) {
             case elements.VENUS:
@@ -357,7 +367,7 @@ export class MainChar extends Player {
         let mars_lv = this.mars_level_current;
         let jupiter_lv = this.jupiter_level_current;
         for (let i = 0; i < djinni_key_name.length; ++i) {
-            const djinn = djinni_list[djinni_key_name[i]];
+            const djinn = this.info.djinni_list[djinni_key_name[i]];
             let lv_shift;
             switch (djinni_next_status[i]) {
                 case djinn_status.SET: lv_shift = ELEM_LV_DELTA; break;
@@ -372,7 +382,7 @@ export class MainChar extends Player {
                 case elements.JUPITER: jupiter_lv += lv_shift; break;
             }
         }
-        this.class = choose_right_class(this.element_afinity, venus_lv, mercury_lv, mars_lv, jupiter_lv);
+        this.class = choose_right_class(this.info.classes_list, this.class_table, this.element_afinity, venus_lv, mercury_lv, mars_lv, jupiter_lv);
         let return_obj = {
             class_name: this.class.name,
             class_key_name: this.class.key_name
@@ -454,7 +464,7 @@ export class MainChar extends Player {
         }
         for (let i = 0; i < this_djinni.length; ++i) {
             let djinn_key_name = this_djinni[i];
-            let djinn = djinni_list[djinn_key_name];
+            let djinn = this.info.djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && preview_obj.djinni_key_name && preview_obj.djinni_key_name.includes(djinn_key_name)) {
                 status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
@@ -552,7 +562,7 @@ export class MainChar extends Player {
     update_elemental_attributes() {
         this.init_elemental_attributes();
         for (let i = 0; i < this.djinni.length; ++i) {
-            let djinn = djinni_list[this.djinni[i]];
+            let djinn = this.info.djinni_list[this.djinni[i]];
             if (djinn.status !== djinn_status.SET) continue;
             this[djinn.element + "_level_current"] += ELEM_LV_DELTA;
             this[djinn.element + "_power_current"] += ELEM_POWER_DELTA;
@@ -585,7 +595,7 @@ export class MainChar extends Player {
         this.update_abilities();
     }
 
-    static get_active_players(max) {
+    static get_active_players(party_data, max) {
         return party_data.members.slice(0, max).filter(char => {
             return !char.has_permanent_status(permanent_status.DOWNED);
         });

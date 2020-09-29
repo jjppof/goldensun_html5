@@ -1,6 +1,4 @@
 import { Window } from '../../Window.js';
-import { party_data } from "../../../initializers/main_chars.js";
-import { items_list } from '../../../initializers/items.js';
 import { kill_all_sprites } from '../../../utils.js';
 
 const MAX_PER_LINE = 5;
@@ -29,8 +27,9 @@ Used in shop menus. Can display the amout of an item in the inventory
 
 Input: game [Phaser:Game] - Reference to the running game object*/
 export class InventoryWindow{
-    constructor(game){
+    constructor(game, data){
         this.game = game;
+        this.data = data;
         this.close_callback = null;
         this.expanded = false;
 
@@ -79,8 +78,8 @@ export class InventoryWindow{
 
     Input: index [number] - Party index of the character*/
     change_character(index){
-        this.char = party_data.members[index];
-        this.char_items = this.char.items.filter(item_obj => {return item_obj.key_name in items_list;});
+        this.char = this.data.info.party_data.members[index];
+        this.char_items = this.char.items.filter(item_obj => {return item_obj.key_name in this.data.info.items_list;});
 
         kill_all_sprites(this.sprite_group);
         kill_all_sprites(this.icon_group);
@@ -92,7 +91,7 @@ export class InventoryWindow{
     Includes icons and quantity text*/
     set_sprites(){
         for(let i=0; i<this.char_items.length; i++){
-            let this_item = items_list[this.char_items[i].key_name];
+            let this_item = this.data.info.items_list[this.char_items[i].key_name];
             let col = i % MAX_PER_LINE;
             let line = (i / MAX_PER_LINE) | 0;
 
@@ -137,10 +136,10 @@ export class InventoryWindow{
            close_callback [function] - Callback function (Optional)
            open_callback [function] - Callback function (Optional)*/
     open(char_index, item, expand=false, close_callback, open_callback){
-        this.char = party_data.members[char_index];
+        this.char = this.data.info.party_data.members[char_index];
         this.selected_item = item;
 
-        this.char_items = this.char.items.filter(item_obj => {return item_obj.key_name in items_list;});
+        this.char_items = this.char.items.filter(item_obj => {return item_obj.key_name in this.data.info.items_list;});
 
         this.check_expand(expand);
         this.set_sprites();

@@ -1,4 +1,3 @@
-import { classes_list, class_table } from '../initializers/main_chars.js';
 import { elements } from '../utils.js';
 
 export class Classes {
@@ -37,7 +36,7 @@ export class Classes {
     }
 }
 
-export function choose_right_class(element_afinity, venus_lvl, mercury_lvl, mars_lvl, jupiter_lvl) {
+export function choose_right_class(classes_list, class_table, element_afinity, venus_lvl, mercury_lvl, mars_lvl, jupiter_lvl) {
     let secondary_elements = [
         ...element_afinity !== elements.VENUS ? [{element: elements.VENUS, level: venus_lvl}] : [],
         ...element_afinity !== elements.MERCURY ? [{element: elements.MERCURY, level: mercury_lvl}] : [],

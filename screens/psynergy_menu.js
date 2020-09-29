@@ -1,8 +1,6 @@
 import { CharsMenu } from '../base/menus/CharsMenu.js';
 import { BasicInfoWindow } from '../base/windows/BasicInfoWindow.js';
 import { ItemPsynergyChooseWindow } from '../base/windows/ItemPsynergyChooseWindow.js';
-import { party_data } from '../initializers/main_chars.js';
-import { abilities_list, field_abilities_list } from '../initializers/abilities.js';
 import { Window } from '../base/Window.js';
 import * as numbers from '../magic_numbers.js';
 
@@ -76,7 +74,7 @@ export class PsynergyMenuScreen {
     char_change(party_index) {
         if (!this.is_open) return;
         this.selected_char_index = party_index;
-        this.basic_info_window.set_char(party_data.members[party_index]);
+        this.basic_info_window.set_char(this.data.info.party_data.members[party_index]);
         this.set_psynergy_icons();
     }
 
@@ -98,9 +96,9 @@ export class PsynergyMenuScreen {
     }
 
     psynergy_choose(ability) {
-        if (ability.key_name in field_abilities_list) {
+        if (ability.key_name in this.data.info.field_abilities_list) {
             this.close_menu(true);
-            field_abilities_list[ability.key_name].cast(this.data.hero, party_data.members[this.selected_char_index].key_name);
+            this.data.info.field_abilities_list[ability.key_name].cast(this.data.hero, this.data.info.party_data.members[this.selected_char_index].key_name);
         }
     }
 
@@ -116,17 +114,17 @@ export class PsynergyMenuScreen {
         if (this.choosing_psynergy) {
             this.description_window.update_text(description, this.description_window_text);
         } else {
-            this.description_window.update_text(party_data.coins + "    Coins", this.description_window_text);
+            this.description_window.update_text(this.data.info.party_data.coins + "    Coins", this.description_window_text);
         }
     }
 
     set_psynergy_icons() {
         this.psynergy_overview_window.remove_from_group();
         let counter = 0;
-        for (let i = 0; i < party_data.members[this.selected_char_index].abilities.length; ++i) {
-            const ability_key_name = party_data.members[this.selected_char_index].abilities[i];
-            if (ability_key_name in abilities_list) {
-                const ability = abilities_list[ability_key_name];
+        for (let i = 0; i < this.data.info.party_data.members[this.selected_char_index].abilities.length; ++i) {
+            const ability_key_name = this.data.info.party_data.members[this.selected_char_index].abilities[i];
+            if (ability_key_name in this.data.info.abilities_list) {
+                const ability = this.data.info.abilities_list[ability_key_name];
                 if (ability.is_field_psynergy || ability.effects_outside_battle) {
                     const x = TOTAL_BORDER + PSY_OVERVIEW_WIN_INSIDE_PADDING_H + Math.ceil((counter%PSY_OVERVIEW_WIN_ICONS_PER_LINE) * (PSY_OVERVIEW_WIN_SPACE_BETWN_ICO + numbers.ICON_WIDTH));
                     const y = TOTAL_BORDER + PSY_OVERVIEW_WIN_INSIDE_PADDING_V + parseInt(counter/PSY_OVERVIEW_WIN_ICONS_PER_LINE) * (PSY_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
@@ -140,7 +138,7 @@ export class PsynergyMenuScreen {
     open_menu(close_callback) {
         this.close_callback = close_callback;
         this.chars_menu.open(this.selected_char_index);
-        this.basic_info_window.open(party_data.members[this.selected_char_index]);
+        this.basic_info_window.open(this.data.info.party_data.members[this.selected_char_index]);
         this.set_psynergy_icons();
         this.set_guide_window_text();
         this.set_description_window_text();

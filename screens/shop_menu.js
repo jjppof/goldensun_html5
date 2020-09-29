@@ -3,7 +3,6 @@ import { ShopkeepDialog } from '../base/windows/shop/ShopkeepDialog.js';
 import { BuyArtifactsMenu } from '../base/windows/shop/BuyArtifactsMenu.js';
 import { SellRepairMenu } from '../base/windows/shop/SellRepairMenu.js';
 import { capitalize } from '../utils.js';
-import { items_list } from '../initializers/items.js';
 import { InventoryWindow } from '../base/windows/shop/InventoryWindow.js';
 import { BuySelectMenu } from '../base/windows/shop/BuySelectMenu.js';
 import { EquipCompare } from '../base/windows/shop/EquipCompare.js';
@@ -16,9 +15,9 @@ export class ShopMenuScreen{
         let esc_propagation_priority = 0;
         let enter_propagation_priority = 0;
 
-        this.items_db = items_list;
-        this.shops_db = this.data.shops_db;
-        this.shopkeep_dialog_db = this.data.shopkeep_dialog_db;
+        this.items_db = this.data.info.items_list;
+        this.shops_db = _.mapKeys(this.data.dbs.shops_db, shop => shop.key_name);
+        this.shopkeep_dialog_db = this.data.dbs.shopkeep_dialog_db;
 
         this.normal_item_list = [];
         this.artifact_list = [];
@@ -39,9 +38,9 @@ export class ShopMenuScreen{
 
         this.npc_dialog = new ShopkeepDialog(this.game, this.data);
 
-        this.inv_win = new InventoryWindow(this.game);
-        this.buy_select = new BuySelectMenu(this.game);
-        this.eq_compare = new EquipCompare(this.game);
+        this.inv_win = new InventoryWindow(this.game, data);
+        this.buy_select = new BuySelectMenu(this.game, data);
+        this.eq_compare = new EquipCompare(this.game, data);
         /*
         this.buy_menu = new BuyArtifactsMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
         this.sell_menu = new SellRepairMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
@@ -55,7 +54,7 @@ export class ShopMenuScreen{
 
         let item_list = this.shops_db[this.shop_key].item_list;
         for(let i=0; i<item_list.length; i++){
-            let item = this.items_db[item_list[i]];
+            let item = this.items_db[item_list[i].key_name];
 
             if(item.rare_item === true) this.artifact_list.push(item);
             else this.normal_item_list.push(item);
