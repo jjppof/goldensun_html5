@@ -33,6 +33,9 @@ export class DialogManager {
         if (this.window) { //destroys the current window
             this.window.destroy(false);
         }
+        if (hero_direction === undefined) {
+            hero_direction = utils.directions.down;
+        }
         let win_pos = this.get_dialog_window_position(this.parts[this.step].width, this.parts[this.step].height, hero_direction);
         if (custom_pos && custom_pos.x !== undefined) {
             win_pos.x = custom_pos.x;
