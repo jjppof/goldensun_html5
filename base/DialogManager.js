@@ -2,7 +2,10 @@ import * as numbers from '../magic_numbers.js';
 import * as utils from '../utils.js';
 import { Window } from './Window.js';
 
-export class DialogManager { //the dialog can be divided in n windows. Each division has a step index
+//A dialog can be divided in N windows. Each division has a step index.
+//To set a dialog, call the DialogManager.set_dialog function and pass the entire dialog text.
+//To advance the dialog (call next window), call the DialogManager.next function.
+export class DialogManager {
     constructor(game) {
         this.game = game;
         this.parts = null; //parts of the dialog text
@@ -10,6 +13,7 @@ export class DialogManager { //the dialog can be divided in n windows. Each divi
         this.finished = false;
     }
 
+    //Internal method. Try to calculate the position of the dialog window
     get_dialog_window_position(width, height, hero_direction) {
         const x = (numbers.GAME_WIDTH - width) >> 1;
         let y = (numbers.MAX_DIAG_WIN_HEIGHT - height) >> 1;
@@ -19,11 +23,12 @@ export class DialogManager { //the dialog can be divided in n windows. Each divi
         return {x: x, y: y};
     }
 
-    next(callback, hero_direction, custom_pos) { //calls the next dialog window
+    //Calls the next dialog window. If the dialog is finished, this function returns true.
+    next(callback, hero_direction, custom_pos) { 
         if (this.step >= this.parts.length) { //finishes the dialog
             this.finished = true;
             this.window.destroy(true, callback);
-            return;
+            return this.finished;
         }
         if (this.window) { //destroys the current window
             this.window.destroy(false);
@@ -39,9 +44,11 @@ export class DialogManager { //the dialog can be divided in n windows. Each divi
         this.window.set_text(this.parts[this.step].lines, undefined, undefined, undefined , true);
         this.window.show(callback);
         ++this.step;
+        return this.finished;
     }
 
-    set_dialog(text) { //divides the text into windows and, for each window, into lines
+    //Receives a text string and mount the the dialog sections that will go to each window of the dialog
+    set_dialog(text) {
         const max_efective_width = numbers.MAX_DIAG_WIN_WIDTH - 2 * numbers.WINDOW_PADDING_H - numbers.INSIDE_BORDER_WIDTH;
         let words = text.split(' ');
         let windows = []; //array of lines
