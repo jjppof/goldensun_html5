@@ -25,7 +25,8 @@ const LINE_SHIFT = 32;
 /*Displays a shopkeeper's wares to purchase
 Supports multiple item pages
 
-Input: game [Phaser:Game] - Reference to the running game object*/
+Input: game [Phaser:Game] - Reference to the running game object
+       data [GoldenSun] - Reference to the main JS Class instance*/
 export class BuySelectMenu{
     constructor(game, data){
         this.game = game;

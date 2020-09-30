@@ -8,9 +8,10 @@ const DIALOG_X = 8;
 const DIALOG_Y = 12;
 
 export class ShopkeepDialog{
-    constructor(game, data){
+    constructor(game, data, parent){
         this.game = game;
         this.data = data;
+        this.parent = parent;
         this.shop_key = null;
         this.avatar_key = null;
         this.dialog_key = null;
@@ -31,8 +32,8 @@ export class ShopkeepDialog{
 
     open(shop_key){
         this.shop_key = shop_key;
-        this.avatar_key = this.data.shop_screen.shops_db[shop_key].avatar_key;
-        this.dialog_key = this.data.shop_screen.shops_db[shop_key].dialog_key;
+        this.avatar_key = this.parent.shops_db[shop_key].avatar_key;
+        this.dialog_key = this.parent.shops_db[shop_key].dialog_key;
         this.messages = _.mapKeys(this.data.shop_screen.shopkeep_dialog_db[this.dialog_key].messages, messages => messages.key);
 
         this.avatar = this.avatar_group.create(0, 0, "avatars", this.avatar_key);

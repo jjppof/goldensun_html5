@@ -189,6 +189,11 @@
                 "key_name": "ice_crystal",
                 "quantity": 1,
                 "equipped": true
+            },{
+                "key_name": "spirit_ring",
+                "quantity": 1,
+                "equipped": true,
+                "broken": true
             }
         ],
         "battle_animations_variations": {

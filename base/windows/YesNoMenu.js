@@ -4,15 +4,15 @@ import { capitalize } from '../../utils.js';
 const TITLE_WINDOW_WIDTH = 36
 
 export class YesNoMenu{
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority, yes_callback, no_callback){
+    constructor(game, data, esc_propagation_priority, enter_propagation_priority){
         this.game = game;
         this.data = data;
         this.esc_propagation_priority = esc_propagation_priority + 1;
         this.enter_propagation_priority = enter_propagation_priority + 1;
-        this.yes_callback = yes_callback;
-        this.no_callback = no_callback;
 
-        this.callback = no_callback;
+        this.yes_callback = null;
+        this.no_callback = null;
+
         this.buttons_keys = ["yes", "no"];
 
         this.was_in_dialog = null;
@@ -47,12 +47,10 @@ export class YesNoMenu{
     button_press(index){
         switch (this.buttons_keys[index]) {
             case "yes":
-                this.callback = this.yes_callback;
-                this.close_menu();
+                this.close_menu(this.yes_callback);
                 break;
             case "no":
-                this.callback = this.no_callback;
-                this.close_menu();
+                this.close_menu(this.no_callback);
                 break;
         }
     }
@@ -61,7 +59,10 @@ export class YesNoMenu{
         return this.menu.menu_active;
     }
 
-    open_menu(){
+    open_menu(yes_callback, no_callback){
+        this.yes_callback = yes_callback;
+        this.no_callback = no_callback;
+
         this.was_in_dialog = this.data.in_dialog;
         this.data.in_dialog = this.was_in_dialog === true ? this.was_in_dialog : true;
         if(this.data.hero.in_action()){
@@ -72,10 +73,11 @@ export class YesNoMenu{
         
     }
 
-    close_menu() {
+    close_menu(callback) {
+        if(callback === undefined) callback = this.no_callback;
         if (!this.is_active()) return;
         this.menu.close();
         this.data.in_dialog = this.was_in_dialog;
-        this.callback();
+        callback();
     }
 }

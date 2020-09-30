@@ -27,6 +27,11 @@ const SEPARATOR_LENGTH = 104;
 
 const SEPARATOR_COUNT = 3;
 
+/*Compares the character's equipped item with another item
+Used in shop menus. Will show stat differences
+
+Input: game [Phaser:Game] - Reference to the running game object
+       data [GoldenSun] - Reference to the main JS Class instance*/
 export class EquipCompare {
     constructor(game, data) {
         this.game = game;
@@ -62,6 +67,11 @@ export class EquipCompare {
         this.arrow_group.alpha = 0;
     }
 
+    /*Initializes a text-shadow pair
+
+    Input: text [string] - The text to display
+           x, y [number] - The text position
+           right_align - If true, the text will be right-aligned*/
     init_text_sprite(text, x, y, right_align){
         let txt = this.window.set_text_in_position(text, x, y, right_align);
         this.window.add_to_internal_group("texts",txt.shadow);
@@ -69,6 +79,10 @@ export class EquipCompare {
         return txt;
     }
 
+    /*Creates or recycles an arrow sprite
+
+    Input: diff [number] - Stat difference, affects the arrow type
+           line [number] - Line index for displaying purposes*/
     make_arrow(diff, line){
         if(diff === 0) return;
 
@@ -81,6 +95,11 @@ export class EquipCompare {
         else this.window.create_at_group(arrow_x, arrow_y, key, undefined, undefined, "arrows");
     }
 
+    /*Finds the statistical difference in a stat for two items
+
+    Input: equipped [string] - Key name for the equipped item
+           new_item [string] - Key name for the item being compared
+           stat [string] - Stat to compare*/
     compare_items(equipped, new_item, stat){
         let eq_effects = _.mapKeys(this.data.info.items_list[equipped].effects, effect => effect.type);
         let nitem_effects = _.mapKeys(this.data.info.items_list[new_item].effects, effect => effect.type);
@@ -94,6 +113,11 @@ export class EquipCompare {
         return (nitem_stat - eq_stat);
     }
 
+    /*Updates the text and creates arrows if necessary
+    
+    Input: stat [string] - "attack", "defense", "agility"
+           curr_stat_text [object] - The text-shadow pair displaying the current stat
+           line [number] - Line index for displaying purposes*/
     display_stat(stat, curr_val, stat_diff){
         let new_stat_text = null;
         let curr_stat_text = null;
@@ -126,6 +150,7 @@ export class EquipCompare {
         this.make_arrow(stat_diff, line);
     }
 
+    /*Compare the same item for a different character*/
     change_character(index){
         this.selected_char = index;
         kill_all_sprites(this.arrow_group);
@@ -133,6 +158,7 @@ export class EquipCompare {
         this.show_stat_compare();
     }
 
+    /*Displays the stat comparison*/
     show_stat_compare(){
         let this_char = this.data.info.party_data.members[this.selected_char];
         if(!this.data.info.items_list[this.selected_item].equipable_chars.includes(this_char.key_name)){
@@ -165,6 +191,7 @@ export class EquipCompare {
         this.arrow_group.alpha = 1;
     }
 
+    /*Displays the "Can't equip" message*/
     show_cant_equip(){
         this.text_group.alpha = 0;
         this.arrow_group.alpha = 0;
@@ -174,6 +201,12 @@ export class EquipCompare {
         this.cant_equip_text.shadow.alpha = 1;
     }
 
+    /*Opens this window with the selected member
+
+    Input: char [number] - Party index of the character
+           item [string] - Key name of the item to compare
+           close_callback [function] - Callback function (Optional)
+           open_callback [function] - Callback function (Optional)*/
     open(char, item, close_callback, open_callback){
         this.selected_char = char;
         this.selected_item = item;
@@ -184,6 +217,9 @@ export class EquipCompare {
         this.window.show(open_callback, false);
     }
 
+    /*Clears information and closes the window
+
+    Input: destroy [boolean] - If true, sprites are destroyed*/
     close(destroy = false){
         kill_all_sprites(this.arrow_group, destroy);
         if(destroy) kill_all_sprites(this.text_group, destroy);

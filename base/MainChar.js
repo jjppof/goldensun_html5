@@ -114,7 +114,8 @@ export class MainChar extends Player {
             weapon: null,
             head: null,
             chest: null,
-            body: null
+            body: null,
+            ring: null
         };
         this.equipped_abilities = [];
         this.innate_abilities = innate_abilities;
@@ -245,12 +246,15 @@ export class MainChar extends Player {
             this.unequip_item(this.equip_slots.chest.index);
         } else if (item.type === item_types.ARMOR && this.equip_slots.body !== null) {
             this.unequip_item(this.equip_slots.body.index);
+        } else if (item.type === item_types.RING && this.equip_slots.ring !== null) {
+            this.unequip_item(this.equip_slots.ring.index);
         }
         switch (item.type) {
             case item_types.WEAPONS: this.equip_slots.weapon = item_obj; break;
             case item_types.HEAD_PROTECTOR: this.equip_slots.head = item_obj; break;
             case item_types.CHEST_PROTECTOR: this.equip_slots.chest = item_obj; break;
             case item_types.ARMOR: this.equip_slots.body = item_obj; break;
+            case item_types.RING: this.equip_slots.ring = item_obj; break;
         }
         item_obj.equipped = true;
         for (let i = 0; i < item.effects.length; ++i) {
@@ -276,6 +280,8 @@ export class MainChar extends Player {
             this.equip_slots.chest = null;
         } else if (item.type === item_types.ARMOR && this.equip_slots.body !== null) {
             this.equip_slots.body = null;
+        } else if (item.type === item_types.RING && this.equip_slots.ring !== null) {
+            this.equip_slots.ring = null;
         }
         item_obj.equipped = false;
         this.effects.forEach(effect => {

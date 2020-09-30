@@ -333,5 +333,53 @@
         "equipable_chars": ["sheba"],
         "price": 5500,
         "granted_ability": ""
+    },{
+        "key_name": "adepts_clothes",
+        "name": "Adept's Clothes",
+        "type": "armor",
+        "description": "Clothing: Boosts PP",
+        "use_type": "no_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": false,
+        "imporant_item": false,
+        "carry_up_to_30": false,
+        "effects": [{
+            "type": "defense",
+            "quantity": 18,
+            "operator": "plus"
+        },
+        {
+            "type": "max_pp",
+            "quantity": 8,
+            "operator": "plus"
+        }],
+        "attribute": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "",
+        "equipable_chars": ["isaac", "garet", "sheba"],
+        "price": 850,
+        "granted_ability": ""
+    },
+    {
+        "key_name": "spirit_ring",
+        "name": "Spirit Ring",
+        "type": "ring",
+        "description": "Ring: Restores 160 HP to all allies",
+        "use_type": "breaks_when_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": true,
+        "imporant_item": false,
+        "carry_up_to_30": false,
+        "effects": [],
+        "attribute": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "wish_well",
+        "equipable_chars": ["isaac", "garet", "sheba"],
+        "price": 3600,
+        "granted_ability": ""
     }
 ]

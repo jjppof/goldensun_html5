@@ -6,6 +6,48 @@ import { capitalize } from '../utils.js';
 import { InventoryWindow } from '../base/windows/shop/InventoryWindow.js';
 import { BuySelectMenu } from '../base/windows/shop/BuySelectMenu.js';
 import { EquipCompare } from '../base/windows/shop/EquipCompare.js';
+import { YesNoMenu } from '../base/windows/YesNoMenu.js';
+
+const ITEM_PRICE_WIN_X = 0;
+const ITEM_PRICE_WIN_Y = 64;
+const ITEM_PRICE_WIN_WIDTH = 116;
+const ITEM_PRICE_WIN_HEIGHT = 28;
+const ITEM_PRICE_NAME_X = 8;
+const ITEM_PRICE_NAME_Y = 8;
+const ITEM_PRICE_LABEL_X = 8;
+const ITEM_PRICE_LABEL_Y = 16;
+const ITEM_PRICE_VAL_END_X = 77;
+const ITEM_PRICE_VAL_Y = 16;
+const ITEM_PRICE_COINS_X = 80;
+const ITEM_PRICE_COINS_Y = 16;
+
+const ITEM_PRICE_WIN_X2 = 120;
+const ITEM_PRICE_WIN_Y2 = 64;
+
+const YOUR_COINS_WIN_X = 144;
+const YOUR_COINS_WIN_Y = 56;
+const YOUR_COINS_WIN_WIDTH = 92;
+const YOUR_COINS_WIN_HEIGHT = 28;
+const YOUR_COINS_LABEL_X = 8;
+const YOUR_COINS_LABEL_Y = 8;
+const YOUR_COINS_VAL_END_X = 85;
+const YOUR_COINS_VAL_Y = 16;
+
+const YOUR_COINS_WIN_X2 = 0;
+const YOUR_COINS_WIN_Y2 = 72;
+
+const ITEM_DESC_WIN_X = 0;
+const ITEM_DESC_WIN_Y = 136;
+const ITEM_DESC_WIN_WIDTH = 236;
+const ITEM_DESC_WIN_HEIGHT = 20;
+const ITEM_DESC_TEXT_X = 8;
+const ITEM_DESC_TEXT_Y = 8;
+
+const ITEM_DESC_WIN_X2 = 0;
+const ITEM_DESC_WIN_Y2 = 0;
+
+const CHARS_MENU_X = 0;
+const CHARS_MENU_Y = 112;
 
 export class ShopMenuScreen{
     constructor(game, data){
@@ -36,11 +78,12 @@ export class ShopMenuScreen{
         ++esc_propagation_priority;
         ++enter_propagation_priority;
 
-        this.npc_dialog = new ShopkeepDialog(this.game, this.data);
+        this.npc_dialog = new ShopkeepDialog(this.game, this.data, this);
 
-        this.inv_win = new InventoryWindow(this.game, data);
-        this.buy_select = new BuySelectMenu(this.game, data);
-        this.eq_compare = new EquipCompare(this.game, data);
+        this.inventory_win = new InventoryWindow(this.game, this.data);
+        this.buy_select = new BuySelectMenu(this.game, this.data);
+        this.eq_compare = new EquipCompare(this.game, this.data);
+        this.yesno_action = new YesNoMenu(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
         /*
         this.buy_menu = new BuyArtifactsMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
         this.sell_menu = new SellRepairMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);

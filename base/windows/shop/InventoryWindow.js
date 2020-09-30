@@ -25,7 +25,8 @@ const TEXT_Y = 8;
 /*Displays a character's inventory through icons
 Used in shop menus. Can display the amout of an item in the inventory
 
-Input: game [Phaser:Game] - Reference to the running game object*/
+Input: game [Phaser:Game] - Reference to the running game object
+       data [GoldenSun] - Reference to the main JS Class instance*/
 export class InventoryWindow{
     constructor(game, data){
         this.game = game;
