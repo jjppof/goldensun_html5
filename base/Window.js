@@ -388,7 +388,7 @@ export class Window {
            padding_x [number] - Padding on the x axis
            padding_y [number] - Padding on the y axis
            space_bewteen lines [number] - Offset between lines*/
-    set_text(lines, padding_x, padding_y, space_between_lines, italic = false) {
+    set_text(lines, padding_x, padding_y, space_between_lines, italic = false, animate = false) {
         for (let i = 0; i < this.lines_sprites.length; ++i) {
             this.lines_sprites[i].text.destroy();
             this.lines_sprites[i].shadow.destroy();
@@ -398,10 +398,17 @@ export class Window {
         const x_pos = padding_x === undefined ? numbers.WINDOW_PADDING_H + 4 : padding_x;
         let y_pos = padding_y === undefined ? numbers.WINDOW_PADDING_TOP + top_shift : padding_y;
         const font_name = italic ? 'gs-italic-bmp-font' : 'gs-bmp-font';
+
+        let lines_promises = [];
+        let anim_promise;
+        let anim_promise_resolve;
+        if (animate) {
+            anim_promise = new Promise(resolve => anim_promise_resolve = resolve);
+        }
         for (let i = 0; i < lines.length; ++i) {
             let line = lines[i];
-            let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, line, numbers.FONT_SIZE);
-            let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, font_name, line, numbers.FONT_SIZE);
+            let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, animate ? '' : line, numbers.FONT_SIZE);
+            let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, font_name, animate ? '' : line, numbers.FONT_SIZE);
 
             y_pos += numbers.FONT_SIZE + (space_between_lines === undefined ? numbers.SPACE_BETWEEN_LINES : space_between_lines);
 
@@ -410,10 +417,35 @@ export class Window {
             this.remove_smooth(text_sprite_shadow);
             text_sprite_shadow.tint = 0x0;
 
+            if (animate) {
+                const words = line.split(' ');
+                let words_index = 0;
+                let line_promise_resolve;
+                const repeater = () => {
+                    this.game.time.events.repeat(25, words.length, () => {
+                        text_sprite.text += words[words_index] + ' ';
+                        text_sprite_shadow.text += words[words_index] + ' ';
+                        ++words_index;
+                        if (words_index === words.length) {
+                            line_promise_resolve();
+                        }
+                    });
+                };
+                if (!lines_promises.length) {
+                    repeater();
+                } else {
+                    lines_promises.pop().then(repeater);
+                }
+                lines_promises.push(new Promise(resolve => line_promise_resolve = resolve));
+            }
+
             this.group.add(text_sprite_shadow);
             this.group.add(text_sprite);
             this.lines_sprites.push({text: text_sprite, shadow: text_sprite_shadow});
         }
+
+        Promise.all(lines_promises).then(anim_promise_resolve);
+        return anim_promise;
     }
 
     /*Creates a sprite to represent the given text

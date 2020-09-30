@@ -65,8 +65,9 @@ export class DialogManager {
             this.avatar = avatar;
         }
         this.window = new Window(this.game, win_pos.x, win_pos.y, this.parts[this.step].width, this.parts[this.step].height, false);
-        this.window.set_text(this.parts[this.step].lines, undefined, undefined, undefined , this.italic_font);
-        this.window.show(callback);
+        this.window.show(((step, italic_font, next_callback) => {
+            this.window.set_text(this.parts[step].lines, undefined, undefined, undefined , italic_font, true).then(next_callback);
+        }).bind(this, this.step, this.italic_font, callback));
         if (this.avatar) {
             const avatar_pos = this.get_avatar_position(win_pos);
             const window_size = numbers.AVATAR_SIZE + 4;
