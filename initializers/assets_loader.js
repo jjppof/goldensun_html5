@@ -41,6 +41,7 @@ function load_misc(game) {
     game.load.image('arrow_change', 'assets/images/misc/arrow_change.png');
     game.load.image('item_border', 'assets/images/misc/item_border.png');
     game.load.image('price_tag', 'assets/images/misc/price_tag.png');
+    game.load.image('broken', 'assets/images/misc/broken.png');
     game.load.image('frost_snowflake', 'assets/images/interactable_objects/snowflake.png');
     game.load.atlasJSONHash('dust', 'assets/images/misc/dust.png', 'assets/images/misc/dust.json');
     game.load.atlasJSONHash('battle_cursor', 'assets/images/misc/battle_cursor.png', 'assets/images/misc/battle_cursor.json');

@@ -109,11 +109,18 @@ export class InventoryWindow{
                 this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "items_icons", undefined, this_item.key_name, "sprites");
             }
 
+            if (this.char_items[i].broken) {
+                let dead_broken = this.sprite_group.children.filter(b => { return (b.alive === false && b.key === "broken"); });
+                if(dead_broken.length>0) dead_broken[0].reset(col*ICON_SIZE, line*ICON_SIZE);
+                else this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "broken", undefined,undefined, "sprites");
+            }
+
             if (this.char_items[i].equipped) {
                 let dead_icons = this.icon_group.children.filter(e => { return (e.alive === false && e.text === undefined); });
                 if(dead_icons.length>0) dead_icons[0].reset(col*ICON_SIZE, line*ICON_SIZE);
                 else this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "equipped", undefined,undefined, "icons");
             }
+
             if (this.char_items[i].quantity > 1) {
                 let dead_text = this.icon_group.children.filter(t => { return (t.alive === false && t.text !== undefined); });
                 if(dead_text.length>0){
