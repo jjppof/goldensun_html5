@@ -53,7 +53,7 @@ export class GameEventManager {
     set_npc_event(npc) {
         if (npc.npc_type === npc_types.NORMAL) {
             if (npc.message) {
-                const dialog_manager = new DialogManager(this.game);
+                const dialog_manager = new DialogManager(this.game, this.data);
                 dialog_manager.set_dialog(npc.message, npc.avatar);
                 const npc_x = npc.sprite.x;
                 const npc_y = npc.sprite.y;

@@ -33,5 +33,20 @@
                 "json": "assets/images/misc/move_psynergy_hand.json"
             }
         }]
+    },
+    {
+        "key_name": "dialog_crystal",
+        "initial_animation": "rotate",
+        "actions": [{
+            "key_name": "dialog_crystal",
+            "frame_rate": 12,
+            "animations": ["rotate"],
+            "frames_count": 7,
+            "loop": true,
+            "spritesheet": {
+                "image": "assets/images/misc/dialog_crystal.png",
+                "json": "assets/images/misc/dialog_crystal.json"
+            }
+        }]
     }
 ]

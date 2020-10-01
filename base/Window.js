@@ -45,6 +45,14 @@ export class Window {
         this.internal_groups = {};
     }
 
+    get real_x() {
+        return this.group.x;
+    }
+
+    get real_y() {
+        return this.group.y;
+    }
+
     /*Removes existing separator graphics*/
     clear_separators() {
         this.separators_graphics.clear();

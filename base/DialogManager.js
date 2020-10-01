@@ -2,12 +2,15 @@ import * as numbers from '../magic_numbers.js';
 import * as utils from '../utils.js';
 import { Window } from './Window.js';
 
+const DIALOG_CRYSTAL_KEY = "dialog_crystal";
+
 //A dialog can be divided in N windows. Each division has a step index.
 //To set a dialog, call the DialogManager.set_dialog function and pass the entire dialog text.
 //To advance the dialog (call next window), call the DialogManager.next function.
 export class DialogManager {
-    constructor(game, italic_font = true) {
+    constructor(game, data, italic_font = true) {
         this.game = game;
+        this.data = data;
         this.parts = null; //parts of the dialog text
         this.step = 0; //step index
         this.finished = false;
@@ -15,6 +18,13 @@ export class DialogManager {
         this.window = null;
         this.avatar_window = null;
         this.italic_font = italic_font;
+        this.dialog_crystal_sprite_base = this.data.info.misc_sprite_base_list[DIALOG_CRYSTAL_KEY];
+        const sprite_key = this.dialog_crystal_sprite_base.getActionKey(DIALOG_CRYSTAL_KEY);
+        this.dialog_crystal = this.game.add.sprite(0, 0, sprite_key);
+        this.dialog_crystal_sprite_base.setAnimation(this.dialog_crystal, DIALOG_CRYSTAL_KEY);
+        this.dialog_crystal_anim_key = this.dialog_crystal_sprite_base.getAnimationKey(DIALOG_CRYSTAL_KEY, "rotate");
+        this.dialog_crystal.visible = false;
+        this.dialog_crystal_tween = null;
     }
 
     //Internal method. Try to calculate the position of the dialog window
@@ -46,11 +56,13 @@ export class DialogManager {
         if (this.step >= this.parts.length) { //finishes the dialog
             this.finished = true;
             this.window.destroy(true, callback);
+            this.dialog_crystal.destroy();
             return this.finished;
         }
         if (this.window) { //destroys the current window
             this.window.destroy(false);
         }
+        this.dialog_crystal.visible = false;
         if (hero_direction === undefined) {
             hero_direction = utils.directions.down;
         }
@@ -66,7 +78,26 @@ export class DialogManager {
         }
         this.window = new Window(this.game, win_pos.x, win_pos.y, this.parts[this.step].width, this.parts[this.step].height, false);
         this.window.show(((step, italic_font, next_callback) => {
-            this.window.set_text(this.parts[step].lines, undefined, undefined, undefined , italic_font, true).then(next_callback);
+            this.window.set_text(this.parts[step].lines, undefined, undefined, undefined , italic_font, true).then(() => {
+                if (step < this.parts.length - 1) {
+                    this.dialog_crystal.visible = true;
+                    this.dialog_crystal.x = this.window.real_x + this.parts[step].width - this.dialog_crystal.width;
+                    this.dialog_crystal.y = this.window.real_y + this.parts[step].height;
+                    const parent = this.dialog_crystal.parent;
+                    parent.setChildIndex(this.dialog_crystal, parent.getChildIndex(this.window.group));
+                    this.dialog_crystal.play(this.dialog_crystal_anim_key);
+                    const tween_to_y = [this.dialog_crystal.y - (this.dialog_crystal.height >> 1), this.dialog_crystal.y];
+                    if (this.dialog_crystal_tween && this.dialog_crystal_tween.isRunning) {
+                        this.dialog_crystal_tween.stop();
+                    }
+                    this.dialog_crystal_tween = this.game.tweens.create(this.dialog_crystal).to({y: tween_to_y}, 1400, Phaser.Easing.Quadratic.InOut, true, 0, -1);
+                } else {
+                    if (this.dialog_crystal_tween && this.dialog_crystal_tween.isRunning) {
+                        this.dialog_crystal_tween.stop();
+                    }
+                }
+                next_callback();
+            });
         }).bind(this, this.step, this.italic_font, callback));
         if (this.avatar) {
             const avatar_pos = this.get_avatar_position(win_pos);
