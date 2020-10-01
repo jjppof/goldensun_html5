@@ -145,7 +145,7 @@ export class DialogManager {
             }
         }
         if (line.length) { //deal with the last window that does not have 3 lines
-            max_window_width = Math.max(max_window_width, utils.get_text_width(this.game, line.join(' '), this.italic_font), max_efective_width);
+            max_window_width = Math.max(max_window_width, utils.get_text_width(this.game, line.join(' '), this.italic_font));
             lines.push(line.join(' '));
             windows.push({
                 lines: lines.slice(),
