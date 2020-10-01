@@ -125,16 +125,19 @@ export class DialogManager {
             const word = words[i];
             line_width = utils.get_text_width(this.game, line.join(' ') + word, this.italic_font);
             if (line_width >= window_width) { //check if it's the end of the line
-                lines.push(line.join(' '));
+                const line_text = line.join(' ');
+                lines.push(line_text);
+                window_widths.push(utils.get_text_width(this.game, line_text, this.italic_font));
                 line = [];
                 line.push(word);
                 line_width = utils.get_text_width(this.game, word, this.italic_font);
                 if (lines.length === numbers.MAX_LINES_PER_DIAG_WIN) { //check if it's the end of the window
                     windows.push({
                         lines: lines.slice(),
-                        width: window_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH,
+                        width: Math.max(...window_widths) + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH,
                         height: numbers.WINDOW_PADDING_TOP + numbers.WINDOW_PADDING_BOTTOM + lines.length * (numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES) - numbers.SPACE_BETWEEN_LINES
                     });
+                    window_widths = [];
                     lines = [];
                 }
             } else {
@@ -142,10 +145,8 @@ export class DialogManager {
             }
         }
         if (line.length) { //deal with the last window that does not have 3 lines
-            let width_to_consider = utils.get_text_width(this.game, line.join(' '), this.italic_font);
-            if (lines.length) {
-                width_to_consider = Math.max(window_width, line_width);
-            }
+            window_widths.push(utils.get_text_width(this.game, line.join(' '), this.italic_font));
+            const width_to_consider = Math.max(...window_widths);
             window_width = width_to_consider > max_efective_width ? max_efective_width : width_to_consider;
             lines.push(line.join(' '));
             windows.push({
