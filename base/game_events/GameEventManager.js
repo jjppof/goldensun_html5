@@ -54,7 +54,7 @@ export class GameEventManager {
         if (npc.npc_type === npc_types.NORMAL) {
             if (npc.message) {
                 const dialog_manager = new DialogManager(this.game, this.data);
-                dialog_manager.set_dialog(npc.message, npc.avatar);
+                dialog_manager.set_dialog(npc.message, npc.avatar, this.data.hero.current_direction);
                 const npc_x = npc.sprite.x;
                 const npc_y = npc.sprite.y;
                 const interaction_pattern = this.data.dbs.npc_db[npc.key_name].interaction_pattern;
@@ -72,7 +72,7 @@ export class GameEventManager {
                         this.fire_npc_events(npc);
                     }
                     this.control_enable = true;
-                }, this.data.hero.current_direction);
+                });
                 this.fire_next_step();
             } else {
                 this.fire_npc_events(npc);
