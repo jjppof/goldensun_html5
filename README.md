@@ -17,8 +17,8 @@ GS-HTML5 has no external dependency, so there's no `npm install` or packages on 
 - Clone the project (or download it and extract the files);
 - Download [node.js](https://nodejs.org/en/download/) and install it (make sure you add node.js in the system path, default install should do it);
 - In the terminal of your computer, install a light http server by running `npm install http-server -g`;
-- In the terminal, go to the root folder (use `cd` command: `cd path\to\gshtml5`) of the GS-HTML5 you cloned/downloaded and then run `http-server`;
-- Go to your browser (prefer Chrome based browsers) and access the address shown in the terminal (it's probably `http://localhost:8080/`).
+- In the terminal, go to the root folder (use `cd` command: `cd path\to\gshtml5`) of the GS-HTML5 you cloned/downloaded and then run `http-server -c-1 -o`;
+- If the browser didn't open automatically, go to your browser (prefer Chrome based browsers) and access the address shown in the terminal (it's probably `http://localhost:8080/`).
 - I strongly reccomend using [Visual Studio Code](https://code.visualstudio.com/download) to develop.
 
 ## Utils
