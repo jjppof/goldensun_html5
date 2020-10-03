@@ -48,5 +48,20 @@
                 "json": "assets/images/misc/dialog_crystal.json"
             }
         }]
+    },
+    {
+        "key_name": "dust",
+        "initial_animation": "spread",
+        "actions": [{
+            "key_name": "dust",
+            "frame_rate": 12,
+            "animations": ["spread"],
+            "frames_count": 8,
+            "loop": false,
+            "spritesheet": {
+                "image": "assets/images/misc/dust.png",
+                "json": "assets/images/misc/dust.json"
+            }
+        }]
     }
 ]

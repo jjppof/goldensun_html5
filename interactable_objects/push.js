@@ -5,8 +5,8 @@ import { JumpEvent } from "../base/tile_events/JumpEvent.js";
 
 const DUST_COUNT = 7;
 const DUST_RADIUS = 18;
-const DUST_FRAMES = Phaser.Animation.generateFrameNames('dust/', 0, 7, '', 2);
 const PUSH_SHIFT = 16;
+const DUST_KEY = "dust";
 
 export function normal_push(game, data, interactable_object) {
     if (data.hero.trying_to_push && [directions.up, directions.down, directions.left, directions.right].includes(data.hero.trying_to_push_direction) && data.hero.trying_to_push_direction === data.hero.current_direction && !data.hero.casting_psynergy && !data.hero.jumping && !data.in_battle) {
@@ -192,11 +192,12 @@ function dust_animation(game, data, interactable_object, promise_resolve) {
     let sprites = new Array(DUST_COUNT);
     const origin_x = (interactable_object.current_x + 0.5) * data.map.sprite.tileWidth;
     const origin_y = (interactable_object.current_y + 0.5) * data.map.sprite.tileHeight;
+    const dust_sprite_base = data.info.misc_sprite_base_list[DUST_KEY];
     for (let i = 0; i < DUST_COUNT; ++i) {
         const this_angle = (Math.PI + numbers.degree60) * i/(DUST_COUNT - 1) - numbers.degree30;
         const x = origin_x + DUST_RADIUS * Math.cos(this_angle);
         const y = origin_y + DUST_RADIUS * Math.sin(this_angle);
-        let dust_sprite = data.npc_group.create(origin_x, origin_y, 'dust');
+        let dust_sprite = data.npc_group.create(origin_x, origin_y, DUST_KEY);
         if (this_angle < 0 || this_angle > Math.PI) {
             data.npc_group.setChildIndex(dust_sprite, data.npc_group.getChildIndex(interactable_object.interactable_object_sprite));
         }
@@ -206,11 +207,12 @@ function dust_animation(game, data, interactable_object, promise_resolve) {
             y: y
         }, 400, Phaser.Easing.Linear.In, true);
         sprites[i] = dust_sprite;
-        dust_sprite.animations.add('anim', DUST_FRAMES, 12, false, false);
+        dust_sprite_base.setAnimation(dust_sprite, DUST_KEY);
+        const animation_key = dust_sprite_base.getAnimationKey(DUST_KEY, "spread");
         let resolve_func;
         promises[i] = new Promise(resolve => { resolve_func = resolve; });
-        dust_sprite.animations.currentAnim.onComplete.addOnce(resolve_func);
-        dust_sprite.animations.play('anim');
+        dust_sprite.animations.getAnimation(animation_key).onComplete.addOnce(resolve_func);
+        dust_sprite.animations.play(animation_key);
     }
     Promise.all(promises).then(() => {
         sprites.forEach(sprite => {
