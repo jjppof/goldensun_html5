@@ -22,16 +22,21 @@ const SUB_ICON_Y = 8;
 const TEXT_X = 8;
 const TEXT_Y = 8;
 
+const CURSOR_X = 136;
+const CURSOR_Y = 112;
+
 /*Displays a character's inventory through icons
 Used in shop menus. Can display the amout of an item in the inventory
 
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
 export class InventoryWindow{
-    constructor(game, data){
+    constructor(game, data, cursor_manager){
         this.game = game;
         this.data = data;
+        this.cursor_manager = cursor_manager;
         this.close_callback = null;
+
         this.expanded = false;
 
         this.window = new Window(this.game, BASE_X, BASE_Y, BASE_WIDTH, BASE_HEIGHT);
@@ -86,6 +91,11 @@ export class InventoryWindow{
         kill_all_sprites(this.icon_group);
         if(this.expanded) this.set_text();
         this.set_sprites();
+    }
+
+    /*Moves the cursor to the given column and line*/
+    set_cursor(col, line){
+        this.cursor_manager.move_to(CURSOR_X + col*ICON_SIZE, CURSOR_Y + line*ICON_SIZE, "point", true);
     }
 
     /*Displays the sprites for the window

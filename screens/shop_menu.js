@@ -10,6 +10,8 @@ import { YesNoMenu } from '../base/windows/YesNoMenu.js';
 import { ShopItemQuantityWindow } from '../base/windows/shop/ShopItemQuantityWindow.js';
 import { Window } from '../base/Window.js';
 import { ShopCharDisplay } from '../base/windows/shop/ShopCharDisplay.js';
+import { CursorManager } from '../base/utils/CursorManager.js';
+import { ControlManager } from '../base/utils/ControlManager.js';
 
 const ITEM_PRICE_WIN_X = 0;
 const ITEM_PRICE_WIN_Y = 64;
@@ -52,17 +54,6 @@ const ITEM_DESC_WIN_Y2 = 0;
 const CHARS_MENU_X = 0;
 const CHARS_MENU_Y = 112;
 
-const CURSOR_WIGGLE_X1 = -4;
-const CURSOR_WIGGLE_Y1 = +4;
-
-const CURSOR_WIGGLE_X2 = -8;
-const CURSOR_WIGGLE_Y2 = 0;
-
-const CURSOR_POINT_X = -4;
-const CURSOR_POINT_Y = 4;
-
-const CURSOR_TWEEN_TIME = Phaser.Timer.QUARTER >> 1;
-
 export class ShopMenuScreen{
     constructor(game, data){
         this.game = game;
@@ -92,77 +83,38 @@ export class ShopMenuScreen{
         ++esc_propagation_priority;
         ++enter_propagation_priority;
 
-        this.cursor_group = this.game.add.group();
-        this.cursor_group.alpha = 1;
-        this.cursor_group.x = 0;
-        this.cursor_group.y = 0;
-        this.cursor = this.cursor_group.create(0, 0, "cursor");
-        this.cursor_wiggle_tween = null;
-        this.cursor_point_tween = null;
-        this.cursor.default_pos = {x: 0, y: 0};
-
+        this.cursor_manager = new CursorManager(this.game);
+        this.control_manager = new ControlManager(this.game);
         this.npc_dialog = new ShopkeepDialog(this.game, this.data, this);
 
-        this.inventory_win = new InventoryWindow(this.game, this.data);
-        this.buy_select = new BuySelectMenu(this.game, this.data);
+        this.inv_win = new InventoryWindow(this.game, this.data, this.cursor_manager);
+        this.buy_select = new BuySelectMenu(this.game, this.data, this.cursor_manager);
         this.eq_compare = new EquipCompare(this.game, this.data);
         this.yesno_action = new YesNoMenu(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
-        this.quantity_win = new ShopItemQuantityWindow(this.game, this.data, this);
-        this.char_display = new ShopCharDisplay(this.game, this.data);
+        this.quant_win = new ShopItemQuantityWindow(this.game, this.data, this.cursor_manager);
+        this.char_display = new ShopCharDisplay(this.game, this.data, this.cursor_manager);
 
         this.item_price_win = new Window(this.game, ITEM_PRICE_WIN_X, ITEM_PRICE_WIN_Y, ITEM_PRICE_WIN_WIDTH, ITEM_PRICE_WIN_HEIGHT);
         this.your_coins_win = new Window(this.game, YOUR_COINS_WIN_X, YOUR_COINS_WIN_Y, YOUR_COINS_WIN_WIDTH, YOUR_COINS_WIN_HEIGHT);
         this.item_desc_win = new Window(this.game, ITEM_DESC_WIN_X, ITEM_DESC_WIN_Y, ITEM_DESC_WIN_WIDTH, ITEM_DESC_WIN_HEIGHT);
+       
+        
+        this.buy_menu = new BuyArtifactsMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority, this);
         /*
-        this.buy_menu = new BuyArtifactsMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
         this.sell_menu = new SellRepairMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
         this.artifacts_menu = new BuyArtifactsMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
-        this.repair_menu = new SellRepairMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);*/
-    }
+        this.repair_menu = new SellRepairMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
+        */
 
-    clear_cursor_tweens(){
-        if(this.cursor_wiggle_tween) this.game.tweens.remove(this.cursor_wiggle_tween);
-        if(this.cursor_point_tween) this.game.tweens.remove(this.cursor_point_tween);
+        this.your_coins_label = this.your_coins_win.set_text_in_position("Your Coins: ", YOUR_COINS_LABEL_X, YOUR_COINS_LABEL_Y);
+        this.your_coins_text = this.your_coins_win.set_text_in_position("", YOUR_COINS_VAL_END_X, YOUR_COINS_VAL_Y, true);
 
-        this.cursor_wiggle_tween = null;
-        this.cursor_point_tween = null;
+        this.item_name_text = this.item_price_win.set_text_in_position("", ITEM_PRICE_NAME_X, ITEM_PRICE_NAME_Y);
+        this.item_price_label = this.item_price_win.set_text_in_position("Price", ITEM_PRICE_LABEL_X, ITEM_PRICE_LABEL_Y);
+        this.item_price_val_text = this.item_price_win.set_text_in_position("", ITEM_PRICE_VAL_END_X, ITEM_PRICE_VAL_Y, true);
+        this.item_price_coins_label = this.item_price_win.set_text_in_position("Coins", ITEM_PRICE_COINS_X, ITEM_PRICE_COINS_Y);
 
-        this.cursor.x = this.cursor.default_pos.x;
-        this.cursor.y = this.cursor.default_pos.y;
-    }
-
-    init_cursor_tween(type){
-        let tween = null;
-        this.clear_cursor_tweens();
-        switch(type){
-            case "wiggle":
-                tween = this.game.add.tween(this.cursor)
-                .to({ x: this.cursor.x + CURSOR_WIGGLE_X1, y: this.cursor.y + CURSOR_WIGGLE_Y1 }, CURSOR_TWEEN_TIME, Phaser.Easing.Linear.None)
-                .to({ x: this.cursor.x + CURSOR_WIGGLE_X2, y: this.cursor.y + CURSOR_WIGGLE_Y2 }, CURSOR_TWEEN_TIME, Phaser.Easing.Linear.None)
-                .to({ x: this.cursor.x + CURSOR_WIGGLE_X1, y: this.cursor.y + CURSOR_WIGGLE_Y1 }, CURSOR_TWEEN_TIME, Phaser.Easing.Linear.None)
-                .to({ x: this.cursor.x, y: this.cursor.y}, CURSOR_TWEEN_TIME, Phaser.Easing.Linear.None).loop();
-                break;
-            case "point":
-                tween = this.game.add.tween(this.cursor)
-                .to({ x: this.cursor.x + CURSOR_POINT_X, y: this.cursor.y + CURSOR_POINT_Y }, CURSOR_TWEEN_TIME, Phaser.Easing.Linear.None)
-                .to({ x: this.cursor.x, y: this.cursor.y}, CURSOR_TWEEN_TIME, Phaser.Easing.Linear.None).loop();
-        }
-        if(tween) tween.start();
-    }
-
-    move_cursor_to(new_x, new_y, delay, tween_type=undefined){
-        this.cursor.default_pos = {x: new_x, y: new_y};
-        this.game.world.bringToTop(this.cursor.parent);
-
-        let t = this.game.add.tween(this.cursor).to(
-            {x: new_x + this.game.camera.x, y: new_y + this.game.camera.y},
-            delay,
-            Phaser.Easing.Linear.None,
-            true
-        )
-        if(tween_type !== undefined){
-            t.onComplete.addOnce(this.init_cursor_tween.bind(this,tween_type),this);
-        }
+        this.item_desc_text = this.item_desc_win.set_text_in_position("", ITEM_DESC_TEXT_X, ITEM_DESC_TEXT_Y);
     }
 
     set_item_lists(){
@@ -179,6 +131,33 @@ export class ShopMenuScreen{
 
         this.normal_item_list = _.mapKeys(this.normal_item_list, item => item.key_name);
         this.artifact_list = _.mapKeys(this.artifact_list, item => item.key_name);
+    }
+
+    update_item_desc(text){
+        this.item_desc_win.update_text(text, this.item_desc_text);
+    }
+
+    update_your_coins(){
+        this.your_coins_win.update_text(String(this.data.info.party_data.coins), this.your_coins_text);
+    }
+
+    update_item_price(text){
+        this.item_price_win.update_text(text, this.item_price_val_text);
+    }
+
+    update_item_name(text){
+        this.item_price_win.update_text(text, this.item_name_text);
+    }
+
+    update_item_price_label(text){
+        this.item_price_win.update_text(text, this.item_price_label);
+    }
+
+    update_item_info(key){
+        let this_item = this.data.info.items_list[key];
+        this.update_item_desc(this_item.description);
+        this.update_item_name(this_item.name);
+        this.update_item_price(String(this_item.price));
     }
 
     button_press(index) {

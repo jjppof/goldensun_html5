@@ -21,13 +21,11 @@ const COINS_LABEL_Y = 8;
 const CURSOR_X = 132;
 const CURSOR_Y = 46;
 
-const PLACE_CURSOR_TIME = Phaser.Timer.QUARTER >> 1;
-
 export class ShopItemQuantityWindow {
-    constructor(game, data, parent) {
+    constructor(game, data, cursor_manager) {
         this.game = game;
         this.data = data;
-        this.parent = parent;
+        this.cursor_manager = cursor_manager;
         this.close_callback = null;
 
         this.window = new Window(this.game, QUANTITY_WIN_X, QUANTITY_WIN_Y, QUANTITY_WIN_WIDTH, QUANTITY_WIN_HEIGHT);
@@ -48,7 +46,7 @@ export class ShopItemQuantityWindow {
     }
 
     open(item_obj, close_callback, open_callback){
-        this.parent.move_cursor_to(CURSOR_X+this.game.camera.x, CURSOR_Y+this.game.camera.y, PLACE_CURSOR_TIME, "wiggle");
+        this.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "wiggle");
 
         this.coins = this.data.info.party_data.coins;
         this.window.update_text(String(this.coins), this.coins_val_text);
@@ -63,10 +61,10 @@ export class ShopItemQuantityWindow {
 
     close(){
         this.item_counter.deactivate();
+        this.cursor_manager.clear_tweens();
 
         this.choosen_quantity = 1;
         this.coins = 0;
-        this.cursor_tween.stop();
 
         this.window.close(this.close_callback, false);
         this.close_callback = null;

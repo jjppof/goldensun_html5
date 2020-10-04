@@ -2,76 +2,67 @@ import { CharsMenu } from '../../menus/CharsMenu.js';
 import { Window } from '../../Window.js';
 import { InventoryWindow } from './InventoryWindow.js';
 
-const MAX_PER_PAGE = 7
-
-const CURSOR_BASE_X = -4;
-const CURSOR_BASE_Y = 116;
-
 export class BuyArtifactsMenu{
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority){
+    constructor(game, data, esc_propagation_priority, enter_propagation_priority, parent){
         this.game = game;
         this.data = data;
         this.esc_propagation_priority = esc_propagation_priority + 1;
         this.enter_propagation_priority = enter_propagation_priority + 1;
+        this.parent = parent;
+        this.control_manager = this.parent.control_manager;
         
-        this.description_window = new Window();
-        this.coin_window = new Window();
-        this.item_info_window = new Window();
-        this.chars_window = new CharsMenu();
-        this.inventory_window = new InventoryWindow();
+        this.item_desc_win = this.parent.item_desc_win;
+        this.your_coins_win = this.parent.your_coins_win;
+        this.item_price_win = this.parent.item_price_win;
+        this.char_display = this.parent.char_display;
+        this.inv_win = this.parent.inv_win;
+        this.quant_win =  this.parent.quant_win;
+        this.buy_select = this.parent.buy_select;
 
-        this.cursor_control = new CursorControl(this.game, true, true, this.get_page_number.bind(this), this.get_elem_per_page.bind(this), this.group,
-            this.page_change.bind(this), this.element_change.bind(this), this.get_page_index.bind(this), this.set_page_index.bind(this),
-            this.get_element_index.bind(this), this.set_element_index.bind(this), this.is_open.bind(this), this.is_activated.bind(this),
-            this.get_cursor_x.bind(this), this.get_cursor_y.bind(this)
-        );
-    }
-
-    get_page_number(){
-
-    }
-
-    get_elem_per_page(){
+        this.current_state = 0;
+        this.previous_state = 0;
+        this.is_artifacts_menu = null;
+        this.item_list = [];
+        this.selected_item = null;
 
     }
 
-    page_change(){
-
+    set_control(horizontal, vertical, horizontal_loop=true, vertical_loop=false, callbacks){
+        if(horizontal){
+            if(!horizontal_loop){
+                this.control_manager.directions["left"].loop = false;
+                this.control_manager.directions["right"].loop = false;
+            } 
+            this.control_manager.directions["left"].callback = callbacks.left;
+            this.control_manager.directions["right"].callback = callbacks.right;
+        }
+        if(vertical){
+            if(!vertical_loop){
+                this.control_manager.directions["up"].loop = false;
+                this.control_manager.directions["down"].loop = false;
+            }
+            this.control_manager.directions["up"].callback = callbacks.up;
+            this.control_manager.directions["down"].callback = callbacks.down; 
+        }
+        this.control_manager.set_directions();
     }
 
-    element_change(){
+    open_menu(is_artifacts_menu){
+        this.is_artifacts_menu = is_artifacts_menu;
+        this.item_list = this.is_artifacts_menu ? this.parent.artifact_lsit : this.parent.normal_item_list;
 
+        if(!this.buy_select.is_open) this.buy_select.open(this.item_list);
+
+        this.selected_item = Array.from(Object.keys(this.buy_select.items))[this.buy_select.selected_index];
+
+        this.parent.update_item_info(this.selected_item);
+        this.parent.update_your_coins();
+
+        if(!this.item_desc_win.open) this.item_desc_win.show();
+        if(!this.item_price_win.open) this.item_price_win.show();
+        if(!this.your_coins_win.open) this.your_coins_win.show();
+
+        this.set_control(true, false, true, false, {right: this.buy_select.change_item.bind(this.buy_select), left: this.buy_select.change_item.bind(this.buy_select)});
     }
 
-    get_page_index(){
-
-    }
-
-    set_page_index(){
-
-    }
-
-    get_element_index(){
-
-    }
-
-    set_element_index(){
-
-    }
-
-    is_open(){
-
-    }
-
-    is_activated(){
-
-    }
-
-    get_cursor_x(){
-
-    }
-
-    get_cursor_y(){
-
-    }
 }
