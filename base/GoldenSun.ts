@@ -4,15 +4,16 @@ import { Debug } from './debug/debug.js';
 import { load_all } from './initializers/assets_loader.js';
 import { Collision } from './Collision.js';
 import { directions } from './utils.js';
-import { Hero } from './Hero.js';
+import { Hero } from './Hero';
 import { TileEventManager } from './tile_events/TileEventManager.js';
-import { GameEventManager } from './game_events/GameEventManager.js';
+import { GameEventManager } from './game_events/GameEventManager';
 import { load_databases } from './initializers/databases_loader.js';
 import { initialize_game_data } from './initializers/initialize_info.js';
 import { Map } from './Map.js';
 import { Battle } from './battle/Battle.js';
+import { MenuScreen } from './screens/menu.js';
 
-class GoldenSun {
+export class GoldenSun {
     public game: Phaser.Game = null;
     public dbs: any = {};
     public info: any = {};
@@ -25,28 +26,28 @@ class GoldenSun {
     //game objects
     public hero: Hero = null;
     public collision: Collision = null;
-    public cursors: any = null;
+    public cursors: Phaser.CursorKeys = null;
     public debug: Debug = null;
-    public menu_screen: any = null;
+    public menu_screen: MenuScreen = null;
     public map: Map = null;
     public tile_event_manager: TileEventManager = null;
     public game_event_manager: GameEventManager = null;
     public battle_instance: Battle = null;
 
     //common inputs
-    public enter_input: any = null;
-    public esc_input: any = null;
-    public shift_input: any = null;
-    public spacebar_input: any = null;
+    public enter_input: Phaser.Signal = null;
+    public esc_input: Phaser.Signal = null;
+    public shift_input: Phaser.Signal = null;
+    public spacebar_input: Phaser.Signal = null;
 
     //screen
     public fullscreen: boolean = false;
     public scale_factor: number = 1;
 
     //groups
-    public underlayer_group: any = null;
-    public npc_group: any = null;
-    public overlayer_group: any = null;
+    public underlayer_group: Phaser.Group = null;
+    public npc_group: Phaser.Group = null;
+    public overlayer_group: Phaser.Group = null;
 
     constructor() {
         this.game = new Phaser.Game(

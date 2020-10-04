@@ -4828,6 +4828,9 @@ declare module Phaser {
         components: any;
         cropRect: Phaser.Rectangle;
         customRender: boolean;
+        base_collider_layer: number;
+        disableRoundPx: boolean;
+        roundPx: boolean;
         data: any;
         debug: boolean;
         deltaX: number;

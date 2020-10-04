@@ -1,6 +1,8 @@
 import * as numbers from "./magic_numbers.js";
 import { reverse_directions, base_actions } from "./utils.js";
 import { Footsteps } from "./Footsteps.js";
+import { GoldenSun } from "./GoldenSun";
+import { SpriteBase } from "./SpriteBase.js";
 
 const DEFAULT_SHADOW_KEYNAME = "shadow";
 
@@ -15,6 +17,34 @@ const default_anchor = {
 };
 
 export class ControllableChar {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public key_name: string;
+    public x_speed: number;
+    public y_speed: number;
+    public extra_speed: number;
+    public stop_by_colliding: boolean;
+    public force_direction: boolean;
+    public climbing: boolean;
+    public pushing: boolean;
+    public jumping: boolean;
+    public casting_psynergy: boolean;
+    public teleporting: boolean;
+    public idle_climbing: boolean;
+    public sprite_info: SpriteBase;
+    public sprite: Phaser.Sprite;
+    public shadow: Phaser.Sprite;
+    public body_radius: number;
+    public tile_x_pos: number;
+    public tile_y_pos: number;
+    public current_action: string;
+    public current_direction: number;
+    public required_direction: number;
+    public desired_direction: number;
+    public color_filter: Phaser.Filter;
+    public enable_footsteps: boolean;
+    public footsteps: Footsteps;
+
     constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps) {
         this.game = game;
         this.data = data;
@@ -49,7 +79,7 @@ export class ControllableChar {
         return this.casting_psynergy || this.pushing || (this.climbing && !allow_climbing) || this.jumping || this.teleporting;
     }
 
-    set_sprite(group, sprite_info, map_sprite, layer, anchor_x, anchor_y) {
+    set_sprite(group, sprite_info, map_sprite, layer, anchor_x?, anchor_y?) {
         anchor_x = anchor_x === undefined ? default_anchor.x : anchor_x;
         anchor_y = anchor_y === undefined ? default_anchor.y : anchor_y;
         this.sprite_info = sprite_info;
@@ -62,7 +92,7 @@ export class ControllableChar {
         this.sprite.anchor.setTo(anchor_x, anchor_y);
     }
 
-    reset_anchor(property) {
+    reset_anchor(property?) {
         if (property !== undefined && ['x', 'y'].includes(property)) {
             this.sprite.anchor[property] = default_anchor[property];
         } else {
@@ -71,7 +101,7 @@ export class ControllableChar {
         }
     }
 
-    set_shadow(key_name, group, layer, shadow_anchor_x, shadow_anchor_y) {
+    set_shadow(key_name, group, layer, shadow_anchor_x?, shadow_anchor_y?) {
         key_name = key_name === undefined ? DEFAULT_SHADOW_KEYNAME : key_name;
         shadow_anchor_x = shadow_anchor_x === undefined ? DEFAULT_SHADOW_ANCHOR_X : shadow_anchor_x;
         shadow_anchor_y = shadow_anchor_y === undefined ? DEFAULT_SHADOW_ANCHOR_Y : shadow_anchor_y;
@@ -92,7 +122,7 @@ export class ControllableChar {
         this.shadow.base_collider_layer = layer;
     }
 
-    play(action, animation) {
+    play(action?, animation?) {
         action = action === undefined ? this.current_action : action;
         animation = animation === undefined ? reverse_directions[this.current_direction] : animation;
         if (this.sprite_info.getSpriteAction(this.sprite) !== action) {

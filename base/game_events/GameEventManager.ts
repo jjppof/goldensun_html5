@@ -1,6 +1,7 @@
 import { base_actions, directions, is_close, reverse_directions } from "../utils.js";
 import { DialogManager } from "../DialogManager.js";
 import { npc_types } from "../NPC.js";
+import { GoldenSun } from "../GoldenSun";
 
 export const interaction_patterns = {
     TIK_TAK_TOE: "tik_tak_toe",
@@ -8,6 +9,12 @@ export const interaction_patterns = {
 };
 
 export class GameEventManager {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public on_event: boolean;
+    public control_enable: boolean;
+    public fire_next_step: Function;
+
     constructor(game, data) {
         this.game = game;
         this.data = data;

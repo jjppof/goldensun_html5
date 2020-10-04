@@ -2,10 +2,13 @@ export class SpriteBase {
     constructor (key_name, actions) {
         this.key_name = key_name;
         this.actions = {};
+        this.animations = {};
+        this.dash_speed = 0;
+        this.walk_speed = 0;
+        this.climb_speed = 0;
         for (let i = 0; i < actions.length; ++i) {
             this.actions[actions[i]] = {};
         }
-        this.animations = {};
     }
 
     setActionDirections(action, directions, frame_counts) {

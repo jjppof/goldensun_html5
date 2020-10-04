@@ -1,4 +1,4 @@
-import { ControllableChar } from "./ControllableChar.js";
+import { ControllableChar } from "./ControllableChar";
 import * as numbers from './magic_numbers.js';
 import { TileEvent, event_types } from "./tile_events/TileEvent.js";
 import { get_transition_directions, range_360, directions, base_actions } from './utils.js';
@@ -55,6 +55,11 @@ const speeds = {
 };
 
 export class Hero extends ControllableChar {
+    public arrow_inputs: number;
+    public trying_to_push: boolean;
+    public trying_to_push_direction: number;
+    public push_timer: Phaser.TimerEvent;
+
     constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction) {
         super(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, true);
         this.arrow_inputs = null;
@@ -65,10 +70,10 @@ export class Hero extends ControllableChar {
 
     update_arrow_inputs() {
         this.arrow_inputs =
-              1 * this.data.cursors.right.isDown
-            | 2 * this.data.cursors.left.isDown
-            | 4 * this.data.cursors.up.isDown
-            | 8 * this.data.cursors.down.isDown;
+              1 * (+this.data.cursors.right.isDown)
+            | 2 * (+this.data.cursors.left.isDown)
+            | 4 * (+this.data.cursors.up.isDown)
+            | 8 * (+this.data.cursors.down.isDown);
         this.required_direction = rotation_key[this.arrow_inputs];
     }
 
