@@ -1,6 +1,6 @@
 import { base_actions, directions, reverse_directions } from "../utils.js";
 import { event_types, TileEvent } from "./TileEvent.js";
-import * as numbers from "../../magic_numbers.js";
+import * as numbers from "../magic_numbers.js";
 
 export class TeleportEvent extends TileEvent {
     constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, target, x_target, y_target, advance_effect, dest_collider_layer) {

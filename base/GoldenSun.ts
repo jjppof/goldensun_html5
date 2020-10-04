@@ -1,4 +1,4 @@
-import * as numbers from '../magic_numbers.js';
+import * as numbers from './magic_numbers.js';
 import { TileEvent } from './tile_events/TileEvent.js';
 import { Debug } from './debug/debug.js';
 import { load_all } from './initializers/assets_loader.js';
@@ -9,8 +9,45 @@ import { TileEventManager } from './tile_events/TileEventManager.js';
 import { GameEventManager } from './game_events/GameEventManager.js';
 import { load_databases } from './initializers/databases_loader.js';
 import { initialize_game_data } from './initializers/initialize_info.js';
+import { Map } from './Map.js';
+import { Battle } from './battle/Battle.js';
 
 class GoldenSun {
+    public game: any = {};
+    public dbs: any = {};
+    public info: any = {};
+
+    //game states
+    public menu_open: boolean = false;
+    public in_battle: boolean = false;
+    public created: boolean = false;
+
+    //game objects
+    public hero: Hero = null;
+    public collision: Collision = null;
+    public cursors: any = null;
+    public debug: Debug = null;
+    public menu_screen: any = null;
+    public map: Map = null;
+    public tile_event_manager: TileEventManager = null;
+    public game_event_manager: GameEventManager = null;
+    public battle_instance: Battle = null;
+
+    //common inputs
+    public enter_input: any = null;
+    public esc_input: any = null;
+    public shift_input: any = null;
+    public spacebar_input: any = null;
+
+    //screen
+    public fullscreen: boolean = false;
+    public scale_factor: number = 1;
+
+    //groups
+    public underlayer_group: any = null;
+    public npc_group: any = null;
+    public overlayer_group: any = null;
+
     constructor() {
         this.game = new Phaser.Game(
             numbers.GAME_WIDTH,
@@ -27,39 +64,6 @@ class GoldenSun {
             false, //transparent
             false //antialias
         );
-        this.dbs = {};
-        this.info = {};
-
-        //game states
-        this.menu_open = false;
-        this.in_battle = false;
-        this.created = false;
-
-        //game objects
-        this.hero = null;
-        this.collision = null;
-        this.cursors = null;
-        this.debug = null;
-        this.menu_screen = null;
-        this.map = null;
-        this.tile_event_manager = null;
-        this.game_event_manager = null;
-        this.battle_instance = null;
-
-        //common inputs
-        this.enter_input = null;
-        this.esc_input = null;
-        this.shift_input = null;
-        this.spacebar_input = null;
-
-        //screen
-        this.fullscreen = false;
-        this.scale_factor = 1;
-
-        //groups
-        this.underlayer_group = null;
-        this.npc_group = null;
-        this.overlayer_group = null;
     }
 
     preload() {
@@ -237,4 +241,4 @@ class GoldenSun {
 var golden_sun = new GoldenSun();
 
 //debugging porpouses
-window.data = golden_sun;
+(window as any).data = golden_sun;

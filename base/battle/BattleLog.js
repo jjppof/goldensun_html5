@@ -1,4 +1,4 @@
-import * as numbers from '../../magic_numbers.js';
+import * as numbers from '../magic_numbers.js';
 import { ability_msg_types } from '../Ability.js';
 import { effect_names, effect_types } from '../Effect.js';
 import { element_names } from '../utils.js';

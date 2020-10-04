@@ -1,7 +1,7 @@
 import { Window } from '../../Window.js';
 import { base_actions, capitalize, directions, reverse_directions } from '../../utils.js';
 import { djinn_font_colors } from '../../Djinn.js';
-import * as numbers from '../../../magic_numbers.js';
+import * as numbers from '../../magic_numbers.js';
 
 const BASE_WIN_WIDTH = 236;
 const BASE_WIN_HEIGHT = 36;

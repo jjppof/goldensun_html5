@@ -1,4 +1,4 @@
-import * as numbers from '../magic_numbers.js';
+import * as numbers from './magic_numbers.js';
 import { ordered_elements } from './utils.js';
 
 export const djinn_status = {

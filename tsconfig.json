@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "typeRoots": ["globals.d.ts" ],
+        "module": "commonjs",
+        "noImplicitAny": false,
+        "target": "es6",
+        "allowJs": true,
+        "sourceMap": true
+    }
+}

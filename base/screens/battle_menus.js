@@ -1,7 +1,7 @@
 import { CharsStatusWindow } from "../windows/CharsStatusWindow.js";
 import { HorizontalMenu } from "../menus/HorizontalMenu.js";
 import { capitalize, ordered_elements } from "../utils.js";
-import * as numbers from "../../magic_numbers.js";
+import * as numbers from "../magic_numbers.js";
 import { Djinn, djinn_status } from "../Djinn.js";
 import { DescriptionWindow } from "../windows/battle/DescriptionWindow.js"
 import { PsynergyWindow } from "../windows/battle/PsynergyWindow.js"

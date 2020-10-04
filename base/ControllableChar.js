@@ -1,4 +1,4 @@
-import * as numbers from "../magic_numbers.js";
+import * as numbers from "./magic_numbers.js";
 import { reverse_directions, base_actions } from "./utils.js";
 import { Footsteps } from "./Footsteps.js";
 

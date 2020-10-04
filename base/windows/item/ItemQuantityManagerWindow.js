@@ -1,5 +1,5 @@
 import { Window } from '../../Window.js';
-import * as numbers from '../../../magic_numbers.js';
+import * as numbers from '../../magic_numbers.js';
 import { ItemCounter } from '../../utils/ItemsCounter.js';
 
 const WIN_WIDTH = 132;

@@ -1,5 +1,5 @@
 import { Window } from '../../Window.js';
-import * as numbers from '../../../magic_numbers.js';
+import * as numbers from '../../magic_numbers.js';
 import { ordered_elements } from '../../utils.js';
 
 const BASE_WIN_WIDTH = 116;

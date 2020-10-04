@@ -1,7 +1,7 @@
 import { Window } from '../../Window.js';
 import { djinn_status, djinn_font_colors } from '../../Djinn.js';
 import { CursorControl } from '../../utils/CursorControl.js';
-import * as numbers from '../../../magic_numbers.js';
+import * as numbers from '../../magic_numbers.js';
 import { base_actions, capitalize, change_brightness, directions, elements, reverse_directions } from '../../utils.js';
 import { DjinnModeHeaderWindow } from './DjinnModeHeaderWindow.js';
 import { DjinnCharStatsWindow } from './DjinnCharStatsWindow.js';

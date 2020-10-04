@@ -1,6 +1,5 @@
 import { Window } from '../../Window.js';
-import * as numbers from '../../../magic_numbers.js';
-import { djinn_status, djinn_font_colors } from '../../Djinn.js';
+import * as numbers from '../../magic_numbers.js';
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 36;

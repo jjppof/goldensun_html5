@@ -1,6 +1,6 @@
 import { Window } from "../Window.js";
 import { CursorControl } from "../utils/CursorControl.js";
-import * as numbers from '../../magic_numbers.js';
+import * as numbers from '../magic_numbers.js';
 
 const PSY_OVERVIEW_WIN_X = 104;
 const PSY_OVERVIEW_WIN_Y = 24;

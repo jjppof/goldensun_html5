@@ -1,5 +1,5 @@
 import { event_types, TileEvent } from "./TileEvent.js";
-import * as numbers from '../../magic_numbers.js';
+import * as numbers from '../magic_numbers.js';
 import { get_surroundings, get_opposite_direction, directions, split_direction, reverse_directions } from '../utils.js';
 
 const JUMP_OFFSET = 30;

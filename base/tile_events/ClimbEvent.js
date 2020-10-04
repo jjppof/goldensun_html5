@@ -1,7 +1,7 @@
 import { base_actions, directions, reverse_directions } from "../utils.js";
 import { JumpEvent } from "./JumpEvent.js";
 import { TileEvent, event_types } from "./TileEvent.js";
-import * as numbers from "../../magic_numbers.js";
+import * as numbers from "../magic_numbers.js";
 
 export class ClimbEvent extends TileEvent {
     constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, change_to_collision_layer, is_set, origin_interactable_object, climbing_only) {

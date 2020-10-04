@@ -1,6 +1,6 @@
 import { Window } from "../../Window.js";
 import { CursorControl } from '../../utils/CursorControl.js';
-import * as numbers from "../../../magic_numbers.js"
+import * as numbers from "../../magic_numbers.js"
 import { use_types } from "../../Item.js";
 
 const BASE_WINDOW_X = 120;

@@ -1,4 +1,4 @@
-import * as numbers from '../magic_numbers.js';
+import * as numbers from './magic_numbers.js';
 import * as utils from './utils.js';
 import { Window } from './Window.js';
 

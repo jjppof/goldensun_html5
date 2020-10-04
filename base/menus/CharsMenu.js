@@ -1,5 +1,5 @@
 import { Window } from '../Window.js';
-import * as numbers from '../../magic_numbers.js';
+import * as numbers from '../magic_numbers.js';
 import { CursorControl } from '../utils/CursorControl.js';
 import { base_actions, directions, reverse_directions } from '../utils.js';
 

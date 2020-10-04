@@ -2,7 +2,7 @@ import { CharsMenu } from '../menus/CharsMenu.js';
 import { BasicInfoWindow } from '../windows/BasicInfoWindow.js';
 import { ItemPsynergyChooseWindow } from '../windows/ItemPsynergyChooseWindow.js';
 import { Window } from '../Window.js';
-import * as numbers from '../../magic_numbers.js';
+import * as numbers from '../magic_numbers.js';
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;

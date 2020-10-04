@@ -1,6 +1,6 @@
 import { Window } from "../../Window.js";
 import { CursorControl } from '../../utils/CursorControl.js';
-import * as numbers from "../../../magic_numbers.js"
+import * as numbers from "../../magic_numbers.js"
 import { Djinn } from "../../Djinn.js";
 import { SummonDjinnStandbyWindow } from "./SummonDjinnStandbyWindow.js";
 import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle.js";

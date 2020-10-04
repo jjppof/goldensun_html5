@@ -5,7 +5,7 @@ import { Effect, effect_types } from './Effect.js';
 import { item_types } from './Item.js';
 import { Player, fighter_types, permanent_status } from './Player.js';
 import { elements, ordered_elements } from './utils.js';
-import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from '../magic_numbers.js';
+import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from './magic_numbers.js';
 
 const ELEM_LV_DELTA = 1;
 const ELEM_POWER_DELTA = 5;

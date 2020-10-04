@@ -1,5 +1,5 @@
 import { get_text_width } from '../utils.js';
-import * as numbers from '../../magic_numbers.js';
+import * as numbers from '../magic_numbers.js';
 import { Window } from '../Window.js';
 
 const FORWARD = 1;

@@ -1,5 +1,5 @@
 
-import * as numbers from '../../magic_numbers.js';
+import * as numbers from '../magic_numbers.js';
 import { range_360 } from '../utils.js';
 import { ability_target_types } from '../Ability.js';
 import { fighter_types, permanent_status } from '../Player.js';

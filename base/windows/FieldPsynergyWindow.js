@@ -1,6 +1,6 @@
 import { Window } from '../Window.js';
 import { capitalize, get_text_width } from "../utils.js";
-import * as numbers from '../../magic_numbers.js';
+import * as numbers from '../magic_numbers.js';
 
 const BASE_WIDTH = (numbers.WINDOW_PADDING_H << 1) + 8;
 const BASE_HEIGHT = 20;

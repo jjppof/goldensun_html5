@@ -1,4 +1,4 @@
-import * as numbers from  "../../magic_numbers.js";
+import * as numbers from  "../magic_numbers.js";
 import { TileEvent, event_types } from "../tile_events/TileEvent.js";
 import { get_surroundings, get_opposite_direction, directions, reverse_directions, base_actions } from "../utils.js";
 import { JumpEvent } from "../tile_events/JumpEvent.js";

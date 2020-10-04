@@ -2,7 +2,7 @@ import { base_actions, directions, map_directions } from "./utils.js";
 import { NPC_Sprite, NPC, npc_movement_types } from './NPC.js';
 import { InteractableObjects, InteractableObjects_Sprite, interactable_object_interaction_types } from "./InteractableObjects.js";
 import { TileEvent, event_types as tile_event_types } from './tile_events/TileEvent.js';
-import * as numbers from "../magic_numbers.js";
+import * as numbers from "./magic_numbers.js";
 import { JumpEvent } from "./tile_events/JumpEvent.js";
 import { TeleportEvent } from "./tile_events/TeleportEvent.js";
 import { ClimbEvent } from "./tile_events/ClimbEvent.js";
