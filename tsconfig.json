@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "typeRoots": ["globals.d.ts" ],
+        "typeRoots": ["types/pixi.d.ts", "types/p2.d.ts", "types/phaser.d.ts"],
         "module": "commonjs",
         "noImplicitAny": false,
         "target": "es6",

@@ -13,7 +13,7 @@ import { Map } from './Map.js';
 import { Battle } from './battle/Battle.js';
 
 class GoldenSun {
-    public game: any = {};
+    public game: Phaser.Game = null;
     public dbs: any = {};
     public info: any = {};
 
