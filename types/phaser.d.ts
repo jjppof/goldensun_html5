@@ -4831,6 +4831,10 @@ declare module Phaser {
         base_collider_layer: number;
         disableRoundPx: boolean;
         roundPx: boolean;
+        y_sort: number;
+        sort_function: Function;
+        send_to_back: boolean;
+        send_to_front: boolean;
         data: any;
         debug: boolean;
         deltaX: number;

@@ -10,8 +10,31 @@ import { StepEvent } from "./tile_events/StepEvent.js";
 import { CollisionEvent } from "./tile_events/CollisionEvent.js";
 import { SpeedEvent } from "./tile_events/SpeedEvent.js";
 import { GameEvent } from "./game_events/GameEvent.js";
+import { GoldenSun } from "./GoldenSun";
 
 export class Map {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public name: string;
+    public key_name: string;
+    public tileset_name: string;
+    public physics_names: string;
+    public tileset_image_url: string;
+    public tileset_json_url: string;
+    public physics_jsons_url: string;
+    public sprite: Phaser.Tilemap;
+    public events: {[location_key: string]: TileEvent[]};
+    public npcs: NPC[];
+    public interactable_objects: InteractableObjects[];
+    public collision_layers_number: number;
+    public collision_sprite: Phaser.Sprite;
+    public color_filter: Phaser.Filter;
+    public collision_layer: number;
+    public show_footsteps: boolean;
+    public assets_loaded: boolean;
+    public lazy_load: boolean;
+    public layers: any;
+
     constructor (
         game,
         data,
@@ -45,14 +68,15 @@ export class Map {
         this.show_footsteps = false;
         this.assets_loaded = false;
         this.lazy_load = lazy_load === undefined ? false : lazy_load;
+        this.layers = [];
     }
 
     sort_sprites() {
         let send_to_back_list = new Array(this.data.npc_group.children.length);
         let send_to_front_list = new Array(this.data.npc_group.children.length);
         let has_sort_function = new Array(this.data.npc_group.children.length);
-        this.data.npc_group.children.forEach((sprite, index) => {
-            sprite.y_sort = (sprite.base_collider_layer.toString() + sprite.y.toString()) | 0;
+        this.data.npc_group.children.forEach((sprite: Phaser.Sprite, index) => {
+            sprite.y_sort = parseInt(sprite.base_collider_layer.toString() + sprite.y.toString());
             if (sprite.sort_function) {
                 has_sort_function[index] = sprite;
                 return;
@@ -74,12 +98,12 @@ export class Map {
         }
         send_to_back_list.forEach(sprite => {
             if (sprite) {
-                this.data.npc_group.sendChildToBack(sprite);
+                this.data.npc_group.sendToBack(sprite);
             }
         });
         send_to_front_list.forEach(sprite => {
             if (sprite) {
-                this.data.npc_group.bringChildToTop(sprite);
+                this.data.npc_group.bringToTop(sprite);
             }
         });
         has_sort_function.forEach(sprite => {
@@ -293,13 +317,13 @@ export class Map {
             property_info.intermediate_collider_layer_shift
         );
         this.interactable_objects.push(interactable_object);
-        for (let psynergy_key in data.dbs.interactable_objects_db[property_info.key_name].psynergy_keys) {
-            const psynergy_properties = data.dbs.interactable_objects_db[property_info.key_name].psynergy_keys[psynergy_key];
+        for (let psynergy_key in this.data.dbs.interactable_objects_db[property_info.key_name].psynergy_keys) {
+            const psynergy_properties = this.data.dbs.interactable_objects_db[property_info.key_name].psynergy_keys[psynergy_key];
             if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
                 interactable_object.custom_data[psynergy_key + "_casted"] = false;
             }
         }
-        if (data.dbs.interactable_objects_db[property_info.key_name].pushable && property_info.block_stair_collider_layer_shift !== undefined) {
+        if (this.data.dbs.interactable_objects_db[property_info.key_name].pushable && property_info.block_stair_collider_layer_shift !== undefined) {
             interactable_object.custom_data.block_stair_collider_layer_shift = property_info.block_stair_collider_layer_shift;
         }
     }
