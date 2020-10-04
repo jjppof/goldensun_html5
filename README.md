@@ -13,13 +13,20 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0
 
 ## Running GS-HTML5 on your computer
 
-GS-HTML5 has no external dependency, so there's no `npm install` or packages on CDN, etc. Just clone the project and run it into a http server. I would recommend these steps:
+In order to run GS-HTML5 in your computer, just clone the project and run it into a http server. I would recommend these steps:
 - Clone the project (or download it and extract the files);
 - Download [node.js](https://nodejs.org/en/download/) and install it (make sure you add node.js in the system path, default install should do it);
 - In the terminal of your computer, install a light http server by running `npm install http-server -g`;
 - In the terminal, go to the root folder (use `cd` command: `cd path\to\gshtml5`) of the GS-HTML5 you cloned/downloaded and then run `http-server -c-1 -o`;
 - If the browser didn't open automatically, go to your browser (prefer Chrome based browsers) and access the address shown in the terminal (it's probably `http://localhost:8080/`).
+
+## For developers
+
+GS-HTML5 supports both Javascript and Typescript. We use [Webpack](https://webpack.js.org/) to build the bundle and serve the development environment.
 - I strongly reccomend using [Visual Studio Code](https://code.visualstudio.com/download) to develop.
+- Install dev dependencies by running `npm install` in the root folder.
+- Use `npm start` to start the development server.
+- Use `npm run build` to generate a bundle.
 
 ## Utils
 
