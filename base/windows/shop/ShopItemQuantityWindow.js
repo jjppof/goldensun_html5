@@ -31,29 +31,32 @@ export class ShopItemQuantityWindow {
         this.window = new Window(this.game, QUANTITY_WIN_X, QUANTITY_WIN_Y, QUANTITY_WIN_WIDTH, QUANTITY_WIN_HEIGHT);
         this.item_counter = new ItemCounter(this.game, this.window.group, ITEM_COUNTER_X, ITEM_COUNTER_Y, this.on_change.bind(this));
 
-        this.choosen_quantity = 1;
-        this.coins = 0;
+        this.chosen_quantity = 1;
+        this.base_price = 0;
+        this.is_open = false;
 
-        this.quantity_text = this.window.set_text_in_position(String(this.choosen_quantity), QUANTITY_TEXT_END_X, QUANTITY_TEXT_Y, true);
+        this.quantity_text = this.window.set_text_in_position(String(this.chosen_quantity), QUANTITY_TEXT_END_X, QUANTITY_TEXT_Y, true);
         this.coins_val_text = this.window.set_text_in_position("", COINS_VALUE_END_X, COINS_VALUE_Y, true);
         this.coins_label_text = this.window.set_text_in_position("Coins", COINS_LABEL_X, COINS_LABEL_Y);
 
     }
 
     on_change(quantity) {
-        this.choosen_quantity = quantity;
-        this.window.update_text(String(this.choosen_quantity), this.quantity_text);
+        this.chosen_quantity = quantity;
+        this.window.update_text(String(this.chosen_quantity), this.quantity_text);
+        this.window.update_text(String(this.base_price*this.chosen_quantity), this.coins_val_text);
     }
 
     open(item_obj, close_callback, open_callback){
         this.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "wiggle");
 
-        this.coins = this.data.info.party_data.coins;
-        this.window.update_text(String(this.coins), this.coins_val_text);
+        this.base_price = this.data.info.items_list[item_obj.key_name].price;
+        this.window.update_text(String(this.base_price), this.coins_val_text);
 
         let quantity = (item_obj.quantity === -1 ? 30 : item_obj.quantity);
-        this.item_counter.config(quantity, this.choosen_quantity);
+        this.item_counter.config(quantity, this.chosen_quantity);
 
+        this.is_open = true;
         this.close_callback = close_callback;
         this.window.show(open_callback, false);
 
@@ -61,11 +64,13 @@ export class ShopItemQuantityWindow {
 
     close(){
         this.item_counter.deactivate();
+        this.item_counter.clear();
         this.cursor_manager.clear_tweens();
 
-        this.choosen_quantity = 1;
-        this.coins = 0;
+        this.chosen_quantity = 1;
+        this.base_price = 0;
 
+        this.is_open = false;
         this.window.close(this.close_callback, false);
         this.close_callback = null;
     }

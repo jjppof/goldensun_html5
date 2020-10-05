@@ -10,6 +10,7 @@ export class ControlManager{
     constructor(game){
         this.game = game;
         this.disabled = false;
+        this.initialized = false;
 
         this.directions = [{key: "left", pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.LEFT},
         {key: "right", pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.RIGHT},
@@ -42,6 +43,34 @@ export class ControlManager{
         }
     }
 
+    set_control(horizontal, vertical, horizontal_loop=true, vertical_loop=false, callbacks){
+        if(this.initialized) this.reset();
+
+        if(horizontal){
+            if(!horizontal_loop){
+                this.directions["left"].loop = false;
+                this.directions["right"].loop = false;
+            } 
+            this.directions["left"].callback = callbacks.left;
+            this.directions["right"].callback = callbacks.right;
+        }
+        if(vertical){
+            if(!vertical_loop){
+                this.directions["up"].loop = false;
+                this.directions["down"].loop = false;
+            }
+            this.directions["up"].callback = callbacks.up;
+            this.directions["down"].callback = callbacks.down; 
+        }
+        if(callbacks.enter) this.actions["enter"].callback = callbacks.enter;
+        if(callbacks.esc) this.actions["esc"].callback = callbacks.esc;
+        if(callbacks.shift) this.actions["shift"].callback = callbacks.shift;
+        if(callbacks.spacebar) this.actions["spacebar"].callback = callbacks.spacebar;
+
+        this.set_directions();
+        this.set_actions();
+    }
+
     set_directions(){
         let directions_length = Object.keys(this.directions).length;
         for(let i=0; i<directions_length; i++){
@@ -54,8 +83,7 @@ export class ControlManager{
                             this.stop_timers();
                         }
                         this.directions[direction_keys[i]].pressed = true;
-                        if(direction_keys[i] === "right" || direction_keys[i] === "down") this.set_loop_timers(direction_keys[i], FORWARD);
-                        if(direction_keys[i] === "left" || direction_keys[i] === "up") this.set_loop_timers(direction_keys[i], BACKWARD);
+                        this.set_loop_timers(direction_keys[i]);
                     });
                     let b2 = this.game.input.keyboard.addKey(this.directions[direction_keys[i]].phaser_key).onUp.add(() => {
                         if (this.disabled) return;
@@ -74,6 +102,7 @@ export class ControlManager{
                 }
             };
         }
+        if(!this.initialized) this.initialized = true;
     }
 
     set_actions(){
@@ -87,21 +116,20 @@ export class ControlManager{
                 this.signal_bindings.push(b);
             }
         }
+        if(!this.initialized) this.initialized = true;
     }
 
-    set_loop_timers(direction,step) {
-        console.log(direction);
-        console.log(step);
-        this.change_index(direction, step);
+    set_loop_timers(direction) {
+        this.change_index(direction);
         this.loop_start_timer.add(Phaser.Timer.QUARTER, () => {
-            this.loop_repeat_timer.loop(INDEX_CHANGE_TIME, this.change_index.bind(this, direction, step));
+            this.loop_repeat_timer.loop(INDEX_CHANGE_TIME, this.change_index.bind(this, direction));
             this.loop_repeat_timer.start();
         });
         this.loop_start_timer.start();
     }
 
-    change_index(direction, step) {
-        this.directions[direction].callback(step);
+    change_index(direction) {
+        this.directions[direction].callback();
     }
 
     stop_timers() {
@@ -119,7 +147,24 @@ export class ControlManager{
     }
 
     reset(){
+        let directions_length = Object.keys(this.directions).length;
+        let actions_length = Object.keys(this.actions).length;
 
+        for(let i=0; i<directions_length; i++){
+            this.directions[direction_keys[i]].pressed = false;
+            this.directions[direction_keys[i]].loop = true;
+            this.directions[direction_keys[i]].callback = null;
+        }
+
+        for(let i=0; i<actions_length; i++){
+            this.actions[action_keys[i]].callback = null;
+        }
+
+        this.signal_bindings.forEach(signal_binding => {
+            signal_binding.detach();
+        });
+        this.signal_bindings = [];
+        if(this.initialized) this.initialized = false;
     }
 
     destroy() {

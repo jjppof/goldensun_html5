@@ -38,6 +38,7 @@ export class InventoryWindow{
         this.close_callback = null;
 
         this.expanded = false;
+        this.is_open = false;
 
         this.window = new Window(this.game, BASE_X, BASE_Y, BASE_WIDTH, BASE_HEIGHT);
         this.text = this.window.set_text_in_position("", TEXT_X, TEXT_Y);
@@ -162,6 +163,7 @@ export class InventoryWindow{
         this.check_expand(expand);
         this.set_sprites();
 
+        this.is_open = true;
         this.close_callback = close_callback;
         this.window.show(open_callback, false);
     }
@@ -179,6 +181,7 @@ export class InventoryWindow{
         this.char_items = [];
         this.selected_item = null;
 
+        this.is_open = false;
         this.window.close(this.close_callback, false);
         this.close_callback = null;
     }

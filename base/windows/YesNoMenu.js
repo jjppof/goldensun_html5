@@ -1,14 +1,13 @@
-import { HorizontalMenu } from '../menus/HorizontalMenu.js';
+import { ButtonSelectMenu } from '../menus/ButtonSelectMenu.js';
 import { capitalize } from '../../utils.js';
 
 const TITLE_WINDOW_WIDTH = 36
 
 export class YesNoMenu{
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority){
+    constructor(game, data, control_manager){
         this.game = game;
         this.data = data;
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
+        this.control_manager = control_manager;
 
         this.yes_callback = null;
         this.no_callback = null;
@@ -16,17 +15,14 @@ export class YesNoMenu{
         this.buttons_keys = ["yes", "no"];
 
         this.was_in_dialog = null;
+        this.is_open = false;
 
-        this.menu = new HorizontalMenu(
-            this.game,
-            this.data,
+        this.menu = new ButtonSelectMenu(this.game, this.data,
             this.buttons_keys,
             this.buttons_keys.map(b => capitalize(b)),
-            this.button_press.bind(this),
-            enter_propagation_priority,
-            this.close_menu.bind(this),
-            esc_propagation_priority
-        );
+            {on_press: this.button_press.bind(this),
+            on_cancel: this.close_menu.bind(this)},
+            this.control_manager);
         this.menu.title_window.update_size({width: TITLE_WINDOW_WIDTH});
     }
 
@@ -44,8 +40,8 @@ export class YesNoMenu{
         this.menu.title_window.send_to_front();
     }
 
-    button_press(index){
-        switch (this.buttons_keys[index]) {
+    button_press(){
+        switch (this.buttons_keys[this.menu.selected_button_index]){
             case "yes":
                 this.close_menu(this.yes_callback);
                 break;
@@ -59,9 +55,9 @@ export class YesNoMenu{
         return this.menu.menu_active;
     }
 
-    open_menu(yes_callback, no_callback){
-        this.yes_callback = yes_callback;
-        this.no_callback = no_callback;
+    open_menu(callbacks){
+        this.yes_callback = callbacks.yes;
+        this.no_callback = callbacks.no;
 
         this.was_in_dialog = this.data.in_dialog;
         this.data.in_dialog = this.was_in_dialog === true ? this.was_in_dialog : true;
@@ -69,6 +65,7 @@ export class YesNoMenu{
             this.data.hero.stop_char();
             this.data.hero.update_shadow();
         }
+        this.is_open = true;
         this.menu.open();
         
     }
@@ -77,7 +74,9 @@ export class YesNoMenu{
         if(callback === undefined) callback = this.no_callback;
         if (!this.is_active()) return;
         this.menu.close();
+        
         this.data.in_dialog = this.was_in_dialog;
+        this.is_open = false;
         callback();
     }
 }

@@ -40,6 +40,7 @@ export class EquipCompare {
 
         this.selected_item = null;
         this.selected_char = null;
+        this.is_open = false;
 
         this.window = new Window(this.game, BASE_X, BASE_Y, BASE_WIDTH, BASE_HEIGHT);
 
@@ -151,8 +152,8 @@ export class EquipCompare {
     }
 
     /*Compare the same item for a different character*/
-    change_character(index){
-        this.selected_char = index;
+    change_character(key_name){
+        this.selected_char = key_name;
         kill_all_sprites(this.arrow_group);
 
         this.show_stat_compare();
@@ -213,6 +214,7 @@ export class EquipCompare {
 
         this.show_stat_compare();
 
+        this.is_open = true;
         this.close_callback = close_callback;
         this.window.show(open_callback, false);
     }
@@ -227,6 +229,7 @@ export class EquipCompare {
         this.selected_item = null;
         this.selected_char = null;
 
+        this.is_open = false;
         this.window.close(this.close_callback, false);
         this.close_callback = null;
     }

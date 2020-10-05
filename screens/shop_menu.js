@@ -1,4 +1,3 @@
-import { HorizontalMenu } from '../base/menus/HorizontalMenu.js';
 import { ShopkeepDialog } from '../base/windows/shop/ShopkeepDialog.js';
 import { BuyArtifactsMenu } from '../base/windows/shop/BuyArtifactsMenu.js';
 import { SellRepairMenu } from '../base/windows/shop/SellRepairMenu.js';
@@ -12,6 +11,7 @@ import { Window } from '../base/Window.js';
 import { ShopCharDisplay } from '../base/windows/shop/ShopCharDisplay.js';
 import { CursorManager } from '../base/utils/CursorManager.js';
 import { ControlManager } from '../base/utils/ControlManager.js';
+import { ButtonSelectMenu } from '../base/menus/ButtonSelectMenu.js';
 
 const ITEM_PRICE_WIN_X = 0;
 const ITEM_PRICE_WIN_Y = 64;
@@ -59,8 +59,6 @@ export class ShopMenuScreen{
         this.game = game;
         this.data = data;
         this.shop_key = null;
-        let esc_propagation_priority = 0;
-        let enter_propagation_priority = 0;
 
         this.items_db = this.data.info.items_list;
         this.shops_db = _.mapKeys(this.data.dbs.shops_db, shop => shop.key_name);
@@ -70,36 +68,31 @@ export class ShopMenuScreen{
         this.artifact_list = [];
 
         this.buttons_keys = ["buy", "sell", "artifacts", "repair"];
-        this.horizontal_menu = new HorizontalMenu(
-            this.game,
-            this.data,
-            this.buttons_keys,
-            this.buttons_keys.map(b => capitalize(b)),
-            this.button_press.bind(this),
-            enter_propagation_priority,
-            this.close_menu.bind(this),
-            esc_propagation_priority
-        );
-        ++esc_propagation_priority;
-        ++enter_propagation_priority;
 
         this.cursor_manager = new CursorManager(this.game);
         this.control_manager = new ControlManager(this.game);
+        
+        this.horizontal_menu = new ButtonSelectMenu(this.game, this.data,
+            this.buttons_keys,
+            this.buttons_keys.map(b => capitalize(b)),
+            {on_press: this.button_press.bind(this), on_cancel: this.close_menu.bind(this)},
+            this.control_manager);
+
         this.npc_dialog = new ShopkeepDialog(this.game, this.data, this);
 
         this.inv_win = new InventoryWindow(this.game, this.data, this.cursor_manager);
-        this.buy_select = new BuySelectMenu(this.game, this.data, this.cursor_manager);
+        this.buy_select = new BuySelectMenu(this.game, this.data, this);
         this.eq_compare = new EquipCompare(this.game, this.data);
-        this.yesno_action = new YesNoMenu(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
+        this.yesno_action = new YesNoMenu(this.game, this.data, this.control_manager);
         this.quant_win = new ShopItemQuantityWindow(this.game, this.data, this.cursor_manager);
-        this.char_display = new ShopCharDisplay(this.game, this.data, this.cursor_manager);
+        this.char_display = new ShopCharDisplay(this.game, this.data, this);
 
         this.item_price_win = new Window(this.game, ITEM_PRICE_WIN_X, ITEM_PRICE_WIN_Y, ITEM_PRICE_WIN_WIDTH, ITEM_PRICE_WIN_HEIGHT);
         this.your_coins_win = new Window(this.game, YOUR_COINS_WIN_X, YOUR_COINS_WIN_Y, YOUR_COINS_WIN_WIDTH, YOUR_COINS_WIN_HEIGHT);
         this.item_desc_win = new Window(this.game, ITEM_DESC_WIN_X, ITEM_DESC_WIN_Y, ITEM_DESC_WIN_WIDTH, ITEM_DESC_WIN_HEIGHT);
        
         
-        this.buy_menu = new BuyArtifactsMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority, this);
+        this.buy_menu = new BuyArtifactsMenu(this.game, this.data, this);
         /*
         this.sell_menu = new SellRepairMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
         this.artifacts_menu = new BuyArtifactsMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
@@ -124,6 +117,7 @@ export class ShopMenuScreen{
         let item_list = this.shops_db[this.shop_key].item_list;
         for(let i=0; i<item_list.length; i++){
             let item = this.items_db[item_list[i].key_name];
+            if(item_list[i].quantity === 0) continue;
 
             if(item.rare_item === true) this.artifact_list.push(item);
             else this.normal_item_list.push(item);
@@ -160,33 +154,25 @@ export class ShopMenuScreen{
         this.update_item_price(String(this_item.price));
     }
 
-    button_press(index) {
-        /*
-        switch (this.buttons_keys[index]) {
+    button_press() {
+        switch (this.buttons_keys[this.horizontal_menu.selected_button_index]){
             case "buy":
-                this.button_press_action(this.buy_menu);
+                this.horizontal_menu.deactivate(true);
+                this.buy_menu.open_menu(false);
                 break;
+                /*
             case "sell":
                 this.button_press_action(this.sell_menu);
-                break;
+                break;*/
             case "artifacts":
-                this.button_press_action(this.artifacts_menu);
-                break;
+                this.horizontal_menu.deactivate(true);
+                this.buy_menu.open_menu(true);
+                break;/*
             case "repair":
                 this.button_press_action(this.repair_menu);
                 break;
-        }*/
-    }
-
-    button_press_action(menu) {
-        /*
-        this.horizontal_menu.deactivate();
-        menu.open_menu(close_this_menu => {
-            this.horizontal_menu.activate();
-            if (close_this_menu) {
-                this.close_menu();
-            }
-        });*/
+                */
+        }
     }
 
     update_position() {
@@ -198,10 +184,22 @@ export class ShopMenuScreen{
         return this.horizontal_menu.menu_active;
     }
 
+    open_horizontal_menu(message_key="cancel_option"){
+        if(!this.npc_dialog.dialog_window.open){
+            this.npc_dialog.open(this.shop_key);
+        }
+        else{
+            let msg = this.npc_dialog.get_message(message_key);
+            this.npc_dialog.update_dialog(msg.text);
+        }
+        this.horizontal_menu.open();
+
+    }
+
     open_menu(shop_key) {
+        console.log(shop_key);
         this.shop_key = shop_key;
         this.data.in_dialog = true;
-        this.npc_dialog.open(shop_key);
 
         if(this.data.hero.in_action()){
             this.data.hero.stop_char();
@@ -210,8 +208,7 @@ export class ShopMenuScreen{
 
         this.set_item_lists();
         this.data.menu_open = true;
-        this.horizontal_menu.open();
-        
+        this.open_horizontal_menu();
     }
 
     end_dialog() {
@@ -219,6 +216,7 @@ export class ShopMenuScreen{
         this.npc_dialog.close();
         this.data.in_dialog = false;
         this.data.menu_open = false;
+        this.control_manager.reset();
     }
 
     close_menu() {
@@ -231,10 +229,8 @@ export class ShopMenuScreen{
         this.normal_item_list = [];
         this.artifact_list = [];
 
-        data.enter_input.add(() => {
-            if (data.shop_screen.is_active()) {
-                data.shop_screen.end_dialog();
-            }
-        }, this);
+        this.control_manager.reset();
+        this.control_manager.actions["enter"].callback = this.end_dialog.bind(this);
+        this.control_manager.set_actions();
     }
 }
