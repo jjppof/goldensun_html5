@@ -117,7 +117,7 @@ export class Hero extends ControllableChar {
     check_interactable_objects(map, contact) {
         let j = 0;
         for (j = 0; j < map.interactable_objects.length; ++j) { //check if hero is colliding with any interactable object
-            const interactable_object_body = map.interactable_objects[j].interactable_object_sprite.body;
+            const interactable_object_body = map.interactable_objects[j].sprite.body;
             if (!interactable_object_body) continue;
             if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
                 if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {

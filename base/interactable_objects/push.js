@@ -23,8 +23,8 @@ export function target_only_push(game, data, interactable_object, before_move, p
 export function fire_push_movement(game, data, interactable_object, push_end, before_move, target_only = false, enable_physics_at_end = true, on_push_update = undefined) {
     let expected_position;
     if (!target_only) {
-        let positive_limit = data.hero.sprite.x + (-interactable_object.interactable_object_sprite.y - interactable_object.interactable_object_sprite.x);
-        let negative_limit = -data.hero.sprite.x + (-interactable_object.interactable_object_sprite.y + interactable_object.interactable_object_sprite.x);
+        let positive_limit = data.hero.sprite.x + (-interactable_object.sprite.y - interactable_object.sprite.x);
+        let negative_limit = -data.hero.sprite.x + (-interactable_object.sprite.y + interactable_object.sprite.x);
         if (-data.hero.sprite.y >= positive_limit && -data.hero.sprite.y >= negative_limit) {
             expected_position = directions.down;
         } else if (-data.hero.sprite.y <= positive_limit && -data.hero.sprite.y >= negative_limit) {
@@ -62,7 +62,7 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
                 break;
         }
         shift_events(data, interactable_object, event_shift_x, event_shift_y);
-        let sprites = [interactable_object.interactable_object_sprite.body];
+        let sprites = [interactable_object.sprite.body];
         if (!target_only) {
             sprites.push(...[data.hero.shadow, data.hero.sprite.body]);
         }
@@ -108,8 +108,8 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
                             shift_events(data, interactable_object, 0, drop_tile.dest_y - interactable_object.current_y);
                             interactable_object.current_y = drop_tile.dest_y;
                             interactable_object.change_collider_layer(data, drop_tile.destination_collider_layer);
-                            game.add.tween(interactable_object.interactable_object_sprite.body).to({
-                                y: interactable_object.interactable_object_sprite.body.y + dest_y_shift_px
+                            game.add.tween(interactable_object.sprite.body).to({
+                                y: interactable_object.sprite.body.y + dest_y_shift_px
                             },
                             drop_tile.animation_duration,
                             Phaser.Easing.Quadratic.In,
@@ -199,7 +199,7 @@ function dust_animation(game, data, interactable_object, promise_resolve) {
         const y = origin_y + DUST_RADIUS * Math.sin(this_angle);
         let dust_sprite = data.npc_group.create(origin_x, origin_y, DUST_KEY);
         if (this_angle < 0 || this_angle > Math.PI) {
-            data.npc_group.setChildIndex(dust_sprite, data.npc_group.getChildIndex(interactable_object.interactable_object_sprite));
+            data.npc_group.setChildIndex(dust_sprite, data.npc_group.getChildIndex(interactable_object.sprite));
         }
         dust_sprite.anchor.setTo(0.5, 0.5);
         game.add.tween(dust_sprite).to({

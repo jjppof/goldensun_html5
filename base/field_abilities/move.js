@@ -100,7 +100,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                         this.controllable_char.sprite.animations.frameName = `cast/${dest_direction}/01`;
                     });
                 }, () => {
-                    const pos_sqr_distance = Math.pow(this.controllable_char.sprite.body.x - this.target_object.interactable_object_sprite.body.x, 2) + Math.pow(this.controllable_char.sprite.body.y - this.target_object.interactable_object_sprite.body.y, 2);
+                    const pos_sqr_distance = Math.pow(this.controllable_char.sprite.body.x - this.target_object.sprite.body.x, 2) + Math.pow(this.controllable_char.sprite.body.y - this.target_object.sprite.body.y, 2);
                     const rad_sqr_distance = Math.pow(numbers.HERO_BODY_RADIUS + this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius, 2);
                     if (pos_sqr_distance <= rad_sqr_distance) {
                         this.controllable_char.sprite.body.x = (this.controllable_char.tile_x_pos + 0.5) * this.data.map.sprite.tileWidth;
@@ -138,32 +138,32 @@ export class MoveFieldPsynergy extends FieldAbilities {
         switch (this.cast_direction) {
             case directions.up:
                 if (this.target_found) {
-                    translate_x = this.target_object.interactable_object_sprite.centerX;
-                    translate_y = this.target_object.interactable_object_sprite.y;
+                    translate_x = this.target_object.sprite.centerX;
+                    translate_y = this.target_object.sprite.y;
                 } else {
                     translate_y -= MAX_HAND_TRANSLATE;
                 }
                 break;
             case directions.down:
                 if (this.target_found) {
-                    translate_x = this.target_object.interactable_object_sprite.centerX;
-                    translate_y = this.target_object.interactable_object_sprite.y - this.target_object.interactable_object_sprite.height + this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
+                    translate_x = this.target_object.sprite.centerX;
+                    translate_y = this.target_object.sprite.y - this.target_object.sprite.height + this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
                 } else {
                     translate_y += MAX_HAND_TRANSLATE;
                 }
                 break;
             case directions.right:
                 if (this.target_found) {
-                    translate_x = this.target_object.interactable_object_sprite.x - 2 * this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
-                    translate_y = this.target_object.interactable_object_sprite.centerY;
+                    translate_x = this.target_object.sprite.x - 2 * this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
+                    translate_y = this.target_object.sprite.centerY;
                 } else {
                     translate_x += MAX_HAND_TRANSLATE;
                 }
                 break;
             case directions.left:
                 if (this.target_found) {
-                    translate_x = this.target_object.interactable_object_sprite.x + 2 * this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
-                    translate_y = this.target_object.interactable_object_sprite.centerY;
+                    translate_x = this.target_object.sprite.x + 2 * this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
+                    translate_y = this.target_object.sprite.centerY;
                 } else {
                     translate_x -= MAX_HAND_TRANSLATE;
                 }
@@ -178,7 +178,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
             const anim_key = this.hand_sprite_base.getAnimationKey(MOVE_HAND_KEY_NAME, reverse_directions[this.cast_direction]);
             this.hand_sprite.animations.play(anim_key);
             if (this.target_found) {
-                this.target_object.interactable_object_sprite.filters = [this.target_object.color_filter];
+                this.target_object.sprite.filters = [this.target_object.color_filter];
                 this.target_hueshift_timer = this.game.time.create(false);
                 this.target_hueshift_timer.loop(5, () => {
                     this.target_object.color_filter.hue_adjust = Math.random() * 2 * Math.PI;
@@ -300,7 +300,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
 
     unset_hue_shifter() {
         if (this.target_found) {
-            this.target_object.interactable_object_sprite.filters = undefined;
+            this.target_object.sprite.filters = undefined;
             this.target_hueshift_timer.stop();
         }
     }

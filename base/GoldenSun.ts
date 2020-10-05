@@ -9,7 +9,7 @@ import { TileEventManager } from './tile_events/TileEventManager.js';
 import { GameEventManager } from './game_events/GameEventManager';
 import { load_databases } from './initializers/databases_loader.js';
 import { initialize_game_data } from './initializers/initialize_info.js';
-import { Map } from './Map.js';
+import { Map } from './Map';
 import { Battle } from './battle/Battle.js';
 import { MenuScreen } from './screens/menu.js';
 

@@ -90,10 +90,10 @@ export class FrostFieldPsynergy extends FieldAbilities {
                 }
             }
         });
-        this.target_object.interactable_object_sprite.send_to_back = false;
+        this.target_object.sprite.send_to_back = false;
         this.data.map.sort_sprites();
         this.target_object.custom_data.color_filters = this.game.add.filter('ColorFilters');
-        this.target_object.interactable_object_sprite.filters = [this.target_object.custom_data.color_filters];
+        this.target_object.sprite.filters = [this.target_object.custom_data.color_filters];
         let blink_counter = 16;
         let blink_timer = this.game.time.create(false);
         blink_timer.loop(50, () => {
@@ -113,8 +113,8 @@ export class FrostFieldPsynergy extends FieldAbilities {
 
     /*Plays the pillar's growing animation*/
     grow_pillar() {
-        this.target_object.interactable_object_sprite.animations.play("frost_pool_pillar");
-        this.target_object.interactable_object_sprite.animations.currentAnim.onComplete.addOnce(() => {
+        this.target_object.sprite.animations.play("frost_pool_pillar");
+        this.target_object.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.set_permanent_blink();
             this.unset_hero_cast_anim();
             this.stop_casting();
@@ -132,7 +132,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
             });
         });
         blink_timer.start();
-        target_object.interactable_object_sprite.events.onDestroy.add(() => {
+        target_object.sprite.events.onDestroy.add(() => {
             blink_timer.destroy();
         });
     }

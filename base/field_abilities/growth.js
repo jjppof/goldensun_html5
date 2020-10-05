@@ -100,8 +100,8 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         this.target_object.get_events().forEach(event => {
             event.activate();
         });
-        this.target_object.interactable_object_sprite.animations.play("growth_growing", 8, false);
-        this.target_object.interactable_object_sprite.animations.currentAnim.onComplete.addOnce(() => {
+        this.target_object.sprite.animations.play("growth_growing", 8, false);
+        this.target_object.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.unset_hero_cast_anim();
             this.stop_casting();
         });

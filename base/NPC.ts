@@ -1,7 +1,7 @@
 import { SpriteBase } from './SpriteBase.js';
-import { event_types as game_event_types } from "./game_events/GameEvent.js";
+import { event_types as game_event_types, GameEvent } from "./game_events/GameEvent.js";
 import { mount_collision_polygon } from './utils.js';
-import { ControllableChar } from './ControllableChar.js';
+import { ControllableChar } from './ControllableChar';
 import { BattleEvent } from './game_events/BattleEvent.js';
 
 export class NPC_Sprite extends SpriteBase {
@@ -26,6 +26,15 @@ export const npc_types = {
 };
 
 export class NPC extends ControllableChar {
+    public movement_type: string;
+    public npc_type: string;
+    public message: string;
+    public thought_message: string;
+    public avatar: string;
+    public base_collider_layer: number;
+    public talk_range_factor: number;
+    public events: GameEvent[];
+
     constructor(
         game,
         data,

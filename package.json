@@ -18,10 +18,14 @@
   },
   "homepage": "https://github.com/jjppof/goldensun_html5#readme",
   "devDependencies": {
+    "@types/lodash": "^4.14.161",
     "ts-loader": "^8.0.4",
     "typescript": "^4.0.3",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "lodash": "^4.17.20"
   }
 }

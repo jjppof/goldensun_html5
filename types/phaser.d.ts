@@ -4835,6 +4835,9 @@ declare module Phaser {
         sort_function: Function;
         send_to_back: boolean;
         send_to_front: boolean;
+        is_npc: boolean;
+        is_interactable_object: boolean;
+        interactable_object: any;
         data: any;
         debug: boolean;
         deltaX: number;
@@ -5517,6 +5520,7 @@ declare module Phaser {
         tileMargin: number;
         tileSpacing: number;
         tileWidth: number;
+        tileProperties: any;
         total: number;
 
         containsTileIndex(tileIndex: number): boolean;

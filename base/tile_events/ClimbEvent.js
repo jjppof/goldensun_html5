@@ -147,7 +147,7 @@ export class ClimbEvent extends TileEvent {
     }
 
     create_climb_collision_bodies() {
-        this.origin_interactable_object.interactable_object_sprite.send_to_back = true;
+        this.origin_interactable_object.sprite.send_to_back = true;
         const postions = this.origin_interactable_object.events_info.climb.collision_tiles.map(tile_shift => {
             return {x: this.origin_interactable_object.current_x + tile_shift.x, y: this.origin_interactable_object.current_y + tile_shift.y};
         });
@@ -177,7 +177,7 @@ export class ClimbEvent extends TileEvent {
     }
 
     remove_climb_collision_bodies(collide_with_map = true) {
-        this.origin_interactable_object.interactable_object_sprite.send_to_back = false;
+        this.origin_interactable_object.sprite.send_to_back = false;
         JumpEvent.set_jump_collision(this.game, this.data);
         if (collide_with_map) {
             this.data.hero.sprite.body.collides(this.data.collision.map_collision_group);

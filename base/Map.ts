@@ -1,5 +1,5 @@
 import { base_actions, directions, map_directions } from "./utils.js";
-import { NPC_Sprite, NPC, npc_movement_types } from './NPC.js';
+import { NPC_Sprite, NPC, npc_movement_types } from './NPC';
 import { InteractableObjects, InteractableObjects_Sprite, interactable_object_interaction_types } from "./InteractableObjects.js";
 import { TileEvent, event_types as tile_event_types } from './tile_events/TileEvent.js';
 import * as numbers from "./magic_numbers.js";
@@ -11,6 +11,7 @@ import { CollisionEvent } from "./tile_events/CollisionEvent.js";
 import { SpeedEvent } from "./tile_events/SpeedEvent.js";
 import { GameEvent } from "./game_events/GameEvent.js";
 import { GoldenSun } from "./GoldenSun";
+import * as _ from "lodash";
 
 export class Map {
     public game: Phaser.Game;
@@ -175,7 +176,7 @@ export class Map {
         this.config_body(collision_obj, collision_layer);
     }
 
-    get_current_tile(controllable_char, layer) {
+    get_current_tile(controllable_char, layer?) {
         if (layer !== undefined) {
             return this.sprite.getTile(controllable_char.tile_x_pos, controllable_char.tile_y_pos, layer);
         } else {
@@ -404,7 +405,7 @@ export class Map {
             this.layers[i].sprite.layer_z = this.layers[i].properties.z;
             layer.resizeWorld();
             if (this.layers[i].properties.blendMode !== undefined) {
-                layer.blendMode = PIXI.blendModes[this.layers[i].properties.blendMode];
+                layer.blendMode = PIXI.blendModes[this.layers[i].properties.blendMode] as unknown as PIXI.blendModes;
             }
             if (this.layers[i].alpha !== undefined) {
                 layer.alpha = this.layers[i].alpha;
@@ -480,7 +481,7 @@ export class Map {
 
         let sprites_to_remove = []
         for (let i = 0; i < this.data.npc_group.children.length; ++i) {
-            let sprite = this.data.npc_group.children[i];
+            let sprite = this.data.npc_group.children[i] as Phaser.Sprite;
             if (!sprite.is_npc && !sprite.is_interactable_object) continue;
             if (sprite.is_interactable_object && sprite.interactable_object.custom_data.blocking_stair_block) {
                 sprite.interactable_object.custom_data.blocking_stair_block.destroy();

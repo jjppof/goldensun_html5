@@ -4,6 +4,7 @@ import * as numbers from './magic_numbers.js';
 import { directions, get_surroundings, mount_collision_polygon } from "./utils.js";
 import { JumpEvent } from "./tile_events/JumpEvent.js";
 import { ClimbEvent } from "./tile_events/ClimbEvent.js";
+import { GoldenSun } from "./GoldenSun";
 
 export const interactable_object_interaction_types = {
     ONCE: "once",
@@ -23,12 +24,34 @@ export class InteractableObjects_Sprite extends SpriteBase {
 }
 
 export class InteractableObjects {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public key_name: string;
+    public x: number;
+    public y: number;
+    public sprite_info: SpriteBase;
+    public allowed_tiles: {x: number, y: number, collision_layer: number}[];
+    public base_collider_layer: number;
+    public collider_layer_shift: number;
+    public intermediate_collider_layer_shift: number;
+    public not_allowed_tiles: {x: number, y: number}[];
+    public object_drop_tiles: any;
+    public events: Set<TileEvent>;
+    public events_info: any;
+    public current_x: number;
+    public current_y: number;
+    public custom_data: any;
+    public collision_change_functions: Function[];
+    public color_filter: Phaser.Filter;
+    public sprite: Phaser.Sprite;
+
     constructor(game, data, key_name, x, y, allowed_tiles, base_collider_layer, collider_layer_shift, not_allowed_tiles, object_drop_tiles, intermediate_collider_layer_shift) {
         this.game = game;
         this.data = data;
         this.key_name = key_name;
         this.x = x;
         this.y = y;
+        this.sprite_info = null;
         this.allowed_tiles = allowed_tiles;
         this.base_collider_layer = base_collider_layer;
         this.collider_layer_shift = collider_layer_shift;
@@ -47,7 +70,7 @@ export class InteractableObjects {
     }
 
     set_sprite(sprite) {
-        this.interactable_object_sprite = sprite;
+        this.sprite = sprite;
     }
 
     position_allowed(x, y) {
@@ -64,16 +87,16 @@ export class InteractableObjects {
     }
 
     get_current_position(map) {
-        const x = (this.interactable_object_sprite.x/map.sprite.tileWidth) | 0;
-        const y = (this.interactable_object_sprite.y/map.sprite.tileHeight) | 0;
+        const x = (this.sprite.x/map.sprite.tileWidth) | 0;
+        const y = (this.sprite.y/map.sprite.tileHeight) | 0;
         return { x: x, y: y };
     }
 
     change_collider_layer(data, destination_collider_layer) {
-        this.interactable_object_sprite.body.removeCollisionGroup(data.collision.interactable_objs_collision_groups[this.base_collider_layer]);
-        this.interactable_object_sprite.body.setCollisionGroup(data.collision.interactable_objs_collision_groups[destination_collider_layer]);
+        this.sprite.body.removeCollisionGroup(data.collision.interactable_objs_collision_groups[this.base_collider_layer]);
+        this.sprite.body.setCollisionGroup(data.collision.interactable_objs_collision_groups[destination_collider_layer]);
         this.base_collider_layer = destination_collider_layer;
-        this.interactable_object_sprite.base_collider_layer = destination_collider_layer;
+        this.sprite.base_collider_layer = destination_collider_layer;
         this.collision_change_functions.forEach(f => { f(); });
     }
 
@@ -115,25 +138,25 @@ export class InteractableObjects {
     initial_config(map_sprite) {
         const interactable_object_sprite = this.data.npc_group.create(0, 0, this.key_name + "_" + this.key_name);
         this.set_sprite(interactable_object_sprite);
-        this.interactable_object_sprite.is_interactable_object = true;
-        this.interactable_object_sprite.roundPx = true;
-        this.interactable_object_sprite.base_collider_layer = this.base_collider_layer;
-        this.interactable_object_sprite.interactable_object = this;
+        this.sprite.is_interactable_object = true;
+        this.sprite.roundPx = true;
+        this.sprite.base_collider_layer = this.base_collider_layer;
+        this.sprite.interactable_object = this;
         if (this.data.dbs.interactable_objects_db[this.key_name].send_to_back !== undefined) { 
-            this.interactable_object_sprite.send_to_back = this.data.dbs.interactable_objects_db[this.key_name].send_to_back;
+            this.sprite.send_to_back = this.data.dbs.interactable_objects_db[this.key_name].send_to_back;
         }
         if (this.data.dbs.interactable_objects_db[this.key_name].anchor_x !== undefined) {
-            this.interactable_object_sprite.anchor.x = this.data.dbs.interactable_objects_db[this.key_name].anchor_x;
+            this.sprite.anchor.x = this.data.dbs.interactable_objects_db[this.key_name].anchor_x;
         }
-        this.interactable_object_sprite.anchor.y = this.data.dbs.interactable_objects_db[this.key_name].anchor_y;
+        this.sprite.anchor.y = this.data.dbs.interactable_objects_db[this.key_name].anchor_y;
         const shift_x = this.data.dbs.interactable_objects_db[this.key_name].shift_x !== undefined ? this.data.dbs.interactable_objects_db[this.key_name].shift_x : 0;
         const shift_y = this.data.dbs.interactable_objects_db[this.key_name].shift_y !== undefined ? this.data.dbs.interactable_objects_db[this.key_name].shift_y : 0;
-        this.interactable_object_sprite.centerX = (this.x + 1) * map_sprite.tileWidth + shift_x;
+        this.sprite.centerX = (this.x + 1) * map_sprite.tileWidth + shift_x;
         const anchor_shift = this.data.dbs.interactable_objects_db[this.key_name].anchor_y * map_sprite.tileWidth * 0.5;
-        this.interactable_object_sprite.centerY = this.y * map_sprite.tileWidth - anchor_shift + shift_y;
-        this.sprite_info.setAnimation(this.interactable_object_sprite, this.key_name);
+        this.sprite.centerY = this.y * map_sprite.tileWidth - anchor_shift + shift_y;
+        this.sprite_info.setAnimation(this.sprite, this.key_name);
         const initial_animation = this.data.dbs.interactable_objects_db[this.key_name].initial_animation;
-        this.interactable_object_sprite.animations.play(this.key_name + "_" + initial_animation);
+        this.sprite.animations.play(this.key_name + "_" + initial_animation);
     }
 
     initialize_related_events(map_events, map) {
@@ -311,23 +334,23 @@ export class InteractableObjects {
     config_body(collision_obj) {
         if (this.data.dbs.interactable_objects_db[this.key_name].body_radius === 0) return;
         const collision_groups = collision_obj.interactable_objs_collision_groups;
-        this.game.physics.p2.enable(this.interactable_object_sprite, false);
-        this.interactable_object_sprite.anchor.y = this.data.dbs.interactable_objects_db[this.key_name].anchor_y; //Important to be after the previous command
-        this.interactable_object_sprite.body.clearShapes();
+        this.game.physics.p2.enable(this.sprite, false);
+        this.sprite.anchor.y = this.data.dbs.interactable_objects_db[this.key_name].anchor_y; //Important to be after the previous command
+        this.sprite.body.clearShapes();
         const width = this.data.dbs.interactable_objects_db[this.key_name].body_radius << 1;
         const polygon = mount_collision_polygon(width, -(width >> 1), this.data.dbs.interactable_objects_db[this.key_name].collision_body_bevel);
-        this.interactable_object_sprite.body.addPolygon({
+        this.sprite.body.addPolygon({
                 optimalDecomp: false,
                 skipSimpleCheck: true,
                 removeCollinearPoints: false
         }, polygon);
-        this.interactable_object_sprite.body.setCollisionGroup(collision_groups[this.base_collider_layer]);
-        this.interactable_object_sprite.body.damping = 1;
-        this.interactable_object_sprite.body.angularDamping = 1;
-        this.interactable_object_sprite.body.setZeroRotation();
-        this.interactable_object_sprite.body.fixedRotation = true;
-        this.interactable_object_sprite.body.dynamic = false;
-        this.interactable_object_sprite.body.static = true;
+        this.sprite.body.setCollisionGroup(collision_groups[this.base_collider_layer]);
+        this.sprite.body.damping = 1;
+        this.sprite.body.angularDamping = 1;
+        this.sprite.body.setZeroRotation();
+        this.sprite.body.fixedRotation = true;
+        this.sprite.body.dynamic = false;
+        this.sprite.body.static = true;
         if (this.custom_data.block_stair_collider_layer_shift !== undefined) {
             this.creating_blocking_stair_block(collision_obj);
         }
