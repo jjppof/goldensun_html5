@@ -1,8 +1,72 @@
-import { SpriteBase } from "./SpriteBase.js";
-import { Player, fighter_types } from "./Player.js";
+import { SpriteBase } from "./SpriteBase";
+import { Player, fighter_types } from "./Player";
 import { ordered_elements } from "./utils.js";
+import * as _ from "lodash";
+import * as numbers from "./magic_numbers.js";
+import { effect_types } from "./Effect.js";
 
 export class Enemy extends Player {
+    public level: number;
+    public turns: number;
+    public max_hp: number;
+    public max_pp: number;
+    public hp_recovery: number;
+    public pp_recovery: number;
+    public atk: number;
+    public def: number;
+    public agi: number;
+    public luk: number;
+    public items: {
+        key_name: string,
+        quantity: number,
+        use_weight: number
+    }[];
+    public abilities: {
+        key_name: string,
+        use_weight: number
+    }[];
+    public coins_reward: number;
+    public item_reward: string;
+    public item_reward_chance: number;
+    public exp_reward: number;
+    public venus_level: number;
+    public mercury_level: number;
+    public mars_level: number;
+    public jupiter_level: number;
+    public venus_power: number;
+    public mercury_power: number;
+    public mars_power: number;
+    public jupiter_power: number;
+    public venus_resist: number;
+    public mercury_resist: number;
+    public mars_resist: number;
+    public jupiter_resist: number;
+    public battle_animations_variations: {[ability_key: string]: string};
+    public fighter_type: number;
+    public class: any;
+    public current_exp: number;
+    public current_hp: number;
+    public current_pp: number;
+    public current_hp_recovery: number;
+    public current_pp_recovery: number;
+    public current_atk: number;
+    public current_def: number;
+    public current_agi: number;
+    public current_luk: number;
+    public venus_level_current: number;
+    public mercury_level_current: number;
+    public mars_level_current: number;
+    public jupiter_level_current: number;
+    public venus_power_current: number;
+    public mercury_power_current: number;
+    public mars_power_current: number;
+    public jupiter_power_current: number;
+    public venus_resist_current: number;
+    public mercury_resist_current: number;
+    public mars_resist_current: number;
+    public jupiter_resist_current: number;
+    public battle_scale: number;
+
     constructor(enemy_data, name) {
         super(enemy_data.key_name, name ? name : enemy_data.name);
         this.level = enemy_data.level;
@@ -33,6 +97,7 @@ export class Enemy extends Player {
         this.mercury_resist = enemy_data.mercury_resist;
         this.mars_resist = enemy_data.mars_resist;
         this.jupiter_resist = enemy_data.jupiter_resist;
+        this.battle_scale = enemy_data.battle_scale;
         this.battle_animations_variations = Object.assign({}, enemy_data.battle_animations_variations);
         this.fighter_type = fighter_types.ENEMY;
         this.class = {
@@ -87,25 +152,18 @@ export class Enemy extends Player {
             const element = ordered_elements[i];
             const power_key = element + "_power_current";
             const resist_key = element + "_resist_current";
-            this[power_key] = _.clamp(this[power_key], ELEM_ATTR_MIN, ELEM_ATTR_MAX);
-            this[resist_key] = _.clamp(this[resist_key], ELEM_ATTR_MIN, ELEM_ATTR_MAX);
+            this[power_key] = _.clamp(this[power_key], numbers.ELEM_ATTR_MIN, numbers.ELEM_ATTR_MAX);
+            this[resist_key] = _.clamp(this[resist_key], numbers.ELEM_ATTR_MIN, numbers.ELEM_ATTR_MAX);
         }
     }
 }
 
 export class EnemyBase extends SpriteBase {
-    constructor(
-        key_name,
-        battle_scale,
-        data
-    ) {
+    constructor(key_name, data) {
         super(key_name, ["battle"]);
-        this.key_name = key_name;
-        this.battle_scale = battle_scale;
-        this.data = data;
     }
 }
 
-export function get_enemy_instance(enemies_list, key_name, suffix) {
-    return new Enemy(enemies_list[key_name].data, enemies_list[key_name].data.name + suffix);
+export function get_enemy_instance(enemy_data, suffix) {
+    return new Enemy(enemy_data, enemy_data.name + suffix);
 }

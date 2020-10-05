@@ -214,7 +214,7 @@ export class BattleStage {
             info.sprite = sprite;
         });
         this.enemies_info.forEach(info => {
-            const sprite = set_sprite(this.group_enemies, info, false, "battle_front", this.data.info.enemies_list);
+            const sprite = set_sprite(this.group_enemies, info, false, "battle_front", this.data.info.enemies_list.sprite_base);
             info.sprite = sprite;
         });
         this.first_ally_char = this.group_allies.children[0];
