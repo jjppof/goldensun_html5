@@ -70,8 +70,8 @@ export class GameEventManager {
                 this.data.hero.set_direction(interaction_directions.hero_direction);
                 this.data.hero.play(base_actions.IDLE, reverse_directions[interaction_directions.hero_direction]);
                 npc.play(base_actions.IDLE, reverse_directions[interaction_directions.target_direction]);
-                this.fire_next_step = dialog_manager.next.bind(dialog_manager, () => {
-                    if (dialog_manager.finished) {
+                this.fire_next_step = dialog_manager.next.bind(dialog_manager, finished => {
+                    if (finished) {
                         this.on_event = false;
                         const initial_action = this.data.dbs.npc_db[npc.key_name].initial_action;
                         const initial_direction = this.data.dbs.npc_db[npc.key_name].actions[initial_action].initial_direction;

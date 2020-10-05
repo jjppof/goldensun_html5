@@ -62,16 +62,16 @@ export class DialogManager {
         }
     }
 
-    //Calls the next dialog window. If the dialog is finished, this function returns true.
+    //Calls the next dialog window. If the dialog is finished, this function passes true to the callback.
     next(callback, custom_pos, custom_avatar_pos) {
         if (this.avatar_window) {
             this.avatar_window.destroy(false);
         }
         if (this.step >= this.parts.length) { //finishes the dialog
             this.finished = true;
-            this.window.destroy(true, callback);
+            this.window.destroy(true, callback.bind(this, this.finished));
             this.dialog_crystal.destroy();
-            return this.finished;
+            return;
         }
         if (this.window) { //destroys the current window
             this.window.destroy(false);
@@ -104,7 +104,7 @@ export class DialogManager {
                         this.dialog_crystal_tween.stop();
                     }
                 }
-                next_callback();
+                next_callback(this.finished);
             });
         }).bind(this, this.step, this.italic_font, callback));
         if (this.avatar) {
@@ -121,7 +121,6 @@ export class DialogManager {
             this.avatar_window.show();
         }
         ++this.step;
-        return this.finished;
     }
 
     //Receives a text string and mount the the dialog sections that will go to each window of the dialog.
