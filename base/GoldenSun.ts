@@ -11,6 +11,7 @@ import { load_databases } from './initializers/databases_loader.js';
 import { initialize_game_data } from './initializers/initialize_info.js';
 import { Map } from './Map.js';
 import { Battle } from './battle/Battle.js';
+import { ShopMenuScreen } from './screens/shop_menu.js';
 
 class GoldenSun {
     public game: Phaser.Game = null;
@@ -184,6 +185,7 @@ class GoldenSun {
             window.dispatchEvent(new Event('resize'));
         });
 
+        var shop_screen = new ShopMenuScreen(this.game, this);
         //enable psynergies shortcuts for testing
         this.game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
@@ -196,6 +198,10 @@ class GoldenSun {
         this.game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
             this.info.field_abilities_list.growth.cast(this.hero, this.dbs.init_db.initial_shortcuts.growth);
+        });
+        this.game.input.keyboard.addKey(Phaser.Keyboard.S).onDown.add(() => {
+            if (this.hero.in_action() || this.menu_open || this.in_battle) return;
+            shop_screen.open_menu("madra_test_shop");
         });
     }
 

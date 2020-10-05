@@ -4,8 +4,10 @@ import { initialize_items } from './items.js';
 import { initialize_djinni, initialize_djinni_sprites } from './djinni.js';
 import { initialize_enemies } from './enemies.js';
 import { initialize_maps } from './maps.js';
+import { initialize_shops } from './shops.js';
 import { initialize_menu } from '../screens/menu.js';
 import { initialize_misc_data } from './misc_data.js';
+import { ShopMenuScreen } from '../screens/shop_menu.js';
 
 export async function initialize_game_data(game, data) {
     let load_maps_promise_resolve;
@@ -66,9 +68,17 @@ export async function initialize_game_data(game, data) {
     data.info.misc_sprite_base_list = initialize_misc_data(game, data.dbs.misc_animations_db, load_misc_promise_resolve);
     await load_misc_promise;
 
+    let load_shops_promise_resolve;
+    const load_shops_promise = new Promise(resolve => {
+        load_shops_promise_resolve = resolve;
+    });
+    data.info.shops_list = initialize_shops(game, data.dbs.shops_db, load_shops_promise_resolve);
+    await load_shops_promise;
+
     //initialize field abilities
     data.info.field_abilities_list = initialize_field_abilities(game, data);
 
     //initialize screens
+    data.shop_screen = new ShopMenuScreen(game, data);
     data.menu_screen = initialize_menu(game, data);
 }
