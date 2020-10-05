@@ -1,4 +1,4 @@
-import { Map } from "../Map.js";
+import { Map } from "../Map";
 
 export function initialize_maps(game, data, maps_db, load_promise_resolve) {
     let maps = {};

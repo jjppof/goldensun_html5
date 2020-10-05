@@ -1,6 +1,6 @@
 import { base_actions, directions, map_directions } from "./utils.js";
 import { NPC_Sprite, NPC, npc_movement_types } from './NPC';
-import { InteractableObjects, InteractableObjects_Sprite, interactable_object_interaction_types } from "./InteractableObjects.js";
+import { InteractableObjects, InteractableObjects_Sprite, interactable_object_interaction_types } from "./InteractableObjects";
 import { TileEvent, event_types as tile_event_types } from './tile_events/TileEvent.js';
 import * as numbers from "./magic_numbers.js";
 import { JumpEvent } from "./tile_events/JumpEvent.js";

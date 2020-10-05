@@ -1,4 +1,19 @@
 export class SpriteBase {
+    public key_name: string;
+    public actions: {
+        [action: string]: {
+            directions?: string[],
+            frame_counts?: any,
+            frame_rate?: {[direction: string]: any},
+            loop?: boolean|boolean[],
+            spritesheet?: {spritesheet_image_url: string, spritesheet_json_url: string}
+        }
+    };
+    public animations: {[action: string]: {[animation: string]: string[]}};
+    public dash_speed: number;
+    public walk_speed: number;
+    public climb_speed: number;
+
     constructor (key_name, actions) {
         this.key_name = key_name;
         this.actions = {};
@@ -54,8 +69,9 @@ export class SpriteBase {
     loadSpritesheets(game, force_load, on_load_complete) {
         for(let action in this.actions){
             const spritesheet = this.actions[action].spritesheet;
+            const action_key = this.getActionKey(action);
             let loader = game.load.atlasJSONHash(
-                this.key_name + "_" + action,
+                action_key,
                 spritesheet.spritesheet_image_url,
                 spritesheet.spritesheet_json_url
             );
@@ -85,8 +101,9 @@ export class SpriteBase {
         for (let i = 0; i < directions.length; ++i) {
             const direction = directions[i];
             const frame_rate = this.actions[action].frame_rate[direction];
+            const anim_key = this.getAnimationKey(action, direction);
             sprite.animations.add(
-                action + "_" + direction,
+                anim_key,
                 this.animations[action][direction],
                 frame_rate,
                 Array.isArray(loop) ? loop[i] : loop,
