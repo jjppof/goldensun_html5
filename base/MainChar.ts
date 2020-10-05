@@ -1,11 +1,12 @@
 import { SpriteBase } from './SpriteBase.js';
-import { choose_right_class } from './Classes.js';
+import { choose_right_class, Classes } from './Classes.js';
 import { djinn_status } from './Djinn.js';
 import { Effect, effect_types } from './Effect.js';
 import { item_types } from './Item.js';
 import { Player, fighter_types, permanent_status } from './Player.js';
 import { elements, ordered_elements } from './utils.js';
 import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from './magic_numbers.js';
+import * as _ from "lodash";
 
 const ELEM_LV_DELTA = 1;
 const ELEM_POWER_DELTA = 5;
@@ -28,7 +29,93 @@ export class MainCharBase extends SpriteBase {
     }
 }
 
+export type ItemSlot = {
+    key_name: string,
+    index: number,
+    quantity: number,
+    equipped: boolean
+};
+
 export class MainChar extends Player {
+    public info: any;
+    public sprite_base: SpriteBase;
+    public starting_level: number;
+    public level: number;
+    public class_table: any;
+    public class: Classes;
+    public battle_scale: number;
+    public exp_curve: number[];
+    public current_exp: number;
+    public venus_level_base: number;
+    public mercury_level_base: number;
+    public mars_level_base: number;
+    public jupiter_level_base: number;
+    public venus_power_base: number;
+    public mercury_power_base: number;
+    public mars_power_base: number;
+    public jupiter_power_base: number;
+    public venus_resist_base: number;
+    public mercury_resist_base: number;
+    public mars_resist_base: number;
+    public jupiter_resist_base: number;
+    public element_afinity: string;
+    public venus_djinni: string[];
+    public mercury_djinni: string[];
+    public mars_djinni: string[];
+    public jupiter_djinni: string[];
+    public hp_curve: number[];
+    public pp_curve: number[];
+    public atk_curve: number[];
+    public def_curve: number[];
+    public agi_curve: number[];
+    public luk_curve: number[];
+    public hp_extra: number;
+    public pp_extra: number;
+    public atk_extra: number;
+    public def_extra: number;
+    public agi_extra: number;
+    public luk_extra: number;
+    public hp_recovery: number;
+    public pp_recovery: number;
+    public items: ItemSlot[];
+    public equip_slots: {
+        weapon: ItemSlot,
+        head: ItemSlot,
+        chest: ItemSlot,
+        body: ItemSlot
+    };
+    public equipped_abilities: string[];
+    public innate_abilities: string[];
+    public in_party: boolean;
+    public abilities: string[];
+    public turns: number;
+    public fighter_type: number;
+    public battle_animations_variations: {[ability_key: string]: string};
+    public venus_level_current: number;
+    public mercury_level_current: number;
+    public mars_level_current: number;
+    public jupiter_level_current: number;
+    public venus_power_current: number;
+    public mercury_power_current: number;
+    public mars_power_current: number;
+    public jupiter_power_current: number;
+    public venus_resist_current: number;
+    public mercury_resist_current: number;
+    public mars_resist_current: number;
+    public jupiter_resist_current: number;
+    public max_hp: number;
+    public current_max_hp: number;
+    public max_pp: number;
+    public current_max_pp: number;
+    public atk: number;
+    public current_atk: number;
+    public def: number;
+    public current_def: number;
+    public agi: number;
+    public current_agi: number;
+    public luk: number;
+    public current_luk: number;
+
     constructor (
         key_name,
         info,
@@ -161,7 +248,8 @@ export class MainChar extends Player {
                     {agi: this.agi},
                     {luk: this.luk}
                 ]
-            }
+            },
+            after: null
         };
         this.current_exp += value;
         this.level = _.findIndex(this.exp_curve, exp => exp > this.current_exp);
@@ -385,7 +473,8 @@ export class MainChar extends Player {
         this.class = choose_right_class(this.info.classes_list, this.class_table, this.element_afinity, venus_lv, mercury_lv, mars_lv, jupiter_lv);
         let return_obj = {
             class_name: this.class.name,
-            class_key_name: this.class.key_name
+            class_key_name: this.class.key_name,
+            abilities: null
         };
         return_obj.abilities = this.innate_abilities.concat(this.class.ability_level_pairs.filter(pair => {
             return pair.level <= this.level && !this.innate_abilities.includes(pair.ability);
@@ -423,7 +512,7 @@ export class MainChar extends Player {
     preview_stats_by_effect(effect_type, effect_obj, item_key_name) {
         const preview_obj = {
             effect_obj: effect_obj,
-            item_key_name, item_key_name
+            item_key_name: item_key_name
         }
         switch (effect_type) {
             case effect_types.MAX_HP:
@@ -441,7 +530,7 @@ export class MainChar extends Player {
         }
     }
 
-    set_max_stat(stat, preview = false, preview_obj = {}) {
+    set_max_stat(stat, preview = false, preview_obj: any = {}) {
         const stat_key = ["hp", "pp"].includes(stat) ? "max_" + stat : stat;
         const curret_key = "current_" + stat;
         const boost_key = stat + "_boost";

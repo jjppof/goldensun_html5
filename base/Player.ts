@@ -47,6 +47,13 @@ export const on_remove_status_msg = {
 };
 
 export class Player {
+    public key_name: string;
+    public name: string;
+    public temporary_status: Set<string>;
+    public permanent_status: Set<string>;
+    public effects: Effect[];
+    public effect_turns_count: {[effect: string]: number|{[element: string]: number}};
+
     constructor(key_name, name) {
         this.key_name = key_name;
         this.name = name;
@@ -118,14 +125,14 @@ export class Player {
     set_effect_turns_count(effect, value = -1, relative = true) {
         switch (effect.type) {
             case effect_types.TEMPORARY_STATUS:
-                this.effect_turns_count[effect.status_key_name] = relative ? this.effect_turns_count[effect.status_key_name] + value : value;
+                this.effect_turns_count[effect.status_key_name] = relative ? (this.effect_turns_count[effect.status_key_name] as number) + value : value;
             case effect_types.MAX_HP:
             case effect_types.MAX_PP:
             case effect_types.ATTACK:
             case effect_types.DEFENSE:
             case effect_types.AGILITY:
             case effect_types.LUCK:
-                return this.effect_turns_count[effect.type] = relative ? this.effect_turns_count[effect.type] + value : value;;
+                return this.effect_turns_count[effect.type] = relative ? (this.effect_turns_count[effect.type] as number) + value : value;;
             case effect_types.POWER:
             case effect_types.RESIST:
                 return this.effect_turns_count[effect.type][effect.attribute] = relative ? this.effect_turns_count[effect.type][effect.attribute] + value : value;;
