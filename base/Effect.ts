@@ -1,3 +1,7 @@
+import { Ability } from "./Ability.js";
+import { Enemy } from "./Enemy.js";
+import { Item } from "./Item.js";
+import { MainChar } from "./MainChar.js";
 import { variation, elements } from "./utils.js"
 
 export const effect_types = {
@@ -72,6 +76,38 @@ export const effect_msg = {
 };
 
 export class Effect {
+    public type: string;
+    public quantity: number;
+    public operator: string;
+    public effect_owner_instance: Ability|Item;
+    public quantity_is_absolute: boolean;
+    public rate: number;
+    public chance: number;
+    public attribute: string;
+    public add_status: boolean;
+    public status_key_name: string;
+    public turns_quantity: number;
+    public turn_count: number;
+    public variation_on_final_result: boolean;
+    public damage_formula_key_name: string;
+    public usage: string;
+    public on_caster: boolean;
+    public relative_to_property: string;
+    public effect_msg: string;
+    public show_msg: boolean;
+    public char: MainChar|Enemy;
+    public sub_effect: {
+        type: string,
+        quantity_is_absolute: boolean,
+        rate: number,
+        chance: number,
+        attribute: string,
+        variation_on_final_result: boolean,
+        usage: string,
+        on_caster: boolean,
+        operator: string
+    };
+
     constructor(
         type,
         quantity,
@@ -139,7 +175,7 @@ export class Effect {
         this.sub_effect.on_caster = this.sub_effect.on_caster === undefined ? false : this.sub_effect.on_caster;
     }
 
-    apply_general_value(property, direct_value) {
+    apply_general_value(property, direct_value?) {
         const before_value = property !== undefined ? this.char[property] : direct_value;
         if (Math.random() >= this.chance) {
             return {

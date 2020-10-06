@@ -1,6 +1,26 @@
 import { elements } from './utils.js';
+import * as _ from "lodash";
 
 export class Classes {
+    public key_name: string;
+    public name: string;
+    public required_venus_level: number;
+    public required_mercury_level: number;
+    public required_mars_level: number;
+    public required_jupiter_level: number;
+    public hp_boost: number;
+    public pp_boost: number;
+    public atk_boost: number;
+    public def_boost: number;
+    public agi_boost: number;
+    public luk_boost: number;
+    public ability_level_pairs: {
+        ability: string,
+        level: number
+    }[];
+    public class_type: number;
+    public vulnerabilities: any;
+
     constructor(
         key_name,
         name,
@@ -51,14 +71,14 @@ export function choose_right_class(classes_list, class_table, element_afinity, v
         secondary_afinity = _.maxBy(secondary_elements, element => element.level).element;
     }
     const class_type = class_table[element_afinity][secondary_afinity];
-    let classes = Object.values(classes_list).filter(this_class => this_class.class_type === class_type);
-    classes = classes.filter(this_class => {
+    let classes = Object.values(classes_list).filter((this_class: Classes) => this_class.class_type === class_type);
+    classes = classes.filter((this_class: Classes) => {
         return this_class.required_venus_level <= venus_lvl &&
         this_class.required_mercury_level <= mercury_lvl &&
         this_class.required_mars_level <= mars_lvl &&
         this_class.required_jupiter_level <= jupiter_lvl;
     });
-    return _.sortBy(classes, [this_class => {
+    return _.sortBy(classes, [(this_class: Classes) => {
         return this_class.required_venus_level + this_class.required_mercury_level + this_class.required_mars_level + this_class.required_jupiter_level;
     }]).reverse()[0];
 }
