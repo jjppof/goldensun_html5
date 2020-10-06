@@ -61,8 +61,7 @@ export class Battle {
             const qtd = _.random(member_info.min, member_info.max);
             for (let i = 0; i < qtd; ++i) {
                 this.enemies_info.push({
-                    sprite_key: member_info.key + "_battle",
-                    scale: this.data.info.enemies_list[member_info.key].battle_scale
+                    sprite_key: member_info.key + "_battle"
                 });
                 if (this.enemies_info[counter].sprite_key in battle_keys_count) {
                     battle_keys_count[this.enemies_info[counter].sprite_key] += 1;
@@ -74,7 +73,8 @@ export class Battle {
                     battle_key_suffix = "_" + battle_keys_count[this.enemies_info[counter].sprite_key].toString();
                     name_suffix = " " + battle_keys_count[this.enemies_info[counter].sprite_key].toString();
                 }
-                this.enemies_info[counter].instance = get_enemy_instance(this.data.info.enemies_list, member_info.key, name_suffix);
+                this.enemies_info[counter].instance = get_enemy_instance(this.data.info.enemies_list[member_info.key].data, name_suffix);
+                this.enemies_info[counter].scale = this.enemies_info[counter].instance.battle_scale;
                 this.enemies_info[counter].battle_key = this.enemies_info[counter].sprite_key + battle_key_suffix;
                 this.this_enemies_list[this.enemies_info[counter].battle_key] = this.enemies_info[counter].instance;
                 ++counter;
