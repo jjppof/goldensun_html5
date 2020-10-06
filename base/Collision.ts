@@ -1,4 +1,16 @@
+import { Hero } from "./Hero";
+
 export class Collision {
+    public game: Phaser.Game;
+    public hero: Hero;
+    public hero_collision_group: Phaser.Physics.P2.CollisionGroup;
+    public dynamic_events_collision_group: Phaser.Physics.P2.CollisionGroup;
+    public map_collision_group: Phaser.Physics.P2.CollisionGroup;
+    public npc_collision_groups: {[layer_index: number]: Phaser.Physics.P2.CollisionGroup};
+    public interactable_objs_collision_groups: {[layer_index: number]: Phaser.Physics.P2.CollisionGroup};
+    public max_layers_created: number;
+    public dynamic_jump_events_bodies: Phaser.Physics.P2.Body[];
+
     constructor(game, hero) {
         this.game = game;
         this.hero = hero;

@@ -4,6 +4,15 @@ import * as utils from './utils.js';
 const PAGE_NUMBER_WIDTH = 8;
 const PAGE_NUMBER_HEIGHT = 8;
 const PAGE_INDICATOR_ARROW_Y = 0;
+const TRANSITION_TIME = Phaser.Timer.QUARTER >> 2;
+
+type TextObj = {
+    text: Phaser.BitmapText,
+    shadow: Phaser.BitmapText,
+    right_align: boolean,
+    initial_x: number,
+    text_bg: Phaser.Graphics
+};
 
 /*A basic window template used in most menus
 Creates the background and borders
@@ -16,6 +25,31 @@ Input: game [Phaser:Game] - Reference to the running game object
        color [number] - The window's background color
        font_color [number] - The window's default font color*/
 export class Window {
+    public game: Phaser.Game;
+    public group: Phaser.Group;
+    public x: number;
+    public y: number;
+    public width: number;
+    public height: number;
+    public color: number;
+    public font_color: number;
+    public graphics: Phaser.Graphics;
+    public separators_graphics: Phaser.Graphics;
+    public need_pos_update: boolean;
+    public open: boolean;
+    public lines_sprites: {text: Phaser.BitmapText, shadow: Phaser.BitmapText}[];
+    public extra_sprites: Phaser.Sprite[];
+    public internal_groups: {[key: string]: Phaser.Group};
+    public close_callback: Function;
+    public page_indicator_is_set: boolean;
+    public page_number_bar: Phaser.Graphics;
+    public page_number_bar_highlight: Phaser.Graphics;
+    public page_indicator_arrow_timer: Phaser.Timer;
+    public page_indicator_right_arrow: Phaser.Sprite;
+    public page_indicator_left_arrow: Phaser.Sprite;
+    public page_indicators: TextObj[];
+    public calculated_arrow_left_x: number;
+
     constructor(game, x, y, width, height, need_pos_update = true, color = numbers.DEFAULT_WINDOW_COLOR, font_color = numbers.DEFAULT_FONT_COLOR) {
         this.game = game;
         this.group = game.add.group();
@@ -36,7 +70,6 @@ export class Window {
         this.group.alpha = 0;
         this.group.width = 0;
         this.group.height = 0;
-        this.group.window_object = this;
         this.need_pos_update = need_pos_update;
         this.open = false;
         this.lines_sprites = [];
@@ -241,7 +274,7 @@ export class Window {
                 y [number] - The new group's y
     
     Output: [Phaser:Group]*/
-    define_internal_group(key, position = {}) {
+    define_internal_group(key, position: {x?: number, y?: number} = {}) {
         let internal_group = this.game.add.group();
         this.destroy_internal_group(key);
         this.internal_groups[key] = internal_group;
@@ -300,10 +333,9 @@ export class Window {
         this.close_callback = close_callback;
         this.page_indicator_is_set = false;
         if (animate) {
-            this.transition_time = Phaser.Timer.QUARTER/4;
             this.game.add.tween(this.group).to(
                 { width: this.graphics.width, height: this.graphics.height },
-                this.transition_time,
+                TRANSITION_TIME,
                 Phaser.Easing.Linear.None,
                 true
             ).onComplete.addOnce(() => {
@@ -329,7 +361,7 @@ export class Window {
     /*Adds a sprite to the group
     
     Input: sprite [Phaser:Sprite] - The sprite to be added*/
-    add_sprite_to_group(sprite, internal_group_key) {
+    add_sprite_to_group(sprite, internal_group_key?) {
         let group = this.group;
         if (internal_group_key !== undefined) {
             const internal_group = this.get_internal_group(internal_group_key);
@@ -347,7 +379,7 @@ export class Window {
            key [string] = The key for the sprite
            color [number] = The color palette to be used
            frame [string|number] = The frame value (spritesheets only)*/
-    create_at_group(x, y, key, color, frame, internal_group_key) {
+    create_at_group(x, y, key, color?, frame?, internal_group_key?) {
         let group = this.group;
         if (internal_group_key !== undefined) {
             const internal_group = this.get_internal_group(internal_group_key);
@@ -365,7 +397,7 @@ export class Window {
 
     /*Sends this window to the front of the screen*/
     send_to_front(){
-        this.group.parent.bringToTop(this.group);
+        (this.group.parent as Phaser.Group).bringToTop(this.group);
     }
 
     /*Removes a sprite from the group
@@ -622,7 +654,7 @@ export class Window {
         if (animate) {
             this.game.add.tween(this.group).to(
                 { width: 0, height: 0 },
-                this.transition_time,
+                TRANSITION_TIME,
                 Phaser.Easing.Linear.None,
                 true
             ).onComplete.addOnce(() => {
@@ -671,7 +703,7 @@ export class Window {
         if (animate) {
             this.game.add.tween(this.group).to(
                 { width: 0, height: 0 },
-                this.transition_time,
+                TRANSITION_TIME,
                 Phaser.Easing.Linear.None,
                 true
             ).onComplete.addOnce(on_destroy);

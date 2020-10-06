@@ -412,6 +412,8 @@ declare module Phaser {
         bottom: number;
         cameraOffset: Phaser.Point;
         checkWorldBounds: boolean;
+        centerX: number;
+        centerY: number;
         data: any;
         destroyPhase: boolean;
         debug: boolean;
