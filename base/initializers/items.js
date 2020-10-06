@@ -22,8 +22,7 @@ export function initialize_items(game, items_db, load_promise_resolve) {
             item_data.use_ability,
             item_data.equipable_chars,
             item_data.price,
-            item_data.granted_ability,
-            item_data.icon_path
+            item_data.granted_ability
         );
     }
     const loader = game.load.atlasJSONHash('items_icons', 'assets/images/icons/items/items_icons.png', 'assets/images/icons/items/items_icons.json');

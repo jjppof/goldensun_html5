@@ -1,4 +1,4 @@
-import { Effect, effect_types } from "./Effect.js";
+import { Effect, effect_types } from "./Effect";
 import { ordered_elements } from "./utils.js";
 
 export const fighter_types = {

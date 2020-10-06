@@ -20,6 +20,27 @@ export const use_types = {
 }
 
 export class Item {
+    public key_name: string;
+    public name: string;
+    public type: string;
+    public description: string;
+    public use_type: string;
+    public curses_when_equipped: boolean;
+    public cant_be_removed: boolean;
+    public rare_item: boolean;
+    public imporant_item: boolean;
+    public carry_up_to_30: boolean;
+    public effects: any;
+    public attribute: string;
+    public unleash_ability: string;
+    public unleash_rate: number;
+    public use_ability: string;
+    public equipable_chars: string[];
+    public price: number;
+    public granted_ability: string;
+    public broken: boolean;
+    public equipable: boolean;
+
     constructor(
         key_name,
         name,
@@ -39,7 +60,6 @@ export class Item {
         equipable_chars,
         price,
         granted_ability,
-        icon_path
     ) {
         this.key_name = key_name;
         this.name = name;
@@ -59,7 +79,6 @@ export class Item {
         this.equipable_chars = equipable_chars;
         this.price = price;
         this.granted_ability = granted_ability;
-        this.icon_path = icon_path;
         this.broken = false;
         this.equipable = this.type === item_types.GENERAL_ITEM ? false : true;
     }

@@ -73,6 +73,31 @@ export const diminishing_ratios = {
 }
 
 export class Ability {
+    public key_name: string;
+    public name: string;
+    public description: string;
+    public type: string;
+    public element: string;
+    public battle_target: string;
+    public range: number;
+    public pp_cost: number;
+    public ability_power: number;
+    public effects_outside_battle: boolean;
+    public is_battle_ability: boolean;
+    public is_field_psynergy: boolean;
+    public effects: any;
+    public ability_category: string;
+    public battle_animation_key: string;
+    public priority_move: boolean;
+    public has_critical: boolean;
+    public crit_mult_factor: number;
+    public can_switch_to_unleash: boolean;
+    public can_be_evaded: boolean;
+    public use_diminishing_ratio: boolean;
+    public msg_type: string;
+    public affects_pp: boolean;
+    public has_animation_variation: boolean;
+
     constructor(
         key_name,
         name,
