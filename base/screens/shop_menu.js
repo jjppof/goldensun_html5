@@ -198,7 +198,6 @@ export class ShopMenuScreen{
     }
 
     open_menu(shop_key) {
-        console.log(shop_key);
         this.shop_key = shop_key;
         this.data.in_dialog = true;
 

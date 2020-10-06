@@ -80,21 +80,24 @@ export class ShopkeepDialog{
         return this.messages[message_key];
     }
 
-    update_dialog(message){
+    update_dialog(message, show_crystal=false){
         this.current_message = message;
         //this.dialog_window.update_text(this.current_message,this.text);
         //if(!this.dialog_window.open) this.dialog_window.show();
-        this.dialog_manager.set_dialog(this.current_message, this.avatar_key);
-        this.dialog_manager.next(undefined, {x: FRAME_SIZE+4, y:0}, {x: 0, y: 0});
+        this.dialog_manager.quick_next(this.current_message, finished => {
+            if (finished) {
+                console.log("dialog finished");
+            }
+        },
+        undefined,
+        this.avatar_key,
+        {x: FRAME_SIZE+4, y:0},
+        {x: 0, y: 0},
+        show_crystal);
     }
 
-    close_dialog(){
-        //this.dialog_window.close();
-        //if(this.dialog_manager.window.open) this.dialog_manager.window.close();
-    }
-
-    hide(dialog_only=true){
-        this.dialog_manager.hide(dialog_only);
+    close_dialog(callback, dialog_only=true){
+        this.dialog_manager.kill_dialog(callback, dialog_only);
         //this.close_dialog();
         //this.avatar_frame.close();
         //this.avatar_group.alpha = 0;
@@ -102,7 +105,7 @@ export class ShopkeepDialog{
 
     close(){
         //this.close_dialog();
-        this.hide(false);
+        this.close_dialog(false);
         //this.avatar_frame.close();
         //this.avatar_group.alpha = 0;
 
