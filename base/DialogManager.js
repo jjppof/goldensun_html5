@@ -66,6 +66,7 @@ export class DialogManager {
     next(callback, custom_pos, custom_avatar_pos) {
         if (this.avatar_window) {
             this.avatar_window.destroy(false);
+            this.avatar_window = null;
         }
         if (this.step >= this.parts.length) { //finishes the dialog
             this.finished = true;
@@ -75,7 +76,13 @@ export class DialogManager {
         }
         if (this.window) { //destroys the current window
             this.window.destroy(false);
+            this.window = null;
         }
+        this.mount_window(callback, custom_pos, custom_avatar_pos);
+        ++this.step;
+    }
+
+    mount_window(callback, custom_pos, custom_avatar_pos) {
         this.dialog_crystal.visible = false;
         let win_pos = this.get_dialog_window_position(this.parts[this.step].width, this.parts[this.step].height);
         if (custom_pos && custom_pos.x !== undefined) {
@@ -120,7 +127,6 @@ export class DialogManager {
             this.avatar_window.create_at_group(4, 4, "avatars", undefined, this.avatar);
             this.avatar_window.show();
         }
-        ++this.step;
     }
 
     //Receives a text string and mount the the dialog sections that will go to each window of the dialog.
@@ -168,5 +174,33 @@ export class DialogManager {
             });
         };
         this.parts = windows;
+    }
+
+    //Calls a window and let it open till you call quick_next again or call kill_dialog. Is expected that text fits in one window.
+    quick_next(text, callback, avatar, hero_direction, custom_pos, custom_avatar_pos, show_crystal = false) {
+        this.parts = null;
+        this.step = 0;
+        if (this.window) {
+            this.window.destroy(false);
+            this.window = null;
+        }
+        if (this.avatar_window) {
+            this.avatar_window.destroy(false);
+            this.avatar_window = null;
+        }
+        this.show_crystal = show_crystal;
+        this.set_dialog(text, avatar, hero_direction);
+        this.mount_window(callback, custom_pos, custom_avatar_pos);
+    }
+
+    kill_dialog(callback) {
+        if (this.avatar_window) {
+            this.avatar_window.destroy(false);
+        }
+        if (this.window) {
+            this.finished = true;
+            this.window.destroy(true, callback);
+            this.dialog_crystal.destroy();
+        }
     }
 }
