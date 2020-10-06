@@ -11,19 +11,23 @@ export class DialogManager {
     constructor(game, data, italic_font = true) {
         this.game = game;
         this.data = data;
+        this.italic_font = italic_font;
+
         this.parts = null; //parts of the dialog text
         this.step = 0; //step index
         this.finished = false;
+
         this.avatar = null;
         this.window = null;
         this.avatar_window = null;
-        this.italic_font = italic_font;
         this.hero_direction = utils.directions.down;
+
         this.dialog_crystal_sprite_base = this.data.info.misc_sprite_base_list[DIALOG_CRYSTAL_KEY];
         const sprite_key = this.dialog_crystal_sprite_base.getActionKey(DIALOG_CRYSTAL_KEY);
         this.dialog_crystal = this.game.add.sprite(0, 0, sprite_key);
         this.dialog_crystal_sprite_base.setAnimation(this.dialog_crystal, DIALOG_CRYSTAL_KEY);
         this.dialog_crystal_anim_key = this.dialog_crystal_sprite_base.getAnimationKey(DIALOG_CRYSTAL_KEY, "rotate");
+
         this.dialog_crystal.visible = false;
         this.dialog_crystal_tween = null;
     }
@@ -169,5 +173,14 @@ export class DialogManager {
             });
         };
         this.parts = windows;
+    }
+
+    hide(dialog_only=false){
+        if(!dialog_only){
+            if(this.avatar) this.avatar.alpha = 0;
+            if(this.avatar_window) this.avatar_window.close();
+        }
+        this.window.close();
+        this.dialog_crystal.visible = false;
     }
 }

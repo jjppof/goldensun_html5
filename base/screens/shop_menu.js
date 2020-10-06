@@ -185,7 +185,8 @@ export class ShopMenuScreen{
     }
 
     open_horizontal_menu(message_key="cancel_option"){
-        if(!this.npc_dialog.dialog_window.open){
+        //if(!this.npc_dialog.dialog_window.open){
+        if(!this.npc_dialog.is_active()){
             this.npc_dialog.open(this.shop_key);
         }
         else{
