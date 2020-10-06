@@ -26,6 +26,7 @@ export class DialogManager {
         this.dialog_crystal_anim_key = this.dialog_crystal_sprite_base.getAnimationKey(DIALOG_CRYSTAL_KEY, "rotate");
         this.dialog_crystal.visible = false;
         this.dialog_crystal_tween = null;
+        this.show_crystal = false;
     }
 
     //Internal method. Try to calculate the position of the dialog window
@@ -94,7 +95,7 @@ export class DialogManager {
         this.window = new Window(this.game, win_pos.x, win_pos.y, this.parts[this.step].width, this.parts[this.step].height, false);
         this.window.show(((step, italic_font, next_callback) => {
             this.window.set_text(this.parts[step].lines, undefined, undefined, undefined , italic_font, true).then(() => {
-                if (step < this.parts.length - 1) {
+                if (step < this.parts.length - 1 || this.show_crystal) {
                     this.dialog_crystal.visible = true;
                     this.dialog_crystal.x = this.window.real_x + this.parts[step].width - this.dialog_crystal.width;
                     this.dialog_crystal.y = this.window.real_y + this.parts[step].height;
