@@ -116,7 +116,7 @@ export class DialogManager {
                         this.dialog_crystal_tween.stop();
                     }
                 }
-                next_callback(this.finished);
+                if(next_callback) next_callback(this.finished);
             });
         }).bind(this, this.step, this.italic_font, callback));
         if (this.avatar) {
@@ -198,7 +198,7 @@ export class DialogManager {
         this.mount_window(callback, custom_pos, custom_avatar_pos);
     }
 
-    kill_dialog(callback, dialog_only=false) {
+    kill_dialog(callback, dialog_only=false, destroy_crystal=false) {
         if(!dialog_only){
             if (this.avatar_window) {
                 this.avatar_window.destroy(false);
@@ -207,7 +207,7 @@ export class DialogManager {
         if (this.window) {
             this.finished = true;
             this.window.destroy(true, callback);
-            this.dialog_crystal.destroy();
+            if(destroy_crystal) this.dialog_crystal.destroy();
         }
     }
 }

@@ -208,7 +208,7 @@ export class EquipCompare {
            item [string] - Key name of the item to compare
            close_callback [function] - Callback function (Optional)
            open_callback [function] - Callback function (Optional)*/
-    open(char, item, close_callback, open_callback){
+    open(char=0, item, close_callback, open_callback){
         this.selected_char = char;
         this.selected_item = item;
 

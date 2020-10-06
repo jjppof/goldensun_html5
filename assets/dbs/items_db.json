@@ -381,5 +381,25 @@
         "equipable_chars": ["isaac", "garet", "sheba"],
         "price": 3600,
         "granted_ability": ""
+    },
+    {
+        "key_name": "game_ticket",
+        "name": "Game Ticket",
+        "type": "general_item",
+        "description": "Ticket for use in special game",
+        "use_type": "single_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": true,
+        "imporant_item": false,
+        "carry_up_to_30": true,
+        "effects": [],
+        "attribute": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "",
+        "equipable_chars": [],
+        "price": 50,
+        "granted_ability": ""
     }
 ]

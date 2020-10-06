@@ -9,7 +9,8 @@
             {"key": "sell_select", "text": "What do you want to sell?"},
             {"key": "repair_select", "text": "What can I repair for you?"},
             {"key": "character_select", "text": "Now, who is this for?"},
-            {"key": "equip_option", "text": "Will you be equiping this right now, ${HERO}?"},
+            {"key": "equip_now", "text": "Will you be equiping this right now, ${HERO}?"},
+            {"key": "cant_equip", "text": "${HERO} can't equip this. Is that OK?"},
             {"key": "equip_compliment", "text": "It suits you very well."},
             {"key": "buy_quantity", "text": "How many do you need?"},
             {"key": "inventory_full", "text": "${HERO}'s hands are full, so who wants it?"},
@@ -30,7 +31,7 @@
             {"key": "repair_deal_accept", "text": "Then, I will take it."},
             {"key": "repair_done", "text": "Your repairs are done. Here you go."},
             {"key": "repair_follow_up", "text": "Do you need any more repairs?"},
-            {"key": "cancel_option", "text": "Feel free to look around."},
+            {"key": "cancel_option", "text": "Feel free to take a look around."},
             {"key": "not_enough_coins", "text": "I'm sorry, but that's a little out of your price range."},
             {"key": "goodbye", "text": "Thank you very much. Please come again."}
         ]

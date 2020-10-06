@@ -173,6 +173,9 @@ export class ShopMenuScreen{
                 break;
                 */
         }
+        if(!this.npc_dialog.is_active){
+            this.npc_dialog.close_dialog()
+        }
     }
 
     update_position() {
@@ -185,13 +188,11 @@ export class ShopMenuScreen{
     }
 
     open_horizontal_menu(message_key="cancel_option"){
-        //if(!this.npc_dialog.dialog_window.open){
-        if(!this.npc_dialog.is_active()){
+        if(!this.npc_dialog.is_active){
             this.npc_dialog.open(this.shop_key);
         }
         else{
-            let msg = this.npc_dialog.get_message(message_key);
-            this.npc_dialog.update_dialog(msg.text);
+            this.npc_dialog.update_dialog(message_key);
         }
         this.horizontal_menu.open();
 
@@ -199,7 +200,6 @@ export class ShopMenuScreen{
 
     open_menu(shop_key) {
         this.shop_key = shop_key;
-        this.data.in_dialog = true;
 
         if(this.data.hero.in_action()){
             this.data.hero.stop_char();
@@ -214,7 +214,6 @@ export class ShopMenuScreen{
     end_dialog() {
         this.shop_key = null;
         this.npc_dialog.close();
-        this.data.in_dialog = false;
         this.data.menu_open = false;
         this.control_manager.reset();
     }
@@ -223,8 +222,7 @@ export class ShopMenuScreen{
         if (!this.is_active()) return;
         this.horizontal_menu.close();
 
-        this.npc_dialog.current_message = this.npc_dialog.get_message("goodbye");
-        this.npc_dialog.update_dialog(this.npc_dialog.current_message.text); 
+        this.npc_dialog.update_dialog("goodbye"); 
 
         this.normal_item_list = [];
         this.artifact_list = [];
