@@ -1,3 +1,5 @@
+import { GoldenSun } from "./GoldenSun.js";
+import { SpriteBase } from "./SpriteBase.js";
 import {base_actions, directions} from "./utils.js";
 
 const FOOTSTEPS_TTL = Phaser.Timer.SECOND << 1;
@@ -23,6 +25,24 @@ Can be applied to any movable unit
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
 export class Footsteps{
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public x_pos: number;
+    public y_pos: number;
+    public current_action: string;
+    public current_direction: number;
+    public anchor_x: number;
+    public anchor_y: number;
+    public group: Phaser.Group;
+    public dead_steps: Phaser.Sprite[];
+    public dead_index: number;
+    public foot_forward: string;
+    public can_make_footprint: boolean;
+    public footsteps_time_interval: number;
+    public new_step_timer: Phaser.Timer;
+    public expire_timer: Phaser.Timer;
+    public footsteps_sprite_base: SpriteBase;
+
     constructor(game, data){
         this.game = game;
         this.data = data;
@@ -40,7 +60,6 @@ export class Footsteps{
         this.dead_index = 0;
         this.foot_forward = foot_forward_types.NONE;
         this.can_make_footprint = true;
-        this.footsteps_type = 1;
         this.footsteps_time_interval = WALKING_TIME_INTERVAL;
 
         this.new_step_timer = this.game.time.create(false);
@@ -99,8 +118,8 @@ export class Footsteps{
         this.current_direction = direction;
         this.current_action = action;
         this.update_foot();
-        this.footsteps_type = this.current_action === base_actions.IDLE ? "double" : "single";
-        const animation_name = this.footsteps_sprite_base.getAnimationKey(FOOTSTEPS_KEY_NAME, this.footsteps_type);
+        const footsteps_type = this.current_action === base_actions.IDLE ? "double" : "single";
+        const animation_name = this.footsteps_sprite_base.getAnimationKey(FOOTSTEPS_KEY_NAME, footsteps_type);
 
         let footsteps_sprite;
         if(this.dead_index === 0){
@@ -145,7 +164,7 @@ export class Footsteps{
     clean_all(force_destroy){
         this.new_step_timer.stop(true);
         this.expire_timer.stop(true);
-        this.group.children.forEach(sprite => {
+        this.group.children.forEach((sprite: Phaser.Sprite) => {
             if (force_destroy) {
                 sprite.destroy();
             } else {
@@ -154,7 +173,7 @@ export class Footsteps{
                 sprite.kill();
             }
         });
-        this.dead_steps = this.group.children.slice();
+        this.dead_steps = this.group.children.slice() as Phaser.Sprite[];
         this.dead_index = this.group.children.length;
     }
 

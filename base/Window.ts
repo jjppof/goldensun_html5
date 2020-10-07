@@ -325,7 +325,7 @@ export class Window {
     Input: show_callback [function] - Callback function (Optional)
            animate [boolean] - If true, plays an animation
            close_callback [function] - Callback function (Optional)*/
-    show(show_callback, animate = true, close_callback = undefined) {
+    show(show_callback?, animate = true, close_callback = undefined) {
         this.group.alpha = 1;
         this.group.x = this.game.camera.x + this.x;
         this.group.y = this.game.camera.y + this.y;
@@ -691,7 +691,7 @@ export class Window {
 
     Input: animate [boolean] - Plays a fading animation if true
            destroy_callbcak [function] - Callback function (Optional)*/
-    destroy(animate, destroy_callback) {
+    destroy(animate, destroy_callback?) {
         let on_destroy = () => { 
             if (this.page_indicator_is_set) {
                 this.unset_page_indicator();

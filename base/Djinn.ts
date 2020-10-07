@@ -1,5 +1,6 @@
 import * as numbers from './magic_numbers.js';
 import { ordered_elements } from './utils.js';
+import * as _ from "lodash";
 
 export const djinn_status = {
     SET: "set",
@@ -14,6 +15,21 @@ export const djinn_font_colors= {
 };
 
 export class Djinn {
+    public key_name: string;
+    public name: string;
+    public description: string;
+    public element: string;
+    public ability_key_name: string;
+    public hp_boost: number;
+    public pp_boost: number;
+    public atk_boost: number;
+    public def_boost: number;
+    public agi_boost: number;
+    public luk_boost: number;
+    public status: string;
+    public index: number;
+    public recovery_turn: number;
+
     constructor(
         key_name,
         name,

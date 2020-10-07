@@ -2,6 +2,10 @@ import { Battle } from "../battle/Battle.js";
 import { GameEvent, event_types } from "./GameEvent.js";
 
 export class BattleEvent extends GameEvent {
+    public background_key: string;
+    public enemy_party_key: string;
+    public battle: Battle;
+
     constructor(game, data, background_key, enemy_party_key) {
         super(game, data, event_types.BATTLE);
         this.background_key = background_key;

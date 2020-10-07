@@ -1,4 +1,6 @@
+import { GoldenSun } from './GoldenSun.js';
 import * as numbers from './magic_numbers.js';
+import { SpriteBase } from './SpriteBase.js';
 import * as utils from './utils.js';
 import { Window } from './Window.js';
 
@@ -8,6 +10,26 @@ const DIALOG_CRYSTAL_KEY = "dialog_crystal";
 //To set a dialog, call the DialogManager.set_dialog function and pass the entire dialog text.
 //To advance the dialog (call next window), call the DialogManager.next function.
 export class DialogManager {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public parts: {
+        lines: string[],
+        width: number,
+        height: number
+    }[];
+    public step: number;
+    public finished: boolean;
+    public avatar: string;
+    public window: Window;
+    public avatar_window: Window;
+    public italic_font: boolean;
+    public hero_direction: number;
+    public dialog_crystal_sprite_base: SpriteBase;
+    public dialog_crystal: Phaser.Sprite;
+    public dialog_crystal_anim_key: string;
+    public dialog_crystal_tween: Phaser.Tween;
+    public show_crystal: boolean;
+
     constructor(game, data, italic_font = true) {
         this.game = game;
         this.data = data;
