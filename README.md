@@ -28,6 +28,7 @@ GS-HTML5 supports both Javascript and Typescript. We use [Webpack](https://webpa
 - Install dev dependencies by running `npm install` in the root folder.
 - Use `npm start` to start the development server.
 - Use `npm run build` to generate a bundle.
+- Use these [guidelines](https://typedoc.org/guides/doccomments/) to comment code.
 
 ## Utils
 
