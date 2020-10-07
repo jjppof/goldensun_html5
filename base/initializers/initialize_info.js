@@ -51,7 +51,8 @@ export async function initialize_game_data(game, data) {
 
     data.info.party_data = {
         members: [],
-        coins: data.dbs.init_db.coins
+        coins: data.dbs.init_db.coins,
+        game_tickets: {coins_remaining: 300, tickets_bought: 0}
     };
 
     let load_chars_promise_resolve;

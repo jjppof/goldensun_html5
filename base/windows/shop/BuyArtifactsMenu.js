@@ -32,9 +32,26 @@ export class BuyArtifactsMenu{
         this.selected_character = null;
     }
 
+    update_game_ticket_step(){
+        let bought = this.data.info.party_data.game_tickets.tickets_bought
+        if(bought >= 1 && bought < 6) return 300;
+        if(bought >= 6 && bought < 11) return 500;
+        if(bought >= 11 && bought < 16) return 1000;
+        if(bought >= 16 && bought < 21) return 2000;
+        if(bought >= 21 && bought < 26) return 4000;
+        if(bought >= 26) return 8000;
+    }
+
     check_game_ticket(){
-        let chance = _.random(0, 1);
-        if(chance === 1){
+        let game_ticket = false;
+        this.data.info.party_data.game_tickets.coins_remaining -= this.selected_item.price;
+        if(this.data.info.party_data.game_tickets.coins_remaining < 0){
+            game_ticket = true;
+            this.data.info.party_data.game_tickets.tickets_bought += 1;
+            this.data.info.party_data.game_tickets.coins_remaining = this.update_game_ticket_step();
+        }
+
+        if(game_ticket){
             this.npc_dialog.update_dialog("game_ticket", true);
             this.control_manager.set_control(false, false, false, false, {esc: this.open_inventory_view.bind(this, 0, true),
                 enter: this.open_inventory_view.bind(this, 0, true)});
