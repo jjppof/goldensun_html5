@@ -19,6 +19,8 @@ const ITEM_Y = 8;
 const SUB_ICON_X = 7;
 const SUB_ICON_Y = 8;
 
+const SUB_TEXT_X_SHIFT = 8;
+
 const TEXT_X = 8;
 const TEXT_Y = 8;
 
@@ -137,9 +139,11 @@ export class InventoryWindow{
                 if(dead_text.length>0){
                     dead_text[0].text = this.char_items[i].quantity.toString();
                     dead_text[0].reset(col*ICON_SIZE, line*ICON_SIZE);
+                    dead_text[0].x += (SUB_TEXT_X_SHIFT - dead_text[0].width);
                 }
                 else{
                     let item_count = this.game.add.bitmapText(col*ICON_SIZE, line*ICON_SIZE, 'gs-item-bmp-font', this.char_items[i].quantity.toString());
+                    item_count.x += (SUB_TEXT_X_SHIFT - item_count.width);
                     this.window.add_to_internal_group("icons", item_count);
                 }
             }

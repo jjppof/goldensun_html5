@@ -309,7 +309,8 @@ export class BuyArtifactsMenu{
     }
 
     open_inventory_view(index=0, game_ticket=false){
-        this.buy_select_index = this.buy_select.selected_index;
+        if(!game_ticket)this.buy_select_index = this.buy_select.selected_index;
+        
         if(this.item_desc_win.open) this.item_desc_win.close();
         if(this.buy_select.is_open) this.buy_select.close();
         if(this.quant_win.is_open) this.quant_win.close();
