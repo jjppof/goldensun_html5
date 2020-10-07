@@ -155,9 +155,10 @@ export class ShopMenuScreen{
     }
 
     button_press() {
+        this.horizontal_menu.deactivate(true);
+        
         switch (this.buttons_keys[this.horizontal_menu.selected_button_index]){
             case "buy":
-                this.horizontal_menu.deactivate(true);
                 this.buy_menu.open_menu(false);
                 break;
                 /*
@@ -165,7 +166,6 @@ export class ShopMenuScreen{
                 this.button_press_action(this.sell_menu);
                 break;*/
             case "artifacts":
-                this.horizontal_menu.deactivate(true);
                 this.buy_menu.open_menu(true);
                 break;/*
             case "repair":

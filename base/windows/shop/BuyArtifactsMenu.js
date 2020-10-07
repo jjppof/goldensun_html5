@@ -27,6 +27,7 @@ export class BuyArtifactsMenu{
         this.is_artifacts_menu = null;
         this.item_list = [];
         this.selected_item = null;
+        this.buy_select_index = 0;
         this.old_item = null;
         this.selected_character = null;
     }
@@ -167,7 +168,7 @@ export class BuyArtifactsMenu{
             let new_index = this.selected_character.items.length;
             if(!exists){
                 if(item_to_add.equipable) this.selected_character.items.push({key_name: item_to_add.key_name, quantity: 1, equipped: false, index: new_index});
-                else this.selected_character.items.push({key_name: item_to_add.key_name, quantity: 1, index: new_index});
+                else this.selected_character.items.push({key_name: item_to_add.key_name, quantity: quantity, index: new_index});
             }
 
             if(!game_ticket){
@@ -291,6 +292,7 @@ export class BuyArtifactsMenu{
     }
 
     open_equip_compare(index=0){
+        this.buy_select_index = this.buy_select.selected_index;
         if(this.item_desc_win.open) this.item_desc_win.close();
         if(this.buy_select.is_open) this.buy_select.close();
         this.npc_dialog.update_dialog("character_select");
@@ -307,6 +309,7 @@ export class BuyArtifactsMenu{
     }
 
     open_inventory_view(index=0, game_ticket=false){
+        this.buy_select_index = this.buy_select.selected_index;
         if(this.item_desc_win.open) this.item_desc_win.close();
         if(this.buy_select.is_open) this.buy_select.close();
         if(this.quant_win.is_open) this.quant_win.close();
@@ -343,7 +346,7 @@ export class BuyArtifactsMenu{
         if(this.inv_win.is_open) this.inv_win.close();
         if(this.eq_compare.is_open) this.eq_compare.close();
 
-        if(!this.buy_select.is_open) this.buy_select.open(this.item_list);
+        if(!this.buy_select.is_open) this.buy_select.open(this.item_list, this.buy_select_index);
         this.control_manager.reset();
 
         this.selected_item = this.buy_select.pages[this.buy_select.current_page][this.buy_select.selected_index].key_name;
