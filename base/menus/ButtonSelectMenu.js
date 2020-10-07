@@ -19,6 +19,7 @@ export class ButtonSelectMenu {
         this.on_press = callbacks.on_press;
         this.control_manager = control_manager;
         this.buttons_number = buttons.length;
+        this.custom_scale = null;
 
         const max_title_width = get_text_width(this.game, _.maxBy(titles, title => title.length));
         this.title_window_width = title_window_width !== undefined ? title_window_width : max_title_width + 2 * (numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH);
@@ -101,10 +102,16 @@ export class ButtonSelectMenu {
     }
 
     set_button() {
-        this.buttons[this.selected_button_index].sprite.scale.setTo(1.2, 1.2);
+        let active_default = 1.2;
+        let max_scale = 1.3;
+        if(this.custom_scale){
+            active_default = this.custom_scale.active_default;
+            max_scale = this.custom_scale.max_scale;
+        }
+        this.buttons[this.selected_button_index].sprite.scale.setTo(active_default, active_default);
         this.buttons[this.selected_button_index].sprite.bringToTop();
         this.selected_button_tween = this.game.add.tween(this.buttons[this.selected_button_index].sprite.scale).to(
-            { x: 1.3, y: 1.3 },
+            { x: max_scale, y: max_scale },
             Phaser.Timer.QUARTER >> 1,
             Phaser.Easing.Linear.None,
             true,
@@ -129,9 +136,11 @@ export class ButtonSelectMenu {
         this.title_window.update(undefined, true);
     }
 
-    open(callback, select_index=0, start_active = true) {
+    open(callback, select_index=0, start_active = true, custom_scale) {
         this.reset_button();
         this.set_control();
+        this.game.world.bringToTop(this.group);
+        if(custom_scale) this.custom_scale = custom_scale;
 
         this.menu_active = start_active;
         this.group.alpha = 1;

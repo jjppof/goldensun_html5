@@ -80,10 +80,10 @@ export class ShopMenuScreen{
 
         this.npc_dialog = new ShopkeepDialog(this.game, this.data, this);
 
+        this.yesno_action = new YesNoMenu(this.game, this.data, this.control_manager);
         this.inv_win = new InventoryWindow(this.game, this.data, this.cursor_manager);
         this.buy_select = new BuySelectMenu(this.game, this.data, this);
         this.eq_compare = new EquipCompare(this.game, this.data);
-        this.yesno_action = new YesNoMenu(this.game, this.data, this.control_manager);
         this.quant_win = new ShopItemQuantityWindow(this.game, this.data, this.cursor_manager);
         this.char_display = new ShopCharDisplay(this.game, this.data, this);
 

@@ -434,6 +434,7 @@ export class BuySelectMenu{
         kill_all_sprites(this.bg_group, destroy);
 
         this.items = [];
+        this.pages = [];
         this.selected_index = null;
         this.current_page = 0;
         this.is_open = false;

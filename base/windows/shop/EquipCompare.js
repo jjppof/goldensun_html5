@@ -171,8 +171,34 @@ export class EquipCompare {
         this.cant_equip_text.shadow.alpha = 0;
 
         let selected_item_type = this.data.info.items_list[this.selected_item].type;
-        
-        let char_current_item = this_char.items.filter(itm => {return (itm.equipped === true && this.data.info.items_list[itm.key_name].type === selected_item_type)})[0].key_name; 
+        let char_current_item = null;
+        let eq_slots = this.data.info.party_data.members[this.selected_char].equip_slots;
+
+        switch(selected_item_type){
+            case "weapons":
+                if(eq_slots.weapon) char_current_item = this.data.info.items_list[eq_slots.weapon.key_name].key_name;
+                break;        
+            case "armor":
+                if(eq_slots.body) char_current_item = this.data.info.items_list[eq_slots.body.key_name].key_name;
+                break;
+            case "chest_protector":
+                if(eq_slots.chest) char_current_item = this.data.info.items_list[eq_slots.chest.key_name].key_name;
+                break;
+            case "head_protector":
+                if(eq_slots.head) char_current_item = this.data.info.items_list[eq_slots.head.key_name].key_name;
+                break;
+            case "ring":
+                if(eq_slots.ring) char_current_item = this.data.info.items_list[eq_slots.ring.key_name].key_name;
+                break;
+            case "boots":
+                if(eq_slots.boots) char_current_item = this.data.info.items_list[eq_slots.boots.key_name].key_name;
+                break;
+            case "underwear":
+                if(eq_slots.underwear) char_current_item = this.data.info.items_list[eq_slots.underwear.key_name].key_name;
+                break;
+        }
+
+        //this_char.items.filter(itm => {return (itm.equipped === true && this.data.info.items_list[itm.key_name].type === selected_item_type)})[0].key_name; 
 
         let atk_diff = this.compare_items(char_current_item, this.selected_item, "attack");
         let def_diff = this.compare_items(char_current_item, this.selected_item, "defense");

@@ -55,7 +55,7 @@ export class YesNoMenu{
         return this.menu.menu_active;
     }
 
-    open_menu(callbacks){
+    open_menu(callbacks, custom_pos){
         this.yes_callback = callbacks.yes;
         this.no_callback = callbacks.no;
 
@@ -65,8 +65,13 @@ export class YesNoMenu{
             this.data.hero.stop_char();
             this.data.hero.update_shadow();
         }
+
         this.is_open = true;
-        this.menu.open();
+        this.menu.open(undefined, 0, true, {active_default: 1.1, max_scale: 1.2});
+
+        if(custom_pos){
+            this.update_position(custom_pos.x, custom_pos.y);
+        }
         
     }
 

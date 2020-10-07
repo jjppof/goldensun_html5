@@ -1,4 +1,5 @@
 import { ItemCounter } from '../../utils/ItemsCounter.js';
+import { ShopItemCounter } from './ShopItemCounter.js';
 import { Window } from '../../Window.js';
 
 const QUANTITY_WIN_X = 56;
@@ -29,7 +30,7 @@ export class ShopItemQuantityWindow {
         this.close_callback = null;
 
         this.window = new Window(this.game, QUANTITY_WIN_X, QUANTITY_WIN_Y, QUANTITY_WIN_WIDTH, QUANTITY_WIN_HEIGHT);
-        this.item_counter = new ItemCounter(this.game, this.window.group, ITEM_COUNTER_X, ITEM_COUNTER_Y, this.on_change.bind(this));
+        this.item_counter = new ShopItemCounter(this.game, this.window.group, ITEM_COUNTER_X, ITEM_COUNTER_Y, this.on_change.bind(this));
 
         this.chosen_quantity = 1;
         this.base_price = 0;
@@ -47,14 +48,25 @@ export class ShopItemQuantityWindow {
         this.window.update_text(String(this.base_price*this.chosen_quantity), this.coins_val_text);
     }
 
-    open(item_obj, close_callback, open_callback){
+    increase_amount(){
+        this.item_counter.advance_step(1);
+    }
+
+    decrease_amount(){
+        this.item_counter.advance_step(-1);
+    }
+
+    open(shop_item_obj, char_item_obj, close_callback, open_callback){
         this.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "wiggle");
 
-        this.base_price = this.data.info.items_list[item_obj.key_name].price;
+        this.base_price = this.data.info.items_list[shop_item_obj.key_name].price;
         this.window.update_text(String(this.base_price), this.coins_val_text);
 
-        let quantity = (item_obj.quantity === -1 ? 30 : item_obj.quantity);
-        this.item_counter.config(quantity, this.chosen_quantity);
+        let owned = !char_item_obj ? 0 : char_item_obj.quantity;
+        let available_quantity = (shop_item_obj.quantity === -1 ? 30 : shop_item_obj.quantity);
+        if(available_quantity + owned > 30) available_quantity = 30 - owned;
+
+        this.item_counter.config(available_quantity, this.chosen_quantity, owned);
 
         this.is_open = true;
         this.close_callback = close_callback;
