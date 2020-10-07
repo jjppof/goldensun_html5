@@ -2,6 +2,8 @@ const MAX_INVENTORY_SIZE = 15;
 const MAX_STACK_SIZE = 30;
 
 const SELL_MULTIPLIER = 3/4;
+const REPAIR_MULTIPLIER = 1/4;
+const SELL_BROKEN_MULTIPLIER = SELL_MULTIPLIER - REPAIR_MULTIPLIER;
 
 const YESNO_X = 56;
 const YESNO_Y = 40;
@@ -45,10 +47,10 @@ export class BuyArtifactsMenu{
     check_game_ticket(){
         let game_ticket = false;
         this.data.info.party_data.game_tickets.coins_remaining -= this.selected_item.price;
-        if(this.data.info.party_data.game_tickets.coins_remaining < 0){
+        if(this.data.info.party_data.game_tickets.coins_remaining <= 0){
             game_ticket = true;
             this.data.info.party_data.game_tickets.tickets_bought += 1;
-            this.data.info.party_data.game_tickets.coins_remaining = this.update_game_ticket_step();
+            this.data.info.party_data.game_tickets.coins_remaining += this.update_game_ticket_step();
         }
 
         if(game_ticket){
@@ -60,7 +62,8 @@ export class BuyArtifactsMenu{
     }
 
     sell_old_equip(old_item){
-        this.npc_dialog.update_dialog("after_sell", true);
+        let msg_key = old_item.rare_item ? "after_sell_artifact" : "after_sell_normal";
+        this.npc_dialog.update_dialog(msg_key, true);
 
         if(old_item.rare_item){
             let shop_list = this.data.info.shops_list[this.parent.shop_key].item_list;
@@ -82,7 +85,9 @@ export class BuyArtifactsMenu{
             }
         }
 
-        this.data.info.party_data.coins += (old_item.price*SELL_MULTIPLIER | 0);
+        let sell_price = this.old_item.broken ? this.old_item.price*SELL_BROKEN_MULTIPLIER : this.old_item.price*SELL_MULTIPLIER;
+
+        this.data.info.party_data.coins += sell_price | 0;
         this.parent.update_your_coins();
 
         this.control_manager.set_control(false, false, false, false, {esc: this.check_game_ticket.bind(this),
@@ -136,13 +141,16 @@ export class BuyArtifactsMenu{
         }
 
         let after_compliment = () =>{
+            let sell_price = this.old_item.broken ? this.old_item.price*SELL_BROKEN_MULTIPLIER : this.old_item.price*SELL_MULTIPLIER;
+
             let text = this.npc_dialog.get_message("sell_current");
-            text = this.npc_dialog.replace_text("price", text, (this.old_item.price*SELL_MULTIPLIER) | 0);
+            text = this.npc_dialog.replace_text("price", text, sell_price | 0);
             text = this.npc_dialog.replace_text("item", text, this.old_item.name);
             this.npc_dialog.update_dialog(text, false, false);
 
             this.yesno_action.open_menu({yes: this.sell_old_equip.bind(this, this.old_item), no: () => {
-                this.npc_dialog.update_dialog("decline_sell", true);
+                let msg_key = this.old_item.rare_item ? "decline_sell_artifact" : "decline_sell_normal";
+                this.npc_dialog.update_dialog(msg_key, true);
                 this.control_manager.set_control(false, false, false, false, {esc: this.check_game_ticket.bind(this),
                     enter: this.check_game_ticket.bind(this)});
             }},{x: YESNO_X, y: YESNO_Y});

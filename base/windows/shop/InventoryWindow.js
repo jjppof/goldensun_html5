@@ -2,6 +2,7 @@ import { Window } from '../../Window.js';
 import { kill_all_sprites } from '../../utils.js';
 
 const MAX_PER_LINE = 5;
+const MAX_LINES = 3;
 const ICON_SIZE = 16;
 
 const MESSAGE_HAVE_ITEM = "You have ";
@@ -27,16 +28,20 @@ const TEXT_Y = 8;
 const CURSOR_X = 136;
 const CURSOR_Y = 112;
 
+const SELL_MULTIPLIER = 3/4;
+const REPAIR_MULTIPLIER = 1/4;
+const SELL_BROKEN_MULTIPLIER = SELL_MULTIPLIER - REPAIR_MULTIPLIER;
+
 /*Displays a character's inventory through icons
 Used in shop menus. Can display the amout of an item in the inventory
 
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
 export class InventoryWindow{
-    constructor(game, data, cursor_manager){
+    constructor(game, data, parent){
         this.game = game;
         this.data = data;
-        this.cursor_manager = cursor_manager;
+        this.parent = parent;
         this.close_callback = null;
 
         this.expanded = false;
@@ -49,7 +54,9 @@ export class InventoryWindow{
         
         this.char = null;
         this.char_items = [];
+        this.item_grid = [];
         this.selected_item = null;
+        this.cursor_pos = {line: 0, col: 0};
         this.sprite_group = this.window.define_internal_group("sprites", {x: ITEM_X, y: ITEM_Y});
         this.icon_group = this.window.define_internal_group("icons", {x: ITEM_X + SUB_ICON_X, y: ITEM_Y + SUB_ICON_Y});
     }
@@ -96,9 +103,89 @@ export class InventoryWindow{
         this.set_sprites();
     }
 
+    make_item_grid(){
+        let lines = [];
+        for(let line = 0; line < (this.char_items.length/MAX_PER_LINE | 0)+1; line++){
+            let this_line = [];
+            for(let col = 0; col < MAX_PER_LINE; col++){
+                if(this.char_items[line*MAX_PER_LINE+col]) this_line.push(this.char_items[line*MAX_PER_LINE+col]);
+            }
+            lines.push(this_line);
+        }
+        this.item_grid = lines;
+    }
+
+    /*Reutrns the item at a given position
+
+    Output: {key_name, quantity, equipped, broken, quantity}*/
+    get_item_at(line, col){
+        return this.char_items[col + line*MAX_PER_LINE];
+    }
+
+    next_col(){
+        if(this.cursor_pos.col < MAX_PER_LINE-1){
+            this.set_cursor(this.cursor_pos.line, this.cursor_pos.col+1);
+        }
+        else if(this.cursor_pos.col === MAX_PER_LINE-1){
+            if(this.cursor_pos.line === MAX_LINES-1){
+                this.set_cursor(0,0);
+            }
+            else{
+                this.set_cursor(this.cursor_pos.line+1,0);
+            }
+        }
+    }
+
+    previous_col(){
+        if(this.cursor_pos.col > 0){
+            this.set_cursor(this.cursor_pos.line, this.cursor_pos.col-1);
+        }
+        else if(this.cursor_pos.col === 0){
+            if(this.cursor_pos.line === 0){
+                this.set_cursor(MAX_LINES-1, MAX_PER_LINE-1);
+            }
+            else{
+                this.set_cursor(this.cursor_pos.line-1, MAX_PER_LINE-1);
+            }
+        }
+    }
+
+    next_line(){
+        if(this.item_grid.length === 1) return;
+
+        if(this.cursor_pos.line < highest_pos.line){
+            if(this.cursor_pos.col > highest_pos.col && this.cursor_pos.line+1 === highest_pos.line) this.set_cursor(this.cursor_pos.line+1, this.cursor_pos.col);
+            else this.set_cursor(this.cursor_pos.line+1, highest_pos.col)
+        }
+        else if(this.cursor_pos.line === highest_pos.line){
+            this.set_cursor(0, this.cursor_pos.col);
+        }
+    }
+
+    previous_line(){
+        if(this.item_grid.length === 1) return;
+        
+        if(this.cursor_pos.line > 0){
+            this.set_cursor(this.cursor_pos.line-1, this.cursor_pos.col);
+        }
+        else if(this.cursor_pos.line === 0){
+            this.set_cursor(highest_pos.line, this.cursor_pos.col);
+        }
+    }
+
     /*Moves the cursor to the given column and line*/
-    set_cursor(col, line){
-        this.cursor_manager.move_to(CURSOR_X + col*ICON_SIZE, CURSOR_Y + line*ICON_SIZE, "point", true);
+    set_cursor(line, col){
+        this.cursor_pos = {line: line, col: col};
+        this.parent.cursor_manager.move_to(CURSOR_X + col*ICON_SIZE, CURSOR_Y + line*ICON_SIZE, "point", true);
+        if(this.parent.item_price_win.open){
+            let is_repair = this.parent.sell_menu.is_repair_menu;
+            let itm = this.get_item_at(line, col);
+            if(is_repair) this.parent.update_item_info(itm.key_name, (this.data.info.items_list[itm.key_name].price*REPAIR_MULTIPLIER | 0), true, itm.broken);
+            else{
+                if(itm.broken) this.parent.update_item_info(itm.key_name, (this.data.info.items_list[itm.key_name].price*SELL_BROKEN_MULTIPLIER | 0));
+                else this.parent.update_item_info(itm.key_name, (this.data.info.items_list[itm.key_name].price*SELL_MULTIPLIER | 0));
+            }
+        }
     }
 
     /*Displays the sprites for the window
@@ -158,7 +245,7 @@ export class InventoryWindow{
            expand [boolean] - If true, the window will be in expanded state
            close_callback [function] - Callback function (Optional)
            open_callback [function] - Callback function (Optional)*/
-    open(char_index, item, expand=false, close_callback, open_callback){
+    open(char_index, item=undefined, expand=false, close_callback, open_callback){
         this.char = this.data.info.party_data.members[char_index];
         this.selected_item = item;
 
@@ -166,6 +253,7 @@ export class InventoryWindow{
 
         this.check_expand(expand);
         this.set_sprites();
+        this.make_item_grid();
 
         this.is_open = true;
         this.close_callback = close_callback;
@@ -184,6 +272,7 @@ export class InventoryWindow{
         this.char = null;
         this.char_items = [];
         this.selected_item = null;
+        this.cursor_pos = {line: 0, col: 0};
 
         this.is_open = false;
         this.window.close(this.close_callback, false);

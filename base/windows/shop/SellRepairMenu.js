@@ -2,6 +2,8 @@ const MAX_INVENTORY_SIZE = 15;
 const MAX_STACK_SIZE = 30;
 
 const SELL_MULTIPLIER = 3/4;
+const REPAIR_MULTIPLIER = 1/4;
+const SELL_BROKEN_MULTIPLIER = SELL_MULTIPLIER - REPAIR_MULTIPLIER;
 
 const YESNO_X = 56;
 const YESNO_Y = 40;
@@ -19,27 +21,14 @@ export class SellRepairMenu{
         this.char_display = this.parent.char_display;
         this.inv_win = this.parent.inv_win;
         this.quant_win =  this.parent.quant_win;
-        this.buy_select = this.parent.buy_select;
-        this.eq_compare = this.parent.eq_compare;
         this.yesno_action = this.parent.yesno_action;
         this.npc_dialog = this.parent.npc_dialog;
 
-        this.is_artifacts_menu = null;
-        this.item_list = [];
+        this.is_repair_menu = null;
         this.selected_item = null;
-        this.buy_select_index = 0;
+        this.inv_win_pos = {line: 0, col: 0};
         this.old_item = null;
         this.selected_character = null;
-    }
-
-    check_game_ticket(){
-        let chance = _.random(0, 1);
-        if(chance === 1){
-            this.npc_dialog.update_dialog("game_ticket", true);
-            this.control_manager.set_control(false, false, false, false, {esc: this.open_inventory_view.bind(this, 0, true),
-                enter: this.open_inventory_view.bind(this, 0, true)});
-        }
-        else this.open_buy_select();
     }
 
     sell_old_equip(old_item){
@@ -232,7 +221,8 @@ export class SellRepairMenu{
         }
     }
 
-    on_buy_item_select(game_ticket=false){
+    on_sell_item_select(){
+        this.inv_win_pos = this.inv_win.cursor_pos;
         this.selected_character = this.char_display.lines[this.char_display.current_line][this.char_display.selected_index];
         let char_index = this.char_display.selected_index;
         let have_quant = 0;
@@ -278,104 +268,56 @@ export class SellRepairMenu{
         }
     }
 
-    on_cancel_char_select(){
-        if(this.inv_win.is_open) this.inv_win.close();
-        if(this.eq_compare.is_open) this.eq_compare.close();
-        if(this.char_display.is_open)this.char_display.close();
-        this.open_buy_select();
+    on_character_select(){
+        if(!this.item_desc_win.open) this.item_desc_win.show();
+        if(!this.item_price_win.open) this.item_price_win.show();
+
+        this.inv_win.set_cursor(0,0);
+
+        this.control_manager.set_control(true, true, true, true, {right: this.inv_win.next_col.bind(this.inv_win),
+            left: this.inv_win.previous_col.bind(this.inv_win),
+            up: this.inv_win.previous_line.bind(this.inv_win),
+            down: this.inv_win.next_line.bind(this.inv_win),
+            esc: this.open_inventory_view.bind(this),
+            enter: this.on_sell_item_select.bind(this)});
     }
 
-    on_cancel_game_ticket(){
-        this.npc_dialog.update_dialog("game_ticket_decline", true);
-        this.control_manager.set_control(false, false, false, false, {esc: this.on_cancel_char_select.bind(this),
-            enter: this.on_cancel_char_select.bind(this)});
-    }
-
-    open_equip_compare(index=0){
+    open_inventory_view(index=0, msg_key="sale_follow_up"){
         if(this.item_desc_win.open) this.item_desc_win.close();
-        if(this.buy_select.is_open) this.buy_select.close();
-        this.npc_dialog.update_dialog("character_select");
-
-        if(!this.char_display.is_open) this.char_display.open(index);
-        if(!this.eq_compare.is_open) this.eq_compare.open(index, this.selected_item.key_name);
-
-        this.control_manager.set_control(true, true, true, false, {right: this.char_display.next_char.bind(this.char_display),
-            left: this.char_display.previous_char.bind(this.char_display),
-            up: this.char_display.previous_line.bind(this.char_display),
-            down: this.char_display.next_line.bind(this.char_display),
-            esc: this.on_cancel_char_select.bind(this),
-            enter: this.on_buy_equip_select.bind(this)});
-    }
-
-    open_inventory_view(index=0, game_ticket=false){
-        this.buy_select_index = this.buy_select.selected_index
-        if(this.item_desc_win.open) this.item_desc_win.close();
-        if(this.buy_select.is_open) this.buy_select.close();
+        if(this.item_price_win.open) this.item_price_win.close();
         if(this.quant_win.is_open) this.quant_win.close();
 
-        if(game_ticket) this.npc_dialog.update_dialog("game_ticket_select");
-        else this.npc_dialog.update_dialog("character_select");
+        this.npc_dialog.update_dialog(msg_key);
 
-        let this_item = game_ticket ? "game_ticket" : this.selected_item.key_name;
+        if(!this.your_coins_win.open) this.your_coins_win.show();
+        this.parent.update_your_coins();
 
         if(!this.char_display.is_open) this.char_display.open(index);
         else this.char_display.select_char(index);
+        this.game.world.bringToTop(this.char_display.char_group);
 
-        if(this.inv_win.is_open && this.inv_win.selected_item !== this_item) this.inv_win.close();
-        if(!this.inv_win.is_open) this.inv_win.open(index, this_item, true); 
+        if(this.inv_win.is_open) this.inv_win.close();
+        if(!this.inv_win.is_open) this.inv_win.open(index, undefined, false); 
 
         this.control_manager.set_control(true, true, true, false, {right: this.char_display.next_char.bind(this.char_display),
             left: this.char_display.previous_char.bind(this.char_display),
             up: this.char_display.previous_line.bind(this.char_display),
             down: this.char_display.next_line.bind(this.char_display),
-            esc: (game_ticket ? this.on_cancel_game_ticket.bind(this): this.on_cancel_char_select.bind(this)),
-            enter: this.on_buy_item_select.bind(this, game_ticket)});
-    }
-    
-    on_buy_select(){
-        this.selected_item = this.buy_select.pages[this.buy_select.current_page][this.buy_select.selected_index];
-
-        if(this.selected_item.equipable) this.open_equip_compare();
-        else this.open_inventory_view();
-    }
-
-    open_buy_select(msg_key="sale_follow_up"){
-        this.npc_dialog.update_dialog(msg_key);
-        if(this.char_display.is_open) this.char_display.close();
-        if(this.inv_win.is_open) this.inv_win.close();
-        if(this.eq_compare.is_open) this.eq_compare.close();
-
-        if(!this.buy_select.is_open) this.buy_select.open(this.item_list);
-        this.control_manager.reset();
-
-        this.selected_item = this.buy_select.pages[this.buy_select.current_page][this.buy_select.selected_index].key_name;
-
-        this.parent.update_item_info(this.selected_item);
-        this.parent.update_your_coins();
-
-        if(!this.item_desc_win.open) this.item_desc_win.show();
-        if(!this.item_price_win.open) this.item_price_win.show();
-        if(!this.your_coins_win.open) this.your_coins_win.show();
-
-        this.control_manager.set_control(true, true, true, false, {right: this.buy_select.next_item.bind(this.buy_select),
-            left: this.buy_select.previous_item.bind(this.buy_select),
-            up: this.buy_select.previous_page.bind(this.buy_select),
-            down: this.buy_select.next_page.bind(this.buy_select),
             esc: this.close_menu.bind(this),
-            enter: this.on_buy_select.bind(this)});
+            enter: this.on_character_select.bind(this)});
     }
 
-    open_menu(is_artifacts_menu){
-        this.is_artifacts_menu = is_artifacts_menu;
+    open_menu(is_repair_menu){
+        this.is_repair_menu = is_repair_menu;
         this.item_list = this.is_artifacts_menu ? this.parent.artifact_list : this.parent.normal_item_list;
 
-        if(is_artifacts_menu){
-            this.npc_dialog.update_dialog("artifacts_menu", true);
+        if(is_repair_menu){
+            this.npc_dialog.update_dialog("repair_menu", true);
 
-            this.control_manager.set_control(false, false, false, false, {esc: this.open_buy_select.bind(this, "buy_select"),
-            enter: this.open_buy_select.bind(this, "buy_select")});
+            this.control_manager.set_control(false, false, false, false, {esc: this.open_inventory_view.bind(this, 0, "repair_select"),
+            enter: this.open_inventory_view.bind(this, 0, "repair_select")});
         }
-        else this.open_buy_select("buy_select");
+        else this.open_inventory_view(0, "sell_select");
     }
 
     close_menu(){
@@ -386,15 +328,14 @@ export class SellRepairMenu{
         if(this.inv_win.is_open) this.inv_win.close();
         if(this.yesno_action.is_open) this.yesno_action.close();
         if(this.quant_win.is_open) this.quant_win.close();
-        if(this.buy_select.is_open) this.buy_select.close();
-        if(this.eq_compare.is_open) this.eq_compare.close();
 
         this.parent.cursor_manager.hide();
 
-        this.is_artifacts_menu = null;
-        this.item_list = [];
+        this.is_repair_menu = null;
         this.selected_item = null;
+        this.inv_win_pos = {line: 0, col: 0};
         this.old_item = null;
+        this.selected_character = null;
 
         this.control_manager.reset();
         this.parent.horizontal_menu.activate();
