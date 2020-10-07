@@ -1,8 +1,10 @@
-import { Window } from '../Window.js';
+import { TextObj, Window } from '../Window';
 import { get_text_width, ordered_elements } from '../utils.js';
 import * as numbers from '../magic_numbers.js';
-import { Djinn } from '../Djinn.js';
-import { MainChar } from '../MainChar.js';
+import { Djinn } from '../Djinn';
+import { MainChar } from '../MainChar';
+import { GoldenSun } from '../GoldenSun';
+import * as _ from "lodash";
 
 const WIDTH_PER_CHAR = 46;
 const STATUS_WIN_HEIGHT = 35;
@@ -24,6 +26,19 @@ const STANDBY_COUNT_SHIFT_Y = [8, 16];
 const SEPARATOR_WIDTH = 3;
 const INITIAL_PADDING__DJINNI_X = 7;
 
+type InfoSprite = {
+    group: Phaser.Group;
+    name: TextObj;
+    hp_bar_graphics: Phaser.Graphics;
+    hp_bar_damage_graphics: Phaser.Graphics;
+    hp_header: TextObj;
+    hp: TextObj;
+    pp_bar_graphics: Phaser.Graphics;
+    pp_bar_damage_graphics: Phaser.Graphics;
+    pp_header: TextObj;
+    pp: TextObj;
+};
+
 /*A window displaying the character's name and HP/PP
 The normal version is used in the field menu
 The compacted version and Djinn information are displayed in battle
@@ -33,6 +48,21 @@ Input: game [Phaser:Game] - Reference to the running game object
        djinn_info [boolean] - If true, will display Djinn on standby
        compact [boolean] - If true, displays the compacted version*/
 export class CharsStatusWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public djinni_info: boolean;
+    public compact: boolean;
+    public name_y: number;
+    public status_win_height: number;
+    public status_win_width: number;
+    public status_win_x: number;
+    public status_window: Window;
+    public status_header_width: number;
+    public info_sprites: {[char_key: string]: InfoSprite};
+    public stars_group: Phaser.Group;
+    public standby_count_text: {[element: string]: TextObj};
+    public standby_djinni: {[element: string]: number};
+
     constructor(game, data, djinni_info = false, compact = false) {
         this.game = game;
         this.data = data;
@@ -78,7 +108,18 @@ export class CharsStatusWindow {
     set_chars_info() {
         const chars_list = this.data.info.party_data.members.slice(0, MAX_CHARS_NUMBER);
         for (let i = 0; i < chars_list.length; ++i) {
-            let info_sprites_obj = {};
+            let info_sprites_obj: InfoSprite = {
+                group: null,
+                name: null,
+                hp_bar_graphics: null,
+                hp_bar_damage_graphics: null,
+                hp_header: null,
+                hp: null,
+                pp_bar_graphics: null,
+                pp_bar_damage_graphics: null,
+                pp_header: null,
+                pp: null
+            };
             const char = chars_list[i];
             const base_x_pos =  i * (WIDTH_PER_CHAR + SEPARATOR_WIDTH) + INITIAL_PADDING_X;
             const group_key = char.key_name + "_status";
@@ -96,7 +137,7 @@ export class CharsStatusWindow {
             info_sprites_obj.group.add(info_sprites_obj.hp_bar_graphics);
 
             info_sprites_obj.hp_bar_damage_graphics = this.game.add.graphics(0, 0);
-            info_sprites_obj.hp_bar_damage_graphics.default_y = y_pos_bar;
+            info_sprites_obj.hp_bar_damage_graphics.data.default_y = y_pos_bar;
             info_sprites_obj.group.add(info_sprites_obj.hp_bar_damage_graphics);
 
             info_sprites_obj.hp_header = this.status_window.set_text_in_position("HP", base_x_pos, y_pos, false, false, this.status_window.font_color, false, group_key);
@@ -112,7 +153,7 @@ export class CharsStatusWindow {
             info_sprites_obj.group.add(info_sprites_obj.pp_bar_graphics);
 
             info_sprites_obj.pp_bar_damage_graphics = this.game.add.graphics(0, 0);
-            info_sprites_obj.pp_bar_damage_graphics.default_y = y_pos_bar;
+            info_sprites_obj.pp_bar_damage_graphics.data.default_y = y_pos_bar;
             info_sprites_obj.group.add(info_sprites_obj.pp_bar_damage_graphics);
 
             info_sprites_obj.pp_header = this.status_window.set_text_in_position("PP", base_x_pos, y_pos, false, false, this.status_window.font_color, false, group_key);
@@ -168,18 +209,18 @@ export class CharsStatusWindow {
             info_sprite.hp_bar_graphics.x = base_x_pos;
             info_sprite.pp_bar_graphics.x = base_x_pos;
 
-            const hp_damage_bar_width = parseInt(STATUS_BAR_WIDTH * (1 - char.current_hp/char.max_hp));
+            const hp_damage_bar_width = (STATUS_BAR_WIDTH * (1 - char.current_hp/char.max_hp)) | 0;
             const hp_damage_bar_x = base_x_pos + STATUS_BAR_WIDTH - hp_damage_bar_width;
             info_sprite.hp_bar_damage_graphics.clear();
             info_sprite.hp_bar_damage_graphics.beginFill(STATUS_BAR_COLOR_BAD, 1);
-            info_sprite.hp_bar_damage_graphics.drawRect(hp_damage_bar_x, info_sprite.hp_bar_damage_graphics.default_y, hp_damage_bar_width, STATUS_BAR_HEIGHT);
+            info_sprite.hp_bar_damage_graphics.drawRect(hp_damage_bar_x, info_sprite.hp_bar_damage_graphics.data.default_y, hp_damage_bar_width, STATUS_BAR_HEIGHT);
             info_sprite.hp_bar_damage_graphics.endFill();
 
-            const pp_damage_bar_width = parseInt(STATUS_BAR_WIDTH * (1 - char.current_pp/char.max_pp));
+            const pp_damage_bar_width = (STATUS_BAR_WIDTH * (1 - char.current_pp/char.max_pp)) | 0;
             const pp_damage_bar_x = base_x_pos + STATUS_BAR_WIDTH - pp_damage_bar_width;
             info_sprite.pp_bar_damage_graphics.clear();
             info_sprite.pp_bar_damage_graphics.beginFill(STATUS_BAR_COLOR_BAD, 1);
-            info_sprite.pp_bar_damage_graphics.drawRect(pp_damage_bar_x, info_sprite.pp_bar_damage_graphics.default_y, pp_damage_bar_width, STATUS_BAR_HEIGHT);
+            info_sprite.pp_bar_damage_graphics.drawRect(pp_damage_bar_x, info_sprite.pp_bar_damage_graphics.data.default_y, pp_damage_bar_width, STATUS_BAR_HEIGHT);
             info_sprite.pp_bar_damage_graphics.endFill();
 
             if (i !== 0 || show_djinn_info) {

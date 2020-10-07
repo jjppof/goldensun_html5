@@ -1,6 +1,7 @@
-import { Window } from '../Window.js';
+import { TextObj, Window } from '../Window.js';
 import { capitalize, get_text_width } from "../utils.js";
 import * as numbers from '../magic_numbers.js';
+import { GoldenSun } from '../GoldenSun.js';
 
 const BASE_WIDTH = (numbers.WINDOW_PADDING_H << 1) + 8;
 const BASE_HEIGHT = 20;
@@ -14,6 +15,11 @@ const DIFF_CORRECTION = 56;
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
 export class FieldPsynergyWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public window: Window;
+    public text: TextObj;
+
     constructor(game, data) {
         this.game = game;
         this.data = data;

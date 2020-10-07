@@ -6,12 +6,12 @@ const PAGE_NUMBER_HEIGHT = 8;
 const PAGE_INDICATOR_ARROW_Y = 0;
 const TRANSITION_TIME = Phaser.Timer.QUARTER >> 2;
 
-type TextObj = {
+export type TextObj = {
     text: Phaser.BitmapText,
     shadow: Phaser.BitmapText,
     right_align: boolean,
     initial_x: number,
-    text_bg: Phaser.Graphics
+    text_bg?: Phaser.Graphics
 };
 
 /*A basic window template used in most menus
@@ -498,7 +498,7 @@ export class Window {
             shadow [Phaser:Sprite] - The text's shadow
             right_align [boolean] - The input value
             initial_x [number] - The text's x value*/
-    set_single_line_text(text, right_align = false, italic = false) {
+    set_single_line_text(text, right_align = false, italic = false): TextObj {
         const x_pos = numbers.WINDOW_PADDING_H + 4;
         let y_pos = numbers.WINDOW_PADDING_TOP;
         const font_name = italic ? 'gs-italic-bmp-font' : 'gs-bmp-font';
@@ -535,7 +535,7 @@ export class Window {
             right_align [boolean] - The input value
             initial_x [number] - The text's x value
             text_bg [Phaser:Sprite] - The text's background*/
-    set_text_in_position(text, x_pos, y_pos, right_align = false, is_center_pos = false, color = this.font_color, with_bg = false, internal_group_key = undefined, italic = false) {
+    set_text_in_position(text, x_pos, y_pos, right_align = false, is_center_pos = false, color = this.font_color, with_bg = false, internal_group_key = undefined, italic = false): TextObj {
         const font_name = italic ? 'gs-italic-bmp-font' : 'gs-bmp-font';
         let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, text, numbers.FONT_SIZE);
         let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, font_name, text, numbers.FONT_SIZE);
@@ -584,7 +584,7 @@ export class Window {
                 text - The text to change
                 shadow - The shadow of the text
             new_x, new_y [number] - The x and y for the new position*/
-    update_text(new_text, text_shadow_pair, new_x, new_y) {
+    update_text(new_text, text_shadow_pair, new_x?, new_y?) {
         text_shadow_pair.text.setText(new_text);
         text_shadow_pair.shadow.setText(new_text);
         this.update_text_position({x: new_x, y: new_y}, text_shadow_pair);
@@ -650,7 +650,7 @@ export class Window {
 
     Input: callback [function] - Callback function (Optional)
            animate [boolean] - Plays a fading animation if true*/
-    close(callback, animate = true) {
+    close(callback?, animate = true) {
         if (animate) {
             this.game.add.tween(this.group).to(
                 { width: 0, height: 0 },
