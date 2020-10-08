@@ -1,6 +1,21 @@
+import { GoldenSun } from "../GoldenSun";
+import { MainChar } from "../MainChar";
 import { reverse_directions, ordered_elements } from "../utils.js";
 
 export class Debug {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public debug_physics: boolean;
+    public grid: boolean;
+    public debug_keys: boolean;
+    public debug_stats: boolean;
+    public show_fps: boolean;
+    public debug_stats_info: {
+        chars: MainChar[],
+        selected: number,
+        listener: EventListener
+    };
+
     constructor(game, data) {
         this.game = game;
         this.data = data;
@@ -39,9 +54,9 @@ export class Debug {
     }
 
     update_debug_physics(flag) {
-        data.map.collision_sprite.body.debug = flag;
+        this.data.map.collision_sprite.body.debug = flag;
         for (let i = 0; i < this.data.npc_group.children.length; ++i) {
-            let sprite = this.data.npc_group.children[i];
+            let sprite: Phaser.Sprite = this.data.npc_group.children[i] as Phaser.Sprite;
             if (!sprite.is_npc && !sprite.is_interactable_object) continue;
             if (!sprite.body) continue;
             sprite.body.debug = flag;
@@ -112,8 +127,8 @@ export class Debug {
         document.querySelector("#key_debug table .y").innerHTML = `${this.data.hero.tile_y_pos}/${this.data.hero.sprite.body.y.toFixed(3)}`;
         document.querySelector("#key_debug table .speed_x").innerHTML = this.data.hero.sprite.body.velocity.x.toFixed(3);
         document.querySelector("#key_debug table .speed_y").innerHTML = this.data.hero.sprite.body.velocity.y.toFixed(3);
-        document.querySelector("#key_debug table .force_direction").innerHTML = this.data.hero.force_direction;
-        document.querySelector("#key_debug table .stop_by_colliding").innerHTML = this.data.hero.stop_by_colliding;
+        document.querySelector("#key_debug table .force_direction").innerHTML = this.data.hero.force_direction.toString();
+        document.querySelector("#key_debug table .stop_by_colliding").innerHTML = this.data.hero.stop_by_colliding.toString();
     }
 
     toggle_fps() {
@@ -145,7 +160,7 @@ export class Debug {
             this.game.debug.geom(new Phaser.Rectangle(x_pos, y_pos, tile_width, tile_height), 'rgba(255,0,0,0.5)');
             this.game.debug.geom(new Phaser.Circle(this.data.hero.sprite.x, this.data.hero.sprite.y, 5), 'rgba(20,75,0,1.0)');
             for (let point in this.data.map.events) {
-                let pos = point.split('_');
+                let pos = point.split('_').map(p => parseInt(p));
                 this.game.debug.geom(new Phaser.Rectangle(pos[0]*tile_width, pos[1]*tile_height, tile_width, tile_height), 'rgba(255,255,60,0.7)');
             }
 
@@ -187,13 +202,13 @@ export class Debug {
                 chars: this.data.battle_instance.allies_info.concat(this.data.battle_instance.enemies_info).map(info => info.instance),
                 selected: 0,
                 listener: event => {
-                    this.debug_stats_info.selected = event.target.value;
+                    this.debug_stats_info.selected = (event.target as any).value;
                 }
             };
             this.debug_stats_info.chars.forEach((char, index) => {
                 let option = document.createElement("option");
                 option.innerText = char.name;
-                option.setAttribute("value", index);
+                option.setAttribute("value", index.toString());
                 select_element.appendChild(option);
             });
             select_element.addEventListener('change', this.debug_stats_info.listener);
@@ -213,29 +228,29 @@ export class Debug {
         const char = this.debug_stats_info.chars[this.debug_stats_info.selected];
         document.querySelector("#stats_debug table .name").innerHTML = char.name;
         document.querySelector("#stats_debug table .class").innerHTML = char.class.name;
-        document.querySelector("#stats_debug table .level").innerHTML = char.level;
-        document.querySelector("#stats_debug table .exp").innerHTML = char.current_exp;
-        document.querySelector("#stats_debug table .current_hp").innerHTML = char.current_hp;
-        document.querySelector("#stats_debug table .max_hp").innerHTML = char.max_hp;
-        document.querySelector("#stats_debug table .current_pp").innerHTML = char.current_pp;
-        document.querySelector("#stats_debug table .max_pp").innerHTML = char.max_pp;
-        document.querySelector("#stats_debug table .atk").innerHTML = char.current_atk;
-        document.querySelector("#stats_debug table .def").innerHTML = char.current_def;
-        document.querySelector("#stats_debug table .agi").innerHTML = char.current_agi;
-        document.querySelector("#stats_debug table .luk").innerHTML = char.current_luk;
-        document.querySelector("#stats_debug table .venus_power").innerHTML = char.venus_power_current;
-        document.querySelector("#stats_debug table .venus_resist").innerHTML = char.venus_resist_current;
-        document.querySelector("#stats_debug table .venus_level").innerHTML = char.venus_level_current;
-        document.querySelector("#stats_debug table .mercury_power").innerHTML = char.mercury_power_current;
-        document.querySelector("#stats_debug table .mercury_resist").innerHTML = char.mercury_resist_current;
-        document.querySelector("#stats_debug table .mercury_level").innerHTML = char.mercury_level_current;
-        document.querySelector("#stats_debug table .mars_power").innerHTML = char.mars_power_current;
-        document.querySelector("#stats_debug table .mars_resist").innerHTML = char.mars_resist_current;
-        document.querySelector("#stats_debug table .mars_level").innerHTML = char.mars_level_current;
-        document.querySelector("#stats_debug table .jupiter_power").innerHTML = char.jupiter_power_current;
-        document.querySelector("#stats_debug table .jupiter_resist").innerHTML = char.jupiter_resist_current;
-        document.querySelector("#stats_debug table .jupiter_level").innerHTML = char.jupiter_level_current;
-        document.querySelector("#stats_debug table .turns").innerHTML = char.turns;
+        document.querySelector("#stats_debug table .level").innerHTML = char.level.toString();
+        document.querySelector("#stats_debug table .exp").innerHTML = char.current_exp.toString();
+        document.querySelector("#stats_debug table .current_hp").innerHTML = char.current_hp.toString();
+        document.querySelector("#stats_debug table .max_hp").innerHTML = char.max_hp.toString();
+        document.querySelector("#stats_debug table .current_pp").innerHTML = char.current_pp.toString();
+        document.querySelector("#stats_debug table .max_pp").innerHTML = char.max_pp.toString();
+        document.querySelector("#stats_debug table .atk").innerHTML = char.current_atk.toString();
+        document.querySelector("#stats_debug table .def").innerHTML = char.current_def.toString();
+        document.querySelector("#stats_debug table .agi").innerHTML = char.current_agi.toString();
+        document.querySelector("#stats_debug table .luk").innerHTML = char.current_luk.toString();
+        document.querySelector("#stats_debug table .venus_power").innerHTML = char.venus_power_current.toString();
+        document.querySelector("#stats_debug table .venus_resist").innerHTML = char.venus_resist_current.toString();
+        document.querySelector("#stats_debug table .venus_level").innerHTML = char.venus_level_current.toString();
+        document.querySelector("#stats_debug table .mercury_power").innerHTML = char.mercury_power_current.toString();
+        document.querySelector("#stats_debug table .mercury_resist").innerHTML = char.mercury_resist_current.toString();
+        document.querySelector("#stats_debug table .mercury_level").innerHTML = char.mercury_level_current.toString();
+        document.querySelector("#stats_debug table .mars_power").innerHTML = char.mars_power_current.toString();
+        document.querySelector("#stats_debug table .mars_resist").innerHTML = char.mars_resist_current.toString();
+        document.querySelector("#stats_debug table .mars_level").innerHTML = char.mars_level_current.toString();
+        document.querySelector("#stats_debug table .jupiter_power").innerHTML = char.jupiter_power_current.toString();
+        document.querySelector("#stats_debug table .jupiter_resist").innerHTML = char.jupiter_resist_current.toString();
+        document.querySelector("#stats_debug table .jupiter_level").innerHTML = char.jupiter_level_current.toString();
+        document.querySelector("#stats_debug table .turns").innerHTML = char.turns.toString();
         document.querySelector("#stats_debug table .temp_statuses").innerHTML = [...char.temporary_status].join(" ");
         document.querySelector("#stats_debug table .perm_statuses").innerHTML = [...char.permanent_status].join(" ");
         let buff_html = "";
@@ -249,6 +264,6 @@ export class Debug {
             }
         });
         document.querySelector("#stats_debug table .buff").innerHTML = buff_html;
-        document.querySelector("#stats_debug table .effect_count").innerHTML = char.effects.length;
+        document.querySelector("#stats_debug table .effect_count").innerHTML = char.effects.length.toString();
     }
 }
