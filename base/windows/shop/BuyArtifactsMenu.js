@@ -426,6 +426,7 @@ export class BuyArtifactsMenu{
         this.item_list = [];
         this.selected_item = null;
         this.old_item = null;
+        this.buy_select_pos = {page: 0, index: 0};
 
         this.control_manager.reset();
         this.parent.horizontal_menu.activate();
