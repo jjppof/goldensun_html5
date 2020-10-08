@@ -5,12 +5,13 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0
 
 - Feel free to help! Check what I need help [here](https://github.com/jjppof/goldensun_html5/projects/2). Please, reach me if you want to do so.
 - The goal of this project is not to do exactly the same engine as GS, but very similar.
-- If you found any bug, please create an issue for it.
+- If you found any bug, please create an [issue](https://github.com/jjppof/goldensun_html5/issues/new) for it.
 - Check the [wiki](https://github.com/jjppof/goldensun_html5/wiki) for database configuration, tutorials and project information.
 - This repository is just the engine. I'm not planning to do maps, animations, items etc. Content here is just enough to show the functionalities.
 - I use [projects](https://github.com/jjppof/goldensun_html5/projects/1) to write down things.
 - There's no production environment for now, but I'm planning to do it with webpack and embed most of the assets.
 - It's also a possible to distribute it by Electron and/or Ionic.
+- Join us at [GSHC discord](https://discord.gg/jwKJDXC) (#programming channel).
 
 ## Running GS-HTML5 on your computer
 
@@ -43,7 +44,7 @@ Some useful tools that I use to manage the resources:
 - [XnConvert](https://www.xnview.com/en/xnconvert/) (for batch image convertion)
 
 ## Credits
-- **http://www.goldensunhacking.net/** (This project would be impossible without these guys. [discord](https://discord.gg/7qBjWE))
+- **http://www.goldensunhacking.net/** (This project would be impossible without these guys)
 - https://gamefaqs.gamespot.com/gba/561356-golden-sun-the-lost-age/faqs
 - http://www.goldensun-syndicate.net/sprites/
 - https://www.spriters-resource.com/game_boy_advance/gs/
