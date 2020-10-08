@@ -5,11 +5,13 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0
 
 - Feel free to help! Check what I need help [here](https://github.com/jjppof/goldensun_html5/projects/2). Please, reach me if you want to do so.
 - The goal of this project is not to do exactly the same engine as GS, but very similar.
-- If you found any bug, please create an issue for it.
+- If you found any bug, please create an [issue](https://github.com/jjppof/goldensun_html5/issues/new) for it.
 - Check the [wiki](https://github.com/jjppof/goldensun_html5/wiki) for database configuration, tutorials and project information.
-- This repository is just the engine. I'm not planning to do maps, animations, items etc. Content here is just enough to show the functionalities.
+- **This repository is just the engine**. I'm not planning to do maps, animations, items etc. Content here is just enough to show the functionalities.
 - I use [projects](https://github.com/jjppof/goldensun_html5/projects/1) to write down things.
 - There's no production environment for now, but I'm planning to do it with webpack and embed most of the assets.
+- In the future, it will also be possible to distribute it by Electron (desktop) and/or Ionic (mobile).
+- Join us at [GSHC discord](https://discord.gg/jwKJDXC) (#programming channel).
 
 ## Running GS-HTML5 on your computer
 
@@ -27,13 +29,16 @@ GS-HTML5 supports both Javascript and Typescript. We use [Webpack](https://webpa
 - Install dev dependencies by running `npm install` in the root folder.
 - Use `npm start` to start the development server.
 - Use `npm run build` to generate a bundle.
+- Use these [guidelines](https://typedoc.org/guides/doccomments/) to comment code.
 
 ## Utils
 
 Some useful tools that I use to manage the resources:
+- [Visual Studio Code](https://code.visualstudio.com/download) (for developing the game)
 - [TexturePacker 4.6.1](https://www.codeandweb.com/texturepacker) (for creating spritesheets)
-- [Sprite Sheet Packer](https://www.codeandweb.com/free-sprite-sheet-packer) (free alternative for TexturePacker)
+  - [Sprite Sheet Packer](https://www.codeandweb.com/free-sprite-sheet-packer) (free alternative for TexturePacker)
 - [PhysicsEditor 1.6.3](https://www.codeandweb.com/physicseditor) (for creating collision structures)
+  - [LoonPhysics](https://loonride.com/physics) (free alternative for PhysicsEditor)
 - [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579)) (for building maps)
 - [Shoebox](https://renderhjs.net/shoebox/) (for creating fonts)
 - [Golden Sun Editor](http://forum.goldensunhacking.net/index.php?action=downloads;sa=view;down=124) (for game info)
@@ -41,7 +46,7 @@ Some useful tools that I use to manage the resources:
 - [XnConvert](https://www.xnview.com/en/xnconvert/) (for batch image convertion)
 
 ## Credits
-- **http://www.goldensunhacking.net/** (This project would be impossible without these guys. [discord](https://discord.gg/7qBjWE))
+- **http://www.goldensunhacking.net/** (This project would be impossible without these guys)
 - https://gamefaqs.gamespot.com/gba/561356-golden-sun-the-lost-age/faqs
 - http://www.goldensun-syndicate.net/sprites/
 - https://www.spriters-resource.com/game_boy_advance/gs/
