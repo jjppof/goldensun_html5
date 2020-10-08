@@ -39,6 +39,7 @@ export function fire_push_movement(game, data, interactable_object, push_end, be
         if (!target_only) {
             data.hero.pushing = true;
             data.hero.current_action = base_actions.PUSH;
+            data.hero.set_action();
         }
         game.physics.p2.pause();
         let tween_x = 0, tween_y = 0;
