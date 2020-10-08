@@ -153,7 +153,7 @@ export class EquipCompare {
 
     /*Compare the same item for a different character*/
     change_character(key_name){
-        this.selected_char = key_name;
+        this.selected_char = this.data.info.party_data.members.filter(c => { return (c.key_name === key_name)})[0];
         kill_all_sprites(this.arrow_group);
 
         this.show_stat_compare();
@@ -161,8 +161,7 @@ export class EquipCompare {
 
     /*Displays the stat comparison*/
     show_stat_compare(){
-        let this_char = this.data.info.party_data.members[this.selected_char];
-        if(!this.data.info.items_list[this.selected_item].equipable_chars.includes(this_char.key_name)){
+        if(!this.data.info.items_list[this.selected_item].equipable_chars.includes(this.selected_char.key_name)){
             this.show_cant_equip();
             return;
         }
@@ -172,7 +171,7 @@ export class EquipCompare {
 
         let selected_item_type = this.data.info.items_list[this.selected_item].type;
         let char_current_item = null;
-        let eq_slots = this.data.info.party_data.members[this.selected_char].equip_slots;
+        let eq_slots = this.selected_char.equip_slots;
 
         switch(selected_item_type){
             case "weapons":
@@ -198,15 +197,13 @@ export class EquipCompare {
                 break;
         }
 
-        //this_char.items.filter(itm => {return (itm.equipped === true && this.data.info.items_list[itm.key_name].type === selected_item_type)})[0].key_name; 
-
         let atk_diff = this.compare_items(char_current_item, this.selected_item, "attack");
         let def_diff = this.compare_items(char_current_item, this.selected_item, "defense");
         let agi_diff = this.compare_items(char_current_item, this.selected_item, "agility");
 
-        this.display_stat("attack", this_char.current_atk, atk_diff);
-        this.display_stat("defense", this_char.current_def, def_diff);
-        this.display_stat("agility", this_char.current_agi, agi_diff);
+        this.display_stat("attack", this.selected_char.current_atk, atk_diff);
+        this.display_stat("defense", this.selected_char.current_def, def_diff);
+        this.display_stat("agility", this.selected_char.current_agi, agi_diff);
 
         this.window.update_text(this.data.info.items_list[char_current_item].name, this.item_name_text);
 
@@ -230,12 +227,12 @@ export class EquipCompare {
 
     /*Opens this window with the selected member
 
-    Input: char [number] - Party index of the character
+    Input: char_key [string] - The character's key name
            item [string] - Key name of the item to compare
            close_callback [function] - Callback function (Optional)
            open_callback [function] - Callback function (Optional)*/
-    open(char=0, item, close_callback, open_callback){
-        this.selected_char = char;
+    open(char_key, item, close_callback, open_callback){
+        this.selected_char = this.data.info.party_data.members.filter(c => { return (c.key_name === char_key)})[0];
         this.selected_item = item;
 
         this.show_stat_compare();

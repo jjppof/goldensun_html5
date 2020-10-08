@@ -29,9 +29,10 @@ export class BuyArtifactsMenu{
         this.is_artifacts_menu = null;
         this.item_list = [];
         this.selected_item = null;
-        this.buy_select_index = 0;
+        this.buy_select_pos = {page: 0, index: 0};
         this.old_item = null;
         this.selected_character = null;
+        this.selected_char_index = 0;
     }
 
     update_game_ticket_step(){
@@ -55,8 +56,8 @@ export class BuyArtifactsMenu{
 
         if(game_ticket){
             this.npc_dialog.update_dialog("game_ticket", true);
-            this.control_manager.set_control(false, false, false, false, {esc: this.open_inventory_view.bind(this, 0, true),
-                enter: this.open_inventory_view.bind(this, 0, true)});
+            this.control_manager.set_control(false, false, false, false, {esc: this.open_inventory_view.bind(this, true),
+                enter: this.open_inventory_view.bind(this, true)});
         }
         else this.open_buy_select();
     }
@@ -236,6 +237,7 @@ export class BuyArtifactsMenu{
 
     on_buy_equip_select(){
         this.selected_character = this.char_display.lines[this.char_display.current_line][this.char_display.selected_index];
+        this.selected_char_index = this.char_display.selected_index;
 
         if(this.selected_character.items.length === MAX_INVENTORY_SIZE){
             let text = this.npc_dialog.get_message("inventory_full");
@@ -259,7 +261,7 @@ export class BuyArtifactsMenu{
 
     on_buy_item_select(game_ticket=false){
         this.selected_character = this.char_display.lines[this.char_display.current_line][this.char_display.selected_index];
-        let char_index = this.char_display.selected_index;
+        this.selected_char_index = this.char_display.selected_index;
         let have_quant = 0;
 
         for(let i=0; i<this.selected_character.items.length; i++){
@@ -297,7 +299,7 @@ export class BuyArtifactsMenu{
                 if(!this.quant_win.is_open) this.quant_win.open(shop_item, char_item);
                 this.control_manager.set_control(true, false, true, false, {right: this.quant_win.increase_amount.bind(this.quant_win),
                     left: this.quant_win.decrease_amount.bind(this.quant_win),
-                    esc: this.open_inventory_view.bind(this, char_index),
+                    esc: this.open_inventory_view.bind(this),
                     enter: this.on_purchase_success.bind(this)});
             }
         }
@@ -316,14 +318,15 @@ export class BuyArtifactsMenu{
             enter: this.on_cancel_char_select.bind(this)});
     }
 
-    open_equip_compare(index=0){
-        this.buy_select_index = this.buy_select.selected_index;
+    open_equip_compare(){
+        this.buy_select_pos = {page: this.buy_select.current_page, index: this.buy_select.selected_index};
         if(this.item_desc_win.open) this.item_desc_win.close();
         if(this.buy_select.is_open) this.buy_select.close();
         this.npc_dialog.update_dialog("character_select");
 
-        if(!this.char_display.is_open) this.char_display.open(index);
-        if(!this.eq_compare.is_open) this.eq_compare.open(index, this.selected_item.key_name);
+        let char_key = (this.selected_character) ? this.selected_character.key_name : this.data.info.party_data.members[0].key_name;
+        if(!this.char_display.is_open) this.char_display.open(this.selected_char_index);
+        if(!this.eq_compare.is_open) this.eq_compare.open(char_key, this.selected_item.key_name);
 
         this.control_manager.set_control(true, true, true, false, {right: this.char_display.next_char.bind(this.char_display),
             left: this.char_display.previous_char.bind(this.char_display),
@@ -333,23 +336,25 @@ export class BuyArtifactsMenu{
             enter: this.on_buy_equip_select.bind(this)});
     }
 
-    open_inventory_view(index=0, game_ticket=false){
-        if(!game_ticket)this.buy_select_index = this.buy_select.selected_index;
+    open_inventory_view(game_ticket=false){
+        if(!game_ticket && this.buy_select.is_open) this.buy_select_pos = {page: this.buy_select.current_page, index: this.buy_select.selected_index};
         
         if(this.item_desc_win.open) this.item_desc_win.close();
         if(this.buy_select.is_open) this.buy_select.close();
         if(this.quant_win.is_open) this.quant_win.close();
+        if(this.eq_compare.is_open) this.eq_compare.close();
 
         if(game_ticket) this.npc_dialog.update_dialog("game_ticket_select");
         else this.npc_dialog.update_dialog("character_select");
 
         let this_item = game_ticket ? "game_ticket" : this.selected_item.key_name;
 
-        if(!this.char_display.is_open) this.char_display.open(index);
-        else this.char_display.select_char(index);
+        if(!this.char_display.is_open) this.char_display.open(this.selected_char_index);
+        else this.char_display.select_char(this.selected_char_index);
 
+        let char_key = (this.selected_character) ? this.selected_character.key_name : this.data.info.party_data.members[0].key_name;
         if(this.inv_win.is_open && this.inv_win.selected_item !== this_item) this.inv_win.close();
-        if(!this.inv_win.is_open) this.inv_win.open(index, this_item, true); 
+        if(!this.inv_win.is_open) this.inv_win.open(char_key, this_item, true); 
 
         this.control_manager.set_control(true, true, true, false, {right: this.char_display.next_char.bind(this.char_display),
             left: this.char_display.previous_char.bind(this.char_display),
@@ -366,17 +371,16 @@ export class BuyArtifactsMenu{
         else this.open_inventory_view();
     }
 
-    open_buy_select(msg_key="sale_follow_up"){
+    open_buy_select(msg_key="sell_follow_up"){
         this.npc_dialog.update_dialog(msg_key);
         if(this.char_display.is_open) this.char_display.close();
         if(this.inv_win.is_open) this.inv_win.close();
         if(this.eq_compare.is_open) this.eq_compare.close();
 
-        if(!this.buy_select.is_open) this.buy_select.open(this.item_list, this.buy_select_index);
+        if(!this.buy_select.is_open) this.buy_select.open(this.item_list, this.buy_select_pos.index, this.buy_select_pos.page);
         this.control_manager.reset();
 
         this.selected_item = this.buy_select.pages[this.buy_select.current_page][this.buy_select.selected_index].key_name;
-
         this.parent.update_item_info(this.selected_item);
         this.parent.update_your_coins();
 

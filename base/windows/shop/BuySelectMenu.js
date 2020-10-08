@@ -51,7 +51,7 @@ export class BuySelectMenu{
 
         this.window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
         this.items = [];
-        this.selected_index = null;
+        this.selected_index = 0;
         this.current_page = 0;
         this.pages = [];
         this.tweens = {item: null, bg: null};
@@ -435,7 +435,7 @@ export class BuySelectMenu{
 
         this.items = [];
         this.pages = [];
-        this.selected_index = null;
+        this.selected_index = 0;
         this.current_page = 0;
         this.is_open = false;
 

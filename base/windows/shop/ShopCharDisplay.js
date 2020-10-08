@@ -188,8 +188,10 @@ export class ShopCharDisplay {
         //set run animation for new character;
         
         this.parent.cursor_manager.move_to(CURSOR_X + index*GAP_SIZE, CURSOR_Y, "wiggle");
-        if(this.parent.eq_compare.is_open) this.parent.eq_compare.change_character(this.current_line*MAX_PER_LINE + this.selected_index);
-        if(this.parent.inv_win.is_open) this.parent.inv_win.change_character(this.current_line*MAX_PER_LINE + this.selected_index);
+        let c = this.data.info.party_data.members[this.current_line*MAX_PER_LINE + this.selected_index];
+        
+        if(this.parent.eq_compare.is_open) this.parent.eq_compare.change_character(c.key_name);
+        if(this.parent.inv_win.is_open) this.parent.inv_win.change_character(c.key_name);
     }
 
     next_char(){

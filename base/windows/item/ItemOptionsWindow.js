@@ -177,7 +177,7 @@ export class ItemOptionsWindow {
             this.text_sprites.remove.text.tint = ENABLE_COLOR;
             this.option_active.remove = true;
         }
-        if (this.item.imporant_item) {
+        if (this.item.important_item) {
             this.text_sprites.drop.text.tint = DISABLE_COLOR;
             this.option_active.drop = false;
         } else {

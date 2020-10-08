@@ -53,7 +53,6 @@ export class InventoryWindow{
         this.text.shadow.alpha = 0;
         
         this.char = null;
-        this.char_items = [];
         this.item_grid = [];
         this.selected_item = null;
         this.cursor_pos = {line: 0, col: 0};
@@ -81,10 +80,27 @@ export class InventoryWindow{
 
     /*Sets and displays the text relative to the selected item*/
     set_text(){
-        let item_match = this.char_items.filter(item_obj => { return item_obj.key_name === this.selected_item; });
+        let item_match = null;
+        let found = false;
+        let finish = false;
 
-        if(item_match.length === 0) this.window.update_text(MESSAGE_NO_ITEM, this.text);
-        else this.window.update_text(MESSAGE_HAVE_ITEM + item_match[0].quantity, this.text);
+        for(let line=0; line<MAX_LINES; line++){
+            for(let col=0; col<MAX_PER_LINE; col++){
+                if(!this.item_grid[line][col]){
+                    finish = true;
+                    break;
+                }
+                if(this.item_grid[line][col].key_name === this.selected_item){
+                    item_match = this.item_grid[line][col];
+                    found = true;
+                    break;
+                }
+            }
+            if(found || finish) break;
+        }
+
+        if(!found) this.window.update_text(MESSAGE_NO_ITEM, this.text);
+        else this.window.update_text(MESSAGE_HAVE_ITEM + item_match.quantity, this.text);
 
         this.text.text.alpha = 1;
         this.text.shadow.alpha = 1;
@@ -92,10 +108,10 @@ export class InventoryWindow{
 
     /*Changes the character whose inventory is being shown
 
-    Input: index [number] - Party index of the character*/
-    change_character(index){
-        this.char = this.data.info.party_data.members[index];
-        this.char_items = this.char.items.filter(item_obj => {return item_obj.key_name in this.data.info.items_list;});
+    Input: key_name [number] - The character's key name*/
+    change_character(key_name){
+        this.char = this.data.info.party_data.members.filter(c => { return (c.key_name === key_name)})[0];
+        this.make_item_grid();
 
         kill_all_sprites(this.sprite_group);
         kill_all_sprites(this.icon_group);
@@ -104,30 +120,52 @@ export class InventoryWindow{
     }
 
     make_item_grid(){
+        this.item_grid = [];
+
+        let char_items = this.char.items.filter(item_obj => {return item_obj.key_name in this.data.info.items_list;});
+
         let lines = [];
-        for(let line = 0; line < (this.char_items.length/MAX_PER_LINE | 0)+1; line++){
+        for(let line = 0; line < (char_items.length/MAX_PER_LINE | 0)+1; line++){
             let this_line = [];
             for(let col = 0; col < MAX_PER_LINE; col++){
-                if(this.char_items[line*MAX_PER_LINE+col]) this_line.push(this.char_items[line*MAX_PER_LINE+col]);
+                if(char_items[line*MAX_PER_LINE+col]) this_line.push(char_items[line*MAX_PER_LINE+col]);
             }
             lines.push(this_line);
         }
         this.item_grid = lines;
     }
 
-    /*Reutrns the item at a given position
+    
+    kill_item_at(line, col){
+        let item_icons = this.sprite_group.children.filter(s => { return (s.alive === true && s.key === "items_icons" &&
+            s.x === col*ICON_SIZE && s.y === line*ICON_SIZE); });
+        let bg_icons = this.sprite_group.children.filter(s => { return (s.alive === true && s.key === "item_border" &&
+            s.x === col*ICON_SIZE && s.y === line*ICON_SIZE); });
 
-    Output: {key_name, quantity, equipped, broken, quantity}*/
-    get_item_at(line, col){
-        return this.char_items[col + line*MAX_PER_LINE];
+        item_icons[0].kill();
+        bg_icons[0].kill();
+        
+        if(this.item_grid[line][col].broken){
+            let broken_icons = this.sprite_group.children.filter(b => { return (b.alive === true && b.key === "broken" &&
+            b.x === col*ICON_SIZE && b.y === line*ICON_SIZE); });
+            broken_icons[0].kill();
+        }
+
+        if(this.item_grid[line][col].equipped){
+            let equipped_icons = this.icon_group.children.filter(e => { return (e.alive === true && e.text === undefined &&
+                e.x === col*ICON_SIZE && e.y === line*ICON_SIZE); });
+            equipped_icons[0].kill();
+        }
     }
 
     next_col(){
-        if(this.cursor_pos.col < MAX_PER_LINE-1){
+        if (this.item_grid.length === 1 && this.item_grid[this.cursor_pos.line].length === 1) return;
+
+        if(this.cursor_pos.col < this.item_grid[this.cursor_pos.line].length-1){
             this.set_cursor(this.cursor_pos.line, this.cursor_pos.col+1);
         }
-        else if(this.cursor_pos.col === MAX_PER_LINE-1){
-            if(this.cursor_pos.line === MAX_LINES-1){
+        else{
+            if(this.cursor_pos.line === this.item_grid.length-1){
                 this.set_cursor(0,0);
             }
             else{
@@ -137,12 +175,14 @@ export class InventoryWindow{
     }
 
     previous_col(){
+        if (this.item_grid.length === 1 && this.item_grid[this.cursor_pos.line].length === 1) return;
+
         if(this.cursor_pos.col > 0){
             this.set_cursor(this.cursor_pos.line, this.cursor_pos.col-1);
         }
-        else if(this.cursor_pos.col === 0){
+        else{
             if(this.cursor_pos.line === 0){
-                this.set_cursor(MAX_LINES-1, MAX_PER_LINE-1);
+                this.set_cursor(this.item_grid.length-1, this.item_grid[this.item_grid.length-1].length-1);
             }
             else{
                 this.set_cursor(this.cursor_pos.line-1, MAX_PER_LINE-1);
@@ -153,23 +193,26 @@ export class InventoryWindow{
     next_line(){
         if(this.item_grid.length === 1) return;
 
-        if(this.cursor_pos.line < highest_pos.line){
-            if(this.cursor_pos.col > highest_pos.col && this.cursor_pos.line+1 === highest_pos.line) this.set_cursor(this.cursor_pos.line+1, this.cursor_pos.col);
-            else this.set_cursor(this.cursor_pos.line+1, highest_pos.col)
-        }
-        else if(this.cursor_pos.line === highest_pos.line){
+        if(this.cursor_pos.line === this.item_grid.length-1){
             this.set_cursor(0, this.cursor_pos.col);
+        }
+        else{
+            if(this.cursor_pos.col > this.item_grid[this.cursor_pos.line+1].length-1)
+                this.set_cursor(this.cursor_pos.line+1, this.item_grid[this.cursor_pos.line+1].length-1);
+            else this.set_cursor(this.cursor_pos.line+1, this.cursor_pos.col);
         }
     }
 
     previous_line(){
         if(this.item_grid.length === 1) return;
-        
-        if(this.cursor_pos.line > 0){
-            this.set_cursor(this.cursor_pos.line-1, this.cursor_pos.col);
+
+        if(this.cursor_pos.line === 0){
+            if(this.cursor_pos.col > this.item_grid[this.item_grid.length-1].length-1)
+                this.set_cursor(this.item_grid.length-1, this.item_grid[this.item_grid.length-1].length-1);
+            else this.set_cursor(this.item_grid.length-1, this.cursor_pos.col);
         }
-        else if(this.cursor_pos.line === 0){
-            this.set_cursor(highest_pos.line, this.cursor_pos.col);
+        else{
+            this.set_cursor(this.cursor_pos.line-1, this.cursor_pos.col);
         }
     }
 
@@ -179,11 +222,15 @@ export class InventoryWindow{
         this.parent.cursor_manager.move_to(CURSOR_X + col*ICON_SIZE, CURSOR_Y + line*ICON_SIZE, "point", true);
         if(this.parent.item_price_win.open){
             let is_repair = this.parent.sell_menu.is_repair_menu;
-            let itm = this.get_item_at(line, col);
-            if(is_repair) this.parent.update_item_info(itm.key_name, (this.data.info.items_list[itm.key_name].price*REPAIR_MULTIPLIER | 0), true, itm.broken);
+            let itm = this.item_grid[line][col];
+
+            let item_price = this.data.info.items_list[itm.key_name].price;
+            let important_item = this.data.info.items_list[itm.key_name].important_item;
+            if(is_repair)
+                this.parent.update_item_info(itm.key_name, (item_price*REPAIR_MULTIPLIER | 0), !itm.broken, itm.broken, important_item);
             else{
-                if(itm.broken) this.parent.update_item_info(itm.key_name, (this.data.info.items_list[itm.key_name].price*SELL_BROKEN_MULTIPLIER | 0));
-                else this.parent.update_item_info(itm.key_name, (this.data.info.items_list[itm.key_name].price*SELL_MULTIPLIER | 0));
+                if(itm.broken) this.parent.update_item_info(itm.key_name, (item_price*SELL_BROKEN_MULTIPLIER | 0), important_item, true, important_item);
+                else this.parent.update_item_info(itm.key_name, (item_price*SELL_MULTIPLIER | 0), important_item, true, important_item);
             }
         }
     }
@@ -191,69 +238,76 @@ export class InventoryWindow{
     /*Displays the sprites for the window
     Includes icons and quantity text*/
     set_sprites(){
-        for(let i=0; i<this.char_items.length; i++){
-            let this_item = this.data.info.items_list[this.char_items[i].key_name];
-            let col = i % MAX_PER_LINE;
-            let line = (i / MAX_PER_LINE) | 0;
+        let finish = false;
 
-            let dead_items = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === "items_icons"); });
-            let dead_backgrounds = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === "item_border"); });
+        for(let line=0; line<MAX_LINES; line++){
+            for(let col=0; col<MAX_PER_LINE; col++){
 
-            if(dead_items.length>0 && dead_backgrounds.length>0){
-                dead_backgrounds[0].reset(col*ICON_SIZE, line*ICON_SIZE);
-                dead_items[0].reset(col*ICON_SIZE, line*ICON_SIZE);
-                dead_items[0].frameName = this_item.key_name;
-            }
-            else{
-                this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "item_border", undefined, undefined, "sprites");
-                this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "items_icons", undefined, this_item.key_name, "sprites");
-            }
+                if(!this.item_grid[line][col]){
+                    finish = true;
+                    break;
+                }
 
-            if (this.char_items[i].broken) {
-                let dead_broken = this.sprite_group.children.filter(b => { return (b.alive === false && b.key === "broken"); });
-                if(dead_broken.length>0) dead_broken[0].reset(col*ICON_SIZE, line*ICON_SIZE);
-                else this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "broken", undefined,undefined, "sprites");
-            }
+                let this_item = this.data.info.items_list[this.item_grid[line][col].key_name];
 
-            if (this.char_items[i].equipped) {
-                let dead_icons = this.icon_group.children.filter(e => { return (e.alive === false && e.text === undefined); });
-                if(dead_icons.length>0) dead_icons[0].reset(col*ICON_SIZE, line*ICON_SIZE);
-                else this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "equipped", undefined,undefined, "icons");
-            }
+                let dead_items = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === "items_icons"); });
+                let dead_backgrounds = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === "item_border"); });
 
-            if (this.char_items[i].quantity > 1) {
-                let dead_text = this.icon_group.children.filter(t => { return (t.alive === false && t.text !== undefined); });
-                if(dead_text.length>0){
-                    dead_text[0].text = this.char_items[i].quantity.toString();
-                    dead_text[0].reset(col*ICON_SIZE, line*ICON_SIZE);
-                    dead_text[0].x += (SUB_TEXT_X_SHIFT - dead_text[0].width);
+                if(dead_items.length>0 && dead_backgrounds.length>0){
+                    dead_backgrounds[0].reset(col*ICON_SIZE, line*ICON_SIZE);
+                    dead_items[0].reset(col*ICON_SIZE, line*ICON_SIZE);
+                    dead_items[0].frameName = this_item.key_name;
                 }
                 else{
-                    let item_count = this.game.add.bitmapText(col*ICON_SIZE, line*ICON_SIZE, 'gs-item-bmp-font', this.char_items[i].quantity.toString());
-                    item_count.x += (SUB_TEXT_X_SHIFT - item_count.width);
-                    this.window.add_to_internal_group("icons", item_count);
+                    this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "item_border", undefined, undefined, "sprites");
+                    this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "items_icons", undefined, this_item.key_name, "sprites");
+                }
+
+                if (this.item_grid[line][col].broken) {
+                    let dead_broken = this.sprite_group.children.filter(b => { return (b.alive === false && b.key === "broken"); });
+                    if(dead_broken.length>0) dead_broken[0].reset(col*ICON_SIZE, line*ICON_SIZE);
+                    else this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "broken", undefined,undefined, "sprites");
+                }
+
+                if (this.item_grid[line][col].equipped) {
+                    let dead_icons = this.icon_group.children.filter(e => { return (e.alive === false && e.text === undefined); });
+                    if(dead_icons.length>0) dead_icons[0].reset(col*ICON_SIZE, line*ICON_SIZE);
+                    else this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "equipped", undefined,undefined, "icons");
+                }
+
+                if (this.item_grid[line][col].quantity > 1) {
+                    let dead_text = this.icon_group.children.filter(t => { return (t.alive === false && t.text !== undefined); });
+                    if(dead_text.length>0){
+                        dead_text[0].text = this.item_grid[line][col].quantity.toString();
+                        dead_text[0].reset(col*ICON_SIZE, line*ICON_SIZE);
+                        dead_text[0].x += (SUB_TEXT_X_SHIFT - dead_text[0].width);
+                    }
+                    else{
+                        let item_count = this.game.add.bitmapText(col*ICON_SIZE, line*ICON_SIZE, 'gs-item-bmp-font', this.item_grid[line][col].quantity.toString());
+                        item_count.x += (SUB_TEXT_X_SHIFT - item_count.width);
+                        this.window.add_to_internal_group("icons", item_count);
+                    }
                 }
             }
+            if(finish) break;
         }
         this.sprite_group.alpha = 1;
     }
 
     /*Opens this window for a given character
 
-    Input: char_index [number] - The character's party index
+    Input: char_key [string] - The character's key name
            item [string] - The item to check against
            expand [boolean] - If true, the window will be in expanded state
            close_callback [function] - Callback function (Optional)
            open_callback [function] - Callback function (Optional)*/
-    open(char_index, item=undefined, expand=false, close_callback, open_callback){
-        this.char = this.data.info.party_data.members[char_index];
+    open(char_key, item=undefined, expand=false, close_callback, open_callback){
+        this.char = this.data.info.party_data.members.filter(c => { return (c.key_name === char_key)})[0];
         this.selected_item = item;
 
-        this.char_items = this.char.items.filter(item_obj => {return item_obj.key_name in this.data.info.items_list;});
-
+        this.make_item_grid();
         this.check_expand(expand);
         this.set_sprites();
-        this.make_item_grid();
 
         this.is_open = true;
         this.close_callback = close_callback;
@@ -270,9 +324,9 @@ export class InventoryWindow{
         this.text.text.alpha = 0;
         this.text.shadow.alpha = 0;
         this.char = null;
-        this.char_items = [];
         this.selected_item = null;
         this.cursor_pos = {line: 0, col: 0};
+        this.item_grid = [];
 
         this.is_open = false;
         this.window.close(this.close_callback, false);

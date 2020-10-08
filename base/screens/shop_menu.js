@@ -125,19 +125,22 @@ export class ShopMenuScreen{
         this.your_coins_win.update_text(String(this.data.info.party_data.coins), this.your_coins_text);
     }
 
-    update_item_info(key, custom_price, repair_menu=false, broken=false){
+    update_item_info(key, custom_price, custom_msg=false, broken=false, cant_sell=false){
         let this_item = this.data.info.items_list[key];
 
         this.item_desc_win.update_text(this_item.description, this.item_desc_text);
         this.item_price_win.update_text(this_item.name, this.item_name_text);
 
-        let coins_label = (repair_menu && !broken) ? "" : "Coins";
+        let coins_label = (custom_msg) ? "" : "Coins";
         this.item_price_win.update_text(coins_label, this.item_price_coins_label);
-        let price_label = (repair_menu && !broken) ? "It's not broken." : "Price"
+
+        let price_label = "Price";
+        if(custom_msg && !broken) price_label = "It's not broken.";
+        else if(custom_msg && cant_sell) price_label = "We can't buy that.";
         this.item_price_win.update_text(price_label, this.item_price_label);
 
         let price_val = custom_price ? custom_price : this_item.price;
-        let price_text = (repair_menu && !broken) ? "" : price_val;
+        let price_text = (custom_msg) ? "" : price_val;
         this.item_price_win.update_text(price_text, this.item_price_val_text);
     }
 
@@ -147,11 +150,13 @@ export class ShopMenuScreen{
             this.item_price_win.update_position({x: ITEM_PRICE_WIN_X, y: ITEM_PRICE_WIN_Y});
             this.item_desc_win.update_position({x: ITEM_DESC_WIN_X, y: ITEM_DESC_WIN_Y});
             this.your_coins_win.update_position({x: YOUR_COINS_WIN_X, y: YOUR_COINS_WIN_Y});
+            this.windows_mode = "buy";
         }
         else{
             this.item_price_win.update_position({x: ITEM_PRICE_WIN_X2, y: ITEM_PRICE_WIN_Y2});
             this.item_desc_win.update_position({x: ITEM_DESC_WIN_X2, y: ITEM_DESC_WIN_Y2});
             this.your_coins_win.update_position({x: YOUR_COINS_WIN_X2, y: YOUR_COINS_WIN_Y2});
+            this.windows_mode = "sell";
         }
     }
 
