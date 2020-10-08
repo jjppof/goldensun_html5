@@ -20,8 +20,10 @@ export class GoldenSun {
 
     //game states
     public menu_open: boolean = false;
+    public shop_open: boolean = false;
     public in_battle: boolean = false;
     public created: boolean = false;
+    public force_stop_movement: boolean = false;
 
     //game objects
     public hero: Hero = null;
@@ -200,12 +202,16 @@ export class GoldenSun {
         });
     }
 
+    hero_movement_allowed() {
+        return !(this.hero.in_action(true) || this.menu_open || this.shop_open || this.in_battle || this.tile_event_manager.on_event || this.force_stop_movement);
+    }
+
     update() {
         if (!this.created) {
             this.render_loading();
             return;
         }
-        if (!this.tile_event_manager.on_event && !this.game_event_manager.on_event && !this.hero.pushing && !this.menu_open && !this.hero.casting_psynergy && !this.in_battle) {
+        if (this.hero_movement_allowed()) {
             this.hero.update_tile_position(this.map.sprite);
 
             this.tile_event_manager.fire_triggered_events();
@@ -218,9 +224,7 @@ export class GoldenSun {
             this.map.update(); //update map and its objects position/velocity/sprite
         } else {
             this.hero.stop_char(false);
-            if (this.hero.pushing) {
-                this.hero.set_action();
-            }else if (this.menu_open && this.menu_screen.horizontal_menu.menu_active) {
+            if (this.menu_open && this.menu_screen.horizontal_menu.menu_active) {
                 this.menu_screen.update_position();
             } else if (this.in_battle) {
                 this.battle_instance.update();

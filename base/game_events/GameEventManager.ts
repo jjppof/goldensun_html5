@@ -50,6 +50,7 @@ export class GameEventManager {
             if (is_close_check) {
                 this.data.hero.stop_char()
                 this.on_event = true;
+                this.data.force_stop_movement = true;
                 this.control_enable = false;
                 this.set_npc_event(npc);
                 break;
@@ -73,6 +74,7 @@ export class GameEventManager {
                 this.fire_next_step = dialog_manager.next.bind(dialog_manager, finished => {
                     if (finished) {
                         this.on_event = false;
+                        this.data.force_stop_movement = false;
                         const initial_action = this.data.dbs.npc_db[npc.key_name].initial_action;
                         const initial_direction = this.data.dbs.npc_db[npc.key_name].actions[initial_action].initial_direction;
                         npc.play(initial_action, initial_direction);
