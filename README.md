@@ -34,9 +34,11 @@ GS-HTML5 supports both Javascript and Typescript. We use [Webpack](https://webpa
 ## Utils
 
 Some useful tools that I use to manage the resources:
+- [Visual Studio Code](https://code.visualstudio.com/download) (for developing the game)
 - [TexturePacker 4.6.1](https://www.codeandweb.com/texturepacker) (for creating spritesheets)
-- [Sprite Sheet Packer](https://www.codeandweb.com/free-sprite-sheet-packer) (free alternative for TexturePacker)
+  - [Sprite Sheet Packer](https://www.codeandweb.com/free-sprite-sheet-packer) (free alternative for TexturePacker)
 - [PhysicsEditor 1.6.3](https://www.codeandweb.com/physicseditor) (for creating collision structures)
+  - [LoonPhysics](https://loonride.com/physics) (free alternative for PhysicsEditor)
 - [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579)) (for building maps)
 - [Shoebox](https://renderhjs.net/shoebox/) (for creating fonts)
 - [Golden Sun Editor](http://forum.goldensunhacking.net/index.php?action=downloads;sa=view;down=124) (for game info)
