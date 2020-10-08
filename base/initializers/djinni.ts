@@ -1,5 +1,5 @@
-import { Djinn } from '../Djinn.js';
-import { SpriteBase } from '../SpriteBase.js';
+import { Djinn } from '../Djinn';
+import { SpriteBase } from '../SpriteBase';
 import { elements } from '../utils.js';
 
 export function initialize_djinni(djinni_db) {

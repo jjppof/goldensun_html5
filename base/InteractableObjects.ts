@@ -1,4 +1,4 @@
-import { SpriteBase } from "./SpriteBase.js";
+import { SpriteBase } from "./SpriteBase";
 import { TileEvent, event_types as tile_event_types } from "./tile_events/TileEvent.js";
 import * as numbers from './magic_numbers.js';
 import { directions, get_surroundings, mount_collision_polygon } from "./utils.js";

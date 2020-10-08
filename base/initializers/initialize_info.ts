@@ -1,11 +1,11 @@
-import { initialize_main_chars, initialize_classes } from './main_chars.js';
-import { initialize_abilities, initialize_field_abilities } from './abilities.js';
-import { initialize_items } from './items.js';
-import { initialize_djinni, initialize_djinni_sprites } from './djinni.js';
-import { initialize_enemies } from './enemies.js';
-import { initialize_maps } from './maps.js';
-import { initialize_menu } from '../screens/menu.js';
-import { initialize_misc_data } from './misc_data.js';
+import { initialize_main_chars, initialize_classes } from './main_chars';
+import { initialize_abilities, initialize_field_abilities } from './abilities';
+import { initialize_items } from './items';
+import { initialize_djinni, initialize_djinni_sprites } from './djinni';
+import { initialize_enemies } from './enemies';
+import { initialize_maps } from './maps';
+import { initialize_menu } from '../screens/menu';
+import { initialize_misc_data } from './misc_data';
 
 export async function initialize_game_data(game, data) {
     let load_maps_promise_resolve;

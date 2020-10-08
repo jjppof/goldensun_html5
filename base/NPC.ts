@@ -1,8 +1,8 @@
-import { SpriteBase } from './SpriteBase.js';
-import { event_types as game_event_types, GameEvent } from "./game_events/GameEvent.js";
+import { SpriteBase } from './SpriteBase';
+import { event_types as game_event_types, GameEvent } from "./game_events/GameEvent";
 import { mount_collision_polygon } from './utils.js';
 import { ControllableChar } from './ControllableChar';
-import { BattleEvent } from './game_events/BattleEvent.js';
+import { BattleEvent } from './game_events/BattleEvent';
 
 export class NPC_Sprite extends SpriteBase {
     constructor (key_name, actions) {

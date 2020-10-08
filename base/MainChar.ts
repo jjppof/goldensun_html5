@@ -1,9 +1,9 @@
-import { SpriteBase } from './SpriteBase.js';
-import { choose_right_class, Classes } from './Classes.js';
-import { djinn_status } from './Djinn.js';
-import { Effect, effect_types } from './Effect.js';
-import { item_types } from './Item.js';
-import { Player, fighter_types, permanent_status } from './Player.js';
+import { SpriteBase } from './SpriteBase';
+import { choose_right_class, Classes } from './Classes';
+import { djinn_status } from './Djinn';
+import { Effect, effect_types } from './Effect';
+import { item_types } from './Item';
+import { Player, fighter_types, permanent_status } from './Player';
 import { elements, ordered_elements } from './utils.js';
 import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from './magic_numbers.js';
 import * as _ from "lodash";
@@ -104,9 +104,9 @@ export class MainChar extends Player {
     public mars_resist_current: number;
     public jupiter_resist_current: number;
     public max_hp: number;
-    public current_max_hp: number;
+    public current_hp: number;
     public max_pp: number;
-    public current_max_pp: number;
+    public current_pp: number;
     public atk: number;
     public current_atk: number;
     public def: number;

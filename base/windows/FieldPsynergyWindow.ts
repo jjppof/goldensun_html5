@@ -1,7 +1,7 @@
-import { TextObj, Window } from '../Window.js';
+import { TextObj, Window } from '../Window';
 import { capitalize, get_text_width } from "../utils.js";
 import * as numbers from '../magic_numbers.js';
-import { GoldenSun } from '../GoldenSun.js';
+import { GoldenSun } from '../GoldenSun';
 
 const BASE_WIDTH = (numbers.WINDOW_PADDING_H << 1) + 8;
 const BASE_HEIGHT = 20;

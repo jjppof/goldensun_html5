@@ -1,4 +1,4 @@
-import { Ability } from '../Ability.js';
+import { Ability } from '../Ability';
 import { MoveFieldPsynergy } from '../field_abilities/move.js';
 import { FrostFieldPsynergy } from '../field_abilities/frost.js';
 import { GrowthFieldPsynergy } from '../field_abilities/growth.js';

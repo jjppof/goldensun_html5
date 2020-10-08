@@ -1,4 +1,5 @@
-import { Window } from '../Window.js';
+import { MainChar } from '../MainChar';
+import { TextObj, Window } from '../Window';
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;
@@ -10,6 +11,25 @@ Used for Psynergy and Item menus
 
 Input: game [Phaser:Game] - Reference to the running game object*/
 export class BasicInfoWindow {
+    public game: Phaser.Game;
+    public char: MainChar;
+    public window_open: boolean;
+    public x: number;
+    public y: number;
+    public base_window: Window;
+    public avatar_group: Phaser.Group;
+    public x_avatar: number;
+    public y_avatar: number;
+    public avatar: Phaser.Sprite;
+    public name_text: TextObj;
+    public lv_text: TextObj;
+    public class_text: TextObj;
+    public hp_text: TextObj;
+    public pp_text: TextObj;
+    public max_hp_text: TextObj;
+    public max_pp_text: TextObj;
+    public exp_text: TextObj;
+
     constructor(game) {
         this.game = game;
         this.char = null;

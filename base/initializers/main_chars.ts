@@ -1,5 +1,5 @@
-import { Classes } from '../Classes.js';
-import { MainChar, MainCharBase } from '../MainChar.js';
+import { Classes } from '../Classes';
+import { MainChar, MainCharBase } from '../MainChar';
 
 export function initialize_classes(classes_db) {
     let classes_list = {};

@@ -1,4 +1,4 @@
-import { Item } from '../Item.js';
+import { Item } from '../Item';
 
 export function initialize_items(game, items_db, load_promise_resolve) {
     let items_list = {};

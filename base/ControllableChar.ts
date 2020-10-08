@@ -1,8 +1,8 @@
 import * as numbers from "./magic_numbers.js";
 import { reverse_directions, base_actions } from "./utils.js";
-import { Footsteps } from "./Footsteps.js";
+import { Footsteps } from "./Footsteps";
 import { GoldenSun } from "./GoldenSun";
-import { SpriteBase } from "./SpriteBase.js";
+import { SpriteBase } from "./SpriteBase";
 
 const DEFAULT_SHADOW_KEYNAME = "shadow";
 

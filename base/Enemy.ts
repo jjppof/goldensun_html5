@@ -3,7 +3,7 @@ import { Player, fighter_types } from "./Player";
 import { ordered_elements } from "./utils.js";
 import * as _ from "lodash";
 import * as numbers from "./magic_numbers.js";
-import { effect_types } from "./Effect.js";
+import { effect_types } from "./Effect";
 
 export class Enemy extends Player {
     public level: number;
@@ -159,7 +159,7 @@ export class Enemy extends Player {
 }
 
 export class EnemyBase extends SpriteBase {
-    constructor(key_name, data) {
+    constructor(key_name) {
         super(key_name, ["battle"]);
     }
 }

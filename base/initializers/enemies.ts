@@ -1,4 +1,4 @@
-import { EnemyBase } from '../Enemy.js';
+import { EnemyBase } from '../Enemy';
 
 export function initialize_enemies(game, enemies_db, load_promise_resolve) {
     let load_promises = [];
@@ -8,9 +8,9 @@ export function initialize_enemies(game, enemies_db, load_promise_resolve) {
             data: enemies_db[i],
             sprite_base: null
         };
-        info.sprite_base = new EnemyBase(enemy_data.key_name);
+        info.sprite_base = new EnemyBase(info.data.key_name);
 
-        const action = enemy_data.battle_spritesheet;
+        const action = info.data.battle_spritesheet;
         if (action !== undefined) {
             info.sprite_base.setActionSpritesheet("battle", action.spritesheet_img, action.spritesheet);
             info.sprite_base.setActionDirections("battle", action.positions, action.frames_number);

@@ -1,5 +1,5 @@
 import { Battle } from "../battle/Battle.js";
-import { GameEvent, event_types } from "./GameEvent.js";
+import { GameEvent, event_types } from "./GameEvent";
 
 export class BattleEvent extends GameEvent {
     public background_key: string;

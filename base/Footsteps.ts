@@ -1,5 +1,5 @@
-import { GoldenSun } from "./GoldenSun.js";
-import { SpriteBase } from "./SpriteBase.js";
+import { GoldenSun } from "./GoldenSun";
+import { SpriteBase } from "./SpriteBase";
 import {base_actions, directions} from "./utils.js";
 
 const FOOTSTEPS_TTL = Phaser.Timer.SECOND << 1;
@@ -161,7 +161,7 @@ export class Footsteps{
     /*Kills all sprites and resets the timers
 
     Input: force_destroy [boolean] - If true, destroys steps instead*/
-    clean_all(force_destroy){
+    clean_all(force_destroy = false){
         this.new_step_timer.stop(true);
         this.expire_timer.stop(true);
         this.group.children.forEach((sprite: Phaser.Sprite) => {

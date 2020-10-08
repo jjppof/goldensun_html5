@@ -1,7 +1,7 @@
-import { Ability } from "./Ability.js";
-import { Enemy } from "./Enemy.js";
-import { Item } from "./Item.js";
-import { MainChar } from "./MainChar.js";
+import { Ability } from "./Ability";
+import { Enemy } from "./Enemy";
+import { Item } from "./Item";
+import { MainChar } from "./MainChar";
 import { variation, elements } from "./utils.js"
 
 export const effect_types = {
@@ -256,7 +256,7 @@ export class Effect {
         }
     }
 
-    apply_effect(direct_value) {
+    apply_effect(direct_value?) {
         switch (this.type) {
             case effect_types.MAX_HP:
             case effect_types.MAX_PP:

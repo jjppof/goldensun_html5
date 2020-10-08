@@ -1,3 +1,5 @@
+import * as _ from "lodash";
+
 export function load_databases(game, dbs) {
     // initializing json database data
     dbs.init_db = game.cache.getJSON('init_db'); 

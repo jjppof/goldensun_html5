@@ -56,7 +56,7 @@ export class Classes {
     }
 }
 
-export function choose_right_class(classes_list, class_table, element_afinity, venus_lvl, mercury_lvl, mars_lvl, jupiter_lvl) {
+export function choose_right_class(classes_list: {[class_key: string]: Classes}, class_table, element_afinity, venus_lvl, mercury_lvl, mars_lvl, jupiter_lvl): Classes {
     let secondary_elements = [
         ...element_afinity !== elements.VENUS ? [{element: elements.VENUS, level: venus_lvl}] : [],
         ...element_afinity !== elements.MERCURY ? [{element: elements.MERCURY, level: mercury_lvl}] : [],
@@ -71,7 +71,7 @@ export function choose_right_class(classes_list, class_table, element_afinity, v
         secondary_afinity = _.maxBy(secondary_elements, element => element.level).element;
     }
     const class_type = class_table[element_afinity][secondary_afinity];
-    let classes = Object.values(classes_list).filter((this_class: Classes) => this_class.class_type === class_type);
+    let classes: Classes[] = Object.values(classes_list).filter((this_class: Classes) => this_class.class_type === class_type);
     classes = classes.filter((this_class: Classes) => {
         return this_class.required_venus_level <= venus_lvl &&
         this_class.required_mercury_level <= mercury_lvl &&

@@ -9,7 +9,7 @@ import { ClimbEvent } from "./tile_events/ClimbEvent.js";
 import { StepEvent } from "./tile_events/StepEvent.js";
 import { CollisionEvent } from "./tile_events/CollisionEvent.js";
 import { SpeedEvent } from "./tile_events/SpeedEvent.js";
-import { GameEvent } from "./game_events/GameEvent.js";
+import { GameEvent } from "./game_events/GameEvent";
 import { GoldenSun } from "./GoldenSun";
 import * as _ from "lodash";
 
