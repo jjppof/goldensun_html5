@@ -108,15 +108,17 @@ export class SellRepairMenu{
             }
         }
 
-        let exists = false;
-        let shop_list = this.data.info.shops_list[this.parent.shop_key].item_list;
-        for(let i=0; i<shop_list.length; i++){
-            if(shop_list[i].key_name === this.selected_item.key_name){
-                exists = true;
-                this.data.info.shops_list[this.parent.shop_key].item_list[i].quantity += quantity;
+        if(this.data.info.items_list[this.selected_item.key_name].rare_item){ 
+            let exists = false;
+            let shop_list = this.data.info.shops_list[this.parent.shop_key].item_list;
+            for(let i=0; i<shop_list.length; i++){
+                if(shop_list[i].key_name === this.selected_item.key_name){
+                    exists = true;
+                    this.data.info.shops_list[this.parent.shop_key].item_list[i].quantity += quantity;
+                }
             }
+            if(!exists) shop_list.push({key_name: this.selected_item.key_name, quantity: quantity});
         }
-        if(!exists) shop_list.push({key_name: this.selected_item.key_name, quantity: quantity});
 
         if(this.inv_win.is_open) this.inv_win.close();
         if(!this.inv_win.is_open) this.inv_win.open(this.selected_character.key_name, undefined, false);
@@ -132,7 +134,14 @@ export class SellRepairMenu{
         
         this.selected_item = this.inv_win.item_grid[this.inv_win_pos.line][this.inv_win_pos.col];
 
-        if(this.selected_item.quantity === 1){
+        if(this.data.info.items_list[this.selected_item.key_name].important_item){
+            this.npc_dialog.update_dialog("cant_sell", true);
+
+            this.control_manager.set_control(false, false, false, false, {esc: this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos),
+            enter: this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos)})
+        }
+
+        else if(this.selected_item.quantity === 1){
             let msg_key = this.data.info.items_list[this.selected_item.key_name].rare_item ? "sell_artifact" : "sell_normal";
 
             let text = this.npc_dialog.get_message(msg_key);
@@ -144,8 +153,8 @@ export class SellRepairMenu{
             this.yesno_action.open_menu({yes: this.on_sale_success.bind(this), no: () => {
                 let decline_msg = this.data.info.items_list[this.selected_item.key_name].rare_item ? "decline_sell_artifact" : "decline_sell_normal";
                 this.npc_dialog.update_dialog(decline_msg, true);
-                this.control_manager.set_control(false, false, false, false, {esc: this.on_character_select.bind(this, "sale_follow_up"),
-                    enter: this.on_character_select.bind(this, "sell_follow_up", this.char_index, this.inv_win_pos)})
+                this.control_manager.set_control(false, false, false, false, {esc: this.on_character_select.bind(this, "sale_follow_up", this.inv_win_pos),
+                    enter: this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos)})
                 }},
                 {x: YESNO_X, y: YESNO_Y});
         }

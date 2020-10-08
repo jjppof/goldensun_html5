@@ -66,6 +66,7 @@ export class ShopMenuScreen{
 
         this.buttons_keys = ["buy", "sell", "artifacts", "repair"];
         this.windows_mode = "buy";
+        this.current_index= 0;
 
         this.cursor_manager = new CursorManager(this.game);
         this.control_manager = new ControlManager(this.game);
@@ -162,6 +163,7 @@ export class ShopMenuScreen{
 
     button_press() {
         this.horizontal_menu.deactivate(true);
+        this.current_index = this.horizontal_menu.selected_button_index;
         
         switch (this.buttons_keys[this.horizontal_menu.selected_button_index]){
             case "buy":
@@ -202,7 +204,7 @@ export class ShopMenuScreen{
         else{
             this.npc_dialog.update_dialog(message_key);
         }
-        this.horizontal_menu.open();
+        this.horizontal_menu.open(undefined, this.current_index);
 
     }
 
@@ -234,6 +236,7 @@ export class ShopMenuScreen{
 
         this.normal_item_list = [];
         this.artifact_list = [];
+        this.current_index = 0;
 
         this.control_manager.reset();
         this.control_manager.actions["enter"].callback = this.end_dialog.bind(this);
