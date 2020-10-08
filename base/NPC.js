@@ -20,9 +20,7 @@ export const npc_movement_types = {
 export const npc_types = {
     NORMAL: "normal",
     INN: "inn",
-    WEAPON_SHOP: "weapon_shop",
-    ARMOR_SHOP: "armor_shop",
-    MEDICINE_SHOP: "medicine_shop"
+    SHOP: "shop"
 };
 
 export class NPC extends ControllableChar {

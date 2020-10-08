@@ -54,32 +54,43 @@ export class GameEventManager {
     set_npc_event(npc) {
         if (npc.npc_type === npc_types.NORMAL) {
             if (npc.message) {
-                const dialog_manager = new DialogManager(this.game, this.data);
-                dialog_manager.set_dialog(npc.message, npc.avatar, this.data.hero.current_direction);
-                const npc_x = npc.sprite.x;
-                const npc_y = npc.sprite.y;
-                const interaction_pattern = this.data.dbs.npc_db[npc.key_name].interaction_pattern;
-                const interaction_directions = GameEventManager.get_interaction_directions(
-                    this.data.hero.sprite.x, this.data.hero.sprite.y, npc_x, npc_y, interaction_pattern, npc.body_radius);
-                this.data.hero.set_direction(interaction_directions.hero_direction);
-                this.data.hero.play(base_actions.IDLE, reverse_directions[interaction_directions.hero_direction]);
-                npc.play(base_actions.IDLE, reverse_directions[interaction_directions.target_direction]);
-                this.fire_next_step = dialog_manager.next.bind(dialog_manager, finished => {
-                    if (finished) {
-                        this.on_event = false;
-                        this.data.force_stop_movement = false;
-                        const initial_action = this.data.dbs.npc_db[npc.key_name].initial_action;
-                        const initial_direction = this.data.dbs.npc_db[npc.key_name].actions[initial_action].initial_direction;
-                        npc.play(initial_action, initial_direction);
-                        this.fire_npc_events(npc);
-                    }
-                    this.control_enable = true;
-                });
-                this.fire_next_step();
+                this.manage_npc_dialog(npc);
             } else {
                 this.fire_npc_events(npc);
             }
+        } else if (npc.npc_type === npc_types.SHOP) {
+            //open the shop here
+
+            //on shop finish:
+            this.on_event = false;
+            this.data.force_stop_movement = false;
+            this.control_enable = true;
         }
+    }
+
+    manage_npc_dialog(npc) {
+        const dialog_manager = new DialogManager(this.game, this.data);
+        dialog_manager.set_dialog(npc.message, npc.avatar, this.data.hero.current_direction);
+        const npc_x = npc.sprite.x;
+        const npc_y = npc.sprite.y;
+        const interaction_pattern = this.data.dbs.npc_db[npc.key_name].interaction_pattern;
+        const interaction_directions = GameEventManager.get_interaction_directions(
+            this.data.hero.sprite.x, this.data.hero.sprite.y, npc_x, npc_y, interaction_pattern, npc.body_radius);
+        this.data.hero.set_direction(interaction_directions.hero_direction);
+        this.data.hero.play(base_actions.IDLE, reverse_directions[interaction_directions.hero_direction]);
+        npc.play(base_actions.IDLE, reverse_directions[interaction_directions.target_direction]);
+        this.fire_next_step = dialog_manager.next.bind(dialog_manager, finished => {
+            if (finished) {
+                this.on_event = false;
+                this.data.force_stop_movement = false;
+                const initial_action = this.data.dbs.npc_db[npc.key_name].initial_action;
+                const initial_direction = this.data.dbs.npc_db[npc.key_name].actions[initial_action].initial_direction;
+                npc.play(initial_action, initial_direction);
+                this.fire_npc_events(npc);
+            }
+            this.control_enable = true;
+        });
+        this.fire_next_step();
     }
 
     fire_npc_events(npc) {
