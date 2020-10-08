@@ -45,6 +45,7 @@ export class SellRepairMenu{
             this.data.info.party_data.coins -= (this.data.info.items_list[this.selected_item.key_name].price*REPAIR_MULTIPLIER | 0);
 
             this.npc_dialog.update_dialog("repair_done", true);
+            this.parent.update_your_coins();
 
             this.control_manager.set_control(false, false, false, false, {esc: this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos),
                 enter: this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos)});
