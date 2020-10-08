@@ -217,14 +217,14 @@ export class ShopMenuScreen{
         }
 
         this.set_item_lists();
-        this.data.menu_open = true;
+        this.data.shop_open = true;
         this.open_horizontal_menu();
     }
 
     end_dialog() {
         this.shop_key = null;
         this.npc_dialog.close();
-        this.data.menu_open = false;
+        this.data.shop_open = false;
         this.control_manager.reset();
     }
 

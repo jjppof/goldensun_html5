@@ -201,10 +201,6 @@ class GoldenSun {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
             this.info.field_abilities_list.growth.cast(this.hero, this.dbs.init_db.initial_shortcuts.growth);
         });
-        this.game.input.keyboard.addKey(Phaser.Keyboard.S).onDown.add(() => {
-            if (this.hero.in_action() || this.menu_open || this.in_battle) return;
-            shop_screen.open_menu("madra_test_shop");
-        });
     }
 
     hero_movement_allowed() {
