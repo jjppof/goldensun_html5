@@ -1,11 +1,11 @@
 import { capitalize } from '../utils.js';
 import { HorizontalMenu } from '../menus/HorizontalMenu.js';
-import { PsynergyMenuScreen } from './psynergy_menu.js';
-import { ItemMenuScreen } from './item_menu.js';
-import { DjinnMenuScreen } from './djinni_menu.js';
+import { MainPsynergyMenu } from './MainPsynergyMenu.js';
+import { MainItemMenu } from './MainItemMenu.js';
+import { MainDjinnMenu } from './MainDjinnMenu.js';
 import { CharsStatusWindow } from '../windows/CharsStatusWindow.js';
 
-export class MenuScreen {
+export class MainMenu {
     constructor(game, data) {
         this.game = game;
         this.data = data;
@@ -27,9 +27,9 @@ export class MenuScreen {
         );
         ++esc_propagation_priority;
         ++enter_propagation_priority;
-        this.psynergy_menu = new PsynergyMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
-        this.item_menu = new ItemMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
-        this.djinn_menu = new DjinnMenuScreen(this.game, this.data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority, spacebar_propagation_priority);
+        this.psynergy_menu = new MainPsynergyMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
+        this.item_menu = new MainItemMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
+        this.djinn_menu = new MainDjinnMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority, spacebar_propagation_priority);
     }
 
     button_press(index) {
@@ -88,10 +88,10 @@ export function initialize_menu(game, data) {
             data.menu_open = true;
             data.hero.stop_char();
             data.hero.update_shadow();
-            data.menu_screen.open_menu();
-        } else if (data.menu_screen.is_active()) {
-            data.menu_screen.close_menu();
+            data.main_menu.open_menu();
+        } else if (data.main_menu.is_active()) {
+            data.main_menu.close_menu();
         }
     }, this);
-    return new MenuScreen(game, data);
+    return new MainMenu(game, data);
 }

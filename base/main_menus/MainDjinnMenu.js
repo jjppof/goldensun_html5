@@ -2,7 +2,7 @@ import { CharsQuickInfoDjinnWindow } from '../windows/djinn/CharsQuickInfoDjinnW
 import { DjinnListWindow } from '../windows/djinn/DjinnListWindow.js';
 import { DjinnActionWindow } from '../windows/djinn/DjinnActionWindow.js';
 
-export class DjinnMenuScreen {
+export class MainDjinnMenu {
     constructor(game, data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority, spacebar_propagation_priority) {
         this.game = game;
         this.data = data;

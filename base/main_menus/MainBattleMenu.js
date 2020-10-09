@@ -17,7 +17,7 @@ const INNER_TITLE_WINDOW_WIDTH = 60;
 const FORWARD = 1;
 const BACKWARD = -1;
 
-export class BattleMenuScreen {
+export class MainBattleMenu {
     constructor(game, data, enter_propagation_priority, esc_propagation_priority, on_abilities_choose, choose_targets) {
         this.game = game;
         this.data = data;

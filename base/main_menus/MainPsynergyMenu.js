@@ -29,7 +29,7 @@ const PSY_OVERVIEW_WIN_SPACE_BETWN_LINE = 3;
 const PSY_OVERVIEW_WIN_SPACE_BETWN_ICO = ((PSY_OVERVIEW_WIN_WIDTH - 2*(numbers.INSIDE_BORDER_WIDTH + PSY_OVERVIEW_WIN_INSIDE_PADDING_H)) -
     (PSY_OVERVIEW_WIN_ICONS_PER_LINE * numbers.ICON_WIDTH))/(PSY_OVERVIEW_WIN_ICONS_PER_LINE - 1);
 
-export class PsynergyMenuScreen {
+export class MainPsynergyMenu {
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;

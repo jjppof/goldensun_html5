@@ -36,7 +36,7 @@ const SUB_ICON_Y = 8;
 const ITEM_OVERVIEW_Y_SHIFT = 16;
 const ITEM_OVERVIEW_HEIGHT_SHIFT = 16;
 
-export class ItemMenuScreen {
+export class MainItemMenu {
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;

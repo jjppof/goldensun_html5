@@ -11,7 +11,7 @@ import { load_databases } from './initializers/databases_loader';
 import { initialize_game_data } from './initializers/initialize_info';
 import { Map } from './Map';
 import { Battle } from './battle/Battle.js';
-import { MenuScreen } from './screens/menu.js';
+import { MainMenu } from './main_menus/MainMenu.js';
 
 export class GoldenSun {
     public game: Phaser.Game = null;
@@ -30,7 +30,7 @@ export class GoldenSun {
     public collision: Collision = null;
     public cursors: Phaser.CursorKeys = null;
     public debug: Debug = null;
-    public menu_screen: MenuScreen = null;
+    public main_menu: MainMenu = null;
     public map: Map = null;
     public tile_event_manager: TileEventManager = null;
     public game_event_manager: GameEventManager = null;
@@ -224,8 +224,8 @@ export class GoldenSun {
             this.map.update(); //update map and its objects position/velocity/sprite
         } else {
             this.hero.stop_char(false);
-            if (this.menu_open && this.menu_screen.horizontal_menu.menu_active) {
-                this.menu_screen.update_position();
+            if (this.menu_open && this.main_menu.horizontal_menu.menu_active) {
+                this.main_menu.update_position();
             } else if (this.in_battle) {
                 this.battle_instance.update();
             }

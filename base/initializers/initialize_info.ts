@@ -4,7 +4,7 @@ import { initialize_items } from './items';
 import { initialize_djinni, initialize_djinni_sprites } from './djinni';
 import { initialize_enemies } from './enemies';
 import { initialize_maps } from './maps';
-import { initialize_menu } from '../screens/menu';
+import { initialize_menu } from '../main_menus/MainMenu';
 import { initialize_misc_data } from './misc_data';
 
 export async function initialize_game_data(game, data) {
@@ -70,5 +70,5 @@ export async function initialize_game_data(game, data) {
     data.info.field_abilities_list = initialize_field_abilities(game, data);
 
     //initialize screens
-    data.menu_screen = initialize_menu(game, data);
+    data.main_menu = initialize_menu(game, data);
 }
