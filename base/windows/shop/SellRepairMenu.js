@@ -206,6 +206,7 @@ export class SellRepairMenu{
         if(this.inv_win.is_open) this.inv_win.close();
         if(!this.inv_win.is_open) this.inv_win.open(this.selected_character.key_name, undefined, false);
         this.inv_win.set_cursor(item_pos.line,item_pos.col);
+        if(!this.inv_win.item_grid[item_pos.line][item_pos.col]) this.inv_win.previous_col();
 
         this.control_manager.set_control(true, true, true, true, {right: this.inv_win.next_col.bind(this.inv_win),
             left: this.inv_win.previous_col.bind(this.inv_win),
