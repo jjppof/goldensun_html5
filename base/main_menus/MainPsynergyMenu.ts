@@ -1,8 +1,9 @@
-import { CharsMenu } from '../menus/CharsMenu.js';
-import { BasicInfoWindow } from '../windows/BasicInfoWindow.js';
-import { ItemPsynergyChooseWindow } from '../windows/ItemPsynergyChooseWindow.js';
-import { Window } from '../Window.js';
+import { CharsMenu } from '../menus/CharsMenu';
+import { BasicInfoWindow } from '../windows/BasicInfoWindow';
+import { ItemPsynergyChooseWindow } from '../windows/ItemPsynergyChooseWindow';
+import { TextObj, Window } from '../Window';
 import * as numbers from '../magic_numbers.js';
+import { GoldenSun } from '../GoldenSun';
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;
@@ -30,6 +31,28 @@ const PSY_OVERVIEW_WIN_SPACE_BETWN_ICO = ((PSY_OVERVIEW_WIN_WIDTH - 2*(numbers.I
     (PSY_OVERVIEW_WIN_ICONS_PER_LINE * numbers.ICON_WIDTH))/(PSY_OVERVIEW_WIN_ICONS_PER_LINE - 1);
 
 export class MainPsynergyMenu {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public chars_menu: CharsMenu;
+    public basic_info_window: BasicInfoWindow;
+    public selected_char_index: number;
+    public is_open: boolean;
+    public close_callback: Function;
+    public guide_window: Window;
+    public guide_window_text: TextObj;
+    public choosing_psynergy: boolean;
+    public guide_window_msgs: {
+        choosing_char
+        choosing_psynergy
+    };
+    public description_window: Window;
+    public description_window_text: TextObj;
+    public psynergy_overview_window: Window;
+    public shortcuts_window: Window;
+    public psynergy_choose_window: ItemPsynergyChooseWindow;
+
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -52,7 +75,7 @@ export class MainPsynergyMenu {
         this.description_window_text = this.description_window.set_single_line_text("");
         this.psynergy_overview_window = new Window(this.game, PSY_OVERVIEW_WIN_X, PSY_OVERVIEW_WIN_Y, PSY_OVERVIEW_WIN_WIDTH, PSY_OVERVIEW_WIN_HEIGHT);
         this.shortcuts_window = new Window(this.game, SHORTCUTS_WINDOW_X, SHORTCUTS_WINDOW_Y, SHORTCUTS_WINDOW_WIDTH, SHORTCUTS_WINDOW_HEIGHT);
-        this.shortcuts_window_text = this.shortcuts_window.set_text(["Use a keyboard number", "to set a shorcut."], undefined, 7, 3);
+        this.shortcuts_window.set_text(["Use a keyboard number", "to set a shorcut."], undefined, 7, 3);
         this.psynergy_choose_window = new ItemPsynergyChooseWindow(
             this.game,
             this.data,
@@ -110,7 +133,7 @@ export class MainPsynergyMenu {
         }
     }
 
-    set_description_window_text(description) {
+    set_description_window_text(description?) {
         if (this.choosing_psynergy) {
             this.description_window.update_text(description, this.description_window_text);
         } else {
@@ -127,7 +150,7 @@ export class MainPsynergyMenu {
                 const ability = this.data.info.abilities_list[ability_key_name];
                 if (ability.is_field_psynergy || ability.effects_outside_battle) {
                     const x = TOTAL_BORDER + PSY_OVERVIEW_WIN_INSIDE_PADDING_H + Math.ceil((counter%PSY_OVERVIEW_WIN_ICONS_PER_LINE) * (PSY_OVERVIEW_WIN_SPACE_BETWN_ICO + numbers.ICON_WIDTH));
-                    const y = TOTAL_BORDER + PSY_OVERVIEW_WIN_INSIDE_PADDING_V + parseInt(counter/PSY_OVERVIEW_WIN_ICONS_PER_LINE) * (PSY_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
+                    const y = TOTAL_BORDER + PSY_OVERVIEW_WIN_INSIDE_PADDING_V + ((counter/PSY_OVERVIEW_WIN_ICONS_PER_LINE) |0) * (PSY_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
                     this.psynergy_overview_window.create_at_group(x, y, "abilities_icons", undefined, ability_key_name);
                     ++counter;
                 }

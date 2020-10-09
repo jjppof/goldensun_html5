@@ -94,7 +94,7 @@ export class BasicInfoWindow {
 
     Input: initial_char [string] - The character selected by default
            callback [function] - Callback function (Optional)*/
-    open(initial_char, callback) {
+    open(initial_char, callback?) {
         this.update_position();
         this.avatar_group.alpha = 1;
         this.set_char(initial_char);
@@ -109,7 +109,7 @@ export class BasicInfoWindow {
     /*Closes the window
 
     Input: callback [function] - Callback function (Optional)*/
-    close(callback) {
+    close(callback?) {
         this.avatar_group.alpha = 0;
         this.base_window.close(() => {
             this.window_open = false;

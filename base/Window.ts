@@ -404,7 +404,7 @@ export class Window {
     
     Input: sprite [Phaser:Sprite] - The sprite to be removed
            destroy [boolean] - If true, the sprite is destroyed*/
-    remove_from_group(sprite, destroy = true) {
+    remove_from_group(sprite?, destroy = true) {
         if (sprite !== undefined) {
             this.group.remove(sprite, destroy);
         } else {

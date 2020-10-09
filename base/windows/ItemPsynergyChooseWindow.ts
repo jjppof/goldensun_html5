@@ -60,7 +60,7 @@ export class ItemPsynergyChooseWindow {
     public char_index: number;
     public item_objs: ItemSlot[];
 
-    constructor(game, data, is_psynergy_window, on_change, on_choose, esc_propagation_priority, enter_propagation_priority) {
+    constructor(game, data, is_psynergy_window, on_change, on_choose, esc_propagation_priority, enter_propagation_priority?) {
         this.game = game;
         this.data = data;
         this.is_psynergy_window = is_psynergy_window;
@@ -376,7 +376,7 @@ export class ItemPsynergyChooseWindow {
     Input: char_index [number] = The selected character's party index
            close_callback [function] = Closing callback (Optional)
            open_callback [function] = Opening callback (Optional)*/
-    open(char_index, close_callback, open_callback) {
+    open(char_index, close_callback, open_callback?) {
         this.update_position();
         this.char_index = char_index;
         this.char = this.data.info.party_data.members[char_index];
