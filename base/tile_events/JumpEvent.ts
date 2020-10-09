@@ -1,4 +1,4 @@
-import { event_types, TileEvent } from "./TileEvent.js";
+import { event_types, TileEvent } from "./TileEvent";
 import * as numbers from '../magic_numbers.js';
 import { get_surroundings, get_opposite_direction, directions, split_direction, reverse_directions } from '../utils.js';
 
@@ -6,6 +6,8 @@ const JUMP_OFFSET = 30;
 const JUMP_DURATION = 150;
 
 export class JumpEvent extends TileEvent {
+    public is_set: boolean;
+
     constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, is_set) {
         super(game, data, event_types.JUMP, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
         this.is_set = is_set;
@@ -64,7 +66,7 @@ export class JumpEvent extends TileEvent {
                     continue;
                 }
                 //cancel jumping if the next side event is also a jump
-                if (event.type === event_types.JUMP && event.is_set && event.activation_collision_layers.includes(this.data.map.collision_layer)) {
+                if (event.type === event_types.JUMP && (event as JumpEvent).is_set && event.activation_collision_layers.includes(this.data.map.collision_layer)) {
                     return;
                 }
             }
@@ -80,7 +82,7 @@ export class JumpEvent extends TileEvent {
             let active_jump_event_found = false;
             for (let i = 0; i < this.data.map.events[next_pos_key].length; ++i) {
                 const event = this.data.map.events[next_pos_key][i];
-                if (event.type === event_types.JUMP && event.is_active(get_opposite_direction(jump_direction)) && event.is_set && event.activation_collision_layers.includes(this.data.map.collision_layer)) {
+                if (event.type === event_types.JUMP && event.is_active(get_opposite_direction(jump_direction)) && (event as JumpEvent).is_set && event.activation_collision_layers.includes(this.data.map.collision_layer)) {
                     active_jump_event_found = true;
                     if (event.dynamic) {
                         JumpEvent.set_jump_collision(this.game, this.data);
@@ -98,7 +100,7 @@ export class JumpEvent extends TileEvent {
         }
         this.data.hero.jumping = true;
         this.data.tile_event_manager.on_event = true;
-        let tween_obj = {};
+        let tween_obj: any = {};
         tween_obj[direction] = this.data.hero.sprite[direction] + jump_offset;
         const hero_x = this.data.map.sprite.tileWidth * (next_position.x + 0.5);
         const hero_y = this.data.map.sprite.tileHeight * (next_position.y + 0.5);
@@ -121,7 +123,7 @@ export class JumpEvent extends TileEvent {
             ).onComplete.addOnce(() => {
                 this.data.hero.shadow.visible = true;
                 this.data.hero.sprite.animations.currentAnim.reverseOnce();
-                this.data.hero.sprite.animations.play("jump_" + reverse_directions[jump_direction], this.data.hero.sprite_info.actions["jump"].frame_rate, false);
+                this.data.hero.play("jump", reverse_directions[jump_direction]);
                 this.data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
                     this.game.physics.p2.resume();
                     this.data.hero.jumping = false;
@@ -157,7 +159,7 @@ export class JumpEvent extends TileEvent {
             if (surrounding_key in this.data.map.events) {
                 for (let j = 0; j < this.data.map.events[surrounding_key].length; ++j) {
                     const surrounding_event = this.data.map.events[surrounding_key][j];
-                    if (surrounding_event.type === event_types.JUMP && right_direction && surrounding_event.is_set && surrounding_event.activation_collision_layers.includes(this.data.map.collision_layer)) {
+                    if (surrounding_event.type === event_types.JUMP && right_direction && (surrounding_event as JumpEvent).is_set && surrounding_event.activation_collision_layers.includes(this.data.map.collision_layer)) {
                         if ((surrounding_event.dynamic || this.dynamic) && !surroundings[i].diag) {
                             at_least_one_dynamic_and_not_diag = true;
                         }
@@ -180,8 +182,8 @@ export class JumpEvent extends TileEvent {
             this.data.map.collision_sprite.body.removeCollisionGroup(this.data.collision.hero_collision_group, true);
             bodies_position.forEach(position => {
                 const pos_array = position.split("_");
-                const x_pos = ((pos_array[0] | 0) + .5) * this.data.map.sprite.tileWidth;
-                const y_pos = ((pos_array[1] | 0) + .5) * this.data.map.sprite.tileHeight;
+                const x_pos = (parseInt(pos_array[0]) + .5) * this.data.map.sprite.tileWidth;
+                const y_pos = (parseInt(pos_array[1]) + .5) * this.data.map.sprite.tileHeight;
                 let body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
                 body.clearShapes();
                 body.setRectangle(this.data.map.sprite.tileWidth, this.data.map.sprite.tileHeight, 0, 0);

@@ -1,6 +1,11 @@
-import { TileEvent, event_types } from "./TileEvent.js";
+import { directions } from "../utils.js";
+import { TileEvent, event_types } from "./TileEvent";
 
 export class CollisionEvent extends TileEvent {
+    public dest_collider_layer: number;
+    public next_x: number;
+    public next_y: number;
+
     constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, dest_collider_layer) {
         super(game, data, event_types.COLLISION, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
         this.dest_collider_layer = dest_collider_layer;

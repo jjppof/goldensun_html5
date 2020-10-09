@@ -1,8 +1,15 @@
 import { base_actions, directions, reverse_directions } from "../utils.js";
-import { event_types, TileEvent } from "./TileEvent.js";
+import { event_types, TileEvent } from "./TileEvent";
 import * as numbers from "../magic_numbers.js";
+import * as _ from "lodash";
 
 export class TeleportEvent extends TileEvent {
+    public target: string;
+    public x_target: number;
+    public y_target: number;
+    public advance_effect: boolean;
+    public dest_collider_layer: number;
+
     constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, target, x_target, y_target, advance_effect, dest_collider_layer) {
         super(game, data, event_types.TELEPORT, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
         this.target = target;
@@ -109,7 +116,9 @@ export class TeleportEvent extends TileEvent {
             offsets = tile.base_offset.split(",");
             base_x = this.x + (offsets[0] | 0);
             base_y = this.y + (offsets[1] | 0) - 1;
-            target_index = (_.findKey(this.data.map.sprite.tilesets[0].tileProperties, {open_door : close_door_index}) | 0) + 1;
+            target_index = parseInt(_.findKey(this.data.map.sprite.tilesets[0].tileProperties, {
+                open_door : close_door_index
+            })) + 1;
             this.data.map.sprite.replace(source_index, target_index, base_x, base_y, 1, 1, layer.name);
         }
     }

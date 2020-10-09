@@ -1,9 +1,17 @@
+import { Collision } from '../Collision';
+import { GoldenSun } from '../GoldenSun';
+import { Hero } from '../Hero';
 import { base_actions } from '../utils.js';
-import { event_types } from './TileEvent.js';
+import { event_types, TileEvent } from './TileEvent';
 
 const EVENT_INIT_DELAY = 350;
 
 class EventQueue {
+    public climb_event: boolean;
+    public queue: {
+        event: TileEvent,
+        fire_function: Function
+    }[];
     constructor() {
         this.climb_event = false;
         this.queue = [];
@@ -36,6 +44,15 @@ class EventQueue {
 }
 
 export class TileEventManager {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public hero: Hero;
+    public collision: Collision;
+    public event_timers: {[event_id: number]: Phaser.TimerEvent};
+    public on_event: boolean;
+    public walking_on_pillars_tiles: Set<string>;
+    public triggered_events: {[event_id: number]: TileEvent};
+
     constructor(game, data, hero, collision) {
         this.game = game;
         this.data = data;

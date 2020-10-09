@@ -1,4 +1,7 @@
+import { GoldenSun } from "../GoldenSun";
+import { InteractableObjects } from "../InteractableObjects";
 import { get_directions, split_direction } from "../utils.js";
+import * as _ from "lodash";
 
 export const event_types = {
     CLIMB: "climb",
@@ -10,6 +13,21 @@ export const event_types = {
 };
 
 export class TileEvent {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public type: string;
+    public x: number;
+    public y: number;
+    public location_key: string;
+    public id: number;
+    public activation_collision_layers: number[];
+    public activation_directions: number[];
+    public dynamic: boolean;
+    public active: boolean[];
+    public origin_interactable_object: InteractableObjects;
+    public static id_incrementer: number;
+    public static events: {[id: number]: TileEvent};
+
     constructor(game, data, type, x, y, activation_directions, activation_collision_layers, dynamic, active, origin_interactable_object) {
         this.game = game;
         this.data = data;
