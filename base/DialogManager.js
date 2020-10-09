@@ -33,6 +33,16 @@ export class DialogManager {
         this.show_crystal = false;
     }
 
+    update_position(avatar_x, avatar_y, win_x, win_y){
+        console.log("updating dialog manager pos");
+        if(this.avatar){
+            this.avatar_window.x = this.game.camera.x + avatar_x;
+            this.avatar_window.y = this.game.camera.y + avatar_y;
+        }
+        this.window.x = this.game.camera.x + win_x;
+        this.window.y = this.game.camera.y + win_y;
+    }
+
     //Internal method. Try to calculate the position of the dialog window
     get_dialog_window_position(width, height) {
         const x = (numbers.GAME_WIDTH - width) >> 1;

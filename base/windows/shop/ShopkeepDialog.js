@@ -28,12 +28,7 @@ export class ShopkeepDialog{
     }
 
     update_position(){
-        if(this.dialog_manager.avatar){
-            this.dialog_manager.avatar_window.x = this.game.camera.x;
-            this.dialog_manager.avatar_window.y = this.game.camera.y;
-        }
-        this.dialog_manager.window.x = this.game.camera.x + FRAME_SIZE+4;
-        this.dialog_manager.window.y = this.game.camera.y;
+        this.dialog_manager.update_position(0,0,FRAME_SIZE+4,0);
     }
     
     replace_text(type, message, input){
