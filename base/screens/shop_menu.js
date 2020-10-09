@@ -122,11 +122,6 @@ export class ShopMenuScreen{
         this.artifact_list = _.mapKeys(this.artifact_list, item => item.key_name);
     }
 
-    update_position(){
-        this.npc_dialog.update_position();
-        this.horizontal_menu.update_position();
-    }
-
     update_your_coins(){
         this.your_coins_win.update_text(String(this.data.info.party_data.coins), this.your_coins_text);
     }
