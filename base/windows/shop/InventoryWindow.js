@@ -69,8 +69,8 @@ export class InventoryWindow{
 
         let modifier = expand ? 1 : -1;
 
-        this.window.update_size({height: BASE_HEIGHT + modifier * EXPAND_DIFF});
-        this.window.update_position({y: BASE_Y - modifier * EXPAND_DIFF});
+        this.window.update_size({height: this.window.height + modifier * EXPAND_DIFF});
+        this.window.update_position({y: this.window.y - modifier * EXPAND_DIFF});
         this.sprite_group.y = this.sprite_group.y + modifier * EXPAND_DIFF;
         this.icon_group.y = this.icon_group.y + modifier * EXPAND_DIFF;
         this.window.update();
@@ -327,6 +327,7 @@ export class InventoryWindow{
         this.selected_item = null;
         this.cursor_pos = {line: 0, col: 0};
         this.item_grid = [];
+        this.check_expand(false);
 
         this.is_open = false;
         this.window.close(this.close_callback, false);

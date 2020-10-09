@@ -145,7 +145,7 @@ export class ShopMenuScreen{
         this.item_price_win.update_text(price_text, this.item_price_val_text);
     }
 
-    alternate_window_pos(mode="buy"){
+    alternate_window_pos(mode){
         if(this.windows_mode === mode) return;
         if(mode==="buy"){
             this.item_price_win.update_position({x: ITEM_PRICE_WIN_X, y: ITEM_PRICE_WIN_Y});

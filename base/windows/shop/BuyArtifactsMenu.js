@@ -353,8 +353,9 @@ export class BuyArtifactsMenu{
         else this.char_display.select_char(this.selected_char_index);
 
         let char_key = (this.selected_character) ? this.selected_character.key_name : this.data.info.party_data.members[0].key_name;
-        if(this.inv_win.is_open && this.inv_win.selected_item !== this_item) this.inv_win.close();
-        if(!this.inv_win.is_open) this.inv_win.open(char_key, this_item, true); 
+        
+        if(this.inv_win.is_open) this.inv_win.close();
+        this.inv_win.open(char_key, this_item, true); 
 
         this.control_manager.set_control(true, true, true, false, {right: this.char_display.next_char.bind(this.char_display),
             left: this.char_display.previous_char.bind(this.char_display),
