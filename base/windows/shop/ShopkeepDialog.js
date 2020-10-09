@@ -1,12 +1,6 @@
 import { DialogManager } from '../../DialogManager.js';
-import { Window } from '../../Window.js';
 
 const FRAME_SIZE = 36;
-const DIALOG_WINDOW_WIDTH = 136;
-const AVATAR_SHIFT = 4;
-
-const DIALOG_X = 8;
-const DIALOG_Y = 8;
 
 export class ShopkeepDialog{
     constructor(game, data, parent){
@@ -31,6 +25,15 @@ export class ShopkeepDialog{
         this.messages = _.mapKeys(this.data.shop_screen.shopkeep_dialog_db[this.dialog_key].messages, messages => messages.key);
 
         this.update_dialog("welcome"); 
+    }
+
+    update_position(){
+        if(this.dialog_manager.avatar){
+            this.dialog_manager.avatar_window.x = this.game.camera.x;
+            this.dialog_manager.avatar_window.y = this.game.camera.y;
+        }
+        this.dialog_manager.window.x = this.game.camera.x + FRAME_SIZE+4;
+        this.dialog_manager.window.y = this.game.camera.y;
     }
     
     replace_text(type, message, input){

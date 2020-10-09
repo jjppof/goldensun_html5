@@ -31,6 +31,7 @@ class GoldenSun {
     public cursors: any = null;
     public debug: Debug = null;
     public menu_screen: any = null;
+    public shop_screen: any = null;
     public map: Map = null;
     public tile_event_manager: TileEventManager = null;
     public game_event_manager: GameEventManager = null;
@@ -187,7 +188,7 @@ class GoldenSun {
             window.dispatchEvent(new Event('resize'));
         });
 
-        var shop_screen = new ShopMenuScreen(this.game, this);
+        this.shop_screen = new ShopMenuScreen(this.game, this);
         //enable psynergies shortcuts for testing
         this.game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;
@@ -227,6 +228,9 @@ class GoldenSun {
             this.hero.stop_char(false);
             if (this.menu_open && this.menu_screen.horizontal_menu.menu_active) {
                 this.menu_screen.update_position();
+            }
+            else if (this.shop_open && this.shop_screen.horizontal_menu.menu_active) {
+                this.shop_screen.update_position();
             } else if (this.in_battle) {
                 this.battle_instance.update();
             }
