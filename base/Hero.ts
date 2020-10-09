@@ -56,16 +56,10 @@ const speeds = {
 
 export class Hero extends ControllableChar {
     public arrow_inputs: number;
-    public trying_to_push: boolean;
-    public trying_to_push_direction: number;
-    public push_timer: Phaser.TimerEvent;
 
     constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction) {
         super(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, true);
         this.arrow_inputs = null;
-        this.trying_to_push = false;
-        this.trying_to_push_direction = null;
-        this.push_timer = null;
     }
 
     update_arrow_inputs() {

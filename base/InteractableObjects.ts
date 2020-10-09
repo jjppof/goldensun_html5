@@ -42,7 +42,7 @@ export class InteractableObjects {
     public current_y: number;
     public custom_data: any;
     public collision_change_functions: Function[];
-    public color_filter: Phaser.Filter;
+    public color_filter: any;
     public sprite: Phaser.Sprite;
 
     constructor(game, data, key_name, x, y, allowed_tiles, base_collider_layer, collider_layer_shift, not_allowed_tiles, object_drop_tiles, intermediate_collider_layer_shift) {

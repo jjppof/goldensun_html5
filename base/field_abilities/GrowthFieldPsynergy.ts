@@ -1,5 +1,6 @@
 import { directions } from "../utils.js";
 import { FieldAbilities } from "./FieldAbilities.js";
+import * as _ from "lodash";
 
 const ABILITY_KEY_NAME = "growth";
 const ACTION_KEY_NAME = "cast";
@@ -11,6 +12,10 @@ const Y_PARTICLE_SPEED = 35;
 const NO_TARGET_SPROUT_COUNT = 5;
 
 export class GrowthFieldPsynergy extends FieldAbilities {
+    public increase_duration: number;
+    public emitter: Phaser.Particles.Arcade.Emitter;
+    public particle_filter: any;
+
     constructor(game, data) {
         super(game, data, ABILITY_KEY_NAME, GROWTH_MAX_RANGE, ACTION_KEY_NAME, true);
         this.set_bootstrap_method(this.init_bubbles.bind(this));

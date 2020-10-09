@@ -39,7 +39,7 @@ export class FieldPsynergyWindow {
 
     Input: text [string] - The psynergy name to show
            callback [function] - Callback function (Optional)*/
-    open(text, callback) {
+    open(text, callback?) {
         let text_size = get_text_width(this.game,text);
         this.window.update_size({width: BASE_WIDTH+text_size, height: BASE_HEIGHT});
         this.window.update_position({x: (POS_X - (text_size >> 1)) | 0, y: (POS_Y + this.vertical_adjust()) | 0});
@@ -55,7 +55,7 @@ export class FieldPsynergyWindow {
     /*Closes the window
 
     Input: callback [function] - Callback function (Optional)*/
-    close(callback) {
+    close(callback?) {
         this.window.close(() => {
             if (callback !== undefined) {
                 callback();

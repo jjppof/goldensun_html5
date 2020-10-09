@@ -1,13 +1,30 @@
-import { init_cast_aura, tint_map_layers } from "../field_abilities/psynergy_cast.js";
-import { base_actions, directions, reverse_directions } from "../utils.js";
-import { interactable_object_interaction_types } from "../InteractableObjects.js";
-import { FieldPsynergyWindow } from "../windows/FieldPsynergyWindow.js";
+import { init_cast_aura, tint_map_layers } from "./psynergy_cast";
+import { base_actions, directions, directions_count, reverse_directions } from "../utils.js";
+import { InteractableObjects, interactable_object_interaction_types } from "../InteractableObjects";
+import { FieldPsynergyWindow } from "../windows/FieldPsynergyWindow";
+import { GoldenSun } from "../GoldenSun";
+import { ControllableChar } from "../ControllableChar";
 
 /*Defines and manages the usage of field psynergy
 
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
 export class FieldAbilities {
+    public game: Phaser.Game;
+    public ability_key_name: string;
+    public data: GoldenSun;
+    public target_max_range: number;
+    public action_key_name: string;
+    public need_target: boolean;
+    public bootstrap_method: Function;
+    public cast_finisher: Function;
+    public controllable_char: ControllableChar;
+    public target_found: boolean;
+    public target_object: InteractableObjects;
+    public stop_casting: Function;
+    public field_psynergy_window: FieldPsynergyWindow;
+    public cast_direction: number;
+
     constructor(game, data, ability_key_name, target_max_range, action_key_name, need_target) {
         this.game = game;
         this.ability_key_name = ability_key_name;

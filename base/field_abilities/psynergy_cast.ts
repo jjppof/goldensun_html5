@@ -1,4 +1,4 @@
-export function init_cast_aura(game, sprite, group, filter, after_init, after_destroy, before_destroy) {
+export function init_cast_aura(game: Phaser.Game, sprite: Phaser.Sprite, group: Phaser.Group, filter, after_init, after_destroy, before_destroy) {
     const ring_up_time = 750;
     const ring_up_time_half = ring_up_time >> 1;
     const step_time = (ring_up_time / 3) | 0;
@@ -150,7 +150,7 @@ export function init_cast_aura(game, sprite, group, filter, after_init, after_de
     };
 }
 
-export function tint_map_layers(game, map, filter, after_destroy) {
+export function tint_map_layers(game, map, filter, after_destroy?) {
     filter.colorize_intensity = 0;
     filter.gray = 0;
     filter.colorize = Math.random();

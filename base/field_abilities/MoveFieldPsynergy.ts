@@ -1,7 +1,8 @@
 import * as numbers from '../magic_numbers.js';
 import { target_only_push } from '../interactable_objects/push.js';
 import { directions, reverse_directions, join_directions } from "../utils.js";
-import { FieldAbilities } from "./FieldAbilities.js";
+import { FieldAbilities } from "./FieldAbilities";
+import { SpriteBase } from '../SpriteBase';
 
 const ABILITY_KEY_NAME = "move";
 const ACTION_KEY_NAME = "cast";
@@ -10,6 +11,14 @@ const MOVE_MAX_RANGE = 26;
 const MOVE_HAND_KEY_NAME = "move_hand";
 
 export class MoveFieldPsynergy extends FieldAbilities {
+    public hand_sprite_base: SpriteBase;
+    public hand_sprite: Phaser.Sprite;
+    public emitter: Phaser.Particles.Arcade.Emitter;
+    public final_emitter: Phaser.Particles.Arcade.Emitter;
+    public controls_active: boolean;
+    public target_hueshift_timer: Phaser.Timer;
+    public final_emitter_particles_count: number;
+
     constructor(game, data) {
         super(game, data, ABILITY_KEY_NAME, MOVE_MAX_RANGE, ACTION_KEY_NAME, true);
         this.set_bootstrap_method(this.init_move.bind(this));

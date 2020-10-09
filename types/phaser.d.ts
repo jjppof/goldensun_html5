@@ -3004,7 +3004,7 @@ declare module Phaser {
                 emitY: number;
                 exists: boolean;
                 frequency: number;
-                gravity: Phaser.Point;
+                gravity: Phaser.Point|number
                 group: Phaser.Group;
                 height: number;
                 left: number;

@@ -1,16 +1,16 @@
 import * as numbers from '../magic_numbers.js';
-import { event_types } from "../tile_events/TileEvent.js";
 import { get_surroundings, directions} from "../utils.js";
 import { JumpEvent } from "../tile_events/JumpEvent.js";
 import { FieldAbilities } from "./FieldAbilities.js";
+import * as _ from "lodash";
 
 const ABILITY_KEY_NAME = "frost";
 const ACTION_KEY_NAME = "cast";
 const FROST_MAX_RANGE = 12;
-const SNOWFLAKES_COUNT = 16; 
+const SNOWFLAKES_COUNT = 16;
 const TOTAL_TURNS_SNOWFLAKES = Math.PI * 7;
-const POLAR_SLOPE = 0.15; 
-const SPIRAL_INTENSITY = 8; 
+const POLAR_SLOPE = 0.15;
+const SPIRAL_INTENSITY = 8;
 const SNOWFLAKE_DURATION = 1650;
 
 /*Handles the "Frost" field psynergy
@@ -74,20 +74,18 @@ export class FrostFieldPsynergy extends FieldAbilities {
     /*Changes the pool into a pillar
     Will change its properties and animation*/
     init_pillar() {
-        this.target_object.get_events().forEach(event => {
+        this.target_object.get_events().forEach((event: JumpEvent) => {
             if (event.is_set) {
                 event.deactivate();
                 event.is_set = false;
             } else {
                 event.activate();
                 event.is_set = true;
-                if (event.type === event_types.JUMP) {
-                    JumpEvent.active_jump_surroundings(
-                        this.data,
-                        get_surroundings(event.x, event.y, false, 2),
-                        this.target_object.collider_layer_shift + this.target_object.base_collider_layer
-                    );
-                }
+                JumpEvent.active_jump_surroundings(
+                    this.data,
+                    get_surroundings(event.x, event.y, false, 2),
+                    this.target_object.collider_layer_shift + this.target_object.base_collider_layer
+                );
             }
         });
         this.target_object.sprite.send_to_back = false;

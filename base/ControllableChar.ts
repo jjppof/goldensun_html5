@@ -44,6 +44,9 @@ export class ControllableChar {
     public color_filter: Phaser.Filter;
     public enable_footsteps: boolean;
     public footsteps: Footsteps;
+    public trying_to_push: boolean;
+    public trying_to_push_direction: number;
+    public push_timer: Phaser.TimerEvent;
 
     constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps) {
         this.game = game;
@@ -71,6 +74,9 @@ export class ControllableChar {
         this.required_direction = 0;
         this.desired_direction = initial_direction;
         this.color_filter = this.game.add.filter('ColorFilters');
+        this.trying_to_push = false;
+        this.trying_to_push_direction = null;
+        this.push_timer = null;
         this.enable_footsteps = enable_footsteps === undefined ? false : enable_footsteps;
         this.footsteps = new Footsteps(this.game, this.data);
     }
