@@ -1,11 +1,21 @@
 import { capitalize } from '../utils.js';
-import { HorizontalMenu } from '../menus/HorizontalMenu.js';
+import { HorizontalMenu } from '../support_menus/HorizontalMenu.js';
 import { MainPsynergyMenu } from './MainPsynergyMenu.js';
 import { MainItemMenu } from './MainItemMenu.js';
 import { MainDjinnMenu } from './MainDjinnMenu.js';
 import { CharsStatusWindow } from '../windows/CharsStatusWindow.js';
+import { GoldenSun } from '../GoldenSun.js';
 
 export class MainMenu {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public chars_status_window: CharsStatusWindow;
+    public buttons_keys: string[];
+    public horizontal_menu: HorizontalMenu;
+    public psynergy_menu: MainPsynergyMenu;
+    public item_menu: MainItemMenu;
+    public djinn_menu: MainDjinnMenu;
+
     constructor(game, data) {
         this.game = game;
         this.data = data;

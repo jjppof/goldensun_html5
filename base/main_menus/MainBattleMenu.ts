@@ -1,16 +1,18 @@
-import { CharsStatusWindow } from "../windows/CharsStatusWindow.js";
-import { HorizontalMenu } from "../menus/HorizontalMenu.js";
+import { CharsStatusWindow } from "../windows/CharsStatusWindow";
+import { HorizontalMenu } from "../support_menus/HorizontalMenu";
 import { capitalize, ordered_elements } from "../utils.js";
 import * as numbers from "../magic_numbers.js";
-import { Djinn, djinn_status } from "../Djinn.js";
-import { DescriptionWindow } from "../windows/battle/DescriptionWindow.js"
-import { PsynergyWindow } from "../windows/battle/PsynergyWindow.js"
-import { DjinnWindow } from "../windows/battle/DjinnWindow.js";
-import { ItemWindow } from "../windows/battle/ItemWindow.js";
-import { SummonWindow } from "../windows/battle/SummonWindow.js";
-import { MAX_CHARS_IN_BATTLE } from "../battle/Battle.js";
-import { permanent_status } from "../Player.js";
-import { MainChar } from "../MainChar.js";
+import { Djinn, djinn_status } from "../Djinn";
+import { DescriptionWindow } from "../windows/battle/DescriptionWindow"
+import { PsynergyWindow } from "../windows/battle/PsynergyWindow"
+import { DjinnWindow } from "../windows/battle/DjinnWindow";
+import { ItemWindow } from "../windows/battle/ItemWindow";
+import { SummonWindow } from "../windows/battle/SummonWindow";
+import { MAX_CHARS_IN_BATTLE } from "../battle/Battle";
+import { permanent_status } from "../Player";
+import { MainChar } from "../MainChar";
+import { GoldenSun } from "../GoldenSun";
+import * as _ from "lodash";
 
 const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
@@ -18,6 +20,35 @@ const FORWARD = 1;
 const BACKWARD = -1;
 
 export class MainBattleMenu {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public on_abilities_choose: Function;
+    public choose_targets: Function;
+    public chars_status_window: CharsStatusWindow;
+    public start_buttons_keys: string[];
+    public shift_propagation_priority: number;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public start_horizontal_menu: HorizontalMenu;
+    public inner_buttons_keys: string[];
+    public current_buttons: string[];
+    public description_window: DescriptionWindow;
+    public djinn_window: DjinnWindow;
+    public psynergy_window: PsynergyWindow;
+    public item_window: ItemWindow;
+    public summon_window: SummonWindow;
+    public group: Phaser.Group;
+    public avatar_sprite: Phaser.Sprite;
+    public inner_horizontal_menu: HorizontalMenu;
+    public abilities: {[char_key_name: string]: {
+        key_name: string,
+        targets: any[],
+        type?: string,
+        djinn_key_name?: string
+    }[]};
+    public current_char_index: number;
+    public djinni_already_used: {[element: string]: number};
+
     constructor(game, data, enter_propagation_priority, esc_propagation_priority, on_abilities_choose, choose_targets) {
         this.game = game;
         this.data = data;

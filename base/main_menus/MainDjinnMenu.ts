@@ -1,8 +1,22 @@
 import { CharsQuickInfoDjinnWindow } from '../windows/djinn/CharsQuickInfoDjinnWindow.js';
 import { DjinnListWindow } from '../windows/djinn/DjinnListWindow.js';
 import { DjinnActionWindow } from '../windows/djinn/DjinnActionWindow.js';
+import { GoldenSun } from '../GoldenSun.js';
 
 export class MainDjinnMenu {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public shift_propagation_priority: number;
+    public spacebar_propagation_priority: number;
+    public is_open: boolean;
+    public close_callback: Function;
+    public selected_char_index: number;
+    public chars_quick_info_window: CharsQuickInfoDjinnWindow;
+    public djinn_action_window: DjinnActionWindow;
+    public djinni_list_window: DjinnListWindow;
+
     constructor(game, data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority, spacebar_propagation_priority) {
         this.game = game;
         this.data = data;

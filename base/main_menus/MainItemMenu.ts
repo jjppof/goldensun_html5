@@ -1,11 +1,12 @@
-import { CharsMenu } from '../menus/CharsMenu.js';
+import { CharsMenu } from '../support_menus/CharsMenu.js';
 import { BasicInfoWindow } from '../windows/BasicInfoWindow.js';
 import { ItemPsynergyChooseWindow } from '../windows/ItemPsynergyChooseWindow.js';
-import { Window } from '../Window.js';
+import { TextObj, Window } from '../Window.js';
 import * as numbers from '../magic_numbers.js';
 import { ItemOptionsWindow } from '../windows/item/ItemOptionsWindow.js';
 import { StatsCheckWithItemWindow } from '../windows/item/StatsCheckWithItemWindow.js';
 import { item_types } from '../Item.js';
+import { GoldenSun } from '../GoldenSun.js';
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;
@@ -37,6 +38,33 @@ const ITEM_OVERVIEW_Y_SHIFT = 16;
 const ITEM_OVERVIEW_HEIGHT_SHIFT = 16;
 
 export class MainItemMenu {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public chars_menu: CharsMenu;
+    public basic_info_window: BasicInfoWindow;
+    public item_change_stats_window: StatsCheckWithItemWindow;
+    public selected_char_index: number;
+    public is_open: boolean;
+    public close_callback: Function;
+    public guide_window: Window;
+    public guide_window_text: TextObj;
+    public choosing_item: boolean;
+    public guide_window_msgs: {
+        choosing_char: string,
+        choosing_item: string
+    };
+    public description_window: Window;
+    public description_window_text: TextObj;
+    public arrange_window: Window;
+    public arrange_window_text: TextObj;
+    public item_overview_window: Window;
+    public item_choose_window: ItemPsynergyChooseWindow;
+    public item_options_window: ItemOptionsWindow;
+    public choosing_give_destination: boolean;
+    public after_char_choose_on_give: Function;
+
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -231,7 +259,7 @@ export class MainItemMenu {
         }
     }
 
-    set_description_window_text(description) {
+    set_description_window_text(description?) {
         if (this.choosing_item) {
             this.description_window.update_text(description, this.description_window_text);
         } else {
@@ -247,7 +275,7 @@ export class MainItemMenu {
             const item_key_name = item_obj.key_name;
             if (item_key_name in this.data.info.items_list) {
                 const x = TOTAL_BORDER + ITEM_OVERVIEW_WIN_INSIDE_PADDING_H + Math.ceil((counter%ITEM_OVERVIEW_WIN_ICONS_PER_LINE) * (ITEM_OVERVIEW_WIN_SPACE_BETWN_ICO + numbers.ICON_WIDTH));
-                const y = TOTAL_BORDER + ITEM_OVERVIEW_WIN_INSIDE_PADDING_V + parseInt(counter/ITEM_OVERVIEW_WIN_ICONS_PER_LINE) * (ITEM_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
+                const y = TOTAL_BORDER + ITEM_OVERVIEW_WIN_INSIDE_PADDING_V + ((counter/ITEM_OVERVIEW_WIN_ICONS_PER_LINE) | 0) * (ITEM_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
                 this.item_overview_window.create_at_group(x, y, "items_icons", undefined, item_key_name);
                 if (item_obj.equipped) {
                     this.item_overview_window.create_at_group(x + SUB_ICON_X, y + SUB_ICON_Y, "equipped");
