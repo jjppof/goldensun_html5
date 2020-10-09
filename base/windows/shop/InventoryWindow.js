@@ -224,13 +224,15 @@ export class InventoryWindow{
             let is_repair = this.parent.sell_menu.is_repair_menu;
             let itm = this.item_grid[line][col];
 
-            let item_price = this.data.info.items_list[itm.key_name].price;
-            let important_item = this.data.info.items_list[itm.key_name].important_item;
-            if(is_repair)
-                this.parent.update_item_info(itm.key_name, (item_price*REPAIR_MULTIPLIER | 0), !itm.broken, itm.broken, important_item);
-            else{
-                if(itm.broken) this.parent.update_item_info(itm.key_name, (item_price*SELL_BROKEN_MULTIPLIER | 0), important_item, true, important_item);
-                else this.parent.update_item_info(itm.key_name, (item_price*SELL_MULTIPLIER | 0), important_item, true, important_item);
+            if(itm){
+                let item_price = this.data.info.items_list[itm.key_name].price;
+                let important_item = this.data.info.items_list[itm.key_name].important_item;
+                if(is_repair)
+                    this.parent.update_item_info(itm.key_name, (item_price*REPAIR_MULTIPLIER | 0), !itm.broken, itm.broken, important_item);
+                else{
+                    if(itm.broken) this.parent.update_item_info(itm.key_name, (item_price*SELL_BROKEN_MULTIPLIER | 0), important_item, true, important_item);
+                    else this.parent.update_item_info(itm.key_name, (item_price*SELL_MULTIPLIER | 0), important_item, true, important_item);
+                }
             }
         }
     }
