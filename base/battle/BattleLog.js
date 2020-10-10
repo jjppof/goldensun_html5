@@ -1,8 +1,8 @@
 import * as numbers from '../magic_numbers.js';
-import { ability_msg_types } from '../Ability.js';
-import { effect_names, effect_types } from '../Effect.js';
+import { ability_msg_types } from '../Ability';
+import { effect_names, effect_types } from '../Effect';
 import { element_names } from '../utils.js';
-import { on_remove_status_msg } from '../Player.js';
+import { on_remove_status_msg } from '../Player';
 
 const LOG_X = 3;
 const LOG_OUT_Y = 127;

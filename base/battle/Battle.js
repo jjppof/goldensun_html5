@@ -1,16 +1,16 @@
-import { permanent_status, temporary_status, on_catch_status_msg, fighter_types } from "../Player.js";
+import { permanent_status, temporary_status, on_catch_status_msg, fighter_types } from "../Player";
 import { BattleStage } from "./BattleStage.js";
 import { BattleLog } from "./BattleLog.js";
-import { BattleMenuScreen } from "../screens/battle_menus.js";
-import { get_enemy_instance } from "../Enemy.js";
-import { ability_types, Ability, diminishing_ratios, ability_categories } from "../Ability.js";
+import { MainBattleMenu } from "../main_menus/MainBattleMenu";
+import { get_enemy_instance } from "../Enemy";
+import { ability_types, Ability, diminishing_ratios, ability_categories } from "../Ability";
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
 import { EnemyAI } from "./EnemyAI.js";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
-import { effect_types, Effect, effect_usages, effect_names, effect_msg } from "../Effect.js";
+import { effect_types, Effect, effect_usages, effect_names, effect_msg } from "../Effect";
 import { variation, ordered_elements, element_names } from "../utils.js";
-import { djinn_status, Djinn } from "../Djinn.js";
-import { MainChar } from "../MainChar.js";
+import { djinn_status, Djinn } from "../Djinn";
+import { MainChar } from "../MainChar";
 import { BattleAnimationManager } from "./BattleAnimationManager.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;
@@ -61,8 +61,7 @@ export class Battle {
             const qtd = _.random(member_info.min, member_info.max);
             for (let i = 0; i < qtd; ++i) {
                 this.enemies_info.push({
-                    sprite_key: member_info.key + "_battle",
-                    scale: this.data.info.enemies_list[member_info.key].battle_scale
+                    sprite_key: member_info.key + "_battle"
                 });
                 if (this.enemies_info[counter].sprite_key in battle_keys_count) {
                     battle_keys_count[this.enemies_info[counter].sprite_key] += 1;
@@ -74,7 +73,8 @@ export class Battle {
                     battle_key_suffix = "_" + battle_keys_count[this.enemies_info[counter].sprite_key].toString();
                     name_suffix = " " + battle_keys_count[this.enemies_info[counter].sprite_key].toString();
                 }
-                this.enemies_info[counter].instance = get_enemy_instance(this.data.info.enemies_list, member_info.key, name_suffix);
+                this.enemies_info[counter].instance = get_enemy_instance(this.data.info.enemies_list[member_info.key].data, name_suffix);
+                this.enemies_info[counter].scale = this.enemies_info[counter].instance.battle_scale;
                 this.enemies_info[counter].battle_key = this.enemies_info[counter].sprite_key + battle_key_suffix;
                 this.this_enemies_list[this.enemies_info[counter].battle_key] = this.enemies_info[counter].instance;
                 ++counter;
@@ -84,7 +84,7 @@ export class Battle {
         this.esc_propagation_priority = 0;
         this.battle_stage = new BattleStage(this.game, this.data, background_key, this.allies_info, this.enemies_info, this.esc_propagation_priority++, this.enter_propagation_priority++);
         this.battle_log = new BattleLog(this.game);
-        this.battle_menu = new BattleMenuScreen(this.game, this.data, ++this.enter_propagation_priority, ++this.esc_propagation_priority, this.on_abilities_choose.bind(this), this.choose_targets.bind(this));
+        this.battle_menu = new MainBattleMenu(this.game, this.data, ++this.enter_propagation_priority, ++this.esc_propagation_priority, this.on_abilities_choose.bind(this), this.choose_targets.bind(this));
         this.target_window = new ChoosingTargetWindow(this.game, this.data);
         this.animation_manager = new BattleAnimationManager(this.game, this.data);
         this.battle_phase = battle_phases.NONE;

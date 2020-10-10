@@ -1,6 +1,6 @@
-import { Window } from '../../Window.js';
+import { Window } from '../../Window';
 import * as numbers from '../../magic_numbers.js';
-import { CursorControl } from '../../utils/CursorControl.js';
+import { CursorControl } from '../../utils/CursorControl';
 import { DropItemWindow } from './DropItemWindow.js';
 import { ItemQuantityManagerWindow } from './ItemQuantityManagerWindow.js';
 import { GiveItemOptionsWindow } from './GiveItemOptionsWindow.js';

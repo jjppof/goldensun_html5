@@ -1,6 +1,6 @@
 // Enemy target rolling: http://forum.goldensunhacking.net/index.php?topic=2793.0
 
-import { permanent_status } from "../Player.js";
+import { permanent_status } from "../Player";
 
 export class EnemyAI {
     static roll_action(caster, allies, enemies) { //hard coded to attack only the first char always. WIP

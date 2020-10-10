@@ -1,6 +1,5 @@
-import { ItemCounter } from '../../utils/ItemsCounter.js';
 import { ShopItemCounter } from './ShopItemCounter.js';
-import { Window } from '../../Window.js';
+import { Window } from '../../Window';
 
 const QUANTITY_WIN_X = 56;
 const QUANTITY_WIN_Y = 32;

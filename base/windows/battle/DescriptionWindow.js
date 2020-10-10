@@ -1,4 +1,4 @@
-import { Window } from "../../Window.js";
+import { Window } from "../../Window";
 
 const BASE_WIN_WIDTH = 236;
 const BASE_WIN_HEIGHT = 28;

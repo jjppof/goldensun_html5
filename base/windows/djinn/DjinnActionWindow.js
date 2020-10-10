@@ -1,5 +1,5 @@
-import { Window } from '../../Window.js';
-import { djinn_status } from '../../Djinn.js';
+import { Window } from '../../Window';
+import { djinn_status } from '../../Djinn';
 
 const BASE_WIN_WIDTH = 132;
 const BASE_WIN_HEIGHT = 36;

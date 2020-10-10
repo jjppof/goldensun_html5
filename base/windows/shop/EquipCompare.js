@@ -1,7 +1,7 @@
-import { Window } from '../../Window.js';
+import { Window } from '../../Window';
 import { kill_all_sprites } from '../../utils.js';
-import { item_types } from '../../Item.js';
-import { effect_operators, effect_types } from '../../Effect.js';
+import { item_types } from '../../Item.ts';
+import { effect_operators, effect_types } from '../../Effect.ts';
 
 const BASE_X = 128;
 const BASE_Y = 88;

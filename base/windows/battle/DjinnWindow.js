@@ -1,6 +1,6 @@
-import { Window } from "../../Window.js";
-import { CursorControl } from '../../utils/CursorControl.js';
-import { djinn_status, djinn_font_colors } from "../../Djinn.js";
+import { Window } from "../../Window";
+import { CursorControl } from '../../utils/CursorControl';
+import { djinn_status, djinn_font_colors } from "../../Djinn";
 import { DjinnStatsWindow } from "./DjinnStatsWindow.js";
 
 const BASE_WINDOW_X = 160;

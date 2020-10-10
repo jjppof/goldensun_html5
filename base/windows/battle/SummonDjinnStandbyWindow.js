@@ -1,4 +1,4 @@
-import { Window } from "../../Window.js";
+import { Window } from "../../Window";
 import { ordered_elements } from "../../utils.js";
 
 const BASE_WIN_X = 160;

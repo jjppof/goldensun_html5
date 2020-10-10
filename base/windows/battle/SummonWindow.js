@@ -1,10 +1,10 @@
-import { Window } from "../../Window.js";
-import { CursorControl } from '../../utils/CursorControl.js';
+import { Window } from "../../Window";
+import { CursorControl } from '../../utils/CursorControl';
 import * as numbers from "../../magic_numbers.js"
-import { Djinn } from "../../Djinn.js";
+import { Djinn } from "../../Djinn";
 import { SummonDjinnStandbyWindow } from "./SummonDjinnStandbyWindow.js";
 import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle.js";
-import { MainChar } from "../../MainChar.js";
+import { MainChar } from "../../MainChar";
 
 const BASE_WINDOW_X = 104;
 const BASE_WINDOW_Y = 88;

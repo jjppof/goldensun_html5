@@ -1,4 +1,4 @@
-import { DialogManager } from '../../DialogManager.js';
+import { DialogManager } from '../../DialogManager';
 
 const FRAME_SIZE = 36;
 
@@ -22,7 +22,7 @@ export class ShopkeepDialog{
         this.shop_key = shop_key;
         this.avatar_key = this.parent.shops_db[shop_key].avatar_key;
         this.dialog_key = this.parent.shops_db[shop_key].dialog_key;
-        this.messages = _.mapKeys(this.data.shop_screen.shopkeep_dialog_db[this.dialog_key].messages, messages => messages.key);
+        this.messages = _.mapKeys(this.data.shop_menu.shopkeep_dialog_db[this.dialog_key].messages, messages => messages.key);
 
         this.update_dialog("welcome"); 
     }

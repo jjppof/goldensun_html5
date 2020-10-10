@@ -1,6 +1,6 @@
-import { Window } from '../../Window.js';
-import { item_types } from '../../Item.js';
-import { effect_types, effect_operators } from '../../Effect.js';
+import { Window } from '../../Window';
+import { item_types } from '../../Item';
+import { effect_types, effect_operators } from '../../Effect';
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;

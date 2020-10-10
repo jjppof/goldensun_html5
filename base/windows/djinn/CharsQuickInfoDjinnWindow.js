@@ -1,4 +1,4 @@
-import { Window } from '../../Window.js';
+import { Window } from '../../Window';
 import * as numbers from '../../magic_numbers.js';
 
 const BASE_WIN_WIDTH = 100;

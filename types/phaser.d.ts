@@ -412,6 +412,8 @@ declare module Phaser {
         bottom: number;
         cameraOffset: Phaser.Point;
         checkWorldBounds: boolean;
+        centerX: number;
+        centerY: number;
         data: any;
         destroyPhase: boolean;
         debug: boolean;
@@ -1902,6 +1904,8 @@ declare module Phaser {
         classType: any;
         cursor: any;
         cursorIndex: number;
+        send_to_back: boolean;
+        base_collider_layer: number;
         enableBody: boolean;
         enableBodyDebug: boolean;
         exists: boolean;
@@ -3000,7 +3004,7 @@ declare module Phaser {
                 emitY: number;
                 exists: boolean;
                 frequency: number;
-                gravity: Phaser.Point;
+                gravity: Phaser.Point|number
                 group: Phaser.Group;
                 height: number;
                 left: number;
@@ -4828,6 +4832,16 @@ declare module Phaser {
         components: any;
         cropRect: Phaser.Rectangle;
         customRender: boolean;
+        base_collider_layer: number;
+        disableRoundPx: boolean;
+        roundPx: boolean;
+        y_sort: number;
+        sort_function: Function;
+        send_to_back: boolean;
+        send_to_front: boolean;
+        is_npc: boolean;
+        is_interactable_object: boolean;
+        interactable_object: any;
         data: any;
         debug: boolean;
         deltaX: number;
@@ -5510,6 +5524,7 @@ declare module Phaser {
         tileMargin: number;
         tileSpacing: number;
         tileWidth: number;
+        tileProperties: any;
         total: number;
 
         containsTileIndex(tileIndex: number): boolean;

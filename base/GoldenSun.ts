@@ -1,19 +1,20 @@
 import * as numbers from './magic_numbers.js';
-import { TileEvent } from './tile_events/TileEvent.js';
-import { Debug } from './debug/debug.js';
-import { load_all } from './initializers/assets_loader.js';
-import { Collision } from './Collision.js';
+import { TileEvent } from './tile_events/TileEvent';
+import { Debug } from './debug/Debug';
+import { load_all } from './initializers/assets_loader';
+import { Collision } from './Collision';
 import { directions } from './utils.js';
-import { Hero } from './Hero.js';
-import { TileEventManager } from './tile_events/TileEventManager.js';
-import { GameEventManager } from './game_events/GameEventManager.js';
-import { load_databases } from './initializers/databases_loader.js';
-import { initialize_game_data } from './initializers/initialize_info.js';
-import { Map } from './Map.js';
+import { Hero } from './Hero';
+import { TileEventManager } from './tile_events/TileEventManager';
+import { GameEventManager } from './game_events/GameEventManager';
+import { load_databases } from './initializers/databases_loader';
+import { initialize_game_data } from './initializers/initialize_info';
+import { Map } from './Map';
 import { Battle } from './battle/Battle.js';
-import { ShopMenuScreen } from './screens/shop_menu.js';
+import { MainMenu } from './main_menus/MainMenu';
+import { ShopMenu } from './main_menus/ShopMenu.js';
 
-class GoldenSun {
+export class GoldenSun {
     public game: Phaser.Game = null;
     public dbs: any = {};
     public info: any = {};
@@ -28,29 +29,29 @@ class GoldenSun {
     //game objects
     public hero: Hero = null;
     public collision: Collision = null;
-    public cursors: any = null;
+    public cursors: Phaser.CursorKeys = null;
     public debug: Debug = null;
-    public menu_screen: any = null;
-    public shop_screen: any = null;
+    public main_menu: MainMenu = null;
+    public shop_menu: ShopMenu = null;
     public map: Map = null;
     public tile_event_manager: TileEventManager = null;
     public game_event_manager: GameEventManager = null;
     public battle_instance: Battle = null;
 
     //common inputs
-    public enter_input: any = null;
-    public esc_input: any = null;
-    public shift_input: any = null;
-    public spacebar_input: any = null;
+    public enter_input: Phaser.Signal = null;
+    public esc_input: Phaser.Signal = null;
+    public shift_input: Phaser.Signal = null;
+    public spacebar_input: Phaser.Signal = null;
 
     //screen
     public fullscreen: boolean = false;
     public scale_factor: number = 1;
 
     //groups
-    public underlayer_group: any = null;
-    public npc_group: any = null;
-    public overlayer_group: any = null;
+    public underlayer_group: Phaser.Group = null;
+    public npc_group: Phaser.Group = null;
+    public overlayer_group: Phaser.Group = null;
 
     constructor() {
         this.game = new Phaser.Game(
@@ -225,11 +226,11 @@ class GoldenSun {
             this.map.update(); //update map and its objects position/velocity/sprite
         } else {
             this.hero.stop_char(false);
-            if (this.menu_open && this.menu_screen.horizontal_menu.menu_active) {
-                this.menu_screen.update_position();
+            if (this.menu_open && this.main_menu.horizontal_menu.menu_active) {
+                this.main_menu.update_position();
             }
-            else if (this.shop_open && this.shop_screen.horizontal_menu.menu_active) {
-                this.shop_screen.update_position();
+            else if (this.shop_open && this.shop_menu.horizontal_menu.menu_active) {
+                this.shop_menu.update_position();
             } else if (this.in_battle) {
                 this.battle_instance.update();
             }

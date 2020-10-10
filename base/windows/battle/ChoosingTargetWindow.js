@@ -1,4 +1,4 @@
-import { Window } from "../../Window.js";
+import { Window } from "../../Window";
 import * as numbers from "../../magic_numbers.js";
 import { elements, ordered_elements } from "../../utils.js";
 

@@ -1,4 +1,4 @@
-import { ButtonSelectMenu } from '../menus/ButtonSelectMenu.js';
+import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu.js';
 import { capitalize } from '../utils.js';
 
 const TITLE_WINDOW_WIDTH = 36
