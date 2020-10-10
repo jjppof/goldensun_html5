@@ -39,6 +39,7 @@
             {"key": "repair_follow_up", "text": "Do you need any more repairs?"},
             {"key": "cancel_option", "text": "Feel free to take a look around."},
             {"key": "not_enough_coins", "text": "I'm sorry, but that's a little out of your price range."},
+            {"key": "no_artifacts", "text": "I'm sorry, We're all out of stock right now."},
             {"key": "goodbye", "text": "Thank you very much. Please come again."}
         ]
     }

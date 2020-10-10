@@ -195,6 +195,7 @@ export class SellRepairMenu{
     }
 
     on_character_select(msg_key="sell_follow_up", item_pos = {line: 0, col: 0}){
+        if(this.quant_win.is_open) this.quant_win.close();
         if(!this.item_desc_win.open) this.item_desc_win.show();
         if(!this.item_price_win.open) this.item_price_win.show();
 

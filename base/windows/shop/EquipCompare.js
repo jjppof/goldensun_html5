@@ -1,6 +1,7 @@
 import { Window } from '../../Window';
 import { kill_all_sprites } from '../../utils.js';
-import { item_types } from '../../Item';
+import { item_types } from '../../Item.ts';
+import { effect_operators, effect_types } from '../../Effect.ts';
 
 const BASE_X = 128;
 const BASE_Y = 88;
@@ -101,16 +102,52 @@ export class EquipCompare {
 
     Input: equipped [string] - Key name for the equipped item
            new_item [string] - Key name for the item being compared
-           stat [string] - Stat to compare*/
-    compare_items(equipped, new_item, stat){
-        let eq_effects = _.mapKeys(this.data.info.items_list[equipped].effects, effect => effect.type);
+           stat [string] - Stat to compare
+           current_val [number] - Current value of the stat*/
+    compare_items(equipped, new_item, stat, current_val){
+        let eq_effects = [];
+        if(equipped){
+            eq_effects = _.mapKeys(this.data.info.items_list[equipped].effects, effect => effect.type);
+        }
         let nitem_effects = _.mapKeys(this.data.info.items_list[new_item].effects, effect => effect.type);
 
         let eq_stat = 0;
         let nitem_stat = 0;
 
-        if(eq_effects[stat]) eq_stat = eq_effects[stat].quantity * (eq_effects[stat].operator === "minus" ? -1 : 1);
-        if(nitem_effects[stat]) nitem_stat = nitem_effects[stat].quantity * (nitem_effects[stat].operator === "minus" ? -1 : 1);
+        if(eq_effects[stat]){
+            switch(eq_effects[stat].operator){
+                case effect_operators.PLUS:
+                    eq_stat = eq_effects[stat].quantity;
+                    break;
+                case effect_operators.MINUS:
+                    eq_stat = -1*eq_effects[stat].quantity;
+                    break;
+                case effect_operators.TIMES:
+                    eq_stat = eq_effects[stat].quantity*current_val;
+                    break;
+                case effect_operators.DIVIDE:
+                    eq_stat = (eq_effects[stat].quantity/current_val) | 0;
+                    break;
+
+            }
+        }
+        if(nitem_effects[stat]){
+            switch(nitem_effects[stat].operator){
+                case effect_operators.PLUS:
+                    nitem_stat = nitem_effects[stat].quantity;
+                    break;
+                case effect_operators.MINUS:
+                    nitem_stat = -1*nitem_effects[stat].quantity;
+                    break;
+                case effect_operators.TIMES:
+                    nitem_stat = nitem_effects[stat].quantity*current_val;
+                    break;
+                case effect_operators.DIVIDE:
+                    nitem_stat = -(current_val/nitem_effects[stat].quantity) | 0;
+                    break;
+
+            }
+        }
 
         return (nitem_stat - eq_stat);
     }
@@ -126,17 +163,17 @@ export class EquipCompare {
         let line = 0;
 
         switch(stat){
-            case "attack":
+            case effect_types.ATTACK:
                 new_stat_text = this.new_atk_text;
                 curr_stat_text = this.curr_atk_text;
                 line = 0;
                 break;
-            case "defense":
+            case effect_types.DEFENSE:
                 new_stat_text = this.new_def_text;
                 curr_stat_text = this.curr_def_text;
                 line = 1;
                 break;
-            case "agility":
+            case effect_types.AGILITY:
                 new_stat_text = this.new_agi_text;
                 curr_stat_text = this.curr_agi_text;
                 line = 2;
@@ -198,15 +235,16 @@ export class EquipCompare {
                 break;
         }
 
-        let atk_diff = this.compare_items(char_current_item, this.selected_item, "attack");
-        let def_diff = this.compare_items(char_current_item, this.selected_item, "defense");
-        let agi_diff = this.compare_items(char_current_item, this.selected_item, "agility");
+        let atk_diff = this.compare_items(char_current_item, this.selected_item, effect_types.ATTACK, this.selected_char.atk);
+        let def_diff = this.compare_items(char_current_item, this.selected_item, effect_types.DEFENSE, this.selected_char.def);
+        let agi_diff = this.compare_items(char_current_item, this.selected_item, effect_types.AGILITY, this.selected_char.agi);
 
-        this.display_stat("attack", this.selected_char.current_atk, atk_diff);
-        this.display_stat("defense", this.selected_char.current_def, def_diff);
-        this.display_stat("agility", this.selected_char.current_agi, agi_diff);
+        this.display_stat(effect_types.ATTACK, this.selected_char.atk, atk_diff);
+        this.display_stat(effect_types.DEFENSE, this.selected_char.def, def_diff);
+        this.display_stat(effect_types.AGILITY, this.selected_char.agi, agi_diff);
 
-        this.window.update_text(this.data.info.items_list[char_current_item].name, this.item_name_text);
+        let name = this.data.info.items_list[char_current_item] ? this.data.info.items_list[char_current_item].name : "";
+        this.window.update_text(name, this.item_name_text);
 
         for(let i=0; i<SEPARATOR_COUNT; i++){
             this.window.draw_separator(SEPARATOR_X, SEPARATOR_Y+LINE_SHIFT*i, SEPARATOR_X+SEPARATOR_LENGTH , SEPARATOR_Y+LINE_SHIFT*i, false);
