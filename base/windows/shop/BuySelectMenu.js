@@ -41,12 +41,14 @@ Supports multiple item pages
 
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance
-       cursor_manager [CursorManager] - The manager class for cursor movement*/
+       parent [ShopMenuScreen] - The main shop menu class
+       on_change [function] - Function callback to update the parent*/
 export class BuySelectMenu{
-    constructor(game, data, parent){
+    constructor(game, data, parent, on_change){
         this.game = game;
         this.data = data;
         this.parent = parent;
+        this.on_change = on_change;
         this.close_callback = null;
 
         this.window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
@@ -306,7 +308,7 @@ export class BuySelectMenu{
 
         this.set_item(this.selected_index);
         this.set_cursor(this.selected_index);
-        if(this.parent) this.parent.update_item_info(this.pages[this.current_page][this.selected_index].key_name);
+        this.on_change(this.pages[this.current_page][this.selected_index].key_name);
     }
 
     /*Returns the item with the next index

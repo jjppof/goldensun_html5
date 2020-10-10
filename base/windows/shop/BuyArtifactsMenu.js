@@ -33,6 +33,7 @@ export class BuyArtifactsMenu{
         this.old_item = null;
         this.selected_character = null;
         this.selected_char_index = 0;
+        this.active = false;
     }
 
     update_game_ticket_step(){
@@ -145,8 +146,7 @@ export class BuyArtifactsMenu{
             let sell_price = this.old_item.broken ? this.old_item.price*SELL_BROKEN_MULTIPLIER : this.old_item.price*SELL_MULTIPLIER;
 
             let text = this.npc_dialog.get_message("sell_current");
-            text = this.npc_dialog.replace_text("price", text, sell_price | 0);
-            text = this.npc_dialog.replace_text("item", text, this.old_item.name);
+            text = this.npc_dialog.replace_text(text, undefined, this.old_item.name, sell_price | 0);
             this.npc_dialog.update_dialog(text, false, false);
 
             this.yesno_action.open_menu({yes: this.sell_old_equip.bind(this, this.old_item), no: () => {
@@ -212,7 +212,7 @@ export class BuyArtifactsMenu{
                 if(equip_ask){
                     let equip_now = () => {
                         let text = this.npc_dialog.get_message("equip_now");
-                        text = this.npc_dialog.replace_text("hero", text, this.selected_character.name);
+                        text = this.npc_dialog.replace_text(text, this.selected_character.name);
                         this.npc_dialog.update_dialog(text, false, false);
 
                         this.yesno_action.open_menu({yes: this.equip_new_item.bind(this), no: () => {
@@ -241,13 +241,13 @@ export class BuyArtifactsMenu{
 
         if(this.selected_character.items.length === MAX_INVENTORY_SIZE){
             let text = this.npc_dialog.get_message("inventory_full");
-            text = this.npc_dialog.replace_text("hero", text, this.selected_character.name);
+            text = this.npc_dialog.replace_text(text, this.selected_character.name);
             this.npc_dialog.update_dialog(text, false, false);
         }
         else{
             if(!this.selected_item.equipable_chars.includes(this.selected_character.key_name)){
                 let text = this.npc_dialog.get_message("cant_equip");
-                text = this.npc_dialog.replace_text("hero", text, this.selected_character.name);
+                text = this.npc_dialog.replace_text(text, this.selected_character.name);
                 this.npc_dialog.update_dialog(text, false, false);
 
                 this.yesno_action.open_menu({yes: this.on_purchase_success.bind(this), no: this.open_equip_compare.bind(this)},
@@ -273,7 +273,7 @@ export class BuyArtifactsMenu{
 
         if(this.selected_character.items.length === MAX_INVENTORY_SIZE){
             let text = this.npc_dialog.get_message("inventory_full");
-            text = this.npc_dialog.replace_text("hero", text, this.selected_character.name);
+            text = this.npc_dialog.replace_text(text, this.selected_character.name);
             this.npc_dialog.update_dialog(text, false, false);
         }
         
@@ -281,8 +281,7 @@ export class BuyArtifactsMenu{
             let item_name = this.data.info.items_list[this.selected_item.key_name].name;
 
             let text = this.npc_dialog.get_message("stack_full");
-            text = this.npc_dialog.replace_text("hero", text, this.selected_character.name);
-            text = this.npc_dialog.replace_text("item", text, item_name);
+            text = this.npc_dialog.replace_text(text, this.selected_character.name, item_name);
             this.npc_dialog.update_dialog(text, false, false);
         }
         else{
@@ -399,6 +398,7 @@ export class BuyArtifactsMenu{
 
     open_menu(is_artifacts_menu){
         this.is_artifacts_menu = is_artifacts_menu;
+        this.active = true;
         this.item_list = this.is_artifacts_menu ? this.parent.artifact_list : this.parent.normal_item_list;
 
         if(is_artifacts_menu){
@@ -428,6 +428,7 @@ export class BuyArtifactsMenu{
         this.selected_item = null;
         this.old_item = null;
         this.buy_select_pos = {page: 0, index: 0};
+        this.active = false;
 
         this.control_manager.reset();
         this.parent.horizontal_menu.activate();

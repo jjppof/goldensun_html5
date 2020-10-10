@@ -28,20 +28,17 @@ const TEXT_Y = 8;
 const CURSOR_X = 136;
 const CURSOR_Y = 112;
 
-const SELL_MULTIPLIER = 3/4;
-const REPAIR_MULTIPLIER = 1/4;
-const SELL_BROKEN_MULTIPLIER = SELL_MULTIPLIER - REPAIR_MULTIPLIER;
-
 /*Displays a character's inventory through icons
 Used in shop menus. Can display the amout of an item in the inventory
 
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
 export class InventoryWindow{
-    constructor(game, data, parent){
+    constructor(game, data, parent, on_change){
         this.game = game;
         this.data = data;
         this.parent = parent;
+        this.on_change = on_change;
         this.close_callback = null;
 
         this.expanded = false;
@@ -220,21 +217,7 @@ export class InventoryWindow{
     set_cursor(line, col){
         this.cursor_pos = {line: line, col: col};
         this.parent.cursor_manager.move_to(CURSOR_X + col*ICON_SIZE, CURSOR_Y + line*ICON_SIZE, "point", true);
-        if(this.parent.item_price_win.open){
-            let is_repair = this.parent.sell_menu.is_repair_menu;
-            let itm = this.item_grid[line][col];
-
-            if(itm){
-                let item_price = this.data.info.items_list[itm.key_name].price;
-                let important_item = this.data.info.items_list[itm.key_name].important_item;
-                if(is_repair)
-                    this.parent.update_item_info(itm.key_name, (item_price*REPAIR_MULTIPLIER | 0), !itm.broken, itm.broken, important_item);
-                else{
-                    if(itm.broken) this.parent.update_item_info(itm.key_name, (item_price*SELL_BROKEN_MULTIPLIER | 0), important_item, true, important_item);
-                    else this.parent.update_item_info(itm.key_name, (item_price*SELL_MULTIPLIER | 0), important_item, true, important_item);
-                }
-            }
-        }
+        this.on_change(line, col);
     }
 
     /*Displays the sprites for the window

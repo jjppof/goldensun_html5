@@ -51,6 +51,10 @@ const ITEM_DESC_TEXT_Y = 8;
 const ITEM_DESC_WIN_X2 = 0;
 const ITEM_DESC_WIN_Y2 = 40;
 
+const SELL_MULTIPLIER = 3/4;
+const REPAIR_MULTIPLIER = 1/4;
+const SELL_BROKEN_MULTIPLIER = SELL_MULTIPLIER - REPAIR_MULTIPLIER;
+
 export class ShopMenuScreen{
     constructor(game, data){
         this.game = game;
@@ -80,11 +84,11 @@ export class ShopMenuScreen{
         this.npc_dialog = new ShopkeepDialog(this.game, this.data, this);
 
         this.yesno_action = new YesNoMenu(this.game, this.data, this.control_manager);
-        this.inv_win = new InventoryWindow(this.game, this.data, this);
-        this.buy_select = new BuySelectMenu(this.game, this.data, this);
+        this.inv_win = new InventoryWindow(this.game, this.data, this, this.on_inv_win_change.bind(this));
+        this.buy_select = new BuySelectMenu(this.game, this.data, this, this.on_buy_select_change.bind(this));
         this.eq_compare = new EquipCompare(this.game, this.data);
         this.quant_win = new ShopItemQuantityWindow(this.game, this.data, this.cursor_manager);
-        this.char_display = new ShopCharDisplay(this.game, this.data, this);
+        this.char_display = new ShopCharDisplay(this.game, this.data, this, this.on_char_display_change.bind(this));
 
         this.item_price_win = new Window(this.game, ITEM_PRICE_WIN_X, ITEM_PRICE_WIN_Y, ITEM_PRICE_WIN_WIDTH, ITEM_PRICE_WIN_HEIGHT);
         this.your_coins_win = new Window(this.game, YOUR_COINS_WIN_X, YOUR_COINS_WIN_Y, YOUR_COINS_WIN_WIDTH, YOUR_COINS_WIN_HEIGHT);
@@ -103,6 +107,33 @@ export class ShopMenuScreen{
         this.item_price_coins_label = this.item_price_win.set_text_in_position("Coins", ITEM_PRICE_COINS_X, ITEM_PRICE_COINS_Y);
 
         this.item_desc_text = this.item_desc_win.set_text_in_position("", ITEM_DESC_TEXT_X, ITEM_DESC_TEXT_Y);
+    }
+
+    on_char_display_change(key_name){
+        if(this.eq_compare.is_open) this.eq_compare.change_character(key_name);
+        if(this.inv_win.is_open) this.inv_win.change_character(key_name);
+    }
+
+    on_inv_win_change(line, col){
+        if(this.item_price_win.open && this.sell_menu.active){
+            let is_repair = this.sell_menu.is_repair_menu;
+            let itm = this.inv_win.item_grid[line][col];
+
+            if(itm){
+                let item_price = this.data.info.items_list[itm.key_name].price;
+                let important_item = this.data.info.items_list[itm.key_name].important_item;
+                let price_val = item_price;
+
+                if(is_repair) price_val = item_price*REPAIR_MULTIPLIER | 0;
+                else price_val = item_price * (itm.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER) | 0;
+
+                this.update_item_info(itm.key_name, price_val, is_repair ? !itm.broken : important_item, is_repair ? itm.broken : true, important_item);
+            }
+        }
+    }
+
+    on_buy_select_change(key_name){
+        this.update_item_info(key_name);
     }
 
     set_item_lists(){

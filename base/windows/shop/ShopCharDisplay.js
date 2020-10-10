@@ -29,10 +29,11 @@ const ARROW_Y_DIFF = 8;
 const ARROW_TWEEN_TIME = Phaser.Timer.QUARTER >> 1;
 
 export class ShopCharDisplay {
-    constructor(game, data, parent){
+    constructor(game, data, parent, on_change){
         this.game = game;
         this.data = data;
         this.parent = parent;
+        this.on_change = on_change;
         this.close_callback = null;
 
         this.window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
@@ -190,8 +191,7 @@ export class ShopCharDisplay {
         this.parent.cursor_manager.move_to(CURSOR_X + index*GAP_SIZE, CURSOR_Y, "wiggle");
         let c = this.data.info.party_data.members[this.current_line*MAX_PER_LINE + this.selected_index];
         
-        if(this.parent.eq_compare.is_open) this.parent.eq_compare.change_character(c.key_name);
-        if(this.parent.inv_win.is_open) this.parent.inv_win.change_character(c.key_name);
+        this.on_change(c.key_name);
     }
 
     next_char(){

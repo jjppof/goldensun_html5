@@ -28,19 +28,17 @@ export class ShopkeepDialog{
     }
 
     update_position(){
-        this.dialog_manager.update_position(0,0,FRAME_SIZE+4,0);
+        this.dialog_manager.update_position();
     }
     
-    replace_text(type, message, input){
-        if (type == "hero"){
-            return message.replace("${HERO}", input);
-        }
-        else if (type == "item"){
-            return message.replace("${ITEM}", input);
-        }
-        else if (type = "price"){
-            return message.replace("${PRICE}", input);
-        }
+    replace_text(message, hero=undefined, item=undefined, price=undefined){
+        do{
+            if(message.includes("${HERO}")) message = message.replace("${HERO}", hero);
+            if(message.includes("${ITEM}")) message = message.replace("${ITEM}", item);
+            if(message.includes("${PRICE}")) message = message.replace("${PRICE}", price);
+        }while(message.includes("${HERO}") || message.includes("${ITEM}") || message.includes("${PRICE}"));
+        
+        return message;
     }
 
     get_message(message_key){

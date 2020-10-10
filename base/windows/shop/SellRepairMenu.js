@@ -28,6 +28,7 @@ export class SellRepairMenu{
         this.inv_win_pos = {line: 0, col: 0};
         this.selected_character = null;
         this.selected_char_index = 0;
+        this.activate = false;
     }
 
     on_item_repair(){
@@ -64,7 +65,7 @@ export class SellRepairMenu{
             let msg_key = item_breakable ? "cant_repair" : "repair_decline";
 
             let text = this.npc_dialog.get_message(msg_key);
-            text = this.npc_dialog.replace_text("item", text, this.data.info.items_list[this.selected_item.key_name].name);
+            text = this.npc_dialog.replace_text(text, undefined, this.data.info.items_list[this.selected_item.key_name].name);
             this.npc_dialog.update_dialog(text, true, false);
 
             this.control_manager.set_control(false, false, false, false, {esc: this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos),
@@ -74,8 +75,7 @@ export class SellRepairMenu{
         else{
             let price = (this.data.info.items_list[this.selected_item.key_name].price * REPAIR_MULTIPLIER) | 0;
             let text = this.npc_dialog.get_message("repair_deal");
-            text = this.npc_dialog.replace_text("item", text, this.data.info.items_list[this.selected_item.key_name].name);
-            text = this.npc_dialog.replace_text("price", text, price);
+            text = this.npc_dialog.replace_text(text, undefined, this.data.info.items_list[this.selected_item.key_name].name, price);
             this.npc_dialog.update_dialog(text, false, false);
 
             this.yesno_action.open_menu({yes: () => {
@@ -146,9 +146,9 @@ export class SellRepairMenu{
             let msg_key = this.data.info.items_list[this.selected_item.key_name].rare_item ? "sell_artifact" : "sell_normal";
 
             let text = this.npc_dialog.get_message(msg_key);
-            if(msg_key === "sell_normal") text = this.npc_dialog.replace_text("item", text, this.data.info.items_list[this.selected_item.key_name].name);
+            let item_name = msg_key === "sell_normal" ? this.data.info.items_list[this.selected_item.key_name].name : undefined;
             let item_price = (this.data.info.items_list[this.selected_item.key_name].price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0; 
-            text = this.npc_dialog.replace_text("price", text, item_price);
+            text = this.npc_dialog.replace_text(text, undefined, item_name, item_price);
             this.npc_dialog.update_dialog(text, false, false);
 
             this.yesno_action.open_menu({yes: this.on_sale_success.bind(this), no: () => {
@@ -178,7 +178,7 @@ export class SellRepairMenu{
 
                     let text = this.npc_dialog.get_message("sell_quantity_confirm");
                     let item_price = (this.data.info.items_list[this.selected_item.key_name].price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0; 
-                    text = this.npc_dialog.replace_text("price", text, item_price*quant);
+                    text = this.npc_dialog.replace_text(text, undefined, undefined, item_price*quant);
                     this.npc_dialog.update_dialog(text, false, false);
 
                     this.yesno_action.open_menu({yes: this.on_sale_success.bind(this, quant),
@@ -244,6 +244,7 @@ export class SellRepairMenu{
 
     open_menu(is_repair_menu){
         this.is_repair_menu = is_repair_menu;
+        this.active = true;
         this.item_list = this.is_artifacts_menu ? this.parent.artifact_list : this.parent.normal_item_list;
 
         if(is_repair_menu){
@@ -270,6 +271,7 @@ export class SellRepairMenu{
         this.selected_item = null;
         this.inv_win_pos = {line: 0, col: 0};
         this.selected_character = null;
+        this.active = false;
 
         this.control_manager.reset();
         this.parent.horizontal_menu.activate();
