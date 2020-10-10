@@ -1,9 +1,10 @@
+const WIGGLE_KEY = "wiggle"
 const WIGGLE_X1 = -4;
 const WIGGLE_Y1 = +4;
-
 const WIGGLE_X2 = -8;
 const WIGGLE_Y2 = 0;
 
+const POINT_KEY = "point"
 const POINT_X = -6;
 const POINT_Y = 6;
 
@@ -36,14 +37,14 @@ export class CursorManager{
         this.clear_tweens();
 
         switch(type){
-            case "wiggle":
+            case WIGGLE_KEY:
                 this.active_tween = this.game.add.tween(this.cursor)
                 .to({ x: this.cursor.x + WIGGLE_X1, y: this.cursor.y + WIGGLE_Y1 }, TWEEN_TIME, Phaser.Easing.Linear.None)
                 .to({ x: this.cursor.x + WIGGLE_X2, y: this.cursor.y + WIGGLE_Y2 }, TWEEN_TIME, Phaser.Easing.Linear.None)
                 .to({ x: this.cursor.x + WIGGLE_X1, y: this.cursor.y + WIGGLE_Y1 }, TWEEN_TIME, Phaser.Easing.Linear.None)
                 .to({ x: this.cursor.x, y: this.cursor.y}, TWEEN_TIME, Phaser.Easing.Linear.None).loop();
                 break;
-            case "point":
+            case POINT_KEY:
                 this.active_tween = this.game.add.tween(this.cursor)
                 .to({ x: this.cursor.x + POINT_X, y: this.cursor.y + POINT_Y }, TWEEN_TIME, Phaser.Easing.Linear.None)
                 .to({ x: this.cursor.x, y: this.cursor.y}, TWEEN_TIME, Phaser.Easing.Linear.None).loop();

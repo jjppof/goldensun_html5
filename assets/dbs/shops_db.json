@@ -1,7 +1,6 @@
 [
     {
         "key_name": "madra_test_shop",
-        "shop_type": "general_shop",
         "dialog_key": "female_medicine_shopkeep_00",
         "avatar_key": "potion_shopkeeper",
         "item_list": [

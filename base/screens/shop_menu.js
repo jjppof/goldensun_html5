@@ -55,11 +55,15 @@ const SELL_MULTIPLIER = 3/4;
 const REPAIR_MULTIPLIER = 1/4;
 const SELL_BROKEN_MULTIPLIER = SELL_MULTIPLIER - REPAIR_MULTIPLIER;
 
+const BUY_MODE = "buy"
+const SELL_MODE = "sell"
+
 export class ShopMenuScreen{
     constructor(game, data){
         this.game = game;
         this.data = data;
         this.shop_key = null;
+        this.close_callback = null;
 
         this.items_db = this.data.info.items_list;
         this.shops_db = _.mapKeys(this.data.dbs.shops_db, shop => shop.key_name);
@@ -69,7 +73,7 @@ export class ShopMenuScreen{
         this.artifact_list = [];
 
         this.buttons_keys = ["buy", "sell", "artifacts", "repair"];
-        this.windows_mode = "buy";
+        this.windows_mode = BUY_MODE;
         this.current_index= 0;
 
         this.cursor_manager = new CursorManager(this.game);
@@ -178,17 +182,17 @@ export class ShopMenuScreen{
 
     alternate_window_pos(mode){
         if(this.windows_mode === mode) return;
-        if(mode==="buy"){
+        if(mode===BUY_MODE){
             this.item_price_win.update_position({x: ITEM_PRICE_WIN_X, y: ITEM_PRICE_WIN_Y});
             this.item_desc_win.update_position({x: ITEM_DESC_WIN_X, y: ITEM_DESC_WIN_Y});
             this.your_coins_win.update_position({x: YOUR_COINS_WIN_X, y: YOUR_COINS_WIN_Y});
-            this.windows_mode = "buy";
+            this.windows_mode = BUY_MODE;
         }
         else{
             this.item_price_win.update_position({x: ITEM_PRICE_WIN_X2, y: ITEM_PRICE_WIN_Y2});
             this.item_desc_win.update_position({x: ITEM_DESC_WIN_X2, y: ITEM_DESC_WIN_Y2});
             this.your_coins_win.update_position({x: YOUR_COINS_WIN_X2, y: YOUR_COINS_WIN_Y2});
-            this.windows_mode = "sell";
+            this.windows_mode = SELL_MODE;
         }
     }
 
@@ -198,19 +202,19 @@ export class ShopMenuScreen{
         
         switch (this.buttons_keys[this.horizontal_menu.selected_button_index]){
             case "buy":
-                this.alternate_window_pos("buy");
+                this.alternate_window_pos(BUY_MODE);
                 this.buy_menu.open_menu(false);
                 break;
             case "sell":
-                this.alternate_window_pos("sell");
+                this.alternate_window_pos(SELL_MODE);
                 this.sell_menu.open_menu(false);
                 break;
             case "artifacts":
-                this.alternate_window_pos("buy");
+                this.alternate_window_pos(BUY_MODE);
                 this.buy_menu.open_menu(true);
                 break;
             case "repair":
-                this.alternate_window_pos("sell");
+                this.alternate_window_pos(SELL_MODE);
                 this.sell_menu.open_menu(true);
                 break;
         }
@@ -239,8 +243,9 @@ export class ShopMenuScreen{
 
     }
 
-    open_menu(shop_key) {
+    open_menu(shop_key, close_callback) {
         this.shop_key = shop_key;
+        this.close_callback = close_callback;
 
         if(this.data.hero.in_action()){
             this.data.hero.stop_char();
@@ -257,6 +262,9 @@ export class ShopMenuScreen{
         this.npc_dialog.close();
         this.data.shop_open = false;
         this.control_manager.reset();
+        
+        this.close_callback();
+        this.close_callback = null;
     }
 
     close_menu() {

@@ -188,7 +188,6 @@ class GoldenSun {
             window.dispatchEvent(new Event('resize'));
         });
 
-        this.shop_screen = new ShopMenuScreen(this.game, this);
         //enable psynergies shortcuts for testing
         this.game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(() => {
             if (this.hero.in_action() || this.menu_open || this.in_battle) return;

@@ -1,3 +1,5 @@
+import { item_types } from '../../Item.js';
+
 const MAX_INVENTORY_SIZE = 15;
 const MAX_STACK_SIZE = 30;
 
@@ -103,25 +105,25 @@ export class BuyArtifactsMenu{
         this.npc_dialog.update_dialog("equip_compliment", true);
 
         switch(item_type){
-            case "weapons":
+            case item_types.WEAPONS:
                 if(eq_slots.weapon) this.old_item = this.data.info.items_list[eq_slots.weapon.key_name];
                 break;        
-            case "armor":
+            case item_types.ARMOR:
                 if(eq_slots.body) this.old_item = this.data.info.items_list[eq_slots.body.key_name];
                 break;
-            case "chest_protector":
+            case item_types.CHEST_PROTECTOR:
                 if(eq_slots.chest) this.old_item = this.data.info.items_list[eq_slots.chest.key_name];
                 break;
-            case "head_protector":
+            case item_types.HEAD_PROTECTOR:
                 if(eq_slots.head) this.old_item = this.data.info.items_list[eq_slots.head.key_name];
                 break;
-            case "ring":
+            case item_types.RING:
                 if(eq_slots.ring) this.old_item = this.data.info.items_list[eq_slots.ring.key_name];
                 break;
-            case "boots":
+            case item_types.LEG_PROTECTOR:
                 if(eq_slots.boots) this.old_item = this.data.info.items_list[eq_slots.boots.key_name];
                 break;
-            case "underwear":
+            case item_types.UNDERWEAR:
                 if(eq_slots.underwear) this.old_item = this.data.info.items_list[eq_slots.underwear.key_name];
                 break;
         }
@@ -336,7 +338,12 @@ export class BuyArtifactsMenu{
     }
 
     open_inventory_view(game_ticket=false){
-        if(!game_ticket && this.buy_select.is_open) this.buy_select_pos = {page: this.buy_select.current_page, index: this.buy_select.selected_index};
+        if(!game_ticket && this.buy_select.is_open){
+            this.buy_select_pos = {
+                page: this.buy_select.current_page,
+                index: this.buy_select.selected_index
+            };
+        }
         
         if(this.item_desc_win.open) this.item_desc_win.close();
         if(this.buy_select.is_open) this.buy_select.close();

@@ -53,7 +53,7 @@ export class ButtonSelectMenu {
     mount_buttons(filtered_buttons = []) {
         const buttons = this.buttons_keys.filter(key => !filtered_buttons.includes(key));
         this.buttons_number = buttons.length;
-        const total_width = BUTTON_WIDTH * this.buttons_number + this.title_window_width + 2 * numbers.OUTSIDE_BORDER_WIDTH + 2;
+        const total_width = BUTTON_WIDTH * this.buttons_number + this.title_window_width + (numbers.OUTSIDE_BORDER_WIDTH << 1) + 2;
         this.x = numbers.GAME_WIDTH - total_width;
         if (!this.dock_right) {
             this.x = this.x >> 1;
@@ -72,7 +72,7 @@ export class ButtonSelectMenu {
             }
             this.buttons[i].sprite.anchor.setTo(0.5, 1);
             this.buttons[i].sprite.centerX = parseInt(BUTTON_WIDTH * (i + 0.5));
-            this.buttons[i].sprite.centerY = parseInt(BUTTON_HEIGHT * 0.5);
+            this.buttons[i].sprite.centerY = parseInt(BUTTON_HEIGHT >> 1);
         }
     }
 
@@ -133,7 +133,7 @@ export class ButtonSelectMenu {
     update_position() {
         this.group.x = this.game.camera.x + this.x;
         this.group.y = this.game.camera.y + this.y;
-        this.title_window.update(undefined, true);
+        this.title_window.update(true);
     }
 
     open(callback, select_index=0, start_active = true, custom_scale) {

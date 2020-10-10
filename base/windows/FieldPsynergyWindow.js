@@ -34,7 +34,7 @@ export class FieldPsynergyWindow {
     Input: text [string] - The psynergy name to show
            callback [function] - Callback function (Optional)*/
     open(text, callback) {
-        let new_text = capitalize(text);
+        const new_text = capitalize(text);
         this.window.update_text(new_text, this.text);
         this.window.update_size({width: BASE_WIDTH+this.text.text.width, height: BASE_HEIGHT});
         this.window.update_position({x: (POS_X - (this.text.text.width >> 1)) | 0, y: (POS_Y + this.vertical_adjust()) | 0});

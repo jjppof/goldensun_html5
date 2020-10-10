@@ -61,12 +61,12 @@ export class GameEventManager {
             }
         } else if (npc.npc_type === npc_types.SHOP) {
             if(!this.data.shop_open){
-                this.data.shop_screen.open_menu(npc.shop_key);
+                this.data.shop_screen.open_menu(npc.shop_key, ()=>{
+                    this.on_event = false;
+                    this.data.force_stop_movement = false;
+                    this.control_enable = true;
+                });
             }
-
-            this.on_event = false;
-            this.data.force_stop_movement = false;
-            this.control_enable = true;
         }
     }
 

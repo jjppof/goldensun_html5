@@ -2,6 +2,8 @@ import { ButtonSelectMenu } from '../menus/ButtonSelectMenu.js';
 import { capitalize } from '../utils.js';
 
 const TITLE_WINDOW_WIDTH = 36
+const YES_ACTION = "yes";
+const NO_ACTION = "no";
 
 export class YesNoMenu{
     constructor(game, data, control_manager){
@@ -12,9 +14,8 @@ export class YesNoMenu{
         this.yes_callback = null;
         this.no_callback = null;
 
-        this.buttons_keys = ["yes", "no"];
+        this.buttons_keys = [YES_ACTION, NO_ACTION];
 
-        this.was_in_dialog = null;
         this.is_open = false;
 
         this.menu = new ButtonSelectMenu(this.game, this.data,
@@ -42,10 +43,10 @@ export class YesNoMenu{
 
     button_press(){
         switch (this.buttons_keys[this.menu.selected_button_index]){
-            case "yes":
+            case YES_ACTION:
                 this.close_menu(this.yes_callback);
                 break;
-            case "no":
+            case NO_ACTION:
                 this.close_menu(this.no_callback);
                 break;
         }
@@ -59,8 +60,6 @@ export class YesNoMenu{
         this.yes_callback = callbacks.yes;
         this.no_callback = callbacks.no;
 
-        this.was_in_dialog = this.data.in_dialog;
-        this.data.in_dialog = this.was_in_dialog === true ? this.was_in_dialog : true;
         if(this.data.hero.in_action()){
             this.data.hero.stop_char();
             this.data.hero.update_shadow();
@@ -80,7 +79,6 @@ export class YesNoMenu{
         if (!this.is_active()) return;
         this.menu.close();
         
-        this.data.in_dialog = this.was_in_dialog;
         this.is_open = false;
         callback();
     }

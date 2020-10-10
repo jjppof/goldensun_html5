@@ -69,12 +69,7 @@ export async function initialize_game_data(game, data) {
     data.info.misc_sprite_base_list = initialize_misc_data(game, data.dbs.misc_animations_db, load_misc_promise_resolve);
     await load_misc_promise;
 
-    let load_shops_promise_resolve;
-    const load_shops_promise = new Promise(resolve => {
-        load_shops_promise_resolve = resolve;
-    });
-    data.info.shops_list = initialize_shops(game, data.dbs.shops_db, load_shops_promise_resolve);
-    await load_shops_promise;
+    data.info.shops_list = initialize_shops(game, data.dbs.shops_db);
 
     //initialize field abilities
     data.info.field_abilities_list = initialize_field_abilities(game, data);

@@ -28,6 +28,14 @@ const TEXT_Y = 8;
 const CURSOR_X = 136;
 const CURSOR_Y = 112;
 
+const SPRITE_GROUP_KEY = "sprites";
+const ICON_GROUP_KEY = "icons";
+
+const ITEMS_IMG_KEY = "items_icons";
+const BACKGROUND_IMG_KEY = "item_border";
+const EQUIPPED_IMG_KEY = "equipped";
+const BROKEN_IMG_KEY = "broken"; 
+
 /*Displays a character's inventory through icons
 Used in shop menus. Can display the amout of an item in the inventory
 
@@ -53,8 +61,8 @@ export class InventoryWindow{
         this.item_grid = [];
         this.selected_item = null;
         this.cursor_pos = {line: 0, col: 0};
-        this.sprite_group = this.window.define_internal_group("sprites", {x: ITEM_X, y: ITEM_Y});
-        this.icon_group = this.window.define_internal_group("icons", {x: ITEM_X + SUB_ICON_X, y: ITEM_Y + SUB_ICON_Y});
+        this.sprite_group = this.window.define_internal_group(SPRITE_GROUP_KEY, {x: ITEM_X, y: ITEM_Y});
+        this.icon_group = this.window.define_internal_group(ICON_GROUP_KEY, {x: ITEM_X + SUB_ICON_X, y: ITEM_Y + SUB_ICON_Y});
     }
 
     /*Checks and manages the expanded state of the window
@@ -134,23 +142,27 @@ export class InventoryWindow{
 
     
     kill_item_at(line, col){
-        let item_icons = this.sprite_group.children.filter(s => { return (s.alive === true && s.key === "items_icons" &&
-            s.x === col*ICON_SIZE && s.y === line*ICON_SIZE); });
-        let bg_icons = this.sprite_group.children.filter(s => { return (s.alive === true && s.key === "item_border" &&
-            s.x === col*ICON_SIZE && s.y === line*ICON_SIZE); });
+        let item_icons = this.sprite_group.children.filter(s => { 
+            return (s.alive === true && s.key === ITEMS_IMG_KEY && s.x === col*ICON_SIZE && s.y === line*ICON_SIZE);
+         });
+        let bg_icons = this.sprite_group.children.filter(s => { 
+            return (s.alive === true && s.key === BACKGROUND_IMG_KEY && s.x === col*ICON_SIZE && s.y === line*ICON_SIZE);
+        });
 
         item_icons[0].kill();
         bg_icons[0].kill();
         
         if(this.item_grid[line][col].broken){
-            let broken_icons = this.sprite_group.children.filter(b => { return (b.alive === true && b.key === "broken" &&
-            b.x === col*ICON_SIZE && b.y === line*ICON_SIZE); });
+            let broken_icons = this.sprite_group.children.filter(b => {
+                return (b.alive === true && b.key === BROKEN_IMG_KEY && b.x === col*ICON_SIZE && b.y === line*ICON_SIZE);
+            });
             broken_icons[0].kill();
         }
 
         if(this.item_grid[line][col].equipped){
-            let equipped_icons = this.icon_group.children.filter(e => { return (e.alive === true && e.text === undefined &&
-                e.x === col*ICON_SIZE && e.y === line*ICON_SIZE); });
+            let equipped_icons = this.icon_group.children.filter(e => {
+                return (e.alive === true && e.text === undefined && e.x === col*ICON_SIZE && e.y === line*ICON_SIZE);
+            });
             equipped_icons[0].kill();
         }
     }
@@ -235,8 +247,8 @@ export class InventoryWindow{
 
                 let this_item = this.data.info.items_list[this.item_grid[line][col].key_name];
 
-                let dead_items = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === "items_icons"); });
-                let dead_backgrounds = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === "item_border"); });
+                let dead_items = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === ITEMS_IMG_KEY); });
+                let dead_backgrounds = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === BACKGROUND_IMG_KEY); });
 
                 if(dead_items.length>0 && dead_backgrounds.length>0){
                     dead_backgrounds[0].reset(col*ICON_SIZE, line*ICON_SIZE);
@@ -244,20 +256,20 @@ export class InventoryWindow{
                     dead_items[0].frameName = this_item.key_name;
                 }
                 else{
-                    this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "item_border", undefined, undefined, "sprites");
-                    this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "items_icons", undefined, this_item.key_name, "sprites");
+                    this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, BACKGROUND_IMG_KEY, undefined, undefined, SPRITE_GROUP_KEY);
+                    this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, ITEMS_IMG_KEY, undefined, this_item.key_name, SPRITE_GROUP_KEY);
                 }
 
                 if (this.item_grid[line][col].broken) {
-                    let dead_broken = this.sprite_group.children.filter(b => { return (b.alive === false && b.key === "broken"); });
+                    let dead_broken = this.sprite_group.children.filter(b => { return (b.alive === false && b.key === BROKEN_IMG_KEY); });
                     if(dead_broken.length>0) dead_broken[0].reset(col*ICON_SIZE, line*ICON_SIZE);
-                    else this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "broken", undefined,undefined, "sprites");
+                    else this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, BROKEN_IMG_KEY, undefined,undefined, SPRITE_GROUP_KEY);
                 }
 
                 if (this.item_grid[line][col].equipped) {
                     let dead_icons = this.icon_group.children.filter(e => { return (e.alive === false && e.text === undefined); });
                     if(dead_icons.length>0) dead_icons[0].reset(col*ICON_SIZE, line*ICON_SIZE);
-                    else this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, "equipped", undefined,undefined, "icons");
+                    else this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, EQUIPPED_IMG_KEY, undefined,undefined, ICON_GROUP_KEY);
                 }
 
                 if (this.item_grid[line][col].quantity > 1) {
@@ -270,7 +282,7 @@ export class InventoryWindow{
                     else{
                         let item_count = this.game.add.bitmapText(col*ICON_SIZE, line*ICON_SIZE, 'gs-item-bmp-font', this.item_grid[line][col].quantity.toString());
                         item_count.x += (SUB_TEXT_X_SHIFT - item_count.width);
-                        this.window.add_to_internal_group("icons", item_count);
+                        this.window.add_to_internal_group(ICON_GROUP_KEY, item_count);
                     }
                 }
             }

@@ -1,5 +1,5 @@
 import { Window } from '../../Window.js';
-import { kill_all_sprites } from '../../utils.js';
+import * as utils from '../../utils.js';
 
 const MAX_PER_LINE = 4;
 
@@ -124,13 +124,15 @@ export class ShopCharDisplay {
             let char = this.lines[this.current_line][i];
             let sprite = null;
 
-            let dead_idle = this.char_group.children.filter(s => { return (s.alive === false && s.key === char.key_name + "_idle"); });
+            let dead_idle = this.char_group.children.filter(s => { 
+                return (s.alive === false && s.key === char.sprite_base.getActionKey(utils.base_actions.IDLE));
+            });
 
             if(dead_idle.length>0) sprite = dead_idle[0].reset(i*GAP_SIZE, 0);
-            else sprite = this.char_group.create(i*GAP_SIZE, 0, char.key_name + "_idle");
+            else sprite = this.char_group.create(i*GAP_SIZE, 0, char.sprite_base.getActionKey(utils.base_actions.IDLE));
 
-            char.sprite_base.setAnimation(sprite, "idle");
-            sprite.animations.play("idle_down");
+            char.sprite_base.setAnimation(sprite, utils.base_actions.IDLE);
+            sprite.animations.play(char.sprite_base.getAnimationKey(utils.base_actions.IDLE, utils.reverse_directions[utils.directions.down]));
         }
     }
 
@@ -162,7 +164,7 @@ export class ShopCharDisplay {
                 this.selected_index = this.lines[this.current_line].length - 1;
         }
 
-        kill_all_sprites(this.char_group);
+        utils.kill_all_sprites(this.char_group);
         //unset run animation for previous character
         this.set_chars();
         this.check_arrows();
@@ -255,7 +257,7 @@ export class ShopCharDisplay {
     close(destroy=false) {
         this.is_open = false;
         this.deactivate();
-        kill_all_sprites(this.char_group, destroy);
+        utils.kill_all_sprites(this.char_group, destroy);
 
         this.lines = [];
         this.line_index = 0;
