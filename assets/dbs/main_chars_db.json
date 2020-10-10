@@ -50,7 +50,7 @@
                     "up_right"
                 ],
                 "directions_frames_number": 6,
-                "frame_rate": 9
+                "frame_rate": 10
             },{
                 "key": "climb",
                 "spritesheet": "assets/images/spritesheets/main_chars/isaac_climb.json",
@@ -189,6 +189,11 @@
                 "key_name": "ice_crystal",
                 "quantity": 1,
                 "equipped": true
+            },{
+                "key_name": "spirit_ring",
+                "quantity": 1,
+                "equipped": true,
+                "broken": true
             }
         ],
         "battle_animations_variations": {

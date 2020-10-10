@@ -271,6 +271,7 @@ export class Map {
             property_info.message,
             property_info.thought_message,
             property_info.avatar ? property_info.avatar : null,
+            property_info.shop_key,
             property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer,
             property_info.talk_range_factor,
             property_info.events === undefined ? [] : property_info.events

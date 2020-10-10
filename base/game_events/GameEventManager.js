@@ -1,6 +1,7 @@
 import { base_actions, directions, is_close, reverse_directions } from "../utils.js";
 import { DialogManager } from "../DialogManager.js";
 import { npc_types } from "../NPC.js";
+import { ShopMenuScreen } from "../screens/shop_menu.js";
 
 export const interaction_patterns = {
     TIK_TAK_TOE: "tik_tak_toe",
@@ -59,12 +60,13 @@ export class GameEventManager {
                 this.fire_npc_events(npc);
             }
         } else if (npc.npc_type === npc_types.SHOP) {
-            //open the shop here
-
-            //on shop finish:
-            this.on_event = false;
-            this.data.force_stop_movement = false;
-            this.control_enable = true;
+            if(!this.data.shop_open){
+                this.data.shop_screen.open_menu(npc.shop_key, ()=>{
+                    this.on_event = false;
+                    this.data.force_stop_movement = false;
+                    this.control_enable = true;
+                });
+            }
         }
     }
 

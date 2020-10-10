@@ -11,6 +11,7 @@ import { load_databases } from './initializers/databases_loader.js';
 import { initialize_game_data } from './initializers/initialize_info.js';
 import { Map } from './Map.js';
 import { Battle } from './battle/Battle.js';
+import { ShopMenuScreen } from './screens/shop_menu.js';
 
 class GoldenSun {
     public game: Phaser.Game = null;
@@ -30,6 +31,7 @@ class GoldenSun {
     public cursors: any = null;
     public debug: Debug = null;
     public menu_screen: any = null;
+    public shop_screen: any = null;
     public map: Map = null;
     public tile_event_manager: TileEventManager = null;
     public game_event_manager: GameEventManager = null;
@@ -225,6 +227,9 @@ class GoldenSun {
             this.hero.stop_char(false);
             if (this.menu_open && this.menu_screen.horizontal_menu.menu_active) {
                 this.menu_screen.update_position();
+            }
+            else if (this.shop_open && this.shop_screen.horizontal_menu.menu_active) {
+                this.shop_screen.update_position();
             } else if (this.in_battle) {
                 this.battle_instance.update();
             }

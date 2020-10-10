@@ -29,7 +29,7 @@ export class Item {
         curses_when_equipped,
         cant_be_removed,
         rare_item,
-        imporant_item,
+        important_item,
         carry_up_to_30,
         effects,
         attribute,
@@ -49,7 +49,7 @@ export class Item {
         this.curses_when_equipped = curses_when_equipped;
         this.cant_be_removed = cant_be_removed;
         this.rare_item = rare_item;
-        this.imporant_item = imporant_item;
+        this.important_item = important_item;
         this.carry_up_to_30 = carry_up_to_30;
         this.effects = effects;
         this.attribute = attribute;

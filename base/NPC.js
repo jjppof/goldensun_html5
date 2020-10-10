@@ -38,6 +38,7 @@ export class NPC extends ControllableChar {
         message,
         thought_message,
         avatar,
+        shop_key,
         base_collider_layer,
         talk_range_factor,
         events_info
@@ -48,6 +49,7 @@ export class NPC extends ControllableChar {
         this.message = message;
         this.thought_message = thought_message;
         this.avatar = avatar;
+        this.shop_key = shop_key;
         this.base_collider_layer = base_collider_layer;
         this.talk_range_factor = talk_range_factor === undefined ? NPC_TALK_RANGE : talk_range_factor;
         this.events = [];

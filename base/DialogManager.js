@@ -11,22 +11,33 @@ export class DialogManager {
     constructor(game, data, italic_font = true) {
         this.game = game;
         this.data = data;
+        this.italic_font = italic_font;
+
         this.parts = null; //parts of the dialog text
         this.step = 0; //step index
         this.finished = false;
+
         this.avatar = null;
         this.window = null;
         this.avatar_window = null;
-        this.italic_font = italic_font;
         this.hero_direction = utils.directions.down;
+
         this.dialog_crystal_sprite_base = this.data.info.misc_sprite_base_list[DIALOG_CRYSTAL_KEY];
         const sprite_key = this.dialog_crystal_sprite_base.getActionKey(DIALOG_CRYSTAL_KEY);
         this.dialog_crystal = this.game.add.sprite(0, 0, sprite_key);
         this.dialog_crystal_sprite_base.setAnimation(this.dialog_crystal, DIALOG_CRYSTAL_KEY);
         this.dialog_crystal_anim_key = this.dialog_crystal_sprite_base.getAnimationKey(DIALOG_CRYSTAL_KEY, "rotate");
+
         this.dialog_crystal.visible = false;
         this.dialog_crystal_tween = null;
         this.show_crystal = false;
+    }
+
+    update_position(){
+        if(this.avatar){
+            this.avatar_window.update(true);
+        }
+        this.window.update(true);
     }
 
     //Internal method. Try to calculate the position of the dialog window
@@ -112,7 +123,7 @@ export class DialogManager {
                         this.dialog_crystal_tween.stop();
                     }
                 }
-                next_callback(this.finished);
+                if(next_callback) next_callback(this.finished);
             });
         }).bind(this, this.step, this.italic_font, callback));
         if (this.avatar) {
@@ -194,14 +205,16 @@ export class DialogManager {
         this.mount_window(callback, custom_pos, custom_avatar_pos);
     }
 
-    kill_dialog(callback) {
-        if (this.avatar_window) {
-            this.avatar_window.destroy(false);
+    kill_dialog(callback, dialog_only=false, destroy_crystal=false) {
+        if(!dialog_only){
+            if (this.avatar_window) {
+                this.avatar_window.destroy(false);
+            }
         }
         if (this.window) {
             this.finished = true;
             this.window.destroy(true, callback);
-            this.dialog_crystal.destroy();
+            if(destroy_crystal) this.dialog_crystal.destroy();
         }
     }
 }
