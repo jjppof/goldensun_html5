@@ -1,6 +1,6 @@
 import { base_actions, directions, reverse_directions } from "../utils.js";
-import { JumpEvent } from "./JumpEvent.js";
-import { TileEvent, event_types } from "./TileEvent.js";
+import { JumpEvent } from "./JumpEvent";
+import { TileEvent, event_types } from "./TileEvent";
 import * as numbers from "../magic_numbers.js";
 
 export class ClimbEvent extends TileEvent {
@@ -8,7 +8,7 @@ export class ClimbEvent extends TileEvent {
     public is_set: boolean;
     public climbing_only: boolean;
 
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, change_to_collision_layer, is_set, origin_interactable_object, climbing_only) {
+    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, change_to_collision_layer, is_set?, origin_interactable_object?, climbing_only?) {
         super(game, data, event_types.CLIMB, x, y, activation_directions, activation_collision_layers, dynamic, active, origin_interactable_object);
         this.change_to_collision_layer = change_to_collision_layer;
         this.is_set = is_set === undefined ? true : is_set;

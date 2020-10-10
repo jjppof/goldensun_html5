@@ -1,9 +1,9 @@
 import { SpriteBase } from "./SpriteBase";
-import { TileEvent, event_types as tile_event_types } from "./tile_events/TileEvent.js";
+import { TileEvent, event_types as tile_event_types } from "./tile_events/TileEvent";
 import * as numbers from './magic_numbers.js';
 import { directions, get_surroundings, mount_collision_polygon } from "./utils.js";
-import { JumpEvent } from "./tile_events/JumpEvent.js";
-import { ClimbEvent } from "./tile_events/ClimbEvent.js";
+import { JumpEvent } from "./tile_events/JumpEvent";
+import { ClimbEvent } from "./tile_events/ClimbEvent";
 import { GoldenSun } from "./GoldenSun";
 
 export const interactable_object_interaction_types = {

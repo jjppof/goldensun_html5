@@ -5,6 +5,33 @@ const INDEX_CHANGE_TIME = Phaser.Timer.QUARTER >> 1;
 const CURSOR_TWEEN_TIME = Phaser.Timer.QUARTER >> 1;
 
 export class CursorControl {
+    public game: Phaser.Game;
+    public is_right_left: boolean;
+    public is_up_down: boolean;
+    public max_right_left_getter: Function;
+    public max_up_down_getter: Function;
+    public base_group: Phaser.Group;
+    public cursor_group: Phaser.Group;
+    public on_right_left_change: Function;
+    public on_up_down_change: Function;
+    public right_left_index_getter: Function;
+    public right_left_index_setter: Function;
+    public up_down_index_getter: Function;
+    public up_down_index_setter: Function;
+    public open_checker: Function;
+    public active_checker: Function;
+    public cursor_base_x_getter: Function;
+    public cursor_base_y_getter: Function;
+    public right_pressed: boolean;
+    public left_pressed: boolean;
+    public up_pressed: boolean;
+    public down_pressed: boolean;
+    public choose_timer_repeat: Phaser.Timer;
+    public choose_timer_start: Phaser.Timer;
+    public signal_bindings: Phaser.SignalBinding[];
+    public cursor: Phaser.Sprite;
+    public cursor_tween: Phaser.Tween;
+
     constructor(
         game,
         is_right_left,
@@ -140,7 +167,6 @@ export class CursorControl {
     }
 
     init_cursor() {
-        this.cursor_base_x = -5;
         this.cursor_group = this.game.add.group();
         this.cursor = this.cursor_group.create(0, 0, "cursor");
         this.cursor_group.alpha = 0;

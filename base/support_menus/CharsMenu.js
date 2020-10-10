@@ -1,6 +1,6 @@
-import { Window } from '../Window.js';
+import { Window } from '../Window';
 import * as numbers from '../magic_numbers.js';
-import { CursorControl } from '../utils/CursorControl.js';
+import { CursorControl } from '../utils/CursorControl';
 import { base_actions, directions, reverse_directions } from '../utils.js';
 
 const BASE_WIN_WIDTH = 100;

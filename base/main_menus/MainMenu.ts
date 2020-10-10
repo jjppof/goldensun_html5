@@ -1,10 +1,10 @@
 import { capitalize } from '../utils.js';
-import { HorizontalMenu } from '../support_menus/HorizontalMenu.js';
-import { MainPsynergyMenu } from './MainPsynergyMenu.js';
-import { MainItemMenu } from './MainItemMenu.js';
-import { MainDjinnMenu } from './MainDjinnMenu.js';
-import { CharsStatusWindow } from '../windows/CharsStatusWindow.js';
-import { GoldenSun } from '../GoldenSun.js';
+import { HorizontalMenu } from '../support_menus/HorizontalMenu';
+import { MainPsynergyMenu } from './MainPsynergyMenu';
+import { MainItemMenu } from './MainItemMenu';
+import { MainDjinnMenu } from './MainDjinnMenu';
+import { CharsStatusWindow } from '../windows/CharsStatusWindow';
+import { GoldenSun } from '../GoldenSun';
 
 export class MainMenu {
     public game: Phaser.Game;

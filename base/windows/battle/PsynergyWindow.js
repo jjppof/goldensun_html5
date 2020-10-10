@@ -1,7 +1,7 @@
-import { Window } from '../../Window.js';
+import { Window } from '../../Window';
 import * as numbers from '../../magic_numbers.js';
-import { CursorControl } from '../../utils/CursorControl.js';
-import { temporary_status } from '../../Player.js';
+import { CursorControl } from '../../utils/CursorControl';
+import { temporary_status } from '../../Player';
 
 const BASE_WIN_WIDTH = 164;
 const BASE_WIN_HEIGHT = 84;

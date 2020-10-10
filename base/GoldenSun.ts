@@ -1,11 +1,11 @@
 import * as numbers from './magic_numbers.js';
-import { TileEvent } from './tile_events/TileEvent.js';
+import { TileEvent } from './tile_events/TileEvent';
 import { Debug } from './debug/Debug';
 import { load_all } from './initializers/assets_loader';
 import { Collision } from './Collision';
 import { directions } from './utils.js';
 import { Hero } from './Hero';
-import { TileEventManager } from './tile_events/TileEventManager.js';
+import { TileEventManager } from './tile_events/TileEventManager';
 import { GameEventManager } from './game_events/GameEventManager';
 import { load_databases } from './initializers/databases_loader';
 import { initialize_game_data } from './initializers/initialize_info';

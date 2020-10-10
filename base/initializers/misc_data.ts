@@ -1,4 +1,4 @@
-import { SpriteBase } from '../SpriteBase.js';
+import { SpriteBase } from '../SpriteBase';
 
 export function initialize_misc_data(game, misc_db, load_promise_resolve) {
     let misc_sprite_base_list = {};

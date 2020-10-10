@@ -1,7 +1,7 @@
 import * as numbers from  "../magic_numbers.js";
-import { TileEvent, event_types } from "../tile_events/TileEvent.js";
+import { TileEvent, event_types } from "../tile_events/TileEvent";
 import { get_surroundings, get_opposite_direction, directions, reverse_directions, base_actions } from "../utils.js";
-import { JumpEvent } from "../tile_events/JumpEvent.js";
+import { JumpEvent } from "../tile_events/JumpEvent";
 
 const DUST_COUNT = 7;
 const DUST_RADIUS = 18;
@@ -20,7 +20,7 @@ export function target_only_push(game, data, interactable_object, before_move, p
     fire_push_movement(game, data, interactable_object, push_end, before_move, true, enable_physics_at_end, on_push_update);
 }
 
-export function fire_push_movement(game, data, interactable_object, push_end, before_move, target_only = false, enable_physics_at_end = true, on_push_update = undefined) {
+export function fire_push_movement(game, data, interactable_object, push_end?, before_move?, target_only = false, enable_physics_at_end = true, on_push_update = undefined) {
     let expected_position;
     if (!target_only) {
         let positive_limit = data.hero.sprite.x + (-interactable_object.sprite.y - interactable_object.sprite.x);
@@ -206,7 +206,7 @@ function dust_animation(game, data, interactable_object, promise_resolve) {
         game.add.tween(dust_sprite).to({
             x: x,
             y: y
-        }, 400, Phaser.Easing.Linear.In, true);
+        }, 400, Phaser.Easing.Linear.None, true);
         sprites[i] = dust_sprite;
         dust_sprite_base.setAnimation(dust_sprite, DUST_KEY);
         const animation_key = dust_sprite_base.getAnimationKey(DUST_KEY, "spread");

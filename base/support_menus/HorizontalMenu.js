@@ -1,6 +1,6 @@
 import { get_text_width } from '../utils.js';
 import * as numbers from '../magic_numbers.js';
-import { Window } from '../Window.js';
+import { Window } from '../Window';
 
 const FORWARD = 1;
 const BACKWARD = -1;

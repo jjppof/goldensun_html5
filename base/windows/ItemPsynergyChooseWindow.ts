@@ -1,5 +1,5 @@
 import { Window, TextObj } from "../Window";
-import { CursorControl } from "../utils/CursorControl.js";
+import { CursorControl } from "../utils/CursorControl";
 import * as numbers from '../magic_numbers.js';
 import { GoldenSun } from "../GoldenSun";
 import { ItemSlot, MainChar } from "../MainChar";

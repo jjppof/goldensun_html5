@@ -1,5 +1,5 @@
-import { Window } from '../../Window.js';
-import { CursorControl } from '../../utils/CursorControl.js';
+import { Window } from '../../Window';
+import { CursorControl } from '../../utils/CursorControl';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 76;

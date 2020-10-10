@@ -1,7 +1,7 @@
 //please check http://forum.goldensunhacking.net/index.php?topic=2460
 
 import { elements } from "../utils.js";
-import { permanent_status } from "../Player.js";
+import { permanent_status } from "../Player";
 import { ELEM_ATTR_MAX, ELEM_ATTR_MIN } from "../magic_numbers.js";
 
 export const CRITICAL_CHANCE = 1/32;

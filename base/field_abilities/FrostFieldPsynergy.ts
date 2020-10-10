@@ -1,7 +1,7 @@
 import * as numbers from '../magic_numbers.js';
 import { get_surroundings, directions} from "../utils.js";
-import { JumpEvent } from "../tile_events/JumpEvent.js";
-import { FieldAbilities } from "./FieldAbilities.js";
+import { JumpEvent } from "../tile_events/JumpEvent";
+import { FieldAbilities } from "./FieldAbilities";
 import * as _ from "lodash";
 
 const ABILITY_KEY_NAME = "frost";

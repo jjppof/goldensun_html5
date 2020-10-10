@@ -8,6 +8,24 @@ const FORWARD = 1;
 const BACKWARD = -1;
 
 export class ItemCounter {
+    public game: Phaser.Game;
+    public group: Phaser.Group;
+    public available_items_count: number;
+    public x: number;
+    public y: number;
+    public on_change: Function;
+    public current_quantity: number;
+    public internal_group: Phaser.Group;
+    public graphics: Phaser.Graphics;
+    public active_bar_graphics: Phaser.Graphics;
+    public inactive_bar_graphics: Phaser.Graphics;
+    public active: boolean;
+    public choose_timer_repeat: Phaser.Timer;
+    public choose_timer_start: Phaser.Timer;
+    public index_change_time: number;
+    public right_pressed: boolean;
+    public left_pressed: boolean;
+
     constructor(game, group, x, y, on_change) {
         this.game = game;
         this.group = group;

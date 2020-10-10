@@ -1,12 +1,12 @@
 import { CharsMenu } from '../support_menus/CharsMenu.js';
-import { BasicInfoWindow } from '../windows/BasicInfoWindow.js';
-import { ItemPsynergyChooseWindow } from '../windows/ItemPsynergyChooseWindow.js';
-import { TextObj, Window } from '../Window.js';
+import { BasicInfoWindow } from '../windows/BasicInfoWindow';
+import { ItemPsynergyChooseWindow } from '../windows/ItemPsynergyChooseWindow';
+import { TextObj, Window } from '../Window';
 import * as numbers from '../magic_numbers.js';
 import { ItemOptionsWindow } from '../windows/item/ItemOptionsWindow.js';
 import { StatsCheckWithItemWindow } from '../windows/item/StatsCheckWithItemWindow.js';
-import { item_types } from '../Item.js';
-import { GoldenSun } from '../GoldenSun.js';
+import { item_types } from '../Item';
+import { GoldenSun } from '../GoldenSun';
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;

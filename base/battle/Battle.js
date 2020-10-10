@@ -1,16 +1,16 @@
-import { permanent_status, temporary_status, on_catch_status_msg, fighter_types } from "../Player.js";
+import { permanent_status, temporary_status, on_catch_status_msg, fighter_types } from "../Player";
 import { BattleStage } from "./BattleStage.js";
 import { BattleLog } from "./BattleLog.js";
-import { MainBattleMenu } from "../main_menus/MainBattleMenu.js";
-import { get_enemy_instance } from "../Enemy.js";
-import { ability_types, Ability, diminishing_ratios, ability_categories } from "../Ability.js";
+import { MainBattleMenu } from "../main_menus/MainBattleMenu";
+import { get_enemy_instance } from "../Enemy";
+import { ability_types, Ability, diminishing_ratios, ability_categories } from "../Ability";
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
 import { EnemyAI } from "./EnemyAI.js";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
-import { effect_types, Effect, effect_usages, effect_names, effect_msg } from "../Effect.js";
+import { effect_types, Effect, effect_usages, effect_names, effect_msg } from "../Effect";
 import { variation, ordered_elements, element_names } from "../utils.js";
-import { djinn_status, Djinn } from "../Djinn.js";
-import { MainChar } from "../MainChar.js";
+import { djinn_status, Djinn } from "../Djinn";
+import { MainChar } from "../MainChar";
 import { BattleAnimationManager } from "./BattleAnimationManager.js";
 
 export const MAX_CHARS_IN_BATTLE = 4;

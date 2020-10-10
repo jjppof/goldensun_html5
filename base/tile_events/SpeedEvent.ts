@@ -1,4 +1,4 @@
-import { TileEvent, event_types } from "./TileEvent.js";
+import { TileEvent, event_types } from "./TileEvent";
 
 export class SpeedEvent extends TileEvent {
     public speed: number;

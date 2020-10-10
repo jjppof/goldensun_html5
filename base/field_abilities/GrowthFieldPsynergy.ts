@@ -1,5 +1,5 @@
 import { directions } from "../utils.js";
-import { FieldAbilities } from "./FieldAbilities.js";
+import { FieldAbilities } from "./FieldAbilities";
 import * as _ from "lodash";
 
 const ABILITY_KEY_NAME = "growth";

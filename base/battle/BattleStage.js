@@ -1,8 +1,8 @@
 
 import * as numbers from '../magic_numbers.js';
 import { range_360 } from '../utils.js';
-import { ability_target_types } from '../Ability.js';
-import { fighter_types, permanent_status } from '../Player.js';
+import { ability_target_types } from '../Ability';
+import { fighter_types, permanent_status } from '../Player';
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
