@@ -1,4 +1,4 @@
-import { Window } from '../../Window.js';
+import { Window } from '../../Window';
 import { kill_all_sprites } from '../../utils.js';
 
 const MAX_PER_PAGE = 7;

@@ -82,7 +82,8 @@ export class MainChar extends Player {
         weapon: ItemSlot,
         head: ItemSlot,
         chest: ItemSlot,
-        body: ItemSlot
+        body: ItemSlot,
+        ring: ItemSlot
     };
     public equipped_abilities: string[];
     public innate_abilities: string[];

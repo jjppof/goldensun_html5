@@ -1,6 +1,6 @@
-import { Window } from '../../Window.js';
+import { Window } from '../../Window';
 import { kill_all_sprites } from '../../utils.js';
-import { item_types } from '../../Item.js';
+import { item_types } from '../../Item';
 
 const BASE_X = 128;
 const BASE_Y = 88;

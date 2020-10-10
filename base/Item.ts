@@ -28,7 +28,7 @@ export class Item {
     public curses_when_equipped: boolean;
     public cant_be_removed: boolean;
     public rare_item: boolean;
-    public imporant_item: boolean;
+    public important_item: boolean;
     public carry_up_to_30: boolean;
     public effects: any;
     public attribute: string;

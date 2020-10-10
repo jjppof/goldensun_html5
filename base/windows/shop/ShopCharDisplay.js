@@ -1,4 +1,4 @@
-import { Window } from '../../Window.js';
+import { Window } from '../../Window';
 import * as utils from '../../utils.js';
 
 const MAX_PER_LINE = 4;

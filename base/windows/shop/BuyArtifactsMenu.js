@@ -1,4 +1,4 @@
-import { item_types } from '../../Item.js';
+import { item_types } from '../../Item';
 
 const MAX_INVENTORY_SIZE = 15;
 const MAX_STACK_SIZE = 30;

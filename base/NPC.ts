@@ -32,6 +32,7 @@ export class NPC extends ControllableChar {
     public base_collider_layer: number;
     public talk_range_factor: number;
     public events: GameEvent[];
+    public shop_key: string;
 
     constructor(
         game,
