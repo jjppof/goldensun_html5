@@ -262,8 +262,8 @@ export class ShopMenuScreen{
         this.npc_dialog.close();
         this.data.shop_open = false;
         this.control_manager.reset();
-        
-        this.close_callback();
+
+        if(this.close_callback) this.close_callback();
         this.close_callback = null;
     }
 

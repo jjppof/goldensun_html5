@@ -1,6 +1,7 @@
 import { item_types } from '../../Item.js';
 
 const MAX_INVENTORY_SIZE = 15;
+const MAX_ITEMS_PER_PAGE = 7;
 const MAX_STACK_SIZE = 30;
 
 const SELL_MULTIPLIER = 3/4;
@@ -31,7 +32,7 @@ export class BuyArtifactsMenu{
         this.is_artifacts_menu = null;
         this.item_list = [];
         this.selected_item = null;
-        this.buy_select_pos = {page: 0, index: 0};
+        this.buy_select_pos = {page: 0, index: 0, is_last: false};
         this.old_item = null;
         this.selected_character = null;
         this.selected_char_index = 0;
@@ -104,6 +105,7 @@ export class BuyArtifactsMenu{
 
         this.npc_dialog.update_dialog("equip_compliment", true);
 
+        this.old_item = null;
         switch(item_type){
             case item_types.WEAPONS:
                 if(eq_slots.weapon) this.old_item = this.data.info.items_list[eq_slots.weapon.key_name];
@@ -127,12 +129,14 @@ export class BuyArtifactsMenu{
                 if(eq_slots.underwear) this.old_item = this.data.info.items_list[eq_slots.underwear.key_name];
                 break;
         }
-        
-        for(let i=0; i<this.selected_character.items.length; i++){
-            let itm = this.selected_character.items[i];
-            if(itm.key_name === this.old_item.key_name){
-                this.selected_character.unequip_item(i);
-                break;
+
+        if(this.old_item){
+            for(let i=0; i<this.selected_character.items.length; i++){
+                let itm = this.selected_character.items[i];
+                if(itm.key_name === this.old_item.key_name){
+                    this.selected_character.unequip_item(i);
+                    break;
+                }
             }
         }
 
@@ -144,23 +148,29 @@ export class BuyArtifactsMenu{
             }
         }
 
-        let after_compliment = () =>{
-            let sell_price = this.old_item.broken ? this.old_item.price*SELL_BROKEN_MULTIPLIER : this.old_item.price*SELL_MULTIPLIER;
-
-            let text = this.npc_dialog.get_message("sell_current");
-            text = this.npc_dialog.replace_text(text, undefined, this.old_item.name, sell_price | 0);
-            this.npc_dialog.update_dialog(text, false, false);
-
-            this.yesno_action.open_menu({yes: this.sell_old_equip.bind(this, this.old_item), no: () => {
-                let msg_key = this.old_item.rare_item ? "decline_sell_artifact" : "decline_sell_normal";
-                this.npc_dialog.update_dialog(msg_key, true);
-                this.control_manager.set_control(false, false, false, false, {esc: this.check_game_ticket.bind(this),
-                    enter: this.check_game_ticket.bind(this)});
-            }},{x: YESNO_X, y: YESNO_Y});
-        } 
-
-        this.control_manager.set_control(false, false, false, false, {esc: after_compliment.bind(this),
-            enter: after_compliment.bind(this)});
+        if(!this.old_item){
+            this.control_manager.set_control(false, false, false, false, {esc: this.check_game_ticket.bind(this),
+                enter: this.check_game_ticket.bind(this)});
+        }
+        else{
+            let after_compliment = () =>{
+                let sell_price = this.old_item.broken ? this.old_item.price*SELL_BROKEN_MULTIPLIER : this.old_item.price*SELL_MULTIPLIER;
+    
+                let text = this.npc_dialog.get_message("sell_current");
+                text = this.npc_dialog.replace_text(text, undefined, this.old_item.name, sell_price | 0);
+                this.npc_dialog.update_dialog(text, false, false);
+    
+                this.yesno_action.open_menu({yes: this.sell_old_equip.bind(this, this.old_item), no: () => {
+                    let msg_key = this.old_item.rare_item ? "decline_sell_artifact" : "decline_sell_normal";
+                    this.npc_dialog.update_dialog(msg_key, true);
+                    this.control_manager.set_control(false, false, false, false, {esc: this.check_game_ticket.bind(this),
+                        enter: this.check_game_ticket.bind(this)});
+                }},{x: YESNO_X, y: YESNO_Y});
+            } 
+    
+            this.control_manager.set_control(false, false, false, false, {esc: after_compliment.bind(this),
+                enter: after_compliment.bind(this)});
+        }
     }
 
     on_purchase_success(equip_ask=false, game_ticket=false){
@@ -217,10 +227,9 @@ export class BuyArtifactsMenu{
                         text = this.npc_dialog.replace_text(text, this.selected_character.name);
                         this.npc_dialog.update_dialog(text, false, false);
 
-                        this.yesno_action.open_menu({yes: this.equip_new_item.bind(this), no: () => {
-                            this.control_manager.set_control(false, false, false, false, {esc: this.check_game_ticket.bind(this),
-                                enter: this.check_game_ticket.bind(this)});
-                        }},{x: YESNO_X, y: YESNO_Y})
+                        this.yesno_action.open_menu({yes: this.equip_new_item.bind(this),
+                        no: this.check_game_ticket.bind(this)},
+                        {x: YESNO_X, y: YESNO_Y})
                     }
                     this.control_manager.set_control(false, false, false, false, {esc: equip_now.bind(this),
                         enter: equip_now.bind(this)});  
@@ -320,7 +329,9 @@ export class BuyArtifactsMenu{
     }
 
     open_equip_compare(){
-        this.buy_select_pos = {page: this.buy_select.current_page, index: this.buy_select.selected_index};
+        this.buy_select_pos = {page: this.buy_select.current_page,
+            index: this.buy_select.selected_index,
+            is_last: this.buy_select.is_last(this.buy_select.current_page, this.buy_select.selected_index)};
         if(this.item_desc_win.open) this.item_desc_win.close();
         if(this.buy_select.is_open) this.buy_select.close();
         this.npc_dialog.update_dialog("character_select");
@@ -341,7 +352,8 @@ export class BuyArtifactsMenu{
         if(!game_ticket && this.buy_select.is_open){
             this.buy_select_pos = {
                 page: this.buy_select.current_page,
-                index: this.buy_select.selected_index
+                index: this.buy_select.selected_index,
+                is_last: this.buy_select.is_last(this.buy_select.current_page, this.buy_select.selected_index)
             };
         }
         
@@ -379,28 +391,39 @@ export class BuyArtifactsMenu{
     }
 
     open_buy_select(msg_key="sell_follow_up"){
-        this.npc_dialog.update_dialog(msg_key);
-        if(this.char_display.is_open) this.char_display.close();
-        if(this.inv_win.is_open) this.inv_win.close();
-        if(this.eq_compare.is_open) this.eq_compare.close();
-
-        if(!this.buy_select.is_open) this.buy_select.open(this.item_list, this.buy_select_pos.index, this.buy_select_pos.page);
-        this.control_manager.reset();
-
-        this.selected_item = this.buy_select.pages[this.buy_select.current_page][this.buy_select.selected_index].key_name;
-        this.parent.update_item_info(this.selected_item);
-        this.parent.update_your_coins();
-
-        if(!this.item_desc_win.open) this.item_desc_win.show();
-        if(!this.item_price_win.open) this.item_price_win.show();
-        if(!this.your_coins_win.open) this.your_coins_win.show();
-
-        this.control_manager.set_control(true, true, true, false, {right: this.buy_select.next_item.bind(this.buy_select),
-            left: this.buy_select.previous_item.bind(this.buy_select),
-            up: this.buy_select.previous_page.bind(this.buy_select),
-            down: this.buy_select.next_page.bind(this.buy_select),
-            esc: this.close_menu.bind(this),
-            enter: this.on_buy_select.bind(this)});
+        if(Object.keys(this.item_list).length === 0) this.close_menu();
+        else{
+            if(this.buy_select_pos.is_last){
+                if(this.buy_select_pos.index === 0){
+                    this.buy_select_pos.pages -= 1;
+                    this.buy_select_pos.index = MAX_ITEMS_PER_PAGE-1;
+                }
+                else this.buy_select_pos.index -= 1;
+            }
+    
+            this.npc_dialog.update_dialog(msg_key);
+            if(this.char_display.is_open) this.char_display.close();
+            if(this.inv_win.is_open) this.inv_win.close();
+            if(this.eq_compare.is_open) this.eq_compare.close();
+    
+            if(!this.buy_select.is_open) this.buy_select.open(this.item_list, this.buy_select_pos.index, this.buy_select_pos.page);
+            this.control_manager.reset();
+    
+            this.selected_item = this.buy_select.pages[this.buy_select.current_page][this.buy_select.selected_index].key_name;
+            this.parent.update_item_info(this.selected_item);
+            this.parent.update_your_coins();
+    
+            if(!this.item_desc_win.open) this.item_desc_win.show();
+            if(!this.item_price_win.open) this.item_price_win.show();
+            if(!this.your_coins_win.open) this.your_coins_win.show();
+    
+            this.control_manager.set_control(true, true, true, false, {right: this.buy_select.next_item.bind(this.buy_select),
+                left: this.buy_select.previous_item.bind(this.buy_select),
+                up: this.buy_select.previous_page.bind(this.buy_select),
+                down: this.buy_select.next_page.bind(this.buy_select),
+                esc: this.close_menu.bind(this),
+                enter: this.on_buy_select.bind(this)});
+        }
     }
 
     open_menu(is_artifacts_menu){
@@ -409,10 +432,18 @@ export class BuyArtifactsMenu{
         this.item_list = this.is_artifacts_menu ? this.parent.artifact_list : this.parent.normal_item_list;
 
         if(is_artifacts_menu){
-            this.npc_dialog.update_dialog("artifacts_menu", true);
+            if(Object.keys(this.item_list).length === 0){
+                this.npc_dialog.update_dialog("no_artifacts", true);
 
-            this.control_manager.set_control(false, false, false, false, {esc: this.open_buy_select.bind(this, "buy_select"),
-            enter: this.open_buy_select.bind(this, "buy_select")});
+                this.control_manager.set_control(false, false, false, false, {esc: this.close_menu.bind(this),
+                enter: this.close_menu.bind(this)});
+            }
+            else{
+                this.npc_dialog.update_dialog("artifacts_menu", true);
+
+                this.control_manager.set_control(false, false, false, false, {esc: this.open_buy_select.bind(this, "buy_select"),
+                enter: this.open_buy_select.bind(this, "buy_select")});
+            }
         }
         else this.open_buy_select("buy_select");
     }

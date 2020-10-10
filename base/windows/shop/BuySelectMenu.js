@@ -373,6 +373,11 @@ export class BuySelectMenu{
         this.tweens = {item: tweens[0], bg: tweens[1]};
     }
 
+    is_last(page, index){
+        if(page === this.pages.length-1 && index === this.pages[page].length-1) return true;
+        else return false;
+    }
+
     /*Removes the scaling animation from the selected item
 
     Input: index [number] - Item index (on screen)*/
