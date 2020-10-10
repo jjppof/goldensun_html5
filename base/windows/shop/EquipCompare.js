@@ -235,13 +235,13 @@ export class EquipCompare {
                 break;
         }
 
-        let atk_diff = this.compare_items(char_current_item, this.selected_item, effect_types.ATTACK, this.selected_char.current_atk);
-        let def_diff = this.compare_items(char_current_item, this.selected_item, effect_types.DEFENSE, this.selected_char.current_def);
-        let agi_diff = this.compare_items(char_current_item, this.selected_item, effect_types.AGILITY, this.selected_char.current_agi);
+        let atk_diff = this.compare_items(char_current_item, this.selected_item, effect_types.ATTACK, this.selected_char.atk);
+        let def_diff = this.compare_items(char_current_item, this.selected_item, effect_types.DEFENSE, this.selected_char.def);
+        let agi_diff = this.compare_items(char_current_item, this.selected_item, effect_types.AGILITY, this.selected_char.agi);
 
-        this.display_stat(effect_types.ATTACK, this.selected_char.current_atk, atk_diff);
-        this.display_stat(effect_types.DEFENSE, this.selected_char.current_def, def_diff);
-        this.display_stat(effect_types.AGILITY, this.selected_char.current_agi, agi_diff);
+        this.display_stat(effect_types.ATTACK, this.selected_char.atk, atk_diff);
+        this.display_stat(effect_types.DEFENSE, this.selected_char.def, def_diff);
+        this.display_stat(effect_types.AGILITY, this.selected_char.agi, agi_diff);
 
         let name = this.data.info.items_list[char_current_item] ? this.data.info.items_list[char_current_item].name : "";
         this.window.update_text(name, this.item_name_text);
