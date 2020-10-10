@@ -498,9 +498,9 @@ export class Window {
             shadow [Phaser:Sprite] - The text's shadow
             right_align [boolean] - The input value
             initial_x [number] - The text's x value*/
-    set_single_line_text(text, right_align = false, italic = false): TextObj {
-        const x_pos = numbers.WINDOW_PADDING_H + 4;
-        let y_pos = numbers.WINDOW_PADDING_TOP;
+set_single_line_text(text, right_align = false, italic = false): TextObj {
+        const x_pos = italic ? numbers.WINDOW_PADDING_H + 2 : numbers.WINDOW_PADDING_H + 4;
+        let y_pos = italic ? numbers.WINDOW_PADDING_TOP - 2 : numbers.WINDOW_PADDING_TOP;
         const font_name = italic ? 'gs-italic-bmp-font' : 'gs-bmp-font';
         let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, text, numbers.FONT_SIZE);
         let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, font_name, text, numbers.FONT_SIZE);

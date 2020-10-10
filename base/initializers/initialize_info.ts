@@ -6,6 +6,8 @@ import { initialize_enemies } from './enemies';
 import { initialize_maps } from './maps';
 import { initialize_menu } from '../main_menus/MainMenu';
 import { initialize_misc_data } from './misc_data';
+import { ShopMenu } from '../main_menus/ShopMenu.js';
+import { initialize_shops } from './shops.js';
 
 export async function initialize_game_data(game, data) {
     let load_maps_promise_resolve;
@@ -49,7 +51,8 @@ export async function initialize_game_data(game, data) {
 
     data.info.party_data = {
         members: [],
-        coins: data.dbs.init_db.coins
+        coins: data.dbs.init_db.coins,
+        game_tickets: {coins_remaining: 300, tickets_bought: 0}
     };
 
     let load_chars_promise_resolve;
@@ -66,9 +69,12 @@ export async function initialize_game_data(game, data) {
     data.info.misc_sprite_base_list = initialize_misc_data(game, data.dbs.misc_animations_db, load_misc_promise_resolve);
     await load_misc_promise;
 
+    data.info.shops_list = initialize_shops(game, data.dbs.shops_db);
+
     //initialize field abilities
     data.info.field_abilities_list = initialize_field_abilities(game, data);
 
     //initialize screens
+    data.shop_menu = new ShopMenu(game, data);
     data.main_menu = initialize_menu(game, data);
 }

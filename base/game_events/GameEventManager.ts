@@ -66,12 +66,13 @@ export class GameEventManager {
                 this.fire_npc_events(npc);
             }
         } else if (npc.npc_type === npc_types.SHOP) {
-            //open the shop here
-
-            //on shop finish:
-            this.on_event = false;
-            this.data.force_stop_movement = false;
-            this.control_enable = true;
+            if(!this.data.shop_open){
+                this.data.shop_menu.open_menu(npc.shop_key, ()=>{
+                    this.on_event = false;
+                    this.data.force_stop_movement = false;
+                    this.control_enable = true;
+                });
+            }
         }
     }
 

@@ -93,7 +93,7 @@ export class MainMenu {
 
 export function initialize_menu(game, data) {
     data.spacebar_input.add(() => {
-        if (data.hero.in_action() || data.in_battle || !data.created) return;
+        if (data.hero.in_action() || data.in_battle || !data.created || data.game_event_manager.on_event) return;
         if (!data.menu_open) {
             data.menu_open = true;
             data.hero.stop_char();
