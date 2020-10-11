@@ -6,7 +6,7 @@ function load_buttons(game) {
 }
 
 function load_db_files(game) {
-    game.load.json('init_db', 'init.json');
+    game.load.json('init_db', 'assets/init.json');
     game.load.json('classes_db', 'assets/dbs/classes_db.json');
     game.load.json('abilities_db', 'assets/dbs/abilities_db.json');
     game.load.json('items_db', 'assets/dbs/items_db.json');
