@@ -16,7 +16,7 @@ export class CursorManager{
         this.game = game;
 
         this.group = this.game.add.group();
-        this.group.alpha = 1;
+        this.group.visible = false;
         this.group.x = 0;
         this.group.y = 0;
         this.cursor = this.group.create(0, 0, "cursor");
@@ -35,6 +35,7 @@ export class CursorManager{
 
     init_tween(type){
         this.clear_tweens();
+        if(!this.group.visible) this.show();
 
         switch(type){
             case WIGGLE_KEY:
