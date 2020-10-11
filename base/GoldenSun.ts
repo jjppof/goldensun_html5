@@ -10,7 +10,7 @@ import { GameEventManager } from './game_events/GameEventManager';
 import { load_databases } from './initializers/databases_loader';
 import { initialize_game_data } from './initializers/initialize_info';
 import { Map } from './Map';
-import { Battle } from './battle/Battle.js';
+import { Battle } from './battle/Battle';
 import { MainMenu } from './main_menus/MainMenu';
 import { ShopMenu } from './main_menus/ShopMenu.js';
 

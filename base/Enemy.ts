@@ -65,7 +65,6 @@ export class Enemy extends Player {
     public mercury_resist_current: number;
     public mars_resist_current: number;
     public jupiter_resist_current: number;
-    public battle_scale: number;
 
     constructor(enemy_data, name) {
         super(enemy_data.key_name, name ? name : enemy_data.name);

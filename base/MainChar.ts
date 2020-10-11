@@ -43,7 +43,6 @@ export class MainChar extends Player {
     public level: number;
     public class_table: any;
     public class: Classes;
-    public battle_scale: number;
     public exp_curve: number[];
     public current_exp: number;
     public venus_level_base: number;

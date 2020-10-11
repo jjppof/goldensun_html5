@@ -1,8 +1,8 @@
 import { permanent_status, temporary_status, on_catch_status_msg, fighter_types } from "../Player";
 import { BattleStage } from "./BattleStage.js";
 import { BattleLog } from "./BattleLog.js";
-import { MainBattleMenu } from "../main_menus/MainBattleMenu";
-import { get_enemy_instance } from "../Enemy";
+import { MainBattleMenu, PlayerAbilities, PlayerAbility } from "../main_menus/MainBattleMenu";
+import { Enemy, get_enemy_instance } from "../Enemy";
 import { ability_types, Ability, diminishing_ratios, ability_categories } from "../Ability";
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
 import { EnemyAI } from "./EnemyAI.js";
@@ -12,6 +12,8 @@ import { variation, ordered_elements, element_names } from "../utils.js";
 import { djinn_status, Djinn } from "../Djinn";
 import { MainChar } from "../MainChar";
 import { BattleAnimationManager } from "./BattleAnimationManager.js";
+import { GoldenSun } from "../GoldenSun";
+import * as _ from "lodash";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 
@@ -39,7 +41,42 @@ const battle_phases = {
     END: 6 // End (the last enemy has fallen, exp/gold/drops are awarded)
 };
 
+export type PlayerInfo = {
+    sprite_key: string,
+    scale?: number,
+    instance?: Enemy|MainChar,
+    entered_in_battle?: boolean,
+    battle_key?: string
+};
+
 export class Battle {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public allies_info: PlayerInfo[];
+    public enemies_party_name: string;
+    public enemies_info: PlayerInfo[];
+    public this_enemies_list: {[battle_key: string]: Enemy};
+    public enter_propagation_priority: number;
+    public esc_propagation_priority: number;
+    public battle_stage: BattleStage;
+    public battle_log: BattleLog;
+    public battle_menu: MainBattleMenu;
+    public target_window: ChoosingTargetWindow;
+    public animation_manager: BattleAnimationManager;
+    public battle_phase: number;
+    public controls_enabled: boolean;
+    public on_going_effects: Effect[];
+    public allies_defeated: boolean;
+    public enemies_defeated: boolean;
+    public battle_finishing: boolean;
+    public signal_bindings: Phaser.SignalBinding[];
+    public advance_log_resolve: Function;
+    public allies_abilities: PlayerAbilities;
+    public enemies_abilities: PlayerAbilities;
+    public turns_actions: PlayerAbility[];
+    public allies_map_sprite: {[player_key: string]: Phaser.Sprite};
+    public enemies_map_sprite: {[player_key: string]: Phaser.Sprite};
+
     constructor(game, data, background_key, enemy_party_key) {
         this.game = game;
         this.data = data;
@@ -52,12 +89,13 @@ export class Battle {
                 entered_in_battle: true
             };
         });
-        this.enemies_party_data = this.data.dbs.enemies_parties_db[enemy_party_key];
+        const enemies_party_data = this.data.dbs.enemies_parties_db[enemy_party_key];
+        this.enemies_party_name = enemies_party_data.name;
         this.enemies_info = [];
         this.this_enemies_list = {};
         let battle_keys_count = {};
         let counter = 0;
-        this.enemies_party_data.members.forEach(member_info => {
+        enemies_party_data.members.forEach(member_info => {
             const qtd = _.random(member_info.min, member_info.max);
             for (let i = 0; i < qtd; ++i) {
                 this.enemies_info.push({
@@ -76,7 +114,7 @@ export class Battle {
                 this.enemies_info[counter].instance = get_enemy_instance(this.data.info.enemies_list[member_info.key].data, name_suffix);
                 this.enemies_info[counter].scale = this.enemies_info[counter].instance.battle_scale;
                 this.enemies_info[counter].battle_key = this.enemies_info[counter].sprite_key + battle_key_suffix;
-                this.this_enemies_list[this.enemies_info[counter].battle_key] = this.enemies_info[counter].instance;
+                this.this_enemies_list[this.enemies_info[counter].battle_key] = this.enemies_info[counter].instance as Enemy;
                 ++counter;
             }
         });
@@ -128,7 +166,7 @@ export class Battle {
     }
 
     on_abilities_choose(abilities) {
-        this.player_abilities = abilities;
+        this.allies_abilities = abilities;
         this.battle_menu.close_menu();
         this.battle_stage.reset_positions();
         this.battle_stage.choosing_actions = false;
@@ -197,7 +235,7 @@ export class Battle {
         this.battle_phase = battle_phases.START;
         this.data.in_battle = true;
         this.data.battle_instance = this;
-        this.battle_log.add(this.enemies_party_data.name + " appeared!");
+        this.battle_log.add(this.enemies_party_name + " appeared!");
         this.battle_stage.initialize_stage(() => {
             this.allies_map_sprite = _.mapValues(_.keyBy(this.allies_info, 'instance.key_name'), info => info.sprite);
             this.enemies_map_sprite = _.mapValues(_.keyBy(this.enemies_info, 'instance.key_name'), info => info.sprite);
@@ -229,13 +267,13 @@ export class Battle {
             }
             return [this.enemies_info[index].battle_key, abilities];
         }));
-        for (let char_key in this.player_abilities) {
+        for (let char_key in this.allies_abilities) {
             const this_char = this.data.info.main_char_list[char_key];
-            for (let i = 0; i < this.player_abilities[char_key].length; ++i) {
-                const this_ability = this.data.info.abilities_list[this.player_abilities[char_key][i].key_name];
+            for (let i = 0; i < this.allies_abilities[char_key].length; ++i) {
+                const this_ability = this.data.info.abilities_list[this.allies_abilities[char_key][i].key_name];
                 const priority_move = this_ability !== undefined ? this_ability.priority_move : false;
-                this.player_abilities[char_key][i].speed = BattleFormulas.player_turn_speed(this_char.current_agi, priority_move, i > 0);
-                this.player_abilities[char_key][i].caster = this_char;
+                this.allies_abilities[char_key][i].speed = BattleFormulas.player_turn_speed(this_char.current_agi, priority_move, i > 0);
+                this.allies_abilities[char_key][i].caster = this_char;
             }
         }
         for (let battle_key in this.enemies_abilities) {
@@ -247,7 +285,7 @@ export class Battle {
                 this.enemies_abilities[battle_key][i].caster = this_enemy;
             }
         }
-        this.turns_actions = _.sortBy(Object.values(this.player_abilities).flat().concat(Object.values(this.enemies_abilities).flat()), action => {
+        this.turns_actions = _.sortBy(Object.values(this.allies_abilities).flat().concat(Object.values(this.enemies_abilities).flat()), action => {
             return action.speed; //still need to add left most and player preference criterias
         });
         for (let i = 0; i < this.turns_actions.length; ++i) {
@@ -314,8 +352,9 @@ export class Battle {
         let ability = this.data.info.abilities_list[action.key_name];
         let item_name = "";
         if (action.caster.fighter_type === fighter_types.ALLY && ability !== undefined && ability.can_switch_to_unleash) { //change the current ability to unleash ability from weapon
-            if (action.caster.equip_slots.weapon && this.data.info.items_list[action.caster.equip_slots.weapon.key_name].unleash_ability) {
-                const weapon = this.data.info.items_list[action.caster.equip_slots.weapon.key_name];
+            const caster = action.caster as MainChar;
+            if (caster.equip_slots.weapon && this.data.info.items_list[caster.equip_slots.weapon.key_name].unleash_ability) {
+                const weapon = this.data.info.items_list[caster.equip_slots.weapon.key_name];
                 if (Math.random() < weapon.unleash_rate) {
                     item_name = weapon.name;
                     action.key_name = weapon.unleash_ability;
@@ -763,14 +802,16 @@ So, if a character will die after 5 turns and you land another Curse on them, it
         if (this.allies_defeated) {
             this.battle_log.add(this.allies_info[0].instance.name + "' party has been defeated!");
         } else {
-            this.battle_log.add(this.enemies_party_data.name + " has been defeated!");
+            this.battle_log.add(this.enemies_party_name + " has been defeated!");
             await this.wait_for_key();
-            const total_exp = this.enemies_info.map(info => info.instance.exp_reward).reduce((a, b) => a + b, 0);
+            const total_exp = this.enemies_info.map(info => {
+                return (info.instance as Enemy).exp_reward;
+            }).reduce((a, b) => a + b, 0);
             this.battle_log.add(`You got ${total_exp.toString()} experience points.`);
             await this.wait_for_key();
             for (let i = 0; i < this.allies_info.length; ++i) {
                 const info = this.allies_info[i];
-                const char = info.instance;
+                const char = info.instance as MainChar;
                 if (!char.has_permanent_status(permanent_status.DOWNED)) {
                     const change = char.add_exp(info.entered_in_battle ? total_exp : total_exp >> 1);
                     if (change.before.level !== change.after.level) {
@@ -802,11 +843,13 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     }
                 }
             }
-            const total_coins = this.enemies_info.map(info => info.instance.coins_reward).reduce((a, b) => a + b, 0);
+            const total_coins = this.enemies_info.map(info => {
+                return (info.instance as Enemy).coins_reward;
+            }).reduce((a, b) => a + b, 0);
             this.battle_log.add(`You got ${total_coins.toString()} coins.`);
             await this.wait_for_key();
             for (let i = 0; i < this.enemies_info.length; ++i) {
-                const enemy = this.enemies_info[i].instance;
+                const enemy = this.enemies_info[i].instance as Enemy;
                 if (enemy.item_reward && Math.random() < enemy.item_reward_chance) {
                     //add item
                     const item = this.data.info.items_list[enemy.item_reward];

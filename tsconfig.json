@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "typeRoots": ["types/pixi.d.ts", "types/p2.d.ts", "types/phaser.d.ts"],
-        "lib": ["es6", "dom", "es2017"],
+        "lib": ["dom", "es2019"],
         "module": "commonjs",
         "noImplicitAny": false,
         "target": "es6",
