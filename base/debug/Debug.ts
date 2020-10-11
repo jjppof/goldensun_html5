@@ -199,7 +199,7 @@ export class Debug {
         const select_element = document.getElementById("stats_debug_select");
         if (this.debug_stats) {
             this.debug_stats_info = {
-                chars: this.data.battle_instance.allies_info.concat(this.data.battle_instance.enemies_info).map(info => info.instance),
+                chars: this.data.battle_instance.allies_info.concat(this.data.battle_instance.enemies_info).map(info => info.instance as MainChar),
                 selected: 0,
                 listener: event => {
                     this.debug_stats_info.selected = (event.target as any).value;

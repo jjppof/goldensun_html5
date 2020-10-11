@@ -6,7 +6,7 @@ function load_buttons(game) {
 }
 
 function load_db_files(game) {
-    game.load.json('init_db', 'init.json');
+    game.load.json('init_db', 'assets/init.json');
     game.load.json('classes_db', 'assets/dbs/classes_db.json');
     game.load.json('abilities_db', 'assets/dbs/abilities_db.json');
     game.load.json('items_db', 'assets/dbs/items_db.json');
@@ -68,5 +68,5 @@ export function load_all(game) {
     load_assets(game);
     load_buttons(game);
     load_fonts(game);
-    game.load.script('color_filters', 'plugins/color_filters.js');
+    game.load.script('color_filters', 'assets/filters/color_filters.js');
 }

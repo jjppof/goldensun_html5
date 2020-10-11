@@ -13,11 +13,24 @@ import { permanent_status } from "../Player";
 import { MainChar } from "../MainChar";
 import { GoldenSun } from "../GoldenSun";
 import * as _ from "lodash";
+import { Enemy } from "../Enemy";
 
 const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
 const FORWARD = 1;
 const BACKWARD = -1;
+
+export type PlayerAbility = {
+    key_name: string,
+    targets: any[],
+    type?: string,
+    djinn_key_name?: string,
+    speed?: number,
+    caster?: Enemy|MainChar,
+    battle_animation_key?: string
+};
+
+export type PlayerAbilities = {[char_key_name: string]: PlayerAbility[]};
 
 export class MainBattleMenu {
     public game: Phaser.Game;
@@ -40,12 +53,7 @@ export class MainBattleMenu {
     public group: Phaser.Group;
     public avatar_sprite: Phaser.Sprite;
     public inner_horizontal_menu: HorizontalMenu;
-    public abilities: {[char_key_name: string]: {
-        key_name: string,
-        targets: any[],
-        type?: string,
-        djinn_key_name?: string
-    }[]};
+    public abilities: PlayerAbilities;
     public current_char_index: number;
     public djinni_already_used: {[element: string]: number};
 

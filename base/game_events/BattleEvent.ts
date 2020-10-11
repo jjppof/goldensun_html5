@@ -1,4 +1,4 @@
-import { Battle } from "../battle/Battle.js";
+import { Battle } from "../battle/Battle";
 import { GameEvent, event_types } from "./GameEvent";
 
 export class BattleEvent extends GameEvent {

@@ -53,6 +53,7 @@ export class Player {
     public permanent_status: Set<string>;
     public effects: Effect[];
     public effect_turns_count: {[effect: string]: number|{[element: string]: number}};
+    public battle_scale: number;
 
     constructor(key_name, name) {
         this.key_name = key_name;

@@ -3,7 +3,7 @@ import { CursorControl } from '../../utils/CursorControl';
 import * as numbers from "../../magic_numbers.js"
 import { Djinn } from "../../Djinn";
 import { SummonDjinnStandbyWindow } from "./SummonDjinnStandbyWindow.js";
-import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle.js";
+import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle";
 import { MainChar } from "../../MainChar";
 
 const BASE_WINDOW_X = 104;
