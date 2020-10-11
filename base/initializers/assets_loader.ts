@@ -68,5 +68,5 @@ export function load_all(game) {
     load_assets(game);
     load_buttons(game);
     load_fonts(game);
-    game.load.script('color_filters', 'base/filters/color_filters.js');
+    game.load.script('color_filters', 'assets/filters/color_filters.js');
 }
