@@ -89,7 +89,6 @@ export class MainChar extends Player {
     public in_party: boolean;
     public abilities: string[];
     public turns: number;
-    public fighter_type: number;
     public battle_animations_variations: {[ability_key: string]: string};
     public venus_level_current: number;
     public mercury_level_current: number;

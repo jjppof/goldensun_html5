@@ -1,6 +1,6 @@
 import * as numbers from "../magic_numbers.js";
 import { range_360 } from "../utils.js";
-import { DEFAULT_POS_ANGLE } from "./BattleStage.js";
+import { DEFAULT_POS_ANGLE } from "./BattleStage";
 
 export class BattleAnimation {
     //tween type can be 'initial' for first position
