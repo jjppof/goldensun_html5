@@ -58,7 +58,15 @@ export class MainPsynergyMenu {
         this.data = data;
         this.esc_propagation_priority = esc_propagation_priority + 1;
         this.enter_propagation_priority = enter_propagation_priority + 1;
-        this.chars_menu = new CharsMenu(this.game, this.data, this.char_choose.bind(this), this.char_change.bind(this), this.enter_propagation_priority);
+        this.chars_menu = new CharsMenu(
+            this.game,
+            this.data,
+            this.char_choose.bind(this),
+            this.char_change.bind(this),
+            undefined,
+            this.enter_propagation_priority,
+            this.esc_propagation_priority
+        );
         this.basic_info_window = new BasicInfoWindow(this.game);
         this.selected_char_index = 0;
         this.is_open = false;

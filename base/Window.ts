@@ -428,7 +428,7 @@ export class Window {
            padding_x [number] - Padding on the x axis
            padding_y [number] - Padding on the y axis
            space_bewteen lines [number] - Offset between lines*/
-    set_text(lines, padding_x, padding_y, space_between_lines, italic = false, animate = false) {
+    set_text(lines, padding_x?, padding_y?, space_between_lines?, italic = false, animate = false) {
         for (let i = 0; i < this.lines_sprites.length; ++i) {
             this.lines_sprites[i].text.destroy();
             this.lines_sprites[i].shadow.destroy();

@@ -2,13 +2,15 @@ import { Window } from '../Window';
 import * as numbers from '../magic_numbers.js';
 import { CursorControl } from '../utils/CursorControl';
 import { base_actions, directions, reverse_directions } from '../utils.js';
+import { GoldenSun } from '../GoldenSun';
+import * as _ from "lodash";
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 36;
 const MAX_PER_LINE = 4;
 const WORKING_WIDTH = BASE_WIN_WIDTH - 2 * (numbers.OUTSIDE_BORDER_WIDTH + numbers.INSIDE_BORDER_WIDTH);
-const SLOT_WIDTH = parseInt(WORKING_WIDTH/MAX_PER_LINE);
-const SLOT_WIDTH_CENTER = parseInt(WORKING_WIDTH/MAX_PER_LINE/2);
+const SLOT_WIDTH = (WORKING_WIDTH/MAX_PER_LINE) | 0;
+const SLOT_WIDTH_CENTER = (WORKING_WIDTH/MAX_PER_LINE/2) | 0;
 
 /*A window template showing character sprites
 Displays characters in line, using their idle animations
@@ -21,6 +23,29 @@ Input: game [Phaser:Game] - Reference to the running game object
        esc_propagation_priority [number] - Counts parent-child status for ESC key (Cancel/Back)
        enter_propagation_priority [number] - Counts parent-child status for Enter key (Choose/Select)*/
 export class CharsMenu {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public enter_propagation_priority: number;
+    public esc_propagation_priority: number;
+    public on_choose: Function;
+    public on_change: Function;
+    public on_cancel: Function;
+    public base_window: Window;
+    public group: Phaser.Group;
+    public x: number;
+    public y: number;
+    public selected_y: number;
+    public unselected_y: number;
+    public selected_button_index: number;
+    public line_index: number;
+    public menu_open: boolean;
+    public menu_active: boolean;
+    public cursor_control: CursorControl;
+    public char_buttons: {
+        [char_key_name: string]: Phaser.Sprite
+    };
+    public buttons_number: number;
+
     constructor(game, data, on_choose, on_change, on_cancel, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;

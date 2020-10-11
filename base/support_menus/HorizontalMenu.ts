@@ -1,6 +1,8 @@
 import { get_text_width } from '../utils.js';
 import * as numbers from '../magic_numbers.js';
 import { Window } from '../Window';
+import { GoldenSun } from '../GoldenSun';
+import * as _ from "lodash";
 
 const FORWARD = 1;
 const BACKWARD = -1;
@@ -23,7 +25,36 @@ Input: game [Phaser:Game] - Reference to the running game object
        title_window_width [number] - The width of the title window
        dock_right [boolean] - If true, places the menu on the right side of the screen*/
 export class HorizontalMenu {
-    constructor(game, data, buttons, titles, on_choose, enter_propagation_priority, on_cancel, esc_propagation_priority, title_window_width, dock_right = false) {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public buttons_keys: string[];
+    public titles: string[];
+    public buttons_number: number;
+    public enter_propagation_priority: number;
+    public esc_propagation_priority: number;
+    public title_window_width: number;
+    public dock_right: boolean;
+    public x: number;
+    public y: number;
+    public title_window: Window;
+    public group: Phaser.Group;
+    public selected_button_index: number;
+    public menu_open: boolean;
+    public menu_active: boolean;
+    public selected_button_tween: Phaser.Tween;
+    public choose_timer_repeat: Phaser.Timer;
+    public choose_timer_start: Phaser.Timer;
+    public on_choose: Function;
+    public on_cancel: Function;
+    public right_pressed: boolean;
+    public left_pressed: boolean;
+    public signal_bindings: Phaser.SignalBinding[];
+    public buttons: {
+        sprite: Phaser.Sprite,
+        title: string
+    }[];
+
+    constructor(game, data, buttons, titles, on_choose, enter_propagation_priority, on_cancel, esc_propagation_priority, title_window_width?, dock_right = false) {
         this.game = game;
         this.data = data;
         this.buttons_keys = buttons;
@@ -129,8 +160,8 @@ export class HorizontalMenu {
                 title: this.titles[i]
             }
             this.buttons[i].sprite.anchor.setTo(0.5, 1);
-            this.buttons[i].sprite.centerX = parseInt(BUTTON_WIDTH * (i + 0.5));
-            this.buttons[i].sprite.centerY = parseInt(BUTTON_HEIGHT >> 1);
+            this.buttons[i].sprite.centerX = (BUTTON_WIDTH * (i + 0.5)) | 0;
+            this.buttons[i].sprite.centerY = (BUTTON_HEIGHT >> 1) | 0;
         }
     }
 
@@ -223,7 +254,7 @@ export class HorizontalMenu {
     Input: callback [function] - Callback function (Optional)
            select_index [number] - Default selected button index
            start_active [boolean] - If true, sets this window to "active" mode*/
-    open(callback, select_index, start_active = true) {
+    open(callback?, select_index?, start_active = true) {
         this.reset_button();
         this.right_pressed = false;
         this.left_pressed = false;
@@ -256,7 +287,7 @@ export class HorizontalMenu {
     
     Input: callback [function] - Callback function (Optional)
            animate [boolean] - If true, will play an animation while closing*/
-    close(callback, animate = true) {
+    close(callback?, animate = true) {
         this.menu_open = false;
         this.stop_timers();
         this.reset_button();
