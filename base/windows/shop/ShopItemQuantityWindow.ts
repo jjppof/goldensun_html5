@@ -1,5 +1,9 @@
-import { ShopItemCounter } from './ShopItemCounter.js';
-import { Window } from '../../Window';
+import { ShopItemCounter } from './ShopItemCounter';
+import { Window, TextObj } from '../../Window';
+import { GoldenSun } from '../../GoldenSun';
+import { CursorManager } from '../../utils/CursorManager';
+import { ShopItem } from '../../Shop';
+import { ItemSlot } from '../../MainChar';
 
 const QUANTITY_WIN_X = 56;
 const QUANTITY_WIN_Y = 32;
@@ -22,7 +26,22 @@ const CURSOR_X = 132;
 const CURSOR_Y = 46;
 
 export class ShopItemQuantityWindow {
-    constructor(game, data, cursor_manager) {
+    public game:Phaser.Game;
+    public data:GoldenSun;
+    public cursor_manager:CursorManager;
+    public close_callback:Function;
+
+    public window:Window;
+    public item_counter:ShopItemCounter;
+    public chosen_quantity:number;
+    public base_price:number;
+    public is_open:boolean;
+
+    public quantity_text:TextObj;
+    public coins_val_text:TextObj;
+    public coins_label_text:TextObj;
+
+    constructor(game:Phaser.Game, data:GoldenSun, cursor_manager:CursorManager) {
         this.game = game;
         this.data = data;
         this.cursor_manager = cursor_manager;
@@ -41,7 +60,7 @@ export class ShopItemQuantityWindow {
 
     }
 
-    on_change(quantity) {
+    on_change(quantity:number) {
         this.chosen_quantity = quantity;
         this.window.update_text(String(this.chosen_quantity), this.quantity_text);
         this.window.update_text(String(this.base_price*this.chosen_quantity), this.coins_val_text);
@@ -55,7 +74,8 @@ export class ShopItemQuantityWindow {
         this.item_counter.advance_step(-1);
     }
 
-    open(shop_item_obj, char_item_obj, use_coins=false, close_callback, open_callback){
+    open(shop_item_obj:ShopItem, char_item_obj?:ItemSlot, use_coins:boolean=false,
+        close_callback?:Function, open_callback?:Function){
         this.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "wiggle");
 
         this.base_price = this.data.info.items_list[shop_item_obj.key_name].price;

@@ -1,6 +1,9 @@
 import { get_text_width } from '../utils.js';
 import * as numbers from '../magic_numbers.js';
 import { Window } from '../Window';
+import { GoldenSun } from '../GoldenSun';
+import { ControlManager } from '../utils/ControlManager';
+import * as _ from "lodash";
 
 const FORWARD = 1;
 const BACKWARD = -1;
@@ -10,7 +13,34 @@ const BUTTON_Y = numbers.GAME_HEIGHT - BUTTON_HEIGHT;
 const TITLE_WINDOW_HEIGHT = BUTTON_HEIGHT - numbers.OUTSIDE_BORDER_WIDTH - numbers.INSIDE_BORDER_WIDTH;
 
 export class ButtonSelectMenu {
-    constructor(game, data, buttons, titles, callbacks, control_manager, title_window_width, dock_right=false) {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public buttons_keys: string[];
+    public titles: string[];
+    public buttons_number: number;
+    public on_cancel: Function;
+    public on_press: Function;
+    public control_manager: ControlManager;
+    public title_window_width: number;
+    public custom_scale: {
+        active_default: number;
+        max_scale: number;
+    }
+    public dock_right: boolean;
+    public x: number;
+    public y: number;
+    public title_window: Window;
+    public group: Phaser.Group;
+    public selected_button_index: number;
+    public menu_open: boolean;
+    public menu_active: boolean;
+    public selected_button_tween: Phaser.Tween;
+    public buttons: {
+        sprite: Phaser.Sprite,
+        title: string
+    }[];
+    constructor(game:Phaser.Game, data:GoldenSun, buttons:string[], titles:string[], callbacks:{
+        on_cancel: Function, on_press:Function}, control_manager:ControlManager, title_window_width?:number, dock_right:boolean=false) {
         this.game = game;
         this.data = data;
         this.buttons_keys = buttons;
@@ -50,7 +80,7 @@ export class ButtonSelectMenu {
             esc: this.on_cancel.bind(this), enter: this.on_press.bind(this)});
     }
 
-    mount_buttons(filtered_buttons = []) {
+    mount_buttons(filtered_buttons:string[]=[]) {
         const buttons = this.buttons_keys.filter(key => !filtered_buttons.includes(key));
         this.buttons_number = buttons.length;
         const total_width = BUTTON_WIDTH * this.buttons_number + this.title_window_width + (numbers.OUTSIDE_BORDER_WIDTH << 1) + 2;
@@ -71,12 +101,12 @@ export class ButtonSelectMenu {
                 title: this.titles[i]
             }
             this.buttons[i].sprite.anchor.setTo(0.5, 1);
-            this.buttons[i].sprite.centerX = parseInt(BUTTON_WIDTH * (i + 0.5));
-            this.buttons[i].sprite.centerY = parseInt(BUTTON_HEIGHT >> 1);
+            this.buttons[i].sprite.centerX = (BUTTON_WIDTH * (i + 0.5)) | 0;
+            this.buttons[i].sprite.centerY = (BUTTON_HEIGHT >> 1) | 0;
         }
     }
 
-    change_button(step) {
+    change_button(step:number) {
         this.reset_button();
         this.selected_button_index = (this.selected_button_index + step) % this.buttons_number;
         if (this.selected_button_index < 0) {
@@ -94,7 +124,7 @@ export class ButtonSelectMenu {
         this.change_button(BACKWARD);
     }
 
-    set_to_position(index) {
+    set_to_position(index:number) {
         this.reset_button();
         this.selected_button_index = index;
         this.title_window.set_text([[this.buttons[this.selected_button_index].title]]);
@@ -136,7 +166,8 @@ export class ButtonSelectMenu {
         this.title_window.update(true);
     }
 
-    open(callback, select_index=0, start_active = true, custom_scale) {
+    open(callback:Function, select_index:number=0, start_active:boolean=true,
+        custom_scale?:{active_default: number, max_scale: number}) {
         this.reset_button();
         this.set_control();
         this.game.world.bringToTop(this.group);
@@ -172,7 +203,7 @@ export class ButtonSelectMenu {
         });
     }
 
-    close(callback, animate = true) {
+    close(callback?: () => void, animate:boolean=true) {
         this.menu_open = false;
         this.reset_button();
         this.control_manager.reset();

@@ -12,6 +12,14 @@ const TWEEN_TIME = Phaser.Timer.QUARTER >> 1;
 const MOVE_TIME = Phaser.Timer.QUARTER >> 1;
 
 export class CursorManager{
+    public game:Phaser.Game;
+    public group:Phaser.Group;
+    public cursor:Phaser.Sprite;
+
+    public active_tween:Phaser.Tween;
+    public current_tween:string;
+    public cursor_default_pos:{x:number, y:number};
+
     constructor(game){
         this.game = game;
 
@@ -22,18 +30,18 @@ export class CursorManager{
         this.cursor = this.group.create(0, 0, "cursor");
         this.active_tween = null;
         this.current_tween = null;
-        this.cursor.default_pos = {x: 0, y: 0};
+        this.cursor_default_pos = {x: 0, y: 0};
     }
 
     clear_tweens(){
         if(this.active_tween) this.game.tweens.remove(this.active_tween);
         this.active_tween = null;
 
-        this.cursor.x = this.cursor.default_pos.x;
-        this.cursor.y = this.cursor.default_pos.y;
+        this.cursor.x = this.cursor_default_pos.x;
+        this.cursor.y = this.cursor_default_pos.y;
     }
 
-    init_tween(type){
+    init_tween(type:string){
         this.clear_tweens();
         if(!this.group.visible) this.show();
 
@@ -55,10 +63,10 @@ export class CursorManager{
         if(this.active_tween) this.active_tween.start();
     }
 
-    move_to(new_x, new_y, tween_type=undefined, animate=true){
+    move_to(new_x:number, new_y:number, tween_type?:string, animate:boolean=true){
         if(!this.group.visible) this.show();
 
-        this.cursor.default_pos = {x: new_x + this.game.camera.x, y: new_y + this.game.camera.y};
+        this.cursor_default_pos = {x: new_x + this.game.camera.x, y: new_y + this.game.camera.y};
         this.game.world.bringToTop(this.cursor.parent);
 
         if(animate){

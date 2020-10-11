@@ -1,10 +1,30 @@
 import { directions, reverse_directions, action_inputs } from '../utils.js';
+import * as _ from "lodash";
 const DEFAULT_LOOP_TIME = Phaser.Timer.QUARTER >> 1;
 
 const direction_keys = ["left", "right", "up", "down"];
 const action_keys = ["spacebar", "esc", "enter", "shift"];
 
+export type ControlStatus = {
+    key:string;
+    pressed?:boolean;
+    callback:Function;
+    loop?:boolean;
+    phaser_key:number;
+}
+
 export class ControlManager{
+    public game:Phaser.Game;
+    public disabled:boolean;
+    public initialized:boolean;
+    public loop_time:number;
+
+    public directions:ControlStatus[]
+    public actions:ControlStatus[];
+
+    public signal_bindings:Phaser.SignalBinding[];
+    public loop_start_timer:Phaser.Timer;
+    public loop_repeat_timer:Phaser.Timer;
     constructor(game){
         this.game = game;
         this.disabled = false;
@@ -29,7 +49,7 @@ export class ControlManager{
         this.loop_repeat_timer = this.game.time.create(false);
     }
 
-    get_opposite_dir(dir){
+    get_opposite_dir(dir:string){
         switch(dir){
             case reverse_directions[directions.right]:
                 return reverse_directions[directions.left];
@@ -42,7 +62,11 @@ export class ControlManager{
         }
     }
 
-    set_control(horizontal, vertical, horizontal_loop=true, vertical_loop=false, callbacks, custom_loop_time){
+    set_control(horizontal:boolean, vertical:boolean, horizontal_loop:boolean=true, vertical_loop:boolean=false,
+        callbacks:{
+            left?:Function, right?:Function, up?:Function, down?:Function,
+            enter?:Function, esc?:Function, shift?:Function, spacebar?:Function
+        }, custom_loop_time?:number){
         if(this.initialized) this.reset();
 
         if(horizontal){
@@ -119,7 +143,7 @@ export class ControlManager{
         if(!this.initialized) this.initialized = true;
     }
 
-    set_loop_timers(direction) {
+    set_loop_timers(direction?:string) {
         this.change_index(direction);
         this.loop_start_timer.add(Phaser.Timer.QUARTER, () => {
             this.loop_repeat_timer.loop(this.loop_time, this.change_index.bind(this, direction));
@@ -128,7 +152,7 @@ export class ControlManager{
         this.loop_start_timer.start();
     }
 
-    change_index(direction) {
+    change_index(direction:string) {
         this.directions[direction].callback();
     }
 

@@ -33,7 +33,8 @@ export type ItemSlot = {
     key_name: string,
     index: number,
     quantity: number,
-    equipped: boolean
+    equipped?: boolean,
+    broken?: boolean
 };
 
 export class MainChar extends Player {
@@ -82,7 +83,9 @@ export class MainChar extends Player {
         head: ItemSlot,
         chest: ItemSlot,
         body: ItemSlot,
-        ring: ItemSlot
+        ring: ItemSlot,
+        boots: ItemSlot,
+        underwear: ItemSlot
     };
     public equipped_abilities: string[];
     public innate_abilities: string[];
@@ -201,7 +204,9 @@ export class MainChar extends Player {
             head: null,
             chest: null,
             body: null,
-            ring: null
+            ring: null,
+            boots: null,
+            underwear: null
         };
         this.equipped_abilities = [];
         this.innate_abilities = innate_abilities;
@@ -335,6 +340,10 @@ export class MainChar extends Player {
             this.unequip_item(this.equip_slots.body.index);
         } else if (item.type === item_types.RING && this.equip_slots.ring !== null) {
             this.unequip_item(this.equip_slots.ring.index);
+        } else if (item.type === item_types.LEG_PROTECTOR && this.equip_slots.boots !== null) {
+            this.unequip_item(this.equip_slots.boots.index);
+        } else if (item.type === item_types.UNDERWEAR && this.equip_slots.underwear !== null) {
+            this.unequip_item(this.equip_slots.underwear.index);
         }
         switch (item.type) {
             case item_types.WEAPONS: this.equip_slots.weapon = item_obj; break;
@@ -342,6 +351,8 @@ export class MainChar extends Player {
             case item_types.CHEST_PROTECTOR: this.equip_slots.chest = item_obj; break;
             case item_types.ARMOR: this.equip_slots.body = item_obj; break;
             case item_types.RING: this.equip_slots.ring = item_obj; break;
+            case item_types.LEG_PROTECTOR: this.equip_slots.boots = item_obj; break;
+            case item_types.UNDERWEAR: this.equip_slots.underwear = item_obj; break;
         }
         item_obj.equipped = true;
         for (let i = 0; i < item.effects.length; ++i) {
@@ -369,6 +380,10 @@ export class MainChar extends Player {
             this.equip_slots.body = null;
         } else if (item.type === item_types.RING && this.equip_slots.ring !== null) {
             this.equip_slots.ring = null;
+        } else if (item.type === item_types.LEG_PROTECTOR && this.equip_slots.boots !== null) {
+            this.equip_slots.boots = null;
+        } else if (item.type === item_types.UNDERWEAR && this.equip_slots.underwear !== null) {
+            this.equip_slots.underwear = null;
         }
         item_obj.equipped = false;
         this.effects.forEach(effect => {

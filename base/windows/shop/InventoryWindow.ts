@@ -1,5 +1,8 @@
-import { Window } from '../../Window';
+import { Window, TextObj } from '../../Window';
 import { kill_all_sprites } from '../../utils.js';
+import { GoldenSun } from '../../GoldenSun';
+import { ShopMenu } from '../../main_menus/ShopMenu';
+import { MainChar, ItemSlot } from '../../MainChar';
 
 const MAX_PER_LINE = 5;
 const MAX_LINES = 3;
@@ -42,7 +45,25 @@ Used in shop menus. Can display the amout of an item in the inventory
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
 export class InventoryWindow{
-    constructor(game, data, parent, on_change){
+    public game:Phaser.Game;
+    public data:GoldenSun;
+    public parent:ShopMenu;
+    public on_change:Function;
+    public close_callback:Function;
+
+    public expanded:boolean;
+    public is_open:boolean;
+    public window:Window;
+    public text:TextObj;
+    
+    public char:MainChar;
+    public item_grid:ItemSlot[][];
+    public selected_item:string;
+    public cursor_pos:{line:number, col:number};
+    public sprite_group:Phaser.Group;
+    public icon_group:Phaser.Group;
+
+    constructor(game:Phaser.Game, data:GoldenSun, parent:ShopMenu, on_change:Function){
         this.game = game;
         this.data = data;
         this.parent = parent;
@@ -68,7 +89,7 @@ export class InventoryWindow{
     /*Checks and manages the expanded state of the window
 
     Input: expand [boolean]: If true, the window be in expanded state*/
-    check_expand(expand){
+    check_expand(expand:boolean){
         if(expand) this.set_text();
         if(this.expanded === expand) return;
 
@@ -114,7 +135,7 @@ export class InventoryWindow{
     /*Changes the character whose inventory is being shown
 
     Input: key_name [number] - The character's key name*/
-    change_character(key_name){
+    change_character(key_name:string){
         this.char = this.data.info.party_data.members.filter(c => { return (c.key_name === key_name)})[0];
         this.make_item_grid();
 
@@ -141,29 +162,29 @@ export class InventoryWindow{
     }
 
     
-    kill_item_at(line, col){
-        let item_icons = this.sprite_group.children.filter(s => { 
+    kill_item_at(line:number, col:number){
+        let item_icons = this.sprite_group.children.filter((s:Phaser.Sprite) => { 
             return (s.alive === true && s.key === ITEMS_IMG_KEY && s.x === col*ICON_SIZE && s.y === line*ICON_SIZE);
          });
-        let bg_icons = this.sprite_group.children.filter(s => { 
+        let bg_icons = this.sprite_group.children.filter((s:Phaser.Sprite) => { 
             return (s.alive === true && s.key === BACKGROUND_IMG_KEY && s.x === col*ICON_SIZE && s.y === line*ICON_SIZE);
         });
 
-        item_icons[0].kill();
-        bg_icons[0].kill();
+        (item_icons[0] as Phaser.Sprite).kill();
+        (bg_icons[0] as Phaser.Sprite).kill();
         
         if(this.item_grid[line][col].broken){
-            let broken_icons = this.sprite_group.children.filter(b => {
+            let broken_icons = this.sprite_group.children.filter((b:Phaser.Sprite) => {
                 return (b.alive === true && b.key === BROKEN_IMG_KEY && b.x === col*ICON_SIZE && b.y === line*ICON_SIZE);
             });
-            broken_icons[0].kill();
+            (broken_icons[0] as Phaser.Sprite).kill();
         }
 
         if(this.item_grid[line][col].equipped){
-            let equipped_icons = this.icon_group.children.filter(e => {
-                return (e.alive === true && e.text === undefined && e.x === col*ICON_SIZE && e.y === line*ICON_SIZE);
+            let equipped_icons = this.icon_group.children.filter((e:Phaser.Sprite) => {
+                return (e.alive === true && e.key === EQUIPPED_IMG_KEY && e.x === col*ICON_SIZE && e.y === line*ICON_SIZE);
             });
-            equipped_icons[0].kill();
+            (equipped_icons[0] as Phaser.Sprite).kill();
         }
     }
 
@@ -226,7 +247,7 @@ export class InventoryWindow{
     }
 
     /*Moves the cursor to the given column and line*/
-    set_cursor(line, col){
+    set_cursor(line:number, col:number){
         this.cursor_pos = {line: line, col: col};
         this.parent.cursor_manager.move_to(CURSOR_X + col*ICON_SIZE, CURSOR_Y + line*ICON_SIZE, "point", true);
         this.on_change(line, col);
@@ -247,13 +268,13 @@ export class InventoryWindow{
 
                 let this_item = this.data.info.items_list[this.item_grid[line][col].key_name];
 
-                let dead_items = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === ITEMS_IMG_KEY); });
-                let dead_backgrounds = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === BACKGROUND_IMG_KEY); });
+                let dead_items = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === false && s.key === ITEMS_IMG_KEY); });
+                let dead_backgrounds = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === false && s.key === BACKGROUND_IMG_KEY); });
 
                 if(dead_items.length>0 && dead_backgrounds.length>0){
-                    dead_backgrounds[0].reset(col*ICON_SIZE, line*ICON_SIZE);
-                    dead_items[0].reset(col*ICON_SIZE, line*ICON_SIZE);
-                    dead_items[0].frameName = this_item.key_name;
+                    (dead_backgrounds[0] as Phaser.Sprite).reset(col*ICON_SIZE, line*ICON_SIZE);
+                    (dead_items[0] as Phaser.Sprite).reset(col*ICON_SIZE, line*ICON_SIZE);
+                    (dead_items[0] as Phaser.Sprite).frameName = this_item.key_name;
                 }
                 else{
                     this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, BACKGROUND_IMG_KEY, undefined, undefined, SPRITE_GROUP_KEY);
@@ -261,23 +282,23 @@ export class InventoryWindow{
                 }
 
                 if (this.item_grid[line][col].broken) {
-                    let dead_broken = this.sprite_group.children.filter(b => { return (b.alive === false && b.key === BROKEN_IMG_KEY); });
-                    if(dead_broken.length>0) dead_broken[0].reset(col*ICON_SIZE, line*ICON_SIZE);
+                    let dead_broken = this.sprite_group.children.filter((b:Phaser.Sprite) => { return (b.alive === false && b.key === BROKEN_IMG_KEY); });
+                    if(dead_broken.length>0) (dead_broken[0] as Phaser.Sprite).reset(col*ICON_SIZE, line*ICON_SIZE);
                     else this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, BROKEN_IMG_KEY, undefined,undefined, SPRITE_GROUP_KEY);
                 }
 
                 if (this.item_grid[line][col].equipped) {
-                    let dead_icons = this.icon_group.children.filter(e => { return (e.alive === false && e.text === undefined); });
-                    if(dead_icons.length>0) dead_icons[0].reset(col*ICON_SIZE, line*ICON_SIZE);
+                    let dead_icons = this.icon_group.children.filter((e:Phaser.Sprite) => { return (e.alive === false && e.key === EQUIPPED_IMG_KEY); });
+                    if(dead_icons.length>0) (dead_icons[0] as Phaser.Sprite).reset(col*ICON_SIZE, line*ICON_SIZE);
                     else this.window.create_at_group(col*ICON_SIZE, line*ICON_SIZE, EQUIPPED_IMG_KEY, undefined,undefined, ICON_GROUP_KEY);
                 }
 
                 if (this.item_grid[line][col].quantity > 1) {
-                    let dead_text = this.icon_group.children.filter(t => { return (t.alive === false && t.text !== undefined); });
+                    let dead_text = this.icon_group.children.filter((t:Phaser.BitmapText) => { return (t.alive === false && t.text !== undefined); });
                     if(dead_text.length>0){
-                        dead_text[0].text = this.item_grid[line][col].quantity.toString();
-                        dead_text[0].reset(col*ICON_SIZE, line*ICON_SIZE);
-                        dead_text[0].x += (SUB_TEXT_X_SHIFT - dead_text[0].width);
+                        (dead_text[0] as Phaser.BitmapText).text = this.item_grid[line][col].quantity.toString();
+                        (dead_text[0] as Phaser.BitmapText).reset(col*ICON_SIZE, line*ICON_SIZE);
+                        dead_text[0].x += (SUB_TEXT_X_SHIFT - (dead_text[0] as Phaser.BitmapText).width);
                     }
                     else{
                         let item_count = this.game.add.bitmapText(col*ICON_SIZE, line*ICON_SIZE, 'gs-item-bmp-font', this.item_grid[line][col].quantity.toString());
@@ -298,7 +319,7 @@ export class InventoryWindow{
            expand [boolean] - If true, the window will be in expanded state
            close_callback [function] - Callback function (Optional)
            open_callback [function] - Callback function (Optional)*/
-    open(char_key, item=undefined, expand=false, close_callback, open_callback){
+    open(char_key:string, item?:string, expand:boolean=false, close_callback?:Function, open_callback?:Function){
         this.char = this.data.info.party_data.members.filter(c => { return (c.key_name === char_key)})[0];
         this.selected_item = item;
 

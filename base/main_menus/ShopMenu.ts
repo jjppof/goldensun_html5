@@ -1,17 +1,20 @@
-import { ShopkeepDialog } from '../windows/shop/ShopkeepDialog.js';
-import { BuyArtifactsMenu } from '../windows/shop/BuyArtifactsMenu.js';
-import { SellRepairMenu } from '../windows/shop/SellRepairMenu.js';
+import { ShopkeepDialog } from '../windows/shop/ShopkeepDialog';
+import { BuyArtifactsMenu } from '../windows/shop/BuyArtifactsMenu';
+import { SellRepairMenu } from '../windows/shop/SellRepairMenu';
 import { capitalize } from '../utils.js';
-import { InventoryWindow } from '../windows/shop/InventoryWindow.js';
-import { BuySelectMenu } from '../windows/shop/BuySelectMenu.js';
-import { EquipCompare } from '../windows/shop/EquipCompare.js';
-import { YesNoMenu } from '../windows/YesNoMenu.js';
-import { ShopItemQuantityWindow } from '../windows/shop/ShopItemQuantityWindow.js';
-import { Window } from '../Window';
-import { ShopCharDisplay } from '../windows/shop/ShopCharDisplay.js';
-import { CursorManager } from '../utils/CursorManager.js';
-import { ControlManager } from '../utils/ControlManager.js';
-import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu.js';
+import { InventoryWindow } from '../windows/shop/InventoryWindow';
+import { BuySelectMenu } from '../windows/shop/BuySelectMenu';
+import { EquipCompare } from '../windows/shop/EquipCompare';
+import { YesNoMenu } from '../windows/YesNoMenu';
+import { ShopItemQuantityWindow } from '../windows/shop/ShopItemQuantityWindow';
+import { Window, TextObj } from '../Window';
+import { ShopCharDisplay } from '../windows/shop/ShopCharDisplay';
+import { CursorManager } from '../utils/CursorManager';
+import { ControlManager } from '../utils/ControlManager';
+import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu';
+import { GoldenSun } from '../GoldenSun';
+import * as _ from "lodash";
+import { Shop } from '../Shop';
 
 const ITEM_PRICE_WIN_X = 0;
 const ITEM_PRICE_WIN_Y = 64;
@@ -59,14 +62,66 @@ const BUY_MODE = "buy"
 const SELL_MODE = "sell"
 
 export class ShopMenu{
-    constructor(game, data){
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public shop_key: string;
+    public close_callback: Function;
+    public items_db: {
+        key_name: string;
+        item: any;
+    }
+    public shops_db:{
+        key_name: string;
+        shop: any;
+    }
+    public shopkeep_dialog_db:{
+        key_name: string;
+        dialog: any;
+    }
+
+    public normal_item_list: {key_name: string,
+        quantity: number}[];
+    public artifact_list: {key_name: string,
+        quantity: number}[];
+
+    public buttons_keys: string[];
+    public windows_mode: string;
+    public current_index: number;
+    public cursor_manager: CursorManager;
+    public control_manager: ControlManager;
+    
+    public horizontal_menu: ButtonSelectMenu;
+    public npc_dialog: ShopkeepDialog;
+    public yesno_action: YesNoMenu;
+    public inv_win: InventoryWindow;
+    public buy_select: BuySelectMenu;
+    public eq_compare: EquipCompare;
+    public quant_win: ShopItemQuantityWindow;
+    public char_display: ShopCharDisplay;
+
+    public item_price_win: Window;
+    public item_desc_win: Window;
+    public your_coins_win: Window;
+
+    public buy_menu: BuyArtifactsMenu;
+    public sell_menu: SellRepairMenu;
+
+    public your_coins_label: TextObj;
+    public your_coins_text: TextObj;
+    public item_name_text: TextObj;
+    public item_price_coins_label: TextObj;
+    public item_price_label: TextObj;
+    public item_price_val_text: TextObj;
+    public item_desc_text: TextObj;
+
+    constructor(game:Phaser.Game, data:GoldenSun){
         this.game = game;
         this.data = data;
         this.shop_key = null;
         this.close_callback = null;
 
         this.items_db = this.data.info.items_list;
-        this.shops_db = _.mapKeys(this.data.dbs.shops_db, shop => shop.key_name);
+        this.shops_db = _.mapKeys(this.data.dbs.shops_db, (shop:Shop) => shop.key_name);
         this.shopkeep_dialog_db = this.data.dbs.shopkeep_dialog_db;
 
         this.normal_item_list = [];
@@ -113,12 +168,12 @@ export class ShopMenu{
         this.item_desc_text = this.item_desc_win.set_text_in_position("", ITEM_DESC_TEXT_X, ITEM_DESC_TEXT_Y);
     }
 
-    on_char_display_change(key_name){
+    on_char_display_change(key_name:string){
         if(this.eq_compare.is_open) this.eq_compare.change_character(key_name);
         if(this.inv_win.is_open) this.inv_win.change_character(key_name);
     }
 
-    on_inv_win_change(line, col){
+    on_inv_win_change(line:number, col:number){
         if(this.item_price_win.open && this.sell_menu.active){
             let is_repair = this.sell_menu.is_repair_menu;
             let itm = this.inv_win.item_grid[line][col];
@@ -136,7 +191,7 @@ export class ShopMenu{
         }
     }
 
-    on_buy_select_change(key_name){
+    on_buy_select_change(key_name:string){
         this.update_item_info(key_name);
     }
 
@@ -161,7 +216,8 @@ export class ShopMenu{
         this.your_coins_win.update_text(String(this.data.info.party_data.coins), this.your_coins_text);
     }
 
-    update_item_info(key, custom_price, custom_msg=false, broken=false, cant_sell=false){
+    update_item_info(key:string, custom_price?:number, custom_msg:boolean=false,
+        broken:boolean=false, cant_sell:boolean=false){
         let this_item = this.data.info.items_list[key];
 
         this.item_desc_win.update_text(this_item.description, this.item_desc_text);
@@ -180,7 +236,7 @@ export class ShopMenu{
         this.item_price_win.update_text(price_text, this.item_price_val_text);
     }
 
-    alternate_window_pos(mode){
+    alternate_window_pos(mode:string){
         if(this.windows_mode === mode) return;
         if(mode===BUY_MODE){
             this.item_price_win.update_position({x: ITEM_PRICE_WIN_X, y: ITEM_PRICE_WIN_Y});
@@ -243,7 +299,7 @@ export class ShopMenu{
 
     }
 
-    open_menu(shop_key, close_callback) {
+    open_menu(shop_key:string, close_callback?:Function) {
         this.shop_key = shop_key;
         this.close_callback = close_callback;
 

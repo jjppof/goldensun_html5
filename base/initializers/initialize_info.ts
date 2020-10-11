@@ -6,8 +6,8 @@ import { initialize_enemies } from './enemies';
 import { initialize_maps } from './maps';
 import { initialize_menu } from '../main_menus/MainMenu';
 import { initialize_misc_data } from './misc_data';
-import { ShopMenu } from '../main_menus/ShopMenu.js';
-import { initialize_shops } from './shops.js';
+import { ShopMenu } from '../main_menus/ShopMenu';
+import { initialize_shops } from './shops';
 
 export async function initialize_game_data(game, data) {
     let load_maps_promise_resolve;
@@ -69,7 +69,7 @@ export async function initialize_game_data(game, data) {
     data.info.misc_sprite_base_list = initialize_misc_data(game, data.dbs.misc_animations_db, load_misc_promise_resolve);
     await load_misc_promise;
 
-    data.info.shops_list = initialize_shops(game, data.dbs.shops_db);
+    data.info.shops_list = initialize_shops(data.dbs.shops_db);
 
     //initialize field abilities
     data.info.field_abilities_list = initialize_field_abilities(game, data);

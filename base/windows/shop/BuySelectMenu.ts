@@ -1,5 +1,8 @@
 import { Window } from '../../Window';
 import { kill_all_sprites } from '../../utils.js';
+import { GoldenSun } from '../../GoldenSun';
+import { ShopMenu } from '../../main_menus/ShopMenu';
+import { ShopItem } from '../../Shop.js';
 
 const MAX_PER_PAGE = 7;
 
@@ -28,9 +31,9 @@ const CURSOR_Y = 112;
 const ARROW_GROUP_X = 224;
 const ARROW_GROUP_Y = 80;
 const UP_ARROW_X = 16;
-const UP_ARROW_Y = 20; //88-80
+const UP_ARROW_Y = 20;
 const DOWN_ARROW_X = 0;
-const DOWN_ARROW_Y = 52; //132-140
+const DOWN_ARROW_Y = 52;
 const ARROW_Y_DIFF = 8;
 
 const SELECT_TWEEN_TIME = Phaser.Timer.QUARTER;
@@ -44,7 +47,31 @@ Input: game [Phaser:Game] - Reference to the running game object
        parent [ShopMenuScreen] - The main shop menu class
        on_change [function] - Function callback to update the parent*/
 export class BuySelectMenu{
-    constructor(game, data, parent, on_change){
+    public game:Phaser.Game;
+    public data:GoldenSun;
+    public parent:ShopMenu;
+    public on_change:Function;
+    public close_callback:Function;
+
+    public window:Window;
+    public items:ShopItem[];
+    public selected_index:number;
+    public current_page:number;
+    public pages:ShopItem[][];
+    public tweens:{item:Phaser.Tween, bg:Phaser.Tween};
+    public is_open:boolean;
+
+    public sprite_group:Phaser.Group;
+    public tag_group:Phaser.Group;
+    public text_group:Phaser.Group;
+    public bg_group:Phaser.Group;
+    public arrow_group:Phaser.Group;
+
+    public up_arrow:Phaser.Sprite;
+    public down_arrow:Phaser.Sprite;
+    public arrow_tweens:Phaser.Tween[];
+
+    constructor(game:Phaser.Game, data:GoldenSun, parent:ShopMenu, on_change:Function){
         this.game = game;
         this.data = data;
         this.parent = parent;
@@ -101,7 +128,7 @@ export class BuySelectMenu{
     /*Hides or shows specific arrows
     
     Input: up, down [boolean] - If true, shows up/down arrow*/
-    set_arrows(up=false, down=false){
+    set_arrows(up:boolean=false, down:boolean=false){
         this.up_arrow.x = UP_ARROW_X;
         this.up_arrow.y = UP_ARROW_Y;
         this.down_arrow.x = DOWN_ARROW_X;
@@ -153,18 +180,18 @@ export class BuySelectMenu{
 
     Input: text [string] - Price of the item
            index [number] - Line index of the item*/
-    set_text(text, index){
-        let dead_texts = this.text_group.children.filter(t => { return (t.alive === false && t.tint !== 0); });
-        let dead_shadows = this.text_group.children.filter(s => { return (s.alive === false && s.tint === 0); });
+    set_text(text:string, index:number){
+        let dead_texts = this.text_group.children.filter((t:Phaser.BitmapText) => { return (t.alive === false && t.tint !== 0); });
+        let dead_shadows = this.text_group.children.filter((s:Phaser.BitmapText) => { return (s.alive === false && s.tint === 0); });
 
         let sprite = null;
         let shadow = null;
 
         if(dead_texts.length>0 && dead_shadows.length>0){
-            dead_texts[0].text = text;
-            dead_texts[0].reset(index*LINE_SHIFT, 0);
-            dead_shadows[0].text = text;
-            dead_shadows[0].reset(index*LINE_SHIFT, 0);
+            (dead_texts[0] as Phaser.BitmapText).text = text;
+            (dead_texts[0] as Phaser.BitmapText).reset(index*LINE_SHIFT, 0);
+            (dead_shadows[0] as Phaser.BitmapText).text = text;
+            (dead_shadows[0] as Phaser.BitmapText).reset(index*LINE_SHIFT, 0);
             sprite = dead_texts[0];
             shadow = dead_shadows[0];
         }
@@ -182,14 +209,14 @@ export class BuySelectMenu{
         sprite.y -= sprite.width;
         shadow.x -= 1;
         
-        let dead_text_bgs = this.bg_group.children.filter(bg => { return bg.alive === false; });
+        let dead_text_bgs = this.bg_group.children.filter((bg:Phaser.Graphics) => { return bg.alive === false; });
 
         if(dead_text_bgs.length>0){
-            dead_text_bgs[0].clear();
-            dead_text_bgs[0].beginFill(TEXT_BG_COLOR, 1);
-            dead_text_bgs[0].drawRect(0, 0, -(sprite.height+1), -(sprite.width+1));
-            dead_text_bgs[0].endFill();
-            dead_text_bgs[0].reset(index*LINE_SHIFT, 0)
+            (dead_text_bgs[0] as Phaser.Graphics).clear();
+            (dead_text_bgs[0] as Phaser.Graphics).beginFill(TEXT_BG_COLOR, 1);
+            (dead_text_bgs[0] as Phaser.Graphics).drawRect(0, 0, -(sprite.height+1), -(sprite.width+1));
+            (dead_text_bgs[0] as Phaser.Graphics).endFill();
+            (dead_text_bgs[0] as Phaser.Graphics).reset(index*LINE_SHIFT, 0)
         }
         else{
             let bg = this.game.add.graphics(index*LINE_SHIFT, 0);
@@ -221,28 +248,28 @@ export class BuySelectMenu{
     /*Displays the sprites for the window
 
     Input: page [number] - The item page index*/
-    set_sprites(page){        
+    set_sprites(page:number){        
         for(let i = 0; i<this.pages[page].length; i++){
 
-            let dead_items = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === "items_icons"); });
-            let dead_backgrounds = this.sprite_group.children.filter(s => { return (s.alive === false && s.key === "item_border"); });
+            let dead_items = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === false && s.key === "items_icons"); });
+            let dead_backgrounds = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === false && s.key === "item_border"); });
 
             if(dead_items.length>0 && dead_backgrounds.length>0){
-                dead_backgrounds[0].reset(i*LINE_SHIFT, 0);
+                (dead_backgrounds[0] as Phaser.Sprite).reset(i*LINE_SHIFT, 0);
                 dead_backgrounds[0].scale.x = 1;
                 dead_backgrounds[0].scale.y = 1;
-                dead_items[0].frameName = this.pages[page][i].key_name;
+                (dead_items[0] as Phaser.Sprite).frameName = this.pages[page][i].key_name;
                 dead_items[0].scale.x = 1;
                 dead_items[0].scale.y = 1;
-                dead_items[0].reset(i*LINE_SHIFT, 0);
+                (dead_items[0] as Phaser.Sprite).reset(i*LINE_SHIFT, 0);
             }
             else{
                 this.sprite_group.create(i*LINE_SHIFT, 0, "item_border").anchor.setTo(0.5, 0.5);
                 this.sprite_group.create(i*LINE_SHIFT, 0, "items_icons", this.pages[page][i].key_name).anchor.setTo(0.5, 0.5);
             }
 
-            let dead_tags = this.tag_group.children.filter(t => { return t.alive === false; });
-            if(dead_tags.length>0) dead_tags[0].reset(i*LINE_SHIFT, 0); 
+            let dead_tags = this.tag_group.children.filter((t:Phaser.Sprite) => { return t.alive === false; });
+            if(dead_tags.length>0) (dead_tags[0] as Phaser.Sprite).reset(i*LINE_SHIFT, 0); 
             else this.tag_group.create(i*LINE_SHIFT, 0, "price_tag");
             
             let price = this.data.info.items_list[this.pages[page][i].key_name].price;
@@ -254,7 +281,7 @@ export class BuySelectMenu{
     /*Displays a specific page of items
 
     Input: index [number] - Index of the page to be displayed*/
-    change_page(page, force_index=undefined){
+    change_page(page:number, force_index?:number){
         if(this.pages.length === 1) return;
         this.clear_arrow_tweens();
 
@@ -282,7 +309,7 @@ export class BuySelectMenu{
 
     /*Changes to the next item page
     Used as a callback for controls*/
-    next_page(force_index=undefined){
+    next_page(force_index?:number){
         if(this.pages.length === 1 || this.current_page + 1 === this.pages.length) return;
         let index =  this.current_page + 1;
 
@@ -291,7 +318,7 @@ export class BuySelectMenu{
 
     /*Changes to the previous item page
     Used as a callback for controls*/
-    previous_page(force_index=undefined){
+    previous_page(force_index?:number){
         if(this.pages.length === 1 || this.current_page -1 < 0) return;
         let index = this.current_page - 1;
 
@@ -301,7 +328,7 @@ export class BuySelectMenu{
     /*Selects a specific item on screen
 
     Input: step [number] - Step index for new item selection*/
-    change_item(index){
+    change_item(index:number){
         this.unset_item(this.selected_index);
 
         this.selected_index = index;
@@ -350,11 +377,11 @@ export class BuySelectMenu{
     /*Sets the scaling animation for the selected item
 
     Input: index [number] - Item index (on screen)*/
-    set_item(index) {
+    set_item(index:number) {
         this.game.world.bringToTop(this.sprite_group);
         this.game.world.bringToTop(this.parent.cursor_manager.group);
-        let itm_list = this.sprite_group.children.filter(s => { return (s.alive === true && s.key === "items_icons"); });
-        let bg_list = this.sprite_group.children.filter(s => { return (s.alive === true && s.key === "item_border"); });
+        let itm_list = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === true && s.key === "items_icons"); });
+        let bg_list = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === true && s.key === "item_border"); });
         
         let tweens = [this.tweens.item, this.tweens.bg];
         let lists = [itm_list, bg_list];
@@ -373,7 +400,13 @@ export class BuySelectMenu{
         this.tweens = {item: tweens[0], bg: tweens[1]};
     }
 
-    is_last(page, index){
+    /*Checks wether this is the last item on the list
+
+    Input: page[number] - The item's page
+           index[number] - The item's index
+    
+    Output: [boolean] - True if last, false otherwise*/
+    is_last(page:number, index:number){
         if(page === this.pages.length-1 && index === this.pages[page].length-1) return true;
         else return false;
     }
@@ -381,16 +414,16 @@ export class BuySelectMenu{
     /*Removes the scaling animation from the selected item
 
     Input: index [number] - Item index (on screen)*/
-    unset_item(index) {
-        let itm_list = this.sprite_group.children.filter(s => { return (s.alive === true && s.key === "items_icons"); });
-        let bg_list = this.sprite_group.children.filter(s => { return (s.alive === true && s.key === "item_border"); });
+    unset_item(index:number) {
+        let itm_list = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === true && s.key === "items_icons"); });
+        let bg_list = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === true && s.key === "item_border"); });
 
         let tweens = [this.tweens.item, this.tweens.bg];
         let lists = [itm_list, bg_list];
 
         for(let i=0; i<2; i++){
             if (lists[i][index]) {
-                lists[i][index].scale.setTo(1.0, 1.0);
+                (lists[i][index] as Phaser.Sprite).scale.setTo(1.0, 1.0);
             }
             if (tweens[i]) {
                 this.game.tweens.remove(tweens[i]);
@@ -402,7 +435,7 @@ export class BuySelectMenu{
     /*Sets the cursor to the current item's index
 
     Input: index [number] - Selected item's index*/
-    set_cursor(index){
+    set_cursor(index:number){
         this.parent.cursor_manager.move_to(CURSOR_X + index*LINE_SHIFT, CURSOR_Y, "point");
     }
 
@@ -413,7 +446,7 @@ export class BuySelectMenu{
            page [number] - Initial selected page index
            close_callback [function] - Callback function (Optional)
            open_callback [function] - Callback function (Optional)*/
-    open(items, index=0, page=0, close_callback=undefined, open_callback=undefined){
+    open(items:ShopItem[], index:number=0, page:number=0, close_callback?:Function, open_callback?:Function){
         this.items = items;
         this.current_page = page
         this.selected_index = index;
@@ -432,7 +465,7 @@ export class BuySelectMenu{
     /*Clears information and closes the window
 
     Input: destroy [boolean] - If true, sprites are destroyed*/
-    close(destroy = false){
+    close(destroy:boolean=false){
         this.unset_item(this.selected_index);
 
         kill_all_sprites(this.sprite_group, destroy);

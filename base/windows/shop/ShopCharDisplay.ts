@@ -1,5 +1,8 @@
 import { Window } from '../../Window';
 import * as utils from '../../utils.js';
+import { GoldenSun } from '../../GoldenSun';
+import { ShopMenu } from '../../main_menus/ShopMenu';
+import { MainChar } from '../../MainChar';
 
 const MAX_PER_LINE = 4;
 
@@ -21,14 +24,32 @@ const CURSOR_Y = 118;
 const ARROW_GROUP_X = 96;
 const ARROW_GROUP_Y = 100;
 const UP_ARROW_X = 16;
-const UP_ARROW_Y = 20; //100-108
+const UP_ARROW_Y = 20;
 const DOWN_ARROW_X = 0;
-const DOWN_ARROW_Y = 24; //124-132
+const DOWN_ARROW_Y = 24;
 const ARROW_Y_DIFF = 8;
 
 const ARROW_TWEEN_TIME = Phaser.Timer.QUARTER >> 1;
 
 export class ShopCharDisplay {
+    public game:Phaser.Game;
+    public data:GoldenSun;
+    public parent:ShopMenu;
+    public on_change:Function;
+    public close_callback:Function;
+
+    public window:Window;
+    public char_group:Phaser.Group;
+    public arrow_group:Phaser.Group;
+    public up_arrow:Phaser.Sprite;
+    public down_arrow:Phaser.Sprite;
+
+    public arrow_tweens:Phaser.Tween[];
+    public lines:MainChar[][];
+    public current_line:number;
+    public selected_index:number;
+    public is_active:boolean;
+    public is_open:boolean;
     constructor(game, data, parent, on_change){
         this.game = game;
         this.data = data;
@@ -71,7 +92,7 @@ export class ShopCharDisplay {
     /*Hides or shows specific arrows
     
     Input: up, down [boolean] - If true, shows up/down arrow*/
-    set_arrows(up=false, down=false){
+    set_arrows(up:boolean=false, down:boolean=false){
         this.up_arrow.x = UP_ARROW_X;
         this.up_arrow.y = UP_ARROW_Y;
         this.down_arrow.x = DOWN_ARROW_X;
@@ -122,13 +143,13 @@ export class ShopCharDisplay {
     set_chars() {
         for (let i = 0; i < this.lines[this.current_line].length; ++i) {
             let char = this.lines[this.current_line][i];
-            let sprite = null;
+            let sprite:Phaser.Sprite = null;
 
-            let dead_idle = this.char_group.children.filter(s => { 
+            let dead_idle = this.char_group.children.filter((s:Phaser.Sprite) => { 
                 return (s.alive === false && s.key === char.sprite_base.getActionKey(utils.base_actions.IDLE));
             });
 
-            if(dead_idle.length>0) sprite = dead_idle[0].reset(i*GAP_SIZE, 0);
+            if(dead_idle.length>0) sprite = (dead_idle[0] as Phaser.Sprite).reset(i*GAP_SIZE, 0);
             else sprite = this.char_group.create(i*GAP_SIZE, 0, char.sprite_base.getActionKey(utils.base_actions.IDLE));
 
             char.sprite_base.setAnimation(sprite, utils.base_actions.IDLE);
@@ -150,7 +171,7 @@ export class ShopCharDisplay {
         }
     }
 
-    change_line(line, force_index=undefined){
+    change_line(line:number, force_index?:number){
         this.clear_arrow_tweens();
 
         if(this.data.info.party_data.members.length < MAX_PER_LINE*line) return;
@@ -171,21 +192,21 @@ export class ShopCharDisplay {
         this.select_char(this.selected_index);
     }
 
-    next_line(force_index=undefined){
+    next_line(force_index?:number){
         if(this.lines.length === 1 || this.current_line + 1 === this.lines.length) return;
         let index =  this.current_line + 1;
 
         this.change_line(index, force_index);
     }
 
-    previous_line(force_index=undefined){
+    previous_line(force_index?:number){
         if(this.lines.length === 1 || this.current_line -1 < 0) return;
         let index = this.current_line - 1;
 
         this.change_line(index, force_index);
     }
 
-    select_char(index){
+    select_char(index:number){
         //unset run animation for previous character;
         this.selected_index = index;
         //set run animation for new character;
@@ -236,7 +257,7 @@ export class ShopCharDisplay {
         this.is_active = false;
     }
 
-    open(select_index=0, close_callback, open_callback) {
+    open(select_index:number=0, close_callback?:Function, open_callback?:Function) {
         this.selected_index = select_index;
         this.current_line = 0;
 
@@ -254,13 +275,13 @@ export class ShopCharDisplay {
         this.window.show(open_callback, false);
     }
 
-    close(destroy=false) {
+    close(destroy:boolean=false) {
         this.is_open = false;
         this.deactivate();
         utils.kill_all_sprites(this.char_group, destroy);
 
         this.lines = [];
-        this.line_index = 0;
+        this.current_line = 0;
         this.selected_index = 0;
         this.is_active = false;
         this.is_open = false;

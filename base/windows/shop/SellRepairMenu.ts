@@ -1,3 +1,14 @@
+import { GoldenSun } from "../../GoldenSun";
+import { ItemSlot, MainChar } from "../../MainChar";
+import { ShopMenu } from "../../main_menus/ShopMenu";
+import { ControlManager } from "../../utils/ControlManager";
+import { Window } from "../../Window";
+import { YesNoMenu } from "../YesNoMenu";
+import { InventoryWindow } from "./InventoryWindow";
+import { ShopCharDisplay } from "./ShopCharDisplay";
+import { ShopItemQuantityWindow } from "./ShopItemQuantityWindow";
+import { ShopkeepDialog } from "./ShopkeepDialog";
+
 const SELL_MULTIPLIER = 3/4;
 const REPAIR_MULTIPLIER = 1/4;
 const SELL_BROKEN_MULTIPLIER = SELL_MULTIPLIER - REPAIR_MULTIPLIER;
@@ -8,6 +19,27 @@ const YESNO_X = 56;
 const YESNO_Y = 40;
 
 export class SellRepairMenu{
+    public game:Phaser.Game;
+    public data:GoldenSun;
+    public parent:ShopMenu;
+    public control_manager:ControlManager;
+
+    public item_desc_win:Window;
+    public your_coins_win:Window;
+    public item_price_win:Window;
+    public char_display:ShopCharDisplay;
+    public inv_win:InventoryWindow;
+    public quant_win:ShopItemQuantityWindow;
+    public yesno_action:YesNoMenu;
+    public npc_dialog:ShopkeepDialog;
+
+    public is_repair_menu:boolean;
+    public selected_item:ItemSlot;
+    public inv_win_pos:{line:number, col:number};
+    public selected_character:MainChar;
+    public selected_char_index:number;
+    public active:boolean;
+
     constructor(game, data, parent){
         this.game = game;
         this.data = data;
@@ -28,7 +60,7 @@ export class SellRepairMenu{
         this.inv_win_pos = {line: 0, col: 0};
         this.selected_character = null;
         this.selected_char_index = 0;
-        this.activate = false;
+        this.active = false;
     }
 
     on_item_repair(){
@@ -75,7 +107,7 @@ export class SellRepairMenu{
         else{
             let price = (this.data.info.items_list[this.selected_item.key_name].price * REPAIR_MULTIPLIER) | 0;
             let text = this.npc_dialog.get_message("repair_deal");
-            text = this.npc_dialog.replace_text(text, undefined, this.data.info.items_list[this.selected_item.key_name].name, price);
+            text = this.npc_dialog.replace_text(text, undefined, this.data.info.items_list[this.selected_item.key_name].name, String(price));
             this.npc_dialog.update_dialog(text, false, false);
 
             this.yesno_action.open_menu({yes: () => {
@@ -148,7 +180,7 @@ export class SellRepairMenu{
             let text = this.npc_dialog.get_message(msg_key);
             let item_name = msg_key === "sell_normal" ? this.data.info.items_list[this.selected_item.key_name].name : undefined;
             let item_price = (this.data.info.items_list[this.selected_item.key_name].price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0; 
-            text = this.npc_dialog.replace_text(text, undefined, item_name, item_price);
+            text = this.npc_dialog.replace_text(text, undefined, item_name, String(item_price));
             this.npc_dialog.update_dialog(text, false, false);
 
             this.yesno_action.open_menu({yes: this.on_sale_success.bind(this), no: () => {
@@ -169,7 +201,7 @@ export class SellRepairMenu{
             if(!this.quant_win.is_open) this.quant_win.open(char_item);
             this.control_manager.set_control(true, false, true, false, {right: this.quant_win.increase_amount.bind(this.quant_win),
                 left: this.quant_win.decrease_amount.bind(this.quant_win),
-                esc: this.on_character_select.bind(this, "sell_follow_up", this.char_index, this.inv_win_pos),
+                esc: this.on_character_select.bind(this, "sell_follow_up", this.selected_char_index, this.inv_win_pos),
                 enter: () => {
                     let quant = 1;
                     quant = this.quant_win.chosen_quantity;
@@ -178,7 +210,7 @@ export class SellRepairMenu{
 
                     let text = this.npc_dialog.get_message("sell_quantity_confirm");
                     let item_price = (this.data.info.items_list[this.selected_item.key_name].price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0; 
-                    text = this.npc_dialog.replace_text(text, undefined, undefined, item_price*quant);
+                    text = this.npc_dialog.replace_text(text, undefined, undefined, String(item_price*quant));
                     this.npc_dialog.update_dialog(text, false, false);
 
                     this.yesno_action.open_menu({yes: this.on_sale_success.bind(this, quant),
@@ -246,7 +278,6 @@ export class SellRepairMenu{
     open_menu(is_repair_menu){
         this.is_repair_menu = is_repair_menu;
         this.active = true;
-        this.item_list = this.is_artifacts_menu ? this.parent.artifact_list : this.parent.normal_item_list;
 
         if(is_repair_menu){
             this.npc_dialog.update_dialog("repair_menu", true);
@@ -263,7 +294,7 @@ export class SellRepairMenu{
         if(this.your_coins_win.open) this.your_coins_win.close();
         if(this.char_display.is_open) this.char_display.close();
         if(this.inv_win.is_open) this.inv_win.close();
-        if(this.yesno_action.is_open) this.yesno_action.close();
+        if(this.yesno_action.is_open) this.yesno_action.close_menu();
         if(this.quant_win.is_open) this.quant_win.close();
 
         this.parent.cursor_manager.hide();
