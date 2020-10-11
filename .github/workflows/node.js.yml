@@ -32,6 +32,8 @@ jobs:
         cd _temp_
         git init
         git remote add origin https://${{ secrets.GITHUB_TOKEN }}@github.com/jjppof/goldensun_html5.git
+        git config --global user.email "jjpp.of@gmail.com"
+        git config --global user.name "jjppof"
         git add .
         git commit -m 'automatic page deploy'
         git push -f -u -q origin master:demo
