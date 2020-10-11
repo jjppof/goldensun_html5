@@ -228,8 +228,7 @@ export class GoldenSun {
             this.hero.stop_char(false);
             if (this.menu_open && this.main_menu.horizontal_menu.menu_active) {
                 this.main_menu.update_position();
-            }
-            else if (this.shop_open && this.shop_menu.horizontal_menu.menu_active) {
+            } else if (this.shop_open && this.shop_menu.horizontal_menu.menu_active) {
                 this.shop_menu.update_position();
             } else if (this.in_battle) {
                 this.battle_instance.update();

@@ -1,4 +1,4 @@
-import { CharsMenu } from '../support_menus/CharsMenu.js';
+import { CharsMenu } from '../support_menus/CharsMenu';
 import { BasicInfoWindow } from '../windows/BasicInfoWindow';
 import { ItemPsynergyChooseWindow } from '../windows/ItemPsynergyChooseWindow';
 import { TextObj, Window } from '../Window';

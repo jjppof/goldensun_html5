@@ -11,6 +11,5 @@ export function initialize_shops(game, shops_db) {
             shop_data.item_list
         );
     }
-    game.load.start();
     return shops_list;
 }
