@@ -196,25 +196,24 @@ export class BattleStage {
         this.bg_height = this.battle_bg.height;
         this.battle_bg.scale.setTo(BG_DEFAULT_SCALE);
         this.battle_bg2.scale.setTo(BG_DEFAULT_SCALE);
-        const set_sprite = (group, info, is_ally, animation, list) => {
+        const set_sprite = (group, info, is_ally, animation, sprite_base) => {
             const sprite = group.create(0, 0, info.sprite_key);
             sprite.anchor.setTo(0.5, 1);
             sprite.scale.setTo(info.scale, info.scale);
             sprite.ellipses_semi_major = SEMI_MAJOR_AXIS;
             sprite.ellipses_semi_minor = SEMI_MINOR_AXIS;
             sprite.is_ally = is_ally;
-            const key = info.sprite_key.slice(0, info.sprite_key.lastIndexOf("_"));
-            list[key].setAnimation(sprite, "battle");
+            sprite_base.setAnimation(sprite, "battle");
             sprite.animations.play(animation);
             this.sprites.push(sprite);
             return sprite;
         };
         this.allies_info.forEach(info => {
-            const sprite = set_sprite(this.group_allies, info, true, "battle_back", _.mapValues(this.data.info.main_char_list, char => char.sprite_base));
+            const sprite = set_sprite(this.group_allies, info, true, "battle_back", this.data.info.main_char_list[info.instance.key_name].sprite_base);
             info.sprite = sprite;
         });
         this.enemies_info.forEach(info => {
-            const sprite = set_sprite(this.group_enemies, info, false, "battle_front", this.data.info.enemies_list.sprite_base);
+            const sprite = set_sprite(this.group_enemies, info, false, "battle_front", this.data.info.enemies_list[info.instance.key_name].sprite_base);
             info.sprite = sprite;
         });
         this.first_ally_char = this.group_allies.children[0];
