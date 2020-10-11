@@ -11,6 +11,8 @@ const SELL_BROKEN_MULTIPLIER = SELL_MULTIPLIER - REPAIR_MULTIPLIER;
 const YESNO_X = 56;
 const YESNO_Y = 40;
 
+const ITEM_COUNTER_LOOP_TIME = 100;
+
 export class BuyArtifactsMenu{
     constructor(game, data, parent){
         this.game = game;
@@ -298,19 +300,30 @@ export class BuyArtifactsMenu{
         else{
             if(game_ticket) this.on_purchase_success(false, game_ticket);
             else{
-                this.npc_dialog.update_dialog("buy_quantity");
-                let shop_items = this.data.info.shops_list[this.parent.shop_key].item_list;
-                let shop_item_match = shop_items.filter(i => { return (i.key_name === this.selected_item.key_name); })[0];
-                let shop_item = {key_name: shop_item_match.key_name, quantity: shop_item_match.quantity === -1 ? 30 : shop_item_match.quantity};
-
-                let char_item_match = this.selected_character.items.filter(i => { return (i.key_name === this.selected_item.key_name); });
-                let char_item = char_item_match.length !== 0 ? char_item_match[0] : null;
-
-                if(!this.quant_win.is_open) this.quant_win.open(shop_item, char_item);
-                this.control_manager.set_control(true, false, true, false, {right: this.quant_win.increase_amount.bind(this.quant_win),
-                    left: this.quant_win.decrease_amount.bind(this.quant_win),
-                    esc: this.open_inventory_view.bind(this),
-                    enter: this.on_purchase_success.bind(this)});
+                if(this.data.info.party_data.coins - this.selected_item.price < 0 && !game_ticket){
+                    this.npc_dialog.update_dialog("not_enough_coins", true);
+                    this.parent.cursor_manager.hide();
+        
+                    if(this.quant_win.is_open) this.quant_win.close();
+                    this.control_manager.set_control(false, false, false, false, {esc: this.open_buy_select.bind(this),
+                    enter: this.open_buy_select.bind(this)});
+                }
+                else{
+                    this.npc_dialog.update_dialog("buy_quantity");
+                    let shop_items = this.data.info.shops_list[this.parent.shop_key].item_list;
+                    let shop_item_match = shop_items.filter(i => { return (i.key_name === this.selected_item.key_name); })[0];
+                    let shop_item = {key_name: shop_item_match.key_name, quantity: shop_item_match.quantity === -1 ? 30 : shop_item_match.quantity};
+    
+                    let char_item_match = this.selected_character.items.filter(i => { return (i.key_name === this.selected_item.key_name); });
+                    let char_item = char_item_match.length !== 0 ? char_item_match[0] : null;
+    
+                    if(!this.quant_win.is_open) this.quant_win.open(shop_item, char_item, true);
+                    this.control_manager.set_control(true, false, true, false, {right: this.quant_win.increase_amount.bind(this.quant_win),
+                        left: this.quant_win.decrease_amount.bind(this.quant_win),
+                        esc: this.open_inventory_view.bind(this),
+                        enter: this.on_purchase_success.bind(this)},
+                        ITEM_COUNTER_LOOP_TIME);
+                }
             }
         }
     }

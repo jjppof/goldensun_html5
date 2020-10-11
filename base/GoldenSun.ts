@@ -191,15 +191,15 @@ export class GoldenSun {
 
         //enable psynergies shortcuts for testing
         this.game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(() => {
-            if (this.hero.in_action() || this.menu_open || this.in_battle) return;
+            if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
             this.info.field_abilities_list.move.cast(this.hero, this.dbs.init_db.initial_shortcuts.move);
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.W).onDown.add(() => {
-            if (this.hero.in_action() || this.menu_open || this.in_battle) return;
+            if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
             this.info.field_abilities_list.frost.cast(this.hero, this.dbs.init_db.initial_shortcuts.frost);
         });
         this.game.input.keyboard.addKey(Phaser.Keyboard.E).onDown.add(() => {
-            if (this.hero.in_action() || this.menu_open || this.in_battle) return;
+            if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
             this.info.field_abilities_list.growth.cast(this.hero, this.dbs.init_db.initial_shortcuts.growth);
         });
     }

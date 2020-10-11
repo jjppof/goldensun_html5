@@ -55,7 +55,7 @@ export class ShopItemQuantityWindow {
         this.item_counter.advance_step(-1);
     }
 
-    open(shop_item_obj, char_item_obj, close_callback, open_callback){
+    open(shop_item_obj, char_item_obj, use_coins=false, close_callback, open_callback){
         this.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "wiggle");
 
         this.base_price = this.data.info.items_list[shop_item_obj.key_name].price;
@@ -64,6 +64,9 @@ export class ShopItemQuantityWindow {
         let owned = !char_item_obj ? 0 : char_item_obj.quantity;
         let available_quantity = (shop_item_obj.quantity === -1 ? 30 : shop_item_obj.quantity);
         if(available_quantity + owned > 30) available_quantity = 30 - owned;
+        if(use_coins && this.base_price*available_quantity > this.data.info.party_data.coins){
+            available_quantity = (this.data.info.party_data.coins/this.base_price) | 0;
+        }
 
         this.item_counter.config(available_quantity, this.chosen_quantity, owned);
 

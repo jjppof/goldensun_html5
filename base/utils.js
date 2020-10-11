@@ -59,6 +59,13 @@ export const base_actions = {
     CAST: "cast"
 };
 
+export const action_inputs = {
+    SPACEBAR: "spacebar",
+    ENTER: "enter",
+    SHIFT: "shift",
+    ESC: "esc"
+};
+
 
 /*Returns the angle for an 8-Directional value
 Works clockwise starting with "Right"
