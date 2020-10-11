@@ -5,6 +5,16 @@ import * as _ from "lodash";
 
 const FRAME_SIZE = 36;
 
+export type DialogData={
+    key_name:string,
+    messages:DialogMessage[]
+}
+
+export type DialogMessage={
+    key:string,
+    text:string
+}
+
 export class ShopkeepDialog{
     public game:Phaser.Game;
     public data:GoldenSun;
@@ -14,7 +24,7 @@ export class ShopkeepDialog{
     public dialog_key:string;
 
     public dialog_manager:DialogManager;
-    public messages:{key:string, text:string}[];
+    public messages:{[key:string] : DialogMessage};
     public current_message:string;
     public is_active:boolean;
 
