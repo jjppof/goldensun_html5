@@ -1,5 +1,5 @@
 import { permanent_status, temporary_status, on_catch_status_msg, fighter_types } from "../Player";
-import { BattleStage } from "./BattleStage.js";
+import { BattleStage } from "./BattleStage";
 import { BattleLog } from "./BattleLog.js";
 import { MainBattleMenu, PlayerAbilities, PlayerAbility } from "../main_menus/MainBattleMenu";
 import { Enemy, get_enemy_instance } from "../Enemy";

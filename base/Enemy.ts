@@ -42,7 +42,6 @@ export class Enemy extends Player {
     public mars_resist: number;
     public jupiter_resist: number;
     public battle_animations_variations: {[ability_key: string]: string};
-    public fighter_type: number;
     public class: any;
     public current_exp: number;
     public current_hp: number;

@@ -514,6 +514,7 @@ declare module PIXI {
 
     // Overwritten by Phaser.Point
     export class Point {
+        setTo(x: number, y: number): void;
 
         constructor(x?: number, y?: number);
 
@@ -521,7 +522,6 @@ declare module PIXI {
         y: number;
 
         clone(): Point;
-        set(x: number, y: number): void;
 
     }
 
