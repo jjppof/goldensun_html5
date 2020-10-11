@@ -46,7 +46,8 @@ export type PlayerInfo = {
     scale?: number,
     instance?: Enemy|MainChar,
     entered_in_battle?: boolean,
-    battle_key?: string
+    battle_key?: string,
+    sprite?: Phaser.Sprite
 };
 
 export class Battle {
