@@ -1,4 +1,4 @@
-import { ShopkeepDialog } from '../windows/shop/ShopkeepDialog';
+import { DialogData, ShopkeepDialog } from '../windows/shop/ShopkeepDialog';
 import { BuyArtifactsMenu } from '../windows/shop/BuyArtifactsMenu';
 import { SellRepairMenu } from '../windows/shop/SellRepairMenu';
 import { capitalize } from '../utils.js';
@@ -13,6 +13,7 @@ import { CursorManager } from '../utils/CursorManager';
 import { ControlManager } from '../utils/ControlManager';
 import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu';
 import { GoldenSun } from '../GoldenSun';
+import { ShopItem } from '../Shop';
 import * as _ from "lodash";
 import { Shop } from '../Shop';
 
@@ -70,19 +71,11 @@ export class ShopMenu{
         key_name: string;
         item: any;
     }
-    public shops_db:{
-        key_name: string;
-        shop: any;
-    }
-    public shopkeep_dialog_db:{
-        key_name: string;
-        dialog: any;
-    }
+    public shops_db:{[key_name:string] : Shop};
+    public shopkeep_dialog_db:{[key_name:string] : DialogData};
 
-    public normal_item_list: {key_name: string,
-        quantity: number}[];
-    public artifact_list: {key_name: string,
-        quantity: number}[];
+    public normal_item_list: {[key_name:string] : ShopItem};
+    public artifact_list: {[key_name:string] : ShopItem};
 
     public buttons_keys: string[];
     public windows_mode: string;
@@ -121,11 +114,11 @@ export class ShopMenu{
         this.close_callback = null;
 
         this.items_db = this.data.info.items_list;
-        this.shops_db = _.mapKeys(this.data.dbs.shops_db, (shop:Shop) => shop.key_name);
+        this.shops_db = _.mapKeys(this.data.dbs.shops_db, shop => shop.key_name) as {[key_name:string] : Shop};;
         this.shopkeep_dialog_db = this.data.dbs.shopkeep_dialog_db;
 
-        this.normal_item_list = [];
-        this.artifact_list = [];
+        this.normal_item_list = {};
+        this.artifact_list = {};
 
         this.buttons_keys = ["buy", "sell", "artifacts", "repair"];
         this.windows_mode = BUY_MODE;
@@ -196,20 +189,20 @@ export class ShopMenu{
     }
 
     set_item_lists(){
-        this.normal_item_list = [];
-        this.artifact_list = [];
+        let normal_list:ShopItem[] = [];
+        let artifact_list:ShopItem[] = [];
 
         let item_list = this.shops_db[this.shop_key].item_list;
         for(let i=0; i<item_list.length; i++){
             let item = this.items_db[item_list[i].key_name];
             if(item_list[i].quantity === 0) continue;
 
-            if(item.rare_item === true) this.artifact_list.push(item);
-            else this.normal_item_list.push(item);
+            if(item.rare_item === true) artifact_list.push(item);
+            else normal_list.push(item);
         }
 
-        this.normal_item_list = _.mapKeys(this.normal_item_list, item => item.key_name);
-        this.artifact_list = _.mapKeys(this.artifact_list, item => item.key_name);
+        this.normal_item_list = _.mapKeys(normal_list, item => item.key_name) as {[key_name:string] : ShopItem};
+        this.artifact_list = _.mapKeys(artifact_list, item => item.key_name) as {[key_name:string] : ShopItem};;
     }
 
     update_your_coins(){
@@ -329,8 +322,8 @@ export class ShopMenu{
 
         this.npc_dialog.update_dialog("goodbye"); 
 
-        this.normal_item_list = [];
-        this.artifact_list = [];
+        this.normal_item_list = {};
+        this.artifact_list = {};
         this.current_index = 0;
 
         this.control_manager.reset();

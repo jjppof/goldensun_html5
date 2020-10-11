@@ -44,7 +44,7 @@ export class BuyArtifactsMenu{
     public npc_dialog:ShopkeepDialog;
 
     public is_artifacts_menu:boolean;
-    public item_list:ShopItem[];
+    public item_list:{[key_name:string] : ShopItem};;
     public selected_item:ShopItem;
     public buy_select_pos:{page:number, index:number, is_last:boolean};
     public old_item:Item;
@@ -69,7 +69,7 @@ export class BuyArtifactsMenu{
         this.npc_dialog = this.parent.npc_dialog;
 
         this.is_artifacts_menu = null;
-        this.item_list = [];
+        this.item_list = {};
         this.selected_item = null;
         this.buy_select_pos = {page: 0, index: 0, is_last: false};
         this.old_item = null;
@@ -513,7 +513,7 @@ export class BuyArtifactsMenu{
         this.parent.cursor_manager.hide();
 
         this.is_artifacts_menu = null;
-        this.item_list = [];
+        this.item_list = {};
         this.selected_item = null;
         this.old_item = null;
         this.buy_select_pos = {page: 0, index: 0, is_last: false};

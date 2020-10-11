@@ -54,7 +54,7 @@ export class BuySelectMenu{
     public close_callback:Function;
 
     public window:Window;
-    public items:ShopItem[];
+    public items:{[key_name:string] : ShopItem};
     public selected_index:number;
     public current_page:number;
     public pages:ShopItem[][];
@@ -79,7 +79,7 @@ export class BuySelectMenu{
         this.close_callback = null;
 
         this.window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
-        this.items = [];
+        this.items = {};
         this.selected_index = 0;
         this.current_page = 0;
         this.pages = [];
@@ -446,7 +446,7 @@ export class BuySelectMenu{
            page [number] - Initial selected page index
            close_callback [function] - Callback function (Optional)
            open_callback [function] - Callback function (Optional)*/
-    open(items:ShopItem[], index:number=0, page:number=0, close_callback?:Function, open_callback?:Function){
+    open(items:{[key_name:string] : ShopItem}, index:number=0, page:number=0, close_callback?:Function, open_callback?:Function){
         this.items = items;
         this.current_page = page
         this.selected_index = index;
@@ -473,7 +473,7 @@ export class BuySelectMenu{
         kill_all_sprites(this.text_group, destroy);
         kill_all_sprites(this.bg_group, destroy);
 
-        this.items = [];
+        this.items = {};
         this.pages = [];
         this.selected_index = 0;
         this.current_page = 0;

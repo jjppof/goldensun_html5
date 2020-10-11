@@ -19,8 +19,8 @@ export class ControlManager{
     public initialized:boolean;
     public loop_time:number;
 
-    public directions:ControlStatus[]
-    public actions:ControlStatus[];
+    public directions:{[key:string] : ControlStatus};
+    public actions:{[key:string] : ControlStatus};
 
     public signal_bindings:Phaser.SignalBinding[];
     public loop_start_timer:Phaser.Timer;
@@ -31,18 +31,18 @@ export class ControlManager{
         this.initialized = false;
         this.loop_time = DEFAULT_LOOP_TIME;
 
-        this.directions = [{key: reverse_directions[directions.left], pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.LEFT},
+        let dirs = [{key: reverse_directions[directions.left], pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.LEFT},
         {key: reverse_directions[directions.right], pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.RIGHT},
         {key: reverse_directions[directions.up], pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.UP},
         {key: reverse_directions[directions.down], pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.DOWN}];
 
-        this.actions = [{key: action_inputs.SPACEBAR, callback: null, phaser_key: Phaser.Keyboard.SPACEBAR},
+        let acts = [{key: action_inputs.SPACEBAR, callback: null, phaser_key: Phaser.Keyboard.SPACEBAR},
         {key: action_inputs.ESC, callback: null, phaser_key: Phaser.Keyboard.ESC},
         {key: action_inputs.ENTER, callback: null, phaser_key: Phaser.Keyboard.ENTER},
         {key: action_inputs.SHIFT, callback: null, phaser_key: Phaser.Keyboard.SHIFT}];
 
-        this.directions = _.mapKeys(this.directions, dir => dir.key);
-        this.actions = _.mapKeys(this.actions, act => act.key);
+        this.directions = _.mapKeys(dirs, dir => dir.key) as {[key:string] : ControlStatus};
+        this.actions = _.mapKeys(acts, act => act.key) as {[key:string] : ControlStatus};
 
         this.signal_bindings = [];
         this.loop_start_timer = this.game.time.create(false);
