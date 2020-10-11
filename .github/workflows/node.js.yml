@@ -31,7 +31,7 @@ jobs:
         mv index.html _temp_/index.html
         cd _temp_
         git init
-        git remote add origin https://${{ secrets.GITHUB_TOKEN }}@github.com/jjppof/goldensun_html5.git
+        git remote add origin https://jjppof:${{ secrets.GITHUB_TOKEN }}@github.com/jjppof/goldensun_html5.git
         git config --global user.email "jjpp.of@gmail.com"
         git config --global user.name "jjppof"
         git add .
