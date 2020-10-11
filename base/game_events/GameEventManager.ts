@@ -67,8 +67,10 @@ export class GameEventManager {
             }
         } else if (npc.npc_type === npc_types.SHOP) {
             if(!this.data.shop_open){
+                this.set_npc_and_hero_directions(npc);
                 this.data.shop_menu.open_menu(npc.shop_key, ()=>{
                     this.on_event = false;
+                    this.reset_npc_direction(npc);
                     this.data.force_stop_movement = false;
                     this.control_enable = true;
                 });
@@ -76,9 +78,7 @@ export class GameEventManager {
         }
     }
 
-    manage_npc_dialog(npc) {
-        const dialog_manager = new DialogManager(this.game, this.data);
-        dialog_manager.set_dialog(npc.message, npc.avatar, this.data.hero.current_direction);
+    set_npc_and_hero_directions(npc) {
         const npc_x = npc.sprite.x;
         const npc_y = npc.sprite.y;
         const interaction_pattern = this.data.dbs.npc_db[npc.key_name].interaction_pattern;
@@ -87,13 +87,23 @@ export class GameEventManager {
         this.data.hero.set_direction(interaction_directions.hero_direction);
         this.data.hero.play(base_actions.IDLE, reverse_directions[interaction_directions.hero_direction]);
         npc.play(base_actions.IDLE, reverse_directions[interaction_directions.target_direction]);
+    }
+
+    reset_npc_direction(npc) {
+        const initial_action = this.data.dbs.npc_db[npc.key_name].initial_action;
+        const initial_direction = this.data.dbs.npc_db[npc.key_name].actions[initial_action].initial_direction;
+        npc.play(initial_action, initial_direction);
+    }
+
+    manage_npc_dialog(npc) {
+        const dialog_manager = new DialogManager(this.game, this.data);
+        dialog_manager.set_dialog(npc.message, npc.avatar, this.data.hero.current_direction);
+        this.set_npc_and_hero_directions(npc);
         this.fire_next_step = dialog_manager.next.bind(dialog_manager, finished => {
             if (finished) {
                 this.on_event = false;
                 this.data.force_stop_movement = false;
-                const initial_action = this.data.dbs.npc_db[npc.key_name].initial_action;
-                const initial_direction = this.data.dbs.npc_db[npc.key_name].actions[initial_action].initial_direction;
-                npc.play(initial_action, initial_direction);
+                this.reset_npc_direction(npc);
                 this.fire_npc_events(npc);
             }
             this.control_enable = true;
