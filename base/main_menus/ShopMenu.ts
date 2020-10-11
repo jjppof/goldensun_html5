@@ -14,6 +14,7 @@ import { ControlManager } from '../utils/ControlManager';
 import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu';
 import { GoldenSun } from '../GoldenSun';
 import * as _ from "lodash";
+import { Shop } from '../Shop';
 
 const ITEM_PRICE_WIN_X = 0;
 const ITEM_PRICE_WIN_Y = 64;
@@ -120,7 +121,7 @@ export class ShopMenu{
         this.close_callback = null;
 
         this.items_db = this.data.info.items_list;
-        this.shops_db = _.mapKeys(this.data.dbs.shops_db, shop => shop.key_name);
+        this.shops_db = _.mapKeys(this.data.dbs.shops_db, (shop:Shop) => shop.key_name);
         this.shopkeep_dialog_db = this.data.dbs.shopkeep_dialog_db;
 
         this.normal_item_list = [];
