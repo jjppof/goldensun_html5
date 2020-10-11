@@ -1,12 +1,24 @@
-import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu.js';
+import { GoldenSun } from '../GoldenSun';
+import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu';
 import { capitalize } from '../utils.js';
+import { ControlManager } from '../utils/ControlManager';
 
 const TITLE_WINDOW_WIDTH = 36
 const YES_ACTION = "yes";
 const NO_ACTION = "no";
 
 export class YesNoMenu{
-    constructor(game, data, control_manager){
+    public game:Phaser.Game;
+    public data:GoldenSun;
+    public control_manager:ControlManager;
+
+    public yes_callback:Function;
+    public no_callback:Function;
+    
+    public buttons_keys:string[];
+    public is_open:boolean;
+    public menu:ButtonSelectMenu;
+    constructor(game:Phaser.Game, data:GoldenSun, control_manager:ControlManager){
         this.game = game;
         this.data = data;
         this.control_manager = control_manager;
@@ -27,7 +39,7 @@ export class YesNoMenu{
         this.menu.title_window.update_size({width: TITLE_WINDOW_WIDTH});
     }
 
-    update_position(new_x=undefined, new_y=undefined) {
+    update_position(new_x:number=undefined, new_y:number=undefined) {
         if(new_x !== undefined){
             let diff = this.menu.title_window.x - this.menu.x;
             this.menu.x = new_x;
@@ -56,7 +68,7 @@ export class YesNoMenu{
         return this.menu.menu_active;
     }
 
-    open_menu(callbacks, custom_pos){
+    open_menu(callbacks:{yes:Function, no:Function}, custom_pos?:{x:number, y:number}){
         this.yes_callback = callbacks.yes;
         this.no_callback = callbacks.no;
 
@@ -74,7 +86,7 @@ export class YesNoMenu{
         
     }
 
-    close_menu(callback) {
+    close_menu(callback?:Function) {
         if(callback === undefined) callback = this.no_callback;
         if (!this.is_active()) return;
         this.menu.close();

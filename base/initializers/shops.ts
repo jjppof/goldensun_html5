@@ -1,6 +1,6 @@
-import { Shop } from '../Shop.js';
+import { Shop } from '../Shop';
 
-export function initialize_shops(game, shops_db) {
+export function initialize_shops(shops_db:Shop[]) {
     let shops_list = {};
     for (let i = 0; i < shops_db.length; ++i) {
         const shop_data = shops_db[i];

@@ -1,4 +1,17 @@
-import { item_types } from '../../Item';
+import { GoldenSun } from '../../GoldenSun';
+import { Item, item_types } from '../../Item';
+import { ShopMenu } from '../../main_menus/ShopMenu';
+import { ControlManager } from '../../utils/ControlManager';
+import { InventoryWindow } from './InventoryWindow';
+import { ShopCharDisplay } from './ShopCharDisplay';
+import { Window } from '../../Window';
+import { ShopItemQuantityWindow } from './ShopItemQuantityWindow';
+import { BuySelectMenu } from './BuySelectMenu';
+import { EquipCompare } from './EquipCompare';
+import { YesNoMenu } from '../YesNoMenu';
+import { ShopkeepDialog } from './ShopkeepDialog';
+import { ShopItem } from '../../Shop';
+import { MainChar } from '../../MainChar';
 
 const MAX_INVENTORY_SIZE = 15;
 const MAX_ITEMS_PER_PAGE = 7;
@@ -14,7 +27,31 @@ const YESNO_Y = 40;
 const ITEM_COUNTER_LOOP_TIME = 100;
 
 export class BuyArtifactsMenu{
-    constructor(game, data, parent){
+    public game:Phaser.Game;
+    public data:GoldenSun;
+    public parent:ShopMenu;
+    public control_manager:ControlManager;
+    
+    public item_desc_win:Window;
+    public your_coins_win:Window;
+    public item_price_win:Window;
+    public char_display:ShopCharDisplay;
+    public inv_win:InventoryWindow;
+    public quant_win:ShopItemQuantityWindow;
+    public buy_select:BuySelectMenu;
+    public eq_compare:EquipCompare;
+    public yesno_action:YesNoMenu;
+    public npc_dialog:ShopkeepDialog;
+
+    public is_artifacts_menu:boolean;
+    public item_list:ShopItem[];
+    public selected_item:ShopItem;
+    public buy_select_pos:{page:number, index:number, is_last:boolean};
+    public old_item:Item;
+    public selected_character:MainChar;
+    public selected_char_index:number;
+    public active:boolean;
+    constructor(game:Phaser.Game, data:GoldenSun, parent:ShopMenu){
         this.game = game;
         this.data = data;
         this.parent = parent;
@@ -53,7 +90,7 @@ export class BuyArtifactsMenu{
 
     check_game_ticket(){
         let game_ticket = false;
-        this.data.info.party_data.game_tickets.coins_remaining -= this.selected_item.price;
+        this.data.info.party_data.game_tickets.coins_remaining -= this.data.info.items_list[this.selected_item.key_name].price;
         if(this.data.info.party_data.game_tickets.coins_remaining <= 0){
             game_ticket = true;
             this.data.info.party_data.game_tickets.tickets_bought += 1;
@@ -68,7 +105,7 @@ export class BuyArtifactsMenu{
         else this.open_buy_select();
     }
 
-    sell_old_equip(old_item){
+    sell_old_equip(old_item:Item){
         let msg_key = old_item.rare_item ? "after_sell_artifact" : "after_sell_normal";
         this.npc_dialog.update_dialog(msg_key, true);
 
@@ -159,7 +196,7 @@ export class BuyArtifactsMenu{
                 let sell_price = this.old_item.broken ? this.old_item.price*SELL_BROKEN_MULTIPLIER : this.old_item.price*SELL_MULTIPLIER;
     
                 let text = this.npc_dialog.get_message("sell_current");
-                text = this.npc_dialog.replace_text(text, undefined, this.old_item.name, sell_price | 0);
+                text = this.npc_dialog.replace_text(text, undefined, this.old_item.name, String(sell_price | 0));
                 this.npc_dialog.update_dialog(text, false, false);
     
                 this.yesno_action.open_menu({yes: this.sell_old_equip.bind(this, this.old_item), no: () => {
@@ -175,13 +212,14 @@ export class BuyArtifactsMenu{
         }
     }
 
-    on_purchase_success(equip_ask=false, game_ticket=false){
+    on_purchase_success(equip_ask:boolean=false, game_ticket:boolean=false){
         let quantity = 1;
-        let item_to_add = game_ticket ? {key_name: "game_ticket"} : this.selected_item;
+        let key_name = game_ticket ? "game_ticket" : this.selected_item.key_name;
+        let item_to_add = this.data.info.items_list[key_name];
 
         if(this.quant_win.is_open && !game_ticket) quantity = this.quant_win.chosen_quantity;
 
-        if(this.data.info.party_data.coins - this.selected_item.price*quantity < 0 && !game_ticket){
+        if(this.data.info.party_data.coins - this.data.info.items_list[this.selected_item.key_name].price*quantity < 0 && !game_ticket){
             this.npc_dialog.update_dialog("not_enough_coins", true);
             this.parent.cursor_manager.hide();
 
@@ -194,7 +232,7 @@ export class BuyArtifactsMenu{
             this.parent.cursor_manager.hide();
         
             if(this.quant_win.is_open) this.quant_win.close();
-            if(!game_ticket) this.data.info.party_data.coins -=  this.selected_item.price*quantity;
+            if(!game_ticket) this.data.info.party_data.coins -=  this.data.info.items_list[this.selected_item.key_name].price*quantity;
 
             let exists = false;
             for(let i=0; i<this.selected_character.items.length; i++){
@@ -258,7 +296,7 @@ export class BuyArtifactsMenu{
             this.npc_dialog.update_dialog(text, false, false);
         }
         else{
-            if(!this.selected_item.equipable_chars.includes(this.selected_character.key_name)){
+            if(!this.data.info.items_list[this.selected_item.key_name].equipable_chars.includes(this.selected_character.key_name)){
                 let text = this.npc_dialog.get_message("cant_equip");
                 text = this.npc_dialog.replace_text(text, this.selected_character.name);
                 this.npc_dialog.update_dialog(text, false, false);
@@ -272,7 +310,7 @@ export class BuyArtifactsMenu{
         }
     }
 
-    on_buy_item_select(game_ticket=false){
+    on_buy_item_select(game_ticket:boolean=false){
         this.selected_character = this.char_display.lines[this.char_display.current_line][this.char_display.selected_index];
         this.selected_char_index = this.char_display.selected_index;
         let have_quant = 0;
@@ -300,7 +338,7 @@ export class BuyArtifactsMenu{
         else{
             if(game_ticket) this.on_purchase_success(false, game_ticket);
             else{
-                if(this.data.info.party_data.coins - this.selected_item.price < 0 && !game_ticket){
+                if(this.data.info.party_data.coins - this.data.info.items_list[this.selected_item.key_name].price < 0 && !game_ticket){
                     this.npc_dialog.update_dialog("not_enough_coins", true);
                     this.parent.cursor_manager.hide();
         
@@ -361,7 +399,7 @@ export class BuyArtifactsMenu{
             enter: this.on_buy_equip_select.bind(this)});
     }
 
-    open_inventory_view(game_ticket=false){
+    open_inventory_view(game_ticket:boolean=false){
         if(!game_ticket && this.buy_select.is_open){
             this.buy_select_pos = {
                 page: this.buy_select.current_page,
@@ -399,16 +437,16 @@ export class BuyArtifactsMenu{
     on_buy_select(){
         this.selected_item = this.buy_select.pages[this.buy_select.current_page][this.buy_select.selected_index];
 
-        if(this.selected_item.equipable) this.open_equip_compare();
+        if(this.data.info.items_list[this.selected_item.key_name].equipable) this.open_equip_compare();
         else this.open_inventory_view();
     }
 
-    open_buy_select(msg_key="sell_follow_up"){
+    open_buy_select(msg_key:string="sell_follow_up"){
         if(Object.keys(this.item_list).length === 0) this.close_menu();
         else{
             if(this.buy_select_pos.is_last){
                 if(this.buy_select_pos.index === 0){
-                    this.buy_select_pos.pages -= 1;
+                    this.buy_select_pos.page -= 1;
                     this.buy_select_pos.index = MAX_ITEMS_PER_PAGE-1;
                 }
                 else this.buy_select_pos.index -= 1;
@@ -422,8 +460,8 @@ export class BuyArtifactsMenu{
             if(!this.buy_select.is_open) this.buy_select.open(this.item_list, this.buy_select_pos.index, this.buy_select_pos.page);
             this.control_manager.reset();
     
-            this.selected_item = this.buy_select.pages[this.buy_select.current_page][this.buy_select.selected_index].key_name;
-            this.parent.update_item_info(this.selected_item);
+            this.selected_item = this.buy_select.pages[this.buy_select.current_page][this.buy_select.selected_index];
+            this.parent.update_item_info(this.selected_item.key_name);
             this.parent.update_your_coins();
     
             if(!this.item_desc_win.open) this.item_desc_win.show();
@@ -439,7 +477,7 @@ export class BuyArtifactsMenu{
         }
     }
 
-    open_menu(is_artifacts_menu){
+    open_menu(is_artifacts_menu:boolean){
         this.is_artifacts_menu = is_artifacts_menu;
         this.active = true;
         this.item_list = this.is_artifacts_menu ? this.parent.artifact_list : this.parent.normal_item_list;
@@ -467,7 +505,7 @@ export class BuyArtifactsMenu{
         if(this.your_coins_win.open) this.your_coins_win.close();
         if(this.char_display.is_open) this.char_display.close();
         if(this.inv_win.is_open) this.inv_win.close();
-        if(this.yesno_action.is_open) this.yesno_action.close();
+        if(this.yesno_action.is_open) this.yesno_action.close_menu();
         if(this.quant_win.is_open) this.quant_win.close();
         if(this.buy_select.is_open) this.buy_select.close();
         if(this.eq_compare.is_open) this.eq_compare.close();
@@ -478,7 +516,7 @@ export class BuyArtifactsMenu{
         this.item_list = [];
         this.selected_item = null;
         this.old_item = null;
-        this.buy_select_pos = {page: 0, index: 0};
+        this.buy_select_pos = {page: 0, index: 0, is_last: false};
         this.active = false;
 
         this.control_manager.reset();

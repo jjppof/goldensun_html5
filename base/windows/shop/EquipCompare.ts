@@ -1,7 +1,10 @@
-import { Window } from '../../Window';
+import { Window, TextObj } from '../../Window';
 import { kill_all_sprites } from '../../utils.js';
-import { item_types } from '../../Item.ts';
-import { effect_operators, effect_types } from '../../Effect.ts';
+import { item_types } from '../../Item';
+import { effect_operators, effect_types } from '../../Effect';
+import { GoldenSun } from '../../GoldenSun';
+import { MainChar } from '../../MainChar';
+import * as _ from "lodash";
 
 const BASE_X = 128;
 const BASE_Y = 88;
@@ -35,7 +38,32 @@ Used in shop menus. Will show stat differences
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
 export class EquipCompare {
-    constructor(game, data) {
+    public game:Phaser.Game;
+    public data:GoldenSun;
+    public close_callback:Function;
+
+    public selected_item:string;
+    public selected_char:MainChar;
+    public is_open:boolean;
+    public window:Window;
+    public text_group:Phaser.Group;
+    public arrow_group:Phaser.Group;
+
+    public cant_equip_text:TextObj;
+    public atk_label_text:TextObj;
+    public def_label_text:TextObj;
+    public agi_label_text:TextObj;
+    public item_name_text:TextObj;
+
+    public curr_atk_text:TextObj;
+    public curr_def_text:TextObj;
+    public curr_agi_text:TextObj;
+
+    public new_atk_text:TextObj;
+    public new_def_text:TextObj;
+    public new_agi_text:TextObj;
+
+    constructor(game:Phaser.Game, data:GoldenSun) {
         this.game = game;
         this.data = data;
         this.close_callback = null;
@@ -75,7 +103,7 @@ export class EquipCompare {
     Input: text [string] - The text to display
            x, y [number] - The text position
            right_align - If true, the text will be right-aligned*/
-    init_text_sprite(text, x, y, right_align){
+    init_text_sprite(text:string, x:number, y:number, right_align:boolean){
         let txt = this.window.set_text_in_position(text, x, y, right_align);
         this.window.add_to_internal_group("texts",txt.shadow);
         this.window.add_to_internal_group("texts",txt.text);
@@ -86,15 +114,15 @@ export class EquipCompare {
 
     Input: diff [number] - Stat difference, affects the arrow type
            line [number] - Line index for displaying purposes*/
-    make_arrow(diff, line){
+    make_arrow(diff:number, line:number){
         if(diff === 0) return;
 
         let arrow_x = 0;
         let arrow_y = LINE_SHIFT*line + (diff>0 ? UP_ARROW_Y_SHIFT : 0);
         let key = diff>0 ? "up_arrow" : "down_arrow";
 
-        let dead_arrows = this.arrow_group.children.filter(a => { return (a.alive === false && a.key === key); });
-        if(dead_arrows.length>0) dead_arrows[0].reset(arrow_x, arrow_y);
+        let dead_arrows = this.arrow_group.children.filter((a:Phaser.Sprite) => { return (a.alive === false && a.key === key); });
+        if(dead_arrows.length>0) (dead_arrows[0] as Phaser.Sprite).reset(arrow_x, arrow_y);
         else this.window.create_at_group(arrow_x, arrow_y, key, undefined, undefined, "arrows");
     }
 
@@ -104,7 +132,7 @@ export class EquipCompare {
            new_item [string] - Key name for the item being compared
            stat [string] - Stat to compare
            current_val [number] - Current value of the stat*/
-    compare_items(equipped, new_item, stat, current_val){
+    compare_items(equipped:string, new_item:string, stat:string, current_val:number){
         let eq_effects = [];
         if(equipped){
             eq_effects = _.mapKeys(this.data.info.items_list[equipped].effects, effect => effect.type);
@@ -155,9 +183,9 @@ export class EquipCompare {
     /*Updates the text and creates arrows if necessary
     
     Input: stat [string] - "attack", "defense", "agility"
-           curr_stat_text [object] - The text-shadow pair displaying the current stat
-           line [number] - Line index for displaying purposes*/
-    display_stat(stat, curr_val, stat_diff){
+           curr_val [number] - The current stat
+           stat_diff [number] - Stat difference*/
+    display_stat(stat:string, curr_val:number, stat_diff:number){
         let new_stat_text = null;
         let curr_stat_text = null;
         let line = 0;
@@ -190,7 +218,7 @@ export class EquipCompare {
     }
 
     /*Compare the same item for a different character*/
-    change_character(key_name){
+    change_character(key_name:string){
         this.selected_char = this.data.info.party_data.members.filter(c => { return (c.key_name === key_name)})[0];
         kill_all_sprites(this.arrow_group);
 
@@ -270,8 +298,8 @@ export class EquipCompare {
            item [string] - Key name of the item to compare
            close_callback [function] - Callback function (Optional)
            open_callback [function] - Callback function (Optional)*/
-    open(char_key, item, close_callback, open_callback){
-        this.selected_char = this.data.info.party_data.members.filter(c => { return (c.key_name === char_key)})[0];
+    open(char_key:string, item:string, close_callback?:Function, open_callback?:Function){
+        this.selected_char = this.data.info.party_data.members.filter((c:MainChar) => { return (c.key_name === char_key)})[0];
         this.selected_item = item;
 
         this.show_stat_compare();
@@ -284,7 +312,7 @@ export class EquipCompare {
     /*Clears information and closes the window
 
     Input: destroy [boolean] - If true, sprites are destroyed*/
-    close(destroy = false){
+    close(destroy:boolean=false){
         kill_all_sprites(this.arrow_group, destroy);
         if(destroy) kill_all_sprites(this.text_group, destroy);
 

@@ -1,9 +1,24 @@
 import { DialogManager } from '../../DialogManager';
+import { GoldenSun } from '../../GoldenSun';
+import { ShopMenu } from '../../main_menus/ShopMenu';
+import * as _ from "lodash";
 
 const FRAME_SIZE = 36;
 
 export class ShopkeepDialog{
-    constructor(game, data, parent){
+    public game:Phaser.Game;
+    public data:GoldenSun;
+    public parent:ShopMenu;
+    public shop_key:string;
+    public avatar_key:string;
+    public dialog_key:string;
+
+    public dialog_manager:DialogManager;
+    public messages:{key:string, text:string}[];
+    public current_message:string;
+    public is_active:boolean;
+
+    constructor(game:Phaser.Game, data:GoldenSun, parent:ShopMenu){
         this.game = game;
         this.data = data;
         this.parent = parent;
@@ -18,7 +33,7 @@ export class ShopkeepDialog{
         this.is_active = false;
     }
 
-    open(shop_key){
+    open(shop_key:string){
         this.shop_key = shop_key;
         this.avatar_key = this.parent.shops_db[shop_key].avatar_key;
         this.dialog_key = this.parent.shops_db[shop_key].dialog_key;
@@ -31,7 +46,7 @@ export class ShopkeepDialog{
         this.dialog_manager.update_position();
     }
     
-    replace_text(message, hero=undefined, item=undefined, price=undefined){
+    replace_text(message:string, hero?:string, item?:string, price?:string){
         do{
             if(message.includes("${HERO}")) message = message.replace("${HERO}", hero);
             if(message.includes("${ITEM}")) message = message.replace("${ITEM}", item);
@@ -41,11 +56,11 @@ export class ShopkeepDialog{
         return message;
     }
 
-    get_message(message_key){
+    get_message(message_key:string){
         return this.messages[message_key].text;
     }
 
-    update_dialog(message, show_crystal=false, is_key=true, callback=undefined){
+    update_dialog(message:string, show_crystal:boolean=false, is_key:boolean=true, callback?:Function){
         if(is_key) this.current_message = this.messages[message].text;
         else this.current_message = message;
         this.is_active = true;
@@ -59,7 +74,7 @@ export class ShopkeepDialog{
         show_crystal);
     }
 
-    close_dialog(callback, dialog_only=true){
+    close_dialog(callback?:Function, dialog_only:boolean=true){
         this.is_active = false;
         this.dialog_manager.kill_dialog(callback, dialog_only);
     }

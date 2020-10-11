@@ -12,7 +12,7 @@ import { initialize_game_data } from './initializers/initialize_info';
 import { Map } from './Map';
 import { Battle } from './battle/Battle.js';
 import { MainMenu } from './main_menus/MainMenu';
-import { ShopMenu } from './main_menus/ShopMenu.js';
+import { ShopMenu } from './main_menus/ShopMenu';
 
 export class GoldenSun {
     public game: Phaser.Game = null;
