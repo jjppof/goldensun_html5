@@ -1,9 +1,13 @@
-import { Window } from '../../Window';
+import { TextObj, Window } from '../../Window';
 import * as numbers from '../../magic_numbers.js';
 import { CursorControl } from '../../utils/CursorControl';
-import { DropItemWindow } from './DropItemWindow.js';
-import { ItemQuantityManagerWindow } from './ItemQuantityManagerWindow.js';
-import { GiveItemOptionsWindow } from './GiveItemOptionsWindow.js';
+import { DropItemWindow } from './DropItemWindow';
+import { ItemQuantityManagerWindow } from './ItemQuantityManagerWindow';
+import { GiveItemOptionsWindow } from './GiveItemOptionsWindow';
+import { GoldenSun } from '../../GoldenSun';
+import { ItemSlot, MainChar } from '../../MainChar';
+import { Item } from '../../Item';
+import { StatsCheckWithItemWindow } from './StatsCheckWithItemWindow';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 52;
@@ -32,6 +36,52 @@ const ACTION_WINDOW_MSG_WIDTH = 67;
 const ACTION_WINDOW_MSG_HEIGHT = 20;
 
 export class ItemOptionsWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public item_obj: ItemSlot;
+    public item: Item;
+    public char: MainChar;
+    public window_open: boolean;
+    public window_active: boolean;
+    public x: number;
+    public y: number;
+    public base_window: Window;
+    public group: Phaser.Group;
+    public text_sprites: {
+        use: TextObj,
+        equip: TextObj,
+        details: TextObj,
+        give: TextObj,
+        remove: TextObj,
+        drop: TextObj
+    };
+    public horizontal_index: number;
+    public vertical_index: number;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public cursor_control: CursorControl;
+    public option_active: {
+        use: boolean,
+        equip: boolean,
+        details: boolean,
+        give: boolean,
+        remove: boolean,
+        drop: boolean
+    };
+    public give_item_options_window: GiveItemOptionsWindow;
+    public item_quantity_manager_window: ItemQuantityManagerWindow;
+    public drop_item_window: DropItemWindow;
+    public action_message_window: Window;
+    public on_give_callback: Function;
+    public close_callback: Function;
+    public icon_sprite: Phaser.Sprite;
+    public char_name: TextObj;
+    public item_name: TextObj;
+    public equip_sprite: Phaser.Sprite;
+    public item_count_sprite: Phaser.BitmapText;
+    public stats_update_callback: Function;
+    public stats_window: StatsCheckWithItemWindow;
+
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -357,7 +407,7 @@ export class ItemOptionsWindow {
         }
     }
 
-    open(item_obj, item, char, stats_window, on_give_callback, close_callback, stats_update_callback, open_callback) {
+    open(item_obj, item, char, stats_window, on_give_callback, close_callback, stats_update_callback, open_callback?) {
         this.item_obj = item_obj;
         this.item = item;
         this.char = char;
