@@ -133,16 +133,12 @@ export class EquipCompare {
            stat [string] - Stat to compare
            current_val [number] - Current value of the stat*/
     compare_items(equipped:string, new_item:string, stat:string, current_val:number){
-        console.log(equipped);
-        console.log(new_item);
         let eq_effects = {};
         if(equipped){
             eq_effects = _.mapKeys(this.data.info.items_list[equipped].effects, effect => effect.type);
         }
         let nitem_effects = _.mapKeys(this.data.info.items_list[new_item].effects, effect => effect.type);
 
-        console.log(eq_effects);
-        console.log(nitem_effects);
         let eq_stat = 0;
         let nitem_stat = 0;
 
