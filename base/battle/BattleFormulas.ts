@@ -3,6 +3,7 @@
 import { elements } from "../utils.js";
 import { permanent_status } from "../Player";
 import { ELEM_ATTR_MAX, ELEM_ATTR_MIN } from "../magic_numbers.js";
+import * as _ from "lodash";
 
 export const CRITICAL_CHANCE = 1/32;
 

@@ -1,3 +1,4 @@
+import { GoldenSun } from "../GoldenSun";
 import { BattleAnimation } from "./BattleAnimation";
 
 const ANIMATIONS_BASE_PATH = "assets/images/abilities_animations/";
@@ -6,6 +7,12 @@ const ANIMATION_SUFFIX = "_battle_animation";
 const RECIPE_SUFFIX = "_battle_recipe";
 
 export class BattleAnimationManager {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public animations: {[battle_anim_key: string]: BattleAnimation};
+    public not_available: Set<string>;
+    public render_function: Function;
+
     constructor(game, data) {
         this.game = game;
         this.data = data;

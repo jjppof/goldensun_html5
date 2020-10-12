@@ -408,6 +408,7 @@ declare module Phaser {
         animations: Phaser.AnimationManager;
         angle: number;
         autoCull: boolean;
+        autoRound: boolean;
         body: Phaser.Physics.Arcade.Body | Phaser.Physics.P2.Body | Phaser.Physics.Ninja.Body | any;
         bottom: number;
         cameraOffset: Phaser.Point;

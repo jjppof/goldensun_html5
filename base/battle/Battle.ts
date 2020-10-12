@@ -1,17 +1,17 @@
 import { permanent_status, temporary_status, on_catch_status_msg, fighter_types } from "../Player";
 import { BattleStage } from "./BattleStage";
-import { BattleLog } from "./BattleLog.js";
+import { BattleLog } from "./BattleLog";
 import { MainBattleMenu, PlayerAbilities, PlayerAbility } from "../main_menus/MainBattleMenu";
 import { Enemy, get_enemy_instance } from "../Enemy";
 import { ability_types, Ability, diminishing_ratios, ability_categories } from "../Ability";
 import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
-import { EnemyAI } from "./EnemyAI.js";
-import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas.js";
+import { EnemyAI } from "./EnemyAI";
+import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas";
 import { effect_types, Effect, effect_usages, effect_names, effect_msg } from "../Effect";
 import { variation, ordered_elements, element_names } from "../utils.js";
 import { djinn_status, Djinn } from "../Djinn";
 import { MainChar } from "../MainChar";
-import { BattleAnimationManager } from "./BattleAnimationManager.js";
+import { BattleAnimationManager } from "./BattleAnimationManager";
 import { GoldenSun } from "../GoldenSun";
 import * as _ from "lodash";
 

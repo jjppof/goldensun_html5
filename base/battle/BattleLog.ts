@@ -11,6 +11,11 @@ const LOG_2_Y = 151;
 const ANIM_DURATION = 50;
 
 export class BattleLog {
+    public game: Phaser.Game;
+    public x: number;
+    public y: number;
+    public logs: Phaser.BitmapText[];
+
     constructor(game) {
         this.game = game;
         this.x = game.camera.x;
