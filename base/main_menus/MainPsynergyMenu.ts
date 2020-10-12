@@ -33,8 +33,7 @@ const PSY_OVERVIEW_WIN_SPACE_BETWN_ICO = ((PSY_OVERVIEW_WIN_WIDTH - 2*(numbers.I
 export class MainPsynergyMenu {
     public game: Phaser.Game;
     public data: GoldenSun;
-    public esc_propagation_priority: number;
-    public enter_propagation_priority: number;
+    public 
     public chars_menu: CharsMenu;
     public basic_info_window: BasicInfoWindow;
     public selected_char_index: number;
@@ -53,11 +52,9 @@ export class MainPsynergyMenu {
     public shortcuts_window: Window;
     public psynergy_choose_window: ItemPsynergyChooseWindow;
 
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
+    constructor(game, data, parent) {
         this.game = game;
         this.data = data;
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
         this.chars_menu = new CharsMenu(
             this.game,
             this.data,
@@ -92,14 +89,6 @@ export class MainPsynergyMenu {
             this.psynergy_choose.bind(this),
             this.esc_propagation_priority
         );
-    }
-
-    set_control() {
-        this.data.esc_input.add(() => {
-            if (!this.is_open) return;
-            this.data.esc_input.halt();
-            this.close_menu();
-        }, this, this.esc_propagation_priority);
     }
 
     char_change(party_index) {

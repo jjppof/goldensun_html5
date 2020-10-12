@@ -25,8 +25,6 @@ Input: game [Phaser:Game] - Reference to the running game object
 export class CharsMenu {
     public game: Phaser.Game;
     public data: GoldenSun;
-    public enter_propagation_priority: number;
-    public esc_propagation_priority: number;
     public on_choose: Function;
     public on_change: Function;
     public on_cancel: Function;
@@ -46,11 +44,9 @@ export class CharsMenu {
     };
     public buttons_number: number;
 
-    constructor(game, data, on_choose, on_change, on_cancel, esc_propagation_priority, enter_propagation_priority) {
+    constructor(game, data, on_choose, on_change, on_cancel) {
         this.game = game;
         this.data = data;
-        this.enter_propagation_priority = enter_propagation_priority;
-        this.esc_propagation_priority = esc_propagation_priority;
         this.on_choose = on_choose === undefined ? () => {} : on_choose;
         this.on_change = on_change === undefined ? () => {} : on_change;
         this.on_cancel = on_cancel === undefined ? () => {} : on_cancel;
