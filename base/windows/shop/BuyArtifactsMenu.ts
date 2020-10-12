@@ -55,7 +55,7 @@ export class BuyArtifactsMenu{
         this.game = game;
         this.data = data;
         this.parent = parent;
-        this.control_manager = this.parent.control_manager;
+        this.control_manager = this.data.control_manager;
         
         this.item_desc_win = this.parent.item_desc_win;
         this.your_coins_win = this.parent.your_coins_win;
@@ -221,7 +221,7 @@ export class BuyArtifactsMenu{
 
         if(this.data.info.party_data.coins - this.data.info.items_list[this.selected_item.key_name].price*quantity < 0 && !game_ticket){
             this.npc_dialog.update_dialog("not_enough_coins", true);
-            this.parent.cursor_manager.hide();
+            this.data.cursor_manager.hide();
 
             if(this.quant_win.is_open) this.quant_win.close();
             this.control_manager.set_control(false, false, false, false, {esc: this.open_buy_select.bind(this),
@@ -229,7 +229,7 @@ export class BuyArtifactsMenu{
         }
         else{
             this.npc_dialog.update_dialog("after_buy", true);
-            this.parent.cursor_manager.hide();
+            this.data.cursor_manager.hide();
         
             if(this.quant_win.is_open) this.quant_win.close();
             if(!game_ticket) this.data.info.party_data.coins -=  this.data.info.items_list[this.selected_item.key_name].price*quantity;
@@ -340,7 +340,7 @@ export class BuyArtifactsMenu{
             else{
                 if(this.data.info.party_data.coins - this.data.info.items_list[this.selected_item.key_name].price < 0 && !game_ticket){
                     this.npc_dialog.update_dialog("not_enough_coins", true);
-                    this.parent.cursor_manager.hide();
+                    this.data.cursor_manager.hide();
         
                     if(this.quant_win.is_open) this.quant_win.close();
                     this.control_manager.set_control(false, false, false, false, {esc: this.open_buy_select.bind(this),
@@ -510,7 +510,7 @@ export class BuyArtifactsMenu{
         if(this.buy_select.is_open) this.buy_select.close();
         if(this.eq_compare.is_open) this.eq_compare.close();
 
-        this.parent.cursor_manager.hide();
+        this.data.cursor_manager.hide();
 
         this.is_artifacts_menu = null;
         this.item_list = {};

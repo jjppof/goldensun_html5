@@ -211,7 +211,7 @@ export class ShopCharDisplay {
         this.selected_index = index;
         //set run animation for new character;
         
-        this.parent.cursor_manager.move_to(CURSOR_X + index*GAP_SIZE, CURSOR_Y, "wiggle");
+        this.data.cursor_manager.move_to(CURSOR_X + index*GAP_SIZE, CURSOR_Y, "wiggle");
         let c = this.data.info.party_data.members[this.current_line*MAX_PER_LINE + this.selected_index];
         
         this.on_change(c.key_name);
@@ -248,12 +248,12 @@ export class ShopCharDisplay {
     }
 
     activate(){
-        this.parent.cursor_manager.move_to(CURSOR_X + this.selected_index*GAP_SIZE, CURSOR_Y, "wiggle");
+        this.data.cursor_manager.move_to(CURSOR_X + this.selected_index*GAP_SIZE, CURSOR_Y, "wiggle");
         this.is_active = true;
     }
     
     deactivate(){
-        this.parent.cursor_manager.clear_tweens();
+        this.data.cursor_manager.clear_tweens();
         this.is_active = false;
     }
 

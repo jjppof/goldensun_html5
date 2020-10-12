@@ -28,7 +28,6 @@ const CURSOR_Y = 46;
 export class ShopItemQuantityWindow {
     public game:Phaser.Game;
     public data:GoldenSun;
-    public cursor_manager:CursorManager;
     public close_callback:Function;
 
     public window:Window;
@@ -41,10 +40,9 @@ export class ShopItemQuantityWindow {
     public coins_val_text:TextObj;
     public coins_label_text:TextObj;
 
-    constructor(game:Phaser.Game, data:GoldenSun, cursor_manager:CursorManager) {
+    constructor(game:Phaser.Game, data:GoldenSun) {
         this.game = game;
         this.data = data;
-        this.cursor_manager = cursor_manager;
         this.close_callback = null;
 
         this.window = new Window(this.game, QUANTITY_WIN_X, QUANTITY_WIN_Y, QUANTITY_WIN_WIDTH, QUANTITY_WIN_HEIGHT);
@@ -76,7 +74,7 @@ export class ShopItemQuantityWindow {
 
     open(shop_item_obj:ShopItem, char_item_obj?:ItemSlot, use_coins:boolean=false,
         close_callback?:Function, open_callback?:Function){
-        this.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "wiggle");
+        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "wiggle");
 
         this.base_price = this.data.info.items_list[shop_item_obj.key_name].price;
         this.window.update_text(String(this.base_price), this.coins_val_text);
@@ -99,7 +97,7 @@ export class ShopItemQuantityWindow {
     close(){
         this.item_counter.deactivate();
         this.item_counter.clear();
-        this.cursor_manager.clear_tweens();
+        this.data.cursor_manager.clear_tweens();
 
         this.chosen_quantity = 1;
         this.base_price = 0;

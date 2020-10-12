@@ -1,17 +1,17 @@
 import { capitalize } from '../utils.js';
-import { HorizontalMenu } from '../support_menus/HorizontalMenu';
 import { MainPsynergyMenu } from './MainPsynergyMenu';
 import { MainItemMenu } from './MainItemMenu';
 import { MainDjinnMenu } from './MainDjinnMenu';
 import { CharsStatusWindow } from '../windows/CharsStatusWindow';
 import { GoldenSun } from '../GoldenSun';
+import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu.js';
 
 export class MainMenu {
     public game: Phaser.Game;
     public data: GoldenSun;
     public chars_status_window: CharsStatusWindow;
     public buttons_keys: string[];
-    public horizontal_menu: HorizontalMenu;
+    public horizontal_menu: ButtonSelectMenu;
     public psynergy_menu: MainPsynergyMenu;
     public item_menu: MainItemMenu;
     public djinn_menu: MainDjinnMenu;
@@ -21,25 +21,19 @@ export class MainMenu {
         this.data = data;
         this.chars_status_window = new CharsStatusWindow(this.game, this.data);
         this.buttons_keys = ["psynergy", "djinni", "item", "status"];
-        let esc_propagation_priority = 0;
-        let enter_propagation_priority = 0;
-        let shift_propagation_priority = 0;
-        let spacebar_propagation_priority = 0;
-        this.horizontal_menu = new HorizontalMenu(
+        this.horizontal_menu = new ButtonSelectMenu(
             this.game,
             this.data,
             this.buttons_keys,
             this.buttons_keys.map(b => capitalize(b)),
-            this.button_press.bind(this),
-            enter_propagation_priority,
-            this.close_menu.bind(this),
-            esc_propagation_priority
+            {
+                on_press: this.button_press.bind(this),
+                on_cancel:  this.close_menu.bind(this),
+            }
         );
-        ++esc_propagation_priority;
-        ++enter_propagation_priority;
-        this.psynergy_menu = new MainPsynergyMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
-        this.item_menu = new MainItemMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
-        this.djinn_menu = new MainDjinnMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority, spacebar_propagation_priority);
+        this.psynergy_menu = new MainPsynergyMenu(this.game, this.data, parent);
+        this.item_menu = new MainItemMenu(this.game, this.data, parent);
+        this.djinn_menu = new MainDjinnMenu(this.game, this.data, parent);
     }
 
     button_press(index) {

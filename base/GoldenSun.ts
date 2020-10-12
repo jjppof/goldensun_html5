@@ -13,6 +13,8 @@ import { Map } from './Map';
 import { Battle } from './battle/Battle';
 import { MainMenu } from './main_menus/MainMenu';
 import { ShopMenu } from './main_menus/ShopMenu';
+import { ControlManager } from './utils/ControlManager.js';
+import { CursorManager } from './utils/CursorManager.js';
 
 export class GoldenSun {
     public game: Phaser.Game = null;
@@ -33,6 +35,8 @@ export class GoldenSun {
     public debug: Debug = null;
     public main_menu: MainMenu = null;
     public shop_menu: ShopMenu = null;
+    public control_manager: ControlManager = null;
+    public cursor_manager: CursorManager = null;
     public map: Map = null;
     public tile_event_manager: TileEventManager = null;
     public game_event_manager: GameEventManager = null;

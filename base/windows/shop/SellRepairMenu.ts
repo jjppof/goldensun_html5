@@ -40,11 +40,11 @@ export class SellRepairMenu{
     public selected_char_index:number;
     public active:boolean;
 
-    constructor(game, data, parent){
+    constructor(game:Phaser.Game, data:GoldenSun, parent:ShopMenu){
         this.game = game;
         this.data = data;
         this.parent = parent;
-        this.control_manager = this.parent.control_manager;
+        this.control_manager = this.data.control_manager;
         
         this.item_desc_win = this.parent.item_desc_win;
         this.your_coins_win = this.parent.your_coins_win;
@@ -206,7 +206,7 @@ export class SellRepairMenu{
                     let quant = 1;
                     quant = this.quant_win.chosen_quantity;
                     this.quant_win.close();
-                    this.parent.cursor_manager.hide();
+                    this.data.cursor_manager.hide();
 
                     let text = this.npc_dialog.get_message("sell_quantity_confirm");
                     let item_price = (this.data.info.items_list[this.selected_item.key_name].price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0; 
@@ -297,7 +297,7 @@ export class SellRepairMenu{
         if(this.yesno_action.is_open) this.yesno_action.close_menu();
         if(this.quant_win.is_open) this.quant_win.close();
 
-        this.parent.cursor_manager.hide();
+        this.data.cursor_manager.hide();
 
         this.is_repair_menu = null;
         this.selected_item = null;

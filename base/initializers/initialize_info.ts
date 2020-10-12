@@ -8,6 +8,8 @@ import { initialize_menu } from '../main_menus/MainMenu';
 import { initialize_misc_data } from './misc_data';
 import { ShopMenu } from '../main_menus/ShopMenu';
 import { initialize_shops } from './shops';
+import { CursorManager } from '../utils/CursorManager';
+import { ControlManager } from '../utils/ControlManager';
 
 export async function initialize_game_data(game, data) {
     let load_maps_promise_resolve;
@@ -73,6 +75,10 @@ export async function initialize_game_data(game, data) {
 
     //initialize field abilities
     data.info.field_abilities_list = initialize_field_abilities(game, data);
+
+    //initialize managers
+    data.cursor_manager = new CursorManager(game);
+    data.control_manager = new ControlManager(game);
 
     //initialize screens
     data.shop_menu = new ShopMenu(game, data);

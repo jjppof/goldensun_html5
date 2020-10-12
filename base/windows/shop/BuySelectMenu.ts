@@ -379,7 +379,7 @@ export class BuySelectMenu{
     Input: index [number] - Item index (on screen)*/
     set_item(index:number) {
         this.game.world.bringToTop(this.sprite_group);
-        this.game.world.bringToTop(this.parent.cursor_manager.group);
+        this.game.world.bringToTop(this.data.cursor_manager.group);
         let itm_list = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === true && s.key === "items_icons"); });
         let bg_list = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === true && s.key === "item_border"); });
         
@@ -436,7 +436,7 @@ export class BuySelectMenu{
 
     Input: index [number] - Selected item's index*/
     set_cursor(index:number){
-        this.parent.cursor_manager.move_to(CURSOR_X + index*LINE_SHIFT, CURSOR_Y, "point");
+        this.data.cursor_manager.move_to(CURSOR_X + index*LINE_SHIFT, CURSOR_Y, "point");
     }
 
     /*Opens this window at page 0

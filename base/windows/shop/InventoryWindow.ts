@@ -249,7 +249,7 @@ export class InventoryWindow{
     /*Moves the cursor to the given column and line*/
     set_cursor(line:number, col:number){
         this.cursor_pos = {line: line, col: col};
-        this.parent.cursor_manager.move_to(CURSOR_X + col*ICON_SIZE, CURSOR_Y + line*ICON_SIZE, "point", true);
+        this.data.cursor_manager.move_to(CURSOR_X + col*ICON_SIZE, CURSOR_Y + line*ICON_SIZE, "point", true);
         this.on_change(line, col);
     }
 

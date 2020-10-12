@@ -18,10 +18,10 @@ export class YesNoMenu{
     public buttons_keys:string[];
     public is_open:boolean;
     public menu:ButtonSelectMenu;
-    constructor(game:Phaser.Game, data:GoldenSun, control_manager:ControlManager){
+    constructor(game:Phaser.Game, data:GoldenSun){
         this.game = game;
         this.data = data;
-        this.control_manager = control_manager;
+        this.control_manager = this.data.control_manager;
 
         this.yes_callback = null;
         this.no_callback = null;
@@ -34,8 +34,7 @@ export class YesNoMenu{
             this.buttons_keys,
             this.buttons_keys.map(b => capitalize(b)),
             {on_press: this.button_press.bind(this),
-            on_cancel: this.close_menu.bind(this)},
-            this.control_manager);
+            on_cancel: this.close_menu.bind(this)});
         this.menu.title_window.update_size({width: TITLE_WINDOW_WIDTH});
     }
 

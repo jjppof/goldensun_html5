@@ -80,7 +80,6 @@ export class ShopMenu{
     public buttons_keys: string[];
     public windows_mode: string;
     public current_index: number;
-    public cursor_manager: CursorManager;
     public control_manager: ControlManager;
     
     public horizontal_menu: ButtonSelectMenu;
@@ -124,22 +123,20 @@ export class ShopMenu{
         this.windows_mode = BUY_MODE;
         this.current_index= 0;
 
-        this.cursor_manager = new CursorManager(this.game);
-        this.control_manager = new ControlManager(this.game);
+        this.control_manager = this.data.control_manager;
         
         this.horizontal_menu = new ButtonSelectMenu(this.game, this.data,
             this.buttons_keys,
             this.buttons_keys.map(b => capitalize(b)),
-            {on_press: this.button_press.bind(this), on_cancel: this.close_menu.bind(this)},
-            this.control_manager);
+            {on_press: this.button_press.bind(this), on_cancel: this.close_menu.bind(this)});
 
         this.npc_dialog = new ShopkeepDialog(this.game, this.data, this);
 
-        this.yesno_action = new YesNoMenu(this.game, this.data, this.control_manager);
+        this.yesno_action = new YesNoMenu(this.game, this.data);
         this.inv_win = new InventoryWindow(this.game, this.data, this, this.on_inv_win_change.bind(this));
         this.buy_select = new BuySelectMenu(this.game, this.data, this, this.on_buy_select_change.bind(this));
         this.eq_compare = new EquipCompare(this.game, this.data);
-        this.quant_win = new ShopItemQuantityWindow(this.game, this.data, this.cursor_manager);
+        this.quant_win = new ShopItemQuantityWindow(this.game, this.data);
         this.char_display = new ShopCharDisplay(this.game, this.data, this, this.on_char_display_change.bind(this));
 
         this.item_price_win = new Window(this.game, ITEM_PRICE_WIN_X, ITEM_PRICE_WIN_Y, ITEM_PRICE_WIN_WIDTH, ITEM_PRICE_WIN_HEIGHT);
