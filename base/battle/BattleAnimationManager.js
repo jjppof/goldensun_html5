@@ -1,4 +1,4 @@
-import { BattleAnimation } from "./BattleAnimation.js";
+import { BattleAnimation } from "./BattleAnimation";
 
 const ANIMATIONS_BASE_PATH = "assets/images/abilities_animations/";
 const ANIMATIONS_DB_PATH = "assets/dbs/abilities_animations/";

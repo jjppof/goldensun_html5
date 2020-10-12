@@ -39,16 +39,18 @@ const RANGES = [11,9,7,5,3,1,3,5,7,9,11];
 const BATTLE_CURSOR_SCALES = [.1,.2,.3,.4,.6,1,.6,.4,.3,.2,.1];
 const CHOOSING_TARGET_SCREEN_SHIFT_TIME = 150;
 
+export type CameraAngle = {
+    rad: number,
+    spining: boolean,
+    update: Function
+};
+
 export class BattleStage {
     public game: Phaser.Game;
     public data: GoldenSun;
     public esc_propagation_priority: number;
     public enter_propagation_priority: number;
-    public camera_angle: {
-        rad: number,
-        spining: boolean,
-        update: Function
-    };
+    public camera_angle: CameraAngle;
     public background_key: string;
     public old_camera_angle: number;
     public battle_group: Phaser.Group;
