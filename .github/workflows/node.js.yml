@@ -30,6 +30,7 @@ jobs:
         mv dist/ _temp_/dist
         mv index.html _temp_/index.html
         cd _temp_
+        echo 'hshtml5.org'>CNAME
         git init
         git remote add origin https://jjppof:${{ secrets.GITHUB_TOKEN }}@github.com/jjppof/goldensun_html5.git
         git config --global user.email "jjpp.of@gmail.com"
