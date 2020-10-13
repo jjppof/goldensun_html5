@@ -63,7 +63,7 @@ export class MainPsynergyMenu {
             this.data,
             this.char_choose.bind(this),
             this.char_change.bind(this),
-            undefined,
+            this.close_menu.bind(this),
             this.enter_propagation_priority,
             this.esc_propagation_priority
         );
