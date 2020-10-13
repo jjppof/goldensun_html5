@@ -1,29 +1,58 @@
-import { Window } from "../../Window";
+import { TextObj, Window } from "../../Window";
 import { CursorControl } from '../../utils/CursorControl';
 import * as numbers from "../../magic_numbers.js"
-import { use_types } from "../../Item";
+import { Djinn } from "../../Djinn";
+import { SummonDjinnStandbyWindow } from "./SummonDjinnStandbyWindow";
+import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle";
+import { MainChar } from "../../MainChar";
+import { GoldenSun } from "../../GoldenSun";
+import * as _ from "lodash";
 
-const BASE_WINDOW_X = 120;
-const BASE_WINDOW_Y = 72;
-const BASE_WINDOW_WIDTH = 116;
-const BASE_WINDOW_HEIGHT = 84;
-const ELEM_PER_PAGE = 5;
+const BASE_WINDOW_X = 104;
+const BASE_WINDOW_Y = 88;
+const BASE_WINDOW_WIDTH = 132;
+const BASE_WINDOW_HEIGHT = 68;
+const ELEM_PER_PAGE = 4;
 const TOP_PADDING = 8;
 const SPACE_BETWEEN_ITEMS = 8;
-const HIGHLIGHT_BAR_WIDTH = 104;
+const HIGHLIGHT_BAR_WIDTH = 120;
 const HIGHLIGHT_BAR_HEIGHT = 8;
 const HIGHLIGHT_BAR_X = 8;
-const BUTTON_X = 96;
+const BUTTON_X = 80;
 const BUTTON_Y = 136;
-const ITEM_NAME_X = 26;
-const CURSOR_X = 116;
-const CURSOR_Y = 84;
+const SUMMON_NAME_X = 28;
+const CURSOR_X = 98;
+const CURSOR_Y = 100;
 const CURSOR_SHIFT = 16;
-const ITEM_ICON_X = 8;
-const SUB_ICON_X = 7;
-const SUB_ICON_Y = 8;
+const SUMMON_ICON_X = 10;
 
-export class ItemWindow {
+export class SummonWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public base_window: Window;
+    public group: Phaser.Group;
+    public button: Phaser.Sprite;
+    public highlight_bar: Phaser.Graphics;
+    public signal_bindings: Phaser.SignalBinding[];
+    public summon_names: TextObj[];
+    public other_sprites: (Phaser.Sprite|Phaser.Group|Phaser.BitmapText)[];
+    public cursor_control: CursorControl;
+    public djinn_numbers_window: SummonDjinnStandbyWindow;
+    public window_open: boolean;
+    public window_active: boolean;
+    public close_callback: Function;
+    public set_description: Function;
+    public summon_index: number;
+    public page_index: number;
+    public page_number: number;
+    public choosen_ability: string;
+    public summons: any[];
+    public all_summons: any[];
+    public char: MainChar;
+    public djinni_already_used: {[element: string]: number};
+
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -32,7 +61,7 @@ export class ItemWindow {
         this.base_window = new Window(this.game, BASE_WINDOW_X, BASE_WINDOW_Y, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
         this.base_window.init_page_indicator_bar();
         this.group = this.game.add.group();
-        this.button = this.group.create(BUTTON_X, BUTTON_Y, "buttons", "item");
+        this.button = this.group.create(BUTTON_X, BUTTON_Y, "buttons", "summon");
         this.group.alpha = 0;
         this.highlight_bar = this.game.add.graphics(0, 0);
         this.highlight_bar.blendMode = PIXI.blendModes.SCREEN;
@@ -42,12 +71,13 @@ export class ItemWindow {
         this.highlight_bar.drawRect(HIGHLIGHT_BAR_X, 0, HIGHLIGHT_BAR_WIDTH, HIGHLIGHT_BAR_HEIGHT);
         this.highlight_bar.endFill();
         this.signal_bindings = this.set_control();
-        this.item_names = [];
+        this.summon_names = [];
         this.other_sprites = [];
         this.cursor_control = new CursorControl(this.game, true, true, this.get_max_pages.bind(this), this.get_max_elem_on_page.bind(this),
-            this.group, this.change_page.bind(this), this.change_item.bind(this), this.get_page_index.bind(this), this.set_page_index.bind(this),
-            this.get_item_index.bind(this), this.set_item_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),
+            this.group, this.change_page.bind(this), this.change_summon.bind(this), this.get_page_index.bind(this), this.set_page_index.bind(this),
+            this.get_summon_index.bind(this), this.set_summon_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),
             this.get_cursor_x.bind(this), this.get_cursor_y.bind(this));
+        this.djinn_numbers_window = new SummonDjinnStandbyWindow(game);
     }
 
     set_control() {
@@ -56,18 +86,13 @@ export class ItemWindow {
                 if (!this.window_open || !this.window_active) return;
                 this.data.esc_input.halt();
                 this.choosen_ability = null;
-                this.item_obj = null;
                 this.close(this.close_callback);
             }, this, this.esc_propagation_priority),
             this.data.enter_input.add(() => {
                 if (!this.window_open || !this.window_active) return;
                 this.data.enter_input.halt();
-                const this_item = this.data.info.items_list[this.items[this.item_index].key_name];
-                if (this_item.use_type !== use_types.NO_USE && this.data.info.abilities_list[this_item.use_ability].is_battle_ability) {
-                    this.choosen_ability = this_item.use_ability;
-                    this.item_obj = this.items[this.item_index];
-                    this.hide(this.close_callback);
-                }
+                this.choosen_ability = this.summons[this.summon_index].key_name;
+                this.hide(this.close_callback);
             }, this, this.enter_propagation_priority)
         ];
     }
@@ -77,7 +102,7 @@ export class ItemWindow {
     }
 
     get_cursor_y() {
-        return CURSOR_Y + (this.item_index * CURSOR_SHIFT);
+        return CURSOR_Y + (this.summon_index * CURSOR_SHIFT);
     }
 
     is_open() {
@@ -96,16 +121,16 @@ export class ItemWindow {
         this.page_index = index;
     }
 
-    get_item_index() {
-        return this.item_index;
+    get_summon_index() {
+        return this.summon_index;
     }
 
-    set_item_index(index) {
-        this.item_index = index;
+    set_summon_index(index) {
+        this.summon_index = index;
     } 
 
     get_max_elem_on_page() {
-        return this.items.length;
+        return this.summons.length;
     }
 
     get_max_pages() {
@@ -119,66 +144,69 @@ export class ItemWindow {
 
     change_page(before_index, after_index) {
         this.config_page();
-        if (this.item_index >= this.items.length) {
-            this.item_index = this.items.length - 1;
+        if (this.summon_index >= this.summons.length) {
+            this.summon_index = this.summons.length - 1;
             this.cursor_control.set_cursor_position();
         }
         if (this.set_description) {
-            this.set_description(this.data.info.items_list[this.items[this.item_index].key_name].description);
+            this.set_description(this.data.info.abilities_list[this.summons[this.summon_index].key_name].description);
         }
         this.set_highlight_bar();
         this.base_window.set_page_indicator_highlight(this.page_number, this.page_index);
+        this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
     }
 
-    change_item(before_index, after_index) {
+    change_summon(before_index, after_index) {
         if (this.set_description) {
-            this.set_description(this.data.info.items_list[this.items[this.item_index].key_name].description);
+            this.set_description(this.data.info.abilities_list[this.summons[this.summon_index].key_name].description);
         }
         this.set_highlight_bar();
+        this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
     }
 
     set_highlight_bar() {
-        this.highlight_bar.y = TOP_PADDING + this.item_index * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
+        this.highlight_bar.y = TOP_PADDING + this.summon_index * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
     }
 
     config_page() {
         this.clear_sprites();
-        this.items = this.all_items.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
-        for (let i = 0; i < this.items.length; ++i) {
-            const item = this.data.info.items_list[this.items[i].key_name];
+        this.summons = this.all_summons.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
+        for (let i = 0; i < this.summons.length; ++i) {
+            const ability = this.data.info.abilities_list[this.summons[i].key_name];
             const base_y = TOP_PADDING + i * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
-            const item_y = base_y - 4;
-            this.other_sprites.push(this.base_window.create_at_group(ITEM_ICON_X, item_y, "items_icons", undefined, this.items[i].key_name));
-            if (this.items[i].equipped) {
-                this.other_sprites.push(this.base_window.create_at_group(ITEM_ICON_X + SUB_ICON_X, item_y + SUB_ICON_Y, "equipped"));
-            }
-            if (this.items[i].quantity > 1) {
-                let item_count = this.game.add.bitmapText(ITEM_ICON_X + SUB_ICON_X, item_y + SUB_ICON_Y, 'gs-item-bmp-font', this.items[i].quantity.toString());
-                this.base_window.add_sprite_to_group(item_count);
-                this.other_sprites.push(item_count);
-            }
+            const summon_y = base_y - 3;
+            this.other_sprites.push(this.base_window.create_at_group(SUMMON_ICON_X, summon_y, "abilities_icons", undefined, this.summons[i].key_name));
             let color = numbers.DEFAULT_FONT_COLOR;
-            if (item.use_type === use_types.NO_USE || !this.data.info.abilities_list[item.use_ability].is_battle_ability) {
-                color = numbers.YELLOW_FONT_COLOR;
+            if (!this.summons[i].available) {
+                color = numbers.RED_FONT_COLOR;
             }
-            const name = this.base_window.set_text_in_position(item.name, ITEM_NAME_X, base_y, false, false, color);
-            this.item_names.push(name);
+            const name = this.base_window.set_text_in_position(ability.name, SUMMON_NAME_X, base_y, false, false, color);
+            this.summon_names.push(name);
         }
     }
 
     set_page_number() {
-        const list_length = this.all_items.length;
-        this.page_number = parseInt((list_length - 1)/ELEM_PER_PAGE) + 1;
+        const list_length = this.all_summons.length;
+        this.page_number = (((list_length - 1)/ELEM_PER_PAGE) | 0) + 1;
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
         }
     }
 
     mount_window() {
-        this.all_items = this.char.items;
-        this.all_items = _.sortBy(this.all_items, [item_obj => {
-            return this.data.info.items_list[item_obj.key_name].use_type === use_types.NO_USE ||
-                !this.data.info.abilities_list[this.data.info.items_list[item_obj.key_name].use_ability].is_battle_ability;
+        const standby_djinni = Djinn.get_standby_djinni(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE));
+        for (let elem in standby_djinni) {
+            standby_djinni[elem] -= this.djinni_already_used[elem];
+        }
+        this.all_summons = _.map(this.data.dbs.summons_db, summon => {
+            const available = _.every(summon.requirements, (value, elem) => value <= standby_djinni[elem]);
+            return Object.assign({}, summon, {
+                available: available,
+                index: available ? -summon.index : summon.index
+            });
+        });
+        this.all_summons = _.sortBy(this.all_summons, [summon => {
+            return summon.index;
         }]);
         this.set_page_number();
         this.base_window.set_page_indicator(this.page_number, this.page_index);
@@ -186,7 +214,7 @@ export class ItemWindow {
     }
 
     clear_sprites() {
-        this.item_names.forEach(text => {
+        this.summon_names.forEach(text => {
             this.base_window.remove_text(text);
         });
         this.other_sprites.forEach(sprite => {
@@ -194,21 +222,24 @@ export class ItemWindow {
         });
     }
 
-    open(char, close_callback, set_description) {
+    open(char, close_callback, set_description, djinni_already_used) {
         this.char = char;
         this.close_callback = close_callback;
         this.set_description = set_description;
+        this.djinni_already_used = djinni_already_used;
         this.group.alpha = 1;
-        this.item_index = 0;
+        this.summon_index = 0;
         this.page_index = 0;
         this.choosen_ability = null;
         this.highlight_bar.alpha = 1;
+        this.djinn_numbers_window.open();
         this.update_position();
         this.set_highlight_bar();
         this.mount_window();
+        this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
         this.cursor_control.activate();
         if (this.set_description) {
-            this.set_description(this.data.info.items_list[this.items[this.item_index].key_name].description);
+            this.set_description(this.data.info.abilities_list[this.summons[this.summon_index].key_name].description);
         }
         this.base_window.show(() => {
             this.window_open = true;
@@ -216,11 +247,12 @@ export class ItemWindow {
         }, false);
     }
 
-    
     show() {
         this.group.alpha = 1;
         this.highlight_bar.alpha = 1;
         this.cursor_control.activate();
+        this.djinn_numbers_window.open();
+        this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
         this.base_window.show(() => {
             this.window_active = true;
         }, false);
@@ -230,10 +262,11 @@ export class ItemWindow {
         this.group.alpha = 0;
         this.highlight_bar.alpha = 0;
         this.cursor_control.deactivate();
+        this.djinn_numbers_window.close();
         this.base_window.close(() => {
             this.window_active = false;
             if (callback !== undefined) {
-                callback(this.choosen_ability, this.item_obj);
+                callback(this.choosen_ability);
             }
         }, false);
     }
@@ -244,11 +277,12 @@ export class ItemWindow {
         this.group.alpha = 0;
         this.highlight_bar.alpha = 0;
         this.cursor_control.deactivate();
+        this.djinn_numbers_window.close();
         this.base_window.close(() => {
             this.window_open = false;
             this.window_active = false;
             if (callback !== undefined) {
-                callback(this.choosen_ability, this.item_obj);
+                callback(this.choosen_ability);
             }
         }, false);
     }
@@ -260,5 +294,6 @@ export class ItemWindow {
         this.base_window.destroy(false);
         this.group.destroy();
         this.cursor_control.destroy();
+        this.djinn_numbers_window.destroy();
     }
 }

@@ -1,4 +1,4 @@
-import { Window } from "../../Window";
+import { TextObj, Window } from "../../Window";
 import { ordered_elements } from "../../utils.js";
 
 const BASE_WIN_X = 160;
@@ -17,6 +17,13 @@ const HIGHLIGHT_LEFT_PADDING = 8;
 const HIGHLIGHT_TOP_PADDING = 8;
 
 export class SummonDjinnStandbyWindow {
+    public game: Phaser.Game;
+    public base_window: Window;
+    public texts: {[element: string]: TextObj};
+    public graphics: {[element: string]: Phaser.Graphics};
+    public timers: {[element: string]: Phaser.Timer};
+    public window_open: boolean;
+
     constructor(game) {
         this.game = game;
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);

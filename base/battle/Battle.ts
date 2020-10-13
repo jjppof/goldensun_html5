@@ -4,7 +4,7 @@ import { BattleLog } from "./BattleLog";
 import { MainBattleMenu, PlayerAbilities, PlayerAbility } from "../main_menus/MainBattleMenu";
 import { Enemy, get_enemy_instance } from "../Enemy";
 import { ability_types, Ability, diminishing_ratios, ability_categories } from "../Ability";
-import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow.js";
+import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow";
 import { EnemyAI } from "./EnemyAI";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas";
 import { effect_types, Effect, effect_usages, effect_names, effect_msg } from "../Effect";

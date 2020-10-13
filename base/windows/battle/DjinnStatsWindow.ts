@@ -1,5 +1,8 @@
-import { Window } from "../../Window";
+import { TextObj, Window } from "../../Window";
 import * as numbers from "../../magic_numbers.js";
+import { GoldenSun } from "../../GoldenSun";
+import { MainChar } from "../../MainChar";
+import { Djinn } from "../../Djinn";
 
 const BASE_WIN_X = 0;
 const BASE_WIN_Y = 64;
@@ -22,6 +25,20 @@ const SHIFT_DESCRIPTION_X = 55;
 const SHIFT_DESCRIPTION_Y = 72;
 
 export class DjinnStatsWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public base_window: Window;
+    public before_stats: {[stat: string]: TextObj};
+    public after_stats: {[stat: string]: TextObj};
+    public up_arrows: {[stat: string]: Phaser.Sprite};
+    public down_arrows: {[stat: string]: Phaser.Sprite};
+    public before_class_text: TextObj;
+    public after_class_text: TextObj;
+    public window_open: boolean;
+    public char: MainChar;
+    public next_djinni_status: string;
+    public djinn: Djinn;
+
     constructor(game, data) {
         this.game = game;
         this.data = data;

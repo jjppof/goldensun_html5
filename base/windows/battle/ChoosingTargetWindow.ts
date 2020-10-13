@@ -1,6 +1,9 @@
-import { Window } from "../../Window";
+import { TextObj, Window } from "../../Window";
 import * as numbers from "../../magic_numbers.js";
 import { elements, ordered_elements } from "../../utils.js";
+import { GoldenSun } from "../../GoldenSun";
+import { ItemSlot } from "../../MainChar";
+import * as _ from "lodash";
 
 const BASE_WIN_HEIGHT = 20;
 const BASE_WIN_Y = 136;
@@ -38,6 +41,27 @@ const SUB_ICON_X = 0;
 const SUB_ICON_Y = 0;
 
 export class ChoosingTargetWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public base_window: Window;
+    public window_open: boolean;
+    public group: Phaser.Group;
+    public sprites: Phaser.Sprite[];
+    public action: string;
+    public texts: TextObj[];
+    public element: string;
+    public ability_name: string;
+    public ability_name_x: number;
+    public window_sprites: (Phaser.Sprite|Phaser.Group)[];
+    public star_x: number;
+    public icon_sprite_sheet: string;
+    public ability_key_name: string;
+    public icon_group: Phaser.Group;
+    public item_obj: ItemSlot;
+    public quantities: number[];
+    public width: number;
+    public x: number;
+
     constructor(game, data) {
         this.game = game;
         this.data = data;

@@ -1,7 +1,10 @@
-import { Window } from '../../Window';
+import { TextObj, Window } from '../../Window';
 import * as numbers from '../../magic_numbers.js';
 import { CursorControl } from '../../utils/CursorControl';
 import { temporary_status } from '../../Player';
+import { GoldenSun } from '../../GoldenSun';
+import { MainChar } from '../../MainChar';
+import { Djinn } from '../../Djinn';
 
 const BASE_WIN_WIDTH = 164;
 const BASE_WIN_HEIGHT = 84;
@@ -36,6 +39,42 @@ const HIGHLIGHT_BAR_HEIGHT = 8;
 const HIGHLIGHT_BAR_X = 8;
 
 export class PsynergyWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public window_open: boolean;
+    public window_active: boolean;
+    public text_sprites_in_window: TextObj[];
+    public icon_sprites_in_window: Phaser.Sprite[];
+    public misc_sprites_in_window: Phaser.Sprite[];
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public base_window: Window;
+    public group: Phaser.Group;
+    public button: Phaser.Sprite;
+    public cursor_control: CursorControl;
+    public signal_bindings: Phaser.SignalBinding[];
+    public highlight_bar: Phaser.Graphics;
+    public expanded: boolean;
+    public ability_index: number;
+    public page_index: number;
+    public page_number: number;
+    public abilities: string[];
+    public all_abilities: string[];
+    public close_callback: Function;
+    public set_description: Function;
+    public choosen_ability: string;
+    public psy_sealed: boolean;
+    public char: MainChar;
+    public gained_abilities: string[];
+    public lost_abilities: string[];
+    public intersection_abilities: string[];
+    public current_abilities: string[];
+    public next_abilities: string[];
+    public psy_info_1_text: TextObj;
+    public psy_info_2_text: TextObj;
+    public djinni: Djinn[];
+    public next_djinni_status: string[];
+
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -130,7 +169,7 @@ export class PsynergyWindow {
 
     set_page_number() {
         const list_length = this.all_abilities.length;
-        this.page_number = parseInt((list_length - 1)/ELEM_PER_PAGE) + 1;
+        this.page_number = (((list_length - 1)/ELEM_PER_PAGE) | 0) + 1;
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
         }
@@ -319,7 +358,7 @@ export class PsynergyWindow {
         }, false);
     }
 
-    hide(callback) {
+    hide(callback?) {
         this.group.alpha = 0;
         this.highlight_bar.alpha = 0;
         this.cursor_control.deactivate();
@@ -331,7 +370,7 @@ export class PsynergyWindow {
         }, false);
     }
 
-    close(callback) {
+    close(callback?) {
         this.clear_sprites();
         this.base_window.unset_page_indicator();
         this.group.alpha = 0;

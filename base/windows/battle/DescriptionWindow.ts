@@ -1,4 +1,4 @@
-import { Window } from "../../Window";
+import { TextObj, Window } from "../../Window";
 
 const BASE_WIN_WIDTH = 236;
 const BASE_WIN_HEIGHT = 28;
@@ -9,6 +9,11 @@ const DESCRIPTION_X = 8;
 const DESCRIPTION_Y = 12;
 
 export class DescriptionWindow {
+    public game: Phaser.Game;
+    public base_window: Window;
+    public description: TextObj;
+    public is_open: boolean;
+
     constructor(game) {
         this.game = game;
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);

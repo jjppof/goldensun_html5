@@ -468,7 +468,7 @@ export class MainChar extends Player {
         this.add_djinn(new_djinn_key_name);
     }
 
-    preview_djinn_change(stats, djinni_key_name, djinni_next_status, action) {
+    preview_djinn_change(stats, djinni_key_name, djinni_next_status, action?) {
         const previous_class = this.class;
         let venus_lv = this.venus_level_current;
         let mercury_lv = this.mercury_level_current;
