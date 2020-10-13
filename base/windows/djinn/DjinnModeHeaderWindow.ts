@@ -1,7 +1,9 @@
-import { Window } from '../../Window';
+import { TextObj, Window } from '../../Window';
 import { base_actions, capitalize, directions, reverse_directions } from '../../utils.js';
-import { djinn_font_colors } from '../../Djinn';
+import { Djinn, djinn_font_colors } from '../../Djinn';
 import * as numbers from '../../magic_numbers.js';
+import { GoldenSun } from '../../GoldenSun';
+import { MainChar } from '../../MainChar';
 
 const BASE_WIN_WIDTH = 236;
 const BASE_WIN_HEIGHT = 36;
@@ -34,6 +36,32 @@ const SPACEBAR_KEY_X = 132;
 const SPACEBAR_KEY_Y = 24;
 
 export class DjinnModeHeaderWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public window_open: boolean;
+    public x: number;
+    public y: number;
+    public base_window: Window;
+    public group: Phaser.Group;
+    public ok_msg_text: TextObj;
+    public djinn_status_text: TextObj;
+    public djinn_name_before_text: TextObj;
+    public djinn_name_after_text: TextObj;
+    public sprites: Phaser.Sprite[];
+    public djinn_sprites: Phaser.Sprite[];
+    public tweens: Phaser.Tween[];
+    public djinn_status_arrow: Phaser.Sprite;
+    public spacebar_key: {
+        shadow: Phaser.Sprite,
+        text: Phaser.Sprite
+    };
+    public action_info_text: TextObj;
+    public djinn_status_arrow_blink_timer: Phaser.Timer;
+    public chars: MainChar[];
+    public action_text: string;
+    public djinni: Djinn[];
+    public next_djinni_status: string[];
+
     constructor(game, data) {
         this.game = game;
         this.data = data;
@@ -189,7 +217,7 @@ export class DjinnModeHeaderWindow {
         }
     }
 
-    open(chars, djinni, next_djinni_status, action_text, callback) {
+    open(chars, djinni, next_djinni_status, action_text?, callback?) {
         this.chars = chars;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;
@@ -203,7 +231,7 @@ export class DjinnModeHeaderWindow {
         }, false);
     }
 
-    close(callback) {
+    close(callback?) {
         this.unmount_window();
         this.base_window.close(() => {
             this.window_open = false;

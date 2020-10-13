@@ -1,7 +1,7 @@
-import { CharsQuickInfoDjinnWindow } from '../windows/djinn/CharsQuickInfoDjinnWindow.js';
-import { DjinnListWindow } from '../windows/djinn/DjinnListWindow.js';
-import { DjinnActionWindow } from '../windows/djinn/DjinnActionWindow.js';
-import { GoldenSun } from '../GoldenSun.js';
+import { CharsQuickInfoDjinnWindow } from '../windows/djinn/CharsQuickInfoDjinnWindow';
+import { DjinnListWindow } from '../windows/djinn/DjinnListWindow';
+import { DjinnActionWindow } from '../windows/djinn/DjinnActionWindow';
+import { GoldenSun } from '../GoldenSun';
 
 export class MainDjinnMenu {
     public game: Phaser.Game;

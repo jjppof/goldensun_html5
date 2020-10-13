@@ -1,5 +1,8 @@
-import { Window } from '../../Window';
+import { TextObj, Window } from '../../Window';
 import * as numbers from '../../magic_numbers.js';
+import { GoldenSun } from '../../GoldenSun';
+import { MainChar } from '../../MainChar';
+import { Djinn } from '../../Djinn';
 
 const BASE_WIN_WIDTH = 116;
 const BASE_WIN_HEIGHT = 116;
@@ -22,6 +25,34 @@ const PSY_INFO_X = 8;
 const PSY_INFO_2_Y = PSY_INFO_1_Y + 1 + numbers.FONT_SIZE;
 
 export class DjinnPsynergyWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public window_open: boolean;
+    public text_sprites_in_window: TextObj[];
+    public icon_sprites_in_window: Phaser.Sprite[];
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public spacebar_propagation_priority: number;
+    public base_window: Window;
+    public psy_info_1_text: TextObj;
+    public psy_info_2_text: TextObj;
+    public execute_operation: boolean;
+    public close_callback: Function;
+    public spacebar_callback: Function;
+    public page_number: number;
+    public page_index: number;
+    public all_abilities: string[];
+    public abilities: string[];
+    public gained_abilities: string[];
+    public lost_abilities: string[];
+    public intersection_abilities: string[];
+    public current_abilities: string[];
+    public next_abilities: string[];
+    public char: MainChar;
+    public djinni: Djinn[];
+    public next_djinni_status: string;
+    public action: string;
+
     constructor(game, data, esc_propagation_priority, enter_propagation_priority, spacebar_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -71,7 +102,7 @@ export class DjinnPsynergyWindow {
 
     set_page_number() {
         const list_length = this.all_abilities.length;
-        this.page_number = parseInt((list_length - 1)/ELEM_PER_PAGE) + 1;
+        this.page_number = (((list_length - 1)/ELEM_PER_PAGE) | 0) + 1;
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
         }
@@ -176,7 +207,7 @@ export class DjinnPsynergyWindow {
         this.mount_window();
     }
 
-    open(char, djinni, next_djinni_status, close_callback, hidden = false, spacebar_callback, action, callback = undefined) {
+    open(char, djinni, next_djinni_status, close_callback, hidden = false, spacebar_callback?, action?, callback = undefined) {
         this.char = char;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;
@@ -198,7 +229,7 @@ export class DjinnPsynergyWindow {
         }, false);
     }
 
-    close(callback) {
+    close(callback?) {
         this.clear_sprites();
         this.base_window.unset_page_indicator();
         this.base_window.close(() => {
