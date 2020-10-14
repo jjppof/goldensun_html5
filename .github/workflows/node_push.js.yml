@@ -18,7 +18,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
-    - name: demo_deploy
+    - name: Demo deploy
       run: |
         npm install
         npm run build
