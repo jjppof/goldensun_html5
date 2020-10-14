@@ -1,6 +1,6 @@
 import { GoldenSun } from "../GoldenSun";
 import { InteractableObjects } from "../InteractableObjects";
-import { get_directions, split_direction } from "../utils.js";
+import { get_directions, split_direction } from "../utils";
 import * as _ from "lodash";
 
 export const event_types = {

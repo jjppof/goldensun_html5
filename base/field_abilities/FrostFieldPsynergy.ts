@@ -1,5 +1,5 @@
-import * as numbers from '../magic_numbers.js';
-import { get_surroundings, directions} from "../utils.js";
+import * as numbers from '../magic_numbers';
+import { get_surroundings, directions} from "../utils";
 import { JumpEvent } from "../tile_events/JumpEvent";
 import { FieldAbilities } from "./FieldAbilities";
 import * as _ from "lodash";

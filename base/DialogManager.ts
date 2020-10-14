@@ -1,7 +1,7 @@
 import { GoldenSun } from './GoldenSun';
-import * as numbers from './magic_numbers.js';
+import * as numbers from './magic_numbers';
 import { SpriteBase } from './SpriteBase';
-import * as utils from './utils.js';
+import * as utils from './utils';
 import { Window } from './Window';
 
 const DIALOG_CRYSTAL_KEY = "dialog_crystal";

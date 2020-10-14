@@ -8,7 +8,7 @@ import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow";
 import { EnemyAI } from "./EnemyAI";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas";
 import { effect_types, Effect, effect_usages, effect_names, effect_msg } from "../Effect";
-import { variation, ordered_elements, element_names } from "../utils.js";
+import { variation, ordered_elements, element_names } from "../utils";
 import { djinn_status, Djinn } from "../Djinn";
 import { MainChar } from "../MainChar";
 import { BattleAnimationManager } from "./BattleAnimationManager";

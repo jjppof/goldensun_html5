@@ -1,9 +1,9 @@
-import * as numbers from './magic_numbers.js';
+import * as numbers from './magic_numbers';
 import { TileEvent } from './tile_events/TileEvent';
 import { Debug } from './debug/Debug';
 import { load_all } from './initializers/assets_loader';
 import { Collision } from './Collision';
-import { directions } from './utils.js';
+import { directions } from './utils';
 import { Hero } from './Hero';
 import { TileEventManager } from './tile_events/TileEventManager';
 import { GameEventManager } from './game_events/GameEventManager';

@@ -1,5 +1,5 @@
-import * as numbers from "./magic_numbers.js";
-import { reverse_directions, base_actions } from "./utils.js";
+import * as numbers from "./magic_numbers";
+import { reverse_directions, base_actions } from "./utils";
 import { Footsteps } from "./Footsteps";
 import { GoldenSun } from "./GoldenSun";
 import { SpriteBase } from "./SpriteBase";

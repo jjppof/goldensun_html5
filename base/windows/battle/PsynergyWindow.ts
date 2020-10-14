@@ -1,5 +1,5 @@
 import { TextObj, Window } from '../../Window';
-import * as numbers from '../../magic_numbers.js';
+import * as numbers from '../../magic_numbers';
 import { CursorControl } from '../../utils/CursorControl';
 import { temporary_status } from '../../Player';
 import { GoldenSun } from '../../GoldenSun';

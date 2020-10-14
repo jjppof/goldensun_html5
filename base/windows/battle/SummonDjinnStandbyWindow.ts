@@ -1,5 +1,5 @@
 import { TextObj, Window } from "../../Window";
-import { ordered_elements } from "../../utils.js";
+import { ordered_elements } from "../../utils";
 
 const BASE_WIN_X = 160;
 const BASE_WIN_Y = 64;

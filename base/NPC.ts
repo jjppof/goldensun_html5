@@ -1,6 +1,6 @@
 import { SpriteBase } from './SpriteBase';
 import { event_types as game_event_types, GameEvent } from "./game_events/GameEvent";
-import { mount_collision_polygon } from './utils.js';
+import { mount_collision_polygon } from './utils';
 import { ControllableChar } from './ControllableChar';
 import { BattleEvent } from './game_events/BattleEvent';
 

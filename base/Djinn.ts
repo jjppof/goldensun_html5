@@ -1,5 +1,5 @@
-import * as numbers from './magic_numbers.js';
-import { ordered_elements } from './utils.js';
+import * as numbers from './magic_numbers';
+import { ordered_elements } from './utils';
 import * as _ from "lodash";
 
 export const djinn_status = {

@@ -1,6 +1,6 @@
 
-import * as numbers from '../magic_numbers.js';
-import { range_360 } from '../utils.js';
+import * as numbers from '../magic_numbers';
+import { range_360 } from '../utils';
 import { ability_target_types } from '../Ability';
 import { fighter_types, permanent_status, Player } from '../Player';
 import { GoldenSun } from '../GoldenSun';

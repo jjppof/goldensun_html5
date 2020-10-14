@@ -1,5 +1,5 @@
-import * as numbers from './magic_numbers.js';
-import * as utils from './utils.js';
+import * as numbers from './magic_numbers';
+import * as utils from './utils';
 
 const PAGE_NUMBER_WIDTH = 8;
 const PAGE_NUMBER_HEIGHT = 8;

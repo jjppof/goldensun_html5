@@ -1,8 +1,8 @@
 import { TextObj, Window } from '../../Window';
 import { djinn_status, djinn_font_colors } from '../../Djinn';
 import { CursorControl } from '../../utils/CursorControl';
-import * as numbers from '../../magic_numbers.js';
-import { base_actions, capitalize, change_brightness, directions, elements, reverse_directions } from '../../utils.js';
+import * as numbers from '../../magic_numbers';
+import { base_actions, capitalize, change_brightness, directions, elements, reverse_directions } from '../../utils';
 import { DjinnModeHeaderWindow } from './DjinnModeHeaderWindow';
 import { DjinnCharStatsWindow } from './DjinnCharStatsWindow';
 import { DjinnPsynergyWindow } from './DjinnPsynergyWindow';

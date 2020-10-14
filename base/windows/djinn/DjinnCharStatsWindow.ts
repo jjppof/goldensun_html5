@@ -1,6 +1,6 @@
 import { TextObj, Window } from '../../Window';
-import * as numbers from '../../magic_numbers.js';
-import { ordered_elements } from '../../utils.js';
+import * as numbers from '../../magic_numbers';
+import { ordered_elements } from '../../utils';
 import { MainChar } from '../../MainChar';
 import { Djinn } from '../../Djinn';
 

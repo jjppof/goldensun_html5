@@ -1,5 +1,5 @@
 import { Effect, effect_types } from "./Effect";
-import { ordered_elements } from "./utils.js";
+import { ordered_elements } from "./utils";
 
 export const fighter_types = {
     ALLY: 1,

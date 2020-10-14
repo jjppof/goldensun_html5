@@ -1,6 +1,6 @@
-import * as numbers from '../magic_numbers.js';
+import * as numbers from '../magic_numbers';
 import { target_only_push } from '../interactable_objects/push';
-import { directions, reverse_directions, join_directions } from "../utils.js";
+import { directions, reverse_directions, join_directions } from "../utils";
 import { FieldAbilities } from "./FieldAbilities";
 import { SpriteBase } from '../SpriteBase';
 

@@ -1,6 +1,6 @@
 import { GoldenSun } from '../GoldenSun';
 import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu';
-import { capitalize } from '../utils.js';
+import { capitalize } from '../utils';
 import { ControlManager } from '../utils/ControlManager';
 
 const TITLE_WINDOW_WIDTH = 36

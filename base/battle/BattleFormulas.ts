@@ -1,8 +1,8 @@
 //please check http://forum.goldensunhacking.net/index.php?topic=2460
 
-import { elements } from "../utils.js";
+import { elements } from "../utils";
 import { permanent_status } from "../Player";
-import { ELEM_ATTR_MAX, ELEM_ATTR_MIN } from "../magic_numbers.js";
+import { ELEM_ATTR_MAX, ELEM_ATTR_MIN } from "../magic_numbers";
 import * as _ from "lodash";
 
 export const CRITICAL_CHANCE = 1/32;

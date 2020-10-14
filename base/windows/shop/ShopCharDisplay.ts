@@ -1,5 +1,5 @@
 import { Window } from '../../Window';
-import * as utils from '../../utils.js';
+import * as utils from '../../utils';
 import { GoldenSun } from '../../GoldenSun';
 import { ShopMenu } from '../../main_menus/ShopMenu';
 import { MainChar } from '../../MainChar';

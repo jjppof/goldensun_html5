@@ -2,7 +2,7 @@ import { CharsMenu } from '../support_menus/CharsMenu';
 import { BasicInfoWindow } from '../windows/BasicInfoWindow';
 import { ItemPsynergyChooseWindow } from '../windows/ItemPsynergyChooseWindow';
 import { TextObj, Window } from '../Window';
-import * as numbers from '../magic_numbers.js';
+import * as numbers from '../magic_numbers';
 import { GoldenSun } from '../GoldenSun';
 
 const GUIDE_WINDOW_X = 104;

@@ -1,4 +1,4 @@
-import { capitalize } from '../utils.js';
+import { capitalize } from '../utils';
 import { HorizontalMenu } from '../support_menus/HorizontalMenu';
 import { MainPsynergyMenu } from './MainPsynergyMenu';
 import { MainItemMenu } from './MainItemMenu';

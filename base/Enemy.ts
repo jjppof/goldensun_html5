@@ -1,8 +1,8 @@
 import { SpriteBase } from "./SpriteBase";
 import { Player, fighter_types } from "./Player";
-import { ordered_elements } from "./utils.js";
+import { ordered_elements } from "./utils";
 import * as _ from "lodash";
-import * as numbers from "./magic_numbers.js";
+import * as numbers from "./magic_numbers";
 import { effect_types } from "./Effect";
 
 export class Enemy extends Player {

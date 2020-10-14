@@ -1,6 +1,6 @@
 import { TextObj, Window } from '../Window';
-import { get_text_width, ordered_elements } from '../utils.js';
-import * as numbers from '../magic_numbers.js';
+import { get_text_width, ordered_elements } from '../utils';
+import * as numbers from '../magic_numbers';
 import { Djinn } from '../Djinn';
 import { MainChar } from '../MainChar';
 import { GoldenSun } from '../GoldenSun';

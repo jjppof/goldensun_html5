@@ -1,6 +1,6 @@
-import { base_actions, directions, reverse_directions } from "../utils.js";
+import { base_actions, directions, reverse_directions } from "../utils";
 import { event_types, TileEvent } from "./TileEvent";
-import * as numbers from "../magic_numbers.js";
+import * as numbers from "../magic_numbers";
 import * as _ from "lodash";
 
 export class TeleportEvent extends TileEvent {

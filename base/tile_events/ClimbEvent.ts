@@ -1,7 +1,7 @@
-import { base_actions, directions, reverse_directions } from "../utils.js";
+import { base_actions, directions, reverse_directions } from "../utils";
 import { JumpEvent } from "./JumpEvent";
 import { TileEvent, event_types } from "./TileEvent";
-import * as numbers from "../magic_numbers.js";
+import * as numbers from "../magic_numbers";
 
 export class ClimbEvent extends TileEvent {
     public change_to_collision_layer: number;

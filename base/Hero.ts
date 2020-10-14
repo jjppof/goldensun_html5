@@ -1,7 +1,7 @@
 import { ControllableChar } from "./ControllableChar";
-import * as numbers from './magic_numbers.js';
+import * as numbers from './magic_numbers';
 import { TileEvent, event_types } from "./tile_events/TileEvent";
-import { get_transition_directions, range_360, directions, base_actions } from './utils.js';
+import { get_transition_directions, range_360, directions, base_actions } from './utils';
 import { normal_push } from "./interactable_objects/push";
 
 const SPEED_LIMIT_TO_STOP = 13;

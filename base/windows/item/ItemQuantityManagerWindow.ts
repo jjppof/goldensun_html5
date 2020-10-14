@@ -1,5 +1,5 @@
 import { TextObj, Window } from '../../Window';
-import * as numbers from '../../magic_numbers.js';
+import * as numbers from '../../magic_numbers';
 import { ItemCounter } from '../../utils/ItemsCounter';
 import { GoldenSun } from '../../GoldenSun';
 import { ItemSlot, MainChar } from '../../MainChar';

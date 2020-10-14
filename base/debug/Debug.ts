@@ -1,6 +1,6 @@
 import { GoldenSun } from "../GoldenSun";
 import { MainChar } from "../MainChar";
-import { reverse_directions, ordered_elements } from "../utils.js";
+import { reverse_directions, ordered_elements } from "../utils";
 
 export class Debug {
     public game: Phaser.Game;

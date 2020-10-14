@@ -4,8 +4,8 @@ import { djinn_status } from './Djinn';
 import { Effect, effect_types } from './Effect';
 import { item_types } from './Item';
 import { Player, fighter_types, permanent_status } from './Player';
-import { elements, ordered_elements } from './utils.js';
-import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from './magic_numbers.js';
+import { elements, ordered_elements } from './utils';
+import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from './magic_numbers';
 import * as _ from "lodash";
 
 const ELEM_LV_DELTA = 1;

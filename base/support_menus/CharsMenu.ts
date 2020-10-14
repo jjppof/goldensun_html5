@@ -1,7 +1,7 @@
 import { Window } from '../Window';
-import * as numbers from '../magic_numbers.js';
+import * as numbers from '../magic_numbers';
 import { CursorControl } from '../utils/CursorControl';
-import { base_actions, directions, reverse_directions } from '../utils.js';
+import { base_actions, directions, reverse_directions } from '../utils';
 import { GoldenSun } from '../GoldenSun';
 import * as _ from "lodash";
 

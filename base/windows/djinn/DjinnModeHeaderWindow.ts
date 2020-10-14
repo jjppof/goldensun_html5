@@ -1,7 +1,7 @@
 import { TextObj, Window } from '../../Window';
-import { base_actions, capitalize, directions, reverse_directions } from '../../utils.js';
+import { base_actions, capitalize, directions, reverse_directions } from '../../utils';
 import { Djinn, djinn_font_colors } from '../../Djinn';
-import * as numbers from '../../magic_numbers.js';
+import * as numbers from '../../magic_numbers';
 import { GoldenSun } from '../../GoldenSun';
 import { MainChar } from '../../MainChar';
 

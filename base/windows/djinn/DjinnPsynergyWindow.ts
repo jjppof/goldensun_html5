@@ -1,5 +1,5 @@
 import { TextObj, Window } from '../../Window';
-import * as numbers from '../../magic_numbers.js';
+import * as numbers from '../../magic_numbers';
 import { GoldenSun } from '../../GoldenSun';
 import { MainChar } from '../../MainChar';
 import { Djinn } from '../../Djinn';

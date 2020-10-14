@@ -1,6 +1,6 @@
 import { TextObj, Window } from "../../Window";
-import * as numbers from "../../magic_numbers.js";
-import { elements, ordered_elements } from "../../utils.js";
+import * as numbers from "../../magic_numbers";
+import { elements, ordered_elements } from "../../utils";
 import { GoldenSun } from "../../GoldenSun";
 import { ItemSlot } from "../../MainChar";
 import * as _ from "lodash";

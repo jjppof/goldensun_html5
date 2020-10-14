@@ -1,5 +1,5 @@
-import { get_text_width } from '../utils.js';
-import * as numbers from '../magic_numbers.js';
+import { get_text_width } from '../utils';
+import * as numbers from '../magic_numbers';
 import { Window } from '../Window';
 import { GoldenSun } from '../GoldenSun';
 import { ControlManager } from '../utils/ControlManager';
