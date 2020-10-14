@@ -67,8 +67,8 @@ export class TeleportEvent extends TileEvent {
         this.data.map.unset_map();
         const next_map_key_name = this.target;
         const target_collision_layer = this.dest_collider_layer;
-        this.data.hero.shadow.base_collider_layer = target_collision_layer;
-        this.data.hero.sprite.base_collider_layer = target_collision_layer;
+        this.data.hero.shadow.base_collision_layer = target_collision_layer;
+        this.data.hero.sprite.base_collision_layer = target_collision_layer;
         this.data.map = await this.data.info.maps_list[next_map_key_name].mount_map(target_collision_layer);
         this.game.camera.setBoundsToWorld();
         if (this.game.camera.bounds.width < numbers.GAME_WIDTH) {

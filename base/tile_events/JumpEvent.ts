@@ -56,7 +56,7 @@ export class JumpEvent extends TileEvent {
                 for (let j = 0; j < this.data.map.interactable_objects.length; ++j) {
                     const interactable_object = this.data.map.interactable_objects[j];
                     //if the side position has a interactable object, it does not cancel this jump event
-                    if (this.data.map.collision_layer !== interactable_object.base_collider_layer) continue;
+                    if (this.data.map.collision_layer !== interactable_object.base_collision_layer) continue;
                     if (event.x === interactable_object.current_x && event.y === interactable_object.current_y) {
                         interactable_object_found = true;
                         break;
@@ -75,7 +75,7 @@ export class JumpEvent extends TileEvent {
         for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
             const next_interactable_object = this.data.map.interactable_objects[i];
             if (next_interactable_object.current_x !== next_position.x || next_interactable_object.current_y !== next_position.y) continue;
-            if (this.data.map.collision_layer !== next_interactable_object.base_collider_layer) continue;
+            if (this.data.map.collision_layer !== next_interactable_object.base_collision_layer) continue;
             return;
         }
         if (next_pos_key in this.data.map.events) {

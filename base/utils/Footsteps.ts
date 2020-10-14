@@ -54,7 +54,7 @@ export class Footsteps{
         this.anchor_y = FOOTSTEPS_ANCHOR;
         this.group = this.game.add.group();
         this.group.send_to_back = true;
-        this.group.base_collider_layer = 0;
+        this.group.base_collision_layer = 0;
 
         this.dead_steps = new Array(MAX_DEAD_SIZE);
         this.dead_index = 0;
@@ -134,7 +134,7 @@ export class Footsteps{
         }
         const animation_obj = footsteps_sprite.animations.getAnimation(animation_name);
         animation_obj.stop(true);
-        this.group.base_collider_layer = this.data.map.collision_layer;
+        this.group.base_collision_layer = this.data.map.collision_layer;
         footsteps_sprite.x = this.data.hero.shadow.x;
         footsteps_sprite.y = this.data.hero.shadow.y;
         this.position_footsteps(footsteps_sprite);

@@ -77,7 +77,7 @@ export class Map {
         let send_to_front_list = new Array(this.data.npc_group.children.length);
         let has_sort_function = new Array(this.data.npc_group.children.length);
         this.data.npc_group.children.forEach((sprite: Phaser.Sprite, index) => {
-            sprite.y_sort = parseInt(sprite.base_collider_layer.toString() + sprite.y.toString());
+            sprite.y_sort = parseInt(sprite.base_collision_layer.toString() + sprite.y.toString());
             if (sprite.sort_function) {
                 has_sort_function[index] = sprite;
                 return;
@@ -297,7 +297,7 @@ export class Map {
             property_info.thought_message,
             property_info.avatar ? property_info.avatar : null,
             property_info.shop_key,
-            property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer,
+            property_info.base_collision_layer === undefined ? 0 : property_info.base_collision_layer,
             property_info.talk_range_factor,
             property_info.events === undefined ? [] : property_info.events
         ));
@@ -312,7 +312,7 @@ export class Map {
             property_info.x,
             property_info.y,
             property_info.allowed_tiles === undefined ? [] : property_info.allowed_tiles,
-            property_info.base_collider_layer === undefined ? 0 : property_info.base_collider_layer,
+            property_info.base_collision_layer === undefined ? 0 : property_info.base_collision_layer,
             property_info.collider_layer_shift,
             property_info.not_allowed_tiles,
             property_info.object_drop_tiles,
@@ -389,8 +389,8 @@ export class Map {
             npc_sprite_info.generateAllFrames();
             await new Promise(resolve => {
                 npc_sprite_info.loadSpritesheets(this.game, true, () => {
-                    npc.set_shadow(npc_db.shadow_key, this.data.npc_group, npc.base_collider_layer, npc_db.shadow_anchor_x, npc_db.shadow_anchor_y);
-                    npc.set_sprite(this.data.npc_group, npc_sprite_info, this.sprite, npc.base_collider_layer, npc_db.anchor_x, npc_db.anchor_y);
+                    npc.set_shadow(npc_db.shadow_key, this.data.npc_group, npc.base_collision_layer, npc_db.shadow_anchor_x, npc_db.shadow_anchor_y);
+                    npc.set_sprite(this.data.npc_group, npc_sprite_info, this.sprite, npc.base_collision_layer, npc_db.anchor_x, npc_db.anchor_y);
                     npc.set_sprite_as_npc();
                     npc.play();
                     resolve();

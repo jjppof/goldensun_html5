@@ -105,7 +105,7 @@ export class FieldAbilities {
             const item_y_px = interactable_object.current_y * this.data.map.sprite.tileHeight + (this.data.map.sprite.tileHeight >> 1);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
             const y_condition = item_y_px >= min_y && item_y_px <= max_y;
-            if (x_condition && y_condition && this.data.map.collision_layer === interactable_object.base_collider_layer) {
+            if (x_condition && y_condition && this.data.map.collision_layer === interactable_object.base_collision_layer) {
                 let this_sqr_distance = Math.pow(item_x_px - this.controllable_char.sprite.x, 2) + Math.pow(item_y_px - this.controllable_char.sprite.y, 2);
                 if (this_sqr_distance < sqr_distance) {
                     sqr_distance = this_sqr_distance;

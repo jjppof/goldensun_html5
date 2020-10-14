@@ -64,7 +64,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
     }
 
     fire_push() {
-        if (this.data.map.collision_layer === this.target_object.base_collider_layer) {
+        if (this.data.map.collision_layer === this.target_object.base_collision_layer) {
             let item_position = this.target_object.get_current_position(this.data.map);
             switch (this.controllable_char.trying_to_push_direction) {
                 case directions.up:
@@ -133,7 +133,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
         this.hand_sprite.visible = true;
         this.hand_sprite.scale.setTo(1, 1);
         this.hand_sprite.send_to_front = true;
-        this.hand_sprite.base_collider_layer = this.data.map.collision_layer;
+        this.hand_sprite.base_collision_layer = this.data.map.collision_layer;
         this.hand_sprite.animations.currentAnim.stop(true);
         this.hand_sprite.frameName = this.hand_sprite_base.getFrameName(MOVE_HAND_KEY_NAME, reverse_directions[this.cast_direction], 0);
         this.hand_sprite.anchor.x = 0.5;

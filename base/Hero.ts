@@ -94,7 +94,7 @@ export class Hero extends ControllableChar {
             if (desired_direction !== null || this.force_direction) {
                 if (!this.force_direction) {
                     this.current_direction = desired_direction;
-                    if (this.game.time.frames & 1) { //turn time frame rate
+                    if (this.game.time.frames & 1) { //char turn time frame rate
                         this.desired_direction = get_transition_directions(this.desired_direction, desired_direction);
                     }
                 } else {
@@ -116,7 +116,7 @@ export class Hero extends ControllableChar {
             if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
                 if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
                     const interactable_object = map.interactable_objects[j];
-                    if ([base_actions.WALK, base_actions.DASH].includes(this.current_action) && this.data.map.collision_layer === interactable_object.base_collider_layer) {
+                    if ([base_actions.WALK, base_actions.DASH].includes(this.current_action) && this.data.map.collision_layer === interactable_object.base_collision_layer) {
                         this.trying_to_push = true;
                         if (this.push_timer === null) {
                             this.trying_to_push_direction = this.current_direction;

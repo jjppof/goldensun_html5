@@ -93,7 +93,7 @@ export class ControllableChar {
         this.sprite = group.create(0, 0, action_key);
         this.sprite.centerX = ((this.tile_x_pos + 1.5) * map_sprite.tileWidth) | 0;
         this.sprite.centerY = ((this.tile_y_pos + 1.5) * map_sprite.tileHeight) | 0;
-        this.sprite.base_collider_layer = layer;
+        this.sprite.base_collision_layer = layer;
         this.sprite.roundPx = true;
         this.sprite.anchor.setTo(anchor_x, anchor_y);
     }
@@ -115,7 +115,7 @@ export class ControllableChar {
         this.shadow.blendMode = PIXI.blendModes.MULTIPLY;
         this.shadow.disableRoundPx = true;
         this.shadow.anchor.setTo(shadow_anchor_x, shadow_anchor_y);
-        this.shadow.base_collider_layer = layer;
+        this.shadow.base_collision_layer = layer;
     }
 
     camera_follow() {
@@ -123,9 +123,9 @@ export class ControllableChar {
         this.game.camera.focusOn(this.sprite);
     }
 
-    set_collider_layer(layer) {
-        this.sprite.base_collider_layer = layer;
-        this.shadow.base_collider_layer = layer;
+    set_collision_layer(layer) {
+        this.sprite.base_collision_layer = layer;
+        this.shadow.base_collision_layer = layer;
     }
 
     play(action?, animation?) {

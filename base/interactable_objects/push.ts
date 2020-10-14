@@ -168,7 +168,7 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
         }
         data.map.events[new_event_location_key].push(event);
         const new_surroundings = get_surroundings(new_x, new_y, false, 2);
-        JumpEvent.active_jump_surroundings(data, new_surroundings, interactable_object.collider_layer_shift + interactable_object.base_collider_layer);
+        JumpEvent.active_jump_surroundings(data, new_surroundings, interactable_object.collider_layer_shift + interactable_object.base_collision_layer);
         const old_surroundings = get_surroundings(old_x, old_y, false, 2);
         for (let j = 0; j < old_surroundings.length; ++j) {
             const old_surrounding = old_surroundings[j];
@@ -177,7 +177,7 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
                 for (let k = 0; k < data.map.events[old_key].length; ++k) {
                     const old_surr_event = data.map.events[old_key][k];
                     if (old_surr_event.type === event_types.JUMP) {
-                        const target_layer = interactable_object.collider_layer_shift + interactable_object.base_collider_layer;
+                        const target_layer = interactable_object.collider_layer_shift + interactable_object.base_collision_layer;
                         if (old_surr_event.activation_collision_layers.includes(target_layer) && old_surr_event.dynamic === false) {
                             old_surr_event.deactivate_at(get_opposite_direction(old_surrounding.direction));
                         }

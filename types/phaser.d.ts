@@ -1906,7 +1906,7 @@ declare module Phaser {
         cursor: any;
         cursorIndex: number;
         send_to_back: boolean;
-        base_collider_layer: number;
+        base_collision_layer: number;
         enableBody: boolean;
         enableBodyDebug: boolean;
         exists: boolean;
@@ -4833,7 +4833,7 @@ declare module Phaser {
         components: any;
         cropRect: Phaser.Rectangle;
         customRender: boolean;
-        base_collider_layer: number;
+        base_collision_layer: number;
         disableRoundPx: boolean;
         roundPx: boolean;
         y_sort: number;

@@ -29,7 +29,7 @@ export class NPC extends ControllableChar {
     public message: string;
     public thought_message: string;
     public avatar: string;
-    public base_collider_layer: number;
+    public base_collision_layer: number;
     public talk_range_factor: number;
     public events: GameEvent[];
     public shop_key: string;
@@ -49,7 +49,7 @@ export class NPC extends ControllableChar {
         thought_message,
         avatar,
         shop_key,
-        base_collider_layer,
+        base_collision_layer,
         talk_range_factor,
         events_info
     ) {
@@ -60,7 +60,7 @@ export class NPC extends ControllableChar {
         this.thought_message = thought_message;
         this.avatar = avatar;
         this.shop_key = shop_key;
-        this.base_collider_layer = base_collider_layer;
+        this.base_collision_layer = base_collision_layer;
         this.talk_range_factor = talk_range_factor === undefined ? NPC_TALK_RANGE : talk_range_factor;
         this.events = [];
         this.set_events(events_info);
@@ -110,7 +110,7 @@ export class NPC extends ControllableChar {
                 skipSimpleCheck: true,
                 removeCollinearPoints: false
         }, polygon);
-        this.sprite.body.setCollisionGroup(collision_obj.npc_collision_groups[this.base_collider_layer]);
+        this.sprite.body.setCollisionGroup(collision_obj.npc_collision_groups[this.base_collision_layer]);
         this.sprite.body.damping = 1;
         this.sprite.body.angularDamping = 1;
         this.sprite.body.setZeroRotation();

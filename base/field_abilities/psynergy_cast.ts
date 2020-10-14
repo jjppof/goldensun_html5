@@ -10,8 +10,8 @@ export function init_cast_aura(game: Phaser.Game, sprite: Phaser.Sprite, group: 
     for (let j = 0; j < auras_number; ++j) {
         let back_aura = group.create(0, 0, "psynergy_aura");
         let front_aura = group.create(0, 0, "psynergy_aura");
-        back_aura.base_collider_layer = sprite.base_collider_layer;
-        front_aura.base_collider_layer = sprite.base_collider_layer;
+        back_aura.base_collision_layer = sprite.base_collision_layer;
+        front_aura.base_collision_layer = sprite.base_collision_layer;
         back_aura.sort_function = () => {
             group.setChildIndex(back_aura, group.getChildIndex(sprite));
         };
