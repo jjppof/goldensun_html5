@@ -1,6 +1,6 @@
 import * as numbers from "./magic_numbers";
 import { reverse_directions, base_actions } from "./utils";
-import { Footsteps } from "./Footsteps";
+import { Footsteps } from "./utils/Footsteps";
 import { GoldenSun } from "./GoldenSun";
 import { SpriteBase } from "./SpriteBase";
 

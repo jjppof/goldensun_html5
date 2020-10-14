@@ -1,6 +1,6 @@
-import { GoldenSun } from "./GoldenSun";
-import { SpriteBase } from "./SpriteBase";
-import {base_actions, directions} from "./utils";
+import { GoldenSun } from "../GoldenSun";
+import { SpriteBase } from "../SpriteBase";
+import {base_actions, directions} from "../utils";
 
 const FOOTSTEPS_TTL = Phaser.Timer.SECOND << 1;
 const WALKING_TIME_INTERVAL = Phaser.Timer.QUARTER;
