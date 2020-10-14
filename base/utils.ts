@@ -1,4 +1,5 @@
-import * as numbers from './magic_numbers.js';
+import * as numbers from './magic_numbers';
+import * as _ from "lodash";
 
 /*Element keys*/
 export const elements = {

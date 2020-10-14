@@ -1,6 +1,6 @@
 import { TextObj, Window } from '../Window';
-import { capitalize, get_text_width } from "../utils.js";
-import * as numbers from '../magic_numbers.js';
+import { capitalize, get_text_width } from "../utils";
+import * as numbers from '../magic_numbers';
 import { GoldenSun } from '../GoldenSun';
 
 const BASE_WIDTH = 10;

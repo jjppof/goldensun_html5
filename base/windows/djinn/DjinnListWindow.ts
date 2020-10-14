@@ -1,11 +1,14 @@
-import { Window } from '../../Window';
+import { TextObj, Window } from '../../Window';
 import { djinn_status, djinn_font_colors } from '../../Djinn';
 import { CursorControl } from '../../utils/CursorControl';
-import * as numbers from '../../magic_numbers.js';
-import { base_actions, capitalize, change_brightness, directions, elements, reverse_directions } from '../../utils.js';
-import { DjinnModeHeaderWindow } from './DjinnModeHeaderWindow.js';
-import { DjinnCharStatsWindow } from './DjinnCharStatsWindow.js';
-import { DjinnPsynergyWindow } from './DjinnPsynergyWindow.js';
+import * as numbers from '../../magic_numbers';
+import { base_actions, capitalize, change_brightness, directions, elements, reverse_directions } from '../../utils';
+import { DjinnModeHeaderWindow } from './DjinnModeHeaderWindow';
+import { DjinnCharStatsWindow } from './DjinnCharStatsWindow';
+import { DjinnPsynergyWindow } from './DjinnPsynergyWindow';
+import { GoldenSun } from '../../GoldenSun';
+import { DjinnActionWindow } from './DjinnActionWindow';
+import { CharsQuickInfoDjinnWindow } from './CharsQuickInfoDjinnWindow';
 
 const WIN_WIDTH = 236;
 const WIN_HEIGHT = 116;
@@ -35,6 +38,48 @@ const VIEW_STATES = {
 }
 
 export class DjinnListWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public base_window: Window;
+    public group: Phaser.Group;
+    public chars_sprites_group: Phaser.Group;
+    public window_open: boolean;
+    public window_active: boolean;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public shift_propagation_priority: number;
+    public spacebar_propagation_priority: number;
+    public selected_char_index: number;
+    public selected_djinn_index: number;
+    public page_index: number;
+    public close_callback: Function;
+    public chars_sprites: {
+        [char_key_name: string]: Phaser.Sprite
+    };
+    public djinns_sprites: {
+        [element: string]: Phaser.Sprite
+    }[];
+    public djinn_description: TextObj;
+    public page_number_bar_highlight: Phaser.Graphics;
+    public on_action_bar_highlight: Phaser.Graphics;
+    public cursor_control: CursorControl;
+    public sizes: number[];
+    public djinn_names: TextObj[][];
+    public active_djinn_sprite: Phaser.Sprite;
+    public djinn_status_change_header_window: DjinnModeHeaderWindow;
+    public djinn_char_stats_window_left: DjinnCharStatsWindow;
+    public djinn_char_stats_window_right: DjinnCharStatsWindow;
+    public djinn_psynergy_window: DjinnPsynergyWindow;
+    public setting_djinn_status: boolean;
+    public setting_djinn_status_char_index: number;
+    public setting_djinn_status_djinn_index: number;
+    public djinni_status_texts: TextObj[];
+    public stars: Phaser.Sprite[][];
+    public djinn_action_window: DjinnActionWindow;
+    public chars_quick_info_window: CharsQuickInfoDjinnWindow;
+    public view_state: number;
+    public changing_djinn_status: boolean;
+
     constructor (game, data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority, spacebar_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -580,7 +625,7 @@ export class DjinnListWindow {
         }
     }
 
-    open(chars_quick_info_window, djinn_action_window, close_callback, open_callback) {
+    open(chars_quick_info_window, djinn_action_window, close_callback?, open_callback?) {
         this.selected_char_index = 0;
         this.selected_djinn_index = 0;
         this.page_index = 0;
@@ -607,7 +652,7 @@ export class DjinnListWindow {
         }
     }
 
-    close(close_callback) {
+    close(close_callback?) {
         this.window_open = false;
         this.window_active = false;
         this.cursor_control.deactivate();

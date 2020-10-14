@@ -2,7 +2,7 @@ import { Ability } from "./Ability";
 import { Enemy } from "./Enemy";
 import { Item } from "./Item";
 import { MainChar } from "./MainChar";
-import { variation, elements } from "./utils.js"
+import { variation, elements } from "./utils"
 
 export const effect_types = {
     MAX_HP: "max_hp",

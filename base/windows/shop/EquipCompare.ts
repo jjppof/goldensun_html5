@@ -1,5 +1,5 @@
 import { Window, TextObj } from '../../Window';
-import { kill_all_sprites } from '../../utils.js';
+import { kill_all_sprites } from '../../utils';
 import { item_types } from '../../Item';
 import { effect_operators, effect_types } from '../../Effect';
 import { GoldenSun } from '../../GoldenSun';

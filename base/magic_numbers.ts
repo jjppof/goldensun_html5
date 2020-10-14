@@ -1,7 +1,7 @@
 export const GAME_WIDTH = 240;
 export const GAME_HEIGHT = 160;
 export const TARGET_FPS = 60;
-export const HERO_BODY_RADIUS = 7;
+export const HERO_BODY_RADIUS = 7.0;
 export const INV_SQRT2 = 1/Math.sqrt(2);
 export const DELTA_TIME_FACTOR = 50.0/3.0;
 export const MAP_DAMPING = 1;

@@ -6,8 +6,6 @@ name: DEMO dedploy
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
   build:
@@ -16,11 +14,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 14.x
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
-    - name: demo_deploy
+    - name: Demo deploy
       run: |
         npm install
         npm run build
@@ -30,6 +28,7 @@ jobs:
         mv dist/ _temp_/dist
         mv index.html _temp_/index.html
         cd _temp_
+        echo 'gshtml5.org'>CNAME
         git init
         git remote add origin https://jjppof:${{ secrets.GITHUB_TOKEN }}@github.com/jjppof/goldensun_html5.git
         git config --global user.email "jjpp.of@gmail.com"

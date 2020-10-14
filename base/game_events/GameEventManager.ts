@@ -1,5 +1,5 @@
-import { base_actions, directions, is_close, reverse_directions } from "../utils.js";
-import { DialogManager } from "../DialogManager";
+import { base_actions, directions, is_close, reverse_directions } from "../utils";
+import { DialogManager } from "../utils/DialogManager";
 import { npc_types } from "../NPC";
 import { GoldenSun } from "../GoldenSun";
 

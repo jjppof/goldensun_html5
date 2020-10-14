@@ -408,6 +408,7 @@ declare module Phaser {
         animations: Phaser.AnimationManager;
         angle: number;
         autoCull: boolean;
+        autoRound: boolean;
         body: Phaser.Physics.Arcade.Body | Phaser.Physics.P2.Body | Phaser.Physics.Ninja.Body | any;
         bottom: number;
         cameraOffset: Phaser.Point;
@@ -1905,7 +1906,7 @@ declare module Phaser {
         cursor: any;
         cursorIndex: number;
         send_to_back: boolean;
-        base_collider_layer: number;
+        base_collision_layer: number;
         enableBody: boolean;
         enableBodyDebug: boolean;
         exists: boolean;
@@ -4832,7 +4833,7 @@ declare module Phaser {
         components: any;
         cropRect: Phaser.Rectangle;
         customRender: boolean;
-        base_collider_layer: number;
+        base_collision_layer: number;
         disableRoundPx: boolean;
         roundPx: boolean;
         y_sort: number;

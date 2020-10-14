@@ -1,6 +1,9 @@
-import { Window } from '../../Window';
-import * as numbers from '../../magic_numbers.js';
+import { TextObj, Window } from '../../Window';
+import * as numbers from '../../magic_numbers';
 import { CursorControl } from '../../utils/CursorControl';
+import { GoldenSun } from '../../GoldenSun';
+import { ItemSlot, MainChar } from '../../MainChar';
+import { Item } from '../../Item';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 36;
@@ -26,6 +29,31 @@ const YES = 0;
 const NO = 1;
 
 export class GiveItemOptionsWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public base_window: Window;
+    public item_obj: ItemSlot;
+    public item: Item;
+    public char: MainChar;
+    public window_open: boolean;
+    public window_active: boolean;
+    public choosing_char: boolean;
+    public asking_for_equip: boolean;
+    public group: Phaser.Group;
+    public answer_index: number;
+    public yes_text: TextObj;
+    public no_text: TextObj;
+    public cursor_control: CursorControl;
+    public close_callback: Function;
+    public icon_sprite: Phaser.Sprite;
+    public char_name: TextObj;
+    public item_name: TextObj;
+    public action_text: TextObj;
+    public equip_sprite: Phaser.Sprite;
+    public item_count_sprite: Phaser.BitmapText;
+
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -131,7 +159,7 @@ export class GiveItemOptionsWindow {
         }
     }
 
-    open(item_obj, item, char, choosing_char, asking_for_equip, close_callback, open_callback) {
+    open(item_obj, item, char, choosing_char, asking_for_equip, close_callback?, open_callback?) {
         this.item_obj = item_obj;
         this.item = item;
         this.char = char;
@@ -153,7 +181,7 @@ export class GiveItemOptionsWindow {
         }, false);
     }
 
-    close(callback) {
+    close(callback?) {
         this.cursor_control.deactivate();
         this.unset_header();
         this.base_window.close(() => {

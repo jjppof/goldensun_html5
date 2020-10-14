@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import { capitalize } from '../utils.js';
+=======
+import { capitalize } from '../utils';
+import { HorizontalMenu } from '../support_menus/HorizontalMenu';
+>>>>>>> master
 import { MainPsynergyMenu } from './MainPsynergyMenu';
 import { MainItemMenu } from './MainItemMenu';
 import { MainDjinnMenu } from './MainDjinnMenu';

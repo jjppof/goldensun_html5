@@ -1,9 +1,9 @@
-import * as numbers from './magic_numbers.js';
+import * as numbers from './magic_numbers';
 import { TileEvent } from './tile_events/TileEvent';
 import { Debug } from './debug/Debug';
 import { load_all } from './initializers/assets_loader';
 import { Collision } from './Collision';
-import { directions } from './utils.js';
+import { directions } from './utils';
 import { Hero } from './Hero';
 import { TileEventManager } from './tile_events/TileEventManager';
 import { GameEventManager } from './game_events/GameEventManager';
@@ -21,7 +21,7 @@ export class GoldenSun {
     public dbs: any = {};
     public info: any = {};
 
-    //game states
+    //main game states
     public menu_open: boolean = false;
     public shop_open: boolean = false;
     public in_battle: boolean = false;
@@ -29,30 +29,32 @@ export class GoldenSun {
     public force_stop_movement: boolean = false;
 
     //game objects
-    public hero: Hero = null;
-    public collision: Collision = null;
-    public cursors: Phaser.CursorKeys = null;
-    public debug: Debug = null;
-    public main_menu: MainMenu = null;
-    public shop_menu: ShopMenu = null;
-    public control_manager: ControlManager = null;
-    public cursor_manager: CursorManager = null;
-    public map: Map = null;
-    public tile_event_manager: TileEventManager = null;
-    public game_event_manager: GameEventManager = null;
-    public battle_instance: Battle = null;
+    public hero: Hero = null;                           //class responsible for the control of the main hero
+    public collision: Collision = null;                 //class responsible for the collision system
+    public debug: Debug = null;                         //class responsible for the debug systems
+    public main_menu: MainMenu = null;                  //class responbible for the main menu
+    public shop_menu: ShopMenu = null;                  //class responsible for the shop system
+    public map: Map = null;                             //the current active map
+    public tile_event_manager: TileEventManager = null; //class responsible for the tile events
+    public game_event_manager: GameEventManager = null; //class responsible for the game events
+    public battle_instance: Battle = null;              //class responsible for a battle
 
-    //common inputs
+    //inputs
+    public cursors: Phaser.CursorKeys = null;
     public enter_input: Phaser.Signal = null;
     public esc_input: Phaser.Signal = null;
     public shift_input: Phaser.Signal = null;
     public spacebar_input: Phaser.Signal = null;
 
-    //screen
+    //managers
+    public control_manager: ControlManager = null;
+    public cursor_manager: CursorManager = null;
+
+    //variables that control the canvas
     public fullscreen: boolean = false;
     public scale_factor: number = 1;
 
-    //groups
+    //groups that will hold the sprites that are below the hero, same level than hero and above the hero
     public underlayer_group: Phaser.Group = null;
     public npc_group: Phaser.Group = null;
     public overlayer_group: Phaser.Group = null;
@@ -95,8 +97,10 @@ export class GoldenSun {
     }
 
     async create() {
+        //load some json files from assets folder
         load_databases(this.game, this.dbs);
 
+        //initialize common inputs
         this.enter_input = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown;
         this.esc_input = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC).onDown;
         this.shift_input = this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT).onDown;
@@ -104,9 +108,8 @@ export class GoldenSun {
 
         this.scale_factor = this.dbs.init_db.initial_scale_factor;
 
-        //init debug instance
+        //init debug systems
         this.debug = new Debug(this.game, this);
-        //init debug controls
         this.debug.initialize_controls();
 
         //creating groups. Order here is important
@@ -114,9 +117,10 @@ export class GoldenSun {
         this.npc_group = this.game.add.group();
         this.overlayer_group = this.game.add.group();
 
+        //use the data loaded from json files to initialize some data
         await initialize_game_data(this.game, this);
 
-        //configuring map layers: creating sprites, listing events and setting the layers
+        //configs map layers: creates sprites, interactable objects and npcs, lists events and sets the map layers
         this.map = await this.info.maps_list[this.dbs.init_db.map_key_name].mount_map(this.dbs.init_db.map_z_index);
 
         //initializes the controllable hero
@@ -142,10 +146,11 @@ export class GoldenSun {
         this.collision.config_collisions(this.map, this.map.collision_layer, this.npc_group);
         this.game.physics.p2.updateBoundsCollisionGroup();
 
-        this.initialize_game_main_controls();
-
+        //initializes the event managers
         this.tile_event_manager = new TileEventManager(this.game, this, this.hero, this.collision);
         this.game_event_manager = new GameEventManager(this.game, this);
+
+        this.initialize_utils_controls();
 
         //set keyboard cursors
         this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -154,7 +159,7 @@ export class GoldenSun {
         this.game.camera.resetFX();
     }
 
-    initialize_game_main_controls() {
+    initialize_utils_controls() {
         //set initial zoom
         this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event('resize'));
@@ -228,7 +233,7 @@ export class GoldenSun {
         if (this.hero_movement_allowed()) {
             this.hero.update_tile_position(this.map.sprite);
 
-            this.tile_event_manager.fire_triggered_events();
+            this.tile_event_manager.fire_triggered_events(); //trigger any event that's waiting to be triggered
             const location_key = TileEvent.get_location_key(this.hero.tile_x_pos, this.hero.tile_y_pos);
             if (location_key in this.map.events) { //check if the actual tile has an event
                 this.tile_event_manager.check_tile_events(location_key, this.map);

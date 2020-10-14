@@ -1,5 +1,6 @@
-import { Window } from '../../Window';
-import * as numbers from '../../magic_numbers.js';
+import { TextObj, Window } from '../../Window';
+import * as numbers from '../../magic_numbers';
+import { MainChar } from '../../MainChar';
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 36;
@@ -13,6 +14,16 @@ const LV_Y = 8;
 const LV_NUMBER_RIGHT_X = 94;
 
 export class CharsQuickInfoDjinnWindow {
+    public game: Phaser.Game;
+    public char: MainChar;
+    public window_open: boolean;
+    public x: number;
+    public y: number;
+    public base_window: Window;
+    public char_name: TextObj;
+    public char_class: TextObj;
+    public level_number: TextObj;
+
     constructor(game) {
         this.game = game;
         this.char = null;
@@ -38,7 +49,7 @@ export class CharsQuickInfoDjinnWindow {
         this.update_text();
     }
 
-    open(char, callback) {
+    open(char, callback?) {
         this.char = char;
         this.update_text();
         this.base_window.show(() => {
@@ -49,7 +60,7 @@ export class CharsQuickInfoDjinnWindow {
         }, false);
     }
 
-    close(callback) {
+    close(callback?) {
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {

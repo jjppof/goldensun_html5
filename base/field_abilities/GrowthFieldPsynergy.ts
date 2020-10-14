@@ -1,4 +1,4 @@
-import { directions } from "../utils.js";
+import { directions } from "../utils";
 import { FieldAbilities } from "./FieldAbilities";
 import * as _ from "lodash";
 

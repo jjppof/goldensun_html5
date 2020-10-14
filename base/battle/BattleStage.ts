@@ -1,8 +1,11 @@
 
-import * as numbers from '../magic_numbers.js';
-import { range_360 } from '../utils.js';
+import * as numbers from '../magic_numbers';
+import { range_360 } from '../utils';
 import { ability_target_types } from '../Ability';
-import { fighter_types, permanent_status } from '../Player';
+import { fighter_types, permanent_status, Player } from '../Player';
+import { GoldenSun } from '../GoldenSun';
+import { PlayerInfo } from './Battle';
+import * as _ from "lodash";
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
@@ -36,7 +39,59 @@ const RANGES = [11,9,7,5,3,1,3,5,7,9,11];
 const BATTLE_CURSOR_SCALES = [.1,.2,.3,.4,.6,1,.6,.4,.3,.2,.1];
 const CHOOSING_TARGET_SCREEN_SHIFT_TIME = 150;
 
+export type CameraAngle = {
+    rad: number,
+    spining: boolean,
+    update: Function
+};
+
 export class BattleStage {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public camera_angle: CameraAngle;
+    public background_key: string;
+    public old_camera_angle: number;
+    public battle_group: Phaser.Group;
+    public crop_group: Phaser.Group;
+    public group_enemies: Phaser.Group;
+    public group_allies: Phaser.Group;
+    public allies_info: PlayerInfo[];
+    public enemies_info: PlayerInfo[];
+    public allies_count: number;
+    public enemies_count: number;
+    public shift_from_middle_enemy: number;
+    public shift_from_middle_ally: number;
+    public sprites: Phaser.Sprite[];
+    public x: number;
+    public y: number;
+    public choose_timer_repeat: Phaser.Timer;
+    public choose_timer_start: Phaser.Timer;
+    public signal_bindings: Phaser.SignalBinding[];
+    public choosing_actions: boolean;
+    public choosing_targets: boolean;
+    public right_pressed: boolean;
+    public left_pressed: boolean;
+    public target_type: string;
+    public ability_caster: Player;
+    public black_bg: Phaser.Graphics;
+    public battle_bg: Phaser.TileSprite;
+    public battle_bg2: Phaser.TileSprite;
+    public upper_rect: Phaser.Graphics;
+    public lower_rect: Phaser.Graphics;
+    public first_ally_char: Phaser.Sprite;
+    public last_ally_char: Phaser.Sprite;
+    public first_enemy_char: Phaser.Sprite;
+    public last_enemy_char: Phaser.Sprite;
+    public choosing_targets_callback: Function;
+    public range_cursor_position: number;
+    public ability_range: string|number;
+    public ability_type: string;
+    public cursors_tweens: Phaser.Tween[];
+    public cursors: Phaser.Sprite[];
+    public bg_height: number;
+
     constructor(game, data, background_key, allies_info, enemies_info, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -177,7 +232,7 @@ export class BattleStage {
                 this.range_cursor_position = (RANGES.length >> 1) - group_half_length;
                 target_sprite_index = 0;
             } else if (target_sprite_index < 0) {
-                this.range_cursor_position = (RANGES.length >> 1) + group_half_length + !(group_length % 2);
+                this.range_cursor_position = (RANGES.length >> 1) + group_half_length + (+!(group_length % 2));
                 target_sprite_index = group_length - 1;
             }
         } while (group_info[target_sprite_index].instance.has_permanent_status(permanent_status.DOWNED));
@@ -194,15 +249,15 @@ export class BattleStage {
         this.battle_bg = this.game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, "battle_backgrounds", this.background_key);
         this.battle_bg2 = this.game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, "battle_backgrounds", this.background_key);
         this.bg_height = this.battle_bg.height;
-        this.battle_bg.scale.setTo(BG_DEFAULT_SCALE);
-        this.battle_bg2.scale.setTo(BG_DEFAULT_SCALE);
+        this.battle_bg.scale.setTo(BG_DEFAULT_SCALE, BG_DEFAULT_SCALE);
+        this.battle_bg2.scale.setTo(BG_DEFAULT_SCALE, BG_DEFAULT_SCALE);
         const set_sprite = (group, info, is_ally, animation, sprite_base) => {
             const sprite = group.create(0, 0, info.sprite_key);
             sprite.anchor.setTo(0.5, 1);
             sprite.scale.setTo(info.scale, info.scale);
             sprite.ellipses_semi_major = SEMI_MAJOR_AXIS;
             sprite.ellipses_semi_minor = SEMI_MINOR_AXIS;
-            sprite.is_ally = is_ally;
+            sprite.data.is_Ally = is_ally;
             sprite_base.setAnimation(sprite, "battle");
             sprite.animations.play(animation);
             this.sprites.push(sprite);
@@ -216,10 +271,10 @@ export class BattleStage {
             const sprite = set_sprite(this.group_enemies, info, false, "battle_front", this.data.info.enemies_list[info.instance.key_name].sprite_base);
             info.sprite = sprite;
         });
-        this.first_ally_char = this.group_allies.children[0];
-        this.last_ally_char = this.group_allies.children[this.allies_count - 1];
-        this.first_enemy_char = this.group_enemies.children[0];
-        this.last_enemy_char = this.group_enemies.children[this.enemies_count - 1];
+        this.first_ally_char = this.group_allies.children[0] as Phaser.Sprite;
+        this.last_ally_char = this.group_allies.children[this.allies_count - 1] as Phaser.Sprite;
+        this.first_enemy_char = this.group_enemies.children[0] as Phaser.Sprite;
+        this.last_enemy_char = this.group_enemies.children[this.enemies_count - 1] as Phaser.Sprite;
     }
 
     intialize_crop_rectangles() {
@@ -285,10 +340,10 @@ export class BattleStage {
         this.battle_bg2.y = -this.battle_bg.height * (ACTION_POS_BG_SCALE - 1) + BG_Y - CHOOSE_TARGET_ALLY_SHIFT;
         for (let i = 0; i < this.sprites.length; ++i) {
             const sprite = this.sprites[i];
-            const index_shifted = sprite.is_ally ? i : (this.enemies_count - 1) - (i - this.allies_count);
-            const x_shift = sprite.is_ally ? ACTION_POS_ALLY_X : ACTION_POS_ENEMY_CENTER_X - (this.enemies_count >> 1) * ACTION_POS_SPACE_BETWEEN;
+            const index_shifted = sprite.data.is_Ally ? i : (this.enemies_count - 1) - (i - this.allies_count);
+            const x_shift = sprite.data.is_Ally ? ACTION_POS_ALLY_X : ACTION_POS_ENEMY_CENTER_X - (this.enemies_count >> 1) * ACTION_POS_SPACE_BETWEEN;
             const pos_x = x_shift + index_shifted * ACTION_POS_SPACE_BETWEEN;
-            const pos_y = sprite.is_ally ? ACTION_ALLY_Y : ACTION_ENEMY_Y;
+            const pos_y = sprite.data.is_Ally ? ACTION_ALLY_Y : ACTION_ENEMY_Y;
             sprite.x = pos_x;
             sprite.y = pos_y;
             const this_scale_x = sprite.scale.x + Math.sign(sprite.scale.x) * ACTION_POS_SCALE_ADD;
@@ -375,8 +430,8 @@ export class BattleStage {
                 y: this.battle_group.y + (this.target_type === ability_target_types.ALLY ? CHOOSE_TARGET_ALLY_SHIFT : CHOOSE_TARGET_ENEMY_SHIFT)
             }, CHOOSING_TARGET_SCREEN_SHIFT_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
                 const cursor_count = this.ability_range;
-                this.cursors = new Array(cursor_count);
-                this.cursors_tweens = new Array(cursor_count).fill(null);
+                this.cursors = new Array<Phaser.Sprite>(cursor_count as number);
+                this.cursors_tweens = new Array<Phaser.Tween>(cursor_count as number).fill(null);
                 for (let i = 0; i < cursor_count; ++i) {
                     this.cursors[i] = this.battle_group.create(0, 0, "battle_cursor");
                     this.cursors[i].animations.add("anim");
@@ -449,15 +504,15 @@ export class BattleStage {
     update_sprite_properties() {
         for (let i = 0; i < this.sprites.length; ++i) {
             const sprite = this.sprites[i];
-            const relative_angle = sprite.is_ally ? this.camera_angle.rad : this.camera_angle.rad + Math.PI;
+            const relative_angle = sprite.data.is_Ally ? this.camera_angle.rad : this.camera_angle.rad + Math.PI;
             const angle_position = BattleStage.get_angle(relative_angle);
             const pos_x = BattleStage.ellipse_position(sprite, angle_position, true);
             const pos_y = BattleStage.ellipse_position(sprite, angle_position, false);
-            const shift_from_middle = sprite.is_ally ? this.shift_from_middle_ally : this.shift_from_middle_enemy;
-            const index_shifted = sprite.is_ally ? i : i - this.allies_count;
+            const shift_from_middle = sprite.data.is_Ally ? this.shift_from_middle_ally : this.shift_from_middle_enemy;
+            const index_shifted = sprite.data.is_Ally ? i : i - this.allies_count;
             sprite.x = pos_x + ((SPACE_BETWEEN_CHARS * index_shifted - shift_from_middle) + (SPACE_BETWEEN_CHARS >> 1)) * Math.sin(relative_angle); //shift party players from base point
             sprite.y = pos_y;
-            const info = sprite.is_ally ? this.allies_info[index_shifted] : this.enemies_info[index_shifted];
+            const info = sprite.data.is_Ally ? this.allies_info[index_shifted] : this.enemies_info[index_shifted];
             const scale = BattleStage.get_scale(info.scale, relative_angle);
             sprite.scale.setTo(scale, scale);
             if (Math.sin(relative_angle) > 0 && !sprite.animations.currentAnim.name.endsWith('back')) { //change texture in function of position

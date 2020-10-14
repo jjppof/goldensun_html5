@@ -1,6 +1,9 @@
-import { Window } from '../../Window';
-import * as numbers from '../../magic_numbers.js';
+import { TextObj, Window } from '../../Window';
+import * as numbers from '../../magic_numbers';
 import { ItemCounter } from '../../utils/ItemsCounter';
+import { GoldenSun } from '../../GoldenSun';
+import { ItemSlot, MainChar } from '../../MainChar';
+import { Item } from '../../Item';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 52;
@@ -26,6 +29,34 @@ const REMOVE_TEXT_COUNT_X = 53;
 const REMOVE_TEXT_COUNT_Y = ITEM_COUNTER_Y;
 
 export class ItemQuantityManagerWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public item_obj: ItemSlot;
+    public item: Item;
+    public char: MainChar;
+    public window_open: boolean;
+    public window_active: boolean;
+    public x: number;
+    public y: number;
+    public base_window: Window;
+    public group: Phaser.Group;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public choosen_quantity: number;
+    public item_counter: ItemCounter;
+    public remaining_with_char_count: TextObj;
+    public new_amount_with_dest_char_count: TextObj;
+    public to_remove_count: TextObj;
+    public destination_char: MainChar;
+    public icon_sprite: Phaser.Sprite;
+    public char_name: TextObj;
+    public item_name: TextObj;
+    public equip_sprite: Phaser.Sprite;
+    public item_count_sprite: Phaser.BitmapText;
+    public close_callback: Function;
+    public dest_item_obj: ItemSlot;
+    public dest_char_name: TextObj;
+
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -112,7 +143,7 @@ export class ItemQuantityManagerWindow {
         this.group.y = this.game.camera.y + this.y;
     }
 
-    open(item_obj, item, char, close_callback, destination_char, open_callback) {
+    open(item_obj, item, char, close_callback, destination_char?, open_callback?) {
         this.item_obj = item_obj;
         this.item = item;
         this.char = char;
@@ -121,7 +152,11 @@ export class ItemQuantityManagerWindow {
             const dest_item_obj = this.destination_char.items.filter(item => {
                 return item.key_name === item_obj.key_name;
             });
-            this.dest_item_obj = dest_item_obj.length ? dest_item_obj[0] : { quantity: 0 };
+            this.dest_item_obj = dest_item_obj.length ? dest_item_obj[0] : {
+                key_name: null,
+                index: null,
+                quantity: 0
+            };
         }
         this.choosen_quantity = 1;
         this.close_callback = close_callback;

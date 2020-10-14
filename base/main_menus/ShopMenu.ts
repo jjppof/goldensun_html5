@@ -1,7 +1,7 @@
 import { DialogData, ShopkeepDialog } from '../windows/shop/ShopkeepDialog';
 import { BuyArtifactsMenu } from '../windows/shop/BuyArtifactsMenu';
 import { SellRepairMenu } from '../windows/shop/SellRepairMenu';
-import { capitalize } from '../utils.js';
+import { capitalize } from '../utils';
 import { InventoryWindow } from '../windows/shop/InventoryWindow';
 import { BuySelectMenu } from '../windows/shop/BuySelectMenu';
 import { EquipCompare } from '../windows/shop/EquipCompare';

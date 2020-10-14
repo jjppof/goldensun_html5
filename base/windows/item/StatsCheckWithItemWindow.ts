@@ -1,6 +1,9 @@
-import { Window } from '../../Window';
-import { item_types } from '../../Item';
+import { TextObj, Window } from '../../Window';
+import { Item, item_types } from '../../Item';
 import { effect_types, effect_operators } from '../../Effect';
+import { GoldenSun } from '../../GoldenSun';
+import { ItemSlot, MainChar } from '../../MainChar';
+import * as _ from "lodash";
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;
@@ -10,7 +13,35 @@ const ARROW_X = 53;
 const ARROW_Y_SHIFT = 2;
 const PREVIEW_TEXT_X = 94;
 
+type Arrows = {
+    attack: Phaser.Sprite|TextObj,
+    defense: Phaser.Sprite|TextObj,
+    agility: Phaser.Sprite|TextObj
+};
+
 export class StatsCheckWithItemWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public char: MainChar;
+    public window_open: boolean;
+    public x: number;
+    public y: number;
+    public base_window: Window;
+    public avatar_group: Phaser.Group;
+    public x_avatar: number;
+    public y_avatar: number;
+    public avatar: Phaser.Sprite;
+    public up_arrows: Arrows;
+    public down_arrows: Arrows;
+    public preview_stats_texts: Arrows;
+    public name_text: TextObj;
+    public lv_text: TextObj;
+    public attack_text: TextObj;
+    public defense_text: TextObj;
+    public agility_text: TextObj;
+    public item: Item;
+    public item_obj: ItemSlot;
+
     constructor(game, data) {
         this.game = game;
         this.data = data;
@@ -25,21 +56,21 @@ export class StatsCheckWithItemWindow {
         this.y_avatar = this.y + 8;
         this.avatar = null;
 
-        this.up_arrows =  {
+        this.up_arrows = {
             [effect_types.ATTACK]: this.base_window.create_at_group(ARROW_X, 48 - ARROW_Y_SHIFT, "up_arrow"),
             [effect_types.DEFENSE]: this.base_window.create_at_group(ARROW_X, 64 - ARROW_Y_SHIFT, "up_arrow"),
             [effect_types.AGILITY]: this.base_window.create_at_group(ARROW_X, 80 - ARROW_Y_SHIFT, "up_arrow")
-        };
-        this.down_arrows =  {
+        } as Arrows;
+        this.down_arrows = {
             [effect_types.ATTACK]: this.base_window.create_at_group(ARROW_X, 48 - ARROW_Y_SHIFT, "down_arrow"),
             [effect_types.DEFENSE]: this.base_window.create_at_group(ARROW_X, 64 - ARROW_Y_SHIFT, "down_arrow"),
             [effect_types.AGILITY]: this.base_window.create_at_group(ARROW_X, 80 - ARROW_Y_SHIFT, "down_arrow")
-        };
-        this.preview_stats_texts =  {
+        } as Arrows;
+        this.preview_stats_texts = {
             [effect_types.ATTACK]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 48, true),
             [effect_types.DEFENSE]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 64, true),
             [effect_types.AGILITY]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 80, true)
-        };
+        } as Arrows;
         this.hide_arrows();
 
         this.base_window.set_text_in_position("Lv", 48, 24);
@@ -149,7 +180,7 @@ export class StatsCheckWithItemWindow {
         this.set_compare_arrows(effect_types.AGILITY, equip_slot_property, "current_agi", compare_removing);
     }
 
-    open(char, item, item_obj, callback) {
+    open(char, item, item_obj, callback?) {
         this.update_position();
         this.avatar_group.alpha = 1;
         this.char = char;
@@ -164,7 +195,7 @@ export class StatsCheckWithItemWindow {
         }, false);
     }
 
-    close(callback) {
+    close(callback?) {
         this.avatar_group.alpha = 0;
         this.base_window.close(() => {
             this.window_open = false;

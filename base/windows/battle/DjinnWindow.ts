@@ -1,7 +1,10 @@
-import { Window } from "../../Window";
+import { TextObj, Window } from "../../Window";
 import { CursorControl } from '../../utils/CursorControl';
 import { djinn_status, djinn_font_colors } from "../../Djinn";
-import { DjinnStatsWindow } from "./DjinnStatsWindow.js";
+import { DjinnStatsWindow } from "./DjinnStatsWindow";
+import { GoldenSun } from "../../GoldenSun";
+import { MainChar } from "../../MainChar";
+import { PsynergyWindow } from "./PsynergyWindow";
 
 const BASE_WINDOW_X = 160;
 const BASE_WINDOW_Y = 72;
@@ -23,6 +26,34 @@ const CURSOR_SHIFT = 16;
 const RECOVERY_NUMBER_X = 67;
 
 export class DjinnWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public shift_propagation_priority: number;
+    public base_window: Window;
+    public stats_window: DjinnStatsWindow;
+    public group: Phaser.Group;
+    public button: Phaser.Sprite;
+    public highlight_bar: Phaser.Graphics;
+    public signal_bindings: Phaser.SignalBinding[];
+    public djinn_names: TextObj[];
+    public stars_sprites: Phaser.Sprite[];
+    public cursor_control: CursorControl;
+    public window_open: boolean;
+    public window_active: boolean;
+    public psynergy_window_open: boolean;
+    public char: MainChar;
+    public close_callback: Function;
+    public set_description: Function;
+    public psynergy_window: PsynergyWindow;
+    public choosen_ability: string;
+    public djinn_index: number;
+    public djinni: string[];
+    public all_djinni: string[];
+    public page_index: number;
+    public page_number: number;
+
     constructor(game, data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -194,7 +225,7 @@ export class DjinnWindow {
 
     set_page_number() {
         const list_length = this.all_djinni.length;
-        this.page_number = parseInt((list_length - 1)/ELEM_PER_PAGE) + 1;
+        this.page_number = (((list_length - 1)/ELEM_PER_PAGE) | 0) + 1;
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
         }

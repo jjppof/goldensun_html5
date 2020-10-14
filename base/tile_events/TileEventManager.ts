@@ -1,7 +1,7 @@
 import { Collision } from '../Collision';
 import { GoldenSun } from '../GoldenSun';
 import { Hero } from '../Hero';
-import { base_actions } from '../utils.js';
+import { base_actions } from '../utils';
 import { event_types, TileEvent } from './TileEvent';
 
 const EVENT_INIT_DELAY = 350;

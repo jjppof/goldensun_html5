@@ -1,8 +1,103 @@
-import * as numbers from "../magic_numbers.js";
-import { range_360 } from "../utils.js";
-import { DEFAULT_POS_ANGLE } from "./BattleStage.js";
+import * as numbers from "../magic_numbers";
+import { range_360 } from "../utils";
+import { CameraAngle, DEFAULT_POS_ANGLE } from "./BattleStage";
+
+type DefaultAttr = {
+    start_delay: number|number[],
+    to: string|number|number[],
+    is_absolute: boolean,
+    tween: string,
+    duration: number,
+    sprite_index?: string|number|number[],
+    yoyo?: boolean,
+    shift?: number|number[],
+    force_stage_update?: boolean,
+    direction?: boolean
+};
 
 export class BattleAnimation {
+    public game: Phaser.Game;
+    public key_name: string;
+    public sprites_keys: {
+        key_name: string,
+        per_target: boolean,
+        position: string,
+        count: number,
+        trails: boolean,
+        trails_mode: string,
+        trail_frame_diff: number
+    }[];
+    public x_sequence: DefaultAttr[];
+    public y_sequence: DefaultAttr[];
+    public x_ellipse_axis_factor_sequence: DefaultAttr[];
+    public y_ellipse_axis_factor_sequence: DefaultAttr[];
+    public x_scale_sequence: DefaultAttr[];
+    public y_scale_sequence: DefaultAttr[];
+    public x_anchor_sequence: DefaultAttr[];
+    public y_anchor_sequence: DefaultAttr[];
+    public alpha_sequence: DefaultAttr[];
+    public rotation_sequence: DefaultAttr[];
+    public stage_angle_sequence: DefaultAttr[];
+    public hue_angle_sequence: DefaultAttr[];
+    public tint_sequence: {
+        start_delay: number|number[],
+        sprite_index: string|number|number[],
+        value: [r: number, g: number, b: number]
+    }[];
+    public grayscale_sequence: DefaultAttr[];
+    public colorize_sequence: {
+        start_delay: number|number[],
+        sprite_index: string|number|number[],
+        value: number,
+        colorize_intensity: number,
+    }[];
+    public custom_filter_sequence: {
+        start_delay: number|number[], 
+        sprite_index: string|number|number[],
+        filter: string, 
+        value: any
+    }[];
+    public play_sequence: {
+        start_delay: number|number[],
+        sprite_index: string|number|number[],
+        reverse: boolean,
+        frame_rate: number,
+        repeat: boolean,
+        animation_key: string,
+        wait: boolean,
+        hide_on_complete: boolean
+    }[];
+    public set_frame_sequence: any;
+    public blend_mode_sequence: {
+        start_delay: number|number[],
+        sprite_index: string|number|number[],
+        mode: string
+    }[];
+    public is_party_animation: boolean;
+    public running: boolean;
+    public sprites: Phaser.Sprite[];
+    public sprites_prev_properties: {
+        [key: string]: {
+            [property: string]: any
+        }
+    };
+    public stage_prev_value: number;
+    public x0: number;
+    public y0: number;
+    public caster_sprite: Phaser.Sprite;
+    public targets_sprites: Phaser.Sprite[];
+    public background_sprites: Phaser.Sprite[];
+    public group_caster: Phaser.Group;
+    public group_enemy: Phaser.Group;
+    public super_group: Phaser.Group;
+    public stage_camera: CameraAngle;
+    public trails_objs: (Phaser.RenderTexture|Phaser.Sprite)[];
+    public caster_filter: any;
+    public targets_filter: any;
+    public background_filter: any;
+    public sprites_filters: any[];
+    public promises: Promise<any>[];
+
     //tween type can be 'initial' for first position
     //sprite_index: "targets" is the target, "caster" is the caster, "background" is the background sprite, 0...n is the sprites_key_names index
     //property "to" value can be "target" or an actual value. In the case of "target" is the the corresponding property value. In the case of using "target", a "shift" property is available to be added to the resulting value
@@ -102,12 +197,12 @@ export class BattleAnimation {
                     const frames = Phaser.Animation.generateFrameNames(sprite_info.key_name + '/', 1, psy_sprite.animations.frameTotal, '', 3);
                     psy_sprite.animations.add(sprite_info.key_name, frames);
                     psy_sprite.animations.frameName = frames[0];
-                    psy_sprite.battle_index = this.sprites.length;
-                    psy_sprite.trails = sprite_info.trails;
-                    psy_sprite.trails_info = trails_info;
+                    psy_sprite.data.battle_index = this.sprites.length;
+                    psy_sprite.data.trails = sprite_info.trails;
+                    psy_sprite.data.trails_info = trails_info;
                     if (sprite_info.trails) {
-                        psy_sprite.x_history = new Array(trails_info.frame_diff + 1).fill(psy_sprite.x - this.game.camera.x);
-                        psy_sprite.y_history = new Array(trails_info.frame_diff + 1).fill(psy_sprite.y - this.game.camera.y);
+                        psy_sprite.data.x_history = new Array(trails_info.frame_diff + 1).fill(psy_sprite.x - this.game.camera.x);
+                        psy_sprite.data.y_history = new Array(trails_info.frame_diff + 1).fill(psy_sprite.y - this.game.camera.y);
                     }
                     this.sprites.push(psy_sprite);
                 }
@@ -200,7 +295,7 @@ export class BattleAnimation {
                 sprite.destroy();
             });
             this.trails_objs.forEach(obj => {
-                obj.destroy();
+                obj.destroy(true);
             });
             this.running = false;
             if (finish_callback !== undefined) {
@@ -209,7 +304,7 @@ export class BattleAnimation {
         });
     }
 
-    get_sprites(seq, inner_property) {
+    get_sprites(seq, inner_property?) {
         if (inner_property) {
             if (seq.sprite_index === "background") {
                 if (inner_property === "filter") {
@@ -259,7 +354,7 @@ export class BattleAnimation {
         }
     }
 
-    play_number_property_sequence(sequence, target_property, inner_property) {
+    play_number_property_sequence(sequence, target_property, inner_property?) {
         let chained_tweens = {};
         let auto_start_tween = {};
         for (let i = 0; i < sequence.length; ++i) {
@@ -271,7 +366,7 @@ export class BattleAnimation {
             let sprites = this.get_sprites(seq, inner_property);
             let promises_set = false;
             sprites.forEach((this_sprite, index) => {
-                const uniq_key = this_sprite.key + "_" + this_sprite.battle_index;
+                const uniq_key = this_sprite.key + "_" + this_sprite.data.battle_index;
                 if (this.sprites_prev_properties[uniq_key] === undefined) {
                     this.sprites_prev_properties[uniq_key] = {};
                 }
@@ -416,7 +511,7 @@ export class BattleAnimation {
         }
     }
 
-    play_filter_property(sequence, property, ...secondary_properties) {
+    play_filter_property(sequence, property?, ...secondary_properties) {
         for (let i = 0; i < sequence.length; ++i) {
             const filter_seq = sequence[i];
             let sprites = this.get_sprites(filter_seq);
@@ -456,7 +551,7 @@ export class BattleAnimation {
                         to_value -= Math.sign(to_value) * numbers.degree360;
                     }
                 } else {
-                    to_value = this.stage_prev_value + stage_angle_seq.to;
+                    to_value = this.stage_prev_value + (stage_angle_seq.to as number);
                 }
             }
             this.stage_prev_value = to_value;
@@ -472,7 +567,7 @@ export class BattleAnimation {
                     stage_angle_seq.duration,
                     stage_angle_seq.tween.split('.').reduce((p, prop) => p[prop], Phaser.Easing),
                     chained_tweens.length === 0,
-                    stage_angle_seq.start_delay
+                    stage_angle_seq.start_delay as number
                 );
                 let resolve_function;
                 let this_promise = new Promise(resolve => { resolve_function = resolve; });
@@ -498,16 +593,16 @@ export class BattleAnimation {
     render() {
         let clear = true;
         this.sprites.forEach(sprite => {
-            if (!sprite.trails) return;
-            sprite.x_history.unshift(sprite.x);
-            sprite.y_history.unshift(sprite.y);
+            if (!sprite.data.trails) return;
+            sprite.data.x_history.unshift(sprite.x);
+            sprite.data.y_history.unshift(sprite.y);
             if (clear) {
-                sprite.trails_info.texture_1.clear();
-                sprite.trails_info.texture_2.clear();
+                sprite.data.trails_info.texture_1.clear();
+                sprite.data.trails_info.texture_2.clear();
                 clear = false;
             }
-            sprite.trails_info.texture_1.renderXY(sprite, sprite.x_history[sprite.trails_info.frame_diff >> 1], sprite.y_history[sprite.trails_info.frame_diff >> 1]);
-            sprite.trails_info.texture_2.renderXY(sprite, sprite.x_history.pop(), sprite.y_history.pop());
+            sprite.data.trails_info.texture_1.renderXY(sprite, sprite.data.x_history[sprite.data.trails_info.frame_diff >> 1], sprite.data.y_history[sprite.data.trails_info.frame_diff >> 1]);
+            sprite.data.trails_info.texture_2.renderXY(sprite, sprite.data.x_history.pop(), sprite.data.y_history.pop());
         });
     }
 

@@ -1,7 +1,10 @@
-import { Window } from "../../Window";
+import { TextObj, Window } from "../../Window";
 import { CursorControl } from '../../utils/CursorControl';
-import * as numbers from "../../magic_numbers.js"
+import * as numbers from "../../magic_numbers";
 import { use_types } from "../../Item";
+import { GoldenSun } from "../../GoldenSun";
+import { ItemSlot, MainChar } from "../../MainChar";
+import * as _ from "lodash";
 
 const BASE_WINDOW_X = 120;
 const BASE_WINDOW_Y = 72;
@@ -24,6 +27,31 @@ const SUB_ICON_X = 7;
 const SUB_ICON_Y = 8;
 
 export class ItemWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public base_window: Window;
+    public group: Phaser.Group;
+    public button: Phaser.Sprite;
+    public highlight_bar: Phaser.Graphics;
+    public signal_bindings: Phaser.SignalBinding[];
+    public item_names: TextObj[];
+    public other_sprites: (Phaser.Sprite|Phaser.Group|Phaser.BitmapText)[];
+    public cursor_control: CursorControl;
+    public window_open: boolean;
+    public window_active: boolean;
+    public item_index: number;
+    public page_index: number;
+    public page_number: number;
+    public close_callback: Function;
+    public set_description: Function;
+    public choosen_ability: string;
+    public item_obj: ItemSlot;
+    public items: ItemSlot[];
+    public all_items: ItemSlot[];
+    public char: MainChar;
+
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -168,7 +196,7 @@ export class ItemWindow {
 
     set_page_number() {
         const list_length = this.all_items.length;
-        this.page_number = parseInt((list_length - 1)/ELEM_PER_PAGE) + 1;
+        this.page_number = (((list_length - 1)/ELEM_PER_PAGE) | 0) + 1;
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
         }

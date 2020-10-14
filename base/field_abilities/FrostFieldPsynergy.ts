@@ -1,5 +1,5 @@
-import * as numbers from '../magic_numbers.js';
-import { get_surroundings, directions} from "../utils.js";
+import * as numbers from '../magic_numbers';
+import { get_surroundings, directions} from "../utils";
 import { JumpEvent } from "../tile_events/JumpEvent";
 import { FieldAbilities } from "./FieldAbilities";
 import * as _ from "lodash";
@@ -84,7 +84,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
                 JumpEvent.active_jump_surroundings(
                     this.data,
                     get_surroundings(event.x, event.y, false, 2),
-                    this.target_object.collider_layer_shift + this.target_object.base_collider_layer
+                    this.target_object.collider_layer_shift + this.target_object.base_collision_layer
                 );
             }
         });

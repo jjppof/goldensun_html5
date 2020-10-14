@@ -1,6 +1,8 @@
-import { Window } from '../../Window';
-import * as numbers from '../../magic_numbers.js';
-import { ordered_elements } from '../../utils.js';
+import { TextObj, Window } from '../../Window';
+import * as numbers from '../../magic_numbers';
+import { ordered_elements } from '../../utils';
+import { MainChar } from '../../MainChar';
+import { Djinn } from '../../Djinn';
 
 const BASE_WIN_WIDTH = 116;
 const BASE_WIN_HEIGHT = 116;
@@ -31,6 +33,30 @@ const ARROW_CHANGE_CLASS_X = 24;
 const ARROW_CHANGE_CLASS_Y = 48;
 
 export class DjinnCharStatsWindow {
+    public game: Phaser.Game;
+    public window_open: boolean;
+    public sprites: Phaser.Sprite[];
+    public base_window: Window;
+    public char_name_text: TextObj;
+    public level_number_text: TextObj;
+    public class_text: TextObj;
+    public new_class_text: TextObj;
+    public djinn_number_texts: {
+        [element: string]: TextObj
+    };
+    public stats_current_texts: {
+        [stat: string]: TextObj
+    };
+    public stats_next_texts: {
+        [stat: string]: TextObj
+    };
+    public class_name_arrow: Phaser.Sprite;
+    public class_name_arrow_blink_timer: Phaser.Timer;
+    public char: MainChar;
+    public djinni: Djinn[];
+    public next_djinni_status: string;
+    public action: string;
+
     constructor(game, win_x = 0) {
         this.game = game;
         this.window_open = false;
@@ -119,7 +145,7 @@ export class DjinnCharStatsWindow {
         }
     }
 
-    open(char, djinni, next_djinni_status, action, callback) {
+    open(char, djinni, next_djinni_status, action?, callback?) {
         this.char = char;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;
@@ -133,7 +159,7 @@ export class DjinnCharStatsWindow {
         }, false);
     }
 
-    close(callback) {
+    close(callback?) {
         this.unmount_window();
         this.base_window.close(() => {
             this.window_open = false;

@@ -1,4 +1,4 @@
-import { elements } from './utils.js';
+import { elements } from './utils';
 import * as _ from "lodash";
 
 export class Classes {

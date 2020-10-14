@@ -1,7 +1,7 @@
-import * as numbers from '../magic_numbers.js';
+import * as numbers from '../magic_numbers';
 import { ability_msg_types } from '../Ability';
 import { effect_names, effect_types } from '../Effect';
-import { element_names } from '../utils.js';
+import { element_names } from '../utils';
 import { on_remove_status_msg } from '../Player';
 
 const LOG_X = 3;
@@ -11,6 +11,11 @@ const LOG_2_Y = 151;
 const ANIM_DURATION = 50;
 
 export class BattleLog {
+    public game: Phaser.Game;
+    public x: number;
+    public y: number;
+    public logs: Phaser.BitmapText[];
+
     constructor(game) {
         this.game = game;
         this.x = game.camera.x;

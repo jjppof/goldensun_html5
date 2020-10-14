@@ -4,8 +4,8 @@ import { djinn_status } from './Djinn';
 import { Effect, effect_types } from './Effect';
 import { item_types } from './Item';
 import { Player, fighter_types, permanent_status } from './Player';
-import { elements, ordered_elements } from './utils.js';
-import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from './magic_numbers.js';
+import { elements, ordered_elements } from './utils';
+import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from './magic_numbers';
 import * as _ from "lodash";
 
 const ELEM_LV_DELTA = 1;
@@ -92,7 +92,6 @@ export class MainChar extends Player {
     public in_party: boolean;
     public abilities: string[];
     public turns: number;
-    public fighter_type: number;
     public battle_animations_variations: {[ability_key: string]: string};
     public venus_level_current: number;
     public mercury_level_current: number;
@@ -469,7 +468,7 @@ export class MainChar extends Player {
         this.add_djinn(new_djinn_key_name);
     }
 
-    preview_djinn_change(stats, djinni_key_name, djinni_next_status, action) {
+    preview_djinn_change(stats, djinni_key_name, djinni_next_status, action?) {
         const previous_class = this.class;
         let venus_lv = this.venus_level_current;
         let mercury_lv = this.mercury_level_current;

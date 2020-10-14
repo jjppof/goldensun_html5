@@ -1,6 +1,6 @@
 import { Djinn } from '../Djinn';
 import { SpriteBase } from '../SpriteBase';
-import { elements } from '../utils.js';
+import { elements } from '../utils';
 
 export function initialize_djinni(djinni_db) {
     let djinni_list = {};

@@ -1,4 +1,4 @@
-import { DialogManager } from '../../DialogManager';
+import { DialogManager } from '../../utils/DialogManager';
 import { GoldenSun } from '../../GoldenSun';
 import { ShopMenu } from '../../main_menus/ShopMenu';
 import * as _ from "lodash";

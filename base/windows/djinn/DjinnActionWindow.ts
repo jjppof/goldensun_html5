@@ -1,4 +1,4 @@
-import { Window } from '../../Window';
+import { TextObj, Window } from '../../Window';
 import { djinn_status } from '../../Djinn';
 
 const BASE_WIN_WIDTH = 132;
@@ -17,6 +17,19 @@ const DJINN_ACTION_X = SHIFT_KEY_X + 23;
 const DJINN_ACTION_Y = 24;
 
 export class DjinnActionWindow {
+    public game: Phaser.Game;
+    public window_open: boolean;
+    public base_window: Window;
+    public action_description_text: TextObj;
+    public char_name_text: TextObj;
+    public djinn_name_text: TextObj;
+    public star_sprite: Phaser.Sprite;
+    public shift_key: {
+        shadow: Phaser.Sprite,
+        text: Phaser.Sprite
+    };
+    public action_text: TextObj;
+
     constructor(game) {
         this.game = game;
         this.window_open = false;
@@ -56,7 +69,7 @@ export class DjinnActionWindow {
         this.shift_key.text.alpha = this.shift_key.shadow.alpha = 0;
     }
 
-    open(callback) {
+    open(callback?) {
         this.base_window.show(() => {
             this.window_open = true;
             if (callback !== undefined) {
@@ -65,7 +78,7 @@ export class DjinnActionWindow {
         }, false);
     }
 
-    close(callback) {
+    close(callback?) {
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {

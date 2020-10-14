@@ -1,4 +1,4 @@
-import { directions } from "../utils.js";
+import { directions } from "../utils";
 import { TileEvent, event_types } from "./TileEvent";
 
 export class CollisionEvent extends TileEvent {

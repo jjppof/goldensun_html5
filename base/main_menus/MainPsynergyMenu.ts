@@ -2,7 +2,7 @@ import { CharsMenu } from '../support_menus/CharsMenu';
 import { BasicInfoWindow } from '../windows/BasicInfoWindow';
 import { ItemPsynergyChooseWindow } from '../windows/ItemPsynergyChooseWindow';
 import { TextObj, Window } from '../Window';
-import * as numbers from '../magic_numbers.js';
+import * as numbers from '../magic_numbers';
 import { GoldenSun } from '../GoldenSun';
 import { ShopCharDisplay } from '../windows/shop/ShopCharDisplay';
 
@@ -55,7 +55,22 @@ export class MainPsynergyMenu {
     constructor(game:Phaser.Game, data:GoldenSun) {
         this.game = game;
         this.data = data;
+<<<<<<< HEAD
 
+=======
+        this.esc_propagation_priority = esc_propagation_priority + 1;
+        this.enter_propagation_priority = enter_propagation_priority + 1;
+        this.chars_menu = new CharsMenu(
+            this.game,
+            this.data,
+            this.char_choose.bind(this),
+            this.char_change.bind(this),
+            this.close_menu.bind(this),
+            this.enter_propagation_priority,
+            this.esc_propagation_priority
+        );
+        this.basic_info_window = new BasicInfoWindow(this.game);
+>>>>>>> master
         this.selected_char_index = 0;
         this.is_open = false;
         this.choosing_psynergy = false;

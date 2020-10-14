@@ -1,10 +1,12 @@
-import { Window } from "../../Window";
+import { TextObj, Window } from "../../Window";
 import { CursorControl } from '../../utils/CursorControl';
-import * as numbers from "../../magic_numbers.js"
+import * as numbers from "../../magic_numbers"
 import { Djinn } from "../../Djinn";
-import { SummonDjinnStandbyWindow } from "./SummonDjinnStandbyWindow.js";
+import { SummonDjinnStandbyWindow } from "./SummonDjinnStandbyWindow";
 import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle";
 import { MainChar } from "../../MainChar";
+import { GoldenSun } from "../../GoldenSun";
+import * as _ from "lodash";
 
 const BASE_WINDOW_X = 104;
 const BASE_WINDOW_Y = 88;
@@ -25,6 +27,32 @@ const CURSOR_SHIFT = 16;
 const SUMMON_ICON_X = 10;
 
 export class SummonWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public base_window: Window;
+    public group: Phaser.Group;
+    public button: Phaser.Sprite;
+    public highlight_bar: Phaser.Graphics;
+    public signal_bindings: Phaser.SignalBinding[];
+    public summon_names: TextObj[];
+    public other_sprites: (Phaser.Sprite|Phaser.Group|Phaser.BitmapText)[];
+    public cursor_control: CursorControl;
+    public djinn_numbers_window: SummonDjinnStandbyWindow;
+    public window_open: boolean;
+    public window_active: boolean;
+    public close_callback: Function;
+    public set_description: Function;
+    public summon_index: number;
+    public page_index: number;
+    public page_number: number;
+    public choosen_ability: string;
+    public summons: any[];
+    public all_summons: any[];
+    public char: MainChar;
+    public djinni_already_used: {[element: string]: number};
+
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -159,19 +187,19 @@ export class SummonWindow {
 
     set_page_number() {
         const list_length = this.all_summons.length;
-        this.page_number = parseInt((list_length - 1)/ELEM_PER_PAGE) + 1;
+        this.page_number = (((list_length - 1)/ELEM_PER_PAGE) | 0) + 1;
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
         }
     }
 
     mount_window() {
-        this.standby_djinni = Djinn.get_standby_djinni(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE));
-        for (let elem in this.standby_djinni) {
-            this.standby_djinni[elem] -= this.djinni_already_used[elem];
+        const standby_djinni = Djinn.get_standby_djinni(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE));
+        for (let elem in standby_djinni) {
+            standby_djinni[elem] -= this.djinni_already_used[elem];
         }
         this.all_summons = _.map(this.data.dbs.summons_db, summon => {
-            const available = _.every(summon.requirements, (value, elem) => value <= this.standby_djinni[elem]);
+            const available = _.every(summon.requirements, (value, elem) => value <= standby_djinni[elem]);
             return Object.assign({}, summon, {
                 available: available,
                 index: available ? -summon.index : summon.index
@@ -224,6 +252,7 @@ export class SummonWindow {
         this.highlight_bar.alpha = 1;
         this.cursor_control.activate();
         this.djinn_numbers_window.open();
+        this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
         this.base_window.show(() => {
             this.window_active = true;
         }, false);

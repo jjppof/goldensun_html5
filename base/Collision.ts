@@ -74,8 +74,8 @@ export class Collision {
     change_map_body(data, new_collider_layer_index) {
         if (data.map.collision_layer === new_collider_layer_index) return;
         data.map.collision_layer = new_collider_layer_index;
-        this.hero.shadow.base_collider_layer = data.map.collision_layer;
-        this.hero.sprite.base_collider_layer = data.map.collision_layer;
+        this.hero.shadow.base_collision_layer = data.map.collision_layer;
+        this.hero.sprite.base_collision_layer = data.map.collision_layer;
         data.map.config_body(this, new_collider_layer_index);
         this.config_collision_groups(data.map);
         this.config_collisions(data.map, data.map.collision_layer, data.npc_group);

@@ -1,5 +1,5 @@
 import { Effect, effect_types } from "./Effect";
-import { ordered_elements } from "./utils.js";
+import { ordered_elements } from "./utils";
 
 export const fighter_types = {
     ALLY: 1,
@@ -54,6 +54,7 @@ export class Player {
     public effects: Effect[];
     public effect_turns_count: {[effect: string]: number|{[element: string]: number}};
     public battle_scale: number;
+    public fighter_type: number;
 
     constructor(key_name, name) {
         this.key_name = key_name;

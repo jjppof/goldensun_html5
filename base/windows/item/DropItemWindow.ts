@@ -1,5 +1,8 @@
-import { Window } from '../../Window';
+import { TextObj, Window } from '../../Window';
 import { CursorControl } from '../../utils/CursorControl';
+import { GoldenSun } from '../../GoldenSun';
+import { ItemSlot, MainChar } from '../../MainChar';
+import { Item } from '../../Item';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 76;
@@ -20,6 +23,26 @@ const SUB_ICON_X = 7;
 const SUB_ICON_Y = 8;
 
 export class DropItemWindow {
+    public game: Phaser.Game;
+    public data: GoldenSun;
+    public base_window: Window;
+    public item_obj: ItemSlot;
+    public item: Item;
+    public char: MainChar;
+    public window_open: boolean;
+    public window_active: boolean;
+    public esc_propagation_priority: number;
+    public enter_propagation_priority: number;
+    public icon_name: TextObj;
+    public icon: Phaser.Sprite;
+    public item_count_sprite: Phaser.BitmapText;
+    public group: Phaser.Group;
+    public answer_index: number;
+    public dropped: boolean;
+    public cursor_control: CursorControl;
+    public close_callback: Function;
+    public quantity_to_remove: number;
+
     constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
         this.game = game;
         this.data = data;
@@ -113,7 +136,7 @@ export class DropItemWindow {
         this.close(this.close_callback.bind(this, this.dropped));
     }
 
-    open(item_obj, item, char, quantity_to_remove, close_callback, open_callback) {
+    open(item_obj, item, char, quantity_to_remove, close_callback?, open_callback?) {
         this.item_obj = item_obj;
         this.item = item;
         this.char = char;
