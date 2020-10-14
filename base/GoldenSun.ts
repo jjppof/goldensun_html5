@@ -11,10 +11,10 @@ import { load_databases } from './initializers/databases_loader';
 import { initialize_game_data } from './initializers/initialize_info';
 import { Map } from './Map';
 import { Battle } from './battle/Battle';
-import { MainMenu } from './main_menus/MainMenu';
+import { MainMenu, initialize_menu } from './main_menus/MainMenu';
 import { ShopMenu } from './main_menus/ShopMenu';
-import { ControlManager } from './utils/ControlManager.js';
-import { CursorManager } from './utils/CursorManager.js';
+import { ControlManager } from './utils/ControlManager';
+import { CursorManager } from './utils/CursorManager';
 
 export class GoldenSun {
     public game: Phaser.Game = null;
@@ -192,6 +192,14 @@ export class GoldenSun {
             this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
             window.dispatchEvent(new Event('resize'));
         });
+
+        //initialize managers
+        this.cursor_manager = new CursorManager(this.game);
+        this.control_manager = new ControlManager(this.game);
+
+        //initialize screens
+        this.shop_menu = new ShopMenu(this.game, this);
+        this.main_menu = initialize_menu(this.game, this);
 
         //enable psynergies shortcuts for testing
         this.game.input.keyboard.addKey(Phaser.Keyboard.Q).onDown.add(() => {

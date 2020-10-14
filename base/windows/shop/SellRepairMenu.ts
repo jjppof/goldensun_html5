@@ -23,6 +23,7 @@ export class SellRepairMenu{
     public data:GoldenSun;
     public parent:ShopMenu;
     public control_manager:ControlManager;
+    public close_callback:Function;
 
     public item_desc_win:Window;
     public your_coins_win:Window;
@@ -45,6 +46,7 @@ export class SellRepairMenu{
         this.data = data;
         this.parent = parent;
         this.control_manager = this.data.control_manager;
+        this.close_callback = null;
         
         this.item_desc_win = this.parent.item_desc_win;
         this.your_coins_win = this.parent.your_coins_win;
@@ -275,8 +277,9 @@ export class SellRepairMenu{
             enter: this.on_character_select.bind(this)});
     }
 
-    open_menu(is_repair_menu){
+    open_menu(is_repair_menu:boolean, close_callback?:Function){
         this.is_repair_menu = is_repair_menu;
+        this.close_callback = close_callback;
         this.active = true;
 
         if(is_repair_menu){
@@ -306,8 +309,8 @@ export class SellRepairMenu{
         this.active = false;
 
         this.control_manager.reset();
-        this.parent.horizontal_menu.activate();
-        this.parent.open_horizontal_menu();
+        this.close_callback();
+        this.close_callback = null;
     }
 
 }

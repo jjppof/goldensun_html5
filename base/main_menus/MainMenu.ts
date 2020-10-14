@@ -4,7 +4,7 @@ import { MainItemMenu } from './MainItemMenu';
 import { MainDjinnMenu } from './MainDjinnMenu';
 import { CharsStatusWindow } from '../windows/CharsStatusWindow';
 import { GoldenSun } from '../GoldenSun';
-import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu.js';
+import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu';
 
 export class MainMenu {
     public game: Phaser.Game;
@@ -31,13 +31,14 @@ export class MainMenu {
                 on_cancel:  this.close_menu.bind(this),
             }
         );
-        this.psynergy_menu = new MainPsynergyMenu(this.game, this.data, parent);
-        this.item_menu = new MainItemMenu(this.game, this.data, parent);
-        this.djinn_menu = new MainDjinnMenu(this.game, this.data, parent);
+        this.psynergy_menu = new MainPsynergyMenu(this.game, this.data);
+        this.item_menu = new MainItemMenu(this.game, this.data);
+        this.djinn_menu = new MainDjinnMenu(this.game, this.data);
     }
 
-    button_press(index) {
-        switch (this.buttons_keys[index]) {
+    button_press() {
+        this.horizontal_menu.deactivate(true);
+        switch (this.buttons_keys[this.horizontal_menu.selected_button_index]) {
             case "psynergy":
                 this.button_press_action(this.psynergy_menu);
                 break;
@@ -50,9 +51,9 @@ export class MainMenu {
         }
     }
 
-    button_press_action(menu) {
+    button_press_action(menu:any) {
         this.horizontal_menu.deactivate();
-        menu.open_menu(close_this_menu => {
+        menu.open_menu((close_this_menu:boolean) => {
             this.horizontal_menu.activate();
             this.chars_status_window.update_chars_info();
             if (close_this_menu) {
@@ -82,10 +83,11 @@ export class MainMenu {
         this.data.menu_open = false;
         this.horizontal_menu.close();
         this.chars_status_window.close();
+        this.data.control_manager.reset();
     }
 }
 
-export function initialize_menu(game, data) {
+export function initialize_menu(game:Phaser.Game, data:GoldenSun) {
     data.spacebar_input.add(() => {
         if (data.hero.in_action() || data.in_battle || !data.created || data.game_event_manager.on_event) return;
         if (!data.menu_open) {

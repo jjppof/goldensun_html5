@@ -32,7 +32,7 @@ const ACTION_WINDOW_MSG_WIDTH = 67;
 const ACTION_WINDOW_MSG_HEIGHT = 20;
 
 export class ItemOptionsWindow {
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
+    constructor(game, data) {
         this.game = game;
         this.data = data;
         this.item_obj = null;
@@ -62,8 +62,6 @@ export class ItemOptionsWindow {
         };
         this.horizontal_index = 0;
         this.vertical_index = 0;
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
         this.cursor_control = new CursorControl(this.game, true, true, () => MAX_HORIZONTAL, () => MAX_VERTICAL, this.group,
             this.on_change.bind(this), this.on_change.bind(this), this.get_horizontal_index.bind(this), this.set_horizontal_index.bind(this),
             this.get_vertical_index.bind(this), this.set_vertical_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),

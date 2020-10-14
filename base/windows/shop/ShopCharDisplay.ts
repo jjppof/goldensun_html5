@@ -1,7 +1,6 @@
 import { Window } from '../../Window';
 import * as utils from '../../utils.js';
 import { GoldenSun } from '../../GoldenSun';
-import { ShopMenu } from '../../main_menus/ShopMenu';
 import { MainChar } from '../../MainChar';
 
 const MAX_PER_LINE = 4;
@@ -11,8 +10,16 @@ const WIN_Y = 112;
 const WIN_WIDTH = 100;
 const WIN_HEIGHT = 20;
 
+const WIN_X2 = 0;
+const WIN_Y2 = 0;
+const WIN_WIDTH2 = 100;
+const WIN_HEIGHT2 = 36;
+
 const CHAR_GROUP_X = 16;
 const CHAR_GROUP_Y = 128;
+
+const CHAR_GROUP_X2 = 16;
+const CHAR_GROUP_Y2 = 26;
 
 const GAP_SIZE = 24;
 const SHIFT_X = 16;
@@ -20,6 +27,9 @@ const SHIFT_Y = 32;
 
 const CURSOR_X = 0;
 const CURSOR_Y = 118;
+
+const CURSOR_X2 = 0;
+const CURSOR_Y2 = 22;
 
 const ARROW_GROUP_X = 96;
 const ARROW_GROUP_Y = 100;
@@ -29,12 +39,19 @@ const DOWN_ARROW_X = 0;
 const DOWN_ARROW_Y = 24;
 const ARROW_Y_DIFF = 8;
 
+const ARROW_GROUP_X2 = 92;
+const ARROW_GROUP_Y2 = -4;
+
+const MENU_SELECTED_Y_SHIFT = 4;
+
+const SHOP_MODE = "shop";
+const MENU_MODE = "menu";
+
 const ARROW_TWEEN_TIME = Phaser.Timer.QUARTER >> 1;
 
 export class ShopCharDisplay {
     public game:Phaser.Game;
     public data:GoldenSun;
-    public parent:ShopMenu;
     public on_change:Function;
     public close_callback:Function;
 
@@ -50,10 +67,11 @@ export class ShopCharDisplay {
     public selected_index:number;
     public is_active:boolean;
     public is_open:boolean;
-    constructor(game, data, parent, on_change){
+    public mode:string;
+
+    constructor(game:Phaser.Game, data:GoldenSun, on_change:Function){
         this.game = game;
         this.data = data;
-        this.parent = parent;
         this.on_change = on_change;
         this.close_callback = null;
 
@@ -80,13 +98,28 @@ export class ShopCharDisplay {
         this.selected_index = 0;
         this.is_active = false;
         this.is_open = false;
+        this.mode = null;
     }
 
-    update_group_pos(){
-        this.char_group.x = CHAR_GROUP_X - SHIFT_X + this.game.camera.x;
-        this.char_group.y = CHAR_GROUP_Y - SHIFT_Y + this.game.camera.y;
-        this.arrow_group.x = ARROW_GROUP_X + this.game.camera.x;
-        this.arrow_group.y = ARROW_GROUP_Y + this.game.camera.y;
+    check_mode(){
+        if(this.mode === SHOP_MODE){
+            this.window.update_size({width:WIN_WIDTH, height:WIN_HEIGHT});
+            this.window.update_position({x:WIN_X, y:WIN_Y});
+
+            this.char_group.x = CHAR_GROUP_X - SHIFT_X + this.game.camera.x;
+            this.char_group.y = CHAR_GROUP_Y - SHIFT_Y + this.game.camera.y;
+            this.arrow_group.x = ARROW_GROUP_X + this.game.camera.x;
+            this.arrow_group.y = ARROW_GROUP_Y + this.game.camera.y;
+        }
+        else if(this.mode === MENU_MODE){
+            this.window.update_size({width:WIN_WIDTH2, height:WIN_HEIGHT2});
+            this.window.update_position({x:WIN_X2, y:WIN_Y2});
+
+            this.char_group.x = CHAR_GROUP_X2 - SHIFT_X + this.game.camera.x;
+            this.char_group.y = CHAR_GROUP_Y2 - SHIFT_Y + this.game.camera.y;
+            this.arrow_group.x = ARROW_GROUP_X2 + this.game.camera.x;
+            this.arrow_group.y = ARROW_GROUP_Y2 + this.game.camera.y;
+        }
     }
 
     /*Hides or shows specific arrows
@@ -186,7 +219,7 @@ export class ShopCharDisplay {
         }
 
         utils.kill_all_sprites(this.char_group);
-        //unset run animation for previous character
+        this.unset_character(this.selected_index);
         this.set_chars();
         this.check_arrows();
         this.select_char(this.selected_index);
@@ -206,15 +239,38 @@ export class ShopCharDisplay {
         this.change_line(index, force_index);
     }
 
+    set_character(index:number){
+        if(this.mode===SHOP_MODE){
+            //set run animation for new character;
+        }
+
+        else if(this.mode===MENU_MODE){
+            this.char_group.children[index].y = MENU_SELECTED_Y_SHIFT;
+        }
+    }
+
+    unset_character(index:number){
+        if(this.mode===SHOP_MODE){
+            //unset run animation for new character;
+        }
+
+        else if(this.mode===MENU_MODE){
+            this.char_group.children[index].y = 0;
+        }
+    }
+
     select_char(index:number){
-        //unset run animation for previous character;
-        this.selected_index = index;
-        //set run animation for new character;
+        this.unset_character(this.selected_index);
+        this.selected_index =  index;
+        this.set_character(this.selected_index);
         
-        this.data.cursor_manager.move_to(CURSOR_X + index*GAP_SIZE, CURSOR_Y, "wiggle");
-        let c = this.data.info.party_data.members[this.current_line*MAX_PER_LINE + this.selected_index];
+        if(this.mode===SHOP_MODE) this.data.cursor_manager.move_to(CURSOR_X + index*GAP_SIZE, CURSOR_Y, "wiggle");
+        else if (this.mode===MENU_MODE) this.data.cursor_manager.move_to(CURSOR_X2 + index*GAP_SIZE, CURSOR_Y2, "point");
         
-        this.on_change(c.key_name);
+        if(this.on_change){
+            let c = this.data.info.party_data.members[this.current_line*MAX_PER_LINE + this.selected_index];
+            this.on_change(c.key_name);
+        }
     }
 
     next_char(){
@@ -248,7 +304,9 @@ export class ShopCharDisplay {
     }
 
     activate(){
-        this.data.cursor_manager.move_to(CURSOR_X + this.selected_index*GAP_SIZE, CURSOR_Y, "wiggle");
+        if(this.mode===SHOP_MODE) this.data.cursor_manager.move_to(CURSOR_X + this.selected_index*GAP_SIZE, CURSOR_Y, "wiggle");
+        else if (this.mode===MENU_MODE) this.data.cursor_manager.move_to(CURSOR_X2 + this.selected_index*GAP_SIZE, CURSOR_Y2, "point");
+
         this.is_active = true;
     }
     
@@ -257,15 +315,16 @@ export class ShopCharDisplay {
         this.is_active = false;
     }
 
-    open(select_index:number=0, close_callback?:Function, open_callback?:Function) {
+    open(select_index:number=0, mode:string=SHOP_MODE, close_callback?:Function, open_callback?:Function) {
         this.selected_index = select_index;
         this.current_line = 0;
+        this.mode = mode;
 
         this.make_lines();
-        this.update_group_pos();
+        this.check_mode();
         this.check_arrows();
         this.set_chars();
-        //set running animation for character
+        this.select_char(this.selected_index);
 
         this.char_group.alpha = 1;
         this.is_open = true;
@@ -286,6 +345,7 @@ export class ShopCharDisplay {
         this.is_active = false;
         this.is_open = false;
         this.char_group.alpha = 0;
+        this.mode = null;
 
         this.set_arrows(false, false);
 

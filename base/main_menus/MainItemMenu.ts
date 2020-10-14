@@ -40,8 +40,6 @@ const ITEM_OVERVIEW_HEIGHT_SHIFT = 16;
 export class MainItemMenu {
     public game: Phaser.Game;
     public data: GoldenSun;
-    public esc_propagation_priority: number;
-    public enter_propagation_priority: number;
     public chars_menu: CharsMenu;
     public basic_info_window: BasicInfoWindow;
     public item_change_stats_window: StatsCheckWithItemWindow;
@@ -65,19 +63,13 @@ export class MainItemMenu {
     public choosing_give_destination: boolean;
     public after_char_choose_on_give: Function;
 
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
+    constructor(game, data) {
         this.game = game;
         this.data = data;
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
         this.chars_menu = new CharsMenu(
             this.game,
             this.data,
-            this.char_choose.bind(this),
             this.char_change.bind(this),
-            this.char_choose_cancel.bind(this),
-            this.esc_propagation_priority,
-            this.enter_propagation_priority
         );
         this.basic_info_window = new BasicInfoWindow(this.game);
         this.item_change_stats_window = new StatsCheckWithItemWindow(this.game, this.data);
@@ -102,10 +94,8 @@ export class MainItemMenu {
             this.data,
             false,
             this.item_change.bind(this),
-            this.item_choose.bind(this),
-            this.esc_propagation_priority
         );
-        this.item_options_window = new ItemOptionsWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
+        this.item_options_window = new ItemOptionsWindow(this.game, this.data);
         this.choosing_give_destination = false;
     }
 
@@ -114,7 +104,7 @@ export class MainItemMenu {
             if (!this.is_open) return;
             this.data.esc_input.halt();
             this.close_menu();
-        }, this, this.esc_propagation_priority);
+        }, this);
     }
 
     shift_item_overview(down) {

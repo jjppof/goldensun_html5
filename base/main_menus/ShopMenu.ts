@@ -130,14 +130,14 @@ export class ShopMenu{
             this.buttons_keys.map(b => capitalize(b)),
             {on_press: this.button_press.bind(this), on_cancel: this.close_menu.bind(this)});
 
-        this.npc_dialog = new ShopkeepDialog(this.game, this.data, this);
+        this.npc_dialog = new ShopkeepDialog(this.game, this.data);
 
         this.yesno_action = new YesNoMenu(this.game, this.data);
-        this.inv_win = new InventoryWindow(this.game, this.data, this, this.on_inv_win_change.bind(this));
-        this.buy_select = new BuySelectMenu(this.game, this.data, this, this.on_buy_select_change.bind(this));
+        this.inv_win = new InventoryWindow(this.game, this.data, this.on_inv_win_change.bind(this));
+        this.buy_select = new BuySelectMenu(this.game, this.data, this.on_buy_select_change.bind(this));
         this.eq_compare = new EquipCompare(this.game, this.data);
         this.quant_win = new ShopItemQuantityWindow(this.game, this.data);
-        this.char_display = new ShopCharDisplay(this.game, this.data, this, this.on_char_display_change.bind(this));
+        this.char_display = new ShopCharDisplay(this.game, this.data, this.on_char_display_change.bind(this));
 
         this.item_price_win = new Window(this.game, ITEM_PRICE_WIN_X, ITEM_PRICE_WIN_Y, ITEM_PRICE_WIN_WIDTH, ITEM_PRICE_WIN_HEIGHT);
         this.your_coins_win = new Window(this.game, YOUR_COINS_WIN_X, YOUR_COINS_WIN_Y, YOUR_COINS_WIN_WIDTH, YOUR_COINS_WIN_HEIGHT);
@@ -156,6 +156,10 @@ export class ShopMenu{
         this.item_price_coins_label = this.item_price_win.set_text_in_position("Coins", ITEM_PRICE_COINS_X, ITEM_PRICE_COINS_Y);
 
         this.item_desc_text = this.item_desc_win.set_text_in_position("", ITEM_DESC_TEXT_X, ITEM_DESC_TEXT_Y);
+    }
+    on_submenu_close(){
+        this.horizontal_menu.activate();
+        this.open_horizontal_menu();
     }
 
     on_char_display_change(key_name:string){
@@ -249,19 +253,19 @@ export class ShopMenu{
         switch (this.buttons_keys[this.horizontal_menu.selected_button_index]){
             case "buy":
                 this.alternate_window_pos(BUY_MODE);
-                this.buy_menu.open_menu(false);
+                this.buy_menu.open_menu(false, this.on_submenu_close.bind(this));
                 break;
             case "sell":
                 this.alternate_window_pos(SELL_MODE);
-                this.sell_menu.open_menu(false);
+                this.sell_menu.open_menu(false, this.on_submenu_close.bind(this));
                 break;
             case "artifacts":
                 this.alternate_window_pos(BUY_MODE);
-                this.buy_menu.open_menu(true);
+                this.buy_menu.open_menu(true, this.on_submenu_close.bind(this));
                 break;
             case "repair":
                 this.alternate_window_pos(SELL_MODE);
-                this.sell_menu.open_menu(true);
+                this.sell_menu.open_menu(true, this.on_submenu_close.bind(this));
                 break;
         }
         if(!this.npc_dialog.is_active){
@@ -280,7 +284,7 @@ export class ShopMenu{
 
     open_horizontal_menu(message_key="cancel_option"){
         if(!this.npc_dialog.is_active){
-            this.npc_dialog.open(this.shop_key);
+            this.npc_dialog.open(this.shop_key, this.data.info.shops_list[this.shop_key].avatar_key, this.data.info.shops_list[this.shop_key].dialog_key);
         }
         else{
             this.npc_dialog.update_dialog(message_key);

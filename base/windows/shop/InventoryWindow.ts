@@ -47,7 +47,6 @@ Input: game [Phaser:Game] - Reference to the running game object
 export class InventoryWindow{
     public game:Phaser.Game;
     public data:GoldenSun;
-    public parent:ShopMenu;
     public on_change:Function;
     public close_callback:Function;
 
@@ -63,10 +62,9 @@ export class InventoryWindow{
     public sprite_group:Phaser.Group;
     public icon_group:Phaser.Group;
 
-    constructor(game:Phaser.Game, data:GoldenSun, parent:ShopMenu, on_change:Function){
+    constructor(game:Phaser.Game, data:GoldenSun, on_change:Function){
         this.game = game;
         this.data = data;
-        this.parent = parent;
         this.on_change = on_change;
         this.close_callback = null;
 

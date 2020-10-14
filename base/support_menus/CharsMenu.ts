@@ -44,12 +44,12 @@ export class CharsMenu {
     };
     public buttons_number: number;
 
-    constructor(game, data, on_choose, on_change, on_cancel) {
+    constructor(game, data, on_change) {
         this.game = game;
         this.data = data;
-        this.on_choose = on_choose === undefined ? () => {} : on_choose;
-        this.on_change = on_change === undefined ? () => {} : on_change;
-        this.on_cancel = on_cancel === undefined ? () => {} : on_cancel;
+        //this.on_choose = on_choose === undefined ? () => {} : on_choose;
+        //this.on_change = on_change === undefined ? () => {} : on_change;
+        //this.on_cancel = on_cancel === undefined ? () => {} : on_cancel;
         this.base_window = new Window(this.game, 0, 0, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
         this.group = game.add.group();
         this.group.alpha = 0;
@@ -62,7 +62,7 @@ export class CharsMenu {
         this.line_index = 0;
         this.menu_open = false;
         this.menu_active = false;
-        this.set_control();
+        //this.set_control();
         this.cursor_control = new CursorControl(this.game, true, false, this.get_max_per_line.bind(this), undefined, this.group,
             this.change_button.bind(this), undefined, this.get_selected_button_index.bind(this), this.set_selected_button_index.bind(this),
             undefined, undefined, this.is_open.bind(this), this.is_activated.bind(this), this.get_cursor_x.bind(this),
@@ -136,7 +136,7 @@ export class CharsMenu {
 
     /*Manages interaction with the parent menu
     Passes control over to the Choose/Cancel functions*/
-    set_control() {
+    /*set_control() {
         this.data.enter_input.add(() => {
             if (!this.menu_open || !this.menu_active) return;
             this.data.enter_input.halt();
@@ -147,7 +147,7 @@ export class CharsMenu {
             this.data.esc_input.halt();
             this.on_cancel();
         }, this, this.esc_propagation_priority);
-    }
+    }*/
 
     /*Updates the position for the character menu*/
     update_position() {

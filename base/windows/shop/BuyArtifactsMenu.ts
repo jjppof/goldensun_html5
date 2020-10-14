@@ -31,6 +31,7 @@ export class BuyArtifactsMenu{
     public data:GoldenSun;
     public parent:ShopMenu;
     public control_manager:ControlManager;
+    public close_callback:Function;
     
     public item_desc_win:Window;
     public your_coins_win:Window;
@@ -56,6 +57,7 @@ export class BuyArtifactsMenu{
         this.data = data;
         this.parent = parent;
         this.control_manager = this.data.control_manager;
+        this.close_callback = null;
         
         this.item_desc_win = this.parent.item_desc_win;
         this.your_coins_win = this.parent.your_coins_win;
@@ -477,8 +479,9 @@ export class BuyArtifactsMenu{
         }
     }
 
-    open_menu(is_artifacts_menu:boolean){
+    open_menu(is_artifacts_menu:boolean, close_callback?:Function){
         this.is_artifacts_menu = is_artifacts_menu;
+        this.close_callback = close_callback;
         this.active = true;
         this.item_list = this.is_artifacts_menu ? this.parent.artifact_list : this.parent.normal_item_list;
 
@@ -520,8 +523,8 @@ export class BuyArtifactsMenu{
         this.active = false;
 
         this.control_manager.reset();
-        this.parent.horizontal_menu.activate();
-        this.parent.open_horizontal_menu();
+        this.close_callback();
+        this.close_callback = null;
     }
 
 }

@@ -8,18 +8,26 @@ const PSY_OVERVIEW_WIN_X = 104;
 const PSY_OVERVIEW_WIN_Y = 24;
 const PSY_OVERVIEW_WIN_WIDTH = 132;
 const PSY_OVERVIEW_WIN_HEIGHT = 108;
+
 const SPACE_BETWEEN_ITEMS = 1;
+const ELEM_NAME_ICON_SHIFT = 4;
+
 const ELEM_PADDING_TOP = 12;
 const ELEM_PADDING_LEFT = 8;
 const ELEM_PER_PAGE = 5;
+
 const PSY_PP_X = 125;
 const PSY_PP_COST_X = 102;
 const PSY_PP_COST_Y = 8;
-const ELEM_NAME_ICON_SHIFT = 4;
+
 const HIGHLIGHT_WIDTH = 114;
 const HIGHLIGHT_HEIGHT = numbers.FONT_SIZE;
+
 const SUB_ICON_X = 0;
 const SUB_ICON_Y = 0;
+
+const CURSOR_X = -5;
+const CURSOR_Y = ELEM_PADDING_TOP + ((numbers.ICON_HEIGHT >> 1)|0);
 
 /*Displays the character's Psynergy or Items
 Used in a selection-type menu, referring to the above
@@ -35,45 +43,45 @@ export class ItemPsynergyChooseWindow {
     public game: Phaser.Game;
     public data: GoldenSun;
     public is_psynergy_window: boolean;
+    public on_change: Function;
+
     public element_list: any;
     public element_sprite_key: string;
-    public on_choose: Function;
-    public on_change: Function;
-    public esc_propagation_priority: number;
-    public enter_propagation_priority: number;
+
     public window: Window;
     public group: Phaser.Group;
+
     public window_open: boolean;
     public window_activated: boolean;
     public close_callback: Function;
     public char: MainChar;
     public char_select_controls_sprites: (Phaser.Sprite|Phaser.BitmapText)[];
+
     public page_index: number;
     public page_number: number;
     public text_sprites_in_window: TextObj[];
     public icon_sprites_in_window: (Phaser.Sprite|Phaser.Group)[];
     public selected_element_index: number;
     public elements: string[]|ItemSlot[];
-    public cursor_control: CursorControl;
     public selected_element_tween: Phaser.Tween;
+
     public highlight_bar: Phaser.Graphics;
     public char_index: number;
     public item_objs: ItemSlot[];
 
-    constructor(game, data, is_psynergy_window, on_change, on_choose, esc_propagation_priority, enter_propagation_priority?) {
+    constructor(game:Phaser.Game, data:GoldenSun, is_psynergy_window:boolean, on_change:Function) {
         this.game = game;
         this.data = data;
         this.is_psynergy_window = is_psynergy_window;
+        this.on_change = on_change === undefined ? () => {} : on_change;
+
         this.element_list = this.is_psynergy_window ? this.data.info.abilities_list : this.data.info.items_list;
         this.element_sprite_key = this.is_psynergy_window ? "abilities_icons" : "items_icons";
-        this.on_choose = on_choose === undefined ? () => {} : on_choose;
-        this.on_change = on_change === undefined ? () => {} : on_change;
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
+
         this.window = new Window(this.game, PSY_OVERVIEW_WIN_X, PSY_OVERVIEW_WIN_Y, PSY_OVERVIEW_WIN_WIDTH, PSY_OVERVIEW_WIN_HEIGHT);
         this.group = game.add.group();
         this.group.alpha = 0;
-        this.set_control();
+
         this.window_open = false;
         this.window_activated = false;
         this.close_callback = undefined;
@@ -86,17 +94,14 @@ export class ItemPsynergyChooseWindow {
         ];
         const sprite_pair = this.window.set_text_in_position(": Change Char", 49, 96);
         this.char_select_controls_sprites.push(sprite_pair.text, sprite_pair.shadow);
+
         this.page_index = 0;
         this.text_sprites_in_window = [];
         this.icon_sprites_in_window = [];
         this.selected_element_index = 0;
         this.elements = [];
-        this.cursor_control = new CursorControl(this.game, true, true, this.get_page_number.bind(this), this.get_elem_per_page.bind(this), this.group,
-            this.page_change.bind(this), this.element_change.bind(this), this.get_page_index.bind(this), this.set_page_index.bind(this),
-            this.get_element_index.bind(this), this.set_element_index.bind(this), this.is_open.bind(this), this.is_activated.bind(this),
-            this.get_cursor_x.bind(this), this.get_cursor_y.bind(this)
-        );
         this.selected_element_tween = null;
+
         this.highlight_bar = this.game.add.graphics(0, 0);
         this.highlight_bar.blendMode = PIXI.blendModes.SCREEN;
         this.window.add_sprite_to_group(this.highlight_bar);
@@ -106,7 +111,24 @@ export class ItemPsynergyChooseWindow {
         if (this.is_psynergy_window) {
             this.window.set_text_in_position("PP", PSY_PP_COST_X, PSY_PP_COST_Y);
         }
+
         this.window.init_page_indicator_bar();
+    }
+
+    next_page(){
+
+    }
+
+    previous_page(){
+
+    }
+
+    next_element(){
+
+    }
+
+    previous_element(){
+        
     }
 
     /*Returns the name of the Psynergy/Item
@@ -116,28 +138,6 @@ export class ItemPsynergyChooseWindow {
     Output: [string]*/
     get_element_key_name(index) {
         return this.is_psynergy_window ? this.elements[index] : (this.elements[index] as ItemSlot).key_name;
-    }
-
-    set_control() {
-        this.data.esc_input.add(() => {
-            if (!this.window_open || !this.window_activated) return;
-            this.data.esc_input.halt();
-            this.close();
-        }, this, this.esc_propagation_priority);
-        this.data.enter_input.add(() => {
-            if (!this.window_open || !this.window_activated) return;
-            this.data.enter_input.halt();
-            if (this.is_psynergy_window && this.element_list[this.elements[this.selected_element_index] as string].is_field_psynergy) {
-                this.close();
-            }
-            if (!this.is_psynergy_window) {
-                this.deactivate();
-            }
-            this.on_choose(
-                this.element_list[this.get_element_key_name(this.selected_element_index) as string],
-                this.is_psynergy_window ? undefined : this.item_objs[this.selected_element_index]
-            );
-        }, this, this.enter_propagation_priority);
     }
 
     /*Checks "open" state
@@ -180,20 +180,6 @@ export class ItemPsynergyChooseWindow {
     Input: index [number] - The new page's index*/
     set_page_index(index) {
         this.page_index = index;
-    }
-
-    /*Returns the cursor's x value
-
-    Output: [number]*/
-    get_cursor_x() {
-        return -5;
-    }
-
-    /*Returns the cursor's y value
-
-    Output: [number]*/
-    get_cursor_y() {
-        return ELEM_PADDING_TOP + ((numbers.ICON_HEIGHT >> 1)|0) + this.selected_element_index * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS);
     }
 
     /*Returns the number of elements in this page
@@ -254,7 +240,7 @@ export class ItemPsynergyChooseWindow {
         }
         if (this.selected_element_index >= this.elements.length) {
             this.selected_element_index = this.elements.length - 1;
-            this.cursor_control.set_cursor_position();
+            this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.selected_element_index * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS))
         }
         for (let i = 0; i < this.elements.length; ++i) {
             const elem_key_name = this.get_element_key_name(i);
@@ -380,21 +366,24 @@ export class ItemPsynergyChooseWindow {
         this.update_position();
         this.char_index = char_index;
         this.char = this.data.info.party_data.members[char_index];
+
         this.set_page_number();
         this.group.alpha = 1;
         this.close_callback = close_callback;
         this.window.show(open_callback, false);
+
         this.selected_element_index = 0;
         this.page_index = 0;
         this.set_elements();
+
         this.window.set_page_indicator(this.page_number, this.page_index);
-        this.cursor_control.activate();
         this.set_element_tween();
         this.set_highlight_bar();
         this.on_change(
             this.element_list[this.get_element_key_name(this.selected_element_index) as string],
             this.is_psynergy_window ? undefined : this.item_objs[this.selected_element_index]
         );
+
         this.window_open = true;
         this.window_activated = true;
     }
@@ -405,7 +394,7 @@ export class ItemPsynergyChooseWindow {
         this.group.alpha = 1;
         this.clear_sprites();
         this.window.unset_page_indicator();
-        this.cursor_control.deactivate();
+        this.data.cursor_manager.hide();
         this.unset_element_tween();
         this.window_open = false;
         this.window_activated = false;
@@ -421,7 +410,6 @@ export class ItemPsynergyChooseWindow {
             this.is_psynergy_window ? undefined : this.item_objs[this.selected_element_index]
         );
         this.window.set_page_indicator(this.page_number, this.page_index);
-        this.cursor_control.activate();
         this.set_element_tween();
         this.set_highlight_bar();
         this.window_activated = true;
@@ -435,7 +423,7 @@ export class ItemPsynergyChooseWindow {
     deactivate() {
         this.clear_sprites();
         this.window.unset_page_indicator();
-        this.cursor_control.deactivate();
+        this.data.cursor_manager.hide();
         this.unset_element_tween();
         this.unset_highlight_bar();
         this.window_activated = false;
