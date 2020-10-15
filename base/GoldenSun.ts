@@ -38,7 +38,6 @@ export class GoldenSun {
     public battle_instance: Battle = null;              //class responsible for a battle
 
     //inputs
-    public cursors: Phaser.CursorKeys = null;
     public enter_input: Phaser.Signal = null;
     public esc_input: Phaser.Signal = null;
     public shift_input: Phaser.Signal = null;
@@ -145,9 +144,6 @@ export class GoldenSun {
         this.game_event_manager = new GameEventManager(this.game, this);
 
         this.initialize_utils_controls();
-
-        //set keyboard cursors
-        this.cursors = this.game.input.keyboard.createCursorKeys();
 
         this.created = true;
         this.game.camera.resetFX();
