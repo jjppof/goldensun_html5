@@ -1,0 +1,101 @@
+import { base_actions, directions, reverse_directions } from "../utils";
+import { event_types, TileEvent } from "./TileEvent";
+
+const TIME_PER_TILE = 60;
+const DUST_COUNT = 6;
+const DUST_KEY = "dust";
+
+export class SliderEvent extends TileEvent {
+    public x_target: number;
+    public y_target: number;
+    public dest_collision_layer: number;
+    public show_dust: boolean;
+    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, x_target, y_target, dest_collision_layer, show_dust) {
+        super(game, data, event_types.SLIDER, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
+        this.x_target = x_target;
+        this.y_target = y_target;
+        this.dest_collision_layer = dest_collision_layer;
+        this.show_dust = show_dust === undefined ? true : show_dust;
+    }
+
+    fire() {
+        if (!this.data.hero.stop_by_colliding || !this.check_position() || !this.data.hero_movement_allowed(false)) {
+            return;
+        }
+        this.data.tile_event_manager.on_event = true;
+        this.data.hero.sliding = true;
+        this.game.physics.p2.pause();
+
+        const initial_x = this.data.map.sprite.tileWidth * (this.x + 0.5);
+        const initial_y = this.data.map.sprite.tileHeight * (this.y + 0.6);
+        const jump_y = this.data.map.sprite.tileHeight * this.y;
+        this.data.hero.play(base_actions.JUMP, reverse_directions[directions.down], false);
+        this.game.time.events.add(200, () => {
+            this.data.hero.shadow.visible = false;
+            this.data.hero.current_action = base_actions.IDLE;
+            this.data.hero.play(base_actions.IDLE, reverse_directions[directions.down], false);
+            this.game.add.tween(this.data.hero.sprite.body).to(
+                {x: initial_x, y: [jump_y, initial_y]}, 150, Phaser.Easing.Linear.None, true
+            ).onComplete.addOnce(() => {
+                if (this.show_dust) {
+                    this.dust_animation();
+                }
+                const little_step = initial_y + (this.data.map.sprite.tileHeight * 1.2);
+                this.game.add.tween(this.data.hero.sprite.body).to(
+                    {y: little_step}, 70, Phaser.Easing.Quadratic.Out, true
+                ).onComplete.addOnce(() => {
+                    this.data.hero.set_frame(directions.down_right);
+                    this.game.time.events.add(40, () => {
+                        this.data.hero.set_frame(directions.down_left);
+                        this.game.time.events.add(40, () => {
+                            this.data.hero.set_frame(directions.down);
+                        });
+                    });
+                    const target_x = this.data.map.sprite.tileWidth * (this.x_target + 0.5);
+                    const target_y = this.data.map.sprite.tileHeight * (this.y_target + 0.5);
+                    const slide_time = Math.abs(this.y_target - this.y) * TIME_PER_TILE;
+                    this.game.add.tween(this.data.hero.sprite.body).to(
+                        {x: target_x, y: target_y}, slide_time, Phaser.Easing.Linear.None, true
+                    ).onComplete.addOnce(() => {
+                        this.data.hero.play();
+                        this.data.hero.update_shadow();
+                        this.data.hero.shadow.visible = true;
+                        if (this.dest_collision_layer !== this.data.map.collision_layer) {
+                            this.data.collision.change_map_body(this.data, this.dest_collision_layer);
+                        }
+                        this.game.time.events.add(80, () => {
+                            this.data.hero.sliding = false;
+                            this.game.physics.p2.resume();
+                            this.data.tile_event_manager.on_event = false;
+                        })
+                    });
+                });
+            });
+        });
+    }
+
+    dust_animation() {
+        const dust_sprite_base = this.data.info.misc_sprite_base_list[DUST_KEY];
+        const initial_x = this.data.map.sprite.tileWidth * (this.x + 0.5);
+        for (let i = 0; i < DUST_COUNT; ++i) {
+            this.game.time.events.add(40 * i, () => {
+                const start_x = this.data.hero.sprite.body.x - Math.random() * this.data.map.sprite.tileWidth + (this.data.map.sprite.tileWidth >> 1);
+                const start_y = this.data.hero.sprite.body.y - Math.random() * this.data.map.sprite.tileHeight + (this.data.map.sprite.tileHeight >> 1);
+                const dust_sprite: Phaser.Sprite = this.data.npc_group.create(start_x, start_y, DUST_KEY);
+                dust_sprite.base_collision_layer = this.dest_collision_layer;
+                dust_sprite.anchor.setTo(0.5, 0.5);
+                this.game.add.tween(dust_sprite).to({
+                    x: start_x + (start_x < initial_x ? -1 : 1) * (this.data.map.sprite.tileHeight/3),
+                    y: start_y - (this.data.map.sprite.tileHeight >> 1)
+                }, 400, Phaser.Easing.Linear.None, true);
+                this.data.npc_group.setChildIndex(dust_sprite, this.data.npc_group.getChildIndex(this.data.hero.sprite));
+                dust_sprite_base.setAnimation(dust_sprite, DUST_KEY);
+                const animation_key = dust_sprite_base.getAnimationKey(DUST_KEY, "spread");
+                dust_sprite.animations.getAnimation(animation_key).onComplete.addOnce(() => {
+                    dust_sprite.destroy();
+                });
+                dust_sprite.animations.play(animation_key);
+            });
+        }
+    }
+};

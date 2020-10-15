@@ -1,6 +1,6 @@
 import { event_types, TileEvent } from "./TileEvent";
 import * as numbers from '../magic_numbers';
-import { get_surroundings, get_opposite_direction, directions, split_direction, reverse_directions } from '../utils';
+import { get_surroundings, get_opposite_direction, directions, split_direction, reverse_directions, base_actions } from '../utils';
 
 const JUMP_OFFSET = 30;
 const JUMP_DURATION = 150;
@@ -14,7 +14,7 @@ export class JumpEvent extends TileEvent {
     }
 
     fire() {
-        if (!this.data.hero.stop_by_colliding || !this.check_position() || this.data.hero.in_action() || this.data.menu_open || this.data.in_battle || this.data.tile_event_manager.on_event) {
+        if (!this.data.hero.stop_by_colliding || !this.check_position() || !this.data.hero_movement_allowed(false)) {
             return;
         }
         let jump_offset = JUMP_OFFSET;
@@ -110,7 +110,7 @@ export class JumpEvent extends TileEvent {
             tween_obj.x = hero_x;
         }
         this.game.physics.p2.pause();
-        this.data.hero.play("jump", reverse_directions[jump_direction]);
+        this.data.hero.play(base_actions.JUMP, reverse_directions[jump_direction]);
         this.data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.data.hero.shadow.visible = false;
             this.data.hero.shadow.x = hero_x;
@@ -123,7 +123,7 @@ export class JumpEvent extends TileEvent {
             ).onComplete.addOnce(() => {
                 this.data.hero.shadow.visible = true;
                 this.data.hero.sprite.animations.currentAnim.reverseOnce();
-                this.data.hero.play("jump", reverse_directions[jump_direction]);
+                this.data.hero.play(base_actions.JUMP, reverse_directions[jump_direction]);
                 this.data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
                     this.game.physics.p2.resume();
                     this.data.hero.jumping = false;

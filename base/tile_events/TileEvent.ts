@@ -9,7 +9,8 @@ export const event_types = {
     TELEPORT: "teleport",
     JUMP: "jump",
     STEP: "step",
-    COLLISION: "collision"
+    COLLISION: "collision",
+    SLIDER: "slider"
 };
 
 export class TileEvent {

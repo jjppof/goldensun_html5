@@ -207,8 +207,8 @@ export class GoldenSun {
         });
     }
 
-    hero_movement_allowed() {
-        return !(this.hero.in_action(true) || this.menu_open || this.shop_open || this.in_battle || this.tile_event_manager.on_event || this.force_stop_movement);
+    hero_movement_allowed(allow_climbing = true) {
+        return !(this.hero.in_action(allow_climbing) || this.menu_open || this.shop_open || this.in_battle || this.tile_event_manager.on_event || this.force_stop_movement);
     }
 
     update() {

@@ -34,7 +34,7 @@
                     "up_right"
                 ],
                 "directions_frames_number": 6,
-                "frame_rate": 7
+                "frame_rate": 8
             },{
                 "key": "dash",
                 "spritesheet": "assets/images/spritesheets/main_chars/isaac_dash.json",
@@ -50,7 +50,7 @@
                     "up_right"
                 ],
                 "directions_frames_number": 6,
-                "frame_rate": 10
+                "frame_rate": 11
             },{
                 "key": "climb",
                 "spritesheet": "assets/images/spritesheets/main_chars/isaac_climb.json",

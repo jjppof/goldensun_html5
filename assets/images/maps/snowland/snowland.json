@@ -206,7 +206,7 @@
  "orientation":"orthogonal",
  "properties":
     {
-     "event_01":"{\n\"type\": \"teleport\",\n\"x_target\": 28,\n\"y_target\": 22,\n\"target\": \"madra_side\",\n\"activation_directions\": \"left\",\n\"x\": 0,\n\"y\": 18,\n\"advance_effect\": false,\n\"dest_collider_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
+     "event_01":"{\n\"type\": \"teleport\",\n\"x_target\": 28,\n\"y_target\": 22,\n\"target\": \"madra_side\",\n\"activation_directions\": \"left\",\n\"x\": 0,\n\"y\": 18,\n\"advance_effect\": false,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": [0]\n}",
      "footprint":true
     },
  "propertytypes":

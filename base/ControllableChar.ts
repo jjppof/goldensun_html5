@@ -28,6 +28,7 @@ export class ControllableChar {
     public climbing: boolean;
     public pushing: boolean;
     public jumping: boolean;
+    public sliding: boolean;
     public casting_psynergy: boolean;
     public teleporting: boolean;
     public idle_climbing: boolean;
@@ -60,6 +61,7 @@ export class ControllableChar {
         this.climbing = false;
         this.pushing = false;
         this.jumping = false;
+        this.sliding = false;
         this.casting_psynergy = false;
         this.teleporting = false;
         this.idle_climbing = false;
@@ -82,7 +84,7 @@ export class ControllableChar {
     }
 
     in_action(allow_climbing = false) {
-        return this.casting_psynergy || this.pushing || (this.climbing && !allow_climbing) || this.jumping || this.teleporting;
+        return this.casting_psynergy || this.pushing || (this.climbing && !allow_climbing) || this.jumping || this.teleporting || this.sliding;
     }
 
     set_sprite(group, sprite_info, map_sprite, layer, anchor_x?, anchor_y?) {
@@ -128,7 +130,7 @@ export class ControllableChar {
         this.shadow.base_collision_layer = layer;
     }
 
-    play(action?, animation?) {
+    play(action?, animation?, start = true) {
         action = action === undefined ? this.current_action : action;
         animation = animation === undefined ? reverse_directions[this.current_direction] : animation;
         if (this.sprite_info.getSpriteAction(this.sprite) !== action) {
@@ -139,8 +141,18 @@ export class ControllableChar {
         if (!this.sprite.animations.getAnimation(animation_key)) {
             this.sprite_info.setAnimation(this.sprite, action);
         }
-        this.sprite.animations.play(animation_key);
-        return this.sprite.animations.getAnimation(animation_key);
+        const animation_obj = this.sprite.animations.getAnimation(animation_key);
+        if (start) {
+            this.sprite.animations.play(animation_key);
+        } else {
+            animation_obj.stop(true);
+        }
+        return animation_obj;
+    }
+
+    set_frame(direction: number, frame_index = 0) {
+        const frame_name = this.sprite_info.getFrameName(this.current_action, reverse_directions[direction], frame_index);
+        this.sprite.frameName = frame_name;
     }
 
     update_shadow() {

@@ -57,7 +57,8 @@ export const base_actions = {
     DASH: "dash",
     PUSH: "push",
     CLIMB: "climb",
-    CAST: "cast"
+    CAST: "cast",
+    JUMP: "jump"
 };
 
 export const action_inputs = {
