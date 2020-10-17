@@ -1,6 +1,6 @@
 import { TextObj, Window } from '../../Window';
 import * as numbers from '../../magic_numbers';
-import { ItemCounter } from '../../utils/ItemsCounter';
+import { ItemCounter } from '../../utils/ItemCounter';
 import { GoldenSun } from '../../GoldenSun';
 import { ItemSlot, MainChar } from '../../MainChar';
 import { Item } from '../../Item';
@@ -28,6 +28,11 @@ const REMAIN_TEXT_DEST_CHAR_COUNT_X = 94;
 const REMOVE_TEXT_COUNT_X = 53;
 const REMOVE_TEXT_COUNT_Y = ITEM_COUNTER_Y;
 
+const CURSOR_X = 138;
+const CURSOR_Y = 46;
+
+const ITEM_COUNTER_LOOP_TIME = 100;
+
 export class ItemQuantityManagerWindow {
     public game: Phaser.Game;
     public data: GoldenSun;
@@ -40,8 +45,6 @@ export class ItemQuantityManagerWindow {
     public y: number;
     public base_window: Window;
     public group: Phaser.Group;
-    public esc_propagation_priority: number;
-    public enter_propagation_priority: number;
     public choosen_quantity: number;
     public item_counter: ItemCounter;
     public remaining_with_char_count: TextObj;
@@ -57,7 +60,7 @@ export class ItemQuantityManagerWindow {
     public dest_item_obj: ItemSlot;
     public dest_char_name: TextObj;
 
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
+    constructor(game, data) {
         this.game = game;
         this.data = data;
         this.item_obj = null;
@@ -71,28 +74,28 @@ export class ItemQuantityManagerWindow {
         this.group = this.game.add.group();
         this.group.alpha = 0;
         this.base_window.set_text_in_position("How many?", QUESTION_TEXT_X, QUESTION_TEXT_Y);
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
         this.choosen_quantity = 1;
         this.item_counter = new ItemCounter(this.game, this.group, ITEM_COUNTER_X, ITEM_COUNTER_Y, this.on_change.bind(this));
         this.remaining_with_char_count = this.base_window.set_text_in_position("", REMAIN_TEXT_CHAR_COUNT_X, REMAIN_TEXT_CHAR_COUNT_Y, true);
         this.new_amount_with_dest_char_count = this.base_window.set_text_in_position("", REMAIN_TEXT_DEST_CHAR_COUNT_X, REMAIN_TEXT_CHAR_COUNT_Y, true);
         this.to_remove_count = this.base_window.set_text_in_position("", REMOVE_TEXT_COUNT_X, REMOVE_TEXT_COUNT_Y, true);
-        this.set_control();
     }
 
-    set_control() {
-        this.data.esc_input.add(() => {
-            if (!this.window_open || !this.window_active) return;
-            this.data.esc_input.halt();
-            this.choosen_quantity = 0;
-            this.close(this.close_callback);
-        }, this, this.esc_propagation_priority);
-        this.data.enter_input.add(() => {
-            if (!this.window_open || !this.window_active) return;
-            this.data.enter_input.halt();
-            this.close(this.close_callback);
-        }, this, this.enter_propagation_priority);
+    grant_control(on_cancel:Function, on_select:Function){
+        this.data.control_manager.set_control(true, false, true, false, {
+            left: this.decrease_amount.bind(this),
+            right: this.increase_amount.bind(this),
+            esc: on_cancel,
+            enter: on_select
+        }, ITEM_COUNTER_LOOP_TIME)
+    }
+
+    increase_amount(){
+        this.item_counter.advance_step(1);
+    }
+
+    decrease_amount(){
+        this.item_counter.advance_step(-1);
     }
 
     on_change(quantity) {
@@ -143,11 +146,15 @@ export class ItemQuantityManagerWindow {
         this.group.y = this.game.camera.y + this.y;
     }
 
-    open(item_obj, item, char, close_callback, destination_char?, open_callback?) {
+    open(item_obj:ItemSlot, item:Item, char:MainChar, close_callback?:Function,
+        destination_char?:MainChar, open_callback?:Function) {
+        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "point", false);
+
         this.item_obj = item_obj;
         this.item = item;
         this.char = char;
         this.destination_char = destination_char;
+
         if (this.destination_char) {
             const dest_item_obj = this.destination_char.items.filter(item => {
                 return item.key_name === item_obj.key_name;
@@ -160,11 +167,14 @@ export class ItemQuantityManagerWindow {
         }
         this.choosen_quantity = 1;
         this.close_callback = close_callback;
+
         this.update_position();
         this.set_header();
         this.item_counter.config(this.item_obj.quantity, this.choosen_quantity);
+
         this.group.alpha = 1;
         this.on_change(this.choosen_quantity);
+
         this.base_window.show(() => {
             this.window_open = true;
             this.window_active = true;
@@ -174,10 +184,13 @@ export class ItemQuantityManagerWindow {
         }, false);
     }
 
-    close(callback) {
+    close(callback?:Function) {
+        this.data.cursor_manager.hide();
         this.unset_header();
         this.item_counter.deactivate();
+
         this.group.alpha = 0;
+        this.choosen_quantity = 0;
         this.base_window.close(() => {
             this.window_open = false;
             this.window_active = false;
@@ -195,6 +208,7 @@ export class ItemQuantityManagerWindow {
     }
 
     deactivate() {
+        this.data.cursor_manager.hide();
         this.unset_header();
         this.item_counter.deactivate();
         this.window_active = false;

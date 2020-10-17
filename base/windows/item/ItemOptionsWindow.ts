@@ -1,39 +1,47 @@
 import { TextObj, Window } from '../../Window';
 import * as numbers from '../../magic_numbers';
-import { CursorControl } from '../../utils/CursorControl';
 import { DropItemWindow } from './DropItemWindow';
 import { ItemQuantityManagerWindow } from './ItemQuantityManagerWindow';
-import { GiveItemOptionsWindow } from './GiveItemOptionsWindow';
+import { GiveItemWindow } from './GiveItemWindow';
 import { GoldenSun } from '../../GoldenSun';
 import { ItemSlot, MainChar } from '../../MainChar';
-import { Item } from '../../Item';
+import { Item, item_types } from '../../Item';
 import { StatsCheckWithItemWindow } from './StatsCheckWithItemWindow';
+import { MainItemMenu } from '../../main_menus/MainItemMenu';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 52;
 const WIN_X = 104;
 const WIN_Y = 0;
+
 const OPTION_TEXT_HORIZONTAL_PADDING = 8;
 const OPTION_TEXT_MAX_WIDHT = 40;
 const OPTION_TEXT_Y_POS = 32;
+
 const MAX_HORIZONTAL = 3;
 const MAX_VERTICAL = 2;
-const CURSOR_X_SHIFT = -15;
-const CURSOR_Y_SHIFT = 4;
+
 const CHAR_NAME_X = 27;
 const CHAR_NAME_Y = 8;
+
 const ITEM_NAME_X = 27;
 const ITEM_NAME_Y = CHAR_NAME_Y + numbers.FONT_SIZE;
 const ITEM_ICON_X = 8;
 const ITEM_ICON_Y = 8;
+
 const SUB_ICON_X = 7;
 const SUB_ICON_Y = 8;
+
 const DISABLE_COLOR = 0x606060;
 const ENABLE_COLOR = 0xFFFFFF;
+
 const ACTION_WINDOW_MSG_X = 122;
 const ACTION_WINDOW_MSG_Y = 66;
 const ACTION_WINDOW_MSG_WIDTH = 67;
 const ACTION_WINDOW_MSG_HEIGHT = 20;
+
+const CURSOR_X_POS = [96, 136, 176];
+const CURSOR_Y_POS = [36, 44];
 
 export class ItemOptionsWindow {
     public game: Phaser.Game;
@@ -41,12 +49,15 @@ export class ItemOptionsWindow {
     public item_obj: ItemSlot;
     public item: Item;
     public char: MainChar;
+    public close_callback: Function;
+
     public window_open: boolean;
     public window_active: boolean;
     public x: number;
     public y: number;
     public base_window: Window;
     public group: Phaser.Group;
+
     public text_sprites: {
         use: TextObj,
         equip: TextObj,
@@ -55,11 +66,10 @@ export class ItemOptionsWindow {
         remove: TextObj,
         drop: TextObj
     };
+
     public horizontal_index: number;
     public vertical_index: number;
-    public esc_propagation_priority: number;
-    public enter_propagation_priority: number;
-    public cursor_control: CursorControl;
+
     public option_active: {
         use: boolean,
         equip: boolean,
@@ -68,32 +78,40 @@ export class ItemOptionsWindow {
         remove: boolean,
         drop: boolean
     };
-    public give_item_options_window: GiveItemOptionsWindow;
+
+    public give_item_options_window: GiveItemWindow;
     public item_quantity_manager_window: ItemQuantityManagerWindow;
     public drop_item_window: DropItemWindow;
     public action_message_window: Window;
-    public on_give_callback: Function;
-    public close_callback: Function;
+
     public icon_sprite: Phaser.Sprite;
     public char_name: TextObj;
     public item_name: TextObj;
+
     public equip_sprite: Phaser.Sprite;
     public item_count_sprite: Phaser.BitmapText;
+
     public stats_update_callback: Function;
     public stats_window: StatsCheckWithItemWindow;
+    public item_menu: MainItemMenu;
 
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
+    constructor(game:Phaser.Game, data:GoldenSun) {
         this.game = game;
         this.data = data;
         this.item_obj = null;
         this.item = null;
         this.char = null;
+
+        this.stats_window = null;
+        this.item_menu = null;
+
         this.window_open = false;
         this.window_active = false;
         this.x = WIN_X;
         this.y = WIN_Y;
         this.base_window = new Window(this.game, this.x, this.y, WIN_WIDTH, WIN_HEIGHT);
         this.group = this.game.add.group();
+
         this.text_sprites = {
             use: this.base_window.set_text_in_position("Use", OPTION_TEXT_HORIZONTAL_PADDING, OPTION_TEXT_Y_POS),
             equip: this.base_window.set_text_in_position("Equip", OPTION_TEXT_HORIZONTAL_PADDING + OPTION_TEXT_MAX_WIDHT, OPTION_TEXT_Y_POS),
@@ -102,6 +120,10 @@ export class ItemOptionsWindow {
             remove: this.base_window.set_text_in_position("Remove", OPTION_TEXT_HORIZONTAL_PADDING + OPTION_TEXT_MAX_WIDHT, OPTION_TEXT_Y_POS + numbers.FONT_SIZE),
             drop: this.base_window.set_text_in_position("Drop", OPTION_TEXT_HORIZONTAL_PADDING + 2 * OPTION_TEXT_MAX_WIDHT, OPTION_TEXT_Y_POS + numbers.FONT_SIZE)
         };
+
+        this.horizontal_index = 0;
+        this.vertical_index = 0;
+
         this.option_active = {
             use: true,
             equip: true,
@@ -110,17 +132,11 @@ export class ItemOptionsWindow {
             remove: true,
             drop: true
         };
-        this.horizontal_index = 0;
-        this.vertical_index = 0;
-        this.cursor_control = new CursorControl(this.game, true, true, () => MAX_HORIZONTAL, () => MAX_VERTICAL, this.group,
-            this.on_change.bind(this), this.on_change.bind(this), this.get_horizontal_index.bind(this), this.set_horizontal_index.bind(this),
-            this.get_vertical_index.bind(this), this.set_vertical_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),
-            this.get_cursor_x.bind(this), this.get_cursor_y.bind(this));
-        this.give_item_options_window = new GiveItemOptionsWindow(this.game, this.data, this.esc_propagation_priority + 2, this.enter_propagation_priority + 2);
-        this.item_quantity_manager_window = new ItemQuantityManagerWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority);
-        this.drop_item_window = new DropItemWindow(this.game, this.data, this.esc_propagation_priority + 1, this.enter_propagation_priority + 1);
+
+        this.give_item_options_window = new GiveItemWindow(this.game, this.data);
+        this.item_quantity_manager_window = new ItemQuantityManagerWindow(this.game, this.data);
+        this.drop_item_window = new DropItemWindow(this.game, this.data);
         this.action_message_window = new Window(this.game, ACTION_WINDOW_MSG_X, ACTION_WINDOW_MSG_Y, ACTION_WINDOW_MSG_WIDTH, ACTION_WINDOW_MSG_HEIGHT);
-        this.set_control();
     }
 
     hide() {
@@ -143,60 +159,39 @@ export class ItemOptionsWindow {
         }
     }
 
-    is_open() {
-        return this.window_open;
+    next_vertical(){
+        if(this.vertical_index < MAX_VERTICAL -1)
+            this.choose_position(this.vertical_index+1, this.horizontal_index);
+        else this.choose_position(0, this.horizontal_index);
     }
 
-    is_active() {
-        return this.window_active;
+    previous_vertical(){
+        if(this.vertical_index > 0)
+            this.choose_position(this.vertical_index-1, this.horizontal_index);
+        else this.choose_position(MAX_VERTICAL-1, this.horizontal_index);
     }
 
-    get_cursor_x() {
-        return OPTION_TEXT_HORIZONTAL_PADDING + this.horizontal_index * OPTION_TEXT_MAX_WIDHT + CURSOR_X_SHIFT;
+    next_horizontal(){
+        if(this.horizontal_index < MAX_HORIZONTAL -1)
+            this.choose_position(this.vertical_index, this.horizontal_index+1);
+        else this.choose_position(this.vertical_index, 0);
     }
 
-    get_cursor_y() {
-        return OPTION_TEXT_Y_POS + numbers.FONT_SIZE * this.vertical_index + CURSOR_Y_SHIFT;
+    previous_horizontal(){
+        if(this.horizontal_index > 0)
+            this.choose_position(this.vertical_index, this.horizontal_index-1);
+        else this.choose_position(this.vertical_index, MAX_HORIZONTAL-1);
     }
 
-    get_vertical_index() {
-        return this.vertical_index;
-    }
-
-    set_vertical_index(index) {
-        this.vertical_index = index;
-    }
-
-    get_horizontal_index() {
-        return this.horizontal_index;
-    }
-
-    set_horizontal_index(index) {
-        this.horizontal_index = index;
-    }
-    
-    set_control() {
-        this.data.esc_input.add(() => {
-            if (!this.window_open || !this.window_active) return;
-            this.data.esc_input.halt();
-            if (this.action_message_window.open) {
-                this.action_message_window.close();
-            } else {
-                this.close(this.close_callback);
-            }
-        }, this, this.esc_propagation_priority);
-        this.data.enter_input.add(() => {
-            if (!this.window_open || !this.window_active) return;
-            this.data.enter_input.halt();
-            if (this.action_message_window.open) {
-                this.action_message_window.close();
-            } else {
-                this.on_choose();
-            }
-        }, this, this.enter_propagation_priority);
+    choose_position(vertical:number, horizontal:number){
+        this.vertical_index = vertical;
+        this.horizontal_index = horizontal;
+        this.data.cursor_manager.move_to(CURSOR_X_POS[this.horizontal_index], CURSOR_Y_POS[this.vertical_index], "point", false);
+        this.on_change();
     }
 
     set_available_options() {
+        this.show_text();
         if (!this.item.use_ability || this.item.broken) {
             this.text_sprites.use.text.tint = DISABLE_COLOR;
             this.option_active.use = false;
@@ -266,14 +261,23 @@ export class ItemOptionsWindow {
         this.group.y = this.game.camera.y + this.y;
     }
 
-    open_action_message_window(text, close_callback) {
+    open_action_message_window(text:string, close_callback:Function) {
         this.action_message_window.set_text([text]);
-        this.cursor_control.deactivate();
+        this.data.cursor_manager.hide();
         if (this.stats_update_callback !== undefined) {
             this.stats_update_callback();
         }
+
         this.action_message_window.show(undefined, true, () => {
             close_callback();
+        });
+
+        this.data.control_manager.simple_control(() =>{
+            this.action_message_window.close();
+            this.data.control_manager.reset();
+        },() =>{ 
+            this.action_message_window.close();
+            this.data.control_manager.reset();
         });
     }
 
@@ -281,64 +285,14 @@ export class ItemOptionsWindow {
         if (this.horizontal_index === 0) {
             if (this.vertical_index === 1 && this.option_active.give) {
                 this.deactivate();
-                this.give_item_options_window.open(this.item_obj, this.item, this.char, true, false);
-                this.give_item_options_window.deactive();
-                this.on_give_callback((destination_char, after_choose_callback, unmount_give_window_set) => {
-                    if (destination_char === null) {
-                        this.give_item_options_window.close();
-                        this.activate();
-                    } else if (destination_char.key_name !== this.char.key_name) {
-                        this.give_item_options_window.close();
-                        let dest_item_obj = {
-                            key_name: this.item_obj.key_name,
-                            equipped: false,
-                            quantity: this.item_obj.quantity
-                        };
-                        if (this.item.equipable_chars.includes(destination_char.key_name)) {
-                            this.give_item_options_window.open(dest_item_obj, this.item, destination_char, false, true, (answer, equip) => {
-                                if (answer) {
-                                    this.activate();
-                                    this.char.remove_item(this.item_obj, this.item_obj.quantity);
-                                    destination_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, equip);
-                                    unmount_give_window_set();
-                                    this.open_action_message_window("Given.", () => {
-                                        this.close(this.close_callback.bind(this, true));
-                                    });
-                                } else {
-                                    this.close(this.close_callback.bind(this, true));
-                                    unmount_give_window_set();
-                                }
-                            });
-                        } else {
-                            if (this.item_obj.quantity > 1) {
-                                this.item_quantity_manager_window.open(dest_item_obj, this.item, this.char, quantity => {
-                                    if (quantity > 0) {
-                                        this.activate();
-                                        dest_item_obj.quantity = quantity;
-                                        this.char.remove_item(this.item_obj, quantity);
-                                        destination_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, false);
-                                        unmount_give_window_set();
-                                        this.open_action_message_window("Given.", () => {
-                                            this.close(this.close_callback.bind(this, true));
-                                        });
-                                    } else {
-                                        this.close(this.close_callback.bind(this, true));
-                                        unmount_give_window_set();
-                                    }
-                                }, destination_char);
-                            } else {
-                                this.activate();
-                                this.char.remove_item(this.item_obj, this.item_obj.quantity);
-                                destination_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, false);
-                                unmount_give_window_set();
-                                this.open_action_message_window("Given.", () => {
-                                    this.close(this.close_callback.bind(this, true));
-                                });
-                            }
-                        }
-                        after_choose_callback();
+                this.give_item_options_window.open(this.item_obj, this.item, this.char, this.item_menu, () => {
+                    this.data.cursor_manager.show();
+                    this.item_menu.choosing_give_destination = false;
+                    this.item_menu.shift_item_overview(false);
+                    if(this.give_item_options_window.choosing_char){
+                        this.open_options(this.vertical_index, this.horizontal_index);
                     }
-                });
+                }, );
             }
         } else if (this.horizontal_index === 1) {
             if (this.vertical_index === 0 && this.option_active.equip) {
@@ -356,27 +310,17 @@ export class ItemOptionsWindow {
         } else if (this.horizontal_index === 2) {
             if (this.vertical_index === 1 && this.option_active.drop) {
                 this.deactivate();
-                let open_drop_window = (quantity = 1) => {
-                    this.drop_item_window.open(this.item_obj, this.item, this.char, quantity, dropped => {
-                        this.activate();
-                        if (dropped) {
-                            this.open_action_message_window("Dropped it.", () => {
-                                this.close(this.close_callback);
-                            });
-                        }
-                    });
-                };
-                if (this.item_obj.quantity > 1) {
-                    this.item_quantity_manager_window.open(this.item_obj, this.item, this.char, quantity => {
-                        if (quantity > 0) {
-                            open_drop_window(quantity);
-                        } else {
-                            this.activate();
-                        }
-                    });
-                } else {
-                    open_drop_window();
-                }
+                this.drop_item_window.open(this.item_obj, this.item, this.char, this.item_menu, () => {
+                    if(this.drop_item_window.dropped){
+                        this.hide_text();
+                        this.item_menu.item_choose_window.close();
+                        this.item_menu.shift_item_overview(true, false);
+                        this.open_action_message_window("Dropped it.", () => {
+                            this.close(this.close_callback);
+                        });
+                    }
+                    else this.open_options(this.vertical_index, this.horizontal_index);
+                });
             }
         }
     }
@@ -405,19 +349,49 @@ export class ItemOptionsWindow {
         }
     }
 
-    open(item_obj, item, char, stats_window, on_give_callback, close_callback, stats_update_callback, open_callback?) {
+    open_options(vertical:number=0, horizontal:number=0){
+        this.set_header();
+
+        if (this.item_menu.item_options_window.item.type === item_types.ABILITY_GRANTOR) {
+
+        } else if (this.item_menu.item_options_window.item.type !== item_types.GENERAL_ITEM) {
+            this.item_menu.item_change_stats_window.open(
+                this.data.info.party_data.members[this.item_menu.item_choose_window.char_index],
+                this.item_menu.item_options_window.item,
+                this.item_menu.item_options_window.item_obj
+            );
+            this.item_menu.item_change_stats_window.compare_items();
+        }
+        this.item_menu.chars_menu.select_char(this.item_menu.item_choose_window.char_index);
+        this.item_menu.item_options_window.stats_window.compare_items(true);
+
+        this.choose_position(vertical, horizontal);
+
+        this.data.control_manager.set_control(true, true, true, true, {
+            right: this.next_horizontal.bind(this),
+            left: this.previous_horizontal.bind(this),
+            up: this.next_vertical.bind(this),
+            down: this.previous_vertical.bind(this),
+            esc: this.close.bind(this, this.close_callback),
+            enter: this.on_choose.bind(this)});
+    }
+
+    open(item_obj:ItemSlot, item:Item, char:MainChar, stats_window:StatsCheckWithItemWindow, item_menu:MainItemMenu,
+        close_callback:Function, stats_update_callback:Function, open_callback?:Function) {
         this.item_obj = item_obj;
         this.item = item;
         this.char = char;
         this.stats_window = stats_window;
-        this.cursor_control.activate();
-        this.on_give_callback = on_give_callback;
+        this.item_menu = item_menu;
+
         this.close_callback = close_callback;
         this.stats_update_callback = stats_update_callback;
         this.update_position();
-        this.set_header();
         this.set_available_options();
         this.on_change();
+
+        this.open_options();
+
         this.base_window.show(() => {
             this.window_open = true;
             this.window_active = true;
@@ -427,8 +401,10 @@ export class ItemOptionsWindow {
         }, false);
     }
 
-    close(callback) {
-        this.cursor_control.deactivate();
+    close(callback?:Function) {
+        this.data.cursor_manager.hide();
+        this.data.control_manager.reset();
+
         this.unset_header();
         this.base_window.close(() => {
             this.window_open = false;
@@ -443,13 +419,12 @@ export class ItemOptionsWindow {
         this.set_header();
         this.set_available_options();
         this.on_change();
-        this.cursor_control.activate();
         this.window_active = true;
     }
 
     deactivate() {
         this.unset_header();
-        this.cursor_control.deactivate();
+        this.data.cursor_manager.hide();
         this.window_active = false;
     }
 }

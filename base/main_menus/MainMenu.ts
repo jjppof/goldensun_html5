@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-import { capitalize } from '../utils.js';
-=======
 import { capitalize } from '../utils';
-import { HorizontalMenu } from '../support_menus/HorizontalMenu';
->>>>>>> master
 import { MainPsynergyMenu } from './MainPsynergyMenu';
 import { MainItemMenu } from './MainItemMenu';
 import { MainDjinnMenu } from './MainDjinnMenu';
@@ -14,8 +9,11 @@ import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu';
 export class MainMenu {
     public game: Phaser.Game;
     public data: GoldenSun;
-    public chars_status_window: CharsStatusWindow;
+
     public buttons_keys: string[];
+    public current_index: number;
+
+    public chars_status_window: CharsStatusWindow;
     public horizontal_menu: ButtonSelectMenu;
     public psynergy_menu: MainPsynergyMenu;
     public item_menu: MainItemMenu;
@@ -24,8 +22,11 @@ export class MainMenu {
     constructor(game, data) {
         this.game = game;
         this.data = data;
-        this.chars_status_window = new CharsStatusWindow(this.game, this.data);
+
         this.buttons_keys = ["psynergy", "djinni", "item", "status"];
+        this.current_index = 0;
+
+        this.chars_status_window = new CharsStatusWindow(this.game, this.data);
         this.horizontal_menu = new ButtonSelectMenu(
             this.game,
             this.data,
@@ -43,6 +44,8 @@ export class MainMenu {
 
     button_press() {
         this.horizontal_menu.deactivate(true);
+        this.current_index = this.horizontal_menu.selected_button_index;
+
         switch (this.buttons_keys[this.horizontal_menu.selected_button_index]) {
             case "psynergy":
                 this.button_press_action(this.psynergy_menu);
@@ -58,6 +61,7 @@ export class MainMenu {
 
     button_press_action(menu:any) {
         this.horizontal_menu.deactivate();
+        
         menu.open_menu((close_this_menu:boolean) => {
             this.horizontal_menu.activate();
             this.chars_status_window.update_chars_info();
@@ -77,7 +81,8 @@ export class MainMenu {
     }
 
     open_menu() {
-        this.horizontal_menu.open();
+        this.horizontal_menu.open(undefined, this.current_index);
+
         this.chars_status_window.update_position();
         this.chars_status_window.update_chars_info();
         this.chars_status_window.show();
@@ -85,7 +90,10 @@ export class MainMenu {
 
     close_menu() {
         if (!this.is_active()) return;
+
         this.data.menu_open = false;
+        this.current_index = 0;
+
         this.horizontal_menu.close();
         this.chars_status_window.close();
         this.data.control_manager.reset();

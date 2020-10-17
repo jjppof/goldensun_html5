@@ -5,7 +5,7 @@ import { ControlManager } from "../../utils/ControlManager";
 import { Window } from "../../Window";
 import { YesNoMenu } from "../YesNoMenu";
 import { InventoryWindow } from "./InventoryWindow";
-import { ShopCharDisplay } from "./ShopCharDisplay";
+import { CharsMenu } from "../../support_menus/CharsMenu";
 import { ShopItemQuantityWindow } from "./ShopItemQuantityWindow";
 import { ShopkeepDialog } from "./ShopkeepDialog";
 
@@ -28,7 +28,7 @@ export class SellRepairMenu{
     public item_desc_win:Window;
     public your_coins_win:Window;
     public item_price_win:Window;
-    public char_display:ShopCharDisplay;
+    public char_display:CharsMenu;
     public inv_win:InventoryWindow;
     public quant_win:ShopItemQuantityWindow;
     public yesno_action:YesNoMenu;

@@ -80,7 +80,7 @@ export class DjinnListWindow {
     public view_state: number;
     public changing_djinn_status: boolean;
 
-    constructor (game, data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority, spacebar_propagation_priority) {
+    constructor (game, data) {
         this.game = game;
         this.data = data;
         this.base_window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
@@ -90,10 +90,10 @@ export class DjinnListWindow {
         this.group.add(this.chars_sprites_group);
         this.window_open = false;
         this.window_active = false;
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
-        this.shift_propagation_priority = shift_propagation_priority + 1;
-        this.spacebar_propagation_priority = spacebar_propagation_priority + 1;
+        //this.esc_propagation_priority = esc_propagation_priority + 1;
+        //this.enter_propagation_priority = enter_propagation_priority + 1;
+        //this.shift_propagation_priority = shift_propagation_priority + 1;
+        //this.spacebar_propagation_priority = spacebar_propagation_priority + 1;
         this.selected_char_index = 0;
         this.selected_djinn_index = 0;
         this.page_index = 0;

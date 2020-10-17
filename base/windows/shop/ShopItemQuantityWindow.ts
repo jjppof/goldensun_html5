@@ -1,4 +1,4 @@
-import { ShopItemCounter } from './ShopItemCounter';
+import { ItemCounter } from '../../utils/ItemCounter';
 import { Window, TextObj } from '../../Window';
 import { GoldenSun } from '../../GoldenSun';
 import { CursorManager } from '../../utils/CursorManager';
@@ -31,7 +31,7 @@ export class ShopItemQuantityWindow {
     public close_callback:Function;
 
     public window:Window;
-    public item_counter:ShopItemCounter;
+    public item_counter:ItemCounter;
     public chosen_quantity:number;
     public base_price:number;
     public is_open:boolean;
@@ -46,7 +46,7 @@ export class ShopItemQuantityWindow {
         this.close_callback = null;
 
         this.window = new Window(this.game, QUANTITY_WIN_X, QUANTITY_WIN_Y, QUANTITY_WIN_WIDTH, QUANTITY_WIN_HEIGHT);
-        this.item_counter = new ShopItemCounter(this.game, this.window.group, ITEM_COUNTER_X, ITEM_COUNTER_Y, this.on_change.bind(this));
+        this.item_counter = new ItemCounter(this.game, this.window.group, ITEM_COUNTER_X, ITEM_COUNTER_Y, this.on_change.bind(this));
 
         this.chosen_quantity = 1;
         this.base_price = 0;

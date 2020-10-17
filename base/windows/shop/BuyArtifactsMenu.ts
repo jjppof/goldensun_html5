@@ -3,7 +3,7 @@ import { Item, item_types } from '../../Item';
 import { ShopMenu } from '../../main_menus/ShopMenu';
 import { ControlManager } from '../../utils/ControlManager';
 import { InventoryWindow } from './InventoryWindow';
-import { ShopCharDisplay } from './ShopCharDisplay';
+import { CharsMenu } from '../../support_menus/CharsMenu';
 import { Window } from '../../Window';
 import { ShopItemQuantityWindow } from './ShopItemQuantityWindow';
 import { BuySelectMenu } from './BuySelectMenu';
@@ -36,7 +36,7 @@ export class BuyArtifactsMenu{
     public item_desc_win:Window;
     public your_coins_win:Window;
     public item_price_win:Window;
-    public char_display:ShopCharDisplay;
+    public char_display:CharsMenu;
     public inv_win:InventoryWindow;
     public quant_win:ShopItemQuantityWindow;
     public buy_select:BuySelectMenu;

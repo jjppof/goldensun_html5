@@ -26,8 +26,9 @@ const HIGHLIGHT_HEIGHT = numbers.FONT_SIZE;
 const SUB_ICON_X = 0;
 const SUB_ICON_Y = 0;
 
-const CURSOR_X = -5;
-const CURSOR_Y = ELEM_PADDING_TOP + ((numbers.ICON_HEIGHT >> 1)|0);
+const CURSOR_X = 98;
+const CURSOR_Y = 42;
+const CURSOR_GAP = 16;
 
 /*Displays the character's Psynergy or Items
 Used in a selection-type menu, referring to the above
@@ -96,6 +97,7 @@ export class ItemPsynergyChooseWindow {
         this.char_select_controls_sprites.push(sprite_pair.text, sprite_pair.shadow);
 
         this.page_index = 0;
+        this.page_number = 0;
         this.text_sprites_in_window = [];
         this.icon_sprites_in_window = [];
         this.selected_element_index = 0;
@@ -116,19 +118,33 @@ export class ItemPsynergyChooseWindow {
     }
 
     next_page(){
+        if(this.page_number === 1) return;
 
+        if(this.page_index < this.page_number-1) this.page_change(this.page_index+1);
+        else this.page_change(0);
     }
 
     previous_page(){
+        if(this.page_number === 1) return;
 
+        if(this.page_index > 0) this.page_change(this.page_index-1);
+        else this.page_change(this.page_number-1);
     }
 
     next_element(){
+        if(this.elements.length === 1) return;
 
+        if(this.selected_element_index < this.elements.length-1)
+            this.element_change(this.selected_element_index+1);
+        else this.element_change(0);
     }
 
     previous_element(){
-        
+        if(this.elements.length === 1) return;
+
+        if(this.selected_element_index > 0)
+            this.element_change(this.selected_element_index-1);
+        else this.element_change(this.elements.length-1);
     }
 
     /*Returns the name of the Psynergy/Item
@@ -136,57 +152,8 @@ export class ItemPsynergyChooseWindow {
     Input: index [number] : The element's index
 
     Output: [string]*/
-    get_element_key_name(index) {
+    get_element_key_name(index:number) {
         return this.is_psynergy_window ? this.elements[index] : (this.elements[index] as ItemSlot).key_name;
-    }
-
-    /*Checks "open" state
-
-    Output: [boolean] - True if "open"*/
-    is_open() {
-        return this.window_open;
-    }
-
-    /*Checks "activated" state
-
-    Output: [boolean] - True if "activated"*/
-    is_activated() {
-        return this.window_activated;
-    }
-
-    /*Returns the currently selected element's index
-
-    Output: [number]*/
-    get_element_index() {
-        return this.selected_element_index;
-    }
-
-    /*Selects a new element
-
-    Input: index [number] - The new element's index*/
-    set_element_index(index) {
-        this.selected_element_index = index;
-    }
-
-    /*Returns the current page's index
-
-    Output: [number]*/
-    get_page_index() {
-        return this.page_index;
-    }
-
-    /*Selects a new page
-
-    Input: index [number] - The new page's index*/
-    set_page_index(index) {
-        this.page_index = index;
-    }
-
-    /*Returns the number of elements in this page
-    
-    Output: [number]*/
-    get_elem_per_page() {
-        return this.elements.length;
     }
 
     /*Sets the total page number*/
@@ -205,13 +172,6 @@ export class ItemPsynergyChooseWindow {
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
         }
-    }
-
-    /*Returns the total page number
-    
-    Output: [number]*/
-    get_page_number() {
-        return this.page_number;
     }
 
     /*Updates this window's position*/
@@ -240,7 +200,7 @@ export class ItemPsynergyChooseWindow {
         }
         if (this.selected_element_index >= this.elements.length) {
             this.selected_element_index = this.elements.length - 1;
-            this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.selected_element_index * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS))
+            this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.selected_element_index*CURSOR_GAP, "point", false);
         }
         for (let i = 0; i < this.elements.length; ++i) {
             const elem_key_name = this.get_element_key_name(i);
@@ -288,12 +248,8 @@ export class ItemPsynergyChooseWindow {
     }
 
     /*Sets the scaling effect for the selected item*/
-    set_element_tween(before_index?) {
-        if (this.selected_element_tween) {
-            this.selected_element_tween.stop();
-            this.icon_sprites_in_window[before_index].scale.setTo(1, 1);
-        }
-        this.selected_element_tween = this.game.add.tween(this.icon_sprites_in_window[this.selected_element_index].scale).to(
+    set_element_tween(index:number) {
+        this.selected_element_tween = this.game.add.tween(this.icon_sprites_in_window[index].scale).to(
             { x: 1.6, y: 1.6 },
             Phaser.Timer.QUARTER,
             Phaser.Easing.Linear.None,
@@ -305,29 +261,39 @@ export class ItemPsynergyChooseWindow {
     }
 
     /*Stops the scaling effect*/
-    unset_element_tween() {
-        this.selected_element_tween.stop();
-        this.selected_element_tween = null;
+    unset_element_tween(index:number) {
+        if(this.icon_sprites_in_window[index]) this.icon_sprites_in_window[index].scale.setTo(1, 1);
+
+        if(this.selected_element_tween){
+            this.selected_element_tween.stop();
+            this.selected_element_tween = null;
+        }
     }
 
     /*Selects a new element
     
     Input: before_index [number] - Previous element
            after_index [number] - Next element*/
-    element_change(before_index, after_index) {
-        this.set_element_tween(before_index);
+    element_change(index:number) {
+        this.unset_element_tween(this.selected_element_index);
+        this.selected_element_index = index;
+        this.set_element_tween(this.selected_element_index);
+
         this.set_highlight_bar();
         this.on_change(
-            this.element_list[this.get_element_key_name(after_index) as string],
-            this.is_psynergy_window ? undefined : this.item_objs[after_index]
+            this.element_list[this.get_element_key_name(index) as string],
+            this.is_psynergy_window ? undefined : this.item_objs[index]
         );
+        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.selected_element_index*CURSOR_GAP, "point", false);
     }
 
     /*Displays a new page*/
-    page_change() {
+    page_change(page:number) {
+        this.page_index = page;
         this.set_elements();
         this.set_element_tween(this.selected_element_index);
         this.set_highlight_bar();
+
         this.on_change(
             this.element_list[this.get_element_key_name(this.selected_element_index) as string],
             this.is_psynergy_window ? undefined : this.item_objs[this.selected_element_index]
@@ -347,6 +313,18 @@ export class ItemPsynergyChooseWindow {
         this.text_sprites_in_window = [];
     }
 
+    /*Enables control keys for this menu*/
+    grant_control(on_cancel:Function, on_select:Function){
+        this.data.control_manager.set_control(true, true, true, true, {
+            right: this.next_page.bind(this),
+            left: this.previous_page.bind(this),
+            up: this.previous_element.bind(this),
+            down: this.next_element.bind(this),
+            esc: on_cancel,
+            enter: on_select
+        });
+    }
+
     /*Hides this window*/
     hide() {
         this.window.group.alpha = 0;
@@ -362,7 +340,7 @@ export class ItemPsynergyChooseWindow {
     Input: char_index [number] = The selected character's party index
            close_callback [function] = Closing callback (Optional)
            open_callback [function] = Opening callback (Optional)*/
-    open(char_index, close_callback, open_callback?) {
+    open(char_index:number, close_callback?:Function, open_callback?:Function) {
         this.update_position();
         this.char_index = char_index;
         this.char = this.data.info.party_data.members[char_index];
@@ -377,12 +355,14 @@ export class ItemPsynergyChooseWindow {
         this.set_elements();
 
         this.window.set_page_indicator(this.page_number, this.page_index);
-        this.set_element_tween();
+        this.set_element_tween(this.selected_element_index);
         this.set_highlight_bar();
         this.on_change(
             this.element_list[this.get_element_key_name(this.selected_element_index) as string],
             this.is_psynergy_window ? undefined : this.item_objs[this.selected_element_index]
         );
+
+        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "point", false);
 
         this.window_open = true;
         this.window_activated = true;
@@ -395,7 +375,7 @@ export class ItemPsynergyChooseWindow {
         this.clear_sprites();
         this.window.unset_page_indicator();
         this.data.cursor_manager.hide();
-        this.unset_element_tween();
+        this.unset_element_tween(this.selected_element_index);
         this.window_open = false;
         this.window_activated = false;
     }
@@ -405,12 +385,10 @@ export class ItemPsynergyChooseWindow {
     activate() {
         this.set_page_number();
         this.set_elements();
-        this.on_change(
-            this.element_list[this.get_element_key_name(this.selected_element_index) as string],
-            this.is_psynergy_window ? undefined : this.item_objs[this.selected_element_index]
-        );
+        this.element_change(this.selected_element_index);
+        
         this.window.set_page_indicator(this.page_number, this.page_index);
-        this.set_element_tween();
+        this.set_element_tween(this.selected_element_index);
         this.set_highlight_bar();
         this.window_activated = true;
         this.char_select_controls_sprites.forEach(sprite => {
@@ -424,7 +402,7 @@ export class ItemPsynergyChooseWindow {
         this.clear_sprites();
         this.window.unset_page_indicator();
         this.data.cursor_manager.hide();
-        this.unset_element_tween();
+        this.unset_element_tween(this.selected_element_index);
         this.unset_highlight_bar();
         this.window_activated = false;
         this.char_select_controls_sprites.forEach(sprite => {

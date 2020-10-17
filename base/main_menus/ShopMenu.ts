@@ -8,8 +8,7 @@ import { EquipCompare } from '../windows/shop/EquipCompare';
 import { YesNoMenu } from '../windows/YesNoMenu';
 import { ShopItemQuantityWindow } from '../windows/shop/ShopItemQuantityWindow';
 import { Window, TextObj } from '../Window';
-import { ShopCharDisplay } from '../windows/shop/ShopCharDisplay';
-import { CursorManager } from '../utils/CursorManager';
+import { CharsMenu } from '../support_menus/CharsMenu';
 import { ControlManager } from '../utils/ControlManager';
 import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu';
 import { GoldenSun } from '../GoldenSun';
@@ -89,7 +88,7 @@ export class ShopMenu{
     public buy_select: BuySelectMenu;
     public eq_compare: EquipCompare;
     public quant_win: ShopItemQuantityWindow;
-    public char_display: ShopCharDisplay;
+    public char_display: CharsMenu;
 
     public item_price_win: Window;
     public item_desc_win: Window;
@@ -137,7 +136,7 @@ export class ShopMenu{
         this.buy_select = new BuySelectMenu(this.game, this.data, this.on_buy_select_change.bind(this));
         this.eq_compare = new EquipCompare(this.game, this.data);
         this.quant_win = new ShopItemQuantityWindow(this.game, this.data);
-        this.char_display = new ShopCharDisplay(this.game, this.data, this.on_char_display_change.bind(this));
+        this.char_display = new CharsMenu(this.game, this.data, this.on_char_display_change.bind(this));
 
         this.item_price_win = new Window(this.game, ITEM_PRICE_WIN_X, ITEM_PRICE_WIN_Y, ITEM_PRICE_WIN_WIDTH, ITEM_PRICE_WIN_HEIGHT);
         this.your_coins_win = new Window(this.game, YOUR_COINS_WIN_X, YOUR_COINS_WIN_Y, YOUR_COINS_WIN_WIDTH, YOUR_COINS_WIN_HEIGHT);

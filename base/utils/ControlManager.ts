@@ -62,6 +62,15 @@ export class ControlManager{
         }
     }
 
+    simple_control(esc?:Function, enter?:Function){
+        if(this.initialized) this.reset();
+
+        if(enter) this.actions[action_inputs.ENTER].callback = enter;
+        if(esc) this.actions[action_inputs.ESC].callback = esc;
+
+        this.set_actions();
+    }
+
     set_control(horizontal:boolean, vertical:boolean, horizontal_loop:boolean=true, vertical_loop:boolean=false,
         callbacks:{
             left?:Function, right?:Function, up?:Function, down?:Function,
