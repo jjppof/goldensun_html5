@@ -3,7 +3,7 @@ import * as _ from "lodash";
 const DEFAULT_LOOP_TIME = Phaser.Timer.QUARTER >> 1;
 
 const direction_keys = ["left", "right", "up", "down"];
-const action_keys = ["spacebar", "esc", "enter", "shift"];
+const action_keys = ["spacebar", "esc", "enter", "shift", "tab"];
 
 export type ControlStatus = {
     key:string;
@@ -39,7 +39,8 @@ export class ControlManager{
         let acts = [{key: action_inputs.SPACEBAR, callback: null, phaser_key: Phaser.Keyboard.SPACEBAR},
         {key: action_inputs.ESC, callback: null, phaser_key: Phaser.Keyboard.ESC},
         {key: action_inputs.ENTER, callback: null, phaser_key: Phaser.Keyboard.ENTER},
-        {key: action_inputs.SHIFT, callback: null, phaser_key: Phaser.Keyboard.SHIFT}];
+        {key: action_inputs.SHIFT, callback: null, phaser_key: Phaser.Keyboard.SHIFT},
+        {key: action_inputs.TAB, callback: null, phaser_key: Phaser.Keyboard.TAB}];
 
         this.directions = _.mapKeys(dirs, dir => dir.key) as {[key:string] : ControlStatus};
         this.actions = _.mapKeys(acts, act => act.key) as {[key:string] : ControlStatus};
@@ -74,7 +75,8 @@ export class ControlManager{
     set_control(horizontal:boolean, vertical:boolean, horizontal_loop:boolean=true, vertical_loop:boolean=false,
         callbacks:{
             left?:Function, right?:Function, up?:Function, down?:Function,
-            enter?:Function, esc?:Function, shift?:Function, spacebar?:Function
+            enter?:Function, esc?:Function, shift?:Function, spacebar?:Function,
+            tab?:Function
         }, custom_loop_time?:number){
         if(this.initialized) this.reset();
 
@@ -98,6 +100,7 @@ export class ControlManager{
         if(callbacks.esc) this.actions[action_inputs.ESC].callback = callbacks.esc;
         if(callbacks.shift) this.actions[action_inputs.SHIFT].callback = callbacks.shift;
         if(callbacks.spacebar) this.actions[action_inputs.SPACEBAR].callback = callbacks.spacebar;
+        if(callbacks.tab) this.actions[action_inputs.TAB].callback = callbacks.tab;
 
         if(custom_loop_time) this.loop_time = custom_loop_time;
         this.set_directions();

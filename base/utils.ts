@@ -65,7 +65,8 @@ export const action_inputs = {
     SPACEBAR: "spacebar",
     ENTER: "enter",
     SHIFT: "shift",
-    ESC: "esc"
+    ESC: "esc",
+    TAB: "tab"
 };
 
 

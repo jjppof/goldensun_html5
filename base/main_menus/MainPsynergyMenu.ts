@@ -86,6 +86,11 @@ export class MainPsynergyMenu {
         this.selected_char_index = this.chars_menu.selected_index;
         this.basic_info_window.set_char(this.data.info.party_data.members[this.chars_menu.selected_index]);
         this.set_psynergy_icons();
+
+        if(this.psynergy_choose_window.window_open){
+            this.psynergy_choose_window.close();
+            this.psynergy_choose_window.open(this.chars_menu.selected_index);
+        }
     }
 
     char_choose() {
@@ -106,7 +111,9 @@ export class MainPsynergyMenu {
             let psy_win = this.psynergy_choose_window;
             let selected_psy = psy_win.element_list[psy_win.elements[psy_win.selected_element_index] as string];
             this.psynergy_choose(selected_psy);
-        });
+        },{
+        shift:this.chars_menu.previous_char.bind(this.chars_menu),
+        spacebar:this.chars_menu.next_char.bind(this.chars_menu)});
     }
 
     psynergy_change(ability:Ability) {
