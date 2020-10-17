@@ -123,15 +123,12 @@ export class MainItemMenu {
     }
 
     char_change() {
+        if(this.selected_char_index === this.chars_menu.selected_index) return;
+
         this.selected_char_index = this.chars_menu.selected_index;
         this.basic_info_window.set_char(this.data.info.party_data.members[this.selected_char_index]);
         this.set_item_icons();
 
-        if(this.item_choose_window.window_open){
-            this.item_choose_window.close();
-            this.item_choose_window.open(this.chars_menu.selected_index);
-        }
-        
         if (this.choosing_give_destination) {
             if (this.item_options_window.item.type === item_types.ABILITY_GRANTOR) {
 
@@ -143,6 +140,12 @@ export class MainItemMenu {
                     preview_obj
                 );
                 this.item_change_stats_window.compare_items();
+            }
+        }
+        else{
+            if(this.item_choose_window.window_open && !this.item_options_window.window_open){
+                this.item_choose_window.close();
+                this.item_choose_window.open(this.chars_menu.selected_index);
             }
         }
     }
@@ -285,6 +288,7 @@ export class MainItemMenu {
     close_menu(close_menu_below:boolean = false) {
         this.chars_menu.close();
         this.basic_info_window.close();
+        this.item_change_stats_window.close();
 
         this.is_open = false;
         this.data.cursor_manager.hide();

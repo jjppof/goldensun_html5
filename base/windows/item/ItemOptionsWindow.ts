@@ -351,14 +351,15 @@ export class ItemOptionsWindow {
 
     open_options(vertical:number=0, horizontal:number=0){
         this.set_header();
+        this.item_menu.item_choose_window.deactivate();
 
-        if (this.item_menu.item_options_window.item.type === item_types.ABILITY_GRANTOR) {
+        if (this.item.type === item_types.ABILITY_GRANTOR) {
 
-        } else if (this.item_menu.item_options_window.item.type !== item_types.GENERAL_ITEM) {
+        } else if (this.item.type !== item_types.GENERAL_ITEM) {
             this.item_menu.item_change_stats_window.open(
                 this.data.info.party_data.members[this.item_menu.item_choose_window.char_index],
-                this.item_menu.item_options_window.item,
-                this.item_menu.item_options_window.item_obj
+                this.item,
+                this.item_obj
             );
             this.item_menu.item_change_stats_window.compare_items();
         }

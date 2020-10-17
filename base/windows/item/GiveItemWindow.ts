@@ -114,6 +114,7 @@ export class GiveItemWindow {
     }
 
     set_header() {
+        this.unset_header();
         this.icon_sprite = this.base_window.create_at_group(ITEM_ICON_X, ITEM_ICON_Y, "items_icons", undefined, this.item.key_name);
         this.base_window.update_text(this.char.name, this.char_name, CHAR_NAME_X, CHAR_NAME_Y);
         this.base_window.update_text(this.item.name, this.item_name, ITEM_NAME_X, ITEM_NAME_Y);

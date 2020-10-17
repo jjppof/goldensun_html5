@@ -83,6 +83,8 @@ export class MainPsynergyMenu {
     }
 
     char_change() {
+        if(this.selected_char_index === this.chars_menu.selected_index) return;
+        
         this.selected_char_index = this.chars_menu.selected_index;
         this.basic_info_window.set_char(this.data.info.party_data.members[this.chars_menu.selected_index]);
         this.set_psynergy_icons();
