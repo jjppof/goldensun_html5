@@ -126,7 +126,7 @@ export class Footsteps{
             const sprite_key = this.footsteps_sprite_base.getActionKey(FOOTSTEPS_KEY_NAME);
             footsteps_sprite = this.group.create(0, 0, sprite_key);
             footsteps_sprite.anchor.setTo(this.anchor_x, this.anchor_y);
-            this.footsteps_sprite_base.setAnimation(footsteps_sprite,FOOTSTEPS_KEY_NAME);
+            this.footsteps_sprite_base.setAnimation(footsteps_sprite, FOOTSTEPS_KEY_NAME);
         }
         else{
             footsteps_sprite = this.dead_steps[--this.dead_index];

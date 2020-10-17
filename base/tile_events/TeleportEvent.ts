@@ -8,19 +8,19 @@ export class TeleportEvent extends TileEvent {
     public x_target: number;
     public y_target: number;
     public advance_effect: boolean;
-    public dest_collider_layer: number;
+    public dest_collision_layer: number;
 
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, target, x_target, y_target, advance_effect, dest_collider_layer) {
+    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, target, x_target, y_target, advance_effect, dest_collision_layer) {
         super(game, data, event_types.TELEPORT, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
         this.target = target;
         this.x_target = x_target;
         this.y_target = y_target;
         this.advance_effect = advance_effect;
-        this.dest_collider_layer = dest_collider_layer;
+        this.dest_collision_layer = dest_collision_layer;
     }
 
     fire() {
-        if (!this.check_position() || this.data.hero.in_action() || this.data.menu_open || this.data.in_battle || this.data.tile_event_manager.on_event) {
+        if (!this.check_position() || !this.data.hero_movement_allowed()) {
             return;
         }
         this.data.tile_event_manager.on_event = true;
@@ -66,7 +66,7 @@ export class TeleportEvent extends TileEvent {
     async change_map() {
         this.data.map.unset_map();
         const next_map_key_name = this.target;
-        const target_collision_layer = this.dest_collider_layer;
+        const target_collision_layer = this.dest_collision_layer;
         this.data.hero.shadow.base_collision_layer = target_collision_layer;
         this.data.hero.sprite.base_collision_layer = target_collision_layer;
         this.data.map = await this.data.info.maps_list[next_map_key_name].mount_map(target_collision_layer);

@@ -12,6 +12,7 @@ import { SpeedEvent } from "./tile_events/SpeedEvent";
 import { GameEvent } from "./game_events/GameEvent";
 import { GoldenSun } from "./GoldenSun";
 import * as _ from "lodash";
+import { SliderEvent } from "./tile_events/SliderEvent";
 
 export class Map {
     public game: Phaser.Game;
@@ -234,7 +235,23 @@ export class Map {
                 property_info.x_target,
                 property_info.y_target,
                 property_info.advance_effect,
-                property_info.dest_collider_layer ? property_info.dest_collider_layer : 0
+                property_info.dest_collision_layer ? property_info.dest_collision_layer : 0
+            );
+            this.events[this_event_location_key].push(new_event);
+        } else if (property_info.type === tile_event_types.SLIDER) {
+            const new_event = new SliderEvent(
+                this.game,
+                this.data,
+                property_info.x,
+                property_info.y,
+                map_directions(property_info.activation_directions),
+                property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
+                false,
+                property_info.active === undefined ? true : property_info.active,
+                property_info.x_target,
+                property_info.y_target,
+                property_info.dest_collision_layer ? property_info.dest_collision_layer : 0,
+                property_info.show_dust
             );
             this.events[this_event_location_key].push(new_event);
         } else if (property_info.type === tile_event_types.JUMP) {
@@ -273,7 +290,7 @@ export class Map {
                 property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
                 false,
                 property_info.active === undefined ? true : property_info.active,
-                property_info.dest_collider_layer
+                property_info.dest_collision_layer
             );
             this.events[this_event_location_key].push(new_event);
         }

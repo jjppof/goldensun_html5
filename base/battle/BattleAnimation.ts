@@ -366,7 +366,12 @@ export class BattleAnimation {
             let sprites = this.get_sprites(seq, inner_property);
             let promises_set = false;
             sprites.forEach((this_sprite, index) => {
-                const uniq_key = this_sprite.key + "_" + this_sprite.data.battle_index;
+                let uniq_key;
+                if (this_sprite.data) {
+                    uniq_key = this_sprite.key + "_" + this_sprite.data.battle_index;
+                } else {
+                    uniq_key = index; //potential bug
+                }
                 if (this.sprites_prev_properties[uniq_key] === undefined) {
                     this.sprites_prev_properties[uniq_key] = {};
                 }

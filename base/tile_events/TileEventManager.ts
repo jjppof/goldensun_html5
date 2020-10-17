@@ -91,7 +91,7 @@ export class TileEventManager {
         if (this.hero.current_direction !== this_activation_direction) return;
         if (current_event.type === event_types.CLIMB && !this.hero.idle_climbing) {
             current_event.fire(this_activation_direction);
-        } else if ([event_types.TELEPORT, event_types.JUMP].includes(current_event.type)) {
+        } else if ([event_types.TELEPORT, event_types.JUMP, event_types.SLIDER].includes(current_event.type)) {
             current_event.fire();
         }
     }

@@ -16,7 +16,7 @@ export class ClimbEvent extends TileEvent {
     }
 
     fire(activation_direction) {
-        if (!this.data.hero.stop_by_colliding || !this.check_position() || this.data.hero.in_action(true) || this.data.menu_open || this.data.in_battle || this.data.tile_event_manager.on_event) {
+        if (!this.data.hero.stop_by_colliding || !this.check_position() || !this.data.hero_movement_allowed()) {
             return;
         }
         if (!this.data.hero.climbing && !this.climbing_only) {

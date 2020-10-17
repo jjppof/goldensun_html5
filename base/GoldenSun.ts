@@ -40,7 +40,6 @@ export class GoldenSun {
     public battle_instance: Battle = null;              //class responsible for a battle
 
     //inputs
-    public cursors: Phaser.CursorKeys = null;
     public enter_input: Phaser.Signal = null;
     public esc_input: Phaser.Signal = null;
     public shift_input: Phaser.Signal = null;
@@ -152,9 +151,6 @@ export class GoldenSun {
 
         this.initialize_utils_controls();
 
-        //set keyboard cursors
-        this.cursors = this.game.input.keyboard.createCursorKeys();
-
         this.created = true;
         this.game.camera.resetFX();
     }
@@ -221,8 +217,8 @@ export class GoldenSun {
         });
     }
 
-    hero_movement_allowed() {
-        return !(this.hero.in_action(true) || this.menu_open || this.shop_open || this.in_battle || this.tile_event_manager.on_event || this.force_stop_movement);
+    hero_movement_allowed(allow_climbing = true) {
+        return !(this.hero.in_action(allow_climbing) || this.menu_open || this.shop_open || this.in_battle || this.tile_event_manager.on_event || this.force_stop_movement);
     }
 
     update() {

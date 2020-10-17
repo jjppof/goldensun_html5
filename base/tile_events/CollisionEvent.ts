@@ -2,13 +2,13 @@ import { directions } from "../utils";
 import { TileEvent, event_types } from "./TileEvent";
 
 export class CollisionEvent extends TileEvent {
-    public dest_collider_layer: number;
+    public dest_collision_layer: number;
     public next_x: number;
     public next_y: number;
 
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, dest_collider_layer) {
+    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, dest_collision_layer) {
         super(game, data, event_types.COLLISION, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
-        this.dest_collider_layer = dest_collider_layer;
+        this.dest_collision_layer = dest_collision_layer;
         this.next_x = 0;
         this.next_y = 0;
     }
@@ -32,7 +32,7 @@ export class CollisionEvent extends TileEvent {
     fire() {
         if (this.data.hero.tile_x_pos === this.next_x && this.data.hero.tile_y_pos === this.next_y) {
             this.data.tile_event_manager.unset_triggered_event(this);
-            this.data.collision.change_map_body(this.data, this.dest_collider_layer);
+            this.data.collision.change_map_body(this.data, this.dest_collision_layer);
         } else if (!this.check_position()) {
             this.data.tile_event_manager.unset_triggered_event(this);
         }
