@@ -76,8 +76,8 @@ export class ButtonSelectMenu {
 
     set_control() {
         if(this.control_manager.initialized) this.control_manager.reset();
-        this.control_manager.set_control(true, false, true, false, {right: this.next_button.bind(this), left: this.previous_button.bind(this),
-            esc: this.on_cancel.bind(this), enter: this.on_press.bind(this)});
+        this.control_manager.set_control({right: this.next_button.bind(this), left: this.previous_button.bind(this),
+            esc: this.on_cancel.bind(this), enter: this.on_press.bind(this)}, {horizontal_loop: true});
     }
 
     mount_buttons(filtered_buttons:string[]=[]) {

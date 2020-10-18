@@ -306,12 +306,12 @@ export class CharsMenu {
     }
 
     grant_control(on_cancel:Function, on_select:Function){
-        this.data.control_manager.set_control(true, true, true, false, {right: this.next_char.bind(this),
+        this.data.control_manager.set_control({right: this.next_char.bind(this),
             left: this.previous_char.bind(this),
             up: this.previous_line.bind(this),
             down: this.next_line.bind(this),
             esc: on_cancel,
-            enter: on_select});
+            enter: on_select}, {horizontal_loop:true});
     }
 
     activate(){

@@ -1,5 +1,4 @@
 import { Window, TextObj } from "../Window";
-import { CursorControl } from "../utils/CursorControl";
 import * as numbers from '../magic_numbers';
 import { GoldenSun } from "../GoldenSun";
 import { ItemSlot, MainChar } from "../MainChar";
@@ -315,7 +314,7 @@ export class ItemPsynergyChooseWindow {
 
     /*Enables control keys for this menu*/
     grant_control(on_cancel:Function, on_select:Function, extra_commands?:{shift?:Function, spacebar?:Function}){
-        this.data.control_manager.set_control(true, true, true, true, {
+        this.data.control_manager.set_control({
             right: this.next_page.bind(this),
             left: this.previous_page.bind(this),
             up: this.previous_element.bind(this),
@@ -324,7 +323,7 @@ export class ItemPsynergyChooseWindow {
             enter: on_select,
             shift: extra_commands.shift,
             spacebar: extra_commands.spacebar
-        });
+        },{horizontal_loop:true, vertical_loop:true});
     }
 
     /*Hides this window*/

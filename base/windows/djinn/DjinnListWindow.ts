@@ -1,6 +1,5 @@
 import { TextObj, Window } from '../../Window';
 import { djinn_status, djinn_font_colors } from '../../Djinn';
-import { CursorControl } from '../../utils/CursorControl';
 import * as numbers from '../../magic_numbers';
 import { base_actions, capitalize, change_brightness, directions, elements, reverse_directions } from '../../utils';
 import { DjinnModeHeaderWindow } from './DjinnModeHeaderWindow';
@@ -14,23 +13,35 @@ const WIN_WIDTH = 236;
 const WIN_HEIGHT = 116;
 const WIN_X = 0;
 const WIN_Y = 40;
+
 const CHAR_X_PADDING = 32;
 const CHAR_Y_PADDING = 23;
 const CHAR_X_BETWEEN = 56;
 const CHARS_PER_PAGE = 4;
+
 const HIGHLIGHT_HEIGHT = 8;
 const HIGHLIGHT_WIDTH = 48;
 const HIGHLIGHT_X_PADDING = 16;
 const HIGHLIGHT_Y_PADDING = 24;
+
 const DJINN_NAME_X_PADDING = 24;
 const DJINN_NAME_Y_PADDING = 24;
 const STAR_X_PADDING = HIGHLIGHT_X_PADDING + 1;
 const STAR_Y_PADDING = HIGHLIGHT_Y_PADDING + 1;
+
 const DJINN_NAME_BETWEEN = 56;
 const DJINN_DESCRIPTION_X = 8;
 const DJINN_DESCRIPTION_Y = 104;
 const DJINN_SPRITE_X = 50;
 const DJINN_CHAR_WIN_STATS_RIGHT_X = 120;
+
+const CURSOR_X = 0;
+const CURSOR_Y = 68;
+const CURSOR_TEXT_X = 0;
+const CURSOR_TEXT_Y = 60;
+const COL_GAP = 58;
+const LINE_GAP = 8;
+
 const VIEW_STATES = {
     STATS: 0,
     THIS_CHAR: 1,
@@ -40,19 +51,18 @@ const VIEW_STATES = {
 export class DjinnListWindow {
     public game: Phaser.Game;
     public data: GoldenSun;
+
     public base_window: Window;
     public group: Phaser.Group;
     public chars_sprites_group: Phaser.Group;
+
     public window_open: boolean;
     public window_active: boolean;
-    public esc_propagation_priority: number;
-    public enter_propagation_priority: number;
-    public shift_propagation_priority: number;
-    public spacebar_propagation_priority: number;
     public selected_char_index: number;
     public selected_djinn_index: number;
     public page_index: number;
     public close_callback: Function;
+
     public chars_sprites: {
         [char_key_name: string]: Phaser.Sprite
     };
@@ -60,9 +70,10 @@ export class DjinnListWindow {
         [element: string]: Phaser.Sprite
     }[];
     public djinn_description: TextObj;
+
     public page_number_bar_highlight: Phaser.Graphics;
     public on_action_bar_highlight: Phaser.Graphics;
-    public cursor_control: CursorControl;
+
     public sizes: number[];
     public djinn_names: TextObj[][];
     public active_djinn_sprite: Phaser.Sprite;
@@ -83,43 +94,38 @@ export class DjinnListWindow {
     constructor (game, data) {
         this.game = game;
         this.data = data;
+
         this.base_window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
         this.group = this.game.add.group();
         this.group.alpha = 0;
         this.chars_sprites_group = this.game.add.group();
         this.group.add(this.chars_sprites_group);
+
         this.window_open = false;
         this.window_active = false;
-        //this.esc_propagation_priority = esc_propagation_priority + 1;
-        //this.enter_propagation_priority = enter_propagation_priority + 1;
-        //this.shift_propagation_priority = shift_propagation_priority + 1;
-        //this.spacebar_propagation_priority = spacebar_propagation_priority + 1;
         this.selected_char_index = 0;
         this.selected_djinn_index = 0;
         this.page_index = 0;
         this.close_callback = null;
+
         this.chars_sprites = {};
         this.djinns_sprites = [];
         this.djinn_description = this.base_window.set_text_in_position("", DJINN_DESCRIPTION_X, DJINN_DESCRIPTION_Y);
+
         this.page_number_bar_highlight =  this.get_highlight_bar();
         this.on_action_bar_highlight =  this.get_highlight_bar();
         this.on_action_bar_highlight.alpha = 0;
-        this.cursor_control = new CursorControl(this.game, true, true, this.get_max_chars.bind(this),
-            this.get_max_djinn.bind(this), this.group, this.on_char_change.bind(this), this.on_djinn_change.bind(this),
-            this.get_char_index.bind(this), this.set_char_index.bind(this), this.get_djinn_index.bind(this),
-            this.set_djinn_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),
-            this.get_x_cursor.bind(this), this.get_y_cursor.bind(this)
-        );
+
         this.sizes = [];
         this.djinn_names = [];
         this.active_djinn_sprite = null;
         this.djinn_status_change_header_window = new DjinnModeHeaderWindow(this.game, this.data);
         this.djinn_char_stats_window_left = new DjinnCharStatsWindow(this.game);
         this.djinn_char_stats_window_right = new DjinnCharStatsWindow(this.game, DJINN_CHAR_WIN_STATS_RIGHT_X);
-        this.djinn_psynergy_window = new DjinnPsynergyWindow(this.game, this.data, this.esc_propagation_priority, this.enter_propagation_priority, this.spacebar_propagation_priority);
+        this.djinn_psynergy_window = new DjinnPsynergyWindow(this.game, this.data);
+
         this.init_djinn_sprites();
         this.init_djinni_status_texts();
-        this.set_control();
     }
 
     get_highlight_bar() {
@@ -137,6 +143,7 @@ export class DjinnListWindow {
         this.group.y = this.game.camera.y + WIN_Y;
     }
 
+    /*
     set_control() {
         this.data.esc_input.add(() => {
             if (!this.window_open || !this.window_active) return;
@@ -159,36 +166,21 @@ export class DjinnListWindow {
             this.data.shift_input.halt();
             this.change_djinn_status(this.selected_char_index, this.selected_djinn_index);
         }, this, this.shift_propagation_priority);
-    }
+    }*/
 
-    get_x_cursor() {
-        return HIGHLIGHT_X_PADDING + this.selected_char_index * DJINN_NAME_BETWEEN - 14;
-    }
-
-    get_y_cursor() {
-        if (this.setting_djinn_status && this.selected_char_index === this.setting_djinn_status_char_index) {
-            return HIGHLIGHT_Y_PADDING - numbers.FONT_SIZE;
-        } else if (this.setting_djinn_status && this.selected_djinn_index === this.data.info.party_data.members[this.selected_char_index].djinni.length) {
-            return HIGHLIGHT_Y_PADDING - numbers.FONT_SIZE;
-        } else {
-            return HIGHLIGHT_Y_PADDING + this.selected_djinn_index * numbers.FONT_SIZE + 3;
+    select_djinn(char:number, index:number){
+        if(this.selected_djinn_index !== index){
+            this.selected_djinn_index = index;
+            this.on_djinn_change();
         }
-    }
 
-    is_open() {
-        return this.window_open;
-    }
+        if(this.selected_char_index !== char){
+            this.selected_char_index = char;
+            this.on_char_change();
+        }
 
-    is_active() {
-        return this.window_active;
-    }
-
-    get_char_index() {
-        return this.selected_char_index;
-    }
-
-    set_char_index(index) {
-        this.selected_char_index = index;
+        if(this.data.cursor_manager.active_tween) this.data.cursor_manager.clear_tweens();
+        this.data.cursor_manager.move_to(CURSOR_X + char*COL_GAP, CURSOR_Y + index*LINE_GAP, undefined, false);
     }
 
     get_djinn_index() {
@@ -385,14 +377,14 @@ export class DjinnListWindow {
         }
     }
 
-    on_char_change(before_index, after_index) {
-        this.selected_char_index = after_index;
+    on_char_change() {
         if (this.setting_djinn_status && this.selected_char_index === this.setting_djinn_status_char_index) {
             this.selected_djinn_index = this.setting_djinn_status_djinn_index;
         } else {
             if (this.selected_djinn_index >= this.sizes[this.selected_char_index]) {
                 this.selected_djinn_index = this.sizes[this.selected_char_index] - 1;
-                this.cursor_control.set_cursor_position();
+                this.data.cursor_manager.move_to(CURSOR_X + this.selected_char_index*COL_GAP,
+                    CURSOR_Y + this.selected_djinn_index*LINE_GAP, undefined, false);
             }
         }
         this.set_highlight_bar();
@@ -403,8 +395,7 @@ export class DjinnListWindow {
         this.set_djinn_sprite();
     }
 
-    on_djinn_change(before_index, after_index) {
-        this.selected_djinn_index = after_index;
+    on_djinn_change() {
         this.set_highlight_bar();
         this.set_action_text();
         this.update_djinn_description();
@@ -449,7 +440,7 @@ export class DjinnListWindow {
         this.setting_djinn_status = true;
         this.djinn_action_window.set_action_for_specific_djinn(this_char, this_djinn);
         this.darken_font_color();
-        this.cursor_control.set_cursor_position();
+        this.data.cursor_manager.move_to(CURSOR_TEXT_X, CURSOR_TEXT_Y, undefined, false);
     }
 
     darken_font_color(darken = true) {
@@ -491,7 +482,7 @@ export class DjinnListWindow {
         this.set_action_text();
         this.update_djinn_description();
         this.set_djinn_sprite();
-        this.cursor_control.set_cursor_position();
+        this.data.cursor_manager.move_to(CURSOR_X + this.selected_char_index*COL_GAP, CURSOR_Y + this.selected_djinn_index*LINE_GAP, undefined, false);
     }
 
     set_djinn_operation() {
@@ -635,13 +626,15 @@ export class DjinnListWindow {
         this.setting_djinn_status = false;
         this.chars_quick_info_window = chars_quick_info_window;
         this.djinn_action_window = djinn_action_window;
+
         this.load_page();
         this.update_position();
         this.set_highlight_bar();
         this.set_action_text();
         this.update_djinn_description();
         this.set_djinn_sprite();
-        this.cursor_control.activate();
+
+        this.select_djinn(0, 0);
         this.window_open = true;
         this.window_active = true;
         this.changing_djinn_status = false;
@@ -655,7 +648,7 @@ export class DjinnListWindow {
     close(close_callback?) {
         this.window_open = false;
         this.window_active = false;
-        this.cursor_control.deactivate();
+        this.data.cursor_manager.hide();
         this.unset_page();
         this.group.alpha = 0;
         this.base_window.close(undefined, false);
@@ -666,11 +659,11 @@ export class DjinnListWindow {
 
     activate() {
         this.window_active = true;
-        this.cursor_control.activate();
+        this.select_djinn(this.selected_char_index, this.selected_djinn_index);
     }
 
     deactivate() {
         this.window_active = false;
-        this.cursor_control.deactivate();
+        this.data.cursor_manager.hide();
     }
 }

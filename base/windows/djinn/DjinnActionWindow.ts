@@ -1,5 +1,6 @@
 import { TextObj, Window } from '../../Window';
-import { djinn_status } from '../../Djinn';
+import { Djinn, djinn_status } from '../../Djinn';
+import { MainChar } from '../../MainChar';
 
 const BASE_WIN_WIDTH = 132;
 const BASE_WIN_HEIGHT = 36;
@@ -30,7 +31,7 @@ export class DjinnActionWindow {
     };
     public action_text: TextObj;
 
-    constructor(game) {
+    constructor(game:Phaser.Game) {
         this.game = game;
         this.window_open = false;
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
@@ -45,7 +46,7 @@ export class DjinnActionWindow {
         this.action_text = this.base_window.set_text_in_position("", DJINN_ACTION_X, DJINN_ACTION_Y);
     }
 
-    set_action_text(status) {
+    set_action_text(status:string) {
         this.base_window.update_text("Choose a djinn.", this.action_description_text);
         this.base_window.update_text("", this.char_name_text);
         this.base_window.update_text("", this.djinn_name_text);
@@ -60,7 +61,7 @@ export class DjinnActionWindow {
         }
     }
 
-    set_action_for_specific_djinn(this_char, this_djinn) {
+    set_action_for_specific_djinn(this_char:MainChar, this_djinn:Djinn) {
         this.star_sprite = this.base_window.create_at_group(DJINN_NAME_X - 7, DJINN_NAME_Y + 1, this_djinn.element + "_star");
         this.base_window.update_text("What will you do?", this.action_description_text);
         this.base_window.update_text(this_char.name + "'s", this.char_name_text);
@@ -69,7 +70,7 @@ export class DjinnActionWindow {
         this.shift_key.text.alpha = this.shift_key.shadow.alpha = 0;
     }
 
-    open(callback?) {
+    open(callback?:Function) {
         this.base_window.show(() => {
             this.window_open = true;
             if (callback !== undefined) {
@@ -78,7 +79,7 @@ export class DjinnActionWindow {
         }, false);
     }
 
-    close(callback?) {
+    close(callback?:Function) {
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {

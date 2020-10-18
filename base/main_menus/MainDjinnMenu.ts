@@ -13,27 +13,20 @@ export class MainDjinnMenu {
     public djinn_action_window: DjinnActionWindow;
     public djinni_list_window: DjinnListWindow;
 
-    constructor(game, data) {
+    constructor(game:Phaser.Game, data:GoldenSun) {
         this.game = game;
         this.data = data;
-        this.is_open = false;
         this.close_callback = null;
+
+        this.is_open = false;
         this.selected_char_index = 0;
-        this.set_control();
+
         this.chars_quick_info_window = new CharsQuickInfoDjinnWindow(this.game);
         this.djinn_action_window = new DjinnActionWindow(this.game);
         this.djinni_list_window = new DjinnListWindow(this.game, this.data);
     }
 
-    set_control() {
-        this.data.esc_input.add(() => {
-            if (!this.is_open) return;
-            this.data.esc_input.halt();
-            this.close_menu();
-        }, this);
-    }
-
-    open_menu(close_callback) {
+    open_menu(close_callback?:Function) {
         this.close_callback = close_callback;
         this.selected_char_index = 0;
         this.chars_quick_info_window.open(this.data.info.party_data.members[this.selected_char_index]);
@@ -42,7 +35,7 @@ export class MainDjinnMenu {
         this.is_open = true;
     }
 
-    close_menu(close_menu_below = false) {
+    close_menu(close_menu_below:boolean=false) {
         this.is_open = false;
         this.chars_quick_info_window.close();
         this.djinni_list_window.close();

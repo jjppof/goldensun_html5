@@ -53,23 +53,22 @@ export class DjinnPsynergyWindow {
     public next_djinni_status: string;
     public action: string;
 
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority, spacebar_propagation_priority) {
+    constructor(game, data) {
         this.game = game;
         this.data = data;
         this.window_open = false;
         this.text_sprites_in_window = [];
         this.icon_sprites_in_window = [];
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
-        this.spacebar_propagation_priority = spacebar_propagation_priority + 1;
+
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
         this.base_window.init_page_indicator_bar();
         this.base_window.set_text_in_position("PP", PSY_PP_COST_X, PSY_PP_COST_Y);
         this.psy_info_1_text = this.base_window.set_text_in_position("", PSY_INFO_X, PSY_INFO_1_Y);
         this.psy_info_2_text = this.base_window.set_text_in_position("", PSY_INFO_X, PSY_INFO_2_Y);
-        this.set_control();
+        //this.set_control();
     }
 
+    /*
     set_control() {
         this.data.esc_input.add(() => {
             if (!this.window_open) return;
@@ -98,7 +97,7 @@ export class DjinnPsynergyWindow {
                 this.spacebar_callback();
             }
         }, this, this.spacebar_propagation_priority);
-    }
+    }*/
 
     set_page_number() {
         const list_length = this.all_abilities.length;

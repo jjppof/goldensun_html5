@@ -186,6 +186,16 @@ export class InventoryWindow{
         }
     }
 
+    grant_control(on_cancel:Function, on_select:Function){
+        this.data.control_manager.set_control({right: this.next_col.bind(this),
+            left: this.previous_col.bind(this),
+            up: this.previous_line.bind(this),
+            down: this.next_line.bind(this),
+            esc: on_cancel,
+            enter: on_select},
+            {horizontal_loop:true, vertical_loop:true});
+    }
+
     next_col(){
         if (this.item_grid.length === 1 && this.item_grid[this.cursor_pos.line].length === 1) return;
 

@@ -82,8 +82,7 @@ export class SellRepairMenu{
             this.npc_dialog.update_dialog("repair_done", true);
             this.parent.update_your_coins();
 
-            this.control_manager.set_control(false, false, false, false, {esc: this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos),
-                enter: this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos)});
+            this.control_manager.simple_input(this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos));
         }, this);
     }
 
@@ -102,8 +101,7 @@ export class SellRepairMenu{
             text = this.npc_dialog.replace_text(text, undefined, this.data.info.items_list[this.selected_item.key_name].name);
             this.npc_dialog.update_dialog(text, true, false);
 
-            this.control_manager.set_control(false, false, false, false, {esc: this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos),
-                enter: this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos)});
+            this.control_manager.simple_input(this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos));
         }
         
         else{
@@ -114,12 +112,10 @@ export class SellRepairMenu{
 
             this.yesno_action.open_menu({yes: () => {
                 this.npc_dialog.update_dialog("repair_deal_accept", true);
-                this.control_manager.set_control(false, false, false, false, {esc: this.on_item_repair.bind(this),
-                    enter: this.on_item_repair.bind(this)})
+                this.control_manager.simple_input(this.on_item_repair.bind(this))
                 }, no: () => {
                 this.npc_dialog.update_dialog("repair_deal_decline", true);
-                this.control_manager.set_control(false, false, false, false, {esc: this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos),
-                    enter: this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos)})
+                this.control_manager.simple_input(this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos));
                 }},
                 {x: YESNO_X, y: YESNO_Y});
         }
@@ -158,8 +154,7 @@ export class SellRepairMenu{
         if(this.inv_win.is_open) this.inv_win.close();
         if(!this.inv_win.is_open) this.inv_win.open(this.selected_character.key_name, undefined, false);
 
-        this.control_manager.set_control(false, false, false, false, {esc: this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos),
-            enter: this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos)});
+        this.control_manager.simple_input(this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos));
     }
 
     on_sell_item_select(){
@@ -172,8 +167,7 @@ export class SellRepairMenu{
         if(this.data.info.items_list[this.selected_item.key_name].important_item){
             this.npc_dialog.update_dialog("cant_sell", true);
 
-            this.control_manager.set_control(false, false, false, false, {esc: this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos),
-            enter: this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos)})
+            this.control_manager.simple_input(this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos));
         }
 
         else if(this.selected_item.quantity === 1){
@@ -188,8 +182,7 @@ export class SellRepairMenu{
             this.yesno_action.open_menu({yes: this.on_sale_success.bind(this), no: () => {
                 let decline_msg = this.data.info.items_list[this.selected_item.key_name].rare_item ? "decline_sell_artifact" : "decline_sell_normal";
                 this.npc_dialog.update_dialog(decline_msg, true);
-                this.control_manager.set_control(false, false, false, false, {esc: this.on_character_select.bind(this, "sale_follow_up", this.inv_win_pos),
-                    enter: this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos)})
+                this.control_manager.simple_input(this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos));
                 }},
                 {x: YESNO_X, y: YESNO_Y});
         }
@@ -201,30 +194,26 @@ export class SellRepairMenu{
             let char_item = char_item_match.length !== 0 ? char_item_match[0] : null;
 
             if(!this.quant_win.is_open) this.quant_win.open(char_item);
-            this.control_manager.set_control(true, false, true, false, {right: this.quant_win.increase_amount.bind(this.quant_win),
-                left: this.quant_win.decrease_amount.bind(this.quant_win),
-                esc: this.on_character_select.bind(this, "sell_follow_up", this.selected_char_index, this.inv_win_pos),
-                enter: () => {
-                    let quant = 1;
-                    quant = this.quant_win.chosen_quantity;
-                    this.quant_win.close();
-                    this.data.cursor_manager.hide();
+            this.quant_win.grant_control(this.on_character_select.bind(this, "sell_follow_up", this.selected_char_index, this.inv_win_pos),
+            () => {
+                let quant = 1;
+                quant = this.quant_win.chosen_quantity;
+                this.quant_win.close();
+                this.data.cursor_manager.hide();
 
-                    let text = this.npc_dialog.get_message("sell_quantity_confirm");
-                    let item_price = (this.data.info.items_list[this.selected_item.key_name].price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0; 
-                    text = this.npc_dialog.replace_text(text, undefined, undefined, String(item_price*quant));
-                    this.npc_dialog.update_dialog(text, false, false);
+                let text = this.npc_dialog.get_message("sell_quantity_confirm");
+                let item_price = (this.data.info.items_list[this.selected_item.key_name].price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0; 
+                text = this.npc_dialog.replace_text(text, undefined, undefined, String(item_price*quant));
+                this.npc_dialog.update_dialog(text, false, false);
 
-                    this.yesno_action.open_menu({yes: this.on_sale_success.bind(this, quant),
-                        no: () => {
-                        let decline_msg = this.data.info.items_list[this.selected_item.key_name].rare_item ? "decline_sell_artifact" : "decline_sell_normal";
-                        this.npc_dialog.update_dialog(decline_msg, true);
-                        this.control_manager.set_control(false, false, false, false, {esc: this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos),
-                            enter: this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos)});}
-                        },
-                        {x: YESNO_X, y: YESNO_Y})
-                }}
-            );
+                this.yesno_action.open_menu({yes: this.on_sale_success.bind(this, quant),
+                    no: () => {
+                    let decline_msg = this.data.info.items_list[this.selected_item.key_name].rare_item ? "decline_sell_artifact" : "decline_sell_normal";
+                    this.npc_dialog.update_dialog(decline_msg, true);
+                    this.control_manager.simple_input(this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos));}
+                    },
+                    {x: YESNO_X, y: YESNO_Y})
+            });
         }
     }
 
@@ -243,12 +232,8 @@ export class SellRepairMenu{
         this.inv_win.set_cursor(item_pos.line,item_pos.col);
         if(!this.inv_win.item_grid[item_pos.line][item_pos.col]) this.inv_win.previous_col();
 
-        this.control_manager.set_control(true, true, true, true, {right: this.inv_win.next_col.bind(this.inv_win),
-            left: this.inv_win.previous_col.bind(this.inv_win),
-            up: this.inv_win.previous_line.bind(this.inv_win),
-            down: this.inv_win.next_line.bind(this.inv_win),
-            esc: this.open_inventory_view.bind(this),
-            enter: (this.is_repair_menu ? this.on_repair_item_select.bind(this) : this.on_sell_item_select.bind(this))});
+        this.inv_win.grant_control(this.open_inventory_view.bind(this),
+            (this.is_repair_menu ? this.on_repair_item_select.bind(this) : this.on_sell_item_select.bind(this)));
     }
 
     open_inventory_view(msg_key="sell_follow_up"){
@@ -269,12 +254,7 @@ export class SellRepairMenu{
         if(this.inv_win.is_open) this.inv_win.close();
         if(!this.inv_win.is_open) this.inv_win.open(char_key, undefined, false); 
 
-        this.control_manager.set_control(true, true, true, false, {right: this.char_display.next_char.bind(this.char_display),
-            left: this.char_display.previous_char.bind(this.char_display),
-            up: this.char_display.previous_line.bind(this.char_display),
-            down: this.char_display.next_line.bind(this.char_display),
-            esc: this.close_menu.bind(this),
-            enter: this.on_character_select.bind(this)});
+        this.char_display.grant_control(this.close_menu.bind(this), this.on_character_select.bind(this));
     }
 
     open_menu(is_repair_menu:boolean, close_callback?:Function){
@@ -285,8 +265,7 @@ export class SellRepairMenu{
         if(is_repair_menu){
             this.npc_dialog.update_dialog("repair_menu", true);
 
-            this.control_manager.set_control(false, false, false, false, {esc: this.open_inventory_view.bind(this, "repair_select"),
-            enter: this.open_inventory_view.bind(this, "repair_select")});
+            this.control_manager.simple_input(this.open_inventory_view.bind(this, "repair_select"));
         }
         else this.open_inventory_view("sell_select");
     }

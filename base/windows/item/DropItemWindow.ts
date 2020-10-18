@@ -131,12 +131,12 @@ export class DropItemWindow {
             }
         }, false);
 
-        this.data.control_manager.set_control(false, true, false, true, {
+        this.data.control_manager.set_control({
             up: this.change_answer.bind(this),
             down: this.change_answer.bind(this),
             esc: this.close.bind(this),
             enter: this.on_drop.bind(this)
-        });
+        },{vertical_loop:true});
 
     }
 

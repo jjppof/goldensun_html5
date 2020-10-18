@@ -272,10 +272,7 @@ export class ItemOptionsWindow {
             close_callback();
         });
 
-        this.data.control_manager.simple_control(() =>{
-            this.action_message_window.close();
-            this.data.control_manager.reset();
-        },() =>{ 
+        this.data.control_manager.simple_input(() =>{
             this.action_message_window.close();
             this.data.control_manager.reset();
         });
@@ -368,13 +365,14 @@ export class ItemOptionsWindow {
 
         this.choose_position(vertical, horizontal);
 
-        this.data.control_manager.set_control(true, true, true, true, {
+        this.data.control_manager.set_control({
             right: this.next_horizontal.bind(this),
             left: this.previous_horizontal.bind(this),
             up: this.next_vertical.bind(this),
             down: this.previous_vertical.bind(this),
             esc: this.close.bind(this, this.close_callback),
-            enter: this.on_choose.bind(this)});
+            enter: this.on_choose.bind(this)},
+            {horizontal_loop:true, vertical_loop:true});
     }
 
     open(item_obj:ItemSlot, item:Item, char:MainChar, stats_window:StatsCheckWithItemWindow, item_menu:MainItemMenu,

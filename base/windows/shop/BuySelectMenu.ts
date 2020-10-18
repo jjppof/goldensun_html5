@@ -304,6 +304,16 @@ export class BuySelectMenu{
         this.change_item(this.selected_index);
     }
 
+    grant_control(on_cancel:Function, on_select:Function){
+        this.data.control_manager.set_control({right: this.next_item.bind(this),
+            left: this.previous_item.bind(this),
+            up: this.previous_page.bind(this),
+            down: this.next_page.bind(this),
+            esc: on_cancel,
+            enter: on_select},
+            {horizontal_loop:true});
+    }
+
     /*Changes to the next item page
     Used as a callback for controls*/
     next_page(force_index?:number){

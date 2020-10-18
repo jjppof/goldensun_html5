@@ -44,12 +44,12 @@ export class CharsQuickInfoDjinnWindow {
         this.base_window.update_text(this.char.level.toString(), this.level_number);
     }
 
-    set_char(char) {
+    set_char(char:MainChar) {
         this.char = char;
         this.update_text();
     }
 
-    open(char, callback?) {
+    open(char:MainChar, callback?:Function) {
         this.char = char;
         this.update_text();
         this.base_window.show(() => {
@@ -60,7 +60,7 @@ export class CharsQuickInfoDjinnWindow {
         }, false);
     }
 
-    close(callback?) {
+    close(callback?:Function) {
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {

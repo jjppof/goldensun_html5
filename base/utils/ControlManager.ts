@@ -1,5 +1,6 @@
 import { directions, reverse_directions, action_inputs } from '../utils';
 import * as _ from "lodash";
+
 const DEFAULT_LOOP_TIME = Phaser.Timer.QUARTER >> 1;
 
 const direction_keys = ["left", "right", "up", "down"];
@@ -31,10 +32,10 @@ export class ControlManager{
         this.initialized = false;
         this.loop_time = DEFAULT_LOOP_TIME;
 
-        let dirs = [{key: reverse_directions[directions.left], pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.LEFT},
-        {key: reverse_directions[directions.right], pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.RIGHT},
-        {key: reverse_directions[directions.up], pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.UP},
-        {key: reverse_directions[directions.down], pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.DOWN}];
+        let dirs = [{key: reverse_directions[directions.left], pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.LEFT},
+        {key: reverse_directions[directions.right], pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.RIGHT},
+        {key: reverse_directions[directions.up], pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.UP},
+        {key: reverse_directions[directions.down], pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.DOWN}];
 
         let acts = [{key: action_inputs.SPACEBAR, callback: null, phaser_key: Phaser.Keyboard.SPACEBAR},
         {key: action_inputs.ESC, callback: null, phaser_key: Phaser.Keyboard.ESC},
@@ -63,46 +64,42 @@ export class ControlManager{
         }
     }
 
-    simple_control(esc?:Function, enter?:Function){
+    simple_input(callback:Function){
         if(this.initialized) this.reset();
-
-        if(enter) this.actions[action_inputs.ENTER].callback = enter;
-        if(esc) this.actions[action_inputs.ESC].callback = esc;
+        
+        this.actions[action_inputs.ENTER].callback = callback;
+        this.actions[action_inputs.ESC].callback = callback;
 
         this.set_actions();
     }
 
-    set_control(horizontal:boolean, vertical:boolean, horizontal_loop:boolean=true, vertical_loop:boolean=false,
-        callbacks:{
-            left?:Function, right?:Function, up?:Function, down?:Function,
-            enter?:Function, esc?:Function, shift?:Function, spacebar?:Function,
-            tab?:Function
-        }, custom_loop_time?:number){
+    set_control(callbacks:{left?:Function, right?:Function, up?:Function, down?:Function,
+        enter?:Function, esc?:Function, shift?:Function, spacebar?:Function, tab?:Function},
+        params?:{custom_loop_time?:number, horizontal_loop?:boolean, vertical_loop?:boolean}){
         if(this.initialized) this.reset();
 
-        if(horizontal){
-            if(!horizontal_loop){
-                this.directions[reverse_directions[directions.left]].loop = false;
-                this.directions[reverse_directions[directions.right]].loop = false;
-            } 
-            this.directions[reverse_directions[directions.left]].callback = callbacks.left;
-            this.directions[reverse_directions[directions.right]].callback = callbacks.right;
-        }
-        if(vertical){
-            if(!vertical_loop){
-                this.directions[reverse_directions[directions.up]].loop = false;
-                this.directions[reverse_directions[directions.down]].loop = false;
-            }
-            this.directions[reverse_directions[directions.up]].callback = callbacks.up;
-            this.directions[reverse_directions[directions.down]].callback = callbacks.down; 
-        }
+        if(callbacks.left) this.directions[reverse_directions[directions.left]].callback = callbacks.left;
+        if(callbacks.right) this.directions[reverse_directions[directions.right]].callback = callbacks.right;
+        if(callbacks.up) this.directions[reverse_directions[directions.up]].callback = callbacks.up;
+        if(callbacks.down) this.directions[reverse_directions[directions.down]].callback = callbacks.down; 
+
         if(callbacks.enter) this.actions[action_inputs.ENTER].callback = callbacks.enter;
         if(callbacks.esc) this.actions[action_inputs.ESC].callback = callbacks.esc;
         if(callbacks.shift) this.actions[action_inputs.SHIFT].callback = callbacks.shift;
         if(callbacks.spacebar) this.actions[action_inputs.SPACEBAR].callback = callbacks.spacebar;
         if(callbacks.tab) this.actions[action_inputs.TAB].callback = callbacks.tab;
 
-        if(custom_loop_time) this.loop_time = custom_loop_time;
+        if(params){
+            if(params.custom_loop_time) this.loop_time = params.custom_loop_time;
+            if(params.vertical_loop){
+                this.directions[reverse_directions[directions.up]].loop = true;
+                this.directions[reverse_directions[directions.down]].loop = true;
+            }
+            if(params.horizontal_loop){
+                this.directions[reverse_directions[directions.left]].loop = true;
+                this.directions[reverse_directions[directions.right]].loop = true;
+            }
+        }
         this.set_directions();
         this.set_actions();
     }
@@ -188,7 +185,7 @@ export class ControlManager{
 
         for(let i=0; i<directions_length; i++){
             this.directions[direction_keys[i]].pressed = false;
-            this.directions[direction_keys[i]].loop = true;
+            this.directions[direction_keys[i]].loop = false;
             this.directions[direction_keys[i]].callback = null;
         }
 
