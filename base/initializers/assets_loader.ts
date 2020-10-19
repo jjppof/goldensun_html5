@@ -62,11 +62,16 @@ function load_fonts(game) {
     game.load.bitmapFont('gs-shop-bmp-font', 'assets/font/gs-shop-font.png', 'assets/font/gs-shop-font.fnt');
 }
 
+function load_filters(game) {
+    game.load.script('color_filters', 'assets/filters/color_filters.js');
+    game.load.script('mode7', 'assets/filters/mode7.js');
+}
+
 export function load_all(game) {
     load_db_files(game);
     load_misc(game);
     load_assets(game);
     load_buttons(game);
     load_fonts(game);
-    game.load.script('color_filters', 'assets/filters/color_filters.js');
+    load_filters(game);
 }
