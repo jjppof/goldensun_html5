@@ -105,7 +105,7 @@ export class JumpEvent extends TileEvent {
         const hero_x = this.data.map.sprite.tileWidth * (next_position.x + 0.5);
         const hero_y = this.data.map.sprite.tileHeight * (next_position.y + 0.5);
         if (direction === "x") {
-            tween_obj.y = [hero_y - 5, hero_y - 8, hero_y - 5, hero_y];
+            tween_obj.y = [hero_y - 6, hero_y - 11, hero_y - 6, hero_y];
         } else {
             tween_obj.x = hero_x;
         }
@@ -113,14 +113,14 @@ export class JumpEvent extends TileEvent {
         this.data.hero.play(base_actions.JUMP, reverse_directions[jump_direction]);
         this.data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.data.hero.shadow.visible = false;
-            this.data.hero.shadow.x = hero_x;
-            this.data.hero.shadow.y = hero_y;
             this.game.add.tween(this.data.hero.sprite.body).to( 
                 tween_obj,
                 JUMP_DURATION,
                 Phaser.Easing.Linear.None,
                 true
             ).onComplete.addOnce(() => {
+                this.data.hero.shadow.x = hero_x;
+                this.data.hero.shadow.y = hero_y;
                 this.data.hero.shadow.visible = true;
                 this.data.hero.sprite.animations.currentAnim.reverseOnce();
                 this.data.hero.play(base_actions.JUMP, reverse_directions[jump_direction]);
