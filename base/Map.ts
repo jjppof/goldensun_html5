@@ -36,6 +36,7 @@ export class Map {
     public assets_loaded: boolean;
     public lazy_load: boolean;
     public layers: any;
+    public collision_embedded: boolean;
 
     constructor (
         game,
@@ -47,17 +48,18 @@ export class Map {
         tileset_image_url,
         tileset_json_url,
         physics_jsons_url,
-        lazy_load
+        lazy_load,
+        collision_embedded
     ) {
         this.game = game;
         this.data = data;
         this.name = name;
         this.key_name = key_name;
         this.tileset_name = tileset_name;
-        this.physics_names = physics_names;
+        this.physics_names = physics_names === undefined ? [] : physics_names;
         this.tileset_image_url = tileset_image_url;
         this.tileset_json_url = tileset_json_url;
-        this.physics_jsons_url = physics_jsons_url;
+        this.physics_jsons_url = physics_jsons_url === undefined ? [] : physics_jsons_url;
         this.sprite = null;
         this.events = {};
         this.npcs = [];
@@ -71,6 +73,7 @@ export class Map {
         this.assets_loaded = false;
         this.lazy_load = lazy_load === undefined ? false : lazy_load;
         this.layers = [];
+        this.collision_embedded = collision_embedded === undefined ? false : collision_embedded;
     }
 
     sort_sprites() {
@@ -159,10 +162,43 @@ export class Map {
     config_body(collision_obj, collision_layer) {
         this.game.physics.p2.enable(this.collision_sprite, false);
         this.collision_sprite.body.clearShapes();
-        this.collision_sprite.body.loadPolygon( //load map physics data json files
-            this.physics_names[collision_layer], 
-            this.physics_names[collision_layer]
-        );
+        if (this.collision_embedded) {
+            this.collision_sprite.width = this.sprite.widthInPixels;
+            this.collision_sprite.height = this.sprite.heightInPixels;
+            this.collision_sprite.anchor.setTo(0 ,0);
+            const collision_layer_objects = this.sprite.objects[this.collision_layer];
+            for (let i = 0; i < collision_layer_objects.length; ++i) {
+                const collision_object = collision_layer_objects[i];
+                if (collision_object.polygon) {
+                    const new_polygon = collision_object.polygon.map((point: number[]) => {
+                        const new_point = [
+                            Math.round(collision_object.x + point[0]),
+                            Math.round(collision_object.y + point[1])
+                        ];
+                        return new_point;
+                    });
+                    this.collision_sprite.body.addPolygon({
+                        optimalDecomp: false,
+                        skipSimpleCheck: false,
+                        removeCollinearPoints: false,
+                        remove: false,
+                        adjustCenterOfMass: false
+                    }, new_polygon);
+                } else if (collision_object.rectangle) {
+                    this.collision_sprite.body.addRectangle(
+                        Math.round(collision_object.width),
+                        Math.round(collision_object.height),
+                        Math.round(collision_object.x) + (Math.round(collision_object.width) >> 1),
+                        Math.round(collision_object.y) + (Math.round(collision_object.height) >> 1)
+                    );
+                }
+            }
+        } else {
+            this.collision_sprite.body.loadPolygon( //load map physics data json files
+                this.physics_names[collision_layer], 
+                this.physics_names[collision_layer]
+            );
+        }
         this.collision_sprite.body.setCollisionGroup(collision_obj.map_collision_group);
         this.collision_sprite.body.damping = numbers.MAP_DAMPING;
         this.collision_sprite.body.angularDamping = numbers.MAP_DAMPING;
@@ -420,7 +456,7 @@ export class Map {
         for (let i = 0; i < this.layers.length; ++i) {
             let layer = this.sprite.createLayer(this.layers[i].name);
             this.layers[i].sprite = layer;
-            this.layers[i].sprite.layer_z = this.layers[i].properties.z;
+            this.layers[i].sprite.layer_z = this.layers[i].properties.z === undefined ? i : this.layers[i].properties.z;
             layer.resizeWorld();
             if (this.layers[i].properties.blendMode !== undefined) {
                 layer.blendMode = PIXI.blendModes[this.layers[i].properties.blendMode] as unknown as PIXI.blendModes;
@@ -429,9 +465,16 @@ export class Map {
                 layer.alpha = this.layers[i].alpha;
             }
 
-            let is_over = this.layers[i].properties.over.toString().split(",");
-            is_over = is_over.length > this.collision_layer ? is_over[this.collision_layer] | 0 : is_over[0] | 0;
-            if (is_over !== 0) {
+            let is_over = false;
+            if (this.layers[i].properties.over !== undefined) {
+                const is_over_prop = this.layers[i].properties.over.toString().split(",").map(over => parseInt(over));
+                if (is_over_prop.length > this.collision_layer) {
+                    is_over = Boolean(is_over_prop[this.collision_layer]);
+                } else {
+                    is_over = Boolean(is_over_prop[0]);
+                }
+            }
+            if (is_over) {
                 overlayer_group.add(layer);
             } else {
                 underlayer_group.add(layer);
@@ -452,6 +495,10 @@ export class Map {
         GameEvent.reset();
         this.sprite = this.game.add.tilemap(this.key_name);
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
+
+        this.sprite.objects = _.mapKeys(this.sprite.objects, (obj: any, collision_index: string) => {
+            return parseInt(collision_index);
+        }) as any;
 
         for (let i = 0; i < this.sprite.tilesets.length; ++i) {
             const tileset = this.sprite.tilesets[i];

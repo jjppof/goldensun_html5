@@ -82,15 +82,16 @@ export class Collision {
         let layers = data.map.layers;
         for (let i = 0; i < layers.length; ++i) {
             let layer = layers[i];
-            let is_over = layer.properties.over.toString().split(",");
-            if (is_over.length > new_collider_layer_index) {
-                is_over = is_over.length > new_collider_layer_index ? (is_over[new_collider_layer_index]) | 0 : (is_over[0]) | 0;
-                if (is_over !== 0) {
+            if (layer.properties.over !== undefined) {
+                const is_over_prop = layer.properties.over.toString().split(",").map(over => parseInt(over));
+                if (is_over_prop.length <= data.map.collision_layer) continue;
+                const is_over = Boolean(is_over_prop[data.map.collision_layer]);
+                if (is_over) {
                     data.underlayer_group.remove(layer.sprite, false, true);
                     let index = 0;
                     for (index = 0; index < data.overlayer_group.children.length; ++index) {
                         let child = data.overlayer_group.children[index];
-                        if (child.layer_z > layer.z) {
+                        if (child.layer_z > (layer.z === undefined ? i : layer.z)) {
                             data.overlayer_group.addAt(layer.sprite, index, true);
                             break;
                         }

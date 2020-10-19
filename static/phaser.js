@@ -9073,10 +9073,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
             {
                 options = options || {};
 
-                // Remove all shapes
-                for(var i = this.shapes.length; i >= 0; --i)
-                {
-                    this.removeShape(this.shapes[i]);
+                if (options.remove !== undefined && options.remove) {
+                    // Remove all shapes
+                    for(var i = this.shapes.length; i >= 0; --i)
+                    {
+                        this.removeShape(this.shapes[i]);
+                    }
                 }
 
                 var p = new decomp.Polygon();
@@ -9143,7 +9145,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
                     this.addShape(c,cm);
                 }
 
-                this.adjustCenterOfMass();
+                if (options.adjustCenterOfMass === undefined || options.adjustCenterOfMass === true) {
+                    this.adjustCenterOfMass();
+                }
 
                 this.aabbNeedsUpdate = true;
 
