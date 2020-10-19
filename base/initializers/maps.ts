@@ -14,7 +14,8 @@ export function initialize_maps(game, data, maps_db, load_promise_resolve) {
             map_data.tileset_files.image,
             map_data.tileset_files.json,
             map_data.collision_files,
-            map_data.lazy_load
+            map_data.lazy_load,
+            map_data.collision_embedded
         );
     }
     let load_promises = [];
