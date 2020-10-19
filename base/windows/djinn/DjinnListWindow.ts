@@ -168,6 +168,49 @@ export class DjinnListWindow {
         }, this, this.shift_propagation_priority);
     }*/
 
+    next_character(){
+        if(this.selected_char_index < this.sizes.length-1){
+            if (this.setting_djinn_status && this.selected_char_index+1 === this.setting_djinn_status_char_index) {
+                this.select_action_text();
+            }
+            else this.select_djinn(this.selected_char_index+1, this.selected_djinn_index);
+        }
+        else return;
+    }
+
+    previous_character(){
+        if(this.selected_char_index > 0){
+            if (this.setting_djinn_status && this.selected_char_index-1 === this.setting_djinn_status_char_index) {
+                this.select_action_text();
+            }
+            this.select_djinn(this.selected_char_index-1, this.selected_djinn_index);
+        }
+        else return;
+    }
+
+    next_djinni(){
+        if (this.setting_djinn_status && this.selected_char_index === this.setting_djinn_status_char_index) return;
+
+        if(this.selected_djinn_index < this.sizes[this.selected_char_index]-1){
+            this.select_djinn(this.selected_char_index, this.selected_djinn_index+1);
+        }
+        else this.select_djinn(this.selected_char_index, 0);
+    }
+
+    previous_djinni(){
+        if (this.setting_djinn_status && this.selected_char_index === this.setting_djinn_status_char_index) return;
+
+        if(this.selected_djinn_index > 0){
+            this.select_djinn(this.selected_char_index, this.selected_djinn_index-1);
+        }
+        else this.select_djinn(this.selected_char_index, this.sizes[this.selected_char_index]-1);
+    }
+
+    select_action_text(){
+        if(this.data.cursor_manager.active_tween) this.data.cursor_manager.clear_tweens();
+        this.data.cursor_manager.move_to(CURSOR_TEXT_X + COL_GAP*this.selected_char_index, CURSOR_TEXT_Y, undefined, false);
+    }
+
     select_djinn(char:number, index:number){
         if(this.selected_djinn_index !== index){
             this.selected_djinn_index = index;
@@ -231,7 +274,7 @@ export class DjinnListWindow {
         }
     }
 
-    set_djinn_sprite(tween = true) {
+    set_djinn_sprite(tween:boolean=true) {
         const this_char = this.data.info.party_data.members[this.selected_char_index];
         if (this.setting_djinn_status && this.selected_djinn_index === this_char.djinni.length) return;
         const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
@@ -251,7 +294,7 @@ export class DjinnListWindow {
             );
         }
         this_sprite.alpha = 1;
-        let action, direction;
+        let action:string, direction:string;
         switch (this_djinn.status) {
             case djinn_status.RECOVERY:
                 direction = "left";
@@ -294,7 +337,7 @@ export class DjinnListWindow {
         }
     }
 
-    update_djinn_list(char_index) {
+    update_djinn_list(char_index:number) {
         this.djinn_names[char_index].forEach(sprite => {
             this.base_window.remove_text(sprite);
         });
@@ -402,45 +445,17 @@ export class DjinnListWindow {
         this.set_djinn_sprite();
     }
 
-    on_choose() {
-        const this_char = this.data.info.party_data.members[this.selected_char_index];
-        const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
-        if (this.setting_djinn_status || this_djinn.status === djinn_status.RECOVERY) return; 
-        for (let key in this.chars_sprites) {
-            this.chars_sprites[key].y -= numbers.FONT_SIZE;
-        }
-        for (let i = 0; i < CHARS_PER_PAGE; ++i) {
-            for (let key in elements) {
-                const elem = elements[key];
-                if (elem === elements.NO_ELEMENT) continue;
-                this.djinns_sprites[i][elem].y -= numbers.FONT_SIZE;
-            }
-        }
-        for (let i = 0; i < CHARS_PER_PAGE; ++i) {
-            let status_text;
-            if (i === this.selected_char_index) {
-                switch (this_djinn.status) {
-                    case djinn_status.SET: status_text = capitalize(djinn_status.STANDBY); break;
-                    case djinn_status.STANDBY: status_text = capitalize(djinn_status.SET); break;
-                }
-            } else {
-                const other_char = this.data.info.party_data.members[i];
-                if (other_char === undefined) continue;
-                if (other_char.djinni.length < this_char.djinni.length) {
-                    status_text = "Give";
-                    ++this.sizes[i];
-                } else {
-                    status_text = "Trade";
-                }
-            }
-            this.base_window.update_text(status_text, this.djinni_status_texts[i]);
-        }
-        this.setting_djinn_status_char_index = this.selected_char_index;
-        this.setting_djinn_status_djinn_index = this.selected_djinn_index;
-        this.setting_djinn_status = true;
-        this.djinn_action_window.set_action_for_specific_djinn(this_char, this_djinn);
-        this.darken_font_color();
-        this.data.cursor_manager.move_to(CURSOR_TEXT_X, CURSOR_TEXT_Y, undefined, false);
+    
+    grant_control(on_cancel:Function, on_select:Function, on_shift?:Function){
+        this.data.control_manager.set_control({
+            right: this.next_character.bind(this),
+            left: this.previous_character.bind(this),
+            up: this.previous_djinni.bind(this),
+            down: this.next_djinni.bind(this),
+            esc: on_cancel,
+            enter: on_select,
+            shift: on_shift,
+        }, {horizontal_loop:true, vertical_loop:true});
     }
 
     darken_font_color(darken = true) {
@@ -451,38 +466,6 @@ export class DjinnListWindow {
             if (darken && i === this.setting_djinn_status_djinn_index) continue;
             this.base_window.update_text_color(color, this.djinn_names[this.setting_djinn_status_char_index][i]);
         }
-    }
-
-    cancel_djinn_status_set(reset_index = false) {
-        if (!this.setting_djinn_status) return;
-        for (let key in this.chars_sprites) {
-            this.chars_sprites[key].y += numbers.FONT_SIZE;
-        }
-        for (let i = 0; i < CHARS_PER_PAGE; ++i) {
-            for (let key in elements) {
-                const elem = elements[key];
-                if (elem === elements.NO_ELEMENT) continue;
-                this.djinns_sprites[i][elem].y += numbers.FONT_SIZE;
-            }
-            this.base_window.update_text("", this.djinni_status_texts[i]);
-            const this_char = this.data.info.party_data.members[i];
-            if (this_char === undefined) continue;
-            this.sizes[i] = this_char.djinni.length;
-        }
-        if (reset_index) {
-            this.selected_char_index = this.setting_djinn_status_char_index;
-            this.selected_djinn_index = this.setting_djinn_status_djinn_index;
-            this.set_highlight_bar();
-        }
-        this.darken_font_color(false);
-        this.setting_djinn_status_char_index = -1;
-        this.setting_djinn_status_djinn_index = -1;
-        this.setting_djinn_status = false;
-        this.set_highlight_bar();
-        this.set_action_text();
-        this.update_djinn_description();
-        this.set_djinn_sprite();
-        this.data.cursor_manager.move_to(CURSOR_X + this.selected_char_index*COL_GAP, CURSOR_Y + this.selected_djinn_index*LINE_GAP, undefined, false);
     }
 
     set_djinn_operation() {
@@ -590,7 +573,7 @@ export class DjinnListWindow {
                 this.djinn_status_change_header_window.close();
                 this.djinn_char_stats_window_left.close();
                 if (execute_operation) {
-                    this.change_djinn_status(this.setting_djinn_status_char_index, this.setting_djinn_status_djinn_index);
+                    this.change_djinn_status();
                     this.cancel_djinn_status_set();
                 }
                 this.activate();
@@ -598,28 +581,108 @@ export class DjinnListWindow {
         }
     }
 
-    change_djinn_status(char_index, djinn_index) {
-        const this_char = this.data.info.party_data.members[char_index];
-        const this_djinn = this.data.info.djinni_list[this_char.djinni[djinn_index]];
+    change_djinn_status() {
+        const this_char = this.data.info.party_data.members[this.selected_char_index];
+        const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
         if (this_djinn.status === djinn_status.SET) {
             this_djinn.set_status(djinn_status.STANDBY, this_char);
-            this.base_window.update_text_color(djinn_font_colors[djinn_status.STANDBY], this.djinn_names[char_index][djinn_index]);
+            this.base_window.update_text_color(djinn_font_colors[djinn_status.STANDBY], this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
             this.chars_quick_info_window.update_text();
             this.set_action_text();
             this.set_djinn_sprite(false);
         } else if (this_djinn.status === djinn_status.STANDBY) {
             this_djinn.set_status(djinn_status.SET, this_char);
-            this.base_window.update_text_color(djinn_font_colors[djinn_status.SET], this.djinn_names[char_index][djinn_index]);
+            this.base_window.update_text_color(djinn_font_colors[djinn_status.SET], this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
             this.chars_quick_info_window.update_text();
             this.set_action_text();
             this.set_djinn_sprite(false);
         }
     }
 
-    open(chars_quick_info_window, djinn_action_window, close_callback?, open_callback?) {
+    cancel_djinn_status_set(reset_index:boolean=false) {
+        if (!this.setting_djinn_status) return;
+        for (let key in this.chars_sprites) {
+            this.chars_sprites[key].y += numbers.FONT_SIZE;
+        }
+        for (let i = 0; i < CHARS_PER_PAGE; ++i) {
+            for (let key in elements) {
+                const elem = elements[key];
+                if (elem === elements.NO_ELEMENT) continue;
+                this.djinns_sprites[i][elem].y += numbers.FONT_SIZE;
+            }
+            this.base_window.update_text("", this.djinni_status_texts[i]);
+            const this_char = this.data.info.party_data.members[i];
+            if (this_char === undefined) continue;
+            this.sizes[i] = this_char.djinni.length;
+        }
+        if (reset_index) {
+            this.selected_char_index = this.setting_djinn_status_char_index;
+            this.selected_djinn_index = this.setting_djinn_status_djinn_index;
+            this.set_highlight_bar();
+        }
+        this.darken_font_color(false);
+        this.setting_djinn_status_char_index = -1;
+        this.setting_djinn_status_djinn_index = -1;
+        this.setting_djinn_status = false;
+        this.set_highlight_bar();
+        this.set_action_text();
+        this.update_djinn_description();
+        this.set_djinn_sprite();
+        this.data.cursor_manager.move_to(CURSOR_X + this.selected_char_index*COL_GAP, CURSOR_Y + this.selected_djinn_index*LINE_GAP, undefined, false);
+        this.grant_control(this.close.bind(this), this.on_choose.bind(this), this.change_djinn_status.bind(this));
+    }
+
+    on_choose() {
+        const this_char = this.data.info.party_data.members[this.selected_char_index];
+        const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
+
+        if (this.setting_djinn_status || this_djinn.status === djinn_status.RECOVERY) return; 
+        for (let key in this.chars_sprites) {
+            this.chars_sprites[key].y -= numbers.FONT_SIZE;
+        }
+        for (let i = 0; i < CHARS_PER_PAGE; ++i) {
+            for (let key in elements) {
+                const elem = elements[key];
+                if (elem === elements.NO_ELEMENT) continue;
+                this.djinns_sprites[i][elem].y -= numbers.FONT_SIZE;
+            }
+        }
+        for (let i = 0; i < CHARS_PER_PAGE; ++i) {
+            let status_text;
+            if (i === this.selected_char_index) {
+                switch (this_djinn.status) {
+                    case djinn_status.SET: status_text = capitalize(djinn_status.STANDBY); break;
+                    case djinn_status.STANDBY: status_text = capitalize(djinn_status.SET); break;
+                }
+            } else {
+                const other_char = this.data.info.party_data.members[i];
+                if (other_char === undefined) continue;
+                if (other_char.djinni.length < this_char.djinni.length) {
+                    status_text = "Give";
+                    ++this.sizes[i];
+                } else {
+                    status_text = "Trade";
+                }
+            }
+            this.base_window.update_text(status_text, this.djinni_status_texts[i]);
+        }
+        this.setting_djinn_status_char_index = this.selected_char_index;
+        this.setting_djinn_status_djinn_index = this.selected_djinn_index;
+        this.setting_djinn_status = true;
+        this.djinn_action_window.set_action_for_specific_djinn(this_char, this_djinn);
+        this.darken_font_color();
+        this.select_action_text();
+        this.selected_djinn_index = 0;
+
+        this.grant_control(this.cancel_djinn_status_set.bind(this, true), this.set_djinn_operation.bind(this));
+    }
+
+    open(chars_quick_info_window:CharsQuickInfoDjinnWindow, djinn_action_window:DjinnActionWindow,
+        close_callback?:Function, open_callback?:Function) {
         this.selected_char_index = 0;
         this.selected_djinn_index = 0;
         this.page_index = 0;
+
         this.group.alpha = 1;
         this.setting_djinn_status_char_index = -1;
         this.setting_djinn_status_djinn_index = -1;
@@ -639,13 +702,16 @@ export class DjinnListWindow {
         this.window_active = true;
         this.changing_djinn_status = false;
         this.close_callback = close_callback;
+
+        this.grant_control(this.close.bind(this), this.on_choose.bind(this), this.change_djinn_status.bind(this));
+
         this.base_window.show(undefined, false);
         if (open_callback) {
             open_callback();
         }
     }
 
-    close(close_callback?) {
+    close(close_callback?:Function) {
         this.window_open = false;
         this.window_active = false;
         this.data.cursor_manager.hide();
