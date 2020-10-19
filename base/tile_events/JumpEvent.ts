@@ -105,7 +105,7 @@ export class JumpEvent extends TileEvent {
         const hero_x = this.data.map.sprite.tileWidth * (next_position.x + 0.5);
         const hero_y = this.data.map.sprite.tileHeight * (next_position.y + 0.5);
         if (direction === "x") {
-            tween_obj.y = [hero_y - 6, hero_y - 11, hero_y - 6, hero_y];
+            tween_obj.y = [hero_y - 8, hero_y - 16, hero_y - 8, hero_y];
         } else {
             tween_obj.x = hero_x;
         }
