@@ -32,8 +32,6 @@ const CURSOR_X = 194;
 const CURSOR_Y1 = 12;
 const CURSOR_Y2 = 28;
 
-const ITEM_COUNTER_LOOP_TIME = 100;
-
 export class GiveItemWindow {
     public game: Phaser.Game;
     public data: GoldenSun;

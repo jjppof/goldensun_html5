@@ -15,10 +15,12 @@ const LV_NUMBER_RIGHT_X = 94;
 
 export class CharsQuickInfoDjinnWindow {
     public game: Phaser.Game;
+
     public char: MainChar;
     public window_open: boolean;
     public x: number;
     public y: number;
+
     public base_window: Window;
     public char_name: TextObj;
     public char_class: TextObj;
@@ -26,11 +28,12 @@ export class CharsQuickInfoDjinnWindow {
 
     constructor(game) {
         this.game = game;
+
         this.char = null;
         this.window_open = false;
         this.x = BASE_WIN_X;
         this.y = BASE_WIN_Y;
-        this.char = null;
+
         this.base_window = new Window(this.game, this.x, this.y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
         this.char_name = this.base_window.set_text_in_position("", NAME_X, NAME_Y);
         this.char_class = this.base_window.set_text_in_position("", NAME_X, CLASS_Y);
@@ -52,6 +55,7 @@ export class CharsQuickInfoDjinnWindow {
     open(char:MainChar, callback?:Function) {
         this.char = char;
         this.update_text();
+        
         this.base_window.show(() => {
             this.window_open = true;
             if (callback !== undefined) {
