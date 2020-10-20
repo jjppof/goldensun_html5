@@ -40,7 +40,7 @@ export class ButtonSelectMenu {
         title: string
     }[];
     constructor(game:Phaser.Game, data:GoldenSun, buttons:string[], titles:string[], callbacks:{
-        on_cancel: Function, on_press:Function}, title_window_width?:number, dock_right:boolean=false) {
+        on_cancel?: Function, on_press:Function}, title_window_width?:number, dock_right:boolean=false) {
         this.game = game;
         this.data = data;
         this.buttons_keys = buttons;
