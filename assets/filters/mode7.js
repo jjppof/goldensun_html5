@@ -5,10 +5,11 @@ Phaser.Filter.Mode7 = function (game) {
     this.uniforms.sin1 = {type: "1f", value: 1};
     this.uniforms.sin2 = {type: "1f", value: 0};
     this.uniforms.cos1 = {type: "1f", value: 0};
-    this.uniforms.cos2 = {type: "1f", value: -1};
+    this.uniforms.cos2 = {type: "1f", value: 1};
     this.uniforms.scale = {type: "1f", value: .28};
     this.uniforms.distance = {type: "1f", value: 1};
-    this.uniforms.lookY = {type: "1f", value: 3.5};
+    this.uniforms.lookY = {type: "1f", value: 4.5};
+    this.uniforms.inclination = {type: "1f", value: 4};
 
     this.fragmentSrc = [
         "precision mediump float;",
@@ -25,6 +26,7 @@ Phaser.Filter.Mode7 = function (game) {
 
         "uniform highp float scale;",
         "uniform highp float lookY;",
+        "uniform highp float inclination;",
         "uniform highp float distance;",
 
         "void main(void) {",
@@ -32,7 +34,7 @@ Phaser.Filter.Mode7 = function (game) {
         "    vec2 warped;",
 
         // perform mode7 transform on uvs
-        "    warped = vec2(uv.x-0.5, 4) / vec2(uv.y + lookY, uv.y + lookY);",
+        "    warped = vec2(uv.x-0.5, inclination) / vec2(-uv.y + lookY, -uv.y + lookY);",
         "    warped.y -= distance;",
         "    warped /= scale;",
 
@@ -40,9 +42,9 @@ Phaser.Filter.Mode7 = function (game) {
         "    warped += vec2(0.5, 0.5);", // centred
 
         "    bool isDraw = uv.y > 0.5 - lookY;",
-        "    if (isDraw){",
+        "    if (isDraw) {",
         "        gl_FragColor = texture2D(uSampler, warped);",
-        "    }else{",
+        "    } else {",
         "        gl_FragColor = vec4(0.0,0.0,0.0,0.0);",
         "    }",
         "}",
@@ -62,5 +64,23 @@ Object.defineProperty(Phaser.Filter.Mode7.prototype, 'angle', {
         this.uniforms.cos1.value = Math.cos(value)
         this.uniforms.sin2.value = Math.sin(value - 0.5*Math.PI)
         this.uniforms.cos2.value = Math.cos(value - 0.5*Math.PI)
+    }
+});
+
+Object.defineProperty(Phaser.Filter.Mode7.prototype, 'inclination', {
+    get: function() {
+        return this.uniforms.inclination.value;
+    },
+    set: function(value) {
+        this.uniforms.inclination.value = value;
+    }
+});
+
+Object.defineProperty(Phaser.Filter.Mode7.prototype, 'lookY', {
+    get: function() {
+        return this.uniforms.lookY.value;
+    },
+    set: function(value) {
+        this.uniforms.lookY.value = value;
     }
 });
