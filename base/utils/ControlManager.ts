@@ -1,4 +1,4 @@
-import { directions, reverse_directions, action_inputs, get_opposite_direction } from '../utils';
+import { directions, action_inputs, get_opposite_direction } from '../utils';
 import * as _ from "lodash";
 
 const DEFAULT_LOOP_TIME = Phaser.Timer.QUARTER >> 1;
