@@ -1,12 +1,14 @@
-import { directions, reverse_directions, action_inputs } from '../utils';
+import { directions, action_inputs, get_opposite_direction } from '../utils';
 import * as _ from "lodash";
+
 const DEFAULT_LOOP_TIME = Phaser.Timer.QUARTER >> 1;
 
-const direction_keys = ["left", "right", "up", "down"];
-const action_keys = ["spacebar", "esc", "enter", "shift"];
+const direction_keys = [directions.left, directions.right, directions.up, directions.down];
+const action_keys = [action_inputs.SPACEBAR, action_inputs.ESC, action_inputs.ENTER,
+    action_inputs.SHIFT, action_inputs.TAB];
 
 export type ControlStatus = {
-    key:string;
+    key:string|number;
     pressed?:boolean;
     callback:Function;
     loop?:boolean;
@@ -19,7 +21,7 @@ export class ControlManager{
     public initialized:boolean;
     public loop_time:number;
 
-    public directions:{[key:string] : ControlStatus};
+    public directions:{[key:number] : ControlStatus};
     public actions:{[key:string] : ControlStatus};
 
     public signal_bindings:Phaser.SignalBinding[];
@@ -31,17 +33,18 @@ export class ControlManager{
         this.initialized = false;
         this.loop_time = DEFAULT_LOOP_TIME;
 
-        let dirs = [{key: reverse_directions[directions.left], pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.LEFT},
-        {key: reverse_directions[directions.right], pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.RIGHT},
-        {key: reverse_directions[directions.up], pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.UP},
-        {key: reverse_directions[directions.down], pressed: false, callback: null, loop: true, phaser_key: Phaser.Keyboard.DOWN}];
+        let dirs = [{key: directions.left, pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.LEFT},
+        {key: directions.right, pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.RIGHT},
+        {key: directions.up, pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.UP},
+        {key: directions.down, pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.DOWN}];
 
         let acts = [{key: action_inputs.SPACEBAR, callback: null, phaser_key: Phaser.Keyboard.SPACEBAR},
         {key: action_inputs.ESC, callback: null, phaser_key: Phaser.Keyboard.ESC},
         {key: action_inputs.ENTER, callback: null, phaser_key: Phaser.Keyboard.ENTER},
-        {key: action_inputs.SHIFT, callback: null, phaser_key: Phaser.Keyboard.SHIFT}];
+        {key: action_inputs.SHIFT, callback: null, phaser_key: Phaser.Keyboard.SHIFT},
+        {key: action_inputs.TAB, callback: null, phaser_key: Phaser.Keyboard.TAB}];
 
-        this.directions = _.mapKeys(dirs, dir => dir.key) as {[key:string] : ControlStatus};
+        this.directions = _.mapKeys(dirs, dir => dir.key) as {[key:number] : ControlStatus};
         this.actions = _.mapKeys(acts, act => act.key) as {[key:string] : ControlStatus};
 
         this.signal_bindings = [];
@@ -49,48 +52,42 @@ export class ControlManager{
         this.loop_repeat_timer = this.game.time.create(false);
     }
 
-    get_opposite_dir(dir:string){
-        switch(dir){
-            case reverse_directions[directions.right]:
-                return reverse_directions[directions.left];
-            case reverse_directions[directions.left]:
-                return reverse_directions[directions.right];
-            case reverse_directions[directions.up]:
-                return reverse_directions[directions.down];
-            case reverse_directions[directions.down]:
-                return reverse_directions[directions.up];
-        }
+    simple_input(callback:Function){
+        if(this.initialized) this.reset();
+        
+        this.actions[action_inputs.ENTER].callback = callback;
+        this.actions[action_inputs.ESC].callback = callback;
+
+        this.set_actions();
     }
 
-    set_control(horizontal:boolean, vertical:boolean, horizontal_loop:boolean=true, vertical_loop:boolean=false,
-        callbacks:{
-            left?:Function, right?:Function, up?:Function, down?:Function,
-            enter?:Function, esc?:Function, shift?:Function, spacebar?:Function
-        }, custom_loop_time?:number){
+    set_control(callbacks:{left?:Function, right?:Function, up?:Function, down?:Function,
+        enter?:Function, esc?:Function, shift?:Function, spacebar?:Function, tab?:Function},
+        params?:{custom_loop_time?:number, horizontal_loop?:boolean, vertical_loop?:boolean}){
         if(this.initialized) this.reset();
 
-        if(horizontal){
-            if(!horizontal_loop){
-                this.directions[reverse_directions[directions.left]].loop = false;
-                this.directions[reverse_directions[directions.right]].loop = false;
-            } 
-            this.directions[reverse_directions[directions.left]].callback = callbacks.left;
-            this.directions[reverse_directions[directions.right]].callback = callbacks.right;
-        }
-        if(vertical){
-            if(!vertical_loop){
-                this.directions[reverse_directions[directions.up]].loop = false;
-                this.directions[reverse_directions[directions.down]].loop = false;
-            }
-            this.directions[reverse_directions[directions.up]].callback = callbacks.up;
-            this.directions[reverse_directions[directions.down]].callback = callbacks.down; 
-        }
+        if(callbacks.left) this.directions[directions.left].callback = callbacks.left;
+        if(callbacks.right) this.directions[directions.right].callback = callbacks.right;
+        if(callbacks.up) this.directions[directions.up].callback = callbacks.up;
+        if(callbacks.down) this.directions[directions.down].callback = callbacks.down; 
+
         if(callbacks.enter) this.actions[action_inputs.ENTER].callback = callbacks.enter;
         if(callbacks.esc) this.actions[action_inputs.ESC].callback = callbacks.esc;
         if(callbacks.shift) this.actions[action_inputs.SHIFT].callback = callbacks.shift;
         if(callbacks.spacebar) this.actions[action_inputs.SPACEBAR].callback = callbacks.spacebar;
+        if(callbacks.tab) this.actions[action_inputs.TAB].callback = callbacks.tab;
 
-        if(custom_loop_time) this.loop_time = custom_loop_time;
+        if(params){
+            if(params.custom_loop_time) this.loop_time = params.custom_loop_time;
+            if(params.vertical_loop){
+                this.directions[directions.up].loop = true;
+                this.directions[directions.down].loop = true;
+            }
+            if(params.horizontal_loop){
+                this.directions[directions.left].loop = true;
+                this.directions[directions.right].loop = true;
+            }
+        }
         this.set_directions();
         this.set_actions();
     }
@@ -102,8 +99,8 @@ export class ControlManager{
                 if(this.directions[direction_keys[i]].loop){
                     let b1 = this.game.input.keyboard.addKey(this.directions[direction_keys[i]].phaser_key).onDown.add(() => {
                         if (this.disabled) return;
-                        if (this.directions[this.get_opposite_dir(direction_keys[i])].pressed) {
-                            this.directions[this.get_opposite_dir(direction_keys[i])].pressed = false;
+                        if (this.directions[get_opposite_direction(direction_keys[i])].pressed) {
+                            this.directions[get_opposite_direction(direction_keys[i])].pressed = false;
                             this.stop_timers();
                         }
                         this.directions[direction_keys[i]].pressed = true;
@@ -143,7 +140,7 @@ export class ControlManager{
         if(!this.initialized) this.initialized = true;
     }
 
-    set_loop_timers(direction?:string) {
+    set_loop_timers(direction?:number) {
         this.change_index(direction);
         this.loop_start_timer.add(Phaser.Timer.QUARTER, () => {
             this.loop_repeat_timer.loop(this.loop_time, this.change_index.bind(this, direction));
@@ -152,7 +149,7 @@ export class ControlManager{
         this.loop_start_timer.start();
     }
 
-    change_index(direction:string) {
+    change_index(direction:number) {
         this.directions[direction].callback();
     }
 
@@ -176,7 +173,7 @@ export class ControlManager{
 
         for(let i=0; i<directions_length; i++){
             this.directions[direction_keys[i]].pressed = false;
-            this.directions[direction_keys[i]].loop = true;
+            this.directions[direction_keys[i]].loop = false;
             this.directions[direction_keys[i]].callback = null;
         }
 

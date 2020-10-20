@@ -47,7 +47,6 @@ Input: game [Phaser:Game] - Reference to the running game object
 export class InventoryWindow{
     public game:Phaser.Game;
     public data:GoldenSun;
-    public parent:ShopMenu;
     public on_change:Function;
     public close_callback:Function;
 
@@ -63,10 +62,9 @@ export class InventoryWindow{
     public sprite_group:Phaser.Group;
     public icon_group:Phaser.Group;
 
-    constructor(game:Phaser.Game, data:GoldenSun, parent:ShopMenu, on_change:Function){
+    constructor(game:Phaser.Game, data:GoldenSun, on_change:Function){
         this.game = game;
         this.data = data;
-        this.parent = parent;
         this.on_change = on_change;
         this.close_callback = null;
 
@@ -188,6 +186,16 @@ export class InventoryWindow{
         }
     }
 
+    grant_control(on_cancel:Function, on_select:Function){
+        this.data.control_manager.set_control({right: this.next_col.bind(this),
+            left: this.previous_col.bind(this),
+            up: this.previous_line.bind(this),
+            down: this.next_line.bind(this),
+            esc: on_cancel,
+            enter: on_select},
+            {horizontal_loop:true, vertical_loop:true});
+    }
+
     next_col(){
         if (this.item_grid.length === 1 && this.item_grid[this.cursor_pos.line].length === 1) return;
 
@@ -249,7 +257,7 @@ export class InventoryWindow{
     /*Moves the cursor to the given column and line*/
     set_cursor(line:number, col:number){
         this.cursor_pos = {line: line, col: col};
-        this.parent.cursor_manager.move_to(CURSOR_X + col*ICON_SIZE, CURSOR_Y + line*ICON_SIZE, "point", true);
+        this.data.cursor_manager.move_to(CURSOR_X + col*ICON_SIZE, CURSOR_Y + line*ICON_SIZE, "point", true);
         this.on_change(line, col);
     }
 

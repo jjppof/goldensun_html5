@@ -1,7 +1,6 @@
-import { ShopItemCounter } from './ShopItemCounter';
+import { ItemCounter } from '../../utils/ItemCounter';
 import { Window, TextObj } from '../../Window';
 import { GoldenSun } from '../../GoldenSun';
-import { CursorManager } from '../../utils/CursorManager';
 import { ShopItem } from '../../Shop';
 import { ItemSlot } from '../../MainChar';
 
@@ -25,14 +24,15 @@ const COINS_LABEL_Y = 8;
 const CURSOR_X = 132;
 const CURSOR_Y = 46;
 
+const ITEM_COUNTER_LOOP_TIME = 100;
+
 export class ShopItemQuantityWindow {
     public game:Phaser.Game;
     public data:GoldenSun;
-    public cursor_manager:CursorManager;
     public close_callback:Function;
 
     public window:Window;
-    public item_counter:ShopItemCounter;
+    public item_counter:ItemCounter;
     public chosen_quantity:number;
     public base_price:number;
     public is_open:boolean;
@@ -41,14 +41,13 @@ export class ShopItemQuantityWindow {
     public coins_val_text:TextObj;
     public coins_label_text:TextObj;
 
-    constructor(game:Phaser.Game, data:GoldenSun, cursor_manager:CursorManager) {
+    constructor(game:Phaser.Game, data:GoldenSun) {
         this.game = game;
         this.data = data;
-        this.cursor_manager = cursor_manager;
         this.close_callback = null;
 
         this.window = new Window(this.game, QUANTITY_WIN_X, QUANTITY_WIN_Y, QUANTITY_WIN_WIDTH, QUANTITY_WIN_HEIGHT);
-        this.item_counter = new ShopItemCounter(this.game, this.window.group, ITEM_COUNTER_X, ITEM_COUNTER_Y, this.on_change.bind(this));
+        this.item_counter = new ItemCounter(this.game, this.window.group, ITEM_COUNTER_X, ITEM_COUNTER_Y, this.on_change.bind(this));
 
         this.chosen_quantity = 1;
         this.base_price = 0;
@@ -66,6 +65,14 @@ export class ShopItemQuantityWindow {
         this.window.update_text(String(this.base_price*this.chosen_quantity), this.coins_val_text);
     }
 
+    grant_control(on_cancel:Function, on_select:Function){
+        this.data.control_manager.set_control({right: this.increase_amount.bind(this),
+            left: this.decrease_amount.bind(this),
+            esc: on_cancel,
+            enter: on_select},
+            {custom_loop_time:ITEM_COUNTER_LOOP_TIME, horizontal_loop:true});
+    }
+
     increase_amount(){
         this.item_counter.advance_step(1);
     }
@@ -76,7 +83,7 @@ export class ShopItemQuantityWindow {
 
     open(shop_item_obj:ShopItem, char_item_obj?:ItemSlot, use_coins:boolean=false,
         close_callback?:Function, open_callback?:Function){
-        this.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "wiggle");
+        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "wiggle");
 
         this.base_price = this.data.info.items_list[shop_item_obj.key_name].price;
         this.window.update_text(String(this.base_price), this.coins_val_text);
@@ -99,7 +106,7 @@ export class ShopItemQuantityWindow {
     close(){
         this.item_counter.deactivate();
         this.item_counter.clear();
-        this.cursor_manager.clear_tweens();
+        this.data.cursor_manager.clear_tweens();
 
         this.chosen_quantity = 1;
         this.base_price = 0;

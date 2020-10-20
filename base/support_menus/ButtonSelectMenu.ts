@@ -40,14 +40,14 @@ export class ButtonSelectMenu {
         title: string
     }[];
     constructor(game:Phaser.Game, data:GoldenSun, buttons:string[], titles:string[], callbacks:{
-        on_cancel: Function, on_press:Function}, control_manager:ControlManager, title_window_width?:number, dock_right:boolean=false) {
+        on_cancel?: Function, on_press:Function}, title_window_width?:number, dock_right:boolean=false) {
         this.game = game;
         this.data = data;
         this.buttons_keys = buttons;
         this.titles = titles;
         this.on_cancel = callbacks.on_cancel;
         this.on_press = callbacks.on_press;
-        this.control_manager = control_manager;
+        this.control_manager = this.data.control_manager;
         this.buttons_number = buttons.length;
         this.custom_scale = null;
 
@@ -76,8 +76,8 @@ export class ButtonSelectMenu {
 
     set_control() {
         if(this.control_manager.initialized) this.control_manager.reset();
-        this.control_manager.set_control(true, false, true, false, {right: this.next_button.bind(this), left: this.previous_button.bind(this),
-            esc: this.on_cancel.bind(this), enter: this.on_press.bind(this)});
+        this.control_manager.set_control({right: this.next_button.bind(this), left: this.previous_button.bind(this),
+            esc: this.on_cancel.bind(this), enter: this.on_press.bind(this)}, {horizontal_loop: true});
     }
 
     mount_buttons(filtered_buttons:string[]=[]) {
@@ -166,7 +166,7 @@ export class ButtonSelectMenu {
         this.title_window.update(true);
     }
 
-    open(callback:Function, select_index:number=0, start_active:boolean=true,
+    open(callback?:Function, select_index:number=0, start_active:boolean=true,
         custom_scale?:{active_default: number, max_scale: number}) {
         this.reset_button();
         this.set_control();

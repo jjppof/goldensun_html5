@@ -1,9 +1,10 @@
-import { CharsMenu } from '../support_menus/CharsMenu';
 import { BasicInfoWindow } from '../windows/BasicInfoWindow';
 import { ItemPsynergyChooseWindow } from '../windows/ItemPsynergyChooseWindow';
 import { TextObj, Window } from '../Window';
 import * as numbers from '../magic_numbers';
 import { GoldenSun } from '../GoldenSun';
+import { CharsMenu } from '../support_menus/CharsMenu';
+import { Ability } from '../Ability';
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;
@@ -33,100 +34,95 @@ const PSY_OVERVIEW_WIN_SPACE_BETWN_ICO = ((PSY_OVERVIEW_WIN_WIDTH - 2*(numbers.I
 export class MainPsynergyMenu {
     public game: Phaser.Game;
     public data: GoldenSun;
-    public esc_propagation_priority: number;
-    public enter_propagation_priority: number;
-    public chars_menu: CharsMenu;
-    public basic_info_window: BasicInfoWindow;
+
     public selected_char_index: number;
     public is_open: boolean;
-    public close_callback: Function;
-    public guide_window: Window;
-    public guide_window_text: TextObj;
     public choosing_psynergy: boolean;
-    public guide_window_msgs: {
-        choosing_char
-        choosing_psynergy
-    };
+    public close_callback: Function;
+
+    public guide_window_msgs: {choosing_char:string, choosing_psynergy:string};
+
+    public psynergy_choose_window: ItemPsynergyChooseWindow;
+    public chars_menu: CharsMenu;
+    public basic_info_window: BasicInfoWindow;
+
     public description_window: Window;
-    public description_window_text: TextObj;
+    public guide_window: Window;
     public psynergy_overview_window: Window;
     public shortcuts_window: Window;
-    public psynergy_choose_window: ItemPsynergyChooseWindow;
 
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
+    public guide_window_text: TextObj;
+    public description_window_text: TextObj;
+
+    constructor(game:Phaser.Game, data:GoldenSun) {
         this.game = game;
         this.data = data;
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
-        this.chars_menu = new CharsMenu(
-            this.game,
-            this.data,
-            this.char_choose.bind(this),
-            this.char_change.bind(this),
-            this.close_menu.bind(this),
-            this.enter_propagation_priority,
-            this.esc_propagation_priority
-        );
-        this.basic_info_window = new BasicInfoWindow(this.game);
+
         this.selected_char_index = 0;
         this.is_open = false;
-        this.close_callback = null;
-        this.set_control();
-        this.guide_window = new Window(this.game, GUIDE_WINDOW_X, GUIDE_WINDOW_Y, GUIDE_WINDOW_WIDTH, GUIDE_WINDOW_HEIGHT);
-        this.guide_window_text = this.guide_window.set_single_line_text("");
         this.choosing_psynergy = false;
+        this.close_callback = null;
+
         this.guide_window_msgs = {
             choosing_char: "Whose Psynergy?",
             choosing_psynergy: "Which Psynergy?",
         }
+
+        this.psynergy_choose_window = new ItemPsynergyChooseWindow(this.game, this.data, true, this.psynergy_change.bind(this));
+        this.chars_menu = new CharsMenu(this.game, this.data, this.char_change.bind(this));
+        this.basic_info_window = new BasicInfoWindow(this.game);
+
+        this.guide_window = new Window(this.game, GUIDE_WINDOW_X, GUIDE_WINDOW_Y, GUIDE_WINDOW_WIDTH, GUIDE_WINDOW_HEIGHT);
         this.description_window = new Window(this.game, DESCRIPTION_WINDOW_X, DESCRIPTION_WINDOW_Y, DESCRIPTION_WINDOW_WIDTH, DESCRIPTION_WINDOW_HEIGHT);
-        this.description_window_text = this.description_window.set_single_line_text("");
         this.psynergy_overview_window = new Window(this.game, PSY_OVERVIEW_WIN_X, PSY_OVERVIEW_WIN_Y, PSY_OVERVIEW_WIN_WIDTH, PSY_OVERVIEW_WIN_HEIGHT);
         this.shortcuts_window = new Window(this.game, SHORTCUTS_WINDOW_X, SHORTCUTS_WINDOW_Y, SHORTCUTS_WINDOW_WIDTH, SHORTCUTS_WINDOW_HEIGHT);
+
+        this.guide_window_text = this.guide_window.set_single_line_text("");
+        this.description_window_text = this.description_window.set_single_line_text("");
         this.shortcuts_window.set_text(["Use a keyboard number", "to set a shorcut."], undefined, 7, 3);
-        this.psynergy_choose_window = new ItemPsynergyChooseWindow(
-            this.game,
-            this.data,
-            true,
-            this.psynergy_change.bind(this),
-            this.psynergy_choose.bind(this),
-            this.esc_propagation_priority
-        );
     }
 
-    set_control() {
-        this.data.esc_input.add(() => {
-            if (!this.is_open) return;
-            this.data.esc_input.halt();
-            this.close_menu();
-        }, this, this.esc_propagation_priority);
-    }
-
-    char_change(party_index) {
-        if (!this.is_open) return;
-        this.selected_char_index = party_index;
-        this.basic_info_window.set_char(this.data.info.party_data.members[party_index]);
+    char_change() {
+        if(this.selected_char_index === this.chars_menu.selected_index) return;
+        
+        this.selected_char_index = this.chars_menu.selected_index;
+        this.basic_info_window.set_char(this.data.info.party_data.members[this.chars_menu.selected_index]);
         this.set_psynergy_icons();
+
+        if(this.psynergy_choose_window.window_open){
+            this.psynergy_choose_window.close();
+            this.psynergy_choose_window.open(this.chars_menu.selected_index);
+        }
     }
 
-    char_choose(party_index) {
-        if (!this.is_open) return;
+    char_choose() {
+        if(this.shortcuts_window.open) this.shortcuts_window.close(undefined, false);
+        if(this.psynergy_overview_window.open) this.psynergy_overview_window.close(undefined, false);
+        
         this.chars_menu.deactivate();
         this.choosing_psynergy = true;
         this.set_guide_window_text();
-        this.psynergy_choose_window.open(party_index, () => {
+        this.psynergy_choose_window.open(this.chars_menu.selected_index, () => {
             this.choosing_psynergy = false;
             this.chars_menu.activate();
             this.set_guide_window_text();
             this.set_description_window_text();
         });
+
+        this.psynergy_choose_window.grant_control(this.open_char_select.bind(this), () => {
+            let psy_win = this.psynergy_choose_window;
+            let selected_psy = psy_win.element_list[psy_win.elements[psy_win.selected_element_index] as string];
+            this.psynergy_choose(selected_psy);
+        },{
+        shift:this.chars_menu.previous_char.bind(this.chars_menu),
+        spacebar:this.chars_menu.next_char.bind(this.chars_menu)});
     }
 
-    psynergy_change(ability) {
+    psynergy_change(ability:Ability) {
         this.set_description_window_text(ability.description);
     }
 
-    psynergy_choose(ability) {
+    psynergy_choose(ability:Ability) {
         if (ability.key_name in this.data.info.field_abilities_list) {
             this.close_menu(true);
             this.data.info.field_abilities_list[ability.key_name].cast(this.data.hero, this.data.info.party_data.members[this.selected_char_index].key_name);
@@ -141,7 +137,7 @@ export class MainPsynergyMenu {
         }
     }
 
-    set_description_window_text(description?) {
+    set_description_window_text(description?:string) {
         if (this.choosing_psynergy) {
             this.description_window.update_text(description, this.description_window_text);
         } else {
@@ -151,6 +147,7 @@ export class MainPsynergyMenu {
 
     set_psynergy_icons() {
         this.psynergy_overview_window.remove_from_group();
+
         let counter = 0;
         for (let i = 0; i < this.data.info.party_data.members[this.selected_char_index].abilities.length; ++i) {
             const ability_key_name = this.data.info.party_data.members[this.selected_char_index].abilities[i];
@@ -166,28 +163,48 @@ export class MainPsynergyMenu {
         }
     }
 
-    open_menu(close_callback) {
+    open_char_select(){
+        if(this.psynergy_choose_window.window_open) this.psynergy_choose_window.close();
+
+        if(!this.psynergy_overview_window.open) this.psynergy_overview_window.show(undefined,false);
+        if(!this.shortcuts_window.open) this.shortcuts_window.show(undefined,false);
+        if(!this.chars_menu.is_open) this.chars_menu.open(this.selected_char_index, "menu");
+        
+        this.chars_menu.select_char(this.selected_char_index);
+        this.chars_menu.grant_control(this.close_menu.bind(this), this.char_choose.bind(this));
+    }
+
+    open_menu(close_callback:Function) {
         this.close_callback = close_callback;
-        this.chars_menu.open(this.selected_char_index);
         this.basic_info_window.open(this.data.info.party_data.members[this.selected_char_index]);
+
+        this.is_open = true;
+
         this.set_psynergy_icons();
         this.set_guide_window_text();
         this.set_description_window_text();
+
         this.guide_window.show(undefined, false);
         this.description_window.show(undefined, false);
         this.psynergy_overview_window.show(undefined, false);
         this.shortcuts_window.show(undefined, false);
-        this.is_open = true;
+
+        this.open_char_select();
     }
 
-    close_menu(close_menu_below = false) {
+    close_menu(close_menu_below:boolean = false) {
         this.chars_menu.close();
         this.basic_info_window.close();
+
         this.is_open = false;
+        this.data.cursor_manager.hide();
+
         this.guide_window.close(undefined, false);
         this.description_window.close(undefined, false);
         this.psynergy_overview_window.close(undefined, false);
         this.shortcuts_window.close(undefined, false);
+        if(this.psynergy_choose_window.window_open) this.psynergy_choose_window.close();
+
         if (this.close_callback !== null) {
             this.close_callback(close_menu_below);
         }

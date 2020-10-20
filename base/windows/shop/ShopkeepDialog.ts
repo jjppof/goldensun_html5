@@ -18,7 +18,6 @@ export type DialogMessage={
 export class ShopkeepDialog{
     public game:Phaser.Game;
     public data:GoldenSun;
-    public parent:ShopMenu;
     public shop_key:string;
     public avatar_key:string;
     public dialog_key:string;
@@ -28,10 +27,9 @@ export class ShopkeepDialog{
     public current_message:string;
     public is_active:boolean;
 
-    constructor(game:Phaser.Game, data:GoldenSun, parent:ShopMenu){
+    constructor(game:Phaser.Game, data:GoldenSun){
         this.game = game;
         this.data = data;
-        this.parent = parent;
         this.shop_key = null;
         this.avatar_key = null;
         this.dialog_key = null;
@@ -43,10 +41,10 @@ export class ShopkeepDialog{
         this.is_active = false;
     }
 
-    open(shop_key:string){
+    open(shop_key:string, avatar_key:string, dialog_key:string){
         this.shop_key = shop_key;
-        this.avatar_key = this.parent.shops_db[shop_key].avatar_key;
-        this.dialog_key = this.parent.shops_db[shop_key].dialog_key;
+        this.avatar_key = avatar_key;
+        this.dialog_key = dialog_key;
         this.messages = _.mapKeys(this.data.shop_menu.shopkeep_dialog_db[this.dialog_key].messages, messages => messages.key);
 
         this.update_dialog("welcome"); 

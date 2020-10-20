@@ -8,18 +8,23 @@ const BASE_WIN_WIDTH = 116;
 const BASE_WIN_HEIGHT = 116;
 const BASE_WIN_X = 120;
 const BASE_WIN_Y = 40;
+
 const ELEM_PER_PAGE = 5;
 const ELEM_PADDING_TOP = 12;
 const ELEM_PADDING_LEFT = 8;
 const SPACE_BETWEEN_ITEMS = 2;
+
 const PSY_PP_X = 109;
 const PSY_PP_COST_X = 86;
 const PSY_PP_COST_Y = 8;
 const ELEM_NAME_ICON_SHIFT = 4;
+
 const FORWARD = 1;
 const BACKWARD = -1;
+
 const PSY_GAIN_COLOR = numbers.YELLOW_FONT_COLOR;
 const PSY_LOST_COLOR = numbers.RED_FONT_COLOR;
+
 const PSY_INFO_1_Y = 96;
 const PSY_INFO_X = 8;
 const PSY_INFO_2_Y = PSY_INFO_1_Y + 1 + numbers.FONT_SIZE;
@@ -27,20 +32,22 @@ const PSY_INFO_2_Y = PSY_INFO_1_Y + 1 + numbers.FONT_SIZE;
 export class DjinnPsynergyWindow {
     public game: Phaser.Game;
     public data: GoldenSun;
+
     public window_open: boolean;
     public text_sprites_in_window: TextObj[];
     public icon_sprites_in_window: Phaser.Sprite[];
-    public esc_propagation_priority: number;
-    public enter_propagation_priority: number;
-    public spacebar_propagation_priority: number;
+
     public base_window: Window;
     public psy_info_1_text: TextObj;
     public psy_info_2_text: TextObj;
+
     public execute_operation: boolean;
     public close_callback: Function;
     public spacebar_callback: Function;
+
     public page_number: number;
     public page_index: number;
+
     public all_abilities: string[];
     public abilities: string[];
     public gained_abilities: string[];
@@ -48,56 +55,47 @@ export class DjinnPsynergyWindow {
     public intersection_abilities: string[];
     public current_abilities: string[];
     public next_abilities: string[];
+
     public char: MainChar;
     public djinni: Djinn[];
-    public next_djinni_status: string;
+    public next_djinni_status: string[];
     public action: string;
 
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority, spacebar_propagation_priority) {
+    constructor(game:Phaser.Game, data:GoldenSun) {
         this.game = game;
         this.data = data;
+
         this.window_open = false;
         this.text_sprites_in_window = [];
         this.icon_sprites_in_window = [];
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
-        this.spacebar_propagation_priority = spacebar_propagation_priority + 1;
+
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
         this.base_window.init_page_indicator_bar();
         this.base_window.set_text_in_position("PP", PSY_PP_COST_X, PSY_PP_COST_Y);
         this.psy_info_1_text = this.base_window.set_text_in_position("", PSY_INFO_X, PSY_INFO_1_Y);
         this.psy_info_2_text = this.base_window.set_text_in_position("", PSY_INFO_X, PSY_INFO_2_Y);
-        this.set_control();
     }
 
-    set_control() {
-        this.data.esc_input.add(() => {
-            if (!this.window_open) return;
-            this.data.esc_input.halt();
-            this.execute_operation = false;
-            this.close(this.close_callback);
-        }, this, this.esc_propagation_priority);
-        this.data.enter_input.add(() => {
-            if (!this.window_open) return;
-            this.data.enter_input.halt();
-            this.execute_operation = true;
-            this.close(this.close_callback);
-        }, this, this.enter_propagation_priority);
-        this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
-            if (!this.window_open) return;
-            this.change_page(FORWARD);
-        });
-        this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
-            if (!this.window_open) return;
-            this.change_page(BACKWARD);
-        });
-        this.data.spacebar_input.add(() => {
-            if (!this.window_open) return;
-            this.data.spacebar_input.halt();
-            if (this.spacebar_callback !== undefined) {
-                this.spacebar_callback();
-            }
-        }, this, this.spacebar_propagation_priority);
+    previous_page(){
+        this.change_page(BACKWARD);
+    }
+
+    next_page(){
+        this.change_page(FORWARD);
+    }
+
+    grant_control(){
+        this.data.control_manager.set_control({
+            left: this.previous_page.bind(this),
+            right: this.next_page.bind(this),
+            spacebar: this.spacebar_callback,
+            esc: () => {
+                this.execute_operation = false;
+                this.close(this.close_callback)},
+            enter: () => {
+                this.execute_operation = true;
+                this.close(this.close_callback)}
+        },{horizontal_loop:true});
     }
 
     set_page_number() {
@@ -108,7 +106,7 @@ export class DjinnPsynergyWindow {
         }
     }
 
-    change_page(page_shift) {
+    change_page(page_shift:number) {
         this.page_index += page_shift;
         if (this.page_index === this.page_number) {
             this.page_index = 0;
@@ -197,7 +195,7 @@ export class DjinnPsynergyWindow {
         this.text_sprites_in_window = [];
     }
 
-    update_info(char, djinni, next_djinni_status) {
+    update_info(char:MainChar, djinni:Djinn[], next_djinni_status:string[]) {
         this.clear_sprites();
         this.base_window.unset_page_indicator();
         this.char = char;
@@ -207,7 +205,8 @@ export class DjinnPsynergyWindow {
         this.mount_window();
     }
 
-    open(char, djinni, next_djinni_status, close_callback, hidden = false, spacebar_callback?, action?, callback = undefined) {
+    open(char:MainChar, djinni:Djinn[], next_djinni_status:string[], close_callback:Function,
+        hidden:boolean=false, spacebar_callback?:Function, action?:string, callback:Function=undefined) {
         this.char = char;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;
@@ -229,7 +228,7 @@ export class DjinnPsynergyWindow {
         }, false);
     }
 
-    close(callback?) {
+    close(callback?:Function) {
         this.clear_sprites();
         this.base_window.unset_page_indicator();
         this.base_window.close(() => {

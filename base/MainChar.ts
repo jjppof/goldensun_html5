@@ -31,7 +31,7 @@ export class MainCharBase extends SpriteBase {
 
 export type ItemSlot = {
     key_name: string,
-    index: number,
+    index?: number,
     quantity: number,
     equipped?: boolean,
     broken?: boolean

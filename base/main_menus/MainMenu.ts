@@ -1,17 +1,20 @@
 import { capitalize } from '../utils';
-import { HorizontalMenu } from '../support_menus/HorizontalMenu';
 import { MainPsynergyMenu } from './MainPsynergyMenu';
 import { MainItemMenu } from './MainItemMenu';
 import { MainDjinnMenu } from './MainDjinnMenu';
 import { CharsStatusWindow } from '../windows/CharsStatusWindow';
 import { GoldenSun } from '../GoldenSun';
+import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu';
 
 export class MainMenu {
     public game: Phaser.Game;
     public data: GoldenSun;
-    public chars_status_window: CharsStatusWindow;
+
     public buttons_keys: string[];
-    public horizontal_menu: HorizontalMenu;
+    public current_index: number;
+
+    public chars_status_window: CharsStatusWindow;
+    public horizontal_menu: ButtonSelectMenu;
     public psynergy_menu: MainPsynergyMenu;
     public item_menu: MainItemMenu;
     public djinn_menu: MainDjinnMenu;
@@ -19,31 +22,31 @@ export class MainMenu {
     constructor(game, data) {
         this.game = game;
         this.data = data;
-        this.chars_status_window = new CharsStatusWindow(this.game, this.data);
+
         this.buttons_keys = ["psynergy", "djinni", "item", "status"];
-        let esc_propagation_priority = 0;
-        let enter_propagation_priority = 0;
-        let shift_propagation_priority = 0;
-        let spacebar_propagation_priority = 0;
-        this.horizontal_menu = new HorizontalMenu(
+        this.current_index = 0;
+
+        this.chars_status_window = new CharsStatusWindow(this.game, this.data);
+        this.horizontal_menu = new ButtonSelectMenu(
             this.game,
             this.data,
             this.buttons_keys,
             this.buttons_keys.map(b => capitalize(b)),
-            this.button_press.bind(this),
-            enter_propagation_priority,
-            this.close_menu.bind(this),
-            esc_propagation_priority
+            {
+                on_press: this.button_press.bind(this),
+                on_cancel:  this.close_menu.bind(this),
+            }
         );
-        ++esc_propagation_priority;
-        ++enter_propagation_priority;
-        this.psynergy_menu = new MainPsynergyMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
-        this.item_menu = new MainItemMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority);
-        this.djinn_menu = new MainDjinnMenu(this.game, this.data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority, spacebar_propagation_priority);
+        this.psynergy_menu = new MainPsynergyMenu(this.game, this.data);
+        this.item_menu = new MainItemMenu(this.game, this.data);
+        this.djinn_menu = new MainDjinnMenu(this.game, this.data);
     }
 
-    button_press(index) {
-        switch (this.buttons_keys[index]) {
+    button_press() {
+        this.horizontal_menu.deactivate(true);
+        this.current_index = this.horizontal_menu.selected_button_index;
+
+        switch (this.buttons_keys[this.horizontal_menu.selected_button_index]) {
             case "psynergy":
                 this.button_press_action(this.psynergy_menu);
                 break;
@@ -56,9 +59,10 @@ export class MainMenu {
         }
     }
 
-    button_press_action(menu) {
+    button_press_action(menu:any) {
         this.horizontal_menu.deactivate();
-        menu.open_menu(close_this_menu => {
+        
+        menu.open_menu((close_this_menu:boolean) => {
             this.horizontal_menu.activate();
             this.chars_status_window.update_chars_info();
             if (close_this_menu) {
@@ -77,7 +81,8 @@ export class MainMenu {
     }
 
     open_menu() {
-        this.horizontal_menu.open();
+        this.horizontal_menu.open(undefined, this.current_index);
+
         this.chars_status_window.update_position();
         this.chars_status_window.update_chars_info();
         this.chars_status_window.show();
@@ -85,13 +90,17 @@ export class MainMenu {
 
     close_menu() {
         if (!this.is_active()) return;
+
         this.data.menu_open = false;
+        this.current_index = 0;
+
         this.horizontal_menu.close();
         this.chars_status_window.close();
+        this.data.control_manager.reset();
     }
 }
 
-export function initialize_menu(game, data) {
+export function initialize_menu(game:Phaser.Game, data:GoldenSun) {
     data.spacebar_input.add(() => {
         if (data.hero.in_action() || data.in_battle || !data.created || data.game_event_manager.on_event) return;
         if (!data.menu_open) {

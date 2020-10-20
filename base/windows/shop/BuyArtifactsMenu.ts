@@ -3,7 +3,7 @@ import { Item, item_types } from '../../Item';
 import { ShopMenu } from '../../main_menus/ShopMenu';
 import { ControlManager } from '../../utils/ControlManager';
 import { InventoryWindow } from './InventoryWindow';
-import { ShopCharDisplay } from './ShopCharDisplay';
+import { CharsMenu } from '../../support_menus/CharsMenu';
 import { Window } from '../../Window';
 import { ShopItemQuantityWindow } from './ShopItemQuantityWindow';
 import { BuySelectMenu } from './BuySelectMenu';
@@ -31,11 +31,12 @@ export class BuyArtifactsMenu{
     public data:GoldenSun;
     public parent:ShopMenu;
     public control_manager:ControlManager;
+    public close_callback:Function;
     
     public item_desc_win:Window;
     public your_coins_win:Window;
     public item_price_win:Window;
-    public char_display:ShopCharDisplay;
+    public char_display:CharsMenu;
     public inv_win:InventoryWindow;
     public quant_win:ShopItemQuantityWindow;
     public buy_select:BuySelectMenu;
@@ -55,7 +56,8 @@ export class BuyArtifactsMenu{
         this.game = game;
         this.data = data;
         this.parent = parent;
-        this.control_manager = this.parent.control_manager;
+        this.control_manager = this.data.control_manager;
+        this.close_callback = null;
         
         this.item_desc_win = this.parent.item_desc_win;
         this.your_coins_win = this.parent.your_coins_win;
@@ -99,8 +101,7 @@ export class BuyArtifactsMenu{
 
         if(game_ticket){
             this.npc_dialog.update_dialog("game_ticket", true);
-            this.control_manager.set_control(false, false, false, false, {esc: this.open_inventory_view.bind(this, true),
-                enter: this.open_inventory_view.bind(this, true)});
+            this.control_manager.simple_input(this.open_inventory_view.bind(this, true));
         }
         else this.open_buy_select();
     }
@@ -134,8 +135,7 @@ export class BuyArtifactsMenu{
         this.data.info.party_data.coins += sell_price | 0;
         this.parent.update_your_coins();
 
-        this.control_manager.set_control(false, false, false, false, {esc: this.check_game_ticket.bind(this),
-            enter: this.check_game_ticket.bind(this)});
+        this.control_manager.simple_input(this.check_game_ticket.bind(this));
     }
 
     equip_new_item(){
@@ -188,8 +188,7 @@ export class BuyArtifactsMenu{
         }
 
         if(!this.old_item){
-            this.control_manager.set_control(false, false, false, false, {esc: this.check_game_ticket.bind(this),
-                enter: this.check_game_ticket.bind(this)});
+            this.control_manager.simple_input(this.check_game_ticket.bind(this));
         }
         else{
             let after_compliment = () =>{
@@ -202,13 +201,11 @@ export class BuyArtifactsMenu{
                 this.yesno_action.open_menu({yes: this.sell_old_equip.bind(this, this.old_item), no: () => {
                     let msg_key = this.old_item.rare_item ? "decline_sell_artifact" : "decline_sell_normal";
                     this.npc_dialog.update_dialog(msg_key, true);
-                    this.control_manager.set_control(false, false, false, false, {esc: this.check_game_ticket.bind(this),
-                        enter: this.check_game_ticket.bind(this)});
+                    this.control_manager.simple_input(this.check_game_ticket.bind(this));
                 }},{x: YESNO_X, y: YESNO_Y});
             } 
     
-            this.control_manager.set_control(false, false, false, false, {esc: after_compliment.bind(this),
-                enter: after_compliment.bind(this)});
+            this.control_manager.simple_input(after_compliment.bind(this));
         }
     }
 
@@ -221,15 +218,14 @@ export class BuyArtifactsMenu{
 
         if(this.data.info.party_data.coins - this.data.info.items_list[this.selected_item.key_name].price*quantity < 0 && !game_ticket){
             this.npc_dialog.update_dialog("not_enough_coins", true);
-            this.parent.cursor_manager.hide();
+            this.data.cursor_manager.hide();
 
             if(this.quant_win.is_open) this.quant_win.close();
-            this.control_manager.set_control(false, false, false, false, {esc: this.open_buy_select.bind(this),
-            enter: this.open_buy_select.bind(this)});
+            this.control_manager.simple_input(this.open_buy_select.bind(this));
         }
         else{
             this.npc_dialog.update_dialog("after_buy", true);
-            this.parent.cursor_manager.hide();
+            this.data.cursor_manager.hide();
         
             if(this.quant_win.is_open) this.quant_win.close();
             if(!game_ticket) this.data.info.party_data.coins -=  this.data.info.items_list[this.selected_item.key_name].price*quantity;
@@ -271,17 +267,14 @@ export class BuyArtifactsMenu{
                         no: this.check_game_ticket.bind(this)},
                         {x: YESNO_X, y: YESNO_Y})
                     }
-                    this.control_manager.set_control(false, false, false, false, {esc: equip_now.bind(this),
-                        enter: equip_now.bind(this)});  
+                    this.control_manager.simple_input(equip_now.bind(this));
                 }
                 else{
-                    this.control_manager.set_control(false, false, false, false, {esc: this.check_game_ticket.bind(this),
-                        enter: this.check_game_ticket.bind(this)});
+                    this.control_manager.simple_input(this.check_game_ticket.bind(this));
                 }
             }
             else{
-                this.control_manager.set_control(false, false, false, false, {esc: this.open_buy_select.bind(this),
-                    enter: this.open_buy_select.bind(this)});
+                this.control_manager.simple_input(this.open_buy_select.bind(this));
             }
         }    
     }
@@ -340,11 +333,10 @@ export class BuyArtifactsMenu{
             else{
                 if(this.data.info.party_data.coins - this.data.info.items_list[this.selected_item.key_name].price < 0 && !game_ticket){
                     this.npc_dialog.update_dialog("not_enough_coins", true);
-                    this.parent.cursor_manager.hide();
+                    this.data.cursor_manager.hide();
         
                     if(this.quant_win.is_open) this.quant_win.close();
-                    this.control_manager.set_control(false, false, false, false, {esc: this.open_buy_select.bind(this),
-                    enter: this.open_buy_select.bind(this)});
+                    this.control_manager.simple_input(this.open_buy_select.bind(this));
                 }
                 else{
                     this.npc_dialog.update_dialog("buy_quantity");
@@ -356,11 +348,7 @@ export class BuyArtifactsMenu{
                     let char_item = char_item_match.length !== 0 ? char_item_match[0] : null;
     
                     if(!this.quant_win.is_open) this.quant_win.open(shop_item, char_item, true);
-                    this.control_manager.set_control(true, false, true, false, {right: this.quant_win.increase_amount.bind(this.quant_win),
-                        left: this.quant_win.decrease_amount.bind(this.quant_win),
-                        esc: this.open_inventory_view.bind(this),
-                        enter: this.on_purchase_success.bind(this)},
-                        ITEM_COUNTER_LOOP_TIME);
+                    this.quant_win.grant_control(this.open_inventory_view.bind(this), this.on_purchase_success.bind(this));
                 }
             }
         }
@@ -375,8 +363,7 @@ export class BuyArtifactsMenu{
 
     on_cancel_game_ticket(){
         this.npc_dialog.update_dialog("game_ticket_decline", true);
-        this.control_manager.set_control(false, false, false, false, {esc: this.on_cancel_char_select.bind(this),
-            enter: this.on_cancel_char_select.bind(this)});
+        this.control_manager.simple_input(this.on_cancel_char_select.bind(this));
     }
 
     open_equip_compare(){
@@ -391,12 +378,7 @@ export class BuyArtifactsMenu{
         if(!this.char_display.is_open) this.char_display.open(this.selected_char_index);
         if(!this.eq_compare.is_open) this.eq_compare.open(char_key, this.selected_item.key_name);
 
-        this.control_manager.set_control(true, true, true, false, {right: this.char_display.next_char.bind(this.char_display),
-            left: this.char_display.previous_char.bind(this.char_display),
-            up: this.char_display.previous_line.bind(this.char_display),
-            down: this.char_display.next_line.bind(this.char_display),
-            esc: this.on_cancel_char_select.bind(this),
-            enter: this.on_buy_equip_select.bind(this)});
+        this.char_display.grant_control(this.on_cancel_char_select.bind(this), this.on_buy_equip_select.bind(this));
     }
 
     open_inventory_view(game_ticket:boolean=false){
@@ -426,12 +408,8 @@ export class BuyArtifactsMenu{
         if(this.inv_win.is_open) this.inv_win.close();
         this.inv_win.open(char_key, this_item, true); 
 
-        this.control_manager.set_control(true, true, true, false, {right: this.char_display.next_char.bind(this.char_display),
-            left: this.char_display.previous_char.bind(this.char_display),
-            up: this.char_display.previous_line.bind(this.char_display),
-            down: this.char_display.next_line.bind(this.char_display),
-            esc: (game_ticket ? this.on_cancel_game_ticket.bind(this): this.on_cancel_char_select.bind(this)),
-            enter: this.on_buy_item_select.bind(this, game_ticket)});
+        this.char_display.grant_control((game_ticket ? this.on_cancel_game_ticket.bind(this): this.on_cancel_char_select.bind(this)),
+            this.on_buy_item_select.bind(this, game_ticket));
     }
     
     on_buy_select(){
@@ -468,32 +446,24 @@ export class BuyArtifactsMenu{
             if(!this.item_price_win.open) this.item_price_win.show();
             if(!this.your_coins_win.open) this.your_coins_win.show();
     
-            this.control_manager.set_control(true, true, true, false, {right: this.buy_select.next_item.bind(this.buy_select),
-                left: this.buy_select.previous_item.bind(this.buy_select),
-                up: this.buy_select.previous_page.bind(this.buy_select),
-                down: this.buy_select.next_page.bind(this.buy_select),
-                esc: this.close_menu.bind(this),
-                enter: this.on_buy_select.bind(this)});
+            this.buy_select.grant_control(this.close_menu.bind(this), this.on_buy_select.bind(this));
         }
     }
 
-    open_menu(is_artifacts_menu:boolean){
+    open_menu(is_artifacts_menu:boolean, close_callback?:Function){
         this.is_artifacts_menu = is_artifacts_menu;
+        this.close_callback = close_callback;
         this.active = true;
         this.item_list = this.is_artifacts_menu ? this.parent.artifact_list : this.parent.normal_item_list;
 
         if(is_artifacts_menu){
             if(Object.keys(this.item_list).length === 0){
                 this.npc_dialog.update_dialog("no_artifacts", true);
-
-                this.control_manager.set_control(false, false, false, false, {esc: this.close_menu.bind(this),
-                enter: this.close_menu.bind(this)});
+                this.control_manager.simple_input(this.close_menu.bind(this));
             }
             else{
                 this.npc_dialog.update_dialog("artifacts_menu", true);
-
-                this.control_manager.set_control(false, false, false, false, {esc: this.open_buy_select.bind(this, "buy_select"),
-                enter: this.open_buy_select.bind(this, "buy_select")});
+                this.control_manager.simple_input(this.open_buy_select.bind(this, "buy_select"));
             }
         }
         else this.open_buy_select("buy_select");
@@ -510,7 +480,7 @@ export class BuyArtifactsMenu{
         if(this.buy_select.is_open) this.buy_select.close();
         if(this.eq_compare.is_open) this.eq_compare.close();
 
-        this.parent.cursor_manager.hide();
+        this.data.cursor_manager.hide();
 
         this.is_artifacts_menu = null;
         this.item_list = {};
@@ -520,8 +490,8 @@ export class BuyArtifactsMenu{
         this.active = false;
 
         this.control_manager.reset();
-        this.parent.horizontal_menu.activate();
-        this.parent.open_horizontal_menu();
+        this.close_callback();
+        this.close_callback = null;
     }
 
 }

@@ -3,108 +3,91 @@ import { CursorControl } from '../../utils/CursorControl';
 import { GoldenSun } from '../../GoldenSun';
 import { ItemSlot, MainChar } from '../../MainChar';
 import { Item } from '../../Item';
+import { MainItemMenu } from '../../main_menus/MainItemMenu';
+import { ItemQuantityManagerWindow } from './ItemQuantityManagerWindow';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 76;
 const WIN_X = 104;
 const WIN_Y = 26;
+
 const INFO_X = 16;
 const QUESTION_Y = 22;
 const ANSWER_X = 32;
 const YES_Y = 46;
 const NO_Y = 62;
+
 const ICON_Y = 4;
 const ICON_NAME_X = 32;
 const ICON_NAME_Y = 8;
-const POSSIBLE_ANSWERS_COUNT = 2;
-const CURSOR_X = 16;
-const CURSOR_Y_SHIFT = 5;
+
 const SUB_ICON_X = 7;
 const SUB_ICON_Y = 8;
+
+const CURSOR_X = 114;
+const CURSOR_Y1 = 76;
+const CURSOR_Y2 = 92;
 
 export class DropItemWindow {
     public game: Phaser.Game;
     public data: GoldenSun;
+    public item_menu: MainItemMenu;
+    public item_quant_win: ItemQuantityManagerWindow;
+
     public base_window: Window;
     public item_obj: ItemSlot;
     public item: Item;
     public char: MainChar;
+
     public window_open: boolean;
     public window_active: boolean;
-    public esc_propagation_priority: number;
-    public enter_propagation_priority: number;
+    public quantity_to_remove: number;
+    public answer_index: number;
+
     public icon_name: TextObj;
     public icon: Phaser.Sprite;
     public item_count_sprite: Phaser.BitmapText;
     public group: Phaser.Group;
-    public answer_index: number;
     public dropped: boolean;
-    public cursor_control: CursorControl;
     public close_callback: Function;
-    public quantity_to_remove: number;
+    public open_callback: Function;
 
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
+    constructor(game:Phaser.Game, data:GoldenSun) {
         this.game = game;
         this.data = data;
+        this.item_menu = null;
+        this.item_quant_win = null;
+
         this.base_window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
         this.item_obj = null;
         this.item = null;
         this.char = null;
+
         this.window_open = false;
         this.window_active = false;
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
+        this.quantity_to_remove = 0;
+        this.answer_index = 0;
+
         this.base_window.set_text(["Are you sure you", "want to drop it?"], INFO_X, QUESTION_Y, 1);
         this.base_window.set_text_in_position("Yes", ANSWER_X, YES_Y);
         this.base_window.set_text_in_position("No", ANSWER_X, NO_Y);
+
         this.icon_name = this.base_window.set_text_in_position("", ICON_NAME_X, ICON_NAME_Y);
         this.icon = null;
         this.item_count_sprite = null;
+
         this.group = this.game.add.group();
-        this.answer_index = 0;
         this.dropped = false;
-        this.cursor_control = new CursorControl(this.game, false, true, undefined, () => POSSIBLE_ANSWERS_COUNT,
-            this.group, undefined, undefined, undefined, undefined, this.get_answer_index.bind(this),
-            this.set_answer_index.bind(this), this.is_open.bind(this), this.is_active.bind(this),
-            this.get_cursor_x.bind(this), this.get_cursor_y.bind(this));
-        this.set_control();
     }
 
-    set_control() {
-        this.data.esc_input.add(() => {
-            if (!this.window_open) return;
-            this.data.esc_input.halt();
-            this.close(this.close_callback.bind(this, this.dropped));
-        }, this, this.esc_propagation_priority);
-        this.data.enter_input.add(() => {
-            if (!this.window_open) return;
-            this.data.enter_input.halt();
-            this.on_choose();
-        }, this, this.enter_propagation_priority);
+    change_answer(){
+        if(this.answer_index === YES_Y) this.set_answer_index(NO_Y);
+        else this.set_answer_index(YES_Y);
     }
 
-    get_cursor_x() {
-        return CURSOR_X;
-    }
-
-    get_cursor_y() {
-        return (this.answer_index ? NO_Y : YES_Y) + CURSOR_Y_SHIFT;
-    }
-
-    is_active() {
-        return this.window_active;
-    }
-
-    is_open() {
-        return this.window_open;
-    }
-
-    get_answer_index() {
-        return this.answer_index;
-    }
-
-    set_answer_index(index) {
+    set_answer_index(index:number) {
         this.answer_index = index;
+        this.data.cursor_manager.move_to(CURSOR_X, (index === YES_Y ? CURSOR_Y1 : CURSOR_Y2), "point", false);
     }
 
     update_position() {
@@ -128,42 +111,70 @@ export class DropItemWindow {
         }
     }
 
-    on_choose() {
-        if (this.answer_index === 0) {
+    on_drop() {
+        if (this.answer_index === YES_Y) {
             this.char.remove_item(this.item_obj, this.quantity_to_remove);
             this.dropped = true;
         }
-        this.close(this.close_callback.bind(this, this.dropped));
+        this.close();
     }
 
-    open(item_obj, item, char, quantity_to_remove, close_callback?, open_callback?) {
-        this.item_obj = item_obj;
-        this.item = item;
-        this.char = char;
-        this.quantity_to_remove = quantity_to_remove;
-        this.answer_index = 0;
-        this.cursor_control.activate();
-        this.set_info();
-        this.update_position();
-        this.dropped = false;
-        this.close_callback = close_callback;
+    on_quantity_select(){
+        this.quantity_to_remove = this.item_quant_win.window_open ? this.item_quant_win.choosen_quantity : this.item_obj.quantity;
+        
+        this.set_answer_index(YES_Y);
         this.base_window.show(() => {
             this.window_open = true;
             this.window_active = true;
-            if (open_callback !== undefined) {
-                open_callback();
+            if (this.open_callback !== undefined) {
+                this.open_callback();
             }
         }, false);
+
+        this.data.control_manager.set_control({
+            up: this.change_answer.bind(this),
+            down: this.change_answer.bind(this),
+            esc: this.close.bind(this),
+            enter: this.on_drop.bind(this)
+        },{vertical_loop:true});
+
     }
 
-    close(callback) {
-        this.cursor_control.deactivate();
+    on_item_select(){
+        if (this.item_obj.quantity > 1) {
+            this.item_quant_win.open(this.item_obj, this.item, this.char);
+            this.item_quant_win.grant_control(this.close.bind(this), this.on_quantity_select.bind(this));
+        } 
+        else this.on_quantity_select();
+    }
+
+    open(item_obj:ItemSlot, item:Item, char:MainChar, item_menu:MainItemMenu,
+        close_callback?:Function, open_callback?:Function) {
+        this.item_obj = item_obj;
+        this.item = item;
+        this.char = char;
+        this.item_menu = item_menu;
+        this.close_callback = close_callback;
+        this.open_callback = open_callback;
+
+        this.quantity_to_remove = 0;
+        this.item_quant_win = this.item_menu.item_options_window.item_quantity_manager_window;
+        this.answer_index = 0;
+        this.dropped = false;
+
+        this.set_info();
+        this.update_position();
+        this.on_item_select();
+    }
+
+    close() {
         this.unset_info();
+        if(this.item_quant_win.window_open) this.item_quant_win.close();
         this.base_window.close(() => {
             this.window_open = false;
             this.window_active = false;
-            if (callback !== undefined) {
-                callback();
+            if (this.close_callback !== undefined) {
+                this.close_callback();
             }
         }, false);
     }

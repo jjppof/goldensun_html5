@@ -44,12 +44,10 @@ Supports multiple item pages
 
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance
-       parent [ShopMenuScreen] - The main shop menu class
        on_change [function] - Function callback to update the parent*/
 export class BuySelectMenu{
     public game:Phaser.Game;
     public data:GoldenSun;
-    public parent:ShopMenu;
     public on_change:Function;
     public close_callback:Function;
 
@@ -71,10 +69,9 @@ export class BuySelectMenu{
     public down_arrow:Phaser.Sprite;
     public arrow_tweens:Phaser.Tween[];
 
-    constructor(game:Phaser.Game, data:GoldenSun, parent:ShopMenu, on_change:Function){
+    constructor(game:Phaser.Game, data:GoldenSun, on_change:Function){
         this.game = game;
         this.data = data;
-        this.parent = parent;
         this.on_change = on_change;
         this.close_callback = null;
 
@@ -307,6 +304,16 @@ export class BuySelectMenu{
         this.change_item(this.selected_index);
     }
 
+    grant_control(on_cancel:Function, on_select:Function){
+        this.data.control_manager.set_control({right: this.next_item.bind(this),
+            left: this.previous_item.bind(this),
+            up: this.previous_page.bind(this),
+            down: this.next_page.bind(this),
+            esc: on_cancel,
+            enter: on_select},
+            {horizontal_loop:true});
+    }
+
     /*Changes to the next item page
     Used as a callback for controls*/
     next_page(force_index?:number){
@@ -379,7 +386,7 @@ export class BuySelectMenu{
     Input: index [number] - Item index (on screen)*/
     set_item(index:number) {
         this.game.world.bringToTop(this.sprite_group);
-        this.game.world.bringToTop(this.parent.cursor_manager.group);
+        this.game.world.bringToTop(this.data.cursor_manager.group);
         let itm_list = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === true && s.key === "items_icons"); });
         let bg_list = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === true && s.key === "item_border"); });
         
@@ -436,7 +443,7 @@ export class BuySelectMenu{
 
     Input: index [number] - Selected item's index*/
     set_cursor(index:number){
-        this.parent.cursor_manager.move_to(CURSOR_X + index*LINE_SHIFT, CURSOR_Y, "point");
+        this.data.cursor_manager.move_to(CURSOR_X + index*LINE_SHIFT, CURSOR_Y, "point", false);
     }
 
     /*Opens this window at page 0

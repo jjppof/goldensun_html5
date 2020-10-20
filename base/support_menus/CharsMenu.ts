@@ -1,240 +1,367 @@
 import { Window } from '../Window';
-import * as numbers from '../magic_numbers';
-import { CursorControl } from '../utils/CursorControl';
-import { base_actions, directions, reverse_directions } from '../utils';
+import * as utils from '../utils';
 import { GoldenSun } from '../GoldenSun';
-import * as _ from "lodash";
+import { MainChar } from '../MainChar';
 
-const BASE_WIN_WIDTH = 100;
-const BASE_WIN_HEIGHT = 36;
 const MAX_PER_LINE = 4;
-const WORKING_WIDTH = BASE_WIN_WIDTH - 2 * (numbers.OUTSIDE_BORDER_WIDTH + numbers.INSIDE_BORDER_WIDTH);
-const SLOT_WIDTH = (WORKING_WIDTH/MAX_PER_LINE) | 0;
-const SLOT_WIDTH_CENTER = (WORKING_WIDTH/MAX_PER_LINE/2) | 0;
 
-/*A window template showing character sprites
-Displays characters in line, using their idle animations
-Used for Psynergy and Item menus
+const WIN_X = 0;
+const WIN_Y = 112;
+const WIN_WIDTH = 100;
+const WIN_HEIGHT = 20;
 
-Input: game [Phaser:Game] - Reference to the running game object
-       data [GoldenSun] - Reference to the main JS Class instance
-       on_choose [function] - Callback executed on "Choose" option
-       on_cancel [function] - Callback executed on "Cancel" option
-       esc_propagation_priority [number] - Counts parent-child status for ESC key (Cancel/Back)
-       enter_propagation_priority [number] - Counts parent-child status for Enter key (Choose/Select)*/
+const WIN_X2 = 0;
+const WIN_Y2 = 0;
+const WIN_WIDTH2 = 100;
+const WIN_HEIGHT2 = 36;
+
+const CHAR_GROUP_X = 16;
+const CHAR_GROUP_Y = 128;
+
+const CHAR_GROUP_X2 = 16;
+const CHAR_GROUP_Y2 = 28;
+
+const GAP_SIZE = 24;
+const SHIFT_X = 16;
+const SHIFT_Y = 32;
+
+const CURSOR_X = 0;
+const CURSOR_Y = 118;
+
+const CURSOR_X2 = 0;
+const CURSOR_Y2 = 22;
+
+const ARROW_GROUP_X = 96;
+const ARROW_GROUP_Y = 100;
+const UP_ARROW_X = 16;
+const UP_ARROW_Y = 20;
+const DOWN_ARROW_X = 0;
+const DOWN_ARROW_Y = 24;
+const ARROW_Y_DIFF = 8;
+
+const ARROW_GROUP_X2 = 92;
+const ARROW_GROUP_Y2 = -4;
+
+const MENU_SELECTED_Y_SHIFT = 4;
+
+const SHOP_MODE = "shop";
+const MENU_MODE = "menu";
+
+const ARROW_TWEEN_TIME = Phaser.Timer.QUARTER >> 1;
+
 export class CharsMenu {
-    public game: Phaser.Game;
-    public data: GoldenSun;
-    public enter_propagation_priority: number;
-    public esc_propagation_priority: number;
-    public on_choose: Function;
-    public on_change: Function;
-    public on_cancel: Function;
-    public base_window: Window;
-    public group: Phaser.Group;
-    public x: number;
-    public y: number;
-    public selected_y: number;
-    public unselected_y: number;
-    public selected_button_index: number;
-    public line_index: number;
-    public menu_open: boolean;
-    public menu_active: boolean;
-    public cursor_control: CursorControl;
-    public char_buttons: {
-        [char_key_name: string]: Phaser.Sprite
-    };
-    public buttons_number: number;
+    public game:Phaser.Game;
+    public data:GoldenSun;
+    public on_change:Function;
+    public close_callback:Function;
 
-    constructor(game, data, on_choose, on_change, on_cancel, esc_propagation_priority, enter_propagation_priority) {
+    public window:Window;
+    public char_group:Phaser.Group;
+    public arrow_group:Phaser.Group;
+    public up_arrow:Phaser.Sprite;
+    public down_arrow:Phaser.Sprite;
+
+    public arrow_tweens:Phaser.Tween[];
+    public lines:MainChar[][];
+    public current_line:number;
+    public selected_index:number;
+    public is_active:boolean;
+    public is_open:boolean;
+    public mode:string;
+
+    constructor(game:Phaser.Game, data:GoldenSun, on_change:Function){
         this.game = game;
         this.data = data;
-        this.enter_propagation_priority = enter_propagation_priority;
-        this.esc_propagation_priority = esc_propagation_priority;
-        this.on_choose = on_choose === undefined ? () => {} : on_choose;
-        this.on_change = on_change === undefined ? () => {} : on_change;
-        this.on_cancel = on_cancel === undefined ? () => {} : on_cancel;
-        this.base_window = new Window(this.game, 0, 0, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
-        this.group = game.add.group();
-        this.group.alpha = 0;
-        this.x = 0;
-        this.y = 0;
-        this.selected_y = 0;
-        this.unselected_y = -4;
-        this.set_chars();
-        this.selected_button_index = 0;
-        this.line_index = 0;
-        this.menu_open = false;
-        this.menu_active = false;
-        this.set_control();
-        this.cursor_control = new CursorControl(this.game, true, false, this.get_max_per_line.bind(this), undefined, this.group,
-            this.change_button.bind(this), undefined, this.get_selected_button_index.bind(this), this.set_selected_button_index.bind(this),
-            undefined, undefined, this.is_open.bind(this), this.is_activated.bind(this), this.get_cursor_x.bind(this),
-            this.get_cursor_y.bind(this)
-        );
+        this.on_change = on_change;
+        this.close_callback = null;
+
+        this.window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
+        this.char_group = this.game.add.group();
+        this.char_group.x = CHAR_GROUP_X - SHIFT_X;
+        this.char_group.y = CHAR_GROUP_Y - SHIFT_Y;
+        this.char_group.alpha = 1;
+
+        this.arrow_group = this.game.add.group();
+        this.arrow_group.x = ARROW_GROUP_X;
+        this.arrow_group.y = ARROW_GROUP_Y;
+
+        this.up_arrow = this.arrow_group.create(UP_ARROW_X, UP_ARROW_Y, "green_arrow");
+        this.up_arrow.rotation = Math.PI;
+        this.down_arrow = this.arrow_group.create(DOWN_ARROW_X, DOWN_ARROW_Y, "green_arrow");
+        this.up_arrow.alpha = 0;
+        this.down_arrow.alpha = 0;
+
+        this.arrow_tweens = [];
+
+        this.lines = [];
+        this.current_line = 0;
+        this.selected_index = 0;
+        this.is_active = false;
+        this.is_open = false;
+        this.mode = null;
     }
 
-    /*Returns the cursor's x value
+    check_mode(){
+        if(this.mode === SHOP_MODE){
+            this.window.update_size({width:WIN_WIDTH, height:WIN_HEIGHT});
+            this.window.update_position({x:WIN_X, y:WIN_Y});
+
+            this.char_group.x = CHAR_GROUP_X - SHIFT_X + this.game.camera.x;
+            this.char_group.y = CHAR_GROUP_Y - SHIFT_Y + this.game.camera.y;
+            this.arrow_group.x = ARROW_GROUP_X + this.game.camera.x;
+            this.arrow_group.y = ARROW_GROUP_Y + this.game.camera.y;
+        }
+        else if(this.mode === MENU_MODE){
+            this.window.update_size({width:WIN_WIDTH2, height:WIN_HEIGHT2});
+            this.window.update_position({x:WIN_X2, y:WIN_Y2});
+
+            this.char_group.x = CHAR_GROUP_X2 - SHIFT_X + this.game.camera.x;
+            this.char_group.y = CHAR_GROUP_Y2 - SHIFT_Y + this.game.camera.y;
+            this.arrow_group.x = ARROW_GROUP_X2 + this.game.camera.x;
+            this.arrow_group.y = ARROW_GROUP_Y2 + this.game.camera.y;
+        }
+    }
+
+    /*Hides or shows specific arrows
     
-    Output: [number]*/
-    get_cursor_x() {
-        return this.char_buttons[this.data.info.party_data.members[this.selected_button_index].key_name].x;
+    Input: up, down [boolean] - If true, shows up/down arrow*/
+    set_arrows(up:boolean=false, down:boolean=false){
+        this.up_arrow.x = UP_ARROW_X;
+        this.up_arrow.y = UP_ARROW_Y;
+        this.down_arrow.x = DOWN_ARROW_X;
+        this.down_arrow.y = DOWN_ARROW_Y;
+        if(up) this.up_arrow.alpha = 1;
+        else this.up_arrow.alpha = 0;
+
+        if(down) this.down_arrow.alpha = 1;
+        else this.down_arrow.alpha = 0;
     }
 
-    /*Returns the cursor's y value
-    
-    Output: [number]*/
-    get_cursor_y() {
-        return 22;
+    /*Checks which arrows to show or hide*/
+    check_arrows(){
+        let up = false;
+        let down = false;
+
+        if(this.current_line < this.lines.length-1) down = true;
+        if(this.current_line > 0) up = true;
+
+        this.set_arrows(up, down);
+        this.init_arrow_tweens();
+        this.game.world.bringToTop(this.arrow_group);
     }
 
-    /*Returns the maximum number of characters per line
-    
-    Output: [number]*/
-    get_max_per_line() {
-        return this.data.info.party_data.members.slice(this.line_index * MAX_PER_LINE, (this.line_index + 1) * MAX_PER_LINE).length;
+    /*Starts the arrow animations*/
+    init_arrow_tweens(){
+        let up_tween = this.game.add.tween(this.up_arrow)
+                .to({y: UP_ARROW_Y - ARROW_Y_DIFF}, ARROW_TWEEN_TIME, Phaser.Easing.Linear.None)
+                .to({y: UP_ARROW_Y}, ARROW_TWEEN_TIME, Phaser.Easing.Linear.None).loop();
+        this.arrow_tweens.push(up_tween);
+
+        let down_tween = this.game.add.tween(this.down_arrow)
+                .to({y: DOWN_ARROW_Y + ARROW_Y_DIFF}, ARROW_TWEEN_TIME, Phaser.Easing.Linear.None)
+                .to({y: DOWN_ARROW_Y}, ARROW_TWEEN_TIME, Phaser.Easing.Linear.None).loop();
+        this.arrow_tweens.push(down_tween);
+
+        up_tween.start();
+        down_tween.start();
     }
 
-    /*Returns the index for the selected character button
-    
-    Output: [number]*/
-    get_selected_button_index() {
-        return this.selected_button_index;
+    /*Clears the arrow animations*/
+    clear_arrow_tweens(){
+        for(let i=0; i<this.arrow_tweens.length; i++){
+            this.game.tweens.remove(this.arrow_tweens.pop());
+        }
     }
 
-    /*Sets an index for the selected character button
-    
-    Output: [number]*/
-    set_selected_button_index(index) {
-        this.selected_button_index = index;
-    }
-
-    /*Checks the "open" state for this menu
-
-    Output: [boolean]*/
-    is_open() {
-        return this.menu_open;
-    }
-
-    /*Checks the "active" state for this menu
-
-    Output: [boolean]*/
-    is_activated() {
-        return this.menu_active;
-    }
-
-    /*Creates the character buttons from the party data
-    Displays new sprites for each party member on screen with their idle animation*/
     set_chars() {
-        for (let key_name in this.char_buttons) {
-            this.char_buttons[key_name].destroy();
-        }
-        this.char_buttons = {};
-        for (let i = 0; i < _.clamp(this.data.info.party_data.members.length, 0, MAX_PER_LINE); ++i) {
-            const char = this.data.info.party_data.members[i];
-            this.char_buttons[char.key_name] = this.group.create(0, 0, char.sprite_base.getActionKey(base_actions.IDLE));
-            this.data.info.party_data.members[i].sprite_base.setAnimation(this.char_buttons[char.key_name], base_actions.IDLE);
-            this.char_buttons[char.key_name].animations.play(char.sprite_base.getAnimationKey(base_actions.IDLE, reverse_directions[directions.down]));
-        }
-    }
+        for (let i = 0; i < this.lines[this.current_line].length; ++i) {
+            let char = this.lines[this.current_line][i];
+            let sprite:Phaser.Sprite = null;
 
-    /*Manages interaction with the parent menu
-    Passes control over to the Choose/Cancel functions*/
-    set_control() {
-        this.data.enter_input.add(() => {
-            if (!this.menu_open || !this.menu_active) return;
-            this.data.enter_input.halt();
-            this.on_choose(this.selected_button_index);
-        }, this, this.enter_propagation_priority);
-        this.data.esc_input.add(() => {
-            if (!this.menu_open || !this.menu_active) return;
-            this.data.esc_input.halt();
-            this.on_cancel();
-        }, this, this.esc_propagation_priority);
-    }
+            let dead_idle = this.char_group.children.filter((s:Phaser.Sprite) => { 
+                return (s.alive === false && s.key === char.sprite_base.getActionKey(utils.base_actions.IDLE));
+            });
 
-    /*Updates the position for the character menu*/
-    update_position() {
-        this.group.x = this.game.camera.x + this.x;
-        this.group.y = this.game.camera.y + this.y;
-        for (let i = 0; i < _.clamp(this.data.info.party_data.members.length, 0, MAX_PER_LINE); ++i) {
-            const char = this.data.info.party_data.members[i];
-            this.char_buttons[char.key_name].centerX = i * SLOT_WIDTH + SLOT_WIDTH_CENTER + numbers.OUTSIDE_BORDER_WIDTH + numbers.INSIDE_BORDER_WIDTH;
-            this.char_buttons[char.key_name].y = this.unselected_y;
+            if(dead_idle.length>0) sprite = (dead_idle[0] as Phaser.Sprite).reset(i*GAP_SIZE, 0);
+            else sprite = this.char_group.create(i*GAP_SIZE, 0, char.sprite_base.getActionKey(utils.base_actions.IDLE));
+
+            char.sprite_base.setAnimation(sprite, utils.base_actions.IDLE);
+            sprite.animations.play(char.sprite_base.getAnimationKey(utils.base_actions.IDLE, utils.reverse_directions[utils.directions.down]));
         }
     }
 
-    /*Changes the selected character
+    make_lines(){
+        let party_length = this.data.info.party_data.members.length;
+        let line_number = party_length%MAX_PER_LINE===0 ? (party_length/MAX_PER_LINE) | 0 : ((party_length/MAX_PER_LINE) | 0) + 1;
 
-    Input: old_index [number] - Previously selected index
-           new_index [number] - New index to be selected*/
-    change_button(old_index, new_index) {
-        this.reset_button(old_index);
-        this.on_change(new_index);
-        this.set_button(new_index);
+        for(let i = 0; i<line_number; i++){
+            let chars = [];
+            for(let n=i*MAX_PER_LINE; n<(i+1)*MAX_PER_LINE; n++){
+                if(!this.data.info.party_data.members[n]) break;
+                chars.push(this.data.info.party_data.members[n]);
+            }
+            this.lines[i] = chars;
+        }
     }
 
-    /*Shows the character as "selected"
-    Moves the character down on scree n*/
-    set_button(index) {
-        let selected_char = this.char_buttons[this.data.info.party_data.members[index].key_name];
-        selected_char.y = this.selected_y;
+    change_line(line:number, force_index?:number){
+        this.clear_arrow_tweens();
+
+        if(this.data.info.party_data.members.length < MAX_PER_LINE*line) return;
+
+        this.current_line = line;
+        
+        if(force_index !== undefined){
+            this.selected_index = force_index;
+        }
+        else if(this.selected_index !== null && this.selected_index >= this.lines[this.current_line].length){
+                this.selected_index = this.lines[this.current_line].length - 1;
+        }
+
+        utils.kill_all_sprites(this.char_group);
+        this.unset_character(this.selected_index);
+        this.set_chars();
+        this.check_arrows();
+        this.select_char(this.selected_index);
     }
 
-    /*Resets the character's "selected" state
-    Moves the character back in line with the remaining unselected members*/
-    reset_button(index) {
-        let selected_char = this.char_buttons[this.data.info.party_data.members[index].key_name];
-        selected_char.y = this.unselected_y;
+    next_line(force_index?:number){
+        if(this.lines.length === 1 || this.current_line + 1 === this.lines.length) return;
+        let index =  this.current_line + 1;
+
+        this.change_line(index, force_index);
     }
 
-    /*Sets the selected character index using the party index
+    previous_line(force_index?:number){
+        if(this.lines.length === 1 || this.current_line -1 < 0) return;
+        let index = this.current_line - 1;
+
+        this.change_line(index, force_index);
+    }
+
+    set_character(index:number){
+        if(this.mode===SHOP_MODE){
+            //set run animation for new character;
+        }
+
+        else if(this.mode===MENU_MODE){
+            this.char_group.children[index].y = MENU_SELECTED_Y_SHIFT;
+        }
+    }
+
+    unset_character(index:number){
+        if(this.mode===SHOP_MODE){
+            //unset run animation for new character;
+        }
+
+        else if(this.mode===MENU_MODE){
+            this.char_group.children[index].y = 0;
+        }
+    }
+
+    select_char(index:number){
+        if(this.mode===SHOP_MODE) this.data.cursor_manager.move_to(CURSOR_X + index*GAP_SIZE, CURSOR_Y, "wiggle");
+        else if (this.mode===MENU_MODE) this.data.cursor_manager.move_to(CURSOR_X2 + index*GAP_SIZE, CURSOR_Y2, "point", false);
+
+        if(index !== this.selected_index){
+            this.unset_character(this.selected_index);
+            this.selected_index =  index;
+            this.set_character(this.selected_index);
+        }
+        
+        if(this.on_change){
+            let c = this.data.info.party_data.members[this.current_line*MAX_PER_LINE + this.selected_index];
+            this.on_change(c.key_name);
+        }
+    }
+
+    next_char(){
+        if(this.lines[this.current_line].length === 1 && this.lines.length === 1) return;
+
+        if(this.selected_index + 1 === this.lines[this.current_line].length){
+            if(this.current_line + 1 === this.lines.length){
+                if(this.lines.length === 1) this.select_char(0);
+                else this.change_line(0, 0);
+            }
+            else this.next_line(0);
+        }
+        else{
+            this.select_char(this.selected_index + 1);
+        }
+    }
+
+    previous_char(){
+        if(this.lines[this.current_line].length === 1 && this.lines.length === 1) return;
+
+        if(this.selected_index -1 < 0){
+            if(this.current_line -1 < 0){
+                if(this.lines.length === 1) this.select_char(this.lines[this.current_line].length-1);
+                else this.change_line(this.lines.length-1, this.lines[this.lines.length-1].length-1); 
+            }
+            else this.previous_line(this.lines[this.current_line -1].length-1);
+        }
+        else{
+            this.select_char(this.selected_index - 1);
+        }
+    }
+
+    grant_control(on_cancel:Function, on_select:Function){
+        this.data.control_manager.set_control({right: this.next_char.bind(this),
+            left: this.previous_char.bind(this),
+            up: this.previous_line.bind(this),
+            down: this.next_line.bind(this),
+            esc: on_cancel,
+            enter: on_select}, {horizontal_loop:true});
+    }
+
+    activate(){
+        if(this.mode===SHOP_MODE) this.data.cursor_manager.move_to(CURSOR_X + this.selected_index*GAP_SIZE, CURSOR_Y, "wiggle");
+        else if (this.mode===MENU_MODE) this.data.cursor_manager.move_to(CURSOR_X2 + this.selected_index*GAP_SIZE, CURSOR_Y2, "point", false);
+
+        this.is_active = true;
+    }
     
-    Input: party_index [number] - The character's party index*/
-    set_char_by_index(party_index) {
-        this.reset_button(this.selected_button_index);
-        this.selected_button_index = party_index;
-        this.set_button(this.selected_button_index);
+    deactivate(){
+        this.data.cursor_manager.clear_tweens();
+        this.is_active = false;
     }
 
-    /*Opens this window
+    open(select_index:number=0, mode:string=SHOP_MODE, close_callback?:Function, open_callback?:Function) {
+        this.selected_index = select_index;
+        this.current_line = 0;
+        this.mode = mode;
 
-    Input: select_index [number] - Default character selected index
-           start_active [boolean] - If true, the menu starts in "active" state*/
-    open(select_index, start_active = true) {
-        if (Object.keys(this.char_buttons).length != _.clamp(this.data.info.party_data.members.length, 0, MAX_PER_LINE)) {
-            this.set_chars();
-        }
-        this.buttons_number = _.clamp(this.data.info.party_data.members.length, 0, MAX_PER_LINE);
-        this.selected_button_index = select_index === undefined ? 0 : select_index;
-        this.line_index = 0;
-        this.update_position();
-        this.set_button(this.selected_button_index);
-        this.base_window.show(undefined, false);
-        this.group.alpha = 1;
-        this.menu_active = start_active;
-        this.cursor_control.activate();
-        this.menu_open = true;
+        this.make_lines();
+        this.check_mode();
+        this.check_arrows();
+        this.set_chars();
+        this.select_char(this.selected_index);
+
+        this.char_group.alpha = 1;
+        this.is_open = true;
+        this.close_callback = close_callback;
+
+        this.activate();
+        this.window.show(open_callback, false);
     }
 
-    /*Closes this window*/
-    close() {
-        this.menu_open = false;
-        this.reset_button(this.selected_button_index);
-        this.group.alpha = 0;
-        this.cursor_control.deactivate();
-        this.base_window.close(undefined, false);
+    close(destroy:boolean=false) {
+        this.is_open = false;
+        this.deactivate();
+        utils.kill_all_sprites(this.char_group, destroy);
+
+        this.lines = [];
+        this.current_line = 0;
+        this.selected_index = 0;
+        this.is_active = false;
+        this.is_open = false;
+        this.char_group.alpha = 0;
+        this.mode = null;
+
+        this.set_arrows(false, false);
+
+        this.window.close(this.close_callback, false);
+        this.close_callback = null;
     }
 
-    /*Enables the "active" state for this window*/
-    activate() {
-        this.menu_active = true;
-        this.cursor_control.activate();
-    }
-
-    /*Disables the "active" state for this window*/
-    deactivate() {
-        this.menu_active = false;
-        this.cursor_control.deactivate();
-    }
 }

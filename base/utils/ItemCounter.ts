@@ -6,7 +6,7 @@ const MAX_ITEMS = 30;
 const GRID_WIDTH = MAX_ITEMS * 2 + 1;
 const GRID_HEIGHT = 8;
 
-export class ShopItemCounter {
+export class ItemCounter {
     public game:Phaser.Game;
     public group:Phaser.Group;
     public x:number;
@@ -110,7 +110,7 @@ export class ShopItemCounter {
         }
     } 
 
-    config(available_items_count:number, initial_quantity:number, disabled_count:number) {
+    config(available_items_count:number, initial_quantity:number, disabled_count:number=0) {
         this.clear();
         this.current_quantity = initial_quantity;
         this.available_items_count = available_items_count;
