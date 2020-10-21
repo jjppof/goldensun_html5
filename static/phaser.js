@@ -19908,6 +19908,21 @@ PIXI.WebGLSpriteBatch.prototype.render = function (sprite, matrix)
     var resolution = texture.baseTexture.resolution;
     var textureIndex = texture.baseTexture.textureIndex;
 
+    if (sprite.mode7) {
+        const apply_mode7 = (x, y) => {
+            y = y/160;
+            x = x/240;
+            y = ((4/(-y + 4.5)) - 1)/0.28;
+            x = ((x - 0.5)/(-y + 4.5))/0.28;
+            y += 0.5;
+            x += 0.5;
+            y *= 160;
+            x *= 240;
+            return [x, y];
+        }
+        [wt.tx, wt.ty] = apply_mode7(wt.tx, wt.ty);
+    }
+
     var a = wt.a / resolution;
     var b = wt.b / resolution;
     var c = wt.c / resolution;

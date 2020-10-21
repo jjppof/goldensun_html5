@@ -84,3 +84,21 @@ Object.defineProperty(Phaser.Filter.Mode7.prototype, 'lookY', {
         this.uniforms.lookY.value = value;
     }
 });
+
+Object.defineProperty(Phaser.Filter.Mode7.prototype, 'scale', {
+    get: function() {
+        return this.uniforms.scale.value;
+    },
+    set: function(value) {
+        this.uniforms.scale.value = value;
+    }
+});
+
+Object.defineProperty(Phaser.Filter.Mode7.prototype, 'distance', {
+    get: function() {
+        return this.uniforms.distance.value;
+    },
+    set: function(value) {
+        this.uniforms.distance.value = value;
+    }
+});
