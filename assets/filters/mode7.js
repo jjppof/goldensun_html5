@@ -2,10 +2,6 @@ Phaser.Filter.Mode7 = function (game) {
     Phaser.Filter.call(this, game);
 
     this.uniforms.angle = {type: "1f", value: 0};
-    this.uniforms.sin1 = {type: "1f", value: 1};
-    this.uniforms.sin2 = {type: "1f", value: 0};
-    this.uniforms.cos1 = {type: "1f", value: 0};
-    this.uniforms.cos2 = {type: "1f", value: 1};
     this.uniforms.scale = {type: "1f", value: .28};
     this.uniforms.distance = {type: "1f", value: 1};
     this.uniforms.lookY = {type: "1f", value: 4.5};
@@ -19,15 +15,14 @@ Phaser.Filter.Mode7 = function (game) {
         "uniform sampler2D uSampler;",
 
         "precision highp float;",
-        "uniform highp float sin1;",
-        "uniform highp float sin2;",
-        "uniform highp float cos1;",
-        "uniform highp float cos2;",
 
         "uniform highp float scale;",
         "uniform highp float lookY;",
         "uniform highp float inclination;",
         "uniform highp float distance;",
+        "uniform highp float angle;",
+        "highp float cos_;",
+        "highp float sin_;",
 
         "void main(void) {",
         "    vec2 uv = vTextureCoord;",
@@ -38,7 +33,9 @@ Phaser.Filter.Mode7 = function (game) {
         "    warped.y -= distance;",
         "    warped /= scale;",
 
-        "    warped *= mat2(sin1, sin2, cos1, cos2);", // rotate the new uvs
+        "    cos_ = cos(angle);",
+        "    sin_ = sin(angle);",
+        "    warped *= mat2(cos_, -sin_, sin_, cos_);", // rotate the new uvs
         "    warped += vec2(0.5, 0.5);", // centred
 
         "    bool isDraw = uv.y > 0.5 - lookY;",
@@ -60,10 +57,6 @@ Object.defineProperty(Phaser.Filter.Mode7.prototype, 'angle', {
     },
     set: function(value) {
         this.uniforms.angle.value = value;
-        this.uniforms.sin1.value = -Math.sin(value)
-        this.uniforms.cos1.value = Math.cos(value)
-        this.uniforms.sin2.value = Math.sin(value - 0.5*Math.PI)
-        this.uniforms.cos2.value = Math.cos(value - 0.5*Math.PI)
     }
 });
 
