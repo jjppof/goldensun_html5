@@ -5,7 +5,7 @@ Phaser.Filter.Mode7 = function (game) {
     this.uniforms.scale = {type: "1f", value: .28};
     this.uniforms.distance = {type: "1f", value: 1};
     this.uniforms.lookY = {type: "1f", value: 4.5};
-    this.uniforms.inclination = {type: "1f", value: 4};
+    this.uniforms.inclination = {type: "1f", value: 1};
 
     this.fragmentSrc = [
         "precision mediump float;",
@@ -29,7 +29,7 @@ Phaser.Filter.Mode7 = function (game) {
         "    vec2 warped;",
 
         // perform mode7 transform on uvs
-        "    warped = vec2(uv.x-0.5, inclination) / vec2(-uv.y + lookY, -uv.y + lookY);",
+        "    warped = vec2(uv.x-0.5, 4) / vec2(-inclination*uv.y + lookY, -inclination*uv.y + lookY);",
         "    warped.y -= distance;",
         "    warped /= scale;",
 
