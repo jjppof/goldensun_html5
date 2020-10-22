@@ -229,11 +229,11 @@ export class Hero extends ControllableChar {
         this.update_shadow(); //updates the hero's shadow position
     }
 
-    config_body(collision_obj) {
+    config_body(collision_obj, body_radius = numbers.HERO_BODY_RADIUS) {
         this.game.physics.p2.enable(this.sprite, false);
         this.reset_anchor(); //Important to be after the previous command
         this.sprite.body.clearShapes();
-        this.body_radius = numbers.HERO_BODY_RADIUS;
+        this.body_radius = body_radius;
         this.sprite.body.setCircle(this.body_radius, 0, 0);
         this.sprite.body.setCollisionGroup(collision_obj.hero_collision_group);
         this.sprite.body.mass = 1.0;

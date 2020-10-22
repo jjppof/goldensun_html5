@@ -2,10 +2,10 @@ Phaser.Filter.Mode7 = function (game) {
     Phaser.Filter.call(this, game);
 
     this.uniforms.angle = {type: "1f", value: 0};
-    this.uniforms.scale = {type: "1f", value: .28};
-    this.uniforms.distance = {type: "1f", value: 1};
-    this.uniforms.lookY = {type: "1f", value: 4.5};
-    this.uniforms.inclination = {type: "1f", value: 1};
+    this.uniforms.scale = {type: "1f", value: .42};
+    this.uniforms.distance = {type: "1f", value: 1.023};
+    this.uniforms.lookY = {type: "1f", value: 4.61};
+    this.uniforms.inclination = {type: "1f", value: 1.37};
 
     this.fragmentSrc = [
         "precision mediump float;",
