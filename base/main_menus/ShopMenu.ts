@@ -9,8 +9,7 @@ import { YesNoMenu } from '../windows/YesNoMenu';
 import { ShopItemQuantityWindow } from '../windows/shop/ShopItemQuantityWindow';
 import { Window, TextObj } from '../Window';
 import { CharsMenu } from '../support_menus/CharsMenu';
-import { ControlManager } from '../utils/ControlManager';
-import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu';
+import { HorizontalMenu } from '../support_menus/HorizontalMenu';
 import { GoldenSun } from '../GoldenSun';
 import { ShopItem } from '../Shop';
 import * as _ from "lodash";
@@ -79,9 +78,8 @@ export class ShopMenu{
     public buttons_keys: string[];
     public windows_mode: string;
     public current_index: number;
-    public control_manager: ControlManager;
     
-    public horizontal_menu: ButtonSelectMenu;
+    public horizontal_menu: HorizontalMenu;
     public npc_dialog: ShopkeepDialog;
     public yesno_action: YesNoMenu;
     public inv_win: InventoryWindow;
@@ -121,10 +119,8 @@ export class ShopMenu{
         this.buttons_keys = ["buy", "sell", "artifacts", "repair"];
         this.windows_mode = BUY_MODE;
         this.current_index= 0;
-
-        this.control_manager = this.data.control_manager;
         
-        this.horizontal_menu = new ButtonSelectMenu(this.game, this.data,
+        this.horizontal_menu = new HorizontalMenu(this.game, this.data,
             this.buttons_keys,
             this.buttons_keys.map(b => capitalize(b)),
             {on_press: this.button_press.bind(this), on_cancel: this.close_menu.bind(this)});
@@ -310,7 +306,7 @@ export class ShopMenu{
         this.shop_key = null;
         this.npc_dialog.close();
         this.data.shop_open = false;
-        this.control_manager.reset();
+        this.data.control_manager.reset();
 
         if(this.close_callback) this.close_callback();
         this.close_callback = null;
@@ -326,8 +322,8 @@ export class ShopMenu{
         this.artifact_list = {};
         this.current_index = 0;
 
-        this.control_manager.reset();
-        this.control_manager.actions["enter"].callback = this.end_dialog.bind(this);
-        this.control_manager.set_actions();
+        this.data.control_manager.reset();
+        this.data.control_manager.actions["enter"].callback = this.end_dialog.bind(this);
+        this.data.control_manager.set_actions();
     }
 }

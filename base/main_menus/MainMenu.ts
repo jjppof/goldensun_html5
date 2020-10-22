@@ -4,7 +4,7 @@ import { MainItemMenu } from './MainItemMenu';
 import { MainDjinnMenu } from './MainDjinnMenu';
 import { CharsStatusWindow } from '../windows/CharsStatusWindow';
 import { GoldenSun } from '../GoldenSun';
-import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu';
+import { HorizontalMenu } from '../support_menus/HorizontalMenu';
 
 export class MainMenu {
     public game: Phaser.Game;
@@ -14,7 +14,7 @@ export class MainMenu {
     public current_index: number;
 
     public chars_status_window: CharsStatusWindow;
-    public horizontal_menu: ButtonSelectMenu;
+    public horizontal_menu: HorizontalMenu;
     public psynergy_menu: MainPsynergyMenu;
     public item_menu: MainItemMenu;
     public djinn_menu: MainDjinnMenu;
@@ -27,7 +27,7 @@ export class MainMenu {
         this.current_index = 0;
 
         this.chars_status_window = new CharsStatusWindow(this.game, this.data);
-        this.horizontal_menu = new ButtonSelectMenu(
+        this.horizontal_menu = new HorizontalMenu(
             this.game,
             this.data,
             this.buttons_keys,

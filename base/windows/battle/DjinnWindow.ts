@@ -54,12 +54,10 @@ export class DjinnWindow {
     public page_index: number;
     public page_number: number;
 
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority, shift_propagation_priority) {
+    constructor(game, data) {
         this.game = game;
         this.data = data;
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
-        this.shift_propagation_priority = shift_propagation_priority + 1;
+
         this.base_window = new Window(this.game, BASE_WINDOW_X, BASE_WINDOW_Y, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
         this.base_window.init_page_indicator_bar();
         this.stats_window = new DjinnStatsWindow(this.game, this.data);
@@ -264,7 +262,7 @@ export class DjinnWindow {
         });
     }
 
-    open(char, close_callback, set_description, psynergy_window) {
+    open(char, close_callback, set_description, psynergy_window?) {
         this.char = char;
         this.close_callback = close_callback;
         this.set_description = set_description;
@@ -311,7 +309,7 @@ export class DjinnWindow {
         }, false);
     }
 
-    close(callback) {
+    close(callback?:Function) {
         this.clear_sprites();
         this.base_window.unset_page_indicator();
         this.group.alpha = 0;

@@ -75,7 +75,7 @@ export class PsynergyWindow {
     public djinni: Djinn[];
     public next_djinni_status: string[];
 
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
+    constructor(game, data) {
         this.game = game;
         this.data = data;
         this.window_open = false;
@@ -83,8 +83,7 @@ export class PsynergyWindow {
         this.text_sprites_in_window = [];
         this.icon_sprites_in_window = [];
         this.misc_sprites_in_window = [];
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
+
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
         this.base_window.init_page_indicator_bar();
         this.group = this.game.add.group();
@@ -370,7 +369,7 @@ export class PsynergyWindow {
         }, false);
     }
 
-    close(callback?) {
+    close(callback?:Function) {
         this.clear_sprites();
         this.base_window.unset_page_indicator();
         this.group.alpha = 0;

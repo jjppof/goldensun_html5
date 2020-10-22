@@ -123,7 +123,7 @@ export class Battle {
         this.esc_propagation_priority = 0;
         this.battle_stage = new BattleStage(this.game, this.data, background_key, this.allies_info, this.enemies_info, this.esc_propagation_priority++, this.enter_propagation_priority++);
         this.battle_log = new BattleLog(this.game);
-        this.battle_menu = new MainBattleMenu(this.game, this.data, ++this.enter_propagation_priority, ++this.esc_propagation_priority, this.on_abilities_choose.bind(this), this.choose_targets.bind(this));
+        this.battle_menu = new MainBattleMenu(this.game, this.data, this.on_abilities_choose.bind(this), this.choose_targets.bind(this));
         this.target_window = new ChoosingTargetWindow(this.game, this.data);
         this.animation_manager = new BattleAnimationManager(this.game, this.data);
         this.battle_phase = battle_phases.NONE;

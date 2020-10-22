@@ -52,11 +52,10 @@ export class ItemWindow {
     public all_items: ItemSlot[];
     public char: MainChar;
 
-    constructor(game, data, esc_propagation_priority, enter_propagation_priority) {
+    constructor(game, data) {
         this.game = game;
         this.data = data;
-        this.esc_propagation_priority = esc_propagation_priority + 1;
-        this.enter_propagation_priority = enter_propagation_priority + 1;
+
         this.base_window = new Window(this.game, BASE_WINDOW_X, BASE_WINDOW_Y, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
         this.base_window.init_page_indicator_bar();
         this.group = this.game.add.group();
@@ -266,7 +265,7 @@ export class ItemWindow {
         }, false);
     }
 
-    close(callback) {
+    close(callback?:Function) {
         this.clear_sprites();
         this.base_window.unset_page_indicator();
         this.group.alpha = 0;
