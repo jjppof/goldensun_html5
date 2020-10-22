@@ -147,18 +147,6 @@ export class Debug {
         const input_slider = document.createElement('input');
         input_slider.type = "range";
         input_slider.disabled = true;
-        input_slider.oninput = e => {
-            _.set(window, input_variable.value, parseFloat(input_slider.value));
-        };
-        input_variable.onkeyup = e => {
-            const value = _.get(window, input_variable.value);
-            if (_.isNumber(value)) {
-                input_slider.disabled = false;
-                input_slider.value = value.toString();
-            } else {
-                input_slider.disabled = true;
-            }
-        }
 
         const input_min = document.createElement('input');
         input_min.type = "number";
@@ -181,6 +169,14 @@ export class Debug {
             input_slider.step = input_step.value;
         };
 
+        const input_value = document.createElement('input');
+        input_value.type = "number";
+        input_value.placeholder = "var value";
+        input_value.disabled = true;
+        input_value.onkeyup = e => {
+            _.set(window, input_variable.value, parseFloat(input_value.value));
+        };
+
         const input_remove = document.createElement('input');
         input_remove.type = "button";
         input_remove.value = "Remove";
@@ -188,11 +184,30 @@ export class Debug {
             holder.remove();
         };
 
+        input_slider.oninput = e => {
+            _.set(window, input_variable.value, parseFloat(input_slider.value));
+            input_value.value = input_slider.value;
+        };
+
+        input_variable.onkeyup = e => {
+            const value = _.get(window, input_variable.value);
+            if (_.isNumber(value)) {
+                input_slider.disabled = false;
+                input_value.disabled = false;
+                input_slider.value = value.toString();
+                input_value.value = value.toString();
+            } else {
+                input_slider.disabled = true;
+                input_value.disabled = true;
+            }
+        }
+
         holder.appendChild(input_variable);
         holder.appendChild(input_min);
         holder.appendChild(input_max);
         holder.appendChild(input_step);
         holder.appendChild(input_slider);
+        holder.appendChild(input_value);
         holder.appendChild(input_remove);
         document.getElementById("sliders_debug").appendChild(holder);
     }
