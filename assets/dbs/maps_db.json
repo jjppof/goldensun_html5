@@ -79,5 +79,14 @@
             "json":"assets/images/maps/snowland/snowland.json"
         },
         "collision_files":["assets/images/maps/snowland/snowland_physics.json"]
+    },{
+        "name":"World Map",
+        "key_name":"world_map",
+        "tileset_key_name":"world_map",
+        "tileset_files": {
+            "image":"assets/images/maps/world_map/world_map.png",
+            "json":"assets/images/maps/world_map/world_map.json"
+        },
+        "collision_embedded": true
     }
 ]

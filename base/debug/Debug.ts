@@ -1,6 +1,7 @@
 import { GoldenSun } from "../GoldenSun";
 import { MainChar } from "../MainChar";
 import { reverse_directions, ordered_elements } from "../utils";
+import * as _ from "lodash";
 
 export class Debug {
     public game: Phaser.Game;
@@ -10,6 +11,7 @@ export class Debug {
     public debug_keys: boolean;
     public debug_stats: boolean;
     public show_fps: boolean;
+    public show_sliders: boolean;
     public debug_stats_info: {
         chars: MainChar[],
         selected: number,
@@ -24,6 +26,7 @@ export class Debug {
         this.debug_keys = false;
         this.debug_stats = false;
         this.show_fps = false;
+        this.show_sliders = false;
     }
 
     initialize_controls() {
@@ -50,6 +53,11 @@ export class Debug {
         //enable fps show
         this.game.input.keyboard.addKey(Phaser.Keyboard.F).onDown.add(() => {
             this.toggle_fps();
+        }, this);
+
+        //show sliders
+        this.game.input.keyboard.addKey(Phaser.Keyboard.L).onDown.add(() => {
+            this.toggle_sliders();
         }, this);
     }
 
@@ -117,6 +125,76 @@ export class Debug {
             document.onkeydown = undefined;
             document.onkeyup = undefined;
         }
+    }
+
+    toggle_sliders() {
+        this.show_sliders = !this.show_sliders;
+        if (this.show_sliders) {
+            document.getElementById("sliders_debug").style.display = "block";
+        } else {
+            document.getElementById("sliders_debug").style.display = "none";
+        }
+    }
+
+    add_slider() {
+        const holder = document.createElement('div');
+        holder.classList.add("holder");
+
+        const input_variable = document.createElement('input');
+        input_variable.type = "text";
+        input_variable.placeholder = "variable name";
+
+        const input_slider = document.createElement('input');
+        input_slider.type = "range";
+        input_slider.disabled = true;
+        input_slider.oninput = e => {
+            _.set(window, input_variable.value, parseFloat(input_slider.value));
+        };
+        input_variable.onkeyup = e => {
+            const value = _.get(window, input_variable.value);
+            if (_.isNumber(value)) {
+                input_slider.disabled = false;
+                input_slider.value = value.toString();
+            } else {
+                input_slider.disabled = true;
+            }
+        }
+
+        const input_min = document.createElement('input');
+        input_min.type = "number";
+        input_min.placeholder = "min value";
+        input_min.onkeyup = e => {
+            input_slider.min = input_min.value;
+        };
+
+        const input_max = document.createElement('input');
+        input_max.type = "number";
+        input_max.placeholder = "max value";
+        input_max.onkeyup = e => {
+            input_slider.max = input_max.value;
+        };
+
+        const input_step = document.createElement('input');
+        input_step.type = "number";
+        input_step.placeholder = "step value";
+        input_step.onkeyup = e => {
+            input_slider.step = input_step.value;
+        };
+
+        const input_remove = document.createElement('input');
+        input_remove.type = "button";
+        input_remove.value = "Remove";
+        input_remove.onclick = e => {
+            holder.remove();
+        };
+
+        holder.appendChild(input_variable);
+        holder.appendChild(input_min);
+        holder.appendChild(input_max);
+        holder.appendChild(input_step);
+        holder.appendChild(input_slider);
+        holder.appendChild(input_remove);
+        document.getElementById("sliders_debug").appendChild(holder);
     }
 
     fill_key_debug_table() {
