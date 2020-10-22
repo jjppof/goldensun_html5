@@ -55,7 +55,7 @@ export class ControllableChar {
         this.key_name = key_name;
         this.x_speed = 0;
         this.y_speed = 0;
-        this.extra_speed = 0;
+        this.extra_speed = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPEED_REDUCE : 0;
         this.stop_by_colliding = false;
         this.force_direction = false;
         this.climbing = false;
@@ -98,6 +98,8 @@ export class ControllableChar {
         this.sprite.base_collision_layer = layer;
         this.sprite.roundPx = true;
         this.sprite.anchor.setTo(anchor_x, anchor_y);
+        const scale = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE : 1;
+        this.sprite.scale.setTo(scale , scale);
     }
 
     reset_anchor(property?) {
@@ -118,6 +120,8 @@ export class ControllableChar {
         this.shadow.disableRoundPx = true;
         this.shadow.anchor.setTo(shadow_anchor_x, shadow_anchor_y);
         this.shadow.base_collision_layer = layer;
+        const scale = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE : 1;
+        this.shadow.scale.setTo(scale , scale);
     }
 
     camera_follow() {

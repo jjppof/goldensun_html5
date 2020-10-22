@@ -171,7 +171,7 @@ export class Debug {
 
         const input_value = document.createElement('input');
         input_value.type = "number";
-        input_value.placeholder = "var value";
+        input_value.placeholder = "current value";
         input_value.disabled = true;
         input_value.onkeyup = e => {
             _.set(window, input_variable.value, parseFloat(input_value.value));

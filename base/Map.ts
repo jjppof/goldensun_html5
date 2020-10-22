@@ -30,13 +30,15 @@ export class Map {
     public interactable_objects: InteractableObjects[];
     public collision_layers_number: number;
     public collision_sprite: Phaser.Sprite;
-    public color_filter: Phaser.Filter;
+    public color_filter: any;
+    public mode7_filter: any;
     public collision_layer: number;
     public show_footsteps: boolean;
     public assets_loaded: boolean;
     public lazy_load: boolean;
     public layers: any;
     public collision_embedded: boolean;
+    public is_world_map: boolean;
 
     constructor (
         game,
@@ -68,12 +70,14 @@ export class Map {
         this.collision_sprite = this.game.add.sprite(0, 0);
         this.collision_sprite.width = this.collision_sprite.height = 0;
         this.color_filter = this.game.add.filter('ColorFilters');
+        this.mode7_filter = this.game.add.filter('Mode7');
         this.collision_layer = null;
         this.show_footsteps = false;
         this.assets_loaded = false;
         this.lazy_load = lazy_load === undefined ? false : lazy_load;
         this.layers = [];
         this.collision_embedded = collision_embedded === undefined ? false : collision_embedded;
+        this.is_world_map = false;
     }
 
     sort_sprites() {
@@ -494,8 +498,11 @@ export class Map {
         TileEvent.reset();
         GameEvent.reset();
         this.sprite = this.game.add.tilemap(this.key_name);
-        this.sprite.addTilesetImage(this.tileset_name, this.key_name);
+        if (this.sprite.properties.world_map) {
+            this.is_world_map = true;
+        }
 
+        this.sprite.addTilesetImage(this.tileset_name, this.key_name);
         this.sprite.objects = _.mapKeys(this.sprite.objects, (obj: any, collision_index: string) => {
             return parseInt(collision_index);
         }) as any;
@@ -531,7 +538,39 @@ export class Map {
             this.show_footsteps = true;
         }
 
+        this.config_world_map();
+
         return this;
+    }
+
+    config_world_map() {
+        let next_body_radius = numbers.HERO_BODY_RADIUS;
+        if (this.is_world_map) {
+            this.layers.forEach(l => l.sprite.filters = [this.mode7_filter]);
+            this.game.camera.bounds = null;
+            this.npcs.forEach(npc => {
+                npc.extra_speed -= numbers.WORLD_MAP_SPEED_REDUCE;
+                npc.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE , numbers.WORLD_MAP_SPRITE_SCALE);
+                npc.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE , numbers.WORLD_MAP_SPRITE_SCALE);
+                npc.sprite.data.mode7 = npc.shadow.data.mode7 = true;
+            });
+            this.interactable_objects.forEach(obj => obj.sprite.data.mode7 = true);
+            next_body_radius = numbers.HERO_BODY_RADIUS_M7;
+        }
+
+        if (this.data.hero && next_body_radius !== this.data.hero.body_radius) {
+            this.data.hero.config_body(this.data.collision);
+            let scale;
+            if (this.is_world_map) {
+                this.data.hero.extra_speed += numbers.WORLD_MAP_SPEED_REDUCE;
+                scale = numbers.WORLD_MAP_SPRITE_SCALE;
+            } else {
+                this.data.hero.extra_speed -= numbers.WORLD_MAP_SPEED_REDUCE;
+                scale = 1;
+            }
+            this.data.hero.sprite.scale.setTo(scale, scale);
+            this.data.hero.shadow.scale.setTo(scale, scale);
+        }
     }
 
     unset_map() {
