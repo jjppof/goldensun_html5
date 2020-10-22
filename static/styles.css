@@ -67,3 +67,22 @@ canvas {
     font-family: monospace;
     max-width: 500px;
 }
+#sliders_debug {
+    display: none;
+    margin: 1rem 20%;
+}
+#sliders_debug button {
+    margin-bottom: 10px;
+}
+#sliders_debug .holder {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin-bottom: 10px;
+}
+#sliders_debug .holder input {
+    margin-right: 5px;
+}
+#sliders_debug .holder input[type="number"] {
+    max-width: 100px;
+}

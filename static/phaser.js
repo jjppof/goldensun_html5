@@ -19952,6 +19952,24 @@ PIXI.WebGLSpriteBatch.prototype.render = function (sprite, matrix)
         h1 = _w1;
     }
 
+    if (sprite.mode7) {
+        const apply_mode7 = (x, y) => {
+            const uvy = y/sprite.game._height;
+            const uvx = x/sprite.game._width;
+            y = 4           / (-1.3 * uvy + 4.63);
+            x = (uvx - 0.5) / (-1   * uvy + 3.68);
+            y -= 1;
+            y /= 0.28;
+            x /= 0.28;
+            y += 0.5;
+            x += 0.5;
+            y *= sprite.game._height;
+            x *= sprite.game._width;
+            return [x, y];
+        }
+        [tx, ty] = apply_mode7(tx, ty);
+    }
+
     var colors = this.colors;
     var positions = this.positions;
     var tint = sprite.tint;
