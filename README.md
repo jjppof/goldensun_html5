@@ -3,11 +3,12 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0
 
 **See the [DEMO](https://jjppof.github.io/goldensun_html5/index).** Prefer to use Chrome based browsers.
 
+- **This repository is just the engine**. I'm not planning to do maps, animations, items etc. Content here is just enough to show the functionalities.
+- People should be able to make a GS like game without any programming skills with this project.
 - Feel free to help! Check what I need help [here](https://github.com/jjppof/goldensun_html5/projects/2). Please, reach me if you want to do so.
 - The goal of this project is not to do exactly the same engine as GS, but very similar.
 - If you found any bug, please create an [issue](https://github.com/jjppof/goldensun_html5/issues/new) for it.
 - Check the [wiki](https://github.com/jjppof/goldensun_html5/wiki) for database configuration, tutorials and project information.
-- **This repository is just the engine**. I'm not planning to do maps, animations, items etc. Content here is just enough to show the functionalities.
 - I use [projects](https://github.com/jjppof/goldensun_html5/projects/1) to write down things.
 - There's no production environment for now, but I'm planning to do it with webpack and embed most of the assets.
 - In the future, it will also be possible to distribute it by Electron (desktop) and/or Ionic (mobile).
