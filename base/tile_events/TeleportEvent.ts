@@ -90,6 +90,7 @@ export class TeleportEvent extends TileEvent {
 
     camera_fade_out() {
         this.data.hero.update_shadow();
+        this.data.hero.update_half_crop(true);
         this.data.map.npcs.forEach(npc => npc.update());
         this.game.camera.flash(0x0);
         this.game.camera.onFlashComplete.addOnce(() => {

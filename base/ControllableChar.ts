@@ -48,6 +48,7 @@ export class ControllableChar {
     public trying_to_push: boolean;
     public trying_to_push_direction: number;
     public push_timer: Phaser.TimerEvent;
+    public crop_texture: boolean;
 
     constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps) {
         this.game = game;
@@ -81,6 +82,7 @@ export class ControllableChar {
         this.push_timer = null;
         this.enable_footsteps = enable_footsteps === undefined ? false : enable_footsteps;
         this.footsteps = new Footsteps(this.game, this.data);
+        this.crop_texture = false;
     }
 
     in_action(allow_climbing = false) {
@@ -166,6 +168,56 @@ export class ControllableChar {
         this.shadow.y = this.sprite.body.y;
     }
 
+    create_half_crop_mask(is_world_map: boolean = false) {
+        if (is_world_map) {
+            this.sprite.mask = this.game.add.graphics(this.sprite.centerX - (this.sprite.width >> 1), this.sprite.centerY - (this.sprite.height >> 1));
+            this.sprite.mask.beginFill(0xffffff, 1);
+            this.sprite.mask.drawRect(0, 0, this.sprite.width, this.sprite.height);
+        }
+    }
+
+    set_half_crop_mask(crop: boolean, force: boolean = false) {
+        if (crop && (!this.crop_texture || force)) {
+            this.sprite.mask.clear();
+            this.sprite.mask.beginFill(0xffffff, 1);
+            this.sprite.mask.drawRect(0, 0, this.sprite.width, ((this.sprite.height * 3) | 0) >> 2);
+            this.shadow.visible = false;
+            this.crop_texture = true;
+        } else if (!crop && (this.crop_texture || force)) {
+            this.sprite.mask.clear();
+            this.sprite.mask.beginFill(0xffffff, 1);
+            this.sprite.mask.drawRect(0, 0, this.sprite.width, this.sprite.height);
+            this.crop_texture = false;
+            this.shadow.visible = true;
+        }
+    }
+
+    check_half_crop_tile(force: boolean = false) {
+        const tiles = this.data.map.get_current_tile(this);
+        for (let i = 0; i < tiles.length; ++i) {
+            const tile = tiles[i];
+            if (tile.properties.half_crop) {
+                this.set_half_crop_mask(true, force);
+                return;
+            }
+        }
+        this.set_half_crop_mask(false, force);
+    }
+
+    update_half_crop(force: boolean = false) {
+        if (this.sprite.mask) {
+            if (force) {
+                this.sprite.update();
+                this.sprite.postUpdate();
+            }
+            this.sprite.mask.x = this.sprite.centerX - (this.sprite.width >> 1);
+            this.sprite.mask.y = this.sprite.centerY - (this.sprite.height >> 1);
+            if (this.data.map.is_world_map) {
+                this.check_half_crop_tile(force);
+            }
+        }
+    }
+
     stop_char(change_sprite = true) {
         this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         if (change_sprite) {
@@ -215,8 +267,8 @@ export class ControllableChar {
             this.current_action = base_actions.IDLE;
         } else if (this.required_direction !== null && !this.climbing && !this.pushing) {
             const footsteps = this.enable_footsteps && this.data.map.show_footsteps && this.tile_able_to_show_footprint();
-            if(this.footsteps.can_make_footprint && footsteps){
-                this.footsteps.create_step(this.current_direction,this.current_action);
+            if (this.footsteps.can_make_footprint && footsteps) {
+                this.footsteps.create_step(this.current_direction, this.current_action);
             }
             const shift_pressed = this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT);
             if (shift_pressed && this.current_action !== base_actions.DASH) {

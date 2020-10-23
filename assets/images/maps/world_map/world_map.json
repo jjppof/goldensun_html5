@@ -1,11 +1,4 @@
 { "compressionlevel":-1,
- "editorsettings":
-    {
-     "export":
-        {
-         "target":"."
-        }
-    },
  "height":33,
  "infinite":false,
  "layers":[
@@ -230,6 +223,100 @@
          "spacing":0,
          "tilecount":1280,
          "tileheight":8,
+         "tileproperties":
+            {
+             "1195":
+                {
+                 "half_crop":true
+                },
+             "1196":
+                {
+                 "half_crop":true
+                },
+             "1198":
+                {
+                 "half_crop":true
+                },
+             "171":
+                {
+                 "half_crop":true
+                },
+             "172":
+                {
+                 "half_crop":true
+                },
+             "174":
+                {
+                 "half_crop":true
+                },
+             "650":
+                {
+                 "half_crop":true
+                },
+             "651":
+                {
+                 "half_crop":true
+                },
+             "939":
+                {
+                 "half_crop":true
+                },
+             "940":
+                {
+                 "half_crop":true
+                },
+             "942":
+                {
+                 "half_crop":true
+                }
+            },
+         "tilepropertytypes":
+            {
+             "1195":
+                {
+                 "half_crop":"bool"
+                },
+             "1196":
+                {
+                 "half_crop":"bool"
+                },
+             "1198":
+                {
+                 "half_crop":"bool"
+                },
+             "171":
+                {
+                 "half_crop":"bool"
+                },
+             "172":
+                {
+                 "half_crop":"bool"
+                },
+             "174":
+                {
+                 "half_crop":"bool"
+                },
+             "650":
+                {
+                 "half_crop":"bool"
+                },
+             "651":
+                {
+                 "half_crop":"bool"
+                },
+             "939":
+                {
+                 "half_crop":"bool"
+                },
+             "940":
+                {
+                 "half_crop":"bool"
+                },
+             "942":
+                {
+                 "half_crop":"bool"
+                }
+            },
          "tiles":
             {
              "31":

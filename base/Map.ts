@@ -570,17 +570,17 @@ export class Map {
 
         if (this.data.hero && next_body_radius !== this.data.hero.body_radius) {
             this.data.hero.config_body(this.data.collision, this.is_world_map ? numbers.HERO_BODY_RADIUS_M7 : numbers.HERO_BODY_RADIUS);
-            let scale_x, scale_y;
             if (this.is_world_map) {
                 this.data.hero.extra_speed += numbers.WORLD_MAP_SPEED_REDUCE;
-                scale_x = numbers.WORLD_MAP_SPRITE_SCALE_X;
-                scale_y = numbers.WORLD_MAP_SPRITE_SCALE_Y;
+                this.data.hero.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
+                this.data.hero.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
+                this.data.hero.create_half_crop_mask(this.is_world_map);
             } else {
                 this.data.hero.extra_speed -= numbers.WORLD_MAP_SPEED_REDUCE;
-                scale_x = scale_y = 1;
+                this.data.hero.sprite.scale.setTo(1, 1);
+                this.data.hero.shadow.scale.setTo(1, 1);
+                this.data.hero.sprite.mask = null;
             }
-            this.data.hero.sprite.scale.setTo(scale_x, scale_y);
-            this.data.hero.shadow.scale.setTo(scale_x, scale_y);
         }
     }
 

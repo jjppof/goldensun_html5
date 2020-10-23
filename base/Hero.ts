@@ -229,6 +229,7 @@ export class Hero extends ControllableChar {
         this.collision_dealer(map); //check if the hero is colliding and its consequences
         this.set_action(true); //sets the hero sprite
         this.update_shadow(); //updates the hero's shadow position
+        this.update_half_crop(); //halves the hero texture if needed
     }
 
     config_body(collision_obj, body_radius = numbers.HERO_BODY_RADIUS) {
