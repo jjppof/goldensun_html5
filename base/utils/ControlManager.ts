@@ -18,7 +18,7 @@ export type ControlStatus = {
 export class ControlManager{
     public game:Phaser.Game;
     public disabled:boolean;
-    public initialized:boolean;
+    //public initialized:boolean;
     public loop_time:number;
 
     public directions:{[key:number] : ControlStatus};
@@ -30,7 +30,7 @@ export class ControlManager{
     constructor(game){
         this.game = game;
         this.disabled = false;
-        this.initialized = false;
+        //this.initialized = false;
         this.loop_time = DEFAULT_LOOP_TIME;
 
         let dirs = [{key: directions.left, pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.LEFT},
@@ -52,6 +52,10 @@ export class ControlManager{
         this.loop_repeat_timer = this.game.time.create(false);
     }
 
+    get initialized(){
+        return this.signal_bindings.length !== 0;
+    }
+
     simple_input(callback:Function){
         if(this.initialized) this.reset();
         
@@ -59,6 +63,35 @@ export class ControlManager{
         this.actions[action_inputs.ESC].callback = callback;
 
         this.set_actions();
+    }
+    
+    add_fleeting_control(key:number|string, callbacks:{on_down?:Function, on_up?:Function}, params?:{persist?:boolean}){
+        let control:ControlStatus = null;
+        let bindings = [];
+        
+        let persist = params ? (params.persist ? params.persist : false) : false;
+
+        action_keys.forEach(k => {if(k === key) control = this.actions[k];});
+        if(!control) direction_keys.forEach(k => {if(k === key) control = this.directions[k];});
+
+        if(callbacks.on_down){
+            let b1 = this.game.input.keyboard.addKey(control.phaser_key).onDown.add(() => {
+                if (this.disabled) return;
+                callbacks.on_down();
+            });
+            if(!persist) this.signal_bindings.push(b1);
+            bindings.push(b1);
+        }
+        if(callbacks.on_up){
+            let b2 = this.game.input.keyboard.addKey(control.phaser_key).onUp.add(() => {
+                if (this.disabled) return;
+                callbacks.on_up();
+            });
+            if(!persist) this.signal_bindings.push(b2);
+            bindings.push(b2);
+        }
+
+        return bindings;
     }
 
     set_control(callbacks:{left?:Function, right?:Function, up?:Function, down?:Function,
@@ -123,7 +156,6 @@ export class ControlManager{
                 }
             };
         }
-        if(!this.initialized) this.initialized = true;
     }
 
     set_actions(){
@@ -137,7 +169,6 @@ export class ControlManager{
                 this.signal_bindings.push(b);
             }
         }
-        if(!this.initialized) this.initialized = true;
     }
 
     set_loop_timers(direction?:number) {
@@ -171,6 +202,9 @@ export class ControlManager{
         let directions_length = Object.keys(this.directions).length;
         let actions_length = Object.keys(this.actions).length;
 
+        this.loop_start_timer.stop();
+        this.loop_repeat_timer.stop();
+
         for(let i=0; i<directions_length; i++){
             this.directions[direction_keys[i]].pressed = false;
             this.directions[direction_keys[i]].loop = false;
@@ -185,7 +219,7 @@ export class ControlManager{
             signal_binding.detach();
         });
         this.signal_bindings = [];
-        if(this.initialized) this.initialized = false;
+
         if(this.loop_time !== DEFAULT_LOOP_TIME) this.loop_time = DEFAULT_LOOP_TIME;
     }
 

@@ -14,6 +14,7 @@ import { GoldenSun } from "../GoldenSun";
 import * as _ from "lodash";
 import { Enemy } from "../Enemy";
 import { HorizontalMenu } from "../support_menus/HorizontalMenu";
+import { sum } from "lodash";
 
 const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
@@ -191,16 +192,20 @@ export class MainBattleMenu {
 
         window.open(this.data.info.party_data.members[this.current_char_index], (ability:string, item_obj:ItemSlot) => {
             if (ability) {
+                let summon_used_djinn:{[element: string]: number} = null;
                 let djinn_key_name:string;
+
                 if (action_type === "djinni" && this.data.info.djinni_list[ability].status === djinn_status.STANDBY) {
                     djinn_key_name = ability;
                     ability = "set_djinn";
 
                 } else if (action_type === "summon") {
                     const requirements = this.data.dbs.summons_db[ability].requirements;
-                    this.djinni_already_used = _.mapValues(this.djinni_already_used, (value, elem) => {
+                    summon_used_djinn = _.mapValues(this.djinni_already_used, (value, elem) => {
                         return value + requirements[elem];
                     });
+
+                    this.djinni_already_used = summon_used_djinn;
                 }
 
                 this.description_window.hide();
@@ -219,13 +224,19 @@ export class MainBattleMenu {
                         this.change_char(FORWARD);
 
                     } else {
+                        if(summon_used_djinn){
+                            this.djinni_already_used = _.mapValues(this.djinni_already_used, (value, elem) => {
+                                return value - summon_used_djinn[elem];
+                            });
+                        }
+                        
                         this.description_window.show();
                         window.show();
                     }
                 }, this.data.info.party_data.members[this.current_char_index], item_obj);
 
             } else {
-                if (window.is_open()) {
+                if (window.window_open) {
                     window.close();
                 }
 

@@ -63,8 +63,6 @@ export class HorizontalMenu {
         this.selected_button_index = 0;
         this.menu_open = false;
         this.menu_active = false;
-        this.group.width = 0;
-        this.group.height = 0;
         this.selected_button_tween = null;
 
         this.x = numbers.GAME_WIDTH - total_width;
@@ -74,6 +72,8 @@ export class HorizontalMenu {
         this.title_window = new Window(this.game, this.x + BUTTON_WIDTH * this.buttons_number, this.y, this.title_window_width, TITLE_WINDOW_HEIGHT);
         this.group = game.add.group();
         this.group.alpha = 0;
+        this.group.width = 0;
+        this.group.height = 0;
 
         this.mount_buttons();
     }
