@@ -98,8 +98,9 @@ export class ControllableChar {
         this.sprite.base_collision_layer = layer;
         this.sprite.roundPx = true;
         this.sprite.anchor.setTo(anchor_x, anchor_y);
-        const scale = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE : 1;
-        this.sprite.scale.setTo(scale , scale);
+        const scale_x = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
+        const scale_y = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
+        this.sprite.scale.setTo(scale_x , scale_y);
     }
 
     reset_anchor(property?) {
@@ -120,8 +121,9 @@ export class ControllableChar {
         this.shadow.disableRoundPx = true;
         this.shadow.anchor.setTo(shadow_anchor_x, shadow_anchor_y);
         this.shadow.base_collision_layer = layer;
-        const scale = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE : 1;
-        this.shadow.scale.setTo(scale , scale);
+        const scale_x = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
+        const scale_y = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
+        this.shadow.scale.setTo(scale_x , scale_y);
     }
 
     camera_follow() {

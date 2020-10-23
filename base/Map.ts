@@ -14,6 +14,9 @@ import { GoldenSun } from "./GoldenSun";
 import * as _ from "lodash";
 import { SliderEvent } from "./tile_events/SliderEvent";
 
+const MAX_CAMERA_ROTATION = 0.05;
+const CAMERA_ROTATION_STEP = 0.005;
+
 export class Map {
     public game: Phaser.Game;
     public data: GoldenSun;
@@ -130,6 +133,13 @@ export class Map {
         this.freeze_body();
         this.npcs.forEach(npc => npc.update());
         this.sort_sprites();
+        if (this.is_world_map) {
+            if (this.data.hero.x_speed && Math.abs(this.mode7_filter.angle) < MAX_CAMERA_ROTATION * Math.abs(this.data.hero.x_speed)) {
+                this.mode7_filter.angle -= Math.sign(this.data.hero.x_speed) * CAMERA_ROTATION_STEP;
+            } else if (!this.data.hero.x_speed && Math.abs(this.mode7_filter.angle) > 0) {
+                this.mode7_filter.angle -= Math.sign(this.mode7_filter.angle) * CAMERA_ROTATION_STEP;
+            }
+        }
     }
 
     load_map_assets(force_load, on_complete) {
@@ -550,8 +560,8 @@ export class Map {
             this.game.camera.bounds = null;
             this.npcs.forEach(npc => {
                 npc.extra_speed -= numbers.WORLD_MAP_SPEED_REDUCE;
-                npc.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE , numbers.WORLD_MAP_SPRITE_SCALE);
-                npc.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE , numbers.WORLD_MAP_SPRITE_SCALE);
+                npc.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X , numbers.WORLD_MAP_SPRITE_SCALE_Y);
+                npc.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X , numbers.WORLD_MAP_SPRITE_SCALE_Y);
                 npc.sprite.data.mode7 = npc.shadow.data.mode7 = true;
             });
             this.interactable_objects.forEach(obj => obj.sprite.data.mode7 = true);
@@ -560,16 +570,17 @@ export class Map {
 
         if (this.data.hero && next_body_radius !== this.data.hero.body_radius) {
             this.data.hero.config_body(this.data.collision, this.is_world_map ? numbers.HERO_BODY_RADIUS_M7 : numbers.HERO_BODY_RADIUS);
-            let scale;
+            let scale_x, scale_y;
             if (this.is_world_map) {
                 this.data.hero.extra_speed += numbers.WORLD_MAP_SPEED_REDUCE;
-                scale = numbers.WORLD_MAP_SPRITE_SCALE;
+                scale_x = numbers.WORLD_MAP_SPRITE_SCALE_X;
+                scale_y = numbers.WORLD_MAP_SPRITE_SCALE_Y;
             } else {
                 this.data.hero.extra_speed -= numbers.WORLD_MAP_SPEED_REDUCE;
-                scale = 1;
+                scale_x = scale_y = 1;
             }
-            this.data.hero.sprite.scale.setTo(scale, scale);
-            this.data.hero.shadow.scale.setTo(scale, scale);
+            this.data.hero.sprite.scale.setTo(scale_x, scale_y);
+            this.data.hero.shadow.scale.setTo(scale_x, scale_y);
         }
     }
 
