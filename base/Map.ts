@@ -559,7 +559,7 @@ export class Map {
         }
 
         if (this.data.hero && next_body_radius !== this.data.hero.body_radius) {
-            this.data.hero.config_body(this.data.collision);
+            this.data.hero.config_body(this.data.collision, this.is_world_map ? numbers.HERO_BODY_RADIUS_M7 : numbers.HERO_BODY_RADIUS);
             let scale;
             if (this.is_world_map) {
                 this.data.hero.extra_speed += numbers.WORLD_MAP_SPEED_REDUCE;

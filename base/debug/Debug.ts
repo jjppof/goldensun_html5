@@ -165,15 +165,12 @@ export class Debug {
         const input_step = document.createElement('input');
         input_step.type = "number";
         input_step.placeholder = "step value";
-        input_step.onkeyup = e => {
-            input_slider.step = input_step.value;
-        };
 
         const input_value = document.createElement('input');
         input_value.type = "number";
         input_value.placeholder = "current value";
         input_value.disabled = true;
-        input_value.onkeyup = e => {
+        input_value.onkeyup = input_value.onchange = e => {
             _.set(window, input_variable.value, parseFloat(input_value.value));
         };
 
@@ -182,6 +179,13 @@ export class Debug {
         input_remove.value = "Remove";
         input_remove.onclick = e => {
             holder.remove();
+        };
+
+        input_step.onkeyup = e => {
+            input_slider.step = input_step.value;
+            input_value.step = input_step.value;
+            input_min.step = input_step.value;
+            input_max.step = input_step.value;
         };
 
         input_slider.oninput = e => {
