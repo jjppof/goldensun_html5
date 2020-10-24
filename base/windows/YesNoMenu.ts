@@ -1,7 +1,6 @@
 import { GoldenSun } from '../GoldenSun';
-import { ButtonSelectMenu } from '../support_menus/ButtonSelectMenu';
+import { HorizontalMenu } from '../support_menus/HorizontalMenu';
 import { capitalize } from '../utils';
-import { ControlManager } from '../utils/ControlManager';
 
 const TITLE_WINDOW_WIDTH = 36
 const YES_ACTION = "yes";
@@ -10,18 +9,16 @@ const NO_ACTION = "no";
 export class YesNoMenu{
     public game:Phaser.Game;
     public data:GoldenSun;
-    public control_manager:ControlManager;
 
     public yes_callback:Function;
     public no_callback:Function;
     
     public buttons_keys:string[];
     public is_open:boolean;
-    public menu:ButtonSelectMenu;
+    public menu:HorizontalMenu;
     constructor(game:Phaser.Game, data:GoldenSun){
         this.game = game;
         this.data = data;
-        this.control_manager = this.data.control_manager;
 
         this.yes_callback = null;
         this.no_callback = null;
@@ -30,7 +27,7 @@ export class YesNoMenu{
 
         this.is_open = false;
 
-        this.menu = new ButtonSelectMenu(this.game, this.data,
+        this.menu = new HorizontalMenu(this.game, this.data,
             this.buttons_keys,
             this.buttons_keys.map(b => capitalize(b)),
             {on_press: this.button_press.bind(this),
