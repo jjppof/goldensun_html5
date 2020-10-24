@@ -14,7 +14,7 @@ import { GoldenSun } from "../GoldenSun";
 import * as _ from "lodash";
 import { Enemy } from "../Enemy";
 import { HorizontalMenu } from "../support_menus/HorizontalMenu";
-import { sum } from "lodash";
+import { Target } from "../battle/BattleStage";
 
 const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
@@ -24,7 +24,7 @@ const BACKWARD = -1;
 
 export type PlayerAbility = {
     key_name: string,
-    targets: any[],
+    targets: Target[],
     type?: string,
     djinn_key_name?: string,
     speed?: number,
@@ -140,7 +140,7 @@ export class MainBattleMenu {
         switch (this.current_buttons[this.inner_horizontal_menu.selected_button_index]) {
             case "attack":
                 this.inner_horizontal_menu.deactivate(true);
-                this.choose_targets("attack", "attack", (targets:any[]) => {
+                this.choose_targets("attack", "attack", (targets:Target[]) => {
                     if (targets) {
                         this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
                             key_name: "attack",
@@ -168,7 +168,7 @@ export class MainBattleMenu {
                 break
             case "defend":
                 this.inner_horizontal_menu.deactivate(true);
-                this.choose_targets("defend", "defend", (targets:any[]) => {
+                this.choose_targets("defend", "defend", (targets:Target[]) => {
                     if (targets) {
                         this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
                             key_name: "defend",

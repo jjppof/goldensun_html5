@@ -266,6 +266,7 @@ export class SummonWindow {
         this.djinn_numbers_window.open();
         this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
         this.select_summon(this.summon_index);
+        this.summon_choose();
 
         this.base_window.show(() => {
             this.window_active = true;

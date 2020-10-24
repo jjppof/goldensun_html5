@@ -324,6 +324,7 @@ export class DjinnWindow {
         this.select_djinn(this.djinn_index);
         this.stats_window.open(this.char);
         this.update_stats();
+        this.djinn_choose();
 
         this.base_window.show(() => {
             this.window_active = true;

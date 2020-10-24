@@ -18,7 +18,6 @@ export type ControlStatus = {
 export class ControlManager{
     public game:Phaser.Game;
     public disabled:boolean;
-    //public initialized:boolean;
     public loop_time:number;
 
     public directions:{[key:number] : ControlStatus};
@@ -30,7 +29,6 @@ export class ControlManager{
     constructor(game){
         this.game = game;
         this.disabled = false;
-        //this.initialized = false;
         this.loop_time = DEFAULT_LOOP_TIME;
 
         let dirs = [{key: directions.left, pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.LEFT},
@@ -56,11 +54,11 @@ export class ControlManager{
         return this.signal_bindings.length !== 0;
     }
 
-    simple_input(callback:Function){
+    simple_input(callback:Function, enter_only:boolean=false){
         if(this.initialized) this.reset();
         
         this.actions[action_inputs.ENTER].callback = callback;
-        this.actions[action_inputs.ESC].callback = callback;
+        if(!enter_only) this.actions[action_inputs.ESC].callback = callback;
 
         this.set_actions();
     }

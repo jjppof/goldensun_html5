@@ -263,6 +263,8 @@ export class ItemWindow {
         this.highlight_bar.alpha = 1;
 
         this.select_item(this.item_index);
+        this.item_choose();
+
         this.base_window.show(() => {
             this.window_active = true;
         }, false);

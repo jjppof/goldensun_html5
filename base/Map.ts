@@ -14,8 +14,8 @@ import { GoldenSun } from "./GoldenSun";
 import * as _ from "lodash";
 import { SliderEvent } from "./tile_events/SliderEvent";
 
-const MAX_CAMERA_ROTATION = 0.05;
-const CAMERA_ROTATION_STEP = 0.005;
+const MAX_CAMERA_ROTATION = 0.035;
+const CAMERA_ROTATION_STEP = 0.003;
 
 export class Map {
     public game: Phaser.Game;

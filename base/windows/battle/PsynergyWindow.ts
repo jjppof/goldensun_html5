@@ -402,6 +402,8 @@ export class PsynergyWindow {
         this.highlight_bar.alpha = 1;
 
         this.select_ability(this.ability_index);
+        this.ability_choose();
+
         this.base_window.show(() => {
             this.window_active = true;
         }, false);
