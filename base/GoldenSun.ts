@@ -132,7 +132,8 @@ export class GoldenSun {
             this.dbs.init_db.initial_action,
             directions[this.dbs.init_db.initial_direction]
         );
-        this.hero.set_sprite(this.npc_group, this.info.main_char_list[this.hero.key_name].sprite_base, this.map.sprite, this.map.collision_layer);
+        const hero_sprite_base = this.info.main_char_list[this.hero.key_name].sprite_base;
+        this.hero.set_sprite(this.npc_group, hero_sprite_base, this.map.sprite, this.map.collision_layer, this.map.is_world_map);
         this.hero.set_shadow('shadow', this.npc_group, this.map.collision_layer);
         this.hero.create_half_crop_mask(this.map.is_world_map);
         this.hero.camera_follow();

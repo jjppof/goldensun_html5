@@ -466,7 +466,7 @@ export class Map {
                     if (!npc.no_shadow) {
                         npc.set_shadow(npc_db.shadow_key, this.data.npc_group, npc.base_collision_layer, npc_db.shadow_anchor_x, npc_db.shadow_anchor_y);
                     }
-                    npc.set_sprite(this.data.npc_group, npc_sprite_info, this.sprite, npc.base_collision_layer, npc_db.anchor_x, npc_db.anchor_y);
+                    npc.set_sprite(this.data.npc_group, npc_sprite_info, this.sprite, npc.base_collision_layer, npc_db.anchor_x, npc_db.anchor_y, this.is_world_map);
                     npc.set_sprite_as_npc();
                     npc.play(npc.current_action, npc.current_direction);
                     resolve();

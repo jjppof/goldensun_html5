@@ -89,7 +89,7 @@ export class ControllableChar {
         return this.casting_psynergy || this.pushing || (this.climbing && !allow_climbing) || this.jumping || this.teleporting || this.sliding;
     }
 
-    set_sprite(group, sprite_info, map_sprite, layer, anchor_x?, anchor_y?) {
+    set_sprite(group, sprite_info, map_sprite, layer, anchor_x?, anchor_y?, is_world_map: boolean = false) {
         anchor_x = anchor_x === undefined ? default_anchor.x : anchor_x;
         anchor_y = anchor_y === undefined ? default_anchor.y : anchor_y;
         this.sprite_info = sprite_info;
@@ -101,8 +101,8 @@ export class ControllableChar {
         this.sprite.base_collision_layer = layer;
         this.sprite.roundPx = true;
         
-        const scale_x = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
-        const scale_y = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
+        const scale_x = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
+        const scale_y = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
         this.sprite.scale.setTo(scale_x , scale_y);
     }
 
@@ -115,7 +115,7 @@ export class ControllableChar {
         }
     }
 
-    set_shadow(key_name, group, layer, shadow_anchor_x?, shadow_anchor_y?) {
+    set_shadow(key_name, group, layer, shadow_anchor_x?, shadow_anchor_y?, is_world_map: boolean = false) {
         key_name = key_name === undefined ? DEFAULT_SHADOW_KEYNAME : key_name;
         shadow_anchor_x = shadow_anchor_x === undefined ? DEFAULT_SHADOW_ANCHOR_X : shadow_anchor_x;
         shadow_anchor_y = shadow_anchor_y === undefined ? DEFAULT_SHADOW_ANCHOR_Y : shadow_anchor_y;
@@ -124,8 +124,8 @@ export class ControllableChar {
         this.shadow.disableRoundPx = true;
         this.shadow.anchor.setTo(shadow_anchor_x, shadow_anchor_y);
         this.shadow.base_collision_layer = layer;
-        const scale_x = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
-        const scale_y = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
+        const scale_x = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
+        const scale_y = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
         this.shadow.scale.setTo(scale_x , scale_y);
     }
 
