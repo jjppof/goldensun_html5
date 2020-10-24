@@ -19952,7 +19952,7 @@ PIXI.WebGLSpriteBatch.prototype.render = function (sprite, matrix)
         h1 = _w1;
     }
 
-    if (sprite.mode7) {
+    if (sprite.data && sprite.data.mode7) {
         const apply_mode7 = (x, y) => {
             const uvy = y/sprite.game._height;
             const uvx = x/sprite.game._width;

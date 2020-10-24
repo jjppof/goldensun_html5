@@ -71,10 +71,10 @@ export class TeleportEvent extends TileEvent {
         this.data.hero.sprite.base_collision_layer = target_collision_layer;
         this.data.map = await this.data.info.maps_list[next_map_key_name].mount_map(target_collision_layer);
         this.game.camera.setBoundsToWorld();
-        if (this.game.camera.bounds.width < numbers.GAME_WIDTH) {
+        if (this.game.camera.bounds?.width < numbers.GAME_WIDTH) {
             this.game.camera.bounds.width = numbers.GAME_WIDTH;
         }
-        if (this.game.camera.bounds.height < numbers.GAME_HEIGHT) {
+        if (this.game.camera.bounds?.height < numbers.GAME_HEIGHT) {
             this.game.camera.bounds.height = numbers.GAME_HEIGHT;
         }
         this.data.collision.config_collision_groups(this.data.map);
@@ -90,6 +90,7 @@ export class TeleportEvent extends TileEvent {
 
     camera_fade_out() {
         this.data.hero.update_shadow();
+        this.data.hero.update_half_crop(true);
         this.data.map.npcs.forEach(npc => npc.update());
         this.game.camera.flash(0x0);
         this.game.camera.onFlashComplete.addOnce(() => {

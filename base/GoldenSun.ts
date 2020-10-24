@@ -134,6 +134,7 @@ export class GoldenSun {
         );
         this.hero.set_sprite(this.npc_group, this.info.main_char_list[this.hero.key_name].sprite_base, this.map.sprite, this.map.collision_layer);
         this.hero.set_shadow('shadow', this.npc_group, this.map.collision_layer);
+        this.hero.create_half_crop_mask(this.map.is_world_map);
         this.hero.camera_follow();
         this.hero.play();
 

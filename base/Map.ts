@@ -14,6 +14,9 @@ import { GoldenSun } from "./GoldenSun";
 import * as _ from "lodash";
 import { SliderEvent } from "./tile_events/SliderEvent";
 
+const MAX_CAMERA_ROTATION = 0.05;
+const CAMERA_ROTATION_STEP = 0.005;
+
 export class Map {
     public game: Phaser.Game;
     public data: GoldenSun;
@@ -30,13 +33,15 @@ export class Map {
     public interactable_objects: InteractableObjects[];
     public collision_layers_number: number;
     public collision_sprite: Phaser.Sprite;
-    public color_filter: Phaser.Filter;
+    public color_filter: any;
+    public mode7_filter: any;
     public collision_layer: number;
     public show_footsteps: boolean;
     public assets_loaded: boolean;
     public lazy_load: boolean;
     public layers: any;
     public collision_embedded: boolean;
+    public is_world_map: boolean;
 
     constructor (
         game,
@@ -68,12 +73,14 @@ export class Map {
         this.collision_sprite = this.game.add.sprite(0, 0);
         this.collision_sprite.width = this.collision_sprite.height = 0;
         this.color_filter = this.game.add.filter('ColorFilters');
+        this.mode7_filter = this.game.add.filter('Mode7');
         this.collision_layer = null;
         this.show_footsteps = false;
         this.assets_loaded = false;
         this.lazy_load = lazy_load === undefined ? false : lazy_load;
         this.layers = [];
         this.collision_embedded = collision_embedded === undefined ? false : collision_embedded;
+        this.is_world_map = false;
     }
 
     sort_sprites() {
@@ -126,6 +133,13 @@ export class Map {
         this.freeze_body();
         this.npcs.forEach(npc => npc.update());
         this.sort_sprites();
+        if (this.is_world_map) {
+            if (this.data.hero.x_speed && Math.abs(this.mode7_filter.angle) < MAX_CAMERA_ROTATION * Math.abs(this.data.hero.x_speed)) {
+                this.mode7_filter.angle -= Math.sign(this.data.hero.x_speed) * CAMERA_ROTATION_STEP;
+            } else if (!this.data.hero.x_speed && Math.abs(this.mode7_filter.angle) > 0) {
+                this.mode7_filter.angle -= Math.sign(this.mode7_filter.angle) * CAMERA_ROTATION_STEP;
+            }
+        }
     }
 
     load_map_assets(force_load, on_complete) {
@@ -494,8 +508,11 @@ export class Map {
         TileEvent.reset();
         GameEvent.reset();
         this.sprite = this.game.add.tilemap(this.key_name);
-        this.sprite.addTilesetImage(this.tileset_name, this.key_name);
+        if (this.sprite.properties.world_map) {
+            this.is_world_map = true;
+        }
 
+        this.sprite.addTilesetImage(this.tileset_name, this.key_name);
         this.sprite.objects = _.mapKeys(this.sprite.objects, (obj: any, collision_index: string) => {
             return parseInt(collision_index);
         }) as any;
@@ -531,7 +548,40 @@ export class Map {
             this.show_footsteps = true;
         }
 
+        this.config_world_map();
+
         return this;
+    }
+
+    config_world_map() {
+        let next_body_radius = numbers.HERO_BODY_RADIUS;
+        if (this.is_world_map) {
+            this.layers.forEach(l => l.sprite.filters = [this.mode7_filter]);
+            this.game.camera.bounds = null;
+            this.npcs.forEach(npc => {
+                npc.extra_speed -= numbers.WORLD_MAP_SPEED_REDUCE;
+                npc.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X , numbers.WORLD_MAP_SPRITE_SCALE_Y);
+                npc.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X , numbers.WORLD_MAP_SPRITE_SCALE_Y);
+                npc.sprite.data.mode7 = npc.shadow.data.mode7 = true;
+            });
+            this.interactable_objects.forEach(obj => obj.sprite.data.mode7 = true);
+            next_body_radius = numbers.HERO_BODY_RADIUS_M7;
+        }
+
+        if (this.data.hero && next_body_radius !== this.data.hero.body_radius) {
+            this.data.hero.config_body(this.data.collision, this.is_world_map ? numbers.HERO_BODY_RADIUS_M7 : numbers.HERO_BODY_RADIUS);
+            if (this.is_world_map) {
+                this.data.hero.extra_speed += numbers.WORLD_MAP_SPEED_REDUCE;
+                this.data.hero.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
+                this.data.hero.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
+                this.data.hero.create_half_crop_mask(this.is_world_map);
+            } else {
+                this.data.hero.extra_speed -= numbers.WORLD_MAP_SPEED_REDUCE;
+                this.data.hero.sprite.scale.setTo(1, 1);
+                this.data.hero.shadow.scale.setTo(1, 1);
+                this.data.hero.sprite.mask = null;
+            }
+        }
     }
 
     unset_map() {

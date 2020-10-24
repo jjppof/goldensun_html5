@@ -5,6 +5,7 @@ import { get_transition_directions, range_360, directions, base_actions } from '
 import { normal_push } from "./interactable_objects/push";
 
 const SPEED_LIMIT_TO_STOP = 13;
+const SPEED_LIMIT_TO_STOP_WORLD_MAP = 9;
 const MINIMAL_SLOPE = 0.1;
 
 //rotation_key can convert from pressed_keys to the corresponding in-game rotation
@@ -174,7 +175,8 @@ export class Hero extends ControllableChar {
         }
         //normals having length, means that a collision is happening
         if (normals.length && [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action)) {
-            if (Math.abs(this.sprite.body.velocity.x) < SPEED_LIMIT_TO_STOP && Math.abs(this.sprite.body.velocity.y) < SPEED_LIMIT_TO_STOP) { //speeds below SPEED_LIMIT_TO_STOP are not considered
+            const speed_limit = this.data.map.is_world_map ? SPEED_LIMIT_TO_STOP_WORLD_MAP : SPEED_LIMIT_TO_STOP;
+            if (Math.abs(this.sprite.body.velocity.x) < speed_limit && Math.abs(this.sprite.body.velocity.y) < speed_limit) { //speeds below SPEED_LIMIT_TO_STOP are not considered
                 let contact_point_directions = new Array(normals.length); // a contact point direction is the opposite direction of the contact normal vector
                 normals.forEach((normal, index) => { //slopes outside the MINIMAL_SLOPE range will be desconsidered
                     if (Math.abs(normal[0]) < MINIMAL_SLOPE) normal[0] = 0;
@@ -227,13 +229,14 @@ export class Hero extends ControllableChar {
         this.collision_dealer(map); //check if the hero is colliding and its consequences
         this.set_action(true); //sets the hero sprite
         this.update_shadow(); //updates the hero's shadow position
+        this.update_half_crop(); //halves the hero texture if needed
     }
 
-    config_body(collision_obj) {
+    config_body(collision_obj, body_radius = numbers.HERO_BODY_RADIUS) {
         this.game.physics.p2.enable(this.sprite, false);
         this.reset_anchor(); //Important to be after the previous command
         this.sprite.body.clearShapes();
-        this.body_radius = numbers.HERO_BODY_RADIUS;
+        this.body_radius = body_radius;
         this.sprite.body.setCircle(this.body_radius, 0, 0);
         this.sprite.body.setCollisionGroup(collision_obj.hero_collision_group);
         this.sprite.body.mass = 1.0;
