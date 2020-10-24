@@ -1,5 +1,5 @@
-import { base_actions, directions, map_directions } from "./utils";
-import { NPC_Sprite, NPC, npc_movement_types } from './NPC';
+import { directions, map_directions } from "./utils";
+import { NPC_Sprite, NPC } from './NPC';
 import { InteractableObjects, InteractableObjects_Sprite, interactable_object_interaction_types } from "./InteractableObjects";
 import { TileEvent, event_types as tile_event_types } from './tile_events/TileEvent';
 import * as numbers from "./magic_numbers";
@@ -14,8 +14,8 @@ import { GoldenSun } from "./GoldenSun";
 import * as _ from "lodash";
 import { SliderEvent } from "./tile_events/SliderEvent";
 
-const MAX_CAMERA_ROTATION = 0.05;
-const CAMERA_ROTATION_STEP = 0.005;
+const MAX_CAMERA_ROTATION = 0.035;
+const CAMERA_ROTATION_STEP = 0.003;
 
 export class Map {
     public game: Phaser.Game;
@@ -126,15 +126,21 @@ export class Map {
     }
 
     freeze_body() {
-        this.collision_sprite.body.velocity.y = this.collision_sprite.body.velocity.x = 0; //fixes map body
+        this.collision_sprite.body.velocity.y = this.collision_sprite.body.velocity.x = 0;
     }
 
     update() {
         this.freeze_body();
         this.npcs.forEach(npc => npc.update());
         this.sort_sprites();
+        this.update_map_rotation();
+    }
+
+    update_map_rotation() {
         if (this.is_world_map) {
-            if (this.data.hero.x_speed && Math.abs(this.mode7_filter.angle) < MAX_CAMERA_ROTATION * Math.abs(this.data.hero.x_speed)) {
+            const value_check = Math.abs(this.mode7_filter.angle) < MAX_CAMERA_ROTATION * Math.abs(this.data.hero.x_speed);
+            const sign_check =  Math.sign(this.mode7_filter.angle) === this.data.hero.x_speed;
+            if (this.data.hero.x_speed && (value_check || sign_check)) {
                 this.mode7_filter.angle -= Math.sign(this.data.hero.x_speed) * CAMERA_ROTATION_STEP;
             } else if (!this.data.hero.x_speed && Math.abs(this.mode7_filter.angle) > 0) {
                 this.mode7_filter.angle -= Math.sign(this.mode7_filter.angle) * CAMERA_ROTATION_STEP;
@@ -222,8 +228,10 @@ export class Map {
     }
 
     config_all_bodies(collision_obj, collision_layer) {
-        this.npcs.forEach(npc => npc.config_body(collision_obj));
-        this.interactable_objects.forEach(interactable_obj => interactable_obj.config_body(collision_obj));
+        if (!this.is_world_map) {
+            this.npcs.forEach(npc => npc.config_body(collision_obj));
+            this.interactable_objects.forEach(interactable_obj => interactable_obj.config_body(collision_obj));
+        }
         this.config_body(collision_obj, collision_layer);
     }
 
@@ -280,7 +288,7 @@ export class Map {
                 map_directions(property_info.activation_directions),
                 property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
                 false,
-                property_info.active === undefined ? true : property_info.active,
+                property_info.active,
                 property_info.target,
                 property_info.x_target,
                 property_info.y_target,
@@ -349,6 +357,7 @@ export class Map {
     create_npcs(raw_property) {
         const property_info = JSON.parse(raw_property);
         const initial_action = this.data.dbs.npc_db[property_info.key_name].initial_action;
+        const initial_animation = property_info.animation_key !== undefined ? property_info.animation_key : this.data.dbs.npc_db[property_info.key_name].actions[initial_action].initial_direction;
         this.npcs.push(new NPC(
             this.game,
             this.data,
@@ -356,7 +365,7 @@ export class Map {
             property_info.initial_x,
             property_info.initial_y,
             initial_action,
-            this.data.dbs.npc_db[property_info.key_name].actions[initial_action].initial_direction,
+            initial_animation,
             property_info.enable_footsteps,
             property_info.npc_type,
             property_info.movement_type,
@@ -366,7 +375,8 @@ export class Map {
             property_info.shop_key,
             property_info.base_collision_layer === undefined ? 0 : property_info.base_collision_layer,
             property_info.talk_range_factor,
-            property_info.events === undefined ? [] : property_info.events
+            property_info.events === undefined ? [] : property_info.events,
+            this.data.dbs.npc_db[property_info.key_name].no_shadow
         ));
     }
 
@@ -433,17 +443,14 @@ export class Map {
         for (let i = 0; i < this.npcs.length; ++i) {
             const npc = this.npcs[i];
             const npc_db = this.data.dbs.npc_db[npc.key_name];
-            let actions = [];
-            if (npc.movement_type === npc_movement_types.IDLE) {
-                actions = [base_actions.IDLE];
-            }
+            let actions = Object.keys(npc_db.actions);
             const npc_sprite_info = new NPC_Sprite(npc.key_name, actions);
             for (let j = 0; j < actions.length; ++j) {
                 const action = actions[j];
                 npc_sprite_info.setActionSpritesheet(
                     action,
-                    `assets/images/spritesheets/npc/${npc.key_name}_${action}.png`,
-                    `assets/images/spritesheets/npc/${npc.key_name}_${action}.json`
+                    npc_db.actions[action].spritesheet.image,
+                    npc_db.actions[action].spritesheet.json
                 );
                 npc_sprite_info.setActionDirections(
                     action,
@@ -456,10 +463,12 @@ export class Map {
             npc_sprite_info.generateAllFrames();
             await new Promise(resolve => {
                 npc_sprite_info.loadSpritesheets(this.game, true, () => {
-                    npc.set_shadow(npc_db.shadow_key, this.data.npc_group, npc.base_collision_layer, npc_db.shadow_anchor_x, npc_db.shadow_anchor_y);
+                    if (!npc.no_shadow) {
+                        npc.set_shadow(npc_db.shadow_key, this.data.npc_group, npc.base_collision_layer, npc_db.shadow_anchor_x, npc_db.shadow_anchor_y);
+                    }
                     npc.set_sprite(this.data.npc_group, npc_sprite_info, this.sprite, npc.base_collision_layer, npc_db.anchor_x, npc_db.anchor_y);
                     npc.set_sprite_as_npc();
-                    npc.play();
+                    npc.play(npc.current_action, npc.current_direction);
                     resolve();
                 });
             });
@@ -560,12 +569,22 @@ export class Map {
             this.game.camera.bounds = null;
             this.npcs.forEach(npc => {
                 npc.extra_speed -= numbers.WORLD_MAP_SPEED_REDUCE;
-                npc.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X , numbers.WORLD_MAP_SPRITE_SCALE_Y);
-                npc.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X , numbers.WORLD_MAP_SPRITE_SCALE_Y);
-                npc.sprite.data.mode7 = npc.shadow.data.mode7 = true;
+                if (!this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
+                    npc.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
+                }
+                npc.sprite.data.mode7 = true;
+                if (npc.shadow) {
+                    if (!this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
+                        npc.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X , numbers.WORLD_MAP_SPRITE_SCALE_Y);
+                    }
+                    npc.shadow.data.mode7 = true;
+                }
             });
             this.interactable_objects.forEach(obj => obj.sprite.data.mode7 = true);
             next_body_radius = numbers.HERO_BODY_RADIUS_M7;
+        } else {
+            this.game.camera.bounds = new Phaser.Rectangle();
+            this.game.camera.bounds.copyFrom(this.game.world.bounds);
         }
 
         if (this.data.hero && next_body_radius !== this.data.hero.body_radius) {
@@ -579,6 +598,7 @@ export class Map {
                 this.data.hero.extra_speed -= numbers.WORLD_MAP_SPEED_REDUCE;
                 this.data.hero.sprite.scale.setTo(1, 1);
                 this.data.hero.shadow.scale.setTo(1, 1);
+                this.data.hero.sprite.mask.destroy();
                 this.data.hero.sprite.mask = null;
             }
         }

@@ -54,10 +54,10 @@ export class TeleportEvent extends TileEvent {
 
     camera_fade_in() {
         this.data.hero.stop_char(true);
-        this.data.hero.set_direction(this.activation_directions[0]);
-        this.data.hero.play(base_actions.IDLE, reverse_directions[this.data.hero.current_direction]);
         this.game.camera.fade();
         this.game.camera.onFadeComplete.addOnce(() => {
+            this.data.hero.set_direction(this.activation_directions[0]);
+            this.data.hero.play(base_actions.IDLE, reverse_directions[this.data.hero.current_direction]);
             this.game.camera.lerp.setTo(1, 1);
             this.change_map();
         });
@@ -91,6 +91,7 @@ export class TeleportEvent extends TileEvent {
     camera_fade_out() {
         this.data.hero.update_shadow();
         this.data.hero.update_half_crop(true);
+        this.data.map.sort_sprites();
         this.data.map.npcs.forEach(npc => npc.update());
         this.game.camera.flash(0x0);
         this.game.camera.onFlashComplete.addOnce(() => {

@@ -11,7 +11,11 @@
                 "frame_rate": [[0.2,3,1,1,1]],
                 "directions": ["down", "up", "left", "right"],
                 "frames_count": 6,
-                "initial_direction": "down"
+                "initial_direction": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/npc/village_1_idle.png",
+                    "json": "assets/images/spritesheets/npc/village_1_idle.json"
+                }
             }
         }
     },{
@@ -26,7 +30,30 @@
                 "frame_rate": [[0.2,5,0.3,1,1,1]],
                 "directions": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 6,
-                "initial_direction": "down"
+                "initial_direction": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/npc/briggs_idle.png",
+                    "json": "assets/images/spritesheets/npc/briggs_idle.json"
+                }
+            }
+        }
+    },{
+        "key_name": "towns",
+        "anchor_x": 0.5,
+        "anchor_y": 0.5,
+        "initial_action": "towns",
+        "no_shadow": true,
+        "ignore_world_map_scale": true,
+        "actions": {
+            "towns": {
+                "frame_rate": 1,
+                "directions": ["town_00", "town_01", "town_02"],
+                "frames_count": 1,
+                "initial_direction": "town_00",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/places/towns.png",
+                    "json": "assets/images/spritesheets/places/towns.json"
+                }
             }
         }
     }

@@ -95,11 +95,12 @@ export class ControllableChar {
         this.sprite_info = sprite_info;
         const action_key = this.sprite_info.getActionKey(this.current_action);
         this.sprite = group.create(0, 0, action_key);
-        this.sprite.centerX = ((this.tile_x_pos + 1.5) * map_sprite.tileWidth) | 0;
-        this.sprite.centerY = ((this.tile_y_pos + 1.5) * map_sprite.tileHeight) | 0;
+        this.sprite.anchor.setTo(anchor_x, anchor_y);
+        this.sprite.x = ((this.tile_x_pos + 0.5) * map_sprite.tileWidth) | 0;
+        this.sprite.y = ((this.tile_y_pos + 0.5) * map_sprite.tileHeight) | 0;
         this.sprite.base_collision_layer = layer;
         this.sprite.roundPx = true;
-        this.sprite.anchor.setTo(anchor_x, anchor_y);
+        
         const scale_x = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
         const scale_y = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
         this.sprite.scale.setTo(scale_x , scale_y);
@@ -164,8 +165,14 @@ export class ControllableChar {
     }
 
     update_shadow() {
-        this.shadow.x = this.sprite.body.x;
-        this.shadow.y = this.sprite.body.y;
+        if (!this.shadow) return;
+        if (this.sprite.body) {
+            this.shadow.x = this.sprite.body.x;
+            this.shadow.y = this.sprite.body.y;
+        } else {
+            this.shadow.x = this.sprite.x;
+            this.shadow.y = this.sprite.y;
+        }
     }
 
     create_half_crop_mask(is_world_map: boolean = false) {
@@ -173,6 +180,7 @@ export class ControllableChar {
             this.sprite.mask = this.game.add.graphics(this.sprite.centerX - (this.sprite.width >> 1), this.sprite.centerY - (this.sprite.height >> 1));
             this.sprite.mask.beginFill(0xffffff, 1);
             this.sprite.mask.drawRect(0, 0, this.sprite.width, this.sprite.height);
+            this.sprite.mask.endFill();
         }
     }
 
@@ -181,12 +189,14 @@ export class ControllableChar {
             this.sprite.mask.clear();
             this.sprite.mask.beginFill(0xffffff, 1);
             this.sprite.mask.drawRect(0, 0, this.sprite.width, ((this.sprite.height * 3) | 0) >> 2);
+            this.sprite.mask.endFill();
             this.shadow.visible = false;
             this.crop_texture = true;
         } else if (!crop && (this.crop_texture || force)) {
             this.sprite.mask.clear();
             this.sprite.mask.beginFill(0xffffff, 1);
             this.sprite.mask.drawRect(0, 0, this.sprite.width, this.sprite.height);
+            this.sprite.mask.endFill();
             this.crop_texture = false;
             this.shadow.visible = true;
         }
@@ -219,7 +229,9 @@ export class ControllableChar {
     }
 
     stop_char(change_sprite = true) {
-        this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
+        if (this.sprite.body) {
+            this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
+        }
         if (change_sprite) {
             this.current_action = base_actions.IDLE;
             this.set_action();

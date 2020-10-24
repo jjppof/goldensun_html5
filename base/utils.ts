@@ -86,7 +86,7 @@ Input: arr [array] - Direction keys (array of string)
 
 Output: [array] - Direction values (array of number)*/
 export function map_directions(arr) {
-    if (arr === undefined) return arr;
+    if (arr === undefined || arr === "all") return arr;
     arr = Array.isArray(arr) ? arr : [arr];
     return arr.map(key => directions[key]);
 }

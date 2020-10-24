@@ -1,0 +1,36 @@
+{"frames": {
+
+"towns/town_00/00":
+{
+	"frame": {"x":1,"y":1,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"towns/town_01/00":
+{
+	"frame": {"x":1,"y":69,"w":32,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":1,"w":32,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"towns/town_02/00":
+{
+	"frame": {"x":1,"y":35,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "towns.png",
+	"format": "RGBA8888",
+	"size": {"w":34,"h":101},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:5fb188cbe4460ae81e5f250344bef18c:44da8e8fb5b0a38586bb2ff267dfaa62:83ad9e04c96c98a4967eb099ace18c94$"
+}
+}

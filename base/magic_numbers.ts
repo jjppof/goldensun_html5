@@ -38,5 +38,5 @@ export const ELEM_ATTR_MIN = -200;
 export const ELEM_ATTR_MAX = 200;
 export const AVATAR_SIZE = 32;
 export const WORLD_MAP_SPEED_REDUCE = -40;
-export const WORLD_MAP_SPRITE_SCALE_Y = 0.77;
-export const WORLD_MAP_SPRITE_SCALE_X = 0.82;
+export const WORLD_MAP_SPRITE_SCALE_Y = 0.84;
+export const WORLD_MAP_SPRITE_SCALE_X = 0.84;

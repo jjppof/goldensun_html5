@@ -3,6 +3,7 @@ import { event_types as game_event_types, GameEvent } from "./game_events/GameEv
 import { mount_collision_polygon } from './utils';
 import { ControllableChar } from './ControllableChar';
 import { BattleEvent } from './game_events/BattleEvent';
+import { Collision } from './Collision';
 
 export class NPC_Sprite extends SpriteBase {
     constructor (key_name, actions) {
@@ -20,7 +21,8 @@ export const npc_movement_types = {
 export const npc_types = {
     NORMAL: "normal",
     INN: "inn",
-    SHOP: "shop"
+    SHOP: "shop",
+    SPRITE: "sprite"
 };
 
 export class NPC extends ControllableChar {
@@ -33,6 +35,7 @@ export class NPC extends ControllableChar {
     public talk_range_factor: number;
     public events: GameEvent[];
     public shop_key: string;
+    public no_shadow: boolean;
 
     constructor(
         game,
@@ -51,7 +54,8 @@ export class NPC extends ControllableChar {
         shop_key,
         base_collision_layer,
         talk_range_factor,
-        events_info
+        events_info,
+        no_shadow
     ) {
         super(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps);
         this.npc_type = npc_type;
@@ -62,6 +66,7 @@ export class NPC extends ControllableChar {
         this.shop_key = shop_key;
         this.base_collision_layer = base_collision_layer;
         this.talk_range_factor = talk_range_factor === undefined ? NPC_TALK_RANGE : talk_range_factor;
+        this.no_shadow = no_shadow === undefined ? false : no_shadow;
         this.events = [];
         this.set_events(events_info);
     }
@@ -88,7 +93,7 @@ export class NPC extends ControllableChar {
         this.update_shadow();
     }
 
-    config_body(collision_obj) {
+    config_body(collision_obj: Collision) {
         this.game.physics.p2.enable(this.sprite, false);
         //Important to be after the previous command
         if (this.data.dbs.npc_db[this.key_name].anchor_x !== undefined) {

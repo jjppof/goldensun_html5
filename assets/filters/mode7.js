@@ -5,6 +5,7 @@ Phaser.Filter.Mode7 = function (game) {
     this.uniforms.scale = {type: "1f", value: .44};
     this.uniforms.distance = {type: "1f", value: 1.023};
     this.uniforms.lookY = {type: "1f", value: 4.59};
+    this.uniforms.lookX = {type: "1f", value: 0.48};
     this.uniforms.inclination = {type: "1f", value: 1.37};
 
     this.fragmentSrc = [
@@ -18,6 +19,7 @@ Phaser.Filter.Mode7 = function (game) {
 
         "uniform highp float scale;",
         "uniform highp float lookY;",
+        "uniform highp float lookX;",
         "uniform highp float inclination;",
         "uniform highp float distance;",
         "uniform highp float angle;",
@@ -29,7 +31,7 @@ Phaser.Filter.Mode7 = function (game) {
         "    vec2 warped;",
 
         // perform mode7 transform on uvs
-        "    warped = vec2(uv.x-0.5, 4) / vec2(-inclination*uv.y + lookY, -inclination*uv.y + lookY);",
+        "    warped = vec2(uv.x-lookX, 4) / vec2(-inclination*uv.y + lookY, -inclination*uv.y + lookY);",
         "    warped.y -= distance;",
         "    warped /= scale;",
 
@@ -75,6 +77,15 @@ Object.defineProperty(Phaser.Filter.Mode7.prototype, 'lookY', {
     },
     set: function(value) {
         this.uniforms.lookY.value = value;
+    }
+});
+
+Object.defineProperty(Phaser.Filter.Mode7.prototype, 'lookX', {
+    get: function() {
+        return this.uniforms.lookX.value;
+    },
+    set: function(value) {
+        this.uniforms.lookX.value = value;
     }
 });
 

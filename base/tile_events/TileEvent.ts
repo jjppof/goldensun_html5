@@ -38,12 +38,12 @@ export class TileEvent {
         this.location_key = TileEvent.get_location_key(this.x, this.y);
         this.id = TileEvent.id_incrementer++;
         this.activation_collision_layers = Array.isArray(activation_collision_layers) ? activation_collision_layers : [activation_collision_layers];
-        if (activation_directions === undefined) {
+        if (activation_directions === undefined || activation_directions === "all") {
             activation_directions = get_directions(true);
         }
         this.activation_directions = Array.isArray(activation_directions) ? activation_directions : [activation_directions];
         this.dynamic = dynamic;
-        this.active = Array.isArray(active) ? active : new Array(this.activation_directions.length).fill(active);
+        this.active = Array.isArray(active) ? active : new Array(this.activation_directions.length).fill(active === undefined ? true : active);
         this.origin_interactable_object = origin_interactable_object === undefined ? null : origin_interactable_object;
         TileEvent.events[this.id] = this;
     }
