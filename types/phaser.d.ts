@@ -4849,6 +4849,8 @@ declare module Phaser {
         deltaY: number;
         deltaZ: number;
         destroyPhase: boolean;
+        ellipses_semi_major: number;
+        ellipses_semi_minor: number;
         events: Phaser.Events;
         exists: boolean;
         fixedToCamera: boolean;

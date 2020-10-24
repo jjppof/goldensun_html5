@@ -1,5 +1,4 @@
 import { TextObj, Window } from '../../Window';
-import { CursorControl } from '../../utils/CursorControl';
 import { GoldenSun } from '../../GoldenSun';
 import { ItemSlot, MainChar } from '../../MainChar';
 import { Item } from '../../Item';
