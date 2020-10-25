@@ -23,6 +23,10 @@ export class ControllableChar {
     public x_speed: number;
     public y_speed: number;
     public extra_speed: number;
+    public walk_speed: number;
+    public dash_speed: number;
+    public climb_speed: number;
+    public push_speed: number;
     public stop_by_colliding: boolean;
     public force_direction: boolean;
     public climbing: boolean;
@@ -50,13 +54,17 @@ export class ControllableChar {
     public push_timer: Phaser.TimerEvent;
     public crop_texture: boolean;
 
-    constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps) {
+    constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps, walk_speed, dash_speed, climb_speed, push_speed) {
         this.game = game;
         this.data = data;
         this.key_name = key_name;
         this.x_speed = 0;
         this.y_speed = 0;
-        this.extra_speed = this.data.map?.is_world_map ? numbers.WORLD_MAP_SPEED_REDUCE : 0;
+        this.extra_speed = 0;
+        this.walk_speed = walk_speed;
+        this.dash_speed = dash_speed;
+        this.climb_speed = climb_speed;
+        this.push_speed = push_speed;
         this.stop_by_colliding = false;
         this.force_direction = false;
         this.climbing = false;
@@ -299,14 +307,16 @@ export class ControllableChar {
     calculate_speed() { //when setting temp_x or temp_y, it means that these velocities will still be analyzed in collision_dealer function
         const delta_time = this.game.time.elapsedMS / numbers.DELTA_TIME_FACTOR;
         if (this.current_action === base_actions.DASH) {
-            this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * (this.sprite_info.dash_speed + this.extra_speed)) | 0;
-            this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * (this.sprite_info.dash_speed + this.extra_speed)) | 0;
+            const speed_factor = this.dash_speed + this.extra_speed + (this.data.map.is_world_map ? numbers.WORLD_MAP_SPEED_DASH_REDUCE : 0);
+            this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * speed_factor) | 0;
+            this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * speed_factor) | 0;
         } else if(this.current_action === base_actions.WALK) {
-            this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * (this.sprite_info.walk_speed + this.extra_speed)) | 0;
-            this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * (this.sprite_info.walk_speed + this.extra_speed)) | 0;
+            const speed_factor = this.walk_speed + this.extra_speed + (this.data.map.is_world_map ? numbers.WORLD_MAP_SPEED_WALK_REDUCE : 0);
+            this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * speed_factor) | 0;
+            this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * speed_factor) | 0;
         } else if(this.current_action === base_actions.CLIMB) {
-            this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * this.sprite_info.climb_speed) | 0;
-            this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * this.sprite_info.climb_speed) | 0;
+            this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * this.climb_speed) | 0;
+            this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * this.climb_speed) | 0;
         } else if(this.current_action === base_actions.IDLE) {
             this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         }

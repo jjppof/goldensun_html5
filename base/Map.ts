@@ -356,8 +356,9 @@ export class Map {
 
     create_npcs(raw_property) {
         const property_info = JSON.parse(raw_property);
-        const initial_action = this.data.dbs.npc_db[property_info.key_name].initial_action;
-        const initial_animation = property_info.animation_key !== undefined ? property_info.animation_key : this.data.dbs.npc_db[property_info.key_name].actions[initial_action].initial_direction;
+        const npc_db = this.data.dbs.npc_db[property_info.key_name];
+        const initial_action = npc_db.initial_action;
+        const initial_animation = property_info.animation_key !== undefined ? property_info.animation_key : npc_db.actions[initial_action].initial_direction;
         this.npcs.push(new NPC(
             this.game,
             this.data,
@@ -367,6 +368,10 @@ export class Map {
             initial_action,
             initial_animation,
             property_info.enable_footsteps,
+            npc_db.walk_speed,
+            npc_db.dash_speed,
+            npc_db.climb_speed,
+            npc_db.push_speed,
             property_info.npc_type,
             property_info.movement_type,
             property_info.message,
@@ -568,7 +573,6 @@ export class Map {
             this.layers.forEach(l => l.sprite.filters = [this.mode7_filter]);
             this.game.camera.bounds = null;
             this.npcs.forEach(npc => {
-                npc.extra_speed -= numbers.WORLD_MAP_SPEED_REDUCE;
                 if (!this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
                     npc.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
                 }
@@ -590,12 +594,10 @@ export class Map {
         if (this.data.hero && next_body_radius !== this.data.hero.body_radius) {
             this.data.hero.config_body(this.data.collision, this.is_world_map ? numbers.HERO_BODY_RADIUS_M7 : numbers.HERO_BODY_RADIUS);
             if (this.is_world_map) {
-                this.data.hero.extra_speed += numbers.WORLD_MAP_SPEED_REDUCE;
                 this.data.hero.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
                 this.data.hero.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
                 this.data.hero.create_half_crop_mask(this.is_world_map);
             } else {
-                this.data.hero.extra_speed -= numbers.WORLD_MAP_SPEED_REDUCE;
                 this.data.hero.sprite.scale.setTo(1, 1);
                 this.data.hero.shadow.scale.setTo(1, 1);
                 this.data.hero.sprite.mask.destroy();

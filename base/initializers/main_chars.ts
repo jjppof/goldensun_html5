@@ -1,5 +1,6 @@
 import { Classes } from '../Classes';
-import { MainChar, MainCharBase } from '../MainChar';
+import { MainChar } from '../MainChar';
+import { SpriteBase } from '../SpriteBase';
 
 export function initialize_classes(classes_db) {
     let classes_list = {};
@@ -31,18 +32,18 @@ export function initialize_main_chars(game, info, main_chars_db, classes_db, loa
     let main_char_list = {};
     for (let i = 0; i < main_chars_db.length; ++i) {
         const char_data = main_chars_db[i];
-        const sprite_base = new MainCharBase(
+        const sprite_base = new SpriteBase(
             char_data.key_name,
-            char_data.actions.map(action => action.key),
-            char_data.walk_speed,
-            char_data.dash_speed,
-            char_data.climb_speed,
-            char_data.push_speed,
+            char_data.actions.map(action => action.key)
         );
         main_char_list[char_data.key_name] = new MainChar(
             char_data.key_name,
             info,
             sprite_base,
+            char_data.walk_speed,
+            char_data.dash_speed,
+            char_data.climb_speed,
+            char_data.push_speed,
             char_data.name,
             char_data.hp_curve,
             char_data.pp_curve,

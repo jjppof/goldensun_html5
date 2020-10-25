@@ -58,8 +58,8 @@ const speeds = {
 export class Hero extends ControllableChar {
     public arrow_inputs: number;
 
-    constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction) {
-        super(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, true);
+    constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, walk_speed, dash_speed, climb_speed, push_speed) {
+        super(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, true, walk_speed, dash_speed, climb_speed, push_speed);
         this.arrow_inputs = null;
     }
 

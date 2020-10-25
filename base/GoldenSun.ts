@@ -118,16 +118,21 @@ export class GoldenSun {
         this.map = await this.info.maps_list[this.dbs.init_db.map_key_name].mount_map(this.dbs.init_db.map_z_index);
 
         //initializes the controllable hero
+        const hero_key_name = this.dbs.init_db.hero_key_name;
         this.hero = new Hero(
             this.game,
             this,
-            this.dbs.init_db.hero_key_name,
+            hero_key_name,
             this.dbs.init_db.x_tile_position,
             this.dbs.init_db.y_tile_position,
             this.dbs.init_db.initial_action,
-            directions[this.dbs.init_db.initial_direction]
+            directions[this.dbs.init_db.initial_direction],
+            this.info.main_char_list[hero_key_name].walk_speed,
+            this.info.main_char_list[hero_key_name].dash_speed,
+            this.info.main_char_list[hero_key_name].climb_speed,
+            this.info.main_char_list[hero_key_name].push_speed
         );
-        const hero_sprite_base = this.info.main_char_list[this.hero.key_name].sprite_base;
+        const hero_sprite_base = this.info.main_char_list[hero_key_name].sprite_base;
         this.hero.set_sprite(this.npc_group, hero_sprite_base, this.map.sprite, this.map.collision_layer, this.map.is_world_map);
         this.hero.set_shadow('shadow', this.npc_group, this.map.collision_layer);
         this.hero.create_half_crop_mask(this.map.is_world_map);

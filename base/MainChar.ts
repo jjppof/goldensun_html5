@@ -12,23 +12,6 @@ const ELEM_LV_DELTA = 1;
 const ELEM_POWER_DELTA = 5;
 const ELEM_RESIST_DELTA = 5;
 
-export class MainCharBase extends SpriteBase {
-    constructor (
-        key_name,
-        actions,
-        walk_speed,
-        dash_speed,
-        climb_speed,
-        push_speed
-    ) {
-        super(key_name, actions);
-        this.walk_speed = walk_speed;
-        this.dash_speed = dash_speed;
-        this.climb_speed = climb_speed;
-        this.push_speed = push_speed;
-    }
-}
-
 export type ItemSlot = {
     key_name: string,
     index?: number,
@@ -40,6 +23,10 @@ export type ItemSlot = {
 export class MainChar extends Player {
     public info: any;
     public sprite_base: SpriteBase;
+    public walk_speed: number;
+    public dash_speed: number;
+    public climb_speed: number;
+    public push_speed: number;
     public starting_level: number;
     public level: number;
     public class_table: any;
@@ -122,6 +109,10 @@ export class MainChar extends Player {
         key_name,
         info,
         sprite_base,
+        walk_speed,
+        dash_speed,
+        climb_speed,
+        push_speed,
         name,
         hp_curve,
         pp_curve,
@@ -154,6 +145,10 @@ export class MainChar extends Player {
         super(key_name, name);
         this.info = info;
         this.sprite_base = sprite_base;
+        this.walk_speed = walk_speed;
+        this.dash_speed = dash_speed;
+        this.climb_speed = climb_speed;
+        this.push_speed = push_speed;
         this.starting_level = starting_level;
         this.level = this.starting_level;
         this.class_table = class_table;
