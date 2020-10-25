@@ -57,20 +57,18 @@ const speeds = {
 
 export class Hero extends ControllableChar {
     public arrow_inputs: number;
-    public cursors: Phaser.CursorKeys;
 
     constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction) {
         super(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, true);
         this.arrow_inputs = null;
-        this.cursors = this.game.input.keyboard.createCursorKeys();
     }
 
     update_arrow_inputs() {
         this.arrow_inputs =
-              1 * (+this.cursors.right.isDown)
-            | 2 * (+this.cursors.left.isDown)
-            | 4 * (+this.cursors.up.isDown)
-            | 8 * (+this.cursors.down.isDown);
+              1 * (+this.game.input.keyboard.isDown(this.data.gamepad.RIGHT))
+            | 2 * (+this.game.input.keyboard.isDown(this.data.gamepad.LEFT))
+            | 4 * (+this.game.input.keyboard.isDown(this.data.gamepad.UP))
+            | 8 * (+this.game.input.keyboard.isDown(this.data.gamepad.DOWN));
         this.required_direction = rotation_key[this.arrow_inputs];
     }
 
