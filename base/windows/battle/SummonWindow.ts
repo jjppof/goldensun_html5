@@ -211,20 +211,20 @@ export class SummonWindow {
     }
 
     summon_choose(){
-        this.data.control_manager.set_control({
+        this.data.control_manager.set_main_control({
             left: this.previous_page.bind(this),
             right: this.next_page.bind(this),
             up: this.previous_summon.bind(this),
             down: this.next_summon.bind(this),
-            esc: () => {
+            b: () => {
                 this.choosen_ability = null;
                 this.close(this.close_callback);
             },
-            enter: () => {
+            a: () => {
                 this.choosen_ability = this.summons[this.summon_index].key_name;
                 this.hide(this.close_callback);
             }
-        },{horizontal_loop:true, vertical_loop:true});
+        },{loop_configs: {vertical:true, horizontal:true}});
     }
 
     open(char:MainChar, close_callback:Function, set_description:Function, djinni_already_used?:{[element: string]: number}) {

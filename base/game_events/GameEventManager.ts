@@ -25,15 +25,17 @@ export class GameEventManager {
     }
 
     set_controls() {
-        this.data.enter_input.add(() => {
-            if (this.data.hero.in_action() || this.data.in_battle || !this.control_enable) return;
-            if (this.on_event) {
-                this.control_enable = false;
-                this.fire_next_step();
-            } else {
-                this.search_for_npc();
+        this.data.control_manager.add_fleeting_control(this.data.gamepad.A, {
+            on_down: () => {
+                if (this.data.hero.in_action() || this.data.in_battle || !this.control_enable) return;
+                if (this.on_event) {
+                    this.control_enable = false;
+                    this.fire_next_step();
+                } else {
+                    this.search_for_npc();
+                }
             }
-        });
+        }, {persist:true});
     }
 
     search_for_npc() {

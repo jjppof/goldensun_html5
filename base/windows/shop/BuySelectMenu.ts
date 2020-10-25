@@ -305,13 +305,17 @@ export class BuySelectMenu{
     }
 
     grant_control(on_cancel:Function, on_select:Function){
-        this.data.control_manager.set_control({right: this.next_item.bind(this),
+        this.data.control_manager.set_main_control({right: this.next_item.bind(this),
             left: this.previous_item.bind(this),
             up: this.previous_page.bind(this),
             down: this.next_page.bind(this),
-            esc: on_cancel,
-            enter: on_select},
-            {horizontal_loop:true});
+            b: on_cancel,
+            a: on_select},{loop_configs: {horizontal:true}});
+        this.data.control_manager.set_extra_control([
+            {label:"psy1", callback:() =>{
+                console.log("Pressed psy1 key");
+            }}
+        ])
     }
 
     /*Changes to the next item page

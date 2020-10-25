@@ -82,12 +82,12 @@ export class ItemQuantityManagerWindow {
     }
 
     grant_control(on_cancel:Function, on_select:Function){
-        this.data.control_manager.set_control({
+        this.data.control_manager.set_main_control({
             left: this.decrease_amount.bind(this),
             right: this.increase_amount.bind(this),
-            esc: on_cancel,
-            enter: on_select
-        }, {custom_loop_time:ITEM_COUNTER_LOOP_TIME, horizontal_loop:true})
+            b: on_cancel,
+            a: on_select
+        },{loop_configs: {horizontal:true, horizontal_time:ITEM_COUNTER_LOOP_TIME}});
     }
 
     increase_amount(){
