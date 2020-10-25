@@ -130,12 +130,12 @@ export class DropItemWindow {
             }
         }, false);
 
-        this.data.control_manager.set_control({
+        this.data.control_manager.set_main_control({
             up: this.change_answer.bind(this),
             down: this.change_answer.bind(this),
-            esc: this.close.bind(this),
-            enter: this.on_drop.bind(this)
-        },{vertical_loop:true});
+            b: this.close.bind(this),
+            a: this.on_drop.bind(this)
+        },{loop_configs: {vertical:true}});
 
     }
 

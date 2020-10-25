@@ -209,7 +209,7 @@ export class MainBattleMenu {
                 }
 
                 this.description_window.hide();
-                this.choose_targets(ability, action_type, targets => {
+                this.choose_targets(ability, action_type, (targets:Target[]) => {
                     if (targets) {
                         this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
                             key_name: ability,

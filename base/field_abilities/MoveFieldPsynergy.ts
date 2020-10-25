@@ -15,7 +15,6 @@ export class MoveFieldPsynergy extends FieldAbilities {
     public hand_sprite: Phaser.Sprite;
     public emitter: Phaser.Particles.Arcade.Emitter;
     public final_emitter: Phaser.Particles.Arcade.Emitter;
-    public controls_active: boolean;
     public target_hueshift_timer: Phaser.Timer;
     public final_emitter_particles_count: number;
 
@@ -30,37 +29,31 @@ export class MoveFieldPsynergy extends FieldAbilities {
         this.hand_sprite_base.setAnimation(this.hand_sprite, MOVE_HAND_KEY_NAME);
         this.emitter = null;
         this.final_emitter = null;
-        this.set_controls();
-        this.controls_active = false;
     }
 
     set_controls() {
-        this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(() => {
-            if (!this.controls_active) return;
-            this.controllable_char.trying_to_push_direction = directions.right;
-            this.fire_push();
-        });
-        this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(() => {
-            if (!this.controls_active) return;
-            this.controllable_char.trying_to_push_direction = directions.left;
-            this.fire_push();
-        });
-        this.game.input.keyboard.addKey(Phaser.Keyboard.UP).onDown.add(() => {
-            if (!this.controls_active) return;
-            this.controllable_char.trying_to_push_direction = directions.up;
-            this.fire_push();
-        });
-        this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onDown.add(() => {
-            if (!this.controls_active) return;
-            this.controllable_char.trying_to_push_direction = directions.down;
-            this.fire_push();
-        });
-        this.data.esc_input.add(() => {
-            if (!this.controls_active) return;
-            this.controls_active = false;
-            this.finish_hand();
-            this.unset_hero_cast_anim();
-        });
+        this.data.control_manager.set_main_control({
+            right: () => {
+                this.controllable_char.trying_to_push_direction = directions.right;
+                this.fire_push();
+            },
+            left: () => {
+                this.controllable_char.trying_to_push_direction = directions.left;
+                this.fire_push();
+            },
+            up: () => {
+                this.controllable_char.trying_to_push_direction = directions.up;
+                this.fire_push();
+            },
+            down: () => {
+                this.controllable_char.trying_to_push_direction = directions.down;
+                this.fire_push();
+            },
+            b: () => {
+                this.finish_hand();
+                this.unset_hero_cast_anim();
+            }
+        })
     }
 
     fire_push() {
@@ -82,7 +75,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
             }
             let position_allowed = this.target_object.position_allowed(item_position.x, item_position.y);
             if (position_allowed && !(this.controllable_char.tile_x_pos === item_position.x && this.controllable_char.tile_y_pos === item_position.y)) {
-                this.controls_active = false;
+                this.data.control_manager.reset();
                 target_only_push(this.game, this.data, this.target_object, (x_shift, y_shift) => {
                     const x_target = this.hand_sprite.x + x_shift;
                     const y_target = this.hand_sprite.y + y_shift;
@@ -193,7 +186,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                     this.target_object.color_filter.hue_adjust = Math.random() * 2 * Math.PI;
                 });
                 this.target_hueshift_timer.start();
-                this.controls_active = true;
+                this.set_controls();
             } else {
                 this.game.time.events.add(700, () => {
                     this.finish_hand();
@@ -204,6 +197,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
     }
 
     finish_hand() {
+        this.data.control_manager.reset();
         let flip_timer = this.game.time.create(false);
         let fake_hand_scale = {x : 1};
         flip_timer.loop(40, () => {
