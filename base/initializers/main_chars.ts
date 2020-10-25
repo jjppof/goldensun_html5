@@ -43,7 +43,6 @@ export function initialize_main_chars(game, info, main_chars_db, classes_db, loa
             char_data.walk_speed,
             char_data.dash_speed,
             char_data.climb_speed,
-            char_data.push_speed,
             char_data.name,
             char_data.hp_curve,
             char_data.pp_curve,

@@ -49,7 +49,6 @@ export class NPC extends ControllableChar {
         walk_speed,
         dash_speed,
         climb_speed,
-        push_speed,
         npc_type,
         movement_type,
         message,
@@ -61,7 +60,7 @@ export class NPC extends ControllableChar {
         events_info,
         no_shadow
     ) {
-        super(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps, walk_speed, dash_speed, climb_speed, push_speed);
+        super(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps, walk_speed, dash_speed, climb_speed);
         this.npc_type = npc_type;
         this.movement_type = movement_type;
         this.message = message;

@@ -10,19 +10,11 @@ export class SpriteBase {
         }
     };
     public animations: {[action: string]: {[animation: string]: string[]}};
-    public dash_speed: number;
-    public walk_speed: number;
-    public climb_speed: number;
-    public push_speed: number;
 
     constructor (key_name, actions) {
         this.key_name = key_name;
         this.actions = {};
         this.animations = {};
-        this.dash_speed = 0;
-        this.walk_speed = 0;
-        this.climb_speed = 0;
-        this.push_speed = 0;
         for (let i = 0; i < actions.length; ++i) {
             this.actions[actions[i]] = {};
         }

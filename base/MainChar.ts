@@ -26,7 +26,6 @@ export class MainChar extends Player {
     public walk_speed: number;
     public dash_speed: number;
     public climb_speed: number;
-    public push_speed: number;
     public starting_level: number;
     public level: number;
     public class_table: any;
@@ -112,7 +111,6 @@ export class MainChar extends Player {
         walk_speed,
         dash_speed,
         climb_speed,
-        push_speed,
         name,
         hp_curve,
         pp_curve,
@@ -148,7 +146,6 @@ export class MainChar extends Player {
         this.walk_speed = walk_speed;
         this.dash_speed = dash_speed;
         this.climb_speed = climb_speed;
-        this.push_speed = push_speed;
         this.starting_level = starting_level;
         this.level = this.starting_level;
         this.class_table = class_table;

@@ -26,7 +26,6 @@ export class ControllableChar {
     public walk_speed: number;
     public dash_speed: number;
     public climb_speed: number;
-    public push_speed: number;
     public stop_by_colliding: boolean;
     public force_direction: boolean;
     public climbing: boolean;
@@ -54,7 +53,7 @@ export class ControllableChar {
     public push_timer: Phaser.TimerEvent;
     public crop_texture: boolean;
 
-    constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps, walk_speed, dash_speed, climb_speed, push_speed) {
+    constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps, walk_speed, dash_speed, climb_speed) {
         this.game = game;
         this.data = data;
         this.key_name = key_name;
@@ -64,7 +63,6 @@ export class ControllableChar {
         this.walk_speed = walk_speed;
         this.dash_speed = dash_speed;
         this.climb_speed = climb_speed;
-        this.push_speed = push_speed;
         this.stop_by_colliding = false;
         this.force_direction = false;
         this.climbing = false;

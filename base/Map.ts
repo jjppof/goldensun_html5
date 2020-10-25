@@ -371,7 +371,6 @@ export class Map {
             npc_db.walk_speed,
             npc_db.dash_speed,
             npc_db.climb_speed,
-            npc_db.push_speed,
             property_info.npc_type,
             property_info.movement_type,
             property_info.message,
