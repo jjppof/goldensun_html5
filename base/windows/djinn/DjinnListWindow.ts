@@ -457,15 +457,15 @@ export class DjinnListWindow {
 
     
     grant_control(on_cancel:Function, on_select:Function, on_shift?:Function){
-        this.data.control_manager.set_control({
+        this.data.control_manager.set_main_control({
             right: this.next_character.bind(this),
             left: this.previous_character.bind(this),
             up: this.previous_djinni.bind(this),
             down: this.next_djinni.bind(this),
-            esc: on_cancel,
-            enter: on_select,
-            shift: on_shift,
-        }, {horizontal_loop:true, vertical_loop:true});
+            b: on_cancel,
+            a: on_select,
+            l: on_shift,
+        },{loop_configs: {vertical:true, horizontal:true}});
     }
 
     darken_font_color(darken = true) {

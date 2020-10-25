@@ -101,16 +101,17 @@ export class MainMenu {
 }
 
 export function initialize_menu(game:Phaser.Game, data:GoldenSun) {
-    data.spacebar_input.add(() => {
-        if (data.hero.in_action() || data.in_battle || !data.created || data.game_event_manager.on_event) return;
-        if (!data.menu_open) {
-            data.menu_open = true;
-            data.hero.stop_char();
-            data.hero.update_shadow();
-            data.main_menu.open_menu();
-        } else if (data.main_menu.is_active()) {
-            data.main_menu.close_menu();
+    data.control_manager.add_fleeting_control(data.gamepad.A, {
+        on_down: () => {
+            if (data.hero.in_action() || data.in_battle || !data.created || data.game_event_manager.on_event) return;
+            if (!data.menu_open) {
+                data.menu_open = true;
+                data.hero.stop_char();
+                data.hero.update_shadow();
+                data.main_menu.open_menu();
+            }
         }
-    }, this);
+    }, {persist:true});
+
     return new MainMenu(game, data);
 }

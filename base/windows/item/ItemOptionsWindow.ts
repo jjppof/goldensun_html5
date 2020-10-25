@@ -365,14 +365,13 @@ export class ItemOptionsWindow {
 
         this.choose_position(vertical, horizontal);
 
-        this.data.control_manager.set_control({
+        this.data.control_manager.set_main_control({
             right: this.next_horizontal.bind(this),
             left: this.previous_horizontal.bind(this),
             up: this.next_vertical.bind(this),
             down: this.previous_vertical.bind(this),
-            esc: this.close.bind(this, this.close_callback),
-            enter: this.on_choose.bind(this)},
-            {horizontal_loop:true, vertical_loop:true});
+            b: this.close.bind(this, this.close_callback),
+            a: this.on_choose.bind(this)},{loop_configs: {vertical:true, horizontal:true}});
     }
 
     open(item_obj:ItemSlot, item:Item, char:MainChar, stats_window:StatsCheckWithItemWindow, item_menu:MainItemMenu,

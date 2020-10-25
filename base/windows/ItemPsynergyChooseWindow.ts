@@ -29,6 +29,8 @@ const CURSOR_X = 98;
 const CURSOR_Y = 42;
 const CURSOR_GAP = 16;
 
+const HORIZONTAL_LOOP_TIME = 300;
+
 /*Displays the character's Psynergy or Items
 Used in a selection-type menu, referring to the above
 
@@ -314,16 +316,16 @@ export class ItemPsynergyChooseWindow {
 
     /*Enables control keys for this menu*/
     grant_control(on_cancel:Function, on_select:Function, extra_commands?:{shift?:Function, spacebar?:Function}){
-        this.data.control_manager.set_control({
+        this.data.control_manager.set_main_control({
             right: this.next_page.bind(this),
             left: this.previous_page.bind(this),
             up: this.previous_element.bind(this),
             down: this.next_element.bind(this),
-            esc: on_cancel,
-            enter: on_select,
-            shift: extra_commands.shift,
-            spacebar: extra_commands.spacebar
-        },{horizontal_loop:true, vertical_loop:true});
+            b: on_cancel,
+            a: on_select,
+            l: extra_commands.shift,
+            r: extra_commands.spacebar
+        },{loop_configs: {vertical:true, horizontal:true, horizontal_time:HORIZONTAL_LOOP_TIME}});
     }
 
     /*Hides this window*/

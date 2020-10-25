@@ -85,17 +85,17 @@ export class DjinnPsynergyWindow {
     }
 
     grant_control(){
-        this.data.control_manager.set_control({
+        this.data.control_manager.set_main_control({
             left: this.previous_page.bind(this),
             right: this.next_page.bind(this),
-            spacebar: this.spacebar_callback,
-            esc: () => {
+            r: this.spacebar_callback,
+            b: () => {
                 this.execute_operation = false;
                 this.close(this.close_callback)},
-            enter: () => {
+            a: () => {
                 this.execute_operation = true;
                 this.close(this.close_callback)}
-        },{horizontal_loop:true});
+        },{loop_configs: {horizontal:true}});
     }
 
     set_page_number() {

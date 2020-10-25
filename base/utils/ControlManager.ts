@@ -1,49 +1,57 @@
 import { directions, action_inputs, get_opposite_direction } from '../utils';
 import * as _ from "lodash";
+import { Gamepad } from '../Gamepad';
 
 const DEFAULT_LOOP_TIME = Phaser.Timer.QUARTER >> 1;
 
-const direction_keys = [directions.left, directions.right, directions.up, directions.down];
-const action_keys = [action_inputs.SPACEBAR, action_inputs.ESC, action_inputs.ENTER,
-    action_inputs.SHIFT, action_inputs.TAB];
+export type ControlObj = {
+    key:number,
+    callback:Function,
+    pressed?:boolean,
+    loop?:boolean,
+    loop_time?:number,
+}
 
-export type ControlStatus = {
-    key:string|number;
-    pressed?:boolean;
-    callback:Function;
-    loop?:boolean;
-    phaser_key:number;
+export type LoopConfigs = {
+    key:number,
+    loop_time:boolean
 }
 
 export class ControlManager{
     public game:Phaser.Game;
+    public gamepad: Gamepad;
     public disabled:boolean;
-    public loop_time:number;
 
-    public directions:{[key:number] : ControlStatus};
-    public actions:{[key:string] : ControlStatus};
+    public main_keys_list:number[];
+    public extra_keys_list:number[];
+
+    public main_keys:{[key:number] : ControlObj};
+    public extra_keys:{[key:number] : ControlObj};
 
     public signal_bindings:Phaser.SignalBinding[];
     public loop_start_timer:Phaser.Timer;
     public loop_repeat_timer:Phaser.Timer;
-    constructor(game){
+
+    constructor(game:Phaser.Game, gamepad:Gamepad){
         this.game = game;
+        this.gamepad = gamepad;
         this.disabled = false;
-        this.loop_time = DEFAULT_LOOP_TIME;
 
-        let dirs = [{key: directions.left, pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.LEFT},
-        {key: directions.right, pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.RIGHT},
-        {key: directions.up, pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.UP},
-        {key: directions.down, pressed: false, callback: null, loop: false, phaser_key: Phaser.Keyboard.DOWN}];
+        this.main_keys_list = this.gamepad.main_keys;
+        this.extra_keys_list = this.gamepad.extra_keys;
 
-        let acts = [{key: action_inputs.SPACEBAR, callback: null, phaser_key: Phaser.Keyboard.SPACEBAR},
-        {key: action_inputs.ESC, callback: null, phaser_key: Phaser.Keyboard.ESC},
-        {key: action_inputs.ENTER, callback: null, phaser_key: Phaser.Keyboard.ENTER},
-        {key: action_inputs.SHIFT, callback: null, phaser_key: Phaser.Keyboard.SHIFT},
-        {key: action_inputs.TAB, callback: null, phaser_key: Phaser.Keyboard.TAB}];
+        let main_to_map = [];
+        for(let i=0; i<this.main_keys_list.length; i++){
+            main_to_map.push({key: this.main_keys_list[i], callback: null, pressed: false, loop: false, loop_time: DEFAULT_LOOP_TIME});
+        }
 
-        this.directions = _.mapKeys(dirs, dir => dir.key) as {[key:number] : ControlStatus};
-        this.actions = _.mapKeys(acts, act => act.key) as {[key:string] : ControlStatus};
+        let extra_to_map = [];
+        for(let i=0; i<this.extra_keys_list.length; i++){
+            extra_to_map.push({key: this.extra_keys_list[i], callback: null});
+        }
+
+        this.main_keys = _.mapKeys(main_to_map, k => k.key) as {[key:number] : ControlObj};
+        this.extra_keys = _.mapKeys(extra_to_map, k => k.key) as {[key:number] : ControlObj};
 
         this.signal_bindings = [];
         this.loop_start_timer = this.game.time.create(false);
@@ -54,26 +62,23 @@ export class ControlManager{
         return this.signal_bindings.length !== 0;
     }
 
-    simple_input(callback:Function, enter_only:boolean=false){
+    simple_input(callback:Function, confirm_only:boolean=false){
         if(this.initialized) this.reset();
         
-        this.actions[action_inputs.ENTER].callback = callback;
-        if(!enter_only) this.actions[action_inputs.ESC].callback = callback;
+        this.main_keys[this.gamepad.A].callback = callback;
+        if(!confirm_only) this.main_keys[this.gamepad.B].callback = callback;
 
-        this.set_actions();
+        this.enable_main_keys();
     }
     
-    add_fleeting_control(key:number|string, callbacks:{on_down?:Function, on_up?:Function}, params?:{persist?:boolean}){
-        let control:ControlStatus = null;
-        let bindings = [];
+    add_fleeting_control(key:number, callbacks:{on_down?:Function, on_up?:Function}, params?:{persist?:boolean}){
+        let control:ControlObj = this.main_keys[key] ? this.main_keys[key] : this.extra_keys[key];
+        let bindings:Phaser.SignalBinding[] = [];
         
         let persist = params ? (params.persist ? params.persist : false) : false;
 
-        action_keys.forEach(k => {if(k === key) control = this.actions[k];});
-        if(!control) direction_keys.forEach(k => {if(k === key) control = this.directions[k];});
-
         if(callbacks.on_down){
-            let b1 = this.game.input.keyboard.addKey(control.phaser_key).onDown.add(() => {
+            let b1 = this.game.input.keyboard.addKey(control.key).onDown.add(() => {
                 if (this.disabled) return;
                 callbacks.on_down();
             });
@@ -81,7 +86,7 @@ export class ControlManager{
             bindings.push(b1);
         }
         if(callbacks.on_up){
-            let b2 = this.game.input.keyboard.addKey(control.phaser_key).onUp.add(() => {
+            let b2 = this.game.input.keyboard.addKey(control.key).onUp.add(() => {
                 if (this.disabled) return;
                 callbacks.on_up();
             });
@@ -92,63 +97,95 @@ export class ControlManager{
         return bindings;
     }
 
-    set_control(callbacks:{left?:Function, right?:Function, up?:Function, down?:Function,
-        enter?:Function, esc?:Function, shift?:Function, spacebar?:Function, tab?:Function},
-        params?:{custom_loop_time?:number, horizontal_loop?:boolean, vertical_loop?:boolean}){
+    set_main_control(callbacks:{left?:Function, right?:Function, up?:Function, down?:Function,
+        a?:Function, b?:Function, l?:Function, r?:Function, select?:Function, start?:Function},
+        params?:{
+            loop_configs?:{vertical?:boolean, vertical_time?:number,
+                horizontal?:boolean, horizontal_time?:number,
+                shoulder?:boolean, shoulder_time?:number}
+        }){
         if(this.initialized) this.reset();
 
-        if(callbacks.left) this.directions[directions.left].callback = callbacks.left;
-        if(callbacks.right) this.directions[directions.right].callback = callbacks.right;
-        if(callbacks.up) this.directions[directions.up].callback = callbacks.up;
-        if(callbacks.down) this.directions[directions.down].callback = callbacks.down; 
+        if(callbacks.left) this.main_keys[this.gamepad.LEFT].callback = callbacks.left;
+        if(callbacks.right) this.main_keys[this.gamepad.RIGHT].callback = callbacks.right;
+        if(callbacks.up) this.main_keys[this.gamepad.UP].callback = callbacks.up;
+        if(callbacks.down) this.main_keys[this.gamepad.DOWN].callback = callbacks.down; 
 
-        if(callbacks.enter) this.actions[action_inputs.ENTER].callback = callbacks.enter;
-        if(callbacks.esc) this.actions[action_inputs.ESC].callback = callbacks.esc;
-        if(callbacks.shift) this.actions[action_inputs.SHIFT].callback = callbacks.shift;
-        if(callbacks.spacebar) this.actions[action_inputs.SPACEBAR].callback = callbacks.spacebar;
-        if(callbacks.tab) this.actions[action_inputs.TAB].callback = callbacks.tab;
+        if(callbacks.a) this.main_keys[this.gamepad.A].callback = callbacks.a;
+        if(callbacks.b) this.main_keys[this.gamepad.B].callback = callbacks.b;
+        if(callbacks.l) this.main_keys[this.gamepad.L].callback = callbacks.l;
+        if(callbacks.r) this.main_keys[this.gamepad.R].callback = callbacks.r;
 
-        if(params){
-            if(params.custom_loop_time) this.loop_time = params.custom_loop_time;
-            if(params.vertical_loop){
-                this.directions[directions.up].loop = true;
-                this.directions[directions.down].loop = true;
-            }
-            if(params.horizontal_loop){
-                this.directions[directions.left].loop = true;
-                this.directions[directions.right].loop = true;
-            }
-        }
-        this.set_directions();
-        this.set_actions();
+        if(callbacks.select) this.main_keys[this.gamepad.SELECT].callback = callbacks.select;
+        if(callbacks.start) this.main_keys[this.gamepad.START].callback = callbacks.start;
+        
+        if(params) this.set_params(params);
+        this.enable_main_keys();
     }
 
-    set_directions(){
-        let directions_length = Object.keys(this.directions).length;
-        for(let i=0; i<directions_length; i++){
-            if(this.directions[direction_keys[i]].callback){
-                if(this.directions[direction_keys[i]].loop){
-                    let b1 = this.game.input.keyboard.addKey(this.directions[direction_keys[i]].phaser_key).onDown.add(() => {
+    set_params(params:any){
+        if(params.loop_configs){
+            let configs = params.loop_configs;
+            let controls = [];
+
+            if(configs.vertical){
+                controls.push({key:this.gamepad.UP, loop_time:configs.vertical_time});
+                controls.push({key:this.gamepad.DOWN, loop_time:configs.vertical_time});
+            }
+            if(configs.horizontal){
+                controls.push({key:this.gamepad.LEFT, loop_time:configs.horizontal_time});
+                controls.push({key:this.gamepad.RIGHT, loop_time:configs.horizontal_time});
+            }
+            if(configs.shoulder){
+                controls.push({key:this.gamepad.L, loop_time:configs.shoulder_time});
+                controls.push({key:this.gamepad.R, loop_time:configs.shoulder_time});
+            }
+
+            this.enable_loop(controls);
+        }
+    }
+
+    enable_loop(controls:{key:number, loop_time?:number}[]){
+        controls.forEach(obj => {
+            this.main_keys[obj.key].loop = true;
+            if(obj.loop_time) this.main_keys[obj.key].loop_time = obj.loop_time;
+        })
+    }
+
+    set_extra_control(control_objects:{label:string, callback:Function}[]){
+        control_objects.forEach(obj => {
+            let key = this.gamepad.get_key_by_label(obj.label);
+            this.extra_keys[key].callback = obj.callback;
+        });
+
+        this.enable_extra_keys();
+    }
+
+    enable_main_keys(){
+        for(let i=0; i<this.main_keys_list.length; i++){
+            if(this.main_keys[this.main_keys_list[i]].callback){
+                if(this.main_keys[this.main_keys_list[i]].loop){
+                    let b1 = this.game.input.keyboard.addKey(this.main_keys[this.main_keys_list[i]].key).onDown.add(() => {
                         if (this.disabled) return;
-                        if (this.directions[get_opposite_direction(direction_keys[i])].pressed) {
-                            this.directions[get_opposite_direction(direction_keys[i])].pressed = false;
+                        if (this.main_keys[this.gamepad.opposite_key(this.main_keys_list[i])].pressed) {
+                            this.main_keys[this.gamepad.opposite_key(this.main_keys_list[i])].pressed = false;
                             this.stop_timers();
                         }
-                        this.directions[direction_keys[i]].pressed = true;
-                        this.set_loop_timers(direction_keys[i]);
+                        this.main_keys[this.main_keys_list[i]].pressed = true;
+                        this.set_loop_timers(this.main_keys_list[i]);
                     });
-                    let b2 = this.game.input.keyboard.addKey(this.directions[direction_keys[i]].phaser_key).onUp.add(() => {
+                    let b2 = this.game.input.keyboard.addKey(this.main_keys[this.main_keys_list[i]].key).onUp.add(() => {
                         if (this.disabled) return;
-                        this.directions[direction_keys[i]].pressed = false;
+                        this.main_keys[this.main_keys_list[i]].pressed = false;
                         this.stop_timers();
                     });
                     this.signal_bindings.push(b1);
                     this.signal_bindings.push(b2);
                 }
                 else{
-                    let b = this.game.input.keyboard.addKey(this.directions[direction_keys[i]].phaser_key).onDown.add(() => {
+                    let b = this.game.input.keyboard.addKey(this.main_keys[this.main_keys_list[i]].key).onDown.add(() => {
                         if (this.disabled) return;
-                        this.directions[direction_keys[i]].callback();
+                        this.main_keys[this.main_keys_list[i]].callback();
                     });
                     this.signal_bindings.push(b);
                 }
@@ -156,30 +193,30 @@ export class ControlManager{
         }
     }
 
-    set_actions(){
-        let actions_length = Object.keys(this.actions).length;
-        for(let i=0; i<actions_length; i++){
-            if(this.actions[action_keys[i]].callback){
-                let b = this.game.input.keyboard.addKey(this.actions[action_keys[i]].phaser_key).onDown.add(() => {
+    enable_extra_keys(){
+        for(let i=0; i<this.extra_keys_list.length; i++){
+            if(this.extra_keys[this.extra_keys_list[i]].callback){
+                let b = this.game.input.keyboard.addKey(this.extra_keys[this.extra_keys_list[i]].key).onDown.add(() => {
                     if (this.disabled) return;
-                    this.actions[action_keys[i]].callback();
+                    this.extra_keys[this.extra_keys_list[i]].callback();
                 });
                 this.signal_bindings.push(b);
             }
         }
     }
 
-    set_loop_timers(direction?:number) {
-        this.change_index(direction);
+    set_loop_timers(key?:number) {
+        this.change_index(key);
+
         this.loop_start_timer.add(Phaser.Timer.QUARTER, () => {
-            this.loop_repeat_timer.loop(this.loop_time, this.change_index.bind(this, direction));
+            this.loop_repeat_timer.loop(this.main_keys[key].loop_time, this.change_index.bind(this, key));
             this.loop_repeat_timer.start();
         });
         this.loop_start_timer.start();
     }
 
-    change_index(direction:number) {
-        this.directions[direction].callback();
+    change_index(key:number) {
+        this.main_keys[key].callback();
     }
 
     stop_timers() {
@@ -197,28 +234,24 @@ export class ControlManager{
     }
 
     reset(){
-        let directions_length = Object.keys(this.directions).length;
-        let actions_length = Object.keys(this.actions).length;
-
         this.loop_start_timer.stop();
         this.loop_repeat_timer.stop();
 
-        for(let i=0; i<directions_length; i++){
-            this.directions[direction_keys[i]].pressed = false;
-            this.directions[direction_keys[i]].loop = false;
-            this.directions[direction_keys[i]].callback = null;
+        for(let i=0; i<this.main_keys_list.length; i++){
+            this.main_keys[this.main_keys_list[i]].pressed = false;
+            this.main_keys[this.main_keys_list[i]].callback = null;
+            this.main_keys[this.main_keys_list[i]].loop = false;
+            this.main_keys[this.main_keys_list[i]].loop_time = DEFAULT_LOOP_TIME;
         }
 
-        for(let i=0; i<actions_length; i++){
-            this.actions[action_keys[i]].callback = null;
+        for(let i=0; i<this.extra_keys_list.length; i++){
+            this.extra_keys[this.extra_keys_list[i]].callback = null;
         }
 
         this.signal_bindings.forEach(signal_binding => {
             signal_binding.detach();
         });
         this.signal_bindings = [];
-
-        if(this.loop_time !== DEFAULT_LOOP_TIME) this.loop_time = DEFAULT_LOOP_TIME;
     }
 
     destroy() {

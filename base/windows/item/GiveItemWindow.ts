@@ -186,12 +186,13 @@ export class GiveItemWindow {
         if(this.asking_for_equip){
             this.set_header();
             this.set_answer_index(YES_Y);
-            this.data.control_manager.set_control({
+            
+            this.data.control_manager.set_main_control({
                 up: this.change_answer.bind(this),
                 down: this.change_answer.bind(this),
-                esc: this.on_give.bind(this, false),
-                enter: this.on_give.bind(this)
-            },{vertical_loop:true});
+                b: this.on_give.bind(this, false),
+                a: this.on_give.bind(this)
+            },{loop_configs: {vertical:true}});
         }
         else{
             if (this.item_obj.quantity > 1) {

@@ -1,6 +1,7 @@
 import { GoldenSun } from "../GoldenSun";
 import { MainChar } from "../MainChar";
 import { reverse_directions, ordered_elements } from "../utils";
+import { extra_input_labels } from "../Gamepad";
 import * as _ from "lodash";
 
 export class Debug {
@@ -31,34 +32,46 @@ export class Debug {
 
     initialize_controls() {
         //activate debug mode
-        this.game.input.keyboard.addKey(Phaser.Keyboard.D).onDown.add(() => {
-            this.toggle_debug_physics();
-        });
-        
+        this.data.control_manager.add_fleeting_control(this.data.gamepad.get_key_by_label(extra_input_labels.DEBUG_PHYS), {
+            on_down: () => {
+                this.toggle_debug_physics();
+            }
+        }, {persist:true});
+
         //activate grid mode
-        this.game.input.keyboard.addKey(Phaser.Keyboard.G).onDown.add(() => {
-            this.toggle_grid();
-        }, this);
+        this.data.control_manager.add_fleeting_control(this.data.gamepad.get_key_by_label(extra_input_labels.GRID), {
+            on_down: () => {
+                this.toggle_grid();
+            }
+        }, {persist:true});
 
         //activate keys debug mode
-        this.game.input.keyboard.addKey(Phaser.Keyboard.K).onDown.add(() => {
-            this.toggle_keys();
-        }, this);
+        this.data.control_manager.add_fleeting_control(this.data.gamepad.get_key_by_label(extra_input_labels.KEYS), {
+            on_down: () => {
+                this.toggle_keys();
+            }
+        }, {persist:true});
 
         //activate stats debug mode
-        this.game.input.keyboard.addKey(Phaser.Keyboard.S).onDown.add(() => {
-            this.toggle_stats();
-        }, this);
+        this.data.control_manager.add_fleeting_control(this.data.gamepad.get_key_by_label(extra_input_labels.STATS), {
+            on_down: () => {
+                this.toggle_stats();
+            }
+        }, {persist:true});
 
         //enable fps show
-        this.game.input.keyboard.addKey(Phaser.Keyboard.F).onDown.add(() => {
-            this.toggle_fps();
-        }, this);
+        this.data.control_manager.add_fleeting_control(this.data.gamepad.get_key_by_label(extra_input_labels.FPS), {
+            on_down: () => {
+                this.toggle_fps();
+            }
+        }, {persist:true});
 
         //show sliders
-        this.game.input.keyboard.addKey(Phaser.Keyboard.L).onDown.add(() => {
-            this.toggle_sliders();
-        }, this);
+        this.data.control_manager.add_fleeting_control(this.data.gamepad.get_key_by_label(extra_input_labels.SLIDERS), {
+            on_down: () => {
+                this.toggle_sliders();
+            }
+        }, {persist:true});
     }
 
     update_debug_physics(flag) {

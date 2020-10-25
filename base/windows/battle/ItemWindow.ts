@@ -208,17 +208,17 @@ export class ItemWindow {
     }
 
     item_choose(){
-        this.data.control_manager.set_control({
+        this.data.control_manager.set_main_control({
             left: this.previous_page.bind(this),
             right: this.next_page.bind(this),
             up: this.previous_item.bind(this),
             down: this.next_item.bind(this),
-            esc: () => {
+            b: () => {
                 this.choosen_ability = null;
                 this.item_obj = null;
                 this.close(this.close_callback);
             },
-            enter: () => {
+            a: () => {
                 const this_item = this.data.info.items_list[this.items[this.item_index].key_name];
                 if (this_item.use_type !== use_types.NO_USE && this.data.info.abilities_list[this_item.use_ability].is_battle_ability) {
                     this.choosen_ability = this_item.use_ability;
@@ -226,7 +226,7 @@ export class ItemWindow {
                     this.hide(this.close_callback);
                 }
             }
-        },{horizontal_loop:true, vertical_loop:true});
+        },{loop_configs: {vertical:true, horizontal:true}});
     }
 
     open(char:MainChar, close_callback:Function, set_description:Function, ...args:any[]) {

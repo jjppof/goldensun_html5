@@ -322,8 +322,6 @@ export class ShopMenu{
         this.artifact_list = {};
         this.current_index = 0;
 
-        this.data.control_manager.reset();
-        this.data.control_manager.actions["enter"].callback = this.end_dialog.bind(this);
-        this.data.control_manager.set_actions();
+        this.data.control_manager.simple_input(this.end_dialog.bind(this));
     }
 }

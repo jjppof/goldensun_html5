@@ -79,8 +79,8 @@ export class HorizontalMenu {
     }
 
     set_control() {
-        this.data.control_manager.set_control({right: this.next_button.bind(this), left: this.previous_button.bind(this),
-            esc: (this.on_cancel ? this.on_cancel.bind(this) : undefined), enter: this.on_press.bind(this)}, {horizontal_loop: true});
+        this.data.control_manager.set_main_control({right: this.next_button.bind(this), left: this.previous_button.bind(this),
+            b: (this.on_cancel ? this.on_cancel.bind(this) : undefined), a: this.on_press.bind(this)},{loop_configs: {horizontal:true}});
     }
 
     mount_buttons(filtered_buttons:string[]=[]) {
