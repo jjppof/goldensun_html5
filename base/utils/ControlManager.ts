@@ -1,4 +1,3 @@
-import { directions, action_inputs, get_opposite_direction } from '../utils';
 import * as _ from "lodash";
 import { Gamepad } from '../Gamepad';
 
