@@ -18,7 +18,7 @@ export type LoopConfigs = {
 
 export class ControlManager{
     public game:Phaser.Game;
-    public gamepad: Gamepad;
+    public gamepad:Gamepad;
     public disabled:boolean;
 
     public main_keys_list:number[];
