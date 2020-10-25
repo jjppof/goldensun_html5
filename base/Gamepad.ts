@@ -1,16 +1,3 @@
-export type BaseInputs = {
-    LEFT:number,
-    RIGHT:number,
-    UP:number,
-    DOWN:number,
-    A:number,
-    B:number,
-    L?:number,
-    R?:number,
-    SELECT?:number,
-    START?:number,
-}
-
 export const extra_input_labels = {
     PSY1: "psy1",
     PSY2: "psy2",
