@@ -40,12 +40,6 @@ export class GoldenSun {
     public game_event_manager: GameEventManager = null; //class responsible for the game events
     public battle_instance: Battle = null;              //class responsible for a battle
 
-    //inputs
-    public enter_input: Phaser.Signal = null;
-    public esc_input: Phaser.Signal = null;
-    public shift_input: Phaser.Signal = null;
-    public spacebar_input: Phaser.Signal = null;
-
     //managers
     public control_manager: ControlManager = null;
     public cursor_manager: CursorManager = null;
