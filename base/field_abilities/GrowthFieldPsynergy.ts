@@ -114,8 +114,8 @@ export class GrowthFieldPsynergy extends FieldAbilities {
 
     miss_target() {
         this.emitter.destroy();
-        let grow_center_x = this.controllable_char.sprite.centerX; 
-        let grow_center_y = this.controllable_char.sprite.centerY + 17; 
+        let grow_center_x = this.controllable_char.sprite.centerX;
+        let grow_center_y = this.controllable_char.sprite.centerY + 17;
         switch(this.cast_direction) {
             case directions.up:
                 grow_center_y -= 16;
@@ -134,7 +134,9 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         let promises = new Array(NO_TARGET_SPROUT_COUNT);
         const variation = 13;
         for (let i = 0; i < NO_TARGET_SPROUT_COUNT; ++i) {
-            let miss_target_sprite = this.data.overlayer_group.create(grow_center_x + _.random(-variation, variation), grow_center_y + _.random(-variation, variation), "growth_growth");
+            const center_x = grow_center_x + _.random(-variation, variation);
+            const center_y = grow_center_y + _.random(-variation, variation);
+            const miss_target_sprite = this.data.overlayer_group.create(center_x, center_y, "growth_growth");
             miss_target_sprite.anchor.setTo(0.5, 1);
             miss_target_sprite.animations.add("no_target", frames, 10, false, false);
             let resolve_func;
