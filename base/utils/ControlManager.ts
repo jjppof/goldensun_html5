@@ -19,7 +19,6 @@ export type LoopConfigs = {
 export class ControlManager{
     public game:Phaser.Game;
     public gamepad:Gamepad;
-    public disabled:boolean;
 
     public main_keys_list:number[];
     public extra_keys_list:number[];
@@ -34,7 +33,6 @@ export class ControlManager{
     constructor(game:Phaser.Game, gamepad:Gamepad){
         this.game = game;
         this.gamepad = gamepad;
-        this.disabled = false;
 
         this.main_keys_list = this.gamepad.main_keys;
         this.extra_keys_list = this.gamepad.extra_keys;
@@ -78,7 +76,6 @@ export class ControlManager{
 
         if(callbacks.on_down){
             let b1 = this.game.input.keyboard.addKey(control.key).onDown.add(() => {
-                if (this.disabled) return;
                 callbacks.on_down();
             });
             if(!persist) this.signal_bindings.push(b1);
@@ -86,7 +83,6 @@ export class ControlManager{
         }
         if(callbacks.on_up){
             let b2 = this.game.input.keyboard.addKey(control.key).onUp.add(() => {
-                if (this.disabled) return;
                 callbacks.on_up();
             });
             if(!persist) this.signal_bindings.push(b2);
@@ -101,7 +97,8 @@ export class ControlManager{
         params?:{
             loop_configs?:{vertical?:boolean, vertical_time?:number,
                 horizontal?:boolean, horizontal_time?:number,
-                shoulder?:boolean, shoulder_time?:number}
+                shoulder?:boolean, shoulder_time?:number},
+            persist?:boolean
         }){
         if(this.initialized) this.reset();
 
@@ -120,6 +117,15 @@ export class ControlManager{
         
         if(params) this.set_params(params);
         this.enable_main_keys();
+    }
+
+    set_extra_control(control_objects:{label:string, callback:Function}[], params?:{persist?:boolean}){
+        control_objects.forEach(obj => {
+            let key = this.gamepad.get_key_by_label(obj.label);
+            this.extra_keys[key].callback = obj.callback;
+        });
+
+        this.enable_extra_keys();
     }
 
     set_params(params:any){
@@ -151,21 +157,11 @@ export class ControlManager{
         })
     }
 
-    set_extra_control(control_objects:{label:string, callback:Function}[]){
-        control_objects.forEach(obj => {
-            let key = this.gamepad.get_key_by_label(obj.label);
-            this.extra_keys[key].callback = obj.callback;
-        });
-
-        this.enable_extra_keys();
-    }
-
     enable_main_keys(){
         for(let i=0; i<this.main_keys_list.length; i++){
             if(this.main_keys[this.main_keys_list[i]].callback){
                 if(this.main_keys[this.main_keys_list[i]].loop){
                     let b1 = this.game.input.keyboard.addKey(this.main_keys[this.main_keys_list[i]].key).onDown.add(() => {
-                        if (this.disabled) return;
                         if (this.main_keys[this.gamepad.opposite_key(this.main_keys_list[i])].pressed) {
                             this.main_keys[this.gamepad.opposite_key(this.main_keys_list[i])].pressed = false;
                             this.stop_timers();
@@ -174,7 +170,6 @@ export class ControlManager{
                         this.set_loop_timers(this.main_keys_list[i]);
                     });
                     let b2 = this.game.input.keyboard.addKey(this.main_keys[this.main_keys_list[i]].key).onUp.add(() => {
-                        if (this.disabled) return;
                         this.main_keys[this.main_keys_list[i]].pressed = false;
                         this.stop_timers();
                     });
@@ -183,7 +178,6 @@ export class ControlManager{
                 }
                 else{
                     let b = this.game.input.keyboard.addKey(this.main_keys[this.main_keys_list[i]].key).onDown.add(() => {
-                        if (this.disabled) return;
                         this.main_keys[this.main_keys_list[i]].callback();
                     });
                     this.signal_bindings.push(b);
@@ -196,7 +190,6 @@ export class ControlManager{
         for(let i=0; i<this.extra_keys_list.length; i++){
             if(this.extra_keys[this.extra_keys_list[i]].callback){
                 let b = this.game.input.keyboard.addKey(this.extra_keys[this.extra_keys_list[i]].key).onDown.add(() => {
-                    if (this.disabled) return;
                     this.extra_keys[this.extra_keys_list[i]].callback();
                 });
                 this.signal_bindings.push(b);
@@ -223,15 +216,6 @@ export class ControlManager{
         this.loop_repeat_timer.stop();
     }
 
-    disable(){
-        this.disabled = true;
-        this.stop_timers();
-    }
-    
-    enable(){
-        this.disabled = false;
-    }
-
     reset(){
         this.loop_start_timer.stop();
         this.loop_repeat_timer.stop();
@@ -251,15 +235,6 @@ export class ControlManager{
             signal_binding.detach();
         });
         this.signal_bindings = [];
-    }
-
-    destroy() {
-        this.loop_start_timer.destroy();
-        this.loop_repeat_timer.destroy();
-
-        this.signal_bindings.forEach(signal_binding => {
-            signal_binding.detach();
-        });
     }
 
 }
