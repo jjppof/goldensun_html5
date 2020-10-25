@@ -132,9 +132,9 @@
         }],
         "initial_animation": "sprout",
         "actions": {
-            "frame_rate": [[0.4, 2], 4],
-            "animations": ["sprout", "growing"],
-            "frames_count": [2, 6]
+            "frame_rate": [[0.4, 2], 4, 10],
+            "animations": ["sprout", "growing", "no_target"],
+            "frames_count": [2, 6, 7]
         },
         "spritesheet": {
             "image": "assets/images/interactable_objects/psynergy_growth.png",
