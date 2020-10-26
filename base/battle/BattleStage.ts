@@ -7,9 +7,7 @@ import { GoldenSun } from '../GoldenSun';
 import { PlayerInfo } from './Battle';
 import * as _ from "lodash";
 import { SpriteBase } from '../SpriteBase';
-import { MainChar } from '../MainChar';
-import { Enemy } from '../Enemy';
-import { extra_input_labels } from '../Gamepad';
+
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
@@ -477,12 +475,14 @@ export class BattleStage {
                 this.choosing_targets = true;
                 this.change_target(0, false);
 
-                this.data.control_manager.set_main_control({
-                    right: this.previous_target.bind(this),
-                    left: this.next_target.bind(this),
-                    a: this.set_targets.bind(this),
-                    b: this.choosing_targets_finished.bind(this, null)
-                },{loop_configs: {horizontal:true}});
+                let controls = [
+                    {key: this.data.gamepad.LEFT, callback: this.next_target.bind(this)},
+                    {key: this.data.gamepad.RIGHT, callback: this.previous_target.bind(this)},
+                    {key: this.data.gamepad.A, callback: this.set_targets.bind(this)},
+                    {key: this.data.gamepad.B, callback: this.choosing_targets_finished.bind(this, null)},
+                ];
+
+                this.data.control_manager.set_control(controls, {loop_configs:{horizontal:true}});
             });
         }
     }
@@ -505,13 +505,10 @@ export class BattleStage {
     update_stage() {
         if (this.choosing_actions) return;
 
-        let cam_plus_key = this.data.gamepad.get_key_by_label(extra_input_labels.BATTLE_CAM_PLUS);
-        let cam_minus_key = this.data.gamepad.get_key_by_label(extra_input_labels.BATTLE_CAM_MINUS);
-
-        if (!this.game.input.keyboard.isDown(cam_plus_key) && this.game.input.keyboard.isDown(cam_minus_key)) {
+        if (!this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_PLUS) && this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_MINUS)) {
             this.camera_angle.rad -= CAMERA_SPEED;
             this.battle_bg.x -= BG_SPEED
-        } else if (this.game.input.keyboard.isDown(cam_plus_key) && !this.game.input.keyboard.isDown(cam_minus_key)) {
+        } else if (this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_PLUS) && !this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_MINUS)) {
             this.camera_angle.rad += CAMERA_SPEED;
             this.battle_bg.x += BG_SPEED
         } else {

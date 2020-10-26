@@ -12,5 +12,31 @@
         "move": "isaac",
         "frost": "sheba",
         "growth": "isaac"
+    },
+    "default_inputs":{
+        "left": "LEFT",
+        "right": "RIGHT",
+        "up": "UP",
+        "down": "DOWN",
+        "a": "Z",
+        "b": "X",
+        "l": "A",
+        "r": "S",
+        "select": "BACKSPACE",
+        "start": "ENTER",
+        "psy1": "Q",
+        "psy2": "W",
+        "psy3": "E",
+        "zoom1": "ONE",
+        "zoom2": "TWO",
+        "zoom3": "THREE",
+        "debug_physics": "D",
+        "debug_grid": "G",
+        "debug_keys": "K",
+        "debug_stats": "T",
+        "debug_fps": "F",
+        "debug_sliders": "L",
+        "debug_cam_minus": "PAGE_DOWN",
+        "debug_cam_plus": "PAGE_UP"
     }
 }

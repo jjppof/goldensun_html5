@@ -30,6 +30,7 @@ const CURSOR_Y = 42;
 const CURSOR_GAP = 16;
 
 const HORIZONTAL_LOOP_TIME = 300;
+const SHOULDER_LOOP_TIME = 200;
 
 /*Displays the character's Psynergy or Items
 Used in a selection-type menu, referring to the above
@@ -315,17 +316,20 @@ export class ItemPsynergyChooseWindow {
     }
 
     /*Enables control keys for this menu*/
-    grant_control(on_cancel:Function, on_select:Function, extra_commands?:{shift?:Function, spacebar?:Function}){
-        this.data.control_manager.set_main_control({
-            right: this.next_page.bind(this),
-            left: this.previous_page.bind(this),
-            up: this.previous_element.bind(this),
-            down: this.next_element.bind(this),
-            b: on_cancel,
-            a: on_select,
-            l: extra_commands.shift,
-            r: extra_commands.spacebar
-        },{loop_configs: {vertical:true, horizontal:true, horizontal_time:HORIZONTAL_LOOP_TIME}});
+    grant_control(on_cancel:Function, on_select:Function, shoulder_r?:Function, shoulder_l?:Function){
+        let controls = [
+            {key: this.data.gamepad.LEFT, callback: this.previous_page.bind(this)},
+            {key: this.data.gamepad.RIGHT, callback: this.next_page.bind(this)},
+            {key: this.data.gamepad.UP, callback: this.previous_element.bind(this)},
+            {key: this.data.gamepad.DOWN, callback: this.next_element.bind(this)},
+            {key: this.data.gamepad.A, callback: on_select},
+            {key: this.data.gamepad.B, callback: on_cancel},
+            {key: this.data.gamepad.L, callback: shoulder_l},
+            {key: this.data.gamepad.R, callback: shoulder_r},
+        ];
+
+        this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true,
+            shoulder:true, horizontal_time:HORIZONTAL_LOOP_TIME, shoulder_time: SHOULDER_LOOP_TIME}});
     }
 
     /*Hides this window*/

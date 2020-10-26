@@ -1,21 +1,18 @@
-export const extra_input_labels = {
-    PSY1: "psy1",
-    PSY2: "psy2",
-    PSY3: "psy3",
-    ZOOM1: "zoom1",
-    ZOOM2: "zoom2",
-    ZOOM3: "zoom3",
-    DEBUG_PHYS: "debug_phys",
-    GRID: "grid",
-    KEYS: "keys",
-    STATS: "stats",
-    FPS: "fps",
-    SLIDERS: "sliders",
-    BATTLE_CAM_PLUS: "battle_cam_plus",
-    BATTLE_CAM_MINUS: "battle_cam_minus"
-}
+import { GoldenSun } from "./GoldenSun";
+
+export const input_ids = [
+    "LEFT", "RIGHT", "UP", "DOWN",
+    "A", "B", "L", "R", "SELECT", "START",
+    "PSY1", "PSY2", "PSY3", "ZOOM1", "ZOOM2",
+    "ZOOM3", "DEBUG_PHYSICS", "DEBUG_GRID",
+    "DEBUG_KEYS", "DEBUG_STATS", "DEBUG_FPS",
+    "DEBUG_SLIDERS", "DEBUG_CAM_PLUS",
+    "DEBUG_CAM_MINUS"
+]
 
 export class Gamepad{
+    public data:GoldenSun;
+    
     public LEFT:number;
     public RIGHT:number;
     public UP:number;
@@ -29,57 +26,41 @@ export class Gamepad{
     public SELECT:number;
     public START:number;
 
-    public extra_inputs:{label:string, key:number}[];
+    public PSY1:number;
+    public PSY2:number;
+    public PSY3:number;
 
-    constructor(){
+    public ZOOM1:number;
+    public ZOOM2:number;
+    public ZOOM3:number;
+
+    public DEBUG_PHYSICS:number;
+    public DEBUG_GRID:number;
+    public DEBUG_KEYS:number;
+    public DEBUG_STATS:number;
+    public DEBUG_FPS:number;
+    public DEBUG_SLIDERS:number;
+    public DEBUG_CAM_MINUS:number;
+    public DEBUG_CAM_PLUS:number;
+
+    constructor(data:GoldenSun){
+        this.data = data;
         this.initialize_gamepad();
     }
 
     initialize_gamepad(){
-        let base = {
-            LEFT: Phaser.Keyboard.LEFT,
-            RIGHT: Phaser.Keyboard.RIGHT,
-            UP: Phaser.Keyboard.UP,
-            DOWN: Phaser.Keyboard.DOWN,
-            A: Phaser.Keyboard.Z, //previously ENTER
-            B: Phaser.Keyboard.X, //previously ESC
-            L: Phaser.Keyboard.A, //previously SHIFT
-            R: Phaser.Keyboard.S, //previously SPACEBAR
-            SELECT: Phaser.Keyboard.BACKSPACE,
-            START: Phaser.Keyboard.ENTER
-        };
+        for (let index in input_ids){
+            this[input_ids[index]] = Phaser.Keyboard[this.data.dbs.init_db.default_inputs[input_ids[index].toLowerCase()]];
+        }
+    }
 
-        let extra = [
-            {label: extra_input_labels.PSY1, key: Phaser.Keyboard.Q},
-            {label: extra_input_labels.PSY2, key: Phaser.Keyboard.W},
-            {label: extra_input_labels.PSY3, key: Phaser.Keyboard.E},
-            {label: extra_input_labels.ZOOM1, key: Phaser.Keyboard.ONE},
-            {label: extra_input_labels.ZOOM2, key: Phaser.Keyboard.TWO},
-            {label: extra_input_labels.ZOOM3, key: Phaser.Keyboard.THREE},
-            {label: extra_input_labels.DEBUG_PHYS, key: Phaser.Keyboard.D},
-            {label: extra_input_labels.GRID, key: Phaser.Keyboard.G},
-            {label: extra_input_labels.KEYS, key: Phaser.Keyboard.K},
-            {label: extra_input_labels.STATS, key: Phaser.Keyboard.S},
-            {label: extra_input_labels.FPS, key: Phaser.Keyboard.F},
-            {label: extra_input_labels.SLIDERS, key: Phaser.Keyboard.L},
-            {label: extra_input_labels.BATTLE_CAM_MINUS, key: Phaser.Keyboard.PAGE_DOWN},
-            {label: extra_input_labels.BATTLE_CAM_PLUS, key: Phaser.Keyboard.PAGE_UP},
-        ];
-
-        this.LEFT = base.LEFT;
-        this.RIGHT = base.RIGHT;
-        this.UP = base.UP;
-        this.DOWN = base.DOWN;
-
-        this.A = base.A;
-        this.B = base.B;
-        this.L = base.L;
-        this.R = base.R;
-
-        this.SELECT = base.SELECT;
-        this.START= base.START;
-
-        this.extra_inputs = extra ? extra : [];
+    get_id_by_key(key:number){
+        for(let property in this){
+            let property_name = property as string;
+            if(this[property_name] === key)
+                return property_name;
+        }
+        return null;
     }
 
     opposite_key(key:number){
@@ -101,48 +82,15 @@ export class Gamepad{
         }
     }
 
-    get_key_by_label(label:string){
-        for(let i=0; i<this.extra_inputs.length; i++){
-            if(this.extra_inputs[i].label === label)
-                return this.extra_inputs[i].key; 
-        }
-        return null;
-    }
-
-    get_label_by_key(key:number){
-        for(let i=0; i<this.extra_inputs.length; i++){
-            if(this.extra_inputs[i].key === key)
-                return this.extra_inputs[i].label; 
-        }
-        return null;
-    }
-
-    get main_keys(){
+    get keys(){
         let keys:number[] = [];
 
-        if(this.LEFT) keys.push(this.LEFT);
-        if(this.RIGHT) keys.push(this.RIGHT);
-        if(this.UP) keys.push(this.UP);
-        if(this.DOWN) keys.push(this.DOWN);
-
-        if(this.A) keys.push(this.A);
-        if(this.B) keys.push(this.B);
-        if(this.L) keys.push(this.L);
-        if(this.R) keys.push(this.R);
-
-        if(this.SELECT) keys.push(this.SELECT);
-        if(this.START) keys.push(this.START);
+        for(let property in this){
+            let property_name = property as string;
+            if(input_ids.includes(property_name))
+                keys.push(this[property_name]);
+        }
 
         return keys;
     }
-
-    get extra_keys(){
-        let keys:number[] = [];
-
-        this.extra_inputs.forEach(obj => {keys.push(obj.key)});
-
-        return keys;
-    }
-
-
 }

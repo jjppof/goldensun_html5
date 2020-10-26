@@ -32,28 +32,30 @@ export class MoveFieldPsynergy extends FieldAbilities {
     }
 
     set_controls() {
-        this.data.control_manager.set_main_control({
-            right: () => {
-                this.controllable_char.trying_to_push_direction = directions.right;
-                this.fire_push();
-            },
-            left: () => {
+        let controls = [
+            {key: this.data.gamepad.LEFT, callback: () => {
                 this.controllable_char.trying_to_push_direction = directions.left;
                 this.fire_push();
-            },
-            up: () => {
+            }},
+            {key: this.data.gamepad.RIGHT, callback: () => {
+                this.controllable_char.trying_to_push_direction = directions.right;
+                this.fire_push();
+            }},
+            {key: this.data.gamepad.UP, callback: () => {
                 this.controllable_char.trying_to_push_direction = directions.up;
                 this.fire_push();
-            },
-            down: () => {
+            }},
+            {key: this.data.gamepad.DOWN, callback: () => {
                 this.controllable_char.trying_to_push_direction = directions.down;
                 this.fire_push();
-            },
-            b: () => {
+            }},
+            {key: this.data.gamepad.B, callback: () => {
                 this.finish_hand();
                 this.unset_hero_cast_anim();
-            }
-        })
+            }}
+        ];
+
+        this.data.control_manager.set_control(controls);
     }
 
     fire_push() {

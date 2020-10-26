@@ -1,7 +1,6 @@
 import { GoldenSun } from "../GoldenSun";
 import { MainChar } from "../MainChar";
 import { reverse_directions, ordered_elements } from "../utils";
-import { extra_input_labels } from "../Gamepad";
 import * as _ from "lodash";
 
 export class Debug {
@@ -31,47 +30,15 @@ export class Debug {
     }
 
     initialize_controls() {
-        //activate debug mode
-        this.data.control_manager.add_fleeting_control(this.data.gamepad.get_key_by_label(extra_input_labels.DEBUG_PHYS), {
-            on_down: () => {
-                this.toggle_debug_physics();
-            }
-        }, {persist:true});
-
-        //activate grid mode
-        this.data.control_manager.add_fleeting_control(this.data.gamepad.get_key_by_label(extra_input_labels.GRID), {
-            on_down: () => {
-                this.toggle_grid();
-            }
-        }, {persist:true});
-
-        //activate keys debug mode
-        this.data.control_manager.add_fleeting_control(this.data.gamepad.get_key_by_label(extra_input_labels.KEYS), {
-            on_down: () => {
-                this.toggle_keys();
-            }
-        }, {persist:true});
-
-        //activate stats debug mode
-        this.data.control_manager.add_fleeting_control(this.data.gamepad.get_key_by_label(extra_input_labels.STATS), {
-            on_down: () => {
-                this.toggle_stats();
-            }
-        }, {persist:true});
-
-        //enable fps show
-        this.data.control_manager.add_fleeting_control(this.data.gamepad.get_key_by_label(extra_input_labels.FPS), {
-            on_down: () => {
-                this.toggle_fps();
-            }
-        }, {persist:true});
-
-        //show sliders
-        this.data.control_manager.add_fleeting_control(this.data.gamepad.get_key_by_label(extra_input_labels.SLIDERS), {
-            on_down: () => {
-                this.toggle_sliders();
-            }
-        }, {persist:true});
+        let debug_controls = [
+            {key: this.data.gamepad.DEBUG_PHYSICS, callback: this.toggle_debug_physics.bind(this)},
+            {key: this.data.gamepad.DEBUG_GRID, callback: this.toggle_grid.bind(this)},
+            {key: this.data.gamepad.DEBUG_KEYS, callback: this.toggle_keys.bind(this)},
+            {key: this.data.gamepad.DEBUG_STATS, callback: this.toggle_stats.bind(this)},
+            {key: this.data.gamepad.DEBUG_FPS, callback: this.toggle_fps.bind(this)},
+            {key: this.data.gamepad.DEBUG_SLIDERS, callback: this.toggle_sliders.bind(this)},
+        ];
+        this.data.control_manager.set_control(debug_controls, {persist:true});
     }
 
     update_debug_physics(flag) {
@@ -84,6 +51,7 @@ export class Debug {
         }
     }
 
+    //activate debug mode
     toggle_debug_physics() {
         this.data.hero.sprite.body.debug = !this.data.hero.sprite.body.debug;
         this.update_debug_physics(this.data.hero.sprite.body.debug);
@@ -99,6 +67,8 @@ export class Debug {
         this.debug_physics = !this.debug_physics;
     }
 
+    
+    //activate keys debug mode
     toggle_keys() {
         this.debug_keys = !this.debug_keys;
         const toggler = (is_down, e) => {
@@ -140,6 +110,7 @@ export class Debug {
         }
     }
 
+    //show sliders
     toggle_sliders() {
         this.show_sliders = !this.show_sliders;
         if (this.show_sliders) {
@@ -241,10 +212,13 @@ export class Debug {
         document.querySelector("#key_debug table .stop_by_colliding").innerHTML = this.data.hero.stop_by_colliding.toString();
     }
 
+    
+    //enable fps show
     toggle_fps() {
         this.show_fps = !this.show_fps;
     }
 
+    //activate grid mode
     toggle_grid() {
         this.grid = !this.grid;
     }
@@ -300,6 +274,7 @@ export class Debug {
         }
     }
 
+    //activate stats debug mode
     toggle_stats() {
         if (!this.data.in_battle) {
             this.debug_stats = false;

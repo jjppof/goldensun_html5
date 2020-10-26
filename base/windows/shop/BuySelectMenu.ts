@@ -305,17 +305,15 @@ export class BuySelectMenu{
     }
 
     grant_control(on_cancel:Function, on_select:Function){
-        this.data.control_manager.set_main_control({right: this.next_item.bind(this),
-            left: this.previous_item.bind(this),
-            up: this.previous_page.bind(this),
-            down: this.next_page.bind(this),
-            b: on_cancel,
-            a: on_select},{loop_configs: {horizontal:true}});
-        this.data.control_manager.set_extra_control([
-            {label:"psy1", callback:() =>{
-                console.log("Pressed psy1 key");
-            }}
-        ])
+        let controls = [
+            {key: this.data.gamepad.LEFT, callback: this.previous_item.bind(this)},
+            {key: this.data.gamepad.RIGHT, callback: this.next_item.bind(this)},
+            {key: this.data.gamepad.UP, callback: this.previous_page.bind(this)},
+            {key: this.data.gamepad.DOWN, callback: this.next_page.bind(this)},
+            {key: this.data.gamepad.A, callback: on_select},
+            {key: this.data.gamepad.B, callback: on_cancel}
+        ];
+        this.data.control_manager.set_control(controls, {loop_configs:{horizontal:true}});
     }
 
     /*Changes to the next item page

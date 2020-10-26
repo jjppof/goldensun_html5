@@ -85,17 +85,19 @@ export class DjinnPsynergyWindow {
     }
 
     grant_control(){
-        this.data.control_manager.set_main_control({
-            left: this.previous_page.bind(this),
-            right: this.next_page.bind(this),
-            r: this.spacebar_callback,
-            b: () => {
-                this.execute_operation = false;
-                this.close(this.close_callback)},
-            a: () => {
+        let controls = [
+            {key: this.data.gamepad.LEFT, callback: this.previous_page.bind(this)},
+            {key: this.data.gamepad.LEFT, callback: this.next_page.bind(this)},
+            {key: this.data.gamepad.R, callback: this.spacebar_callback},
+            {key: this.data.gamepad.A, callback: () => {
                 this.execute_operation = true;
-                this.close(this.close_callback)}
-        },{loop_configs: {horizontal:true}});
+                this.close(this.close_callback)}},
+            {key: this.data.gamepad.B, callback: () => {
+                this.execute_operation = false;
+                this.close(this.close_callback)}},
+
+        ];
+        this.data.control_manager.set_control(controls, {loop_configs:{horizontal:true}});
     }
 
     set_page_number() {

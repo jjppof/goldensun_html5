@@ -101,7 +101,7 @@ export class MainMenu {
 }
 
 export function initialize_menu(game:Phaser.Game, data:GoldenSun) {
-    let open_func = () => {
+    let trigger_menu = () => {
         if (data.hero.in_action() || data.in_battle || !data.created || data.game_event_manager.on_event) return;
         if (!data.menu_open) {
             data.menu_open = true;
@@ -111,13 +111,12 @@ export function initialize_menu(game:Phaser.Game, data:GoldenSun) {
         };
     }
 
-    data.control_manager.add_fleeting_control(data.gamepad.A, {
-        on_down: open_func
-    }, {persist:true});
-
-    data.control_manager.add_fleeting_control(data.gamepad.SELECT, {
-        on_down: open_func
-    }, {persist:true});
+    let controls = [
+        {key: data.gamepad.A, callback: trigger_menu},
+        {key: data.gamepad.SELECT, callback: trigger_menu}
+    ];
+    
+    data.control_manager.set_control(controls, {persist:true});
 
     return new MainMenu(game, data);
 }

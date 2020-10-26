@@ -130,12 +130,13 @@ export class DropItemWindow {
             }
         }, false);
 
-        this.data.control_manager.set_main_control({
-            up: this.change_answer.bind(this),
-            down: this.change_answer.bind(this),
-            b: this.close.bind(this),
-            a: this.on_drop.bind(this)
-        },{loop_configs: {vertical:true}});
+        let controls = [
+            {key: this.data.gamepad.UP, callback: this.change_answer.bind(this)},
+            {key: this.data.gamepad.DOWN, callback: this.change_answer.bind(this)},
+            {key: this.data.gamepad.A, callback: this.on_drop.bind(this)},
+            {key: this.data.gamepad.B, callback: this.close.bind(this)},
+        ];
+        this.data.control_manager.set_control(controls, {loop_configs:{vertical:true}});
 
     }
 
