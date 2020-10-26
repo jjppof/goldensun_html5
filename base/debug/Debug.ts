@@ -30,7 +30,6 @@ export class Debug {
     }
 
     initialize_controls() {
-        console.log("this");
         let debug_controls = [
             {key: this.data.gamepad.DEBUG_PHYSICS, callback: this.toggle_debug_physics.bind(this)},
             {key: this.data.gamepad.DEBUG_GRID, callback: this.toggle_grid.bind(this)},
@@ -40,7 +39,6 @@ export class Debug {
             {key: this.data.gamepad.DEBUG_SLIDERS, callback: this.toggle_sliders.bind(this)},
         ];
         this.data.control_manager.set_control(debug_controls, {persist:true});
-        console.log("done");
     }
 
     update_debug_physics(flag) {
