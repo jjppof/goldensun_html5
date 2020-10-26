@@ -311,11 +311,6 @@ export class BuySelectMenu{
             down: this.next_page.bind(this),
             b: on_cancel,
             a: on_select},{loop_configs: {horizontal:true}});
-        this.data.control_manager.set_extra_control([
-            {label:"psy1", callback:() =>{
-                console.log("Pressed psy1 key");
-            }}
-        ])
     }
 
     /*Changes to the next item page

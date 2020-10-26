@@ -115,17 +115,21 @@ export class ControlManager{
         if(callbacks.select) this.main_keys[this.gamepad.SELECT].callback = callbacks.select;
         if(callbacks.start) this.main_keys[this.gamepad.START].callback = callbacks.start;
         
-        if(params) this.set_params(params);
-        this.enable_main_keys();
+        if(params){
+            this.set_params(params);
+            this.enable_main_keys(params.persist);
+        }
+        else this.enable_main_keys();
     }
 
-    set_extra_control(control_objects:{label:string, callback:Function}[], params?:{persist?:boolean}){
+    set_extra_control(control_objects:{key_label:string, callback:Function}[], params?:{persist?:boolean}){
         control_objects.forEach(obj => {
-            let key = this.gamepad.get_key_by_label(obj.label);
+            let key = this.gamepad.get_key_by_label(obj.key_label);
             this.extra_keys[key].callback = obj.callback;
         });
 
-        this.enable_extra_keys();
+        if(params) this.enable_extra_keys(params.persist);
+        else this.enable_extra_keys();
     }
 
     set_params(params:any){
@@ -157,9 +161,14 @@ export class ControlManager{
         })
     }
 
-    enable_main_keys(){
+    enable_main_keys(persist?:boolean){
+        let bindings:Phaser.SignalBinding[] = [];
+
         for(let i=0; i<this.main_keys_list.length; i++){
             if(this.main_keys[this.main_keys_list[i]].callback){
+                let key_callback = this.main_keys[this.main_keys_list[i]].callback;
+                let loop_time = this.main_keys[this.main_keys_list[i]].loop_time;
+
                 if(this.main_keys[this.main_keys_list[i]].loop){
                     let b1 = this.game.input.keyboard.addKey(this.main_keys[this.main_keys_list[i]].key).onDown.add(() => {
                         if (this.main_keys[this.gamepad.opposite_key(this.main_keys_list[i])].pressed) {
@@ -167,48 +176,54 @@ export class ControlManager{
                             this.stop_timers();
                         }
                         this.main_keys[this.main_keys_list[i]].pressed = true;
-                        this.set_loop_timers(this.main_keys_list[i]);
+                        this.set_loop_timers(key_callback, loop_time);
                     });
                     let b2 = this.game.input.keyboard.addKey(this.main_keys[this.main_keys_list[i]].key).onUp.add(() => {
                         this.main_keys[this.main_keys_list[i]].pressed = false;
                         this.stop_timers();
                     });
-                    this.signal_bindings.push(b1);
-                    this.signal_bindings.push(b2);
+
+                    if(!persist) this.signal_bindings.push(b1, b2);
+                    bindings.push(b1, b2);
                 }
                 else{
                     let b = this.game.input.keyboard.addKey(this.main_keys[this.main_keys_list[i]].key).onDown.add(() => {
-                        this.main_keys[this.main_keys_list[i]].callback();
+                        key_callback();
                     });
-                    this.signal_bindings.push(b);
+
+                    if(!persist) this.signal_bindings.push(b);
+                    bindings.push(b);
                 }
             };
         }
     }
 
-    enable_extra_keys(){
+    enable_extra_keys(persist?:boolean){
+        let bindings:Phaser.SignalBinding[] = [];
+
         for(let i=0; i<this.extra_keys_list.length; i++){
             if(this.extra_keys[this.extra_keys_list[i]].callback){
+                let key_callback = this.extra_keys[this.extra_keys_list[i]].callback;
+
                 let b = this.game.input.keyboard.addKey(this.extra_keys[this.extra_keys_list[i]].key).onDown.add(() => {
-                    this.extra_keys[this.extra_keys_list[i]].callback();
+                    key_callback();
                 });
-                this.signal_bindings.push(b);
+
+                if(!persist) this.signal_bindings.push(b);
+                bindings.push(b);
             }
         }
+        return bindings;
     }
 
-    set_loop_timers(key?:number) {
-        this.change_index(key);
+    set_loop_timers(callback:Function, loop_time:number) {
+        callback();
 
         this.loop_start_timer.add(Phaser.Timer.QUARTER, () => {
-            this.loop_repeat_timer.loop(this.main_keys[key].loop_time, this.change_index.bind(this, key));
+            this.loop_repeat_timer.loop(loop_time, callback);
             this.loop_repeat_timer.start();
         });
         this.loop_start_timer.start();
-    }
-
-    change_index(key:number) {
-        this.main_keys[key].callback();
     }
 
     stop_timers() {

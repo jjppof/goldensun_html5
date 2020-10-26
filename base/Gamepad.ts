@@ -1,3 +1,18 @@
+import { GoldenSun } from "./GoldenSun";
+
+export const main_input_labels = {
+    LEFT: "left",
+    RIGHT: "right",
+    UP: "up",
+    DOWN: "down",
+    A: "a",
+    B: "b",
+    L: "l",
+    R: "r",
+    SELECT: "select",
+    START: "start"
+}
+
 export const extra_input_labels = {
     PSY1: "psy1",
     PSY2: "psy2",
@@ -16,6 +31,8 @@ export const extra_input_labels = {
 }
 
 export class Gamepad{
+    public data:GoldenSun;
+    
     public LEFT:number;
     public RIGHT:number;
     public UP:number;
@@ -31,55 +48,22 @@ export class Gamepad{
 
     public extra_inputs:{label:string, key:number}[];
 
-    constructor(){
+    constructor(data:GoldenSun){
+        this.data = data;
         this.initialize_gamepad();
     }
 
     initialize_gamepad(){
-        let base = {
-            LEFT: Phaser.Keyboard.LEFT,
-            RIGHT: Phaser.Keyboard.RIGHT,
-            UP: Phaser.Keyboard.UP,
-            DOWN: Phaser.Keyboard.DOWN,
-            A: Phaser.Keyboard.Z, //previously ENTER
-            B: Phaser.Keyboard.X, //previously ESC
-            L: Phaser.Keyboard.A, //previously SHIFT
-            R: Phaser.Keyboard.S, //previously SPACEBAR
-            SELECT: Phaser.Keyboard.BACKSPACE,
-            START: Phaser.Keyboard.ENTER
-        };
+        for (let label in main_input_labels){
+            this[label] = Phaser.Keyboard[this.data.dbs.init_db.default_inputs[main_input_labels[label]]];
+        }
 
-        let extra = [
-            {label: extra_input_labels.PSY1, key: Phaser.Keyboard.Q},
-            {label: extra_input_labels.PSY2, key: Phaser.Keyboard.W},
-            {label: extra_input_labels.PSY3, key: Phaser.Keyboard.E},
-            {label: extra_input_labels.ZOOM1, key: Phaser.Keyboard.ONE},
-            {label: extra_input_labels.ZOOM2, key: Phaser.Keyboard.TWO},
-            {label: extra_input_labels.ZOOM3, key: Phaser.Keyboard.THREE},
-            {label: extra_input_labels.DEBUG_PHYS, key: Phaser.Keyboard.D},
-            {label: extra_input_labels.GRID, key: Phaser.Keyboard.G},
-            {label: extra_input_labels.KEYS, key: Phaser.Keyboard.K},
-            {label: extra_input_labels.STATS, key: Phaser.Keyboard.S},
-            {label: extra_input_labels.FPS, key: Phaser.Keyboard.F},
-            {label: extra_input_labels.SLIDERS, key: Phaser.Keyboard.L},
-            {label: extra_input_labels.BATTLE_CAM_MINUS, key: Phaser.Keyboard.PAGE_DOWN},
-            {label: extra_input_labels.BATTLE_CAM_PLUS, key: Phaser.Keyboard.PAGE_UP},
-        ];
+        let extra = [];
+        for (let label in extra_input_labels){
+            extra.push({label: extra_input_labels[label], key: Phaser.Keyboard[this.data.dbs.init_db.default_inputs[extra_input_labels[label]]]});
+        }
 
-        this.LEFT = base.LEFT;
-        this.RIGHT = base.RIGHT;
-        this.UP = base.UP;
-        this.DOWN = base.DOWN;
-
-        this.A = base.A;
-        this.B = base.B;
-        this.L = base.L;
-        this.R = base.R;
-
-        this.SELECT = base.SELECT;
-        this.START= base.START;
-
-        this.extra_inputs = extra ? extra : [];
+        this.extra_inputs = extra;
     }
 
     opposite_key(key:number){
@@ -120,18 +104,11 @@ export class Gamepad{
     get main_keys(){
         let keys:number[] = [];
 
-        if(this.LEFT) keys.push(this.LEFT);
-        if(this.RIGHT) keys.push(this.RIGHT);
-        if(this.UP) keys.push(this.UP);
-        if(this.DOWN) keys.push(this.DOWN);
-
-        if(this.A) keys.push(this.A);
-        if(this.B) keys.push(this.B);
-        if(this.L) keys.push(this.L);
-        if(this.R) keys.push(this.R);
-
-        if(this.SELECT) keys.push(this.SELECT);
-        if(this.START) keys.push(this.START);
+        for(let label in this){
+            let str_label = label as string;
+            if(main_input_labels[str_label])
+                keys.push(this[str_label]);
+        }
 
         return keys;
     }
@@ -143,6 +120,5 @@ export class Gamepad{
 
         return keys;
     }
-
 
 }

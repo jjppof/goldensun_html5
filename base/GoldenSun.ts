@@ -96,7 +96,7 @@ export class GoldenSun {
         load_databases(this.game, this.dbs);
 
         //initialize managers
-        this.gamepad = new Gamepad();
+        this.gamepad = new Gamepad(this);
         this.cursor_manager = new CursorManager(this.game);
         this.control_manager = new ControlManager(this.game, this.gamepad);
 
@@ -176,58 +176,49 @@ export class GoldenSun {
         });
 
         //enable zoom
-        this.control_manager.add_fleeting_control(this.gamepad.get_key_by_label(extra_input_labels.ZOOM1), {
-            on_down: () => {
+        let zoom_controls = [
+            {key_label: extra_input_labels.ZOOM1, callback: () => {
                 if (this.fullscreen) return;
                 this.scale_factor = 1;
                 this.game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
                 window.dispatchEvent(new Event('resize'));
-            }
-        }, {persist:true});
-
-        this.control_manager.add_fleeting_control(this.gamepad.get_key_by_label(extra_input_labels.ZOOM2), {
-            on_down: () => {
+            }},
+            {key_label: extra_input_labels.ZOOM2, callback: () => {
                 if (this.fullscreen) return;
                 this.scale_factor = 2;
                 this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
                 window.dispatchEvent(new Event('resize'));
-            }
-        }, {persist:true});
-
-        this.control_manager.add_fleeting_control(this.gamepad.get_key_by_label(extra_input_labels.ZOOM3), {
-            on_down: () => {
+            }},
+            {key_label: extra_input_labels.ZOOM3, callback: () => {
                 if (this.fullscreen) return;
                 this.scale_factor = 3;
                 this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
                 window.dispatchEvent(new Event('resize'));
-            }
-        }, {persist:true});
+            }},
+
+        ];
+        this.control_manager.set_extra_control(zoom_controls, {persist:true});
 
         //initialize screens
         this.shop_menu = new ShopMenu(this.game, this);
         this.main_menu = initialize_menu(this.game, this);
 
         //enable psynergies shortcuts for testing
-        this.control_manager.add_fleeting_control(this.gamepad.get_key_by_label(extra_input_labels.PSY1), {
-            on_down: () => {
+        let psy_controls = [
+            {key_label: extra_input_labels.PSY1, callback: () => {
                 if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
                 this.info.field_abilities_list.move.cast(this.hero, this.dbs.init_db.initial_shortcuts.move);
-            }
-        }, {persist:true});
-
-        this.control_manager.add_fleeting_control(this.gamepad.get_key_by_label(extra_input_labels.PSY2), {
-            on_down: () => {
+            }},
+            {key_label: extra_input_labels.PSY2, callback: () => {
                 if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
                 this.info.field_abilities_list.frost.cast(this.hero, this.dbs.init_db.initial_shortcuts.frost);
-            }
-        }, {persist:true});
-
-        this.control_manager.add_fleeting_control(this.gamepad.get_key_by_label(extra_input_labels.PSY3), {
-            on_down: () => {
+            }},
+            {key_label: extra_input_labels.PSY3, callback: () => {
                 if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
             this.info.field_abilities_list.growth.cast(this.hero, this.dbs.init_db.initial_shortcuts.growth);
-            }
-        }, {persist:true});
+            }}
+        ];
+        this.control_manager.set_extra_control(psy_controls, {persist:true});
     }
 
     hero_movement_allowed(allow_climbing = true) {

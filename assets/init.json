@@ -12,5 +12,31 @@
         "move": "isaac",
         "frost": "sheba",
         "growth": "isaac"
+    },
+    "default_inputs":{
+        "left": "LEFT",
+        "right": "RIGHT",
+        "up": "UP",
+        "down": "DOWN",
+        "a": "Z",
+        "b": "X",
+        "l": "A",
+        "r": "S",
+        "select": "BACKSPACE",
+        "start": "ENTER",
+        "psy1": "Q",
+        "psy2": "W",
+        "psy3": "E",
+        "zoom1": "ONE",
+        "zoom2": "TWO",
+        "zoom3": "THREE",
+        "debug_phys": "D",
+        "grid": "G",
+        "keys": "K",
+        "stats": "S",
+        "fps": "F",
+        "sliders": "L",
+        "battle_cam_minus": "PAGE_DOWN",
+        "battle_cam_plus": "PAGE_UP"
     }
 }
