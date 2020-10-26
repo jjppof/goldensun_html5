@@ -80,6 +80,7 @@ export class ControlManager{
             bindings.push(b2);
         }
 
+        this.reset(false);
         return bindings;
     }
 
@@ -169,6 +170,7 @@ export class ControlManager{
                 }
             };
         }
+        this.reset(false);
     }
 
     set_loop_timers(callback:Function, loop_time:number) {
@@ -186,7 +188,7 @@ export class ControlManager{
         this.loop_repeat_timer.stop();
     }
 
-    reset(){
+    reset(detach:boolean=true){
         this.loop_start_timer.stop();
         this.loop_repeat_timer.stop();
 
@@ -197,10 +199,12 @@ export class ControlManager{
             this.keys[this.keys_list[i]].loop_time = DEFAULT_LOOP_TIME;
         }
 
-        this.signal_bindings.forEach(signal_binding => {
-            signal_binding.detach();
-        });
-        this.signal_bindings = [];
+        if(detach){
+            this.signal_bindings.forEach(signal_binding => {
+                signal_binding.detach();
+            });
+            this.signal_bindings = [];
+        }
     }
 
 }
