@@ -187,12 +187,13 @@ export class GiveItemWindow {
             this.set_header();
             this.set_answer_index(YES_Y);
             
-            this.data.control_manager.set_main_control({
-                up: this.change_answer.bind(this),
-                down: this.change_answer.bind(this),
-                b: this.on_give.bind(this, false),
-                a: this.on_give.bind(this)
-            },{loop_configs: {vertical:true}});
+            let controls = [
+                {key: this.data.gamepad.UP, callback: this.change_answer.bind(this)},
+                {key: this.data.gamepad.DOWN, callback: this.change_answer.bind(this)},
+                {key: this.data.gamepad.A, callback: this.on_give.bind(this)},
+                {key: this.data.gamepad.B, callback: this.on_give.bind(this, false)},
+            ];
+            this.data.control_manager.set_control(controls, {loop_configs:{vertical:true}});
         }
         else{
             if (this.item_obj.quantity > 1) {

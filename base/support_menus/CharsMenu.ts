@@ -306,12 +306,15 @@ export class CharsMenu {
     }
 
     grant_control(on_cancel:Function, on_select:Function){
-        this.data.control_manager.set_main_control({right: this.next_char.bind(this),
-            left: this.previous_char.bind(this),
-            up: this.previous_line.bind(this),
-            down: this.next_line.bind(this),
-            b: on_cancel,
-            a: on_select},{loop_configs: {horizontal:true}});
+        let controls = [
+            {key: this.data.gamepad.LEFT, callback: this.previous_char.bind(this)},
+            {key: this.data.gamepad.RIGHT, callback: this.next_char.bind(this)},
+            {key: this.data.gamepad.UP, callback: this.previous_line.bind(this)},
+            {key: this.data.gamepad.DOWN, callback: this.next_line.bind(this)},
+            {key: this.data.gamepad.A, callback: on_select},
+            {key: this.data.gamepad.B, callback: on_cancel}
+        ];
+        this.data.control_manager.set_control(controls,{loop_configs: {horizontal:true}});
     }
 
     activate(){

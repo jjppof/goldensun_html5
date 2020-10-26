@@ -245,12 +245,14 @@ export class DjinnWindow {
         this.psynergy_window.open(this.char, undefined, undefined, true, this.data.info.djinni_list[this.djinni[this.djinn_index]], this.get_next_status());
         this.psynergy_window_open = true;
 
-        this.data.control_manager.set_main_control({
-            up: this.previous_djinn.bind(this),
-            down: this.next_djinn.bind(this),
-            left: this.psynergy_window.previous_page.bind(this.psynergy_window),
-            right: this.psynergy_window.next_page.bind(this.psynergy_window)
-        },{loop_configs: {vertical:true, horizontal:true}});
+        let controls = [
+            {key: this.data.gamepad.LEFT, callback: this.psynergy_window.previous_page.bind(this.psynergy_window)},
+            {key: this.data.gamepad.RIGHT, callback: this.psynergy_window.next_page.bind(this.psynergy_window)},
+            {key: this.data.gamepad.UP, callback: this.previous_djinn.bind(this)},
+            {key: this.data.gamepad.DOWN, callback: this.next_djinn.bind(this)}
+        ];
+
+        this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
     }
 
     hide_psynergy(){
@@ -264,23 +266,25 @@ export class DjinnWindow {
     }
 
     djinn_choose(){
-        this.data.control_manager.set_main_control({
-            left: this.previous_page.bind(this),
-            right: this.next_page.bind(this),
-            up: this.previous_djinn.bind(this),
-            down: this.next_djinn.bind(this),
-            b: () => {
-                this.choosen_ability = null;
-                this.close(this.close_callback);
-            },
-            a: () => {
+        let controls = [
+            {key: this.data.gamepad.LEFT, callback: this.previous_page.bind(this)},
+            {key: this.data.gamepad.RIGHT, callback: this.next_page.bind(this)},
+            {key: this.data.gamepad.UP, callback: this.previous_djinn.bind(this)},
+            {key: this.data.gamepad.DOWN, callback: this.next_djinn.bind(this)},
+            {key: this.data.gamepad.A, callback: () => {
                 const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
                 if (this_djinn.status !== djinn_status.RECOVERY) {
                     this.choosen_ability = this_djinn.ability_key_name;
                     this.hide(this.close_callback);
                 }
-            }
-        },{loop_configs: {vertical:true, horizontal:true}});
+            }},
+            {key: this.data.gamepad.B, callback: () => {
+                this.choosen_ability = null;
+                this.close(this.close_callback);
+            }},
+        ];
+
+        this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
 
         if(this.shift_bindings.length === 0){
             this.shift_bindings = this.data.control_manager.add_fleeting_control(this.data.gamepad.R,

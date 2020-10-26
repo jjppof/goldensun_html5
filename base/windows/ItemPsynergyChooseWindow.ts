@@ -316,16 +316,18 @@ export class ItemPsynergyChooseWindow {
 
     /*Enables control keys for this menu*/
     grant_control(on_cancel:Function, on_select:Function, extra_commands?:{shift?:Function, spacebar?:Function}){
-        this.data.control_manager.set_main_control({
-            right: this.next_page.bind(this),
-            left: this.previous_page.bind(this),
-            up: this.previous_element.bind(this),
-            down: this.next_element.bind(this),
-            b: on_cancel,
-            a: on_select,
-            l: extra_commands.shift,
-            r: extra_commands.spacebar
-        },{loop_configs: {vertical:true, horizontal:true, horizontal_time:HORIZONTAL_LOOP_TIME}});
+        let controls = [
+            {key: this.data.gamepad.LEFT, callback: this.previous_page.bind(this)},
+            {key: this.data.gamepad.RIGHT, callback: this.next_page.bind(this)},
+            {key: this.data.gamepad.UP, callback: this.previous_element.bind(this)},
+            {key: this.data.gamepad.DOWN, callback: this.next_element.bind(this)},
+            {key: this.data.gamepad.A, callback: on_select},
+            {key: this.data.gamepad.B, callback: on_cancel},
+            {key: this.data.gamepad.L, callback: extra_commands.shift},
+            {key: this.data.gamepad.R, callback: extra_commands.spacebar},
+        ];
+
+        this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true, horizontal_time:HORIZONTAL_LOOP_TIME}});
     }
 
     /*Hides this window*/

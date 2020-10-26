@@ -20,11 +20,9 @@ export class ControlManager{
     public game:Phaser.Game;
     public gamepad:Gamepad;
 
-    public main_keys_list:number[];
-    public extra_keys_list:number[];
+    public keys_list:number[];
 
-    public main_keys:{[key:number] : ControlObj};
-    public extra_keys:{[key:number] : ControlObj};
+    public keys:{[key:number] : ControlObj};
 
     public signal_bindings:Phaser.SignalBinding[];
     public loop_start_timer:Phaser.Timer;
@@ -34,21 +32,14 @@ export class ControlManager{
         this.game = game;
         this.gamepad = gamepad;
 
-        this.main_keys_list = this.gamepad.main_keys;
-        this.extra_keys_list = this.gamepad.extra_keys;
+        this.keys_list = this.gamepad.keys;
 
-        let main_to_map = [];
-        for(let i=0; i<this.main_keys_list.length; i++){
-            main_to_map.push({key: this.main_keys_list[i], callback: null, pressed: false, loop: false, loop_time: DEFAULT_LOOP_TIME});
+        let keys_to_map = [];
+        for(let i=0; i<this.keys_list.length; i++){
+            keys_to_map.push({key: this.keys_list[i], callback: null, pressed: false, loop: false, loop_time: DEFAULT_LOOP_TIME});
         }
 
-        let extra_to_map = [];
-        for(let i=0; i<this.extra_keys_list.length; i++){
-            extra_to_map.push({key: this.extra_keys_list[i], callback: null});
-        }
-
-        this.main_keys = _.mapKeys(main_to_map, k => k.key) as {[key:number] : ControlObj};
-        this.extra_keys = _.mapKeys(extra_to_map, k => k.key) as {[key:number] : ControlObj};
+        this.keys = _.mapKeys(keys_to_map, k => k.key) as {[key:number] : ControlObj};
 
         this.signal_bindings = [];
         this.loop_start_timer = this.game.time.create(false);
@@ -62,14 +53,14 @@ export class ControlManager{
     simple_input(callback:Function, confirm_only:boolean=false){
         if(this.initialized) this.reset();
         
-        this.main_keys[this.gamepad.A].callback = callback;
-        if(!confirm_only) this.main_keys[this.gamepad.B].callback = callback;
+        this.keys[this.gamepad.A].callback = callback;
+        if(!confirm_only) this.keys[this.gamepad.B].callback = callback;
 
-        this.enable_main_keys();
+        this.enable_keys();
     }
     
     add_fleeting_control(key:number, callbacks:{on_down?:Function, on_up?:Function}, params?:{persist?:boolean}){
-        let control:ControlObj = this.main_keys[key] ? this.main_keys[key] : this.extra_keys[key];
+        let control:ControlObj = this.keys[key];
         let bindings:Phaser.SignalBinding[] = [];
         
         let persist = params ? (params.persist ? params.persist : false) : false;
@@ -92,44 +83,26 @@ export class ControlManager{
         return bindings;
     }
 
-    set_main_control(callbacks:{left?:Function, right?:Function, up?:Function, down?:Function,
-        a?:Function, b?:Function, l?:Function, r?:Function, select?:Function, start?:Function},
+    set_control(controls:{key:number, callback:Function}[],
         params?:{
             loop_configs?:{vertical?:boolean, vertical_time?:number,
                 horizontal?:boolean, horizontal_time?:number,
                 shoulder?:boolean, shoulder_time?:number},
-            persist?:boolean
+            persist?:boolean, no_reset?:boolean
         }){
-        if(this.initialized) this.reset();
+        let disable_reset:boolean = params ? (params.no_reset ? params.no_reset : false) : false;
+        if(this.initialized && !disable_reset) this.reset();
 
-        if(callbacks.left) this.main_keys[this.gamepad.LEFT].callback = callbacks.left;
-        if(callbacks.right) this.main_keys[this.gamepad.RIGHT].callback = callbacks.right;
-        if(callbacks.up) this.main_keys[this.gamepad.UP].callback = callbacks.up;
-        if(callbacks.down) this.main_keys[this.gamepad.DOWN].callback = callbacks.down; 
-
-        if(callbacks.a) this.main_keys[this.gamepad.A].callback = callbacks.a;
-        if(callbacks.b) this.main_keys[this.gamepad.B].callback = callbacks.b;
-        if(callbacks.l) this.main_keys[this.gamepad.L].callback = callbacks.l;
-        if(callbacks.r) this.main_keys[this.gamepad.R].callback = callbacks.r;
-
-        if(callbacks.select) this.main_keys[this.gamepad.SELECT].callback = callbacks.select;
-        if(callbacks.start) this.main_keys[this.gamepad.START].callback = callbacks.start;
+        for(let i=0; i<controls.length; i++){
+            if(controls[i].callback)
+                this.keys[controls[i].key].callback = controls[i].callback;
+        }
         
         if(params){
             this.set_params(params);
-            this.enable_main_keys(params.persist);
+            this.enable_keys(params.persist);
         }
-        else this.enable_main_keys();
-    }
-
-    set_extra_control(control_objects:{key_label:string, callback:Function}[], params?:{persist?:boolean}){
-        control_objects.forEach(obj => {
-            let key = this.gamepad.get_key_by_label(obj.key_label);
-            this.extra_keys[key].callback = obj.callback;
-        });
-
-        if(params) this.enable_extra_keys(params.persist);
-        else this.enable_extra_keys();
+        else this.enable_keys();
     }
 
     set_params(params:any){
@@ -156,30 +129,30 @@ export class ControlManager{
 
     enable_loop(controls:{key:number, loop_time?:number}[]){
         controls.forEach(obj => {
-            this.main_keys[obj.key].loop = true;
-            if(obj.loop_time) this.main_keys[obj.key].loop_time = obj.loop_time;
+            this.keys[obj.key].loop = true;
+            if(obj.loop_time) this.keys[obj.key].loop_time = obj.loop_time;
         })
     }
 
-    enable_main_keys(persist?:boolean){
+    enable_keys(persist?:boolean){
         let bindings:Phaser.SignalBinding[] = [];
 
-        for(let i=0; i<this.main_keys_list.length; i++){
-            if(this.main_keys[this.main_keys_list[i]].callback){
-                let key_callback = this.main_keys[this.main_keys_list[i]].callback;
-                let loop_time = this.main_keys[this.main_keys_list[i]].loop_time;
+        for(let i=0; i<this.keys_list.length; i++){
+            if(this.keys[this.keys_list[i]].callback){
+                let key_callback = this.keys[this.keys_list[i]].callback;
+                let loop_time = this.keys[this.keys_list[i]].loop_time;
 
-                if(this.main_keys[this.main_keys_list[i]].loop){
-                    let b1 = this.game.input.keyboard.addKey(this.main_keys[this.main_keys_list[i]].key).onDown.add(() => {
-                        if (this.main_keys[this.gamepad.opposite_key(this.main_keys_list[i])].pressed) {
-                            this.main_keys[this.gamepad.opposite_key(this.main_keys_list[i])].pressed = false;
+                if(this.keys[this.keys_list[i]].loop){
+                    let b1 = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onDown.add(() => {
+                        if (this.keys[this.gamepad.opposite_key(this.keys_list[i])].pressed) {
+                            this.keys[this.gamepad.opposite_key(this.keys_list[i])].pressed = false;
                             this.stop_timers();
                         }
-                        this.main_keys[this.main_keys_list[i]].pressed = true;
+                        this.keys[this.keys_list[i]].pressed = true;
                         this.set_loop_timers(key_callback, loop_time);
                     });
-                    let b2 = this.game.input.keyboard.addKey(this.main_keys[this.main_keys_list[i]].key).onUp.add(() => {
-                        this.main_keys[this.main_keys_list[i]].pressed = false;
+                    let b2 = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onUp.add(() => {
+                        this.keys[this.keys_list[i]].pressed = false;
                         this.stop_timers();
                     });
 
@@ -187,7 +160,7 @@ export class ControlManager{
                     bindings.push(b1, b2);
                 }
                 else{
-                    let b = this.game.input.keyboard.addKey(this.main_keys[this.main_keys_list[i]].key).onDown.add(() => {
+                    let b = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onDown.add(() => {
                         key_callback();
                     });
 
@@ -196,24 +169,6 @@ export class ControlManager{
                 }
             };
         }
-    }
-
-    enable_extra_keys(persist?:boolean){
-        let bindings:Phaser.SignalBinding[] = [];
-
-        for(let i=0; i<this.extra_keys_list.length; i++){
-            if(this.extra_keys[this.extra_keys_list[i]].callback){
-                let key_callback = this.extra_keys[this.extra_keys_list[i]].callback;
-
-                let b = this.game.input.keyboard.addKey(this.extra_keys[this.extra_keys_list[i]].key).onDown.add(() => {
-                    key_callback();
-                });
-
-                if(!persist) this.signal_bindings.push(b);
-                bindings.push(b);
-            }
-        }
-        return bindings;
     }
 
     set_loop_timers(callback:Function, loop_time:number) {
@@ -235,15 +190,11 @@ export class ControlManager{
         this.loop_start_timer.stop();
         this.loop_repeat_timer.stop();
 
-        for(let i=0; i<this.main_keys_list.length; i++){
-            this.main_keys[this.main_keys_list[i]].pressed = false;
-            this.main_keys[this.main_keys_list[i]].callback = null;
-            this.main_keys[this.main_keys_list[i]].loop = false;
-            this.main_keys[this.main_keys_list[i]].loop_time = DEFAULT_LOOP_TIME;
-        }
-
-        for(let i=0; i<this.extra_keys_list.length; i++){
-            this.extra_keys[this.extra_keys_list[i]].callback = null;
+        for(let i=0; i<this.keys_list.length; i++){
+            this.keys[this.keys_list[i]].pressed = false;
+            this.keys[this.keys_list[i]].callback = null;
+            this.keys[this.keys_list[i]].loop = false;
+            this.keys[this.keys_list[i]].loop_time = DEFAULT_LOOP_TIME;
         }
 
         this.signal_bindings.forEach(signal_binding => {

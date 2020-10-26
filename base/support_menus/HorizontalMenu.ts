@@ -79,8 +79,14 @@ export class HorizontalMenu {
     }
 
     set_control() {
-        this.data.control_manager.set_main_control({right: this.next_button.bind(this), left: this.previous_button.bind(this),
-            b: (this.on_cancel ? this.on_cancel.bind(this) : undefined), a: this.on_press.bind(this)},{loop_configs: {horizontal:true}});
+        let controls = [
+            {key: this.data.gamepad.LEFT, callback: this.previous_button.bind(this)},
+            {key: this.data.gamepad.RIGHT, callback: this.next_button.bind(this)},
+            {key: this.data.gamepad.A, callback: this.on_press.bind(this)},
+            {key: this.data.gamepad.B, callback: (this.on_cancel ? this.on_cancel.bind(this) : undefined)}
+        ];
+
+        this.data.control_manager.set_control(controls, {loop_configs:{horizontal:true}});
     }
 
     mount_buttons(filtered_buttons:string[]=[]) {

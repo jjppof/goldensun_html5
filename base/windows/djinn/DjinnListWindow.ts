@@ -457,15 +457,16 @@ export class DjinnListWindow {
 
     
     grant_control(on_cancel:Function, on_select:Function, on_shift?:Function){
-        this.data.control_manager.set_main_control({
-            right: this.next_character.bind(this),
-            left: this.previous_character.bind(this),
-            up: this.previous_djinni.bind(this),
-            down: this.next_djinni.bind(this),
-            b: on_cancel,
-            a: on_select,
-            l: on_shift,
-        },{loop_configs: {vertical:true, horizontal:true}});
+        let controls = [
+            {key: this.data.gamepad.LEFT, callback: this.previous_character.bind(this)},
+            {key: this.data.gamepad.RIGHT, callback: this.next_character.bind(this)},
+            {key: this.data.gamepad.UP, callback: this.previous_djinni.bind(this)},
+            {key: this.data.gamepad.DOWN, callback: this.next_djinni.bind(this)},
+            {key: this.data.gamepad.A, callback: on_select},
+            {key: this.data.gamepad.B, callback: on_cancel},
+            {key: this.data.gamepad.R, callback: on_shift}
+        ];
+        this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
     }
 
     darken_font_color(darken = true) {

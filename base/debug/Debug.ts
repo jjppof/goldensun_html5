@@ -1,7 +1,6 @@
 import { GoldenSun } from "../GoldenSun";
 import { MainChar } from "../MainChar";
 import { reverse_directions, ordered_elements } from "../utils";
-import { extra_input_labels } from "../Gamepad";
 import * as _ from "lodash";
 
 export class Debug {
@@ -32,14 +31,14 @@ export class Debug {
 
     initialize_controls() {
         let debug_controls = [
-            {key_label: extra_input_labels.DEBUG_PHYS, callback: this.toggle_debug_physics.bind(this)},
-            {key_label: extra_input_labels.GRID, callback: this.toggle_grid.bind(this)},
-            {key_label: extra_input_labels.KEYS, callback: this.toggle_keys.bind(this)},
-            {key_label: extra_input_labels.STATS, callback: this.toggle_stats.bind(this)},
-            {key_label: extra_input_labels.FPS, callback: this.toggle_fps.bind(this)},
-            {key_label: extra_input_labels.SLIDERS, callback: this.toggle_sliders.bind(this)},
+            {key: this.data.gamepad.DEBUG_PHYSICS, callback: this.toggle_debug_physics.bind(this)},
+            {key: this.data.gamepad.DEBUG_GRID, callback: this.toggle_grid.bind(this)},
+            {key: this.data.gamepad.DEBUG_KEYS, callback: this.toggle_keys.bind(this)},
+            {key: this.data.gamepad.DEBUG_STATS, callback: this.toggle_stats.bind(this)},
+            {key: this.data.gamepad.DEBUG_FPS, callback: this.toggle_fps.bind(this)},
+            {key: this.data.gamepad.DEBUG_SLIDERS, callback: this.toggle_sliders.bind(this)},
         ];
-        this.data.control_manager.set_extra_control(debug_controls, {persist:true});
+        this.data.control_manager.set_control(debug_controls, {persist:true});
     }
 
     update_debug_physics(flag) {

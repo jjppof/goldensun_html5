@@ -15,7 +15,7 @@ import { MainMenu, initialize_menu } from './main_menus/MainMenu';
 import { ShopMenu } from './main_menus/ShopMenu';
 import { ControlManager } from './utils/ControlManager';
 import { CursorManager } from './utils/CursorManager';
-import { Gamepad, extra_input_labels } from './Gamepad';
+import { Gamepad } from './Gamepad';
 
 export class GoldenSun {
     public game: Phaser.Game = null;
@@ -177,19 +177,19 @@ export class GoldenSun {
 
         //enable zoom
         let zoom_controls = [
-            {key_label: extra_input_labels.ZOOM1, callback: () => {
+            {key: this.gamepad.ZOOM1, callback: () => {
                 if (this.fullscreen) return;
                 this.scale_factor = 1;
                 this.game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
                 window.dispatchEvent(new Event('resize'));
             }},
-            {key_label: extra_input_labels.ZOOM2, callback: () => {
+            {key: this.gamepad.ZOOM2, callback: () => {
                 if (this.fullscreen) return;
                 this.scale_factor = 2;
                 this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
                 window.dispatchEvent(new Event('resize'));
             }},
-            {key_label: extra_input_labels.ZOOM3, callback: () => {
+            {key: this.gamepad.ZOOM3, callback: () => {
                 if (this.fullscreen) return;
                 this.scale_factor = 3;
                 this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
@@ -197,7 +197,7 @@ export class GoldenSun {
             }},
 
         ];
-        this.control_manager.set_extra_control(zoom_controls, {persist:true});
+        this.control_manager.set_control(zoom_controls, {persist:true});
 
         //initialize screens
         this.shop_menu = new ShopMenu(this.game, this);
@@ -205,20 +205,20 @@ export class GoldenSun {
 
         //enable psynergies shortcuts for testing
         let psy_controls = [
-            {key_label: extra_input_labels.PSY1, callback: () => {
+            {key: this.gamepad.PSY1, callback: () => {
                 if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
                 this.info.field_abilities_list.move.cast(this.hero, this.dbs.init_db.initial_shortcuts.move);
             }},
-            {key_label: extra_input_labels.PSY2, callback: () => {
+            {key: this.gamepad.PSY2, callback: () => {
                 if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
                 this.info.field_abilities_list.frost.cast(this.hero, this.dbs.init_db.initial_shortcuts.frost);
             }},
-            {key_label: extra_input_labels.PSY3, callback: () => {
+            {key: this.gamepad.PSY3, callback: () => {
                 if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
             this.info.field_abilities_list.growth.cast(this.hero, this.dbs.init_db.initial_shortcuts.growth);
             }}
         ];
-        this.control_manager.set_extra_control(psy_controls, {persist:true});
+        this.control_manager.set_control(psy_controls, {persist:true});
     }
 
     hero_movement_allowed(allow_climbing = true) {

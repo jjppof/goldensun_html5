@@ -110,11 +110,13 @@ export function initialize_menu(game:Phaser.Game, data:GoldenSun) {
             data.main_menu.open_menu();
         };
     }
+
+    let controls = [
+        {key: data.gamepad.A, callback: trigger_menu},
+        {key: data.gamepad.SELECT, callback: trigger_menu}
+    ];
     
-    data.control_manager.set_main_control({
-        a: trigger_menu,
-        select: trigger_menu
-    }, {persist:true});
+    data.control_manager.set_control(controls, {persist:true});
 
     return new MainMenu(game, data);
 }

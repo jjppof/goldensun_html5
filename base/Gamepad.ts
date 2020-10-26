@@ -1,34 +1,14 @@
 import { GoldenSun } from "./GoldenSun";
 
-export const main_input_labels = {
-    LEFT: "left",
-    RIGHT: "right",
-    UP: "up",
-    DOWN: "down",
-    A: "a",
-    B: "b",
-    L: "l",
-    R: "r",
-    SELECT: "select",
-    START: "start"
-}
-
-export const extra_input_labels = {
-    PSY1: "psy1",
-    PSY2: "psy2",
-    PSY3: "psy3",
-    ZOOM1: "zoom1",
-    ZOOM2: "zoom2",
-    ZOOM3: "zoom3",
-    DEBUG_PHYS: "debug_phys",
-    GRID: "grid",
-    KEYS: "keys",
-    STATS: "stats",
-    FPS: "fps",
-    SLIDERS: "sliders",
-    BATTLE_CAM_PLUS: "battle_cam_plus",
-    BATTLE_CAM_MINUS: "battle_cam_minus"
-}
+export const input_ids = [
+    "LEFT", "RIGHT", "UP", "DOWN",
+    "A", "B", "L", "R", "SELECT", "START",
+    "PSY1", "PSY2", "PSY3", "ZOOM1", "ZOOM2",
+    "ZOOM3", "DEBUG_PHYSICS", "DEBUG_GRID",
+    "DEBUG_KEYS", "DEBUG_STATS", "DEBUG_FPS",
+    "DEBUG_SLIDERS", "DEBUG_CAM_PLUS",
+    "DEBUG_CAM_MINUS"
+]
 
 export class Gamepad{
     public data:GoldenSun;
@@ -46,7 +26,22 @@ export class Gamepad{
     public SELECT:number;
     public START:number;
 
-    public extra_inputs:{label:string, key:number}[];
+    public PSY1:number;
+    public PSY2:number;
+    public PSY3:number;
+
+    public ZOOM1:number;
+    public ZOOM2:number;
+    public ZOOM3:number;
+
+    public DEBUG_PHYSICS:number;
+    public DEBUG_GRID:number;
+    public DEBUG_KEYS:number;
+    public DEBUG_STATS:number;
+    public DEBUG_FPS:number;
+    public DEBUG_SLIDERS:number;
+    public DEBUG_CAM_MINUS:number;
+    public DEBUG_CAM_PLUS:number;
 
     constructor(data:GoldenSun){
         this.data = data;
@@ -54,16 +49,18 @@ export class Gamepad{
     }
 
     initialize_gamepad(){
-        for (let label in main_input_labels){
-            this[label] = Phaser.Keyboard[this.data.dbs.init_db.default_inputs[main_input_labels[label]]];
+        for (let index in input_ids){
+            this[input_ids[index]] = Phaser.Keyboard[this.data.dbs.init_db.default_inputs[input_ids[index].toLowerCase()]];
         }
+    }
 
-        let extra = [];
-        for (let label in extra_input_labels){
-            extra.push({label: extra_input_labels[label], key: Phaser.Keyboard[this.data.dbs.init_db.default_inputs[extra_input_labels[label]]]});
+    get_id_by_key(key:number){
+        for(let property in this){
+            let property_name = property as string;
+            if(this[property_name] === key)
+                return property_name;
         }
-
-        this.extra_inputs = extra;
+        return null;
     }
 
     opposite_key(key:number){
@@ -85,40 +82,15 @@ export class Gamepad{
         }
     }
 
-    get_key_by_label(label:string){
-        for(let i=0; i<this.extra_inputs.length; i++){
-            if(this.extra_inputs[i].label === label)
-                return this.extra_inputs[i].key; 
-        }
-        return null;
-    }
-
-    get_label_by_key(key:number){
-        for(let i=0; i<this.extra_inputs.length; i++){
-            if(this.extra_inputs[i].key === key)
-                return this.extra_inputs[i].label; 
-        }
-        return null;
-    }
-
-    get main_keys(){
+    get keys(){
         let keys:number[] = [];
 
-        for(let label in this){
-            let str_label = label as string;
-            if(main_input_labels[str_label])
-                keys.push(this[str_label]);
+        for(let property in this){
+            let property_name = property as string;
+            if(input_ids.includes(property_name))
+                keys.push(this[property_name]);
         }
 
         return keys;
     }
-
-    get extra_keys(){
-        let keys:number[] = [];
-
-        this.extra_inputs.forEach(obj => {keys.push(obj.key)});
-
-        return keys;
-    }
-
 }

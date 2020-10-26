@@ -365,13 +365,16 @@ export class ItemOptionsWindow {
 
         this.choose_position(vertical, horizontal);
 
-        this.data.control_manager.set_main_control({
-            right: this.next_horizontal.bind(this),
-            left: this.previous_horizontal.bind(this),
-            up: this.next_vertical.bind(this),
-            down: this.previous_vertical.bind(this),
-            b: this.close.bind(this, this.close_callback),
-            a: this.on_choose.bind(this)},{loop_configs: {vertical:true, horizontal:true}});
+        let controls = [
+            {key: this.data.gamepad.LEFT, callback: this.previous_horizontal.bind(this)},
+            {key: this.data.gamepad.RIGHT, callback: this.next_horizontal.bind(this)},
+            {key: this.data.gamepad.UP, callback: this.next_vertical.bind(this)},
+            {key: this.data.gamepad.DOWN, callback: this.previous_vertical.bind(this)},
+            {key: this.data.gamepad.A, callback: this.on_choose.bind(this)},
+            {key: this.data.gamepad.B, callback: this.close.bind(this, this.close_callback)}
+        ];
+
+        this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
     }
 
     open(item_obj:ItemSlot, item:Item, char:MainChar, stats_window:StatsCheckWithItemWindow, item_menu:MainItemMenu,

@@ -211,20 +211,22 @@ export class SummonWindow {
     }
 
     summon_choose(){
-        this.data.control_manager.set_main_control({
-            left: this.previous_page.bind(this),
-            right: this.next_page.bind(this),
-            up: this.previous_summon.bind(this),
-            down: this.next_summon.bind(this),
-            b: () => {
-                this.choosen_ability = null;
-                this.close(this.close_callback);
-            },
-            a: () => {
+        let controls = [
+            {key: this.data.gamepad.LEFT, callback: this.previous_page.bind(this)},
+            {key: this.data.gamepad.RIGHT, callback: this.next_page.bind(this)},
+            {key: this.data.gamepad.UP, callback: this.previous_summon.bind(this)},
+            {key: this.data.gamepad.DOWN, callback: this.next_summon.bind(this)},
+            {key: this.data.gamepad.A, callback: () => {
                 this.choosen_ability = this.summons[this.summon_index].key_name;
                 this.hide(this.close_callback);
-            }
-        },{loop_configs: {vertical:true, horizontal:true}});
+            }},
+            {key: this.data.gamepad.B, callback: () => {
+                this.choosen_ability = null;
+                this.close(this.close_callback);
+            }},
+        ];
+        
+        this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
     }
 
     open(char:MainChar, close_callback:Function, set_description:Function, djinni_already_used?:{[element: string]: number}) {

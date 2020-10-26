@@ -30,13 +30,13 @@
         "zoom1": "ONE",
         "zoom2": "TWO",
         "zoom3": "THREE",
-        "debug_phys": "D",
-        "grid": "G",
-        "keys": "K",
-        "stats": "S",
-        "fps": "F",
-        "sliders": "L",
-        "battle_cam_minus": "PAGE_DOWN",
-        "battle_cam_plus": "PAGE_UP"
+        "debug_physics": "D",
+        "debug_grid": "G",
+        "debug_keys": "K",
+        "debug_stats": "S",
+        "debug_fps": "F",
+        "debug_sliders": "L",
+        "debug_cam_minus": "PAGE_DOWN",
+        "debug_cam_plus": "PAGE_UP"
     }
 }
