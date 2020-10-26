@@ -33,7 +33,7 @@
         "debug_physics": "D",
         "debug_grid": "G",
         "debug_keys": "K",
-        "debug_stats": "S",
+        "debug_stats": "T",
         "debug_fps": "F",
         "debug_sliders": "L",
         "debug_cam_minus": "PAGE_DOWN",

@@ -113,9 +113,7 @@ export class MainPsynergyMenu {
             let psy_win = this.psynergy_choose_window;
             let selected_psy = psy_win.element_list[psy_win.elements[psy_win.selected_element_index] as string];
             this.psynergy_choose(selected_psy);
-        },{
-        shift:this.chars_menu.previous_char.bind(this.chars_menu),
-        spacebar:this.chars_menu.next_char.bind(this.chars_menu)});
+        }, this.chars_menu.next_char.bind(this.chars_menu), this.chars_menu.previous_char.bind(this.chars_menu));
     }
 
     psynergy_change(ability:Ability) {

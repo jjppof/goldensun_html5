@@ -168,8 +168,7 @@ export class MainItemMenu {
             let selected_item = item_win.element_list[(item_win.elements[item_win.selected_element_index] as ItemSlot).key_name];
             let selected_item_obj = item_win.item_objs[item_win.selected_element_index];
             this.item_choose(selected_item, selected_item_obj);
-        },{shift: this.chars_menu.previous_char.bind(this.chars_menu),
-        spacebar: this.chars_menu.next_char.bind(this.chars_menu)});
+        }, this.chars_menu.next_char.bind(this.chars_menu), this.chars_menu.previous_char.bind(this.chars_menu));
     }
 
     on_item_choose_close() {

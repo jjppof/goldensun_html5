@@ -219,6 +219,14 @@ export class GoldenSun {
             }}
         ];
         this.control_manager.set_control(psy_controls, {persist:true});
+
+        
+        let controls2 = [
+            {key: this.gamepad.L, callback: () =>{console.log("L pressed");}},
+            {key: this.gamepad.R, callback: () =>{console.log("R pressed");}},
+            {key: this.gamepad.A, callback: () =>{console.log("A pressed");}}
+        ]
+        this.control_manager.set_control(controls2, {no_reset:true});
     }
 
     hero_movement_allowed(allow_climbing = true) {
