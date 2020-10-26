@@ -39,7 +39,7 @@ Some useful tools that I use to manage the resources:
   - [Sprite Sheet Packer](https://www.codeandweb.com/free-sprite-sheet-packer) (free alternative for TexturePacker)
 - [PhysicsEditor 1.6.3](https://www.codeandweb.com/physicseditor) (for creating collision structures)
   - [LoonPhysics](https://loonride.com/physics) (free alternative for PhysicsEditor)
-- [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579)) (for building maps)
+- [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579)) (for building maps and also collision structures)
 - [Shoebox](https://renderhjs.net/shoebox/) (for creating fonts)
 - [Golden Sun Editor](http://forum.goldensunhacking.net/index.php?action=downloads;sa=view;down=124) (for game info)
 - [Paint.NET](https://www.getpaint.net/) (for images editing)
