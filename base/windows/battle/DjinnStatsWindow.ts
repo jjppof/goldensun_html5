@@ -3,6 +3,7 @@ import * as numbers from "../../magic_numbers";
 import { GoldenSun } from "../../GoldenSun";
 import { MainChar } from "../../MainChar";
 import { Djinn } from "../../Djinn";
+import { ordered_main_stats } from "../../Player";
 
 const BASE_WIN_X = 0;
 const BASE_WIN_Y = 64;
@@ -16,7 +17,6 @@ const BEFORE_STAT_X = 78;
 const AFTER_STAT_X = 126;
 const CLASS_ARROW_X = 80;
 const CLASS_ARROW_Y = 16;
-const stats_keys = ["max_hp", "max_pp", "atk", "def", "agi", "luk"];
 const STAT_ARROW_X = 80;
 const STAT_ARROW_Y = 15;
 const SHIFT_BUTTON_X = 32;
@@ -48,12 +48,12 @@ export class DjinnStatsWindow {
         this.after_stats = {};
         this.up_arrows = {};
         this.down_arrows = {};
-        for (let i = 0; i < stats_keys.length; ++i) {
+        for (let i = 0; i < ordered_main_stats.length; ++i) {
             this.base_window.set_text_in_position(labels[i], HP_LABEL_X, HP_LABEL_Y + i * numbers.FONT_SIZE);
-            this.before_stats[stats_keys[i]] = this.base_window.set_text_in_position("", BEFORE_STAT_X, HP_LABEL_Y + i * numbers.FONT_SIZE, true);
-            this.after_stats[stats_keys[i]] = this.base_window.set_text_in_position("", AFTER_STAT_X, HP_LABEL_Y + i * numbers.FONT_SIZE, true);
-            this.up_arrows[stats_keys[i]] = this.base_window.create_at_group(STAT_ARROW_X, STAT_ARROW_Y + i * numbers.FONT_SIZE, "stat_up");
-            this.down_arrows[stats_keys[i]] = this.base_window.create_at_group(STAT_ARROW_X, STAT_ARROW_Y + i * numbers.FONT_SIZE, "stat_down");
+            this.before_stats[ordered_main_stats[i]] = this.base_window.set_text_in_position("", BEFORE_STAT_X, HP_LABEL_Y + i * numbers.FONT_SIZE, true);
+            this.after_stats[ordered_main_stats[i]] = this.base_window.set_text_in_position("", AFTER_STAT_X, HP_LABEL_Y + i * numbers.FONT_SIZE, true);
+            this.up_arrows[ordered_main_stats[i]] = this.base_window.create_at_group(STAT_ARROW_X, STAT_ARROW_Y + i * numbers.FONT_SIZE, "stat_up");
+            this.down_arrows[ordered_main_stats[i]] = this.base_window.create_at_group(STAT_ARROW_X, STAT_ARROW_Y + i * numbers.FONT_SIZE, "stat_down");
         }
         this.hide_arrows();
         this.before_class_text = this.base_window.set_text_in_position("", HP_LABEL_X, CLASS_NAME_Y);
@@ -67,18 +67,18 @@ export class DjinnStatsWindow {
     }
 
     hide_arrows() {
-        for (let i = 0; i < stats_keys.length; ++i) {
-            this.down_arrows[stats_keys[i]].alpha = 0;
-            this.up_arrows[stats_keys[i]].alpha = 0;
+        for (let i = 0; i < ordered_main_stats.length; ++i) {
+            this.down_arrows[ordered_main_stats[i]].alpha = 0;
+            this.up_arrows[ordered_main_stats[i]].alpha = 0;
         }
     }
 
     set_stats() {
         this.base_window.update_text(this.char.class.name, this.before_class_text);
-        const preview_values = this.char.preview_djinn_change(stats_keys, [this.djinn.key_name], [this.next_djinni_status]);
+        const preview_values = this.char.preview_djinn_change(ordered_main_stats, [this.djinn.key_name], [this.next_djinni_status]);
         this.base_window.update_text(preview_values.class_name, this.after_class_text);
-        for (let i = 0; i < stats_keys.length; ++i) {
-            const stat_key = stats_keys[i];
+        for (let i = 0; i < ordered_main_stats.length; ++i) {
+            const stat_key = ordered_main_stats[i];
             const current_stat = this.char[stat_key];
             const next_stat = preview_values[stat_key];
             this.base_window.update_text(current_stat.toString(), this.before_stats[stat_key]);

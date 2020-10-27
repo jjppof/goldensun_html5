@@ -22,6 +22,26 @@ export const permanent_status = {
     HAUNT: "haunt"
 };
 
+export const main_stats = {
+    MAX_HP: "max_hp",
+    CURRENT_HP: "current_hp",
+    MAX_PP: "max_pp",
+    CURRENT_PP: "current_pp",
+    ATTACK: "atk",
+    DEFENSE: "def",
+    AGILITY: "agi",
+    LUCK: "luk"
+};
+
+export const ordered_main_stats = [
+    main_stats.MAX_HP,
+    main_stats.MAX_PP,
+    main_stats.ATTACK,
+    main_stats.DEFENSE,
+    main_stats.AGILITY,
+    main_stats.LUCK
+];
+
 export const on_catch_status_msg = {
     [temporary_status.DELUSION]: target => `${target.name} is wrapped in delusion!`,
     [temporary_status.STUN]: target => `${target.name} has been stunned!`,

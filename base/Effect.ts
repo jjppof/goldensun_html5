@@ -2,6 +2,7 @@ import { Ability } from "./Ability";
 import { Enemy } from "./Enemy";
 import { Item } from "./Item";
 import { MainChar } from "./MainChar";
+import { main_stats } from "./Player";
 import { variation, elements } from "./utils"
 
 export const effect_types = {
@@ -30,17 +31,6 @@ export const effect_types = {
     DAMAGE_MODIFIER: "damage_modifier",
     DAMAGE_INPUT: "damage_input"
 };
-
-export const effect_type_stat = {
-    [effect_types.MAX_HP]: "max_hp",
-    [effect_types.MAX_PP]: "max_pp",
-    [effect_types.ATTACK]: "atk",
-    [effect_types.DEFENSE]: "def",
-    [effect_types.AGILITY]: "agi",
-    [effect_types.LUCK]: "luk",
-    [effect_types.CURRENT_HP]: "current_hp",
-    [effect_types.CURRENT_PP]: "current_pp"
-}
 
 export const effect_names = {
     [effect_types.MAX_HP]: "HP",
@@ -107,6 +97,7 @@ export class Effect {
         on_caster: boolean,
         operator: string
     };
+    private effect_type_stat: {[effect_type: string]: string};
 
     constructor(
         type,
@@ -154,6 +145,16 @@ export class Effect {
         if (this.sub_effect !== undefined) {
             this.init_sub_effect();
         }
+        this.effect_type_stat = {
+            [effect_types.MAX_HP]: main_stats.MAX_HP,
+            [effect_types.MAX_PP]: main_stats.MAX_PP,
+            [effect_types.ATTACK]: main_stats.ATTACK,
+            [effect_types.DEFENSE]: main_stats.DEFENSE,
+            [effect_types.AGILITY]: main_stats.AGILITY,
+            [effect_types.LUCK]: main_stats.LUCK,
+            [effect_types.CURRENT_HP]: main_stats.CURRENT_HP,
+            [effect_types.CURRENT_PP]: main_stats.CURRENT_PP
+        };
     }
 
     static apply_operator(a, b, operator) {
@@ -264,18 +265,18 @@ export class Effect {
             case effect_types.DEFENSE:
             case effect_types.AGILITY:
             case effect_types.LUCK:
-                return this.apply_general_value(effect_type_stat[this.type]);
+                return this.apply_general_value(this.effect_type_stat[this.type]);
             case effect_types.HP_RECOVERY:
                 return this.apply_general_value("hp_recovery");
             case effect_types.PP_RECOVERY:
                 return this.apply_general_value("pp_recovery");
             case effect_types.CURRENT_HP:
-                const result_current_hp = this.apply_general_value("current_hp");
-                this.check_caps("current_hp", "max_hp", 0, result_current_hp);
+                const result_current_hp = this.apply_general_value(main_stats.CURRENT_HP);
+                this.check_caps(main_stats.CURRENT_HP, main_stats.MAX_HP, 0, result_current_hp);
                 return result_current_hp
             case effect_types.CURRENT_PP:
-                const result_current_pp = this.apply_general_value("current_pp");
-                this.check_caps("current_pp", "max_pp", 0, result_current_pp);
+                const result_current_pp = this.apply_general_value(main_stats.CURRENT_PP);
+                this.check_caps(main_stats.CURRENT_PP, main_stats.MAX_PP, 0, result_current_pp);
                 return result_current_pp
             case effect_types.POWER:
                 return this.apply_general_value(this.attribute + "_power_current");
@@ -302,15 +303,15 @@ export class Effect {
                 return this.apply_general_value(undefined, direct_value);
             case effect_types.DAMAGE_INPUT:
                 let result = this.apply_general_value(undefined, direct_value);
-                const stat = effect_type_stat[this.sub_effect.type];
+                const stat = this.effect_type_stat[this.sub_effect.type];
                 result.before = this.char[stat];
                 result.after = this.apply_subeffect(stat, result.after);
                 switch(this.sub_effect.type) {
                     case effect_types.CURRENT_HP:
-                        this.check_caps("current_hp", "max_hp", 0, result);
+                        this.check_caps(main_stats.CURRENT_HP, main_stats.MAX_HP, 0, result);
                         break;
                     case effect_types.CURRENT_PP:
-                        this.check_caps("current_pp", "max_pp", 0, result);
+                        this.check_caps(main_stats.CURRENT_PP, main_stats.MAX_PP, 0, result);
                         break;
                 }
                 return result;

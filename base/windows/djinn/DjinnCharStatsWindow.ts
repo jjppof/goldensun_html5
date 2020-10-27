@@ -3,6 +3,7 @@ import * as numbers from '../../magic_numbers';
 import { ordered_elements } from '../../utils';
 import { MainChar } from '../../MainChar';
 import { Djinn } from '../../Djinn';
+import { ordered_main_stats } from '../../Player';
 
 const BASE_WIN_WIDTH = 116;
 const BASE_WIN_HEIGHT = 116;
@@ -28,7 +29,6 @@ const DJINN_NUMBER_X = 110;
 const DJINN_NUMBER_Y = 48;
 
 const stats = ["HP", "PP", "Attack", "Defense", "Agility", "Luck"];
-const stats_keys = ["max_hp", "max_pp", "atk", "def", "agi", "luk"];
 
 const STATS_X = 8;
 const STATS_BASE_Y = 64;
@@ -131,7 +131,7 @@ export class DjinnCharStatsWindow {
             this.sprites.push(star_sprite);
         });
 
-        const preview_values = this.char.preview_djinn_change(stats_keys, this.djinni.map(d => d.key_name), this.next_djinni_status, this.action);
+        const preview_values = this.char.preview_djinn_change(ordered_main_stats, this.djinni.map(d => d.key_name), this.next_djinni_status, this.action);
         if (preview_values.class_key_name !== this.char.class.key_name) {
             this.base_window.update_text(preview_values.class_name, this.new_class_text);
             this.class_name_arrow_blink_timer.resume();
@@ -140,8 +140,8 @@ export class DjinnCharStatsWindow {
         }
 
         stats.forEach((stat, i) => {
-            const current_stat = this.char[stats_keys[i]];
-            const next_stat = preview_values[stats_keys[i]];
+            const current_stat = this.char[ordered_main_stats[i]];
+            const next_stat = preview_values[ordered_main_stats[i]];
 
             this.base_window.update_text(current_stat.toString(), this.stats_current_texts[stat]);
             this.base_window.update_text(next_stat.toString(), this.stats_next_texts[stat]);

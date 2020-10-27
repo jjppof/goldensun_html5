@@ -2,7 +2,7 @@ import * as numbers from '../magic_numbers';
 import { ability_msg_types } from '../Ability';
 import { effect_names, effect_types } from '../Effect';
 import { element_names } from '../utils';
-import { on_remove_status_msg } from '../Player';
+import { main_stats, on_remove_status_msg } from '../Player';
 
 const LOG_X = 3;
 const LOG_OUT_Y = 127;
@@ -112,8 +112,8 @@ export class BattleLog {
 
     async add_damage(damage, target, pp_damage = false) {
         const stat_str = pp_damage ? "PP" : "HP";
-        const current_property = pp_damage ? "current_pp" : "current_hp";
-        const max_property = pp_damage ? "max_pp" : "max_hp";
+        const current_property = pp_damage ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
+        const max_property = pp_damage ? main_stats.MAX_PP : main_stats.MAX_HP;
         if (damage >= 0) {
             if (target[current_property] - damage < 0) {
                 damage = target[current_property];

@@ -319,10 +319,10 @@ export class Debug {
         document.querySelector("#stats_debug table .max_hp").innerHTML = char.max_hp.toString();
         document.querySelector("#stats_debug table .current_pp").innerHTML = char.current_pp.toString();
         document.querySelector("#stats_debug table .max_pp").innerHTML = char.max_pp.toString();
-        document.querySelector("#stats_debug table .atk").innerHTML = char.current_atk.toString();
-        document.querySelector("#stats_debug table .def").innerHTML = char.current_def.toString();
-        document.querySelector("#stats_debug table .agi").innerHTML = char.current_agi.toString();
-        document.querySelector("#stats_debug table .luk").innerHTML = char.current_luk.toString();
+        document.querySelector("#stats_debug table .atk").innerHTML = char.atk.toString();
+        document.querySelector("#stats_debug table .def").innerHTML = char.def.toString();
+        document.querySelector("#stats_debug table .agi").innerHTML = char.agi.toString();
+        document.querySelector("#stats_debug table .luk").innerHTML = char.luk.toString();
         document.querySelector("#stats_debug table .venus_power").innerHTML = char.venus_power_current.toString();
         document.querySelector("#stats_debug table .venus_resist").innerHTML = char.venus_resist_current.toString();
         document.querySelector("#stats_debug table .venus_level").innerHTML = char.venus_level_current.toString();

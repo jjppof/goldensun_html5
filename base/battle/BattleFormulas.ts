@@ -41,7 +41,7 @@ export class BattleFormulas {
     }
 
     static base_damage(caster, target) {
-        const relative_atk = caster.current_atk - target.current_def;
+        const relative_atk = caster.atk - target.def;
         return (relative_atk < 0 ? 0 : relative_atk)/2.0;
     }
 
@@ -91,14 +91,14 @@ export class BattleFormulas {
     static ailment_success(caster, target, base_chance, magnitude, element, vulnerabity) {
         const level_key = element + "_level_current";
         const relative_level = caster[level_key] - target[level_key];
-        const luck_factor = target.current_luk >> 1;
+        const luck_factor = target.luk >> 1;
         vulnerabity = vulnerabity === undefined ? 0 : vulnerabity;
         const chance = ((relative_level - luck_factor) * 3)/100 + base_chance + vulnerabity * magnitude;
         return chance >= Math.random();
     }
 
     static ailment_recovery(player, turn_number, base_chance) {
-        return (((player.current_luk * 3) - (turn_number * 5) + base_chance * 100) * 655) >= _.random(0, 0xFFFF);
+        return (((player.luk * 3) - (turn_number * 5) + base_chance * 100) * 655) >= _.random(0, 0xFFFF);
     }
 
     static battle_poison_damage(player, poison_type) {

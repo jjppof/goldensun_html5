@@ -1,4 +1,4 @@
-import { permanent_status, temporary_status, on_catch_status_msg, fighter_types, Player } from "../Player";
+import { permanent_status, temporary_status, on_catch_status_msg, fighter_types, Player, main_stats } from "../Player";
 import { BattleStage } from "./BattleStage";
 import { BattleLog } from "./BattleLog";
 import { MainBattleMenu, PlayerAbilities, PlayerAbility } from "../main_menus/MainBattleMenu";
@@ -277,7 +277,7 @@ export class Battle {
                 const this_ability = this.data.info.abilities_list[this.allies_abilities[char_key][i].key_name];
                 const priority_move = this_ability !== undefined ? this_ability.priority_move : false;
 
-                this.allies_abilities[char_key][i].speed = BattleFormulas.player_turn_speed(this_char.current_agi, priority_move, i > 0);
+                this.allies_abilities[char_key][i].speed = BattleFormulas.player_turn_speed(this_char.agi, priority_move, i > 0);
                 this.allies_abilities[char_key][i].caster = this_char;
             }
         }
@@ -288,7 +288,7 @@ export class Battle {
                 const this_ability = this.data.info.abilities_list[this.enemies_abilities[battle_key][i].key_name];
                 const priority_move = this_ability !== undefined ? this_ability.priority_move : false;
 
-                this.enemies_abilities[battle_key][i].speed = BattleFormulas.enemy_turn_speed(this_enemy.current_agi, i + 1, this_enemy.turns, priority_move);
+                this.enemies_abilities[battle_key][i].speed = BattleFormulas.enemy_turn_speed(this_enemy.agi, i + 1, this_enemy.turns, priority_move);
                 this.enemies_abilities[battle_key][i].caster = this_enemy;
             }
         }
@@ -598,8 +598,8 @@ export class Battle {
 
             await this.battle_log.add_damage(damage, target_instance, ability.affects_pp);
 
-            const current_property = ability.affects_pp ? "current_pp" : "current_hp";
-            const max_property = ability.affects_pp ? "max_pp" : "max_hp";
+            const current_property = ability.affects_pp ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
+            const max_property = ability.affects_pp ? main_stats.MAX_PP : main_stats.MAX_HP;
             target_instance.current_hp = _.clamp(target_instance[current_property] - damage, 0, target_instance[max_property]);
 
             this.battle_menu.chars_status_window.update_chars_info();
@@ -958,12 +958,12 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                             if (diff !== 0) {
                                 let stat_text;
                                 switch (stat) {
-                                    case "max_hp": stat_text = "Maximum HP"; break;
-                                    case "max_pp": stat_text = "Maximum PP"; break;
-                                    case "atk": stat_text = "Attack"; break;
-                                    case "def": stat_text = "Defense"; break;
-                                    case "agi": stat_text = "Agility"; break;
-                                    case "luk": stat_text = "Luck"; break;
+                                    case main_stats.MAX_HP: stat_text = "Maximum HP"; break;
+                                    case main_stats.MAX_PP: stat_text = "Maximum PP"; break;
+                                    case main_stats.ATTACK: stat_text = "Attack"; break;
+                                    case main_stats.DEFENSE: stat_text = "Defense"; break;
+                                    case main_stats.AGILITY: stat_text = "Agility"; break;
+                                    case main_stats.LUCK: stat_text = "Luck"; break;
                                 }
 
                                 this.battle_log.add(`${stat_text} rises by ${diff.toString()}!`);

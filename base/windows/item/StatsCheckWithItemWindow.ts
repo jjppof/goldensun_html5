@@ -4,6 +4,7 @@ import { effect_types, effect_operators } from '../../Effect';
 import { GoldenSun } from '../../GoldenSun';
 import { ItemSlot, MainChar } from '../../MainChar';
 import * as _ from "lodash";
+import { main_stats } from '../../Player';
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;
@@ -104,9 +105,9 @@ export class StatsCheckWithItemWindow {
     update_info(set_compare_arrows = true) {
         this.base_window.update_text(this.char.name, this.name_text);
         this.base_window.update_text(this.char.level.toString(), this.lv_text);
-        this.base_window.update_text(this.char.current_atk.toString(), this.attack_text);
-        this.base_window.update_text(this.char.current_def.toString(), this.defense_text);
-        this.base_window.update_text(this.char.current_agi.toString(), this.agility_text);
+        this.base_window.update_text(this.char.atk.toString(), this.attack_text);
+        this.base_window.update_text(this.char.def.toString(), this.defense_text);
+        this.base_window.update_text(this.char.agi.toString(), this.agility_text);
         if (this.avatar) {
             this.avatar.destroy();
         }
@@ -175,9 +176,9 @@ export class StatsCheckWithItemWindow {
             case item_types.CHEST_PROTECTOR: equip_slot_property = "chest"; break;
             case item_types.ARMOR: equip_slot_property = "body"; break;
         }
-        this.set_compare_arrows(effect_types.ATTACK, equip_slot_property, "current_atk", compare_removing);
-        this.set_compare_arrows(effect_types.DEFENSE, equip_slot_property, "current_def", compare_removing);
-        this.set_compare_arrows(effect_types.AGILITY, equip_slot_property, "current_agi", compare_removing);
+        this.set_compare_arrows(effect_types.ATTACK, equip_slot_property, main_stats.ATTACK, compare_removing);
+        this.set_compare_arrows(effect_types.DEFENSE, equip_slot_property, main_stats.DEFENSE, compare_removing);
+        this.set_compare_arrows(effect_types.AGILITY, equip_slot_property, main_stats.AGILITY, compare_removing);
     }
 
     open(char, item, item_obj, callback?) {
