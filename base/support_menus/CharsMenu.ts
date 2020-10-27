@@ -361,7 +361,6 @@ export class CharsMenu {
         this.set_arrows(false, false);
 
         this.window.close(callback, false);
-        callback = null;
     }
 
 }
