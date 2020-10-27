@@ -27,11 +27,9 @@ export class MainChar extends Player {
     public dash_speed: number;
     public climb_speed: number;
     public starting_level: number;
-    public level: number;
     public class_table: any;
     public class: Classes;
     public exp_curve: number[];
-    public current_exp: number;
     public venus_level_base: number;
     public mercury_level_base: number;
     public mars_level_base: number;
@@ -61,8 +59,6 @@ export class MainChar extends Player {
     public def_extra: number;
     public agi_extra: number;
     public luk_extra: number;
-    public hp_recovery: number;
-    public pp_recovery: number;
     public items: ItemSlot[];
     public equip_slots: {
         weapon: ItemSlot,
@@ -77,28 +73,6 @@ export class MainChar extends Player {
     public innate_abilities: string[];
     public in_party: boolean;
     public abilities: string[];
-    public turns: number;
-    public battle_animations_variations: {[ability_key: string]: string};
-    public venus_level_current: number;
-    public mercury_level_current: number;
-    public mars_level_current: number;
-    public jupiter_level_current: number;
-    public venus_power_current: number;
-    public mercury_power_current: number;
-    public mars_power_current: number;
-    public jupiter_power_current: number;
-    public venus_resist_current: number;
-    public mercury_resist_current: number;
-    public mars_resist_current: number;
-    public jupiter_resist_current: number;
-    public max_hp: number;
-    public current_hp: number;
-    public max_pp: number;
-    public current_pp: number;
-    public atk: number;
-    public def: number;
-    public agi: number;
-    public luk: number;
 
     constructor (
         key_name,
