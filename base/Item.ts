@@ -38,7 +38,6 @@ export class Item {
     public equipable_chars: string[];
     public price: number;
     public granted_ability: string;
-    public broken: boolean;
     public equipable: boolean;
 
     constructor(
@@ -79,7 +78,6 @@ export class Item {
         this.equipable_chars = equipable_chars;
         this.price = price;
         this.granted_ability = granted_ability;
-        this.broken = false;
         this.equipable = this.type === item_types.GENERAL_ITEM ? false : true;
     }
 }

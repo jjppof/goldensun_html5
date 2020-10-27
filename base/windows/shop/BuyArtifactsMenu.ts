@@ -10,7 +10,7 @@ import { EquipCompare } from './EquipCompare';
 import { YesNoMenu } from '../YesNoMenu';
 import { ShopkeepDialog } from './ShopkeepDialog';
 import { ShopItem } from '../../Shop';
-import { MainChar } from '../../MainChar';
+import { ItemSlot, MainChar } from '../../MainChar';
 
 const MAX_INVENTORY_SIZE = 15;
 const MAX_ITEMS_PER_PAGE = 7;
@@ -103,7 +103,7 @@ export class BuyArtifactsMenu{
         else this.open_buy_select();
     }
 
-    sell_old_equip(old_item:Item){
+    sell_old_equip(old_item:Item, slot: ItemSlot){
         let msg_key = old_item.rare_item ? "after_sell_artifact" : "after_sell_normal";
         this.npc_dialog.update_dialog(msg_key, true);
 
@@ -127,7 +127,7 @@ export class BuyArtifactsMenu{
             }
         }
 
-        let sell_price = this.old_item.broken ? this.old_item.price*SELL_BROKEN_MULTIPLIER : this.old_item.price*SELL_MULTIPLIER;
+        let sell_price = slot.broken ? this.old_item.price*SELL_BROKEN_MULTIPLIER : this.old_item.price*SELL_MULTIPLIER;
 
         this.data.info.party_data.coins += sell_price | 0;
         this.parent.update_your_coins();
@@ -142,29 +142,32 @@ export class BuyArtifactsMenu{
         this.npc_dialog.update_dialog("equip_compliment", true);
 
         this.old_item = null;
+        let slot: ItemSlot = null;
         switch(item_type){
             case item_types.WEAPONS:
-                if(eq_slots.weapon) this.old_item = this.data.info.items_list[eq_slots.weapon.key_name];
-                break;        
+                if(eq_slots.weapon) slot = eq_slots.weapon;
+                break;
             case item_types.ARMOR:
-                if(eq_slots.body) this.old_item = this.data.info.items_list[eq_slots.body.key_name];
+                if(eq_slots.body) slot = eq_slots.body;
                 break;
             case item_types.CHEST_PROTECTOR:
-                if(eq_slots.chest) this.old_item = this.data.info.items_list[eq_slots.chest.key_name];
+                if(eq_slots.chest) slot = eq_slots.chest;
                 break;
             case item_types.HEAD_PROTECTOR:
-                if(eq_slots.head) this.old_item = this.data.info.items_list[eq_slots.head.key_name];
+                if(eq_slots.head) slot = eq_slots.head;
                 break;
             case item_types.RING:
-                if(eq_slots.ring) this.old_item = this.data.info.items_list[eq_slots.ring.key_name];
+                if(eq_slots.ring) slot = eq_slots.ring;
                 break;
             case item_types.LEG_PROTECTOR:
-                if(eq_slots.boots) this.old_item = this.data.info.items_list[eq_slots.boots.key_name];
+                if(eq_slots.boots) slot = eq_slots.boots;
                 break;
             case item_types.UNDERWEAR:
-                if(eq_slots.underwear) this.old_item = this.data.info.items_list[eq_slots.underwear.key_name];
+                if(eq_slots.underwear) slot = eq_slots.underwear;
                 break;
         }
+
+        if(slot) this.old_item = this.data.info.items_list[slot.key_name];
 
         if(this.old_item){
             for(let i=0; i<this.selected_character.items.length; i++){
@@ -189,13 +192,13 @@ export class BuyArtifactsMenu{
         }
         else{
             let after_compliment = () =>{
-                let sell_price = this.old_item.broken ? this.old_item.price*SELL_BROKEN_MULTIPLIER : this.old_item.price*SELL_MULTIPLIER;
+                let sell_price = slot.broken ? this.old_item.price*SELL_BROKEN_MULTIPLIER : this.old_item.price*SELL_MULTIPLIER;
     
                 let text = this.npc_dialog.get_message("sell_current");
                 text = this.npc_dialog.replace_text(text, undefined, this.old_item.name, String(sell_price | 0));
                 this.npc_dialog.update_dialog(text, false, false);
     
-                this.yesno_action.open_menu({yes: this.sell_old_equip.bind(this, this.old_item), no: () => {
+                this.yesno_action.open_menu({yes: this.sell_old_equip.bind(this, this.old_item, slot), no: () => {
                     let msg_key = this.old_item.rare_item ? "decline_sell_artifact" : "decline_sell_normal";
                     this.npc_dialog.update_dialog(msg_key, true);
                     this.data.control_manager.simple_input(this.check_game_ticket.bind(this));
