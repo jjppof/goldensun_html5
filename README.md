@@ -31,6 +31,7 @@ GS-HTML5 supports both Javascript and Typescript. We use [Webpack](https://webpa
 - Use `npm start` to start the development server.
 - Use `npm run build` to generate a bundle.
 - Use these [guidelines](https://typedoc.org/guides/doccomments/) to comment code.
+- Learn Phaser 2 by [examples](https://phaser.io/examples/v2) or by this [tutorial](https://phaser.io/tutorials/making-your-first-phaser-2-game).
 
 ## Utils
 
