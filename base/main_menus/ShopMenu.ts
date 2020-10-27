@@ -153,7 +153,6 @@ export class ShopMenu{
         this.item_desc_text = this.item_desc_win.set_text_in_position("", ITEM_DESC_TEXT_X, ITEM_DESC_TEXT_Y);
     }
     on_submenu_close(){
-        this.horizontal_menu.activate();
         this.open_horizontal_menu();
     }
 
@@ -242,39 +241,36 @@ export class ShopMenu{
     }
 
     button_press() {
-        this.horizontal_menu.deactivate(true);
-        this.current_index = this.horizontal_menu.selected_button_index;
+        this.horizontal_menu.close(() => {
+            this.current_index = this.horizontal_menu.selected_button_index;
         
-        switch (this.buttons_keys[this.horizontal_menu.selected_button_index]){
-            case "buy":
-                this.alternate_window_pos(BUY_MODE);
-                this.buy_menu.open_menu(false, this.on_submenu_close.bind(this));
-                break;
-            case "sell":
-                this.alternate_window_pos(SELL_MODE);
-                this.sell_menu.open_menu(false, this.on_submenu_close.bind(this));
-                break;
-            case "artifacts":
-                this.alternate_window_pos(BUY_MODE);
-                this.buy_menu.open_menu(true, this.on_submenu_close.bind(this));
-                break;
-            case "repair":
-                this.alternate_window_pos(SELL_MODE);
-                this.sell_menu.open_menu(true, this.on_submenu_close.bind(this));
-                break;
-        }
-        if(!this.npc_dialog.is_active){
-            this.npc_dialog.close_dialog()
-        }
+            switch (this.buttons_keys[this.horizontal_menu.selected_button_index]){
+                case "buy":
+                    this.alternate_window_pos(BUY_MODE);
+                    this.buy_menu.open_menu(false, this.on_submenu_close.bind(this));
+                    break;
+                case "sell":
+                    this.alternate_window_pos(SELL_MODE);
+                    this.sell_menu.open_menu(false, this.on_submenu_close.bind(this));
+                    break;
+                case "artifacts":
+                    this.alternate_window_pos(BUY_MODE);
+                    this.buy_menu.open_menu(true, this.on_submenu_close.bind(this));
+                    break;
+                case "repair":
+                    this.alternate_window_pos(SELL_MODE);
+                    this.sell_menu.open_menu(true, this.on_submenu_close.bind(this));
+                    break;
+            }
+            if(!this.npc_dialog.is_active){
+                this.npc_dialog.close_dialog()
+            }
+        });
     }
 
     update_position() {
         this.npc_dialog.update_position();
         this.horizontal_menu.update_position();
-    }
-
-    is_active() {
-        return this.horizontal_menu.menu_active;
     }
 
     open_horizontal_menu(message_key="cancel_option"){
@@ -313,7 +309,7 @@ export class ShopMenu{
     }
 
     close_menu() {
-        if (!this.is_active()) return;
+        if (!this.horizontal_menu.menu_active) return;
         this.horizontal_menu.close();
 
         this.npc_dialog.update_dialog("goodbye"); 

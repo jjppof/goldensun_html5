@@ -49,7 +49,6 @@ export class BuySelectMenu{
     public game:Phaser.Game;
     public data:GoldenSun;
     public on_change:Function;
-    public close_callback:Function;
 
     public window:Window;
     public items:{[key_name:string] : ShopItem};
@@ -73,7 +72,6 @@ export class BuySelectMenu{
         this.game = game;
         this.data = data;
         this.on_change = on_change;
-        this.close_callback = null;
 
         this.window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
         this.items = {};
@@ -310,8 +308,8 @@ export class BuySelectMenu{
             {key: this.data.gamepad.RIGHT, callback: this.next_item.bind(this)},
             {key: this.data.gamepad.UP, callback: this.previous_page.bind(this)},
             {key: this.data.gamepad.DOWN, callback: this.next_page.bind(this)},
-            {key: this.data.gamepad.A, callback: on_select},
-            {key: this.data.gamepad.B, callback: on_cancel}
+            {key: this.data.gamepad.A, callback: on_select, params:{reset_control:true}},
+            {key: this.data.gamepad.B, callback: on_cancel, params:{reset_control:true}}
         ];
         this.data.control_manager.set_control(controls, {loop_configs:{horizontal:true}});
     }
@@ -453,9 +451,8 @@ export class BuySelectMenu{
     Input: items [array] - The item list to display (array of Item)
            index [number] - Initial selected item index
            page [number] - Initial selected page index
-           close_callback [function] - Callback function (Optional)
            open_callback [function] - Callback function (Optional)*/
-    open(items:{[key_name:string] : ShopItem}, index:number=0, page:number=0, close_callback?:Function, open_callback?:Function){
+    open(items:{[key_name:string] : ShopItem}, index:number=0, page:number=0, open_callback?:Function){
         this.items = items;
         this.current_page = page
         this.selected_index = index;
@@ -467,14 +464,13 @@ export class BuySelectMenu{
         this.set_cursor(this.selected_index);
         this.update_group_pos();
 
-        this.close_callback = close_callback;
         this.window.show(open_callback, false);
     }
 
     /*Clears information and closes the window
 
     Input: destroy [boolean] - If true, sprites are destroyed*/
-    close(destroy:boolean=false){
+    close(callback?:Function, destroy:boolean=false){
         this.unset_item(this.selected_index);
 
         kill_all_sprites(this.sprite_group, destroy);
@@ -490,7 +486,6 @@ export class BuySelectMenu{
 
         this.set_arrows(false, false);
 
-        this.window.close(this.close_callback, false);
-        this.close_callback = null;
+        this.window.close(callback, false);
     }
 }

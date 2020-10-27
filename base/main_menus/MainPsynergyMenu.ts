@@ -99,15 +99,18 @@ export class MainPsynergyMenu {
         if(this.shortcuts_window.open) this.shortcuts_window.close(undefined, false);
         if(this.psynergy_overview_window.open) this.psynergy_overview_window.close(undefined, false);
         
-        this.chars_menu.deactivate();
+        if(this.chars_menu.is_active) this.chars_menu.deactivate();
         this.choosing_psynergy = true;
         this.set_guide_window_text();
-        this.psynergy_choose_window.open(this.chars_menu.selected_index, () => {
-            this.choosing_psynergy = false;
-            this.chars_menu.activate();
-            this.set_guide_window_text();
-            this.set_description_window_text();
-        });
+
+        if(!this.psynergy_choose_window.window_open){
+            this.psynergy_choose_window.open(this.chars_menu.selected_index, () => {
+                this.choosing_psynergy = false;
+                this.chars_menu.activate();
+                this.set_guide_window_text();
+                this.set_description_window_text();
+            });
+        };
 
         this.psynergy_choose_window.grant_control(this.open_char_select.bind(this), () => {
             let psy_win = this.psynergy_choose_window;
@@ -125,6 +128,7 @@ export class MainPsynergyMenu {
             this.close_menu(true);
             this.data.info.field_abilities_list[ability.key_name].cast(this.data.hero, this.data.info.party_data.members[this.selected_char_index].key_name);
         }
+        else this.char_choose();
     }
 
     set_guide_window_text() {
@@ -191,11 +195,13 @@ export class MainPsynergyMenu {
     }
 
     close_menu(close_menu_below:boolean = false) {
+        this.data.cursor_manager.hide();
+        this.data.control_manager.reset();
+        
         this.chars_menu.close();
         this.basic_info_window.close();
 
         this.is_open = false;
-        this.data.cursor_manager.hide();
 
         this.guide_window.close(undefined, false);
         this.description_window.close(undefined, false);

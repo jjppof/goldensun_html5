@@ -29,7 +29,6 @@ const ITEM_COUNTER_LOOP_TIME = 100;
 export class ShopItemQuantityWindow {
     public game:Phaser.Game;
     public data:GoldenSun;
-    public close_callback:Function;
 
     public window:Window;
     public item_counter:ItemCounter;
@@ -44,7 +43,6 @@ export class ShopItemQuantityWindow {
     constructor(game:Phaser.Game, data:GoldenSun) {
         this.game = game;
         this.data = data;
-        this.close_callback = null;
 
         this.window = new Window(this.game, QUANTITY_WIN_X, QUANTITY_WIN_Y, QUANTITY_WIN_WIDTH, QUANTITY_WIN_HEIGHT);
         this.item_counter = new ItemCounter(this.game, this.window.group, ITEM_COUNTER_X, ITEM_COUNTER_Y, this.on_change.bind(this));
@@ -83,8 +81,7 @@ export class ShopItemQuantityWindow {
         this.item_counter.advance_step(-1);
     }
 
-    open(shop_item_obj:ShopItem, char_item_obj?:ItemSlot, use_coins:boolean=false,
-        close_callback?:Function, open_callback?:Function){
+    open(shop_item_obj:ShopItem, char_item_obj?:ItemSlot, use_coins:boolean=false, open_callback?:Function){
         this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "wiggle");
 
         this.base_price = this.data.info.items_list[shop_item_obj.key_name].price;
@@ -100,12 +97,11 @@ export class ShopItemQuantityWindow {
         this.item_counter.config(available_quantity, this.chosen_quantity, owned);
 
         this.is_open = true;
-        this.close_callback = close_callback;
         this.window.show(open_callback, false);
 
     }
 
-    close(){
+    close(callback?:Function){
         this.item_counter.deactivate();
         this.item_counter.clear();
         this.data.cursor_manager.clear_tweens();
@@ -114,7 +110,6 @@ export class ShopItemQuantityWindow {
         this.base_price = 0;
 
         this.is_open = false;
-        this.window.close(this.close_callback, false);
-        this.close_callback = null;
+        this.window.close(callback, false);
     }
 }

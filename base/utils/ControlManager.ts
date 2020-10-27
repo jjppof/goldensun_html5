@@ -9,6 +9,7 @@ export type ControlObj = {
     pressed?:boolean,
     loop?:boolean,
     loop_time?:number,
+    reset?:boolean
 }
 
 export type LoopConfigs = {
@@ -19,9 +20,9 @@ export type LoopConfigs = {
 export class ControlManager{
     public game:Phaser.Game;
     public gamepad:Gamepad;
+    public disabled:boolean;
 
     public keys_list:number[];
-
     public keys:{[key:number] : ControlObj};
 
     public signal_bindings:Phaser.SignalBinding[];
@@ -31,12 +32,13 @@ export class ControlManager{
     constructor(game:Phaser.Game, gamepad:Gamepad){
         this.game = game;
         this.gamepad = gamepad;
+        this.disabled = false;
 
         this.keys_list = this.gamepad.keys;
 
         let keys_to_map = [];
         for(let i=0; i<this.keys_list.length; i++){
-            keys_to_map.push({key: this.keys_list[i], callback: null, pressed: false, loop: false, loop_time: DEFAULT_LOOP_TIME});
+            keys_to_map.push({key: this.keys_list[i], callback: null, pressed: false, loop: false, loop_time: DEFAULT_LOOP_TIME, reset:false});
         }
 
         this.keys = _.mapKeys(keys_to_map, k => k.key) as {[key:number] : ControlObj};
@@ -50,11 +52,19 @@ export class ControlManager{
         return this.signal_bindings.length !== 0;
     }
 
-    simple_input(callback:Function, confirm_only:boolean=false){
+    simple_input(callback:Function, params?:{reset_control?:boolean, confirm_only?:boolean}){
         if(this.initialized) this.reset();
         
         this.keys[this.gamepad.A].callback = callback;
-        if(!confirm_only) this.keys[this.gamepad.B].callback = callback;
+
+        if(params){
+            this.keys[this.gamepad.A].reset = params.reset_control ? params.reset_control : false;
+
+            if(!params.confirm_only) {
+                this.keys[this.gamepad.B].callback = callback;
+                this.keys[this.gamepad.B].reset = params.reset_control ? params.reset_control : false; 
+            }
+        }
 
         this.enable_keys();
     }
@@ -67,6 +77,7 @@ export class ControlManager{
 
         if(callbacks.on_down){
             let b1 = this.game.input.keyboard.addKey(control.key).onDown.add(() => {
+                if(this.disabled) return;
                 callbacks.on_down();
             });
             if(!persist) this.signal_bindings.push(b1);
@@ -74,6 +85,7 @@ export class ControlManager{
         }
         if(callbacks.on_up){
             let b2 = this.game.input.keyboard.addKey(control.key).onUp.add(() => {
+                if(this.disabled) return;
                 callbacks.on_up();
             });
             if(!persist) this.signal_bindings.push(b2);
@@ -84,44 +96,46 @@ export class ControlManager{
         return bindings;
     }
 
-    set_control(controls:{key:number, callback:Function}[],
-        params?:{
+    set_control(controls:{key:number, callback:Function, params?:{reset_control?:boolean}}[],
+        configs?:{
             loop_configs?:{vertical?:boolean, vertical_time?:number,
                 horizontal?:boolean, horizontal_time?:number,
                 shoulder?:boolean, shoulder_time?:number},
             persist?:boolean, no_reset?:boolean
         }){
-        let disable_reset:boolean = params ? (params.no_reset ? params.no_reset : false) : false;
+        let disable_reset:boolean = configs ? (configs.no_reset ? configs.no_reset : false) : false;
         if(this.initialized && !disable_reset) this.reset();
 
         for(let i=0; i<controls.length; i++){
             if(controls[i].callback)
                 this.keys[controls[i].key].callback = controls[i].callback;
+                if(controls[i].params)
+                    this.keys[controls[i].key].reset = controls[i].params.reset_control ? controls[i].params.reset_control : false; 
         }
         
-        if(params){
-            this.set_params(params);
-            this.enable_keys(params.persist);
+        if(configs){
+            this.set_configs(configs);
+            this.enable_keys(configs.persist);
         }
         else this.enable_keys();
     }
 
-    set_params(params:any){
-        if(params.loop_configs){
-            let configs = params.loop_configs;
+    set_configs(configs:any){
+        if(configs.loop_configs){
+            let options = configs.loop_configs;
             let controls = [];
 
-            if(configs.vertical){
-                controls.push({key:this.gamepad.UP, loop_time:configs.vertical_time});
-                controls.push({key:this.gamepad.DOWN, loop_time:configs.vertical_time});
+            if(options.vertical){
+                controls.push({key:this.gamepad.UP, loop_time:options.vertical_time});
+                controls.push({key:this.gamepad.DOWN, loop_time:options.vertical_time});
             }
-            if(configs.horizontal){
-                controls.push({key:this.gamepad.LEFT, loop_time:configs.horizontal_time});
-                controls.push({key:this.gamepad.RIGHT, loop_time:configs.horizontal_time});
+            if(options.horizontal){
+                controls.push({key:this.gamepad.LEFT, loop_time:options.horizontal_time});
+                controls.push({key:this.gamepad.RIGHT, loop_time:options.horizontal_time});
             }
-            if(configs.shoulder){
-                controls.push({key:this.gamepad.L, loop_time:configs.shoulder_time});
-                controls.push({key:this.gamepad.R, loop_time:configs.shoulder_time});
+            if(options.shoulder){
+                controls.push({key:this.gamepad.L, loop_time:options.shoulder_time});
+                controls.push({key:this.gamepad.R, loop_time:options.shoulder_time});
             }
 
             this.enable_loop(controls);
@@ -142,17 +156,24 @@ export class ControlManager{
             if(this.keys[this.keys_list[i]].callback){
                 let key_callback = this.keys[this.keys_list[i]].callback;
                 let loop_time = this.keys[this.keys_list[i]].loop_time;
+                let trigger_reset = this.keys[this.keys_list[i]].reset;
 
                 if(this.keys[this.keys_list[i]].loop){
                     let b1 = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onDown.add(() => {
                         if (this.keys[this.gamepad.opposite_key(this.keys_list[i])].pressed) {
+                            if(this.disabled) return;
+
                             this.keys[this.gamepad.opposite_key(this.keys_list[i])].pressed = false;
                             this.stop_timers();
                         }
+
                         this.keys[this.keys_list[i]].pressed = true;
                         this.set_loop_timers(key_callback, loop_time);
                     });
+
                     let b2 = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onUp.add(() => {
+                        if(this.disabled) return;
+
                         this.keys[this.keys_list[i]].pressed = false;
                         this.stop_timers();
                     });
@@ -162,6 +183,9 @@ export class ControlManager{
                 }
                 else{
                     let b = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onDown.add(() => {
+                        if(this.disabled) return;
+                        
+                        if(trigger_reset) this.reset();
                         key_callback();
                     });
 

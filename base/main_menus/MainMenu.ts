@@ -43,7 +43,6 @@ export class MainMenu {
     }
 
     button_press() {
-        this.horizontal_menu.deactivate(true);
         this.current_index = this.horizontal_menu.selected_button_index;
 
         switch (this.buttons_keys[this.horizontal_menu.selected_button_index]) {
@@ -59,25 +58,21 @@ export class MainMenu {
         }
     }
 
-    button_press_action(menu:any) {
-        this.horizontal_menu.deactivate();
-        
-        menu.open_menu((close_this_menu:boolean) => {
-            this.horizontal_menu.activate();
-            this.chars_status_window.update_chars_info();
-            if (close_this_menu) {
-                this.close_menu();
-            }
+    button_press_action(menu:any) {      
+        this.horizontal_menu.close(() => {
+            menu.open_menu((close_this_menu:boolean) => {
+                this.horizontal_menu.open();
+                this.chars_status_window.update_chars_info();
+                if (close_this_menu) {
+                    this.close_menu();
+                }
+            });
         });
     }
 
     update_position() {
         this.chars_status_window.update_position(true);
         this.horizontal_menu.update_position();
-    }
-
-    is_active() {
-        return this.horizontal_menu.menu_active;
     }
 
     open_menu() {
@@ -89,14 +84,14 @@ export class MainMenu {
     }
 
     close_menu() {
-        if (!this.is_active()) return;
+        if (!this.horizontal_menu.menu_active) return;
+        this.data.control_manager.reset();
 
         this.data.menu_open = false;
         this.current_index = 0;
 
         this.horizontal_menu.close();
         this.chars_status_window.close();
-        this.data.control_manager.reset();
     }
 }
 

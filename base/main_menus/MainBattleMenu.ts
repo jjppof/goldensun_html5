@@ -105,34 +105,35 @@ export class MainBattleMenu {
     start_button_press() {
         switch (this.start_buttons_keys[this.start_horizontal_menu.selected_button_index]) {
             case "fight":
-                this.start_horizontal_menu.close();
-                let filtered_buttons = [];
-                if (!Djinn.has_standby_djinn(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE))) {
-                    filtered_buttons.push("summon");
-                }
-                this.current_buttons = this.inner_buttons_keys.filter(key => !filtered_buttons.includes(key));
-                this.inner_horizontal_menu.mount_buttons(filtered_buttons);
-                this.abilities = {};
-                this.data.info.party_data.members.slice(0, MAX_CHARS_IN_BATTLE).forEach((char:MainChar) => {
-                    this.abilities[char.key_name] = [];
-                });
-                this.djinni_already_used = ordered_elements.reduce((a,b) => (a[b] = 0, a), {});
-                this.inner_horizontal_menu.open();
-                let this_char = this.data.info.party_data.members[this.current_char_index];
-                while (this_char.is_paralyzed() || this_char.has_permanent_status(permanent_status.DOWNED)) {
-                    this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
-                        key_name: "",
-                        targets: []
-                    });
-                    ++this.current_char_index;
-                    this_char = this.data.info.party_data.members[this.current_char_index];
-                    if (this.current_char_index >= MAX_CHARS_IN_BATTLE || this.current_char_index >= this.data.info.party_data.members.length) {
-                        this.current_char_index = 0;
-                        this.on_abilities_choose(this.abilities);
-                        break;
+                this.start_horizontal_menu.close(()=>{
+                    let filtered_buttons = [];
+                    if (!Djinn.has_standby_djinn(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE))) {
+                        filtered_buttons.push("summon");
                     }
-                }
-                this.set_avatar();
+                    this.current_buttons = this.inner_buttons_keys.filter(key => !filtered_buttons.includes(key));
+                    this.inner_horizontal_menu.mount_buttons(filtered_buttons);
+                    this.abilities = {};
+                    this.data.info.party_data.members.slice(0, MAX_CHARS_IN_BATTLE).forEach((char:MainChar) => {
+                        this.abilities[char.key_name] = [];
+                    });
+                    this.djinni_already_used = ordered_elements.reduce((a,b) => (a[b] = 0, a), {});
+                    this.inner_horizontal_menu.open();
+                    let this_char = this.data.info.party_data.members[this.current_char_index];
+                    while (this_char.is_paralyzed() || this_char.has_permanent_status(permanent_status.DOWNED)) {
+                        this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
+                            key_name: "",
+                            targets: []
+                        });
+                        ++this.current_char_index;
+                        this_char = this.data.info.party_data.members[this.current_char_index];
+                        if (this.current_char_index >= MAX_CHARS_IN_BATTLE || this.current_char_index >= this.data.info.party_data.members.length) {
+                            this.current_char_index = 0;
+                            this.on_abilities_choose(this.abilities);
+                            break;
+                        }
+                    }
+                    this.set_avatar();
+                });
         }
     }
 

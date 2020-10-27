@@ -285,12 +285,14 @@ export class MainItemMenu {
     }
 
     close_menu(close_menu_below:boolean = false) {
+        this.data.cursor_manager.hide();
+        this.data.control_manager.reset();
+        
         this.chars_menu.close();
         this.basic_info_window.close();
         this.item_change_stats_window.close();
 
         this.is_open = false;
-        this.data.cursor_manager.hide();
 
         this.guide_window.close(undefined, false);
         this.description_window.close(undefined, false);

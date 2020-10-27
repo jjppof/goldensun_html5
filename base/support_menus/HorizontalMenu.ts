@@ -82,8 +82,8 @@ export class HorizontalMenu {
         let controls = [
             {key: this.data.gamepad.LEFT, callback: this.previous_button.bind(this)},
             {key: this.data.gamepad.RIGHT, callback: this.next_button.bind(this)},
-            {key: this.data.gamepad.A, callback: this.on_press.bind(this)},
-            {key: this.data.gamepad.B, callback: (this.on_cancel ? this.on_cancel.bind(this) : undefined)}
+            {key: this.data.gamepad.A, callback: this.on_press.bind(this), params:{reset_control:true}},
+            {key: this.data.gamepad.B, callback: (this.on_cancel ? this.on_cancel.bind(this) : undefined), params:{reset_control:true}}
         ];
 
         this.data.control_manager.set_control(controls, {loop_configs:{horizontal:true}});
@@ -186,7 +186,6 @@ export class HorizontalMenu {
     open(callback?:Function, select_index:number=0, start_active:boolean=true,
         custom_scale?:{active_default: number, max_scale: number}) {
         this.reset_button();
-        this.set_control();
         this.game.world.bringToTop(this.group);
 
         if(custom_scale) this.custom_scale = custom_scale;
@@ -218,10 +217,11 @@ export class HorizontalMenu {
             if (callback) {
                 callback();
             }
+            this.set_control();
         });
     }
 
-    close(callback?: () => void, animate:boolean=true) {
+    close(callback?: Function, animate:boolean=true) {
         this.reset_button();
         this.data.control_manager.reset();
 
@@ -243,7 +243,7 @@ export class HorizontalMenu {
                 Phaser.Easing.Linear.None,
                 true
             ).onComplete.addOnce(buttons_resolve);
-            Promise.all([window_promise, buttons_promise]).then(callback !== undefined ? callback : () => {});
+            Promise.all([window_promise, buttons_promise]).then(callback !== undefined ? (callback as () => void) : () => {});
 
         } else {
             this.title_window.close(undefined, false);
@@ -256,7 +256,6 @@ export class HorizontalMenu {
 
     activate() {
         this.menu_active = true;
-        this.set_control();
 
         this.buttons.forEach(obj => {
             obj.sprite.alpha = 1;
@@ -268,6 +267,7 @@ export class HorizontalMenu {
 
         this.title_window.set_text([[this.buttons[this.selected_button_index].title]]);
         this.set_button();
+        this.set_control();
     }
 
     deactivate(hide = false) {

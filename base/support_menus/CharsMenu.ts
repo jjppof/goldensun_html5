@@ -53,7 +53,6 @@ export class CharsMenu {
     public game:Phaser.Game;
     public data:GoldenSun;
     public on_change:Function;
-    public close_callback:Function;
 
     public window:Window;
     public char_group:Phaser.Group;
@@ -73,7 +72,6 @@ export class CharsMenu {
         this.game = game;
         this.data = data;
         this.on_change = on_change;
-        this.close_callback = null;
 
         this.window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
         this.char_group = this.game.add.group();
@@ -311,8 +309,8 @@ export class CharsMenu {
             {key: this.data.gamepad.RIGHT, callback: this.next_char.bind(this)},
             {key: this.data.gamepad.UP, callback: this.previous_line.bind(this)},
             {key: this.data.gamepad.DOWN, callback: this.next_line.bind(this)},
-            {key: this.data.gamepad.A, callback: on_select},
-            {key: this.data.gamepad.B, callback: on_cancel}
+            {key: this.data.gamepad.A, callback: on_select, params:{reset_control:true}},
+            {key: this.data.gamepad.B, callback: on_cancel, params:{reset_control:true}}
         ];
         this.data.control_manager.set_control(controls,{loop_configs: {horizontal:true}});
     }
@@ -329,7 +327,7 @@ export class CharsMenu {
         this.is_active = false;
     }
 
-    open(select_index:number=0, mode:string=SHOP_MODE, close_callback?:Function, open_callback?:Function) {
+    open(select_index:number=0, mode:string=SHOP_MODE, open_callback?:Function) {
         this.selected_index = select_index;
         this.current_line = 0;
         this.mode = mode;
@@ -342,13 +340,12 @@ export class CharsMenu {
 
         this.char_group.alpha = 1;
         this.is_open = true;
-        this.close_callback = close_callback;
 
         this.activate();
         this.window.show(open_callback, false);
     }
 
-    close(destroy:boolean=false) {
+    close(callback?:Function, destroy:boolean=false) {
         this.is_open = false;
         this.deactivate();
         utils.kill_all_sprites(this.char_group, destroy);
@@ -363,8 +360,8 @@ export class CharsMenu {
 
         this.set_arrows(false, false);
 
-        this.window.close(this.close_callback, false);
-        this.close_callback = null;
+        this.window.close(callback, false);
+        callback = null;
     }
 
 }

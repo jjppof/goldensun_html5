@@ -18,6 +18,7 @@ export type DialogMessage={
 export class ShopkeepDialog{
     public game:Phaser.Game;
     public data:GoldenSun;
+    
     public shop_key:string;
     public avatar_key:string;
     public dialog_key:string;
@@ -30,6 +31,7 @@ export class ShopkeepDialog{
     constructor(game:Phaser.Game, data:GoldenSun){
         this.game = game;
         this.data = data;
+
         this.shop_key = null;
         this.avatar_key = null;
         this.dialog_key = null;
@@ -87,8 +89,8 @@ export class ShopkeepDialog{
         this.dialog_manager.kill_dialog(callback, dialog_only);
     }
 
-    close(){
-        this.close_dialog(undefined, false);
+    close(callback?:Function){
+        this.close_dialog(callback, false);
 
         this.shop_key = null;
         this.avatar_key = null;
