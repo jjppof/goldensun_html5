@@ -240,8 +240,8 @@ export class CharsStatusWindow {
     }
 
     /*Closes this window*/
-    close() {
-        this.status_window.close();
+    close(callback?:Function) {
+        this.status_window.close(callback);
     }
 
     /*Destroys this window*/

@@ -11,6 +11,7 @@ import { YesNoMenu } from '../YesNoMenu';
 import { ShopkeepDialog } from './ShopkeepDialog';
 import { ShopItem } from '../../Shop';
 import { ItemSlot, MainChar } from '../../MainChar';
+import { WINDOW_PADDING_BOTTOM } from '../../magic_numbers';
 
 const MAX_INVENTORY_SIZE = 15;
 const MAX_ITEMS_PER_PAGE = 7;
@@ -23,6 +24,17 @@ const SELL_BROKEN_MULTIPLIER = SELL_MULTIPLIER - REPAIR_MULTIPLIER;
 const YESNO_X = 56;
 const YESNO_Y = 40;
 
+export const WindowNames = {
+    ITEM_DESC_WIN: "item_desc_win",
+    ITEM_PRICE_WIN: "item_price_win",
+    YOUR_COINS_WIN: "your_coins_win",
+    CHAR_DISPLAY: "char_display",
+    INV_WIN: "inv_win",
+    YESNO_ACTION: "yesno_action",
+    QUANT_WIN: "quant_win",
+    BUY_SELECT: "buy_select",
+    EQ_COMPARE: "eq_compare"
+}
 
 export class BuyArtifactsMenu{
     public game:Phaser.Game;
@@ -111,7 +123,7 @@ export class BuyArtifactsMenu{
             let shop_list = this.data.info.shops_list[this.parent.shop_key].item_list;
             let exists = false;
             for(let i=0; i<shop_list.length; i++){
-                if(shop_list[i].key_name = old_item.key_name){
+                if(shop_list[i].key_name === old_item.key_name){
                     exists = true;
                     this.data.info.shops_list[this.parent.shop_key].item_list[i].quantity += 1;
                 }
@@ -131,6 +143,7 @@ export class BuyArtifactsMenu{
 
         this.data.info.party_data.coins += sell_price | 0;
         this.parent.update_your_coins();
+        this.parent.update_items();
 
         this.data.control_manager.simple_input(this.check_game_ticket.bind(this));
     }
@@ -220,10 +233,11 @@ export class BuyArtifactsMenu{
             this.npc_dialog.update_dialog("not_enough_coins", true);
             this.data.cursor_manager.hide();
 
-            if(this.quant_win.is_open) this.quant_win.close(() => {
+            let exec = () => {
                 this.data.control_manager.simple_input(this.open_buy_select.bind(this));
-            });
-            else this.open_buy_select.bind(this);
+            };
+            if(this.quant_win.is_open) this.quant_win.close(exec);
+            else exec();
         }
         else{
             this.npc_dialog.update_dialog("after_buy", true);
@@ -255,9 +269,8 @@ export class BuyArtifactsMenu{
                             this.data.info.shops_list[this.parent.shop_key].item_list[i].quantity -= quantity;
                         }
                     }
-                    this.parent.set_item_lists();
-                    this.item_list = this.is_artifacts_menu ? this.parent.artifact_list : this.parent.normal_item_list;
-                    this.buy_select.items = this.item_list;
+
+                    this.parent.update_items();
 
                     if(equip_ask){
                         let equip_now = () => {
@@ -293,6 +306,8 @@ export class BuyArtifactsMenu{
             let text = this.npc_dialog.get_message("inventory_full");
             text = this.npc_dialog.replace_text(text, this.selected_character.name);
             this.npc_dialog.update_dialog(text, false, false);
+
+            this.char_display.grant_control(this.on_cancel_char_select.bind(this), this.on_buy_equip_select.bind(this));
         }
         else{
             if(!this.data.info.items_list[this.selected_item.key_name].equipable_chars.includes(this.selected_character.key_name)){
@@ -348,8 +363,12 @@ export class BuyArtifactsMenu{
                     this.npc_dialog.update_dialog("not_enough_coins", true);
                     this.data.cursor_manager.hide();
         
-                    if(this.quant_win.is_open) this.quant_win.close();
-                    this.data.control_manager.simple_input(this.open_buy_select.bind(this));
+                    let finish = () => {
+                        this.data.control_manager.simple_input(this.open_buy_select.bind(this));
+                    }  
+
+                    if(this.quant_win.is_open) this.quant_win.close(finish);
+                    else finish();
                 }
                 else{
                     this.npc_dialog.update_dialog("buy_quantity");
@@ -372,7 +391,7 @@ export class BuyArtifactsMenu{
         if(this.eq_compare.is_open) this.eq_compare.close();
         if(this.char_display.is_open)this.char_display.close();
 
-        let close_windows = ["inv_win", "eq_compare", "char_display"];
+        let close_windows = [WindowNames.INV_WIN, WindowNames.EQ_COMPARE, WindowNames.CHAR_DISPLAY];
         this.close_windows(close_windows, this.open_buy_select.bind(this));
     }
 
@@ -386,14 +405,14 @@ export class BuyArtifactsMenu{
             index: this.buy_select.selected_index,
             is_last: this.buy_select.is_last(this.buy_select.current_page, this.buy_select.selected_index)};
         
-        let close_windows = ["buy_select", "item_desc_win"];
+        let close_windows = [WindowNames.BUY_SELECT, WindowNames.ITEM_DESC_WIN];
         this.close_windows(close_windows, () => {
             this.npc_dialog.update_dialog("character_select");
 
             let char_key = (this.selected_character) ? this.selected_character.key_name : this.data.info.party_data.members[0].key_name;
 
-            let open_windows = [{name: "char_display", arguments: [this.selected_char_index, "shop"]},
-                {name: "eq_compare", arguments: [char_key, this.selected_item.key_name]}];
+            let open_windows = [{name: WindowNames.CHAR_DISPLAY, arguments: [this.selected_char_index, "shop"]},
+                {name: WindowNames.EQ_COMPARE, arguments: [char_key, this.selected_item.key_name]}];
             this.show_windows(open_windows, () => {
                 this.char_display.grant_control(this.on_cancel_char_select.bind(this), this.on_buy_equip_select.bind(this));
             })
@@ -409,7 +428,7 @@ export class BuyArtifactsMenu{
             };
         }
         
-        let close_windows = ["item_desc_win", "buy_select", "quant_win", "eq_compare"];
+        let close_windows = [WindowNames.ITEM_DESC_WIN, WindowNames.BUY_SELECT, WindowNames.QUANT_WIN, WindowNames.EQ_COMPARE];
         this.close_windows(close_windows, () => {
             if(game_ticket) this.npc_dialog.update_dialog("game_ticket_select");
             else this.npc_dialog.update_dialog("character_select");
@@ -461,13 +480,13 @@ export class BuyArtifactsMenu{
     
             this.npc_dialog.update_dialog(msg_key);
 
-            let close_windows = ["char_display", "inv_win", "eq_compare"];
+            let close_windows = [WindowNames.CHAR_DISPLAY, WindowNames.INV_WIN, WindowNames.EQ_COMPARE];
             this.close_windows(close_windows, () => {
                 let open_windows = [
-                    {name: "buy_select", arguments: [this.item_list, this.buy_select_pos.index, this.buy_select_pos.page]},
-                    {name: "your_coins_win", arguments: []},
-                    {name: "item_price_win", arguments: []},
-                    {name: "item_desc_win", arguments: []},
+                    {name: WindowNames.BUY_SELECT, arguments: [this.item_list, this.buy_select_pos.index, this.buy_select_pos.page]},
+                    {name: WindowNames.YOUR_COINS_WIN, arguments: []},
+                    {name: WindowNames.ITEM_PRICE_WIN, arguments: []},
+                    {name: WindowNames.ITEM_DESC_WIN, arguments: []},
                 ]
                 this.show_windows(open_windows, () =>{
                     this.selected_item = this.buy_select.pages[this.buy_select.current_page][this.buy_select.selected_index];
@@ -512,9 +531,9 @@ export class BuyArtifactsMenu{
         this.buy_select_pos = {page: 0, index: 0, is_last: false};
         this.active = false;
 
-        let windows = ["item_desc_win", "item_price_win", "your_coins_win",
-        "char_display", "inv_win", "yesno_action", "quant_win", "buy_select",
-        "eq_compare"];
+        let windows = [WindowNames.ITEM_DESC_WIN, WindowNames.ITEM_PRICE_WIN, WindowNames.YOUR_COINS_WIN,
+        WindowNames.CHAR_DISPLAY, WindowNames.INV_WIN, WindowNames.YESNO_ACTION, WindowNames.QUANT_WIN,
+        WindowNames.BUY_SELECT, WindowNames.EQ_COMPARE];
 
         this.close_windows(windows, () =>{
             this.close_callback();

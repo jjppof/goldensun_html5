@@ -268,7 +268,17 @@ export class ShopMenu{
         });
     }
 
-    update_position() {
+    update_items(){
+        let active_menu = (this.buy_menu.active ? this.buy_menu : (this.sell_menu.active ? this.sell_menu : null));
+
+        this.set_item_lists();
+        if(active_menu === this.buy_menu){
+            this.buy_menu.item_list = this.buy_menu.is_artifacts_menu ? this.artifact_list : this.normal_item_list;
+            this.buy_select.items = this.buy_menu.item_list;    
+        }
+    }
+
+    update_position(){
         this.npc_dialog.update_position();
         this.horizontal_menu.update_position();
     }
