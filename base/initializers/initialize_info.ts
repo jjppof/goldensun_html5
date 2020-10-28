@@ -6,6 +6,7 @@ import { initialize_enemies } from './enemies';
 import { initialize_maps } from './maps';
 import { initialize_misc_data } from './misc_data';
 import { initialize_shops } from './shops';
+import { initialize_interactable_objs_data } from './interactable_objects';
 
 export async function initialize_game_data(game, data) {
     let load_maps_promise_resolve;
@@ -67,8 +68,14 @@ export async function initialize_game_data(game, data) {
     data.info.misc_sprite_base_list = initialize_misc_data(game, data.dbs.misc_animations_db, load_misc_promise_resolve);
     await load_misc_promise;
 
+    let load_iter_objs_promise_resolve;
+    const load_iter_objs_promise = new Promise(resolve => {
+        load_iter_objs_promise_resolve = resolve;
+    });
+    data.info.iter_objs_sprite_base_list = initialize_interactable_objs_data(game, data.dbs.interactable_objects_db, load_iter_objs_promise_resolve);
+    await load_iter_objs_promise;
+
     data.info.shops_list = initialize_shops(data.dbs.shops_db);
 
-    //initialize field abilities
     data.info.field_abilities_list = initialize_field_abilities(game, data);
 }

@@ -1,6 +1,6 @@
 import { directions, map_directions } from "./utils";
 import { NPC_Sprite, NPC } from './NPC';
-import { InteractableObjects, InteractableObjects_Sprite, interactable_object_interaction_types } from "./InteractableObjects";
+import { InteractableObjects, interactable_object_interaction_types } from "./InteractableObjects";
 import { TileEvent, event_types as tile_event_types } from './tile_events/TileEvent';
 import * as numbers from "./magic_numbers";
 import { JumpEvent } from "./tile_events/JumpEvent";
@@ -411,35 +411,12 @@ export class Map {
         }
     }
 
-    async config_interactable_object() {
+    config_interactable_object() {
         for (let i = 0; i < this.interactable_objects.length; ++i) {
             const interactable_object = this.interactable_objects[i];
-            const action = interactable_object.key_name;
-            let interactable_obj_sprite_info = new InteractableObjects_Sprite(
-                interactable_object.key_name,
-                [action]
-            );
-            interactable_object.sprite_info = interactable_obj_sprite_info;
-            interactable_obj_sprite_info.setActionSpritesheet(
-                action,
-                this.data.dbs.interactable_objects_db[interactable_object.key_name].spritesheet.image,
-                this.data.dbs.interactable_objects_db[interactable_object.key_name].spritesheet.json
-            );
-            interactable_obj_sprite_info.setActionDirections(
-                action, 
-                this.data.dbs.interactable_objects_db[interactable_object.key_name].actions.animations,
-                this.data.dbs.interactable_objects_db[interactable_object.key_name].actions.frames_count
-            );
-            interactable_obj_sprite_info.setActionFrameRate(action, this.data.dbs.interactable_objects_db[interactable_object.key_name].actions.frame_rate);
-            interactable_obj_sprite_info.setActionLoop(action, this.data.dbs.interactable_objects_db[interactable_object.key_name].actions.loop)
-            interactable_obj_sprite_info.generateAllFrames();
-            await new Promise(resolve => {
-                interactable_obj_sprite_info.loadSpritesheets(this.game, true, () => {
-                    interactable_object.initial_config(this.sprite);
-                    interactable_object.initialize_related_events(this.events, this);
-                    resolve();
-                });
-            });
+            interactable_object.sprite_info = this.data.info.iter_objs_sprite_base_list[interactable_object.key_name];
+            interactable_object.initial_config(this.sprite);
+            interactable_object.initialize_related_events(this.events, this);
         }
     }
 
@@ -554,7 +531,7 @@ export class Map {
         });
 
         this.config_layers(this.data.overlayer_group, this.data.underlayer_group);
-        await this.config_interactable_object();
+        this.config_interactable_object();
         await this.config_npc();
 
         if (this.sprite.properties.footprint) {

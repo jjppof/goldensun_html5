@@ -17,12 +17,6 @@ export const interactable_object_event_types = {
     CLIMB: "climb"
 };
 
-export class InteractableObjects_Sprite extends SpriteBase {
-    constructor (key_name, actions) {
-        super(key_name, actions);
-    }
-}
-
 export class InteractableObjects {
     public game: Phaser.Game;
     public data: GoldenSun;

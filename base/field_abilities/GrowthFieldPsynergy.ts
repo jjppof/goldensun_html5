@@ -1,6 +1,7 @@
 import { directions } from "../utils";
 import { FieldAbilities } from "./FieldAbilities";
 import * as _ from "lodash";
+import { SpriteBase } from "../SpriteBase";
 
 const ABILITY_KEY_NAME = "growth";
 const ACTION_KEY_NAME = "cast";
@@ -12,13 +13,15 @@ const Y_PARTICLE_SPEED = 35;
 const NO_TARGET_SPROUT_COUNT = 5;
 
 export class GrowthFieldPsynergy extends FieldAbilities {
-    public increase_duration: number;
-    public emitter: Phaser.Particles.Arcade.Emitter;
-    public particle_filter: any;
+    private increase_duration: number;
+    private emitter: Phaser.Particles.Arcade.Emitter;
+    private particle_filter: any;
+    private sprite_base: SpriteBase;
 
     constructor(game, data) {
         super(game, data, ABILITY_KEY_NAME, GROWTH_MAX_RANGE, ACTION_KEY_NAME, true);
         this.set_bootstrap_method(this.init_bubbles.bind(this));
+        this.sprite_base = this.data.info.iter_objs_sprite_base_list[ABILITY_KEY_NAME];
     }
 
     set_emitter() {
@@ -105,7 +108,8 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         this.target_object.get_events().forEach(event => {
             event.activate();
         });
-        this.target_object.sprite.animations.play("growth_growing", 8, false);
+        const anim_key = this.sprite_base.getAnimationKey(ABILITY_KEY_NAME, "growing");
+        this.target_object.sprite.animations.play(anim_key);
         this.target_object.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.unset_hero_cast_anim();
             this.stop_casting();
@@ -130,19 +134,22 @@ export class GrowthFieldPsynergy extends FieldAbilities {
                 grow_center_x += 16;
                 break;
         }
-        const frames = Phaser.Animation.generateFrameNames('growth/no_target/', 0, 6, '', 2);
         let promises = new Array(NO_TARGET_SPROUT_COUNT);
         const variation = 13;
+        const action_key = this.sprite_base.getActionKey(ABILITY_KEY_NAME);
+        const anim_key = this.sprite_base.getAnimationKey(ABILITY_KEY_NAME, "no_target");
+        const first_frame_name = this.sprite_base.getFrameName(ABILITY_KEY_NAME, "no_target", 0);
         for (let i = 0; i < NO_TARGET_SPROUT_COUNT; ++i) {
             const center_x = grow_center_x + _.random(-variation, variation);
             const center_y = grow_center_y + _.random(-variation, variation);
-            const miss_target_sprite = this.data.overlayer_group.create(center_x, center_y, "growth_growth");
+            const miss_target_sprite: Phaser.Sprite = this.data.overlayer_group.create(center_x, center_y, action_key);
             miss_target_sprite.anchor.setTo(0.5, 1);
-            miss_target_sprite.animations.add("no_target", frames, 10, false, false);
+            this.sprite_base.setAnimation(miss_target_sprite, ABILITY_KEY_NAME);
+            miss_target_sprite.frameName = first_frame_name;
             let resolve_func;
             promises.push(new Promise(resolve => { resolve_func = resolve; }));
             this.game.time.events.add(i * 40, () => {
-                miss_target_sprite.animations.play("no_target");
+                miss_target_sprite.animations.play(anim_key);
                 miss_target_sprite.animations.currentAnim.onComplete.addOnce(() => {
                     miss_target_sprite.destroy();
                     resolve_func();
