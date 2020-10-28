@@ -87,7 +87,7 @@ export class DjinnPsynergyWindow {
     grant_control(){
         let controls = [
             {key: this.data.gamepad.LEFT, callback: this.previous_page.bind(this)},
-            {key: this.data.gamepad.LEFT, callback: this.next_page.bind(this)},
+            {key: this.data.gamepad.RIGHT, callback: this.next_page.bind(this)},
             {key: this.data.gamepad.R, callback: this.spacebar_callback},
             {key: this.data.gamepad.A, callback: () => {
                 this.execute_operation = true;

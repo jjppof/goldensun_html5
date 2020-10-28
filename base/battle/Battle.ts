@@ -242,7 +242,7 @@ export class Battle {
                 this.battle_log.clear();
                 this.battle_phase = battle_phases.MENU;
                 this.check_phases();
-            })
+            });
         });
     }
 

@@ -40,7 +40,6 @@ Input: game [Phaser:Game] - Reference to the running game object
 export class EquipCompare {
     public game:Phaser.Game;
     public data:GoldenSun;
-    public close_callback:Function;
 
     public selected_item:string;
     public selected_char:MainChar;
@@ -66,7 +65,6 @@ export class EquipCompare {
     constructor(game:Phaser.Game, data:GoldenSun) {
         this.game = game;
         this.data = data;
-        this.close_callback = null;
 
         this.selected_item = null;
         this.selected_char = null;
@@ -296,23 +294,21 @@ export class EquipCompare {
 
     Input: char_key [string] - The character's key name
            item [string] - Key name of the item to compare
-           close_callback [function] - Callback function (Optional)
            open_callback [function] - Callback function (Optional)*/
-    open(char_key:string, item:string, close_callback?:Function, open_callback?:Function){
+    open(char_key:string, item:string, open_callback?:Function){
         this.selected_char = this.data.info.party_data.members.filter((c:MainChar) => { return (c.key_name === char_key)})[0];
         this.selected_item = item;
 
         this.show_stat_compare();
 
         this.is_open = true;
-        this.close_callback = close_callback;
         this.window.show(open_callback, false);
     }
 
     /*Clears information and closes the window
 
     Input: destroy [boolean] - If true, sprites are destroyed*/
-    close(destroy:boolean=false){
+    close(callback?:Function, destroy:boolean=false){
         kill_all_sprites(this.arrow_group, destroy);
         if(destroy) kill_all_sprites(this.text_group, destroy);
 
@@ -320,7 +316,6 @@ export class EquipCompare {
         this.selected_char = null;
 
         this.is_open = false;
-        this.window.close(this.close_callback, false);
-        this.close_callback = null;
+        this.window.close(callback, false);
     }
 }

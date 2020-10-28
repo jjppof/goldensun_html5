@@ -31,7 +31,7 @@ export class YesNoMenu{
             this.buttons_keys,
             this.buttons_keys.map(b => capitalize(b)),
             {on_press: this.button_press.bind(this),
-            on_cancel: this.close_menu.bind(this)});
+            on_cancel: this.close.bind(this)});
         this.menu.title_window.update_size({width: TITLE_WINDOW_WIDTH});
     }
 
@@ -52,10 +52,10 @@ export class YesNoMenu{
     button_press(){
         switch (this.buttons_keys[this.menu.selected_button_index]){
             case YES_ACTION:
-                this.close_menu(this.yes_callback);
+                this.close(this.yes_callback);
                 break;
             case NO_ACTION:
-                this.close_menu(this.no_callback);
+                this.close(this.no_callback);
                 break;
         }
     }
@@ -64,7 +64,7 @@ export class YesNoMenu{
         return this.menu.menu_active;
     }
 
-    open_menu(callbacks:{yes:Function, no:Function}, custom_pos?:{x:number, y:number}){
+    open(callbacks:{yes:Function, no:Function}, custom_pos?:{x:number, y:number}, open_callback?:Function){
         this.yes_callback = callbacks.yes;
         this.no_callback = callbacks.no;
 
@@ -74,7 +74,7 @@ export class YesNoMenu{
         }
 
         this.is_open = true;
-        this.menu.open(undefined, 0, true, {active_default: 1.1, max_scale: 1.2});
+        this.menu.open(open_callback, 0, true, {active_default: 1.1, max_scale: 1.2});
 
         if(custom_pos){
             this.update_position(custom_pos.x, custom_pos.y);
@@ -82,12 +82,11 @@ export class YesNoMenu{
         
     }
 
-    close_menu(callback?:Function) {
+    close(callback?:Function) {
         if(callback === undefined) callback = this.no_callback;
         if (!this.is_active()) return;
-        this.menu.close();
-        
+
+        this.menu.close(callback);
         this.is_open = false;
-        callback();
     }
 }

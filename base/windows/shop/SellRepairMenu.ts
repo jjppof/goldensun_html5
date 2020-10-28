@@ -63,195 +63,233 @@ export class SellRepairMenu{
     }
 
     on_item_repair(){
-        if(this.npc_dialog.dialog_manager.window.open){
-            this.npc_dialog.dialog_manager.window.close();
-            let crystal = this.npc_dialog.dialog_manager.dialog_crystal;
-            if(crystal.visible = true) crystal.visible = false;
+        let exec = ()=>{
+            this.inv_win.kill_item_at(this.inv_win_pos.line,this.inv_win_pos.col);
+            this.data.control_manager.reset();
+    
+            this.game.time.events.add(REPAIR_WAIT_TIME, ()=>{
+                this.selected_item.broken = false;
+                this.data.info.party_data.coins -= (this.data.info.items_list[this.selected_item.key_name].price*REPAIR_MULTIPLIER | 0);
+    
+                this.npc_dialog.update_dialog("repair_done", true);
+                this.parent.update_your_coins();
+    
+                this.data.control_manager.simple_input(this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos));
+            }, this);
         }
 
-        this.inv_win.kill_item_at(this.inv_win_pos.line,this.inv_win_pos.col);
-        this.data.control_manager.reset();
-
-        this.game.time.events.add(REPAIR_WAIT_TIME, ()=>{
-            this.selected_item.broken = false;
-            this.data.info.party_data.coins -= (this.data.info.items_list[this.selected_item.key_name].price*REPAIR_MULTIPLIER | 0);
-
-            this.npc_dialog.update_dialog("repair_done", true);
-            this.parent.update_your_coins();
-
-            this.data.control_manager.simple_input(this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos));
-        }, this);
+        if(this.npc_dialog.dialog_manager.window.open){
+            this.npc_dialog.dialog_manager.dialog_crystal.visible = false;
+            this.npc_dialog.dialog_manager.window.close(exec);
+        }
+        else exec();
     }
 
     on_repair_item_select(){
-        this.inv_win_pos = this.inv_win.cursor_pos;
+        let exec = ()=>{
+            this.inv_win_pos = this.inv_win.cursor_pos;
+            this.selected_item = this.inv_win.item_grid[this.inv_win_pos.line][this.inv_win_pos.col];
 
-        if(this.item_desc_win.open) this.item_desc_win.close();
-        
-        this.selected_item = this.inv_win.item_grid[this.inv_win_pos.line][this.inv_win_pos.col];
+            if(!this.selected_item.broken){
+                let item_breakable = this.data.info.items_list[this.selected_item.key_name].use_type === "breaks_when_use";
+                let msg_key = item_breakable ? "cant_repair" : "repair_decline";
 
-        if(!this.selected_item.broken){
-            let item_breakable = this.data.info.items_list[this.selected_item.key_name].use_type === "breaks_when_use";
-            let msg_key = item_breakable ? "cant_repair" : "repair_decline";
+                let text = this.npc_dialog.get_message(msg_key);
+                text = this.npc_dialog.replace_text(text, undefined, this.data.info.items_list[this.selected_item.key_name].name);
+                this.npc_dialog.update_dialog(text, true, false);
 
-            let text = this.npc_dialog.get_message(msg_key);
-            text = this.npc_dialog.replace_text(text, undefined, this.data.info.items_list[this.selected_item.key_name].name);
-            this.npc_dialog.update_dialog(text, true, false);
-
-            this.data.control_manager.simple_input(this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos));
-        }
-        
-        else{
-            let price = (this.data.info.items_list[this.selected_item.key_name].price * REPAIR_MULTIPLIER) | 0;
-            let text = this.npc_dialog.get_message("repair_deal");
-            text = this.npc_dialog.replace_text(text, undefined, this.data.info.items_list[this.selected_item.key_name].name, String(price));
-            this.npc_dialog.update_dialog(text, false, false);
-
-            this.yesno_action.open_menu({yes: () => {
-                this.npc_dialog.update_dialog("repair_deal_accept", true);
-                this.data.control_manager.simple_input(this.on_item_repair.bind(this))
-                }, no: () => {
-                this.npc_dialog.update_dialog("repair_deal_decline", true);
                 this.data.control_manager.simple_input(this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos));
-                }},
-                {x: YESNO_X, y: YESNO_Y});
-        }
+            }
+            
+            else{
+                let price = (this.data.info.items_list[this.selected_item.key_name].price * REPAIR_MULTIPLIER) | 0;
+                let text = this.npc_dialog.get_message("repair_deal");
+                text = this.npc_dialog.replace_text(text, undefined, this.data.info.items_list[this.selected_item.key_name].name, String(price));
+                this.npc_dialog.update_dialog(text, false, false);
+
+                this.yesno_action.open({yes: () => {
+                    this.npc_dialog.update_dialog("repair_deal_accept", true);
+                    this.data.control_manager.simple_input(this.on_item_repair.bind(this))
+                    }, no: () => {
+                    this.npc_dialog.update_dialog("repair_deal_decline", true);
+                    this.data.control_manager.simple_input(this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos));
+                    }},
+                    {x: YESNO_X, y: YESNO_Y});
+            }
+        };
+
+        if(this.item_desc_win.open) this.item_desc_win.close(exec);
+        else exec();
     }
 
     on_sale_success(quantity = 1){
-        let msg_key = this.data.info.items_list[this.selected_item.key_name].rare_item ? "after_sell_artifact" : "after_sell_normal";
-        this.npc_dialog.update_dialog(msg_key, true);
+        let exec = () => {
+            let msg_key = this.data.info.items_list[this.selected_item.key_name].rare_item ? "after_sell_artifact" : "after_sell_normal";
+            this.npc_dialog.update_dialog(msg_key, true);
 
-        let item_price = (this.data.info.items_list[this.selected_item.key_name].price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0;
-        this.data.info.party_data.coins += item_price*quantity;
-        this.parent.update_your_coins();
+            let item_price = (this.data.info.items_list[this.selected_item.key_name].price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0;
+            this.data.info.party_data.coins += item_price*quantity;
+            this.parent.update_your_coins();
 
-        for(let i=0; i<this.selected_character.items.length; i++){
-            let itm = this.selected_character.items[i];
-            if(itm.key_name === this.selected_item.key_name){
-                this.selected_character.items[i].quantity -= quantity;
-                if(this.selected_character.items[i].quantity === 0){
-                    this.selected_character.items.splice(i, 1);
+            for(let i=0; i<this.selected_character.items.length; i++){
+                let itm = this.selected_character.items[i];
+                if(itm.key_name === this.selected_item.key_name){
+                    this.selected_character.items[i].quantity -= quantity;
+                    if(this.selected_character.items[i].quantity === 0){
+                        this.selected_character.items.splice(i, 1);
+                    }
                 }
             }
-        }
 
-        if(this.data.info.items_list[this.selected_item.key_name].rare_item){ 
-            let exists = false;
-            let shop_list = this.data.info.shops_list[this.parent.shop_key].item_list;
-            for(let i=0; i<shop_list.length; i++){
-                if(shop_list[i].key_name === this.selected_item.key_name){
-                    exists = true;
-                    this.data.info.shops_list[this.parent.shop_key].item_list[i].quantity += quantity;
+            if(this.data.info.items_list[this.selected_item.key_name].rare_item){ 
+                let exists = false;
+                let shop_list = this.data.info.shops_list[this.parent.shop_key].item_list;
+                for(let i=0; i<shop_list.length; i++){
+                    if(shop_list[i].key_name === this.selected_item.key_name){
+                        exists = true;
+                        this.data.info.shops_list[this.parent.shop_key].item_list[i].quantity += quantity;
+                    }
                 }
+                if(!exists) shop_list.push({key_name: this.selected_item.key_name, quantity: quantity});
             }
-            if(!exists) shop_list.push({key_name: this.selected_item.key_name, quantity: quantity});
-        }
 
-        if(this.inv_win.is_open) this.inv_win.close();
-        if(!this.inv_win.is_open) this.inv_win.open(this.selected_character.key_name, undefined, false);
-
-        this.data.control_manager.simple_input(this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos));
-    }
-
-    on_sell_item_select(){
-        this.inv_win_pos = this.inv_win.cursor_pos;
-
-        if(this.item_desc_win.open) this.item_desc_win.close();
-        
-        this.selected_item = this.inv_win.item_grid[this.inv_win_pos.line][this.inv_win_pos.col];
-
-        if(this.data.info.items_list[this.selected_item.key_name].important_item){
-            this.npc_dialog.update_dialog("cant_sell", true);
-
+            this.parent.set_item_lists();
             this.data.control_manager.simple_input(this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos));
         }
 
-        else if(this.selected_item.quantity === 1){
-            let msg_key = this.data.info.items_list[this.selected_item.key_name].rare_item ? "sell_artifact" : "sell_normal";
-
-            let text = this.npc_dialog.get_message(msg_key);
-            let item_name = msg_key === "sell_normal" ? this.data.info.items_list[this.selected_item.key_name].name : undefined;
-            let item_price = (this.data.info.items_list[this.selected_item.key_name].price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0; 
-            text = this.npc_dialog.replace_text(text, undefined, item_name, String(item_price));
-            this.npc_dialog.update_dialog(text, false, false);
-
-            this.yesno_action.open_menu({yes: this.on_sale_success.bind(this), no: () => {
-                let decline_msg = this.data.info.items_list[this.selected_item.key_name].rare_item ? "decline_sell_artifact" : "decline_sell_normal";
-                this.npc_dialog.update_dialog(decline_msg, true);
-                this.data.control_manager.simple_input(this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos));
-                }},
-                {x: YESNO_X, y: YESNO_Y});
+        if(this.inv_win.is_open){
+            this.inv_win.refresh(this.selected_character.key_name, undefined);
+            exec();
         }
-        
-        else{
-            this.npc_dialog.update_dialog("sell_quantity_select");
+        else this.inv_win.open(this.selected_character.key_name, undefined, false, exec);
+    }
 
-            let char_item_match = this.selected_character.items.filter(i => { return (i.key_name === this.selected_item.key_name); });
-            let char_item = char_item_match.length !== 0 ? char_item_match[0] : null;
+    on_sell_item_select(){
+        let exec = () => {
+            this.inv_win_pos = this.inv_win.cursor_pos;
+            this.selected_item = this.inv_win.item_grid[this.inv_win_pos.line][this.inv_win_pos.col];
 
-            if(!this.quant_win.is_open) this.quant_win.open(char_item);
-            this.quant_win.grant_control(this.on_character_select.bind(this, "sell_follow_up", this.selected_char_index, this.inv_win_pos),
-            () => {
-                let quant = 1;
-                quant = this.quant_win.chosen_quantity;
-                this.quant_win.close();
-                this.data.cursor_manager.hide();
+            if(this.data.info.items_list[this.selected_item.key_name].important_item){
+                this.npc_dialog.update_dialog("cant_sell", true);
 
-                let text = this.npc_dialog.get_message("sell_quantity_confirm");
+                this.data.control_manager.simple_input(this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos));
+            }
+
+            else if(this.selected_item.quantity === 1){
+                let msg_key = this.data.info.items_list[this.selected_item.key_name].rare_item ? "sell_artifact" : "sell_normal";
+
+                let text = this.npc_dialog.get_message(msg_key);
+                let item_name = msg_key === "sell_normal" ? this.data.info.items_list[this.selected_item.key_name].name : undefined;
                 let item_price = (this.data.info.items_list[this.selected_item.key_name].price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0; 
-                text = this.npc_dialog.replace_text(text, undefined, undefined, String(item_price*quant));
+                text = this.npc_dialog.replace_text(text, undefined, item_name, String(item_price));
                 this.npc_dialog.update_dialog(text, false, false);
 
-                this.yesno_action.open_menu({yes: this.on_sale_success.bind(this, quant),
-                    no: () => {
+                this.yesno_action.open({yes: this.on_sale_success.bind(this, 1), no: () => {
                     let decline_msg = this.data.info.items_list[this.selected_item.key_name].rare_item ? "decline_sell_artifact" : "decline_sell_normal";
                     this.npc_dialog.update_dialog(decline_msg, true);
-                    this.data.control_manager.simple_input(this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos));}
-                    },
-                    {x: YESNO_X, y: YESNO_Y})
-            });
+                    this.data.control_manager.simple_input(this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos));
+                    }},
+                    {x: YESNO_X, y: YESNO_Y});
+            }
+            
+            else{
+                this.npc_dialog.update_dialog("sell_quantity_select");
+
+                let char_item_match = this.selected_character.items.filter(i => { return (i.key_name === this.selected_item.key_name); });
+                let char_item = char_item_match.length !== 0 ? char_item_match[0] : null;
+
+                let quant_control = () => {
+                    this.quant_win.grant_control(this.on_character_select.bind(this, "sell_follow_up", this.selected_char_index, this.inv_win_pos),
+                    () => {
+                        let quant = 1;
+                        quant = this.quant_win.chosen_quantity;
+                        this.quant_win.close();
+                        this.data.cursor_manager.hide();
+
+                        let text = this.npc_dialog.get_message("sell_quantity_confirm");
+                        let item_price = (this.data.info.items_list[this.selected_item.key_name].price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0; 
+                        text = this.npc_dialog.replace_text(text, undefined, undefined, String(item_price*quant));
+                        this.npc_dialog.update_dialog(text, false, false);
+
+                        this.yesno_action.open({yes: this.on_sale_success.bind(this, quant),
+                            no: () => {
+                            let decline_msg = this.data.info.items_list[this.selected_item.key_name].rare_item ? "decline_sell_artifact" : "decline_sell_normal";
+                            this.npc_dialog.update_dialog(decline_msg, true);
+                            this.data.control_manager.simple_input(this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos));}
+                            },
+                            {x: YESNO_X, y: YESNO_Y})
+                    });
+                };
+
+                if(!this.quant_win.is_open) this.quant_win.open(char_item, undefined, false, quant_control);
+                else quant_control();
+            }
         }
+
+        if(this.item_desc_win.open) this.item_desc_win.close(exec);
+        else exec();
     }
 
     on_character_select(msg_key="sell_follow_up", item_pos = {line: 0, col: 0}){
-        if(this.quant_win.is_open) this.quant_win.close();
-        if(!this.item_desc_win.open) this.item_desc_win.show();
-        if(!this.item_price_win.open) this.item_price_win.show();
+        let start = () =>{
+            let open_windows = [{name: "item_desc_win"}, {name:"item_price_win"}];
+            this.show_windows(open_windows, () =>{
+                if(msg_key) this.npc_dialog.update_dialog(msg_key);
 
-        if(msg_key) this.npc_dialog.update_dialog(msg_key);
+                this.selected_character = this.char_display.lines[this.char_display.current_line][this.char_display.selected_index];
+                this.selected_char_index = this.char_display.selected_index; 
+                
+                let finish = () =>{
+                    this.inv_win.set_cursor(item_pos.line,item_pos.col);
+                    if(!this.inv_win.item_grid[item_pos.line][item_pos.col]) this.inv_win.previous_col();
+    
+                    this.inv_win.grant_control(this.open_inventory_view.bind(this),
+                        (this.is_repair_menu ? this.on_repair_item_select.bind(this) : this.on_sell_item_select.bind(this)));
+                }
 
-        this.selected_character = this.char_display.lines[this.char_display.current_line][this.char_display.selected_index];
-        this.selected_char_index = this.char_display.selected_index;
-        
-        if(this.inv_win.is_open) this.inv_win.close();
-        if(!this.inv_win.is_open) this.inv_win.open(this.selected_character.key_name, undefined, false);
-        this.inv_win.set_cursor(item_pos.line,item_pos.col);
-        if(!this.inv_win.item_grid[item_pos.line][item_pos.col]) this.inv_win.previous_col();
+                if(this.inv_win.is_open){
+                    this.inv_win.refresh(this.selected_character.key_name, undefined);
+                    finish();
+                }
+                else this.inv_win.open(this.selected_character.key_name, undefined, false, finish);
+            })
+        }
 
-        this.inv_win.grant_control(this.open_inventory_view.bind(this),
-            (this.is_repair_menu ? this.on_repair_item_select.bind(this) : this.on_sell_item_select.bind(this)));
+        if(this.quant_win.is_open) this.quant_win.close(() =>{start});
+        else start();
     }
 
     open_inventory_view(msg_key="sell_follow_up"){
-        if(this.item_desc_win.open) this.item_desc_win.close();
-        if(this.item_price_win.open) this.item_price_win.close();
-        if(this.quant_win.is_open) this.quant_win.close();
+        let close_windows = ["item_desc_win", "item_price_win", "quant_win"];
 
-        this.npc_dialog.update_dialog(msg_key);
+        this.close_windows(close_windows, () => {
+            this.npc_dialog.update_dialog(msg_key);
 
-        if(!this.your_coins_win.open) this.your_coins_win.show();
-        this.parent.update_your_coins();
+            let next_step = () => {
+                this.game.world.bringToTop(this.char_display.char_group);
+    
+                let char_key = (this.selected_character) ? this.selected_character.key_name : this.data.info.party_data.members[0].key_name;
 
-        if(!this.char_display.is_open) this.char_display.open(this.selected_char_index);
-        else this.char_display.select_char(this.selected_char_index);
-        this.game.world.bringToTop(this.char_display.char_group);
+                let finish = () => {
+                    if(!this.your_coins_win.open) this.your_coins_win.show();
+                    this.parent.update_your_coins();
+            
+                    this.char_display.grant_control(this.close_menu.bind(this), this.on_character_select.bind(this));    
+                }
 
-        let char_key = (this.selected_character) ? this.selected_character.key_name : this.data.info.party_data.members[0].key_name;
-        if(this.inv_win.is_open) this.inv_win.close();
-        if(!this.inv_win.is_open) this.inv_win.open(char_key, undefined, false); 
-
-        this.char_display.grant_control(this.close_menu.bind(this), this.on_character_select.bind(this));
+                if(this.inv_win.is_open){
+                    this.inv_win.refresh(char_key);
+                    finish();
+                }
+                else this.inv_win.open(char_key, undefined, false, finish);
+            }
+    
+            if(!this.char_display.is_open) this.char_display.open(this.selected_char_index, "shop", next_step);
+            else{
+                this.char_display.select_char(this.selected_char_index);
+                next_step();
+            }
+        });
     }
 
     open_menu(is_repair_menu:boolean, close_callback?:Function){
@@ -268,25 +306,67 @@ export class SellRepairMenu{
     }
 
     close_menu(){
-        if(this.item_desc_win.open) this.item_desc_win.close();
-        if(this.item_price_win.open) this.item_price_win.close();
-        if(this.your_coins_win.open) this.your_coins_win.close();
-        if(this.char_display.is_open) this.char_display.close();
-        if(this.inv_win.is_open) this.inv_win.close();
-        if(this.yesno_action.is_open) this.yesno_action.close_menu();
-        if(this.quant_win.is_open) this.quant_win.close();
-
         this.data.cursor_manager.hide();
+        this.data.control_manager.reset();
 
         this.is_repair_menu = null;
         this.selected_item = null;
         this.inv_win_pos = {line: 0, col: 0};
         this.selected_character = null;
+        this.selected_char_index = 0;
         this.active = false;
 
-        this.data.control_manager.reset();
-        this.close_callback();
-        this.close_callback = null;
+        let close_windows = ["item_desc_win", "item_price_win", "your_coins_win",
+        "char_display", "inv_win", "yesno_action", "quant_win"];
+
+        this.close_windows(close_windows, () => {    
+            this.close_callback();
+            this.close_callback = null;
+        });
     }
 
+    show_windows(properties:{name:string, arguments?:any[]}[], on_complete:Function){
+        let promises:Promise<void>[] = [];
+
+        let window_count = Object.keys(properties).length
+        for(let i=0; i<window_count; i++){
+            let args:any[] = properties[i].arguments ? properties[i].arguments : [];
+            let is_window = this[properties[i].name] instanceof Window;
+
+            if(is_window ? this[properties[i].name].open : this[properties[i].name].is_open) continue;
+            else{
+                let opened:() => void;
+                let promise = new Promise<void>(resolve => opened = resolve);
+                promises.push(promise);
+
+                args.push(opened);
+                is_window ? this[properties[i].name].show.apply(this[properties[i].name], args) :
+                    this[properties[i].name].open.apply(this[properties[i].name], args);
+            }
+        }
+
+        Promise.all(promises).then(() =>{
+            on_complete();
+        });
+    }
+
+    close_windows(properties:string[], on_complete:Function){
+        let promises:Promise<void>[] = [];
+
+        for(let i in properties){
+            let is_window = this[properties[i]] instanceof Window;
+            if(!(is_window ? this[properties[i]].open : this[properties[i]].is_open)) continue;
+            else{
+                let closed:() => void;
+                let promise = new Promise<void>(resolve => closed = resolve);
+                promises.push(promise);
+
+                this[properties[i]].close(closed);
+            }
+        }
+
+        Promise.all(promises).then(() =>{
+            on_complete();
+        });
+    }
 }

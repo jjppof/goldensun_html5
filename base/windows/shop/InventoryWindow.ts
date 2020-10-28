@@ -48,7 +48,6 @@ export class InventoryWindow{
     public game:Phaser.Game;
     public data:GoldenSun;
     public on_change:Function;
-    public close_callback:Function;
 
     public expanded:boolean;
     public is_open:boolean;
@@ -66,7 +65,6 @@ export class InventoryWindow{
         this.game = game;
         this.data = data;
         this.on_change = on_change;
-        this.close_callback = null;
 
         this.expanded = false;
         this.is_open = false;
@@ -322,14 +320,24 @@ export class InventoryWindow{
         this.sprite_group.alpha = 1;
     }
 
+    refresh(char_key:string, item?:string){
+        this.char = this.data.info.party_data.members.filter(c => { return (c.key_name === char_key)})[0];
+        this.selected_item = item;
+
+        kill_all_sprites(this.sprite_group);
+        kill_all_sprites(this.icon_group);
+
+        this.make_item_grid();
+        this.set_sprites();
+    }
+
     /*Opens this window for a given character
 
     Input: char_key [string] - The character's key name
            item [string] - The item to check against
            expand [boolean] - If true, the window will be in expanded state
-           close_callback [function] - Callback function (Optional)
            open_callback [function] - Callback function (Optional)*/
-    open(char_key:string, item?:string, expand:boolean=false, close_callback?:Function, open_callback?:Function){
+    open(char_key:string, item?:string, expand:boolean=false, open_callback?:Function){
         this.char = this.data.info.party_data.members.filter(c => { return (c.key_name === char_key)})[0];
         this.selected_item = item;
 
@@ -338,14 +346,13 @@ export class InventoryWindow{
         this.set_sprites();
 
         this.is_open = true;
-        this.close_callback = close_callback;
         this.window.show(open_callback, false);
     }
 
     /*Clears information and closes the window
 
     Input: destroy [boolean] - If true, sprites are destroyed*/
-    close(destroy = false){
+    close(callback?:Function, destroy = false){
         kill_all_sprites(this.sprite_group, destroy);
         kill_all_sprites(this.icon_group, destroy);
 
@@ -358,7 +365,6 @@ export class InventoryWindow{
         this.check_expand(false);
 
         this.is_open = false;
-        this.window.close(this.close_callback, false);
-        this.close_callback = null;
+        this.window.close(callback, false);
     }
 }
