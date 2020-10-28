@@ -12,7 +12,7 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0
 - Check the [wiki](https://github.com/jjppof/goldensun_html5/wiki) for database configuration, tutorials and project information.
 - There's no production environment for now, but I'm planning to do it with webpack and embed most of the assets.
 - In the future, it will also be possible to distribute it by Electron (desktop) and/or Ionic (mobile).
-- **Join us at [GSHC discord](https://discord.gg/jwKJDXC)** (#programming channel) for discussion about the project. For reference, check their [API](http://phaser.io/docs/2.6.2/index).
+- **Join us at [GSHC discord](https://discord.gg/jwKJDXC)** (#programming channel) for discussion about the project.
 
 ## Running GS-HTML5 on your computer
 
@@ -31,7 +31,7 @@ GS-HTML5 supports both Javascript and Typescript. We use [Webpack](https://webpa
 - Use `npm start` to start the development server.
 - Use `npm run build` to generate a bundle.
 - Use these [guidelines](https://typedoc.org/guides/doccomments/) to comment code.
-- Learn Phaser 2 by [examples](https://phaser.io/examples/v2) or by this [tutorial](https://phaser.io/tutorials/making-your-first-phaser-2-game).
+- Learn Phaser 2 by [examples](https://phaser.io/examples/v2) or by this [tutorial](https://phaser.io/tutorials/making-your-first-phaser-2-game). For reference, check their [API](http://phaser.io/docs/2.6.2/index).
 
 ## Utils
 
