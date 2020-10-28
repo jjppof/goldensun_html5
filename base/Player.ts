@@ -22,6 +22,26 @@ export const permanent_status = {
     HAUNT: "haunt"
 };
 
+export const main_stats = {
+    MAX_HP: "max_hp",
+    CURRENT_HP: "current_hp",
+    MAX_PP: "max_pp",
+    CURRENT_PP: "current_pp",
+    ATTACK: "atk",
+    DEFENSE: "def",
+    AGILITY: "agi",
+    LUCK: "luk"
+};
+
+export const ordered_main_stats = [
+    main_stats.MAX_HP,
+    main_stats.MAX_PP,
+    main_stats.ATTACK,
+    main_stats.DEFENSE,
+    main_stats.AGILITY,
+    main_stats.LUCK
+];
+
 export const on_catch_status_msg = {
     [temporary_status.DELUSION]: target => `${target.name} is wrapped in delusion!`,
     [temporary_status.STUN]: target => `${target.name} has been stunned!`,
@@ -55,6 +75,32 @@ export class Player {
     public effect_turns_count: {[effect: string]: number|{[element: string]: number}};
     public battle_scale: number;
     public fighter_type: number;
+    public venus_level_current: number;
+    public mercury_level_current: number;
+    public mars_level_current: number;
+    public jupiter_level_current: number;
+    public venus_power_current: number;
+    public mercury_power_current: number;
+    public mars_power_current: number;
+    public jupiter_power_current: number;
+    public venus_resist_current: number;
+    public mercury_resist_current: number;
+    public mars_resist_current: number;
+    public jupiter_resist_current: number;
+    public turns: number;
+    public battle_animations_variations: {[ability_key: string]: string};
+    public max_hp: number;
+    public current_hp: number;
+    public max_pp: number;
+    public hp_recovery: number;
+    public pp_recovery: number;
+    public current_pp: number;
+    public atk: number;
+    public def: number;
+    public agi: number;
+    public luk: number;
+    public level: number;
+    public current_exp: number;
 
     constructor(key_name, name) {
         this.key_name = key_name;

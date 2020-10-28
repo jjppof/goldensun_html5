@@ -192,7 +192,7 @@ export class ItemOptionsWindow {
 
     set_available_options() {
         this.show_text();
-        if (!this.item.use_ability || this.item.broken) {
+        if (!this.item.use_ability || this.item_obj.broken) {
             this.text_sprites.use.text.tint = DISABLE_COLOR;
             this.option_active.use = false;
         } else {

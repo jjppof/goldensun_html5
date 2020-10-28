@@ -8,6 +8,7 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0
 - Feel free to help! Check what I need help [here](https://github.com/jjppof/goldensun_html5/projects). Please, reach me if you want to do so.
 - The goal of this project is not to do exactly the same engine as GS, but very similar.
 - If you found any bug, please create an [issue](https://github.com/jjppof/goldensun_html5/issues/new) for it.
+- Issues are not very well explained, feel free to reach me for details about them.
 - Check the [wiki](https://github.com/jjppof/goldensun_html5/wiki) for database configuration, tutorials and project information.
 - There's no production environment for now, but I'm planning to do it with webpack and embed most of the assets.
 - In the future, it will also be possible to distribute it by Electron (desktop) and/or Ionic (mobile).
@@ -30,6 +31,7 @@ GS-HTML5 supports both Javascript and Typescript. We use [Webpack](https://webpa
 - Use `npm start` to start the development server.
 - Use `npm run build` to generate a bundle.
 - Use these [guidelines](https://typedoc.org/guides/doccomments/) to comment code.
+- Learn Phaser 2 by [examples](https://phaser.io/examples/v2) or by this [tutorial](https://phaser.io/tutorials/making-your-first-phaser-2-game).
 
 ## Utils
 
@@ -39,7 +41,7 @@ Some useful tools that I use to manage the resources:
   - [Sprite Sheet Packer](https://www.codeandweb.com/free-sprite-sheet-packer) (free alternative for TexturePacker)
 - [PhysicsEditor 1.6.3](https://www.codeandweb.com/physicseditor) (for creating collision structures)
   - [LoonPhysics](https://loonride.com/physics) (free alternative for PhysicsEditor)
-- [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579)) (for building maps)
+- [Tiledmap Editor 1.1](https://www.mapeditor.org/) ([Tiledmap version problem fix](https://github.com/bjorn/tiled/issues/2058#issuecomment-458975579)) (for building maps and also collision structures)
 - [Shoebox](https://renderhjs.net/shoebox/) (for creating fonts)
 - [Golden Sun Editor](http://forum.goldensunhacking.net/index.php?action=downloads;sa=view;down=124) (for game info)
 - [Paint.NET](https://www.getpaint.net/) (for images editing)

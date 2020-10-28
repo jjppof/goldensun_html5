@@ -6,16 +6,6 @@ import * as numbers from "./magic_numbers";
 import { effect_types } from "./Effect";
 
 export class Enemy extends Player {
-    public level: number;
-    public turns: number;
-    public max_hp: number;
-    public max_pp: number;
-    public hp_recovery: number;
-    public pp_recovery: number;
-    public atk: number;
-    public def: number;
-    public agi: number;
-    public luk: number;
     public items: {
         key_name: string,
         quantity: number,
@@ -41,29 +31,9 @@ export class Enemy extends Player {
     public mercury_resist: number;
     public mars_resist: number;
     public jupiter_resist: number;
-    public battle_animations_variations: {[ability_key: string]: string};
     public class: any;
-    public current_exp: number;
-    public current_hp: number;
-    public current_pp: number;
     public current_hp_recovery: number;
     public current_pp_recovery: number;
-    public current_atk: number;
-    public current_def: number;
-    public current_agi: number;
-    public current_luk: number;
-    public venus_level_current: number;
-    public mercury_level_current: number;
-    public mars_level_current: number;
-    public jupiter_level_current: number;
-    public venus_power_current: number;
-    public mercury_power_current: number;
-    public mars_power_current: number;
-    public jupiter_power_current: number;
-    public venus_resist_current: number;
-    public mercury_resist_current: number;
-    public mars_resist_current: number;
-    public jupiter_resist_current: number;
 
     constructor(enemy_data, name) {
         super(enemy_data.key_name, name ? name : enemy_data.name);
@@ -112,10 +82,6 @@ export class Enemy extends Player {
         this.current_pp = this.max_pp;
         this.current_hp_recovery = this.hp_recovery;
         this.current_pp_recovery = this.pp_recovery;
-        this.current_atk = this.atk;
-        this.current_def = this.def;
-        this.current_agi = this.agi;
-        this.current_luk = this.luk;
         this.venus_level_current = this.venus_level;
         this.mercury_level_current = this.mercury_level;
         this.mars_level_current = this.mars_level;

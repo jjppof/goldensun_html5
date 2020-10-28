@@ -3,7 +3,7 @@ import { choose_right_class, Classes } from './Classes';
 import { djinn_status } from './Djinn';
 import { Effect, effect_types } from './Effect';
 import { item_types } from './Item';
-import { Player, fighter_types, permanent_status } from './Player';
+import { Player, fighter_types, permanent_status, main_stats } from './Player';
 import { elements, ordered_elements } from './utils';
 import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from './magic_numbers';
 import * as _ from "lodash";
@@ -27,11 +27,9 @@ export class MainChar extends Player {
     public dash_speed: number;
     public climb_speed: number;
     public starting_level: number;
-    public level: number;
     public class_table: any;
     public class: Classes;
     public exp_curve: number[];
-    public current_exp: number;
     public venus_level_base: number;
     public mercury_level_base: number;
     public mars_level_base: number;
@@ -61,8 +59,6 @@ export class MainChar extends Player {
     public def_extra: number;
     public agi_extra: number;
     public luk_extra: number;
-    public hp_recovery: number;
-    public pp_recovery: number;
     public items: ItemSlot[];
     public equip_slots: {
         weapon: ItemSlot,
@@ -77,32 +73,6 @@ export class MainChar extends Player {
     public innate_abilities: string[];
     public in_party: boolean;
     public abilities: string[];
-    public turns: number;
-    public battle_animations_variations: {[ability_key: string]: string};
-    public venus_level_current: number;
-    public mercury_level_current: number;
-    public mars_level_current: number;
-    public jupiter_level_current: number;
-    public venus_power_current: number;
-    public mercury_power_current: number;
-    public mars_power_current: number;
-    public jupiter_power_current: number;
-    public venus_resist_current: number;
-    public mercury_resist_current: number;
-    public mars_resist_current: number;
-    public jupiter_resist_current: number;
-    public max_hp: number;
-    public current_hp: number;
-    public max_pp: number;
-    public current_pp: number;
-    public atk: number;
-    public current_atk: number;
-    public def: number;
-    public current_def: number;
-    public agi: number;
-    public current_agi: number;
-    public luk: number;
-    public current_luk: number;
 
     constructor (
         key_name,
@@ -505,20 +475,7 @@ export class MainChar extends Player {
             djinni_next_status: djinni_next_status,
             action: action
         };
-        switch (stat) {
-            case "max_hp":
-                return this.set_max_stat("hp", true, preview_obj);
-            case "max_pp":
-                return this.set_max_stat("pp", true, preview_obj);
-            case "atk":
-                return this.set_max_stat("atk", true, preview_obj);
-            case "def":
-                return this.set_max_stat("def", true, preview_obj);
-            case "agi":
-                return this.set_max_stat("agi", true, preview_obj);
-            case "luk":
-                return this.set_max_stat("luk", true, preview_obj);
-        }
+        return this.set_max_stat(stat, true, preview_obj);
     }
 
     preview_stats_by_effect(effect_type, effect_obj, item_key_name) {
@@ -528,26 +485,26 @@ export class MainChar extends Player {
         }
         switch (effect_type) {
             case effect_types.MAX_HP:
-                return this.set_max_stat("hp", true, preview_obj);
+                return this.set_max_stat(main_stats.MAX_HP, true, preview_obj);
             case effect_types.MAX_PP:
-                return this.set_max_stat("pp", true, preview_obj);
+                return this.set_max_stat(main_stats.MAX_PP, true, preview_obj);
             case effect_types.ATTACK:
-                return this.set_max_stat("atk", true, preview_obj);
+                return this.set_max_stat(main_stats.ATTACK, true, preview_obj);
             case effect_types.DEFENSE:
-                return this.set_max_stat("def", true, preview_obj);
+                return this.set_max_stat(main_stats.DEFENSE, true, preview_obj);
             case effect_types.AGILITY:
-                return this.set_max_stat("agi", true, preview_obj);
+                return this.set_max_stat(main_stats.AGILITY, true, preview_obj);
             case effect_types.LUCK:
-                return this.set_max_stat("luk", true, preview_obj);
+                return this.set_max_stat(main_stats.LUCK, true, preview_obj);
         }
     }
 
     set_max_stat(stat, preview = false, preview_obj: any = {}) {
-        const stat_key = ["hp", "pp"].includes(stat) ? "max_" + stat : stat;
-        const curret_key = "current_" + stat;
-        const boost_key = stat + "_boost";
-        const curve_key = stat + "_curve";
-        const extra_key = stat + "_extra";
+        const stat_prefix = [main_stats.MAX_HP, main_stats.MAX_PP].includes(stat) ? stat.split("_")[1] : stat;
+        const stat_key = stat;
+        const boost_key = stat_prefix + "_boost";
+        const curve_key = stat_prefix + "_curve";
+        const extra_key = stat_prefix + "_extra";
         const previous_value = this[stat_key];
         this[stat_key] = (this[curve_key][this.level] * this.class[boost_key] + this[extra_key]) | 0;
         let this_djinni = this.djinni;
@@ -577,22 +534,22 @@ export class MainChar extends Player {
             if (preview && effect.effect_owner_instance && preview_obj.item_key_name === effect.effect_owner_instance.key_name) return;
             let effect_type;
             switch (stat) {
-                case "hp":
+                case main_stats.MAX_HP:
                     effect_type = effect_types.MAX_HP;
                     break;
-                case "pp":
+                case main_stats.MAX_PP:
                     effect_type = effect_types.MAX_PP;
                     break;
-                case "atk":
+                case main_stats.ATTACK:
                     effect_type = effect_types.ATTACK;
                     break;
-                case "def":
+                case main_stats.DEFENSE:
                     effect_type = effect_types.DEFENSE;
                     break;
-                case "agi":
+                case main_stats.AGILITY:
                     effect_type = effect_types.AGILITY;
                     break;
-                case "luk":
+                case main_stats.LUCK:
                     effect_type = effect_types.LUCK;
                     break;
             }
@@ -604,21 +561,24 @@ export class MainChar extends Player {
             const preview_value = preview_obj.effect_obj ? Effect.preview_value_applied(preview_obj.effect_obj, this[stat_key]) : this[stat_key];
             this[stat_key] = previous_value;
             return preview_value;
-        } 
-        if (this[curret_key] === undefined) {
-            this[curret_key] = this[stat_key];
-        } else {
-            this[curret_key] = Math.round(this[curret_key] * this[stat_key]/previous_value);
+        }
+        if ([main_stats.MAX_HP, main_stats.MAX_PP].includes(stat)) {
+            const current_key = stat === main_stats.MAX_HP ? main_stats.CURRENT_HP : main_stats.CURRENT_PP;
+            if (this[current_key] === undefined) {
+                this[current_key] = this[stat_key];
+            } else {
+                this[current_key] = Math.round(this[current_key] * this[stat_key]/previous_value);
+            }
         }
     }
 
     update_attributes() {
-        this.set_max_stat("hp");
-        this.set_max_stat("pp");
-        this.set_max_stat("atk");
-        this.set_max_stat("def");
-        this.set_max_stat("agi");
-        this.set_max_stat("luk");
+        this.set_max_stat(main_stats.MAX_HP);
+        this.set_max_stat(main_stats.MAX_PP);
+        this.set_max_stat(main_stats.ATTACK);
+        this.set_max_stat(main_stats.DEFENSE);
+        this.set_max_stat(main_stats.AGILITY);
+        this.set_max_stat(main_stats.LUCK);
     }
 
     add_extra_max_hp(amount) {
