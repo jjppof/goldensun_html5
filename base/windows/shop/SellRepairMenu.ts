@@ -17,6 +17,16 @@ const REPAIR_WAIT_TIME = Phaser.Timer.SECOND*6;
 const YESNO_X = 56;
 const YESNO_Y = 40;
 
+export const WindowNames = {
+    ITEM_DESC_WIN: "item_desc_win",
+    ITEM_PRICE_WIN: "item_price_win",
+    YOUR_COINS_WIN: "your_coins_win",
+    CHAR_DISPLAY: "char_display",
+    INV_WIN: "inv_win",
+    YESNO_ACTION: "yesno_action",
+    QUANT_WIN: "quant_win",
+}
+
 export class SellRepairMenu{
     public game:Phaser.Game;
     public data:GoldenSun;
@@ -232,7 +242,7 @@ export class SellRepairMenu{
 
     on_character_select(msg_key="sell_follow_up", item_pos = {line: 0, col: 0}){
         let start = () =>{
-            let open_windows = [{name: "item_desc_win"}, {name:"item_price_win"}];
+            let open_windows = [{name: WindowNames.ITEM_DESC_WIN}, {name: WindowNames.ITEM_PRICE_WIN}];
             this.show_windows(open_windows, () =>{
                 if(msg_key) this.npc_dialog.update_dialog(msg_key);
 
@@ -260,7 +270,7 @@ export class SellRepairMenu{
     }
 
     open_inventory_view(msg_key="sell_follow_up"){
-        let close_windows = ["item_desc_win", "item_price_win", "quant_win"];
+        let close_windows = [WindowNames.ITEM_DESC_WIN, WindowNames.ITEM_PRICE_WIN, WindowNames.QUANT_WIN];
 
         this.close_windows(close_windows, () => {
             this.npc_dialog.update_dialog(msg_key);
@@ -316,8 +326,8 @@ export class SellRepairMenu{
         this.selected_char_index = 0;
         this.active = false;
 
-        let close_windows = ["item_desc_win", "item_price_win", "your_coins_win",
-        "char_display", "inv_win", "yesno_action", "quant_win"];
+        let close_windows = [WindowNames.ITEM_DESC_WIN, WindowNames.ITEM_PRICE_WIN, WindowNames.YOUR_COINS_WIN,
+        WindowNames.CHAR_DISPLAY, WindowNames.INV_WIN, WindowNames.YESNO_ACTION, WindowNames.QUANT_WIN];
 
         this.close_windows(close_windows, () => {    
             this.close_callback();

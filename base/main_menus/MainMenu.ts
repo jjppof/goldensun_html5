@@ -61,11 +61,12 @@ export class MainMenu {
     button_press_action(menu:any) {      
         this.horizontal_menu.close(() => {
             menu.open_menu((close_this_menu:boolean) => {
-                this.horizontal_menu.open();
-                this.chars_status_window.update_chars_info();
-                if (close_this_menu) {
-                    this.close_menu();
-                }
+                this.horizontal_menu.open(() => {
+                    this.chars_status_window.update_chars_info();
+                    if (close_this_menu) {
+                        this.close_menu();
+                    }
+                }, this.current_index);
             });
         });
     }
@@ -76,22 +77,30 @@ export class MainMenu {
     }
 
     open_menu() {
-        this.horizontal_menu.open(undefined, this.current_index);
-
-        this.chars_status_window.update_position();
-        this.chars_status_window.update_chars_info();
-        this.chars_status_window.show();
+        this.horizontal_menu.open(() => {
+            this.chars_status_window.update_position();
+            this.chars_status_window.update_chars_info();
+            this.chars_status_window.show();
+        }, this.current_index);
     }
 
     close_menu() {
         if (!this.horizontal_menu.menu_active) return;
         this.data.control_manager.reset();
 
-        this.data.menu_open = false;
-        this.current_index = 0;
+        let promises:Promise<void>[] = [];
 
-        this.horizontal_menu.close();
-        this.chars_status_window.close();
+        let closed:() => void;
+        let promise = new Promise<void>(resolve => closed = resolve);
+        promises.push(promise);
+            
+        this.horizontal_menu.close(closed);
+        this.chars_status_window.close(closed);
+
+        Promise.all(promises).then(() =>{
+            this.data.menu_open = false;
+            this.current_index = 0;
+        });
     }
 }
 
