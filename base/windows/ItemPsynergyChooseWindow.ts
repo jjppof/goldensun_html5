@@ -316,7 +316,7 @@ export class ItemPsynergyChooseWindow {
     }
 
     /*Enables control keys for this menu*/
-    grant_control(on_cancel:Function, on_select:Function, shoulder_r?:Function, shoulder_l?:Function){
+    grant_control(on_cancel:Function, on_select:Function, next_char?:Function, previous_char?:Function){
         let controls = [
             {key: this.data.gamepad.LEFT, callback: this.previous_page.bind(this)},
             {key: this.data.gamepad.RIGHT, callback: this.next_page.bind(this)},
@@ -324,8 +324,8 @@ export class ItemPsynergyChooseWindow {
             {key: this.data.gamepad.DOWN, callback: this.next_element.bind(this)},
             {key: this.data.gamepad.A, callback: on_select},
             {key: this.data.gamepad.B, callback: on_cancel},
-            {key: this.data.gamepad.L, callback: shoulder_l},
-            {key: this.data.gamepad.R, callback: shoulder_r},
+            {key: this.data.gamepad.L, callback: previous_char},
+            {key: this.data.gamepad.R, callback: next_char},
         ];
 
         this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true,

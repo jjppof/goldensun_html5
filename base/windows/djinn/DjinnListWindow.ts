@@ -456,7 +456,7 @@ export class DjinnListWindow {
     }
 
     
-    grant_control(on_cancel:Function, on_select:Function, on_shift?:Function){
+    grant_control(on_cancel:Function, on_select:Function, on_change_djinn_status?:Function){
         let controls = [
             {key: this.data.gamepad.LEFT, callback: this.previous_character.bind(this)},
             {key: this.data.gamepad.RIGHT, callback: this.next_character.bind(this)},
@@ -464,7 +464,7 @@ export class DjinnListWindow {
             {key: this.data.gamepad.DOWN, callback: this.next_djinni.bind(this)},
             {key: this.data.gamepad.A, callback: on_select},
             {key: this.data.gamepad.B, callback: on_cancel},
-            {key: this.data.gamepad.R, callback: on_shift}
+            {key: this.data.gamepad.R, callback: on_change_djinn_status}
         ];
         this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
     }

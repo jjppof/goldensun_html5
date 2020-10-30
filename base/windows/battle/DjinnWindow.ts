@@ -4,7 +4,6 @@ import { DjinnStatsWindow } from "./DjinnStatsWindow";
 import { GoldenSun } from "../../GoldenSun";
 import { MainChar } from "../../MainChar";
 import { PsynergyWindow } from "./PsynergyWindow";
-import { action_inputs } from "../../utils";
 
 const BASE_WINDOW_X = 160;
 const BASE_WINDOW_Y = 72;
@@ -44,7 +43,7 @@ export class DjinnWindow {
 
     public djinn_names: TextObj[];
     public stars_sprites: Phaser.Sprite[];
-    public shift_bindings: Phaser.SignalBinding[];
+    public open_psy_bindings: Phaser.SignalBinding[];
 
     public window_open: boolean;
     public window_active: boolean;
@@ -85,7 +84,7 @@ export class DjinnWindow {
 
         this.djinn_names = [];
         this.stars_sprites = [];
-        this.shift_bindings = [];
+        this.open_psy_bindings = [];
     }
 
     select_djinn(index:number){
@@ -286,8 +285,8 @@ export class DjinnWindow {
 
         this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
 
-        if(this.shift_bindings.length === 0){
-            this.shift_bindings = this.data.control_manager.add_fleeting_control(this.data.gamepad.R,
+        if(this.open_psy_bindings.length === 0){
+            this.open_psy_bindings = this.data.control_manager.add_fleeting_control(this.data.gamepad.R,
                 {on_down: this.show_psynergy.bind(this), on_up: this.hide_psynergy.bind(this)},
                 {persist: true});
         }
@@ -342,10 +341,10 @@ export class DjinnWindow {
         this.stats_window.close();
         this.data.cursor_manager.hide();
 
-        this.shift_bindings.forEach(signal_binding => {
+        this.open_psy_bindings.forEach(signal_binding => {
             signal_binding.detach();
         });
-        this.shift_bindings = [];
+        this.open_psy_bindings = [];
 
         this.base_window.close(() => {
             this.window_active = false;
@@ -365,10 +364,10 @@ export class DjinnWindow {
         this.data.cursor_manager.hide();
         this.data.control_manager.reset();
 
-        this.shift_bindings.forEach(signal_binding => {
+        this.open_psy_bindings.forEach(signal_binding => {
             signal_binding.detach();
         });
-        this.shift_bindings = [];
+        this.open_psy_bindings = [];
 
         this.stats_window.close();
         this.base_window.close(() => {

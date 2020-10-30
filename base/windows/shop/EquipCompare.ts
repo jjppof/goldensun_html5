@@ -237,28 +237,15 @@ export class EquipCompare {
         let char_current_item = null;
         let eq_slots = this.selected_char.equip_slots;
 
-        switch(selected_item_type){
-            case item_types.WEAPONS:
-                if(eq_slots.weapon) char_current_item = this.data.info.items_list[eq_slots.weapon.key_name].key_name;
-                break;        
-            case item_types.ARMOR:
-                if(eq_slots.body) char_current_item = this.data.info.items_list[eq_slots.body.key_name].key_name;
-                break;
-            case item_types.CHEST_PROTECTOR:
-                if(eq_slots.chest) char_current_item = this.data.info.items_list[eq_slots.chest.key_name].key_name;
-                break;
-            case item_types.HEAD_PROTECTOR:
-                if(eq_slots.head) char_current_item = this.data.info.items_list[eq_slots.head.key_name].key_name;
-                break;
-            case item_types.RING:
-                if(eq_slots.ring) char_current_item = this.data.info.items_list[eq_slots.ring.key_name].key_name;
-                break;
-            case item_types.LEG_PROTECTOR:
-                if(eq_slots.boots) char_current_item = this.data.info.items_list[eq_slots.boots.key_name].key_name;
-                break;
-            case item_types.UNDERWEAR:
-                if(eq_slots.underwear) char_current_item = this.data.info.items_list[eq_slots.underwear.key_name].key_name;
-                break;
+        let eq_types = ["WEAPONS", "ARMOR", "CHEST_PROTECTOR",
+        "HEAD_PROTECTOR", "RING", "LEG_PROTECTOR", "UNDERWEAR"];
+
+        let slot_types = ["weapon", "body", "chest", "head",
+        "ring", "boots", "underwear"];
+
+        for(let i=0; i<eq_types.length; i++){
+            if(selected_item_type === item_types[eq_types[i]] && eq_slots[slot_types[i]])
+               char_current_item = this.data.info.items_list[eq_slots[slot_types[i]].key_name].key_name;
         }
 
         let atk_diff = this.compare_items(char_current_item, this.selected_item, effect_types.ATTACK, this.selected_char.atk);
