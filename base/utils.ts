@@ -61,14 +61,6 @@ export const base_actions = {
     JUMP: "jump"
 };
 
-export const action_inputs = {
-    SPACEBAR: "spacebar",
-    ENTER: "enter",
-    SHIFT: "shift",
-    ESC: "esc",
-    TAB: "tab"
-};
-
 
 /*Returns the angle for an 8-Directional value
 Works clockwise starting with "Right"

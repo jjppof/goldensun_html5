@@ -288,10 +288,10 @@ export class ControllableChar {
             if (this.footsteps.can_make_footprint && footsteps) {
                 this.footsteps.create_step(this.current_direction, this.current_action);
             }
-            const shift_pressed = this.game.input.keyboard.isDown(this.data.gamepad.B);
-            if (shift_pressed && this.current_action !== base_actions.DASH) {
+            const dash_pressed = this.game.input.keyboard.isDown(this.data.gamepad.B);
+            if (dash_pressed && this.current_action !== base_actions.DASH) {
                 this.current_action = base_actions.DASH;
-            } else if (!shift_pressed && this.current_action !== base_actions.WALK) {
+            } else if (!dash_pressed && this.current_action !== base_actions.WALK) {
                 this.current_action = base_actions.WALK;
             }
         }

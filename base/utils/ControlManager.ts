@@ -1,4 +1,5 @@
 import * as _ from "lodash";
+import { isArguments } from "lodash";
 import { Gamepad } from '../Gamepad';
 
 const DEFAULT_LOOP_TIME = Phaser.Timer.QUARTER >> 1;
@@ -52,21 +53,18 @@ export class ControlManager{
         return this.signal_bindings.length !== 0;
     }
 
-    simple_input(callback:Function, params?:{reset_control?:boolean, confirm_only?:boolean}){
-        if(this.initialized) this.reset();
-        
-        this.keys[this.gamepad.A].callback = callback;
+    simple_input(callback:Function, params?:{reset_on_press?:boolean, confirm_only?:boolean, persist?:boolean, no_initial_reset?:boolean}){
+        let controls = [{key: this.gamepad.A, callback: callback, reset_control: (params ? params.reset_on_press : undefined)}];
 
         if(params){
-            this.keys[this.gamepad.A].reset = params.reset_control ? params.reset_control : false;
-
-            if(!params.confirm_only) {
-                this.keys[this.gamepad.B].callback = callback;
-                this.keys[this.gamepad.B].reset = params.reset_control ? params.reset_control : false; 
-            }
+            if(!params.confirm_only)
+                controls.push({key: this.gamepad.B, callback: callback, reset_control: (params ? params.reset_on_press : undefined)});
+                return this.set_control(controls, {persist: params.persist, no_reset: params.no_initial_reset});
         }
-
-        this.enable_keys();
+        else{
+            controls.push({key: this.gamepad.B, callback: callback, reset_control: (params ? params.reset_on_press : undefined)});
+            return this.set_control(controls);
+        }
     }
     
     add_fleeting_control(key:number, callbacks:{on_down?:Function, on_up?:Function}, params?:{persist?:boolean}){
@@ -115,9 +113,9 @@ export class ControlManager{
         
         if(configs){
             this.set_configs(configs);
-            this.enable_keys(configs.persist);
+            return this.enable_keys(configs.persist);
         }
-        else this.enable_keys();
+        else return this.enable_keys();
     }
 
     set_configs(configs:any){
@@ -146,7 +144,7 @@ export class ControlManager{
         controls.forEach(obj => {
             this.keys[obj.key].loop = true;
             if(obj.loop_time) this.keys[obj.key].loop_time = obj.loop_time;
-        })
+        });
     }
 
     enable_keys(persist?:boolean){
@@ -195,6 +193,7 @@ export class ControlManager{
             };
         }
         this.reset(false);
+        return bindings;
     }
 
     set_loop_timers(callback:Function, loop_time:number) {

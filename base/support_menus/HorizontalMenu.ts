@@ -11,6 +11,9 @@ const BUTTON_WIDTH = 24;
 const BUTTON_HEIGHT = 24;
 const BUTTON_Y = numbers.GAME_HEIGHT - BUTTON_HEIGHT;
 
+const ACTIVE_DEFAULT = 1.15;
+const MAX_SCALE_DEFAULT = 1.25;
+
 const TITLE_WINDOW_HEIGHT = BUTTON_HEIGHT - numbers.OUTSIDE_BORDER_WIDTH - numbers.INSIDE_BORDER_WIDTH;
 
 export class HorizontalMenu {
@@ -146,8 +149,8 @@ export class HorizontalMenu {
     }
 
     set_button() {
-        let active_default = 1.2;
-        let max_scale = 1.3;
+        let active_default = ACTIVE_DEFAULT;
+        let max_scale = MAX_SCALE_DEFAULT;
 
         if(this.custom_scale){
             active_default = this.custom_scale.active_default;
@@ -186,7 +189,6 @@ export class HorizontalMenu {
     open(callback?:Function, select_index:number=0, start_active:boolean=true,
         custom_scale?:{active_default: number, max_scale: number}) {
         this.reset_button();
-        this.game.world.bringToTop(this.group);
 
         if(custom_scale) this.custom_scale = custom_scale;
 
@@ -218,6 +220,7 @@ export class HorizontalMenu {
                 callback();
             }
             this.set_control();
+            this.game.world.bringToTop(this.group);
         });
     }
 

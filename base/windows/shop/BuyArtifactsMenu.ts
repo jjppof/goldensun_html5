@@ -11,7 +11,7 @@ import { YesNoMenu } from '../YesNoMenu';
 import { ShopkeepDialog } from './ShopkeepDialog';
 import { ShopItem } from '../../Shop';
 import { ItemSlot, MainChar } from '../../MainChar';
-import { WINDOW_PADDING_BOTTOM } from '../../magic_numbers';
+import { eq } from 'lodash';
 
 const MAX_INVENTORY_SIZE = 15;
 const MAX_ITEMS_PER_PAGE = 7;
@@ -54,13 +54,15 @@ export class BuyArtifactsMenu{
     public npc_dialog:ShopkeepDialog;
 
     public is_artifacts_menu:boolean;
+    public active:boolean;
+
     public item_list:{[key_name:string] : ShopItem};;
     public selected_item:ShopItem;
-    public buy_select_pos:{page:number, index:number, is_last:boolean};
+    public buy_select_pos:{page:number, index:number, is_last:boolean, should_change:boolean};
     public old_item:Item;
+
     public selected_character:MainChar;
     public selected_char_index:number;
-    public active:boolean;
 
     constructor(game:Phaser.Game, data:GoldenSun, parent:ShopMenu){
         this.game = game;
@@ -80,13 +82,15 @@ export class BuyArtifactsMenu{
         this.npc_dialog = this.parent.npc_dialog;
 
         this.is_artifacts_menu = null;
+        this.active = false;
+        
         this.item_list = {};
         this.selected_item = null;
-        this.buy_select_pos = {page: 0, index: 0, is_last: false};
+        this.buy_select_pos = {page: 0, index: 0, is_last: false, should_change: false};
         this.old_item = null;
+
         this.selected_character = null;
         this.selected_char_index = 0;
-        this.active = false;
     }
 
     update_game_ticket_step(){
@@ -131,6 +135,10 @@ export class BuyArtifactsMenu{
             if(!exists){
                 this.data.info.shops_list[this.parent.shop_key].item_list.push({key_name: old_item.key_name, quantity: 1});
             }
+
+            
+            if(this.buy_select_pos.should_change)
+                this.buy_select_pos.should_change = false;
         }
 
         for(let i=0; i<this.selected_character.items.length; i++){
@@ -156,28 +164,16 @@ export class BuyArtifactsMenu{
 
         this.old_item = null;
         let slot: ItemSlot = null;
-        switch(item_type){
-            case item_types.WEAPONS:
-                if(eq_slots.weapon) slot = eq_slots.weapon;
-                break;
-            case item_types.ARMOR:
-                if(eq_slots.body) slot = eq_slots.body;
-                break;
-            case item_types.CHEST_PROTECTOR:
-                if(eq_slots.chest) slot = eq_slots.chest;
-                break;
-            case item_types.HEAD_PROTECTOR:
-                if(eq_slots.head) slot = eq_slots.head;
-                break;
-            case item_types.RING:
-                if(eq_slots.ring) slot = eq_slots.ring;
-                break;
-            case item_types.LEG_PROTECTOR:
-                if(eq_slots.boots) slot = eq_slots.boots;
-                break;
-            case item_types.UNDERWEAR:
-                if(eq_slots.underwear) slot = eq_slots.underwear;
-                break;
+
+        let eq_types = ["WEAPONS", "ARMOR", "CHEST_PROTECTOR",
+        "HEAD_PROTECTOR", "RING", "LEG_PROTECTOR", "UNDERWEAR"];
+
+        let slot_types = ["weapon", "body", "chest", "head",
+        "ring", "boots", "underwear"];
+
+        for(let i=0; i<eq_types.length; i++){
+            if(item_type === item_types[eq_types[i]] && eq_slots[slot_types[i]])
+                slot = eq_slots[slot_types[i]];
         }
 
         if(slot) this.old_item = this.data.info.items_list[slot.key_name];
@@ -185,7 +181,7 @@ export class BuyArtifactsMenu{
         if(this.old_item){
             for(let i=0; i<this.selected_character.items.length; i++){
                 let itm = this.selected_character.items[i];
-                if(itm.key_name === this.old_item.key_name){
+                if(itm.key_name === this.old_item.key_name && itm.equipped){
                     this.selected_character.unequip_item(i);
                     break;
                 }
@@ -264,10 +260,17 @@ export class BuyArtifactsMenu{
                 if(!game_ticket){
                     let shop_list = this.data.info.shops_list[this.parent.shop_key].item_list;
 
+                    let cursor_back = false;
                     for(let i=0; i<shop_list.length; i++){
                         if(shop_list[i].key_name === this.selected_item.key_name && shop_list[i].quantity !== -1){
                             this.data.info.shops_list[this.parent.shop_key].item_list[i].quantity -= quantity;
+                            if(this.data.info.shops_list[this.parent.shop_key].item_list[i].quantity === 0)
+                                cursor_back = true;
                         }
+                    }
+
+                    if(this.buy_select_pos.is_last && cursor_back){
+                        this.buy_select_pos.should_change = true;
                     }
 
                     this.parent.update_items();
@@ -403,7 +406,8 @@ export class BuyArtifactsMenu{
     open_equip_compare(){
         this.buy_select_pos = {page: this.buy_select.current_page,
             index: this.buy_select.selected_index,
-            is_last: this.buy_select.is_last(this.buy_select.current_page, this.buy_select.selected_index)};
+            is_last: this.buy_select.is_last(this.buy_select.current_page, this.buy_select.selected_index),
+            should_change: false};
         
         let close_windows = [WindowNames.BUY_SELECT, WindowNames.ITEM_DESC_WIN];
         this.close_windows(close_windows, () => {
@@ -424,7 +428,8 @@ export class BuyArtifactsMenu{
             this.buy_select_pos = {
                 page: this.buy_select.current_page,
                 index: this.buy_select.selected_index,
-                is_last: this.buy_select.is_last(this.buy_select.current_page, this.buy_select.selected_index)
+                is_last: this.buy_select.is_last(this.buy_select.current_page, this.buy_select.selected_index),
+                should_change: false
             };
         }
         
@@ -470,14 +475,14 @@ export class BuyArtifactsMenu{
         if(Object.keys(this.item_list).length === 0) this.close_menu();
 
         else{
-            if(this.buy_select_pos.is_last){
+            if(this.buy_select_pos.should_change){
                 if(this.buy_select_pos.index === 0){
                     this.buy_select_pos.page -= 1;
                     this.buy_select_pos.index = MAX_ITEMS_PER_PAGE-1;
                 }
                 else this.buy_select_pos.index -= 1;
             }
-    
+
             this.npc_dialog.update_dialog(msg_key);
 
             let close_windows = [WindowNames.CHAR_DISPLAY, WindowNames.INV_WIN, WindowNames.EQ_COMPARE];
@@ -508,11 +513,11 @@ export class BuyArtifactsMenu{
         if(is_artifacts_menu){
             if(Object.keys(this.item_list).length === 0){
                 this.npc_dialog.update_dialog("no_artifacts", true);
-                this.data.control_manager.simple_input(this.close_menu.bind(this), {reset_control:true});
+                this.data.control_manager.simple_input(this.close_menu.bind(this), {reset_on_press:true});
             }
             else{
                 this.npc_dialog.update_dialog("artifacts_menu", true);
-                this.data.control_manager.simple_input(this.open_buy_select.bind(this, "buy_select"), {reset_control:true});
+                this.data.control_manager.simple_input(this.open_buy_select.bind(this, "buy_select"), {reset_on_press:true});
             }
         }
         else this.open_buy_select("buy_select");
@@ -528,7 +533,7 @@ export class BuyArtifactsMenu{
         this.selected_character = null;
         this.selected_char_index = 0;
         this.old_item = null;
-        this.buy_select_pos = {page: 0, index: 0, is_last: false};
+        this.buy_select_pos = {page: 0, index: 0, is_last: false, should_change: false};
         this.active = false;
 
         let windows = [WindowNames.ITEM_DESC_WIN, WindowNames.ITEM_PRICE_WIN, WindowNames.YOUR_COINS_WIN,

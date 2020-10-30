@@ -6,6 +6,8 @@ import { CharsStatusWindow } from '../windows/CharsStatusWindow';
 import { GoldenSun } from '../GoldenSun';
 import { HorizontalMenu } from '../support_menus/HorizontalMenu';
 
+const TITLE_WINDOW_WIDTH = 70;
+
 export class MainMenu {
     public game: Phaser.Game;
     public data: GoldenSun;
@@ -36,7 +38,7 @@ export class MainMenu {
                 on_press: this.button_press.bind(this),
                 on_cancel:  this.close_menu.bind(this),
             }
-        );
+        , TITLE_WINDOW_WIDTH);
         this.psynergy_menu = new MainPsynergyMenu(this.game, this.data);
         this.item_menu = new MainItemMenu(this.game, this.data);
         this.djinn_menu = new MainDjinnMenu(this.game, this.data);

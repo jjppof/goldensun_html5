@@ -43,11 +43,13 @@ export class SellRepairMenu{
     public npc_dialog:ShopkeepDialog;
 
     public is_repair_menu:boolean;
+    public active:boolean;
+
     public selected_item:ItemSlot;
     public inv_win_pos:{line:number, col:number};
+
     public selected_character:MainChar;
     public selected_char_index:number;
-    public active:boolean;
 
     constructor(game:Phaser.Game, data:GoldenSun, parent:ShopMenu){
         this.game = game;
@@ -65,11 +67,13 @@ export class SellRepairMenu{
         this.npc_dialog = this.parent.npc_dialog;
 
         this.is_repair_menu = null;
+        this.active = false;
+
         this.selected_item = null;
         this.inv_win_pos = {line: 0, col: 0};
+
         this.selected_character = null;
         this.selected_char_index = 0;
-        this.active = false;
     }
 
     on_item_repair(){

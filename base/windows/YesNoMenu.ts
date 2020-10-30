@@ -74,7 +74,7 @@ export class YesNoMenu{
         }
 
         this.is_open = true;
-        this.menu.open(open_callback, 0, true, {active_default: 1.1, max_scale: 1.2});
+        this.menu.open(open_callback, 0, true);
 
         if(custom_pos){
             this.update_position(custom_pos.x, custom_pos.y);

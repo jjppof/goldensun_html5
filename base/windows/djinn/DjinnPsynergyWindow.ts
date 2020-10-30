@@ -43,7 +43,7 @@ export class DjinnPsynergyWindow {
 
     public execute_operation: boolean;
     public close_callback: Function;
-    public spacebar_callback: Function;
+    public next_state_callback: Function;
 
     public page_number: number;
     public page_index: number;
@@ -88,7 +88,7 @@ export class DjinnPsynergyWindow {
         let controls = [
             {key: this.data.gamepad.LEFT, callback: this.previous_page.bind(this)},
             {key: this.data.gamepad.RIGHT, callback: this.next_page.bind(this)},
-            {key: this.data.gamepad.R, callback: this.spacebar_callback},
+            {key: this.data.gamepad.R, callback: this.next_state_callback},
             {key: this.data.gamepad.A, callback: () => {
                 this.execute_operation = true;
                 this.close(this.close_callback)}},
@@ -208,7 +208,7 @@ export class DjinnPsynergyWindow {
     }
 
     open(char:MainChar, djinni:Djinn[], next_djinni_status:string[], close_callback:Function,
-        hidden:boolean=false, spacebar_callback?:Function, action?:string, callback:Function=undefined) {
+        hidden:boolean=false, next_state_callback?:Function, action?:string, callback:Function=undefined) {
         this.char = char;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;
@@ -216,7 +216,7 @@ export class DjinnPsynergyWindow {
         this.execute_operation = false;
         this.page_index = 0;
         this.mount_window();
-        this.spacebar_callback = spacebar_callback;
+        this.next_state_callback = next_state_callback;
         this.action = action;
         if (hidden) {
             this.window_open = true;
