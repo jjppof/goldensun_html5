@@ -286,8 +286,8 @@ export class DjinnWindow {
         this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
 
         if(this.open_psy_bindings.length === 0){
-            let controls = [{key: this.data.gamepad.R, on_down: this.show_psynergy.bind(this), on_up: this.hide_psynergy.bind(this)}];
-            this.data.control_manager.set_control(controls, {persist: true});
+            let control = [{key: this.data.gamepad.R, on_down: this.show_psynergy.bind(this), on_up: this.hide_psynergy.bind(this)}];
+            this.data.control_manager.set_control(control, {persist: true, no_reset: true});
         }
     }
 
