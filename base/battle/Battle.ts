@@ -15,6 +15,7 @@ import { BattleAnimationManager } from "./BattleAnimationManager";
 import { GoldenSun } from "../GoldenSun";
 import * as _ from "lodash";
 import { Target } from "../battle/BattleStage";
+import { use_types } from "../Item";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 
@@ -410,6 +411,12 @@ export class Battle {
             return;
         } else {
             action.caster.current_pp -= ability.pp_cost;
+        }
+
+        if (ability.ability_category === ability_categories.ITEM) {
+            if (this.data.info.items_list[action.item_slot.key_name].use_type === use_types.SINGLE_USE) {
+                --action.item_slot.quantity;
+            }
         }
 
         let djinn_name = action.djinn_key_name ? this.data.info.djinni_list[action.djinn_key_name].name : undefined;
