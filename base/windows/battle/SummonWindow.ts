@@ -64,7 +64,7 @@ export class SummonWindow {
         this.data = data;
 
         this.base_window = new Window(this.game, BASE_WINDOW_X, BASE_WINDOW_Y, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
-        this.base_window.init_page_indicator_bar();
+        this.base_window.page_indicator.initialize();
         this.djinn_numbers_window = new SummonDjinnStandbyWindow(game);
         this.group = this.game.add.group();
         this.group.alpha = 0;
@@ -131,7 +131,7 @@ export class SummonWindow {
         }
 
         this.set_highlight_bar();
-        this.base_window.set_page_indicator_highlight(this.page_number, this.page_index);
+        this.base_window.page_indicator.set_highlight(this.page_number, this.page_index);
         this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
     }
 
@@ -196,7 +196,7 @@ export class SummonWindow {
         }]);
 
         this.set_page_number();
-        this.base_window.set_page_indicator(this.page_number, this.page_index);
+        this.base_window.page_indicator.set_page(this.page_number, this.page_index);
         this.config_page();
     }
 
@@ -212,15 +212,15 @@ export class SummonWindow {
 
     summon_choose(){
         let controls = [
-            {key: this.data.gamepad.LEFT, callback: this.previous_page.bind(this)},
-            {key: this.data.gamepad.RIGHT, callback: this.next_page.bind(this)},
-            {key: this.data.gamepad.UP, callback: this.previous_summon.bind(this)},
-            {key: this.data.gamepad.DOWN, callback: this.next_summon.bind(this)},
-            {key: this.data.gamepad.A, callback: () => {
+            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this)},
+            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this)},
+            {key: this.data.gamepad.UP, on_down: this.previous_summon.bind(this)},
+            {key: this.data.gamepad.DOWN, on_down: this.next_summon.bind(this)},
+            {key: this.data.gamepad.A, on_down: () => {
                 this.choosen_ability = this.summons[this.summon_index].key_name;
                 this.hide(this.close_callback);
             }},
-            {key: this.data.gamepad.B, callback: () => {
+            {key: this.data.gamepad.B, on_down: () => {
                 this.choosen_ability = null;
                 this.close(this.close_callback);
             }},
@@ -291,7 +291,7 @@ export class SummonWindow {
 
     close(callback?:Function) {
         this.clear_sprites();
-        this.base_window.unset_page_indicator();
+        this.base_window.page_indicator.terminante();
 
         this.group.alpha = 0;
         this.highlight_bar.alpha = 0;

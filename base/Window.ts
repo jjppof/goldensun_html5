@@ -1,4 +1,5 @@
 import * as numbers from './magic_numbers';
+import { PageIndicator } from './support_menus/PageIndicator';
 import * as utils from './utils';
 
 const PAGE_NUMBER_WIDTH = 8;
@@ -41,24 +42,23 @@ export class Window {
     public extra_sprites: Phaser.Sprite[];
     public internal_groups: {[key: string]: Phaser.Group};
     public close_callback: Function;
-    public page_indicator_is_set: boolean;
-    public page_number_bar: Phaser.Graphics;
-    public page_number_bar_highlight: Phaser.Graphics;
-    public page_indicator_arrow_timer: Phaser.Timer;
-    public page_indicator_right_arrow: Phaser.Sprite;
-    public page_indicator_left_arrow: Phaser.Sprite;
-    public page_indicators: TextObj[];
-    public calculated_arrow_left_x: number;
+    public page_indicator: PageIndicator;
 
     constructor(game, x, y, width, height, need_pos_update = true, color = numbers.DEFAULT_WINDOW_COLOR, font_color = numbers.DEFAULT_FONT_COLOR) {
         this.game = game;
         this.group = game.add.group();
+
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+
         this.color = color;
         this.font_color = font_color;
+
+        this.extra_sprites = [];
+        this.internal_groups = {};
+
         this.graphics = this.game.add.graphics(0, 0);
         this.separators_graphics = this.game.add.graphics(0, 0);
 
@@ -70,12 +70,11 @@ export class Window {
         this.group.alpha = 0;
         this.group.width = 0;
         this.group.height = 0;
+
         this.need_pos_update = need_pos_update;
         this.open = false;
         this.lines_sprites = [];
-
-        this.extra_sprites = [];
-        this.internal_groups = {};
+        this.page_indicator = new PageIndicator(this.game, this);
     }
 
     get real_x() {
@@ -329,9 +328,10 @@ export class Window {
         this.group.alpha = 1;
         this.group.x = this.game.camera.x + this.x;
         this.group.y = this.game.camera.y + this.y;
-        this.open = true;
+
         this.close_callback = close_callback;
-        this.page_indicator_is_set = false;
+        this.page_indicator.is_set = false;
+
         if (animate) {
             this.game.add.tween(this.group).to(
                 { width: this.graphics.width, height: this.graphics.height },
@@ -339,9 +339,11 @@ export class Window {
                 Phaser.Easing.Linear.None,
                 true
             ).onComplete.addOnce(() => {
+                this.open = true;
                 if (show_callback !== undefined) show_callback();
             });
         } else {
+            this.open = true;
             this.group.width = this.graphics.width;
             this.group.height = this.graphics.height;
             if (show_callback !== undefined) show_callback();
@@ -660,8 +662,8 @@ set_single_line_text(text, right_align = false, italic = false): TextObj {
             ).onComplete.addOnce(() => {
                 this.group.alpha = 0;
                 this.open = false;
-                if (this.page_indicator_is_set) {
-                    this.unset_page_indicator();
+                if (this.page_indicator.is_set) {
+                    this.page_indicator.terminante();
                 }
                 if (callback !== undefined) {
                     callback();
@@ -673,8 +675,8 @@ set_single_line_text(text, right_align = false, italic = false): TextObj {
         } else {
             this.group.alpha = 0;
             this.open = false;
-            if (this.page_indicator_is_set) {
-                this.unset_page_indicator();
+            if (this.page_indicator.is_set) {
+                this.page_indicator.terminante();
             }
             this.group.width = 0;
             this.group.height = 0;
@@ -693,8 +695,8 @@ set_single_line_text(text, right_align = false, italic = false): TextObj {
            destroy_callbcak [function] - Callback function (Optional)*/
     destroy(animate, destroy_callback?) {
         let on_destroy = () => { 
-            if (this.page_indicator_is_set) {
-                this.unset_page_indicator();
+            if (this.page_indicator.is_set) {
+                this.page_indicator.terminante();
             }
             this.group.destroy();
             this.internal_groups = {};
@@ -710,91 +712,5 @@ set_single_line_text(text, right_align = false, italic = false): TextObj {
         } else {
             on_destroy();
         }
-    }
-
-    /*Enables the page indicators to be shown and prepares the space accordingly
-    Used in the Psynergy and Items menu*/
-    init_page_indicator_bar() {
-        this.page_number_bar = this.game.add.graphics(0, 0);
-        this.page_number_bar.alpha = 0;
-        this.add_sprite_to_group(this.page_number_bar);
-        this.page_number_bar.beginFill(this.color, 1);
-        this.page_number_bar.drawRect(0, 0, PAGE_NUMBER_WIDTH, PAGE_NUMBER_HEIGHT);
-        this.page_number_bar.endFill();
-        this.page_number_bar_highlight = this.game.add.graphics(0, 0);
-        this.page_number_bar_highlight.blendMode = PIXI.blendModes.SCREEN;
-        this.page_number_bar_highlight.alpha = 0;
-        this.add_sprite_to_group(this.page_number_bar_highlight);
-        this.page_number_bar_highlight.beginFill(this.color, 1);
-        this.page_number_bar_highlight.drawRect(0, 0, PAGE_NUMBER_WIDTH, PAGE_NUMBER_HEIGHT);
-        this.page_number_bar_highlight.endFill();
-        this.page_indicators = [];
-        this.page_indicator_arrow_timer = this.game.time.create(false);
-        this.page_indicator_right_arrow = this.create_at_group((this.width - 3), PAGE_INDICATOR_ARROW_Y, "page_arrow");
-        this.page_indicator_right_arrow.scale.x = -1;
-        this.page_indicator_right_arrow.x -= this.page_indicator_right_arrow.width;
-        this.page_indicator_right_arrow.alpha = 0;
-        this.page_indicator_left_arrow = this.create_at_group(0, PAGE_INDICATOR_ARROW_Y, "page_arrow");
-        this.page_indicator_left_arrow.alpha = 0;
-    }
-
-    /*Sets the current page in the window
-    
-    Input: page_number [number] - The number of pages
-           page_index [number] - The current page being shown*/
-    set_page_indicator(page_number, page_index) {
-        if (page_number <= 1) return;
-        this.page_number_bar.width = page_number * PAGE_NUMBER_WIDTH;
-        this.page_number_bar.x = this.width - this.page_number_bar.width - 5;
-        this.page_number_bar.alpha = 1;
-        for (let i = 1; i <= page_number; ++i) {
-            const x = this.page_number_bar.x + PAGE_NUMBER_WIDTH * (i - 1) + (PAGE_NUMBER_WIDTH >> 1);
-            const y = PAGE_NUMBER_HEIGHT >> 1;
-            this.page_indicators.push(this.set_text_in_position(i.toString(), x, y, false, true));
-        }
-        this.page_number_bar_highlight.alpha = 1;
-        this.set_page_indicator_highlight(page_number, page_index);
-        this.set_page_indicator_arrow(page_number);
-    }
-
-    /*Sets the page indicator highlight in the window
-    
-    Input: page_number [number] - The number of pages
-           page_index [number] - The current page being shown*/
-    set_page_indicator_highlight(page_number, page_index) {
-        this.page_number_bar_highlight.x = this.width - 5 - (page_number - page_index) * PAGE_NUMBER_WIDTH;
-    }
-
-    /*Sets the page indicator arrows in the window
-
-    Input: page_number [number] - The number of pages*/
-    set_page_indicator_arrow(page_number) {
-        this.page_indicator_left_arrow.alpha = 1;
-        this.page_indicator_right_arrow.alpha = 1;
-        this.calculated_arrow_left_x = this.width - 5 - page_number * PAGE_NUMBER_WIDTH - this.page_indicator_left_arrow.width - 2;
-        this.page_indicator_left_arrow.x = this.calculated_arrow_left_x;
-        if (this.page_indicator_arrow_timer.running && this.page_indicator_arrow_timer.paused) {
-            this.page_indicator_arrow_timer.resume();
-        } else {
-            this.page_indicator_arrow_timer.loop(Phaser.Timer.QUARTER >> 1, () => {
-                this.page_indicator_left_arrow.x = this.calculated_arrow_left_x + ~(-this.page_indicator_left_arrow.x%2);
-                this.page_indicator_right_arrow.x = (this.width - 3) - ~(-this.page_indicator_right_arrow.x%2);
-                this.page_indicator_right_arrow.x -= this.page_indicator_right_arrow.width;
-            });
-            this.page_indicator_arrow_timer.start();
-        }
-    }
-
-    /*Removes the page indicator from the window*/
-    unset_page_indicator() {
-        this.page_number_bar.alpha = 0;
-        this.page_number_bar_highlight.alpha = 0;
-        this.page_indicator_left_arrow.alpha = 0;
-        this.page_indicator_right_arrow.alpha = 0;
-        for (let i = 0; i < this.page_indicators.length; ++i) {
-            this.remove_text(this.page_indicators[i]);
-        }
-        this.page_indicators = [];
-        this.page_indicator_arrow_timer.pause();
     }
 }
