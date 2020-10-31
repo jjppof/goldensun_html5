@@ -12,6 +12,15 @@
     <script type="text/javascript" src="static/phaser.js"></script>
     <script type="module" src="dist/bundle.js"></script>
 
+    <!-- Prevent arrows to scroll the page -->
+    <script>
+        window.addEventListener("keydown", function(e) {
+            if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) { // space and arrow keys
+                e.preventDefault();
+            }
+        }, false);
+    </script>
+
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-66229740-5"></script>
     <script>
