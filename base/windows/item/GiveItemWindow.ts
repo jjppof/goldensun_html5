@@ -188,10 +188,10 @@ export class GiveItemWindow {
             this.set_answer_index(YES_Y);
             
             let controls = [
-                {key: this.data.gamepad.UP, callback: this.change_answer.bind(this)},
-                {key: this.data.gamepad.DOWN, callback: this.change_answer.bind(this)},
-                {key: this.data.gamepad.A, callback: this.on_give.bind(this)},
-                {key: this.data.gamepad.B, callback: this.on_give.bind(this, false)},
+                {key: this.data.gamepad.UP, on_down: this.change_answer.bind(this)},
+                {key: this.data.gamepad.DOWN, on_down: this.change_answer.bind(this)},
+                {key: this.data.gamepad.A, on_down: this.on_give.bind(this)},
+                {key: this.data.gamepad.B, on_down: this.on_give.bind(this, false)},
             ];
             this.data.control_manager.set_control(controls, {loop_configs:{vertical:true}});
         }

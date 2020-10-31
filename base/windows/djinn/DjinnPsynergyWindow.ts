@@ -70,7 +70,7 @@ export class DjinnPsynergyWindow {
         this.icon_sprites_in_window = [];
 
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
-        this.base_window.init_page_indicator_bar();
+        this.base_window.page_indicator.initialize();
         this.base_window.set_text_in_position("PP", PSY_PP_COST_X, PSY_PP_COST_Y);
         this.psy_info_1_text = this.base_window.set_text_in_position("", PSY_INFO_X, PSY_INFO_1_Y);
         this.psy_info_2_text = this.base_window.set_text_in_position("", PSY_INFO_X, PSY_INFO_2_Y);
@@ -86,13 +86,13 @@ export class DjinnPsynergyWindow {
 
     grant_control(){
         let controls = [
-            {key: this.data.gamepad.LEFT, callback: this.previous_page.bind(this)},
-            {key: this.data.gamepad.RIGHT, callback: this.next_page.bind(this)},
-            {key: this.data.gamepad.R, callback: this.next_state_callback},
-            {key: this.data.gamepad.A, callback: () => {
+            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this)},
+            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this)},
+            {key: this.data.gamepad.R, on_down: this.next_state_callback},
+            {key: this.data.gamepad.A, on_down: () => {
                 this.execute_operation = true;
                 this.close(this.close_callback)}},
-            {key: this.data.gamepad.B, callback: () => {
+            {key: this.data.gamepad.B, on_down: () => {
                 this.execute_operation = false;
                 this.close(this.close_callback)}},
 
@@ -116,7 +116,7 @@ export class DjinnPsynergyWindow {
             this.page_index = this.page_number - 1;
         }
         this.set_abilities_list();
-        this.base_window.set_page_indicator_highlight(this.page_number, this.page_index);
+        this.base_window.page_indicator.set_highlight(this.page_number, this.page_index);
     }
 
     set_abilities_list() {
@@ -183,7 +183,7 @@ export class DjinnPsynergyWindow {
         this.set_abilities();
         this.set_abilities_list();
         this.set_page_number();
-        this.base_window.set_page_indicator(this.page_number, this.page_index);
+        this.base_window.page_indicator.set_page(this.page_number, this.page_index);
     }
 
     clear_sprites() {
@@ -199,7 +199,7 @@ export class DjinnPsynergyWindow {
 
     update_info(char:MainChar, djinni:Djinn[], next_djinni_status:string[]) {
         this.clear_sprites();
-        this.base_window.unset_page_indicator();
+        this.base_window.page_indicator.terminante();
         this.char = char;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;
@@ -232,7 +232,7 @@ export class DjinnPsynergyWindow {
 
     close(callback?:Function) {
         this.clear_sprites();
-        this.base_window.unset_page_indicator();
+        this.base_window.page_indicator.terminante();
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {

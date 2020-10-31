@@ -175,50 +175,44 @@ export class GoldenSun {
             window.dispatchEvent(new Event('resize'));
         });
 
-        //enable zoom
-        let zoom_controls = [
-            {key: this.gamepad.ZOOM1, callback: () => {
+        //initialize screens
+        this.shop_menu = new ShopMenu(this.game, this);
+        this.main_menu = initialize_menu(this.game, this);
+
+        //enable zoom and psynergies shortcuts for testing
+        let controls = [
+            {key: this.gamepad.ZOOM1, on_down: () => {
                 if (this.fullscreen) return;
                 this.scale_factor = 1;
                 this.game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
                 window.dispatchEvent(new Event('resize'));
             }},
-            {key: this.gamepad.ZOOM2, callback: () => {
+            {key: this.gamepad.ZOOM2, on_down: () => {
                 if (this.fullscreen) return;
                 this.scale_factor = 2;
                 this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
                 window.dispatchEvent(new Event('resize'));
             }},
-            {key: this.gamepad.ZOOM3, callback: () => {
+            {key: this.gamepad.ZOOM3, on_down: () => {
                 if (this.fullscreen) return;
                 this.scale_factor = 3;
                 this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
                 window.dispatchEvent(new Event('resize'));
             }},
-
-        ];
-        this.control_manager.set_control(zoom_controls, {persist:true});
-
-        //initialize screens
-        this.shop_menu = new ShopMenu(this.game, this);
-        this.main_menu = initialize_menu(this.game, this);
-
-        //enable psynergies shortcuts for testing
-        let psy_controls = [
-            {key: this.gamepad.PSY1, callback: () => {
+            {key: this.gamepad.PSY1, on_down: () => {
                 if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
                 this.info.field_abilities_list.move.cast(this.hero, this.dbs.init_db.initial_shortcuts.move);
             }},
-            {key: this.gamepad.PSY2, callback: () => {
+            {key: this.gamepad.PSY2, on_down: () => {
                 if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
                 this.info.field_abilities_list.frost.cast(this.hero, this.dbs.init_db.initial_shortcuts.frost);
             }},
-            {key: this.gamepad.PSY3, callback: () => {
+            {key: this.gamepad.PSY3, on_down: () => {
                 if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
             this.info.field_abilities_list.growth.cast(this.hero, this.dbs.init_db.initial_shortcuts.growth);
             }}
         ];
-        this.control_manager.set_control(psy_controls, {persist:true});
+        this.control_manager.set_control(controls, {persist:true});
     }
 
     hero_movement_allowed(allow_climbing = true) {

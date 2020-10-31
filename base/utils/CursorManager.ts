@@ -60,6 +60,7 @@ export class CursorManager{
         }
 
         this.current_tween = type;
+        this.game.world.bringToTop(this.cursor.parent);
         if(this.active_tween) this.active_tween.start();
     }
 

@@ -31,12 +31,12 @@ export class Debug {
 
     initialize_controls() {
         let debug_controls = [
-            {key: this.data.gamepad.DEBUG_PHYSICS, callback: this.toggle_debug_physics.bind(this)},
-            {key: this.data.gamepad.DEBUG_GRID, callback: this.toggle_grid.bind(this)},
-            {key: this.data.gamepad.DEBUG_KEYS, callback: this.toggle_keys.bind(this)},
-            {key: this.data.gamepad.DEBUG_STATS, callback: this.toggle_stats.bind(this)},
-            {key: this.data.gamepad.DEBUG_FPS, callback: this.toggle_fps.bind(this)},
-            {key: this.data.gamepad.DEBUG_SLIDERS, callback: this.toggle_sliders.bind(this)},
+            {key: this.data.gamepad.DEBUG_PHYSICS, on_down: this.toggle_debug_physics.bind(this)},
+            {key: this.data.gamepad.DEBUG_GRID, on_down: this.toggle_grid.bind(this)},
+            {key: this.data.gamepad.DEBUG_KEYS, on_down: this.toggle_keys.bind(this)},
+            {key: this.data.gamepad.DEBUG_STATS, on_down: this.toggle_stats.bind(this)},
+            {key: this.data.gamepad.DEBUG_FPS, on_down: this.toggle_fps.bind(this)},
+            {key: this.data.gamepad.DEBUG_SLIDERS, on_down: this.toggle_sliders.bind(this)},
         ];
         this.data.control_manager.set_control(debug_controls, {persist:true});
     }

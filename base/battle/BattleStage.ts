@@ -476,10 +476,10 @@ export class BattleStage {
                 this.change_target(0, false);
 
                 let controls = [
-                    {key: this.data.gamepad.LEFT, callback: this.next_target.bind(this)},
-                    {key: this.data.gamepad.RIGHT, callback: this.previous_target.bind(this)},
-                    {key: this.data.gamepad.A, callback: this.set_targets.bind(this)},
-                    {key: this.data.gamepad.B, callback: this.choosing_targets_finished.bind(this, null)},
+                    {key: this.data.gamepad.LEFT, on_down: this.next_target.bind(this)},
+                    {key: this.data.gamepad.RIGHT, on_down: this.previous_target.bind(this)},
+                    {key: this.data.gamepad.A, on_down: this.set_targets.bind(this)},
+                    {key: this.data.gamepad.B, on_down: this.choosing_targets_finished.bind(this, null)},
                 ];
 
                 this.data.control_manager.set_control(controls, {loop_configs:{horizontal:true}});
