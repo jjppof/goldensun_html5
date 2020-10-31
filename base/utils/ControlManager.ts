@@ -1,5 +1,4 @@
 import * as _ from "lodash";
-import { isArguments } from "lodash";
 import { Gamepad } from '../Gamepad';
 
 const DEFAULT_LOOP_TIME = Phaser.Timer.QUARTER >> 1;
@@ -14,14 +13,10 @@ export type ControlObj = {
     reset?:boolean
 }
 
-export type LoopConfigs = {
-    key:number,
-    loop_time:boolean
-}
-
 export class ControlManager{
     public game:Phaser.Game;
     public gamepad:Gamepad;
+
     public disabled:boolean;
     public busy:boolean;
 
@@ -40,6 +35,7 @@ export class ControlManager{
     constructor(game:Phaser.Game, gamepad:Gamepad){
         this.game = game;
         this.gamepad = gamepad;
+
         this.disabled = false;
         this.busy = false;
 
@@ -50,7 +46,7 @@ export class ControlManager{
             keys_to_map.push({key: this.keys_list[i], on_down: null, on_up: null, pressed: false, loop: false, loop_time: DEFAULT_LOOP_TIME, reset:false});
         }
 
-        this.keys = _.mapKeys(keys_to_map, k => k.key) as {[key:number] : ControlObj};
+        this.keys = _.mapKeys(keys_to_map, k => k.key) as {[key:number]: ControlObj};
 
         this.signal_bindings = [];
         this.signal_bindings_key = null;
