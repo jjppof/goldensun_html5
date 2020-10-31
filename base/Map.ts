@@ -553,11 +553,13 @@ export class Map {
                     npc.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
                 }
                 npc.sprite.data.mode7 = true;
+                npc.sprite.data.map = this;
                 if (npc.shadow) {
                     if (!this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
                         npc.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X , numbers.WORLD_MAP_SPRITE_SCALE_Y);
                     }
                     npc.shadow.data.mode7 = true;
+                    npc.shadow.data.map = this;
                 }
             });
             this.interactable_objects.forEach(obj => obj.sprite.data.mode7 = true);
