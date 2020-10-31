@@ -80,7 +80,7 @@ export class Battle {
     public battle_finishing: boolean;
 
     public advance_log_resolve: Function;
-    public advance_log_bindings: Phaser.SignalBinding[];
+    public advance_log_control_key: number;
     public allies_abilities: PlayerAbilities;
     public enemies_abilities: PlayerAbilities;
     public turns_actions: PlayerAbility[];
@@ -91,7 +91,6 @@ export class Battle {
     constructor(game:Phaser.Game, data:GoldenSun, background_key:string, enemy_party_key:string) {
         this.game = game;
         this.data = data;
-        this.advance_log_bindings = [];
 
         this.allies_info = this.data.info.party_data.members.slice(0, MAX_CHARS_IN_BATTLE).map((char:MainChar) => {
             char.init_effect_turns_count();
@@ -235,7 +234,7 @@ export class Battle {
         this.data.in_battle = true;
         this.data.battle_instance = this;
 
-        this.advance_log_bindings = this.data.control_manager.simple_input(() => {
+        this.advance_log_control_key = this.data.control_manager.simple_input(() => {
             if (this.advance_log_resolve) {
                 this.advance_log_resolve();
                 this.advance_log_resolve = null;
@@ -993,9 +992,8 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
         this.battle_stage.unset_stage(() => {
             this.data.control_manager.reset();
-            this.advance_log_bindings.forEach(bind => bind.detach());
-            this.advance_log_bindings = [];
-
+            this.data.control_manager.detach_bindings(this.advance_log_control_key);
+            
             this.battle_log.destroy();
             this.battle_menu.destroy_menu();
             this.target_window.destroy();

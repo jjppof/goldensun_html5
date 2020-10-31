@@ -67,7 +67,7 @@ export class DjinnWindow {
         this.data = data;
 
         this.base_window = new Window(this.game, BASE_WINDOW_X, BASE_WINDOW_Y, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
-        this.base_window.init_page_indicator_bar();
+        this.base_window.page_indicator.initialize();
         this.stats_window = new DjinnStatsWindow(this.game, this.data);
         this.group = this.game.add.group();
         this.group.alpha = 0;
@@ -150,7 +150,7 @@ export class DjinnWindow {
         }
         this.call_set_description();
         this.set_highlight_bar();
-        this.base_window.set_page_indicator_highlight(this.page_number, this.page_index);
+        this.base_window.page_indicator.set_highlight(this.page_number, this.page_index);
         this.update_stats();
     }
 
@@ -223,7 +223,7 @@ export class DjinnWindow {
     mount_window() {
         this.all_djinni = this.char.djinni;
         this.set_page_number();
-        this.base_window.set_page_indicator(this.page_number, this.page_index);
+        this.base_window.page_indicator.set_page(this.page_number, this.page_index);
 
         this.config_page();
         this.update_stats();
@@ -245,10 +245,10 @@ export class DjinnWindow {
         this.psynergy_window_open = true;
 
         let controls = [
-            {key: this.data.gamepad.LEFT, callback: this.psynergy_window.previous_page.bind(this.psynergy_window)},
-            {key: this.data.gamepad.RIGHT, callback: this.psynergy_window.next_page.bind(this.psynergy_window)},
-            {key: this.data.gamepad.UP, callback: this.previous_djinn.bind(this)},
-            {key: this.data.gamepad.DOWN, callback: this.next_djinn.bind(this)}
+            {key: this.data.gamepad.LEFT, on_down: this.psynergy_window.previous_page.bind(this.psynergy_window)},
+            {key: this.data.gamepad.RIGHT, on_down: this.psynergy_window.next_page.bind(this.psynergy_window)},
+            {key: this.data.gamepad.UP, on_down: this.previous_djinn.bind(this)},
+            {key: this.data.gamepad.DOWN, on_down: this.next_djinn.bind(this)}
         ];
 
         this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
@@ -266,18 +266,18 @@ export class DjinnWindow {
 
     djinn_choose(){
         let controls = [
-            {key: this.data.gamepad.LEFT, callback: this.previous_page.bind(this)},
-            {key: this.data.gamepad.RIGHT, callback: this.next_page.bind(this)},
-            {key: this.data.gamepad.UP, callback: this.previous_djinn.bind(this)},
-            {key: this.data.gamepad.DOWN, callback: this.next_djinn.bind(this)},
-            {key: this.data.gamepad.A, callback: () => {
+            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this)},
+            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this)},
+            {key: this.data.gamepad.UP, on_down: this.previous_djinn.bind(this)},
+            {key: this.data.gamepad.DOWN, on_down: this.next_djinn.bind(this)},
+            {key: this.data.gamepad.A, on_down: () => {
                 const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
                 if (this_djinn.status !== djinn_status.RECOVERY) {
                     this.choosen_ability = this_djinn.ability_key_name;
                     this.hide(this.close_callback);
                 }
             }},
-            {key: this.data.gamepad.B, callback: () => {
+            {key: this.data.gamepad.B, on_down: () => {
                 this.choosen_ability = null;
                 this.close(this.close_callback);
             }},
@@ -286,9 +286,8 @@ export class DjinnWindow {
         this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
 
         if(this.open_psy_bindings.length === 0){
-            this.open_psy_bindings = this.data.control_manager.add_fleeting_control(this.data.gamepad.R,
-                {on_down: this.show_psynergy.bind(this), on_up: this.hide_psynergy.bind(this)},
-                {persist: true});
+            let controls = [{key: this.data.gamepad.R, on_down: this.show_psynergy.bind(this), on_up: this.hide_psynergy.bind(this)}];
+            this.data.control_manager.set_control(controls, {persist: true});
         }
     }
 
@@ -356,7 +355,7 @@ export class DjinnWindow {
 
     close(callback?:Function) {
         this.clear_sprites();
-        this.base_window.unset_page_indicator();
+        this.base_window.page_indicator.terminante();
 
         this.group.alpha = 0;
         this.highlight_bar.alpha = 0;

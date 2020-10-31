@@ -99,7 +99,7 @@ export class PsynergyWindow {
         this.misc_sprites_in_window = [];
 
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
-        this.base_window.init_page_indicator_bar();
+        this.base_window.page_indicator.initialize();
         this.group = this.game.add.group();
         this.group.alpha = 0;
 
@@ -171,7 +171,7 @@ export class PsynergyWindow {
         }
 
         this.set_highlight_bar();
-        this.base_window.set_page_indicator_highlight(this.page_number, this.page_index);
+        this.base_window.page_indicator.set_highlight(this.page_number, this.page_index);
     }
 
     change_ability() {
@@ -186,7 +186,7 @@ export class PsynergyWindow {
         this.djinni = [djinni];
 
         this.clear_sprites();
-        this.base_window.unset_page_indicator();
+        this.base_window.page_indicator.terminante();
 
         this.mount_window();
         this.set_highlight_bar();
@@ -300,7 +300,7 @@ export class PsynergyWindow {
             this.base_window.update_position({x: BASE_WIN_X, y: BASE_WIN_Y});
         }
 
-        this.base_window.set_page_indicator(this.page_number, this.page_index);
+        this.base_window.page_indicator.set_page(this.page_number, this.page_index);
     }
 
     clear_sprites(clear_psy_gain = true) {
@@ -334,17 +334,17 @@ export class PsynergyWindow {
 
     ability_choose(){
         let controls = [
-            {key: this.data.gamepad.LEFT, callback: this.previous_page.bind(this)},
-            {key: this.data.gamepad.RIGHT, callback: this.next_page.bind(this)},
-            {key: this.data.gamepad.UP, callback: this.previous_ability.bind(this)},
-            {key: this.data.gamepad.DOWN, callback: this.next_ability.bind(this)},
-            {key: this.data.gamepad.A, callback: () => {
+            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this)},
+            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this)},
+            {key: this.data.gamepad.UP, on_down: this.previous_ability.bind(this)},
+            {key: this.data.gamepad.DOWN, on_down: this.next_ability.bind(this)},
+            {key: this.data.gamepad.A, on_down: () => {
                 if(!this.expanded){
                     this.choosen_ability = this.abilities[this.ability_index];
                     this.hide(this.close_callback);
                 }
             }},
-            {key: this.data.gamepad.B, callback: () => {
+            {key: this.data.gamepad.B, on_down: () => {
                 if(!this.expanded){
                     this.choosen_ability = null;
                     this.close(this.close_callback);
@@ -422,7 +422,7 @@ export class PsynergyWindow {
 
     close(callback?:Function) {
         this.clear_sprites();
-        this.base_window.unset_page_indicator();
+        this.base_window.page_indicator.terminante();
 
         this.group.alpha = 0;
         this.highlight_bar.alpha = 0;
