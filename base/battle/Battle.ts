@@ -240,7 +240,7 @@ export class Battle {
                 this.advance_log_resolve();
                 this.advance_log_resolve = null;
             }
-        }, {persist: true, no_initial_reset: true});
+        }, {persist: true});
 
         this.battle_log.add(this.enemies_party_name + " appeared!");
         this.battle_stage.initialize_stage(() => {
