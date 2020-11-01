@@ -63,19 +63,19 @@ export class Hero extends ControllableChar {
         this.arrow_inputs = null;
     }
 
-    update_arrow_inputs() {
+    check_control_inputs() {
         this.arrow_inputs =
               1 * (+this.game.input.keyboard.isDown(this.data.gamepad.RIGHT))
             | 2 * (+this.game.input.keyboard.isDown(this.data.gamepad.LEFT))
             | 4 * (+this.game.input.keyboard.isDown(this.data.gamepad.UP))
             | 8 * (+this.game.input.keyboard.isDown(this.data.gamepad.DOWN));
         this.required_direction = rotation_key[this.arrow_inputs];
+
+        this.dashing  = this.game.input.keyboard.isDown(this.data.gamepad.B);
     }
 
     set_speed_factors(check_on_event = false) {
-        if (check_on_event && this.data.tile_event_manager.on_event) {
-            return;
-        }
+        if (check_on_event && this.data.tile_event_manager.on_event) return;
         let desired_direction = rotation_key[this.arrow_inputs];
         if (this.climbing) {
             if (desired_direction === null) {
@@ -220,7 +220,7 @@ export class Hero extends ControllableChar {
     }
 
     update(map) {
-        this.update_arrow_inputs(); //check which arrow keys are being pressed
+        this.check_control_inputs(); //check which arrow keys are being pressed
         this.set_speed_factors(true); //sets the direction of the movement
         this.set_current_action(); //chooses which sprite the hero shall assume
         this.calculate_speed(); //calculates the final speed
