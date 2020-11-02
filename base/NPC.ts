@@ -5,12 +5,6 @@ import { ControllableChar } from './ControllableChar';
 import { BattleEvent } from './game_events/BattleEvent';
 import { Collision } from './Collision';
 
-export class NPC_Sprite extends SpriteBase {
-    constructor (key_name, actions) {
-        super(key_name, actions);
-    }
-}
-
 const NPC_TALK_RANGE = 3.0;
 
 export const npc_movement_types = {

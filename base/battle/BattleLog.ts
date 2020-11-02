@@ -59,8 +59,9 @@ export class BattleLog {
         return promise;
     }
 
-    async add_ability(caster, ability, item_name, djinn_name) {
-        switch (ability.msg_type) {
+    async add_ability(caster, ability, item_name, djinn_name, force_use = false) {
+        const msg_type = force_use ? ability_msg_types.USE : ability.msg_type;
+        switch (msg_type) {
             case ability_msg_types.ATTACK:
                 await this.add(`${caster.name} attacks!`);
                 break;
@@ -74,7 +75,7 @@ export class BattleLog {
                 await this.add(`${caster.name} summons ${ability.name}!`);
                 break;
             case ability_msg_types.USE:
-                await this.add(`${caster.name} uses ${ability.name}!`);
+                await this.add(`${caster.name} uses ${item_name ? item_name : ability.name}!`);
                 break;
             case ability_msg_types.DEFEND:
                 await this.add(`${caster.name} is defending!`);

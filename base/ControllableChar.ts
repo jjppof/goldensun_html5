@@ -110,7 +110,6 @@ export class ControllableChar {
         this.sprite.y = ((this.tile_y_pos + 0.5) * map_sprite.tileHeight) | 0;
         this.sprite.base_collision_layer = layer;
         this.sprite.roundPx = true;
-        
         const scale_x = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
         const scale_y = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
         this.sprite.scale.setTo(scale_x , scale_y);

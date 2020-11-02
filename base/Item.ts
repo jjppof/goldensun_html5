@@ -40,6 +40,8 @@ export class Item {
     public granted_ability: string;
     public equipable: boolean;
 
+    public static readonly BREAKS_CHANCE = 1/8;
+
     constructor(
         key_name,
         name,

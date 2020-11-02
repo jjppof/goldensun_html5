@@ -81,9 +81,10 @@ export class ChoosingTargetWindow {
     }
 
     set_info() {
-        const name = this.base_window.set_text_in_position(this.ability_name, this.ability_name_x, ABILITY_NAME_Y);
+        const display_name = this.action === "item" ? this.data.info.items_list[this.item_obj.key_name].name : this.ability_name;
+        const name = this.base_window.set_text_in_position(display_name, this.ability_name_x, ABILITY_NAME_Y);
         this.texts.push(name);
-        if (this.element && this.element !== elements.NO_ELEMENT && this.action !== "summon") {
+        if (this.element && this.element !== elements.NO_ELEMENT && !["summon", "item"].includes(this.action)) {
             const star = this.base_window.create_at_group(this.star_x, STAR_Y, this.element + "_star");
             this.window_sprites.push(star);
         }
@@ -110,7 +111,7 @@ export class ChoosingTargetWindow {
             });
         } else if (this.action === "item") {
             this.icon_group = this.game.add.group();
-            let icon_sprite = this.icon_group.create(0, 0, this.icon_sprite_sheet, this.ability_key_name);
+            let icon_sprite = this.icon_group.create(0, 0, this.icon_sprite_sheet, this.item_obj.key_name);
             icon_sprite.anchor.setTo(0.5, 0.5);
             if (this.item_obj.equipped) {
                 this.icon_group.create(SUB_ICON_X, SUB_ICON_Y, "equipped");

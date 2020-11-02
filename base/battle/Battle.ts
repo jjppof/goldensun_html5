@@ -15,7 +15,7 @@ import { BattleAnimationManager } from "./BattleAnimationManager";
 import { GoldenSun } from "../GoldenSun";
 import * as _ from "lodash";
 import { Target } from "../battle/BattleStage";
-import { use_types } from "../Item";
+import { Item, use_types } from "../Item";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 
@@ -374,7 +374,7 @@ export class Battle {
         }
 
         let ability = this.data.info.abilities_list[action.key_name];
-        let item_name = "";
+        let item_name = action.item_slot ? this.data.info.items_list[action.item_slot.key_name].name : "";
 
         if (action.caster.fighter_type === fighter_types.ALLY && ability !== undefined && ability.can_switch_to_unleash) { //change the current ability to unleash ability from weapon
             const caster = action.caster as MainChar;
@@ -413,16 +413,10 @@ export class Battle {
             action.caster.current_pp -= ability.pp_cost;
         }
 
-        if (ability.ability_category === ability_categories.ITEM) {
-            if (this.data.info.items_list[action.item_slot.key_name].use_type === use_types.SINGLE_USE) {
-                --action.item_slot.quantity;
-            }
-        }
+        const djinn_name = action.djinn_key_name ? this.data.info.djinni_list[action.djinn_key_name].name : undefined;
+        await this.battle_log.add_ability(action.caster, ability, item_name, djinn_name, action.item_slot !== undefined);
 
-        let djinn_name = action.djinn_key_name ? this.data.info.djinni_list[action.djinn_key_name].name : undefined;
-        await this.battle_log.add_ability(action.caster, ability, item_name, djinn_name);
-
-        if (ability.ability_category === ability_categories.DJINN) {
+        if (ability.ability_category === ability_categories.DJINN) { //change djinn status
             if (ability.effects.some(effect => effect.type === effect_types.SET_DJINN)) {
                 this.data.info.djinni_list[action.djinn_key_name].set_status(djinn_status.SET, action.caster);
             } else {
@@ -446,6 +440,15 @@ export class Battle {
 
             } else { //set djinni used in this summon to recovery mode
                 Djinn.set_to_recovery(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE), requirements);
+            }
+        }
+
+        if (action.item_slot) { //check if item is broken
+            if (action.item_slot.broken) {
+                await this.battle_log.add(`But ${item_name} is broken...`);
+                await this.wait_for_key();
+                this.check_phases();
+                return;
             }
         }
 
@@ -501,6 +504,19 @@ export class Battle {
                     }, ability, true);
 
                     await this.battle_log.add(`${action.caster.name}'s ${element_names[element]} Power rises by ${power.toString()}!`);
+                    await this.wait_for_key();
+                }
+            }
+        }
+
+        if (action.item_slot) {
+            const item: Item = this.data.info.items_list[action.item_slot.key_name];
+            if (item.use_type === use_types.SINGLE_USE) { //consume item on usage
+                --action.item_slot.quantity;
+            } else if (item.use_type === use_types.BREAKS_WHEN_USE) { //check if item is going to break
+                if (Math.random() < Item.BREAKS_CHANCE) {
+                    action.item_slot.broken = true;
+                    await this.battle_log.add(`${item.name} broke...`);
                     await this.wait_for_key();
                 }
             }

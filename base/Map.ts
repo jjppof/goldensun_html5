@@ -1,5 +1,5 @@
 import { directions, map_directions } from "./utils";
-import { NPC_Sprite, NPC } from './NPC';
+import { NPC } from './NPC';
 import { InteractableObjects, interactable_object_interaction_types } from "./InteractableObjects";
 import { TileEvent, event_types as tile_event_types } from './tile_events/TileEvent';
 import * as numbers from "./magic_numbers";
@@ -13,6 +13,7 @@ import { GameEvent } from "./game_events/GameEvent";
 import { GoldenSun } from "./GoldenSun";
 import * as _ from "lodash";
 import { SliderEvent } from "./tile_events/SliderEvent";
+import { SpriteBase } from "./SpriteBase";
 
 const MAX_CAMERA_ROTATION = 0.035;
 const CAMERA_ROTATION_STEP = 0.003;
@@ -425,7 +426,7 @@ export class Map {
             const npc = this.npcs[i];
             const npc_db = this.data.dbs.npc_db[npc.key_name];
             let actions = Object.keys(npc_db.actions);
-            const npc_sprite_info = new NPC_Sprite(npc.key_name, actions);
+            const npc_sprite_info = new SpriteBase(npc.key_name, actions);
             for (let j = 0; j < actions.length; ++j) {
                 const action = actions[j];
                 npc_sprite_info.setActionSpritesheet(
@@ -448,6 +449,12 @@ export class Map {
                         npc.set_shadow(npc_db.shadow_key, this.data.npc_group, npc.base_collision_layer, npc_db.shadow_anchor_x, npc_db.shadow_anchor_y);
                     }
                     npc.set_sprite(this.data.npc_group, npc_sprite_info, this.sprite, npc.base_collision_layer, npc_db.anchor_x, npc_db.anchor_y, this.is_world_map);
+                    if (this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
+                        npc.sprite.scale.setTo(1, 1);
+                        if (npc.shadow) {
+                            npc.shadow.scale.setTo(1, 1);
+                        }
+                    }
                     npc.set_sprite_as_npc();
                     npc.play(npc.current_action, npc.current_direction);
                     resolve();
