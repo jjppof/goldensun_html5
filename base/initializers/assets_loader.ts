@@ -3,6 +3,23 @@ function load_buttons(game) {
     game.load.image('shift_keyboard', 'assets/images/keyboard/shift.png');
     game.load.image('tab_keyboard', 'assets/images/keyboard/tab.png');
     game.load.image('spacebar_keyboard', 'assets/images/keyboard/spacebar.png');
+    game.load.image('a_button', 'assets/images/keyboard/a_button.png');
+    game.load.image('select_button', 'assets/images/keyboard/select_button.png');
+    game.load.image('l_button', 'assets/images/keyboard/l_button.png');
+    game.load.image('r_button', 'assets/images/keyboard/r_button.png');
+}
+
+function load_icons(game){
+    game.load.image('sleep_icon', 'assets/images/icons/status/sleep_icon.jpg');
+    game.load.image('delusion_icon', 'assets/images/icons/status/delusion_icon.jpg');
+    game.load.image('downed_icon', 'assets/images/icons/status/downed_icon.jpg');
+    game.load.image('haunt_icon', 'assets/images/icons/status/haunt_icon.jpg');
+    game.load.image('curse_icon', 'assets/images/icons/status/curse_icon.jpg');
+    game.load.image('eq_curse_icon', 'assets/images/icons/status/eq_curse_icon.jpg');
+    game.load.image('stun_icon', 'assets/images/icons/status/stun_icon.jpg');
+    game.load.image('seal_icon', 'assets/images/icons/status/seal_icon.jpg');
+    game.load.image('poison_icon', 'assets/images/icons/status/poison_icon.jpg');
+    game.load.image('venom_icon', 'assets/images/icons/status/venom_icon.jpg');
 }
 
 function load_db_files(game) {
@@ -72,6 +89,7 @@ export function load_all(game) {
     load_misc(game);
     load_assets(game);
     load_buttons(game);
+    load_icons(game);
     load_fonts(game);
     load_filters(game);
 }

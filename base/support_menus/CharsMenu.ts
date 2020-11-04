@@ -43,6 +43,9 @@ const ARROW_GROUP_X2 = 92;
 const ARROW_GROUP_Y2 = -4;
 
 const MENU_SELECTED_Y_SHIFT = 4;
+const SEPARATOR_X = 4;
+const SEPARATOR_Y = 27;
+const SEPARATOR_LENGTH = 96;
 
 const SHOP_MODE = "shop";
 const MENU_MODE = "menu";
@@ -117,6 +120,8 @@ export class CharsMenu {
             this.char_group.y = CHAR_GROUP_Y2 - SHIFT_Y + this.game.camera.y;
             this.arrow_group.x = ARROW_GROUP_X2 + this.game.camera.x;
             this.arrow_group.y = ARROW_GROUP_Y2 + this.game.camera.y;
+
+            this.window.draw_separator(SEPARATOR_X, SEPARATOR_Y, SEPARATOR_X+SEPARATOR_LENGTH , SEPARATOR_Y, false);
         }
     }
 
@@ -360,6 +365,7 @@ export class CharsMenu {
 
         this.set_arrows(false, false);
 
+        this.window.clear_separators();
         this.window.close(callback, false);
     }
 
