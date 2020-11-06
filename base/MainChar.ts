@@ -7,7 +7,7 @@ import { Player, fighter_types, permanent_status, main_stats } from './Player';
 import { elements, ordered_elements } from './utils';
 import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from './magic_numbers';
 import * as _ from "lodash";
-import { PartyData } from './initializers/initialize_info';
+import { GameInfo, PartyData } from './initializers/initialize_info';
 import { Ability } from './Ability';
 
 const ELEM_LV_DELTA = 1;
@@ -24,7 +24,7 @@ export type ItemSlot = {
 };
 
 export class MainChar extends Player {
-    public info: any;
+    public info: GameInfo;
     public sprite_base: SpriteBase;
     public walk_speed: number;
     public dash_speed: number;
@@ -616,41 +616,63 @@ export class MainChar extends Player {
         this.luk_extra += amount;
     }
 
-    init_elemental_attributes() {
-        this.venus_level_current = this.venus_level_base;
-        this.mercury_level_current = this.mercury_level_base;
-        this.mars_level_current = this.mars_level_base;
-        this.jupiter_level_current = this.jupiter_level_base;
-        this.venus_power_current = this.venus_power_base;
-        this.mercury_power_current = this.mercury_power_base;
-        this.mars_power_current = this.mars_power_base;
-        this.jupiter_power_current = this.jupiter_power_base;
-        this.venus_resist_current = this.venus_resist_base;
-        this.mercury_resist_current = this.mercury_resist_base;
-        this.mars_resist_current = this.mars_resist_base;
-        this.jupiter_resist_current = this.jupiter_resist_base;
+    preview_elemental_stats_without_abilities_effect() {
+        return this.update_elemental_attributes(true, true);
     }
 
-    update_elemental_attributes() {
-        this.init_elemental_attributes();
+    update_elemental_attributes(preview: boolean = false, ignore_ability_effects: boolean = false) {
+        const previous_stats = {};
+        ordered_elements.forEach(element => {
+            if (preview) {
+                previous_stats[element] = {
+                    power: this[element + "_power_current"],
+                    resit: this[element + "_resist_current"],
+                    level: this[element + "_level_current"]
+                }
+            }
+            this[element + "_power_current"] = this[element + "_power_base"];
+            this[element + "_resist_current"] = this[element + "_resist_base"];
+            this[element + "_level_current"] = this[element + "_level_base"];
+        });
+
         for (let i = 0; i < this.djinni.length; ++i) {
             let djinn = this.info.djinni_list[this.djinni[i]];
             if (djinn.status !== djinn_status.SET) continue;
-            this[djinn.element + "_level_current"] += ELEM_LV_DELTA;
             this[djinn.element + "_power_current"] += ELEM_POWER_DELTA;
             this[djinn.element + "_resist_current"] += ELEM_RESIST_DELTA;
+            this[djinn.element + "_level_current"] += ELEM_LV_DELTA;
         }
+
         this.effects.forEach(effect => {
             if (effect.type === effect_types.POWER || effect.type === effect_types.RESIST) {
+                if (ignore_ability_effects && effect.effect_owner_instance instanceof Ability) return;
                 effect.apply_effect();
             }
         });
+
         for (let i = 0; i < ordered_elements.length; ++i) {
             const element = ordered_elements[i];
             const power_key = element + "_power_current";
             const resist_key = element + "_resist_current";
             this[power_key] = _.clamp(this[power_key], ELEM_ATTR_MIN, ELEM_ATTR_MAX);
             this[resist_key] = _.clamp(this[resist_key], ELEM_ATTR_MIN, ELEM_ATTR_MAX);
+        }
+
+        if (preview) {
+            const elemental_stats = Object.fromEntries(ordered_elements.map(element => {
+                const return_data = [element, {
+                    power: this[element + "_power_current"],
+                    resist: this[element + "_resist_current"],
+                    level: this[element + "_level_current"]
+                }];
+                this[element + "_power_current"] = previous_stats[element].power;
+                this[element + "_resist_current"] = previous_stats[element].resist;
+                this[element + "_level_current"] = previous_stats[element].level;
+                return return_data;
+            }));
+            return elemental_stats;
+        } else {
+            return null;
         }
     }
 
