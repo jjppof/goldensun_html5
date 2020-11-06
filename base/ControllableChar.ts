@@ -28,6 +28,7 @@ export class ControllableChar {
     public climb_speed: number;
     public stop_by_colliding: boolean;
     public force_direction: boolean;
+    public dashing: boolean;
     public climbing: boolean;
     public pushing: boolean;
     public jumping: boolean;
@@ -52,6 +53,7 @@ export class ControllableChar {
     public trying_to_push_direction: number;
     public push_timer: Phaser.TimerEvent;
     public crop_texture: boolean;
+    public shadow_following: boolean;
 
     constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps, walk_speed, dash_speed, climb_speed) {
         this.game = game;
@@ -65,6 +67,7 @@ export class ControllableChar {
         this.climb_speed = climb_speed;
         this.stop_by_colliding = false;
         this.force_direction = false;
+        this.dashing = false;
         this.climbing = false;
         this.pushing = false;
         this.jumping = false;
@@ -89,6 +92,7 @@ export class ControllableChar {
         this.enable_footsteps = enable_footsteps === undefined ? false : enable_footsteps;
         this.footsteps = new Footsteps(this.game, this.data);
         this.crop_texture = false;
+        this.shadow_following = true;
     }
 
     in_action(allow_climbing = false) {
@@ -106,7 +110,6 @@ export class ControllableChar {
         this.sprite.y = ((this.tile_y_pos + 0.5) * map_sprite.tileHeight) | 0;
         this.sprite.base_collision_layer = layer;
         this.sprite.roundPx = true;
-        
         const scale_x = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
         const scale_y = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
         this.sprite.scale.setTo(scale_x , scale_y);
@@ -171,7 +174,7 @@ export class ControllableChar {
     }
 
     update_shadow() {
-        if (!this.shadow) return;
+        if (!this.shadow || !this.shadow_following) return;
         if (this.sprite.body) {
             this.shadow.x = this.sprite.body.x;
             this.shadow.y = this.sprite.body.y;
@@ -278,9 +281,7 @@ export class ControllableChar {
     }
 
     set_current_action() {
-        if (this.data.tile_event_manager.on_event) {
-            return;
-        }
+        if (this.data.tile_event_manager.on_event) return;
         if (this.required_direction === null && this.current_action !== base_actions.IDLE && !this.climbing) {
             this.current_action = base_actions.IDLE;
         } else if (this.required_direction !== null && !this.climbing && !this.pushing) {
@@ -288,10 +289,9 @@ export class ControllableChar {
             if (this.footsteps.can_make_footprint && footsteps) {
                 this.footsteps.create_step(this.current_direction, this.current_action);
             }
-            const dash_pressed = this.game.input.keyboard.isDown(this.data.gamepad.B);
-            if (dash_pressed && this.current_action !== base_actions.DASH) {
+            if (this.dashing && this.current_action !== base_actions.DASH) {
                 this.current_action = base_actions.DASH;
-            } else if (!dash_pressed && this.current_action !== base_actions.WALK) {
+            } else if (!this.dashing && this.current_action !== base_actions.WALK) {
                 this.current_action = base_actions.WALK;
             }
         }

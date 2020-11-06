@@ -8,7 +8,7 @@ import { Hero } from './Hero';
 import { TileEventManager } from './tile_events/TileEventManager';
 import { GameEventManager } from './game_events/GameEventManager';
 import { load_databases } from './initializers/databases_loader';
-import { initialize_game_data } from './initializers/initialize_info';
+import { GameInfo, initialize_game_data } from './initializers/initialize_info';
 import { Map } from './Map';
 import { Battle } from './battle/Battle';
 import { MainMenu, initialize_menu } from './main_menus/MainMenu';
@@ -20,7 +20,7 @@ import { Gamepad } from './Gamepad';
 export class GoldenSun {
     public game: Phaser.Game = null;
     public dbs: any = {};
-    public info: any = {};
+    public info: GameInfo = {} as GameInfo;
 
     //main game states
     public menu_open: boolean = false;

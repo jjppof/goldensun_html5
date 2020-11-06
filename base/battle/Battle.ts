@@ -15,6 +15,7 @@ import { BattleAnimationManager } from "./BattleAnimationManager";
 import { GoldenSun } from "../GoldenSun";
 import * as _ from "lodash";
 import { Target } from "../battle/BattleStage";
+import { Item, use_types } from "../Item";
 
 export const MAX_CHARS_IN_BATTLE = 4;
 
@@ -373,7 +374,7 @@ export class Battle {
         }
 
         let ability = this.data.info.abilities_list[action.key_name];
-        let item_name = "";
+        let item_name = action.item_slot ? this.data.info.items_list[action.item_slot.key_name].name : "";
 
         if (action.caster.fighter_type === fighter_types.ALLY && ability !== undefined && ability.can_switch_to_unleash) { //change the current ability to unleash ability from weapon
             const caster = action.caster as MainChar;
@@ -412,10 +413,10 @@ export class Battle {
             action.caster.current_pp -= ability.pp_cost;
         }
 
-        let djinn_name = action.djinn_key_name ? this.data.info.djinni_list[action.djinn_key_name].name : undefined;
-        await this.battle_log.add_ability(action.caster, ability, item_name, djinn_name);
+        const djinn_name = action.djinn_key_name ? this.data.info.djinni_list[action.djinn_key_name].name : undefined;
+        await this.battle_log.add_ability(action.caster, ability, item_name, djinn_name, action.item_slot !== undefined);
 
-        if (ability.ability_category === ability_categories.DJINN) {
+        if (ability.ability_category === ability_categories.DJINN) { //change djinn status
             if (ability.effects.some(effect => effect.type === effect_types.SET_DJINN)) {
                 this.data.info.djinni_list[action.djinn_key_name].set_status(djinn_status.SET, action.caster);
             } else {
@@ -439,6 +440,15 @@ export class Battle {
 
             } else { //set djinni used in this summon to recovery mode
                 Djinn.set_to_recovery(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE), requirements);
+            }
+        }
+
+        if (action.item_slot) { //check if item is broken
+            if (action.item_slot.broken) {
+                await this.battle_log.add(`But ${item_name} is broken...`);
+                await this.wait_for_key();
+                this.check_phases();
+                return;
             }
         }
 
@@ -494,6 +504,19 @@ export class Battle {
                     }, ability, true);
 
                     await this.battle_log.add(`${action.caster.name}'s ${element_names[element]} Power rises by ${power.toString()}!`);
+                    await this.wait_for_key();
+                }
+            }
+        }
+
+        if (action.item_slot) {
+            const item: Item = this.data.info.items_list[action.item_slot.key_name];
+            if (item.use_type === use_types.SINGLE_USE) { //consume item on usage
+                --action.item_slot.quantity;
+            } else if (item.use_type === use_types.BREAKS_WHEN_USE) { //check if item is going to break
+                if (Math.random() < Item.BREAKS_CHANCE) {
+                    action.item_slot.broken = true;
+                    await this.battle_log.add(`${item.name} broke...`);
                     await this.wait_for_key();
                 }
             }
@@ -733,7 +756,6 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
                 case effect_types.CURRENT_HP:
                     effect_result = target_instance.add_effect(effect, ability, true);
-
                     if (effect_result.effect.show_msg) {
                         const damage = effect_result.changes.before - effect_result.changes.after;
                         await this.battle_log.add_damage(damage, target_instance);
@@ -759,7 +781,6 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 case effect_types.AGILITY:
                 case effect_types.LUCK:
                 case effect_types.POWER:
-
                 case effect_types.RESIST:
                     effect_result = target_instance.add_effect(effect, ability, true);
                     this.on_going_effects.push(effect_result.effect);
@@ -876,11 +897,9 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             for (let j = 0; j < player_djinni.length; ++j) {
                 const djinn_key = player_djinni[j];
                 const djinn = this.data.info.djinni_list[djinn_key];
-
                 if (djinn.status === djinn_status.RECOVERY) {
                     if (djinn.recovery_turn === 0) {
                         djinn.set_status(djinn_status.SET, player);
-
                         await this.battle_log.add(`${djinn.name} is set to ${player.name}!`);
                         await this.wait_for_key(); 
                     } else {
@@ -900,10 +919,12 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 // - Downed characters get none.
 
     async battle_phase_end() {
-        for (let i = 0; i < this.on_going_effects.length; ++i) {
+        for (let i = 0; i < this.on_going_effects.length; ++i) { //remove all effects acquired in battle
             const effect = this.on_going_effects[i];
-            effect.char.remove_effect(effect);
-            effect.char.update_all();
+            if (effect.type !== effect_types.PERMANENT_STATUS) {
+                effect.char.remove_effect(effect);
+                effect.char.update_all();
+            }
         };
 
         if (this.allies_defeated) {
@@ -913,18 +934,17 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             this.battle_log.add(this.enemies_party_name + " has been defeated!");
             await this.wait_for_key();
 
-            const total_exp = this.enemies_info.map(info => {
+            const total_exp = this.enemies_info.map(info => { //calculates total exp gained
                 return (info.instance as Enemy).exp_reward;
             }).reduce((a, b) => a + b, 0);
-
             this.battle_log.add(`You got ${total_exp.toString()} experience points.`);
             await this.wait_for_key();
 
             for (let i = 0; i < this.allies_info.length; ++i) {
                 const info = this.allies_info[i];
                 const char = info.instance as MainChar;
-
-                if (!char.has_permanent_status(permanent_status.DOWNED)) {
+                if (!char.has_permanent_status(permanent_status.DOWNED)) { //downed chars don't receive exp
+                    //chars that not entered in battle, receive only hald exp
                     const change = char.add_exp(info.entered_in_battle ? total_exp : total_exp >> 1);
 
                     if (change.before.level !== change.after.level) {
@@ -941,7 +961,6 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         for (let j = 0; j < change.before.stats.length; ++j) {
                             const stat = Object.keys(change.before.stats[j])[0];
                             const diff = change.after.stats[j][stat] - change.before.stats[j][stat];
-
                             if (diff !== 0) {
                                 let stat_text;
                                 switch (stat) {
@@ -952,7 +971,6 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                                     case main_stats.AGILITY: stat_text = "Agility"; break;
                                     case main_stats.LUCK: stat_text = "Luck"; break;
                                 }
-
                                 this.battle_log.add(`${stat_text} rises by ${diff.toString()}!`);
                                 await this.wait_for_key();
                             }
@@ -961,23 +979,22 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 }
             }
 
-            const total_coins = this.enemies_info.map(info => {
+            const total_coins = this.enemies_info.map(info => { //calculate total coins received
                 return (info.instance as Enemy).coins_reward;
             }).reduce((a, b) => a + b, 0);
-
             this.battle_log.add(`You got ${total_coins.toString()} coins.`);
             await this.wait_for_key();
 
-            for (let i = 0; i < this.enemies_info.length; ++i) {
+            for (let i = 0; i < this.enemies_info.length; ++i) { //receiving items as reward
                 const enemy = this.enemies_info[i].instance as Enemy;
                 if (enemy.item_reward && Math.random() < enemy.item_reward_chance) {
-                    //add item
                     const item = this.data.info.items_list[enemy.item_reward];
                     if (item !== undefined) {
-                        this.battle_log.add(`You got a ${item.name}.`);
-                        await this.wait_for_key();
-
-                    } else { //debuf purposes only
+                        if (MainChar.add_item_to_party(this.data.info.party_data, item, 1)) {
+                            this.battle_log.add(`You got a ${item.name}.`);
+                            await this.wait_for_key();
+                        }
+                    } else { //debug purposes only
                         this.battle_log.add(`${enemy.item_reward} not registered...`);
                         await this.wait_for_key();
                     }

@@ -16,6 +16,7 @@ import { Enemy } from "../Enemy";
 import { HorizontalMenu } from "../support_menus/HorizontalMenu";
 import { Target } from "../battle/BattleStage";
 import { BattleStatusWindow } from "../windows/battle/BattleStatusWindow";
+import { ability_categories } from "../Ability";
 
 const START_TITLE_WINDOW_WIDTH = 76;
 const INNER_TITLE_WINDOW_WIDTH = 60;
@@ -26,11 +27,11 @@ const BACKWARD = -1;
 export type PlayerAbility = {
     key_name: string,
     targets: Target[],
-    type?: string,
     djinn_key_name?: string,
     speed?: number,
     caster?: Enemy|MainChar,
-    battle_animation_key?: string
+    battle_animation_key?: string,
+    item_slot?: ItemSlot
 };
 
 export type PlayerAbilities = {[char_key_name: string]: PlayerAbility[]};
@@ -157,8 +158,7 @@ export class MainBattleMenu {
                     if (targets) {
                         this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
                             key_name: "attack",
-                            targets: targets,
-                            type: "attack"
+                            targets: targets
                         });
                         this.inner_horizontal_menu.activate();
                         this.change_char(FORWARD);
@@ -185,8 +185,7 @@ export class MainBattleMenu {
                     if (targets) {
                         this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
                             key_name: "defend",
-                            targets: targets,
-                            type: "defend"
+                            targets: targets
                         });
                         this.inner_horizontal_menu.activate();
                         this.change_char(FORWARD);
@@ -203,7 +202,7 @@ export class MainBattleMenu {
         this.inner_horizontal_menu.deactivate(true);
         this.description_window.open(description_on_top);
 
-        window.open(this.data.info.party_data.members[this.current_char_index], (ability:string, item_obj:ItemSlot) => {
+        window.open(this.data.info.party_data.members[this.current_char_index], (ability:string, item_slot:ItemSlot) => {
             if (ability) {
                 let summon_used_djinn:{[element: string]: number} = null;
                 let djinn_key_name:string;
@@ -227,8 +226,8 @@ export class MainBattleMenu {
                         this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
                             key_name: ability,
                             targets: targets,
-                            type: action_type,
-                            djinn_key_name: djinn_key_name
+                            djinn_key_name: djinn_key_name,
+                            item_slot: item_slot
                         });
 
                         window.close();
@@ -246,7 +245,7 @@ export class MainBattleMenu {
                         this.description_window.show();
                         window.show();
                     }
-                }, this.data.info.party_data.members[this.current_char_index], item_obj);
+                }, this.data.info.party_data.members[this.current_char_index], item_slot);
 
             } else {
                 if (window.window_open) {
@@ -272,7 +271,7 @@ export class MainBattleMenu {
             const next_char = this.data.info.party_data.members[this.current_char_index];
             if (pop_ability) {
                 const ability_info = this.abilities[next_char.key_name].pop();
-                if (ability_info.type === "summon") {
+                if (this.data.info.abilities_list[ability_info.key_name].ability_category === ability_categories.SUMMON) {
                     const requirements = this.data.dbs.summons_db[ability_info.key_name].requirements;
                     this.djinni_already_used = _.mapValues(this.djinni_already_used, (value, elem) => {
                         return value - requirements[elem];

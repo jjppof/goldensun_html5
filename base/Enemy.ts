@@ -122,12 +122,6 @@ export class Enemy extends Player {
     }
 }
 
-export class EnemyBase extends SpriteBase {
-    constructor(key_name) {
-        super(key_name, ["battle"]);
-    }
-}
-
 export function get_enemy_instance(enemy_data, suffix) {
     return new Enemy(enemy_data, enemy_data.name + suffix);
 }

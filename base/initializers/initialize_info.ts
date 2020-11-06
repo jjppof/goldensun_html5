@@ -7,6 +7,43 @@ import { initialize_maps } from './maps';
 import { initialize_misc_data } from './misc_data';
 import { initialize_shops } from './shops';
 import { initialize_interactable_objs_data } from './interactable_objects';
+import { MainChar } from '../MainChar';
+import { Classes } from '../Classes';
+import { Map } from '../Map';
+import { SpriteBase } from '../SpriteBase';
+import { Djinn } from '../Djinn';
+import { Ability } from '../Ability';
+import { Item } from '../Item';
+import { Shop } from '../Shop';
+import { FieldAbilities } from '../field_abilities/FieldAbilities';
+
+export type PartyData = {
+    members: MainChar[],
+    coins: number,
+    game_tickets: {
+        coins_remaining: number,
+        tickets_bought: number
+    }
+};
+
+export type GameInfo = {
+    maps_list: {[map_key: string]: Map},
+    classes_list: {[class_key: string]: Classes},
+    enemies_list: {[enemy_key: string]: {
+        data: any,
+        sprite_base: SpriteBase
+    }},
+    djinni_list: {[djinn_key: string]: Djinn},
+    djinni_sprites: {[djinn_key: string]: SpriteBase},
+    abilities_list: {[ability_key: string]: Ability},
+    items_list: {[item_key: string]: Item},
+    party_data: PartyData,
+    main_char_list: {[main_char_key: string]: MainChar},
+    misc_sprite_base_list: {[misc_key: string]: SpriteBase},
+    iter_objs_sprite_base_list: {[iter_obj_key: string]: SpriteBase},
+    shops_list: {[shop_key: string]: Shop},
+    field_abilities_list: {[field_psynergy_key: string]: FieldAbilities},
+};
 
 export async function initialize_game_data(game, data) {
     let load_maps_promise_resolve;
