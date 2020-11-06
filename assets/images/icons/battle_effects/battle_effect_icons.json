@@ -82,8 +82,8 @@
 		},
 		"death_curse": {
 			"frame": {
-				"x": 0,
-				"y": 16,
+				"x": 56,
+				"y": 0,
 				"w": 14,
 				"h": 16
 			},
@@ -102,7 +102,7 @@
 		},
 		"def_down": {
 			"frame": {
-				"x": 14,
+				"x": 0,
 				"y": 16,
 				"w": 14,
 				"h": 16
@@ -122,7 +122,7 @@
 		},
 		"def_up": {
 			"frame": {
-				"x": 28,
+				"x": 14,
 				"y": 16,
 				"w": 14,
 				"h": 16
@@ -142,7 +142,7 @@
 		},
 		"delusion": {
 			"frame": {
-				"x": 42,
+				"x": 28,
 				"y": 16,
 				"w": 14,
 				"h": 16
@@ -162,8 +162,8 @@
 		},
 		"downed": {
 			"frame": {
-				"x": 0,
-				"y": 32,
+				"x": 42,
+				"y": 16,
 				"w": 14,
 				"h": 16
 			},
@@ -182,8 +182,8 @@
 		},
 		"equip_curse": {
 			"frame": {
-				"x": 14,
-				"y": 32,
+				"x": 56,
+				"y": 16,
 				"w": 14,
 				"h": 16
 			},
@@ -202,7 +202,7 @@
 		},
 		"haunt": {
 			"frame": {
-				"x": 28,
+				"x": 0,
 				"y": 32,
 				"w": 14,
 				"h": 16
@@ -222,7 +222,67 @@
 		},
 		"poison": {
 			"frame": {
+				"x": 14,
+				"y": 32,
+				"w": 14,
+				"h": 16
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 14,
+				"h": 16
+			},
+			"sourceSize": {
+				"w": 14,
+				"h": 16
+			}
+		},
+		"pow_down": {
+			"frame": {
+				"x": 28,
+				"y": 32,
+				"w": 14,
+				"h": 16
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 14,
+				"h": 16
+			},
+			"sourceSize": {
+				"w": 14,
+				"h": 16
+			}
+		},
+		"pow_up": {
+			"frame": {
 				"x": 42,
+				"y": 32,
+				"w": 14,
+				"h": 16
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 14,
+				"h": 16
+			},
+			"sourceSize": {
+				"w": 14,
+				"h": 16
+			}
+		},
+		"pow_up_down": {
+			"frame": {
+				"x": 56,
 				"y": 32,
 				"w": 14,
 				"h": 16
@@ -280,7 +340,7 @@
 				"h": 16
 			}
 		},
-		"seal": {
+		"res_up_down": {
 			"frame": {
 				"x": 28,
 				"y": 48,
@@ -300,7 +360,7 @@
 				"h": 16
 			}
 		},
-		"sleep": {
+		"seal": {
 			"frame": {
 				"x": 42,
 				"y": 48,
@@ -320,9 +380,29 @@
 				"h": 16
 			}
 		},
-		"stun": {
+		"sleep": {
 			"frame": {
 				"x": 56,
+				"y": 48,
+				"w": 14,
+				"h": 16
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 14,
+				"h": 16
+			},
+			"sourceSize": {
+				"w": 14,
+				"h": 16
+			}
+		},
+		"stun": {
+			"frame": {
+				"x": 70,
 				"y": 0,
 				"w": 14,
 				"h": 16
@@ -342,7 +422,7 @@
 		},
 		"venom": {
 			"frame": {
-				"x": 56,
+				"x": 70,
 				"y": 16,
 				"w": 14,
 				"h": 16
@@ -367,7 +447,7 @@
 		"image": "spritesheet",
 		"format": "RGBA8888",
 		"size": {
-			"w": 70,
+			"w": 84,
 			"h": 64
 		},
 		"scale": "1"

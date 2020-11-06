@@ -120,7 +120,7 @@ export class CursorManager{
                 this.flip_cursor();
         }
 
-        pos.x -= (this.cursor_flipped ? CursorManager.X_SHIFT : -CursorManager.X_SHIFT);
+        pos.x += CursorManager.X_SHIFT;
 
         this.cursor_default_pos = {x: pos.x + this.game.camera.x, y: pos.y + this.game.camera.y};
 
@@ -169,12 +169,7 @@ export class CursorManager{
     public flip_cursor(){
         this.clear_tweens();
 
-        let shift = 2*this.cursor.width;
         this.cursor.scale.x *= -1;
-
-        //this.cursor.x += shift;
-        //this.cursor_default_pos.x += shift;
-
         this.cursor_flipped = this.cursor_flipped ? false : true;
     }
 

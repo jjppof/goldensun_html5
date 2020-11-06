@@ -44,11 +44,9 @@ export class StatusMultiComponent{
     private static readonly BattleBuffMsgs={
         ATK_UP: {line1: "Attack increased by ${VALUE}.", line2: ""},
         DEF_UP: {line1: "Defense increased by ${VALUE}.", line2: ""},
-        RES_UP: {line1: "Resistance increased by ${VALUE}.", line2: ""},
         AGI_UP: {line1: "Agility increased by ${VALUE}.", line2: ""},
         ATK_DOWN: {line1: "Attack dropped by ${VALUE}.", line2: "Increase with spells like Impact."},
         DEF_DOWN: {line1: "Defense dropped by ${VALUE}.", line2: "Increase with spells like Guard."},
-        RES_DOWN: {line1: "Resistance dropped by ${VALUE}.", line2: "Increase with spells like Ward."},
         AGI_DOWN: {line1: "Agility dropped by ${VALUE}.", line2: ""}
     }
 
@@ -240,12 +238,41 @@ export class StatusMultiComponent{
                             }
                         }
                         else if(effect.type === BattleEffectTypes.BUFF_DEBUFF){
-                            let name = (effect.key as string).toUpperCase();
-                            msgs = {line1: StatusMultiComponent.BattleBuffMsgs[name].line1,
-                                line2: StatusMultiComponent.BattleBuffMsgs[name].line2};
-    
-                            let value = (effect.properties.value ? effect.properties.value : 0);
-                            msgs.line1 = msgs.line1.replace("${VALUE}", value);
+                            if(effect.key.includes("res") || effect.key.includes("pow")){
+                                let effect_name = "";
+                                if(effect.key.includes("res")) effect_name = "Resist";
+                                else if(effect.key.includes("pow")) effect_name = "Power";
+
+                                let venus = String((effect.properties.values[0] ? effect.properties.values[0] : 0));
+                                let mercury = String((effect.properties.values[1] ? effect.properties.values[1] : 0));
+                                let mars = String((effect.properties.values[2] ? effect.properties.values[2] : 0));
+                                let jupiter = String((effect.properties.values[3] ? effect.properties.values[3] : 0));
+
+                                let elems_to_show:{element:string, value:string}[] = [];
+                                msgs = {line1: "", line2: ""};
+
+                                if(parseInt(venus) !== 0) elems_to_show.push({element: utils.elements.VENUS, value: venus});
+                                if(parseInt(mercury) !== 0) elems_to_show.push({element: utils.elements.MERCURY, value: mercury});
+                                if(parseInt(mars) !== 0) elems_to_show.push({element: utils.elements.MARS, value: mars});
+                                if(parseInt(jupiter) !== 0) elems_to_show.push({element: utils.elements.JUPITER, value: jupiter});
+
+                                for(let index in elems_to_show){
+                                    if(parseInt(elems_to_show[index].value) >= 0) elems_to_show[index].value = "+" + elems_to_show[index].value;
+                                    let element_name = utils.element_names[elems_to_show[index].element];
+
+                                    let line = parseInt(index) < 2 ? "line1" : "line2";
+                                    msgs[line] += (parseInt(index)%2 !== 0 ? ", " : "") + element_name + " " + effect_name + " " + elems_to_show[index].value;
+                                }
+                            }
+                            else{
+                                let name = (effect.key as string).toUpperCase();
+
+                                msgs = {line1: StatusMultiComponent.BattleBuffMsgs[name].line1,
+                                    line2: StatusMultiComponent.BattleBuffMsgs[name].line2};
+
+                                let value = (effect.properties.values[0] ? effect.properties.values[0] : 0);
+                                msgs.line1 = msgs.line1.replace("${VALUE}", value);
+                            }
                         }
                         this.update_callback(msgs.line1, msgs.line2, {index: this.current_col, vertical: false});
                     }
@@ -344,7 +371,7 @@ export class StatusMultiComponent{
                 else{
                     this.current_col = (this.current_col+1)%(effects_count+1);
                 }
-                
+
                 this.on_change();
                 break;
             case ComponentStates.PSYNERGY:

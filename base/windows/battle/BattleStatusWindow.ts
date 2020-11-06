@@ -3,16 +3,16 @@ import { GoldenSun } from "../../GoldenSun";
 import { MainChar } from "../../MainChar";
 import { ComponentStates, StatusMultiComponent } from "../../support_menus/StatusMultiComponent";
 import { TextObj, Window } from "../../Window";
-import { ordered_status_battle, ordered_status_menu } from "../../utils";
+import { elements, ordered_elements, ordered_status_battle, ordered_status_menu } from "../../utils";
 import * as _ from "lodash";
-import { temporary_status } from "../../Player";
+import { main_stats, temporary_status } from "../../Player";
 
 export type BattleStatusEffect = {
     key:string,
     type:BattleEffectTypes,
     properties?:{
         turns?:number,
-        value?:number
+        values?:number[]
     }
 }
 
@@ -97,12 +97,6 @@ export class BattleStatusWindow{
         CURR_END_X: 100,
         CURR_Y: 40
     }
-    private static readonly COMPONENT = {
-        X: 8,
-        Y: 64,
-        WIDTH: 168,
-        HEIGHT: 66
-    }
     private static readonly EFFECTS = {
         X: 112,
         Y: 8,
@@ -110,6 +104,7 @@ export class BattleStatusWindow{
     }
 
     private static readonly GROUP_KEY = "status_win";
+    private static readonly MAX_EFFECTS_DISPLAYED = 8;
 
     private game:Phaser.Game;
     private data:GoldenSun;
@@ -277,7 +272,7 @@ export class BattleStatusWindow{
 
     private update_effects(){
         let status_effects = this.get_status_effects();
-        let buffs_debuffs = []; //get buffs/debuffs info
+        let buffs_debuffs = this.get_buffs_debuffs();
 
         let effects = [];
 
@@ -292,18 +287,78 @@ export class BattleStatusWindow{
                 effect.properties.turns = this.selected_char.get_effect_turns_count(main_char_effect);
             }
 
-            effects.push(effect);
+            if(effects.length < BattleStatusWindow.MAX_EFFECTS_DISPLAYED)
+                effects.push(effect);
         }
 
         for(let index in buffs_debuffs){
-            let effect:BattleStatusEffect = {key: null, type:null, properties: null};
-            
-            //add buffs and debuffs to effects
-            effects.push(effect);
+            let effect:BattleStatusEffect = {key: null, type:null, properties:{values: null}};
+
+            let modifier = null;
+            for(let n in buffs_debuffs[index].values){
+                if(buffs_debuffs[index].values[n] < 0){
+                    if(modifier === null){
+                        modifier = "_down";
+                    }
+                    else if(modifier === "_up"){
+                        modifier === "_up_down";
+                    }
+                }
+                else if(buffs_debuffs[index].values[n] > 0){
+                    if(modifier === null){
+                        modifier = "_up";
+                    }
+                    else if(modifier === "_down"){
+                        modifier = "_up_down";
+                    }
+                }
+            }
+            if(modifier === null) continue;
+
+            effect.key = buffs_debuffs[index].stat+modifier;
+
+            effect.type = BattleEffectTypes.BUFF_DEBUFF;
+            effect.properties.values = buffs_debuffs[index].values;
+
+            if(effects.length < BattleStatusWindow.MAX_EFFECTS_DISPLAYED)
+                effects.push(effect);
         }
 
         this.battle_effects = effects;
         return this.battle_effects.length;
+    }
+
+    private get_buffs_debuffs(){
+        let effects:{stat: string, values: number[]}[] = [];
+
+        let base_stats = [main_stats.ATTACK, main_stats.DEFENSE, main_stats.AGILITY];
+
+        for(let index in base_stats){
+            let effect = {stat: base_stats[index], values: [this.selected_char[base_stats[index]] - 
+                this.selected_char.preview_stat_without_abilities_effect(base_stats[index])]};
+            effects.push(effect);
+        }
+
+        let elemental_base = this.selected_char.preview_elemental_stats_without_abilities_effect();
+
+        let resist_changes = [];
+        resist_changes.push(this.selected_char.venus_resist_current - elemental_base[elements.VENUS].resist);
+        resist_changes.push(this.selected_char.mercury_resist_current - elemental_base[elements.MERCURY].resist);
+        resist_changes.push(this.selected_char.mars_resist_current - elemental_base[elements.MARS].resist);
+        resist_changes.push(this.selected_char.jupiter_resist_current - elemental_base[elements.JUPITER].resist);
+
+        let power_changes = [];
+        power_changes.push(this.selected_char.venus_power_current - elemental_base[elements.VENUS].power);
+        power_changes.push(this.selected_char.mercury_power_current - elemental_base[elements.MERCURY].power);
+        power_changes.push(this.selected_char.mars_power_current - elemental_base[elements.MARS].power);
+        power_changes.push(this.selected_char.jupiter_power_current - elemental_base[elements.JUPITER].power);
+
+        if(resist_changes.reduce((a, b) => a + b, 0) != 0)
+            effects.push({stat: "res", values: resist_changes});
+        if(power_changes.reduce((a, b) => a + b, 0) != 0)
+            effects.push({stat: "pow", values: power_changes});
+
+        return effects;
     }
 
     private get_status_effects(menu?:boolean){

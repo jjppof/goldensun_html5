@@ -626,7 +626,7 @@ export class MainChar extends Player {
             if (preview) {
                 previous_stats[element] = {
                     power: this[element + "_power_current"],
-                    resit: this[element + "_resist_current"],
+                    resist: this[element + "_resist_current"],
                     level: this[element + "_level_current"]
                 }
             }
