@@ -3,6 +3,7 @@ import { kill_all_sprites } from '../../utils';
 import { GoldenSun } from '../../GoldenSun';
 import { ShopMenu } from '../../main_menus/ShopMenu';
 import { MainChar, ItemSlot } from '../../MainChar';
+import { CursorManager, PointVariants } from '../../utils/CursorManager';
 
 const MAX_PER_LINE = 5;
 const MAX_LINES = 3;
@@ -257,8 +258,14 @@ export class InventoryWindow{
     /*Moves the cursor to the given column and line*/
     set_cursor(line:number, col:number){
         this.cursor_pos = {line: line, col: col};
-        this.data.cursor_manager.move_to(CURSOR_X + col*ICON_SIZE, CURSOR_Y + line*ICON_SIZE, "point", true);
-        this.on_change(line, col);
+        //this.data.cursor_manager.move_to(CURSOR_X + col*ICON_SIZE, CURSOR_Y + line*ICON_SIZE, "point", true);
+        let cursor_x = CURSOR_X + col*ICON_SIZE;
+        let cursor_y = CURSOR_Y + line*ICON_SIZE;
+        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {
+            tween_config:{type: CursorManager.CursorTweens.POINT, variant:PointVariants.LONG}}, 
+            () =>{
+                this.on_change(line, col);
+        });
     }
 
     /*Displays the sprites for the window

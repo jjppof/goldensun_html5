@@ -1,63 +1,68 @@
 import { TextObj, Window } from "../../Window";
-import * as numbers from "../../magic_numbers"
-import { Djinn } from "../../Djinn";
-import { SummonDjinnStandbyWindow } from "./SummonDjinnStandbyWindow";
-import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle";
-import { MainChar } from "../../MainChar";
+import * as numbers from "../../magic_numbers";
+import { use_types } from "../../Item";
 import { GoldenSun } from "../../GoldenSun";
+import { ItemSlot, MainChar } from "../../MainChar";
 import * as _ from "lodash";
+import { CursorManager, PointVariants } from "../../utils/CursorManager";
 
-const BASE_WINDOW_X = 104;
-const BASE_WINDOW_Y = 88;
-const BASE_WINDOW_WIDTH = 132;
-const BASE_WINDOW_HEIGHT = 68;
+//TO DO: decrement item quantity when using a consumable item
+//TO DO: use item sprite instead of ability sprite for items (Spirit Ring)
+//TO DO: show broken icon on broken items
 
-const ELEM_PER_PAGE = 4;
+const BASE_WINDOW_X = 120;
+const BASE_WINDOW_Y = 72;
+const BASE_WINDOW_WIDTH = 116;
+const BASE_WINDOW_HEIGHT = 84;
+
+const ELEM_PER_PAGE = 5;
 const TOP_PADDING = 8;
 const SPACE_BETWEEN_ITEMS = 8;
 
-const HIGHLIGHT_BAR_WIDTH = 120;
+const HIGHLIGHT_BAR_WIDTH = 104;
 const HIGHLIGHT_BAR_HEIGHT = 8;
 const HIGHLIGHT_BAR_X = 8;
 
-const BUTTON_X = 80;
+const BUTTON_X = 96;
 const BUTTON_Y = 136;
-const SUMMON_NAME_X = 28;
 
-const CURSOR_X = 98;
-const CURSOR_Y = 100;
+const CURSOR_X = 116;
+const CURSOR_Y = 84;
 const CURSOR_SHIFT = 16;
 
-const SUMMON_ICON_X = 10;
+const ITEM_NAME_X = 26;
+const ITEM_ICON_X = 8;
+const SUB_ICON_X = 7;
+const SUB_ICON_Y = 8;
 
-export class SummonWindow {
+export class BattleItemWindow {
     public game: Phaser.Game;
     public data: GoldenSun;
 
     public base_window: Window;
-    public djinn_numbers_window: SummonDjinnStandbyWindow;
     public group: Phaser.Group;
 
     public button: Phaser.Sprite;
     public highlight_bar: Phaser.Graphics;
 
-    public summon_names: TextObj[];
+    public item_names: TextObj[];
     public other_sprites: (Phaser.Sprite|Phaser.Group|Phaser.BitmapText)[];
 
     public window_open: boolean;
     public window_active: boolean;
-    public close_callback: Function;
-    public set_description: Function;
 
-    public summon_index: number;
+    public item_index: number;
     public page_index: number;
     public page_number: number;
 
+    public close_callback: Function;
+    public set_description: Function;
     public choosen_ability: string;
-    public summons: any[];
-    public all_summons: any[];
+
+    public item_obj: ItemSlot;
+    public items: ItemSlot[];
+    public all_items: ItemSlot[];
     public char: MainChar;
-    public djinni_already_used: {[element: string]: number};
 
     constructor(game:Phaser.Game, data:GoldenSun) {
         this.game = game;
@@ -65,11 +70,10 @@ export class SummonWindow {
 
         this.base_window = new Window(this.game, BASE_WINDOW_X, BASE_WINDOW_Y, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
         this.base_window.page_indicator.initialize();
-        this.djinn_numbers_window = new SummonDjinnStandbyWindow(game);
         this.group = this.game.add.group();
         this.group.alpha = 0;
 
-        this.button = this.group.create(BUTTON_X, BUTTON_Y, "buttons", "summon");
+        this.button = this.group.create(BUTTON_X, BUTTON_Y, "buttons", "item");
         this.highlight_bar = this.game.add.graphics(0, 0);
         this.highlight_bar.blendMode = PIXI.blendModes.SCREEN;
         this.highlight_bar.alpha = 0;
@@ -79,24 +83,30 @@ export class SummonWindow {
         this.highlight_bar.drawRect(HIGHLIGHT_BAR_X, 0, HIGHLIGHT_BAR_WIDTH, HIGHLIGHT_BAR_HEIGHT);
         this.highlight_bar.endFill();
 
-        this.summon_names = [];
+        this.item_names = [];
         this.other_sprites = [];
     }
 
-    select_summon(index:number){
-        this.summon_index = index;
-        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.summon_index*CURSOR_SHIFT, "point", false);
-        this.change_summon();
+   select_item(index:number){
+        this.item_index = index;
+
+        let cursor_x = CURSOR_X;
+        let cursor_y = CURSOR_Y + this.item_index*CURSOR_SHIFT;
+        
+        let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
+        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
+        //this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.item_index*CURSOR_SHIFT, "point", false);
+        this.change_item();
     }
 
-    next_summon(){
-        if(this.summons.length === 1) return;
-        this.select_summon((this.summon_index+1)%this.summons.length);
+    next_item(){
+        if(this.items.length === 1) return;
+        this.select_item((this.item_index+1)%this.items.length);
     }
 
-    previous_summon(){
-        if(this.summons.length === 1) return;
-        this.select_summon((this.summon_index+this.summons.length-1)%this.summons.length);
+    previous_item(){
+        if(this.items.length === 1) return;
+        this.select_item((this.item_index+this.items.length-1)%this.items.length);
     }
 
     next_page(){
@@ -108,7 +118,7 @@ export class SummonWindow {
 
     previous_page(){
         if(this.page_number === 1) return;
-        
+
         this.page_index = (this.page_index+this.page_number-1)%this.page_number;
         this.change_page();
     }
@@ -121,55 +131,61 @@ export class SummonWindow {
     change_page() {
         this.config_page();
 
-        if (this.summon_index >= this.summons.length) {
-            this.summon_index = this.summons.length - 1;
-            this.select_summon(this.summon_index);
+        if (this.item_index >= this.items.length) {
+            this.item_index = this.items.length - 1;
+            this.select_item(this.item_index);
         }
 
         if (this.set_description) {
-            this.set_description(this.data.info.abilities_list[this.summons[this.summon_index].key_name].description);
+            this.set_description(this.data.info.items_list[this.items[this.item_index].key_name].description);
         }
 
         this.set_highlight_bar();
         this.base_window.page_indicator.set_highlight(this.page_number, this.page_index);
-        this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
     }
 
-    change_summon() {
+    change_item() {
         if (this.set_description) {
-            this.set_description(this.data.info.abilities_list[this.summons[this.summon_index].key_name].description);
+            this.set_description(this.data.info.items_list[this.items[this.item_index].key_name].description);
         }
-
         this.set_highlight_bar();
-        this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
     }
 
     set_highlight_bar() {
-        this.highlight_bar.y = TOP_PADDING + this.summon_index * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
+        this.highlight_bar.y = TOP_PADDING + this.item_index * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
     }
 
     config_page() {
         this.clear_sprites();
-        this.summons = this.all_summons.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
+        this.items = this.all_items.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
 
-        for (let i = 0; i < this.summons.length; ++i) {
-            const ability = this.data.info.abilities_list[this.summons[i].key_name];
+        for (let i = 0; i < this.items.length; ++i) {
+            const item = this.data.info.items_list[this.items[i].key_name];
             const base_y = TOP_PADDING + i * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
-            const summon_y = base_y - 3;
+            const item_y = base_y - 4;
 
-            this.other_sprites.push(this.base_window.create_at_group(SUMMON_ICON_X, summon_y, "abilities_icons", undefined, this.summons[i].key_name));
-            let color = numbers.DEFAULT_FONT_COLOR;
-            if (!this.summons[i].available) {
-                color = numbers.RED_FONT_COLOR;
+            this.other_sprites.push(this.base_window.create_at_group(ITEM_ICON_X, item_y, "items_icons", undefined, this.items[i].key_name));
+            if (this.items[i].equipped) {
+                this.other_sprites.push(this.base_window.create_at_group(ITEM_ICON_X + SUB_ICON_X, item_y + SUB_ICON_Y, "equipped"));
+            }
+            if (this.items[i].quantity > 1) {
+                let item_count = this.game.add.bitmapText(ITEM_ICON_X + SUB_ICON_X, item_y + SUB_ICON_Y, 'gs-item-bmp-font', this.items[i].quantity.toString());
+                this.base_window.add_sprite_to_group(item_count);
+                this.other_sprites.push(item_count);
             }
 
-            const name = this.base_window.set_text_in_position(ability.name, SUMMON_NAME_X, base_y, false, false, color);
-            this.summon_names.push(name);
+            let color = numbers.DEFAULT_FONT_COLOR;
+            if (item.use_type === use_types.NO_USE || !this.data.info.abilities_list[item.use_ability].is_battle_ability) {
+                color = numbers.YELLOW_FONT_COLOR;
+            }
+
+            const name = this.base_window.set_text_in_position(item.name, ITEM_NAME_X, base_y, false, false, color);
+            this.item_names.push(name);
         }
     }
 
     set_page_number() {
-        const list_length = this.all_summons.length;
+        const list_length = this.all_items.length;
         this.page_number = (((list_length - 1)/ELEM_PER_PAGE) | 0) + 1;
 
         if (this.page_index >= this.page_number) {
@@ -178,97 +194,85 @@ export class SummonWindow {
     }
 
     mount_window() {
-        const standby_djinni = Djinn.get_standby_djinni(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE));
-        for (let elem in standby_djinni) {
-            standby_djinni[elem] -= this.djinni_already_used[elem];
-        }
-
-        this.all_summons = _.map(this.data.dbs.summons_db, summon => {
-            const available = _.every(summon.requirements, (value, elem) => value <= standby_djinni[elem]);
-            return Object.assign({}, summon, {
-                available: available,
-                index: available ? -summon.index : summon.index
-            });
-        });
-
-        this.all_summons = _.sortBy(this.all_summons, [summon => {
-            return summon.index;
+        this.all_items = this.char.items;
+        this.all_items = _.sortBy(this.all_items, [item_obj => {
+            return this.data.info.items_list[item_obj.key_name].use_type === use_types.NO_USE ||
+                !this.data.info.abilities_list[this.data.info.items_list[item_obj.key_name].use_ability].is_battle_ability;
         }]);
-
+        
         this.set_page_number();
         this.base_window.page_indicator.set_page(this.page_number, this.page_index);
         this.config_page();
     }
 
     clear_sprites() {
-        this.summon_names.forEach(text => {
+        this.item_names.forEach(text => {
             this.base_window.remove_text(text);
         });
-
         this.other_sprites.forEach(sprite => {
             this.base_window.remove_from_group(sprite, true);
         });
     }
 
-    summon_choose(){
+    item_choose(){
         let controls = [
             {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this)},
             {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this)},
-            {key: this.data.gamepad.UP, on_down: this.previous_summon.bind(this)},
-            {key: this.data.gamepad.DOWN, on_down: this.next_summon.bind(this)},
+            {key: this.data.gamepad.UP, on_down: this.previous_item.bind(this)},
+            {key: this.data.gamepad.DOWN, on_down: this.next_item.bind(this)},
             {key: this.data.gamepad.A, on_down: () => {
-                this.choosen_ability = this.summons[this.summon_index].key_name;
-                this.hide(this.close_callback);
+                const this_item = this.data.info.items_list[this.items[this.item_index].key_name];
+                if (this_item.use_type !== use_types.NO_USE && this.data.info.abilities_list[this_item.use_ability].is_battle_ability) {
+                    this.choosen_ability = this_item.use_ability;
+                    this.item_obj = this.items[this.item_index];
+                    this.hide(this.close_callback);
+                }
             }},
             {key: this.data.gamepad.B, on_down: () => {
                 this.choosen_ability = null;
+                this.item_obj = null;
                 this.close(this.close_callback);
             }},
         ];
-        
+
         this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
     }
 
-    open(char:MainChar, close_callback:Function, set_description:Function, djinni_already_used?:{[element: string]: number}) {
-        console.log(djinni_already_used);
+    open(char:MainChar, close_callback:Function, set_description:Function, ...args:any[]) {
         this.char = char;
         this.close_callback = close_callback;
         this.set_description = set_description;
-        this.djinni_already_used = djinni_already_used;
-        
-        this.summon_index = 0;
+
+        this.group.alpha = 1;
+        this.item_index = 0;
         this.page_index = 0;
         this.choosen_ability = null;
-
         this.highlight_bar.alpha = 1;
-        this.group.alpha = 1;
-        this.djinn_numbers_window.open();
 
         this.update_position();
         this.set_highlight_bar();
         this.mount_window();
 
-        this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
-        this.select_summon(0);
-        this.summon_choose();
+        this.select_item(0);
+        this.item_choose();
 
         if (this.set_description) {
-            this.set_description(this.data.info.abilities_list[this.summons[this.summon_index].key_name].description);
+            this.set_description(this.data.info.items_list[this.items[this.item_index].key_name].description);
         }
+
         this.base_window.show(() => {
             this.window_open = true;
             this.window_active = true;
         }, false);
     }
 
+    
     show() {
         this.group.alpha = 1;
         this.highlight_bar.alpha = 1;
 
-        this.djinn_numbers_window.open();
-        this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
-        this.select_summon(this.summon_index);
-        this.summon_choose();
+        this.select_item(this.item_index);
+        this.item_choose();
 
         this.base_window.show(() => {
             this.window_active = true;
@@ -280,11 +284,10 @@ export class SummonWindow {
         this.highlight_bar.alpha = 0;
         this.data.cursor_manager.hide();
 
-        this.djinn_numbers_window.close();
         this.base_window.close(() => {
             this.window_active = false;
             if (callback !== undefined) {
-                callback(this.choosen_ability);
+                callback(this.choosen_ability, this.item_obj);
             }
         }, false);
     }
@@ -295,16 +298,14 @@ export class SummonWindow {
 
         this.group.alpha = 0;
         this.highlight_bar.alpha = 0;
-
         this.data.cursor_manager.hide();
         this.data.control_manager.reset();
 
-        this.djinn_numbers_window.close();
         this.base_window.close(() => {
             this.window_open = false;
             this.window_active = false;
             if (callback !== undefined) {
-                callback(this.choosen_ability);
+                callback(this.choosen_ability, this.item_obj);
             }
         }, false);
     }
@@ -312,8 +313,6 @@ export class SummonWindow {
     destroy() {
         this.base_window.destroy(false);
         this.group.destroy();
-        this.djinn_numbers_window.destroy();
-
         this.data.cursor_manager.hide();
         this.data.control_manager.reset();
     }

@@ -9,19 +9,6 @@ function load_buttons(game) {
     game.load.image('r_button', 'assets/images/keyboard/r_button.png');
 }
 
-function load_icons(game){
-    game.load.image('sleep_icon', 'assets/images/icons/status/sleep_icon.jpg');
-    game.load.image('delusion_icon', 'assets/images/icons/status/delusion_icon.jpg');
-    game.load.image('downed_icon', 'assets/images/icons/status/downed_icon.jpg');
-    game.load.image('haunt_icon', 'assets/images/icons/status/haunt_icon.jpg');
-    game.load.image('curse_icon', 'assets/images/icons/status/curse_icon.jpg');
-    game.load.image('eq_curse_icon', 'assets/images/icons/status/eq_curse_icon.jpg');
-    game.load.image('stun_icon', 'assets/images/icons/status/stun_icon.jpg');
-    game.load.image('seal_icon', 'assets/images/icons/status/seal_icon.jpg');
-    game.load.image('poison_icon', 'assets/images/icons/status/poison_icon.jpg');
-    game.load.image('venom_icon', 'assets/images/icons/status/venom_icon.jpg');
-}
-
 function load_db_files(game) {
     game.load.json('init_db', 'assets/init.json');
     game.load.json('classes_db', 'assets/dbs/classes_db.json');
@@ -60,6 +47,7 @@ function load_misc(game) {
     game.load.image('price_tag', 'assets/images/misc/price_tag.png');
     game.load.image('broken', 'assets/images/misc/broken.png');
     game.load.image('frost_snowflake', 'assets/images/interactable_objects/snowflake.png');
+    game.load.atlasJSONHash('battle_effect_icons', 'assets/images/icons/battle_effects/battle_effect_icons.png', 'assets/images/icons/battle_effects/battle_effect_icons.json')
     game.load.atlasJSONHash('dust', 'assets/images/misc/dust.png', 'assets/images/misc/dust.json');
     game.load.atlasJSONHash('battle_cursor', 'assets/images/misc/battle_cursor.png', 'assets/images/misc/battle_cursor.json');
     game.load.atlasJSONHash('ranges', 'assets/images/misc/ranges.png', 'assets/images/misc/ranges.json');
@@ -89,7 +77,6 @@ export function load_all(game) {
     load_misc(game);
     load_assets(game);
     load_buttons(game);
-    load_icons(game);
     load_fonts(game);
     load_filters(game);
 }

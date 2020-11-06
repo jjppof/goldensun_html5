@@ -2,6 +2,7 @@ import { Window } from '../Window';
 import * as utils from '../utils';
 import { GoldenSun } from '../GoldenSun';
 import { MainChar } from '../MainChar';
+import { CursorManager, PointVariants } from '../utils/CursorManager';
 
 const MAX_PER_LINE = 4;
 
@@ -263,8 +264,7 @@ export class CharsMenu {
     }
 
     select_char(index:number){
-        if(this.mode===SHOP_MODE) this.data.cursor_manager.move_to(CURSOR_X + index*GAP_SIZE, CURSOR_Y, "wiggle");
-        else if (this.mode===MENU_MODE) this.data.cursor_manager.move_to(CURSOR_X2 + index*GAP_SIZE, CURSOR_Y2, "point", false);
+        this.move_cursor(index);
 
         if(index !== this.selected_index){
             this.unset_character(this.selected_index);
@@ -320,10 +320,34 @@ export class CharsMenu {
         this.data.control_manager.set_control(controls,{loop_configs: {horizontal:true}});
     }
 
-    activate(){
-        if(this.mode===SHOP_MODE) this.data.cursor_manager.move_to(CURSOR_X + this.selected_index*GAP_SIZE, CURSOR_Y, "wiggle");
-        else if (this.mode===MENU_MODE) this.data.cursor_manager.move_to(CURSOR_X2 + this.selected_index*GAP_SIZE, CURSOR_Y2, "point", false);
+    move_cursor(pos?:number, on_complete?:Function){
+        if(!pos) pos = this.selected_index;
 
+        let cursor_x = 0;
+        let cursor_y = 0;
+        let tween_config = {type: null, variant: null};
+        let animate = true;
+
+        if(this.mode===SHOP_MODE){
+            cursor_x = CURSOR_X + pos*GAP_SIZE;
+            cursor_y = CURSOR_Y;
+            tween_config.type = CursorManager.CursorTweens.WIGGLE;
+            animate = true;
+        }
+        else if(this.mode===MENU_MODE){
+            cursor_x = CURSOR_X2 + pos*GAP_SIZE;
+            cursor_y = CURSOR_Y2;
+            tween_config.type = CursorManager.CursorTweens.POINT;
+            tween_config.variant = PointVariants.NORMAL;
+            animate = false;
+        }
+        //if(this.mode===SHOP_MODE) this.data.cursor_manager.move_to(CURSOR_X + this.selected_index*GAP_SIZE, CURSOR_Y, "wiggle");
+        //else if (this.mode===MENU_MODE) this.data.cursor_manager.move_to(CURSOR_X2 + this.selected_index*GAP_SIZE, CURSOR_Y2, "point", false);
+        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: animate, tween_config: tween_config}, on_complete);
+    }
+
+    activate(){
+        this.move_cursor();
         this.is_active = true;
     }
     

@@ -3,7 +3,8 @@ import { djinn_status, djinn_font_colors } from "../../Djinn";
 import { DjinnStatsWindow } from "./DjinnStatsWindow";
 import { GoldenSun } from "../../GoldenSun";
 import { MainChar } from "../../MainChar";
-import { PsynergyWindow } from "./PsynergyWindow";
+import { BattlePsynergyWindow } from "./BattlePsynergyWindow";
+import { CursorManager, PointVariants } from "../../utils/CursorManager";
 
 const BASE_WINDOW_X = 160;
 const BASE_WINDOW_Y = 72;
@@ -30,7 +31,7 @@ const CURSOR_SHIFT = 16;
 
 const RECOVERY_NUMBER_X = 67;
 
-export class DjinnWindow {
+export class BattleDjinnWindow {
     public game: Phaser.Game;
     public data: GoldenSun;
 
@@ -52,7 +53,7 @@ export class DjinnWindow {
     public char: MainChar;
     public close_callback: Function;
     public set_description: Function;
-    public psynergy_window: PsynergyWindow;
+    public psynergy_window: BattlePsynergyWindow;
     public choosen_ability: string;
 
     public djinni: string[];
@@ -89,7 +90,13 @@ export class DjinnWindow {
 
     select_djinn(index:number){
         this.djinn_index = index;
-        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.djinn_index*CURSOR_SHIFT, "point", false);
+        
+        let cursor_x = CURSOR_X;
+        let cursor_y = CURSOR_Y + this.djinn_index*CURSOR_SHIFT;
+        
+        let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
+        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
+        //this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.djinn_index*CURSOR_SHIFT, "point", false);
         this.change_djinn();
         
         if(this.psynergy_window_open) 
@@ -291,7 +298,7 @@ export class DjinnWindow {
         }
     }
 
-    open(char:MainChar, close_callback:Function, set_description:Function, psynergy_window?:PsynergyWindow) {
+    open(char:MainChar, close_callback:Function, set_description:Function, psynergy_window?:BattlePsynergyWindow) {
         this.char = char;
         this.close_callback = close_callback;
         this.set_description = set_description;

@@ -4,6 +4,7 @@ import { ItemCounter } from '../../utils/ItemCounter';
 import { GoldenSun } from '../../GoldenSun';
 import { ItemSlot, MainChar } from '../../MainChar';
 import { Item } from '../../Item';
+import { CursorManager, PointVariants } from '../../utils/CursorManager';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 52;
@@ -149,40 +150,43 @@ export class ItemQuantityManagerWindow {
 
     open(item_obj:ItemSlot, item:Item, char:MainChar, close_callback?:Function,
         destination_char?:MainChar, open_callback?:Function) {
-        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "point", false);
+        //this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "point", false);
+        this.data.cursor_manager.move_to({x:CURSOR_X, y:CURSOR_Y}, {animate: false, 
+        tween_config:{type: CursorManager.CursorTweens.POINT, variant:PointVariants.NORMAL}},
+        () => {
+            this.item_obj = item_obj;
+            this.item = item;
+            this.char = char;
+            this.destination_char = destination_char;
 
-        this.item_obj = item_obj;
-        this.item = item;
-        this.char = char;
-        this.destination_char = destination_char;
-
-        if (this.destination_char) {
-            const dest_item_obj = this.destination_char.items.filter(item => {
-                return item.key_name === item_obj.key_name;
-            });
-            this.dest_item_obj = dest_item_obj.length ? dest_item_obj[0] : {
-                key_name: null,
-                index: null,
-                quantity: 0
-            };
-        }
-        this.choosen_quantity = 1;
-        this.close_callback = close_callback;
-
-        this.update_position();
-        this.set_header();
-        this.item_counter.config(this.item_obj.quantity, this.choosen_quantity);
-
-        this.group.alpha = 1;
-        this.on_change(this.choosen_quantity);
-
-        this.base_window.show(() => {
-            this.window_open = true;
-            this.window_active = true;
-            if (open_callback !== undefined) {
-                open_callback();
+            if (this.destination_char) {
+                const dest_item_obj = this.destination_char.items.filter(item => {
+                    return item.key_name === item_obj.key_name;
+                });
+                this.dest_item_obj = dest_item_obj.length ? dest_item_obj[0] : {
+                    key_name: null,
+                    index: null,
+                    quantity: 0
+                };
             }
-        }, false);
+            this.choosen_quantity = 1;
+            this.close_callback = close_callback;
+
+            this.update_position();
+            this.set_header();
+            this.item_counter.config(this.item_obj.quantity, this.choosen_quantity);
+
+            this.group.alpha = 1;
+            this.on_change(this.choosen_quantity);
+
+            this.base_window.show(() => {
+                this.window_open = true;
+                this.window_active = true;
+                if (open_callback !== undefined) {
+                    open_callback();
+                }
+            }, false);
+        });
     }
 
     close(callback?:Function) {

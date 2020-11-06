@@ -8,7 +8,7 @@ const BASE_WIN_TOP_Y = 32;
 const DESCRIPTION_X = 8;
 const DESCRIPTION_Y = 12;
 
-export class DescriptionWindow {
+export class BattleDescriptionWindow {
     public game: Phaser.Game;
     public base_window: Window;
     public description: TextObj;

@@ -3,6 +3,7 @@ import { Window, TextObj } from '../../Window';
 import { GoldenSun } from '../../GoldenSun';
 import { ShopItem } from '../../Shop';
 import { ItemSlot } from '../../MainChar';
+import { CursorManager } from '../../utils/CursorManager';
 
 const QUANTITY_WIN_X = 56;
 const QUANTITY_WIN_Y = 32;
@@ -82,23 +83,23 @@ export class ShopItemQuantityWindow {
     }
 
     open(shop_item_obj:ShopItem, char_item_obj?:ItemSlot, use_coins:boolean=false, open_callback?:Function){
-        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "wiggle");
-
-        this.base_price = this.data.info.items_list[shop_item_obj.key_name].price;
-        this.window.update_text(String(this.base_price), this.coins_val_text);
-
-        let owned = !char_item_obj ? 0 : char_item_obj.quantity;
-        let available_quantity = (shop_item_obj.quantity === -1 ? 30 : shop_item_obj.quantity);
-        if(available_quantity + owned > 30) available_quantity = 30 - owned;
-        if(use_coins && this.base_price*available_quantity > this.data.info.party_data.coins){
-            available_quantity = (this.data.info.party_data.coins/this.base_price) | 0;
-        }
-
-        this.item_counter.config(available_quantity, this.chosen_quantity, owned);
-
-        this.is_open = true;
-        this.window.show(open_callback, false);
-
+        //this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "wiggle");
+        this.data.cursor_manager.move_to({x:CURSOR_X, y:CURSOR_Y}, {tween_config:{type: CursorManager.CursorTweens.WIGGLE}}, () => {
+            this.base_price = this.data.info.items_list[shop_item_obj.key_name].price;
+            this.window.update_text(String(this.base_price), this.coins_val_text);
+    
+            let owned = !char_item_obj ? 0 : char_item_obj.quantity;
+            let available_quantity = (shop_item_obj.quantity === -1 ? 30 : shop_item_obj.quantity);
+            if(available_quantity + owned > 30) available_quantity = 30 - owned;
+            if(use_coins && this.base_price*available_quantity > this.data.info.party_data.coins){
+                available_quantity = (this.data.info.party_data.coins/this.base_price) | 0;
+            }
+    
+            this.item_counter.config(available_quantity, this.chosen_quantity, owned);
+    
+            this.is_open = true;
+            this.window.show(open_callback, false);
+        });
     }
 
     close(callback?:Function){

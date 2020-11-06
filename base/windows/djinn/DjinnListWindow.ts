@@ -222,8 +222,11 @@ export class DjinnListWindow {
         }
         else this.active_djinn_sprite.alpha = 0;
 
-        if(this.data.cursor_manager.active_tween) this.data.cursor_manager.clear_tweens();
-        this.data.cursor_manager.move_to(CURSOR_TEXT_X + COL_GAP*this.selected_char_index, CURSOR_TEXT_Y, undefined, false);
+        this.data.cursor_manager.clear_tweens();
+        //this.data.cursor_manager.move_to(CURSOR_TEXT_X + COL_GAP*this.selected_char_index, CURSOR_TEXT_Y, undefined, false);
+        let cursor_x = CURSOR_TEXT_X + COL_GAP*this.selected_char_index;
+        let cursor_y = CURSOR_TEXT_Y;
+        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false});
     }
 
     select_djinn(char:number, index:number, force_change:boolean=false){
@@ -238,8 +241,11 @@ export class DjinnListWindow {
             this.on_char_change();
         }
 
-        if(this.data.cursor_manager.active_tween) this.data.cursor_manager.clear_tweens();
-        this.data.cursor_manager.move_to(CURSOR_X + char*COL_GAP, CURSOR_Y + index*LINE_GAP, undefined, false);
+        this.data.cursor_manager.clear_tweens();
+        //this.data.cursor_manager.move_to(CURSOR_X + char*COL_GAP, CURSOR_Y + index*LINE_GAP, undefined, false);
+        let cursor_x = CURSOR_X + char*COL_GAP;
+        let cursor_y = CURSOR_Y + index*LINE_GAP;
+        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false});
     }
 
     init_djinn_sprites() {
@@ -434,8 +440,12 @@ export class DjinnListWindow {
         } else {
             if (this.selected_djinn_index >= this.sizes[this.selected_char_index]) {
                 this.selected_djinn_index = this.sizes[this.selected_char_index] - 1;
-                this.data.cursor_manager.move_to(CURSOR_X + this.selected_char_index*COL_GAP,
-                    CURSOR_Y + this.selected_djinn_index*LINE_GAP, undefined, false);
+
+                let cursor_x = CURSOR_X + this.selected_char_index*COL_GAP;
+                let cursor_y = CURSOR_Y + this.selected_djinn_index*LINE_GAP;
+                this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false});
+                /*this.data.cursor_manager.move_to(CURSOR_X + this.selected_char_index*COL_GAP,
+                    CURSOR_Y + this.selected_djinn_index*LINE_GAP, undefined, false);*/
             }
         }
 

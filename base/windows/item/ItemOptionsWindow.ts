@@ -8,6 +8,7 @@ import { ItemSlot, MainChar } from '../../MainChar';
 import { Item, item_types } from '../../Item';
 import { StatsCheckWithItemWindow } from './StatsCheckWithItemWindow';
 import { MainItemMenu } from '../../main_menus/MainItemMenu';
+import { CursorManager, PointVariants } from '../../utils/CursorManager';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 52;
@@ -186,7 +187,13 @@ export class ItemOptionsWindow {
     choose_position(vertical:number, horizontal:number){
         this.vertical_index = vertical;
         this.horizontal_index = horizontal;
-        this.data.cursor_manager.move_to(CURSOR_X_POS[this.horizontal_index], CURSOR_Y_POS[this.vertical_index], "point", false);
+
+        let cursor_x = CURSOR_X_POS[this.horizontal_index];
+        let cursor_y = CURSOR_Y_POS[this.vertical_index];
+        
+        let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
+        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
+        //this.data.cursor_manager.move_to(CURSOR_X_POS[this.horizontal_index], CURSOR_Y_POS[this.vertical_index], "point", false);
         this.on_change();
     }
 
