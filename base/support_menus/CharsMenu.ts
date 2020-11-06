@@ -341,8 +341,6 @@ export class CharsMenu {
             tween_config.variant = PointVariants.NORMAL;
             animate = false;
         }
-        //if(this.mode===SHOP_MODE) this.data.cursor_manager.move_to(CURSOR_X + this.selected_index*GAP_SIZE, CURSOR_Y, "wiggle");
-        //else if (this.mode===MENU_MODE) this.data.cursor_manager.move_to(CURSOR_X2 + this.selected_index*GAP_SIZE, CURSOR_Y2, "point", false);
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: animate, tween_config: tween_config}, on_complete);
     }
 

@@ -443,7 +443,6 @@ export class BuySelectMenu{
 
     Input: index [number] - Selected item's index*/
     set_cursor(index:number, on_complete?:Function){
-        //this.data.cursor_manager.move_to(CURSOR_X + index*LINE_SHIFT, CURSOR_Y, "point", false);
         let cursor_x = CURSOR_X + index*LINE_SHIFT;
         let cursor_y = CURSOR_Y;
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate:false,

@@ -209,7 +209,6 @@ export class ItemPsynergyChooseWindow {
         if (this.selected_element_index >= this.elements.length) {
             this.selected_element_index = this.elements.length - 1;
             this.move_cursor(CURSOR_X, CURSOR_Y + this.selected_element_index*CURSOR_GAP);
-            //this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.selected_element_index*CURSOR_GAP, "point", false);
         }
         for (let i = 0; i < this.elements.length; ++i) {
             const elem_key_name = this.get_element_key_name(i);
@@ -300,7 +299,6 @@ export class ItemPsynergyChooseWindow {
             this.is_psynergy_window ? undefined : this.item_objs[index]
         );
         this.move_cursor(CURSOR_X, CURSOR_Y + this.selected_element_index*CURSOR_GAP);
-        //this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.selected_element_index*CURSOR_GAP, "point", false);
     }
 
     /*Displays a new page*/
@@ -389,7 +387,6 @@ export class ItemPsynergyChooseWindow {
         );
 
         this.move_cursor(CURSOR_X, CURSOR_Y);
-        //this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "point", false);
 
         this.window_open = true;
         this.window_activated = true;

@@ -83,7 +83,6 @@ export class ShopItemQuantityWindow {
     }
 
     open(shop_item_obj:ShopItem, char_item_obj?:ItemSlot, use_coins:boolean=false, open_callback?:Function){
-        //this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "wiggle");
         this.data.cursor_manager.move_to({x:CURSOR_X, y:CURSOR_Y}, {tween_config:{type: CursorManager.CursorTweens.WIGGLE}}, () => {
             this.base_price = this.data.info.items_list[shop_item_obj.key_name].price;
             this.window.update_text(String(this.base_price), this.coins_val_text);

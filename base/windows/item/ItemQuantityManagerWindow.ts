@@ -150,7 +150,6 @@ export class ItemQuantityManagerWindow {
 
     open(item_obj:ItemSlot, item:Item, char:MainChar, close_callback?:Function,
         destination_char?:MainChar, open_callback?:Function) {
-        //this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "point", false);
         this.data.cursor_manager.move_to({x:CURSOR_X, y:CURSOR_Y}, {animate: false, 
         tween_config:{type: CursorManager.CursorTweens.POINT, variant:PointVariants.NORMAL}},
         () => {

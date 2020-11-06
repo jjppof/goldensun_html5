@@ -93,7 +93,6 @@ export class DropItemWindow {
 
         let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
-        //this.data.cursor_manager.move_to(CURSOR_X, (index === YES_Y ? CURSOR_Y1 : CURSOR_Y2), "point", false);
     }
 
     update_position() {

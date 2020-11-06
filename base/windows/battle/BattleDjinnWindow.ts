@@ -96,7 +96,6 @@ export class BattleDjinnWindow {
         
         let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
-        //this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.djinn_index*CURSOR_SHIFT, "point", false);
         this.change_djinn();
         
         if(this.psynergy_window_open) 

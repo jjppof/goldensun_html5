@@ -223,7 +223,6 @@ export class DjinnListWindow {
         else this.active_djinn_sprite.alpha = 0;
 
         this.data.cursor_manager.clear_tweens();
-        //this.data.cursor_manager.move_to(CURSOR_TEXT_X + COL_GAP*this.selected_char_index, CURSOR_TEXT_Y, undefined, false);
         let cursor_x = CURSOR_TEXT_X + COL_GAP*this.selected_char_index;
         let cursor_y = CURSOR_TEXT_Y;
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false});
@@ -242,7 +241,6 @@ export class DjinnListWindow {
         }
 
         this.data.cursor_manager.clear_tweens();
-        //this.data.cursor_manager.move_to(CURSOR_X + char*COL_GAP, CURSOR_Y + index*LINE_GAP, undefined, false);
         let cursor_x = CURSOR_X + char*COL_GAP;
         let cursor_y = CURSOR_Y + index*LINE_GAP;
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false});
@@ -444,8 +442,6 @@ export class DjinnListWindow {
                 let cursor_x = CURSOR_X + this.selected_char_index*COL_GAP;
                 let cursor_y = CURSOR_Y + this.selected_djinn_index*LINE_GAP;
                 this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false});
-                /*this.data.cursor_manager.move_to(CURSOR_X + this.selected_char_index*COL_GAP,
-                    CURSOR_Y + this.selected_djinn_index*LINE_GAP, undefined, false);*/
             }
         }
 

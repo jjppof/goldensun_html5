@@ -190,10 +190,9 @@ export class ItemOptionsWindow {
 
         let cursor_x = CURSOR_X_POS[this.horizontal_index];
         let cursor_y = CURSOR_Y_POS[this.vertical_index];
-        
+
         let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
-        //this.data.cursor_manager.move_to(CURSOR_X_POS[this.horizontal_index], CURSOR_Y_POS[this.vertical_index], "point", false);
         this.on_change();
     }
 
