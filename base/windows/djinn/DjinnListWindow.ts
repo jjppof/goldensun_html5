@@ -223,9 +223,7 @@ export class DjinnListWindow {
         else this.active_djinn_sprite.alpha = 0;
 
         this.data.cursor_manager.clear_tweens();
-        let cursor_x = CURSOR_TEXT_X + COL_GAP*this.selected_char_index;
-        let cursor_y = CURSOR_TEXT_Y;
-        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false});
+        this.move_cursor(CURSOR_TEXT_X + COL_GAP*this.selected_char_index, CURSOR_TEXT_Y);
     }
 
     select_djinn(char:number, index:number, force_change:boolean=false){
@@ -241,9 +239,7 @@ export class DjinnListWindow {
         }
 
         this.data.cursor_manager.clear_tweens();
-        let cursor_x = CURSOR_X + char*COL_GAP;
-        let cursor_y = CURSOR_Y + index*LINE_GAP;
-        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false});
+        this.move_cursor(CURSOR_X + char*COL_GAP, CURSOR_Y + index*LINE_GAP);
     }
 
     init_djinn_sprites() {
@@ -438,10 +434,7 @@ export class DjinnListWindow {
         } else {
             if (this.selected_djinn_index >= this.sizes[this.selected_char_index]) {
                 this.selected_djinn_index = this.sizes[this.selected_char_index] - 1;
-
-                let cursor_x = CURSOR_X + this.selected_char_index*COL_GAP;
-                let cursor_y = CURSOR_Y + this.selected_djinn_index*LINE_GAP;
-                this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false});
+                this.move_cursor(CURSOR_X + this.selected_char_index*COL_GAP, CURSOR_Y + this.selected_djinn_index*LINE_GAP);
             }
         }
 
@@ -454,11 +447,15 @@ export class DjinnListWindow {
         this.set_djinn_sprite();
     }
 
-    on_djinn_change() {
+    on_djinn_change(){
         this.set_highlight_bar();
         this.set_action_text();
         this.update_djinn_description();
         this.set_djinn_sprite();
+    }
+
+    move_cursor(x_pos:number, y_pos:number, on_complete?:Function){
+        this.data.cursor_manager.move_to({x: x_pos, y: y_pos}, {animate: false}, on_complete);
     }
 
     
