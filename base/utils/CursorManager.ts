@@ -29,13 +29,23 @@ export class CursorManager{
     }
     private static readonly POINT = {
         KEY: CursorManager.CursorTweens.POINT,
-        X: -2,
-        Y: 2,
-        MODIFIER: 2,
+        0:{
+            X: -1,
+            Y: 1
+        },
+        1:{
+            X: -4,
+            Y: 4
+        },
+        2:{
+            X: -6,
+            Y: 6
+        },
         DEFAULT_TIME: Phaser.Timer.QUARTER >> 1
     }
 
     private static readonly DEFAULT_MOVE_TIME = Phaser.Timer.QUARTER >> 1;
+    private static readonly X_SHIFT = 8;
 
     private game:Phaser.Game;
     private group:Phaser.Group;
@@ -56,6 +66,7 @@ export class CursorManager{
         this.group.y = 0;
 
         this.cursor = this.group.create(0, 0, "cursor");
+        this.cursor.anchor.x = 0.5;
 
         this.active_tween = null;
 
@@ -83,9 +94,11 @@ export class CursorManager{
                 break;
             case CursorManager.POINT.KEY:
                 if(!config.variant) config.variant = PointVariants.NORMAL;
-                let point_x = CursorManager.POINT.X - config.variant*CursorManager.POINT.MODIFIER;
-                let point_y = CursorManager.POINT.Y + config.variant*CursorManager.POINT.MODIFIER;
+                let point_x = CursorManager.POINT[config.variant].X;
+                let point_y = CursorManager.POINT[config.variant].Y;
                 let point_time = config.time ? config.time : CursorManager.POINT.DEFAULT_TIME;
+
+                if(this.cursor_flipped) point_x *= -1;
 
                 this.active_tween = this.game.add.tween(this.cursor)
                 .to({ x: this.cursor.x + point_x, y: this.cursor.y + point_y }, point_time, Phaser.Easing.Linear.None)
@@ -100,6 +113,15 @@ export class CursorManager{
         move_time?:number, tween_config?:TweenConfig}, on_complete?:Function){
         if(!this.group.visible) this.show();
         this.bring_to_top();
+        
+        if(params){
+            if(params.flip === undefined) params.flip = false;
+            if(params.flip !== this.cursor_flipped) 
+                this.flip_cursor();
+        }
+
+        pos.x -= (this.cursor_flipped ? CursorManager.X_SHIFT : -CursorManager.X_SHIFT);
+
         this.cursor_default_pos = {x: pos.x + this.game.camera.x, y: pos.y + this.game.camera.y};
 
         if(!params){
@@ -109,9 +131,7 @@ export class CursorManager{
         }
         else{
             if(params.animate === undefined) params.animate = true;
-            if(params.flip === undefined) params.flip = false;
 
-            if(params.flip !== this.cursor_flipped) this.flip_cursor();
             let move_time = params.move_time ? params.move_time : CursorManager.DEFAULT_MOVE_TIME;
     
             if(params.animate){
@@ -149,11 +169,11 @@ export class CursorManager{
     public flip_cursor(){
         this.clear_tweens();
 
-        let shift = this.cursor.width;
+        let shift = 2*this.cursor.width;
         this.cursor.scale.x *= -1;
 
-        this.cursor.x += shift;
-        this.cursor_default_pos.x += shift;
+        //this.cursor.x += shift;
+        //this.cursor_default_pos.x += shift;
 
         this.cursor_flipped = this.cursor_flipped ? false : true;
     }

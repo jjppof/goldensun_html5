@@ -170,7 +170,7 @@ export class BattleStatusWindow{
         this.effect_sprites = [];
 
         this.window = new Window(this.game, 0, 0, BattleStatusWindow.WINDOW.WIDTH, BattleStatusWindow.WINDOW.HEIGHT);
-        this.component = new StatusMultiComponent(this.data, this.window);
+        this.component = new StatusMultiComponent(this.game, this.data, this.window);
 
         this.window.define_internal_group(BattleStatusWindow.GROUP_KEY, {x:0, y:0});
         this.battle_sprite = null;
@@ -319,7 +319,6 @@ export class BattleStatusWindow{
     }
 
     private set_sprites(){
-        this.component.clear();
         if(this.battle_sprite) this.battle_sprite.destroy();
         if(this.avatar) this.avatar.destroy();
 
@@ -357,8 +356,6 @@ export class BattleStatusWindow{
                 this.effect_sprites.push(sprite);
             }
         }
-
-        this.component.inititalize(this.selected_char, this.on_change.bind(this), this.battle_effects);
     }
 
     private change_character(new_char:MainChar){
@@ -366,7 +363,6 @@ export class BattleStatusWindow{
         this.update_info();
         this.set_sprites();
         
-        this.component.clear();
         this.component.char_change(this.selected_char, this.battle_effects);
     }
 
@@ -444,6 +440,7 @@ export class BattleStatusWindow{
         this.window.show(() =>{
             this.update_info();
             this.set_sprites();
+            this.component.inititalize(this.selected_char, this.on_change.bind(this), this.battle_effects);
             this.check_shift(this.component.current_state !== ComponentStates.STATISTICS);
             
             if(open_callback){

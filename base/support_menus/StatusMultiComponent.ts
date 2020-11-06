@@ -6,6 +6,7 @@ import { BattleEffectTypes, BattleStatusEffect } from "../windows/battle/BattleS
 import * as _ from "lodash";
 import { temporary_status } from "../Player";
 import { BitmapText } from "phaser-ce";
+import { CursorManager, PointVariants } from "../utils/CursorManager";
 
 export enum ComponentStates {
     STATISTICS,
@@ -82,16 +83,44 @@ export class StatusMultiComponent{
         NUMBERS_END_X: 69,
         NUMBERS_Y: 80,
         NUMBERS_X_SHIFT: 32,
-        NUMBERS_Y_SHIFT: 8 
+        NUMBERS_Y_SHIFT: 8,
+        CURSOR:{
+            0:{X: 31, Y: 15},
+            1:{X: 79, Y: 23},
+            2:{X: 111, Y: 39},
+            3:{X: 111, Y: 47},
+            4:{X: 39, Y: 63},
+            5:{X: 119, Y: 87},
+            6:{X: 119, Y: 95},
+            7:{X: 119, Y: 103},
+            8:{X: 119, Y: 111},
+            EFFECT:{X: 119, Y: 15, SHIFT: 16}
+        },
+        HIGHLIGHT:{
+            0:{X: 8, Y: 8, WIDTH: 96, HEIGHT: 8},
+            1:{X: 8, Y: 16, WIDTH: 104, HEIGHT: 8},
+            2:{X: 48, Y: 32, WIDTH: 88, HEIGHT: 8},
+            3:{X: 48, Y: 40, WIDTH: 88, HEIGHT: 8},
+            4:{X: 8, Y: 56, WIDTH: 80, HEIGHT: 8},
+            5:{X: 8, Y: 80, WIDTH: 160, HEIGHT: 8},
+            6:{X: 8, Y: 88, WIDTH: 160, HEIGHT: 8},
+            7:{X: 8, Y: 96, WIDTH: 160, HEIGHT: 8},
+            8:{X: 8, Y: 104, WIDTH: 160, HEIGHT: 8},
+            EFFECT:{X: 112, Y: 8, WIDTH: 16, HEIGHT: 16, SHIFT: 16},
+            NORMAL:{X: 120, Y: 8, WIDTH: 80, HEIGHT: 8}
+        }
     }
 
     private static readonly GROUP_KEY = "status_component";
 
+    private game:Phaser.Game;
     private data:GoldenSun;
     private window:Window;
 
     private current_line:number;
     private current_col:number;
+
+    private highlight:Phaser.Graphics;
 
     private update_callback:Function;
     public current_state:ComponentStates;
@@ -100,7 +129,8 @@ export class StatusMultiComponent{
     private selected_char:MainChar;
     private battle_effects:BattleStatusEffect[];
 
-    public constructor(data:GoldenSun, window:Window){
+    public constructor(game:Phaser.Game, data:GoldenSun, window:Window){
+        this.game = game;
         this.data = data;
         this.window = window;
 
@@ -108,6 +138,9 @@ export class StatusMultiComponent{
         this.current_col = 0;
 
         this.window.define_internal_group(StatusMultiComponent.GROUP_KEY, {x:0, y:0});
+        this.highlight = this.game.add.graphics(0, 0);
+        this.highlight.blendMode = PIXI.blendModes.SCREEN;
+        this.window.add_to_internal_group(StatusMultiComponent.GROUP_KEY, this.highlight);
 
         this.update_callback = null;
         this.current_state = null;
@@ -117,9 +150,67 @@ export class StatusMultiComponent{
         this.battle_effects = [];
     }
 
+    private update_highlight(highlight:{x:number, y:number, width:number, height:number}){
+        this.highlight.clear();
+
+        this.highlight.beginFill(this.window.color, 1);
+        this.highlight.drawRect(highlight.x, highlight.y, highlight.width, highlight.height);
+        this.highlight.endFill();
+    }
+
+    private select_option(){
+        switch(this.current_state){
+            case ComponentStates.STATISTICS:
+                let highlight = {x: 0, y: 0, width: 0, height: 0};
+                let cursor_x = 0;
+                let cursor_y = 0;
+
+                if(this.current_col === 0){
+                    highlight.x = StatusMultiComponent.STATISTICS.HIGHLIGHT[this.current_line].X;
+                    highlight.y = StatusMultiComponent.STATISTICS.HIGHLIGHT[this.current_line].Y;
+                    highlight.width = StatusMultiComponent.STATISTICS.HIGHLIGHT[this.current_line].WIDTH;
+                    highlight.height = StatusMultiComponent.STATISTICS.HIGHLIGHT[this.current_line].HEIGHT;
+
+                    cursor_x = StatusMultiComponent.STATISTICS.CURSOR[this.current_line].X;
+                    cursor_y = StatusMultiComponent.STATISTICS.CURSOR[this.current_line].Y;
+                }
+                else{
+                    if(this.battle_effects.length === 0){
+                        highlight.x = StatusMultiComponent.STATISTICS.HIGHLIGHT.NORMAL.X;
+                        highlight.y = StatusMultiComponent.STATISTICS.HIGHLIGHT.NORMAL.Y;
+                        highlight.width = StatusMultiComponent.STATISTICS.HIGHLIGHT.NORMAL.WIDTH;
+                        highlight.height = StatusMultiComponent.STATISTICS.HIGHLIGHT.NORMAL.HEIGHT;
+                    }
+                    else{
+                        let highlight_shift = StatusMultiComponent.STATISTICS.HIGHLIGHT.EFFECT.SHIFT;
+                        highlight.x = StatusMultiComponent.STATISTICS.HIGHLIGHT.EFFECT.X + highlight_shift*(this.current_col-1);
+                        highlight.y = StatusMultiComponent.STATISTICS.HIGHLIGHT.EFFECT.Y;
+                        highlight.width = StatusMultiComponent.STATISTICS.HIGHLIGHT.EFFECT.WIDTH;
+                        highlight.height = StatusMultiComponent.STATISTICS.HIGHLIGHT.EFFECT.HEIGHT;
+                    }
+                    
+                    let cursor_shift = StatusMultiComponent.STATISTICS.CURSOR.EFFECT.SHIFT;
+                    cursor_x = StatusMultiComponent.STATISTICS.CURSOR.EFFECT.X + cursor_shift*(this.current_col-1);
+                    cursor_y = StatusMultiComponent.STATISTICS.CURSOR.EFFECT.Y;
+                }
+                this.update_highlight(highlight);
+                
+                let cursor_tween = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.SHORT};
+                this.data.cursor_manager.move_to({x: cursor_x, y:cursor_y}, {animate: false, flip: true, tween_config: cursor_tween});
+                break;
+            case ComponentStates.PSYNERGY:
+                break;
+            case ComponentStates.DJINN:
+                break;
+            case ComponentStates.ITEMS:
+                break;      
+        }
+    }
+
     private on_change(){
         switch(this.current_state){
             case ComponentStates.STATISTICS:
+                this.select_option();
                 if(this.current_col===0){
                     let msgs = {line1: StatusMultiComponent.StatisticsMsgs[this.current_line].line1,
                         line2: StatusMultiComponent.StatisticsMsgs[this.current_line].line2};
@@ -128,7 +219,6 @@ export class StatusMultiComponent{
                         let exp = this.selected_char.exp_curve[this.selected_char.level] - this.selected_char.current_exp;
                         msgs.line2 = msgs.line2.replace("${EXP}", exp);
                     }
-
                     this.update_callback(msgs.line1, msgs.line2, {index: this.current_line, vertical: true});
                 }
                 else{
@@ -225,7 +315,13 @@ export class StatusMultiComponent{
             case ComponentStates.STATISTICS:
                 let effects_count = this.battle_effects.length;
                 
-                this.current_col = (this.current_col+(effects_count+1)-1)%(effects_count === 0 ? 2 : (effects_count+1));
+                if(effects_count === 0){
+                    this.current_col = this.current_col === 0 ? 1 : 0;
+                }
+                else{
+                    this.current_col = (this.current_col+(effects_count+1)-1)%(effects_count+1);
+                }
+
                 this.on_change();
                 break;
             case ComponentStates.PSYNERGY:
@@ -242,7 +338,13 @@ export class StatusMultiComponent{
             case ComponentStates.STATISTICS:
                 let effects_count = this.battle_effects.length;
 
-                this.current_col = (this.current_col+1)%(effects_count === 0 ? 2 : (effects_count+1));
+                if(effects_count === 0){
+                    this.current_col = this.current_col === 0 ? 1 : 0;
+                }
+                else{
+                    this.current_col = (this.current_col+1)%(effects_count+1);
+                }
+                
                 this.on_change();
                 break;
             case ComponentStates.PSYNERGY:
@@ -316,22 +418,13 @@ export class StatusMultiComponent{
     }
 
     private unset_state(){
+        this.highlight.clear();
+        this.data.cursor_manager.hide();
+
         for(let index in this.state_sprites){
             this.state_sprites[index].destroy();
         }
         this.state_sprites = [];
-        /*
-        switch(this.current_state){
-            case ComponentStates.STATISTICS:
-                break;
-            case ComponentStates.PSYNERGY:
-                break;
-            case ComponentStates.DJINN:
-                break;
-            case ComponentStates.ITEMS:
-                break;      
-        }
-        */
     }
 
     private get_djinn_counts(element:string){
@@ -400,15 +493,18 @@ export class StatusMultiComponent{
     public char_change(char:MainChar, battle_effects:BattleStatusEffect[]){
         this.selected_char = char;
         this.battle_effects = battle_effects;
-        this.change_state(ComponentStates.STATISTICS);
+        this.change_state(this.current_state, true);
     }
 
-    private change_state(new_state:ComponentStates){
+    private change_state(new_state:ComponentStates, keep_pos?:boolean){
         this.unset_state();
-        this.current_state = new_state;
-        this.current_col = 0;
-        this.current_line = 0;
 
+        if(!keep_pos){
+            this.current_col = 0;
+            this.current_line = 0;
+        }
+
+        this.current_state = new_state;
         this.setup_state();
         this.on_change();
     }
