@@ -56,7 +56,7 @@ export class BuyArtifactsMenu{
     public is_artifacts_menu:boolean;
     public active:boolean;
 
-    public item_list:{[key_name:string] : ShopItem};;
+    public item_list:{[key_name:string] : ShopItem};
     public selected_item:ShopItem;
     public buy_select_pos:{page:number, index:number, is_last:boolean, should_change:boolean};
     public old_item:Item;

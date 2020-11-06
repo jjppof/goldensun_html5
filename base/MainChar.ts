@@ -2,15 +2,18 @@ import { SpriteBase } from './SpriteBase';
 import { choose_right_class, Classes } from './Classes';
 import { djinn_status } from './Djinn';
 import { Effect, effect_types } from './Effect';
-import { item_types } from './Item';
+import { Item, item_types } from './Item';
 import { Player, fighter_types, permanent_status, main_stats } from './Player';
 import { elements, ordered_elements } from './utils';
 import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from './magic_numbers';
 import * as _ from "lodash";
+import { PartyData } from './initializers/initialize_info';
+import { Ability } from './Ability';
 
 const ELEM_LV_DELTA = 1;
 const ELEM_POWER_DELTA = 5;
 const ELEM_RESIST_DELTA = 5;
+export const MAX_ITEMS_PER_CHAR = 30;
 
 export type ItemSlot = {
     key_name: string,
@@ -499,6 +502,10 @@ export class MainChar extends Player {
         }
     }
 
+    preview_stat_without_abilities_effect(stat) {
+        return this.set_max_stat(stat, true, {ignore_ability_effect: true});
+    }
+
     set_max_stat(stat, preview = false, preview_obj: any = {}) {
         const stat_prefix = [main_stats.MAX_HP, main_stats.MAX_PP].includes(stat) ? stat.split("_")[1] : stat;
         const stat_key = stat;
@@ -506,7 +513,10 @@ export class MainChar extends Player {
         const curve_key = stat_prefix + "_curve";
         const extra_key = stat_prefix + "_extra";
         const previous_value = this[stat_key];
+
+        //setting stats by current level and extra values
         this[stat_key] = (this[curve_key][this.level] * this.class[boost_key] + this[extra_key]) | 0;
+
         let this_djinni = this.djinni;
         if (preview) {
             if (preview_obj.action === "Trade") {
@@ -532,6 +542,7 @@ export class MainChar extends Player {
         }
         this.effects.forEach(effect => {
             if (preview && effect.effect_owner_instance && preview_obj.item_key_name === effect.effect_owner_instance.key_name) return;
+            if (preview && preview_obj.ignore_ability_effect && effect.effect_owner_instance instanceof Ability) return;
             let effect_type;
             switch (stat) {
                 case main_stats.MAX_HP:
@@ -656,9 +667,20 @@ export class MainChar extends Player {
         this.update_abilities();
     }
 
-    static get_active_players(party_data, max) {
+    static get_active_players(party_data: PartyData, max: number) {
         return party_data.members.slice(0, max).filter(char => {
             return !char.has_permanent_status(permanent_status.DOWNED);
         });
+    }
+
+    static add_item_to_party(party_data: PartyData, item: Item, quantity: number) {
+        for (let i = 0; i < party_data.members.length; ++i) {
+            const char = party_data.members[i];
+            if (char.items.length < MAX_ITEMS_PER_CHAR) {
+                char.add_item(item.key_name, quantity, false);
+                return true;
+            }
+        }
+        return false;
     }
 }

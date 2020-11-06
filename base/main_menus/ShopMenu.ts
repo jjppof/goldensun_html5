@@ -109,8 +109,8 @@ export class ShopMenu{
         this.shop_key = null;
         this.close_callback = null;
 
-        this.items_db = this.data.info.items_list;
-        this.shops_db = _.mapKeys(this.data.dbs.shops_db, shop => shop.key_name) as {[key_name:string] : Shop};;
+        this.items_db = this.data.info.items_list as any;
+        this.shops_db = _.mapKeys(this.data.dbs.shops_db, shop => shop.key_name) as {[key_name:string] : Shop};
         this.shopkeep_dialog_db = this.data.dbs.shopkeep_dialog_db;
 
         this.normal_item_list = {};
@@ -197,7 +197,7 @@ export class ShopMenu{
         }
 
         this.normal_item_list = _.mapKeys(normal_list, item => item.key_name) as {[key_name:string] : ShopItem};
-        this.artifact_list = _.mapKeys(artifact_list, item => item.key_name) as {[key_name:string] : ShopItem};;
+        this.artifact_list = _.mapKeys(artifact_list, item => item.key_name) as {[key_name:string] : ShopItem};
     }
 
     update_your_coins(){

@@ -180,10 +180,10 @@ export class Player {
             case effect_types.DEFENSE:
             case effect_types.AGILITY:
             case effect_types.LUCK:
-                return this.effect_turns_count[effect.type] = relative ? (this.effect_turns_count[effect.type] as number) + value : value;;
+                return this.effect_turns_count[effect.type] = relative ? (this.effect_turns_count[effect.type] as number) + value : value;
             case effect_types.POWER:
             case effect_types.RESIST:
-                return this.effect_turns_count[effect.type][effect.attribute] = relative ? this.effect_turns_count[effect.type][effect.attribute] + value : value;;
+                return this.effect_turns_count[effect.type][effect.attribute] = relative ? this.effect_turns_count[effect.type][effect.attribute] + value : value;
         }
     }
 
