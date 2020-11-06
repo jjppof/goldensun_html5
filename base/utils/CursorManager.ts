@@ -27,7 +27,6 @@ export class CursorManager{
         Y2: 0,
         DEFAULT_TIME: Phaser.Timer.QUARTER >> 1
     }
-
     private static readonly POINT = {
         KEY: CursorManager.CursorTweens.POINT,
         X: -2,

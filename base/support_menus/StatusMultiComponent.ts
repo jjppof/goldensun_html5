@@ -132,28 +132,33 @@ export class StatusMultiComponent{
                     this.update_callback(msgs.line1, msgs.line2, {index: this.current_line, vertical: true});
                 }
                 else{
-                    let effect = this.battle_effects[this.current_col-1];
+                    if(this.battle_effects.length === 0){
+                        this.update_callback("Normal status.", "", {index: 1, vertical: false});
+                    }
+                    else{
+                        let effect = this.battle_effects[this.current_col-1];
 
-                    let msgs = null;
-                    if(effect.type === BattleEffectTypes.STATUS_CONDITION){
-                        let name = (effect.key as string).toUpperCase();
-                        msgs = {line1: StatusMultiComponent.BattleStatusMsgs[name].line1,
-                            line2: StatusMultiComponent.BattleStatusMsgs[name].line2};
-
-                        if(effect.key === temporary_status.DEATH_CURSE){
-                            let turns = (effect.properties.turns ? effect.properties.turns : 0);
-                            msgs.line1 = msgs.line1.replace("${N}", turns);
+                        let msgs = null;
+                        if(effect.type === BattleEffectTypes.STATUS_CONDITION){
+                            let name = (effect.key as string).toUpperCase();
+                            msgs = {line1: StatusMultiComponent.BattleStatusMsgs[name].line1,
+                                line2: StatusMultiComponent.BattleStatusMsgs[name].line2};
+    
+                            if(effect.key === temporary_status.DEATH_CURSE){
+                                let turns = (effect.properties.turns ? effect.properties.turns : 0);
+                                msgs.line1 = msgs.line1.replace("${N}", turns);
+                            }
                         }
+                        else if(effect.type === BattleEffectTypes.BUFF_DEBUFF){
+                            let name = (effect.key as string).toUpperCase();
+                            msgs = {line1: StatusMultiComponent.BattleBuffMsgs[name].line1,
+                                line2: StatusMultiComponent.BattleBuffMsgs[name].line2};
+    
+                            let value = (effect.properties.value ? effect.properties.value : 0);
+                            msgs.line1 = msgs.line1.replace("${VALUE}", value);
+                        }
+                        this.update_callback(msgs.line1, msgs.line2, {index: this.current_col, vertical: false});
                     }
-                    else if(effect.type === BattleEffectTypes.BUFF_DEBUFF){
-                        let name = (effect.key as string).toUpperCase();
-                        msgs = {line1: StatusMultiComponent.BattleBuffMsgs[name].line1,
-                            line2: StatusMultiComponent.BattleBuffMsgs[name].line2};
-
-                        let value = (effect.properties.value ? effect.properties.value : 0);
-                        msgs.line1 = msgs.line1.replace("${VALUE}", value);
-                    }
-                    this.update_callback(msgs.line1, msgs.line2, {index: this.current_col, vertical: false});
                 }
                 break;
             case ComponentStates.PSYNERGY:
@@ -219,9 +224,8 @@ export class StatusMultiComponent{
         switch(this.current_state){
             case ComponentStates.STATISTICS:
                 let effects_count = this.battle_effects.length;
-                if(effects_count === 0) return;
-
-                this.current_col = (this.current_col+(effects_count+1)-1)%(effects_count+1);
+                
+                this.current_col = (this.current_col+(effects_count+1)-1)%(effects_count === 0 ? 2 : (effects_count+1));
                 this.on_change();
                 break;
             case ComponentStates.PSYNERGY:
@@ -237,9 +241,8 @@ export class StatusMultiComponent{
         switch(this.current_state){
             case ComponentStates.STATISTICS:
                 let effects_count = this.battle_effects.length;
-                if(effects_count === 0) return;
 
-                this.current_col = (this.current_col+1)%(effects_count+1);
+                this.current_col = (this.current_col+1)%(effects_count === 0 ? 2 : (effects_count+1));
                 this.on_change();
                 break;
             case ComponentStates.PSYNERGY:
