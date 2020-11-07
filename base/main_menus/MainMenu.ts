@@ -63,8 +63,8 @@ export class MainMenu {
     button_press_action(menu:any) {      
         this.horizontal_menu.close(() => {
             menu.open_menu((close_this_menu:boolean) => {
+                this.chars_status_window.update_chars_info();
                 this.horizontal_menu.open(() => {
-                    this.chars_status_window.update_chars_info();
                     if (close_this_menu) {
                         this.close_menu();
                     }
@@ -79,11 +79,10 @@ export class MainMenu {
     }
 
     open_menu() {
-        this.horizontal_menu.open(() => {
-            this.chars_status_window.update_position();
-            this.chars_status_window.update_chars_info();
-            this.chars_status_window.show();
-        }, this.current_index);
+        this.chars_status_window.update_chars_info();
+        this.chars_status_window.update_position();
+        this.chars_status_window.show();
+        this.horizontal_menu.open();
     }
 
     close_menu() {
