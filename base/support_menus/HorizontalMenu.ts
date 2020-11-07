@@ -85,8 +85,8 @@ export class HorizontalMenu {
         let controls = [
             {key: this.data.gamepad.LEFT, on_down: this.previous_button.bind(this)},
             {key: this.data.gamepad.RIGHT, on_down: this.next_button.bind(this)},
-            {key: this.data.gamepad.A, on_down: this.on_press.bind(this), params:{reset_control:true}},
-            {key: this.data.gamepad.B, on_down: (this.on_cancel ? this.on_cancel.bind(this) : undefined), params:{reset_control:true}}
+            {key: this.data.gamepad.A, on_down: this.on_press.bind(this)},
+            {key: this.data.gamepad.B, on_down: (this.on_cancel ? this.on_cancel.bind(this) : undefined)}
         ];
 
         this.data.control_manager.set_control(controls, {loop_configs:{horizontal:true}});

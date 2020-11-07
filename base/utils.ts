@@ -58,9 +58,9 @@ export const base_actions = {
     PUSH: "push",
     CLIMB: "climb",
     CAST: "cast",
-    JUMP: "jump"
+    JUMP: "jump",
+    BATTLE: "battle"
 };
-
 
 /*Returns the angle for an 8-Directional value
 Works clockwise starting with "Right"

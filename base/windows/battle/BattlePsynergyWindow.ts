@@ -4,6 +4,7 @@ import { temporary_status } from '../../Player';
 import { GoldenSun } from '../../GoldenSun';
 import { MainChar } from '../../MainChar';
 import { Djinn } from '../../Djinn';
+import { CursorManager, PointVariants } from '../../utils/CursorManager';
 
 const BASE_WIN_WIDTH = 164;
 const BASE_WIN_HEIGHT = 84;
@@ -44,7 +45,7 @@ const HIGHLIGHT_BAR_WIDTH = 152;
 const HIGHLIGHT_BAR_HEIGHT = 8;
 const HIGHLIGHT_BAR_X = 8;
 
-export class PsynergyWindow {
+export class BattlePsynergyWindow {
     public game: Phaser.Game;
     public data: GoldenSun;
 
@@ -116,7 +117,12 @@ export class PsynergyWindow {
 
     select_ability(index:number){
         this.ability_index = index;
-        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.ability_index*CURSOR_SHIFT, "point", false);
+
+        let cursor_x = CURSOR_X;
+        let cursor_y = CURSOR_Y + this.ability_index*CURSOR_SHIFT;
+        
+        let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
+        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
         this.change_ability();
     }
 

@@ -2,11 +2,11 @@ import { CharsStatusWindow } from "../windows/CharsStatusWindow";
 import { capitalize, ordered_elements } from "../utils";
 import * as numbers from "../magic_numbers";
 import { Djinn, djinn_status } from "../Djinn";
-import { DescriptionWindow } from "../windows/battle/DescriptionWindow"
-import { PsynergyWindow } from "../windows/battle/PsynergyWindow"
-import { DjinnWindow } from "../windows/battle/DjinnWindow";
-import { ItemWindow } from "../windows/battle/ItemWindow";
-import { SummonWindow } from "../windows/battle/SummonWindow";
+import { BattleDescriptionWindow } from "../windows/battle/BattleDescriptionWindow"
+import { BattlePsynergyWindow } from "../windows/battle/BattlePsynergyWindow"
+import { BattleDjinnWindow } from "../windows/battle/BattleDjinnWindow";
+import { BattleItemWindow } from "../windows/battle/BattleItemWindow";
+import { BattleSummonWindow } from "../windows/battle/BattleSummonWindow";
 import { MAX_CHARS_IN_BATTLE } from "../battle/Battle";
 import { permanent_status } from "../Player";
 import { ItemSlot, MainChar } from "../MainChar";
@@ -15,6 +15,7 @@ import * as _ from "lodash";
 import { Enemy } from "../Enemy";
 import { HorizontalMenu } from "../support_menus/HorizontalMenu";
 import { Target } from "../battle/BattleStage";
+import { BattleStatusWindow } from "../windows/battle/BattleStatusWindow";
 import { ability_categories } from "../Ability";
 
 const START_TITLE_WINDOW_WIDTH = 76;
@@ -48,11 +49,12 @@ export class MainBattleMenu {
     public inner_horizontal_menu: HorizontalMenu;
 
     public chars_status_window: CharsStatusWindow;
-    public description_window: DescriptionWindow;
-    public djinn_window: DjinnWindow;
-    public psynergy_window: PsynergyWindow;
-    public item_window: ItemWindow;
-    public summon_window: SummonWindow;
+    public description_window: BattleDescriptionWindow;
+    public djinn_window: BattleDjinnWindow;
+    public psynergy_window: BattlePsynergyWindow;
+    public item_window: BattleItemWindow;
+    public summon_window: BattleSummonWindow;
+    public status_window: BattleStatusWindow;
 
     public group: Phaser.Group;
     public avatar_sprite: Phaser.Sprite;
@@ -92,11 +94,12 @@ export class MainBattleMenu {
         );
 
         this.chars_status_window = new CharsStatusWindow(this.game, this.data, true, true);
-        this.description_window = new DescriptionWindow(this.game);
-        this.djinn_window = new DjinnWindow(this.game, this.data);
-        this.psynergy_window = new PsynergyWindow(this.game, this.data);
-        this.item_window = new ItemWindow(this.game, this.data);
-        this.summon_window = new SummonWindow(this.game, this.data);
+        this.description_window = new BattleDescriptionWindow(this.game);
+        this.djinn_window = new BattleDjinnWindow(this.game, this.data);
+        this.psynergy_window = new BattlePsynergyWindow(this.game, this.data);
+        this.item_window = new BattleItemWindow(this.game, this.data);
+        this.summon_window = new BattleSummonWindow(this.game, this.data);
+        this.status_window = new BattleStatusWindow(this.game, this.data);
 
         this.group = this.game.add.group();
         this.avatar_sprite = this.group.create(0, numbers.GAME_HEIGHT - numbers.AVATAR_SIZE);
@@ -135,6 +138,15 @@ export class MainBattleMenu {
                     }
                     this.set_avatar();
                 });
+                break;
+            case "status":
+                this.start_horizontal_menu.close(()=>{
+                    this.status_window.open(this.data.info.party_data.members[0], ()=>{
+                        this.start_horizontal_menu.open();
+                    },()=>{
+                        this.status_window.grant_control();
+                    });
+                })    
         }
     }
 
@@ -185,7 +197,7 @@ export class MainBattleMenu {
         }
     }
 
-    on_ability_choose(window:PsynergyWindow|DjinnWindow|ItemWindow|SummonWindow
+    on_ability_choose(window:BattlePsynergyWindow|BattleDjinnWindow|BattleItemWindow|BattleSummonWindow
         , description_on_top:boolean, action_type:string, ...args:any[]) {
         this.inner_horizontal_menu.deactivate(true);
         this.description_window.open(description_on_top);
