@@ -258,6 +258,8 @@ export class ControlManager{
     }
 
     detach_bindings(key:number){
+        if(!this.global_bindings[key]) return;
+        
         let bindings = this.global_bindings[key];
         bindings.forEach(bind => bind.detach());
 

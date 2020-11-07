@@ -263,6 +263,8 @@ export class StatusMultiComponent{
                                     let line = parseInt(index) < 2 ? "line1" : "line2";
                                     msgs[line] += (parseInt(index)%2 !== 0 ? ", " : "") + element_name + " " + effect_name + " " + elems_to_show[index].value;
                                 }
+                                if(msgs.line2 === "") msgs.line1 += ".";
+                                else msgs.line2 += ".";
                             }
                             else{
                                 let name = (effect.key as string).toUpperCase();
