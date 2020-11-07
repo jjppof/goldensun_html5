@@ -42,6 +42,17 @@ export const ordered_main_stats = [
     main_stats.LUCK
 ];
 
+export const effect_type_stat = {
+    [effect_types.MAX_HP]: main_stats.MAX_HP,
+    [effect_types.MAX_PP]: main_stats.MAX_PP,
+    [effect_types.ATTACK]: main_stats.ATTACK,
+    [effect_types.DEFENSE]: main_stats.DEFENSE,
+    [effect_types.AGILITY]: main_stats.AGILITY,
+    [effect_types.LUCK]: main_stats.LUCK,
+    [effect_types.CURRENT_HP]: main_stats.CURRENT_HP,
+    [effect_types.CURRENT_PP]: main_stats.CURRENT_PP
+};
+
 export const on_catch_status_msg = {
     [temporary_status.DELUSION]: target => `${target.name} is wrapped in delusion!`,
     [temporary_status.STUN]: target => `${target.name} has been stunned!`,

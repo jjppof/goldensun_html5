@@ -2,7 +2,7 @@ import { Ability } from "./Ability";
 import { Enemy } from "./Enemy";
 import { Item } from "./Item";
 import { MainChar } from "./MainChar";
-import { main_stats } from "./Player";
+import { effect_type_stat, main_stats } from "./Player";
 import { variation, elements } from "./utils"
 
 export const effect_types = {
@@ -97,7 +97,6 @@ export class Effect {
         on_caster: boolean,
         operator: string
     };
-    private effect_type_stat: {[effect_type: string]: string};
 
     constructor(
         type,
@@ -145,16 +144,6 @@ export class Effect {
         if (this.sub_effect !== undefined) {
             this.init_sub_effect();
         }
-        this.effect_type_stat = {
-            [effect_types.MAX_HP]: main_stats.MAX_HP,
-            [effect_types.MAX_PP]: main_stats.MAX_PP,
-            [effect_types.ATTACK]: main_stats.ATTACK,
-            [effect_types.DEFENSE]: main_stats.DEFENSE,
-            [effect_types.AGILITY]: main_stats.AGILITY,
-            [effect_types.LUCK]: main_stats.LUCK,
-            [effect_types.CURRENT_HP]: main_stats.CURRENT_HP,
-            [effect_types.CURRENT_PP]: main_stats.CURRENT_PP
-        };
     }
 
     static apply_operator(a, b, operator) {
@@ -265,7 +254,7 @@ export class Effect {
             case effect_types.DEFENSE:
             case effect_types.AGILITY:
             case effect_types.LUCK:
-                return this.apply_general_value(this.effect_type_stat[this.type]);
+                return this.apply_general_value(effect_type_stat[this.type]);
             case effect_types.HP_RECOVERY:
                 return this.apply_general_value("hp_recovery");
             case effect_types.PP_RECOVERY:
@@ -303,7 +292,7 @@ export class Effect {
                 return this.apply_general_value(undefined, direct_value);
             case effect_types.DAMAGE_INPUT:
                 let result = this.apply_general_value(undefined, direct_value);
-                const stat = this.effect_type_stat[this.sub_effect.type];
+                const stat = effect_type_stat[this.sub_effect.type];
                 result.before = this.char[stat];
                 result.after = this.apply_subeffect(stat, result.after);
                 switch(this.sub_effect.type) {
