@@ -1,8 +1,8 @@
 import { Window } from '../../Window';
 import { kill_all_sprites } from '../../utils';
 import { GoldenSun } from '../../GoldenSun';
-import { ShopMenu } from '../../main_menus/ShopMenu';
 import { ShopItem } from '../../Shop.js';
+import { CursorManager, PointVariants } from '../../utils/CursorManager';
 
 const MAX_PER_PAGE = 7;
 
@@ -386,7 +386,7 @@ export class BuySelectMenu{
     Input: index [number] - Item index (on screen)*/
     set_item(index:number) {
         this.game.world.bringToTop(this.sprite_group);
-        this.game.world.bringToTop(this.data.cursor_manager.group);
+        this.data.cursor_manager.bring_to_top();
         let itm_list = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === true && s.key === "items_icons"); });
         let bg_list = this.sprite_group.children.filter((s:Phaser.Sprite) => { return (s.alive === true && s.key === "item_border"); });
         
@@ -442,8 +442,11 @@ export class BuySelectMenu{
     /*Sets the cursor to the current item's index
 
     Input: index [number] - Selected item's index*/
-    set_cursor(index:number){
-        this.data.cursor_manager.move_to(CURSOR_X + index*LINE_SHIFT, CURSOR_Y, "point", false);
+    set_cursor(index:number, on_complete?:Function){
+        let cursor_x = CURSOR_X + index*LINE_SHIFT;
+        let cursor_y = CURSOR_Y;
+        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate:false,
+            tween_config:{type: CursorManager.CursorTweens.POINT, variant:PointVariants.LONG}}, on_complete);
     }
 
     /*Opens this window at page 0

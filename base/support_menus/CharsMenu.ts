@@ -2,6 +2,7 @@ import { Window } from '../Window';
 import * as utils from '../utils';
 import { GoldenSun } from '../GoldenSun';
 import { MainChar } from '../MainChar';
+import { CursorManager, PointVariants } from '../utils/CursorManager';
 
 const MAX_PER_LINE = 4;
 
@@ -43,6 +44,9 @@ const ARROW_GROUP_X2 = 92;
 const ARROW_GROUP_Y2 = -4;
 
 const MENU_SELECTED_Y_SHIFT = 4;
+const SEPARATOR_X = 4;
+const SEPARATOR_Y = 27;
+const SEPARATOR_LENGTH = 96;
 
 const SHOP_MODE = "shop";
 const MENU_MODE = "menu";
@@ -117,6 +121,8 @@ export class CharsMenu {
             this.char_group.y = CHAR_GROUP_Y2 - SHIFT_Y + this.game.camera.y;
             this.arrow_group.x = ARROW_GROUP_X2 + this.game.camera.x;
             this.arrow_group.y = ARROW_GROUP_Y2 + this.game.camera.y;
+
+            this.window.draw_separator(SEPARATOR_X, SEPARATOR_Y, SEPARATOR_X+SEPARATOR_LENGTH , SEPARATOR_Y, false);
         }
     }
 
@@ -258,13 +264,11 @@ export class CharsMenu {
     }
 
     select_char(index:number){
-        if(this.mode===SHOP_MODE) this.data.cursor_manager.move_to(CURSOR_X + index*GAP_SIZE, CURSOR_Y, "wiggle");
-        else if (this.mode===MENU_MODE) this.data.cursor_manager.move_to(CURSOR_X2 + index*GAP_SIZE, CURSOR_Y2, "point", false);
-
         if(index !== this.selected_index){
             this.unset_character(this.selected_index);
             this.selected_index =  index;
             this.set_character(this.selected_index);
+            this.move_cursor(index);
         }
         
         if(this.on_change){
@@ -315,10 +319,32 @@ export class CharsMenu {
         this.data.control_manager.set_control(controls,{loop_configs: {horizontal:true}});
     }
 
-    activate(){
-        if(this.mode===SHOP_MODE) this.data.cursor_manager.move_to(CURSOR_X + this.selected_index*GAP_SIZE, CURSOR_Y, "wiggle");
-        else if (this.mode===MENU_MODE) this.data.cursor_manager.move_to(CURSOR_X2 + this.selected_index*GAP_SIZE, CURSOR_Y2, "point", false);
+    move_cursor(pos?:number, on_complete?:Function){
+        if(!pos) pos = this.selected_index;
 
+        let cursor_x = 0;
+        let cursor_y = 0;
+        let tween_config = {type: null, variant: null};
+        let animate = false;
+
+        if(this.mode===SHOP_MODE){
+            cursor_x = CURSOR_X + pos*GAP_SIZE;
+            cursor_y = CURSOR_Y;
+            tween_config.type = CursorManager.CursorTweens.WIGGLE;
+            animate = true;
+        }
+        else if(this.mode===MENU_MODE){
+            cursor_x = CURSOR_X2 + pos*GAP_SIZE;
+            cursor_y = CURSOR_Y2;
+            tween_config.type = CursorManager.CursorTweens.POINT;
+            tween_config.variant = PointVariants.NORMAL;
+            animate = false;
+        }
+        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: animate, tween_config: tween_config}, on_complete);
+    }
+
+    activate(){
+        this.move_cursor();
         this.is_active = true;
     }
     
@@ -360,6 +386,7 @@ export class CharsMenu {
 
         this.set_arrows(false, false);
 
+        this.window.clear_separators();
         this.window.close(callback, false);
     }
 

@@ -4,6 +4,7 @@ import { use_types } from "../../Item";
 import { GoldenSun } from "../../GoldenSun";
 import { ItemSlot, MainChar } from "../../MainChar";
 import * as _ from "lodash";
+import { CursorManager, PointVariants } from "../../utils/CursorManager";
 
 //TO DO: decrement item quantity when using a consumable item
 //TO DO: use item sprite instead of ability sprite for items (Spirit Ring)
@@ -34,7 +35,7 @@ const ITEM_ICON_X = 8;
 const SUB_ICON_X = 7;
 const SUB_ICON_Y = 8;
 
-export class ItemWindow {
+export class BattleItemWindow {
     public game: Phaser.Game;
     public data: GoldenSun;
 
@@ -88,7 +89,12 @@ export class ItemWindow {
 
    select_item(index:number){
         this.item_index = index;
-        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.item_index*CURSOR_SHIFT, "point", false);
+
+        let cursor_x = CURSOR_X;
+        let cursor_y = CURSOR_Y + this.item_index*CURSOR_SHIFT;
+        
+        let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
+        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
         this.change_item();
     }
 

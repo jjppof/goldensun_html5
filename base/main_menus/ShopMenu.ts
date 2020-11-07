@@ -14,6 +14,7 @@ import { GoldenSun } from '../GoldenSun';
 import { ShopItem } from '../Shop';
 import * as _ from "lodash";
 import { Shop } from '../Shop';
+import { Item } from '../Item';
 
 const ITEM_PRICE_WIN_X = 0;
 const ITEM_PRICE_WIN_Y = 64;
@@ -65,10 +66,7 @@ export class ShopMenu{
     public data: GoldenSun;
     public shop_key: string;
     public close_callback: Function;
-    public items_db: {
-        key_name: string;
-        item: any;
-    }
+    public items_db:{[key_name:string] : Item};
     public shops_db:{[key_name:string] : Shop};
     public shopkeep_dialog_db:{[key_name:string] : DialogData};
 
@@ -109,7 +107,7 @@ export class ShopMenu{
         this.shop_key = null;
         this.close_callback = null;
 
-        this.items_db = this.data.info.items_list as any;
+        this.items_db = this.data.info.items_list;
         this.shops_db = _.mapKeys(this.data.dbs.shops_db, shop => shop.key_name) as {[key_name:string] : Shop};
         this.shopkeep_dialog_db = this.data.dbs.shopkeep_dialog_db;
 
@@ -192,8 +190,8 @@ export class ShopMenu{
             let item = this.items_db[item_list[i].key_name];
             if(item_list[i].quantity === 0) continue;
 
-            if(item.rare_item === true) artifact_list.push(item);
-            else normal_list.push(item);
+            if(item.rare_item === true) artifact_list.push(item_list[i]);
+            else normal_list.push(item_list[i]);
         }
 
         this.normal_item_list = _.mapKeys(normal_list, item => item.key_name) as {[key_name:string] : ShopItem};
@@ -321,6 +319,7 @@ export class ShopMenu{
     close_menu() {
         if (!this.horizontal_menu.menu_active) return;
         this.horizontal_menu.close();
+        this.data.cursor_manager.hide();
 
         this.npc_dialog.update_dialog("goodbye"); 
 

@@ -33,6 +33,27 @@ export const main_stats = {
     LUCK: "luk"
 };
 
+export const ordered_status_battle = [
+    permanent_status.DOWNED,
+    permanent_status.EQUIP_CURSE,
+    temporary_status.DEATH_CURSE,
+    permanent_status.POISON,
+    permanent_status.VENOM,
+    temporary_status.SEAL,
+    temporary_status.STUN,
+    temporary_status.SLEEP,
+    permanent_status.HAUNT,
+    temporary_status.DELUSION
+]
+
+export const ordered_status_menu = [
+    permanent_status.DOWNED,
+    permanent_status.POISON,
+    permanent_status.VENOM,
+    permanent_status.EQUIP_CURSE,
+    permanent_status.HAUNT
+]
+
 export const ordered_main_stats = [
     main_stats.MAX_HP,
     main_stats.MAX_PP,
@@ -41,6 +62,17 @@ export const ordered_main_stats = [
     main_stats.AGILITY,
     main_stats.LUCK
 ];
+
+export const effect_type_stat = {
+    [effect_types.MAX_HP]: main_stats.MAX_HP,
+    [effect_types.MAX_PP]: main_stats.MAX_PP,
+    [effect_types.ATTACK]: main_stats.ATTACK,
+    [effect_types.DEFENSE]: main_stats.DEFENSE,
+    [effect_types.AGILITY]: main_stats.AGILITY,
+    [effect_types.LUCK]: main_stats.LUCK,
+    [effect_types.CURRENT_HP]: main_stats.CURRENT_HP,
+    [effect_types.CURRENT_PP]: main_stats.CURRENT_PP
+};
 
 export const on_catch_status_msg = {
     [temporary_status.DELUSION]: target => `${target.name} is wrapped in delusion!`,

@@ -3,6 +3,10 @@ function load_buttons(game) {
     game.load.image('shift_keyboard', 'assets/images/keyboard/shift.png');
     game.load.image('tab_keyboard', 'assets/images/keyboard/tab.png');
     game.load.image('spacebar_keyboard', 'assets/images/keyboard/spacebar.png');
+    game.load.image('a_button', 'assets/images/keyboard/a_button.png');
+    game.load.image('select_button', 'assets/images/keyboard/select_button.png');
+    game.load.image('l_button', 'assets/images/keyboard/l_button.png');
+    game.load.image('r_button', 'assets/images/keyboard/r_button.png');
 }
 
 function load_db_files(game) {
@@ -43,6 +47,7 @@ function load_misc(game) {
     game.load.image('price_tag', 'assets/images/misc/price_tag.png');
     game.load.image('broken', 'assets/images/misc/broken.png');
     game.load.image('frost_snowflake', 'assets/images/interactable_objects/snowflake.png');
+    game.load.atlasJSONHash('battle_effect_icons', 'assets/images/icons/battle_effects/battle_effect_icons.png', 'assets/images/icons/battle_effects/battle_effect_icons.json')
     game.load.atlasJSONHash('dust', 'assets/images/misc/dust.png', 'assets/images/misc/dust.json');
     game.load.atlasJSONHash('battle_cursor', 'assets/images/misc/battle_cursor.png', 'assets/images/misc/battle_cursor.json');
     game.load.atlasJSONHash('ranges', 'assets/images/misc/ranges.png', 'assets/images/misc/ranges.json');

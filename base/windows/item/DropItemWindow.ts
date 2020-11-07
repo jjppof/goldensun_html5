@@ -4,6 +4,7 @@ import { ItemSlot, MainChar } from '../../MainChar';
 import { Item } from '../../Item';
 import { MainItemMenu } from '../../main_menus/MainItemMenu';
 import { ItemQuantityManagerWindow } from './ItemQuantityManagerWindow';
+import { CursorManager, PointVariants } from '../../utils/CursorManager';
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 76;
@@ -86,7 +87,12 @@ export class DropItemWindow {
 
     set_answer_index(index:number) {
         this.answer_index = index;
-        this.data.cursor_manager.move_to(CURSOR_X, (index === YES_Y ? CURSOR_Y1 : CURSOR_Y2), "point", false);
+
+        let cursor_x = CURSOR_X;
+        let cursor_y = (index === YES_Y ? CURSOR_Y1 : CURSOR_Y2);
+
+        let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
+        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
     }
 
     update_position() {

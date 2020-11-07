@@ -3,6 +3,7 @@ import * as numbers from '../magic_numbers';
 import { GoldenSun } from "../GoldenSun";
 import { ItemSlot, MainChar } from "../MainChar";
 import { PageIndicator } from "../support_menus/PageIndicator";
+import { CursorManager, PointVariants } from "../utils/CursorManager";
 
 const PSY_OVERVIEW_WIN_X = 104;
 const PSY_OVERVIEW_WIN_Y = 24;
@@ -207,7 +208,7 @@ export class ItemPsynergyChooseWindow {
         }
         if (this.selected_element_index >= this.elements.length) {
             this.selected_element_index = this.elements.length - 1;
-            this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.selected_element_index*CURSOR_GAP, "point", false);
+            this.move_cursor(CURSOR_X, CURSOR_Y + this.selected_element_index*CURSOR_GAP);
         }
         for (let i = 0; i < this.elements.length; ++i) {
             const elem_key_name = this.get_element_key_name(i);
@@ -297,7 +298,7 @@ export class ItemPsynergyChooseWindow {
             this.element_list[this.get_element_key_name(index) as string],
             this.is_psynergy_window ? undefined : this.item_objs[index]
         );
-        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.selected_element_index*CURSOR_GAP, "point", false);
+        this.move_cursor(CURSOR_X, CURSOR_Y + this.selected_element_index*CURSOR_GAP);
     }
 
     /*Displays a new page*/
@@ -343,6 +344,11 @@ export class ItemPsynergyChooseWindow {
             shoulder:true, horizontal_time:HORIZONTAL_LOOP_TIME, shoulder_time: SHOULDER_LOOP_TIME}});
     }
 
+    move_cursor(x_pos:number, y_pos:number, on_complete?:Function){
+        let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
+        this.data.cursor_manager.move_to({x: x_pos, y: y_pos}, {animate: false, tween_config: tween_config}, on_complete);
+    }
+
     /*Hides this window*/
     hide() {
         this.window.group.alpha = 0;
@@ -380,7 +386,7 @@ export class ItemPsynergyChooseWindow {
             this.is_psynergy_window ? undefined : this.item_objs[this.selected_element_index]
         );
 
-        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y, "point", false);
+        this.move_cursor(CURSOR_X, CURSOR_Y);
 
         this.window_open = true;
         this.window_activated = true;

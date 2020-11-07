@@ -6,6 +6,7 @@ import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle";
 import { MainChar } from "../../MainChar";
 import { GoldenSun } from "../../GoldenSun";
 import * as _ from "lodash";
+import { CursorManager, PointVariants } from "../../utils/CursorManager";
 
 const BASE_WINDOW_X = 104;
 const BASE_WINDOW_Y = 88;
@@ -30,7 +31,7 @@ const CURSOR_SHIFT = 16;
 
 const SUMMON_ICON_X = 10;
 
-export class SummonWindow {
+export class BattleSummonWindow {
     public game: Phaser.Game;
     public data: GoldenSun;
 
@@ -85,7 +86,12 @@ export class SummonWindow {
 
     select_summon(index:number){
         this.summon_index = index;
-        this.data.cursor_manager.move_to(CURSOR_X, CURSOR_Y + this.summon_index*CURSOR_SHIFT, "point", false);
+        
+        let cursor_x = CURSOR_X;
+        let cursor_y = CURSOR_Y + this.summon_index*CURSOR_SHIFT;
+        
+        let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
+        this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
         this.change_summon();
     }
 
