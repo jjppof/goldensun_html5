@@ -44,7 +44,7 @@ export class BattleDjinnWindow {
 
     public djinn_names: TextObj[];
     public stars_sprites: Phaser.Sprite[];
-    public open_psy_bindings: Phaser.SignalBinding[];
+    public open_psy_key: number;
 
     public window_open: boolean;
     public window_active: boolean;
@@ -85,7 +85,7 @@ export class BattleDjinnWindow {
 
         this.djinn_names = [];
         this.stars_sprites = [];
-        this.open_psy_bindings = [];
+        this.open_psy_key = null;
     }
 
     select_djinn(index:number){
@@ -291,9 +291,9 @@ export class BattleDjinnWindow {
 
         this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
 
-        if(this.open_psy_bindings.length === 0){
+        if(!this.open_psy_key){
             let control = [{key: this.data.gamepad.R, on_down: this.show_psynergy.bind(this), on_up: this.hide_psynergy.bind(this)}];
-            this.data.control_manager.set_control(control, {persist: true, no_reset: true});
+            this.open_psy_key = this.data.control_manager.set_control(control, {persist: true, no_reset: true});
         }
     }
 
@@ -346,10 +346,8 @@ export class BattleDjinnWindow {
         this.stats_window.close();
         this.data.cursor_manager.hide();
 
-        this.open_psy_bindings.forEach(signal_binding => {
-            signal_binding.detach();
-        });
-        this.open_psy_bindings = [];
+        this.data.control_manager.detach_bindings(this.open_psy_key);
+        this.open_psy_key = null;
 
         this.base_window.close(() => {
             this.window_active = false;
@@ -369,10 +367,8 @@ export class BattleDjinnWindow {
         this.data.cursor_manager.hide();
         this.data.control_manager.reset();
 
-        this.open_psy_bindings.forEach(signal_binding => {
-            signal_binding.detach();
-        });
-        this.open_psy_bindings = [];
+        this.data.control_manager.detach_bindings(this.open_psy_key);
+        this.open_psy_key = null;
 
         this.stats_window.close();
         this.base_window.close(() => {
