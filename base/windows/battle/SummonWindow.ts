@@ -159,7 +159,7 @@ export class SummonWindow {
 
             this.other_sprites.push(this.base_window.create_at_group(SUMMON_ICON_X, summon_y, "abilities_icons", undefined, this.summons[i].key_name));
             let color = numbers.DEFAULT_FONT_COLOR;
-            if (!this.summons[i].available) {
+            if (!this.summons[i].can_be_summoned) {
                 color = numbers.RED_FONT_COLOR;
             }
 
@@ -183,12 +183,13 @@ export class SummonWindow {
             standby_djinni[elem] -= this.djinni_already_used[elem];
         }
 
-        this.all_summons = _.map(this.data.dbs.summons_db, summon => {
-            const available = _.every(summon.requirements, (value, elem) => value <= standby_djinni[elem]);
-            return Object.assign({}, summon, {
-                available: available,
-                index: available ? -summon.index : summon.index
-            });
+        this.all_summons = _.flatMap(this.data.info.summons_list, summon => {
+            if (!summon.available) return [];
+            const can_be_summoned = _.every(summon.requirements, (value, elem) => value <= standby_djinni[elem]);
+            return [Object.assign({}, summon, {
+                can_be_summoned: can_be_summoned,
+                index: can_be_summoned ? -summon.index : summon.index
+            })];
         });
 
         this.all_summons = _.sortBy(this.all_summons, [summon => {
@@ -230,7 +231,6 @@ export class SummonWindow {
     }
 
     open(char:MainChar, close_callback:Function, set_description:Function, djinni_already_used?:{[element: string]: number}) {
-        console.log(djinni_already_used);
         this.char = char;
         this.close_callback = close_callback;
         this.set_description = set_description;

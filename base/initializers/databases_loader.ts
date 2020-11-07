@@ -23,8 +23,4 @@ export function load_databases(game, dbs) {
     dbs.interactable_objects_db = _.mapKeys(dbs.interactable_objects_db, interactable_object_data => interactable_object_data.key_name);
     dbs.enemies_parties_db = _.mapKeys(dbs.enemies_parties_db, enemy_party_data => enemy_party_data.key_name);
     dbs.npc_db = _.mapKeys(dbs.npc_db, npc_data => npc_data.key_name);
-    dbs.summons_db = _.mapKeys(dbs.summons_db, (summon_data, index) => {
-        summon_data.index = parseInt(index);
-        return summon_data.key_name;
-    });
 }

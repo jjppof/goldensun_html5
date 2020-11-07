@@ -200,7 +200,7 @@ export class MainBattleMenu {
                     ability = "set_djinn";
 
                 } else if (action_type === "summon") {
-                    const requirements = this.data.dbs.summons_db[ability].requirements;
+                    const requirements = this.data.info.summons_list[ability].requirements;
                     summon_used_djinn = _.mapValues(this.djinni_already_used, (value, elem) => {
                         return value + requirements[elem];
                     });
@@ -260,7 +260,7 @@ export class MainBattleMenu {
             if (pop_ability) {
                 const ability_info = this.abilities[next_char.key_name].pop();
                 if (this.data.info.abilities_list[ability_info.key_name].ability_category === ability_categories.SUMMON) {
-                    const requirements = this.data.dbs.summons_db[ability_info.key_name].requirements;
+                    const requirements = this.data.info.summons_list[ability_info.key_name].requirements;
                     this.djinni_already_used = _.mapValues(this.djinni_already_used, (value, elem) => {
                         return value - requirements[elem];
                     });
