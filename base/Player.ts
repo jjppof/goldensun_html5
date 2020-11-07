@@ -33,6 +33,27 @@ export const main_stats = {
     LUCK: "luk"
 };
 
+export const ordered_status_battle = [
+    permanent_status.DOWNED,
+    permanent_status.EQUIP_CURSE,
+    temporary_status.DEATH_CURSE,
+    permanent_status.POISON,
+    permanent_status.VENOM,
+    temporary_status.SEAL,
+    temporary_status.STUN,
+    temporary_status.SLEEP,
+    permanent_status.HAUNT,
+    temporary_status.DELUSION
+]
+
+export const ordered_status_menu = [
+    permanent_status.DOWNED,
+    permanent_status.POISON,
+    permanent_status.VENOM,
+    permanent_status.EQUIP_CURSE,
+    permanent_status.HAUNT
+]
+
 export const ordered_main_stats = [
     main_stats.MAX_HP,
     main_stats.MAX_PP,

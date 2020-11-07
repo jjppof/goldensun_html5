@@ -1,6 +1,5 @@
 import * as numbers from './magic_numbers';
 import * as _ from "lodash";
-import { temporary_status, permanent_status } from "./Player";
 
 /*Element keys*/
 export const elements = {
@@ -23,27 +22,6 @@ export const element_names = {
     [elements.MARS]: "Fire",
     [elements.JUPITER]: "Wind"
 };
-
-export const ordered_status_battle = [
-    permanent_status.DOWNED,
-    permanent_status.EQUIP_CURSE,
-    temporary_status.DEATH_CURSE,
-    permanent_status.POISON,
-    permanent_status.VENOM,
-    temporary_status.SEAL,
-    temporary_status.STUN,
-    temporary_status.SLEEP,
-    permanent_status.HAUNT,
-    temporary_status.DELUSION
-]
-
-export const ordered_status_menu = [
-    permanent_status.DOWNED,
-    permanent_status.POISON,
-    permanent_status.VENOM,
-    permanent_status.EQUIP_CURSE,
-    permanent_status.HAUNT
-]
 
 /*8-Directional direction values*/
 export const directions = {
@@ -80,7 +58,8 @@ export const base_actions = {
     PUSH: "push",
     CLIMB: "climb",
     CAST: "cast",
-    JUMP: "jump"
+    JUMP: "jump",
+    BATTLE: "battle"
 };
 
 

@@ -2,10 +2,10 @@ import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle";
 import { GoldenSun } from "../../GoldenSun";
 import { MainChar } from "../../MainChar";
 import { ComponentStates, StatusMultiComponent } from "../../support_menus/StatusMultiComponent";
+import { main_stats, temporary_status, ordered_status_battle, ordered_status_menu } from "../../Player";
 import { TextObj, Window } from "../../Window";
-import { elements, ordered_elements, ordered_status_battle, ordered_status_menu } from "../../utils";
+import { base_actions, elements } from "../../utils";
 import * as _ from "lodash";
-import { main_stats, temporary_status } from "../../Player";
 
 export type BattleStatusEffect = {
     key:string,
@@ -387,15 +387,15 @@ export class BattleStatusWindow{
         this.avatar = this.window.create_at_group(BattleStatusWindow.AVATAR.X, BattleStatusWindow.AVATAR.Y,
             "avatars", undefined, this.selected_char.key_name, BattleStatusWindow.GROUP_KEY);
         
-        let sprite_key = this.selected_char.key_name + "_battle";
+        let sprite_key = this.selected_char.sprite_base.getActionKey(base_actions.BATTLE);
         let sprite_base = this.data.info.main_char_list[this.selected_char.key_name].sprite_base;
 
         this.battle_sprite = this.window.create_at_group(BattleStatusWindow.BATTLESPRITE.CENTER_X, BattleStatusWindow.BATTLESPRITE.END_Y,
             sprite_key, undefined, undefined, BattleStatusWindow.GROUP_KEY);
         this.battle_sprite.anchor.setTo(0.5, 1);
 
-        sprite_base.setAnimation(this.battle_sprite, "battle");
-        this.battle_sprite.animations.play("battle_back");
+        sprite_base.setAnimation(this.battle_sprite, base_actions.BATTLE);
+        this.battle_sprite.animations.play(sprite_base.getAnimationKey(base_actions.BATTLE, "back"));
 
         //TO DO: add shadow
         //TO DO: add weapon

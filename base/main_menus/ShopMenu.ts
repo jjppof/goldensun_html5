@@ -107,7 +107,7 @@ export class ShopMenu{
         this.shop_key = null;
         this.close_callback = null;
 
-        this.items_db = this.data.info.items_list as any;
+        this.items_db = this.data.info.items_list;
         this.shops_db = _.mapKeys(this.data.dbs.shops_db, shop => shop.key_name) as {[key_name:string] : Shop};
         this.shopkeep_dialog_db = this.data.dbs.shopkeep_dialog_db;
 
