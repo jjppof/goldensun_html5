@@ -319,6 +319,7 @@ export class ShopMenu{
     close_menu() {
         if (!this.horizontal_menu.menu_active) return;
         this.horizontal_menu.close();
+        this.data.cursor_manager.hide();
 
         this.npc_dialog.update_dialog("goodbye"); 
 

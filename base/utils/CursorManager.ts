@@ -178,6 +178,7 @@ export class CursorManager{
     }
 
     public hide(){
+        this.clear_tweens();
         this.group.visible = false;
     }
 

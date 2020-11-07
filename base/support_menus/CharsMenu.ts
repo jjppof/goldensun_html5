@@ -325,7 +325,7 @@ export class CharsMenu {
         let cursor_x = 0;
         let cursor_y = 0;
         let tween_config = {type: null, variant: null};
-        let animate = true;
+        let animate = false;
 
         if(this.mode===SHOP_MODE){
             cursor_x = CURSOR_X + pos*GAP_SIZE;

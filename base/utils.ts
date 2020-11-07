@@ -62,7 +62,6 @@ export const base_actions = {
     BATTLE: "battle"
 };
 
-
 /*Returns the angle for an 8-Directional value
 Works clockwise starting with "Right"
 

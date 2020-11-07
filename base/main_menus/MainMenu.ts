@@ -89,6 +89,7 @@ export class MainMenu {
     close_menu() {
         if (!this.horizontal_menu.menu_active) return;
         this.data.control_manager.reset();
+        this.data.cursor_manager.hide();
 
         let promises:Promise<void>[] = [];
 

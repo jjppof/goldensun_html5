@@ -4,7 +4,7 @@ import { item_types } from '../../Item';
 import { effect_operators, effect_types } from '../../Effect';
 import { GoldenSun } from '../../GoldenSun';
 import { MainChar } from '../../MainChar';
-import { main_stats } from '../../Player';
+import { effect_type_stat, main_stats } from '../../Player';
 import * as _ from "lodash";
 
 const BASE_X = 128;
@@ -249,13 +249,17 @@ export class EquipCompare {
                char_current_item = this.data.info.items_list[eq_slots[slot_types[i]].key_name].key_name;
         }
 
-        let diffs = {atk: 0, def: 0, agi: 0};
-        let labels = ["ATTACK", "DEFENSE", "AGILITY"];
+        let diffs = {
+            [main_stats.ATTACK]: 0,
+            [main_stats.DEFENSE]: 0,
+            [main_stats.AGILITY]: 0
+        };
+        let labels = [effect_types.ATTACK, effect_types.DEFENSE, effect_types.AGILITY];
 
         for(let i=0; i<labels.length; i++){
-            diffs[main_stats[labels[i]]] = this.compare_items(char_current_item, this.selected_item, effect_types[labels[i]], this.selected_char[main_stats[labels[i]]]);
+            diffs[effect_type_stat[labels[i]]] = this.compare_items(char_current_item, this.selected_item, labels[i], this.selected_char[effect_type_stat[labels[i]]]);
 
-            this.display_stat(effect_types[labels[i]], this.selected_char[main_stats[labels[i]]], diffs[main_stats[labels[i]]]);
+            this.display_stat(labels[i], this.selected_char[effect_type_stat[labels[i]]], diffs[effect_type_stat[labels[i]]]);
         }
 
         let name = this.data.info.items_list[char_current_item] ? this.data.info.items_list[char_current_item].name : "";
