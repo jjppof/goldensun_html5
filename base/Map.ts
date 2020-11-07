@@ -212,6 +212,12 @@ export class Map {
                         Math.round(collision_object.x) + (Math.round(collision_object.width) >> 1),
                         Math.round(collision_object.y) + (Math.round(collision_object.height) >> 1)
                     );
+                } else if (collision_object.ellipse) {
+                    this.collision_sprite.body.addCircle(
+                        collision_object.width >> 1,
+                        Math.round(collision_object.x) + (Math.round(collision_object.width) >> 1),
+                        Math.round(collision_object.y) + (Math.round(collision_object.height) >> 1)
+                    );
                 }
             }
         } else {
