@@ -1,7 +1,7 @@
 import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle";
 import { GoldenSun } from "../../GoldenSun";
 import { MainChar } from "../../MainChar";
-import { ComponentStates, StatusMultiComponent } from "../../support_menus/StatusMultiComponent";
+import { ComponentStates, StatusMultiComponent } from "../../status/StatusMultiComponent";
 import { main_stats, temporary_status, ordered_status_battle, ordered_status_menu, permanent_status } from "../../Player";
 import { TextObj, Window } from "../../Window";
 import { base_actions, elements } from "../../utils";
