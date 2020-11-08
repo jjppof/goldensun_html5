@@ -110,10 +110,7 @@ export class MainBattleMenu {
         switch (this.start_buttons_keys[this.start_horizontal_menu.selected_button_index]) {
             case "fight":
                 this.start_horizontal_menu.close(()=>{
-                    
-                    let filtered_buttons = [];
-                    this.current_buttons = this.inner_buttons_keys.filter(key => !filtered_buttons.includes(key));
-                    this.inner_horizontal_menu.mount_buttons(filtered_buttons);
+                    this.current_buttons = this.inner_buttons_keys;
                     this.abilities = {};
                     this.data.info.party_data.members.slice(0, MAX_CHARS_IN_BATTLE).forEach((char:MainChar) => {
                         this.abilities[char.key_name] = [];
