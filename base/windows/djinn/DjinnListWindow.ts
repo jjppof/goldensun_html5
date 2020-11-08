@@ -625,8 +625,9 @@ export class DjinnListWindow {
     }
 
     change_djinn_status() {
+        let djinn_index = this.setting_djinn_status ? this.setting_djinn_status_djinn_index : this.selected_djinn_index;
         const this_char = this.data.info.party_data.members[this.selected_char_index];
-        const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
+        const this_djinn = this.data.info.djinni_list[this_char.djinni[djinn_index]];
 
         if (this_djinn.status === djinn_status.SET) {
             this_djinn.set_status(djinn_status.STANDBY, this_char);
