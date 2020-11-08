@@ -612,7 +612,7 @@ export class DjinnListWindow {
 
                 if (execute_operation) {
                     this.change_djinn_status();
-                    this.cancel_djinn_status_set(true);
+                    this.cancel_djinn_status_set();
                 }
                 else{
                     this.grant_control(this.cancel_djinn_status_set.bind(this, true), this.set_djinn_operation.bind(this));
