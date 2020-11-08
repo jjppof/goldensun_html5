@@ -264,11 +264,12 @@ export class CharsMenu {
     }
 
     select_char(index:number){
+        this.move_cursor(index);
+        
         if(index !== this.selected_index){
             this.unset_character(this.selected_index);
             this.selected_index =  index;
             this.set_character(this.selected_index);
-            this.move_cursor(index);
         }
         
         if(this.on_change){
