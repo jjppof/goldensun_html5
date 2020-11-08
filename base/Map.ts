@@ -40,7 +40,7 @@ export class Map {
     public show_footsteps: boolean;
     public assets_loaded: boolean;
     public lazy_load: boolean;
-    public layers: any;
+    public layers: any[];
     public collision_embedded: boolean;
     public is_world_map: boolean;
 
@@ -473,7 +473,7 @@ export class Map {
         for (let i = 0; i < this.layers.length; ++i) {
             let layer = this.sprite.createLayer(this.layers[i].name);
             this.layers[i].sprite = layer;
-            this.layers[i].sprite.layer_z = this.layers[i].properties.z === undefined ? i : this.layers[i].properties.z;
+            layer.layer_z = this.layers[i].properties.z === undefined ? i : this.layers[i].properties.z;
             layer.resizeWorld();
             if (this.layers[i].properties.blendMode !== undefined) {
                 layer.blendMode = PIXI.blendModes[this.layers[i].properties.blendMode] as unknown as PIXI.blendModes;

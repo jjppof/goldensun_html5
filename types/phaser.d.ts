@@ -5434,9 +5434,11 @@ declare module Phaser {
         game: Phaser.Game;
         index: number;
         layer: Phaser.TilemapLayer;
+        layer_z: number;
         map: Phaser.Tilemap;
         name: string;
         physicsType: number;
+        properties: any;
         renderSettings: { enableScrollDelta: boolean; overdrawRatio: number; copyCanvas: any; };
         scrollFactorX: number;
         scrollFactorY: number;

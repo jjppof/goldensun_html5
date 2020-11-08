@@ -1,30 +1,30 @@
-export const item_types = {
-    WEAPONS: "weapons",
-    ARMOR: "armor",
-    CHEST_PROTECTOR: "chest_protector",
-    HEAD_PROTECTOR: "head_protector",
-    LEG_PROTECTOR: "leg_protector",
-    ABILITY_GRANTOR: "ability_grantor",
-    LUCKY_CHARM: "lucky_charm",
-    RING: "ring",
-    UNDERWEAR: "underwear",
-    GENERAL_ITEM: "general_item",
-    SHIRT: "shirt"
+export enum item_types {
+    WEAPONS = "weapons",
+    ARMOR = "armor",
+    CHEST_PROTECTOR = "chest_protector",
+    HEAD_PROTECTOR = "head_protector",
+    LEG_PROTECTOR = "leg_protector",
+    ABILITY_GRANTOR = "ability_grantor",
+    LUCKY_CHARM = "lucky_charm",
+    RING = "ring",
+    UNDERWEAR = "underwear",
+    GENERAL_ITEM = "general_item",
+    SHIRT = "shirt"
 };
 
-export const use_types = {
-    MULTIPLE_USES: "multiple_uses",
-    SINGLE_USE: "single_use",
-    BREAKS_WHEN_USE: "breaks_when_use",
-    NO_USE: "no_use"
+export enum use_types {
+    MULTIPLE_USES = "multiple_uses",
+    SINGLE_USE = "single_use",
+    BREAKS_WHEN_USE = "breaks_when_use",
+    NO_USE = "no_use"
 }
 
 export class Item {
     public key_name: string;
     public name: string;
-    public type: string;
+    public type: item_types;
     public description: string;
-    public use_type: string;
+    public use_type: use_types;
     public curses_when_equipped: boolean;
     public cant_be_removed: boolean;
     public rare_item: boolean;

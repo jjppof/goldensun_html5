@@ -2,10 +2,10 @@ import * as numbers from './magic_numbers';
 import { ordered_elements } from './utils';
 import * as _ from "lodash";
 
-export const djinn_status = {
-    SET: "set",
-    STANDBY: "standby",
-    RECOVERY: "recovery"
+export enum djinn_status {
+    SET = "set",
+    STANDBY = "standby",
+    RECOVERY = "recovery"
 };
 
 export const djinn_font_colors= {
@@ -26,7 +26,7 @@ export class Djinn {
     public def_boost: number;
     public agi_boost: number;
     public luk_boost: number;
-    public status: string;
+    public status: djinn_status;
     public index: number;
     public recovery_turn: number;
 

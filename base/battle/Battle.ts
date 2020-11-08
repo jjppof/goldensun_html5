@@ -8,7 +8,7 @@ import { ChoosingTargetWindow } from "../windows/battle/ChoosingTargetWindow";
 import { EnemyAI } from "./EnemyAI";
 import { BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE } from "./BattleFormulas";
 import { effect_types, Effect, effect_usages, effect_names, effect_msg } from "../Effect";
-import { variation, ordered_elements, element_names } from "../utils";
+import { variation, ordered_elements, element_names, base_actions } from "../utils";
 import { djinn_status, Djinn } from "../Djinn";
 import { ItemSlot, MainChar } from "../MainChar";
 import { BattleAnimationManager } from "./BattleAnimationManager";
@@ -93,10 +93,10 @@ export class Battle {
         this.game = game;
         this.data = data;
 
-        this.allies_info = this.data.info.party_data.members.slice(0, MAX_CHARS_IN_BATTLE).map((char:MainChar) => {
+        this.allies_info = this.data.info.party_data.members.slice(0, MAX_CHARS_IN_BATTLE).map(char => {
             char.init_effect_turns_count();
             return {
-                sprite_key: char.key_name + "_battle",
+                sprite_key: char.sprite_base.getActionKey(base_actions.BATTLE),
                 scale: char.battle_scale,
                 instance: char,
                 entered_in_battle: true
@@ -685,7 +685,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             switch(effect.type) {
                 case effect_types.PERMANENT_STATUS:
                     if (effect.add_status) {
-                        if (target_instance.has_permanent_status(effect.status_key_name)) break;
+                        if (target_instance.has_permanent_status(effect.status_key_name as permanent_status)) break;
                         if (effect.status_key_name === permanent_status.POISON && target_instance.has_permanent_status(permanent_status.VENOM)) break;
                     }
                     
@@ -702,7 +702,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                             const this_effect = target_instance.add_effect(effect, ability, true).effect;
 
                             if (this_effect.type === effect_types.TEMPORARY_STATUS) {
-                                if (!target_instance.has_temporary_status(this_effect.status_key_name)) {
+                                if (!target_instance.has_temporary_status(this_effect.status_key_name as temporary_status)) {
                                     this.on_going_effects.push(this_effect);
                                 }
 

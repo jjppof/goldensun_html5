@@ -42,7 +42,7 @@ export class ControllableChar {
     public body_radius: number;
     public tile_x_pos: number;
     public tile_y_pos: number;
-    public current_action: string;
+    public current_action: string|base_actions;
     public current_direction: number;
     public required_direction: number;
     public desired_direction: number;
@@ -212,7 +212,7 @@ export class ControllableChar {
     }
 
     check_half_crop_tile(force: boolean = false) {
-        const tiles = this.data.map.get_current_tile(this);
+        const tiles = this.data.map.get_current_tile(this) as Phaser.Tile[];
         for (let i = 0; i < tiles.length; ++i) {
             const tile = tiles[i];
             if (tile.properties.half_crop) {
@@ -267,7 +267,7 @@ export class ControllableChar {
     }
 
     tile_able_to_show_footprint() {
-        const tiles = this.data.map.get_current_tile(this);
+        const tiles = this.data.map.get_current_tile(this) as Phaser.Tile[];
         for (let i = 0; i < tiles.length; ++i) {
             const tile = tiles[i];
             if (tile.properties.hasOwnProperty("disable_footprint")) {
@@ -321,7 +321,7 @@ export class ControllableChar {
     }
 
     apply_speed() {
-        if ([base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action)) { //sets the final velocity
+        if ([base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action as base_actions)) { //sets the final velocity
             this.sprite.body.velocity.x = this.sprite.body.velocity.temp_x;
             this.sprite.body.velocity.y = this.sprite.body.velocity.temp_y;
         }

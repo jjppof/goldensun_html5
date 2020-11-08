@@ -117,7 +117,7 @@ export class Hero extends ControllableChar {
             if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
                 if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
                     const interactable_object = map.interactable_objects[j];
-                    if ([base_actions.WALK, base_actions.DASH].includes(this.current_action) && this.data.map.collision_layer === interactable_object.base_collision_layer) {
+                    if ([base_actions.WALK, base_actions.DASH].includes(this.current_action as base_actions) && this.data.map.collision_layer === interactable_object.base_collision_layer) {
                         this.trying_to_push = true;
                         if (this.push_timer === null) {
                             this.trying_to_push_direction = this.current_direction;
@@ -172,7 +172,7 @@ export class Hero extends ControllableChar {
             this.check_interactable_objects(map, contact);
         }
         //normals having length, means that a collision is happening
-        if (normals.length && [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action)) {
+        if (normals.length && [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action as base_actions)) {
             const speed_limit = this.data.map.is_world_map ? SPEED_LIMIT_TO_STOP_WORLD_MAP : SPEED_LIMIT_TO_STOP;
             if (Math.abs(this.sprite.body.velocity.x) < speed_limit && Math.abs(this.sprite.body.velocity.y) < speed_limit) { //speeds below SPEED_LIMIT_TO_STOP are not considered
                 let contact_point_directions = new Array(normals.length); // a contact point direction is the opposite direction of the contact normal vector

@@ -1,40 +1,40 @@
-export const ability_types = {
-    HEALING: "healing",
-    EFFECT_ONLY: "effect_only",
-    ADDED_DAMAGE: "added_damage",
-    MULTIPLIER: "multiplier",
-    BASE_DAMAGE: "base_damage",
-    SUMMON: "summon",
-    UTILITY: "utility",
-    DIRECT_DAMAGE: "direct_damage"
+export enum ability_types {
+    HEALING = "healing",
+    EFFECT_ONLY = "effect_only",
+    ADDED_DAMAGE = "added_damage",
+    MULTIPLIER = "multiplier",
+    BASE_DAMAGE = "base_damage",
+    SUMMON = "summon",
+    UTILITY = "utility",
+    DIRECT_DAMAGE = "direct_damage"
 };
 
-export const ability_msg_types = {
-    CAST: "cast",
-    ATTACK: "attack",
-    USE: "use",
-    SUMMON: "summon",
-    UNLEASH: "unleash",
-    DEFEND: "defend",
-    ITEM_UNLEASH: "item_unleash",
-    SET_DJINN: "set_djinn",
-    NO_MSG: "no_msg"
+export enum ability_msg_types {
+    CAST = "cast",
+    ATTACK = "attack",
+    USE = "use",
+    SUMMON = "summon",
+    UNLEASH = "unleash",
+    DEFEND = "defend",
+    ITEM_UNLEASH = "item_unleash",
+    SET_DJINN = "set_djinn",
+    NO_MSG = "no_msg"
 };
 
-export const ability_target_types = {
-    NO_TARGET: "no_target",
-    ALLY: "ally",
-    ENEMY: "enemy",
-    USER: "user"
+export enum ability_target_types {
+    NO_TARGET = "no_target",
+    ALLY = "ally",
+    ENEMY = "enemy",
+    USER = "user"
 };
 
-export const ability_categories = {
-    PSYNERGY: "psynergy",
-    DJINN: "djinn",
-    SUMMON: "summon",
-    ITEM: "item",
-    WEAPON_UNLEASH: "weapon_unleash",
-    NORMAL: "normal"
+export enum ability_categories {
+    PSYNERGY = "psynergy",
+    DJINN = "djinn",
+    SUMMON = "summon",
+    ITEM = "item",
+    WEAPON_UNLEASH = "weapon_unleash",
+    NORMAL = "normal"
 }
 
 export const diminishing_ratios = {
@@ -76,7 +76,7 @@ export class Ability {
     public key_name: string;
     public name: string;
     public description: string;
-    public type: string;
+    public type: ability_types;
     public element: string;
     public battle_target: string;
     public range: number;
@@ -86,7 +86,7 @@ export class Ability {
     public is_battle_ability: boolean;
     public is_field_psynergy: boolean;
     public effects: any;
-    public ability_category: string;
+    public ability_category: ability_categories;
     public battle_animation_key: string;
     public priority_move: boolean;
     public has_critical: boolean;
@@ -94,7 +94,7 @@ export class Ability {
     public can_switch_to_unleash: boolean;
     public can_be_evaded: boolean;
     public use_diminishing_ratio: boolean;
-    public msg_type: string;
+    public msg_type: ability_msg_types;
     public affects_pp: boolean;
     public has_animation_variation: boolean;
 
