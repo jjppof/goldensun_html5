@@ -1,36 +1,72 @@
 import { Effect, effect_types } from "./Effect";
 import { ordered_elements } from "./utils";
 
-export const fighter_types = {
-    ALLY: 1,
-    ENEMY: 2,
+export enum fighter_types {
+    ALLY = 1,
+    ENEMY = 2,
 };
 
-export const temporary_status = {
-    DELUSION: "delusion",
-    STUN: "stun",
-    SLEEP: "sleep",
-    SEAL: "seal",
-    DEATH_CURSE: "death_curse"
+export enum temporary_status {
+    DELUSION = "delusion",
+    STUN = "stun",
+    SLEEP = "sleep",
+    SEAL = "seal",
+    DEATH_CURSE = "death_curse"
 };
 
-export const permanent_status = {
-    DOWNED: "downed",
-    POISON: "poison",
-    VENOM: "venom",
-    EQUIP_CURSE: "equip_curse",
-    HAUNT: "haunt"
+export enum permanent_status {
+    DOWNED = "downed",
+    POISON = "poison",
+    VENOM = "venom",
+    EQUIP_CURSE = "equip_curse",
+    HAUNT = "haunt"
 };
 
-export const main_stats = {
-    MAX_HP: "max_hp",
-    CURRENT_HP: "current_hp",
-    MAX_PP: "max_pp",
-    CURRENT_PP: "current_pp",
-    ATTACK: "atk",
-    DEFENSE: "def",
-    AGILITY: "agi",
-    LUCK: "luk"
+export enum main_stats {
+    MAX_HP = "max_hp",
+    CURRENT_HP = "current_hp",
+    MAX_PP = "max_pp",
+    CURRENT_PP = "current_pp",
+    ATTACK = "atk",
+    DEFENSE = "def",
+    AGILITY = "agi",
+    LUCK = "luk"
+};
+
+export type effect_type_stat = (typeof effect_type_stat)[keyof typeof effect_type_stat]
+export const effect_type_stat = {
+    [effect_types.MAX_HP]: main_stats.MAX_HP,
+    [effect_types.MAX_PP]: main_stats.MAX_PP,
+    [effect_types.ATTACK]: main_stats.ATTACK,
+    [effect_types.DEFENSE]: main_stats.DEFENSE,
+    [effect_types.AGILITY]: main_stats.AGILITY,
+    [effect_types.LUCK]: main_stats.LUCK,
+    [effect_types.CURRENT_HP]: main_stats.CURRENT_HP,
+    [effect_types.CURRENT_PP]: main_stats.CURRENT_PP
+} as const;
+
+export const on_catch_status_msg = {
+    [temporary_status.DELUSION]: target => `${target.name} is wrapped in delusion!`,
+    [temporary_status.STUN]: target => `${target.name} has been stunned!`,
+    [temporary_status.SLEEP]: target => `${target.name} falls asleep!`,
+    [temporary_status.SEAL]: target => `${target.name}'s Psynergy has been sealed!`,
+    [temporary_status.DEATH_CURSE]: target => `The Spirit of Death embraces ${target.name}!`,
+    [permanent_status.DOWNED]: target => {
+        return target.fighter_type === fighter_types.ALLY ? `${target.name} was downed...` : `You felled ${target.name}!`;
+    },
+    [permanent_status.POISON]: target => `${target.name} is infected with poison!`,
+    [permanent_status.VENOM]: target => `${target.name} is infected with deadly poison!`,
+    [permanent_status.HAUNT]: target => `An evil spirit grips ${target.name}!`
+};
+
+export const on_remove_status_msg = {
+    [temporary_status.DELUSION]: target => `${target.name} sees clearly once again!`,
+    [temporary_status.STUN]: target => `${target.name} is no longer stunned!`,
+    [temporary_status.SLEEP]: target => `${target.name} wakes from slumber!`,
+    [temporary_status.SEAL]: target => `${target.name}'s Psynergy seal is gone!`,
+    [permanent_status.DOWNED]: target => `${target.name}'s has been revived!`,
+    [permanent_status.POISON]: target => `The poison is purged from ${target.name}!`,
+    [permanent_status.VENOM]: target => `The venom is purged from ${target.name}!`
 };
 
 export const ordered_status_battle = [
@@ -63,50 +99,15 @@ export const ordered_main_stats = [
     main_stats.LUCK
 ];
 
-export const effect_type_stat = {
-    [effect_types.MAX_HP]: main_stats.MAX_HP,
-    [effect_types.MAX_PP]: main_stats.MAX_PP,
-    [effect_types.ATTACK]: main_stats.ATTACK,
-    [effect_types.DEFENSE]: main_stats.DEFENSE,
-    [effect_types.AGILITY]: main_stats.AGILITY,
-    [effect_types.LUCK]: main_stats.LUCK,
-    [effect_types.CURRENT_HP]: main_stats.CURRENT_HP,
-    [effect_types.CURRENT_PP]: main_stats.CURRENT_PP
-};
-
-export const on_catch_status_msg = {
-    [temporary_status.DELUSION]: target => `${target.name} is wrapped in delusion!`,
-    [temporary_status.STUN]: target => `${target.name} has been stunned!`,
-    [temporary_status.SLEEP]: target => `${target.name} falls asleep!`,
-    [temporary_status.SEAL]: target => `${target.name}'s Psynergy has been sealed!`,
-    [temporary_status.DEATH_CURSE]: target => `The Spirit of Death embraces ${target.name}!`,
-    [permanent_status.DOWNED]: target => {
-        return target.fighter_type === fighter_types.ALLY ? `${target.name} was downed...` : `You felled ${target.name}!`;
-    },
-    [permanent_status.POISON]: target => `${target.name} is infected with poison!`,
-    [permanent_status.VENOM]: target => `${target.name} is infected with deadly poison!`,
-    [permanent_status.HAUNT]: target => `An evil spirit grips ${target.name}!`
-};
-
-export const on_remove_status_msg = {
-    [temporary_status.DELUSION]: target => `${target.name} sees clearly once again!`,
-    [temporary_status.STUN]: target => `${target.name} is no longer stunned!`,
-    [temporary_status.SLEEP]: target => `${target.name} wakes from slumber!`,
-    [temporary_status.SEAL]: target => `${target.name}'s Psynergy seal is gone!`,
-    [permanent_status.DOWNED]: target => `${target.name}'s has been revived!`,
-    [permanent_status.POISON]: target => `The poison is purged from ${target.name}!`,
-    [permanent_status.VENOM]: target => `The venom is purged from ${target.name}!`
-};
-
 export class Player {
     public key_name: string;
     public name: string;
-    public temporary_status: Set<string>;
-    public permanent_status: Set<string>;
+    public temporary_status: Set<temporary_status>;
+    public permanent_status: Set<permanent_status>;
     public effects: Effect[];
     public effect_turns_count: {[effect: string]: number|{[element: string]: number}};
     public battle_scale: number;
-    public fighter_type: number;
+    public fighter_type: fighter_types;
     public venus_level_current: number;
     public mercury_level_current: number;
     public mars_level_current: number;
@@ -166,7 +167,7 @@ export class Player {
         }
     }
 
-    get_effect_turns_key(effect) {
+    get_effect_turns_key(effect: Effect) {
         switch (effect.type) {
             case effect_types.TEMPORARY_STATUS:
                 return effect.status_key_name;
@@ -253,7 +254,7 @@ export class Player {
         };
     }
 
-    remove_effect(effect_to_remove, apply = false) {
+    remove_effect(effect_to_remove: Effect, apply: boolean = false) {
         this.effects = this.effects.filter(effect => {
             return effect !== effect_to_remove;
         });
@@ -262,27 +263,27 @@ export class Player {
         }
     }
 
-    add_permanent_status(status) {
+    add_permanent_status(status: permanent_status) {
         this.permanent_status.add(status);
     }
 
-    remove_permanent_status(status) {
+    remove_permanent_status(status: permanent_status) {
         this.permanent_status.delete(status);
     }
 
-    has_permanent_status(status) {
+    has_permanent_status(status: permanent_status) {
         return this.permanent_status.has(status);
     }
 
-    add_temporary_status(status) {
+    add_temporary_status(status: temporary_status) {
         this.temporary_status.add(status);
     }
 
-    remove_temporary_status(status) {
+    remove_temporary_status(status: temporary_status) {
         this.temporary_status.delete(status);
     }
 
-    has_temporary_status(status) {
+    has_temporary_status(status: temporary_status) {
         return this.temporary_status.has(status);
     }
 

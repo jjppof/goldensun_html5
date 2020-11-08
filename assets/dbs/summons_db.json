@@ -1,6 +1,7 @@
 [
     {
         "key_name": "venus",
+        "available": true,
         "requirements": {
             "venus": 1,
             "mercury": 0,
@@ -9,6 +10,7 @@
         }
     },{
         "key_name": "mercury",
+        "available": true,
         "requirements": {
             "venus": 0,
             "mercury": 1,
@@ -17,6 +19,7 @@
         }
     },{
         "key_name": "mars",
+        "available": true,
         "requirements": {
             "venus": 0,
             "mercury": 0,
@@ -25,6 +28,7 @@
         }
     },{
         "key_name": "jupiter",
+        "available": true,
         "requirements": {
             "venus": 0,
             "mercury": 0,
@@ -33,6 +37,7 @@
         }
     },{
         "key_name": "ramses",
+        "available": true,
         "requirements": {
             "venus": 2,
             "mercury": 0,
@@ -41,6 +46,7 @@
         }
     },{
         "key_name": "nereid",
+        "available": true,
         "requirements": {
             "venus": 0,
             "mercury": 2,
@@ -49,6 +55,7 @@
         }
     },{
         "key_name": "kirin",
+        "available": true,
         "requirements": {
             "venus": 0,
             "mercury": 0,
@@ -57,6 +64,7 @@
         }
     },{
         "key_name": "atalanta",
+        "available": true,
         "requirements": {
             "venus": 0,
             "mercury": 0,
@@ -65,6 +73,7 @@
         }
     },{
         "key_name": "cybele",
+        "available": true,
         "requirements": {
             "venus": 3,
             "mercury": 0,
@@ -73,6 +82,7 @@
         }
     },{
         "key_name": "neptune",
+        "available": true,
         "requirements": {
             "venus": 0,
             "mercury": 3,
@@ -81,6 +91,7 @@
         }
     },{
         "key_name": "tiamat",
+        "available": true,
         "requirements": {
             "venus": 0,
             "mercury": 0,
@@ -89,6 +100,7 @@
         }
     },{
         "key_name": "procne",
+        "available": true,
         "requirements": {
             "venus": 0,
             "mercury": 0,
@@ -97,6 +109,7 @@
         }
     },{
         "key_name": "judgment",
+        "available": true,
         "requirements": {
             "venus": 4,
             "mercury": 0,
@@ -105,6 +118,7 @@
         }
     },{
         "key_name": "boreas",
+        "available": true,
         "requirements": {
             "venus": 0,
             "mercury": 4,
@@ -113,6 +127,7 @@
         }
     },{
         "key_name": "meteor",
+        "available": true,
         "requirements": {
             "venus": 0,
             "mercury": 0,
@@ -121,6 +136,7 @@
         }
     },{
         "key_name": "thor",
+        "available": true,
         "requirements": {
             "venus": 0,
             "mercury": 0,

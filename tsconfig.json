@@ -7,5 +7,11 @@
         "target": "es6",
         "allowJs": true,
         "sourceMap": true
-    }
+    },
+    "exclude": [
+        "./assets/filters/*.js",
+        "./dist",
+        "./node_modules",
+        "./static/*.js"
+    ]
 }

@@ -128,7 +128,7 @@ export class TileEventManager {
                 );
             } else {
                 const right_direction = this_event.activation_directions.includes(this.hero.current_direction);
-                if (right_direction && [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.hero.current_action)) {
+                if (right_direction && [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.hero.current_action as base_actions)) {
                     if (this.event_timers[this_event.id] && !this.event_timers[this_event.id].timer.expired) {
                         continue;
                     }

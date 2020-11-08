@@ -7,21 +7,21 @@ import { Collision } from './Collision';
 
 const NPC_TALK_RANGE = 3.0;
 
-export const npc_movement_types = {
-    IDLE: "idle",
-    WALK_AROUND: "walk_around"
+export enum npc_movement_types {
+    IDLE = "idle",
+    WALK_AROUND = "walk_around"
 };
 
-export const npc_types = {
-    NORMAL: "normal",
-    INN: "inn",
-    SHOP: "shop",
-    SPRITE: "sprite"
+export enum npc_types {
+    NORMAL = "normal",
+    INN = "inn",
+    SHOP = "shop",
+    SPRITE = "sprite"
 };
 
 export class NPC extends ControllableChar {
-    public movement_type: string;
-    public npc_type: string;
+    public movement_type: npc_movement_types;
+    public npc_type: npc_types;
     public message: string;
     public thought_message: string;
     public avatar: string;

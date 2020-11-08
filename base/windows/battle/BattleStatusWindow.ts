@@ -1,8 +1,8 @@
 import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle";
 import { GoldenSun } from "../../GoldenSun";
 import { MainChar } from "../../MainChar";
-import { ComponentStates, StatusMultiComponent } from "../../status/StatusMultiComponent";
-import { main_stats, temporary_status, ordered_status_battle, ordered_status_menu } from "../../Player";
+import { ComponentStates, StatusMultiComponent } from "../../support_menus/StatusMultiComponent";
+import { main_stats, temporary_status, ordered_status_battle, ordered_status_menu, permanent_status } from "../../Player";
 import { TextObj, Window } from "../../Window";
 import { base_actions, elements } from "../../utils";
 import * as _ from "lodash";
@@ -361,13 +361,13 @@ export class BattleStatusWindow{
         return effects;
     }
 
-    private get_status_effects(menu?:boolean){
+    private get_status_effects(menu?:boolean) {
         if(menu){
             return _.sortBy([...this.data.info.main_char_list[this.selected_char.key_name].permanent_status],
                 s => ordered_status_menu.indexOf(s));
         }
         else{
-            return _.sortBy([...this.data.info.main_char_list[this.selected_char.key_name].temporary_status].
+            return _.sortBy(([...this.data.info.main_char_list[this.selected_char.key_name].temporary_status] as (permanent_status|temporary_status)[]).
                 concat([...this.data.info.main_char_list[this.selected_char.key_name].permanent_status]),
                 s => ordered_status_battle.indexOf(s));
         }

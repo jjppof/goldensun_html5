@@ -51,15 +51,15 @@ export const reverse_directions = {
 };
 
 
-export const base_actions = {
-    IDLE: "idle",
-    WALK: "walk",
-    DASH: "dash",
-    PUSH: "push",
-    CLIMB: "climb",
-    CAST: "cast",
-    JUMP: "jump",
-    BATTLE: "battle"
+export enum base_actions {
+    IDLE = "idle",
+    WALK = "walk",
+    DASH = "dash",
+    PUSH = "push",
+    CLIMB = "climb",
+    CAST = "cast",
+    JUMP = "jump",
+    BATTLE = "battle"
 };
 
 /*Returns the angle for an 8-Directional value

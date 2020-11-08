@@ -16,6 +16,9 @@ import { Ability } from '../Ability';
 import { Item } from '../Item';
 import { Shop } from '../Shop';
 import { FieldAbilities } from '../field_abilities/FieldAbilities';
+import { Summon } from '../Summon';
+import { GoldenSun } from '../GoldenSun';
+import { initialize_summons } from './summons';
 
 export type PartyData = {
     members: MainChar[],
@@ -42,10 +45,11 @@ export type GameInfo = {
     misc_sprite_base_list: {[misc_key: string]: SpriteBase},
     iter_objs_sprite_base_list: {[iter_obj_key: string]: SpriteBase},
     shops_list: {[shop_key: string]: Shop},
+    summons_list: {[summon_key: string]: Summon},
     field_abilities_list: {[field_psynergy_key: string]: FieldAbilities},
 };
 
-export async function initialize_game_data(game, data) {
+export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     let load_maps_promise_resolve;
     const load_maps_promise = new Promise(resolve => {
         load_maps_promise_resolve = resolve;
@@ -113,6 +117,8 @@ export async function initialize_game_data(game, data) {
     await load_iter_objs_promise;
 
     data.info.shops_list = initialize_shops(data.dbs.shops_db);
+
+    data.info.summons_list = initialize_summons(data.dbs.summons_db);
 
     data.info.field_abilities_list = initialize_field_abilities(game, data);
 }

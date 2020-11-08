@@ -6,15 +6,15 @@ import { JumpEvent } from "./tile_events/JumpEvent";
 import { ClimbEvent } from "./tile_events/ClimbEvent";
 import { GoldenSun } from "./GoldenSun";
 
-export const interactable_object_interaction_types = {
-    ONCE: "once",
-    INFINITE: "infinite"
+export enum interactable_object_interaction_types {
+    ONCE = "once",
+    INFINITE = "infinite"
 };
 
-export const interactable_object_event_types = {
-    JUMP: "jump",
-    JUMP_AROUND: "jump_around",
-    CLIMB: "climb"
+export enum interactable_object_event_types {
+    JUMP = "jump",
+    JUMP_AROUND = "jump_around",
+    CLIMB = "climb"
 };
 
 export class InteractableObjects {

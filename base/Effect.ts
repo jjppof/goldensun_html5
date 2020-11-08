@@ -2,36 +2,37 @@ import { Ability } from "./Ability";
 import { Enemy } from "./Enemy";
 import { Item } from "./Item";
 import { MainChar } from "./MainChar";
-import { effect_type_stat, main_stats } from "./Player";
+import { effect_type_stat, main_stats, permanent_status, temporary_status } from "./Player";
 import { variation, elements } from "./utils"
 
-export const effect_types = {
-    MAX_HP: "max_hp",
-    MAX_PP: "max_pp",
-    ATTACK: "attack",
-    DEFENSE: "defense",
-    AGILITY: "agility",
-    LUCK: "luck",
-    POWER: "power",
-    RESIST: "resist",
-    CURRENT_HP: "current_hp",
-    CURRENT_PP: "current_pp",
-    HP_RECOVERY: "hp_recovery",
-    PP_RECOVERY: "pp_recovery",
-    CRITICALS: "criticals",
-    COUNTER_STRIKE: "counter_strike",
-    TEMPORARY_STATUS: "temporary_status",
-    PERMANENT_STATUS: "permanent_status",
-    TURNS: "turns",
-    ENCOUNTERS: "encounters",
-    FLEE: "flee",
-    END_THE_ROUND: "end_the_round",
-    ABILITY_POWER: "ability_power",
-    SET_DJINN: "set_djinn",
-    DAMAGE_MODIFIER: "damage_modifier",
-    DAMAGE_INPUT: "damage_input"
+export enum effect_types {
+    MAX_HP = "max_hp",
+    MAX_PP = "max_pp",
+    ATTACK = "attack",
+    DEFENSE = "defense",
+    AGILITY = "agility",
+    LUCK = "luck",
+    POWER = "power",
+    RESIST = "resist",
+    CURRENT_HP = "current_hp",
+    CURRENT_PP = "current_pp",
+    HP_RECOVERY = "hp_recovery",
+    PP_RECOVERY = "pp_recovery",
+    CRITICALS = "criticals",
+    COUNTER_STRIKE = "counter_strike",
+    TEMPORARY_STATUS = "temporary_status",
+    PERMANENT_STATUS = "permanent_status",
+    TURNS = "turns",
+    ENCOUNTERS = "encounters",
+    FLEE = "flee",
+    END_THE_ROUND = "end_the_round",
+    ABILITY_POWER = "ability_power",
+    SET_DJINN = "set_djinn",
+    DAMAGE_MODIFIER = "damage_modifier",
+    DAMAGE_INPUT = "damage_input"
 };
 
+export type effect_names = (typeof effect_names)[keyof typeof effect_names]
 export const effect_names = {
     [effect_types.MAX_HP]: "HP",
     [effect_types.MAX_PP]: "PP",
@@ -41,23 +42,23 @@ export const effect_names = {
     [effect_types.LUCK]: "Luck",
     [effect_types.POWER]: "Power",
     [effect_types.RESIST]: "Resist"
+} as const;
+
+export enum effect_operators {
+    PLUS = "plus",
+    MINUS = "minus",
+    TIMES = "times",
+    DIVIDE = "divide"
 };
 
-export const effect_operators = {
-    PLUS: "plus",
-    MINUS: "minus",
-    TIMES: "times",
-    DIVIDE: "divide"
-};
-
-export const effect_usages = {
-    NOT_APPLY: "not_apply",
-    ON_USE: "on_use",
-    ON_TAKE: "on_take",
-    BATTLE_ROUND_START: "battle_round_start",
-    BATTLE_ROUND_END: "battle_round_end",
-    PLAYER_TURN_START: "player_turn_start",
-    PLAYER_TURN_END: "player_turn_end"
+export enum effect_usages {
+    NOT_APPLY = "not_apply",
+    ON_USE = "on_use",
+    ON_TAKE = "on_take",
+    BATTLE_ROUND_START = "battle_round_start",
+    BATTLE_ROUND_END = "battle_round_end",
+    PLAYER_TURN_START = "player_turn_start",
+    PLAYER_TURN_END = "player_turn_end"
 };
 
 export const effect_msg = {
@@ -66,16 +67,16 @@ export const effect_msg = {
 };
 
 export class Effect {
-    public type: string;
+    public type: effect_types;
     public quantity: number;
-    public operator: string;
+    public operator: effect_operators;
     public effect_owner_instance: Ability|Item;
     public quantity_is_absolute: boolean;
     public rate: number;
     public chance: number;
     public attribute: string;
     public add_status: boolean;
-    public status_key_name: string;
+    public status_key_name: permanent_status|temporary_status;
     public turns_quantity: number;
     public turn_count: number;
     public variation_on_final_result: boolean;
@@ -87,7 +88,7 @@ export class Effect {
     public show_msg: boolean;
     public char: MainChar|Enemy;
     public sub_effect: {
-        type: string,
+        type: effect_types,
         quantity_is_absolute: boolean,
         rate: number,
         chance: number,
@@ -95,7 +96,7 @@ export class Effect {
         variation_on_final_result: boolean,
         usage: string,
         on_caster: boolean,
-        operator: string
+        operator: effect_operators
     };
 
     constructor(
@@ -276,16 +277,16 @@ export class Effect {
                 return this.apply_general_value("turns");
             case effect_types.PERMANENT_STATUS:
                 if (this.add_status) {
-                    this.char.add_permanent_status(this.status_key_name);
+                    this.char.add_permanent_status(this.status_key_name as permanent_status);
                 } else {
-                    this.char.remove_permanent_status(this.status_key_name);
+                    this.char.remove_permanent_status(this.status_key_name as permanent_status);
                 }
                 return;
             case effect_types.TEMPORARY_STATUS:
                 if (this.add_status) {
-                    this.char.add_temporary_status(this.status_key_name);
+                    this.char.add_temporary_status(this.status_key_name as temporary_status);
                 } else {
-                    this.char.remove_temporary_status(this.status_key_name);
+                    this.char.remove_temporary_status(this.status_key_name as temporary_status);
                 }
                 return;
             case effect_types.DAMAGE_MODIFIER:
