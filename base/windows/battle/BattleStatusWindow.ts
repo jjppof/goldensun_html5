@@ -506,6 +506,7 @@ export class BattleStatusWindow{
         }
 
         if(this.current_component) this.current_component.on_change();
+        this.grant_control();
     }
 
     private check_shift(shift:boolean){
