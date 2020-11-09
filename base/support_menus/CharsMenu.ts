@@ -264,18 +264,18 @@ export class CharsMenu {
     }
 
     select_char(index:number){
-        this.move_cursor(index);
-        
-        if(index !== this.selected_index){
-            this.unset_character(this.selected_index);
-            this.selected_index =  index;
-            this.set_character(this.selected_index);
-        }
-        
-        if(this.on_change){
-            let c = this.data.info.party_data.members[this.current_line*MAX_PER_LINE + this.selected_index];
-            this.on_change(c.key_name);
-        }
+        this.move_cursor(index, ()=>{
+            if(index !== this.selected_index){
+                this.unset_character(this.selected_index);
+                this.selected_index =  index;
+                this.set_character(this.selected_index);
+            }
+            
+            if(this.on_change){
+                let c = this.data.info.party_data.members[this.current_line*MAX_PER_LINE + this.selected_index];
+                this.on_change(c.key_name);
+            }
+        });
     }
 
     next_char(){
@@ -321,7 +321,7 @@ export class CharsMenu {
     }
 
     move_cursor(pos?:number, on_complete?:Function){
-        if(!pos) pos = this.selected_index;
+        if(pos === undefined) pos = this.selected_index;
 
         let cursor_x = 0;
         let cursor_y = 0;
