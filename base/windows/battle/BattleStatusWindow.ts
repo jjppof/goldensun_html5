@@ -1,7 +1,7 @@
 import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle";
 import { GoldenSun } from "../../GoldenSun";
 import { MainChar } from "../../MainChar";
-import { ComponentStates, StatusMultiComponent } from "../../status/StatusMultiComponent";
+import { ComponentStates, StatusStateManager } from "../../status/StatusStateManager";
 import { main_stats, temporary_status, ordered_status_battle, ordered_status_menu, permanent_status } from "../../Player";
 import { TextObj, Window } from "../../Window";
 import { base_actions, elements } from "../../utils";
@@ -117,7 +117,7 @@ export class BattleStatusWindow{
     private effect_sprites:Phaser.Sprite[];
 
     private window:Window;
-    private component:StatusMultiComponent;
+    private manager:StatusStateManager;
 
     private battle_sprite:Phaser.Sprite;
     private avatar:Phaser.Sprite;
@@ -165,7 +165,7 @@ export class BattleStatusWindow{
         this.effect_sprites = [];
 
         this.window = new Window(this.game, 0, 0, BattleStatusWindow.WINDOW.WIDTH, BattleStatusWindow.WINDOW.HEIGHT);
-        this.component = new StatusMultiComponent(this.game, this.data, this.window);
+        this.manager = new StatusStateManager(this.game, this.data, this.window);
 
         this.window.define_internal_group(BattleStatusWindow.GROUP_KEY, {x:0, y:0});
         this.battle_sprite = null;
@@ -418,7 +418,7 @@ export class BattleStatusWindow{
         this.update_info();
         this.set_sprites();
         
-        this.component.char_change(this.selected_char, this.battle_effects);
+        this.manager.char_change(this.selected_char, this.battle_effects);
     }
 
     private next_char(){
@@ -453,14 +453,14 @@ export class BattleStatusWindow{
 
     public grant_control(){
         let controls = [
-            {key: this.data.gamepad.A, on_down: this.component.trigger_state_change.bind(this.component)},
+            {key: this.data.gamepad.A, on_down: this.manager.trigger_state_change.bind(this.manager)},
             {key: this.data.gamepad.B, on_down: this.close.bind(this, this.close_callback)},
             {key: this.data.gamepad.L, on_down: this.previous_char.bind(this)},
             {key: this.data.gamepad.R, on_down: this.next_char.bind(this)},
-            {key: this.data.gamepad.LEFT, on_down: this.component.on_left.bind(this.component)},
-            {key: this.data.gamepad.RIGHT, on_down: this.component.on_right.bind(this.component)},
-            {key: this.data.gamepad.UP, on_down: this.component.on_up.bind(this.component)},
-            {key: this.data.gamepad.DOWN, on_down: this.component.on_down.bind(this.component)},
+            {key: this.data.gamepad.LEFT, on_down: this.manager.controls.left},
+            {key: this.data.gamepad.RIGHT, on_down: this.manager.controls.right},
+            {key: this.data.gamepad.UP, on_down: this.manager.controls.up},
+            {key: this.data.gamepad.DOWN, on_down: this.manager.controls.down},
         ];
 
         this.data.control_manager.set_control(controls, {loop_configs:{vertical: true, horizontal: true, shoulder: true}});
@@ -480,10 +480,16 @@ export class BattleStatusWindow{
         this.desc_shifted = shift;
     }
 
-    private on_change(line1:string, line2:string, highlight_pos?:{index:number, vertical:boolean}){
-        this.window.update_text(line1, this.desc_line1);
-        this.window.update_text(line2, this.desc_line2);
-        this.check_shift(this.component.current_state !== ComponentStates.STATISTICS);
+    private on_change(line1:string, line2?:string){
+        if(!line2 === undefined){
+            this.window.update_text("", this.desc_line1);
+            this.window.update_text(line1, this.desc_line2);
+        }
+        else{
+            this.window.update_text(line1, this.desc_line1);
+            this.window.update_text(line2, this.desc_line2);
+        }
+        this.check_shift(this.manager.current_state !== ComponentStates.STATISTICS);
     }
 
     public open(selected_char?:MainChar, close_callback?:Function, open_callback?:Function){
@@ -495,8 +501,8 @@ export class BattleStatusWindow{
         this.window.show(() =>{
             this.update_info();
             this.set_sprites();
-            this.component.inititalize(this.selected_char, this.on_change.bind(this), this.battle_effects);
-            this.check_shift(this.component.current_state !== ComponentStates.STATISTICS);
+            this.manager.inititalize(this.selected_char, this.on_change.bind(this), this.battle_effects);
+            this.check_shift(this.manager.current_state !== ComponentStates.STATISTICS);
             
             if(open_callback){
                 open_callback();
@@ -505,7 +511,7 @@ export class BattleStatusWindow{
     }
 
     public close(callback?:Function){
-        this.component.clear();
+        this.manager.clear();
         this.window.close(callback);
     }
 }
