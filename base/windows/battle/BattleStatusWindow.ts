@@ -427,7 +427,6 @@ export class BattleStatusWindow{
         this.set_sprites();
         
         this.change_state(this.current_state);
-        //this.manager.char_change(this.selected_char, this.battle_effects);
     }
 
     private next_char(){
