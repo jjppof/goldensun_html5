@@ -108,7 +108,7 @@
                     "up_right"
                 ],
                 "directions_frames_number": 2,
-                "frame_rate": 16,
+                "frame_rate": 8,
                 "loop": false
             },{
                 "key": "battle",

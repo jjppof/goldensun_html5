@@ -1,11 +1,11 @@
 import { base_actions, directions, reverse_directions } from "../utils";
 import { event_types, TileEvent } from "./TileEvent";
 
-const TIME_PER_TILE = 60;
-const DUST_COUNT = 6;
-const DUST_KEY = "dust";
-
 export class SliderEvent extends TileEvent {
+    private static readonly TIME_PER_TILE = 60;
+    private static readonly DUST_COUNT = 6;
+    private static readonly DUST_KEY = "dust";
+
     public x_target: number;
     public y_target: number;
     public dest_collision_layer: number;
@@ -53,7 +53,7 @@ export class SliderEvent extends TileEvent {
                     });
                     const target_x = this.data.map.sprite.tileWidth * (this.x_target + 0.5);
                     const target_y = this.data.map.sprite.tileHeight * (this.y_target + 0.5);
-                    const slide_time = Math.abs(this.y_target - this.y) * TIME_PER_TILE;
+                    const slide_time = Math.abs(this.y_target - this.y) * SliderEvent.TIME_PER_TILE;
                     this.game.add.tween(this.data.hero.sprite.body).to(
                         {x: target_x, y: target_y}, slide_time, Phaser.Easing.Linear.None, true
                     ).onComplete.addOnce(() => {
@@ -75,13 +75,13 @@ export class SliderEvent extends TileEvent {
     }
 
     dust_animation() {
-        const dust_sprite_base = this.data.info.misc_sprite_base_list[DUST_KEY];
+        const dust_sprite_base = this.data.info.misc_sprite_base_list[SliderEvent.DUST_KEY];
         const initial_x = this.data.map.sprite.tileWidth * (this.x + 0.5);
-        for (let i = 0; i < DUST_COUNT; ++i) {
+        for (let i = 0; i < SliderEvent.DUST_COUNT; ++i) {
             this.game.time.events.add(40 * i, () => {
                 const start_x = this.data.hero.sprite.body.x - Math.random() * this.data.map.sprite.tileWidth + (this.data.map.sprite.tileWidth >> 1);
                 const start_y = this.data.hero.sprite.body.y - Math.random() * this.data.map.sprite.tileHeight + (this.data.map.sprite.tileHeight >> 1);
-                const dust_sprite: Phaser.Sprite = this.data.npc_group.create(start_x, start_y, DUST_KEY);
+                const dust_sprite: Phaser.Sprite = this.data.npc_group.create(start_x, start_y, SliderEvent.DUST_KEY);
                 dust_sprite.base_collision_layer = this.dest_collision_layer;
                 dust_sprite.anchor.setTo(0.5, 0.5);
                 this.game.add.tween(dust_sprite).to({
@@ -89,8 +89,8 @@ export class SliderEvent extends TileEvent {
                     y: start_y - (this.data.map.sprite.tileHeight >> 1)
                 }, 400, Phaser.Easing.Linear.None, true);
                 this.data.npc_group.setChildIndex(dust_sprite, this.data.npc_group.getChildIndex(this.data.hero.sprite));
-                dust_sprite_base.setAnimation(dust_sprite, DUST_KEY);
-                const animation_key = dust_sprite_base.getAnimationKey(DUST_KEY, "spread");
+                dust_sprite_base.setAnimation(dust_sprite, SliderEvent.DUST_KEY);
+                const animation_key = dust_sprite_base.getAnimationKey(SliderEvent.DUST_KEY, "spread");
                 dust_sprite.animations.getAnimation(animation_key).onComplete.addOnce(() => {
                     dust_sprite.destroy();
                 });

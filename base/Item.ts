@@ -20,6 +20,8 @@ export enum use_types {
 }
 
 export class Item {
+    public static readonly BREAKS_CHANCE = 1/8;
+
     public key_name: string;
     public name: string;
     public type: item_types;
@@ -39,8 +41,6 @@ export class Item {
     public price: number;
     public granted_ability: string;
     public equipable: boolean;
-
-    public static readonly BREAKS_CHANCE = 1/8;
 
     constructor(
         key_name,

@@ -5,8 +5,6 @@ import { ControllableChar } from './ControllableChar';
 import { BattleEvent } from './game_events/BattleEvent';
 import { Collision } from './Collision';
 
-const NPC_TALK_RANGE = 3.0;
-
 export enum npc_movement_types {
     IDLE = "idle",
     WALK_AROUND = "walk_around"
@@ -20,6 +18,8 @@ export enum npc_types {
 };
 
 export class NPC extends ControllableChar {
+    private static readonly NPC_TALK_RANGE = 3.0;
+
     public movement_type: npc_movement_types;
     public npc_type: npc_types;
     public message: string;
@@ -62,7 +62,7 @@ export class NPC extends ControllableChar {
         this.avatar = avatar;
         this.shop_key = shop_key;
         this.base_collision_layer = base_collision_layer;
-        this.talk_range_factor = talk_range_factor === undefined ? NPC_TALK_RANGE : talk_range_factor;
+        this.talk_range_factor = talk_range_factor === undefined ? NPC.NPC_TALK_RANGE : talk_range_factor;
         this.no_shadow = no_shadow === undefined ? false : no_shadow;
         this.events = [];
         this.set_events(events_info);

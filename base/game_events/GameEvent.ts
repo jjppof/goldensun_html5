@@ -1,13 +1,13 @@
 import { GoldenSun } from "../GoldenSun";
 
-export const event_types = {
-    BATTLE: "battle"
+export enum event_types {
+    BATTLE = "battle"
 };
 
 export class GameEvent {
     public game: Phaser.Game;
     public data: GoldenSun;
-    public type: string;
+    public type: event_types;
     public id: number;
     public static id_incrementer: number;
     public static events: {[id: number]: GameEvent};

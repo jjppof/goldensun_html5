@@ -3,9 +3,9 @@ import { DialogManager } from "../utils/DialogManager";
 import { npc_types } from "../NPC";
 import { GoldenSun } from "../GoldenSun";
 
-export const interaction_patterns = {
-    TIK_TAK_TOE: "tik_tak_toe",
-    CROSS: "cross"
+export enum interaction_patterns {
+    TIK_TAK_TOE = "tik_tak_toe",
+    CROSS = "cross"
 };
 
 export class GameEventManager {

@@ -1,4 +1,4 @@
-import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle";
+import { Battle } from "../../battle/Battle";
 import { GoldenSun } from "../../GoldenSun";
 import { MainChar } from "../../MainChar";
 import { ComponentStates, StatusMultiComponent } from "../../status/StatusMultiComponent";
@@ -252,7 +252,7 @@ export class BattleStatusWindow{
         this.window.update_text(char.current_exp, this.exp_value);
 
         this.window.update_text(char.class.name, this.class_name);
-        this.window.update_text((char_index >= MAX_CHARS_IN_BATTLE ? "In the back" : ""), this.in_the_back);
+        this.window.update_text((char_index >= Battle.MAX_CHARS_IN_BATTLE ? "In the back" : ""), this.in_the_back);
 
         if(this.update_effects() !== 0)
             this.window.update_text("", this.normal_status);

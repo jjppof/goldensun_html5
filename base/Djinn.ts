@@ -8,11 +8,12 @@ export enum djinn_status {
     RECOVERY = "recovery"
 };
 
-export const djinn_font_colors= {
+export type djinn_font_colors = (typeof djinn_font_colors)[keyof typeof djinn_font_colors]
+export const djinn_font_colors = {
     [djinn_status.RECOVERY]: numbers.YELLOW_FONT_COLOR,
     [djinn_status.STANDBY]: numbers.RED_FONT_COLOR,
     [djinn_status.SET]: numbers.DEFAULT_FONT_COLOR
-};
+} as const;
 
 export class Djinn {
     public key_name: string;

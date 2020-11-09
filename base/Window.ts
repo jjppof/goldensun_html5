@@ -2,11 +2,6 @@ import * as numbers from './magic_numbers';
 import { PageIndicator } from './support_menus/PageIndicator';
 import * as utils from './utils';
 
-const PAGE_NUMBER_WIDTH = 8;
-const PAGE_NUMBER_HEIGHT = 8;
-const PAGE_INDICATOR_ARROW_Y = 0;
-const TRANSITION_TIME = Phaser.Timer.QUARTER >> 2;
-
 export type TextObj = {
     text: Phaser.BitmapText,
     shadow: Phaser.BitmapText,
@@ -26,6 +21,8 @@ Input: game [Phaser:Game] - Reference to the running game object
        color [number] - The window's background color
        font_color [number] - The window's default font color*/
 export class Window {
+    private static readonly TRANSITION_TIME = Phaser.Timer.QUARTER >> 2;
+
     public game: Phaser.Game;
     public group: Phaser.Group;
     public x: number;
@@ -335,7 +332,7 @@ export class Window {
         if (animate) {
             this.game.add.tween(this.group).to(
                 { width: this.graphics.width, height: this.graphics.height },
-                TRANSITION_TIME,
+                Window.TRANSITION_TIME,
                 Phaser.Easing.Linear.None,
                 true
             ).onComplete.addOnce(() => {
@@ -656,7 +653,7 @@ set_single_line_text(text, right_align = false, italic = false): TextObj {
         if (animate) {
             this.game.add.tween(this.group).to(
                 { width: 0, height: 0 },
-                TRANSITION_TIME,
+                Window.TRANSITION_TIME,
                 Phaser.Easing.Linear.None,
                 true
             ).onComplete.addOnce(() => {
@@ -705,7 +702,7 @@ set_single_line_text(text, right_align = false, italic = false): TextObj {
         if (animate) {
             this.game.add.tween(this.group).to(
                 { width: 0, height: 0 },
-                TRANSITION_TIME,
+                Window.TRANSITION_TIME,
                 Phaser.Easing.Linear.None,
                 true
             ).onComplete.addOnce(on_destroy);

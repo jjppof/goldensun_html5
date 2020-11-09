@@ -15,10 +15,10 @@ import * as _ from "lodash";
 import { SliderEvent } from "./tile_events/SliderEvent";
 import { SpriteBase } from "./SpriteBase";
 
-const MAX_CAMERA_ROTATION = 0.035;
-const CAMERA_ROTATION_STEP = 0.003;
-
 export class Map {
+    private static readonly MAX_CAMERA_ROTATION = 0.035;
+    private static readonly CAMERA_ROTATION_STEP = 0.003;
+
     public game: Phaser.Game;
     public data: GoldenSun;
     public name: string;
@@ -139,12 +139,12 @@ export class Map {
 
     update_map_rotation() {
         if (this.is_world_map) {
-            const value_check = Math.abs(this.mode7_filter.angle) < MAX_CAMERA_ROTATION * Math.abs(this.data.hero.x_speed);
+            const value_check = Math.abs(this.mode7_filter.angle) < Map.MAX_CAMERA_ROTATION * Math.abs(this.data.hero.x_speed);
             const sign_check =  Math.sign(this.mode7_filter.angle) === this.data.hero.x_speed;
             if (this.data.hero.x_speed && (value_check || sign_check)) {
-                this.mode7_filter.angle -= Math.sign(this.data.hero.x_speed) * CAMERA_ROTATION_STEP;
+                this.mode7_filter.angle -= Math.sign(this.data.hero.x_speed) * Map.CAMERA_ROTATION_STEP;
             } else if (!this.data.hero.x_speed && Math.abs(this.mode7_filter.angle) > 0) {
-                this.mode7_filter.angle -= Math.sign(this.mode7_filter.angle) * CAMERA_ROTATION_STEP;
+                this.mode7_filter.angle -= Math.sign(this.mode7_filter.angle) * Map.CAMERA_ROTATION_STEP;
             }
         }
     }
