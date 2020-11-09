@@ -2,7 +2,7 @@ import { TextObj, Window } from "../../Window";
 import * as numbers from "../../magic_numbers"
 import { Djinn } from "../../Djinn";
 import { SummonDjinnStandbyWindow } from "./SummonDjinnStandbyWindow";
-import { MAX_CHARS_IN_BATTLE } from "../../battle/Battle";
+import { Battle } from "../../battle/Battle";
 import { MainChar } from "../../MainChar";
 import { GoldenSun } from "../../GoldenSun";
 import * as _ from "lodash";
@@ -184,7 +184,7 @@ export class BattleSummonWindow {
     }
 
     mount_window() {
-        const standby_djinni = Djinn.get_standby_djinni(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE));
+        const standby_djinni = Djinn.get_standby_djinni(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, Battle.MAX_CHARS_IN_BATTLE));
         for (let elem in standby_djinni) {
             standby_djinni[elem] -= this.djinni_already_used[elem];
         }

@@ -4,8 +4,6 @@ import { Hero } from '../Hero';
 import { base_actions } from '../utils';
 import { event_types, TileEvent } from './TileEvent';
 
-const EVENT_INIT_DELAY = 350;
-
 class EventQueue {
     public climb_event: boolean;
     public queue: {
@@ -44,6 +42,8 @@ class EventQueue {
 }
 
 export class TileEventManager {
+    private static readonly EVENT_INIT_DELAY = 350;
+
     public game: Phaser.Game;
     public data: GoldenSun;
     public hero: Hero;
@@ -136,7 +136,7 @@ export class TileEventManager {
                         this_event,
                         this.hero.current_direction,
                         () => {
-                            this.event_timers[this_event.id] = this.game.time.events.add(EVENT_INIT_DELAY, this.fire_event.bind(this, this_event, this.hero.current_direction));
+                            this.event_timers[this_event.id] = this.game.time.events.add(TileEventManager.EVENT_INIT_DELAY, this.fire_event.bind(this, this_event, this.hero.current_direction));
                         }
                     );
                 }

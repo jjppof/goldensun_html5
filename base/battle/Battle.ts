@@ -17,8 +17,6 @@ import * as _ from "lodash";
 import { Target } from "../battle/BattleStage";
 import { Item, use_types } from "../Item";
 
-export const MAX_CHARS_IN_BATTLE = 4;
-
 /* ACTIONS:
 - Attack
 - Psynergy
@@ -33,14 +31,14 @@ export const MAX_CHARS_IN_BATTLE = 4;
 - Retreat
 */
 
-const battle_phases = {
-    NONE: 0, // (not in a battle)
-    START: 1, // Start (camera pan, shows enemies, move to menu)
-    MENU: 2, // (includes submenus, this phase doesn't end until the player has entered their final command)
-    ROUND_START: 3, // Start (turn order is determined, enemies may commit to certain actions)
-    COMBAT: 4, // (all actions are queued and take place here, you could further break up combat actions into subactions, which should be governed by a separate sub-state variable)
-    ROUND_END: 5, // End (djinn recovery, status/buff/debuff timers decrement)
-    END: 6 // End (the last enemy has fallen, exp/gold/drops are awarded)
+enum battle_phases {
+    NONE, // (not in a battle)
+    START, // Start (camera pan, shows enemies, move to menu)
+    MENU, // (includes submenus, this phase doesn't end until the player has entered their final command)
+    ROUND_START, // Start (turn order is determined, enemies may commit to certain actions)
+    COMBAT, // (all actions are queued and take place here, you could further break up combat actions into subactions, which should be governed by a separate sub-state variable)
+    ROUND_END, // End (djinn recovery, status/buff/debuff timers decrement)
+    END // End (the last enemy has fallen, exp/gold/drops are awarded)
 };
 
 export type PlayerInfo = {
@@ -59,6 +57,8 @@ export type EnemyPartyMember = {
 }
 
 export class Battle {
+    public static readonly MAX_CHARS_IN_BATTLE = 4;
+
     public game: Phaser.Game;
     public data: GoldenSun;
 
@@ -93,7 +93,7 @@ export class Battle {
         this.game = game;
         this.data = data;
 
-        this.allies_info = this.data.info.party_data.members.slice(0, MAX_CHARS_IN_BATTLE).map(char => {
+        this.allies_info = this.data.info.party_data.members.slice(0, Battle.MAX_CHARS_IN_BATTLE).map(char => {
             char.init_effect_turns_count();
             return {
                 sprite_key: char.sprite_base.getActionKey(base_actions.BATTLE),
@@ -425,7 +425,7 @@ export class Battle {
 
         } else if (ability.ability_category === ability_categories.SUMMON) { //some summon checks
             const requirements = this.data.info.summons_list[ability.key_name].requirements;
-            const standby_djinni = Djinn.get_standby_djinni(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE));
+            const standby_djinni = Djinn.get_standby_djinni(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, Battle.MAX_CHARS_IN_BATTLE));
 
             const has_available_djinni = _.every(requirements, (requirement, element) => {
                 return standby_djinni[element] >= requirement;
@@ -439,7 +439,7 @@ export class Battle {
                 return;
 
             } else { //set djinni used in this summon to recovery mode
-                Djinn.set_to_recovery(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, MAX_CHARS_IN_BATTLE), requirements);
+                Djinn.set_to_recovery(this.data.info.djinni_list, MainChar.get_active_players(this.data.info.party_data, Battle.MAX_CHARS_IN_BATTLE), requirements);
             }
         }
 
@@ -889,7 +889,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             return !effects_to_remove.includes(index);
         });
 
-        for (let i = 0; i < MAX_CHARS_IN_BATTLE; ++i) {
+        for (let i = 0; i < Battle.MAX_CHARS_IN_BATTLE; ++i) {
             const player = this.data.info.party_data.members[i];
             if (player === undefined) continue;
 

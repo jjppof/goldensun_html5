@@ -4,19 +4,19 @@ import { Footsteps } from "./utils/Footsteps";
 import { GoldenSun } from "./GoldenSun";
 import { SpriteBase } from "./SpriteBase";
 
-const DEFAULT_SHADOW_KEYNAME = "shadow";
-
-const DEFAULT_SHADOW_ANCHOR_X = 0.45;
-const DEFAULT_SHADOW_ANCHOR_Y = 0.05;
-const DEFAULT_SPRITE_ANCHOR_X = 0.50;
-const DEFAULT_SPRITE_ANCHOR_Y = 0.80;
-
-const default_anchor = {
-    x: DEFAULT_SPRITE_ANCHOR_X,
-    y: DEFAULT_SPRITE_ANCHOR_Y
-};
-
 export class ControllableChar {
+    private static readonly DEFAULT_SHADOW_KEYNAME = "shadow";
+
+    private static readonly DEFAULT_SHADOW_ANCHOR_X = 0.45;
+    private static readonly DEFAULT_SHADOW_ANCHOR_Y = 0.05;
+    private static readonly DEFAULT_SPRITE_ANCHOR_X = 0.50;
+    private static readonly DEFAULT_SPRITE_ANCHOR_Y = 0.80;
+
+    private static readonly default_anchor = {
+        x: ControllableChar.DEFAULT_SPRITE_ANCHOR_X,
+        y: ControllableChar.DEFAULT_SPRITE_ANCHOR_Y
+    };
+
     public game: Phaser.Game;
     public data: GoldenSun;
     public key_name: string;
@@ -100,8 +100,8 @@ export class ControllableChar {
     }
 
     set_sprite(group, sprite_info, map_sprite, layer, anchor_x?, anchor_y?, is_world_map: boolean = false) {
-        anchor_x = anchor_x === undefined ? default_anchor.x : anchor_x;
-        anchor_y = anchor_y === undefined ? default_anchor.y : anchor_y;
+        anchor_x = anchor_x === undefined ? ControllableChar.default_anchor.x : anchor_x;
+        anchor_y = anchor_y === undefined ? ControllableChar.default_anchor.y : anchor_y;
         this.sprite_info = sprite_info;
         const action_key = this.sprite_info.getActionKey(this.current_action);
         this.sprite = group.create(0, 0, action_key);
@@ -117,17 +117,17 @@ export class ControllableChar {
 
     reset_anchor(property?) {
         if (property !== undefined && ['x', 'y'].includes(property)) {
-            this.sprite.anchor[property] = default_anchor[property];
+            this.sprite.anchor[property] = ControllableChar.default_anchor[property];
         } else {
-            this.sprite.anchor.x = default_anchor.x;
-            this.sprite.anchor.y = default_anchor.y;
+            this.sprite.anchor.x = ControllableChar.default_anchor.x;
+            this.sprite.anchor.y = ControllableChar.default_anchor.y;
         }
     }
 
     set_shadow(key_name, group, layer, shadow_anchor_x?, shadow_anchor_y?, is_world_map: boolean = false) {
-        key_name = key_name === undefined ? DEFAULT_SHADOW_KEYNAME : key_name;
-        shadow_anchor_x = shadow_anchor_x === undefined ? DEFAULT_SHADOW_ANCHOR_X : shadow_anchor_x;
-        shadow_anchor_y = shadow_anchor_y === undefined ? DEFAULT_SHADOW_ANCHOR_Y : shadow_anchor_y;
+        key_name = key_name === undefined ? ControllableChar.DEFAULT_SHADOW_KEYNAME : key_name;
+        shadow_anchor_x = shadow_anchor_x === undefined ? ControllableChar.DEFAULT_SHADOW_ANCHOR_X : shadow_anchor_x;
+        shadow_anchor_y = shadow_anchor_y === undefined ? ControllableChar.DEFAULT_SHADOW_ANCHOR_Y : shadow_anchor_y;
         this.shadow = group.create(0, 0, key_name);
         this.shadow.blendMode = PIXI.blendModes.MULTIPLY;
         this.shadow.disableRoundPx = true;

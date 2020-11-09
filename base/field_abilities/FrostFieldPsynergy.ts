@@ -4,23 +4,23 @@ import { JumpEvent } from "../tile_events/JumpEvent";
 import { FieldAbilities } from "./FieldAbilities";
 import * as _ from "lodash";
 
-const ABILITY_KEY_NAME = "frost";
-const ACTION_KEY_NAME = "cast";
-const FROST_MAX_RANGE = 12;
-const SNOWFLAKES_COUNT = 16;
-const TOTAL_TURNS_SNOWFLAKES = Math.PI * 7;
-const POLAR_SLOPE = 0.15;
-const SPIRAL_INTENSITY = 8;
-const SNOWFLAKE_DURATION = 1650;
-
 /*Handles the "Frost" field psynergy
 Does not handle the in-battle command
 
 Input:game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
 export class FrostFieldPsynergy extends FieldAbilities {
+    private static readonly ABILITY_KEY_NAME = "frost";
+    private static readonly ACTION_KEY_NAME = "cast";
+    private static readonly FROST_MAX_RANGE = 12;
+    private static readonly SNOWFLAKES_COUNT = 16;
+    private static readonly TOTAL_TURNS_SNOWFLAKES = Math.PI * 7;
+    private static readonly POLAR_SLOPE = 0.15;
+    private static readonly SPIRAL_INTENSITY = 8;
+    private static readonly SNOWFLAKE_DURATION = 1650;
+
     constructor(game, data) {
-        super(game, data, ABILITY_KEY_NAME, FROST_MAX_RANGE, ACTION_KEY_NAME, true);
+        super(game, data, FrostFieldPsynergy.ABILITY_KEY_NAME, FrostFieldPsynergy.FROST_MAX_RANGE, FrostFieldPsynergy.ACTION_KEY_NAME, true);
         this.set_bootstrap_method(this.init_snowflakes.bind(this));
     }
 
@@ -28,7 +28,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
     Upon finishing, triggers the pillar's growth*/
     init_snowflakes() {
         this.field_psynergy_window.close();
-        for (let i = 0; i < SNOWFLAKES_COUNT; ++i) {
+        for (let i = 0; i < FrostFieldPsynergy.SNOWFLAKES_COUNT; ++i) {
             let snowflake_sprite = this.data.overlayer_group.create(0, 0, "frost_snowflake");
             snowflake_sprite.anchor.setTo(0.5, 0.5);
             const scale_factor = _.random(5, 8)/10.0;
@@ -43,23 +43,23 @@ export class FrostFieldPsynergy extends FieldAbilities {
                 case directions.up: y_dest -= 14; break;
                 case directions.down: y_dest += 12; break;
             }
-            let spiral_angle = {rad: TOTAL_TURNS_SNOWFLAKES};
+            let spiral_angle = {rad: FrostFieldPsynergy.TOTAL_TURNS_SNOWFLAKES};
             const sign_x = Math.sign(Math.random() - 0.5);
             const sign_y = Math.sign(Math.random() - 0.5);
             const tween = this.game.add.tween(spiral_angle).to(
                 {rad: -Math.PI},
-                SNOWFLAKE_DURATION,
+                FrostFieldPsynergy.SNOWFLAKE_DURATION,
                 Phaser.Easing.Linear.None,
                 true,
                 i*(Phaser.Timer.QUARTER/5)
             );
             tween.onUpdateCallback(() => {
-                snowflake_sprite.centerX = sign_x * SPIRAL_INTENSITY * Math.exp(POLAR_SLOPE * spiral_angle.rad) * Math.cos(spiral_angle.rad) + x_dest;
-                snowflake_sprite.centerY = sign_y * SPIRAL_INTENSITY * Math.exp(POLAR_SLOPE * spiral_angle.rad) * Math.sin(spiral_angle.rad) + y_dest;
+                snowflake_sprite.centerX = sign_x * FrostFieldPsynergy.SPIRAL_INTENSITY * Math.exp(FrostFieldPsynergy.POLAR_SLOPE * spiral_angle.rad) * Math.cos(spiral_angle.rad) + x_dest;
+                snowflake_sprite.centerY = sign_y * FrostFieldPsynergy.SPIRAL_INTENSITY * Math.exp(FrostFieldPsynergy.POLAR_SLOPE * spiral_angle.rad) * Math.sin(spiral_angle.rad) + y_dest;
             });
             tween.onComplete.addOnce(() => {
                 snowflake_sprite.destroy();
-                if (i === SNOWFLAKES_COUNT - 1) {
+                if (i === FrostFieldPsynergy.SNOWFLAKES_COUNT - 1) {
                     if (this.target_found) {
                         this.init_pillar();
                     } else {

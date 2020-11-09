@@ -3,20 +3,20 @@ import { InteractableObjects } from "../InteractableObjects";
 import { get_directions, split_direction } from "../utils";
 import * as _ from "lodash";
 
-export const event_types = {
-    CLIMB: "climb",
-    SPEED: "speed",
-    TELEPORT: "teleport",
-    JUMP: "jump",
-    STEP: "step",
-    COLLISION: "collision",
-    SLIDER: "slider"
+export enum event_types {
+    CLIMB = "climb",
+    SPEED = "speed",
+    TELEPORT = "teleport",
+    JUMP = "jump",
+    STEP = "step",
+    COLLISION = "collision",
+    SLIDER = "slider"
 };
 
 export class TileEvent {
     public game: Phaser.Game;
     public data: GoldenSun;
-    public type: string;
+    public type: event_types;
     public x: number;
     public y: number;
     public location_key: string;

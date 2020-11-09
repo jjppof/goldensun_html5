@@ -1,9 +1,9 @@
 import { directions } from "../utils";
 import { TileEvent, event_types } from "./TileEvent";
 
-const STEP_SHIFT_FACTOR = 4;
-
 export class StepEvent extends TileEvent {
+    private static readonly STEP_SHIFT_FACTOR = 3;
+
     public step_direction: number;
     public next_x: number;
     public next_y: number;
@@ -20,9 +20,9 @@ export class StepEvent extends TileEvent {
     set() {
         let next_x, next_y = this.y, shift_y;
         if (this.step_direction === directions.up) {
-            shift_y = -((this.data.map.sprite.tileHeight/STEP_SHIFT_FACTOR) | 0);
+            shift_y = -((this.data.map.sprite.tileHeight/StepEvent.STEP_SHIFT_FACTOR) | 0);
         } else if (this.step_direction === directions.down) {
-            shift_y = (this.data.map.sprite.tileHeight/STEP_SHIFT_FACTOR) | 0;
+            shift_y = (this.data.map.sprite.tileHeight/StepEvent.STEP_SHIFT_FACTOR) | 0;
         }
         if (this.activation_directions[0] === directions.left) {
             next_x = this.x - 1;

@@ -4,58 +4,58 @@ import { TileEvent, event_types } from "./tile_events/TileEvent";
 import { get_transition_directions, range_360, directions, base_actions } from './utils';
 import { normal_push } from "./interactable_objects/push";
 
-const SPEED_LIMIT_TO_STOP = 13;
-const SPEED_LIMIT_TO_STOP_WORLD_MAP = 9;
-const MINIMAL_SLOPE = 0.1;
-
-//rotation_key can convert from pressed_keys to the corresponding in-game rotation
-const rotation_key = [
-    null,                   //no keys pressed
-    directions.right,       //right
-    directions.left,        //left
-    null,                   //right and left
-    directions.up,          //up
-    directions.up_right,    //up and right
-    directions.up_left,     //up and left
-    null,                   //up, left, and right
-    directions.down,        //down
-    directions.down_right,  //down and right
-    directions.down_left,   //down and left
-    null,                   //down, left, and right
-    null,                   //down and up
-    null,                   //down, up, and right
-    null,                   //down, up, and left
-    null,                   //down, up, left, and right
-];
-
-//rotation_normal converts from normal_angle region (floor((angle-15)/30)) to in-game rotation
-const rotation_normal = [
-    directions.right,      //345-15 degrees
-    directions.up_right,   //15-45 degrees
-    directions.up_right,   //45-75 degrees
-    directions.up,         //75-105 degrees
-    directions.up_left,    //105-135 degrees
-    directions.up_left,    //135-165 degrees
-    directions.left,       //165-195 degrees
-    directions.down_left,  //195-225 degrees
-    directions.down_left,  //225-255 degrees
-    directions.down,       //255-285 degrees
-    directions.down_right, //285-315 degrees
-    directions.down_right, //315-345 degrees
-];
-
-const speeds = {
-    [directions.right]: {x: 1, y: 0},
-    [directions.left]: {x: -1, y: 0},
-    [directions.up]: {x: 0, y: -1},
-    [directions.up_right]: {x: numbers.INV_SQRT2, y: -numbers.INV_SQRT2},
-    [directions.up_left]: {x: -numbers.INV_SQRT2, y: -numbers.INV_SQRT2},
-    [directions.down]: {x: 0, y: 1},
-    [directions.down_right]: {x: numbers.INV_SQRT2, y: numbers.INV_SQRT2},
-    [directions.down_left]: {x: -numbers.INV_SQRT2, y: numbers.INV_SQRT2}
-};
-
 export class Hero extends ControllableChar {
+    private static readonly SPEED_LIMIT_TO_STOP = 13;
+    private static readonly SPEED_LIMIT_TO_STOP_WORLD_MAP = 9;
+    private static readonly MINIMAL_SLOPE = 0.1;
+
+    //ROTATION_KEY can convert from pressed_keys to the corresponding in-game rotation
+    private static readonly ROTATION_KEY = [
+        null,                   //no keys pressed
+        directions.right,       //right
+        directions.left,        //left
+        null,                   //right and left
+        directions.up,          //up
+        directions.up_right,    //up and right
+        directions.up_left,     //up and left
+        null,                   //up, left, and right
+        directions.down,        //down
+        directions.down_right,  //down and right
+        directions.down_left,   //down and left
+        null,                   //down, left, and right
+        null,                   //down and up
+        null,                   //down, up, and right
+        null,                   //down, up, and left
+        null,                   //down, up, left, and right
+    ];
+
+    //ROTATION_NORMAL converts from normal_angle region (floor((angle-15)/30)) to in-game rotation
+    private static readonly ROTATION_NORMAL = [
+        directions.right,      //345-15 degrees
+        directions.up_right,   //15-45 degrees
+        directions.up_right,   //45-75 degrees
+        directions.up,         //75-105 degrees
+        directions.up_left,    //105-135 degrees
+        directions.up_left,    //135-165 degrees
+        directions.left,       //165-195 degrees
+        directions.down_left,  //195-225 degrees
+        directions.down_left,  //225-255 degrees
+        directions.down,       //255-285 degrees
+        directions.down_right, //285-315 degrees
+        directions.down_right, //315-345 degrees
+    ];
+
+    private static readonly SPEEDS = {
+        [directions.right]: {x: 1, y: 0},
+        [directions.left]: {x: -1, y: 0},
+        [directions.up]: {x: 0, y: -1},
+        [directions.up_right]: {x: numbers.INV_SQRT2, y: -numbers.INV_SQRT2},
+        [directions.up_left]: {x: -numbers.INV_SQRT2, y: -numbers.INV_SQRT2},
+        [directions.down]: {x: 0, y: 1},
+        [directions.down_right]: {x: numbers.INV_SQRT2, y: numbers.INV_SQRT2},
+        [directions.down_left]: {x: -numbers.INV_SQRT2, y: numbers.INV_SQRT2}
+    };
+
     public arrow_inputs: number;
 
     constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, walk_speed, dash_speed, climb_speed) {
@@ -69,14 +69,14 @@ export class Hero extends ControllableChar {
             | 2 * (+this.game.input.keyboard.isDown(this.data.gamepad.LEFT))
             | 4 * (+this.game.input.keyboard.isDown(this.data.gamepad.UP))
             | 8 * (+this.game.input.keyboard.isDown(this.data.gamepad.DOWN));
-        this.required_direction = rotation_key[this.arrow_inputs];
+        this.required_direction = Hero.ROTATION_KEY[this.arrow_inputs];
 
         this.dashing  = this.game.input.keyboard.isDown(this.data.gamepad.B);
     }
 
     set_speed_factors(check_on_event = false) {
         if (check_on_event && this.data.tile_event_manager.on_event) return;
-        let desired_direction = rotation_key[this.arrow_inputs];
+        let desired_direction = Hero.ROTATION_KEY[this.arrow_inputs];
         if (this.climbing) {
             if (desired_direction === null) {
                 this.x_speed = this.y_speed = 0;
@@ -87,8 +87,8 @@ export class Hero extends ControllableChar {
                 }
                 this.set_direction(desired_direction);
                 this.idle_climbing = false;
-                this.x_speed = speeds[desired_direction].x;
-                this.y_speed = speeds[desired_direction].y;
+                this.x_speed = Hero.SPEEDS[desired_direction].x;
+                this.y_speed = Hero.SPEEDS[desired_direction].y;
             }
         } else {
             //when force_direction is true, it means that the hero is going to face a different direction from the one specified in the keyboard arrows
@@ -101,8 +101,8 @@ export class Hero extends ControllableChar {
                 } else {
                     desired_direction = this.current_direction;
                 }
-                this.x_speed = speeds[desired_direction].x;
-                this.y_speed = speeds[desired_direction].y;
+                this.x_speed = Hero.SPEEDS[desired_direction].x;
+                this.y_speed = Hero.SPEEDS[desired_direction].y;
             } else {
                 this.x_speed = this.y_speed = 0;
             }
@@ -173,14 +173,14 @@ export class Hero extends ControllableChar {
         }
         //normals having length, means that a collision is happening
         if (normals.length && [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action as base_actions)) {
-            const speed_limit = this.data.map.is_world_map ? SPEED_LIMIT_TO_STOP_WORLD_MAP : SPEED_LIMIT_TO_STOP;
+            const speed_limit = this.data.map.is_world_map ? Hero.SPEED_LIMIT_TO_STOP_WORLD_MAP : Hero.SPEED_LIMIT_TO_STOP;
             if (Math.abs(this.sprite.body.velocity.x) < speed_limit && Math.abs(this.sprite.body.velocity.y) < speed_limit) { //speeds below SPEED_LIMIT_TO_STOP are not considered
                 let contact_point_directions = new Array(normals.length); // a contact point direction is the opposite direction of the contact normal vector
                 normals.forEach((normal, index) => { //slopes outside the MINIMAL_SLOPE range will be desconsidered
-                    if (Math.abs(normal[0]) < MINIMAL_SLOPE) normal[0] = 0;
-                    if (Math.abs(normal[1]) < MINIMAL_SLOPE) normal[1] = 0;
-                    if (Math.abs(normal[0]) > 1 - MINIMAL_SLOPE) normal[0] = Math.sign(normal[0]);
-                    if (Math.abs(normal[1]) > 1 - MINIMAL_SLOPE) normal[1] = Math.sign(normal[1]);
+                    if (Math.abs(normal[0]) < Hero.MINIMAL_SLOPE) normal[0] = 0;
+                    if (Math.abs(normal[1]) < Hero.MINIMAL_SLOPE) normal[1] = 0;
+                    if (Math.abs(normal[0]) > 1 - Hero.MINIMAL_SLOPE) normal[0] = Math.sign(normal[0]);
+                    if (Math.abs(normal[1]) > 1 - Hero.MINIMAL_SLOPE) normal[1] = Math.sign(normal[1]);
                     contact_point_directions[index] = range_360(Math.atan2(normal[1], -normal[0])); //storing the angle as if it is in the 1st quadrant
                 });
                 const desired_direction = range_360(Math.atan2(-this.sprite.body.velocity.temp_y, this.sprite.body.velocity.temp_x)); //storing the angle as if it is in the 1st quadrant
@@ -197,8 +197,8 @@ export class Hero extends ControllableChar {
                 this.stop_by_colliding = false;
                 if (normals.length === 1) { //everything inside this if is to deal with direction changing when colliding
                     //finds which 30 degree sector the normal angle lies within, and converts to a direction
-                    const wall_direction = rotation_normal[(range_360(Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree15) / numbers.degree30) | 0];
-                    const relative_direction = (rotation_key[this.arrow_inputs] - wall_direction) & 7;
+                    const wall_direction = Hero.ROTATION_NORMAL[(range_360(Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree15) / numbers.degree30) | 0];
+                    const relative_direction = (Hero.ROTATION_KEY[this.arrow_inputs] - wall_direction) & 7;
                     //if player's direction is within 1 of wall_direction
                     if (relative_direction === 1 || relative_direction === 7) {
                         this.force_direction = true;

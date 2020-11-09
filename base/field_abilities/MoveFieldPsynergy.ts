@@ -1,16 +1,16 @@
 import * as numbers from '../magic_numbers';
 import { target_only_push } from '../interactable_objects/push';
-import { directions, reverse_directions, join_directions } from "../utils";
+import { directions, reverse_directions, join_directions, base_actions } from "../utils";
 import { FieldAbilities } from "./FieldAbilities";
 import { SpriteBase } from '../SpriteBase';
 
-const ABILITY_KEY_NAME = "move";
-const ACTION_KEY_NAME = "cast";
-const MAX_HAND_TRANSLATE = 16;
-const MOVE_MAX_RANGE = 26;
-const MOVE_HAND_KEY_NAME = "move_hand";
-
 export class MoveFieldPsynergy extends FieldAbilities {
+    private static readonly ABILITY_KEY_NAME = "move";
+    private static readonly ACTION_KEY_NAME = "cast";
+    private static readonly MAX_HAND_TRANSLATE = 16;
+    private static readonly MOVE_MAX_RANGE = 26;
+    private static readonly MOVE_HAND_KEY_NAME = "move_hand";
+
     public hand_sprite_base: SpriteBase;
     public hand_sprite: Phaser.Sprite;
     public emitter: Phaser.Particles.Arcade.Emitter;
@@ -19,14 +19,14 @@ export class MoveFieldPsynergy extends FieldAbilities {
     public final_emitter_particles_count: number;
 
     constructor(game, data) {
-        super(game, data, ABILITY_KEY_NAME, MOVE_MAX_RANGE, ACTION_KEY_NAME, true);
+        super(game, data, MoveFieldPsynergy.ABILITY_KEY_NAME, MoveFieldPsynergy.MOVE_MAX_RANGE, MoveFieldPsynergy.ACTION_KEY_NAME, true);
         this.set_bootstrap_method(this.init_move.bind(this));
         this.set_cast_finisher_method(this.unset_hue_shifter.bind(this));
-        this.hand_sprite_base = this.data.info.misc_sprite_base_list[MOVE_HAND_KEY_NAME];
-        const sprite_key = this.hand_sprite_base.getActionKey(MOVE_HAND_KEY_NAME);
+        this.hand_sprite_base = this.data.info.misc_sprite_base_list[MoveFieldPsynergy.MOVE_HAND_KEY_NAME];
+        const sprite_key = this.hand_sprite_base.getActionKey(MoveFieldPsynergy.MOVE_HAND_KEY_NAME);
         this.hand_sprite = this.game.add.sprite(0, 0, sprite_key);
         this.hand_sprite.visible = false;
-        this.hand_sprite_base.setAnimation(this.hand_sprite, MOVE_HAND_KEY_NAME);
+        this.hand_sprite_base.setAnimation(this.hand_sprite, MoveFieldPsynergy.MOVE_HAND_KEY_NAME);
         this.emitter = null;
         this.final_emitter = null;
     }
@@ -100,8 +100,11 @@ export class MoveFieldPsynergy extends FieldAbilities {
                         this.controllable_char.set_direction(this.cast_direction);
                         this.controllable_char.sprite.animations.stop();
                         const dest_direction = reverse_directions[this.cast_direction];
-                        this.controllable_char.sprite.animations.play("cast_" + dest_direction, 0);
-                        this.controllable_char.sprite.animations.frameName = `cast/${dest_direction}/01`;
+                        const anim_key = this.controllable_char.sprite_info.getAnimationKey(base_actions.CAST, dest_direction);
+                        this.controllable_char.sprite.animations.play(anim_key);
+                        this.controllable_char.sprite.animations.currentAnim.stop();
+                        const frame_name = this.controllable_char.sprite_info.getFrameName(base_actions.CAST, dest_direction, 1);
+                        this.controllable_char.sprite.animations.frameName = frame_name;
                     });
                 }, () => {
                     const pos_sqr_distance = Math.pow(this.controllable_char.sprite.body.x - this.target_object.sprite.body.x, 2) + Math.pow(this.controllable_char.sprite.body.y - this.target_object.sprite.body.y, 2);
@@ -130,7 +133,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
         this.hand_sprite.send_to_front = true;
         this.hand_sprite.base_collision_layer = this.data.map.collision_layer;
         this.hand_sprite.animations.currentAnim.stop(true);
-        this.hand_sprite.frameName = this.hand_sprite_base.getFrameName(MOVE_HAND_KEY_NAME, reverse_directions[this.cast_direction], 0);
+        this.hand_sprite.frameName = this.hand_sprite_base.getFrameName(MoveFieldPsynergy.MOVE_HAND_KEY_NAME, reverse_directions[this.cast_direction], 0);
         this.hand_sprite.anchor.x = 0.5;
         this.hand_sprite.centerX = this.controllable_char.sprite.centerX;
         this.hand_sprite.centerY = this.controllable_char.sprite.centerY;
@@ -145,7 +148,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                     translate_x = this.target_object.sprite.centerX;
                     translate_y = this.target_object.sprite.y;
                 } else {
-                    translate_y -= MAX_HAND_TRANSLATE;
+                    translate_y -= MoveFieldPsynergy.MAX_HAND_TRANSLATE;
                 }
                 break;
             case directions.down:
@@ -153,7 +156,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                     translate_x = this.target_object.sprite.centerX;
                     translate_y = this.target_object.sprite.y - this.target_object.sprite.height + this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
                 } else {
-                    translate_y += MAX_HAND_TRANSLATE;
+                    translate_y += MoveFieldPsynergy.MAX_HAND_TRANSLATE;
                 }
                 break;
             case directions.right:
@@ -161,7 +164,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                     translate_x = this.target_object.sprite.x - 2 * this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
                     translate_y = this.target_object.sprite.centerY;
                 } else {
-                    translate_x += MAX_HAND_TRANSLATE;
+                    translate_x += MoveFieldPsynergy.MAX_HAND_TRANSLATE;
                 }
                 break;
             case directions.left:
@@ -169,7 +172,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                     translate_x = this.target_object.sprite.x + 2 * this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius;
                     translate_y = this.target_object.sprite.centerY;
                 } else {
-                    translate_x -= MAX_HAND_TRANSLATE;
+                    translate_x -= MoveFieldPsynergy.MAX_HAND_TRANSLATE;
                 }
                 break;
         }
@@ -179,7 +182,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
             Phaser.Easing.Linear.None,
             true
         ).onComplete.addOnce(() => {
-            const anim_key = this.hand_sprite_base.getAnimationKey(MOVE_HAND_KEY_NAME, reverse_directions[this.cast_direction]);
+            const anim_key = this.hand_sprite_base.getAnimationKey(MoveFieldPsynergy.MOVE_HAND_KEY_NAME, reverse_directions[this.cast_direction]);
             this.hand_sprite.animations.play(anim_key);
             if (this.target_found) {
                 this.target_object.sprite.filters = [this.target_object.color_filter];
@@ -239,16 +242,16 @@ export class MoveFieldPsynergy extends FieldAbilities {
         let y_shift = 0;
         switch(this.cast_direction) {
             case directions.up:
-                y_shift = -MAX_HAND_TRANSLATE;
+                y_shift = -MoveFieldPsynergy.MAX_HAND_TRANSLATE;
                 break;
             case directions.down:
-                y_shift = MAX_HAND_TRANSLATE;
+                y_shift = MoveFieldPsynergy.MAX_HAND_TRANSLATE;
                 break;
             case directions.left:
-                x_shift = -MAX_HAND_TRANSLATE;
+                x_shift = -MoveFieldPsynergy.MAX_HAND_TRANSLATE;
                 break;
             case directions.right:
-                x_shift = MAX_HAND_TRANSLATE;
+                x_shift = MoveFieldPsynergy.MAX_HAND_TRANSLATE;
                 break;
         }
         this.emitter = this.game.add.emitter(this.controllable_char.sprite.centerX + x_shift, this.controllable_char.sprite.centerY + y_shift, 150);
@@ -256,8 +259,8 @@ export class MoveFieldPsynergy extends FieldAbilities {
         this.emitter.minParticleSpeed.setTo(-15, -15);
         this.emitter.maxParticleSpeed.setTo(15, 15);
         this.emitter.gravity = 0;
-        this.emitter.width = 2 * MOVE_MAX_RANGE;
-        this.emitter.height = 2 * MOVE_MAX_RANGE;
+        this.emitter.width = 2 * MoveFieldPsynergy.MOVE_MAX_RANGE;
+        this.emitter.height = 2 * MoveFieldPsynergy.MOVE_MAX_RANGE;
         this.emitter.forEach(particle => {
             particle.animations.add('vanish', null, 4, true, false);
         });
@@ -288,7 +291,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
     start_final_emitter(x, y) {
         this.final_emitter.x = x;
         this.final_emitter.y = y;
-        let lifetime = Phaser.Timer.QUARTER;
+        const lifetime = Phaser.Timer.QUARTER;
         this.final_emitter.start(true, lifetime, null, this.final_emitter_particles_count);
         this.final_emitter.forEach(particle => {
             particle.animations.play('vanish');

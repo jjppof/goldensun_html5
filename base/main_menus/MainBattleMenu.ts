@@ -7,7 +7,7 @@ import { BattlePsynergyWindow } from "../windows/battle/BattlePsynergyWindow"
 import { BattleDjinnWindow } from "../windows/battle/BattleDjinnWindow";
 import { BattleItemWindow } from "../windows/battle/BattleItemWindow";
 import { BattleSummonWindow } from "../windows/battle/BattleSummonWindow";
-import { MAX_CHARS_IN_BATTLE } from "../battle/Battle";
+import { Battle } from "../battle/Battle";
 import { permanent_status } from "../Player";
 import { ItemSlot, MainChar } from "../MainChar";
 import { GoldenSun } from "../GoldenSun";
@@ -112,7 +112,7 @@ export class MainBattleMenu {
                 this.start_horizontal_menu.close(()=>{
                     this.current_buttons = this.inner_buttons_keys;
                     this.abilities = {};
-                    this.data.info.party_data.members.slice(0, MAX_CHARS_IN_BATTLE).forEach((char:MainChar) => {
+                    this.data.info.party_data.members.slice(0, Battle.MAX_CHARS_IN_BATTLE).forEach((char:MainChar) => {
                         this.abilities[char.key_name] = [];
                     });
                     this.djinni_already_used = ordered_elements.reduce((a,b) => (a[b] = 0, a), {});
@@ -125,7 +125,7 @@ export class MainBattleMenu {
                         });
                         ++this.current_char_index;
                         this_char = this.data.info.party_data.members[this.current_char_index];
-                        if (this.current_char_index >= MAX_CHARS_IN_BATTLE || this.current_char_index >= this.data.info.party_data.members.length) {
+                        if (this.current_char_index >= Battle.MAX_CHARS_IN_BATTLE || this.current_char_index >= this.data.info.party_data.members.length) {
                             this.current_char_index = 0;
                             this.on_abilities_choose(this.abilities);
                             break;
@@ -259,7 +259,7 @@ export class MainBattleMenu {
         if (before_char.turns === abilities_count || !abilities_count) {
             this.current_char_index += step;
         }
-        if (this.current_char_index >= MAX_CHARS_IN_BATTLE || this.current_char_index >= this.data.info.party_data.members.length) {
+        if (this.current_char_index >= Battle.MAX_CHARS_IN_BATTLE || this.current_char_index >= this.data.info.party_data.members.length) {
             this.current_char_index = 0;
             this.on_abilities_choose(this.abilities);
         } else if (this.current_char_index >= 0) {

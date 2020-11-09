@@ -3,25 +3,25 @@ import { FieldAbilities } from "./FieldAbilities";
 import * as _ from "lodash";
 import { SpriteBase } from "../SpriteBase";
 
-const ABILITY_KEY_NAME = "growth";
-const ACTION_KEY_NAME = "cast";
-const GROWTH_MAX_RANGE = 12;
-const MAX_PARTICLE_SPEED = 60;
-const MIN_PARTICLE_SPEED = 55;
-const X_PARTICLE_SPEED = 35;
-const Y_PARTICLE_SPEED = 35;
-const NO_TARGET_SPROUT_COUNT = 5;
-
 export class GrowthFieldPsynergy extends FieldAbilities {
+    private static readonly ABILITY_KEY_NAME = "growth";
+    private static readonly ACTION_KEY_NAME = "cast";
+    private static readonly GROWTH_MAX_RANGE = 12;
+    private static readonly MAX_PARTICLE_SPEED = 60;
+    private static readonly MIN_PARTICLE_SPEED = 55;
+    private static readonly X_PARTICLE_SPEED = 35;
+    private static readonly Y_PARTICLE_SPEED = 35;
+    private static readonly NO_TARGET_SPROUT_COUNT = 5;
+
     private increase_duration: number;
     private emitter: Phaser.Particles.Arcade.Emitter;
     private particle_filter: any;
     private sprite_base: SpriteBase;
 
     constructor(game, data) {
-        super(game, data, ABILITY_KEY_NAME, GROWTH_MAX_RANGE, ACTION_KEY_NAME, true);
+        super(game, data, GrowthFieldPsynergy.ABILITY_KEY_NAME, GrowthFieldPsynergy.GROWTH_MAX_RANGE, GrowthFieldPsynergy.ACTION_KEY_NAME, true);
         this.set_bootstrap_method(this.init_bubbles.bind(this));
-        this.sprite_base = this.data.info.iter_objs_sprite_base_list[ABILITY_KEY_NAME];
+        this.sprite_base = this.data.info.iter_objs_sprite_base_list[GrowthFieldPsynergy.ABILITY_KEY_NAME];
     }
 
     set_emitter() {
@@ -36,38 +36,38 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         this.increase_duration = 0;
         switch(this.cast_direction) {
             case directions.up:
-                max_y_speed = -MAX_PARTICLE_SPEED;
-                min_y_speed = -MIN_PARTICLE_SPEED;
-                max_x_speed = min_x_speed = X_PARTICLE_SPEED;
+                max_y_speed = -GrowthFieldPsynergy.MAX_PARTICLE_SPEED;
+                min_y_speed = -GrowthFieldPsynergy.MIN_PARTICLE_SPEED;
+                max_x_speed = min_x_speed = GrowthFieldPsynergy.X_PARTICLE_SPEED;
                 y_dest -= 7;
-                emitter_width = GROWTH_MAX_RANGE >> 1;
-                emitter_height = 1.5 * GROWTH_MAX_RANGE;
+                emitter_width = GrowthFieldPsynergy.GROWTH_MAX_RANGE >> 1;
+                emitter_height = 1.5 * GrowthFieldPsynergy.GROWTH_MAX_RANGE;
                 this.increase_duration = 80;
                 break;
             case directions.down:
-                max_y_speed = MAX_PARTICLE_SPEED;
-                min_y_speed = MIN_PARTICLE_SPEED;
-                max_x_speed = min_x_speed = X_PARTICLE_SPEED;
+                max_y_speed = GrowthFieldPsynergy.MAX_PARTICLE_SPEED;
+                min_y_speed = GrowthFieldPsynergy.MIN_PARTICLE_SPEED;
+                max_x_speed = min_x_speed = GrowthFieldPsynergy.X_PARTICLE_SPEED;
                 y_dest += 12;
-                emitter_width = GROWTH_MAX_RANGE >> 1;
-                emitter_height = 1.5 * GROWTH_MAX_RANGE;
+                emitter_width = GrowthFieldPsynergy.GROWTH_MAX_RANGE >> 1;
+                emitter_height = 1.5 * GrowthFieldPsynergy.GROWTH_MAX_RANGE;
                 this.increase_duration = 80;
                 break;
             case directions.left:
-                max_x_speed = -MAX_PARTICLE_SPEED;
-                min_x_speed = -MIN_PARTICLE_SPEED;
-                max_y_speed = min_y_speed = Y_PARTICLE_SPEED;
+                max_x_speed = -GrowthFieldPsynergy.MAX_PARTICLE_SPEED;
+                min_x_speed = -GrowthFieldPsynergy.MIN_PARTICLE_SPEED;
+                max_y_speed = min_y_speed = GrowthFieldPsynergy.Y_PARTICLE_SPEED;
                 x_dest -= 16;
-                emitter_width = 1.5 * GROWTH_MAX_RANGE;
-                emitter_height = GROWTH_MAX_RANGE;
+                emitter_width = 1.5 * GrowthFieldPsynergy.GROWTH_MAX_RANGE;
+                emitter_height = GrowthFieldPsynergy.GROWTH_MAX_RANGE;
                 break;
             case directions.right:
-                max_x_speed = MAX_PARTICLE_SPEED;
-                min_x_speed = MIN_PARTICLE_SPEED;
-                max_y_speed = min_y_speed = Y_PARTICLE_SPEED;
+                max_x_speed = GrowthFieldPsynergy.MAX_PARTICLE_SPEED;
+                min_x_speed = GrowthFieldPsynergy.MIN_PARTICLE_SPEED;
+                max_y_speed = min_y_speed = GrowthFieldPsynergy.Y_PARTICLE_SPEED;
                 x_dest += 16;
-                emitter_width = 1.5 * GROWTH_MAX_RANGE;
-                emitter_height = GROWTH_MAX_RANGE;
+                emitter_width = 1.5 * GrowthFieldPsynergy.GROWTH_MAX_RANGE;
+                emitter_height = GrowthFieldPsynergy.GROWTH_MAX_RANGE;
                 break;
         }
         this.emitter = this.game.add.emitter(x_dest, y_dest, 20);
@@ -108,7 +108,7 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         this.target_object.get_events().forEach(event => {
             event.activate();
         });
-        const anim_key = this.sprite_base.getAnimationKey(ABILITY_KEY_NAME, "growing");
+        const anim_key = this.sprite_base.getAnimationKey(GrowthFieldPsynergy.ABILITY_KEY_NAME, "growing");
         this.target_object.sprite.animations.play(anim_key);
         this.target_object.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.unset_hero_cast_anim();
@@ -134,17 +134,17 @@ export class GrowthFieldPsynergy extends FieldAbilities {
                 grow_center_x += 16;
                 break;
         }
-        let promises = new Array(NO_TARGET_SPROUT_COUNT);
+        let promises = new Array(GrowthFieldPsynergy.NO_TARGET_SPROUT_COUNT);
         const variation = 13;
-        const action_key = this.sprite_base.getActionKey(ABILITY_KEY_NAME);
-        const anim_key = this.sprite_base.getAnimationKey(ABILITY_KEY_NAME, "no_target");
-        const first_frame_name = this.sprite_base.getFrameName(ABILITY_KEY_NAME, "no_target", 0);
-        for (let i = 0; i < NO_TARGET_SPROUT_COUNT; ++i) {
+        const action_key = this.sprite_base.getActionKey(GrowthFieldPsynergy.ABILITY_KEY_NAME);
+        const anim_key = this.sprite_base.getAnimationKey(GrowthFieldPsynergy.ABILITY_KEY_NAME, "no_target");
+        const first_frame_name = this.sprite_base.getFrameName(GrowthFieldPsynergy.ABILITY_KEY_NAME, "no_target", 0);
+        for (let i = 0; i < GrowthFieldPsynergy.NO_TARGET_SPROUT_COUNT; ++i) {
             const center_x = grow_center_x + _.random(-variation, variation);
             const center_y = grow_center_y + _.random(-variation, variation);
             const miss_target_sprite: Phaser.Sprite = this.data.overlayer_group.create(center_x, center_y, action_key);
             miss_target_sprite.anchor.setTo(0.5, 1);
-            this.sprite_base.setAnimation(miss_target_sprite, ABILITY_KEY_NAME);
+            this.sprite_base.setAnimation(miss_target_sprite, GrowthFieldPsynergy.ABILITY_KEY_NAME);
             miss_target_sprite.frameName = first_frame_name;
             let resolve_func;
             promises.push(new Promise(resolve => { resolve_func = resolve; }));

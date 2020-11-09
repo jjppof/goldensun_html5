@@ -10,20 +10,20 @@ import * as _ from "lodash";
 import { GameInfo, PartyData } from './initializers/initialize_info';
 import { Ability } from './Ability';
 
-const ELEM_LV_DELTA = 1;
-const ELEM_POWER_DELTA = 5;
-const ELEM_RESIST_DELTA = 5;
-export const MAX_ITEMS_PER_CHAR = 30;
-
 export type ItemSlot = {
     key_name: string,
-    index?: number,
     quantity: number,
+    index?: number,
     equipped?: boolean,
     broken?: boolean
 };
 
 export class MainChar extends Player {
+    private static readonly ELEM_LV_DELTA = 1;
+    private static readonly ELEM_POWER_DELTA = 5;
+    private static readonly ELEM_RESIST_DELTA = 5;
+    public static readonly MAX_ITEMS_PER_CHAR = 30;
+
     public info: GameInfo;
     public sprite_base: SpriteBase;
     public walk_speed: number;
@@ -443,10 +443,10 @@ export class MainChar extends Player {
             const djinn = this.info.djinni_list[djinni_key_name[i]];
             let lv_shift;
             switch (djinni_next_status[i]) {
-                case djinn_status.SET: lv_shift = ELEM_LV_DELTA; break;
+                case djinn_status.SET: lv_shift = MainChar.ELEM_LV_DELTA; break;
                 case djinn_status.RECOVERY:
                 case "irrelevant": lv_shift = 0; break;
-                default: lv_shift = -ELEM_LV_DELTA;
+                default: lv_shift = -MainChar.ELEM_LV_DELTA;
             }
             switch (djinn.element) {
                 case elements.VENUS: venus_lv += lv_shift; break;
@@ -638,9 +638,9 @@ export class MainChar extends Player {
         for (let i = 0; i < this.djinni.length; ++i) {
             let djinn = this.info.djinni_list[this.djinni[i]];
             if (djinn.status !== djinn_status.SET) continue;
-            this[djinn.element + "_power_current"] += ELEM_POWER_DELTA;
-            this[djinn.element + "_resist_current"] += ELEM_RESIST_DELTA;
-            this[djinn.element + "_level_current"] += ELEM_LV_DELTA;
+            this[djinn.element + "_power_current"] += MainChar.ELEM_POWER_DELTA;
+            this[djinn.element + "_resist_current"] += MainChar.ELEM_RESIST_DELTA;
+            this[djinn.element + "_level_current"] += MainChar.ELEM_LV_DELTA;
         }
 
         this.effects.forEach(effect => {
@@ -698,7 +698,7 @@ export class MainChar extends Player {
     static add_item_to_party(party_data: PartyData, item: Item, quantity: number) {
         for (let i = 0; i < party_data.members.length; ++i) {
             const char = party_data.members[i];
-            if (char.items.length < MAX_ITEMS_PER_CHAR) {
+            if (char.items.length < MainChar.MAX_ITEMS_PER_CHAR) {
                 char.add_item(item.key_name, quantity, false);
                 return true;
             }
