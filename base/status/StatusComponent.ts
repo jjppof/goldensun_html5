@@ -1,7 +1,7 @@
 import { BitmapText } from "phaser-ce";
 import { GoldenSun } from "../GoldenSun";
 import { Window } from "../Window";
-import { StatusStateManager } from "./StatusStateManager";
+import { BattleStatusWindow } from "../windows/battle/BattleStatusWindow";
 
 export abstract class StatusComponent{
     protected static readonly GROUP_KEY = "status_component";
@@ -15,9 +15,9 @@ export abstract class StatusComponent{
 
     protected highlight:Phaser.Graphics;
     protected state_sprites:(Phaser.Sprite|BitmapText)[];
-    protected manager:StatusStateManager;
+    protected manager:BattleStatusWindow;
 
-    public constructor(game:Phaser.Game, data:GoldenSun, window:Window, manager:StatusStateManager, pos?:{line:number, col:number}){
+    public constructor(game:Phaser.Game, data:GoldenSun, window:Window, manager:BattleStatusWindow, pos?:{line:number, col:number}){
         if(this.constructor === StatusComponent){
             throw new Error("Cannot instanciate abstract class.");
         }

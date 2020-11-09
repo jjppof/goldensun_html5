@@ -1,11 +1,12 @@
 import { Battle } from "../../battle/Battle";
 import { GoldenSun } from "../../GoldenSun";
 import { MainChar } from "../../MainChar";
-import { ComponentStates, StatusStateManager } from "../../status/StatusStateManager";
 import { main_stats, temporary_status, ordered_status_battle, ordered_status_menu, permanent_status } from "../../Player";
 import { TextObj, Window } from "../../Window";
 import { base_actions, elements } from "../../utils";
 import * as _ from "lodash";
+import { StatusComponent } from "../../status/StatusComponent";
+import { StatusStatistics } from "../../status/StatusStatistics";
 
 export type BattleStatusEffect = {
     key:string,
@@ -14,6 +15,13 @@ export type BattleStatusEffect = {
         turns?:number,
         values?:number[]
     }
+}
+
+export enum ComponentStates {
+    STATISTICS,
+    PSYNERGY,
+    DJINN,
+    ITEMS
 }
 
 export enum BattleEffectTypes{
@@ -112,39 +120,32 @@ export class BattleStatusWindow{
 
     private desc_shifted:boolean;
     private selected_char:MainChar;
+    
+    private current_state:ComponentStates;
+    private current_component:StatusComponent;
 
     private battle_effects:BattleStatusEffect[];
     private effect_sprites:Phaser.Sprite[];
 
     private window:Window;
-    private manager:StatusStateManager;
-
     private battle_sprite:Phaser.Sprite;
     private avatar:Phaser.Sprite;
 
     private name:TextObj;
-    private level_label:TextObj;
     private level_value:TextObj;
 
-    private exp_label:TextObj;
     private exp_value:TextObj;
     private normal_status:TextObj;
 
-    private hp_label:TextObj;
     private max_hp:TextObj;
     private curr_hp:TextObj;
 
-    private pp_label:TextObj;
     private max_pp:TextObj;
     private curr_pp:TextObj;
 
-    private atk_label:TextObj;
     private atk_value:TextObj;
-    private def_label:TextObj;
     private def_value:TextObj;
-    private agi_label:TextObj;
     private agi_value:TextObj;
-    private luk_label:TextObj;
     private luk_value:TextObj;
 
     private class_name:TextObj;
@@ -165,38 +166,45 @@ export class BattleStatusWindow{
         this.effect_sprites = [];
 
         this.window = new Window(this.game, 0, 0, BattleStatusWindow.WINDOW.WIDTH, BattleStatusWindow.WINDOW.HEIGHT);
-        this.manager = new StatusStateManager(this.game, this.data, this.window);
-
         this.window.define_internal_group(BattleStatusWindow.GROUP_KEY, {x:0, y:0});
+
         this.battle_sprite = null;
         this.avatar = null;
 
         this.init_text();
     }
 
+    public get selected_character(){
+        return this.selected_char;
+    }
+
+    public get battle_effects_array(){
+        return this.battle_effects;
+    }
+
     private init_text(){
         this.name = this.window.set_text_in_position("", BattleStatusWindow.NAME.X, BattleStatusWindow.NAME.Y,
             false, false, undefined, false, BattleStatusWindow.GROUP_KEY);
-        this.level_label = this.window.set_text_in_position("Lv", BattleStatusWindow.LEVEL.LABEL_X, BattleStatusWindow.LEVEL.LABEL_Y,
+        this.window.set_text_in_position("Lv", BattleStatusWindow.LEVEL.LABEL_X, BattleStatusWindow.LEVEL.LABEL_Y,
             false, false, undefined, false, BattleStatusWindow.GROUP_KEY);
         this.level_value = this.window.set_text_in_position("", BattleStatusWindow.LEVEL.VALUE_END_X, BattleStatusWindow.LEVEL.VALUE_Y,
             true, false, undefined, false, BattleStatusWindow.GROUP_KEY);
 
-        this.exp_label = this.window.set_text_in_position("Exp", BattleStatusWindow.EXP.LABEL_X, BattleStatusWindow.EXP.LABEL_Y,
+        this.window.set_text_in_position("Exp", BattleStatusWindow.EXP.LABEL_X, BattleStatusWindow.EXP.LABEL_Y,
             false, false, undefined, false, BattleStatusWindow.GROUP_KEY);
         this.exp_value = this.window.set_text_in_position("", BattleStatusWindow.EXP.VALUE_END_X, BattleStatusWindow.EXP.VALUE_Y,
             true, false, undefined, false, BattleStatusWindow.GROUP_KEY);
         this.normal_status = this.window.set_text_in_position("", BattleStatusWindow.NORMAL_STATUS.X, BattleStatusWindow.NORMAL_STATUS.Y,
             false, false, undefined, false, BattleStatusWindow.GROUP_KEY);
 
-        this.hp_label = this.window.set_text_in_position("HP", BattleStatusWindow.HP.LABEL_X, BattleStatusWindow.HP.LABEL_Y,
+        this.window.set_text_in_position("HP", BattleStatusWindow.HP.LABEL_X, BattleStatusWindow.HP.LABEL_Y,
             false, false, undefined, false, BattleStatusWindow.GROUP_KEY);
         this.max_hp = this.window.set_text_in_position("", BattleStatusWindow.HP.MAX_END_X, BattleStatusWindow.HP.MAX_Y,
             true, false, undefined, false, BattleStatusWindow.GROUP_KEY);
         this.curr_hp = this.window.set_text_in_position("/", BattleStatusWindow.HP.CURR_END_X, BattleStatusWindow.HP.CURR_Y,
         true, false, undefined, false, BattleStatusWindow.GROUP_KEY);
 
-        this.pp_label = this.window.set_text_in_position("PP", BattleStatusWindow.PP.LABEL_X, BattleStatusWindow.PP.LABEL_Y,
+        this.window.set_text_in_position("PP", BattleStatusWindow.PP.LABEL_X, BattleStatusWindow.PP.LABEL_Y,
             false, false, undefined, false, BattleStatusWindow.GROUP_KEY);
         this.max_pp = this.window.set_text_in_position("", BattleStatusWindow.PP.MAX_END_X, BattleStatusWindow.PP.MAX_Y,
             true, false, undefined, false, BattleStatusWindow.GROUP_KEY);
@@ -205,19 +213,19 @@ export class BattleStatusWindow{
 
         let shift = BattleStatusWindow.STATS.LINE_SHIFT;
 
-        this.atk_label = this.window.set_text_in_position("Attack", BattleStatusWindow.STATS.LABEL_X, BattleStatusWindow.STATS.LABEL_Y,
+        this.window.set_text_in_position("Attack", BattleStatusWindow.STATS.LABEL_X, BattleStatusWindow.STATS.LABEL_Y,
             false, false, undefined, false, BattleStatusWindow.GROUP_KEY);
         this.atk_value = this.window.set_text_in_position("", BattleStatusWindow.STATS.VALUE_END_X, BattleStatusWindow.STATS.VALUE_Y,
             true, false, undefined, false, BattleStatusWindow.GROUP_KEY);
-        this.def_label = this.window.set_text_in_position("Defense", BattleStatusWindow.STATS.LABEL_X, BattleStatusWindow.STATS.LABEL_Y+shift,
+        this.window.set_text_in_position("Defense", BattleStatusWindow.STATS.LABEL_X, BattleStatusWindow.STATS.LABEL_Y+shift,
             false, false, undefined, false, BattleStatusWindow.GROUP_KEY);
         this.def_value = this.window.set_text_in_position("", BattleStatusWindow.STATS.VALUE_END_X, BattleStatusWindow.STATS.VALUE_Y+shift,
             true, false, undefined, false, BattleStatusWindow.GROUP_KEY);
-        this.agi_label = this.window.set_text_in_position("Agility", BattleStatusWindow.STATS.LABEL_X, BattleStatusWindow.STATS.LABEL_Y+2*shift,
+        this.window.set_text_in_position("Agility", BattleStatusWindow.STATS.LABEL_X, BattleStatusWindow.STATS.LABEL_Y+2*shift,
             false, false, undefined, false, BattleStatusWindow.GROUP_KEY);
         this.agi_value = this.window.set_text_in_position("", BattleStatusWindow.STATS.VALUE_END_X, BattleStatusWindow.STATS.VALUE_Y+2*shift,
             true, false, undefined, false, BattleStatusWindow.GROUP_KEY);
-        this.luk_label = this.window.set_text_in_position("Luck", BattleStatusWindow.STATS.LABEL_X, BattleStatusWindow.STATS.LABEL_Y+3*shift,
+        this.window.set_text_in_position("Luck", BattleStatusWindow.STATS.LABEL_X, BattleStatusWindow.STATS.LABEL_Y+3*shift,
             false, false, undefined, false, BattleStatusWindow.GROUP_KEY);
         this.luk_value = this.window.set_text_in_position("", BattleStatusWindow.STATS.VALUE_END_X, BattleStatusWindow.STATS.VALUE_Y+3*shift,
             true, false, undefined, false, BattleStatusWindow.GROUP_KEY);
@@ -353,10 +361,10 @@ export class BattleStatusWindow{
         power_changes.push(this.selected_char.mars_power_current - elemental_base[elements.MARS].power);
         power_changes.push(this.selected_char.jupiter_power_current - elemental_base[elements.JUPITER].power);
 
-        if(resist_changes.reduce((a, b) => a + b, 0) != 0)
-            effects.push({stat: "res", values: resist_changes});
         if(power_changes.reduce((a, b) => a + b, 0) != 0)
             effects.push({stat: "pow", values: power_changes});
+        if(resist_changes.reduce((a, b) => a + b, 0) != 0)
+            effects.push({stat: "res", values: resist_changes});
 
         return effects;
     }
@@ -418,7 +426,8 @@ export class BattleStatusWindow{
         this.update_info();
         this.set_sprites();
         
-        this.manager.char_change(this.selected_char, this.battle_effects);
+        this.change_state(this.current_state);
+        //this.manager.char_change(this.selected_char, this.battle_effects);
     }
 
     private next_char(){
@@ -453,17 +462,51 @@ export class BattleStatusWindow{
 
     public grant_control(){
         let controls = [
-            {key: this.data.gamepad.A, on_down: this.manager.trigger_state_change.bind(this.manager)},
+            {key: this.data.gamepad.A, on_down: this.trigger_state_change.bind(this)},
             {key: this.data.gamepad.B, on_down: this.close.bind(this, this.close_callback)},
             {key: this.data.gamepad.L, on_down: this.previous_char.bind(this)},
             {key: this.data.gamepad.R, on_down: this.next_char.bind(this)},
-            {key: this.data.gamepad.LEFT, on_down: this.manager.controls.left},
-            {key: this.data.gamepad.RIGHT, on_down: this.manager.controls.right},
-            {key: this.data.gamepad.UP, on_down: this.manager.controls.up},
-            {key: this.data.gamepad.DOWN, on_down: this.manager.controls.down},
+            {key: this.data.gamepad.LEFT, on_down: this.current_component.on_left.bind(this.current_component)},
+            {key: this.data.gamepad.RIGHT, on_down: this.current_component.on_right.bind(this.current_component)},
+            {key: this.data.gamepad.UP, on_down: this.current_component.on_up.bind(this.current_component)},
+            {key: this.data.gamepad.DOWN, on_down: this.current_component.on_down.bind(this.current_component)},
         ];
 
         this.data.control_manager.set_control(controls, {loop_configs:{vertical: true, horizontal: true, shoulder: true}});
+    }
+
+    public trigger_state_change(){
+        /*
+        this.unset_state();
+        this.current_state++;
+        this.setup_state();
+        */
+    }
+
+    private change_state(new_state:ComponentStates){
+        let pos = {line: 0, col: 0};
+        
+        if(this.current_component){
+            pos = this.current_component.current_pos;
+            this.current_component.destroy();
+            this.current_component = null;
+        }
+
+        this.current_state = new_state;
+
+        switch(this.current_state){
+            case ComponentStates.STATISTICS:
+                this.current_component = new StatusStatistics(this.game, this.data, this.window, this, pos);
+                break;
+            case ComponentStates.PSYNERGY:
+                break;
+            case ComponentStates.DJINN:
+                break;
+            case ComponentStates.ITEMS:
+                break;
+        }
+
+        if(this.current_component) this.current_component.on_change();
     }
 
     private check_shift(shift:boolean){
@@ -480,7 +523,7 @@ export class BattleStatusWindow{
         this.desc_shifted = shift;
     }
 
-    private on_change(line1:string, line2?:string){
+    public update_description(line1:string, line2?:string){
         if(!line2 === undefined){
             this.window.update_text("", this.desc_line1);
             this.window.update_text(line1, this.desc_line2);
@@ -489,7 +532,7 @@ export class BattleStatusWindow{
             this.window.update_text(line1, this.desc_line1);
             this.window.update_text(line2, this.desc_line2);
         }
-        this.check_shift(this.manager.current_state !== ComponentStates.STATISTICS);
+        this.check_shift(this.current_state !== ComponentStates.STATISTICS);
     }
 
     public open(selected_char?:MainChar, close_callback?:Function, open_callback?:Function){
@@ -501,8 +544,8 @@ export class BattleStatusWindow{
         this.window.show(() =>{
             this.update_info();
             this.set_sprites();
-            this.manager.inititalize(this.selected_char, this.on_change.bind(this), this.battle_effects);
-            this.check_shift(this.manager.current_state !== ComponentStates.STATISTICS);
+            this.change_state(ComponentStates.STATISTICS);
+            this.check_shift(this.current_state !== ComponentStates.STATISTICS);
             
             if(open_callback){
                 open_callback();
@@ -510,8 +553,14 @@ export class BattleStatusWindow{
         });
     }
 
+    public clear_component(){
+        this.current_component.destroy();
+        this.current_state = null;
+        this.current_component = null;
+    }
+
     public close(callback?:Function){
-        this.manager.clear();
+        this.clear_component();
         this.window.close(callback);
     }
 }

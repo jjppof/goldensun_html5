@@ -2,10 +2,9 @@ import { StatusComponent } from "./StatusComponent";
 import { Window } from "../Window";
 import { GoldenSun } from "../GoldenSun";
 import { CursorManager, PointVariants } from "../utils/CursorManager";
-import { BattleEffectTypes, BattleStatusEffect } from "../windows/battle/BattleStatusWindow";
+import { BattleEffectTypes, BattleStatusWindow } from "../windows/battle/BattleStatusWindow";
 import { temporary_status } from "../Player";
 import { elements, element_names, ordered_elements } from "../utils";
-import { StatusStateManager } from "./StatusStateManager";
 
 export enum Statistics {
     NAME,
@@ -103,7 +102,7 @@ export class StatusStatistics extends StatusComponent{
     public static readonly NUMBERS_X_SHIFT = 32;
     public static readonly NUMBERS_Y_SHIFT = 8;
     
-    public constructor(game:Phaser.Game, data:GoldenSun, window:Window, manager:StatusStateManager, pos?:{line:number, col:number}){
+    public constructor(game:Phaser.Game, data:GoldenSun, window:Window, manager:BattleStatusWindow, pos?:{line:number, col:number}){
         super(game, data, window, manager, pos);
     }
 
