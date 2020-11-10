@@ -215,9 +215,7 @@ export class StatusStatistics extends StatusComponent {
                         msgs.line1 = msgs.line1(turns);
                     }
                 } else if (effect.key === effect_types.RESIST || effect.key === effect_types.POWER) {
-                    let effect_name = "";
-                    if ((effect.key = effect_types.RESIST)) effect_name = effect_names[effect_types.RESIST];
-                    else if ((effect.key = effect_types.RESIST)) effect_name = effect_names[effect_types.POWER];
+                    const effect_name = effect_names[effect.key];
 
                     const elems_to_show = _.flatMap(elements, element =>
                         effect.properties.value[element]

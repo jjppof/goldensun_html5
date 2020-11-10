@@ -2,7 +2,6 @@ import {Battle} from "../../battle/Battle";
 import {GoldenSun} from "../../GoldenSun";
 import {MainChar} from "../../MainChar";
 import {
-    main_stats,
     temporary_status,
     ordered_status_battle,
     ordered_status_menu,
@@ -21,7 +20,7 @@ export type BattleStatusEffect = {
     properties?: {
         modifier?: string;
         turns?: number;
-        value?: number | {[element in elements]: number};
+        value?: number | {[element in elements]?: number};
     };
 };
 
@@ -538,7 +537,7 @@ export class BattleStatusWindow {
     }
 
     private get_buffs_debuffs() {
-        const effects: {stat: effect_types; value: number | {[element in elements]: number}}[] = [];
+        const effects: {stat: effect_types; value: BattleStatusEffect["properties"]["value"]}[] = [];
 
         const stat_keys = [effect_types.ATTACK, effect_types.DEFENSE, effect_types.AGILITY];
 
@@ -554,32 +553,25 @@ export class BattleStatusWindow {
 
         const elemental_base = this.selected_char.preview_elemental_stats_without_abilities_effect();
 
-        const power_value: {[element in elements]: number} = {
+        const power_value: BattleStatusEffect["properties"]["value"] = {
             [elements.VENUS]: this.selected_char.venus_power_current - elemental_base[elements.VENUS].power,
             [elements.MERCURY]: this.selected_char.mercury_power_current - elemental_base[elements.MERCURY].power,
             [elements.MARS]: this.selected_char.mars_power_current - elemental_base[elements.MARS].power,
             [elements.JUPITER]: this.selected_char.jupiter_power_current - elemental_base[elements.JUPITER].power,
-            [elements.NO_ELEMENT]: 0,
         };
-        const resist_value: {[element in elements]: number} = {
+        const resist_value: BattleStatusEffect["properties"]["value"] = {
             [elements.VENUS]: this.selected_char.venus_resist_current - elemental_base[elements.VENUS].resist,
             [elements.MERCURY]: this.selected_char.mercury_resist_current - elemental_base[elements.MERCURY].resist,
             [elements.MARS]: this.selected_char.mars_resist_current - elemental_base[elements.MARS].resist,
             [elements.JUPITER]: this.selected_char.jupiter_resist_current - elemental_base[elements.JUPITER].resist,
-            [elements.NO_ELEMENT]: 0,
         };
 
-        let sum = 0;
-        for (let element in power_value) {
-            sum += power_value[element];
+        if (_.some(power_value)) {
+            effects.push({stat: effect_types.POWER, value: power_value});
         }
-        if (sum !== 0) effects.push({stat: effect_types.POWER, value: power_value});
-
-        sum = 0;
-        for (let element in resist_value) {
-            sum += resist_value[element];
+        if (_.some(resist_value)) {
+            effects.push({stat: effect_types.RESIST, value: resist_value});
         }
-        if (sum !== 0) effects.push({stat: effect_types.RESIST, value: resist_value});
 
         return effects;
     }
