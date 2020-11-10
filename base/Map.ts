@@ -14,6 +14,8 @@ import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
 import {SliderEvent} from "./tile_events/SliderEvent";
 import {SpriteBase} from "./SpriteBase";
+import {Collision} from "./Collision";
+import {ControllableChar} from "./ControllableChar";
 
 export class Map {
     private static readonly MAX_CAMERA_ROTATION = 0.035;
@@ -150,7 +152,7 @@ export class Map {
         }
     }
 
-    load_map_assets(force_load, on_complete) {
+    load_map_assets(force_load: boolean, on_complete: () => void) {
         let load_tilemap_promise_resolve;
         let load_tilemap_promise = new Promise(resolve => {
             load_tilemap_promise_resolve = resolve;
@@ -185,7 +187,7 @@ export class Map {
         }
     }
 
-    config_body(collision_obj, collision_layer) {
+    config_body(collision_obj: Collision, collision_layer: number) {
         this.game.physics.p2.enable(this.collision_sprite, false);
         this.collision_sprite.body.clearShapes();
         if (this.collision_embedded) {
@@ -243,7 +245,7 @@ export class Map {
         this.collision_sprite.body.static = true;
     }
 
-    config_all_bodies(collision_obj, collision_layer) {
+    config_all_bodies(collision_obj: Collision, collision_layer: number) {
         if (!this.is_world_map) {
             this.npcs.forEach(npc => npc.config_body(collision_obj));
             this.interactable_objects.forEach(interactable_obj => interactable_obj.config_body(collision_obj));
@@ -251,7 +253,7 @@ export class Map {
         this.config_body(collision_obj, collision_layer);
     }
 
-    get_current_tile(controllable_char, layer?) {
+    get_current_tile(controllable_char: ControllableChar, layer?) {
         if (layer !== undefined) {
             return this.sprite.getTile(controllable_char.tile_x_pos, controllable_char.tile_y_pos, layer);
         } else {
@@ -263,7 +265,7 @@ export class Map {
         }
     }
 
-    get_layer(name) {
+    get_layer(name: string) {
         return _.find(this.layers, {name: name});
     }
 
@@ -507,7 +509,7 @@ export class Map {
         }
     }
 
-    config_layers(overlayer_group, underlayer_group) {
+    config_layers(overlayer_group: Phaser.Group, underlayer_group: Phaser.Group) {
         for (let i = 0; i < this.layers.length; ++i) {
             let layer = this.sprite.createLayer(this.layers[i].name);
             this.layers[i].sprite = layer;
@@ -540,7 +542,7 @@ export class Map {
         }
     }
 
-    async mount_map(collision_layer) {
+    async mount_map(collision_layer: number) {
         if (!this.assets_loaded) {
             let load_promise_resolve;
             const load_promise = new Promise(resolve => (load_promise_resolve = resolve));

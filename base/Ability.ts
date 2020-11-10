@@ -152,7 +152,7 @@ export class Ability {
         this.has_animation_variation = has_animation_variation === undefined ? false : has_animation_variation;
     }
 
-    static get_diminishing_ratios(ability_type, use_diminishing_ratio) {
+    static get_diminishing_ratios(ability_type: ability_types, use_diminishing_ratio: boolean) {
         if (use_diminishing_ratio) {
             return diminishing_ratios.DIMINISH;
         }

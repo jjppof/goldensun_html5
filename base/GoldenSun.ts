@@ -137,6 +137,8 @@ export class GoldenSun {
             hero_sprite_base,
             this.map.sprite,
             this.map.collision_layer,
+            undefined,
+            undefined,
             this.map.is_world_map
         );
         this.hero.set_shadow("shadow", this.npc_group, this.map.collision_layer);

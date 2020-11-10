@@ -56,17 +56,17 @@ export class ControllableChar {
     public shadow_following: boolean;
 
     constructor(
-        game,
-        data,
-        key_name,
-        initial_x,
-        initial_y,
-        initial_action,
-        initial_direction,
-        enable_footsteps,
-        walk_speed,
-        dash_speed,
-        climb_speed
+        game: Phaser.Game,
+        data: GoldenSun,
+        key_name: string,
+        initial_x: number,
+        initial_y: number,
+        initial_action: string | base_actions,
+        initial_direction: number,
+        enable_footsteps: boolean,
+        walk_speed: number,
+        dash_speed: number,
+        climb_speed: number
     ) {
         this.game = game;
         this.data = data;
@@ -107,7 +107,7 @@ export class ControllableChar {
         this.shadow_following = true;
     }
 
-    in_action(allow_climbing = false) {
+    in_action(allow_climbing: boolean = false) {
         return (
             this.casting_psynergy ||
             this.pushing ||
@@ -118,7 +118,15 @@ export class ControllableChar {
         );
     }
 
-    set_sprite(group, sprite_info, map_sprite, layer, anchor_x?, anchor_y?, is_world_map: boolean = false) {
+    set_sprite(
+        group: Phaser.Group,
+        sprite_info: SpriteBase,
+        map_sprite: Phaser.Tilemap,
+        layer: number,
+        anchor_x?: number,
+        anchor_y?: number,
+        is_world_map: boolean = false
+    ) {
         anchor_x = anchor_x === undefined ? ControllableChar.default_anchor.x : anchor_x;
         anchor_y = anchor_y === undefined ? ControllableChar.default_anchor.y : anchor_y;
         this.sprite_info = sprite_info;
@@ -134,7 +142,7 @@ export class ControllableChar {
         this.sprite.scale.setTo(scale_x, scale_y);
     }
 
-    reset_anchor(property?) {
+    reset_anchor(property?: "x" | "y") {
         if (property !== undefined && ["x", "y"].includes(property)) {
             this.sprite.anchor[property] = ControllableChar.default_anchor[property];
         } else {
@@ -143,7 +151,14 @@ export class ControllableChar {
         }
     }
 
-    set_shadow(key_name, group, layer, shadow_anchor_x?, shadow_anchor_y?, is_world_map: boolean = false) {
+    set_shadow(
+        key_name: string,
+        group: Phaser.Group,
+        layer: number,
+        shadow_anchor_x?: number,
+        shadow_anchor_y?: number,
+        is_world_map: boolean = false
+    ) {
         key_name = key_name === undefined ? ControllableChar.DEFAULT_SHADOW_KEYNAME : key_name;
         shadow_anchor_x = shadow_anchor_x === undefined ? ControllableChar.DEFAULT_SHADOW_ANCHOR_X : shadow_anchor_x;
         shadow_anchor_y = shadow_anchor_y === undefined ? ControllableChar.DEFAULT_SHADOW_ANCHOR_Y : shadow_anchor_y;
@@ -162,12 +177,12 @@ export class ControllableChar {
         this.game.camera.focusOn(this.sprite);
     }
 
-    set_collision_layer(layer) {
+    set_collision_layer(layer: number) {
         this.sprite.base_collision_layer = layer;
         this.shadow.base_collision_layer = layer;
     }
 
-    play(action?, animation?, start = true) {
+    play(action?: string | base_actions, animation?: string | number, start: boolean = true) {
         action = action === undefined ? this.current_action : action;
         animation = animation === undefined ? reverse_directions[this.current_direction] : animation;
         if (this.sprite_info.getSpriteAction(this.sprite) !== action) {
@@ -187,7 +202,7 @@ export class ControllableChar {
         return animation_obj;
     }
 
-    set_frame(direction: number, frame_index = 0) {
+    set_frame(direction: number, frame_index: number = 0) {
         const frame_name = this.sprite_info.getFrameName(
             this.current_action,
             reverse_directions[direction],
@@ -263,7 +278,7 @@ export class ControllableChar {
         }
     }
 
-    stop_char(change_sprite = true) {
+    stop_char(change_sprite: boolean = true) {
         if (this.sprite.body) {
             this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         }
@@ -273,11 +288,11 @@ export class ControllableChar {
         }
     }
 
-    set_direction(direction) {
+    set_direction(direction: number) {
         this.current_direction = this.desired_direction = direction;
     }
 
-    set_action(check_on_event = false) {
+    set_action(check_on_event: boolean = false) {
         if (check_on_event && this.data.tile_event_manager.on_event) {
             return;
         }
@@ -324,7 +339,7 @@ export class ControllableChar {
         }
     }
 
-    update_tile_position(map_sprite) {
+    update_tile_position(map_sprite: Phaser.Tilemap) {
         this.tile_x_pos = (this.sprite.x / map_sprite.tileWidth) | 0;
         this.tile_y_pos = (this.sprite.y / map_sprite.tileHeight) | 0;
     }
@@ -362,7 +377,7 @@ export class ControllableChar {
         }
     }
 
-    set_speed(x_speed, y_speed) {
+    set_speed(x_speed: number, y_speed: number) {
         this.x_speed = x_speed === undefined ? this.x_speed : x_speed;
         this.y_speed = y_speed === undefined ? this.y_speed : y_speed;
         this.calculate_speed();

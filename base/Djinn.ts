@@ -1,6 +1,7 @@
 import * as numbers from "./magic_numbers";
 import {elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
+import {MainChar} from "./MainChar";
 
 export enum djinn_status {
     SET = "set",
@@ -61,7 +62,7 @@ export class Djinn {
         this.recovery_turn = 0;
     }
 
-    set_status(status, char) {
+    set_status(status: djinn_status, char: MainChar) {
         this.status = status;
         char.update_elemental_attributes();
         char.update_class();

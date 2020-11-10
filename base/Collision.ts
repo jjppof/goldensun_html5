@@ -1,4 +1,6 @@
+import {GoldenSun} from "./GoldenSun";
 import {Hero} from "./Hero";
+import {Map} from "./Map";
 
 export class Collision {
     public game: Phaser.Game;
@@ -11,7 +13,7 @@ export class Collision {
     public max_layers_created: number;
     public dynamic_jump_events_bodies: Phaser.Physics.P2.Body[];
 
-    constructor(game, hero) {
+    constructor(game: Phaser.Game, hero: Hero) {
         this.game = game;
         this.hero = hero;
         this.config_world();
@@ -35,7 +37,7 @@ export class Collision {
         this.game.physics.p2.restitution = 0;
     }
 
-    config_collision_groups(map) {
+    config_collision_groups(map: Map) {
         //p2 has a limit number of collision groups that can be created. Then, NPCs and I. Objs. groups will be created on demand.
         for (let layer_index = this.max_layers_created; layer_index < map.collision_layers_number; ++layer_index) {
             this.npc_collision_groups[layer_index] = this.game.physics.p2.createCollisionGroup();
@@ -44,7 +46,7 @@ export class Collision {
         this.max_layers_created = Math.max(this.max_layers_created, map.collision_layers_number);
     }
 
-    config_collisions(map, collision_layer, npc_group) {
+    config_collisions(map: Map, collision_layer: number, npc_group: Phaser.Group) {
         this.hero.sprite.body.collides(this.map_collision_group);
         map.collision_sprite.body.collides(this.hero_collision_group);
 
@@ -63,7 +65,7 @@ export class Collision {
         }
 
         for (let i = 0; i < npc_group.children.length; ++i) {
-            const sprite = npc_group.children[i];
+            const sprite = npc_group.children[i] as Phaser.Sprite;
             if (!sprite.is_npc && !sprite.is_interactable_object) continue;
             if (!sprite.body) continue;
             sprite.body.collides(this.hero_collision_group);
@@ -71,7 +73,7 @@ export class Collision {
         this.hero.sprite.body.collides(this.dynamic_events_collision_group);
     }
 
-    change_map_body(data, new_collider_layer_index) {
+    change_map_body(data: GoldenSun, new_collider_layer_index: number) {
         if (data.map.collision_layer === new_collider_layer_index) return;
         data.map.collision_layer = new_collider_layer_index;
         this.hero.shadow.base_collision_layer = data.map.collision_layer;
@@ -93,7 +95,7 @@ export class Collision {
                     data.underlayer_group.remove(layer.sprite, false, true);
                     let index = 0;
                     for (index = 0; index < data.overlayer_group.children.length; ++index) {
-                        let child = data.overlayer_group.children[index];
+                        let child = data.overlayer_group.children[index] as Phaser.TilemapLayer;
                         if (child.layer_z > (layer.z === undefined ? i : layer.z)) {
                             data.overlayer_group.addAt(layer.sprite, index, true);
                             break;
@@ -106,7 +108,7 @@ export class Collision {
                     data.overlayer_group.remove(layer.sprite, false, true);
                     let index = 0;
                     for (index = 0; index < data.underlayer_group.children.length; ++index) {
-                        let child = data.underlayer_group.children[index];
+                        let child = data.underlayer_group.children[index] as Phaser.TilemapLayer;
                         if (child.layer_z > layer.z) {
                             data.underlayer_group.addAt(layer.sprite, index, true);
                             break;

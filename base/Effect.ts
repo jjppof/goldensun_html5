@@ -146,7 +146,7 @@ export class Effect {
         }
     }
 
-    static apply_operator(a, b, operator) {
+    static apply_operator(a: number, b: number, operator: effect_operators) {
         switch (operator) {
             case effect_operators.PLUS:
                 return a + b;
@@ -172,7 +172,7 @@ export class Effect {
         this.sub_effect.on_caster = this.sub_effect.on_caster === undefined ? false : this.sub_effect.on_caster;
     }
 
-    apply_general_value(property, direct_value?) {
+    apply_general_value(property: string, direct_value?: number) {
         const before_value = property !== undefined ? this.char[property] : direct_value;
         if (Math.random() >= this.chance) {
             return {
@@ -212,7 +212,7 @@ export class Effect {
         };
     }
 
-    apply_subeffect(property, value) {
+    apply_subeffect(property: string, value: number) {
         if (Math.random() < this.sub_effect.chance) {
             if (this.sub_effect.quantity_is_absolute) {
                 this.char[property] = value;

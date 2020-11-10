@@ -484,9 +484,12 @@ export class Battle {
         if (ability.ability_category === ability_categories.DJINN) {
             //change djinn status
             if (ability.effects.some(effect => effect.type === effect_types.SET_DJINN)) {
-                this.data.info.djinni_list[action.djinn_key_name].set_status(djinn_status.SET, action.caster);
+                this.data.info.djinni_list[action.djinn_key_name].set_status(
+                    djinn_status.SET,
+                    action.caster as MainChar
+                );
             } else {
-                this.data.info.djinni_list[action.key_name].set_status(djinn_status.STANDBY, action.caster);
+                this.data.info.djinni_list[action.key_name].set_status(djinn_status.STANDBY, action.caster as MainChar);
             }
         } else if (ability.ability_category === ability_categories.SUMMON) {
             //some summon checks

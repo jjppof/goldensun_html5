@@ -5,6 +5,8 @@ import {directions, get_surroundings, mount_collision_polygon} from "./utils";
 import {JumpEvent} from "./tile_events/JumpEvent";
 import {ClimbEvent} from "./tile_events/ClimbEvent";
 import {GoldenSun} from "./GoldenSun";
+import {Map} from "./Map";
+import {Collision} from "./Collision";
 
 export enum interactable_object_interaction_types {
     ONCE = "once",
@@ -80,7 +82,7 @@ export class InteractableObjects {
         this.sprite = sprite;
     }
 
-    position_allowed(x, y) {
+    position_allowed(x: number, y: number) {
         if (
             this.data.map.interactable_objects.filter(item => {
                 return item.current_x === x && item.current_y === y;
@@ -95,13 +97,13 @@ export class InteractableObjects {
         return false;
     }
 
-    get_current_position(map) {
+    get_current_position(map: Map) {
         const x = (this.sprite.x / map.sprite.tileWidth) | 0;
         const y = (this.sprite.y / map.sprite.tileHeight) | 0;
         return {x: x, y: y};
     }
 
-    change_collider_layer(data, destination_collider_layer) {
+    change_collider_layer(data: GoldenSun, destination_collider_layer: number) {
         this.sprite.body.removeCollisionGroup(
             data.collision.interactable_objs_collision_groups[this.base_collision_layer]
         );
@@ -127,7 +129,7 @@ export class InteractableObjects {
         this.events.delete(id);
     }
 
-    creating_blocking_stair_block(collision_obj) {
+    creating_blocking_stair_block(collision_obj: Collision) {
         const target_layer = this.base_collision_layer + this.custom_data.block_stair_collider_layer_shift;
         const x_pos = (this.current_x + 0.5) * this.data.map.sprite.tileWidth;
         const y_pos = (this.current_y + 1.5) * this.data.map.sprite.tileHeight - 4;
@@ -152,7 +154,7 @@ export class InteractableObjects {
         this.custom_data.blocking_stair_block = body;
     }
 
-    initial_config(map_sprite) {
+    initial_config(map_sprite: Phaser.Tilemap) {
         const interactable_object_sprite = this.data.npc_group.create(0, 0, this.key_name + "_" + this.key_name);
         this.set_sprite(interactable_object_sprite);
         this.sprite.is_interactable_object = true;
@@ -182,7 +184,7 @@ export class InteractableObjects {
         this.sprite.animations.play(this.key_name + "_" + initial_animation);
     }
 
-    initialize_related_events(map_events, map) {
+    initialize_related_events(map_events: Map["events"], map: Map) {
         const position = this.get_current_position(map);
         let x_pos = position.x;
         let y_pos = position.y;
@@ -211,7 +213,7 @@ export class InteractableObjects {
         }
     }
 
-    not_allowed_tile_test(x, y) {
+    not_allowed_tile_test(x: number, y: number) {
         for (let i = 0; i < this.not_allowed_tiles.length; ++i) {
             const not_allowed_tile = this.not_allowed_tiles[i];
             if (not_allowed_tile.x === x && not_allowed_tile.y === y) {
@@ -221,7 +223,14 @@ export class InteractableObjects {
         return false;
     }
 
-    set_jump_type_event(event_info, x_pos, y_pos, active_event, target_layer, map_events) {
+    set_jump_type_event(
+        event_info: any,
+        x_pos: number,
+        y_pos: number,
+        active_event: boolean,
+        target_layer: number,
+        map_events: Map["events"]
+    ) {
         if (this.not_allowed_tile_test(x_pos, y_pos)) return;
         const this_event_location_key = TileEvent.get_location_key(x_pos, y_pos);
         if (!(this_event_location_key in map_events)) {
@@ -246,7 +255,14 @@ export class InteractableObjects {
         });
     }
 
-    set_jump_around_event(event_info, x_pos, y_pos, active_event, target_layer, map_events) {
+    set_jump_around_event(
+        event_info: any,
+        x_pos: number,
+        y_pos: number,
+        active_event: boolean,
+        target_layer: number,
+        map_events: Map["events"]
+    ) {
         let is_set = event_info.is_set === undefined ? true : event_info.is_set;
         get_surroundings(x_pos, y_pos).forEach((pos, index) => {
             if (this.not_allowed_tile_test(pos.x, pos.y)) return;
@@ -255,7 +271,7 @@ export class InteractableObjects {
                 //check if already theres a jump event in this place
                 for (let k = 0; k < map_events[this_event_location_key].length; ++k) {
                     const event = map_events[this_event_location_key][k];
-                    if (event.type === tile_event_types.JUMP && event.is_set) {
+                    if (event.type === tile_event_types.JUMP && (event as JumpEvent).is_set) {
                         if (event.activation_collision_layers.includes(target_layer)) {
                             is_set = false;
                         }
@@ -284,7 +300,14 @@ export class InteractableObjects {
         this.events_info[event_info.type] = event_info;
     }
 
-    set_stair_event(event_info, x_pos, y_pos, active_event, target_layer, map_events) {
+    set_stair_event(
+        event_info: any,
+        x_pos: number,
+        y_pos: number,
+        active_event: boolean,
+        target_layer: number,
+        map_events: Map["events"]
+    ) {
         const events_data = [
             {
                 x: x_pos,
@@ -367,7 +390,7 @@ export class InteractableObjects {
         this.events_info[event_info.type] = event_info;
     }
 
-    config_body(collision_obj) {
+    config_body(collision_obj: Collision) {
         if (this.data.dbs.interactable_objects_db[this.key_name].body_radius === 0) return;
         const collision_groups = collision_obj.interactable_objs_collision_groups;
         this.game.physics.p2.enable(this.sprite, false);

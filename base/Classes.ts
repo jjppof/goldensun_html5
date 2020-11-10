@@ -1,5 +1,6 @@
 import {elements} from "./utils";
 import * as _ from "lodash";
+import {GameInfo} from "./initializers/initialize_info";
 
 export class Classes {
     public key_name: string;
@@ -57,13 +58,13 @@ export class Classes {
 }
 
 export function choose_right_class(
-    classes_list: {[class_key: string]: Classes},
+    classes_list: GameInfo["classes_list"],
     class_table,
-    element_afinity,
-    venus_lvl,
-    mercury_lvl,
-    mars_lvl,
-    jupiter_lvl
+    element_afinity: elements,
+    venus_lvl: number,
+    mercury_lvl: number,
+    mars_lvl: number,
+    jupiter_lvl: number
 ): Classes {
     let secondary_elements = [
         ...(element_afinity !== elements.VENUS ? [{element: elements.VENUS, level: venus_lvl}] : []),
@@ -79,10 +80,8 @@ export function choose_right_class(
         secondary_afinity = _.maxBy(secondary_elements, element => element.level).element;
     }
     const class_type = class_table[element_afinity][secondary_afinity];
-    let classes: Classes[] = Object.values(classes_list).filter(
-        (this_class: Classes) => this_class.class_type === class_type
-    );
-    classes = classes.filter((this_class: Classes) => {
+    let classes = Object.values(classes_list).filter(this_class => this_class.class_type === class_type);
+    classes = classes.filter(this_class => {
         return (
             this_class.required_venus_level <= venus_lvl &&
             this_class.required_mercury_level <= mercury_lvl &&
@@ -91,7 +90,7 @@ export function choose_right_class(
         );
     });
     return _.sortBy(classes, [
-        (this_class: Classes) => {
+        this_class => {
             return (
                 this_class.required_venus_level +
                 this_class.required_mercury_level +

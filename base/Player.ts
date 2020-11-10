@@ -186,7 +186,7 @@ export class Player {
         return null;
     }
 
-    get_effect_turns_count(effect) {
+    get_effect_turns_count(effect: Effect) {
         switch (effect.type) {
             case effect_types.TEMPORARY_STATUS:
                 return this.effect_turns_count[effect.status_key_name];

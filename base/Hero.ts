@@ -3,6 +3,9 @@ import * as numbers from "./magic_numbers";
 import {TileEvent, event_types} from "./tile_events/TileEvent";
 import {get_transition_directions, range_360, directions, base_actions} from "./utils";
 import {normal_push} from "./interactable_objects/push";
+import {Map} from "./Map";
+import {ClimbEvent} from "./tile_events/ClimbEvent";
+import {Collision} from "./Collision";
 
 export class Hero extends ControllableChar {
     private static readonly SPEED_LIMIT_TO_STOP = 13;
@@ -97,7 +100,7 @@ export class Hero extends ControllableChar {
         this.dashing = this.game.input.keyboard.isDown(this.data.gamepad.B);
     }
 
-    set_speed_factors(check_on_event = false) {
+    set_speed_factors(check_on_event: boolean = false) {
         if (check_on_event && this.data.tile_event_manager.on_event) return;
         let desired_direction = Hero.ROTATION_KEY[this.arrow_inputs];
         if (this.climbing) {
@@ -134,7 +137,7 @@ export class Hero extends ControllableChar {
         }
     }
 
-    check_interactable_objects(map, contact) {
+    check_interactable_objects(map: Map, contact: p2.ContactEquation) {
         let j = 0;
         for (j = 0; j < map.interactable_objects.length; ++j) {
             //check if hero is colliding with any interactable object
@@ -157,7 +160,7 @@ export class Hero extends ControllableChar {
                                 events_in_pos.forEach(event => {
                                     if (
                                         event.type === event_types.CLIMB &&
-                                        event.is_set &&
+                                        (event as ClimbEvent).is_set &&
                                         event.activation_directions.includes(this.trying_to_push_direction)
                                     ) {
                                         has_stair = true;
@@ -199,7 +202,7 @@ export class Hero extends ControllableChar {
         }
     }
 
-    collision_dealer(map) {
+    collision_dealer(map: Map) {
         let normals = [];
         for (let i = 0; i < this.game.physics.p2.world.narrowphase.contactEquations.length; ++i) {
             const contact = this.game.physics.p2.world.narrowphase.contactEquations[i];
@@ -280,7 +283,7 @@ export class Hero extends ControllableChar {
         this.apply_speed();
     }
 
-    update(map) {
+    update(map: Map) {
         this.check_control_inputs(); //check which arrow keys are being pressed
         this.set_speed_factors(true); //sets the direction of the movement
         this.set_current_action(); //chooses which sprite the hero shall assume
@@ -291,7 +294,7 @@ export class Hero extends ControllableChar {
         this.update_half_crop(); //halves the hero texture if needed
     }
 
-    config_body(collision_obj, body_radius = numbers.HERO_BODY_RADIUS) {
+    config_body(collision_obj: Collision, body_radius: number = numbers.HERO_BODY_RADIUS) {
         this.game.physics.p2.enable(this.sprite, false);
         this.reset_anchor(); //Important to be after the previous command
         this.sprite.body.clearShapes();
