@@ -516,6 +516,7 @@ export class BattleStatusWindow{
 
         this.current_state = new_state;
         this.current_component = this.components[this.current_state];
+        this.check_shift();
 
         this.current_component.reset(pos);
         this.grant_control();
@@ -545,7 +546,6 @@ export class BattleStatusWindow{
             this.window.update_text(line1, this.desc_line1);
             this.window.update_text(line2, this.desc_line2);
         }
-        this.check_shift();
     }
 
     public open(selected_char?:MainChar, close_callback?:Function, open_callback?:Function){
@@ -558,7 +558,6 @@ export class BattleStatusWindow{
             this.update_info();
             this.set_sprites();
             this.change_state(ComponentStates.STATISTICS);
-            this.check_shift();
             
             if(open_callback){
                 open_callback();
