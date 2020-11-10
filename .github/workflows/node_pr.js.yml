@@ -21,4 +21,5 @@ jobs:
     - name: PR check
       run: |
         npm install
+        npm run format-check
         npm run build
