@@ -305,32 +305,32 @@ export class BattleStatusWindow{
             const effect:BattleStatusEffect = {key: null, properties:{value: null}};
 
             let modifier = null;
-            if(buffs_debuffs[index].stat.toUpperCase() in effect_types){
-                if(buffs_debuffs[index].stat === effect_types.RESIST || buffs_debuffs[index].stat === effect_types.POWER){
-                    for(let element in elements){
-                        if(buffs_debuffs[index].value[elements[element]] < 0){
-                            if(modifier === null){
-                                modifier = "down";
-                            }
-                            else if(modifier === "up"){
-                                modifier === "up_down";
-                            }
+            
+            if(buffs_debuffs[index].stat === effect_types.RESIST || buffs_debuffs[index].stat === effect_types.POWER){
+                for(let element in elements){
+                    if(buffs_debuffs[index].value[elements[element]] < 0){
+                        if(modifier === null){
+                            modifier = "down";
                         }
-                        else if(buffs_debuffs[index].value[elements[element]] > 0){
-                            if(modifier === null){
-                                modifier = "up";
-                            }
-                            else if(modifier === "down"){
-                                modifier = "up_down";
-                            }
+                        else if(modifier === "up"){
+                            modifier === "up_down";
+                        }
+                    }
+                    else if(buffs_debuffs[index].value[elements[element]] > 0){
+                        if(modifier === null){
+                            modifier = "up";
+                        }
+                        else if(modifier === "down"){
+                            modifier = "up_down";
                         }
                     }
                 }
-                else{
-                    if(effect.properties.value >= 0) modifier = "up";
-                    else modifier = "down";
-                }
             }
+            else if(buffs_debuffs[index].stat in effect_type_stat){
+                if(effect.properties.value >= 0) modifier = "up";
+                else modifier = "down";
+            }
+
             if(modifier === null) continue;
 
             effect.key = buffs_debuffs[index].stat;
@@ -433,7 +433,7 @@ export class BattleStatusWindow{
             for(let index in this.battle_effects){
                 const effect = this.battle_effects[index];
                 let key = effect.key as String;
-                if(effect_types[key.toUpperCase()]){
+                if(effect.key in effect_type_stat || effect.key === effect_types.RESIST || effect.key === effect_types.POWER){
                     key = key + "_" + effect.properties.modifier;
                 }
 

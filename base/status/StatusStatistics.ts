@@ -173,7 +173,7 @@ export class StatusStatistics extends StatusComponent{
                 const effect = this.manager.battle_effects_array[this.current_col-1];
 
                 let msgs = null;
-                if(effect.key in ordered_status_battle){
+                if(ordered_status_battle.includes(effect.key as (temporary_status | permanent_status))){
                     msgs = {line1: StatusStatistics.BattleStatusMsgs[effect.key].line1,
                         line2: StatusStatistics.BattleStatusMsgs[effect.key].line2};
 
@@ -183,28 +183,28 @@ export class StatusStatistics extends StatusComponent{
                     } 
                 }
                 else if(effect.key === effect_types.RESIST || effect.key === effect_types.POWER){
-                        let effect_name = "";
-                        if(effect.key = effect_types.RESIST) effect_name = effect_names.resist;
-                        else if(effect.key = effect_types.RESIST) effect_name = effect_names.power;
-                        
-                        const elems_to_show = _.flatMap(elements, element => effect.properties.value[element] ? [{
-                            element: element,
-                            value: effect.properties.value[element]
-                        }] : []);
+                    let effect_name = "";
+                    if(effect.key = effect_types.RESIST) effect_name = effect_names.resist;
+                    else if(effect.key = effect_types.RESIST) effect_name = effect_names.power;
+                    
+                    const elems_to_show = _.flatMap(elements, element => effect.properties.value[element] ? [{
+                        element: element,
+                        value: effect.properties.value[element]
+                    }] : []);
 
-                        msgs = {line1: "", line2: ""};
+                    msgs = {line1: "", line2: ""};
 
-                        for(let i = 0; i<elems_to_show.length; i++){
-                            if(elems_to_show[i].value >= 0) elems_to_show[i].value = "+" + elems_to_show[i].value;
-                            const element_name = element_names[elems_to_show[i].element];
+                    for(let i = 0; i<elems_to_show.length; i++){
+                        if(elems_to_show[i].value >= 0) elems_to_show[i].value = "+" + elems_to_show[i].value;
+                        const element_name = element_names[elems_to_show[i].element];
 
-                            const line = i < 2 ? "line1" : "line2";
-                            msgs[line] += (i%2 !== 0 ? ", " : "") + element_name + " " + effect_name + " " + elems_to_show[i].value;
-                        }
-
-                        if(msgs.line2 === "") msgs.line1 += ".";
-                        else msgs.line2 += ".";
+                        const line = i < 2 ? "line1" : "line2";
+                        msgs[line] += (i%2 !== 0 ? ", " : "") + element_name + " " + effect_name + " " + elems_to_show[i].value;
                     }
+
+                    if(msgs.line2 === "") msgs.line1 += ".";
+                    else msgs.line2 += ".";
+                }
                 else if(effect.key in effect_type_stat){
                     msgs = {line1: StatusStatistics.BattleBuffMsgs[effect.properties.modifier][effect.key].line1,
                         line2: StatusStatistics.BattleBuffMsgs[effect.properties.modifier][effect.key].line2};
