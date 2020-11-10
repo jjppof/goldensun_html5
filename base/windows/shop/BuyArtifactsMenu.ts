@@ -11,7 +11,6 @@ import { YesNoMenu } from '../YesNoMenu';
 import { ShopkeepDialog } from './ShopkeepDialog';
 import { ShopItem } from '../../Shop';
 import { ItemSlot, MainChar } from '../../MainChar';
-import { eq } from 'lodash';
 
 const MAX_INVENTORY_SIZE = 15;
 const MAX_ITEMS_PER_PAGE = 7;

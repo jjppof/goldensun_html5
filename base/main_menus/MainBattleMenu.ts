@@ -138,8 +138,6 @@ export class MainBattleMenu {
                 this.start_horizontal_menu.close(()=>{
                     this.status_window.open(this.data.info.party_data.members[0], ()=>{
                         this.start_horizontal_menu.open();
-                    },()=>{
-                        this.status_window.grant_control();
                     });
                 })    
         }
