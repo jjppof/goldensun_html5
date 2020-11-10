@@ -11,6 +11,10 @@ export class PsynergyStatistics extends StatusComponent{
         super(game, data, window, manager, pos);
     }
 
+    public on_change(){
+        
+    }
+
     public select_option(){
 
     }

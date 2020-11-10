@@ -2,9 +2,12 @@ import { StatusComponent } from "./StatusComponent";
 import { Window } from "../Window";
 import { GoldenSun } from "../GoldenSun";
 import { CursorManager, PointVariants } from "../utils/CursorManager";
-import { BattleEffectTypes, BattleStatusWindow } from "../windows/battle/BattleStatusWindow";
-import { temporary_status } from "../Player";
+import { BattleStatusWindow } from "../windows/battle/BattleStatusWindow";
+import { permanent_status, temporary_status } from "../Player";
 import { elements, element_names, ordered_elements } from "../utils";
+import { effect_names, effect_types } from "../Effect";
+import { djinn_status } from "../Djinn";
+import * as _ from "lodash";
 
 export enum Statistics {
     NAME,
@@ -20,38 +23,38 @@ export enum Statistics {
 
 export class StatusStatistics extends StatusComponent{
     public static readonly BattleStatusMsgs = {
-        DELUSION: {line1: "Delusions misdirect your attacks.", line2: "Cure with Elixer or Restore."},
-        STUN: {line1: "You are stunned and cannot act.", line2: "Cure with Elixer or Restore."},
-        SLEEP: {line1: "Sleep prevents you from acting.", line2: "Wake with Elixer or Restore."},
-        SEAL: {line1: "Your Psynergy is sealed.", line2: "Cure with Elixer or Restore."},
-        DEATH_CURSE: {line1: "You will be downed in ${N} turns.", line2: "Cure wth Elixer or Restore."},
-        DOWNED: {line1: "You are down. Heal at a Sanctum", line2: "or use Revive or Water of Life."},
-        POISON: {line1: "A mild poison wracks your body.", line2: "Cure with Antidote or Cure Poison."},
-        VENOM: {line1: "A vile poison wracks your body.", line2: "Cure with Antidote or Cure Poison."},
-        EQUIP_CURSE: {line1: "A cursed item binds your actions.", line2: "Remove the item at a Sanctum."},
-        HAUNT: {line1: "An evil spirit wounds you.", line2: "Exorcise it at a Sanctum."}
+        [temporary_status.DELUSION]: {line1: "Delusions misdirect your attacks.", line2: "Cure with Elixer or Restore."},
+        [temporary_status.STUN]: {line1: "You are stunned and cannot act.", line2: "Cure with Elixer or Restore."},
+        [temporary_status.SLEEP]: {line1: "Sleep prevents you from acting.", line2: "Wake with Elixer or Restore."},
+        [temporary_status.SEAL]: {line1: "Your Psynergy is sealed.", line2: "Cure with Elixer or Restore."},
+        [temporary_status.DEATH_CURSE]: {line1: (turns:number) =>`You will be downed in ${turns} turns.`, line2: "Cure wth Elixer or Restore."},
+        [permanent_status.DOWNED]: {line1: "You are down. Heal at a Sanctum", line2: "or use Revive or Water of Life."},
+        [permanent_status.POISON]: {line1: "A mild poison wracks your body.", line2: "Cure with Antidote or Cure Poison."},
+        [permanent_status.VENOM]: {line1: "A vile poison wracks your body.", line2: "Cure with Antidote or Cure Poison."},
+        [permanent_status.EQUIP_CURSE]: {line1: "A cursed item binds your actions.", line2: "Remove the item at a Sanctum."},
+        [permanent_status.HAUNT]: {line1: "An evil spirit wounds you.", line2: "Exorcise it at a Sanctum."}
     };
 
     public static readonly BattleBuffMsgs = {
-        ATK_UP: {line1: "Attack increased by ${VALUE}.", line2: ""},
-        DEF_UP: {line1: "Defense increased by ${VALUE}.", line2: ""},
-        AGI_UP: {line1: "Agility increased by ${VALUE}.", line2: ""},
-        ATK_DOWN: {line1: "Attack dropped by ${VALUE}.", line2: "Increase with spells like Impact."},
-        DEF_DOWN: {line1: "Defense dropped by ${VALUE}.", line2: "Increase with spells like Guard."},
-        AGI_DOWN: {line1: "Agility dropped by ${VALUE}.", line2: ""}
+        attack_up: {line1: (value:number) =>`Attack increased by ${value}.`, line2: ""},
+        defense_up: {line1: (value:number) =>`Defense increased by ${value}.`, line2: ""},
+        agility_up: {line1: (value:number) =>`Agility increased by ${value}.`, line2: ""},
+        attack_down: {line1: (value:number) =>`Attack dropped by ${value}.`, line2: "Increase with spells like Impact."},
+        defense_down: {line1: (value:number) =>`Defense dropped by ${value}.`, line2: "Increase with spells like Guard."},
+        agility_down: {line1: (value:number) =>`Agility dropped by ${value}.`, line2: ""}
     };
 
     public static readonly MenuStatusMsgs = {
-        DOWNED: {line1: "You are down. Revive at a Sanctum", line2: "or with the Water of Life."},
-        POISON: {line1: "You're afflicted by poison.", line2: "Cure with Antidote or Cure Poison."},
-        VENOM: {line1: "You're afflicted by venom.", line2: "Cure with Antidote or Cure Poison."},
-        EQUIP_CURSE: {line1: "A cursed item immoblizes you.", line2: "Remove it at a Sanctum."},
-        HAUNT: {line1: "You receve damage from spirits.", line2: "Exorcise the spirits at a Sanctum."}
+        [permanent_status.DOWNED]: {line1: "You are down. Revive at a Sanctum", line2: "or with the Water of Life."},
+        [permanent_status.POISON]: {line1: "You're afflicted by poison.", line2: "Cure with Antidote or Cure Poison."},
+        [permanent_status.VENOM]: {line1: "You're afflicted by venom.", line2: "Cure with Antidote or Cure Poison."},
+        [permanent_status.EQUIP_CURSE]: {line1: "A cursed item immoblizes you.", line2: "Remove it at a Sanctum."},
+        [permanent_status.HAUNT]: {line1: "You receve damage from spirits.", line2: "Exorcise the spirits at a Sanctum."}
     };
 
     public static readonly StatisticsMsgs = {
         0: {line1: "Use the L & R Buttons to", line2: "switch between characters."},
-        1: {line1: "Current experience points.", line2: "${EXP} to next level."},
+        1: {line1: "Current experience points.", line2: (exp:number) =>`${exp} to next level.`},
         2: {line1: "Your current and maximum HP.", line2: "Affected by Djinn and equipment."},
         3: {line1: "Your current and maximum PP.", line2: "Affected by Djinn and equipment."},
         4: {line1: "Your current class. Your", line2: "class changes when you set Djinn."},
@@ -154,7 +157,7 @@ export class StatusStatistics extends StatusComponent{
             if(this.current_line === Statistics.EXP){
                 const char = this.manager.selected_character;
                 const exp = char.exp_curve[char.level] - char.current_exp;
-                msgs.line2 = msgs.line2.replace("${EXP}", exp);
+                msgs.line2 = msgs.line2(exp);
             }
             this.manager.update_description(msgs.line1, msgs.line2);
         }
@@ -164,36 +167,30 @@ export class StatusStatistics extends StatusComponent{
             }
             else{
                 const effect = this.manager.battle_effects_array[this.current_col-1];
+                const name = effect.key.toUpperCase();
 
                 let msgs = null;
-                if(effect.type === BattleEffectTypes.STATUS_CONDITION){
-                    let name = (effect.key as string).toUpperCase();
-                    msgs = {line1: StatusStatistics.BattleStatusMsgs[name].line1,
-                        line2: StatusStatistics.BattleStatusMsgs[name].line2};
+                if(temporary_status[name] || permanent_status[name]){
+                    msgs = {line1: StatusStatistics.BattleStatusMsgs[effect.key].line1,
+                        line2: StatusStatistics.BattleStatusMsgs[effect.key].line2};
 
                     if(effect.key === temporary_status.DEATH_CURSE){
-                        let turns = (effect.properties.turns ? effect.properties.turns : 0);
-                        msgs.line1 = msgs.line1.replace("${N}", turns);
+                        const turns = (effect.properties.turns ? effect.properties.turns : 0);
+                        msgs.line1 = msgs.line1(turns);
                     } 
                 }
-                else if(effect.type === BattleEffectTypes.BUFF_DEBUFF){
-                    if(effect.key.includes("res") || effect.key.includes("pow")){
+                else if(effect_types[name]){
+                    if(effect.key === effect_types.RESIST || effect.key === effect_types.POWER){
                         let effect_name = "";
-                        if(effect.key.includes("res")) effect_name = "Resist";
-                        else if(effect.key.includes("pow")) effect_name = "Power";
+                        if(effect.key.includes(effect_types.RESIST)) effect_name = effect_names.resist;
+                        else if(effect.key.includes(effect_types.POWER)) effect_name = effect_names.power;
+                        
+                        const elems_to_show = _.flatMap(elements, element => effect.properties.value[element] ? [{
+                            element: element,
+                            value: String(effect.properties.value[element])
+                        }] : []);
 
-                        const venus = String((effect.properties.values[0] ? effect.properties.values[0] : 0));
-                        const mercury = String((effect.properties.values[1] ? effect.properties.values[1] : 0));
-                        const mars = String((effect.properties.values[2] ? effect.properties.values[2] : 0));
-                        const jupiter = String((effect.properties.values[3] ? effect.properties.values[3] : 0));
-
-                        const elems_to_show:{element:string, value:string}[] = [];
                         msgs = {line1: "", line2: ""};
-
-                        if(parseInt(venus) !== 0) elems_to_show.push({element: elements.VENUS, value: venus});
-                        if(parseInt(mercury) !== 0) elems_to_show.push({element: elements.MERCURY, value: mercury});
-                        if(parseInt(mars) !== 0) elems_to_show.push({element: elements.MARS, value: mars});
-                        if(parseInt(jupiter) !== 0) elems_to_show.push({element: elements.JUPITER, value: jupiter});
 
                         for(let index in elems_to_show){
                             if(parseInt(elems_to_show[index].value) >= 0) elems_to_show[index].value = "+" + elems_to_show[index].value;
@@ -202,17 +199,18 @@ export class StatusStatistics extends StatusComponent{
                             const line = parseInt(index) < 2 ? "line1" : "line2";
                             msgs[line] += (parseInt(index)%2 !== 0 ? ", " : "") + element_name + " " + effect_name + " " + elems_to_show[index].value;
                         }
+
                         if(msgs.line2 === "") msgs.line1 += ".";
                         else msgs.line2 += ".";
                     }
                     else{
-                        const name = (effect.key as string).toUpperCase();
+                        const name = (effect.key as string) + effect.properties.modifier
 
                         msgs = {line1: StatusStatistics.BattleBuffMsgs[name].line1,
                             line2: StatusStatistics.BattleBuffMsgs[name].line2};
 
-                        const value = (effect.properties.values[0] ? effect.properties.values[0] : 0);
-                        msgs.line1 = msgs.line1.replace("${VALUE}", value);
+                        const value = (effect.properties.value ? effect.properties.value : 0);
+                        msgs.line1 = msgs.line1(value);
                     }
                 }
                 this.manager.update_description(msgs.line1, msgs.line2);
@@ -262,29 +260,29 @@ export class StatusStatistics extends StatusComponent{
 
     public initialize(){
         const stars = ["venus_star", "mercury_star", "mars_star", "jupiter_star"];
-        for(let index in stars){
-            const x_pos = StatusStatistics.STARS_X + parseInt(index)*StatusStatistics.STARS_SHIFT;  
+        for(let i = 0; i<stars.length; i++){
+            const x_pos = StatusStatistics.STARS_X + i*StatusStatistics.STARS_SHIFT;  
             const y_pos = StatusStatistics.STARS_Y;
 
-            const star = this.window.create_at_group(x_pos, y_pos, stars[index], undefined, undefined, StatusStatistics.GROUP_KEY);
+            const star = this.window.create_at_group(x_pos, y_pos, stars[i], undefined, undefined, StatusStatistics.GROUP_KEY);
             this.state_sprites.push(star);
         };
 
         const labels = ["Djinn", "Lv", "Power", "Resist"];
 
-        for(let index in labels){
+        for(let i = 0; i<labels.length; i++){
             const x_pos = StatusStatistics.LABEL_X;
-            const y_pos = StatusStatistics.LABEL_Y + parseInt(index)*StatusStatistics.LABEL_SHIFT;
+            const y_pos = StatusStatistics.LABEL_Y + i*StatusStatistics.LABEL_SHIFT;
 
-            const label = this.window.set_text_in_position(labels[index], x_pos, y_pos, false, false, undefined, false, StatusStatistics.GROUP_KEY);
+            const label = this.window.set_text_in_position(labels[i], x_pos, y_pos, false, false, undefined, false, StatusStatistics.GROUP_KEY);
             this.state_sprites.push(label.text, label.shadow);
         }
 
-        for(let index in ordered_elements){
-            const djinn_counts = this.get_djinn_counts(ordered_elements[index]);
-            const elemental_stats = this.get_elemental_stats(ordered_elements[index]);
+        for(let i = 0; i<ordered_elements.length; i++){
+            const djinn_counts = this.get_djinn_counts(ordered_elements[i]);
+            const elemental_stats = this.get_elemental_stats(ordered_elements[i]);
 
-            const x_pos = StatusStatistics.NUMBERS_END_X + parseInt(index)*StatusStatistics.NUMBERS_X_SHIFT;
+            const x_pos = StatusStatistics.NUMBERS_END_X + i*StatusStatistics.NUMBERS_X_SHIFT;
             let y_pos = StatusStatistics.NUMBERS_Y;
             let text = djinn_counts.set + "/" + djinn_counts.total;
 
@@ -311,7 +309,7 @@ export class StatusStatistics extends StatusComponent{
         }
     }
 
-    private get_djinn_counts(element:string){
+    private get_djinn_counts(element:elements){
         let set_count = 0;
         let total_count = 0;
         let djinn_names = [];
@@ -336,14 +334,14 @@ export class StatusStatistics extends StatusComponent{
         };
 
         for(let index in djinn_names){
-            if(this.data.info.djinni_list[djinn_names[index]].status === "set")
+            if(this.data.info.djinni_list[djinn_names[index]].status === djinn_status.SET)
                 set_count++;
         }
 
         return {set: set_count, total: total_count};
     }
 
-    private get_elemental_stats(element:string){
+    private get_elemental_stats(element:elements){
         let elemental_level = 0;
         let elemental_power = 0;
         let elemental_resistance = 0;

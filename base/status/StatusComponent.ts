@@ -18,29 +18,29 @@ export abstract class StatusComponent{
     protected manager:BattleStatusWindow;
 
     public constructor(game:Phaser.Game, data:GoldenSun, window:Window, manager:BattleStatusWindow, pos?:{line:number, col:number}){
-        if(this.constructor === StatusComponent){
-            throw new Error("Cannot instanciate abstract class.");
-        }
-        else{
-            this.game = game;
-            this.data = data;
-            this.window = window;
+        this.game = game;
+        this.data = data;
+        this.window = window;
 
-            this.window.define_internal_group(StatusComponent.GROUP_KEY, {x:0, y:0});
-            this.highlight = this.game.add.graphics(0, 0);
-            this.highlight.blendMode = PIXI.blendModes.SCREEN;
-            this.window.add_to_internal_group(StatusComponent.GROUP_KEY, this.highlight);
+        this.window.define_internal_group(StatusComponent.GROUP_KEY, {x:0, y:0});
+        this.highlight = this.game.add.graphics(0, 0);
+        this.highlight.blendMode = PIXI.blendModes.SCREEN;
+        this.window.add_to_internal_group(StatusComponent.GROUP_KEY, this.highlight);
 
-            this.state_sprites = [];
-            this.manager = manager;
+        this.state_sprites = [];
+        this.manager = manager;
 
-            this.current_col = pos ? pos.col : 0;
-            this.current_line = pos ? pos.line : 0;
-
-            this.initialize();
-            this.select_option();
-        }
+        this.current_col = pos ? pos.col : 0;
+        this.current_line = pos ? pos.line : 0;
     }
+
+    public abstract select_option():void;
+    public abstract on_change():void;
+    public abstract on_left():void;
+    public abstract on_right():void;
+    public abstract on_up():void;
+    public abstract on_down():void;
+    public abstract initialize():void;
 
     protected update_highlight(highlight:{x:number, y:number, width:number, height:number}){
         this.highlight.clear();
@@ -54,37 +54,21 @@ export abstract class StatusComponent{
         return {line: this.current_line, col: this.current_col};
     }
 
-    public select_option(){
-        throw new Error("Abstract method must by implemented by inheritance");
+    public reset(pos?:{line:number, col:number}){
+        if(pos){
+            this.current_line = pos.line;
+            this.current_col = pos.col;
+        }
+
+        this.clear();
+        this.initialize();
+
+        this.select_option();
+        this.on_change();
     }
 
-    public on_change(){
-        throw new Error("Abstract method must by implemented by inheritance");
-    }
-
-    public on_left(){
-        throw new Error("Abstract method must by implemented by inheritance");
-    }
-
-    public on_right(){
-        throw new Error("Abstract method must by implemented by inheritance");
-    }
-
-    public on_up(){
-        throw new Error("Abstract method must by implemented by inheritance");
-    }
-
-    public on_down(){
-        throw new Error("Abstract method must by implemented by inheritance");
-    }
-
-    public initialize(){
-        throw new Error("Abstract method must by implemented by inheritance");
-    }
-
-    public destroy(){
+    public clear(){
         this.highlight.clear();
-        this.highlight.destroy();
         this.data.cursor_manager.hide();
 
         for(let index in this.state_sprites){

@@ -7,13 +7,14 @@ import { base_actions, elements } from "../../utils";
 import * as _ from "lodash";
 import { StatusComponent } from "../../status/StatusComponent";
 import { StatusStatistics } from "../../status/StatusStatistics";
+import { effect_types } from "../../Effect";
 
 export type BattleStatusEffect = {
-    key:string,
-    type:BattleEffectTypes,
+    key:temporary_status|permanent_status|effect_types,
     properties?:{
+        modifier?:string,
         turns?:number,
-        values?:number[]
+        value?:number|{[element in elements]: number}
     }
 }
 
@@ -22,11 +23,6 @@ export enum ComponentStates {
     PSYNERGY,
     DJINN,
     ITEMS
-}
-
-export enum BattleEffectTypes{
-    STATUS_CONDITION,
-    BUFF_DEBUFF
 }
 
 export class BattleStatusWindow{
@@ -123,6 +119,7 @@ export class BattleStatusWindow{
     
     private current_state:ComponentStates;
     private current_component:StatusComponent;
+    private components:StatusComponent[];
 
     private battle_effects:BattleStatusEffect[];
     private effect_sprites:Phaser.Sprite[];
@@ -167,6 +164,12 @@ export class BattleStatusWindow{
 
         this.window = new Window(this.game, 0, 0, BattleStatusWindow.WINDOW.WIDTH, BattleStatusWindow.WINDOW.HEIGHT);
         this.window.define_internal_group(BattleStatusWindow.GROUP_KEY, {x:0, y:0});
+
+        this.components = [];
+        this.components.push(new StatusStatistics(this.game, this.data, this.window, this));
+        //push psy
+        //push djnn
+        //push item
 
         this.battle_sprite = null;
         this.avatar = null;
@@ -285,10 +288,9 @@ export class BattleStatusWindow{
         const effects = [];
 
         for(let index in status_effects){
-            const effect:BattleStatusEffect = {key: null, type:null, properties: null};
+            const effect:BattleStatusEffect = {key: null, properties: null};
 
             effect.key = status_effects[index];
-            effect.type = BattleEffectTypes.STATUS_CONDITION;
 
             if(status_effects[index] === temporary_status.DEATH_CURSE){
                 const main_char_effect = _.find(this.selected_char.effects, {status_key_name: temporary_status.DEATH_CURSE});
@@ -300,33 +302,40 @@ export class BattleStatusWindow{
         }
 
         for(let index in buffs_debuffs){
-            const effect:BattleStatusEffect = {key: null, type:null, properties:{values: null}};
+            const effect:BattleStatusEffect = {key: null, properties:{value: null}};
 
             let modifier = null;
-            for(let n in buffs_debuffs[index].values){
-                if(buffs_debuffs[index].values[n] < 0){
-                    if(modifier === null){
-                        modifier = "_down";
-                    }
-                    else if(modifier === "_up"){
-                        modifier === "_up_down";
+            if(effect_types[buffs_debuffs[index].stat.toUpperCase()]){
+                if(buffs_debuffs[index].stat === effect_types.RESIST || buffs_debuffs[index].stat === effect_types.POWER){
+                    for(let element in elements){
+                        if(buffs_debuffs[index].value[elements[element]] < 0){
+                            if(modifier === null){
+                                modifier = "_down";
+                            }
+                            else if(modifier === "_up"){
+                                modifier === "_up_down";
+                            }
+                        }
+                        else if(buffs_debuffs[index].value[elements[element]] > 0){
+                            if(modifier === null){
+                                modifier = "_up";
+                            }
+                            else if(modifier === "_down"){
+                                modifier = "_up_down";
+                            }
+                        }
                     }
                 }
-                else if(buffs_debuffs[index].values[n] > 0){
-                    if(modifier === null){
-                        modifier = "_up";
-                    }
-                    else if(modifier === "_down"){
-                        modifier = "_up_down";
-                    }
+                else{
+                    if(effect.properties.value >= 0) modifier = "_up";
+                    else modifier = "_down";
                 }
             }
             if(modifier === null) continue;
 
-            effect.key = buffs_debuffs[index].stat+modifier;
-
-            effect.type = BattleEffectTypes.BUFF_DEBUFF;
-            effect.properties.values = buffs_debuffs[index].values;
+            effect.key = buffs_debuffs[index].stat;
+            effect.properties.modifier = modifier;
+            effect.properties.value = buffs_debuffs[index].value;
 
             if(effects.length < BattleStatusWindow.MAX_EFFECTS_DISPLAYED)
                 effects.push(effect);
@@ -337,34 +346,47 @@ export class BattleStatusWindow{
     }
 
     private get_buffs_debuffs(){
-        const effects:{stat: string, values: number[]}[] = [];
+        const effects:{stat: effect_types, value: number|{[element in elements]: number}}[] = [];
 
         const base_stats = [main_stats.ATTACK, main_stats.DEFENSE, main_stats.AGILITY];
+        const stat_keys = [effect_types.ATTACK, effect_types.DEFENSE, effect_types.AGILITY];
 
         for(let index in base_stats){
-            const effect = {stat: base_stats[index], values: [this.selected_char[base_stats[index]] - 
-                this.selected_char.preview_stat_without_abilities_effect(base_stats[index])]};
-            effects.push(effect);
+            const val = this.selected_char[base_stats[index]] - this.selected_char.preview_stat_without_abilities_effect(base_stats[index]);
+            if(val !== 0){
+                const effect = {stat: stat_keys[index], value: val};
+                effects.push(effect);
+            }
         }
 
         const elemental_base = this.selected_char.preview_elemental_stats_without_abilities_effect();
 
-        const resist_changes = [];
-        resist_changes.push(this.selected_char.venus_resist_current - elemental_base[elements.VENUS].resist);
-        resist_changes.push(this.selected_char.mercury_resist_current - elemental_base[elements.MERCURY].resist);
-        resist_changes.push(this.selected_char.mars_resist_current - elemental_base[elements.MARS].resist);
-        resist_changes.push(this.selected_char.jupiter_resist_current - elemental_base[elements.JUPITER].resist);
+        const power_value: {[element in elements]: number} = {
+            [elements.VENUS]: this.selected_char.venus_power_current - elemental_base[elements.VENUS].power,
+            [elements.MERCURY]: this.selected_char.mercury_power_current - elemental_base[elements.MERCURY].power,
+            [elements.MARS]: this.selected_char.mars_power_current - elemental_base[elements.MARS].power,
+            [elements.JUPITER]: this.selected_char.jupiter_power_current - elemental_base[elements.JUPITER].power, 
+            [elements.NO_ELEMENT]: 0
+        };
+        const resist_value: {[element in elements]: number} = {
+            [elements.VENUS]: this.selected_char.venus_resist_current - elemental_base[elements.VENUS].resist,
+            [elements.MERCURY]: this.selected_char.mercury_resist_current - elemental_base[elements.MERCURY].resist,
+            [elements.MARS]: this.selected_char.mars_resist_current - elemental_base[elements.MARS].resist,
+            [elements.JUPITER]: this.selected_char.jupiter_resist_current - elemental_base[elements.JUPITER].resist, 
+            [elements.NO_ELEMENT]: 0
+        };  
 
-        const power_changes = [];
-        power_changes.push(this.selected_char.venus_power_current - elemental_base[elements.VENUS].power);
-        power_changes.push(this.selected_char.mercury_power_current - elemental_base[elements.MERCURY].power);
-        power_changes.push(this.selected_char.mars_power_current - elemental_base[elements.MARS].power);
-        power_changes.push(this.selected_char.jupiter_power_current - elemental_base[elements.JUPITER].power);
+        let sum = 0;
+        for(let element in power_value){
+            sum += power_value[element];
+        }
+        if(sum !== 0) effects.push({stat: effect_types.POWER, value: power_value});
 
-        if(power_changes.reduce((a, b) => a + b, 0) != 0)
-            effects.push({stat: "pow", values: power_changes});
-        if(resist_changes.reduce((a, b) => a + b, 0) != 0)
-            effects.push({stat: "res", values: resist_changes});
+        sum = 0;
+        for(let element in resist_value){
+            sum += resist_value[element];
+        }
+        if(sum !== 0) effects.push({stat: effect_types.RESIST, value: resist_value});
 
         return effects;
     }
@@ -411,11 +433,15 @@ export class BattleStatusWindow{
         if(this.battle_effects.length > 0){
             for(let index in this.battle_effects){
                 const effect = this.battle_effects[index];
+                let key = effect.key as String;
+                if(effect_types[key.toUpperCase()]){
+                    key = key + effect.properties.modifier;
+                }
 
                 const x_pos = BattleStatusWindow.EFFECTS.X + parseInt(index)*BattleStatusWindow.EFFECTS.SHIFT;
                 const y_pos = BattleStatusWindow.EFFECTS.Y;
 
-                const sprite = this.window.create_at_group(x_pos, y_pos, "battle_effect_icons", undefined, effect.key, BattleStatusWindow.GROUP_KEY);
+                const sprite = this.window.create_at_group(x_pos, y_pos, "battle_effect_icons", undefined, key, BattleStatusWindow.GROUP_KEY);
                 this.effect_sprites.push(sprite);
             }
         }
@@ -485,25 +511,14 @@ export class BattleStatusWindow{
         
         if(this.current_component){
             pos = this.current_component.current_pos;
-            this.current_component.destroy();
+            this.current_component.clear();
             this.current_component = null;
         }
 
         this.current_state = new_state;
+        this.current_component = this.components[this.current_state];
 
-        switch(this.current_state){
-            case ComponentStates.STATISTICS:
-                this.current_component = new StatusStatistics(this.game, this.data, this.window, this, pos);
-                break;
-            case ComponentStates.PSYNERGY:
-                break;
-            case ComponentStates.DJINN:
-                break;
-            case ComponentStates.ITEMS:
-                break;
-        }
-
-        this.current_component.on_change();
+        this.current_component.reset(pos);
         this.grant_control();
     }
 
@@ -552,7 +567,7 @@ export class BattleStatusWindow{
     }
 
     public clear_component(){
-        this.current_component.destroy();
+        this.current_component.clear();
         this.current_state = null;
         this.current_component = null;
     }
