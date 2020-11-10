@@ -2,12 +2,12 @@ import * as numbers from './magic_numbers';
 import * as _ from "lodash";
 
 /*Element keys*/
-export const elements = {
-    VENUS: "venus",
-    MERCURY: "mercury",
-    MARS: "mars",
-    JUPITER: "jupiter",
-    NO_ELEMENT: "no_element"
+export enum elements {
+    VENUS = "venus",
+    MERCURY = "mercury",
+    MARS = "mars",
+    JUPITER = "jupiter",
+    NO_ELEMENT = "no_element"
 };
 
 /*Default elements order*/
