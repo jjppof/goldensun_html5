@@ -189,13 +189,13 @@ export class StatusStatistics extends StatusComponent{
                         
                         const elems_to_show = _.flatMap(elements, element => effect.properties.value[element] ? [{
                             element: element,
-                            value: String(effect.properties.value[element])
+                            value: effect.properties.value[element]
                         }] : []);
 
                         msgs = {line1: "", line2: ""};
 
                         for(let i = 0; i<elems_to_show.length; i++){
-                            if(parseInt(elems_to_show[i].value) >= 0) elems_to_show[i].value = "+" + elems_to_show[i].value;
+                            if(elems_to_show[i].value >= 0) elems_to_show[i].value = "+" + elems_to_show[i].value;
                             const element_name = element_names[elems_to_show[i].element];
 
                             const line = i < 2 ? "line1" : "line2";
