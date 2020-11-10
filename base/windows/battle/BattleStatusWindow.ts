@@ -211,7 +211,7 @@ export class BattleStatusWindow{
         this.curr_pp = this.window.set_text_in_position("/", BattleStatusWindow.PP.CURR_END_X, BattleStatusWindow.PP.CURR_Y,
         true, false, undefined, false, BattleStatusWindow.GROUP_KEY);
 
-        let shift = BattleStatusWindow.STATS.LINE_SHIFT;
+        const shift = BattleStatusWindow.STATS.LINE_SHIFT;
 
         this.window.set_text_in_position("Attack", BattleStatusWindow.STATS.LABEL_X, BattleStatusWindow.STATS.LABEL_Y,
             false, false, undefined, false, BattleStatusWindow.GROUP_KEY);
@@ -243,9 +243,9 @@ export class BattleStatusWindow{
     }
 
     private update_info(){
-        let char = this.selected_char;
+        const char = this.selected_char;
+        const party = this.data.info.party_data.members;
         let char_index = -1;
-        let party = this.data.info.party_data.members;
 
         this.battle_effects = [];
 
@@ -279,19 +279,19 @@ export class BattleStatusWindow{
     }
 
     private update_effects(){
-        let status_effects = this.get_status_effects();
-        let buffs_debuffs = this.get_buffs_debuffs();
+        const status_effects = this.get_status_effects();
+        const buffs_debuffs = this.get_buffs_debuffs();
 
-        let effects = [];
+        const effects = [];
 
         for(let index in status_effects){
-            let effect:BattleStatusEffect = {key: null, type:null, properties: null};
+            const effect:BattleStatusEffect = {key: null, type:null, properties: null};
 
             effect.key = status_effects[index];
             effect.type = BattleEffectTypes.STATUS_CONDITION;
 
             if(status_effects[index] === temporary_status.DEATH_CURSE){
-                let main_char_effect = _.find(this.selected_char.effects, {status_key_name: temporary_status.DEATH_CURSE});
+                const main_char_effect = _.find(this.selected_char.effects, {status_key_name: temporary_status.DEATH_CURSE});
                 effect.properties.turns = this.selected_char.get_effect_turns_count(main_char_effect);
             }
 
@@ -300,7 +300,7 @@ export class BattleStatusWindow{
         }
 
         for(let index in buffs_debuffs){
-            let effect:BattleStatusEffect = {key: null, type:null, properties:{values: null}};
+            const effect:BattleStatusEffect = {key: null, type:null, properties:{values: null}};
 
             let modifier = null;
             for(let n in buffs_debuffs[index].values){
@@ -337,25 +337,25 @@ export class BattleStatusWindow{
     }
 
     private get_buffs_debuffs(){
-        let effects:{stat: string, values: number[]}[] = [];
+        const effects:{stat: string, values: number[]}[] = [];
 
-        let base_stats = [main_stats.ATTACK, main_stats.DEFENSE, main_stats.AGILITY];
+        const base_stats = [main_stats.ATTACK, main_stats.DEFENSE, main_stats.AGILITY];
 
         for(let index in base_stats){
-            let effect = {stat: base_stats[index], values: [this.selected_char[base_stats[index]] - 
+            const effect = {stat: base_stats[index], values: [this.selected_char[base_stats[index]] - 
                 this.selected_char.preview_stat_without_abilities_effect(base_stats[index])]};
             effects.push(effect);
         }
 
-        let elemental_base = this.selected_char.preview_elemental_stats_without_abilities_effect();
+        const elemental_base = this.selected_char.preview_elemental_stats_without_abilities_effect();
 
-        let resist_changes = [];
+        const resist_changes = [];
         resist_changes.push(this.selected_char.venus_resist_current - elemental_base[elements.VENUS].resist);
         resist_changes.push(this.selected_char.mercury_resist_current - elemental_base[elements.MERCURY].resist);
         resist_changes.push(this.selected_char.mars_resist_current - elemental_base[elements.MARS].resist);
         resist_changes.push(this.selected_char.jupiter_resist_current - elemental_base[elements.JUPITER].resist);
 
-        let power_changes = [];
+        const power_changes = [];
         power_changes.push(this.selected_char.venus_power_current - elemental_base[elements.VENUS].power);
         power_changes.push(this.selected_char.mercury_power_current - elemental_base[elements.MERCURY].power);
         power_changes.push(this.selected_char.mars_power_current - elemental_base[elements.MARS].power);
@@ -395,8 +395,8 @@ export class BattleStatusWindow{
         this.avatar = this.window.create_at_group(BattleStatusWindow.AVATAR.X, BattleStatusWindow.AVATAR.Y,
             "avatars", undefined, this.selected_char.key_name, BattleStatusWindow.GROUP_KEY);
         
-        let sprite_key = this.selected_char.sprite_base.getActionKey(base_actions.BATTLE);
-        let sprite_base = this.data.info.main_char_list[this.selected_char.key_name].sprite_base;
+        const sprite_key = this.selected_char.sprite_base.getActionKey(base_actions.BATTLE);
+        const sprite_base = this.data.info.main_char_list[this.selected_char.key_name].sprite_base;
 
         this.battle_sprite = this.window.create_at_group(BattleStatusWindow.BATTLESPRITE.CENTER_X, BattleStatusWindow.BATTLESPRITE.END_Y,
             sprite_key, undefined, undefined, BattleStatusWindow.GROUP_KEY);
@@ -410,12 +410,12 @@ export class BattleStatusWindow{
 
         if(this.battle_effects.length > 0){
             for(let index in this.battle_effects){
-                let effect = this.battle_effects[index];
+                const effect = this.battle_effects[index];
 
-                let x_pos = BattleStatusWindow.EFFECTS.X + parseInt(index)*BattleStatusWindow.EFFECTS.SHIFT;
-                let y_pos = BattleStatusWindow.EFFECTS.Y;
+                const x_pos = BattleStatusWindow.EFFECTS.X + parseInt(index)*BattleStatusWindow.EFFECTS.SHIFT;
+                const y_pos = BattleStatusWindow.EFFECTS.Y;
 
-                let sprite = this.window.create_at_group(x_pos, y_pos, "battle_effect_icons", undefined, effect.key, BattleStatusWindow.GROUP_KEY);
+                const sprite = this.window.create_at_group(x_pos, y_pos, "battle_effect_icons", undefined, effect.key, BattleStatusWindow.GROUP_KEY);
                 this.effect_sprites.push(sprite);
             }
         }
@@ -430,8 +430,8 @@ export class BattleStatusWindow{
     }
 
     private next_char(){
+        const party = this.data.info.party_data.members;
         let char_index = -1;
-        let party = this.data.info.party_data.members;
 
         for(let index in party){
             if(party[index].key_name === this.selected_char.key_name){
@@ -440,13 +440,12 @@ export class BattleStatusWindow{
             }
         }
 
-        let party_size = party.length;
-        this.change_character(party[(char_index+1)%party_size]);
+        this.change_character(party[(char_index+1)%party.length]);
     }
 
     private previous_char(){
+        const party = this.data.info.party_data.members;
         let char_index = -1;
-        let party = this.data.info.party_data.members;
 
         for(let index in party){
             if(party[index].key_name === this.selected_char.key_name){
@@ -455,12 +454,11 @@ export class BattleStatusWindow{
             }
         }
 
-        let party_size = party.length;
-        this.change_character(party[(char_index+party_size-1)%party_size]);
+        this.change_character(party[(char_index+party.length-1)%party.length]);
     }
 
     public grant_control(){
-        let controls = [
+        const controls = [
             {key: this.data.gamepad.A, on_down: this.trigger_state_change.bind(this)},
             {key: this.data.gamepad.B, on_down: this.close.bind(this, this.close_callback)},
             {key: this.data.gamepad.L, on_down: this.previous_char.bind(this)},
@@ -505,7 +503,7 @@ export class BattleStatusWindow{
                 break;
         }
 
-        if(this.current_component) this.current_component.on_change();
+        this.current_component.on_change();
         this.grant_control();
     }
 
@@ -514,9 +512,9 @@ export class BattleStatusWindow{
 
         this.window.clear_separators();
 
-        let separator_x = BattleStatusWindow.SEPARATOR.X;
-        let separator_y = BattleStatusWindow.SEPARATOR.Y + (shift ? BattleStatusWindow.SEPARATOR.SHIFT : 0);
-        let separator_width = BattleStatusWindow.SEPARATOR.WIDTH;
+        const separator_x = BattleStatusWindow.SEPARATOR.X;
+        const separator_y = BattleStatusWindow.SEPARATOR.Y + (shift ? BattleStatusWindow.SEPARATOR.SHIFT : 0);
+        const separator_width = BattleStatusWindow.SEPARATOR.WIDTH;
 
         this.window.draw_separator(separator_x, separator_y, separator_x+separator_width, separator_y, false);
 

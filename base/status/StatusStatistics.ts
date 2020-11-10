@@ -107,7 +107,7 @@ export class StatusStatistics extends StatusComponent{
     }
 
     public select_option(){
-        let highlight = {x: 0, y: 0, width: 0, height: 0};
+        const highlight = {x: 0, y: 0, width: 0, height: 0};
         let cursor_x = 0;
         let cursor_y = 0;
 
@@ -135,25 +135,25 @@ export class StatusStatistics extends StatusComponent{
                 highlight.height = StatusStatistics.HIGHLIGHT.EFFECT.HEIGHT;
             }
             
-            let cursor_shift = StatusStatistics.CURSOR.EFFECT.SHIFT;
+            const cursor_shift = StatusStatistics.CURSOR.EFFECT.SHIFT;
             cursor_x = StatusStatistics.CURSOR.EFFECT.X + cursor_shift*(this.current_col-1);
             cursor_y = StatusStatistics.CURSOR.EFFECT.Y;
         }
         this.update_highlight(highlight);
         
-        let cursor_tween = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.SHORT};
+        const cursor_tween = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.SHORT};
         this.data.cursor_manager.move_to({x: cursor_x, y:cursor_y}, {animate: false, flip: true, tween_config: cursor_tween});
     }
 
     public on_change(){
         this.select_option();
         if(this.current_col===0){
-            let msgs = {line1: StatusStatistics.StatisticsMsgs[this.current_line].line1,
+            const msgs = {line1: StatusStatistics.StatisticsMsgs[this.current_line].line1,
                 line2: StatusStatistics.StatisticsMsgs[this.current_line].line2};
 
             if(this.current_line === Statistics.EXP){
-                let char = this.manager.selected_character;
-                let exp = char.exp_curve[char.level] - char.current_exp;
+                const char = this.manager.selected_character;
+                const exp = char.exp_curve[char.level] - char.current_exp;
                 msgs.line2 = msgs.line2.replace("${EXP}", exp);
             }
             this.manager.update_description(msgs.line1, msgs.line2);
@@ -163,7 +163,7 @@ export class StatusStatistics extends StatusComponent{
                 this.manager.update_description("Normal status.", "");
             }
             else{
-                let effect = this.manager.battle_effects_array[this.current_col-1];
+                const effect = this.manager.battle_effects_array[this.current_col-1];
 
                 let msgs = null;
                 if(effect.type === BattleEffectTypes.STATUS_CONDITION){
@@ -182,12 +182,12 @@ export class StatusStatistics extends StatusComponent{
                         if(effect.key.includes("res")) effect_name = "Resist";
                         else if(effect.key.includes("pow")) effect_name = "Power";
 
-                        let venus = String((effect.properties.values[0] ? effect.properties.values[0] : 0));
-                        let mercury = String((effect.properties.values[1] ? effect.properties.values[1] : 0));
-                        let mars = String((effect.properties.values[2] ? effect.properties.values[2] : 0));
-                        let jupiter = String((effect.properties.values[3] ? effect.properties.values[3] : 0));
+                        const venus = String((effect.properties.values[0] ? effect.properties.values[0] : 0));
+                        const mercury = String((effect.properties.values[1] ? effect.properties.values[1] : 0));
+                        const mars = String((effect.properties.values[2] ? effect.properties.values[2] : 0));
+                        const jupiter = String((effect.properties.values[3] ? effect.properties.values[3] : 0));
 
-                        let elems_to_show:{element:string, value:string}[] = [];
+                        const elems_to_show:{element:string, value:string}[] = [];
                         msgs = {line1: "", line2: ""};
 
                         if(parseInt(venus) !== 0) elems_to_show.push({element: elements.VENUS, value: venus});
@@ -197,21 +197,21 @@ export class StatusStatistics extends StatusComponent{
 
                         for(let index in elems_to_show){
                             if(parseInt(elems_to_show[index].value) >= 0) elems_to_show[index].value = "+" + elems_to_show[index].value;
-                            let element_name = element_names[elems_to_show[index].element];
+                            const element_name = element_names[elems_to_show[index].element];
 
-                            let line = parseInt(index) < 2 ? "line1" : "line2";
+                            const line = parseInt(index) < 2 ? "line1" : "line2";
                             msgs[line] += (parseInt(index)%2 !== 0 ? ", " : "") + element_name + " " + effect_name + " " + elems_to_show[index].value;
                         }
                         if(msgs.line2 === "") msgs.line1 += ".";
                         else msgs.line2 += ".";
                     }
                     else{
-                        let name = (effect.key as string).toUpperCase();
+                        const name = (effect.key as string).toUpperCase();
 
                         msgs = {line1: StatusStatistics.BattleBuffMsgs[name].line1,
                             line2: StatusStatistics.BattleBuffMsgs[name].line2};
 
-                        let value = (effect.properties.values[0] ? effect.properties.values[0] : 0);
+                        const value = (effect.properties.values[0] ? effect.properties.values[0] : 0);
                         msgs.line1 = msgs.line1.replace("${VALUE}", value);
                     }
                 }
@@ -221,7 +221,7 @@ export class StatusStatistics extends StatusComponent{
     }
 
     public on_left(){
-        let effects_count = this.manager.battle_effects_array.length;
+        const effects_count = this.manager.battle_effects_array.length;
         
         if(effects_count === 0) this.current_col = this.current_col === 0 ? 1 : 0;
         else this.current_col = (this.current_col+(effects_count+1)-1)%(effects_count+1);
@@ -230,7 +230,7 @@ export class StatusStatistics extends StatusComponent{
     }
 
     public on_right(){
-        let effects_count = this.manager.battle_effects_array.length;
+        const effects_count = this.manager.battle_effects_array.length;
 
         if(effects_count === 0) this.current_col = this.current_col === 0 ? 1 : 0;
         else this.current_col = (this.current_col+1)%(effects_count+1);
@@ -261,30 +261,30 @@ export class StatusStatistics extends StatusComponent{
     }
 
     public initialize(){
-        let stars = ["venus_star", "mercury_star", "mars_star", "jupiter_star"];
+        const stars = ["venus_star", "mercury_star", "mars_star", "jupiter_star"];
         for(let index in stars){
-            let x_pos = StatusStatistics.STARS_X + parseInt(index)*StatusStatistics.STARS_SHIFT;  
-            let y_pos = StatusStatistics.STARS_Y;
+            const x_pos = StatusStatistics.STARS_X + parseInt(index)*StatusStatistics.STARS_SHIFT;  
+            const y_pos = StatusStatistics.STARS_Y;
 
-            let star = this.window.create_at_group(x_pos, y_pos, stars[index], undefined, undefined, StatusStatistics.GROUP_KEY);
+            const star = this.window.create_at_group(x_pos, y_pos, stars[index], undefined, undefined, StatusStatistics.GROUP_KEY);
             this.state_sprites.push(star);
         };
 
-        let labels = ["Djinn", "Lv", "Power", "Resist"];
+        const labels = ["Djinn", "Lv", "Power", "Resist"];
 
         for(let index in labels){
-            let x_pos = StatusStatistics.LABEL_X;
-            let y_pos = StatusStatistics.LABEL_Y + parseInt(index)*StatusStatistics.LABEL_SHIFT;
+            const x_pos = StatusStatistics.LABEL_X;
+            const y_pos = StatusStatistics.LABEL_Y + parseInt(index)*StatusStatistics.LABEL_SHIFT;
 
-            let label = this.window.set_text_in_position(labels[index], x_pos, y_pos, false, false, undefined, false, StatusStatistics.GROUP_KEY);
+            const label = this.window.set_text_in_position(labels[index], x_pos, y_pos, false, false, undefined, false, StatusStatistics.GROUP_KEY);
             this.state_sprites.push(label.text, label.shadow);
         }
 
         for(let index in ordered_elements){
-            let djinn_counts = this.get_djinn_counts(ordered_elements[index]);
-            let elemental_stats = this.get_elemental_stats(ordered_elements[index]);
+            const djinn_counts = this.get_djinn_counts(ordered_elements[index]);
+            const elemental_stats = this.get_elemental_stats(ordered_elements[index]);
 
-            let x_pos = StatusStatistics.NUMBERS_END_X + parseInt(index)*StatusStatistics.NUMBERS_X_SHIFT;
+            const x_pos = StatusStatistics.NUMBERS_END_X + parseInt(index)*StatusStatistics.NUMBERS_X_SHIFT;
             let y_pos = StatusStatistics.NUMBERS_Y;
             let text = djinn_counts.set + "/" + djinn_counts.total;
 
