@@ -1,25 +1,25 @@
 import * as numbers from "./magic_numbers";
-import {ordered_elements} from "./utils";
+import {elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
 
 export enum djinn_status {
     SET = "set",
     STANDBY = "standby",
     RECOVERY = "recovery",
+    ANY = "any",
 }
 
-export type djinn_font_colors = typeof djinn_font_colors[keyof typeof djinn_font_colors];
-export const djinn_font_colors = {
+export const djinn_font_colors: {[status in djinn_status]?: number} = {
     [djinn_status.RECOVERY]: numbers.YELLOW_FONT_COLOR,
     [djinn_status.STANDBY]: numbers.RED_FONT_COLOR,
     [djinn_status.SET]: numbers.DEFAULT_FONT_COLOR,
-} as const;
+};
 
 export class Djinn {
     public key_name: string;
     public name: string;
     public description: string;
-    public element: string;
+    public element: elements;
     public ability_key_name: string;
     public hp_boost: number;
     public pp_boost: number;

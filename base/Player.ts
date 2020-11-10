@@ -33,8 +33,7 @@ export enum main_stats {
     LUCK = "luk",
 }
 
-export type effect_type_stat = typeof effect_type_stat[keyof typeof effect_type_stat];
-export const effect_type_stat = {
+export const effect_type_stat: {[effect_type in effect_types]?: main_stats} = {
     [effect_types.MAX_HP]: main_stats.MAX_HP,
     [effect_types.MAX_PP]: main_stats.MAX_PP,
     [effect_types.ATTACK]: main_stats.ATTACK,
@@ -43,7 +42,7 @@ export const effect_type_stat = {
     [effect_types.LUCK]: main_stats.LUCK,
     [effect_types.CURRENT_HP]: main_stats.CURRENT_HP,
     [effect_types.CURRENT_PP]: main_stats.CURRENT_PP,
-} as const;
+};
 
 export const on_catch_status_msg = {
     [temporary_status.DELUSION]: target => `${target.name} is wrapped in delusion!`,

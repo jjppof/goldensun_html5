@@ -3,7 +3,7 @@ import {choose_right_class, Classes} from "./Classes";
 import {djinn_status} from "./Djinn";
 import {Effect, effect_types} from "./Effect";
 import {Item, item_types} from "./Item";
-import {Player, fighter_types, permanent_status, main_stats} from "./Player";
+import {Player, fighter_types, permanent_status, main_stats, effect_type_stat} from "./Player";
 import {elements, ordered_elements} from "./utils";
 import {ELEM_ATTR_MIN, ELEM_ATTR_MAX} from "./magic_numbers";
 import * as _ from "lodash";
@@ -45,7 +45,7 @@ export class MainChar extends Player {
     public mercury_resist_base: number;
     public mars_resist_base: number;
     public jupiter_resist_base: number;
-    public element_afinity: string;
+    public element_afinity: elements;
     public venus_djinni: string[];
     public mercury_djinni: string[];
     public mars_djinni: string[];
@@ -208,7 +208,7 @@ export class MainChar extends Player {
         );
     }
 
-    add_exp(value) {
+    add_exp(value: number) {
         let return_data = {
             before: {
                 level: this.level,
@@ -251,7 +251,7 @@ export class MainChar extends Player {
         });
     }
 
-    add_item(item_key_name, quantity, equip) {
+    add_item(item_key_name: string, quantity: number, equip: boolean) {
         let found = false;
         if (this.info.items_list[item_key_name].type === item_types.GENERAL_ITEM) {
             this.items.forEach(item_obj => {
@@ -273,7 +273,7 @@ export class MainChar extends Player {
         }
     }
 
-    remove_item(item_obj_to_remove, quantity) {
+    remove_item(item_obj_to_remove: ItemSlot, quantity: number) {
         let adjust_index = false;
         this.items = this.items.filter((item_obj, index) => {
             if (item_obj_to_remove.key_name === item_obj.key_name) {
@@ -294,8 +294,8 @@ export class MainChar extends Player {
         });
     }
 
-    equip_item(index, initialize = false) {
-        let item_obj = this.items[index];
+    equip_item(index: number, initialize: boolean = false) {
+        const item_obj = this.items[index];
         if (item_obj.equipped && !initialize) return;
         const item = this.info.items_list[item_obj.key_name];
         if (item.type === item_types.WEAPONS && this.equip_slots.weapon !== null) {
@@ -348,8 +348,8 @@ export class MainChar extends Player {
         }
     }
 
-    unequip_item(index) {
-        let item_obj = this.items[index];
+    unequip_item(index: number) {
+        const item_obj = this.items[index];
         if (!item_obj.equipped) return;
         const item = this.info.items_list[item_obj.key_name];
         if (item.type === item_types.WEAPONS && this.equip_slots.weapon !== null) {
@@ -383,9 +383,9 @@ export class MainChar extends Player {
         }
     }
 
-    init_djinni(djinni) {
+    init_djinni(djinni: string[]) {
         for (let i = 0; i < djinni.length; ++i) {
-            let djinn = this.info.djinni_list[djinni[i]];
+            const djinn = this.info.djinni_list[djinni[i]];
             switch (djinn.element) {
                 case elements.VENUS:
                     this.venus_djinni.push(djinn.key_name);
@@ -404,8 +404,8 @@ export class MainChar extends Player {
         this.update_elemental_attributes();
     }
 
-    add_djinn(djinn_key_name) {
-        let djinn = this.info.djinni_list[djinn_key_name];
+    add_djinn(djinn_key_name: string) {
+        const djinn = this.info.djinni_list[djinn_key_name];
         switch (djinn.element) {
             case elements.VENUS:
                 this.venus_djinni.push(djinn.key_name);
@@ -423,8 +423,8 @@ export class MainChar extends Player {
         this.update_all();
     }
 
-    remove_djinn(djinn_key_name) {
-        let djinn = this.info.djinni_list[djinn_key_name];
+    remove_djinn(djinn_key_name: string) {
+        const djinn = this.info.djinni_list[djinn_key_name];
         let this_djinni_list;
         switch (djinn.element) {
             case elements.VENUS:
@@ -445,12 +445,12 @@ export class MainChar extends Player {
         this.update_all();
     }
 
-    replace_djinn(old_djinn_key_name, new_djinn_key_name) {
+    replace_djinn(old_djinn_key_name: string, new_djinn_key_name: string) {
         this.remove_djinn(old_djinn_key_name);
         this.add_djinn(new_djinn_key_name);
     }
 
-    preview_djinn_change(stats, djinni_key_name, djinni_next_status, action?) {
+    preview_djinn_change(stats: main_stats[], djinni_key_name: string[], djinni_next_status: djinn_status[], action?) {
         const previous_class = this.class;
         let venus_lv = this.venus_level_current;
         let mercury_lv = this.mercury_level_current;
@@ -464,7 +464,7 @@ export class MainChar extends Player {
                     lv_shift = MainChar.ELEM_LV_DELTA;
                     break;
                 case djinn_status.RECOVERY:
-                case "irrelevant":
+                case djinn_status.ANY:
                     lv_shift = 0;
                     break;
                 default:
@@ -508,7 +508,7 @@ export class MainChar extends Player {
             this.equipped_abilities
         );
         djinni_next_status = djinni_next_status.map(status =>
-            status === "irrelevant" ? djinn_status.STANDBY : status
+            status === djinn_status.ANY ? djinn_status.STANDBY : status
         );
         stats.forEach(stat => {
             return_obj[stat] = this.preview_stats_by_djinn(stat, djinni_key_name, djinni_next_status, action);
@@ -517,7 +517,7 @@ export class MainChar extends Player {
         return return_obj;
     }
 
-    preview_stats_by_djinn(stat, djinni_key_name, djinni_next_status, action) {
+    preview_stats_by_djinn(stat: main_stats, djinni_key_name: string[], djinni_next_status: djinn_status[], action) {
         const preview_obj = {
             djinni_key_name: djinni_key_name,
             djinni_next_status: djinni_next_status,
@@ -526,32 +526,19 @@ export class MainChar extends Player {
         return this.set_max_stat(stat, true, preview_obj);
     }
 
-    preview_stats_by_effect(effect_type, effect_obj, item_key_name) {
+    preview_stats_by_effect(effect_type: effect_types, effect_obj, item_key_name: string) {
         const preview_obj = {
             effect_obj: effect_obj,
             item_key_name: item_key_name,
         };
-        switch (effect_type) {
-            case effect_types.MAX_HP:
-                return this.set_max_stat(main_stats.MAX_HP, true, preview_obj);
-            case effect_types.MAX_PP:
-                return this.set_max_stat(main_stats.MAX_PP, true, preview_obj);
-            case effect_types.ATTACK:
-                return this.set_max_stat(main_stats.ATTACK, true, preview_obj);
-            case effect_types.DEFENSE:
-                return this.set_max_stat(main_stats.DEFENSE, true, preview_obj);
-            case effect_types.AGILITY:
-                return this.set_max_stat(main_stats.AGILITY, true, preview_obj);
-            case effect_types.LUCK:
-                return this.set_max_stat(main_stats.LUCK, true, preview_obj);
-        }
+        return this.set_max_stat(effect_type_stat[effect_type], true, preview_obj);
     }
 
-    preview_stat_without_abilities_effect(stat) {
+    preview_stat_without_abilities_effect(stat: main_stats) {
         return this.set_max_stat(stat, true, {ignore_ability_effect: true});
     }
 
-    set_max_stat(stat, preview = false, preview_obj: any = {}) {
+    set_max_stat(stat: main_stats, preview = false, preview_obj: any = {}) {
         const stat_prefix = [main_stats.MAX_HP, main_stats.MAX_PP].includes(stat) ? stat.split("_")[1] : stat;
         const stat_key = stat;
         const boost_key = stat_prefix + "_boost";
@@ -644,27 +631,27 @@ export class MainChar extends Player {
         this.set_max_stat(main_stats.LUCK);
     }
 
-    add_extra_max_hp(amount) {
+    add_extra_max_hp(amount: number) {
         this.hp_extra += amount;
     }
 
-    add_extra_max_pp(amount) {
+    add_extra_max_pp(amount: number) {
         this.pp_extra += amount;
     }
 
-    add_extra_max_atk(amount) {
+    add_extra_max_atk(amount: number) {
         this.atk_extra += amount;
     }
 
-    add_extra_max_def(amount) {
+    add_extra_max_def(amount: number) {
         this.def_extra += amount;
     }
 
-    add_extra_max_agi(amount) {
+    add_extra_max_agi(amount: number) {
         this.agi_extra += amount;
     }
 
-    add_extra_max_luk(amount) {
+    add_extra_max_luk(amount: number) {
         this.luk_extra += amount;
     }
 

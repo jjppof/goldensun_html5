@@ -32,8 +32,7 @@ export enum effect_types {
     DAMAGE_INPUT = "damage_input",
 }
 
-export type effect_names = typeof effect_names[keyof typeof effect_names];
-export const effect_names = {
+export const effect_names: {[effect_type in effect_types]?: string} = {
     [effect_types.MAX_HP]: "HP",
     [effect_types.MAX_PP]: "PP",
     [effect_types.ATTACK]: "Attack",
@@ -42,7 +41,7 @@ export const effect_names = {
     [effect_types.LUCK]: "Luck",
     [effect_types.POWER]: "Power",
     [effect_types.RESIST]: "Resist",
-} as const;
+};
 
 export enum effect_operators {
     PLUS = "plus",
@@ -74,7 +73,7 @@ export class Effect {
     public quantity_is_absolute: boolean;
     public rate: number;
     public chance: number;
-    public attribute: string;
+    public attribute: elements;
     public add_status: boolean;
     public status_key_name: permanent_status | temporary_status;
     public turns_quantity: number;
@@ -92,7 +91,7 @@ export class Effect {
         quantity_is_absolute: boolean;
         rate: number;
         chance: number;
-        attribute: string;
+        attribute: elements;
         variation_on_final_result: boolean;
         usage: string;
         on_caster: boolean;

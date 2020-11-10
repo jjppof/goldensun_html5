@@ -3,7 +3,7 @@ import * as numbers from "../../magic_numbers";
 import {temporary_status} from "../../Player";
 import {GoldenSun} from "../../GoldenSun";
 import {MainChar} from "../../MainChar";
-import {Djinn} from "../../Djinn";
+import {Djinn, djinn_status} from "../../Djinn";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
 
 const BASE_WIN_WIDTH = 164;
@@ -87,7 +87,7 @@ export class BattlePsynergyWindow {
     public psy_info_2_text: TextObj;
 
     public djinni: Djinn[];
-    public next_djinni_status: string[];
+    public next_djinni_status: djinn_status[];
 
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;

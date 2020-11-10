@@ -1,3 +1,5 @@
+import {elements} from "./utils";
+
 export enum ability_types {
     HEALING = "healing",
     EFFECT_ONLY = "effect_only",
@@ -77,7 +79,7 @@ export class Ability {
     public name: string;
     public description: string;
     public type: ability_types;
-    public element: string;
+    public element: elements;
     public battle_target: string;
     public range: number;
     public pp_cost: number;

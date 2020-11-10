@@ -1,3 +1,5 @@
+import {elements} from "./utils";
+
 export enum item_types {
     WEAPONS = "weapons",
     ARMOR = "armor",
@@ -33,7 +35,7 @@ export class Item {
     public important_item: boolean;
     public carry_up_to_30: boolean;
     public effects: any;
-    public attribute: string;
+    public attribute: elements;
     public unleash_ability: string;
     public unleash_rate: number;
     public use_ability: string;

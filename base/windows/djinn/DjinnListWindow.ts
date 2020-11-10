@@ -519,24 +519,27 @@ export class DjinnListWindow {
 
         if (this.setting_djinn_status_char_index !== this.selected_char_index) {
             const next_char = this.data.info.party_data.members[this.selected_char_index];
-            let this_statuses: string[], next_statuses: string[], this_djinni: Djinn[], next_djinni: Djinn[];
+            let this_statuses: djinn_status[],
+                next_statuses: djinn_status[],
+                this_djinni: Djinn[],
+                next_djinni: Djinn[];
             let action_text: string, next_djinn: Djinn;
 
             if (this.action_text_selected) {
-                this_statuses = [this_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY];
-                next_statuses = [this_djinn.status === djinn_status.STANDBY ? "irrelevant" : this_djinn.status];
+                this_statuses = [this_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : djinn_status.STANDBY];
+                next_statuses = [this_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : this_djinn.status];
                 this_djinni = [this_djinn];
                 next_djinni = [this_djinn];
                 action_text = "Give";
             } else {
                 next_djinn = this.data.info.djinni_list[next_char.djinni[this.selected_djinn_index]];
                 this_statuses = [
-                    next_djinn.status === djinn_status.STANDBY ? "irrelevant" : next_djinn.status,
-                    this_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY,
+                    next_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : next_djinn.status,
+                    this_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : djinn_status.STANDBY,
                 ];
                 next_statuses = [
-                    this_djinn.status === djinn_status.STANDBY ? "irrelevant" : this_djinn.status,
-                    next_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY,
+                    this_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : this_djinn.status,
+                    next_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : djinn_status.STANDBY,
                 ];
                 this_djinni = [next_djinn, this_djinn];
                 next_djinni = [this_djinn, next_djinn];
@@ -622,7 +625,7 @@ export class DjinnListWindow {
             );
             this.djinn_psynergy_window.grant_control();
         } else {
-            let next_status: string;
+            let next_status: djinn_status;
             switch (this_djinn.status) {
                 case djinn_status.SET:
                     next_status = djinn_status.STANDBY;

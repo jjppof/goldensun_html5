@@ -2,7 +2,7 @@ import {TextObj, Window} from "../../Window";
 import * as numbers from "../../magic_numbers";
 import {GoldenSun} from "../../GoldenSun";
 import {MainChar} from "../../MainChar";
-import {Djinn} from "../../Djinn";
+import {Djinn, djinn_status} from "../../Djinn";
 import {ordered_main_stats} from "../../Player";
 
 const BASE_WIN_X = 0;
@@ -36,7 +36,7 @@ export class DjinnStatsWindow {
     public after_class_text: TextObj;
     public window_open: boolean;
     public char: MainChar;
-    public next_djinni_status: string;
+    public next_djinni_status: djinn_status;
     public djinn: Djinn;
 
     constructor(game, data) {

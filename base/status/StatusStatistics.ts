@@ -216,8 +216,8 @@ export class StatusStatistics extends StatusComponent {
                     }
                 } else if (effect.key === effect_types.RESIST || effect.key === effect_types.POWER) {
                     let effect_name = "";
-                    if ((effect.key = effect_types.RESIST)) effect_name = effect_names.resist;
-                    else if ((effect.key = effect_types.RESIST)) effect_name = effect_names.power;
+                    if ((effect.key = effect_types.RESIST)) effect_name = effect_names[effect_types.RESIST];
+                    else if ((effect.key = effect_types.RESIST)) effect_name = effect_names[effect_types.POWER];
 
                     const elems_to_show = _.flatMap(elements, element =>
                         effect.properties.value[element]

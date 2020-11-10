@@ -2,7 +2,7 @@ import {TextObj, Window} from "../../Window";
 import * as numbers from "../../magic_numbers";
 import {ordered_elements} from "../../utils";
 import {MainChar} from "../../MainChar";
-import {Djinn} from "../../Djinn";
+import {Djinn, djinn_status} from "../../Djinn";
 import {ordered_main_stats} from "../../Player";
 
 const BASE_WIN_WIDTH = 116;
@@ -64,7 +64,7 @@ export class DjinnCharStatsWindow {
 
     public char: MainChar;
     public djinni: Djinn[];
-    public next_djinni_status: string[];
+    public next_djinni_status: djinn_status[];
     public action: string;
 
     constructor(game, win_x = 0) {
@@ -198,7 +198,7 @@ export class DjinnCharStatsWindow {
         }
     }
 
-    open(char: MainChar, djinni: Djinn[], next_djinni_status: string[], action?: string, callback?: Function) {
+    open(char: MainChar, djinni: Djinn[], next_djinni_status: djinn_status[], action?: string, callback?: Function) {
         this.char = char;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;
