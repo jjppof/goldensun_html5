@@ -17,7 +17,7 @@ export enum npc_types {
     SPRITE = "sprite",
 }
 
-export class NPC extends ControllableChar {
+export class NPC extends ControllableChar    {
     private static readonly NPC_TALK_RANGE = 3.0;
 
     public movement_type: npc_movement_types;
