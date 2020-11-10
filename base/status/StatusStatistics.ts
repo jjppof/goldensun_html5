@@ -194,12 +194,12 @@ export class StatusStatistics extends StatusComponent{
 
                         msgs = {line1: "", line2: ""};
 
-                        for(let index in elems_to_show){
-                            if(parseInt(elems_to_show[index].value) >= 0) elems_to_show[index].value = "+" + elems_to_show[index].value;
-                            const element_name = element_names[elems_to_show[index].element];
+                        for(let i = 0; i<elems_to_show.length; i++){
+                            if(parseInt(elems_to_show[i].value) >= 0) elems_to_show[i].value = "+" + elems_to_show[i].value;
+                            const element_name = element_names[elems_to_show[i].element];
 
-                            const line = parseInt(index) < 2 ? "line1" : "line2";
-                            msgs[line] += (parseInt(index)%2 !== 0 ? ", " : "") + element_name + " " + effect_name + " " + elems_to_show[index].value;
+                            const line = i < 2 ? "line1" : "line2";
+                            msgs[line] += (i%2 !== 0 ? ", " : "") + element_name + " " + effect_name + " " + elems_to_show[i].value;
                         }
 
                         if(msgs.line2 === "") msgs.line1 += ".";
