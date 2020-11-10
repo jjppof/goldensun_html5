@@ -3,7 +3,7 @@ import { Window } from "../Window";
 import { GoldenSun } from "../GoldenSun";
 import { CursorManager, PointVariants } from "../utils/CursorManager";
 import { BattleStatusWindow } from "../windows/battle/BattleStatusWindow";
-import { permanent_status, temporary_status } from "../Player";
+import { effect_type_stat, ordered_status_battle, permanent_status, temporary_status } from "../Player";
 import { elements, element_names, ordered_elements } from "../utils";
 import { effect_names, effect_types } from "../Effect";
 import { djinn_status } from "../Djinn";
@@ -36,12 +36,16 @@ export class StatusStatistics extends StatusComponent{
     };
 
     public static readonly BattleBuffMsgs = {
-        attack_up: {line1: (value:number) =>`Attack increased by ${value}.`, line2: ""},
-        defense_up: {line1: (value:number) =>`Defense increased by ${value}.`, line2: ""},
-        agility_up: {line1: (value:number) =>`Agility increased by ${value}.`, line2: ""},
-        attack_down: {line1: (value:number) =>`Attack dropped by ${value}.`, line2: "Increase with spells like Impact."},
-        defense_down: {line1: (value:number) =>`Defense dropped by ${value}.`, line2: "Increase with spells like Guard."},
-        agility_down: {line1: (value:number) =>`Agility dropped by ${value}.`, line2: ""}
+        up:{
+            [effect_types.ATTACK]: {line1: (value:number) =>`Attack increased by ${value}.`, line2: ""},
+            [effect_types.DEFENSE]: {line1: (value:number) =>`Defense increased by ${value}.`, line2: ""},
+            [effect_types.AGILITY]: {line1: (value:number) =>`Agility increased by ${value}.`, line2: ""},
+        },
+        down:{
+            [effect_types.ATTACK]: {line1: (value:number) =>`Attack dropped by ${value}.`, line2: "Increase with spells like Impact."},
+            [effect_types.DEFENSE]: {line1: (value:number) =>`Defense dropped by ${value}.`, line2: "Increase with spells like Guard."},
+            [effect_types.AGILITY]: {line1: (value:number) =>`Agility dropped by ${value}.`, line2: ""}
+        }
     };
 
     public static readonly MenuStatusMsgs = {
@@ -167,10 +171,9 @@ export class StatusStatistics extends StatusComponent{
             }
             else{
                 const effect = this.manager.battle_effects_array[this.current_col-1];
-                const name = effect.key.toUpperCase();
 
                 let msgs = null;
-                if(temporary_status[name] || permanent_status[name]){
+                if(effect.key in ordered_status_battle){
                     msgs = {line1: StatusStatistics.BattleStatusMsgs[effect.key].line1,
                         line2: StatusStatistics.BattleStatusMsgs[effect.key].line2};
 
@@ -179,11 +182,10 @@ export class StatusStatistics extends StatusComponent{
                         msgs.line1 = msgs.line1(turns);
                     } 
                 }
-                else if(effect_types[name]){
-                    if(effect.key === effect_types.RESIST || effect.key === effect_types.POWER){
+                else if(effect.key === effect_types.RESIST || effect.key === effect_types.POWER){
                         let effect_name = "";
-                        if(effect.key.includes(effect_types.RESIST)) effect_name = effect_names.resist;
-                        else if(effect.key.includes(effect_types.POWER)) effect_name = effect_names.power;
+                        if(effect.key = effect_types.RESIST) effect_name = effect_names.resist;
+                        else if(effect.key = effect_types.RESIST) effect_name = effect_names.power;
                         
                         const elems_to_show = _.flatMap(elements, element => effect.properties.value[element] ? [{
                             element: element,
@@ -203,15 +205,12 @@ export class StatusStatistics extends StatusComponent{
                         if(msgs.line2 === "") msgs.line1 += ".";
                         else msgs.line2 += ".";
                     }
-                    else{
-                        const name = (effect.key as string) + effect.properties.modifier
+                else if(effect.key in effect_type_stat){
+                    msgs = {line1: StatusStatistics.BattleBuffMsgs[effect.properties.modifier][effect.key].line1,
+                        line2: StatusStatistics.BattleBuffMsgs[effect.properties.modifier][effect.key].line2};
 
-                        msgs = {line1: StatusStatistics.BattleBuffMsgs[name].line1,
-                            line2: StatusStatistics.BattleBuffMsgs[name].line2};
-
-                        const value = (effect.properties.value ? effect.properties.value : 0);
-                        msgs.line1 = msgs.line1(value);
-                    }
+                    const value = (effect.properties.value ? effect.properties.value : 0);
+                    msgs.line1 = msgs.line1(value);
                 }
                 this.manager.update_description(msgs.line1, msgs.line2);
             }

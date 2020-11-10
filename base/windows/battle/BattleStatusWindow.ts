@@ -1,7 +1,7 @@
 import { Battle } from "../../battle/Battle";
 import { GoldenSun } from "../../GoldenSun";
 import { MainChar } from "../../MainChar";
-import { main_stats, temporary_status, ordered_status_battle, ordered_status_menu, permanent_status } from "../../Player";
+import { main_stats, temporary_status, ordered_status_battle, ordered_status_menu, permanent_status, effect_type_stat } from "../../Player";
 import { TextObj, Window } from "../../Window";
 import { base_actions, elements } from "../../utils";
 import * as _ from "lodash";
@@ -305,30 +305,30 @@ export class BattleStatusWindow{
             const effect:BattleStatusEffect = {key: null, properties:{value: null}};
 
             let modifier = null;
-            if(effect_types[buffs_debuffs[index].stat.toUpperCase()]){
+            if(buffs_debuffs[index].stat.toUpperCase() in effect_types){
                 if(buffs_debuffs[index].stat === effect_types.RESIST || buffs_debuffs[index].stat === effect_types.POWER){
                     for(let element in elements){
                         if(buffs_debuffs[index].value[elements[element]] < 0){
                             if(modifier === null){
-                                modifier = "_down";
+                                modifier = "down";
                             }
-                            else if(modifier === "_up"){
-                                modifier === "_up_down";
+                            else if(modifier === "up"){
+                                modifier === "up_down";
                             }
                         }
                         else if(buffs_debuffs[index].value[elements[element]] > 0){
                             if(modifier === null){
-                                modifier = "_up";
+                                modifier = "up";
                             }
-                            else if(modifier === "_down"){
-                                modifier = "_up_down";
+                            else if(modifier === "down"){
+                                modifier = "up_down";
                             }
                         }
                     }
                 }
                 else{
-                    if(effect.properties.value >= 0) modifier = "_up";
-                    else modifier = "_down";
+                    if(effect.properties.value >= 0) modifier = "up";
+                    else modifier = "down";
                 }
             }
             if(modifier === null) continue;
@@ -348,13 +348,12 @@ export class BattleStatusWindow{
     private get_buffs_debuffs(){
         const effects:{stat: effect_types, value: number|{[element in elements]: number}}[] = [];
 
-        const base_stats = [main_stats.ATTACK, main_stats.DEFENSE, main_stats.AGILITY];
         const stat_keys = [effect_types.ATTACK, effect_types.DEFENSE, effect_types.AGILITY];
 
-        for(let index in base_stats){
-            const val = this.selected_char[base_stats[index]] - this.selected_char.preview_stat_without_abilities_effect(base_stats[index]);
+        for(let i = 0; i<stat_keys.length; i++){
+            const val = this.selected_char[effect_type_stat[stat_keys[i]]] - this.selected_char.preview_stat_without_abilities_effect(effect_type_stat[stat_keys[i]]);
             if(val !== 0){
-                const effect = {stat: stat_keys[index], value: val};
+                const effect = {stat: stat_keys[i], value: val};
                 effects.push(effect);
             }
         }
@@ -435,7 +434,7 @@ export class BattleStatusWindow{
                 const effect = this.battle_effects[index];
                 let key = effect.key as String;
                 if(effect_types[key.toUpperCase()]){
-                    key = key + effect.properties.modifier;
+                    key = key + "_" + effect.properties.modifier;
                 }
 
                 const x_pos = BattleStatusWindow.EFFECTS.X + parseInt(index)*BattleStatusWindow.EFFECTS.SHIFT;
