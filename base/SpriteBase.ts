@@ -2,16 +2,16 @@ export class SpriteBase {
     public key_name: string;
     public actions: {
         [action: string]: {
-            directions?: string[],
-            frame_counts?: any,
-            frame_rate?: {[direction: string]: any},
-            loop?: boolean|boolean[],
-            spritesheet?: {spritesheet_image_url: string, spritesheet_json_url: string}
-        }
+            directions?: string[];
+            frame_counts?: any;
+            frame_rate?: {[direction: string]: any};
+            loop?: boolean | boolean[];
+            spritesheet?: {spritesheet_image_url: string; spritesheet_json_url: string};
+        };
     };
     public animations: {[action: string]: {[animation: string]: string[]}};
 
-    constructor (key_name, actions) {
+    constructor(key_name, actions) {
         this.key_name = key_name;
         this.actions = {};
         this.animations = {};
@@ -55,13 +55,13 @@ export class SpriteBase {
 
     setActionSpritesheet(action, spritesheet_image_url, spritesheet_json_url) {
         this.actions[action].spritesheet = {
-            spritesheet_image_url : spritesheet_image_url,
-            spritesheet_json_url : spritesheet_json_url
+            spritesheet_image_url: spritesheet_image_url,
+            spritesheet_json_url: spritesheet_json_url,
         };
     }
 
     loadSpritesheets(game, force_load, on_load_complete) {
-        for(let action in this.actions){
+        for (let action in this.actions) {
             const spritesheet = this.actions[action].spritesheet;
             const action_key = this.getActionKey(action);
             let loader = game.load.atlasJSONHash(
@@ -105,20 +105,20 @@ export class SpriteBase {
             );
         }
     }
-    
+
     generateAllFrames() {
         for (let action in this.actions) {
             const directions = this.actions[action].directions;
             const frame_counts = this.actions[action].frame_counts;
             for (let i = 0; i < directions.length; ++i) {
                 const direction = directions[i];
-                this.generateFrameNames(action, direction, 0, frame_counts[i] - 1, '', 2);
+                this.generateFrameNames(action, direction, 0, frame_counts[i] - 1, "", 2);
             }
         }
     }
 
     getFrameName(action, direction, index) {
-        const formatted_index = index.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
+        const formatted_index = index.toLocaleString("en-US", {minimumIntegerDigits: 2, useGrouping: false});
         return `${action}/${direction}/${formatted_index}`;
     }
 

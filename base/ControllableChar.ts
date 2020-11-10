@@ -1,20 +1,20 @@
 import * as numbers from "./magic_numbers";
-import { reverse_directions, base_actions } from "./utils";
-import { Footsteps } from "./utils/Footsteps";
-import { GoldenSun } from "./GoldenSun";
-import { SpriteBase } from "./SpriteBase";
+import {reverse_directions, base_actions} from "./utils";
+import {Footsteps} from "./utils/Footsteps";
+import {GoldenSun} from "./GoldenSun";
+import {SpriteBase} from "./SpriteBase";
 
 export class ControllableChar {
     private static readonly DEFAULT_SHADOW_KEYNAME = "shadow";
 
     private static readonly DEFAULT_SHADOW_ANCHOR_X = 0.45;
     private static readonly DEFAULT_SHADOW_ANCHOR_Y = 0.05;
-    private static readonly DEFAULT_SPRITE_ANCHOR_X = 0.50;
-    private static readonly DEFAULT_SPRITE_ANCHOR_Y = 0.80;
+    private static readonly DEFAULT_SPRITE_ANCHOR_X = 0.5;
+    private static readonly DEFAULT_SPRITE_ANCHOR_Y = 0.8;
 
     private static readonly default_anchor = {
         x: ControllableChar.DEFAULT_SPRITE_ANCHOR_X,
-        y: ControllableChar.DEFAULT_SPRITE_ANCHOR_Y
+        y: ControllableChar.DEFAULT_SPRITE_ANCHOR_Y,
     };
 
     public game: Phaser.Game;
@@ -42,7 +42,7 @@ export class ControllableChar {
     public body_radius: number;
     public tile_x_pos: number;
     public tile_y_pos: number;
-    public current_action: string|base_actions;
+    public current_action: string | base_actions;
     public current_direction: number;
     public required_direction: number;
     public desired_direction: number;
@@ -55,7 +55,19 @@ export class ControllableChar {
     public crop_texture: boolean;
     public shadow_following: boolean;
 
-    constructor(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps, walk_speed, dash_speed, climb_speed) {
+    constructor(
+        game,
+        data,
+        key_name,
+        initial_x,
+        initial_y,
+        initial_action,
+        initial_direction,
+        enable_footsteps,
+        walk_speed,
+        dash_speed,
+        climb_speed
+    ) {
         this.game = game;
         this.data = data;
         this.key_name = key_name;
@@ -85,7 +97,7 @@ export class ControllableChar {
         this.current_direction = initial_direction;
         this.required_direction = 0;
         this.desired_direction = initial_direction;
-        this.color_filter = this.game.add.filter('ColorFilters');
+        this.color_filter = this.game.add.filter("ColorFilters");
         this.trying_to_push = false;
         this.trying_to_push_direction = null;
         this.push_timer = null;
@@ -96,7 +108,14 @@ export class ControllableChar {
     }
 
     in_action(allow_climbing = false) {
-        return this.casting_psynergy || this.pushing || (this.climbing && !allow_climbing) || this.jumping || this.teleporting || this.sliding;
+        return (
+            this.casting_psynergy ||
+            this.pushing ||
+            (this.climbing && !allow_climbing) ||
+            this.jumping ||
+            this.teleporting ||
+            this.sliding
+        );
     }
 
     set_sprite(group, sprite_info, map_sprite, layer, anchor_x?, anchor_y?, is_world_map: boolean = false) {
@@ -112,11 +131,11 @@ export class ControllableChar {
         this.sprite.roundPx = true;
         const scale_x = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
         const scale_y = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
-        this.sprite.scale.setTo(scale_x , scale_y);
+        this.sprite.scale.setTo(scale_x, scale_y);
     }
 
     reset_anchor(property?) {
-        if (property !== undefined && ['x', 'y'].includes(property)) {
+        if (property !== undefined && ["x", "y"].includes(property)) {
             this.sprite.anchor[property] = ControllableChar.default_anchor[property];
         } else {
             this.sprite.anchor.x = ControllableChar.default_anchor.x;
@@ -135,7 +154,7 @@ export class ControllableChar {
         this.shadow.base_collision_layer = layer;
         const scale_x = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
         const scale_y = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
-        this.shadow.scale.setTo(scale_x , scale_y);
+        this.shadow.scale.setTo(scale_x, scale_y);
     }
 
     camera_follow() {
@@ -169,7 +188,11 @@ export class ControllableChar {
     }
 
     set_frame(direction: number, frame_index = 0) {
-        const frame_name = this.sprite_info.getFrameName(this.current_action, reverse_directions[direction], frame_index);
+        const frame_name = this.sprite_info.getFrameName(
+            this.current_action,
+            reverse_directions[direction],
+            frame_index
+        );
         this.sprite.frameName = frame_name;
     }
 
@@ -186,7 +209,10 @@ export class ControllableChar {
 
     create_half_crop_mask(is_world_map: boolean = false) {
         if (is_world_map) {
-            this.sprite.mask = this.game.add.graphics(this.sprite.centerX - (this.sprite.width >> 1), this.sprite.centerY - (this.sprite.height >> 1));
+            this.sprite.mask = this.game.add.graphics(
+                this.sprite.centerX - (this.sprite.width >> 1),
+                this.sprite.centerY - (this.sprite.height >> 1)
+            );
             this.sprite.mask.beginFill(0xffffff, 1);
             this.sprite.mask.drawRect(0, 0, this.sprite.width, this.sprite.height);
             this.sprite.mask.endFill();
@@ -285,7 +311,8 @@ export class ControllableChar {
         if (this.required_direction === null && this.current_action !== base_actions.IDLE && !this.climbing) {
             this.current_action = base_actions.IDLE;
         } else if (this.required_direction !== null && !this.climbing && !this.pushing) {
-            const footsteps = this.enable_footsteps && this.data.map.show_footsteps && this.tile_able_to_show_footprint();
+            const footsteps =
+                this.enable_footsteps && this.data.map.show_footsteps && this.tile_able_to_show_footprint();
             if (this.footsteps.can_make_footprint && footsteps) {
                 this.footsteps.create_step(this.current_direction, this.current_action);
             }
@@ -298,30 +325,38 @@ export class ControllableChar {
     }
 
     update_tile_position(map_sprite) {
-        this.tile_x_pos = (this.sprite.x/map_sprite.tileWidth) | 0;
-        this.tile_y_pos = (this.sprite.y/map_sprite.tileHeight) | 0;
+        this.tile_x_pos = (this.sprite.x / map_sprite.tileWidth) | 0;
+        this.tile_y_pos = (this.sprite.y / map_sprite.tileHeight) | 0;
     }
 
-    calculate_speed() { //when setting temp_x or temp_y, it means that these velocities will still be analyzed in collision_dealer function
+    calculate_speed() {
+        //when setting temp_x or temp_y, it means that these velocities will still be analyzed in collision_dealer function
         const delta_time = this.game.time.elapsedMS / numbers.DELTA_TIME_FACTOR;
         if (this.current_action === base_actions.DASH) {
-            const speed_factor = this.dash_speed + this.extra_speed + (this.data.map.is_world_map ? numbers.WORLD_MAP_SPEED_DASH_REDUCE : 0);
+            const speed_factor =
+                this.dash_speed +
+                this.extra_speed +
+                (this.data.map.is_world_map ? numbers.WORLD_MAP_SPEED_DASH_REDUCE : 0);
             this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * speed_factor) | 0;
             this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * speed_factor) | 0;
-        } else if(this.current_action === base_actions.WALK) {
-            const speed_factor = this.walk_speed + this.extra_speed + (this.data.map.is_world_map ? numbers.WORLD_MAP_SPEED_WALK_REDUCE : 0);
+        } else if (this.current_action === base_actions.WALK) {
+            const speed_factor =
+                this.walk_speed +
+                this.extra_speed +
+                (this.data.map.is_world_map ? numbers.WORLD_MAP_SPEED_WALK_REDUCE : 0);
             this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * speed_factor) | 0;
             this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * speed_factor) | 0;
-        } else if(this.current_action === base_actions.CLIMB) {
+        } else if (this.current_action === base_actions.CLIMB) {
             this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * this.climb_speed) | 0;
             this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * this.climb_speed) | 0;
-        } else if(this.current_action === base_actions.IDLE) {
+        } else if (this.current_action === base_actions.IDLE) {
             this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         }
     }
 
     apply_speed() {
-        if ([base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action as base_actions)) { //sets the final velocity
+        if ([base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action as base_actions)) {
+            //sets the final velocity
             this.sprite.body.velocity.x = this.sprite.body.velocity.temp_x;
             this.sprite.body.velocity.y = this.sprite.body.velocity.temp_y;
         }

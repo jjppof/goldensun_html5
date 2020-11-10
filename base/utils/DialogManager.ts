@@ -1,8 +1,8 @@
-import { GoldenSun } from '../GoldenSun';
-import * as numbers from '../magic_numbers';
-import { SpriteBase } from '../SpriteBase';
-import * as utils from '../utils';
-import { Window } from '../Window';
+import {GoldenSun} from "../GoldenSun";
+import * as numbers from "../magic_numbers";
+import {SpriteBase} from "../SpriteBase";
+import * as utils from "../utils";
+import {Window} from "../Window";
 
 const DIALOG_CRYSTAL_KEY = "dialog_crystal";
 
@@ -13,9 +13,9 @@ export class DialogManager {
     public game: Phaser.Game;
     public data: GoldenSun;
     public parts: {
-        lines: string[],
-        width: number,
-        height: number
+        lines: string[];
+        width: number;
+        height: number;
     }[];
     public step: number;
     public finished: boolean;
@@ -55,8 +55,8 @@ export class DialogManager {
         this.show_crystal = false;
     }
 
-    update_position(){
-        if(this.avatar){
+    update_position() {
+        if (this.avatar) {
             this.avatar_window.update(true);
         }
         this.window.update(true);
@@ -102,13 +102,15 @@ export class DialogManager {
             this.avatar_window.destroy(false);
             this.avatar_window = null;
         }
-        if (this.step >= this.parts.length) { //finishes the dialog
+        if (this.step >= this.parts.length) {
+            //finishes the dialog
             this.finished = true;
             this.window.destroy(true, callback.bind(this, this.finished));
             this.dialog_crystal.destroy();
             return;
         }
-        if (this.window) { //destroys the current window
+        if (this.window) {
+            //destroys the current window
             this.window.destroy(false);
             this.window = null;
         }
@@ -125,29 +127,46 @@ export class DialogManager {
         if (custom_pos && custom_pos.y !== undefined) {
             win_pos.y = custom_pos.y;
         }
-        this.window = new Window(this.game, win_pos.x, win_pos.y, this.parts[this.step].width, this.parts[this.step].height, false);
-        this.window.show(((step, italic_font, next_callback) => {
-            this.window.set_text(this.parts[step].lines, undefined, undefined, undefined , italic_font, true).then(() => {
-                if (step < this.parts.length - 1 || this.show_crystal) {
-                    this.dialog_crystal.visible = true;
-                    this.dialog_crystal.x = this.window.real_x + this.parts[step].width - this.dialog_crystal.width;
-                    this.dialog_crystal.y = this.window.real_y + this.parts[step].height;
-                    const parent = this.dialog_crystal.parent;
-                    parent.setChildIndex(this.dialog_crystal, parent.getChildIndex(this.window.group));
-                    this.dialog_crystal.play(this.dialog_crystal_anim_key);
-                    const tween_to_y = [this.dialog_crystal.y - (this.dialog_crystal.height >> 1), this.dialog_crystal.y];
-                    if (this.dialog_crystal_tween && this.dialog_crystal_tween.isRunning) {
-                        this.dialog_crystal_tween.stop();
-                    }
-                    this.dialog_crystal_tween = this.game.tweens.create(this.dialog_crystal).to({y: tween_to_y}, 1400, Phaser.Easing.Quadratic.InOut, true, 0, -1);
-                } else {
-                    if (this.dialog_crystal_tween && this.dialog_crystal_tween.isRunning) {
-                        this.dialog_crystal_tween.stop();
-                    }
-                }
-                if(next_callback) next_callback(this.finished);
-            });
-        }).bind(this, this.step, this.italic_font, callback));
+        this.window = new Window(
+            this.game,
+            win_pos.x,
+            win_pos.y,
+            this.parts[this.step].width,
+            this.parts[this.step].height,
+            false
+        );
+        this.window.show(
+            ((step, italic_font, next_callback) => {
+                this.window
+                    .set_text(this.parts[step].lines, undefined, undefined, undefined, italic_font, true)
+                    .then(() => {
+                        if (step < this.parts.length - 1 || this.show_crystal) {
+                            this.dialog_crystal.visible = true;
+                            this.dialog_crystal.x =
+                                this.window.real_x + this.parts[step].width - this.dialog_crystal.width;
+                            this.dialog_crystal.y = this.window.real_y + this.parts[step].height;
+                            const parent = this.dialog_crystal.parent;
+                            parent.setChildIndex(this.dialog_crystal, parent.getChildIndex(this.window.group));
+                            this.dialog_crystal.play(this.dialog_crystal_anim_key);
+                            const tween_to_y = [
+                                this.dialog_crystal.y - (this.dialog_crystal.height >> 1),
+                                this.dialog_crystal.y,
+                            ];
+                            if (this.dialog_crystal_tween && this.dialog_crystal_tween.isRunning) {
+                                this.dialog_crystal_tween.stop();
+                            }
+                            this.dialog_crystal_tween = this.game.tweens
+                                .create(this.dialog_crystal)
+                                .to({y: tween_to_y}, 1400, Phaser.Easing.Quadratic.InOut, true, 0, -1);
+                        } else {
+                            if (this.dialog_crystal_tween && this.dialog_crystal_tween.isRunning) {
+                                this.dialog_crystal_tween.stop();
+                            }
+                        }
+                        if (next_callback) next_callback(this.finished);
+                    });
+            }).bind(this, this.step, this.italic_font, callback)
+        );
         if (this.avatar) {
             let avatar_pos = this.get_avatar_position(win_pos);
             if (custom_avatar_pos && custom_avatar_pos.x !== undefined) {
@@ -168,8 +187,9 @@ export class DialogManager {
     set_dialog(text, avatar, hero_direction) {
         this.set_avatar(avatar);
         this.set_hero_direction(hero_direction);
-        const max_efective_width = numbers.MAX_DIAG_WIN_WIDTH - 2 * numbers.WINDOW_PADDING_H - numbers.INSIDE_BORDER_WIDTH;
-        let words = text.split(' ');
+        const max_efective_width =
+            numbers.MAX_DIAG_WIN_WIDTH - 2 * numbers.WINDOW_PADDING_H - numbers.INSIDE_BORDER_WIDTH;
+        let words = text.split(" ");
         let windows = []; //array of lines
         let lines = []; //array of strings
         let line = []; //array of words
@@ -177,19 +197,28 @@ export class DialogManager {
         let max_window_width = 0;
         for (let i = 0; i < words.length; ++i) {
             const word = words[i];
-            line_width = utils.get_text_width(this.game, line.join(' ') + word, this.italic_font);
-            if (line_width >= max_efective_width) { //check if it's the end of the line
-                const line_text = line.join(' ');
+            line_width = utils.get_text_width(this.game, line.join(" ") + word, this.italic_font);
+            if (line_width >= max_efective_width) {
+                //check if it's the end of the line
+                const line_text = line.join(" ");
                 lines.push(line_text);
-                max_window_width = Math.max(max_window_width, utils.get_text_width(this.game, line_text, this.italic_font));
+                max_window_width = Math.max(
+                    max_window_width,
+                    utils.get_text_width(this.game, line_text, this.italic_font)
+                );
                 line = [];
                 line.push(word);
                 line_width = utils.get_text_width(this.game, word, this.italic_font);
-                if (lines.length === numbers.MAX_LINES_PER_DIAG_WIN) { //check if it's the end of the window
+                if (lines.length === numbers.MAX_LINES_PER_DIAG_WIN) {
+                    //check if it's the end of the window
                     windows.push({
                         lines: lines.slice(),
                         width: max_window_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH,
-                        height: numbers.WINDOW_PADDING_TOP + numbers.WINDOW_PADDING_BOTTOM + lines.length * (numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES) - numbers.SPACE_BETWEEN_LINES
+                        height:
+                            numbers.WINDOW_PADDING_TOP +
+                            numbers.WINDOW_PADDING_BOTTOM +
+                            lines.length * (numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES) -
+                            numbers.SPACE_BETWEEN_LINES,
                     });
                     max_window_width = 0;
                     lines = [];
@@ -198,15 +227,23 @@ export class DialogManager {
                 line.push(word);
             }
         }
-        if (line.length) { //deal with the last window that does not have 3 lines
-            max_window_width = Math.max(max_window_width, utils.get_text_width(this.game, line.join(' '), this.italic_font));
-            lines.push(line.join(' '));
+        if (line.length) {
+            //deal with the last window that does not have 3 lines
+            max_window_width = Math.max(
+                max_window_width,
+                utils.get_text_width(this.game, line.join(" "), this.italic_font)
+            );
+            lines.push(line.join(" "));
             windows.push({
                 lines: lines.slice(),
                 width: max_window_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH + 2,
-                height: numbers.WINDOW_PADDING_TOP + numbers.WINDOW_PADDING_BOTTOM + lines.length * (numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES) - numbers.SPACE_BETWEEN_LINES
+                height:
+                    numbers.WINDOW_PADDING_TOP +
+                    numbers.WINDOW_PADDING_BOTTOM +
+                    lines.length * (numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES) -
+                    numbers.SPACE_BETWEEN_LINES,
             });
-        };
+        }
         this.parts = windows;
     }
 
@@ -227,8 +264,8 @@ export class DialogManager {
         this.mount_window(callback, custom_pos, custom_avatar_pos);
     }
 
-    kill_dialog(callback, dialog_only=false, destroy_crystal=false) {
-        if(!dialog_only){
+    kill_dialog(callback, dialog_only = false, destroy_crystal = false) {
+        if (!dialog_only) {
             if (this.avatar_window) {
                 this.avatar_window.destroy(false);
             }
@@ -236,7 +273,7 @@ export class DialogManager {
         if (this.window) {
             this.finished = true;
             this.window.destroy(true, callback);
-            if(destroy_crystal) this.dialog_crystal.destroy();
+            if (destroy_crystal) this.dialog_crystal.destroy();
         }
     }
 }

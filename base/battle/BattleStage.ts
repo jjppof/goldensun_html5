@@ -1,13 +1,11 @@
-
-import * as numbers from '../magic_numbers';
-import { range_360 } from '../utils';
-import { ability_target_types } from '../Ability';
-import { fighter_types, permanent_status, Player } from '../Player';
-import { GoldenSun } from '../GoldenSun';
-import { PlayerInfo } from './Battle';
+import * as numbers from "../magic_numbers";
+import {range_360} from "../utils";
+import {ability_target_types} from "../Ability";
+import {fighter_types, permanent_status, Player} from "../Player";
+import {GoldenSun} from "../GoldenSun";
+import {PlayerInfo} from "./Battle";
 import * as _ from "lodash";
-import { SpriteBase } from '../SpriteBase';
-
+import {SpriteBase} from "../SpriteBase";
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
@@ -22,8 +20,8 @@ const BG_SPEED = 2.4;
 const BG_SPIN_SPEED = 0.4;
 
 const SPACE_BETWEEN_CHARS = 35;
-const SEMI_MAJOR_AXIS = numbers.GAME_WIDTH/2 - 50;
-const SEMI_MINOR_AXIS = numbers.GAME_HEIGHT/50;
+const SEMI_MAJOR_AXIS = numbers.GAME_WIDTH / 2 - 50;
+const SEMI_MINOR_AXIS = numbers.GAME_HEIGHT / 50;
 
 export const DEFAULT_POS_ANGLE = 0.7551327;
 const INITIAL_POS_ANGLE = -2.120575;
@@ -47,22 +45,22 @@ const CHOOSE_TARGET_ALLY_SHIFT = -3;
 const CHOOSE_TARGET_RIGHT = 1;
 const CHOOSE_TARGET_LEFT = -1;
 
-const RANGES = [11,9,7,5,3,1,3,5,7,9,11];
-const BATTLE_CURSOR_SCALES = [.1,.2,.3,.4,.6,1,.6,.4,.3,.2,.1];
+const RANGES = [11, 9, 7, 5, 3, 1, 3, 5, 7, 9, 11];
+const BATTLE_CURSOR_SCALES = [0.1, 0.2, 0.3, 0.4, 0.6, 1, 0.6, 0.4, 0.3, 0.2, 0.1];
 
 const INIT_TIME = 1500;
 const CHOOSING_TARGET_SCREEN_SHIFT_TIME = 150;
 
 export type CameraAngle = {
-    rad: number,
-    spining: boolean,
-    update: Function
+    rad: number;
+    spining: boolean;
+    update: Function;
 };
 
 export type Target = {
-    magnitude: number,
-    target: PlayerInfo
-}
+    magnitude: number;
+    target: PlayerInfo;
+};
 
 export class BattleStage {
     public game: Phaser.Game;
@@ -110,21 +108,27 @@ export class BattleStage {
 
     public choosing_targets_callback: Function;
     public range_cursor_position: number;
-    public ability_range: string|number;
+    public ability_range: string | number;
     public ability_type: string;
 
     public cursors_tweens: Phaser.Tween[];
     public cursors: Phaser.Sprite[];
     public bg_height: number;
 
-    constructor(game:Phaser.Game, data:GoldenSun, background_key:string, allies_info:PlayerInfo[], enemies_info:PlayerInfo[]) {
+    constructor(
+        game: Phaser.Game,
+        data: GoldenSun,
+        background_key: string,
+        allies_info: PlayerInfo[],
+        enemies_info: PlayerInfo[]
+    ) {
         this.game = game;
         this.data = data;
 
         this.camera_angle = {
-            rad : INITIAL_POS_ANGLE,
+            rad: INITIAL_POS_ANGLE,
             spining: false,
-            update: this.update_sprite_properties.bind(this)
+            update: this.update_sprite_properties.bind(this),
         };
 
         this.background_key = background_key;
@@ -157,7 +161,7 @@ export class BattleStage {
     }
 
     set_targets() {
-        let party_count:number, party_info:PlayerInfo[];
+        let party_count: number, party_info: PlayerInfo[];
 
         switch (this.target_type) {
             case ability_target_types.ALLY:
@@ -171,16 +175,21 @@ export class BattleStage {
                 break;
 
             case ability_target_types.USER:
-                party_count = this.ability_caster.fighter_type === fighter_types.ALLY ? this.allies_count : this.enemies_count;
-                party_info = this.ability_caster.fighter_type === fighter_types.ENEMY ? this.allies_info : this.enemies_info;
+                party_count =
+                    this.ability_caster.fighter_type === fighter_types.ALLY ? this.allies_count : this.enemies_count;
+                party_info =
+                    this.ability_caster.fighter_type === fighter_types.ENEMY ? this.allies_info : this.enemies_info;
                 break;
         }
 
         const targets = _.zipWith(
-            RANGES.slice(this.range_cursor_position - (party_count>>1), this.range_cursor_position + (party_count>>1) + 1).reverse(),
+            RANGES.slice(
+                this.range_cursor_position - (party_count >> 1),
+                this.range_cursor_position + (party_count >> 1) + 1
+            ).reverse(),
             party_info,
             (magnitude, target) => {
-                let t:Target = {magnitude: magnitude > this.ability_range ? null : magnitude, target: target};
+                let t: Target = {magnitude: magnitude > this.ability_range ? null : magnitude, target: target};
                 return t;
             }
         );
@@ -192,15 +201,15 @@ export class BattleStage {
         }
     }
 
-    next_target(){
+    next_target() {
         this.change_target(CHOOSE_TARGET_LEFT);
     }
 
-    previous_target(){
+    previous_target() {
         this.change_target(CHOOSE_TARGET_RIGHT);
     }
 
-    change_target(step:number, tween_to_pos:boolean=true) {
+    change_target(step: number, tween_to_pos: boolean = true) {
         if (this.target_type === ability_target_types.ENEMY) {
             step *= -1;
         }
@@ -209,7 +218,7 @@ export class BattleStage {
         const group_length = group_info.length;
         const group_half_length = group_length % 2 ? group_length >> 1 : (group_length >> 1) - 1;
 
-        let target_sprite_index:number;
+        let target_sprite_index: number;
 
         do {
             this.range_cursor_position += step;
@@ -221,9 +230,8 @@ export class BattleStage {
             if (target_sprite_index >= group_length) {
                 this.range_cursor_position = (RANGES.length >> 1) - group_half_length;
                 target_sprite_index = 0;
-
             } else if (target_sprite_index < 0) {
-                this.range_cursor_position = (RANGES.length >> 1) + group_half_length + (+!(group_length % 2));
+                this.range_cursor_position = (RANGES.length >> 1) + group_half_length + +!(group_length % 2);
                 target_sprite_index = group_length - 1;
             }
         } while (group_info[target_sprite_index].instance.has_permanent_status(permanent_status.DOWNED));
@@ -239,15 +247,35 @@ export class BattleStage {
         this.black_bg.drawRect(0, 0, numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
         this.black_bg.endFill();
 
-        this.battle_bg = this.game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, "battle_backgrounds", this.background_key);
-        this.battle_bg2 = this.game.add.tileSprite(BG_X, BG_Y, numbers.GAME_WIDTH, BG_HEIGHT, "battle_backgrounds", this.background_key);
+        this.battle_bg = this.game.add.tileSprite(
+            BG_X,
+            BG_Y,
+            numbers.GAME_WIDTH,
+            BG_HEIGHT,
+            "battle_backgrounds",
+            this.background_key
+        );
+        this.battle_bg2 = this.game.add.tileSprite(
+            BG_X,
+            BG_Y,
+            numbers.GAME_WIDTH,
+            BG_HEIGHT,
+            "battle_backgrounds",
+            this.background_key
+        );
 
         this.bg_height = this.battle_bg.height;
 
         this.battle_bg.scale.setTo(BG_DEFAULT_SCALE, BG_DEFAULT_SCALE);
         this.battle_bg2.scale.setTo(BG_DEFAULT_SCALE, BG_DEFAULT_SCALE);
 
-        const set_sprite = (group:Phaser.Group, info:PlayerInfo, is_ally:boolean, animation:string, sprite_base:SpriteBase) => {
+        const set_sprite = (
+            group: Phaser.Group,
+            info: PlayerInfo,
+            is_ally: boolean,
+            animation: string,
+            sprite_base: SpriteBase
+        ) => {
             const sprite = group.create(0, 0, info.sprite_key);
             sprite.anchor.setTo(0.5, 1);
             sprite.scale.setTo(info.scale, info.scale);
@@ -264,12 +292,24 @@ export class BattleStage {
         };
 
         this.allies_info.forEach(info => {
-            const sprite = set_sprite(this.group_allies, info, true, "battle_back", this.data.info.main_char_list[info.instance.key_name].sprite_base);
+            const sprite = set_sprite(
+                this.group_allies,
+                info,
+                true,
+                "battle_back",
+                this.data.info.main_char_list[info.instance.key_name].sprite_base
+            );
             info.sprite = sprite;
         });
 
         this.enemies_info.forEach(info => {
-            const sprite = set_sprite(this.group_enemies, info, false, "battle_front", this.data.info.enemies_list[info.instance.key_name].sprite_base);
+            const sprite = set_sprite(
+                this.group_enemies,
+                info,
+                false,
+                "battle_front",
+                this.data.info.enemies_list[info.instance.key_name].sprite_base
+            );
             info.sprite = sprite;
         });
 
@@ -314,35 +354,69 @@ export class BattleStage {
         this.battle_group.add(this.group_enemies);
         this.battle_group.add(this.group_allies);
 
-        this.game.add.tween(this.upper_rect).to({
-            height: BG_Y
-        }, INIT_TIME, Phaser.Easing.Linear.None, true);
+        this.game.add.tween(this.upper_rect).to(
+            {
+                height: BG_Y,
+            },
+            INIT_TIME,
+            Phaser.Easing.Linear.None,
+            true
+        );
 
-        this.game.add.tween(this.lower_rect).to({
-            y: BG_Y + this.bg_height - 1,
-            height: numbers.GAME_HEIGHT - this.bg_height - BG_Y + 1
-        }, INIT_TIME, Phaser.Easing.Linear.None, true);
+        this.game.add.tween(this.lower_rect).to(
+            {
+                y: BG_Y + this.bg_height - 1,
+                height: numbers.GAME_HEIGHT - this.bg_height - BG_Y + 1,
+            },
+            INIT_TIME,
+            Phaser.Easing.Linear.None,
+            true
+        );
 
-        this.game.add.tween(this.camera_angle).to({
-            rad: DEFAULT_POS_ANGLE
-        }, INIT_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
-            if (callback) {
-                callback();
-            }
-        });
+        this.game.add
+            .tween(this.camera_angle)
+            .to(
+                {
+                    rad: DEFAULT_POS_ANGLE,
+                },
+                INIT_TIME,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(() => {
+                if (callback) {
+                    callback();
+                }
+            });
 
-        this.game.add.tween(this.battle_group.scale).to({
-            x: 1, y: 1
-        }, INIT_TIME, Phaser.Easing.Linear.None, true);
+        this.game.add.tween(this.battle_group.scale).to(
+            {
+                x: 1,
+                y: 1,
+            },
+            INIT_TIME,
+            Phaser.Easing.Linear.None,
+            true
+        );
     }
 
     async set_stage_default_position() {
-        let promise_resolve:Function;
-        const promise = new Promise(resolve => { promise_resolve = resolve });
+        let promise_resolve: Function;
+        const promise = new Promise(resolve => {
+            promise_resolve = resolve;
+        });
 
-        this.game.add.tween(this.camera_angle).to({
-            rad: DEFAULT_POS_ANGLE
-        }, 300, Phaser.Easing.Linear.None, true).onComplete.addOnce(promise_resolve);
+        this.game.add
+            .tween(this.camera_angle)
+            .to(
+                {
+                    rad: DEFAULT_POS_ANGLE,
+                },
+                300,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(promise_resolve);
         await promise;
     }
 
@@ -355,8 +429,10 @@ export class BattleStage {
 
         for (let i = 0; i < this.sprites.length; ++i) {
             const sprite = this.sprites[i];
-            const index_shifted = sprite.data.is_Ally ? i : (this.enemies_count - 1) - (i - this.allies_count);
-            const x_shift = sprite.data.is_Ally ? ACTION_POS_ALLY_X : ACTION_POS_ENEMY_CENTER_X - (this.enemies_count >> 1) * ACTION_POS_SPACE_BETWEEN;
+            const index_shifted = sprite.data.is_Ally ? i : this.enemies_count - 1 - (i - this.allies_count);
+            const x_shift = sprite.data.is_Ally
+                ? ACTION_POS_ALLY_X
+                : ACTION_POS_ENEMY_CENTER_X - (this.enemies_count >> 1) * ACTION_POS_SPACE_BETWEEN;
 
             const pos_x = x_shift + index_shifted * ACTION_POS_SPACE_BETWEEN;
             const pos_y = sprite.data.is_Ally ? ACTION_ALLY_Y : ACTION_ENEMY_Y;
@@ -385,7 +461,7 @@ export class BattleStage {
         }
     }
 
-    set_battle_cursors_position(tween_to_pos:boolean=true) {
+    set_battle_cursors_position(tween_to_pos: boolean = true) {
         const group_info = this.target_type === ability_target_types.ALLY ? this.allies_info : this.enemies_info;
         const group_half_length = group_info.length % 2 ? group_info.length >> 1 : (group_info.length >> 1) - 1;
         const center_shift = this.range_cursor_position - (RANGES.length >> 1);
@@ -396,7 +472,8 @@ export class BattleStage {
 
             if (target_info && !target_info.instance.has_permanent_status(permanent_status.DOWNED)) {
                 const target_sprite = target_info.sprite;
-                const this_scale = BATTLE_CURSOR_SCALES[this.range_cursor_position - center_shift - (this.cursors.length >> 1) + i];
+                const this_scale =
+                    BATTLE_CURSOR_SCALES[this.range_cursor_position - center_shift - (this.cursors.length >> 1) + i];
 
                 cursor_sprite.scale.setTo(this_scale, this_scale);
                 cursor_sprite.alpha = 1;
@@ -409,21 +486,45 @@ export class BattleStage {
                 const dest_y = target_sprite.y - target_sprite.height - 5;
 
                 if (tween_to_pos) {
-                    this.game.add.tween(cursor_sprite).to({
-                        centerX: dest_x,
-                        y: dest_y
-                    }, 85, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
-                        this.cursors_tweens[i] = this.game.add.tween(cursor_sprite).to({
-                            y: cursor_sprite.y - 4
-                        }, 100, Phaser.Easing.Linear.None, true, 0, -1, true);
-                    });
+                    this.game.add
+                        .tween(cursor_sprite)
+                        .to(
+                            {
+                                centerX: dest_x,
+                                y: dest_y,
+                            },
+                            85,
+                            Phaser.Easing.Linear.None,
+                            true
+                        )
+                        .onComplete.addOnce(() => {
+                            this.cursors_tweens[i] = this.game.add.tween(cursor_sprite).to(
+                                {
+                                    y: cursor_sprite.y - 4,
+                                },
+                                100,
+                                Phaser.Easing.Linear.None,
+                                true,
+                                0,
+                                -1,
+                                true
+                            );
+                        });
                 } else {
                     cursor_sprite.centerX = dest_x;
                     cursor_sprite.y = dest_y;
 
-                    this.cursors_tweens[i] = this.game.add.tween(cursor_sprite).to({
-                        y: cursor_sprite.y - 4
-                    }, 100, Phaser.Easing.Linear.None, true, 0, -1, true);
+                    this.cursors_tweens[i] = this.game.add.tween(cursor_sprite).to(
+                        {
+                            y: cursor_sprite.y - 4,
+                        },
+                        100,
+                        Phaser.Easing.Linear.None,
+                        true,
+                        0,
+                        -1,
+                        true
+                    );
                 }
             } else {
                 cursor_sprite.alpha = 0;
@@ -445,7 +546,13 @@ export class BattleStage {
         });
     }
 
-    choose_targets(range:string|number, target_type:string, ability_type:string, ability_caster:Player, callback:Function) {
+    choose_targets(
+        range: string | number,
+        target_type: string,
+        ability_type: string,
+        ability_caster: Player,
+        callback: Function
+    ) {
         this.choosing_targets_callback = callback;
         this.range_cursor_position = RANGES.length >> 1;
 
@@ -456,43 +563,63 @@ export class BattleStage {
         this.target_type = target_type;
         if (this.target_type === ability_target_types.USER) {
             this.set_targets();
-
         } else {
-            this.game.add.tween(this.battle_group).to({
-                y: this.battle_group.y + (this.target_type === ability_target_types.ALLY ? CHOOSE_TARGET_ALLY_SHIFT : CHOOSE_TARGET_ENEMY_SHIFT)
-            }, CHOOSING_TARGET_SCREEN_SHIFT_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
-                const cursor_count = this.ability_range;
+            this.game.add
+                .tween(this.battle_group)
+                .to(
+                    {
+                        y:
+                            this.battle_group.y +
+                            (this.target_type === ability_target_types.ALLY
+                                ? CHOOSE_TARGET_ALLY_SHIFT
+                                : CHOOSE_TARGET_ENEMY_SHIFT),
+                    },
+                    CHOOSING_TARGET_SCREEN_SHIFT_TIME,
+                    Phaser.Easing.Linear.None,
+                    true
+                )
+                .onComplete.addOnce(() => {
+                    const cursor_count = this.ability_range;
 
-                this.cursors = new Array<Phaser.Sprite>(cursor_count as number);
-                this.cursors_tweens = new Array<Phaser.Tween>(cursor_count as number).fill(null);
+                    this.cursors = new Array<Phaser.Sprite>(cursor_count as number);
+                    this.cursors_tweens = new Array<Phaser.Tween>(cursor_count as number).fill(null);
 
-                for (let i = 0; i < cursor_count; ++i) {
-                    this.cursors[i] = this.battle_group.create(0, 0, "battle_cursor");
-                    this.cursors[i].animations.add("anim");
-                    this.cursors[i].animations.play("anim", 40, true);
-                }
+                    for (let i = 0; i < cursor_count; ++i) {
+                        this.cursors[i] = this.battle_group.create(0, 0, "battle_cursor");
+                        this.cursors[i].animations.add("anim");
+                        this.cursors[i].animations.play("anim", 40, true);
+                    }
 
-                this.choosing_targets = true;
-                this.change_target(0, false);
+                    this.choosing_targets = true;
+                    this.change_target(0, false);
 
-                let controls = [
-                    {key: this.data.gamepad.LEFT, on_down: this.next_target.bind(this)},
-                    {key: this.data.gamepad.RIGHT, on_down: this.previous_target.bind(this)},
-                    {key: this.data.gamepad.A, on_down: this.set_targets.bind(this)},
-                    {key: this.data.gamepad.B, on_down: this.choosing_targets_finished.bind(this, null)},
-                ];
+                    let controls = [
+                        {key: this.data.gamepad.LEFT, on_down: this.next_target.bind(this)},
+                        {key: this.data.gamepad.RIGHT, on_down: this.previous_target.bind(this)},
+                        {key: this.data.gamepad.A, on_down: this.set_targets.bind(this)},
+                        {key: this.data.gamepad.B, on_down: this.choosing_targets_finished.bind(this, null)},
+                    ];
 
-                this.data.control_manager.set_control(controls, {loop_configs:{horizontal:true}});
-            });
+                    this.data.control_manager.set_control(controls, {loop_configs: {horizontal: true}});
+                });
         }
     }
 
-    choosing_targets_finished(targets:Target[]) {
+    choosing_targets_finished(targets: Target[]) {
         this.choosing_targets = false;
 
-        this.game.add.tween(this.battle_group).to({
-            y: this.battle_group.y - (this.target_type === ability_target_types.ALLY ? CHOOSE_TARGET_ALLY_SHIFT : CHOOSE_TARGET_ENEMY_SHIFT)
-        }, CHOOSING_TARGET_SCREEN_SHIFT_TIME, Phaser.Easing.Linear.None, true);
+        this.game.add.tween(this.battle_group).to(
+            {
+                y:
+                    this.battle_group.y -
+                    (this.target_type === ability_target_types.ALLY
+                        ? CHOOSE_TARGET_ALLY_SHIFT
+                        : CHOOSE_TARGET_ENEMY_SHIFT),
+            },
+            CHOOSING_TARGET_SCREEN_SHIFT_TIME,
+            Phaser.Easing.Linear.None,
+            true
+        );
 
         this.unset_battle_cursors();
         this.choosing_targets_callback(targets);
@@ -505,12 +632,18 @@ export class BattleStage {
     update_stage() {
         if (this.choosing_actions) return;
 
-        if (!this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_PLUS) && this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_MINUS)) {
+        if (
+            !this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_PLUS) &&
+            this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_MINUS)
+        ) {
             this.camera_angle.rad -= CAMERA_SPEED;
-            this.battle_bg.x -= BG_SPEED
-        } else if (this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_PLUS) && !this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_MINUS)) {
+            this.battle_bg.x -= BG_SPEED;
+        } else if (
+            this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_PLUS) &&
+            !this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_MINUS)
+        ) {
             this.camera_angle.rad += CAMERA_SPEED;
-            this.battle_bg.x += BG_SPEED
+            this.battle_bg.x += BG_SPEED;
         } else {
             const delta = range_360(this.camera_angle.rad) - range_360(this.old_camera_angle);
             this.battle_bg.x += BG_SPIN_SPEED * this.battle_bg.width * delta; //tie bg x position with camera angle when spining
@@ -518,29 +651,40 @@ export class BattleStage {
 
         this.old_camera_angle = this.camera_angle.rad;
 
-        if (this.battle_bg.x > this.battle_bg.width || this.battle_bg.x < -this.battle_bg.width) { //check bg x position surplus
+        if (this.battle_bg.x > this.battle_bg.width || this.battle_bg.x < -this.battle_bg.width) {
+            //check bg x position surplus
             this.battle_bg.x = this.battle_bg2.x;
         }
 
-        if (this.battle_bg.x > 0) { //make bg2 follow default bg
+        if (this.battle_bg.x > 0) {
+            //make bg2 follow default bg
             this.battle_bg2.x = this.battle_bg.x - this.battle_bg.width;
         } else if (this.battle_bg.x < 0) {
             this.battle_bg2.x = this.battle_bg.x + this.battle_bg.width;
         }
 
-        if (Math.sin(this.camera_angle.rad) > 0 && this.battle_group.getChildIndex(this.group_allies) < this.battle_group.getChildIndex(this.group_enemies)) { //check party and enemy z index
+        if (
+            Math.sin(this.camera_angle.rad) > 0 &&
+            this.battle_group.getChildIndex(this.group_allies) < this.battle_group.getChildIndex(this.group_enemies)
+        ) {
+            //check party and enemy z index
             this.battle_group.swapChildren(this.group_enemies, this.group_allies);
-        } else if (Math.sin(this.camera_angle.rad) < 0 && this.battle_group.getChildIndex(this.group_allies) > this.battle_group.getChildIndex(this.group_enemies)) {
+        } else if (
+            Math.sin(this.camera_angle.rad) < 0 &&
+            this.battle_group.getChildIndex(this.group_allies) > this.battle_group.getChildIndex(this.group_enemies)
+        ) {
             this.battle_group.swapChildren(this.group_enemies, this.group_allies);
         }
 
-        if (Math.cos(this.camera_angle.rad) < 0 && this.first_ally_char.z > this.last_ally_char.z) { //check ally z index order
+        if (Math.cos(this.camera_angle.rad) < 0 && this.first_ally_char.z > this.last_ally_char.z) {
+            //check ally z index order
             this.group_allies.reverse();
         } else if (Math.cos(this.camera_angle.rad) > 0 && this.first_ally_char.z < this.last_ally_char.z) {
             this.group_allies.reverse();
         }
 
-        if (Math.cos(this.camera_angle.rad) < 0 && this.first_enemy_char.z < this.last_enemy_char.z) { //check enemy z index order
+        if (Math.cos(this.camera_angle.rad) < 0 && this.first_enemy_char.z < this.last_enemy_char.z) {
+            //check enemy z index order
             this.group_enemies.reverse();
         } else if (Math.cos(this.camera_angle.rad) > 0 && this.first_enemy_char.z > this.last_enemy_char.z) {
             this.group_enemies.reverse();
@@ -561,20 +705,25 @@ export class BattleStage {
             const shift_from_middle = sprite.data.is_Ally ? this.shift_from_middle_ally : this.shift_from_middle_enemy;
             const index_shifted = sprite.data.is_Ally ? i : i - this.allies_count;
 
-            sprite.x = pos_x + ((SPACE_BETWEEN_CHARS * index_shifted - shift_from_middle) + (SPACE_BETWEEN_CHARS >> 1)) * Math.sin(relative_angle); //shift party players from base point
+            sprite.x =
+                pos_x +
+                (SPACE_BETWEEN_CHARS * index_shifted - shift_from_middle + (SPACE_BETWEEN_CHARS >> 1)) *
+                    Math.sin(relative_angle); //shift party players from base point
             sprite.y = pos_y;
 
             const info = sprite.data.is_Ally ? this.allies_info[index_shifted] : this.enemies_info[index_shifted];
             const scale = BattleStage.get_scale(info.scale, relative_angle);
             sprite.scale.setTo(scale, scale);
 
-            if (Math.sin(relative_angle) > 0 && !sprite.animations.currentAnim.name.endsWith('back')) { //change texture in function of position
-                sprite.animations.play(sprite.animations.currentAnim.name.replace('front', 'back'));
-            } else if (Math.sin(relative_angle) <= 0 && !sprite.animations.currentAnim.name.endsWith('front')) {
-                sprite.animations.play(sprite.animations.currentAnim.name.replace('back', 'front'));
+            if (Math.sin(relative_angle) > 0 && !sprite.animations.currentAnim.name.endsWith("back")) {
+                //change texture in function of position
+                sprite.animations.play(sprite.animations.currentAnim.name.replace("front", "back"));
+            } else if (Math.sin(relative_angle) <= 0 && !sprite.animations.currentAnim.name.endsWith("front")) {
+                sprite.animations.play(sprite.animations.currentAnim.name.replace("back", "front"));
             }
 
-            if (Math.cos(relative_angle) > 0 && sprite.scale.x < 0) { //change side in function of position
+            if (Math.cos(relative_angle) > 0 && sprite.scale.x < 0) {
+                //change side in function of position
                 sprite.scale.setTo(sprite.scale.x, sprite.scale.y);
             } else if (Math.cos(relative_angle) <= 0 && sprite.scale.x > 0) {
                 sprite.scale.setTo(-sprite.scale.x, sprite.scale.y);
@@ -582,7 +731,7 @@ export class BattleStage {
         }
     }
 
-    unset_stage(on_fade_complete:Function, on_flash_complete:Function) {
+    unset_stage(on_fade_complete: Function, on_flash_complete: Function) {
         this.game.camera.fade();
         this.game.camera.onFadeComplete.addOnce(() => {
             if (on_fade_complete) {
@@ -594,27 +743,42 @@ export class BattleStage {
             this.lower_rect.y = numbers.GAME_HEIGHT >> 1;
             const fade_time = 300;
             this.game.camera.resetFX();
-            this.game.add.tween(this.upper_rect).to({
-                height: 0
-            }, fade_time, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
-                if (on_flash_complete) {
-                    on_flash_complete();
-                }
-                this.crop_group.destroy();
-            });
-            this.game.add.tween(this.lower_rect).to({
-                height: 0, y: numbers.GAME_HEIGHT
-            }, fade_time, Phaser.Easing.Linear.None, true);
+            this.game.add
+                .tween(this.upper_rect)
+                .to(
+                    {
+                        height: 0,
+                    },
+                    fade_time,
+                    Phaser.Easing.Linear.None,
+                    true
+                )
+                .onComplete.addOnce(() => {
+                    if (on_flash_complete) {
+                        on_flash_complete();
+                    }
+                    this.crop_group.destroy();
+                });
+            this.game.add.tween(this.lower_rect).to(
+                {
+                    height: 0,
+                    y: numbers.GAME_HEIGHT,
+                },
+                fade_time,
+                Phaser.Easing.Linear.None,
+                true
+            );
         }, this);
     }
 
-    static ellipse(angle:number, a:number, b:number) { //ellipse formula
+    static ellipse(angle: number, a: number, b: number) {
+        //ellipse formula
         a = a === undefined ? SEMI_MAJOR_AXIS : a;
         b = b === undefined ? SEMI_MINOR_AXIS : b;
-        return a*b/Math.sqrt(Math.pow(b*Math.cos(angle), 2) + Math.pow(a*Math.sin(angle), 2));
+        return (a * b) / Math.sqrt(Math.pow(b * Math.cos(angle), 2) + Math.pow(a * Math.sin(angle), 2));
     }
-    
-    static ellipse_position(sprite:Phaser.Sprite, angle:number, is_x:boolean) {
+
+    static ellipse_position(sprite: Phaser.Sprite, angle: number, is_x: boolean) {
         if (is_x) {
             const a = sprite.ellipses_semi_major;
             return CENTER_X + BattleStage.ellipse(angle, a, SEMI_MINOR_AXIS) * Math.cos(angle);
@@ -623,12 +787,19 @@ export class BattleStage {
             return CENTER_Y + BattleStage.ellipse(angle, SEMI_MAJOR_AXIS, b) * Math.sin(angle);
         }
     }
-    
-    static get_angle(angle:number) { //equidistant ellipse angle formula: https://math.stackexchange.com/a/1123448/202435
-        return angle + Math.atan(((SEMI_MINOR_AXIS - SEMI_MAJOR_AXIS) * Math.tan(angle))/(SEMI_MAJOR_AXIS + SEMI_MINOR_AXIS*Math.pow(Math.tan(angle), 2)));
+
+    static get_angle(angle: number) {
+        //equidistant ellipse angle formula: https://math.stackexchange.com/a/1123448/202435
+        return (
+            angle +
+            Math.atan(
+                ((SEMI_MINOR_AXIS - SEMI_MAJOR_AXIS) * Math.tan(angle)) /
+                    (SEMI_MAJOR_AXIS + SEMI_MINOR_AXIS * Math.pow(Math.tan(angle), 2))
+            )
+        );
     }
-    
-    static get_scale(default_scale:number, angle:number) {
-        return (Math.sin(angle)/7 + SCALE_FACTOR) * default_scale;
+
+    static get_scale(default_scale: number, angle: number) {
+        return (Math.sin(angle) / 7 + SCALE_FACTOR) * default_scale;
     }
 }

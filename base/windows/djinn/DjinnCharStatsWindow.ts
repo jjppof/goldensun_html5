@@ -1,9 +1,9 @@
-import { TextObj, Window } from '../../Window';
-import * as numbers from '../../magic_numbers';
-import { ordered_elements } from '../../utils';
-import { MainChar } from '../../MainChar';
-import { Djinn } from '../../Djinn';
-import { ordered_main_stats } from '../../Player';
+import {TextObj, Window} from "../../Window";
+import * as numbers from "../../magic_numbers";
+import {ordered_elements} from "../../utils";
+import {MainChar} from "../../MainChar";
+import {Djinn} from "../../Djinn";
+import {ordered_main_stats} from "../../Player";
 
 const BASE_WIN_WIDTH = 116;
 const BASE_WIN_HEIGHT = 116;
@@ -61,7 +61,7 @@ export class DjinnCharStatsWindow {
 
     public class_name_arrow: Phaser.Sprite;
     public class_name_arrow_blink_timer: Phaser.Timer;
-    
+
     public char: MainChar;
     public djinni: Djinn[];
     public next_djinni_status: string[];
@@ -96,11 +96,20 @@ export class DjinnCharStatsWindow {
             if (["HP", "PP"].includes(stat)) {
                 shift = -8;
             }
-            this.stats_current_texts[stat] = this.base_window.set_text_in_position("", STATS_CURRENT_X + shift, y, true);
+            this.stats_current_texts[stat] = this.base_window.set_text_in_position(
+                "",
+                STATS_CURRENT_X + shift,
+                y,
+                true
+            );
             this.stats_next_texts[stat] = this.base_window.set_text_in_position("", STATS_NEXT_X, y, true);
         });
 
-        this.class_name_arrow = this.base_window.create_at_group(ARROW_CHANGE_CLASS_X, ARROW_CHANGE_CLASS_Y, "arrow_change");
+        this.class_name_arrow = this.base_window.create_at_group(
+            ARROW_CHANGE_CLASS_X,
+            ARROW_CHANGE_CLASS_Y,
+            "arrow_change"
+        );
         this.init_arrow_blinks();
     }
 
@@ -116,7 +125,13 @@ export class DjinnCharStatsWindow {
     }
 
     mount_window() {
-        const avatar_sprite = this.base_window.create_at_group(AVATAR_X, AVATAR_Y, "avatars", undefined , this.char.key_name);
+        const avatar_sprite = this.base_window.create_at_group(
+            AVATAR_X,
+            AVATAR_Y,
+            "avatars",
+            undefined,
+            this.char.key_name
+        );
         this.sprites.push(avatar_sprite);
 
         this.base_window.update_text(this.char.name, this.char_name_text);
@@ -124,14 +139,23 @@ export class DjinnCharStatsWindow {
         this.base_window.update_text(this.char.class.name, this.class_text);
 
         elements_list.forEach((element, i) => {
-            this.base_window.update_text(this.char[element + "_djinni"].length.toString(), this.djinn_number_texts[element]);
-            const star_width = 6, char_width = 6;
+            this.base_window.update_text(
+                this.char[element + "_djinni"].length.toString(),
+                this.djinn_number_texts[element]
+            );
+            const star_width = 6,
+                char_width = 6;
             const x = DJINN_NUMBER_X - star_width - char_width - 1 - i * DJINN_NUMBER_SLOT_WIDTH;
             const star_sprite = this.base_window.create_at_group(x, DJINN_NUMBER_Y + 1, element + "_star");
             this.sprites.push(star_sprite);
         });
 
-        const preview_values = this.char.preview_djinn_change(ordered_main_stats, this.djinni.map(d => d.key_name), this.next_djinni_status, this.action);
+        const preview_values = this.char.preview_djinn_change(
+            ordered_main_stats,
+            this.djinni.map(d => d.key_name),
+            this.next_djinni_status,
+            this.action
+        );
         if (preview_values.class_key_name !== this.char.class.key_name) {
             this.base_window.update_text(preview_values.class_name, this.new_class_text);
             this.class_name_arrow_blink_timer.resume();
@@ -153,7 +177,11 @@ export class DjinnCharStatsWindow {
                 shift = -8;
             }
             if (current_stat !== next_stat) {
-                const arrow_sprite = this.base_window.create_at_group(STATS_CURRENT_X + shift, y, "stat_" + (next_stat > current_stat ? "up" : "down"));
+                const arrow_sprite = this.base_window.create_at_group(
+                    STATS_CURRENT_X + shift,
+                    y,
+                    "stat_" + (next_stat > current_stat ? "up" : "down")
+                );
                 this.sprites.push(arrow_sprite);
             }
         });
@@ -170,13 +198,13 @@ export class DjinnCharStatsWindow {
         }
     }
 
-    open(char:MainChar, djinni:Djinn[], next_djinni_status:string[], action?:string, callback?:Function) {
+    open(char: MainChar, djinni: Djinn[], next_djinni_status: string[], action?: string, callback?: Function) {
         this.char = char;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;
         this.action = action;
         this.mount_window();
-        
+
         this.base_window.show(() => {
             this.window_open = true;
             if (callback !== undefined) {
@@ -185,7 +213,7 @@ export class DjinnCharStatsWindow {
         }, false);
     }
 
-    close(callback?:Function) {
+    close(callback?: Function) {
         this.unmount_window();
         this.base_window.close(() => {
             this.window_open = false;

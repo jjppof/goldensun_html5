@@ -1,9 +1,9 @@
-import { TextObj, Window } from '../../Window';
-import { base_actions, capitalize, directions, reverse_directions } from '../../utils';
-import { Djinn, djinn_font_colors } from '../../Djinn';
-import * as numbers from '../../magic_numbers';
-import { GoldenSun } from '../../GoldenSun';
-import { MainChar } from '../../MainChar';
+import {TextObj, Window} from "../../Window";
+import {base_actions, capitalize, directions, reverse_directions} from "../../utils";
+import {Djinn, djinn_font_colors} from "../../Djinn";
+import * as numbers from "../../magic_numbers";
+import {GoldenSun} from "../../GoldenSun";
+import {MainChar} from "../../MainChar";
 
 const BASE_WIN_WIDTH = 236;
 const BASE_WIN_HEIGHT = 36;
@@ -60,8 +60,8 @@ export class DjinnModeHeaderWindow {
     public tweens: Phaser.Tween[];
     public djinn_status_arrow: Phaser.Sprite;
     public spacebar_key: {
-        shadow: Phaser.Sprite,
-        text: Phaser.Sprite
+        shadow: Phaser.Sprite;
+        text: Phaser.Sprite;
     };
     public action_info_text: TextObj;
     public djinn_status_arrow_blink_timer: Phaser.Timer;
@@ -70,7 +70,7 @@ export class DjinnModeHeaderWindow {
     public djinni: Djinn[];
     public next_djinni_status: string[];
 
-    constructor(game:Phaser.Game, data:GoldenSun) {
+    constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
 
@@ -86,15 +86,27 @@ export class DjinnModeHeaderWindow {
 
         this.ok_msg_text = this.base_window.set_text_in_position("Is this OK?", OK_MSG_X, OK_MSG_Y);
         this.djinn_status_text = this.base_window.set_text_in_position("", DJINN_STATUS_X, DJINN_STATUS_Y);
-        this.djinn_name_before_text = this.base_window.set_text_in_position("", DJINN_NAME_BEFORE_X, DJINN_NAME_BEFORE_Y);
+        this.djinn_name_before_text = this.base_window.set_text_in_position(
+            "",
+            DJINN_NAME_BEFORE_X,
+            DJINN_NAME_BEFORE_Y
+        );
         this.djinn_name_after_text = this.base_window.set_text_in_position("", DJINN_NAME_AFTER_X, DJINN_NAME_AFTER_Y);
 
-        this.djinn_status_arrow = this.base_window.create_at_group(ARROW_CHANGE_DJINN_X, ARROW_CHANGE_DJINN_Y, "arrow_change");
+        this.djinn_status_arrow = this.base_window.create_at_group(
+            ARROW_CHANGE_DJINN_X,
+            ARROW_CHANGE_DJINN_Y,
+            "arrow_change"
+        );
         this.spacebar_key = {
             shadow: this.base_window.create_at_group(SPACEBAR_KEY_X + 1, SPACEBAR_KEY_Y + 1, "spacebar_keyboard", 0x0),
-            text: this.base_window.create_at_group(SPACEBAR_KEY_X, SPACEBAR_KEY_Y, "spacebar_keyboard")
+            text: this.base_window.create_at_group(SPACEBAR_KEY_X, SPACEBAR_KEY_Y, "spacebar_keyboard"),
         };
-        this.action_info_text = this.base_window.set_text_in_position("", this.spacebar_key.text.width + SPACEBAR_KEY_X + 2, SPACEBAR_KEY_Y);
+        this.action_info_text = this.base_window.set_text_in_position(
+            "",
+            this.spacebar_key.text.width + SPACEBAR_KEY_X + 2,
+            SPACEBAR_KEY_Y
+        );
         this.init_arrow_blinks();
     }
 
@@ -112,7 +124,7 @@ export class DjinnModeHeaderWindow {
         this.djinn_status_arrow_blink_timer.pause();
     }
 
-    set_action_info_text(text:string) {
+    set_action_info_text(text: string) {
         this.base_window.update_text(text, this.action_info_text);
     }
 
@@ -129,14 +141,24 @@ export class DjinnModeHeaderWindow {
             this.base_window.update_text(this.djinni[0].name, this.djinn_name_before_text);
 
             this.base_window.update_text_color(djinn_font_colors[this.djinni[0].status], this.djinn_name_before_text);
-            this.base_window.update_text_position({x: DJINN_NAME_BEFORE_X, y: DJINN_NAME_BEFORE_Y}, this.djinn_name_before_text);
+            this.base_window.update_text_position(
+                {x: DJINN_NAME_BEFORE_X, y: DJINN_NAME_BEFORE_Y},
+                this.djinn_name_before_text
+            );
             this.base_window.update_text_position({x: DJINN_NAME_AFTER_X}, this.djinn_name_after_text);
 
             this.base_window.update_text(this.djinni[0].name, this.djinn_name_after_text);
-            this.base_window.update_text_color(djinn_font_colors[this.next_djinni_status[0]], this.djinn_name_after_text);
+            this.base_window.update_text_color(
+                djinn_font_colors[this.next_djinni_status[0]],
+                this.djinn_name_after_text
+            );
 
-            this.sprites.push(this.base_window.create_at_group(STAR_BEFORE_X, STAR_BEFORE_Y, this.djinni[0].element + "_star"));
-            this.sprites.push(this.base_window.create_at_group(STAR_AFTER_X, STAR_AFTER_Y, this.djinni[0].element + "_star"));
+            this.sprites.push(
+                this.base_window.create_at_group(STAR_BEFORE_X, STAR_BEFORE_Y, this.djinni[0].element + "_star")
+            );
+            this.sprites.push(
+                this.base_window.create_at_group(STAR_AFTER_X, STAR_AFTER_Y, this.djinni[0].element + "_star")
+            );
 
             this.djinn_status_arrow.alpha = 1;
             this.djinn_status_arrow_blink_timer.resume();
@@ -150,18 +172,36 @@ export class DjinnModeHeaderWindow {
             this.base_window.update_text_color(djinn_font_colors[this.djinni[0].status], this.djinn_name_before_text);
 
             if (this.action_text === "Trade") {
-                this.sprites.push(this.base_window.create_at_group(STAR_BEFORE_X - 5, STAR_BEFORE_Y, this.djinni[0].element + "_star"));
+                this.sprites.push(
+                    this.base_window.create_at_group(STAR_BEFORE_X - 5, STAR_BEFORE_Y, this.djinni[0].element + "_star")
+                );
                 this.base_window.update_text(this.djinni[1].name, this.djinn_name_after_text);
-                this.base_window.update_text_color(djinn_font_colors[this.djinni[1].status], this.djinn_name_after_text);
+                this.base_window.update_text_color(
+                    djinn_font_colors[this.djinni[1].status],
+                    this.djinn_name_after_text
+                );
 
-                this.sprites.push(this.base_window.create_at_group(STAR_AFTER_X - 5, STAR_AFTER_Y, this.djinni[1].element + "_star"));
+                this.sprites.push(
+                    this.base_window.create_at_group(STAR_AFTER_X - 5, STAR_AFTER_Y, this.djinni[1].element + "_star")
+                );
                 this.base_window.update_text_position({x: DJINN_NAME_AFTER_X - 5}, this.djinn_name_after_text);
-                this.base_window.update_text_position({x: DJINN_NAME_BEFORE_X - 5, y: DJINN_NAME_BEFORE_Y}, this.djinn_name_before_text);
-
+                this.base_window.update_text_position(
+                    {x: DJINN_NAME_BEFORE_X - 5, y: DJINN_NAME_BEFORE_Y},
+                    this.djinn_name_before_text
+                );
             } else if (this.action_text === "Give") {
                 this.base_window.update_text("", this.djinn_name_after_text);
-                this.base_window.update_text_position({x: DJINN_NAME_BEFORE_X - 5, y: DJINN_NAME_BEFORE_Y + numbers.FONT_SIZE}, this.djinn_name_before_text);
-                this.sprites.push(this.base_window.create_at_group(STAR_BEFORE_X - 5, STAR_BEFORE_Y + numbers.FONT_SIZE, this.djinni[0].element + "_star"));
+                this.base_window.update_text_position(
+                    {x: DJINN_NAME_BEFORE_X - 5, y: DJINN_NAME_BEFORE_Y + numbers.FONT_SIZE},
+                    this.djinn_name_before_text
+                );
+                this.sprites.push(
+                    this.base_window.create_at_group(
+                        STAR_BEFORE_X - 5,
+                        STAR_BEFORE_Y + numbers.FONT_SIZE,
+                        this.djinni[0].element + "_star"
+                    )
+                );
             }
             this.djinn_status_arrow.alpha = 0;
         }
@@ -172,7 +212,7 @@ export class DjinnModeHeaderWindow {
         for (let i = 0; i < this.chars.length; ++i) {
             const this_char = this.chars[i];
             const this_djinn = this.djinni[i];
-            let djinn_x:number, djinn_y:number;
+            let djinn_x: number, djinn_y: number;
 
             if (["Trade", "Give"].includes(this.action_text)) {
                 djinn_x = DJINN_MULT_X[i];
@@ -185,14 +225,26 @@ export class DjinnModeHeaderWindow {
             const char_sprite = this.base_window.create_at_group(CHARS_X[i], CHARS_Y[i], action_key);
             char_sprite.anchor.setTo(0.5, 1.0);
 
-            const animation_key = this_char.sprite_base.getAnimationKey(base_actions.IDLE, reverse_directions[directions.down]);
-            char_sprite.animations.add(animation_key, this_char.sprite_base.animations.idle.down, this_char.sprite_base.actions.idle.frame_rate, true);
+            const animation_key = this_char.sprite_base.getAnimationKey(
+                base_actions.IDLE,
+                reverse_directions[directions.down]
+            );
+            char_sprite.animations.add(
+                animation_key,
+                this_char.sprite_base.animations.idle.down,
+                this_char.sprite_base.actions.idle.frame_rate,
+                true
+            );
             char_sprite.animations.play(animation_key, this_char.sprite_base.actions.idle.frame_rate, true);
             this.sprites.push(char_sprite);
 
             if (this.action_text === "Give" && i === 1) break;
 
-            const djinn_sprite = this.group.create(djinn_x, djinn_y, this_djinn.element + "_djinn_" + this_djinn.status);
+            const djinn_sprite = this.group.create(
+                djinn_x,
+                djinn_y,
+                this_djinn.element + "_djinn_" + this_djinn.status
+            );
             djinn_sprite.anchor.setTo(0.5, 1.0);
             djinn_sprite.scale.x = -0.8;
             djinn_sprite.scale.y = 0.8;
@@ -203,12 +255,13 @@ export class DjinnModeHeaderWindow {
 
             if (["Trade", "Give"].includes(this.action_text)) {
                 const sign = i === 0 ? 1 : -1;
-                const a = sign * 17, b = sign * 33;
+                const a = sign * 17,
+                    b = sign * 33;
                 const y_shift = -sign * 5;
                 const tween = this.game.add.tween(djinn_sprite).to(
                     {
                         y: [djinn_y, djinn_y + y_shift, djinn_y + y_shift, djinn_y],
-                        x: [djinn_x, djinn_x+a, djinn_x+a+b, djinn_x+a+b+a]
+                        x: [djinn_x, djinn_x + a, djinn_x + a + b, djinn_x + a + b + a],
                     },
                     700,
                     Phaser.Easing.Linear.None,
@@ -244,7 +297,7 @@ export class DjinnModeHeaderWindow {
         }
     }
 
-    open(chars:MainChar[], djinni:Djinn[], next_djinni_status:string[], action_text?:string, callback?:Function) {
+    open(chars: MainChar[], djinni: Djinn[], next_djinni_status: string[], action_text?: string, callback?: Function) {
         this.chars = chars;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;
@@ -258,7 +311,7 @@ export class DjinnModeHeaderWindow {
         }, false);
     }
 
-    close(callback?:Function) {
+    close(callback?: Function) {
         this.unmount_window();
         this.base_window.close(() => {
             this.window_open = false;

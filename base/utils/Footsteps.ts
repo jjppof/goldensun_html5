@@ -1,5 +1,5 @@
-import { GoldenSun } from "../GoldenSun";
-import { SpriteBase } from "../SpriteBase";
+import {GoldenSun} from "../GoldenSun";
+import {SpriteBase} from "../SpriteBase";
 import {base_actions, directions} from "../utils";
 
 const FOOTSTEPS_TTL = Phaser.Timer.SECOND << 1;
@@ -16,7 +16,7 @@ const MAX_DEAD_SIZE = 20;
 const foot_forward_types = {
     NONE: "none",
     RIGHT: "right",
-    LEFT: "left"
+    LEFT: "left",
 };
 
 /*Generates and manages footprints
@@ -24,7 +24,7 @@ Can be applied to any movable unit
 
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
-export class Footsteps{
+export class Footsteps {
     public game: Phaser.Game;
     public data: GoldenSun;
     public x_pos: number;
@@ -43,7 +43,7 @@ export class Footsteps{
     public expire_timer: Phaser.Timer;
     public footsteps_sprite_base: SpriteBase;
 
-    constructor(game, data){
+    constructor(game, data) {
         this.game = game;
         this.data = data;
         this.x_pos = 0;
@@ -69,17 +69,23 @@ export class Footsteps{
     }
 
     /*Sets the footprint interval timer*/
-    set_new_step_timer(){
+    set_new_step_timer() {
         this.can_make_footprint = false;
-        this.new_step_timer.add(this.footsteps_time_interval,() => {this.can_make_footprint = true;})
+        this.new_step_timer.add(this.footsteps_time_interval, () => {
+            this.can_make_footprint = true;
+        });
         this.new_step_timer.start();
     }
 
     /*Sets the footprint expiration timer*/
-    set_expire_timer(sprite, animation){
-        this.expire_timer.add(FOOTSTEPS_TTL,()=>{
-            sprite.animations.play(animation);
-        },this);
+    set_expire_timer(sprite, animation) {
+        this.expire_timer.add(
+            FOOTSTEPS_TTL,
+            () => {
+                sprite.animations.play(animation);
+            },
+            this
+        );
         this.expire_timer.start();
     }
 
@@ -87,11 +93,10 @@ export class Footsteps{
     Killing leaves the sprite in memory to be recycled
 
     Input: expired [Phaser:Sprite]: The step to be killed/destroyed*/
-    kill_step(expired){
-        if(this.dead_index === MAX_DEAD_SIZE){
+    kill_step(expired) {
+        if (this.dead_index === MAX_DEAD_SIZE) {
             expired.destroy();
-        }
-        else{
+        } else {
             expired.kill();
             this.dead_steps[this.dead_index++] = expired;
         }
@@ -101,9 +106,9 @@ export class Footsteps{
     Also flips the sprite horizontally if necessary
     
     Input: sprite [Phaser:Sprite] - The sprite to be affected*/
-    position_footsteps(sprite){
+    position_footsteps(sprite) {
         sprite.scale.x = this.foot_forward === foot_forward_types.RIGHT ? -1 : 1;
-        sprite.rotation = (this.current_direction + 2)*Math.PI/4;
+        sprite.rotation = ((this.current_direction + 2) * Math.PI) / 4;
     }
 
     /*Displays a new step on screen
@@ -111,7 +116,7 @@ export class Footsteps{
 
     Input: direction [number] = The parent's current direction
            action [string] = The parent's current action*/
-    create_step(direction,action){
+    create_step(direction, action) {
         if (this.data.npc_group.getIndex(this.group) < 0) {
             this.data.npc_group.add(this.group);
         }
@@ -122,13 +127,12 @@ export class Footsteps{
         const animation_name = this.footsteps_sprite_base.getAnimationKey(FOOTSTEPS_KEY_NAME, footsteps_type);
 
         let footsteps_sprite;
-        if(this.dead_index === 0){
+        if (this.dead_index === 0) {
             const sprite_key = this.footsteps_sprite_base.getActionKey(FOOTSTEPS_KEY_NAME);
             footsteps_sprite = this.group.create(0, 0, sprite_key);
             footsteps_sprite.anchor.setTo(this.anchor_x, this.anchor_y);
             this.footsteps_sprite_base.setAnimation(footsteps_sprite, FOOTSTEPS_KEY_NAME);
-        }
-        else{
+        } else {
             footsteps_sprite = this.dead_steps[--this.dead_index];
             footsteps_sprite.reset(0, 0);
         }
@@ -148,20 +152,21 @@ export class Footsteps{
     }
 
     /*Updates the "foot_forward" property*/
-    update_foot(){
-        this.footsteps_time_interval = this.current_action === base_actions.WALK ? WALKING_TIME_INTERVAL : RUNNING_TIME_INTERVAL;
-        if(this.current_action === base_actions.IDLE){
+    update_foot() {
+        this.footsteps_time_interval =
+            this.current_action === base_actions.WALK ? WALKING_TIME_INTERVAL : RUNNING_TIME_INTERVAL;
+        if (this.current_action === base_actions.IDLE) {
             this.foot_forward = foot_forward_types.NONE;
-        }
-        else{
-            this.foot_forward = this.foot_forward === foot_forward_types.LEFT ? foot_forward_types.RIGHT : foot_forward_types.LEFT;
+        } else {
+            this.foot_forward =
+                this.foot_forward === foot_forward_types.LEFT ? foot_forward_types.RIGHT : foot_forward_types.LEFT;
         }
     }
 
     /*Kills all sprites and resets the timers
 
     Input: force_destroy [boolean] - If true, destroys steps instead*/
-    clean_all(force_destroy = false){
+    clean_all(force_destroy = false) {
         this.new_step_timer.stop(true);
         this.expire_timer.stop(true);
         this.group.children.forEach((sprite: Phaser.Sprite) => {
@@ -178,7 +183,7 @@ export class Footsteps{
     }
 
     /*Destroys this object and its children*/
-    destroy(){
+    destroy() {
         this.clean_all(true);
         this.new_step_timer.destroy();
         this.expire_timer.destroy();

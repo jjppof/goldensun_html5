@@ -1,4 +1,4 @@
-import { Hero } from "./Hero";
+import {Hero} from "./Hero";
 
 export class Collision {
     public game: Phaser.Game;
@@ -83,7 +83,10 @@ export class Collision {
         for (let i = 0; i < layers.length; ++i) {
             let layer = layers[i];
             if (layer.properties.over !== undefined) {
-                const is_over_prop = layer.properties.over.toString().split(",").map(over => parseInt(over));
+                const is_over_prop = layer.properties.over
+                    .toString()
+                    .split(",")
+                    .map(over => parseInt(over));
                 if (is_over_prop.length <= data.map.collision_layer) continue;
                 const is_over = Boolean(is_over_prop[data.map.collision_layer]);
                 if (is_over) {

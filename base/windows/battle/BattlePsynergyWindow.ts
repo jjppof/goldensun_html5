@@ -1,10 +1,10 @@
-import { TextObj, Window } from '../../Window';
-import * as numbers from '../../magic_numbers';
-import { temporary_status } from '../../Player';
-import { GoldenSun } from '../../GoldenSun';
-import { MainChar } from '../../MainChar';
-import { Djinn } from '../../Djinn';
-import { CursorManager, PointVariants } from '../../utils/CursorManager';
+import {TextObj, Window} from "../../Window";
+import * as numbers from "../../magic_numbers";
+import {temporary_status} from "../../Player";
+import {GoldenSun} from "../../GoldenSun";
+import {MainChar} from "../../MainChar";
+import {Djinn} from "../../Djinn";
+import {CursorManager, PointVariants} from "../../utils/CursorManager";
 
 const BASE_WIN_WIDTH = 164;
 const BASE_WIN_HEIGHT = 84;
@@ -89,7 +89,7 @@ export class BattlePsynergyWindow {
     public djinni: Djinn[];
     public next_djinni_status: string[];
 
-    constructor(game:Phaser.Game, data:GoldenSun) {
+    constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
 
@@ -115,38 +115,38 @@ export class BattlePsynergyWindow {
         this.highlight_bar.endFill();
     }
 
-    select_ability(index:number){
+    select_ability(index: number) {
         this.ability_index = index;
 
         let cursor_x = CURSOR_X;
-        let cursor_y = CURSOR_Y + this.ability_index*CURSOR_SHIFT;
-        
+        let cursor_y = CURSOR_Y + this.ability_index * CURSOR_SHIFT;
+
         let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
         this.change_ability();
     }
 
-    next_ability(){
-        if(this.abilities.length === 1) return;
-        this.select_ability((this.ability_index+1)%this.abilities.length);
+    next_ability() {
+        if (this.abilities.length === 1) return;
+        this.select_ability((this.ability_index + 1) % this.abilities.length);
     }
 
-    previous_ability(){
-        if(this.abilities.length === 1) return;
-        this.select_ability((this.ability_index+this.abilities.length-1)%this.abilities.length);
+    previous_ability() {
+        if (this.abilities.length === 1) return;
+        this.select_ability((this.ability_index + this.abilities.length - 1) % this.abilities.length);
     }
 
-    next_page(){
-        if(this.page_number === 1) return;
+    next_page() {
+        if (this.page_number === 1) return;
 
-        this.page_index = (this.page_index+1)%this.page_number;
+        this.page_index = (this.page_index + 1) % this.page_number;
         this.change_page();
     }
 
-    previous_page(){
-        if(this.page_number === 1) return;
+    previous_page() {
+        if (this.page_number === 1) return;
 
-        this.page_index = (this.page_index+this.page_number-1)%this.page_number;
+        this.page_index = (this.page_index + this.page_number - 1) % this.page_number;
         this.change_page();
     }
 
@@ -157,7 +157,7 @@ export class BattlePsynergyWindow {
 
     set_page_number() {
         const list_length = this.all_abilities.length;
-        this.page_number = (((list_length - 1)/ELEM_PER_PAGE) | 0) + 1;
+        this.page_number = (((list_length - 1) / ELEM_PER_PAGE) | 0) + 1;
 
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
@@ -188,7 +188,7 @@ export class BattlePsynergyWindow {
         this.set_highlight_bar();
     }
 
-    change_djinni(djinni:Djinn){
+    change_djinni(djinni: Djinn) {
         this.djinni = [djinni];
 
         this.clear_sprites();
@@ -204,7 +204,10 @@ export class BattlePsynergyWindow {
 
     set_abilities_list() {
         this.clear_sprites(false);
-        this.abilities = this.all_abilities.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
+        this.abilities = this.all_abilities.slice(
+            this.page_index * ELEM_PER_PAGE,
+            (this.page_index + 1) * ELEM_PER_PAGE
+        );
 
         for (let i = 0; i < this.abilities.length; ++i) {
             const key_name = this.abilities[i];
@@ -222,20 +225,56 @@ export class BattlePsynergyWindow {
                 font_color = numbers.RED_FONT_COLOR;
             }
 
-            const psynergy_name_sprite = this.base_window.set_text_in_position(this.data.info.abilities_list[key_name].name, x_elem_name, y + ELEM_NAME_ICON_SHIFT, false, false, font_color);
+            const psynergy_name_sprite = this.base_window.set_text_in_position(
+                this.data.info.abilities_list[key_name].name,
+                x_elem_name,
+                y + ELEM_NAME_ICON_SHIFT,
+                false,
+                false,
+                font_color
+            );
             this.text_sprites_in_window.push(psynergy_name_sprite);
 
-            const pp_sprite = this.base_window.set_text_in_position("PP", PP_X, y + ELEM_NAME_ICON_SHIFT, false, false, font_color);
+            const pp_sprite = this.base_window.set_text_in_position(
+                "PP",
+                PP_X,
+                y + ELEM_NAME_ICON_SHIFT,
+                false,
+                false,
+                font_color
+            );
             this.text_sprites_in_window.push(pp_sprite);
 
-            this.icon_sprites_in_window.push(this.base_window.create_at_group(icon_x, icon_y, "abilities_icons", undefined, key_name));
+            this.icon_sprites_in_window.push(
+                this.base_window.create_at_group(icon_x, icon_y, "abilities_icons", undefined, key_name)
+            );
             this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
 
-            this.misc_sprites_in_window.push(this.base_window.create_at_group(START_X, y + 5, this.data.info.abilities_list[key_name].element + "_star"));
-            this.misc_sprites_in_window.push(this.base_window.create_at_group(RANGE_X, y + 4, "ranges", undefined, this.data.info.abilities_list[key_name].range.toString()));
+            this.misc_sprites_in_window.push(
+                this.base_window.create_at_group(
+                    START_X,
+                    y + 5,
+                    this.data.info.abilities_list[key_name].element + "_star"
+                )
+            );
+            this.misc_sprites_in_window.push(
+                this.base_window.create_at_group(
+                    RANGE_X,
+                    y + 4,
+                    "ranges",
+                    undefined,
+                    this.data.info.abilities_list[key_name].range.toString()
+                )
+            );
 
-            const psynergy_cost_sprite = this.base_window.set_text_in_position(this.data.info.abilities_list[key_name].pp_cost, PSY_PP_END_X, y + ELEM_NAME_ICON_SHIFT,
-                true, false, font_color);
+            const psynergy_cost_sprite = this.base_window.set_text_in_position(
+                this.data.info.abilities_list[key_name].pp_cost,
+                PSY_PP_END_X,
+                y + ELEM_NAME_ICON_SHIFT,
+                true,
+                false,
+                font_color
+            );
             this.text_sprites_in_window.push(psynergy_cost_sprite);
 
             if (this.expanded) {
@@ -243,7 +282,6 @@ export class BattlePsynergyWindow {
                     this.base_window.update_text_color(PSY_GAIN_COLOR, psynergy_name_sprite);
                     this.base_window.update_text_color(PSY_GAIN_COLOR, psynergy_cost_sprite);
                     this.base_window.update_text_color(PSY_GAIN_COLOR, pp_sprite);
-
                 } else if (this.lost_abilities.includes(key_name)) {
                     this.base_window.update_text_color(PSY_LOST_COLOR, psynergy_name_sprite);
                     this.base_window.update_text_color(PSY_LOST_COLOR, psynergy_cost_sprite);
@@ -255,13 +293,22 @@ export class BattlePsynergyWindow {
 
     set_abilities() {
         this.current_abilities = this.char.abilities.filter(key_name => {
-            return key_name in this.data.info.abilities_list && this.data.info.abilities_list[key_name].is_battle_ability;
+            return (
+                key_name in this.data.info.abilities_list && this.data.info.abilities_list[key_name].is_battle_ability
+            );
         });
         this.all_abilities = this.current_abilities;
         if (this.expanded) {
-            const preview_values = this.char.preview_djinn_change([], this.djinni.map(d => d.key_name), this.next_djinni_status);
+            const preview_values = this.char.preview_djinn_change(
+                [],
+                this.djinni.map(d => d.key_name),
+                this.next_djinni_status
+            );
             this.next_abilities = preview_values.abilities.filter(key_name => {
-                return key_name in this.data.info.abilities_list && this.data.info.abilities_list[key_name].is_battle_ability;
+                return (
+                    key_name in this.data.info.abilities_list &&
+                    this.data.info.abilities_list[key_name].is_battle_ability
+                );
             });
             let current_set = new Set(this.current_abilities);
             let next_set = new Set(this.next_abilities);
@@ -300,7 +347,6 @@ export class BattlePsynergyWindow {
         if (this.expanded) {
             this.base_window.update_size({height: BASE_WIN_EXPANDED_HEIGHT});
             this.base_window.update_position({x: BASE_WIN_EXPANDED_X, y: BASE_WIN_EXPANDED_Y});
-
         } else {
             this.base_window.update_size({height: BASE_WIN_HEIGHT});
             this.base_window.update_position({x: BASE_WIN_X, y: BASE_WIN_Y});
@@ -338,27 +384,33 @@ export class BattlePsynergyWindow {
         this.text_sprites_in_window = [];
     }
 
-    ability_choose(){
+    ability_choose() {
         let controls = [
             {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this)},
             {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this)},
             {key: this.data.gamepad.UP, on_down: this.previous_ability.bind(this)},
             {key: this.data.gamepad.DOWN, on_down: this.next_ability.bind(this)},
-            {key: this.data.gamepad.A, on_down: () => {
-                if(!this.expanded){
-                    this.choosen_ability = this.abilities[this.ability_index];
-                    this.hide(this.close_callback);
-                }
-            }},
-            {key: this.data.gamepad.B, on_down: () => {
-                if(!this.expanded){
-                    this.choosen_ability = null;
-                    this.close(this.close_callback);
-                }
-            }},
+            {
+                key: this.data.gamepad.A,
+                on_down: () => {
+                    if (!this.expanded) {
+                        this.choosen_ability = this.abilities[this.ability_index];
+                        this.hide(this.close_callback);
+                    }
+                },
+            },
+            {
+                key: this.data.gamepad.B,
+                on_down: () => {
+                    if (!this.expanded) {
+                        this.choosen_ability = null;
+                        this.close(this.close_callback);
+                    }
+                },
+            },
         ];
 
-        this.data.control_manager.set_control(controls,{loop_configs: {vertical:true, horizontal:true}});
+        this.data.control_manager.set_control(controls, {loop_configs: {vertical: true, horizontal: true}});
     }
 
     open(char, close_callback, set_description, expanded = false, djinn = null, next_djinn_status = null) {
@@ -413,7 +465,7 @@ export class BattlePsynergyWindow {
         }, false);
     }
 
-    hide(callback?:Function) {
+    hide(callback?: Function) {
         this.group.alpha = 0;
         this.highlight_bar.alpha = 0;
 
@@ -426,7 +478,7 @@ export class BattlePsynergyWindow {
         }, false);
     }
 
-    close(callback?:Function) {
+    close(callback?: Function) {
         this.clear_sprites();
         this.base_window.page_indicator.terminante();
 

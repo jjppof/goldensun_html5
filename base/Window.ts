@@ -1,13 +1,13 @@
-import * as numbers from './magic_numbers';
-import { PageIndicator } from './support_menus/PageIndicator';
-import * as utils from './utils';
+import * as numbers from "./magic_numbers";
+import {PageIndicator} from "./support_menus/PageIndicator";
+import * as utils from "./utils";
 
 export type TextObj = {
-    text: Phaser.BitmapText,
-    shadow: Phaser.BitmapText,
-    right_align: boolean,
-    initial_x: number,
-    text_bg?: Phaser.Graphics
+    text: Phaser.BitmapText;
+    shadow: Phaser.BitmapText;
+    right_align: boolean;
+    initial_x: number;
+    text_bg?: Phaser.Graphics;
 };
 
 /*A basic window template used in most menus
@@ -35,13 +35,22 @@ export class Window {
     public separators_graphics: Phaser.Graphics;
     public need_pos_update: boolean;
     public open: boolean;
-    public lines_sprites: {text: Phaser.BitmapText, shadow: Phaser.BitmapText}[];
+    public lines_sprites: {text: Phaser.BitmapText; shadow: Phaser.BitmapText}[];
     public extra_sprites: Phaser.Sprite[];
     public internal_groups: {[key: string]: Phaser.Group};
     public close_callback: Function;
     public page_indicator: PageIndicator;
 
-    constructor(game, x, y, width, height, need_pos_update = true, color = numbers.DEFAULT_WINDOW_COLOR, font_color = numbers.DEFAULT_FONT_COLOR) {
+    constructor(
+        game,
+        x,
+        y,
+        width,
+        height,
+        need_pos_update = true,
+        color = numbers.DEFAULT_WINDOW_COLOR,
+        font_color = numbers.DEFAULT_FONT_COLOR
+    ) {
         this.game = game;
         this.group = game.add.group();
 
@@ -91,15 +100,15 @@ export class Window {
     These are created by changing the brightness of the background*/
     draw_separator(x_0, y_0, x_1, y_1, vertical = true) {
         const lighter = utils.change_brightness(this.color, 1.3);
-        const darker = utils.change_brightness(this.color, 0.80);
-        const medium = utils.change_brightness(this.color, 0.90);
+        const darker = utils.change_brightness(this.color, 0.8);
+        const medium = utils.change_brightness(this.color, 0.9);
         const colors = [medium, darker, lighter];
         for (let i = 0; i < colors.length; ++i) {
             const color = colors[i];
             const shift = i - 1;
             this.separators_graphics.lineStyle(1, color);
-            this.separators_graphics.moveTo(x_0 + shift * +vertical, y_0 + shift * +(!vertical));
-            this.separators_graphics.lineTo(x_1 + shift * +vertical, y_1 + shift * +(!vertical));
+            this.separators_graphics.moveTo(x_0 + shift * +vertical, y_0 + shift * +!vertical);
+            this.separators_graphics.lineTo(x_1 + shift * +vertical, y_1 + shift * +!vertical);
         }
     }
 
@@ -126,66 +135,66 @@ export class Window {
         this.graphics.moveTo(0, 1);
         this.graphics.lineTo(0, this.height + 1);
 
-        this.graphics.lineStyle(1, 0xFFFFFF)
+        this.graphics.lineStyle(1, 0xffffff);
         this.graphics.moveTo(1, 1);
         this.graphics.lineTo(1, this.height + 1);
 
-        this.graphics.lineStyle(1, 0xA5A5A5)
+        this.graphics.lineStyle(1, 0xa5a5a5);
         this.graphics.moveTo(2, 1);
         this.graphics.lineTo(2, this.height);
 
-        this.graphics.lineStyle(1, 0x111111)
+        this.graphics.lineStyle(1, 0x111111);
         this.graphics.moveTo(3, 3);
         this.graphics.lineTo(3, this.height - 1);
 
         //Right
-        this.graphics.lineStyle(1, 0x525252)
+        this.graphics.lineStyle(1, 0x525252);
         this.graphics.moveTo(this.width, 2);
         this.graphics.lineTo(this.width, this.height);
-        
-        this.graphics.lineStyle(1, 0xA5A5A5)
+
+        this.graphics.lineStyle(1, 0xa5a5a5);
         this.graphics.moveTo(this.width + 2, 1);
         this.graphics.lineTo(this.width + 2, this.height + 1);
-        
-        this.graphics.lineStyle(1, 0xFFFFFF)
+
+        this.graphics.lineStyle(1, 0xffffff);
         this.graphics.moveTo(this.width + 1, 1);
         this.graphics.lineTo(this.width + 1, this.height);
-        
-        this.graphics.lineStyle(1, 0x111111)
+
+        this.graphics.lineStyle(1, 0x111111);
         this.graphics.moveTo(this.width + 3, 1);
         this.graphics.lineTo(this.width + 3, this.height + 1);
 
         //Up
-        this.graphics.lineStyle(1, 0x525252)
+        this.graphics.lineStyle(1, 0x525252);
         this.graphics.moveTo(2, 0);
         this.graphics.lineTo(this.width + 2, 0);
 
-        this.graphics.lineStyle(1, 0xFFFFFF)
+        this.graphics.lineStyle(1, 0xffffff);
         this.graphics.moveTo(2, 1);
         this.graphics.lineTo(this.width + 2, 1);
 
-        this.graphics.lineStyle(1, 0xA5A5A5)
+        this.graphics.lineStyle(1, 0xa5a5a5);
         this.graphics.moveTo(3, 2);
         this.graphics.lineTo(this.width + 1, 2);
 
-        this.graphics.lineStyle(1, 0x111111)
+        this.graphics.lineStyle(1, 0x111111);
         this.graphics.moveTo(3, 3);
         this.graphics.lineTo(this.width, 3);
 
         //Down
-        this.graphics.lineStyle(1, 0x525252)
+        this.graphics.lineStyle(1, 0x525252);
         this.graphics.moveTo(3, this.height);
         this.graphics.lineTo(this.width, this.height);
 
-        this.graphics.lineStyle(1, 0xFFFFFF)
+        this.graphics.lineStyle(1, 0xffffff);
         this.graphics.moveTo(2, this.height + 1);
         this.graphics.lineTo(this.width + 2, this.height + 1);
 
-        this.graphics.lineStyle(1, 0xA5A5A5)
+        this.graphics.lineStyle(1, 0xa5a5a5);
         this.graphics.moveTo(2, this.height + 2);
         this.graphics.lineTo(this.width + 2, this.height + 2);
 
-        this.graphics.lineStyle(1, 0x111111)
+        this.graphics.lineStyle(1, 0x111111);
         this.graphics.moveTo(2, this.height + 3);
         this.graphics.lineTo(this.width + 2, this.height + 3);
 
@@ -270,7 +279,7 @@ export class Window {
                 y [number] - The new group's y
     
     Output: [Phaser:Group]*/
-    define_internal_group(key, position: {x?: number, y?: number} = {}) {
+    define_internal_group(key, position: {x?: number; y?: number} = {}) {
         let internal_group = this.game.add.group();
         this.destroy_internal_group(key);
         this.internal_groups[key] = internal_group;
@@ -330,15 +339,18 @@ export class Window {
         this.page_indicator.is_set = false;
 
         if (animate) {
-            this.game.add.tween(this.group).to(
-                { width: this.graphics.width, height: this.graphics.height },
-                Window.TRANSITION_TIME,
-                Phaser.Easing.Linear.None,
-                true
-            ).onComplete.addOnce(() => {
-                this.open = true;
-                if (show_callback !== undefined) show_callback();
-            });
+            this.game.add
+                .tween(this.group)
+                .to(
+                    {width: this.graphics.width, height: this.graphics.height},
+                    Window.TRANSITION_TIME,
+                    Phaser.Easing.Linear.None,
+                    true
+                )
+                .onComplete.addOnce(() => {
+                    this.open = true;
+                    if (show_callback !== undefined) show_callback();
+                });
         } else {
             this.open = true;
             this.group.width = this.graphics.width;
@@ -395,7 +407,7 @@ export class Window {
     }
 
     /*Sends this window to the front of the screen*/
-    send_to_front(){
+    send_to_front() {
         (this.group.parent as Phaser.Group).bringToTop(this.group);
     }
 
@@ -436,20 +448,28 @@ export class Window {
         const top_shift = italic ? -2 : 0;
         const x_pos = padding_x === undefined ? numbers.WINDOW_PADDING_H + 4 : padding_x;
         let y_pos = padding_y === undefined ? numbers.WINDOW_PADDING_TOP + top_shift : padding_y;
-        const font_name = italic ? 'gs-italic-bmp-font' : 'gs-bmp-font';
+        const font_name = italic ? "gs-italic-bmp-font" : "gs-bmp-font";
 
         let lines_promises = [];
         let anim_promise;
         let anim_promise_resolve;
         if (animate) {
-            anim_promise = new Promise(resolve => anim_promise_resolve = resolve);
+            anim_promise = new Promise(resolve => (anim_promise_resolve = resolve));
         }
         for (let i = 0; i < lines.length; ++i) {
             let line = lines[i];
-            let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, animate ? '' : line, numbers.FONT_SIZE);
-            let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, font_name, animate ? '' : line, numbers.FONT_SIZE);
+            let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, animate ? "" : line, numbers.FONT_SIZE);
+            let text_sprite_shadow = this.game.add.bitmapText(
+                x_pos + 1,
+                y_pos + 1,
+                font_name,
+                animate ? "" : line,
+                numbers.FONT_SIZE
+            );
 
-            y_pos += numbers.FONT_SIZE + (space_between_lines === undefined ? numbers.SPACE_BETWEEN_LINES : space_between_lines);
+            y_pos +=
+                numbers.FONT_SIZE +
+                (space_between_lines === undefined ? numbers.SPACE_BETWEEN_LINES : space_between_lines);
 
             this.remove_smooth(text_sprite);
             text_sprite.tint = this.font_color;
@@ -457,13 +477,13 @@ export class Window {
             text_sprite_shadow.tint = 0x0;
 
             if (animate) {
-                const words = line.split(' ');
+                const words = line.split(" ");
                 let words_index = 0;
                 let line_promise_resolve;
                 const repeater = () => {
                     this.game.time.events.repeat(25, words.length, () => {
-                        text_sprite.text += words[words_index] + ' ';
-                        text_sprite_shadow.text += words[words_index] + ' ';
+                        text_sprite.text += words[words_index] + " ";
+                        text_sprite_shadow.text += words[words_index] + " ";
                         ++words_index;
                         if (words_index === words.length) {
                             line_promise_resolve();
@@ -475,7 +495,7 @@ export class Window {
                 } else {
                     lines_promises.pop().then(repeater);
                 }
-                lines_promises.push(new Promise(resolve => line_promise_resolve = resolve));
+                lines_promises.push(new Promise(resolve => (line_promise_resolve = resolve)));
             }
 
             this.group.add(text_sprite_shadow);
@@ -497,12 +517,12 @@ export class Window {
             shadow [Phaser:Sprite] - The text's shadow
             right_align [boolean] - The input value
             initial_x [number] - The text's x value*/
-set_single_line_text(text, right_align = false, italic = false): TextObj {
+    set_single_line_text(text, right_align = false, italic = false): TextObj {
         const x_pos = italic ? numbers.WINDOW_PADDING_H + 2 : numbers.WINDOW_PADDING_H + 4;
         let y_pos = italic ? numbers.WINDOW_PADDING_TOP - 2 : numbers.WINDOW_PADDING_TOP;
-        const font_name = italic ? 'gs-italic-bmp-font' : 'gs-bmp-font';
+        const font_name = italic ? "gs-italic-bmp-font" : "gs-bmp-font";
         let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, text, numbers.FONT_SIZE);
-        let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, font_name, text, numbers.FONT_SIZE);
+        let text_sprite_shadow = this.game.add.bitmapText(x_pos + 1, y_pos + 1, font_name, text, numbers.FONT_SIZE);
         if (right_align) {
             text_sprite.x -= text_sprite.width;
             text_sprite_shadow.x -= text_sprite_shadow.width;
@@ -534,10 +554,20 @@ set_single_line_text(text, right_align = false, italic = false): TextObj {
             right_align [boolean] - The input value
             initial_x [number] - The text's x value
             text_bg [Phaser:Sprite] - The text's background*/
-    set_text_in_position(text, x_pos, y_pos, right_align = false, is_center_pos = false, color = this.font_color, with_bg = false, internal_group_key = undefined, italic = false): TextObj {
-        const font_name = italic ? 'gs-italic-bmp-font' : 'gs-bmp-font';
+    set_text_in_position(
+        text,
+        x_pos,
+        y_pos,
+        right_align = false,
+        is_center_pos = false,
+        color = this.font_color,
+        with_bg = false,
+        internal_group_key = undefined,
+        italic = false
+    ): TextObj {
+        const font_name = italic ? "gs-italic-bmp-font" : "gs-bmp-font";
         let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, text, numbers.FONT_SIZE);
-        let text_sprite_shadow = this.game.add.bitmapText(x_pos+1, y_pos+1, font_name, text, numbers.FONT_SIZE);
+        let text_sprite_shadow = this.game.add.bitmapText(x_pos + 1, y_pos + 1, font_name, text, numbers.FONT_SIZE);
         if (is_center_pos) {
             text_sprite.centerX = x_pos;
             text_sprite.centerY = y_pos;
@@ -566,14 +596,22 @@ set_single_line_text(text, right_align = false, italic = false): TextObj {
 
         let added_to_internal = false;
         if (internal_group_key !== undefined) {
-            added_to_internal = this.add_to_internal_group(internal_group_key, text_sprite_shadow) && this.add_to_internal_group(internal_group_key, text_sprite);
+            added_to_internal =
+                this.add_to_internal_group(internal_group_key, text_sprite_shadow) &&
+                this.add_to_internal_group(internal_group_key, text_sprite);
         }
         if (!added_to_internal) {
             this.group.add(text_sprite_shadow);
             this.group.add(text_sprite);
         }
 
-        return {text: text_sprite, shadow: text_sprite_shadow, right_align: right_align, initial_x: x_pos, text_bg: text_bg};
+        return {
+            text: text_sprite,
+            shadow: text_sprite_shadow,
+            right_align: right_align,
+            initial_x: x_pos,
+            text_bg: text_bg,
+        };
     }
 
     /*Changes the text and repositions it
@@ -651,24 +689,22 @@ set_single_line_text(text, right_align = false, italic = false): TextObj {
            animate [boolean] - Plays a fading animation if true*/
     close(callback?, animate = true) {
         if (animate) {
-            this.game.add.tween(this.group).to(
-                { width: 0, height: 0 },
-                Window.TRANSITION_TIME,
-                Phaser.Easing.Linear.None,
-                true
-            ).onComplete.addOnce(() => {
-                this.group.alpha = 0;
-                this.open = false;
-                if (this.page_indicator.is_set) {
-                    this.page_indicator.terminante();
-                }
-                if (callback !== undefined) {
-                    callback();
-                }
-                if (this.close_callback !== undefined) {
-                    this.close_callback();
-                }
-            });
+            this.game.add
+                .tween(this.group)
+                .to({width: 0, height: 0}, Window.TRANSITION_TIME, Phaser.Easing.Linear.None, true)
+                .onComplete.addOnce(() => {
+                    this.group.alpha = 0;
+                    this.open = false;
+                    if (this.page_indicator.is_set) {
+                        this.page_indicator.terminante();
+                    }
+                    if (callback !== undefined) {
+                        callback();
+                    }
+                    if (this.close_callback !== undefined) {
+                        this.close_callback();
+                    }
+                });
         } else {
             this.group.alpha = 0;
             this.open = false;
@@ -691,21 +727,19 @@ set_single_line_text(text, right_align = false, italic = false): TextObj {
     Input: animate [boolean] - Plays a fading animation if true
            destroy_callbcak [function] - Callback function (Optional)*/
     destroy(animate, destroy_callback?) {
-        let on_destroy = () => { 
+        let on_destroy = () => {
             if (this.page_indicator.is_set) {
                 this.page_indicator.terminante();
             }
             this.group.destroy();
             this.internal_groups = {};
             if (destroy_callback !== undefined) destroy_callback();
-        }
+        };
         if (animate) {
-            this.game.add.tween(this.group).to(
-                { width: 0, height: 0 },
-                Window.TRANSITION_TIME,
-                Phaser.Easing.Linear.None,
-                true
-            ).onComplete.addOnce(on_destroy);
+            this.game.add
+                .tween(this.group)
+                .to({width: 0, height: 0}, Window.TRANSITION_TIME, Phaser.Easing.Linear.None, true)
+                .onComplete.addOnce(on_destroy);
         } else {
             on_destroy();
         }

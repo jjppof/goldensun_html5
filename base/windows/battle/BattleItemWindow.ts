@@ -1,10 +1,10 @@
-import { TextObj, Window } from "../../Window";
+import {TextObj, Window} from "../../Window";
 import * as numbers from "../../magic_numbers";
-import { use_types } from "../../Item";
-import { GoldenSun } from "../../GoldenSun";
-import { ItemSlot, MainChar } from "../../MainChar";
+import {use_types} from "../../Item";
+import {GoldenSun} from "../../GoldenSun";
+import {ItemSlot, MainChar} from "../../MainChar";
 import * as _ from "lodash";
-import { CursorManager, PointVariants } from "../../utils/CursorManager";
+import {CursorManager, PointVariants} from "../../utils/CursorManager";
 
 //TO DO: decrement item quantity when using a consumable item
 //TO DO: use item sprite instead of ability sprite for items (Spirit Ring)
@@ -46,7 +46,7 @@ export class BattleItemWindow {
     public highlight_bar: Phaser.Graphics;
 
     public item_names: TextObj[];
-    public other_sprites: (Phaser.Sprite|Phaser.Group|Phaser.BitmapText)[];
+    public other_sprites: (Phaser.Sprite | Phaser.Group | Phaser.BitmapText)[];
 
     public window_open: boolean;
     public window_active: boolean;
@@ -64,7 +64,7 @@ export class BattleItemWindow {
     public all_items: ItemSlot[];
     public char: MainChar;
 
-    constructor(game:Phaser.Game, data:GoldenSun) {
+    constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
 
@@ -87,38 +87,38 @@ export class BattleItemWindow {
         this.other_sprites = [];
     }
 
-   select_item(index:number){
+    select_item(index: number) {
         this.item_index = index;
 
         let cursor_x = CURSOR_X;
-        let cursor_y = CURSOR_Y + this.item_index*CURSOR_SHIFT;
-        
+        let cursor_y = CURSOR_Y + this.item_index * CURSOR_SHIFT;
+
         let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
         this.change_item();
     }
 
-    next_item(){
-        if(this.items.length === 1) return;
-        this.select_item((this.item_index+1)%this.items.length);
+    next_item() {
+        if (this.items.length === 1) return;
+        this.select_item((this.item_index + 1) % this.items.length);
     }
 
-    previous_item(){
-        if(this.items.length === 1) return;
-        this.select_item((this.item_index+this.items.length-1)%this.items.length);
+    previous_item() {
+        if (this.items.length === 1) return;
+        this.select_item((this.item_index + this.items.length - 1) % this.items.length);
     }
 
-    next_page(){
-        if(this.page_number === 1) return;
+    next_page() {
+        if (this.page_number === 1) return;
 
-        this.page_index = (this.page_index+1)%this.page_number;
+        this.page_index = (this.page_index + 1) % this.page_number;
         this.change_page();
     }
 
-    previous_page(){
-        if(this.page_number === 1) return;
+    previous_page() {
+        if (this.page_number === 1) return;
 
-        this.page_index = (this.page_index+this.page_number-1)%this.page_number;
+        this.page_index = (this.page_index + this.page_number - 1) % this.page_number;
         this.change_page();
     }
 
@@ -163,18 +163,30 @@ export class BattleItemWindow {
             const base_y = TOP_PADDING + i * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
             const item_y = base_y - 4;
 
-            this.other_sprites.push(this.base_window.create_at_group(ITEM_ICON_X, item_y, "items_icons", undefined, this.items[i].key_name));
+            this.other_sprites.push(
+                this.base_window.create_at_group(ITEM_ICON_X, item_y, "items_icons", undefined, this.items[i].key_name)
+            );
             if (this.items[i].equipped) {
-                this.other_sprites.push(this.base_window.create_at_group(ITEM_ICON_X + SUB_ICON_X, item_y + SUB_ICON_Y, "equipped"));
+                this.other_sprites.push(
+                    this.base_window.create_at_group(ITEM_ICON_X + SUB_ICON_X, item_y + SUB_ICON_Y, "equipped")
+                );
             }
             if (this.items[i].quantity > 1) {
-                let item_count = this.game.add.bitmapText(ITEM_ICON_X + SUB_ICON_X, item_y + SUB_ICON_Y, 'gs-item-bmp-font', this.items[i].quantity.toString());
+                let item_count = this.game.add.bitmapText(
+                    ITEM_ICON_X + SUB_ICON_X,
+                    item_y + SUB_ICON_Y,
+                    "gs-item-bmp-font",
+                    this.items[i].quantity.toString()
+                );
                 this.base_window.add_sprite_to_group(item_count);
                 this.other_sprites.push(item_count);
             }
 
             let color = numbers.DEFAULT_FONT_COLOR;
-            if (item.use_type === use_types.NO_USE || !this.data.info.abilities_list[item.use_ability].is_battle_ability) {
+            if (
+                item.use_type === use_types.NO_USE ||
+                !this.data.info.abilities_list[item.use_ability].is_battle_ability
+            ) {
                 color = numbers.YELLOW_FONT_COLOR;
             }
 
@@ -185,7 +197,7 @@ export class BattleItemWindow {
 
     set_page_number() {
         const list_length = this.all_items.length;
-        this.page_number = (((list_length - 1)/ELEM_PER_PAGE) | 0) + 1;
+        this.page_number = (((list_length - 1) / ELEM_PER_PAGE) | 0) + 1;
 
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
@@ -194,11 +206,16 @@ export class BattleItemWindow {
 
     mount_window() {
         this.all_items = this.char.items;
-        this.all_items = _.sortBy(this.all_items, [item_obj => {
-            return this.data.info.items_list[item_obj.key_name].use_type === use_types.NO_USE ||
-                !this.data.info.abilities_list[this.data.info.items_list[item_obj.key_name].use_ability].is_battle_ability;
-        }]);
-        
+        this.all_items = _.sortBy(this.all_items, [
+            item_obj => {
+                return (
+                    this.data.info.items_list[item_obj.key_name].use_type === use_types.NO_USE ||
+                    !this.data.info.abilities_list[this.data.info.items_list[item_obj.key_name].use_ability]
+                        .is_battle_ability
+                );
+            },
+        ]);
+
         this.set_page_number();
         this.base_window.page_indicator.set_page(this.page_number, this.page_index);
         this.config_page();
@@ -213,31 +230,40 @@ export class BattleItemWindow {
         });
     }
 
-    item_choose(){
+    item_choose() {
         let controls = [
             {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this)},
             {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this)},
             {key: this.data.gamepad.UP, on_down: this.previous_item.bind(this)},
             {key: this.data.gamepad.DOWN, on_down: this.next_item.bind(this)},
-            {key: this.data.gamepad.A, on_down: () => {
-                const this_item = this.data.info.items_list[this.items[this.item_index].key_name];
-                if (this_item.use_type !== use_types.NO_USE && this.data.info.abilities_list[this_item.use_ability].is_battle_ability) {
-                    this.choosen_ability = this_item.use_ability;
-                    this.item_obj = this.items[this.item_index];
-                    this.hide(this.close_callback);
-                }
-            }},
-            {key: this.data.gamepad.B, on_down: () => {
-                this.choosen_ability = null;
-                this.item_obj = null;
-                this.close(this.close_callback);
-            }},
+            {
+                key: this.data.gamepad.A,
+                on_down: () => {
+                    const this_item = this.data.info.items_list[this.items[this.item_index].key_name];
+                    if (
+                        this_item.use_type !== use_types.NO_USE &&
+                        this.data.info.abilities_list[this_item.use_ability].is_battle_ability
+                    ) {
+                        this.choosen_ability = this_item.use_ability;
+                        this.item_obj = this.items[this.item_index];
+                        this.hide(this.close_callback);
+                    }
+                },
+            },
+            {
+                key: this.data.gamepad.B,
+                on_down: () => {
+                    this.choosen_ability = null;
+                    this.item_obj = null;
+                    this.close(this.close_callback);
+                },
+            },
         ];
 
-        this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
+        this.data.control_manager.set_control(controls, {loop_configs: {vertical: true, horizontal: true}});
     }
 
-    open(char:MainChar, close_callback:Function, set_description:Function, ...args:any[]) {
+    open(char: MainChar, close_callback: Function, set_description: Function, ...args: any[]) {
         this.char = char;
         this.close_callback = close_callback;
         this.set_description = set_description;
@@ -265,7 +291,6 @@ export class BattleItemWindow {
         }, false);
     }
 
-    
     show() {
         this.group.alpha = 1;
         this.highlight_bar.alpha = 1;
@@ -278,7 +303,7 @@ export class BattleItemWindow {
         }, false);
     }
 
-    hide(callback?:Function) {
+    hide(callback?: Function) {
         this.group.alpha = 0;
         this.highlight_bar.alpha = 0;
         this.data.cursor_manager.hide();
@@ -291,7 +316,7 @@ export class BattleItemWindow {
         }, false);
     }
 
-    close(callback?:Function) {
+    close(callback?: Function) {
         this.clear_sprites();
         this.base_window.page_indicator.terminante();
 

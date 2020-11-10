@@ -1,5 +1,5 @@
-import { GoldenSun } from "../GoldenSun";
-import { BattleAnimation } from "./BattleAnimation";
+import {GoldenSun} from "../GoldenSun";
+import {BattleAnimation} from "./BattleAnimation";
 
 const ANIMATIONS_BASE_PATH = "assets/images/abilities_animations/";
 const ANIMATIONS_DB_PATH = "assets/dbs/abilities_animations/";
@@ -22,28 +22,41 @@ export class BattleAnimationManager {
     }
 
     async load_animation(battle_anim_key) {
-        if (battle_anim_key in this.animations || this.not_available.has(battle_anim_key) || battle_anim_key === "no_animation") return;
+        if (
+            battle_anim_key in this.animations ||
+            this.not_available.has(battle_anim_key) ||
+            battle_anim_key === "no_animation"
+        )
+            return;
         const sprite_key = battle_anim_key + ANIMATION_SUFFIX;
         const recipe_key = battle_anim_key + RECIPE_SUFFIX;
-        const sprite_loader = this.game.load.atlasJSONHash(sprite_key, `${ANIMATIONS_BASE_PATH}${battle_anim_key}.png`, `${ANIMATIONS_BASE_PATH}${battle_anim_key}.json`);
+        const sprite_loader = this.game.load.atlasJSONHash(
+            sprite_key,
+            `${ANIMATIONS_BASE_PATH}${battle_anim_key}.png`,
+            `${ANIMATIONS_BASE_PATH}${battle_anim_key}.json`
+        );
         const recipe_loader = this.game.load.json(recipe_key, `${ANIMATIONS_DB_PATH}${battle_anim_key}_db.json`);
 
         let all_succeed = true;
         let sprite_loader_promise_resolve;
-        const sprite_loader_promise = new Promise(resolve => { sprite_loader_promise_resolve = resolve });
+        const sprite_loader_promise = new Promise(resolve => {
+            sprite_loader_promise_resolve = resolve;
+        });
         sprite_loader.onFileComplete.addOnce((progress, filekey, success) => {
             all_succeed = all_succeed && success;
             sprite_loader_promise_resolve();
         });
         let recipe_loader_promise_resolve;
-        const recipe_loader_promise = new Promise(resolve => { recipe_loader_promise_resolve = resolve });
+        const recipe_loader_promise = new Promise(resolve => {
+            recipe_loader_promise_resolve = resolve;
+        });
         recipe_loader.onFileComplete.addOnce((progress, filekey, success) => {
             all_succeed = all_succeed && success;
             recipe_loader_promise_resolve();
         });
 
         let load_complete_promise_resolve;
-        const load_complete_promise = new Promise(resolve => load_complete_promise_resolve = resolve);
+        const load_complete_promise = new Promise(resolve => (load_complete_promise_resolve = resolve));
         this.game.load.onLoadComplete.addOnce(load_complete_promise_resolve);
         this.game.load.start();
         await Promise.all([sprite_loader_promise, recipe_loader_promise, load_complete_promise]);
@@ -97,7 +110,9 @@ export class BattleAnimationManager {
             [battle_stage.battle_bg, battle_stage.battle_bg2]
         );
         let play_promise_resolve;
-        const play_promise = new Promise(resolve => { play_promise_resolve = resolve });
+        const play_promise = new Promise(resolve => {
+            play_promise_resolve = resolve;
+        });
         this.render_function = this.animations[battle_anim_key].render.bind(this.animations[battle_anim_key]);
         this.animations[battle_anim_key].play(play_promise_resolve);
         await play_promise;

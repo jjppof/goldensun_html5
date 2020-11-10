@@ -1,10 +1,10 @@
-import { TextObj, Window } from "../../Window";
-import { djinn_status, djinn_font_colors } from "../../Djinn";
-import { DjinnStatsWindow } from "./DjinnStatsWindow";
-import { GoldenSun } from "../../GoldenSun";
-import { MainChar } from "../../MainChar";
-import { BattlePsynergyWindow } from "./BattlePsynergyWindow";
-import { CursorManager, PointVariants } from "../../utils/CursorManager";
+import {TextObj, Window} from "../../Window";
+import {djinn_status, djinn_font_colors} from "../../Djinn";
+import {DjinnStatsWindow} from "./DjinnStatsWindow";
+import {GoldenSun} from "../../GoldenSun";
+import {MainChar} from "../../MainChar";
+import {BattlePsynergyWindow} from "./BattlePsynergyWindow";
+import {CursorManager, PointVariants} from "../../utils/CursorManager";
 
 const BASE_WINDOW_X = 160;
 const BASE_WINDOW_Y = 72;
@@ -88,41 +88,41 @@ export class BattleDjinnWindow {
         this.open_psy_key = null;
     }
 
-    select_djinn(index:number){
+    select_djinn(index: number) {
         this.djinn_index = index;
-        
+
         let cursor_x = CURSOR_X;
-        let cursor_y = CURSOR_Y + this.djinn_index*CURSOR_SHIFT;
-        
+        let cursor_y = CURSOR_Y + this.djinn_index * CURSOR_SHIFT;
+
         let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
         this.change_djinn();
-        
-        if(this.psynergy_window_open) 
+
+        if (this.psynergy_window_open)
             this.psynergy_window.change_djinni(this.data.info.djinni_list[this.djinni[this.djinn_index]]);
     }
 
-    next_djinn(){
-        if(this.djinni.length === 1) return;
-        this.select_djinn((this.djinn_index+1)%this.djinni.length);
+    next_djinn() {
+        if (this.djinni.length === 1) return;
+        this.select_djinn((this.djinn_index + 1) % this.djinni.length);
     }
 
-    previous_djinn(){
-        if(this.djinni.length === 1) return;
-        this.select_djinn((this.djinn_index+this.djinni.length-1)%this.djinni.length);
+    previous_djinn() {
+        if (this.djinni.length === 1) return;
+        this.select_djinn((this.djinn_index + this.djinni.length - 1) % this.djinni.length);
     }
 
-    next_page(){
-        if(this.page_number === 1) return;
+    next_page() {
+        if (this.page_number === 1) return;
 
-        this.page_index = (this.page_index+1)%this.page_number;
+        this.page_index = (this.page_index + 1) % this.page_number;
         this.change_page();
     }
 
-    previous_page(){
-        if(this.page_number === 1) return;
+    previous_page() {
+        if (this.page_number === 1) return;
 
-        this.page_index = (this.page_index+this.page_number-1)%this.page_number;
+        this.page_index = (this.page_index + this.page_number - 1) % this.page_number;
         this.change_page();
     }
 
@@ -183,9 +183,15 @@ export class BattleDjinnWindow {
             let color;
 
             switch (djinn.status) {
-                case djinn_status.SET: color = djinn_font_colors[djinn_status.SET]; break;
-                case djinn_status.STANDBY: color = djinn_font_colors[djinn_status.STANDBY]; break;
-                case djinn_status.RECOVERY: color = djinn_font_colors[djinn_status.RECOVERY]; break;
+                case djinn_status.SET:
+                    color = djinn_font_colors[djinn_status.SET];
+                    break;
+                case djinn_status.STANDBY:
+                    color = djinn_font_colors[djinn_status.STANDBY];
+                    break;
+                case djinn_status.RECOVERY:
+                    color = djinn_font_colors[djinn_status.RECOVERY];
+                    break;
             }
 
             const name = this.base_window.set_text_in_position(djinn.name, DJINN_NAME_X, base_y, false, false, color);
@@ -193,7 +199,13 @@ export class BattleDjinnWindow {
 
             if (djinn.status === djinn_status.RECOVERY) {
                 const rec_number = this.base_window.set_text_in_position(
-                    (djinn.recovery_turn + 1).toString(), RECOVERY_NUMBER_X, base_y, true, false, djinn_font_colors[djinn_status.RECOVERY]);
+                    (djinn.recovery_turn + 1).toString(),
+                    RECOVERY_NUMBER_X,
+                    base_y,
+                    true,
+                    false,
+                    djinn_font_colors[djinn_status.RECOVERY]
+                );
                 this.djinn_names.push(rec_number);
             }
         }
@@ -201,7 +213,7 @@ export class BattleDjinnWindow {
 
     set_page_number() {
         const list_length = this.all_djinni.length;
-        this.page_number = (((list_length - 1)/ELEM_PER_PAGE) | 0) + 1;
+        this.page_number = (((list_length - 1) / ELEM_PER_PAGE) | 0) + 1;
 
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
@@ -210,17 +222,23 @@ export class BattleDjinnWindow {
 
     get_next_status() {
         const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
-        let next_status:string;
+        let next_status: string;
 
         switch (this_djinn.status) {
-            case djinn_status.SET: next_status = djinn_status.STANDBY; break;
-            case djinn_status.STANDBY: next_status = djinn_status.SET; break;
-            case djinn_status.RECOVERY: next_status = djinn_status.RECOVERY; break;
+            case djinn_status.SET:
+                next_status = djinn_status.STANDBY;
+                break;
+            case djinn_status.STANDBY:
+                next_status = djinn_status.SET;
+                break;
+            case djinn_status.RECOVERY:
+                next_status = djinn_status.RECOVERY;
+                break;
         }
 
         return next_status;
     }
-    
+
     update_stats() {
         const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
         this.stats_window.set_djinn(this_djinn, this.get_next_status());
@@ -244,60 +262,79 @@ export class BattleDjinnWindow {
         });
     }
 
-    show_psynergy(){
-        if(this.psynergy_window_open) return;
+    show_psynergy() {
+        if (this.psynergy_window_open) return;
 
-        this.psynergy_window.open(this.char, undefined, undefined, true, this.data.info.djinni_list[this.djinni[this.djinn_index]], this.get_next_status());
+        this.psynergy_window.open(
+            this.char,
+            undefined,
+            undefined,
+            true,
+            this.data.info.djinni_list[this.djinni[this.djinn_index]],
+            this.get_next_status()
+        );
         this.psynergy_window_open = true;
 
         let controls = [
             {key: this.data.gamepad.LEFT, on_down: this.psynergy_window.previous_page.bind(this.psynergy_window)},
             {key: this.data.gamepad.RIGHT, on_down: this.psynergy_window.next_page.bind(this.psynergy_window)},
             {key: this.data.gamepad.UP, on_down: this.previous_djinn.bind(this)},
-            {key: this.data.gamepad.DOWN, on_down: this.next_djinn.bind(this)}
+            {key: this.data.gamepad.DOWN, on_down: this.next_djinn.bind(this)},
         ];
 
-        this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
+        this.data.control_manager.set_control(controls, {loop_configs: {vertical: true, horizontal: true}});
     }
 
-    hide_psynergy(){
-        if(!this.psynergy_window_open) return;
+    hide_psynergy() {
+        if (!this.psynergy_window_open) return;
 
         this.psynergy_window.close();
         this.psynergy_window_open = false;
-        
+
         this.select_djinn(this.djinn_index);
         this.djinn_choose();
     }
 
-    djinn_choose(){
+    djinn_choose() {
         let controls = [
             {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this)},
             {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this)},
             {key: this.data.gamepad.UP, on_down: this.previous_djinn.bind(this)},
             {key: this.data.gamepad.DOWN, on_down: this.next_djinn.bind(this)},
-            {key: this.data.gamepad.A, on_down: () => {
-                const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
-                if (this_djinn.status !== djinn_status.RECOVERY) {
-                    this.choosen_ability = this_djinn.ability_key_name;
-                    this.hide(this.close_callback);
-                }
-            }},
-            {key: this.data.gamepad.B, on_down: () => {
-                this.choosen_ability = null;
-                this.close(this.close_callback);
-            }},
+            {
+                key: this.data.gamepad.A,
+                on_down: () => {
+                    const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
+                    if (this_djinn.status !== djinn_status.RECOVERY) {
+                        this.choosen_ability = this_djinn.ability_key_name;
+                        this.hide(this.close_callback);
+                    }
+                },
+            },
+            {
+                key: this.data.gamepad.B,
+                on_down: () => {
+                    this.choosen_ability = null;
+                    this.close(this.close_callback);
+                },
+            },
         ];
 
-        this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
+        this.data.control_manager.set_control(controls, {loop_configs: {vertical: true, horizontal: true}});
 
-        if(!this.open_psy_key){
-            let control = [{key: this.data.gamepad.R, on_down: this.show_psynergy.bind(this), on_up: this.hide_psynergy.bind(this)}];
+        if (!this.open_psy_key) {
+            let control = [
+                {
+                    key: this.data.gamepad.R,
+                    on_down: this.show_psynergy.bind(this),
+                    on_up: this.hide_psynergy.bind(this),
+                },
+            ];
             this.open_psy_key = this.data.control_manager.set_control(control, {persist: true, no_reset: true});
         }
     }
 
-    open(char:MainChar, close_callback:Function, set_description:Function, psynergy_window?:BattlePsynergyWindow) {
+    open(char: MainChar, close_callback: Function, set_description: Function, psynergy_window?: BattlePsynergyWindow) {
         this.char = char;
         this.close_callback = close_callback;
         this.set_description = set_description;
@@ -339,7 +376,7 @@ export class BattleDjinnWindow {
         }, false);
     }
 
-    hide(callback?:Function) {
+    hide(callback?: Function) {
         this.group.alpha = 0;
         this.highlight_bar.alpha = 0;
 
@@ -357,7 +394,7 @@ export class BattleDjinnWindow {
         }, false);
     }
 
-    close(callback?:Function) {
+    close(callback?: Function) {
         this.clear_sprites();
         this.base_window.page_indicator.terminante();
 

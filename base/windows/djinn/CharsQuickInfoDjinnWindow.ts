@@ -1,13 +1,13 @@
-import { TextObj, Window } from '../../Window';
-import * as numbers from '../../magic_numbers';
-import { MainChar } from '../../MainChar';
+import {TextObj, Window} from "../../Window";
+import * as numbers from "../../magic_numbers";
+import {MainChar} from "../../MainChar";
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 36;
 const BASE_WIN_X = 0;
 const BASE_WIN_Y = 0;
 const NAME_X = 8;
-const NAME_Y = 8
+const NAME_Y = 8;
 const CLASS_Y = NAME_Y + numbers.FONT_SIZE;
 const LV_X = 56;
 const LV_Y = 8;
@@ -47,15 +47,15 @@ export class CharsQuickInfoDjinnWindow {
         this.base_window.update_text(this.char.level.toString(), this.level_number);
     }
 
-    set_char(char:MainChar) {
+    set_char(char: MainChar) {
         this.char = char;
         this.update_text();
     }
 
-    open(char:MainChar, callback?:Function) {
+    open(char: MainChar, callback?: Function) {
         this.char = char;
         this.update_text();
-        
+
         this.base_window.show(() => {
             this.window_open = true;
             if (callback !== undefined) {
@@ -64,7 +64,7 @@ export class CharsQuickInfoDjinnWindow {
         }, false);
     }
 
-    close(callback?:Function) {
+    close(callback?: Function) {
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {

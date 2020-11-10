@@ -1,21 +1,21 @@
-import { SpriteBase } from './SpriteBase';
-import { choose_right_class, Classes } from './Classes';
-import { djinn_status } from './Djinn';
-import { Effect, effect_types } from './Effect';
-import { Item, item_types } from './Item';
-import { Player, fighter_types, permanent_status, main_stats } from './Player';
-import { elements, ordered_elements } from './utils';
-import { ELEM_ATTR_MIN, ELEM_ATTR_MAX } from './magic_numbers';
+import {SpriteBase} from "./SpriteBase";
+import {choose_right_class, Classes} from "./Classes";
+import {djinn_status} from "./Djinn";
+import {Effect, effect_types} from "./Effect";
+import {Item, item_types} from "./Item";
+import {Player, fighter_types, permanent_status, main_stats} from "./Player";
+import {elements, ordered_elements} from "./utils";
+import {ELEM_ATTR_MIN, ELEM_ATTR_MAX} from "./magic_numbers";
 import * as _ from "lodash";
-import { GameInfo, PartyData } from './initializers/initialize_info';
-import { Ability } from './Ability';
+import {GameInfo, PartyData} from "./initializers/initialize_info";
+import {Ability} from "./Ability";
 
 export type ItemSlot = {
-    key_name: string,
-    quantity: number,
-    index?: number,
-    equipped?: boolean,
-    broken?: boolean
+    key_name: string;
+    quantity: number;
+    index?: number;
+    equipped?: boolean;
+    broken?: boolean;
 };
 
 export class MainChar extends Player {
@@ -64,20 +64,20 @@ export class MainChar extends Player {
     public luk_extra: number;
     public items: ItemSlot[];
     public equip_slots: {
-        weapon: ItemSlot,
-        head: ItemSlot,
-        chest: ItemSlot,
-        body: ItemSlot,
-        ring: ItemSlot,
-        boots: ItemSlot,
-        underwear: ItemSlot
+        weapon: ItemSlot;
+        head: ItemSlot;
+        chest: ItemSlot;
+        body: ItemSlot;
+        ring: ItemSlot;
+        boots: ItemSlot;
+        underwear: ItemSlot;
     };
     public equipped_abilities: string[];
     public innate_abilities: string[];
     public in_party: boolean;
     public abilities: string[];
 
-    constructor (
+    constructor(
         key_name,
         info,
         sprite_base,
@@ -137,12 +137,15 @@ export class MainChar extends Player {
         this.mercury_resist_base = mercury_resist_base;
         this.mars_resist_base = mars_resist_base;
         this.jupiter_resist_base = jupiter_resist_base;
-        this.element_afinity = _.maxBy([
-            {element: elements.VENUS, level: this.venus_level_base},
-            {element: elements.MERCURY, level: this.mercury_level_base},
-            {element: elements.MARS, level: this.mars_level_base},
-            {element: elements.JUPITER, level: this.jupiter_level_base},
-        ], element => element.level).element;
+        this.element_afinity = _.maxBy(
+            [
+                {element: elements.VENUS, level: this.venus_level_base},
+                {element: elements.MERCURY, level: this.mercury_level_base},
+                {element: elements.MARS, level: this.mars_level_base},
+                {element: elements.JUPITER, level: this.jupiter_level_base},
+            ],
+            element => element.level
+        ).element;
         this.venus_djinni = [];
         this.mercury_djinni = [];
         this.mars_djinni = [];
@@ -171,7 +174,7 @@ export class MainChar extends Player {
             body: null,
             ring: null,
             boots: null,
-            underwear: null
+            underwear: null,
         };
         this.equipped_abilities = [];
         this.innate_abilities = innate_abilities;
@@ -216,10 +219,10 @@ export class MainChar extends Player {
                     {atk: this.atk},
                     {def: this.def},
                     {agi: this.agi},
-                    {luk: this.luk}
-                ]
+                    {luk: this.luk},
+                ],
             },
-            after: null
+            after: null,
         };
         this.current_exp += value;
         this.level = _.findIndex(this.exp_curve, exp => exp > this.current_exp);
@@ -233,8 +236,8 @@ export class MainChar extends Player {
                 {atk: this.atk},
                 {def: this.def},
                 {agi: this.agi},
-                {luk: this.luk}
-            ]
+                {luk: this.luk},
+            ],
         };
         return return_data;
     }
@@ -263,7 +266,7 @@ export class MainChar extends Player {
             key_name: item_key_name,
             quantity: quantity,
             equipped: false,
-            index: this.items.length
+            index: this.items.length,
         });
         if (equip) {
             this.equip_item(this.items.length - 1);
@@ -311,13 +314,27 @@ export class MainChar extends Player {
             this.unequip_item(this.equip_slots.underwear.index);
         }
         switch (item.type) {
-            case item_types.WEAPONS: this.equip_slots.weapon = item_obj; break;
-            case item_types.HEAD_PROTECTOR: this.equip_slots.head = item_obj; break;
-            case item_types.CHEST_PROTECTOR: this.equip_slots.chest = item_obj; break;
-            case item_types.ARMOR: this.equip_slots.body = item_obj; break;
-            case item_types.RING: this.equip_slots.ring = item_obj; break;
-            case item_types.LEG_PROTECTOR: this.equip_slots.boots = item_obj; break;
-            case item_types.UNDERWEAR: this.equip_slots.underwear = item_obj; break;
+            case item_types.WEAPONS:
+                this.equip_slots.weapon = item_obj;
+                break;
+            case item_types.HEAD_PROTECTOR:
+                this.equip_slots.head = item_obj;
+                break;
+            case item_types.CHEST_PROTECTOR:
+                this.equip_slots.chest = item_obj;
+                break;
+            case item_types.ARMOR:
+                this.equip_slots.body = item_obj;
+                break;
+            case item_types.RING:
+                this.equip_slots.ring = item_obj;
+                break;
+            case item_types.LEG_PROTECTOR:
+                this.equip_slots.boots = item_obj;
+                break;
+            case item_types.UNDERWEAR:
+                this.equip_slots.underwear = item_obj;
+                break;
         }
         item_obj.equipped = true;
         for (let i = 0; i < item.effects.length; ++i) {
@@ -443,28 +460,56 @@ export class MainChar extends Player {
             const djinn = this.info.djinni_list[djinni_key_name[i]];
             let lv_shift;
             switch (djinni_next_status[i]) {
-                case djinn_status.SET: lv_shift = MainChar.ELEM_LV_DELTA; break;
+                case djinn_status.SET:
+                    lv_shift = MainChar.ELEM_LV_DELTA;
+                    break;
                 case djinn_status.RECOVERY:
-                case "irrelevant": lv_shift = 0; break;
-                default: lv_shift = -MainChar.ELEM_LV_DELTA;
+                case "irrelevant":
+                    lv_shift = 0;
+                    break;
+                default:
+                    lv_shift = -MainChar.ELEM_LV_DELTA;
             }
             switch (djinn.element) {
-                case elements.VENUS: venus_lv += lv_shift; break;
-                case elements.MERCURY: mercury_lv += lv_shift; break;
-                case elements.MARS: mars_lv += lv_shift; break;
-                case elements.JUPITER: jupiter_lv += lv_shift; break;
+                case elements.VENUS:
+                    venus_lv += lv_shift;
+                    break;
+                case elements.MERCURY:
+                    mercury_lv += lv_shift;
+                    break;
+                case elements.MARS:
+                    mars_lv += lv_shift;
+                    break;
+                case elements.JUPITER:
+                    jupiter_lv += lv_shift;
+                    break;
             }
         }
-        this.class = choose_right_class(this.info.classes_list, this.class_table, this.element_afinity, venus_lv, mercury_lv, mars_lv, jupiter_lv);
+        this.class = choose_right_class(
+            this.info.classes_list,
+            this.class_table,
+            this.element_afinity,
+            venus_lv,
+            mercury_lv,
+            mars_lv,
+            jupiter_lv
+        );
         let return_obj = {
             class_name: this.class.name,
             class_key_name: this.class.key_name,
-            abilities: null
+            abilities: null,
         };
-        return_obj.abilities = this.innate_abilities.concat(this.class.ability_level_pairs.filter(pair => {
-            return pair.level <= this.level && !this.innate_abilities.includes(pair.ability);
-        }).map(pair => pair.ability), this.equipped_abilities);
-        djinni_next_status = djinni_next_status.map(status => status === "irrelevant" ? djinn_status.STANDBY : status);
+        return_obj.abilities = this.innate_abilities.concat(
+            this.class.ability_level_pairs
+                .filter(pair => {
+                    return pair.level <= this.level && !this.innate_abilities.includes(pair.ability);
+                })
+                .map(pair => pair.ability),
+            this.equipped_abilities
+        );
+        djinni_next_status = djinni_next_status.map(status =>
+            status === "irrelevant" ? djinn_status.STANDBY : status
+        );
         stats.forEach(stat => {
             return_obj[stat] = this.preview_stats_by_djinn(stat, djinni_key_name, djinni_next_status, action);
         });
@@ -476,7 +521,7 @@ export class MainChar extends Player {
         const preview_obj = {
             djinni_key_name: djinni_key_name,
             djinni_next_status: djinni_next_status,
-            action: action
+            action: action,
         };
         return this.set_max_stat(stat, true, preview_obj);
     }
@@ -484,8 +529,8 @@ export class MainChar extends Player {
     preview_stats_by_effect(effect_type, effect_obj, item_key_name) {
         const preview_obj = {
             effect_obj: effect_obj,
-            item_key_name: item_key_name
-        }
+            item_key_name: item_key_name,
+        };
         switch (effect_type) {
             case effect_types.MAX_HP:
                 return this.set_max_stat(main_stats.MAX_HP, true, preview_obj);
@@ -541,7 +586,12 @@ export class MainChar extends Player {
             this[stat_key] += djinn[boost_key];
         }
         this.effects.forEach(effect => {
-            if (preview && effect.effect_owner_instance && preview_obj.item_key_name === effect.effect_owner_instance.key_name) return;
+            if (
+                preview &&
+                effect.effect_owner_instance &&
+                preview_obj.item_key_name === effect.effect_owner_instance.key_name
+            )
+                return;
             if (preview && preview_obj.ignore_ability_effect && effect.effect_owner_instance instanceof Ability) return;
             let effect_type;
             switch (stat) {
@@ -569,7 +619,9 @@ export class MainChar extends Player {
             }
         });
         if (preview) {
-            const preview_value = preview_obj.effect_obj ? Effect.preview_value_applied(preview_obj.effect_obj, this[stat_key]) : this[stat_key];
+            const preview_value = preview_obj.effect_obj
+                ? Effect.preview_value_applied(preview_obj.effect_obj, this[stat_key])
+                : this[stat_key];
             this[stat_key] = previous_value;
             return preview_value;
         }
@@ -578,7 +630,7 @@ export class MainChar extends Player {
             if (this[current_key] === undefined) {
                 this[current_key] = this[stat_key];
             } else {
-                this[current_key] = Math.round(this[current_key] * this[stat_key]/previous_value);
+                this[current_key] = Math.round((this[current_key] * this[stat_key]) / previous_value);
             }
         }
     }
@@ -627,8 +679,8 @@ export class MainChar extends Player {
                 previous_stats[element] = {
                     power: this[element + "_power_current"],
                     resist: this[element + "_resist_current"],
-                    level: this[element + "_level_current"]
-                }
+                    level: this[element + "_level_current"],
+                };
             }
             this[element + "_power_current"] = this[element + "_power_base"];
             this[element + "_resist_current"] = this[element + "_resist_base"];
@@ -659,17 +711,22 @@ export class MainChar extends Player {
         }
 
         if (preview) {
-            const elemental_stats = Object.fromEntries(ordered_elements.map(element => {
-                const return_data = [element, {
-                    power: this[element + "_power_current"],
-                    resist: this[element + "_resist_current"],
-                    level: this[element + "_level_current"]
-                }];
-                this[element + "_power_current"] = previous_stats[element].power;
-                this[element + "_resist_current"] = previous_stats[element].resist;
-                this[element + "_level_current"] = previous_stats[element].level;
-                return return_data;
-            }));
+            const elemental_stats = Object.fromEntries(
+                ordered_elements.map(element => {
+                    const return_data = [
+                        element,
+                        {
+                            power: this[element + "_power_current"],
+                            resist: this[element + "_resist_current"],
+                            level: this[element + "_level_current"],
+                        },
+                    ];
+                    this[element + "_power_current"] = previous_stats[element].power;
+                    this[element + "_resist_current"] = previous_stats[element].resist;
+                    this[element + "_level_current"] = previous_stats[element].level;
+                    return return_data;
+                })
+            );
             return elemental_stats;
         } else {
             return null;
@@ -677,9 +734,14 @@ export class MainChar extends Player {
     }
 
     update_abilities() {
-        this.abilities = this.innate_abilities.concat(this.class.ability_level_pairs.filter(pair => {
-            return pair.level <= this.level && !this.innate_abilities.includes(pair.ability);
-        }).map(pair => pair.ability), this.equipped_abilities);
+        this.abilities = this.innate_abilities.concat(
+            this.class.ability_level_pairs
+                .filter(pair => {
+                    return pair.level <= this.level && !this.innate_abilities.includes(pair.ability);
+                })
+                .map(pair => pair.ability),
+            this.equipped_abilities
+        );
     }
 
     update_all() {

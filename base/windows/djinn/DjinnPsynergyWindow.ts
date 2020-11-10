@@ -1,8 +1,8 @@
-import { TextObj, Window } from '../../Window';
-import * as numbers from '../../magic_numbers';
-import { GoldenSun } from '../../GoldenSun';
-import { MainChar } from '../../MainChar';
-import { Djinn } from '../../Djinn';
+import {TextObj, Window} from "../../Window";
+import * as numbers from "../../magic_numbers";
+import {GoldenSun} from "../../GoldenSun";
+import {MainChar} from "../../MainChar";
+import {Djinn} from "../../Djinn";
 
 const BASE_WIN_WIDTH = 116;
 const BASE_WIN_HEIGHT = 116;
@@ -61,7 +61,7 @@ export class DjinnPsynergyWindow {
     public next_djinni_status: string[];
     public action: string;
 
-    constructor(game:Phaser.Game, data:GoldenSun) {
+    constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
 
@@ -76,39 +76,46 @@ export class DjinnPsynergyWindow {
         this.psy_info_2_text = this.base_window.set_text_in_position("", PSY_INFO_X, PSY_INFO_2_Y);
     }
 
-    previous_page(){
+    previous_page() {
         this.change_page(BACKWARD);
     }
 
-    next_page(){
+    next_page() {
         this.change_page(FORWARD);
     }
 
-    grant_control(){
+    grant_control() {
         let controls = [
             {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this)},
             {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this)},
             {key: this.data.gamepad.R, on_down: this.next_state_callback},
-            {key: this.data.gamepad.A, on_down: () => {
-                this.execute_operation = true;
-                this.close(this.close_callback)}},
-            {key: this.data.gamepad.B, on_down: () => {
-                this.execute_operation = false;
-                this.close(this.close_callback)}},
-
+            {
+                key: this.data.gamepad.A,
+                on_down: () => {
+                    this.execute_operation = true;
+                    this.close(this.close_callback);
+                },
+            },
+            {
+                key: this.data.gamepad.B,
+                on_down: () => {
+                    this.execute_operation = false;
+                    this.close(this.close_callback);
+                },
+            },
         ];
-        this.data.control_manager.set_control(controls, {loop_configs:{horizontal:true}});
+        this.data.control_manager.set_control(controls, {loop_configs: {horizontal: true}});
     }
 
     set_page_number() {
         const list_length = this.all_abilities.length;
-        this.page_number = (((list_length - 1)/ELEM_PER_PAGE) | 0) + 1;
+        this.page_number = (((list_length - 1) / ELEM_PER_PAGE) | 0) + 1;
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
         }
     }
 
-    change_page(page_shift:number) {
+    change_page(page_shift: number) {
         this.page_index += page_shift;
         if (this.page_index === this.page_number) {
             this.page_index = 0;
@@ -121,7 +128,10 @@ export class DjinnPsynergyWindow {
 
     set_abilities_list() {
         this.clear_sprites();
-        this.abilities = this.all_abilities.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
+        this.abilities = this.all_abilities.slice(
+            this.page_index * ELEM_PER_PAGE,
+            (this.page_index + 1) * ELEM_PER_PAGE
+        );
         for (let i = 0; i < this.abilities.length; ++i) {
             const key_name = this.abilities[i];
             const x = ELEM_PADDING_LEFT;
@@ -129,11 +139,22 @@ export class DjinnPsynergyWindow {
             const icon_x = x + (numbers.ICON_WIDTH >> 1);
             const icon_y = y + (numbers.ICON_HEIGHT >> 1);
             const x_elem_name = ELEM_PADDING_LEFT + numbers.ICON_WIDTH + 2;
-            const psynergy_name_sprite = this.base_window.set_text_in_position(this.data.info.abilities_list[key_name].name, x_elem_name, y + ELEM_NAME_ICON_SHIFT);
+            const psynergy_name_sprite = this.base_window.set_text_in_position(
+                this.data.info.abilities_list[key_name].name,
+                x_elem_name,
+                y + ELEM_NAME_ICON_SHIFT
+            );
             this.text_sprites_in_window.push(psynergy_name_sprite);
-            this.icon_sprites_in_window.push(this.base_window.create_at_group(icon_x, icon_y, "abilities_icons", undefined, key_name));
+            this.icon_sprites_in_window.push(
+                this.base_window.create_at_group(icon_x, icon_y, "abilities_icons", undefined, key_name)
+            );
             this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
-            const psynergy_cost_sprite = this.base_window.set_text_in_position(this.data.info.abilities_list[key_name].pp_cost, PSY_PP_X, y + ELEM_NAME_ICON_SHIFT, true);
+            const psynergy_cost_sprite = this.base_window.set_text_in_position(
+                this.data.info.abilities_list[key_name].pp_cost,
+                PSY_PP_X,
+                y + ELEM_NAME_ICON_SHIFT,
+                true
+            );
             this.text_sprites_in_window.push(psynergy_cost_sprite);
             if (this.gained_abilities.includes(key_name)) {
                 this.base_window.update_text_color(PSY_GAIN_COLOR, psynergy_name_sprite);
@@ -149,7 +170,12 @@ export class DjinnPsynergyWindow {
         this.current_abilities = this.char.abilities.filter(key_name => {
             return key_name in this.data.info.abilities_list;
         });
-        const preview_values = this.char.preview_djinn_change([], this.djinni.map(d => d.key_name), this.next_djinni_status, this.action);
+        const preview_values = this.char.preview_djinn_change(
+            [],
+            this.djinni.map(d => d.key_name),
+            this.next_djinni_status,
+            this.action
+        );
         this.next_abilities = preview_values.abilities.filter(key_name => {
             return key_name in this.data.info.abilities_list;
         });
@@ -197,7 +223,7 @@ export class DjinnPsynergyWindow {
         this.text_sprites_in_window = [];
     }
 
-    update_info(char:MainChar, djinni:Djinn[], next_djinni_status:string[]) {
+    update_info(char: MainChar, djinni: Djinn[], next_djinni_status: string[]) {
         this.clear_sprites();
         this.base_window.page_indicator.terminante();
         this.char = char;
@@ -207,8 +233,16 @@ export class DjinnPsynergyWindow {
         this.mount_window();
     }
 
-    open(char:MainChar, djinni:Djinn[], next_djinni_status:string[], close_callback:Function,
-        hidden:boolean=false, next_state_callback?:Function, action?:string, callback:Function=undefined) {
+    open(
+        char: MainChar,
+        djinni: Djinn[],
+        next_djinni_status: string[],
+        close_callback: Function,
+        hidden: boolean = false,
+        next_state_callback?: Function,
+        action?: string,
+        callback: Function = undefined
+    ) {
         this.char = char;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;
@@ -230,7 +264,7 @@ export class DjinnPsynergyWindow {
         }, false);
     }
 
-    close(callback?:Function) {
+    close(callback?: Function) {
         this.clear_sprites();
         this.base_window.page_indicator.terminante();
         this.base_window.close(() => {

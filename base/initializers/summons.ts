@@ -1,4 +1,4 @@
-import { Summon } from "../Summon";
+import {Summon} from "../Summon";
 
 export function initialize_summons(summons_db) {
     let summons_list = {};

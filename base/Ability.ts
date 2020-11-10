@@ -6,8 +6,8 @@ export enum ability_types {
     BASE_DAMAGE = "base_damage",
     SUMMON = "summon",
     UTILITY = "utility",
-    DIRECT_DAMAGE = "direct_damage"
-};
+    DIRECT_DAMAGE = "direct_damage",
+}
 
 export enum ability_msg_types {
     CAST = "cast",
@@ -18,15 +18,15 @@ export enum ability_msg_types {
     DEFEND = "defend",
     ITEM_UNLEASH = "item_unleash",
     SET_DJINN = "set_djinn",
-    NO_MSG = "no_msg"
-};
+    NO_MSG = "no_msg",
+}
 
 export enum ability_target_types {
     NO_TARGET = "no_target",
     ALLY = "ally",
     ENEMY = "enemy",
-    USER = "user"
-};
+    USER = "user",
+}
 
 export enum ability_categories {
     PSYNERGY = "psynergy",
@@ -34,43 +34,43 @@ export enum ability_categories {
     SUMMON = "summon",
     ITEM = "item",
     WEAPON_UNLEASH = "weapon_unleash",
-    NORMAL = "normal"
+    NORMAL = "normal",
 }
 
 export const diminishing_ratios = {
     STANDARD: {
-        11: .1,
-        9: .2,
-        7: .4,
-        5: .6,
-        3: .8,
-        1: 1
+        11: 0.1,
+        9: 0.2,
+        7: 0.4,
+        5: 0.6,
+        3: 0.8,
+        1: 1,
     },
     SUMMON: {
-        11: .1,
-        9: .2,
-        7: .3,
-        5: .4,
-        3: .7,
-        1: 1
+        11: 0.1,
+        9: 0.2,
+        7: 0.3,
+        5: 0.4,
+        3: 0.7,
+        1: 1,
     },
     DIMINISH: {
-        11: .1,
-        9: .1,
-        7: .1,
-        5: .3,
-        3: .5,
-        1: 1
+        11: 0.1,
+        9: 0.1,
+        7: 0.1,
+        5: 0.3,
+        3: 0.5,
+        1: 1,
     },
     STATUS: {
-        11: .3,
-        9: .3,
-        7: .3,
-        5: .3,
-        3: .6,
-        1: 1
-    }
-}
+        11: 0.3,
+        9: 0.3,
+        7: 0.3,
+        5: 0.3,
+        3: 0.6,
+        1: 1,
+    },
+};
 
 export class Ability {
     public key_name: string;
@@ -155,8 +155,10 @@ export class Ability {
             return diminishing_ratios.DIMINISH;
         }
         switch (ability_type) {
-            case ability_types.SUMMON: return diminishing_ratios.SUMMON;
-            default: return diminishing_ratios.STANDARD;
+            case ability_types.SUMMON:
+                return diminishing_ratios.SUMMON;
+            default:
+                return diminishing_ratios.STANDARD;
         }
     }
 }

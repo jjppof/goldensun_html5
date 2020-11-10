@@ -1,9 +1,9 @@
-import { Ability } from "./Ability";
-import { Enemy } from "./Enemy";
-import { Item } from "./Item";
-import { MainChar } from "./MainChar";
-import { effect_type_stat, main_stats, permanent_status, temporary_status } from "./Player";
-import { variation, elements } from "./utils"
+import {Ability} from "./Ability";
+import {Enemy} from "./Enemy";
+import {Item} from "./Item";
+import {MainChar} from "./MainChar";
+import {effect_type_stat, main_stats, permanent_status, temporary_status} from "./Player";
+import {variation, elements} from "./utils";
 
 export enum effect_types {
     MAX_HP = "max_hp",
@@ -29,10 +29,10 @@ export enum effect_types {
     ABILITY_POWER = "ability_power",
     SET_DJINN = "set_djinn",
     DAMAGE_MODIFIER = "damage_modifier",
-    DAMAGE_INPUT = "damage_input"
-};
+    DAMAGE_INPUT = "damage_input",
+}
 
-export type effect_names = (typeof effect_names)[keyof typeof effect_names]
+export type effect_names = typeof effect_names[keyof typeof effect_names];
 export const effect_names = {
     [effect_types.MAX_HP]: "HP",
     [effect_types.MAX_PP]: "PP",
@@ -41,15 +41,15 @@ export const effect_names = {
     [effect_types.AGILITY]: "Agility",
     [effect_types.LUCK]: "Luck",
     [effect_types.POWER]: "Power",
-    [effect_types.RESIST]: "Resist"
+    [effect_types.RESIST]: "Resist",
 } as const;
 
 export enum effect_operators {
     PLUS = "plus",
     MINUS = "minus",
     TIMES = "times",
-    DIVIDE = "divide"
-};
+    DIVIDE = "divide",
+}
 
 export enum effect_usages {
     NOT_APPLY = "not_apply",
@@ -58,8 +58,8 @@ export enum effect_usages {
     BATTLE_ROUND_START = "battle_round_start",
     BATTLE_ROUND_END = "battle_round_end",
     PLAYER_TURN_START = "player_turn_start",
-    PLAYER_TURN_END = "player_turn_end"
-};
+    PLAYER_TURN_END = "player_turn_end",
+}
 
 export const effect_msg = {
     aura: target => `A protective aura encircles ${target.name}!`,
@@ -70,13 +70,13 @@ export class Effect {
     public type: effect_types;
     public quantity: number;
     public operator: effect_operators;
-    public effect_owner_instance: Ability|Item;
+    public effect_owner_instance: Ability | Item;
     public quantity_is_absolute: boolean;
     public rate: number;
     public chance: number;
     public attribute: string;
     public add_status: boolean;
-    public status_key_name: permanent_status|temporary_status;
+    public status_key_name: permanent_status | temporary_status;
     public turns_quantity: number;
     public turn_count: number;
     public variation_on_final_result: boolean;
@@ -86,17 +86,17 @@ export class Effect {
     public relative_to_property: string;
     public effect_msg: string;
     public show_msg: boolean;
-    public char: MainChar|Enemy;
+    public char: MainChar | Enemy;
     public sub_effect: {
-        type: effect_types,
-        quantity_is_absolute: boolean,
-        rate: number,
-        chance: number,
-        attribute: string,
-        variation_on_final_result: boolean,
-        usage: string,
-        on_caster: boolean,
-        operator: effect_operators
+        type: effect_types;
+        quantity_is_absolute: boolean;
+        rate: number;
+        chance: number;
+        attribute: string;
+        variation_on_final_result: boolean;
+        usage: string;
+        on_caster: boolean;
+        operator: effect_operators;
     };
 
     constructor(
@@ -149,19 +149,26 @@ export class Effect {
 
     static apply_operator(a, b, operator) {
         switch (operator) {
-            case effect_operators.PLUS: return a + b;
-            case effect_operators.MINUS: return a - b;
-            case effect_operators.TIMES: return a * b;
-            case effect_operators.DIVIDE: return a / b;
+            case effect_operators.PLUS:
+                return a + b;
+            case effect_operators.MINUS:
+                return a - b;
+            case effect_operators.TIMES:
+                return a * b;
+            case effect_operators.DIVIDE:
+                return a / b;
         }
     }
 
     init_sub_effect() {
-        this.sub_effect.quantity_is_absolute = this.sub_effect.quantity_is_absolute === undefined ? false : this.sub_effect.quantity_is_absolute;
+        this.sub_effect.quantity_is_absolute =
+            this.sub_effect.quantity_is_absolute === undefined ? false : this.sub_effect.quantity_is_absolute;
         this.sub_effect.rate = this.sub_effect.rate === undefined ? 1.0 : this.sub_effect.rate;
         this.sub_effect.chance = this.sub_effect.chance === undefined ? 1.0 : this.sub_effect.chance;
-        this.sub_effect.attribute = this.sub_effect.attribute === undefined ? elements.NO_ELEMENT : this.sub_effect.attribute;
-        this.sub_effect.variation_on_final_result = this.sub_effect.variation_on_final_result === undefined ? false : this.sub_effect.variation_on_final_result;
+        this.sub_effect.attribute =
+            this.sub_effect.attribute === undefined ? elements.NO_ELEMENT : this.sub_effect.attribute;
+        this.sub_effect.variation_on_final_result =
+            this.sub_effect.variation_on_final_result === undefined ? false : this.sub_effect.variation_on_final_result;
         this.sub_effect.usage = this.sub_effect.usage === undefined ? effect_usages.NOT_APPLY : this.sub_effect.usage;
         this.sub_effect.on_caster = this.sub_effect.on_caster === undefined ? false : this.sub_effect.on_caster;
     }
@@ -171,7 +178,7 @@ export class Effect {
         if (Math.random() >= this.chance) {
             return {
                 before: before_value,
-                after: before_value
+                after: before_value,
             };
         }
         let after_value;
@@ -188,7 +195,9 @@ export class Effect {
             }
             let value_to_use;
             if (property !== undefined) {
-                value_to_use = this.char[this.relative_to_property !== undefined ? this.relative_to_property : property];
+                value_to_use = this.char[
+                    this.relative_to_property !== undefined ? this.relative_to_property : property
+                ];
             } else {
                 value_to_use = direct_value;
             }
@@ -200,7 +209,7 @@ export class Effect {
         }
         return {
             before: before_value,
-            after: after_value
+            after: after_value,
         };
     }
 
@@ -263,11 +272,11 @@ export class Effect {
             case effect_types.CURRENT_HP:
                 const result_current_hp = this.apply_general_value(main_stats.CURRENT_HP);
                 this.check_caps(main_stats.CURRENT_HP, main_stats.MAX_HP, 0, result_current_hp);
-                return result_current_hp
+                return result_current_hp;
             case effect_types.CURRENT_PP:
                 const result_current_pp = this.apply_general_value(main_stats.CURRENT_PP);
                 this.check_caps(main_stats.CURRENT_PP, main_stats.MAX_PP, 0, result_current_pp);
-                return result_current_pp
+                return result_current_pp;
             case effect_types.POWER:
                 return this.apply_general_value(this.attribute + "_power_current");
             case effect_types.RESIST:
@@ -296,7 +305,7 @@ export class Effect {
                 const stat = effect_type_stat[this.sub_effect.type];
                 result.before = this.char[stat];
                 result.after = this.apply_subeffect(stat, result.after);
-                switch(this.sub_effect.type) {
+                switch (this.sub_effect.type) {
                     case effect_types.CURRENT_HP:
                         this.check_caps(main_stats.CURRENT_HP, main_stats.MAX_HP, 0, result);
                         break;

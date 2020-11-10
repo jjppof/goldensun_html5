@@ -1,6 +1,6 @@
-import { Djinn } from '../Djinn';
-import { SpriteBase } from '../SpriteBase';
-import { elements } from '../utils';
+import {Djinn} from "../Djinn";
+import {SpriteBase} from "../SpriteBase";
+import {elements} from "../utils";
 
 export function initialize_djinni(djinni_db) {
     let djinni_list = {};
@@ -28,12 +28,12 @@ export function initialize_djinni_sprites(game, load_promise_resolve) {
     const actions = ["set", "standby"];
     const directions = {
         set: ["down"],
-        standby: ["left", "down"]
+        standby: ["left", "down"],
     };
     const frames_number = 4;
     const frames_rate = {
         set: 6,
-        standby: 2
+        standby: 2,
     };
     const base_path = "assets/images/spritesheets/djinn/";
     let load_promises = [];
@@ -44,8 +44,16 @@ export function initialize_djinni_sprites(game, load_promise_resolve) {
         djinni_sprites[element] = new SpriteBase(element + "_djinn", actions);
         for (let j = 0; j < actions.length; ++j) {
             const action = actions[j];
-            djinni_sprites[element].setActionSpritesheet(action, `${base_path}${element}_djinn.png`, `${base_path}${element}_djinn.json`);
-            djinni_sprites[element].setActionDirections(action, directions[action], new Array(directions[action].length).fill(frames_number));
+            djinni_sprites[element].setActionSpritesheet(
+                action,
+                `${base_path}${element}_djinn.png`,
+                `${base_path}${element}_djinn.json`
+            );
+            djinni_sprites[element].setActionDirections(
+                action,
+                directions[action],
+                new Array(directions[action].length).fill(frames_number)
+            );
             djinni_sprites[element].setActionFrameRate(action, frames_rate[action]);
         }
         djinni_sprites[element].generateAllFrames();

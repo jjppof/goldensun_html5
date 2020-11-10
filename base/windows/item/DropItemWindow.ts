@@ -1,10 +1,10 @@
-import { TextObj, Window } from '../../Window';
-import { GoldenSun } from '../../GoldenSun';
-import { ItemSlot, MainChar } from '../../MainChar';
-import { Item } from '../../Item';
-import { MainItemMenu } from '../../main_menus/MainItemMenu';
-import { ItemQuantityManagerWindow } from './ItemQuantityManagerWindow';
-import { CursorManager, PointVariants } from '../../utils/CursorManager';
+import {TextObj, Window} from "../../Window";
+import {GoldenSun} from "../../GoldenSun";
+import {ItemSlot, MainChar} from "../../MainChar";
+import {Item} from "../../Item";
+import {MainItemMenu} from "../../main_menus/MainItemMenu";
+import {ItemQuantityManagerWindow} from "./ItemQuantityManagerWindow";
+import {CursorManager, PointVariants} from "../../utils/CursorManager";
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 76;
@@ -52,7 +52,7 @@ export class DropItemWindow {
     public close_callback: Function;
     public open_callback: Function;
 
-    constructor(game:Phaser.Game, data:GoldenSun) {
+    constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
         this.item_menu = null;
@@ -80,16 +80,16 @@ export class DropItemWindow {
         this.dropped = false;
     }
 
-    change_answer(){
-        if(this.answer_index === YES_Y) this.set_answer_index(NO_Y);
+    change_answer() {
+        if (this.answer_index === YES_Y) this.set_answer_index(NO_Y);
         else this.set_answer_index(YES_Y);
     }
 
-    set_answer_index(index:number) {
+    set_answer_index(index: number) {
         this.answer_index = index;
 
         let cursor_x = CURSOR_X;
-        let cursor_y = (index === YES_Y ? CURSOR_Y1 : CURSOR_Y2);
+        let cursor_y = index === YES_Y ? CURSOR_Y1 : CURSOR_Y2;
 
         let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
@@ -104,7 +104,12 @@ export class DropItemWindow {
         this.base_window.update_text(this.item.name, this.icon_name);
         this.icon = this.base_window.create_at_group(INFO_X, ICON_Y, "items_icons", undefined, this.item.key_name);
         if (this.quantity_to_remove > 1) {
-            this.item_count_sprite = this.game.add.bitmapText(INFO_X + SUB_ICON_X, ICON_Y + SUB_ICON_Y, 'gs-item-bmp-font', this.quantity_to_remove.toString());
+            this.item_count_sprite = this.game.add.bitmapText(
+                INFO_X + SUB_ICON_X,
+                ICON_Y + SUB_ICON_Y,
+                "gs-item-bmp-font",
+                this.quantity_to_remove.toString()
+            );
             this.base_window.add_sprite_to_group(this.item_count_sprite);
         }
     }
@@ -124,9 +129,11 @@ export class DropItemWindow {
         this.close();
     }
 
-    on_quantity_select(){
-        this.quantity_to_remove = this.item_quant_win.window_open ? this.item_quant_win.choosen_quantity : this.item_obj.quantity;
-        
+    on_quantity_select() {
+        this.quantity_to_remove = this.item_quant_win.window_open
+            ? this.item_quant_win.choosen_quantity
+            : this.item_obj.quantity;
+
         this.set_answer_index(YES_Y);
         this.base_window.show(() => {
             this.window_open = true;
@@ -142,20 +149,24 @@ export class DropItemWindow {
             {key: this.data.gamepad.A, on_down: this.on_drop.bind(this)},
             {key: this.data.gamepad.B, on_down: this.close.bind(this)},
         ];
-        this.data.control_manager.set_control(controls, {loop_configs:{vertical:true}});
-
+        this.data.control_manager.set_control(controls, {loop_configs: {vertical: true}});
     }
 
-    on_item_select(){
+    on_item_select() {
         if (this.item_obj.quantity > 1) {
             this.item_quant_win.open(this.item_obj, this.item, this.char);
             this.item_quant_win.grant_control(this.close.bind(this), this.on_quantity_select.bind(this));
-        } 
-        else this.on_quantity_select();
+        } else this.on_quantity_select();
     }
 
-    open(item_obj:ItemSlot, item:Item, char:MainChar, item_menu:MainItemMenu,
-        close_callback?:Function, open_callback?:Function) {
+    open(
+        item_obj: ItemSlot,
+        item: Item,
+        char: MainChar,
+        item_menu: MainItemMenu,
+        close_callback?: Function,
+        open_callback?: Function
+    ) {
         this.item_obj = item_obj;
         this.item = item;
         this.char = char;
@@ -175,7 +186,7 @@ export class DropItemWindow {
 
     close() {
         this.unset_info();
-        if(this.item_quant_win.window_open) this.item_quant_win.close();
+        if (this.item_quant_win.window_open) this.item_quant_win.close();
         this.base_window.close(() => {
             this.window_open = false;
             this.window_active = false;

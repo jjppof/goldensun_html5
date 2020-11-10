@@ -1,4 +1,4 @@
-import { SpriteBase } from '../SpriteBase';
+import {SpriteBase} from "../SpriteBase";
 
 export function initialize_enemies(game, enemies_db, load_promise_resolve) {
     let load_promises = [];
@@ -6,7 +6,7 @@ export function initialize_enemies(game, enemies_db, load_promise_resolve) {
     for (let i = 0; i < enemies_db.length; ++i) {
         let info = {
             data: enemies_db[i],
-            sprite_base: null
+            sprite_base: null,
         };
         info.sprite_base = new SpriteBase(info.data.key_name, ["battle"]);
 

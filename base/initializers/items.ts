@@ -1,4 +1,4 @@
-import { Item } from '../Item';
+import {Item} from "../Item";
 
 export function initialize_items(game, items_db, load_promise_resolve) {
     let items_list = {};
@@ -25,7 +25,11 @@ export function initialize_items(game, items_db, load_promise_resolve) {
             item_data.granted_ability
         );
     }
-    const loader = game.load.atlasJSONHash('items_icons', 'assets/images/icons/items/items_icons.png', 'assets/images/icons/items/items_icons.json');
+    const loader = game.load.atlasJSONHash(
+        "items_icons",
+        "assets/images/icons/items/items_icons.png",
+        "assets/images/icons/items/items_icons.json"
+    );
     loader.onLoadComplete.addOnce(load_promise_resolve);
     game.load.start();
     return items_list;

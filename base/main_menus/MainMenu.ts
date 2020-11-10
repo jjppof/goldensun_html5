@@ -1,10 +1,10 @@
-import { capitalize } from '../utils';
-import { MainPsynergyMenu } from './MainPsynergyMenu';
-import { MainItemMenu } from './MainItemMenu';
-import { MainDjinnMenu } from './MainDjinnMenu';
-import { CharsStatusWindow } from '../windows/CharsStatusWindow';
-import { GoldenSun } from '../GoldenSun';
-import { HorizontalMenu } from '../support_menus/HorizontalMenu';
+import {capitalize} from "../utils";
+import {MainPsynergyMenu} from "./MainPsynergyMenu";
+import {MainItemMenu} from "./MainItemMenu";
+import {MainDjinnMenu} from "./MainDjinnMenu";
+import {CharsStatusWindow} from "../windows/CharsStatusWindow";
+import {GoldenSun} from "../GoldenSun";
+import {HorizontalMenu} from "../support_menus/HorizontalMenu";
 
 const TITLE_WINDOW_WIDTH = 70;
 
@@ -36,9 +36,10 @@ export class MainMenu {
             this.buttons_keys.map(b => capitalize(b)),
             {
                 on_press: this.button_press.bind(this),
-                on_cancel:  this.close_menu.bind(this),
-            }
-        , TITLE_WINDOW_WIDTH);
+                on_cancel: this.close_menu.bind(this),
+            },
+            TITLE_WINDOW_WIDTH
+        );
         this.psynergy_menu = new MainPsynergyMenu(this.game, this.data);
         this.item_menu = new MainItemMenu(this.game, this.data);
         this.djinn_menu = new MainDjinnMenu(this.game, this.data);
@@ -60,9 +61,9 @@ export class MainMenu {
         }
     }
 
-    button_press_action(menu:any) {      
+    button_press_action(menu: any) {
         this.horizontal_menu.close(() => {
-            menu.open_menu((close_this_menu:boolean) => {
+            menu.open_menu((close_this_menu: boolean) => {
                 this.chars_status_window.update_chars_info();
                 this.horizontal_menu.open(() => {
                     if (close_this_menu) {
@@ -90,23 +91,23 @@ export class MainMenu {
         this.data.control_manager.reset();
         this.data.cursor_manager.hide();
 
-        let promises:Promise<void>[] = [];
+        let promises: Promise<void>[] = [];
 
-        let closed:() => void;
-        let promise = new Promise<void>(resolve => closed = resolve);
+        let closed: () => void;
+        let promise = new Promise<void>(resolve => (closed = resolve));
         promises.push(promise);
-            
+
         this.horizontal_menu.close(closed);
         this.chars_status_window.close(closed);
 
-        Promise.all(promises).then(() =>{
+        Promise.all(promises).then(() => {
             this.data.menu_open = false;
             this.current_index = 0;
         });
     }
 }
 
-export function initialize_menu(game:Phaser.Game, data:GoldenSun) {
+export function initialize_menu(game: Phaser.Game, data: GoldenSun) {
     let trigger_menu = () => {
         if (data.hero.in_action() || data.in_battle || !data.created || data.game_event_manager.on_event) return;
         if (!data.menu_open) {
@@ -114,15 +115,15 @@ export function initialize_menu(game:Phaser.Game, data:GoldenSun) {
             data.hero.stop_char();
             data.hero.update_shadow();
             data.main_menu.open_menu();
-        };
-    }
+        }
+    };
 
     let controls = [
         {key: data.gamepad.A, on_down: trigger_menu},
-        {key: data.gamepad.SELECT, on_down: trigger_menu}
+        {key: data.gamepad.SELECT, on_down: trigger_menu},
     ];
-    
-    data.control_manager.set_control(controls, {persist:true});
+
+    data.control_manager.set_control(controls, {persist: true});
 
     return new MainMenu(game, data);
 }

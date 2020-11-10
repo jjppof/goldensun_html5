@@ -1,4 +1,4 @@
-import * as numbers from './magic_numbers';
+import * as numbers from "./magic_numbers";
 import * as _ from "lodash";
 
 /*Element keys*/
@@ -7,20 +7,18 @@ export enum elements {
     MERCURY = "mercury",
     MARS = "mars",
     JUPITER = "jupiter",
-    NO_ELEMENT = "no_element"
-};
+    NO_ELEMENT = "no_element",
+}
 
 /*Default elements order*/
-export const ordered_elements = [
-    elements.VENUS, elements.MERCURY, elements.MARS, elements.JUPITER
-];
+export const ordered_elements = [elements.VENUS, elements.MERCURY, elements.MARS, elements.JUPITER];
 
 /*Element names*/
 export const element_names = {
     [elements.VENUS]: "Earth",
     [elements.MERCURY]: "Water",
     [elements.MARS]: "Fire",
-    [elements.JUPITER]: "Wind"
+    [elements.JUPITER]: "Wind",
 };
 
 /*8-Directional direction values*/
@@ -32,7 +30,7 @@ export const directions = {
     left: 4,
     up_left: 5,
     up: 6,
-    up_right: 7
+    up_right: 7,
 };
 
 /*Size of "directions" object*/
@@ -47,9 +45,8 @@ export const reverse_directions = {
     [directions.left]: "left",
     [directions.down_left]: "down_left",
     [directions.down]: "down",
-    [directions.down_right]: "down_right"
+    [directions.down_right]: "down_right",
 };
-
 
 export enum base_actions {
     IDLE = "idle",
@@ -59,8 +56,8 @@ export enum base_actions {
     CLIMB = "climb",
     CAST = "cast",
     JUMP = "jump",
-    BATTLE = "battle"
-};
+    BATTLE = "battle",
+}
 
 /*Returns the angle for an 8-Directional value
 Works clockwise starting with "Right"
@@ -68,8 +65,9 @@ Works clockwise starting with "Right"
 Input: direction [number]: 0-7, clockwise starting with "Right"
 
 Output: [number] - Angle in radians*/
-export function directions_angles(direction){ //clockwise from "right"
-    return direction*Math.PI/4;
+export function directions_angles(direction) {
+    //clockwise from "right"
+    return (direction * Math.PI) / 4;
 }
 
 /*Maps direction keys to their values
@@ -90,11 +88,11 @@ Input: direction [number] - Diagonal direction value
 
 Output: [array] - Array with split direction values*/
 export function split_direction(direction) {
-    if(direction%2===0) return [direction];
-    
+    if (direction % 2 === 0) return [direction];
+
     let vals = new Array(2);
-    vals[0] = direction===directions.right ? direction.up_right : direction-1;
-    vals[1] = direction===directions.up_right ? directions.right : direction+1;
+    vals[0] = direction === directions.right ? direction.up_right : direction - 1;
+    vals[1] = direction === directions.up_right ? directions.right : direction + 1;
     return vals;
 }
 
@@ -107,7 +105,7 @@ Output: [number] - Diagonal direction value
 */
 export function join_directions(dir_1, dir_2) {
     dir_2 = dir_1 === directions.up && dir_2 === directions.right ? directions_count : dir_2;
-    return Math.min(dir_1,dir_2)+1;
+    return Math.min(dir_1, dir_2) + 1;
 }
 
 /*Returns a random number (0,4)
@@ -137,7 +135,7 @@ Input: quadrants [array] - Quadrants to check (array of number)
 
 Output: [boolean]*/
 export function is_inside_sector(quadrants, radius, range_factor, x, y, target_x, target_y) {
-    const range_radius_squared = (radius * range_factor) * (radius * range_factor);
+    const range_radius_squared = radius * range_factor * (radius * range_factor);
     const target_radius_squared = Math.pow(target_x - x, 2) + Math.pow(target_y - y, 2);
     const target_angle = range_360(Math.atan2(y - target_y, target_x - x));
     const angles = [0, numbers.degree90, Math.PI, numbers.degree270, numbers.degree360];
@@ -179,91 +177,91 @@ export function is_close(current_direction, x, y, target_x, target_y, range_fact
             return is_inside_sector([2, 3], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
         case directions.up_left:
             return is_inside_sector([2], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-    };
+    }
 }
 
 /*Direction transitions
 Used being forced to change directions*/
 export const transitions = {
-    [directions.up] : {
-        [directions.up] : directions.up,
-        [directions.down] : directions.down_left,
-        [directions.left] : directions.up_left,
-        [directions.right] : directions.up_right,
-        [directions.down_left] : directions.left,
-        [directions.down_right] : directions.right,
-        [directions.up_left] : directions.up,
-        [directions.up_right] : directions.up
+    [directions.up]: {
+        [directions.up]: directions.up,
+        [directions.down]: directions.down_left,
+        [directions.left]: directions.up_left,
+        [directions.right]: directions.up_right,
+        [directions.down_left]: directions.left,
+        [directions.down_right]: directions.right,
+        [directions.up_left]: directions.up,
+        [directions.up_right]: directions.up,
     },
-    [directions.down] : {
-        [directions.up] : directions.up_left,
-        [directions.down] : directions.down,
-        [directions.left] : directions.down_left,
-        [directions.right] : directions.down_right,
-        [directions.down_left] : directions.down,
-        [directions.down_right] : directions.down,
-        [directions.up_left] : directions.left,
-        [directions.up_right] : directions.right
+    [directions.down]: {
+        [directions.up]: directions.up_left,
+        [directions.down]: directions.down,
+        [directions.left]: directions.down_left,
+        [directions.right]: directions.down_right,
+        [directions.down_left]: directions.down,
+        [directions.down_right]: directions.down,
+        [directions.up_left]: directions.left,
+        [directions.up_right]: directions.right,
     },
-    [directions.left] : {
-        [directions.up] : directions.up_left,
-        [directions.down] : directions.down_left,
-        [directions.left] : directions.left,
-        [directions.right] : directions.up_right,
-        [directions.down_left] : directions.left,
-        [directions.down_right] : directions.down,
-        [directions.up_left] : directions.left,
-        [directions.up_right] : directions.up
+    [directions.left]: {
+        [directions.up]: directions.up_left,
+        [directions.down]: directions.down_left,
+        [directions.left]: directions.left,
+        [directions.right]: directions.up_right,
+        [directions.down_left]: directions.left,
+        [directions.down_right]: directions.down,
+        [directions.up_left]: directions.left,
+        [directions.up_right]: directions.up,
     },
-    [directions.right] : {
-        [directions.up] : directions.up_right,
-        [directions.down] : directions.down_right,
-        [directions.left] : directions.down_left,
-        [directions.right] : directions.right,
-        [directions.down_left] : directions.down,
-        [directions.down_right] : directions.right,
-        [directions.up_left] : directions.up,
-        [directions.up_right] : directions.right
+    [directions.right]: {
+        [directions.up]: directions.up_right,
+        [directions.down]: directions.down_right,
+        [directions.left]: directions.down_left,
+        [directions.right]: directions.right,
+        [directions.down_left]: directions.down,
+        [directions.down_right]: directions.right,
+        [directions.up_left]: directions.up,
+        [directions.up_right]: directions.right,
     },
-    [directions.down_left] : {
-        [directions.up] : directions.up_left,
-        [directions.down] : directions.down_left,
-        [directions.left] : directions.down_left,
-        [directions.right] : directions.down_right,
-        [directions.down_left] : directions.down_left,
-        [directions.down_right] : directions.down,
-        [directions.up_left] : directions.left,
-        [directions.up_right] : directions.up
+    [directions.down_left]: {
+        [directions.up]: directions.up_left,
+        [directions.down]: directions.down_left,
+        [directions.left]: directions.down_left,
+        [directions.right]: directions.down_right,
+        [directions.down_left]: directions.down_left,
+        [directions.down_right]: directions.down,
+        [directions.up_left]: directions.left,
+        [directions.up_right]: directions.up,
     },
-    [directions.down_right] : {
-        [directions.up] : directions.up_right,
-        [directions.down] : directions.down_right,
-        [directions.left] : directions.down_left,
-        [directions.right] : directions.down_right,
-        [directions.down_left] : directions.down,
-        [directions.down_right] : directions.down_right,
-        [directions.up_left] : directions.left,
-        [directions.up_right] : directions.right
+    [directions.down_right]: {
+        [directions.up]: directions.up_right,
+        [directions.down]: directions.down_right,
+        [directions.left]: directions.down_left,
+        [directions.right]: directions.down_right,
+        [directions.down_left]: directions.down,
+        [directions.down_right]: directions.down_right,
+        [directions.up_left]: directions.left,
+        [directions.up_right]: directions.right,
     },
-    [directions.up_left] : {
-        [directions.up] : directions.up_left,
-        [directions.down] : directions.down_left,
-        [directions.left] : directions.up_left,
-        [directions.right] : directions.up_right,
-        [directions.down_left] : directions.left,
-        [directions.down_right] : directions.right,
-        [directions.up_left] : directions.up_left,
-        [directions.up_right] : directions.up
+    [directions.up_left]: {
+        [directions.up]: directions.up_left,
+        [directions.down]: directions.down_left,
+        [directions.left]: directions.up_left,
+        [directions.right]: directions.up_right,
+        [directions.down_left]: directions.left,
+        [directions.down_right]: directions.right,
+        [directions.up_left]: directions.up_left,
+        [directions.up_right]: directions.up,
     },
-    [directions.up_right] : {
-        [directions.up] : directions.up_right,
-        [directions.down] : directions.down_right,
-        [directions.left] : directions.up_left,
-        [directions.right] : directions.up_right,
-        [directions.down_left] : directions.left,
-        [directions.down_right] : directions.right,
-        [directions.up_left] : directions.up,
-        [directions.up_right] : directions.up_right
+    [directions.up_right]: {
+        [directions.up]: directions.up_right,
+        [directions.down]: directions.down_right,
+        [directions.left]: directions.up_left,
+        [directions.right]: directions.up_right,
+        [directions.down_left]: directions.left,
+        [directions.down_right]: directions.right,
+        [directions.up_left]: directions.up,
+        [directions.up_right]: directions.up_right,
     },
 };
 
@@ -274,10 +272,14 @@ Input: direction [number] - Direction value
 Output: [number] - Opposite direction value*/
 export function get_opposite_direction(direction) {
     switch (direction) {
-        case directions.up: return directions.down;
-        case directions.down: return directions.up;
-        case directions.left: return directions.right;
-        case directions.right: return directions.left;
+        case directions.up:
+            return directions.down;
+        case directions.down:
+            return directions.up;
+        case directions.left:
+            return directions.right;
+        case directions.right:
+            return directions.left;
     }
 }
 
@@ -288,7 +290,7 @@ Input: current_direction [number] - Current direction value
        desired_direction [number] - Desired direction value
 
 Output: [number] - The direction value to apply*/
-export function get_transition_directions(current_direction, desired_direction){
+export function get_transition_directions(current_direction, desired_direction) {
     return transitions[desired_direction][current_direction];
 }
 
@@ -296,8 +298,9 @@ export function get_transition_directions(current_direction, desired_direction){
 
 Input: game [Phaser:Game] - Reference to the running game object
        text [string] - Text string*/
-export function get_text_width(game, text, italic = false) { //get text width in px (dirty way)
-    const font_name = italic ? 'gs-italic-bmp-font' : 'gs-bmp-font';
+export function get_text_width(game, text, italic = false) {
+    //get text width in px (dirty way)
+    const font_name = italic ? "gs-italic-bmp-font" : "gs-bmp-font";
     let text_sprite = game.add.bitmapText(0, 0, font_name, text, numbers.FONT_SIZE);
     const text_width = text_sprite.width;
     text_sprite.destroy();
@@ -308,11 +311,11 @@ export function get_text_width(game, text, italic = false) { //get text width in
 
 Input: group [Phaser:Group] - The parent group
        destroy [boolean] - If true, child is destroyed instead.*/
-export function kill_all_sprites(group, destroy=false){
-    group.children.forEach(child =>{
-        if(destroy) child.parent.remove(child,true);
+export function kill_all_sprites(group, destroy = false) {
+    group.children.forEach(child => {
+        if (destroy) child.parent.remove(child, true);
         else child.kill();
-    })
+    });
 }
 
 /*Returns the surrounding positions
@@ -337,7 +340,7 @@ export function get_surroundings(x, y, with_diagonals = false, shift = 1) {
         ]);
     }
     return surroundings;
-};
+}
 
 /*Lists all directions, diagonals optional
 
@@ -356,7 +359,7 @@ Input: text [string] - Text to change
        lower [boolean] - Whether the full text should be lowercased
 
 Output: [string] - Capitalized text*/
-export function capitalize(text, lower = false){
+export function capitalize(text, lower = false) {
     return (lower ? text.toLowerCase() : text).replace(/(?:^|\s|["'([{])+\S/g, match => match.toUpperCase());
 }
 
@@ -367,13 +370,13 @@ Input: hex [number] - Input color
 
 Output [number] - Output color*/
 export function change_brightness(hex, percent) {
-    if (typeof hex === 'string') {
-        hex = hex.replace(/^\s*#|\s*$/g, '');
+    if (typeof hex === "string") {
+        hex = hex.replace(/^\s*#|\s*$/g, "");
     } else {
         hex = hex.toString(16);
     }
     if (hex.length == 3) {
-        hex = hex.replace(/(.)/g, '$1$1');
+        hex = hex.replace(/(.)/g, "$1$1");
     } else {
         hex = ("000000" + hex).slice(-6);
     }
@@ -395,10 +398,11 @@ export function change_brightness(hex, percent) {
 Input: r,g,b [number] - Red, Green, Blue channels
 
 Output [array] - Hue, Saturation, Value channels (array of number)*/
-export function rgb2hsv(r,g,b) {
-    let v = Math.max(r,g,b), n = v-Math.min(r,g,b);
-    let h = n && ((v === r) ? (g-b)/n : ((v === g) ? 2+(b-r)/n : 4+(r-g)/n)); 
-    return [60*(h<0?h+6:h), v&&n/v, v];
+export function rgb2hsv(r, g, b) {
+    let v = Math.max(r, g, b),
+        n = v - Math.min(r, g, b);
+    let h = n && (v === r ? (g - b) / n : v === g ? 2 + (b - r) / n : 4 + (r - g) / n);
+    return [60 * (h < 0 ? h + 6 : h), v && n / v, v];
 }
 
 /*Transform HSV color into RGB color
@@ -406,9 +410,9 @@ export function rgb2hsv(r,g,b) {
 Input: h,s,v [number] - Hue, Saturation, Value channels
 
 Output [array] - Red, Green, Blue (array of number)*/
-export function hsv2rgb(h,s,v) {
-    let f = (n,k=(n+h/60)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0);
-    return [f(5),f(3),f(1)];
+export function hsv2rgb(h, s, v) {
+    let f = (n, k = (n + h / 60) % 6) => v - v * s * Math.max(Math.min(k, 4 - k, 1), 0);
+    return [f(5), f(3), f(1)];
 }
 
 /*Defines the collision polygon
@@ -422,12 +426,12 @@ export function mount_collision_polygon(width, shift, bevel) {
     if (bevel === undefined) bevel = 0;
     return [
         [bevel + shift, shift],
-        ... bevel === 0 ? [] : [[width - bevel + shift, shift]],
+        ...(bevel === 0 ? [] : [[width - bevel + shift, shift]]),
         [width + shift, bevel + shift],
-        ... bevel === 0 ? [] : [[width + shift, width - bevel + shift]],
+        ...(bevel === 0 ? [] : [[width + shift, width - bevel + shift]]),
         [width - bevel + shift, width + shift],
-        ... bevel === 0 ? [] : [[bevel + shift, width + shift]],
+        ...(bevel === 0 ? [] : [[bevel + shift, width + shift]]),
         [shift, width - bevel + shift],
-        ... bevel === 0 ? [] : [[shift, bevel + shift]]
+        ...(bevel === 0 ? [] : [[shift, bevel + shift]]),
     ];
 }

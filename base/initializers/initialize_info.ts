@@ -1,52 +1,54 @@
-import { initialize_main_chars, initialize_classes } from './main_chars';
-import { initialize_abilities, initialize_field_abilities } from './abilities';
-import { initialize_items } from './items';
-import { initialize_djinni, initialize_djinni_sprites } from './djinni';
-import { initialize_enemies } from './enemies';
-import { initialize_maps } from './maps';
-import { initialize_misc_data } from './misc_data';
-import { initialize_shops } from './shops';
-import { initialize_interactable_objs_data } from './interactable_objects';
-import { MainChar } from '../MainChar';
-import { Classes } from '../Classes';
-import { Map } from '../Map';
-import { SpriteBase } from '../SpriteBase';
-import { Djinn } from '../Djinn';
-import { Ability } from '../Ability';
-import { Item } from '../Item';
-import { Shop } from '../Shop';
-import { FieldAbilities } from '../field_abilities/FieldAbilities';
-import { Summon } from '../Summon';
-import { GoldenSun } from '../GoldenSun';
-import { initialize_summons } from './summons';
+import {initialize_main_chars, initialize_classes} from "./main_chars";
+import {initialize_abilities, initialize_field_abilities} from "./abilities";
+import {initialize_items} from "./items";
+import {initialize_djinni, initialize_djinni_sprites} from "./djinni";
+import {initialize_enemies} from "./enemies";
+import {initialize_maps} from "./maps";
+import {initialize_misc_data} from "./misc_data";
+import {initialize_shops} from "./shops";
+import {initialize_interactable_objs_data} from "./interactable_objects";
+import {MainChar} from "../MainChar";
+import {Classes} from "../Classes";
+import {Map} from "../Map";
+import {SpriteBase} from "../SpriteBase";
+import {Djinn} from "../Djinn";
+import {Ability} from "../Ability";
+import {Item} from "../Item";
+import {Shop} from "../Shop";
+import {FieldAbilities} from "../field_abilities/FieldAbilities";
+import {Summon} from "../Summon";
+import {GoldenSun} from "../GoldenSun";
+import {initialize_summons} from "./summons";
 
 export type PartyData = {
-    members: MainChar[],
-    coins: number,
+    members: MainChar[];
+    coins: number;
     game_tickets: {
-        coins_remaining: number,
-        tickets_bought: number
-    }
+        coins_remaining: number;
+        tickets_bought: number;
+    };
 };
 
 export type GameInfo = {
-    maps_list: {[map_key: string]: Map},
-    classes_list: {[class_key: string]: Classes},
-    enemies_list: {[enemy_key: string]: {
-        data: any,
-        sprite_base: SpriteBase
-    }},
-    djinni_list: {[djinn_key: string]: Djinn},
-    djinni_sprites: {[djinn_key: string]: SpriteBase},
-    abilities_list: {[ability_key: string]: Ability},
-    items_list: {[item_key: string]: Item},
-    party_data: PartyData,
-    main_char_list: {[main_char_key: string]: MainChar},
-    misc_sprite_base_list: {[misc_key: string]: SpriteBase},
-    iter_objs_sprite_base_list: {[iter_obj_key: string]: SpriteBase},
-    shops_list: {[shop_key: string]: Shop},
-    summons_list: {[summon_key: string]: Summon},
-    field_abilities_list: {[field_psynergy_key: string]: FieldAbilities},
+    maps_list: {[map_key: string]: Map};
+    classes_list: {[class_key: string]: Classes};
+    enemies_list: {
+        [enemy_key: string]: {
+            data: any;
+            sprite_base: SpriteBase;
+        };
+    };
+    djinni_list: {[djinn_key: string]: Djinn};
+    djinni_sprites: {[djinn_key: string]: SpriteBase};
+    abilities_list: {[ability_key: string]: Ability};
+    items_list: {[item_key: string]: Item};
+    party_data: PartyData;
+    main_char_list: {[main_char_key: string]: MainChar};
+    misc_sprite_base_list: {[misc_key: string]: SpriteBase};
+    iter_objs_sprite_base_list: {[iter_obj_key: string]: SpriteBase};
+    shops_list: {[shop_key: string]: Shop};
+    summons_list: {[summon_key: string]: Summon};
+    field_abilities_list: {[field_psynergy_key: string]: FieldAbilities};
 };
 
 export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
@@ -74,14 +76,14 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     });
     data.info.djinni_sprites = initialize_djinni_sprites(game, load_djinni_sprites_promise_resolve);
     await load_djinni_sprites_promise;
-    
+
     let load_abilities_promise_resolve;
     const load_abilities_promise = new Promise(resolve => {
         load_abilities_promise_resolve = resolve;
     });
     data.info.abilities_list = initialize_abilities(game, data.dbs.abilities_db, load_abilities_promise_resolve);
     await load_abilities_promise;
-    
+
     let load_items_promise_resolve;
     const load_items_promise = new Promise(resolve => {
         load_items_promise_resolve = resolve;
@@ -92,28 +94,42 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     data.info.party_data = {
         members: [],
         coins: data.dbs.init_db.coins,
-        game_tickets: {coins_remaining: 300, tickets_bought: 0}
+        game_tickets: {coins_remaining: 300, tickets_bought: 0},
     };
 
     let load_chars_promise_resolve;
     const load_chars_promise = new Promise(resolve => {
         load_chars_promise_resolve = resolve;
     });
-    data.info.main_char_list = initialize_main_chars(game, data.info, data.dbs.main_chars_db, data.dbs.classes_db, load_chars_promise_resolve);
+    data.info.main_char_list = initialize_main_chars(
+        game,
+        data.info,
+        data.dbs.main_chars_db,
+        data.dbs.classes_db,
+        load_chars_promise_resolve
+    );
     await load_chars_promise;
 
     let load_misc_promise_resolve;
     const load_misc_promise = new Promise(resolve => {
         load_misc_promise_resolve = resolve;
     });
-    data.info.misc_sprite_base_list = initialize_misc_data(game, data.dbs.misc_animations_db, load_misc_promise_resolve);
+    data.info.misc_sprite_base_list = initialize_misc_data(
+        game,
+        data.dbs.misc_animations_db,
+        load_misc_promise_resolve
+    );
     await load_misc_promise;
 
     let load_iter_objs_promise_resolve;
     const load_iter_objs_promise = new Promise(resolve => {
         load_iter_objs_promise_resolve = resolve;
     });
-    data.info.iter_objs_sprite_base_list = initialize_interactable_objs_data(game, data.dbs.interactable_objects_db, load_iter_objs_promise_resolve);
+    data.info.iter_objs_sprite_base_list = initialize_interactable_objs_data(
+        game,
+        data.dbs.interactable_objects_db,
+        load_iter_objs_promise_resolve
+    );
     await load_iter_objs_promise;
 
     data.info.shops_list = initialize_shops(data.dbs.shops_db);

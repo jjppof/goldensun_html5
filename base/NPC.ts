@@ -1,21 +1,21 @@
-import { SpriteBase } from './SpriteBase';
-import { event_types as game_event_types, GameEvent } from "./game_events/GameEvent";
-import { mount_collision_polygon } from './utils';
-import { ControllableChar } from './ControllableChar';
-import { BattleEvent } from './game_events/BattleEvent';
-import { Collision } from './Collision';
+import {SpriteBase} from "./SpriteBase";
+import {event_types as game_event_types, GameEvent} from "./game_events/GameEvent";
+import {mount_collision_polygon} from "./utils";
+import {ControllableChar} from "./ControllableChar";
+import {BattleEvent} from "./game_events/BattleEvent";
+import {Collision} from "./Collision";
 
 export enum npc_movement_types {
     IDLE = "idle",
-    WALK_AROUND = "walk_around"
-};
+    WALK_AROUND = "walk_around",
+}
 
 export enum npc_types {
     NORMAL = "normal",
     INN = "inn",
     SHOP = "shop",
-    SPRITE = "sprite"
-};
+    SPRITE = "sprite",
+}
 
 export class NPC extends ControllableChar {
     private static readonly NPC_TALK_RANGE = 3.0;
@@ -54,7 +54,19 @@ export class NPC extends ControllableChar {
         events_info,
         no_shadow
     ) {
-        super(game, data, key_name, initial_x, initial_y, initial_action, initial_direction, enable_footsteps, walk_speed, dash_speed, climb_speed);
+        super(
+            game,
+            data,
+            key_name,
+            initial_x,
+            initial_y,
+            initial_action,
+            initial_direction,
+            enable_footsteps,
+            walk_speed,
+            dash_speed,
+            climb_speed
+        );
         this.npc_type = npc_type;
         this.movement_type = movement_type;
         this.message = message;
@@ -77,7 +89,9 @@ export class NPC extends ControllableChar {
             const event_info = events_info[i];
             switch (event_info.type) {
                 case game_event_types.BATTLE:
-                    this.events.push(new BattleEvent(this.game, this.data, event_info.background_key, event_info.enemy_party_key));
+                    this.events.push(
+                        new BattleEvent(this.game, this.data, event_info.background_key, event_info.enemy_party_key)
+                    );
                     break;
             }
         }
@@ -96,22 +110,29 @@ export class NPC extends ControllableChar {
         if (this.data.dbs.npc_db[this.key_name].anchor_x !== undefined) {
             this.sprite.anchor.x = this.data.dbs.npc_db[this.key_name].anchor_x;
         } else {
-            this.reset_anchor('x');
+            this.reset_anchor("x");
         }
         if (this.data.dbs.npc_db[this.key_name].anchor_y !== undefined) {
             this.sprite.anchor.y = this.data.dbs.npc_db[this.key_name].anchor_y;
         } else {
-            this.reset_anchor('y');
+            this.reset_anchor("y");
         }
         this.sprite.body.clearShapes();
         this.body_radius = this.data.dbs.npc_db[this.key_name].body_radius;
         const width = this.body_radius << 1;
-        const polygon = mount_collision_polygon(width, -(width >> 1), this.data.dbs.npc_db[this.key_name].collision_body_bevel);
-        this.sprite.body.addPolygon({
+        const polygon = mount_collision_polygon(
+            width,
+            -(width >> 1),
+            this.data.dbs.npc_db[this.key_name].collision_body_bevel
+        );
+        this.sprite.body.addPolygon(
+            {
                 optimalDecomp: false,
                 skipSimpleCheck: true,
-                removeCollinearPoints: false
-        }, polygon);
+                removeCollinearPoints: false,
+            },
+            polygon
+        );
         this.sprite.body.setCollisionGroup(collision_obj.npc_collision_groups[this.base_collision_layer]);
         this.sprite.body.damping = 1;
         this.sprite.body.angularDamping = 1;

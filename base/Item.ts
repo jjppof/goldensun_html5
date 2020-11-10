@@ -9,18 +9,18 @@ export enum item_types {
     RING = "ring",
     UNDERWEAR = "underwear",
     GENERAL_ITEM = "general_item",
-    SHIRT = "shirt"
-};
+    SHIRT = "shirt",
+}
 
 export enum use_types {
     MULTIPLE_USES = "multiple_uses",
     SINGLE_USE = "single_use",
     BREAKS_WHEN_USE = "breaks_when_use",
-    NO_USE = "no_use"
+    NO_USE = "no_use",
 }
 
 export class Item {
-    public static readonly BREAKS_CHANCE = 1/8;
+    public static readonly BREAKS_CHANCE = 1 / 8;
 
     public key_name: string;
     public name: string;
@@ -60,7 +60,7 @@ export class Item {
         use_ability,
         equipable_chars,
         price,
-        granted_ability,
+        granted_ability
     ) {
         this.key_name = key_name;
         this.name = name;

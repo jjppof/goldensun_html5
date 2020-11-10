@@ -1,26 +1,26 @@
-import { Effect, effect_types } from "./Effect";
-import { ordered_elements } from "./utils";
+import {Effect, effect_types} from "./Effect";
+import {ordered_elements} from "./utils";
 
 export enum fighter_types {
     ALLY = 1,
     ENEMY = 2,
-};
+}
 
 export enum temporary_status {
     DELUSION = "delusion",
     STUN = "stun",
     SLEEP = "sleep",
     SEAL = "seal",
-    DEATH_CURSE = "death_curse"
-};
+    DEATH_CURSE = "death_curse",
+}
 
 export enum permanent_status {
     DOWNED = "downed",
     POISON = "poison",
     VENOM = "venom",
     EQUIP_CURSE = "equip_curse",
-    HAUNT = "haunt"
-};
+    HAUNT = "haunt",
+}
 
 export enum main_stats {
     MAX_HP = "max_hp",
@@ -30,10 +30,10 @@ export enum main_stats {
     ATTACK = "atk",
     DEFENSE = "def",
     AGILITY = "agi",
-    LUCK = "luk"
-};
+    LUCK = "luk",
+}
 
-export type effect_type_stat = (typeof effect_type_stat)[keyof typeof effect_type_stat]
+export type effect_type_stat = typeof effect_type_stat[keyof typeof effect_type_stat];
 export const effect_type_stat = {
     [effect_types.MAX_HP]: main_stats.MAX_HP,
     [effect_types.MAX_PP]: main_stats.MAX_PP,
@@ -42,7 +42,7 @@ export const effect_type_stat = {
     [effect_types.AGILITY]: main_stats.AGILITY,
     [effect_types.LUCK]: main_stats.LUCK,
     [effect_types.CURRENT_HP]: main_stats.CURRENT_HP,
-    [effect_types.CURRENT_PP]: main_stats.CURRENT_PP
+    [effect_types.CURRENT_PP]: main_stats.CURRENT_PP,
 } as const;
 
 export const on_catch_status_msg = {
@@ -52,11 +52,13 @@ export const on_catch_status_msg = {
     [temporary_status.SEAL]: target => `${target.name}'s Psynergy has been sealed!`,
     [temporary_status.DEATH_CURSE]: target => `The Spirit of Death embraces ${target.name}!`,
     [permanent_status.DOWNED]: target => {
-        return target.fighter_type === fighter_types.ALLY ? `${target.name} was downed...` : `You felled ${target.name}!`;
+        return target.fighter_type === fighter_types.ALLY
+            ? `${target.name} was downed...`
+            : `You felled ${target.name}!`;
     },
     [permanent_status.POISON]: target => `${target.name} is infected with poison!`,
     [permanent_status.VENOM]: target => `${target.name} is infected with deadly poison!`,
-    [permanent_status.HAUNT]: target => `An evil spirit grips ${target.name}!`
+    [permanent_status.HAUNT]: target => `An evil spirit grips ${target.name}!`,
 };
 
 export const on_remove_status_msg = {
@@ -66,7 +68,7 @@ export const on_remove_status_msg = {
     [temporary_status.SEAL]: target => `${target.name}'s Psynergy seal is gone!`,
     [permanent_status.DOWNED]: target => `${target.name}'s has been revived!`,
     [permanent_status.POISON]: target => `The poison is purged from ${target.name}!`,
-    [permanent_status.VENOM]: target => `The venom is purged from ${target.name}!`
+    [permanent_status.VENOM]: target => `The venom is purged from ${target.name}!`,
 };
 
 export const ordered_status_battle = [
@@ -79,16 +81,16 @@ export const ordered_status_battle = [
     temporary_status.STUN,
     temporary_status.SLEEP,
     permanent_status.HAUNT,
-    temporary_status.DELUSION
-]
+    temporary_status.DELUSION,
+];
 
 export const ordered_status_menu = [
     permanent_status.DOWNED,
     permanent_status.POISON,
     permanent_status.VENOM,
     permanent_status.EQUIP_CURSE,
-    permanent_status.HAUNT
-]
+    permanent_status.HAUNT,
+];
 
 export const ordered_main_stats = [
     main_stats.MAX_HP,
@@ -96,7 +98,7 @@ export const ordered_main_stats = [
     main_stats.ATTACK,
     main_stats.DEFENSE,
     main_stats.AGILITY,
-    main_stats.LUCK
+    main_stats.LUCK,
 ];
 
 export class Player {
@@ -105,7 +107,7 @@ export class Player {
     public temporary_status: Set<temporary_status>;
     public permanent_status: Set<permanent_status>;
     public effects: Effect[];
-    public effect_turns_count: {[effect: string]: number|{[element: string]: number}};
+    public effect_turns_count: {[effect: string]: number | {[element: string]: number}};
     public battle_scale: number;
     public fighter_type: fighter_types;
     public venus_level_current: number;
@@ -206,17 +208,23 @@ export class Player {
     set_effect_turns_count(effect, value = -1, relative = true) {
         switch (effect.type) {
             case effect_types.TEMPORARY_STATUS:
-                this.effect_turns_count[effect.status_key_name] = relative ? (this.effect_turns_count[effect.status_key_name] as number) + value : value;
+                this.effect_turns_count[effect.status_key_name] = relative
+                    ? (this.effect_turns_count[effect.status_key_name] as number) + value
+                    : value;
             case effect_types.MAX_HP:
             case effect_types.MAX_PP:
             case effect_types.ATTACK:
             case effect_types.DEFENSE:
             case effect_types.AGILITY:
             case effect_types.LUCK:
-                return this.effect_turns_count[effect.type] = relative ? (this.effect_turns_count[effect.type] as number) + value : value;
+                return (this.effect_turns_count[effect.type] = relative
+                    ? (this.effect_turns_count[effect.type] as number) + value
+                    : value);
             case effect_types.POWER:
             case effect_types.RESIST:
-                return this.effect_turns_count[effect.type][effect.attribute] = relative ? this.effect_turns_count[effect.type][effect.attribute] + value : value;
+                return (this.effect_turns_count[effect.type][effect.attribute] = relative
+                    ? this.effect_turns_count[effect.type][effect.attribute] + value
+                    : value);
         }
     }
 
@@ -250,7 +258,7 @@ export class Player {
         }
         return {
             effect: effect,
-            changes: changes
+            changes: changes,
         };
     }
 
@@ -295,7 +303,7 @@ export class Player {
         if (this.permanent_status.has(permanent_status.POISON)) {
             return permanent_status.POISON;
         } else if (this.permanent_status.has(permanent_status.VENOM)) {
-            return permanent_status.VENOM
+            return permanent_status.VENOM;
         } else {
             return false;
         }

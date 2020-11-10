@@ -1,7 +1,7 @@
-import { directions } from "../utils";
-import { FieldAbilities } from "./FieldAbilities";
+import {directions} from "../utils";
+import {FieldAbilities} from "./FieldAbilities";
 import * as _ from "lodash";
-import { SpriteBase } from "../SpriteBase";
+import {SpriteBase} from "../SpriteBase";
 
 export class GrowthFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "growth";
@@ -19,7 +19,14 @@ export class GrowthFieldPsynergy extends FieldAbilities {
     private sprite_base: SpriteBase;
 
     constructor(game, data) {
-        super(game, data, GrowthFieldPsynergy.ABILITY_KEY_NAME, GrowthFieldPsynergy.GROWTH_MAX_RANGE, GrowthFieldPsynergy.ACTION_KEY_NAME, true);
+        super(
+            game,
+            data,
+            GrowthFieldPsynergy.ABILITY_KEY_NAME,
+            GrowthFieldPsynergy.GROWTH_MAX_RANGE,
+            GrowthFieldPsynergy.ACTION_KEY_NAME,
+            true
+        );
         this.set_bootstrap_method(this.init_bubbles.bind(this));
         this.sprite_base = this.data.info.iter_objs_sprite_base_list[GrowthFieldPsynergy.ABILITY_KEY_NAME];
     }
@@ -34,7 +41,7 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         let emitter_width = 0;
         let emitter_height = 0;
         this.increase_duration = 0;
-        switch(this.cast_direction) {
+        switch (this.cast_direction) {
             case directions.up:
                 max_y_speed = -GrowthFieldPsynergy.MAX_PARTICLE_SPEED;
                 min_y_speed = -GrowthFieldPsynergy.MIN_PARTICLE_SPEED;
@@ -77,13 +84,13 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         this.emitter.gravity = 0;
         this.emitter.width = emitter_width;
         this.emitter.height = emitter_height;
-        this.particle_filter = this.game.add.filter('ColorFilters');
+        this.particle_filter = this.game.add.filter("ColorFilters");
         this.particle_filter.hue_adjust = 3;
         this.emitter.maxParticleScale = 0.5;
         this.emitter.minParticleScale = 0.4;
         this.emitter.forEach(particle => {
             particle.filters = [this.particle_filter];
-            particle.animations.add('shine', ["ball/01", "ball/02", "ball/03"], 4, false, false);
+            particle.animations.add("shine", ["ball/01", "ball/02", "ball/03"], 4, false, false);
         });
     }
 
@@ -92,7 +99,7 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         this.set_emitter();
         this.emitter.start(false, 100 + this.increase_duration, 8, 0);
         this.emitter.forEach(particle => {
-            particle.animations.play('shine');
+            particle.animations.play("shine");
         });
         this.game.time.events.add(Phaser.Timer.SECOND, () => {
             if (this.target_found) {
@@ -120,7 +127,7 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         this.emitter.destroy();
         let grow_center_x = this.controllable_char.sprite.centerX;
         let grow_center_y = this.controllable_char.sprite.centerY + 17;
-        switch(this.cast_direction) {
+        switch (this.cast_direction) {
             case directions.up:
                 grow_center_y -= 16;
                 break;
@@ -147,7 +154,11 @@ export class GrowthFieldPsynergy extends FieldAbilities {
             this.sprite_base.setAnimation(miss_target_sprite, GrowthFieldPsynergy.ABILITY_KEY_NAME);
             miss_target_sprite.frameName = first_frame_name;
             let resolve_func;
-            promises.push(new Promise(resolve => { resolve_func = resolve; }));
+            promises.push(
+                new Promise(resolve => {
+                    resolve_func = resolve;
+                })
+            );
             this.game.time.events.add(i * 40, () => {
                 miss_target_sprite.animations.play(anim_key);
                 miss_target_sprite.animations.currentAnim.onComplete.addOnce(() => {

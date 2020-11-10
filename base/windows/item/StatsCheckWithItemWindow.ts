@@ -1,10 +1,10 @@
-import { TextObj, Window } from '../../Window';
-import { Item, item_types } from '../../Item';
-import { effect_types, effect_operators } from '../../Effect';
-import { GoldenSun } from '../../GoldenSun';
-import { ItemSlot, MainChar } from '../../MainChar';
+import {TextObj, Window} from "../../Window";
+import {Item, item_types} from "../../Item";
+import {effect_types, effect_operators} from "../../Effect";
+import {GoldenSun} from "../../GoldenSun";
+import {ItemSlot, MainChar} from "../../MainChar";
 import * as _ from "lodash";
-import { main_stats } from '../../Player';
+import {main_stats} from "../../Player";
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;
@@ -15,9 +15,9 @@ const ARROW_Y_SHIFT = 2;
 const PREVIEW_TEXT_X = 94;
 
 type Arrows = {
-    attack: Phaser.Sprite|TextObj,
-    defense: Phaser.Sprite|TextObj,
-    agility: Phaser.Sprite|TextObj
+    attack: Phaser.Sprite | TextObj;
+    defense: Phaser.Sprite | TextObj;
+    agility: Phaser.Sprite | TextObj;
 };
 
 export class StatsCheckWithItemWindow {
@@ -60,17 +60,17 @@ export class StatsCheckWithItemWindow {
         this.up_arrows = {
             [effect_types.ATTACK]: this.base_window.create_at_group(ARROW_X, 48 - ARROW_Y_SHIFT, "up_arrow"),
             [effect_types.DEFENSE]: this.base_window.create_at_group(ARROW_X, 64 - ARROW_Y_SHIFT, "up_arrow"),
-            [effect_types.AGILITY]: this.base_window.create_at_group(ARROW_X, 80 - ARROW_Y_SHIFT, "up_arrow")
+            [effect_types.AGILITY]: this.base_window.create_at_group(ARROW_X, 80 - ARROW_Y_SHIFT, "up_arrow"),
         } as Arrows;
         this.down_arrows = {
             [effect_types.ATTACK]: this.base_window.create_at_group(ARROW_X, 48 - ARROW_Y_SHIFT, "down_arrow"),
             [effect_types.DEFENSE]: this.base_window.create_at_group(ARROW_X, 64 - ARROW_Y_SHIFT, "down_arrow"),
-            [effect_types.AGILITY]: this.base_window.create_at_group(ARROW_X, 80 - ARROW_Y_SHIFT, "down_arrow")
+            [effect_types.AGILITY]: this.base_window.create_at_group(ARROW_X, 80 - ARROW_Y_SHIFT, "down_arrow"),
         } as Arrows;
         this.preview_stats_texts = {
             [effect_types.ATTACK]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 48, true),
             [effect_types.DEFENSE]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 64, true),
-            [effect_types.AGILITY]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 80, true)
+            [effect_types.AGILITY]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 80, true),
         } as Arrows;
         this.hide_arrows();
 
@@ -121,7 +121,10 @@ export class StatsCheckWithItemWindow {
         let effect_obj = _.find(this.item.effects, {type: effect_type});
         let preview_stats;
         if (effect_obj !== undefined) {
-            const equip_slot_key_name = this.char.equip_slots[equip_slot_property] === null ? null : this.char.equip_slots[equip_slot_property].key_name;
+            const equip_slot_key_name =
+                this.char.equip_slots[equip_slot_property] === null
+                    ? null
+                    : this.char.equip_slots[equip_slot_property].key_name;
             preview_stats = this.char.preview_stats_by_effect(effect_type, effect_obj, equip_slot_key_name);
         }
         if (this.char.equip_slots[equip_slot_property] === null) {
@@ -129,15 +132,22 @@ export class StatsCheckWithItemWindow {
             this.update_preview_text(preview_stats, effect_type);
             this.up_arrows[effect_type].alpha = 1;
         } else {
-            const equipped_effect_obj = _.find(this.data.info.items_list[this.char.equip_slots[equip_slot_property].key_name].effects, {type: effect_type});
+            const equipped_effect_obj = _.find(
+                this.data.info.items_list[this.char.equip_slots[equip_slot_property].key_name].effects,
+                {type: effect_type}
+            );
             if (equipped_effect_obj === undefined && effect_obj === undefined) return;
             if (effect_obj === undefined || compare_removing) {
                 effect_obj = {
                     type: effect_type,
                     quantity: 0,
-                    operator: effect_operators.PLUS
+                    operator: effect_operators.PLUS,
                 };
-                preview_stats = this.char.preview_stats_by_effect(effect_type, effect_obj, this.char.equip_slots[equip_slot_property].key_name);
+                preview_stats = this.char.preview_stats_by_effect(
+                    effect_type,
+                    effect_obj,
+                    this.char.equip_slots[equip_slot_property].key_name
+                );
             }
             const current_stats = this.char[current_stats_property];
             if (preview_stats > current_stats) {
@@ -171,10 +181,18 @@ export class StatsCheckWithItemWindow {
         if (!this.item.equipable_chars.includes(this.char.key_name)) return;
         let equip_slot_property;
         switch (this.item.type) {
-            case item_types.WEAPONS: equip_slot_property = "weapon"; break;
-            case item_types.HEAD_PROTECTOR: equip_slot_property = "head"; break;
-            case item_types.CHEST_PROTECTOR: equip_slot_property = "chest"; break;
-            case item_types.ARMOR: equip_slot_property = "body"; break;
+            case item_types.WEAPONS:
+                equip_slot_property = "weapon";
+                break;
+            case item_types.HEAD_PROTECTOR:
+                equip_slot_property = "head";
+                break;
+            case item_types.CHEST_PROTECTOR:
+                equip_slot_property = "chest";
+                break;
+            case item_types.ARMOR:
+                equip_slot_property = "body";
+                break;
         }
         this.set_compare_arrows(effect_types.ATTACK, equip_slot_property, main_stats.ATTACK, compare_removing);
         this.set_compare_arrows(effect_types.DEFENSE, equip_slot_property, main_stats.DEFENSE, compare_removing);
