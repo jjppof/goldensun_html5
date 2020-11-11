@@ -211,7 +211,6 @@ export class DjinnPsynergyWindow {
         this.set_abilities();
         this.set_abilities_list();
         this.set_page_number();
-        this.base_window.page_indicator.initialize(this.page_number, this.page_index);
     }
 
     clear_sprites() {
