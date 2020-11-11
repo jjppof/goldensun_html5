@@ -1,4 +1,4 @@
-import { TextObj, Window } from "../../Window";
+import {TextObj, Window} from "../../Window";
 
 const BASE_WIN_WIDTH = 236;
 const BASE_WIN_HEIGHT = 28;

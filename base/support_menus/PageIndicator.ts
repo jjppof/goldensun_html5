@@ -1,4 +1,4 @@
-import { Window, TextObj } from "../Window";
+import {Window, TextObj} from "../Window";
 
 export class PageIndicator {
   private static readonly NUMBER_WIDTH = 8;

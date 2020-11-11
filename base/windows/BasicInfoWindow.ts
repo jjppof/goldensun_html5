@@ -1,5 +1,5 @@
-import { MainChar } from '../MainChar';
-import { TextObj, Window } from '../Window';
+import {MainChar} from "../MainChar";
+import {TextObj, Window} from "../Window";
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;

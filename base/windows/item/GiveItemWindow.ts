@@ -1,11 +1,11 @@
-import { TextObj, Window } from '../../Window';
-import * as numbers from '../../magic_numbers';
-import { GoldenSun } from '../../GoldenSun';
-import { ItemSlot, MainChar } from '../../MainChar';
-import { Item } from '../../Item';
-import { ItemQuantityManagerWindow } from './ItemQuantityManagerWindow';
-import { MainItemMenu } from '../../main_menus/MainItemMenu';
-import { CursorManager, PointVariants } from '../../utils/CursorManager';
+import {TextObj, Window} from "../../Window";
+import * as numbers from "../../magic_numbers";
+import {GoldenSun} from "../../GoldenSun";
+import {ItemSlot, MainChar} from "../../MainChar";
+import {Item} from "../../Item";
+import {ItemQuantityManagerWindow} from "./ItemQuantityManagerWindow";
+import {MainItemMenu} from "../../main_menus/MainItemMenu";
+import {CursorManager, PointVariants} from "../../utils/CursorManager";
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 36;
@@ -63,7 +63,7 @@ export class GiveItemWindow {
     public equip_sprite: Phaser.Sprite;
     public item_count_sprite: Phaser.BitmapText;
 
-    constructor(game:Phaser.Game, data:GoldenSun) {
+    constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
         this.close_callback = null;
@@ -97,20 +97,19 @@ export class GiveItemWindow {
         this.item_count_sprite = null;
     }
 
-    change_answer(){
-        if(this.answer_index === YES_Y) this.set_answer_index(NO_Y);
+    change_answer() {
+        if (this.answer_index === YES_Y) this.set_answer_index(NO_Y);
         else this.set_answer_index(YES_Y);
     }
 
-    set_answer_index(index:number) {
+    set_answer_index(index: number) {
         this.answer_index = index;
-        
+
         let cursor_x = CURSOR_X;
-        let cursor_y = (index === YES_Y ? CURSOR_Y1 : CURSOR_Y2);
+        let cursor_y = index === YES_Y ? CURSOR_Y1 : CURSOR_Y2;
 
         let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
-
     }
 
     update_position() {
@@ -120,7 +119,13 @@ export class GiveItemWindow {
 
     set_header() {
         this.unset_header();
-        this.icon_sprite = this.base_window.create_at_group(ITEM_ICON_X, ITEM_ICON_Y, "items_icons", undefined, this.item.key_name);
+        this.icon_sprite = this.base_window.create_at_group(
+            ITEM_ICON_X,
+            ITEM_ICON_Y,
+            "items_icons",
+            undefined,
+            this.item.key_name
+        );
         this.base_window.update_text(this.char.name, this.char_name, CHAR_NAME_X, CHAR_NAME_Y);
         this.base_window.update_text(this.item.name, this.item_name, ITEM_NAME_X, ITEM_NAME_Y);
         if (this.choosing_char) {
@@ -132,11 +137,20 @@ export class GiveItemWindow {
         }
         this.equip_sprite = null;
         if (this.item_obj.equipped) {
-            this.equip_sprite = this.base_window.create_at_group(ITEM_ICON_X + SUB_ICON_X, ITEM_ICON_Y + SUB_ICON_Y, "equipped");
+            this.equip_sprite = this.base_window.create_at_group(
+                ITEM_ICON_X + SUB_ICON_X,
+                ITEM_ICON_Y + SUB_ICON_Y,
+                "equipped"
+            );
         }
         this.item_count_sprite = null;
         if (this.item_obj.quantity > 1) {
-            this.item_count_sprite = this.game.add.bitmapText(ITEM_ICON_X + SUB_ICON_X, ITEM_ICON_Y + SUB_ICON_Y, 'gs-item-bmp-font', this.item_obj.quantity.toString());
+            this.item_count_sprite = this.game.add.bitmapText(
+                ITEM_ICON_X + SUB_ICON_X,
+                ITEM_ICON_Y + SUB_ICON_Y,
+                "gs-item-bmp-font",
+                this.item_obj.quantity.toString()
+            );
             this.base_window.add_sprite_to_group(this.item_count_sprite);
         }
     }
@@ -156,18 +170,20 @@ export class GiveItemWindow {
         }
     }
 
-    on_give(equip?:boolean){
-        if(!equip) equip = this.answer_index === YES_Y ? true : false;
+    on_give(equip?: boolean) {
+        if (!equip) equip = this.answer_index === YES_Y ? true : false;
 
         let chars_menu = this.item_menu.chars_menu;
         let dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];
         let dest_item_obj = {
             key_name: this.item_obj.key_name,
             equipped: equip,
-            quantity: (this.item_quantity_manager_window.window_open ? this.item_quantity_manager_window.choosen_quantity : this.item_obj.quantity),
+            quantity: this.item_quantity_manager_window.window_open
+                ? this.item_quantity_manager_window.choosen_quantity
+                : this.item_obj.quantity,
         };
 
-        if(this.item_quantity_manager_window.window_open) this.item_quantity_manager_window.close();
+        if (this.item_quantity_manager_window.window_open) this.item_quantity_manager_window.close();
 
         this.char.remove_item(this.item_obj, dest_item_obj.quantity);
         dest_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, equip);
@@ -182,7 +198,7 @@ export class GiveItemWindow {
         });
     }
 
-    on_character_select(){
+    on_character_select() {
         this.choosing_char = false;
         this.item_menu.choosing_give_destination = false;
 
@@ -190,33 +206,31 @@ export class GiveItemWindow {
         let dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];
         this.asking_for_equip = this.item.equipable_chars.includes(dest_char.key_name);
 
-        if(this.asking_for_equip){
+        if (this.asking_for_equip) {
             this.set_header();
             this.set_answer_index(YES_Y);
-            
+
             let controls = [
                 {key: this.data.gamepad.UP, on_down: this.change_answer.bind(this)},
                 {key: this.data.gamepad.DOWN, on_down: this.change_answer.bind(this)},
                 {key: this.data.gamepad.A, on_down: this.on_give.bind(this)},
                 {key: this.data.gamepad.B, on_down: this.on_give.bind(this, false)},
             ];
-            this.data.control_manager.set_control(controls, {loop_configs:{vertical:true}});
-        }
-        else{
+            this.data.control_manager.set_control(controls, {loop_configs: {vertical: true}});
+        } else {
             if (this.item_obj.quantity > 1) {
                 let dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];
-      
+
                 this.item_quantity_manager_window.open(this.item_obj, this.item, this.char, undefined, dest_char);
                 this.item_quantity_manager_window.grant_control(() => {
                     this.item_quantity_manager_window.close();
                     this.choosing_character();
                 }, this.on_give.bind(this));
-            } 
-            else this.on_give(false);
+            } else this.on_give(false);
         }
     }
 
-    choosing_character(){
+    choosing_character() {
         this.choosing_char = true;
         this.set_header();
 
@@ -228,8 +242,14 @@ export class GiveItemWindow {
         this.item_menu.shift_item_overview(true);
     }
 
-    open(item_obj:ItemSlot, item:Item, char:MainChar, item_menu:MainItemMenu,
-        close_callback?:Function, open_callback?:Function) {
+    open(
+        item_obj: ItemSlot,
+        item: Item,
+        char: MainChar,
+        item_menu: MainItemMenu,
+        close_callback?: Function,
+        open_callback?: Function
+    ) {
         this.item_obj = item_obj;
         this.item = item;
         this.char = char;

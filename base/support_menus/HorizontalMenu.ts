@@ -1,7 +1,7 @@
-import { get_text_width } from '../utils';
-import * as numbers from '../magic_numbers';
-import { Window } from '../Window';
-import { GoldenSun } from '../GoldenSun';
+import {get_text_width} from "../utils";
+import * as numbers from "../magic_numbers";
+import {Window} from "../Window";
+import {GoldenSun} from "../GoldenSun";
 import * as _ from "lodash";
 
 const FORWARD = 1;
@@ -31,7 +31,7 @@ export class HorizontalMenu {
     public custom_scale: {
         active_default: number;
         max_scale: number;
-    }
+    };
     public selected_button_index: number;
     public menu_open: boolean;
     public menu_active: boolean;
@@ -43,12 +43,22 @@ export class HorizontalMenu {
 
     public group: Phaser.Group;
     public buttons: {
-        sprite: Phaser.Sprite,
-        title: string
+        sprite: Phaser.Sprite;
+        title: string;
     }[];
 
-    constructor(game:Phaser.Game, data:GoldenSun, buttons:string[], titles:string[], callbacks:{
-        on_cancel?: Function, on_press:Function}, title_window_width?:number, dock_right:boolean=false) {
+    constructor(
+        game: Phaser.Game,
+        data: GoldenSun,
+        buttons: string[],
+        titles: string[],
+        callbacks: {
+            on_cancel?: Function;
+            on_press: Function;
+        },
+        title_window_width?: number,
+        dock_right: boolean = false
+    ) {
         this.game = game;
         this.data = data;
         this.buttons_keys = buttons;
@@ -57,12 +67,19 @@ export class HorizontalMenu {
         this.on_press = callbacks.on_press;
         this.buttons_number = buttons.length;
 
-        const max_title_width = get_text_width(this.game, _.maxBy(titles, title => title.length));
-        this.title_window_width = title_window_width !== undefined ? title_window_width : max_title_width + 2 * (numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH);
-        const total_width = BUTTON_WIDTH * this.buttons_number + this.title_window_width + 2 * numbers.OUTSIDE_BORDER_WIDTH + 2;
+        const max_title_width = get_text_width(
+            this.game,
+            _.maxBy(titles, title => title.length)
+        );
+        this.title_window_width =
+            title_window_width !== undefined
+                ? title_window_width
+                : max_title_width + 2 * (numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH);
+        const total_width =
+            BUTTON_WIDTH * this.buttons_number + this.title_window_width + 2 * numbers.OUTSIDE_BORDER_WIDTH + 2;
         this.dock_right = dock_right;
 
-        this.custom_scale = null;   
+        this.custom_scale = null;
         this.selected_button_index = 0;
         this.menu_open = false;
         this.menu_active = false;
@@ -72,7 +89,13 @@ export class HorizontalMenu {
         if (!this.dock_right) this.x = this.x >> 1;
         this.y = BUTTON_Y;
 
-        this.title_window = new Window(this.game, this.x + BUTTON_WIDTH * this.buttons_number, this.y, this.title_window_width, TITLE_WINDOW_HEIGHT);
+        this.title_window = new Window(
+            this.game,
+            this.x + BUTTON_WIDTH * this.buttons_number,
+            this.y,
+            this.title_window_width,
+            TITLE_WINDOW_HEIGHT
+        );
         this.group = game.add.group();
         this.group.alpha = 0;
         this.group.width = 0;
@@ -86,16 +109,17 @@ export class HorizontalMenu {
             {key: this.data.gamepad.LEFT, on_down: this.previous_button.bind(this)},
             {key: this.data.gamepad.RIGHT, on_down: this.next_button.bind(this)},
             {key: this.data.gamepad.A, on_down: this.on_press.bind(this)},
-            {key: this.data.gamepad.B, on_down: (this.on_cancel ? this.on_cancel.bind(this) : undefined)}
+            {key: this.data.gamepad.B, on_down: this.on_cancel ? this.on_cancel.bind(this) : undefined},
         ];
 
-        this.data.control_manager.set_control(controls, {loop_configs:{horizontal:true}});
+        this.data.control_manager.set_control(controls, {loop_configs: {horizontal: true}});
     }
 
-    mount_buttons(filtered_buttons:string[]=[]) {
+    mount_buttons(filtered_buttons: string[] = []) {
         const buttons = this.buttons_keys.filter(key => !filtered_buttons.includes(key));
         this.buttons_number = buttons.length;
-        const total_width = BUTTON_WIDTH * this.buttons_number + this.title_window_width + (numbers.OUTSIDE_BORDER_WIDTH << 1) + 2;
+        const total_width =
+            BUTTON_WIDTH * this.buttons_number + this.title_window_width + (numbers.OUTSIDE_BORDER_WIDTH << 1) + 2;
         this.x = numbers.GAME_WIDTH - total_width;
 
         if (!this.dock_right) this.x = this.x >> 1;
@@ -111,15 +135,15 @@ export class HorizontalMenu {
         for (let i = 0; i < this.buttons_number; ++i) {
             this.buttons[i] = {
                 sprite: this.group.create(0, 0, "buttons", buttons[i]),
-                title: this.titles[i]
-            }
+                title: this.titles[i],
+            };
             this.buttons[i].sprite.anchor.setTo(0.5, 1);
             this.buttons[i].sprite.centerX = (BUTTON_WIDTH * (i + 0.5)) | 0;
             this.buttons[i].sprite.centerY = (BUTTON_HEIGHT >> 1) | 0;
         }
     }
 
-    change_button(step:number) {
+    change_button(step: number) {
         this.reset_button();
 
         this.selected_button_index = (this.selected_button_index + step) % this.buttons_number;
@@ -131,15 +155,15 @@ export class HorizontalMenu {
         this.set_button();
     }
 
-    next_button(){
+    next_button() {
         this.change_button(FORWARD);
     }
 
-    previous_button(){
+    previous_button() {
         this.change_button(BACKWARD);
     }
 
-    set_to_position(index:number) {
+    set_to_position(index: number) {
         this.reset_button();
 
         this.selected_button_index = index;
@@ -152,29 +176,23 @@ export class HorizontalMenu {
         let active_default = ACTIVE_DEFAULT;
         let max_scale = MAX_SCALE_DEFAULT;
 
-        if(this.custom_scale){
+        if (this.custom_scale) {
             active_default = this.custom_scale.active_default;
             max_scale = this.custom_scale.max_scale;
         }
 
         this.buttons[this.selected_button_index].sprite.scale.setTo(active_default, active_default);
         this.buttons[this.selected_button_index].sprite.bringToTop();
-        this.selected_button_tween = this.game.add.tween(this.buttons[this.selected_button_index].sprite.scale).to(
-            { x: max_scale, y: max_scale },
-            Phaser.Timer.QUARTER >> 1,
-            Phaser.Easing.Linear.None,
-            true,
-            0,
-            -1,
-            true
-        );
+        this.selected_button_tween = this.game.add
+            .tween(this.buttons[this.selected_button_index].sprite.scale)
+            .to({x: max_scale, y: max_scale}, Phaser.Timer.QUARTER >> 1, Phaser.Easing.Linear.None, true, 0, -1, true);
     }
 
     reset_button() {
         if (this.buttons[this.selected_button_index]) {
             this.buttons[this.selected_button_index].sprite.scale.setTo(1.0, 1.0);
         }
-        
+
         if (this.selected_button_tween) {
             this.selected_button_tween.stop();
         }
@@ -186,11 +204,15 @@ export class HorizontalMenu {
         this.title_window.update(true);
     }
 
-    open(callback?:Function, select_index:number=0, start_active:boolean=true,
-        custom_scale?:{active_default: number, max_scale: number}) {
+    open(
+        callback?: Function,
+        select_index: number = 0,
+        start_active: boolean = true,
+        custom_scale?: {active_default: number; max_scale: number}
+    ) {
         this.reset_button();
 
-        if(custom_scale) this.custom_scale = custom_scale;
+        if (custom_scale) this.custom_scale = custom_scale;
 
         this.menu_active = start_active;
         this.group.alpha = 1;
@@ -199,19 +221,26 @@ export class HorizontalMenu {
         this.update_position();
         this.title_window.set_text([[this.buttons[this.selected_button_index].title]]);
 
-        let window_promise_resolve:Function;
-        let window_promise = new Promise(resolve => { window_promise_resolve = resolve; })
+        let window_promise_resolve: Function;
+        let window_promise = new Promise(resolve => {
+            window_promise_resolve = resolve;
+        });
         this.title_window.show(window_promise_resolve);
 
-        let buttons_resolve:Function;
-        let buttons_promise = new Promise(resolve => { buttons_resolve = resolve; })
+        let buttons_resolve: Function;
+        let buttons_promise = new Promise(resolve => {
+            buttons_resolve = resolve;
+        });
 
-        this.game.add.tween(this.group).to(
-            { width: BUTTON_WIDTH * this.buttons_number, height: BUTTON_HEIGHT },
-            Phaser.Timer.QUARTER >> 2,
-            Phaser.Easing.Linear.None,
-            true
-        ).onComplete.addOnce(buttons_resolve);
+        this.game.add
+            .tween(this.group)
+            .to(
+                {width: BUTTON_WIDTH * this.buttons_number, height: BUTTON_HEIGHT},
+                Phaser.Timer.QUARTER >> 2,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(buttons_resolve);
 
         Promise.all([window_promise, buttons_promise]).then(() => {
             this.set_button();
@@ -224,7 +253,7 @@ export class HorizontalMenu {
         });
     }
 
-    close(callback?: Function, animate:boolean=true) {
+    close(callback?: Function, animate: boolean = true) {
         this.reset_button();
         this.data.control_manager.reset();
 
@@ -232,22 +261,25 @@ export class HorizontalMenu {
         this.group.alpha = 0;
 
         if (animate) {
-            let window_promise_resolve:Function;
-            let window_promise = new Promise(resolve => { window_promise_resolve = resolve; })
+            let window_promise_resolve: Function;
+            let window_promise = new Promise(resolve => {
+                window_promise_resolve = resolve;
+            });
             this.title_window.close(window_promise_resolve);
 
             const transition_time = Phaser.Timer.QUARTER >> 2;
-            let buttons_resolve:Function;
-            let buttons_promise = new Promise(resolve => { buttons_resolve = resolve; })
+            let buttons_resolve: Function;
+            let buttons_promise = new Promise(resolve => {
+                buttons_resolve = resolve;
+            });
 
-            this.game.add.tween(this.group).to(
-                { width: 0, height: 0 },
-                transition_time,
-                Phaser.Easing.Linear.None,
-                true
-            ).onComplete.addOnce(buttons_resolve);
-            Promise.all([window_promise, buttons_promise]).then(callback !== undefined ? (callback as () => void) : () => {});
-
+            this.game.add
+                .tween(this.group)
+                .to({width: 0, height: 0}, transition_time, Phaser.Easing.Linear.None, true)
+                .onComplete.addOnce(buttons_resolve);
+            Promise.all([window_promise, buttons_promise]).then(
+                callback !== undefined ? (callback as () => void) : () => {}
+            );
         } else {
             this.title_window.close(undefined, false);
             this.group.width = this.group.height = 0;

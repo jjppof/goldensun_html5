@@ -1,19 +1,21 @@
-import { directions, map_directions } from "./utils";
-import { NPC } from './NPC';
-import { InteractableObjects, interactable_object_interaction_types } from "./InteractableObjects";
-import { TileEvent, event_types as tile_event_types } from './tile_events/TileEvent';
+import {directions, map_directions} from "./utils";
+import {NPC} from "./NPC";
+import {InteractableObjects, interactable_object_interaction_types} from "./InteractableObjects";
+import {TileEvent, event_types as tile_event_types} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
-import { JumpEvent } from "./tile_events/JumpEvent";
-import { TeleportEvent } from "./tile_events/TeleportEvent";
-import { ClimbEvent } from "./tile_events/ClimbEvent";
-import { StepEvent } from "./tile_events/StepEvent";
-import { CollisionEvent } from "./tile_events/CollisionEvent";
-import { SpeedEvent } from "./tile_events/SpeedEvent";
-import { GameEvent } from "./game_events/GameEvent";
-import { GoldenSun } from "./GoldenSun";
+import {JumpEvent} from "./tile_events/JumpEvent";
+import {TeleportEvent} from "./tile_events/TeleportEvent";
+import {ClimbEvent} from "./tile_events/ClimbEvent";
+import {StepEvent} from "./tile_events/StepEvent";
+import {CollisionEvent} from "./tile_events/CollisionEvent";
+import {SpeedEvent} from "./tile_events/SpeedEvent";
+import {GameEvent} from "./game_events/GameEvent";
+import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
-import { SliderEvent } from "./tile_events/SliderEvent";
-import { SpriteBase } from "./SpriteBase";
+import {SliderEvent} from "./tile_events/SliderEvent";
+import {SpriteBase} from "./SpriteBase";
+import {Collision} from "./Collision";
+import {ControllableChar} from "./ControllableChar";
 
 export class Map {
     private static readonly MAX_CAMERA_ROTATION = 0.035;
@@ -44,7 +46,7 @@ export class Map {
     public collision_embedded: boolean;
     public is_world_map: boolean;
 
-    constructor (
+    constructor(
         game,
         data,
         name,
@@ -73,8 +75,8 @@ export class Map {
         this.collision_layers_number = this.physics_names.length;
         this.collision_sprite = this.game.add.sprite(0, 0);
         this.collision_sprite.width = this.collision_sprite.height = 0;
-        this.color_filter = this.game.add.filter('ColorFilters');
-        this.mode7_filter = this.game.add.filter('Mode7');
+        this.color_filter = this.game.add.filter("ColorFilters");
+        this.mode7_filter = this.game.add.filter("Mode7");
         this.collision_layer = null;
         this.show_footsteps = false;
         this.assets_loaded = false;
@@ -101,7 +103,7 @@ export class Map {
                 return;
             }
         });
-        this.data.npc_group.sort('y_sort', Phaser.Group.SORT_ASCENDING);
+        this.data.npc_group.sort("y_sort", Phaser.Group.SORT_ASCENDING);
         let shadow_index = this.data.npc_group.getChildIndex(this.data.hero.sprite) - 1;
         if (shadow_index >= -1 && shadow_index < this.data.npc_group.children.length) {
             if (shadow_index === -1) {
@@ -139,8 +141,9 @@ export class Map {
 
     update_map_rotation() {
         if (this.is_world_map) {
-            const value_check = Math.abs(this.mode7_filter.angle) < Map.MAX_CAMERA_ROTATION * Math.abs(this.data.hero.x_speed);
-            const sign_check =  Math.sign(this.mode7_filter.angle) === this.data.hero.x_speed;
+            const value_check =
+                Math.abs(this.mode7_filter.angle) < Map.MAX_CAMERA_ROTATION * Math.abs(this.data.hero.x_speed);
+            const sign_check = Math.sign(this.mode7_filter.angle) === this.data.hero.x_speed;
             if (this.data.hero.x_speed && (value_check || sign_check)) {
                 this.mode7_filter.angle -= Math.sign(this.data.hero.x_speed) * Map.CAMERA_ROTATION_STEP;
             } else if (!this.data.hero.x_speed && Math.abs(this.mode7_filter.angle) > 0) {
@@ -149,12 +152,14 @@ export class Map {
         }
     }
 
-    load_map_assets(force_load, on_complete) {
+    load_map_assets(force_load: boolean, on_complete: () => void) {
         let load_tilemap_promise_resolve;
         let load_tilemap_promise = new Promise(resolve => {
             load_tilemap_promise_resolve = resolve;
         });
-        this.game.load.tilemap(this.key_name, this.tileset_json_url, null, Phaser.Tilemap.TILED_JSON).onLoadComplete.addOnce(load_tilemap_promise_resolve);
+        this.game.load
+            .tilemap(this.key_name, this.tileset_json_url, null, Phaser.Tilemap.TILED_JSON)
+            .onLoadComplete.addOnce(load_tilemap_promise_resolve);
 
         let load_image_promise_resolve;
         let load_image_promise = new Promise(resolve => {
@@ -169,7 +174,9 @@ export class Map {
                 load_physics_promise_resolve = resolve;
             });
             physics_promises.push(load_physics_promise);
-            this.game.load.physics(this.physics_names[i], this.physics_jsons_url[i]).onLoadComplete.addOnce(load_physics_promise_resolve);
+            this.game.load
+                .physics(this.physics_names[i], this.physics_jsons_url[i])
+                .onLoadComplete.addOnce(load_physics_promise_resolve);
         }
         if (force_load) {
             Promise.all([load_tilemap_promise, load_image_promise, ...physics_promises]).then(() => {
@@ -180,13 +187,13 @@ export class Map {
         }
     }
 
-    config_body(collision_obj, collision_layer) {
+    config_body(collision_obj: Collision, collision_layer: number) {
         this.game.physics.p2.enable(this.collision_sprite, false);
         this.collision_sprite.body.clearShapes();
         if (this.collision_embedded) {
             this.collision_sprite.width = this.sprite.widthInPixels;
             this.collision_sprite.height = this.sprite.heightInPixels;
-            this.collision_sprite.anchor.setTo(0 ,0);
+            this.collision_sprite.anchor.setTo(0, 0);
             const collision_layer_objects = this.sprite.objects[this.collision_layer];
             for (let i = 0; i < collision_layer_objects.length; ++i) {
                 const collision_object = collision_layer_objects[i];
@@ -194,17 +201,20 @@ export class Map {
                     const new_polygon = collision_object.polygon.map((point: number[]) => {
                         const new_point = [
                             Math.round(collision_object.x + point[0]),
-                            Math.round(collision_object.y + point[1])
+                            Math.round(collision_object.y + point[1]),
                         ];
                         return new_point;
                     });
-                    this.collision_sprite.body.addPolygon({
-                        optimalDecomp: false,
-                        skipSimpleCheck: false,
-                        removeCollinearPoints: false,
-                        remove: false,
-                        adjustCenterOfMass: false
-                    }, new_polygon);
+                    this.collision_sprite.body.addPolygon(
+                        {
+                            optimalDecomp: false,
+                            skipSimpleCheck: false,
+                            removeCollinearPoints: false,
+                            remove: false,
+                            adjustCenterOfMass: false,
+                        },
+                        new_polygon
+                    );
                 } else if (collision_object.rectangle) {
                     this.collision_sprite.body.addRectangle(
                         Math.round(collision_object.width),
@@ -221,8 +231,9 @@ export class Map {
                 }
             }
         } else {
-            this.collision_sprite.body.loadPolygon( //load map physics data json files
-                this.physics_names[collision_layer], 
+            this.collision_sprite.body.loadPolygon(
+                //load map physics data json files
+                this.physics_names[collision_layer],
                 this.physics_names[collision_layer]
             );
         }
@@ -234,7 +245,7 @@ export class Map {
         this.collision_sprite.body.static = true;
     }
 
-    config_all_bodies(collision_obj, collision_layer) {
+    config_all_bodies(collision_obj: Collision, collision_layer: number) {
         if (!this.is_world_map) {
             this.npcs.forEach(npc => npc.config_body(collision_obj));
             this.interactable_objects.forEach(interactable_obj => interactable_obj.config_body(collision_obj));
@@ -242,15 +253,19 @@ export class Map {
         this.config_body(collision_obj, collision_layer);
     }
 
-    get_current_tile(controllable_char, layer?) {
+    get_current_tile(controllable_char: ControllableChar, layer?) {
         if (layer !== undefined) {
             return this.sprite.getTile(controllable_char.tile_x_pos, controllable_char.tile_y_pos, layer);
         } else {
-            return this.layers.map(layer => this.sprite.getTile(controllable_char.tile_x_pos, controllable_char.tile_y_pos, layer.name)).filter(tile => tile);
+            return this.layers
+                .map(layer =>
+                    this.sprite.getTile(controllable_char.tile_x_pos, controllable_char.tile_y_pos, layer.name)
+                )
+                .filter(tile => tile);
         }
     }
 
-    get_layer(name) {
+    get_layer(name: string) {
         return _.find(this.layers, {name: name});
     }
 
@@ -365,30 +380,35 @@ export class Map {
         const property_info = JSON.parse(raw_property);
         const npc_db = this.data.dbs.npc_db[property_info.key_name];
         const initial_action = npc_db.initial_action;
-        const initial_animation = property_info.animation_key !== undefined ? property_info.animation_key : npc_db.actions[initial_action].initial_direction;
-        this.npcs.push(new NPC(
-            this.game,
-            this.data,
-            property_info.key_name,
-            property_info.initial_x,
-            property_info.initial_y,
-            initial_action,
-            initial_animation,
-            property_info.enable_footsteps,
-            npc_db.walk_speed,
-            npc_db.dash_speed,
-            npc_db.climb_speed,
-            property_info.npc_type,
-            property_info.movement_type,
-            property_info.message,
-            property_info.thought_message,
-            property_info.avatar ? property_info.avatar : null,
-            property_info.shop_key,
-            property_info.base_collision_layer === undefined ? 0 : property_info.base_collision_layer,
-            property_info.talk_range_factor,
-            property_info.events === undefined ? [] : property_info.events,
-            this.data.dbs.npc_db[property_info.key_name].no_shadow
-        ));
+        const initial_animation =
+            property_info.animation_key !== undefined
+                ? property_info.animation_key
+                : npc_db.actions[initial_action].initial_direction;
+        this.npcs.push(
+            new NPC(
+                this.game,
+                this.data,
+                property_info.key_name,
+                property_info.initial_x,
+                property_info.initial_y,
+                initial_action,
+                initial_animation,
+                property_info.enable_footsteps,
+                npc_db.walk_speed,
+                npc_db.dash_speed,
+                npc_db.climb_speed,
+                property_info.npc_type,
+                property_info.movement_type,
+                property_info.message,
+                property_info.thought_message,
+                property_info.avatar ? property_info.avatar : null,
+                property_info.shop_key,
+                property_info.base_collision_layer === undefined ? 0 : property_info.base_collision_layer,
+                property_info.talk_range_factor,
+                property_info.events === undefined ? [] : property_info.events,
+                this.data.dbs.npc_db[property_info.key_name].no_shadow
+            )
+        );
     }
 
     create_interactable_objects(raw_property) {
@@ -408,13 +428,19 @@ export class Map {
         );
         this.interactable_objects.push(interactable_object);
         for (let psynergy_key in this.data.dbs.interactable_objects_db[property_info.key_name].psynergy_keys) {
-            const psynergy_properties = this.data.dbs.interactable_objects_db[property_info.key_name].psynergy_keys[psynergy_key];
+            const psynergy_properties = this.data.dbs.interactable_objects_db[property_info.key_name].psynergy_keys[
+                psynergy_key
+            ];
             if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
                 interactable_object.custom_data[psynergy_key + "_casted"] = false;
             }
         }
-        if (this.data.dbs.interactable_objects_db[property_info.key_name].pushable && property_info.block_stair_collider_layer_shift !== undefined) {
-            interactable_object.custom_data.block_stair_collider_layer_shift = property_info.block_stair_collider_layer_shift;
+        if (
+            this.data.dbs.interactable_objects_db[property_info.key_name].pushable &&
+            property_info.block_stair_collider_layer_shift !== undefined
+        ) {
+            interactable_object.custom_data.block_stair_collider_layer_shift =
+                property_info.block_stair_collider_layer_shift;
         }
     }
 
@@ -452,9 +478,23 @@ export class Map {
             await new Promise(resolve => {
                 npc_sprite_info.loadSpritesheets(this.game, true, () => {
                     if (!npc.no_shadow) {
-                        npc.set_shadow(npc_db.shadow_key, this.data.npc_group, npc.base_collision_layer, npc_db.shadow_anchor_x, npc_db.shadow_anchor_y);
+                        npc.set_shadow(
+                            npc_db.shadow_key,
+                            this.data.npc_group,
+                            npc.base_collision_layer,
+                            npc_db.shadow_anchor_x,
+                            npc_db.shadow_anchor_y
+                        );
                     }
-                    npc.set_sprite(this.data.npc_group, npc_sprite_info, this.sprite, npc.base_collision_layer, npc_db.anchor_x, npc_db.anchor_y, this.is_world_map);
+                    npc.set_sprite(
+                        this.data.npc_group,
+                        npc_sprite_info,
+                        this.sprite,
+                        npc.base_collision_layer,
+                        npc_db.anchor_x,
+                        npc_db.anchor_y,
+                        this.is_world_map
+                    );
                     if (this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
                         npc.sprite.scale.setTo(1, 1);
                         if (npc.shadow) {
@@ -469,14 +509,14 @@ export class Map {
         }
     }
 
-    config_layers(overlayer_group, underlayer_group) {
+    config_layers(overlayer_group: Phaser.Group, underlayer_group: Phaser.Group) {
         for (let i = 0; i < this.layers.length; ++i) {
             let layer = this.sprite.createLayer(this.layers[i].name);
             this.layers[i].sprite = layer;
             layer.layer_z = this.layers[i].properties.z === undefined ? i : this.layers[i].properties.z;
             layer.resizeWorld();
             if (this.layers[i].properties.blendMode !== undefined) {
-                layer.blendMode = PIXI.blendModes[this.layers[i].properties.blendMode] as unknown as PIXI.blendModes;
+                layer.blendMode = (PIXI.blendModes[this.layers[i].properties.blendMode] as unknown) as PIXI.blendModes;
             }
             if (this.layers[i].alpha !== undefined) {
                 layer.alpha = this.layers[i].alpha;
@@ -484,7 +524,10 @@ export class Map {
 
             let is_over = false;
             if (this.layers[i].properties.over !== undefined) {
-                const is_over_prop = this.layers[i].properties.over.toString().split(",").map(over => parseInt(over));
+                const is_over_prop = this.layers[i].properties.over
+                    .toString()
+                    .split(",")
+                    .map(over => parseInt(over));
                 if (is_over_prop.length > this.collision_layer) {
                     is_over = Boolean(is_over_prop[this.collision_layer]);
                 } else {
@@ -499,10 +542,10 @@ export class Map {
         }
     }
 
-    async mount_map(collision_layer) {
+    async mount_map(collision_layer: number) {
         if (!this.assets_loaded) {
             let load_promise_resolve;
-            const load_promise = new Promise(resolve => load_promise_resolve = resolve);
+            const load_promise = new Promise(resolve => (load_promise_resolve = resolve));
             this.load_map_assets(true, load_promise_resolve);
             await load_promise;
         }
@@ -531,9 +574,9 @@ export class Map {
             const raw_property = this.sprite.properties[property];
             if (property.startsWith("event")) {
                 this.create_tile_events(raw_property);
-            } else if(property.startsWith("npc")) {
+            } else if (property.startsWith("npc")) {
                 this.create_npcs(raw_property);
-            } else if(property.startsWith("interactable_object")) {
+            } else if (property.startsWith("interactable_object")) {
                 this.create_interactable_objects(raw_property);
             }
         }
@@ -559,7 +602,7 @@ export class Map {
     config_world_map() {
         let next_body_radius = numbers.HERO_BODY_RADIUS;
         if (this.is_world_map) {
-            this.layers.forEach(l => l.sprite.filters = [this.mode7_filter]);
+            this.layers.forEach(l => (l.sprite.filters = [this.mode7_filter]));
             this.game.camera.bounds = null;
             this.npcs.forEach(npc => {
                 if (!this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
@@ -569,13 +612,13 @@ export class Map {
                 npc.sprite.data.map = this;
                 if (npc.shadow) {
                     if (!this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
-                        npc.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X , numbers.WORLD_MAP_SPRITE_SCALE_Y);
+                        npc.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
                     }
                     npc.shadow.data.mode7 = true;
                     npc.shadow.data.map = this;
                 }
             });
-            this.interactable_objects.forEach(obj => obj.sprite.data.mode7 = true);
+            this.interactable_objects.forEach(obj => (obj.sprite.data.mode7 = true));
             next_body_radius = numbers.HERO_BODY_RADIUS_M7;
         } else {
             this.game.camera.bounds = new Phaser.Rectangle();
@@ -583,7 +626,10 @@ export class Map {
         }
 
         if (this.data.hero && next_body_radius !== this.data.hero.body_radius) {
-            this.data.hero.config_body(this.data.collision, this.is_world_map ? numbers.HERO_BODY_RADIUS_M7 : numbers.HERO_BODY_RADIUS);
+            this.data.hero.config_body(
+                this.data.collision,
+                this.is_world_map ? numbers.HERO_BODY_RADIUS_M7 : numbers.HERO_BODY_RADIUS
+            );
             if (this.is_world_map) {
                 this.data.hero.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
                 this.data.hero.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
@@ -607,7 +653,7 @@ export class Map {
             this.data.hero.footsteps.clean_all();
         }
 
-        let sprites_to_remove = []
+        let sprites_to_remove = [];
         for (let i = 0; i < this.data.npc_group.children.length; ++i) {
             let sprite = this.data.npc_group.children[i] as Phaser.Sprite;
             if (!sprite.is_npc && !sprite.is_interactable_object) continue;

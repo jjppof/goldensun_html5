@@ -1,14 +1,14 @@
-import { Collision } from '../Collision';
-import { GoldenSun } from '../GoldenSun';
-import { Hero } from '../Hero';
-import { base_actions } from '../utils';
-import { event_types, TileEvent } from './TileEvent';
+import {Collision} from "../Collision";
+import {GoldenSun} from "../GoldenSun";
+import {Hero} from "../Hero";
+import {base_actions} from "../utils";
+import {event_types, TileEvent} from "./TileEvent";
 
 class EventQueue {
     public climb_event: boolean;
     public queue: {
-        event: TileEvent,
-        fire_function: Function
+        event: TileEvent;
+        fire_function: Function;
     }[];
     constructor() {
         this.climb_event = false;
@@ -16,7 +16,7 @@ class EventQueue {
     }
 
     add(event, this_activation_direction, fire_function, fire = false) {
-        switch(event.type) {
+        switch (event.type) {
             case event_types.CLIMB:
                 if (event.active && event.is_set && event.activation_directions.includes(this_activation_direction)) {
                     this.climb_event = true;
@@ -28,7 +28,7 @@ class EventQueue {
         } else {
             this.queue.push({
                 event: event,
-                fire_function: fire_function
+                fire_function: fire_function,
             });
         }
     }
@@ -107,38 +107,36 @@ export class TileEventManager {
             if (!this_event.is_active(this.hero.current_direction)) continue;
             if (this_event.type === event_types.SPEED) {
                 if (this.hero.extra_speed !== this_event.speed) {
-                    event_queue.add(
-                        this_event,
-                        this.hero.current_direction,
-                        this_event.fire.bind(this_event),
-                        true
-                    );
+                    event_queue.add(this_event, this.hero.current_direction, this_event.fire.bind(this_event), true);
                 }
             } else if (this_event.type === event_types.TELEPORT && !this_event.advance_effect) {
-                    event_queue.add(
-                        this_event,
-                        this.hero.current_direction,
-                        this.fire_event.bind(this, this_event, this.hero.current_direction)
-                    );
-            } else if ([event_types.STEP, event_types.COLLISION].includes(this_event.type) && !this.event_triggered(this_event)) {
                 event_queue.add(
                     this_event,
                     this.hero.current_direction,
-                    this_event.set.bind(this_event)
+                    this.fire_event.bind(this, this_event, this.hero.current_direction)
                 );
+            } else if (
+                [event_types.STEP, event_types.COLLISION].includes(this_event.type) &&
+                !this.event_triggered(this_event)
+            ) {
+                event_queue.add(this_event, this.hero.current_direction, this_event.set.bind(this_event));
             } else {
                 const right_direction = this_event.activation_directions.includes(this.hero.current_direction);
-                if (right_direction && [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.hero.current_action as base_actions)) {
+                if (
+                    right_direction &&
+                    [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(
+                        this.hero.current_action as base_actions
+                    )
+                ) {
                     if (this.event_timers[this_event.id] && !this.event_timers[this_event.id].timer.expired) {
                         continue;
                     }
-                    event_queue.add(
-                        this_event,
-                        this.hero.current_direction,
-                        () => {
-                            this.event_timers[this_event.id] = this.game.time.events.add(TileEventManager.EVENT_INIT_DELAY, this.fire_event.bind(this, this_event, this.hero.current_direction));
-                        }
-                    );
+                    event_queue.add(this_event, this.hero.current_direction, () => {
+                        this.event_timers[this_event.id] = this.game.time.events.add(
+                            TileEventManager.EVENT_INIT_DELAY,
+                            this.fire_event.bind(this, this_event, this.hero.current_direction)
+                        );
+                    });
                 }
             }
         }

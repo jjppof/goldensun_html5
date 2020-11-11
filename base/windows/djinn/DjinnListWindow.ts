@@ -1,13 +1,13 @@
-import { TextObj, Window } from '../../Window';
-import { djinn_status, djinn_font_colors, Djinn } from '../../Djinn';
-import * as numbers from '../../magic_numbers';
-import { base_actions, capitalize, change_brightness, directions, elements, reverse_directions } from '../../utils';
-import { DjinnModeHeaderWindow } from './DjinnModeHeaderWindow';
-import { DjinnCharStatsWindow } from './DjinnCharStatsWindow';
-import { DjinnPsynergyWindow } from './DjinnPsynergyWindow';
-import { GoldenSun } from '../../GoldenSun';
-import { DjinnActionWindow } from './DjinnActionWindow';
-import { CharsQuickInfoDjinnWindow } from './CharsQuickInfoDjinnWindow';
+import {TextObj, Window} from "../../Window";
+import {djinn_status, djinn_font_colors, Djinn} from "../../Djinn";
+import * as numbers from "../../magic_numbers";
+import {base_actions, capitalize, change_brightness, directions, elements, reverse_directions} from "../../utils";
+import {DjinnModeHeaderWindow} from "./DjinnModeHeaderWindow";
+import {DjinnCharStatsWindow} from "./DjinnCharStatsWindow";
+import {DjinnPsynergyWindow} from "./DjinnPsynergyWindow";
+import {GoldenSun} from "../../GoldenSun";
+import {DjinnActionWindow} from "./DjinnActionWindow";
+import {CharsQuickInfoDjinnWindow} from "./CharsQuickInfoDjinnWindow";
 
 const WIN_WIDTH = 236;
 const WIN_HEIGHT = 116;
@@ -45,8 +45,8 @@ const LINE_GAP = 8;
 const VIEW_STATES = {
     STATS: 0,
     THIS_CHAR: 1,
-    NEXT_CHAR: 2
-}
+    NEXT_CHAR: 2,
+};
 
 export class DjinnListWindow {
     public game: Phaser.Game;
@@ -61,14 +61,14 @@ export class DjinnListWindow {
     public window_active: boolean;
     public selected_char_index: number;
     public selected_djinn_index: number;
-    public action_text_selected : boolean;
+    public action_text_selected: boolean;
     public page_index: number;
 
     public chars_sprites: {
-        [char_key_name: string]: Phaser.Sprite
+        [char_key_name: string]: Phaser.Sprite;
     };
     public djinns_sprites: {
-        [element: string]: Phaser.Sprite
+        [element: string]: Phaser.Sprite;
     }[];
     public djinn_description: TextObj;
 
@@ -96,7 +96,7 @@ export class DjinnListWindow {
     public view_state: number;
     public changing_djinn_status: boolean;
 
-    constructor (game:Phaser.Game, data:GoldenSun) {
+    constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
         this.close_callback = null;
@@ -118,8 +118,8 @@ export class DjinnListWindow {
         this.djinns_sprites = [];
         this.djinn_description = this.base_window.set_text_in_position("", DJINN_DESCRIPTION_X, DJINN_DESCRIPTION_Y);
 
-        this.page_number_bar_highlight =  this.get_highlight_bar();
-        this.on_action_bar_highlight =  this.get_highlight_bar();
+        this.page_number_bar_highlight = this.get_highlight_bar();
+        this.on_action_bar_highlight = this.get_highlight_bar();
         this.on_action_bar_highlight.alpha = 0;
 
         this.sizes = [];
@@ -151,95 +151,103 @@ export class DjinnListWindow {
         this.group.y = this.game.camera.y + WIN_Y;
     }
 
-    next_character(){
-        if(this.selected_char_index === this.sizes.length-1) return;
+    next_character() {
+        if (this.selected_char_index === this.sizes.length - 1) return;
 
-        if (this.setting_djinn_status && (this.selected_char_index+1 === this.setting_djinn_status_char_index ||
-        this.sizes[this.selected_char_index+1] < this.sizes[this.setting_djinn_status_char_index] && this.action_text_selected)) {
-            this.selected_char_index = this.selected_char_index+1;
+        if (
+            this.setting_djinn_status &&
+            (this.selected_char_index + 1 === this.setting_djinn_status_char_index ||
+                (this.sizes[this.selected_char_index + 1] < this.sizes[this.setting_djinn_status_char_index] &&
+                    this.action_text_selected))
+        ) {
+            this.selected_char_index = this.selected_char_index + 1;
             this.select_action_text();
             this.on_char_change();
-        }
-        else{
-            if(this.action_text_selected) this.selected_djinn_index = 0;
-            this.select_djinn(this.selected_char_index+1, this.selected_djinn_index);
-        }
-    }
-
-    previous_character(){
-        if(this.selected_char_index === 0) return;
-
-        if (this.setting_djinn_status && (this.selected_char_index-1 === this.setting_djinn_status_char_index ||
-            this.sizes[this.selected_char_index-1] < this.sizes[this.setting_djinn_status_char_index] && this.action_text_selected)) {
-                this.selected_char_index = this.selected_char_index-1;
-                this.select_action_text();
-                this.on_char_change();
-            }
-        else{
-            if(this.action_text_selected) this.selected_djinn_index = 0;
-            this.select_djinn(this.selected_char_index-1, this.selected_djinn_index);
+        } else {
+            if (this.action_text_selected) this.selected_djinn_index = 0;
+            this.select_djinn(this.selected_char_index + 1, this.selected_djinn_index);
         }
     }
 
-    next_djinni(){
+    previous_character() {
+        if (this.selected_char_index === 0) return;
+
+        if (
+            this.setting_djinn_status &&
+            (this.selected_char_index - 1 === this.setting_djinn_status_char_index ||
+                (this.sizes[this.selected_char_index - 1] < this.sizes[this.setting_djinn_status_char_index] &&
+                    this.action_text_selected))
+        ) {
+            this.selected_char_index = this.selected_char_index - 1;
+            this.select_action_text();
+            this.on_char_change();
+        } else {
+            if (this.action_text_selected) this.selected_djinn_index = 0;
+            this.select_djinn(this.selected_char_index - 1, this.selected_djinn_index);
+        }
+    }
+
+    next_djinni() {
         if (this.setting_djinn_status && this.selected_char_index === this.setting_djinn_status_char_index) return;
         if (this.sizes[this.selected_char_index] <= 1) return;
 
-        if (this.setting_djinn_status && this.selected_djinn_index === this.sizes[this.selected_char_index]-1 
-            && !this.action_text_selected && this.sizes[this.selected_char_index] < this.sizes[this.setting_djinn_status_char_index])
+        if (
+            this.setting_djinn_status &&
+            this.selected_djinn_index === this.sizes[this.selected_char_index] - 1 &&
+            !this.action_text_selected &&
+            this.sizes[this.selected_char_index] < this.sizes[this.setting_djinn_status_char_index]
+        )
             this.select_action_text();
-
-        else{
-            if(this.action_text_selected || this.selected_djinn_index === this.sizes[this.selected_char_index]-1){
+        else {
+            if (this.action_text_selected || this.selected_djinn_index === this.sizes[this.selected_char_index] - 1) {
                 this.select_djinn(this.selected_char_index, 0, true);
-            }
-                
-            else this.select_djinn(this.selected_char_index, this.selected_djinn_index+1);
+            } else this.select_djinn(this.selected_char_index, this.selected_djinn_index + 1);
         }
     }
 
-    previous_djinni(){
+    previous_djinni() {
         if (this.setting_djinn_status && this.selected_char_index === this.setting_djinn_status_char_index) return;
         if (this.sizes[this.selected_char_index] <= 1) return;
 
-        if (this.setting_djinn_status && this.selected_djinn_index === 0 && !this.action_text_selected &&
-            this.sizes[this.selected_char_index] < this.sizes[this.setting_djinn_status_char_index])
+        if (
+            this.setting_djinn_status &&
+            this.selected_djinn_index === 0 &&
+            !this.action_text_selected &&
+            this.sizes[this.selected_char_index] < this.sizes[this.setting_djinn_status_char_index]
+        )
             this.select_action_text();
-
-        else{
-            if(this.action_text_selected || this.selected_djinn_index === 0){
-                this.select_djinn(this.selected_char_index, this.sizes[this.selected_char_index]-1, true);
-            }
-            else this.select_djinn(this.selected_char_index, this.selected_djinn_index-1);
+        else {
+            if (this.action_text_selected || this.selected_djinn_index === 0) {
+                this.select_djinn(this.selected_char_index, this.sizes[this.selected_char_index] - 1, true);
+            } else this.select_djinn(this.selected_char_index, this.selected_djinn_index - 1);
         }
     }
 
-    select_action_text(){
+    select_action_text() {
         this.action_text_selected = true;
         this.set_highlight_bar();
-        if(this.selected_char_index === this.setting_djinn_status_char_index){
+        if (this.selected_char_index === this.setting_djinn_status_char_index) {
             this.set_djinn_sprite();
-        }
-        else this.active_djinn_sprite.alpha = 0;
+        } else this.active_djinn_sprite.alpha = 0;
 
         this.data.cursor_manager.clear_tweens();
-        this.move_cursor(CURSOR_TEXT_X + COL_GAP*this.selected_char_index, CURSOR_TEXT_Y);
+        this.move_cursor(CURSOR_TEXT_X + COL_GAP * this.selected_char_index, CURSOR_TEXT_Y);
     }
 
-    select_djinn(char:number, index:number, force_change:boolean=false){
+    select_djinn(char: number, index: number, force_change: boolean = false) {
         this.action_text_selected = false;
-        if(this.selected_djinn_index !== index || force_change){
+        if (this.selected_djinn_index !== index || force_change) {
             this.selected_djinn_index = index;
             this.on_djinn_change();
         }
 
-        if(this.selected_char_index !== char || force_change){
+        if (this.selected_char_index !== char || force_change) {
             this.selected_char_index = char;
             this.on_char_change();
         }
 
         this.data.cursor_manager.clear_tweens();
-        this.move_cursor(CURSOR_X + char*COL_GAP, CURSOR_Y + index*LINE_GAP);
+        this.move_cursor(CURSOR_X + char * COL_GAP, CURSOR_Y + index * LINE_GAP);
     }
 
     init_djinn_sprites() {
@@ -263,12 +271,12 @@ export class DjinnListWindow {
         this.djinni_status_texts = [];
         for (let i = 0; i < CHARS_PER_PAGE; ++i) {
             const x = STAR_X_PADDING - 1 + i * DJINN_NAME_BETWEEN;
-            const y = 16
+            const y = 16;
             this.djinni_status_texts.push(this.base_window.set_text_in_position("", x, y));
         }
     }
 
-    set_djinn_sprite(tween:boolean=true) {
+    set_djinn_sprite(tween: boolean = true) {
         const this_char = this.data.info.party_data.members[this.selected_char_index];
         if (this.setting_djinn_status && this.selected_djinn_index === this_char.djinni.length) return;
 
@@ -282,16 +290,13 @@ export class DjinnListWindow {
         this.active_djinn_sprite = this_sprite;
         if (tween) {
             this_sprite.scale.setTo(0, 0);
-            this.game.add.tween(this_sprite.scale).to(
-                { x: -1, y: 1 },
-                Phaser.Timer.QUARTER >> 1,
-                Phaser.Easing.Linear.None,
-                true
-            );
+            this.game.add
+                .tween(this_sprite.scale)
+                .to({x: -1, y: 1}, Phaser.Timer.QUARTER >> 1, Phaser.Easing.Linear.None, true);
         }
 
         this_sprite.alpha = 1;
-        let action:string, direction:string;
+        let action: string, direction: string;
         switch (this_djinn.status) {
             case djinn_status.RECOVERY:
                 direction = "left";
@@ -327,7 +332,10 @@ export class DjinnListWindow {
                 this_char.sprite_base.setAnimation(this.chars_sprites[char_key_name], base_actions.IDLE);
             }
 
-            const animation_key = this_char.sprite_base.getAnimationKey(base_actions.IDLE, reverse_directions[directions.down]);
+            const animation_key = this_char.sprite_base.getAnimationKey(
+                base_actions.IDLE,
+                reverse_directions[directions.down]
+            );
             this.chars_sprites[char_key_name].animations.play(animation_key);
             const x = CHAR_X_PADDING + i * CHAR_X_BETWEEN;
             this.chars_sprites[char_key_name].x = x;
@@ -340,7 +348,7 @@ export class DjinnListWindow {
         }
     }
 
-    update_djinn_list(char_index:number) {
+    update_djinn_list(char_index: number) {
         this.djinn_names[char_index].forEach(sprite => {
             this.base_window.remove_text(sprite);
         });
@@ -364,11 +372,24 @@ export class DjinnListWindow {
             let color;
 
             switch (this_djinn.status) {
-                case djinn_status.SET: color = djinn_font_colors[djinn_status.SET]; break;
-                case djinn_status.STANDBY: color = djinn_font_colors[djinn_status.STANDBY]; break;
-                case djinn_status.RECOVERY: color = djinn_font_colors[djinn_status.RECOVERY]; break;
+                case djinn_status.SET:
+                    color = djinn_font_colors[djinn_status.SET];
+                    break;
+                case djinn_status.STANDBY:
+                    color = djinn_font_colors[djinn_status.STANDBY];
+                    break;
+                case djinn_status.RECOVERY:
+                    color = djinn_font_colors[djinn_status.RECOVERY];
+                    break;
             }
-            const djinn_name = this.base_window.set_text_in_position(this_djinn.name, djinn_x, djinn_y, false, false, color);
+            const djinn_name = this.base_window.set_text_in_position(
+                this_djinn.name,
+                djinn_x,
+                djinn_y,
+                false,
+                false,
+                color
+            );
             this_djinn_names.push(djinn_name);
         }
 
@@ -401,15 +422,20 @@ export class DjinnListWindow {
         }
         if (this.setting_djinn_status) {
             this.on_action_bar_highlight.alpha = 1;
-            this.on_action_bar_highlight.x = HIGHLIGHT_X_PADDING + this.setting_djinn_status_char_index * DJINN_NAME_BETWEEN;
-            this.on_action_bar_highlight.y = HIGHLIGHT_Y_PADDING + this.setting_djinn_status_djinn_index * numbers.FONT_SIZE;
+            this.on_action_bar_highlight.x =
+                HIGHLIGHT_X_PADDING + this.setting_djinn_status_char_index * DJINN_NAME_BETWEEN;
+            this.on_action_bar_highlight.y =
+                HIGHLIGHT_Y_PADDING + this.setting_djinn_status_djinn_index * numbers.FONT_SIZE;
         } else {
             this.on_action_bar_highlight.alpha = 0;
         }
     }
 
     update_djinn_description() {
-        if (this.setting_djinn_status && this.selected_djinn_index === this.data.info.party_data.members[this.selected_char_index].djinni.length) {
+        if (
+            this.setting_djinn_status &&
+            this.selected_djinn_index === this.data.info.party_data.members[this.selected_char_index].djinni.length
+        ) {
             this.base_window.update_text("", this.djinn_description);
         } else {
             const this_char = this.data.info.party_data.members[this.selected_char_index];
@@ -420,7 +446,6 @@ export class DjinnListWindow {
 
     set_action_text() {
         if (this.setting_djinn_status) {
-
         } else {
             const this_char = this.data.info.party_data.members[this.selected_char_index];
             const this_djinn = this.data.info.djinni_list[this_char.djinni[this.selected_djinn_index]];
@@ -434,7 +459,10 @@ export class DjinnListWindow {
         } else {
             if (this.selected_djinn_index >= this.sizes[this.selected_char_index]) {
                 this.selected_djinn_index = this.sizes[this.selected_char_index] - 1;
-                this.move_cursor(CURSOR_X + this.selected_char_index*COL_GAP, CURSOR_Y + this.selected_djinn_index*LINE_GAP);
+                this.move_cursor(
+                    CURSOR_X + this.selected_char_index * COL_GAP,
+                    CURSOR_Y + this.selected_djinn_index * LINE_GAP
+                );
             }
         }
 
@@ -447,19 +475,18 @@ export class DjinnListWindow {
         this.set_djinn_sprite();
     }
 
-    on_djinn_change(){
+    on_djinn_change() {
         this.set_highlight_bar();
         this.set_action_text();
         this.update_djinn_description();
         this.set_djinn_sprite();
     }
 
-    move_cursor(x_pos:number, y_pos:number, on_complete?:Function){
+    move_cursor(x_pos: number, y_pos: number, on_complete?: Function) {
         this.data.cursor_manager.move_to({x: x_pos, y: y_pos}, {animate: false}, on_complete);
     }
 
-    
-    grant_control(on_cancel:Function, on_select:Function, on_change_djinn_status?:Function){
+    grant_control(on_cancel: Function, on_select: Function, on_change_djinn_status?: Function) {
         let controls = [
             {key: this.data.gamepad.LEFT, on_down: this.previous_character.bind(this)},
             {key: this.data.gamepad.RIGHT, on_down: this.next_character.bind(this)},
@@ -467,9 +494,9 @@ export class DjinnListWindow {
             {key: this.data.gamepad.DOWN, on_down: this.next_djinni.bind(this)},
             {key: this.data.gamepad.A, on_down: on_select},
             {key: this.data.gamepad.B, on_down: on_cancel},
-            {key: this.data.gamepad.R, on_down: on_change_djinn_status}
+            {key: this.data.gamepad.R, on_down: on_change_djinn_status},
         ];
-        this.data.control_manager.set_control(controls, {loop_configs:{vertical:true, horizontal:true}});
+        this.data.control_manager.set_control(controls, {loop_configs: {vertical: true, horizontal: true}});
     }
 
     darken_font_color(darken = true) {
@@ -477,7 +504,9 @@ export class DjinnListWindow {
 
         for (let i = 0; i < this.djinn_names[this.setting_djinn_status_char_index].length; ++i) {
             const this_djinn = this.data.info.djinni_list[this_char.djinni[i]];
-            const color = darken ? change_brightness(djinn_font_colors[this_djinn.status], 0.7) : djinn_font_colors[this_djinn.status];
+            const color = darken
+                ? change_brightness(djinn_font_colors[this_djinn.status], 0.7)
+                : djinn_font_colors[this_djinn.status];
 
             if (darken && i === this.setting_djinn_status_djinn_index) continue;
             this.base_window.update_text_color(color, this.djinn_names[this.setting_djinn_status_char_index][i]);
@@ -490,44 +519,35 @@ export class DjinnListWindow {
 
         if (this.setting_djinn_status_char_index !== this.selected_char_index) {
             const next_char = this.data.info.party_data.members[this.selected_char_index];
-            let this_statuses:string[], next_statuses:string[], this_djinni:Djinn[], next_djinni:Djinn[];
-            let action_text:string, next_djinn:Djinn;
+            let this_statuses: djinn_status[],
+                next_statuses: djinn_status[],
+                this_djinni: Djinn[],
+                next_djinni: Djinn[];
+            let action_text: string, next_djinn: Djinn;
 
             if (this.action_text_selected) {
-                this_statuses = [this_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY];
-                next_statuses = [this_djinn.status === djinn_status.STANDBY ? "irrelevant" : this_djinn.status];
+                this_statuses = [this_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : djinn_status.STANDBY];
+                next_statuses = [this_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : this_djinn.status];
                 this_djinni = [this_djinn];
                 next_djinni = [this_djinn];
                 action_text = "Give";
-            }
-            
-            else {
+            } else {
                 next_djinn = this.data.info.djinni_list[next_char.djinni[this.selected_djinn_index]];
                 this_statuses = [
-                    next_djinn.status === djinn_status.STANDBY ? "irrelevant" : next_djinn.status,
-                    this_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY
+                    next_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : next_djinn.status,
+                    this_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : djinn_status.STANDBY,
                 ];
                 next_statuses = [
-                    this_djinn.status === djinn_status.STANDBY ? "irrelevant" : this_djinn.status,
-                    next_djinn.status === djinn_status.STANDBY ? "irrelevant" : djinn_status.STANDBY
+                    this_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : this_djinn.status,
+                    next_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : djinn_status.STANDBY,
                 ];
                 this_djinni = [next_djinn, this_djinn];
                 next_djinni = [this_djinn, next_djinn];
                 action_text = "Trade";
             }
 
-            this.djinn_char_stats_window_left.open(
-                this_char,
-                this_djinni,
-                this_statuses,
-                action_text
-            );
-            this.djinn_char_stats_window_right.open(
-                next_char,
-                next_djinni,
-                next_statuses,
-                action_text
-            );
+            this.djinn_char_stats_window_left.open(this_char, this_djinni, this_statuses, action_text);
+            this.djinn_char_stats_window_right.open(next_char, next_djinni, next_statuses, action_text);
 
             this.djinn_char_stats_window_right.base_window.update_position({x: DJINN_CHAR_WIN_STATS_RIGHT_X});
             this.djinn_status_change_header_window.open(
@@ -540,82 +560,96 @@ export class DjinnListWindow {
             this.deactivate();
             this.view_state = VIEW_STATES.STATS;
 
-            this.djinn_psynergy_window.open(this_char, this_djinni, this_statuses, (execute_operation:boolean) => {
-                this.djinn_status_change_header_window.close();
-                this.djinn_char_stats_window_left.close();
-                this.djinn_char_stats_window_right.close();
+            this.djinn_psynergy_window.open(
+                this_char,
+                this_djinni,
+                this_statuses,
+                (execute_operation: boolean) => {
+                    this.djinn_status_change_header_window.close();
+                    this.djinn_char_stats_window_left.close();
+                    this.djinn_char_stats_window_right.close();
 
-                if (execute_operation) {
-                    if (action_text === "Trade") {
-                        this_char.replace_djinn(this_djinn.key_name, next_djinn.key_name);
-                        next_char.replace_djinn(next_djinn.key_name, this_djinn.key_name);
+                    if (execute_operation) {
+                        if (action_text === "Trade") {
+                            this_char.replace_djinn(this_djinn.key_name, next_djinn.key_name);
+                            next_char.replace_djinn(next_djinn.key_name, this_djinn.key_name);
+                        } else if (action_text === "Give") {
+                            this_char.remove_djinn(this_djinn.key_name);
+                            next_char.add_djinn(this_djinn.key_name);
+                            this.selected_djinn_index = 0;
+                        }
 
-                    } else if (action_text === "Give") {
-                        this_char.remove_djinn(this_djinn.key_name);
-                        next_char.add_djinn(this_djinn.key_name);
-                        this.selected_djinn_index = 0;
+                        this.update_djinn_list(this.selected_char_index);
+                        this.update_djinn_list(this.setting_djinn_status_char_index);
+                        this.cancel_djinn_status_set();
+                    } else {
+                        this.grant_control(
+                            this.cancel_djinn_status_set.bind(this, true),
+                            this.set_djinn_operation.bind(this)
+                        );
+                    }
+                    this.activate();
+                },
+                true,
+                () => {
+                    ++this.view_state;
+                    if (this.view_state > VIEW_STATES.NEXT_CHAR) {
+                        this.view_state = VIEW_STATES.STATS;
                     }
 
-                    this.update_djinn_list(this.selected_char_index);
-                    this.update_djinn_list(this.setting_djinn_status_char_index);
-                    this.cancel_djinn_status_set();
-                }
-
-                else{
-                    this.grant_control(this.cancel_djinn_status_set.bind(this, true), this.set_djinn_operation.bind(this));
-                }
-                this.activate();
-
-            }, true, () => {
-                ++this.view_state;
-                if (this.view_state > VIEW_STATES.NEXT_CHAR) {
-                    this.view_state = VIEW_STATES.STATS;
-                }
-
-                switch (this.view_state) {
-                    case VIEW_STATES.STATS:
-                        this.djinn_psynergy_window.base_window.close(undefined, false);
-                        this.djinn_char_stats_window_left.base_window.show(undefined, false);
-                        this.djinn_char_stats_window_right.base_window.update_position({x: DJINN_CHAR_WIN_STATS_RIGHT_X});
-                        this.djinn_status_change_header_window.set_action_info_text(`: ${this_char.name}'s Psy`);
-                        break;
-                    case VIEW_STATES.THIS_CHAR:
-                        this.djinn_psynergy_window.update_info(this_char, this_djinni, this_statuses);
-                        this.djinn_psynergy_window.base_window.show(undefined, false);
-                        this.djinn_char_stats_window_right.base_window.close(undefined, false);
-                        this.djinn_status_change_header_window.set_action_info_text(`: ${next_char.name}'s Psy`);
-                        break;
-                    case VIEW_STATES.NEXT_CHAR:
-                        this.djinn_psynergy_window.update_info(next_char, next_djinni, next_statuses);
-                        this.djinn_char_stats_window_left.base_window.close(undefined, false);
-                        this.djinn_char_stats_window_right.base_window.show(undefined, false);
-                        this.djinn_char_stats_window_right.base_window.update_position({x: 0});
-                        this.djinn_status_change_header_window.set_action_info_text(": Status");
-                        break;
-                }
-            }, action_text);
+                    switch (this.view_state) {
+                        case VIEW_STATES.STATS:
+                            this.djinn_psynergy_window.base_window.close(undefined, false);
+                            this.djinn_char_stats_window_left.base_window.show(undefined, false);
+                            this.djinn_char_stats_window_right.base_window.update_position({
+                                x: DJINN_CHAR_WIN_STATS_RIGHT_X,
+                            });
+                            this.djinn_status_change_header_window.set_action_info_text(`: ${this_char.name}'s Psy`);
+                            break;
+                        case VIEW_STATES.THIS_CHAR:
+                            this.djinn_psynergy_window.update_info(this_char, this_djinni, this_statuses);
+                            this.djinn_psynergy_window.base_window.show(undefined, false);
+                            this.djinn_char_stats_window_right.base_window.close(undefined, false);
+                            this.djinn_status_change_header_window.set_action_info_text(`: ${next_char.name}'s Psy`);
+                            break;
+                        case VIEW_STATES.NEXT_CHAR:
+                            this.djinn_psynergy_window.update_info(next_char, next_djinni, next_statuses);
+                            this.djinn_char_stats_window_left.base_window.close(undefined, false);
+                            this.djinn_char_stats_window_right.base_window.show(undefined, false);
+                            this.djinn_char_stats_window_right.base_window.update_position({x: 0});
+                            this.djinn_status_change_header_window.set_action_info_text(": Status");
+                            break;
+                    }
+                },
+                action_text
+            );
             this.djinn_psynergy_window.grant_control();
-
         } else {
-            let next_status:string;
+            let next_status: djinn_status;
             switch (this_djinn.status) {
-                case djinn_status.SET: next_status = djinn_status.STANDBY; break;
-                case djinn_status.STANDBY: next_status = djinn_status.SET; break;
+                case djinn_status.SET:
+                    next_status = djinn_status.STANDBY;
+                    break;
+                case djinn_status.STANDBY:
+                    next_status = djinn_status.SET;
+                    break;
             }
 
             this.deactivate();
             this.djinn_status_change_header_window.open([this_char], [this_djinn], [next_status]);
             this.djinn_char_stats_window_left.open(this_char, [this_djinn], [next_status]);
-            this.djinn_psynergy_window.open(this_char, [this_djinn], [next_status], (execute_operation:boolean) => {
+            this.djinn_psynergy_window.open(this_char, [this_djinn], [next_status], (execute_operation: boolean) => {
                 this.djinn_status_change_header_window.close();
                 this.djinn_char_stats_window_left.close();
 
                 if (execute_operation) {
                     this.change_djinn_status();
                     this.cancel_djinn_status_set(true);
-                }
-                else{
-                    this.grant_control(this.cancel_djinn_status_set.bind(this, true), this.set_djinn_operation.bind(this));
+                } else {
+                    this.grant_control(
+                        this.cancel_djinn_status_set.bind(this, true),
+                        this.set_djinn_operation.bind(this)
+                    );
                 }
 
                 this.activate();
@@ -631,21 +665,26 @@ export class DjinnListWindow {
 
         if (this_djinn.status === djinn_status.SET) {
             this_djinn.set_status(djinn_status.STANDBY, this_char);
-            this.base_window.update_text_color(djinn_font_colors[djinn_status.STANDBY], this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
+            this.base_window.update_text_color(
+                djinn_font_colors[djinn_status.STANDBY],
+                this.djinn_names[this.selected_char_index][this.selected_djinn_index]
+            );
             this.chars_quick_info_window.update_text();
             this.set_action_text();
             this.set_djinn_sprite(false);
-
         } else if (this_djinn.status === djinn_status.STANDBY) {
             this_djinn.set_status(djinn_status.SET, this_char);
-            this.base_window.update_text_color(djinn_font_colors[djinn_status.SET], this.djinn_names[this.selected_char_index][this.selected_djinn_index]);
+            this.base_window.update_text_color(
+                djinn_font_colors[djinn_status.SET],
+                this.djinn_names[this.selected_char_index][this.selected_djinn_index]
+            );
             this.chars_quick_info_window.update_text();
             this.set_action_text();
             this.set_djinn_sprite(false);
         }
     }
 
-    cancel_djinn_status_set(reset_index:boolean=false) {
+    cancel_djinn_status_set(reset_index: boolean = false) {
         if (!this.setting_djinn_status) return;
         for (let key in this.chars_sprites) {
             this.chars_sprites[key].y += numbers.FONT_SIZE;
@@ -689,7 +728,7 @@ export class DjinnListWindow {
 
         //make selected djinni's sprite stay on screen
 
-        if (this.setting_djinn_status || this_djinn.status === djinn_status.RECOVERY) return; 
+        if (this.setting_djinn_status || this_djinn.status === djinn_status.RECOVERY) return;
         for (let key in this.chars_sprites) {
             this.chars_sprites[key].y -= numbers.FONT_SIZE;
         }
@@ -704,8 +743,12 @@ export class DjinnListWindow {
             let status_text;
             if (i === this.selected_char_index) {
                 switch (this_djinn.status) {
-                    case djinn_status.SET: status_text = capitalize(djinn_status.STANDBY); break;
-                    case djinn_status.STANDBY: status_text = capitalize(djinn_status.SET); break;
+                    case djinn_status.SET:
+                        status_text = capitalize(djinn_status.STANDBY);
+                        break;
+                    case djinn_status.STANDBY:
+                        status_text = capitalize(djinn_status.SET);
+                        break;
                 }
             } else {
                 const other_char = this.data.info.party_data.members[i];
@@ -731,8 +774,12 @@ export class DjinnListWindow {
         this.grant_control(this.cancel_djinn_status_set.bind(this, true), this.set_djinn_operation.bind(this));
     }
 
-    open(chars_quick_info_window:CharsQuickInfoDjinnWindow, djinn_action_window:DjinnActionWindow,
-        close_callback?:Function, open_callback?:Function) {
+    open(
+        chars_quick_info_window: CharsQuickInfoDjinnWindow,
+        djinn_action_window: DjinnActionWindow,
+        close_callback?: Function,
+        open_callback?: Function
+    ) {
         this.selected_char_index = 0;
         this.selected_djinn_index = 0;
         this.page_index = 0;
@@ -772,7 +819,7 @@ export class DjinnListWindow {
 
         this.unset_page();
         this.group.alpha = 0;
-        
+
         this.base_window.close(undefined, false);
         if (this.close_callback) {
             this.close_callback();

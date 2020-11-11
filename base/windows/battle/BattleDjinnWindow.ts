@@ -1,10 +1,10 @@
-import { TextObj, Window } from "../../Window";
-import { djinn_status, djinn_font_colors } from "../../Djinn";
-import { DjinnStatsWindow } from "./DjinnStatsWindow";
-import { GoldenSun } from "../../GoldenSun";
-import { MainChar } from "../../MainChar";
-import { BattlePsynergyWindow } from "./BattlePsynergyWindow";
-import { CursorManager, PointVariants } from "../../utils/CursorManager";
+import {TextObj, Window} from "../../Window";
+import {djinn_status, djinn_font_colors} from "../../Djinn";
+import {DjinnStatsWindow} from "./DjinnStatsWindow";
+import {GoldenSun} from "../../GoldenSun";
+import {MainChar} from "../../MainChar";
+import {BattlePsynergyWindow} from "./BattlePsynergyWindow";
+import {CursorManager, PointVariants} from "../../utils/CursorManager";
 
 const BASE_WINDOW_X = 160;
 const BASE_WINDOW_Y = 72;

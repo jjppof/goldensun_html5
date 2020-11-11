@@ -1,8 +1,8 @@
-import { TextObj, Window } from "../../Window";
+import {TextObj, Window} from "../../Window";
 import * as numbers from "../../magic_numbers";
-import { elements, ordered_elements } from "../../utils";
-import { GoldenSun } from "../../GoldenSun";
-import { ItemSlot } from "../../MainChar";
+import {elements, ordered_elements} from "../../utils";
+import {GoldenSun} from "../../GoldenSun";
+import {ItemSlot} from "../../MainChar";
 import * as _ from "lodash";
 
 const BASE_WIN_HEIGHT = 20;
@@ -52,7 +52,7 @@ export class ChoosingTargetWindow {
     public element: string;
     public ability_name: string;
     public ability_name_x: number;
-    public window_sprites: (Phaser.Sprite|Phaser.Group)[];
+    public window_sprites: (Phaser.Sprite | Phaser.Group)[];
     public star_x: number;
     public icon_sprite_sheet: string;
     public ability_key_name: string;
@@ -81,7 +81,8 @@ export class ChoosingTargetWindow {
     }
 
     set_info() {
-        const display_name = this.action === "item" ? this.data.info.items_list[this.item_obj.key_name].name : this.ability_name;
+        const display_name =
+            this.action === "item" ? this.data.info.items_list[this.item_obj.key_name].name : this.ability_name;
         const name = this.base_window.set_text_in_position(display_name, this.ability_name_x, ABILITY_NAME_Y);
         this.texts.push(name);
         if (this.element && this.element !== elements.NO_ELEMENT && !["summon", "item"].includes(this.action)) {
@@ -89,7 +90,13 @@ export class ChoosingTargetWindow {
             this.window_sprites.push(star);
         }
         if (this.icon_sprite_sheet && this.action !== "item") {
-            const icon = this.base_window.create_at_group(ICON_X, ICON_Y, this.icon_sprite_sheet, undefined, this.ability_key_name);
+            const icon = this.base_window.create_at_group(
+                ICON_X,
+                ICON_Y,
+                this.icon_sprite_sheet,
+                undefined,
+                this.ability_key_name
+            );
             this.window_sprites.push(icon);
         }
         if (this.action === "psynergy") {
@@ -105,7 +112,11 @@ export class ChoosingTargetWindow {
                 const star_x = counter === 0 ? STAR_X_SUMOON_1 : STAR_X_SUMOON_2;
                 const star = this.base_window.create_at_group(star_x, STAR_Y, element + "_star");
                 this.window_sprites.push(star);
-                const req_text = this.base_window.set_text_in_position(reqs[element].toString(), star_x + STAR_WIDTH + 1, ABILITY_NAME_Y);
+                const req_text = this.base_window.set_text_in_position(
+                    reqs[element].toString(),
+                    star_x + STAR_WIDTH + 1,
+                    ABILITY_NAME_Y
+                );
                 this.texts.push(req_text);
                 ++counter;
             });
@@ -117,7 +128,12 @@ export class ChoosingTargetWindow {
                 this.icon_group.create(SUB_ICON_X, SUB_ICON_Y, "equipped");
             }
             if (this.item_obj.quantity > 1) {
-                let item_count = this.game.add.bitmapText(SUB_ICON_X, SUB_ICON_Y, 'gs-item-bmp-font', this.item_obj.quantity.toString());
+                let item_count = this.game.add.bitmapText(
+                    SUB_ICON_X,
+                    SUB_ICON_Y,
+                    "gs-item-bmp-font",
+                    this.item_obj.quantity.toString()
+                );
                 this.icon_group.add(item_count);
             }
             this.base_window.add_sprite_to_group(this.icon_group);

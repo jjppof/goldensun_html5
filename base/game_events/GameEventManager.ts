@@ -1,12 +1,12 @@
-import { base_actions, directions, is_close, reverse_directions } from "../utils";
-import { DialogManager } from "../utils/DialogManager";
-import { npc_types } from "../NPC";
-import { GoldenSun } from "../GoldenSun";
+import {base_actions, directions, is_close, reverse_directions} from "../utils";
+import {DialogManager} from "../utils/DialogManager";
+import {npc_types} from "../NPC";
+import {GoldenSun} from "../GoldenSun";
 
 export enum interaction_patterns {
     TIK_TAK_TOE = "tik_tak_toe",
-    CROSS = "cross"
-};
+    CROSS = "cross",
+}
 
 export class GameEventManager {
     public game: Phaser.Game;
@@ -25,15 +25,20 @@ export class GameEventManager {
     }
 
     set_controls() {
-        let controls = [{key: this.data.gamepad.A, on_down: () => {
-            if (this.data.hero.in_action() || this.data.in_battle || !this.control_enable) return;
-            if (this.on_event) {
-                this.control_enable = false;
-                this.fire_next_step();
-            } else {
-                this.search_for_npc();
-            }
-        }}];
+        let controls = [
+            {
+                key: this.data.gamepad.A,
+                on_down: () => {
+                    if (this.data.hero.in_action() || this.data.in_battle || !this.control_enable) return;
+                    if (this.on_event) {
+                        this.control_enable = false;
+                        this.fire_next_step();
+                    } else {
+                        this.search_for_npc();
+                    }
+                },
+            },
+        ];
 
         this.data.control_manager.set_control(controls, {persist: true});
     }
@@ -51,7 +56,7 @@ export class GameEventManager {
                 npc.talk_range_factor
             );
             if (is_close_check) {
-                this.data.hero.stop_char()
+                this.data.hero.stop_char();
                 this.on_event = true;
                 this.data.force_stop_movement = true;
                 this.control_enable = false;
@@ -69,9 +74,9 @@ export class GameEventManager {
                 this.fire_npc_events(npc);
             }
         } else if (npc.npc_type === npc_types.SHOP) {
-            if(!this.data.shop_open){
+            if (!this.data.shop_open) {
                 this.set_npc_and_hero_directions(npc);
-                this.data.shop_menu.open_menu(npc.shop_key, ()=>{
+                this.data.shop_menu.open_menu(npc.shop_key, () => {
                     this.on_event = false;
                     this.reset_npc_direction(npc);
                     this.data.force_stop_movement = false;
@@ -86,7 +91,13 @@ export class GameEventManager {
         const npc_y = npc.sprite.y;
         const interaction_pattern = this.data.dbs.npc_db[npc.key_name].interaction_pattern;
         const interaction_directions = GameEventManager.get_interaction_directions(
-            this.data.hero.sprite.x, this.data.hero.sprite.y, npc_x, npc_y, interaction_pattern, npc.body_radius);
+            this.data.hero.sprite.x,
+            this.data.hero.sprite.y,
+            npc_x,
+            npc_y,
+            interaction_pattern,
+            npc.body_radius
+        );
         this.data.hero.set_direction(interaction_directions.hero_direction);
         this.data.hero.play(base_actions.IDLE, reverse_directions[interaction_directions.hero_direction]);
         npc.play(base_actions.IDLE, reverse_directions[interaction_directions.target_direction]);
@@ -139,28 +150,52 @@ export class GameEventManager {
         let hero_direction;
         if (hero_x <= target_x - target_body_radius && hero_y >= target_y + target_body_radius) {
             hero_direction = directions.up_right;
-            target_direction = interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.down_left : target_direction;
-        } else if (hero_x <= target_x - target_body_radius && hero_y >= target_y - target_body_radius && hero_y <= target_y + target_body_radius) {
+            target_direction =
+                interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.down_left : target_direction;
+        } else if (
+            hero_x <= target_x - target_body_radius &&
+            hero_y >= target_y - target_body_radius &&
+            hero_y <= target_y + target_body_radius
+        ) {
             hero_direction = directions.right;
-            target_direction = interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.left : target_direction;
+            target_direction =
+                interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.left : target_direction;
         } else if (hero_x <= target_x - target_body_radius && hero_y <= target_y - target_body_radius) {
             hero_direction = directions.down_right;
-            target_direction = interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.up_left : target_direction;
-        } else if (hero_x >= target_x - target_body_radius && hero_x <= target_x + target_body_radius && hero_y <= target_y - target_body_radius) {
+            target_direction =
+                interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.up_left : target_direction;
+        } else if (
+            hero_x >= target_x - target_body_radius &&
+            hero_x <= target_x + target_body_radius &&
+            hero_y <= target_y - target_body_radius
+        ) {
             hero_direction = directions.down;
-            target_direction = interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.up : target_direction;
+            target_direction =
+                interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.up : target_direction;
         } else if (hero_x >= target_x + target_body_radius && hero_y <= target_y - target_body_radius) {
             hero_direction = directions.down_left;
-            target_direction = interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.up_right : target_direction;
-        } else if (hero_x >= target_x + target_body_radius && hero_y >= target_y - target_body_radius && hero_y <= target_y + target_body_radius) {
+            target_direction =
+                interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.up_right : target_direction;
+        } else if (
+            hero_x >= target_x + target_body_radius &&
+            hero_y >= target_y - target_body_radius &&
+            hero_y <= target_y + target_body_radius
+        ) {
             hero_direction = directions.left;
-            target_direction = interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.right : target_direction;
+            target_direction =
+                interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.right : target_direction;
         } else if (hero_x >= target_x + target_body_radius && hero_y >= target_y + target_body_radius) {
             hero_direction = directions.up_left;
-            target_direction = interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.down_right : target_direction;
-        } else if (hero_x >= target_x - target_body_radius && hero_x <= target_x + target_body_radius && hero_y >= target_y + target_body_radius) {
+            target_direction =
+                interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.down_right : target_direction;
+        } else if (
+            hero_x >= target_x - target_body_radius &&
+            hero_x <= target_x + target_body_radius &&
+            hero_y >= target_y + target_body_radius
+        ) {
             hero_direction = directions.up;
-            target_direction = interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.down : target_direction;
+            target_direction =
+                interaction_pattern === interaction_patterns.TIK_TAK_TOE ? directions.down : target_direction;
         }
 
         return {hero_direction: hero_direction, target_direction: target_direction};

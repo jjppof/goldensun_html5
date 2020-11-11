@@ -1,10 +1,10 @@
-import { TextObj, Window } from '../../Window';
-import * as numbers from '../../magic_numbers';
-import { ItemCounter } from '../../utils/ItemCounter';
-import { GoldenSun } from '../../GoldenSun';
-import { ItemSlot, MainChar } from '../../MainChar';
-import { Item } from '../../Item';
-import { CursorManager, PointVariants } from '../../utils/CursorManager';
+import {TextObj, Window} from "../../Window";
+import * as numbers from "../../magic_numbers";
+import {ItemCounter} from "../../utils/ItemCounter";
+import {GoldenSun} from "../../GoldenSun";
+import {ItemSlot, MainChar} from "../../MainChar";
+import {Item} from "../../Item";
+import {CursorManager, PointVariants} from "../../utils/CursorManager";
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 52;
@@ -76,53 +76,101 @@ export class ItemQuantityManagerWindow {
         this.group.alpha = 0;
         this.base_window.set_text_in_position("How many?", QUESTION_TEXT_X, QUESTION_TEXT_Y);
         this.choosen_quantity = 1;
-        this.item_counter = new ItemCounter(this.game, this.group, ITEM_COUNTER_X, ITEM_COUNTER_Y, this.on_change.bind(this));
-        this.remaining_with_char_count = this.base_window.set_text_in_position("", REMAIN_TEXT_CHAR_COUNT_X, REMAIN_TEXT_CHAR_COUNT_Y, true);
-        this.new_amount_with_dest_char_count = this.base_window.set_text_in_position("", REMAIN_TEXT_DEST_CHAR_COUNT_X, REMAIN_TEXT_CHAR_COUNT_Y, true);
-        this.to_remove_count = this.base_window.set_text_in_position("", REMOVE_TEXT_COUNT_X, REMOVE_TEXT_COUNT_Y, true);
+        this.item_counter = new ItemCounter(
+            this.game,
+            this.group,
+            ITEM_COUNTER_X,
+            ITEM_COUNTER_Y,
+            this.on_change.bind(this)
+        );
+        this.remaining_with_char_count = this.base_window.set_text_in_position(
+            "",
+            REMAIN_TEXT_CHAR_COUNT_X,
+            REMAIN_TEXT_CHAR_COUNT_Y,
+            true
+        );
+        this.new_amount_with_dest_char_count = this.base_window.set_text_in_position(
+            "",
+            REMAIN_TEXT_DEST_CHAR_COUNT_X,
+            REMAIN_TEXT_CHAR_COUNT_Y,
+            true
+        );
+        this.to_remove_count = this.base_window.set_text_in_position(
+            "",
+            REMOVE_TEXT_COUNT_X,
+            REMOVE_TEXT_COUNT_Y,
+            true
+        );
     }
 
-    grant_control(on_cancel:Function, on_select:Function){
+    grant_control(on_cancel: Function, on_select: Function) {
         let controls = [
             {key: this.data.gamepad.LEFT, on_down: this.decrease_amount.bind(this)},
             {key: this.data.gamepad.RIGHT, on_down: this.increase_amount.bind(this)},
             {key: this.data.gamepad.A, on_down: on_select},
             {key: this.data.gamepad.B, on_down: on_cancel},
         ];
-        this.data.control_manager.set_control(controls, {loop_configs:{horizontal:true, horizontal_time:ITEM_COUNTER_LOOP_TIME}});
+        this.data.control_manager.set_control(controls, {
+            loop_configs: {horizontal: true, horizontal_time: ITEM_COUNTER_LOOP_TIME},
+        });
     }
 
-    increase_amount(){
+    increase_amount() {
         this.item_counter.advance_step(1);
     }
 
-    decrease_amount(){
+    decrease_amount() {
         this.item_counter.advance_step(-1);
     }
 
     on_change(quantity) {
         this.choosen_quantity = quantity;
         this.base_window.update_text(this.choosen_quantity.toString(), this.to_remove_count);
-        this.base_window.update_text((this.item_obj.quantity - this.choosen_quantity).toString(), this.remaining_with_char_count);
+        this.base_window.update_text(
+            (this.item_obj.quantity - this.choosen_quantity).toString(),
+            this.remaining_with_char_count
+        );
         if (this.destination_char) {
-            this.base_window.update_text((this.dest_item_obj.quantity + this.choosen_quantity).toString(), this.new_amount_with_dest_char_count);
+            this.base_window.update_text(
+                (this.dest_item_obj.quantity + this.choosen_quantity).toString(),
+                this.new_amount_with_dest_char_count
+            );
         }
     }
 
     set_header() {
-        this.icon_sprite = this.base_window.create_at_group(ITEM_ICON_X, ITEM_ICON_Y, "items_icons", undefined, this.item.key_name);
+        this.icon_sprite = this.base_window.create_at_group(
+            ITEM_ICON_X,
+            ITEM_ICON_Y,
+            "items_icons",
+            undefined,
+            this.item.key_name
+        );
         this.char_name = this.base_window.set_text_in_position(this.char.name, CHAR_NAME_X, CHAR_NAME_Y);
         if (this.destination_char) {
-            this.dest_char_name = this.base_window.set_text_in_position(this.destination_char.name, DEST_CHAR_NAME_X, CHAR_NAME_Y);
+            this.dest_char_name = this.base_window.set_text_in_position(
+                this.destination_char.name,
+                DEST_CHAR_NAME_X,
+                CHAR_NAME_Y
+            );
         }
         this.item_name = this.base_window.set_text_in_position(this.item.name, ITEM_NAME_X, ITEM_NAME_Y);
         this.equip_sprite = null;
         if (this.item_obj.equipped) {
-            this.equip_sprite = this.base_window.create_at_group(ITEM_ICON_X + SUB_ICON_X, ITEM_ICON_Y + SUB_ICON_Y, "equipped");
+            this.equip_sprite = this.base_window.create_at_group(
+                ITEM_ICON_X + SUB_ICON_X,
+                ITEM_ICON_Y + SUB_ICON_Y,
+                "equipped"
+            );
         }
         this.item_count_sprite = null;
         if (this.item_obj.quantity > 1) {
-            this.item_count_sprite = this.game.add.bitmapText(ITEM_ICON_X + SUB_ICON_X, ITEM_ICON_Y + SUB_ICON_Y, 'gs-item-bmp-font', this.item_obj.quantity.toString());
+            this.item_count_sprite = this.game.add.bitmapText(
+                ITEM_ICON_X + SUB_ICON_X,
+                ITEM_ICON_Y + SUB_ICON_Y,
+                "gs-item-bmp-font",
+                this.item_obj.quantity.toString()
+            );
             this.base_window.add_sprite_to_group(this.item_count_sprite);
         }
     }
@@ -148,47 +196,57 @@ export class ItemQuantityManagerWindow {
         this.group.y = this.game.camera.y + this.y;
     }
 
-    open(item_obj:ItemSlot, item:Item, char:MainChar, close_callback?:Function,
-        destination_char?:MainChar, open_callback?:Function) {
-        this.data.cursor_manager.move_to({x:CURSOR_X, y:CURSOR_Y}, {animate: false, 
-        tween_config:{type: CursorManager.CursorTweens.POINT, variant:PointVariants.NORMAL}},
-        () => {
-            this.item_obj = item_obj;
-            this.item = item;
-            this.char = char;
-            this.destination_char = destination_char;
+    open(
+        item_obj: ItemSlot,
+        item: Item,
+        char: MainChar,
+        close_callback?: Function,
+        destination_char?: MainChar,
+        open_callback?: Function
+    ) {
+        this.data.cursor_manager.move_to(
+            {x: CURSOR_X, y: CURSOR_Y},
+            {animate: false, tween_config: {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL}},
+            () => {
+                this.item_obj = item_obj;
+                this.item = item;
+                this.char = char;
+                this.destination_char = destination_char;
 
-            if (this.destination_char) {
-                const dest_item_obj = this.destination_char.items.filter(item => {
-                    return item.key_name === item_obj.key_name;
-                });
-                this.dest_item_obj = dest_item_obj.length ? dest_item_obj[0] : {
-                    key_name: null,
-                    index: null,
-                    quantity: 0
-                };
-            }
-            this.choosen_quantity = 1;
-            this.close_callback = close_callback;
-
-            this.update_position();
-            this.set_header();
-            this.item_counter.config(this.item_obj.quantity, this.choosen_quantity);
-
-            this.group.alpha = 1;
-            this.on_change(this.choosen_quantity);
-
-            this.base_window.show(() => {
-                this.window_open = true;
-                this.window_active = true;
-                if (open_callback !== undefined) {
-                    open_callback();
+                if (this.destination_char) {
+                    const dest_item_obj = this.destination_char.items.filter(item => {
+                        return item.key_name === item_obj.key_name;
+                    });
+                    this.dest_item_obj = dest_item_obj.length
+                        ? dest_item_obj[0]
+                        : {
+                              key_name: null,
+                              index: null,
+                              quantity: 0,
+                          };
                 }
-            }, false);
-        });
+                this.choosen_quantity = 1;
+                this.close_callback = close_callback;
+
+                this.update_position();
+                this.set_header();
+                this.item_counter.config(this.item_obj.quantity, this.choosen_quantity);
+
+                this.group.alpha = 1;
+                this.on_change(this.choosen_quantity);
+
+                this.base_window.show(() => {
+                    this.window_open = true;
+                    this.window_active = true;
+                    if (open_callback !== undefined) {
+                        open_callback();
+                    }
+                }, false);
+            }
+        );
     }
 
-    close(callback?:Function) {
+    close(callback?: Function) {
         this.data.cursor_manager.hide();
         this.unset_header();
         this.item_counter.deactivate();

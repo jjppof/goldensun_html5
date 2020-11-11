@@ -12,6 +12,7 @@
         "./assets/filters/*.js",
         "./dist",
         "./node_modules",
-        "./static/*.js"
+        "./static/*.js",
+        "webpack.config.js"
     ]
 }

@@ -1,20 +1,42 @@
-import { directions } from "../utils";
-import { TileEvent, event_types } from "./TileEvent";
+import {directions} from "../utils";
+import {TileEvent, event_types} from "./TileEvent";
 
 export class CollisionEvent extends TileEvent {
     public dest_collision_layer: number;
     public next_x: number;
     public next_y: number;
 
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, dest_collision_layer) {
-        super(game, data, event_types.COLLISION, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
+    constructor(
+        game,
+        data,
+        x,
+        y,
+        activation_directions,
+        activation_collision_layers,
+        dynamic,
+        active,
+        dest_collision_layer
+    ) {
+        super(
+            game,
+            data,
+            event_types.COLLISION,
+            x,
+            y,
+            activation_directions,
+            activation_collision_layers,
+            dynamic,
+            active,
+            null
+        );
         this.dest_collision_layer = dest_collision_layer;
         this.next_x = 0;
         this.next_y = 0;
     }
 
     set() {
-        let next_x = this.x, next_y = this.y;
+        let next_x = this.x,
+            next_y = this.y;
         if (this.activation_directions[0] === directions.left) {
             next_x = this.x - 1;
         } else if (this.activation_directions[0] === directions.right) {

@@ -1,13 +1,13 @@
 type Requirements = {
-    venus: number,
-    mercury: number,
-    mars: number,
-    jupiter: number
+    venus: number;
+    mercury: number;
+    mars: number;
+    jupiter: number;
 };
 
 export class Summon {
     public key_name: string;
-    public index : number;
+    public index: number;
     public requirements: Requirements;
     public available: boolean;
 

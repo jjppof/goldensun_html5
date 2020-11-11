@@ -6,7 +6,7 @@ import { Battle } from "../../battle/Battle";
 import { MainChar } from "../../MainChar";
 import { GoldenSun } from "../../GoldenSun";
 import * as _ from "lodash";
-import { CursorManager, PointVariants } from "../../utils/CursorManager";
+import {CursorManager, PointVariants} from "../../utils/CursorManager";
 
 const BASE_WINDOW_X = 104;
 const BASE_WINDOW_Y = 88;

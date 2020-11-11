@@ -1,6 +1,6 @@
-import { Classes } from '../Classes';
-import { MainChar } from '../MainChar';
-import { SpriteBase } from '../SpriteBase';
+import {Classes} from "../Classes";
+import {MainChar} from "../MainChar";
+import {SpriteBase} from "../SpriteBase";
 
 export function initialize_classes(classes_db) {
     let classes_list = {};

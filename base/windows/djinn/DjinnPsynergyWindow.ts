@@ -2,7 +2,7 @@ import { TextObj, Window } from "../../Window";
 import * as numbers from "../../magic_numbers";
 import { GoldenSun } from "../../GoldenSun";
 import { MainChar } from "../../MainChar";
-import { Djinn } from "../../Djinn";
+import { Djinn, djinn_status } from "../../Djinn";
 
 const BASE_WIN_WIDTH = 116;
 const BASE_WIN_HEIGHT = 116;
@@ -58,7 +58,7 @@ export class DjinnPsynergyWindow {
 
   public char: MainChar;
   public djinni: Djinn[];
-  public next_djinni_status: string[];
+  public next_djinni_status: djinn_status[];
   public action: string;
 
   constructor(game: Phaser.Game, data: GoldenSun) {
@@ -275,7 +275,7 @@ export class DjinnPsynergyWindow {
     this.text_sprites_in_window = [];
   }
 
-  update_info(char: MainChar, djinni: Djinn[], next_djinni_status: string[]) {
+  update_info(char: MainChar, djinni: Djinn[], next_djinni_status: djinn_status[]) {
     this.clear_sprites();
     this.base_window.page_indicator.terminante();
     this.char = char;
@@ -288,7 +288,7 @@ export class DjinnPsynergyWindow {
   open(
     char: MainChar,
     djinni: Djinn[],
-    next_djinni_status: string[],
+    next_djinni_status: djinn_status[],
     close_callback: Function,
     hidden: boolean = false,
     next_state_callback?: Function,

@@ -1,9 +1,9 @@
-import { init_cast_aura, tint_map_layers } from "./psynergy_cast";
-import { base_actions, directions, directions_count, reverse_directions } from "../utils";
-import { InteractableObjects, interactable_object_interaction_types } from "../InteractableObjects";
-import { FieldPsynergyWindow } from "../windows/FieldPsynergyWindow";
-import { GoldenSun } from "../GoldenSun";
-import { ControllableChar } from "../ControllableChar";
+import {init_cast_aura, tint_map_layers} from "./psynergy_cast";
+import {base_actions, directions, directions_count, reverse_directions} from "../utils";
+import {InteractableObjects, interactable_object_interaction_types} from "../InteractableObjects";
+import {FieldPsynergyWindow} from "../windows/FieldPsynergyWindow";
+import {GoldenSun} from "../GoldenSun";
+import {ControllableChar} from "../ControllableChar";
 
 /*Defines and manages the usage of field psynergy
 
@@ -48,7 +48,7 @@ export class FieldAbilities {
 
     Output: [number] - Non-diagonal cast direction*/
     get_cast_direction(direction) {
-        if(direction%2===0) return direction;
+        if (direction % 2 === 0) return direction;
         direction++;
         return direction === directions_count ? directions.right : direction;
     }
@@ -100,13 +100,28 @@ export class FieldAbilities {
         let sqr_distance = Infinity;
         for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
             let interactable_object = this.data.map.interactable_objects[i];
-            if (!(this.ability_key_name in this.data.dbs.interactable_objects_db[interactable_object.key_name].psynergy_keys)) continue;
-            const item_x_px = interactable_object.current_x * this.data.map.sprite.tileWidth + (this.data.map.sprite.tileWidth >> 1);
-            const item_y_px = interactable_object.current_y * this.data.map.sprite.tileHeight + (this.data.map.sprite.tileHeight >> 1);
+            if (
+                !(
+                    this.ability_key_name in
+                    this.data.dbs.interactable_objects_db[interactable_object.key_name].psynergy_keys
+                )
+            )
+                continue;
+            const item_x_px =
+                interactable_object.current_x * this.data.map.sprite.tileWidth + (this.data.map.sprite.tileWidth >> 1);
+            const item_y_px =
+                interactable_object.current_y * this.data.map.sprite.tileHeight +
+                (this.data.map.sprite.tileHeight >> 1);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
             const y_condition = item_y_px >= min_y && item_y_px <= max_y;
-            if (x_condition && y_condition && this.data.map.collision_layer === interactable_object.base_collision_layer) {
-                let this_sqr_distance = Math.pow(item_x_px - this.controllable_char.sprite.x, 2) + Math.pow(item_y_px - this.controllable_char.sprite.y, 2);
+            if (
+                x_condition &&
+                y_condition &&
+                this.data.map.collision_layer === interactable_object.base_collision_layer
+            ) {
+                let this_sqr_distance =
+                    Math.pow(item_x_px - this.controllable_char.sprite.x, 2) +
+                    Math.pow(item_y_px - this.controllable_char.sprite.y, 2);
                 if (this_sqr_distance < sqr_distance) {
                     sqr_distance = this_sqr_distance;
                     this.target_found = true;
@@ -118,7 +133,8 @@ export class FieldAbilities {
 
     set_target_casted() {
         if (this.target_object) {
-            const psynergy_properties = this.data.dbs.interactable_objects_db[this.target_object.key_name].psynergy_keys[this.ability_key_name];
+            const psynergy_properties = this.data.dbs.interactable_objects_db[this.target_object.key_name]
+                .psynergy_keys[this.ability_key_name];
             if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
                 const casted_property = this.ability_key_name + "_casted";
                 if (this.target_object.custom_data[casted_property]) {
@@ -159,16 +175,24 @@ export class FieldAbilities {
 
         this.set_hero_cast_anim();
         let reset_map;
-        this.stop_casting = init_cast_aura(this.game, this.controllable_char.sprite, this.data.npc_group, this.controllable_char.color_filter, () => {
-            reset_map = tint_map_layers(this.game, this.data.map, this.data.map.color_filter);
-            this.bootstrap_method();
-        }, () => {
-            this.game.physics.p2.resume();
-            this.controllable_char.casting_psynergy = false;
-            this.target_object = null;
-        }, () => {
-            this.cast_finisher();
-            reset_map();
-        });
+        this.stop_casting = init_cast_aura(
+            this.game,
+            this.controllable_char.sprite,
+            this.data.npc_group,
+            this.controllable_char.color_filter,
+            () => {
+                reset_map = tint_map_layers(this.game, this.data.map, this.data.map.color_filter);
+                this.bootstrap_method();
+            },
+            () => {
+                this.game.physics.p2.resume();
+                this.controllable_char.casting_psynergy = false;
+                this.target_object = null;
+            },
+            () => {
+                this.cast_finisher();
+                reset_map();
+            }
+        );
     }
 }

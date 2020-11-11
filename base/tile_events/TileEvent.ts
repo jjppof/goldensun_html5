@@ -1,6 +1,6 @@
-import { GoldenSun } from "../GoldenSun";
-import { InteractableObjects } from "../InteractableObjects";
-import { get_directions, split_direction } from "../utils";
+import {GoldenSun} from "../GoldenSun";
+import {InteractableObjects} from "../InteractableObjects";
+import {get_directions, split_direction} from "../utils";
 import * as _ from "lodash";
 
 export enum event_types {
@@ -10,8 +10,8 @@ export enum event_types {
     JUMP = "jump",
     STEP = "step",
     COLLISION = "collision",
-    SLIDER = "slider"
-};
+    SLIDER = "slider",
+}
 
 export class TileEvent {
     public game: Phaser.Game;
@@ -29,7 +29,18 @@ export class TileEvent {
     public static id_incrementer: number;
     public static events: {[id: number]: TileEvent};
 
-    constructor(game, data, type, x, y, activation_directions, activation_collision_layers, dynamic, active, origin_interactable_object) {
+    constructor(
+        game,
+        data,
+        type,
+        x,
+        y,
+        activation_directions,
+        activation_collision_layers,
+        dynamic,
+        active,
+        origin_interactable_object
+    ) {
         this.game = game;
         this.data = data;
         this.type = type;
@@ -37,13 +48,19 @@ export class TileEvent {
         this.y = y;
         this.location_key = TileEvent.get_location_key(this.x, this.y);
         this.id = TileEvent.id_incrementer++;
-        this.activation_collision_layers = Array.isArray(activation_collision_layers) ? activation_collision_layers : [activation_collision_layers];
+        this.activation_collision_layers = Array.isArray(activation_collision_layers)
+            ? activation_collision_layers
+            : [activation_collision_layers];
         if (activation_directions === undefined || activation_directions === "all") {
             activation_directions = get_directions(true);
         }
-        this.activation_directions = Array.isArray(activation_directions) ? activation_directions : [activation_directions];
+        this.activation_directions = Array.isArray(activation_directions)
+            ? activation_directions
+            : [activation_directions];
         this.dynamic = dynamic;
-        this.active = Array.isArray(active) ? active : new Array(this.activation_directions.length).fill(active === undefined ? true : active);
+        this.active = Array.isArray(active)
+            ? active
+            : new Array(this.activation_directions.length).fill(active === undefined ? true : active);
         this.origin_interactable_object = origin_interactable_object === undefined ? null : origin_interactable_object;
         TileEvent.events[this.id] = this;
     }

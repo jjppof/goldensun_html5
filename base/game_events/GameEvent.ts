@@ -1,8 +1,8 @@
-import { GoldenSun } from "../GoldenSun";
+import {GoldenSun} from "../GoldenSun";
 
 export enum event_types {
-    BATTLE = "battle"
-};
+    BATTLE = "battle",
+}
 
 export class GameEvent {
     public game: Phaser.Game;

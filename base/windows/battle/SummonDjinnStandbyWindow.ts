@@ -1,5 +1,5 @@
-import { TextObj, Window } from "../../Window";
-import { ordered_elements } from "../../utils";
+import {TextObj, Window} from "../../Window";
+import {ordered_elements} from "../../utils";
 
 const BASE_WIN_X = 160;
 const BASE_WIN_Y = 64;
@@ -32,13 +32,27 @@ export class SummonDjinnStandbyWindow {
         this.timers = {};
         for (let i = 0; i < ordered_elements.length; ++i) {
             const element = ordered_elements[i];
-            this.base_window.create_at_group(STAR_LEFT_PADDING + i * SPACE_BETWEEN_STARS, STAR_TOP_PADDING, element + "_star");
-            this.texts[element] = this.base_window.set_text_in_position("", TEXT_LEFT_PADDING + i * SPACE_BETWEEN_TEXTS, TEXT_TOP_PADDING, true);
+            this.base_window.create_at_group(
+                STAR_LEFT_PADDING + i * SPACE_BETWEEN_STARS,
+                STAR_TOP_PADDING,
+                element + "_star"
+            );
+            this.texts[element] = this.base_window.set_text_in_position(
+                "",
+                TEXT_LEFT_PADDING + i * SPACE_BETWEEN_TEXTS,
+                TEXT_TOP_PADDING,
+                true
+            );
             this.graphics[element] = this.game.add.graphics(0, 0);
             this.graphics[element].blendMode = PIXI.blendModes.SCREEN;
             this.base_window.add_sprite_to_group(this.graphics[element]);
             this.graphics[element].beginFill(this.base_window.color, 1);
-            this.graphics[element].drawRect(HIGHLIGHT_LEFT_PADDING + i * HIGHLIGHT_WIDTH, HIGHLIGHT_TOP_PADDING, HIGHLIGHT_WIDTH, HIGHLIGHT_HEIGHT);
+            this.graphics[element].drawRect(
+                HIGHLIGHT_LEFT_PADDING + i * HIGHLIGHT_WIDTH,
+                HIGHLIGHT_TOP_PADDING,
+                HIGHLIGHT_WIDTH,
+                HIGHLIGHT_HEIGHT
+            );
             this.graphics[element].endFill();
         }
         this.window_open = false;
@@ -47,7 +61,7 @@ export class SummonDjinnStandbyWindow {
     blink(element, sprite) {
         this.timers[element] = this.game.time.create(false);
         this.timers[element].loop(150, () => {
-            sprite.alpha = +(!sprite.alpha);
+            sprite.alpha = +!sprite.alpha;
         });
         this.timers[element].start();
     }

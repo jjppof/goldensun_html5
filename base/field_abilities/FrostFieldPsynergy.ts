@@ -1,7 +1,7 @@
-import * as numbers from '../magic_numbers';
-import { get_surroundings, directions} from "../utils";
-import { JumpEvent } from "../tile_events/JumpEvent";
-import { FieldAbilities } from "./FieldAbilities";
+import * as numbers from "../magic_numbers";
+import {get_surroundings, directions} from "../utils";
+import {JumpEvent} from "../tile_events/JumpEvent";
+import {FieldAbilities} from "./FieldAbilities";
 import * as _ from "lodash";
 
 /*Handles the "Frost" field psynergy
@@ -20,7 +20,14 @@ export class FrostFieldPsynergy extends FieldAbilities {
     private static readonly SNOWFLAKE_DURATION = 1650;
 
     constructor(game, data) {
-        super(game, data, FrostFieldPsynergy.ABILITY_KEY_NAME, FrostFieldPsynergy.FROST_MAX_RANGE, FrostFieldPsynergy.ACTION_KEY_NAME, true);
+        super(
+            game,
+            data,
+            FrostFieldPsynergy.ABILITY_KEY_NAME,
+            FrostFieldPsynergy.FROST_MAX_RANGE,
+            FrostFieldPsynergy.ACTION_KEY_NAME,
+            true
+        );
         this.set_bootstrap_method(this.init_snowflakes.bind(this));
     }
 
@@ -31,31 +38,51 @@ export class FrostFieldPsynergy extends FieldAbilities {
         for (let i = 0; i < FrostFieldPsynergy.SNOWFLAKES_COUNT; ++i) {
             let snowflake_sprite = this.data.overlayer_group.create(0, 0, "frost_snowflake");
             snowflake_sprite.anchor.setTo(0.5, 0.5);
-            const scale_factor = _.random(5, 8)/10.0;
+            const scale_factor = _.random(5, 8) / 10.0;
             const rotation_factor = Math.random() * numbers.degree360;
             snowflake_sprite.scale.setTo(scale_factor, scale_factor);
             snowflake_sprite.rotation = rotation_factor;
             let x_dest = this.controllable_char.sprite.centerX;
             let y_dest = this.controllable_char.sprite.centerY + 12;
             switch (this.cast_direction) {
-                case directions.left: x_dest -= 16; break;
-                case directions.right: x_dest += 16; break;
-                case directions.up: y_dest -= 14; break;
-                case directions.down: y_dest += 12; break;
+                case directions.left:
+                    x_dest -= 16;
+                    break;
+                case directions.right:
+                    x_dest += 16;
+                    break;
+                case directions.up:
+                    y_dest -= 14;
+                    break;
+                case directions.down:
+                    y_dest += 12;
+                    break;
             }
             let spiral_angle = {rad: FrostFieldPsynergy.TOTAL_TURNS_SNOWFLAKES};
             const sign_x = Math.sign(Math.random() - 0.5);
             const sign_y = Math.sign(Math.random() - 0.5);
-            const tween = this.game.add.tween(spiral_angle).to(
-                {rad: -Math.PI},
-                FrostFieldPsynergy.SNOWFLAKE_DURATION,
-                Phaser.Easing.Linear.None,
-                true,
-                i*(Phaser.Timer.QUARTER/5)
-            );
+            const tween = this.game.add
+                .tween(spiral_angle)
+                .to(
+                    {rad: -Math.PI},
+                    FrostFieldPsynergy.SNOWFLAKE_DURATION,
+                    Phaser.Easing.Linear.None,
+                    true,
+                    i * (Phaser.Timer.QUARTER / 5)
+                );
             tween.onUpdateCallback(() => {
-                snowflake_sprite.centerX = sign_x * FrostFieldPsynergy.SPIRAL_INTENSITY * Math.exp(FrostFieldPsynergy.POLAR_SLOPE * spiral_angle.rad) * Math.cos(spiral_angle.rad) + x_dest;
-                snowflake_sprite.centerY = sign_y * FrostFieldPsynergy.SPIRAL_INTENSITY * Math.exp(FrostFieldPsynergy.POLAR_SLOPE * spiral_angle.rad) * Math.sin(spiral_angle.rad) + y_dest;
+                snowflake_sprite.centerX =
+                    sign_x *
+                        FrostFieldPsynergy.SPIRAL_INTENSITY *
+                        Math.exp(FrostFieldPsynergy.POLAR_SLOPE * spiral_angle.rad) *
+                        Math.cos(spiral_angle.rad) +
+                    x_dest;
+                snowflake_sprite.centerY =
+                    sign_y *
+                        FrostFieldPsynergy.SPIRAL_INTENSITY *
+                        Math.exp(FrostFieldPsynergy.POLAR_SLOPE * spiral_angle.rad) *
+                        Math.sin(spiral_angle.rad) +
+                    y_dest;
             });
             tween.onComplete.addOnce(() => {
                 snowflake_sprite.destroy();
@@ -90,15 +117,15 @@ export class FrostFieldPsynergy extends FieldAbilities {
         });
         this.target_object.sprite.send_to_back = false;
         this.data.map.sort_sprites();
-        this.target_object.custom_data.color_filters = this.game.add.filter('ColorFilters');
+        this.target_object.custom_data.color_filters = this.game.add.filter("ColorFilters");
         this.target_object.sprite.filters = [this.target_object.custom_data.color_filters];
         let blink_counter = 16;
         let blink_timer = this.game.time.create(false);
         blink_timer.loop(50, () => {
-            if (blink_counter%2 === 0) {
-                this.target_object.custom_data.color_filters.tint = [1,1,1];
+            if (blink_counter % 2 === 0) {
+                this.target_object.custom_data.color_filters.tint = [1, 1, 1];
             } else {
-                this.target_object.custom_data.color_filters.tint = [-1,-1,-1];
+                this.target_object.custom_data.color_filters.tint = [-1, -1, -1];
             }
             --blink_counter;
             if (blink_counter === 0) {

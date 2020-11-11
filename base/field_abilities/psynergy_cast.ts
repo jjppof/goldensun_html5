@@ -1,4 +1,12 @@
-export function init_cast_aura(game: Phaser.Game, sprite: Phaser.Sprite, group: Phaser.Group, filter, after_init, after_destroy, before_destroy) {
+export function init_cast_aura(
+    game: Phaser.Game,
+    sprite: Phaser.Sprite,
+    group: Phaser.Group,
+    filter,
+    after_init,
+    after_destroy,
+    before_destroy
+) {
     const ring_up_time = 750;
     const ring_up_time_half = ring_up_time >> 1;
     const step_time = (ring_up_time / 3) | 0;
@@ -41,23 +49,19 @@ export function init_cast_aura(game: Phaser.Game, sprite: Phaser.Sprite, group: 
             let aura = auras[i].aura;
             let initial_y = auras[i].initial_y;
             let scale_factor = auras[i].scale_factor;
-            let tween_a = game.add.tween(aura).to(
-                { y: initial_y - step_height },
-                step_time,
-                Phaser.Easing.Linear.None
-            );
-            let tween_b = game.add.tween(aura).to(
-                { y: initial_y - 2 * step_height },
-                step_time,
-                Phaser.Easing.Linear.None
-            );
-            let tween_c = game.add.tween(aura).to(
-                { y: initial_y - 3 * step_height },
-                step_time,
-                Phaser.Easing.Linear.None
-            );
+            let tween_a = game.add.tween(aura).to({y: initial_y - step_height}, step_time, Phaser.Easing.Linear.None);
+            let tween_b = game.add
+                .tween(aura)
+                .to({y: initial_y - 2 * step_height}, step_time, Phaser.Easing.Linear.None);
+            let tween_c = game.add
+                .tween(aura)
+                .to({y: initial_y - 3 * step_height}, step_time, Phaser.Easing.Linear.None);
             let promise_resolve;
-            promises.push(new Promise(resolve => { promise_resolve = resolve; }));
+            promises.push(
+                new Promise(resolve => {
+                    promise_resolve = resolve;
+                })
+            );
             tween_c.onComplete.add(() => {
                 aura.y = initial_y;
                 if (!stop_asked) {
@@ -67,23 +71,17 @@ export function init_cast_aura(game: Phaser.Game, sprite: Phaser.Sprite, group: 
                     promise_resolve();
                 }
             });
-            let tween_aa = game.add.tween(aura.scale).to(
-                { x: scale_factor, y: scale_factor },
-                ring_up_time_half,
-                Phaser.Easing.Quadratic.Out
-            );
-            let tween_cc = game.add.tween(aura.scale).to(
-                { x: 0, y: 0 },
-                ring_up_time_half,
-                Phaser.Easing.Quadratic.Out
-            );
+            let tween_aa = game.add
+                .tween(aura.scale)
+                .to({x: scale_factor, y: scale_factor}, ring_up_time_half, Phaser.Easing.Quadratic.Out);
+            let tween_cc = game.add.tween(aura.scale).to({x: 0, y: 0}, ring_up_time_half, Phaser.Easing.Quadratic.Out);
             tweens[j].push({
                 aura: aura,
                 tween_a: tween_a,
                 tween_aa: tween_aa,
                 tween_b: tween_b,
                 tween_c: tween_c,
-                tween_cc: tween_cc
+                tween_cc: tween_cc,
             });
             tween_a.chain(tween_b);
             tween_b.chain(tween_c);
@@ -103,10 +101,10 @@ export function init_cast_aura(game: Phaser.Game, sprite: Phaser.Sprite, group: 
     let blink_timer = game.time.create(false);
     let hue_timer = game.time.create(false);
     blink_timer.loop(50, () => {
-        if (blink_counter%2 === 0) {
-            filter.tint = [1,1,1];
+        if (blink_counter % 2 === 0) {
+            filter.tint = [1, 1, 1];
         } else {
-            filter.tint = [-1,-1,-1];
+            filter.tint = [-1, -1, -1];
         }
         --blink_counter;
         if (blink_counter === 0) {
@@ -129,7 +127,7 @@ export function init_cast_aura(game: Phaser.Game, sprite: Phaser.Sprite, group: 
         stop_asked = true;
         hue_timer.stop();
         blink_timer.stop();
-        filter.tint = [-1,-1,-1];
+        filter.tint = [-1, -1, -1];
         filter.gray = 0;
         filter.hue_adjust = 0;
         sprite.filters = undefined;
@@ -157,26 +155,21 @@ export function tint_map_layers(game, map, filter, after_destroy?) {
     for (let i = 0; i < map.layers.length; ++i) {
         map.layers[i].sprite.filters = [filter];
     }
-    game.add.tween(filter).to(
-        { colorize_intensity: 0.4, gray: 1 },
-        Phaser.Timer.QUARTER,
-        Phaser.Easing.Linear.None,
-        true
-    );
+    game.add
+        .tween(filter)
+        .to({colorize_intensity: 0.4, gray: 1}, Phaser.Timer.QUARTER, Phaser.Easing.Linear.None, true);
     return () => {
-        game.add.tween(filter).to(
-            { colorize_intensity: 0, gray: 0 },
-            Phaser.Timer.QUARTER,
-            Phaser.Easing.Linear.None,
-            true
-        ).onComplete.addOnce(() => {
-            filter.colorize = -1;
-            for (let i = 0; i < map.layers.length; ++i) {
-                map.layers[i].sprite.filters = undefined;
-            }
-            if (after_destroy !== undefined) {
-                after_destroy();
-            }
-        });
+        game.add
+            .tween(filter)
+            .to({colorize_intensity: 0, gray: 0}, Phaser.Timer.QUARTER, Phaser.Easing.Linear.None, true)
+            .onComplete.addOnce(() => {
+                filter.colorize = -1;
+                for (let i = 0; i < map.layers.length; ++i) {
+                    map.layers[i].sprite.filters = undefined;
+                }
+                if (after_destroy !== undefined) {
+                    after_destroy();
+                }
+            });
     };
 }

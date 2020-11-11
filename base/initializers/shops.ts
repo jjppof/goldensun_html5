@@ -1,4 +1,4 @@
-import { Shop } from '../Shop';
+import {Shop} from "../Shop";
 
 export function initialize_shops(shops_db) {
     let shops_list = {};

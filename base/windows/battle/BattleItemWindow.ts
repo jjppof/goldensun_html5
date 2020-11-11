@@ -1,10 +1,10 @@
-import { TextObj, Window } from "../../Window";
+import {TextObj, Window} from "../../Window";
 import * as numbers from "../../magic_numbers";
-import { use_types } from "../../Item";
-import { GoldenSun } from "../../GoldenSun";
-import { ItemSlot, MainChar } from "../../MainChar";
+import {use_types} from "../../Item";
+import {GoldenSun} from "../../GoldenSun";
+import {ItemSlot, MainChar} from "../../MainChar";
 import * as _ from "lodash";
-import { CursorManager, PointVariants } from "../../utils/CursorManager";
+import {CursorManager, PointVariants} from "../../utils/CursorManager";
 
 //TO DO: decrement item quantity when using a consumable item
 //TO DO: use item sprite instead of ability sprite for items (Spirit Ring)

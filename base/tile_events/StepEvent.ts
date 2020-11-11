@@ -1,5 +1,5 @@
-import { directions } from "../utils";
-import { TileEvent, event_types } from "./TileEvent";
+import {directions} from "../utils";
+import {TileEvent, event_types} from "./TileEvent";
 
 export class StepEvent extends TileEvent {
     private static readonly STEP_SHIFT_FACTOR = 3;
@@ -10,7 +10,18 @@ export class StepEvent extends TileEvent {
     public shift_y: number;
 
     constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, step_direction) {
-        super(game, data, event_types.STEP, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
+        super(
+            game,
+            data,
+            event_types.STEP,
+            x,
+            y,
+            activation_directions,
+            activation_collision_layers,
+            dynamic,
+            active,
+            null
+        );
         this.step_direction = step_direction;
         this.next_x = 0;
         this.next_y = 0;
@@ -18,11 +29,13 @@ export class StepEvent extends TileEvent {
     }
 
     set() {
-        let next_x, next_y = this.y, shift_y;
+        let next_x,
+            next_y = this.y,
+            shift_y;
         if (this.step_direction === directions.up) {
-            shift_y = -((this.data.map.sprite.tileHeight/StepEvent.STEP_SHIFT_FACTOR) | 0);
+            shift_y = -((this.data.map.sprite.tileHeight / StepEvent.STEP_SHIFT_FACTOR) | 0);
         } else if (this.step_direction === directions.down) {
-            shift_y = (this.data.map.sprite.tileHeight/StepEvent.STEP_SHIFT_FACTOR) | 0;
+            shift_y = (this.data.map.sprite.tileHeight / StepEvent.STEP_SHIFT_FACTOR) | 0;
         }
         if (this.activation_directions[0] === directions.left) {
             next_x = this.x - 1;
@@ -41,9 +54,14 @@ export class StepEvent extends TileEvent {
             if (this.shift_y > 0) {
                 this.data.hero.shadow_following = false;
                 this.data.hero.shadow.y += this.shift_y;
-                const tween = this.game.add.tween(this.data.hero.sprite.body).to({
-                    y: this.data.hero.sprite.body.y + this.shift_y
-                }, 50, Phaser.Easing.Linear.None, true);
+                const tween = this.game.add.tween(this.data.hero.sprite.body).to(
+                    {
+                        y: this.data.hero.sprite.body.y + this.shift_y,
+                    },
+                    50,
+                    Phaser.Easing.Linear.None,
+                    true
+                );
                 tween.onComplete.addOnce(() => {
                     this.data.hero.shadow_following = true;
                 });

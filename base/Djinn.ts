@@ -1,25 +1,26 @@
-import * as numbers from './magic_numbers';
-import { ordered_elements } from './utils';
+import * as numbers from "./magic_numbers";
+import {elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
+import {MainChar} from "./MainChar";
 
 export enum djinn_status {
     SET = "set",
     STANDBY = "standby",
-    RECOVERY = "recovery"
-};
+    RECOVERY = "recovery",
+    ANY = "any",
+}
 
-export type djinn_font_colors = (typeof djinn_font_colors)[keyof typeof djinn_font_colors]
-export const djinn_font_colors = {
+export const djinn_font_colors: {[status in djinn_status]?: number} = {
     [djinn_status.RECOVERY]: numbers.YELLOW_FONT_COLOR,
     [djinn_status.STANDBY]: numbers.RED_FONT_COLOR,
-    [djinn_status.SET]: numbers.DEFAULT_FONT_COLOR
-} as const;
+    [djinn_status.SET]: numbers.DEFAULT_FONT_COLOR,
+};
 
 export class Djinn {
     public key_name: string;
     public name: string;
     public description: string;
-    public element: string;
+    public element: elements;
     public ability_key_name: string;
     public hp_boost: number;
     public pp_boost: number;
@@ -61,7 +62,7 @@ export class Djinn {
         this.recovery_turn = 0;
     }
 
-    set_status(status, char) {
+    set_status(status: djinn_status, char: MainChar) {
         this.status = status;
         char.update_elemental_attributes();
         char.update_class();
@@ -70,15 +71,22 @@ export class Djinn {
     }
 
     static has_standby_djinn(djinni_list, members) {
-        return _.some(members.map(char => char.djinni).map(djinn_keys => {
-            return djinn_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length;
-        }));
+        return _.some(
+            members
+                .map(char => char.djinni)
+                .map(djinn_keys => {
+                    return djinn_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length;
+                })
+        );
     }
 
     static get_standby_djinni(djinni_list, members) {
-        let standby_djinni = _.mapValues(_.groupBy(members.map(c => c.djinni).flat(), key => {
-            return djinni_list[key].element;
-        }), djinni_keys => djinni_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length);
+        let standby_djinni = _.mapValues(
+            _.groupBy(members.map(c => c.djinni).flat(), key => {
+                return djinni_list[key].element;
+            }),
+            djinni_keys => djinni_keys.filter(key => djinni_list[key].status === djinn_status.STANDBY).length
+        );
         for (let i = 0; i < ordered_elements.length; ++i) {
             const element = ordered_elements[i];
             if (!(element in standby_djinni)) {

@@ -1,5 +1,5 @@
-import { base_actions, directions, reverse_directions } from "../utils";
-import { event_types, TileEvent } from "./TileEvent";
+import {base_actions, directions, reverse_directions} from "../utils";
+import {event_types, TileEvent} from "./TileEvent";
 import * as numbers from "../magic_numbers";
 import * as _ from "lodash";
 
@@ -10,8 +10,33 @@ export class TeleportEvent extends TileEvent {
     public advance_effect: boolean;
     public dest_collision_layer: number;
 
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, target, x_target, y_target, advance_effect, dest_collision_layer) {
-        super(game, data, event_types.TELEPORT, x, y, activation_directions, activation_collision_layers, dynamic, active, null);
+    constructor(
+        game,
+        data,
+        x,
+        y,
+        activation_directions,
+        activation_collision_layers,
+        dynamic,
+        active,
+        target,
+        x_target,
+        y_target,
+        advance_effect,
+        dest_collision_layer
+    ) {
+        super(
+            game,
+            data,
+            event_types.TELEPORT,
+            x,
+            y,
+            activation_directions,
+            activation_collision_layers,
+            dynamic,
+            active,
+            null
+        );
         this.target = target;
         this.x_target = x_target;
         this.y_target = y_target;
@@ -37,16 +62,29 @@ export class TeleportEvent extends TileEvent {
             const time = 400;
             const tween_x = this.data.map.sprite.tileWidth * (this.x + 0.5);
             const tween_y = this.data.hero.sprite.y - 15;
-            this.game.add.tween(this.data.hero.shadow).to({
-                x: tween_x,
-                y: tween_y
-            }, time, Phaser.Easing.Linear.None, true);
-            this.game.add.tween(this.data.hero.sprite.body).to({
-                x: tween_x,
-                y: tween_y
-            }, time, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
-                this.camera_fade_in();
-            });
+            this.game.add.tween(this.data.hero.shadow).to(
+                {
+                    x: tween_x,
+                    y: tween_y,
+                },
+                time,
+                Phaser.Easing.Linear.None,
+                true
+            );
+            this.game.add
+                .tween(this.data.hero.sprite.body)
+                .to(
+                    {
+                        x: tween_x,
+                        y: tween_y,
+                    },
+                    time,
+                    Phaser.Easing.Linear.None,
+                    true
+                )
+                .onComplete.addOnce(() => {
+                    this.camera_fade_in();
+                });
         } else {
             this.camera_fade_in();
         }
@@ -103,7 +141,7 @@ export class TeleportEvent extends TileEvent {
 
     open_door() {
         const layer = _.find(this.data.map.sprite.layers, {
-            name : this.data.map.sprite.properties.door_layer
+            name: this.data.map.sprite.properties.door_layer,
         });
         const sample_tile = this.data.map.sprite.getTile(this.x, this.y - 1, layer.name);
         const door_type_index = sample_tile.properties.door_type;
@@ -118,9 +156,12 @@ export class TeleportEvent extends TileEvent {
             offsets = tile.base_offset.split(",");
             base_x = this.x + (offsets[0] | 0);
             base_y = this.y + (offsets[1] | 0) - 1;
-            target_index = parseInt(_.findKey(this.data.map.sprite.tilesets[0].tileProperties, {
-                open_door : close_door_index
-            })) + 1;
+            target_index =
+                parseInt(
+                    _.findKey(this.data.map.sprite.tilesets[0].tileProperties, {
+                        open_door: close_door_index,
+                    })
+                ) + 1;
             this.data.map.sprite.replace(source_index, target_index, base_x, base_y, 1, 1, layer.name);
         }
     }

@@ -1,19 +1,19 @@
-import { SpriteBase } from "./SpriteBase";
-import { Player, fighter_types } from "./Player";
-import { ordered_elements } from "./utils";
+import {SpriteBase} from "./SpriteBase";
+import {Player, fighter_types} from "./Player";
+import {ordered_elements} from "./utils";
 import * as _ from "lodash";
 import * as numbers from "./magic_numbers";
-import { effect_types } from "./Effect";
+import {effect_types} from "./Effect";
 
 export class Enemy extends Player {
     public items: {
-        key_name: string,
-        quantity: number,
-        use_weight: number
+        key_name: string;
+        quantity: number;
+        use_weight: number;
     }[];
     public abilities: {
-        key_name: string,
-        use_weight: number
+        key_name: string;
+        use_weight: number;
     }[];
     public coins_reward: number;
     public item_reward: string;
@@ -70,7 +70,7 @@ export class Enemy extends Player {
         this.fighter_type = fighter_types.ENEMY;
         this.class = {
             name: "No Class",
-            vulnerabilities: enemy_data.vulnerabilities === undefined ? [] : enemy_data.vulnerabilities
+            vulnerabilities: enemy_data.vulnerabilities === undefined ? [] : enemy_data.vulnerabilities,
         };
         this.current_exp = -1;
         this.effects = [];

@@ -1,11 +1,14 @@
-import { SpriteBase } from '../SpriteBase';
+import {SpriteBase} from "../SpriteBase";
 
 export function initialize_misc_data(game, misc_db, load_promise_resolve) {
     let misc_sprite_base_list = {};
     let load_promises = [];
     for (let i = 0; i < misc_db.length; ++i) {
         const misc_data = misc_db[i];
-        const sprite_base = new SpriteBase(misc_data.key_name, misc_data.actions.map(action => action.key_name));
+        const sprite_base = new SpriteBase(
+            misc_data.key_name,
+            misc_data.actions.map(action => action.key_name)
+        );
         misc_sprite_base_list[misc_data.key_name] = sprite_base;
         for (let j = 0; j < misc_data.actions.length; ++j) {
             const action = misc_data.actions[j];

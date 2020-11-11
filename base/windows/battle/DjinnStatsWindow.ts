@@ -1,9 +1,9 @@
-import { TextObj, Window } from "../../Window";
+import {TextObj, Window} from "../../Window";
 import * as numbers from "../../magic_numbers";
-import { GoldenSun } from "../../GoldenSun";
-import { MainChar } from "../../MainChar";
-import { Djinn } from "../../Djinn";
-import { ordered_main_stats } from "../../Player";
+import {GoldenSun} from "../../GoldenSun";
+import {MainChar} from "../../MainChar";
+import {Djinn, djinn_status} from "../../Djinn";
+import {ordered_main_stats} from "../../Player";
 
 const BASE_WIN_X = 0;
 const BASE_WIN_Y = 64;
@@ -36,7 +36,7 @@ export class DjinnStatsWindow {
     public after_class_text: TextObj;
     public window_open: boolean;
     public char: MainChar;
-    public next_djinni_status: string;
+    public next_djinni_status: djinn_status;
     public djinn: Djinn;
 
     constructor(game, data) {
@@ -50,10 +50,28 @@ export class DjinnStatsWindow {
         this.down_arrows = {};
         for (let i = 0; i < ordered_main_stats.length; ++i) {
             this.base_window.set_text_in_position(labels[i], HP_LABEL_X, HP_LABEL_Y + i * numbers.FONT_SIZE);
-            this.before_stats[ordered_main_stats[i]] = this.base_window.set_text_in_position("", BEFORE_STAT_X, HP_LABEL_Y + i * numbers.FONT_SIZE, true);
-            this.after_stats[ordered_main_stats[i]] = this.base_window.set_text_in_position("", AFTER_STAT_X, HP_LABEL_Y + i * numbers.FONT_SIZE, true);
-            this.up_arrows[ordered_main_stats[i]] = this.base_window.create_at_group(STAT_ARROW_X, STAT_ARROW_Y + i * numbers.FONT_SIZE, "stat_up");
-            this.down_arrows[ordered_main_stats[i]] = this.base_window.create_at_group(STAT_ARROW_X, STAT_ARROW_Y + i * numbers.FONT_SIZE, "stat_down");
+            this.before_stats[ordered_main_stats[i]] = this.base_window.set_text_in_position(
+                "",
+                BEFORE_STAT_X,
+                HP_LABEL_Y + i * numbers.FONT_SIZE,
+                true
+            );
+            this.after_stats[ordered_main_stats[i]] = this.base_window.set_text_in_position(
+                "",
+                AFTER_STAT_X,
+                HP_LABEL_Y + i * numbers.FONT_SIZE,
+                true
+            );
+            this.up_arrows[ordered_main_stats[i]] = this.base_window.create_at_group(
+                STAT_ARROW_X,
+                STAT_ARROW_Y + i * numbers.FONT_SIZE,
+                "stat_up"
+            );
+            this.down_arrows[ordered_main_stats[i]] = this.base_window.create_at_group(
+                STAT_ARROW_X,
+                STAT_ARROW_Y + i * numbers.FONT_SIZE,
+                "stat_down"
+            );
         }
         this.hide_arrows();
         this.before_class_text = this.base_window.set_text_in_position("", HP_LABEL_X, CLASS_NAME_Y);
@@ -75,7 +93,11 @@ export class DjinnStatsWindow {
 
     set_stats() {
         this.base_window.update_text(this.char.class.name, this.before_class_text);
-        const preview_values = this.char.preview_djinn_change(ordered_main_stats, [this.djinn.key_name], [this.next_djinni_status]);
+        const preview_values = this.char.preview_djinn_change(
+            ordered_main_stats,
+            [this.djinn.key_name],
+            [this.next_djinni_status]
+        );
         this.base_window.update_text(preview_values.class_name, this.after_class_text);
         for (let i = 0; i < ordered_main_stats.length; ++i) {
             const stat_key = ordered_main_stats[i];
