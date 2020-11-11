@@ -5,6 +5,7 @@ import {GoldenSun} from "../../GoldenSun";
 import {MainChar} from "../../MainChar";
 import {BattlePsynergyWindow} from "./BattlePsynergyWindow";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
+import {PageIndicatorModes} from "../../support_menus/PageIndicator";
 
 const BASE_WINDOW_X = 160;
 const BASE_WINDOW_Y = 72;
@@ -68,7 +69,6 @@ export class BattleDjinnWindow {
         this.data = data;
 
         this.base_window = new Window(this.game, BASE_WINDOW_X, BASE_WINDOW_Y, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
-        this.base_window.page_indicator.initialize();
         this.stats_window = new DjinnStatsWindow(this.game, this.data);
         this.group = this.game.add.group();
         this.group.alpha = 0;
@@ -94,7 +94,10 @@ export class BattleDjinnWindow {
         let cursor_x = CURSOR_X;
         let cursor_y = CURSOR_Y + this.djinn_index * CURSOR_SHIFT;
 
-        let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
+        let tween_config = {
+            type: CursorManager.CursorTweens.POINT,
+            variant: PointVariants.NORMAL,
+        };
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
         this.change_djinn();
 
@@ -156,7 +159,7 @@ export class BattleDjinnWindow {
         }
         this.call_set_description();
         this.set_highlight_bar();
-        this.base_window.page_indicator.set_highlight(this.page_number, this.page_index);
+        this.base_window.page_indicator.select_page(this.page_index);
         this.update_stats();
     }
 
@@ -218,6 +221,7 @@ export class BattleDjinnWindow {
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
         }
+        this.base_window.page_indicator.initialize(this.page_number, this.page_index, PageIndicatorModes.FLASH);
     }
 
     get_next_status() {
@@ -247,7 +251,6 @@ export class BattleDjinnWindow {
     mount_window() {
         this.all_djinni = this.char.djinni;
         this.set_page_number();
-        this.base_window.page_indicator.set_page(this.page_number, this.page_index);
 
         this.config_page();
         this.update_stats();
@@ -276,13 +279,21 @@ export class BattleDjinnWindow {
         this.psynergy_window_open = true;
 
         let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.psynergy_window.previous_page.bind(this.psynergy_window)},
-            {key: this.data.gamepad.RIGHT, on_down: this.psynergy_window.next_page.bind(this.psynergy_window)},
+            {
+                key: this.data.gamepad.LEFT,
+                on_down: this.psynergy_window.previous_page.bind(this.psynergy_window),
+            },
+            {
+                key: this.data.gamepad.RIGHT,
+                on_down: this.psynergy_window.next_page.bind(this.psynergy_window),
+            },
             {key: this.data.gamepad.UP, on_down: this.previous_djinn.bind(this)},
             {key: this.data.gamepad.DOWN, on_down: this.next_djinn.bind(this)},
         ];
 
-        this.data.control_manager.set_control(controls, {loop_configs: {vertical: true, horizontal: true}});
+        this.data.control_manager.set_control(controls, {
+            loop_configs: {vertical: true, horizontal: true},
+        });
     }
 
     hide_psynergy() {
@@ -320,7 +331,9 @@ export class BattleDjinnWindow {
             },
         ];
 
-        this.data.control_manager.set_control(controls, {loop_configs: {vertical: true, horizontal: true}});
+        this.data.control_manager.set_control(controls, {
+            loop_configs: {vertical: true, horizontal: true},
+        });
 
         if (!this.open_psy_key) {
             let control = [
@@ -330,7 +343,10 @@ export class BattleDjinnWindow {
                     on_up: this.hide_psynergy.bind(this),
                 },
             ];
-            this.open_psy_key = this.data.control_manager.set_control(control, {persist: true, no_reset: true});
+            this.open_psy_key = this.data.control_manager.set_control(control, {
+                persist: true,
+                no_reset: true,
+            });
         }
     }
 

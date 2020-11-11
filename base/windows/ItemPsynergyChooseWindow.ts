@@ -132,8 +132,6 @@ export class ItemPsynergyChooseWindow {
         if (this.is_psynergy_window) {
             this.window.set_text_in_position("PP", PSY_PP_COST_X, PSY_PP_COST_Y);
         }
-
-        this.window.page_indicator.initialize();
     }
 
     next_page() {
@@ -194,6 +192,8 @@ export class ItemPsynergyChooseWindow {
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
         }
+
+        this.window.page_indicator.initialize(this.page_number, this.page_index);
     }
 
     /*Updates this window's position*/
@@ -352,7 +352,7 @@ export class ItemPsynergyChooseWindow {
             this.element_list[this.get_element_key_name(this.selected_element_index) as string],
             this.is_psynergy_window ? undefined : this.item_objs[this.selected_element_index]
         );
-        this.window.page_indicator.set_highlight(this.page_number, this.page_index);
+        this.window.page_indicator.select_page(this.page_index);
     }
 
     /*Removes all sprites from this window*/
@@ -392,7 +392,10 @@ export class ItemPsynergyChooseWindow {
     }
 
     move_cursor(x_pos: number, y_pos: number, on_complete?: Function) {
-        let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
+        let tween_config = {
+            type: CursorManager.CursorTweens.POINT,
+            variant: PointVariants.NORMAL,
+        };
         this.data.cursor_manager.move_to(
             {x: x_pos, y: y_pos},
             {animate: false, tween_config: tween_config},
@@ -420,16 +423,15 @@ export class ItemPsynergyChooseWindow {
         this.char_index = char_index;
         this.char = this.data.info.party_data.members[char_index];
 
+        this.page_index = 0;
         this.set_page_number();
         this.group.alpha = 1;
         this.close_callback = close_callback;
         this.window.show(open_callback, false);
 
         this.selected_element_index = 0;
-        this.page_index = 0;
         this.set_elements();
 
-        this.window.page_indicator.set_page(this.page_number, this.page_index);
         this.set_element_tween(this.selected_element_index);
         this.set_highlight_bar();
         this.on_change(
@@ -463,7 +465,7 @@ export class ItemPsynergyChooseWindow {
         this.set_elements();
         this.element_change(this.selected_element_index);
 
-        this.window.page_indicator.set_page(this.page_number, this.page_index);
+        this.window.page_indicator.initialize(this.page_number, this.page_index);
         this.set_element_tween(this.selected_element_index);
         this.set_highlight_bar();
 

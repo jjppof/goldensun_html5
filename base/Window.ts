@@ -35,7 +35,10 @@ export class Window {
     public separators_graphics: Phaser.Graphics;
     public need_pos_update: boolean;
     public open: boolean;
-    public lines_sprites: {text: Phaser.BitmapText; shadow: Phaser.BitmapText}[];
+    public lines_sprites: {
+        text: Phaser.BitmapText;
+        shadow: Phaser.BitmapText;
+    }[];
     public extra_sprites: Phaser.Sprite[];
     public internal_groups: {[key: string]: Phaser.Group};
     public close_callback: Function;
@@ -336,7 +339,6 @@ export class Window {
         this.group.y = this.game.camera.y + this.y;
 
         this.close_callback = close_callback;
-        this.page_indicator.is_set = false;
 
         if (animate) {
             this.game.add
@@ -500,7 +502,10 @@ export class Window {
 
             this.group.add(text_sprite_shadow);
             this.group.add(text_sprite);
-            this.lines_sprites.push({text: text_sprite, shadow: text_sprite_shadow});
+            this.lines_sprites.push({
+                text: text_sprite,
+                shadow: text_sprite_shadow,
+            });
         }
 
         Promise.all(lines_promises).then(anim_promise_resolve);
@@ -536,7 +541,12 @@ export class Window {
         this.group.add(text_sprite_shadow);
         this.group.add(text_sprite);
 
-        return {text: text_sprite, shadow: text_sprite_shadow, right_align: right_align, initial_x: x_pos};
+        return {
+            text: text_sprite,
+            shadow: text_sprite_shadow,
+            right_align: right_align,
+            initial_x: x_pos,
+        };
     }
 
     /*Creates a sprite to represent a single line of text at a given location

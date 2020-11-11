@@ -7,6 +7,7 @@ import {MainChar} from "../../MainChar";
 import {GoldenSun} from "../../GoldenSun";
 import * as _ from "lodash";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
+import {PageIndicatorModes} from "../../support_menus/PageIndicator";
 
 const BASE_WINDOW_X = 104;
 const BASE_WINDOW_Y = 88;
@@ -65,7 +66,6 @@ export class BattleSummonWindow {
         this.data = data;
 
         this.base_window = new Window(this.game, BASE_WINDOW_X, BASE_WINDOW_Y, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
-        this.base_window.page_indicator.initialize();
         this.djinn_numbers_window = new SummonDjinnStandbyWindow(game);
         this.group = this.game.add.group();
         this.group.alpha = 0;
@@ -90,7 +90,10 @@ export class BattleSummonWindow {
         let cursor_x = CURSOR_X;
         let cursor_y = CURSOR_Y + this.summon_index * CURSOR_SHIFT;
 
-        let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
+        let tween_config = {
+            type: CursorManager.CursorTweens.POINT,
+            variant: PointVariants.NORMAL,
+        };
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
         this.change_summon();
     }
@@ -137,7 +140,7 @@ export class BattleSummonWindow {
         }
 
         this.set_highlight_bar();
-        this.base_window.page_indicator.set_highlight(this.page_number, this.page_index);
+        this.base_window.page_indicator.select_page(this.page_index);
         this.djinn_numbers_window.set_numbers(this.summons[this.summon_index].requirements);
     }
 
@@ -196,6 +199,7 @@ export class BattleSummonWindow {
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
         }
+        this.base_window.page_indicator.initialize(this.page_number, this.page_index, PageIndicatorModes.FLASH);
     }
 
     mount_window() {
@@ -225,7 +229,6 @@ export class BattleSummonWindow {
         ]);
 
         this.set_page_number();
-        this.base_window.page_indicator.set_page(this.page_number, this.page_index);
         this.config_page();
     }
 
@@ -261,7 +264,9 @@ export class BattleSummonWindow {
             },
         ];
 
-        this.data.control_manager.set_control(controls, {loop_configs: {vertical: true, horizontal: true}});
+        this.data.control_manager.set_control(controls, {
+            loop_configs: {vertical: true, horizontal: true},
+        });
     }
 
     open(

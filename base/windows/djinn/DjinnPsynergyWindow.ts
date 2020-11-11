@@ -70,7 +70,6 @@ export class DjinnPsynergyWindow {
         this.icon_sprites_in_window = [];
 
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
-        this.base_window.page_indicator.initialize();
         this.base_window.set_text_in_position("PP", PSY_PP_COST_X, PSY_PP_COST_Y);
         this.psy_info_1_text = this.base_window.set_text_in_position("", PSY_INFO_X, PSY_INFO_1_Y);
         this.psy_info_2_text = this.base_window.set_text_in_position("", PSY_INFO_X, PSY_INFO_2_Y);
@@ -104,7 +103,9 @@ export class DjinnPsynergyWindow {
                 },
             },
         ];
-        this.data.control_manager.set_control(controls, {loop_configs: {horizontal: true}});
+        this.data.control_manager.set_control(controls, {
+            loop_configs: {horizontal: true},
+        });
     }
 
     set_page_number() {
@@ -113,6 +114,7 @@ export class DjinnPsynergyWindow {
         if (this.page_index >= this.page_number) {
             this.page_index = this.page_number - 1;
         }
+        this.base_window.page_indicator.initialize(this.page_number, this.page_index);
     }
 
     change_page(page_shift: number) {
@@ -123,7 +125,7 @@ export class DjinnPsynergyWindow {
             this.page_index = this.page_number - 1;
         }
         this.set_abilities_list();
-        this.base_window.page_indicator.set_highlight(this.page_number, this.page_index);
+        this.base_window.page_indicator.select_page(this.page_index);
     }
 
     set_abilities_list() {
@@ -209,7 +211,6 @@ export class DjinnPsynergyWindow {
         this.set_abilities();
         this.set_abilities_list();
         this.set_page_number();
-        this.base_window.page_indicator.set_page(this.page_number, this.page_index);
     }
 
     clear_sprites() {
