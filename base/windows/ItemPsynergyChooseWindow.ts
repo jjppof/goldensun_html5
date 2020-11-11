@@ -432,7 +432,6 @@ export class ItemPsynergyChooseWindow {
         this.selected_element_index = 0;
         this.set_elements();
 
-        //this.window.page_indicator.set_page(this.page_index);
         this.set_element_tween(this.selected_element_index);
         this.set_highlight_bar();
         this.on_change(
