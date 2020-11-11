@@ -149,8 +149,8 @@ export class PageIndicator {
                 this.flash_event = null;
             }
 
-            this.page_numbers.forEach(n => {
-                n.text.tint = INACTIVE_FONT_COLOR;
+            this.page_numbers.forEach((n, index) => {
+                n.text.tint = index === page_index ? DEFAULT_FONT_COLOR : INACTIVE_FONT_COLOR;
             });
 
             this.flash_event = this.flash_timer.loop(PageIndicator.FLASH_LOOP, () => {
