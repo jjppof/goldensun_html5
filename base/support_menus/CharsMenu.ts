@@ -339,7 +339,7 @@ export class CharsMenu {
             cursor_x = CURSOR_X + pos * GAP_SIZE;
             cursor_y = CURSOR_Y;
             tween_config.type = CursorManager.CursorTweens.WIGGLE;
-            animate = true;
+            animate = false;
         } else if (this.mode === MENU_MODE) {
             cursor_x = CURSOR_X2 + pos * GAP_SIZE;
             cursor_y = CURSOR_Y2;
