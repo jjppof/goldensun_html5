@@ -1,169 +1,222 @@
+import {DEFAULT_FONT_COLOR, INACTIVE_FONT_COLOR} from "../magic_numbers";
 import {Window, TextObj} from "../Window";
 
+export enum PageIndicatorModes {
+    HIGHLIGHT,
+    FLASH,
+}
+
 export class PageIndicator {
-  private static readonly NUMBER_WIDTH = 8;
-  private static readonly NUMBER_HEIGHT = 8;
+    private static readonly NUMBER_WIDTH = 8;
+    private static readonly NUMBER_HEIGHT = 8;
 
-  private static readonly GROUP_KEY = "page_indicator";
+    private static readonly ARROW_SHIFT = 1;
+    private static readonly GROUP_KEY = "page_indicator";
 
-  private game: Phaser.Game;
-  private window: Window;
+    private static readonly ARROW_LOOP = Phaser.Timer.QUARTER >> 1;
+    private static readonly FLASH_LOOP = 150;
 
-  private set: boolean;
-  private page_count: number;
-  private anchor_x: number;
+    private game: Phaser.Game;
+    private window: Window;
 
-  private number_bar: Phaser.Graphics;
-  private number_bar_highlight: Phaser.Graphics;
+    private set: boolean;
+    private mode: PageIndicatorModes;
 
-  private arrow_timer: Phaser.Timer;
-  private right_arrow: Phaser.Sprite;
-  private left_arrow: Phaser.Sprite;
+    private page_count: number;
+    private anchor: {x: number; y: number};
 
-  private page_numbers: TextObj[];
+    private number_bar: Phaser.Graphics;
+    private number_bar_highlight: Phaser.Graphics;
 
-  public constructor(game: Phaser.Game, window: Window, anchor_x?: number) {
-    this.game = game;
-    this.window = window;
+    private flash_timer: Phaser.Timer;
+    private flash_event: Phaser.TimerEvent;
+    private arrow_timer: Phaser.Timer;
 
-    this.window.define_internal_group(PageIndicator.GROUP_KEY, { x: 0, y: 0 });
+    private right_arrow: Phaser.Sprite;
+    private left_arrow: Phaser.Sprite;
 
-    this.set = false;
-    this.page_count = 0;
-    this.anchor_x = anchor_x ? anchor_x : this.window.width - 3;
-  }
+    private default_arrow_pos: {
+        right: number;
+        left: number;
+    };
 
-  get is_set() {
-    return this.set;
-  }
+    private page_numbers: TextObj[];
 
-  public initialize(page_count: number) {
-    this.page_count = page_count;
+    public constructor(game: Phaser.Game, window: Window, anchor?: {x: number; y: number}) {
+        this.game = game;
+        this.window = window;
 
-    this.number_bar = this.game.add.graphics(0, 0);
-    this.number_bar.alpha = 0;
-    this.window.add_sprite_to_group(this.number_bar, PageIndicator.GROUP_KEY);
+        this.window.define_internal_group(PageIndicator.GROUP_KEY, {x: 0, y: 0});
 
-    this.number_bar.beginFill(this.window.color, 1);
-    this.number_bar.drawRect(
-      0,
-      0,
-      PageIndicator.NUMBER_WIDTH,
-      PageIndicator.NUMBER_HEIGHT
-    );
-    this.number_bar.endFill();
+        this.set = false;
+        this.mode = null;
+        this.flash_event = null;
 
-    this.number_bar_highlight = this.game.add.graphics(0, 0);
-    this.number_bar_highlight.blendMode = PIXI.blendModes.SCREEN;
-    this.number_bar_highlight.alpha = 0;
+        this.page_count = 0;
+        this.anchor = {
+            x: anchor ? anchor.x : this.window.width - 3,
+            y: anchor ? anchor.y : 0,
+        };
 
-    this.window.add_sprite_to_group(
-      this.number_bar_highlight,
-      PageIndicator.GROUP_KEY
-    );
-    this.number_bar_highlight.beginFill(this.window.color, 1);
-    this.number_bar_highlight.drawRect(
-      0,
-      0,
-      PageIndicator.NUMBER_WIDTH,
-      PageIndicator.NUMBER_HEIGHT
-    );
-    this.number_bar_highlight.endFill();
-
-    this.page_numbers = [];
-    this.arrow_timer = this.game.time.create(false);
-
-    this.right_arrow = this.window.create_at_group(
-      this.anchor_x,
-      0,
-      "page_arrow",
-      undefined,
-      undefined,
-      PageIndicator.GROUP_KEY
-    );
-    this.right_arrow.scale.x = -1;
-    this.right_arrow.x -= this.right_arrow.width;
-    this.right_arrow.alpha = 0;
-
-    this.left_arrow = this.window.create_at_group(
-      0,
-      0,
-      "page_arrow",
-      undefined,
-      undefined,
-      PageIndicator.GROUP_KEY
-    );
-    this.left_arrow.alpha = 0;
-
-    this.set = true;
-  }
-
-  public set_page(page_index: number) {
-    if (this.page_count <= 1) return;
-
-    this.number_bar.width = this.page_count * PageIndicator.NUMBER_WIDTH;
-    this.number_bar.x = this.window.width - this.number_bar.width - 5;
-    this.number_bar.alpha = 1;
-
-    for (let i = 1; i <= this.page_count; ++i) {
-      const x =
-        this.number_bar.x +
-        PageIndicator.NUMBER_WIDTH * (i - 1) +
-        (PageIndicator.NUMBER_WIDTH >> 1);
-      const y = PageIndicator.NUMBER_HEIGHT >> 1;
-      this.page_numbers.push(
-        this.window.set_text_in_position(i.toString(), x, y, false, true)
-      );
+        this.default_arrow_pos = {right: 0, left: 0};
     }
 
-    this.number_bar_highlight.alpha = 1;
-    this.set_highlight(page_index);
-    this.set_arrows();
-  }
+    get is_set() {
+        return this.set;
+    }
 
-  public set_highlight(page_index: number) {
-    this.number_bar_highlight.x =
-      this.window.width -
-      5 -
-      (this.page_count - page_index) * PageIndicator.NUMBER_WIDTH;
-  }
+    set position(anchor: {x?: number; y?: number}) {
+        if (anchor.x) this.anchor.x = anchor.x;
+        if (anchor.y) this.anchor.y = anchor.y;
+    }
 
-  private set_arrows() {
-    this.left_arrow.alpha = 1;
-    this.right_arrow.alpha = 1;
+    public initialize(page_count: number, page_index: number, mode?: PageIndicatorModes) {
+        if (page_count <= 1) return;
+        if (this.is_set) {
+        }
+        this.mode = mode ? mode : PageIndicatorModes.HIGHLIGHT;
+        this.page_count = page_count;
 
-    let left_arrow_x =
-      this.window.width -
-      5 -
-      this.page_count * PageIndicator.NUMBER_WIDTH -
-      this.left_arrow.width -
-      2;
-    this.left_arrow.x = left_arrow_x;
+        this.number_bar = this.game.add.graphics(0, 0);
+        this.number_bar.alpha = 0;
+        this.window.add_sprite_to_group(this.number_bar, PageIndicator.GROUP_KEY);
 
-    if (this.arrow_timer.running && this.arrow_timer.paused) {
-      this.arrow_timer.resume();
-    } else {
-      this.arrow_timer.loop(Phaser.Timer.QUARTER >> 1, () => {
-        this.left_arrow.x = left_arrow_x + ~(-this.left_arrow.x % 2);
-        this.right_arrow.x = this.anchor_x - ~(-this.right_arrow.x % 2);
+        this.number_bar.beginFill(this.window.color, 1);
+        this.number_bar.drawRect(0, 0, PageIndicator.NUMBER_WIDTH, PageIndicator.NUMBER_HEIGHT);
+        this.number_bar.endFill();
+
+        this.number_bar_highlight = this.game.add.graphics(0, 0);
+        this.number_bar_highlight.blendMode = PIXI.blendModes.SCREEN;
+        this.number_bar_highlight.alpha = 0;
+
+        this.window.add_sprite_to_group(this.number_bar_highlight, PageIndicator.GROUP_KEY);
+        this.number_bar_highlight.beginFill(this.window.color, 1);
+        this.number_bar_highlight.drawRect(0, 0, PageIndicator.NUMBER_WIDTH, PageIndicator.NUMBER_HEIGHT);
+        this.number_bar_highlight.endFill();
+
+        this.page_numbers = [];
+
+        this.arrow_timer = this.game.time.create(false);
+        this.flash_timer = this.game.time.create(false);
+
+        this.right_arrow = this.window.create_at_group(
+            0,
+            0,
+            "page_arrow",
+            undefined,
+            undefined,
+            PageIndicator.GROUP_KEY
+        );
+        this.right_arrow.alpha = 0;
+
+        this.left_arrow = this.window.create_at_group(
+            0,
+            0,
+            "page_arrow",
+            undefined,
+            undefined,
+            PageIndicator.GROUP_KEY
+        );
+        this.left_arrow.alpha = 0;
+
+        this.set = true;
+
+        this.number_bar.width = this.page_count * PageIndicator.NUMBER_WIDTH;
+        this.number_bar.x = this.anchor.x - this.number_bar.width - 2;
+        this.number_bar.y = this.anchor.y;
+        this.number_bar.alpha = 1;
+
+        for (let i = 1; i <= this.page_count; ++i) {
+            const x = this.number_bar.x + PageIndicator.NUMBER_WIDTH * (i - 1) + (PageIndicator.NUMBER_WIDTH >> 1);
+            const y = this.number_bar.y + (PageIndicator.NUMBER_HEIGHT >> 1);
+            this.page_numbers.push(this.window.set_text_in_position(i.toString(), x, y, false, true));
+        }
+
+        this.number_bar_highlight.alpha = 1;
+        this.select_page(page_index);
+        this.set_arrows();
+    }
+
+    public select_page(page_index: number) {
+        if (this.mode === PageIndicatorModes.HIGHLIGHT) {
+            this.number_bar_highlight.x = this.number_bar.x + page_index * PageIndicator.NUMBER_WIDTH;
+            this.number_bar_highlight.y = this.number_bar.y;
+        } else if (this.mode === PageIndicatorModes.FLASH) {
+            this.number_bar_highlight.alpha = 0;
+
+            if (this.flash_timer.running) {
+                this.flash_event.pendingDelete = true;
+                this.flash_event = null;
+            }
+
+            this.page_numbers.forEach(n => {
+                n.text.tint = INACTIVE_FONT_COLOR;
+            });
+
+            this.flash_event = this.flash_timer.loop(PageIndicator.FLASH_LOOP, () => {
+                if (this.page_numbers[page_index].text.tint === DEFAULT_FONT_COLOR) {
+                    this.page_numbers[page_index].text.tint = INACTIVE_FONT_COLOR;
+                } else {
+                    this.page_numbers[page_index].text.tint = DEFAULT_FONT_COLOR;
+                }
+            });
+            this.flash_timer.start();
+        }
+    }
+
+    private set_arrows() {
+        this.left_arrow.alpha = 1;
+        this.right_arrow.alpha = 1;
+
+        const left_arrow_x = this.number_bar.x - 8;
+        this.left_arrow.x = left_arrow_x;
+        this.left_arrow.y = this.anchor.y;
+
+        this.right_arrow.x = this.anchor.x;
+        this.right_arrow.y = this.anchor.y;
+
+        this.right_arrow.scale.x = -1;
         this.right_arrow.x -= this.right_arrow.width;
-      });
-      this.arrow_timer.start();
+
+        this.default_arrow_pos = {right: this.right_arrow.x, left: this.left_arrow.x};
+
+        if (this.arrow_timer.running && this.arrow_timer.paused) {
+            this.arrow_timer.resume();
+        } else {
+            this.arrow_timer.loop(PageIndicator.ARROW_LOOP, () => {
+                if (
+                    this.right_arrow.x !== this.default_arrow_pos.right &&
+                    this.left_arrow.x !== this.default_arrow_pos.left
+                ) {
+                    this.right_arrow.x = this.default_arrow_pos.right;
+                    this.left_arrow.x = this.default_arrow_pos.left;
+                } else {
+                    this.right_arrow.x += -PageIndicator.ARROW_SHIFT;
+                    this.left_arrow.x += PageIndicator.ARROW_SHIFT;
+                }
+            });
+            this.arrow_timer.start();
+        }
     }
-  }
 
-  public terminante() {
-    this.set = false;
+    public terminante() {
+        if (!this.set) return;
 
-    this.number_bar.alpha = 0;
-    this.number_bar_highlight.alpha = 0;
-    this.left_arrow.alpha = 0;
-    this.right_arrow.alpha = 0;
+        this.set = false;
+        this.mode = null;
 
-    for (let i = 0; i < this.page_numbers.length; ++i) {
-      this.window.remove_text(this.page_numbers[i]);
+        this.number_bar.alpha = 0;
+        this.number_bar_highlight.alpha = 0;
+        this.left_arrow.alpha = 0;
+        this.right_arrow.alpha = 0;
+
+        for (let i = 0; i < this.page_numbers.length; ++i) {
+            this.window.remove_text(this.page_numbers[i]);
+        }
+
+        this.page_numbers = [];
+
+        this.arrow_timer.pause();
+        this.flash_timer.pause();
     }
-    this.page_numbers = [];
-    this.arrow_timer.pause();
-  }
 }

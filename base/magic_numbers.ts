@@ -8,6 +8,7 @@ export const DELTA_TIME_FACTOR = 50.0 / 3.0;
 export const MAP_DAMPING = 1;
 export const DEFAULT_WINDOW_COLOR = 0x006080;
 export const DEFAULT_FONT_COLOR = 0xf8f8f8;
+export const INACTIVE_FONT_COLOR = 0x088dbd;
 export const YELLOW_FONT_COLOR = 0xf8f840;
 export const RED_FONT_COLOR = 0xf80000;
 export const BLUE_FONT_COLOR = 0x0000f8;
