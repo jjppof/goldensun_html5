@@ -11,9 +11,12 @@ import {
 import {TextObj, Window} from "../../Window";
 import {base_actions, elements} from "../../utils";
 import * as _ from "lodash";
-import {StatusComponent} from "../../status/StatusComponent";
-import {StatusStatistics} from "../../status/StatusStatistics";
+import {StatusComponent} from "../../support_menus/StatusComponent";
+import {StatusStatistics} from "../../support_menus/StatusStatistics";
 import {effect_types} from "../../Effect";
+import {StatusPsynergy} from "../../support_menus/StatusPsynergy";
+import {StatusDjinn} from "../../support_menus/StatusDjinn";
+import {StatusItems} from "../../support_menus/StatusItems";
 
 export type BattleStatusEffect = {
     key: temporary_status | permanent_status | effect_types;
@@ -171,15 +174,17 @@ export class BattleStatusWindow {
         this.window = new Window(this.game, 0, 0, BattleStatusWindow.WINDOW.WIDTH, BattleStatusWindow.WINDOW.HEIGHT);
         this.window.define_internal_group(BattleStatusWindow.GROUP_KEY, {x: 0, y: 0});
 
-        this.components = [];
-        this.components.push(new StatusStatistics(this.game, this.data, this.window, this));
-        //push psy
-        //push djnn
-        //push item
+        this.components = [
+            new StatusStatistics(this.game, this.data, this.window, this),
+            new StatusPsynergy(this.game, this.data, this.window, this),
+            new StatusDjinn(this.game, this.data, this.window, this),
+            new StatusItems(this.game, this.data, this.window, this),
+        ];
 
         this.battle_sprite = null;
         this.avatar = null;
 
+        this.window.group.bringToTop(this.window.internal_groups[BattleStatusWindow.GROUP_KEY]);
         this.init_text();
     }
 
@@ -713,18 +718,18 @@ export class BattleStatusWindow {
     }
 
     public trigger_state_change() {
-        /*
-        this.unset_state();
-        this.current_state++;
-        this.setup_state();
-        */
+        if (this.current_state === ComponentStates.ITEMS) this.current_state = ComponentStates.STATISTICS;
+        else this.current_state++;
+
+        this.change_state(this.current_state, true);
     }
 
-    private change_state(new_state: ComponentStates) {
+    private change_state(new_state: ComponentStates, reset_pos: boolean = false) {
         let pos = {line: 0, col: 0};
 
         if (this.current_component) {
-            pos = this.current_component.current_pos;
+            if (!reset_pos) pos = this.current_component.current_pos;
+
             this.current_component.clear();
             this.current_component = null;
         }
@@ -753,7 +758,7 @@ export class BattleStatusWindow {
     }
 
     public update_description(line1: string, line2?: string) {
-        if (!line2 === undefined) {
+        if (line2 === undefined) {
             this.window.update_text("", this.desc_line1);
             this.window.update_text(line1, this.desc_line2);
         } else {
