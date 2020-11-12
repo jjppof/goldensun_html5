@@ -5,6 +5,7 @@ import {CursorManager, PointVariants} from "../utils/CursorManager";
 import {BattleStatusWindow} from "../windows/battle/BattleStatusWindow";
 import {Ability} from "../Ability";
 import {PageIndicatorModes} from "./PageIndicator";
+import {StatusItems} from "./StatusItems";
 
 export class StatusPsynergy extends StatusComponent {
     private static readonly CURSOR = {
@@ -30,6 +31,10 @@ export class StatusPsynergy extends StatusComponent {
         STAR_Y: 73,
         RANGE_CENTER_X: 148,
         RANGE_Y: 72,
+    };
+    private static readonly PAGE_INDICATOR_ANCHOR = {
+        X: 171,
+        Y: 64,
     };
 
     private static readonly MAX_LINES = 4;
@@ -133,7 +138,10 @@ export class StatusPsynergy extends StatusComponent {
     }
 
     public initialize() {
-        const page_indicator_anchor = {x: 171, y: 64};
+        const page_indicator_anchor = {
+            x: StatusPsynergy.PAGE_INDICATOR_ANCHOR.X,
+            y: StatusPsynergy.PAGE_INDICATOR_ANCHOR.Y,
+        };
         this.update_abilities();
 
         const abilities = this.battle_abilities[this.current_col];

@@ -25,6 +25,10 @@ export class StatusItems extends StatusComponent {
         NAME_X: 40,
         NAME_Y: 72,
     };
+    private static readonly PAGE_INDICATOR_ANCHOR = {
+        X: 171,
+        Y: 64,
+    };
 
     private static readonly MAX_LINES = 4;
     private static readonly SHIFT = 16;
@@ -127,7 +131,7 @@ export class StatusItems extends StatusComponent {
     }
 
     public initialize() {
-        const page_indicator_anchor = {x: 171, y: 64};
+        const page_indicator_anchor = {x: StatusItems.PAGE_INDICATOR_ANCHOR.X, y: StatusItems.PAGE_INDICATOR_ANCHOR.Y};
         this.update_abilities();
 
         const items = this.char_items[this.current_col];
