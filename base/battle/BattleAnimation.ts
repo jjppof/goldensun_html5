@@ -30,36 +30,36 @@ export class BattleAnimation {
         trails_mode: string;
         trail_frame_diff: number;
     }[];
-    public x_sequence: DefaultAttr[];
-    public y_sequence: DefaultAttr[];
-    public x_ellipse_axis_factor_sequence: DefaultAttr[];
-    public y_ellipse_axis_factor_sequence: DefaultAttr[];
-    public x_scale_sequence: DefaultAttr[];
-    public y_scale_sequence: DefaultAttr[];
-    public x_anchor_sequence: DefaultAttr[];
-    public y_anchor_sequence: DefaultAttr[];
-    public alpha_sequence: DefaultAttr[];
-    public rotation_sequence: DefaultAttr[];
-    public stage_angle_sequence: DefaultAttr[];
-    public hue_angle_sequence: DefaultAttr[];
+    public x_sequence: DefaultAttr[] = [];
+    public y_sequence: DefaultAttr[] = [];
+    public x_ellipse_axis_factor_sequence: DefaultAttr[] = [];
+    public y_ellipse_axis_factor_sequence: DefaultAttr[] = [];
+    public x_scale_sequence: DefaultAttr[] = [];
+    public y_scale_sequence: DefaultAttr[] = [];
+    public x_anchor_sequence: DefaultAttr[] = [];
+    public y_anchor_sequence: DefaultAttr[] = [];
+    public alpha_sequence: DefaultAttr[] = [];
+    public rotation_sequence: DefaultAttr[] = [];
+    public stage_angle_sequence: DefaultAttr[] = [];
+    public hue_angle_sequence: DefaultAttr[] = [];
     public tint_sequence: {
         start_delay: number | number[];
         sprite_index: string | number | number[];
         value: [r: number, g: number, b: number];
-    }[];
-    public grayscale_sequence: DefaultAttr[];
+    }[] = [];
+    public grayscale_sequence: DefaultAttr[] = [];
     public colorize_sequence: {
         start_delay: number | number[];
         sprite_index: string | number | number[];
         value: number;
         colorize_intensity: number;
-    }[];
+    }[] = [];
     public custom_filter_sequence: {
         start_delay: number | number[];
         sprite_index: string | number | number[];
         filter: string;
         value: any;
-    }[];
+    }[] = [];
     public play_sequence: {
         start_delay: number | number[];
         sprite_index: string | number | number[];
@@ -69,13 +69,13 @@ export class BattleAnimation {
         animation_key: string;
         wait: boolean;
         hide_on_complete: boolean;
-    }[];
-    public set_frame_sequence: any;
+    }[] = [];
+    public set_frame_sequence: any[] = [];
     public blend_mode_sequence: {
         start_delay: number | number[];
         sprite_index: string | number | number[];
         mode: string;
-    }[];
+    }[] = [];
     public particles_sequence: {
         start_delay: number;
         x: number | string;
@@ -105,7 +105,7 @@ export class BattleAnimation {
             frame_rate: number;
             loop: boolean;
         };
-    }[];
+    }[] = [];
     public is_party_animation: boolean;
     public running: boolean;
     public sprites: Phaser.Sprite[];
@@ -168,26 +168,28 @@ export class BattleAnimation {
         this.data = data;
         this.key_name = key_name;
         this.sprites_keys = sprites_keys;
-        this.x_sequence = x_sequence;
-        this.y_sequence = y_sequence;
-        this.x_ellipse_axis_factor_sequence = x_ellipse_axis_factor_sequence;
-        this.y_ellipse_axis_factor_sequence = y_ellipse_axis_factor_sequence;
-        this.x_scale_sequence = x_scale_sequence;
-        this.y_scale_sequence = y_scale_sequence;
-        this.x_anchor_sequence = x_anchor_sequence;
-        this.y_anchor_sequence = y_anchor_sequence;
-        this.alpha_sequence = alpha_sequence;
-        this.rotation_sequence = rotation_sequence;
-        this.stage_angle_sequence = stage_angle_sequence;
-        this.hue_angle_sequence = hue_angle_sequence;
-        this.tint_sequence = tint_sequence;
-        this.grayscale_sequence = grayscale_sequence;
-        this.colorize_sequence = colorize_sequence;
-        this.custom_filter_sequence = custom_filter_sequence;
-        this.play_sequence = play_sequence;
-        this.set_frame_sequence = set_frame_sequence;
-        this.blend_mode_sequence = blend_mode_sequence;
-        this.particles_sequence = particles_sequence;
+        this.x_sequence = x_sequence === undefined ? [] : x_sequence;
+        this.y_sequence = y_sequence === undefined ? [] : y_sequence;
+        this.x_ellipse_axis_factor_sequence =
+            x_ellipse_axis_factor_sequence === undefined ? [] : x_ellipse_axis_factor_sequence;
+        this.y_ellipse_axis_factor_sequence =
+            y_ellipse_axis_factor_sequence === undefined ? [] : y_ellipse_axis_factor_sequence;
+        this.x_scale_sequence = x_scale_sequence === undefined ? [] : x_scale_sequence;
+        this.y_scale_sequence = y_scale_sequence === undefined ? [] : y_scale_sequence;
+        this.x_anchor_sequence = x_anchor_sequence === undefined ? [] : x_anchor_sequence;
+        this.y_anchor_sequence = y_anchor_sequence === undefined ? [] : y_anchor_sequence;
+        this.alpha_sequence = alpha_sequence === undefined ? [] : alpha_sequence;
+        this.rotation_sequence = rotation_sequence === undefined ? [] : rotation_sequence;
+        this.stage_angle_sequence = stage_angle_sequence === undefined ? [] : stage_angle_sequence;
+        this.hue_angle_sequence = hue_angle_sequence === undefined ? [] : hue_angle_sequence;
+        this.tint_sequence = tint_sequence === undefined ? [] : tint_sequence;
+        this.grayscale_sequence = grayscale_sequence === undefined ? [] : grayscale_sequence;
+        this.colorize_sequence = colorize_sequence === undefined ? [] : colorize_sequence;
+        this.custom_filter_sequence = custom_filter_sequence === undefined ? [] : custom_filter_sequence;
+        this.play_sequence = play_sequence === undefined ? [] : play_sequence;
+        this.set_frame_sequence = set_frame_sequence === undefined ? [] : set_frame_sequence;
+        this.blend_mode_sequence = blend_mode_sequence === undefined ? [] : blend_mode_sequence;
+        this.particles_sequence = particles_sequence === undefined ? [] : particles_sequence;
         this.is_party_animation = is_party_animation;
         this.running = false;
     }
