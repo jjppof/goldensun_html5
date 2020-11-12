@@ -28,7 +28,9 @@ export abstract class StatusComponent {
         this.data = data;
         this.window = window;
 
-        this.window.define_internal_group(StatusComponent.GROUP_KEY, {x: 0, y: 0});
+        if (!this.window.internal_groups[StatusComponent.GROUP_KEY])
+            this.window.define_internal_group(StatusComponent.GROUP_KEY, {x: 0, y: 0});
+
         this.highlight = this.game.add.graphics(0, 0);
         this.highlight.blendMode = PIXI.blendModes.SCREEN;
         this.window.add_to_internal_group(StatusComponent.GROUP_KEY, this.highlight);
@@ -81,5 +83,7 @@ export abstract class StatusComponent {
             this.state_sprites[index].destroy();
         }
         this.state_sprites = [];
+
+        if (this.window.page_indicator.is_set) this.window.page_indicator.terminante();
     }
 }

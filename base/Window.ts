@@ -10,6 +10,14 @@ export type TextObj = {
     text_bg?: Phaser.Graphics;
 };
 
+export type ItemObj = {
+    icon: Phaser.Sprite;
+    background?: Phaser.Sprite;
+    equipped?: Phaser.Sprite;
+    broken?: Phaser.Sprite;
+    quantity?: Phaser.BitmapText;
+};
+
 /*A basic window template used in most menus
 Creates the background and borders
 Supports the addition of sprites and text
@@ -22,6 +30,12 @@ Input: game [Phaser:Game] - Reference to the running game object
        font_color [number] - The window's default font color*/
 export class Window {
     private static readonly TRANSITION_TIME = Phaser.Timer.QUARTER >> 2;
+    private static readonly ITEM_OBJ = {
+        EQUIPPED_X: 7,
+        EQUIPPED_Y: 8,
+        QUANTITY_END_X: 15,
+        QUANTITY_Y: 8,
+    };
 
     public game: Phaser.Game;
     public group: Phaser.Group;
@@ -92,6 +106,84 @@ export class Window {
 
     get real_y() {
         return this.group.y;
+    }
+
+    make_item_obj(
+        key_name: string,
+        pos?: {x: number; y: number},
+        params?: {bg?: boolean; equipped?: boolean; broken?: boolean; quantity?: number; internal_group?: string}
+    ) {
+        const obj: ItemObj = {icon: null, background: null, equipped: null, broken: null, quantity: null};
+        const base_x = pos ? pos.x : 0;
+        const base_y = pos ? pos.y : 0;
+
+        if (params) {
+            if (params.bg) {
+                obj.background = this.create_at_group(
+                    base_x,
+                    base_y,
+                    "item_border",
+                    undefined,
+                    undefined,
+                    params.internal_group
+                );
+            }
+
+            obj.icon = this.create_at_group(base_x, base_y, "items_icons", undefined, key_name, params.internal_group);
+
+            if (params.broken) {
+                obj.broken = this.create_at_group(
+                    base_x,
+                    base_y,
+                    "broken",
+                    undefined,
+                    undefined,
+                    params.internal_group
+                );
+            }
+            if (params.equipped) {
+                obj.equipped = this.create_at_group(
+                    base_x + Window.ITEM_OBJ.EQUIPPED_X,
+                    base_y + Window.ITEM_OBJ.EQUIPPED_Y,
+                    "equipped",
+                    undefined,
+                    undefined,
+                    params.internal_group
+                );
+            }
+            if (params.quantity) {
+                obj.quantity = this.game.add.bitmapText(
+                    base_x + Window.ITEM_OBJ.QUANTITY_END_X,
+                    base_y + Window.ITEM_OBJ.QUANTITY_Y,
+                    "gs-item-bmp-font",
+                    params.quantity.toString()
+                );
+                obj.quantity.x -= obj.quantity.width;
+
+                if (params.internal_group) this.add_to_internal_group(params.internal_group, obj.quantity);
+                else this.group.add(obj.quantity);
+            }
+        } else {
+            obj.icon = this.create_at_group(base_x, base_y, "items_icons", undefined, key_name);
+        }
+        return obj;
+    }
+
+    move_item_obj(item_obj: ItemObj, new_pos: {x: number; y: number}) {
+        for (let obj in item_obj) {
+            if (item_obj[obj]) {
+                item_obj[obj].x = new_pos.x;
+                item_obj[obj].y = new_pos.y;
+
+                if (obj === "equipped") {
+                    item_obj[obj].x += Window.ITEM_OBJ.EQUIPPED_X;
+                    item_obj[obj].y += Window.ITEM_OBJ.EQUIPPED_Y;
+                } else if (obj === "quantity") {
+                    item_obj[obj].x += Window.ITEM_OBJ.QUANTITY_END_X - item_obj[obj].width;
+                    item_obj[obj].y += Window.ITEM_OBJ.QUANTITY_Y;
+                }
+            }
+        }
     }
 
     /*Removes existing separator graphics*/
