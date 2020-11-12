@@ -3,7 +3,8 @@ import {Window} from "../Window";
 import {GoldenSun} from "../GoldenSun";
 import {CursorManager, PointVariants} from "../utils/CursorManager";
 import {BattleStatusWindow} from "../windows/battle/BattleStatusWindow";
-import {Djinn} from "../Djinn";
+import {Djinn, djinn_status} from "../Djinn";
+import {DEFAULT_FONT_COLOR, RED_FONT_COLOR, YELLOW_FONT_COLOR} from "../magic_numbers";
 
 export class StatusDjinn extends StatusComponent {
     private static readonly CURSOR = {
@@ -21,13 +22,14 @@ export class StatusDjinn extends StatusComponent {
         STAR_Y: 81,
         NAME_X: 16,
         NAME_Y: 80,
+        RECOVERY_END_X: 58,
+        RECOVERY_Y: 80,
     };
 
     private static readonly SHIFT_X = 56;
     private static readonly SHIFT_Y = 16;
 
     private static readonly MAX_LINES = 3;
-    private static readonly MAX_PER_LINE = 3;
 
     private char_djinn: Djinn[][];
 
@@ -133,6 +135,8 @@ export class StatusDjinn extends StatusComponent {
             col.forEach((djinn, line_index) => {
                 const name = djinn.name;
                 const star_key = djinn.element + "_star";
+                const recovery = djinn.recovery_turn + 1;
+                const status = djinn.status;
 
                 let x_pos = StatusDjinn.DJINN.STAR_X + col_index * StatusDjinn.SHIFT_X;
                 let y_pos = StatusDjinn.DJINN.STAR_Y + line_index * StatusDjinn.SHIFT_Y;
@@ -147,6 +151,29 @@ export class StatusDjinn extends StatusComponent {
                 );
                 this.state_sprites.push(star);
 
+                let font_color = DEFAULT_FONT_COLOR;
+
+                if (status === djinn_status.RECOVERY) {
+                    font_color = YELLOW_FONT_COLOR;
+
+                    x_pos = StatusDjinn.DJINN.RECOVERY_END_X + col_index * StatusDjinn.SHIFT_X;
+                    y_pos = StatusDjinn.DJINN.RECOVERY_Y + line_index * StatusDjinn.SHIFT_Y;
+
+                    const recovery_text = this.window.set_text_in_position(
+                        recovery,
+                        x_pos,
+                        y_pos,
+                        true,
+                        false,
+                        font_color,
+                        false,
+                        StatusDjinn.GROUP_KEY
+                    );
+                    this.state_sprites.push(recovery_text.text, recovery_text.shadow);
+                } else if (status === djinn_status.STANDBY) {
+                    font_color = RED_FONT_COLOR;
+                }
+
                 x_pos = StatusDjinn.DJINN.NAME_X + col_index * StatusDjinn.SHIFT_X;
                 y_pos = StatusDjinn.DJINN.NAME_Y + line_index * StatusDjinn.SHIFT_Y;
 
@@ -156,7 +183,7 @@ export class StatusDjinn extends StatusComponent {
                     y_pos,
                     false,
                     false,
-                    undefined,
+                    font_color,
                     false,
                     StatusDjinn.GROUP_KEY
                 );

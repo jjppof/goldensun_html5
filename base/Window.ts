@@ -113,15 +113,9 @@ export class Window {
         pos?: {x: number; y: number},
         params?: {bg?: boolean; equipped?: boolean; broken?: boolean; quantity?: number; internal_group?: string}
     ) {
-        let obj: ItemObj = {icon: null, background: null, equipped: null, broken: null, quantity: null};
+        const obj: ItemObj = {icon: null, background: null, equipped: null, broken: null, quantity: null};
         const base_x = pos ? pos.x : 0;
         const base_y = pos ? pos.y : 0;
-
-        /*
-        this.window.make_item_obj("spirit_ring", {x: 100, y:100}, {broken: true, equipped: true});
-        
-        let obj = this.window.make_item_obj("herb", undefined, {bg: true, quantity:10});
-        this.window.move_item_obj(obj, {x: 50, y:50});*/
 
         if (params) {
             if (params.bg) {
