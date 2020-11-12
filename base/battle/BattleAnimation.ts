@@ -1,6 +1,8 @@
+import {GoldenSun} from "../GoldenSun";
 import * as numbers from "../magic_numbers";
 import {range_360} from "../utils";
 import {CameraAngle, DEFAULT_POS_ANGLE} from "./BattleStage";
+import * as _ from "lodash";
 
 type DefaultAttr = {
     start_delay: number | number[];
@@ -17,6 +19,7 @@ type DefaultAttr = {
 
 export class BattleAnimation {
     public game: Phaser.Game;
+    public data: GoldenSun;
     public key_name: string;
     public sprites_keys: {
         key_name: string;
@@ -73,6 +76,36 @@ export class BattleAnimation {
         sprite_index: string | number | number[];
         mode: string;
     }[];
+    public particles_sequence: {
+        start_delay: number;
+        x: number | string;
+        y: number | string;
+        emit_x: number;
+        emit_y: number;
+        shift_x: number;
+        shift_y: number;
+        max_particles: number;
+        particle_key: string;
+        alpha: number;
+        blend_mode: string;
+        frequency: number; // How often a particle is emitted in ms (if emitter is started with explode === false).
+        gravity: number;
+        height: number;
+        width: number;
+        lifespan: number; // How long each particle lives once it is emitted in ms. Default is 2 seconds. Set lifespan to 'zero' for particles to live forever.
+        min_particle_speed: {x: number; y: number};
+        max_particle_speed: {x: number; y: number};
+        min_particle_scale: number;
+        max_particle_scale: number;
+        explode: boolean; // if true, frequency will be ignored
+        trails: boolean;
+        emission_duration: number;
+        animation: {
+            animation_key: string;
+            frame_rate: number;
+            loop: boolean;
+        };
+    }[];
     public is_party_animation: boolean;
     public running: boolean;
     public sprites: Phaser.Sprite[];
@@ -106,6 +139,7 @@ export class BattleAnimation {
     //"duration" set to "instantly" must have the "start_delay" value set as absolute
     constructor(
         game,
+        data,
         key_name,
         sprites_keys, //{key_name: string, per_target: bool, position: value}
         x_sequence, //{start_delay: value, sprite_index: index, to: value, is_absolute: bool, tween: type, yoyo: bool, duration: value, shift: value}
@@ -127,9 +161,11 @@ export class BattleAnimation {
         play_sequence, //{start_delay: value, sprite_index: index, reverse: bool, frame_rate: value, repeat: bool, animation_key: key, wait: bool, hide_on_complete: bool}
         set_frame_sequence, //{start_delay: value, frame: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
+        particles_sequence,
         is_party_animation
     ) {
         this.game = game;
+        this.data = data;
         this.key_name = key_name;
         this.sprites_keys = sprites_keys;
         this.x_sequence = x_sequence;
@@ -151,6 +187,7 @@ export class BattleAnimation {
         this.play_sequence = play_sequence;
         this.set_frame_sequence = set_frame_sequence;
         this.blend_mode_sequence = blend_mode_sequence;
+        this.particles_sequence = particles_sequence;
         this.is_party_animation = is_party_animation;
         this.running = false;
     }
@@ -294,6 +331,7 @@ export class BattleAnimation {
         this.play_filter_property(this.colorize_sequence, "colorize", "colorize_intensity");
         this.play_filter_property(this.custom_filter_sequence);
         this.play_stage_angle_sequence();
+        this.play_particles();
         this.unmount_animation(finish_callback);
     }
 
@@ -649,6 +687,89 @@ export class BattleAnimation {
                 }
                 chained_tweens.push(tween);
             }
+        }
+    }
+
+    play_particles() {
+        for (let i = 0; i < this.particles_sequence.length; ++i) {
+            let resolve_function;
+            const this_promise = new Promise(resolve => {
+                resolve_function = resolve;
+            });
+            this.promises.push(this_promise);
+            const particles_seq = this.particles_sequence[i];
+            let x = particles_seq.x;
+            let y = particles_seq.y;
+            if (x === "caster") {
+                x = this.caster_sprite.x;
+            } else if (x === "targets") {
+                _.mean(this.targets_sprites.map(target => target.x));
+            }
+            if (y === "caster") {
+                y = this.caster_sprite.y;
+            } else if (y === "targets") {
+                _.mean(this.targets_sprites.map(target => target.y));
+            }
+            (x as number) += particles_seq.shift_x ? particles_seq.shift_x : 0;
+            (y as number) += particles_seq.shift_y ? particles_seq.shift_y : 0;
+            const emitter = this.game.add.emitter(x as number, y as number, particles_seq.max_particles);
+            emitter.makeParticles(particles_seq.particle_key);
+            if (particles_seq.alpha !== undefined) emitter.alpha = particles_seq.alpha;
+            if (particles_seq.blend_mode !== undefined) {
+                switch (particles_seq.blend_mode) {
+                    case "screen":
+                        emitter.blendMode = PIXI.blendModes.SCREEN;
+                        break;
+                    case "normal":
+                        emitter.blendMode = PIXI.blendModes.NORMAL;
+                        break;
+                }
+            }
+            if (particles_seq.emit_x !== undefined) emitter.emitX = particles_seq.emit_x;
+            if (particles_seq.emit_y !== undefined) emitter.emitY = particles_seq.emit_y;
+            if (particles_seq.frequency !== undefined) emitter.frequency = particles_seq.frequency;
+            if (particles_seq.gravity !== undefined) emitter.gravity = particles_seq.gravity;
+            if (particles_seq.width !== undefined) emitter.width = particles_seq.width;
+            if (particles_seq.height !== undefined) emitter.height = particles_seq.height;
+            if (particles_seq.min_particle_scale !== undefined)
+                emitter.minParticleScale = particles_seq.min_particle_scale;
+            if (particles_seq.max_particle_scale !== undefined)
+                emitter.maxParticleScale = particles_seq.max_particle_scale;
+            if (particles_seq.min_particle_speed?.x !== undefined)
+                emitter.minParticleSpeed.x = particles_seq.min_particle_speed.x;
+            if (particles_seq.min_particle_speed?.y !== undefined)
+                emitter.minParticleSpeed.y = particles_seq.min_particle_speed.y;
+            if (particles_seq.max_particle_speed?.x !== undefined)
+                emitter.maxParticleSpeed.x = particles_seq.max_particle_speed.x;
+            if (particles_seq.max_particle_speed?.y !== undefined)
+                emitter.maxParticleSpeed.y = particles_seq.max_particle_speed.y;
+            let anim_key;
+            if (particles_seq.animation !== undefined) {
+                const particle_sprite_base = this.data.info.misc_sprite_base_list[particles_seq.particle_key];
+                anim_key = particle_sprite_base.getAnimationKey(
+                    particles_seq.particle_key,
+                    particles_seq.animation.animation_key
+                );
+                emitter.forEach((particle: Phaser.Sprite) => {
+                    particle_sprite_base.setAnimation(particle, particles_seq.particle_key);
+                });
+            }
+            this.game.time.events.add(particles_seq.start_delay, () => {
+                emitter.start(particles_seq.explode, particles_seq.lifespan, particles_seq.frequency);
+                if (particles_seq.animation !== undefined) {
+                    emitter.forEach((particle: Phaser.Sprite) => {
+                        particle.animations.play(
+                            anim_key,
+                            particles_seq.animation.frame_rate,
+                            particles_seq.animation.loop
+                        );
+                    });
+                }
+                this.game.time.events.add(particles_seq.emission_duration, () => {
+                    emitter.destroy();
+                    resolve_function();
+                });
+            });
         }
     }
 

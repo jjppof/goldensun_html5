@@ -89,7 +89,7 @@ export class SpriteBase {
         );
     }
 
-    setAnimation(sprite, action) {
+    setAnimation(sprite: Phaser.Sprite, action) {
         const directions = this.actions[action].directions;
         const loop = this.actions[action].loop === undefined ? true : this.actions[action].loop;
         for (let i = 0; i < directions.length; ++i) {
