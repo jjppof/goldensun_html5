@@ -3,7 +3,7 @@ import {ItemPsynergyChooseWindow} from "../windows/ItemPsynergyChooseWindow";
 import {TextObj, Window} from "../Window";
 import * as numbers from "../magic_numbers";
 import {GoldenSun} from "../GoldenSun";
-import {CharsMenu} from "../support_menus/CharsMenu";
+import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
 import {Ability} from "../Ability";
 
 const GUIDE_WINDOW_X = 104;
@@ -222,7 +222,7 @@ export class MainPsynergyMenu {
 
         if (!this.psynergy_overview_window.open) this.psynergy_overview_window.show(undefined, false);
         if (!this.shortcuts_window.open) this.shortcuts_window.show(undefined, false);
-        if (!this.chars_menu.is_open) this.chars_menu.open(this.selected_char_index, "menu");
+        if (!this.chars_menu.is_open) this.chars_menu.open(this.selected_char_index, CharsMenuModes.MENU);
 
         this.chars_menu.select_char(this.selected_char_index);
         this.chars_menu.grant_control(this.close_menu.bind(this), this.char_choose.bind(this));

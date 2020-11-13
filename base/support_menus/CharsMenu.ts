@@ -48,6 +48,10 @@ const SEPARATOR_X = 4;
 const SEPARATOR_Y = 27;
 const SEPARATOR_LENGTH = 96;
 
+export enum CharsMenuModes {
+    SHOP,
+    MENU
+}
 const SHOP_MODE = "shop";
 const MENU_MODE = "menu";
 
@@ -71,7 +75,7 @@ export class CharsMenu {
     public selected_index: number;
     public is_active: boolean;
     public is_open: boolean;
-    public mode: string;
+    public mode: CharsMenuModes;
 
     constructor(game: Phaser.Game, data: GoldenSun, on_change: Function) {
         this.game = game;
@@ -106,7 +110,7 @@ export class CharsMenu {
     }
 
     check_mode() {
-        if (this.mode === SHOP_MODE) {
+        if (this.mode === CharsMenuModes.SHOP) {
             this.window.update_size({width: WIN_WIDTH, height: WIN_HEIGHT});
             this.window.update_position({x: WIN_X, y: WIN_Y});
 
@@ -114,7 +118,7 @@ export class CharsMenu {
             this.char_group.y = CHAR_GROUP_Y - SHIFT_Y + this.game.camera.y;
             this.arrow_group.x = ARROW_GROUP_X + this.game.camera.x;
             this.arrow_group.y = ARROW_GROUP_Y + this.game.camera.y;
-        } else if (this.mode === MENU_MODE) {
+        } else if (this.mode === CharsMenuModes.MENU) {
             this.window.update_size({width: WIN_WIDTH2, height: WIN_HEIGHT2});
             this.window.update_position({x: WIN_X2, y: WIN_Y2});
 
@@ -264,17 +268,19 @@ export class CharsMenu {
     }
 
     set_character(index: number) {
-        if (this.mode === SHOP_MODE) {
+        if (this.mode === CharsMenuModes.SHOP) {
             //set run animation for new character;
-        } else if (this.mode === MENU_MODE) {
+        } else if (this.mode === CharsMenuModes.MENU) {
             this.char_sprites[index].y = MENU_SELECTED_Y_SHIFT;
         }
     }
 
     unset_character(index: number) {
-        if (this.mode === SHOP_MODE) {
+        if(index === undefined  || index === null) return;
+
+        if (this.mode === CharsMenuModes.SHOP) {
             //unset run animation for new character;
-        } else if (this.mode === MENU_MODE) {
+        } else if (this.mode === CharsMenuModes.MENU) {
             this.char_sprites[index].y = 0;
         }
     }
@@ -357,7 +363,6 @@ export class CharsMenu {
     }
 
     grant_control(on_cancel: Function, on_select: Function, enable_swap?: boolean) {
-        enable_swap = true;
         const controls: {key: number; on_down: Function; on_up?: Function; params?: any}[] = [
             {key: this.data.gamepad.LEFT, on_down: this.previous_char.bind(this)},
             {key: this.data.gamepad.RIGHT, on_down: this.next_char.bind(this)},
@@ -368,8 +373,8 @@ export class CharsMenu {
         ];
         if (enable_swap) {
             controls.push(
-                {key: this.data.gamepad.L, on_down: this.swap_previous.bind(this), on_up: this.select_char.bind(this)},
-                {key: this.data.gamepad.R, on_down: this.swap_next.bind(this), on_up: this.select_char.bind(this)}
+                {key: this.data.gamepad.L, on_down: this.swap_previous.bind(this)},
+                {key: this.data.gamepad.R, on_down: this.swap_next.bind(this)}
             );
         }
 
@@ -383,11 +388,11 @@ export class CharsMenu {
         let cursor_y = 0;
         let tween_config = {type: null, variant: null};
 
-        if (this.mode === SHOP_MODE) {
+        if (this.mode === CharsMenuModes.SHOP) {
             cursor_x = CURSOR_X + pos * GAP_SIZE;
             cursor_y = CURSOR_Y;
             tween_config.type = CursorManager.CursorTweens.WIGGLE;
-        } else if (this.mode === MENU_MODE) {
+        } else if (this.mode === CharsMenuModes.MENU) {
             cursor_x = CURSOR_X2 + pos * GAP_SIZE;
             cursor_y = CURSOR_Y2;
             tween_config.type = CursorManager.CursorTweens.POINT;
@@ -410,7 +415,7 @@ export class CharsMenu {
         this.is_active = false;
     }
 
-    open(select_index: number = 0, mode: string = SHOP_MODE, open_callback?: Function) {
+    open(select_index: number = 0, mode:CharsMenuModes = CharsMenuModes.SHOP, open_callback?: Function) {
         this.current_line = 0;
         this.mode = mode;
 

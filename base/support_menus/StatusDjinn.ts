@@ -65,7 +65,9 @@ export class StatusDjinn extends StatusComponent {
         this.select_option();
 
         const chosen_djinn = this.char_djinn[this.current_col][this.current_line];
-        this.manager.update_description(chosen_djinn.description);
+        const msg = chosen_djinn.status === djinn_status.STANDBY ? "Ready to summon." : chosen_djinn.description;
+
+        this.manager.update_description(msg);
     }
 
     public on_left() {

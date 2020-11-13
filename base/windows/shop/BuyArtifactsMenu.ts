@@ -2,7 +2,7 @@ import {GoldenSun} from "../../GoldenSun";
 import {Item, item_types} from "../../Item";
 import {ShopMenu} from "../../main_menus/ShopMenu";
 import {InventoryWindow} from "./InventoryWindow";
-import {CharsMenu} from "../../support_menus/CharsMenu";
+import {CharsMenu, CharsMenuModes} from "../../support_menus/CharsMenu";
 import {Window} from "../../Window";
 import {ShopItemQuantityWindow} from "./ShopItemQuantityWindow";
 import {BuySelectMenu} from "./BuySelectMenu";
@@ -524,7 +524,7 @@ export class BuyArtifactsMenu {
             if (this.char_display.is_open) {
                 this.char_display.select_char(this.selected_char_index);
                 on_char_display_open();
-            } else this.char_display.open(this.selected_char_index, "shop", on_char_display_open);
+            } else this.char_display.open(this.selected_char_index, CharsMenuModes.SHOP, on_char_display_open);
         });
     }
 

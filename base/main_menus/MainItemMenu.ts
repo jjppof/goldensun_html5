@@ -6,7 +6,7 @@ import {ItemOptionsWindow} from "../windows/item/ItemOptionsWindow";
 import {StatsCheckWithItemWindow} from "../windows/item/StatsCheckWithItemWindow";
 import {Item, item_types} from "../Item";
 import {GoldenSun} from "../GoldenSun";
-import {CharsMenu} from "../support_menus/CharsMenu";
+import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
 import {ItemSlot} from "../MainChar";
 import {ItemQuantityManagerWindow} from "../windows/item/ItemQuantityManagerWindow";
 
@@ -337,7 +337,7 @@ export class MainItemMenu {
 
         if (!this.item_overview_window.open) this.item_overview_window.show(undefined, false);
         if (!this.arrange_window.open) this.arrange_window.show(undefined, false);
-        if (!this.chars_menu.is_open) this.chars_menu.open(this.selected_char_index, "menu");
+        if (!this.chars_menu.is_open) this.chars_menu.open(this.selected_char_index, CharsMenuModes.MENU);
 
         this.shift_item_overview(false);
 

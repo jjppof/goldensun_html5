@@ -4,7 +4,7 @@ import {ShopMenu} from "../../main_menus/ShopMenu";
 import {Window} from "../../Window";
 import {YesNoMenu} from "../YesNoMenu";
 import {InventoryWindow} from "./InventoryWindow";
-import {CharsMenu} from "../../support_menus/CharsMenu";
+import {CharsMenu, CharsMenuModes} from "../../support_menus/CharsMenu";
 import {ShopItemQuantityWindow} from "./ShopItemQuantityWindow";
 import {ShopkeepDialog} from "./ShopkeepDialog";
 
@@ -370,7 +370,7 @@ export class SellRepairMenu {
                 } else this.inv_win.open(char_key, undefined, false, finish);
             };
 
-            if (!this.char_display.is_open) this.char_display.open(this.selected_char_index, "shop", next_step);
+            if (!this.char_display.is_open) this.char_display.open(this.selected_char_index, CharsMenuModes.SHOP, next_step);
             else {
                 this.char_display.select_char(this.selected_char_index);
                 next_step();
