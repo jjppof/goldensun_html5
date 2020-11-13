@@ -18,6 +18,26 @@ export type ItemSlot = {
     broken?: boolean;
 };
 
+export enum equip_slots {
+    WEAPON = "weapon",
+    HEAD = "head",
+    CHEST = "chest",
+    BODY = "body",
+    RING = "ring",
+    BOOTS = "boots",
+    UNDERWEAR = "underwear",
+}
+
+export const item_equip_slot = {
+    [item_types.WEAPONS]: equip_slots.WEAPON,
+    [item_types.ARMOR]: equip_slots.BODY,
+    [item_types.CHEST_PROTECTOR]: equip_slots.CHEST,
+    [item_types.HEAD_PROTECTOR]: equip_slots.HEAD,
+    [item_types.LEG_PROTECTOR]: equip_slots.BOOTS,
+    [item_types.RING]: equip_slots.RING,
+    [item_types.UNDERWEAR]: equip_slots.UNDERWEAR,
+};
+
 export class MainChar extends Player {
     private static readonly ELEM_LV_DELTA = 1;
     private static readonly ELEM_POWER_DELTA = 5;
@@ -63,15 +83,7 @@ export class MainChar extends Player {
     public agi_extra: number;
     public luk_extra: number;
     public items: ItemSlot[];
-    public equip_slots: {
-        weapon: ItemSlot;
-        head: ItemSlot;
-        chest: ItemSlot;
-        body: ItemSlot;
-        ring: ItemSlot;
-        boots: ItemSlot;
-        underwear: ItemSlot;
-    };
+    public equip_slots: {[slot in equip_slots]: ItemSlot};
     public equipped_abilities: string[];
     public innate_abilities: string[];
     public in_party: boolean;
@@ -168,13 +180,13 @@ export class MainChar extends Player {
         this.pp_recovery = 0;
         this.items = items;
         this.equip_slots = {
-            weapon: null,
-            head: null,
-            chest: null,
-            body: null,
-            ring: null,
-            boots: null,
-            underwear: null,
+            [equip_slots.WEAPON]: null,
+            [equip_slots.HEAD]: null,
+            [equip_slots.CHEST]: null,
+            [equip_slots.BODY]: null,
+            [equip_slots.RING]: null,
+            [equip_slots.BOOTS]: null,
+            [equip_slots.UNDERWEAR]: null,
         };
         this.equipped_abilities = [];
         this.innate_abilities = innate_abilities;
@@ -298,44 +310,10 @@ export class MainChar extends Player {
         const item_obj = this.items[index];
         if (item_obj.equipped && !initialize) return;
         const item = this.info.items_list[item_obj.key_name];
-        if (item.type === item_types.WEAPONS && this.equip_slots.weapon !== null) {
-            this.unequip_item(this.equip_slots.weapon.index);
-        } else if (item.type === item_types.HEAD_PROTECTOR && this.equip_slots.head !== null) {
-            this.unequip_item(this.equip_slots.head.index);
-        } else if (item.type === item_types.CHEST_PROTECTOR && this.equip_slots.chest !== null) {
-            this.unequip_item(this.equip_slots.chest.index);
-        } else if (item.type === item_types.ARMOR && this.equip_slots.body !== null) {
-            this.unequip_item(this.equip_slots.body.index);
-        } else if (item.type === item_types.RING && this.equip_slots.ring !== null) {
-            this.unequip_item(this.equip_slots.ring.index);
-        } else if (item.type === item_types.LEG_PROTECTOR && this.equip_slots.boots !== null) {
-            this.unequip_item(this.equip_slots.boots.index);
-        } else if (item.type === item_types.UNDERWEAR && this.equip_slots.underwear !== null) {
-            this.unequip_item(this.equip_slots.underwear.index);
+        if (item.type in item_equip_slot && this.equip_slots[item_equip_slot[item.type]] !== null) {
+            this.unequip_item(this.equip_slots[item_equip_slot[item.type]].index);
         }
-        switch (item.type) {
-            case item_types.WEAPONS:
-                this.equip_slots.weapon = item_obj;
-                break;
-            case item_types.HEAD_PROTECTOR:
-                this.equip_slots.head = item_obj;
-                break;
-            case item_types.CHEST_PROTECTOR:
-                this.equip_slots.chest = item_obj;
-                break;
-            case item_types.ARMOR:
-                this.equip_slots.body = item_obj;
-                break;
-            case item_types.RING:
-                this.equip_slots.ring = item_obj;
-                break;
-            case item_types.LEG_PROTECTOR:
-                this.equip_slots.boots = item_obj;
-                break;
-            case item_types.UNDERWEAR:
-                this.equip_slots.underwear = item_obj;
-                break;
-        }
+        this.equip_slots[item_equip_slot[item.type]] = item_obj;
         item_obj.equipped = true;
         for (let i = 0; i < item.effects.length; ++i) {
             this.add_effect(item.effects[i], item);
@@ -352,20 +330,8 @@ export class MainChar extends Player {
         const item_obj = this.items[index];
         if (!item_obj.equipped) return;
         const item = this.info.items_list[item_obj.key_name];
-        if (item.type === item_types.WEAPONS && this.equip_slots.weapon !== null) {
-            this.equip_slots.weapon = null;
-        } else if (item.type === item_types.HEAD_PROTECTOR && this.equip_slots.head !== null) {
-            this.equip_slots.head = null;
-        } else if (item.type === item_types.CHEST_PROTECTOR && this.equip_slots.chest !== null) {
-            this.equip_slots.chest = null;
-        } else if (item.type === item_types.ARMOR && this.equip_slots.body !== null) {
-            this.equip_slots.body = null;
-        } else if (item.type === item_types.RING && this.equip_slots.ring !== null) {
-            this.equip_slots.ring = null;
-        } else if (item.type === item_types.LEG_PROTECTOR && this.equip_slots.boots !== null) {
-            this.equip_slots.boots = null;
-        } else if (item.type === item_types.UNDERWEAR && this.equip_slots.underwear !== null) {
-            this.equip_slots.underwear = null;
+        if (item.type in item_equip_slot && this.equip_slots[item_equip_slot[item.type]] !== null) {
+            this.equip_slots[item_equip_slot[item.type]] = null;
         }
         item_obj.equipped = false;
         this.effects.forEach(effect => {

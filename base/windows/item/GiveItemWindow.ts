@@ -193,7 +193,10 @@ export class GiveItemWindow {
         this.yes_text.shadow.alpha = this.no_text.shadow.alpha = 0;
 
         this.item_menu.item_options_window.open_action_message_window("Given.", () => {
-            this.item_menu.item_options_window.close(this.item_menu.item_options_window.close_callback);
+            const char_index = this.data.info.party_data.members.indexOf(this.char);
+            this.item_menu.item_options_window.close(() => {
+                this.item_menu.item_options_window.close_callback(true, char_index);
+            });
             this.close();
         });
     }

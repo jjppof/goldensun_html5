@@ -251,7 +251,6 @@ export class EquipCompare {
         let eq_slots = this.selected_char.equip_slots;
 
         let eq_types = ["WEAPONS", "ARMOR", "CHEST_PROTECTOR", "HEAD_PROTECTOR", "RING", "LEG_PROTECTOR", "UNDERWEAR"];
-
         let slot_types = ["weapon", "body", "chest", "head", "ring", "boots", "underwear"];
 
         for (let i = 0; i < eq_types.length; i++) {
