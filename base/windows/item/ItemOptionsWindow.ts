@@ -372,7 +372,10 @@ export class ItemOptionsWindow {
 
     on_change() {
         this.stats_window.hide_arrows();
-        this.stats_window.show();
+
+        if (this.stats_window.window_open) this.stats_window.close();
+        this.stats_window.open(this.char, this.item, this.item_obj);
+
         if (this.horizontal_index === 0) {
             if (this.vertical_index === 0 && this.option_active.use) {
                 this.stats_window.hide();
