@@ -55,6 +55,7 @@ export class MainItemMenu {
     public item_change_stats_window: StatsCheckWithItemWindow;
 
     public selected_char_index: number;
+    public selected_item_pos: {page: number, index: number};
     public is_open: boolean;
     public choosing_give_destination: boolean;
     public overview_shifted: boolean;
@@ -85,6 +86,7 @@ export class MainItemMenu {
         this.item_change_stats_window = new StatsCheckWithItemWindow(this.game, this.data);
 
         this.selected_char_index = 0;
+        this.selected_item_pos = {page: 0, index: 0};
         this.is_open = false;
         this.choosing_give_destination = false;
         this.overview_shifted = false;
@@ -196,16 +198,19 @@ export class MainItemMenu {
             this.set_guide_window_text();
             this.item_choose_window.open(this.selected_char_index, () => {
                 this.on_item_choose_close();
-            });
+            }, undefined, this.selected_item_pos);
         }
 
         this.item_choose_window.grant_control(
             this.open_char_select.bind(this),
             () => {
-                let item_win = this.item_choose_window;
-                let selected_item =
+                const item_win = this.item_choose_window;
+                this.selected_item_pos = {page: item_win.page_index, index: item_win.selected_element_index};
+
+                const selected_item =
                     item_win.element_list[(item_win.elements[item_win.selected_element_index] as ItemSlot).key_name];
-                let selected_item_obj = item_win.item_objs[item_win.selected_element_index];
+                const selected_item_obj = item_win.item_objs[item_win.selected_element_index];
+
                 this.item_choose(selected_item, selected_item_obj);
             },
             this.chars_menu.next_char.bind(this.chars_menu),
@@ -249,9 +254,15 @@ export class MainItemMenu {
             this.data.info.party_data.members[this.selected_char_index],
             this.item_change_stats_window,
             this,
-            () => {
+            (item_given?:boolean, char_index?:number) => {
                 this.shift_item_overview(false);
-                this.open_char_select();
+                if(item_given){
+                    this.chars_menu.select_char(char_index);
+                    this.char_change();
+                    this.open_char_select();
+                }
+                else
+                    this.char_choose();
             },
             () => {
                 if (item.type === item_types.ABILITY_GRANTOR) {
