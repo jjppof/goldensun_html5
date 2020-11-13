@@ -2,7 +2,7 @@ import {TextObj, Window} from "../../Window";
 import {Item, item_types} from "../../Item";
 import {effect_types, effect_operators} from "../../Effect";
 import {GoldenSun} from "../../GoldenSun";
-import {ItemSlot, MainChar} from "../../MainChar";
+import {ItemSlot, item_equip_slot, MainChar} from "../../MainChar";
 import * as _ from "lodash";
 import {main_stats} from "../../Player";
 
@@ -195,24 +195,24 @@ export class StatsCheckWithItemWindow {
                 break;
         }
 
-        const eq_types = [
-            "WEAPONS",
-            "ARMOR",
-            "CHEST_PROTECTOR",
-            "HEAD_PROTECTOR",
-            "RING",
-            "LEG_PROTECTOR",
-            "UNDERWEAR",
-        ];
-        const slot_types = ["weapon", "body", "chest", "head", "ring", "boots", "underwear"];
-
-        for (let i = 0; i < eq_types.length; i++) {
-            if (this.item.type === item_types[eq_types[i]]) equip_slot_property = slot_types[i];
-        }
-
-        this.set_compare_arrows(effect_types.ATTACK, equip_slot_property, main_stats.ATTACK, compare_removing);
-        this.set_compare_arrows(effect_types.DEFENSE, equip_slot_property, main_stats.DEFENSE, compare_removing);
-        this.set_compare_arrows(effect_types.AGILITY, equip_slot_property, main_stats.AGILITY, compare_removing);
+        this.set_compare_arrows(
+            effect_types.ATTACK,
+            item_equip_slot[this.item.type],
+            main_stats.ATTACK,
+            compare_removing
+        );
+        this.set_compare_arrows(
+            effect_types.DEFENSE,
+            item_equip_slot[this.item.type],
+            main_stats.DEFENSE,
+            compare_removing
+        );
+        this.set_compare_arrows(
+            effect_types.AGILITY,
+            item_equip_slot[this.item.type],
+            main_stats.AGILITY,
+            compare_removing
+        );
     }
 
     open(char, item, item_obj, callback?) {

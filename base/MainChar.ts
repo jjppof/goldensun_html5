@@ -34,10 +34,8 @@ export const item_equip_slot = {
     [item_types.CHEST_PROTECTOR]: equip_slots.CHEST,
     [item_types.HEAD_PROTECTOR]: equip_slots.HEAD,
     [item_types.LEG_PROTECTOR]: equip_slots.BOOTS,
-    [item_types.LUCKY_CHARM]: equip_slots.BODY,
     [item_types.RING]: equip_slots.RING,
     [item_types.UNDERWEAR]: equip_slots.UNDERWEAR,
-    [item_types.SHIRT]: equip_slots.UNDERWEAR,
 };
 
 export class MainChar extends Player {
@@ -312,7 +310,7 @@ export class MainChar extends Player {
         const item_obj = this.items[index];
         if (item_obj.equipped && !initialize) return;
         const item = this.info.items_list[item_obj.key_name];
-        if (this.equip_slots[item_equip_slot[item.type]] !== null) {
+        if (item.type in item_equip_slot && this.equip_slots[item_equip_slot[item.type]] !== null) {
             this.unequip_item(this.equip_slots[item_equip_slot[item.type]].index);
         }
         this.equip_slots[item_equip_slot[item.type]] = item_obj;
@@ -332,7 +330,7 @@ export class MainChar extends Player {
         const item_obj = this.items[index];
         if (!item_obj.equipped) return;
         const item = this.info.items_list[item_obj.key_name];
-        if (this.equip_slots[item_equip_slot[item.type]] !== null) {
+        if (item.type in item_equip_slot && this.equip_slots[item_equip_slot[item.type]] !== null) {
             this.equip_slots[item_equip_slot[item.type]] = null;
         }
         item_obj.equipped = false;
