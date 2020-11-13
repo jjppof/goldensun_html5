@@ -232,6 +232,7 @@ declare module Phaser {
                 emitter: Phaser.ParticleStorm.Emitter;
                 parent: Phaser.ParticleStorm;
                 pixelSize: number;
+                useRect: boolean;
 
                 addToWorld(group?: Phaser.Group): Phaser.Image | Phaser.Sprite | Phaser.Group;
                 preUpdate(): void;

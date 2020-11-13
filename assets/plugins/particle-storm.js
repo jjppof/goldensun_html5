@@ -5350,6 +5350,11 @@ Phaser.ParticleStorm.Renderer.Base = function (emitter) {
     */
     this.pixelSize = 1;
 
+    /**
+    * @property {boolean} useRect - If true, uses a rectable to build a pixel instead of a circle.
+    */
+    this.useRect = true;
+
 };
 
 Phaser.ParticleStorm.Renderer.Base.prototype = {
@@ -5725,7 +5730,11 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.update = function (particle) {
 
     if (this.pixelSize > 2)
     {
-        this.bmd.rect(x, y, this.pixelSize, this.pixelSize, particle.color.rgba);
+        if (this.useRect) {
+            this.bmd.rect(x, y, this.pixelSize, this.pixelSize, particle.color.rgba);
+        } else {
+            this.bmd.circle(x, y, this.pixelSize/2, particle.color.rgba);
+        }
     }
     else
     {
