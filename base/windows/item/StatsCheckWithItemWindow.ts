@@ -2,7 +2,7 @@ import {TextObj, Window} from "../../Window";
 import {Item, item_types} from "../../Item";
 import {effect_types, effect_operators} from "../../Effect";
 import {GoldenSun} from "../../GoldenSun";
-import {ItemSlot, MainChar} from "../../MainChar";
+import {ItemSlot, item_equip_slot, MainChar} from "../../MainChar";
 import * as _ from "lodash";
 import {main_stats} from "../../Player";
 
@@ -179,7 +179,7 @@ export class StatsCheckWithItemWindow {
         this.hide_arrows();
         if (this.item_obj.equipped && !compare_removing) return;
         if (!this.item.equipable_chars.includes(this.char.key_name)) return;
-        let equip_slot_property;
+        let equip_slot_property = null;
         switch (this.item.type) {
             case item_types.WEAPONS:
                 equip_slot_property = "weapon";
@@ -194,9 +194,25 @@ export class StatsCheckWithItemWindow {
                 equip_slot_property = "body";
                 break;
         }
-        this.set_compare_arrows(effect_types.ATTACK, equip_slot_property, main_stats.ATTACK, compare_removing);
-        this.set_compare_arrows(effect_types.DEFENSE, equip_slot_property, main_stats.DEFENSE, compare_removing);
-        this.set_compare_arrows(effect_types.AGILITY, equip_slot_property, main_stats.AGILITY, compare_removing);
+
+        this.set_compare_arrows(
+            effect_types.ATTACK,
+            item_equip_slot[this.item.type],
+            main_stats.ATTACK,
+            compare_removing
+        );
+        this.set_compare_arrows(
+            effect_types.DEFENSE,
+            item_equip_slot[this.item.type],
+            main_stats.DEFENSE,
+            compare_removing
+        );
+        this.set_compare_arrows(
+            effect_types.AGILITY,
+            item_equip_slot[this.item.type],
+            main_stats.AGILITY,
+            compare_removing
+        );
     }
 
     open(char, item, item_obj, callback?) {

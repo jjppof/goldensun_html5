@@ -7,11 +7,10 @@ export enum item_types {
     HEAD_PROTECTOR = "head_protector",
     LEG_PROTECTOR = "leg_protector",
     ABILITY_GRANTOR = "ability_grantor",
-    LUCKY_CHARM = "lucky_charm",
+    CLASS_CHANGER = "class_changer",
     RING = "ring",
     UNDERWEAR = "underwear",
     GENERAL_ITEM = "general_item",
-    SHIRT = "shirt",
 }
 
 export enum use_types {

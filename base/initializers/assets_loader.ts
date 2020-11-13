@@ -96,6 +96,10 @@ function load_filters(game) {
     game.load.script("mode7", "assets/filters/mode7.js");
 }
 
+function load_plugins(game) {
+    game.load.script("particlestorm", "assets/plugins/particle-storm.js");
+}
+
 export function load_all(game) {
     load_db_files(game);
     load_misc(game);
@@ -103,4 +107,5 @@ export function load_all(game) {
     load_buttons(game);
     load_fonts(game);
     load_filters(game);
+    load_plugins(game);
 }

@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "typeRoots": ["types/pixi.d.ts", "types/p2.d.ts", "types/phaser.d.ts"],
+        "typeRoots": ["types/pixi.d.ts", "types/p2.d.ts", "types/phaser.d.ts", "types/particlestorm.d.ts"],
         "lib": ["dom", "es2019"],
         "module": "commonjs",
         "noImplicitAny": false,
@@ -10,6 +10,7 @@
     },
     "exclude": [
         "./assets/filters/*.js",
+        "./assets/plugins/*.js",
         "./dist",
         "./node_modules",
         "./static/*.js",

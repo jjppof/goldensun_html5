@@ -64,6 +64,7 @@ export class BattleAnimationManager {
             const animation_recipe = this.game.cache.getJSON(battle_anim_key + RECIPE_SUFFIX);
             this.animations[battle_anim_key] = new BattleAnimation(
                 this.game,
+                this.data,
                 animation_recipe.key_name,
                 animation_recipe.sprites,
                 animation_recipe.x_sequence,
@@ -85,6 +86,7 @@ export class BattleAnimationManager {
                 animation_recipe.play_sequence,
                 animation_recipe.set_frame_sequence,
                 animation_recipe.blend_mode_sequence,
+                animation_recipe.particles_sequence,
                 animation_recipe.is_party_animation
             );
         } else {

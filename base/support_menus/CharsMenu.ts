@@ -283,7 +283,7 @@ export class CharsMenu {
         if (index === undefined) index = this.selected_index;
 
         this.move_cursor(index, () => {
-            if (this.selected_index !== null) this.unset_character(this.selected_index);
+            this.unset_character(this.selected_index);
             this.selected_index = index;
             this.set_character(this.selected_index);
 
@@ -382,23 +382,20 @@ export class CharsMenu {
         let cursor_x = 0;
         let cursor_y = 0;
         let tween_config = {type: null, variant: null};
-        let animate = false;
 
         if (this.mode === SHOP_MODE) {
             cursor_x = CURSOR_X + pos * GAP_SIZE;
             cursor_y = CURSOR_Y;
             tween_config.type = CursorManager.CursorTweens.WIGGLE;
-            animate = false;
         } else if (this.mode === MENU_MODE) {
             cursor_x = CURSOR_X2 + pos * GAP_SIZE;
             cursor_y = CURSOR_Y2;
             tween_config.type = CursorManager.CursorTweens.POINT;
             tween_config.variant = PointVariants.NORMAL;
-            animate = false;
         }
         this.data.cursor_manager.move_to(
             {x: cursor_x, y: cursor_y},
-            {animate: animate, tween_config: tween_config},
+            {animate: false, tween_config: tween_config},
             on_complete
         );
     }
