@@ -74,7 +74,7 @@ export class CursorManager {
         this.cursor_flipped = false;
     }
 
-    public init_tween(config: TweenConfig, callback?:Function) {
+    public init_tween(config: TweenConfig, callback?: Function) {
         this.clear_tweens();
         if (!this.group.visible) this.show();
 
@@ -137,15 +137,19 @@ export class CursorManager {
         const flip = params ? (params.flip !== undefined ? params.flip : false) : false;
         const animate = params ? (params.animate !== undefined ? params.animate : true) : true;
         const tween_config = params ? params.tween_config : undefined;
-        const move_time = params ? (params.move_time !== undefined ? params.move_time : CursorManager.DEFAULT_MOVE_TIME) : CursorManager.DEFAULT_MOVE_TIME;
+        const move_time = params
+            ? params.move_time !== undefined
+                ? params.move_time
+                : CursorManager.DEFAULT_MOVE_TIME
+            : CursorManager.DEFAULT_MOVE_TIME;
 
-        if(flip !== this.cursor_flipped) this.flip_cursor();
-        if(!tween_config) this.clear_tweens();
+        if (flip !== this.cursor_flipped) this.flip_cursor();
+        if (!tween_config) this.clear_tweens();
 
         pos.x += CursorManager.X_SHIFT;
         this.cursor_default_pos = {x: pos.x + this.game.camera.x, y: pos.y + this.game.camera.y};
 
-        if(animate){
+        if (animate) {
             let t = this.game.add
                 .tween(this.cursor)
                 .to(
@@ -156,16 +160,15 @@ export class CursorManager {
                 );
             t.onComplete.addOnce(() => {
                 if (tween_config) this.init_tween(tween_config, on_complete);
-                else{
-                    if(on_complete) on_complete();
+                else {
+                    if (on_complete) on_complete();
                 }
             }, this);
-        }
-        else{
+        } else {
             this.cursor.x = pos.x + this.game.camera.x;
             this.cursor.y = pos.y + this.game.camera.y;
 
-            if(tween_config) this.init_tween(tween_config, on_complete);
+            if (tween_config) this.init_tween(tween_config, on_complete);
             else if (on_complete) on_complete();
         }
     }
