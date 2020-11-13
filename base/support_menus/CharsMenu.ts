@@ -66,6 +66,7 @@ export class CharsMenu {
 
     public arrow_tweens: Phaser.Tween[];
     public lines: MainChar[][];
+    public char_sprites: Phaser.Sprite[];
     public current_line: number;
     public selected_index: number;
     public is_active: boolean;
@@ -96,8 +97,9 @@ export class CharsMenu {
         this.arrow_tweens = [];
 
         this.lines = [];
+        this.char_sprites = [];
         this.current_line = 0;
-        this.selected_index = 0;
+        this.selected_index = null;
         this.is_active = false;
         this.is_open = false;
         this.mode = null;
@@ -181,6 +183,8 @@ export class CharsMenu {
     }
 
     set_chars() {
+        this.char_sprites = [];
+
         for (let i = 0; i < this.lines[this.current_line].length; ++i) {
             let char = this.lines[this.current_line][i];
             let sprite: Phaser.Sprite = null;
@@ -204,6 +208,7 @@ export class CharsMenu {
                     utils.reverse_directions[utils.directions.down]
                 )
             );
+            this.char_sprites.push(sprite);
         }
     }
 
@@ -225,9 +230,10 @@ export class CharsMenu {
     }
 
     change_line(line: number, force_index?: number) {
-        this.clear_arrow_tweens();
-
         if (this.data.info.party_data.members.length < MAX_PER_LINE * line) return;
+
+        this.clear_arrow_tweens();
+        this.unset_character(this.selected_index);
 
         this.current_line = line;
 
@@ -238,7 +244,6 @@ export class CharsMenu {
         }
 
         utils.kill_all_sprites(this.char_group);
-        this.unset_character(this.selected_index);
         this.set_chars();
         this.check_arrows();
         this.select_char(this.selected_index);
@@ -262,7 +267,7 @@ export class CharsMenu {
         if (this.mode === SHOP_MODE) {
             //set run animation for new character;
         } else if (this.mode === MENU_MODE) {
-            this.char_group.children[index].y = MENU_SELECTED_Y_SHIFT;
+            this.char_sprites[index].y = MENU_SELECTED_Y_SHIFT;
         }
     }
 
@@ -270,17 +275,17 @@ export class CharsMenu {
         if (this.mode === SHOP_MODE) {
             //unset run animation for new character;
         } else if (this.mode === MENU_MODE) {
-            this.char_group.children[index].y = 0;
+            this.char_sprites[index].y = 0;
         }
     }
 
-    select_char(index: number) {
+    select_char(index?: number) {
+        if (index === undefined) index = this.selected_index;
+
         this.move_cursor(index, () => {
-            if (index !== this.selected_index) {
-                this.unset_character(this.selected_index);
-                this.selected_index = index;
-                this.set_character(this.selected_index);
-            }
+            if (this.selected_index !== null) this.unset_character(this.selected_index);
+            this.selected_index = index;
+            this.set_character(this.selected_index);
 
             if (this.on_change) {
                 let c = this.data.info.party_data.members[this.current_line * MAX_PER_LINE + this.selected_index];
@@ -315,8 +320,45 @@ export class CharsMenu {
         }
     }
 
-    grant_control(on_cancel: Function, on_select: Function) {
-        let controls = [
+    swap_next() {
+        if (
+            this.selected_index === this.lines[this.current_line].length - 1 &&
+            this.current_line === this.lines.length - 1
+        )
+            return;
+
+        const index = this.selected_index + this.current_line * MAX_PER_LINE;
+        const this_char = this.data.info.party_data.members[index];
+
+        this.data.info.party_data.members[index] = this.data.info.party_data.members[index + 1];
+        this.data.info.party_data.members[index + 1] = this_char;
+
+        const new_index = (this.selected_index + 1) % MAX_PER_LINE;
+        const new_line = this.current_line + (new_index === 0 ? 1 : 0);
+
+        this.make_lines();
+        this.change_line(new_line, new_index);
+    }
+
+    swap_previous() {
+        if (this.selected_index === 0 && this.current_line === 0) return;
+
+        const index = this.selected_index + this.current_line * MAX_PER_LINE;
+        const this_char = this.data.info.party_data.members[index];
+
+        this.data.info.party_data.members[index] = this.data.info.party_data.members[index - 1];
+        this.data.info.party_data.members[index - 1] = this_char;
+
+        const new_index = (this.selected_index + MAX_PER_LINE - 1) % MAX_PER_LINE;
+        const new_line = this.current_line - (new_index > this.selected_index ? 1 : 0);
+
+        this.make_lines();
+        this.change_line(new_line, new_index);
+    }
+
+    grant_control(on_cancel: Function, on_select: Function, enable_swap?: boolean) {
+        enable_swap = true;
+        const controls: {key: number; on_down: Function; on_up?: Function; params?: any}[] = [
             {key: this.data.gamepad.LEFT, on_down: this.previous_char.bind(this)},
             {key: this.data.gamepad.RIGHT, on_down: this.next_char.bind(this)},
             {key: this.data.gamepad.UP, on_down: this.previous_line.bind(this)},
@@ -324,6 +366,13 @@ export class CharsMenu {
             {key: this.data.gamepad.A, on_down: on_select, params: {reset_control: true}},
             {key: this.data.gamepad.B, on_down: on_cancel, params: {reset_control: true}},
         ];
+        if (enable_swap) {
+            controls.push(
+                {key: this.data.gamepad.L, on_down: this.swap_previous.bind(this), on_up: this.select_char.bind(this)},
+                {key: this.data.gamepad.R, on_down: this.swap_next.bind(this), on_up: this.select_char.bind(this)}
+            );
+        }
+
         this.data.control_manager.set_control(controls, {loop_configs: {horizontal: true}});
     }
 
@@ -365,7 +414,6 @@ export class CharsMenu {
     }
 
     open(select_index: number = 0, mode: string = SHOP_MODE, open_callback?: Function) {
-        this.selected_index = select_index;
         this.current_line = 0;
         this.mode = mode;
 
@@ -373,7 +421,7 @@ export class CharsMenu {
         this.check_mode();
         this.check_arrows();
         this.set_chars();
-        this.select_char(this.selected_index);
+        this.select_char(select_index);
 
         this.char_group.alpha = 1;
         this.is_open = true;
@@ -388,8 +436,9 @@ export class CharsMenu {
         utils.kill_all_sprites(this.char_group, destroy);
 
         this.lines = [];
+        this.char_sprites = [];
         this.current_line = 0;
-        this.selected_index = 0;
+        this.selected_index = null;
         this.is_active = false;
         this.is_open = false;
         this.char_group.alpha = 0;
