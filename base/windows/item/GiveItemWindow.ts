@@ -194,7 +194,10 @@ export class GiveItemWindow {
 
         this.item_menu.item_options_window.open_action_message_window("Given.", () => {
             const char_index = this.data.info.party_data.members.indexOf(this.char);
-            this.item_menu.item_options_window.close(this.item_menu.item_options_window.close_callback(true, char_index));
+            this.item_menu.item_options_window.close( () => {
+                this.item_menu.item_options_window.close_callback(true, char_index);
+                }
+            );
             this.close();
         });
     }

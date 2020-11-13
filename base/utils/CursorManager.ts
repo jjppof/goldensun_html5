@@ -30,8 +30,8 @@ export class CursorManager {
     private static readonly POINT = {
         KEY: CursorManager.CursorTweens.POINT,
         0: {
-            X: -1,
-            Y: 1,
+            X: -2,
+            Y: 2,
         },
         1: {
             X: -4,
@@ -74,7 +74,7 @@ export class CursorManager {
         this.cursor_flipped = false;
     }
 
-    public init_tween(config: TweenConfig) {
+    public init_tween(config: TweenConfig, callback?:Function) {
         this.clear_tweens();
         if (!this.group.visible) this.show();
 
@@ -107,7 +107,7 @@ export class CursorManager {
                     .loop();
                 break;
             case CursorManager.POINT.KEY:
-                if (!config.variant) config.variant = PointVariants.NORMAL;
+                if (config.variant === undefined) config.variant = PointVariants.NORMAL;
                 let point_x = CursorManager.POINT[config.variant].X;
                 let point_y = CursorManager.POINT[config.variant].Y;
                 let point_time = config.time ? config.time : CursorManager.POINT.DEFAULT_TIME;
@@ -123,6 +123,7 @@ export class CursorManager {
 
         this.bring_to_top();
         if (this.active_tween) this.active_tween.start();
+        if (callback) callback();
     }
 
     public move_to(
@@ -133,46 +134,39 @@ export class CursorManager {
         if (!this.group.visible) this.show();
         this.bring_to_top();
 
-        if (params) {
-            if (params.flip === undefined) params.flip = false;
-            if (params.flip !== this.cursor_flipped) this.flip_cursor();
-        }
+        const flip = params ? (params.flip !== undefined ? params.flip : false) : false;
+        const animate = params ? (params.animate !== undefined ? params.animate : true) : true;
+        const tween_config = params ? params.tween_config : undefined;
+        const move_time = params ? (params.move_time !== undefined ? params.move_time : CursorManager.DEFAULT_MOVE_TIME) : CursorManager.DEFAULT_MOVE_TIME;
+
+        if(flip !== this.cursor_flipped) this.flip_cursor();
+        if(!tween_config) this.clear_tweens();
 
         pos.x += CursorManager.X_SHIFT;
-
         this.cursor_default_pos = {x: pos.x + this.game.camera.x, y: pos.y + this.game.camera.y};
 
-        if (!params) {
+        if(animate){
+            let t = this.game.add
+                .tween(this.cursor)
+                .to(
+                    {x: pos.x + this.game.camera.x, y: pos.y + this.game.camera.y},
+                    move_time,
+                    Phaser.Easing.Linear.None,
+                    true
+                );
+            t.onComplete.addOnce(() => {
+                if (tween_config) this.init_tween(tween_config, on_complete);
+                else{
+                    if(on_complete) on_complete();
+                }
+            }, this);
+        }
+        else{
             this.cursor.x = pos.x + this.game.camera.x;
             this.cursor.y = pos.y + this.game.camera.y;
-            if (on_complete) on_complete();
-        } else {
-            if (params.animate === undefined) params.animate = true;
 
-            let move_time = params.move_time ? params.move_time : CursorManager.DEFAULT_MOVE_TIME;
-
-            if (params.animate) {
-                let t = this.game.add
-                    .tween(this.cursor)
-                    .to(
-                        {x: pos.x + this.game.camera.x, y: pos.y + this.game.camera.y},
-                        move_time,
-                        Phaser.Easing.Linear.None,
-                        true
-                    );
-                if (params.tween_config) {
-                    t.onComplete.addOnce(() => {
-                        this.init_tween(params.tween_config);
-                        if (on_complete) on_complete();
-                    }, this);
-                }
-            } else {
-                this.cursor.x = pos.x + this.game.camera.x;
-                this.cursor.y = pos.y + this.game.camera.y;
-
-                if (params.tween_config) this.init_tween(params.tween_config);
-                if (on_complete) on_complete();
-            }
+            if(tween_config) this.init_tween(tween_config, on_complete);
+            else if (on_complete) on_complete();
         }
     }
 
@@ -196,7 +190,6 @@ export class CursorManager {
     }
 
     public hide() {
-        this.clear_tweens();
         this.group.visible = false;
     }
 

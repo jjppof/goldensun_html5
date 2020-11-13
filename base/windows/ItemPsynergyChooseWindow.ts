@@ -418,7 +418,7 @@ export class ItemPsynergyChooseWindow {
     Input: char_index [number] = The selected character's party index
            close_callback [function] = Closing callback (Optional)
            open_callback [function] = Opening callback (Optional)*/
-    open(char_index: number, close_callback?: Function, open_callback?: Function, pos?:{page:number, index:number}) {
+    open(char_index: number, close_callback?: Function, open_callback?: Function, pos?: {page: number; index: number}) {
         this.update_position();
         this.char_index = char_index;
         this.char = this.data.info.party_data.members[char_index];
@@ -439,7 +439,7 @@ export class ItemPsynergyChooseWindow {
             this.is_psynergy_window ? undefined : this.item_objs[this.selected_element_index]
         );
 
-        this.move_cursor(CURSOR_X, CURSOR_Y + this.selected_element_index*CURSOR_GAP);
+        this.move_cursor(CURSOR_X, CURSOR_Y + this.selected_element_index * CURSOR_GAP);
 
         this.window_open = true;
         this.window_activated = true;
@@ -480,7 +480,6 @@ export class ItemPsynergyChooseWindow {
     deactivate() {
         this.clear_sprites();
         this.window.page_indicator.terminante();
-        this.data.cursor_manager.hide();
 
         this.unset_element_tween(this.selected_element_index);
         this.unset_highlight_bar();

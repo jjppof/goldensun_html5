@@ -195,14 +195,20 @@ export class StatsCheckWithItemWindow {
                 break;
         }
 
-        const eq_types = ["WEAPONS", "ARMOR", "CHEST_PROTECTOR", "HEAD_PROTECTOR", "RING", "LEG_PROTECTOR", "UNDERWEAR"];
+        const eq_types = [
+            "WEAPONS",
+            "ARMOR",
+            "CHEST_PROTECTOR",
+            "HEAD_PROTECTOR",
+            "RING",
+            "LEG_PROTECTOR",
+            "UNDERWEAR",
+        ];
         const slot_types = ["weapon", "body", "chest", "head", "ring", "boots", "underwear"];
 
         for (let i = 0; i < eq_types.length; i++) {
-            if (this.item.type === item_types[eq_types[i]])
-                equip_slot_property = slot_types[i];
+            if (this.item.type === item_types[eq_types[i]]) equip_slot_property = slot_types[i];
         }
-       
 
         this.set_compare_arrows(effect_types.ATTACK, equip_slot_property, main_stats.ATTACK, compare_removing);
         this.set_compare_arrows(effect_types.DEFENSE, equip_slot_property, main_stats.DEFENSE, compare_removing);
