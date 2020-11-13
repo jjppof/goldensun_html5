@@ -50,7 +50,7 @@ const SEPARATOR_LENGTH = 96;
 
 export enum CharsMenuModes {
     SHOP,
-    MENU
+    MENU,
 }
 const SHOP_MODE = "shop";
 const MENU_MODE = "menu";
@@ -276,7 +276,7 @@ export class CharsMenu {
     }
 
     unset_character(index: number) {
-        if(index === undefined  || index === null) return;
+        if (index === undefined || index === null) return;
 
         if (this.mode === CharsMenuModes.SHOP) {
             //unset run animation for new character;
@@ -415,7 +415,7 @@ export class CharsMenu {
         this.is_active = false;
     }
 
-    open(select_index: number = 0, mode:CharsMenuModes = CharsMenuModes.SHOP, open_callback?: Function) {
+    open(select_index: number = 0, mode: CharsMenuModes = CharsMenuModes.SHOP, open_callback?: Function) {
         this.current_line = 0;
         this.mode = mode;
 

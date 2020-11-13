@@ -1,5 +1,5 @@
 import {GoldenSun} from "../GoldenSun";
-import { MainChar } from "../MainChar";
+import {MainChar} from "../MainChar";
 import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
 import {TextObj, Window} from "../Window";
 
@@ -16,19 +16,19 @@ export class MainStatusMenu {
         X: 0,
         Y: 0,
         WIDTH: 236,
-        HEIGHT: 36
+        HEIGHT: 36,
     };
     private static readonly EQUIP_WIN = {
         X: 0,
         Y: 80,
         WIDTH: 116,
-        HEIGHT: 76
+        HEIGHT: 76,
     };
     private static readonly GUIDE_WIN = {
         X: 104,
         Y: 0,
         WIDTH: 132,
-        HEIGHT: 36
+        HEIGHT: 36,
     };
     private static readonly MAIN_WIN = {
         X: 0,
@@ -38,31 +38,31 @@ export class MainStatusMenu {
     };
     private static readonly NAME = {
         X: 8,
-        Y: 8
+        Y: 8,
     };
     private static readonly CLASS_NAME = {
         X: 8,
-        Y: 56
+        Y: 56,
     };
     private static readonly EXP = {
         LABEL_X: 8,
         LABEL_Y: 16,
         VALUE_END_X: 109,
-        VALUE_Y: 16
+        VALUE_Y: 16,
     };
     private static readonly LEVEL = {
         LABEL_X: 64,
         LABEL_Y: 8,
         VALUE_END_X: 93,
-        VALUE_Y: 8
+        VALUE_Y: 8,
     };
     private static readonly AVATAR = {
         X: 8,
-        Y: 24
+        Y: 24,
     };
     private static readonly NORMAL_STATUS = {
         X: 120,
-        Y: 8
+        Y: 8,
     };
     private static readonly STATS = {
         LABEL_X: 144,
@@ -77,7 +77,7 @@ export class MainStatusMenu {
         MAX_END_X: 133,
         MAX_Y: 32,
         CURR_END_X: 100,
-        CURR_Y: 32
+        CURR_Y: 32,
     };
     private static readonly PP = {
         LABEL_X: 48,
@@ -85,14 +85,14 @@ export class MainStatusMenu {
         MAX_END_X: 133,
         MAX_Y: 40,
         CURR_END_X: 100,
-        CURR_Y: 40
+        CURR_Y: 40,
     };
     private static readonly EFFECTS = {
         ICON_X: 112,
         ICON_Y: 8,
         NAME_X: 0,
         NAME_Y: 0,
-        SHIFT: 16
+        SHIFT: 16,
     };
 
     private static readonly GROUP_KEY: "main_status";
@@ -113,10 +113,10 @@ export class MainStatusMenu {
     private is_open: boolean;
     private close_callback: Function;
 
-    private avatar:Phaser.Sprite;
-    private name:TextObj;
-    private level:TextObj;
-    private level_value:TextObj;
+    private avatar: Phaser.Sprite;
+    private name: TextObj;
+    private level: TextObj;
+    private level_value: TextObj;
 
     public constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
@@ -160,7 +160,7 @@ export class MainStatusMenu {
 
     private toggle_guide_win() {}
 
-    private initialize(){
+    private initialize() {
         this.avatar = this.main_window.create_at_group(
             MainStatusMenu.AVATAR.X,
             MainStatusMenu.AVATAR.Y,
@@ -202,7 +202,7 @@ export class MainStatusMenu {
         );
     }
 
-    private update_info(){
+    private update_info() {
         if (this.avatar) this.avatar.destroy();
 
         const char = this.selected_char;
@@ -218,15 +218,14 @@ export class MainStatusMenu {
 
         this.main_window.update_text(char.name, this.name);
         this.main_window.update_text(char.level, this.level_value);
-
     }
 
     private on_character_change() {
         this.update_info();
     }
 
-    public open_menu(close_callback?:Function, open_callback?:Function){
-        if(close_callback) this.close_callback = close_callback;
+    public open_menu(close_callback?: Function, open_callback?: Function) {
+        if (close_callback) this.close_callback = close_callback;
 
         this.initialize();
 
@@ -238,13 +237,13 @@ export class MainStatusMenu {
         this.is_open = true;
     }
 
-    public close_menu(callback?:Function){
+    public close_menu(callback?: Function) {
         this.is_open = false;
         this.data.cursor_manager.hide();
         this.data.control_manager.reset();
 
-        if(!callback) callback = this.close_callback;
-        
+        if (!callback) callback = this.close_callback;
+
         this.chars_menu.close();
         this.main_window.close(undefined, false);
         this.guide_window.close(undefined, false);
