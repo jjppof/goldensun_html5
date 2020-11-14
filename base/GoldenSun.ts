@@ -21,7 +21,7 @@ export class GoldenSun {
     public game: Phaser.Game = null;
     public dbs: any = {};
     public info: GameInfo = {} as GameInfo;
-    public particle_system: Phaser.ParticleStorm = null;
+    public particle_manager: Phaser.ParticleStorm = null;
 
     //main game states
     public menu_open: boolean = false;
@@ -104,7 +104,7 @@ export class GoldenSun {
         this.scale_factor = this.dbs.init_db.initial_scale_factor;
 
         //advanced particle system
-        this.particle_system = this.game.plugins.add(Phaser.ParticleStorm);
+        this.particle_manager = this.game.plugins.add(Phaser.ParticleStorm);
 
         //init debug systems
         this.debug = new Debug(this.game, this);

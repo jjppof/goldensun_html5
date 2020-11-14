@@ -17,6 +17,38 @@ type DefaultAttr = {
     direction?: boolean;
 };
 
+type AdvParticleValue =
+    | number
+    | {min: number; max: number}
+    | {
+          initial?: number | {min: number; max: number};
+          value: number | {min: number; max: number};
+          delta: number | {min: number; max: number};
+          radial: {arcStart: number; arcEnd: number};
+          control: {x: number; y: number}[] | "linear" | "reverse" | "yoyo";
+      };
+
+type AdvParticleObject = {
+    lifespan: AdvParticleValue;
+    red: AdvParticleValue;
+    green: AdvParticleValue;
+    blue: AdvParticleValue;
+    vx: AdvParticleValue;
+    vy: AdvParticleValue;
+    ax: AdvParticleValue;
+    ay: AdvParticleValue;
+    alpha: AdvParticleValue;
+    scale: AdvParticleValue;
+    rotation: AdvParticleValue;
+    image: string | string[];
+    frame: string | string[];
+    blendMode: string;
+    visible: boolean;
+    sendToBack: boolean;
+    bringToTop: boolean;
+    hsv: AdvParticleValue;
+};
+
 export class BattleAnimation {
     public game: Phaser.Game;
     public data: GoldenSun;
@@ -98,7 +130,6 @@ export class BattleAnimation {
         min_particle_scale: number;
         max_particle_scale: number;
         explode: boolean; // if true, frequency will be ignored
-        trails: boolean;
         emission_duration: number;
         animation: {
             animation_key: string;
