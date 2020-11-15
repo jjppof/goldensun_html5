@@ -87,7 +87,8 @@ export class BattleAnimationManager {
                 animation_recipe.set_frame_sequence,
                 animation_recipe.blend_mode_sequence,
                 animation_recipe.particles_sequence,
-                animation_recipe.is_party_animation
+                animation_recipe.is_party_animation,
+                animation_recipe.advanced_particles_sequence
             );
         } else {
             this.not_available.add(battle_anim_key);

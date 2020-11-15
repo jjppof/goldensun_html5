@@ -47,6 +47,47 @@ type AdvParticleObject = {
     sendToBack: boolean;
     bringToTop: boolean;
     hsv: AdvParticleValue;
+    target: {
+        x: number;
+        y: number;
+        zone_key: string;
+        speed?: "yoyo" | "reverse" | "linear";
+    };
+};
+
+type AdvParticlesZone = {
+    type: "rectangle" | "point" | "line" | "ellipse" | "circle";
+    radius: number;
+    width: number;
+    height: number;
+    points: {x: number; y: number}[];
+};
+
+type AdvEmitter = {
+    emitter_data_key: string;
+    x: number | string;
+    y: number | string;
+    shift_x: number;
+    shift_y: number;
+    total: number;
+    repeat: number;
+    frequency: number;
+    x_step: number;
+    y_step: number;
+    start_delay: number;
+    step_delay: number;
+    random_in_zone: boolean;
+    spacing: number | number[];
+    radiate: {
+        velocity: number;
+        from: number;
+        to: number;
+    };
+    radiateFrom: {
+        x: number;
+        y: number;
+        velocity: number;
+    };
 };
 
 export class BattleAnimation {
@@ -137,6 +178,11 @@ export class BattleAnimation {
             loop: boolean;
         };
     }[] = [];
+    public advanced_particles_sequence: {
+        data: {[emitter_data_key: string]: AdvParticleObject};
+        zones: {[zone_key: string]: AdvParticlesZone};
+        emitters: AdvEmitter[];
+    }[];
     public is_party_animation: boolean;
     public running: boolean;
     public sprites: Phaser.Sprite[];
@@ -193,6 +239,7 @@ export class BattleAnimation {
         set_frame_sequence, //{start_delay: value, frame: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
         particles_sequence,
+        advanced_particles_sequence,
         is_party_animation
     ) {
         this.game = game;
@@ -221,6 +268,7 @@ export class BattleAnimation {
         this.set_frame_sequence = set_frame_sequence === undefined ? [] : set_frame_sequence;
         this.blend_mode_sequence = blend_mode_sequence === undefined ? [] : blend_mode_sequence;
         this.particles_sequence = particles_sequence === undefined ? [] : particles_sequence;
+        this.advanced_particles_sequence = advanced_particles_sequence === undefined ? [] : advanced_particles_sequence;
         this.is_party_animation = is_party_animation;
         this.running = false;
     }
@@ -365,6 +413,7 @@ export class BattleAnimation {
         this.play_filter_property(this.custom_filter_sequence);
         this.play_stage_angle_sequence();
         this.play_particles();
+        this.play_advanced_particles();
         this.unmount_animation(finish_callback);
     }
 
@@ -805,6 +854,8 @@ export class BattleAnimation {
             });
         }
     }
+
+    play_advanced_particles() {}
 
     render() {
         let clear = true;
