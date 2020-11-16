@@ -8,7 +8,7 @@ import {ItemSlot} from "../MainChar";
 import {use_types} from "../Item";
 import {DEFAULT_FONT_COLOR, RED_FONT_COLOR, YELLOW_FONT_COLOR} from "../magic_numbers";
 
-export class StatusItems extends StatusComponent {
+export class BattleStatusItems extends StatusComponent {
     private static readonly CURSOR = {
         X: 10,
         Y: 79,
@@ -47,15 +47,15 @@ export class StatusItems extends StatusComponent {
 
     public select_option() {
         const highlight = {
-            x: StatusItems.HIGHLIGHT.X,
-            y: StatusItems.HIGHLIGHT.Y + StatusItems.SHIFT * this.current_line,
-            width: StatusItems.HIGHLIGHT.WIDTH,
-            height: StatusItems.HIGHLIGHT.HEIGHT,
+            x: BattleStatusItems.HIGHLIGHT.X,
+            y: BattleStatusItems.HIGHLIGHT.Y + BattleStatusItems.SHIFT * this.current_line,
+            width: BattleStatusItems.HIGHLIGHT.WIDTH,
+            height: BattleStatusItems.HIGHLIGHT.HEIGHT,
         };
         this.update_highlight(highlight);
 
-        const cursor_x = StatusItems.CURSOR.X;
-        const cursor_y = StatusItems.CURSOR.Y + StatusItems.SHIFT * this.current_line;
+        const cursor_x = BattleStatusItems.CURSOR.X;
+        const cursor_y = BattleStatusItems.CURSOR.Y + BattleStatusItems.SHIFT * this.current_line;
 
         const cursor_tween = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.SHORT};
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: cursor_tween});
@@ -67,7 +67,7 @@ export class StatusItems extends StatusComponent {
         this.select_option();
 
         const chosen_item = this.char_items[this.current_col][this.current_line];
-        this.manager.update_description(this.data.info.items_list[chosen_item.key_name].description);
+        this.update_description(this.data.info.items_list[chosen_item.key_name].description);
     }
 
     public on_left() {
@@ -131,7 +131,10 @@ export class StatusItems extends StatusComponent {
     }
 
     public initialize() {
-        const page_indicator_anchor = {x: StatusItems.PAGE_INDICATOR_ANCHOR.X, y: StatusItems.PAGE_INDICATOR_ANCHOR.Y};
+        const page_indicator_anchor = {
+            x: BattleStatusItems.PAGE_INDICATOR_ANCHOR.X,
+            y: BattleStatusItems.PAGE_INDICATOR_ANCHOR.Y,
+        };
         this.update_abilities();
 
         const items = this.char_items[this.current_col];
@@ -143,8 +146,8 @@ export class StatusItems extends StatusComponent {
             const equipped = item.equipped;
             const quantity = item.quantity <= 1 ? undefined : item.quantity;
 
-            let x_pos = StatusItems.ITEM.ICON_X;
-            let y_pos = StatusItems.ITEM.ICON_Y + index * StatusItems.SHIFT;
+            let x_pos = BattleStatusItems.ITEM.ICON_X;
+            let y_pos = BattleStatusItems.ITEM.ICON_Y + index * BattleStatusItems.SHIFT;
 
             const item_obj = this.window.make_item_obj(
                 item_key,
@@ -153,15 +156,15 @@ export class StatusItems extends StatusComponent {
                     broken: broken,
                     equipped: equipped,
                     quantity: quantity,
-                    internal_group: StatusItems.GROUP_KEY,
+                    internal_group: BattleStatusItems.GROUP_KEY,
                 }
             );
             for (let obj in item_obj) {
                 if (item_obj[obj]) this.state_sprites.push(item_obj[obj]);
             }
 
-            x_pos = StatusItems.ITEM.NAME_X;
-            y_pos = StatusItems.ITEM.NAME_Y + index * StatusItems.SHIFT;
+            x_pos = BattleStatusItems.ITEM.NAME_X;
+            y_pos = BattleStatusItems.ITEM.NAME_Y + index * BattleStatusItems.SHIFT;
 
             let font_color = YELLOW_FONT_COLOR;
             if (item.broken) {
@@ -178,7 +181,7 @@ export class StatusItems extends StatusComponent {
                 false,
                 font_color,
                 false,
-                StatusItems.GROUP_KEY
+                BattleStatusItems.GROUP_KEY
             );
             this.state_sprites.push(name_text.text, name_text.shadow);
         });
@@ -189,7 +192,7 @@ export class StatusItems extends StatusComponent {
     }
 
     private update_abilities() {
-        const all_items = [...this.manager.selected_character.items];
+        const all_items = [...this.selected_char.items];
 
         this.char_items = [];
         let sorted_items = [];
@@ -205,7 +208,7 @@ export class StatusItems extends StatusComponent {
 
         sorted_items = sorted_items.concat(all_items);
         sorted_items.forEach(item_slot => {
-            if (count === StatusItems.MAX_LINES) {
+            if (count === BattleStatusItems.MAX_LINES) {
                 this.char_items.push(page_items);
                 page_items = [];
                 count = 0;

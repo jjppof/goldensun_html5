@@ -5,9 +5,8 @@ import {CursorManager, PointVariants} from "../utils/CursorManager";
 import {BattleStatusWindow} from "../windows/battle/BattleStatusWindow";
 import {Ability} from "../Ability";
 import {PageIndicatorModes} from "./PageIndicator";
-import {StatusItems} from "./StatusItems";
 
-export class StatusPsynergy extends StatusComponent {
+export class BattleStatusPsynergy extends StatusComponent {
     private static readonly CURSOR = {
         X: 0,
         Y: 79,
@@ -54,15 +53,15 @@ export class StatusPsynergy extends StatusComponent {
 
     public select_option() {
         const highlight = {
-            x: StatusPsynergy.HIGHLIGHT.X,
-            y: StatusPsynergy.HIGHLIGHT.Y + StatusPsynergy.SHIFT * this.current_line,
-            width: StatusPsynergy.HIGHLIGHT.WIDTH,
-            height: StatusPsynergy.HIGHLIGHT.HEIGHT,
+            x: BattleStatusPsynergy.HIGHLIGHT.X,
+            y: BattleStatusPsynergy.HIGHLIGHT.Y + BattleStatusPsynergy.SHIFT * this.current_line,
+            width: BattleStatusPsynergy.HIGHLIGHT.WIDTH,
+            height: BattleStatusPsynergy.HIGHLIGHT.HEIGHT,
         };
         this.update_highlight(highlight);
 
-        const cursor_x = StatusPsynergy.CURSOR.X;
-        const cursor_y = StatusPsynergy.CURSOR.Y + StatusPsynergy.SHIFT * this.current_line;
+        const cursor_x = BattleStatusPsynergy.CURSOR.X;
+        const cursor_y = BattleStatusPsynergy.CURSOR.Y + BattleStatusPsynergy.SHIFT * this.current_line;
 
         const cursor_tween = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.SHORT};
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: cursor_tween});
@@ -74,7 +73,7 @@ export class StatusPsynergy extends StatusComponent {
         this.select_option();
 
         const chosen_ability = this.battle_abilities[this.current_col][this.current_line];
-        this.manager.update_description(chosen_ability.description);
+        this.update_description(chosen_ability.description);
     }
 
     public on_left() {
@@ -139,8 +138,8 @@ export class StatusPsynergy extends StatusComponent {
 
     public initialize() {
         const page_indicator_anchor = {
-            x: StatusPsynergy.PAGE_INDICATOR_ANCHOR.X,
-            y: StatusPsynergy.PAGE_INDICATOR_ANCHOR.Y,
+            x: BattleStatusPsynergy.PAGE_INDICATOR_ANCHOR.X,
+            y: BattleStatusPsynergy.PAGE_INDICATOR_ANCHOR.Y,
         };
         this.update_abilities();
 
@@ -153,8 +152,8 @@ export class StatusPsynergy extends StatusComponent {
             const star_key = ability.element + "_star";
             const range = String(ability.range);
 
-            let x_pos = StatusPsynergy.PSYNERGY.ICON_X;
-            let y_pos = StatusPsynergy.PSYNERGY.ICON_Y + index * StatusPsynergy.SHIFT;
+            let x_pos = BattleStatusPsynergy.PSYNERGY.ICON_X;
+            let y_pos = BattleStatusPsynergy.PSYNERGY.ICON_Y + index * BattleStatusPsynergy.SHIFT;
 
             const icon = this.window.create_at_group(
                 x_pos,
@@ -162,12 +161,12 @@ export class StatusPsynergy extends StatusComponent {
                 "abilities_icons",
                 undefined,
                 icon_key,
-                StatusPsynergy.GROUP_KEY
+                BattleStatusPsynergy.GROUP_KEY
             );
             this.state_sprites.push(icon);
 
-            x_pos = StatusPsynergy.PSYNERGY.NAME_X;
-            y_pos = StatusPsynergy.PSYNERGY.NAME_Y + index * StatusPsynergy.SHIFT;
+            x_pos = BattleStatusPsynergy.PSYNERGY.NAME_X;
+            y_pos = BattleStatusPsynergy.PSYNERGY.NAME_Y + index * BattleStatusPsynergy.SHIFT;
 
             const name_text = this.window.set_text_in_position(
                 name,
@@ -177,12 +176,12 @@ export class StatusPsynergy extends StatusComponent {
                 false,
                 undefined,
                 false,
-                StatusPsynergy.GROUP_KEY
+                BattleStatusPsynergy.GROUP_KEY
             );
             this.state_sprites.push(name_text.text, name_text.shadow);
 
-            x_pos = StatusPsynergy.PSYNERGY.PP_LABEL_X;
-            y_pos = StatusPsynergy.PSYNERGY.PP_LABEL_Y + index * StatusPsynergy.SHIFT;
+            x_pos = BattleStatusPsynergy.PSYNERGY.PP_LABEL_X;
+            y_pos = BattleStatusPsynergy.PSYNERGY.PP_LABEL_Y + index * BattleStatusPsynergy.SHIFT;
 
             const pp_label = this.window.set_text_in_position(
                 "PP",
@@ -192,12 +191,12 @@ export class StatusPsynergy extends StatusComponent {
                 false,
                 undefined,
                 false,
-                StatusPsynergy.GROUP_KEY
+                BattleStatusPsynergy.GROUP_KEY
             );
             this.state_sprites.push(pp_label.text, pp_label.shadow);
 
-            x_pos = StatusPsynergy.PSYNERGY.PP_VALUE_END_X;
-            y_pos = StatusPsynergy.PSYNERGY.PP_VALUE_Y + index * StatusPsynergy.SHIFT;
+            x_pos = BattleStatusPsynergy.PSYNERGY.PP_VALUE_END_X;
+            y_pos = BattleStatusPsynergy.PSYNERGY.PP_VALUE_Y + index * BattleStatusPsynergy.SHIFT;
 
             const pp_value = this.window.set_text_in_position(
                 pp_cost,
@@ -207,12 +206,12 @@ export class StatusPsynergy extends StatusComponent {
                 false,
                 undefined,
                 false,
-                StatusPsynergy.GROUP_KEY
+                BattleStatusPsynergy.GROUP_KEY
             );
             this.state_sprites.push(pp_value.text, pp_value.shadow);
 
-            x_pos = StatusPsynergy.PSYNERGY.STAR_X;
-            y_pos = StatusPsynergy.PSYNERGY.STAR_Y + index * StatusPsynergy.SHIFT;
+            x_pos = BattleStatusPsynergy.PSYNERGY.STAR_X;
+            y_pos = BattleStatusPsynergy.PSYNERGY.STAR_Y + index * BattleStatusPsynergy.SHIFT;
 
             const star = this.window.create_at_group(
                 x_pos,
@@ -220,12 +219,12 @@ export class StatusPsynergy extends StatusComponent {
                 star_key,
                 undefined,
                 undefined,
-                StatusPsynergy.GROUP_KEY
+                BattleStatusPsynergy.GROUP_KEY
             );
             this.state_sprites.push(star);
 
-            x_pos = StatusPsynergy.PSYNERGY.RANGE_CENTER_X;
-            y_pos = StatusPsynergy.PSYNERGY.RANGE_Y + index * StatusPsynergy.SHIFT;
+            x_pos = BattleStatusPsynergy.PSYNERGY.RANGE_CENTER_X;
+            y_pos = BattleStatusPsynergy.PSYNERGY.RANGE_Y + index * BattleStatusPsynergy.SHIFT;
 
             const range_icon = this.window.create_at_group(
                 x_pos,
@@ -233,7 +232,7 @@ export class StatusPsynergy extends StatusComponent {
                 "ranges",
                 undefined,
                 range,
-                StatusPsynergy.GROUP_KEY
+                BattleStatusPsynergy.GROUP_KEY
             );
             range_icon.x -= (range_icon.width / 2) | 0;
             this.state_sprites.push(range_icon);
@@ -249,19 +248,21 @@ export class StatusPsynergy extends StatusComponent {
     }
 
     private update_abilities() {
-        const all_abilities = this.manager.selected_character.abilities;
+        const all_abilities = this.selected_char.abilities;
 
         let page_abilities = [];
         this.battle_abilities = [];
 
         let count = 0;
         all_abilities.forEach(key_name => {
-            if (count === StatusPsynergy.MAX_LINES) {
+            if (count === BattleStatusPsynergy.MAX_LINES) {
                 this.battle_abilities.push(page_abilities);
                 page_abilities = [];
                 count = 0;
             }
-            if (this.data.info.abilities_list[key_name].is_battle_ability) {
+            if (!this.data.info.abilities_list[key_name]) {
+                console.warn("Ability " + '"' + key_name + '"' + " does not exist in the database.");
+            } else if (this.data.info.abilities_list[key_name].is_battle_ability) {
                 page_abilities.push(this.data.info.abilities_list[key_name]);
                 count++;
             }

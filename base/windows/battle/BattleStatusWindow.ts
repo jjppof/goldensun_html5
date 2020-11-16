@@ -12,11 +12,11 @@ import {TextObj, Window} from "../../Window";
 import {base_actions, elements} from "../../utils";
 import * as _ from "lodash";
 import {StatusComponent} from "../../support_menus/StatusComponent";
-import {StatusStatistics} from "../../support_menus/StatusStatistics";
+import {BattleStatusStatistics} from "../../support_menus/BattleStatusStatistics";
 import {effect_types} from "../../Effect";
-import {StatusPsynergy} from "../../support_menus/StatusPsynergy";
-import {StatusDjinn} from "../../support_menus/StatusDjinn";
-import {StatusItems} from "../../support_menus/StatusItems";
+import {BattleStatusPsynergy} from "../../support_menus/BattleStatusPsynergy";
+import {BattleStatusDjinn} from "../../support_menus/BattleStatusDjinn";
+import {BattleStatusItems} from "../../support_menus/BattleStatusItems";
 
 export type BattleStatusEffect = {
     key: temporary_status | permanent_status | effect_types;
@@ -175,10 +175,10 @@ export class BattleStatusWindow {
         this.window.define_internal_group(BattleStatusWindow.GROUP_KEY, {x: 0, y: 0});
 
         this.components = [
-            new StatusStatistics(this.game, this.data, this.window, this),
-            new StatusPsynergy(this.game, this.data, this.window, this),
-            new StatusDjinn(this.game, this.data, this.window, this),
-            new StatusItems(this.game, this.data, this.window, this),
+            new BattleStatusStatistics(this.game, this.data, this.window, this),
+            new BattleStatusPsynergy(this.game, this.data, this.window, this),
+            new BattleStatusDjinn(this.game, this.data, this.window, this),
+            new BattleStatusItems(this.game, this.data, this.window, this),
         ];
 
         this.battle_sprite = null;
