@@ -50,13 +50,22 @@ type AdvParticleObject = {
     target: {
         x: number;
         y: number;
-        zone_key: string;
+        zone_key?: string;
+        zone?: Phaser.ParticleStorm.Zones.Base;
         speed?: "yoyo" | "reverse" | "linear";
     };
 };
 
+enum ZoneTypes {
+    RECTANGLE = "rectangle",
+    POINT = "point",
+    LINE = "line",
+    ELLIPSE = "ellipse",
+    CIRCLE = "circle",
+}
+
 type AdvParticlesZone = {
-    type: "rectangle" | "point" | "line" | "ellipse" | "circle";
+    type: ZoneTypes;
     radius: number;
     width: number;
     height: number;
@@ -65,6 +74,7 @@ type AdvParticlesZone = {
 
 type AdvEmitter = {
     emitter_data_key: string;
+    render_type: "pixel" | "sprite";
     x: number | string;
     y: number | string;
     shift_x: number;
@@ -74,10 +84,15 @@ type AdvEmitter = {
     frequency: number;
     x_step: number;
     y_step: number;
-    start_delay: number;
-    step_delay: number;
+    delay: {
+        start: number;
+        step: number;
+        visible: boolean;
+    };
+    zone_key: string;
     random_in_zone: boolean;
     spacing: number | number[];
+    force: {x: number; y: number};
     radiate: {
         velocity: number;
         from: number;
@@ -87,6 +102,16 @@ type AdvEmitter = {
         x: number;
         y: number;
         velocity: number;
+    };
+    show_trails: boolean;
+    pixel_size: number;
+    pixel_is_rect: boolean;
+    gravity_well: {
+        x: number;
+        y: number;
+        power: number;
+        epsilon: number;
+        gravity: number;
     };
 };
 
@@ -182,6 +207,7 @@ export class BattleAnimation {
         data: {[emitter_data_key: string]: AdvParticleObject};
         zones: {[zone_key: string]: AdvParticlesZone};
         emitters: AdvEmitter[];
+        emission_duration: number;
     }[];
     public is_party_animation: boolean;
     public running: boolean;
@@ -772,6 +798,27 @@ export class BattleAnimation {
         }
     }
 
+    get_sprite_xy_pos(
+        x: number | string,
+        y: number | string,
+        shift_x: number,
+        shift_y: number
+    ): {x: number; y: number} {
+        if (x === "caster") {
+            x = this.caster_sprite.x;
+        } else if (x === "targets") {
+            _.mean(this.targets_sprites.map(target => target.x));
+        }
+        if (y === "caster") {
+            y = this.caster_sprite.y;
+        } else if (y === "targets") {
+            _.mean(this.targets_sprites.map(target => target.y));
+        }
+        (x as number) += shift_x ? shift_x : 0;
+        (y as number) += shift_y ? shift_y : 0;
+        return {x: x as number, y: y as number};
+    }
+
     play_particles() {
         for (let i = 0; i < this.particles_sequence.length; ++i) {
             let resolve_function;
@@ -780,20 +827,14 @@ export class BattleAnimation {
             });
             this.promises.push(this_promise);
             const particles_seq = this.particles_sequence[i];
-            let x = particles_seq.x;
-            let y = particles_seq.y;
-            if (x === "caster") {
-                x = this.caster_sprite.x;
-            } else if (x === "targets") {
-                _.mean(this.targets_sprites.map(target => target.x));
-            }
-            if (y === "caster") {
-                y = this.caster_sprite.y;
-            } else if (y === "targets") {
-                _.mean(this.targets_sprites.map(target => target.y));
-            }
-            (x as number) += particles_seq.shift_x ? particles_seq.shift_x : 0;
-            (y as number) += particles_seq.shift_y ? particles_seq.shift_y : 0;
+
+            const {x, y} = this.get_sprite_xy_pos(
+                particles_seq.x,
+                particles_seq.y,
+                particles_seq.shift_x,
+                particles_seq.shift_y
+            );
+
             const emitter = this.game.add.emitter(x as number, y as number, particles_seq.max_particles);
             emitter.makeParticles(particles_seq.particle_key);
             if (particles_seq.alpha !== undefined) emitter.alpha = particles_seq.alpha;
@@ -855,7 +896,106 @@ export class BattleAnimation {
         }
     }
 
-    play_advanced_particles() {}
+    play_advanced_particles() {
+        for (let i = 0; i < this.advanced_particles_sequence.length; ++i) {
+            let resolve_function;
+            const this_promise = new Promise(resolve => {
+                resolve_function = resolve;
+            });
+            this.promises.push(this_promise);
+            const adv_particles_seq = this.advanced_particles_sequence[i];
+
+            const zone_objs: {[zone_key: string]: Phaser.ParticleStorm.Zones.Base} = {};
+            for (let key in adv_particles_seq.zones) {
+                const zone_info = adv_particles_seq.zones[key];
+                let zone: Phaser.ParticleStorm.Zones.Base;
+                switch (zone_info.type) {
+                    case ZoneTypes.CIRCLE:
+                        zone = this.data.particle_manager.createCircleZone(zone_info.radius);
+                        break;
+                    case ZoneTypes.ELLIPSE:
+                        zone = this.data.particle_manager.createEllipseZone(zone_info.width, zone_info.height);
+                        break;
+                    case ZoneTypes.LINE:
+                        zone = this.data.particle_manager.createLineZone(
+                            zone_info.points[0].x,
+                            zone_info.points[0].y,
+                            zone_info.points[1].x,
+                            zone_info.points[1].y
+                        );
+                        break;
+                    case ZoneTypes.POINT:
+                        zone = this.data.particle_manager.createPointZone(zone_info.points[0].x, zone_info.points[0].y);
+                        break;
+                    case ZoneTypes.RECTANGLE:
+                        zone = this.data.particle_manager.createRectangleZone(zone_info.width, zone_info.height);
+                        break;
+                }
+                zone_objs[key] = zone;
+            }
+
+            for (let key in adv_particles_seq.data) {
+                const data = _.cloneDeep(adv_particles_seq.data[key]);
+                if (data.target?.zone_key !== undefined) {
+                    data.target.zone = zone_objs[data.target.zone_key];
+                }
+                this.data.particle_manager.addData(key, data);
+            }
+
+            const emitters: Phaser.ParticleStorm.Emitter[] = [];
+            adv_particles_seq.emitters.forEach(emitter_info => {
+                const emitter = this.data.particle_manager.createEmitter(emitter_info.render_type);
+                emitter.force.x = emitter_info.force?.x === undefined ? emitter.force.x : emitter_info.force.x;
+                emitter.force.y = emitter_info.force?.y === undefined ? emitter.force.y : emitter_info.force.y;
+                (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).autoClear = !emitter_info.show_trails;
+                (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize =
+                    emitter_info.pixel_size === undefined ? 2 : emitter_info.pixel_size;
+                (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).useRect =
+                    emitter_info.pixel_is_rect === undefined ? false : emitter_info.pixel_is_rect;
+                emitter.addToWorld();
+                if (emitter_info.gravity_well) {
+                    emitter.createGravityWell(
+                        emitter_info.gravity_well.x,
+                        emitter_info.gravity_well.y,
+                        emitter_info.gravity_well.power,
+                        emitter_info.gravity_well.epsilon,
+                        emitter_info.gravity_well.gravity
+                    );
+                }
+                const {x, y} = this.get_sprite_xy_pos(
+                    emitter_info.x,
+                    emitter_info.y,
+                    emitter_info.shift_x,
+                    emitter_info.shift_y
+                );
+                emitter.emit(emitter_info.emitter_data_key, x, y, {
+                    ...(emitter_info.total !== undefined && {total: emitter_info.total}),
+                    ...(emitter_info.repeat !== undefined && {repeat: emitter_info.repeat}),
+                    ...(emitter_info.frequency !== undefined && {frequency: emitter_info.frequency}),
+                    ...(emitter_info.x_step !== undefined && {xStep: emitter_info.x_step}),
+                    ...(emitter_info.y_step !== undefined && {yStep: emitter_info.y_step}),
+                    ...(emitter_info.delay !== undefined && {delay: emitter_info.delay}),
+                    ...(emitter_info.zone_key !== undefined && {zone: zone_objs[emitter_info.zone_key]}),
+                    ...(emitter_info.random_in_zone !== undefined && {random: emitter_info.random_in_zone}),
+                    ...(emitter_info.spacing !== undefined && {spacing: emitter_info.spacing}),
+                    ...(emitter_info.radiate !== undefined && {radiate: emitter_info.radiate}),
+                    ...(emitter_info.radiateFrom !== undefined && {radiateFrom: emitter_info.radiateFrom}),
+                });
+                emitters.push(emitter);
+            });
+
+            this.game.time.events.add(adv_particles_seq.emission_duration, () => {
+                emitters.forEach(emitter => {
+                    this.data.particle_manager.removeEmitter(emitter);
+                    emitter.destroy();
+                });
+                for (let key in adv_particles_seq.data) {
+                    this.data.particle_manager.clearData(key);
+                }
+                resolve_function();
+            });
+        }
+    }
 
     render() {
         let clear = true;
