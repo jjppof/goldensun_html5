@@ -51,26 +51,22 @@ export class StepEvent extends TileEvent {
     fire() {
         if (this.data.hero.tile_x_pos === this.next_x && this.data.hero.tile_y_pos === this.next_y) {
             this.data.tile_event_manager.unset_triggered_event(this);
-            if (this.shift_y > 0) {
-                this.data.hero.shadow_following = false;
-                this.data.hero.shadow.y += this.shift_y;
-                const tween = this.game.add.tween(this.data.hero.sprite.body).to(
-                    {
-                        y: this.data.hero.sprite.body.y + this.shift_y,
-                    },
-                    50,
-                    Phaser.Easing.Linear.None,
-                    true
-                );
-                tween.onComplete.addOnce(() => {
-                    this.data.hero.shadow_following = true;
-                });
-                tween.onUpdateCallback(() => {
-                    this.data.hero.shadow.x = this.data.hero.sprite.body.x;
-                });
-            } else {
-                this.data.hero.sprite.body.y += this.shift_y;
-            }
+            this.data.hero.shadow_following = false;
+            this.data.hero.shadow.y += this.shift_y;
+            const tween = this.game.add.tween(this.data.hero.sprite.body).to(
+                {
+                    y: this.data.hero.sprite.body.y + this.shift_y,
+                },
+                this.shift_y > 0 ? 80 : 50,
+                Phaser.Easing.Linear.None,
+                true
+            );
+            tween.onComplete.addOnce(() => {
+                this.data.hero.shadow_following = true;
+            });
+            tween.onUpdateCallback(() => {
+                this.data.hero.shadow.x = this.data.hero.sprite.body.x;
+            });
         } else if (!this.check_position()) {
             this.data.tile_event_manager.unset_triggered_event(this);
         }
