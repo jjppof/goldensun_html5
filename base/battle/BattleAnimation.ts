@@ -113,6 +113,11 @@ type AdvEmitter = {
         epsilon: number;
         gravity: number;
     };
+    animation: {
+        animation_key: string;
+        frame_rate: number;
+        loop: boolean;
+    };
 };
 
 export class BattleAnimation {
@@ -981,12 +986,32 @@ export class BattleAnimation {
                     ...(emitter_info.radiate !== undefined && {radiate: emitter_info.radiate}),
                     ...(emitter_info.radiateFrom !== undefined && {radiateFrom: emitter_info.radiateFrom}),
                 });
+                if (emitter_info.animation !== undefined) {
+                    const particle_key = adv_particles_seq.data[emitter_info.emitter_data_key].image as string;
+                    const particle_sprite_base = this.data.info.misc_sprite_base_list[particle_key];
+                    const anim_key = particle_sprite_base.getAnimationKey(
+                        particle_key,
+                        emitter_info.animation.animation_key
+                    );
+                    emitter.forEach((particle: Phaser.Sprite) => {
+                        particle_sprite_base.setAnimation(particle, particle_key);
+                    }, this);
+                    emitter.onEmit = new Phaser.Signal();
+                    emitter.onEmit.add((emitter: Phaser.ParticleStorm.Emitter, particle: Phaser.Sprite) => {
+                        particle.animations.play(
+                            anim_key,
+                            emitter_info.animation.frame_rate,
+                            emitter_info.animation.loop
+                        );
+                    });
+                }
                 emitters.push(emitter);
             });
 
             this.game.time.events.add(adv_particles_seq.emission_duration, () => {
                 emitters.forEach(emitter => {
                     this.data.particle_manager.removeEmitter(emitter);
+                    emitter.onEmit.removeAll();
                     emitter.destroy();
                 });
                 for (let key in adv_particles_seq.data) {
