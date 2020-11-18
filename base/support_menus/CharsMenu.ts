@@ -233,7 +233,7 @@ export class CharsMenu {
         }
     }
 
-    change_line(line: number, force_index?: number) {
+    change_line(line: number, force_index?: number, no_cursor?: boolean) {
         if (this.data.info.party_data.members.length < MAX_PER_LINE * line) return;
 
         this.clear_arrow_tweens();
@@ -250,21 +250,21 @@ export class CharsMenu {
         utils.kill_all_sprites(this.char_group);
         this.set_chars();
         this.check_arrows();
-        this.select_char(this.selected_index);
+        this.select_char(this.selected_index, no_cursor);
     }
 
-    next_line(force_index?: number) {
+    next_line(force_index?: number, no_cursor?: boolean) {
         if (this.lines.length === 1 || this.current_line + 1 === this.lines.length) return;
         let index = this.current_line + 1;
 
-        this.change_line(index, force_index);
+        this.change_line(index, force_index, no_cursor);
     }
 
-    previous_line(force_index?: number) {
+    previous_line(force_index?: number, no_cursor?: boolean) {
         if (this.lines.length === 1 || this.current_line - 1 < 0) return;
         let index = this.current_line - 1;
 
-        this.change_line(index, force_index);
+        this.change_line(index, force_index, no_cursor);
     }
 
     set_character(index: number) {
@@ -285,10 +285,10 @@ export class CharsMenu {
         }
     }
 
-    select_char(index?: number) {
+    select_char(index?: number, no_cursor?: boolean) {
         if (index === undefined) index = this.selected_index;
 
-        this.move_cursor(index, () => {
+        const on_move = () => {
             this.unset_character(this.selected_index);
             this.selected_index = index;
             this.set_character(this.selected_index);
@@ -297,32 +297,35 @@ export class CharsMenu {
                 let c = this.data.info.party_data.members[this.current_line * MAX_PER_LINE + this.selected_index];
                 this.on_change(c.key_name);
             }
-        });
+        };
+
+        if (!no_cursor) this.move_cursor(index, on_move);
+        else on_move();
     }
 
-    next_char() {
+    next_char(no_cursor?: boolean) {
         if (this.lines[this.current_line].length === 1 && this.lines.length === 1) return;
 
         if (this.selected_index + 1 === this.lines[this.current_line].length) {
             if (this.current_line + 1 === this.lines.length) {
-                if (this.lines.length === 1) this.select_char(0);
-                else this.change_line(0, 0);
-            } else this.next_line(0);
+                if (this.lines.length === 1) this.select_char(0, no_cursor);
+                else this.change_line(0, 0, no_cursor);
+            } else this.next_line(0, no_cursor);
         } else {
-            this.select_char(this.selected_index + 1);
+            this.select_char(this.selected_index + 1, no_cursor);
         }
     }
 
-    previous_char() {
+    previous_char(no_cursor?: boolean) {
         if (this.lines[this.current_line].length === 1 && this.lines.length === 1) return;
 
         if (this.selected_index - 1 < 0) {
             if (this.current_line - 1 < 0) {
-                if (this.lines.length === 1) this.select_char(this.lines[this.current_line].length - 1);
-                else this.change_line(this.lines.length - 1, this.lines[this.lines.length - 1].length - 1);
-            } else this.previous_line(this.lines[this.current_line - 1].length - 1);
+                if (this.lines.length === 1) this.select_char(this.lines[this.current_line].length - 1, no_cursor);
+                else this.change_line(this.lines.length - 1, this.lines[this.lines.length - 1].length - 1, no_cursor);
+            } else this.previous_line(this.lines[this.current_line - 1].length - 1, no_cursor);
         } else {
-            this.select_char(this.selected_index - 1);
+            this.select_char(this.selected_index - 1, no_cursor);
         }
     }
 

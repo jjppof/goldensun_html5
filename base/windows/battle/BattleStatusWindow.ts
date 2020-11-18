@@ -27,7 +27,7 @@ export type BattleStatusEffect = {
     };
 };
 
-export enum ComponentStates {
+export enum BattleStatusStates {
     STATISTICS,
     PSYNERGY,
     DJINN,
@@ -126,7 +126,7 @@ export class BattleStatusWindow {
     private desc_shifted: boolean;
     private selected_char: MainChar;
 
-    private current_state: ComponentStates;
+    private current_state: BattleStatusStates;
     private current_component: StatusComponent;
     private components: StatusComponent[];
 
@@ -718,13 +718,13 @@ export class BattleStatusWindow {
     }
 
     public trigger_state_change() {
-        if (this.current_state === ComponentStates.ITEMS) this.current_state = ComponentStates.STATISTICS;
+        if (this.current_state === BattleStatusStates.ITEMS) this.current_state = BattleStatusStates.STATISTICS;
         else this.current_state++;
 
         this.change_state(this.current_state, true);
     }
 
-    private change_state(new_state: ComponentStates, reset_pos: boolean = false) {
+    private change_state(new_state: BattleStatusStates, reset_pos: boolean = false) {
         let pos = {line: 0, col: 0};
 
         if (this.current_component) {
@@ -743,7 +743,7 @@ export class BattleStatusWindow {
     }
 
     private check_shift() {
-        const shift = this.current_state !== ComponentStates.STATISTICS;
+        const shift = this.current_state !== BattleStatusStates.STATISTICS;
         if (this.desc_shifted === shift) return;
 
         this.window.clear_separators();
@@ -776,7 +776,7 @@ export class BattleStatusWindow {
         this.window.show(() => {
             this.update_info();
             this.set_sprites();
-            this.change_state(ComponentStates.STATISTICS);
+            this.change_state(BattleStatusStates.STATISTICS);
 
             if (open_callback) {
                 open_callback();

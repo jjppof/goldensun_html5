@@ -6,7 +6,7 @@ import {BattleStatusWindow} from "../windows/battle/BattleStatusWindow";
 import {effect_type_stat, ordered_status_battle, permanent_status, temporary_status} from "../Player";
 import {elements, element_names, ordered_elements} from "../utils";
 import * as _ from "lodash";
-import {MainStatusMenu} from "../main_menus/MainStatusMenu";
+import {MainStatusMenu, MainStatusStates} from "../main_menus/MainStatusMenu";
 
 export enum MainStatistics {
     NAME,
@@ -136,6 +136,8 @@ export class MainStatusStatistics extends StatusComponent {
 
     private static readonly LINES = 8;
 
+    private state: MainStatusStates;
+
     public constructor(
         game: Phaser.Game,
         data: GoldenSun,
@@ -147,6 +149,8 @@ export class MainStatusStatistics extends StatusComponent {
     }
 
     public select_option() {
+        if (this.state === MainStatusStates.CHARACTERS) return;
+
         const highlight = {x: 0, y: 0, width: 0, height: 0};
         let cursor_x = 0;
         let cursor_y = 0;
@@ -260,6 +264,7 @@ export class MainStatusStatistics extends StatusComponent {
     }
 
     public on_left() {
+        if (this.state === MainStatusStates.CHARACTERS) return;
         const effects_count = this.battle_status_effects.length;
 
         if (effects_count === 0) this.current_col = this.current_col === 0 ? 1 : 0;
@@ -269,6 +274,7 @@ export class MainStatusStatistics extends StatusComponent {
     }
 
     public on_right() {
+        if (this.state === MainStatusStates.CHARACTERS) return;
         const effects_count = this.battle_status_effects.length;
 
         if (effects_count === 0) this.current_col = this.current_col === 0 ? 1 : 0;
@@ -278,6 +284,7 @@ export class MainStatusStatistics extends StatusComponent {
     }
 
     public on_up() {
+        if (this.state === MainStatusStates.CHARACTERS) return;
         if (this.mode === StatusModes.BATTLE) {
             if (this.current_col !== 0) this.current_col = 0;
             else this.current_line = (this.current_line + MainStatusStatistics.LINES - 1) % MainStatusStatistics.LINES;
@@ -288,6 +295,7 @@ export class MainStatusStatistics extends StatusComponent {
     }
 
     public on_down() {
+        if (this.state === MainStatusStates.CHARACTERS) return;
         if (this.mode === StatusModes.BATTLE) {
             if (this.current_col !== 0) this.current_col = 0;
             else this.current_line = (this.current_line + 1) % MainStatusStatistics.LINES;
@@ -298,6 +306,8 @@ export class MainStatusStatistics extends StatusComponent {
     }
 
     public initialize() {
+        this.state = (this.manager as MainStatusMenu).state;
+
         const stars = ["venus_star", "mercury_star", "mars_star", "jupiter_star"];
         for (let i = 0; i < stars.length; i++) {
             const x_pos = MainStatusStatistics.ELEM.STARS.X + i * MainStatusStatistics.ELEM.STARS_SHIFT;

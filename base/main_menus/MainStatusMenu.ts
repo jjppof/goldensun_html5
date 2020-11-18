@@ -16,13 +16,6 @@ export enum MainStatusStates {
     ITEMS,
 }
 
-const AdvanceState = {
-    [MainStatusStates.CHARACTERS]: MainStatusStates.STATISTICS,
-    [MainStatusStates.STATISTICS]: MainStatusStates.PSYNERGY,
-    [MainStatusStates.PSYNERGY]: MainStatusStates.ITEMS,
-    [MainStatusStates.ITEMS]: MainStatusStates.STATISTICS,
-};
-
 export class MainStatusMenu {
     private static readonly DESC_WIN = {
         X: 0,
@@ -79,6 +72,19 @@ export class MainStatusMenu {
     private static readonly DESC = {
         LINE1: {X: 6, Y: 7},
         LINE2: {X: 7, Y: 22},
+    };
+    private static readonly StateComponent = {
+        [MainStatusStates.CHARACTERS]: 0,
+        [MainStatusStates.DJINN]: 2,
+        [MainStatusStates.STATISTICS]: 0,
+        [MainStatusStates.PSYNERGY]: 1,
+        [MainStatusStates.ITEMS]: 3,
+    };
+    private static readonly AdvanceState = {
+        [MainStatusStates.CHARACTERS]: MainStatusStates.STATISTICS,
+        [MainStatusStates.STATISTICS]: MainStatusStates.PSYNERGY,
+        [MainStatusStates.PSYNERGY]: MainStatusStates.ITEMS,
+        [MainStatusStates.ITEMS]: MainStatusStates.STATISTICS,
     };
 
     private static readonly GROUP_KEY = "main_status";
@@ -178,6 +184,10 @@ export class MainStatusMenu {
         return this.battle_effects;
     }
 
+    public get state() {
+        return this.current_state;
+    }
+
     private set_battle_effects() {
         const effects = [];
         const status_effects = _.sortBy(
@@ -221,7 +231,7 @@ export class MainStatusMenu {
         this.lr_text.text.visible = !this.lr_text.text.visible;
         this.a_text.text.visible = !this.a_text.text.visible;
 
-        const new_text = this.select_text.text.text === ": Return" ? ": Djinn List" : ": Return";
+        const new_text = this.select_text.text.text === ": Return" ? ": Djinn  list" : ": Return";
         this.guide_window.update_text(new_text, this.select_text);
     }
 
@@ -389,7 +399,7 @@ export class MainStatusMenu {
         );
 
         this.select_text = this.guide_window.set_text_in_position(
-            ": Djinn List",
+            ": Djinn  list",
             MainStatusMenu.GUIDE.SELECT_TEXT.X,
             MainStatusMenu.GUIDE.SELECT_TEXT.Y,
             false,
@@ -441,61 +451,97 @@ export class MainStatusMenu {
         this.main_window.update_text(char.class.name, this.class_name);
     }
 
-    private trigger_state_change() {}
-
-    private cancel_inner_state() {}
+    private trigger_state_change() {
+        this.change_state(MainStatusMenu.AdvanceState[this.current_state], true);
+    }
 
     private next_char() {
-        const party = this.data.info.party_data.members;
-        let char_index = -1;
-
-        for (let index in party) {
-            if (party[index].key_name === this.selected_char.key_name) {
-                char_index = parseInt(index);
-                break;
-            }
-        }
-
-        this.on_character_change(party[(char_index + 1) % party.length]);
+        this.chars_menu.next_char(true);
     }
 
     private previous_char() {
-        const party = this.data.info.party_data.members;
-        let char_index = -1;
-
-        for (let index in party) {
-            if (party[index].key_name === this.selected_char.key_name) {
-                char_index = parseInt(index);
-                break;
-            }
-        }
-
-        this.on_character_change(party[(char_index + party.length - 1) % party.length]);
+        this.chars_menu.previous_char(true);
     }
 
-    private on_character_change(char?: MainChar) {
-        if (char) this.selected_char = char;
-        else this.selected_char = this.chars_menu.lines[this.chars_menu.current_line][this.chars_menu.selected_index];
+    private on_character_change(char?: MainChar | string) {
+        if (char) {
+            if (typeof char === "string") {
+                this.selected_char = this.data.info.main_char_list[char as string];
+            } else this.selected_char = char as MainChar;
+        } else this.selected_char = this.chars_menu.lines[this.chars_menu.current_line][this.chars_menu.selected_index];
 
         this.update_info();
         this.set_battle_effects();
     }
 
-    public grant_control() {
+    public inner_control() {
         const controls = [
-            {key: this.data.gamepad.A, on_down: this.trigger_state_change.bind(this)},
-            {key: this.data.gamepad.B, on_down: this.cancel_inner_state.bind(this)},
-            {key: this.data.gamepad.L, on_down: this.previous_char.bind(this)},
-            {key: this.data.gamepad.R, on_down: this.next_char.bind(this)},
             {key: this.data.gamepad.LEFT, on_down: this.current_component.on_left.bind(this.current_component)},
             {key: this.data.gamepad.RIGHT, on_down: this.current_component.on_right.bind(this.current_component)},
             {key: this.data.gamepad.UP, on_down: this.current_component.on_up.bind(this.current_component)},
             {key: this.data.gamepad.DOWN, on_down: this.current_component.on_down.bind(this.current_component)},
         ];
 
+        if (this.current_state !== MainStatusStates.DJINN) {
+            controls.push(
+                {key: this.data.gamepad.A, on_down: this.trigger_state_change.bind(this)},
+                {key: this.data.gamepad.B, on_down: this.selecting_char.bind(this)},
+                {key: this.data.gamepad.L, on_down: this.chars_menu.previous_char.bind(this.chars_menu, true)},
+                {key: this.data.gamepad.R, on_down: this.chars_menu.next_char.bind(this.chars_menu, true)}
+            );
+        } else {
+            controls.push(
+                {key: this.data.gamepad.A, on_down: this.selecting_char.bind(this)},
+                {key: this.data.gamepad.B, on_down: this.selecting_char.bind(this)},
+                {key: this.data.gamepad.SELECT, on_down: this.selecting_char.bind(this)}
+            );
+        }
+
         this.data.control_manager.set_control(controls, {
             loop_configs: {vertical: true, horizontal: true, shoulder: true},
         });
+    }
+
+    private change_state(new_state: MainStatusStates, reset_pos: boolean = false) {
+        const unimplemented = [MainStatusStates.DJINN, MainStatusStates.PSYNERGY, MainStatusStates.ITEMS];
+        if (unimplemented.includes(new_state)) {
+            console.warn("State " + MainStatusStates[new_state] + " is not implemented. Moving to CHARACTERS");
+            this.selecting_char();
+        } else {
+            let pos = {line: 0, col: 0};
+
+            if (new_state === MainStatusStates.DJINN || this.current_state === MainStatusStates.DJINN)
+                this.toggle_guide_win();
+
+            if (this.current_component) {
+                if (!reset_pos) pos = this.current_component.current_pos;
+
+                this.current_component.clear();
+                this.current_component = null;
+            }
+
+            this.current_state = new_state;
+            this.current_component = this.components[MainStatusMenu.StateComponent[this.current_state]];
+
+            this.current_component.reset(pos);
+            if (this.current_state !== MainStatusStates.CHARACTERS) this.inner_control();
+        }
+    }
+
+    private selecting_char() {
+        this.change_state(MainStatusStates.CHARACTERS);
+        this.chars_menu.grant_control(
+            this.close_menu.bind(this, this.close_callback),
+            this.trigger_state_change.bind(this),
+            true
+        );
+
+        const open_djinn_control = [
+            {key: this.data.gamepad.SELECT, on_down: this.change_state.bind(this, MainStatusStates.DJINN)},
+        ];
+        this.data.control_manager.set_control(open_djinn_control, {no_reset: true});
+
+        this.chars_menu.select_char(this.chars_menu.selected_index);
     }
 
     public open_menu(close_callback?: Function, open_callback?: Function) {
@@ -507,6 +553,8 @@ export class MainStatusMenu {
         this.guide_window.show(undefined, false);
         this.main_window.show(undefined, false);
         this.chars_menu.open(0, CharsMenuModes.MENU);
+
+        this.selecting_char();
 
         if (open_callback) open_callback();
         this.is_open = true;
