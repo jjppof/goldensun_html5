@@ -14,6 +14,19 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0
 - In the future, it will also be possible to distribute it by Electron (desktop) and/or Ionic (mobile).
 - **Join us at [GSHC discord](https://discord.gg/jwKJDXC)** (#programming channel) for discussion about the project.
 
+## Things that you can do without programming knowledge
+
+- Maps
+- Sprites
+- Battle Animations
+- Shops
+- Djinn
+- Summons
+- Abilities
+- Items
+- Main chars
+- Enemies
+
 ## Development environment
 
 GS-HTML5 supports both Javascript and Typescript. We use [Webpack](https://webpack.js.org/) to build the bundle and serve the development environment.
