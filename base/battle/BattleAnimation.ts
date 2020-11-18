@@ -28,7 +28,7 @@ type AdvParticleValue =
           control: {x: number; y: number}[] | "linear" | "reverse" | "yoyo";
       };
 
-type AdvParticleObject = {
+type ParticleObject = {
     lifespan: AdvParticleValue;
     red: AdvParticleValue;
     green: AdvParticleValue;
@@ -64,7 +64,7 @@ enum ZoneTypes {
     CIRCLE = "circle",
 }
 
-type AdvParticlesZone = {
+type ParticlesZone = {
     type: ZoneTypes;
     radius: number;
     width: number;
@@ -72,7 +72,7 @@ type AdvParticlesZone = {
     points: {x: number; y: number}[];
 };
 
-type AdvEmitter = {
+type Emitter = {
     emitter_data_key: string;
     render_type: "pixel" | "sprite";
     x: number | string;
@@ -185,38 +185,9 @@ export class BattleAnimation {
         mode: string;
     }[] = [];
     public particles_sequence: {
-        start_delay: number;
-        x: number | string;
-        y: number | string;
-        emit_x: number;
-        emit_y: number;
-        shift_x: number;
-        shift_y: number;
-        max_particles: number;
-        particle_key: string;
-        alpha: number;
-        blend_mode: string;
-        frequency: number; // How often a particle is emitted in ms (if emitter is started with explode === false).
-        gravity: number;
-        height: number;
-        width: number;
-        lifespan: number; // How long each particle lives once it is emitted in ms. Default is 2 seconds. Set lifespan to 'zero' for particles to live forever.
-        min_particle_speed: {x: number; y: number};
-        max_particle_speed: {x: number; y: number};
-        min_particle_scale: number;
-        max_particle_scale: number;
-        explode: boolean; // if true, frequency will be ignored
-        emission_duration: number;
-        animation: {
-            animation_key: string;
-            frame_rate: number;
-            loop: boolean;
-        };
-    }[] = [];
-    public advanced_particles_sequence: {
-        data: {[emitter_data_key: string]: AdvParticleObject};
-        zones: {[zone_key: string]: AdvParticlesZone};
-        emitters: AdvEmitter[];
+        data: {[emitter_data_key: string]: ParticleObject};
+        zones: {[zone_key: string]: ParticlesZone};
+        emitters: Emitter[];
         emission_finish: number;
     }[];
     public is_party_animation: boolean;
@@ -278,7 +249,6 @@ export class BattleAnimation {
         set_frame_sequence, //{start_delay: value, frame: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
         particles_sequence,
-        advanced_particles_sequence,
         is_party_animation
     ) {
         this.game = game;
@@ -307,7 +277,6 @@ export class BattleAnimation {
         this.set_frame_sequence = set_frame_sequence === undefined ? [] : set_frame_sequence;
         this.blend_mode_sequence = blend_mode_sequence === undefined ? [] : blend_mode_sequence;
         this.particles_sequence = particles_sequence === undefined ? [] : particles_sequence;
-        this.advanced_particles_sequence = advanced_particles_sequence === undefined ? [] : advanced_particles_sequence;
         this.is_party_animation = is_party_animation;
         this.running = false;
         this.render_callbacks = {};
@@ -452,7 +421,6 @@ export class BattleAnimation {
         this.play_filter_property(this.custom_filter_sequence);
         this.play_stage_angle_sequence();
         this.play_particles();
-        this.play_advanced_particles();
         this.unmount_animation(finish_callback);
     }
 
@@ -835,84 +803,7 @@ export class BattleAnimation {
                 resolve_function = resolve;
             });
             this.promises.push(this_promise);
-            const particles_seq = this.particles_sequence[i];
-
-            const {x, y} = this.get_sprite_xy_pos(
-                particles_seq.x,
-                particles_seq.y,
-                particles_seq.shift_x,
-                particles_seq.shift_y
-            );
-
-            const emitter = this.game.add.emitter(x as number, y as number, particles_seq.max_particles);
-            emitter.makeParticles(particles_seq.particle_key);
-            if (particles_seq.alpha !== undefined) emitter.alpha = particles_seq.alpha;
-            if (particles_seq.blend_mode !== undefined) {
-                switch (particles_seq.blend_mode) {
-                    case "screen":
-                        emitter.blendMode = PIXI.blendModes.SCREEN;
-                        break;
-                    case "normal":
-                        emitter.blendMode = PIXI.blendModes.NORMAL;
-                        break;
-                }
-            }
-            if (particles_seq.emit_x !== undefined) emitter.emitX = particles_seq.emit_x;
-            if (particles_seq.emit_y !== undefined) emitter.emitY = particles_seq.emit_y;
-            if (particles_seq.frequency !== undefined) emitter.frequency = particles_seq.frequency;
-            if (particles_seq.gravity !== undefined) emitter.gravity = particles_seq.gravity;
-            if (particles_seq.width !== undefined) emitter.width = particles_seq.width;
-            if (particles_seq.height !== undefined) emitter.height = particles_seq.height;
-            if (particles_seq.min_particle_scale !== undefined)
-                emitter.minParticleScale = particles_seq.min_particle_scale;
-            if (particles_seq.max_particle_scale !== undefined)
-                emitter.maxParticleScale = particles_seq.max_particle_scale;
-            if (particles_seq.min_particle_speed?.x !== undefined)
-                emitter.minParticleSpeed.x = particles_seq.min_particle_speed.x;
-            if (particles_seq.min_particle_speed?.y !== undefined)
-                emitter.minParticleSpeed.y = particles_seq.min_particle_speed.y;
-            if (particles_seq.max_particle_speed?.x !== undefined)
-                emitter.maxParticleSpeed.x = particles_seq.max_particle_speed.x;
-            if (particles_seq.max_particle_speed?.y !== undefined)
-                emitter.maxParticleSpeed.y = particles_seq.max_particle_speed.y;
-            let anim_key;
-            if (particles_seq.animation !== undefined) {
-                const particle_sprite_base = this.data.info.misc_sprite_base_list[particles_seq.particle_key];
-                anim_key = particle_sprite_base.getAnimationKey(
-                    particles_seq.particle_key,
-                    particles_seq.animation.animation_key
-                );
-                emitter.forEach((particle: Phaser.Sprite) => {
-                    particle_sprite_base.setAnimation(particle, particles_seq.particle_key);
-                });
-            }
-            this.game.time.events.add(particles_seq.start_delay, () => {
-                emitter.start(particles_seq.explode, particles_seq.lifespan, particles_seq.frequency);
-                if (particles_seq.animation !== undefined) {
-                    emitter.forEach((particle: Phaser.Sprite) => {
-                        particle.animations.play(
-                            anim_key,
-                            particles_seq.animation.frame_rate,
-                            particles_seq.animation.loop
-                        );
-                    });
-                }
-                this.game.time.events.add(particles_seq.emission_duration, () => {
-                    emitter.destroy();
-                    resolve_function();
-                });
-            });
-        }
-    }
-
-    play_advanced_particles() {
-        for (let i = 0; i < this.advanced_particles_sequence.length; ++i) {
-            let resolve_function;
-            const this_promise = new Promise(resolve => {
-                resolve_function = resolve;
-            });
-            this.promises.push(this_promise);
-            const adv_particles_seq = this.advanced_particles_sequence[i];
+            const adv_particles_seq = this.particles_sequence[i];
 
             const zone_objs: {[zone_key: string]: Phaser.ParticleStorm.Zones.Base} = {};
             for (let key in adv_particles_seq.zones) {
