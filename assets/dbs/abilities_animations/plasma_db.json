@@ -1,0 +1,192 @@
+{
+    "key_name": "plasma",
+    "sprites": [{
+        "key_name": "cast",
+        "per_target": false,
+        "position": "between"
+    }],
+    "stage_angle_sequence": [{
+        "start_delay": 0,
+        "to": 5.752255,
+        "is_absolute": true,
+        "tween": "Exponential.InOut",
+        "duration": 500,
+        "direction": "closest"
+    }],
+    "blend_mode_sequence": [{
+        "start_delay": 0,
+        "mode": "screen",
+        "sprite_index": 0
+    }],
+    "x_sequence": [{
+        "to": 16,
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": 0
+    }],
+    "y_sequence": [{
+        "to": 16,
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": 0
+    },{
+        "start_delay": 1520,
+        "to": 3,
+        "is_absolute": false,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 80,
+        "yoyo": true
+    },{
+        "start_delay": 1500,
+        "to": -20,
+        "is_absolute": false,
+        "tween": "Linear.None",
+        "sprite_index": "targets",
+        "duration": 200,
+        "yoyo": true
+    }],
+    "play_sequence": [{
+        "animation_key": "cast",
+        "start_delay": 1500,
+        "sprite_index": 0,
+        "reverse": false,
+        "frame_rate": 12,
+        "repeat": false,
+        "wait": true,
+        "hide_on_complete": true
+    },{
+        "animation_key": "battle_damage_front",
+        "start_delay": 1500,
+        "sprite_index": "targets",
+        "wait": false
+    },{
+        "animation_key": "battle_front",
+        "start_delay": 2500,
+        "sprite_index": "targets",
+        "wait": false
+    }],
+    "alpha_sequence": [{
+        "to": 0.0,
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": 0
+    },{
+        "to": 0.95,
+        "is_absolute": true,
+        "start_delay": 1500,
+        "duration": "instantly",
+        "sprite_index": 0
+    },{
+        "start_delay": 900,
+        "to": 0.75,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 400
+    },{
+        "start_delay": 1500,
+        "to": 1.0,
+        "is_absolute": true,
+        "tween": "Linear.None",
+        "sprite_index": "background",
+        "duration": 200
+    }],
+    "x_scale_sequence": [{
+        "to": 1.75,
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": 0
+    }],
+    "colorize_sequence": [{
+        "sprite_index": "background",
+        "start_delay": 1470,
+        "value": 0.1,
+        "colorize_intensity": 0.3
+    },{
+        "sprite_index": "background",
+        "start_delay": 1650,
+        "value": -1,
+        "colorize_intensity": 0
+    }],
+    "x_ellipse_axis_factor_sequence": [{
+        "start_delay": 1500,
+        "to": 20,
+        "is_absolute": false,
+        "tween": "Quadratic.Out",
+        "sprite_index": "targets",
+        "duration": 350,
+        "force_stage_update": true
+    },{
+        "start_delay": 1700,
+        "to": -20,
+        "is_absolute": false,
+        "tween": "Quadratic.Out",
+        "sprite_index": "targets",
+        "duration": 200,
+        "force_stage_update": true
+    }],
+    "tint_sequence": [{
+        "sprite_index": "targets",
+        "start_delay": 1500,
+        "value": [1,1,1]
+    },{
+        "sprite_index": "targets",
+        "start_delay": 1650,
+        "value": [-1,-1,-1]
+    },{
+        "sprite_index": "targets",
+        "start_delay": 1900,
+        "value": [1,1,1]
+    },{
+        "sprite_index": "targets",
+        "start_delay": 1930,
+        "value": [-1,-1,-1]
+    },{
+        "sprite_index": "targets",
+        "start_delay": 1960,
+        "value": [1,1,1]
+    },{
+        "sprite_index": "targets",
+        "start_delay": 1990,
+        "value": [-1,-1,-1]
+    }],
+    "advanced_particles_sequence": [{
+        "data": {
+            "explosion" : {
+                "red": 152,
+                "green": 48,
+                "blue": 240,
+                "lifespan": 1000,
+                "ay": 0.04,
+                "velocity": {
+                    "initial": {"min": 0.2, "max": 5.3},
+                    "radial": { "arcStart": -90, "arcEnd": 90 },
+                    "control": [ { "x": 0, "y": 1 }, { "x": 0.5, "y": 0.75 }, { "x": 1, "y": 0.25 } ]
+                }
+            }
+        },
+        "zones": {},
+        "emitters": [{
+            "x": 65,
+            "y": 127,
+            "position": "between",
+            "render_type": "pixel",
+            "show_trails": true,
+            "trails_clear_factor": 0.2,
+            "pixel_size": 18,
+            "pixel_reducing_factor": 0.11,
+            "pixel_is_rect": false,
+            "particles_display_blend_mode": "screen",
+            "render_white_core": true,
+            "total": 250,
+            "frequency": 10,
+            "emitter_data_key": "explosion",
+            "delay": {
+                "start": 1500,
+                "visible": false
+            }
+        }],
+        "emission_finish": 3000
+    }]
+}

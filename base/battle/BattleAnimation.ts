@@ -77,6 +77,7 @@ type AdvEmitter = {
     render_type: "pixel" | "sprite";
     x: number | string;
     y: number | string;
+    position: "behind" | "between" | "over";
     shift_x: number;
     shift_y: number;
     total: number;
@@ -89,6 +90,8 @@ type AdvEmitter = {
         step: number;
         visible: boolean;
     };
+    particles_display_blend_mode: string;
+    render_white_core: boolean;
     zone_key: string;
     random_in_zone: boolean;
     spacing: number | number[];
@@ -104,7 +107,9 @@ type AdvEmitter = {
         velocity: number;
     };
     show_trails: boolean;
+    trails_clear_factor: number;
     pixel_size: number;
+    pixel_reducing_factor: number;
     pixel_is_rect: boolean;
     gravity_well: {
         x: number;
@@ -212,7 +217,7 @@ export class BattleAnimation {
         data: {[emitter_data_key: string]: AdvParticleObject};
         zones: {[zone_key: string]: AdvParticlesZone};
         emitters: AdvEmitter[];
-        emission_duration: number;
+        emission_finish: number;
     }[];
     public is_party_animation: boolean;
     public running: boolean;
@@ -231,6 +236,8 @@ export class BattleAnimation {
     public group_caster: Phaser.Group;
     public group_enemy: Phaser.Group;
     public super_group: Phaser.Group;
+    public back_group: Phaser.Group;
+    public front_group: Phaser.Group;
     public stage_camera: CameraAngle;
     public trails_objs: (Phaser.RenderTexture | Phaser.Sprite)[];
     public caster_filter: any;
@@ -238,6 +245,7 @@ export class BattleAnimation {
     public background_filter: any;
     public sprites_filters: any[];
     public promises: Promise<any>[];
+    public render_callbacks: {[callback_key: string]: Function};
 
     //tween type can be 'initial' for first position
     //sprite_index: "targets" is the target, "caster" is the caster, "background" is the background sprite, 0...n is the sprites_key_names index
@@ -302,6 +310,7 @@ export class BattleAnimation {
         this.advanced_particles_sequence = advanced_particles_sequence === undefined ? [] : advanced_particles_sequence;
         this.is_party_animation = is_party_animation;
         this.running = false;
+        this.render_callbacks = {};
     }
 
     initialize(
@@ -327,6 +336,13 @@ export class BattleAnimation {
         this.super_group = super_group;
         this.stage_camera = stage_camera;
         this.trails_objs = [];
+        if (super_group.getChildIndex(group_caster) < super_group.getChildIndex(group_enemy)) {
+            this.back_group = group_caster;
+            this.front_group = group_enemy;
+        } else {
+            this.back_group = group_enemy;
+            this.front_group = group_caster;
+        }
         for (let i = 0; i < this.sprites_keys.length; ++i) {
             const sprite_info = this.sprites_keys[i];
             let trails_info;
@@ -337,24 +353,16 @@ export class BattleAnimation {
                 const count = sprite_info.count ? sprite_info.count : 1;
                 for (let j = 0; j < count; ++j) {
                     const psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_key);
-                    let back_group, front_group;
-                    if (super_group.getChildIndex(group_caster) < super_group.getChildIndex(group_enemy)) {
-                        back_group = group_caster;
-                        front_group = group_enemy;
-                    } else {
-                        back_group = group_enemy;
-                        front_group = group_caster;
-                    }
                     if (sprite_info.position === "over") {
                         super_group.addChild(psy_sprite);
                     } else if (sprite_info.position === "between") {
-                        super_group.addChildAt(psy_sprite, super_group.getChildIndex(front_group));
+                        super_group.addChildAt(psy_sprite, super_group.getChildIndex(this.front_group));
                     } else if (sprite_info.position === "behind") {
-                        super_group.addChildAt(psy_sprite, super_group.getChildIndex(back_group));
+                        super_group.addChildAt(psy_sprite, super_group.getChildIndex(this.back_group));
                     }
                     const frames = Phaser.Animation.generateFrameNames(
                         sprite_info.key_name + "/",
-                        1,
+                        0,
                         psy_sprite.animations.frameTotal,
                         "",
                         3
@@ -537,10 +545,10 @@ export class BattleAnimation {
             let promises_set = false;
             sprites.forEach((this_sprite, index) => {
                 let uniq_key;
-                if (this_sprite.data) {
+                if (this_sprite.data && this_sprite.data.hasOwnProperty("battle_index")) {
                     uniq_key = this_sprite.key + "_" + this_sprite.data.battle_index;
                 } else {
-                    uniq_key = index; //potential bug
+                    uniq_key = this_sprite.key + "_" + index; //potential bug
                 }
                 if (this.sprites_prev_properties[uniq_key] === undefined) {
                     this.sprites_prev_properties[uniq_key] = {};
@@ -576,9 +584,7 @@ export class BattleAnimation {
                 to_value = seq.is_absolute
                     ? to_value
                     : this.sprites_prev_properties[uniq_key][target_property] + seq_to;
-                if (!seq.yoyo) {
-                    this.sprites_prev_properties[uniq_key][target_property] = to_value;
-                }
+                this.sprites_prev_properties[uniq_key][target_property] = to_value;
                 if (seq.tween === "initial") {
                     this_sprite[target_property] = to_value;
                 } else {
@@ -654,7 +660,7 @@ export class BattleAnimation {
         for (let i = 0; i < this.play_sequence.length; ++i) {
             const play_seq = this.play_sequence[i];
             let sprites = this.get_sprites(play_seq);
-            sprites.forEach((sprite, index) => {
+            sprites.forEach((sprite: Phaser.Sprite, index) => {
                 let resolve_function;
                 let this_promise = new Promise(resolve => {
                     resolve_function = resolve;
@@ -664,11 +670,9 @@ export class BattleAnimation {
                     ? play_seq.start_delay[index]
                     : play_seq.start_delay;
                 this.game.time.events.add(start_delay, () => {
-                    if (play_seq.reverse) {
-                        sprite.animations.getAnimation(play_seq.animation_key).reversed = true;
-                    } else {
-                        sprite.animations.getAnimation(play_seq.animation_key).reversed = false;
-                    }
+                    const anim = sprite.animations.getAnimation(play_seq.animation_key);
+                    anim.reversed = play_seq.reverse === undefined ? false : play_seq.reverse;
+                    anim.stop(true);
                     sprite.animations.play(play_seq.animation_key, play_seq.frame_rate, play_seq.repeat);
                     if (play_seq.wait) {
                         sprite.animations.currentAnim.onComplete.addOnce(() => {
@@ -947,17 +951,64 @@ export class BattleAnimation {
                 this.data.particle_manager.addData(key, data);
             }
 
+            const render_callbacks = [];
             const emitters: Phaser.ParticleStorm.Emitter[] = [];
-            adv_particles_seq.emitters.forEach(emitter_info => {
-                const emitter = this.data.particle_manager.createEmitter(emitter_info.render_type);
+            adv_particles_seq.emitters.forEach((emitter_info, index) => {
+                const emitter = this.data.particle_manager.createEmitter(
+                    emitter_info.render_type,
+                    undefined,
+                    undefined,
+                    emitter_info.render_white_core
+                );
                 emitter.force.x = emitter_info.force?.x === undefined ? emitter.force.x : emitter_info.force.x;
                 emitter.force.y = emitter_info.force?.y === undefined ? emitter.force.y : emitter_info.force.y;
+
                 (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).autoClear = !emitter_info.show_trails;
-                (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize =
-                    emitter_info.pixel_size === undefined ? 2 : emitter_info.pixel_size;
-                (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).useRect =
-                    emitter_info.pixel_is_rect === undefined ? false : emitter_info.pixel_is_rect;
-                emitter.addToWorld();
+                if (emitter_info.show_trails || emitter_info.pixel_reducing_factor) {
+                    const key = `advanced_particles_sequence_${i}_${index}`;
+                    this.render_callbacks[key] = () => {
+                        if (emitter_info.render_type === "pixel") {
+                            if (emitter_info.show_trails) {
+                                (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).clear(
+                                    emitter_info.trails_clear_factor
+                                );
+                            }
+                            if (emitter_info.pixel_reducing_factor !== undefined) {
+                                (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize -=
+                                    emitter_info.pixel_reducing_factor;
+                            }
+                        }
+                    };
+                    render_callbacks.push(key);
+                }
+
+                if (emitter_info.render_type === "pixel") {
+                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize =
+                        emitter_info.pixel_size === undefined ? 2 : emitter_info.pixel_size;
+                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).useRect =
+                        emitter_info.pixel_is_rect === undefined ? false : emitter_info.pixel_is_rect;
+
+                    if (emitter_info.particles_display_blend_mode === "screen") {
+                        (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).display.blendMode =
+                            Phaser.blendModes.SCREEN;
+                    }
+                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).resize(
+                        numbers.GAME_WIDTH << 1,
+                        numbers.GAME_HEIGHT
+                    );
+                }
+
+                const displays = emitter.addToWorld(this.super_group);
+                displays.forEach(display => {
+                    if (!display) return;
+                    if (emitter_info.position === "over") {
+                        this.super_group.addChild(display);
+                    } else if (emitter_info.position === "between") {
+                        this.super_group.setChildIndex(display, this.super_group.getChildIndex(this.front_group));
+                    } else if (emitter_info.position === "behind") {
+                        this.super_group.setChildIndex(display, this.super_group.getChildIndex(this.back_group));
+                    }
+                });
                 if (emitter_info.gravity_well) {
                     emitter.createGravityWell(
                         emitter_info.gravity_well.x,
@@ -1008,10 +1059,15 @@ export class BattleAnimation {
                 emitters.push(emitter);
             });
 
-            this.game.time.events.add(adv_particles_seq.emission_duration, () => {
+            this.game.time.events.add(adv_particles_seq.emission_finish, () => {
+                render_callbacks.forEach(key => {
+                    delete this.render_callbacks[key];
+                });
                 emitters.forEach(emitter => {
                     this.data.particle_manager.removeEmitter(emitter);
-                    emitter.onEmit.removeAll();
+                    if (emitter.onEmit) {
+                        emitter.onEmit.removeAll();
+                    }
                     emitter.destroy();
                 });
                 for (let key in adv_particles_seq.data) {
@@ -1044,6 +1100,9 @@ export class BattleAnimation {
                 sprite.data.y_history.pop()
             );
         });
+        for (let key in this.render_callbacks) {
+            this.render_callbacks[key]();
+        }
     }
 
     static get_angle_by_direction(current_angle, target_angle, direction, fourth_quadrant = false) {

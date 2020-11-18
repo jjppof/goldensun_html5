@@ -24,7 +24,7 @@ declare module Phaser {
         blendModeMap: any;
         hsv: any[];
 
-        createEmitter(renderType?: string, force?: Phaser.Point, scrollSpeed?: Phaser.Point): ParticleStorm.Emitter;
+        createEmitter(renderType?: string, force?: Phaser.Point, scrollSpeed?: Phaser.Point, render_white_core?: boolean): ParticleStorm.Emitter;
         removeEmitter(emitter: ParticleStorm.Emitter): void;
         addData(key: string | string[], obj?: any): ParticleStorm;
         getData(key: string): any;
@@ -179,7 +179,7 @@ declare module Phaser {
 
         class Emitter {
 
-            constructor(parent: Phaser.ParticleStorm, renderType?: string, force?: Phaser.Point, scrollSpeed?: Phaser.Point);
+            constructor(parent: Phaser.ParticleStorm, renderType?: string, force?: Phaser.Point, scrollSpeed?: Phaser.Point, render_white_core?: boolean);
 
             game: Phaser.Game;
             parent: Phaser.ParticleStorm;
@@ -205,8 +205,8 @@ declare module Phaser {
             alive: number;
             dead: number;
 
-            init(renderType?: string, force?: Phaser.Point, scrollSpeed?: Phaser.Point): void;
-            addToWorld(group?: Phaser.Group): Phaser.Image | Phaser.Sprite | Phaser.Group;
+            init(renderType?: string, force?: Phaser.Point, scrollSpeed?: Phaser.Point, render_white_core?: boolean): void;
+            addToWorld(group?: Phaser.Group): (Phaser.Image | Phaser.Sprite | Phaser.Group)[];
             createGravityWell(x?: number, y?: number, power?: number, epsilon?: number, gravity?: number): Phaser.ParticleStorm.GravityWell;
             seed(qty: number): Phaser.ParticleStorm.Emitter;
             emitDelayed(delay: number, key: string, x?: number | number[], y?: number | number[], config?: EmitterConfig): Phaser.TimerEvent;
@@ -234,7 +234,7 @@ declare module Phaser {
                 pixelSize: number;
                 useRect: boolean;
 
-                addToWorld(group?: Phaser.Group): Phaser.Image | Phaser.Sprite | Phaser.Group;
+                addToWorld(group?: Phaser.Group): (Phaser.Image | Phaser.Sprite | Phaser.Group)[];
                 preUpdate(): void;
                 add(particle: Phaser.ParticleStorm.Particle): void;
                 update(particle: Phaser.ParticleStorm.Particle): Phaser.ParticleStorm.Particle;
@@ -260,7 +260,7 @@ declare module Phaser {
 
             class Pixel extends Base {
 
-                constructor(emitter: Phaser.ParticleStorm.Emitter, width: number, height: number);
+                constructor(emitter: Phaser.ParticleStorm.Emitter, width: number, height: number, render_white_core?: boolean);
 
                 bmd: Phaser.BitmapData;
                 display: Phaser.Image;

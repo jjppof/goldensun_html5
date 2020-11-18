@@ -189,9 +189,9 @@ Phaser.ParticleStorm.Zones = {};
 *     This is different to force which is applied as a velocity on the particle, where-as scrollSpeed directly adjusts their final position.
 * @return {Phaser.ParticleStorm.Emitter} The Emitter object.
 */
-Phaser.ParticleStorm.prototype.createEmitter = function (renderType, force, scrollSpeed) {
+Phaser.ParticleStorm.prototype.createEmitter = function (renderType, force, scrollSpeed, render_white_core = false) {
 
-    var emitter = new Phaser.ParticleStorm.Emitter(this, renderType, force, scrollSpeed);
+    var emitter = new Phaser.ParticleStorm.Emitter(this, renderType, force, scrollSpeed, render_white_core);
 
     this.emitters.push(emitter);
 
@@ -695,7 +695,7 @@ Phaser.ParticleStorm.prototype.update = function () {
 * @param {Phaser.Point} [scrollSpeed] - All particles can be scrolled. This offsets their positions by the amount in this Point each update.
 *     This is different to force which is applied as a velocity on the particle, where-as scrollSpeed directly adjusts their final position.
 */
-Phaser.ParticleStorm.Emitter = function (parent, renderType, force, scrollSpeed) {
+Phaser.ParticleStorm.Emitter = function (parent, renderType, force, scrollSpeed, render_white_core = false) {
 
     /**
     * @property {Phaser.Game} game - A reference to the Phaser Game instance.
@@ -913,7 +913,7 @@ Phaser.ParticleStorm.Emitter = function (parent, renderType, force, scrollSpeed)
     */
     this._delay = { enabled: false, start: 0, inc: 0, visible: false };
 
-    this.init(renderType, force, scrollSpeed);
+    this.init(renderType, force, scrollSpeed, render_white_core);
 
 };
 
@@ -931,7 +931,7 @@ Phaser.ParticleStorm.Emitter.prototype = {
     * @param {Phaser.Point} [scrollSpeed] - All particles can be scrolled. This offsets their positions by the amount in this Point each update.
     *     This is different to force which is applied as a velocity on the particle, where-as scrollSpeed directly adjusts their final position.
     */
-    init: function (renderType, force, scrollSpeed) {
+    init: function (renderType, force, scrollSpeed, render_white_core) {
 
         if (renderType === undefined) { renderType = Phaser.ParticleStorm.SPRITE; }
 
@@ -945,7 +945,7 @@ Phaser.ParticleStorm.Emitter.prototype = {
                 break;
 
             case Phaser.ParticleStorm.PIXEL:
-                this.renderer = new Phaser.ParticleStorm.Renderer.Pixel(this, w, h);
+                this.renderer = new Phaser.ParticleStorm.Renderer.Pixel(this, w, h, render_white_core);
                 break;
 
             case Phaser.ParticleStorm.RENDERTEXTURE:
@@ -5372,8 +5372,11 @@ Phaser.ParticleStorm.Renderer.Base.prototype = {
     addToWorld: function (group) {
 
         group.add(this.display);
+        if (this.display2) {
+            group.add(this.display2);
+        }
 
-        return this.display;
+        return [this.display, this.display2];
 
     },
 
@@ -5623,7 +5626,7 @@ Phaser.ParticleStorm.Renderer.Sprite.prototype.destroy = function () {
 * @param {integer} width - The width of the renderer. Defaults to Game.width.
 * @param {integer} height - The height of the renderer. Defaults to Game.height.
 */
-Phaser.ParticleStorm.Renderer.Pixel = function (emitter, width, height) {
+Phaser.ParticleStorm.Renderer.Pixel = function (emitter, width, height, render_white_core = false) {
 
     Phaser.ParticleStorm.Renderer.Base.call(this, emitter);
 
@@ -5632,6 +5635,9 @@ Phaser.ParticleStorm.Renderer.Pixel = function (emitter, width, height) {
     * @property {Phaser.BitmapData} bmd
     */
     this.bmd = this.game.make.bitmapData(width, height);
+    if (render_white_core) {
+        this.bmd2 = this.game.make.bitmapData(width, height);
+    }
 
     /**
     * A Phaser.Image that has this BitmapData set as its texture.
@@ -5640,6 +5646,9 @@ Phaser.ParticleStorm.Renderer.Pixel = function (emitter, width, height) {
     * @property {Phaser.Image} display
     */
     this.display = this.game.make.image(0, 0, this.bmd);
+    if (render_white_core) {
+        this.display2 = this.game.make.image(0, 0, this.bmd2);
+    }
 
     /**
     * If true then this renderer automatically clears itself each update, before
@@ -5666,6 +5675,9 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.constructor = Phaser.ParticleStorm
 Phaser.ParticleStorm.Renderer.Pixel.prototype.resize = function (width, height) {
 
     this.bmd.resize(width, height);
+    if (this.bmd2) {
+        this.bmd2.resize(width, height);
+    }
 
     return this;
 
@@ -5685,6 +5697,11 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.clear = function (alpha) {
     this.bmd.fill(0, 0, 0, alpha);
     this.bmd.update();
 
+    if (this.bmd2) {
+        this.bmd2.fill(0, 0, 0, alpha);
+        this.bmd2.update();
+    }
+
     return this;
 
 };
@@ -5701,6 +5718,10 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.preUpdate = function () {
     {
         this.bmd.clear();
         this.bmd.update();
+    }
+    if (this.bmd2) {
+        this.bmd2.clear();
+        this.bmd2.update();
     }
 
 };
@@ -5727,18 +5748,28 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.update = function (particle) {
     var g = particle.color.green.calc;
     var b = particle.color.blue.calc;
     var a = Math.floor(particle.color.alpha.calc * 255);
+    var a2 = Math.sign(a) * 255;
 
     if (this.pixelSize > 2)
     {
         if (this.useRect) {
             this.bmd.rect(x, y, this.pixelSize, this.pixelSize, particle.color.rgba);
+            if (this.bmd2) {
+                this.bmd2.rect(x, y, this.pixelSize, this.pixelSize, `rgba(255,255,255,${a2/255})`);
+            }
         } else {
             this.bmd.circle(x, y, this.pixelSize/2, particle.color.rgba);
+            if (this.bmd2) {
+                this.bmd2.circle(x, y, this.pixelSize/2, `rgba(255,255,255,${a2/255})`);
+            }
         }
     }
     else
     {
         this.bmd.setPixel32(x, y, r, g, b, a, false);
+        if (this.bmd2) {
+            this.bmd2.setPixel32(x, y, 255, 255, 255, a2, false);
+        }
 
         //  2x2
         if (this.pixelSize === 2)
@@ -5746,6 +5777,11 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.update = function (particle) {
             this.bmd.setPixel32(x + 1, y, r, g, b, a, false);
             this.bmd.setPixel32(x, y + 1, r, g, b, a, false);
             this.bmd.setPixel32(x + 1, y + 1, r, g, b, a, false);
+            if (this.bmd2) {
+                this.bmd2.setPixel32(x + 1, y, 255, 255, 255, a2, false);
+                this.bmd2.setPixel32(x, y + 1, 255, 255, 255, a2, false);
+                this.bmd2.setPixel32(x + 1, y + 1, 255, 255, 255, a2, false);
+            }
         }
     }
 
@@ -5762,9 +5798,15 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.postUpdate = function () {
     if (this.pixelSize <= 2)
     {
         this.bmd.context.putImageData(this.bmd.imageData, 0, 0);
+        if (this.bmd2) {
+            this.bmd2.context.putImageData(this.bmd2.imageData, 0, 0);
+        }
     }
 
     this.bmd.dirty = true;
+    if (this.bmd2) {
+        this.bmd2.dirty = true;
+    }
 
 };
 
@@ -5778,8 +5820,14 @@ Phaser.ParticleStorm.Renderer.Pixel.prototype.destroy = function () {
     this.game = null;
 
     this.display.destroy();
+    if (this.display2) {
+        this.display2.destroy();
+    }
 
     this.bmd.destroy();
+    if (this.bmd2) {
+        this.bmd2.destroy();
+    }
 
 };
 
