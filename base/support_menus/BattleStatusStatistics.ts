@@ -144,7 +144,7 @@ export class BattleStatusStatistics extends StatusComponent {
     };
 
     private static readonly LINES = 9;
-    private static readonly STARS = {X: 65, Y: 73};
+    private static readonly STARS = {X: 64, Y: 73};
     private static readonly STARS_SHIFT = 32;
     private static readonly LABEL = {X: 8, Y: 80};
     private static readonly LABEL_SHIFT = 8;

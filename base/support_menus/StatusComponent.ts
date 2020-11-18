@@ -24,7 +24,7 @@ export abstract class StatusComponent {
     protected mode: StatusModes;
 
     protected highlight: Phaser.Graphics;
-    protected state_sprites: (Phaser.Sprite | BitmapText)[];
+    protected state_sprites: (Phaser.Sprite | BitmapText | Phaser.Group)[];
     protected manager: BattleStatusWindow | MainStatusMenu;
 
     public constructor(

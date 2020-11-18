@@ -71,8 +71,17 @@ export class MainStatusMenu {
     };
     private static readonly DESC = {
         LINE1: {X: 6, Y: 7},
-        LINE2: {X: 7, Y: 22},
+        LINE2: {X: 6, Y: 21},
     };
+    private static readonly DESC_GUIDE = {
+        L: {X: 88, Y: 24},
+        HIFEN: {X: 102, Y: 24},
+        R: {X: 107, Y: 24},
+        LR_TEXT: {X: 122, Y: 24},
+        A: {X: 9, Y: 24},
+        A_TEXT: {X: 19, Y: 24},
+    };
+
     private static readonly StateComponent = {
         [MainStatusStates.CHARACTERS]: 0,
         [MainStatusStates.DJINN]: 2,
@@ -88,7 +97,8 @@ export class MainStatusMenu {
     };
 
     private static readonly GROUP_KEY = "main_status";
-    private static readonly MAX_EFFECTS_DISPLAYED = 5;
+    private static readonly DESC_GUIDE_KEY = "desc_guide";
+    private static readonly MAX_EFFECTS_DISPLAYED = 4;
 
     private game: Phaser.Game;
     private data: GoldenSun;
@@ -127,6 +137,7 @@ export class MainStatusMenu {
     private desc_line2: TextObj;
 
     private battle_effects: BattleStatusEffect[];
+    private desc_guide_sprites: (Phaser.Sprite | Phaser.BitmapText)[];
 
     public constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
@@ -162,6 +173,8 @@ export class MainStatusMenu {
             MainStatusMenu.EQUIP_WIN.WIDTH,
             MainStatusMenu.EQUIP_WIN.HEIGHT
         );
+
+        this.desc_window.define_internal_group(MainStatusMenu.DESC_GUIDE_KEY);
 
         this.components = [
             new MainStatusStatistics(this.game, this.data, this.main_window, this),
@@ -210,6 +223,13 @@ export class MainStatusMenu {
 
         const text2 = line2 !== undefined ? line2 : "";
 
+        const desc_win_group = this.desc_window.get_internal_group(MainStatusMenu.DESC_GUIDE_KEY);
+        if (line1 === "Your status is normal.") {
+            if (!desc_win_group.visible) desc_win_group.visible = true;
+        } else {
+            if (desc_win_group.visible) desc_win_group.visible = false;
+        }
+
         this.desc_window.update_text(line1, this.desc_line1);
         this.desc_window.update_text(text2, this.desc_line2);
     }
@@ -233,6 +253,92 @@ export class MainStatusMenu {
 
         const new_text = this.select_text.text.text === ": Return" ? ": Djinn  list" : ": Return";
         this.guide_window.update_text(new_text, this.select_text);
+    }
+
+    private init_desc_guide() {
+        this.desc_window.create_at_group(
+            MainStatusMenu.DESC_GUIDE.L.X + 1,
+            MainStatusMenu.DESC_GUIDE.L.Y + 1,
+            "l_button",
+            0x0,
+            undefined,
+            MainStatusMenu.DESC_GUIDE_KEY
+        );
+        this.desc_window.create_at_group(
+            MainStatusMenu.DESC_GUIDE.L.X,
+            MainStatusMenu.DESC_GUIDE.L.Y,
+            "l_button",
+            undefined,
+            undefined,
+            MainStatusMenu.DESC_GUIDE_KEY
+        );
+
+        this.desc_window.create_at_group(
+            MainStatusMenu.DESC_GUIDE.R.X + 1,
+            MainStatusMenu.DESC_GUIDE.R.Y + 1,
+            "r_button",
+            0x0,
+            undefined,
+            MainStatusMenu.DESC_GUIDE_KEY
+        );
+        this.desc_window.create_at_group(
+            MainStatusMenu.DESC_GUIDE.R.X,
+            MainStatusMenu.DESC_GUIDE.R.Y,
+            "r_button",
+            undefined,
+            undefined,
+            MainStatusMenu.DESC_GUIDE_KEY
+        );
+
+        this.desc_window.create_at_group(
+            MainStatusMenu.DESC_GUIDE.A.X + 1,
+            MainStatusMenu.DESC_GUIDE.A.Y + 1,
+            "a_button",
+            0x0,
+            undefined,
+            MainStatusMenu.DESC_GUIDE_KEY
+        );
+        this.desc_window.create_at_group(
+            MainStatusMenu.DESC_GUIDE.A.X,
+            MainStatusMenu.DESC_GUIDE.A.Y,
+            "a_button",
+            undefined,
+            undefined,
+            MainStatusMenu.DESC_GUIDE_KEY
+        );
+
+        this.desc_window.set_text_in_position(
+            "-",
+            MainStatusMenu.DESC_GUIDE.HIFEN.X,
+            MainStatusMenu.DESC_GUIDE.HIFEN.Y,
+            false,
+            false,
+            undefined,
+            false,
+            MainStatusMenu.DESC_GUIDE_KEY
+        );
+
+        this.desc_window.set_text_in_position(
+            ": Switch  characters",
+            MainStatusMenu.DESC_GUIDE.LR_TEXT.X,
+            MainStatusMenu.DESC_GUIDE.LR_TEXT.Y,
+            false,
+            false,
+            undefined,
+            false,
+            MainStatusMenu.DESC_GUIDE_KEY
+        );
+
+        this.desc_window.set_text_in_position(
+            ": Psynergy",
+            MainStatusMenu.DESC_GUIDE.A_TEXT.X,
+            MainStatusMenu.DESC_GUIDE.A_TEXT.Y,
+            false,
+            false,
+            undefined,
+            false,
+            MainStatusMenu.DESC_GUIDE_KEY
+        );
     }
 
     private initialize() {
@@ -417,7 +523,8 @@ export class MainStatusMenu {
             false,
             undefined,
             false,
-            MainStatusMenu.GROUP_KEY
+            MainStatusMenu.GROUP_KEY,
+            true
         );
 
         this.desc_line2 = this.desc_window.set_text_in_position(
@@ -428,14 +535,18 @@ export class MainStatusMenu {
             false,
             undefined,
             false,
-            MainStatusMenu.GROUP_KEY
+            MainStatusMenu.GROUP_KEY,
+            true
         );
+
+        this.init_desc_guide();
     }
 
     private update_info() {
         if (this.avatar) this.avatar.destroy();
 
         const char = this.selected_char;
+        this.set_battle_effects();
 
         this.avatar = this.main_window.create_at_group(
             MainStatusMenu.AVATAR.X,
@@ -455,14 +566,6 @@ export class MainStatusMenu {
         this.change_state(MainStatusMenu.AdvanceState[this.current_state], true);
     }
 
-    private next_char() {
-        this.chars_menu.next_char(true);
-    }
-
-    private previous_char() {
-        this.chars_menu.previous_char(true);
-    }
-
     private on_character_change(char?: MainChar | string) {
         if (char) {
             if (typeof char === "string") {
@@ -471,7 +574,9 @@ export class MainStatusMenu {
         } else this.selected_char = this.chars_menu.lines[this.chars_menu.current_line][this.chars_menu.selected_index];
 
         this.update_info();
-        this.set_battle_effects();
+        this.change_state(!this.current_state ? MainStatusStates.CHARACTERS : this.current_state);
+
+        this.data.cursor_manager.show();
     }
 
     public inner_control() {
@@ -513,6 +618,12 @@ export class MainStatusMenu {
             if (new_state === MainStatusStates.DJINN || this.current_state === MainStatusStates.DJINN)
                 this.toggle_guide_win();
 
+            if (new_state !== MainStatusStates.CHARACTERS && !this.desc_window.open) {
+                this.desc_window.show(undefined, false);
+            } else if (new_state === MainStatusStates.CHARACTERS && this.desc_window.open) {
+                this.desc_window.close(undefined, false);
+            }
+
             if (this.current_component) {
                 if (!reset_pos) pos = this.current_component.current_pos;
 
@@ -529,7 +640,9 @@ export class MainStatusMenu {
     }
 
     private selecting_char() {
-        this.change_state(MainStatusStates.CHARACTERS);
+        this.update_info();
+        this.chars_menu.select_char(this.chars_menu.selected_index);
+
         this.chars_menu.grant_control(
             this.close_menu.bind(this, this.close_callback),
             this.trigger_state_change.bind(this),
@@ -540,8 +653,7 @@ export class MainStatusMenu {
             {key: this.data.gamepad.SELECT, on_down: this.change_state.bind(this, MainStatusStates.DJINN)},
         ];
         this.data.control_manager.set_control(open_djinn_control, {no_reset: true});
-
-        this.chars_menu.select_char(this.chars_menu.selected_index);
+        this.data.cursor_manager.show();
     }
 
     public open_menu(close_callback?: Function, open_callback?: Function) {
@@ -549,12 +661,11 @@ export class MainStatusMenu {
 
         this.selected_char = this.data.info.party_data.members[0];
         this.initialize();
+        this.selecting_char();
 
         this.guide_window.show(undefined, false);
         this.main_window.show(undefined, false);
         this.chars_menu.open(0, CharsMenuModes.MENU);
-
-        this.selecting_char();
 
         if (open_callback) open_callback();
         this.is_open = true;
