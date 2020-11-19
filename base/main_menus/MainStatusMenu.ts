@@ -688,6 +688,7 @@ export class MainStatusMenu {
         const open_djinn_control = [
             {key: this.data.gamepad.SELECT, on_down: this.change_state.bind(this, MainStatusStates.DJINN)},
         ];
+
         this.data.control_manager.set_control(open_djinn_control, {no_reset: true});
         this.data.cursor_manager.show();
     }

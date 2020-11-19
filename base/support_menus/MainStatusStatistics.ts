@@ -194,7 +194,7 @@ export class MainStatusStatistics extends StatusComponent {
         }
         this.update_highlight(highlight);
 
-        const cursor_tween = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.SHORT};
+        const cursor_tween = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: cursor_tween});
     }
 
