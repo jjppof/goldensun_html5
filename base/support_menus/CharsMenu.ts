@@ -285,7 +285,7 @@ export class CharsMenu {
         }
     }
 
-    select_char(index?: number, no_cursor?: boolean) {
+    select_char(index?: number, no_cursor?: boolean, silent?: boolean) {
         if (index === undefined) index = this.selected_index;
 
         const on_move = () => {
@@ -293,7 +293,7 @@ export class CharsMenu {
             this.selected_index = index;
             this.set_character(this.selected_index);
 
-            if (this.on_change) {
+            if (this.on_change && !silent) {
                 let c = this.data.info.party_data.members[this.current_line * MAX_PER_LINE + this.selected_index];
                 this.on_change(c.key_name);
             }
@@ -418,7 +418,12 @@ export class CharsMenu {
         this.is_active = false;
     }
 
-    open(select_index: number = 0, mode: CharsMenuModes = CharsMenuModes.SHOP, open_callback?: Function) {
+    open(
+        select_index: number = 0,
+        mode: CharsMenuModes = CharsMenuModes.SHOP,
+        open_callback?: Function,
+        silent?: boolean
+    ) {
         this.current_line = 0;
         this.mode = mode;
 
@@ -426,7 +431,7 @@ export class CharsMenu {
         this.check_mode();
         this.check_arrows();
         this.set_chars();
-        this.select_char(select_index);
+        this.select_char(select_index, undefined, silent);
 
         this.char_group.alpha = 1;
         this.is_open = true;

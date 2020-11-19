@@ -137,7 +137,7 @@ export class MainStatusMenu {
     private desc_line2: TextObj;
 
     private battle_effects: BattleStatusEffect[];
-    private desc_guide_sprites: (Phaser.Sprite | Phaser.BitmapText)[];
+    private active_sprites: (Phaser.Sprite | Phaser.BitmapText)[];
 
     public constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
@@ -187,6 +187,8 @@ export class MainStatusMenu {
         this.current_component = null;
         this.selected_char = null;
         this.is_open = false;
+
+        this.active_sprites = [];
     }
 
     public get selected_character() {
@@ -341,9 +343,19 @@ export class MainStatusMenu {
         );
     }
 
+    private unset_win_assets(window: Window, group_key?: String) {
+        if (group_key !== undefined) group_key === MainStatusMenu.GROUP_KEY;
+        const group = window.get_internal_group(group_key);
+
+        if (!group) return;
+        else group.removeChildren();
+    }
+
     private initialize() {
         this.main_window.define_internal_group(MainStatusMenu.GROUP_KEY);
         this.guide_window.define_internal_group(MainStatusMenu.GROUP_KEY);
+
+        let text_obj: TextObj = null;
 
         this.avatar = this.main_window.create_at_group(
             MainStatusMenu.AVATAR.X,
@@ -353,6 +365,8 @@ export class MainStatusMenu {
             this.selected_char.key_name,
             MainStatusMenu.GROUP_KEY
         );
+        this.active_sprites.push(this.avatar);
+
         this.name = this.main_window.set_text_in_position(
             "",
             MainStatusMenu.NAME.X,
@@ -363,7 +377,9 @@ export class MainStatusMenu {
             false,
             MainStatusMenu.GROUP_KEY
         );
-        this.main_window.set_text_in_position(
+        this.active_sprites.push(this.name.text, this.name.shadow);
+
+        text_obj = this.main_window.set_text_in_position(
             "Lv",
             MainStatusMenu.LEVEL.LABEL_X,
             MainStatusMenu.LEVEL.LABEL_Y,
@@ -373,6 +389,8 @@ export class MainStatusMenu {
             false,
             MainStatusMenu.GROUP_KEY
         );
+        this.active_sprites.push(text_obj.text, text_obj.shadow);
+
         this.level_value = this.main_window.set_text_in_position(
             "",
             MainStatusMenu.LEVEL.VALUE_END_X,
@@ -383,6 +401,7 @@ export class MainStatusMenu {
             false,
             MainStatusMenu.GROUP_KEY
         );
+        this.active_sprites.push(this.level_value.text, this.level_value.shadow);
 
         this.class_name = this.main_window.set_text_in_position(
             "",
@@ -394,6 +413,7 @@ export class MainStatusMenu {
             false,
             MainStatusMenu.GROUP_KEY
         );
+        this.active_sprites.push(this.class_name.text, this.class_name.shadow);
 
         this.l_button = {
             shadow: this.guide_window.create_at_group(
@@ -413,6 +433,7 @@ export class MainStatusMenu {
                 MainStatusMenu.GROUP_KEY
             ),
         };
+        this.active_sprites.push(this.l_button.sprite, this.l_button.shadow);
 
         this.r_button = {
             shadow: this.guide_window.create_at_group(
@@ -432,6 +453,7 @@ export class MainStatusMenu {
                 MainStatusMenu.GROUP_KEY
             ),
         };
+        this.active_sprites.push(this.r_button.sprite, this.r_button.shadow);
 
         this.a_button = {
             shadow: this.guide_window.create_at_group(
@@ -451,6 +473,7 @@ export class MainStatusMenu {
                 MainStatusMenu.GROUP_KEY
             ),
         };
+        this.active_sprites.push(this.a_button.sprite, this.a_button.shadow);
 
         this.select_button = {
             shadow: this.guide_window.create_at_group(
@@ -470,6 +493,7 @@ export class MainStatusMenu {
                 MainStatusMenu.GROUP_KEY
             ),
         };
+        this.active_sprites.push(this.select_button.sprite, this.select_button.shadow);
 
         this.hifen = this.guide_window.set_text_in_position(
             "-",
@@ -481,6 +505,7 @@ export class MainStatusMenu {
             false,
             MainStatusMenu.GROUP_KEY
         );
+        this.active_sprites.push(this.hifen.text, this.hifen.shadow);
 
         this.lr_text = this.guide_window.set_text_in_position(
             ": Rearrange",
@@ -492,6 +517,7 @@ export class MainStatusMenu {
             false,
             MainStatusMenu.GROUP_KEY
         );
+        this.active_sprites.push(this.lr_text.text, this.lr_text.shadow);
 
         this.a_text = this.guide_window.set_text_in_position(
             ": Details",
@@ -503,6 +529,7 @@ export class MainStatusMenu {
             false,
             MainStatusMenu.GROUP_KEY
         );
+        this.active_sprites.push(this.a_text.text, this.a_text.shadow);
 
         this.select_text = this.guide_window.set_text_in_position(
             ": Djinn  list",
@@ -514,6 +541,7 @@ export class MainStatusMenu {
             false,
             MainStatusMenu.GROUP_KEY
         );
+        this.active_sprites.push(this.select_text.text, this.select_text.shadow);
 
         this.desc_line1 = this.desc_window.set_text_in_position(
             "",
@@ -526,6 +554,7 @@ export class MainStatusMenu {
             MainStatusMenu.GROUP_KEY,
             true
         );
+        this.active_sprites.push(this.desc_line1.text, this.desc_line1.shadow);
 
         this.desc_line2 = this.desc_window.set_text_in_position(
             "",
@@ -538,8 +567,7 @@ export class MainStatusMenu {
             MainStatusMenu.GROUP_KEY,
             true
         );
-
-        this.init_desc_guide();
+        this.active_sprites.push(this.desc_line2.text, this.desc_line2.shadow);
     }
 
     private update_info() {
@@ -573,8 +601,12 @@ export class MainStatusMenu {
             } else this.selected_char = char as MainChar;
         } else this.selected_char = this.chars_menu.lines[this.chars_menu.current_line][this.chars_menu.selected_index];
 
+        let state = null;
+        if (this.current_state === null || this.current_state === undefined) state = MainStatusStates.CHARACTERS;
+        else state = this.current_state;
+
         this.update_info();
-        this.change_state(!this.current_state ? MainStatusStates.CHARACTERS : this.current_state);
+        this.change_state(state);
 
         this.data.cursor_manager.show();
     }
@@ -619,9 +651,12 @@ export class MainStatusMenu {
                 this.toggle_guide_win();
 
             if (new_state !== MainStatusStates.CHARACTERS && !this.desc_window.open) {
-                this.desc_window.show(undefined, false);
+                this.desc_window.show(this.init_desc_guide.bind(this), false);
             } else if (new_state === MainStatusStates.CHARACTERS && this.desc_window.open) {
-                this.desc_window.close(undefined, false);
+                this.desc_window.close(
+                    this.unset_win_assets.bind(this, this.desc_window, MainStatusMenu.DESC_GUIDE_KEY),
+                    false
+                );
             }
 
             if (this.current_component) {
@@ -641,7 +676,8 @@ export class MainStatusMenu {
 
     private selecting_char() {
         this.update_info();
-        this.chars_menu.select_char(this.chars_menu.selected_index);
+        this.change_state(MainStatusStates.CHARACTERS);
+        this.chars_menu.select_char(this.chars_menu.selected_index, false, true);
 
         this.chars_menu.grant_control(
             this.close_menu.bind(this, this.close_callback),
@@ -661,11 +697,11 @@ export class MainStatusMenu {
 
         this.selected_char = this.data.info.party_data.members[0];
         this.initialize();
-        this.selecting_char();
 
         this.guide_window.show(undefined, false);
         this.main_window.show(undefined, false);
-        this.chars_menu.open(0, CharsMenuModes.MENU);
+        this.chars_menu.open(0, CharsMenuModes.MENU, undefined, true);
+        this.selecting_char();
 
         if (open_callback) open_callback();
         this.is_open = true;
@@ -676,14 +712,24 @@ export class MainStatusMenu {
         this.data.cursor_manager.hide();
         this.data.control_manager.reset();
 
+        this.current_component.clear();
+        this.current_component = null;
+        this.current_state = null;
+
         if (!callback) callback = this.close_callback;
 
         this.chars_menu.close();
         this.main_window.close(undefined, false);
         this.guide_window.close(undefined, false);
-        this.guide_window.close(undefined, false);
         this.desc_window.close(undefined, false);
         this.equip_window.close(undefined, false);
+
+        this.active_sprites.forEach((s: Phaser.Sprite | Phaser.BitmapText) => {
+            s.destroy();
+        });
+        this.active_sprites = [];
+
+        console.log(this.desc_window);
 
         callback();
         this.close_callback = null;
