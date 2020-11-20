@@ -7,6 +7,7 @@ import {BattleStatusEffect} from "../windows/battle/BattleStatusWindow";
 import * as _ from "lodash";
 import {StatusComponent} from "../support_menus/StatusComponent";
 import {MainStatusStatistics} from "../support_menus/MainStatusStatistics";
+import {MainStatusDjinn} from "../support_menus/MainStatusDjinn";
 
 export enum MainStatusStates {
     CHARACTERS,
@@ -178,8 +179,9 @@ export class MainStatusMenu {
 
         this.components = [
             new MainStatusStatistics(this.game, this.data, this.main_window, this),
+            null,
             //new MainStatusPsynergy(this.game, this.data, this.window, this),
-            //new MainStatusDjinn(this.game, this.data, this.window, this),
+            new MainStatusDjinn(this.game, this.data, this.main_window, this),
             //new MainStatusItems(this.game, this.data, this.window, this),
         ];
 
@@ -255,6 +257,14 @@ export class MainStatusMenu {
 
         const new_text = this.select_text.text.text === ": Return" ? ": Djinn  list" : ": Return";
         this.guide_window.update_text(new_text, this.select_text);
+    }
+
+    private check_main_components() {
+        if ([MainStatusStates.CHARACTERS, MainStatusStates.STATISTICS].includes(this.current_state)) {
+            this.main_window.get_internal_group(MainStatusMenu.GROUP_KEY).visible = true;
+        } else {
+            this.main_window.get_internal_group(MainStatusMenu.GROUP_KEY).visible = false;
+        }
     }
 
     private init_desc_guide() {
@@ -640,17 +650,26 @@ export class MainStatusMenu {
     }
 
     private change_state(new_state: MainStatusStates, reset_pos: boolean = false) {
-        const unimplemented = [MainStatusStates.DJINN, MainStatusStates.PSYNERGY, MainStatusStates.ITEMS];
+        const unimplemented = [MainStatusStates.PSYNERGY, MainStatusStates.ITEMS];
         if (unimplemented.includes(new_state)) {
             console.warn("State " + MainStatusStates[new_state] + " is not implemented. Moving to CHARACTERS");
             this.selecting_char();
         } else {
             let pos = {line: 0, col: 0};
 
-            if (new_state === MainStatusStates.DJINN || this.current_state === MainStatusStates.DJINN)
+            if (new_state === MainStatusStates.DJINN || this.current_state === MainStatusStates.DJINN) {
                 this.toggle_guide_win();
 
-            if (new_state !== MainStatusStates.CHARACTERS && !this.desc_window.open) {
+                if (new_state === MainStatusStates.DJINN) {
+                    this.chars_menu.unset_character(this.chars_menu.selected_index);
+                    this.chars_menu.arrow_group.visible = false;
+                } else {
+                    this.chars_menu.set_character(this.chars_menu.selected_index);
+                    this.chars_menu.arrow_group.visible = true;
+                }
+            }
+
+            if (![MainStatusStates.CHARACTERS, MainStatusStates.DJINN].includes(new_state) && !this.desc_window.open) {
                 this.desc_window.show(this.init_desc_guide.bind(this), false);
             } else if (new_state === MainStatusStates.CHARACTERS && this.desc_window.open) {
                 this.desc_window.close(
@@ -669,8 +688,11 @@ export class MainStatusMenu {
             this.current_state = new_state;
             this.current_component = this.components[MainStatusMenu.StateComponent[this.current_state]];
 
-            this.current_component.reset(pos);
+            if (this.current_state === MainStatusStates.DJINN) this.current_component.initialize();
+            else this.current_component.reset(pos);
+
             if (this.current_state !== MainStatusStates.CHARACTERS) this.inner_control();
+            this.check_main_components();
         }
     }
 

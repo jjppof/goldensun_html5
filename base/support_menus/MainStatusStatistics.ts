@@ -1,13 +1,12 @@
-import {StatusComponent, StatusModes} from "./StatusComponent";
-import {TextObj, Window} from "../Window";
+import {StatusComponent} from "./StatusComponent";
+import {Window} from "../Window";
 import {GoldenSun} from "../GoldenSun";
 import {CursorManager, PointVariants} from "../utils/CursorManager";
 import {BattleStatusEffect, BattleStatusWindow} from "../windows/battle/BattleStatusWindow";
-import {effect_type_stat, ordered_status_battle, permanent_status, temporary_status} from "../Player";
-import {elements, element_names, ordered_elements} from "../utils";
+import {permanent_status} from "../Player";
+import {elements, ordered_elements} from "../utils";
 import * as _ from "lodash";
 import {MainStatusMenu, MainStatusStates} from "../main_menus/MainStatusMenu";
-import {MainChar} from "../MainChar";
 
 export enum MainStatistics {
     NAME,
@@ -566,6 +565,7 @@ export class MainStatusStatistics extends StatusComponent {
                 false,
                 MainStatusStatistics.GROUP_KEY
             );
+            this.state_sprites.push(txt.text, txt.shadow);
 
             txt = this.window.set_text_in_position(
                 this.selected_char.agi,

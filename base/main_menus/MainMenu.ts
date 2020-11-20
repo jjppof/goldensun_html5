@@ -79,7 +79,7 @@ export class MainMenu {
                     this.horizontal_menu.open(undefined, this.current_index);
                 }
             });
-        });
+        }, false);
     }
 
     public update_position() {

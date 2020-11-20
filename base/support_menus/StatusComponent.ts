@@ -128,6 +128,7 @@ export abstract class StatusComponent {
         this.state_sprites = [];
 
         if (this.window.page_indicator.is_set) this.window.page_indicator.terminante();
+        this.window.clear_separators();
     }
 
     protected get_djinn_counts(element: elements) {
