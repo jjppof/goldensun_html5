@@ -110,10 +110,8 @@ export class MainStatusDjinn extends StatusComponent {
 
         const djinn = this.djinn_pages[this.current_page];
 
-        const elems = [elements.VENUS, elements.MERCURY, elements.MARS, elements.JUPITER];
-
-        for (let i = 0; i < elems.length; i++) {
-            const elem = elems[i];
+        for (let i = 0; i < ordered_elements.length; i++) {
+            const elem = ordered_elements[i];
 
             const x_pos = MainStatusDjinn.SPRITES.CENTER_X + i * MainStatusDjinn.SPRITES.SHIFT;
             let y_pos = MainStatusDjinn.SPRITES.Y;
@@ -131,7 +129,7 @@ export class MainStatusDjinn extends StatusComponent {
 
             this.state_sprites.push(djinni_sprite);
 
-            const elem_djinn: Djinn[] = djinn[elems[i]];
+            const elem_djinn: Djinn[] = djinn[ordered_elements[i]];
 
             for (let n = 0; n < elem_djinn.length; n++) {
                 let x_pos = MainStatusDjinn.STARS.X + i * MainStatusDjinn.STARS.X_SHIFT;
@@ -140,7 +138,7 @@ export class MainStatusDjinn extends StatusComponent {
                 const star = this.window.create_at_group(
                     x_pos,
                     y_pos,
-                    elems[i] + "_star",
+                    ordered_elements[i] + "_star",
                     undefined,
                     undefined,
                     MainStatusDjinn.GROUP_KEY
@@ -224,21 +222,21 @@ export class MainStatusDjinn extends StatusComponent {
             [elements.MARS]: [],
             [elements.JUPITER]: [],
         };
-        const elems = [elements.VENUS, elements.MERCURY, elements.MARS, elements.JUPITER];
 
-        for (let char_key in this.data.info.main_char_list) {
-            const char = this.data.info.main_char_list[char_key];
-            for (let i = 0; i < elems.length; i++) {
-                const char_djinn_names = char[elems[i] + "_djinni"];
+        for (let i = 0; i < this.data.info.party_data.members.length; i++) {
+            const char = this.data.info.party_data.members[i];
+
+            for (let i = 0; i < ordered_elements.length; i++) {
+                const char_djinn_names = char[ordered_elements[i] + "_djinni"];
 
                 for (let n = 0; n < char_djinn_names.length; n++) {
-                    djinn[elems[i]].push(this.data.info.djinni_list[char_djinn_names[n]]);
+                    djinn[ordered_elements[i]].push(this.data.info.djinni_list[char_djinn_names[n]]);
                 }
             }
         }
 
-        for (let i = 0; i < elems.length; i++) {
-            djinn[elems[i]].sort((a: Djinn, b: Djinn) => a.index - b.index);
+        for (let i = 0; i < ordered_elements.length; i++) {
+            djinn[ordered_elements[i]].sort((a: Djinn, b: Djinn) => a.index - b.index);
         }
 
         return djinn;
