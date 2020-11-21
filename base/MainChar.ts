@@ -313,7 +313,9 @@ export class MainChar extends Player {
         if (item.type in item_equip_slot && this.equip_slots[item_equip_slot[item.type]] !== null) {
             this.unequip_item(this.equip_slots[item_equip_slot[item.type]].index);
         }
-        this.equip_slots[item_equip_slot[item.type]] = item_obj;
+        if (item.type in item_equip_slot) {
+            this.equip_slots[item_equip_slot[item.type]] = item_obj;
+        }
         item_obj.equipped = true;
         for (let i = 0; i < item.effects.length; ++i) {
             this.add_effect(item.effects[i], item);
