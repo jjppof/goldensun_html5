@@ -974,8 +974,10 @@ export class BattleAnimation {
                                 );
                             }
                             if (emitter_info.pixel_reducing_factor !== undefined) {
-                                (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize -=
-                                    emitter_info.pixel_reducing_factor;
+                                if (!(emitter as any)._delay.waiting) {
+                                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize -=
+                                        emitter_info.pixel_reducing_factor;
+                                }
                             }
                         }
                     };

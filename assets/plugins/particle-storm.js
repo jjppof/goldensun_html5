@@ -1194,6 +1194,7 @@ Phaser.ParticleStorm.Emitter.prototype = {
         if (config.delay)
         {
             this._delay.enabled = true;
+            this._delay.waiting = true;
 
             if (typeof config.delay === 'number')
             {
@@ -1206,6 +1207,10 @@ Phaser.ParticleStorm.Emitter.prototype = {
                 this._delay.start = (config.delay.start) ? config.delay.start : 0;
                 this._delay.step = (config.delay.step) ? config.delay.step : 0;
                 this._delay.visible = (config.delay.visible) ? true : false;
+            }
+
+            if (this._delay.start > 0) {
+                this.game.time.events.add(this._delay.start, () => (this._delay.waiting = false));
             }
         }
 
