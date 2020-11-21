@@ -7,12 +7,7 @@ import * as _ from "lodash";
 import {MainStatusMenu} from "../main_menus/MainStatusMenu";
 import {Djinn} from "../Djinn";
 
-export type DjinnList = {
-    [elements.VENUS]: Djinn[];
-    [elements.MERCURY]: Djinn[];
-    [elements.MARS]: Djinn[];
-    [elements.JUPITER]: Djinn[];
-};
+export type DjinnList = {[element in elements]?: Djinn[]};
 
 export class MainStatusDjinn extends StatusComponent {
     private static readonly STARS = {
@@ -142,19 +137,9 @@ export class MainStatusDjinn extends StatusComponent {
             }
 
             const x_pos = MainStatusDjinn.SPRITES.CENTER_X + i * MainStatusDjinn.SPRITES.SHIFT;
-            let y_pos = MainStatusDjinn.SPRITES.Y;
+            const y_pos = MainStatusDjinn.SPRITES.Y;
 
-            const djinni_sprite = this.djinn_group.create(x_pos, y_pos, elem + "_djinn_set");
-
-            djinni_sprite.anchor.setTo(0.5, 1.0);
-            djinni_sprite.scale.x = -1;
-
-            const direction = "down";
-            const action = "set";
-
-            this.data.info.djinni_sprites[elem].setAnimation(djinni_sprite, action);
-            djinni_sprite.animations.play(action + "_" + direction);
-
+            const djinni_sprite = this.get_djinni_sprite(elem, this.djinn_group, {x: x_pos, y: y_pos});
             this.state_sprites.push(djinni_sprite);
         }
 
@@ -183,29 +168,17 @@ export class MainStatusDjinn extends StatusComponent {
 
         const max_per_page = MainStatusDjinn.DJINN_PER_LINE;
 
-        const venus = djinn_list[elements.VENUS];
-        const mercury = djinn_list[elements.MERCURY];
-        const mars = djinn_list[elements.MARS];
-        const jupiter = djinn_list[elements.JUPITER];
-
-        const highest_count = Math.max(venus.length, mercury.length, mars.length, jupiter.length);
+        const highest_count = (_.maxBy(Object.values(djinn_list), (list: Djinn[]) => list.length) as Djinn[]).length;
 
         let n_pages = (highest_count / max_per_page) | 0;
         if (highest_count % max_per_page) n_pages++;
         this.djinn_pages = [];
 
         for (let i = 0; i < n_pages; i++) {
-            let page: DjinnList = {
-                [elements.VENUS]: [],
-                [elements.MERCURY]: [],
-                [elements.MARS]: [],
-                [elements.JUPITER]: [],
-            };
-
-            page[elements.VENUS] = venus.slice(max_per_page * i, max_per_page * (i + 1) - 1);
-            page[elements.MERCURY] = mercury.slice(max_per_page * i, max_per_page * (i + 1) - 1);
-            page[elements.MARS] = mars.slice(max_per_page * i, max_per_page * (i + 1) - 1);
-            page[elements.JUPITER] = jupiter.slice(max_per_page * i, max_per_page * (i + 1) - 1);
+            const page: DjinnList = ordered_elements.reduce((result, elem) => {
+                result[elem] = djinn_list[elem].slice(max_per_page * i, max_per_page * (i + 1) - 1);
+                return result;
+            }, {} as DjinnList);
 
             this.djinn_pages.push(page);
         }

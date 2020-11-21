@@ -4,7 +4,7 @@ import {GoldenSun} from "../GoldenSun";
 import {CursorManager, PointVariants} from "../utils/CursorManager";
 import {BattleStatusEffect, BattleStatusWindow} from "../windows/battle/BattleStatusWindow";
 import {permanent_status} from "../Player";
-import {elements, ordered_elements} from "../utils";
+import {ordered_elements} from "../utils";
 import * as _ from "lodash";
 import {MainStatusMenu, MainStatusStates} from "../main_menus/MainStatusMenu";
 
@@ -385,27 +385,15 @@ export class MainStatusStatistics extends StatusComponent {
                 this.state_sprites.push(numbers.text, numbers.shadow);
             }
 
-            const djinni_elements = [elements.VENUS, elements.MERCURY, elements.MARS, elements.JUPITER];
-
-            for (let i = 0; i < djinni_elements.length; i++) {
-                const elem = djinni_elements[i];
+            for (let i = 0; i < ordered_elements.length; i++) {
+                const elem = ordered_elements[i];
 
                 const x_pos = MainStatusStatistics.ELEM.DJINN.CENTER_X + i * MainStatusStatistics.ELEM.DJINN.X_SHIFT;
                 let y_pos = MainStatusStatistics.ELEM.DJINN.Y;
 
                 if (this.state === MainStatusStates.CHARACTERS) y_pos += MainStatusStatistics.ELEM.DOWN_SHIFT;
 
-                const djinni_sprite = this.djinn_group.create(x_pos, y_pos, elem + "_djinn_set");
-
-                djinni_sprite.anchor.setTo(0.5, 1.0);
-                djinni_sprite.scale.x = -1;
-
-                const direction = "down";
-                const action = "set";
-
-                this.data.info.djinni_sprites[elem].setAnimation(djinni_sprite, action);
-                djinni_sprite.animations.play(action + "_" + direction);
-
+                const djinni_sprite = this.get_djinni_sprite(elem, this.djinn_group, {x: x_pos, y: y_pos});
                 this.state_sprites.push(djinni_sprite);
             }
 

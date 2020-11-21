@@ -1,8 +1,8 @@
 import {BitmapText} from "phaser-ce";
-import {djinn_status} from "../Djinn";
+import {Djinn, djinn_status} from "../Djinn";
 import {GoldenSun} from "../GoldenSun";
 import {MainStatusMenu} from "../main_menus/MainStatusMenu";
-import {elements} from "../utils";
+import {directions, elements, reverse_directions} from "../utils";
 import {Window} from "../Window";
 import {BattleStatusWindow} from "../windows/battle/BattleStatusWindow";
 
@@ -132,34 +132,13 @@ export abstract class StatusComponent {
     }
 
     protected get_djinn_counts(element: elements) {
-        let set_count = 0;
-        let total_count = 0;
-        let djinn_names = [];
-
-        switch (element) {
-            case elements.VENUS:
-                djinn_names = this.selected_char.venus_djinni;
-                total_count = this.selected_char.venus_djinni.length;
-                break;
-            case elements.MERCURY:
-                djinn_names = this.selected_char.mercury_djinni;
-                total_count = this.selected_char.mercury_djinni.length;
-                break;
-            case elements.MARS:
-                djinn_names = this.selected_char.mars_djinni;
-                total_count = this.selected_char.mars_djinni.length;
-                break;
-            case elements.JUPITER:
-                djinn_names = this.selected_char.jupiter_djinni;
-                total_count = this.selected_char.jupiter_djinni.length;
-                break;
-        }
-
-        for (let index in djinn_names) {
-            if (this.data.info.djinni_list[djinn_names[index]].status === djinn_status.SET) set_count++;
-        }
-
-        return {set: set_count, total: total_count};
+        const djinn = this.selected_char[element + "_djinni"].map(
+            (djinn_key: string) => this.data.info.djinni_list[djinn_key]
+        );
+        return {
+            total: djinn.length,
+            set: djinn.filter((djinni: Djinn) => djinni.status === djinn_status.SET).length,
+        };
     }
 
     protected get_elemental_stats(element: elements) {
@@ -191,5 +170,21 @@ export abstract class StatusComponent {
         }
 
         return {level: elemental_level, power: elemental_power, resistance: elemental_resistance};
+    }
+
+    protected get_djinni_sprite(elem: elements, group: Phaser.Group, pos: {x: number; y: number}) {
+        const action_key = this.data.info.djinni_sprites[elem].getActionKey(djinn_status.SET);
+        const sprite = group.create(pos.x, pos.y, action_key);
+
+        sprite.anchor.setTo(0.5, 1.0);
+        sprite.scale.x = -1;
+
+        const direction = reverse_directions[directions.down];
+        const action = djinn_status.SET;
+
+        this.data.info.djinni_sprites[elem].setAnimation(sprite, action);
+        sprite.animations.play(this.data.info.djinni_sprites[elem].getAnimationKey(action, direction));
+
+        return sprite;
     }
 }

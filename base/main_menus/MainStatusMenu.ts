@@ -1,5 +1,5 @@
 import {GoldenSun} from "../GoldenSun";
-import {MainChar} from "../MainChar";
+import {equip_slots, MainChar} from "../MainChar";
 import {ordered_status_menu} from "../Player";
 import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
 import {TextObj, Window} from "../Window";
@@ -346,7 +346,7 @@ export class MainStatusMenu {
     }
 
     private init_desc_guide() {
-        this.desc_window.create_at_group(
+        let sprite = this.desc_window.create_at_group(
             MainStatusMenu.DESC_GUIDE.L.X + 1,
             MainStatusMenu.DESC_GUIDE.L.Y + 1,
             "l_button",
@@ -354,7 +354,9 @@ export class MainStatusMenu {
             undefined,
             MainStatusMenu.DESC_GUIDE_KEY
         );
-        this.desc_window.create_at_group(
+        this.active_sprites.push(sprite);
+
+        sprite = this.desc_window.create_at_group(
             MainStatusMenu.DESC_GUIDE.L.X,
             MainStatusMenu.DESC_GUIDE.L.Y,
             "l_button",
@@ -362,8 +364,9 @@ export class MainStatusMenu {
             undefined,
             MainStatusMenu.DESC_GUIDE_KEY
         );
+        this.active_sprites.push(sprite);
 
-        this.desc_window.create_at_group(
+        sprite = this.desc_window.create_at_group(
             MainStatusMenu.DESC_GUIDE.R.X + 1,
             MainStatusMenu.DESC_GUIDE.R.Y + 1,
             "r_button",
@@ -371,7 +374,9 @@ export class MainStatusMenu {
             undefined,
             MainStatusMenu.DESC_GUIDE_KEY
         );
-        this.desc_window.create_at_group(
+        this.active_sprites.push(sprite);
+
+        sprite = this.desc_window.create_at_group(
             MainStatusMenu.DESC_GUIDE.R.X,
             MainStatusMenu.DESC_GUIDE.R.Y,
             "r_button",
@@ -379,8 +384,9 @@ export class MainStatusMenu {
             undefined,
             MainStatusMenu.DESC_GUIDE_KEY
         );
+        this.active_sprites.push(sprite);
 
-        this.desc_window.create_at_group(
+        sprite = this.desc_window.create_at_group(
             MainStatusMenu.DESC_GUIDE.A.X + 1,
             MainStatusMenu.DESC_GUIDE.A.Y + 1,
             "a_button",
@@ -388,7 +394,9 @@ export class MainStatusMenu {
             undefined,
             MainStatusMenu.DESC_GUIDE_KEY
         );
-        this.desc_window.create_at_group(
+        this.active_sprites.push(sprite);
+
+        sprite = this.desc_window.create_at_group(
             MainStatusMenu.DESC_GUIDE.A.X,
             MainStatusMenu.DESC_GUIDE.A.Y,
             "a_button",
@@ -396,8 +404,9 @@ export class MainStatusMenu {
             undefined,
             MainStatusMenu.DESC_GUIDE_KEY
         );
+        this.active_sprites.push(sprite);
 
-        this.desc_window.set_text_in_position(
+        let obj = this.desc_window.set_text_in_position(
             "-",
             MainStatusMenu.DESC_GUIDE.HIFEN.X,
             MainStatusMenu.DESC_GUIDE.HIFEN.Y,
@@ -407,8 +416,9 @@ export class MainStatusMenu {
             false,
             MainStatusMenu.DESC_GUIDE_KEY
         );
+        this.active_sprites.push(obj.text, obj.shadow);
 
-        this.desc_window.set_text_in_position(
+        obj = this.desc_window.set_text_in_position(
             ": Switch  characters",
             MainStatusMenu.DESC_GUIDE.LR_TEXT.X,
             MainStatusMenu.DESC_GUIDE.LR_TEXT.Y,
@@ -418,8 +428,9 @@ export class MainStatusMenu {
             false,
             MainStatusMenu.DESC_GUIDE_KEY
         );
+        this.active_sprites.push(obj.text, obj.shadow);
 
-        this.desc_guide_a_text = this.desc_window.set_text_in_position(
+        obj = this.desc_guide_a_text = this.desc_window.set_text_in_position(
             "",
             MainStatusMenu.DESC_GUIDE.A_TEXT.X,
             MainStatusMenu.DESC_GUIDE.A_TEXT.Y,
@@ -429,14 +440,7 @@ export class MainStatusMenu {
             false,
             MainStatusMenu.DESC_GUIDE_KEY
         );
-    }
-
-    private unset_win_assets(window: Window, group_key?: String) {
-        if (group_key !== undefined) group_key === MainStatusMenu.GROUP_KEY;
-        const group = window.get_internal_group(group_key);
-
-        if (!group) return;
-        else group.removeChildren();
+        this.active_sprites.push(obj.text, obj.shadow);
     }
 
     private initialize() {
@@ -776,7 +780,12 @@ export class MainStatusMenu {
         this.main_window.update_text(char.level, this.level_value);
         this.main_window.update_text(char.class.name, this.class_name);
 
-        const names = {weapon: "", head: "", chest: "", body: ""};
+        const names = {
+            [equip_slots.WEAPON]: "",
+            [equip_slots.HEAD]: "",
+            [equip_slots.CHEST]: "",
+            [equip_slots.BODY]: "",
+        };
         for (let property in names) {
             const item_slot = char.equip_slots[property];
 
@@ -784,10 +793,10 @@ export class MainStatusMenu {
             else names[property] = this.data.info.items_list[item_slot.key_name].name;
         }
 
-        this.equip_window.update_text(names.weapon, this.eq_weapon_name);
-        this.equip_window.update_text(names.head, this.eq_head_name);
-        this.equip_window.update_text(names.chest, this.eq_shield_name);
-        this.equip_window.update_text(names.body, this.eq_chest_name);
+        this.equip_window.update_text(names[equip_slots.WEAPON], this.eq_weapon_name);
+        this.equip_window.update_text(names[equip_slots.HEAD], this.eq_head_name);
+        this.equip_window.update_text(names[equip_slots.CHEST], this.eq_shield_name);
+        this.equip_window.update_text(names[equip_slots.BODY], this.eq_chest_name);
     }
 
     private trigger_state_change() {
@@ -923,8 +932,6 @@ export class MainStatusMenu {
         this.menu_open = false;
         this.data.cursor_manager.hide();
         this.data.control_manager.reset();
-
-        this.unset_win_assets.bind(this, this.desc_window, MainStatusMenu.DESC_GUIDE_KEY);
 
         this.current_component.clear();
         this.current_component = null;
