@@ -1,14 +1,11 @@
 import {StatusComponent} from "./StatusComponent";
 import {Window} from "../Window";
 import {GoldenSun} from "../GoldenSun";
-import {CursorManager, PointVariants} from "../utils/CursorManager";
-import {BattleStatusEffect, BattleStatusWindow} from "../windows/battle/BattleStatusWindow";
-import {permanent_status} from "../Player";
+import {BattleStatusWindow} from "../windows/battle/BattleStatusWindow";
 import {elements, ordered_elements} from "../utils";
 import * as _ from "lodash";
-import {MainStatusMenu, MainStatusStates} from "../main_menus/MainStatusMenu";
+import {MainStatusMenu} from "../main_menus/MainStatusMenu";
 import {Djinn} from "../Djinn";
-import {MainChar} from "../MainChar";
 
 export type DjinnList = {
     [elements.VENUS]: Djinn[];
@@ -31,8 +28,8 @@ export class MainStatusDjinn extends StatusComponent {
         Y_SHIFT: 8,
     };
     private static readonly SPRITES = {
-        CENTER_X: 31,
-        Y: 56,
+        CENTER_X: 32,
+        Y: 57,
         SHIFT: 56,
     };
     private static readonly SEPARATOR = {
@@ -112,23 +109,6 @@ export class MainStatusDjinn extends StatusComponent {
 
         for (let i = 0; i < ordered_elements.length; i++) {
             const elem = ordered_elements[i];
-
-            const x_pos = MainStatusDjinn.SPRITES.CENTER_X + i * MainStatusDjinn.SPRITES.SHIFT;
-            let y_pos = MainStatusDjinn.SPRITES.Y;
-
-            const djinni_sprite = this.djinn_group.create(x_pos, y_pos, elem + "_djinn_set");
-
-            djinni_sprite.anchor.setTo(0.5, 1.0);
-            djinni_sprite.scale.x = -1;
-
-            const direction = "down";
-            const action = "set";
-
-            this.data.info.djinni_sprites[elem].setAnimation(djinni_sprite, action);
-            djinni_sprite.animations.play(action + "_" + direction);
-
-            this.state_sprites.push(djinni_sprite);
-
             const elem_djinn: Djinn[] = djinn[ordered_elements[i]];
 
             for (let n = 0; n < elem_djinn.length; n++) {
@@ -160,6 +140,22 @@ export class MainStatusDjinn extends StatusComponent {
                 );
                 this.state_sprites.push(name.text, name.shadow);
             }
+
+            const x_pos = MainStatusDjinn.SPRITES.CENTER_X + i * MainStatusDjinn.SPRITES.SHIFT;
+            let y_pos = MainStatusDjinn.SPRITES.Y;
+
+            const djinni_sprite = this.djinn_group.create(x_pos, y_pos, elem + "_djinn_set");
+
+            djinni_sprite.anchor.setTo(0.5, 1.0);
+            djinni_sprite.scale.x = -1;
+
+            const direction = "down";
+            const action = "set";
+
+            this.data.info.djinni_sprites[elem].setAnimation(djinni_sprite, action);
+            djinni_sprite.animations.play(action + "_" + direction);
+
+            this.state_sprites.push(djinni_sprite);
         }
 
         const sep_x = MainStatusDjinn.SEPARATOR.X;
@@ -216,28 +212,14 @@ export class MainStatusDjinn extends StatusComponent {
     }
 
     private get_djinn_by_element() {
-        const djinn: DjinnList = {
-            [elements.VENUS]: [],
-            [elements.MERCURY]: [],
-            [elements.MARS]: [],
-            [elements.JUPITER]: [],
-        };
-
-        for (let i = 0; i < this.data.info.party_data.members.length; i++) {
-            const char = this.data.info.party_data.members[i];
-
-            for (let i = 0; i < ordered_elements.length; i++) {
-                const char_djinn_names = char[ordered_elements[i] + "_djinni"];
-
-                for (let n = 0; n < char_djinn_names.length; n++) {
-                    djinn[ordered_elements[i]].push(this.data.info.djinni_list[char_djinn_names[n]]);
-                }
-            }
-        }
-
-        for (let i = 0; i < ordered_elements.length; i++) {
-            djinn[ordered_elements[i]].sort((a: Djinn, b: Djinn) => a.index - b.index);
-        }
+        const djinn = ordered_elements.reduce((result, elem) => {
+            const char_djinn = this.data.info.party_data.members.map(char => char[elem + "_djinni"]).flat();
+            result[elem] = _.sortBy(
+                char_djinn.map(djinni_key => this.data.info.djinni_list[djinni_key]),
+                char_djinn => char_djinn.index
+            );
+            return result;
+        }, {});
 
         return djinn;
     }

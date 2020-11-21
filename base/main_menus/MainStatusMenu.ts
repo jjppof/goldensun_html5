@@ -8,6 +8,8 @@ import * as _ from "lodash";
 import {StatusComponent} from "../support_menus/StatusComponent";
 import {MainStatusStatistics} from "../support_menus/MainStatusStatistics";
 import {MainStatusDjinn} from "../support_menus/MainStatusDjinn";
+import {MainStatusPsynergy} from "../support_menus/MainStatusPsynergy";
+import {MainStatusItems} from "../support_menus/MainStatusItems";
 
 export enum MainStatusStates {
     CHARACTERS,
@@ -51,10 +53,14 @@ export class MainStatusMenu {
         Y: 40,
     };
     private static readonly LEVEL = {
-        LABEL_X: 112,
-        LABEL_Y: 8,
-        VALUE_END_X: 149,
-        VALUE_Y: 8,
+        LABEL_X1: 112,
+        LABEL_Y1: 8,
+        VALUE_END_X1: 149,
+        VALUE_Y1: 8,
+        LABEL_X2: 8,
+        LABEL_Y2: 56,
+        VALUE_END_X2: 45,
+        VALUE_Y2: 56,
     };
     private static readonly AVATAR = {
         X: 8,
@@ -82,6 +88,11 @@ export class MainStatusMenu {
         A: {X: 9, Y: 24},
         A_TEXT: {X: 19, Y: 24},
     };
+    private static readonly EQUIP_TEXT = {
+        LABEL: {X: 8, Y: 8},
+        NAME: {X: 16, Y: 16},
+        SHIFT: 16,
+    };
 
     private static readonly StateComponent = {
         [MainStatusStates.CHARACTERS]: 0,
@@ -95,6 +106,10 @@ export class MainStatusMenu {
         [MainStatusStates.STATISTICS]: MainStatusStates.PSYNERGY,
         [MainStatusStates.PSYNERGY]: MainStatusStates.ITEMS,
         [MainStatusStates.ITEMS]: MainStatusStates.STATISTICS,
+    };
+    private static readonly FONTS = {
+        NORMAL: "gs-bmp-font",
+        ITALIC: "gs-italic-bmp-font",
     };
 
     private static readonly GROUP_KEY = "main_status";
@@ -116,12 +131,12 @@ export class MainStatusMenu {
     private current_component: StatusComponent;
     private selected_char: MainChar;
 
-    private is_open: boolean;
+    private menu_open: boolean;
     private close_callback: Function;
 
     private avatar: Phaser.Sprite;
     private name: TextObj;
-    private level: TextObj;
+    private level_label: TextObj;
     private level_value: TextObj;
     private class_name: TextObj;
 
@@ -136,9 +151,16 @@ export class MainStatusMenu {
 
     private desc_line1: TextObj;
     private desc_line2: TextObj;
+    private desc_guide_a_text: TextObj;
+
+    private eq_weapon_name: TextObj;
+    private eq_shield_name: TextObj;
+    private eq_chest_name: TextObj;
+    private eq_head_name: TextObj;
 
     private battle_effects: BattleStatusEffect[];
     private active_sprites: (Phaser.Sprite | Phaser.BitmapText)[];
+    private eq_highlight: Phaser.Graphics;
 
     public constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
@@ -176,19 +198,25 @@ export class MainStatusMenu {
         );
 
         this.desc_window.define_internal_group(MainStatusMenu.DESC_GUIDE_KEY);
+        this.main_window.define_internal_group(MainStatusMenu.GROUP_KEY);
+        this.guide_window.define_internal_group(MainStatusMenu.GROUP_KEY);
+        this.equip_window.define_internal_group(MainStatusMenu.GROUP_KEY);
 
         this.components = [
             new MainStatusStatistics(this.game, this.data, this.main_window, this),
-            null,
-            //new MainStatusPsynergy(this.game, this.data, this.window, this),
+            new MainStatusPsynergy(this.game, this.data, this.main_window, this),
             new MainStatusDjinn(this.game, this.data, this.main_window, this),
-            //new MainStatusItems(this.game, this.data, this.window, this),
+            new MainStatusItems(this.game, this.data, this.main_window, this),
         ];
+
+        this.eq_highlight = this.game.add.graphics(0, 0);
+        this.eq_highlight.blendMode = PIXI.blendModes.SCREEN;
+        this.equip_window.add_to_internal_group(MainStatusMenu.GROUP_KEY, this.eq_highlight);
 
         this.current_state = null;
         this.current_component = null;
         this.selected_char = null;
-        this.is_open = false;
+        this.menu_open = false;
 
         this.active_sprites = [];
     }
@@ -203,6 +231,10 @@ export class MainStatusMenu {
 
     public get state() {
         return this.current_state;
+    }
+
+    public get is_open() {
+        return this.menu_open;
     }
 
     private set_battle_effects() {
@@ -224,15 +256,33 @@ export class MainStatusMenu {
 
     public update_description(line1: string, line2?: string) {
         if (!this.desc_window.open) return;
-
         const text2 = line2 !== undefined ? line2 : "";
 
         const desc_win_group = this.desc_window.get_internal_group(MainStatusMenu.DESC_GUIDE_KEY);
-        if (line1 === "Your status is normal.") {
+        const desc_guide_states = [MainStatusStates.STATISTICS, MainStatusStates.PSYNERGY, MainStatusStates.ITEMS];
+
+        if (text2 === "" && desc_guide_states.includes(this.current_state)) {
+            const next_state = MainStatusMenu.AdvanceState[this.current_state];
+            let next_state_name = MainStatusStates[next_state].toLowerCase();
+            next_state_name = next_state_name.charAt(0).toUpperCase() + next_state_name.slice(1);
+
+            const guide_a_txt = ": " + next_state_name;
+            this.desc_window.update_text(guide_a_txt, this.desc_guide_a_text);
+
             if (!desc_win_group.visible) desc_win_group.visible = true;
         } else {
             if (desc_win_group.visible) desc_win_group.visible = false;
         }
+
+        let font = MainStatusMenu.FONTS.NORMAL;
+        if (this.current_state === MainStatusStates.STATISTICS) {
+            font = MainStatusMenu.FONTS.ITALIC;
+        }
+
+        this.desc_line1.text.font = font;
+        this.desc_line1.shadow.font = font;
+        this.desc_line2.text.font = font;
+        this.desc_line2.shadow.font = font;
 
         this.desc_window.update_text(line1, this.desc_line1);
         this.desc_window.update_text(text2, this.desc_line2);
@@ -260,10 +310,38 @@ export class MainStatusMenu {
     }
 
     private check_main_components() {
-        if ([MainStatusStates.CHARACTERS, MainStatusStates.STATISTICS].includes(this.current_state)) {
-            this.main_window.get_internal_group(MainStatusMenu.GROUP_KEY).visible = true;
-        } else {
+        if (this.current_state === MainStatusStates.DJINN) {
             this.main_window.get_internal_group(MainStatusMenu.GROUP_KEY).visible = false;
+        } else {
+            let label_x = 0;
+            let label_y = 0;
+
+            let value_end_x = 0;
+            let value_y = 0;
+
+            let label = "";
+            if ([MainStatusStates.CHARACTERS, MainStatusStates.STATISTICS].includes(this.current_state)) {
+                label_x = MainStatusMenu.LEVEL.LABEL_X1;
+                label_y = MainStatusMenu.LEVEL.LABEL_Y1;
+
+                value_end_x = MainStatusMenu.LEVEL.VALUE_END_X1;
+                value_y = MainStatusMenu.LEVEL.VALUE_Y1;
+
+                label = "Lv";
+            } else {
+                label_x = MainStatusMenu.LEVEL.LABEL_X2;
+                label_y = MainStatusMenu.LEVEL.LABEL_Y2;
+
+                value_end_x = MainStatusMenu.LEVEL.VALUE_END_X2;
+                value_y = MainStatusMenu.LEVEL.VALUE_Y2;
+
+                label = "L v";
+            }
+            this.main_window.update_text_position({x: label_x, y: label_y}, this.level_label);
+            this.main_window.update_text_position({x: value_end_x, y: value_y}, this.level_value);
+            this.main_window.update_text(label, this.level_label);
+
+            this.main_window.get_internal_group(MainStatusMenu.GROUP_KEY).visible = true;
         }
     }
 
@@ -341,8 +419,8 @@ export class MainStatusMenu {
             MainStatusMenu.DESC_GUIDE_KEY
         );
 
-        this.desc_window.set_text_in_position(
-            ": Psynergy",
+        this.desc_guide_a_text = this.desc_window.set_text_in_position(
+            "",
             MainStatusMenu.DESC_GUIDE.A_TEXT.X,
             MainStatusMenu.DESC_GUIDE.A_TEXT.Y,
             false,
@@ -362,11 +440,6 @@ export class MainStatusMenu {
     }
 
     private initialize() {
-        this.main_window.define_internal_group(MainStatusMenu.GROUP_KEY);
-        this.guide_window.define_internal_group(MainStatusMenu.GROUP_KEY);
-
-        let text_obj: TextObj = null;
-
         this.avatar = this.main_window.create_at_group(
             MainStatusMenu.AVATAR.X,
             MainStatusMenu.AVATAR.Y,
@@ -389,22 +462,22 @@ export class MainStatusMenu {
         );
         this.active_sprites.push(this.name.text, this.name.shadow);
 
-        text_obj = this.main_window.set_text_in_position(
+        this.level_label = this.main_window.set_text_in_position(
             "Lv",
-            MainStatusMenu.LEVEL.LABEL_X,
-            MainStatusMenu.LEVEL.LABEL_Y,
+            MainStatusMenu.LEVEL.LABEL_X1,
+            MainStatusMenu.LEVEL.LABEL_Y1,
             false,
             false,
             undefined,
             false,
             MainStatusMenu.GROUP_KEY
         );
-        this.active_sprites.push(text_obj.text, text_obj.shadow);
+        this.active_sprites.push(this.level_label.text, this.level_label.shadow);
 
         this.level_value = this.main_window.set_text_in_position(
             "",
-            MainStatusMenu.LEVEL.VALUE_END_X,
-            MainStatusMenu.LEVEL.VALUE_Y,
+            MainStatusMenu.LEVEL.VALUE_END_X1,
+            MainStatusMenu.LEVEL.VALUE_Y1,
             true,
             false,
             undefined,
@@ -578,6 +651,110 @@ export class MainStatusMenu {
             true
         );
         this.active_sprites.push(this.desc_line2.text, this.desc_line2.shadow);
+
+        let text = this.equip_window.set_text_in_position(
+            "Weapon",
+            MainStatusMenu.EQUIP_TEXT.LABEL.X,
+            MainStatusMenu.EQUIP_TEXT.LABEL.Y,
+            false,
+            false,
+            undefined,
+            false,
+            MainStatusMenu.GROUP_KEY
+        );
+        this.active_sprites.push(text.text, text.shadow);
+
+        this.eq_weapon_name = this.equip_window.set_text_in_position(
+            "",
+            MainStatusMenu.EQUIP_TEXT.NAME.X,
+            MainStatusMenu.EQUIP_TEXT.NAME.Y,
+            false,
+            false,
+            undefined,
+            false,
+            MainStatusMenu.GROUP_KEY
+        );
+        this.active_sprites.push(this.eq_weapon_name.text, this.eq_weapon_name.shadow);
+
+        let shift = MainStatusMenu.EQUIP_TEXT.SHIFT;
+
+        text = this.equip_window.set_text_in_position(
+            "Head",
+            MainStatusMenu.EQUIP_TEXT.LABEL.X,
+            MainStatusMenu.EQUIP_TEXT.LABEL.Y + shift,
+            false,
+            false,
+            undefined,
+            false,
+            MainStatusMenu.GROUP_KEY
+        );
+        this.active_sprites.push(text.text, text.shadow);
+
+        this.eq_head_name = this.equip_window.set_text_in_position(
+            "",
+            MainStatusMenu.EQUIP_TEXT.NAME.X,
+            MainStatusMenu.EQUIP_TEXT.NAME.Y + shift,
+            false,
+            false,
+            undefined,
+            false,
+            MainStatusMenu.GROUP_KEY
+        );
+        this.active_sprites.push(this.eq_head_name.text, this.eq_head_name.shadow);
+
+        shift += MainStatusMenu.EQUIP_TEXT.SHIFT;
+
+        text = this.equip_window.set_text_in_position(
+            "Shield",
+            MainStatusMenu.EQUIP_TEXT.LABEL.X,
+            MainStatusMenu.EQUIP_TEXT.LABEL.Y + shift,
+            false,
+            false,
+            undefined,
+            false,
+            MainStatusMenu.GROUP_KEY
+        );
+        this.active_sprites.push(text.text, text.shadow);
+
+        this.eq_shield_name = this.equip_window.set_text_in_position(
+            "",
+            MainStatusMenu.EQUIP_TEXT.NAME.X,
+            MainStatusMenu.EQUIP_TEXT.NAME.Y + shift,
+            false,
+            false,
+            undefined,
+            false,
+            MainStatusMenu.GROUP_KEY
+        );
+        this.active_sprites.push(this.eq_shield_name.text, this.eq_shield_name.shadow);
+
+        shift += MainStatusMenu.EQUIP_TEXT.SHIFT;
+
+        text = this.equip_window.set_text_in_position(
+            "Chest",
+            MainStatusMenu.EQUIP_TEXT.LABEL.X,
+            MainStatusMenu.EQUIP_TEXT.LABEL.Y + shift,
+            false,
+            false,
+            undefined,
+            false,
+            MainStatusMenu.GROUP_KEY
+        );
+        this.active_sprites.push(text.text, text.shadow);
+
+        this.eq_chest_name = this.equip_window.set_text_in_position(
+            "",
+            MainStatusMenu.EQUIP_TEXT.NAME.X,
+            MainStatusMenu.EQUIP_TEXT.NAME.Y + shift,
+            false,
+            false,
+            undefined,
+            false,
+            MainStatusMenu.GROUP_KEY
+        );
+        this.active_sprites.push(this.eq_chest_name.text, this.eq_chest_name.shadow);
+
+        this.init_desc_guide();
     }
 
     private update_info() {
@@ -598,6 +775,19 @@ export class MainStatusMenu {
         this.main_window.update_text(char.name, this.name);
         this.main_window.update_text(char.level, this.level_value);
         this.main_window.update_text(char.class.name, this.class_name);
+
+        const names = {weapon: "", head: "", chest: "", body: ""};
+        for (let property in names) {
+            const item_slot = char.equip_slots[property];
+
+            if (!item_slot) names[property] = "";
+            else names[property] = this.data.info.items_list[item_slot.key_name].name;
+        }
+
+        this.equip_window.update_text(names.weapon, this.eq_weapon_name);
+        this.equip_window.update_text(names.head, this.eq_head_name);
+        this.equip_window.update_text(names.chest, this.eq_shield_name);
+        this.equip_window.update_text(names.body, this.eq_chest_name);
     }
 
     private trigger_state_change() {
@@ -650,50 +840,47 @@ export class MainStatusMenu {
     }
 
     private change_state(new_state: MainStatusStates, reset_pos: boolean = false) {
-        const unimplemented = [MainStatusStates.PSYNERGY, MainStatusStates.ITEMS];
-        if (unimplemented.includes(new_state)) {
-            console.warn("State " + MainStatusStates[new_state] + " is not implemented. Moving to CHARACTERS");
-            this.selecting_char();
-        } else {
-            let pos = {line: 0, col: 0};
+        let pos = {line: 0, col: 0};
 
-            if (new_state === MainStatusStates.DJINN || this.current_state === MainStatusStates.DJINN) {
-                this.toggle_guide_win();
+        if (new_state === MainStatusStates.DJINN || this.current_state === MainStatusStates.DJINN) {
+            this.toggle_guide_win();
 
-                if (new_state === MainStatusStates.DJINN) {
-                    this.chars_menu.unset_character(this.chars_menu.selected_index);
-                    this.chars_menu.arrow_group.visible = false;
-                } else {
-                    this.chars_menu.set_character(this.chars_menu.selected_index);
-                    this.chars_menu.arrow_group.visible = true;
-                }
+            if (new_state === MainStatusStates.DJINN) {
+                this.chars_menu.unset_character(this.chars_menu.selected_index);
+                this.chars_menu.arrow_group.visible = false;
+            } else {
+                this.chars_menu.set_character(this.chars_menu.selected_index);
+                this.chars_menu.arrow_group.visible = true;
             }
-
-            if (![MainStatusStates.CHARACTERS, MainStatusStates.DJINN].includes(new_state) && !this.desc_window.open) {
-                this.desc_window.show(this.init_desc_guide.bind(this), false);
-            } else if (new_state === MainStatusStates.CHARACTERS && this.desc_window.open) {
-                this.desc_window.close(
-                    this.unset_win_assets.bind(this, this.desc_window, MainStatusMenu.DESC_GUIDE_KEY),
-                    false
-                );
-            }
-
-            if (this.current_component) {
-                if (!reset_pos) pos = this.current_component.current_pos;
-
-                this.current_component.clear();
-                this.current_component = null;
-            }
-
-            this.current_state = new_state;
-            this.current_component = this.components[MainStatusMenu.StateComponent[this.current_state]];
-
-            if (this.current_state === MainStatusStates.DJINN) this.current_component.initialize();
-            else this.current_component.reset(pos);
-
-            if (this.current_state !== MainStatusStates.CHARACTERS) this.inner_control();
-            this.check_main_components();
         }
+
+        if (![MainStatusStates.CHARACTERS, MainStatusStates.DJINN].includes(new_state) && !this.desc_window.open) {
+            this.desc_window.show(undefined, false);
+        } else if (new_state === MainStatusStates.CHARACTERS && this.desc_window.open) {
+            this.desc_window.close(undefined, false);
+        }
+
+        if (new_state === MainStatusStates.ITEMS && !this.equip_window.open) {
+            this.equip_window.show(undefined, false);
+        } else {
+            this.equip_window.close(undefined, false);
+        }
+
+        if (this.current_component) {
+            if (!reset_pos) pos = this.current_component.current_pos;
+
+            this.current_component.clear();
+            this.current_component = null;
+        }
+
+        this.current_state = new_state;
+        this.current_component = this.components[MainStatusMenu.StateComponent[this.current_state]];
+
+        if (this.current_state === MainStatusStates.DJINN) this.current_component.initialize();
+        else this.current_component.reset(pos);
+
+        if (this.current_state !== MainStatusStates.CHARACTERS) this.inner_control();
+        this.check_main_components();
     }
 
     private selecting_char() {
@@ -727,13 +914,15 @@ export class MainStatusMenu {
         this.selecting_char();
 
         if (open_callback) open_callback();
-        this.is_open = true;
+        this.menu_open = true;
     }
 
     public close_menu(callback?: Function) {
-        this.is_open = false;
+        this.menu_open = false;
         this.data.cursor_manager.hide();
         this.data.control_manager.reset();
+
+        this.unset_win_assets.bind(this, this.desc_window, MainStatusMenu.DESC_GUIDE_KEY);
 
         this.current_component.clear();
         this.current_component = null;
@@ -752,9 +941,15 @@ export class MainStatusMenu {
         });
         this.active_sprites = [];
 
-        console.log(this.desc_window);
-
         callback();
         this.close_callback = null;
+    }
+
+    public update_eq_highlight(highlight: {x: number; y: number; width: number; height: number}) {
+        this.eq_highlight.clear();
+
+        this.eq_highlight.beginFill(this.equip_window.color, 1);
+        this.eq_highlight.drawRect(highlight.x, highlight.y, highlight.width, highlight.height);
+        this.eq_highlight.endFill();
     }
 }
