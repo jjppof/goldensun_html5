@@ -862,7 +862,7 @@ export class MainStatusMenu {
 
         if (new_state === MainStatusStates.ITEMS && !this.equip_window.open) {
             this.equip_window.show(undefined, false);
-        } else {
+        } else if (!(new_state === MainStatusStates.ITEMS) && this.equip_window.open) {
             this.equip_window.close(undefined, false);
         }
 
