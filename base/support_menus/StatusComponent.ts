@@ -1,7 +1,15 @@
 import {BitmapText} from "phaser-ce";
+import {Djinn, djinn_status} from "../Djinn";
 import {GoldenSun} from "../GoldenSun";
+import {MainStatusMenu} from "../main_menus/MainStatusMenu";
+import {directions, elements, reverse_directions} from "../utils";
 import {Window} from "../Window";
 import {BattleStatusWindow} from "../windows/battle/BattleStatusWindow";
+
+export enum StatusModes {
+    BATTLE,
+    MENU,
+}
 
 export abstract class StatusComponent {
     protected static readonly GROUP_KEY = "status_component";
@@ -13,20 +21,28 @@ export abstract class StatusComponent {
     protected current_line: number;
     protected current_col: number;
 
+    protected mode: StatusModes;
+
     protected highlight: Phaser.Graphics;
-    protected state_sprites: (Phaser.Sprite | BitmapText)[];
-    protected manager: BattleStatusWindow;
+    protected state_sprites: (Phaser.Sprite | BitmapText | Phaser.Group)[];
+    protected manager: BattleStatusWindow | MainStatusMenu;
 
     public constructor(
         game: Phaser.Game,
         data: GoldenSun,
         window: Window,
-        manager: BattleStatusWindow,
-        pos?: {line: number; col: number}
+        manager: BattleStatusWindow | MainStatusMenu,
+        pos?: {line: number; col: number},
+        mode?: StatusModes
     ) {
         this.game = game;
         this.data = data;
         this.window = window;
+
+        this.mode = mode ? mode : StatusModes.BATTLE;
+
+        if (this.mode === StatusModes.BATTLE) this.manager = this.manager as BattleStatusWindow;
+        else if (this.mode === StatusModes.MENU) this.manager = this.manager as MainStatusMenu;
 
         if (!this.window.internal_groups[StatusComponent.GROUP_KEY])
             this.window.define_internal_group(StatusComponent.GROUP_KEY, {x: 0, y: 0});
@@ -49,6 +65,33 @@ export abstract class StatusComponent {
     public abstract on_up(): void;
     public abstract on_down(): void;
     public abstract initialize(): void;
+
+    protected get selected_char() {
+        let manager = null;
+
+        if (this.mode === StatusModes.BATTLE) manager = this.manager as BattleStatusWindow;
+        else if (this.mode === StatusModes.MENU) manager = this.manager as MainStatusMenu;
+
+        return manager.selected_character;
+    }
+
+    protected get battle_status_effects() {
+        let manager = null;
+
+        if (this.mode === StatusModes.BATTLE) manager = this.manager as BattleStatusWindow;
+        else if (this.mode === StatusModes.MENU) manager = this.manager as MainStatusMenu;
+
+        return manager.battle_effects_array;
+    }
+
+    protected update_description(line1: string, line2?: string) {
+        let manager = null;
+
+        if (this.mode === StatusModes.BATTLE) manager = this.manager as BattleStatusWindow;
+        else if (this.mode === StatusModes.MENU) manager = this.manager as MainStatusMenu;
+
+        manager.update_description(line1, line2);
+    }
 
     protected update_highlight(highlight: {x: number; y: number; width: number; height: number}) {
         this.highlight.clear();
@@ -85,5 +128,63 @@ export abstract class StatusComponent {
         this.state_sprites = [];
 
         if (this.window.page_indicator.is_set) this.window.page_indicator.terminante();
+        this.window.clear_separators();
+    }
+
+    protected get_djinn_counts(element: elements) {
+        const djinn = this.selected_char[element + "_djinni"].map(
+            (djinn_key: string) => this.data.info.djinni_list[djinn_key]
+        );
+        return {
+            total: djinn.length,
+            set: djinn.filter((djinni: Djinn) => djinni.status === djinn_status.SET).length,
+        };
+    }
+
+    protected get_elemental_stats(element: elements) {
+        let elemental_level = 0;
+        let elemental_power = 0;
+        let elemental_resistance = 0;
+
+        switch (element) {
+            case elements.VENUS:
+                elemental_level = this.selected_char.venus_level_current;
+                elemental_power = this.selected_char.venus_power_current;
+                elemental_resistance = this.selected_char.venus_resist_current;
+                break;
+            case elements.MERCURY:
+                elemental_level = this.selected_char.mercury_level_current;
+                elemental_power = this.selected_char.mercury_power_current;
+                elemental_resistance = this.selected_char.mercury_resist_current;
+                break;
+            case elements.MARS:
+                elemental_level = this.selected_char.mars_level_current;
+                elemental_power = this.selected_char.mars_power_current;
+                elemental_resistance = this.selected_char.mars_resist_current;
+                break;
+            case elements.JUPITER:
+                elemental_level = this.selected_char.jupiter_level_current;
+                elemental_power = this.selected_char.jupiter_power_current;
+                elemental_resistance = this.selected_char.jupiter_resist_current;
+                break;
+        }
+
+        return {level: elemental_level, power: elemental_power, resistance: elemental_resistance};
+    }
+
+    protected get_djinni_sprite(elem: elements, group: Phaser.Group, pos: {x: number; y: number}) {
+        const action_key = this.data.info.djinni_sprites[elem].getActionKey(djinn_status.SET);
+        const sprite = group.create(pos.x, pos.y, action_key);
+
+        sprite.anchor.setTo(0.5, 1.0);
+        sprite.scale.x = -1;
+
+        const direction = reverse_directions[directions.down];
+        const action = djinn_status.SET;
+
+        this.data.info.djinni_sprites[elem].setAnimation(sprite, action);
+        sprite.animations.play(this.data.info.djinni_sprites[elem].getAnimationKey(action, direction));
+
+        return sprite;
     }
 }

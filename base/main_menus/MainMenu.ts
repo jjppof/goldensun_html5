@@ -2,26 +2,27 @@ import {capitalize} from "../utils";
 import {MainPsynergyMenu} from "./MainPsynergyMenu";
 import {MainItemMenu} from "./MainItemMenu";
 import {MainDjinnMenu} from "./MainDjinnMenu";
+import {MainStatusMenu} from "./MainStatusMenu";
 import {CharsStatusWindow} from "../windows/CharsStatusWindow";
 import {GoldenSun} from "../GoldenSun";
 import {HorizontalMenu} from "../support_menus/HorizontalMenu";
 
-const TITLE_WINDOW_WIDTH = 70;
-
 export class MainMenu {
-    public game: Phaser.Game;
-    public data: GoldenSun;
+    private static readonly TITLE_WINDOW_WIDTH = 70;
+    private game: Phaser.Game;
+    private data: GoldenSun;
 
-    public buttons_keys: string[];
-    public current_index: number;
+    private buttons_keys: string[];
+    private current_index: number;
 
-    public chars_status_window: CharsStatusWindow;
-    public horizontal_menu: HorizontalMenu;
-    public psynergy_menu: MainPsynergyMenu;
-    public item_menu: MainItemMenu;
-    public djinn_menu: MainDjinnMenu;
+    private chars_status_window: CharsStatusWindow;
+    private horizontal_menu: HorizontalMenu;
+    private psynergy_menu: MainPsynergyMenu;
+    private item_menu: MainItemMenu;
+    private djinn_menu: MainDjinnMenu;
+    private status_menu: MainStatusMenu;
 
-    constructor(game, data) {
+    public constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
 
@@ -38,14 +39,19 @@ export class MainMenu {
                 on_press: this.button_press.bind(this),
                 on_cancel: this.close_menu.bind(this),
             },
-            TITLE_WINDOW_WIDTH
+            MainMenu.TITLE_WINDOW_WIDTH
         );
         this.psynergy_menu = new MainPsynergyMenu(this.game, this.data);
         this.item_menu = new MainItemMenu(this.game, this.data);
         this.djinn_menu = new MainDjinnMenu(this.game, this.data);
+        this.status_menu = new MainStatusMenu(this.game, this.data);
     }
 
-    button_press() {
+    public get is_active() {
+        return this.horizontal_menu.menu_active;
+    }
+
+    private button_press() {
         this.current_index = this.horizontal_menu.selected_button_index;
 
         switch (this.buttons_keys[this.horizontal_menu.selected_button_index]) {
@@ -58,10 +64,13 @@ export class MainMenu {
             case "item":
                 this.button_press_action(this.item_menu);
                 break;
+            case "status":
+                this.button_press_action(this.status_menu);
+                break;
         }
     }
 
-    button_press_action(menu: any) {
+    private button_press_action(menu: MainPsynergyMenu | MainDjinnMenu | MainItemMenu | MainStatusMenu) {
         this.horizontal_menu.close(() => {
             menu.open_menu((close_this_menu: boolean) => {
                 if (close_this_menu) this.close_menu();
@@ -70,22 +79,22 @@ export class MainMenu {
                     this.horizontal_menu.open(undefined, this.current_index);
                 }
             });
-        });
+        }, false);
     }
 
-    update_position() {
+    public update_position() {
         this.chars_status_window.update_position(true);
         this.horizontal_menu.update_position();
     }
 
-    open_menu() {
+    public open_menu() {
         this.chars_status_window.update_chars_info();
         this.chars_status_window.update_position();
         this.chars_status_window.show();
         this.horizontal_menu.open();
     }
 
-    close_menu() {
+    public close_menu() {
         if (!this.horizontal_menu.menu_active) return;
         this.data.control_manager.reset();
         this.data.cursor_manager.hide();

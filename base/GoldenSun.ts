@@ -281,7 +281,7 @@ export class GoldenSun {
             this.map.update(); //update map and its objects position/velocity/sprite
         } else {
             this.hero.stop_char(false);
-            if (this.menu_open && this.main_menu.horizontal_menu.menu_active) {
+            if (this.menu_open && this.main_menu.is_active) {
                 this.main_menu.update_position();
             } else if (this.shop_open && this.shop_menu.horizontal_menu.menu_active) {
                 this.shop_menu.update_position();
