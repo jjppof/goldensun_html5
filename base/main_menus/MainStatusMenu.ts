@@ -913,7 +913,9 @@ export class MainStatusMenu {
         this.chars_menu.open(0, CharsMenuModes.MENU, undefined, true);
         this.selecting_char();
 
+        this.main_window.group.bringToTop(this.main_window.get_internal_group(MainStatusMenu.GROUP_KEY));
         if (open_callback) open_callback();
+
         this.menu_open = true;
     }
 
