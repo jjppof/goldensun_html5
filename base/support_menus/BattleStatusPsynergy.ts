@@ -70,6 +70,9 @@ export class BattleStatusPsynergy extends StatusComponent {
     }
 
     public on_change() {
+        if (!this.battle_abilities[this.current_col][this.current_line])
+            this.current_line = this.battle_abilities[this.current_col].length - 1;
+
         this.select_option();
 
         const chosen_ability = this.battle_abilities[this.current_col][this.current_line];
@@ -85,7 +88,7 @@ export class BattleStatusPsynergy extends StatusComponent {
         if (!this.battle_abilities[this.current_col][this.current_line])
             this.current_line = this.battle_abilities[this.current_col].length - 1;
 
-        this.reset();
+        this.reset(undefined, true);
     }
 
     public on_right() {
@@ -97,7 +100,7 @@ export class BattleStatusPsynergy extends StatusComponent {
         if (!this.battle_abilities[this.current_col][this.current_line])
             this.current_line = this.battle_abilities[this.current_col].length - 1;
 
-        this.reset();
+        this.reset(undefined, true);
     }
 
     public on_up() {
@@ -111,7 +114,7 @@ export class BattleStatusPsynergy extends StatusComponent {
                 this.current_col = this.current_col - 1;
                 this.current_line = this.battle_abilities[this.current_col].length - 1;
             }
-            this.reset();
+            this.reset(undefined, true);
         } else {
             this.current_line--;
             this.on_change();
@@ -129,7 +132,7 @@ export class BattleStatusPsynergy extends StatusComponent {
                 this.current_col = this.current_col + 1;
                 this.current_line = 0;
             }
-            this.reset();
+            this.reset(undefined, true);
         } else {
             this.current_line++;
             this.on_change();
@@ -143,6 +146,7 @@ export class BattleStatusPsynergy extends StatusComponent {
         };
         this.update_abilities();
 
+        if (!this.battle_abilities[this.current_col]) this.current_col = this.battle_abilities.length - 1;
         const abilities = this.battle_abilities[this.current_col];
 
         abilities.forEach((ability, index) => {

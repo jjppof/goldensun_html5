@@ -64,6 +64,9 @@ export class BattleStatusItems extends StatusComponent {
     }
 
     public on_change() {
+        if (!this.char_items[this.current_col][this.current_line])
+            this.current_line = this.char_items[this.current_col].length - 1;
+
         this.select_option();
 
         const chosen_item = this.char_items[this.current_col][this.current_line];
@@ -79,7 +82,7 @@ export class BattleStatusItems extends StatusComponent {
         if (!this.char_items[this.current_col][this.current_line])
             this.current_line = this.char_items[this.current_col].length - 1;
 
-        this.reset();
+        this.reset(undefined, true);
     }
 
     public on_right() {
@@ -91,7 +94,7 @@ export class BattleStatusItems extends StatusComponent {
         if (!this.char_items[this.current_col][this.current_line])
             this.current_line = this.char_items[this.current_col].length - 1;
 
-        this.reset();
+        this.reset(undefined, true);
     }
 
     public on_up() {
@@ -105,7 +108,7 @@ export class BattleStatusItems extends StatusComponent {
                 this.current_col = this.current_col - 1;
                 this.current_line = this.char_items[this.current_col].length - 1;
             }
-            this.reset();
+            this.reset(undefined, true);
         } else {
             this.current_line--;
             this.on_change();
@@ -123,7 +126,7 @@ export class BattleStatusItems extends StatusComponent {
                 this.current_col = this.current_col + 1;
                 this.current_line = 0;
             }
-            this.reset();
+            this.reset(undefined, true);
         } else {
             this.current_line++;
             this.on_change();
@@ -135,8 +138,10 @@ export class BattleStatusItems extends StatusComponent {
             x: BattleStatusItems.PAGE_INDICATOR_ANCHOR.X,
             y: BattleStatusItems.PAGE_INDICATOR_ANCHOR.Y,
         };
-        this.update_abilities();
 
+        this.update_items();
+
+        if (!this.char_items[this.current_col]) this.current_col = this.char_items.length - 1;
         const items = this.char_items[this.current_col];
 
         items.forEach((item, index) => {
@@ -191,7 +196,7 @@ export class BattleStatusItems extends StatusComponent {
         this.select_option();
     }
 
-    private update_abilities() {
+    private update_items() {
         const all_items = [...this.selected_char.items];
 
         this.char_items = [];

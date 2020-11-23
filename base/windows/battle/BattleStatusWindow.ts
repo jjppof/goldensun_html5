@@ -736,16 +736,14 @@ export class BattleStatusWindow {
 
         this.current_state = new_state;
         this.current_component = this.components[this.current_state];
-        this.check_shift();
 
         this.current_component.reset(pos);
+        this.draw_seprartor();
         this.grant_control();
     }
 
-    private check_shift() {
+    private draw_seprartor() {
         const shift = this.current_state !== BattleStatusStates.STATISTICS;
-        if (this.desc_shifted === shift) return;
-
         this.window.clear_separators();
 
         const separator_x = BattleStatusWindow.SEPARATOR.X;

@@ -62,6 +62,11 @@ export class BattleStatusDjinn extends StatusComponent {
     }
 
     public on_change() {
+        if (!this.char_djinn[this.current_col]) this.current_col = this.char_djinn.length - 1;
+
+        if (!this.char_djinn[this.current_col][this.current_line])
+            this.current_line = this.char_djinn[this.current_col].length - 1;
+
         this.select_option();
 
         const chosen_djinn = this.char_djinn[this.current_col][this.current_line];

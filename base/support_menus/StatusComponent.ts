@@ -105,20 +105,20 @@ export abstract class StatusComponent {
         return {line: this.current_line, col: this.current_col};
     }
 
-    public reset(pos?: {line: number; col: number}) {
+    public reset(pos?: {line: number; col: number}, keep_separator?: boolean) {
         if (pos) {
             this.current_line = pos.line;
             this.current_col = pos.col;
         }
 
-        this.clear();
+        this.clear(keep_separator);
         this.initialize();
 
         this.select_option();
         this.on_change();
     }
 
-    public clear() {
+    public clear(keep_separator?: boolean) {
         this.highlight.clear();
         this.data.cursor_manager.hide();
 
@@ -128,7 +128,7 @@ export abstract class StatusComponent {
         this.state_sprites = [];
 
         if (this.window.page_indicator.is_set) this.window.page_indicator.terminante();
-        this.window.clear_separators();
+        if (!keep_separator) this.window.clear_separators();
     }
 
     protected get_djinn_counts(element: elements) {
