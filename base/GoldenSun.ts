@@ -289,6 +289,11 @@ export class GoldenSun {
                 this.battle_instance.update();
             }
         }
+
+        //fps adjustment for faster monitors since requestAnimationFrame follows monitor frame rate
+        if (this.game.time.fps > 60 && Math.abs(this.game.time.suggestedFps - this.game.time.desiredFps) > 10) {
+            this.game.time.desiredFps = this.game.time.suggestedFps;
+        }
     }
 
     render() {
