@@ -318,6 +318,7 @@ declare module Phaser {
         smoothProperty: string;
         texture: PIXI.Texture;
         textureFrame: Phaser.Frame;
+        trail_factor: number;
         type: number;
         width: number;
 

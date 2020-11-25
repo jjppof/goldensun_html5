@@ -6,8 +6,7 @@
         "position": "between",
         "count": 16,
         "trails": true,
-        "trails_mode": "screen",
-        "trail_frame_diff": 3
+        "trails_factor": 0.35
     }],
     "x_sequence": [{
         "to": [175, 185, 175, 175, 185, 175, 185, 185, 195, 215, 215, 195, 205, 205, 195, 195],
@@ -56,9 +55,6 @@
         "duration": 200,
         "force_stage_update": true
     }],
-    "y_ellipse_axis_factor_sequence": [],
-    "x_scale_sequence": [],
-    "y_scale_sequence": [],
     "x_anchor_sequence": [{
         "to": [0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6],
         "is_absolute": true,
@@ -103,7 +99,6 @@
         "sprite_index": "background",
         "duration": 200
     }],
-    "rotation_sequence": [],
     "stage_angle_sequence": [{
         "start_delay": 0,
         "to": 5.752255,
@@ -118,9 +113,6 @@
         "is_absolute": true,
         "tween": "initial"
     }],
-    "tint_sequence": [],
-    "grayscale_sequence": [],
-    "colorize_sequence": [],
     "custom_filter_sequence": [{
         "start_delay": 1700, 
         "sprite_index": "targets", 
@@ -152,27 +144,6 @@
         "wait": true,
         "hide_on_complete": true
     },{
-        "animation_key": "battle_cast_init_back",
-        "start_delay": 800,
-        "sprite_index": "caster",
-        "wait": false
-    },{
-        "animation_key": "battle_cast_back",
-        "start_delay": 1500,
-        "sprite_index": "caster",
-        "wait": false
-    },{
-        "animation_key": "battle_cast_init_back",
-        "reverse": true,
-        "start_delay": 2500,
-        "sprite_index": "caster",
-        "wait": false
-    },{
-        "animation_key": "battle_back",
-        "start_delay": 3000,
-        "sprite_index": "caster",
-        "wait": false
-    },{
         "animation_key": "battle_damage_front",
         "start_delay": 1700,
         "sprite_index": "targets",
@@ -183,7 +154,6 @@
         "sprite_index": "targets",
         "wait": false
     }],
-    "set_frame_sequence": [],
     "blend_mode_sequence": [{
         "start_delay": 0,
         "mode": "screen",

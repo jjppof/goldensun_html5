@@ -54797,7 +54797,7 @@ Phaser.BitmapData.prototype = {
             if (tx === undefined || tx === null) { tx = source.x; }
             if (ty === undefined || ty === null) { ty = source.y; }
 
-            if (source.texture.trim)
+            if (source.texture.trim && !(source.data && source.data.ignore_trim))
             {
                 //  Offset the translation coordinates by the trim amount
                 tx += source.texture.trim.x - source.anchor.x * source.texture.trim.width;

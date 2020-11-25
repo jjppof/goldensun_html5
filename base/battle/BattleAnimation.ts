@@ -135,8 +135,7 @@ export class BattleAnimation {
         position: string;
         count: number;
         trails: boolean;
-        trails_mode: string;
-        trail_frame_diff: number;
+        trails_factor: number;
     }[];
     public x_sequence: DefaultAttr[] = [];
     public y_sequence: DefaultAttr[] = [];
@@ -210,7 +209,8 @@ export class BattleAnimation {
     public back_group: Phaser.Group;
     public front_group: Phaser.Group;
     public stage_camera: CameraAngle;
-    public trails_objs: (Phaser.RenderTexture | Phaser.Sprite)[];
+    public trails_objs: Phaser.Image[];
+    public trails_bmps: Phaser.BitmapData[];
     public caster_filter: any;
     public targets_filter: any;
     public background_filter: any;
@@ -305,6 +305,7 @@ export class BattleAnimation {
         this.super_group = super_group;
         this.stage_camera = stage_camera;
         this.trails_objs = [];
+        this.trails_bmps = [];
         if (super_group.getChildIndex(group_caster) < super_group.getChildIndex(group_enemy)) {
             this.back_group = group_caster;
             this.front_group = group_enemy;
@@ -314,19 +315,34 @@ export class BattleAnimation {
         }
         for (let i = 0; i < this.sprites_keys.length; ++i) {
             const sprite_info = this.sprites_keys[i];
-            let trails_info;
+            let trail_image: Phaser.Image;
             if (sprite_info.trails) {
-                trails_info = this.initialize_trail_textures(sprite_info.trail_frame_diff, sprite_info.trails_mode);
+                const trail_bitmap_data = this.game.make.bitmapData(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+                trail_bitmap_data.fill(0, 0, 0, 1);
+                trail_bitmap_data.trail_factor = sprite_info.trails_factor;
+                trail_image = this.game.make.image(0, 0, trail_bitmap_data);
+                trail_image.blendMode = Phaser.blendModes.SCREEN;
+                this.trails_bmps.push(trail_bitmap_data);
+                this.trails_objs.push(trail_image);
             }
             if (!sprite_info.per_target) {
                 const count = sprite_info.count ? sprite_info.count : 1;
                 for (let j = 0; j < count; ++j) {
                     const psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_key);
                     if (sprite_info.position === "over") {
+                        if (trail_image) {
+                            super_group.addChild(trail_image);
+                        }
                         super_group.addChild(psy_sprite);
                     } else if (sprite_info.position === "between") {
+                        if (trail_image) {
+                            super_group.addChildAt(trail_image, super_group.getChildIndex(this.front_group));
+                        }
                         super_group.addChildAt(psy_sprite, super_group.getChildIndex(this.front_group));
                     } else if (sprite_info.position === "behind") {
+                        if (trail_image) {
+                            super_group.addChildAt(trail_image, super_group.getChildIndex(this.back_group));
+                        }
                         super_group.addChildAt(psy_sprite, super_group.getChildIndex(this.back_group));
                     }
                     const frames = Phaser.Animation.generateFrameNames(
@@ -339,46 +355,13 @@ export class BattleAnimation {
                     psy_sprite.animations.add(sprite_info.key_name, frames);
                     psy_sprite.animations.frameName = frames[0];
                     psy_sprite.data.battle_index = this.sprites.length;
-                    psy_sprite.data.trails = sprite_info.trails;
-                    psy_sprite.data.trails_info = trails_info;
-                    if (sprite_info.trails) {
-                        psy_sprite.data.x_history = new Array(trails_info.frame_diff + 1).fill(
-                            psy_sprite.x - this.game.camera.x
-                        );
-                        psy_sprite.data.y_history = new Array(trails_info.frame_diff + 1).fill(
-                            psy_sprite.y - this.game.camera.y
-                        );
-                    }
+                    psy_sprite.data.trail_image = trail_image;
+                    psy_sprite.data.ignore_trim = true;
                     this.sprites.push(psy_sprite);
                 }
             }
         }
         this.set_filters();
-    }
-
-    initialize_trail_textures(frame_diff, blend_mode) {
-        switch (blend_mode) {
-            case "screen":
-                blend_mode = PIXI.blendModes.SCREEN;
-                break;
-            case "normal":
-                blend_mode = PIXI.blendModes.NORMAL;
-                break;
-        }
-        const trail_texture = this.game.add.renderTexture(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
-        let trail_sprite = this.game.add.sprite(this.game.camera.x, this.game.camera.y, trail_texture);
-        trail_sprite.blendMode = blend_mode;
-        trail_sprite.alpha = 0.6;
-        const trail_texture_2 = this.game.add.renderTexture(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
-        let trail_sprite_2 = this.game.add.sprite(this.game.camera.x, this.game.camera.y, trail_texture_2);
-        trail_sprite_2.blendMode = blend_mode;
-        trail_sprite_2.alpha = 0.4;
-        this.trails_objs = this.trails_objs.concat(trail_texture, trail_texture_2, trail_sprite, trail_sprite_2);
-        return {
-            texture_1: trail_texture,
-            texture_2: trail_texture_2,
-            frame_diff: frame_diff,
-        };
     }
 
     set_filters() {
@@ -442,6 +425,9 @@ export class BattleAnimation {
             });
             this.trails_objs.forEach(obj => {
                 obj.destroy(true);
+            });
+            this.trails_bmps.forEach(obj => {
+                obj.destroy();
             });
             this.running = false;
             if (finish_callback !== undefined) {
@@ -972,26 +958,11 @@ export class BattleAnimation {
     }
 
     render() {
-        let clear = true;
+        this.trails_bmps.forEach(bmp => bmp.fill(0, 0, 0, bmp.trail_factor));
         this.sprites.forEach(sprite => {
-            if (!sprite.data.trails) return;
-            sprite.data.x_history.unshift(sprite.x);
-            sprite.data.y_history.unshift(sprite.y);
-            if (clear) {
-                sprite.data.trails_info.texture_1.clear();
-                sprite.data.trails_info.texture_2.clear();
-                clear = false;
-            }
-            sprite.data.trails_info.texture_1.renderXY(
-                sprite,
-                sprite.data.x_history[sprite.data.trails_info.frame_diff >> 1],
-                sprite.data.y_history[sprite.data.trails_info.frame_diff >> 1]
-            );
-            sprite.data.trails_info.texture_2.renderXY(
-                sprite,
-                sprite.data.x_history.pop(),
-                sprite.data.y_history.pop()
-            );
+            if (!sprite.data.trail_image) return;
+            const bm_data = sprite.data.trail_image.key as Phaser.BitmapData;
+            bm_data.draw(sprite);
         });
         for (let key in this.render_callbacks) {
             this.render_callbacks[key]();
