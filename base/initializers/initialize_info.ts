@@ -19,6 +19,7 @@ import {FieldAbilities} from "../field_abilities/FieldAbilities";
 import {Summon} from "../Summon";
 import {GoldenSun} from "../GoldenSun";
 import {initialize_summons} from "./summons";
+import {initialize_se} from "./sound_effects";
 
 export type PartyData = {
     members: MainChar[];
@@ -137,4 +138,12 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     data.info.summons_list = initialize_summons(data.dbs.summons_db);
 
     data.info.field_abilities_list = initialize_field_abilities(game, data);
+
+    let load_se_promise_resolve;
+    const load_se_promise = new Promise(resolve => {
+        load_se_promise_resolve = resolve;
+    });
+    const se_data = game.cache.getJSON("se_data");
+    initialize_se(game, data, se_data, load_se_promise_resolve);
+    await load_se_promise;
 }

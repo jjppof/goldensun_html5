@@ -1,0 +1,25 @@
+{
+    "menu_se": {
+        "audio": "assets/sounds/se/menu.ogg",
+        "json": {
+            "spritemap": {
+                "menu_move": {
+                    "start": 0,
+                    "end": 0.149
+                },
+                "menu_negative": {
+                    "start": 0.149,
+                    "end": 0.76
+                },
+                "menu_positive": {
+                    "start": 0.76,
+                    "end": 1.44
+                },
+                "menu_positive_2": {
+                    "start": 1.57,
+                    "end": 2.478
+                }
+            }
+        }
+    }
+}

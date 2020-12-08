@@ -16,6 +16,7 @@ import {ShopMenu} from "./main_menus/ShopMenu";
 import {ControlManager} from "./utils/ControlManager";
 import {CursorManager} from "./utils/CursorManager";
 import {Gamepad} from "./Gamepad";
+import {Audio} from "./Audio";
 
 export class GoldenSun {
     public game: Phaser.Game = null;
@@ -40,6 +41,7 @@ export class GoldenSun {
     public tile_event_manager: TileEventManager = null; //class responsible for the tile events
     public game_event_manager: GameEventManager = null; //class responsible for the game events
     public battle_instance: Battle = null; //class responsible for a battle
+    public audio: Audio = null; //class responsible for controlling the game audio engine
 
     //managers
     public control_manager: ControlManager = null;
@@ -114,6 +116,9 @@ export class GoldenSun {
         this.underlayer_group = this.game.add.group();
         this.npc_group = this.game.add.group();
         this.overlayer_group = this.game.add.group();
+
+        //init audio engine
+        this.audio = new Audio(this.game, this);
 
         //use the data loaded from json files to initialize some data
         await initialize_game_data(this.game, this);

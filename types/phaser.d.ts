@@ -2665,7 +2665,7 @@ declare module Phaser {
         atlasJSONHash(key: string, textureURL?: string, atlasURL?: string, atlasData?: any): Phaser.Loader;
         atlasXML(key: string, textureURL?: string, atlasURL?: string, atlasData?: any): Phaser.Loader;
         audio(key: string, urls: string | string[] | any, autoDecode?: boolean): Phaser.Loader;
-        audiosprite(key: string, urls: string[], jsonURL?: string, jsonData?: string | any, autoDecode?: boolean): Phaser.Loader;
+        audiosprite(key: string, urls: string | string[], jsonURL?: string, jsonData?: string | any, autoDecode?: boolean): Phaser.Loader;
         binary(key: string, url?: string, callback?: Function, callbackContext?: any): Phaser.Loader;
         bitmapFont(key: string, textureURL?: string, atlasURL?: string, atlasData?: any, xSpacing?: number, ySpacing?: number): Phaser.Loader;
         checkKeyExists(type: string, key: string): boolean;

@@ -100,6 +100,10 @@ function load_plugins(game) {
     game.load.script("particlestorm", "assets/plugins/particle-storm.js");
 }
 
+function load_se(game) {
+    game.load.json("se_data", "assets/sounds/se/se.json");
+}
+
 export function load_all(game) {
     load_db_files(game);
     load_misc(game);
@@ -108,4 +112,5 @@ export function load_all(game) {
     load_fonts(game);
     load_filters(game);
     load_plugins(game);
+    load_se(game);
 }
