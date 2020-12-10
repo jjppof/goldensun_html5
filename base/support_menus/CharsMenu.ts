@@ -377,18 +377,26 @@ export class CharsMenu {
             {key: this.data.gamepad.RIGHT, on_down: this.next_char.bind(this)},
             {key: this.data.gamepad.UP, on_down: this.previous_line.bind(this)},
             {key: this.data.gamepad.DOWN, on_down: this.next_line.bind(this)},
-            {key: this.data.gamepad.A, on_down: () => {
-                if (on_select) {
-                    this.data.audio.play_se("menu_se", "menu_positive");
-                    on_select();
-                }
-            }, params: {reset_control: true}},
-            {key: this.data.gamepad.B, on_down: () => {
-                if (on_cancel) {
-                    this.data.audio.play_se("menu_se", "menu_negative");
-                    on_cancel();
-                }
-            }, params: {reset_control: true}},
+            {
+                key: this.data.gamepad.A,
+                on_down: () => {
+                    if (on_select) {
+                        this.data.audio.play_se("menu_se", "menu_positive");
+                        on_select();
+                    }
+                },
+                params: {reset_control: true},
+            },
+            {
+                key: this.data.gamepad.B,
+                on_down: () => {
+                    if (on_cancel) {
+                        this.data.audio.play_se("menu_se", "menu_negative");
+                        on_cancel();
+                    }
+                },
+                params: {reset_control: true},
+            },
         ];
         if (enable_swap) {
             controls.push(
