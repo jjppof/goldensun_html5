@@ -64,14 +64,14 @@ export class HorizontalMenu {
         this.buttons_keys = buttons;
         this.titles = titles;
         this.on_cancel = () => {
-            this.data.audio.play_se("menu_se", "menu_negative");
             if (this.on_cancel) {
+                this.data.audio.play_se("menu_se", "menu_negative");
                 callbacks.on_cancel();
             }
         };
         this.on_press = () => {
-            this.data.audio.play_se("menu_se", "menu_positive");
             if (this.on_press) {
+                this.data.audio.play_se("menu_se", "menu_positive");
                 callbacks.on_press();
             }
         };

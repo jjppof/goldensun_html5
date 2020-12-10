@@ -52,8 +52,6 @@ export enum CharsMenuModes {
     SHOP,
     MENU,
 }
-const SHOP_MODE = "shop";
-const MENU_MODE = "menu";
 
 const ARROW_TWEEN_TIME = Phaser.Timer.QUARTER >> 1;
 
@@ -306,6 +304,8 @@ export class CharsMenu {
     next_char(no_cursor?: boolean) {
         if (this.lines[this.current_line].length === 1 && this.lines.length === 1) return;
 
+        this.data.audio.play_se("menu_se", "menu_move");
+
         if (this.selected_index + 1 === this.lines[this.current_line].length) {
             if (this.current_line + 1 === this.lines.length) {
                 if (this.lines.length === 1) this.select_char(0, no_cursor);
@@ -318,6 +318,8 @@ export class CharsMenu {
 
     previous_char(no_cursor?: boolean) {
         if (this.lines[this.current_line].length === 1 && this.lines.length === 1) return;
+
+        this.data.audio.play_se("menu_se", "menu_move");
 
         if (this.selected_index - 1 < 0) {
             if (this.current_line - 1 < 0) {
@@ -336,6 +338,8 @@ export class CharsMenu {
         )
             return;
 
+        this.data.audio.play_se("menu_se", "menu_positive");
+
         const index = this.selected_index + this.current_line * MAX_PER_LINE;
         const this_char = this.data.info.party_data.members[index];
 
@@ -351,6 +355,8 @@ export class CharsMenu {
 
     swap_previous() {
         if (this.selected_index === 0 && this.current_line === 0) return;
+
+        this.data.audio.play_se("menu_se", "menu_positive");
 
         const index = this.selected_index + this.current_line * MAX_PER_LINE;
         const this_char = this.data.info.party_data.members[index];
@@ -371,8 +377,18 @@ export class CharsMenu {
             {key: this.data.gamepad.RIGHT, on_down: this.next_char.bind(this)},
             {key: this.data.gamepad.UP, on_down: this.previous_line.bind(this)},
             {key: this.data.gamepad.DOWN, on_down: this.next_line.bind(this)},
-            {key: this.data.gamepad.A, on_down: on_select, params: {reset_control: true}},
-            {key: this.data.gamepad.B, on_down: on_cancel, params: {reset_control: true}},
+            {key: this.data.gamepad.A, on_down: () => {
+                if (on_select) {
+                    this.data.audio.play_se("menu_se", "menu_positive");
+                    on_select();
+                }
+            }, params: {reset_control: true}},
+            {key: this.data.gamepad.B, on_down: () => {
+                if (on_cancel) {
+                    this.data.audio.play_se("menu_se", "menu_negative");
+                    on_cancel();
+                }
+            }, params: {reset_control: true}},
         ];
         if (enable_swap) {
             controls.push(
