@@ -162,24 +162,24 @@ export class Map {
         const promises = [];
 
         let load_tilemap_promise_resolve;
-        promises.push(new Promise(resolve => load_tilemap_promise_resolve = resolve));
+        promises.push(new Promise(resolve => (load_tilemap_promise_resolve = resolve)));
         this.game.load
             .tilemap(this.key_name, this.tileset_json_url, null, Phaser.Tilemap.TILED_JSON)
             .onLoadComplete.addOnce(load_tilemap_promise_resolve);
 
         let load_image_promise_resolve;
-        promises.push(new Promise(resolve => load_image_promise_resolve = resolve));
+        promises.push(new Promise(resolve => (load_image_promise_resolve = resolve)));
         this.game.load.image(this.key_name, this.tileset_image_url).onLoadComplete.addOnce(load_image_promise_resolve);
 
         if (this.bgm_key) {
             let load_bgm_promise_resolve;
-            promises.push(new Promise(resolve => load_bgm_promise_resolve = resolve));
+            promises.push(new Promise(resolve => (load_bgm_promise_resolve = resolve)));
             this.game.load.audio(this.bgm_key, [this.bgm_url]).onLoadComplete.addOnce(load_bgm_promise_resolve);
         }
 
         for (let i = 0; i < this.physics_names.length; ++i) {
             let load_physics_promise_resolve;
-            promises.push(new Promise(resolve => load_physics_promise_resolve = resolve));
+            promises.push(new Promise(resolve => (load_physics_promise_resolve = resolve)));
             this.game.load
                 .physics(this.physics_names[i], this.physics_jsons_url[i])
                 .onLoadComplete.addOnce(load_physics_promise_resolve);
