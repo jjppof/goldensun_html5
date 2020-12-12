@@ -45,6 +45,8 @@ export class Map {
     public layers: any[];
     public collision_embedded: boolean;
     public is_world_map: boolean;
+    public bgm_key: string;
+    public bgm_url: string;
 
     constructor(
         game,
@@ -57,7 +59,9 @@ export class Map {
         tileset_json_url,
         physics_jsons_url,
         lazy_load,
-        collision_embedded
+        collision_embedded,
+        bgm_key,
+        bgm_url
     ) {
         this.game = game;
         this.data = data;
@@ -84,6 +88,8 @@ export class Map {
         this.layers = [];
         this.collision_embedded = collision_embedded === undefined ? false : collision_embedded;
         this.is_world_map = false;
+        this.bgm_key = bgm_key;
+        this.bgm_url = bgm_url;
     }
 
     sort_sprites() {
@@ -153,33 +159,33 @@ export class Map {
     }
 
     load_map_assets(force_load: boolean, on_complete: () => void) {
+        const promises = [];
+
         let load_tilemap_promise_resolve;
-        let load_tilemap_promise = new Promise(resolve => {
-            load_tilemap_promise_resolve = resolve;
-        });
+        promises.push(new Promise(resolve => load_tilemap_promise_resolve = resolve));
         this.game.load
             .tilemap(this.key_name, this.tileset_json_url, null, Phaser.Tilemap.TILED_JSON)
             .onLoadComplete.addOnce(load_tilemap_promise_resolve);
 
         let load_image_promise_resolve;
-        let load_image_promise = new Promise(resolve => {
-            load_image_promise_resolve = resolve;
-        });
+        promises.push(new Promise(resolve => load_image_promise_resolve = resolve));
         this.game.load.image(this.key_name, this.tileset_image_url).onLoadComplete.addOnce(load_image_promise_resolve);
 
-        let physics_promises = [];
+        if (this.bgm_key) {
+            let load_bgm_promise_resolve;
+            promises.push(new Promise(resolve => load_bgm_promise_resolve = resolve));
+            this.game.load.audio(this.bgm_key, [this.bgm_url]).onLoadComplete.addOnce(load_bgm_promise_resolve);
+        }
+
         for (let i = 0; i < this.physics_names.length; ++i) {
             let load_physics_promise_resolve;
-            let load_physics_promise = new Promise(resolve => {
-                load_physics_promise_resolve = resolve;
-            });
-            physics_promises.push(load_physics_promise);
+            promises.push(new Promise(resolve => load_physics_promise_resolve = resolve));
             this.game.load
                 .physics(this.physics_names[i], this.physics_jsons_url[i])
                 .onLoadComplete.addOnce(load_physics_promise_resolve);
         }
         if (force_load) {
-            Promise.all([load_tilemap_promise, load_image_promise, ...physics_promises]).then(() => {
+            Promise.all(promises).then(() => {
                 this.assets_loaded = true;
                 on_complete();
             });
@@ -595,6 +601,8 @@ export class Map {
         }
 
         this.config_world_map();
+
+        this.data.audio.add_bgm(this.bgm_key, true);
 
         return this;
     }

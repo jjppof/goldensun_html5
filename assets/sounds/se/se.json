@@ -4,7 +4,7 @@
         "json": {
             "spritemap": {
                 "menu_move": {
-                    "start": 0,
+                    "start": 0.01,
                     "end": 0.149
                 },
                 "menu_negative": {
@@ -17,7 +17,61 @@
                 },
                 "menu_positive_2": {
                     "start": 1.57,
-                    "end": 2.478
+                    "end": 2.407
+                },
+                "menu_positive_3": {
+                    "start": 2.407,
+                    "end": 3.199
+                },
+                "menu_positive_4": {
+                    "start": 3.199,
+                    "end": 3.9
+                }
+            }
+        }
+    },
+    "psynergy_se": {
+        "audio": "assets/sounds/se/psynergy.ogg",
+        "json": {
+            "spritemap": {
+                "psynergy_1": {
+                    "start": 0,
+                    "end": 0.995
+                },
+                "psynergy_2": {
+                    "start": 0.995,
+                    "end": 1.997
+                },
+                "psynergy_3": {
+                    "start": 1.997,
+                    "end": 3.971
+                },
+                "psynergy_4": {
+                    "start": 3.971,
+                    "end": 5.13
+                },
+                "psynergy_5": {
+                    "start": 5.13,
+                    "end": 5.709
+                },
+                "psynergy_6": {
+                    "start": 5.709,
+                    "end": 6.309
+                }
+            }
+        }
+    },
+    "actions_se": {
+        "audio": "assets/sounds/se/actions.ogg",
+        "json": {
+            "spritemap": {
+                "push": {
+                    "start": 0.01,
+                    "end": 1.860
+                },
+                "jump": {
+                    "start": 1.872,
+                    "end": 2.437
                 }
             }
         }

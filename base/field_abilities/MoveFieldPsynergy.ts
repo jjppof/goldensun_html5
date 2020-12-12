@@ -251,6 +251,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                 }
                 break;
         }
+        this.data.audio.play_se("psynergy_se", "psynergy_1");
         this.game.add
             .tween(this.hand_sprite)
             .to({centerX: translate_x, centerY: translate_y}, 200, Phaser.Easing.Linear.None, true)
@@ -279,18 +280,20 @@ export class MoveFieldPsynergy extends FieldAbilities {
 
     finish_hand() {
         this.data.control_manager.reset();
+        this.data.audio.play_se("psynergy_se", "psynergy_4");
         let flip_timer = this.game.time.create(false);
         let fake_hand_scale = {x: 1};
         flip_timer.loop(40, () => {
             this.hand_sprite.scale.x = this.hand_sprite.scale.x > 0 ? -fake_hand_scale.x : fake_hand_scale.x;
         });
         flip_timer.start();
-        let y_shift = this.hand_sprite.y - 10;
-        this.game.add.tween(this.hand_sprite).to({y: y_shift}, 350, Phaser.Easing.Linear.None, true);
-        this.game.add.tween(fake_hand_scale).to({x: 0}, 350, Phaser.Easing.Linear.None, true);
+        const y_shift = this.hand_sprite.y - 10;
+        const time_value = 500;
+        this.game.add.tween(this.hand_sprite).to({y: y_shift}, time_value, Phaser.Easing.Linear.None, true);
+        this.game.add.tween(fake_hand_scale).to({x: 0}, time_value, Phaser.Easing.Linear.None, true);
         this.game.add
             .tween(this.hand_sprite.scale)
-            .to({y: 0}, 350, Phaser.Easing.Linear.None, true)
+            .to({y: 0}, time_value, Phaser.Easing.Linear.None, true)
             .onComplete.addOnce(() => {
                 this.start_final_emitter(this.hand_sprite.x, this.hand_sprite.y);
                 this.stop_casting();
@@ -356,6 +359,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
     }
 
     start_final_emitter(x, y) {
+        this.data.audio.play_se("psynergy_se", "psynergy_6");
         this.final_emitter.x = x;
         this.final_emitter.y = y;
         const lifetime = Phaser.Timer.QUARTER;

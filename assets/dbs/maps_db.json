@@ -4,6 +4,10 @@
         "key_name":"madra",
         "tileset_key_name":"madra",
         "collision_key_names":["madra", "madra_2"],
+        "bgm": {
+            "key": "madra_bgm",
+            "path": "assets/sounds/bgm/little_madra.ogg"
+        },
         "tileset_files": {
             "image":"assets/images/maps/madra/madra.png",
             "json":"assets/images/maps/madra/madra.json"
@@ -14,6 +18,10 @@
         "key_name":"madra_inn",
         "tileset_key_name":"Inside_town",
         "collision_key_names":["madra_inn_down"],
+        "bgm": {
+            "key": "madra_bgm",
+            "path": "assets/sounds/bgm/little_madra.ogg"
+        },
         "tileset_files": {
             "image":"assets/images/maps/madra/Inside_town_00.png",
             "json":"assets/images/maps/madra/inn_down.json"
@@ -24,6 +32,10 @@
         "key_name":"madra_inn_up_stair",
         "tileset_key_name":"Inside_town",
         "collision_key_names":["madra_inn_up_stair"],
+        "bgm": {
+            "key": "madra_bgm",
+            "path": "assets/sounds/bgm/little_madra.ogg"
+        },
         "tileset_files": {
             "image":"assets/images/maps/madra/Inside_town_00.png",
             "json":"assets/images/maps/madra/inn_up_stair.json"
@@ -34,6 +46,10 @@
         "key_name":"madra_inn_up",
         "tileset_key_name":"Inside_town",
         "collision_key_names":["madra_inn_up"],
+        "bgm": {
+            "key": "madra_bgm",
+            "path": "assets/sounds/bgm/little_madra.ogg"
+        },
         "tileset_files": {
             "image":"assets/images/maps/madra/Inside_town_00.png",
             "json":"assets/images/maps/madra/inn_up.json"
@@ -44,6 +60,10 @@
         "key_name":"madra_house_1",
         "tileset_key_name":"Inside_town",
         "collision_key_names":["madra_house_1"],
+        "bgm": {
+            "key": "madra_bgm",
+            "path": "assets/sounds/bgm/little_madra.ogg"
+        },
         "tileset_files": {
             "image":"assets/images/maps/madra/Inside_town_00.png",
             "json":"assets/images/maps/madra/house_1.json"
@@ -54,6 +74,10 @@
         "key_name":"madra_side",
         "tileset_key_name":"madra",
         "collision_key_names":["madra_side", "madra_side_2", "madra_side_3"],
+        "bgm": {
+            "key": "madra_bgm",
+            "path": "assets/sounds/bgm/little_madra.ogg"
+        },
         "tileset_files": {
             "image":"assets/images/maps/madra/madra.png",
             "json":"assets/images/maps/madra/madra_side.json"
@@ -63,6 +87,10 @@
         "name":"Madra",
         "key_name":"madra_corner",
         "tileset_key_name":"madra",
+        "bgm": {
+            "key": "madra_bgm",
+            "path": "assets/sounds/bgm/little_madra.ogg"
+        },
         "tileset_files": {
             "image":"assets/images/maps/madra/madra.png",
             "json":"assets/images/maps/madra/madra_corner.json"

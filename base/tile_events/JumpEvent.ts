@@ -130,6 +130,7 @@ export class JumpEvent extends TileEvent {
             return;
         }
         this.data.hero.jumping = true;
+        this.data.audio.play_se("actions_se", "jump");
         this.data.tile_event_manager.on_event = true;
         let tween_obj: any = {};
         tween_obj[direction] = this.data.hero.sprite[direction] + jump_offset;

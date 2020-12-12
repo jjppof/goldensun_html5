@@ -2,9 +2,9 @@ import {Battle} from "../battle/Battle";
 import {GameEvent, event_types} from "./GameEvent";
 
 export class BattleEvent extends GameEvent {
-    public background_key: string;
-    public enemy_party_key: string;
-    public battle: Battle;
+    private background_key: string;
+    private enemy_party_key: string;
+    private battle: Battle;
 
     constructor(game, data, background_key, enemy_party_key) {
         super(game, data, event_types.BATTLE);

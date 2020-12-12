@@ -73,8 +73,11 @@ export function fire_push_movement(
     if (target_only || expected_position === data.hero.trying_to_push_direction) {
         if (!target_only) {
             data.hero.pushing = true;
+            data.audio.play_se("actions_se", "push");
             data.hero.current_action = base_actions.PUSH;
             data.hero.set_action();
+        } else {
+            data.audio.play_se("menu_se", "menu_positive_4");
         }
         game.physics.p2.pause();
         let tween_x = 0,

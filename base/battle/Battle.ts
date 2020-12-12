@@ -244,6 +244,7 @@ export class Battle {
 
     battle_phase_none() {
         this.game.physics.p2.pause();
+        this.data.audio.stop_bgm();
 
         this.battle_phase = battle_phases.START;
         this.data.in_battle = true;
@@ -1212,6 +1213,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 this.data.in_battle = false;
                 this.data.battle_instance = undefined;
                 this.game.physics.p2.resume();
+                this.data.audio.play_bgm();
             }
         );
     }
