@@ -169,6 +169,8 @@ export class GoldenSun {
 
         this.initialize_utils_controls();
 
+        this.game.sound.mute = true;
+
         this.created = true;
         this.game.camera.resetFX();
     }
@@ -229,6 +231,13 @@ export class GoldenSun {
                         this.scale_factor * numbers.GAME_HEIGHT
                     );
                     window.dispatchEvent(new Event("resize"));
+                },
+            },
+            {
+                key: this.gamepad.MUTE,
+                on_down: () => {
+                    this.game.sound.context.resume();
+                    this.game.sound.mute = !this.game.sound.mute;
                 },
             },
             {

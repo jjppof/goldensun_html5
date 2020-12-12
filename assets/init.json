@@ -30,6 +30,7 @@
         "zoom1": "ONE",
         "zoom2": "TWO",
         "zoom3": "THREE",
+        "mute": "M",
         "debug_physics": "D",
         "debug_grid": "G",
         "debug_keys": "K",

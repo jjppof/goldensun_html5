@@ -17,6 +17,7 @@ export const input_ids = [
     "ZOOM1",
     "ZOOM2",
     "ZOOM3",
+    "MUTE",
     "DEBUG_PHYSICS",
     "DEBUG_GRID",
     "DEBUG_KEYS",
@@ -50,6 +51,8 @@ export class Gamepad {
     public ZOOM1: number;
     public ZOOM2: number;
     public ZOOM3: number;
+
+    public MUTE: number;
 
     public DEBUG_PHYSICS: number;
     public DEBUG_GRID: number;
