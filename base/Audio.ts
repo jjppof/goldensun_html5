@@ -31,7 +31,7 @@ export class Audio {
         }
     }
 
-    play_bgm(loop: boolean = true, volume: number = 0.7) {
+    play_bgm(loop: boolean = true, volume: number = 0.6) {
         this.current_bgm.loop = loop;
         this.current_bgm.volume = volume;
         this.current_bgm.play();

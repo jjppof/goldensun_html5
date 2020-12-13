@@ -71,7 +71,22 @@
                 },
                 "jump": {
                     "start": 1.872,
-                    "end": 2.437
+                    "end": 2.42
+                },
+                "slide": {
+                    "start": 2.415,
+                    "end": 3.315
+                }
+            }
+        }
+    },
+    "misc_se": {
+        "audio": "assets/sounds/se/misc.ogg",
+        "json": {
+            "spritemap": {
+                "rock_drop": {
+                    "start": 0.01,
+                    "end": 0.908
                 }
             }
         }

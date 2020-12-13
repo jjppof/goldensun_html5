@@ -2,6 +2,8 @@ import * as numbers from "../magic_numbers";
 import {TileEvent, event_types} from "../tile_events/TileEvent";
 import {get_surroundings, get_opposite_direction, directions, reverse_directions, base_actions} from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
+import {GoldenSun} from "../GoldenSun";
+import {InteractableObjects} from "../InteractableObjects";
 
 const DUST_COUNT = 7;
 const DUST_RADIUS = 18;
@@ -47,9 +49,9 @@ export function target_only_push(
 }
 
 export function fire_push_movement(
-    game,
-    data,
-    interactable_object,
+    game: Phaser.Game,
+    data: GoldenSun,
+    interactable_object: InteractableObjects,
     push_end?,
     before_move?,
     target_only = false,
@@ -178,6 +180,7 @@ export function fire_push_movement(
                                     true
                                 )
                                 .onComplete.addOnce(() => {
+                                    data.audio.play_se("misc_se", "rock_drop");
                                     if (drop_tile.dust_animation) {
                                         data.hero.current_action = base_actions.IDLE;
                                         data.hero.play(
