@@ -102,19 +102,29 @@
         "key_name":"snowland",
         "tileset_key_name":"snowland",
         "collision_key_names":["snowland_col"],
+        "bgm": {
+            "key": "snowland",
+            "path": "assets/sounds/bgm/snowland.ogg"
+        },
         "tileset_files": {
             "image":"assets/images/maps/snowland/snowland.png",
             "json":"assets/images/maps/snowland/snowland.json"
         },
-        "collision_files":["assets/images/maps/snowland/snowland_physics.json"]
+        "collision_files":["assets/images/maps/snowland/snowland_physics.json"],
+        "lazy_load": true
     },{
         "name":"World Map",
         "key_name":"world_map",
         "tileset_key_name":"world_map",
+        "bgm": {
+            "key": "world_map",
+            "path": "assets/sounds/bgm/world_map.ogg"
+        },
         "tileset_files": {
             "image":"assets/images/maps/world_map/world_map.png",
             "json":"assets/images/maps/world_map/world_map.json"
         },
+        "lazy_load": true,
         "collision_embedded": true
     }
 ]
