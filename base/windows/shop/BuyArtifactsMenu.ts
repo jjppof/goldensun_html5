@@ -469,7 +469,7 @@ export class BuyArtifactsMenu {
                 : this.data.info.party_data.members[0].key_name;
 
             let open_windows = [
-                {name: WindowNames.CHAR_DISPLAY, arguments: [this.selected_char_index, "shop"]},
+                {name: WindowNames.CHAR_DISPLAY, arguments: [this.selected_char_index, CharsMenuModes.SHOP]},
                 {name: WindowNames.EQ_COMPARE, arguments: [char_key, this.selected_item.key_name]},
             ];
             this.show_windows(open_windows, () => {
