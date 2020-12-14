@@ -3,9 +3,9 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0
 
 **See the [DEMO](https://jjppof.github.io/goldensun_html5/index).** Prefer to use Chrome based browsers.
 
-- **This repository is just the engine**. I'm not planning to do maps, animations, items etc. Content here is just enough to show the functionalities.
+- **This repository is just the engine**. I'm not planning to do many maps, animations, items etc. Content here is just enough to show the functionalities.
 - People should be able to make a GS like game without any programming skills with this project.
-- Feel free to help! Check what I need help [here](https://github.com/jjppof/goldensun_html5/projects). Please, reach me if you want to do so.
+- **WE NEED HELP!** Check what we need help [here](https://github.com/jjppof/goldensun_html5/projects). Please, reach me if you want to do so.
 - The goal of this project is not to do exactly the same engine as GS, but very similar.
 - If you found any bug, please create an [issue](https://github.com/jjppof/goldensun_html5/issues/new) for it.
 - Issues are not very well explained, feel free to reach me for details about them.
@@ -54,6 +54,8 @@ Some useful tools that I use to manage the resources:
 - [Shoebox](https://renderhjs.net/shoebox/) (for creating fonts)
 - [Paint.NET](https://www.getpaint.net/) (for images editing)
 - [XnConvert](https://www.xnview.com/en/xnconvert/) (for batch image convertion)
+- [Format Factory](http://www.pcfreetime.com/formatfactory/index.php) (for converting audio files)
+- [Audacity](https://www.audacityteam.org/) (for editing audio files)
 
 ## Credits
 - **http://www.goldensunhacking.net/** (This project would be impossible without these guys)
