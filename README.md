@@ -12,7 +12,7 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0
 - Check the [wiki](https://github.com/jjppof/goldensun_html5/wiki) for database configuration, tutorials and project information.
 - There's no production environment for now, but I'm planning to do it with webpack and embed most of the assets.
 - In the future, it will also be possible to distribute it by Electron (desktop) and/or Ionic (mobile).
-- **Join us at [GSHC discord](https://discord.gg/jwKJDXC)** (#programming channel) for discussion about the project.
+- Use github [discussion](https://github.com/jjppof/goldensun_html5/discussions) to make questions.
 
 ## Things that you can do without programming knowledge
 
