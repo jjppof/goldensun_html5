@@ -1,6 +1,6 @@
 import {GoldenSun} from "./GoldenSun";
 
-export const input_ids = [
+const input_ids = [
     "LEFT",
     "RIGHT",
     "UP",
@@ -69,18 +69,9 @@ export class Gamepad {
     }
 
     initialize_gamepad() {
-        for (let index in input_ids) {
-            this[input_ids[index]] =
-                Phaser.Keyboard[this.data.dbs.init_db.default_inputs[input_ids[index].toLowerCase()]];
+        for (let input of input_ids) {
+            this[input] = Phaser.Keyboard[this.data.dbs.init_db.default_inputs[input]];
         }
-    }
-
-    get_id_by_key(key: number) {
-        for (let property in this) {
-            let property_name = property as string;
-            if (this[property_name] === key) return property_name;
-        }
-        return null;
     }
 
     opposite_key(key: number) {
@@ -114,13 +105,6 @@ export class Gamepad {
     }
 
     get keys() {
-        let keys: number[] = [];
-
-        for (let property in this) {
-            let property_name = property as string;
-            if (input_ids.includes(property_name)) keys.push(this[property_name]);
-        }
-
-        return keys;
+        return input_ids.map(input => this[input]);
     }
 }
