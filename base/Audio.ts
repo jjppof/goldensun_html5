@@ -15,8 +15,11 @@ export class Audio {
         this.se_data[se_key] = this.game.add.audioSprite(se_key);
     }
 
-    play_se(se_key: string, marker_key: string, volume: number = 1) {
-        this.se_data[se_key].play(marker_key, volume);
+    play_se(se_key: string, marker_key: string, on_stop?: Function, volume: number = 1) {
+        const audio = this.se_data[se_key].play(marker_key, volume);
+        if (on_stop) {
+            audio.onStop.addOnce(on_stop);
+        }
     }
 
     add_bgm(bgm_key: string, play: boolean = false) {

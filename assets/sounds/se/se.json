@@ -57,6 +57,10 @@
                 "psynergy_6": {
                     "start": 5.709,
                     "end": 6.309
+                },
+                "psynergy_7": {
+                    "start": 6.313,
+                    "end": 8.144
                 }
             }
         }
@@ -86,7 +90,26 @@
             "spritemap": {
                 "rock_drop": {
                     "start": 0.01,
-                    "end": 0.908
+                    "end": 0.903
+                },
+                "ice_hitting": {
+                    "start": 0.903,
+                    "end": 2.033
+                }
+            }
+        }
+    },
+    "battle_se": {
+        "audio": "assets/sounds/se/battle.ogg",
+        "json": {
+            "spritemap": {
+                "heal_1": {
+                    "start": 0.01,
+                    "end": 1.226
+                },
+                "hit_1": {
+                    "start": 1.226,
+                    "end": 2.154
                 }
             }
         }

@@ -35,6 +35,9 @@ export class FrostFieldPsynergy extends FieldAbilities {
     Upon finishing, triggers the pillar's growth*/
     init_snowflakes() {
         this.field_psynergy_window.close();
+        this.data.audio.play_se("misc_se", "ice_hitting", () => {
+            this.data.audio.play_se("misc_se", "ice_hitting");
+        });
         for (let i = 0; i < FrostFieldPsynergy.SNOWFLAKES_COUNT; ++i) {
             let snowflake_sprite = this.data.overlayer_group.create(0, 0, "frost_snowflake");
             snowflake_sprite.anchor.setTo(0.5, 0.5);
@@ -58,7 +61,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
                     y_dest += 12;
                     break;
             }
-            let spiral_angle = {rad: FrostFieldPsynergy.TOTAL_TURNS_SNOWFLAKES};
+            const spiral_angle = {rad: FrostFieldPsynergy.TOTAL_TURNS_SNOWFLAKES};
             const sign_x = Math.sign(Math.random() - 0.5);
             const sign_y = Math.sign(Math.random() - 0.5);
             const tween = this.game.add
@@ -119,8 +122,9 @@ export class FrostFieldPsynergy extends FieldAbilities {
         this.data.map.sort_sprites();
         this.target_object.custom_data.color_filters = this.game.add.filter("ColorFilters");
         this.target_object.sprite.filters = [this.target_object.custom_data.color_filters];
+        this.data.audio.play_se("psynergy_se", "psynergy_4");
         let blink_counter = 16;
-        let blink_timer = this.game.time.create(false);
+        const blink_timer = this.game.time.create(false);
         blink_timer.loop(50, () => {
             if (blink_counter % 2 === 0) {
                 this.target_object.custom_data.color_filters.tint = [1, 1, 1];
@@ -138,6 +142,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
 
     /*Plays the pillar's growing animation*/
     grow_pillar() {
+        this.data.audio.play_se("psynergy_se", "psynergy_7");
         this.target_object.sprite.animations.play("frost_pool_pillar");
         this.target_object.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.set_permanent_blink();
