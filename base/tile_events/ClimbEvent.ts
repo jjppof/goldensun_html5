@@ -70,6 +70,7 @@ export class ClimbEvent extends TileEvent {
                     .to({x: x_tween, y: y_tween}, 300, Phaser.Easing.Linear.None, true);
                 const start_animation = this.data.hero.play(base_actions.CLIMB, "start");
                 start_animation.onComplete.addOnce(() => {
+                    this.data.hero.sprite.anchor.y -= 0.1;
                     this.data.hero.play(base_actions.CLIMB, base_actions.IDLE);
                     this.data.tile_event_manager.on_event = false;
                     this.data.hero.climbing = true;
@@ -92,6 +93,7 @@ export class ClimbEvent extends TileEvent {
                 .tween(this.data.hero.sprite.body)
                 .to({x: x_tween, y: y_tween}, out_time, Phaser.Easing.Linear.None, true)
                 .onComplete.addOnce(() => {
+                    this.data.hero.sprite.anchor.y -= 0.1;
                     this.game.physics.p2.resume();
                     this.data.tile_event_manager.on_event = false;
                     this.data.hero.climbing = true;
@@ -121,8 +123,8 @@ export class ClimbEvent extends TileEvent {
             this.data.hero.shadow.visible = false;
             this.game.add
                 .tween(this.data.hero.sprite.body)
-                .to({y: this.data.hero.sprite.y - 15}, 170, Phaser.Easing.Linear.None, true);
-            const final_shadow_pos = this.data.hero.sprite.y - 15;
+                .to({y: this.data.hero.sprite.y - 17}, 170, Phaser.Easing.Linear.None, true);
+            const final_shadow_pos = this.data.hero.sprite.y - 17;
             this.game.time.events.add(170, () => {
                 this.data.hero.shadow.y = final_shadow_pos;
                 this.data.hero.shadow.visible = true;
@@ -131,13 +133,14 @@ export class ClimbEvent extends TileEvent {
                 this.game.time.events.add(
                     150,
                     () => {
+                        this.data.hero.sprite.anchor.y += 0.1;
                         this.data.hero.shadow.y = this.data.hero.sprite.y;
                         this.data.hero.play(base_actions.IDLE, reverse_directions[directions.up]);
                         if (this.dynamic) {
                             this.remove_climb_collision_bodies(false);
                         }
                         this.game.time.events.add(
-                            250,
+                            50,
                             () => {
                                 this.data.tile_event_manager.on_event = false;
                                 this.data.hero.climbing = false;
@@ -156,6 +159,7 @@ export class ClimbEvent extends TileEvent {
                 this.data.collision.change_map_body(this.data, this.change_to_collision_layer);
             }
             this.data.tile_event_manager.on_event = true;
+            this.data.hero.sprite.anchor.y += 0.1;
             this.data.hero.play(base_actions.IDLE, reverse_directions[directions.up]);
             const out_time = Phaser.Timer.QUARTER >> 1;
             this.game.add

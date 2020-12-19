@@ -66,7 +66,7 @@
                     "start"
                 ],
                 "directions_frames_number": [4,4,3,3,3,1,4,3],
-                "frame_rate": [7,7,8,8,9,1,10,10],
+                "frame_rate": [7,7,8,8,9,1,15,10],
                 "loop": [true,true,true,true,false,true,false,false]
             },{
                 "key": "jump",
