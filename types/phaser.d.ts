@@ -220,7 +220,7 @@ declare module Phaser {
         sounds: any;
 
         get(marker: string): Phaser.Sound;
-        play(marker: string, volume?: number): Phaser.Sound;
+        play(marker: string, volume?: number, position_shift?: number): Phaser.Sound;
         stop(marker: string): Phaser.Sound;
 
     }

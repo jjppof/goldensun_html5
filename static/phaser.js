@@ -83241,12 +83241,14 @@ Phaser.AudioSprite.prototype = {
      * @param {number} [volume=1] - Volume of the sound you want to play. If none is given it will use the volume given to the Sound when it was created (which defaults to 1 if none was specified).
      * @return {Phaser.Sound} This sound instance.
      */
-    play: function (marker, volume)
+    play: function (marker, volume, position_shift)
     {
 
         if (volume === undefined) { volume = 1; }
+        let position = null;
+        if (position_shift !== 0) { position = this.sounds[marker].position + position_shift; }
 
-        return this.sounds[marker].play(marker, null, volume);
+        return this.sounds[marker].play(marker, position, volume);
 
     },
 
@@ -84017,7 +84019,13 @@ Phaser.Sound.prototype = {
                 }
                 else
                 {
-                    this._startSource(0, this.position, this.duration);
+                    let this_position = this.position;
+                    let this_duration = this.duration;
+                    if (position !== undefined && position !== null) {
+                        this_position = position;
+                        this_duration -= position - this.position;
+                    }
+                    this._startSource(0, this_position, this_duration);
                 }
 
                 this.isPlaying = true;

@@ -15,8 +15,8 @@ export class Audio {
         this.se_data[se_key] = this.game.add.audioSprite(se_key);
     }
 
-    play_se(se_key: string, marker_key: string, on_stop?: Function, volume: number = 1) {
-        const audio = this.se_data[se_key].play(marker_key, volume);
+    play_se(se_key: string, marker_key: string, on_stop?: Function, position_shift: number = 0, volume: number = 1) {
+        const audio = this.se_data[se_key].play(marker_key, volume, position_shift);
         if (on_stop) {
             audio.onStop.addOnce(on_stop);
         }
