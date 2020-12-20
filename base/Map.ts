@@ -412,7 +412,8 @@ export class Map {
                 property_info.base_collision_layer === undefined ? 0 : property_info.base_collision_layer,
                 property_info.talk_range_factor,
                 property_info.events === undefined ? [] : property_info.events,
-                this.data.dbs.npc_db[property_info.key_name].no_shadow
+                this.data.dbs.npc_db[property_info.key_name].no_shadow,
+                property_info.ignore_world_map_scale !== undefined ? property_info.ignore_world_map_scale : npc_db.ignore_world_map_scale
             )
         );
     }
@@ -501,7 +502,7 @@ export class Map {
                         npc_db.anchor_y,
                         this.is_world_map
                     );
-                    if (this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
+                    if (npc.ignore_world_map_scale) {
                         npc.sprite.scale.setTo(1, 1);
                         if (npc.shadow) {
                             npc.shadow.scale.setTo(1, 1);
@@ -613,13 +614,13 @@ export class Map {
             this.layers.forEach(l => (l.sprite.filters = [this.mode7_filter]));
             this.game.camera.bounds = null;
             this.npcs.forEach(npc => {
-                if (!this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
+                if (!npc.ignore_world_map_scale) {
                     npc.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
                 }
                 npc.sprite.data.mode7 = true;
                 npc.sprite.data.map = this;
                 if (npc.shadow) {
-                    if (!this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
+                    if (!npc.ignore_world_map_scale) {
                         npc.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
                     }
                     npc.shadow.data.mode7 = true;

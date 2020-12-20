@@ -1,5 +1,21 @@
 {"frames": {
 
+"towns/cave_00/00":
+{
+	"frame": {"x":35,"y":1,"w":28,"h":27},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":28,"h":27},
+	"sourceSize": {"w":28,"h":28}
+},
+"towns/tower_00/00":
+{
+	"frame": {"x":35,"y":30,"w":21,"h":46},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":17,"w":21,"h":46},
+	"sourceSize": {"w":32,"h":64}
+},
 "towns/town_00/00":
 {
 	"frame": {"x":1,"y":1,"w":32,"h":32},
@@ -29,8 +45,8 @@
 	"version": "1.0",
 	"image": "towns.png",
 	"format": "RGBA8888",
-	"size": {"w":34,"h":101},
+	"size": {"w":64,"h":101},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:5fb188cbe4460ae81e5f250344bef18c:44da8e8fb5b0a38586bb2ff267dfaa62:83ad9e04c96c98a4967eb099ace18c94$"
+	"smartupdate": "$TexturePacker:SmartUpdate:e3ce6ad4ec83050814ef9adf81849865:7593197adcd69aafe18d84be9a601d6a:83ad9e04c96c98a4967eb099ace18c94$"
 }
 }
