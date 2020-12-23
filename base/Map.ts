@@ -413,7 +413,9 @@ export class Map {
                 property_info.talk_range_factor,
                 property_info.events === undefined ? [] : property_info.events,
                 this.data.dbs.npc_db[property_info.key_name].no_shadow,
-                property_info.ignore_world_map_scale !== undefined ? property_info.ignore_world_map_scale : npc_db.ignore_world_map_scale
+                property_info.ignore_world_map_scale !== undefined
+                    ? property_info.ignore_world_map_scale
+                    : npc_db.ignore_world_map_scale
             )
         );
     }
@@ -482,7 +484,7 @@ export class Map {
                 npc_sprite_info.setActionLoop(action, npc_db.actions[action].loop);
             }
             npc_sprite_info.generateAllFrames();
-            await new Promise(resolve => {
+            await new Promise<void>(resolve => {
                 npc_sprite_info.loadSpritesheets(this.game, true, () => {
                     if (!npc.no_shadow) {
                         npc.set_shadow(
