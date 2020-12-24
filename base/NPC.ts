@@ -31,6 +31,8 @@ export class NPC extends ControllableChar {
     public shop_key: string;
     public no_shadow: boolean;
     public ignore_world_map_scale: boolean;
+    public anchor_x: boolean;
+    public anchor_y: boolean;
 
     constructor(
         game,
@@ -54,7 +56,9 @@ export class NPC extends ControllableChar {
         talk_range_factor,
         events_info,
         no_shadow,
-        ignore_world_map_scale
+        ignore_world_map_scale,
+        anchor_x,
+        anchor_y
     ) {
         super(
             game,
@@ -79,6 +83,8 @@ export class NPC extends ControllableChar {
         this.talk_range_factor = talk_range_factor === undefined ? NPC.NPC_TALK_RANGE : talk_range_factor;
         this.no_shadow = no_shadow === undefined ? false : no_shadow;
         this.ignore_world_map_scale = ignore_world_map_scale === undefined ? false : ignore_world_map_scale;
+        this.anchor_x = anchor_x;
+        this.anchor_y = anchor_y;
         this.events = [];
         this.set_events(events_info);
     }

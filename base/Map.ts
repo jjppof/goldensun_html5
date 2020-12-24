@@ -415,7 +415,9 @@ export class Map {
                 this.data.dbs.npc_db[property_info.key_name].no_shadow,
                 property_info.ignore_world_map_scale !== undefined
                     ? property_info.ignore_world_map_scale
-                    : npc_db.ignore_world_map_scale
+                    : npc_db.ignore_world_map_scale,
+                property_info.anchor_x,
+                property_info.anchor_y
             )
         );
     }
@@ -500,8 +502,8 @@ export class Map {
                         npc_sprite_info,
                         this.sprite,
                         npc.base_collision_layer,
-                        npc_db.anchor_x,
-                        npc_db.anchor_y,
+                        npc.anchor_x !== undefined ? npc.anchor_x : npc_db.anchor_x,
+                        npc.anchor_y !== undefined ? npc.anchor_y : npc_db.anchor_y,
                         this.is_world_map
                     );
                     if (npc.ignore_world_map_scale) {
