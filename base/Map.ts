@@ -321,7 +321,8 @@ export class Map {
                 property_info.x_target,
                 property_info.y_target,
                 property_info.advance_effect,
-                property_info.dest_collision_layer ? property_info.dest_collision_layer : 0
+                property_info.dest_collision_layer ? property_info.dest_collision_layer : 0,
+                property_info.destination_direction
             );
             this.events[this_event_location_key].push(new_event);
         } else if (property_info.type === tile_event_types.SLIDER) {

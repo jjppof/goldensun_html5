@@ -9,6 +9,7 @@ export class TeleportEvent extends TileEvent {
     public y_target: number;
     public advance_effect: boolean;
     public dest_collision_layer: number;
+    public destination_direction: string;
 
     constructor(
         game,
@@ -23,7 +24,8 @@ export class TeleportEvent extends TileEvent {
         x_target,
         y_target,
         advance_effect,
-        dest_collision_layer
+        dest_collision_layer,
+        destination_direction
     ) {
         super(
             game,
@@ -42,6 +44,7 @@ export class TeleportEvent extends TileEvent {
         this.y_target = y_target;
         this.advance_effect = advance_effect;
         this.dest_collision_layer = dest_collision_layer;
+        this.destination_direction = destination_direction;
     }
 
     fire() {
@@ -94,7 +97,11 @@ export class TeleportEvent extends TileEvent {
         this.data.hero.stop_char(true);
         this.game.camera.fade();
         this.game.camera.onFadeComplete.addOnce(() => {
-            this.data.hero.set_direction(this.activation_directions[0]);
+            const destination_direction =
+                directions[this.destination_direction] !== undefined
+                    ? directions[this.destination_direction]
+                    : this.activation_directions[0];
+            this.data.hero.set_direction(destination_direction);
             this.data.hero.play(base_actions.IDLE, reverse_directions[this.data.hero.current_direction]);
             this.game.camera.lerp.setTo(1, 1);
             this.change_map();
