@@ -1,5 +1,6 @@
 import {Effect, effect_types} from "./Effect";
-import {ordered_elements} from "./utils";
+import {elements, ordered_elements} from "./utils";
+import * as _ from "lodash";
 
 export enum fighter_types {
     ALLY = 1,
@@ -100,7 +101,7 @@ export const ordered_main_stats = [
     main_stats.LUCK,
 ];
 
-export class Player {
+export abstract class Player {
     public key_name: string;
     public name: string;
     public temporary_status: Set<temporary_status>;
@@ -109,18 +110,15 @@ export class Player {
     public effect_turns_count: {[effect: string]: number | {[element: string]: number}};
     public battle_scale: number;
     public fighter_type: fighter_types;
-    public venus_level_current: number;
-    public mercury_level_current: number;
-    public mars_level_current: number;
-    public jupiter_level_current: number;
-    public venus_power_current: number;
-    public mercury_power_current: number;
-    public mars_power_current: number;
-    public jupiter_power_current: number;
-    public venus_resist_current: number;
-    public mercury_resist_current: number;
-    public mars_resist_current: number;
-    public jupiter_resist_current: number;
+
+    public current_level: {[element in elements]?: number};
+    public current_power: {[element in elements]?: number};
+    public current_resist: {[element in elements]?: number};
+
+    public base_level: {[element in elements]?: number};
+    public base_power: {[element in elements]?: number};
+    public base_resist: {[element in elements]?: number};
+
     public turns: number;
     public battle_animations_variations: {[ability_key: string]: string};
     public max_hp: number;
@@ -142,6 +140,12 @@ export class Player {
         this.temporary_status = new Set();
         this.permanent_status = new Set();
         this.effects = [];
+        this.current_power = ordered_elements.reduce((obj, elem) => {
+            obj[elem] = 0;
+            return obj;
+        }, {});
+        this.current_resist = _.cloneDeep(this.current_power);
+        this.current_level = _.cloneDeep(this.current_power);
         this.init_effect_turns_count();
     }
 
@@ -167,6 +171,8 @@ export class Player {
             this.effect_turns_count[effect_types.RESIST][element] = 0;
         }
     }
+
+    abstract update_all();
 
     get_effect_turns_key(effect: Effect) {
         switch (effect.type) {

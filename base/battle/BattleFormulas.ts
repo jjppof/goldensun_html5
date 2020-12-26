@@ -1,7 +1,7 @@
 //please check http://forum.goldensunhacking.net/index.php?topic=2460
 
 import {elements} from "../utils";
-import {permanent_status} from "../Player";
+import {permanent_status, Player} from "../Player";
 import {ELEM_ATTR_MAX, ELEM_ATTR_MIN} from "../magic_numbers";
 import * as _ from "lodash";
 
@@ -54,15 +54,13 @@ export class BattleFormulas {
         return this.base_damage(caster, target) * mult_mod + add_mod;
     }
 
-    static power_multiplier(caster, target, element, is_psynergy = true) {
+    static power_multiplier(caster: Player, target: Player, element: elements, is_psynergy = true) {
         let caster_power = 100.0,
             target_resist = 100.0;
         if (element !== elements.NO_ELEMENT) {
-            const resist_key = element + "_resist_current";
-            target_resist = target[resist_key];
+            target_resist = target.current_resist[element];
             if (caster !== undefined) {
-                const power_key = element + "_power_current";
-                caster_power = caster[power_key];
+                caster_power = caster.current_power[element];
             }
         }
         const relative_power = _.clamp(caster_power - target_resist, ELEM_ATTR_MIN, ELEM_ATTR_MAX);
@@ -84,11 +82,10 @@ export class BattleFormulas {
         return power + this.power_multiplier(undefined, target, element, true);
     }
 
-    static heal_ability(caster, power, element) {
+    static heal_ability(caster: Player, power: number, element: elements) {
         let caster_power = 100.0;
         if (element !== elements.NO_ELEMENT) {
-            const power_key = element + "_power_current";
-            caster_power = caster[power_key];
+            caster_power = caster.current_power[element];
         }
         return (power * caster_power) / 100.0;
     }
@@ -97,9 +94,15 @@ export class BattleFormulas {
         return power + target.max_hp * djinni_used * 0.03;
     }
 
-    static ailment_success(caster, target, base_chance, magnitude, element, vulnerabity) {
-        const level_key = element + "_level_current";
-        const relative_level = caster[level_key] - target[level_key];
+    static ailment_success(
+        caster: Player,
+        target: Player,
+        base_chance: number,
+        magnitude: number,
+        element: elements,
+        vulnerabity: number
+    ) {
+        const relative_level = caster.current_level[element] - target.current_level[element];
         const luck_factor = target.luk >> 1;
         vulnerabity = vulnerabity === undefined ? 0 : vulnerabity;
         const chance = ((relative_level - luck_factor) * 3) / 100 + base_chance + vulnerabity * magnitude;

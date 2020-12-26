@@ -53,18 +53,6 @@ export class MainChar extends Player {
     public class_table: any;
     public class: Classes;
     public exp_curve: number[];
-    public venus_level_base: number;
-    public mercury_level_base: number;
-    public mars_level_base: number;
-    public jupiter_level_base: number;
-    public venus_power_base: number;
-    public mercury_power_base: number;
-    public mars_power_base: number;
-    public jupiter_power_base: number;
-    public venus_resist_base: number;
-    public mercury_resist_base: number;
-    public mars_resist_base: number;
-    public jupiter_resist_base: number;
     public element_afinity: elements;
     public venus_djinni: string[];
     public mercury_djinni: string[];
@@ -107,18 +95,9 @@ export class MainChar extends Player {
         starting_level,
         class_table,
         battle_scale,
-        venus_level_base,
-        mercury_level_base,
-        mars_level_base,
-        jupiter_level_base,
-        venus_power_base,
-        mercury_power_base,
-        mars_power_base,
-        jupiter_power_base,
-        venus_resist_base,
-        mercury_resist_base,
-        mars_resist_base,
-        jupiter_resist_base,
+        base_level,
+        base_power,
+        base_resist,
         innate_abilities,
         in_party,
         djinni,
@@ -137,27 +116,10 @@ export class MainChar extends Player {
         this.battle_scale = battle_scale;
         this.exp_curve = exp_curve;
         this.current_exp = this.exp_curve[this.level - 1];
-        this.venus_level_base = venus_level_base;
-        this.mercury_level_base = mercury_level_base;
-        this.mars_level_base = mars_level_base;
-        this.jupiter_level_base = jupiter_level_base;
-        this.venus_power_base = venus_power_base;
-        this.mercury_power_base = mercury_power_base;
-        this.mars_power_base = mars_power_base;
-        this.jupiter_power_base = jupiter_power_base;
-        this.venus_resist_base = venus_resist_base;
-        this.mercury_resist_base = mercury_resist_base;
-        this.mars_resist_base = mars_resist_base;
-        this.jupiter_resist_base = jupiter_resist_base;
-        this.element_afinity = _.maxBy(
-            [
-                {element: elements.VENUS, level: this.venus_level_base},
-                {element: elements.MERCURY, level: this.mercury_level_base},
-                {element: elements.MARS, level: this.mars_level_base},
-                {element: elements.JUPITER, level: this.jupiter_level_base},
-            ],
-            element => element.level
-        ).element;
+        this.base_level = _.cloneDeep(base_level);
+        this.base_power = _.cloneDeep(base_power);
+        this.base_resist = _.cloneDeep(base_resist);
+        this.element_afinity = _.maxBy(_.toPairs(this.base_level), pair => pair[1])[0] as elements;
         this.venus_djinni = [];
         this.mercury_djinni = [];
         this.mars_djinni = [];
@@ -213,10 +175,7 @@ export class MainChar extends Player {
             this.info.classes_list,
             this.class_table,
             this.element_afinity,
-            this.venus_level_current,
-            this.mercury_level_current,
-            this.mars_level_current,
-            this.jupiter_level_current
+            this.current_level
         );
     }
 
@@ -420,10 +379,7 @@ export class MainChar extends Player {
 
     preview_djinn_change(stats: main_stats[], djinni_key_name: string[], djinni_next_status: djinn_status[], action?) {
         const previous_class = this.class;
-        let venus_lv = this.venus_level_current;
-        let mercury_lv = this.mercury_level_current;
-        let mars_lv = this.mars_level_current;
-        let jupiter_lv = this.jupiter_level_current;
+        let lvls: Player["current_level"] = _.cloneDeep(this.current_level);
         for (let i = 0; i < djinni_key_name.length; ++i) {
             const djinn = this.info.djinni_list[djinni_key_name[i]];
             let lv_shift;
@@ -438,30 +394,9 @@ export class MainChar extends Player {
                 default:
                     lv_shift = -MainChar.ELEM_LV_DELTA;
             }
-            switch (djinn.element) {
-                case elements.VENUS:
-                    venus_lv += lv_shift;
-                    break;
-                case elements.MERCURY:
-                    mercury_lv += lv_shift;
-                    break;
-                case elements.MARS:
-                    mars_lv += lv_shift;
-                    break;
-                case elements.JUPITER:
-                    jupiter_lv += lv_shift;
-                    break;
-            }
+            lvls[djinn.element] += lv_shift;
         }
-        this.class = choose_right_class(
-            this.info.classes_list,
-            this.class_table,
-            this.element_afinity,
-            venus_lv,
-            mercury_lv,
-            mars_lv,
-            jupiter_lv
-        );
+        this.class = choose_right_class(this.info.classes_list, this.class_table, this.element_afinity, lvls);
         let return_obj = {
             class_name: this.class.name,
             class_key_name: this.class.key_name,
@@ -632,22 +567,22 @@ export class MainChar extends Player {
         ordered_elements.forEach(element => {
             if (preview) {
                 previous_stats[element] = {
-                    power: this[element + "_power_current"],
-                    resist: this[element + "_resist_current"],
-                    level: this[element + "_level_current"],
+                    power: this.current_power[element],
+                    resist: this.current_resist[element],
+                    level: this.current_level[element],
                 };
             }
-            this[element + "_power_current"] = this[element + "_power_base"];
-            this[element + "_resist_current"] = this[element + "_resist_base"];
-            this[element + "_level_current"] = this[element + "_level_base"];
+            this.current_power[element] = this.base_power[element];
+            this.current_resist[element] = this.base_resist[element];
+            this.current_level[element] = this.base_level[element];
         });
 
         for (let i = 0; i < this.djinni.length; ++i) {
             let djinn = this.info.djinni_list[this.djinni[i]];
             if (djinn.status !== djinn_status.SET) continue;
-            this[djinn.element + "_power_current"] += MainChar.ELEM_POWER_DELTA;
-            this[djinn.element + "_resist_current"] += MainChar.ELEM_RESIST_DELTA;
-            this[djinn.element + "_level_current"] += MainChar.ELEM_LV_DELTA;
+            this.current_power[djinn.element] += MainChar.ELEM_POWER_DELTA;
+            this.current_resist[djinn.element] += MainChar.ELEM_RESIST_DELTA;
+            this.current_level[djinn.element] += MainChar.ELEM_LV_DELTA;
         }
 
         this.effects.forEach(effect => {
@@ -659,10 +594,8 @@ export class MainChar extends Player {
 
         for (let i = 0; i < ordered_elements.length; ++i) {
             const element = ordered_elements[i];
-            const power_key = element + "_power_current";
-            const resist_key = element + "_resist_current";
-            this[power_key] = _.clamp(this[power_key], ELEM_ATTR_MIN, ELEM_ATTR_MAX);
-            this[resist_key] = _.clamp(this[resist_key], ELEM_ATTR_MIN, ELEM_ATTR_MAX);
+            this.current_power[element] = _.clamp(this.current_power[element], ELEM_ATTR_MIN, ELEM_ATTR_MAX);
+            this.current_resist[element] = _.clamp(this.current_resist[element], ELEM_ATTR_MIN, ELEM_ATTR_MAX);
         }
 
         if (preview) {
@@ -671,14 +604,14 @@ export class MainChar extends Player {
                     const return_data = [
                         element,
                         {
-                            power: this[element + "_power_current"],
-                            resist: this[element + "_resist_current"],
-                            level: this[element + "_level_current"],
+                            power: this.current_power[element],
+                            resist: this.current_resist[element],
+                            level: this.current_level[element],
                         },
                     ];
-                    this[element + "_power_current"] = previous_stats[element].power;
-                    this[element + "_resist_current"] = previous_stats[element].resist;
-                    this[element + "_level_current"] = previous_stats[element].level;
+                    this.current_power[element] = previous_stats[element].power;
+                    this.current_resist[element] = previous_stats[element].resist;
+                    this.current_level[element] = previous_stats[element].level;
                     return return_data;
                 })
             );
