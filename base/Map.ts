@@ -566,7 +566,7 @@ export class Map {
         TileEvent.reset();
         GameEvent.reset();
         this.sprite = this.game.add.tilemap(this.key_name);
-        if (this.sprite.properties.world_map) {
+        if (this.sprite.properties?.world_map) {
             this.is_world_map = true;
         }
 
@@ -602,7 +602,7 @@ export class Map {
         this.config_interactable_object();
         await this.config_npc();
 
-        if (this.sprite.properties.footprint) {
+        if (this.sprite.properties?.footprint) {
             this.show_footsteps = true;
         }
 
