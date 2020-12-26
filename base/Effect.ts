@@ -2,6 +2,7 @@ import {Ability} from "./Ability";
 import {Item} from "./Item";
 import {effect_type_stat, main_stats, permanent_status, Player, temporary_status} from "./Player";
 import {variation, elements} from "./utils";
+import * as _ from "lodash";
 
 export enum effect_types {
     MAX_HP = "max_hp",
@@ -184,13 +185,14 @@ export class Effect {
             };
         }
         let after_value;
+        const quantity = Array.isArray(this.quantity) ? _.random(this.quantity[0], this.quantity[1]) : this.quantity;
         if (this.quantity_is_absolute) {
             if (property !== undefined) {
-                char[property] = this.quantity;
+                char[property] = quantity;
             }
-            after_value = this.quantity;
+            after_value = quantity;
         } else {
-            let value = this.quantity;
+            let value = quantity;
             value *= this.rate;
             if (this.variation_on_final_result) {
                 value += variation();
