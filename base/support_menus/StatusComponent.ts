@@ -1,6 +1,7 @@
 import {BitmapText} from "phaser-ce";
 import {Djinn, djinn_status} from "../Djinn";
 import {GoldenSun} from "../GoldenSun";
+import {MainChar} from "../MainChar";
 import {MainStatusMenu} from "../main_menus/MainStatusMenu";
 import {directions, elements, reverse_directions} from "../utils";
 import {Window} from "../Window";
@@ -66,7 +67,7 @@ export abstract class StatusComponent {
     public abstract on_down(): void;
     public abstract initialize(): void;
 
-    protected get selected_char() {
+    protected get selected_char(): MainChar {
         let manager = null;
 
         if (this.mode === StatusModes.BATTLE) manager = this.manager as BattleStatusWindow;
@@ -142,32 +143,9 @@ export abstract class StatusComponent {
     }
 
     protected get_elemental_stats(element: elements) {
-        let elemental_level = 0;
-        let elemental_power = 0;
-        let elemental_resistance = 0;
-
-        switch (element) {
-            case elements.VENUS:
-                elemental_level = this.selected_char.venus_level_current;
-                elemental_power = this.selected_char.venus_power_current;
-                elemental_resistance = this.selected_char.venus_resist_current;
-                break;
-            case elements.MERCURY:
-                elemental_level = this.selected_char.mercury_level_current;
-                elemental_power = this.selected_char.mercury_power_current;
-                elemental_resistance = this.selected_char.mercury_resist_current;
-                break;
-            case elements.MARS:
-                elemental_level = this.selected_char.mars_level_current;
-                elemental_power = this.selected_char.mars_power_current;
-                elemental_resistance = this.selected_char.mars_resist_current;
-                break;
-            case elements.JUPITER:
-                elemental_level = this.selected_char.jupiter_level_current;
-                elemental_power = this.selected_char.jupiter_power_current;
-                elemental_resistance = this.selected_char.jupiter_resist_current;
-                break;
-        }
+        const elemental_level = this.selected_char.current_level[element];
+        const elemental_power = this.selected_char.current_power[element];
+        const elemental_resistance = this.selected_char.current_resist[element];
 
         return {level: elemental_level, power: elemental_power, resistance: elemental_resistance};
     }

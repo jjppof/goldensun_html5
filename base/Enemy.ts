@@ -19,18 +19,6 @@ export class Enemy extends Player {
     public item_reward: string;
     public item_reward_chance: number;
     public exp_reward: number;
-    public venus_level: number;
-    public mercury_level: number;
-    public mars_level: number;
-    public jupiter_level: number;
-    public venus_power: number;
-    public mercury_power: number;
-    public mars_power: number;
-    public jupiter_power: number;
-    public venus_resist: number;
-    public mercury_resist: number;
-    public mars_resist: number;
-    public jupiter_resist: number;
     public class: any;
     public current_hp_recovery: number;
     public current_pp_recovery: number;
@@ -53,18 +41,9 @@ export class Enemy extends Player {
         this.item_reward = enemy_data.item_reward;
         this.item_reward_chance = enemy_data.item_reward_chance;
         this.exp_reward = enemy_data.exp_reward;
-        this.venus_level = enemy_data.venus_level;
-        this.mercury_level = enemy_data.mercury_level;
-        this.mars_level = enemy_data.mars_level;
-        this.jupiter_level = enemy_data.jupiter_level;
-        this.venus_power = enemy_data.venus_power;
-        this.mercury_power = enemy_data.mercury_power;
-        this.mars_power = enemy_data.mars_power;
-        this.jupiter_power = enemy_data.jupiter_power;
-        this.venus_resist = enemy_data.venus_resist;
-        this.mercury_resist = enemy_data.mercury_resist;
-        this.mars_resist = enemy_data.mars_resist;
-        this.jupiter_resist = enemy_data.jupiter_resist;
+        this.base_level = Object.assign({}, enemy_data.base_level);
+        this.base_power = Object.assign({}, enemy_data.base_power);
+        this.base_resist = Object.assign({}, enemy_data.base_resist);
         this.battle_scale = enemy_data.battle_scale;
         this.battle_animations_variations = Object.assign({}, enemy_data.battle_animations_variations);
         this.fighter_type = fighter_types.ENEMY;
@@ -82,18 +61,11 @@ export class Enemy extends Player {
         this.current_pp = this.max_pp;
         this.current_hp_recovery = this.hp_recovery;
         this.current_pp_recovery = this.pp_recovery;
-        this.venus_level_current = this.venus_level;
-        this.mercury_level_current = this.mercury_level;
-        this.mars_level_current = this.mars_level;
-        this.jupiter_level_current = this.jupiter_level;
-        this.venus_power_current = this.venus_power;
-        this.mercury_power_current = this.mercury_power;
-        this.mars_power_current = this.mars_power;
-        this.jupiter_power_current = this.jupiter_power;
-        this.venus_resist_current = this.venus_resist;
-        this.mercury_resist_current = this.mercury_resist;
-        this.mars_resist_current = this.mars_resist;
-        this.jupiter_resist_current = this.jupiter_resist;
+        for (let element of ordered_elements) {
+            this.current_power[element] = this.base_power[element];
+            this.current_resist[element] = this.base_resist[element];
+            this.current_level[element] = this.base_level[element];
+        }
     }
 
     update_all() {
@@ -114,10 +86,16 @@ export class Enemy extends Player {
         });
         for (let i = 0; i < ordered_elements.length; ++i) {
             const element = ordered_elements[i];
-            const power_key = element + "_power_current";
-            const resist_key = element + "_resist_current";
-            this[power_key] = _.clamp(this[power_key], numbers.ELEM_ATTR_MIN, numbers.ELEM_ATTR_MAX);
-            this[resist_key] = _.clamp(this[resist_key], numbers.ELEM_ATTR_MIN, numbers.ELEM_ATTR_MAX);
+            this.current_power[element] = _.clamp(
+                this.current_power[element],
+                numbers.ELEM_ATTR_MIN,
+                numbers.ELEM_ATTR_MAX
+            );
+            this.base_resist[element] = _.clamp(
+                this.base_resist[element],
+                numbers.ELEM_ATTR_MIN,
+                numbers.ELEM_ATTR_MAX
+            );
         }
     }
 }

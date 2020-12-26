@@ -1,6 +1,7 @@
 import {elements} from "./utils";
 import * as _ from "lodash";
 import {GameInfo} from "./initializers/initialize_info";
+import {Player} from "./Player";
 
 export class Classes {
     public key_name: string;
@@ -61,16 +62,19 @@ export function choose_right_class(
     classes_list: GameInfo["classes_list"],
     class_table,
     element_afinity: elements,
-    venus_lvl: number,
-    mercury_lvl: number,
-    mars_lvl: number,
-    jupiter_lvl: number
+    current_level: Player["current_level"]
 ): Classes {
     let secondary_elements = [
-        ...(element_afinity !== elements.VENUS ? [{element: elements.VENUS, level: venus_lvl}] : []),
-        ...(element_afinity !== elements.MERCURY ? [{element: elements.MERCURY, level: mercury_lvl}] : []),
-        ...(element_afinity !== elements.MARS ? [{element: elements.MARS, level: mars_lvl}] : []),
-        ...(element_afinity !== elements.JUPITER ? [{element: elements.JUPITER, level: jupiter_lvl}] : []),
+        ...(element_afinity !== elements.VENUS
+            ? [{element: elements.VENUS, level: current_level[elements.VENUS]}]
+            : []),
+        ...(element_afinity !== elements.MERCURY
+            ? [{element: elements.MERCURY, level: current_level[elements.MERCURY]}]
+            : []),
+        ...(element_afinity !== elements.MARS ? [{element: elements.MARS, level: current_level[elements.MARS]}] : []),
+        ...(element_afinity !== elements.JUPITER
+            ? [{element: elements.JUPITER, level: current_level[elements.JUPITER]}]
+            : []),
     ];
     const no_secondary = secondary_elements.every(element => element.level === 0);
     let secondary_afinity;
@@ -83,10 +87,10 @@ export function choose_right_class(
     let classes = Object.values(classes_list).filter(this_class => this_class.class_type === class_type);
     classes = classes.filter(this_class => {
         return (
-            this_class.required_venus_level <= venus_lvl &&
-            this_class.required_mercury_level <= mercury_lvl &&
-            this_class.required_mars_level <= mars_lvl &&
-            this_class.required_jupiter_level <= jupiter_lvl
+            this_class.required_venus_level <= current_level[elements.VENUS] &&
+            this_class.required_mercury_level <= current_level[elements.MERCURY] &&
+            this_class.required_mars_level <= current_level[elements.MARS] &&
+            this_class.required_jupiter_level <= current_level[elements.JUPITER]
         );
     });
     return _.sortBy(classes, [

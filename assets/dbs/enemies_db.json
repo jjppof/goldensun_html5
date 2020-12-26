@@ -55,18 +55,24 @@
         "item_reward": "vial",
         "item_reward_chance": 1,
         "exp_reward": 333,
-        "venus_level": 1,
-        "mercury_level": 1,
-        "mars_level": 1,
-        "jupiter_level": 1,
-        "venus_power": 100,
-        "mercury_power": 100,
-        "mars_power": 100,
-        "jupiter_power": 100,
-        "venus_resist": 100,
-        "mercury_resist": 100,
-        "mars_resist": 100,
-        "jupiter_resist": 100,
+        "base_level": {
+            "venus": 1,
+            "mercury": 1,
+            "mars": 1,
+            "jupiter": 1
+        },
+        "base_power": {
+            "venus": 100,
+            "mercury": 100,
+            "mars": 100,
+            "jupiter": 100
+        },
+        "base_resist": {
+            "venus": 100,
+            "mercury": 100,
+            "mars": 100,
+            "jupiter": 100
+        },
         "battle_animations_variations": {
             "attack": "attack"
         },
@@ -138,18 +144,24 @@
         "item_reward": "",
         "item_reward_chance": 0,
         "exp_reward": 89,
-        "venus_level": 1,
-        "mercury_level": 1,
-        "mars_level": 1,
-        "jupiter_level": 1,
-        "venus_power": 100,
-        "mercury_power": 100,
-        "mars_power": 100,
-        "jupiter_power": 100,
-        "venus_resist": 100,
-        "mercury_resist": 100,
-        "mars_resist": 100,
-        "jupiter_resist": 100,
+        "base_level": {
+            "venus": 1,
+            "mercury": 1,
+            "mars": 1,
+            "jupiter": 1
+        },
+        "base_power": {
+            "venus": 100,
+            "mercury": 100,
+            "mars": 100,
+            "jupiter": 100
+        },
+        "base_resist": {
+            "venus": 100,
+            "mercury": 100,
+            "mars": 100,
+            "jupiter": 100
+        },
         "battle_animations_variations": {
             "attack": "attack"
         },

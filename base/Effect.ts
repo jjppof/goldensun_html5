@@ -1,8 +1,6 @@
 import {Ability} from "./Ability";
-import {Enemy} from "./Enemy";
 import {Item} from "./Item";
-import {MainChar} from "./MainChar";
-import {effect_type_stat, main_stats, permanent_status, temporary_status} from "./Player";
+import {effect_type_stat, main_stats, permanent_status, Player, temporary_status} from "./Player";
 import {variation, elements} from "./utils";
 
 export enum effect_types {
@@ -85,7 +83,7 @@ export class Effect {
     public relative_to_property: string;
     public effect_msg: string;
     public show_msg: boolean;
-    public char: MainChar | Enemy;
+    public char: Player;
     public sub_effect: {
         type: effect_types;
         quantity_is_absolute: boolean;
@@ -172,8 +170,13 @@ export class Effect {
         this.sub_effect.on_caster = this.sub_effect.on_caster === undefined ? false : this.sub_effect.on_caster;
     }
 
-    apply_general_value(property: string, direct_value?: number) {
-        const before_value = property !== undefined ? this.char[property] : direct_value;
+    apply_general_value(property: string, direct_value?: number, element?: elements) {
+        let char = this.char;
+        if (element !== undefined) {
+            char = this.char[this.relative_to_property !== undefined ? this.relative_to_property : property];
+            property = element;
+        }
+        const before_value = property !== undefined ? char[property] : direct_value;
         if (Math.random() >= this.chance) {
             return {
                 before: before_value,
@@ -183,7 +186,7 @@ export class Effect {
         let after_value;
         if (this.quantity_is_absolute) {
             if (property !== undefined) {
-                this.char[property] = this.quantity;
+                char[property] = this.quantity;
             }
             after_value = this.quantity;
         } else {
@@ -194,15 +197,13 @@ export class Effect {
             }
             let value_to_use;
             if (property !== undefined) {
-                value_to_use = this.char[
-                    this.relative_to_property !== undefined ? this.relative_to_property : property
-                ];
+                value_to_use = char[property];
             } else {
                 value_to_use = direct_value;
             }
             const result = Effect.apply_operator(value_to_use, value, this.operator) | 0;
             if (property !== undefined) {
-                this.char[property] = result;
+                char[property] = result;
             }
             after_value = result;
         }
@@ -277,9 +278,9 @@ export class Effect {
                 this.check_caps(main_stats.CURRENT_PP, main_stats.MAX_PP, 0, result_current_pp);
                 return result_current_pp;
             case effect_types.POWER:
-                return this.apply_general_value(this.attribute + "_power_current");
+                return this.apply_general_value("current_power", undefined, this.attribute);
             case effect_types.RESIST:
-                return this.apply_general_value(this.attribute + "_resist_current");
+                return this.apply_general_value("current_resist", undefined, this.attribute);
             case effect_types.TURNS:
                 this.turn_count = 1;
                 return this.apply_general_value("turns");

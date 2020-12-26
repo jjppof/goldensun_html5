@@ -9,7 +9,7 @@ import {
     effect_type_stat,
 } from "../../Player";
 import {TextObj, Window} from "../../Window";
-import {base_actions, elements} from "../../utils";
+import {base_actions, elements, ordered_elements} from "../../utils";
 import * as _ from "lodash";
 import {StatusComponent} from "../../support_menus/StatusComponent";
 import {BattleStatusStatistics} from "../../support_menus/BattleStatusStatistics";
@@ -558,18 +558,14 @@ export class BattleStatusWindow {
 
         const elemental_base = this.selected_char.preview_elemental_stats_without_abilities_effect();
 
-        const power_value: BattleStatusEffect["properties"]["value"] = {
-            [elements.VENUS]: this.selected_char.venus_power_current - elemental_base[elements.VENUS].power,
-            [elements.MERCURY]: this.selected_char.mercury_power_current - elemental_base[elements.MERCURY].power,
-            [elements.MARS]: this.selected_char.mars_power_current - elemental_base[elements.MARS].power,
-            [elements.JUPITER]: this.selected_char.jupiter_power_current - elemental_base[elements.JUPITER].power,
-        };
-        const resist_value: BattleStatusEffect["properties"]["value"] = {
-            [elements.VENUS]: this.selected_char.venus_resist_current - elemental_base[elements.VENUS].resist,
-            [elements.MERCURY]: this.selected_char.mercury_resist_current - elemental_base[elements.MERCURY].resist,
-            [elements.MARS]: this.selected_char.mars_resist_current - elemental_base[elements.MARS].resist,
-            [elements.JUPITER]: this.selected_char.jupiter_resist_current - elemental_base[elements.JUPITER].resist,
-        };
+        const power_value: BattleStatusEffect["properties"]["value"] = ordered_elements.reduce((obj, elem) => {
+            obj[elem] = this.selected_char.current_power[elem] - elemental_base[elem].power;
+            return obj;
+        }, {});
+        const resist_value: BattleStatusEffect["properties"]["value"] = ordered_elements.reduce((obj, elem) => {
+            obj[elem] = this.selected_char.current_resist[elem] - elemental_base[elem].resist;
+            return obj;
+        }, {});
 
         if (_.some(power_value)) {
             effects.push({stat: effect_types.POWER, value: power_value});
