@@ -26,6 +26,7 @@ export enum equip_slots {
     RING = "ring",
     BOOTS = "boots",
     UNDERWEAR = "underwear",
+    CLASS_CHANGER = "class_changer",
 }
 
 export const item_equip_slot = {
@@ -36,6 +37,7 @@ export const item_equip_slot = {
     [item_types.LEG_PROTECTOR]: equip_slots.BOOTS,
     [item_types.RING]: equip_slots.RING,
     [item_types.UNDERWEAR]: equip_slots.UNDERWEAR,
+    [item_types.CLASS_CHANGER]: equip_slots.CLASS_CHANGER,
 };
 
 export class MainChar extends Player {
@@ -151,6 +153,7 @@ export class MainChar extends Player {
             [equip_slots.RING]: null,
             [equip_slots.BOOTS]: null,
             [equip_slots.UNDERWEAR]: null,
+            [equip_slots.CLASS_CHANGER]: null,
         };
         this.equipped_abilities = [];
         this.innate_abilities = innate_abilities;
@@ -172,6 +175,16 @@ export class MainChar extends Player {
         return this_djinni_list.sort((a, b) => {
             return this.info.djinni_list[a].index - this.info.djinni_list[b].index;
         });
+    }
+
+    get granted_class_type() {
+        const equiped_class_changer = 'equip_slots' in this && this.equip_slots[equip_slots.CLASS_CHANGER];
+        
+        if (equiped_class_changer) {
+            return this.info.items_list[equiped_class_changer.key_name].granted_class_type;
+        }
+
+        return -1;
     }
 
     update_class() {
