@@ -69,7 +69,14 @@ export function choose_right_class(
     granted_class_type: number,
 ): Classes {
     const class_type = choose_class_type(class_table, element_afinity, current_level, granted_class_type);
+    return choose_class_by_type(classes_list, current_level, class_type);
+}
 
+export function choose_class_by_type(
+    classes_list: GameInfo["classes_list"],
+    current_level: Player["current_level"],
+    class_type: number,
+): Classes {
     let classes = Object.values(classes_list).filter(this_class => this_class.class_type === class_type);
     classes = classes.filter(this_class => {
         return (

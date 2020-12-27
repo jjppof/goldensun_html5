@@ -9,6 +9,7 @@ import {GoldenSun} from "../GoldenSun";
 import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
 import {ItemSlot} from "../MainChar";
 import {ItemQuantityManagerWindow} from "../windows/item/ItemQuantityManagerWindow";
+import { ClassChangeWithItemWindow } from "../windows/item/ClassChangeWithItemWindow";
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;
@@ -53,6 +54,7 @@ export class MainItemMenu {
     public chars_menu: CharsMenu;
     public basic_info_window: BasicInfoWindow;
     public item_change_stats_window: StatsCheckWithItemWindow;
+    public item_change_class_window: ClassChangeWithItemWindow;
 
     public selected_char_index: number;
     public selected_item_pos: {page: number; index: number};
@@ -84,6 +86,7 @@ export class MainItemMenu {
         this.chars_menu = new CharsMenu(this.game, this.data, this.char_change.bind(this));
         this.basic_info_window = new BasicInfoWindow(this.game);
         this.item_change_stats_window = new StatsCheckWithItemWindow(this.game, this.data);
+        this.item_change_class_window = new ClassChangeWithItemWindow(this.game, this.data);
 
         this.selected_char_index = 0;
         this.selected_item_pos = {page: 0, index: 0};
@@ -165,6 +168,14 @@ export class MainItemMenu {
 
         if (this.choosing_give_destination) {
             if (this.item_options_window.item.type === item_types.ABILITY_GRANTOR) {
+            } else if (this.item_options_window.item.type === item_types.CLASS_CHANGER) {
+                const preview_obj = Object.assign({}, this.item_options_window.item_obj, {equipped: false});
+                this.item_change_class_window.open(
+                    this.data.info.party_data.members[this.selected_char_index],
+                    this.item_options_window.item,
+                    preview_obj
+                );
+                this.item_change_class_window.update_info();
             } else if (this.item_options_window.item.type !== item_types.GENERAL_ITEM) {
                 const preview_obj = Object.assign({}, this.item_options_window.item_obj, {equipped: false});
                 this.item_change_stats_window.open(
@@ -230,14 +241,30 @@ export class MainItemMenu {
         if (this.item_change_stats_window.window_open) {
             this.item_change_stats_window.close();
         }
+
+        if (this.item_change_class_window.window_open) {
+            this.item_change_class_window.close();
+        }
     }
 
     item_change(item: Item, item_obj: ItemSlot) {
         this.set_description_window_text(item.description);
+
         if (this.item_change_stats_window.window_open) {
             this.item_change_stats_window.close();
         }
+
+        if (this.item_change_class_window.window_open) {
+            this.item_change_class_window.close();
+        }
+
         if (item.type === item_types.ABILITY_GRANTOR) {
+        } else if (item.type === item_types.CLASS_CHANGER) {
+            this.item_change_class_window.open(
+                this.data.info.party_data.members[this.selected_char_index],
+                item,
+                item_obj
+            );
         } else if (item.type !== item_types.GENERAL_ITEM) {
             this.item_change_stats_window.open(
                 this.data.info.party_data.members[this.selected_char_index],
@@ -255,6 +282,7 @@ export class MainItemMenu {
             item,
             this.data.info.party_data.members[this.selected_char_index],
             this.item_change_stats_window,
+            this.item_change_class_window,
             this,
             (item_given?: boolean, char_index?: number) => {
                 this.shift_item_overview(false);
@@ -265,6 +293,8 @@ export class MainItemMenu {
             },
             () => {
                 if (item.type === item_types.ABILITY_GRANTOR) {
+                } else if (item.type === item_types.CLASS_CHANGER) {
+                    this.item_change_class_window.update_info();
                 } else if (item.type !== item_types.GENERAL_ITEM) {
                     this.item_change_stats_window.update_info(false);
                     this.item_change_stats_window.hide_arrows();
@@ -334,6 +364,7 @@ export class MainItemMenu {
     open_char_select() {
         if (this.item_choose_window.window_open) this.item_choose_window.close();
         if (this.item_change_stats_window.window_open) this.item_change_stats_window.close();
+        if (this.item_change_class_window.window_open) this.item_change_class_window.close();
 
         if (!this.item_overview_window.open) this.item_overview_window.show(undefined, false);
         if (!this.arrange_window.open) this.arrange_window.show(undefined, false);
@@ -370,6 +401,7 @@ export class MainItemMenu {
         this.chars_menu.close();
         this.basic_info_window.close();
         this.item_change_stats_window.close();
+        this.item_change_class_window.close();
 
         this.is_open = false;
 
