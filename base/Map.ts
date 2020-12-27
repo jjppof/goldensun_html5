@@ -92,6 +92,18 @@ export class Map {
         this.bgm_url = bgm_url;
     }
 
+    get tile_width() {
+        return this.sprite.properties?.real_tile_width !== undefined
+            ? this.sprite.properties.real_tile_width
+            : this.sprite.tileWidth;
+    }
+
+    get tile_height() {
+        return this.sprite.properties?.real_tile_height !== undefined
+            ? this.sprite.properties.real_tile_height
+            : this.sprite.tileHeight;
+    }
+
     sort_sprites() {
         let send_to_back_list = new Array(this.data.npc_group.children.length);
         let send_to_front_list = new Array(this.data.npc_group.children.length);
@@ -501,7 +513,6 @@ export class Map {
                     npc.set_sprite(
                         this.data.npc_group,
                         npc_sprite_info,
-                        this.sprite,
                         npc.base_collision_layer,
                         npc.anchor_x !== undefined ? npc.anchor_x : npc_db.anchor_x,
                         npc.anchor_y !== undefined ? npc.anchor_y : npc_db.anchor_y,

@@ -244,7 +244,7 @@ export class Debug {
         }
 
         if (this.grid) {
-            const tile_width = this.data.map.sprite.tileWidth;
+            const tile_width = this.data.map.tile_width;
             for (let x = 0; x < this.game.world.width; x += tile_width) {
                 this.game.debug.geom(
                     new Phaser.Line(x, 0, x, this.game.world.height),
@@ -253,7 +253,7 @@ export class Debug {
                     4
                 );
             }
-            const tile_height = this.data.map.sprite.tileHeight;
+            const tile_height = this.data.map.tile_height;
             for (let y = 0; y < this.game.world.height; y += tile_height) {
                 this.game.debug.geom(new Phaser.Line(0, y, this.game.world.width, y), "rgba(0,255,255,0.35)", false, 4);
             }
@@ -275,11 +275,11 @@ export class Debug {
             if (this.game.input.mousePointer.withinGame) {
                 const mouse_x =
                     ((this.game.camera.x + this.game.input.mousePointer.x / this.data.scale_factor) /
-                        this.data.map.sprite.tileWidth) |
+                        this.data.map.tile_width) |
                     0;
                 const mouse_y =
                     ((this.game.camera.y + this.game.input.mousePointer.y / this.data.scale_factor) /
-                        this.data.map.sprite.tileHeight) |
+                        this.data.map.tile_height) |
                     0;
                 this.game.debug.text(`x: ${mouse_x}, y: ${mouse_y}`, 140, 15, "#00ff00");
                 const event_key = mouse_x + "_" + mouse_y;

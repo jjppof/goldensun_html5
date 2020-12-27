@@ -50,9 +50,9 @@ export class SliderEvent extends TileEvent {
         this.data.hero.sliding = true;
         this.game.physics.p2.pause();
 
-        const initial_x = this.data.map.sprite.tileWidth * (this.x + 0.5);
-        const initial_y = this.data.map.sprite.tileHeight * (this.y + 0.6);
-        const jump_y = this.data.map.sprite.tileHeight * this.y;
+        const initial_x = this.data.map.tile_width * (this.x + 0.5);
+        const initial_y = this.data.map.tile_height * (this.y + 0.6);
+        const jump_y = this.data.map.tile_height * this.y;
         this.data.hero.play(base_actions.JUMP, reverse_directions[directions.down], false);
         this.game.time.events.add(200, () => {
             this.data.hero.shadow.visible = false;
@@ -66,7 +66,7 @@ export class SliderEvent extends TileEvent {
                     if (this.show_dust) {
                         this.dust_animation();
                     }
-                    const little_step = initial_y + this.data.map.sprite.tileHeight * 1.2;
+                    const little_step = initial_y + this.data.map.tile_height * 1.2;
                     this.game.add
                         .tween(this.data.hero.sprite.body)
                         .to({y: little_step}, 70, Phaser.Easing.Quadratic.Out, true)
@@ -78,8 +78,8 @@ export class SliderEvent extends TileEvent {
                                     this.data.hero.set_frame(directions.down);
                                 });
                             });
-                            const target_x = this.data.map.sprite.tileWidth * (this.x_target + 0.5);
-                            const target_y = this.data.map.sprite.tileHeight * (this.y_target + 0.5);
+                            const target_x = this.data.map.tile_width * (this.x_target + 0.5);
+                            const target_y = this.data.map.tile_height * (this.y_target + 0.5);
                             const slide_time = Math.abs(this.y_target - this.y) * SliderEvent.TIME_PER_TILE;
                             this.game.add
                                 .tween(this.data.hero.sprite.body)
@@ -104,24 +104,24 @@ export class SliderEvent extends TileEvent {
 
     dust_animation() {
         const dust_sprite_base = this.data.info.misc_sprite_base_list[SliderEvent.DUST_KEY];
-        const initial_x = this.data.map.sprite.tileWidth * (this.x + 0.5);
+        const initial_x = this.data.map.tile_width * (this.x + 0.5);
         for (let i = 0; i < SliderEvent.DUST_COUNT; ++i) {
             this.game.time.events.add(40 * i, () => {
                 const start_x =
                     this.data.hero.sprite.body.x -
-                    Math.random() * this.data.map.sprite.tileWidth +
-                    (this.data.map.sprite.tileWidth >> 1);
+                    Math.random() * this.data.map.tile_width +
+                    (this.data.map.tile_width >> 1);
                 const start_y =
                     this.data.hero.sprite.body.y -
-                    Math.random() * this.data.map.sprite.tileHeight +
-                    (this.data.map.sprite.tileHeight >> 1);
+                    Math.random() * this.data.map.tile_height +
+                    (this.data.map.tile_height >> 1);
                 const dust_sprite: Phaser.Sprite = this.data.npc_group.create(start_x, start_y, SliderEvent.DUST_KEY);
                 dust_sprite.base_collision_layer = this.dest_collision_layer;
                 dust_sprite.anchor.setTo(0.5, 0.5);
                 this.game.add.tween(dust_sprite).to(
                     {
-                        x: start_x + (start_x < initial_x ? -1 : 1) * (this.data.map.sprite.tileHeight / 3),
-                        y: start_y - (this.data.map.sprite.tileHeight >> 1),
+                        x: start_x + (start_x < initial_x ? -1 : 1) * (this.data.map.tile_height / 3),
+                        y: start_y - (this.data.map.tile_height >> 1),
                     },
                     400,
                     Phaser.Easing.Linear.None,

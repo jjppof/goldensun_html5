@@ -144,7 +144,6 @@ export class GoldenSun {
         this.hero.set_sprite(
             this.npc_group,
             hero_sprite_base,
-            this.map.sprite,
             this.map.collision_layer,
             undefined,
             undefined,
@@ -285,7 +284,7 @@ export class GoldenSun {
             return;
         }
         if (this.hero_movement_allowed()) {
-            this.hero.update_tile_position(this.map.sprite);
+            this.hero.update_tile_position();
 
             this.tile_event_manager.fire_triggered_events(); //trigger any event that's waiting to be triggered
             const location_key = TileEvent.get_location_key(this.hero.tile_x_pos, this.hero.tile_y_pos);

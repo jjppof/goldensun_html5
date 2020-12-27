@@ -127,9 +127,9 @@ export function fire_push_movement(
             let dest_y = body.y + tween_y;
             if (body === data.hero.shadow || body === data.hero.sprite.body) {
                 if (tween_x === 0) {
-                    dest_x = data.map.sprite.tileWidth * (prev_x + event_shift_x + 0.5);
+                    dest_x = data.map.tile_width * (prev_x + event_shift_x + 0.5);
                 } else if (tween_y === 0) {
-                    dest_y = data.map.sprite.tileHeight * (prev_y + event_shift_y + 0.5);
+                    dest_y = data.map.tile_height * (prev_y + event_shift_y + 0.5);
                 }
             }
             let promise_resolve;
@@ -160,7 +160,7 @@ export function fire_push_movement(
                         ) {
                             drop_found = true;
                             const dest_y_shift_px =
-                                (drop_tile.dest_y - interactable_object.current_y) * data.map.sprite.tileHeight;
+                                (drop_tile.dest_y - interactable_object.current_y) * data.map.tile_height;
                             shift_events(
                                 data,
                                 interactable_object,
@@ -267,8 +267,8 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
 function dust_animation(game, data, interactable_object, promise_resolve) {
     let promises = new Array(DUST_COUNT);
     let sprites = new Array(DUST_COUNT);
-    const origin_x = (interactable_object.current_x + 0.5) * data.map.sprite.tileWidth;
-    const origin_y = (interactable_object.current_y + 0.5) * data.map.sprite.tileHeight;
+    const origin_x = (interactable_object.current_x + 0.5) * data.map.tile_width;
+    const origin_y = (interactable_object.current_y + 0.5) * data.map.tile_height;
     const dust_sprite_base = data.info.misc_sprite_base_list[DUST_KEY];
     for (let i = 0; i < DUST_COUNT; ++i) {
         const this_angle = ((Math.PI + numbers.degree60) * i) / (DUST_COUNT - 1) - numbers.degree30;

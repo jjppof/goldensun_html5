@@ -170,9 +170,9 @@ export class MoveFieldPsynergy extends FieldAbilities {
                         );
                         if (pos_sqr_distance <= rad_sqr_distance) {
                             this.controllable_char.sprite.body.x =
-                                (this.controllable_char.tile_x_pos + 0.5) * this.data.map.sprite.tileWidth;
+                                (this.controllable_char.tile_x_pos + 0.5) * this.data.map.tile_width;
                             this.controllable_char.sprite.body.y =
-                                (this.controllable_char.tile_y_pos + 0.5) * this.data.map.sprite.tileHeight;
+                                (this.controllable_char.tile_y_pos + 0.5) * this.data.map.tile_height;
                             this.controllable_char.shadow.x = this.controllable_char.sprite.body.x;
                             this.controllable_char.shadow.y = this.controllable_char.sprite.body.y;
                         }

@@ -63,7 +63,7 @@ export class TeleportEvent extends TileEvent {
             this.open_door();
             this.game.physics.p2.pause();
             const time = 400;
-            const tween_x = this.data.map.sprite.tileWidth * (this.x + 0.5);
+            const tween_x = this.data.map.tile_width * (this.x + 0.5);
             const tween_y = this.data.hero.sprite.y - 15;
             this.game.add.tween(this.data.hero.shadow).to(
                 {
@@ -114,7 +114,9 @@ export class TeleportEvent extends TileEvent {
         const target_collision_layer = this.dest_collision_layer;
         this.data.hero.shadow.base_collision_layer = target_collision_layer;
         this.data.hero.sprite.base_collision_layer = target_collision_layer;
-        this.data.map = await this.data.info.maps_list[next_map_key_name].mount_map(target_collision_layer);
+        if (this.data.map.key_name !== next_map_key_name) {
+            this.data.map = await this.data.info.maps_list[next_map_key_name].mount_map(target_collision_layer);
+        }
         this.game.camera.setBoundsToWorld();
         if (this.game.camera.bounds?.width < numbers.GAME_WIDTH) {
             this.game.camera.bounds.width = numbers.GAME_WIDTH;
@@ -127,8 +129,8 @@ export class TeleportEvent extends TileEvent {
         this.data.collision.config_collisions(this.data.map, this.data.map.collision_layer, this.data.npc_group);
         this.game.physics.p2.updateBoundsCollisionGroup();
         this.data.debug.update_debug_physics(this.data.hero.sprite.body.debug);
-        this.data.hero.sprite.body.x = (this.x_target + 0.5) * this.data.map.sprite.tileWidth;
-        this.data.hero.sprite.body.y = (this.y_target + 0.5) * this.data.map.sprite.tileHeight;
+        this.data.hero.sprite.body.x = (this.x_target + 0.5) * this.data.map.tile_width;
+        this.data.hero.sprite.body.y = (this.y_target + 0.5) * this.data.map.tile_height;
         this.game.physics.p2.resume();
         this.camera_fade_out();
     }

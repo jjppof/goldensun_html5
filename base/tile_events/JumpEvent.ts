@@ -134,8 +134,8 @@ export class JumpEvent extends TileEvent {
         this.data.tile_event_manager.on_event = true;
         let tween_obj: any = {};
         tween_obj[direction] = this.data.hero.sprite[direction] + jump_offset;
-        const hero_x = this.data.map.sprite.tileWidth * (next_position.x + 0.5);
-        const hero_y = this.data.map.sprite.tileHeight * (next_position.y + 0.5);
+        const hero_x = this.data.map.tile_width * (next_position.x + 0.5);
+        const hero_y = this.data.map.tile_height * (next_position.y + 0.5);
         if (direction === "x") {
             tween_obj.y = [hero_y - 8, hero_y - 16, hero_y - 8, hero_y];
         } else {
@@ -220,11 +220,11 @@ export class JumpEvent extends TileEvent {
             this.data.map.collision_sprite.body.removeCollisionGroup(this.data.collision.hero_collision_group, true);
             bodies_position.forEach(position => {
                 const pos_array = position.split("_");
-                const x_pos = (parseInt(pos_array[0]) + 0.5) * this.data.map.sprite.tileWidth;
-                const y_pos = (parseInt(pos_array[1]) + 0.5) * this.data.map.sprite.tileHeight;
+                const x_pos = (parseInt(pos_array[0]) + 0.5) * this.data.map.tile_width;
+                const y_pos = (parseInt(pos_array[1]) + 0.5) * this.data.map.tile_height;
                 let body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
                 body.clearShapes();
-                body.setRectangle(this.data.map.sprite.tileWidth, this.data.map.sprite.tileHeight, 0, 0);
+                body.setRectangle(this.data.map.tile_width, this.data.map.tile_height, 0, 0);
                 body.setCollisionGroup(this.data.collision.dynamic_events_collision_group);
                 body.damping = numbers.MAP_DAMPING;
                 body.angularDamping = numbers.MAP_DAMPING;
@@ -284,11 +284,11 @@ export class JumpEvent extends TileEvent {
                             }
                             if (dynamic_found) continue;
                         }
-                        let x_pos = (surroundings[i].x + 0.5) * data.map.sprite.tileWidth;
-                        let y_pos = (surroundings[i].y + 0.5) * data.map.sprite.tileHeight;
+                        let x_pos = (surroundings[i].x + 0.5) * data.map.tile_width;
+                        let y_pos = (surroundings[i].y + 0.5) * data.map.tile_height;
                         let body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
                         body.clearShapes();
-                        body.setRectangle(data.map.sprite.tileWidth, data.map.sprite.tileHeight, 0, 0);
+                        body.setRectangle(data.map.tile_width, data.map.tile_height, 0, 0);
                         body.setCollisionGroup(data.collision.dynamic_events_collision_group);
                         body.damping = numbers.MAP_DAMPING;
                         body.angularDamping = numbers.MAP_DAMPING;
