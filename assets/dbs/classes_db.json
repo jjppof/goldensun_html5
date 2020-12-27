@@ -868,7 +868,7 @@
                 {"ability": "fiery_juggle", "level": 37},
                 {"ability": "frost_card", "level": 46}
             ],
-            "class_type": 9
+            "class_type": 15
         },{
             "key_name": "harlequin",
             "name": "Harlequin",
@@ -898,7 +898,7 @@
                 {"ability": "fiery_juggle", "level": 37},
                 {"ability": "frost_card", "level": 46}
             ],
-            "class_type": 9
+            "class_type": 15
         },{
             "key_name": "punchinello",
             "name": "Punchinello",
@@ -929,7 +929,7 @@
                 {"ability": "fiery_juggle", "level": 37},
                 {"ability": "frost_card", "level": 46}
             ],
-            "class_type": 9
+            "class_type": 15
         },{
             "key_name": "acrobat",
             "name": "Acrobat",
@@ -960,7 +960,7 @@
                 {"ability": "fiery_juggle", "level": 37},
                 {"ability": "frost_card", "level": 46}
             ],
-            "class_type": 9
+            "class_type": 15
         }
     ]
 }

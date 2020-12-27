@@ -547,7 +547,7 @@
         "equipable_chars": ["isaac", "garet", "sheba"],
         "price": 30,
         "granted_ability": "",
-        "granted_class_type": 9
+        "granted_class_type": 15
     }
 
 ]
