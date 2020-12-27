@@ -108,10 +108,9 @@ export class FieldAbilities {
             )
                 continue;
             const item_x_px =
-                interactable_object.current_x * this.data.map.sprite.tileWidth + (this.data.map.sprite.tileWidth >> 1);
+                interactable_object.current_x * this.data.map.tile_width + (this.data.map.tile_width >> 1);
             const item_y_px =
-                interactable_object.current_y * this.data.map.sprite.tileHeight +
-                (this.data.map.sprite.tileHeight >> 1);
+                interactable_object.current_y * this.data.map.tile_height + (this.data.map.tile_height >> 1);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
             const y_condition = item_y_px >= min_y && item_y_px <= max_y;
             if (

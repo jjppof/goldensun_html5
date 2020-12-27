@@ -33,9 +33,9 @@ export class StepEvent extends TileEvent {
             next_y = this.y,
             shift_y;
         if (this.step_direction === directions.up) {
-            shift_y = -((this.data.map.sprite.tileHeight / StepEvent.STEP_SHIFT_FACTOR) | 0);
+            shift_y = -((this.data.map.tile_height / StepEvent.STEP_SHIFT_FACTOR) | 0);
         } else if (this.step_direction === directions.down) {
-            shift_y = (this.data.map.sprite.tileHeight / StepEvent.STEP_SHIFT_FACTOR) | 0;
+            shift_y = (this.data.map.tile_height / StepEvent.STEP_SHIFT_FACTOR) | 0;
         }
         if (this.activation_directions[0] === directions.left) {
             next_x = this.x - 1;

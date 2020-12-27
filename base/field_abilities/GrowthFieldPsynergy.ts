@@ -125,6 +125,7 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         const anim_key = this.sprite_base.getAnimationKey(GrowthFieldPsynergy.ABILITY_KEY_NAME, "growing");
         this.target_object.sprite.animations.play(anim_key);
         this.target_object.sprite.animations.currentAnim.onComplete.addOnce(() => {
+            this.target_object.sprite.send_to_back = true;
             this.unset_hero_cast_anim();
             this.stop_casting();
         });

@@ -19956,11 +19956,11 @@ PIXI.WebGLSpriteBatch.prototype.render = function (sprite, matrix)
         const apply_mode7 = (x, y) => {
             const uvy = y/sprite.game._height;
             const uvx = x/sprite.game._width;
-            y = 4           / (-1.3 * uvy + 4.63);
-            x = (uvx - 0.5) / (-1.3 * uvy + 2.65);
+            y = 4           / (-1.25 * uvy + 4.6);
+            x = (uvx - 0.5) / (-0.68 * uvy + 2.71);
             y -= 1;
-            y /= 0.28;
-            x /= 0.28;
+            y /= 0.26;
+            x /= 0.245;
             angle = -sprite.data.map.mode7_filter.angle;
             x = x * Math.cos(angle) + y * Math.sin(angle);
             y = -x * Math.sin(angle) + y * Math.cos(angle)

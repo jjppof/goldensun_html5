@@ -126,5 +126,19 @@
         },
         "lazy_load": true,
         "collision_embedded": true
+    },{
+        "name":"Cave",
+        "key_name":"cave",
+        "tileset_key_name":"cave",
+        "bgm": {
+            "key": "cave_bgm",
+            "path": "assets/sounds/bgm/cave.ogg"
+        },
+        "tileset_files": {
+            "image":"assets/images/maps/cave/cave.png",
+            "json":"assets/images/maps/cave/cave.json"
+        },
+        "lazy_load": true,
+        "collision_embedded": true
     }
 ]

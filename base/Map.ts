@@ -92,6 +92,18 @@ export class Map {
         this.bgm_url = bgm_url;
     }
 
+    get tile_width() {
+        return this.sprite.properties?.real_tile_width !== undefined
+            ? this.sprite.properties.real_tile_width
+            : this.sprite.tileWidth;
+    }
+
+    get tile_height() {
+        return this.sprite.properties?.real_tile_height !== undefined
+            ? this.sprite.properties.real_tile_height
+            : this.sprite.tileHeight;
+    }
+
     sort_sprites() {
         let send_to_back_list = new Array(this.data.npc_group.children.length);
         let send_to_front_list = new Array(this.data.npc_group.children.length);
@@ -321,7 +333,8 @@ export class Map {
                 property_info.x_target,
                 property_info.y_target,
                 property_info.advance_effect,
-                property_info.dest_collision_layer ? property_info.dest_collision_layer : 0
+                property_info.dest_collision_layer ? property_info.dest_collision_layer : 0,
+                property_info.destination_direction
             );
             this.events[this_event_location_key].push(new_event);
         } else if (property_info.type === tile_event_types.SLIDER) {
@@ -412,7 +425,12 @@ export class Map {
                 property_info.base_collision_layer === undefined ? 0 : property_info.base_collision_layer,
                 property_info.talk_range_factor,
                 property_info.events === undefined ? [] : property_info.events,
-                this.data.dbs.npc_db[property_info.key_name].no_shadow
+                this.data.dbs.npc_db[property_info.key_name].no_shadow,
+                property_info.ignore_world_map_scale !== undefined
+                    ? property_info.ignore_world_map_scale
+                    : npc_db.ignore_world_map_scale,
+                property_info.anchor_x,
+                property_info.anchor_y
             )
         );
     }
@@ -454,7 +472,7 @@ export class Map {
         for (let i = 0; i < this.interactable_objects.length; ++i) {
             const interactable_object = this.interactable_objects[i];
             interactable_object.sprite_info = this.data.info.iter_objs_sprite_base_list[interactable_object.key_name];
-            interactable_object.initial_config(this.sprite);
+            interactable_object.initial_config(this);
             interactable_object.initialize_related_events(this.events, this);
         }
     }
@@ -481,7 +499,7 @@ export class Map {
                 npc_sprite_info.setActionLoop(action, npc_db.actions[action].loop);
             }
             npc_sprite_info.generateAllFrames();
-            await new Promise(resolve => {
+            await new Promise<void>(resolve => {
                 npc_sprite_info.loadSpritesheets(this.game, true, () => {
                     if (!npc.no_shadow) {
                         npc.set_shadow(
@@ -495,13 +513,13 @@ export class Map {
                     npc.set_sprite(
                         this.data.npc_group,
                         npc_sprite_info,
-                        this.sprite,
                         npc.base_collision_layer,
-                        npc_db.anchor_x,
-                        npc_db.anchor_y,
+                        this,
+                        npc.anchor_x !== undefined ? npc.anchor_x : npc_db.anchor_x,
+                        npc.anchor_y !== undefined ? npc.anchor_y : npc_db.anchor_y,
                         this.is_world_map
                     );
-                    if (this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
+                    if (npc.ignore_world_map_scale) {
                         npc.sprite.scale.setTo(1, 1);
                         if (npc.shadow) {
                             npc.shadow.scale.setTo(1, 1);
@@ -560,7 +578,7 @@ export class Map {
         TileEvent.reset();
         GameEvent.reset();
         this.sprite = this.game.add.tilemap(this.key_name);
-        if (this.sprite.properties.world_map) {
+        if (this.sprite.properties?.world_map) {
             this.is_world_map = true;
         }
 
@@ -568,6 +586,9 @@ export class Map {
         this.sprite.objects = _.mapKeys(this.sprite.objects, (obj: any, collision_index: string) => {
             return parseInt(collision_index);
         }) as any;
+        if (this.collision_embedded) {
+            this.collision_layers_number = Object.keys(this.sprite.objects).length;
+        }
 
         for (let i = 0; i < this.sprite.tilesets.length; ++i) {
             const tileset = this.sprite.tilesets[i];
@@ -596,7 +617,7 @@ export class Map {
         this.config_interactable_object();
         await this.config_npc();
 
-        if (this.sprite.properties.footprint) {
+        if (this.sprite.properties?.footprint) {
             this.show_footsteps = true;
         }
 
@@ -613,13 +634,13 @@ export class Map {
             this.layers.forEach(l => (l.sprite.filters = [this.mode7_filter]));
             this.game.camera.bounds = null;
             this.npcs.forEach(npc => {
-                if (!this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
+                if (!npc.ignore_world_map_scale) {
                     npc.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
                 }
                 npc.sprite.data.mode7 = true;
                 npc.sprite.data.map = this;
                 if (npc.shadow) {
-                    if (!this.data.dbs.npc_db[npc.key_name].ignore_world_map_scale) {
+                    if (!npc.ignore_world_map_scale) {
                         npc.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
                     }
                     npc.shadow.data.mode7 = true;
@@ -652,6 +673,7 @@ export class Map {
     }
 
     unset_map() {
+        this.sprite.destroy();
         this.data.underlayer_group.removeAll();
         this.data.overlayer_group.removeAll();
 

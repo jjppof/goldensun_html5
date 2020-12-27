@@ -27,20 +27,19 @@ Phaser.Filter.Mode7 = function (game) {
         "highp float sin_;",
 
         "void main(void) {",
-        "    vec2 uv = vTextureCoord;",
         "    vec2 warped;",
 
-        // perform mode7 transform on uvs
-        "    warped = vec2(uv.x-lookX, 4) / vec2(-inclination*uv.y + lookY, -inclination*uv.y + lookY);",
+        "    warped.x = (vTextureCoord.x - lookX) / (-inclination*vTextureCoord.y + lookY);",
+        "    warped.y = 4.0 / (-inclination*vTextureCoord.y + lookY);",
         "    warped.y -= distance;",
         "    warped /= scale;",
 
         "    cos_ = cos(angle);",
         "    sin_ = sin(angle);",
-        "    warped *= mat2(cos_, -sin_, sin_, cos_);", // rotate the new uvs
-        "    warped += vec2(0.5, 0.5);", // centred
+        "    warped *= mat2(cos_, -sin_, sin_, cos_);",
+        "    warped += vec2(0.5, 0.5);",
 
-        "    bool isDraw = uv.y > 0.5 - lookY;",
+        "    bool isDraw = vTextureCoord.y > 0.5 - lookY;",
         "    if (isDraw) {",
         "        gl_FragColor = texture2D(uSampler, warped);",
         "    } else {",

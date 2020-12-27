@@ -98,8 +98,8 @@ export class InteractableObjects {
     }
 
     get_current_position(map: Map) {
-        const x = (this.sprite.x / map.sprite.tileWidth) | 0;
-        const y = (this.sprite.y / map.sprite.tileHeight) | 0;
+        const x = (this.sprite.x / map.tile_width) | 0;
+        const y = (this.sprite.y / map.tile_height) | 0;
         return {x: x, y: y};
     }
 
@@ -131,8 +131,8 @@ export class InteractableObjects {
 
     creating_blocking_stair_block(collision_obj: Collision) {
         const target_layer = this.base_collision_layer + this.custom_data.block_stair_collider_layer_shift;
-        const x_pos = (this.current_x + 0.5) * this.data.map.sprite.tileWidth;
-        const y_pos = (this.current_y + 1.5) * this.data.map.sprite.tileHeight - 4;
+        const x_pos = (this.current_x + 0.5) * this.data.map.tile_width;
+        const y_pos = (this.current_y + 1.5) * this.data.map.tile_height - 4;
         let body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
         body.clearShapes();
         const width = this.data.dbs.interactable_objects_db[this.key_name].body_radius * 2;
@@ -154,7 +154,7 @@ export class InteractableObjects {
         this.custom_data.blocking_stair_block = body;
     }
 
-    initial_config(map_sprite: Phaser.Tilemap) {
+    initial_config(map: Map) {
         const interactable_object_sprite = this.data.npc_group.create(0, 0, this.key_name + "_" + this.key_name);
         this.set_sprite(interactable_object_sprite);
         this.sprite.is_interactable_object = true;
@@ -176,9 +176,9 @@ export class InteractableObjects {
             this.data.dbs.interactable_objects_db[this.key_name].shift_y !== undefined
                 ? this.data.dbs.interactable_objects_db[this.key_name].shift_y
                 : 0;
-        this.sprite.centerX = (this.x + 1) * map_sprite.tileWidth + shift_x;
-        const anchor_shift = this.data.dbs.interactable_objects_db[this.key_name].anchor_y * map_sprite.tileWidth * 0.5;
-        this.sprite.centerY = this.y * map_sprite.tileWidth - anchor_shift + shift_y;
+        this.sprite.centerX = (this.x + 1) * map.tile_width + shift_x;
+        const anchor_shift = this.data.dbs.interactable_objects_db[this.key_name].anchor_y * map.tile_width * 0.5;
+        this.sprite.centerY = this.y * map.tile_width - anchor_shift + shift_y;
         this.sprite_info.setAnimation(this.sprite, this.key_name);
         const initial_animation = this.data.dbs.interactable_objects_db[this.key_name].initial_animation;
         this.sprite.animations.play(this.key_name + "_" + initial_animation);

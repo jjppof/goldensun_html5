@@ -63,7 +63,7 @@ export class ClimbEvent extends TileEvent {
             const turn_animation = this.data.hero.play(base_actions.CLIMB, "turn");
             turn_animation.onComplete.addOnce(() => {
                 this.data.hero.shadow.visible = false;
-                const x_tween = this.data.map.sprite.tileWidth * (this.x + 0.5);
+                const x_tween = this.data.map.tile_width * (this.x + 0.5);
                 const y_tween = this.data.hero.sprite.y + 25;
                 this.game.add
                     .tween(this.data.hero.sprite.body)
@@ -84,7 +84,7 @@ export class ClimbEvent extends TileEvent {
         } else if (activation_direction === directions.up) {
             this.data.hero.play(base_actions.CLIMB, base_actions.IDLE);
             const out_time = Phaser.Timer.QUARTER / 3;
-            const x_tween = this.data.map.sprite.tileWidth * (this.x + 0.5);
+            const x_tween = this.data.map.tile_width * (this.x + 0.5);
             const y_tween = this.data.hero.sprite.y - 15;
             if (this.dynamic) {
                 this.create_climb_collision_bodies();
@@ -209,11 +209,11 @@ export class ClimbEvent extends TileEvent {
             );
         }
         for (let i = 0; i < postions.length; ++i) {
-            const x_pos = (postions[i].x + 0.5) * this.data.map.sprite.tileWidth;
-            const y_pos = (postions[i].y + 0.5) * this.data.map.sprite.tileHeight;
+            const x_pos = (postions[i].x + 0.5) * this.data.map.tile_width;
+            const y_pos = (postions[i].y + 0.5) * this.data.map.tile_height;
             let body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
             body.clearShapes();
-            body.setRectangle(this.data.map.sprite.tileWidth, this.data.map.sprite.tileHeight, 0, 0);
+            body.setRectangle(this.data.map.tile_width, this.data.map.tile_height, 0, 0);
             body.setCollisionGroup(this.data.collision.dynamic_events_collision_group);
             body.damping = numbers.MAP_DAMPING;
             body.angularDamping = numbers.MAP_DAMPING;
