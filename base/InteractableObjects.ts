@@ -154,7 +154,7 @@ export class InteractableObjects {
         this.custom_data.blocking_stair_block = body;
     }
 
-    initial_config(map_sprite: Phaser.Tilemap) {
+    initial_config(map: Map) {
         const interactable_object_sprite = this.data.npc_group.create(0, 0, this.key_name + "_" + this.key_name);
         this.set_sprite(interactable_object_sprite);
         this.sprite.is_interactable_object = true;
@@ -176,10 +176,9 @@ export class InteractableObjects {
             this.data.dbs.interactable_objects_db[this.key_name].shift_y !== undefined
                 ? this.data.dbs.interactable_objects_db[this.key_name].shift_y
                 : 0;
-        this.sprite.centerX = (this.x + 1) * this.data.map.tile_width + shift_x;
-        const anchor_shift =
-            this.data.dbs.interactable_objects_db[this.key_name].anchor_y * this.data.map.tile_width * 0.5;
-        this.sprite.centerY = this.y * this.data.map.tile_width - anchor_shift + shift_y;
+        this.sprite.centerX = (this.x + 1) * map.tile_width + shift_x;
+        const anchor_shift = this.data.dbs.interactable_objects_db[this.key_name].anchor_y * map.tile_width * 0.5;
+        this.sprite.centerY = this.y * map.tile_width - anchor_shift + shift_y;
         this.sprite_info.setAnimation(this.sprite, this.key_name);
         const initial_animation = this.data.dbs.interactable_objects_db[this.key_name].initial_animation;
         this.sprite.animations.play(this.key_name + "_" + initial_animation);

@@ -145,6 +145,7 @@ export class GoldenSun {
             this.npc_group,
             hero_sprite_base,
             this.map.collision_layer,
+            this.map,
             undefined,
             undefined,
             this.map.is_world_map

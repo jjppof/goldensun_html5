@@ -3,6 +3,7 @@ import {reverse_directions, base_actions} from "./utils";
 import {Footsteps} from "./utils/Footsteps";
 import {GoldenSun} from "./GoldenSun";
 import {SpriteBase} from "./SpriteBase";
+import {Map} from "./Map";
 
 export class ControllableChar {
     private static readonly DEFAULT_SHADOW_KEYNAME = "shadow";
@@ -122,6 +123,7 @@ export class ControllableChar {
         group: Phaser.Group,
         sprite_info: SpriteBase,
         layer: number,
+        map: Map,
         anchor_x?: number,
         anchor_y?: number,
         is_world_map: boolean = false
@@ -132,8 +134,8 @@ export class ControllableChar {
         const action_key = this.sprite_info.getActionKey(this.current_action);
         this.sprite = group.create(0, 0, action_key);
         this.sprite.anchor.setTo(anchor_x, anchor_y);
-        this.sprite.x = ((this.tile_x_pos + 0.5) * this.data.map.tile_width) | 0;
-        this.sprite.y = ((this.tile_y_pos + 0.5) * this.data.map.tile_height) | 0;
+        this.sprite.x = ((this.tile_x_pos + 0.5) * map.tile_width) | 0;
+        this.sprite.y = ((this.tile_y_pos + 0.5) * map.tile_height) | 0;
         this.sprite.base_collision_layer = layer;
         this.sprite.roundPx = true;
         const scale_x = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;

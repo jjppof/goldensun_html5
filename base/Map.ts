@@ -472,7 +472,7 @@ export class Map {
         for (let i = 0; i < this.interactable_objects.length; ++i) {
             const interactable_object = this.interactable_objects[i];
             interactable_object.sprite_info = this.data.info.iter_objs_sprite_base_list[interactable_object.key_name];
-            interactable_object.initial_config(this.sprite);
+            interactable_object.initial_config(this);
             interactable_object.initialize_related_events(this.events, this);
         }
     }
@@ -514,6 +514,7 @@ export class Map {
                         this.data.npc_group,
                         npc_sprite_info,
                         npc.base_collision_layer,
+                        this,
                         npc.anchor_x !== undefined ? npc.anchor_x : npc_db.anchor_x,
                         npc.anchor_y !== undefined ? npc.anchor_y : npc_db.anchor_y,
                         this.is_world_map
@@ -585,6 +586,9 @@ export class Map {
         this.sprite.objects = _.mapKeys(this.sprite.objects, (obj: any, collision_index: string) => {
             return parseInt(collision_index);
         }) as any;
+        if (this.collision_embedded) {
+            this.collision_layers_number = Object.keys(this.sprite.objects).length;
+        }
 
         for (let i = 0; i < this.sprite.tilesets.length; ++i) {
             const tileset = this.sprite.tilesets[i];
@@ -669,6 +673,7 @@ export class Map {
     }
 
     unset_map() {
+        this.sprite.destroy();
         this.data.underlayer_group.removeAll();
         this.data.overlayer_group.removeAll();
 
