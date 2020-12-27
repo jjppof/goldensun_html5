@@ -35,11 +35,11 @@ export class BattleFormulas {
         if (turn_quantity === 4) {
             switch (turn_number) {
                 case 2:
-                    (agility * 5) / 6 + priority;
+                    return (agility * 5) / 6 + priority;
                 case 3:
-                    (agility * 4) / 6 + priority;
+                    return (agility * 4) / 6 + priority;
                 case 4:
-                    (agility >> 1) + priority;
+                    return (agility >> 1) + priority;
             }
         }
         return (agility >> 1) + priority;
