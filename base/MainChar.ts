@@ -192,7 +192,8 @@ export class MainChar extends Player {
             this.info.classes_list,
             this.class_table,
             this.element_afinity,
-            this.current_level
+            this.current_level,
+            this.granted_class_type,
         );
     }
 
@@ -286,20 +287,28 @@ export class MainChar extends Player {
         const item_obj = this.items[index];
         if (item_obj.equipped && !initialize) return;
         const item = this.info.items_list[item_obj.key_name];
+
         if (item.type in item_equip_slot && this.equip_slots[item_equip_slot[item.type]] !== null) {
             this.unequip_item(this.equip_slots[item_equip_slot[item.type]].index);
         }
         if (item.type in item_equip_slot) {
             this.equip_slots[item_equip_slot[item.type]] = item_obj;
         }
+
         item_obj.equipped = true;
         for (let i = 0; i < item.effects.length; ++i) {
             this.add_effect(item.effects[i], item);
         }
+
         this.update_attributes();
         this.update_elemental_attributes();
         if (item.type === item_types.ABILITY_GRANTOR) {
             this.equipped_abilities.push(item.granted_ability);
+            this.update_abilities();
+        }
+
+        if (item.type === item_types.CLASS_CHANGER) {
+            this.update_class();
             this.update_abilities();
         }
     }
@@ -413,7 +422,7 @@ export class MainChar extends Player {
             }
             lvls[djinn.element] += lv_shift;
         }
-        this.class = choose_right_class(this.info.classes_list, this.class_table, this.element_afinity, lvls);
+        this.class = choose_right_class(this.info.classes_list, this.class_table, this.element_afinity, lvls, this.granted_class_type);
         let return_obj = {
             class_name: this.class.name,
             class_key_name: this.class.key_name,
