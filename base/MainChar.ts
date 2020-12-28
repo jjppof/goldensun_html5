@@ -328,10 +328,16 @@ export class MainChar extends Player {
         });
         this.update_attributes();
         this.update_elemental_attributes();
+
         if (item.type === item_types.ABILITY_GRANTOR) {
             this.equipped_abilities = this.equipped_abilities.filter(ability => {
                 return ability !== item.granted_ability;
             });
+            this.update_abilities();
+        }
+
+        if (item.type === item_types.CLASS_CHANGER) {
+            this.update_class();
             this.update_abilities();
         }
     }
