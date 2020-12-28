@@ -80,8 +80,8 @@
             "spritesheet": "assets/images/spritesheets/battle/briggs_battle.json",
             "spritesheet_img": "assets/images/spritesheets/battle/briggs_battle.png",
             "positions": [
-                "back", 
-                "front",
+                "idle_back", 
+                "idle_front",
                 "attack_back",
                 "attack_front",
                 "damage_back",
@@ -169,8 +169,8 @@
             "spritesheet": "assets/images/spritesheets/battle/sea_fighter_battle.json",
             "spritesheet_img": "assets/images/spritesheets/battle/sea_fighter_battle.png",
             "positions": [
-                "back", 
-                "front",
+                "idle_back", 
+                "idle_front",
                 "attack_back",
                 "attack_front",
                 "damage_back",

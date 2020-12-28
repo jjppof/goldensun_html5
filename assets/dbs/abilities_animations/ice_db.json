@@ -149,7 +149,7 @@
         "sprite_index": "targets",
         "wait": false
     },{
-        "animation_key": "battle_front",
+        "animation_key": "battle_idle_front",
         "start_delay": 3800,
         "sprite_index": "targets",
         "wait": false

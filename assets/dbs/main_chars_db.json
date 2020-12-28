@@ -117,8 +117,8 @@
                 "directions": [
                     "attack_back", 
                     "attack_front", 
-                    "back", 
-                    "front", 
+                    "idle_back", 
+                    "idle_front", 
                     "cast_back", 
                     "cast_front", 
                     "cast_init_back", 
@@ -229,8 +229,8 @@
                 "spritesheet": "assets/images/spritesheets/battle/garet_battle.json",
                 "spritesheet_img": "assets/images/spritesheets/battle/garet_battle.png",
                 "directions": [
-                    "back", 
-                    "front"
+                    "idle_back", 
+                    "idle_front"
                 ],
                 "directions_frames_number": 4,
                 "frame_rate": 3,
@@ -326,8 +326,8 @@
                 "spritesheet": "assets/images/spritesheets/battle/sheba_battle.json",
                 "spritesheet_img": "assets/images/spritesheets/battle/sheba_battle.png",
                 "directions": [
-                    "back", 
-                    "front"
+                    "idle_back", 
+                    "idle_front"
                 ],
                 "directions_frames_number": 4,
                 "frame_rate": 3,

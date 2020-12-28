@@ -1,11 +1,12 @@
 import * as numbers from "../magic_numbers";
-import {range_360} from "../utils";
+import {base_actions, range_360} from "../utils";
 import {ability_target_types} from "../Ability";
 import {fighter_types, permanent_status, Player} from "../Player";
 import {GoldenSun} from "../GoldenSun";
 import {PlayerInfo} from "./Battle";
 import * as _ from "lodash";
 import {SpriteBase} from "../SpriteBase";
+import {battle_actions, battle_positions} from "./PlayerSprite";
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
@@ -283,8 +284,8 @@ export class BattleStage {
             sprite.ellipses_semi_major = SEMI_MAJOR_AXIS;
             sprite.ellipses_semi_minor = SEMI_MINOR_AXIS;
 
-            sprite.data.is_Ally = is_ally;
-            sprite_base.setAnimation(sprite, "battle");
+            sprite.data.is_ally = is_ally;
+            sprite_base.setAnimation(sprite, base_actions.BATTLE);
             sprite.animations.play(animation);
             this.sprites.push(sprite);
 
@@ -292,23 +293,27 @@ export class BattleStage {
         };
 
         this.allies_info.forEach(info => {
+            const sprite_base = this.data.info.main_char_list[info.instance.key_name].sprite_base;
+            const battle_key = `${battle_actions.IDLE}_${battle_positions.BACK}`;
             const sprite = set_sprite(
                 this.group_allies,
                 info,
                 true,
-                "battle_back",
-                this.data.info.main_char_list[info.instance.key_name].sprite_base
+                sprite_base.getAnimationKey(base_actions.BATTLE, battle_key),
+                sprite_base
             );
             info.sprite = sprite;
         });
 
         this.enemies_info.forEach(info => {
+            const sprite_base = this.data.info.enemies_list[info.instance.key_name].sprite_base;
+            const battle_key = `${battle_actions.IDLE}_${battle_positions.BACK}`;
             const sprite = set_sprite(
                 this.group_enemies,
                 info,
                 false,
-                "battle_front",
-                this.data.info.enemies_list[info.instance.key_name].sprite_base
+                sprite_base.getAnimationKey(base_actions.BATTLE, battle_key),
+                sprite_base
             );
             info.sprite = sprite;
         });
@@ -429,13 +434,13 @@ export class BattleStage {
 
         for (let i = 0; i < this.sprites.length; ++i) {
             const sprite = this.sprites[i];
-            const index_shifted = sprite.data.is_Ally ? i : this.enemies_count - 1 - (i - this.allies_count);
-            const x_shift = sprite.data.is_Ally
+            const index_shifted = sprite.data.is_ally ? i : this.enemies_count - 1 - (i - this.allies_count);
+            const x_shift = sprite.data.is_ally
                 ? ACTION_POS_ALLY_X
                 : ACTION_POS_ENEMY_CENTER_X - (this.enemies_count >> 1) * ACTION_POS_SPACE_BETWEEN;
 
             const pos_x = x_shift + index_shifted * ACTION_POS_SPACE_BETWEEN;
-            const pos_y = sprite.data.is_Ally ? ACTION_ALLY_Y : ACTION_ENEMY_Y;
+            const pos_y = sprite.data.is_ally ? ACTION_ALLY_Y : ACTION_ENEMY_Y;
 
             sprite.x = pos_x;
             sprite.y = pos_y;
@@ -696,14 +701,14 @@ export class BattleStage {
     update_sprite_properties() {
         for (let i = 0; i < this.sprites.length; ++i) {
             const sprite = this.sprites[i];
-            const relative_angle = sprite.data.is_Ally ? this.camera_angle.rad : this.camera_angle.rad + Math.PI;
+            const relative_angle = sprite.data.is_ally ? this.camera_angle.rad : this.camera_angle.rad + Math.PI;
 
             const angle_position = BattleStage.get_angle(relative_angle);
             const pos_x = BattleStage.ellipse_position(sprite, angle_position, true);
             const pos_y = BattleStage.ellipse_position(sprite, angle_position, false);
 
-            const shift_from_middle = sprite.data.is_Ally ? this.shift_from_middle_ally : this.shift_from_middle_enemy;
-            const index_shifted = sprite.data.is_Ally ? i : i - this.allies_count;
+            const shift_from_middle = sprite.data.is_ally ? this.shift_from_middle_ally : this.shift_from_middle_enemy;
+            const index_shifted = sprite.data.is_ally ? i : i - this.allies_count;
 
             sprite.x =
                 pos_x +
@@ -711,15 +716,15 @@ export class BattleStage {
                     Math.sin(relative_angle); //shift party players from base point
             sprite.y = pos_y;
 
-            const info = sprite.data.is_Ally ? this.allies_info[index_shifted] : this.enemies_info[index_shifted];
+            const info = sprite.data.is_ally ? this.allies_info[index_shifted] : this.enemies_info[index_shifted];
             const scale = BattleStage.get_scale(info.scale, relative_angle);
             sprite.scale.setTo(scale, scale);
 
-            if (Math.sin(relative_angle) > 0 && !sprite.animations.currentAnim.name.endsWith("back")) {
+            if (Math.sin(relative_angle) > 0 && !sprite.animations.currentAnim.name.endsWith("idle_back")) {
                 //change texture in function of position
-                sprite.animations.play(sprite.animations.currentAnim.name.replace("front", "back"));
-            } else if (Math.sin(relative_angle) <= 0 && !sprite.animations.currentAnim.name.endsWith("front")) {
-                sprite.animations.play(sprite.animations.currentAnim.name.replace("back", "front"));
+                sprite.animations.play(sprite.animations.currentAnim.name.replace("idle_front", "idle_back"));
+            } else if (Math.sin(relative_angle) <= 0 && !sprite.animations.currentAnim.name.endsWith("idle_front")) {
+                sprite.animations.play(sprite.animations.currentAnim.name.replace("idle_back", "idle_front"));
             }
 
             if (Math.cos(relative_angle) > 0 && sprite.scale.x < 0) {

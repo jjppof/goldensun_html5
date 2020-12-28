@@ -627,7 +627,7 @@ export class BattleStatusWindow {
         this.battle_sprite.anchor.setTo(0.5, 1);
 
         sprite_base.setAnimation(this.battle_sprite, base_actions.BATTLE);
-        this.battle_sprite.animations.play(sprite_base.getAnimationKey(base_actions.BATTLE, "back"));
+        this.battle_sprite.animations.play(sprite_base.getAnimationKey(base_actions.BATTLE, "idle_back"));
 
         //TO DO: add shadow
         //TO DO: add weapon

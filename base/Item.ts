@@ -20,6 +20,15 @@ export enum use_types {
     NO_USE = "no_use",
 }
 
+export enum weapon_types {
+    NOT_A_WEAPON = "not_a_weapon",
+    LONG_SWORD = "sword",
+    LIGHT_BLADE = "light_blade",
+    AXE = "axe",
+    MACE = "mace",
+    STAFF = "staff",
+}
+
 export class Item {
     public static readonly BREAKS_CHANCE = 1 / 8;
 
