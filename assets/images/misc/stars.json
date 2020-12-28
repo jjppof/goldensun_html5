@@ -1,0 +1,44 @@
+{"frames": {
+
+"jupiter":
+{
+	"frame": {"x":1,"y":1,"w":6,"h":6},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":6,"h":6},
+	"sourceSize": {"w":6,"h":6}
+},
+"mars":
+{
+	"frame": {"x":9,"y":1,"w":6,"h":6},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":6,"h":6},
+	"sourceSize": {"w":6,"h":6}
+},
+"mercury":
+{
+	"frame": {"x":17,"y":1,"w":6,"h":6},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":6,"h":6},
+	"sourceSize": {"w":6,"h":6}
+},
+"venus":
+{
+	"frame": {"x":25,"y":1,"w":6,"h":6},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":6,"h":6},
+	"sourceSize": {"w":6,"h":6}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "stars.png",
+	"format": "RGBA8888",
+	"size": {"w":32,"h":8},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:73bc038bdeb18a98e376eef824161e08:8efa5ef4cdaac4afddfba4018b5bca05:35785538339b2ab69d61a4ffdc54ccf7$"
+}
+}

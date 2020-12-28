@@ -86,7 +86,7 @@ export class ChoosingTargetWindow {
         const name = this.base_window.set_text_in_position(display_name, this.ability_name_x, ABILITY_NAME_Y);
         this.texts.push(name);
         if (this.element && this.element !== elements.NO_ELEMENT && !["summon", "item"].includes(this.action)) {
-            const star = this.base_window.create_at_group(this.star_x, STAR_Y, this.element + "_star");
+            const star = this.base_window.create_at_group(this.star_x, STAR_Y, "stars", undefined, this.element);
             this.window_sprites.push(star);
         }
         if (this.icon_sprite_sheet && this.action !== "item") {
@@ -110,7 +110,7 @@ export class ChoosingTargetWindow {
             ordered_elements.forEach(element => {
                 if (!(element in reqs)) return;
                 const star_x = counter === 0 ? STAR_X_SUMOON_1 : STAR_X_SUMOON_2;
-                const star = this.base_window.create_at_group(star_x, STAR_Y, element + "_star");
+                const star = this.base_window.create_at_group(star_x, STAR_Y, "stars", undefined, element);
                 this.window_sprites.push(star);
                 const req_text = this.base_window.set_text_in_position(
                     reqs[element].toString(),

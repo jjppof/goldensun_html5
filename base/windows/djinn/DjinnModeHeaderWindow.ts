@@ -154,10 +154,16 @@ export class DjinnModeHeaderWindow {
             );
 
             this.sprites.push(
-                this.base_window.create_at_group(STAR_BEFORE_X, STAR_BEFORE_Y, this.djinni[0].element + "_star")
+                this.base_window.create_at_group(
+                    STAR_BEFORE_X,
+                    STAR_BEFORE_Y,
+                    "stars",
+                    undefined,
+                    this.djinni[0].element
+                )
             );
             this.sprites.push(
-                this.base_window.create_at_group(STAR_AFTER_X, STAR_AFTER_Y, this.djinni[0].element + "_star")
+                this.base_window.create_at_group(STAR_AFTER_X, STAR_AFTER_Y, "stars", undefined, this.djinni[0].element)
             );
 
             this.djinn_status_arrow.alpha = 1;
@@ -173,7 +179,13 @@ export class DjinnModeHeaderWindow {
 
             if (this.action_text === "Trade") {
                 this.sprites.push(
-                    this.base_window.create_at_group(STAR_BEFORE_X - 5, STAR_BEFORE_Y, this.djinni[0].element + "_star")
+                    this.base_window.create_at_group(
+                        STAR_BEFORE_X - 5,
+                        STAR_BEFORE_Y,
+                        "stars",
+                        undefined,
+                        this.djinni[0].element
+                    )
                 );
                 this.base_window.update_text(this.djinni[1].name, this.djinn_name_after_text);
                 this.base_window.update_text_color(
@@ -182,7 +194,13 @@ export class DjinnModeHeaderWindow {
                 );
 
                 this.sprites.push(
-                    this.base_window.create_at_group(STAR_AFTER_X - 5, STAR_AFTER_Y, this.djinni[1].element + "_star")
+                    this.base_window.create_at_group(
+                        STAR_AFTER_X - 5,
+                        STAR_AFTER_Y,
+                        "stars",
+                        undefined,
+                        this.djinni[1].element
+                    )
                 );
                 this.base_window.update_text_position({x: DJINN_NAME_AFTER_X - 5}, this.djinn_name_after_text);
                 this.base_window.update_text_position(
@@ -199,7 +217,9 @@ export class DjinnModeHeaderWindow {
                     this.base_window.create_at_group(
                         STAR_BEFORE_X - 5,
                         STAR_BEFORE_Y + numbers.FONT_SIZE,
-                        this.djinni[0].element + "_star"
+                        "stars",
+                        undefined,
+                        this.djinni[0].element
                     )
                 );
             }

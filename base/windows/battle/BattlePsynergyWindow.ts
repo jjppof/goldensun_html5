@@ -258,7 +258,9 @@ export class BattlePsynergyWindow {
                 this.base_window.create_at_group(
                     START_X,
                     y + 5,
-                    this.data.info.abilities_list[key_name].element + "_star"
+                    "stars",
+                    undefined,
+                    this.data.info.abilities_list[key_name].element
                 )
             );
             this.misc_sprites_in_window.push(

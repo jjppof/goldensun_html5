@@ -272,8 +272,7 @@ export class MainStatusStatistics extends StatusComponent {
 
         this.state = (this.manager as MainStatusMenu).state;
 
-        const stars = ["venus_star", "mercury_star", "mars_star", "jupiter_star"];
-        for (let i = 0; i < stars.length; i++) {
+        for (let i = 0; i < ordered_elements.length; i++) {
             const x_pos = MainStatusStatistics.ELEM.STARS.X + i * MainStatusStatistics.ELEM.STARS_SHIFT;
             let y_pos = MainStatusStatistics.ELEM.STARS.Y;
 
@@ -282,9 +281,9 @@ export class MainStatusStatistics extends StatusComponent {
             const star = this.window.create_at_group(
                 x_pos,
                 y_pos,
-                stars[i],
+                "stars",
                 undefined,
-                undefined,
+                ordered_elements[i],
                 MainStatusStatistics.GROUP_KEY
             );
             this.state_sprites.push(star);

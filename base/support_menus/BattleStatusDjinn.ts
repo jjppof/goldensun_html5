@@ -141,7 +141,6 @@ export class BattleStatusDjinn extends StatusComponent {
         this.char_djinn.forEach((col, col_index) => {
             col.forEach((djinn, line_index) => {
                 const name = djinn.name;
-                const star_key = djinn.element + "_star";
                 const recovery = djinn.recovery_turn + 1;
                 const status = djinn.status;
 
@@ -151,9 +150,9 @@ export class BattleStatusDjinn extends StatusComponent {
                 const star = this.window.create_at_group(
                     x_pos,
                     y_pos,
-                    star_key,
+                    "stars",
                     undefined,
-                    undefined,
+                    djinn.element,
                     BattleStatusDjinn.GROUP_KEY
                 );
                 this.state_sprites.push(star);

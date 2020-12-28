@@ -111,7 +111,7 @@ export class CharsStatusWindow {
                 const x = i % 2,
                     y = +(i > 1);
 
-                this.stars_group.create(STARS_X[x], STARS_Y[y], element + "_star");
+                this.stars_group.create(STARS_X[x], STARS_Y[y], "stars", element);
                 this.standby_count_text[element] = this.status_window.set_text_in_position(
                     "",
                     STANDBY_COUNT_X[x],

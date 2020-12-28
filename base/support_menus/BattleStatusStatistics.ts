@@ -305,17 +305,16 @@ export class BattleStatusStatistics extends StatusComponent {
     }
 
     public initialize() {
-        const stars = ["venus_star", "mercury_star", "mars_star", "jupiter_star"];
-        for (let i = 0; i < stars.length; i++) {
+        for (let i = 0; i < ordered_elements.length; i++) {
             const x_pos = BattleStatusStatistics.STARS.X + i * BattleStatusStatistics.STARS_SHIFT;
             const y_pos = BattleStatusStatistics.STARS.Y;
 
             const star = this.window.create_at_group(
                 x_pos,
                 y_pos,
-                stars[i],
+                "stars",
                 undefined,
-                undefined,
+                ordered_elements[i],
                 BattleStatusStatistics.GROUP_KEY
             );
             this.state_sprites.push(star);

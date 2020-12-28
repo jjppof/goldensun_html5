@@ -113,9 +113,9 @@ export class MainStatusDjinn extends StatusComponent {
                 const star = this.window.create_at_group(
                     x_pos,
                     y_pos,
-                    ordered_elements[i] + "_star",
+                    "stars",
                     undefined,
-                    undefined,
+                    ordered_elements[i],
                     MainStatusDjinn.GROUP_KEY
                 );
                 this.state_sprites.push(star);

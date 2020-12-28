@@ -365,7 +365,7 @@ export class DjinnListWindow {
             const this_djinn = this.data.info.djinni_list[char_djinni[j]];
             const star_x = STAR_X_PADDING + char_index * DJINN_NAME_BETWEEN;
             const star_y = STAR_Y_PADDING + j * numbers.FONT_SIZE;
-            stars.push(this.base_window.create_at_group(star_x, star_y, this_djinn.element + "_star"));
+            stars.push(this.base_window.create_at_group(star_x, star_y, "stars", undefined, this_djinn.element));
 
             const djinn_x = DJINN_NAME_X_PADDING + char_index * DJINN_NAME_BETWEEN;
             const djinn_y = DJINN_NAME_Y_PADDING + j * numbers.FONT_SIZE;

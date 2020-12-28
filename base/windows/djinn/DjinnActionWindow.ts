@@ -84,7 +84,9 @@ export class DjinnActionWindow {
         this.star_sprite = this.base_window.create_at_group(
             DJINN_NAME_X - 7,
             DJINN_NAME_Y + 1,
-            this_djinn.element + "_star"
+            "stars",
+            undefined,
+            this_djinn.element
         );
 
         this.base_window.update_text("What will you do?", this.action_description_text);

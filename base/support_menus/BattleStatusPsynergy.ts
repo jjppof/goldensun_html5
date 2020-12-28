@@ -153,7 +153,6 @@ export class BattleStatusPsynergy extends StatusComponent {
             const icon_key = ability.key_name;
             const name = ability.name;
             const pp_cost = ability.pp_cost;
-            const star_key = ability.element + "_star";
             const range = String(ability.range);
 
             let x_pos = BattleStatusPsynergy.PSYNERGY.ICON_X;
@@ -220,9 +219,9 @@ export class BattleStatusPsynergy extends StatusComponent {
             const star = this.window.create_at_group(
                 x_pos,
                 y_pos,
-                star_key,
+                "stars",
                 undefined,
-                undefined,
+                ability.element,
                 BattleStatusPsynergy.GROUP_KEY
             );
             this.state_sprites.push(star);

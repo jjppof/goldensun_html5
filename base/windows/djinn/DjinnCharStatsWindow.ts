@@ -146,7 +146,7 @@ export class DjinnCharStatsWindow {
             const star_width = 6,
                 char_width = 6;
             const x = DJINN_NUMBER_X - star_width - char_width - 1 - i * DJINN_NUMBER_SLOT_WIDTH;
-            const star_sprite = this.base_window.create_at_group(x, DJINN_NUMBER_Y + 1, element + "_star");
+            const star_sprite = this.base_window.create_at_group(x, DJINN_NUMBER_Y + 1, "stars", undefined, element);
             this.sprites.push(star_sprite);
         });
 

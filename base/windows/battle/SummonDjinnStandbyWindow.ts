@@ -35,7 +35,9 @@ export class SummonDjinnStandbyWindow {
             this.base_window.create_at_group(
                 STAR_LEFT_PADDING + i * SPACE_BETWEEN_STARS,
                 STAR_TOP_PADDING,
-                element + "_star"
+                "stars",
+                undefined,
+                element
             );
             this.texts[element] = this.base_window.set_text_in_position(
                 "",
