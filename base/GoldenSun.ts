@@ -119,6 +119,7 @@ export class GoldenSun {
 
         //init audio engine
         this.audio = new Audio(this.game, this);
+        this.game.sound.mute = true;
 
         //use the data loaded from json files to initialize some data
         await initialize_game_data(this.game, this);
@@ -171,8 +172,6 @@ export class GoldenSun {
         this.game_event_manager = new GameEventManager(this.game, this);
 
         this.initialize_utils_controls();
-
-        this.game.sound.mute = true;
 
         this.created = true;
         this.game.camera.resetFX();

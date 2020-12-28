@@ -23,7 +23,6 @@ Phaser.Filter.ColorFilters = function (game) {
         "precision mediump float;",
 
         "varying vec2       vTextureCoord;",
-        "varying vec4       vColor;",
         "uniform sampler2D  uSampler;",
         "uniform float      gray;",
         "uniform float      colorize_intensity;",
