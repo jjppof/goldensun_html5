@@ -6,10 +6,9 @@ import {GiveItemWindow} from "./GiveItemWindow";
 import {GoldenSun} from "../../GoldenSun";
 import {ItemSlot, MainChar} from "../../MainChar";
 import {Item, item_types} from "../../Item";
-import {StatsCheckWithItemWindow} from "./StatsCheckWithItemWindow";
 import {MainItemMenu} from "../../main_menus/MainItemMenu";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
-import { ClassChangeWithItemWindow } from "./ClassChangeWithItemWindow";
+import { StatsOrClassCheckWithItemWindow } from "./StatsOrClassCheckWithItemWindow";
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 52;
@@ -94,8 +93,7 @@ export class ItemOptionsWindow {
     public item_count_sprite: Phaser.BitmapText;
 
     public stats_update_callback: Function;
-    public stats_window: StatsCheckWithItemWindow;
-    public class_change_window: ClassChangeWithItemWindow;
+    public stats_window: StatsOrClassCheckWithItemWindow;
     public item_menu: MainItemMenu;
 
     constructor(game: Phaser.Game, data: GoldenSun) {
@@ -106,7 +104,6 @@ export class ItemOptionsWindow {
         this.char = null;
 
         this.stats_window = null;
-        this.class_change_window = null;
         this.item_menu = null;
 
         this.window_open = false;
@@ -314,6 +311,7 @@ export class ItemOptionsWindow {
     }
 
     open_action_message_window(text: string, close_callback: Function) {
+        console.log(text);
         this.action_message_window.set_text([text]);
         this.data.cursor_manager.hide();
         if (this.stats_update_callback !== undefined) {
@@ -377,53 +375,26 @@ export class ItemOptionsWindow {
         this.stats_window.hide_arrows();
 
         if (this.stats_window.window_open) this.stats_window.close();
-        if (this.class_change_window.window_open) this.class_change_window.close();
 
         this.stats_window.open(this.char, this.item, this.item_obj);
-        this.class_change_window.open(this.char, this.item, this.item_obj);
 
         if (this.horizontal_index === 0) {
             if (this.vertical_index === 0 && this.option_active.use) {
                 this.stats_window.hide();
-                this.class_change_window.hide();
             }
             if (this.vertical_index === 1 && this.option_active.give && this.item_obj.equipped) {
-                if (this.item.type === item_types.CLASS_CHANGER) {
-                    this.class_change_window.update_info();
-                    this.stats_window.hide();
-                } else {
-                    this.stats_window.compare_items(true);
-                    this.class_change_window.hide();
-                }
+                this.stats_window.compare_items(true);
             }
         } else if (this.horizontal_index === 1) {
             if (this.vertical_index === 0 && this.option_active.equip) {
-                if (this.item.type === item_types.CLASS_CHANGER) {
-                    this.class_change_window.update_info();
-                    this.stats_window.hide();
-                } else {
-                    this.stats_window.compare_items();
-                    this.class_change_window.hide();
-                }
+                this.stats_window.compare_items();
             }
             if (this.vertical_index === 1 && this.option_active.remove) {
-                if (this.item.type === item_types.CLASS_CHANGER) {
-                    this.class_change_window.update_info();
-                    this.stats_window.hide();
-                } else {
-                    this.stats_window.compare_items(true);
-                    this.class_change_window.hide();
-                }
+                this.stats_window.compare_items(true);
             }
         } else if (this.horizontal_index === 2) {
             if (this.vertical_index === 1 && this.option_active.drop && this.item_obj.equipped) {
-                if (this.item.type === item_types.CLASS_CHANGER) {
-                    this.class_change_window.update_info();
-                    this.stats_window.hide();
-                } else {
-                    this.stats_window.compare_items(true);
-                    this.class_change_window.hide();
-                }
+                this.stats_window.compare_items(true);
             }
         }
     }
@@ -433,12 +404,6 @@ export class ItemOptionsWindow {
         this.item_menu.item_choose_window.deactivate();
 
         if (this.item.type === item_types.ABILITY_GRANTOR) {
-        } else if (this.item.type === item_types.CLASS_CHANGER) {
-            this.item_menu.item_change_class_window.open(
-                this.data.info.party_data.members[this.item_menu.item_choose_window.char_index],
-                this.item,
-                this.item_obj
-            );
         } else if (this.item.type !== item_types.GENERAL_ITEM) {
             this.item_menu.item_change_stats_window.open(
                 this.data.info.party_data.members[this.item_menu.item_choose_window.char_index],
@@ -468,8 +433,7 @@ export class ItemOptionsWindow {
         item_obj: ItemSlot,
         item: Item,
         char: MainChar,
-        stats_window: StatsCheckWithItemWindow,
-        class_change_window: ClassChangeWithItemWindow,
+        stats_window: StatsOrClassCheckWithItemWindow,
         item_menu: MainItemMenu,
         close_callback: Function,
         stats_update_callback: Function,
@@ -479,7 +443,6 @@ export class ItemOptionsWindow {
         this.item = item;
         this.char = char;
         this.stats_window = stats_window;
-        this.class_change_window = class_change_window;
         this.item_menu = item_menu;
 
         this.close_callback = close_callback;
