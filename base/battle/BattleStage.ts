@@ -728,7 +728,9 @@ export class BattleStage {
             if (on_fade_complete) {
                 on_fade_complete();
             }
-            this.battle_group.destroy();
+            this.group_allies.destroy(true);
+            this.group_enemies.destroy(true);
+            this.battle_group.destroy(true);
             this.upper_rect.height = this.lower_rect.height = numbers.GAME_HEIGHT >> 1;
             this.upper_rect.y = 0;
             this.lower_rect.y = numbers.GAME_HEIGHT >> 1;

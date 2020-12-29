@@ -90,28 +90,28 @@ export class PlayerSprite {
     }
 
     get width() {
-        return this.char_sprite.width;
+        return this.group.width;
     }
     set width(width: number) {
         this.group.width = width;
     }
 
     get height() {
-        return this.char_sprite.height;
+        return this.group.height;
     }
     set height(height: number) {
         this.group.height = height;
     }
 
     get rotation() {
-        return this.char_sprite.rotation;
+        return this.group.rotation;
     }
     set rotation(rotation: number) {
         this.group.rotation = rotation;
     }
 
     get alpha() {
-        return this.char_sprite.alpha;
+        return this.group.alpha;
     }
     set alpha(alpha: number) {
         this.group.alpha = alpha;
