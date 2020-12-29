@@ -16,6 +16,7 @@ import {GoldenSun} from "../GoldenSun";
 import * as _ from "lodash";
 import {Target} from "../battle/BattleStage";
 import {Item, use_types} from "../Item";
+import {PlayerSprite} from "./PlayerSprite";
 
 /* ACTIONS:
 - Attack
@@ -47,7 +48,7 @@ export type PlayerInfo = {
     instance?: Enemy | MainChar;
     entered_in_battle?: boolean;
     battle_key?: string;
-    sprite?: Phaser.Sprite;
+    sprite?: PlayerSprite;
 };
 
 export type EnemyPartyMember = {
@@ -86,8 +87,8 @@ export class Battle {
     public enemies_abilities: PlayerAbilities;
     public turns_actions: PlayerAbility[];
 
-    public allies_map_sprite: {[player_key: string]: Phaser.Sprite};
-    public enemies_map_sprite: {[player_key: string]: Phaser.Sprite};
+    public allies_map_sprite: {[player_key: string]: PlayerSprite};
+    public enemies_map_sprite: {[player_key: string]: PlayerSprite};
 
     constructor(game: Phaser.Game, data: GoldenSun, background_key: string, enemy_party_key: string) {
         this.game = game;

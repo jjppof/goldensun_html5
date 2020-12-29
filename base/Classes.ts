@@ -1,3 +1,5 @@
+//reference: http://forum.goldensunhacking.net/index.php?topic=475.msg11653#msg11653
+
 import {elements} from "./utils";
 import * as _ from "lodash";
 import {GameInfo} from "./initializers/initialize_info";

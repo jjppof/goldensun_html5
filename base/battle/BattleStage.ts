@@ -1,12 +1,11 @@
 import * as numbers from "../magic_numbers";
-import {base_actions, range_360} from "../utils";
+import {range_360} from "../utils";
 import {ability_target_types} from "../Ability";
 import {fighter_types, permanent_status, Player} from "../Player";
 import {GoldenSun} from "../GoldenSun";
 import {PlayerInfo} from "./Battle";
 import * as _ from "lodash";
-import {SpriteBase} from "../SpriteBase";
-import {battle_actions, battle_positions} from "./PlayerSprite";
+import {battle_actions, battle_positions, PlayerSprite} from "./PlayerSprite";
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
@@ -21,8 +20,8 @@ const BG_SPEED = 2.4;
 const BG_SPIN_SPEED = 0.4;
 
 const SPACE_BETWEEN_CHARS = 35;
-const SEMI_MAJOR_AXIS = numbers.GAME_WIDTH / 2 - 50;
-const SEMI_MINOR_AXIS = numbers.GAME_HEIGHT / 50;
+export const SEMI_MAJOR_AXIS = numbers.GAME_WIDTH / 2 - 50;
+export const SEMI_MINOR_AXIS = numbers.GAME_HEIGHT / 50;
 
 export const DEFAULT_POS_ANGLE = 0.7551327;
 const INITIAL_POS_ANGLE = -2.120575;
@@ -85,7 +84,7 @@ export class BattleStage {
     public shift_from_middle_enemy: number;
     public shift_from_middle_ally: number;
 
-    public sprites: Phaser.Sprite[];
+    public sprites: PlayerSprite[];
 
     public x: number;
     public y: number;
@@ -270,52 +269,38 @@ export class BattleStage {
         this.battle_bg.scale.setTo(BG_DEFAULT_SCALE, BG_DEFAULT_SCALE);
         this.battle_bg2.scale.setTo(BG_DEFAULT_SCALE, BG_DEFAULT_SCALE);
 
-        const set_sprite = (
-            group: Phaser.Group,
-            info: PlayerInfo,
-            is_ally: boolean,
-            animation: string,
-            sprite_base: SpriteBase
-        ) => {
-            const sprite = group.create(0, 0, info.sprite_key);
-            sprite.anchor.setTo(0.5, 1);
-            sprite.scale.setTo(info.scale, info.scale);
-
-            sprite.ellipses_semi_major = SEMI_MAJOR_AXIS;
-            sprite.ellipses_semi_minor = SEMI_MINOR_AXIS;
-
-            sprite.data.is_ally = is_ally;
-            sprite_base.setAnimation(sprite, base_actions.BATTLE);
-            sprite.animations.play(animation);
-            this.sprites.push(sprite);
-
-            return sprite;
-        };
-
         this.allies_info.forEach(info => {
             const sprite_base = this.data.info.main_char_list[info.instance.key_name].sprite_base;
-            const battle_key = `${battle_actions.IDLE}_${battle_positions.BACK}`;
-            const sprite = set_sprite(
+            const player_sprite = new PlayerSprite(
+                this.game,
+                this.data,
                 this.group_allies,
                 info,
+                sprite_base,
                 true,
-                sprite_base.getAnimationKey(base_actions.BATTLE, battle_key),
-                sprite_base
+                battle_actions.IDLE,
+                battle_positions.BACK
             );
-            info.sprite = sprite;
+            player_sprite.initialize_player();
+            info.sprite = player_sprite;
+            this.sprites.push(player_sprite);
         });
 
         this.enemies_info.forEach(info => {
             const sprite_base = this.data.info.enemies_list[info.instance.key_name].sprite_base;
-            const battle_key = `${battle_actions.IDLE}_${battle_positions.BACK}`;
-            const sprite = set_sprite(
+            const player_sprite = new PlayerSprite(
+                this.game,
+                this.data,
                 this.group_enemies,
                 info,
+                sprite_base,
                 false,
-                sprite_base.getAnimationKey(base_actions.BATTLE, battle_key),
-                sprite_base
+                battle_actions.IDLE,
+                battle_positions.FRONT
             );
-            info.sprite = sprite;
+            player_sprite.initialize_player();
+            info.sprite = player_sprite;
+            this.sprites.push(player_sprite);
         });
 
         this.first_ally_char = this.group_allies.children[0] as Phaser.Sprite;
@@ -433,22 +418,22 @@ export class BattleStage {
         this.battle_bg2.y = -this.battle_bg.height * (ACTION_POS_BG_SCALE - 1) + BG_Y - CHOOSE_TARGET_ALLY_SHIFT;
 
         for (let i = 0; i < this.sprites.length; ++i) {
-            const sprite = this.sprites[i];
-            const index_shifted = sprite.data.is_ally ? i : this.enemies_count - 1 - (i - this.allies_count);
-            const x_shift = sprite.data.is_ally
+            const player_prite = this.sprites[i];
+            const index_shifted = player_prite.is_ally ? i : this.enemies_count - 1 - (i - this.allies_count);
+            const x_shift = player_prite.is_ally
                 ? ACTION_POS_ALLY_X
                 : ACTION_POS_ENEMY_CENTER_X - (this.enemies_count >> 1) * ACTION_POS_SPACE_BETWEEN;
 
             const pos_x = x_shift + index_shifted * ACTION_POS_SPACE_BETWEEN;
-            const pos_y = sprite.data.is_ally ? ACTION_ALLY_Y : ACTION_ENEMY_Y;
+            const pos_y = player_prite.is_ally ? ACTION_ALLY_Y : ACTION_ENEMY_Y;
 
-            sprite.x = pos_x;
-            sprite.y = pos_y;
+            player_prite.x = pos_x;
+            player_prite.y = pos_y;
 
-            const this_scale_x = sprite.scale.x + Math.sign(sprite.scale.x) * ACTION_POS_SCALE_ADD;
-            const this_scale_y = sprite.scale.y + Math.sign(sprite.scale.y) * ACTION_POS_SCALE_ADD;
+            const this_scale_x = player_prite.scale.x + Math.sign(player_prite.scale.x) * ACTION_POS_SCALE_ADD;
+            const this_scale_y = player_prite.scale.y + Math.sign(player_prite.scale.y) * ACTION_POS_SCALE_ADD;
 
-            sprite.scale.setTo(this_scale_x, this_scale_y);
+            player_prite.scale.setTo(this_scale_x, this_scale_y);
         }
     }
 
@@ -700,38 +685,39 @@ export class BattleStage {
 
     update_sprite_properties() {
         for (let i = 0; i < this.sprites.length; ++i) {
-            const sprite = this.sprites[i];
-            const relative_angle = sprite.data.is_ally ? this.camera_angle.rad : this.camera_angle.rad + Math.PI;
+            const player_sprite = this.sprites[i];
+            const relative_angle = player_sprite.is_ally ? this.camera_angle.rad : this.camera_angle.rad + Math.PI;
 
             const angle_position = BattleStage.get_angle(relative_angle);
-            const pos_x = BattleStage.ellipse_position(sprite, angle_position, true);
-            const pos_y = BattleStage.ellipse_position(sprite, angle_position, false);
+            const pos_x = BattleStage.ellipse_position(player_sprite, angle_position, true);
+            const pos_y = BattleStage.ellipse_position(player_sprite, angle_position, false);
 
-            const shift_from_middle = sprite.data.is_ally ? this.shift_from_middle_ally : this.shift_from_middle_enemy;
-            const index_shifted = sprite.data.is_ally ? i : i - this.allies_count;
+            const shift_from_middle = player_sprite.is_ally
+                ? this.shift_from_middle_ally
+                : this.shift_from_middle_enemy;
+            const index_shifted = player_sprite.is_ally ? i : i - this.allies_count;
 
-            sprite.x =
+            player_sprite.x =
                 pos_x +
                 (SPACE_BETWEEN_CHARS * index_shifted - shift_from_middle + (SPACE_BETWEEN_CHARS >> 1)) *
                     Math.sin(relative_angle); //shift party players from base point
-            sprite.y = pos_y;
+            player_sprite.y = pos_y;
 
-            const info = sprite.data.is_ally ? this.allies_info[index_shifted] : this.enemies_info[index_shifted];
-            const scale = BattleStage.get_scale(info.scale, relative_angle);
-            sprite.scale.setTo(scale, scale);
+            const scale = BattleStage.get_scale(relative_angle);
+            player_sprite.scale.setTo(scale, scale);
 
-            if (Math.sin(relative_angle) > 0 && !sprite.animations.currentAnim.name.endsWith("idle_back")) {
+            if (Math.sin(relative_angle) > 0 && player_sprite.position !== battle_positions.BACK) {
                 //change texture in function of position
-                sprite.animations.play(sprite.animations.currentAnim.name.replace("idle_front", "idle_back"));
-            } else if (Math.sin(relative_angle) <= 0 && !sprite.animations.currentAnim.name.endsWith("idle_front")) {
-                sprite.animations.play(sprite.animations.currentAnim.name.replace("idle_back", "idle_front"));
+                player_sprite.set_position(battle_positions.BACK);
+            } else if (Math.sin(relative_angle) <= 0 && player_sprite.position !== battle_positions.FRONT) {
+                player_sprite.set_position(battle_positions.FRONT);
             }
 
-            if (Math.cos(relative_angle) > 0 && sprite.scale.x < 0) {
+            if (Math.cos(relative_angle) > 0 && player_sprite.scale.x < 0) {
                 //change side in function of position
-                sprite.scale.setTo(sprite.scale.x, sprite.scale.y);
-            } else if (Math.cos(relative_angle) <= 0 && sprite.scale.x > 0) {
-                sprite.scale.setTo(-sprite.scale.x, sprite.scale.y);
+                player_sprite.scale.setTo(player_sprite.scale.x, player_sprite.scale.y);
+            } else if (Math.cos(relative_angle) <= 0 && player_sprite.scale.x > 0) {
+                player_sprite.scale.setTo(-player_sprite.scale.x, player_sprite.scale.y);
             }
         }
     }
@@ -783,12 +769,12 @@ export class BattleStage {
         return (a * b) / Math.sqrt(Math.pow(b * Math.cos(angle), 2) + Math.pow(a * Math.sin(angle), 2));
     }
 
-    static ellipse_position(sprite: Phaser.Sprite, angle: number, is_x: boolean) {
+    static ellipse_position(player_sprite: PlayerSprite, angle: number, is_x: boolean) {
         if (is_x) {
-            const a = sprite.ellipses_semi_major;
+            const a = player_sprite.ellipses_semi_major;
             return CENTER_X + BattleStage.ellipse(angle, a, SEMI_MINOR_AXIS) * Math.cos(angle);
         } else {
-            const b = sprite.ellipses_semi_minor;
+            const b = player_sprite.ellipses_semi_minor;
             return CENTER_Y + BattleStage.ellipse(angle, SEMI_MAJOR_AXIS, b) * Math.sin(angle);
         }
     }
@@ -804,7 +790,7 @@ export class BattleStage {
         );
     }
 
-    static get_scale(default_scale: number, angle: number) {
+    static get_scale(angle: number, default_scale: number = 1.0) {
         return (Math.sin(angle) / 7 + SCALE_FACTOR) * default_scale;
     }
 }

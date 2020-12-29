@@ -3,6 +3,7 @@ import * as numbers from "../magic_numbers";
 import {range_360} from "../utils";
 import {CameraAngle, DEFAULT_POS_ANGLE} from "./BattleStage";
 import * as _ from "lodash";
+import {PlayerSprite} from "./PlayerSprite";
 
 type DefaultAttr = {
     start_delay: number | number[];
@@ -200,8 +201,8 @@ export class BattleAnimation {
     public stage_prev_value: number;
     public x0: number;
     public y0: number;
-    public caster_sprite: Phaser.Sprite;
-    public targets_sprites: Phaser.Sprite[];
+    public caster_sprite: PlayerSprite;
+    public targets_sprites: PlayerSprite[];
     public background_sprites: Phaser.Sprite[];
     public group_caster: Phaser.Group;
     public group_enemy: Phaser.Group;
@@ -391,12 +392,12 @@ export class BattleAnimation {
         this.play_number_property_sequence(this.y_ellipse_axis_factor_sequence, "ellipses_semi_minor");
         this.play_number_property_sequence(this.alpha_sequence, "alpha");
         this.play_number_property_sequence(this.rotation_sequence, "rotation");
-        this.play_number_property_sequence(this.x_scale_sequence, "x", "scale");
-        this.play_number_property_sequence(this.y_scale_sequence, "y", "scale");
-        this.play_number_property_sequence(this.x_anchor_sequence, "x", "anchor");
-        this.play_number_property_sequence(this.y_anchor_sequence, "y", "anchor");
-        this.play_number_property_sequence(this.hue_angle_sequence, "hue_adjust", "filter");
-        this.play_number_property_sequence(this.grayscale_sequence, "gray", "filter");
+        this.play_number_property_sequence(this.x_scale_sequence, "scale", "x");
+        this.play_number_property_sequence(this.y_scale_sequence, "scale", "y");
+        this.play_number_property_sequence(this.x_anchor_sequence, "anchor", "x");
+        this.play_number_property_sequence(this.y_anchor_sequence, "anchor", "y");
+        this.play_number_property_sequence(this.hue_angle_sequence, "filters", "hue_adjust");
+        this.play_number_property_sequence(this.grayscale_sequence, "filters", "gray");
         this.play_sprite_sequence();
         this.play_blend_modes();
         this.play_filter_property(this.tint_sequence, "tint");
@@ -436,28 +437,28 @@ export class BattleAnimation {
         });
     }
 
-    get_sprites(seq, inner_property?) {
-        if (inner_property) {
+    get_sprites(seq, obj_propety?: keyof PlayerSprite) {
+        if (obj_propety) {
             if (seq.sprite_index === "background") {
-                if (inner_property === "filter") {
+                if (obj_propety === "filters") {
                     return [this.background_filter];
                 } else {
-                    return this.background_sprites.forEach(sprite => sprite[inner_property]);
+                    return this.background_sprites.forEach(sprite => sprite[obj_propety]);
                 }
             } else if (seq.sprite_index === "caster") {
-                if (inner_property === "filter") {
+                if (obj_propety === "filters") {
                     return [this.caster_filter];
                 } else {
-                    return [this.caster_sprite[inner_property]];
+                    return [this.caster_sprite[obj_propety]];
                 }
             } else if (seq.sprite_index === "targets") {
-                if (inner_property === "filter") {
+                if (obj_propety === "filters") {
                     return [this.targets_filter];
                 } else {
-                    return this.targets_sprites.forEach(sprite => sprite[inner_property]);
+                    return this.targets_sprites.forEach(sprite => sprite[obj_propety]);
                 }
             } else {
-                if (inner_property === "filter") {
+                if (obj_propety === "filters") {
                     if (Array.isArray(seq.sprite_index)) {
                         return seq.sprite_index.map(index => this.sprites_filters[index]);
                     } else {
@@ -465,9 +466,9 @@ export class BattleAnimation {
                     }
                 } else {
                     if (Array.isArray(seq.sprite_index)) {
-                        return seq.sprite_index.map(index => this.sprites[index][inner_property]);
+                        return seq.sprite_index.map(index => this.sprites[index][obj_propety]);
                     } else {
-                        return [this.sprites[seq.sprite_index][inner_property]];
+                        return [this.sprites[seq.sprite_index][obj_propety]];
                     }
                 }
             }
@@ -486,16 +487,17 @@ export class BattleAnimation {
         }
     }
 
-    play_number_property_sequence(sequence, target_property, inner_property?) {
+    play_number_property_sequence(sequence, target_property: keyof PlayerSprite, inner_property?) {
         let chained_tweens = {};
         let auto_start_tween = {};
+        const property_to_set = inner_property !== undefined ? inner_property : target_property;
         for (let i = 0; i < sequence.length; ++i) {
             const seq = sequence[i];
             if (!(seq.sprite_index in auto_start_tween)) auto_start_tween[seq.sprite_index] = true;
             if (seq.sprite_index in chained_tweens) {
                 auto_start_tween[seq.sprite_index] = false;
             }
-            let sprites = this.get_sprites(seq, inner_property);
+            let sprites = this.get_sprites(seq, inner_property !== undefined ? target_property : undefined);
             let promises_set = false;
             sprites.forEach((this_sprite, index) => {
                 let uniq_key;
@@ -507,40 +509,40 @@ export class BattleAnimation {
                 if (this.sprites_prev_properties[uniq_key] === undefined) {
                     this.sprites_prev_properties[uniq_key] = {};
                 }
-                if (this.sprites_prev_properties[uniq_key][target_property] === undefined) {
-                    this.sprites_prev_properties[uniq_key][target_property] = this_sprite[target_property];
+                if (this.sprites_prev_properties[uniq_key][property_to_set] === undefined) {
+                    this.sprites_prev_properties[uniq_key][property_to_set] = this_sprite[property_to_set];
                 }
                 const seq_to = Array.isArray(seq.to) ? seq.to[index] : seq.to;
                 let to_value = seq_to;
                 if (seq_to === "target") {
                     const shift = Array.isArray(seq.shift) ? seq.shift[index] : seq.shift;
                     to_value =
-                        this.targets_sprites[this.targets_sprites.length >> 1][target_property] +
+                        this.targets_sprites[this.targets_sprites.length >> 1][property_to_set] +
                         (shift === undefined ? 0 : shift);
                 }
-                if (["rotation", "hue_adjust"].includes(target_property)) {
-                    this.sprites_prev_properties[uniq_key][target_property] = range_360(
-                        this.sprites_prev_properties[uniq_key][target_property]
+                if (["rotation", "hue_adjust"].includes(property_to_set)) {
+                    this.sprites_prev_properties[uniq_key][property_to_set] = range_360(
+                        this.sprites_prev_properties[uniq_key][property_to_set]
                     );
-                    this_sprite[target_property] = this.sprites_prev_properties[uniq_key][target_property];
+                    this_sprite[property_to_set] = this.sprites_prev_properties[uniq_key][property_to_set];
                     to_value = BattleAnimation.get_angle_by_direction(
-                        this.sprites_prev_properties[uniq_key][target_property],
+                        this.sprites_prev_properties[uniq_key][property_to_set],
                         seq_to,
                         seq.direction,
-                        target_property === "rotation"
+                        property_to_set === "rotation"
                     );
                     if (
-                        Math.abs(this.sprites_prev_properties[uniq_key][target_property] - to_value) > numbers.degree360
+                        Math.abs(this.sprites_prev_properties[uniq_key][property_to_set] - to_value) > numbers.degree360
                     ) {
                         to_value -= Math.sign(to_value) * numbers.degree360;
                     }
                 }
                 to_value = seq.is_absolute
                     ? to_value
-                    : this.sprites_prev_properties[uniq_key][target_property] + seq_to;
-                this.sprites_prev_properties[uniq_key][target_property] = to_value;
+                    : this.sprites_prev_properties[uniq_key][property_to_set] + seq_to;
+                this.sprites_prev_properties[uniq_key][property_to_set] = to_value;
                 if (seq.tween === "initial") {
-                    this_sprite[target_property] = to_value;
+                    this_sprite[property_to_set] = to_value;
                 } else {
                     if (!(seq.sprite_index in chained_tweens)) chained_tweens[seq.sprite_index] = {[index]: []};
                     if (!(index in chained_tweens[seq.sprite_index])) chained_tweens[seq.sprite_index][index] = [];
@@ -555,12 +557,12 @@ export class BattleAnimation {
                             promises_set = true;
                         }
                         this.game.time.events.add(start_delay, () => {
-                            this_sprite[target_property] = to_value;
+                            this_sprite[property_to_set] = to_value;
                             if (seq.force_stage_update) {
                                 this.stage_camera.update();
                             }
-                            if (seq.is_absolute && ["rotation", "hue_adjust"].includes(target_property)) {
-                                this_sprite[target_property] = range_360(this_sprite[target_property]);
+                            if (seq.is_absolute && ["rotation", "hue_adjust"].includes(property_to_set)) {
+                                this_sprite[property_to_set] = range_360(this_sprite[property_to_set]);
                             }
                             if (resolve_function !== undefined) {
                                 resolve_function();
@@ -568,7 +570,7 @@ export class BattleAnimation {
                         });
                     } else {
                         const tween = this.game.add.tween(this_sprite).to(
-                            {[target_property]: to_value},
+                            {[property_to_set]: to_value},
                             Array.isArray(seq.duration) ? seq.duration[index] : seq.duration,
                             seq.tween.split(".").reduce((p, prop) => p[prop], Phaser.Easing),
                             auto_start_tween[seq.sprite_index],
@@ -588,8 +590,8 @@ export class BattleAnimation {
                                 }
                             });
                             tween.onComplete.addOnce(() => {
-                                if (seq.is_absolute && ["rotation", "hue_adjust"].includes(target_property)) {
-                                    this_sprite[target_property] = range_360(this_sprite[target_property]);
+                                if (seq.is_absolute && ["rotation", "hue_adjust"].includes(property_to_set)) {
+                                    this_sprite[property_to_set] = range_360(this_sprite[property_to_set]);
                                 }
                                 resolve_function();
                                 if (seq.force_stage_update) {
