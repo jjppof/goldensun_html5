@@ -102,7 +102,8 @@ export class MainChar extends Player {
         in_party,
         djinni,
         items,
-        battle_animations_variations
+        battle_animations_variations,
+        battle_shadow_key
     ) {
         super(key_name, name);
         this.info = info;
@@ -161,6 +162,7 @@ export class MainChar extends Player {
         this.turns = 1;
         this.fighter_type = fighter_types.ALLY;
         this.battle_animations_variations = Object.assign({}, battle_animations_variations);
+        this.battle_shadow_key = battle_shadow_key;
     }
 
     get djinni() {

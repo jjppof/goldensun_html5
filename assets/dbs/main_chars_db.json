@@ -165,6 +165,7 @@
         "innate_abilities": ["move", "retreat"],
         "in_party": true,
         "battle_scale": 0.9,
+        "battle_shadow_key": "00",
         "djinni": ["flint", "granite", "quartz", "vine", "sap"],
         "items": [
             {
@@ -269,6 +270,7 @@
         "innate_abilities": ["move"],
         "in_party": true,
         "battle_scale": 1.05,
+        "battle_shadow_key": "00",
         "djinni": ["forge", "fever", "corona", "scorch"],
         "items": [
             {
@@ -366,6 +368,7 @@
         "innate_abilities": ["whirlwind"],
         "in_party": true,
         "battle_scale": 0.85,
+        "battle_shadow_key": "00",
         "djinni": ["gust", "breeze", "zephyr", "smog"],
         "items": [
             {

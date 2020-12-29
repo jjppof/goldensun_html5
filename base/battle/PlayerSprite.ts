@@ -139,6 +139,9 @@ export class PlayerSprite {
     }
 
     initialize_player() {
+        this.shadow_sprite = this.group.create(0, 0, "battle_shadows", this.player_info.battle_shadow_key);
+        this.shadow_sprite.anchor.setTo(0.5, 1);
+
         this.char_sprite = this.group.create(0, 0, this.player_info.sprite_key);
         this.char_sprite.anchor.setTo(0.5, 1);
         this.char_sprite.scale.setTo(this.player_info.scale, this.player_info.scale);

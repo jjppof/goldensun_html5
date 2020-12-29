@@ -13,6 +13,7 @@
         "agi": 76,
         "luk": 42,
         "battle_scale": 1.35,
+        "battle_shadow_key": "00",
         "items": [
             {
                 "key_name": "oil_drop",
@@ -105,6 +106,7 @@
         "agi": 61,
         "luk": 26,
         "battle_scale": 1.2,
+        "battle_shadow_key": "00",
         "items": [
             {
                 "key_name": "oil_drop",

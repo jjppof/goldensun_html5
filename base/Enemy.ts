@@ -45,6 +45,7 @@ export class Enemy extends Player {
         this.base_power = Object.assign({}, enemy_data.base_power);
         this.base_resist = Object.assign({}, enemy_data.base_resist);
         this.battle_scale = enemy_data.battle_scale;
+        this.battle_shadow_key = enemy_data.battle_shadow_key;
         this.battle_animations_variations = Object.assign({}, enemy_data.battle_animations_variations);
         this.fighter_type = fighter_types.ENEMY;
         this.class = {
