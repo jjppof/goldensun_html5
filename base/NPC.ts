@@ -29,6 +29,7 @@ export class NPC extends ControllableChar {
     public talk_range_factor: number;
     public events: GameEvent[];
     public shop_key: string;
+    public inn_key: string;
     public no_shadow: boolean;
     public ignore_world_map_scale: boolean;
     public anchor_x: boolean;
@@ -52,6 +53,7 @@ export class NPC extends ControllableChar {
         thought_message,
         avatar,
         shop_key,
+        inn_key,
         base_collision_layer,
         talk_range_factor,
         events_info,
@@ -79,6 +81,7 @@ export class NPC extends ControllableChar {
         this.thought_message = thought_message;
         this.avatar = avatar;
         this.shop_key = shop_key;
+        this.inn_key = inn_key;
         this.base_collision_layer = base_collision_layer;
         this.talk_range_factor = talk_range_factor === undefined ? NPC.NPC_TALK_RANGE : talk_range_factor;
         this.no_shadow = no_shadow === undefined ? false : no_shadow;

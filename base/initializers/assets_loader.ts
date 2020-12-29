@@ -25,6 +25,7 @@ function load_db_files(game) {
     game.load.json("misc_animations_db", "assets/dbs/misc_animations_db.json");
     game.load.json("shopkeep_dialog_db", "assets/dbs/shopkeep_dialog_db.json");
     game.load.json("shops_db", "assets/dbs/shops_db.json");
+    game.load.json("inn_db", "assets/dbs/inn_db.json");
 }
 
 function load_misc(game) {

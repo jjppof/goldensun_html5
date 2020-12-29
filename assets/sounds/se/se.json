@@ -113,5 +113,16 @@
                 }
             }
         }
+    },
+    "inn_se": {
+        "audio": "assets/sounds/se/inn.ogg",
+        "json": {
+            "spritemap": {
+                "inn": {
+                    "start": 0.01,
+                    "end": 6.144
+                }
+            }
+        }
     }
 }
