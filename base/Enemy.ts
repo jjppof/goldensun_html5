@@ -46,6 +46,7 @@ export class Enemy extends Player {
         this.base_resist = Object.assign({}, enemy_data.base_resist);
         this.battle_scale = enemy_data.battle_scale;
         this.battle_shadow_key = enemy_data.battle_shadow_key;
+        this.status_sprite_shift = enemy_data.status_sprite_shift === undefined ? 0 : enemy_data.status_sprite_shift;
         this.battle_animations_variations = Object.assign({}, enemy_data.battle_animations_variations);
         this.fighter_type = fighter_types.ENEMY;
         this.class = {

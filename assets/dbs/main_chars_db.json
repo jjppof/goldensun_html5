@@ -166,6 +166,7 @@
         "in_party": true,
         "battle_scale": 0.9,
         "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
         "djinni": ["flint", "granite", "quartz", "vine", "sap"],
         "items": [
             {

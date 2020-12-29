@@ -44,7 +44,6 @@ enum battle_phases {
 
 export type PlayerInfo = {
     sprite_key: string;
-    battle_shadow_key?: string;
     scale?: number;
     instance?: Enemy | MainChar;
     entered_in_battle?: boolean;
@@ -102,7 +101,6 @@ export class Battle {
                 scale: char.battle_scale,
                 instance: char,
                 entered_in_battle: true,
-                battle_shadow_key: char.battle_shadow_key,
             };
         });
 
@@ -139,7 +137,6 @@ export class Battle {
                     name_suffix
                 );
                 this.enemies_info[counter].scale = this.enemies_info[counter].instance.battle_scale;
-                this.enemies_info[counter].battle_shadow_key = this.enemies_info[counter].instance.battle_shadow_key;
                 this.enemies_info[counter].battle_key = this.enemies_info[counter].sprite_key + battle_key_suffix;
                 this.this_enemies_list[this.enemies_info[counter].battle_key] = this.enemies_info[counter]
                     .instance as Enemy;

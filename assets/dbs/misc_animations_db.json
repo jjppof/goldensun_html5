@@ -63,5 +63,35 @@
                 "json": "assets/images/misc/dust.json"
             }
         }]
+    },
+    {
+        "key_name": "battle_status_sprites",
+        "initial_animation": "death_curse_0",
+        "actions": [{
+            "key_name": "battle_status_sprites",
+            "frame_rate": 10,
+            "animations": [
+                "death_curse_0",
+                "death_curse_1",
+                "death_curse_2",
+                "death_curse_3",
+                "death_curse_4",
+                "death_curse_5",
+                "death_curse_6",
+                "delusion",
+                "haunt",
+                "poison",
+                "seal",
+                "sleep",
+                "stun",
+                "venon"
+            ],
+            "frames_count": [2,2,2,2,2,2,2,4,5,4,4,4,4,4],
+            "loop": true,
+            "spritesheet": {
+                "image": "assets/images/spritesheets/battle/battle_status_sprites.png",
+                "json": "assets/images/spritesheets/battle/battle_status_sprites.json"
+            }
+        }]
     }
 ]

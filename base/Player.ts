@@ -110,6 +110,7 @@ export abstract class Player {
     public effect_turns_count: {[effect: string]: number | {[element: string]: number}};
     public battle_scale: number;
     public battle_shadow_key: string;
+    public status_sprite_shift: number;
     public fighter_type: fighter_types;
 
     public current_level: {[element in elements]?: number};

@@ -62,7 +62,8 @@ export function initialize_main_chars(game, info, main_chars_db, classes_db, loa
             char_data.djinni,
             char_data.items,
             char_data.battle_animations_variations,
-            char_data.battle_shadow_key
+            char_data.battle_shadow_key,
+            char_data.status_sprite_shift
         );
         if (char_data.in_party) {
             info.party_data.members.push(main_char_list[char_data.key_name]);

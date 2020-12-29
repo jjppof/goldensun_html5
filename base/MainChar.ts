@@ -103,7 +103,8 @@ export class MainChar extends Player {
         djinni,
         items,
         battle_animations_variations,
-        battle_shadow_key
+        battle_shadow_key,
+        status_sprite_shift
     ) {
         super(key_name, name);
         this.info = info;
@@ -163,6 +164,7 @@ export class MainChar extends Player {
         this.fighter_type = fighter_types.ALLY;
         this.battle_animations_variations = Object.assign({}, battle_animations_variations);
         this.battle_shadow_key = battle_shadow_key;
+        this.status_sprite_shift = status_sprite_shift === undefined ? 0 : status_sprite_shift;
     }
 
     get djinni() {

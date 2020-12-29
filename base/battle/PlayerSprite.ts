@@ -5,6 +5,7 @@ import {SpriteBase} from "../SpriteBase";
 import {base_actions} from "../utils";
 import {PlayerInfo} from "./Battle";
 import {SEMI_MAJOR_AXIS, SEMI_MINOR_AXIS} from "./BattleStage";
+import * as _ from "lodash";
 
 export enum battle_actions {
     IDLE = "idle",
@@ -20,13 +21,37 @@ export enum battle_positions {
     BACK = "back",
 }
 
+const status_sprites = [
+    temporary_status.DEATH_CURSE,
+    permanent_status.POISON,
+    permanent_status.VENOM,
+    temporary_status.SEAL,
+    temporary_status.STUN,
+    temporary_status.SLEEP,
+    permanent_status.HAUNT,
+    temporary_status.DELUSION,
+];
+
+const sprites_height_factors = {
+    [temporary_status.DEATH_CURSE]: 1.2,
+    [permanent_status.POISON]: 1.0,
+    [permanent_status.VENOM]: 1.0,
+    [temporary_status.SEAL]: 1.2,
+    [temporary_status.STUN]: 0.7,
+    [temporary_status.SLEEP]: 1.0,
+    [permanent_status.HAUNT]: 1.0,
+    [temporary_status.DELUSION]: 1.0,
+};
+
+const STATUS_SPRITES_KEY_NAME = "battle_status_sprites";
+
 export class PlayerSprite {
     private game: Phaser.Game;
     private data: GoldenSun;
     public is_ally: boolean;
     private battle_action: battle_actions;
     private battle_position: battle_positions;
-    private current_status: permanent_status | temporary_status;
+    private current_status_index: number;
     private current_weapon_type: weapon_types;
     private sprite_base: SpriteBase;
     private player_info: PlayerInfo;
@@ -38,6 +63,8 @@ export class PlayerSprite {
     private group: Phaser.Group;
     public ellipses_semi_major: number;
     public ellipses_semi_minor: number;
+    private status_sprite_base: SpriteBase;
+    private status_timer: Phaser.Timer;
 
     constructor(
         game: Phaser.Game,
@@ -54,11 +81,18 @@ export class PlayerSprite {
         this.parent_group = parent_group;
         this.group = this.game.add.group();
         this.parent_group.add(this.group);
+        this.group.onDestroy.addOnce(() => {
+            this.status_timer.stop();
+            this.status_timer.destroy();
+        });
         this.player_info = player_info;
         this.sprite_base = sprite_base;
         this.is_ally = is_ally;
         this.battle_action = initial_action;
         this.battle_position = initial_position;
+        this.current_status_index = 0;
+        this.status_sprite_base = this.data.info.misc_sprite_base_list[STATUS_SPRITES_KEY_NAME];
+        this.status_timer = this.game.time.create(false);
     }
 
     get x() {
@@ -103,6 +137,13 @@ export class PlayerSprite {
         this.group.height = height;
     }
 
+    get char_height() {
+        return this.char_sprite.height;
+    }
+    set char_height(height: number) {
+        this.char_sprite.height = height;
+    }
+
     get rotation() {
         return this.group.rotation;
     }
@@ -139,12 +180,20 @@ export class PlayerSprite {
     }
 
     initialize_player() {
-        this.shadow_sprite = this.group.create(0, 0, "battle_shadows", this.player_info.battle_shadow_key);
+        this.shadow_sprite = this.group.create(0, 0, "battle_shadows", this.player_info.instance.battle_shadow_key);
         this.shadow_sprite.anchor.setTo(0.5, 1);
 
         this.char_sprite = this.group.create(0, 0, this.player_info.sprite_key);
         this.char_sprite.anchor.setTo(0.5, 1);
         this.char_sprite.scale.setTo(this.player_info.scale, this.player_info.scale);
+
+        const status_key = this.status_sprite_base.getActionKey(STATUS_SPRITES_KEY_NAME);
+        this.status_sprite = this.group.create(0, 0, status_key);
+        this.status_sprite.anchor.setTo(0.5, 0.5);
+        this.status_sprite_base.setAnimation(this.status_sprite, STATUS_SPRITES_KEY_NAME);
+        this.status_sprite.visible = false;
+        this.status_timer.loop(4000, this.set_next_status_sprite.bind(this));
+        this.status_timer.start();
 
         this.ellipses_semi_major = SEMI_MAJOR_AXIS;
         this.ellipses_semi_minor = SEMI_MINOR_AXIS;
@@ -166,7 +215,40 @@ export class PlayerSprite {
         this.char_sprite.animations.play(anim_key);
     }
 
+    private set_next_status_sprite() {
+        const player = this.player_info.instance;
+        for (let i = 0; i < status_sprites.length; ++i) {
+            const status = status_sprites[this.current_status_index++];
+            if (this.current_status_index === status_sprites.length) {
+                this.current_status_index = 0;
+            }
+            if (
+                player.has_permanent_status(status as permanent_status) ||
+                player.has_temporary_status(status as temporary_status)
+            ) {
+                this.status_sprite.visible = true;
+                this.status_sprite.y =
+                    -(this.char_sprite.height * sprites_height_factors[status]) +
+                    player.status_sprite_shift * this.player_info.scale;
+                let status_key: string = status;
+                if ((status as temporary_status) === temporary_status.DEATH_CURSE) {
+                    const effect = _.find(player.effects, {
+                        status_key_name: temporary_status.DEATH_CURSE,
+                    });
+                    const remaining_turns = effect ? player.get_effect_turns_count(effect) : 1;
+                    status_key = `${status}_${remaining_turns - 1}`;
+                }
+                const animation_key = this.status_sprite_base.getAnimationKey(STATUS_SPRITES_KEY_NAME, status_key);
+                this.status_sprite.animations.play(animation_key);
+                return;
+            }
+        }
+        this.status_sprite.visible = false;
+    }
+
     destroy() {
+        this.status_timer.stop();
+        this.status_timer.destroy();
         this.parent_group.remove(this.group);
         this.group.destroy(true);
     }
