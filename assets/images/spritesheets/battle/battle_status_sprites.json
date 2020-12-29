@@ -285,32 +285,32 @@
 	"frame": {"x":1,"y":69,"w":46,"h":27},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":9,"y":19,"w":46,"h":27},
-	"sourceSize": {"w":64,"h":64}
+	"spriteSourceSize": {"x":9,"y":1,"w":46,"h":27},
+	"sourceSize": {"w":64,"h":28}
 },
 "battle_status_sprites/stun/01":
 {
 	"frame": {"x":1,"y":98,"w":46,"h":27},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":9,"y":19,"w":46,"h":27},
-	"sourceSize": {"w":64,"h":64}
+	"spriteSourceSize": {"x":9,"y":1,"w":46,"h":27},
+	"sourceSize": {"w":64,"h":28}
 },
 "battle_status_sprites/stun/02":
 {
 	"frame": {"x":1,"y":127,"w":46,"h":27},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":9,"y":19,"w":46,"h":27},
-	"sourceSize": {"w":64,"h":64}
+	"spriteSourceSize": {"x":9,"y":1,"w":46,"h":27},
+	"sourceSize": {"w":64,"h":28}
 },
 "battle_status_sprites/stun/03":
 {
 	"frame": {"x":1,"y":156,"w":46,"h":27},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":9,"y":19,"w":46,"h":27},
-	"sourceSize": {"w":64,"h":64}
+	"spriteSourceSize": {"x":9,"y":1,"w":46,"h":27},
+	"sourceSize": {"w":64,"h":28}
 },
 "battle_status_sprites/venom/00":
 {
@@ -351,6 +351,6 @@
 	"format": "RGBA8888",
 	"size": {"w":120,"h":237},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:bf9ef743c435fa235338e208cd76cccd:5309b38066950de7d4feac040f4625a1:d945b99460a1ebfda52ddc953bb441b7$"
+	"smartupdate": "$TexturePacker:SmartUpdate:e90f2c66870910017d6820671b259390:39849c9c23c275f9bbe15195b38da509:d945b99460a1ebfda52ddc953bb441b7$"
 }
 }
