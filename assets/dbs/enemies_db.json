@@ -14,6 +14,7 @@
         "luk": 42,
         "battle_scale": 1.35,
         "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
         "items": [
             {
                 "key_name": "oil_drop",
@@ -107,6 +108,7 @@
         "luk": 26,
         "battle_scale": 1.2,
         "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
         "items": [
             {
                 "key_name": "oil_drop",

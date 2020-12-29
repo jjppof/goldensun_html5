@@ -272,6 +272,7 @@
         "in_party": true,
         "battle_scale": 1.05,
         "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
         "djinni": ["forge", "fever", "corona", "scorch"],
         "items": [
             {
@@ -370,6 +371,7 @@
         "in_party": true,
         "battle_scale": 0.85,
         "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
         "djinni": ["gust", "breeze", "zephyr", "smog"],
         "items": [
             {
