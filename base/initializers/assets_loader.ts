@@ -80,6 +80,11 @@ function load_assets(game) {
         "assets/images/spritesheets/battle/battle_shadows.png",
         "assets/images/spritesheets/battle/battle_shadows.json"
     );
+    game.load.atlasJSONHash(
+        "battle_status_sprites",
+        "assets/images/spritesheets/battle/battle_status_sprites.png",
+        "assets/images/spritesheets/battle/battle_status_sprites.json"
+    );
 }
 
 function load_fonts(game) {
