@@ -7,6 +7,8 @@ import {PlayerInfo} from "./Battle";
 import {SEMI_MAJOR_AXIS, SEMI_MINOR_AXIS} from "./BattleStage";
 import * as _ from "lodash";
 import {Observable, Subject, Subscription} from "rxjs";
+import {MainChar} from "../MainChar";
+import {Enemy} from "../Enemy";
 
 export enum battle_actions {
     IDLE = "idle",
@@ -68,6 +70,7 @@ export class PlayerSprite {
     private status_timer: Phaser.Timer;
     private on_status_change_obs: Observable<Player["on_status_change"] extends Subject<infer T> ? T : never>;
     private on_status_change_subs: Subscription;
+    public player_instance: MainChar | Enemy;
 
     constructor(
         game: Phaser.Game,
@@ -90,6 +93,7 @@ export class PlayerSprite {
             this.status_timer.destroy();
         });
         this.player_info = player_info;
+        this.player_instance = this.player_info.instance;
         this.sprite_base = sprite_base;
         this.is_ally = is_ally;
         this.battle_action = initial_action;
@@ -184,12 +188,12 @@ export class PlayerSprite {
     }
 
     initialize_player() {
-        this.shadow_sprite = this.group.create(0, 0, "battle_shadows", this.player_info.instance.battle_shadow_key);
+        this.shadow_sprite = this.group.create(0, 0, "battle_shadows", this.player_instance.battle_shadow_key);
         this.shadow_sprite.anchor.setTo(0.5, 1);
 
         this.char_sprite = this.group.create(0, 0, this.player_info.sprite_key);
         this.char_sprite.anchor.setTo(0.5, 1);
-        this.char_sprite.scale.setTo(this.player_info.instance.battle_scale, this.player_info.instance.battle_scale);
+        this.char_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
 
         const status_key = this.status_sprite_base.getActionKey(STATUS_SPRITES_KEY_NAME);
         this.status_sprite = this.group.create(0, 0, status_key);
@@ -198,7 +202,7 @@ export class PlayerSprite {
         this.status_sprite.visible = false;
         this.status_timer.loop(4000, this.set_next_status_sprite.bind(this));
         this.status_timer.start();
-        this.on_status_change_obs = this.player_info.instance.on_status_change.asObservable();
+        this.on_status_change_obs = this.player_instance.on_status_change.asObservable();
         this.on_status_change_subs = this.on_status_change_obs.subscribe(this.set_next_status_sprite.bind(this));
 
         this.ellipses_semi_major = SEMI_MAJOR_AXIS;
@@ -226,26 +230,25 @@ export class PlayerSprite {
     }
 
     set_next_status_sprite() {
-        const player = this.player_info.instance;
         for (let i = 0; i < status_sprites.length; ++i) {
             const status = status_sprites[this.current_status_index++];
             if (this.current_status_index === status_sprites.length) {
                 this.current_status_index = 0;
             }
             if (
-                player.has_permanent_status(status as permanent_status) ||
-                player.has_temporary_status(status as temporary_status)
+                this.player_instance.has_permanent_status(status as permanent_status) ||
+                this.player_instance.has_temporary_status(status as temporary_status)
             ) {
                 this.status_sprite.visible = true;
                 this.status_sprite.y =
                     -(this.char_sprite.height * sprites_height_factors[status]) +
-                    player.status_sprite_shift * this.player_info.instance.battle_scale;
+                    this.player_instance.status_sprite_shift * this.player_instance.battle_scale;
                 let status_key: string = status;
                 if ((status as temporary_status) === temporary_status.DEATH_CURSE) {
-                    const effect = _.find(player.effects, {
+                    const effect = _.find(this.player_instance.effects, {
                         status_key_name: temporary_status.DEATH_CURSE,
                     });
-                    const remaining_turns = effect ? player.get_effect_turns_count(effect) : 1;
+                    const remaining_turns = effect ? this.player_instance.get_effect_turns_count(effect) : 1;
                     status_key = `${status}_${remaining_turns - 1}`;
                 }
                 const animation_key = this.status_sprite_base.getAnimationKey(STATUS_SPRITES_KEY_NAME, status_key);

@@ -16,7 +16,7 @@ import {GoldenSun} from "../GoldenSun";
 import * as _ from "lodash";
 import {Target} from "../battle/BattleStage";
 import {Item, use_types} from "../Item";
-import {PlayerSprite} from "./PlayerSprite";
+import {battle_actions, PlayerSprite} from "./PlayerSprite";
 
 /* ACTIONS:
 - Attack
@@ -360,11 +360,24 @@ export class Battle {
 
     async check_downed(target: Enemy | MainChar) {
         if (target.current_hp === 0) {
-            target.add_permanent_status(permanent_status.DOWNED);
-
+            this.down_a_char(target);
             await this.battle_log.add(on_catch_status_msg[permanent_status.DOWNED](target));
             await this.wait_for_key();
         }
+    }
+
+    down_a_char(target: Enemy | MainChar) {
+        this.on_going_effects = this.on_going_effects.filter(effect => {
+            if (effect.char === target) {
+                target.remove_effect(effect);
+                target.update_all();
+                return false;
+            }
+            return true;
+        });
+        target.add_permanent_status(permanent_status.DOWNED);
+        const player_sprite = _.find(this.battle_stage.sprites, {player_instance: target});
+        player_sprite.set_action(battle_actions.DOWNED);
     }
 
     /*
@@ -647,7 +660,7 @@ export class Battle {
 
             if (action.caster.get_effect_turns_count(this_effect) === 1) {
                 action.caster.current_hp = 0;
-                action.caster.add_permanent_status(permanent_status.DOWNED);
+                this.down_a_char(action.caster);
                 await this.battle_log.add(`The Grim Reaper calls out to ${action.caster.name}`);
                 await this.wait_for_key();
             }
@@ -867,6 +880,12 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                                     target_instance.set_effect_turns_count(this_effect);
                                 } else {
                                     target_instance.set_effect_turns_count(this_effect, this_effect.turn_count, false);
+                                    if (this_effect.status_key_name === temporary_status.STUN) {
+                                        const player_sprite = _.find(this.battle_stage.sprites, {
+                                            player_instance: this_effect.char,
+                                        });
+                                        player_sprite.set_action(battle_actions.DOWNED);
+                                    }
                                 }
                             } else if (
                                 this_effect.status_key_name === permanent_status.VENOM &&
@@ -891,9 +910,15 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                                 });
                                 if (this_effect) {
                                     target_instance.remove_effect(this_effect, true);
+                                    removed = true;
 
                                     if (this_effect.status_key_name === permanent_status.DOWNED) {
                                         target_instance.init_effect_turns_count();
+                                    } else if (this_effect.status_key_name === temporary_status.STUN) {
+                                        const player_sprite = _.find(this.battle_stage.sprites, {
+                                            player_instance: this_effect.char,
+                                        });
+                                        player_sprite.set_action(battle_actions.IDLE);
                                     }
 
                                     if (this_effect.type === effect_types.TEMPORARY_STATUS) {
