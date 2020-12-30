@@ -56,12 +56,12 @@
         "wait": true,
         "hide_on_complete": true
     },{
-        "animation_key": "battle_damage_front",
+        "animation_key": "damage",
         "start_delay": 1500,
         "sprite_index": "targets",
         "wait": false
     },{
-        "animation_key": "battle_idle_front",
+        "animation_key": "idle",
         "start_delay": 2500,
         "sprite_index": "targets",
         "wait": false

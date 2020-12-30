@@ -185,7 +185,7 @@ export class PlayerSprite {
 
         this.char_sprite = this.group.create(0, 0, this.player_info.sprite_key);
         this.char_sprite.anchor.setTo(0.5, 1);
-        this.char_sprite.scale.setTo(this.player_info.scale, this.player_info.scale);
+        this.char_sprite.scale.setTo(this.player_info.instance.battle_scale, this.player_info.instance.battle_scale);
 
         const status_key = this.status_sprite_base.getActionKey(STATUS_SPRITES_KEY_NAME);
         this.status_sprite = this.group.create(0, 0, status_key);
@@ -215,7 +215,11 @@ export class PlayerSprite {
         this.char_sprite.animations.play(anim_key);
     }
 
-    private set_next_status_sprite() {
+    get_animation_key(action: battle_actions, position: battle_positions) {
+        return this.sprite_base.getAnimationKey(base_actions.BATTLE, action + "_" + position);
+    }
+
+    set_next_status_sprite() {
         const player = this.player_info.instance;
         for (let i = 0; i < status_sprites.length; ++i) {
             const status = status_sprites[this.current_status_index++];
@@ -229,7 +233,7 @@ export class PlayerSprite {
                 this.status_sprite.visible = true;
                 this.status_sprite.y =
                     -(this.char_sprite.height * sprites_height_factors[status]) +
-                    player.status_sprite_shift * this.player_info.scale;
+                    player.status_sprite_shift * this.player_info.instance.battle_scale;
                 let status_key: string = status;
                 if ((status as temporary_status) === temporary_status.DEATH_CURSE) {
                     const effect = _.find(player.effects, {

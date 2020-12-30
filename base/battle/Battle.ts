@@ -44,7 +44,6 @@ enum battle_phases {
 
 export type PlayerInfo = {
     sprite_key: string;
-    scale?: number;
     instance?: Enemy | MainChar;
     entered_in_battle?: boolean;
     battle_key?: string;
@@ -98,10 +97,9 @@ export class Battle {
             char.init_effect_turns_count();
             return {
                 sprite_key: char.sprite_base.getActionKey(base_actions.BATTLE),
-                scale: char.battle_scale,
                 instance: char,
                 entered_in_battle: true,
-            };
+            } as PlayerInfo;
         });
 
         const enemies_party_data = this.data.dbs.enemies_parties_db[enemy_party_key];
@@ -136,7 +134,6 @@ export class Battle {
                     this.data.info.enemies_list[member_info.key].data,
                     name_suffix
                 );
-                this.enemies_info[counter].scale = this.enemies_info[counter].instance.battle_scale;
                 this.enemies_info[counter].battle_key = this.enemies_info[counter].sprite_key + battle_key_suffix;
                 this.this_enemies_list[this.enemies_info[counter].battle_key] = this.enemies_info[counter]
                     .instance as Enemy;

@@ -3,7 +3,7 @@ import * as numbers from "../magic_numbers";
 import {range_360} from "../utils";
 import {CameraAngle, DEFAULT_POS_ANGLE} from "./BattleStage";
 import * as _ from "lodash";
-import {PlayerSprite} from "./PlayerSprite";
+import {battle_actions, PlayerSprite} from "./PlayerSprite";
 
 type DefaultAttr = {
     start_delay: number | number[];
@@ -616,7 +616,7 @@ export class BattleAnimation {
         for (let i = 0; i < this.play_sequence.length; ++i) {
             const play_seq = this.play_sequence[i];
             let sprites = this.get_sprites(play_seq);
-            sprites.forEach((sprite: Phaser.Sprite, index) => {
+            sprites.forEach((sprite: Phaser.Sprite | PlayerSprite, index) => {
                 let resolve_function;
                 let this_promise = new Promise(resolve => {
                     resolve_function = resolve;
@@ -626,10 +626,18 @@ export class BattleAnimation {
                     ? play_seq.start_delay[index]
                     : play_seq.start_delay;
                 this.game.time.events.add(start_delay, () => {
-                    const anim = sprite.animations.getAnimation(play_seq.animation_key);
+                    let animation_key = play_seq.animation_key;
+                    if (sprite instanceof PlayerSprite) {
+                        const player = sprite as PlayerSprite;
+                        animation_key = player.get_animation_key(
+                            play_seq.animation_key as battle_actions,
+                            player.position
+                        );
+                    }
+                    const anim = sprite.animations.getAnimation(animation_key);
                     anim.reversed = play_seq.reverse === undefined ? false : play_seq.reverse;
                     anim.stop(true);
-                    sprite.animations.play(play_seq.animation_key, play_seq.frame_rate, play_seq.repeat);
+                    sprite.animations.play(animation_key, play_seq.frame_rate, play_seq.repeat);
                     if (play_seq.wait) {
                         sprite.animations.currentAnim.onComplete.addOnce(() => {
                             if (play_seq.hide_on_complete) {
