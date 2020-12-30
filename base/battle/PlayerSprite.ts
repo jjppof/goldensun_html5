@@ -1,11 +1,12 @@
 import {GoldenSun} from "../GoldenSun";
 import {weapon_types} from "../Item";
-import {permanent_status, temporary_status} from "../Player";
+import {permanent_status, Player, temporary_status} from "../Player";
 import {SpriteBase} from "../SpriteBase";
 import {base_actions} from "../utils";
 import {PlayerInfo} from "./Battle";
 import {SEMI_MAJOR_AXIS, SEMI_MINOR_AXIS} from "./BattleStage";
 import * as _ from "lodash";
+import {Observable, Subject, Subscription} from "rxjs";
 
 export enum battle_actions {
     IDLE = "idle",
@@ -65,6 +66,8 @@ export class PlayerSprite {
     public ellipses_semi_minor: number;
     private status_sprite_base: SpriteBase;
     private status_timer: Phaser.Timer;
+    private on_status_change_obs: Observable<Player["on_status_change"] extends Subject<infer T> ? T : never>;
+    private on_status_change_subs: Subscription;
 
     constructor(
         game: Phaser.Game,
@@ -82,6 +85,7 @@ export class PlayerSprite {
         this.group = this.game.add.group();
         this.parent_group.add(this.group);
         this.group.onDestroy.addOnce(() => {
+            this.on_status_change_subs.unsubscribe();
             this.status_timer.stop();
             this.status_timer.destroy();
         });
@@ -194,6 +198,8 @@ export class PlayerSprite {
         this.status_sprite.visible = false;
         this.status_timer.loop(4000, this.set_next_status_sprite.bind(this));
         this.status_timer.start();
+        this.on_status_change_obs = this.player_info.instance.on_status_change.asObservable();
+        this.on_status_change_subs = this.on_status_change_obs.subscribe(this.set_next_status_sprite.bind(this));
 
         this.ellipses_semi_major = SEMI_MAJOR_AXIS;
         this.ellipses_semi_minor = SEMI_MINOR_AXIS;
@@ -251,6 +257,7 @@ export class PlayerSprite {
     }
 
     destroy() {
+        this.on_status_change_subs.unsubscribe();
         this.status_timer.stop();
         this.status_timer.destroy();
         this.parent_group.remove(this.group);

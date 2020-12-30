@@ -1,6 +1,7 @@
 import {Effect, effect_types} from "./Effect";
 import {elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
+import {Subject} from "rxjs";
 
 export enum fighter_types {
     ALLY = 1,
@@ -112,15 +113,12 @@ export abstract class Player {
     public battle_shadow_key: string;
     public status_sprite_shift: number;
     public fighter_type: fighter_types;
-
     public current_level: {[element in elements]?: number};
     public current_power: {[element in elements]?: number};
     public current_resist: {[element in elements]?: number};
-
     public base_level: {[element in elements]?: number};
     public base_power: {[element in elements]?: number};
     public base_resist: {[element in elements]?: number};
-
     public turns: number;
     public battle_animations_variations: {[ability_key: string]: string};
     public max_hp: number;
@@ -135,12 +133,17 @@ export abstract class Player {
     public luk: number;
     public level: number;
     public current_exp: number;
+    public on_status_change: Subject<{
+        status: permanent_status | temporary_status;
+        added: boolean;
+    }>;
 
     constructor(key_name, name) {
         this.key_name = key_name;
         this.name = name;
         this.temporary_status = new Set();
         this.permanent_status = new Set();
+        this.on_status_change = new Subject();
         this.effects = [];
         this.current_power = ordered_elements.reduce((obj, elem) => {
             obj[elem] = 0;
@@ -280,10 +283,12 @@ export abstract class Player {
 
     add_permanent_status(status: permanent_status) {
         this.permanent_status.add(status);
+        this.on_status_change.next({status: status, added: true});
     }
 
     remove_permanent_status(status: permanent_status) {
         this.permanent_status.delete(status);
+        this.on_status_change.next({status: status, added: false});
     }
 
     has_permanent_status(status: permanent_status) {
@@ -292,10 +297,12 @@ export abstract class Player {
 
     add_temporary_status(status: temporary_status) {
         this.temporary_status.add(status);
+        this.on_status_change.next({status: status, added: true});
     }
 
     remove_temporary_status(status: temporary_status) {
         this.temporary_status.delete(status);
+        this.on_status_change.next({status: status, added: false});
     }
 
     has_temporary_status(status: temporary_status) {
