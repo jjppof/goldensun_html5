@@ -60,7 +60,7 @@ export class Hero extends ControllableChar {
     };
 
     private arrow_inputs: number;
-    private force_diagonal_speed: {x: number, y: number} = {x: 0, y: 0};
+    private force_diagonal_speed: {x: number; y: number} = {x: 0, y: 0};
 
     constructor(
         game,
@@ -265,16 +265,15 @@ export class Hero extends ControllableChar {
                     const normal = normals[0];
                     const wall_direction =
                         Hero.ROTATION_NORMAL[
-                            (range_360(Math.atan2(normal[1], -normal[0]) + numbers.degree15) /
-                                numbers.degree30) |
-                                0
+                            (range_360(Math.atan2(normal[1], -normal[0]) + numbers.degree15) / numbers.degree30) | 0
                         ];
                     const relative_direction = (Hero.ROTATION_KEY[this.arrow_inputs] - wall_direction) & 7;
                     //if player's direction is within 1 of wall_direction
                     if (relative_direction === 1 || relative_direction === 7) {
                         this.force_direction = true;
                         const direction = (wall_direction + (relative_direction << 1)) & 7;
-                        if ((direction & 1) === 1) { //adapting the velocity to the contact slope
+                        if ((direction & 1) === 1) {
+                            //adapting the velocity to the contact slope
                             const going_up = (direction >> 1) & 2;
                             const is_ccw = going_up ? normal[0] >= 0 : normal[0] < 0;
                             //rotates normal vector 90deg
