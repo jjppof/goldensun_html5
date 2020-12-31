@@ -59,7 +59,8 @@ export class Hero extends ControllableChar {
         [directions.down_left]: {x: -numbers.INV_SQRT2, y: numbers.INV_SQRT2},
     };
 
-    public arrow_inputs: number;
+    private arrow_inputs: number;
+    private force_diagonal_speed: {x: number, y: number} = {x: 0, y: 0};
 
     constructor(
         game,
@@ -129,8 +130,13 @@ export class Hero extends ControllableChar {
                 } else {
                     desired_direction = this.current_direction;
                 }
-                this.x_speed = Hero.SPEEDS[desired_direction].x;
-                this.y_speed = Hero.SPEEDS[desired_direction].y;
+                if (this.force_direction && (this.current_direction & 1) === 1) {
+                    this.x_speed = this.force_diagonal_speed.x;
+                    this.y_speed = this.force_diagonal_speed.y;
+                } else {
+                    this.x_speed = Hero.SPEEDS[desired_direction].x;
+                    this.y_speed = Hero.SPEEDS[desired_direction].y;
+                }
             } else {
                 this.x_speed = this.y_speed = 0;
             }
@@ -256,9 +262,10 @@ export class Hero extends ControllableChar {
                 if (normals.length === 1) {
                     //everything inside this if is to deal with direction changing when colliding
                     //finds which 30 degree sector the normal angle lies within, and converts to a direction
+                    const normal = normals[0];
                     const wall_direction =
                         Hero.ROTATION_NORMAL[
-                            (range_360(Math.atan2(normals[0][1], -normals[0][0]) + numbers.degree15) /
+                            (range_360(Math.atan2(normal[1], -normal[0]) + numbers.degree15) /
                                 numbers.degree30) |
                                 0
                         ];
@@ -266,7 +273,15 @@ export class Hero extends ControllableChar {
                     //if player's direction is within 1 of wall_direction
                     if (relative_direction === 1 || relative_direction === 7) {
                         this.force_direction = true;
-                        this.set_direction((wall_direction + (relative_direction << 1)) & 7);
+                        const direction = (wall_direction + (relative_direction << 1)) & 7;
+                        if ((direction & 1) === 1) { //adapting the velocity to the contact slope
+                            const going_up = (direction >> 1) & 2;
+                            const is_ccw = going_up ? normal[0] >= 0 : normal[0] < 0;
+                            //rotates normal vector 90deg
+                            this.force_diagonal_speed.x = is_ccw ? normal[1] : -normal[1];
+                            this.force_diagonal_speed.y = is_ccw ? -normal[0] : normal[0];
+                        }
+                        this.set_direction(direction);
                     } else {
                         this.force_direction = false;
                     }
