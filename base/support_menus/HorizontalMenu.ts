@@ -66,13 +66,13 @@ export class HorizontalMenu {
         this.on_cancel = () => {
             if (this.on_cancel) {
                 this.data.audio.play_se("menu_se", "menu_negative");
-                callbacks.on_cancel();
+                if (callbacks.on_cancel) callbacks.on_cancel();
             }
         };
         this.on_press = () => {
             if (this.on_press) {
                 this.data.audio.play_se("menu_se", "menu_positive");
-                callbacks.on_press();
+                if (callbacks.on_press) callbacks.on_press();
             }
         };
         this.buttons_number = buttons.length;
