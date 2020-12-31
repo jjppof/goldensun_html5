@@ -13,6 +13,7 @@ import {Map} from "./Map";
 import {Battle} from "./battle/Battle";
 import {MainMenu, initialize_menu} from "./main_menus/MainMenu";
 import {ShopMenu} from "./main_menus/ShopMenu";
+import {InnMenu} from "./main_menus/InnMenu";
 import {ControlManager} from "./utils/ControlManager";
 import {CursorManager} from "./utils/CursorManager";
 import {Gamepad} from "./Gamepad";
@@ -27,6 +28,7 @@ export class GoldenSun {
     //main game states
     public menu_open: boolean = false;
     public shop_open: boolean = false;
+    public inn_open: boolean = false;
     public in_battle: boolean = false;
     public created: boolean = false;
     public force_stop_movement: boolean = false;
@@ -37,6 +39,7 @@ export class GoldenSun {
     public debug: Debug = null; //class responsible for the debug systems
     public main_menu: MainMenu = null; //class responbible for the main menu
     public shop_menu: ShopMenu = null; //class responsible for the shop system
+    public inn_menu: InnMenu = null; //class responsible for the inn system
     public map: Map = null; //the current active map
     public tile_event_manager: TileEventManager = null; //class responsible for the tile events
     public game_event_manager: GameEventManager = null; //class responsible for the game events
@@ -198,6 +201,7 @@ export class GoldenSun {
 
         //initialize screens
         this.shop_menu = new ShopMenu(this.game, this);
+        this.inn_menu = new InnMenu(this.game, this);
         this.main_menu = initialize_menu(this.game, this);
 
         //enable zoom and psynergies shortcuts for testing
@@ -245,21 +249,24 @@ export class GoldenSun {
             {
                 key: this.gamepad.PSY1,
                 on_down: () => {
-                    if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
+                    if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open || this.inn_open)
+                        return;
                     this.info.field_abilities_list.move.cast(this.hero, this.dbs.init_db.initial_shortcuts.move);
                 },
             },
             {
                 key: this.gamepad.PSY2,
                 on_down: () => {
-                    if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
+                    if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open || this.inn_open)
+                        return;
                     this.info.field_abilities_list.frost.cast(this.hero, this.dbs.init_db.initial_shortcuts.frost);
                 },
             },
             {
                 key: this.gamepad.PSY3,
                 on_down: () => {
-                    if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open) return;
+                    if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open || this.inn_open)
+                        return;
                     this.info.field_abilities_list.growth.cast(this.hero, this.dbs.init_db.initial_shortcuts.growth);
                 },
             },
@@ -272,6 +279,7 @@ export class GoldenSun {
             this.hero.in_action(allow_climbing) ||
             this.menu_open ||
             this.shop_open ||
+            this.inn_open ||
             this.in_battle ||
             this.tile_event_manager.on_event ||
             this.force_stop_movement

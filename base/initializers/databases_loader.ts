@@ -17,6 +17,7 @@ export function load_databases(game, dbs) {
     dbs.summons_db = game.cache.getJSON("summons_db");
     dbs.shopkeep_dialog_db = game.cache.getJSON("shopkeep_dialog_db");
     dbs.shops_db = game.cache.getJSON("shops_db");
+    dbs.inn_db = game.cache.getJSON("inn_db");
 
     //format some db structures
     dbs.shopkeep_dialog_db = _.mapKeys(dbs.shopkeep_dialog_db, shopkeep_dialog => shopkeep_dialog.key_name);

@@ -83,6 +83,16 @@ export class GameEventManager {
                     this.control_enable = true;
                 });
             }
+        } else if (npc.npc_type === npc_types.INN) {
+            if (!this.data.inn_open) {
+                this.set_npc_and_hero_directions(npc);
+                this.data.inn_menu.start(npc.inn_key, () => {
+                    this.on_event = false;
+                    this.reset_npc_direction(npc);
+                    this.data.force_stop_movement = false;
+                    this.control_enable = true;
+                });
+            }
         }
     }
 
