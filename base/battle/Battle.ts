@@ -1102,10 +1102,58 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 }
             }
         }
+        this.end_phase_recovery_effects();
+        await this.wait_for_key();
 
         this.battle_log.clear();
         this.battle_phase = battle_phases.MENU;
         this.check_phases();
+    }
+
+    end_phase_recovery_effects() {
+        this.allies_info.forEach(player => {
+            if (player.instance.hp_recovery != 0) {
+                player.instance.current_hp = _.clamp(
+                    player.instance.current_hp + player.instance.hp_recovery,
+                    0,
+                    player.instance.max_hp
+                );
+                this.end_phase_recovery_log(player.instance.name, player.instance.hp_recovery, "HP");
+            }
+
+            if (player.instance.pp_recovery != 0) {
+                player.instance.current_pp = _.clamp(
+                    player.instance.current_pp + player.instance.pp_recovery,
+                    0,
+                    player.instance.max_pp
+                );
+                this.end_phase_recovery_log(player.instance.name, player.instance.pp_recovery, "PP");
+            }
+        });
+
+        this.enemies_info.forEach(enemy => {
+            if (enemy.instance.hp_recovery != 0) {
+                enemy.instance.current_hp = _.clamp(
+                    enemy.instance.current_hp + enemy.instance.hp_recovery,
+                    0,
+                    enemy.instance.max_hp
+                );
+                this.end_phase_recovery_log(enemy.instance.name, enemy.instance.hp_recovery, "HP");
+            }
+
+            if (enemy.instance.pp_recovery != 0) {
+                enemy.instance.current_pp = _.clamp(
+                    enemy.instance.current_pp + enemy.instance.pp_recovery,
+                    0,
+                    enemy.instance.max_pp
+                );
+                this.end_phase_recovery_log(enemy.instance.name, enemy.instance.pp_recovery, "PP");
+            }
+        });
+    }
+
+    end_phase_recovery_log(name: string, amount: number, type: string) {
+        this.battle_log.add(name + " recovered " + amount + type);
     }
 
     // Everyone gets equal experience with no division, but:
