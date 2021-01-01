@@ -1,4 +1,5 @@
 import * as _ from "lodash";
+import {Audio} from "../Audio";
 import {Gamepad} from "../Gamepad";
 
 const DEFAULT_LOOP_TIME = Phaser.Timer.QUARTER >> 1;
@@ -11,15 +12,18 @@ export type ControlObj = {
     loop?: boolean;
     loop_time?: number;
     reset?: boolean;
+    sfx?: {
+        up?: string;
+        down?: string;
+    };
 };
 
 export class ControlManager {
     public game: Phaser.Game;
     public gamepad: Gamepad;
+    public audio: Audio;
 
     public disabled: boolean;
-    public busy: boolean;
-
     public keys_list: number[];
     public keys: {[key: number]: ControlObj};
 
@@ -29,16 +33,14 @@ export class ControlManager {
     public loop_start_timer: Phaser.Timer;
     public loop_repeat_timer: Phaser.Timer;
 
-    public control_queue: {controls: any[]; configs?: any}[];
     public global_bindings: {[key: number]: Phaser.SignalBinding[]};
 
-    constructor(game: Phaser.Game, gamepad: Gamepad) {
+    constructor(game: Phaser.Game, gamepad: Gamepad, audio: Audio) {
         this.game = game;
         this.gamepad = gamepad;
+        this.audio = audio;
 
         this.disabled = false;
-        this.busy = false;
-
         this.keys_list = this.gamepad.keys;
 
         let keys_to_map = [];
@@ -51,6 +53,11 @@ export class ControlManager {
                 loop: false,
                 loop_time: DEFAULT_LOOP_TIME,
                 reset: false,
+                down_sfx: null,
+                sfx: {
+                    up: null,
+                    down: null,
+                },
             });
         }
 
@@ -58,8 +65,6 @@ export class ControlManager {
 
         this.signal_bindings = [];
         this.signal_bindings_key = null;
-
-        this.control_queue = [];
         this.global_bindings = {};
 
         this.loop_start_timer = this.game.time.create(false);
@@ -70,16 +75,18 @@ export class ControlManager {
         return this.signal_bindings.length !== 0;
     }
 
-    get has_next() {
-        return this.control_queue.length !== 0;
-    }
-
     simple_input(
         callback: Function,
-        params?: {reset_on_press?: boolean; confirm_only?: boolean; persist?: boolean; no_initial_reset?: boolean}
+        params?: {reset_on_press?: boolean; confirm_only?: boolean; persist?: boolean; no_initial_reset?: boolean},
+        sfx?: string
     ) {
         let controls = [
-            {key: this.gamepad.A, on_down: callback, reset_control: params ? params.reset_on_press : undefined},
+            {
+                key: this.gamepad.A,
+                on_down: callback,
+                reset_control: params ? params.reset_on_press : undefined,
+                sfx: sfx ? {down: sfx} : null,
+            },
         ];
 
         if (params) {
@@ -88,6 +95,7 @@ export class ControlManager {
                     key: this.gamepad.B,
                     on_down: callback,
                     reset_control: params ? params.reset_on_press : undefined,
+                    sfx: sfx ? {down: sfx} : null,
                 });
             return this.set_control(controls, {persist: params.persist, no_reset: params.no_initial_reset});
         } else {
@@ -95,13 +103,20 @@ export class ControlManager {
                 key: this.gamepad.B,
                 on_down: callback,
                 reset_control: params ? params.reset_on_press : undefined,
+                sfx: sfx ? {down: sfx} : null,
             });
             return this.set_control(controls);
         }
     }
 
     set_control(
-        controls: {key: number; on_down?: Function; on_up?: Function; params?: {reset_control?: boolean}}[],
+        controls: {
+            key: number;
+            on_down?: Function;
+            on_up?: Function;
+            params?: {reset_control?: boolean};
+            sfx?: {up?: string; down?: string};
+        }[],
         configs?: {
             loop_configs?: {
                 vertical?: boolean;
@@ -116,39 +131,33 @@ export class ControlManager {
             global_key?: number;
         }
     ) {
-        if (this.busy) {
-            console.log("ControlManager is busy. Request queued.");
-            let global_key = this.make_global_key();
+        let disable_reset: boolean = configs ? (configs.no_reset ? configs.no_reset : false) : false;
+        if (this.initialized && !disable_reset) this.reset();
 
-            let new_configs = configs;
-            new_configs.global_key = global_key;
+        for (let i = 0; i < controls.length; i++) {
+            if (controls[i].on_down) this.keys[controls[i].key].on_down = controls[i].on_down;
+            if (controls[i].on_up) this.keys[controls[i].key].on_up = controls[i].on_up;
 
-            this.control_queue.push({controls: controls, configs: new_configs});
-            return global_key;
+            if (controls[i].params) {
+                this.keys[controls[i].key].reset = controls[i].params.reset_control
+                    ? controls[i].params.reset_control
+                    : false;
+            }
+
+            if (controls[i].sfx) {
+                if (controls[i].sfx.down) this.keys[controls[i].key].sfx.down = controls[i].sfx.down;
+                if (controls[i].sfx.up) this.keys[controls[i].key].sfx.up = controls[i].sfx.up;
+            }
+        }
+
+        if (configs) {
+            this.set_configs(configs);
+
+            let global_key = !configs.global_key ? this.make_global_key() : configs.global_key;
+            return this.enable_keys(global_key, configs.persist);
         } else {
-            let disable_reset: boolean = configs ? (configs.no_reset ? configs.no_reset : false) : false;
-            if (this.initialized && !disable_reset) this.reset();
-
-            this.busy = true;
-
-            for (let i = 0; i < controls.length; i++) {
-                if (controls[i].on_down) this.keys[controls[i].key].on_down = controls[i].on_down;
-                if (controls[i].on_up) this.keys[controls[i].key].on_up = controls[i].on_up;
-                if (controls[i].params)
-                    this.keys[controls[i].key].reset = controls[i].params.reset_control
-                        ? controls[i].params.reset_control
-                        : false;
-            }
-
-            if (configs) {
-                this.set_configs(configs);
-
-                let global_key = !configs.global_key ? this.make_global_key() : configs.global_key;
-                return this.enable_keys(global_key, configs.persist);
-            } else {
-                let global_key = this.make_global_key();
-                return this.enable_keys(global_key);
-            }
+            let global_key = this.make_global_key();
+            return this.enable_keys(global_key);
         }
     }
 
@@ -188,9 +197,14 @@ export class ControlManager {
             let key_on_down = this.keys[this.keys_list[i]].on_down;
             let key_on_up = this.keys[this.keys_list[i]].on_up;
 
+            let sfx_down = this.keys[this.keys_list[i]].sfx.down;
+            let sfx_up = this.keys[this.keys_list[i]].sfx.up;
+
             if (this.keys[this.keys_list[i]].on_up) {
                 let b = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onUp.add(() => {
                     if (this.disabled) return;
+
+                    if (sfx_up) this.audio.play_se(sfx_up);
                     key_on_up();
                 });
                 if (!persist) this.signal_bindings.push(b);
@@ -211,7 +225,7 @@ export class ControlManager {
                         }
 
                         this.keys[this.keys_list[i]].pressed = true;
-                        this.set_loop_timers(key_on_down, loop_time);
+                        this.set_loop_timers(key_on_down, loop_time, sfx_down);
                     });
 
                     let b2 = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onUp.add(() => {
@@ -228,6 +242,7 @@ export class ControlManager {
                         if (this.disabled) return;
 
                         if (trigger_reset) this.reset();
+                        if (sfx_down) this.audio.play_se(sfx_down);
                         key_on_down();
                     });
 
@@ -237,23 +252,22 @@ export class ControlManager {
             }
         }
         this.reset(false);
-        this.busy = false;
 
         this.global_bindings[global_key] = bindings;
         if (!persist) this.signal_bindings_key = global_key;
 
-        if (this.has_next) {
-            console.log("Executing next ControlManager request...");
-            let args = this.control_queue.shift();
-            this.set_control(args.controls, args.configs);
-        } else return global_key;
+        return global_key;
     }
 
-    set_loop_timers(callback: Function, loop_time: number) {
+    set_loop_timers(callback: Function, loop_time: number, sfx?: string) {
+        if (sfx) this.audio.play_se(sfx);
         callback();
 
         this.loop_start_timer.add(Phaser.Timer.QUARTER, () => {
-            this.loop_repeat_timer.loop(loop_time, callback);
+            this.loop_repeat_timer.loop(loop_time, () => {
+                if (sfx !== null || sfx !== undefined) this.audio.play_se(sfx);
+                callback();
+            });
             this.loop_repeat_timer.start();
         });
         this.loop_start_timer.start();
@@ -303,6 +317,7 @@ export class ControlManager {
             this.keys[this.keys_list[i]].loop = false;
             this.keys[this.keys_list[i]].loop_time = DEFAULT_LOOP_TIME;
             this.keys[this.keys_list[i]].reset = false;
+            this.keys[this.keys_list[i]].sfx = {up: null, down: null};
         }
 
         if (detach) {

@@ -62,7 +62,7 @@ export class SliderEvent extends TileEvent {
                 .tween(this.data.hero.sprite.body)
                 .to({x: initial_x, y: [jump_y, initial_y]}, 150, Phaser.Easing.Linear.None, true)
                 .onComplete.addOnce(() => {
-                    this.data.audio.play_se("actions_se", "slide");
+                    this.data.audio.play_se("actions/slide");
                     if (this.show_dust) {
                         this.dust_animation();
                     }

@@ -75,11 +75,11 @@ export function fire_push_movement(
     if (target_only || expected_position === data.hero.trying_to_push_direction) {
         if (!target_only) {
             data.hero.pushing = true;
-            data.audio.play_se("actions_se", "push");
+            data.audio.play_se("actions/push");
             data.hero.current_action = base_actions.PUSH;
             data.hero.set_action();
         } else {
-            data.audio.play_se("menu_se", "menu_positive_4");
+            data.audio.play_se("menu/positive_4");
         }
         game.physics.p2.pause();
         let tween_x = 0,
@@ -180,7 +180,7 @@ export function fire_push_movement(
                                     true
                                 )
                                 .onComplete.addOnce(() => {
-                                    data.audio.play_se("misc_se", "rock_drop");
+                                    data.audio.play_se("misc/rock_drop");
                                     if (drop_tile.dust_animation) {
                                         data.hero.current_action = base_actions.IDLE;
                                         data.hero.play(

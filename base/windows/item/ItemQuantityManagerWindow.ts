@@ -105,10 +105,10 @@ export class ItemQuantityManagerWindow {
 
     grant_control(on_cancel: Function, on_select: Function) {
         let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.decrease_amount.bind(this)},
-            {key: this.data.gamepad.RIGHT, on_down: this.increase_amount.bind(this)},
-            {key: this.data.gamepad.A, on_down: on_select},
-            {key: this.data.gamepad.B, on_down: on_cancel},
+            {key: this.data.gamepad.LEFT, on_down: this.decrease_amount.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.RIGHT, on_down: this.increase_amount.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.A, on_down: on_select, sfx: {down: "menu/positive"}},
+            {key: this.data.gamepad.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
         ];
         this.data.control_manager.set_control(controls, {
             loop_configs: {horizontal: true, horizontal_time: ITEM_COUNTER_LOOP_TIME},
