@@ -1,11 +1,9 @@
 import {TextObj, Window} from "../../Window";
-import {Item, item_types} from "../../Item";
-import {effect_types, effect_operators} from "../../Effect";
+import {Item} from "../../Item";
 import {GoldenSun} from "../../GoldenSun";
-import {ItemSlot, item_equip_slot, MainChar} from "../../MainChar";
+import {ItemSlot, MainChar} from "../../MainChar";
 import * as _ from "lodash";
-import {main_stats} from "../../Player";
-import { choose_class_by_type, choose_class_type_by_element_afinity, choose_right_class } from "../../Classes";
+import { choose_right_class } from "../../Classes";
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;
@@ -13,12 +11,6 @@ const BASE_WIN_X = 0;
 const BASE_WIN_Y = 40;
 const ARROW_X = 32;
 const ARROW_Y = 49;
-
-type Arrows = {
-    attack: Phaser.Sprite | TextObj;
-    defense: Phaser.Sprite | TextObj;
-    agility: Phaser.Sprite | TextObj;
-};
 
 export class ClassChangeWithItemWindow {
     public game: Phaser.Game;
