@@ -178,8 +178,8 @@ export class MainChar extends Player {
     }
 
     get granted_class_type() {
-        const equiped_class_changer = 'equip_slots' in this && this.equip_slots[equip_slots.CLASS_CHANGER];
-        
+        const equiped_class_changer = "equip_slots" in this && this.equip_slots[equip_slots.CLASS_CHANGER];
+
         if (equiped_class_changer) {
             return this.info.items_list[equiped_class_changer.key_name].granted_class_type;
         }
@@ -193,7 +193,7 @@ export class MainChar extends Player {
             this.class_table,
             this.element_afinity,
             this.current_level,
-            this.granted_class_type,
+            this.granted_class_type
         );
     }
 
@@ -428,7 +428,13 @@ export class MainChar extends Player {
             }
             lvls[djinn.element] += lv_shift;
         }
-        this.class = choose_right_class(this.info.classes_list, this.class_table, this.element_afinity, lvls, this.granted_class_type);
+        this.class = choose_right_class(
+            this.info.classes_list,
+            this.class_table,
+            this.element_afinity,
+            lvls,
+            this.granted_class_type
+        );
         let return_obj = {
             class_name: this.class.name,
             class_key_name: this.class.key_name,

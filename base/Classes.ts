@@ -4,7 +4,7 @@ import {elements} from "./utils";
 import * as _ from "lodash";
 import {GameInfo} from "./initializers/initialize_info";
 import {Player} from "./Player";
-import { Item } from "./Item";
+import {Item} from "./Item";
 
 export class Classes {
     public key_name: string;
@@ -66,7 +66,7 @@ export function choose_right_class(
     class_table,
     element_afinity: elements,
     current_level: Player["current_level"],
-    granted_class_type: number,
+    granted_class_type: number
 ): Classes {
     const class_type = choose_class_type(class_table, element_afinity, current_level, granted_class_type);
     return choose_class_by_type(classes_list, current_level, class_type);
@@ -75,7 +75,7 @@ export function choose_right_class(
 export function choose_class_by_type(
     classes_list: GameInfo["classes_list"],
     current_level: Player["current_level"],
-    class_type: number,
+    class_type: number
 ): Classes {
     let classes = Object.values(classes_list).filter(this_class => this_class.class_type === class_type);
     classes = classes.filter(this_class => {
@@ -104,7 +104,9 @@ function choose_class_type(
     current_level: Player["current_level"],
     granted_class_type: number
 ): number {
-    return granted_class_type > 0 ? granted_class_type : choose_class_type_by_element_afinity(class_table, element_afinity, current_level);
+    return granted_class_type > 0
+        ? granted_class_type
+        : choose_class_type_by_element_afinity(class_table, element_afinity, current_level);
 }
 
 export function choose_class_type_by_element_afinity(

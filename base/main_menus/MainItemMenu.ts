@@ -8,7 +8,7 @@ import {GoldenSun} from "../GoldenSun";
 import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
 import {ItemSlot} from "../MainChar";
 import {ItemQuantityManagerWindow} from "../windows/item/ItemQuantityManagerWindow";
-import { StatsOrClassCheckWithItemWindow } from "../windows/item/StatsOrClassCheckWithItemWindow";
+import {StatsOrClassCheckWithItemWindow} from "../windows/item/StatsOrClassCheckWithItemWindow";
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;

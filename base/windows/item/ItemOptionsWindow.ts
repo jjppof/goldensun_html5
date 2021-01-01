@@ -8,7 +8,7 @@ import {ItemSlot, MainChar} from "../../MainChar";
 import {Item, item_types} from "../../Item";
 import {MainItemMenu} from "../../main_menus/MainItemMenu";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
-import { StatsOrClassCheckWithItemWindow } from "./StatsOrClassCheckWithItemWindow";
+import {StatsOrClassCheckWithItemWindow} from "./StatsOrClassCheckWithItemWindow";
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 52;

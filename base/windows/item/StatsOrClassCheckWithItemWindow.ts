@@ -1,8 +1,8 @@
 import {GoldenSun} from "../../GoldenSun";
 import * as _ from "lodash";
-import { StatsCheckWithItemWindow } from "./StatsCheckWithItemWindow";
-import { ClassChangeWithItemWindow } from "./ClassChangeWithItemWindow";
-import { Item, item_types } from "../../Item";
+import {StatsCheckWithItemWindow} from "./StatsCheckWithItemWindow";
+import {ClassChangeWithItemWindow} from "./ClassChangeWithItemWindow";
+import {Item, item_types} from "../../Item";
 
 export class StatsOrClassCheckWithItemWindow {
     public game: Phaser.Game;
