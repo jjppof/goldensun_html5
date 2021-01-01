@@ -5,7 +5,7 @@ import {GoldenSun} from "../../GoldenSun";
 import {ItemSlot, item_equip_slot, MainChar} from "../../MainChar";
 import * as _ from "lodash";
 import {main_stats} from "../../Player";
-import { choose_class_by_type } from "../../Classes";
+import { choose_class_by_type, choose_class_type_by_element_afinity, choose_right_class } from "../../Classes";
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;
@@ -87,8 +87,14 @@ export class ClassChangeWithItemWindow {
         this.base_window.update_text(this.char.name, this.name_text);
         this.base_window.update_text(this.char.level.toString(), this.lv_text);
         this.base_window.update_text(this.char.class.name, this.class_text);
-
-        const preview_class = choose_class_by_type(this.data.info.classes_list, this.char.current_level, this.item.granted_class_type);
+        
+        const preview_class = choose_right_class(
+            this.data.info.classes_list,
+            this.data.dbs.classes_db.class_table,
+            this.char.element_afinity,
+            this.char.current_level,
+            this.item_obj.equipped ? -1 : this.item.granted_class_type,
+        );
 
         this.base_window.update_text(preview_class ? preview_class.name : '', this.preview_class_text);
         if (this.avatar) {

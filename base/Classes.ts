@@ -107,7 +107,7 @@ function choose_class_type(
     return granted_class_type > 0 ? granted_class_type : choose_class_type_by_element_afinity(class_table, element_afinity, current_level);
 }
 
-function choose_class_type_by_element_afinity(
+export function choose_class_type_by_element_afinity(
     class_table,
     element_afinity: elements,
     current_level: Player["current_level"]
