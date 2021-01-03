@@ -5,6 +5,12 @@ import {CameraAngle, DEFAULT_POS_ANGLE} from "./BattleStage";
 import * as _ from "lodash";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
 
+enum positions {
+    OVER = "over",
+    BETWEEN = "between",
+    BEHIND = "behind",
+}
+
 type DefaultAttr = {
     start_delay: number | number[];
     to: string | number | number[];
@@ -78,7 +84,7 @@ type Emitter = {
     render_type: "pixel" | "sprite";
     x: number | string;
     y: number | string;
-    position: "behind" | "between" | "over";
+    position: positions;
     shift_x: number;
     shift_y: number;
     total: number;
@@ -209,6 +215,11 @@ export class BattleAnimation {
     public super_group: Phaser.Group;
     public back_group: Phaser.Group;
     public front_group: Phaser.Group;
+    public ability_sprites_groups: {
+        [positions.BEHIND]: Phaser.Group;
+        [positions.BETWEEN]: Phaser.Group;
+        [positions.OVER]: Phaser.Group;
+    };
     public stage_camera: CameraAngle;
     public trails_objs: Phaser.Image[];
     public trails_bmps: Phaser.BitmapData[];
@@ -281,6 +292,11 @@ export class BattleAnimation {
         this.is_party_animation = is_party_animation;
         this.running = false;
         this.render_callbacks = {};
+        this.ability_sprites_groups = {
+            [positions.BEHIND]: this.game.add.group(),
+            [positions.BETWEEN]: this.game.add.group(),
+            [positions.OVER]: this.game.add.group(),
+        };
     }
 
     initialize(
@@ -314,6 +330,9 @@ export class BattleAnimation {
             this.back_group = group_enemy;
             this.front_group = group_caster;
         }
+        super_group.addChild(this.ability_sprites_groups.over);
+        super_group.addChildAt(this.ability_sprites_groups.between, super_group.getChildIndex(this.front_group));
+        super_group.addChildAt(this.ability_sprites_groups.behind, super_group.getChildIndex(this.back_group));
         for (let i = 0; i < this.sprites_keys.length; ++i) {
             const sprite_info = this.sprites_keys[i];
             let trail_image: Phaser.Image;
@@ -325,27 +344,13 @@ export class BattleAnimation {
                 trail_image.blendMode = Phaser.blendModes.SCREEN;
                 this.trails_bmps.push(trail_bitmap_data);
                 this.trails_objs.push(trail_image);
+                this.ability_sprites_groups[sprite_info.position].addChild(trail_image);
             }
             if (!sprite_info.per_target) {
                 const count = sprite_info.count ? sprite_info.count : 1;
                 for (let j = 0; j < count; ++j) {
                     const psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_key);
-                    if (sprite_info.position === "over") {
-                        if (trail_image) {
-                            super_group.addChild(trail_image);
-                        }
-                        super_group.addChild(psy_sprite);
-                    } else if (sprite_info.position === "between") {
-                        if (trail_image) {
-                            super_group.addChildAt(trail_image, super_group.getChildIndex(this.front_group));
-                        }
-                        super_group.addChildAt(psy_sprite, super_group.getChildIndex(this.front_group));
-                    } else if (sprite_info.position === "behind") {
-                        if (trail_image) {
-                            super_group.addChildAt(trail_image, super_group.getChildIndex(this.back_group));
-                        }
-                        super_group.addChildAt(psy_sprite, super_group.getChildIndex(this.back_group));
-                    }
+                    this.ability_sprites_groups[sprite_info.position].addChild(psy_sprite);
                     const frames = Phaser.Animation.generateFrameNames(
                         sprite_info.key_name + "/",
                         0,
@@ -430,6 +435,9 @@ export class BattleAnimation {
             this.trails_bmps.forEach(obj => {
                 obj.destroy();
             });
+            for (let position in this.ability_sprites_groups) {
+                this.ability_sprites_groups[position].destroy(true);
+            }
             this.running = false;
             if (finish_callback !== undefined) {
                 finish_callback();
@@ -890,13 +898,7 @@ export class BattleAnimation {
                 const displays = emitter.addToWorld(this.super_group);
                 displays.forEach(display => {
                     if (!display) return;
-                    if (emitter_info.position === "over") {
-                        this.super_group.addChild(display);
-                    } else if (emitter_info.position === "between") {
-                        this.super_group.setChildIndex(display, this.super_group.getChildIndex(this.front_group));
-                    } else if (emitter_info.position === "behind") {
-                        this.super_group.setChildIndex(display, this.super_group.getChildIndex(this.back_group));
-                    }
+                    this.ability_sprites_groups[emitter_info.position].addChild(display);
                 });
                 if (emitter_info.gravity_well) {
                     emitter.createGravityWell(

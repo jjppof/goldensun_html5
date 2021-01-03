@@ -24,6 +24,7 @@ export const SEMI_MAJOR_AXIS = numbers.GAME_WIDTH / 2 - 50;
 export const SEMI_MINOR_AXIS = numbers.GAME_HEIGHT / 50;
 
 export const DEFAULT_POS_ANGLE = 0.7551327;
+export const DEFAULT_POS_ANGLE_ENEM = -0.82823;
 const INITIAL_POS_ANGLE = -2.120575;
 
 const INITIAL_SCALE = 1.2;
