@@ -1,5 +1,26 @@
 //please check http://forum.goldensunhacking.net/index.php?topic=2460
 
+/*
+080B0660 - 70% (12/13 - Def debuffs)
+080B0664 - 75% (16/17 - eRes debuffs)
+080B0668 - 30% (22 - Charm)
+080B066C - 45% (24 - Sleep)
+080B0670 - 55% (18/19 - Poison/Venom, 25 - Seal)
+080B0674 - 25% (26 - Haunt)
+080B0678 - 20% (27 - Instant Death)
+080B067C - 65% (20 - Delusion, HP Drain)
+080B0680 - 35% (21 - Confuse, 34 - HP to 1)
+080B0684 - Flat 60% (56 - Revive to 50%)
+080B0688 - Flat 90% (57 - Revive to 80%)
+080B068C - Flat 70% (73 - Revive to 60%)
+080B0690 - 60% (8/9 - Attack debuffs, 28 - Curse, 32 - PP Drain, 80 - Curse)
+080B0694 - 50% (35 - May ignore 50% of Def)
+080B0698 - 40% (23 - Stun, 85 - Stun)
+080B069C - Flat 100% (Def buffs, eRes buffs, Regen, Reflect, Break... seems to be the default for anything that either shouldn't fail or has its success rate calculated differently)
+
+[by Salanewt]
+*/
+
 import {elements} from "../utils";
 import {permanent_status, Player} from "../Player";
 import {ELEM_ATTR_MAX, ELEM_ATTR_MIN} from "../magic_numbers";

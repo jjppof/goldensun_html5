@@ -179,21 +179,7 @@ export class StatsCheckWithItemWindow {
         this.hide_arrows();
         if (this.item_obj.equipped && !compare_removing) return;
         if (!this.item.equipable_chars.includes(this.char.key_name)) return;
-        let equip_slot_property = null;
-        switch (this.item.type) {
-            case item_types.WEAPONS:
-                equip_slot_property = "weapon";
-                break;
-            case item_types.HEAD_PROTECTOR:
-                equip_slot_property = "head";
-                break;
-            case item_types.CHEST_PROTECTOR:
-                equip_slot_property = "chest";
-                break;
-            case item_types.ARMOR:
-                equip_slot_property = "body";
-                break;
-        }
+        if (!(this.item.type in item_equip_slot)) return;
 
         this.set_compare_arrows(
             effect_types.ATTACK,
