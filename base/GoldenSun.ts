@@ -101,10 +101,14 @@ export class GoldenSun {
         //load some json files from assets folder
         load_databases(this.game, this.dbs);
 
+        //init audio engine
+        this.audio = new Audio(this.game);
+        this.game.sound.mute = true;
+
         //initialize managers
         this.gamepad = new Gamepad(this);
         this.cursor_manager = new CursorManager(this.game);
-        this.control_manager = new ControlManager(this.game, this.gamepad);
+        this.control_manager = new ControlManager(this.game, this.gamepad, this.audio);
 
         this.scale_factor = this.dbs.init_db.initial_scale_factor;
 
@@ -119,10 +123,6 @@ export class GoldenSun {
         this.underlayer_group = this.game.add.group();
         this.npc_group = this.game.add.group();
         this.overlayer_group = this.game.add.group();
-
-        //init audio engine
-        this.audio = new Audio(this.game, this);
-        this.game.sound.mute = true;
 
         //use the data loaded from json files to initialize some data
         await initialize_game_data(this.game, this);

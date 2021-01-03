@@ -698,14 +698,30 @@ export class BattleStatusWindow {
 
     public grant_control() {
         const controls = [
-            {key: this.data.gamepad.A, on_down: this.trigger_state_change.bind(this)},
+            {key: this.data.gamepad.A, on_down: this.trigger_state_change.bind(this), sfx: {down: "menu/positive"}},
             {key: this.data.gamepad.B, on_down: this.close.bind(this, this.close_callback)},
-            {key: this.data.gamepad.L, on_down: this.previous_char.bind(this)},
-            {key: this.data.gamepad.R, on_down: this.next_char.bind(this)},
-            {key: this.data.gamepad.LEFT, on_down: this.current_component.on_left.bind(this.current_component)},
-            {key: this.data.gamepad.RIGHT, on_down: this.current_component.on_right.bind(this.current_component)},
-            {key: this.data.gamepad.UP, on_down: this.current_component.on_up.bind(this.current_component)},
-            {key: this.data.gamepad.DOWN, on_down: this.current_component.on_down.bind(this.current_component)},
+            {key: this.data.gamepad.L, on_down: this.previous_char.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.R, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
+            {
+                key: this.data.gamepad.LEFT,
+                on_down: this.current_component.on_left.bind(this.current_component),
+                sfx: {down: "menu/move"},
+            },
+            {
+                key: this.data.gamepad.RIGHT,
+                on_down: this.current_component.on_right.bind(this.current_component),
+                sfx: {down: "menu/move"},
+            },
+            {
+                key: this.data.gamepad.UP,
+                on_down: this.current_component.on_up.bind(this.current_component),
+                sfx: {down: "menu/move"},
+            },
+            {
+                key: this.data.gamepad.DOWN,
+                on_down: this.current_component.on_down.bind(this.current_component),
+                sfx: {down: "menu/move"},
+            },
         ];
 
         this.data.control_manager.set_control(controls, {

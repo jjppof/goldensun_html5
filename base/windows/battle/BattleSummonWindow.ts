@@ -244,16 +244,17 @@ export class BattleSummonWindow {
 
     summon_choose() {
         let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this)},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this)},
-            {key: this.data.gamepad.UP, on_down: this.previous_summon.bind(this)},
-            {key: this.data.gamepad.DOWN, on_down: this.next_summon.bind(this)},
+            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.UP, on_down: this.previous_summon.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.DOWN, on_down: this.next_summon.bind(this), sfx: {down: "menu/move"}},
             {
                 key: this.data.gamepad.A,
                 on_down: () => {
                     this.choosen_ability = this.summons[this.summon_index].key_name;
                     this.hide(this.close_callback);
                 },
+                sfx: {down: "menu/positive"},
             },
             {
                 key: this.data.gamepad.B,
@@ -261,6 +262,7 @@ export class BattleSummonWindow {
                     this.choosen_ability = null;
                     this.close(this.close_callback);
                 },
+                sfx: {down: "menu/negative"},
             },
         ];
 

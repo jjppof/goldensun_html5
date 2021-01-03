@@ -235,10 +235,10 @@ export class BattleItemWindow {
 
     item_choose() {
         let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this)},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this)},
-            {key: this.data.gamepad.UP, on_down: this.previous_item.bind(this)},
-            {key: this.data.gamepad.DOWN, on_down: this.next_item.bind(this)},
+            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.UP, on_down: this.previous_item.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.DOWN, on_down: this.next_item.bind(this), sfx: {down: "menu/move"}},
             {
                 key: this.data.gamepad.A,
                 on_down: () => {
@@ -252,6 +252,7 @@ export class BattleItemWindow {
                         this.hide(this.close_callback);
                     }
                 },
+                sfx: {down: "menu/positive"},
             },
             {
                 key: this.data.gamepad.B,
@@ -260,6 +261,7 @@ export class BattleItemWindow {
                     this.item_obj = null;
                     this.close(this.close_callback);
                 },
+                sfx: {down: "menu/negative"},
             },
         ];
 

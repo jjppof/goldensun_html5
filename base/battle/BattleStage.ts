@@ -583,11 +583,20 @@ export class BattleStage {
                     this.choosing_targets = true;
                     this.change_target(0, false);
 
+                    //Sound for A key unavailable, using Menu Positive instead
                     let controls = [
-                        {key: this.data.gamepad.LEFT, on_down: this.next_target.bind(this)},
-                        {key: this.data.gamepad.RIGHT, on_down: this.previous_target.bind(this)},
-                        {key: this.data.gamepad.A, on_down: this.set_targets.bind(this)},
-                        {key: this.data.gamepad.B, on_down: this.choosing_targets_finished.bind(this, null)},
+                        {key: this.data.gamepad.LEFT, on_down: this.next_target.bind(this), sfx: {down: "menu/move"}},
+                        {
+                            key: this.data.gamepad.RIGHT,
+                            on_down: this.previous_target.bind(this),
+                            sfx: {down: "menu/move"},
+                        },
+                        {key: this.data.gamepad.A, on_down: this.set_targets.bind(this), sfx: {down: "menu/positive"}},
+                        {
+                            key: this.data.gamepad.B,
+                            on_down: this.choosing_targets_finished.bind(this, null),
+                            sfx: {down: "menu/negative"},
+                        },
                     ];
 
                     this.data.control_manager.set_control(controls, {loop_configs: {horizontal: true}});

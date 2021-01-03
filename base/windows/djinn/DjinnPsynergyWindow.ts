@@ -84,16 +84,18 @@ export class DjinnPsynergyWindow {
     }
 
     grant_control() {
+        //Missing check for different states on A Key. Using Set sound for all
         let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this)},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this)},
-            {key: this.data.gamepad.R, on_down: this.next_state_callback},
+            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.R, on_down: this.next_state_callback, sfx: {down: "menu/move"}},
             {
                 key: this.data.gamepad.A,
                 on_down: () => {
                     this.execute_operation = true;
                     this.close(this.close_callback);
                 },
+                sfx: {down: "menu/positive_3"},
             },
             {
                 key: this.data.gamepad.B,
@@ -101,6 +103,7 @@ export class DjinnPsynergyWindow {
                     this.execute_operation = false;
                     this.close(this.close_callback);
                 },
+                sfx: {down: "menu/negative"},
             },
         ];
         this.data.control_manager.set_control(controls, {
