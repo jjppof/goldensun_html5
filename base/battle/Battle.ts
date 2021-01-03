@@ -1102,12 +1102,38 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 }
             }
         }
+        //Check if allies can recover HP or PP at the turn's end and show it in the log
+        await this.apply_battle_recovery(this.allies_info, true);
+        await this.apply_battle_recovery(this.allies_info, false);
+        //Check if enemies can recover HP or PP at the turn's end and show it in the log
+        await this.apply_battle_recovery(this.enemies_info, true);
+        await this.apply_battle_recovery(this.enemies_info, false);
 
         this.battle_log.clear();
         this.battle_phase = battle_phases.MENU;
         this.check_phases();
     }
 
+    async apply_battle_recovery(party: PlayerInfo[], is_hp_recovery: boolean) {
+        let recovery = "";
+        for (let i = 0; i < party.length; i++) {
+            let player = party[i];
+            let recovery_stat = is_hp_recovery ? player.instance.hp_recovery : player.instance.pp_recovery;
+            let current_stat = is_hp_recovery ? player.instance.current_hp : player.instance.current_pp;
+            let max_stat = is_hp_recovery ? player.instance.max_hp : player.instance.max_pp;
+            let print_stat = is_hp_recovery ? "HP" : "PP";
+            if (recovery_stat !== 0) {
+                current_stat = _.clamp(current_stat + recovery_stat, 0, max_stat);
+                if (recovery_stat > 0) {
+                    recovery = "recovers";
+                } else {
+                    recovery = "loses";
+                }
+                this.battle_log.add(`${player.instance.name} ${recovery} ${Math.abs(recovery_stat)} ${print_stat}!`);
+                await this.wait_for_key();
+            }
+        }
+    }
     // Everyone gets equal experience with no division, but:
     // - Characters who do not participate get half;
     // - Downed characters get none.
