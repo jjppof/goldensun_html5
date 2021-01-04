@@ -14,8 +14,8 @@ export class EnemyAI {
                     magnitude: available_target && !char_chosen ? 1 : null,
                     target: {
                         instance: available_target && !char_chosen ? ally : null,
+                        battle_key: ally.key_name,
                     },
-                    type: "attack",
                 };
                 if (available_target && !char_chosen) {
                     char_chosen = true;

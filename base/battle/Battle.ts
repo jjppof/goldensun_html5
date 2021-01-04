@@ -261,7 +261,7 @@ export class Battle {
         this.battle_log.add(this.enemies_party_name + " appeared!");
         this.battle_stage.initialize_stage(() => {
             this.allies_map_sprite = _.mapValues(_.keyBy(this.allies_info, "instance.key_name"), info => info.sprite);
-            this.enemies_map_sprite = _.mapValues(_.keyBy(this.enemies_info, "instance.key_name"), info => info.sprite);
+            this.enemies_map_sprite = _.mapValues(_.keyBy(this.enemies_info, "battle_key"), info => info.sprite);
 
             this.data.control_manager.simple_input(() => {
                 this.battle_log.clear();
@@ -310,6 +310,7 @@ export class Battle {
                     i > 0
                 );
                 this.allies_abilities[char_key][i].caster = this_char;
+                this.allies_abilities[char_key][i].caster_battle_key = char_key;
             }
         }
 
@@ -326,6 +327,7 @@ export class Battle {
                     priority_move
                 );
                 this.enemies_abilities[battle_key][i].caster = this_enemy;
+                this.enemies_abilities[battle_key][i].caster_battle_key = battle_key;
             }
         }
 
@@ -346,7 +348,12 @@ export class Battle {
             }
 
             action.battle_animation_key = battle_animation_key;
-            await this.animation_manager.load_animation(battle_animation_key);
+            const mirrored_animation = ability.can_be_mirrored && action.caster.fighter_type === fighter_types.ENEMY;
+            await this.animation_manager.load_animation(
+                battle_animation_key,
+                action.caster_battle_key,
+                mirrored_animation
+            );
         }
         this.battle_phase = battle_phases.COMBAT;
         this.check_phases();
@@ -463,6 +470,15 @@ export class Battle {
             return;
         }
 
+        const djinn_name = action.djinn_key_name ? this.data.info.djinni_list[action.djinn_key_name].name : undefined;
+        await this.battle_log.add_ability(
+            action.caster,
+            ability,
+            item_name,
+            djinn_name,
+            action.item_slot !== undefined
+        );
+
         if (
             action.caster.has_temporary_status(temporary_status.SEAL) &&
             ability.ability_category === ability_categories.PSYNERGY
@@ -483,15 +499,6 @@ export class Battle {
         } else {
             action.caster.current_pp -= ability.pp_cost;
         }
-
-        const djinn_name = action.djinn_key_name ? this.data.info.djinni_list[action.djinn_key_name].name : undefined;
-        await this.battle_log.add_ability(
-            action.caster,
-            ability,
-            item_name,
-            djinn_name,
-            action.item_slot !== undefined
-        );
 
         if (ability.ability_category === ability_categories.DJINN) {
             //change djinn status
@@ -547,12 +554,21 @@ export class Battle {
             await this.wait_for_key();
         }
 
-        if (this.animation_manager.animation_available(action.battle_animation_key)) {
-            const caster_sprite =
-                action.caster.fighter_type === fighter_types.ALLY
-                    ? this.allies_map_sprite[action.caster.key_name]
-                    : this.enemies_map_sprite[action.caster.key_name];
-            const target_sprites = action.targets.flatMap(info => (info.magnitude ? [info.target.sprite] : []));
+        if (this.animation_manager.animation_available(action.battle_animation_key, action.caster_battle_key)) {
+            const caster_targets_sprites = {
+                caster:
+                    action.caster.fighter_type === fighter_types.ALLY
+                        ? this.allies_map_sprite
+                        : this.enemies_map_sprite,
+                targets:
+                    action.caster.fighter_type === fighter_types.ALLY
+                        ? this.enemies_map_sprite
+                        : this.allies_map_sprite,
+            };
+            const caster_sprite = caster_targets_sprites.caster[action.caster_battle_key];
+            const target_sprites = action.targets.flatMap(info => {
+                return info.magnitude ? [caster_targets_sprites.targets[info.target.battle_key]] : [];
+            });
             const group_caster =
                 action.caster.fighter_type === fighter_types.ALLY
                     ? this.battle_stage.group_allies
@@ -563,6 +579,7 @@ export class Battle {
                     : this.battle_stage.group_allies;
             await this.animation_manager.play(
                 action.battle_animation_key,
+                action.caster_battle_key,
                 caster_sprite,
                 target_sprites,
                 group_caster,

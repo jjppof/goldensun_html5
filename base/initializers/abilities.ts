@@ -31,7 +31,8 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
             ability_data.use_diminishing_ratio,
             ability_data.msg_type,
             ability_data.affects_pp,
-            ability_data.has_animation_variation
+            ability_data.has_animation_variation,
+            ability_data.can_be_mirrored
         );
     }
     const loader = game.load.atlasJSONHash(

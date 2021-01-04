@@ -9,7 +9,7 @@ const RECIPE_SUFFIX = "_battle_recipe";
 export class BattleAnimationManager {
     public game: Phaser.Game;
     public data: GoldenSun;
-    public animations: {[battle_anim_key: string]: BattleAnimation};
+    public animations: {[key: string]: BattleAnimation};
     public not_available: Set<string>;
     public render_function: Function;
 
@@ -21,13 +21,14 @@ export class BattleAnimationManager {
         this.render_function = null;
     }
 
-    async load_animation(battle_anim_key) {
+    async load_animation(battle_anim_key, caster_battle_key, mirrored_animation) {
         if (
             battle_anim_key in this.animations ||
             this.not_available.has(battle_anim_key) ||
             battle_anim_key === "no_animation"
-        )
+        ) {
             return;
+        }
         const sprite_key = battle_anim_key + ANIMATION_SUFFIX;
         const recipe_key = battle_anim_key + RECIPE_SUFFIX;
         const sprite_loader = this.game.load.atlasJSONHash(
@@ -62,7 +63,8 @@ export class BattleAnimationManager {
         await Promise.all([sprite_loader_promise, recipe_loader_promise, load_complete_promise]);
         if (all_succeed) {
             const animation_recipe = this.game.cache.getJSON(battle_anim_key + RECIPE_SUFFIX);
-            this.animations[battle_anim_key] = new BattleAnimation(
+            const key = battle_anim_key + "/" + caster_battle_key;
+            this.animations[key] = new BattleAnimation(
                 this.game,
                 this.data,
                 animation_recipe.key_name,
@@ -87,21 +89,31 @@ export class BattleAnimationManager {
                 animation_recipe.set_frame_sequence,
                 animation_recipe.blend_mode_sequence,
                 animation_recipe.particles_sequence,
-                animation_recipe.is_party_animation
+                mirrored_animation
             );
         } else {
             this.not_available.add(battle_anim_key);
         }
     }
 
-    animation_available(battle_anim_key) {
-        return battle_anim_key in this.animations;
+    animation_available(battle_anim_key, caster_battle_key) {
+        const key = battle_anim_key + "/" + caster_battle_key;
+        return key in this.animations;
     }
 
-    async play(battle_anim_key, caster_sprite, targets_sprites, group_caster, group_taker, battle_stage) {
-        if (!(battle_anim_key in this.animations)) return;
+    async play(
+        battle_anim_key,
+        caster_battle_key,
+        caster_sprite,
+        targets_sprites,
+        group_caster,
+        group_taker,
+        battle_stage
+    ) {
+        const key = battle_anim_key + "/" + caster_battle_key;
+        if (!(key in this.animations)) return;
         const sprite_key = battle_anim_key + ANIMATION_SUFFIX;
-        this.animations[battle_anim_key].initialize(
+        this.animations[key].initialize(
             sprite_key,
             caster_sprite,
             targets_sprites,
@@ -115,8 +127,8 @@ export class BattleAnimationManager {
         const play_promise = new Promise(resolve => {
             play_promise_resolve = resolve;
         });
-        this.render_function = this.animations[battle_anim_key].render.bind(this.animations[battle_anim_key]);
-        this.animations[battle_anim_key].play(play_promise_resolve);
+        this.render_function = this.animations[key].render.bind(this.animations[key]);
+        this.animations[key].play(play_promise_resolve);
         await play_promise;
         this.render_function = null;
     }
@@ -128,7 +140,8 @@ export class BattleAnimationManager {
     }
 
     destroy() {
-        for (let battle_anim_key in this.animations) {
+        for (let key in this.animations) {
+            const battle_anim_key = key.split("/")[0];
             this.game.cache.removeTextureAtlas(battle_anim_key + ANIMATION_SUFFIX);
             this.game.cache.removeJSON(battle_anim_key + RECIPE_SUFFIX);
         }

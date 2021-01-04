@@ -2086,6 +2086,7 @@
         "ability_category": "psynergy",
         "battle_animation_key": "ice",
         "priority_move": false,
-        "msg_type": "cast"
+        "msg_type": "cast",
+        "can_be_mirrored": true
     }
 ]

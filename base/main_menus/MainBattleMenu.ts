@@ -30,6 +30,7 @@ export type PlayerAbility = {
     djinn_key_name?: string;
     speed?: number;
     caster?: Enemy | MainChar;
+    caster_battle_key?: string;
     battle_animation_key?: string;
     item_slot?: ItemSlot;
 };

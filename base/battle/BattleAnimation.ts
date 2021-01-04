@@ -196,7 +196,6 @@ export class BattleAnimation {
         emitters: Emitter[];
         emission_finish: number;
     }[];
-    public is_party_animation: boolean;
     public running: boolean;
     public sprites: Phaser.Sprite[];
     public sprites_prev_properties: {
@@ -229,6 +228,7 @@ export class BattleAnimation {
     public sprites_filters: any[];
     public promises: Promise<any>[];
     public render_callbacks: {[callback_key: string]: Function};
+    public mirrored: boolean;
 
     //tween type can be 'initial' for first position
     //sprite_index: "targets" is the target, "caster" is the caster, "background" is the background sprite, 0...n is the sprites_key_names index
@@ -261,7 +261,7 @@ export class BattleAnimation {
         set_frame_sequence, //{start_delay: value, frame: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
         particles_sequence,
-        is_party_animation
+        mirrored
     ) {
         this.game = game;
         this.data = data;
@@ -289,8 +289,8 @@ export class BattleAnimation {
         this.set_frame_sequence = set_frame_sequence === undefined ? [] : set_frame_sequence;
         this.blend_mode_sequence = blend_mode_sequence === undefined ? [] : blend_mode_sequence;
         this.particles_sequence = particles_sequence === undefined ? [] : particles_sequence;
-        this.is_party_animation = is_party_animation;
         this.running = false;
+        this.mirrored = mirrored;
         this.render_callbacks = {};
         this.ability_sprites_groups = {
             [positions.BEHIND]: this.game.add.group(),
@@ -333,6 +333,12 @@ export class BattleAnimation {
         super_group.addChild(this.ability_sprites_groups.over);
         super_group.addChildAt(this.ability_sprites_groups.between, super_group.getChildIndex(this.front_group));
         super_group.addChildAt(this.ability_sprites_groups.behind, super_group.getChildIndex(this.back_group));
+        if (this.mirrored) {
+            Object.values(positions).forEach(position => {
+                this.ability_sprites_groups[position].scale.x = -1;
+                this.ability_sprites_groups[position].x += numbers.GAME_WIDTH;
+            });
+        }
         for (let i = 0; i < this.sprites_keys.length; ++i) {
             const sprite_info = this.sprites_keys[i];
             let trail_image: Phaser.Image;
@@ -522,11 +528,16 @@ export class BattleAnimation {
                 }
                 const seq_to = Array.isArray(seq.to) ? seq.to[index] : seq.to;
                 let to_value = seq_to;
-                if (seq_to === "target") {
-                    const shift = Array.isArray(seq.shift) ? seq.shift[index] : seq.shift;
-                    to_value =
-                        this.targets_sprites[this.targets_sprites.length >> 1][property_to_set] +
-                        (shift === undefined ? 0 : shift);
+                if (["target", "caster"].includes(seq_to)) {
+                    let shift = Array.isArray(seq.shift) ? seq.shift[index] : seq.shift;
+                    let player_sprite = this.caster_sprite;
+                    if (seq_to === "target") {
+                        player_sprite = this.targets_sprites[this.targets_sprites.length >> 1];
+                    }
+                    to_value = player_sprite[property_to_set] + (shift === undefined ? 0 : shift);
+                    if (this.mirrored && property_to_set === "x") {
+                        to_value = numbers.GAME_WIDTH - to_value;
+                    }
                 }
                 if (["rotation", "hue_adjust"].includes(property_to_set)) {
                     this.sprites_prev_properties[uniq_key][property_to_set] = range_360(
