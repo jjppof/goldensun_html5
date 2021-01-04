@@ -474,7 +474,7 @@ export class BattleStage {
                 }
 
                 const dest_x = target_sprite.x;
-                const dest_y = target_sprite.y - target_sprite.char_height + 5;
+                const dest_y = target_sprite.y - target_sprite.height;
 
                 if (tween_to_pos) {
                     this.game.add
@@ -523,7 +523,7 @@ export class BattleStage {
 
                 const target_sprite = group_info[target_index].sprite;
                 cursor_sprite.centerX = target_sprite.x;
-                cursor_sprite.y = target_sprite.y - target_sprite.char_height;
+                cursor_sprite.y = target_sprite.y - target_sprite.height;
             }
         });
     }

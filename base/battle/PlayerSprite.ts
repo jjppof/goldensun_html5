@@ -145,13 +145,6 @@ export class PlayerSprite {
         this.group.height = height;
     }
 
-    get char_height() {
-        return this.char_sprite.height;
-    }
-    set char_height(height: number) {
-        this.char_sprite.height = height;
-    }
-
     get rotation() {
         return this.group.rotation;
     }
