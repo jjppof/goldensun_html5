@@ -474,7 +474,7 @@ export class BattleStage {
                 }
 
                 const dest_x = target_sprite.x;
-                const dest_y = target_sprite.y - target_sprite.char_height - 5;
+                const dest_y = target_sprite.y - target_sprite.char_height + 5;
 
                 if (tween_to_pos) {
                     this.game.add

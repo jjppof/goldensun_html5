@@ -22,11 +22,7 @@ export class BattleAnimationManager {
     }
 
     async load_animation(battle_anim_key, caster_battle_key, mirrored_animation) {
-        if (
-            battle_anim_key in this.animations ||
-            this.not_available.has(battle_anim_key) ||
-            battle_anim_key === "no_animation"
-        ) {
+        if (this.not_available.has(battle_anim_key) || battle_anim_key === "no_animation") {
             return;
         }
         const sprite_key = battle_anim_key + ANIMATION_SUFFIX;
@@ -131,6 +127,7 @@ export class BattleAnimationManager {
         this.animations[key].play(play_promise_resolve);
         await play_promise;
         this.render_function = null;
+        delete this.animations[key];
     }
 
     render() {
