@@ -5,8 +5,8 @@ import {CameraAngle, DEFAULT_POS_ANGLE} from "./BattleStage";
 import * as _ from "lodash";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
 
-export const CAST_STAGE_POSITION = -0.7151327;
-export const MIRRORED_CAST_STAGE_POSITION = 0.5242024;
+export const CAST_STAGE_POSITION = 0.5242024;
+export const MIRRORED_CAST_STAGE_POSITION = -0.7151327;
 
 enum positions {
     OVER = "over",
@@ -756,9 +756,6 @@ export class BattleAnimation {
                 this.stage_prev_value = range_360(this.stage_prev_value);
                 this.stage_camera.rad = this.stage_prev_value;
                 to_value = BattleAnimation.get_angle_by_direction(this.stage_prev_value, to_value, direction, true);
-                if (Math.abs(this.stage_prev_value - to_value) > numbers.degree360) {
-                    to_value -= Math.sign(to_value) * numbers.degree360;
-                }
             } else {
                 to_value = this.stage_prev_value + (stage_angle_seq.to as number);
             }
@@ -1002,36 +999,30 @@ export class BattleAnimation {
         }
     }
 
-    static get_angle_by_direction(current_angle, incoming_target_angle, direction, fourth_quadrant = false) {
+    //assuming that current angle is between 0 and 360 in rad
+    static get_angle_by_direction(incoming_current_angle, incoming_target_angle, direction, fourth_quadrant = false) {
         let this_direction;
-        let target_angle = incoming_target_angle;
-        if (fourth_quadrant) {
-            target_angle = numbers.degree360 - target_angle;
-            this_direction = target_angle < current_angle ? "counter_clockwise" : "clockwise";
-        } else {
-            this_direction = target_angle > current_angle ? "counter_clockwise" : "clockwise";
-        }
+        const target_angle = fourth_quadrant ? numbers.degree360 - incoming_target_angle : incoming_target_angle;
+        const current_angle = fourth_quadrant ? numbers.degree360 - incoming_current_angle : incoming_current_angle;
+        this_direction = target_angle > current_angle ? "counter_clockwise" : "clockwise";
         if (this_direction === direction) {
             return target_angle;
-        }
-        const diff = (target_angle % numbers.degree360) - (current_angle % numbers.degree360);
-        const shift = Math.sign(diff) * numbers.degree360 - diff;
-        const new_target = (current_angle % numbers.degree360) - shift;
-        if (direction === "closest") {
-            let target_delta, new_target_delta;
-            if (new_target > 0) {
-                new_target_delta = new_target - range_360(current_angle);
-                target_delta = numbers.degree360 - new_target_delta;
+        } else if (direction !== "closest") {
+            const times_bigger = Math.abs(incoming_target_angle / numbers.degree360) | 0;
+            return (
+                incoming_target_angle +
+                times_bigger * (incoming_target_angle > incoming_current_angle ? -numbers.degree360 : numbers.degree360)
+            );
+        } else {
+            const range360_target_angle = range_360(incoming_target_angle);
+            const towards_target = range_360(range360_target_angle - incoming_current_angle);
+            const towards_current = range_360(incoming_current_angle - range360_target_angle);
+            const diff = _.round(towards_target - towards_current, 4);
+            if (+(range360_target_angle > incoming_current_angle) ^ +(diff > 0) || diff === 0) {
+                return range360_target_angle;
             } else {
-                target_delta = target_angle - range_360(current_angle);
-                new_target_delta = numbers.degree360 - target_delta;
-            }
-            if (Math.abs(target_delta) < Math.abs(new_target_delta)) {
-                return target_angle;
-            } else {
-                return new_target;
+                return range360_target_angle + (diff > 0 ? -numbers.degree360 : numbers.degree360);
             }
         }
-        return new_target;
     }
 }

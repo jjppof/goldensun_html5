@@ -6,6 +6,7 @@ import {GoldenSun} from "../GoldenSun";
 import {PlayerInfo} from "./Battle";
 import * as _ from "lodash";
 import {battle_actions, battle_positions, PlayerSprite} from "./PlayerSprite";
+import {BattleAnimation} from "./BattleAnimation";
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
@@ -396,11 +397,18 @@ export class BattleStage {
             promise_resolve = resolve;
         });
 
+        this.camera_angle.rad = range_360(this.camera_angle.rad);
+        const dest_angle = BattleAnimation.get_angle_by_direction(
+            this.camera_angle.rad,
+            DEFAULT_POS_ANGLE,
+            "closest",
+            true
+        );
         this.game.add
             .tween(this.camera_angle)
             .to(
                 {
-                    rad: DEFAULT_POS_ANGLE,
+                    rad: dest_angle,
                 },
                 300,
                 Phaser.Easing.Linear.None,
