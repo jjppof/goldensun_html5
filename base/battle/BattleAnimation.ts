@@ -5,6 +5,9 @@ import {CameraAngle, DEFAULT_POS_ANGLE} from "./BattleStage";
 import * as _ from "lodash";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
 
+export const CAST_STAGE_POSITION = -0.7151327;
+export const MIRRORED_CAST_STAGE_POSITION = 0.5242024;
+
 enum positions {
     OVER = "over",
     BETWEEN = "between",
@@ -21,7 +24,7 @@ type DefaultAttr = {
     yoyo?: boolean;
     shift?: number | number[];
     force_stage_update?: boolean;
-    direction?: boolean;
+    direction?: string;
 };
 
 type AdvParticleValue =
@@ -514,54 +517,58 @@ export class BattleAnimation {
             let sprites = this.get_sprites(seq, inner_property !== undefined ? target_property : undefined);
             let promises_set = false;
             sprites.forEach((this_sprite, index) => {
-                let uniq_key;
-                if (this_sprite.data && this_sprite.data.hasOwnProperty("battle_index")) {
-                    uniq_key = this_sprite.key + "_" + this_sprite.data.battle_index;
-                } else {
-                    uniq_key = this_sprite.key + "_" + index; //potential bug
-                }
-                if (this.sprites_prev_properties[uniq_key] === undefined) {
-                    this.sprites_prev_properties[uniq_key] = {};
-                }
-                if (this.sprites_prev_properties[uniq_key][property_to_set] === undefined) {
-                    this.sprites_prev_properties[uniq_key][property_to_set] = this_sprite[property_to_set];
-                }
-                const seq_to = Array.isArray(seq.to) ? seq.to[index] : seq.to;
-                let to_value = seq_to;
-                if (["target", "caster"].includes(seq_to)) {
-                    let shift = Array.isArray(seq.shift) ? seq.shift[index] : seq.shift;
-                    let player_sprite = this.caster_sprite;
-                    if (seq_to === "target") {
-                        player_sprite = this.targets_sprites[this.targets_sprites.length >> 1];
+                const get_to_value = () => {
+                    let uniq_key;
+                    if (this_sprite.data && this_sprite.data.hasOwnProperty("battle_index")) {
+                        uniq_key = this_sprite.key + "_" + this_sprite.data.battle_index;
+                    } else {
+                        uniq_key = this_sprite.key + "_" + index; //potential bug
                     }
-                    to_value = player_sprite[property_to_set] + (shift === undefined ? 0 : shift);
-                    if (this.mirrored && property_to_set === "x") {
-                        to_value = numbers.GAME_WIDTH - to_value;
+                    if (this.sprites_prev_properties[uniq_key] === undefined) {
+                        this.sprites_prev_properties[uniq_key] = {};
                     }
-                }
-                if (["rotation", "hue_adjust"].includes(property_to_set)) {
-                    this.sprites_prev_properties[uniq_key][property_to_set] = range_360(
-                        this.sprites_prev_properties[uniq_key][property_to_set]
-                    );
-                    this_sprite[property_to_set] = this.sprites_prev_properties[uniq_key][property_to_set];
-                    to_value = BattleAnimation.get_angle_by_direction(
-                        this.sprites_prev_properties[uniq_key][property_to_set],
-                        seq_to,
-                        seq.direction,
-                        property_to_set === "rotation"
-                    );
-                    if (
-                        Math.abs(this.sprites_prev_properties[uniq_key][property_to_set] - to_value) > numbers.degree360
-                    ) {
-                        to_value -= Math.sign(to_value) * numbers.degree360;
+                    if (this.sprites_prev_properties[uniq_key][property_to_set] === undefined) {
+                        this.sprites_prev_properties[uniq_key][property_to_set] = this_sprite[property_to_set];
                     }
-                }
-                to_value = seq.is_absolute
-                    ? to_value
-                    : this.sprites_prev_properties[uniq_key][property_to_set] + seq_to;
-                this.sprites_prev_properties[uniq_key][property_to_set] = to_value;
+                    const seq_to = Array.isArray(seq.to) ? seq.to[index] : seq.to;
+                    let to_value = seq_to;
+                    if (["target", "caster"].includes(seq_to)) {
+                        let shift = Array.isArray(seq.shift) ? seq.shift[index] : seq.shift;
+                        let player_sprite = this.caster_sprite;
+                        if (seq_to === "target") {
+                            player_sprite = this.targets_sprites[this.targets_sprites.length >> 1];
+                        }
+                        to_value = player_sprite[property_to_set] + (shift === undefined ? 0 : shift);
+                        if (this.mirrored && property_to_set === "x") {
+                            to_value = numbers.GAME_WIDTH - to_value;
+                        }
+                    }
+                    if (["rotation", "hue_adjust"].includes(property_to_set)) {
+                        this.sprites_prev_properties[uniq_key][property_to_set] = range_360(
+                            this.sprites_prev_properties[uniq_key][property_to_set]
+                        );
+                        this_sprite[property_to_set] = this.sprites_prev_properties[uniq_key][property_to_set];
+                        to_value = BattleAnimation.get_angle_by_direction(
+                            this.sprites_prev_properties[uniq_key][property_to_set],
+                            seq_to,
+                            seq.direction,
+                            property_to_set === "rotation"
+                        );
+                        if (
+                            Math.abs(this.sprites_prev_properties[uniq_key][property_to_set] - to_value) >
+                            numbers.degree360
+                        ) {
+                            to_value -= Math.sign(to_value) * numbers.degree360;
+                        }
+                    }
+                    to_value = seq.is_absolute
+                        ? to_value
+                        : this.sprites_prev_properties[uniq_key][property_to_set] + seq_to;
+                    this.sprites_prev_properties[uniq_key][property_to_set] = to_value;
+                    return to_value;
+                };
                 if (seq.tween === "initial") {
-                    this_sprite[property_to_set] = to_value;
+                    this_sprite[property_to_set] = get_to_value();
                 } else {
                     if (!(seq.sprite_index in chained_tweens)) chained_tweens[seq.sprite_index] = {[index]: []};
                     if (!(index in chained_tweens[seq.sprite_index])) chained_tweens[seq.sprite_index][index] = [];
@@ -576,7 +583,7 @@ export class BattleAnimation {
                             promises_set = true;
                         }
                         this.game.time.events.add(start_delay, () => {
-                            this_sprite[property_to_set] = to_value;
+                            this_sprite[property_to_set] = get_to_value();
                             if (seq.force_stage_update) {
                                 this.stage_camera.update();
                             }
@@ -589,13 +596,14 @@ export class BattleAnimation {
                         });
                     } else {
                         const tween = this.game.add.tween(this_sprite).to(
-                            {[property_to_set]: to_value},
+                            {[property_to_set]: get_to_value},
                             Array.isArray(seq.duration) ? seq.duration[index] : seq.duration,
                             seq.tween.split(".").reduce((p, prop) => p[prop], Phaser.Easing),
                             auto_start_tween[seq.sprite_index],
                             start_delay,
                             0,
-                            seq.yoyo === undefined ? false : seq.yoyo
+                            seq.yoyo === undefined ? false : seq.yoyo,
+                            true
                         );
                         if (!promises_set) {
                             let resolve_function;
@@ -729,32 +737,34 @@ export class BattleAnimation {
         let chained_tweens = [];
         for (let i = 0; i < this.stage_angle_sequence.length; ++i) {
             const stage_angle_seq = this.stage_angle_sequence[i];
-            let to_value;
+            let to_value = stage_angle_seq.to as number;
             if (this.stage_prev_value === undefined) {
                 this.stage_prev_value = this.stage_camera.rad;
             }
+            let is_absolute = stage_angle_seq.is_absolute;
+            let direction = stage_angle_seq.direction;
             if (stage_angle_seq.to === "default") {
                 to_value = DEFAULT_POS_ANGLE;
-            } else {
-                if (stage_angle_seq.is_absolute) {
-                    this.stage_prev_value = range_360(this.stage_prev_value);
-                    this.stage_camera.rad = this.stage_prev_value;
-                    to_value = BattleAnimation.get_angle_by_direction(
-                        this.stage_prev_value,
-                        stage_angle_seq.to,
-                        stage_angle_seq.direction,
-                        true
-                    );
-                    if (Math.abs(this.stage_prev_value - to_value) > numbers.degree360) {
-                        to_value -= Math.sign(to_value) * numbers.degree360;
-                    }
-                } else {
-                    to_value = this.stage_prev_value + (stage_angle_seq.to as number);
+                direction = "closest";
+                is_absolute = true;
+            } else if (stage_angle_seq.to === "cast_position") {
+                to_value = this.mirrored ? MIRRORED_CAST_STAGE_POSITION : CAST_STAGE_POSITION;
+                direction = "closest";
+                is_absolute = true;
+            }
+            if (is_absolute) {
+                this.stage_prev_value = range_360(this.stage_prev_value);
+                this.stage_camera.rad = this.stage_prev_value;
+                to_value = BattleAnimation.get_angle_by_direction(this.stage_prev_value, to_value, direction, true);
+                if (Math.abs(this.stage_prev_value - to_value) > numbers.degree360) {
+                    to_value -= Math.sign(to_value) * numbers.degree360;
                 }
+            } else {
+                to_value = this.stage_prev_value + (stage_angle_seq.to as number);
             }
             this.stage_prev_value = to_value;
             if (stage_angle_seq.tween === "initial") {
-                if (stage_angle_seq.is_absolute) {
+                if (is_absolute) {
                     this.stage_camera.rad = to_value;
                 } else {
                     this.stage_camera.rad += to_value;
@@ -776,7 +786,7 @@ export class BattleAnimation {
                     this.stage_camera.spining = true;
                 });
                 tween.onComplete.addOnce(() => {
-                    if (stage_angle_seq.is_absolute) {
+                    if (is_absolute) {
                         this.stage_camera.rad = range_360(this.stage_camera.rad);
                     }
                     this.stage_camera.spining = false;
@@ -992,8 +1002,9 @@ export class BattleAnimation {
         }
     }
 
-    static get_angle_by_direction(current_angle, target_angle, direction, fourth_quadrant = false) {
+    static get_angle_by_direction(current_angle, incoming_target_angle, direction, fourth_quadrant = false) {
         let this_direction;
+        let target_angle = incoming_target_angle;
         if (fourth_quadrant) {
             target_angle = numbers.degree360 - target_angle;
             this_direction = target_angle < current_angle ? "counter_clockwise" : "clockwise";

@@ -5782,7 +5782,7 @@ declare module Phaser {
         resume(): void;
         start(index?: number): Phaser.Tween;
         stop(complete?: boolean): Phaser.Tween;
-        to(properties: any, duration?: number, ease?: Function, autoStart?: boolean, delay?: number, repeat?: number, yoyo?: boolean): Phaser.Tween;
+        to(properties: any, duration?: number, ease?: Function, autoStart?: boolean, delay?: number, repeat?: number, yoyo?: boolean, lazyValuesSet?: boolean): Phaser.Tween;
         to(properties: any, duration?: number, ease?: string, autoStart?: boolean, delay?: number, repeat?: number, yoyo?: boolean): Phaser.Tween;
         update(time: number): boolean;
         updateTweenData(property: string, value: number | Function, index?: number): Phaser.Tween;
