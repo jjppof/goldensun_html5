@@ -1,6 +1,12 @@
 import {GoldenSun} from "../GoldenSun";
 import {BattleAnimation} from "./BattleAnimation";
 
+export enum animation_availability {
+    AVAILABLE,
+    NOT_AVAILABLE,
+    NO_ANIMATION,
+}
+
 const ANIMATIONS_BASE_PATH = "assets/images/abilities_animations/";
 const ANIMATIONS_DB_PATH = "assets/dbs/abilities_animations/";
 const ANIMATION_SUFFIX = "_battle_animation";
@@ -94,7 +100,9 @@ export class BattleAnimationManager {
 
     animation_available(battle_anim_key, caster_battle_key) {
         const key = battle_anim_key + "/" + caster_battle_key;
-        return key in this.animations;
+        if (key in this.animations) return animation_availability.AVAILABLE;
+        else if (battle_anim_key === "no_animation") return animation_availability.NO_ANIMATION;
+        else return animation_availability.NOT_AVAILABLE;
     }
 
     async play(

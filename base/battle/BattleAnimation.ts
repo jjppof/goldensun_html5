@@ -662,16 +662,20 @@ export class BattleAnimation {
                         );
                     }
                     const anim = sprite.animations.getAnimation(animation_key);
-                    anim.reversed = play_seq.reverse === undefined ? false : play_seq.reverse;
-                    anim.stop(true);
-                    sprite.animations.play(animation_key, play_seq.frame_rate, play_seq.repeat);
-                    if (play_seq.wait) {
-                        sprite.animations.currentAnim.onComplete.addOnce(() => {
-                            if (play_seq.hide_on_complete) {
-                                sprite.alpha = 0;
-                            }
+                    if (anim) {
+                        anim.reversed = play_seq.reverse === undefined ? false : play_seq.reverse;
+                        anim.stop(true);
+                        sprite.animations.play(animation_key, play_seq.frame_rate, play_seq.repeat);
+                        if (play_seq.wait) {
+                            sprite.animations.currentAnim.onComplete.addOnce(() => {
+                                if (play_seq.hide_on_complete) {
+                                    sprite.alpha = 0;
+                                }
+                                resolve_function();
+                            });
+                        } else {
                             resolve_function();
-                        });
+                        }
                     } else {
                         resolve_function();
                     }

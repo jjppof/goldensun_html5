@@ -29,7 +29,15 @@ export class GameEventManager {
             {
                 key: this.data.gamepad.A,
                 on_down: () => {
-                    if (this.data.hero.in_action() || this.data.in_battle || !this.control_enable) return;
+                    if (
+                        this.data.hero.in_action() ||
+                        this.data.menu_open ||
+                        this.data.in_battle ||
+                        this.data.shop_open ||
+                        this.data.inn_open ||
+                        !this.control_enable
+                    )
+                        return;
                     if (this.on_event) {
                         this.control_enable = false;
                         this.fire_next_step();

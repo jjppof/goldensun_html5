@@ -11,7 +11,7 @@ import {effect_types, Effect, effect_usages, effect_names, effect_msg} from "../
 import {variation, ordered_elements, element_names, base_actions} from "../utils";
 import {djinn_status, Djinn} from "../Djinn";
 import {ItemSlot, MainChar} from "../MainChar";
-import {BattleAnimationManager} from "./BattleAnimationManager";
+import {animation_availability, BattleAnimationManager} from "./BattleAnimationManager";
 import {GoldenSun} from "../GoldenSun";
 import * as _ from "lodash";
 import {Target} from "../battle/BattleStage";
@@ -554,7 +554,11 @@ export class Battle {
             await this.wait_for_key();
         }
 
-        if (this.animation_manager.animation_available(action.battle_animation_key, action.caster_battle_key)) {
+        const anim_availability = this.animation_manager.animation_available(
+            action.battle_animation_key,
+            action.caster_battle_key
+        );
+        if (anim_availability === animation_availability.AVAILABLE) {
             const caster_targets_sprites = {
                 caster:
                     action.caster.fighter_type === fighter_types.ALLY
@@ -587,7 +591,7 @@ export class Battle {
                 this.battle_stage
             );
             this.battle_stage.prevent_camera_angle_overflow();
-        } else {
+        } else if (anim_availability === animation_availability.NOT_AVAILABLE) {
             await this.battle_log.add(`Animation for ${ability.name} not available...`);
             await this.wait_for_key();
         }

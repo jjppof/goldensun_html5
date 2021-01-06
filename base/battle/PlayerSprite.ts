@@ -183,6 +183,7 @@ export class PlayerSprite {
     initialize_player() {
         this.shadow_sprite = this.group.create(0, 0, "battle_shadows", this.player_instance.battle_shadow_key);
         this.shadow_sprite.anchor.setTo(0.5, 1);
+        this.shadow_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
 
         this.char_sprite = this.group.create(0, 0, this.player_info.sprite_key);
         this.char_sprite.anchor.setTo(0.5, 1);
