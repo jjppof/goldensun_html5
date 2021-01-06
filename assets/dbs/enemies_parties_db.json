@@ -2,6 +2,7 @@
     {
         "key_name": "briggs_party",
         "name": "Briggs' party",
+        "can_escape": false,
         "members": [
             {
                 "key": "sea_fighter",
