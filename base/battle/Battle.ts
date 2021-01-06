@@ -79,6 +79,7 @@ export class Battle {
     public allies_defeated: boolean;
     public enemies_defeated: boolean;
     public battle_finishing: boolean;
+    public can_escape: boolean;
 
     public advance_log_resolve: Function;
     public advance_log_control_key: number;
@@ -103,6 +104,7 @@ export class Battle {
         });
 
         const enemies_party_data = this.data.dbs.enemies_parties_db[enemy_party_key];
+        this.can_escape = enemies_party_data.can_escape;
         this.enemies_party_name = enemies_party_data.name;
         this.enemies_info = [];
         this.this_enemies_list = {};
@@ -148,7 +150,8 @@ export class Battle {
             this.game,
             this.data,
             this.on_abilities_choose.bind(this),
-            this.choose_targets.bind(this)
+            this.choose_targets.bind(this),
+            this.can_escape
         );
 
         this.target_window = new ChoosingTargetWindow(this.game, this.data);

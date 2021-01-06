@@ -65,13 +65,22 @@ export class MainBattleMenu {
     public current_buttons: string[];
     public djinni_already_used: {[element: string]: number};
 
-    constructor(game: Phaser.Game, data: GoldenSun, on_abilities_choose: Function, choose_targets: Function) {
+    constructor(
+        game: Phaser.Game,
+        data: GoldenSun,
+        on_abilities_choose: Function,
+        choose_targets: Function,
+        can_escape: boolean
+    ) {
         this.game = game;
         this.data = data;
         this.on_abilities_choose = on_abilities_choose;
         this.choose_targets = choose_targets;
 
         this.start_buttons_keys = ["fight", "flee", "status"];
+        if (can_escape === false) {
+            this.start_buttons_keys.splice(1, 1);
+        }
         this.start_horizontal_menu = new HorizontalMenu(
             this.game,
             this.data,
