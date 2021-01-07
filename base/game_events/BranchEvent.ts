@@ -24,8 +24,8 @@ export class BranchEvent extends GameEvent {
     private left_comparator_value: ComparatorValue;
     private right_comparator_value: ComparatorValue;
     private has_else: boolean;
-    private events: GameEvent[];
-    private else_events: GameEvent[];
+    private events: GameEvent[] = [];
+    private else_events: GameEvent[] = [];
 
     constructor(game, data, condition, left_comparator_value, right_comparator_value, has_else, events, else_events) {
         super(game, data, event_types.BRANCH);
@@ -33,8 +33,22 @@ export class BranchEvent extends GameEvent {
         this.left_comparator_value = left_comparator_value;
         this.right_comparator_value = right_comparator_value;
         this.has_else = has_else;
-        this.events = events === undefined ? [] : events;
-        this.else_events = else_events === undefined ? [] : else_events;
+        this.initialize_events(events, else_events);
+    }
+
+    private initialize_events(events_info, else_events_info) {
+        if (events_info !== undefined) {
+            events_info.forEach(event_info => {
+                const event = this.data.game_event_manager.get_event_instance(event_info);
+                this.events.push(event);
+            });
+        }
+        if (else_events_info !== undefined) {
+            else_events_info.forEach(event_info => {
+                const event = this.data.game_event_manager.get_event_instance(event_info);
+                this.else_events.push(event);
+            });
+        }
     }
 
     private get_value(comparator_value: ComparatorValue) {
