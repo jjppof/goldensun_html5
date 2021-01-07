@@ -1,4 +1,6 @@
-import {GameEvent, event_types} from "./GameEvent";
+import {GameEvent, event_types, game_info_types} from "./GameEvent";
+import * as _ from "lodash";
+import {TileEvent} from "../tile_events/TileEvent";
 
 enum conditions {
     EQ = "=",
@@ -12,6 +14,7 @@ enum conditions {
 enum comparator_types {
     VALUE = "value",
     STORAGE = "storage",
+    GAME_INFO = "game_info",
 }
 
 type ComparatorValue = {
@@ -57,6 +60,25 @@ export class BranchEvent extends GameEvent {
                 return comparator_value.value;
             case comparator_types.STORAGE:
                 return this.data.storage.get(comparator_value.value);
+            case comparator_types.GAME_INFO:
+                switch (comparator_value.value.type) {
+                    case game_info_types.CHAR:
+                        const char = this.data.info.main_char_list[comparator_value.value.key_name];
+                        return _.get(char, comparator_value.value.property);
+                    case game_info_types.HERO:
+                        return _.get(this.data.hero, comparator_value.value.property);
+                    case game_info_types.NPC:
+                        const npc = this.data.map.npcs[comparator_value.value.index];
+                        return _.get(npc, comparator_value.value.property);
+                    case game_info_types.INTERACTABLE_OBJECT:
+                        const interactable_object = this.data.map.interactable_objects[comparator_value.value.index];
+                        return _.get(interactable_object, comparator_value.value.property);
+                    case game_info_types.EVENT:
+                        const event = TileEvent.get_event(comparator_value.value.index);
+                        return _.get(event, comparator_value.value.property);
+                    default:
+                        return null;
+                }
             default:
                 return null;
         }

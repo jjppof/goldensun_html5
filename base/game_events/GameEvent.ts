@@ -1,5 +1,13 @@
 import {GoldenSun} from "../GoldenSun";
 
+export enum game_info_types {
+    CHAR = "char",
+    HERO = "hero",
+    NPC = "npc",
+    EVENT = "event",
+    INTERACTABLE_OBJECT = "interactable_object",
+}
+
 export enum event_types {
     BATTLE = "battle",
     BRANCH = "branch",
