@@ -38,7 +38,7 @@ export class SliderEvent extends TileEvent {
         );
         this.x_target = x_target;
         this.y_target = y_target;
-        this.dest_collision_layer = dest_collision_layer;
+        this.dest_collision_layer = dest_collision_layer !== undefined ? dest_collision_layer : 0;
         this.show_dust = show_dust === undefined ? true : show_dust;
     }
 

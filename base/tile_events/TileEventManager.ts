@@ -1,7 +1,12 @@
-import {Collision} from "../Collision";
 import {GoldenSun} from "../GoldenSun";
-import {Hero} from "../Hero";
 import {base_actions} from "../utils";
+import {ClimbEvent} from "./ClimbEvent";
+import {CollisionEvent} from "./CollisionEvent";
+import {JumpEvent} from "./JumpEvent";
+import {SliderEvent} from "./SliderEvent";
+import {SpeedEvent} from "./SpeedEvent";
+import {StepEvent} from "./StepEvent";
+import {TeleportEvent} from "./TeleportEvent";
 import {event_types, TileEvent} from "./TileEvent";
 
 class EventQueue {
@@ -46,18 +51,14 @@ export class TileEventManager {
 
     public game: Phaser.Game;
     public data: GoldenSun;
-    public hero: Hero;
-    public collision: Collision;
     public event_timers: {[event_id: number]: Phaser.TimerEvent};
     public on_event: boolean;
     public walking_on_pillars_tiles: Set<string>;
     public triggered_events: {[event_id: number]: TileEvent};
 
-    constructor(game, data, hero, collision) {
+    constructor(game, data) {
         this.game = game;
         this.data = data;
-        this.hero = hero;
-        this.collision = collision;
         this.event_timers = {};
         this.on_event = false;
         this.walking_on_pillars_tiles = new Set();
@@ -88,9 +89,10 @@ export class TileEventManager {
     }
 
     fire_event(current_event, this_activation_direction) {
-        if (this.hero.current_direction !== this_activation_direction) return;
-        if (current_event.type === event_types.CLIMB && !this.hero.idle_climbing) {
-            current_event.fire(this_activation_direction);
+        if (this.data.hero.current_direction !== this_activation_direction) return;
+        if (current_event.type === event_types.CLIMB && !this.data.hero.idle_climbing) {
+            (current_event as ClimbEvent).current_activation_direction = this_activation_direction;
+            current_event.fire();
         } else if ([event_types.TELEPORT, event_types.JUMP, event_types.SLIDER].includes(current_event.type)) {
             current_event.fire();
         }
@@ -104,42 +106,143 @@ export class TileEventManager {
             if (this_event.type === event_types.JUMP) {
                 this_event.jump_near_collision();
             }
-            if (!this_event.is_active(this.hero.current_direction)) continue;
+            if (!this_event.is_active(this.data.hero.current_direction)) continue;
             if (this_event.type === event_types.SPEED) {
-                if (this.hero.extra_speed !== this_event.speed) {
-                    event_queue.add(this_event, this.hero.current_direction, this_event.fire.bind(this_event), true);
+                if (this.data.hero.extra_speed !== this_event.speed) {
+                    event_queue.add(
+                        this_event,
+                        this.data.hero.current_direction,
+                        this_event.fire.bind(this_event),
+                        true
+                    );
                 }
             } else if (this_event.type === event_types.TELEPORT && !this_event.advance_effect) {
                 event_queue.add(
                     this_event,
-                    this.hero.current_direction,
-                    this.fire_event.bind(this, this_event, this.hero.current_direction)
+                    this.data.hero.current_direction,
+                    this.fire_event.bind(this, this_event, this.data.hero.current_direction)
                 );
             } else if (
                 [event_types.STEP, event_types.COLLISION].includes(this_event.type) &&
                 !this.event_triggered(this_event)
             ) {
-                event_queue.add(this_event, this.hero.current_direction, this_event.set.bind(this_event));
+                event_queue.add(this_event, this.data.hero.current_direction, this_event.set.bind(this_event));
             } else {
-                const right_direction = this_event.activation_directions.includes(this.hero.current_direction);
+                const right_direction = this_event.activation_directions.includes(this.data.hero.current_direction);
                 if (
                     right_direction &&
                     [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(
-                        this.hero.current_action as base_actions
+                        this.data.hero.current_action as base_actions
                     )
                 ) {
                     if (this.event_timers[this_event.id] && !this.event_timers[this_event.id].timer.expired) {
                         continue;
                     }
-                    event_queue.add(this_event, this.hero.current_direction, () => {
+                    event_queue.add(this_event, this.data.hero.current_direction, () => {
                         this.event_timers[this_event.id] = this.game.time.events.add(
                             TileEventManager.EVENT_INIT_DELAY,
-                            this.fire_event.bind(this, this_event, this.hero.current_direction)
+                            this.fire_event.bind(this, this_event, this.data.hero.current_direction)
                         );
                     });
                 }
             }
         }
         event_queue.process_queue();
+    }
+
+    get_event_instance(info: any) {
+        if (info.type === event_types.CLIMB) {
+            return new ClimbEvent(
+                this.game,
+                this.data,
+                info.x,
+                info.y,
+                info.activation_directions,
+                info.activation_collision_layers,
+                false,
+                info.active,
+                info.change_to_collision_layer
+            );
+        } else if (info.type === event_types.SPEED) {
+            return new SpeedEvent(
+                this.game,
+                this.data,
+                info.x,
+                info.y,
+                info.activation_directions,
+                info.activation_collision_layers,
+                false,
+                info.active,
+                info.speed
+            );
+        } else if (info.type === event_types.TELEPORT) {
+            return new TeleportEvent(
+                this.game,
+                this.data,
+                info.x,
+                info.y,
+                info.activation_directions,
+                info.activation_collision_layers,
+                false,
+                info.active,
+                info.target,
+                info.x_target,
+                info.y_target,
+                info.advance_effect,
+                info.dest_collision_layer,
+                info.destination_direction
+            );
+        } else if (info.type === event_types.SLIDER) {
+            return new SliderEvent(
+                this.game,
+                this.data,
+                info.x,
+                info.y,
+                info.activation_directions,
+                info.activation_collision_layers,
+                false,
+                info.active,
+                info.x_target,
+                info.y_target,
+                info.dest_collision_layer,
+                info.show_dust
+            );
+        } else if (info.type === event_types.JUMP) {
+            return new JumpEvent(
+                this.game,
+                this.data,
+                info.x,
+                info.y,
+                info.activation_directions,
+                info.activation_collision_layers,
+                false,
+                info.active,
+                info.is_set
+            );
+        } else if (info.type === event_types.STEP) {
+            return new StepEvent(
+                this.game,
+                this.data,
+                info.x,
+                info.y,
+                info.activation_directions,
+                info.activation_collision_layers,
+                false,
+                info.active,
+                info.step_direction
+            );
+        } else if (info.type === event_types.COLLISION) {
+            return new CollisionEvent(
+                this.game,
+                this.data,
+                info.x,
+                info.y,
+                info.activation_directions,
+                info.activation_collision_layers,
+                false,
+                info.active,
+                info.dest_collision_layer
+            );
+        }
     }
 }

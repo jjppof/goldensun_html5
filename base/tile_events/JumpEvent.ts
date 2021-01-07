@@ -28,7 +28,7 @@ export class JumpEvent extends TileEvent {
             active,
             null
         );
-        this.is_set = is_set;
+        this.is_set = is_set === undefined ? true : is_set;
     }
 
     fire() {

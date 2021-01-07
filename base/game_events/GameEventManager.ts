@@ -2,6 +2,9 @@ import {base_actions, directions, is_close, reverse_directions} from "../utils";
 import {DialogManager} from "../utils/DialogManager";
 import {npc_types} from "../NPC";
 import {GoldenSun} from "../GoldenSun";
+import {BattleEvent} from "./BattleEvent";
+import {BranchEvent} from "./BranchEvent";
+import {event_types} from "./GameEvent";
 
 export enum interaction_patterns {
     TIK_TAK_TOE = "tik_tak_toe",
@@ -147,6 +150,24 @@ export class GameEventManager {
         npc.events.forEach(event => {
             event.fire();
         });
+    }
+
+    get_event_instance(info: any) {
+        switch (info.type) {
+            case event_types.BATTLE:
+                return new BattleEvent(this.game, this.data, info.background_key, info.enemy_party_key);
+            case event_types.BRANCH:
+                return new BranchEvent(
+                    this.game,
+                    this.data,
+                    info.condition,
+                    info.left_comparator_value,
+                    info.right_comparator_value,
+                    info.has_else,
+                    info.events,
+                    info.else_events
+                );
+        }
     }
 
     static get_interaction_directions(hero_x, hero_y, target_x, target_y, interaction_pattern, target_body_radius) {

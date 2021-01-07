@@ -4,10 +4,10 @@ import {TileEvent, event_types} from "./TileEvent";
 export class StepEvent extends TileEvent {
     private static readonly STEP_SHIFT_FACTOR = 3;
 
-    public step_direction: number;
-    public next_x: number;
-    public next_y: number;
-    public shift_y: number;
+    private step_direction: directions;
+    private next_x: number;
+    private next_y: number;
+    private shift_y: number;
 
     constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, step_direction) {
         super(
@@ -22,7 +22,7 @@ export class StepEvent extends TileEvent {
             active,
             null
         );
-        this.step_direction = step_direction;
+        this.step_direction = directions[step_direction as string];
         this.next_x = 0;
         this.next_y = 0;
         this.shift_y = 0;

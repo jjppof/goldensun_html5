@@ -18,6 +18,7 @@ import {ControlManager} from "./utils/ControlManager";
 import {CursorManager} from "./utils/CursorManager";
 import {Gamepad} from "./Gamepad";
 import {Audio} from "./Audio";
+import {Storage} from "./Storage";
 
 export class GoldenSun {
     public game: Phaser.Game = null;
@@ -45,6 +46,7 @@ export class GoldenSun {
     public game_event_manager: GameEventManager = null; //class responsible for the game events
     public battle_instance: Battle = null; //class responsible for a battle
     public audio: Audio = null; //class responsible for controlling the game audio engine
+    public storage: Storage = null; //class responsible for storing the game custom states
 
     //managers
     public control_manager: ControlManager = null;
@@ -105,6 +107,9 @@ export class GoldenSun {
         this.audio = new Audio(this.game);
         this.game.sound.mute = true;
 
+        //init storage
+        this.storage = new Storage();
+
         //initialize managers
         this.gamepad = new Gamepad(this);
         this.cursor_manager = new CursorManager(this.game);
@@ -126,6 +131,10 @@ export class GoldenSun {
 
         //use the data loaded from json files to initialize some data
         await initialize_game_data(this.game, this);
+
+        //initializes the event managers
+        this.tile_event_manager = new TileEventManager(this.game, this);
+        this.game_event_manager = new GameEventManager(this.game, this);
 
         //configs map layers: creates sprites, interactable objects and npcs, lists events and sets the map layers
         this.map = await this.info.maps_list[this.dbs.init_db.map_key_name].mount_map(this.dbs.init_db.map_z_index);
@@ -169,10 +178,6 @@ export class GoldenSun {
         this.map.config_all_bodies(this.collision, this.map.collision_layer);
         this.collision.config_collisions(this.map, this.map.collision_layer, this.npc_group);
         this.game.physics.p2.updateBoundsCollisionGroup();
-
-        //initializes the event managers
-        this.tile_event_manager = new TileEventManager(this.game, this, this.hero, this.collision);
-        this.game_event_manager = new GameEventManager(this.game, this);
 
         this.initialize_utils_controls();
 

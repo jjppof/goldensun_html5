@@ -2,9 +2,10 @@ import {GoldenSun} from "../GoldenSun";
 
 export enum event_types {
     BATTLE = "battle",
+    BRANCH = "branch",
 }
 
-export class GameEvent {
+export abstract class GameEvent {
     public game: Phaser.Game;
     public data: GoldenSun;
     public type: event_types;
@@ -19,6 +20,8 @@ export class GameEvent {
         this.id = GameEvent.id_incrementer++;
         GameEvent.events[this.id] = this;
     }
+
+    abstract fire(): void;
 
     static get_event(id) {
         return GameEvent.events[id];

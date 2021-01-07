@@ -1,18 +1,10 @@
-import {directions, map_directions} from "./utils";
 import {NPC} from "./NPC";
 import {InteractableObjects, interactable_object_interaction_types} from "./InteractableObjects";
-import {TileEvent, event_types as tile_event_types} from "./tile_events/TileEvent";
+import {TileEvent} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
-import {JumpEvent} from "./tile_events/JumpEvent";
-import {TeleportEvent} from "./tile_events/TeleportEvent";
-import {ClimbEvent} from "./tile_events/ClimbEvent";
-import {StepEvent} from "./tile_events/StepEvent";
-import {CollisionEvent} from "./tile_events/CollisionEvent";
-import {SpeedEvent} from "./tile_events/SpeedEvent";
 import {GameEvent} from "./game_events/GameEvent";
 import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
-import {SliderEvent} from "./tile_events/SliderEvent";
 import {SpriteBase} from "./SpriteBase";
 import {Collision} from "./Collision";
 import {ControllableChar} from "./ControllableChar";
@@ -293,106 +285,8 @@ export class Map {
         if (!(this_event_location_key in this.events)) {
             this.events[this_event_location_key] = [];
         }
-        if (property_info.type === tile_event_types.CLIMB) {
-            const new_event = new ClimbEvent(
-                this.game,
-                this.data,
-                property_info.x,
-                property_info.y,
-                map_directions(property_info.activation_directions),
-                property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
-                false,
-                property_info.active === undefined ? true : property_info.active,
-                property_info.change_to_collision_layer === undefined ? null : property_info.change_to_collision_layer
-            );
-            this.events[this_event_location_key].push(new_event);
-        } else if (property_info.type === tile_event_types.SPEED) {
-            const new_event = new SpeedEvent(
-                this.game,
-                this.data,
-                property_info.x,
-                property_info.y,
-                map_directions(property_info.activation_directions),
-                property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
-                false,
-                property_info.active === undefined ? true : property_info.active,
-                property_info.speed
-            );
-            this.events[this_event_location_key].push(new_event);
-        } else if (property_info.type === tile_event_types.TELEPORT) {
-            const new_event = new TeleportEvent(
-                this.game,
-                this.data,
-                property_info.x,
-                property_info.y,
-                map_directions(property_info.activation_directions),
-                property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
-                false,
-                property_info.active,
-                property_info.target,
-                property_info.x_target,
-                property_info.y_target,
-                property_info.advance_effect,
-                property_info.dest_collision_layer ? property_info.dest_collision_layer : 0,
-                property_info.destination_direction
-            );
-            this.events[this_event_location_key].push(new_event);
-        } else if (property_info.type === tile_event_types.SLIDER) {
-            const new_event = new SliderEvent(
-                this.game,
-                this.data,
-                property_info.x,
-                property_info.y,
-                map_directions(property_info.activation_directions),
-                property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
-                false,
-                property_info.active === undefined ? true : property_info.active,
-                property_info.x_target,
-                property_info.y_target,
-                property_info.dest_collision_layer ? property_info.dest_collision_layer : 0,
-                property_info.show_dust
-            );
-            this.events[this_event_location_key].push(new_event);
-        } else if (property_info.type === tile_event_types.JUMP) {
-            const new_event = new JumpEvent(
-                this.game,
-                this.data,
-                property_info.x,
-                property_info.y,
-                map_directions(property_info.activation_directions),
-                property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
-                false,
-                property_info.initially_active === undefined ? true : property_info.initially_active,
-                property_info.is_set === undefined ? true : property_info.is_set
-            );
-            this.events[this_event_location_key].push(new_event);
-        } else if (property_info.type === tile_event_types.STEP) {
-            const new_event = new StepEvent(
-                this.game,
-                this.data,
-                property_info.x,
-                property_info.y,
-                map_directions(property_info.activation_directions),
-                property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
-                false,
-                property_info.active === undefined ? true : property_info.active,
-                directions[property_info.step_direction]
-            );
-            this.events[this_event_location_key].push(new_event);
-        } else if (property_info.type === tile_event_types.COLLISION) {
-            const new_event = new CollisionEvent(
-                this.game,
-                this.data,
-                property_info.x,
-                property_info.y,
-                map_directions(property_info.activation_directions),
-                property_info.activation_collision_layers ? property_info.activation_collision_layers : [0],
-                false,
-                property_info.active === undefined ? true : property_info.active,
-                property_info.dest_collision_layer
-            );
-            this.events[this_event_location_key].push(new_event);
-        }
+        const event = this.data.tile_event_manager.get_event_instance(property_info);
+        this.events[this_event_location_key].push(event);
     }
 
     create_npcs(raw_property) {

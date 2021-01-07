@@ -1,8 +1,6 @@
-import {SpriteBase} from "./SpriteBase";
-import {event_types as game_event_types, GameEvent} from "./game_events/GameEvent";
+import {GameEvent} from "./game_events/GameEvent";
 import {mount_collision_polygon} from "./utils";
 import {ControllableChar} from "./ControllableChar";
-import {BattleEvent} from "./game_events/BattleEvent";
 import {Collision} from "./Collision";
 
 export enum npc_movement_types {
@@ -98,14 +96,8 @@ export class NPC extends ControllableChar {
 
     set_events(events_info) {
         for (let i = 0; i < events_info.length; ++i) {
-            const event_info = events_info[i];
-            switch (event_info.type) {
-                case game_event_types.BATTLE:
-                    this.events.push(
-                        new BattleEvent(this.game, this.data, event_info.background_key, event_info.enemy_party_key)
-                    );
-                    break;
-            }
+            const event = this.data.game_event_manager.get_event_instance(events_info[i]);
+            this.events.push(event);
         }
     }
 

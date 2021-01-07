@@ -1,6 +1,6 @@
 import {GoldenSun} from "../GoldenSun";
 import {InteractableObjects} from "../InteractableObjects";
-import {get_directions, split_direction} from "../utils";
+import {get_directions, map_directions, split_direction} from "../utils";
 import * as _ from "lodash";
 
 export enum event_types {
@@ -13,7 +13,7 @@ export enum event_types {
     SLIDER = "slider",
 }
 
-export class TileEvent {
+export abstract class TileEvent {
     public game: Phaser.Game;
     public data: GoldenSun;
     public type: event_types;
@@ -48,9 +48,11 @@ export class TileEvent {
         this.y = y;
         this.location_key = TileEvent.get_location_key(this.x, this.y);
         this.id = TileEvent.id_incrementer++;
-        this.activation_collision_layers = Array.isArray(activation_collision_layers)
-            ? activation_collision_layers
-            : [activation_collision_layers];
+        (activation_collision_layers = activation_collision_layers ? activation_collision_layers : [0]),
+            (this.activation_collision_layers = Array.isArray(activation_collision_layers)
+                ? activation_collision_layers
+                : [activation_collision_layers]);
+        activation_directions = map_directions(activation_directions);
         if (activation_directions === undefined || activation_directions === "all") {
             activation_directions = get_directions(true);
         }
@@ -64,6 +66,8 @@ export class TileEvent {
         this.origin_interactable_object = origin_interactable_object === undefined ? null : origin_interactable_object;
         TileEvent.events[this.id] = this;
     }
+
+    abstract fire(): void;
 
     is_active(direction) {
         const possible_directions = split_direction(direction);

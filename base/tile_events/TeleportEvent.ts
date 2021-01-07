@@ -43,7 +43,7 @@ export class TeleportEvent extends TileEvent {
         this.x_target = x_target;
         this.y_target = y_target;
         this.advance_effect = advance_effect;
-        this.dest_collision_layer = dest_collision_layer;
+        this.dest_collision_layer = dest_collision_layer !== undefined ? dest_collision_layer : 0;
         this.destination_direction = destination_direction;
     }
 

@@ -22,16 +22,16 @@ export const element_names = {
 };
 
 /*8-Directional direction values*/
-export const directions = {
-    right: 0,
-    down_right: 1,
-    down: 2,
-    down_left: 3,
-    left: 4,
-    up_left: 5,
-    up: 6,
-    up_right: 7,
-};
+export enum directions {
+    right = 0,
+    down_right = 1,
+    down = 2,
+    down_left = 3,
+    left = 4,
+    up_left = 5,
+    up = 6,
+    up_right = 7,
+}
 
 /*Size of "directions" object*/
 export const directions_count = Object.keys(directions).length;
