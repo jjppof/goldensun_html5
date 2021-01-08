@@ -5,6 +5,7 @@ import {GoldenSun} from "../GoldenSun";
 import {BattleEvent} from "./BattleEvent";
 import {BranchEvent} from "./BranchEvent";
 import {event_types} from "./GameEvent";
+import {SetValueEvent} from "./SetValueEvent";
 
 export enum interaction_patterns {
     TIK_TAK_TOE = "tik_tak_toe",
@@ -167,6 +168,8 @@ export class GameEventManager {
                     info.events,
                     info.else_events
                 );
+            case event_types.SET_VALUE:
+                return new SetValueEvent(this.game, this.data, info.event_value);
         }
     }
 

@@ -8,9 +8,21 @@ export enum game_info_types {
     INTERACTABLE_OBJECT = "interactable_object",
 }
 
+export enum event_value_types {
+    VALUE = "value",
+    STORAGE = "storage",
+    GAME_INFO = "game_info",
+}
+
+export type EventValue = {
+    type: event_value_types;
+    value: any;
+};
+
 export enum event_types {
     BATTLE = "battle",
     BRANCH = "branch",
+    SET_VALUE = "set_value",
 }
 
 export abstract class GameEvent {

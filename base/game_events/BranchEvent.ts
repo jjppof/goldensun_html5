@@ -1,4 +1,4 @@
-import {GameEvent, event_types, game_info_types} from "./GameEvent";
+import {GameEvent, event_types, game_info_types, EventValue, event_value_types} from "./GameEvent";
 import * as _ from "lodash";
 import {TileEvent} from "../tile_events/TileEvent";
 
@@ -11,21 +11,10 @@ enum conditions {
     DIFF = "!=",
 }
 
-enum comparator_types {
-    VALUE = "value",
-    STORAGE = "storage",
-    GAME_INFO = "game_info",
-}
-
-type ComparatorValue = {
-    type: comparator_types;
-    value: any;
-};
-
 export class BranchEvent extends GameEvent {
     private condition: conditions;
-    private left_comparator_value: ComparatorValue;
-    private right_comparator_value: ComparatorValue;
+    private left_comparator_value: EventValue;
+    private right_comparator_value: EventValue;
     private has_else: boolean;
     private events: GameEvent[] = [];
     private else_events: GameEvent[] = [];
@@ -54,13 +43,13 @@ export class BranchEvent extends GameEvent {
         }
     }
 
-    private get_value(comparator_value: ComparatorValue) {
+    private get_value(comparator_value: EventValue) {
         switch (comparator_value.type) {
-            case comparator_types.VALUE:
+            case event_value_types.VALUE:
                 return comparator_value.value;
-            case comparator_types.STORAGE:
-                return this.data.storage.get(comparator_value.value);
-            case comparator_types.GAME_INFO:
+            case event_value_types.STORAGE:
+                return this.data.storage.get(comparator_value.value.key_name);
+            case event_value_types.GAME_INFO:
                 switch (comparator_value.value.type) {
                     case game_info_types.CHAR:
                         const char = this.data.info.main_char_list[comparator_value.value.key_name];
