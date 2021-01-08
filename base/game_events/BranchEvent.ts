@@ -19,8 +19,18 @@ export class BranchEvent extends GameEvent {
     private events: GameEvent[] = [];
     private else_events: GameEvent[] = [];
 
-    constructor(game, data, condition, left_comparator_value, right_comparator_value, has_else, events, else_events) {
-        super(game, data, event_types.BRANCH);
+    constructor(
+        game,
+        data,
+        active,
+        condition,
+        left_comparator_value,
+        right_comparator_value,
+        has_else,
+        events,
+        else_events
+    ) {
+        super(game, data, event_types.BRANCH, active);
         this.condition = condition;
         this.left_comparator_value = left_comparator_value;
         this.right_comparator_value = right_comparator_value;

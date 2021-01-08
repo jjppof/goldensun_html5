@@ -30,13 +30,16 @@ export abstract class GameEvent {
     public data: GoldenSun;
     public type: event_types;
     public id: number;
+    public active: boolean;
+
     public static id_incrementer: number;
     public static events: {[id: number]: GameEvent};
 
-    constructor(game, data, type) {
+    constructor(game, data, type, active) {
         this.game = game;
         this.data = data;
         this.type = type;
+        this.active = active !== undefined ? active : true;
         this.id = GameEvent.id_incrementer++;
         GameEvent.events[this.id] = this;
     }

@@ -5,8 +5,8 @@ import {TileEvent} from "../tile_events/TileEvent";
 export class SetValueEvent extends GameEvent {
     private event_value: EventValue;
 
-    constructor(game, data, event_value) {
-        super(game, data, event_types.BRANCH);
+    constructor(game, data, active, event_value) {
+        super(game, data, event_types.SET_VALUE, active);
         this.event_value = event_value;
     }
 

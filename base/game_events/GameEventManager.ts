@@ -156,11 +156,12 @@ export class GameEventManager {
     get_event_instance(info: any) {
         switch (info.type) {
             case event_types.BATTLE:
-                return new BattleEvent(this.game, this.data, info.background_key, info.enemy_party_key);
+                return new BattleEvent(this.game, this.data, info.active, info.background_key, info.enemy_party_key);
             case event_types.BRANCH:
                 return new BranchEvent(
                     this.game,
                     this.data,
+                    info.active,
                     info.condition,
                     info.left_comparator_value,
                     info.right_comparator_value,
@@ -169,7 +170,7 @@ export class GameEventManager {
                     info.else_events
                 );
             case event_types.SET_VALUE:
-                return new SetValueEvent(this.game, this.data, info.event_value);
+                return new SetValueEvent(this.game, this.data, info.active, info.event_value);
         }
     }
 

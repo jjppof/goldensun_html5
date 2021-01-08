@@ -11,6 +11,7 @@ export enum event_types {
     STEP = "step",
     COLLISION = "collision",
     SLIDER = "slider",
+    EVENT_TRIGGER = "event_trigger",
 }
 
 export abstract class TileEvent {

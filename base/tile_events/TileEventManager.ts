@@ -2,6 +2,7 @@ import {GoldenSun} from "../GoldenSun";
 import {base_actions} from "../utils";
 import {ClimbEvent} from "./ClimbEvent";
 import {CollisionEvent} from "./CollisionEvent";
+import {EventTriggerEvent} from "./EventTriggerEvent";
 import {JumpEvent} from "./JumpEvent";
 import {SliderEvent} from "./SliderEvent";
 import {SpeedEvent} from "./SpeedEvent";
@@ -79,9 +80,9 @@ export class TileEventManager {
 
     fire_triggered_events() {
         Object.keys(this.triggered_events).forEach(id => {
-            const this_event = this.triggered_events[id];
+            const this_event: TileEvent = this.triggered_events[id];
             if (this_event.type === event_types.SPEED) {
-                this_event.unset();
+                (this_event as SpeedEvent).unset();
             } else {
                 this_event.fire();
             }
@@ -93,7 +94,7 @@ export class TileEventManager {
         if (current_event.type === event_types.CLIMB && !this.data.hero.idle_climbing) {
             (current_event as ClimbEvent).current_activation_direction = this_activation_direction;
             current_event.fire();
-        } else if ([event_types.TELEPORT, event_types.JUMP, event_types.SLIDER].includes(current_event.type)) {
+        } else if (![event_types.SPEED, event_types.STEP, event_types.COLLISION].includes(current_event.type)) {
             current_event.fire();
         }
     }
@@ -242,6 +243,18 @@ export class TileEventManager {
                 false,
                 info.active,
                 info.dest_collision_layer
+            );
+        } else if (info.type === event_types.EVENT_TRIGGER) {
+            return new EventTriggerEvent(
+                this.game,
+                this.data,
+                info.x,
+                info.y,
+                info.activation_directions,
+                info.activation_collision_layers,
+                false,
+                info.active,
+                info.events
             );
         }
     }
