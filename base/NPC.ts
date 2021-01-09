@@ -105,6 +105,11 @@ export class NPC extends ControllableChar {
         if (this.movement_type === npc_movement_types.IDLE) {
             this.stop_char(false);
         }
+        if (this.npc_type !== npc_types.SPRITE) {
+            this.set_current_action();
+            this.calculate_speed();
+            this.set_action();
+        }
         this.update_shadow();
     }
 

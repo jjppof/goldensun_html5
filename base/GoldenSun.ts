@@ -148,7 +148,7 @@ export class GoldenSun {
             this.dbs.init_db.x_tile_position,
             this.dbs.init_db.y_tile_position,
             this.dbs.init_db.initial_action,
-            directions[this.dbs.init_db.initial_direction],
+            this.dbs.init_db.initial_direction,
             this.info.main_char_list[hero_key_name].walk_speed,
             this.info.main_char_list[hero_key_name].dash_speed,
             this.info.main_char_list[hero_key_name].climb_speed

@@ -421,7 +421,7 @@ export class Map {
                         }
                     }
                     npc.set_sprite_as_npc();
-                    npc.play(npc.current_action, npc.current_direction);
+                    npc.play(npc.current_action, npc.current_animation);
                     resolve();
                 });
             });

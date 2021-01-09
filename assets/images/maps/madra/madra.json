@@ -314,7 +314,8 @@
      "event_55":"{\n\"type\": \"teleport\",\n\"x\": 31,\n\"y\": 33,\n\"target\": \"world_map\",\n\"activation_directions\": \"down\",\n\"x_target\": 16,\n\"y_target\": 49,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
      "event_56":"{\n\"type\": \"teleport\",\n\"x\": 32,\n\"y\": 33,\n\"target\": \"world_map\",\n\"activation_directions\": \"down\",\n\"x_target\": 16,\n\"y_target\": 49,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
      "event_57":"{\n\"type\": \"teleport\",\n\"x\": 33,\n\"y\": 33,\n\"target\": \"world_map\",\n\"activation_directions\": \"down\",\n\"x_target\": 16,\n\"y_target\": 49,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
-     "npc_01":"{\n    \"key_name\": \"village_1\",\n    \"initial_x\": 20,\n    \"initial_y\": 9,\n    \"npc_type\": \"shop\",\n    \"movement_type\": \"idle\",\n    \"message\": \"I'm everywhere!\",\n    \"thought_message\": \"Nothing to think about.\",\n    \"avatar\": \"\",\n    \"shop_key\": \"madra_test_shop\",\n    \"base_collision_layer\": 0,\n    \"talk_range_factor\": 5\n}"
+     "npc_01":"{\n    \"key_name\": \"village_1\",\n    \"initial_x\": 20,\n    \"initial_y\": 9,\n    \"npc_type\": \"shop\",\n    \"movement_type\": \"idle\",\n    \"message\": \"I'm everywhere!\",\n    \"thought_message\": \"Nothing to think about.\",\n    \"avatar\": \"\",\n    \"shop_key\": \"madra_test_shop\",\n    \"base_collision_layer\": 0,\n    \"talk_range_factor\": 5\n}",
+     "npc_02":"{\n    \"key_name\": \"alex\",\n    \"initial_x\": 25,\n    \"initial_y\": 12,\n    \"npc_type\": \"normal\",\n    \"movement_type\": \"idle\",\n    \"message\": \"No introduction is needed...\",\n    \"thought_message\": \"Nothing to think about.\",\n    \"avatar\": \"alex\",\n    \"base_collision_layer\": 0\n}"
     },
  "propertytypes":
     {
@@ -371,10 +372,17 @@
      "event_49":"string",
      "event_50":"string",
      "event_51":"string",
-     "npc_01":"string"
+     "event_52":"string",
+     "event_53":"string",
+     "event_54":"string",
+     "event_55":"string",
+     "event_56":"string",
+     "event_57":"string",
+     "npc_01":"string",
+     "npc_02":"string"
     },
  "renderorder":"right-down",
- "tiledversion":"1.3.3",
+ "tiledversion":"1.4.2",
  "tileheight":16,
  "tilesets":[
         {

@@ -1,6 +1,6 @@
 import {base_actions, directions, is_close, reverse_directions} from "../utils";
 import {DialogManager} from "../utils/DialogManager";
-import {npc_types} from "../NPC";
+import {NPC, npc_types} from "../NPC";
 import {GoldenSun} from "../GoldenSun";
 import {BattleEvent} from "./BattleEvent";
 import {BranchEvent} from "./BranchEvent";
@@ -108,7 +108,7 @@ export class GameEventManager {
         }
     }
 
-    set_npc_and_hero_directions(npc) {
+    set_npc_and_hero_directions(npc: NPC) {
         const npc_x = npc.sprite.x;
         const npc_y = npc.sprite.y;
         const interaction_pattern = this.data.dbs.npc_db[npc.key_name].interaction_pattern;
@@ -125,13 +125,13 @@ export class GameEventManager {
         npc.play(base_actions.IDLE, reverse_directions[interaction_directions.target_direction]);
     }
 
-    reset_npc_direction(npc) {
+    reset_npc_direction(npc: NPC) {
         const initial_action = this.data.dbs.npc_db[npc.key_name].initial_action;
         const initial_direction = this.data.dbs.npc_db[npc.key_name].actions[initial_action].initial_direction;
         npc.play(initial_action, initial_direction);
     }
 
-    manage_npc_dialog(npc) {
+    manage_npc_dialog(npc: NPC) {
         const dialog_manager = new DialogManager(this.game, this.data);
         dialog_manager.set_dialog(npc.message, npc.avatar, this.data.hero.current_direction);
         this.set_npc_and_hero_directions(npc);
@@ -147,7 +147,7 @@ export class GameEventManager {
         this.fire_next_step();
     }
 
-    fire_npc_events(npc) {
+    fire_npc_events(npc: NPC) {
         npc.events.forEach(event => {
             event.fire();
         });

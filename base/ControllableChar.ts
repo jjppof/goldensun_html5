@@ -1,5 +1,5 @@
 import * as numbers from "./magic_numbers";
-import {reverse_directions, base_actions} from "./utils";
+import {reverse_directions, base_actions, directions} from "./utils";
 import {Footsteps} from "./utils/Footsteps";
 import {GoldenSun} from "./GoldenSun";
 import {SpriteBase} from "./SpriteBase";
@@ -44,6 +44,7 @@ export class ControllableChar {
     public tile_x_pos: number;
     public tile_y_pos: number;
     public current_action: string | base_actions;
+    public current_animation: string;
     public current_direction: number;
     public required_direction: number;
     public desired_direction: number;
@@ -63,7 +64,7 @@ export class ControllableChar {
         initial_x: number,
         initial_y: number,
         initial_action: string | base_actions,
-        initial_direction: number,
+        initial_direction: string,
         enable_footsteps: boolean,
         walk_speed: number,
         dash_speed: number,
@@ -95,9 +96,10 @@ export class ControllableChar {
         this.tile_x_pos = initial_x;
         this.tile_y_pos = initial_y;
         this.current_action = initial_action;
-        this.current_direction = initial_direction;
-        this.required_direction = 0;
-        this.desired_direction = initial_direction;
+        this.current_direction = initial_direction in directions ? directions[initial_direction] : null;
+        this.current_animation = initial_direction;
+        this.required_direction = null;
+        this.desired_direction = this.current_direction;
         this.color_filter = this.game.add.filter("ColorFilters");
         this.trying_to_push = false;
         this.trying_to_push_direction = null;
@@ -185,7 +187,13 @@ export class ControllableChar {
 
     play(action?: string | base_actions, animation?: string | number, start: boolean = true) {
         action = action === undefined ? this.current_action : action;
-        animation = animation === undefined ? reverse_directions[this.current_direction] : animation;
+        if (animation === null || animation === undefined) {
+            if (this.current_direction in reverse_directions) {
+                animation = reverse_directions[this.current_direction];
+            } else {
+                animation = this.current_animation;
+            }
+        }
         if (this.sprite_info.getSpriteAction(this.sprite) !== action) {
             const action_key = this.sprite_info.getActionKey(action);
             this.sprite.loadTexture(action_key);
@@ -291,6 +299,7 @@ export class ControllableChar {
 
     set_direction(direction: number) {
         this.current_direction = this.desired_direction = direction;
+        this.current_animation = reverse_directions[this.current_direction];
     }
 
     set_action(check_on_event: boolean = false) {
@@ -322,8 +331,8 @@ export class ControllableChar {
         return true;
     }
 
-    set_current_action() {
-        if (this.data.tile_event_manager.on_event) return;
+    set_current_action(check_on_event: boolean = false) {
+        if (check_on_event && this.data.tile_event_manager.on_event) return;
         if (this.required_direction === null && this.current_action !== base_actions.IDLE && !this.climbing) {
             this.current_action = base_actions.IDLE;
         } else if (this.required_direction !== null && !this.climbing && !this.pushing) {

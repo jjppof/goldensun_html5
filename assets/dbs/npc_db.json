@@ -15,7 +15,8 @@
                 "spritesheet": {
                     "image": "assets/images/spritesheets/npc/village_1_idle.png",
                     "json": "assets/images/spritesheets/npc/village_1_idle.json"
-                }
+                },
+                "loop": true
             }
         }
     },{
@@ -35,6 +36,37 @@
                     "image": "assets/images/spritesheets/npc/briggs_idle.png",
                     "json": "assets/images/spritesheets/npc/briggs_idle.json"
                 }
+            }
+        }
+    },{
+        "key_name": "alex",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "actions": {
+            "idle": {
+                "frame_rate": [[0.2,6,0.3,2,0.4,1,1]],
+                "directions": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 7,
+                "initial_direction": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/npc/alex_idle.png",
+                    "json": "assets/images/spritesheets/npc/alex_idle.json"
+                },
+                "loop": true
+            },
+            "walk": {
+                "frame_rate": 5,
+                "directions": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 6,
+                "initial_direction": "down",
+                "spritesheet": {
+                    "image": "assets/images/spritesheets/npc/alex_walk.png",
+                    "json": "assets/images/spritesheets/npc/alex_walk.json"
+                },
+                "loop": true
             }
         }
     },{
