@@ -45,6 +45,7 @@
         "collision_body_bevel": 3,
         "interaction_pattern": "tik_tak_toe",
         "body_radius": 7.0,
+        "walk_speed": 60,
         "actions": {
             "idle": {
                 "frame_rate": [[0.2,6,0.3,2,0.4,1,1]],
@@ -58,7 +59,7 @@
                 "loop": true
             },
             "walk": {
-                "frame_rate": 5,
+                "frame_rate": 7,
                 "directions": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 6,
                 "initial_direction": "down",

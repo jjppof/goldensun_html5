@@ -23,6 +23,7 @@ export enum event_types {
     BATTLE = "battle",
     BRANCH = "branch",
     SET_VALUE = "set_value",
+    MOVE = "move",
 }
 
 export abstract class GameEvent {

@@ -126,8 +126,8 @@ export class GameEventManager {
     }
 
     reset_npc_direction(npc: NPC) {
-        const initial_action = this.data.dbs.npc_db[npc.key_name].initial_action;
-        const initial_direction = this.data.dbs.npc_db[npc.key_name].actions[initial_action].initial_direction;
+        const initial_action = npc.current_action;
+        const initial_direction = npc.current_direction;
         npc.play(initial_action, initial_direction);
     }
 

@@ -84,6 +84,7 @@ export class BranchEvent extends GameEvent {
     }
 
     fire() {
+        if (!this.active) return;
         let result: boolean;
         switch (this.condition) {
             case conditions.EQ:

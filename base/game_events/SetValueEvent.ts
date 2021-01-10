@@ -11,6 +11,7 @@ export class SetValueEvent extends GameEvent {
     }
 
     fire() {
+        if (!this.active) return;
         switch (this.event_value.type) {
             case event_value_types.STORAGE:
                 this.data.storage.set(this.event_value.value.key_name, this.event_value.value.value);

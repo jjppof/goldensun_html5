@@ -1,7 +1,8 @@
 import {GameEvent} from "./game_events/GameEvent";
-import {mount_collision_polygon} from "./utils";
+import {mount_collision_polygon, range_360} from "./utils";
 import {ControllableChar} from "./ControllableChar";
 import {Collision} from "./Collision";
+import * as numbers from "./magic_numbers";
 
 export enum npc_movement_types {
     IDLE = "idle",
@@ -101,14 +102,27 @@ export class NPC extends ControllableChar {
         }
     }
 
+    choose_direction() {
+        if (this.x_speed === 0 && this.y_speed === 0) {
+            this.required_direction = null;
+            return;
+        }
+        const angle = range_360(Math.atan2(this.y_speed, this.x_speed));
+        this.required_direction = (1 + Math.floor((angle - numbers.degree45_half) / numbers.degree45)) & 7;
+        this.desired_direction = this.required_direction;
+    }
+
     update() {
         if (this.movement_type === npc_movement_types.IDLE) {
             this.stop_char(false);
         }
         if (this.npc_type !== npc_types.SPRITE) {
+            this.choose_direction();
+            this.set_direction(this.desired_direction);
             this.set_current_action();
             this.calculate_speed();
             this.set_action();
+            this.apply_speed();
         }
         this.update_shadow();
     }
