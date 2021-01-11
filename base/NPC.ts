@@ -102,6 +102,12 @@ export class NPC extends ControllableChar {
         }
     }
 
+    stop_npc() {
+        this.x_speed = this.y_speed = 0;
+        this.choose_direction();
+        this.stop_char();
+    }
+
     choose_direction() {
         if (this.x_speed === 0 && this.y_speed === 0) {
             this.required_direction = null;
@@ -117,6 +123,7 @@ export class NPC extends ControllableChar {
             this.stop_char(false);
         }
         if (this.npc_type !== npc_types.SPRITE) {
+            this.update_tile_position();
             this.choose_direction();
             this.set_direction(this.desired_direction);
             this.set_current_action();

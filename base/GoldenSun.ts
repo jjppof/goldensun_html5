@@ -108,7 +108,8 @@ export class GoldenSun {
         this.game.sound.mute = true;
 
         //init storage
-        this.storage = new Storage();
+        this.storage = new Storage(this);
+        this.storage.init();
 
         //initialize managers
         this.gamepad = new Gamepad(this);
@@ -254,24 +255,21 @@ export class GoldenSun {
             {
                 key: this.gamepad.PSY1,
                 on_down: () => {
-                    if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open || this.inn_open)
-                        return;
+                    if (!this.hero_movement_allowed(false)) return;
                     this.info.field_abilities_list.move.cast(this.hero, this.dbs.init_db.initial_shortcuts.move);
                 },
             },
             {
                 key: this.gamepad.PSY2,
                 on_down: () => {
-                    if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open || this.inn_open)
-                        return;
+                    if (!this.hero_movement_allowed(false)) return;
                     this.info.field_abilities_list.frost.cast(this.hero, this.dbs.init_db.initial_shortcuts.frost);
                 },
             },
             {
                 key: this.gamepad.PSY3,
                 on_down: () => {
-                    if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open || this.inn_open)
-                        return;
+                    if (!this.hero_movement_allowed(false)) return;
                     this.info.field_abilities_list.growth.cast(this.hero, this.dbs.init_db.initial_shortcuts.growth);
                 },
             },
@@ -287,6 +285,7 @@ export class GoldenSun {
             this.inn_open ||
             this.in_battle ||
             this.tile_event_manager.on_event ||
+            this.game_event_manager.on_event ||
             this.force_stop_movement
         );
     }
@@ -309,7 +308,14 @@ export class GoldenSun {
             this.hero.update(this.map); //update hero position/velocity/sprite
             this.map.update(); //update map and its objects position/velocity/sprite
         } else {
-            this.hero.stop_char(false);
+            if (this.game_event_manager.on_event) {
+                this.game_event_manager.update();
+                if (this.force_stop_movement) {
+                    this.hero.stop_char(false);
+                }
+            } else {
+                this.hero.stop_char(false);
+            }
             if (this.menu_open && this.main_menu.is_active) {
                 this.main_menu.update_position();
             } else if (this.shop_open && this.shop_menu.horizontal_menu.menu_active) {

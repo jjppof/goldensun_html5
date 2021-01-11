@@ -297,9 +297,12 @@ export class ControllableChar {
         }
     }
 
-    set_direction(direction: number) {
+    set_direction(direction: number, force_change: boolean = false) {
         this.current_direction = this.desired_direction = direction;
         this.current_animation = reverse_directions[this.current_direction];
+        if (force_change) {
+            this.set_action();
+        }
     }
 
     set_action(check_on_event: boolean = false) {

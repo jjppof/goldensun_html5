@@ -6,6 +6,7 @@ import {BattleEvent} from "./BattleEvent";
 import {BranchEvent} from "./BranchEvent";
 import {event_types} from "./GameEvent";
 import {SetValueEvent} from "./SetValueEvent";
+import {MoveEvent} from "./MoveEvent";
 
 export enum interaction_patterns {
     TIK_TAK_TOE = "tik_tak_toe",
@@ -18,6 +19,7 @@ export class GameEventManager {
     public on_event: boolean;
     public control_enable: boolean;
     public fire_next_step: Function;
+    public update_callbacks: Function[] = [];
 
     constructor(game, data) {
         this.game = game;
@@ -171,7 +173,33 @@ export class GameEventManager {
                 );
             case event_types.SET_VALUE:
                 return new SetValueEvent(this.game, this.data, info.active, info.event_value);
+            case event_types.MOVE:
+                return new MoveEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.is_npc,
+                    info.dest,
+                    info.npc_index,
+                    info.camera_follow,
+                    info.camera_follow_time,
+                    info.final_direction,
+                    info.follow_hero_on_finish,
+                    info.move_finish_events
+                );
         }
+    }
+
+    add_callback(callback) {
+        this.update_callbacks.push(callback);
+    }
+
+    remove_callback(callback) {
+        this.update_callbacks = this.update_callbacks.filter(c => callback !== c);
+    }
+
+    update() {
+        this.update_callbacks.forEach(callback => callback());
     }
 
     static get_interaction_directions(hero_x, hero_y, target_x, target_y, interaction_pattern, target_body_radius) {
