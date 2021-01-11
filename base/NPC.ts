@@ -102,36 +102,11 @@ export class NPC extends ControllableChar {
         }
     }
 
-    stop_npc() {
-        this.x_speed = this.y_speed = 0;
-        this.choose_direction();
-        this.stop_char();
-    }
-
-    choose_direction() {
-        if (this.x_speed === 0 && this.y_speed === 0) {
-            this.required_direction = null;
-            return;
-        }
-        const angle = range_360(Math.atan2(this.y_speed, this.x_speed));
-        this.required_direction = (1 + Math.floor((angle - numbers.degree45_half) / numbers.degree45)) & 7;
-        this.desired_direction = this.required_direction;
-    }
-
     update() {
         if (this.movement_type === npc_movement_types.IDLE) {
             this.stop_char(false);
+            this.update_shadow();
         }
-        if (this.npc_type !== npc_types.SPRITE) {
-            this.update_tile_position();
-            this.choose_direction();
-            this.set_direction(this.desired_direction);
-            this.set_current_action();
-            this.calculate_speed();
-            this.set_action();
-            this.apply_speed();
-        }
-        this.update_shadow();
     }
 
     config_body(collision_obj: Collision) {

@@ -179,13 +179,15 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.is_npc,
+                    info.dest_unit_in_tile,
                     info.dest,
                     info.npc_index,
                     info.camera_follow,
                     info.camera_follow_time,
                     info.final_direction,
                     info.follow_hero_on_finish,
-                    info.move_finish_events
+                    info.move_finish_events,
+                    info.minimal_distance
                 );
         }
     }

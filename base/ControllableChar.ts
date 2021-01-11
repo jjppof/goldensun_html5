@@ -1,5 +1,5 @@
 import * as numbers from "./magic_numbers";
-import {reverse_directions, base_actions, directions} from "./utils";
+import {reverse_directions, base_actions, directions, range_360} from "./utils";
 import {Footsteps} from "./utils/Footsteps";
 import {GoldenSun} from "./GoldenSun";
 import {SpriteBase} from "./SpriteBase";
@@ -211,6 +211,16 @@ export class ControllableChar {
         return animation_obj;
     }
 
+    choose_direction_by_speed() {
+        if (this.x_speed === 0 && this.y_speed === 0) {
+            this.required_direction = null;
+            return;
+        }
+        const angle = range_360(Math.atan2(this.y_speed, this.x_speed));
+        this.required_direction = (1 + Math.floor((angle - numbers.degree45_half) / numbers.degree45)) & 7;
+        this.desired_direction = this.required_direction;
+    }
+
     set_frame(direction: number, frame_index: number = 0) {
         const frame_name = this.sprite_info.getFrameName(
             this.current_action,
@@ -218,6 +228,17 @@ export class ControllableChar {
             frame_index
         );
         this.sprite.frameName = frame_name;
+    }
+
+    update_movement() {
+        this.update_tile_position();
+        this.choose_direction_by_speed();
+        this.set_direction(this.desired_direction);
+        this.set_current_action();
+        this.calculate_speed();
+        this.set_action();
+        this.apply_speed();
+        this.update_shadow();
     }
 
     update_shadow() {
@@ -288,6 +309,8 @@ export class ControllableChar {
     }
 
     stop_char(change_sprite: boolean = true) {
+        this.x_speed = this.y_speed = 0;
+        this.choose_direction_by_speed();
         if (this.sprite.body) {
             this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         }

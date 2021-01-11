@@ -1,16 +1,18 @@
 import {GameEvent, event_types} from "./GameEvent";
 import * as _ from "lodash";
 import {ControllableChar} from "../ControllableChar";
-import {NPC} from "../NPC";
 import * as numbers from "../magic_numbers";
 import {directions} from "../utils";
 
 export class MoveEvent extends GameEvent {
     private static readonly START_FOLLOW_TIME = 300;
+    private static readonly MINIMAL_DISTANCE = 3;
     private is_npc: boolean;
+    private dest_unit_in_tile: boolean;
     private camera_follow: boolean;
     private follow_hero_on_finish: boolean;
     private camera_follow_time: number;
+    private minimal_distance: number;
     private dest: {x: number; y: number};
     private npc_index: number;
     private char: ControllableChar;
@@ -22,20 +24,24 @@ export class MoveEvent extends GameEvent {
         data,
         active,
         is_npc,
+        dest_unit_in_tile,
         dest,
         npc_index,
         camera_follow,
         camera_follow_time,
         final_direction,
         follow_hero_on_finish,
-        move_finish_events
+        move_finish_events,
+        minimal_distance
     ) {
         super(game, data, event_types.MOVE, active);
         this.is_npc = is_npc;
         this.dest = dest;
         this.npc_index = npc_index;
+        this.dest_unit_in_tile = dest_unit_in_tile === undefined ? true : dest_unit_in_tile;
         this.camera_follow = camera_follow;
         this.camera_follow_time = camera_follow_time;
+        this.minimal_distance = minimal_distance;
         this.follow_hero_on_finish = follow_hero_on_finish === undefined ? true : follow_hero_on_finish;
         this.final_direction = final_direction !== undefined ? directions[final_direction as string] : null;
         if (move_finish_events !== undefined) {
@@ -52,10 +58,12 @@ export class MoveEvent extends GameEvent {
         this.data.collision.disable_npc_collision();
         if (this.is_npc) {
             this.char = this.data.map.npcs[this.npc_index];
+        } else {
+            this.char = this.data.hero;
         }
         const dest = {
-            x: (this.dest.x + 0.5) * this.data.map.tile_width,
-            y: (this.dest.y + 0.5) * this.data.map.tile_height,
+            x: this.dest_unit_in_tile ? (this.dest.x + 0.5) * this.data.map.tile_width : this.dest.x,
+            y: this.dest_unit_in_tile ? (this.dest.y + 0.5) * this.data.map.tile_height : this.dest.y,
         };
         const direction = new Phaser.Point(dest.x - this.char.sprite.x, dest.y - this.char.sprite.y).normalize();
         const follow_time =
@@ -85,11 +93,15 @@ export class MoveEvent extends GameEvent {
         await follow_promise;
         this.char.x_speed = direction.x;
         this.char.y_speed = direction.y;
+        const sqr = x => Math.pow(x, 2);
+        const minimal_distance_sqr = sqr(
+            this.minimal_distance !== undefined ? this.minimal_distance : MoveEvent.MINIMAL_DISTANCE
+        );
         const udpate_callback = () => {
-            (this.char as NPC).update();
-            if (this.char.tile_x_pos === this.dest.x && this.char.tile_y_pos === this.dest.y) {
+            this.char.update_movement();
+            if (sqr(dest.x - this.char.sprite.x) + sqr(dest.y - this.char.sprite.y) < minimal_distance_sqr) {
                 this.data.game_event_manager.remove_callback(udpate_callback);
-                (this.char as NPC).stop_npc();
+                this.char.stop_char();
                 if (this.final_direction !== null) {
                     this.char.set_direction(this.final_direction, true);
                 }
