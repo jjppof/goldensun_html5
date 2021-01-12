@@ -129,7 +129,7 @@ export class GameEventManager {
 
     reset_npc_direction(npc: NPC) {
         const initial_action = npc.current_action;
-        const initial_direction = npc.current_direction;
+        const initial_direction = reverse_directions[npc.current_direction];
         npc.play(initial_action, initial_direction);
     }
 
