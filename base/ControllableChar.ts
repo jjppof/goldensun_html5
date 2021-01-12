@@ -230,7 +230,10 @@ export class ControllableChar {
         this.sprite.frameName = frame_name;
     }
 
-    update_movement() {
+    update_movement(ignore_collide_action_change: boolean = false) {
+        if (ignore_collide_action_change) {
+            this.stop_by_colliding = false;
+        }
         this.update_tile_position();
         this.choose_direction_by_speed();
         this.set_direction(this.desired_direction);

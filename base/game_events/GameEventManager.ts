@@ -179,6 +179,7 @@ export class GameEventManager {
                     this.data,
                     info.active,
                     info.is_npc,
+                    info.dash,
                     info.dest_unit_in_tile,
                     info.dest,
                     info.npc_index,

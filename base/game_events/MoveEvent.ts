@@ -8,6 +8,7 @@ export class MoveEvent extends GameEvent {
     private static readonly START_FOLLOW_TIME = 300;
     private static readonly MINIMAL_DISTANCE = 3;
     private is_npc: boolean;
+    private dash: boolean;
     private dest_unit_in_tile: boolean;
     private camera_follow: boolean;
     private follow_hero_on_finish: boolean;
@@ -24,6 +25,7 @@ export class MoveEvent extends GameEvent {
         data,
         active,
         is_npc,
+        dash,
         dest_unit_in_tile,
         dest,
         npc_index,
@@ -36,6 +38,7 @@ export class MoveEvent extends GameEvent {
     ) {
         super(game, data, event_types.MOVE, active);
         this.is_npc = is_npc;
+        this.dash = dash === undefined ? false : dash;
         this.dest = dest;
         this.npc_index = npc_index;
         this.dest_unit_in_tile = dest_unit_in_tile === undefined ? true : dest_unit_in_tile;
@@ -61,6 +64,7 @@ export class MoveEvent extends GameEvent {
         } else {
             this.char = this.data.hero;
         }
+        this.char.dashing = this.dash;
         const dest = {
             x: this.dest_unit_in_tile ? (this.dest.x + 0.5) * this.data.map.tile_width : this.dest.x,
             y: this.dest_unit_in_tile ? (this.dest.y + 0.5) * this.data.map.tile_height : this.dest.y,
@@ -98,7 +102,7 @@ export class MoveEvent extends GameEvent {
             this.minimal_distance !== undefined ? this.minimal_distance : MoveEvent.MINIMAL_DISTANCE
         );
         const udpate_callback = () => {
-            this.char.update_movement();
+            this.char.update_movement(true);
             if (sqr(dest.x - this.char.sprite.x) + sqr(dest.y - this.char.sprite.y) < minimal_distance_sqr) {
                 this.data.game_event_manager.remove_callback(udpate_callback);
                 this.char.stop_char();
@@ -120,22 +124,22 @@ export class MoveEvent extends GameEvent {
                                 true
                             )
                             .onComplete.addOnce(() => {
-                                this.data.collision.enable_npc_collision(this.data.map.collision_layer);
                                 this.data.hero.camera_follow();
-                                this.data.game_event_manager.on_event = false;
-                                this.fire_finish_events();
+                                this.finish();
                             });
                     }
                 } else {
-                    this.data.game_event_manager.on_event = false;
-                    this.fire_finish_events();
+                    this.finish();
                 }
             }
         };
         this.data.game_event_manager.add_callback(udpate_callback);
     }
 
-    fire_finish_events() {
+    finish() {
+        this.char.dashing = false;
+        this.data.collision.enable_npc_collision(this.data.map.collision_layer);
+        this.data.game_event_manager.on_event = false;
         this.move_finish_events.forEach(event => event.fire());
     }
 }
