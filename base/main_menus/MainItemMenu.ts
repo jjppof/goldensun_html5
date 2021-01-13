@@ -3,12 +3,12 @@ import {ItemPsynergyChooseWindow} from "../windows/ItemPsynergyChooseWindow";
 import {TextObj, Window} from "../Window";
 import * as numbers from "../magic_numbers";
 import {ItemOptionsWindow} from "../windows/item/ItemOptionsWindow";
-import {StatsCheckWithItemWindow} from "../windows/item/StatsCheckWithItemWindow";
 import {Item, item_types} from "../Item";
 import {GoldenSun} from "../GoldenSun";
 import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
 import {ItemSlot} from "../MainChar";
 import {ItemQuantityManagerWindow} from "../windows/item/ItemQuantityManagerWindow";
+import {StatsOrClassCheckWithItemWindow} from "../windows/item/StatsOrClassCheckWithItemWindow";
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;
@@ -52,7 +52,7 @@ export class MainItemMenu {
 
     public chars_menu: CharsMenu;
     public basic_info_window: BasicInfoWindow;
-    public item_change_stats_window: StatsCheckWithItemWindow;
+    public item_change_stats_window: StatsOrClassCheckWithItemWindow;
 
     public selected_char_index: number;
     public selected_item_pos: {page: number; index: number};
@@ -83,7 +83,7 @@ export class MainItemMenu {
 
         this.chars_menu = new CharsMenu(this.game, this.data, this.char_change.bind(this));
         this.basic_info_window = new BasicInfoWindow(this.game);
-        this.item_change_stats_window = new StatsCheckWithItemWindow(this.game, this.data);
+        this.item_change_stats_window = new StatsOrClassCheckWithItemWindow(this.game, this.data);
 
         this.selected_char_index = 0;
         this.selected_item_pos = {page: 0, index: 0};
@@ -234,9 +234,11 @@ export class MainItemMenu {
 
     item_change(item: Item, item_obj: ItemSlot) {
         this.set_description_window_text(item.description);
+
         if (this.item_change_stats_window.window_open) {
             this.item_change_stats_window.close();
         }
+
         if (item.type === item_types.ABILITY_GRANTOR) {
         } else if (item.type !== item_types.GENERAL_ITEM) {
             this.item_change_stats_window.open(

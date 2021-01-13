@@ -527,6 +527,27 @@
         "equipable_chars": ["isaac", "garet"],
         "price": 15200,
         "granted_ability": ""
+    },
+    {
+        "key_name": "mysterious_card",
+        "name": "Mysterious Card",
+        "type": "class_changer",
+        "description": "Card: Equip to change your class",
+        "use_type": "no_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": true,
+        "important_item": false,
+        "carry_up_to_30": false,
+        "effects": [],
+        "attribute": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "",
+        "equipable_chars": ["isaac", "garet", "sheba"],
+        "price": 30,
+        "granted_ability": "",
+        "granted_class_type": 15
     }
 
 ]

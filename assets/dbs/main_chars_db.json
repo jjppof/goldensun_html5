@@ -201,6 +201,10 @@
                 "quantity": 1,
                 "equipped": true,
                 "broken": true
+            },{
+                "key_name": "mysterious_card",
+                "quantity": 1,
+                "equipped": false
             }
         ],
         "battle_animations_variations": {

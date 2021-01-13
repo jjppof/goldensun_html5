@@ -6,9 +6,9 @@ import {GiveItemWindow} from "./GiveItemWindow";
 import {GoldenSun} from "../../GoldenSun";
 import {ItemSlot, MainChar} from "../../MainChar";
 import {Item, item_types} from "../../Item";
-import {StatsCheckWithItemWindow} from "./StatsCheckWithItemWindow";
 import {MainItemMenu} from "../../main_menus/MainItemMenu";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
+import {StatsOrClassCheckWithItemWindow} from "./StatsOrClassCheckWithItemWindow";
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 52;
@@ -93,7 +93,7 @@ export class ItemOptionsWindow {
     public item_count_sprite: Phaser.BitmapText;
 
     public stats_update_callback: Function;
-    public stats_window: StatsCheckWithItemWindow;
+    public stats_window: StatsOrClassCheckWithItemWindow;
     public item_menu: MainItemMenu;
 
     constructor(game: Phaser.Game, data: GoldenSun) {
@@ -374,6 +374,7 @@ export class ItemOptionsWindow {
         this.stats_window.hide_arrows();
 
         if (this.stats_window.window_open) this.stats_window.close();
+
         this.stats_window.open(this.char, this.item, this.item_obj);
 
         if (this.horizontal_index === 0) {
@@ -437,7 +438,7 @@ export class ItemOptionsWindow {
         item_obj: ItemSlot,
         item: Item,
         char: MainChar,
-        stats_window: StatsCheckWithItemWindow,
+        stats_window: StatsOrClassCheckWithItemWindow,
         item_menu: MainItemMenu,
         close_callback: Function,
         stats_update_callback: Function,

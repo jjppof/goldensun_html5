@@ -64,28 +64,18 @@ export function choose_right_class(
     classes_list: GameInfo["classes_list"],
     class_table,
     element_afinity: elements,
-    current_level: Player["current_level"]
+    current_level: Player["current_level"],
+    granted_class_type: number
 ): Classes {
-    let secondary_elements = [
-        ...(element_afinity !== elements.VENUS
-            ? [{element: elements.VENUS, level: current_level[elements.VENUS]}]
-            : []),
-        ...(element_afinity !== elements.MERCURY
-            ? [{element: elements.MERCURY, level: current_level[elements.MERCURY]}]
-            : []),
-        ...(element_afinity !== elements.MARS ? [{element: elements.MARS, level: current_level[elements.MARS]}] : []),
-        ...(element_afinity !== elements.JUPITER
-            ? [{element: elements.JUPITER, level: current_level[elements.JUPITER]}]
-            : []),
-    ];
-    const no_secondary = secondary_elements.every(element => element.level === 0);
-    let secondary_afinity;
-    if (no_secondary) {
-        secondary_afinity = element_afinity;
-    } else {
-        secondary_afinity = _.maxBy(secondary_elements, element => element.level).element;
-    }
-    const class_type = class_table[element_afinity][secondary_afinity];
+    const class_type = choose_class_type(class_table, element_afinity, current_level, granted_class_type);
+    return choose_class_by_type(classes_list, current_level, class_type);
+}
+
+export function choose_class_by_type(
+    classes_list: GameInfo["classes_list"],
+    current_level: Player["current_level"],
+    class_type: number
+): Classes {
     let classes = Object.values(classes_list).filter(this_class => this_class.class_type === class_type);
     classes = classes.filter(this_class => {
         return (
@@ -105,4 +95,43 @@ export function choose_right_class(
             );
         },
     ]).reverse()[0];
+}
+
+function choose_class_type(
+    class_table,
+    element_afinity: elements,
+    current_level: Player["current_level"],
+    granted_class_type: number
+): number {
+    return granted_class_type > 0
+        ? granted_class_type
+        : choose_class_type_by_element_afinity(class_table, element_afinity, current_level);
+}
+
+export function choose_class_type_by_element_afinity(
+    class_table,
+    element_afinity: elements,
+    current_level: Player["current_level"]
+): number {
+    let secondary_elements = [
+        ...(element_afinity !== elements.VENUS
+            ? [{element: elements.VENUS, level: current_level[elements.VENUS]}]
+            : []),
+        ...(element_afinity !== elements.MERCURY
+            ? [{element: elements.MERCURY, level: current_level[elements.MERCURY]}]
+            : []),
+        ...(element_afinity !== elements.MARS ? [{element: elements.MARS, level: current_level[elements.MARS]}] : []),
+        ...(element_afinity !== elements.JUPITER
+            ? [{element: elements.JUPITER, level: current_level[elements.JUPITER]}]
+            : []),
+    ];
+    const no_secondary = secondary_elements.every(element => element.level === 0);
+    let secondary_afinity;
+    if (no_secondary) {
+        secondary_afinity = element_afinity;
+    } else {
+        secondary_afinity = _.maxBy(secondary_elements, element => element.level).element;
+    }
+
+    return class_table[element_afinity][secondary_afinity];
 }
