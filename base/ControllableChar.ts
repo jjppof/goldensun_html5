@@ -1,5 +1,5 @@
 import * as numbers from "./magic_numbers";
-import {reverse_directions, base_actions, directions, range_360} from "./utils";
+import {reverse_directions, base_actions, directions, range_360, get_transition_directions} from "./utils";
 import {Footsteps} from "./utils/Footsteps";
 import {GoldenSun} from "./GoldenSun";
 import {SpriteBase} from "./SpriteBase";
@@ -219,6 +219,24 @@ export class ControllableChar {
         const angle = range_360(Math.atan2(this.y_speed, this.x_speed));
         this.required_direction = (1 + Math.floor((angle - numbers.degree45_half) / numbers.degree45)) & 7;
         this.desired_direction = this.required_direction;
+    }
+
+    async go_to_direction(direction: number, time_between_frames: number = 40) {
+        let transition_resolve;
+        const transition_promise = new Promise(resolve => (transition_resolve = resolve));
+        const timer_function = next_direction => {
+            next_direction = get_transition_directions(this.current_direction, direction);
+            this.set_direction(next_direction, true);
+            if (direction !== next_direction) {
+                this.game.time.events.add(time_between_frames, () => {
+                    timer_function(next_direction);
+                });
+            } else {
+                transition_resolve();
+            }
+        };
+        timer_function(direction);
+        await transition_promise;
     }
 
     set_frame(direction: number, frame_index: number = 0) {

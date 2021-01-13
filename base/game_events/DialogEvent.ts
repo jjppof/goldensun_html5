@@ -11,6 +11,7 @@ export class DialogEvent extends GameEvent {
     private npc_hero_reciprocal_look: boolean = false;
     private reset_reciprocal_look: boolean = true;
     private dialog_finish_events: GameEvent[] = [];
+    private previous_npc_direction: number;
 
     constructor(
         game,
@@ -49,11 +50,11 @@ export class DialogEvent extends GameEvent {
 
     next() {
         this.control_enable = false;
-        this.dialog_manager.next(finished => {
+        this.dialog_manager.next(async finished => {
             this.control_enable = true;
             if (finished) {
                 if (this.origin_npc && this.npc_hero_reciprocal_look && this.reset_reciprocal_look) {
-                    this.data.game_event_manager.reset_npc_direction(this.origin_npc);
+                    await this.origin_npc.go_to_direction(this.previous_npc_direction);
                 }
                 this.running = false;
                 --this.data.game_event_manager.events_running_count;
@@ -62,13 +63,15 @@ export class DialogEvent extends GameEvent {
         });
     }
 
-    fire(origin_npc?: NPC) {
+    async fire(origin_npc?: NPC) {
         if (!this.active) return;
         ++this.data.game_event_manager.events_running_count;
+        this.control_enable = false;
         this.running = true;
         this.origin_npc = origin_npc;
         if (this.origin_npc && this.npc_hero_reciprocal_look) {
-            this.data.game_event_manager.set_npc_and_hero_directions(this.origin_npc);
+            this.previous_npc_direction = this.origin_npc.current_direction;
+            await this.data.game_event_manager.set_npc_and_hero_directions(this.origin_npc);
         }
         this.dialog_manager = new DialogManager(this.game, this.data);
         this.dialog_manager.set_dialog(this.text, this.avatar);
