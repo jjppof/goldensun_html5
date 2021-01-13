@@ -1,6 +1,7 @@
 import {GameEvent, event_types, game_info_types, EventValue, event_value_types} from "./GameEvent";
 import * as _ from "lodash";
 import {TileEvent} from "../tile_events/TileEvent";
+import {NPC} from "../NPC";
 
 enum conditions {
     EQ = "=",
@@ -83,8 +84,9 @@ export class BranchEvent extends GameEvent {
         }
     }
 
-    fire() {
+    fire(origin_npc?: NPC) {
         if (!this.active) return;
+        this.origin_npc = origin_npc;
         let result: boolean;
         switch (this.condition) {
             case conditions.EQ:
@@ -108,9 +110,9 @@ export class BranchEvent extends GameEvent {
         }
 
         if (result) {
-            this.events.forEach(event => event.fire());
+            this.events.forEach(event => event.fire(this.origin_npc));
         } else if (this.has_else) {
-            this.else_events.forEach(event => event.fire());
+            this.else_events.forEach(event => event.fire(this.origin_npc));
         }
     }
 }

@@ -7,6 +7,7 @@ import {BranchEvent} from "./BranchEvent";
 import {event_types} from "./GameEvent";
 import {SetValueEvent} from "./SetValueEvent";
 import {MoveEvent} from "./MoveEvent";
+import {DialogEvent} from "./DialogEvent";
 
 export enum interaction_patterns {
     TIK_TAK_TOE = "tik_tak_toe",
@@ -16,18 +17,24 @@ export enum interaction_patterns {
 export class GameEventManager {
     public game: Phaser.Game;
     public data: GoldenSun;
-    public on_event: boolean;
+    public events_running_count: number;
     public control_enable: boolean;
+    public allow_char_to_move: boolean;
     public fire_next_step: Function;
     public update_callbacks: Function[] = [];
 
     constructor(game, data) {
         this.game = game;
         this.data = data;
-        this.on_event = false;
+        this.events_running_count = 0;
         this.control_enable = true;
-        this.fire_next_step = () => {};
+        this.fire_next_step = null;
+        this.allow_char_to_move = false;
         this.set_controls();
+    }
+
+    get on_event() {
+        return this.events_running_count;
     }
 
     set_controls() {
@@ -44,10 +51,10 @@ export class GameEventManager {
                         !this.control_enable
                     )
                         return;
-                    if (this.on_event) {
+                    if (this.on_event && this.fire_next_step) {
                         this.control_enable = false;
                         this.fire_next_step();
-                    } else {
+                    } else if (!this.on_event) {
                         this.search_for_npc();
                     }
                 },
@@ -71,8 +78,6 @@ export class GameEventManager {
             );
             if (is_close_check) {
                 this.data.hero.stop_char();
-                this.on_event = true;
-                this.data.force_stop_movement = true;
                 this.control_enable = false;
                 this.set_npc_event(npc);
                 break;
@@ -89,21 +94,21 @@ export class GameEventManager {
             }
         } else if (npc.npc_type === npc_types.SHOP) {
             if (!this.data.shop_open) {
+                ++this.events_running_count;
                 this.set_npc_and_hero_directions(npc);
                 this.data.shop_menu.open_menu(npc.shop_key, () => {
-                    this.on_event = false;
+                    --this.events_running_count;
                     this.reset_npc_direction(npc);
-                    this.data.force_stop_movement = false;
                     this.control_enable = true;
                 });
             }
         } else if (npc.npc_type === npc_types.INN) {
             if (!this.data.inn_open) {
+                ++this.events_running_count;
                 this.set_npc_and_hero_directions(npc);
                 this.data.inn_menu.start(npc.inn_key, () => {
-                    this.on_event = false;
+                    --this.events_running_count;
                     this.reset_npc_direction(npc);
-                    this.data.force_stop_movement = false;
                     this.control_enable = true;
                 });
             }
@@ -134,24 +139,27 @@ export class GameEventManager {
     }
 
     manage_npc_dialog(npc: NPC) {
+        ++this.events_running_count;
         const dialog_manager = new DialogManager(this.game, this.data);
         dialog_manager.set_dialog(npc.message, npc.avatar, this.data.hero.current_direction);
         this.set_npc_and_hero_directions(npc);
         this.fire_next_step = dialog_manager.next.bind(dialog_manager, finished => {
             if (finished) {
-                this.on_event = false;
-                this.data.force_stop_movement = false;
+                this.fire_next_step = null;
+                --this.events_running_count;
                 this.reset_npc_direction(npc);
                 this.fire_npc_events(npc);
+            } else {
+                this.control_enable = true;
             }
-            this.control_enable = true;
         });
         this.fire_next_step();
     }
 
     fire_npc_events(npc: NPC) {
+        this.control_enable = true;
         npc.events.forEach(event => {
-            event.fire();
+            event.fire(npc);
         });
     }
 
@@ -190,6 +198,17 @@ export class GameEventManager {
                     info.move_finish_events,
                     info.minimal_distance
                 );
+            case event_types.DIALOG:
+                return new DialogEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.text,
+                    info.avatar,
+                    info.npc_hero_reciprocal_look,
+                    info.reset_reciprocal_look,
+                    info.dialog_finish_events
+                );
         }
     }
 
@@ -202,6 +221,9 @@ export class GameEventManager {
     }
 
     update() {
+        if (!this.allow_char_to_move) {
+            this.data.hero.stop_char();
+        }
         this.update_callbacks.forEach(callback => callback());
     }
 

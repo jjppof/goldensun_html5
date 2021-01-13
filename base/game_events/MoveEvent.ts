@@ -3,6 +3,7 @@ import * as _ from "lodash";
 import {ControllableChar} from "../ControllableChar";
 import * as numbers from "../magic_numbers";
 import {directions} from "../utils";
+import {NPC} from "../NPC";
 
 export class MoveEvent extends GameEvent {
     private static readonly START_FOLLOW_TIME = 300;
@@ -55,9 +56,10 @@ export class MoveEvent extends GameEvent {
         }
     }
 
-    async fire() {
+    async fire(origin_npc?: NPC) {
         if (!this.active) return;
-        this.data.game_event_manager.on_event = true;
+        this.origin_npc = origin_npc;
+        ++this.data.game_event_manager.events_running_count;
         this.data.collision.disable_npc_collision();
         if (this.is_npc) {
             this.char = this.data.map.npcs[this.npc_index];
@@ -101,6 +103,9 @@ export class MoveEvent extends GameEvent {
         const minimal_distance_sqr = sqr(
             this.minimal_distance !== undefined ? this.minimal_distance : MoveEvent.MINIMAL_DISTANCE
         );
+        if (!this.is_npc) {
+            this.data.game_event_manager.allow_char_to_move = true;
+        }
         const udpate_callback = () => {
             this.char.update_movement(true);
             if (sqr(dest.x - this.char.sprite.x) + sqr(dest.y - this.char.sprite.y) < minimal_distance_sqr) {
@@ -137,9 +142,12 @@ export class MoveEvent extends GameEvent {
     }
 
     finish() {
+        if (!this.is_npc) {
+            this.data.game_event_manager.allow_char_to_move = false;
+        }
         this.char.dashing = false;
         this.data.collision.enable_npc_collision(this.data.map.collision_layer);
-        this.data.game_event_manager.on_event = false;
-        this.move_finish_events.forEach(event => event.fire());
+        --this.data.game_event_manager.events_running_count;
+        this.move_finish_events.forEach(event => event.fire(this.origin_npc));
     }
 }

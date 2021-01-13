@@ -1,4 +1,5 @@
 import {GoldenSun} from "../GoldenSun";
+import {NPC} from "../NPC";
 
 export enum game_info_types {
     CHAR = "char",
@@ -24,6 +25,7 @@ export enum event_types {
     BRANCH = "branch",
     SET_VALUE = "set_value",
     MOVE = "move",
+    DIALOG = "dialog",
 }
 
 export abstract class GameEvent {
@@ -32,6 +34,7 @@ export abstract class GameEvent {
     public type: event_types;
     public id: number;
     public active: boolean;
+    public origin_npc: NPC = null;
 
     public static id_incrementer: number;
     public static events: {[id: number]: GameEvent};
@@ -45,7 +48,7 @@ export abstract class GameEvent {
         GameEvent.events[this.id] = this;
     }
 
-    abstract fire(): void;
+    abstract fire(origin_npc?: NPC): void;
 
     static get_event(id) {
         return GameEvent.events[id];

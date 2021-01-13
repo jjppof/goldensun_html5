@@ -3,7 +3,6 @@ import {TileEvent} from "./tile_events/TileEvent";
 import {Debug} from "./debug/Debug";
 import {load_all} from "./initializers/assets_loader";
 import {Collision} from "./Collision";
-import {directions} from "./utils";
 import {Hero} from "./Hero";
 import {TileEventManager} from "./tile_events/TileEventManager";
 import {GameEventManager} from "./game_events/GameEventManager";
@@ -32,7 +31,6 @@ export class GoldenSun {
     public inn_open: boolean = false;
     public in_battle: boolean = false;
     public created: boolean = false;
-    public force_stop_movement: boolean = false;
 
     //game objects
     public hero: Hero = null; //class responsible for the control of the main hero
@@ -285,8 +283,7 @@ export class GoldenSun {
             this.inn_open ||
             this.in_battle ||
             this.tile_event_manager.on_event ||
-            this.game_event_manager.on_event ||
-            this.force_stop_movement
+            this.game_event_manager.on_event
         );
     }
 
@@ -310,9 +307,6 @@ export class GoldenSun {
         } else {
             if (this.game_event_manager.on_event) {
                 this.game_event_manager.update();
-                if (this.force_stop_movement) {
-                    this.hero.stop_char(false);
-                }
             } else {
                 this.hero.stop_char(false);
             }
