@@ -129,6 +129,16 @@ export class MainChar extends Player {
         this.mars_djinni = [];
         this.jupiter_djinni = [];
         this.init_djinni(djinni);
+        this.equip_slots = {
+            [equip_slots.WEAPON]: null,
+            [equip_slots.HEAD]: null,
+            [equip_slots.CHEST]: null,
+            [equip_slots.BODY]: null,
+            [equip_slots.RING]: null,
+            [equip_slots.BOOTS]: null,
+            [equip_slots.UNDERWEAR]: null,
+            [equip_slots.CLASS_CHANGER]: null,
+        };
         this.update_class();
         this.hp_curve = hp_curve;
         this.pp_curve = pp_curve;
@@ -145,16 +155,6 @@ export class MainChar extends Player {
         this.hp_recovery = 0;
         this.pp_recovery = 0;
         this.items = items;
-        this.equip_slots = {
-            [equip_slots.WEAPON]: null,
-            [equip_slots.HEAD]: null,
-            [equip_slots.CHEST]: null,
-            [equip_slots.BODY]: null,
-            [equip_slots.RING]: null,
-            [equip_slots.BOOTS]: null,
-            [equip_slots.UNDERWEAR]: null,
-            [equip_slots.CLASS_CHANGER]: null,
-        };
         this.equipped_abilities = [];
         this.innate_abilities = innate_abilities;
         this.init_items();
