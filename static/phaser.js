@@ -70770,6 +70770,8 @@ Phaser.Tween = function (target, game, manager)
     * @private
     */
     this._hasStarted = false;
+
+    this._lazyValuesSet = false;
 };
 
 /**
@@ -70818,7 +70820,7 @@ Phaser.Tween.prototype = {
     * @param {boolean} [yoyo=false] - A tween that yoyos will reverse itself and play backwards automatically. A yoyo'd tween doesn't fire the Tween.onComplete event, so listen for Tween.onLoop instead.
     * @return {Phaser.Tween} This Tween object.
     */
-    to: function (properties, duration, ease, autoStart, delay, repeat, yoyo)
+    to: function (properties, duration, ease, autoStart, delay, repeat, yoyo, lazyValuesSet)
     {
 
         if (duration === undefined || duration <= 0) { duration = 1000; }
@@ -70827,6 +70829,7 @@ Phaser.Tween.prototype = {
         if (delay === undefined) { delay = 0; }
         if (repeat === undefined) { repeat = 0; }
         if (yoyo === undefined) { yoyo = false; }
+        if (lazyValuesSet !== undefined && delay > 0) { this._lazyValuesSet = lazyValuesSet; }
 
         if (typeof ease === 'string' && this.manager.easeMap[ease])
         {
@@ -70925,6 +70928,29 @@ Phaser.Tween.prototype = {
             return this;
         }
 
+        if (!this._lazyValuesSet) {
+            this.populateTweenData();
+        }
+
+        this.manager.add(this);
+
+        this.isRunning = true;
+
+        if (index < 0 || index > this.timeline.length - 1)
+        {
+            index = 0;
+        }
+
+        this.current = index;
+
+        this.timeline[this.current].start();
+
+        return this;
+
+    },
+
+    populateTweenData: function ()
+    {
         //  Populate the tween data
         for (var i = 0; i < this.timeline.length; i++)
         {
@@ -70945,22 +70971,6 @@ Phaser.Tween.prototype = {
         {
             this.timeline[i].loadValues();
         }
-
-        this.manager.add(this);
-
-        this.isRunning = true;
-
-        if (index < 0 || index > this.timeline.length - 1)
-        {
-            index = 0;
-        }
-
-        this.current = index;
-
-        this.timeline[this.current].start();
-
-        return this;
-
     },
 
     /**
@@ -71896,6 +71906,10 @@ Phaser.TweenData.prototype = {
                     //  Parses relative end values with start as base (e.g.: +10, -3)
                     this.vEnd[property] = this.vStart[property] + parseFloat(this.vEnd[property]);
                 }
+                else if (typeof this.vEnd[property] === 'function')
+                {
+                    this.vEnd[property] = this.vEnd[property]();
+                }
 
                 this.parent.properties[property] = this.vEnd[property];
             }
@@ -71929,6 +71943,10 @@ Phaser.TweenData.prototype = {
             if (time >= this.startTime)
             {
                 this.isRunning = true;
+                if (this.parent._lazyValuesSet) {
+                    this.parent.populateTweenData();
+                }
+
             }
             else
             {

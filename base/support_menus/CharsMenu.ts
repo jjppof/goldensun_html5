@@ -304,8 +304,6 @@ export class CharsMenu {
     next_char(no_cursor?: boolean) {
         if (this.lines[this.current_line].length === 1 && this.lines.length === 1) return;
 
-        this.data.audio.play_se("menu_se", "menu_move");
-
         if (this.selected_index + 1 === this.lines[this.current_line].length) {
             if (this.current_line + 1 === this.lines.length) {
                 if (this.lines.length === 1) this.select_char(0, no_cursor);
@@ -318,8 +316,6 @@ export class CharsMenu {
 
     previous_char(no_cursor?: boolean) {
         if (this.lines[this.current_line].length === 1 && this.lines.length === 1) return;
-
-        this.data.audio.play_se("menu_se", "menu_move");
 
         if (this.selected_index - 1 < 0) {
             if (this.current_line - 1 < 0) {
@@ -338,8 +334,6 @@ export class CharsMenu {
         )
             return;
 
-        this.data.audio.play_se("menu_se", "menu_positive");
-
         const index = this.selected_index + this.current_line * MAX_PER_LINE;
         const this_char = this.data.info.party_data.members[index];
 
@@ -356,8 +350,6 @@ export class CharsMenu {
     swap_previous() {
         if (this.selected_index === 0 && this.current_line === 0) return;
 
-        this.data.audio.play_se("menu_se", "menu_positive");
-
         const index = this.selected_index + this.current_line * MAX_PER_LINE;
         const this_char = this.data.info.party_data.members[index];
 
@@ -372,36 +364,42 @@ export class CharsMenu {
     }
 
     grant_control(on_cancel: Function, on_select: Function, enable_swap?: boolean) {
-        const controls: {key: number; on_down: Function; on_up?: Function; params?: any}[] = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_char.bind(this)},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_char.bind(this)},
-            {key: this.data.gamepad.UP, on_down: this.previous_line.bind(this)},
-            {key: this.data.gamepad.DOWN, on_down: this.next_line.bind(this)},
+        const controls: {
+            key: number;
+            on_down: Function;
+            on_up?: Function;
+            params?: any;
+            sfx?: {down?: string; up?: string};
+        }[] = [
+            {key: this.data.gamepad.LEFT, on_down: this.previous_char.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.RIGHT, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.UP, on_down: this.previous_line.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.DOWN, on_down: this.next_line.bind(this), sfx: {down: "menu/move"}},
             {
                 key: this.data.gamepad.A,
                 on_down: () => {
                     if (on_select) {
-                        this.data.audio.play_se("menu_se", "menu_positive");
                         on_select();
                     }
                 },
                 params: {reset_control: true},
+                sfx: {down: "menu/positive"},
             },
             {
                 key: this.data.gamepad.B,
                 on_down: () => {
                     if (on_cancel) {
-                        this.data.audio.play_se("menu_se", "menu_negative");
                         on_cancel();
                     }
                 },
                 params: {reset_control: true},
+                sfx: {down: "menu/negative"},
             },
         ];
         if (enable_swap) {
             controls.push(
-                {key: this.data.gamepad.L, on_down: this.swap_previous.bind(this)},
-                {key: this.data.gamepad.R, on_down: this.swap_next.bind(this)}
+                {key: this.data.gamepad.L, on_down: this.swap_previous.bind(this), sfx: {down: "menu/positive"}},
+                {key: this.data.gamepad.R, on_down: this.swap_next.bind(this), sfx: {down: "menu/positive"}}
             );
         }
 

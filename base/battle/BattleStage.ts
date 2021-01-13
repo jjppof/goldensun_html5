@@ -6,6 +6,7 @@ import {GoldenSun} from "../GoldenSun";
 import {PlayerInfo} from "./Battle";
 import * as _ from "lodash";
 import {battle_actions, battle_positions, PlayerSprite} from "./PlayerSprite";
+import {BattleAnimation} from "./BattleAnimation";
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
@@ -396,11 +397,18 @@ export class BattleStage {
             promise_resolve = resolve;
         });
 
+        this.camera_angle.rad = range_360(this.camera_angle.rad);
+        const dest_angle = BattleAnimation.get_angle_by_direction(
+            this.camera_angle.rad,
+            DEFAULT_POS_ANGLE,
+            "closest",
+            true
+        );
         this.game.add
             .tween(this.camera_angle)
             .to(
                 {
-                    rad: DEFAULT_POS_ANGLE,
+                    rad: dest_angle,
                 },
                 300,
                 Phaser.Easing.Linear.None,
@@ -473,7 +481,7 @@ export class BattleStage {
                 }
 
                 const dest_x = target_sprite.x;
-                const dest_y = target_sprite.y - target_sprite.char_height - 5;
+                const dest_y = target_sprite.y - target_sprite.height;
 
                 if (tween_to_pos) {
                     this.game.add
@@ -522,7 +530,7 @@ export class BattleStage {
 
                 const target_sprite = group_info[target_index].sprite;
                 cursor_sprite.centerX = target_sprite.x;
-                cursor_sprite.y = target_sprite.y - target_sprite.char_height;
+                cursor_sprite.y = target_sprite.y - target_sprite.height;
             }
         });
     }
@@ -583,11 +591,20 @@ export class BattleStage {
                     this.choosing_targets = true;
                     this.change_target(0, false);
 
+                    //Sound for A key unavailable, using Menu Positive instead
                     let controls = [
-                        {key: this.data.gamepad.LEFT, on_down: this.next_target.bind(this)},
-                        {key: this.data.gamepad.RIGHT, on_down: this.previous_target.bind(this)},
-                        {key: this.data.gamepad.A, on_down: this.set_targets.bind(this)},
-                        {key: this.data.gamepad.B, on_down: this.choosing_targets_finished.bind(this, null)},
+                        {key: this.data.gamepad.LEFT, on_down: this.next_target.bind(this), sfx: {down: "menu/move"}},
+                        {
+                            key: this.data.gamepad.RIGHT,
+                            on_down: this.previous_target.bind(this),
+                            sfx: {down: "menu/move"},
+                        },
+                        {key: this.data.gamepad.A, on_down: this.set_targets.bind(this), sfx: {down: "menu/positive"}},
+                        {
+                            key: this.data.gamepad.B,
+                            on_down: this.choosing_targets_finished.bind(this, null),
+                            sfx: {down: "menu/negative"},
+                        },
                     ];
 
                     this.data.control_manager.set_control(controls, {loop_configs: {horizontal: true}});

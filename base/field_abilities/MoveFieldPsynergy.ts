@@ -251,7 +251,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                 }
                 break;
         }
-        this.data.audio.play_se("psynergy_se", "psynergy_1");
+        this.data.audio.play_se("psynergy/1");
         this.game.add
             .tween(this.hand_sprite)
             .to({centerX: translate_x, centerY: translate_y}, 200, Phaser.Easing.Linear.None, true)
@@ -280,7 +280,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
 
     finish_hand() {
         this.data.control_manager.reset();
-        this.data.audio.play_se("psynergy_se", "psynergy_4");
+        this.data.audio.play_se("psynergy/4");
         let flip_timer = this.game.time.create(false);
         let fake_hand_scale = {x: 1};
         flip_timer.loop(40, () => {
@@ -359,7 +359,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
     }
 
     start_final_emitter(x, y) {
-        this.data.audio.play_se("psynergy_se", "psynergy_6");
+        this.data.audio.play_se("psynergy/6");
         this.final_emitter.x = x;
         this.final_emitter.y = y;
         const lifetime = Phaser.Timer.QUARTER;

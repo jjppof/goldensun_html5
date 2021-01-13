@@ -7,7 +7,7 @@
     }],
     "stage_angle_sequence": [{
         "start_delay": 0,
-        "to": 5.752255,
+        "to": "cast_position",
         "is_absolute": true,
         "tween": "Exponential.InOut",
         "duration": 500,

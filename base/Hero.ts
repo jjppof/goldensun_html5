@@ -300,7 +300,7 @@ export class Hero extends ControllableChar {
     update(map: Map) {
         this.check_control_inputs(); //check which arrow keys are being pressed
         this.set_speed_factors(true); //sets the direction of the movement
-        this.set_current_action(); //chooses which sprite the hero shall assume
+        this.set_current_action(true); //chooses which sprite the hero shall assume
         this.calculate_speed(); //calculates the final speed
         this.collision_dealer(map); //check if the hero is colliding and its consequences
         this.set_action(true); //sets the hero sprite

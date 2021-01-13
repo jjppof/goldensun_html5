@@ -101,7 +101,7 @@
     }],
     "stage_angle_sequence": [{
         "start_delay": 0,
-        "to": 5.752255,
+        "to": "cast_position",
         "is_absolute": true,
         "tween": "Exponential.InOut",
         "duration": 500,
@@ -139,7 +139,7 @@
         "start_delay": [1900, 1950, 2000, 2050, 2100, 2150, 2200, 2250, 2300, 2350, 2400, 2450, 2500, 2550, 2600, 2650],
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
         "reverse": false,
-        "frame_rate": 10,
+        "frame_rate": 13,
         "repeat": false,
         "wait": true,
         "hide_on_complete": true
@@ -158,6 +158,5 @@
         "start_delay": 0,
         "mode": "screen",
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    }],
-    "is_party_animation": true
+    }]
 }

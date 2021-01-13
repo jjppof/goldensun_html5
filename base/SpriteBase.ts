@@ -131,6 +131,6 @@ export class SpriteBase {
     }
 
     getSpriteAction(sprite) {
-        return sprite.key.split("_")[1];
+        return sprite.key.split("_").reverse()[0];
     }
 }

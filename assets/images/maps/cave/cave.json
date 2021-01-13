@@ -943,8 +943,8 @@
  "properties":
     {
      "event_01":"{\n\"type\": \"teleport\",\n\"x_target\": 38.5,\n\"y_target\": 25,\n\"target\": \"cave\",\n\"activation_directions\": \"up\",\n\"x\": 26,\n\"y\": 4,\n\"advance_effect\": false,\n\"dest_collision_layer\": 1,\n\"activation_collision_layers\": [0]\n}",
-     "event_02":"{\n\"type\": \"jump\",\n\"x\": 45,\n\"y\": 18,\n\"activation_directions\": [\"right\"],\n\"activation_collision_layers\": [1],\n\"initially_active\": false\n}",
-     "event_03":"{\n\"type\": \"jump\",\n\"x\": 47,\n\"y\": 18,\n\"activation_directions\": [\"left\"],\n\"activation_collision_layers\": [1],\n\"initially_active\": false\n}",
+     "event_02":"{\n\"type\": \"jump\",\n\"x\": 45,\n\"y\": 18,\n\"activation_directions\": [\"right\"],\n\"activation_collision_layers\": [1],\n\"active\": false\n}",
+     "event_03":"{\n\"type\": \"jump\",\n\"x\": 47,\n\"y\": 18,\n\"activation_directions\": [\"left\"],\n\"activation_collision_layers\": [1],\n\"active\": false\n}",
      "event_04":"{\n\"type\": \"teleport\",\n\"x_target\": 26,\n\"y_target\": 5,\n\"target\": \"cave\",\n\"activation_directions\": \"down\",\n\"x\": 39,\n\"y\": 26,\n\"advance_effect\": false,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": [1]\n}",
      "event_05":"{\n\"type\": \"teleport\",\n\"x_target\": 26,\n\"y_target\": 5,\n\"target\": \"cave\",\n\"activation_directions\": \"down\",\n\"x\": 38,\n\"y\": 26,\n\"advance_effect\": false,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": [1]\n}",
      "event_06":"{\n\"type\": \"slider\",\n\"x_target\": 51,\n\"y_target\": 19,\n\"activation_directions\": \"down\",\n\"x\": 51,\n\"y\": 16,\n\"dest_collision_layer\": 1,\n\"activation_collision_layers\": [1]\n}",

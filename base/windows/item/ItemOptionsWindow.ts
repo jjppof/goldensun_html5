@@ -417,13 +417,19 @@ export class ItemOptionsWindow {
 
         this.choose_position(vertical, horizontal);
 
+        //Missing sound for item removal
+        //Missing check for item use and item remove, and using appropriate sound
         let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_horizontal.bind(this)},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_horizontal.bind(this)},
-            {key: this.data.gamepad.UP, on_down: this.next_vertical.bind(this)},
-            {key: this.data.gamepad.DOWN, on_down: this.previous_vertical.bind(this)},
-            {key: this.data.gamepad.A, on_down: this.on_choose.bind(this)},
-            {key: this.data.gamepad.B, on_down: this.close.bind(this, this.close_callback)},
+            {key: this.data.gamepad.LEFT, on_down: this.previous_horizontal.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.RIGHT, on_down: this.next_horizontal.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.UP, on_down: this.next_vertical.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.DOWN, on_down: this.previous_vertical.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.A, on_down: this.on_choose.bind(this), sfx: {down: "menu/positive"}},
+            {
+                key: this.data.gamepad.B,
+                on_down: this.close.bind(this, this.close_callback),
+                sfx: {down: "menu/negative"},
+            },
         ];
 
         this.data.control_manager.set_control(controls, {loop_configs: {vertical: true, horizontal: true}});

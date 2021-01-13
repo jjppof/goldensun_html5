@@ -97,7 +97,7 @@ export class DialogManager {
     }
 
     //Calls the next dialog window. If the dialog is finished, this function passes true to the callback.
-    next(callback, custom_pos, custom_avatar_pos) {
+    next(callback, custom_pos?, custom_avatar_pos?) {
         if (this.avatar_window) {
             this.avatar_window.destroy(false);
             this.avatar_window = null;
@@ -184,7 +184,7 @@ export class DialogManager {
 
     //Receives a text string and mount the the dialog sections that will go to each window of the dialog.
     //Optionally, also receives an initial avatar and the hero talking direction
-    set_dialog(text, avatar, hero_direction) {
+    set_dialog(text, avatar?, hero_direction?) {
         this.set_avatar(avatar);
         this.set_hero_direction(hero_direction);
         const max_efective_width =

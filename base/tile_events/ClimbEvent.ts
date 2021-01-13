@@ -1,12 +1,13 @@
 import {base_actions, directions, reverse_directions} from "../utils";
-import {JumpEvent} from "./JumpEvent";
 import {TileEvent, event_types} from "./TileEvent";
+import {JumpEvent} from "./JumpEvent";
 import * as numbers from "../magic_numbers";
 
 export class ClimbEvent extends TileEvent {
     public change_to_collision_layer: number;
     public is_set: boolean;
     public climbing_only: boolean;
+    public current_activation_direction: directions;
 
     constructor(
         game,
@@ -34,22 +35,22 @@ export class ClimbEvent extends TileEvent {
             active,
             origin_interactable_object
         );
-        this.change_to_collision_layer = change_to_collision_layer;
+        this.change_to_collision_layer = change_to_collision_layer === undefined ? null : change_to_collision_layer;
         this.is_set = is_set === undefined ? true : is_set;
         this.climbing_only = climbing_only === undefined ? false : climbing_only;
     }
 
-    fire(activation_direction) {
+    fire() {
         if (!this.data.hero.stop_by_colliding || !this.check_position() || !this.data.hero_movement_allowed()) {
             return;
         }
         if (!this.data.hero.climbing && !this.climbing_only) {
-            this.start_climbing(activation_direction);
+            this.start_climbing(this.current_activation_direction);
         } else if (
             (this.data.hero.climbing && !this.climbing_only) ||
             (this.data.hero.climbing && this.climbing_only)
         ) {
-            this.finish_climbing(activation_direction);
+            this.finish_climbing(this.current_activation_direction);
         }
     }
 

@@ -162,7 +162,7 @@ export class FieldAbilities {
         this.field_psynergy_window.open(this.ability_key_name);
 
         this.controllable_char.casting_psynergy = true;
-        this.data.audio.play_se("psynergy_se", "psynergy_4");
+        this.data.audio.play_se("psynergy/4");
         this.game.physics.p2.pause();
         this.controllable_char.stop_char(false);
 

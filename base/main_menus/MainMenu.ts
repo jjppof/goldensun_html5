@@ -122,7 +122,7 @@ export function initialize_menu(game: Phaser.Game, data: GoldenSun) {
             data.menu_open = true;
             data.hero.stop_char();
             data.hero.update_shadow();
-            data.audio.play_se("menu_se", "menu_move");
+            data.audio.play_se("menu/move");
             data.main_menu.open_menu();
         }
     };

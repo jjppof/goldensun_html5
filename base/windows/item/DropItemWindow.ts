@@ -144,10 +144,10 @@ export class DropItemWindow {
         }, false);
 
         let controls = [
-            {key: this.data.gamepad.UP, on_down: this.change_answer.bind(this)},
-            {key: this.data.gamepad.DOWN, on_down: this.change_answer.bind(this)},
-            {key: this.data.gamepad.A, on_down: this.on_drop.bind(this)},
-            {key: this.data.gamepad.B, on_down: this.close.bind(this)},
+            {key: this.data.gamepad.UP, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.DOWN, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
+            {key: this.data.gamepad.A, on_down: this.on_drop.bind(this), sfx: {down: "menu/positive"}},
+            {key: this.data.gamepad.B, on_down: this.close.bind(this), sfx: {down: "menu/negative"}},
         ];
         this.data.control_manager.set_control(controls, {loop_configs: {vertical: true}});
     }

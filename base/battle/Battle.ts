@@ -11,7 +11,7 @@ import {effect_types, Effect, effect_usages, effect_names, effect_msg} from "../
 import {variation, ordered_elements, element_names, base_actions} from "../utils";
 import {djinn_status, Djinn} from "../Djinn";
 import {ItemSlot, MainChar} from "../MainChar";
-import {BattleAnimationManager} from "./BattleAnimationManager";
+import {animation_availability, BattleAnimationManager} from "./BattleAnimationManager";
 import {GoldenSun} from "../GoldenSun";
 import * as _ from "lodash";
 import {Target} from "../battle/BattleStage";
@@ -79,6 +79,7 @@ export class Battle {
     public allies_defeated: boolean;
     public enemies_defeated: boolean;
     public battle_finishing: boolean;
+    public can_escape: boolean;
 
     public advance_log_resolve: Function;
     public advance_log_control_key: number;
@@ -103,6 +104,7 @@ export class Battle {
         });
 
         const enemies_party_data = this.data.dbs.enemies_parties_db[enemy_party_key];
+        this.can_escape = enemies_party_data.can_escape;
         this.enemies_party_name = enemies_party_data.name;
         this.enemies_info = [];
         this.this_enemies_list = {};
@@ -148,7 +150,8 @@ export class Battle {
             this.game,
             this.data,
             this.on_abilities_choose.bind(this),
-            this.choose_targets.bind(this)
+            this.choose_targets.bind(this),
+            this.can_escape
         );
 
         this.target_window = new ChoosingTargetWindow(this.game, this.data);
@@ -261,7 +264,7 @@ export class Battle {
         this.battle_log.add(this.enemies_party_name + " appeared!");
         this.battle_stage.initialize_stage(() => {
             this.allies_map_sprite = _.mapValues(_.keyBy(this.allies_info, "instance.key_name"), info => info.sprite);
-            this.enemies_map_sprite = _.mapValues(_.keyBy(this.enemies_info, "instance.key_name"), info => info.sprite);
+            this.enemies_map_sprite = _.mapValues(_.keyBy(this.enemies_info, "battle_key"), info => info.sprite);
 
             this.data.control_manager.simple_input(() => {
                 this.battle_log.clear();
@@ -310,6 +313,7 @@ export class Battle {
                     i > 0
                 );
                 this.allies_abilities[char_key][i].caster = this_char;
+                this.allies_abilities[char_key][i].caster_battle_key = char_key;
             }
         }
 
@@ -326,6 +330,7 @@ export class Battle {
                     priority_move
                 );
                 this.enemies_abilities[battle_key][i].caster = this_enemy;
+                this.enemies_abilities[battle_key][i].caster_battle_key = battle_key;
             }
         }
 
@@ -346,7 +351,12 @@ export class Battle {
             }
 
             action.battle_animation_key = battle_animation_key;
-            await this.animation_manager.load_animation(battle_animation_key);
+            const mirrored_animation = ability.can_be_mirrored && action.caster.fighter_type === fighter_types.ENEMY;
+            await this.animation_manager.load_animation(
+                battle_animation_key,
+                action.caster_battle_key,
+                mirrored_animation
+            );
         }
         this.battle_phase = battle_phases.COMBAT;
         this.check_phases();
@@ -463,6 +473,15 @@ export class Battle {
             return;
         }
 
+        const djinn_name = action.djinn_key_name ? this.data.info.djinni_list[action.djinn_key_name].name : undefined;
+        await this.battle_log.add_ability(
+            action.caster,
+            ability,
+            item_name,
+            djinn_name,
+            action.item_slot !== undefined
+        );
+
         if (
             action.caster.has_temporary_status(temporary_status.SEAL) &&
             ability.ability_category === ability_categories.PSYNERGY
@@ -483,15 +502,6 @@ export class Battle {
         } else {
             action.caster.current_pp -= ability.pp_cost;
         }
-
-        const djinn_name = action.djinn_key_name ? this.data.info.djinni_list[action.djinn_key_name].name : undefined;
-        await this.battle_log.add_ability(
-            action.caster,
-            ability,
-            item_name,
-            djinn_name,
-            action.item_slot !== undefined
-        );
 
         if (ability.ability_category === ability_categories.DJINN) {
             //change djinn status
@@ -547,12 +557,25 @@ export class Battle {
             await this.wait_for_key();
         }
 
-        if (this.animation_manager.animation_available(action.battle_animation_key)) {
-            const caster_sprite =
-                action.caster.fighter_type === fighter_types.ALLY
-                    ? this.allies_map_sprite[action.caster.key_name]
-                    : this.enemies_map_sprite[action.caster.key_name];
-            const target_sprites = action.targets.flatMap(info => (info.magnitude ? [info.target.sprite] : []));
+        const anim_availability = this.animation_manager.animation_available(
+            action.battle_animation_key,
+            action.caster_battle_key
+        );
+        if (anim_availability === animation_availability.AVAILABLE) {
+            const caster_targets_sprites = {
+                caster:
+                    action.caster.fighter_type === fighter_types.ALLY
+                        ? this.allies_map_sprite
+                        : this.enemies_map_sprite,
+                targets:
+                    action.caster.fighter_type === fighter_types.ALLY
+                        ? this.enemies_map_sprite
+                        : this.allies_map_sprite,
+            };
+            const caster_sprite = caster_targets_sprites.caster[action.caster_battle_key];
+            const target_sprites = action.targets.flatMap(info => {
+                return info.magnitude ? [caster_targets_sprites.targets[info.target.battle_key]] : [];
+            });
             const group_caster =
                 action.caster.fighter_type === fighter_types.ALLY
                     ? this.battle_stage.group_allies
@@ -563,6 +586,7 @@ export class Battle {
                     : this.battle_stage.group_allies;
             await this.animation_manager.play(
                 action.battle_animation_key,
+                action.caster_battle_key,
                 caster_sprite,
                 target_sprites,
                 group_caster,
@@ -570,7 +594,7 @@ export class Battle {
                 this.battle_stage
             );
             this.battle_stage.prevent_camera_angle_overflow();
-        } else {
+        } else if (anim_availability === animation_availability.NOT_AVAILABLE) {
             await this.battle_log.add(`Animation for ${ability.name} not available...`);
             await this.wait_for_key();
         }
@@ -1102,12 +1126,38 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 }
             }
         }
+        //Check if allies can recover HP or PP at the turn's end and show it in the log
+        await this.apply_battle_recovery(this.allies_info, true);
+        await this.apply_battle_recovery(this.allies_info, false);
+        //Check if enemies can recover HP or PP at the turn's end and show it in the log
+        await this.apply_battle_recovery(this.enemies_info, true);
+        await this.apply_battle_recovery(this.enemies_info, false);
 
         this.battle_log.clear();
         this.battle_phase = battle_phases.MENU;
         this.check_phases();
     }
 
+    async apply_battle_recovery(party: PlayerInfo[], is_hp_recovery: boolean) {
+        let recovery = "";
+        for (let i = 0; i < party.length; i++) {
+            let player = party[i];
+            let recovery_stat = is_hp_recovery ? player.instance.hp_recovery : player.instance.pp_recovery;
+            let current_stat = is_hp_recovery ? player.instance.current_hp : player.instance.current_pp;
+            let max_stat = is_hp_recovery ? player.instance.max_hp : player.instance.max_pp;
+            let print_stat = is_hp_recovery ? "HP" : "PP";
+            if (recovery_stat !== 0) {
+                current_stat = _.clamp(current_stat + recovery_stat, 0, max_stat);
+                if (recovery_stat > 0) {
+                    recovery = "recovers";
+                } else {
+                    recovery = "loses";
+                }
+                this.battle_log.add(`${player.instance.name} ${recovery} ${Math.abs(recovery_stat)} ${print_stat}!`);
+                await this.wait_for_key();
+            }
+        }
+    }
     // Everyone gets equal experience with no division, but:
     // - Characters who do not participate get half;
     // - Downed characters get none.

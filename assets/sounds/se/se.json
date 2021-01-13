@@ -1,71 +1,71 @@
 {
-    "menu_se": {
+    "menu": {
         "audio": "assets/sounds/se/menu.ogg",
         "json": {
             "spritemap": {
-                "menu_move": {
+                "move": {
                     "start": 0.01,
                     "end": 0.149
                 },
-                "menu_negative": {
+                "negative": {
                     "start": 0.149,
                     "end": 0.76
                 },
-                "menu_positive": {
+                "positive": {
                     "start": 0.76,
                     "end": 1.44
                 },
-                "menu_positive_2": {
+                "positive_2": {
                     "start": 1.57,
                     "end": 2.407
                 },
-                "menu_positive_3": {
+                "positive_3": {
                     "start": 2.407,
                     "end": 3.199
                 },
-                "menu_positive_4": {
+                "positive_4": {
                     "start": 3.199,
                     "end": 3.9
                 }
             }
         }
     },
-    "psynergy_se": {
+    "psynergy": {
         "audio": "assets/sounds/se/psynergy.ogg",
         "json": {
             "spritemap": {
-                "psynergy_1": {
+                "1": {
                     "start": 0,
                     "end": 0.995
                 },
-                "psynergy_2": {
+                "2": {
                     "start": 0.995,
                     "end": 1.997
                 },
-                "psynergy_3": {
+                "3": {
                     "start": 1.997,
                     "end": 3.971
                 },
-                "psynergy_4": {
+                "4": {
                     "start": 3.971,
                     "end": 5.13
                 },
-                "psynergy_5": {
+                "5": {
                     "start": 5.13,
                     "end": 5.709
                 },
-                "psynergy_6": {
+                "6": {
                     "start": 5.709,
                     "end": 6.309
                 },
-                "psynergy_7": {
+                "7": {
                     "start": 6.313,
                     "end": 8.144
                 }
             }
         }
     },
-    "actions_se": {
+    "actions": {
         "audio": "assets/sounds/se/actions.ogg",
         "json": {
             "spritemap": {
@@ -84,7 +84,7 @@
             }
         }
     },
-    "misc_se": {
+    "misc": {
         "audio": "assets/sounds/se/misc.ogg",
         "json": {
             "spritemap": {
@@ -99,7 +99,7 @@
             }
         }
     },
-    "battle_se": {
+    "battle": {
         "audio": "assets/sounds/se/battle.ogg",
         "json": {
             "spritemap": {

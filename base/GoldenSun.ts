@@ -3,7 +3,6 @@ import {TileEvent} from "./tile_events/TileEvent";
 import {Debug} from "./debug/Debug";
 import {load_all} from "./initializers/assets_loader";
 import {Collision} from "./Collision";
-import {directions} from "./utils";
 import {Hero} from "./Hero";
 import {TileEventManager} from "./tile_events/TileEventManager";
 import {GameEventManager} from "./game_events/GameEventManager";
@@ -18,6 +17,7 @@ import {ControlManager} from "./utils/ControlManager";
 import {CursorManager} from "./utils/CursorManager";
 import {Gamepad} from "./Gamepad";
 import {Audio} from "./Audio";
+import {Storage} from "./Storage";
 
 export class GoldenSun {
     public game: Phaser.Game = null;
@@ -31,7 +31,6 @@ export class GoldenSun {
     public inn_open: boolean = false;
     public in_battle: boolean = false;
     public created: boolean = false;
-    public force_stop_movement: boolean = false;
 
     //game objects
     public hero: Hero = null; //class responsible for the control of the main hero
@@ -45,6 +44,7 @@ export class GoldenSun {
     public game_event_manager: GameEventManager = null; //class responsible for the game events
     public battle_instance: Battle = null; //class responsible for a battle
     public audio: Audio = null; //class responsible for controlling the game audio engine
+    public storage: Storage = null; //class responsible for storing the game custom states
 
     //managers
     public control_manager: ControlManager = null;
@@ -101,10 +101,18 @@ export class GoldenSun {
         //load some json files from assets folder
         load_databases(this.game, this.dbs);
 
+        //init audio engine
+        this.audio = new Audio(this.game);
+        this.game.sound.mute = true;
+
+        //init storage
+        this.storage = new Storage(this);
+        this.storage.init();
+
         //initialize managers
         this.gamepad = new Gamepad(this);
         this.cursor_manager = new CursorManager(this.game);
-        this.control_manager = new ControlManager(this.game, this.gamepad);
+        this.control_manager = new ControlManager(this.game, this.gamepad, this.audio);
 
         this.scale_factor = this.dbs.init_db.initial_scale_factor;
 
@@ -120,12 +128,12 @@ export class GoldenSun {
         this.npc_group = this.game.add.group();
         this.overlayer_group = this.game.add.group();
 
-        //init audio engine
-        this.audio = new Audio(this.game, this);
-        this.game.sound.mute = true;
-
         //use the data loaded from json files to initialize some data
         await initialize_game_data(this.game, this);
+
+        //initializes the event managers
+        this.tile_event_manager = new TileEventManager(this.game, this);
+        this.game_event_manager = new GameEventManager(this.game, this);
 
         //configs map layers: creates sprites, interactable objects and npcs, lists events and sets the map layers
         this.map = await this.info.maps_list[this.dbs.init_db.map_key_name].mount_map(this.dbs.init_db.map_z_index);
@@ -139,7 +147,7 @@ export class GoldenSun {
             this.dbs.init_db.x_tile_position,
             this.dbs.init_db.y_tile_position,
             this.dbs.init_db.initial_action,
-            directions[this.dbs.init_db.initial_direction],
+            this.dbs.init_db.initial_direction,
             this.info.main_char_list[hero_key_name].walk_speed,
             this.info.main_char_list[hero_key_name].dash_speed,
             this.info.main_char_list[hero_key_name].climb_speed
@@ -169,10 +177,6 @@ export class GoldenSun {
         this.map.config_all_bodies(this.collision, this.map.collision_layer);
         this.collision.config_collisions(this.map, this.map.collision_layer, this.npc_group);
         this.game.physics.p2.updateBoundsCollisionGroup();
-
-        //initializes the event managers
-        this.tile_event_manager = new TileEventManager(this.game, this, this.hero, this.collision);
-        this.game_event_manager = new GameEventManager(this.game, this);
 
         this.initialize_utils_controls();
 
@@ -249,24 +253,21 @@ export class GoldenSun {
             {
                 key: this.gamepad.PSY1,
                 on_down: () => {
-                    if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open || this.inn_open)
-                        return;
+                    if (!this.hero_movement_allowed(false)) return;
                     this.info.field_abilities_list.move.cast(this.hero, this.dbs.init_db.initial_shortcuts.move);
                 },
             },
             {
                 key: this.gamepad.PSY2,
                 on_down: () => {
-                    if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open || this.inn_open)
-                        return;
+                    if (!this.hero_movement_allowed(false)) return;
                     this.info.field_abilities_list.frost.cast(this.hero, this.dbs.init_db.initial_shortcuts.frost);
                 },
             },
             {
                 key: this.gamepad.PSY3,
                 on_down: () => {
-                    if (this.hero.in_action() || this.menu_open || this.in_battle || this.shop_open || this.inn_open)
-                        return;
+                    if (!this.hero_movement_allowed(false)) return;
                     this.info.field_abilities_list.growth.cast(this.hero, this.dbs.init_db.initial_shortcuts.growth);
                 },
             },
@@ -282,7 +283,7 @@ export class GoldenSun {
             this.inn_open ||
             this.in_battle ||
             this.tile_event_manager.on_event ||
-            this.force_stop_movement
+            this.game_event_manager.on_event
         );
     }
 
@@ -304,7 +305,11 @@ export class GoldenSun {
             this.hero.update(this.map); //update hero position/velocity/sprite
             this.map.update(); //update map and its objects position/velocity/sprite
         } else {
-            this.hero.stop_char(false);
+            if (this.game_event_manager.on_event) {
+                this.game_event_manager.update();
+            } else {
+                this.hero.stop_char(false);
+            }
             if (this.menu_open && this.main_menu.is_active) {
                 this.main_menu.update_position();
             } else if (this.shop_open && this.shop_menu.horizontal_menu.menu_active) {

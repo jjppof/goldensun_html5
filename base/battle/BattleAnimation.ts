@@ -5,6 +5,15 @@ import {CameraAngle, DEFAULT_POS_ANGLE} from "./BattleStage";
 import * as _ from "lodash";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
 
+export const CAST_STAGE_POSITION = 0.5242024;
+export const MIRRORED_CAST_STAGE_POSITION = -0.7151327;
+
+enum positions {
+    OVER = "over",
+    BETWEEN = "between",
+    BEHIND = "behind",
+}
+
 type DefaultAttr = {
     start_delay: number | number[];
     to: string | number | number[];
@@ -15,7 +24,7 @@ type DefaultAttr = {
     yoyo?: boolean;
     shift?: number | number[];
     force_stage_update?: boolean;
-    direction?: boolean;
+    direction?: string;
 };
 
 type AdvParticleValue =
@@ -78,7 +87,7 @@ type Emitter = {
     render_type: "pixel" | "sprite";
     x: number | string;
     y: number | string;
-    position: "behind" | "between" | "over";
+    position: positions;
     shift_x: number;
     shift_y: number;
     total: number;
@@ -190,7 +199,6 @@ export class BattleAnimation {
         emitters: Emitter[];
         emission_finish: number;
     }[];
-    public is_party_animation: boolean;
     public running: boolean;
     public sprites: Phaser.Sprite[];
     public sprites_prev_properties: {
@@ -209,6 +217,11 @@ export class BattleAnimation {
     public super_group: Phaser.Group;
     public back_group: Phaser.Group;
     public front_group: Phaser.Group;
+    public ability_sprites_groups: {
+        [positions.BEHIND]: Phaser.Group;
+        [positions.BETWEEN]: Phaser.Group;
+        [positions.OVER]: Phaser.Group;
+    };
     public stage_camera: CameraAngle;
     public trails_objs: Phaser.Image[];
     public trails_bmps: Phaser.BitmapData[];
@@ -218,6 +231,7 @@ export class BattleAnimation {
     public sprites_filters: any[];
     public promises: Promise<any>[];
     public render_callbacks: {[callback_key: string]: Function};
+    public mirrored: boolean;
 
     //tween type can be 'initial' for first position
     //sprite_index: "targets" is the target, "caster" is the caster, "background" is the background sprite, 0...n is the sprites_key_names index
@@ -250,7 +264,7 @@ export class BattleAnimation {
         set_frame_sequence, //{start_delay: value, frame: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
         particles_sequence,
-        is_party_animation
+        mirrored
     ) {
         this.game = game;
         this.data = data;
@@ -278,9 +292,14 @@ export class BattleAnimation {
         this.set_frame_sequence = set_frame_sequence === undefined ? [] : set_frame_sequence;
         this.blend_mode_sequence = blend_mode_sequence === undefined ? [] : blend_mode_sequence;
         this.particles_sequence = particles_sequence === undefined ? [] : particles_sequence;
-        this.is_party_animation = is_party_animation;
         this.running = false;
+        this.mirrored = mirrored;
         this.render_callbacks = {};
+        this.ability_sprites_groups = {
+            [positions.BEHIND]: this.game.add.group(),
+            [positions.BETWEEN]: this.game.add.group(),
+            [positions.OVER]: this.game.add.group(),
+        };
     }
 
     initialize(
@@ -314,6 +333,15 @@ export class BattleAnimation {
             this.back_group = group_enemy;
             this.front_group = group_caster;
         }
+        super_group.addChild(this.ability_sprites_groups.over);
+        super_group.addChildAt(this.ability_sprites_groups.between, super_group.getChildIndex(this.front_group));
+        super_group.addChildAt(this.ability_sprites_groups.behind, super_group.getChildIndex(this.back_group));
+        if (this.mirrored) {
+            Object.values(positions).forEach(position => {
+                this.ability_sprites_groups[position].scale.x = -1;
+                this.ability_sprites_groups[position].x += numbers.GAME_WIDTH;
+            });
+        }
         for (let i = 0; i < this.sprites_keys.length; ++i) {
             const sprite_info = this.sprites_keys[i];
             let trail_image: Phaser.Image;
@@ -325,27 +353,13 @@ export class BattleAnimation {
                 trail_image.blendMode = Phaser.blendModes.SCREEN;
                 this.trails_bmps.push(trail_bitmap_data);
                 this.trails_objs.push(trail_image);
+                this.ability_sprites_groups[sprite_info.position].addChild(trail_image);
             }
             if (!sprite_info.per_target) {
                 const count = sprite_info.count ? sprite_info.count : 1;
                 for (let j = 0; j < count; ++j) {
                     const psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_key);
-                    if (sprite_info.position === "over") {
-                        if (trail_image) {
-                            super_group.addChild(trail_image);
-                        }
-                        super_group.addChild(psy_sprite);
-                    } else if (sprite_info.position === "between") {
-                        if (trail_image) {
-                            super_group.addChildAt(trail_image, super_group.getChildIndex(this.front_group));
-                        }
-                        super_group.addChildAt(psy_sprite, super_group.getChildIndex(this.front_group));
-                    } else if (sprite_info.position === "behind") {
-                        if (trail_image) {
-                            super_group.addChildAt(trail_image, super_group.getChildIndex(this.back_group));
-                        }
-                        super_group.addChildAt(psy_sprite, super_group.getChildIndex(this.back_group));
-                    }
+                    this.ability_sprites_groups[sprite_info.position].addChild(psy_sprite);
                     const frames = Phaser.Animation.generateFrameNames(
                         sprite_info.key_name + "/",
                         0,
@@ -430,6 +444,9 @@ export class BattleAnimation {
             this.trails_bmps.forEach(obj => {
                 obj.destroy();
             });
+            for (let position in this.ability_sprites_groups) {
+                this.ability_sprites_groups[position].destroy(true);
+            }
             this.running = false;
             if (finish_callback !== undefined) {
                 finish_callback();
@@ -500,49 +517,58 @@ export class BattleAnimation {
             let sprites = this.get_sprites(seq, inner_property !== undefined ? target_property : undefined);
             let promises_set = false;
             sprites.forEach((this_sprite, index) => {
-                let uniq_key;
-                if (this_sprite.data && this_sprite.data.hasOwnProperty("battle_index")) {
-                    uniq_key = this_sprite.key + "_" + this_sprite.data.battle_index;
-                } else {
-                    uniq_key = this_sprite.key + "_" + index; //potential bug
-                }
-                if (this.sprites_prev_properties[uniq_key] === undefined) {
-                    this.sprites_prev_properties[uniq_key] = {};
-                }
-                if (this.sprites_prev_properties[uniq_key][property_to_set] === undefined) {
-                    this.sprites_prev_properties[uniq_key][property_to_set] = this_sprite[property_to_set];
-                }
-                const seq_to = Array.isArray(seq.to) ? seq.to[index] : seq.to;
-                let to_value = seq_to;
-                if (seq_to === "target") {
-                    const shift = Array.isArray(seq.shift) ? seq.shift[index] : seq.shift;
-                    to_value =
-                        this.targets_sprites[this.targets_sprites.length >> 1][property_to_set] +
-                        (shift === undefined ? 0 : shift);
-                }
-                if (["rotation", "hue_adjust"].includes(property_to_set)) {
-                    this.sprites_prev_properties[uniq_key][property_to_set] = range_360(
-                        this.sprites_prev_properties[uniq_key][property_to_set]
-                    );
-                    this_sprite[property_to_set] = this.sprites_prev_properties[uniq_key][property_to_set];
-                    to_value = BattleAnimation.get_angle_by_direction(
-                        this.sprites_prev_properties[uniq_key][property_to_set],
-                        seq_to,
-                        seq.direction,
-                        property_to_set === "rotation"
-                    );
-                    if (
-                        Math.abs(this.sprites_prev_properties[uniq_key][property_to_set] - to_value) > numbers.degree360
-                    ) {
-                        to_value -= Math.sign(to_value) * numbers.degree360;
+                const get_to_value = () => {
+                    let uniq_key;
+                    if (this_sprite.data && this_sprite.data.hasOwnProperty("battle_index")) {
+                        uniq_key = this_sprite.key + "_" + this_sprite.data.battle_index;
+                    } else {
+                        uniq_key = this_sprite.key + "_" + index; //potential bug
                     }
-                }
-                to_value = seq.is_absolute
-                    ? to_value
-                    : this.sprites_prev_properties[uniq_key][property_to_set] + seq_to;
-                this.sprites_prev_properties[uniq_key][property_to_set] = to_value;
+                    if (this.sprites_prev_properties[uniq_key] === undefined) {
+                        this.sprites_prev_properties[uniq_key] = {};
+                    }
+                    if (this.sprites_prev_properties[uniq_key][property_to_set] === undefined) {
+                        this.sprites_prev_properties[uniq_key][property_to_set] = this_sprite[property_to_set];
+                    }
+                    const seq_to = Array.isArray(seq.to) ? seq.to[index] : seq.to;
+                    let to_value = seq_to;
+                    if (["target", "caster"].includes(seq_to)) {
+                        let shift = Array.isArray(seq.shift) ? seq.shift[index] : seq.shift;
+                        let player_sprite = this.caster_sprite;
+                        if (seq_to === "target") {
+                            player_sprite = this.targets_sprites[this.targets_sprites.length >> 1];
+                        }
+                        to_value = player_sprite[property_to_set] + (shift === undefined ? 0 : shift);
+                        if (this.mirrored && property_to_set === "x") {
+                            to_value = numbers.GAME_WIDTH - to_value;
+                        }
+                    }
+                    if (["rotation", "hue_adjust"].includes(property_to_set)) {
+                        this.sprites_prev_properties[uniq_key][property_to_set] = range_360(
+                            this.sprites_prev_properties[uniq_key][property_to_set]
+                        );
+                        this_sprite[property_to_set] = this.sprites_prev_properties[uniq_key][property_to_set];
+                        to_value = BattleAnimation.get_angle_by_direction(
+                            this.sprites_prev_properties[uniq_key][property_to_set],
+                            seq_to,
+                            seq.direction,
+                            property_to_set === "rotation"
+                        );
+                        if (
+                            Math.abs(this.sprites_prev_properties[uniq_key][property_to_set] - to_value) >
+                            numbers.degree360
+                        ) {
+                            to_value -= Math.sign(to_value) * numbers.degree360;
+                        }
+                    }
+                    to_value = seq.is_absolute
+                        ? to_value
+                        : this.sprites_prev_properties[uniq_key][property_to_set] + seq_to;
+                    this.sprites_prev_properties[uniq_key][property_to_set] = to_value;
+                    return to_value;
+                };
                 if (seq.tween === "initial") {
-                    this_sprite[property_to_set] = to_value;
+                    this_sprite[property_to_set] = get_to_value();
                 } else {
                     if (!(seq.sprite_index in chained_tweens)) chained_tweens[seq.sprite_index] = {[index]: []};
                     if (!(index in chained_tweens[seq.sprite_index])) chained_tweens[seq.sprite_index][index] = [];
@@ -557,7 +583,7 @@ export class BattleAnimation {
                             promises_set = true;
                         }
                         this.game.time.events.add(start_delay, () => {
-                            this_sprite[property_to_set] = to_value;
+                            this_sprite[property_to_set] = get_to_value();
                             if (seq.force_stage_update) {
                                 this.stage_camera.update();
                             }
@@ -570,13 +596,14 @@ export class BattleAnimation {
                         });
                     } else {
                         const tween = this.game.add.tween(this_sprite).to(
-                            {[property_to_set]: to_value},
+                            {[property_to_set]: get_to_value},
                             Array.isArray(seq.duration) ? seq.duration[index] : seq.duration,
                             seq.tween.split(".").reduce((p, prop) => p[prop], Phaser.Easing),
                             auto_start_tween[seq.sprite_index],
                             start_delay,
                             0,
-                            seq.yoyo === undefined ? false : seq.yoyo
+                            seq.yoyo === undefined ? false : seq.yoyo,
+                            true
                         );
                         if (!promises_set) {
                             let resolve_function;
@@ -635,16 +662,20 @@ export class BattleAnimation {
                         );
                     }
                     const anim = sprite.animations.getAnimation(animation_key);
-                    anim.reversed = play_seq.reverse === undefined ? false : play_seq.reverse;
-                    anim.stop(true);
-                    sprite.animations.play(animation_key, play_seq.frame_rate, play_seq.repeat);
-                    if (play_seq.wait) {
-                        sprite.animations.currentAnim.onComplete.addOnce(() => {
-                            if (play_seq.hide_on_complete) {
-                                sprite.alpha = 0;
-                            }
+                    if (anim) {
+                        anim.reversed = play_seq.reverse === undefined ? false : play_seq.reverse;
+                        anim.stop(true);
+                        sprite.animations.play(animation_key, play_seq.frame_rate, play_seq.repeat);
+                        if (play_seq.wait) {
+                            sprite.animations.currentAnim.onComplete.addOnce(() => {
+                                if (play_seq.hide_on_complete) {
+                                    sprite.alpha = 0;
+                                }
+                                resolve_function();
+                            });
+                        } else {
                             resolve_function();
-                        });
+                        }
                     } else {
                         resolve_function();
                     }
@@ -710,32 +741,31 @@ export class BattleAnimation {
         let chained_tweens = [];
         for (let i = 0; i < this.stage_angle_sequence.length; ++i) {
             const stage_angle_seq = this.stage_angle_sequence[i];
-            let to_value;
+            let to_value = stage_angle_seq.to as number;
             if (this.stage_prev_value === undefined) {
                 this.stage_prev_value = this.stage_camera.rad;
             }
+            let is_absolute = stage_angle_seq.is_absolute;
+            let direction = stage_angle_seq.direction;
             if (stage_angle_seq.to === "default") {
                 to_value = DEFAULT_POS_ANGLE;
+                direction = "closest";
+                is_absolute = true;
+            } else if (stage_angle_seq.to === "cast_position") {
+                to_value = this.mirrored ? MIRRORED_CAST_STAGE_POSITION : CAST_STAGE_POSITION;
+                direction = "closest";
+                is_absolute = true;
+            }
+            if (is_absolute) {
+                this.stage_prev_value = range_360(this.stage_prev_value);
+                this.stage_camera.rad = this.stage_prev_value;
+                to_value = BattleAnimation.get_angle_by_direction(this.stage_prev_value, to_value, direction, true);
             } else {
-                if (stage_angle_seq.is_absolute) {
-                    this.stage_prev_value = range_360(this.stage_prev_value);
-                    this.stage_camera.rad = this.stage_prev_value;
-                    to_value = BattleAnimation.get_angle_by_direction(
-                        this.stage_prev_value,
-                        stage_angle_seq.to,
-                        stage_angle_seq.direction,
-                        true
-                    );
-                    if (Math.abs(this.stage_prev_value - to_value) > numbers.degree360) {
-                        to_value -= Math.sign(to_value) * numbers.degree360;
-                    }
-                } else {
-                    to_value = this.stage_prev_value + (stage_angle_seq.to as number);
-                }
+                to_value = this.stage_prev_value + (stage_angle_seq.to as number);
             }
             this.stage_prev_value = to_value;
             if (stage_angle_seq.tween === "initial") {
-                if (stage_angle_seq.is_absolute) {
+                if (is_absolute) {
                     this.stage_camera.rad = to_value;
                 } else {
                     this.stage_camera.rad += to_value;
@@ -757,7 +787,7 @@ export class BattleAnimation {
                     this.stage_camera.spining = true;
                 });
                 tween.onComplete.addOnce(() => {
-                    if (stage_angle_seq.is_absolute) {
+                    if (is_absolute) {
                         this.stage_camera.rad = range_360(this.stage_camera.rad);
                     }
                     this.stage_camera.spining = false;
@@ -890,13 +920,7 @@ export class BattleAnimation {
                 const displays = emitter.addToWorld(this.super_group);
                 displays.forEach(display => {
                     if (!display) return;
-                    if (emitter_info.position === "over") {
-                        this.super_group.addChild(display);
-                    } else if (emitter_info.position === "between") {
-                        this.super_group.setChildIndex(display, this.super_group.getChildIndex(this.front_group));
-                    } else if (emitter_info.position === "behind") {
-                        this.super_group.setChildIndex(display, this.super_group.getChildIndex(this.back_group));
-                    }
+                    this.ability_sprites_groups[emitter_info.position].addChild(display);
                 });
                 if (emitter_info.gravity_well) {
                     emitter.createGravityWell(
@@ -979,35 +1003,30 @@ export class BattleAnimation {
         }
     }
 
-    static get_angle_by_direction(current_angle, target_angle, direction, fourth_quadrant = false) {
+    //assuming that current angle is between 0 and 360 in rad
+    static get_angle_by_direction(incoming_current_angle, incoming_target_angle, direction, fourth_quadrant = false) {
         let this_direction;
-        if (fourth_quadrant) {
-            target_angle = numbers.degree360 - target_angle;
-            this_direction = target_angle < current_angle ? "counter_clockwise" : "clockwise";
-        } else {
-            this_direction = target_angle > current_angle ? "counter_clockwise" : "clockwise";
-        }
+        const target_angle = fourth_quadrant ? numbers.degree360 - incoming_target_angle : incoming_target_angle;
+        const current_angle = fourth_quadrant ? numbers.degree360 - incoming_current_angle : incoming_current_angle;
+        this_direction = target_angle > current_angle ? "counter_clockwise" : "clockwise";
         if (this_direction === direction) {
             return target_angle;
-        }
-        const diff = (target_angle % numbers.degree360) - (current_angle % numbers.degree360);
-        const shift = Math.sign(diff) * numbers.degree360 - diff;
-        const new_target = (current_angle % numbers.degree360) - shift;
-        if (direction === "closest") {
-            let target_delta, new_target_delta;
-            if (new_target > 0) {
-                new_target_delta = new_target - range_360(current_angle);
-                target_delta = numbers.degree360 - new_target_delta;
+        } else if (direction !== "closest") {
+            const times_bigger = Math.abs(incoming_target_angle / numbers.degree360) | 0;
+            return (
+                incoming_target_angle +
+                times_bigger * (incoming_target_angle > incoming_current_angle ? -numbers.degree360 : numbers.degree360)
+            );
+        } else {
+            const range360_target_angle = range_360(incoming_target_angle);
+            const towards_target = range_360(range360_target_angle - incoming_current_angle);
+            const towards_current = range_360(incoming_current_angle - range360_target_angle);
+            const diff = _.round(towards_target - towards_current, 4);
+            if (+(range360_target_angle > incoming_current_angle) ^ +(diff > 0) || diff === 0) {
+                return range360_target_angle;
             } else {
-                target_delta = target_angle - range_360(current_angle);
-                new_target_delta = numbers.degree360 - target_delta;
-            }
-            if (Math.abs(target_delta) < Math.abs(new_target_delta)) {
-                return target_angle;
-            } else {
-                return new_target;
+                return range360_target_angle + (diff > 0 ? -numbers.degree360 : numbers.degree360);
             }
         }
-        return new_target;
     }
 }

@@ -46,16 +46,24 @@ export class Collision {
         this.max_layers_created = Math.max(this.max_layers_created, map.collision_layers_number);
     }
 
+    disable_npc_collision() {
+        for (let collide_index in this.npc_collision_groups) {
+            this.hero.sprite.body.removeCollisionGroup(this.npc_collision_groups[collide_index], true);
+        }
+    }
+
+    enable_npc_collision(collision_layer: number) {
+        if (collision_layer in this.npc_collision_groups) {
+            this.hero.sprite.body.collides(this.npc_collision_groups[collision_layer]);
+        }
+    }
+
     config_collisions(map: Map, collision_layer: number, npc_group: Phaser.Group) {
         this.hero.sprite.body.collides(this.map_collision_group);
         map.collision_sprite.body.collides(this.hero_collision_group);
 
-        for (let collide_index in this.npc_collision_groups) {
-            this.hero.sprite.body.removeCollisionGroup(this.npc_collision_groups[collide_index], true);
-        }
-        if (collision_layer in this.npc_collision_groups) {
-            this.hero.sprite.body.collides(this.npc_collision_groups[collision_layer]);
-        }
+        this.disable_npc_collision();
+        this.enable_npc_collision(collision_layer);
 
         for (let collide_index in this.interactable_objs_collision_groups) {
             this.hero.sprite.body.removeCollisionGroup(this.interactable_objs_collision_groups[collide_index], true);

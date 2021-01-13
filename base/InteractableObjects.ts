@@ -1,7 +1,7 @@
 import {SpriteBase} from "./SpriteBase";
 import {TileEvent, event_types as tile_event_types} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
-import {directions, get_surroundings, mount_collision_polygon} from "./utils";
+import {directions, get_surroundings, mount_collision_polygon, reverse_directions} from "./utils";
 import {JumpEvent} from "./tile_events/JumpEvent";
 import {ClimbEvent} from "./tile_events/ClimbEvent";
 import {GoldenSun} from "./GoldenSun";
@@ -181,7 +181,8 @@ export class InteractableObjects {
         this.sprite.centerY = this.y * map.tile_width - anchor_shift + shift_y;
         this.sprite_info.setAnimation(this.sprite, this.key_name);
         const initial_animation = this.data.dbs.interactable_objects_db[this.key_name].initial_animation;
-        this.sprite.animations.play(this.key_name + "_" + initial_animation);
+        const anim_key = this.sprite_info.getAnimationKey(this.key_name, initial_animation);
+        this.sprite.animations.play(anim_key);
     }
 
     initialize_related_events(map_events: Map["events"], map: Map) {
@@ -241,7 +242,12 @@ export class InteractableObjects {
             this.data,
             x_pos,
             y_pos,
-            [directions.up, directions.down, directions.right, directions.left],
+            [
+                reverse_directions[directions.right],
+                reverse_directions[directions.left],
+                reverse_directions[directions.down],
+                reverse_directions[directions.up],
+            ],
             [target_layer],
             event_info.dynamic,
             active_event,
@@ -285,7 +291,12 @@ export class InteractableObjects {
                 this.data,
                 pos.x,
                 pos.y,
-                [directions.right, directions.left, directions.down, directions.up][index],
+                [
+                    reverse_directions[directions.right],
+                    reverse_directions[directions.left],
+                    reverse_directions[directions.down],
+                    reverse_directions[directions.up],
+                ][index],
                 [this.base_collision_layer],
                 event_info.dynamic,
                 active_event,
@@ -312,7 +323,7 @@ export class InteractableObjects {
             {
                 x: x_pos,
                 y: y_pos + 1,
-                activation_directions: [directions.up],
+                activation_directions: [reverse_directions[directions.up]],
                 activation_collision_layers: [this.base_collision_layer],
                 change_to_collision_layer: this.base_collision_layer + this.intermediate_collider_layer_shift,
                 climbing_only: false,
@@ -325,7 +336,7 @@ export class InteractableObjects {
             {
                 x: x_pos,
                 y: y_pos,
-                activation_directions: [directions.down],
+                activation_directions: [reverse_directions[directions.down]],
                 activation_collision_layers: [this.base_collision_layer + this.intermediate_collider_layer_shift],
                 change_to_collision_layer: this.base_collision_layer,
                 climbing_only: true,
@@ -339,7 +350,7 @@ export class InteractableObjects {
             {
                 x: x_pos,
                 y: y_pos + event_info.last_y_shift + 1,
-                activation_directions: [directions.up],
+                activation_directions: [reverse_directions[directions.up]],
                 activation_collision_layers: [this.base_collision_layer + this.intermediate_collider_layer_shift],
                 change_to_collision_layer: target_layer,
                 climbing_only: true,
@@ -353,7 +364,7 @@ export class InteractableObjects {
             {
                 x: x_pos,
                 y: y_pos + event_info.last_y_shift,
-                activation_directions: [directions.down],
+                activation_directions: [reverse_directions[directions.down]],
                 activation_collision_layers: [target_layer],
                 change_to_collision_layer: this.base_collision_layer + this.intermediate_collider_layer_shift,
                 climbing_only: false,
