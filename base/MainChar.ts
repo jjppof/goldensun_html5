@@ -178,12 +178,10 @@ export class MainChar extends Player {
     }
 
     get granted_class_type() {
-        const equiped_class_changer = "equip_slots" in this && this.equip_slots[equip_slots.CLASS_CHANGER];
-
+        const equiped_class_changer = this.equip_slots[equip_slots.CLASS_CHANGER];
         if (equiped_class_changer) {
             return this.info.items_list[equiped_class_changer.key_name].granted_class_type;
         }
-
         return -1;
     }
 
@@ -300,17 +298,15 @@ export class MainChar extends Player {
             this.add_effect(item.effects[i], item);
         }
 
-        this.update_attributes();
         this.update_elemental_attributes();
         if (item.type === item_types.ABILITY_GRANTOR) {
             this.equipped_abilities.push(item.granted_ability);
             this.update_abilities();
-        }
-
-        if (item.type === item_types.CLASS_CHANGER) {
+        } else if (item.type === item_types.CLASS_CHANGER) {
             this.update_class();
             this.update_abilities();
         }
+        this.update_attributes();
     }
 
     unequip_item(index: number) {
@@ -326,20 +322,18 @@ export class MainChar extends Player {
                 this.remove_effect(effect);
             }
         });
-        this.update_attributes();
-        this.update_elemental_attributes();
 
+        this.update_elemental_attributes();
         if (item.type === item_types.ABILITY_GRANTOR) {
             this.equipped_abilities = this.equipped_abilities.filter(ability => {
                 return ability !== item.granted_ability;
             });
             this.update_abilities();
-        }
-
-        if (item.type === item_types.CLASS_CHANGER) {
+        } else if (item.type === item_types.CLASS_CHANGER) {
             this.update_class();
             this.update_abilities();
         }
+        this.update_attributes();
     }
 
     init_djinni(djinni: string[]) {

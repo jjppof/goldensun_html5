@@ -311,7 +311,6 @@ export class ItemOptionsWindow {
     }
 
     open_action_message_window(text: string, close_callback: Function) {
-        console.log(text);
         this.action_message_window.set_text([text]);
         this.data.cursor_manager.hide();
         if (this.stats_update_callback !== undefined) {

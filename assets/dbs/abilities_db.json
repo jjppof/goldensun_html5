@@ -2313,7 +2313,8 @@
                 "type": "permanent_status",
                 "add_status": true,
                 "status_key_name": "downed",
-                "usage": "on_use"
+                "usage": "on_use",
+                "chance": 0.2
             }
         ],
         "ability_category": "psynergy",

@@ -4,7 +4,6 @@ import {elements} from "./utils";
 import * as _ from "lodash";
 import {GameInfo} from "./initializers/initialize_info";
 import {Player} from "./Player";
-import {Item} from "./Item";
 
 export class Classes {
     public key_name: string;
