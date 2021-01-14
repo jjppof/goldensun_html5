@@ -56,6 +56,7 @@ export class ControllableChar {
     public push_timer: Phaser.TimerEvent;
     public crop_texture: boolean;
     public shadow_following: boolean;
+    public look_target: ControllableChar = null;
 
     constructor(
         game: Phaser.Game,
@@ -180,6 +181,23 @@ export class ControllableChar {
         this.game.camera.focusOn(this.sprite);
     }
 
+    set_look_to_target(active: boolean, target?: ControllableChar) {
+        if (active) {
+            this.look_target = target;
+        } else {
+            this.look_target = null;
+        }
+    }
+
+    look_to_target() {
+        if (!this.look_target) return;
+        const x = this.look_target.sprite.x - this.sprite.x;
+        const y = this.look_target.sprite.y - this.sprite.y;
+        const angle = range_360(Math.atan2(y, x));
+        const direction = (1 + Math.floor((angle - numbers.degree45_half) / numbers.degree45)) & 7;
+        this.set_direction(direction, true);
+    }
+
     set_collision_layer(layer: number) {
         this.sprite.base_collision_layer = layer;
         this.shadow.base_collision_layer = layer;
@@ -246,6 +264,10 @@ export class ControllableChar {
             frame_index
         );
         this.sprite.frameName = frame_name;
+    }
+
+    update_on_event() {
+        this.look_to_target();
     }
 
     update_movement(ignore_collide_action_change: boolean = false) {

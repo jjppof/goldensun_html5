@@ -8,6 +8,7 @@ import {event_types} from "./GameEvent";
 import {SetValueEvent} from "./SetValueEvent";
 import {MoveEvent} from "./MoveEvent";
 import {DialogEvent} from "./DialogEvent";
+import {LookEvent} from "./LookEvent";
 
 export enum interaction_patterns {
     TIK_TAK_TOE = "tik_tak_toe",
@@ -206,6 +207,8 @@ export class GameEventManager {
                     info.reset_reciprocal_look,
                     info.dialog_finish_events
                 );
+            case event_types.LOOK:
+                return new LookEvent(this.game, this.data, info.active, info.look, info.looker, info.target);
         }
     }
 
@@ -221,6 +224,8 @@ export class GameEventManager {
         if (!this.allow_char_to_move) {
             this.data.hero.stop_char();
         }
+        this.data.hero.update_on_event();
+        this.data.map.npcs.forEach(npc => npc.update_on_event());
         this.update_callbacks.forEach(callback => callback());
     }
 

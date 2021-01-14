@@ -26,6 +26,7 @@ export enum event_types {
     SET_VALUE = "set_value",
     MOVE = "move",
     DIALOG = "dialog",
+    LOOK = "look",
 }
 
 export abstract class GameEvent {
