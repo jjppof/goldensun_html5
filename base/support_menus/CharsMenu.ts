@@ -90,9 +90,9 @@ export class CharsMenu {
         this.arrow_group.x = ARROW_GROUP_X;
         this.arrow_group.y = ARROW_GROUP_Y;
 
-        this.up_arrow = this.arrow_group.create(UP_ARROW_X, UP_ARROW_Y, "green_arrow");
+        this.up_arrow = this.arrow_group.create(UP_ARROW_X, UP_ARROW_Y, "menu", "green_arrow");
         this.up_arrow.rotation = Math.PI;
-        this.down_arrow = this.arrow_group.create(DOWN_ARROW_X, DOWN_ARROW_Y, "green_arrow");
+        this.down_arrow = this.arrow_group.create(DOWN_ARROW_X, DOWN_ARROW_Y, "menu", "green_arrow");
         this.up_arrow.alpha = 0;
         this.down_arrow.alpha = 0;
 

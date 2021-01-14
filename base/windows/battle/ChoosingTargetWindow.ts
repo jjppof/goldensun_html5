@@ -125,7 +125,7 @@ export class ChoosingTargetWindow {
             let icon_sprite = this.icon_group.create(0, 0, this.icon_sprite_sheet, this.item_obj.key_name);
             icon_sprite.anchor.setTo(0.5, 0.5);
             if (this.item_obj.equipped) {
-                this.icon_group.create(SUB_ICON_X, SUB_ICON_Y, "equipped");
+                this.icon_group.create(SUB_ICON_X, SUB_ICON_Y, "menu", "equipped");
             }
             if (this.item_obj.quantity > 1) {
                 let item_count = this.game.add.bitmapText(

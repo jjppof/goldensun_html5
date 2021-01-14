@@ -263,7 +263,7 @@ export class ItemPsynergyChooseWindow {
 
                 icon_sprite.anchor.setTo(0.5, 0.5);
                 if (this.item_objs[i].equipped) {
-                    icon_group.create(SUB_ICON_X, SUB_ICON_Y, "equipped");
+                    icon_group.create(SUB_ICON_X, SUB_ICON_Y, "menu", "equipped");
                 }
 
                 if (this.item_objs[i].quantity > 1) {

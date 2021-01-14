@@ -65,7 +65,7 @@ export class CursorManager {
         this.group.x = 0;
         this.group.y = 0;
 
-        this.cursor = this.group.create(0, 0, "cursor");
+        this.cursor = this.group.create(0, 0, "menu", "cursor");
         this.cursor.anchor.x = 0.5;
 
         this.active_tween = null;

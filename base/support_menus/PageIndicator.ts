@@ -99,24 +99,10 @@ export class PageIndicator {
         this.arrow_timer = this.game.time.create(false);
         this.flash_timer = this.game.time.create(false);
 
-        this.right_arrow = this.window.create_at_group(
-            0,
-            0,
-            "page_arrow",
-            undefined,
-            undefined,
-            PageIndicator.GROUP_KEY
-        );
+        this.right_arrow = this.window.create_at_group(0, 0, "menu", undefined, "page_arrow", PageIndicator.GROUP_KEY);
         this.right_arrow.alpha = 0;
 
-        this.left_arrow = this.window.create_at_group(
-            0,
-            0,
-            "page_arrow",
-            undefined,
-            undefined,
-            PageIndicator.GROUP_KEY
-        );
+        this.left_arrow = this.window.create_at_group(0, 0, "menu", undefined, "page_arrow", PageIndicator.GROUP_KEY);
         this.left_arrow.alpha = 0;
 
         this.set = true;

@@ -29,19 +29,8 @@ function load_db_files(game) {
 
 function load_misc(game) {
     game.load.image("shadow", "assets/images/misc/shadow.jpg");
-    game.load.image("cursor", "assets/images/misc/cursor.gif");
-    game.load.image("green_arrow", "assets/images/misc/green_arrow.gif");
-    game.load.image("up_arrow", "assets/images/misc/up_arrow.gif");
-    game.load.image("down_arrow", "assets/images/misc/down_arrow.gif");
-    game.load.image("page_arrow", "assets/images/misc/page_arrow.png");
     game.load.image("psynergy_aura", "assets/images/misc/psynergy_aura.png");
-    game.load.image("equipped", "assets/images/misc/equipped.gif");
-    game.load.image("stat_up", "assets/images/misc/stat_up.gif");
-    game.load.image("stat_down", "assets/images/misc/stat_down.gif");
-    game.load.image("arrow_change", "assets/images/misc/arrow_change.png");
-    game.load.image("item_border", "assets/images/misc/item_border.png");
-    game.load.image("price_tag", "assets/images/misc/price_tag.png");
-    game.load.image("broken", "assets/images/misc/broken.png");
+    game.load.atlasJSONHash("menu", "assets/images/misc/menu.png", "assets/images/misc/menu.json");
     game.load.image("frost_snowflake", "assets/images/interactable_objects/snowflake.png");
     game.load.atlasJSONHash(
         "battle_effect_icons",

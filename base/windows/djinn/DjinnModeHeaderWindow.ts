@@ -96,6 +96,8 @@ export class DjinnModeHeaderWindow {
         this.djinn_status_arrow = this.base_window.create_at_group(
             ARROW_CHANGE_DJINN_X,
             ARROW_CHANGE_DJINN_Y,
+            "menu",
+            undefined,
             "arrow_change"
         );
         this.spacebar_key = {

@@ -122,9 +122,9 @@ export class Window {
                 obj.background = this.create_at_group(
                     base_x,
                     base_y,
+                    "menu",
+                    undefined,
                     "item_border",
-                    undefined,
-                    undefined,
                     params.internal_group
                 );
             }
@@ -132,22 +132,15 @@ export class Window {
             obj.icon = this.create_at_group(base_x, base_y, "items_icons", undefined, key_name, params.internal_group);
 
             if (params.broken) {
-                obj.broken = this.create_at_group(
-                    base_x,
-                    base_y,
-                    "broken",
-                    undefined,
-                    undefined,
-                    params.internal_group
-                );
+                obj.broken = this.create_at_group(base_x, base_y, "menu", undefined, "broken", params.internal_group);
             }
             if (params.equipped) {
                 obj.equipped = this.create_at_group(
                     base_x + Window.ITEM_OBJ.EQUIPPED_X,
                     base_y + Window.ITEM_OBJ.EQUIPPED_Y,
+                    "menu",
+                    undefined,
                     "equipped",
-                    undefined,
-                    undefined,
                     params.internal_group
                 );
             }

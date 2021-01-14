@@ -56,7 +56,7 @@ export class ClassChangeWithItemWindow {
         this.class_text = this.base_window.set_text_in_position("0", 8, 40);
 
         this.preview_class_text = this.base_window.set_text_in_position("0", 8, 56);
-        this.class_name_arrow = this.base_window.create_at_group(ARROW_X, ARROW_Y, "arrow_change");
+        this.class_name_arrow = this.base_window.create_at_group(ARROW_X, ARROW_Y, "menu", undefined, "arrow_change");
         this.init_arrow_blinks();
     }
 

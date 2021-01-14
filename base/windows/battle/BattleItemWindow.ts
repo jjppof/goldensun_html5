@@ -171,7 +171,13 @@ export class BattleItemWindow {
             );
             if (this.items[i].equipped) {
                 this.other_sprites.push(
-                    this.base_window.create_at_group(ITEM_ICON_X + SUB_ICON_X, item_y + SUB_ICON_Y, "equipped")
+                    this.base_window.create_at_group(
+                        ITEM_ICON_X + SUB_ICON_X,
+                        item_y + SUB_ICON_Y,
+                        "menu",
+                        undefined,
+                        "equipped"
+                    )
                 );
             }
             if (this.items[i].quantity > 1) {

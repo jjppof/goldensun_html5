@@ -97,9 +97,9 @@ export class BuySelectMenu {
         this.arrow_group.x = ARROW_GROUP_X;
         this.arrow_group.y = ARROW_GROUP_Y;
 
-        this.up_arrow = this.arrow_group.create(UP_ARROW_X, UP_ARROW_Y, "green_arrow");
+        this.up_arrow = this.arrow_group.create(UP_ARROW_X, UP_ARROW_Y, "menu", "green_arrow");
         this.up_arrow.rotation = Math.PI;
-        this.down_arrow = this.arrow_group.create(DOWN_ARROW_X, DOWN_ARROW_Y, "green_arrow");
+        this.down_arrow = this.arrow_group.create(DOWN_ARROW_X, DOWN_ARROW_Y, "menu", "green_arrow");
         this.up_arrow.alpha = 0;
         this.down_arrow.alpha = 0;
 
@@ -260,7 +260,7 @@ export class BuySelectMenu {
                 return s.alive === false && s.key === "items_icons";
             });
             let dead_backgrounds = this.sprite_group.children.filter((s: Phaser.Sprite) => {
-                return s.alive === false && s.key === "item_border";
+                return s.alive === false && s.frameName === "item_border";
             });
 
             if (dead_items.length > 0 && dead_backgrounds.length > 0) {
@@ -272,7 +272,7 @@ export class BuySelectMenu {
                 dead_items[0].scale.y = 1;
                 (dead_items[0] as Phaser.Sprite).reset(i * LINE_SHIFT, 0);
             } else {
-                this.sprite_group.create(i * LINE_SHIFT, 0, "item_border").anchor.setTo(0.5, 0.5);
+                this.sprite_group.create(i * LINE_SHIFT, 0, "menu", "item_border").anchor.setTo(0.5, 0.5);
                 this.sprite_group
                     .create(i * LINE_SHIFT, 0, "items_icons", this.pages[page][i].key_name)
                     .anchor.setTo(0.5, 0.5);
@@ -282,7 +282,7 @@ export class BuySelectMenu {
                 return t.alive === false;
             });
             if (dead_tags.length > 0) (dead_tags[0] as Phaser.Sprite).reset(i * LINE_SHIFT, 0);
-            else this.tag_group.create(i * LINE_SHIFT, 0, "price_tag");
+            else this.tag_group.create(i * LINE_SHIFT, 0, "menu", "price_tag");
 
             let price = this.data.info.items_list[this.pages[page][i].key_name].price;
             this.set_text(price.toString(), i);
@@ -403,7 +403,7 @@ export class BuySelectMenu {
             return s.alive === true && s.key === "items_icons";
         });
         let bg_list = this.sprite_group.children.filter((s: Phaser.Sprite) => {
-            return s.alive === true && s.key === "item_border";
+            return s.alive === true && s.frameName === "item_border";
         });
 
         let tweens = [this.tweens.item, this.tweens.bg];
@@ -436,7 +436,7 @@ export class BuySelectMenu {
             return s.alive === true && s.key === "items_icons";
         });
         let bg_list = this.sprite_group.children.filter((s: Phaser.Sprite) => {
-            return s.alive === true && s.key === "item_border";
+            return s.alive === true && s.frameName === "item_border";
         });
 
         let tweens = [this.tweens.item, this.tweens.bg];

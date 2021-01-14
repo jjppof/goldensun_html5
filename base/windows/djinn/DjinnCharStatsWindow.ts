@@ -108,6 +108,8 @@ export class DjinnCharStatsWindow {
         this.class_name_arrow = this.base_window.create_at_group(
             ARROW_CHANGE_CLASS_X,
             ARROW_CHANGE_CLASS_Y,
+            "menu",
+            undefined,
             "arrow_change"
         );
         this.init_arrow_blinks();
@@ -180,6 +182,8 @@ export class DjinnCharStatsWindow {
                 const arrow_sprite = this.base_window.create_at_group(
                     STATS_CURRENT_X + shift,
                     y,
+                    "menu",
+                    undefined,
                     "stat_" + (next_stat > current_stat ? "up" : "down")
                 );
                 this.sprites.push(arrow_sprite);

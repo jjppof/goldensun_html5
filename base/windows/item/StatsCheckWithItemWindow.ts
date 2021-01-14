@@ -58,14 +58,50 @@ export class StatsCheckWithItemWindow {
         this.avatar = null;
 
         this.up_arrows = {
-            [effect_types.ATTACK]: this.base_window.create_at_group(ARROW_X, 48 - ARROW_Y_SHIFT, "up_arrow"),
-            [effect_types.DEFENSE]: this.base_window.create_at_group(ARROW_X, 64 - ARROW_Y_SHIFT, "up_arrow"),
-            [effect_types.AGILITY]: this.base_window.create_at_group(ARROW_X, 80 - ARROW_Y_SHIFT, "up_arrow"),
+            [effect_types.ATTACK]: this.base_window.create_at_group(
+                ARROW_X,
+                48 - ARROW_Y_SHIFT,
+                "menu",
+                undefined,
+                "up_arrow"
+            ),
+            [effect_types.DEFENSE]: this.base_window.create_at_group(
+                ARROW_X,
+                64 - ARROW_Y_SHIFT,
+                "menu",
+                undefined,
+                "up_arrow"
+            ),
+            [effect_types.AGILITY]: this.base_window.create_at_group(
+                ARROW_X,
+                80 - ARROW_Y_SHIFT,
+                "menu",
+                undefined,
+                "up_arrow"
+            ),
         } as Arrows;
         this.down_arrows = {
-            [effect_types.ATTACK]: this.base_window.create_at_group(ARROW_X, 48 - ARROW_Y_SHIFT, "down_arrow"),
-            [effect_types.DEFENSE]: this.base_window.create_at_group(ARROW_X, 64 - ARROW_Y_SHIFT, "down_arrow"),
-            [effect_types.AGILITY]: this.base_window.create_at_group(ARROW_X, 80 - ARROW_Y_SHIFT, "down_arrow"),
+            [effect_types.ATTACK]: this.base_window.create_at_group(
+                ARROW_X,
+                48 - ARROW_Y_SHIFT,
+                "menu",
+                undefined,
+                "down_arrow"
+            ),
+            [effect_types.DEFENSE]: this.base_window.create_at_group(
+                ARROW_X,
+                64 - ARROW_Y_SHIFT,
+                "menu",
+                undefined,
+                "down_arrow"
+            ),
+            [effect_types.AGILITY]: this.base_window.create_at_group(
+                ARROW_X,
+                80 - ARROW_Y_SHIFT,
+                "menu",
+                undefined,
+                "down_arrow"
+            ),
         } as Arrows;
         this.preview_stats_texts = {
             [effect_types.ATTACK]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 48, true),

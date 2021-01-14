@@ -171,7 +171,10 @@ export class InventoryWindow {
         });
         let bg_icons = this.sprite_group.children.filter((s: Phaser.Sprite) => {
             return (
-                s.alive === true && s.key === BACKGROUND_IMG_KEY && s.x === col * ICON_SIZE && s.y === line * ICON_SIZE
+                s.alive === true &&
+                s.frameName === BACKGROUND_IMG_KEY &&
+                s.x === col * ICON_SIZE &&
+                s.y === line * ICON_SIZE
             );
         });
 
@@ -181,7 +184,10 @@ export class InventoryWindow {
         if (this.item_grid[line][col].broken) {
             let broken_icons = this.sprite_group.children.filter((b: Phaser.Sprite) => {
                 return (
-                    b.alive === true && b.key === BROKEN_IMG_KEY && b.x === col * ICON_SIZE && b.y === line * ICON_SIZE
+                    b.alive === true &&
+                    b.frameName === BROKEN_IMG_KEY &&
+                    b.x === col * ICON_SIZE &&
+                    b.y === line * ICON_SIZE
                 );
             });
             (broken_icons[0] as Phaser.Sprite).kill();
@@ -191,7 +197,7 @@ export class InventoryWindow {
             let equipped_icons = this.icon_group.children.filter((e: Phaser.Sprite) => {
                 return (
                     e.alive === true &&
-                    e.key === EQUIPPED_IMG_KEY &&
+                    e.frameName === EQUIPPED_IMG_KEY &&
                     e.x === col * ICON_SIZE &&
                     e.y === line * ICON_SIZE
                 );
@@ -298,7 +304,7 @@ export class InventoryWindow {
                     return s.alive === false && s.key === ITEMS_IMG_KEY;
                 });
                 let dead_backgrounds = this.sprite_group.children.filter((s: Phaser.Sprite) => {
-                    return s.alive === false && s.key === BACKGROUND_IMG_KEY;
+                    return s.alive === false && s.frameName === BACKGROUND_IMG_KEY;
                 });
 
                 if (dead_items.length > 0 && dead_backgrounds.length > 0) {
@@ -309,9 +315,9 @@ export class InventoryWindow {
                     this.window.create_at_group(
                         col * ICON_SIZE,
                         line * ICON_SIZE,
+                        "menu",
+                        undefined,
                         BACKGROUND_IMG_KEY,
-                        undefined,
-                        undefined,
                         SPRITE_GROUP_KEY
                     );
                     this.window.create_at_group(
@@ -326,7 +332,7 @@ export class InventoryWindow {
 
                 if (this.item_grid[line][col].broken) {
                     let dead_broken = this.sprite_group.children.filter((b: Phaser.Sprite) => {
-                        return b.alive === false && b.key === BROKEN_IMG_KEY;
+                        return b.alive === false && b.frameName === BROKEN_IMG_KEY;
                     });
                     if (dead_broken.length > 0)
                         (dead_broken[0] as Phaser.Sprite).reset(col * ICON_SIZE, line * ICON_SIZE);
@@ -334,16 +340,16 @@ export class InventoryWindow {
                         this.window.create_at_group(
                             col * ICON_SIZE,
                             line * ICON_SIZE,
+                            "menu",
+                            undefined,
                             BROKEN_IMG_KEY,
-                            undefined,
-                            undefined,
                             SPRITE_GROUP_KEY
                         );
                 }
 
                 if (this.item_grid[line][col].equipped) {
                     let dead_icons = this.icon_group.children.filter((e: Phaser.Sprite) => {
-                        return e.alive === false && e.key === EQUIPPED_IMG_KEY;
+                        return e.alive === false && e.frameName === EQUIPPED_IMG_KEY;
                     });
                     if (dead_icons.length > 0)
                         (dead_icons[0] as Phaser.Sprite).reset(col * ICON_SIZE, line * ICON_SIZE);
@@ -351,9 +357,9 @@ export class InventoryWindow {
                         this.window.create_at_group(
                             col * ICON_SIZE,
                             line * ICON_SIZE,
+                            "menu",
+                            undefined,
                             EQUIPPED_IMG_KEY,
-                            undefined,
-                            undefined,
                             ICON_GROUP_KEY
                         );
                 }

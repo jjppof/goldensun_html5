@@ -317,7 +317,13 @@ export class MainItemMenu {
                         (ITEM_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
                 this.item_overview_window.create_at_group(x, y, "items_icons", undefined, item_key_name);
                 if (item_obj.equipped) {
-                    this.item_overview_window.create_at_group(x + SUB_ICON_X, y + SUB_ICON_Y, "equipped");
+                    this.item_overview_window.create_at_group(
+                        x + SUB_ICON_X,
+                        y + SUB_ICON_Y,
+                        "menu",
+                        undefined,
+                        "equipped"
+                    );
                 }
                 if (item_obj.quantity > 1) {
                     let item_count = this.game.add.bitmapText(

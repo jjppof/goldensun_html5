@@ -131,10 +131,10 @@ export class EquipCompare {
         let key = diff > 0 ? "up_arrow" : "down_arrow";
 
         let dead_arrows = this.arrow_group.children.filter((a: Phaser.Sprite) => {
-            return a.alive === false && a.key === key;
+            return a.alive === false && a.frameName === key;
         });
         if (dead_arrows.length > 0) (dead_arrows[0] as Phaser.Sprite).reset(arrow_x, arrow_y);
-        else this.window.create_at_group(arrow_x, arrow_y, key, undefined, undefined, "arrows");
+        else this.window.create_at_group(arrow_x, arrow_y, "menu", undefined, key, "arrows");
     }
 
     /*Finds the statistical difference in a stat for two items

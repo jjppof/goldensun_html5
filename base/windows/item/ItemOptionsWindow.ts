@@ -278,6 +278,8 @@ export class ItemOptionsWindow {
             this.equip_sprite = this.base_window.create_at_group(
                 ITEM_ICON_X + SUB_ICON_X,
                 ITEM_ICON_Y + SUB_ICON_Y,
+                "menu",
+                undefined,
                 "equipped"
             );
         }
