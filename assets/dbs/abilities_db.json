@@ -2240,6 +2240,24 @@
         "priority_move": false,
         "msg_type": "no_msg"
     },{
+        "key_name": "pound",
+        "name": "Pound",
+        "description": " Hammer objects into the ground.",
+        "type": "utility",
+        "element": "mars",
+        "battle_target": "no_target",
+        "range": 1,
+        "pp_cost": 2,
+        "ability_power": 0,
+        "effects_outside_battle": false,
+        "is_battle_ability": false,
+        "is_field_psynergy": true,
+        "effects": [],
+        "ability_category": "normal",
+        "battle_animation_key": "no_animation",
+        "priority_move": false,
+        "msg_type": "no_msg"
+    },{
         "key_name": "sword_card",
         "name": "Sword Card",
         "description": "Reduce a foe's attack.",

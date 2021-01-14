@@ -93,5 +93,25 @@
                 "json": "assets/images/spritesheets/battle/battle_status_sprites.json"
             }
         }]
+    },
+    {
+        "key_name": "pound_hand",
+        "initial_animation": "down",
+        "actions": [{
+            "key_name": "pound_hand",
+            "frame_rate": 10,
+            "animations": [
+                "down",
+                "up",
+                "left",
+                "right"
+            ],
+            "frames_count": 2,
+            "loop": true,
+            "spritesheet": {
+                "image": "assets/images/misc/pound_psynergy_hand.png",
+                "json": "assets/images/misc/pound_psynergy_hand.json"
+            }
+        }]
     }
 ]
