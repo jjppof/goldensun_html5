@@ -98,10 +98,10 @@ export class ItemPsynergyChooseWindow {
         this.close_callback = undefined;
         this.char = null;
         this.char_select_controls_sprites = [
-            this.window.create_at_group(9, 97, "shift_keyboard", 0x0),
-            this.window.create_at_group(8, 96, "shift_keyboard"),
-            this.window.create_at_group(32, 97, "tab_keyboard", 0x0),
-            this.window.create_at_group(31, 96, "tab_keyboard"),
+            this.window.create_at_group(9, 97, "keyboard_buttons", 0x0, "shift"),
+            this.window.create_at_group(8, 96, "keyboard_buttons", undefined, "shift"),
+            this.window.create_at_group(32, 97, "keyboard_buttons", 0x0, "tab"),
+            this.window.create_at_group(31, 96, "keyboard_buttons", undefined, "tab"),
         ];
         const sprite_pair = this.window.set_text_in_position(": Change Char", 49, 96);
         this.char_select_controls_sprites.push(sprite_pair.text, sprite_pair.shadow);

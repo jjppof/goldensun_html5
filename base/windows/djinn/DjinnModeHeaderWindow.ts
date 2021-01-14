@@ -99,8 +99,20 @@ export class DjinnModeHeaderWindow {
             "arrow_change"
         );
         this.spacebar_key = {
-            shadow: this.base_window.create_at_group(SPACEBAR_KEY_X + 1, SPACEBAR_KEY_Y + 1, "spacebar_keyboard", 0x0),
-            text: this.base_window.create_at_group(SPACEBAR_KEY_X, SPACEBAR_KEY_Y, "spacebar_keyboard"),
+            shadow: this.base_window.create_at_group(
+                SPACEBAR_KEY_X + 1,
+                SPACEBAR_KEY_Y + 1,
+                "keyboard_buttons",
+                0x0,
+                "spacebar"
+            ),
+            text: this.base_window.create_at_group(
+                SPACEBAR_KEY_X,
+                SPACEBAR_KEY_Y,
+                "keyboard_buttons",
+                undefined,
+                "spacebar"
+            ),
         };
         this.action_info_text = this.base_window.set_text_in_position(
             "",

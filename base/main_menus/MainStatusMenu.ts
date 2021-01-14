@@ -349,9 +349,9 @@ export class MainStatusMenu {
         let sprite = this.desc_window.create_at_group(
             MainStatusMenu.DESC_GUIDE.L.X + 1,
             MainStatusMenu.DESC_GUIDE.L.Y + 1,
-            "l_button",
+            "keyboard_buttons",
             0x0,
-            undefined,
+            "l_button",
             MainStatusMenu.DESC_GUIDE_KEY
         );
         this.active_sprites.push(sprite);
@@ -359,9 +359,9 @@ export class MainStatusMenu {
         sprite = this.desc_window.create_at_group(
             MainStatusMenu.DESC_GUIDE.L.X,
             MainStatusMenu.DESC_GUIDE.L.Y,
+            "keyboard_buttons",
+            undefined,
             "l_button",
-            undefined,
-            undefined,
             MainStatusMenu.DESC_GUIDE_KEY
         );
         this.active_sprites.push(sprite);
@@ -369,9 +369,9 @@ export class MainStatusMenu {
         sprite = this.desc_window.create_at_group(
             MainStatusMenu.DESC_GUIDE.R.X + 1,
             MainStatusMenu.DESC_GUIDE.R.Y + 1,
-            "r_button",
+            "keyboard_buttons",
             0x0,
-            undefined,
+            "r_button",
             MainStatusMenu.DESC_GUIDE_KEY
         );
         this.active_sprites.push(sprite);
@@ -379,9 +379,9 @@ export class MainStatusMenu {
         sprite = this.desc_window.create_at_group(
             MainStatusMenu.DESC_GUIDE.R.X,
             MainStatusMenu.DESC_GUIDE.R.Y,
+            "keyboard_buttons",
+            undefined,
             "r_button",
-            undefined,
-            undefined,
             MainStatusMenu.DESC_GUIDE_KEY
         );
         this.active_sprites.push(sprite);
@@ -389,9 +389,9 @@ export class MainStatusMenu {
         sprite = this.desc_window.create_at_group(
             MainStatusMenu.DESC_GUIDE.A.X + 1,
             MainStatusMenu.DESC_GUIDE.A.Y + 1,
-            "a_button",
+            "keyboard_buttons",
             0x0,
-            undefined,
+            "a_button",
             MainStatusMenu.DESC_GUIDE_KEY
         );
         this.active_sprites.push(sprite);
@@ -399,9 +399,9 @@ export class MainStatusMenu {
         sprite = this.desc_window.create_at_group(
             MainStatusMenu.DESC_GUIDE.A.X,
             MainStatusMenu.DESC_GUIDE.A.Y,
+            "keyboard_buttons",
+            undefined,
             "a_button",
-            undefined,
-            undefined,
             MainStatusMenu.DESC_GUIDE_KEY
         );
         this.active_sprites.push(sprite);
@@ -506,17 +506,17 @@ export class MainStatusMenu {
             shadow: this.guide_window.create_at_group(
                 MainStatusMenu.GUIDE.L.X + 1,
                 MainStatusMenu.GUIDE.L.Y + 1,
-                "l_button",
+                "keyboard_buttons",
                 0x0,
-                undefined,
+                "l_button",
                 MainStatusMenu.GROUP_KEY
             ),
             sprite: this.guide_window.create_at_group(
                 MainStatusMenu.GUIDE.L.X,
                 MainStatusMenu.GUIDE.L.Y,
+                "keyboard_buttons",
+                undefined,
                 "l_button",
-                undefined,
-                undefined,
                 MainStatusMenu.GROUP_KEY
             ),
         };
@@ -526,17 +526,17 @@ export class MainStatusMenu {
             shadow: this.guide_window.create_at_group(
                 MainStatusMenu.GUIDE.R.X + 1,
                 MainStatusMenu.GUIDE.R.Y + 1,
-                "r_button",
+                "keyboard_buttons",
                 0x0,
-                undefined,
+                "r_button",
                 MainStatusMenu.GROUP_KEY
             ),
             sprite: this.guide_window.create_at_group(
                 MainStatusMenu.GUIDE.R.X,
                 MainStatusMenu.GUIDE.R.Y,
+                "keyboard_buttons",
+                undefined,
                 "r_button",
-                undefined,
-                undefined,
                 MainStatusMenu.GROUP_KEY
             ),
         };
@@ -546,17 +546,17 @@ export class MainStatusMenu {
             shadow: this.guide_window.create_at_group(
                 MainStatusMenu.GUIDE.A.X + 1,
                 MainStatusMenu.GUIDE.A.Y + 1,
-                "a_button",
+                "keyboard_buttons",
                 0x0,
-                undefined,
+                "a_button",
                 MainStatusMenu.GROUP_KEY
             ),
             sprite: this.guide_window.create_at_group(
                 MainStatusMenu.GUIDE.A.X,
                 MainStatusMenu.GUIDE.A.Y,
+                "keyboard_buttons",
+                undefined,
                 "a_button",
-                undefined,
-                undefined,
                 MainStatusMenu.GROUP_KEY
             ),
         };
@@ -566,17 +566,17 @@ export class MainStatusMenu {
             shadow: this.guide_window.create_at_group(
                 MainStatusMenu.GUIDE.SELECT.X + 1,
                 MainStatusMenu.GUIDE.SELECT.Y + 1,
-                "select_button",
+                "keyboard_buttons",
                 0x0,
-                undefined,
+                "select_button",
                 MainStatusMenu.GROUP_KEY
             ),
             sprite: this.guide_window.create_at_group(
                 MainStatusMenu.GUIDE.SELECT.X,
                 MainStatusMenu.GUIDE.SELECT.Y,
+                "keyboard_buttons",
+                undefined,
                 "select_button",
-                undefined,
-                undefined,
                 MainStatusMenu.GROUP_KEY
             ),
         };

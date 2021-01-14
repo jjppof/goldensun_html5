@@ -78,8 +78,8 @@ export class DjinnStatsWindow {
         this.after_class_text = this.base_window.set_text_in_position("", AFTER_CLASS_X, CLASS_NAME_Y);
         let arrow_change = this.base_window.create_at_group(CLASS_ARROW_X, CLASS_ARROW_Y, "arrow_change");
         arrow_change.rotation = -numbers.degree90;
-        this.base_window.create_at_group(SHIFT_BUTTON_X + 1, SHIFT_BUTTON_Y + 1, "shift_keyboard", 0x0);
-        this.base_window.create_at_group(SHIFT_BUTTON_X, SHIFT_BUTTON_Y, "shift_keyboard");
+        this.base_window.create_at_group(SHIFT_BUTTON_X + 1, SHIFT_BUTTON_Y + 1, "keyboard_buttons", 0x0, "shift");
+        this.base_window.create_at_group(SHIFT_BUTTON_X, SHIFT_BUTTON_Y, "keyboard_buttons", undefined, "shift");
         this.base_window.set_text_in_position(": Psy. Gained", SHIFT_DESCRIPTION_X, SHIFT_DESCRIPTION_Y);
         this.window_open = false;
     }

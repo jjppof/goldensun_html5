@@ -1,0 +1,68 @@
+{"frames": {
+
+"a_button":
+{
+	"frame": {"x":39,"y":1,"w":7,"h":7},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":7,"h":7},
+	"sourceSize": {"w":7,"h":7}
+},
+"l_button":
+{
+	"frame": {"x":1,"y":21,"w":13,"h":7},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":13,"h":7},
+	"sourceSize": {"w":13,"h":7}
+},
+"r_button":
+{
+	"frame": {"x":16,"y":21,"w":13,"h":7},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":13,"h":7},
+	"sourceSize": {"w":13,"h":7}
+},
+"select_button":
+{
+	"frame": {"x":31,"y":21,"w":11,"h":7},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":11,"h":7},
+	"sourceSize": {"w":11,"h":7}
+},
+"shift":
+{
+	"frame": {"x":1,"y":11,"w":21,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":21,"h":8},
+	"sourceSize": {"w":21,"h":8}
+},
+"spacebar":
+{
+	"frame": {"x":1,"y":1,"w":36,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":8},
+	"sourceSize": {"w":36,"h":8}
+},
+"tab":
+{
+	"frame": {"x":24,"y":11,"w":16,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":8},
+	"sourceSize": {"w":16,"h":8}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "keyboard_buttons.png",
+	"format": "RGBA8888",
+	"size": {"w":47,"h":29},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:46d29800a66b1312eb2cb31573885684:9bceafcc6f1713ce520cf68d8200c11a:84704fbb4d03351869952e6c7b28287e$"
+}
+}

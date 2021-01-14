@@ -1,12 +1,10 @@
 function load_buttons(game) {
     game.load.atlasJSONHash("buttons", "assets/images/buttons/buttons.png", "assets/images/buttons/buttons.json");
-    game.load.image("shift_keyboard", "assets/images/keyboard/shift.png");
-    game.load.image("tab_keyboard", "assets/images/keyboard/tab.png");
-    game.load.image("spacebar_keyboard", "assets/images/keyboard/spacebar.png");
-    game.load.image("a_button", "assets/images/keyboard/a_button.png");
-    game.load.image("select_button", "assets/images/keyboard/select_button.png");
-    game.load.image("l_button", "assets/images/keyboard/l_button.png");
-    game.load.image("r_button", "assets/images/keyboard/r_button.png");
+    game.load.atlasJSONHash(
+        "keyboard_buttons",
+        "assets/images/keyboard/keyboard_buttons.png",
+        "assets/images/keyboard/keyboard_buttons.json"
+    );
 }
 
 function load_db_files(game) {

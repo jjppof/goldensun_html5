@@ -54,8 +54,14 @@ export class DjinnActionWindow {
         this.action_text = this.base_window.set_text_in_position("", DJINN_ACTION_X, DJINN_ACTION_Y);
 
         this.shift_key = {
-            shadow: this.base_window.create_at_group(SHIFT_KEY_X + 1, SHIFT_KEY_Y + 1, "shift_keyboard", 0x0),
-            text: this.base_window.create_at_group(SHIFT_KEY_X, SHIFT_KEY_Y, "shift_keyboard"),
+            shadow: this.base_window.create_at_group(
+                SHIFT_KEY_X + 1,
+                SHIFT_KEY_Y + 1,
+                "keyboard_buttons",
+                0x0,
+                "shift"
+            ),
+            text: this.base_window.create_at_group(SHIFT_KEY_X, SHIFT_KEY_Y, "keyboard_buttons", undefined, "shift"),
         };
     }
 
