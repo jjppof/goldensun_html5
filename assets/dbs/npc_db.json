@@ -1,5 +1,28 @@
 [
     {
+        "key_name": "chest",
+        "anchor_y": 0.6,
+        "initial_action": "chest",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "no_shadow": true,
+        "body_radius": 7.0,
+        "scale_x": 0.76,
+        "scale_y": 0.8,
+        "actions": {
+            "chest": {
+                "frame_rate": 1,
+                "directions": ["closed", "open", "opening", "shining"],
+                "frames_count": [1,1,2,2],
+                "initial_direction": "closed",
+                "spritesheet": {
+                    "image": "assets/images/misc/chest.png",
+                    "json": "assets/images/misc/chest.json"
+                },
+                "loop": true
+            }
+        }
+    },{
         "key_name": "village_1",
         "anchor_y": 0.8,
         "initial_action": "idle",

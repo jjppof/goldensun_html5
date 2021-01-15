@@ -144,9 +144,11 @@ export abstract class ControllableChar {
         sprite_info: SpriteBase,
         layer: number,
         map: Map,
+        is_world_map: boolean = false,
         anchor_x?: number,
         anchor_y?: number,
-        is_world_map: boolean = false
+        scale_x?: number,
+        scale_y?: number
     ) {
         anchor_x = anchor_x === undefined ? ControllableChar.default_anchor.x : anchor_x;
         anchor_y = anchor_y === undefined ? ControllableChar.default_anchor.y : anchor_y;
@@ -158,8 +160,16 @@ export abstract class ControllableChar {
         this.sprite.y = ((this.tile_y_pos + 0.5) * map.tile_height) | 0;
         this.sprite.base_collision_layer = layer;
         this.sprite.roundPx = true;
-        const scale_x = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
-        const scale_y = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
+        if (is_world_map) {
+            scale_x = numbers.WORLD_MAP_SPRITE_SCALE_X;
+        } else if (scale_x === undefined) {
+            scale_x = 1;
+        }
+        if (is_world_map) {
+            scale_y = numbers.WORLD_MAP_SPRITE_SCALE_Y;
+        } else if (scale_y === undefined) {
+            scale_y = 1;
+        }
         this.sprite.scale.setTo(scale_x, scale_y);
     }
 

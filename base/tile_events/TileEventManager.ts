@@ -21,6 +21,10 @@ class EventQueue {
         this.queue = [];
     }
 
+    get length() {
+        return this.queue.length;
+    }
+
     add(event, this_activation_direction, fire_function, fire = false) {
         switch (event.type) {
             case event_types.CLIMB:
@@ -100,7 +104,7 @@ export class TileEventManager {
     }
 
     check_tile_events(event_key, map) {
-        let event_queue = new EventQueue();
+        let event_queue: EventQueue;
         for (let i = 0; i < map.events[event_key].length; ++i) {
             const this_event = map.events[event_key][i];
             if (!this_event.activation_collision_layers.includes(map.collision_layer)) continue;
@@ -108,6 +112,7 @@ export class TileEventManager {
                 this_event.jump_near_collision();
             }
             if (!this_event.is_active(this.data.hero.current_direction)) continue;
+            event_queue = new EventQueue();
             if (this_event.type === event_types.SPEED) {
                 if (this.data.hero.extra_speed !== this_event.speed) {
                     event_queue.add(
@@ -148,7 +153,9 @@ export class TileEventManager {
                 }
             }
         }
-        event_queue.process_queue();
+        if (event_queue?.length) {
+            event_queue.process_queue();
+        }
     }
 
     get_event_instance(info: any) {

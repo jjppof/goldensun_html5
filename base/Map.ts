@@ -327,7 +327,9 @@ export class Map {
                     ? property_info.ignore_world_map_scale
                     : npc_db.ignore_world_map_scale,
                 property_info.anchor_x,
-                property_info.anchor_y
+                property_info.anchor_y,
+                property_info.scale_x,
+                property_info.scale_y
             )
         );
     }
@@ -412,9 +414,11 @@ export class Map {
                         npc_sprite_info,
                         npc.base_collision_layer,
                         this,
+                        this.is_world_map,
                         npc.anchor_x !== undefined ? npc.anchor_x : npc_db.anchor_x,
                         npc.anchor_y !== undefined ? npc.anchor_y : npc_db.anchor_y,
-                        this.is_world_map
+                        npc.scale_x !== undefined ? npc.scale_x : npc_db.scale_x,
+                        npc.scale_y !== undefined ? npc.scale_y : npc_db.scale_y
                     );
                     if (npc.ignore_world_map_scale) {
                         npc.sprite.scale.setTo(1, 1);

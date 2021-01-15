@@ -1,8 +1,7 @@
 import {GameEvent} from "./game_events/GameEvent";
-import {mount_collision_polygon, range_360} from "./utils";
+import {mount_collision_polygon} from "./utils";
 import {ControllableChar} from "./ControllableChar";
 import {Collision} from "./Collision";
-import * as numbers from "./magic_numbers";
 
 export enum npc_movement_types {
     IDLE = "idle",
@@ -31,8 +30,10 @@ export class NPC extends ControllableChar {
     public inn_key: string;
     public no_shadow: boolean;
     public ignore_world_map_scale: boolean;
-    public anchor_x: boolean;
-    public anchor_y: boolean;
+    public anchor_x: number;
+    public anchor_y: number;
+    public scale_x: number;
+    public scale_y: number;
     public storage_keys: {
         position?: string;
         action?: string;
@@ -66,7 +67,9 @@ export class NPC extends ControllableChar {
         no_shadow,
         ignore_world_map_scale,
         anchor_x,
-        anchor_y
+        anchor_y,
+        scale_x,
+        scale_y
     ) {
         super(
             game,

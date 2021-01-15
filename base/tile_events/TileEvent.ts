@@ -101,7 +101,7 @@ export abstract class TileEvent {
     }
 
     static get_location_key(x, y) {
-        return x.toString() + "_" + y.toString();
+        return `${x}_${y}`;
     }
 
     static get_event_by_id(events, id) {
