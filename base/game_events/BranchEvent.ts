@@ -2,6 +2,7 @@ import {GameEvent, event_types, game_info_types, EventValue, event_value_types} 
 import * as _ from "lodash";
 import {TileEvent} from "../tile_events/TileEvent";
 import {NPC} from "../NPC";
+import {storage_types} from "../Storage";
 
 enum conditions {
     EQ = "=",
@@ -59,7 +60,10 @@ export class BranchEvent extends GameEvent {
             case event_value_types.VALUE:
                 return comparator_value.value;
             case event_value_types.STORAGE:
-                return this.data.storage.get(comparator_value.value.key_name);
+                const storage = this.data.storage.get_object(comparator_value.value.key_name);
+                return storage.type === storage_types.POSITION
+                    ? `${storage.value.x}/${storage.value.y}`
+                    : storage.value;
             case event_value_types.GAME_INFO:
                 switch (comparator_value.value.type) {
                     case game_info_types.CHAR:

@@ -1,3 +1,8 @@
 {
-    "alex_walked": false
+    "alex_walked": false,
+    "alex_position": {
+        "x": 25,
+        "y": 12
+    },
+    "alex_direction": "down"
 }

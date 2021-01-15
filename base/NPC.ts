@@ -33,6 +33,12 @@ export class NPC extends ControllableChar {
     public ignore_world_map_scale: boolean;
     public anchor_x: boolean;
     public anchor_y: boolean;
+    public storage_keys: {
+        position?: string;
+        action?: string;
+        direction?: string;
+        base_collision_layer?: string;
+    };
 
     constructor(
         game,
@@ -40,6 +46,7 @@ export class NPC extends ControllableChar {
         key_name,
         initial_x,
         initial_y,
+        storage_keys,
         initial_action,
         initial_direction,
         enable_footsteps,
@@ -65,30 +72,34 @@ export class NPC extends ControllableChar {
             game,
             data,
             key_name,
+            enable_footsteps,
+            walk_speed,
+            dash_speed,
+            climb_speed,
             initial_x,
             initial_y,
             initial_action,
             initial_direction,
-            enable_footsteps,
-            walk_speed,
-            dash_speed,
-            climb_speed
+            storage_keys
         );
         this.npc_type = npc_type;
         this.movement_type = movement_type;
         this.message = message;
         this.thought_message = thought_message;
-        this.avatar = avatar;
+        this.avatar = avatar ? avatar : null;
         this.shop_key = shop_key;
         this.inn_key = inn_key;
-        this.base_collision_layer = base_collision_layer;
+        if (this.storage_keys.base_collision_layer !== undefined) {
+            base_collision_layer = this.data.storage.get(this.storage_keys.base_collision_layer);
+        }
+        this.base_collision_layer = base_collision_layer === undefined ? 0 : base_collision_layer;
         this.talk_range_factor = talk_range_factor === undefined ? NPC.NPC_TALK_RANGE : talk_range_factor;
         this.no_shadow = no_shadow === undefined ? false : no_shadow;
         this.ignore_world_map_scale = ignore_world_map_scale === undefined ? false : ignore_world_map_scale;
         this.anchor_x = anchor_x;
         this.anchor_y = anchor_y;
         this.events = [];
-        this.set_events(events_info);
+        this.set_events(events_info === undefined ? [] : events_info);
     }
 
     set_sprite_as_npc() {

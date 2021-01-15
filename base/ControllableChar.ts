@@ -5,7 +5,7 @@ import {GoldenSun} from "./GoldenSun";
 import {SpriteBase} from "./SpriteBase";
 import {Map} from "./Map";
 
-export class ControllableChar {
+export abstract class ControllableChar {
     private static readonly DEFAULT_SHADOW_KEYNAME = "shadow";
 
     private static readonly DEFAULT_SHADOW_ANCHOR_X = 0.45;
@@ -37,6 +37,11 @@ export class ControllableChar {
     public casting_psynergy: boolean;
     public teleporting: boolean;
     public idle_climbing: boolean;
+    public storage_keys: {
+        position?: string;
+        action?: string;
+        direction?: string;
+    };
     public sprite_info: SpriteBase;
     public sprite: Phaser.Sprite;
     public shadow: Phaser.Sprite;
@@ -62,14 +67,15 @@ export class ControllableChar {
         game: Phaser.Game,
         data: GoldenSun,
         key_name: string,
-        initial_x: number,
-        initial_y: number,
-        initial_action: string | base_actions,
-        initial_direction: string,
         enable_footsteps: boolean,
         walk_speed: number,
         dash_speed: number,
-        climb_speed: number
+        climb_speed: number,
+        initial_x?: number,
+        initial_y?: number,
+        initial_action?: string | base_actions,
+        initial_direction?: string,
+        storage_keys?: ControllableChar["storage_keys"]
     ) {
         this.game = game;
         this.data = data;
@@ -94,9 +100,20 @@ export class ControllableChar {
         this.sprite = null;
         this.shadow = null;
         this.body_radius = 0;
+        this.storage_keys = storage_keys === undefined ? {} : storage_keys;
+        if (this.storage_keys.position !== undefined) {
+            const position = this.data.storage.get(this.storage_keys.position);
+            initial_x = position.x;
+            initial_y = position.y;
+        }
         this.tile_x_pos = initial_x;
         this.tile_y_pos = initial_y;
-        this.current_action = initial_action;
+        this.current_action =
+            this.storage_keys.action !== undefined ? this.data.storage.get(this.storage_keys.action) : initial_action;
+        initial_direction =
+            this.storage_keys.direction !== undefined
+                ? this.data.storage.get(this.storage_keys.direction)
+                : initial_direction;
         this.current_direction = initial_direction in directions ? directions[initial_direction] : null;
         this.current_animation = initial_direction;
         this.required_direction = null;

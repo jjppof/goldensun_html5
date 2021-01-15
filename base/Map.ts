@@ -292,7 +292,8 @@ export class Map {
     create_npcs(raw_property) {
         const property_info = JSON.parse(raw_property);
         const npc_db = this.data.dbs.npc_db[property_info.key_name];
-        const initial_action = npc_db.initial_action;
+        const initial_action =
+            property_info.initial_action !== undefined ? property_info.initial_action : npc_db.initial_action;
         const initial_animation =
             property_info.animation_key !== undefined
                 ? property_info.animation_key
@@ -304,6 +305,7 @@ export class Map {
                 property_info.key_name,
                 property_info.initial_x,
                 property_info.initial_y,
+                property_info.storage_keys,
                 initial_action,
                 initial_animation,
                 property_info.enable_footsteps,
@@ -314,13 +316,13 @@ export class Map {
                 property_info.movement_type,
                 property_info.message,
                 property_info.thought_message,
-                property_info.avatar ? property_info.avatar : null,
+                property_info.avatar,
                 property_info.shop_key,
                 property_info.inn_key,
-                property_info.base_collision_layer === undefined ? 0 : property_info.base_collision_layer,
+                property_info.base_collision_layer,
                 property_info.talk_range_factor,
-                property_info.events === undefined ? [] : property_info.events,
-                this.data.dbs.npc_db[property_info.key_name].no_shadow,
+                property_info.events,
+                npc_db.no_shadow,
                 property_info.ignore_world_map_scale !== undefined
                     ? property_info.ignore_world_map_scale
                     : npc_db.ignore_world_map_scale,

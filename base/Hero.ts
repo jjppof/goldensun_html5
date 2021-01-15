@@ -78,14 +78,14 @@ export class Hero extends ControllableChar {
             game,
             data,
             key_name,
-            initial_x,
-            initial_y,
-            initial_action,
-            initial_direction,
             true,
             walk_speed,
             dash_speed,
-            climb_speed
+            climb_speed,
+            initial_x,
+            initial_y,
+            initial_action,
+            initial_direction
         );
         this.arrow_inputs = null;
     }

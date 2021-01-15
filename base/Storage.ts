@@ -4,6 +4,7 @@ export enum storage_types {
     BOOLEAN = "boolean",
     NUMBER = "number",
     STRING = "string",
+    POSITION = "position",
 }
 
 type StorageRecord = {
@@ -35,6 +36,9 @@ export class Storage {
                 case "string":
                     type = storage_types.STRING;
                     break;
+                case "object":
+                    type = storage_types.POSITION;
+                    break;
             }
             this.add(key, type, value);
         }
@@ -47,6 +51,10 @@ export class Storage {
             value: initial_value,
             callbacks: callbacks === undefined ? [] : callbacks,
         };
+    }
+
+    get_object(key_name: string) {
+        return this.internal_storage[key_name];
     }
 
     get(key_name: string) {
