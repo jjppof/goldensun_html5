@@ -57,6 +57,7 @@ export enum base_actions {
     CAST = "cast",
     JUMP = "jump",
     BATTLE = "battle",
+    GRANT = "grant",
 }
 
 /*Returns the angle for an 8-Directional value

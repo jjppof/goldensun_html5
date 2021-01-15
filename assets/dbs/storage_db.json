@@ -4,5 +4,7 @@
         "x": 25,
         "y": 12
     },
-    "alex_direction": "down"
+    "alex_direction": "down",
+    "adepts_clothes_chest_open": false,
+    "adepts_clothes_chest_anim": "closed"
 }

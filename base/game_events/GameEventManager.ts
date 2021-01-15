@@ -9,6 +9,7 @@ import {SetValueEvent} from "./SetValueEvent";
 import {MoveEvent} from "./MoveEvent";
 import {DialogEvent} from "./DialogEvent";
 import {LookEvent} from "./LookEvent";
+import {ChestEvent} from "./ChestEvent";
 
 export enum interaction_patterns {
     TIK_TAK_TOE = "tik_tak_toe",
@@ -21,6 +22,7 @@ export class GameEventManager {
     public events_running_count: number;
     public control_enable: boolean;
     public allow_char_to_move: boolean;
+    public force_idle_action: boolean;
     public fire_next_step: Function;
     public update_callbacks: Function[] = [];
 
@@ -31,6 +33,7 @@ export class GameEventManager {
         this.control_enable = true;
         this.fire_next_step = null;
         this.allow_char_to_move = false;
+        this.force_idle_action = true;
         this.set_controls();
     }
 
@@ -209,6 +212,15 @@ export class GameEventManager {
                 );
             case event_types.LOOK:
                 return new LookEvent(this.game, this.data, info.active, info.look, info.looker, info.target);
+            case event_types.CHEST:
+                return new ChestEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.item,
+                    info.quantity,
+                    info.open_finish_events
+                );
         }
     }
 
@@ -222,7 +234,7 @@ export class GameEventManager {
 
     update() {
         if (!this.allow_char_to_move) {
-            this.data.hero.stop_char();
+            this.data.hero.stop_char(this.force_idle_action);
         }
         this.data.hero.update_on_event();
         this.data.map.npcs.forEach(npc => npc.update_on_event());
