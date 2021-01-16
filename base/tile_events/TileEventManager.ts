@@ -112,7 +112,9 @@ export class TileEventManager {
                 this_event.jump_near_collision();
             }
             if (!this_event.is_active(this.data.hero.current_direction)) continue;
-            event_queue = new EventQueue();
+            if (!event_queue) {
+                event_queue = new EventQueue();
+            }
             if (this_event.type === event_types.SPEED) {
                 if (this.data.hero.extra_speed !== this_event.speed) {
                     event_queue.add(
