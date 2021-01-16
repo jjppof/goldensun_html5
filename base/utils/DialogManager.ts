@@ -183,10 +183,13 @@ export class DialogManager {
     }
 
     //Receives a text string and mount the the dialog sections that will go to each window of the dialog.
-    //Optionally, also receives an initial avatar and the hero talking direction
-    set_dialog(text, avatar?, hero_direction?) {
+    //Optionally, also receives an initial avatar and the hero talking direction.
+    //Use ${HERO} to replace by hero name. Use ${BREAK} to start a new window.
+    set_dialog(text: string, avatar?, hero_direction?) {
         this.set_avatar(avatar);
         this.set_hero_direction(hero_direction);
+        text = text.replace(/\${HERO}/g, this.data.info.party_data.members[0].name);
+        text = text.replace(/( )?\${BREAK}( )?/g, " ${BREAK} ");
         const max_efective_width =
             numbers.MAX_DIAG_WIN_WIDTH - 2 * numbers.WINDOW_PADDING_H - numbers.INSIDE_BORDER_WIDTH;
         let words = text.split(" ");
@@ -195,11 +198,21 @@ export class DialogManager {
         let line = []; //array of words
         let line_width = 0; //in px
         let max_window_width = 0;
+        const push_window = () => {
+            windows.push({
+                lines: lines.slice(),
+                width: max_window_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH,
+                height:
+                    numbers.WINDOW_PADDING_TOP +
+                    numbers.WINDOW_PADDING_BOTTOM +
+                    lines.length * (numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES) -
+                    numbers.SPACE_BETWEEN_LINES,
+            });
+        };
         for (let i = 0; i < words.length; ++i) {
             const word = words[i];
             line_width = utils.get_text_width(this.game, line.join(" ") + word, this.italic_font);
-            if (line_width >= max_efective_width) {
-                //check if it's the end of the line
+            if (line_width >= max_efective_width || word === "${BREAK}") { //check if it's the end of the line
                 const line_text = line.join(" ");
                 lines.push(line_text);
                 max_window_width = Math.max(
@@ -207,19 +220,11 @@ export class DialogManager {
                     utils.get_text_width(this.game, line_text, this.italic_font)
                 );
                 line = [];
-                line.push(word);
-                line_width = utils.get_text_width(this.game, word, this.italic_font);
-                if (lines.length === numbers.MAX_LINES_PER_DIAG_WIN) {
-                    //check if it's the end of the window
-                    windows.push({
-                        lines: lines.slice(),
-                        width: max_window_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH,
-                        height:
-                            numbers.WINDOW_PADDING_TOP +
-                            numbers.WINDOW_PADDING_BOTTOM +
-                            lines.length * (numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES) -
-                            numbers.SPACE_BETWEEN_LINES,
-                    });
+                if (word !== "${BREAK}") {
+                    line.push(word);
+                }
+                if (lines.length === numbers.MAX_LINES_PER_DIAG_WIN || word === "${BREAK}") { //check if it's the end of the window
+                    push_window();
                     max_window_width = 0;
                     lines = [];
                 }
@@ -234,15 +239,7 @@ export class DialogManager {
                 utils.get_text_width(this.game, line.join(" "), this.italic_font)
             );
             lines.push(line.join(" "));
-            windows.push({
-                lines: lines.slice(),
-                width: max_window_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH + 2,
-                height:
-                    numbers.WINDOW_PADDING_TOP +
-                    numbers.WINDOW_PADDING_BOTTOM +
-                    lines.length * (numbers.FONT_SIZE + numbers.SPACE_BETWEEN_LINES) -
-                    numbers.SPACE_BETWEEN_LINES,
-            });
+            push_window();
         }
         this.parts = windows;
     }
