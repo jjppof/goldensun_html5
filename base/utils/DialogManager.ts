@@ -212,7 +212,8 @@ export class DialogManager {
         for (let i = 0; i < words.length; ++i) {
             const word = words[i];
             line_width = utils.get_text_width(this.game, line.join(" ") + word, this.italic_font);
-            if (line_width >= max_efective_width || word === "${BREAK}") { //check if it's the end of the line
+            if (line_width >= max_efective_width || word === "${BREAK}") {
+                //check if it's the end of the line
                 const line_text = line.join(" ");
                 lines.push(line_text);
                 max_window_width = Math.max(
@@ -223,7 +224,8 @@ export class DialogManager {
                 if (word !== "${BREAK}") {
                     line.push(word);
                 }
-                if (lines.length === numbers.MAX_LINES_PER_DIAG_WIN || word === "${BREAK}") { //check if it's the end of the window
+                if (lines.length === numbers.MAX_LINES_PER_DIAG_WIN || word === "${BREAK}") {
+                    //check if it's the end of the window
                     push_window();
                     max_window_width = 0;
                     lines = [];
