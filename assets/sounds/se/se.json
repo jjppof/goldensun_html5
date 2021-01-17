@@ -124,5 +124,20 @@
                 }
             }
         }
+    },
+    "door": {
+        "audio": "assets/sounds/se/door.ogg",
+        "json": {
+            "spritemap": {
+                "default": {
+                    "start": 0.01,
+                    "end": 1.18
+                },
+                "open_door": {
+                    "start": 1.18,
+                    "end": 1.666
+                }
+            }
+        }
     }
 }

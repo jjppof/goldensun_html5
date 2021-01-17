@@ -54,6 +54,7 @@ export class TeleportEvent extends TileEvent {
         this.data.tile_event_manager.on_event = true;
         this.data.hero.teleporting = true;
         if (this.advance_effect) {
+            this.data.audio.play_se("door/open_door");
             if (!this.data.hero.stop_by_colliding) {
                 this.data.tile_event_manager.on_event = false;
                 this.data.hero.teleporting = false;
@@ -89,6 +90,7 @@ export class TeleportEvent extends TileEvent {
                     this.camera_fade_in();
                 });
         } else {
+            this.data.audio.play_se("door/default");
             this.camera_fade_in();
         }
     }
