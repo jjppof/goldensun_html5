@@ -1,5 +1,5 @@
 import {init_cast_aura, tint_map_layers} from "./psynergy_cast";
-import {base_actions, directions_count, reverse_directions} from "../utils";
+import {base_actions, directions, reverse_directions} from "../utils";
 import {InteractableObjects, interactable_object_interaction_types} from "../InteractableObjects";
 import {FieldPsynergyWindow} from "../windows/FieldPsynergyWindow";
 import {GoldenSun} from "../GoldenSun";
