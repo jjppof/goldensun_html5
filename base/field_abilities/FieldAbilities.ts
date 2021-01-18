@@ -1,5 +1,5 @@
 import {init_cast_aura, tint_map_layers} from "./psynergy_cast";
-import {base_actions, directions, directions_count, reverse_directions} from "../utils";
+import {base_actions, directions, reverse_directions} from "../utils";
 import {InteractableObjects, interactable_object_interaction_types} from "../InteractableObjects";
 import {FieldPsynergyWindow} from "../windows/FieldPsynergyWindow";
 import {GoldenSun} from "../GoldenSun";
@@ -41,16 +41,14 @@ export class FieldAbilities {
         this.field_psynergy_window = new FieldPsynergyWindow(this.game, this.data);
     }
 
-    /*Sets the psynergy cast direction
-    For diagonals, pick the next clockwise non-diagonal
-
-    Input: direction [number] - Current direction
-
-    Output: [number] - Non-diagonal cast direction*/
+    /**
+     * Sets the psynergy cast direction,
+     * For diagonals, picks the next clockwise non-diagonal.
+     * @param {number} direction - Current direction
+     * @return {number} Non-diagonal cast direction
+     */
     get_cast_direction(direction) {
-        if (direction % 2 === 0) return direction;
-        direction++;
-        return direction === directions_count ? directions.right : direction;
+        return (direction % 2 ? direction + 1 : direction) % 8;
     }
 
     set_hero_cast_anim() {
