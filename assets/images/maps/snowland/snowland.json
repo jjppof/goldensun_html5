@@ -203,11 +203,23 @@
  "properties":
     {
      "event_01":"{\n\"type\": \"teleport\",\n\"x_target\": 22,\n\"y_target\": 10,\n\"target\": \"world_map\",\n\"activation_directions\": \"left\",\n\"x\": 0,\n\"y\": 18,\n\"advance_effect\": false,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": [0],\n\"destination_direction\": \"down\"\n}",
+     "event_02":"{\n\"type\": \"climb\",\n\"x\": 22,\n\"y\": 10,\n \"activation_directions\": \"down\",\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 0\n}",
+     "event_03":"{\n\"type\": \"climb\",\n\"x\": 22,\n\"y\": 11,\n \"activation_directions\": \"up\",\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 0\n}",
+     "event_04":"{\n\"type\": \"climb\",\n\"x\": 22,\n\"y\": 12,\n \"activation_directions\": \"down\",\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 0\n}",
+     "event_05":"{\n\"type\": \"climb\",\n\"x\": 22,\n\"y\": 13,\n \"activation_directions\": \"up\",\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 0\n}",
+     "event_06":"{\n\"type\": \"ice_slide\",\n\"x\": 22,\n\"y\": 14,\n \"activation_directions\": [\"up\", \"down\"],\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 0,\n\"start_sliding_direction\": \"down\"\n}",
+     "event_07":"{\n\"type\": \"ice_slide\",\n\"x\": 24,\n\"y\": 14,\n \"activation_directions\": [\"up\", \"down\"],\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 0,\n\"start_sliding_direction\": \"down\"\n}",
      "footprint":true
     },
  "propertytypes":
     {
      "event_01":"string",
+     "event_02":"string",
+     "event_03":"string",
+     "event_04":"string",
+     "event_05":"string",
+     "event_06":"string",
+     "event_07":"string",
      "footprint":"bool"
     },
  "renderorder":"right-down",

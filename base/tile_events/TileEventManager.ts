@@ -3,6 +3,7 @@ import {base_actions} from "../utils";
 import {ClimbEvent} from "./ClimbEvent";
 import {CollisionEvent} from "./CollisionEvent";
 import {EventTriggerEvent} from "./EventTriggerEvent";
+import {IceSlideEvent} from "./IceSlideEvent";
 import {JumpEvent} from "./JumpEvent";
 import {SliderEvent} from "./SliderEvent";
 import {SpeedEvent} from "./SpeedEvent";
@@ -93,7 +94,11 @@ export class TileEventManager {
         });
     }
 
-    fire_event(current_event, this_activation_direction) {
+    fire_event(current_event: TileEvent, this_activation_direction) {
+        if (current_event.type === event_types.ICE_SLIDE && this.data.hero.ice_sliding_active) {
+            current_event.fire();
+            return;
+        }
         if (this.data.hero.current_direction !== this_activation_direction) return;
         if (current_event.type === event_types.CLIMB && !this.data.hero.idle_climbing) {
             (current_event as ClimbEvent).current_activation_direction = this_activation_direction;
@@ -124,7 +129,10 @@ export class TileEventManager {
                         true
                     );
                 }
-            } else if (this_event.type === event_types.TELEPORT && !this_event.advance_effect) {
+            } else if (
+                this_event.type === event_types.ICE_SLIDE ||
+                (this_event.type === event_types.TELEPORT && !this_event.advance_effect)
+            ) {
                 event_queue.add(
                     this_event,
                     this.data.hero.current_direction,
@@ -264,6 +272,18 @@ export class TileEventManager {
                 false,
                 info.active,
                 info.events
+            );
+        } else if (info.type === event_types.ICE_SLIDE) {
+            return new IceSlideEvent(
+                this.game,
+                this.data,
+                info.x,
+                info.y,
+                info.activation_directions,
+                info.activation_collision_layers,
+                false,
+                info.active,
+                info.start_sliding_direction
             );
         }
     }

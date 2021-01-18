@@ -12,6 +12,7 @@ export enum event_types {
     COLLISION = "collision",
     SLIDER = "slider",
     EVENT_TRIGGER = "event_trigger",
+    ICE_SLIDE = "ice_slide",
 }
 
 export abstract class TileEvent {
