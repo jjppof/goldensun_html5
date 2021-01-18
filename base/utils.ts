@@ -33,9 +33,6 @@ export enum directions {
     up_right = 7,
 }
 
-/*Size of "directions" object*/
-export const directions_count = Object.keys(directions).length;
-
 /*8-Directional direction keys*/
 export const reverse_directions = {
     [directions.right]: "right",
@@ -97,15 +94,16 @@ export function split_direction(direction) {
     return vals;
 }
 
-/*Returns the diagonal value for its component directions
-Example: Input: 6, 0 (up, right) / Output: 7 (up_right)
-
-Input: dir_1, dir_2 [number] - Direction values
-
-Output: [number] - Diagonal direction value
-*/
+/**
+ * Returns the diagonal value for its component directions
+ * Example: Input: 6, 0 (up, right) / Output: 7 (up_right)
+ *
+ * @param {number} dir_1 - Direction values
+ * @param {number} dir_2 - Direction values
+ * @return {number} Diagonal direction value
+ */
 export function join_directions(dir_1, dir_2) {
-    dir_2 = dir_1 === directions.up && dir_2 === directions.right ? directions_count : dir_2;
+    dir_2 = dir_1 === directions.up && dir_2 === directions.right ? 8 : dir_2;
     return Math.min(dir_1, dir_2) + 1;
 }
 
