@@ -198,7 +198,8 @@ export class ClimbEvent extends TileEvent {
 
     create_climb_collision_bodies() {
         this.origin_interactable_object.sprite.send_to_back = true;
-        const relative_positions = this.origin_interactable_object.tile_events_info.flatMap(event_info => {
+        const interactable_object_db = this.data.dbs.interactable_objects_db[this.origin_interactable_object.key_name];
+        const relative_positions = interactable_object_db.events.flatMap(event_info => {
             if (event_info.type !== interactable_object_event_types.CLIMB || !event_info.collision_tiles_relative_pos)
                 return [];
             else {

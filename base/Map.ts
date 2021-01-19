@@ -352,24 +352,10 @@ export class Map {
             property_info.anchor_x,
             property_info.anchor_y,
             property_info.scale_x,
-            property_info.scale_y
+            property_info.scale_y,
+            property_info.block_climb_collision_layer_shift
         );
         this.interactable_objects.push(interactable_object);
-        for (let psynergy_key in this.data.dbs.interactable_objects_db[property_info.key_name].psynergy_keys) {
-            const psynergy_properties = this.data.dbs.interactable_objects_db[property_info.key_name].psynergy_keys[
-                psynergy_key
-            ];
-            if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
-                interactable_object.custom_data[psynergy_key + "_casted"] = false;
-            }
-        }
-        if (
-            this.data.dbs.interactable_objects_db[property_info.key_name].pushable &&
-            property_info.block_stair_collision_layer_shift !== undefined
-        ) {
-            interactable_object.custom_data.block_stair_collision_layer_shift =
-                property_info.block_stair_collision_layer_shift;
-        }
     }
 
     config_interactable_object() {

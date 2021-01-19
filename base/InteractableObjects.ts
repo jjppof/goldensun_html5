@@ -33,7 +33,6 @@ export class InteractableObjects {
     public not_allowed_tiles: {x: number; y: number}[];
     public object_drop_tiles: any;
     public events: Set<TileEvent>;
-    public tile_events_info: any[];
     public current_x: number;
     public current_y: number;
     public custom_data: any;
@@ -49,6 +48,14 @@ export class InteractableObjects {
         position?: string;
         base_collision_layer?: string;
     };
+    public tile_events_info: {
+        [event_id: number]: {
+            collision_layer_shift?: number;
+            intermediate_collision_layer_shift?: number;
+        };
+    };
+    public psynergy_casted: {[field_psynergy_key: string]: boolean};
+    public block_climb_collision_layer_shift: number;
 
     constructor(
         game,
@@ -66,7 +73,8 @@ export class InteractableObjects {
         anchor_x,
         anchor_y,
         scale_x,
-        scale_y
+        scale_y,
+        block_climb_collision_layer_shift
     ) {
         this.game = game;
         this.data = data;
@@ -91,7 +99,6 @@ export class InteractableObjects {
         this.not_allowed_tiles = not_allowed_tiles === undefined ? [] : not_allowed_tiles;
         this.object_drop_tiles = object_drop_tiles === undefined ? [] : object_drop_tiles;
         this.events = new Set();
-        this.tile_events_info = [];
         this.current_x = this.x;
         this.current_y = this.y;
         this.custom_data = {};
@@ -102,6 +109,9 @@ export class InteractableObjects {
         this.anchor_y = anchor_y;
         this.scale_x = scale_x;
         this.scale_y = scale_y;
+        this.tile_events_info = {};
+        this.psynergy_casted = {};
+        this.block_climb_collision_layer_shift = block_climb_collision_layer_shift;
     }
 
     set_sprite(sprite) {
@@ -154,7 +164,7 @@ export class InteractableObjects {
     }
 
     creating_blocking_stair_block(collision_obj: Collision) {
-        const target_layer = this.base_collision_layer + this.custom_data.block_stair_collision_layer_shift;
+        const target_layer = this.base_collision_layer + this.block_climb_collision_layer_shift;
         const x_pos = (this.current_x + 0.5) * this.data.map.tile_width;
         const y_pos = (this.current_y + 1.5) * this.data.map.tile_height - 4;
         let body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
@@ -179,6 +189,13 @@ export class InteractableObjects {
     }
 
     initial_config(map: Map) {
+        const interactable_object_db = this.data.dbs.interactable_objects_db[this.key_name];
+        for (let psynergy_key in interactable_object_db.psynergy_keys) {
+            const psynergy_properties = interactable_object_db.psynergy_keys[psynergy_key];
+            if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
+                this.psynergy_casted[psynergy_key] = false;
+            }
+        }
         const interactable_object_key = this.sprite_info.getActionKey(this.key_name);
         const interactable_object_sprite = this.data.npc_group.create(0, 0, interactable_object_key);
         this.set_sprite(interactable_object_sprite);
@@ -186,7 +203,6 @@ export class InteractableObjects {
         this.sprite.roundPx = true;
         this.sprite.base_collision_layer = this.base_collision_layer;
         this.sprite.interactable_object = this;
-        const interactable_object_db = this.data.dbs.interactable_objects_db[this.key_name];
         if (interactable_object_db.send_to_back !== undefined) {
             this.sprite.send_to_back = interactable_object_db.send_to_back;
         }
@@ -291,7 +307,6 @@ export class InteractableObjects {
         );
         map_events[this_event_location_key].push(new_event);
         this.insert_event(new_event.id);
-        this.tile_events_info.push(event_info);
         this.collision_change_functions.push(() => {
             new_event.activation_collision_layers = [this.base_collision_layer + this.collision_layer_shift];
         });
@@ -344,7 +359,6 @@ export class InteractableObjects {
                 new_event.activation_collision_layers = [this.base_collision_layer];
             });
         });
-        this.tile_events_info.push(event_info);
     }
 
     set_stair_event(
@@ -434,7 +448,6 @@ export class InteractableObjects {
             this.insert_event(new_event.id);
             this.collision_change_functions.push(event_data.collision_change_function.bind(null, new_event));
         });
-        this.tile_events_info.push(event_info);
     }
 
     config_body(collision_obj: Collision) {
@@ -464,7 +477,7 @@ export class InteractableObjects {
         this.sprite.body.fixedRotation = true;
         this.sprite.body.dynamic = false;
         this.sprite.body.static = true;
-        if (this.custom_data.block_stair_collision_layer_shift !== undefined) {
+        if (this.block_climb_collision_layer_shift !== undefined) {
             this.creating_blocking_stair_block(collision_obj);
         }
     }

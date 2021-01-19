@@ -133,12 +133,11 @@ export class FieldAbilities {
             const psynergy_properties = this.data.dbs.interactable_objects_db[this.target_object.key_name]
                 .psynergy_keys[this.ability_key_name];
             if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
-                const casted_property = this.ability_key_name + "_casted";
-                if (this.target_object.custom_data[casted_property]) {
+                if (this.target_object.psynergy_casted[this.ability_key_name]) {
                     this.target_found = false;
                     this.target_object = null;
                 } else if (this.target_found) {
-                    this.target_object.custom_data[casted_property] = true;
+                    this.target_object.psynergy_casted[this.ability_key_name] = true;
                 }
             }
         }
