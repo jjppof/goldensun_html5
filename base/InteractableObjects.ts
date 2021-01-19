@@ -40,6 +40,14 @@ export class InteractableObjects {
     public collision_change_functions: Function[];
     public color_filter: any;
     public sprite: Phaser.Sprite;
+    public anchor_x: number;
+    public anchor_y: number;
+    public scale_x: number;
+    public scale_y: number;
+    public storage_keys: {
+        position?: string;
+        base_collision_layer?: string;
+    };
 
     constructor(
         game,
@@ -47,20 +55,34 @@ export class InteractableObjects {
         key_name,
         x,
         y,
+        storage_keys,
         allowed_tiles,
         base_collision_layer,
         collider_layer_shift,
         not_allowed_tiles,
         object_drop_tiles,
-        intermediate_collider_layer_shift
+        intermediate_collider_layer_shift,
+        anchor_x,
+        anchor_y,
+        scale_x,
+        scale_y
     ) {
         this.game = game;
         this.data = data;
         this.key_name = key_name;
+        this.storage_keys = storage_keys === undefined ? {} : storage_keys;
+        if (this.storage_keys.position !== undefined) {
+            const position = this.data.storage.get(this.storage_keys.position);
+            x = position.x;
+            y = position.y;
+        }
         this.x = x;
         this.y = y;
         this.sprite_info = null;
         this.allowed_tiles = allowed_tiles;
+        if (this.storage_keys.base_collision_layer !== undefined) {
+            base_collision_layer = this.data.storage.get(this.storage_keys.base_collision_layer);
+        }
         this.base_collision_layer = base_collision_layer;
         this.collider_layer_shift = collider_layer_shift;
         this.intermediate_collider_layer_shift =
@@ -69,13 +91,17 @@ export class InteractableObjects {
         this.object_drop_tiles = object_drop_tiles === undefined ? [] : object_drop_tiles;
         this.events = new Set();
         this.events_info = {};
-        this.current_x = x;
-        this.current_y = y;
+        this.current_x = this.x;
+        this.current_y = this.y;
         this.custom_data = {
             collision_tiles_bodies: [],
         };
         this.collision_change_functions = [];
         this.color_filter = this.game.add.filter("ColorFilters");
+        this.anchor_x = anchor_x;
+        this.anchor_y = anchor_y;
+        this.scale_x = scale_x;
+        this.scale_y = scale_y;
     }
 
     set_sprite(sprite) {
@@ -112,9 +138,7 @@ export class InteractableObjects {
         );
         this.base_collision_layer = destination_collider_layer;
         this.sprite.base_collision_layer = destination_collider_layer;
-        this.collision_change_functions.forEach(f => {
-            f();
-        });
+        this.collision_change_functions.forEach(f => f());
     }
 
     insert_event(id) {
@@ -155,32 +179,44 @@ export class InteractableObjects {
     }
 
     initial_config(map: Map) {
-        const interactable_object_sprite = this.data.npc_group.create(0, 0, this.key_name + "_" + this.key_name);
+        const interactable_object_key = this.sprite_info.getActionKey(this.key_name);
+        const interactable_object_sprite = this.data.npc_group.create(0, 0, interactable_object_key);
         this.set_sprite(interactable_object_sprite);
         this.sprite.is_interactable_object = true;
         this.sprite.roundPx = true;
         this.sprite.base_collision_layer = this.base_collision_layer;
         this.sprite.interactable_object = this;
-        if (this.data.dbs.interactable_objects_db[this.key_name].send_to_back !== undefined) {
-            this.sprite.send_to_back = this.data.dbs.interactable_objects_db[this.key_name].send_to_back;
+        const interactable_object_db = this.data.dbs.interactable_objects_db[this.key_name];
+        if (interactable_object_db.send_to_back !== undefined) {
+            this.sprite.send_to_back = interactable_object_db.send_to_back;
         }
-        if (this.data.dbs.interactable_objects_db[this.key_name].anchor_x !== undefined) {
-            this.sprite.anchor.x = this.data.dbs.interactable_objects_db[this.key_name].anchor_x;
+        if (this.anchor_x !== undefined) {
+            this.sprite.anchor.x = interactable_object_db.anchor_x;
+        } else if (interactable_object_db.anchor_x !== undefined) {
+            this.sprite.anchor.x = interactable_object_db.anchor_x;
         }
-        this.sprite.anchor.y = this.data.dbs.interactable_objects_db[this.key_name].anchor_y;
-        const shift_x =
-            this.data.dbs.interactable_objects_db[this.key_name].shift_x !== undefined
-                ? this.data.dbs.interactable_objects_db[this.key_name].shift_x
-                : 0;
-        const shift_y =
-            this.data.dbs.interactable_objects_db[this.key_name].shift_y !== undefined
-                ? this.data.dbs.interactable_objects_db[this.key_name].shift_y
-                : 0;
+        if (this.anchor_y !== undefined) {
+            this.sprite.anchor.y = interactable_object_db.anchor_y;
+        } else if (interactable_object_db.anchor_y !== undefined) {
+            this.sprite.anchor.y = interactable_object_db.anchor_y;
+        }
+        if (this.scale_x !== undefined) {
+            this.sprite.scale.x = interactable_object_db.scale_x;
+        } else if (interactable_object_db.scale_x !== undefined) {
+            this.sprite.scale.x = interactable_object_db.scale_x;
+        }
+        if (this.scale_y !== undefined) {
+            this.sprite.scale.y = interactable_object_db.scale_y;
+        } else if (interactable_object_db.scale_y !== undefined) {
+            this.sprite.scale.y = interactable_object_db.scale_y;
+        }
+        const shift_x = interactable_object_db.shift_x !== undefined ? interactable_object_db.shift_x : 0;
+        const shift_y = interactable_object_db.shift_y !== undefined ? interactable_object_db.shift_y : 0;
         this.sprite.centerX = (this.x + 1) * map.tile_width + shift_x;
-        const anchor_shift = this.data.dbs.interactable_objects_db[this.key_name].anchor_y * map.tile_width * 0.5;
+        const anchor_shift = this.sprite.anchor.y * map.tile_width * 0.5;
         this.sprite.centerY = this.y * map.tile_width - anchor_shift + shift_y;
         this.sprite_info.setAnimation(this.sprite, this.key_name);
-        const initial_animation = this.data.dbs.interactable_objects_db[this.key_name].initial_animation;
+        const initial_animation = interactable_object_db.initial_animation;
         const anim_key = this.sprite_info.getAnimationKey(this.key_name, initial_animation);
         this.sprite.animations.play(anim_key);
     }

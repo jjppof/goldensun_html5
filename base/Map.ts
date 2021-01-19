@@ -342,12 +342,17 @@ export class Map {
             property_info.key_name,
             property_info.x,
             property_info.y,
+            property_info.storage_keys,
             property_info.allowed_tiles === undefined ? [] : property_info.allowed_tiles,
             property_info.base_collision_layer === undefined ? 0 : property_info.base_collision_layer,
             property_info.collider_layer_shift,
             property_info.not_allowed_tiles,
             property_info.object_drop_tiles,
-            property_info.intermediate_collider_layer_shift
+            property_info.intermediate_collider_layer_shift,
+            property_info.anchor_x,
+            property_info.anchor_y,
+            property_info.scale_x,
+            property_info.scale_y
         );
         this.interactable_objects.push(interactable_object);
         for (let psynergy_key in this.data.dbs.interactable_objects_db[property_info.key_name].psynergy_keys) {

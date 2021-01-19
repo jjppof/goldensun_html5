@@ -101,6 +101,8 @@ export class NPC extends ControllableChar {
         this.ignore_world_map_scale = ignore_world_map_scale === undefined ? false : ignore_world_map_scale;
         this.anchor_x = anchor_x;
         this.anchor_y = anchor_y;
+        this.scale_x = scale_x;
+        this.scale_y = scale_y;
         this.events = [];
         this.set_events(events_info === undefined ? [] : events_info);
     }
