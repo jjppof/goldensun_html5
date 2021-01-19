@@ -235,7 +235,7 @@ export class BattleAnimation {
 
     //tween type can be 'initial' for first position
     //sprite_index: "targets" is the target, "caster" is the caster, "background" is the background sprite, 0...n is the sprites_key_names index
-    //property "to" value can be "target" or an actual value. In the case of "target" is the the corresponding property value. In the case of using "target", a "shift" property is available to be added to the resulting value
+    //property "to" value can be "targets" or an actual value. In the case of "targets" is the the corresponding property value. In the case of using "targets", a "shift" property is available to be added to the resulting value
     //values in rad can have "direction" set to "clockwise", "counter_clockwise" or "closest" if "absolute" is true
     //in sprite_keys, position can be: "between", "over" or "behind"
     //"duration" set to "instantly" must have the "start_delay" value set as absolute
@@ -532,10 +532,10 @@ export class BattleAnimation {
                     }
                     const seq_to = Array.isArray(seq.to) ? seq.to[index] : seq.to;
                     let to_value = seq_to;
-                    if (["target", "caster"].includes(seq_to)) {
+                    if (["targets", "caster"].includes(seq_to)) {
                         let shift = Array.isArray(seq.shift) ? seq.shift[index] : seq.shift;
                         let player_sprite = this.caster_sprite;
-                        if (seq_to === "target") {
+                        if (seq_to === "targets") {
                             player_sprite = this.targets_sprites[this.targets_sprites.length >> 1];
                         }
                         to_value = player_sprite[property_to_set] + (shift === undefined ? 0 : shift);
