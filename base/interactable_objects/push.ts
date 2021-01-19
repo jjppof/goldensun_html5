@@ -168,7 +168,7 @@ export function fire_push_movement(
                                 drop_tile.dest_y - interactable_object.current_y
                             );
                             interactable_object.current_y = drop_tile.dest_y;
-                            interactable_object.change_collider_layer(data, drop_tile.destination_collider_layer);
+                            interactable_object.change_collision_layer(data, drop_tile.destination_collision_layer);
                             game.add
                                 .tween(interactable_object.sprite.body)
                                 .to(
@@ -239,7 +239,7 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
         JumpEvent.active_jump_surroundings(
             data,
             new_surroundings,
-            interactable_object.collider_layer_shift + interactable_object.base_collision_layer
+            interactable_object.collision_layer_shift + interactable_object.base_collision_layer
         );
         const old_surroundings = get_surroundings(old_x, old_y, false, 2);
         for (let j = 0; j < old_surroundings.length; ++j) {
@@ -250,7 +250,7 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
                     const old_surr_event = data.map.events[old_key][k];
                     if (old_surr_event.type === event_types.JUMP) {
                         const target_layer =
-                            interactable_object.collider_layer_shift + interactable_object.base_collision_layer;
+                            interactable_object.collision_layer_shift + interactable_object.base_collision_layer;
                         if (
                             old_surr_event.activation_collision_layers.includes(target_layer) &&
                             old_surr_event.dynamic === false

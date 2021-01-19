@@ -343,12 +343,12 @@ export class Map {
             property_info.x,
             property_info.y,
             property_info.storage_keys,
-            property_info.allowed_tiles === undefined ? [] : property_info.allowed_tiles,
-            property_info.base_collision_layer === undefined ? 0 : property_info.base_collision_layer,
-            property_info.collider_layer_shift,
+            property_info.allowed_tiles,
+            property_info.base_collision_layer,
+            property_info.collision_layer_shift,
             property_info.not_allowed_tiles,
             property_info.object_drop_tiles,
-            property_info.intermediate_collider_layer_shift,
+            property_info.intermediate_collision_layer_shift,
             property_info.anchor_x,
             property_info.anchor_y,
             property_info.scale_x,
@@ -365,10 +365,10 @@ export class Map {
         }
         if (
             this.data.dbs.interactable_objects_db[property_info.key_name].pushable &&
-            property_info.block_stair_collider_layer_shift !== undefined
+            property_info.block_stair_collision_layer_shift !== undefined
         ) {
-            interactable_object.custom_data.block_stair_collider_layer_shift =
-                property_info.block_stair_collider_layer_shift;
+            interactable_object.custom_data.block_stair_collision_layer_shift =
+                property_info.block_stair_collision_layer_shift;
         }
     }
 

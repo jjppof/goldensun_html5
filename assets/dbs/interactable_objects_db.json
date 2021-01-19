@@ -13,7 +13,7 @@
         "events": [{
             "type": "jump",
             "active": true,
-            "collider_layer_shift": 1,
+            "collision_layer_shift": 1,
             "x_shift": 0,
             "y_shift": -2,
             "dynamic": true
@@ -44,7 +44,7 @@
             "active": true,
             "dynamic": true,
             "is_set": true,
-            "collision_tiles": [
+            "collision_tiles_relative_pos": [
                 {"x": -1, "y": 0},
                 {"x": -1, "y": -1},
                 {"x": 0, "y": -2},
@@ -56,7 +56,7 @@
         }, {
             "type": "jump",
             "active": true,
-            "collider_layer_shift": 1,
+            "collision_layer_shift": 1,
             "x_shift": 0,
             "y_shift": -2,
             "dynamic": true
@@ -87,12 +87,12 @@
         "events": [{
             "type": "jump_around",
             "active": true,
-            "collider_layer_shift": 0,
+            "collision_layer_shift": 0,
             "dynamic": false
         }, {
             "type": "jump",
             "active": false,
-            "collider_layer_shift": 1,
+            "collision_layer_shift": 1,
             "x_shift": 0,
             "y_shift": -2,
             "dynamic": true,
@@ -127,7 +127,7 @@
             "active": false,
             "dynamic": false,
             "is_set": true,
-            "collision_tiles": [],
+            "collision_tiles_relative_pos": [],
             "last_y_shift": -4
         }],
         "initial_animation": "sprout",

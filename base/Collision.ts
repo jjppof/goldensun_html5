@@ -81,12 +81,12 @@ export class Collision {
         this.hero.sprite.body.collides(this.dynamic_events_collision_group);
     }
 
-    change_map_body(data: GoldenSun, new_collider_layer_index: number) {
-        if (data.map.collision_layer === new_collider_layer_index) return;
-        data.map.collision_layer = new_collider_layer_index;
+    change_map_body(data: GoldenSun, new_collision_layer_index: number) {
+        if (data.map.collision_layer === new_collision_layer_index) return;
+        data.map.collision_layer = new_collision_layer_index;
         this.hero.shadow.base_collision_layer = data.map.collision_layer;
         this.hero.sprite.base_collision_layer = data.map.collision_layer;
-        data.map.config_body(this, new_collider_layer_index);
+        data.map.config_body(this, new_collision_layer_index);
         this.config_collision_groups(data.map);
         this.config_collisions(data.map, data.map.collision_layer, data.npc_group);
         let layers = data.map.layers;

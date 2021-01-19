@@ -2,6 +2,7 @@ import {base_actions, directions, reverse_directions} from "../utils";
 import {TileEvent, event_types} from "./TileEvent";
 import {JumpEvent} from "./JumpEvent";
 import * as numbers from "../magic_numbers";
+import {interactable_object_event_types} from "../InteractableObjects";
 
 export class ClimbEvent extends TileEvent {
     public change_to_collision_layer: number;
@@ -76,6 +77,7 @@ export class ClimbEvent extends TileEvent {
                     this.data.tile_event_manager.on_event = false;
                     this.data.hero.climbing = true;
                     this.data.hero.current_action = base_actions.CLIMB;
+                    this.data.hero.idle_climbing = true;
                     if (this.dynamic) {
                         this.create_climb_collision_bodies();
                     }
@@ -146,6 +148,7 @@ export class ClimbEvent extends TileEvent {
                                 this.data.tile_event_manager.on_event = false;
                                 this.data.hero.climbing = false;
                                 this.data.hero.current_action = base_actions.IDLE;
+                                this.data.hero.idle_climbing = false;
                                 this.data.hero.set_direction(directions.up);
                                 this.game.physics.p2.resume();
                             },
@@ -177,6 +180,7 @@ export class ClimbEvent extends TileEvent {
                         () => {
                             this.data.tile_event_manager.on_event = false;
                             this.data.hero.climbing = false;
+                            this.data.hero.idle_climbing = false;
                             this.game.physics.p2.resume();
                         },
                         this
@@ -194,7 +198,14 @@ export class ClimbEvent extends TileEvent {
 
     create_climb_collision_bodies() {
         this.origin_interactable_object.sprite.send_to_back = true;
-        const postions = this.origin_interactable_object.events_info.climb.collision_tiles.map(tile_shift => {
+        const relative_positions = this.origin_interactable_object.tile_events_info.flatMap(event_info => {
+            if (event_info.type !== interactable_object_event_types.CLIMB || !event_info.collision_tiles_relative_pos)
+                return [];
+            else {
+                return event_info.collision_tiles_relative_pos;
+            }
+        });
+        const positions = relative_positions.map(tile_shift => {
             return {
                 x: this.origin_interactable_object.current_x + tile_shift.x,
                 y: this.origin_interactable_object.current_y + tile_shift.y,
@@ -209,9 +220,9 @@ export class ClimbEvent extends TileEvent {
                 true
             );
         }
-        for (let i = 0; i < postions.length; ++i) {
-            const x_pos = (postions[i].x + 0.5) * this.data.map.tile_width;
-            const y_pos = (postions[i].y + 0.5) * this.data.map.tile_height;
+        for (let i = 0; i < positions.length; ++i) {
+            const x_pos = (positions[i].x + 0.5) * this.data.map.tile_width;
+            const y_pos = (positions[i].y + 0.5) * this.data.map.tile_height;
             let body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
             body.clearShapes();
             body.setRectangle(this.data.map.tile_width, this.data.map.tile_height, 0, 0);
@@ -224,7 +235,7 @@ export class ClimbEvent extends TileEvent {
             body.static = true;
             body.debug = this.data.hero.sprite.body.debug;
             body.collides(this.data.collision.hero_collision_group);
-            this.origin_interactable_object.custom_data.collision_tiles_bodies.push(body);
+            this.origin_interactable_object.collision_tiles_bodies.push(body);
         }
     }
 
@@ -246,7 +257,7 @@ export class ClimbEvent extends TileEvent {
                 this.data.collision.interactable_objs_collision_groups[this.data.map.collision_layer]
             );
         }
-        let bodies = this.origin_interactable_object.custom_data.collision_tiles_bodies;
+        let bodies = this.origin_interactable_object.collision_tiles_bodies;
         for (let i = 0; i < bodies.length; ++i) {
             bodies[i].destroy();
         }

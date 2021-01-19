@@ -28,15 +28,16 @@ export class InteractableObjects {
     public sprite_info: SpriteBase;
     public allowed_tiles: {x: number; y: number; collision_layer: number}[];
     public base_collision_layer: number;
-    public collider_layer_shift: number;
-    public intermediate_collider_layer_shift: number;
+    public collision_layer_shift: number;
+    public intermediate_collision_layer_shift: number;
     public not_allowed_tiles: {x: number; y: number}[];
     public object_drop_tiles: any;
     public events: Set<TileEvent>;
-    public events_info: any;
+    public tile_events_info: any[];
     public current_x: number;
     public current_y: number;
     public custom_data: any;
+    public collision_tiles_bodies: Phaser.Physics.P2.Body[];
     public collision_change_functions: Function[];
     public color_filter: any;
     public sprite: Phaser.Sprite;
@@ -58,10 +59,10 @@ export class InteractableObjects {
         storage_keys,
         allowed_tiles,
         base_collision_layer,
-        collider_layer_shift,
+        collision_layer_shift,
         not_allowed_tiles,
         object_drop_tiles,
-        intermediate_collider_layer_shift,
+        intermediate_collision_layer_shift,
         anchor_x,
         anchor_y,
         scale_x,
@@ -79,23 +80,22 @@ export class InteractableObjects {
         this.x = x;
         this.y = y;
         this.sprite_info = null;
-        this.allowed_tiles = allowed_tiles;
+        this.allowed_tiles = allowed_tiles === undefined ? [] : allowed_tiles;
         if (this.storage_keys.base_collision_layer !== undefined) {
             base_collision_layer = this.data.storage.get(this.storage_keys.base_collision_layer);
         }
-        this.base_collision_layer = base_collision_layer;
-        this.collider_layer_shift = collider_layer_shift;
-        this.intermediate_collider_layer_shift =
-            intermediate_collider_layer_shift === undefined ? 0 : intermediate_collider_layer_shift;
+        this.base_collision_layer = base_collision_layer === undefined ? 0 : base_collision_layer;
+        this.collision_layer_shift = collision_layer_shift;
+        this.intermediate_collision_layer_shift =
+            intermediate_collision_layer_shift === undefined ? 0 : intermediate_collision_layer_shift;
         this.not_allowed_tiles = not_allowed_tiles === undefined ? [] : not_allowed_tiles;
         this.object_drop_tiles = object_drop_tiles === undefined ? [] : object_drop_tiles;
         this.events = new Set();
-        this.events_info = {};
+        this.tile_events_info = [];
         this.current_x = this.x;
         this.current_y = this.y;
-        this.custom_data = {
-            collision_tiles_bodies: [],
-        };
+        this.custom_data = {};
+        this.collision_tiles_bodies = [];
         this.collision_change_functions = [];
         this.color_filter = this.game.add.filter("ColorFilters");
         this.anchor_x = anchor_x;
@@ -129,15 +129,15 @@ export class InteractableObjects {
         return {x: x, y: y};
     }
 
-    change_collider_layer(data: GoldenSun, destination_collider_layer: number) {
+    change_collision_layer(data: GoldenSun, destination_collision_layer: number) {
         this.sprite.body.removeCollisionGroup(
             data.collision.interactable_objs_collision_groups[this.base_collision_layer]
         );
         this.sprite.body.setCollisionGroup(
-            data.collision.interactable_objs_collision_groups[destination_collider_layer]
+            data.collision.interactable_objs_collision_groups[destination_collision_layer]
         );
-        this.base_collision_layer = destination_collider_layer;
-        this.sprite.base_collision_layer = destination_collider_layer;
+        this.base_collision_layer = destination_collision_layer;
+        this.sprite.base_collision_layer = destination_collision_layer;
         this.collision_change_functions.forEach(f => f());
     }
 
@@ -154,7 +154,7 @@ export class InteractableObjects {
     }
 
     creating_blocking_stair_block(collision_obj: Collision) {
-        const target_layer = this.base_collision_layer + this.custom_data.block_stair_collider_layer_shift;
+        const target_layer = this.base_collision_layer + this.custom_data.block_stair_collision_layer_shift;
         const x_pos = (this.current_x + 0.5) * this.data.map.tile_width;
         const y_pos = (this.current_y + 1.5) * this.data.map.tile_height - 4;
         let body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
@@ -229,13 +229,13 @@ export class InteractableObjects {
             const event_info = this.data.dbs.interactable_objects_db[this.key_name].events[i];
             x_pos += event_info.x_shift !== undefined ? event_info.x_shift : 0;
             y_pos += event_info.y_shift !== undefined ? event_info.y_shift : 0;
-            let collider_layer_shift =
-                event_info.collider_layer_shift !== undefined ? event_info.collider_layer_shift : 0;
-            collider_layer_shift =
-                this.collider_layer_shift !== undefined ? this.collider_layer_shift : collider_layer_shift;
-            this.collider_layer_shift = collider_layer_shift;
+            let collision_layer_shift =
+                event_info.collision_layer_shift !== undefined ? event_info.collision_layer_shift : 0;
+            collision_layer_shift =
+                this.collision_layer_shift !== undefined ? this.collision_layer_shift : collision_layer_shift;
+            this.collision_layer_shift = collision_layer_shift;
             const active_event = event_info.active !== undefined ? event_info.active : true;
-            const target_layer = this.base_collision_layer + collider_layer_shift;
+            const target_layer = this.base_collision_layer + collision_layer_shift;
             switch (event_info.type) {
                 case interactable_object_event_types.JUMP:
                     this.set_jump_type_event(event_info, x_pos, y_pos, active_event, target_layer, map_events);
@@ -291,9 +291,9 @@ export class InteractableObjects {
         );
         map_events[this_event_location_key].push(new_event);
         this.insert_event(new_event.id);
-        this.events_info[event_info.type] = event_info;
+        this.tile_events_info.push(event_info);
         this.collision_change_functions.push(() => {
-            new_event.activation_collision_layers = [this.base_collision_layer + this.collider_layer_shift];
+            new_event.activation_collision_layers = [this.base_collision_layer + this.collision_layer_shift];
         });
     }
 
@@ -344,7 +344,7 @@ export class InteractableObjects {
                 new_event.activation_collision_layers = [this.base_collision_layer];
             });
         });
-        this.events_info[event_info.type] = event_info;
+        this.tile_events_info.push(event_info);
     }
 
     set_stair_event(
@@ -361,24 +361,24 @@ export class InteractableObjects {
                 y: y_pos + 1,
                 activation_directions: [reverse_directions[directions.up]],
                 activation_collision_layers: [this.base_collision_layer],
-                change_to_collision_layer: this.base_collision_layer + this.intermediate_collider_layer_shift,
+                change_to_collision_layer: this.base_collision_layer + this.intermediate_collision_layer_shift,
                 climbing_only: false,
                 collision_change_function: event => {
                     event.activation_collision_layers = [this.base_collision_layer];
                     event.change_to_collision_layer =
-                        this.base_collision_layer + this.intermediate_collider_layer_shift;
+                        this.base_collision_layer + this.intermediate_collision_layer_shift;
                 },
             },
             {
                 x: x_pos,
                 y: y_pos,
                 activation_directions: [reverse_directions[directions.down]],
-                activation_collision_layers: [this.base_collision_layer + this.intermediate_collider_layer_shift],
+                activation_collision_layers: [this.base_collision_layer + this.intermediate_collision_layer_shift],
                 change_to_collision_layer: this.base_collision_layer,
                 climbing_only: true,
                 collision_change_function: event => {
                     event.activation_collision_layers = [
-                        this.base_collision_layer + this.intermediate_collider_layer_shift,
+                        this.base_collision_layer + this.intermediate_collision_layer_shift,
                     ];
                     event.change_to_collision_layer = this.base_collision_layer;
                 },
@@ -387,14 +387,14 @@ export class InteractableObjects {
                 x: x_pos,
                 y: y_pos + event_info.last_y_shift + 1,
                 activation_directions: [reverse_directions[directions.up]],
-                activation_collision_layers: [this.base_collision_layer + this.intermediate_collider_layer_shift],
+                activation_collision_layers: [this.base_collision_layer + this.intermediate_collision_layer_shift],
                 change_to_collision_layer: target_layer,
                 climbing_only: true,
                 collision_change_function: event => {
                     event.activation_collision_layers = [
-                        this.base_collision_layer + this.intermediate_collider_layer_shift,
+                        this.base_collision_layer + this.intermediate_collision_layer_shift,
                     ];
-                    event.change_to_collision_layer = this.base_collision_layer + this.collider_layer_shift;
+                    event.change_to_collision_layer = this.base_collision_layer + this.collision_layer_shift;
                 },
             },
             {
@@ -402,12 +402,12 @@ export class InteractableObjects {
                 y: y_pos + event_info.last_y_shift,
                 activation_directions: [reverse_directions[directions.down]],
                 activation_collision_layers: [target_layer],
-                change_to_collision_layer: this.base_collision_layer + this.intermediate_collider_layer_shift,
+                change_to_collision_layer: this.base_collision_layer + this.intermediate_collision_layer_shift,
                 climbing_only: false,
                 collision_change_function: event => {
-                    event.activation_collision_layers = [this.base_collision_layer + this.collider_layer_shift];
+                    event.activation_collision_layers = [this.base_collision_layer + this.collision_layer_shift];
                     event.change_to_collision_layer =
-                        this.base_collision_layer + this.intermediate_collider_layer_shift;
+                        this.base_collision_layer + this.intermediate_collision_layer_shift;
                 },
             },
         ];
@@ -434,7 +434,7 @@ export class InteractableObjects {
             this.insert_event(new_event.id);
             this.collision_change_functions.push(event_data.collision_change_function.bind(null, new_event));
         });
-        this.events_info[event_info.type] = event_info;
+        this.tile_events_info.push(event_info);
     }
 
     config_body(collision_obj: Collision) {
@@ -464,7 +464,7 @@ export class InteractableObjects {
         this.sprite.body.fixedRotation = true;
         this.sprite.body.dynamic = false;
         this.sprite.body.static = true;
-        if (this.custom_data.block_stair_collider_layer_shift !== undefined) {
+        if (this.custom_data.block_stair_collision_layer_shift !== undefined) {
             this.creating_blocking_stair_block(collision_obj);
         }
     }
