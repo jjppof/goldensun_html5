@@ -31,6 +31,8 @@
         "ZOOM2": "TWO",
         "ZOOM3": "THREE",
         "MUTE": "M",
+        "VOL_UP": "SHIFT+PAGE_UP",
+        "VOL_DOWN": "SHIFT+PAGE_DOWN",
         "DEBUG_PHYSICS": "D",
         "DEBUG_GRID": "G",
         "DEBUG_KEYS": "K",

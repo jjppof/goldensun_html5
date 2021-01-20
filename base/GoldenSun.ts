@@ -269,6 +269,16 @@ export class GoldenSun {
                     this.info.field_abilities_list.growth.cast(this.hero, this.dbs.init_db.initial_shortcuts.growth);
                 },
             },
+            {
+                key: this.gamepad.VOL_UP,
+                on_down: () => this.audio.vol(+0.1),
+                params: { withShift: true },
+            },
+            {
+                key: this.gamepad.VOL_DOWN,
+                on_down: () => this.audio.vol(-0.1),
+                params: { withShift: true },
+            }
         ];
         this.control_manager.set_control(controls, {persist: true});
     }

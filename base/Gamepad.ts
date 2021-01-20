@@ -18,6 +18,8 @@ const input_ids = [
     "ZOOM2",
     "ZOOM3",
     "MUTE",
+    "VOL_UP",
+    "VOL_DOWN",
     "DEBUG_PHYSICS",
     "DEBUG_GRID",
     "DEBUG_KEYS",
@@ -53,6 +55,8 @@ export class Gamepad {
     public ZOOM3: number;
 
     public MUTE: number;
+    public VOL_UP: number;
+    public VOL_DOWN: number;    
 
     public DEBUG_PHYSICS: number;
     public DEBUG_GRID: number;
@@ -70,7 +74,9 @@ export class Gamepad {
 
     initialize_gamepad() {
         for (let input of input_ids) {
-            this[input] = Phaser.Keyboard[this.data.dbs.init_db.default_inputs[input]];
+            const match = this.data.dbs.init_db.default_inputs[input].match(/^(?:(ALT|CTRL|SHIFT)? *\+ *)?(\w+)$/);
+            if (!match) continue;
+            this[input] = Phaser.Keyboard[match[2]];
         }
     }
 

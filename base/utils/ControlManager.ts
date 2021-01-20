@@ -12,6 +12,12 @@ export type ControlObj = {
     loop?: boolean;
     loop_time?: number;
     reset?: boolean;
+    /// Whether the alt key is needed or must be excluded
+    withAlt?: boolean;
+    /// Whether the ctrl key is needed or must be excluded
+    withCtrl?: boolean;
+    /// Whether the shift key is needed or must be excluded
+    withShift?: boolean;
     sfx?: {
         up?: string;
         down?: string;
@@ -53,6 +59,9 @@ export class ControlManager {
                 loop: false,
                 loop_time: DEFAULT_LOOP_TIME,
                 reset: false,
+                withAlt: false,
+                withCtrl: false,
+                withShift: false,
                 down_sfx: null,
                 sfx: {
                     up: null,
@@ -114,7 +123,7 @@ export class ControlManager {
             key: number;
             on_down?: Function;
             on_up?: Function;
-            params?: {reset_control?: boolean};
+            params?: {reset_control?: boolean; withAlt?: boolean; withCtrl?: boolean; withShift?: boolean};
             sfx?: {up?: string; down?: string};
         }[],
         configs?: {
@@ -134,21 +143,19 @@ export class ControlManager {
         let disable_reset: boolean = configs ? (configs.no_reset ? configs.no_reset : false) : false;
         if (this.initialized && !disable_reset) this.reset();
 
-        for (let i = 0; i < controls.length; i++) {
-            if (controls[i].on_down) this.keys[controls[i].key].on_down = controls[i].on_down;
-            if (controls[i].on_up) this.keys[controls[i].key].on_up = controls[i].on_up;
+        controls.forEach((control) => {
+            if (control.on_down) this.keys[control.key].on_down = control.on_down;
+            if (control.on_up) this.keys[control.key].on_up = control.on_up;
+            if (control.sfx?.down) this.keys[control.key].sfx.down = control.sfx.down;
+            if (control.sfx?.up) this.keys[control.key].sfx.up = control.sfx.up;
 
-            if (controls[i].params) {
-                this.keys[controls[i].key].reset = controls[i].params.reset_control
-                    ? controls[i].params.reset_control
-                    : false;
+            if (control.params) {
+                this.keys[control.key].reset = control.params?.reset_control ?? false;
+                this.keys[control.key].withAlt = control.params?.withAlt;
+                this.keys[control.key].withCtrl = control.params?.withCtrl;
+                this.keys[control.key].withShift = control.params?.withShift;
             }
-
-            if (controls[i].sfx) {
-                if (controls[i].sfx.down) this.keys[controls[i].key].sfx.down = controls[i].sfx.down;
-                if (controls[i].sfx.up) this.keys[controls[i].key].sfx.up = controls[i].sfx.up;
-            }
-        }
+        });
 
         if (configs) {
             this.set_configs(configs);
@@ -192,65 +199,83 @@ export class ControlManager {
 
     enable_keys(global_key: number, persist?: boolean) {
         let bindings: Phaser.SignalBinding[] = [];
+        const register = (sb: Phaser.SignalBinding) => {
+            if (!persist) this.signal_bindings.push(sb);
+            bindings.push(sb);
+        };
 
-        for (let i = 0; i < this.keys_list.length; i++) {
-            let key_on_down = this.keys[this.keys_list[i]].on_down;
-            let key_on_up = this.keys[this.keys_list[i]].on_up;
+        // for (let i = 0; i < this.keys_list.length; i++) {
+        this.keys_list.forEach((phaser_key_id) => {
+            const control = this.keys[phaser_key_id];
+            const key_on_down = control.on_down;
+            const key_on_up = control.on_up;
+            const sfx_down = control.sfx.down;
+            const sfx_up = control.sfx.up;
+            const withAlt = control.withAlt;
+            const withCtrl = control.withCtrl;
+            const withShift = control.withShift;
 
-            let sfx_down = this.keys[this.keys_list[i]].sfx.down;
-            let sfx_up = this.keys[this.keys_list[i]].sfx.up;
-
-            if (this.keys[this.keys_list[i]].on_up) {
-                let b = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onUp.add(() => {
+            if (key_on_up) {
+                let b = this.game.input.keyboard.addKey(control.key).onUp.add(() => {
                     if (this.disabled) return;
 
                     if (sfx_up) this.audio.play_se(sfx_up);
                     key_on_up();
                 });
-                if (!persist) this.signal_bindings.push(b);
-                bindings.push(b);
+                register(b);
             }
 
-            if (this.keys[this.keys_list[i]].on_down) {
-                let loop_time = this.keys[this.keys_list[i]].loop_time;
-                let trigger_reset = this.keys[this.keys_list[i]].reset;
+            if (key_on_down) {
+                let loop_time = control.loop_time;
+                let trigger_reset = control.reset;
 
-                if (this.keys[this.keys_list[i]].loop) {
-                    let b1 = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onDown.add(() => {
-                        if (this.keys[this.gamepad.opposite_key(this.keys_list[i])].pressed) {
+                function checkSecondKeys(event: Phaser.Key): boolean {
+                    let check_pass: boolean = true;
+                    if (withAlt !== undefined) check_pass = check_pass && withAlt === event.altKey;
+                    if (withCtrl !== undefined) check_pass = check_pass && withCtrl === event.ctrlKey;
+                    if (withShift !== undefined) check_pass = check_pass && withShift === event.shiftKey;
+                    return check_pass;
+                }
+
+                if (control.loop) {
+                    let b1 = this.game.input.keyboard.addKey(control.key).onDown.add((event) => {
+                        const opposite_key = this.keys[this.gamepad.opposite_key(phaser_key_id)];
+
+                        if (!checkSecondKeys(event)) return;
+
+                        if (opposite_key.pressed) {
                             if (this.disabled) return;
 
-                            this.keys[this.gamepad.opposite_key(this.keys_list[i])].pressed = false;
+                            opposite_key.pressed = false;
                             this.stop_timers();
                         }
 
-                        this.keys[this.keys_list[i]].pressed = true;
+                        control.pressed = true;
                         this.set_loop_timers(key_on_down, loop_time, sfx_down);
                     });
 
-                    let b2 = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onUp.add(() => {
+                    let b2 = this.game.input.keyboard.addKey(control.key).onUp.add((event) => {
                         if (this.disabled) return;
 
-                        this.keys[this.keys_list[i]].pressed = false;
+                        control.pressed = false;
                         this.stop_timers();
                     });
-
-                    if (!persist) this.signal_bindings.push(b1, b2);
-                    bindings.push(b1, b2);
+                    register(b1);
+                    register(b2);
                 } else {
-                    let b = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onDown.add(() => {
+                    let b = this.game.input.keyboard.addKey(control.key).onDown.add((event) => {
                         if (this.disabled) return;
+                        
+                        if (!checkSecondKeys(event)) return;
 
                         if (trigger_reset) this.reset();
                         if (sfx_down) this.audio.play_se(sfx_down);
                         key_on_down();
                     });
-
-                    if (!persist) this.signal_bindings.push(b);
-                    bindings.push(b);
+                    register(b);
                 }
             }
-        }
+        });
         this.reset(false);
 
         this.global_bindings[global_key] = bindings;
@@ -310,20 +335,20 @@ export class ControlManager {
         this.loop_start_timer.stop();
         this.loop_repeat_timer.stop();
 
-        for (let i = 0; i < this.keys_list.length; i++) {
-            this.keys[this.keys_list[i]].pressed = false;
-            this.keys[this.keys_list[i]].on_down = null;
-            this.keys[this.keys_list[i]].on_up = null;
-            this.keys[this.keys_list[i]].loop = false;
-            this.keys[this.keys_list[i]].loop_time = DEFAULT_LOOP_TIME;
-            this.keys[this.keys_list[i]].reset = false;
-            this.keys[this.keys_list[i]].sfx = {up: null, down: null};
-        }
+        this.keys_list.forEach((phaser_key_id) => {
+            const control = this.keys[phaser_key_id];
+            control.pressed = false;
+            control.on_down = null;
+            control.on_up = null;
+            control.loop = false;
+            control.loop_time = DEFAULT_LOOP_TIME;
+            control.reset = false;
+            control.sfx = {up: null, down: null};
+            control.withAlt = control.withCtrl = control.withShift = undefined;
+        });
 
         if (detach) {
-            this.signal_bindings.forEach(signal_binding => {
-                signal_binding.detach();
-            });
+            this.signal_bindings.forEach(signal_binding => signal_binding.detach());
             if (this.signal_bindings_key) this.detach_bindings(this.signal_bindings_key);
 
             this.signal_bindings_key = null;
