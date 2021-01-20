@@ -114,7 +114,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
                 JumpEvent.active_jump_surroundings(
                     this.data,
                     get_surroundings(event.x, event.y, false, 2),
-                    this.target_object.collision_layer_shift + this.target_object.base_collision_layer
+                    event.collision_layer_shift_from_source + this.target_object.base_collision_layer
                 );
             }
         });

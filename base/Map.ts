@@ -345,15 +345,14 @@ export class Map {
             property_info.storage_keys,
             property_info.allowed_tiles,
             property_info.base_collision_layer,
-            property_info.collision_layer_shift,
             property_info.not_allowed_tiles,
             property_info.object_drop_tiles,
-            property_info.intermediate_collision_layer_shift,
             property_info.anchor_x,
             property_info.anchor_y,
             property_info.scale_x,
             property_info.scale_y,
-            property_info.block_climb_collision_layer_shift
+            property_info.block_climb_collision_layer_shift,
+            property_info.events_info
         );
         this.interactable_objects.push(interactable_object);
     }

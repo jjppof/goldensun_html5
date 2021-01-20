@@ -28,8 +28,6 @@ export class InteractableObjects {
     public sprite_info: SpriteBase;
     public allowed_tiles: {x: number; y: number; collision_layer: number}[];
     public base_collision_layer: number;
-    public collision_layer_shift: number;
-    public intermediate_collision_layer_shift: number;
     public not_allowed_tiles: {x: number; y: number}[];
     public object_drop_tiles: any;
     public events: Set<TileEvent>;
@@ -66,15 +64,14 @@ export class InteractableObjects {
         storage_keys,
         allowed_tiles,
         base_collision_layer,
-        collision_layer_shift,
         not_allowed_tiles,
         object_drop_tiles,
-        intermediate_collision_layer_shift,
         anchor_x,
         anchor_y,
         scale_x,
         scale_y,
-        block_climb_collision_layer_shift
+        block_climb_collision_layer_shift,
+        events_info
     ) {
         this.game = game;
         this.data = data;
@@ -93,9 +90,6 @@ export class InteractableObjects {
             base_collision_layer = this.data.storage.get(this.storage_keys.base_collision_layer);
         }
         this.base_collision_layer = base_collision_layer === undefined ? 0 : base_collision_layer;
-        this.collision_layer_shift = collision_layer_shift;
-        this.intermediate_collision_layer_shift =
-            intermediate_collision_layer_shift === undefined ? 0 : intermediate_collision_layer_shift;
         this.not_allowed_tiles = not_allowed_tiles === undefined ? [] : not_allowed_tiles;
         this.object_drop_tiles = object_drop_tiles === undefined ? [] : object_drop_tiles;
         this.events = new Set();
@@ -109,9 +103,12 @@ export class InteractableObjects {
         this.anchor_y = anchor_y;
         this.scale_x = scale_x;
         this.scale_y = scale_y;
-        this.tile_events_info = {};
         this.psynergy_casted = {};
         this.block_climb_collision_layer_shift = block_climb_collision_layer_shift;
+        this.tile_events_info = {};
+        for (let index in events_info) {
+            this.tile_events_info[+index] = events_info[index];
+        }
     }
 
     set_sprite(sprite) {
@@ -245,22 +242,21 @@ export class InteractableObjects {
             const event_info = this.data.dbs.interactable_objects_db[this.key_name].events[i];
             x_pos += event_info.x_shift !== undefined ? event_info.x_shift : 0;
             y_pos += event_info.y_shift !== undefined ? event_info.y_shift : 0;
-            let collision_layer_shift =
-                event_info.collision_layer_shift !== undefined ? event_info.collision_layer_shift : 0;
-            collision_layer_shift =
-                this.collision_layer_shift !== undefined ? this.collision_layer_shift : collision_layer_shift;
-            this.collision_layer_shift = collision_layer_shift;
+            const collision_layer_shift =
+                this.tile_events_info[i]?.collision_layer_shift !== undefined
+                    ? this.tile_events_info[i].collision_layer_shift
+                    : 0;
             const active_event = event_info.active !== undefined ? event_info.active : true;
             const target_layer = this.base_collision_layer + collision_layer_shift;
             switch (event_info.type) {
                 case interactable_object_event_types.JUMP:
-                    this.set_jump_type_event(event_info, x_pos, y_pos, active_event, target_layer, map_events);
+                    this.set_jump_type_event(i, event_info, x_pos, y_pos, active_event, target_layer, map_events);
                     break;
                 case interactable_object_event_types.JUMP_AROUND:
                     this.set_jump_around_event(event_info, x_pos, y_pos, active_event, target_layer, map_events);
                     break;
                 case interactable_object_event_types.CLIMB:
-                    this.set_stair_event(event_info, x_pos, y_pos, active_event, target_layer, map_events);
+                    this.set_stair_event(i, event_info, x_pos, y_pos, active_event, target_layer, map_events);
                     break;
             }
         }
@@ -277,6 +273,7 @@ export class InteractableObjects {
     }
 
     set_jump_type_event(
+        event_index: number,
         event_info: any,
         x_pos: number,
         y_pos: number,
@@ -307,8 +304,12 @@ export class InteractableObjects {
         );
         map_events[this_event_location_key].push(new_event);
         this.insert_event(new_event.id);
+        const collision_layer_shift = this.tile_events_info[event_index]?.collision_layer_shift
+            ? this.tile_events_info[event_index].collision_layer_shift
+            : 0;
+        new_event.collision_layer_shift_from_source = collision_layer_shift;
         this.collision_change_functions.push(() => {
-            new_event.activation_collision_layers = [this.base_collision_layer + this.collision_layer_shift];
+            new_event.activation_collision_layers = [this.base_collision_layer + collision_layer_shift];
         });
     }
 
@@ -324,17 +325,7 @@ export class InteractableObjects {
         get_surroundings(x_pos, y_pos).forEach((pos, index) => {
             if (this.not_allowed_tile_test(pos.x, pos.y)) return;
             const this_event_location_key = TileEvent.get_location_key(pos.x, pos.y);
-            if (this_event_location_key in map_events) {
-                //check if already theres a jump event in this place
-                for (let k = 0; k < map_events[this_event_location_key].length; ++k) {
-                    const event = map_events[this_event_location_key][k];
-                    if (event.type === tile_event_types.JUMP && (event as JumpEvent).is_set) {
-                        if (event.activation_collision_layers.includes(target_layer)) {
-                            is_set = false;
-                        }
-                    }
-                }
-            } else {
+            if (!(this_event_location_key in map_events)) {
                 map_events[this_event_location_key] = [];
             }
             const new_event = new JumpEvent(
@@ -348,7 +339,7 @@ export class InteractableObjects {
                     reverse_directions[directions.down],
                     reverse_directions[directions.up],
                 ][index],
-                [this.base_collision_layer],
+                [target_layer],
                 event_info.dynamic,
                 active_event,
                 is_set
@@ -362,6 +353,7 @@ export class InteractableObjects {
     }
 
     set_stair_event(
+        event_index: number,
         event_info: any,
         x_pos: number,
         y_pos: number,
@@ -369,60 +361,69 @@ export class InteractableObjects {
         target_layer: number,
         map_events: Map["events"]
     ) {
+        const collision_layer_shift = this.tile_events_info[event_index]?.collision_layer_shift
+            ? this.tile_events_info[event_index].collision_layer_shift
+            : 0;
+        const intermediate_collision_layer_shift = this.tile_events_info[event_index]
+            ?.intermediate_collision_layer_shift
+            ? this.tile_events_info[event_index].intermediate_collision_layer_shift
+            : 0;
         const events_data = [
             {
                 x: x_pos,
                 y: y_pos + 1,
                 activation_directions: [reverse_directions[directions.up]],
                 activation_collision_layers: [this.base_collision_layer],
-                change_to_collision_layer: this.base_collision_layer + this.intermediate_collision_layer_shift,
+                change_to_collision_layer: this.base_collision_layer + intermediate_collision_layer_shift,
                 climbing_only: false,
                 collision_change_function: event => {
                     event.activation_collision_layers = [this.base_collision_layer];
-                    event.change_to_collision_layer =
-                        this.base_collision_layer + this.intermediate_collision_layer_shift;
+                    event.change_to_collision_layer = this.base_collision_layer + intermediate_collision_layer_shift;
                 },
+                collision_layer_shift_from_source: 0,
             },
             {
                 x: x_pos,
                 y: y_pos,
                 activation_directions: [reverse_directions[directions.down]],
-                activation_collision_layers: [this.base_collision_layer + this.intermediate_collision_layer_shift],
+                activation_collision_layers: [this.base_collision_layer + intermediate_collision_layer_shift],
                 change_to_collision_layer: this.base_collision_layer,
                 climbing_only: true,
                 collision_change_function: event => {
                     event.activation_collision_layers = [
-                        this.base_collision_layer + this.intermediate_collision_layer_shift,
+                        this.base_collision_layer + intermediate_collision_layer_shift,
                     ];
                     event.change_to_collision_layer = this.base_collision_layer;
                 },
+                collision_layer_shift_from_source: 0,
             },
             {
                 x: x_pos,
                 y: y_pos + event_info.last_y_shift + 1,
                 activation_directions: [reverse_directions[directions.up]],
-                activation_collision_layers: [this.base_collision_layer + this.intermediate_collision_layer_shift],
+                activation_collision_layers: [this.base_collision_layer + intermediate_collision_layer_shift],
                 change_to_collision_layer: target_layer,
                 climbing_only: true,
                 collision_change_function: event => {
                     event.activation_collision_layers = [
-                        this.base_collision_layer + this.intermediate_collision_layer_shift,
+                        this.base_collision_layer + intermediate_collision_layer_shift,
                     ];
-                    event.change_to_collision_layer = this.base_collision_layer + this.collision_layer_shift;
+                    event.change_to_collision_layer = this.base_collision_layer + collision_layer_shift;
                 },
+                collision_layer_shift_from_source: collision_layer_shift,
             },
             {
                 x: x_pos,
                 y: y_pos + event_info.last_y_shift,
                 activation_directions: [reverse_directions[directions.down]],
                 activation_collision_layers: [target_layer],
-                change_to_collision_layer: this.base_collision_layer + this.intermediate_collision_layer_shift,
+                change_to_collision_layer: this.base_collision_layer + intermediate_collision_layer_shift,
                 climbing_only: false,
                 collision_change_function: event => {
-                    event.activation_collision_layers = [this.base_collision_layer + this.collision_layer_shift];
-                    event.change_to_collision_layer =
-                        this.base_collision_layer + this.intermediate_collision_layer_shift;
+                    event.activation_collision_layers = [this.base_collision_layer + collision_layer_shift];
+                    event.change_to_collision_layer = this.base_collision_layer + intermediate_collision_layer_shift;
                 },
+                collision_layer_shift_from_source: collision_layer_shift,
             },
         ];
         events_data.forEach(event_data => {
@@ -446,6 +447,7 @@ export class InteractableObjects {
             );
             map_events[this_location_key].push(new_event);
             this.insert_event(new_event.id);
+            new_event.collision_layer_shift_from_source = event_data.collision_layer_shift_from_source;
             this.collision_change_functions.push(event_data.collision_change_function.bind(null, new_event));
         });
     }

@@ -213,10 +213,10 @@ export function fire_push_movement(
     }
 }
 
-function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
-    let object_events = interactable_object.get_events();
+function shift_events(data: GoldenSun, interactable_object: InteractableObjects, event_shift_x, event_shift_y) {
+    const object_events = interactable_object.get_events();
     for (let i = 0; i < object_events.length; ++i) {
-        let event = object_events[i];
+        const event = object_events[i];
         data.map.events[event.location_key] = data.map.events[event.location_key].filter(e => {
             return e.id !== event.id;
         });
@@ -239,7 +239,7 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
         JumpEvent.active_jump_surroundings(
             data,
             new_surroundings,
-            interactable_object.collision_layer_shift + interactable_object.base_collision_layer
+            event.collision_layer_shift_from_source + interactable_object.base_collision_layer
         );
         const old_surroundings = get_surroundings(old_x, old_y, false, 2);
         for (let j = 0; j < old_surroundings.length; ++j) {
@@ -250,7 +250,7 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
                     const old_surr_event = data.map.events[old_key][k];
                     if (old_surr_event.type === event_types.JUMP) {
                         const target_layer =
-                            interactable_object.collision_layer_shift + interactable_object.base_collision_layer;
+                            event.collision_layer_shift_from_source + interactable_object.base_collision_layer;
                         if (
                             old_surr_event.activation_collision_layers.includes(target_layer) &&
                             old_surr_event.dynamic === false
@@ -264,7 +264,7 @@ function shift_events(data, interactable_object, event_shift_x, event_shift_y) {
     }
 }
 
-function dust_animation(game, data, interactable_object, promise_resolve) {
+function dust_animation(game: Phaser.Game, data: GoldenSun, interactable_object: InteractableObjects, promise_resolve) {
     let promises = new Array(DUST_COUNT);
     let sprites = new Array(DUST_COUNT);
     const origin_x = (interactable_object.current_x + 0.5) * data.map.tile_width;

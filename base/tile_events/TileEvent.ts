@@ -28,6 +28,7 @@ export abstract class TileEvent {
     public dynamic: boolean;
     public active: boolean[];
     public origin_interactable_object: InteractableObjects;
+    public collision_layer_shift_from_source: number;
     public static id_incrementer: number;
     public static events: {[id: number]: TileEvent};
 
@@ -66,6 +67,7 @@ export abstract class TileEvent {
             ? active
             : new Array(this.activation_directions.length).fill(active === undefined ? true : active);
         this.origin_interactable_object = origin_interactable_object === undefined ? null : origin_interactable_object;
+        this.collision_layer_shift_from_source = 0;
         TileEvent.events[this.id] = this;
     }
 
