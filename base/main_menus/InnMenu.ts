@@ -126,41 +126,35 @@ export class InnMenu {
         this.data.control_manager.reset();
         this.dialog_manager.kill_dialog(undefined, false);
 
-        this.mask = this.data.game.add.graphics(this.data.hero.sprite.x, this.data.hero.sprite.y);
+        this.mask = this.game.add.graphics(this.data.hero.sprite.x, this.data.hero.sprite.y);
         this.data.game.world.mask = this.mask;
 
         this.inn_recovery();
-        this.data.audio.stop_bgm();
+        this.data.audio.pause_bgm();
 
         this.mask.clear();
         this.mask.beginFill(0xfffffff);
         this.circle = this.mask.drawCircle(0, 0, this.game.width);
 
-        let fadein = this.game.add.tween(this.circle.scale).to({x: 0, y: 0}, 1000, Phaser.Easing.Linear.None);
-        let fadeout = this.game.add.tween(this.circle.scale).to({x: 1, y: 1}, 1000, Phaser.Easing.Linear.None);
-        let play_se = this.game.add.audio("inn_se");
+        const fadein = this.game.add.tween(this.circle.scale).to({x: 0, y: 0}, 1000, Phaser.Easing.Linear.None);
+        const fadeout = this.game.add.tween(this.circle.scale).to({x: 1, y: 1}, 1000, Phaser.Easing.Linear.None);
 
-        fadein.onComplete.addOnce(function () {
-            play_se.play();
-        }, this);
+        fadein.onComplete.addOnce(() => {
+            this.data.audio.play_se("misc/inn", () => {
+                fadeout.start();
+            });
+        });
 
-        play_se.onStop.addOnce(function () {
-            fadeout.start();
-        }, this);
-
-        fadeout.onComplete.addOnce(function () {
-            this.circle = null;
+        fadeout.onComplete.addOnce(() => {
+            this.circle.destroy();
             this.mask.clear();
-            fadein = null;
-            fadeout = null;
-            play_se = null;
 
-            this.data.audio.play_bgm();
+            this.data.audio.resume_bgm();
             this.message = this.data.info.inn_list[this.inn_id].messages.goodbye_message;
             this.update_dialogue();
 
             this.data.control_manager.simple_input(this.close.bind(this));
-        }, this);
+        });
 
         fadein.start();
     }
@@ -180,6 +174,7 @@ export class InnMenu {
         this.avatar = null;
         this.message = null;
         this.callback = undefined;
+        this.mask.destroy();
         this.mask = null;
 
         if (this.close_callback) this.close_callback();

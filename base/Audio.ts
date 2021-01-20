@@ -16,7 +16,7 @@ export class Audio {
 
         const audio = this.se_data[key_parts[0]].play(key_parts[1], volume, position_shift);
         if (on_stop) {
-            audio.onStop.addOnce(on_stop);
+            audio.onMarkerComplete.addOnce(on_stop);
         }
     }
 
@@ -36,6 +36,14 @@ export class Audio {
         this.current_bgm.loop = loop;
         this.current_bgm.volume = volume;
         this.current_bgm.play();
+    }
+
+    resume_bgm() {
+        this.current_bgm.resume();
+    }
+
+    pause_bgm() {
+        this.current_bgm.pause();
     }
 
     stop_bgm() {

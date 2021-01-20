@@ -399,7 +399,7 @@ export class InteractableObjects {
             },
             {
                 x: x_pos,
-                y: y_pos + event_info.last_y_shift + 1,
+                y: y_pos + event_info.top_event_y_shift + 1,
                 activation_directions: [reverse_directions[directions.up]],
                 activation_collision_layers: [this.base_collision_layer + intermediate_collision_layer_shift],
                 change_to_collision_layer: target_layer,
@@ -414,7 +414,7 @@ export class InteractableObjects {
             },
             {
                 x: x_pos,
-                y: y_pos + event_info.last_y_shift,
+                y: y_pos + event_info.top_event_y_shift,
                 activation_directions: [reverse_directions[directions.down]],
                 activation_collision_layers: [target_layer],
                 change_to_collision_layer: this.base_collision_layer + intermediate_collision_layer_shift,

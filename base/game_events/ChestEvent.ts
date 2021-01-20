@@ -89,6 +89,7 @@ export class ChestEvent extends GameEvent {
         let animation_key = this.origin_npc.sprite_info.getAnimationKey("chest", "opening");
         let animation = this.origin_npc.sprite.animations.getAnimation(animation_key);
         animation.play();
+        this.data.audio.play_se("misc/chest_open");
         this.promise = new Promise(resolve => (this.resolve = resolve));
         animation.onComplete.addOnce(() => {
             const animation_key = this.origin_npc.sprite_info.getAnimationKey("chest", "shining");
@@ -116,6 +117,10 @@ export class ChestEvent extends GameEvent {
         await this.data.hero.go_to_direction(directions.down);
         this.data.game_event_manager.force_idle_action = false;
         this.data.hero.play(base_actions.GRANT);
+        this.data.audio.pause_bgm();
+        this.data.audio.play_se("misc/item_get", () => {
+            this.data.audio.resume_bgm();
+        });
         const delta_x = item_sprite.x - this.data.hero.sprite.x;
         const delta_y = item_sprite.y - (this.data.hero.sprite.y - this.data.hero.sprite.height);
         item_sprite.x -= delta_x;

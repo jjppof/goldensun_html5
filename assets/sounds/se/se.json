@@ -94,7 +94,19 @@
                 },
                 "ice_hitting": {
                     "start": 0.903,
-                    "end": 2.033
+                    "end": 2.018
+                },
+                "inn": {
+                    "start": 2.019,
+                    "end": 7.614
+                },
+                "item_get": {
+                    "start": 7.643,
+                    "end": 10.739
+                },
+                "chest_open": {
+                    "start": 10.745,
+                    "end": 10.906
                 }
             }
         }
@@ -110,17 +122,6 @@
                 "hit_1": {
                     "start": 1.226,
                     "end": 2.154
-                }
-            }
-        }
-    },
-    "inn_se": {
-        "audio": "assets/sounds/se/inn.ogg",
-        "json": {
-            "spritemap": {
-                "inn": {
-                    "start": 0.01,
-                    "end": 6.144
                 }
             }
         }

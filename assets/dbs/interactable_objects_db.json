@@ -51,7 +51,7 @@
                 {"x": 1, "y": 0},
                 {"x": 0, "y": 1}
             ],
-            "last_y_shift": -2
+            "top_event_y_shift": -2
         },{
             "type": "jump",
             "active": true,
@@ -124,7 +124,7 @@
             "dynamic": false,
             "is_set": true,
             "collision_tiles_relative_pos": [],
-            "last_y_shift": -4
+            "top_event_y_shift": -4
         }],
         "initial_animation": "sprout",
         "actions": {
