@@ -522,7 +522,7 @@ export class Map {
     config_world_map() {
         let next_body_radius = numbers.HERO_BODY_RADIUS;
         if (this.is_world_map) {
-            this.layers.forEach(l => (l.sprite.filters = [this.mode7_filter]));
+            this.layers.forEach(l => (l.sprite.filters = [this.mode7_filter, this.color_filter]));
             this.game.camera.bounds = null;
             this.npcs.forEach(npc => {
                 if (!npc.ignore_world_map_scale) {
@@ -541,6 +541,7 @@ export class Map {
             this.interactable_objects.forEach(obj => (obj.sprite.data.mode7 = true));
             next_body_radius = numbers.HERO_BODY_RADIUS_M7;
         } else {
+            this.layers.forEach(l => (l.sprite.filters = [this.color_filter]));
             this.game.camera.bounds = new Phaser.Rectangle();
             this.game.camera.bounds.copyFrom(this.game.world.bounds);
         }

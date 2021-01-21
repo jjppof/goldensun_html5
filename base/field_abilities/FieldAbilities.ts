@@ -178,7 +178,7 @@ export class FieldAbilities {
             this.data.npc_group,
             this.controllable_char.color_filter,
             () => {
-                reset_map = tint_map_layers(this.game, this.data.map, this.data.map.color_filter);
+                reset_map = tint_map_layers(this.game, this.data.map.color_filter);
                 this.bootstrap_method();
             },
             () => {

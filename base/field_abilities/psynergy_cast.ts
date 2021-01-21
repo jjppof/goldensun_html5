@@ -148,17 +148,10 @@ export function init_cast_aura(
     };
 }
 
-export function tint_map_layers(game, map, filter, after_destroy?) {
+export function tint_map_layers(game: Phaser.Game, filter, after_destroy?) {
     filter.colorize_intensity = 0;
     filter.gray = 0;
     filter.colorize = Math.random();
-    for (let i = 0; i < map.layers.length; ++i) {
-        if (Array.isArray(map.layers[i].sprite.filters)) {
-            map.layers[i].sprite.filters.push(filter);
-        } else {
-            map.layers[i].sprite.filters = [filter];
-        }
-    }
     game.add
         .tween(filter)
         .to({colorize_intensity: 0.4, gray: 1}, Phaser.Timer.QUARTER, Phaser.Easing.Linear.None, true);
@@ -168,12 +161,6 @@ export function tint_map_layers(game, map, filter, after_destroy?) {
             .to({colorize_intensity: 0, gray: 0}, Phaser.Timer.QUARTER, Phaser.Easing.Linear.None, true)
             .onComplete.addOnce(() => {
                 filter.colorize = -1;
-                for (let i = 0; i < map.layers.length; ++i) {
-                    map.layers[i].sprite.filters = map.layers[i].sprite.filters.filter(f => f !== filter);
-                    if (!map.layers[i].sprite.filters.length) {
-                        map.layers[i].sprite.filters = undefined;
-                    }
-                }
                 if (after_destroy !== undefined) {
                     after_destroy();
                 }
