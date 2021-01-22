@@ -343,7 +343,7 @@ export class Gamepad {
         const btn = this.buttons[gameButton];
         if (btn.isDown) return;
         btn.isDown = true;
-        console.log("onDown", Button[gameButton] ?? CButton[gameButton], btn);
+        // console.log("onDown", Button[gameButton] ?? CButton[gameButton], btn);
         btn.onDown.dispatch(event);
     }
 
@@ -356,7 +356,7 @@ export class Gamepad {
         const btn = this.buttons[gameButton];
         if (btn.isUp) return;
         btn.isUp = true;
-        console.log("onUp", Button[gameButton] ?? CButton[gameButton], btn);
+        // console.log("onUp", Button[gameButton] ?? CButton[gameButton], btn);
         btn.onUp.dispatch(event);
     }
 
@@ -398,12 +398,12 @@ export class Gamepad {
         game.input.gamepad.start();
         game.input.gamepad.onDownCallback = (buttonCode: number) => {
             const gameButtons = Gamepad.transcodeGamepadButton(buttonCode);
-            console.log(buttonCode, gameButtons);
+            // console.log(buttonCode, gameButtons);
             gameButtons.forEach(gameButton => this.onGamepadDown(gameButton));
         };
         game.input.gamepad.onUpCallback = (buttonCode: number) => {
             const gameButtons = Gamepad.transcodeGamepadButton(buttonCode);
-            console.log(buttonCode, gameButtons);
+            // console.log(buttonCode, gameButtons);
             gameButtons.forEach(gameButton => this.onGamepadUp(gameButton));
         };
         game.input.gamepad.onAxisCallback = (pad: Phaser.SinglePad, index: number, value: number) => {
@@ -459,13 +459,13 @@ export class Gamepad {
         // game.input.keyboard.onPressCallback = (charCode: string, event: KeyboardEvent) => {
         game.input.keyboard.onDownCallback = (event: KeyboardEvent) => {
             const gameButtons = Gamepad.transcodeKeyboardKey(event.keyCode);
-            console.log(event, gameButtons);
+            // console.log(event, gameButtons);
             gameButtons.forEach(gameButton => this._onDown(gameButton, event));
             // onKeyboardDown(gameButton)
         };
         game.input.keyboard.onUpCallback = (event: KeyboardEvent) => {
             const gameButtons = Gamepad.transcodeKeyboardKey(event.keyCode);
-            console.log(event, gameButtons);
+            // console.log(event, gameButtons);
             gameButtons.forEach(gameButton => this._onUp(gameButton, event));
             // onKeyboardUp(gameButton)
         };
