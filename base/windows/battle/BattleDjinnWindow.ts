@@ -282,20 +282,20 @@ export class BattleDjinnWindow {
         const controls = [
             {
                 button: Button.LEFT,
-                onDown: this.psynergy_window.previous_page.bind(this.psynergy_window),
+                on_down: this.psynergy_window.previous_page.bind(this.psynergy_window),
                 sfx: {down: "menu/move"},
             },
             {
                 button: Button.RIGHT,
-                onDown: this.psynergy_window.next_page.bind(this.psynergy_window),
+                on_down: this.psynergy_window.next_page.bind(this.psynergy_window),
                 sfx: {down: "menu/move"},
             },
-            {button: Button.UP, onDown: this.previous_djinn.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, onDown: this.next_djinn.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_djinn.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_djinn.bind(this), sfx: {down: "menu/move"}},
         ];
 
-        this.data.control_manager.addControls(controls, {
-            loopConfig: {vertical: true, horizontal: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true},
         });
     }
 
@@ -311,13 +311,13 @@ export class BattleDjinnWindow {
 
     djinn_choose() {
         const controls = [
-            {button: Button.LEFT, onDown: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, onDown: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, onDown: this.previous_djinn.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, onDown: this.next_djinn.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_djinn.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_djinn.bind(this), sfx: {down: "menu/move"}},
             {
                 button: Button.A,
-                onDown: () => {
+                on_down: () => {
                     const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
                     if (this_djinn.status !== djinn_status.RECOVERY) {
                         this.choosen_ability = this_djinn.ability_key_name;
@@ -328,7 +328,7 @@ export class BattleDjinnWindow {
             },
             {
                 button: Button.B,
-                onDown: () => {
+                on_down: () => {
                     this.choosen_ability = null;
                     this.close(this.close_callback);
                 },
@@ -336,15 +336,18 @@ export class BattleDjinnWindow {
             },
         ];
 
-        this.data.control_manager.addControls(controls, {
-            loopConfig: {vertical: true, horizontal: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true},
         });
 
         if (!this.open_psy_key) {
             const controls = [
-                {button: Button.R, onDown: this.show_psynergy.bind(this), onUp: this.hide_psynergy.bind(this)},
+                {button: Button.R, on_down: this.show_psynergy.bind(this), on_up: this.hide_psynergy.bind(this)},
             ];
-            this.open_psy_key = this.data.control_manager.addControls(controls, {persist: true, noReset: true});
+            this.open_psy_key = this.data.control_manager.add_controls(controls, {
+                persist: true,
+                no_initial_reset: true,
+            });
         }
     }
 
@@ -397,7 +400,7 @@ export class BattleDjinnWindow {
         this.stats_window.close();
         this.data.cursor_manager.hide();
 
-        this.data.control_manager.detachBindings(this.open_psy_key);
+        this.data.control_manager.detach_bindings(this.open_psy_key);
         this.open_psy_key = null;
 
         this.base_window.close(() => {
@@ -418,7 +421,7 @@ export class BattleDjinnWindow {
         this.data.cursor_manager.hide();
         this.data.control_manager.reset();
 
-        this.data.control_manager.detachBindings(this.open_psy_key);
+        this.data.control_manager.detach_bindings(this.open_psy_key);
         this.open_psy_key = null;
 
         this.stats_window.close();

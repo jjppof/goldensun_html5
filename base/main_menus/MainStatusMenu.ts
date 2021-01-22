@@ -825,51 +825,51 @@ export class MainStatusMenu {
         const controls = [
             {
                 button: Button.LEFT,
-                onDown: this.current_component.on_left.bind(this.current_component),
+                on_down: this.current_component.on_left.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
                 button: Button.RIGHT,
-                onDown: this.current_component.on_right.bind(this.current_component),
+                on_down: this.current_component.on_right.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
                 button: Button.UP,
-                onDown: this.current_component.on_up.bind(this.current_component),
+                on_down: this.current_component.on_up.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
                 button: Button.DOWN,
-                onDown: this.current_component.on_down.bind(this.current_component),
+                on_down: this.current_component.on_down.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
         ];
 
         if (this.current_state !== MainStatusStates.DJINN) {
             controls.push(
-                {button: Button.A, onDown: this.trigger_state_change.bind(this), sfx: {down: "menu/positive"}},
-                {button: Button.B, onDown: this.selecting_char.bind(this), sfx: {down: "menu/negative"}},
+                {button: Button.A, on_down: this.trigger_state_change.bind(this), sfx: {down: "menu/positive"}},
+                {button: Button.B, on_down: this.selecting_char.bind(this), sfx: {down: "menu/negative"}},
                 {
                     button: Button.L,
-                    onDown: this.chars_menu.previous_char.bind(this.chars_menu, true),
+                    on_down: this.chars_menu.previous_char.bind(this.chars_menu, true),
                     sfx: {down: "menu/positive"},
                 },
                 {
                     button: Button.R,
-                    onDown: this.chars_menu.next_char.bind(this.chars_menu, true),
+                    on_down: this.chars_menu.next_char.bind(this.chars_menu, true),
                     sfx: {down: "menu/positive"},
                 }
             );
         } else {
             controls.push(
-                {button: Button.A, onDown: this.selecting_char.bind(this), sfx: {down: "menu/negative"}},
-                {button: Button.B, onDown: this.selecting_char.bind(this), sfx: {down: "menu/negative"}},
-                {button: Button.SELECT, onDown: this.selecting_char.bind(this), sfx: {down: "menu/negative"}}
+                {button: Button.A, on_down: this.selecting_char.bind(this), sfx: {down: "menu/negative"}},
+                {button: Button.B, on_down: this.selecting_char.bind(this), sfx: {down: "menu/negative"}},
+                {button: Button.SELECT, on_down: this.selecting_char.bind(this), sfx: {down: "menu/negative"}}
             );
         }
 
-        this.data.control_manager.addControls(controls, {
-            loopConfig: {vertical: true, horizontal: true, shoulder: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true, shoulder: true},
         });
     }
 
@@ -928,15 +928,17 @@ export class MainStatusMenu {
             true
         );
 
-        this.data.control_manager.addControls(
+        this.data.control_manager.add_controls(
             [
                 {
                     button: Button.SELECT,
-                    onDown: this.change_state.bind(this, MainStatusStates.DJINN),
+                    on_down: this.change_state.bind(this, MainStatusStates.DJINN),
                     sfx: {down: "menu/positive"},
                 },
             ],
-            {noReset: true}
+            {
+                no_initial_reset: true,
+            }
         );
 
         this.data.cursor_manager.show();

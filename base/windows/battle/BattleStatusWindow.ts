@@ -699,34 +699,34 @@ export class BattleStatusWindow {
 
     public grant_control() {
         const controls = [
-            {button: Button.A, onDown: this.trigger_state_change.bind(this), sfx: {down: "menu/positive"}},
-            {button: Button.B, onDown: this.close.bind(this, this.close_callback)},
-            {button: Button.L, onDown: this.previous_char.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.R, onDown: this.next_char.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, on_down: this.trigger_state_change.bind(this), sfx: {down: "menu/positive"}},
+            {button: Button.B, on_down: this.close.bind(this, this.close_callback)},
+            {button: Button.L, on_down: this.previous_char.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.R, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
             {
                 button: Button.LEFT,
-                onDown: this.current_component.on_left.bind(this.current_component),
+                on_down: this.current_component.on_left.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
                 button: Button.RIGHT,
-                onDown: this.current_component.on_right.bind(this.current_component),
+                on_down: this.current_component.on_right.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
                 button: Button.UP,
-                onDown: this.current_component.on_up.bind(this.current_component),
+                on_down: this.current_component.on_up.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
                 button: Button.DOWN,
-                onDown: this.current_component.on_down.bind(this.current_component),
+                on_down: this.current_component.on_down.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
         ];
 
-        this.data.control_manager.addControls(controls, {
-            loopConfig: {vertical: true, horizontal: true, shoulder: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true, shoulder: true},
         });
     }
 

@@ -326,14 +326,14 @@ export class BuySelectMenu {
      */
     grant_control(on_cancel: Function, on_select: Function) {
         const controls = [
-            {button: Button.LEFT, onDown: this.previous_item.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, onDown: this.next_item.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, onDown: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, onDown: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.A, onDown: on_select, params: {resetControls: true}, sfx: {down: "menu/positive"}},
-            {button: Button.B, onDown: on_cancel, params: {resetControls: true}, sfx: {down: "menu/negative"}},
+            {button: Button.LEFT, on_down: this.previous_item.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_item.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, on_down: on_select, params: {reset_controls: true}, sfx: {down: "menu/positive"}},
+            {button: Button.B, on_down: on_cancel, params: {reset_controls: true}, sfx: {down: "menu/negative"}},
         ];
-        this.data.control_manager.addControls(controls, {loopConfig: {horizontal: true}});
+        this.data.control_manager.add_controls(controls, {loop_config: {horizontal: true}});
     }
 
     /*Changes to the next item page

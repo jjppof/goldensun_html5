@@ -30,11 +30,11 @@ export class DialogEvent extends GameEvent {
         this.npc_hero_reciprocal_look = npc_hero_reciprocal_look ?? false;
         this.reset_reciprocal_look = reset_reciprocal_look ?? true;
 
-        this.data.control_manager.addControls(
+        this.data.control_manager.add_controls(
             [
                 {
                     button: Button.A,
-                    onDown: () => {
+                    on_down: () => {
                         if (!this.running || !this.control_enable) return;
                         this.next();
                     },

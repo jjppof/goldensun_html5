@@ -381,6 +381,6 @@ export class ShopMenu {
         this.artifact_list = {};
         this.current_index = 0;
 
-        this.data.control_manager.addSimpleControls(this.end_dialog.bind(this));
+        this.data.control_manager.add_simple_controls(this.end_dialog.bind(this));
     }
 }

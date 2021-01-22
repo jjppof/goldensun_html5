@@ -366,30 +366,30 @@ export class CharsMenu {
 
     grant_control(on_cancel?: Function, on_select?: Function, enable_swap?: boolean) {
         const controls = [
-            {button: Button.LEFT, onDown: this.previous_char.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, onDown: this.next_char.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, onDown: this.previous_line.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, onDown: this.next_line.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.LEFT, on_down: this.previous_char.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_line.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_line.bind(this), sfx: {down: "menu/move"}},
             {
                 button: Button.A,
-                onDown: () => on_select?.(),
-                params: {resetControls: true},
+                on_down: () => on_select?.(),
+                params: {reset_controls: true},
                 sfx: {down: "menu/positive"},
             },
             {
                 button: Button.B,
-                onDown: () => on_cancel?.(),
-                params: {resetControls: true},
+                on_down: () => on_cancel?.(),
+                params: {reset_controls: true},
                 sfx: {down: "menu/negative"},
             },
         ];
         if (enable_swap) {
             controls.push(
-                {button: Button.L, onDown: this.swap_previous.bind(this), sfx: {down: "menu/positive"}},
-                {button: Button.R, onDown: this.swap_next.bind(this), sfx: {down: "menu/positive"}}
+                {button: Button.L, on_down: this.swap_previous.bind(this), sfx: {down: "menu/positive"}},
+                {button: Button.R, on_down: this.swap_next.bind(this), sfx: {down: "menu/positive"}}
             );
         }
-        this.data.control_manager.addControls(controls, {loopConfig: {horizontal: true}});
+        this.data.control_manager.add_controls(controls, {loop_config: {horizontal: true}});
     }
 
     move_cursor(pos?: number, on_complete?: Function) {

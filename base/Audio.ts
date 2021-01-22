@@ -12,7 +12,7 @@ export class Audio {
      * @param {number} delta - Delta to apply to the volume
      * @return {number} Final game volume
      */
-    vol(delta: number) {
+    alter_volume(delta: number) {
         return (this.game.sound.volume = Math.max(Math.min(this.game.sound.volume + delta, 1), 0));
     }
 

@@ -371,23 +371,23 @@ export class ItemPsynergyChooseWindow {
     /*Enables control keys for this menu*/
     grant_control(on_cancel: Function, on_select: Function, next_char?: Function, previous_char?: Function) {
         const controls = [
-            {button: Button.LEFT, onDown: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, onDown: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, onDown: this.previous_element.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, onDown: this.next_element.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.A, onDown: on_select, sfx: {down: "menu/positive"}},
-            {button: Button.B, onDown: on_cancel, sfx: {down: "menu/negative"}},
-            {button: Button.L, onDown: previous_char, sfx: {down: "menu/positive"}},
-            {button: Button.R, onDown: next_char, sfx: {down: "menu/positive"}},
+            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_element.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_element.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, on_down: on_select, sfx: {down: "menu/positive"}},
+            {button: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
+            {button: Button.L, on_down: previous_char, sfx: {down: "menu/positive"}},
+            {button: Button.R, on_down: next_char, sfx: {down: "menu/positive"}},
         ];
 
-        this.data.control_manager.addControls(controls, {
-            loopConfig: {
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {
                 vertical: true,
                 horizontal: true,
-                horizontalTime: HORIZONTAL_LOOP_TIME,
+                horizontal_time: HORIZONTAL_LOOP_TIME,
                 shoulder: true,
-                shoulderTime: SHOULDER_LOOP_TIME,
+                shoulder_time: SHOULDER_LOOP_TIME,
             },
         });
     }

@@ -242,13 +242,13 @@ export class BattleItemWindow {
 
     item_choose() {
         const controls = [
-            {button: Button.LEFT, onDown: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, onDown: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, onDown: this.previous_item.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, onDown: this.next_item.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_item.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_item.bind(this), sfx: {down: "menu/move"}},
             {
                 button: Button.A,
-                onDown: () => {
+                on_down: () => {
                     const this_item = this.data.info.items_list[this.items[this.item_index].key_name];
                     if (
                         this_item.use_type !== use_types.NO_USE &&
@@ -263,7 +263,7 @@ export class BattleItemWindow {
             },
             {
                 button: Button.B,
-                onDown: () => {
+                on_down: () => {
                     this.choosen_ability = null;
                     this.item_obj = null;
                     this.close(this.close_callback);
@@ -272,8 +272,8 @@ export class BattleItemWindow {
             },
         ];
 
-        this.data.control_manager.addControls(controls, {
-            loopConfig: {vertical: true, horizontal: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true},
         });
     }
 

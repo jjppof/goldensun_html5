@@ -24,11 +24,11 @@ export class ChestEvent extends GameEvent {
         this.item = this.data.info.items_list[item_key_name];
         this.quantity = quantity ?? 1;
 
-        this.data.control_manager.addControls(
+        this.data.control_manager.add_controls(
             [
                 {
                     button: Button.A,
-                    onDown: () => {
+                    on_down: () => {
                         if (!this.running || !this.control_enable) return;
                         this.next();
                     },

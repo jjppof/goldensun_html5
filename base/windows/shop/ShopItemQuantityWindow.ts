@@ -78,13 +78,13 @@ export class ShopItemQuantityWindow {
     grant_control(on_cancel: Function, on_select: Function) {
         //A Key sound is missing, using Menu/Positive4 instead
         const controls = [
-            {button: Button.LEFT, onDown: this.decrease_amount.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, onDown: this.increase_amount.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.A, onDown: on_select, sfx: {down: "menu/positive_4"}},
-            {button: Button.B, onDown: on_cancel, sfx: {down: "menu/negative"}},
+            {button: Button.LEFT, on_down: this.decrease_amount.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.increase_amount.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, on_down: on_select, sfx: {down: "menu/positive_4"}},
+            {button: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
         ];
-        this.data.control_manager.addControls(controls, {
-            loopConfig: {horizontal: true, horizontalTime: ITEM_COUNTER_LOOP_TIME},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {horizontal: true, horizontal_time: ITEM_COUNTER_LOOP_TIME},
         });
     }
 

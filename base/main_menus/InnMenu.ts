@@ -51,7 +51,7 @@ export class InnMenu {
         this.message = this.data.info.inn_list[this.inn_id].messages.welcome_message;
         this.update_dialogue();
 
-        this.data.control_manager.addSimpleControls(this.inn_price.bind(this));
+        this.data.control_manager.add_simple_controls(this.inn_price.bind(this));
     }
 
     //Dialogue function, replaces ${PRICE} with the inn cost and shows the message stored in this.message
@@ -100,12 +100,12 @@ export class InnMenu {
             this.update_dialogue();
 
             this.data.info.party_data.coins -= this.cost;
-            this.data.control_manager.addSimpleControls(this.inn_fade.bind(this));
+            this.data.control_manager.add_simple_controls(this.inn_fade.bind(this));
         } else {
             this.message = this.data.info.inn_list[this.inn_id].messages.not_enough_coins;
             this.update_dialogue();
 
-            this.data.control_manager.addSimpleControls(this.close.bind(this));
+            this.data.control_manager.add_simple_controls(this.close.bind(this));
         }
     }
 
@@ -117,7 +117,7 @@ export class InnMenu {
         this.message = this.data.info.inn_list[this.inn_id].messages.cancel_message;
         this.update_dialogue();
 
-        this.data.control_manager.addSimpleControls(this.close.bind(this));
+        this.data.control_manager.add_simple_controls(this.close.bind(this));
     }
 
     //Recover player's HP and PP, run circle animation, show goodbye message
@@ -153,7 +153,7 @@ export class InnMenu {
             this.message = this.data.info.inn_list[this.inn_id].messages.goodbye_message;
             this.update_dialogue();
 
-            this.data.control_manager.addSimpleControls(this.close.bind(this));
+            this.data.control_manager.add_simple_controls(this.close.bind(this));
         });
 
         fadein.start();

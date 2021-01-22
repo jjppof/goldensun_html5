@@ -394,13 +394,13 @@ export class BattlePsynergyWindow {
 
     ability_choose() {
         const controls = [
-            {button: Button.LEFT, onDown: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, onDown: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, onDown: this.previous_ability.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, onDown: this.next_ability.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_ability.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_ability.bind(this), sfx: {down: "menu/move"}},
             {
                 button: Button.A,
-                onDown: () => {
+                on_down: () => {
                     if (!this.expanded) {
                         this.choosen_ability = this.abilities[this.ability_index];
                         this.hide(this.close_callback);
@@ -410,7 +410,7 @@ export class BattlePsynergyWindow {
             },
             {
                 button: Button.B,
-                onDown: () => {
+                on_down: () => {
                     if (!this.expanded) {
                         this.choosen_ability = null;
                         this.close(this.close_callback);
@@ -420,8 +420,8 @@ export class BattlePsynergyWindow {
             },
         ];
 
-        this.data.control_manager.addControls(controls, {
-            loopConfig: {vertical: true, horizontal: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true},
         });
     }
 

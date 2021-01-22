@@ -225,49 +225,49 @@ export class GoldenSun {
         const controls = [
             {
                 button: CButton.ZOOM1,
-                onDown: () => setupScale(1),
+                on_down: () => setupScale(1),
             },
             {
                 button: CButton.ZOOM2,
-                onDown: () => setupScale(2),
+                on_down: () => setupScale(2),
             },
             {
                 button: CButton.ZOOM3,
-                onDown: () => setupScale(3),
+                on_down: () => setupScale(3),
             },
             {
                 button: CButton.MUTE,
-                onDown: () => {
+                on_down: () => {
                     this.game.sound.context.resume();
                     this.game.sound.mute = !this.game.sound.mute;
                 },
             },
             {
                 button: CButton.PSY1,
-                onDown: () => quickAbility(0),
+                on_down: () => quickAbility(0),
             },
             {
                 button: CButton.PSY2,
-                onDown: () => quickAbility(1),
+                on_down: () => quickAbility(1),
             },
             {
                 button: CButton.PSY3,
-                onDown: () => quickAbility(2),
+                on_down: () => quickAbility(2),
             },
             {
                 button: CButton.PSY4,
-                onDown: () => quickAbility(3),
+                on_down: () => quickAbility(3),
             },
             {
                 button: CButton.VOL_UP,
-                onDown: () => this.audio.vol(+0.1),
+                on_down: () => this.audio.alter_volume(+0.1),
             },
             {
                 button: CButton.VOL_DOWN,
-                onDown: () => this.audio.vol(-0.1),
+                on_down: () => this.audio.alter_volume(-0.1),
             },
         ];
-        this.control_manager.addControls(controls, {persist: true});
+        this.control_manager.add_controls(controls, {persist: true});
     }
 
     hero_movement_allowed(allow_climbing = true) {

@@ -324,7 +324,7 @@ export class ItemOptionsWindow {
             close_callback();
         });
 
-        this.data.control_manager.addSimpleControls(() => {
+        this.data.control_manager.add_simple_controls(() => {
             this.action_message_window.close();
             this.data.control_manager.reset();
         });
@@ -422,16 +422,16 @@ export class ItemOptionsWindow {
         //Missing sound for item removal
         //Missing check for item use and item remove, and using appropriate sound
         const controls = [
-            {button: Button.LEFT, onDown: this.previous_horizontal.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, onDown: this.next_horizontal.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, onDown: this.next_vertical.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, onDown: this.previous_vertical.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.A, onDown: this.on_choose.bind(this), sfx: {down: "menu/positive"}},
-            {button: Button.B, onDown: this.close.bind(this, this.close_callback), sfx: {down: "menu/negative"}},
+            {button: Button.LEFT, on_down: this.previous_horizontal.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_horizontal.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.next_vertical.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.previous_vertical.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, on_down: this.on_choose.bind(this), sfx: {down: "menu/positive"}},
+            {button: Button.B, on_down: this.close.bind(this, this.close_callback), sfx: {down: "menu/negative"}},
         ];
 
-        this.data.control_manager.addControls(controls, {
-            loopConfig: {vertical: true, horizontal: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true},
         });
     }
 

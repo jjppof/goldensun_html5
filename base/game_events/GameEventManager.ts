@@ -43,11 +43,11 @@ export class GameEventManager {
     }
 
     set_controls() {
-        this.data.control_manager.addControls(
+        this.data.control_manager.add_controls(
             [
                 {
                     button: Button.A,
-                    onDown: () => {
+                    on_down: () => {
                         if (
                             this.data.hero.in_action() ||
                             this.data.menu_open ||

@@ -245,13 +245,13 @@ export class BattleSummonWindow {
 
     summon_choose() {
         let controls = [
-            {button: Button.LEFT, onDown: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.RIGHT, onDown: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.UP, onDown: this.previous_summon.bind(this), sfx: {down: "menu/move"}},
-            {button: Button.DOWN, onDown: this.next_summon.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_summon.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_summon.bind(this), sfx: {down: "menu/move"}},
             {
                 button: Button.A,
-                onDown: () => {
+                on_down: () => {
                     this.choosen_ability = this.summons[this.summon_index].key_name;
                     this.hide(this.close_callback);
                 },
@@ -259,7 +259,7 @@ export class BattleSummonWindow {
             },
             {
                 button: Button.B,
-                onDown: () => {
+                on_down: () => {
                     this.choosen_ability = null;
                     this.close(this.close_callback);
                 },
@@ -267,8 +267,8 @@ export class BattleSummonWindow {
             },
         ];
 
-        this.data.control_manager.addControls(controls, {
-            loopConfig: {vertical: true, horizontal: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true},
         });
     }
 
