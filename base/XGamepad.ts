@@ -1,4 +1,4 @@
-import { GoldenSun } from "./GoldenSun";
+import {GoldenSun} from "./GoldenSun";
 
 // export type GamepadState = {
 // 	A: number = 1 << 0;
@@ -17,30 +17,53 @@ import { GoldenSun } from "./GoldenSun";
 
 /** GBA buttons */
 export enum Button {
-    A, B, L, R,
-    START, SELECT,
-    LEFT, RIGHT, UP, DOWN,
+    A,
+    B,
+    L,
+    R,
+    START,
+    SELECT,
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN,
 }
 
 /** GBA button list, for mapping */
-const Buttons = [
-    "A", "B", "L", "R",
-    "START", "SELECT",
-    "LEFT", "RIGHT", "UP", "DOWN"
-];
+const Buttons = ["A", "B", "L", "R", "START", "SELECT", "LEFT", "RIGHT", "UP", "DOWN"];
 
 /** Custom buttons */
 export enum CButton {
-    LB = Button.L, RB = Button.R,
+    LB = Button.L,
+    RB = Button.R,
     BUTTON = Button.DOWN,
-    X, Y, LS, RS, L2, R2,
-    LT = CButton.L2, RT = CButton.R2,
+    X,
+    Y,
+    LS,
+    RS,
+    L2,
+    R2,
+    LT = CButton.L2,
+    RT = CButton.R2,
     // LX, LY, RX, RY,
-    LLEFT, LRIGHT, LUP, LDOWN,
-    RLEFT, RRIGHT, RUP, RDOWN,
-    PSY1, PSY2, PSY3, PSY4,
-    ZOOM1, ZOOM2, ZOOM3,
-    MUTE, VOL_UP, VOL_DOWN,
+    LLEFT,
+    LRIGHT,
+    LUP,
+    LDOWN,
+    RLEFT,
+    RRIGHT,
+    RUP,
+    RDOWN,
+    PSY1,
+    PSY2,
+    PSY3,
+    PSY4,
+    ZOOM1,
+    ZOOM2,
+    ZOOM3,
+    MUTE,
+    VOL_UP,
+    VOL_DOWN,
     DEBUG_PHYSICS,
     DEBUG_GRID,
     DEBUG_KEYS,
@@ -53,13 +76,31 @@ export enum CButton {
 
 /** Custom button list, for mapping */
 const CButtons = [
-    "X", "Y", "LS", "RS", "LT", "RT",
+    "X",
+    "Y",
+    "LS",
+    "RS",
+    "LT",
+    "RT",
     // "LX", "LY", "RX", "RY",
-    "LLEFT", "LRIGHT", "LUP", "LDOWN",
-    "RLEFT", "RRIGHT", "RUP", "RDOWN",
-    "PSY1", "PSY2", "PSY3", "PSY4",
-    "ZOOM1", "ZOOM2", "ZOOM3",
-    "MUTE", "VOL_UP", "VOL_DOWN",
+    "LLEFT",
+    "LRIGHT",
+    "LUP",
+    "LDOWN",
+    "RLEFT",
+    "RRIGHT",
+    "RUP",
+    "RDOWN",
+    "PSY1",
+    "PSY2",
+    "PSY3",
+    "PSY4",
+    "ZOOM1",
+    "ZOOM2",
+    "ZOOM3",
+    "MUTE",
+    "VOL_UP",
+    "VOL_DOWN",
     "DEBUG_PHYSICS",
     "DEBUG_GRID",
     "DEBUG_KEYS",
@@ -148,36 +189,60 @@ export class Gamepad {
     /**
      * Loads the gamepad and keyboard configuration.
      * @param {GoldenSun} data - Master game data object
+     * @param {string} [input_type=default_inputs] - Keyboard key mapping configuration name
      */
-    static initialize(data: GoldenSun) {
+    static initialize(data: GoldenSun, input_type: string = "default_inputs") {
         // Load default gamepad buttons configuration
-        const gamepadMapping = Object.entries(data.dbs.init_db.gamepad_rinputs as { [code: string]: string })
-            .map(([buttonCode, gameButton]): KeyMap => ({ name: gameButton, gameButton: Button[gameButton] ?? CButton[gameButton], buttonCode: Phaser.Gamepad[buttonCode] }));
+        const gamepadMapping = Object.entries(data.dbs.init_db.gamepad_rinputs as {[code: string]: string}).map(
+            ([buttonCode, gameButton]): KeyMap => ({
+                name: gameButton,
+                gameButton: Button[gameButton] ?? CButton[gameButton],
+                buttonCode: Phaser.Gamepad[buttonCode],
+            })
+        );
         // Load custom gamepad buttons configuration
-        const gamepadCustomMapping = Object.entries(data.dbs.init_db.gamepad_inputs as { [code: string]: string })
-            .map(([gameButton, buttonCode]): KeyMap => {
-                const matches = buttonCode.match(/^(?:(?:(\w+) *\+ *)?(\w+) *\+ *)?(\w+)$/);
-                if (!matches) throw new Error("Input not recognized " + buttonCode);
-                const getButtonCode = (code: string): number => gamepadMapping.find(km => km.name === code)?.buttonCode ?? Phaser.Gamepad[code];
-                const getGameButton = (code: string): number => gamepadMapping.find(km => km.name === code || km.buttonCode === Phaser.Gamepad[code])?.gameButton;
-                const km: KeyMap = { name: gameButton, as: buttonCode, gameButton: CButton[gameButton] };
-                if (matches[matches.length - 2]) {
-                    const buttons = Array.prototype.filter.call(matches, (m, i) => i && m);
-                    km.buttonCodes = buttons.map(getButtonCode).filter(bc => bc !== undefined);
-                    km.gameButtons = buttons.map(getGameButton).filter(bc => bc !== undefined);
-                    if (km.buttonCodes.length !== km.gameButtons.length) console.warn(`${buttonCode} not well recognized!`);
-                } else km.buttonCode = getButtonCode(matches[matches.length - 1]);
-                return km;
-            }).filter(km => km);
+        const gamepadCustomMapping = Object.entries(data.dbs.init_db.gamepad_inputs as {[code: string]: string})
+            .map(
+                ([gameButton, buttonCode]): KeyMap => {
+                    const matches = buttonCode.match(/^(?:(?:(\w+) *\+ *)?(\w+) *\+ *)?(\w+)$/);
+                    if (!matches) throw new Error("Input not recognized " + buttonCode);
+                    const getButtonCode = (code: string): number =>
+                        gamepadMapping.find(km => km.name === code)?.buttonCode ?? Phaser.Gamepad[code];
+                    const getGameButton = (code: string): number =>
+                        gamepadMapping.find(km => km.name === code || km.buttonCode === Phaser.Gamepad[code])
+                            ?.gameButton;
+                    const km: KeyMap = {name: gameButton, as: buttonCode, gameButton: CButton[gameButton]};
+                    if (matches[matches.length - 2]) {
+                        const buttons = Array.prototype.filter.call(matches, (m, i) => i && m);
+                        km.buttonCodes = buttons.map(getButtonCode).filter(bc => bc !== undefined);
+                        km.gameButtons = buttons.map(getGameButton).filter(bc => bc !== undefined);
+                        if (km.buttonCodes.length !== km.gameButtons.length)
+                            console.warn(`${buttonCode} not well recognized!`);
+                    } else km.buttonCode = getButtonCode(matches[matches.length - 1]);
+                    return km;
+                }
+            )
+            .filter(km => km);
         // Load gamepad stick configuration
-        const gamepadStickMapping = Object.entries(data.dbs.init_db.gamepad_rsticks as { [code: string]: [string, string] })
-            .map(([buttonCode, gameButtons]): KeyMap => ({ gameButton: null, gameButtons: gameButtons.map(gb => CButton[gb]), buttonCode: Phaser.Gamepad[buttonCode] }));
+        const gamepadStickMapping = Object.entries(
+            data.dbs.init_db.gamepad_rsticks as {[code: string]: [string, string]}
+        ).map(
+            ([buttonCode, gameButtons]): KeyMap => ({
+                gameButton: null,
+                gameButtons: gameButtons.map(gb => CButton[gb]),
+                buttonCode: Phaser.Gamepad[buttonCode],
+            })
+        );
         Gamepad.gamepadStickMapping = gamepadStickMapping;
         Gamepad.gamepadMapping = gamepadMapping.concat(gamepadCustomMapping);
         // Load keyboard keys configuration
-        Gamepad.keyboardMapping = Object.entries(data.dbs.init_db.default_inputs as { [code: string]: string })
-            .map(([gameButton, keyCode]) => ({ gameButton: Button[gameButton] ?? CButton[gameButton], keyCode: Phaser.Keyboard[keyCode] }));
-        // TODO: Handle Alt/Ctrl/Shift modifier 
+        Gamepad.keyboardMapping = Object.entries(data.dbs.init_db[input_type] as {[code: string]: string}).map(
+            ([gameButton, keyCode]): KeyMap => ({
+                gameButton: Button[gameButton] ?? CButton[gameButton],
+                keyCode: Phaser.Keyboard[keyCode],
+            })
+        );
+        // TODO: Handle Alt/Ctrl/Shift modifier.
     }
 
     /**
@@ -224,7 +289,7 @@ export class Gamepad {
     }
 
     /** Every game buttons of the emulated gamepad */
-    buttons: { [button in Button | CButton]?: GamepadButton } = [];
+    buttons: {[button in Button | CButton]?: GamepadButton} = [];
     /** The stick dead zone */
     stickDeadZone: number;
     /** The trigger dead zone */
@@ -236,7 +301,7 @@ export class Gamepad {
      * @param {GoldenSun} data - Master game data object
      */
     constructor(data: GoldenSun) {
-        Gamepad.initialize(data);
+        Gamepad.initialize(data, navigator.language === "fr-FR" ? "azerty_inputs" : "default_inputs");
         this.registerHandleEvents(data.game);
         Buttons.forEach(buttonName => {
             this.buttons[Button[buttonName]] = new GamepadButton(this, Button[buttonName]);
@@ -300,11 +365,12 @@ export class Gamepad {
      * @param {Button|CButton} gameButton - The game button getting pressed
      */
     onGamepadDown(gameButton: Button | CButton) {
-        const groupGameButtons = Gamepad.gamepadMapping.filter(km => 
-            km.gameButton &&
-            km.gameButtons?.[km.gameButtons.length-1] === gameButton &&
-            // km.gameButtons?.includes(gameButton) &&
-            km.gameButtons.every(gb => gb === gameButton || this.isDown(gb))
+        const groupGameButtons = Gamepad.gamepadMapping.filter(
+            km =>
+                km.gameButton &&
+                km.gameButtons?.[km.gameButtons.length - 1] === gameButton &&
+                // km.gameButtons?.includes(gameButton) &&
+                km.gameButtons.every(gb => gb === gameButton || this.isDown(gb))
             // .filter(gb => gb !== gameButton)
             // .every(gb => this.isDown(gb))
         );
@@ -317,7 +383,9 @@ export class Gamepad {
      * @param {Button|CButton} gameButton - The game button getting released
      */
     onGamepadUp(gameButton: Button | CButton) {
-        const groupGameButtons = Gamepad.gamepadMapping.filter(km => km.gameButton && km.gameButtons?.includes(gameButton));
+        const groupGameButtons = Gamepad.gamepadMapping.filter(
+            km => km.gameButton && km.gameButtons?.includes(gameButton)
+        );
         groupGameButtons.forEach(km => this._onUp(km.gameButton));
         this._onUp(gameButton);
     }
@@ -349,7 +417,7 @@ export class Gamepad {
             //     [Phaser.Gamepad["XBOX360_STICK_RIGHT_X"]]: [CButton.RLEFT, CButton.RRIGHT],
             //     [Phaser.Gamepad["XBOX360_STICK_RIGHT_Y"]]: [CButton.RUP, CButton.RDOWN],
             // }[index];
-            
+
             // const gameButtons = Gamepad.gamepadStickMapping.find(km => km.buttonCode === index)?.gameButtons;
 
             // if (!gameButtons) return;
@@ -369,11 +437,13 @@ export class Gamepad {
                     this.onGamepadUp(km.gameButtons[0]);
                     this.onGamepadUp(km.gameButtons[1]);
                 }
-            })
+            });
         };
         game.input.gamepad.onFloatCallback = (buttonCode: number, value: number) => {
             const gameButtons = Gamepad.transcodeGamepadButton(buttonCode);
-            gameButtons.forEach(gameButton => value > this.triggerDeadZone ? this.onGamepadDown(gameButton) : this.onGamepadUp(gameButton));
+            gameButtons.forEach(gameButton =>
+                value > this.triggerDeadZone ? this.onGamepadDown(gameButton) : this.onGamepadUp(gameButton)
+            );
 
             // const gameButton = {
             // 	[Phaser.Gamepad["XBOX360_LEFT_TRIGGER"]]: CButton.L2,
