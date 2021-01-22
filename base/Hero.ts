@@ -6,6 +6,7 @@ import {normal_push} from "./interactable_objects/push";
 import {Map} from "./Map";
 import {ClimbEvent} from "./tile_events/ClimbEvent";
 import {Collision} from "./Collision";
+import {Button, CButton} from "./XGamepad";
 
 export class Hero extends ControllableChar {
     private static readonly SPEED_LIMIT_TO_STOP = 13;
@@ -92,10 +93,10 @@ export class Hero extends ControllableChar {
 
     check_control_inputs() {
         this.arrow_inputs =
-            (1 * +this.game.input.keyboard.isDown(this.data.gamepad.RIGHT)) |
-            (2 * +this.game.input.keyboard.isDown(this.data.gamepad.LEFT)) |
-            (4 * +this.game.input.keyboard.isDown(this.data.gamepad.UP)) |
-            (8 * +this.game.input.keyboard.isDown(this.data.gamepad.DOWN));
+            (1 * +this.data.gamepad.isDown(Button.RIGHT)) |
+            (2 * +this.data.gamepad.isDown(Button.LEFT)) |
+            (4 * +this.data.gamepad.isDown(Button.UP)) |
+            (8 * +this.data.gamepad.isDown(Button.DOWN));
         this.required_direction = Hero.ROTATION_KEY[this.arrow_inputs];
 
         if (!this.ice_sliding_active) {

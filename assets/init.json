@@ -8,12 +8,13 @@
     "y_tile_position": 13,
     "map_z_index": 0,
     "coins": 10000,
-    "initial_shortcuts": {
-        "move": "isaac",
-        "frost": "sheba",
-        "growth": "isaac"
-    },
-    "default_inputs":{
+    "initial_shortcuts": [
+        { "ability": "move", "adept": "isaac" },
+        { "ability": "frost", "adept": "sheba" },
+        { "ability": "growth", "adept": "isaac" },
+        { "ability": "growth", "adept": "garet" }
+    ],
+    "default_inputs": {
         "LEFT": "LEFT",
         "RIGHT": "RIGHT",
         "UP": "UP",
@@ -27,6 +28,7 @@
         "PSY1": "Q",
         "PSY2": "W",
         "PSY3": "E",
+        "PSY4": "R",
         "ZOOM1": "ONE",
         "ZOOM2": "TWO",
         "ZOOM3": "THREE",
