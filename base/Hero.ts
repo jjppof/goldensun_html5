@@ -94,16 +94,16 @@ export class Hero extends ControllableChar {
 
     check_control_inputs() {
         this.arrow_inputs =
-            (1 * +this.data.gamepad.isDown(Button.RIGHT)) |
-            (2 * +this.data.gamepad.isDown(Button.LEFT)) |
-            (4 * +this.data.gamepad.isDown(Button.UP)) |
-            (8 * +this.data.gamepad.isDown(Button.DOWN));
+            (1 * +this.data.gamepad.is_down(Button.RIGHT)) |
+            (2 * +this.data.gamepad.is_down(Button.LEFT)) |
+            (4 * +this.data.gamepad.is_down(Button.UP)) |
+            (8 * +this.data.gamepad.is_down(Button.DOWN));
         this.required_direction = Hero.ROTATION_KEY[this.arrow_inputs];
 
         if (!this.ice_sliding_active) {
             if (!this.arrow_inputs) this.stick_dashing = false;
-            else if (this.data.gamepad.isDown(CButton.LS)) this.stick_dashing = true; // Can't `!this.stickdashing;` since called at every frame
-            this.dashing = this.stick_dashing || this.data.gamepad.isDown(Button.B);
+            else if (this.data.gamepad.is_down(CButton.LS)) this.stick_dashing = true; // Can't `!this.stickdashing;` since called at every frame
+            this.dashing = this.stick_dashing || this.data.gamepad.is_down(Button.B);
         }
     }
 

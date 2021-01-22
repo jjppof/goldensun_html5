@@ -168,7 +168,7 @@ export class ControlManager {
 
         controls.forEach(control => {
             if (control.on_up) {
-                const b = this.gamepad.getButton(control.button).onUp.add(() => {
+                const b = this.gamepad.get_button(control.button).on_up.add(() => {
                     if (this.disabled) return;
 
                     if (control.sfx?.up) this.audio.play_se(control.sfx.up);
@@ -181,34 +181,34 @@ export class ControlManager {
                 const loop_time = control.params?.loop_time;
                 const trigger_reset = control.params?.reset_controls;
 
-                const gamepad_button = this.gamepad.getButton(control.button);
+                const gamepad_button = this.gamepad.get_button(control.button);
 
                 if (loop_time) {
-                    const b1 = gamepad_button.onDown.add(event => {
+                    const b1 = gamepad_button.on_down.add(event => {
                         if (this.disabled) return;
 
-                        const opposite_button = XGamepad.getOppositeButton(control.button as Button);
+                        const opposite_button = XGamepad.get_opposite_button(control.button as Button);
 
-                        if (this.gamepad.isDown(opposite_button)) {
-                            this.gamepad.getButton(opposite_button).isUp = true;
+                        if (this.gamepad.is_down(opposite_button)) {
+                            this.gamepad.get_button(opposite_button).is_up = true;
                             this.stop_timers();
                         }
 
-                        // Done in XGamepad._onDown
-                        // gamepad_button.isDown = true;
+                        // Done in XGamepad._on_down
+                        // gamepad_button.is_down = true;
                         this.start_loop_timers(control.on_down, loop_time, control.sfx?.down);
                     });
-                    const b2 = gamepad_button.onUp.add(event => {
+                    const b2 = gamepad_button.on_up.add(event => {
                         if (this.disabled) return;
 
-                        // Done in XGamepad._onUp
-                        // gamepad_button.isUp = true;
+                        // Done in XGamepad._on_up
+                        // gamepad_button.is_up = true;
                         this.stop_timers();
                     });
                     register(b1);
                     register(b2);
                 } else {
-                    const b = gamepad_button.onDown.add(event => {
+                    const b = gamepad_button.on_down.add(event => {
                         if (this.disabled) return;
 
                         if (trigger_reset) this.reset();

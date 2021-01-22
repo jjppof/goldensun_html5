@@ -635,12 +635,12 @@ export class BattleStage {
     update_stage() {
         if (this.choosing_actions) return;
 
-        if (!this.data.gamepad.isDown(CButton.DEBUG_CAM_PLUS) && this.data.gamepad.isDown(CButton.DEBUG_CAM_MINUS)) {
+        if (this.data.gamepad.is_down(CButton.DEBUG_CAM_MINUS) && !this.data.gamepad.is_down(CButton.DEBUG_CAM_PLUS)) {
             this.camera_angle.rad -= CAMERA_SPEED;
             this.battle_bg.x -= BG_SPEED;
         } else if (
-            this.data.gamepad.isDown(CButton.DEBUG_CAM_PLUS) &&
-            !this.data.gamepad.isDown(CButton.DEBUG_CAM_MINUS)
+            this.data.gamepad.is_down(CButton.DEBUG_CAM_PLUS) &&
+            !this.data.gamepad.is_down(CButton.DEBUG_CAM_MINUS)
         ) {
             this.camera_angle.rad += CAMERA_SPEED;
             this.battle_bg.x += BG_SPEED;

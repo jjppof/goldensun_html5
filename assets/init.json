@@ -111,10 +111,10 @@
         "DEBUG_GRID": "RT+RS"
     },
     "gamepad": {
-        "UseTriggerAsButton": false,
-        "LeftStickAsDPad": true,
-        "RightStickAsDPad": true,
-        "TriggerDeadZone": 0.6,
-        "StickDeadZone": 0.5
+        "use_trigger_as_button": false,
+        "left_stick_as_dpad": true,
+        "right_stick_as_dpad": true,
+        "trigger_dead_zone": 0.6,
+        "stick_dead_zone": 0.5
     }
 }
