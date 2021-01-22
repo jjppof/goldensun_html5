@@ -4,6 +4,7 @@ import {DropItemWindow} from "./DropItemWindow";
 import {ItemQuantityManagerWindow} from "./ItemQuantityManagerWindow";
 import {GiveItemWindow} from "./GiveItemWindow";
 import {GoldenSun} from "../../GoldenSun";
+import {Button} from "../../XGamepad";
 import {ItemSlot, MainChar} from "../../MainChar";
 import {Item, item_types} from "../../Item";
 import {MainItemMenu} from "../../main_menus/MainItemMenu";
@@ -323,7 +324,7 @@ export class ItemOptionsWindow {
             close_callback();
         });
 
-        this.data.control_manager.simple_input(() => {
+        this.data.control_manager.addSimpleControls(() => {
             this.action_message_window.close();
             this.data.control_manager.reset();
         });
@@ -420,20 +421,18 @@ export class ItemOptionsWindow {
 
         //Missing sound for item removal
         //Missing check for item use and item remove, and using appropriate sound
-        let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_horizontal.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_horizontal.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.UP, on_down: this.next_vertical.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.DOWN, on_down: this.previous_vertical.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.A, on_down: this.on_choose.bind(this), sfx: {down: "menu/positive"}},
-            {
-                key: this.data.gamepad.B,
-                on_down: this.close.bind(this, this.close_callback),
-                sfx: {down: "menu/negative"},
-            },
+        const controls = [
+            {button: Button.LEFT, onDown: this.previous_horizontal.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, onDown: this.next_horizontal.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, onDown: this.next_vertical.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, onDown: this.previous_vertical.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, onDown: this.on_choose.bind(this), sfx: {down: "menu/positive"}},
+            {button: Button.B, onDown: this.close.bind(this, this.close_callback), sfx: {down: "menu/negative"}},
         ];
 
-        this.data.control_manager.set_control(controls, {loop_configs: {vertical: true, horizontal: true}});
+        this.data.control_manager.addControls(controls, {
+            loopConfig: {vertical: true, horizontal: true},
+        });
     }
 
     open(

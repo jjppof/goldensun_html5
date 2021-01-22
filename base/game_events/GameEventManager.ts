@@ -2,6 +2,7 @@ import {base_actions, directions, is_close, reverse_directions} from "../utils";
 import {DialogManager} from "../utils/DialogManager";
 import {NPC, npc_types} from "../NPC";
 import {GoldenSun} from "../GoldenSun";
+import {Button} from "../XGamepad";
 import {BattleEvent} from "./BattleEvent";
 import {BranchEvent} from "./BranchEvent";
 import {event_types} from "./GameEvent";
@@ -42,30 +43,31 @@ export class GameEventManager {
     }
 
     set_controls() {
-        let controls = [
-            {
-                key: this.data.gamepad.A,
-                on_down: () => {
-                    if (
-                        this.data.hero.in_action() ||
-                        this.data.menu_open ||
-                        this.data.in_battle ||
-                        this.data.shop_open ||
-                        this.data.inn_open ||
-                        !this.control_enable
-                    )
-                        return;
-                    if (this.on_event && this.fire_next_step) {
-                        this.control_enable = false;
-                        this.fire_next_step();
-                    } else if (!this.on_event) {
-                        this.search_for_npc();
-                    }
+        this.data.control_manager.addControls(
+            [
+                {
+                    button: Button.A,
+                    onDown: () => {
+                        if (
+                            this.data.hero.in_action() ||
+                            this.data.menu_open ||
+                            this.data.in_battle ||
+                            this.data.shop_open ||
+                            this.data.inn_open ||
+                            !this.control_enable
+                        )
+                            return;
+                        if (this.on_event && this.fire_next_step) {
+                            this.control_enable = false;
+                            this.fire_next_step();
+                        } else if (!this.on_event) {
+                            this.search_for_npc();
+                        }
+                    },
                 },
-            },
-        ];
-
-        this.data.control_manager.set_control(controls, {persist: true});
+            ],
+            {persist: true}
+        );
     }
 
     search_for_npc() {

@@ -13,7 +13,7 @@ export class Audio {
      * @return {number} Final game volume
      */
     vol(delta: number) {
-        return this.game.sound.volume = Math.max(Math.min(this.game.sound.volume + delta, 1), 0);
+        return (this.game.sound.volume = Math.max(Math.min(this.game.sound.volume + delta, 1), 0));
     }
 
     add_se(se_key: string) {

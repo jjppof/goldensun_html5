@@ -115,7 +115,7 @@ export class BuyArtifactsMenu {
 
         if (game_ticket) {
             this.npc_dialog.update_dialog("game_ticket", true);
-            this.data.control_manager.simple_input(this.open_inventory_view.bind(this, true));
+            this.data.control_manager.addSimpleControls(this.open_inventory_view.bind(this, true));
         } else this.open_buy_select();
     }
 
@@ -156,7 +156,7 @@ export class BuyArtifactsMenu {
         this.parent.update_your_coins();
         this.parent.update_items();
 
-        this.data.control_manager.simple_input(this.check_game_ticket.bind(this));
+        this.data.control_manager.addSimpleControls(this.check_game_ticket.bind(this));
     }
 
     equip_new_item() {
@@ -197,7 +197,7 @@ export class BuyArtifactsMenu {
         }
 
         if (!this.old_item) {
-            this.data.control_manager.simple_input(this.check_game_ticket.bind(this));
+            this.data.control_manager.addSimpleControls(this.check_game_ticket.bind(this));
         } else {
             let after_compliment = () => {
                 let sell_price = slot.broken
@@ -214,14 +214,14 @@ export class BuyArtifactsMenu {
                         no: () => {
                             let msg_key = this.old_item.rare_item ? "decline_sell_artifact" : "decline_sell_normal";
                             this.npc_dialog.update_dialog(msg_key, true);
-                            this.data.control_manager.simple_input(this.check_game_ticket.bind(this));
+                            this.data.control_manager.addSimpleControls(this.check_game_ticket.bind(this));
                         },
                     },
                     {x: YESNO_X, y: YESNO_Y}
                 );
             };
 
-            this.data.control_manager.simple_input(after_compliment.bind(this));
+            this.data.control_manager.addSimpleControls(after_compliment.bind(this));
         }
     }
 
@@ -241,7 +241,7 @@ export class BuyArtifactsMenu {
             this.data.cursor_manager.hide();
 
             let exec = () => {
-                this.data.control_manager.simple_input(this.open_buy_select.bind(this));
+                this.data.control_manager.addSimpleControls(this.open_buy_select.bind(this));
             };
             if (this.quant_win.is_open) this.quant_win.close(exec);
             else exec();
@@ -312,12 +312,12 @@ export class BuyArtifactsMenu {
                                 {x: YESNO_X, y: YESNO_Y}
                             );
                         };
-                        this.data.control_manager.simple_input(equip_now.bind(this));
+                        this.data.control_manager.addSimpleControls(equip_now.bind(this));
                     } else {
-                        this.data.control_manager.simple_input(this.check_game_ticket.bind(this));
+                        this.data.control_manager.addSimpleControls(this.check_game_ticket.bind(this));
                     }
                 } else {
-                    this.data.control_manager.simple_input(this.open_buy_select.bind(this));
+                    this.data.control_manager.addSimpleControls(this.open_buy_select.bind(this));
                 }
             };
 
@@ -407,7 +407,7 @@ export class BuyArtifactsMenu {
                     this.data.cursor_manager.hide();
 
                     let finish = () => {
-                        this.data.control_manager.simple_input(this.open_buy_select.bind(this));
+                        this.data.control_manager.addSimpleControls(this.open_buy_select.bind(this));
                     };
 
                     if (this.quant_win.is_open) this.quant_win.close(finish);
@@ -449,7 +449,7 @@ export class BuyArtifactsMenu {
 
     on_cancel_game_ticket() {
         this.npc_dialog.update_dialog("game_ticket_decline", true);
-        this.data.control_manager.simple_input(this.on_cancel_char_select.bind(this));
+        this.data.control_manager.addSimpleControls(this.on_cancel_char_select.bind(this));
     }
 
     open_equip_compare() {
@@ -581,11 +581,11 @@ export class BuyArtifactsMenu {
         if (is_artifacts_menu) {
             if (Object.keys(this.item_list).length === 0) {
                 this.npc_dialog.update_dialog("no_artifacts", true);
-                this.data.control_manager.simple_input(this.close_menu.bind(this), {reset_on_press: true});
+                this.data.control_manager.addSimpleControls(this.close_menu.bind(this), {resetOnPress: true});
             } else {
                 this.npc_dialog.update_dialog("artifacts_menu", true);
-                this.data.control_manager.simple_input(this.open_buy_select.bind(this, "buy_select"), {
-                    reset_on_press: true,
+                this.data.control_manager.addSimpleControls(this.open_buy_select.bind(this, "buy_select"), {
+                    resetOnPress: true,
                 });
             }
         } else this.open_buy_select("buy_select");

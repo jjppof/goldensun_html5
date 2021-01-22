@@ -251,7 +251,7 @@ export class Battle {
         this.data.in_battle = true;
         this.data.battle_instance = this;
 
-        this.advance_log_control_key = this.data.control_manager.simple_input(
+        this.advance_log_control_key = this.data.control_manager.addSimpleControls(
             () => {
                 if (this.advance_log_resolve) {
                     this.advance_log_resolve();
@@ -266,7 +266,7 @@ export class Battle {
             this.allies_map_sprite = _.mapValues(_.keyBy(this.allies_info, "instance.key_name"), info => info.sprite);
             this.enemies_map_sprite = _.mapValues(_.keyBy(this.enemies_info, "battle_key"), info => info.sprite);
 
-            this.data.control_manager.simple_input(() => {
+            this.data.control_manager.addSimpleControls(() => {
                 this.battle_log.clear();
                 this.battle_phase = battle_phases.MENU;
                 this.check_phases();
@@ -1275,7 +1275,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
         this.battle_stage.unset_stage(
             () => {
                 this.data.control_manager.reset();
-                this.data.control_manager.detach_bindings(this.advance_log_control_key);
+                this.data.control_manager.detachBindings(this.advance_log_control_key);
 
                 this.battle_log.destroy();
                 this.battle_menu.destroy_menu();

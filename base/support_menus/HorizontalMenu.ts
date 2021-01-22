@@ -2,6 +2,7 @@ import {get_text_width} from "../utils";
 import * as numbers from "../magic_numbers";
 import {Window} from "../Window";
 import {GoldenSun} from "../GoldenSun";
+import {Button} from "../XGamepad";
 import * as _ from "lodash";
 
 const FORWARD = 1;
@@ -112,15 +113,15 @@ export class HorizontalMenu {
         this.mount_buttons();
     }
 
-    set_control() {
-        let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_button.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_button.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.A, on_down: this.on_press.bind(this), sfx: {down: "menu/positive"}},
-            {key: this.data.gamepad.B, on_down: this.on_cancel.bind(this), sfx: {down: "menu/negative"}},
+    set_controls() {
+        const controls = [
+            {button: Button.LEFT, onDown: this.previous_button.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, onDown: this.next_button.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, onDown: this.on_press.bind(this), sfx: {down: "menu/positive"}},
+            {button: Button.B, onDown: this.on_cancel.bind(this), sfx: {down: "menu/negative"}},
         ];
 
-        this.data.control_manager.set_control(controls, {loop_configs: {horizontal: true}});
+        this.data.control_manager.addControls(controls, {loopConfig: {horizontal: true}});
     }
 
     mount_buttons(filtered_buttons: string[] = []) {
@@ -256,7 +257,7 @@ export class HorizontalMenu {
             if (callback) {
                 callback();
             }
-            this.set_control();
+            this.set_controls();
             this.game.world.bringToTop(this.group);
         });
     }
@@ -310,7 +311,7 @@ export class HorizontalMenu {
 
         this.title_window.set_text([[this.buttons[this.selected_button_index].title]]);
         this.set_button();
-        this.set_control();
+        this.set_controls();
     }
 
     deactivate(hide = false) {

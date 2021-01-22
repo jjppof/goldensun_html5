@@ -1,6 +1,7 @@
 import {TextObj, Window} from "../../Window";
 import * as numbers from "../../magic_numbers";
 import {GoldenSun} from "../../GoldenSun";
+import {Button} from "../../XGamepad";
 import {MainChar} from "../../MainChar";
 import {Djinn, djinn_status} from "../../Djinn";
 
@@ -83,32 +84,23 @@ export class DjinnPsynergyWindow {
         this.change_page(FORWARD);
     }
 
+    /**
+     * Grants user control on the current window.
+     */
     grant_control() {
         //Missing check for different states on A Key. Using Set sound for all
-        let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.R, on_down: this.next_state_callback, sfx: {down: "menu/move"}},
-            {
-                key: this.data.gamepad.A,
-                on_down: () => {
-                    this.execute_operation = true;
-                    this.close(this.close_callback);
-                },
-                sfx: {down: "menu/positive_3"},
-            },
-            {
-                key: this.data.gamepad.B,
-                on_down: () => {
-                    this.execute_operation = false;
-                    this.close(this.close_callback);
-                },
-                sfx: {down: "menu/negative"},
-            },
+        const close = execute_operation => {
+            this.execute_operation = execute_operation;
+            this.close(this.close_callback);
+        };
+        const controls = [
+            {button: Button.LEFT, onDown: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, onDown: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.R, onDown: this.next_state_callback, sfx: {down: "menu/move"}},
+            {button: Button.A, onDown: () => close(true), sfx: {down: "menu/positive_3"}},
+            {button: Button.B, onDown: () => close(false), sfx: {down: "menu/negative"}},
         ];
-        this.data.control_manager.set_control(controls, {
-            loop_configs: {horizontal: true},
-        });
+        this.data.control_manager.addControls(controls, {loopConfig: {horizontal: true}});
     }
 
     set_page_number() {
@@ -245,7 +237,7 @@ export class DjinnPsynergyWindow {
         hidden: boolean = false,
         next_state_callback?: Function,
         action?: string,
-        callback: Function = undefined
+        callback?: Function
     ) {
         this.char = char;
         this.djinni = djinni;
@@ -262,9 +254,7 @@ export class DjinnPsynergyWindow {
         }
         this.base_window.show(() => {
             this.window_open = true;
-            if (callback !== undefined) {
-                callback();
-            }
+            callback?.();
         }, false);
     }
 
@@ -273,9 +263,7 @@ export class DjinnPsynergyWindow {
         this.base_window.page_indicator.terminante();
         this.base_window.close(() => {
             this.window_open = false;
-            if (callback !== undefined) {
-                callback(this.execute_operation);
-            }
+            callback?.(this.execute_operation);
         }, false);
     }
 }

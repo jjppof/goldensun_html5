@@ -1,6 +1,7 @@
 import {Window, TextObj} from "../../Window";
 import {kill_all_sprites} from "../../utils";
 import {GoldenSun} from "../../GoldenSun";
+import {Button} from "../../XGamepad";
 import {ShopMenu} from "../../main_menus/ShopMenu";
 import {MainChar, ItemSlot} from "../../MainChar";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
@@ -206,16 +207,23 @@ export class InventoryWindow {
         }
     }
 
+    /**
+     * Grants user control on the current window.
+     * @param {Function} on_cancel - Called when B is pressed
+     * @param {Function} on_select - Called when A is pressed
+     */
     grant_control(on_cancel: Function, on_select: Function) {
-        let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_col.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_col.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.UP, on_down: this.previous_line.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.DOWN, on_down: this.next_line.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.A, on_down: on_select, sfx: {down: "menu/positive"}},
-            {key: this.data.gamepad.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
+        const controls = [
+            {button: Button.LEFT, onDown: this.previous_col.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, onDown: this.next_col.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, onDown: this.previous_line.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, onDown: this.next_line.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, onDown: on_select, sfx: {down: "menu/positive"}},
+            {button: Button.B, onDown: on_cancel, sfx: {down: "menu/negative"}},
         ];
-        this.data.control_manager.set_control(controls, {loop_configs: {vertical: true, horizontal: true}});
+        this.data.control_manager.addControls(controls, {
+            loopConfig: {vertical: true, horizontal: true},
+        });
     }
 
     next_col() {

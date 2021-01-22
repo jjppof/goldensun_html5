@@ -1,5 +1,6 @@
 import {TextObj, Window} from "../../Window";
 import {GoldenSun} from "../../GoldenSun";
+import {Button} from "../../XGamepad";
 import {ItemSlot, MainChar} from "../../MainChar";
 import {Item} from "../../Item";
 import {MainItemMenu} from "../../main_menus/MainItemMenu";
@@ -143,13 +144,13 @@ export class DropItemWindow {
             }
         }, false);
 
-        let controls = [
-            {key: this.data.gamepad.UP, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.DOWN, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.A, on_down: this.on_drop.bind(this), sfx: {down: "menu/positive"}},
-            {key: this.data.gamepad.B, on_down: this.close.bind(this), sfx: {down: "menu/negative"}},
+        const controls = [
+            {button: Button.UP, onDown: this.change_answer.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, onDown: this.change_answer.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, onDown: this.on_drop.bind(this), sfx: {down: "menu/positive"}},
+            {button: Button.B, onDown: this.close.bind(this), sfx: {down: "menu/negative"}},
         ];
-        this.data.control_manager.set_control(controls, {loop_configs: {vertical: true}});
+        this.data.control_manager.addControls(controls, {loopConfig: {vertical: true}});
     }
 
     on_item_select() {

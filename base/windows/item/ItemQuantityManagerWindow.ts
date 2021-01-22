@@ -2,6 +2,7 @@ import {TextObj, Window} from "../../Window";
 import * as numbers from "../../magic_numbers";
 import {ItemCounter} from "../../utils/ItemCounter";
 import {GoldenSun} from "../../GoldenSun";
+import {Button} from "../../XGamepad";
 import {ItemSlot, MainChar} from "../../MainChar";
 import {Item} from "../../Item";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
@@ -103,15 +104,20 @@ export class ItemQuantityManagerWindow {
         );
     }
 
+    /**
+     * Grants user control on the current window.
+     * @param {Function} on_cancel - Called when B is pressed
+     * @param {Function} on_select - Called when A is pressed
+     */
     grant_control(on_cancel: Function, on_select: Function) {
-        let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.decrease_amount.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.RIGHT, on_down: this.increase_amount.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.A, on_down: on_select, sfx: {down: "menu/positive"}},
-            {key: this.data.gamepad.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
+        const controls = [
+            {button: Button.LEFT, onDown: this.decrease_amount.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, onDown: this.increase_amount.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, onDown: on_select, sfx: {down: "menu/positive"}},
+            {button: Button.B, onDown: on_cancel, sfx: {down: "menu/negative"}},
         ];
-        this.data.control_manager.set_control(controls, {
-            loop_configs: {horizontal: true, horizontal_time: ITEM_COUNTER_LOOP_TIME},
+        this.data.control_manager.addControls(controls, {
+            loopConfig: {horizontal: true, horizontalTime: ITEM_COUNTER_LOOP_TIME},
         });
     }
 

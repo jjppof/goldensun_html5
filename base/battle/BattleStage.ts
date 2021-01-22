@@ -3,6 +3,7 @@ import {range_360} from "../utils";
 import {ability_target_types} from "../Ability";
 import {fighter_types, permanent_status, Player} from "../Player";
 import {GoldenSun} from "../GoldenSun";
+import {Button, CButton} from "../XGamepad";
 import {PlayerInfo} from "./Battle";
 import * as _ from "lodash";
 import {battle_actions, battle_positions, PlayerSprite} from "./PlayerSprite";
@@ -591,23 +592,18 @@ export class BattleStage {
                     this.choosing_targets = true;
                     this.change_target(0, false);
 
-                    //Sound for A key unavailable, using Menu Positive instead
-                    let controls = [
-                        {key: this.data.gamepad.LEFT, on_down: this.next_target.bind(this), sfx: {down: "menu/move"}},
+                    // Sound for A key unavailable, using Menu Positive instead
+                    const controls = [
+                        {button: Button.LEFT, onDown: this.next_target.bind(this), sfx: {down: "menu/move"}},
+                        {button: Button.RIGHT, onDown: this.previous_target.bind(this), sfx: {down: "menu/move"}},
+                        {button: Button.A, onDown: this.set_targets.bind(this), sfx: {down: "menu/positive"}},
                         {
-                            key: this.data.gamepad.RIGHT,
-                            on_down: this.previous_target.bind(this),
-                            sfx: {down: "menu/move"},
-                        },
-                        {key: this.data.gamepad.A, on_down: this.set_targets.bind(this), sfx: {down: "menu/positive"}},
-                        {
-                            key: this.data.gamepad.B,
-                            on_down: this.choosing_targets_finished.bind(this, null),
+                            button: Button.B,
+                            onDown: this.choosing_targets_finished.bind(this, null),
                             sfx: {down: "menu/negative"},
                         },
                     ];
-
-                    this.data.control_manager.set_control(controls, {loop_configs: {horizontal: true}});
+                    this.data.control_manager.addControls(controls, {loopConfig: {horizontal: true}});
                 });
         }
     }
@@ -639,15 +635,12 @@ export class BattleStage {
     update_stage() {
         if (this.choosing_actions) return;
 
-        if (
-            !this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_PLUS) &&
-            this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_MINUS)
-        ) {
+        if (!this.data.gamepad.isDown(CButton.DEBUG_CAM_PLUS) && this.data.gamepad.isDown(CButton.DEBUG_CAM_MINUS)) {
             this.camera_angle.rad -= CAMERA_SPEED;
             this.battle_bg.x -= BG_SPEED;
         } else if (
-            this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_PLUS) &&
-            !this.game.input.keyboard.isDown(this.data.gamepad.DEBUG_CAM_MINUS)
+            this.data.gamepad.isDown(CButton.DEBUG_CAM_PLUS) &&
+            !this.data.gamepad.isDown(CButton.DEBUG_CAM_MINUS)
         ) {
             this.camera_angle.rad += CAMERA_SPEED;
             this.battle_bg.x += BG_SPEED;
