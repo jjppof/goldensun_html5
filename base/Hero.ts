@@ -62,6 +62,7 @@ export class Hero extends ControllableChar {
 
     private arrow_inputs: number;
     private force_diagonal_speed: {x: number; y: number} = {x: 0, y: 0};
+    private stickdashing: boolean = false;
 
     constructor(
         game,
@@ -100,7 +101,9 @@ export class Hero extends ControllableChar {
         this.required_direction = Hero.ROTATION_KEY[this.arrow_inputs];
 
         if (!this.ice_sliding_active) {
-            this.dashing = this.game.input.keyboard.isDown(this.data.gamepad.B);
+            if (!this.arrow_inputs) this.stickdashing = false;
+            else if (this.data.gamepad.isDown(CButton.LS)) this.stickdashing = true; // Can't `!this.stickdashing;` since called at every frame
+            this.dashing = this.stickdashing || this.data.gamepad.isDown(Button.B);
         }
     }
 
