@@ -41,5 +41,48 @@
         "DEBUG_SLIDERS": "L",
         "DEBUG_CAM_MINUS": "PAGE_DOWN",
         "DEBUG_CAM_PLUS": "PAGE_UP"
+    },
+    "gamepad_rinputs": {
+        "XBOX360_DPAD_LEFT": "LEFT",
+        "XBOX360_DPAD_RIGHT": "RIGHT",
+        "XBOX360_DPAD_UP": "UP",
+        "XBOX360_DPAD_DOWN": "DOWN",
+        "XBOX360_A": "A",
+        "XBOX360_B": "B",
+        "XBOX360_LEFT_BUMPER": "L",
+        "XBOX360_RIGHT_BUMPER": "R",
+        "XBOX360_BACK": "SELECT",
+        "XBOX360_START": "START",
+
+        "XBOX360_X": "X",
+        "XBOX360_Y": "Y",
+        "XBOX360_LEFT_TRIGGER": "LT",
+        "XBOX360_RIGHT_TRIGGER": "RT",
+        "XBOX360_STICK_LEFT_BUTTON": "LS",
+        "XBOX360_STICK_RIGHT_BUTTON": "RS"
+    },
+    "gamepad_rsticks": {
+        "XBOX360_STICK_LEFT_X": [ "LLEFT", "LRIGHT" ],
+        "XBOX360_STICK_LEFT_Y": [ "LUP", "LDOWN" ],
+        "XBOX360_STICK_RIGHT_X": [ "RLEFT", "RRIGHT" ],
+        "XBOX360_STICK_RIGHT_Y": [ "RUP", "RDOWN" ]
+    },
+    "gamepad_inputs": {
+        "PSY1": "LT+A",
+        "PSY2": "LT+B",
+        "PSY3": "LT+X",
+        "PSY4": "LT+Y",
+        "MUTE": "LT+RT+RS",
+        "VOL_UP": "LT+RT+UP",
+        "VOL_DOWN": "LT+RT+DOWN",
+        "DEBUG_PHYSICS": "LT+RS",
+        "DEBUG_GRID": "RT+RS"
+    },
+    "gamepad": {
+        "UseTriggerAsButton": false,
+        "LeftStickAsDPad": true,
+        "RightStickAsDPad": true,
+        "TriggerDeadZone": 0.6,
+        "StickDeadZone": 0.5
     }
 }
