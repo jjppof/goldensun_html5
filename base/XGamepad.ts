@@ -203,28 +203,26 @@ export class Gamepad {
             })
         );
         // Load custom gamepad buttons configuration
-        const gamepad_custom_mapping = Object.entries(data.dbs.init_db.gamepad_inputs as {[code: string]: string})
-            .map(
-                ([game_button, button_code]): KeyMap => {
-                    const matches = button_code.match(/^(?:(?:(\w+) *\+ *)?(\w+) *\+ *)?(\w+)$/);
-                    if (!matches) console.error("Input not recognized " + button_code);
-                    const get_button_code = (code: string): number =>
-                        gamepad_mapping.find(km => km.name === code)?.button_code ?? Phaser.Gamepad[code];
-                    const get_game_button = (code: string): number =>
-                        gamepad_mapping.find(km => km.name === code || km.button_code === Phaser.Gamepad[code])
-                            ?.game_button;
-                    const km: KeyMap = {name: game_button, as: button_code, game_button: CButton[game_button]};
-                    if (matches[matches.length - 2]) {
-                        const buttons = Array.prototype.filter.call(matches, (m, i) => i && m);
-                        km.button_codes = buttons.map(get_button_code).filter(bc => bc !== undefined);
-                        km.game_buttons = buttons.map(get_game_button).filter(bc => bc !== undefined);
-                        if (km.button_codes.length !== km.game_buttons.length)
-                            console.warn(`${button_code} not well recognized!`);
-                    } else km.button_code = get_button_code(matches[matches.length - 1]);
-                    return km;
-                }
-            )
-            .filter(km => km);
+        const gamepad_custom_mapping = Object.entries(data.dbs.init_db.gamepad_inputs as {[code: string]: string}).map(
+            ([game_button, button_code]): KeyMap => {
+                const matches = button_code.match(/^(?:(?:(\w+) *\+ *)?(\w+) *\+ *)?(\w+)$/);
+                if (!matches) console.error("Input not recognized " + button_code);
+                const get_button_code = (code: string): number =>
+                    gamepad_mapping.find(km => km.name === code)?.button_code ?? Phaser.Gamepad[code];
+                const get_game_button = (code: string): number =>
+                    gamepad_mapping.find(km => km.name === code || km.button_code === Phaser.Gamepad[code])
+                        ?.game_button;
+                const km: KeyMap = {name: game_button, as: button_code, game_button: CButton[game_button]};
+                if (matches[matches.length - 2]) {
+                    const buttons = Array.prototype.filter.call(matches, (m, i) => i && m);
+                    km.button_codes = buttons.map(get_button_code).filter(bc => bc !== undefined);
+                    km.game_buttons = buttons.map(get_game_button).filter(bc => bc !== undefined);
+                    if (km.button_codes.length !== km.game_buttons.length)
+                        console.warn(`${button_code} not well recognized!`);
+                } else km.button_code = get_button_code(matches[matches.length - 1]);
+                return km;
+            }
+        );
         // Load gamepad stick configuration
         const gamepad_stick_mapping = Object.entries(
             data.dbs.init_db.gamepad_rsticks as {[code: string]: [string, string]}
@@ -238,30 +236,28 @@ export class Gamepad {
         Gamepad.gamepad_stick_mapping = gamepad_stick_mapping;
         Gamepad.gamepad_mapping = gamepad_mapping.concat(gamepad_custom_mapping);
         // Load keyboard keys configuration
-        Gamepad.keyboard_mapping = Object.entries(data.dbs.init_db[input_type] as {[code: string]: string})
-            .map(
-                ([game_button, key_code]): KeyMap => {
-                    const matches = key_code.match(
-                        /^(?:(?:(?:(ALT|CTRL|SHIFT) *\+ *)?(ALT|CTRL|SHIFT) *\+ *)?(ALT|CTRL|SHIFT) *\+ *)?(\w+)$/
-                    );
-                    if (!matches) console.error("Input not recognized " + key_code);
-                    const km: KeyMap = {
-                        name: game_button,
-                        as: key_code,
-                        game_button: Button[game_button] ?? CButton[game_button],
-                        key_code: Phaser.Keyboard[matches[matches.length - 1]],
-                    };
-                    if (matches[matches.length - 2]) {
-                        const modifiers = Array.prototype.filter.call(matches, (m, i) => i && m);
-                        km.key_modifiers = {};
-                        if (modifiers.includes("ALT")) km.key_modifiers.alt = true;
-                        if (modifiers.includes("CTRL")) km.key_modifiers.ctrl = true;
-                        if (modifiers.includes("SHIFT")) km.key_modifiers.shift = true;
-                    }
-                    return km;
+        Gamepad.keyboard_mapping = Object.entries(data.dbs.init_db[input_type] as {[code: string]: string}).map(
+            ([game_button, key_code]): KeyMap => {
+                const matches = key_code.match(
+                    /^(?:(?:(?:(ALT|CTRL|SHIFT) *\+ *)?(ALT|CTRL|SHIFT) *\+ *)?(ALT|CTRL|SHIFT) *\+ *)?(\w+)$/
+                );
+                if (!matches) console.error("Input not recognized " + key_code);
+                const km: KeyMap = {
+                    name: game_button,
+                    as: key_code,
+                    game_button: Button[game_button] ?? CButton[game_button],
+                    key_code: Phaser.Keyboard[matches[matches.length - 1]],
+                };
+                if (matches[matches.length - 2]) {
+                    const modifiers = Array.prototype.filter.call(matches, (m, i) => i && m);
+                    km.key_modifiers = {};
+                    if (modifiers.includes("ALT")) km.key_modifiers.alt = true;
+                    if (modifiers.includes("CTRL")) km.key_modifiers.ctrl = true;
+                    if (modifiers.includes("SHIFT")) km.key_modifiers.shift = true;
                 }
-            )
-            .filter(km => km?.game_button);
+                return km;
+            }
+        );
     }
 
     /**
