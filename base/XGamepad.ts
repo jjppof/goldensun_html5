@@ -416,37 +416,21 @@ export class Gamepad {
     register_handle_events(game: Phaser.Game) {
         game.input.gamepad.start();
         game.input.gamepad.onDownCallback = (button_code: number) => {
+            this.is_last_input_gamepad = true;
+
             const game_buttons = Gamepad.transcode_gamepad_button(button_code);
             // console.log(button_code, game_buttons);
             game_buttons.forEach(game_button => this.on_gamepad_down(game_button));
         };
         game.input.gamepad.onUpCallback = (button_code: number) => {
+            this.is_last_input_gamepad = true;
+
             const game_buttons = Gamepad.transcode_gamepad_button(button_code);
             // console.log(button_code, game_buttons);
             game_buttons.forEach(game_button => this.on_gamepad_up(game_button));
         };
         game.input.gamepad.onAxisCallback = (pad: Phaser.SinglePad, index: number, value: number) => {
-            // const game_buttons = {
-            //     // [Phaser.Gamepad["XBOX360_STICK_LEFT_X"]]: [Button.LEFT,Button.RIGHT],
-            //     // [Phaser.Gamepad["XBOX360_STICK_LEFT_Y"]]: [Button.UP,Button.DOWN],
-            //     // [Phaser.Gamepad["XBOX360_STICK_RIGHT_X"]]: [Button.LEFT,Button.RIGHT],
-            //     // [Phaser.Gamepad["XBOX360_STICK_RIGHT_Y"]]: [Button.UP,Button.DOWN],
-            //     [Phaser.Gamepad["XBOX360_STICK_LEFT_X"]]: [CButton.LLEFT, CButton.LRIGHT],
-            //     [Phaser.Gamepad["XBOX360_STICK_LEFT_Y"]]: [CButton.LUP, CButton.LDOWN],
-            //     [Phaser.Gamepad["XBOX360_STICK_RIGHT_X"]]: [CButton.RLEFT, CButton.RRIGHT],
-            //     [Phaser.Gamepad["XBOX360_STICK_RIGHT_Y"]]: [CButton.RUP, CButton.RDOWN],
-            // }[index];
-
-            // const game_buttons = Gamepad.gamepad_stick_mapping.find(km => km.button_code === index)?.game_buttons;
-
-            // if (!game_buttons) return;
-
-            // if (value < -this.stick_dead_zone) this.on_gamepad_down(game_buttons[0]);
-            // else if (value > this.stick_dead_zone) this.on_gamepad_down(game_buttons[1]);
-            // else {
-            //     this.on_gamepad_up(game_buttons[0]);
-            //     this.on_gamepad_up(game_buttons[1]);
-            // }
+            this.is_last_input_gamepad = true;
 
             const game_buttons = Gamepad.gamepad_stick_mapping.filter(km => km.button_code === index);
             game_buttons.forEach(km => {
@@ -459,24 +443,18 @@ export class Gamepad {
             });
         };
         game.input.gamepad.onFloatCallback = (button_code: number, value: number) => {
+            this.is_last_input_gamepad = true;
+
             const game_buttons = Gamepad.transcode_gamepad_button(button_code);
             game_buttons.forEach(game_button =>
                 value > this.trigger_dead_zone ? this.on_gamepad_down(game_button) : this.on_gamepad_up(game_button)
             );
-
-            // const game_button = {
-            // 	[Phaser.Gamepad["XBOX360_LEFT_TRIGGER"]]: CButton.L2,
-            // 	[Phaser.Gamepad["XBOX360_RIGHT_TRIGGER"]]: CButton.R2,
-            // }[button_code];
-
-            // console.log(button_code, value, Button[game_button]);
-
-            // value ? value > this.trigger_dead_zone && this._on_down(game_button) : this._on_up(game_button)
-            // value ? value > 0.6 && this._on_down(game_button) : this._on_up(game_button);
         };
 
         // game.input.keyboard.onPressCallback = (char_code: string, event: KeyboardEvent) => {
         game.input.keyboard.onDownCallback = (event: KeyboardEvent) => {
+            this.is_last_input_gamepad = false;
+
             const game_buttons = Gamepad.keyboard_mapping
                 .filter(
                     km =>
@@ -489,6 +467,8 @@ export class Gamepad {
             game_buttons.forEach(game_button => this._on_down(game_button, event));
         };
         game.input.keyboard.onUpCallback = (event: KeyboardEvent) => {
+            this.is_last_input_gamepad = true;
+
             const game_buttons = Gamepad.transcode_keyboard_key(event.keyCode);
             game_buttons.forEach(game_button => this._on_up(game_button, event));
         };
