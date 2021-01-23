@@ -107,7 +107,7 @@
                 "right"
             ],
             "frames_count": 2,
-            "loop": true,
+            "loop": false,
             "spritesheet": {
                 "image": "assets/images/misc/pound_psynergy_hand.png",
                 "json": "assets/images/misc/pound_psynergy_hand.json"
