@@ -71,8 +71,8 @@
         "DEBUG_STATS": "T",
         "DEBUG_FPS": "F",
         "DEBUG_SLIDERS": "L",
-        "DEBUG_CAM_MINUS": "PAGE_DOWN",
-        "DEBUG_CAM_PLUS": "PAGE_UP"
+        "DEBUG_CAM_MINUS": "ALT+PAGE_DOWN",
+        "DEBUG_CAM_PLUS": "ALT+PAGE_UP"
     },
     "gamepad_rinputs": {
         "XBOX360_DPAD_LEFT": "LEFT",

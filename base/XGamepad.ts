@@ -140,12 +140,14 @@ type KeyMap = {
     name?: string;
     /** For multi-buttons, raw button combinaison */
     as?: string;
-    /** Keycode of the keyboard key that triggers the game button */
-    key_code?: number;
     /** Button code of the controller button that triggers the game button */
     button_code?: number;
     /** Button codes of the controller buttons that trigger the game button, should match {@link KeyMap#game_buttons} */
     button_codes?: number[];
+    /** Keycode of the keyboard key that triggers the game button */
+    key_code?: number;
+    /** Modifiers needed along the {@link KeyMap#key_code} */
+    key_modifiers?: {alt?: boolean; ctrl?: boolean; shift?: boolean};
 };
 
 export class GamepadButton {
@@ -205,7 +207,7 @@ export class Gamepad {
             .map(
                 ([game_button, button_code]): KeyMap => {
                     const matches = button_code.match(/^(?:(?:(\w+) *\+ *)?(\w+) *\+ *)?(\w+)$/);
-                    if (!matches) throw new Error("Input not recognized " + button_code);
+                    if (!matches) console.error("Input not recognized " + button_code);
                     const get_button_code = (code: string): number =>
                         gamepad_mapping.find(km => km.name === code)?.button_code ?? Phaser.Gamepad[code];
                     const get_game_button = (code: string): number =>
@@ -236,13 +238,30 @@ export class Gamepad {
         Gamepad.gamepad_stick_mapping = gamepad_stick_mapping;
         Gamepad.gamepad_mapping = gamepad_mapping.concat(gamepad_custom_mapping);
         // Load keyboard keys configuration
-        Gamepad.keyboard_mapping = Object.entries(data.dbs.init_db[input_type] as {[code: string]: string}).map(
-            ([game_button, key_code]): KeyMap => ({
-                game_button: Button[game_button] ?? CButton[game_button],
-                key_code: Phaser.Keyboard[key_code],
-            })
-        );
-        // TODO: Handle Alt/Ctrl/Shift modifier.
+        Gamepad.keyboard_mapping = Object.entries(data.dbs.init_db[input_type] as {[code: string]: string})
+            .map(
+                ([game_button, key_code]): KeyMap => {
+                    const matches = key_code.match(
+                        /^(?:(?:(?:(ALT|CTRL|SHIFT) *\+ *)?(ALT|CTRL|SHIFT) *\+ *)?(ALT|CTRL|SHIFT) *\+ *)?(\w+)$/
+                    );
+                    if (!matches) console.error("Input not recognized " + key_code);
+                    const km: KeyMap = {
+                        name: game_button,
+                        as: key_code,
+                        game_button: Button[game_button] ?? CButton[game_button],
+                        key_code: Phaser.Keyboard[matches[matches.length - 1]],
+                    };
+                    if (matches[matches.length - 2]) {
+                        const modifiers = Array.prototype.filter.call(matches, (m, i) => i && m);
+                        km.key_modifiers = {};
+                        if (modifiers.includes("ALT")) km.key_modifiers.alt = true;
+                        if (modifiers.includes("CTRL")) km.key_modifiers.ctrl = true;
+                        if (modifiers.includes("SHIFT")) km.key_modifiers.shift = true;
+                    }
+                    return km;
+                }
+            )
+            .filter(km => km?.game_button);
     }
 
     /**
@@ -458,16 +477,20 @@ export class Gamepad {
 
         // game.input.keyboard.onPressCallback = (char_code: string, event: KeyboardEvent) => {
         game.input.keyboard.onDownCallback = (event: KeyboardEvent) => {
-            const game_buttons = Gamepad.transcode_keyboard_key(event.keyCode);
-            // console.log(event, game_buttons);
+            const game_buttons = Gamepad.keyboard_mapping
+                .filter(
+                    km =>
+                        km.key_code === event.keyCode &&
+                        (km.key_modifiers?.alt != undefined ? km.key_modifiers.alt === event.altKey : true) &&
+                        (km.key_modifiers?.ctrl != undefined ? km.key_modifiers.ctrl === event.ctrlKey : true) &&
+                        (km.key_modifiers?.shift != undefined ? km.key_modifiers.shift === event.shiftKey : true)
+                )
+                .map(km => km.game_button);
             game_buttons.forEach(game_button => this._on_down(game_button, event));
-            // on_keyboard_down(game_button)
         };
         game.input.keyboard.onUpCallback = (event: KeyboardEvent) => {
             const game_buttons = Gamepad.transcode_keyboard_key(event.keyCode);
-            // console.log(event, game_buttons);
             game_buttons.forEach(game_button => this._on_up(game_button, event));
-            // on_keyboard_up(game_button)
         };
     }
 
