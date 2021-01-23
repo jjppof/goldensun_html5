@@ -149,6 +149,7 @@ export class ControlManager {
         }
         edits.forEach(edit => {
             const c = controls.find(c => c.button === edit.button);
+            if (!c) return;
             c.params ??= {};
             c.params.loop_time = edit.loop_time ?? DEFAULT_LOOP_TIME;
         });
