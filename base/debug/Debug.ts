@@ -2,6 +2,7 @@ import {GoldenSun} from "../GoldenSun";
 import {MainChar} from "../MainChar";
 import {reverse_directions, ordered_elements} from "../utils";
 import * as _ from "lodash";
+import { RandomDataGenerator } from "phaser-ce";
 
 export class Debug {
     public game: Phaser.Game;
@@ -125,9 +126,15 @@ export class Debug {
         const holder = document.createElement("div");
         holder.classList.add("holder");
 
+        const set_focus_blur = (input: HTMLInputElement) => {
+            input.onfocus = () => this.game.input.enabled = false;
+            input.onblur = () => this.game.input.enabled = true;
+        };
+
         const input_variable = document.createElement("input");
         input_variable.type = "text";
         input_variable.placeholder = "variable name";
+        set_focus_blur(input_variable);
 
         const input_slider = document.createElement("input");
         input_slider.type = "range";
@@ -139,6 +146,7 @@ export class Debug {
         input_min.onkeyup = e => {
             input_slider.min = input_min.value;
         };
+        set_focus_blur(input_min);
 
         const input_max = document.createElement("input");
         input_max.type = "number";
@@ -146,10 +154,12 @@ export class Debug {
         input_max.onkeyup = e => {
             input_slider.max = input_max.value;
         };
+        set_focus_blur(input_max);
 
         const input_step = document.createElement("input");
         input_step.type = "number";
         input_step.placeholder = "step value";
+        set_focus_blur(input_step);
 
         const input_value = document.createElement("input");
         input_value.type = "number";
@@ -158,6 +168,7 @@ export class Debug {
         input_value.onkeyup = input_value.onchange = e => {
             _.set(window, input_variable.value, parseFloat(input_value.value));
         };
+        set_focus_blur(input_value);
 
         const input_remove = document.createElement("input");
         input_remove.type = "button";
