@@ -91,7 +91,7 @@ export class SellRepairMenu {
                     this.npc_dialog.update_dialog("repair_done", true);
                     this.parent.update_your_coins();
 
-                    this.data.control_manager.simple_input(
+                    this.data.control_manager.add_simple_controls(
                         this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos)
                     );
                 },
@@ -123,7 +123,7 @@ export class SellRepairMenu {
                 );
                 this.npc_dialog.update_dialog(text, true, false);
 
-                this.data.control_manager.simple_input(
+                this.data.control_manager.add_simple_controls(
                     this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos)
                 );
             } else {
@@ -141,11 +141,11 @@ export class SellRepairMenu {
                     {
                         yes: () => {
                             this.npc_dialog.update_dialog("repair_deal_accept", true);
-                            this.data.control_manager.simple_input(this.on_item_repair.bind(this));
+                            this.data.control_manager.add_simple_controls(this.on_item_repair.bind(this));
                         },
                         no: () => {
                             this.npc_dialog.update_dialog("repair_deal_decline", true);
-                            this.data.control_manager.simple_input(
+                            this.data.control_manager.add_simple_controls(
                                 this.on_character_select.bind(this, "repair_follow_up", this.inv_win_pos)
                             );
                         },
@@ -196,7 +196,7 @@ export class SellRepairMenu {
             }
 
             this.parent.set_item_lists();
-            this.data.control_manager.simple_input(
+            this.data.control_manager.add_simple_controls(
                 this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos)
             );
         };
@@ -215,7 +215,7 @@ export class SellRepairMenu {
             if (this.data.info.items_list[this.selected_item.key_name].important_item) {
                 this.npc_dialog.update_dialog("cant_sell", true);
 
-                this.data.control_manager.simple_input(
+                this.data.control_manager.add_simple_controls(
                     this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos)
                 );
             } else if (this.selected_item.quantity === 1) {
@@ -241,7 +241,7 @@ export class SellRepairMenu {
                                 ? "decline_sell_artifact"
                                 : "decline_sell_normal";
                             this.npc_dialog.update_dialog(decline_msg, true);
-                            this.data.control_manager.simple_input(
+                            this.data.control_manager.add_simple_controls(
                                 this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos)
                             );
                         },
@@ -287,7 +287,7 @@ export class SellRepairMenu {
                                             ? "decline_sell_artifact"
                                             : "decline_sell_normal";
                                         this.npc_dialog.update_dialog(decline_msg, true);
-                                        this.data.control_manager.simple_input(
+                                        this.data.control_manager.add_simple_controls(
                                             this.on_character_select.bind(this, "sell_follow_up", this.inv_win_pos)
                                         );
                                     },
@@ -387,7 +387,7 @@ export class SellRepairMenu {
         if (is_repair_menu) {
             this.npc_dialog.update_dialog("repair_menu", true);
 
-            this.data.control_manager.simple_input(this.open_inventory_view.bind(this, "repair_select"));
+            this.data.control_manager.add_simple_controls(this.open_inventory_view.bind(this, "repair_select"));
         } else this.open_inventory_view("sell_select");
     }
 

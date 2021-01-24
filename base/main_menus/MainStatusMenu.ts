@@ -1,4 +1,5 @@
 import {GoldenSun} from "../GoldenSun";
+import {Button} from "../XGamepad";
 import {equip_slots, MainChar} from "../MainChar";
 import {ordered_status_menu} from "../Player";
 import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
@@ -821,24 +822,24 @@ export class MainStatusMenu {
     }
 
     public inner_control() {
-        const controls: {key: number; on_down: Function; sfx?: {down?: string; up?: string}}[] = [
+        const controls = [
             {
-                key: this.data.gamepad.LEFT,
+                button: Button.LEFT,
                 on_down: this.current_component.on_left.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
-                key: this.data.gamepad.RIGHT,
+                button: Button.RIGHT,
                 on_down: this.current_component.on_right.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
-                key: this.data.gamepad.UP,
+                button: Button.UP,
                 on_down: this.current_component.on_up.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
-                key: this.data.gamepad.DOWN,
+                button: Button.DOWN,
                 on_down: this.current_component.on_down.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
@@ -846,29 +847,29 @@ export class MainStatusMenu {
 
         if (this.current_state !== MainStatusStates.DJINN) {
             controls.push(
-                {key: this.data.gamepad.A, on_down: this.trigger_state_change.bind(this), sfx: {down: "menu/positive"}},
-                {key: this.data.gamepad.B, on_down: this.selecting_char.bind(this), sfx: {down: "menu/negative"}},
+                {button: Button.A, on_down: this.trigger_state_change.bind(this), sfx: {down: "menu/positive"}},
+                {button: Button.B, on_down: this.selecting_char.bind(this), sfx: {down: "menu/negative"}},
                 {
-                    key: this.data.gamepad.L,
+                    button: Button.L,
                     on_down: this.chars_menu.previous_char.bind(this.chars_menu, true),
                     sfx: {down: "menu/positive"},
                 },
                 {
-                    key: this.data.gamepad.R,
+                    button: Button.R,
                     on_down: this.chars_menu.next_char.bind(this.chars_menu, true),
                     sfx: {down: "menu/positive"},
                 }
             );
         } else {
             controls.push(
-                {key: this.data.gamepad.A, on_down: this.selecting_char.bind(this), sfx: {down: "menu/negative"}},
-                {key: this.data.gamepad.B, on_down: this.selecting_char.bind(this), sfx: {down: "menu/negative"}},
-                {key: this.data.gamepad.SELECT, on_down: this.selecting_char.bind(this), sfx: {down: "menu/negative"}}
+                {button: Button.A, on_down: this.selecting_char.bind(this), sfx: {down: "menu/negative"}},
+                {button: Button.B, on_down: this.selecting_char.bind(this), sfx: {down: "menu/negative"}},
+                {button: Button.SELECT, on_down: this.selecting_char.bind(this), sfx: {down: "menu/negative"}}
             );
         }
 
-        this.data.control_manager.set_control(controls, {
-            loop_configs: {vertical: true, horizontal: true, shoulder: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true, shoulder: true},
         });
     }
 
@@ -927,15 +928,19 @@ export class MainStatusMenu {
             true
         );
 
-        const open_djinn_control = [
+        this.data.control_manager.add_controls(
+            [
+                {
+                    button: Button.SELECT,
+                    on_down: this.change_state.bind(this, MainStatusStates.DJINN),
+                    sfx: {down: "menu/positive"},
+                },
+            ],
             {
-                key: this.data.gamepad.SELECT,
-                on_down: this.change_state.bind(this, MainStatusStates.DJINN),
-                sfx: {down: "menu/positive"},
-            },
-        ];
+                no_initial_reset: true,
+            }
+        );
 
-        this.data.control_manager.set_control(open_djinn_control, {no_reset: true});
         this.data.cursor_manager.show();
     }
 

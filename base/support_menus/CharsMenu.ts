@@ -1,6 +1,7 @@
 import {Window} from "../Window";
 import * as utils from "../utils";
 import {GoldenSun} from "../GoldenSun";
+import {Button} from "../XGamepad";
 import {MainChar} from "../MainChar";
 import {CursorManager, PointVariants} from "../utils/CursorManager";
 
@@ -363,47 +364,32 @@ export class CharsMenu {
         this.change_line(new_line, new_index);
     }
 
-    grant_control(on_cancel: Function, on_select: Function, enable_swap?: boolean) {
-        const controls: {
-            key: number;
-            on_down: Function;
-            on_up?: Function;
-            params?: any;
-            sfx?: {down?: string; up?: string};
-        }[] = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_char.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.UP, on_down: this.previous_line.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.DOWN, on_down: this.next_line.bind(this), sfx: {down: "menu/move"}},
+    grant_control(on_cancel?: Function, on_select?: Function, enable_swap?: boolean) {
+        const controls = [
+            {button: Button.LEFT, on_down: this.previous_char.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_line.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_line.bind(this), sfx: {down: "menu/move"}},
             {
-                key: this.data.gamepad.A,
-                on_down: () => {
-                    if (on_select) {
-                        on_select();
-                    }
-                },
-                params: {reset_control: true},
+                button: Button.A,
+                on_down: () => on_select?.(),
+                params: {reset_controls: true},
                 sfx: {down: "menu/positive"},
             },
             {
-                key: this.data.gamepad.B,
-                on_down: () => {
-                    if (on_cancel) {
-                        on_cancel();
-                    }
-                },
-                params: {reset_control: true},
+                button: Button.B,
+                on_down: () => on_cancel?.(),
+                params: {reset_controls: true},
                 sfx: {down: "menu/negative"},
             },
         ];
         if (enable_swap) {
             controls.push(
-                {key: this.data.gamepad.L, on_down: this.swap_previous.bind(this), sfx: {down: "menu/positive"}},
-                {key: this.data.gamepad.R, on_down: this.swap_next.bind(this), sfx: {down: "menu/positive"}}
+                {button: Button.L, on_down: this.swap_previous.bind(this), sfx: {down: "menu/positive"}},
+                {button: Button.R, on_down: this.swap_next.bind(this), sfx: {down: "menu/positive"}}
             );
         }
-
-        this.data.control_manager.set_control(controls, {loop_configs: {horizontal: true}});
+        this.data.control_manager.add_controls(controls, {loop_config: {horizontal: true}});
     }
 
     move_cursor(pos?: number, on_complete?: Function) {

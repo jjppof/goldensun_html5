@@ -5,6 +5,7 @@ import {MainDjinnMenu} from "./MainDjinnMenu";
 import {MainStatusMenu} from "./MainStatusMenu";
 import {CharsStatusWindow} from "../windows/CharsStatusWindow";
 import {GoldenSun} from "../GoldenSun";
+import {Button} from "../XGamepad";
 import {HorizontalMenu} from "../support_menus/HorizontalMenu";
 
 export class MainMenu {
@@ -127,12 +128,12 @@ export function initialize_menu(game: Phaser.Game, data: GoldenSun) {
         }
     };
 
-    let controls = [
-        {key: data.gamepad.A, on_down: trigger_menu},
-        {key: data.gamepad.SELECT, on_down: trigger_menu},
+    const controls = [
+        {button: Button.A, on_down: trigger_menu},
+        {button: Button.SELECT, on_down: trigger_menu},
     ];
 
-    data.control_manager.set_control(controls, {persist: true});
+    data.control_manager.add_controls(controls, {persist: true});
 
     return new MainMenu(game, data);
 }

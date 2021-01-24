@@ -1,5 +1,6 @@
 import {Battle} from "../../battle/Battle";
 import {GoldenSun} from "../../GoldenSun";
+import {Button} from "../../XGamepad";
 import {MainChar} from "../../MainChar";
 import {
     temporary_status,
@@ -698,34 +699,34 @@ export class BattleStatusWindow {
 
     public grant_control() {
         const controls = [
-            {key: this.data.gamepad.A, on_down: this.trigger_state_change.bind(this), sfx: {down: "menu/positive"}},
-            {key: this.data.gamepad.B, on_down: this.close.bind(this, this.close_callback)},
-            {key: this.data.gamepad.L, on_down: this.previous_char.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.R, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, on_down: this.trigger_state_change.bind(this), sfx: {down: "menu/positive"}},
+            {button: Button.B, on_down: this.close.bind(this, this.close_callback)},
+            {button: Button.L, on_down: this.previous_char.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.R, on_down: this.next_char.bind(this), sfx: {down: "menu/move"}},
             {
-                key: this.data.gamepad.LEFT,
+                button: Button.LEFT,
                 on_down: this.current_component.on_left.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
-                key: this.data.gamepad.RIGHT,
+                button: Button.RIGHT,
                 on_down: this.current_component.on_right.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
-                key: this.data.gamepad.UP,
+                button: Button.UP,
                 on_down: this.current_component.on_up.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
             {
-                key: this.data.gamepad.DOWN,
+                button: Button.DOWN,
                 on_down: this.current_component.on_down.bind(this.current_component),
                 sfx: {down: "menu/move"},
             },
         ];
 
-        this.data.control_manager.set_control(controls, {
-            loop_configs: {vertical: true, horizontal: true, shoulder: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true, shoulder: true},
         });
     }
 

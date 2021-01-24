@@ -4,6 +4,7 @@ import {NPC} from "../NPC";
 import {base_actions, directions} from "../utils";
 import {DialogManager} from "../utils/DialogManager";
 import {GameEvent, event_types} from "./GameEvent";
+import {Button} from "../XGamepad";
 
 const INIT_TEXT = (name: string) => `${name} checked the chest...`;
 const ITEM_TEXT = (hero_name: string, item_name: string) => `${hero_name} got ${item_name}.`;
@@ -21,11 +22,12 @@ export class ChestEvent extends GameEvent {
     constructor(game, data, active, item_key_name, quantity, open_finish_events) {
         super(game, data, event_types.CHEST, active);
         this.item = this.data.info.items_list[item_key_name];
-        this.quantity = quantity === undefined ? 1 : quantity;
-        this.data.control_manager.set_control(
+        this.quantity = quantity ?? 1;
+
+        this.data.control_manager.add_controls(
             [
                 {
-                    key: this.data.gamepad.A,
+                    button: Button.A,
                     on_down: () => {
                         if (!this.running || !this.control_enable) return;
                         this.next();
@@ -34,12 +36,11 @@ export class ChestEvent extends GameEvent {
             ],
             {persist: true}
         );
-        if (open_finish_events !== undefined) {
-            open_finish_events.forEach(event_info => {
-                const event = this.data.game_event_manager.get_event_instance(event_info);
-                this.open_finish_events.push(event);
-            });
-        }
+
+        open_finish_events?.forEach(event_info => {
+            const event = this.data.game_event_manager.get_event_instance(event_info);
+            this.open_finish_events.push(event);
+        });
     }
 
     next() {

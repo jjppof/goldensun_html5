@@ -1,6 +1,7 @@
 import {Window} from "../../Window";
 import {kill_all_sprites} from "../../utils";
 import {GoldenSun} from "../../GoldenSun";
+import {Button} from "../../XGamepad";
 import {ShopItem} from "../../Shop.js";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
 
@@ -318,16 +319,21 @@ export class BuySelectMenu {
         this.change_item(this.selected_index);
     }
 
+    /**
+     * Grants user control on the current window.
+     * @param {Function} on_cancel - Called when B is pressed
+     * @param {Function} on_select - Called when A is pressed
+     */
     grant_control(on_cancel: Function, on_select: Function) {
-        let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_item.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_item.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.UP, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.DOWN, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.A, on_down: on_select, params: {reset_control: true}, sfx: {down: "menu/positive"}},
-            {key: this.data.gamepad.B, on_down: on_cancel, params: {reset_control: true}, sfx: {down: "menu/negative"}},
+        const controls = [
+            {button: Button.LEFT, on_down: this.previous_item.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_item.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, on_down: on_select, params: {reset_controls: true}, sfx: {down: "menu/positive"}},
+            {button: Button.B, on_down: on_cancel, params: {reset_controls: true}, sfx: {down: "menu/negative"}},
         ];
-        this.data.control_manager.set_control(controls, {loop_configs: {horizontal: true}});
+        this.data.control_manager.add_controls(controls, {loop_config: {horizontal: true}});
     }
 
     /*Changes to the next item page

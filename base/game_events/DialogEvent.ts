@@ -1,6 +1,7 @@
 import {NPC} from "../NPC";
 import {DialogManager} from "../utils/DialogManager";
 import {GameEvent, event_types} from "./GameEvent";
+import {Button} from "../XGamepad";
 
 export class DialogEvent extends GameEvent {
     private text: string;
@@ -26,12 +27,13 @@ export class DialogEvent extends GameEvent {
         super(game, data, event_types.DIALOG, active);
         this.text = text;
         this.avatar = avatar;
-        this.npc_hero_reciprocal_look = npc_hero_reciprocal_look === undefined ? false : npc_hero_reciprocal_look;
-        this.reset_reciprocal_look = reset_reciprocal_look === undefined ? true : reset_reciprocal_look;
-        this.data.control_manager.set_control(
+        this.npc_hero_reciprocal_look = npc_hero_reciprocal_look ?? false;
+        this.reset_reciprocal_look = reset_reciprocal_look ?? true;
+
+        this.data.control_manager.add_controls(
             [
                 {
-                    key: this.data.gamepad.A,
+                    button: Button.A,
                     on_down: () => {
                         if (!this.running || !this.control_enable) return;
                         this.next();
@@ -40,6 +42,7 @@ export class DialogEvent extends GameEvent {
             ],
             {persist: true}
         );
+
         if (dialog_finish_events !== undefined) {
             dialog_finish_events.forEach(event_info => {
                 const event = this.data.game_event_manager.get_event_instance(event_info);

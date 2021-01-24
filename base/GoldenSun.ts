@@ -15,7 +15,7 @@ import {ShopMenu} from "./main_menus/ShopMenu";
 import {InnMenu} from "./main_menus/InnMenu";
 import {ControlManager} from "./utils/ControlManager";
 import {CursorManager} from "./utils/CursorManager";
-import {Gamepad} from "./Gamepad";
+import {Gamepad as XGamepad, Button} from "./XGamepad";
 import {Audio} from "./Audio";
 import {Storage} from "./Storage";
 
@@ -49,7 +49,7 @@ export class GoldenSun {
     //managers
     public control_manager: ControlManager = null;
     public cursor_manager: CursorManager = null;
-    public gamepad: Gamepad = null;
+    public gamepad: XGamepad;
 
     //variables that control the canvas
     public fullscreen: boolean = false;
@@ -110,7 +110,7 @@ export class GoldenSun {
         this.storage.init();
 
         //initialize managers
-        this.gamepad = new Gamepad(this);
+        this.gamepad = new XGamepad(this);
         this.cursor_manager = new CursorManager(this.game);
         this.control_manager = new ControlManager(this.game, this.gamepad, this.audio);
 
@@ -206,71 +206,70 @@ export class GoldenSun {
         this.inn_menu = new InnMenu(this.game, this);
         this.main_menu = initialize_menu(this.game, this);
 
-        //enable zoom and psynergies shortcuts for testing
-        let controls = [
+        // Enable zoom and psynergies shortcuts for testing
+
+        const setupScale = (scaleFactor: number) => {
+            if (this.fullscreen) return;
+            this.scale_factor = scaleFactor;
+            this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
+            window.dispatchEvent(new Event("resize"));
+        };
+
+        const quickAbility = (index: number) => {
+            if (!this.hero_movement_allowed(false)) return;
+            // TODO Replace with ingame configuration
+            const shortcut = this.dbs.init_db.initial_shortcuts[index];
+            this.info.field_abilities_list[shortcut.ability].cast(this.hero, shortcut.adept);
+        };
+
+        const controls = [
             {
-                key: this.gamepad.ZOOM1,
-                on_down: () => {
-                    if (this.fullscreen) return;
-                    this.scale_factor = 1;
-                    this.game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
-                    window.dispatchEvent(new Event("resize"));
-                },
+                button: Button.ZOOM1,
+                on_down: () => setupScale(1),
             },
             {
-                key: this.gamepad.ZOOM2,
-                on_down: () => {
-                    if (this.fullscreen) return;
-                    this.scale_factor = 2;
-                    this.game.scale.setupScale(
-                        this.scale_factor * numbers.GAME_WIDTH,
-                        this.scale_factor * numbers.GAME_HEIGHT
-                    );
-                    window.dispatchEvent(new Event("resize"));
-                },
+                button: Button.ZOOM2,
+                on_down: () => setupScale(2),
             },
             {
-                key: this.gamepad.ZOOM3,
-                on_down: () => {
-                    if (this.fullscreen) return;
-                    this.scale_factor = 3;
-                    this.game.scale.setupScale(
-                        this.scale_factor * numbers.GAME_WIDTH,
-                        this.scale_factor * numbers.GAME_HEIGHT
-                    );
-                    window.dispatchEvent(new Event("resize"));
-                },
+                button: Button.ZOOM3,
+                on_down: () => setupScale(3),
             },
             {
-                key: this.gamepad.MUTE,
+                button: Button.MUTE,
                 on_down: () => {
                     this.game.sound.context.resume();
                     this.game.sound.mute = !this.game.sound.mute;
                 },
             },
             {
-                key: this.gamepad.PSY1,
-                on_down: () => {
-                    if (!this.hero_movement_allowed(false)) return;
-                    this.info.field_abilities_list.move.cast(this.hero, this.dbs.init_db.initial_shortcuts.move);
-                },
+                button: Button.PSY1,
+                on_down: () => quickAbility(0),
             },
             {
-                key: this.gamepad.PSY2,
-                on_down: () => {
-                    if (!this.hero_movement_allowed(false)) return;
-                    this.info.field_abilities_list.frost.cast(this.hero, this.dbs.init_db.initial_shortcuts.frost);
-                },
+                button: Button.PSY2,
+                on_down: () => quickAbility(1),
             },
             {
-                key: this.gamepad.PSY3,
-                on_down: () => {
-                    if (!this.hero_movement_allowed(false)) return;
-                    this.info.field_abilities_list.growth.cast(this.hero, this.dbs.init_db.initial_shortcuts.growth);
-                },
+                button: Button.PSY3,
+                on_down: () => quickAbility(2),
+            },
+            {
+                button: Button.PSY4,
+                on_down: () => quickAbility(3),
+            },
+            {
+                button: Button.VOL_UP,
+                on_down: () => this.audio.alter_volume(+Audio.VOLUME_STEP),
+                params: {loop_time: Audio.VOLUME_ALTER_LOOP_TIME},
+            },
+            {
+                button: Button.VOL_DOWN,
+                on_down: () => this.audio.alter_volume(-Audio.VOLUME_STEP),
+                params: {loop_time: Audio.VOLUME_ALTER_LOOP_TIME},
             },
         ];
-        this.control_manager.set_control(controls, {persist: true});
+        this.control_manager.add_controls(controls, {persist: true});
     }
 
     hero_movement_allowed(allow_climbing = true) {

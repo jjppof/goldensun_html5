@@ -8,12 +8,13 @@
     "y_tile_position": 13,
     "map_z_index": 0,
     "coins": 10000,
-    "initial_shortcuts": {
-        "move": "isaac",
-        "frost": "sheba",
-        "growth": "isaac"
-    },
-    "default_inputs":{
+    "initial_shortcuts": [
+        { "ability": "move", "adept": "isaac" },
+        { "ability": "frost", "adept": "sheba" },
+        { "ability": "growth", "adept": "isaac" },
+        { "ability": "growth", "adept": "garet" }
+    ],
+    "default_inputs": {
         "LEFT": "LEFT",
         "RIGHT": "RIGHT",
         "UP": "UP",
@@ -27,10 +28,13 @@
         "PSY1": "Q",
         "PSY2": "W",
         "PSY3": "E",
+        "PSY4": "R",
         "ZOOM1": "ONE",
         "ZOOM2": "TWO",
         "ZOOM3": "THREE",
         "MUTE": "M",
+        "VOL_UP": "SHIFT+PAGE_UP",
+        "VOL_DOWN": "SHIFT+PAGE_DOWN",
         "DEBUG_PHYSICS": "D",
         "DEBUG_GRID": "G",
         "DEBUG_KEYS": "K",
@@ -39,5 +43,79 @@
         "DEBUG_SLIDERS": "L",
         "DEBUG_CAM_MINUS": "PAGE_DOWN",
         "DEBUG_CAM_PLUS": "PAGE_UP"
+    },
+    "azerty_inputs": {
+        "LEFT": "LEFT",
+        "RIGHT": "RIGHT",
+        "UP": "UP",
+        "DOWN": "DOWN",
+        "A": "W",
+        "B": "X",
+        "L": "Q",
+        "R": "S",
+        "SELECT": "BACKSPACE",
+        "START": "ENTER",
+        "PSY1": "A",
+        "PSY2": "Z",
+        "PSY3": "E",
+        "PSY4": "R",
+        "ZOOM1": "ONE",
+        "ZOOM2": "TWO",
+        "ZOOM3": "THREE",
+        "MUTE": "M",
+        "VOL_UP": "SHIFT+PAGE_UP",
+        "VOL_DOWN": "SHIFT+PAGE_DOWN",
+        "DEBUG_PHYSICS": "D",
+        "DEBUG_GRID": "G",
+        "DEBUG_KEYS": "K",
+        "DEBUG_STATS": "T",
+        "DEBUG_FPS": "F",
+        "DEBUG_SLIDERS": "L",
+        "DEBUG_CAM_MINUS": "ALT+PAGE_DOWN",
+        "DEBUG_CAM_PLUS": "ALT+PAGE_UP"
+    },
+    "gamepad_rinputs": {
+        "XBOX360_DPAD_LEFT": "LEFT",
+        "XBOX360_DPAD_RIGHT": "RIGHT",
+        "XBOX360_DPAD_UP": "UP",
+        "XBOX360_DPAD_DOWN": "DOWN",
+        "XBOX360_A": "A",
+        "XBOX360_B": "B",
+        "XBOX360_LEFT_BUMPER": "L",
+        "XBOX360_RIGHT_BUMPER": "R",
+        "XBOX360_BACK": "SELECT",
+        "XBOX360_START": "START",
+
+        "XBOX360_X": "X",
+        "XBOX360_Y": "Y",
+        "XBOX360_LEFT_TRIGGER": "LT",
+        "XBOX360_RIGHT_TRIGGER": "RT",
+        "XBOX360_STICK_LEFT_BUTTON": "LS",
+        "XBOX360_STICK_RIGHT_BUTTON": "RS"
+    },
+    "gamepad_rsticks": {
+        "XBOX360_STICK_LEFT_X": [ "LLEFT", "LRIGHT" ],
+        "XBOX360_STICK_LEFT_Y": [ "LUP", "LDOWN" ],
+        "XBOX360_STICK_RIGHT_X": [ "RLEFT", "RRIGHT" ],
+        "XBOX360_STICK_RIGHT_Y": [ "RUP", "RDOWN" ]
+    },
+    "gamepad_inputs": {
+        "STICK_DASHING": "LS",
+        "PSY1": "LT+A",
+        "PSY2": "LT+B",
+        "PSY3": "LT+X",
+        "PSY4": "LT+Y",
+        "MUTE": "LT+RT+RS",
+        "VOL_UP": "LT+RT+UP",
+        "VOL_DOWN": "LT+RT+DOWN",
+        "DEBUG_PHYSICS": "LT+RS",
+        "DEBUG_GRID": "RT+RS"
+    },
+    "gamepad": {
+        "use_trigger_as_button": false,
+        "left_stick_as_dpad": true,
+        "right_stick_as_dpad": true,
+        "trigger_dead_zone": 0.6,
+        "stick_dead_zone": 0.5
     }
 }

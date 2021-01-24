@@ -2,6 +2,7 @@ import {TextObj, Window} from "../../Window";
 import {djinn_status, djinn_font_colors} from "../../Djinn";
 import {DjinnStatsWindow} from "./DjinnStatsWindow";
 import {GoldenSun} from "../../GoldenSun";
+import {Button} from "../../XGamepad";
 import {MainChar} from "../../MainChar";
 import {BattlePsynergyWindow} from "./BattlePsynergyWindow";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
@@ -278,23 +279,23 @@ export class BattleDjinnWindow {
         );
         this.psynergy_window_open = true;
 
-        let controls = [
+        const controls = [
             {
-                key: this.data.gamepad.LEFT,
+                button: Button.LEFT,
                 on_down: this.psynergy_window.previous_page.bind(this.psynergy_window),
                 sfx: {down: "menu/move"},
             },
             {
-                key: this.data.gamepad.RIGHT,
+                button: Button.RIGHT,
                 on_down: this.psynergy_window.next_page.bind(this.psynergy_window),
                 sfx: {down: "menu/move"},
             },
-            {key: this.data.gamepad.UP, on_down: this.previous_djinn.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.DOWN, on_down: this.next_djinn.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_djinn.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_djinn.bind(this), sfx: {down: "menu/move"}},
         ];
 
-        this.data.control_manager.set_control(controls, {
-            loop_configs: {vertical: true, horizontal: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true},
         });
     }
 
@@ -309,13 +310,13 @@ export class BattleDjinnWindow {
     }
 
     djinn_choose() {
-        let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.UP, on_down: this.previous_djinn.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.DOWN, on_down: this.next_djinn.bind(this), sfx: {down: "menu/move"}},
+        const controls = [
+            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_djinn.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_djinn.bind(this), sfx: {down: "menu/move"}},
             {
-                key: this.data.gamepad.A,
+                button: Button.A,
                 on_down: () => {
                     const this_djinn = this.data.info.djinni_list[this.djinni[this.djinn_index]];
                     if (this_djinn.status !== djinn_status.RECOVERY) {
@@ -326,7 +327,7 @@ export class BattleDjinnWindow {
                 sfx: {down: "menu/positive"},
             },
             {
-                key: this.data.gamepad.B,
+                button: Button.B,
                 on_down: () => {
                     this.choosen_ability = null;
                     this.close(this.close_callback);
@@ -335,21 +336,17 @@ export class BattleDjinnWindow {
             },
         ];
 
-        this.data.control_manager.set_control(controls, {
-            loop_configs: {vertical: true, horizontal: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true},
         });
 
         if (!this.open_psy_key) {
-            let control = [
-                {
-                    key: this.data.gamepad.R,
-                    on_down: this.show_psynergy.bind(this),
-                    on_up: this.hide_psynergy.bind(this),
-                },
+            const controls = [
+                {button: Button.R, on_down: this.show_psynergy.bind(this), on_up: this.hide_psynergy.bind(this)},
             ];
-            this.open_psy_key = this.data.control_manager.set_control(control, {
+            this.open_psy_key = this.data.control_manager.add_controls(controls, {
                 persist: true,
-                no_reset: true,
+                no_initial_reset: true,
             });
         }
     }

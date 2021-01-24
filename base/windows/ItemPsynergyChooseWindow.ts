@@ -1,6 +1,7 @@
 import {Window, TextObj} from "../Window";
 import * as numbers from "../magic_numbers";
 import {GoldenSun} from "../GoldenSun";
+import {Button} from "../XGamepad";
 import {ItemSlot, MainChar} from "../MainChar";
 import {PageIndicator} from "../support_menus/PageIndicator";
 import {CursorManager, PointVariants} from "../utils/CursorManager";
@@ -369,23 +370,23 @@ export class ItemPsynergyChooseWindow {
 
     /*Enables control keys for this menu*/
     grant_control(on_cancel: Function, on_select: Function, next_char?: Function, previous_char?: Function) {
-        let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.UP, on_down: this.previous_element.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.DOWN, on_down: this.next_element.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.A, on_down: on_select, sfx: {down: "menu/positive"}},
-            {key: this.data.gamepad.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
-            {key: this.data.gamepad.L, on_down: previous_char, sfx: {down: "menu/positive"}},
-            {key: this.data.gamepad.R, on_down: next_char, sfx: {down: "menu/positive"}},
+        const controls = [
+            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_element.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_element.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, on_down: on_select, sfx: {down: "menu/positive"}},
+            {button: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
+            {button: Button.L, on_down: previous_char, sfx: {down: "menu/positive"}},
+            {button: Button.R, on_down: next_char, sfx: {down: "menu/positive"}},
         ];
 
-        this.data.control_manager.set_control(controls, {
-            loop_configs: {
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {
                 vertical: true,
                 horizontal: true,
-                shoulder: true,
                 horizontal_time: HORIZONTAL_LOOP_TIME,
+                shoulder: true,
                 shoulder_time: SHOULDER_LOOP_TIME,
             },
         });
