@@ -19,6 +19,8 @@ import {Gamepad as XGamepad, Button, EngineButton} from "./XGamepad";
 import {Audio} from "./Audio";
 import {Storage} from "./Storage";
 
+const VOLUME_ALTER_LOOP_TIME = 100;
+
 export class GoldenSun {
     public game: Phaser.Game = null;
     public dbs: any = {};
@@ -259,12 +261,14 @@ export class GoldenSun {
                 on_down: () => quickAbility(3),
             },
             {
-                on_down: () => this.audio.alter_volume(+0.1),
                 button: EngineButton.VOL_UP,
+                on_down: () => this.audio.alter_volume(+Audio.volume_step),
+                params: {loop_time: VOLUME_ALTER_LOOP_TIME},
             },
             {
-                on_down: () => this.audio.alter_volume(-0.1),
                 button: EngineButton.VOL_DOWN,
+                on_down: () => this.audio.alter_volume(-Audio.volume_step),
+                params: {loop_time: VOLUME_ALTER_LOOP_TIME},
             },
         ];
         this.control_manager.add_controls(controls, {persist: true});
