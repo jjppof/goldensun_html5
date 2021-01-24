@@ -1,6 +1,6 @@
 import {GoldenSun} from "../GoldenSun";
 import {MainChar} from "../MainChar";
-import {EngineButton} from "../XGamepad";
+import {Button} from "../XGamepad";
 import {reverse_directions, ordered_elements} from "../utils";
 import * as _ from "lodash";
 
@@ -32,12 +32,12 @@ export class Debug {
 
     initialize_controls() {
         const debug_controls = [
-            {button: EngineButton.DEBUG_PHYSICS, on_down: this.toggle_debug_physics.bind(this)},
-            {button: EngineButton.DEBUG_GRID, on_down: this.toggle_grid.bind(this)},
-            {button: EngineButton.DEBUG_KEYS, on_down: this.toggle_keys.bind(this)},
-            {button: EngineButton.DEBUG_STATS, on_down: this.toggle_stats.bind(this)},
-            {button: EngineButton.DEBUG_FPS, on_down: this.toggle_fps.bind(this)},
-            {button: EngineButton.DEBUG_SLIDERS, on_down: this.toggle_sliders.bind(this)},
+            {button: Button.DEBUG_PHYSICS, on_down: this.toggle_debug_physics.bind(this)},
+            {button: Button.DEBUG_GRID, on_down: this.toggle_grid.bind(this)},
+            {button: Button.DEBUG_KEYS, on_down: this.toggle_keys.bind(this)},
+            {button: Button.DEBUG_STATS, on_down: this.toggle_stats.bind(this)},
+            {button: Button.DEBUG_FPS, on_down: this.toggle_fps.bind(this)},
+            {button: Button.DEBUG_SLIDERS, on_down: this.toggle_sliders.bind(this)},
         ];
         this.data.control_manager.add_controls(debug_controls, {persist: true});
     }

@@ -1,11 +1,11 @@
 import * as _ from "lodash";
 import {Audio} from "../Audio";
-import {Gamepad as XGamepad, Button, EngineButton} from "../XGamepad";
+import {Gamepad as XGamepad, Button, AnyButton} from "../XGamepad";
 
 const DEFAULT_LOOP_TIME = Phaser.Timer.QUARTER >> 1;
 
 type Control = {
-    button: Button | EngineButton;
+    button: Button;
     on_down?: Function;
     on_up?: Function;
     params?: {

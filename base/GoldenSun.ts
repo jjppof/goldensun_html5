@@ -15,7 +15,7 @@ import {ShopMenu} from "./main_menus/ShopMenu";
 import {InnMenu} from "./main_menus/InnMenu";
 import {ControlManager} from "./utils/ControlManager";
 import {CursorManager} from "./utils/CursorManager";
-import {Gamepad as XGamepad, Button, EngineButton} from "./XGamepad";
+import {Gamepad as XGamepad, Button} from "./XGamepad";
 import {Audio} from "./Audio";
 import {Storage} from "./Storage";
 
@@ -224,47 +224,47 @@ export class GoldenSun {
 
         const controls = [
             {
-                button: EngineButton.ZOOM1,
+                button: Button.ZOOM1,
                 on_down: () => setupScale(1),
             },
             {
-                button: EngineButton.ZOOM2,
+                button: Button.ZOOM2,
                 on_down: () => setupScale(2),
             },
             {
-                button: EngineButton.ZOOM3,
+                button: Button.ZOOM3,
                 on_down: () => setupScale(3),
             },
             {
-                button: EngineButton.MUTE,
+                button: Button.MUTE,
                 on_down: () => {
                     this.game.sound.context.resume();
                     this.game.sound.mute = !this.game.sound.mute;
                 },
             },
             {
-                button: EngineButton.PSY1,
+                button: Button.PSY1,
                 on_down: () => quickAbility(0),
             },
             {
-                button: EngineButton.PSY2,
+                button: Button.PSY2,
                 on_down: () => quickAbility(1),
             },
             {
-                button: EngineButton.PSY3,
+                button: Button.PSY3,
                 on_down: () => quickAbility(2),
             },
             {
-                button: EngineButton.PSY4,
+                button: Button.PSY4,
                 on_down: () => quickAbility(3),
             },
             {
-                button: EngineButton.VOL_UP,
+                button: Button.VOL_UP,
                 on_down: () => this.audio.alter_volume(+Audio.VOLUME_STEP),
                 params: {loop_time: Audio.VOLUME_ALTER_LOOP_TIME},
             },
             {
-                button: EngineButton.VOL_DOWN,
+                button: Button.VOL_DOWN,
                 on_down: () => this.audio.alter_volume(-Audio.VOLUME_STEP),
                 params: {loop_time: Audio.VOLUME_ALTER_LOOP_TIME},
             },
