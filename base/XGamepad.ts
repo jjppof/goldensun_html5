@@ -502,8 +502,3 @@ export class Gamepad {
         return this.buttons[button].is_up;
     }
 }
-
-(window as any).XGamepad = Gamepad;
-(window as any).XAdvanceButton = AdvanceButton;
-(window as any).XEngineButton = EngineButton;
-(window as any).XControllerButton = ControllerButton;

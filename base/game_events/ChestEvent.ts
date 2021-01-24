@@ -84,7 +84,6 @@ export class ChestEvent extends GameEvent {
         emitter.forEach((particle: Phaser.Sprite) => {
             particle.animations.add("vanish", null, 8, true, false);
         });
-        (window as any).em = emitter;
 
         item_sprite.scale.setTo(0, 0);
         let animation_key = this.origin_npc.sprite_info.getAnimationKey("chest", "opening");
