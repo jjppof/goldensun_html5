@@ -10,7 +10,9 @@ export class Audio {
     }
 
     /** Volume step to apply upon volume altering */
-    public static readonly volume_step = 0.1;
+    public static readonly VOLUME_STEP = 0.1;
+    /** Volume change held threshold */
+    public static readonly VOLUME_ALTER_LOOP_TIME = 100;
 
     /**
      * Changes the game volume.

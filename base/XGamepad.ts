@@ -266,11 +266,12 @@ export class Gamepad {
 
     /**
      * Gets the oppposite button.
-     * @param {Button} game_button - GBA button
-     * @return {?Button} - Opposite GBA button
+     * @param {Button|EngineButton} game_button - GBA button
+     * @return {?Button|EngineButton} - Opposite GBA button
      */
-    static get_opposite_button(game_button: Button) {
+    static get_opposite_button(game_button: Button | EngineButton): Button | EngineButton {
         switch (game_button) {
+            // Advance buttons
             case Button.LEFT:
                 return Button.RIGHT;
             case Button.RIGHT:
@@ -283,6 +284,11 @@ export class Gamepad {
                 return Button.R;
             case Button.R:
                 return Button.L;
+            // Engine buttons
+            case EngineButton.VOL_UP:
+                return EngineButton.VOL_DOWN;
+            case EngineButton.VOL_DOWN:
+                return EngineButton.VOL_UP;
             default:
                 return null;
         }

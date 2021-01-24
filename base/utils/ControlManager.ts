@@ -185,7 +185,7 @@ export class ControlManager {
                     const b1 = gamepad_button.on_down.add(event => {
                         if (this.disabled) return;
 
-                        const opposite_button = XGamepad.get_opposite_button(control.button as Button);
+                        const opposite_button = XGamepad.get_opposite_button(control.button);
 
                         if (opposite_button && this.gamepad.is_down(opposite_button)) {
                             this.gamepad.get_button(opposite_button).is_up = true;
