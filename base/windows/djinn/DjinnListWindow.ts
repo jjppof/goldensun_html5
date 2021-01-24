@@ -6,6 +6,7 @@ import {DjinnModeHeaderWindow} from "./DjinnModeHeaderWindow";
 import {DjinnCharStatsWindow} from "./DjinnCharStatsWindow";
 import {DjinnPsynergyWindow} from "./DjinnPsynergyWindow";
 import {GoldenSun} from "../../GoldenSun";
+import {Button} from "../../XGamepad";
 import {DjinnActionWindow} from "./DjinnActionWindow";
 import {CharsQuickInfoDjinnWindow} from "./CharsQuickInfoDjinnWindow";
 
@@ -486,18 +487,26 @@ export class DjinnListWindow {
         this.data.cursor_manager.move_to({x: x_pos, y: y_pos}, {animate: false}, on_complete);
     }
 
+    /**
+     * Grants user control on the current window.
+     * @param {Function} on_cancel - Called when B is pressed
+     * @param {Function} on_select - Called when A is pressed
+     * @param {Function} [on_change_djinn_status] - Called when R is pressed
+     */
     grant_control(on_cancel: Function, on_select: Function, on_change_djinn_status?: Function) {
         //Missing check for different states on R Button. Using "Set" sound for all
-        let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_character.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_character.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.UP, on_down: this.previous_djinni.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.DOWN, on_down: this.next_djinni.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.A, on_down: on_select, sfx: {down: "menu/positive"}},
-            {key: this.data.gamepad.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
-            {key: this.data.gamepad.R, on_down: on_change_djinn_status, sfx: {down: "menu/positive_3"}},
+        const controls = [
+            {button: Button.LEFT, on_down: this.previous_character.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_character.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_djinni.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_djinni.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.A, on_down: on_select, sfx: {down: "menu/positive"}},
+            {button: Button.B, on_down: on_cancel, sfx: {down: "menu/negative"}},
+            {button: Button.R, on_down: on_change_djinn_status, sfx: {down: "menu/positive_3"}},
         ];
-        this.data.control_manager.set_control(controls, {loop_configs: {vertical: true, horizontal: true}});
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true},
+        });
     }
 
     darken_font_color(darken = true) {
@@ -659,6 +668,9 @@ export class DjinnListWindow {
         }
     }
 
+    /**
+     * Toggles the current djinn status (Set <> Standby).
+     */
     change_djinn_status() {
         let djinn_index = this.setting_djinn_status ? this.setting_djinn_status_djinn_index : this.selected_djinn_index;
         const this_char = this.data.info.party_data.members[this.selected_char_index];

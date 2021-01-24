@@ -6,6 +6,7 @@ import {normal_push} from "./interactable_objects/push";
 import {Map} from "./Map";
 import {ClimbEvent} from "./tile_events/ClimbEvent";
 import {Collision} from "./Collision";
+import {Button} from "./XGamepad";
 
 export class Hero extends ControllableChar {
     private static readonly SPEED_LIMIT_TO_STOP = 13;
@@ -61,6 +62,7 @@ export class Hero extends ControllableChar {
 
     private arrow_inputs: number;
     private force_diagonal_speed: {x: number; y: number} = {x: 0, y: 0};
+    private stick_dashing: boolean = false;
 
     constructor(
         game,
@@ -92,14 +94,16 @@ export class Hero extends ControllableChar {
 
     check_control_inputs() {
         this.arrow_inputs =
-            (1 * +this.game.input.keyboard.isDown(this.data.gamepad.RIGHT)) |
-            (2 * +this.game.input.keyboard.isDown(this.data.gamepad.LEFT)) |
-            (4 * +this.game.input.keyboard.isDown(this.data.gamepad.UP)) |
-            (8 * +this.game.input.keyboard.isDown(this.data.gamepad.DOWN));
+            (1 * +this.data.gamepad.is_down(Button.RIGHT)) |
+            (2 * +this.data.gamepad.is_down(Button.LEFT)) |
+            (4 * +this.data.gamepad.is_down(Button.UP)) |
+            (8 * +this.data.gamepad.is_down(Button.DOWN));
         this.required_direction = Hero.ROTATION_KEY[this.arrow_inputs];
 
         if (!this.ice_sliding_active) {
-            this.dashing = this.game.input.keyboard.isDown(this.data.gamepad.B);
+            if (!this.arrow_inputs) this.stick_dashing = false;
+            else if (this.data.gamepad.is_down(Button.STICK_DASHING)) this.stick_dashing = true; // Can't `!this.stickdashing;` since called at every frame
+            this.dashing = this.stick_dashing || this.data.gamepad.is_down(Button.B);
         }
     }
 

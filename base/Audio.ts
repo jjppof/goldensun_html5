@@ -1,3 +1,5 @@
+import * as _ from "lodash";
+
 export class Audio {
     private game: Phaser.Game;
     private se_data: {[se_key: string]: Phaser.AudioSprite} = {};
@@ -5,6 +7,20 @@ export class Audio {
 
     constructor(game: Phaser.Game) {
         this.game = game;
+    }
+
+    /** Volume step to apply upon volume altering */
+    public static readonly VOLUME_STEP = 0.1;
+    /** Volume change held threshold */
+    public static readonly VOLUME_ALTER_LOOP_TIME = 100;
+
+    /**
+     * Changes the game volume.
+     * @param {number} delta - Delta to apply to the volume
+     * @return {number} Final game volume
+     */
+    alter_volume(delta: number) {
+        return (this.game.sound.volume = _.clamp(this.game.sound.volume + delta, 0, 1));
     }
 
     add_se(se_key: string) {

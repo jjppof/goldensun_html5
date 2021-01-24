@@ -2,6 +2,7 @@ import {TextObj, Window} from "../../Window";
 import * as numbers from "../../magic_numbers";
 import {use_types} from "../../Item";
 import {GoldenSun} from "../../GoldenSun";
+import {Button} from "../../XGamepad";
 import {ItemSlot, MainChar} from "../../MainChar";
 import * as _ from "lodash";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
@@ -240,13 +241,13 @@ export class BattleItemWindow {
     }
 
     item_choose() {
-        let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.UP, on_down: this.previous_item.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.DOWN, on_down: this.next_item.bind(this), sfx: {down: "menu/move"}},
+        const controls = [
+            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_item.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_item.bind(this), sfx: {down: "menu/move"}},
             {
-                key: this.data.gamepad.A,
+                button: Button.A,
                 on_down: () => {
                     const this_item = this.data.info.items_list[this.items[this.item_index].key_name];
                     if (
@@ -261,7 +262,7 @@ export class BattleItemWindow {
                 sfx: {down: "menu/positive"},
             },
             {
-                key: this.data.gamepad.B,
+                button: Button.B,
                 on_down: () => {
                     this.choosen_ability = null;
                     this.item_obj = null;
@@ -271,8 +272,8 @@ export class BattleItemWindow {
             },
         ];
 
-        this.data.control_manager.set_control(controls, {
-            loop_configs: {vertical: true, horizontal: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true},
         });
     }
 

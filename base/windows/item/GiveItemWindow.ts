@@ -1,6 +1,7 @@
 import {TextObj, Window} from "../../Window";
 import * as numbers from "../../magic_numbers";
 import {GoldenSun} from "../../GoldenSun";
+import {Button} from "../../XGamepad";
 import {ItemSlot, MainChar} from "../../MainChar";
 import {Item} from "../../Item";
 import {ItemQuantityManagerWindow} from "./ItemQuantityManagerWindow";
@@ -215,13 +216,13 @@ export class GiveItemWindow {
             this.set_header();
             this.set_answer_index(YES_Y);
 
-            let controls = [
-                {key: this.data.gamepad.UP, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
-                {key: this.data.gamepad.DOWN, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
-                {key: this.data.gamepad.A, on_down: this.on_give.bind(this), sfx: {down: "menu/positive_3"}},
-                {key: this.data.gamepad.B, on_down: this.on_give.bind(this, false), sfx: {down: "menu/negative"}},
+            const controls = [
+                {button: Button.UP, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
+                {button: Button.DOWN, on_down: this.change_answer.bind(this), sfx: {down: "menu/move"}},
+                {button: Button.A, on_down: this.on_give.bind(this), sfx: {down: "menu/positive_3"}},
+                {button: Button.B, on_down: this.on_give.bind(this, false), sfx: {down: "menu/negative"}},
             ];
-            this.data.control_manager.set_control(controls, {loop_configs: {vertical: true}});
+            this.data.control_manager.add_controls(controls, {loop_config: {vertical: true}});
         } else {
             if (this.item_obj.quantity > 1) {
                 let dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];

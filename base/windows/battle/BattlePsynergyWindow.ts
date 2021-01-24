@@ -2,6 +2,7 @@ import {TextObj, Window} from "../../Window";
 import * as numbers from "../../magic_numbers";
 import {temporary_status} from "../../Player";
 import {GoldenSun} from "../../GoldenSun";
+import {Button} from "../../XGamepad";
 import {MainChar} from "../../MainChar";
 import {Djinn, djinn_status} from "../../Djinn";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
@@ -392,13 +393,13 @@ export class BattlePsynergyWindow {
     }
 
     ability_choose() {
-        let controls = [
-            {key: this.data.gamepad.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.UP, on_down: this.previous_ability.bind(this), sfx: {down: "menu/move"}},
-            {key: this.data.gamepad.DOWN, on_down: this.next_ability.bind(this), sfx: {down: "menu/move"}},
+        const controls = [
+            {button: Button.LEFT, on_down: this.previous_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.RIGHT, on_down: this.next_page.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.UP, on_down: this.previous_ability.bind(this), sfx: {down: "menu/move"}},
+            {button: Button.DOWN, on_down: this.next_ability.bind(this), sfx: {down: "menu/move"}},
             {
-                key: this.data.gamepad.A,
+                button: Button.A,
                 on_down: () => {
                     if (!this.expanded) {
                         this.choosen_ability = this.abilities[this.ability_index];
@@ -408,7 +409,7 @@ export class BattlePsynergyWindow {
                 sfx: {down: "menu/positive"},
             },
             {
-                key: this.data.gamepad.B,
+                button: Button.B,
                 on_down: () => {
                     if (!this.expanded) {
                         this.choosen_ability = null;
@@ -419,8 +420,8 @@ export class BattlePsynergyWindow {
             },
         ];
 
-        this.data.control_manager.set_control(controls, {
-            loop_configs: {vertical: true, horizontal: true},
+        this.data.control_manager.add_controls(controls, {
+            loop_config: {vertical: true, horizontal: true},
         });
     }
 

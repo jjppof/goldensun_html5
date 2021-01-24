@@ -3,6 +3,7 @@ import {target_only_push} from "../interactable_objects/push";
 import {directions, reverse_directions, join_directions, base_actions} from "../utils";
 import {FieldAbilities} from "./FieldAbilities";
 import {SpriteBase} from "../SpriteBase";
+import {Button} from "../XGamepad";
 
 export class MoveFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "move";
@@ -39,37 +40,18 @@ export class MoveFieldPsynergy extends FieldAbilities {
     }
 
     set_controls() {
-        let controls = [
+        const turn_then_fire_push = direction => {
+            this.controllable_char.trying_to_push_direction = direction;
+            this.fire_push();
+        };
+
+        const controls = [
+            {button: Button.LEFT, on_down: () => turn_then_fire_push(directions.left)},
+            {button: Button.RIGHT, on_down: () => turn_then_fire_push(directions.right)},
+            {button: Button.UP, on_down: () => turn_then_fire_push(directions.up)},
+            {button: Button.DOWN, on_down: () => turn_then_fire_push(directions.down)},
             {
-                key: this.data.gamepad.LEFT,
-                on_down: () => {
-                    this.controllable_char.trying_to_push_direction = directions.left;
-                    this.fire_push();
-                },
-            },
-            {
-                key: this.data.gamepad.RIGHT,
-                on_down: () => {
-                    this.controllable_char.trying_to_push_direction = directions.right;
-                    this.fire_push();
-                },
-            },
-            {
-                key: this.data.gamepad.UP,
-                on_down: () => {
-                    this.controllable_char.trying_to_push_direction = directions.up;
-                    this.fire_push();
-                },
-            },
-            {
-                key: this.data.gamepad.DOWN,
-                on_down: () => {
-                    this.controllable_char.trying_to_push_direction = directions.down;
-                    this.fire_push();
-                },
-            },
-            {
-                key: this.data.gamepad.B,
+                button: Button.B,
                 on_down: () => {
                     this.finish_hand();
                     this.unset_hero_cast_anim();
@@ -77,7 +59,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
             },
         ];
 
-        this.data.control_manager.set_control(controls);
+        this.data.control_manager.add_controls(controls);
     }
 
     fire_push() {

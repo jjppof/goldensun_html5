@@ -1,271 +1,244 @@
 import * as _ from "lodash";
 import {Audio} from "../Audio";
-import {Gamepad} from "../Gamepad";
+import {Gamepad as XGamepad, Button, AnyButton} from "../XGamepad";
 
 const DEFAULT_LOOP_TIME = Phaser.Timer.QUARTER >> 1;
 
-export type ControlObj = {
-    key: number;
+type Control = {
+    button: Button;
     on_down?: Function;
     on_up?: Function;
-    pressed?: boolean;
-    loop?: boolean;
-    loop_time?: number;
-    reset?: boolean;
-    sfx?: {
-        up?: string;
-        down?: string;
+    params?: {
+        /** Whether to reset the binding set upon press */
+        reset_controls?: boolean;
+        /** Time between each trigger on button held */
+        loop_time?: number;
     };
+    sfx?: {up?: string; down?: string};
+};
+
+type ControlParams = {
+    loop_config?: {
+        vertical?: boolean;
+        vertical_time?: number;
+        horizontal?: boolean;
+        horizontal_time?: number;
+        shoulder?: boolean;
+        shoulder_time?: number;
+    };
+    /** Whether the binding set must persist */
+    persist?: boolean;
+    /** Whether to reset the current controls first */
+    no_initial_reset?: boolean;
+};
+
+type SimpleControlParams = {
+    /** Whether to reset the binding set upon button pressed */
+    reset_on_press?: boolean;
+    /** Only add a confirm (A) button, no back (B) button */
+    confirm_only?: boolean;
+    /** Whether the binding set must persist */
+    persist?: boolean;
+    /** Whether to reset the current controls first */
+    no_initial_reset?: boolean;
 };
 
 export class ControlManager {
-    public game: Phaser.Game;
-    public gamepad: Gamepad;
-    public audio: Audio;
+    game: Phaser.Game;
+    gamepad: XGamepad;
+    audio: Audio;
 
-    public disabled: boolean;
-    public keys_list: number[];
-    public keys: {[key: number]: ControlObj};
+    disabled: boolean;
 
-    public signal_bindings: Phaser.SignalBinding[];
-    public signal_bindings_key: number;
+    /** Current binding set, that will be reset upon demand. */
+    current_signal_bindings: Phaser.SignalBinding[];
+    /** Key of the current binding set. */
+    current_set_key?: number;
+    /** Every currently listening signals (binding sets). */
+    signal_bindings: {[key: number]: Phaser.SignalBinding[]};
+    /** Some timer */
+    loop_start_timer: Phaser.Timer;
+    /** Some timer */
+    loop_repeat_timer: Phaser.Timer;
 
-    public loop_start_timer: Phaser.Timer;
-    public loop_repeat_timer: Phaser.Timer;
-
-    public global_bindings: {[key: number]: Phaser.SignalBinding[]};
-
-    constructor(game: Phaser.Game, gamepad: Gamepad, audio: Audio) {
+    constructor(game: Phaser.Game, gamepad: XGamepad, audio: Audio) {
         this.game = game;
         this.gamepad = gamepad;
         this.audio = audio;
 
         this.disabled = false;
-        this.keys_list = this.gamepad.keys;
 
-        let keys_to_map = [];
-        for (let i = 0; i < this.keys_list.length; i++) {
-            keys_to_map.push({
-                key: this.keys_list[i],
-                on_down: null,
-                on_up: null,
-                pressed: false,
-                loop: false,
-                loop_time: DEFAULT_LOOP_TIME,
-                reset: false,
-                down_sfx: null,
-                sfx: {
-                    up: null,
-                    down: null,
-                },
-            });
-        }
-
-        this.keys = _.mapKeys(keys_to_map, k => k.key) as {[key: number]: ControlObj};
-
-        this.signal_bindings = [];
-        this.signal_bindings_key = null;
-        this.global_bindings = {};
+        this.current_signal_bindings = [];
+        this.current_set_key = null;
+        this.signal_bindings = {};
 
         this.loop_start_timer = this.game.time.create(false);
         this.loop_repeat_timer = this.game.time.create(false);
     }
 
     get initialized() {
-        return this.signal_bindings.length !== 0;
+        return this.current_signal_bindings.length;
     }
 
-    simple_input(
-        callback: Function,
-        params?: {reset_on_press?: boolean; confirm_only?: boolean; persist?: boolean; no_initial_reset?: boolean},
-        sfx?: string
-    ) {
-        let controls = [
+    /**
+     * Adds a confirm (A) and back (B) controls.
+     * @param {Function} callback - The callback to call
+     * @param {Object} params - Some parameters for these controls
+     */
+    add_simple_controls(callback: Function, params?: SimpleControlParams, sfx?: string) {
+        const controls: Control[] = [
             {
-                key: this.gamepad.A,
+                button: Button.A,
                 on_down: callback,
-                reset_control: params ? params.reset_on_press : undefined,
+                params: {reset_controls: params?.reset_on_press},
                 sfx: sfx ? {down: sfx} : null,
             },
         ];
 
-        if (params) {
-            if (!params.confirm_only)
-                controls.push({
-                    key: this.gamepad.B,
-                    on_down: callback,
-                    reset_control: params ? params.reset_on_press : undefined,
-                    sfx: sfx ? {down: sfx} : null,
-                });
-            return this.set_control(controls, {persist: params.persist, no_reset: params.no_initial_reset});
-        } else {
+        if (params?.confirm_only !== true) {
             controls.push({
-                key: this.gamepad.B,
+                // ... controls[0]
+                button: Button.B,
                 on_down: callback,
-                reset_control: params ? params.reset_on_press : undefined,
+                params: {reset_controls: params?.reset_on_press},
                 sfx: sfx ? {down: sfx} : null,
             });
-            return this.set_control(controls);
         }
+
+        return params
+            ? this.add_controls(controls, {persist: params?.persist, no_initial_reset: params?.no_initial_reset})
+            : this.add_controls(controls);
     }
 
-    set_control(
-        controls: {
-            key: number;
-            on_down?: Function;
-            on_up?: Function;
-            params?: {reset_control?: boolean};
-            sfx?: {up?: string; down?: string};
-        }[],
-        configs?: {
-            loop_configs?: {
-                vertical?: boolean;
-                vertical_time?: number;
-                horizontal?: boolean;
-                horizontal_time?: number;
-                shoulder?: boolean;
-                shoulder_time?: number;
-            };
-            persist?: boolean;
-            no_reset?: boolean;
-            global_key?: number;
-        }
-    ) {
-        let disable_reset: boolean = configs ? (configs.no_reset ? configs.no_reset : false) : false;
-        if (this.initialized && !disable_reset) this.reset();
+    /**
+     * Adds a list of controls to listen to, also adding them to a binding set.
+     * @param {Control[]} controls - Some controls to add
+     * @param {ControlParams} params - Some parameters for these controls
+     */
+    add_controls(controls: Control[], params?: ControlParams) {
+        const disable_initial_reset = params?.no_initial_reset ?? false;
+        if (this.initialized && !disable_initial_reset) this.reset();
 
-        for (let i = 0; i < controls.length; i++) {
-            if (controls[i].on_down) this.keys[controls[i].key].on_down = controls[i].on_down;
-            if (controls[i].on_up) this.keys[controls[i].key].on_up = controls[i].on_up;
+        if (params) this.apply_control_params(controls, params);
 
-            if (controls[i].params) {
-                this.keys[controls[i].key].reset = controls[i].params.reset_control
-                    ? controls[i].params.reset_control
-                    : false;
-            }
-
-            if (controls[i].sfx) {
-                if (controls[i].sfx.down) this.keys[controls[i].key].sfx.down = controls[i].sfx.down;
-                if (controls[i].sfx.up) this.keys[controls[i].key].sfx.up = controls[i].sfx.up;
-            }
-        }
-
-        if (configs) {
-            this.set_configs(configs);
-
-            let global_key = !configs.global_key ? this.make_global_key() : configs.global_key;
-            return this.enable_keys(global_key, configs.persist);
-        } else {
-            let global_key = this.make_global_key();
-            return this.enable_keys(global_key);
-        }
+        return this.enable_controls(controls.slice(), params?.persist);
     }
 
-    set_configs(configs: any) {
-        if (configs.loop_configs) {
-            let options = configs.loop_configs;
-            let controls = [];
-
-            if (options.vertical) {
-                controls.push({key: this.gamepad.UP, loop_time: options.vertical_time});
-                controls.push({key: this.gamepad.DOWN, loop_time: options.vertical_time});
-            }
-            if (options.horizontal) {
-                controls.push({key: this.gamepad.LEFT, loop_time: options.horizontal_time});
-                controls.push({key: this.gamepad.RIGHT, loop_time: options.horizontal_time});
-            }
-            if (options.shoulder) {
-                controls.push({key: this.gamepad.L, loop_time: options.shoulder_time});
-                controls.push({key: this.gamepad.R, loop_time: options.shoulder_time});
-            }
-
-            this.enable_loop(controls);
+    /**
+     * Handles the `loop_config` param
+     * @param {Control[]} controls - Controls getting added
+     * @param {ControlParams} params - Parameters to apply to these controls
+     */
+    apply_control_params(controls: Control[], params: any) {
+        const edits = [],
+            options = params?.loop_config;
+        if (options?.vertical || options?.vertical_time) {
+            edits.push({button: Button.UP, loop_time: options?.vertical_time});
+            edits.push({button: Button.DOWN, loop_time: options?.vertical_time});
         }
-    }
-
-    enable_loop(controls: {key: number; loop_time?: number}[]) {
-        controls.forEach(obj => {
-            this.keys[obj.key].loop = true;
-            if (obj.loop_time) this.keys[obj.key].loop_time = obj.loop_time;
+        if (options?.horizontal || options?.horizontal_time) {
+            edits.push({button: Button.LEFT, loop_time: options?.horizontal_time});
+            edits.push({button: Button.RIGHT, loop_time: options?.horizontal_time});
+        }
+        if (options?.shoulder || options?.shoulder_time) {
+            edits.push({button: Button.L, loop_time: options?.shoulder_time});
+            edits.push({button: Button.R, loop_time: options?.shoulder_time});
+        }
+        edits.forEach(edit => {
+            const c = controls.find(c => c.button === edit.button);
+            if (!c) return;
+            c.params ??= {};
+            c.params.loop_time = edit.loop_time ?? DEFAULT_LOOP_TIME;
         });
     }
 
-    enable_keys(global_key: number, persist?: boolean) {
-        let bindings: Phaser.SignalBinding[] = [];
+    /**
+     * Add a listener/event for the controls passed.
+     * @param {Control[]} controls - Controls to listen for
+     * @param {boolean?} persist - Whether the controls have to persist
+     */
+    enable_controls(controls: Control[], persist?: boolean) {
+        const bindings: Phaser.SignalBinding[] = [];
+        const register = (sb: Phaser.SignalBinding) => {
+            if (!persist) this.current_signal_bindings.push(sb);
+            bindings.push(sb);
+        };
 
-        for (let i = 0; i < this.keys_list.length; i++) {
-            let key_on_down = this.keys[this.keys_list[i]].on_down;
-            let key_on_up = this.keys[this.keys_list[i]].on_up;
-
-            let sfx_down = this.keys[this.keys_list[i]].sfx.down;
-            let sfx_up = this.keys[this.keys_list[i]].sfx.up;
-
-            if (this.keys[this.keys_list[i]].on_up) {
-                let b = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onUp.add(() => {
+        controls.forEach(control => {
+            if (control.on_up) {
+                const b = this.gamepad.get_button(control.button).on_up.add(() => {
                     if (this.disabled) return;
 
-                    if (sfx_up) this.audio.play_se(sfx_up);
-                    key_on_up();
+                    if (control.sfx?.up) this.audio.play_se(control.sfx.up);
+                    control.on_up();
                 });
-                if (!persist) this.signal_bindings.push(b);
-                bindings.push(b);
+                register(b);
             }
 
-            if (this.keys[this.keys_list[i]].on_down) {
-                let loop_time = this.keys[this.keys_list[i]].loop_time;
-                let trigger_reset = this.keys[this.keys_list[i]].reset;
+            if (control.on_down) {
+                const loop_time = control.params?.loop_time;
+                const trigger_reset = control.params?.reset_controls;
 
-                if (this.keys[this.keys_list[i]].loop) {
-                    let b1 = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onDown.add(() => {
-                        if (this.keys[this.gamepad.opposite_key(this.keys_list[i])].pressed) {
-                            if (this.disabled) return;
+                const gamepad_button = this.gamepad.get_button(control.button);
 
-                            this.keys[this.gamepad.opposite_key(this.keys_list[i])].pressed = false;
+                if (loop_time) {
+                    const b1 = gamepad_button.on_down.add(event => {
+                        if (this.disabled) return;
+
+                        const opposite_button = XGamepad.get_opposite_button(control.button);
+
+                        if (opposite_button && this.gamepad.is_down(opposite_button)) {
+                            this.gamepad.get_button(opposite_button).is_up = true;
                             this.stop_timers();
                         }
 
-                        this.keys[this.keys_list[i]].pressed = true;
-                        this.set_loop_timers(key_on_down, loop_time, sfx_down);
+                        // Done in XGamepad._on_down
+                        // gamepad_button.is_down = true;
+                        this.start_loop_timers(control.on_down, loop_time, control.sfx?.down);
                     });
-
-                    let b2 = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onUp.add(() => {
+                    const b2 = gamepad_button.on_up.add(event => {
                         if (this.disabled) return;
 
-                        this.keys[this.keys_list[i]].pressed = false;
+                        // Done in XGamepad._on_up
+                        // gamepad_button.is_up = true;
                         this.stop_timers();
                     });
-
-                    if (!persist) this.signal_bindings.push(b1, b2);
-                    bindings.push(b1, b2);
+                    register(b1);
+                    register(b2);
                 } else {
-                    let b = this.game.input.keyboard.addKey(this.keys[this.keys_list[i]].key).onDown.add(() => {
+                    const b = gamepad_button.on_down.add(event => {
                         if (this.disabled) return;
 
                         if (trigger_reset) this.reset();
-                        if (sfx_down) this.audio.play_se(sfx_down);
-                        key_on_down();
+                        if (control.sfx?.down) this.audio.play_se(control.sfx.down);
+                        control.on_down();
                     });
-
-                    if (!persist) this.signal_bindings.push(b);
-                    bindings.push(b);
+                    register(b);
                 }
             }
-        }
+        });
+
         this.reset(false);
+        const key = this.make_key();
+        this.signal_bindings[key] = bindings;
+        if (!persist) this.current_set_key = key;
 
-        this.global_bindings[global_key] = bindings;
-        if (!persist) this.signal_bindings_key = global_key;
-
-        return global_key;
+        return key;
     }
 
-    set_loop_timers(callback: Function, loop_time: number, sfx?: string) {
+    /**
+     * Registers a new loop timer.
+     * @param {Function} callback - Callback to call at each tick
+     * @param {number} loop_time - Ticks length
+     * @param {string} sfx - Sfx to play at each tick
+     */
+    start_loop_timers(callback: Function, loop_time: number, sfx: string) {
         if (sfx) this.audio.play_se(sfx);
         callback();
 
         this.loop_start_timer.add(Phaser.Timer.QUARTER, () => {
             this.loop_repeat_timer.loop(loop_time, () => {
-                if (sfx !== null || sfx !== undefined) this.audio.play_se(sfx);
+                if (sfx) this.audio.play_se(sfx);
                 callback();
             });
             this.loop_repeat_timer.start();
@@ -273,17 +246,17 @@ export class ControlManager {
         this.loop_start_timer.start();
     }
 
-    stop_timers() {
-        this.loop_start_timer.stop();
-        this.loop_repeat_timer.stop();
-    }
-
-    make_global_key() {
+    /**
+     * Finds the next usable index of the persisting bindings.
+     *   we could also simply use .length
+     * @return {number} - A free usable index
+     */
+    make_key() {
         let finished = false;
         let i = 0;
 
         do {
-            if (this.global_bindings[i]) {
+            if (this.signal_bindings[i]) {
                 i++;
                 continue;
             } else {
@@ -292,42 +265,41 @@ export class ControlManager {
             }
         } while (!finished);
 
-        this.global_bindings[i] = [new Phaser.SignalBinding(new Phaser.Signal(), () => {}, false)];
+        this.signal_bindings[i] = [];
 
         return i;
     }
 
-    detach_bindings(key: number) {
-        if (!this.global_bindings[key]) return;
-
-        let bindings = this.global_bindings[key];
-        bindings.forEach(bind => bind.detach());
-
-        this.global_bindings[key] = null;
-    }
-
-    reset(detach: boolean = true) {
+    /**
+     * Stops the loop timers.
+     */
+    stop_timers() {
         this.loop_start_timer.stop();
         this.loop_repeat_timer.stop();
+    }
 
-        for (let i = 0; i < this.keys_list.length; i++) {
-            this.keys[this.keys_list[i]].pressed = false;
-            this.keys[this.keys_list[i]].on_down = null;
-            this.keys[this.keys_list[i]].on_up = null;
-            this.keys[this.keys_list[i]].loop = false;
-            this.keys[this.keys_list[i]].loop_time = DEFAULT_LOOP_TIME;
-            this.keys[this.keys_list[i]].reset = false;
-            this.keys[this.keys_list[i]].sfx = {up: null, down: null};
-        }
+    /**
+     * Detachs a binding set based on a key.
+     * @param {number} key - A set index
+     */
+    detach_bindings(key: number) {
+        this.signal_bindings[key]?.forEach(bind => bind.detach());
+        delete this.signal_bindings[key];
+    }
+
+    /**
+     * Stops the loop timers and removes the current listeners.
+     * @param {boolean=true} detach - Whether to removes the current listeners
+     */
+    reset(detach: boolean = true) {
+        this.stop_timers();
 
         if (detach) {
-            this.signal_bindings.forEach(signal_binding => {
-                signal_binding.detach();
-            });
-            if (this.signal_bindings_key) this.detach_bindings(this.signal_bindings_key);
+            this.current_signal_bindings.forEach(bind => bind.detach());
+            this.current_signal_bindings = [];
 
-            this.signal_bindings_key = null;
-            this.signal_bindings = [];
+            if (this.current_set_key) this.detach_bindings(this.current_set_key);
+            this.current_set_key = null;
         }
     }
 }
