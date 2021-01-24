@@ -85,7 +85,6 @@ function load_fonts(game) {
 function load_filters(game) {
     game.load.script("color_filters", "assets/filters/color_filters.js");
     game.load.script("mode7", "assets/filters/mode7.js");
-    game.load.script("circle", "assets/filters/circle.js");
 }
 
 function load_plugins(game) {
