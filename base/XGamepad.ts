@@ -64,7 +64,8 @@ const ControllerButtons = [
 
 /** Custom engine buttons */
 export enum EngineButton {
-    PSY1 = ControllerButton.RDOWN + 1,
+    STICK_DASHING = ControllerButton.RDOWN + 1,
+    PSY1,
     PSY2,
     PSY3,
     PSY4,
@@ -86,6 +87,7 @@ export enum EngineButton {
 
 /** Custom engine button list, for mapping */
 const EngineButtons = [
+    "STICK_DASHING",
     "PSY1",
     "PSY2",
     "PSY3",
@@ -500,3 +502,8 @@ export class Gamepad {
         return this.buttons[button].is_up;
     }
 }
+
+(window as any).XGamepad = Gamepad;
+(window as any).XAdvanceButton = AdvanceButton;
+(window as any).XEngineButton = EngineButton;
+(window as any).XControllerButton = ControllerButton;
