@@ -2,7 +2,7 @@ import {GoldenSun} from "../GoldenSun";
 import {MainChar} from "../MainChar";
 import {reverse_directions, ordered_elements} from "../utils";
 import * as _ from "lodash";
-import { RandomDataGenerator } from "phaser-ce";
+import {RandomDataGenerator} from "phaser-ce";
 
 export class Debug {
     public game: Phaser.Game;
@@ -127,8 +127,8 @@ export class Debug {
         holder.classList.add("holder");
 
         const set_focus_blur = (input: HTMLInputElement) => {
-            input.onfocus = () => this.game.input.enabled = false;
-            input.onblur = () => this.game.input.enabled = true;
+            input.onfocus = () => (this.game.input.enabled = false);
+            input.onblur = () => (this.game.input.enabled = true);
         };
 
         const input_variable = document.createElement("input");
