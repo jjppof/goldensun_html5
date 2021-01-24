@@ -121,10 +121,7 @@ export class ControlManager {
 
         if (params) this.apply_control_params(controls, params);
 
-        return this.enable_controls(
-            controls.map(c => c),
-            params?.persist
-        );
+        return this.enable_controls(controls.slice(), params?.persist);
     }
 
     /**
@@ -190,7 +187,7 @@ export class ControlManager {
 
                         const opposite_button = XGamepad.get_opposite_button(control.button as Button);
 
-                        if (this.gamepad.is_down(opposite_button)) {
+                        if (opposite_button && this.gamepad.is_down(opposite_button)) {
                             this.gamepad.get_button(opposite_button).is_up = true;
                             this.stop_timers();
                         }

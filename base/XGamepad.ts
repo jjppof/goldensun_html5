@@ -1,20 +1,5 @@
 import {GoldenSun} from "./GoldenSun";
 
-// export type GamepadState = {
-// 	A: number = 1 << 0;
-// 	B: number = 1 << 1;
-// 	L: number = 1 << 2;
-// 	R: number = 1 << 3;
-
-// 	START: number = 1 << 4;
-// 	SELECT: number = 1 << 5;
-
-// 	LEFT: number = 1 << 6;
-// 	RIGHT: number = 1 << 7;
-// 	UP: number = 1 << 8;
-// 	DOWN: number = 1 << 9;
-// };
-
 /** GBA buttons */
 export enum Button {
     A,
@@ -214,7 +199,7 @@ export class Gamepad {
                         ?.game_button;
                 const km: KeyMap = {name: game_button, as: button_code, game_button: EngineButton[game_button]};
                 if (matches[matches.length - 2]) {
-                    const buttons = Array.prototype.filter.call(matches, (m, i) => i && m);
+                    const buttons = matches.filter((m, i) => i && m);
                     km.button_codes = buttons.map(get_button_code).filter(bc => bc !== undefined);
                     km.game_buttons = buttons.map(get_game_button).filter(bc => bc !== undefined);
                     if (km.button_codes.length !== km.game_buttons.length)
@@ -249,7 +234,7 @@ export class Gamepad {
                     key_code: Phaser.Keyboard[matches[matches.length - 1]],
                 };
                 if (matches[matches.length - 2]) {
-                    const modifiers = Array.prototype.filter.call(matches, (m, i) => i && m);
+                    const modifiers = matches.filter((m, i) => i && m);
                     km.key_modifiers = {};
                     if (modifiers.includes("ALT")) km.key_modifiers.alt = true;
                     if (modifiers.includes("CTRL")) km.key_modifiers.ctrl = true;
@@ -275,7 +260,7 @@ export class Gamepad {
      * @return {(Button|EngineButton)[]} - GBA custom button(s)
      */
     static transcode_keyboard_key(key_code: number) {
-        // Use a single array Gamepad.keyboard_fast_mapping[key_code] ?
+        // Use a single array Gamepad.keyboard_fast_mapping[key_code]?
         return Gamepad.keyboard_mapping.filter(km => km.key_code === key_code).map(km => km.game_button);
     }
 
@@ -359,7 +344,6 @@ export class Gamepad {
         const btn = this.buttons[game_button];
         if (btn.is_down) return;
         btn.is_down = true;
-        // console.log("onDown", btn.name);
         btn.on_down.dispatch(event);
     }
 
@@ -372,7 +356,6 @@ export class Gamepad {
         const btn = this.buttons[game_button];
         if (btn.is_up) return;
         btn.is_up = true;
-        // console.log("onUp", btn.name);
         btn.on_up.dispatch(event);
     }
 
@@ -384,8 +367,11 @@ export class Gamepad {
         const group_game_buttons = Gamepad.gamepad_mapping.filter(
             km =>
                 km.game_button &&
+                // Check if it's the LAST button of any combo
                 km.game_buttons?.[km.game_buttons.length - 1] === game_button &&
+                // Check if it's any button of any combo
                 // km.game_buttons?.includes(game_button) &&
+                // Then if the others buttons are held down
                 km.game_buttons.every(gb => gb === game_button || this.is_down(gb))
             // .filter(gb => gb !== game_button)
             // .every(gb => this.is_down(gb))
@@ -416,14 +402,12 @@ export class Gamepad {
             this.is_last_input_gamepad = true;
 
             const game_buttons = Gamepad.transcode_gamepad_button(button_code);
-            // console.log(button_code, game_buttons);
             game_buttons.forEach(game_button => this.on_gamepad_down(game_button));
         };
         game.input.gamepad.onUpCallback = (button_code: number) => {
             this.is_last_input_gamepad = true;
 
             const game_buttons = Gamepad.transcode_gamepad_button(button_code);
-            // console.log(button_code, game_buttons);
             game_buttons.forEach(game_button => this.on_gamepad_up(game_button));
         };
         game.input.gamepad.onAxisCallback = (pad: Phaser.SinglePad, index: number, value: number) => {
@@ -448,7 +432,7 @@ export class Gamepad {
             );
         };
 
-        // game.input.keyboard.onPressCallback = (char_code: string, event: KeyboardEvent) => {
+        // Not using .onPressCallback since it triggers with a char, not a key
         game.input.keyboard.onDownCallback = (event: KeyboardEvent) => {
             this.is_last_input_gamepad = false;
 
@@ -498,7 +482,3 @@ export class Gamepad {
         return this.buttons[button].is_up;
     }
 }
-
-(window as any).XGamepad = Gamepad;
-(window as any).XButton = Button;
-(window as any).XCButton = CButton;
