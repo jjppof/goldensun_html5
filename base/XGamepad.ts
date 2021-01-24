@@ -33,7 +33,7 @@ export enum Button {
 const Buttons = ["A", "B", "L", "R", "START", "SELECT", "LEFT", "RIGHT", "UP", "DOWN"];
 
 /** Custom buttons */
-export enum CButton {
+export enum EngineButton {
     LB = Button.L,
     RB = Button.R,
     BUTTON = Button.DOWN,
@@ -43,8 +43,8 @@ export enum CButton {
     RS,
     L2,
     R2,
-    LT = CButton.L2,
-    RT = CButton.R2,
+    LT = EngineButton.L2,
+    RT = EngineButton.R2,
     // LX, LY, RX, RY,
     LLEFT,
     LRIGHT,
@@ -75,7 +75,7 @@ export enum CButton {
 }
 
 /** Custom button list, for mapping */
-const CButtons = [
+const EngineButtons = [
     "X",
     "Y",
     "LS",
@@ -133,9 +133,9 @@ const XBOX360_MAPPING = {
 /** Used to map a real button/key to an emulated controller */
 type KeyMap = {
     /** Game button */
-    game_button: Button | CButton;
+    game_button: Button | EngineButton;
     /** Game button group that triggers the game button */
-    game_buttons?: (Button | CButton)[];
+    game_buttons?: (Button | EngineButton)[];
     /** For multi-button name chaining (reflect) */
     name?: string;
     /** For multi-buttons, raw button combinaison */
@@ -154,7 +154,7 @@ export class GamepadButton {
     /** Emulated gamepad controller */
     gamepad: Gamepad;
     /** Game button that will trigger */
-    button: Button | CButton;
+    button: Button | EngineButton;
     /** Debug purpose */
     name: string = undefined;
     /** Whether the gamepad button is held down */
@@ -164,10 +164,10 @@ export class GamepadButton {
     /** Signal to trigger when that button is release */
     on_up = new Phaser.Signal();
 
-    constructor(gamepad: Gamepad, button: Button | CButton) {
+    constructor(gamepad: Gamepad, button: Button | EngineButton) {
         this.gamepad = gamepad;
         this.button = button;
-        this.name = Button[this.button] ?? CButton[this.button];
+        this.name = Button[this.button] ?? EngineButton[this.button];
     }
     /** Whether the gamepad button is up */
     get is_up() {
@@ -198,7 +198,7 @@ export class Gamepad {
         const gamepad_mapping = Object.entries(data.dbs.init_db.gamepad_rinputs as {[code: string]: string}).map(
             ([button_code, game_button]): KeyMap => ({
                 name: game_button,
-                game_button: Button[game_button] ?? CButton[game_button],
+                game_button: Button[game_button] ?? EngineButton[game_button],
                 button_code: Phaser.Gamepad[button_code],
             })
         );
@@ -212,7 +212,7 @@ export class Gamepad {
                 const get_game_button = (code: string): number =>
                     gamepad_mapping.find(km => km.name === code || km.button_code === Phaser.Gamepad[code])
                         ?.game_button;
-                const km: KeyMap = {name: game_button, as: button_code, game_button: CButton[game_button]};
+                const km: KeyMap = {name: game_button, as: button_code, game_button: EngineButton[game_button]};
                 if (matches[matches.length - 2]) {
                     const buttons = Array.prototype.filter.call(matches, (m, i) => i && m);
                     km.button_codes = buttons.map(get_button_code).filter(bc => bc !== undefined);
@@ -229,7 +229,7 @@ export class Gamepad {
         ).map(
             ([button_code, game_buttons]): KeyMap => ({
                 game_button: null,
-                game_buttons: game_buttons.map(gb => CButton[gb]),
+                game_buttons: game_buttons.map(gb => EngineButton[gb]),
                 button_code: Phaser.Gamepad[button_code],
             })
         );
@@ -245,7 +245,7 @@ export class Gamepad {
                 const km: KeyMap = {
                     name: game_button,
                     as: key_code,
-                    game_button: Button[game_button] ?? CButton[game_button],
+                    game_button: Button[game_button] ?? EngineButton[game_button],
                     key_code: Phaser.Keyboard[matches[matches.length - 1]],
                 };
                 if (matches[matches.length - 2]) {
@@ -263,7 +263,7 @@ export class Gamepad {
     /**
      * Gets the GBA button(s) attached to the controller button.
      * @param {number} button_code - Controller button code.
-     * @return {(Button|CButton[]} - GBA (custom) button(s)
+     * @return {(Button|EngineButton[]} - GBA (custom) button(s)
      */
     static transcode_gamepad_button(button_code: number) {
         // return Gamepad.keyboard_mapping.find(km => km.button_code === button_code)?.game_button;
@@ -272,7 +272,7 @@ export class Gamepad {
     /**
      * Gets the GBA button(s) attached to the Phaser keyboard key.
      * @param {number} key_code - Phaser keyboard key code.
-     * @return {(Button|CButton)[]} - GBA custom button(s)
+     * @return {(Button|EngineButton)[]} - GBA custom button(s)
      */
     static transcode_keyboard_key(key_code: number) {
         // Use a single array Gamepad.keyboard_fast_mapping[key_code] ?
@@ -304,7 +304,7 @@ export class Gamepad {
     }
 
     /** Every game buttons of the emulated gamepad */
-    buttons: {[button in Button | CButton]?: GamepadButton} = [];
+    buttons: {[button in Button | EngineButton]?: GamepadButton} = [];
     /** The stick dead zone */
     stick_dead_zone: number;
     /** The trigger dead zone */
@@ -321,28 +321,29 @@ export class Gamepad {
         Buttons.forEach(button_name => {
             this.buttons[Button[button_name]] = new GamepadButton(this, Button[button_name]);
         });
-        CButtons.filter(bn => bn).forEach(button_name => {
-            this.buttons[CButton[button_name]] = new GamepadButton(this, CButton[button_name]);
+        EngineButtons.filter(bn => bn).forEach(button_name => {
+            this.buttons[EngineButton[button_name]] = new GamepadButton(this, EngineButton[button_name]);
         });
-        const mirror_button = (button: Button | CButton, to: Button | CButton) => {
+        /** Trigger another button along a specific button */
+        const mirror_button = (button: Button | EngineButton, to: Button | EngineButton) => {
             this.buttons[button].on_down.add(() => this.on_gamepad_down(to));
             this.buttons[button].on_up.add(() => this.on_gamepad_up(to));
         };
         if (data.dbs.init_db.gamepad?.use_trigger_as_button === true) {
-            mirror_button(CButton.LT, Button.L);
-            mirror_button(CButton.RT, Button.R);
+            mirror_button(EngineButton.LT, Button.L);
+            mirror_button(EngineButton.RT, Button.R);
         }
         if (data.dbs.init_db.gamepad?.left_stick_as_dpad === true) {
-            mirror_button(CButton.LLEFT, Button.LEFT);
-            mirror_button(CButton.LRIGHT, Button.RIGHT);
-            mirror_button(CButton.LUP, Button.UP);
-            mirror_button(CButton.LDOWN, Button.DOWN);
+            mirror_button(EngineButton.LLEFT, Button.LEFT);
+            mirror_button(EngineButton.LRIGHT, Button.RIGHT);
+            mirror_button(EngineButton.LUP, Button.UP);
+            mirror_button(EngineButton.LDOWN, Button.DOWN);
         }
         if (data.dbs.init_db.gamepad?.right_stick_as_dpad === true) {
-            mirror_button(CButton.RLEFT, Button.LEFT);
-            mirror_button(CButton.RRIGHT, Button.RIGHT);
-            mirror_button(CButton.RUP, Button.UP);
-            mirror_button(CButton.RDOWN, Button.DOWN);
+            mirror_button(EngineButton.RLEFT, Button.LEFT);
+            mirror_button(EngineButton.RRIGHT, Button.RIGHT);
+            mirror_button(EngineButton.RUP, Button.UP);
+            mirror_button(EngineButton.RDOWN, Button.DOWN);
         }
         this.stick_dead_zone = data.dbs.init_db.gamepad?.stick_dead_zone ?? 0.5;
         this.trigger_dead_zone = data.dbs.init_db.gamepad?.trigger_dead_zone ?? 0.6;
@@ -351,10 +352,10 @@ export class Gamepad {
 
     /**
      * Press the game button if it is up then triggers the listeners.
-     * @param {Button|CButton} game_button - The game button to press
+     * @param {Button|EngineButton} game_button - The game button to press
      * @param {?KeyboardEvent} event - The keyboard event if any
      */
-    _on_down(game_button: Button | CButton, event?: KeyboardEvent) {
+    private _on_down(game_button: Button | EngineButton, event?: KeyboardEvent) {
         const btn = this.buttons[game_button];
         if (btn.is_down) return;
         btn.is_down = true;
@@ -364,10 +365,10 @@ export class Gamepad {
 
     /**
      * Releases the game button if it is held down then triggers the listeners.
-     * @param {Button|CButton} game_button - The game button to release
+     * @param {Button|EngineButton} game_button - The game button to release
      * @param {?KeyboardEvent} event - The keyboard event if any
      */
-    _on_up(game_button: Button | CButton, event?: KeyboardEvent) {
+    private _on_up(game_button: Button | EngineButton, event?: KeyboardEvent) {
         const btn = this.buttons[game_button];
         if (btn.is_up) return;
         btn.is_up = true;
@@ -377,9 +378,9 @@ export class Gamepad {
 
     /**
      * Press any multi-buttons involved if none the button itself.
-     * @param {Button|CButton} game_button - The game button getting pressed
+     * @param {Button|EngineButton} game_button - The game button getting pressed
      */
-    on_gamepad_down(game_button: Button | CButton) {
+    on_gamepad_down(game_button: Button | EngineButton) {
         const group_game_buttons = Gamepad.gamepad_mapping.filter(
             km =>
                 km.game_button &&
@@ -395,9 +396,9 @@ export class Gamepad {
 
     /**
      * Releases any multi-buttons involved and the button itself.
-     * @param {Button|CButton} game_button - The game button getting released
+     * @param {Button|EngineButton} game_button - The game button getting released
      */
-    on_gamepad_up(game_button: Button | CButton) {
+    on_gamepad_up(game_button: Button | EngineButton) {
         const group_game_buttons = Gamepad.gamepad_mapping.filter(
             km => km.game_button && km.game_buttons?.includes(game_button)
         );
@@ -472,28 +473,28 @@ export class Gamepad {
 
     /**
      * Returns a gamepad button state with its signal attached.
-     * @param {Button|CButton} button - GBA (custom) button
+     * @param {Button|EngineButton} button - GBA (custom) button
      * @return {GamepadButton} - GBA button state
      */
-    get_button(button: Button | CButton) {
+    get_button(button: Button | EngineButton) {
         return this.buttons[button];
     }
 
     /**
      * Checks if a gamepad button is currently down.
-     * @param {Button|CButton} button - GBA (custom) button
+     * @param {Button|EngineButton} button - GBA (custom) button
      * @return {boolean} - Whether the gamepad button is held down
      */
-    is_down(button: Button | CButton) {
+    is_down(button: Button | EngineButton) {
         return this.buttons[button].is_down;
     }
 
     /**
      * Checks if a gamepad button is currently up.
-     * @param {Button|CButton} button - GBA (custom) button
+     * @param {Button|EngineButton} button - GBA (custom) button
      * @return {boolean} - Whether the gamepad button is up
      */
-    is_up(button: Button | CButton) {
+    is_up(button: Button | EngineButton) {
         return this.buttons[button].is_up;
     }
 }

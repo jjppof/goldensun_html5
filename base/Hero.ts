@@ -6,7 +6,7 @@ import {normal_push} from "./interactable_objects/push";
 import {Map} from "./Map";
 import {ClimbEvent} from "./tile_events/ClimbEvent";
 import {Collision} from "./Collision";
-import {Button, CButton} from "./XGamepad";
+import {Button, EngineButton} from "./XGamepad";
 
 export class Hero extends ControllableChar {
     private static readonly SPEED_LIMIT_TO_STOP = 13;
@@ -102,7 +102,7 @@ export class Hero extends ControllableChar {
 
         if (!this.ice_sliding_active) {
             if (!this.arrow_inputs) this.stick_dashing = false;
-            else if (this.data.gamepad.is_down(CButton.LS)) this.stick_dashing = true; // Can't `!this.stickdashing;` since called at every frame
+            else if (this.data.gamepad.is_down(EngineButton.LS)) this.stick_dashing = true; // Can't `!this.stickdashing;` since called at every frame
             this.dashing = this.stick_dashing || this.data.gamepad.is_down(Button.B);
         }
     }

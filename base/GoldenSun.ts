@@ -15,7 +15,7 @@ import {ShopMenu} from "./main_menus/ShopMenu";
 import {InnMenu} from "./main_menus/InnMenu";
 import {ControlManager} from "./utils/ControlManager";
 import {CursorManager} from "./utils/CursorManager";
-import {Gamepad as XGamepad, Button, CButton} from "./XGamepad";
+import {Gamepad as XGamepad, Button, EngineButton} from "./XGamepad";
 import {Audio} from "./Audio";
 import {Storage} from "./Storage";
 
@@ -224,47 +224,47 @@ export class GoldenSun {
 
         const controls = [
             {
-                button: CButton.ZOOM1,
+                button: EngineButton.ZOOM1,
                 on_down: () => setupScale(1),
             },
             {
-                button: CButton.ZOOM2,
+                button: EngineButton.ZOOM2,
                 on_down: () => setupScale(2),
             },
             {
-                button: CButton.ZOOM3,
+                button: EngineButton.ZOOM3,
                 on_down: () => setupScale(3),
             },
             {
-                button: CButton.MUTE,
+                button: EngineButton.MUTE,
                 on_down: () => {
                     this.game.sound.context.resume();
                     this.game.sound.mute = !this.game.sound.mute;
                 },
             },
             {
-                button: CButton.PSY1,
+                button: EngineButton.PSY1,
                 on_down: () => quickAbility(0),
             },
             {
-                button: CButton.PSY2,
+                button: EngineButton.PSY2,
                 on_down: () => quickAbility(1),
             },
             {
-                button: CButton.PSY3,
+                button: EngineButton.PSY3,
                 on_down: () => quickAbility(2),
             },
             {
-                button: CButton.PSY4,
+                button: EngineButton.PSY4,
                 on_down: () => quickAbility(3),
             },
             {
-                button: CButton.VOL_UP,
                 on_down: () => this.audio.alter_volume(+0.1),
+                button: EngineButton.VOL_UP,
             },
             {
-                button: CButton.VOL_DOWN,
                 on_down: () => this.audio.alter_volume(-0.1),
+                button: EngineButton.VOL_DOWN,
             },
         ];
         this.control_manager.add_controls(controls, {persist: true});

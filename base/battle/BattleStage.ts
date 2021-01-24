@@ -3,7 +3,7 @@ import {range_360} from "../utils";
 import {ability_target_types} from "../Ability";
 import {fighter_types, permanent_status, Player} from "../Player";
 import {GoldenSun} from "../GoldenSun";
-import {Button, CButton} from "../XGamepad";
+import {Button, EngineButton} from "../XGamepad";
 import {PlayerInfo} from "./Battle";
 import * as _ from "lodash";
 import {battle_actions, battle_positions, PlayerSprite} from "./PlayerSprite";
@@ -635,12 +635,15 @@ export class BattleStage {
     update_stage() {
         if (this.choosing_actions) return;
 
-        if (this.data.gamepad.is_down(CButton.DEBUG_CAM_MINUS) && !this.data.gamepad.is_down(CButton.DEBUG_CAM_PLUS)) {
+        if (
+            this.data.gamepad.is_down(EngineButton.DEBUG_CAM_MINUS) &&
+            !this.data.gamepad.is_down(EngineButton.DEBUG_CAM_PLUS)
+        ) {
             this.camera_angle.rad -= CAMERA_SPEED;
             this.battle_bg.x -= BG_SPEED;
         } else if (
-            this.data.gamepad.is_down(CButton.DEBUG_CAM_PLUS) &&
-            !this.data.gamepad.is_down(CButton.DEBUG_CAM_MINUS)
+            this.data.gamepad.is_down(EngineButton.DEBUG_CAM_PLUS) &&
+            !this.data.gamepad.is_down(EngineButton.DEBUG_CAM_MINUS)
         ) {
             this.camera_angle.rad += CAMERA_SPEED;
             this.battle_bg.x += BG_SPEED;
