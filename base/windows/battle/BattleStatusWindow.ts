@@ -802,6 +802,7 @@ export class BattleStatusWindow {
     }
 
     public close(callback?: Function) {
+        this.data.control_manager.reset();
         this.clear_component();
         this.window.close(callback);
     }
