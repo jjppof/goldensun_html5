@@ -352,6 +352,7 @@ export class SellRepairMenu {
 
             let next_step = () => {
                 this.game.world.bringToTop(this.char_display.char_group);
+                this.data.cursor_manager.bring_to_top();
 
                 let char_key = this.selected_character
                     ? this.selected_character.key_name

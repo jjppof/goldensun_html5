@@ -407,6 +407,7 @@ export class BattlePsynergyWindow {
                     }
                 },
                 sfx: {down: "menu/positive"},
+                params: {reset_controls: true},
             },
             {
                 button: Button.B,
@@ -417,6 +418,7 @@ export class BattlePsynergyWindow {
                     }
                 },
                 sfx: {down: "menu/negative"},
+                params: {reset_controls: true},
             },
         ];
 
@@ -474,6 +476,7 @@ export class BattlePsynergyWindow {
 
         this.base_window.show(() => {
             this.window_active = true;
+            this.set_page_number();
         }, false);
     }
 
