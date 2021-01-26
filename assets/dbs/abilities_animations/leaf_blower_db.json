@@ -187,7 +187,7 @@
                     }
                 },
                 "lifespan": 1850,
-                "vy": { "min": -1.7, "max": 0.6 },
+                "vy": { "min": -1.5, "max": 0.4 },
                 "vx": {
                     "value": 0,
                     "control": [ { "x": 0, "y": 0.7 }, { "x": 0.3, "y": 1 }, { "x": 0.7, "y": 0.4 }, { "x": 1, "y": 0.1 } ]
@@ -208,8 +208,8 @@
             "position": "between",
             "render_type": "sprite",
             "particles_display_blend_mode": "screen",
-            "repeat": 60,
-            "frequency": 40,
+            "repeat": 40,
+            "frequency": 70,
             "emitter_data_key": "wind",
             "force": {
                 "x": -0.12
