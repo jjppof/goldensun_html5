@@ -687,13 +687,21 @@
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":13,"h":13},
 	"sourceSize": {"w":13,"h":13}
+},
+"leaf_blower":
+{
+	"frame": {"x":2,"y":597,"w":13,"h":13},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":13,"h":13},
+	"sourceSize": {"w":13,"h":13}
 }},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "abilities_icons.png",
 	"format": "RGBA8888",
-	"size": {"w":32,"h":597},
+	"size": {"w":32,"h":613},
 	"scale": "1",
 	"smartupdate": "$TexturePacker:SmartUpdate:74e34eacbc0c322888c7fd02b6ff05a3:e3da3e17ac6551a3ec9c44beef73eeb4:279e86f3e64bd576035a9e11365d9bf2$"
 }

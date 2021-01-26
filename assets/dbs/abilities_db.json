@@ -204,6 +204,24 @@
         "priority_move": false,
         "msg_type": "cast"
     },{
+        "key_name": "leaf_blower",
+        "name": "Leaf Blower",
+        "description": "Attacks with a string of cutting leaves.",
+        "type": "base_damage",
+        "element": "venus",
+        "battle_target": "enemy",
+        "range": 1,
+        "pp_cost": 6,
+        "ability_power": 45,
+        "effects_outside_battle": false,
+        "is_battle_ability": true,
+        "is_field_psynergy": false,
+        "effects": [],
+        "ability_category": "psynergy",
+        "battle_animation_key": "leaf_blower",
+        "priority_move": false,
+        "msg_type": "cast"
+    },{
         "key_name": "spire",
         "name": "Spire",
         "description": "Attack with earthen spire.",

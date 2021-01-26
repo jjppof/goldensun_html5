@@ -146,6 +146,7 @@ export class BattleAnimation {
         count: number;
         trails: boolean;
         trails_factor: number;
+        frames_number: number;
     }[];
     public x_sequence: DefaultAttr[] = [];
     public y_sequence: DefaultAttr[] = [];
@@ -363,7 +364,7 @@ export class BattleAnimation {
                     const frames = Phaser.Animation.generateFrameNames(
                         sprite_info.key_name + "/",
                         0,
-                        psy_sprite.animations.frameTotal,
+                        sprite_info.frames_number ?? psy_sprite.animations.frameTotal,
                         "",
                         3
                     );
