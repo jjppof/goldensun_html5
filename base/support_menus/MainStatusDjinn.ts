@@ -186,7 +186,7 @@ export class MainStatusDjinn extends StatusComponent {
 
     private get_djinn_by_element() {
         const djinn = ordered_elements.reduce((result, elem) => {
-            const char_djinn = this.data.info.party_data.members.map(char => char[elem + "_djinni"]).flat();
+            const char_djinn = this.data.info.party_data.members.map(char => char.djinn_by_element[elem]).flat();
             result[elem] = _.sortBy(
                 char_djinn.map(djinni_key => this.data.info.djinni_list[djinni_key]),
                 char_djinn => char_djinn.index

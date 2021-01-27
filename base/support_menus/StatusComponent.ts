@@ -133,7 +133,7 @@ export abstract class StatusComponent {
     }
 
     protected get_djinn_counts(element: elements) {
-        const djinn = this.selected_char[element + "_djinni"].map(
+        const djinn = this.selected_char.djinn_by_element[element].map(
             (djinn_key: string) => this.data.info.djinni_list[djinn_key]
         );
         return {

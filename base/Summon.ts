@@ -1,9 +1,6 @@
-type Requirements = {
-    venus: number;
-    mercury: number;
-    mars: number;
-    jupiter: number;
-};
+import {elements} from "./utils";
+
+type Requirements = {[element in elements]: number};
 
 export class Summon {
     public key_name: string;

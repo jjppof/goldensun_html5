@@ -56,10 +56,7 @@ export class MainChar extends Player {
     public class: Classes;
     public exp_curve: number[];
     public element_afinity: elements;
-    public venus_djinni: string[];
-    public mercury_djinni: string[];
-    public mars_djinni: string[];
-    public jupiter_djinni: string[];
+    public djinn_by_element: {[element in elements]?: string[]};
     public hp_curve: number[];
     public pp_curve: number[];
     public atk_curve: number[];
@@ -124,10 +121,10 @@ export class MainChar extends Player {
         this.base_power = _.cloneDeep(base_power);
         this.base_resist = _.cloneDeep(base_resist);
         this.element_afinity = _.maxBy(_.toPairs(this.base_level), pair => pair[1])[0] as elements;
-        this.venus_djinni = [];
-        this.mercury_djinni = [];
-        this.mars_djinni = [];
-        this.jupiter_djinni = [];
+        this.djinn_by_element = {};
+        ordered_elements.forEach(element => {
+            this.djinn_by_element[element] = [];
+        });
         this.init_djinni(djinni);
         this.equip_slots = {
             [equip_slots.WEAPON]: null,
@@ -171,7 +168,7 @@ export class MainChar extends Player {
     }
 
     get djinni() {
-        let this_djinni_list = this.venus_djinni.concat(this.mercury_djinni, this.mars_djinni, this.jupiter_djinni);
+        let this_djinni_list = ordered_elements.map(elem => this.djinn_by_element[elem]).flat();
         return this_djinni_list.sort((a, b) => {
             return this.info.djinni_list[a].index - this.info.djinni_list[b].index;
         });
@@ -339,60 +336,20 @@ export class MainChar extends Player {
     init_djinni(djinni: string[]) {
         for (let i = 0; i < djinni.length; ++i) {
             const djinn = this.info.djinni_list[djinni[i]];
-            switch (djinn.element) {
-                case elements.VENUS:
-                    this.venus_djinni.push(djinn.key_name);
-                    break;
-                case elements.MERCURY:
-                    this.mercury_djinni.push(djinn.key_name);
-                    break;
-                case elements.MARS:
-                    this.mars_djinni.push(djinn.key_name);
-                    break;
-                case elements.JUPITER:
-                    this.jupiter_djinni.push(djinn.key_name);
-                    break;
-            }
+            this.djinn_by_element[djinn.element].push(djinn.key_name);
         }
         this.update_elemental_attributes();
     }
 
     add_djinn(djinn_key_name: string) {
         const djinn = this.info.djinni_list[djinn_key_name];
-        switch (djinn.element) {
-            case elements.VENUS:
-                this.venus_djinni.push(djinn.key_name);
-                break;
-            case elements.MERCURY:
-                this.mercury_djinni.push(djinn.key_name);
-                break;
-            case elements.MARS:
-                this.mars_djinni.push(djinn.key_name);
-                break;
-            case elements.JUPITER:
-                this.jupiter_djinni.push(djinn.key_name);
-                break;
-        }
+        this.djinn_by_element[djinn.element].push(djinn.key_name);
         this.update_all();
     }
 
     remove_djinn(djinn_key_name: string) {
         const djinn = this.info.djinni_list[djinn_key_name];
-        let this_djinni_list;
-        switch (djinn.element) {
-            case elements.VENUS:
-                this_djinni_list = this.venus_djinni;
-                break;
-            case elements.MERCURY:
-                this_djinni_list = this.mercury_djinni;
-                break;
-            case elements.MARS:
-                this_djinni_list = this.mars_djinni;
-                break;
-            case elements.JUPITER:
-                this_djinni_list = this.jupiter_djinni;
-                break;
-        }
+        const this_djinni_list = this.djinn_by_element[djinn.element];
         const index = this_djinni_list.indexOf(djinn_key_name);
         if (index !== -1) this_djinni_list.splice(index, 1);
         this.update_all();

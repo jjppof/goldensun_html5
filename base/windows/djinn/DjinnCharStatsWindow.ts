@@ -142,7 +142,7 @@ export class DjinnCharStatsWindow {
 
         elements_list.forEach((element, i) => {
             this.base_window.update_text(
-                this.char[element + "_djinni"].length.toString(),
+                this.char.djinn_by_element[element].length.toString(),
                 this.djinn_number_texts[element]
             );
             const star_width = 6,
