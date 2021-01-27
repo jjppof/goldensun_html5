@@ -11,6 +11,7 @@ import {MoveEvent} from "./MoveEvent";
 import {DialogEvent} from "./DialogEvent";
 import {LookEvent} from "./LookEvent";
 import {ChestEvent} from "./ChestEvent";
+import {TimerEvent} from "./TimerEvent";
 
 export enum interaction_patterns {
     TIK_TAK_TOE = "tik_tak_toe",
@@ -223,6 +224,8 @@ export class GameEventManager {
                     info.quantity,
                     info.open_finish_events
                 );
+            case event_types.TIMER:
+                return new TimerEvent(this.game, this.data, info.active, info.duration, info.time_finish_events);
         }
     }
 
