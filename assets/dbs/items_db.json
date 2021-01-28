@@ -19,8 +19,58 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet"],
+        "equipable_chars": ["isaac", "garet", "piers"],
         "price": 7000,
+        "granted_ability": ""
+    },{
+        "key_name": "battle_mace",
+        "name": "Battle Mace",
+        "type": "weapons",
+        "description": "Mace",
+        "use_type": "no_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": false,
+        "important_item": false,
+        "carry_up_to_30": false,
+        "effects": [{
+            "type": "attack",
+            "quantity": 56,
+            "operator": "plus"
+        }],
+        "attribute": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "",
+        "equipable_chars": ["isaac", "garet", "piers"],
+        "price": 2600,
+        "granted_ability": ""
+    },{
+        "key_name": "thunder_crown",
+        "name": "Thunder Crown",
+        "type": "head_protector",
+        "description": "Cursed Crown: Replenishes PP",
+        "use_type": "no_use",
+        "curses_when_equipped": true,
+        "cant_be_removed": true,
+        "rare_item": true,
+        "important_item": false,
+        "carry_up_to_30": false,
+        "effects": [{
+            "type": "defense",
+            "quantity": 40,
+            "operator": "plus"
+        },{
+            "type": "pp_recovery",
+            "quantity": 4,
+            "operator": "plus"
+        }],
+        "attribute": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "",
+        "equipable_chars": ["isaac", "garet", "piers"],
+        "price": 7500,
         "granted_ability": ""
     },{
         "key_name": "gaia_blade",
@@ -54,7 +104,7 @@
         "unleash_ability": "titan_blade",
         "unleash_rate": 0.35,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet"],
+        "equipable_chars": ["isaac", "garet", "piers"],
         "price": 17000,
         "granted_ability": ""
     },{
@@ -79,7 +129,7 @@
         "unleash_ability": "vorpal_slash",
         "unleash_rate": 0.35,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet"],
+        "equipable_chars": ["isaac", "garet", "piers"],
         "price": 2200,
         "granted_ability": ""
     },{
@@ -102,7 +152,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet"],
+        "equipable_chars": ["isaac", "garet", "piers"],
         "price": 3000,
         "granted_ability": ""
     },{
@@ -125,7 +175,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet"],
+        "equipable_chars": ["isaac", "garet", "piers"],
         "price": 4600,
         "granted_ability": ""
     },{
@@ -148,7 +198,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet"],
+        "equipable_chars": ["isaac", "garet", "piers"],
         "price": 4900,
         "granted_ability": ""
     },{
@@ -204,7 +254,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet"],
+        "equipable_chars": ["isaac", "garet", "piers"],
         "price": 15000,
         "granted_ability": ""
     },{
@@ -225,6 +275,44 @@
         "use_ability": "cookie",
         "equipable_chars": [],
         "price": 500,
+        "granted_ability": ""
+    },{
+        "key_name": "antidote",
+        "name": "Antidote",
+        "type": "general_item",
+        "description": "Cures Poison",
+        "use_type": "single_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": true,
+        "important_item": false,
+        "carry_up_to_30": true,
+        "effects": [],
+        "attribute": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "antidote",
+        "equipable_chars": [],
+        "price": 20,
+        "granted_ability": ""
+    },{
+        "key_name": "elixir",
+        "name": "Elixir",
+        "type": "general_item",
+        "description": "Cures Delusion, Stun, & Sleep",
+        "use_type": "single_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": true,
+        "important_item": false,
+        "carry_up_to_30": true,
+        "effects": [],
+        "attribute": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "elixir",
+        "equipable_chars": [],
+        "price": 20,
         "granted_ability": ""
     },{
         "key_name": "herb",
@@ -524,7 +612,7 @@
         "unleash_ability": "flare_burst",
         "unleash_rate": 35,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet"],
+        "equipable_chars": ["isaac", "garet", "piers"],
         "price": 15200,
         "granted_ability": ""
     },

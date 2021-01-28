@@ -300,6 +300,78 @@
         "priority_move": false,
         "msg_type": "use"
     },{
+        "key_name": "antidote",
+        "name": "Antidote",
+        "description": "",
+        "type": "utility",
+        "element": "no_element",
+        "battle_target": "ally",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 0,
+        "effects_outside_battle": true,
+        "is_battle_ability": false,
+        "is_field_psynergy": false,
+        "effects": [{
+            "type": "permanent_status",
+            "chance": 1.0,
+            "add_status": false,
+            "status_key_name": "poison",
+            "usage": "on_use"
+        },{
+            "type": "permanent_status",
+            "chance": 1.0,
+            "add_status": false,
+            "status_key_name": "venom",
+            "usage": "on_use"
+        }],
+        "ability_category": "item",
+        "battle_animation_key": "",
+        "priority_move": false,
+        "msg_type": "use"
+    },{
+        "key_name": "elixir",
+        "name": "Elixir",
+        "description": "",
+        "type": "utility",
+        "element": "no_element",
+        "battle_target": "ally",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 0,
+        "effects_outside_battle": true,
+        "is_battle_ability": false,
+        "is_field_psynergy": false,
+        "effects": [{
+            "type": "temporary_status",
+            "chance": 1.0,
+            "add_status": false,
+            "status_key_name": "stun",
+            "usage": "on_use"
+        },{
+            "type": "temporary_status",
+            "chance": 1.0,
+            "add_status": false,
+            "status_key_name": "sleep",
+            "usage": "on_use"
+        },{
+            "type": "temporary_status",
+            "chance": 1.0,
+            "add_status": false,
+            "status_key_name": "delusion",
+            "usage": "on_use"
+        },{
+            "type": "temporary_status",
+            "chance": 1.0,
+            "add_status": false,
+            "status_key_name": "death_curse",
+            "usage": "on_use"
+        }],
+        "ability_category": "item",
+        "battle_animation_key": "",
+        "priority_move": false,
+        "msg_type": "use"
+    },{
         "key_name": "whirlwind",
         "name": "Whirlwind",
         "description": "Attack with a swirling tornado.",
@@ -333,6 +405,24 @@
         "effects": [],
         "ability_category": "psynergy",
         "battle_animation_key": "frost",
+        "priority_move": false,
+        "msg_type": "cast"
+    },{
+        "key_name": "douse",
+        "name": "Douse",
+        "description": "Attack with a surge of water.",
+        "type": "base_damage",
+        "element": "mercury",
+        "battle_target": "enemy",
+        "range": 3,
+        "pp_cost": 5,
+        "ability_power": 25,
+        "effects_outside_battle": false,
+        "is_battle_ability": true,
+        "is_field_psynergy": true,
+        "effects": [],
+        "ability_category": "psynergy",
+        "battle_animation_key": "douse",
         "priority_move": false,
         "msg_type": "cast"
     },{

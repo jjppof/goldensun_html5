@@ -155,5 +155,53 @@
         "def_boost": 0,
         "agi_boost": 0,
         "luk_boost": 0
+    },{
+        "key_name": "fog",
+        "name": "Fog",
+        "description": "Blind an enemy with fog.",
+        "element": "mercury",
+        "ability_key_name": "fog",
+        "hp_boost": 9,
+        "pp_boost": 0,
+        "atk_boost": 0,
+        "def_boost": 2,
+        "agi_boost": 2,
+        "luk_boost": 1
+    },{
+        "key_name": "sour",
+        "name": "Sour",
+        "description": "Reduce a foe's resistance.",
+        "element": "mercury",
+        "ability_key_name": "sour",
+        "hp_boost": 8,
+        "pp_boost": 4,
+        "atk_boost": 3,
+        "def_boost": 0,
+        "agi_boost": 0,
+        "luk_boost": 0
+    },{
+        "key_name": "spring",
+        "name": "Spring",
+        "description": "Restore HP with healing herbs.",
+        "element": "mercury",
+        "ability_key_name": "spring",
+        "hp_boost": 11,
+        "pp_boost": 5,
+        "atk_boost": 0,
+        "def_boost": 0,
+        "agi_boost": 0,
+        "luk_boost": 0
+    },{
+        "key_name": "shade",
+        "name": "Shade",
+        "description": "Create a watery shield.",
+        "element": "mercury",
+        "ability_key_name": "shade",
+        "hp_boost": 9,
+        "pp_boost": 0,
+        "atk_boost": 0,
+        "def_boost": 3,
+        "agi_boost": 0,
+        "luk_boost": 2
     }
 ]
