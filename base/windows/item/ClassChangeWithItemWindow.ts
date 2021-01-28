@@ -98,7 +98,8 @@ export class ClassChangeWithItemWindow {
             this.data.dbs.classes_db.class_table,
             this.char.element_afinity,
             this.char.current_level,
-            this.item_obj.equipped ? -1 : this.item.granted_class_type
+            this.item_obj.equipped ? -1 : this.item.granted_class_type,
+            this.char.special_class_type
         );
 
         this.base_window.update_text(preview_class ? preview_class.name : "", this.preview_class_text);

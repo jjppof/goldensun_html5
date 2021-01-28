@@ -475,6 +475,7 @@
         "battle_scale": 0.85,
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
+        "special_class_type": 14,
         "djinni": ["fog", "sour", "spring", "shade"],
         "items": [
             {

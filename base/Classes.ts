@@ -65,9 +65,16 @@ export function choose_right_class(
     class_table,
     element_afinity: elements,
     current_level: Player["current_level"],
-    granted_class_type: number
+    granted_class_type: number,
+    special_class_type: number
 ): Classes {
-    const class_type = choose_class_type(class_table, element_afinity, current_level, granted_class_type);
+    const class_type = choose_class_type(
+        class_table,
+        element_afinity,
+        current_level,
+        granted_class_type,
+        special_class_type
+    );
     return choose_class_by_type(classes_list, current_level, class_type);
 }
 
@@ -101,17 +108,19 @@ function choose_class_type(
     class_table,
     element_afinity: elements,
     current_level: Player["current_level"],
-    granted_class_type: number
+    granted_class_type: number,
+    special_class_type: number
 ): number {
     return granted_class_type > 0
         ? granted_class_type
-        : choose_class_type_by_element_afinity(class_table, element_afinity, current_level);
+        : choose_class_type_by_element_afinity(class_table, element_afinity, current_level, special_class_type);
 }
 
 export function choose_class_type_by_element_afinity(
     class_table,
     element_afinity: elements,
-    current_level: Player["current_level"]
+    current_level: Player["current_level"],
+    special_class_type: number
 ): number {
     let secondary_elements = [
         ...(element_afinity !== elements.VENUS
@@ -133,5 +142,9 @@ export function choose_class_type_by_element_afinity(
         secondary_afinity = _.maxBy(secondary_elements, element => element.level).element;
     }
 
-    return class_table[element_afinity][secondary_afinity];
+    if (special_class_type > 0 && element_afinity === secondary_afinity) {
+        return special_class_type;
+    } else {
+        return class_table[element_afinity][secondary_afinity];
+    }
 }

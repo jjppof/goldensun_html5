@@ -75,6 +75,7 @@ export class MainChar extends Player {
     public innate_abilities: string[];
     public in_party: boolean;
     public abilities: string[];
+    public special_class_type: number;
 
     constructor(
         key_name,
@@ -103,7 +104,8 @@ export class MainChar extends Player {
         items,
         battle_animations_variations,
         battle_shadow_key,
-        status_sprite_shift
+        status_sprite_shift,
+        special_class_type
     ) {
         super(key_name, name);
         this.info = info;
@@ -113,6 +115,7 @@ export class MainChar extends Player {
         this.climb_speed = climb_speed;
         this.starting_level = starting_level;
         this.level = this.starting_level;
+        this.special_class_type = special_class_type ?? -1;
         this.class_table = class_table;
         this.battle_scale = battle_scale;
         this.exp_curve = exp_curve;
@@ -188,7 +191,8 @@ export class MainChar extends Player {
             this.class_table,
             this.element_afinity,
             this.current_level,
-            this.granted_class_type
+            this.granted_class_type,
+            this.special_class_type
         );
     }
 
@@ -384,7 +388,8 @@ export class MainChar extends Player {
             this.class_table,
             this.element_afinity,
             lvls,
-            this.granted_class_type
+            this.granted_class_type,
+            this.special_class_type
         );
         let return_obj = {
             class_name: this.class.name,
