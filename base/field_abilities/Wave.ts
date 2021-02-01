@@ -42,8 +42,8 @@ export class Wave {
     }
 
     private resize(width: number, height: number) {
-        this.width = width;
-        this.height = height;
+        this.width = width | 0;
+        this.height = height | 0;
         this.half_height = this.height >> 1;
         this.half_width = this.width >> 1;
         this.half_width_sqr = this.half_width * this.half_width;
