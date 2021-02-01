@@ -1408,7 +1408,7 @@
             "luk_boost": 1.2,
             "ability_level_pairs": [
                 {"ability": "cutting_edge", "level": 11},
-                {"ability": "blast", "level": 2},
+                {"ability": "blast_2", "level": 2},
                 {"ability": "mad_blast", "level": 10},
                 {"ability": "fiery_blast", "level": 28},
                 {"ability": "cure_poison", "level": 5},
@@ -1433,7 +1433,7 @@
             "luk_boost": 1.2,
             "ability_level_pairs": [
                 {"ability": "cutting_edge", "level": 11},
-                {"ability": "blast", "level": 2},
+                {"ability": "blast_2", "level": 2},
                 {"ability": "mad_blast", "level": 10},
                 {"ability": "fiery_blast", "level": 28},
                 {"ability": "ply", "level": 2},
@@ -1462,7 +1462,7 @@
             "luk_boost": 1.2,
             "ability_level_pairs": [
                 {"ability": "cutting_edge", "level": 11},
-                {"ability": "blast", "level": 2},
+                {"ability": "blast_2", "level": 2},
                 {"ability": "mad_blast", "level": 10},
                 {"ability": "fiery_blast", "level": 28},
                 {"ability": "ply", "level": 2},
