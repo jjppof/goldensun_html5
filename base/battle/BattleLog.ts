@@ -118,9 +118,7 @@ export class BattleLog {
             case effect_types.POWER:
             case effect_types.RESIST:
                 await this.add(
-                    `${player.name}'s ${element_names[effect.element]} ${
-                        effect_names[effect.type]
-                    } returns to normal!`
+                    `${player.name}'s ${element_names[effect.element]} ${effect_names[effect.type]} returns to normal!`
                 );
                 break;
             case effect_types.TEMPORARY_STATUS:

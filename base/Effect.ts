@@ -163,8 +163,7 @@ export class Effect {
             this.sub_effect.quantity_is_absolute === undefined ? false : this.sub_effect.quantity_is_absolute;
         this.sub_effect.rate = this.sub_effect.rate === undefined ? 1.0 : this.sub_effect.rate;
         this.sub_effect.chance = this.sub_effect.chance === undefined ? 1.0 : this.sub_effect.chance;
-        this.sub_effect.element =
-            this.sub_effect.element === undefined ? elements.NO_ELEMENT : this.sub_effect.element;
+        this.sub_effect.element = this.sub_effect.element === undefined ? elements.NO_ELEMENT : this.sub_effect.element;
         this.sub_effect.variation_on_final_result =
             this.sub_effect.variation_on_final_result === undefined ? false : this.sub_effect.variation_on_final_result;
         this.sub_effect.usage = this.sub_effect.usage === undefined ? effect_usages.NOT_APPLY : this.sub_effect.usage;
