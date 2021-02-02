@@ -847,7 +847,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 */
 
     async apply_effects(action: PlayerAbility, ability: Ability, effect: Effect) {
-        let effect_result: {effect: Effect; changes: any};
+        let effect_result: ReturnType<Player["add_effect"]>;
 
         for (let j = 0; j < action.targets.length; ++j) {
             const target_info = action.targets[j];
@@ -972,7 +972,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
                     await this.check_downed(target_instance);
 
-                    if (effect_result.effect.turns_quantity !== undefined) {
+                    if (effect_result.effect.turns_quantity !== -1) {
                         this.on_going_effects.push(effect_result.effect);
                     } else {
                         target_instance.remove_effect(effect_result.effect);
@@ -989,31 +989,42 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 case effect_types.POWER:
                 case effect_types.RESIST:
                     effect_result = target_instance.add_effect(effect, ability, true);
-                    this.on_going_effects.push(effect_result.effect);
-                    target_instance.set_effect_turns_count(
-                        effect_result.effect,
-                        effect_result.effect.turn_count,
-                        false
-                    );
-
-                    if (effect_result.effect.show_msg) {
-                        const diff = effect_result.changes.after - effect_result.changes.before;
-                        const text = diff >= 0 ? "rises" : "drops";
-                        let element_info = "";
-
-                        if ([effect_types.POWER, effect_types.RESIST].includes(effect.type)) {
-                            element_info = element_names[effect_result.effect.element] + " ";
-                        }
-
-                        await this.battle_log.add(
-                            `${target_instance.name}'s ${element_info}${
-                                effect_names[effect.type]
-                            } ${text} by ${Math.abs(diff)}!`
+                    if (effect.remove_buff) {
+                        this.on_going_effects = this.on_going_effects.filter(
+                            effect => !effect_result.changes.removed_effects.includes(effect)
                         );
-                        this.battle_menu.chars_status_window.update_chars_info();
-                        await this.wait_for_key();
+                        if (effect_result.effect.show_msg) {
+                            await this.battle_log.add(`${target_instance.name}'s strength return to normal!`);
+                            await this.wait_for_key();
+                        }
+                        break;
+                    } else {
+                        this.on_going_effects.push(effect_result.effect);
+                        target_instance.set_effect_turns_count(
+                            effect_result.effect,
+                            effect_result.effect.turn_count,
+                            false
+                        );
+
+                        if (effect_result.effect.show_msg) {
+                            const diff = effect_result.changes.after - effect_result.changes.before;
+                            const text = diff >= 0 ? "rises" : "drops";
+                            let element_info = "";
+
+                            if ([effect_types.POWER, effect_types.RESIST].includes(effect.type)) {
+                                element_info = element_names[effect_result.effect.element] + " ";
+                            }
+
+                            await this.battle_log.add(
+                                `${target_instance.name}'s ${element_info}${
+                                    effect_names[effect.type]
+                                } ${text} by ${Math.abs(diff)}!`
+                            );
+                            this.battle_menu.chars_status_window.update_chars_info();
+                            await this.wait_for_key();
+                        }
+                        break;
                     }
-                    break;
 
                 case effect_types.END_THE_ROUND:
                     await this.battle_log.add(`Everybody is resting!`);
@@ -1059,7 +1070,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 continue;
             }
             let avoid_msg = false;
-            if (effect.turn_count !== undefined) {
+            if (effect.turn_count !== -1) {
                 if (effect.char.get_effect_turns_count(effect) !== null) {
                     if (
                         !(effect.char.key_name in effect_groups) ||

@@ -238,7 +238,14 @@ export abstract class Player {
         }
     }
 
-    add_effect(effect_obj, effect_owner_instance, apply = false) {
+    add_effect(
+        effect_obj,
+        effect_owner_instance,
+        apply = false
+    ): {
+        effect: Effect;
+        changes: ReturnType<Effect["apply_effect"]>;
+    } {
         let effect = new Effect(
             effect_obj.type,
             effect_obj.quantity,
@@ -249,6 +256,7 @@ export abstract class Player {
             effect_obj.chance,
             effect_obj.element,
             effect_obj.add_status,
+            effect_obj.remove_buff,
             effect_obj.status_key_name,
             effect_obj.turns_quantity,
             effect_obj.variation_on_final_result,
@@ -262,7 +270,7 @@ export abstract class Player {
             this
         );
         this.effects.push(effect);
-        let changes;
+        let changes: ReturnType<Effect["apply_effect"]>;
         if (apply) {
             changes = effect.apply_effect();
         }

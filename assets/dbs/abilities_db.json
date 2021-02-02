@@ -2706,7 +2706,39 @@
         "effects_outside_battle": false,
         "is_battle_ability": true,
         "is_field_psynergy": false,
-        "effects": [],
+        "effects": [{
+            "type": "attack",
+            "chance": 1.0,
+            "remove_buff": true,
+            "usage": "on_use"
+        },{
+            "type": "defense",
+            "chance": 1.0,
+            "remove_buff": true,
+            "usage": "on_use"
+        },{
+            "type": "agility",
+            "chance": 1.0,
+            "remove_buff": true,
+            "usage": "on_use"
+        },{
+            "type": "luck",
+            "chance": 1.0,
+            "remove_buff": true,
+            "usage": "on_use"
+        },{
+            "type": "power",
+            "chance": 1.0,
+            "remove_buff": true,
+            "usage": "on_use",
+            "element": "all_elements"
+        },{
+            "type": "resist",
+            "chance": 1.0,
+            "remove_buff": true,
+            "usage": "on_use",
+            "element": "all_elements"
+        }],
         "ability_category": "psynergy",
         "battle_animation_key": "break",
         "priority_move": false,

@@ -74,6 +74,7 @@ export class Effect {
     public chance: number;
     public element: elements;
     public add_status: boolean;
+    public remove_buff: boolean;
     public status_key_name: permanent_status | temporary_status;
     public turns_quantity: number;
     public turn_count: number;
@@ -107,6 +108,7 @@ export class Effect {
         chance, //default: 1.0
         element, //default: no_element
         add_status, //boolean. If false, remove status
+        remove_buff, //boolean. If true, remove buffs
         status_key_name,
         turns_quantity,
         variation_on_final_result,
@@ -128,8 +130,9 @@ export class Effect {
         this.chance = chance === undefined ? 1.0 : chance;
         this.element = element === undefined ? elements.NO_ELEMENT : element;
         this.add_status = add_status;
+        this.remove_buff = remove_buff;
         this.status_key_name = status_key_name;
-        this.turns_quantity = turns_quantity;
+        this.turns_quantity = turns_quantity ?? -1;
         this.turn_count = turns_quantity;
         this.variation_on_final_result = variation_on_final_result === undefined ? false : variation_on_final_result;
         this.damage_formula_key_name = damage_formula_key_name;
@@ -257,14 +260,36 @@ export class Effect {
         }
     }
 
-    apply_effect(direct_value?) {
+    remove_char_buffs(type: effect_types, element?: elements) {
+        const removed_effects: Effect[] = [];
+        this.char.effects.forEach(effect => {
+            if (effect.type !== type || effect.turns_quantity === -1) return;
+            if (element !== undefined && effect.element === element) return;
+            if (Math.random() <= this.chance) return;
+            effect.char.remove_effect(effect);
+            effect.char.update_all();
+            removed_effects.push(effect);
+        });
+        return {removed_effects: removed_effects};
+    }
+
+    apply_effect(
+        direct_value?
+    ): {
+        before?: number;
+        after?: number;
+        removed_effects?: Effect[];
+    } {
         switch (this.type) {
-            case effect_types.MAX_HP:
-            case effect_types.MAX_PP:
             case effect_types.ATTACK:
             case effect_types.DEFENSE:
             case effect_types.AGILITY:
             case effect_types.LUCK:
+                if (this.remove_buff) {
+                    return this.remove_char_buffs(this.type);
+                }
+            case effect_types.MAX_HP:
+            case effect_types.MAX_PP:
                 return this.apply_general_value(effect_type_stat[this.type]);
             case effect_types.HP_RECOVERY:
                 return this.apply_general_value("hp_recovery");
@@ -279,9 +304,17 @@ export class Effect {
                 this.check_caps(main_stats.CURRENT_PP, main_stats.MAX_PP, 0, result_current_pp);
                 return result_current_pp;
             case effect_types.POWER:
-                return this.apply_general_value("current_power", undefined, this.element);
+                if (this.remove_buff) {
+                    return this.remove_char_buffs(this.type, this.element);
+                } else {
+                    return this.apply_general_value("current_power", undefined, this.element);
+                }
             case effect_types.RESIST:
-                return this.apply_general_value("current_resist", undefined, this.element);
+                if (this.remove_buff) {
+                    return this.remove_char_buffs(this.type, this.element);
+                } else {
+                    return this.apply_general_value("current_resist", undefined, this.element);
+                }
             case effect_types.TURNS:
                 this.turn_count = 1;
                 return this.apply_general_value("turns");
