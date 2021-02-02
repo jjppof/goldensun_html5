@@ -43,7 +43,7 @@ export class Item {
     public important_item: boolean;
     public carry_up_to_30: boolean;
     public effects: any;
-    public attribute: elements;
+    public element: elements;
     public unleash_ability: string;
     public unleash_rate: number;
     public use_ability: string;
@@ -65,7 +65,7 @@ export class Item {
         important_item,
         carry_up_to_30,
         effects,
-        attribute,
+        element,
         unleash_ability,
         unleash_rate,
         use_ability,
@@ -85,7 +85,7 @@ export class Item {
         this.important_item = important_item;
         this.carry_up_to_30 = carry_up_to_30;
         this.effects = effects;
-        this.attribute = attribute;
+        this.element = element;
         this.unleash_ability = unleash_ability;
         this.unleash_rate = unleash_rate;
         this.use_ability = use_ability;

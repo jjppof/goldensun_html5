@@ -78,7 +78,7 @@ export class BattleFormulas {
     static power_multiplier(caster: Player, target: Player, element: elements, is_psynergy = true) {
         let caster_power = 100.0,
             target_resist = 100.0;
-        if (element !== elements.NO_ELEMENT) {
+        if (element !== elements.NO_ELEMENT && element !== elements.ALL_ELEMENTS) {
             target_resist = target.current_resist[element];
             if (caster !== undefined) {
                 caster_power = caster.current_power[element];
@@ -105,7 +105,7 @@ export class BattleFormulas {
 
     static heal_ability(caster: Player, power: number, element: elements) {
         let caster_power = 100.0;
-        if (element !== elements.NO_ELEMENT) {
+        if (element !== elements.NO_ELEMENT && element !== elements.ALL_ELEMENTS) {
             caster_power = caster.current_power[element];
         }
         return (power * caster_power) / 100.0;

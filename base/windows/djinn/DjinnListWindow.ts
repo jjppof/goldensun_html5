@@ -257,7 +257,7 @@ export class DjinnListWindow {
 
             for (let key in elements) {
                 const elem = elements[key];
-                if (elem === elements.NO_ELEMENT) continue;
+                if (elem === elements.NO_ELEMENT || elem === elements.ALL_ELEMENTS) continue;
 
                 const x = DJINN_SPRITE_X + i * CHAR_X_BETWEEN;
                 this.djinns_sprites[i][elem] = this.chars_sprites_group.create(x, CHAR_Y_PADDING, elem + "_djinn_set");
@@ -706,7 +706,7 @@ export class DjinnListWindow {
         for (let i = 0; i < CHARS_PER_PAGE; ++i) {
             for (let key in elements) {
                 const elem = elements[key];
-                if (elem === elements.NO_ELEMENT) continue;
+                if (elem === elements.NO_ELEMENT || elem === elements.ALL_ELEMENTS) continue;
                 this.djinns_sprites[i][elem].y += numbers.FONT_SIZE;
             }
             this.base_window.update_text("", this.djinni_status_texts[i]);
@@ -748,7 +748,7 @@ export class DjinnListWindow {
         for (let i = 0; i < CHARS_PER_PAGE; ++i) {
             for (let key in elements) {
                 const elem = elements[key];
-                if (elem === elements.NO_ELEMENT) continue;
+                if (elem === elements.NO_ELEMENT || elem === elements.ALL_ELEMENTS) continue;
                 this.djinns_sprites[i][elem].y -= numbers.FONT_SIZE;
             }
         }

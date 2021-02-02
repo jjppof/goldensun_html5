@@ -49,7 +49,7 @@ export class ChoosingTargetWindow {
     public sprites: Phaser.Sprite[];
     public action: string;
     public texts: TextObj[];
-    public element: string;
+    public element: elements;
     public ability_name: string;
     public ability_name_x: number;
     public window_sprites: (Phaser.Sprite | Phaser.Group)[];
@@ -85,7 +85,7 @@ export class ChoosingTargetWindow {
             this.action === "item" ? this.data.info.items_list[this.item_obj.key_name].name : this.ability_name;
         const name = this.base_window.set_text_in_position(display_name, this.ability_name_x, ABILITY_NAME_Y);
         this.texts.push(name);
-        if (this.element && this.element !== elements.NO_ELEMENT && !["summon", "item"].includes(this.action)) {
+        if (this.element && ![elements.NO_ELEMENT, elements.ALL_ELEMENTS].includes(this.element) && !["summon", "item"].includes(this.action)) {
             const star = this.base_window.create_at_group(this.star_x, STAR_Y, "stars", undefined, this.element);
             this.window_sprites.push(star);
         }

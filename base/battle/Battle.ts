@@ -630,7 +630,7 @@ export class Battle {
                             type: "power",
                             quantity: power,
                             operator: "plus",
-                            attribute: element,
+                            element: element,
                         },
                         ability,
                         true
@@ -1002,7 +1002,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         let element_info = "";
 
                         if ([effect_types.POWER, effect_types.RESIST].includes(effect.type)) {
-                            element_info = element_names[effect_result.effect.attribute] + " ";
+                            element_info = element_names[effect_result.effect.element] + " ";
                         }
 
                         await this.battle_log.add(

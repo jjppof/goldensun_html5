@@ -1,6 +1,6 @@
 import * as numbers from "../magic_numbers";
 import {ability_msg_types} from "../Ability";
-import {effect_names, effect_types} from "../Effect";
+import {Effect, effect_names, effect_types} from "../Effect";
 import {element_names} from "../utils";
 import {main_stats, on_remove_status_msg} from "../Player";
 
@@ -104,7 +104,7 @@ export class BattleLog {
         }
     }
 
-    async add_recover_effect(effect) {
+    async add_recover_effect(effect: Effect) {
         const player = effect.char;
         switch (effect.type) {
             case effect_types.MAX_HP:
@@ -118,7 +118,7 @@ export class BattleLog {
             case effect_types.POWER:
             case effect_types.RESIST:
                 await this.add(
-                    `${player.name}'s ${element_names[effect.attribute]} ${
+                    `${player.name}'s ${element_names[effect.element]} ${
                         effect_names[effect.type]
                     } returns to normal!`
                 );

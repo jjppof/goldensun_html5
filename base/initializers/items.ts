@@ -16,7 +16,7 @@ export function initialize_items(game, items_db, load_promise_resolve) {
             item_data.important_item,
             item_data.carry_up_to_30,
             item_data.effects,
-            item_data.attribute,
+            item_data.element,
             item_data.unleash_ability,
             item_data.unleash_rate,
             item_data.use_ability,

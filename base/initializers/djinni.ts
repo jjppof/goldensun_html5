@@ -40,7 +40,7 @@ export function initialize_djinni_sprites(game, load_promise_resolve) {
     let djinni_sprites = {};
     for (let key in elements) {
         const element = elements[key];
-        if (element === elements.NO_ELEMENT) continue;
+        if (element === elements.NO_ELEMENT || element === elements.ALL_ELEMENTS) continue;
         djinni_sprites[element] = new SpriteBase(element + "_djinn", actions);
         for (let j = 0; j < actions.length; ++j) {
             const action = actions[j];

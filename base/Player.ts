@@ -192,7 +192,7 @@ export abstract class Player {
                 return effect.type;
             case effect_types.POWER:
             case effect_types.RESIST:
-                return effect.type + "_" + effect.attribute;
+                return effect.type + "_" + effect.element;
         }
         return null;
     }
@@ -210,7 +210,7 @@ export abstract class Player {
                 return this.effect_turns_count[effect.type];
             case effect_types.POWER:
             case effect_types.RESIST:
-                return this.effect_turns_count[effect.type][effect.attribute];
+                return this.effect_turns_count[effect.type][effect.element];
         }
         return null;
     }
@@ -232,8 +232,8 @@ export abstract class Player {
                     : value);
             case effect_types.POWER:
             case effect_types.RESIST:
-                return (this.effect_turns_count[effect.type][effect.attribute] = relative
-                    ? this.effect_turns_count[effect.type][effect.attribute] + value
+                return (this.effect_turns_count[effect.type][effect.element] = relative
+                    ? this.effect_turns_count[effect.type][effect.element] + value
                     : value);
         }
     }
@@ -247,7 +247,7 @@ export abstract class Player {
             effect_obj.quantity_is_absolute,
             effect_obj.rate,
             effect_obj.chance,
-            effect_obj.attribute,
+            effect_obj.element,
             effect_obj.add_status,
             effect_obj.status_key_name,
             effect_obj.turns_quantity,

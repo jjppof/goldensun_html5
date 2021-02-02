@@ -8,6 +8,7 @@ export enum elements {
     MARS = "mars",
     JUPITER = "jupiter",
     NO_ELEMENT = "no_element",
+    ALL_ELEMENTS = "all_elements",
 }
 
 /*Default elements order*/

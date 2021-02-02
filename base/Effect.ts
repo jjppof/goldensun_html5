@@ -72,7 +72,7 @@ export class Effect {
     public quantity_is_absolute: boolean;
     public rate: number;
     public chance: number;
-    public attribute: elements;
+    public element: elements;
     public add_status: boolean;
     public status_key_name: permanent_status | temporary_status;
     public turns_quantity: number;
@@ -90,7 +90,7 @@ export class Effect {
         quantity_is_absolute: boolean;
         rate: number;
         chance: number;
-        attribute: elements;
+        element: elements;
         variation_on_final_result: boolean;
         usage: string;
         on_caster: boolean;
@@ -105,7 +105,7 @@ export class Effect {
         quantity_is_absolute, //default: false
         rate, //default: 1.0
         chance, //default: 1.0
-        attribute, //default: no_element
+        element, //default: no_element
         add_status, //boolean. If false, remove status
         status_key_name,
         turns_quantity,
@@ -126,7 +126,7 @@ export class Effect {
         this.quantity_is_absolute = quantity_is_absolute === undefined ? false : quantity_is_absolute;
         this.rate = rate === undefined ? 1.0 : rate;
         this.chance = chance === undefined ? 1.0 : chance;
-        this.attribute = attribute === undefined ? elements.NO_ELEMENT : attribute;
+        this.element = element === undefined ? elements.NO_ELEMENT : element;
         this.add_status = add_status;
         this.status_key_name = status_key_name;
         this.turns_quantity = turns_quantity;
@@ -163,8 +163,8 @@ export class Effect {
             this.sub_effect.quantity_is_absolute === undefined ? false : this.sub_effect.quantity_is_absolute;
         this.sub_effect.rate = this.sub_effect.rate === undefined ? 1.0 : this.sub_effect.rate;
         this.sub_effect.chance = this.sub_effect.chance === undefined ? 1.0 : this.sub_effect.chance;
-        this.sub_effect.attribute =
-            this.sub_effect.attribute === undefined ? elements.NO_ELEMENT : this.sub_effect.attribute;
+        this.sub_effect.element =
+            this.sub_effect.element === undefined ? elements.NO_ELEMENT : this.sub_effect.element;
         this.sub_effect.variation_on_final_result =
             this.sub_effect.variation_on_final_result === undefined ? false : this.sub_effect.variation_on_final_result;
         this.sub_effect.usage = this.sub_effect.usage === undefined ? effect_usages.NOT_APPLY : this.sub_effect.usage;
@@ -280,9 +280,9 @@ export class Effect {
                 this.check_caps(main_stats.CURRENT_PP, main_stats.MAX_PP, 0, result_current_pp);
                 return result_current_pp;
             case effect_types.POWER:
-                return this.apply_general_value("current_power", undefined, this.attribute);
+                return this.apply_general_value("current_power", undefined, this.element);
             case effect_types.RESIST:
-                return this.apply_general_value("current_resist", undefined, this.attribute);
+                return this.apply_general_value("current_resist", undefined, this.element);
             case effect_types.TURNS:
                 this.turn_count = 1;
                 return this.apply_general_value("turns");

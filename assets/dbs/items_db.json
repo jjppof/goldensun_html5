@@ -15,7 +15,7 @@
             "quantity": 90,
             "operator": "plus"
         }],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -38,7 +38,7 @@
             "quantity": 56,
             "operator": "plus"
         }],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -65,7 +65,7 @@
             "quantity": 4,
             "operator": "plus"
         }],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -92,15 +92,15 @@
                 "type": "power",
                 "quantity": 20,
                 "operator": "plus",
-                "attribute": "venus"
+                "element": "venus"
             },{
                 "type": "resist",
                 "quantity": 20,
                 "operator": "plus",
-                "attribute": "venus"
+                "element": "venus"
             }
         ],
-        "attribute": "venus",
+        "element": "venus",
         "unleash_ability": "titan_blade",
         "unleash_rate": 0.35,
         "use_ability": "",
@@ -125,7 +125,7 @@
                 "operator": "plus"
             }
         ],
-        "attribute": "jupiter",
+        "element": "jupiter",
         "unleash_ability": "vorpal_slash",
         "unleash_rate": 0.35,
         "use_ability": "",
@@ -148,7 +148,7 @@
             "quantity": 28,
             "operator": "plus"
         }],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -171,7 +171,7 @@
             "quantity": 33,
             "operator": "plus"
         }],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -194,7 +194,7 @@
             "quantity": 36,
             "operator": "plus"
         }],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -217,7 +217,7 @@
             "quantity": 3,
             "operator": "plus"
         }],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -250,7 +250,7 @@
                 "operator": "plus"
             }
         ],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -269,7 +269,7 @@
         "important_item": false,
         "carry_up_to_30": true,
         "effects": [],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "cookie",
@@ -288,7 +288,7 @@
         "important_item": false,
         "carry_up_to_30": true,
         "effects": [],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "antidote",
@@ -307,7 +307,7 @@
         "important_item": false,
         "carry_up_to_30": true,
         "effects": [],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "elixir",
@@ -326,7 +326,7 @@
         "important_item": false,
         "carry_up_to_30": true,
         "effects": [],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "herb",
@@ -345,7 +345,7 @@
         "important_item": true,
         "carry_up_to_30": false,
         "effects": [],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -364,7 +364,7 @@
         "important_item": true,
         "carry_up_to_30": false,
         "effects": [],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -389,7 +389,7 @@
                 "operator": "plus"
             }
         ],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -414,7 +414,7 @@
                 "operator": "plus"
             }
         ],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "sarcophagus",
         "unleash_rate": 0.35,
         "use_ability": "",
@@ -442,7 +442,7 @@
             "quantity": 8,
             "operator": "plus"
         }],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -462,7 +462,7 @@
         "important_item": false,
         "carry_up_to_30": false,
         "effects": [],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "wish_well",
@@ -482,7 +482,7 @@
         "important_item": false,
         "carry_up_to_30": true,
         "effects": [],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -506,7 +506,7 @@
             "quantity": 6,
             "operator": "plus"
         }],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -530,7 +530,7 @@
             "quantity": 3,
             "operator": "plus"
         }],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -557,7 +557,7 @@
         {   "type": "agility",
             "quantity": 2,
             "operator": "divide"}],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -584,7 +584,7 @@
         {   "type": "luck",
             "quantity": 10,
             "operator": "plus"}],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
@@ -608,7 +608,7 @@
             "quantity": 158,
             "operator": "plus"
         }],
-        "attribute": "mars",
+        "element": "mars",
         "unleash_ability": "flare_burst",
         "unleash_rate": 35,
         "use_ability": "",
@@ -628,7 +628,7 @@
         "important_item": false,
         "carry_up_to_30": false,
         "effects": [],
-        "attribute": "no_element",
+        "element": "no_element",
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
