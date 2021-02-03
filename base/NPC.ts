@@ -34,17 +34,20 @@ export class NPC extends ControllableChar {
     public anchor_y: number;
     public scale_x: number;
     public scale_y: number;
+    public active: boolean;
     public storage_keys: {
         position?: string;
         action?: string;
         direction?: string;
         base_collision_layer?: string;
+        active?: string;
     };
 
     constructor(
         game,
         data,
         key_name,
+        active,
         initial_x,
         initial_y,
         storage_keys,
@@ -92,6 +95,10 @@ export class NPC extends ControllableChar {
         this.avatar = avatar ? avatar : null;
         this.shop_key = shop_key;
         this.inn_key = inn_key;
+        this.active = active ?? true;
+        if (this.storage_keys.active !== undefined) {
+            this.active = this.data.storage.get(this.storage_keys.active);
+        }
         if (this.storage_keys.base_collision_layer !== undefined) {
             base_collision_layer = this.data.storage.get(this.storage_keys.base_collision_layer);
         }
@@ -112,6 +119,7 @@ export class NPC extends ControllableChar {
     }
 
     set_events(events_info) {
+        if (!this.active) return;
         for (let i = 0; i < events_info.length; ++i) {
             const event = this.data.game_event_manager.get_event_instance(events_info[i]);
             this.events.push(event);
@@ -119,6 +127,7 @@ export class NPC extends ControllableChar {
     }
 
     update() {
+        if (!this.active) return;
         if (this.movement_type === npc_movement_types.IDLE) {
             this.stop_char(false);
             this.update_shadow();
@@ -126,6 +135,7 @@ export class NPC extends ControllableChar {
     }
 
     config_body(collision_obj: Collision) {
+        if (!this.active) return;
         this.game.physics.p2.enable(this.sprite, false);
         //Important to be after the previous command
         if (this.data.dbs.npc_db[this.key_name].anchor_x !== undefined) {

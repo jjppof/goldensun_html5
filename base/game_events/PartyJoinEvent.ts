@@ -2,24 +2,20 @@ import {NPC} from "../NPC";
 import {DialogManager} from "../utils/DialogManager";
 import {GameEvent, event_types} from "./GameEvent";
 import {Button} from "../XGamepad";
+import {MainChar} from "../MainChar";
 
-export class DialogEvent extends GameEvent {
-    private text: string;
-    private avatar: string;
+export class PartyJoinEvent extends GameEvent {
+    private char_key_name: string;
+    private join: boolean;
     private dialog_manager: DialogManager = null;
     private running: boolean = false;
     private control_enable: boolean = true;
-    private npc_hero_reciprocal_look: boolean = false;
-    private reset_reciprocal_look: boolean = true;
     private finish_events: GameEvent[] = [];
-    private previous_npc_direction: number;
 
-    constructor(game, data, active, text, avatar, npc_hero_reciprocal_look, reset_reciprocal_look, finish_events) {
-        super(game, data, event_types.DIALOG, active);
-        this.text = text;
-        this.avatar = avatar;
-        this.npc_hero_reciprocal_look = npc_hero_reciprocal_look ?? false;
-        this.reset_reciprocal_look = reset_reciprocal_look ?? true;
+    constructor(game, data, active, char_key_name, join, finish_events) {
+        super(game, data, event_types.PARTY_JOIN, active);
+        this.char_key_name = char_key_name;
+        this.join = join;
 
         this.data.control_manager.add_controls(
             [
@@ -47,9 +43,6 @@ export class DialogEvent extends GameEvent {
         this.dialog_manager.next(async finished => {
             this.control_enable = true;
             if (finished) {
-                if (this.origin_npc && this.npc_hero_reciprocal_look && this.reset_reciprocal_look) {
-                    await this.origin_npc.go_to_direction(this.previous_npc_direction);
-                }
                 this.running = false;
                 --this.data.game_event_manager.events_running_count;
                 this.finish_events.forEach(event => event.fire(this.origin_npc));
@@ -60,15 +53,21 @@ export class DialogEvent extends GameEvent {
     async fire(origin_npc?: NPC) {
         if (!this.active) return;
         ++this.data.game_event_manager.events_running_count;
-        this.control_enable = false;
-        this.running = true;
-        this.origin_npc = origin_npc;
-        if (this.origin_npc && this.npc_hero_reciprocal_look) {
-            this.previous_npc_direction = this.origin_npc.current_direction;
-            await this.data.game_event_manager.set_npc_and_hero_directions(this.origin_npc);
+        if (this.join) {
+            this.control_enable = false;
+            this.running = true;
+            this.origin_npc = origin_npc;
+            const new_char = this.data.info.main_char_list[this.char_key_name];
+            this.dialog_manager = new DialogManager(this.game, this.data);
+            const text = `${new_char.name} joined your party.`;
+            this.dialog_manager.set_dialog(text, this.char_key_name);
+            MainChar.add_member_to_party(this.data, this.data.info.party_data, this.char_key_name);
+            this.data.audio.play_se("misc/party_join");
+            this.next();
+        } else {
+            MainChar.remove_member_from_party(this.data, this.data.info.party_data, this.char_key_name);
+            --this.data.game_event_manager.events_running_count;
+            this.finish_events.forEach(event => event.fire(this.origin_npc));
         }
-        this.dialog_manager = new DialogManager(this.game, this.data);
-        this.dialog_manager.set_dialog(this.text, this.avatar);
-        this.next();
     }
 }

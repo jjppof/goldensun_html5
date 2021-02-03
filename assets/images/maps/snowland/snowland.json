@@ -209,7 +209,8 @@
      "event_05":"{\n\"type\": \"climb\",\n\"x\": 22,\n\"y\": 13,\n \"activation_directions\": \"up\",\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 0\n}",
      "event_06":"{\n\"type\": \"ice_slide\",\n\"x\": 22,\n\"y\": 14,\n \"activation_directions\": [\"up\", \"down\"],\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 0,\n\"start_sliding_direction\": \"down\"\n}",
      "event_07":"{\n\"type\": \"ice_slide\",\n\"x\": 24,\n\"y\": 14,\n \"activation_directions\": [\"up\", \"down\"],\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 0,\n\"start_sliding_direction\": \"down\"\n}",
-     "footprint":true
+     "footprint":true,
+     "npc_01":"{\n    \"key_name\": \"piers\",\n    \"initial_x\": 26,\n    \"initial_y\": 5,\n    \"initial_animation\": \"down\",\n    \"storage_keys\":{\n        \"active\": \"piers_active\"\n    },\n    \"npc_type\": \"normal\",\n    \"movement_type\": \"idle\",\n    \"message\": \"\",\n    \"thought_message\": \"Nothing to think about.\",\n    \"avatar\": \"piers\",\n    \"base_collision_layer\": 0,\n    \"events\": [{\n        \"type\": \"dialog\",\n        \"avatar\": \"piers\",\n        \"text\": \"A little bit easier to find me this time, right?\",\n        \"npc_hero_reciprocal_look\": true,\n        \"reset_reciprocal_look\": false,\n        \"finish_events\": [{\n            \"type\": \"move\",\n            \"is_npc\": true,\n            \"npc_index\": 0,\n            \"camera_follow\": false,\n            \"dest_unit_in_tile\": false,\n            \"dest\": {\n                \"x\": {\n                    \"type\": \"game_info\",\n                    \"value\": {\n                        \"type\": \"hero\",\n                        \"property\": \"sprite.x\"\n                    }\n                },\n                \"y\": {\n                    \"type\": \"game_info\",\n                    \"value\": {\n                        \"type\": \"hero\",\n                        \"property\": \"sprite.y\"\n                    }\n                }\n            },\n            \"finish_events\": [{\n                \"type\": \"party_join\",\n                \"join\": true,\n                \"char_key_name\": \"piers\"\n            },{\n                \"type\": \"set_value\",\n                \"event_value\": {\n                    \"type\": \"storage\",\n                    \"value\": {\n                        \"key_name\": \"piers_active\",\n                        \"value\": false\n                    }\n                }\n            }]\n        }]\n    }]\n}\n"
     },
  "propertytypes":
     {
@@ -220,7 +221,8 @@
      "event_05":"string",
      "event_06":"string",
      "event_07":"string",
-     "footprint":"bool"
+     "footprint":"bool",
+     "npc_01":"string"
     },
  "renderorder":"right-down",
  "tiledversion":"1.4.2",

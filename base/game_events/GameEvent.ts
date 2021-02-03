@@ -29,6 +29,7 @@ export enum event_types {
     LOOK = "look",
     CHEST = "chest",
     TIMER = "timer",
+    PARTY_JOIN = "party_join",
 }
 
 export abstract class GameEvent {

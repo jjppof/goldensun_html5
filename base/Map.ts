@@ -1,5 +1,5 @@
 import {NPC} from "./NPC";
-import {InteractableObjects, interactable_object_interaction_types} from "./InteractableObjects";
+import {InteractableObjects} from "./InteractableObjects";
 import {TileEvent} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
 import {GameEvent} from "./game_events/GameEvent";
@@ -298,40 +298,42 @@ export class Map {
             property_info.animation_key !== undefined
                 ? property_info.animation_key
                 : npc_db.actions[initial_action].initial_direction;
-        this.npcs.push(
-            new NPC(
-                this.game,
-                this.data,
-                property_info.key_name,
-                property_info.initial_x,
-                property_info.initial_y,
-                property_info.storage_keys,
-                initial_action,
-                initial_animation,
-                property_info.enable_footsteps,
-                npc_db.walk_speed,
-                npc_db.dash_speed,
-                npc_db.climb_speed,
-                property_info.npc_type,
-                property_info.movement_type,
-                property_info.message,
-                property_info.thought_message,
-                property_info.avatar,
-                property_info.shop_key,
-                property_info.inn_key,
-                property_info.base_collision_layer,
-                property_info.talk_range_factor,
-                property_info.events,
-                npc_db.no_shadow,
-                property_info.ignore_world_map_scale !== undefined
-                    ? property_info.ignore_world_map_scale
-                    : npc_db.ignore_world_map_scale,
-                property_info.anchor_x,
-                property_info.anchor_y,
-                property_info.scale_x,
-                property_info.scale_y
-            )
+        const npc = new NPC(
+            this.game,
+            this.data,
+            property_info.key_name,
+            property_info.active,
+            property_info.initial_x,
+            property_info.initial_y,
+            property_info.storage_keys,
+            initial_action,
+            initial_animation,
+            property_info.enable_footsteps,
+            npc_db.walk_speed,
+            npc_db.dash_speed,
+            npc_db.climb_speed,
+            property_info.npc_type,
+            property_info.movement_type,
+            property_info.message,
+            property_info.thought_message,
+            property_info.avatar,
+            property_info.shop_key,
+            property_info.inn_key,
+            property_info.base_collision_layer,
+            property_info.talk_range_factor,
+            property_info.events,
+            npc_db.no_shadow,
+            property_info.ignore_world_map_scale !== undefined
+                ? property_info.ignore_world_map_scale
+                : npc_db.ignore_world_map_scale,
+            property_info.anchor_x,
+            property_info.anchor_y,
+            property_info.scale_x,
+            property_info.scale_y
         );
+        if (npc.active) {
+            this.npcs.push(npc);
+        }
     }
 
     create_interactable_objects(raw_property) {

@@ -9,6 +9,7 @@ import {ELEM_ATTR_MIN, ELEM_ATTR_MAX} from "./magic_numbers";
 import * as _ from "lodash";
 import {GameInfo, PartyData} from "./initializers/initialize_info";
 import {Ability} from "./Ability";
+import {GoldenSun} from "./GoldenSun";
 
 export type ItemSlot = {
     key_name: string;
@@ -648,5 +649,19 @@ export class MainChar extends Player {
             }
         }
         return false;
+    }
+
+    static add_member_to_party(data: GoldenSun, party_data: PartyData, char_key_name: string) {
+        const char = data.info.main_char_list[char_key_name];
+        char.in_party = true;
+        party_data.members.push(char);
+    }
+
+    static remove_member_from_party(data: GoldenSun, party_data: PartyData, char_key_name: string) {
+        const char = data.info.main_char_list[char_key_name];
+        char.in_party = false;
+        party_data.members = party_data.members.filter(member => {
+            return member.key_name !== char_key_name;
+        });
     }
 }

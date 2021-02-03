@@ -107,6 +107,10 @@
                 "chest_open": {
                     "start": 10.745,
                     "end": 10.906
+                },
+                "party_join": {
+                    "start": 10.906,
+                    "end": 14.441
                 }
             }
         }

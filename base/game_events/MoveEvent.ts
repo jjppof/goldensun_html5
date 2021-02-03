@@ -15,11 +15,11 @@ export class MoveEvent extends GameEvent {
     private follow_hero_on_finish: boolean;
     private camera_follow_time: number;
     private minimal_distance: number;
-    private dest: {x: number; y: number};
+    private dest: {x: number | string; y: number | string};
     private npc_index: number;
     private char: ControllableChar;
     private final_direction: number;
-    private move_finish_events: GameEvent[] = [];
+    private finish_events: GameEvent[] = [];
 
     constructor(
         game,
@@ -34,7 +34,7 @@ export class MoveEvent extends GameEvent {
         camera_follow_time,
         final_direction,
         follow_hero_on_finish,
-        move_finish_events,
+        finish_events,
         minimal_distance
     ) {
         super(game, data, event_types.MOVE, active);
@@ -48,10 +48,10 @@ export class MoveEvent extends GameEvent {
         this.minimal_distance = minimal_distance;
         this.follow_hero_on_finish = follow_hero_on_finish === undefined ? true : follow_hero_on_finish;
         this.final_direction = final_direction !== undefined ? directions[final_direction as string] : null;
-        if (move_finish_events !== undefined) {
-            move_finish_events.forEach(event_info => {
+        if (finish_events !== undefined) {
+            finish_events.forEach(event_info => {
                 const event = this.data.game_event_manager.get_event_instance(event_info);
-                this.move_finish_events.push(event);
+                this.finish_events.push(event);
             });
         }
     }
@@ -67,9 +67,13 @@ export class MoveEvent extends GameEvent {
             this.char = this.data.hero;
         }
         this.char.dashing = this.dash;
+        const dest_value = {
+            x: typeof this.dest.x === "object" ? this.data.game_event_manager.get_value(this.dest.x) : this.dest.x,
+            y: typeof this.dest.y === "object" ? this.data.game_event_manager.get_value(this.dest.y) : this.dest.y,
+        };
         const dest = {
-            x: this.dest_unit_in_tile ? (this.dest.x + 0.5) * this.data.map.tile_width : this.dest.x,
-            y: this.dest_unit_in_tile ? (this.dest.y + 0.5) * this.data.map.tile_height : this.dest.y,
+            x: this.dest_unit_in_tile ? (dest_value.x + 0.5) * this.data.map.tile_width : dest_value.x,
+            y: this.dest_unit_in_tile ? (dest_value.y + 0.5) * this.data.map.tile_height : dest_value.y,
         };
         const direction = new Phaser.Point(dest.x - this.char.sprite.x, dest.y - this.char.sprite.y).normalize();
         const follow_time =
@@ -148,6 +152,6 @@ export class MoveEvent extends GameEvent {
         this.char.dashing = false;
         this.data.collision.enable_npc_collision(this.data.map.collision_layer);
         --this.data.game_event_manager.events_running_count;
-        this.move_finish_events.forEach(event => event.fire(this.origin_npc));
+        this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 }

@@ -17,9 +17,9 @@ export class ChestEvent extends GameEvent {
     private resolve: Function;
     private promise: Promise<any>;
     private dialog_manager: DialogManager;
-    private open_finish_events: GameEvent[] = [];
+    private finish_events: GameEvent[] = [];
 
-    constructor(game, data, active, item_key_name, quantity, open_finish_events) {
+    constructor(game, data, active, item_key_name, quantity, finish_events) {
         super(game, data, event_types.CHEST, active);
         this.item = this.data.info.items_list[item_key_name];
         this.quantity = quantity ?? 1;
@@ -37,9 +37,9 @@ export class ChestEvent extends GameEvent {
             {persist: true}
         );
 
-        open_finish_events?.forEach(event_info => {
+        finish_events?.forEach(event_info => {
             const event = this.data.game_event_manager.get_event_instance(event_info);
-            this.open_finish_events.push(event);
+            this.finish_events.push(event);
         });
     }
 
@@ -146,6 +146,6 @@ export class ChestEvent extends GameEvent {
         this.control_enable = false;
         this.data.game_event_manager.force_idle_action = true;
         --this.data.game_event_manager.events_running_count;
-        this.open_finish_events.forEach(event => event.fire(this.origin_npc));
+        this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 }

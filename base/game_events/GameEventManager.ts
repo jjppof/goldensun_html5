@@ -1,17 +1,21 @@
-import {base_actions, directions, is_close, reverse_directions} from "../utils";
+import {directions, is_close} from "../utils";
 import {DialogManager} from "../utils/DialogManager";
 import {NPC, npc_types} from "../NPC";
 import {GoldenSun} from "../GoldenSun";
 import {Button} from "../XGamepad";
 import {BattleEvent} from "./BattleEvent";
 import {BranchEvent} from "./BranchEvent";
-import {event_types} from "./GameEvent";
+import {EventValue, event_types, event_value_types, game_info_types} from "./GameEvent";
 import {SetValueEvent} from "./SetValueEvent";
 import {MoveEvent} from "./MoveEvent";
 import {DialogEvent} from "./DialogEvent";
 import {LookEvent} from "./LookEvent";
 import {ChestEvent} from "./ChestEvent";
 import {TimerEvent} from "./TimerEvent";
+import {PartyJoinEvent} from "./PartyJoinEvent";
+import {storage_types} from "../Storage";
+import {TileEvent} from "../tile_events/TileEvent";
+import * as _ from "lodash";
 
 export enum interaction_patterns {
     TIK_TAK_TOE = "tik_tak_toe",
@@ -199,7 +203,7 @@ export class GameEventManager {
                     info.camera_follow_time,
                     info.final_direction,
                     info.follow_hero_on_finish,
-                    info.move_finish_events,
+                    info.finish_events,
                     info.minimal_distance
                 );
             case event_types.DIALOG:
@@ -211,21 +215,23 @@ export class GameEventManager {
                     info.avatar,
                     info.npc_hero_reciprocal_look,
                     info.reset_reciprocal_look,
-                    info.dialog_finish_events
+                    info.finish_events
                 );
             case event_types.LOOK:
                 return new LookEvent(this.game, this.data, info.active, info.look, info.looker, info.target);
             case event_types.CHEST:
-                return new ChestEvent(
+                return new ChestEvent(this.game, this.data, info.active, info.item, info.quantity, info.finish_events);
+            case event_types.TIMER:
+                return new TimerEvent(this.game, this.data, info.active, info.duration, info.finish_events);
+            case event_types.PARTY_JOIN:
+                return new PartyJoinEvent(
                     this.game,
                     this.data,
                     info.active,
-                    info.item,
-                    info.quantity,
-                    info.open_finish_events
+                    info.char_key_name,
+                    info.join,
+                    info.finish_events
                 );
-            case event_types.TIMER:
-                return new TimerEvent(this.game, this.data, info.active, info.duration, info.time_finish_events);
         }
     }
 
@@ -244,6 +250,39 @@ export class GameEventManager {
         this.data.hero.update_on_event();
         this.data.map.npcs.forEach(npc => npc.update_on_event());
         this.update_callbacks.forEach(callback => callback());
+    }
+
+    get_value(comparator_value: EventValue) {
+        switch (comparator_value.type) {
+            case event_value_types.VALUE:
+                return comparator_value.value;
+            case event_value_types.STORAGE:
+                const storage = this.data.storage.get_object(comparator_value.value.key_name);
+                return storage.type === storage_types.POSITION
+                    ? `${storage.value.x}/${storage.value.y}`
+                    : storage.value;
+            case event_value_types.GAME_INFO:
+                switch (comparator_value.value.type) {
+                    case game_info_types.CHAR:
+                        const char = this.data.info.main_char_list[comparator_value.value.key_name];
+                        return _.get(char, comparator_value.value.property);
+                    case game_info_types.HERO:
+                        return _.get(this.data.hero, comparator_value.value.property);
+                    case game_info_types.NPC:
+                        const npc = this.data.map.npcs[comparator_value.value.index];
+                        return _.get(npc, comparator_value.value.property);
+                    case game_info_types.INTERACTABLE_OBJECT:
+                        const interactable_object = this.data.map.interactable_objects[comparator_value.value.index];
+                        return _.get(interactable_object, comparator_value.value.property);
+                    case game_info_types.EVENT:
+                        const event = TileEvent.get_event(comparator_value.value.index);
+                        return _.get(event, comparator_value.value.property);
+                    default:
+                        return null;
+                }
+            default:
+                return null;
+        }
     }
 
     static get_interaction_directions(hero_x, hero_y, target_x, target_y, interaction_pattern, target_body_radius) {
