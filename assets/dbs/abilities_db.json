@@ -1212,28 +1212,7 @@
                 "quantity": 20,
                 "operator": "plus",
                 "usage": "on_use",
-                "element": "venus",
-                "turns_quantity": 3
-            },{
-                "type": "resist",
-                "quantity": 20,
-                "operator": "plus",
-                "usage": "on_use",
-                "element": "mercury",
-                "turns_quantity": 3
-            },{
-                "type": "resist",
-                "quantity": 20,
-                "operator": "plus",
-                "usage": "on_use",
-                "element": "mars",
-                "turns_quantity": 3
-            },{
-                "type": "resist",
-                "quantity": 20,
-                "operator": "plus",
-                "usage": "on_use",
-                "element": "jupiter",
+                "element": "all_elements",
                 "turns_quantity": 3
             }
         ],

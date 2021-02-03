@@ -187,7 +187,7 @@ export class BattleStage {
         const targets = _.zipWith(
             RANGES.slice(
                 this.range_cursor_position - (party_count >> 1),
-                this.range_cursor_position + (party_count >> 1) + 1
+                this.range_cursor_position + (party_count >> 1) + (party_count & 1)
             ).reverse(),
             party_info,
             (magnitude, target) => {

@@ -1,7 +1,7 @@
 import {Ability} from "./Ability";
 import {Item} from "./Item";
 import {effect_type_stat, main_stats, permanent_status, Player, temporary_status} from "./Player";
-import {variation, elements} from "./utils";
+import {variation, elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
 
 export enum effect_types {
@@ -279,6 +279,7 @@ export class Effect {
         before?: number;
         after?: number;
         removed_effects?: Effect[];
+        all_elements?: boolean;
     } {
         switch (this.type) {
             case effect_types.ATTACK:
@@ -304,16 +305,35 @@ export class Effect {
                 this.check_caps(main_stats.CURRENT_PP, main_stats.MAX_PP, 0, result_current_pp);
                 return result_current_pp;
             case effect_types.POWER:
-                if (this.remove_buff) {
-                    return this.remove_char_buffs(this.type, this.element);
-                } else {
-                    return this.apply_general_value("current_power", undefined, this.element);
-                }
             case effect_types.RESIST:
+                const property = this.type === effect_types.POWER ? "current_power" : "current_resist";
                 if (this.remove_buff) {
-                    return this.remove_char_buffs(this.type, this.element);
+                    if (this.element === elements.ALL_ELEMENTS) {
+                        const removed_effects = new Array(ordered_elements.length);
+                        ordered_elements.forEach((element, i) => {
+                            removed_effects[i] = this.remove_char_buffs(this.type, element).removed_effects;
+                        });
+                        return {
+                            removed_effects: removed_effects.flat(),
+                            all_elements: true,
+                        };
+                    } else {
+                        return this.remove_char_buffs(this.type, this.element);
+                    }
                 } else {
-                    return this.apply_general_value("current_resist", undefined, this.element);
+                    if (this.element === elements.ALL_ELEMENTS) {
+                        const results: ReturnType<Effect["apply_general_value"]>[] = new Array(ordered_elements.length);
+                        ordered_elements.forEach((element, i) => {
+                            results[i] = this.apply_general_value(property, undefined, element);
+                        });
+                        return {
+                            before: _.mean(results.map(r => r.before)) | 0,
+                            after: _.mean(results.map(r => r.after)) | 0,
+                            all_elements: true,
+                        };
+                    } else {
+                        return this.apply_general_value(property, undefined, this.element);
+                    }
                 }
             case effect_types.TURNS:
                 this.turn_count = 1;

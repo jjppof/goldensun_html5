@@ -472,7 +472,7 @@
         },
         "innate_abilities": ["frost", "douse"],
         "in_party": true,
-        "battle_scale": 0.85,
+        "battle_scale": 0.95,
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
         "special_class_type": 14,
