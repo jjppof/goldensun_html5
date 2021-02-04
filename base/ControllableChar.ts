@@ -46,6 +46,7 @@ export abstract class ControllableChar {
         position?: string;
         action?: string;
         direction?: string;
+        active?: string;
     };
     public sprite_info: SpriteBase;
     public sprite: Phaser.Sprite;
@@ -68,6 +69,7 @@ export abstract class ControllableChar {
     public crop_texture: boolean;
     public shadow_following: boolean;
     public look_target: ControllableChar = null;
+    public active: boolean;
 
     constructor(
         game: Phaser.Game,
@@ -81,7 +83,8 @@ export abstract class ControllableChar {
         initial_y?: number,
         initial_action?: string | base_actions,
         initial_direction?: string,
-        storage_keys?: ControllableChar["storage_keys"]
+        storage_keys?: ControllableChar["storage_keys"],
+        active?: boolean
     ) {
         this.game = game;
         this.data = data;
@@ -110,6 +113,10 @@ export abstract class ControllableChar {
         this.shadow = null;
         this.body_radius = 0;
         this.storage_keys = storage_keys === undefined ? {} : storage_keys;
+        this.active = active ?? true;
+        if (this.storage_keys.active !== undefined) {
+            this.active = this.data.storage.get(this.storage_keys.active);
+        }
         if (this.storage_keys.position !== undefined) {
             const position = this.data.storage.get(this.storage_keys.position);
             initial_x = position.x;
@@ -165,6 +172,9 @@ export abstract class ControllableChar {
         this.sprite_info = sprite_info;
         const action_key = this.sprite_info.getActionKey(this.current_action);
         this.sprite = group.create(0, 0, action_key);
+        if (!this.active) {
+            this.sprite.visible = false;
+        }
         this.sprite.anchor.setTo(anchor_x, anchor_y);
         this.sprite.x = ((this.tile_x_pos + 0.5) * map.tile_width) | 0;
         this.sprite.y = ((this.tile_y_pos + 0.5) * map.tile_height) | 0;
@@ -204,6 +214,9 @@ export abstract class ControllableChar {
         shadow_anchor_x = shadow_anchor_x === undefined ? ControllableChar.DEFAULT_SHADOW_ANCHOR_X : shadow_anchor_x;
         shadow_anchor_y = shadow_anchor_y === undefined ? ControllableChar.DEFAULT_SHADOW_ANCHOR_Y : shadow_anchor_y;
         this.shadow = group.create(0, 0, key_name);
+        if (!this.active) {
+            this.shadow.visible = false;
+        }
         this.shadow.blendMode = PIXI.blendModes.MULTIPLY;
         this.shadow.disableRoundPx = true;
         this.shadow.anchor.setTo(shadow_anchor_x, shadow_anchor_y);
@@ -304,10 +317,12 @@ export abstract class ControllableChar {
     }
 
     update_on_event() {
+        if (!this.active) return;
         this.look_to_target();
     }
 
     update_movement(ignore_collide_action_change: boolean = false) {
+        if (!this.active) return;
         if (ignore_collide_action_change) {
             this.stop_by_colliding = false;
         }
@@ -322,7 +337,7 @@ export abstract class ControllableChar {
     }
 
     update_shadow() {
-        if (!this.shadow || !this.shadow_following) return;
+        if (!this.shadow || !this.shadow_following || !this.active) return;
         if (this.sprite.body) {
             this.shadow.x = this.sprite.body.x;
             this.shadow.y = this.sprite.body.y;
@@ -375,7 +390,7 @@ export abstract class ControllableChar {
     }
 
     update_half_crop(force: boolean = false) {
-        if (this.sprite.mask) {
+        if (this.sprite.mask && this.active) {
             if (force) {
                 this.sprite.update();
                 this.sprite.postUpdate();
@@ -387,6 +402,8 @@ export abstract class ControllableChar {
             }
         }
     }
+
+    abstract toggle_active(active: boolean): void;
 
     stop_char(change_sprite: boolean = true) {
         this.x_speed = this.y_speed = 0;

@@ -4,6 +4,7 @@ export class Audio {
     private game: Phaser.Game;
     private se_data: {[se_key: string]: Phaser.AudioSprite} = {};
     private current_bgm: Phaser.Sound = null;
+    private bgm_volume: number;
 
     constructor(game: Phaser.Game) {
         this.game = game;
@@ -13,6 +14,8 @@ export class Audio {
     public static readonly VOLUME_STEP = 0.1;
     /** Volume change held threshold */
     public static readonly VOLUME_ALTER_LOOP_TIME = 100;
+    /** Default bgm volume */
+    public static readonly DEFAULT_BGM_VOLUME = 0.6;
 
     /**
      * Changes the game volume.
@@ -48,14 +51,24 @@ export class Audio {
         }
     }
 
-    play_bgm(loop: boolean = true, volume: number = 0.6) {
+    play_bgm(loop: boolean = true, volume?: number) {
         this.current_bgm.loop = loop;
-        this.current_bgm.volume = volume;
+        this.current_bgm.volume = volume ?? Audio.DEFAULT_BGM_VOLUME;
+        this.bgm_volume = this.current_bgm.volume;
         this.current_bgm.play();
     }
 
     resume_bgm() {
+        this.current_bgm.volume = 0;
         this.current_bgm.resume();
+        this.game.add.tween(this.current_bgm).to(
+            {
+                volume: this.bgm_volume,
+            },
+            1000,
+            Phaser.Easing.Linear.None,
+            true
+        );
     }
 
     pause_bgm() {

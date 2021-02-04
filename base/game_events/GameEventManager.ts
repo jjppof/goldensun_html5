@@ -78,7 +78,7 @@ export class GameEventManager {
     search_for_npc() {
         for (let i = 0; i < this.data.map.npcs.length; ++i) {
             const npc = this.data.map.npcs[i];
-            if (npc.npc_type === npc_types.SPRITE) continue;
+            if (npc.npc_type === npc_types.SPRITE || !npc.active) continue;
             const is_close_check = is_close(
                 this.data.hero.current_direction,
                 this.data.hero.sprite.x,
@@ -204,7 +204,9 @@ export class GameEventManager {
                     info.final_direction,
                     info.follow_hero_on_finish,
                     info.finish_events,
-                    info.minimal_distance
+                    info.minimal_distance,
+                    info.keep_npc_collision_disable,
+                    info.deactive_char_on_end
                 );
             case event_types.DIALOG:
                 return new DialogEvent(

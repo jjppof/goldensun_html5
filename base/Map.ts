@@ -144,7 +144,11 @@ export class Map {
 
     update() {
         this.freeze_body();
-        this.npcs.forEach(npc => npc.update());
+        this.npcs.forEach(npc => {
+            if (npc.active) {
+                npc.update();
+            }
+        });
         this.sort_sprites();
         this.update_map_rotation();
     }
@@ -257,7 +261,7 @@ export class Map {
 
     config_all_bodies(collision_obj: Collision, collision_layer: number) {
         if (!this.is_world_map) {
-            this.npcs.forEach(npc => npc.config_body(collision_obj));
+            this.npcs.forEach(npc => npc.config_body());
             this.interactable_objects.forEach(interactable_obj => interactable_obj.config_body(collision_obj));
         }
         this.config_body(collision_obj, collision_layer);
@@ -331,9 +335,7 @@ export class Map {
             property_info.scale_x,
             property_info.scale_y
         );
-        if (npc.active) {
-            this.npcs.push(npc);
-        }
+        this.npcs.push(npc);
     }
 
     create_interactable_objects(raw_property) {
@@ -549,10 +551,7 @@ export class Map {
         }
 
         if (this.data.hero && next_body_radius !== this.data.hero.body_radius) {
-            this.data.hero.config_body(
-                this.data.collision,
-                this.is_world_map ? numbers.HERO_BODY_RADIUS_M7 : numbers.HERO_BODY_RADIUS
-            );
+            this.data.hero.config_body(this.is_world_map ? numbers.HERO_BODY_RADIUS_M7 : numbers.HERO_BODY_RADIUS);
             if (this.is_world_map) {
                 this.data.hero.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
                 this.data.hero.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);

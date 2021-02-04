@@ -135,6 +135,9 @@ export class CharsStatusWindow {
     set_chars_info() {
         const chars_list = this.data.info.party_data.members.slice(0, MAX_CHARS_NUMBER);
         for (let i = 0; i < chars_list.length; ++i) {
+            const char = chars_list[i];
+            if (char.key_name in this.info_sprites) continue;
+
             let info_sprites_obj: InfoSprite = {
                 group: null,
                 name: null,
@@ -148,7 +151,6 @@ export class CharsStatusWindow {
                 pp: null,
             };
 
-            const char = chars_list[i];
             const base_x_pos = i * WIDTH_PER_CHAR + INITIAL_PADDING_X;
             const group_key = char.key_name + "_status";
 
@@ -240,8 +242,25 @@ export class CharsStatusWindow {
         }
     }
 
+    check_chars_in_party() {
+        const current_members = new Set(this.data.info.party_data.members.map(m => m.key_name));
+        const current_info = new Set(Object.keys(this.info_sprites));
+        [...current_members]
+            .filter(m => !current_info.has(m))
+            .forEach(char_key => {
+                const group_key = char_key + "_status";
+                this.status_window.destroy_internal_group(group_key);
+                delete this.info_sprites[char_key];
+            });
+        const add_chars = [...current_members].filter(m => !current_info.has(m)).length;
+        if (add_chars) {
+            this.set_chars_info();
+        }
+    }
+
     /*Updates the information displayed*/
     update_chars_info() {
+        this.check_chars_in_party();
         let show_djinn_info = false;
         if (this.djinni_info) {
             this.standby_djinni = Djinn.get_standby_djinni(

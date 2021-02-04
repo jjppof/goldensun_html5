@@ -53,16 +53,19 @@ export class PartyJoinEvent extends GameEvent {
     async fire(origin_npc?: NPC) {
         if (!this.active) return;
         ++this.data.game_event_manager.events_running_count;
+        this.origin_npc = origin_npc;
         if (this.join) {
             this.control_enable = false;
             this.running = true;
-            this.origin_npc = origin_npc;
             const new_char = this.data.info.main_char_list[this.char_key_name];
             this.dialog_manager = new DialogManager(this.game, this.data);
             const text = `${new_char.name} joined your party.`;
             this.dialog_manager.set_dialog(text, this.char_key_name);
             MainChar.add_member_to_party(this.data, this.data.info.party_data, this.char_key_name);
-            this.data.audio.play_se("misc/party_join");
+            this.data.audio.pause_bgm();
+            this.data.audio.play_se("misc/party_join", () => {
+                this.data.audio.resume_bgm();
+            });
             this.next();
         } else {
             MainChar.remove_member_from_party(this.data, this.data.info.party_data, this.char_key_name);

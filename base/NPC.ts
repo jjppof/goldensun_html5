@@ -1,7 +1,6 @@
 import {GameEvent} from "./game_events/GameEvent";
 import {mount_collision_polygon} from "./utils";
 import {ControllableChar} from "./ControllableChar";
-import {Collision} from "./Collision";
 
 export enum npc_movement_types {
     IDLE = "idle",
@@ -34,13 +33,11 @@ export class NPC extends ControllableChar {
     public anchor_y: number;
     public scale_x: number;
     public scale_y: number;
-    public active: boolean;
     public storage_keys: {
         position?: string;
         action?: string;
         direction?: string;
         base_collision_layer?: string;
-        active?: string;
     };
 
     constructor(
@@ -95,10 +92,6 @@ export class NPC extends ControllableChar {
         this.avatar = avatar ? avatar : null;
         this.shop_key = shop_key;
         this.inn_key = inn_key;
-        this.active = active ?? true;
-        if (this.storage_keys.active !== undefined) {
-            this.active = this.data.storage.get(this.storage_keys.active);
-        }
         if (this.storage_keys.base_collision_layer !== undefined) {
             base_collision_layer = this.data.storage.get(this.storage_keys.base_collision_layer);
         }
@@ -119,7 +112,6 @@ export class NPC extends ControllableChar {
     }
 
     set_events(events_info) {
-        if (!this.active) return;
         for (let i = 0; i < events_info.length; ++i) {
             const event = this.data.game_event_manager.get_event_instance(events_info[i]);
             this.events.push(event);
@@ -134,8 +126,21 @@ export class NPC extends ControllableChar {
         }
     }
 
-    config_body(collision_obj: Collision) {
-        if (!this.active) return;
+    toggle_active(active: boolean) {
+        if (active) {
+            this.sprite.body.setCollisionGroup(this.data.collision.npc_collision_groups[this.base_collision_layer]);
+            this.sprite.visible = true;
+            this.shadow.visible = true;
+            this.active = true;
+        } else {
+            this.sprite.body.removeCollisionGroup(this.data.collision.npc_collision_groups[this.base_collision_layer]);
+            this.sprite.visible = false;
+            this.shadow.visible = false;
+            this.active = false;
+        }
+    }
+
+    config_body() {
         this.game.physics.p2.enable(this.sprite, false);
         //Important to be after the previous command
         if (this.data.dbs.npc_db[this.key_name].anchor_x !== undefined) {
@@ -164,7 +169,9 @@ export class NPC extends ControllableChar {
             },
             polygon
         );
-        this.sprite.body.setCollisionGroup(collision_obj.npc_collision_groups[this.base_collision_layer]);
+        if (this.active) {
+            this.sprite.body.setCollisionGroup(this.data.collision.npc_collision_groups[this.base_collision_layer]);
+        }
         this.sprite.body.damping = 1;
         this.sprite.body.angularDamping = 1;
         this.sprite.body.setZeroRotation();

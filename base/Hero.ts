@@ -337,7 +337,22 @@ export class Hero extends ControllableChar {
         }
     }
 
+    toggle_active(active: boolean) {
+        if (active) {
+            this.sprite.body.setCollisionGroup(this.data.collision.hero_collision_group);
+            this.sprite.visible = true;
+            this.shadow.visible = true;
+            this.active = true;
+        } else {
+            this.sprite.body.removeCollisionGroup(this.data.collision.hero_collision_group);
+            this.sprite.visible = false;
+            this.shadow.visible = false;
+            this.active = false;
+        }
+    }
+
     update(map: Map) {
+        if (!this.active) return;
         this.check_control_inputs(); //check which arrow keys are being pressed
         this.set_speed_factors(true); //sets the direction of the movement
         this.set_current_action(true); //chooses which sprite the hero shall assume
@@ -349,13 +364,13 @@ export class Hero extends ControllableChar {
         this.update_half_crop(); //halves the hero texture if needed
     }
 
-    config_body(collision_obj: Collision, body_radius: number = numbers.HERO_BODY_RADIUS) {
+    config_body(body_radius: number = numbers.HERO_BODY_RADIUS) {
         this.game.physics.p2.enable(this.sprite, false);
         this.reset_anchor(); //Important to be after the previous command
         this.sprite.body.clearShapes();
         this.body_radius = body_radius;
         this.sprite.body.setCircle(this.body_radius, 0, 0);
-        this.sprite.body.setCollisionGroup(collision_obj.hero_collision_group);
+        this.sprite.body.setCollisionGroup(this.data.collision.hero_collision_group);
         this.sprite.body.mass = 1.0;
         this.sprite.body.damping = 0;
         this.sprite.body.angularDamping = 0;

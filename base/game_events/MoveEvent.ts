@@ -19,6 +19,8 @@ export class MoveEvent extends GameEvent {
     private npc_index: number;
     private char: ControllableChar;
     private final_direction: number;
+    private keep_npc_collision_disable: boolean;
+    private deactive_char_on_end: boolean;
     private finish_events: GameEvent[] = [];
 
     constructor(
@@ -35,18 +37,22 @@ export class MoveEvent extends GameEvent {
         final_direction,
         follow_hero_on_finish,
         finish_events,
-        minimal_distance
+        minimal_distance,
+        keep_npc_collision_disable,
+        deactive_char_on_end
     ) {
         super(game, data, event_types.MOVE, active);
         this.is_npc = is_npc;
-        this.dash = dash === undefined ? false : dash;
+        this.dash = dash ?? false;
         this.dest = dest;
         this.npc_index = npc_index;
-        this.dest_unit_in_tile = dest_unit_in_tile === undefined ? true : dest_unit_in_tile;
+        this.dest_unit_in_tile = dest_unit_in_tile ?? true;
         this.camera_follow = camera_follow;
         this.camera_follow_time = camera_follow_time;
         this.minimal_distance = minimal_distance;
-        this.follow_hero_on_finish = follow_hero_on_finish === undefined ? true : follow_hero_on_finish;
+        this.keep_npc_collision_disable = keep_npc_collision_disable ?? false;
+        this.deactive_char_on_end = deactive_char_on_end ?? false;
+        this.follow_hero_on_finish = follow_hero_on_finish ?? true;
         this.final_direction = final_direction !== undefined ? directions[final_direction as string] : null;
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {
@@ -103,7 +109,7 @@ export class MoveEvent extends GameEvent {
         await follow_promise;
         this.char.x_speed = direction.x;
         this.char.y_speed = direction.y;
-        const sqr = x => Math.pow(x, 2);
+        const sqr = x => x * x;
         const minimal_distance_sqr = sqr(
             this.minimal_distance !== undefined ? this.minimal_distance : MoveEvent.MINIMAL_DISTANCE
         );
@@ -150,7 +156,12 @@ export class MoveEvent extends GameEvent {
             this.data.game_event_manager.allow_char_to_move = false;
         }
         this.char.dashing = false;
-        this.data.collision.enable_npc_collision(this.data.map.collision_layer);
+        if (!this.keep_npc_collision_disable) {
+            this.data.collision.enable_npc_collision(this.data.map.collision_layer);
+        }
+        if (this.deactive_char_on_end) {
+            this.char.toggle_active(false);
+        }
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }

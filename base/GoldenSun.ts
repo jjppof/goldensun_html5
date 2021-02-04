@@ -167,10 +167,7 @@ export class GoldenSun {
 
         //initializes collision system
         this.collision = new Collision(this.game, this.hero);
-        this.hero.config_body(
-            this.collision,
-            this.map.is_world_map ? numbers.HERO_BODY_RADIUS_M7 : numbers.HERO_BODY_RADIUS
-        );
+        this.hero.config_body(this.map.is_world_map ? numbers.HERO_BODY_RADIUS_M7 : numbers.HERO_BODY_RADIUS);
         this.collision.config_collision_groups(this.map);
         this.map.config_all_bodies(this.collision, this.map.collision_layer);
         this.collision.config_collisions(this.map, this.map.collision_layer, this.npc_group);
