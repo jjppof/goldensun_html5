@@ -110,6 +110,7 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
         data.info,
         data.dbs.main_chars_db,
         data.dbs.classes_db,
+        data.dbs.npc_db,
         load_chars_promise_resolve
     );
     await load_chars_promise;

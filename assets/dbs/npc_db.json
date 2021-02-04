@@ -112,5 +112,305 @@
                 }
             }
         }
+    },{
+        "key_name": "isaac",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 60,
+        "dash_speed": 85,
+        "climb_speed": 50,
+        "actions": {
+            "idle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_idle.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_idle.png"
+                },
+                "initial_direction": "down",
+                "directions": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 6,
+                "frame_rate": [[0.1,1,1,7,1,1]]
+            },
+            "walk": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_walk.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_walk.png"
+                },
+                "directions": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 6,
+                "frame_rate": 8
+            },
+            "dash": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_dash.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_dash.png"
+                },
+                "directions": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 6,
+                "frame_rate": 11
+            },
+            "climb": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_climb.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_climb.png"
+                },
+                "directions": [
+                    "up",
+                    "down",
+                    "left",
+                    "right",
+                    "end",
+                    "idle",
+                    "turn",
+                    "start"
+                ],
+                "frames_count": [4,4,3,3,3,1,4,3],
+                "frame_rate": [7,7,8,8,9,1,15,10],
+                "loop": [true,true,true,true,false,true,false,false]
+            },
+            "jump": {
+                "spritesheet": {
+                "json": "assets/images/spritesheets/main_chars/isaac_jump.json",
+                "image": "assets/images/spritesheets/main_chars/isaac_jump.png"
+                },
+                "directions": [
+                    "down",
+                    "up",
+                    "left",
+                    "right"
+                ],
+                "frames_count": 2,
+                "frame_rate": 18,
+                "loop": false
+            },
+            "push": {
+                "spritesheet": {
+                "json": "assets/images/spritesheets/main_chars/isaac_push.json",
+                "image": "assets/images/spritesheets/main_chars/isaac_push.png"
+                },
+                "directions": [
+                    "down",
+                    "up",
+                    "left",
+                    "right"
+                ],
+                "frames_count": 4,
+                "frame_rate": 4
+            },
+            "cast": {
+                "spritesheet": {
+                "json": "assets/images/spritesheets/main_chars/isaac_cast.json",
+                "image": "assets/images/spritesheets/main_chars/isaac_cast.png"
+                },
+                "directions": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 2,
+                "frame_rate": 8,
+                "loop": false
+            },
+            "grant": {
+                "spritesheet": {
+                "json": "assets/images/spritesheets/main_chars/isaac_grant.json",
+                "image": "assets/images/spritesheets/main_chars/isaac_grant.png"
+                },
+                "directions": [
+                    "down"
+                ],
+                "frames_count": 1,
+                "frame_rate": 1
+            },
+            "battle": {
+                "spritesheet": {
+                "json": "assets/images/spritesheets/battle/isaac_battle.json",
+                "image": "assets/images/spritesheets/battle/isaac_battle.png"
+                },
+                "directions": [
+                    "attack_back",
+                    "attack_front",
+                    "idle_back",
+                    "idle_front",
+                    "cast_back",
+                    "cast_front",
+                    "cast_init_back",
+                    "cast_init_front",
+                    "damage_back",
+                    "damage_front",
+                    "downed_back",
+                    "downed_front"
+                ],
+                "frames_count": [2,2,4,4,2,2,3,3,1,1,1,1],
+                "frame_rate": [1,1,3,3,10,10,12,6,1,1,1,1],
+                "loop": [false,false,true,true,true,true,false,false,false,false,false,false]
+            }
+        }
+    },{
+        "key_name": "garet",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 60,
+        "dash_speed": 85,
+        "climb_speed": 50,
+        "actions": {
+            "idle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/garet_idle.json",
+                    "image": "assets/images/spritesheets/main_chars/garet_idle.png"
+                },
+                "initial_direction": "down",
+                "directions": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 5,
+                "frame_rate": [[0.1,3,1,1,1]]
+            },
+            "battle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/battle/garet_battle.json",
+                    "image": "assets/images/spritesheets/battle/garet_battle.png"
+                },
+                "directions": [
+                    "idle_back",
+                    "idle_front"
+                ],
+                "frames_count": 4,
+                "frame_rate": 3,
+                "loop": [true,true]
+            }
+        }
+    },{
+        "key_name": "sheba",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 60,
+        "dash_speed": 85,
+        "climb_speed": 50,
+        "actions": {
+            "idle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/sheba_idle.json",
+                    "image": "assets/images/spritesheets/main_chars/sheba_idle.png"
+                },
+                "initial_direction": "down",
+                "directions": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 5,
+                "frame_rate":  [[0.1,3,1,1,1]]
+            },
+            "battle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/battle/sheba_battle.json",
+                    "image": "assets/images/spritesheets/battle/sheba_battle.png"
+                },
+                "directions": [
+                    "idle_back",
+                    "idle_front"
+                ],
+                "frames_count": 4,
+                "frame_rate": 3,
+                "loop": [true,true]
+            }
+        }
+    },{
+        "key_name": "piers",
+        "anchor_y": 0.8,
+        "initial_action": "idle",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "body_radius": 7.0,
+        "walk_speed": 60,
+        "dash_speed": 85,
+        "climb_speed": 50,
+        "actions": {
+            "idle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/piers_idle.json",
+                    "image": "assets/images/spritesheets/main_chars/piers_idle.png"
+                },
+                "initial_direction": "down",
+                "directions": [
+                    "down",
+                    "up",
+                    "left",
+                    "right",
+                    "down_left",
+                    "down_right",
+                    "up_left",
+                    "up_right"
+                ],
+                "frames_count": 6,
+                "frame_rate":  [[0.1,3,0.3,2,0.5,2]]
+            },
+            "battle": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/battle/piers_battle.json",
+                    "image": "assets/images/spritesheets/battle/piers_battle.png"
+                },
+                "directions": [
+                    "idle_back",
+                    "idle_front"
+                ],
+                "frames_count": 4,
+                "frame_rate": 3,
+                "loop": [true,true]
+            }
+        }
     }
 ]

@@ -148,9 +148,9 @@ export class GoldenSun {
             this.dbs.init_db.y_tile_position,
             this.dbs.init_db.initial_action,
             this.dbs.init_db.initial_direction,
-            this.info.main_char_list[hero_key_name].walk_speed,
-            this.info.main_char_list[hero_key_name].dash_speed,
-            this.info.main_char_list[hero_key_name].climb_speed
+            this.dbs.npc_db[hero_key_name].walk_speed,
+            this.dbs.npc_db[hero_key_name].dash_speed,
+            this.dbs.npc_db[hero_key_name].climb_speed
         );
         const hero_sprite_base = this.info.main_char_list[hero_key_name].sprite_base;
         this.hero.set_sprite(

@@ -49,9 +49,6 @@ export class MainChar extends Player {
 
     public info: GameInfo;
     public sprite_base: SpriteBase;
-    public walk_speed: number;
-    public dash_speed: number;
-    public climb_speed: number;
     public starting_level: number;
     public class_table: any;
     public class: Classes;
@@ -82,9 +79,6 @@ export class MainChar extends Player {
         key_name,
         info,
         sprite_base,
-        walk_speed,
-        dash_speed,
-        climb_speed,
         name,
         hp_curve,
         pp_curve,
@@ -111,9 +105,6 @@ export class MainChar extends Player {
         super(key_name, name);
         this.info = info;
         this.sprite_base = sprite_base;
-        this.walk_speed = walk_speed;
-        this.dash_speed = dash_speed;
-        this.climb_speed = climb_speed;
         this.starting_level = starting_level;
         this.level = this.starting_level;
         this.special_class_type = special_class_type ?? -1;

@@ -1,6 +1,7 @@
 import {Classes} from "../Classes";
 import {MainChar} from "../MainChar";
 import {SpriteBase} from "../SpriteBase";
+import {GameInfo} from "./initialize_info";
 
 export function initialize_classes(classes_db) {
     let classes_list = {};
@@ -27,22 +28,24 @@ export function initialize_classes(classes_db) {
     return classes_list;
 }
 
-export function initialize_main_chars(game, info, main_chars_db, classes_db, load_promise_resolve) {
+export function initialize_main_chars(
+    game: Phaser.Game,
+    info: GameInfo,
+    main_chars_db,
+    classes_db,
+    npc_db,
+    load_promise_resolve
+) {
     let load_promises = [];
     let main_char_list = {};
     for (let i = 0; i < main_chars_db.length; ++i) {
         const char_data = main_chars_db[i];
-        const sprite_base = new SpriteBase(
-            char_data.key_name,
-            char_data.actions.map(action => action.key)
-        );
+        const char_db = npc_db[char_data.key_name];
+        const sprite_base = new SpriteBase(char_data.key_name, Object.keys(char_db.actions));
         main_char_list[char_data.key_name] = new MainChar(
             char_data.key_name,
             info,
             sprite_base,
-            char_data.walk_speed,
-            char_data.dash_speed,
-            char_data.climb_speed,
             char_data.name,
             char_data.hp_curve,
             char_data.pp_curve,
@@ -69,12 +72,12 @@ export function initialize_main_chars(game, info, main_chars_db, classes_db, loa
         if (char_data.in_party) {
             info.party_data.members.push(main_char_list[char_data.key_name]);
         }
-        for (let j = 0; j < char_data.actions.length; ++j) {
-            const action = char_data.actions[j];
-            sprite_base.setActionSpritesheet(action.key, action.spritesheet_img, action.spritesheet);
-            sprite_base.setActionDirections(action.key, action.directions, action.directions_frames_number);
-            sprite_base.setActionFrameRate(action.key, action.frame_rate);
-            sprite_base.setActionLoop(action.key, action.loop);
+        for (let action_key in char_db.actions) {
+            const action = char_db.actions[action_key];
+            sprite_base.setActionSpritesheet(action_key, action.spritesheet.image, action.spritesheet.json);
+            sprite_base.setActionDirections(action_key, action.directions, action.frames_count);
+            sprite_base.setActionFrameRate(action_key, action.frame_rate);
+            sprite_base.setActionLoop(action_key, action.loop);
         }
         sprite_base.generateAllFrames();
 
