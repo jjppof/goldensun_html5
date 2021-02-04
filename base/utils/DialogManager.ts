@@ -23,12 +23,13 @@ export class DialogManager {
     public window: Window;
     public avatar_window: Window;
     public italic_font: boolean;
-    public hero_direction: number;
+    public hero_direction: utils.directions;
     public dialog_crystal_sprite_base: SpriteBase;
     public dialog_crystal: Phaser.Sprite;
     public dialog_crystal_anim_key: string;
     public dialog_crystal_tween: Phaser.Tween;
     public show_crystal: boolean;
+    public avatar_inside_window: boolean;
 
     constructor(game, data, italic_font = true) {
         this.game = game;
@@ -90,7 +91,7 @@ export class DialogManager {
     }
 
     //set current hero direction
-    set_hero_direction(hero_direction) {
+    set_hero_direction(hero_direction: utils.directions) {
         if (hero_direction !== undefined) {
             this.hero_direction = hero_direction;
         }
@@ -120,31 +121,43 @@ export class DialogManager {
 
     mount_window(callback, custom_pos, custom_avatar_pos) {
         this.dialog_crystal.visible = false;
-        let win_pos = this.get_dialog_window_position(this.parts[this.step].width, this.parts[this.step].height);
+        let width = this.parts[this.step].width;
+        let height = this.parts[this.step].height;
+        if (this.avatar_inside_window) {
+            width += numbers.AVATAR_SIZE + 2;
+            if (height < numbers.AVATAR_SIZE + 4) {
+                height = numbers.AVATAR_SIZE + 4;
+            }
+        }
+        let win_pos = this.get_dialog_window_position(width, height);
         if (custom_pos && custom_pos.x !== undefined) {
             win_pos.x = custom_pos.x;
         }
         if (custom_pos && custom_pos.y !== undefined) {
             win_pos.y = custom_pos.y;
         }
-        this.window = new Window(
-            this.game,
-            win_pos.x,
-            win_pos.y,
-            this.parts[this.step].width,
-            this.parts[this.step].height,
-            false
-        );
+        this.window = new Window(this.game, win_pos.x, win_pos.y, width, height, false);
         this.window.show(
             ((step, italic_font, next_callback) => {
+                if (this.avatar_inside_window) {
+                    this.window.create_at_group(4, 4, "avatars", undefined, this.avatar);
+                }
+                const padding_x = this.avatar_inside_window ? numbers.AVATAR_SIZE + 10 : undefined;
                 this.window
-                    .set_text(this.parts[step].lines, undefined, undefined, undefined, italic_font, true)
+                    .set_text(this.parts[step].lines, padding_x, undefined, undefined, italic_font, true)
                     .then(() => {
                         if (step < this.parts.length - 1 || this.show_crystal) {
                             this.dialog_crystal.visible = true;
-                            this.dialog_crystal.x =
-                                this.window.real_x + this.parts[step].width - this.dialog_crystal.width;
-                            this.dialog_crystal.y = this.window.real_y + this.parts[step].height;
+                            let width = this.parts[step].width;
+                            let height = this.parts[step].height;
+                            if (this.avatar_inside_window) {
+                                width += numbers.AVATAR_SIZE + 2;
+                                if (height < numbers.AVATAR_SIZE + 4) {
+                                    height = numbers.AVATAR_SIZE + 4;
+                                }
+                            }
+                            this.dialog_crystal.x = this.window.real_x + width - this.dialog_crystal.width;
+                            this.dialog_crystal.y = this.window.real_y + height;
                             const parent = this.dialog_crystal.parent;
                             parent.setChildIndex(this.dialog_crystal, parent.getChildIndex(this.window.group));
                             this.dialog_crystal.play(this.dialog_crystal_anim_key);
@@ -167,7 +180,7 @@ export class DialogManager {
                     });
             }).bind(this, this.step, this.italic_font, callback)
         );
-        if (this.avatar) {
+        if (this.avatar && !this.avatar_inside_window) {
             let avatar_pos = this.get_avatar_position(win_pos);
             if (custom_avatar_pos && custom_avatar_pos.x !== undefined) {
                 avatar_pos.x = custom_avatar_pos.x;
@@ -185,13 +198,20 @@ export class DialogManager {
     //Receives a text string and mount the the dialog sections that will go to each window of the dialog.
     //Optionally, also receives an initial avatar and the hero talking direction.
     //Use ${HERO} to replace by hero name. Use ${BREAK} to start a new window.
-    set_dialog(text: string, avatar?, hero_direction?) {
+    set_dialog(
+        text: string,
+        avatar?: string,
+        hero_direction?: utils.directions,
+        avatar_inside_window?: boolean,
+        custom_max_dialog_width?: number
+    ) {
         this.set_avatar(avatar);
         this.set_hero_direction(hero_direction);
-        text = text.replace(/\${HERO}/g, this.data.info.party_data.members[0].name);
+        this.avatar_inside_window = avatar_inside_window ?? false;
+        const max_dialog_width = custom_max_dialog_width ?? numbers.MAX_DIAG_WIN_WIDTH;
+        text = text.replace(/\${HERO}/g, this.data.info.main_char_list[this.data.hero.key_name].name);
         text = text.replace(/( )?\${BREAK}( )?/g, " ${BREAK} ");
-        const max_efective_width =
-            numbers.MAX_DIAG_WIN_WIDTH - 2 * numbers.WINDOW_PADDING_H - numbers.INSIDE_BORDER_WIDTH;
+        const max_efective_width = max_dialog_width - 2 * numbers.WINDOW_PADDING_H - numbers.INSIDE_BORDER_WIDTH;
         let words = text.split(" ");
         let windows = []; //array of lines
         let lines = []; //array of strings
