@@ -137,5 +137,72 @@
             "image": "assets/images/interactable_objects/psynergy_growth.png",
             "json": "assets/images/interactable_objects/psynergy_growth.json"
         }
+    },{
+        "key_name": "pound_pillar",
+        "shift_x": 6,
+        "shift_y": -5,
+        "anchor_y": 0.9,
+        "scale_x": 0.8,
+        "scale_y": 0.8,
+        "body_radius": 7.0,
+        "send_to_back": false,
+        "psynergy_keys": {
+            "pound": {
+                "interaction_type": "once"
+            }
+        },
+        "pushable": false,
+        "collision_body_bevel": 3,
+        "events": [{
+            "type": "jump",
+            "active": true,
+            "x_shift": 0,
+            "y_shift": -2,
+            "dynamic": true
+        }],
+        "initial_animation": "up",
+        "actions": {
+            "frame_rate": [1, 1],
+            "animations": ["up", "down"],
+            "frames_count": [1, 1]
+        },
+        "spritesheet": {
+            "image": "assets/images/interactable_objects/psynergy_pound.png",
+            "json": "assets/images/interactable_objects/psynergy_pound.json"
+        }
+    },{
+        "key_name": "stone_pillar",
+        "shift_x": 6,
+        "shift_y": -5,
+        "anchor_y": 0.9,
+        "scale_x": 0.8,
+        "scale_y": 0.8,
+        "body_radius": 7.0,
+        "send_to_back": false,
+        "psynergy_keys": {
+            "pound": {
+                "interaction_type": "once"
+            }
+        },
+        "pushable": false,
+        "collision_body_bevel": 3,
+        "events": [{
+            "type": "jump",
+            "active": true,
+            "x_shift": 0,
+            "y_shift": -2,
+            "dynamic": true,
+            "is_set": true
+        }],
+        "initial_animation": "up",
+        "actions": {
+            "frame_rate": [1, 1],
+            "animations": ["up", "down"],
+            "frames_count": [1, 1]
+        },
+        "spritesheet": {
+            "image": "assets/images/interactable_objects/psynergy_pound.png",
+            "json": "assets/images/interactable_objects/psynergy_pound.json"
+        }
     }
 ]

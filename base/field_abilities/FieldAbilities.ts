@@ -24,8 +24,19 @@ export class FieldAbilities {
     public stop_casting: Function;
     public field_psynergy_window: FieldPsynergyWindow;
     public cast_direction: number;
+    public field_color: number;
+    public field_intensity: number;
 
-    constructor(game, data, ability_key_name, target_max_range, action_key_name, need_target) {
+    constructor(
+        game,
+        data,
+        ability_key_name,
+        target_max_range,
+        action_key_name,
+        need_target,
+        field_color?,
+        field_intensity?
+    ) {
         this.game = game;
         this.ability_key_name = ability_key_name;
         this.data = data;
@@ -39,6 +50,8 @@ export class FieldAbilities {
         this.target_object = null;
         this.stop_casting = null;
         this.field_psynergy_window = new FieldPsynergyWindow(this.game, this.data);
+        this.field_color = field_color;
+        this.field_intensity = field_intensity;
     }
 
     /**
@@ -178,7 +191,13 @@ export class FieldAbilities {
             this.data.npc_group,
             this.controllable_char.color_filter,
             () => {
-                reset_map = tint_map_layers(this.game, this.data.map.color_filter);
+                reset_map = tint_map_layers(
+                    this.game,
+                    this.data.map.color_filter,
+                    this.field_color,
+                    this.field_intensity
+                );
+
                 this.bootstrap_method();
             },
             () => {

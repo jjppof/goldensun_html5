@@ -24,6 +24,7 @@ export class GoldenSun {
     public dbs: any = {};
     public info: GameInfo = {} as GameInfo;
     public particle_manager: Phaser.ParticleStorm = null;
+    public camera_shake_enable: boolean = false;
 
     //main game states
     public menu_open: boolean = false;
@@ -316,6 +317,11 @@ export class GoldenSun {
         //fps adjustment for faster monitors since requestAnimationFrame follows monitor frame rate
         if (this.game.time.fps > 60 && Math.abs(this.game.time.suggestedFps - this.game.time.desiredFps) > 10) {
             this.game.time.desiredFps = this.game.time.suggestedFps;
+        }
+
+        if (this.camera_shake_enable) {
+            this.game.camera.x += (Math.random() - 0.5) * 3;
+            this.game.camera.y += (Math.random() - 0.5) * 3;
         }
     }
 

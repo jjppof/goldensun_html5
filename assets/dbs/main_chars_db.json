@@ -129,6 +129,10 @@
                 "quantity": 1,
                 "equipped": true
             },{
+                "key_name": "pound_cube",
+                "quantity": 1,
+                "equipped": true
+            },{
                 "key_name": "cookie",
                 "quantity": 2
             },{

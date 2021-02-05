@@ -148,13 +148,20 @@ export function init_cast_aura(
     };
 }
 
-export function tint_map_layers(game: Phaser.Game, filter, after_destroy?) {
+export function tint_map_layers(game: Phaser.Game, filter, color?, intensity?, after_destroy?) {
     filter.colorize_intensity = 0;
     filter.gray = 0;
-    filter.colorize = Math.random();
+    if (color === undefined) {
+        filter.colorize = Math.random();
+    } else {
+        filter.colorize = color;
+    }
+    if (intensity === undefined) {
+        intensity = 0.4;
+    }
     game.add
         .tween(filter)
-        .to({colorize_intensity: 0.4, gray: 1}, Phaser.Timer.QUARTER, Phaser.Easing.Linear.None, true);
+        .to({colorize_intensity: intensity, gray: 1}, Phaser.Timer.QUARTER, Phaser.Easing.Linear.None, true);
     return () => {
         game.add
             .tween(filter)
