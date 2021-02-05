@@ -12,7 +12,7 @@
         { "ability": "move", "adept": "isaac" },
         { "ability": "frost", "adept": "sheba" },
         { "ability": "growth", "adept": "isaac" },
-        { "ability": "growth", "adept": "garet" }
+        { "ability": "pound", "adept": "garet" }
     ],
     "default_inputs": {
         "LEFT": "LEFT",

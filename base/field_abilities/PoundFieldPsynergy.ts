@@ -63,7 +63,7 @@ export class PoundFieldPsynergy extends FieldAbilities {
         this.hand_translate_x = this.hand_sprite.centerX;
         this.hand_translate_y = this.hand_sprite.centerY;
         let initial_x_pos = 16;
-        let initial_y_pos = -16;
+        let initial_y_pos = -24;
         if (this.target_found) {
             if (this.cast_direction === directions.down) {
                 initial_y_pos = -(this.target_object.sprite.y - this.data.hero.sprite.y + 5);
@@ -78,9 +78,9 @@ export class PoundFieldPsynergy extends FieldAbilities {
             if (this.cast_direction === directions.down) {
                 initial_y_pos = PoundFieldPsynergy.POUND_MAX_RANGE - 4;
             } else if (this.cast_direction === directions.up) {
-                initial_y_pos = -PoundFieldPsynergy.POUND_MAX_RANGE + 4;
+                initial_y_pos = -PoundFieldPsynergy.POUND_MAX_RANGE - 10;
             } else {
-                initial_x_pos = PoundFieldPsynergy.POUND_MAX_RANGE;
+                initial_x_pos = PoundFieldPsynergy.POUND_MAX_RANGE + 4;
             }
         }
         this.move_hand_by_dir(initial_x_pos, initial_y_pos);
@@ -168,7 +168,7 @@ export class PoundFieldPsynergy extends FieldAbilities {
         }
         this.init_shake();
         this.init_stars();
-        this.init_wave(this.hand_sprite.centerX, this.hand_sprite.centerY + 16);
+        this.init_wave(this.hand_sprite.centerX, this.hand_sprite.centerY + 8);
         this.hand_translate_x = this.hand_sprite.centerX;
         this.hand_translate_y = this.controllable_char.sprite.centerY;
         this.move_hand_by_dir(0, -12);

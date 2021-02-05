@@ -40,7 +40,7 @@
 				"h": 64
 			}
 		},
-		"stone_pillar/up/00": {
+		"pound_stone_pillar/up/00": {
 			"frame": {
 				"x": 69,
 				"y": 1,
@@ -60,7 +60,7 @@
 				"h": 64
 			}
 		},
-		"stone_pillar/down/00": {
+		"pound_stone_pillar/down/00": {
 			"frame": {
 				"x": 103,
 				"y": 1,
