@@ -131,7 +131,7 @@ export class PoundFieldPsynergy extends FieldAbilities {
                     }
                     this.hand_tween(
                         this.hand_translate_x,
-                        this.hand_translate_y,
+                        this.target_found ? this.target_object.sprite.y - 4 : this.hand_translate_y,
                         150,
                         this.finish_hand_movement.bind(this)
                     );
