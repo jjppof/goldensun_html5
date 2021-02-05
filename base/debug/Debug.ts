@@ -368,18 +368,17 @@ export class Debug {
         document.querySelector("#stats_debug table .def").innerHTML = char.def.toString();
         document.querySelector("#stats_debug table .agi").innerHTML = char.agi.toString();
         document.querySelector("#stats_debug table .luk").innerHTML = char.luk.toString();
-        document.querySelector("#stats_debug table .venus_power").innerHTML = char.current_power.venus.toString();
-        document.querySelector("#stats_debug table .venus_resist").innerHTML = char.current_resist.venus.toString();
-        document.querySelector("#stats_debug table .venus_level").innerHTML = char.current_level.venus.toString();
-        document.querySelector("#stats_debug table .mercury_power").innerHTML = char.current_power.mercury.toString();
-        document.querySelector("#stats_debug table .mercury_resist").innerHTML = char.current_resist.mercury.toString();
-        document.querySelector("#stats_debug table .mercury_level").innerHTML = char.current_level.mercury.toString();
-        document.querySelector("#stats_debug table .mars_power").innerHTML = char.current_power.mars.toString();
-        document.querySelector("#stats_debug table .mars_resist").innerHTML = char.current_resist.mars.toString();
-        document.querySelector("#stats_debug table .mars_level").innerHTML = char.current_level.mars.toString();
-        document.querySelector("#stats_debug table .jupiter_power").innerHTML = char.current_power.jupiter.toString();
-        document.querySelector("#stats_debug table .jupiter_resist").innerHTML = char.current_resist.jupiter.toString();
-        document.querySelector("#stats_debug table .jupiter_level").innerHTML = char.current_level.jupiter.toString();
+        ordered_elements.forEach(element => {
+            document.querySelector(`#stats_debug table .${element}_power`).innerHTML = char.current_power[
+                element
+            ].toString();
+            document.querySelector(`#stats_debug table .${element}_resist`).innerHTML = char.current_resist[
+                element
+            ].toString();
+            document.querySelector(`#stats_debug table .${element}_level`).innerHTML = char.current_level[
+                element
+            ].toString();
+        });
         document.querySelector("#stats_debug table .turns").innerHTML = char.turns.toString();
         document.querySelector("#stats_debug table .temp_statuses").innerHTML = [...char.temporary_status].join(" ");
         document.querySelector("#stats_debug table .perm_statuses").innerHTML = [...char.permanent_status].join(" ");

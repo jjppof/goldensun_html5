@@ -1,6 +1,6 @@
 //reference: http://forum.goldensunhacking.net/index.php?topic=475.msg11653#msg11653
 
-import {elements} from "./utils";
+import {elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
 import {GameInfo} from "./initializers/initialize_info";
 import {Player} from "./Player";
@@ -8,10 +8,7 @@ import {Player} from "./Player";
 export class Classes {
     public key_name: string;
     public name: string;
-    public required_venus_level: number;
-    public required_mercury_level: number;
-    public required_mars_level: number;
-    public required_jupiter_level: number;
+    public required_level: {[element in elements]?: number};
     public hp_boost: number;
     public pp_boost: number;
     public atk_boost: number;
@@ -28,10 +25,7 @@ export class Classes {
     constructor(
         key_name,
         name,
-        required_venus_level,
-        required_mercury_level,
-        required_mars_level,
-        required_jupiter_level,
+        required_level,
         hp_boost,
         pp_boost,
         atk_boost,
@@ -44,10 +38,7 @@ export class Classes {
     ) {
         this.key_name = key_name;
         this.name = name;
-        this.required_venus_level = required_venus_level;
-        this.required_mercury_level = required_mercury_level;
-        this.required_mars_level = required_mars_level;
-        this.required_jupiter_level = required_jupiter_level;
+        this.required_level = required_level;
         this.hp_boost = hp_boost;
         this.pp_boost = pp_boost;
         this.atk_boost = atk_boost;
@@ -85,23 +76,11 @@ export function choose_class_by_type(
 ): Classes {
     let classes = Object.values(classes_list).filter(this_class => this_class.class_type === class_type);
     classes = classes.filter(this_class => {
-        return (
-            this_class.required_venus_level <= current_level[elements.VENUS] &&
-            this_class.required_mercury_level <= current_level[elements.MERCURY] &&
-            this_class.required_mars_level <= current_level[elements.MARS] &&
-            this_class.required_jupiter_level <= current_level[elements.JUPITER]
-        );
+        return _.every(this_class.required_level, (level, element) => {
+            return level <= current_level[element];
+        });
     });
-    return _.sortBy(classes, [
-        this_class => {
-            return (
-                this_class.required_venus_level +
-                this_class.required_mercury_level +
-                this_class.required_mars_level +
-                this_class.required_jupiter_level
-            );
-        },
-    ]).reverse()[0];
+    return _.sortBy(classes, [this_class => _.sum(Object.values(this_class.required_level))]).reverse()[0];
 }
 
 function choose_class_type(
@@ -122,18 +101,19 @@ export function choose_class_type_by_element_afinity(
     current_level: Player["current_level"],
     special_class_type: number
 ): number {
-    let secondary_elements = [
-        ...(element_afinity !== elements.VENUS
-            ? [{element: elements.VENUS, level: current_level[elements.VENUS]}]
-            : []),
-        ...(element_afinity !== elements.MERCURY
-            ? [{element: elements.MERCURY, level: current_level[elements.MERCURY]}]
-            : []),
-        ...(element_afinity !== elements.MARS ? [{element: elements.MARS, level: current_level[elements.MARS]}] : []),
-        ...(element_afinity !== elements.JUPITER
-            ? [{element: elements.JUPITER, level: current_level[elements.JUPITER]}]
-            : []),
+    const secondary_elements = [
+        ...ordered_elements.flatMap(element => {
+            return element_afinity !== element
+                ? [
+                      {
+                          element: element,
+                          level: current_level[element],
+                      },
+                  ]
+                : [];
+        }),
     ];
+
     const no_secondary = secondary_elements.every(element => element.level === 0);
     let secondary_afinity;
     if (no_secondary) {

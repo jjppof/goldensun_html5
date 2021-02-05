@@ -10,10 +10,7 @@ export function initialize_classes(classes_db) {
         classes_list[class_data.key_name] = new Classes(
             class_data.key_name,
             class_data.name,
-            class_data.required_venus_level,
-            class_data.required_mercury_level,
-            class_data.required_mars_level,
-            class_data.required_jupiter_level,
+            class_data.required_level,
             class_data.hp_boost,
             class_data.pp_boost,
             class_data.atk_boost,

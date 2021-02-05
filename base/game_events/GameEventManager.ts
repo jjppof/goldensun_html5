@@ -78,7 +78,12 @@ export class GameEventManager {
     search_for_npc() {
         for (let i = 0; i < this.data.map.npcs.length; ++i) {
             const npc = this.data.map.npcs[i];
-            if (npc.npc_type === npc_types.SPRITE || !npc.active) continue;
+            if (
+                npc.npc_type === npc_types.SPRITE ||
+                !npc.active ||
+                npc.base_collision_layer !== this.data.map.collision_layer
+            )
+                continue;
             const is_close_check = is_close(
                 this.data.hero.current_direction,
                 this.data.hero.sprite.x,
