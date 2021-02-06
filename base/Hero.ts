@@ -5,7 +5,6 @@ import {get_transition_directions, range_360, directions, base_actions} from "./
 import {normal_push} from "./interactable_objects/push";
 import {Map} from "./Map";
 import {ClimbEvent} from "./tile_events/ClimbEvent";
-import {Collision} from "./Collision";
 import {Button} from "./XGamepad";
 
 export class Hero extends ControllableChar {
@@ -60,7 +59,6 @@ export class Hero extends ControllableChar {
         [directions.down_left]: {x: -numbers.INV_SQRT2, y: numbers.INV_SQRT2},
     };
 
-    private arrow_inputs: number;
     private force_diagonal_speed: {x: number; y: number} = {x: 0, y: 0};
     private stick_dashing: boolean = false;
 
@@ -89,19 +87,18 @@ export class Hero extends ControllableChar {
             initial_action,
             initial_direction
         );
-        this.arrow_inputs = null;
     }
 
     check_control_inputs() {
-        this.arrow_inputs =
+        const arrow_inputs =
             (1 * +this.data.gamepad.is_down(Button.RIGHT)) |
             (2 * +this.data.gamepad.is_down(Button.LEFT)) |
             (4 * +this.data.gamepad.is_down(Button.UP)) |
             (8 * +this.data.gamepad.is_down(Button.DOWN));
-        this.required_direction = Hero.ROTATION_KEY[this.arrow_inputs];
+        this.required_direction = Hero.ROTATION_KEY[arrow_inputs];
 
         if (!this.ice_sliding_active) {
-            if (!this.arrow_inputs) this.stick_dashing = false;
+            if (!arrow_inputs) this.stick_dashing = false;
             else if (this.data.gamepad.is_down(Button.STICK_DASHING)) this.stick_dashing = true; // Can't `!this.stickdashing;` since called at every frame
             this.dashing = this.stick_dashing || this.data.gamepad.is_down(Button.B);
         }
@@ -109,7 +106,7 @@ export class Hero extends ControllableChar {
 
     set_speed_factors(check_on_event: boolean = false, desired_direction?: directions) {
         if (check_on_event && this.data.tile_event_manager.on_event) return;
-        desired_direction = desired_direction === undefined ? Hero.ROTATION_KEY[this.arrow_inputs] : desired_direction;
+        desired_direction = desired_direction === undefined ? this.required_direction : desired_direction;
         if (this.climbing) {
             if (desired_direction === null) {
                 this.x_speed = this.y_speed = 0;
@@ -128,15 +125,20 @@ export class Hero extends ControllableChar {
             //when force_direction is true, it means that the hero is going to face a different direction from the one specified in the keyboard arrows
             if (desired_direction !== null || this.force_direction) {
                 if (!this.force_direction) {
-                    this.current_direction = desired_direction;
+                    this.set_direction(desired_direction, false, false);
+                    //this if controls the transition to the target direction rate
                     if (this.game.time.frames & 1) {
                         //char turn time frame rate
-                        this.desired_direction = get_transition_directions(this.desired_direction, desired_direction);
+                        this.transition_direction = get_transition_directions(
+                            this.transition_direction,
+                            desired_direction
+                        );
                     }
                 } else {
                     desired_direction = this.current_direction;
                 }
                 if (this.force_direction && (this.current_direction & 1) === 1) {
+                    //sets the speed according to the collision slope
                     this.x_speed = this.force_diagonal_speed.x;
                     this.y_speed = this.force_diagonal_speed.y;
                 } else {
@@ -151,27 +153,35 @@ export class Hero extends ControllableChar {
                 if (this.colliding_directions.includes(desired_direction) || desired_direction === null) {
                     this.x_speed = this.y_speed = 0;
                 } else {
+                    //checks if a diagonal direction was asked
                     if ((desired_direction & 1) === 1) {
+                        //changes to a not diagonal direction
                         if (this.colliding_directions.includes(desired_direction - 1)) {
                             desired_direction = (desired_direction + 1) & 7;
                         } else {
                             --desired_direction;
                         }
                     }
+                    //starts sliding
                     this.x_speed = Hero.SPEEDS[desired_direction].x;
                     this.y_speed = Hero.SPEEDS[desired_direction].y;
                     this.ice_slide_direction = desired_direction;
                     this.sliding_on_ice = true;
                 }
             } else if (this.sliding_on_ice && this.colliding_directions.includes(this.ice_slide_direction)) {
+                //stops sliding
                 this.x_speed = this.y_speed = 0;
                 this.ice_slide_direction = null;
                 this.sliding_on_ice = false;
             } else if (this.sliding_on_ice) {
                 if (desired_direction !== null) {
-                    this.current_direction = desired_direction;
+                    //changes the hero direction while sliding
+                    this.set_direction(desired_direction, false, false);
                     if (this.game.time.frames & 1) {
-                        this.desired_direction = get_transition_directions(this.desired_direction, desired_direction);
+                        this.transition_direction = get_transition_directions(
+                            this.transition_direction,
+                            desired_direction
+                        );
                     }
                 }
                 this.x_speed = Hero.SPEEDS[this.ice_slide_direction].x;
@@ -212,7 +222,7 @@ export class Hero extends ControllableChar {
                                 });
                             }
                             if (!has_stair) {
-                                let item_position = interactable_object.get_current_position(map);
+                                const item_position = interactable_object.get_current_position(map);
                                 switch (this.trying_to_push_direction) {
                                     case directions.up:
                                         item_position.y -= 1;
@@ -272,18 +282,18 @@ export class Hero extends ControllableChar {
                 Math.abs(this.sprite.body.velocity.y) < speed_limit
             ) {
                 //speeds below SPEED_LIMIT_TO_STOP are not considered
-                let contact_point_directions = new Array(normals.length); // a contact point direction is the opposite direction of the contact normal vector
+                const contact_point_directions = new Array(normals.length); // a contact point direction is the opposite direction of the contact normal vector
                 normals.forEach((normal, index) => {
+                    const abs_normal_x = Math.abs(normal[0]);
+                    const abs_normal_y = Math.abs(normal[1]);
                     //slopes outside the MINIMAL_SLOPE range will be desconsidered
-                    if (Math.abs(normal[0]) < Hero.MINIMAL_SLOPE) normal[0] = 0;
-                    if (Math.abs(normal[1]) < Hero.MINIMAL_SLOPE) normal[1] = 0;
-                    if (Math.abs(normal[0]) > 1 - Hero.MINIMAL_SLOPE) normal[0] = Math.sign(normal[0]);
-                    if (Math.abs(normal[1]) > 1 - Hero.MINIMAL_SLOPE) normal[1] = Math.sign(normal[1]);
+                    if (abs_normal_x < Hero.MINIMAL_SLOPE) normal[0] = 0;
+                    if (abs_normal_y < Hero.MINIMAL_SLOPE) normal[1] = 0;
+                    if (abs_normal_x > 1 - Hero.MINIMAL_SLOPE) normal[0] = Math.sign(normal[0]);
+                    if (abs_normal_y > 1 - Hero.MINIMAL_SLOPE) normal[1] = Math.sign(normal[1]);
                     contact_point_directions[index] = range_360(Math.atan2(normal[1], -normal[0])); //storing the angle as if it is in the 1st quadrant
                 });
-                const desired_direction = range_360(
-                    Math.atan2(-this.sprite.body.velocity.temp_y, this.sprite.body.velocity.temp_x)
-                ); //storing the angle as if it is in the 1st quadrant
+                const desired_direction = range_360(Math.atan2(-this.temp_velocity_y, this.temp_velocity_x)); //storing the angle as if it is in the 1st quadrant
                 contact_point_directions.forEach(direction => {
                     //check if the desired direction is going towards at least one contact direction with a error margin of 30 degrees
                     if (
@@ -291,8 +301,8 @@ export class Hero extends ControllableChar {
                         direction <= desired_direction + numbers.degree15
                     ) {
                         //if true, it means that the hero is going the in the direction of the collision obejct, then it must stop
-                        this.sprite.body.velocity.temp_x = 0;
-                        this.sprite.body.velocity.temp_y = 0;
+                        this.temp_velocity_x = 0;
+                        this.temp_velocity_y = 0;
                         return;
                     }
                 });
@@ -308,7 +318,7 @@ export class Hero extends ControllableChar {
                         Hero.ROTATION_NORMAL[
                             (range_360(Math.atan2(normal[1], -normal[0]) + numbers.degree15) / numbers.degree30) | 0
                         ];
-                    const relative_direction = (Hero.ROTATION_KEY[this.arrow_inputs] - wall_direction) & 7;
+                    const relative_direction = (this.required_direction - wall_direction) & 7;
                     //if player's direction is within 1 of wall_direction
                     if (relative_direction === 1 || relative_direction === 7) {
                         this.force_direction = true;

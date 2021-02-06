@@ -56,9 +56,18 @@ export abstract class ControllableChar {
     public tile_y_pos: number;
     public current_action: string | base_actions;
     public current_animation: string;
+    public temp_velocity_x: number;
+    public temp_velocity_y: number;
+
+    /* The direction that the hero is moving. */
     public current_direction: number;
+
+    /* The direction determined by the input. */
     public required_direction: number;
-    public desired_direction: number;
+
+    /* When changing directions, the char smoothly changes to the target direction. This var holds the intermediate directions. */
+    public transition_direction: number;
+
     public ice_slide_direction: number;
     public color_filter: Phaser.Filter;
     public enable_footsteps: boolean;
@@ -133,7 +142,7 @@ export abstract class ControllableChar {
         this.current_direction = initial_direction in directions ? directions[initial_direction] : null;
         this.current_animation = initial_direction;
         this.required_direction = null;
-        this.desired_direction = this.current_direction;
+        this.transition_direction = this.current_direction;
         this.ice_slide_direction = null;
         this.color_filter = this.game.add.filter("ColorFilters");
         this.trying_to_push = false;
@@ -286,7 +295,7 @@ export abstract class ControllableChar {
         }
         const angle = range_360(Math.atan2(this.y_speed, this.x_speed));
         this.required_direction = (1 + Math.floor((angle - numbers.degree45_half) / numbers.degree45)) & 7;
-        this.desired_direction = this.required_direction;
+        this.transition_direction = this.required_direction;
     }
 
     async go_to_direction(direction: number, time_between_frames: number = 40) {
@@ -328,7 +337,7 @@ export abstract class ControllableChar {
         }
         this.update_tile_position();
         this.choose_direction_by_speed();
-        this.set_direction(this.desired_direction);
+        this.set_direction(this.transition_direction, false, false);
         this.set_current_action();
         this.calculate_speed();
         this.set_action();
@@ -417,8 +426,11 @@ export abstract class ControllableChar {
         }
     }
 
-    set_direction(direction: number, force_change: boolean = false) {
-        this.current_direction = this.desired_direction = direction;
+    set_direction(direction: number, force_change: boolean = false, transition_also: boolean = true) {
+        this.current_direction = direction;
+        if (transition_also) {
+            this.transition_direction = direction;
+        }
         this.current_animation = reverse_directions[this.current_direction];
         if (force_change) {
             this.set_action();
@@ -436,7 +448,7 @@ export abstract class ControllableChar {
         } else if (this.stop_by_colliding && !this.pushing && this.climbing) {
             idle_climbing = true;
         }
-        const animation = idle_climbing ? base_actions.IDLE : reverse_directions[this.desired_direction];
+        const animation = idle_climbing ? base_actions.IDLE : reverse_directions[this.transition_direction];
         let frame_rate;
         if (action === base_actions.WALK) {
             if (this.ice_sliding_active) {
@@ -467,19 +479,23 @@ export abstract class ControllableChar {
         if (this.required_direction === null && this.current_action !== base_actions.IDLE && !this.climbing) {
             this.current_action = base_actions.IDLE;
         } else if (this.required_direction !== null && !this.climbing && !this.pushing) {
-            const footsteps =
-                this.enable_footsteps &&
-                !this.ice_sliding_active &&
-                this.data.map.show_footsteps &&
-                this.tile_able_to_show_footprint();
-            if (this.footsteps.can_make_footprint && footsteps) {
-                this.footsteps.create_step(this.current_direction, this.current_action);
-            }
+            this.check_footsteps();
             if (this.dashing && this.current_action !== base_actions.DASH) {
                 this.current_action = base_actions.DASH;
             } else if (!this.dashing && this.current_action !== base_actions.WALK) {
                 this.current_action = base_actions.WALK;
             }
+        }
+    }
+
+    check_footsteps() {
+        const footsteps =
+            this.enable_footsteps &&
+            !this.ice_sliding_active &&
+            this.data.map.show_footsteps &&
+            this.tile_able_to_show_footprint();
+        if (this.footsteps.can_make_footprint && footsteps) {
+            this.footsteps.create_step(this.current_direction, this.current_action);
         }
     }
 
@@ -489,11 +505,11 @@ export abstract class ControllableChar {
     }
 
     calculate_speed() {
-        //when setting temp_x or temp_y, it means that these velocities will still be analyzed in collision_dealer function
+        //when setting temp_velocity_x or temp_velocity_y, it means that these velocities will still be analyzed in collision_dealer function
         const delta_time = this.game.time.elapsedMS / numbers.DELTA_TIME_FACTOR;
         const apply_speed = (speed_factor: number) => {
-            this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * speed_factor) | 0;
-            this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * speed_factor) | 0;
+            this.temp_velocity_x = (delta_time * this.x_speed * speed_factor) | 0;
+            this.temp_velocity_y = (delta_time * this.y_speed * speed_factor) | 0;
         };
         if (this.ice_sliding_active && this.sliding_on_ice) {
             const speed_factor = ControllableChar.SLIDE_ICE_SPEED + this.extra_speed;
@@ -511,8 +527,8 @@ export abstract class ControllableChar {
                 (this.data.map.is_world_map ? numbers.WORLD_MAP_SPEED_WALK_REDUCE : 0);
             apply_speed(speed_factor);
         } else if (this.current_action === base_actions.CLIMB) {
-            this.sprite.body.velocity.temp_x = (delta_time * this.x_speed * this.climb_speed) | 0;
-            this.sprite.body.velocity.temp_y = (delta_time * this.y_speed * this.climb_speed) | 0;
+            this.temp_velocity_x = (delta_time * this.x_speed * this.climb_speed) | 0;
+            this.temp_velocity_y = (delta_time * this.y_speed * this.climb_speed) | 0;
         } else if (this.current_action === base_actions.IDLE) {
             this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         }
@@ -524,8 +540,8 @@ export abstract class ControllableChar {
             (this.sliding_on_ice && this.ice_sliding_active)
         ) {
             //sets the final velocity
-            this.sprite.body.velocity.x = this.sprite.body.velocity.temp_x;
-            this.sprite.body.velocity.y = this.sprite.body.velocity.temp_y;
+            this.sprite.body.velocity.x = this.temp_velocity_x;
+            this.sprite.body.velocity.y = this.temp_velocity_y;
         }
     }
 
