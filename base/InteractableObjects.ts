@@ -442,6 +442,7 @@ export class InteractableObjects {
                 event_data.activation_collision_layers,
                 event_info.dynamic,
                 active_event,
+                false,
                 event_data.change_to_collision_layer,
                 event_info.is_set,
                 this,

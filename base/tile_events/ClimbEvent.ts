@@ -2,8 +2,9 @@ import {base_actions, directions, reverse_directions} from "../utils";
 import {TileEvent, event_types} from "./TileEvent";
 import {JumpEvent} from "./JumpEvent";
 import * as numbers from "../magic_numbers";
-import {interactable_object_event_types} from "../InteractableObjects";
+import {InteractableObjects, interactable_object_event_types} from "../InteractableObjects";
 import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
+import {GoldenSun} from "../GoldenSun";
 
 export class ClimbEvent extends TileEvent {
     public change_to_collision_layer: number;
@@ -12,10 +13,10 @@ export class ClimbEvent extends TileEvent {
     public current_activation_direction: directions;
 
     constructor(
-        game,
-        data,
-        x,
-        y,
+        game: Phaser.Game,
+        data: GoldenSun,
+        x: number,
+        y: number,
         activation_directions,
         activation_collision_layers,
         dynamic,
@@ -23,7 +24,7 @@ export class ClimbEvent extends TileEvent {
         affected_by_reveal,
         change_to_collision_layer,
         is_set?,
-        origin_interactable_object?,
+        origin_interactable_object?: InteractableObjects,
         climbing_only?
     ) {
         super(
