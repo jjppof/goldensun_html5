@@ -86,7 +86,7 @@ export class Collision {
         data.map.collision_layer = new_collision_layer_index;
         this.hero.shadow.base_collision_layer = data.map.collision_layer;
         this.hero.sprite.base_collision_layer = data.map.collision_layer;
-        data.map.config_body(this, new_collision_layer_index);
+        data.map.config_body(new_collision_layer_index);
         this.config_collision_groups(data.map);
         this.config_collisions(data.map, data.map.collision_layer, data.npc_group);
         let layers = data.map.layers;

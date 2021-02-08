@@ -175,7 +175,7 @@ export class GoldenSun {
         this.collision = new Collision(this.game, this.hero);
         this.hero.config_body(this.map.is_world_map ? numbers.HERO_BODY_RADIUS_M7 : numbers.HERO_BODY_RADIUS);
         this.collision.config_collision_groups(this.map);
-        this.map.config_all_bodies(this.collision, this.map.collision_layer);
+        this.map.config_all_bodies(this.map.collision_layer);
         this.collision.config_collisions(this.map, this.map.collision_layer, this.npc_group);
         this.game.physics.p2.updateBoundsCollisionGroup();
 
@@ -306,6 +306,7 @@ export class GoldenSun {
             this.map.update(); //update map and its objects position/velocity/sprite
         } else {
             if (this.game_event_manager.on_event) {
+                //updates whatever it is related to a game event
                 this.game_event_manager.update();
             } else {
                 this.hero.stop_char(false);
@@ -319,6 +320,7 @@ export class GoldenSun {
             }
         }
 
+        //updates whatever it is related to a field ability
         for (let ability_key in this.info.field_abilities_list) {
             this.info.field_abilities_list[ability_key].update();
         }

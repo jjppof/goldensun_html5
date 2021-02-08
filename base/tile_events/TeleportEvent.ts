@@ -131,7 +131,7 @@ export class TeleportEvent extends TileEvent {
             this.game.camera.bounds.height = numbers.GAME_HEIGHT;
         }
         this.data.collision.config_collision_groups(this.data.map);
-        this.data.map.config_all_bodies(this.data.collision, this.data.map.collision_layer);
+        this.data.map.config_all_bodies(this.data.map.collision_layer);
         this.data.collision.config_collisions(this.data.map, this.data.map.collision_layer, this.data.npc_group);
         this.game.physics.p2.updateBoundsCollisionGroup();
         this.data.debug.update_debug_physics(this.data.hero.sprite.body.debug);

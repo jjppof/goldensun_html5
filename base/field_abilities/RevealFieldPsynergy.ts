@@ -28,8 +28,8 @@ export class RevealFieldPsynergy extends FieldAbilities {
             const this_y_diff = this_point.y - this.casting_point.y;
             const angle = Math.atan2(this_y_diff, this_x_diff);
             const limit_point = {
-                x: this.casting_point.x + 96 * Math.cos(angle),
-                y: this.casting_point.y + 72 * Math.sin(angle),
+                x: this.casting_point.x + 90 * Math.cos(angle),
+                y: this.casting_point.y + 66 * Math.sin(angle),
             };
             const this_sqr_dist = Math.pow(this_x_diff, 2) + Math.pow(this_y_diff, 2);
             const limit_sqr_dist =
@@ -151,7 +151,7 @@ export class RevealFieldPsynergy extends FieldAbilities {
                     a: 0.2,
                     b: 0.16,
                 },
-                500,
+                350,
                 Phaser.Easing.Linear.None,
                 true
             )

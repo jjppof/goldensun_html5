@@ -60,7 +60,6 @@ export class Hero extends ControllableChar {
     };
 
     private force_diagonal_speed: {x: number; y: number} = {x: 0, y: 0};
-    private stick_dashing: boolean = false;
 
     constructor(
         game,
@@ -98,9 +97,10 @@ export class Hero extends ControllableChar {
         this.required_direction = Hero.ROTATION_KEY[arrow_inputs];
 
         if (!this.ice_sliding_active) {
-            if (!arrow_inputs) this.stick_dashing = false;
-            else if (this.data.gamepad.is_down(Button.STICK_DASHING)) this.stick_dashing = true; // Can't `!this.stickdashing;` since called at every frame
-            this.dashing = this.stick_dashing || this.data.gamepad.is_down(Button.B);
+            let stick_dashing = false;
+            if (!arrow_inputs) stick_dashing = false;
+            else if (this.data.gamepad.is_down(Button.STICK_DASHING)) stick_dashing = true;
+            this.dashing = stick_dashing || this.data.gamepad.is_down(Button.B);
         }
     }
 
@@ -126,9 +126,8 @@ export class Hero extends ControllableChar {
             if (desired_direction !== null || this.force_direction) {
                 if (!this.force_direction) {
                     this.set_direction(desired_direction, false, false);
-                    //this if controls the transition to the target direction rate
                     if (this.game.time.frames & 1) {
-                        //char turn time frame rate
+                        //this if controls the char turn frame rate, how fast is the transition
                         this.transition_direction = get_transition_directions(
                             this.transition_direction,
                             desired_direction

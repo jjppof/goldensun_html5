@@ -160,7 +160,7 @@ export class InteractableObjects {
         this.events.delete(id);
     }
 
-    creating_blocking_stair_block(collision_obj: Collision) {
+    creating_blocking_stair_block() {
         const target_layer = this.base_collision_layer + this.block_climb_collision_layer_shift;
         const x_pos = (this.current_x + 0.5) * this.data.map.tile_width;
         const y_pos = (this.current_y + 1.5) * this.data.map.tile_height - 4;
@@ -181,7 +181,7 @@ export class InteractableObjects {
         body.dynamic = false;
         body.static = true;
         body.debug = this.data.hero.sprite.body.debug;
-        body.collides(collision_obj.hero_collision_group);
+        body.collides(this.data.collision.hero_collision_group);
         this.custom_data.blocking_stair_block = body;
     }
 
@@ -454,9 +454,9 @@ export class InteractableObjects {
         });
     }
 
-    config_body(collision_obj: Collision) {
+    config_body() {
         if (this.data.dbs.interactable_objects_db[this.key_name].body_radius === 0) return;
-        const collision_groups = collision_obj.interactable_objs_collision_groups;
+        const collision_groups = this.data.collision.interactable_objs_collision_groups;
         this.game.physics.p2.enable(this.sprite, false);
         this.sprite.anchor.y = this.data.dbs.interactable_objects_db[this.key_name].anchor_y; //Important to be after the previous command
         this.sprite.body.clearShapes();
@@ -482,7 +482,7 @@ export class InteractableObjects {
         this.sprite.body.dynamic = false;
         this.sprite.body.static = true;
         if (this.block_climb_collision_layer_shift !== undefined) {
-            this.creating_blocking_stair_block(collision_obj);
+            this.creating_blocking_stair_block();
         }
     }
 }

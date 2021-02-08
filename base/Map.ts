@@ -5,7 +5,6 @@ import * as numbers from "./magic_numbers";
 import {GameEvent} from "./game_events/GameEvent";
 import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
-import {SpriteBase} from "./SpriteBase";
 import {Collision} from "./Collision";
 import {ControllableChar} from "./ControllableChar";
 
@@ -201,7 +200,7 @@ export class Map {
         }
     }
 
-    config_body(collision_obj: Collision, collision_layer: number) {
+    config_body(collision_layer: number) {
         this.game.physics.p2.enable(this.collision_sprite, false);
         this.collision_sprite.body.clearShapes();
         if (this.collision_embedded) {
@@ -258,7 +257,7 @@ export class Map {
                 this.physics_names[collision_layer]
             );
         }
-        this.collision_sprite.body.setCollisionGroup(collision_obj.map_collision_group);
+        this.collision_sprite.body.setCollisionGroup(this.data.collision.map_collision_group);
         this.collision_sprite.body.damping = numbers.MAP_DAMPING;
         this.collision_sprite.body.angularDamping = numbers.MAP_DAMPING;
         this.collision_sprite.body.setZeroRotation();
@@ -266,12 +265,12 @@ export class Map {
         this.collision_sprite.body.static = true;
     }
 
-    config_all_bodies(collision_obj: Collision, collision_layer: number) {
+    config_all_bodies(collision_layer: number) {
         if (!this.is_world_map) {
             this.npcs.forEach(npc => npc.config_body());
-            this.interactable_objects.forEach(interactable_obj => interactable_obj.config_body(collision_obj));
+            this.interactable_objects.forEach(interactable_obj => interactable_obj.config_body());
         }
-        this.config_body(collision_obj, collision_layer);
+        this.config_body(collision_layer);
     }
 
     get_current_tile(controllable_char: ControllableChar, layer?) {
@@ -379,61 +378,7 @@ export class Map {
     async config_npc() {
         for (let i = 0; i < this.npcs.length; ++i) {
             const npc = this.npcs[i];
-            const npc_db = this.data.dbs.npc_db[npc.key_name];
-            let actions = Object.keys(npc_db.actions);
-            const npc_sprite_info = new SpriteBase(npc.key_name, actions);
-            for (let j = 0; j < actions.length; ++j) {
-                const action = actions[j];
-                npc_sprite_info.setActionSpritesheet(
-                    action,
-                    npc_db.actions[action].spritesheet.image,
-                    npc_db.actions[action].spritesheet.json
-                );
-                npc_sprite_info.setActionDirections(
-                    action,
-                    npc_db.actions[action].directions,
-                    npc_db.actions[action].frames_count
-                );
-                npc_sprite_info.setActionFrameRate(action, npc_db.actions[action].frame_rate);
-                npc_sprite_info.setActionLoop(action, npc_db.actions[action].loop);
-            }
-            npc_sprite_info.generateAllFrames();
-            await new Promise<void>(resolve => {
-                npc_sprite_info.loadSpritesheets(this.game, true, () => {
-                    if (!npc.no_shadow) {
-                        npc.set_shadow(
-                            npc_db.shadow_key,
-                            this.data.npc_group,
-                            npc.base_collision_layer,
-                            npc_db.shadow_anchor_x,
-                            npc_db.shadow_anchor_y
-                        );
-                    }
-                    npc.set_sprite(
-                        this.data.npc_group,
-                        npc_sprite_info,
-                        npc.base_collision_layer,
-                        this,
-                        this.is_world_map,
-                        npc.anchor_x !== undefined ? npc.anchor_x : npc_db.anchor_x,
-                        npc.anchor_y !== undefined ? npc.anchor_y : npc_db.anchor_y,
-                        npc.scale_x !== undefined ? npc.scale_x : npc_db.scale_x,
-                        npc.scale_y !== undefined ? npc.scale_y : npc_db.scale_y
-                    );
-                    if (npc.ignore_world_map_scale) {
-                        npc.sprite.scale.setTo(1, 1);
-                        if (npc.shadow) {
-                            npc.shadow.scale.setTo(1, 1);
-                        }
-                    }
-                    if (npc.affected_by_reveal) {
-                        npc.sprite.visible = false;
-                    }
-                    npc.set_sprite_as_npc();
-                    npc.play(npc.current_action, npc.current_animation);
-                    resolve();
-                });
-            });
+            await npc.init_npc(this);
         }
     }
 

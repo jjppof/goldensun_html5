@@ -9,7 +9,7 @@ import * as _ from "lodash";
 export class PoundFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "pound";
     private static readonly ACTION_KEY_NAME = "cast";
-    private static readonly POUND_MAX_RANGE = 24;
+    private static readonly POUND_MAX_RANGE = 26;
     private static readonly STAR_MAX_COUNT = 12;
     private static readonly POUND_HAND_KEY_NAME = "pound_hand";
     private static readonly POUND_FIELD_COLOR = 1.0;
