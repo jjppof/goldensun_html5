@@ -5,7 +5,6 @@ import * as numbers from "./magic_numbers";
 import {GameEvent} from "./game_events/GameEvent";
 import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
-import {Collision} from "./Collision";
 import {ControllableChar} from "./ControllableChar";
 
 export class Map {
