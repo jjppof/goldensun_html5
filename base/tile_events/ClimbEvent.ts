@@ -3,6 +3,7 @@ import {TileEvent, event_types} from "./TileEvent";
 import {JumpEvent} from "./JumpEvent";
 import * as numbers from "../magic_numbers";
 import {interactable_object_event_types} from "../InteractableObjects";
+import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 
 export class ClimbEvent extends TileEvent {
     public change_to_collision_layer: number;
@@ -19,6 +20,7 @@ export class ClimbEvent extends TileEvent {
         activation_collision_layers,
         dynamic,
         active,
+        affected_by_reveal,
         change_to_collision_layer,
         is_set?,
         origin_interactable_object?,
@@ -34,7 +36,8 @@ export class ClimbEvent extends TileEvent {
             activation_collision_layers,
             dynamic,
             active,
-            origin_interactable_object
+            origin_interactable_object,
+            affected_by_reveal
         );
         this.change_to_collision_layer = change_to_collision_layer === undefined ? null : change_to_collision_layer;
         this.is_set = is_set === undefined ? true : is_set;
@@ -44,6 +47,9 @@ export class ClimbEvent extends TileEvent {
     fire() {
         if (!this.data.hero.stop_by_colliding || !this.check_position() || !this.data.hero_movement_allowed()) {
             return;
+        }
+        if (this.data.hero.on_reveal) {
+            (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
         }
         if (!this.data.hero.climbing && !this.climbing_only) {
             this.start_climbing(this.current_activation_direction);

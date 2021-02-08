@@ -15,7 +15,18 @@ const JUMP_DURATION = 150;
 export class JumpEvent extends TileEvent {
     public is_set: boolean;
 
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, is_set) {
+    constructor(
+        game,
+        data,
+        x,
+        y,
+        activation_directions,
+        activation_collision_layers,
+        dynamic,
+        active,
+        affected_by_reveal,
+        is_set
+    ) {
         super(
             game,
             data,
@@ -26,7 +37,8 @@ export class JumpEvent extends TileEvent {
             activation_collision_layers,
             dynamic,
             active,
-            null
+            null,
+            affected_by_reveal
         );
         this.is_set = is_set === undefined ? true : is_set;
     }

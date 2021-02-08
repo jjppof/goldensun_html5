@@ -15,6 +15,7 @@ export class CollisionEvent extends TileEvent {
         activation_collision_layers,
         dynamic,
         active,
+        affected_by_reveal,
         dest_collision_layer
     ) {
         super(
@@ -27,7 +28,8 @@ export class CollisionEvent extends TileEvent {
             activation_collision_layers,
             dynamic,
             active,
-            null
+            null,
+            affected_by_reveal
         );
         this.dest_collision_layer = dest_collision_layer;
         this.next_x = 0;

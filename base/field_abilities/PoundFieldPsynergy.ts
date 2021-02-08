@@ -27,9 +27,10 @@ export class PoundFieldPsynergy extends FieldAbilities {
             game,
             data,
             PoundFieldPsynergy.ABILITY_KEY_NAME,
-            PoundFieldPsynergy.POUND_MAX_RANGE,
             PoundFieldPsynergy.ACTION_KEY_NAME,
             true,
+            true,
+            PoundFieldPsynergy.POUND_MAX_RANGE,
             PoundFieldPsynergy.POUND_FIELD_COLOR,
             PoundFieldPsynergy.POUND_FIELD_INTENSITY
         );
@@ -42,6 +43,8 @@ export class PoundFieldPsynergy extends FieldAbilities {
         this.hand_translate_x = 0;
         this.hand_translate_y = 0;
     }
+
+    update() {}
 
     init_hand() {
         this.field_psynergy_window.close();

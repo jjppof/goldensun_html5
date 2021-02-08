@@ -27,6 +27,7 @@ export abstract class TileEvent {
     public activation_directions: number[];
     public dynamic: boolean;
     public active: boolean[];
+    public affected_by_reveal: boolean[];
     public origin_interactable_object: InteractableObjects;
     public collision_layer_shift_from_source: number;
     public static id_incrementer: number;
@@ -42,7 +43,8 @@ export abstract class TileEvent {
         activation_collision_layers,
         dynamic,
         active,
-        origin_interactable_object
+        origin_interactable_object,
+        affected_by_reveal
     ) {
         this.game = game;
         this.data = data;
@@ -66,6 +68,11 @@ export abstract class TileEvent {
         this.active = Array.isArray(active)
             ? active
             : new Array(this.activation_directions.length).fill(active === undefined ? true : active);
+        this.affected_by_reveal = Array.isArray(affected_by_reveal)
+            ? affected_by_reveal
+            : new Array(this.activation_directions.length).fill(
+                  affected_by_reveal === undefined ? false : affected_by_reveal
+              );
         this.origin_interactable_object = origin_interactable_object === undefined ? null : origin_interactable_object;
         this.collision_layer_shift_from_source = 0;
         TileEvent.events[this.id] = this;

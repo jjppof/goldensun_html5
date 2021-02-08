@@ -179,6 +179,7 @@ export class TileEventManager {
                 info.activation_collision_layers,
                 false,
                 info.active,
+                info.affected_by_reveal,
                 info.change_to_collision_layer
             );
         } else if (info.type === event_types.SPEED) {
@@ -191,6 +192,7 @@ export class TileEventManager {
                 info.activation_collision_layers,
                 false,
                 info.active,
+                info.affected_by_reveal,
                 info.speed
             );
         } else if (info.type === event_types.TELEPORT) {
@@ -203,6 +205,7 @@ export class TileEventManager {
                 info.activation_collision_layers,
                 false,
                 info.active,
+                info.affected_by_reveal,
                 info.target,
                 info.x_target,
                 info.y_target,
@@ -220,6 +223,7 @@ export class TileEventManager {
                 info.activation_collision_layers,
                 false,
                 info.active,
+                info.affected_by_reveal,
                 info.x_target,
                 info.y_target,
                 info.dest_collision_layer,
@@ -235,6 +239,7 @@ export class TileEventManager {
                 info.activation_collision_layers,
                 false,
                 info.active,
+                info.affected_by_reveal,
                 info.is_set
             );
         } else if (info.type === event_types.STEP) {
@@ -247,6 +252,7 @@ export class TileEventManager {
                 info.activation_collision_layers,
                 false,
                 info.active,
+                info.affected_by_reveal,
                 info.step_direction
             );
         } else if (info.type === event_types.COLLISION) {
@@ -259,6 +265,7 @@ export class TileEventManager {
                 info.activation_collision_layers,
                 false,
                 info.active,
+                info.affected_by_reveal,
                 info.dest_collision_layer
             );
         } else if (info.type === event_types.EVENT_TRIGGER) {
@@ -271,6 +278,7 @@ export class TileEventManager {
                 info.activation_collision_layers,
                 false,
                 info.active,
+                info.affected_by_reveal,
                 info.events
             );
         } else if (info.type === event_types.ICE_SLIDE) {
@@ -283,6 +291,7 @@ export class TileEventManager {
                 info.activation_collision_layers,
                 false,
                 info.active,
+                info.affected_by_reveal,
                 info.start_sliding_direction
             );
         }

@@ -171,7 +171,7 @@
             "mars": 88,
             "jupiter": 114
         },
-        "innate_abilities": ["whirlwind"],
+        "innate_abilities": ["whirlwind", "reveal"],
         "in_party": true,
         "battle_scale": 0.85,
         "battle_shadow_key": "00",

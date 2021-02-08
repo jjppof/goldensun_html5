@@ -264,6 +264,7 @@ declare module PIXI {
     export class DisplayObject {
 
         alpha: number;
+        avoidFilterCapping: boolean;
         buttonMode: boolean;
         cacheAsBitmap: boolean;
         defaultCursor: string;

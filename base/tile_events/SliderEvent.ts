@@ -19,6 +19,7 @@ export class SliderEvent extends TileEvent {
         activation_collision_layers,
         dynamic,
         active,
+        affected_by_reveal,
         x_target,
         y_target,
         dest_collision_layer,
@@ -34,7 +35,8 @@ export class SliderEvent extends TileEvent {
             activation_collision_layers,
             dynamic,
             active,
-            null
+            null,
+            affected_by_reveal
         );
         this.x_target = x_target;
         this.y_target = y_target;

@@ -2,6 +2,7 @@ import {base_actions, directions, reverse_directions} from "../utils";
 import {event_types, TileEvent} from "./TileEvent";
 import * as numbers from "../magic_numbers";
 import * as _ from "lodash";
+import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 
 export class TeleportEvent extends TileEvent {
     public target: string;
@@ -20,6 +21,7 @@ export class TeleportEvent extends TileEvent {
         activation_collision_layers,
         dynamic,
         active,
+        affected_by_reveal,
         target,
         x_target,
         y_target,
@@ -37,7 +39,8 @@ export class TeleportEvent extends TileEvent {
             activation_collision_layers,
             dynamic,
             active,
-            null
+            null,
+            affected_by_reveal
         );
         this.target = target;
         this.x_target = x_target;
@@ -99,6 +102,9 @@ export class TeleportEvent extends TileEvent {
         this.data.hero.stop_char(true);
         this.game.camera.fade();
         this.game.camera.onFadeComplete.addOnce(() => {
+            if (this.data.hero.on_reveal) {
+                (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(true);
+            }
             const destination_direction =
                 directions[this.destination_direction] !== undefined
                     ? directions[this.destination_direction]

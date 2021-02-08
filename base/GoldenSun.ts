@@ -60,6 +60,7 @@ export class GoldenSun {
     public underlayer_group: Phaser.Group = null;
     public npc_group: Phaser.Group = null;
     public overlayer_group: Phaser.Group = null;
+    public super_group: Phaser.Group = null;
 
     constructor() {
         this.game = new Phaser.Game(
@@ -128,6 +129,10 @@ export class GoldenSun {
         this.underlayer_group = this.game.add.group();
         this.npc_group = this.game.add.group();
         this.overlayer_group = this.game.add.group();
+        this.super_group = this.game.add.group();
+        this.super_group.addChild(this.underlayer_group);
+        this.super_group.addChild(this.npc_group);
+        this.super_group.addChild(this.overlayer_group);
 
         //use the data loaded from json files to initialize some data
         await initialize_game_data(this.game, this);
@@ -312,6 +317,10 @@ export class GoldenSun {
             } else if (this.in_battle) {
                 this.battle_instance.update();
             }
+        }
+
+        for (let ability_key in this.info.field_abilities_list) {
+            this.info.field_abilities_list[ability_key].update();
         }
 
         //fps adjustment for faster monitors since requestAnimationFrame follows monitor frame rate

@@ -23,13 +23,16 @@ export class GrowthFieldPsynergy extends FieldAbilities {
             game,
             data,
             GrowthFieldPsynergy.ABILITY_KEY_NAME,
-            GrowthFieldPsynergy.GROWTH_MAX_RANGE,
             GrowthFieldPsynergy.ACTION_KEY_NAME,
-            true
+            true,
+            true,
+            GrowthFieldPsynergy.GROWTH_MAX_RANGE
         );
         this.set_bootstrap_method(this.init_bubbles.bind(this));
         this.sprite_base = this.data.info.iter_objs_sprite_base_list[GrowthFieldPsynergy.ABILITY_KEY_NAME];
     }
+
+    update() {}
 
     set_emitter() {
         let max_x_speed = 0;
@@ -150,7 +153,7 @@ export class GrowthFieldPsynergy extends FieldAbilities {
                 break;
         }
         this.data.audio.play_se("battle/hit_1");
-        let promises = new Array(GrowthFieldPsynergy.NO_TARGET_SPROUT_COUNT);
+        const promises = new Array(GrowthFieldPsynergy.NO_TARGET_SPROUT_COUNT);
         const variation = 13;
         const action_key = this.sprite_base.getActionKey(GrowthFieldPsynergy.ABILITY_KEY_NAME);
         const anim_key = this.sprite_base.getAnimationKey(GrowthFieldPsynergy.ABILITY_KEY_NAME, "no_target");

@@ -300,6 +300,7 @@ export class InteractableObjects {
             [target_layer],
             event_info.dynamic,
             active_event,
+            false,
             event_info.is_set === undefined ? true : event_info.is_set
         );
         map_events[this_event_location_key].push(new_event);
@@ -342,6 +343,7 @@ export class InteractableObjects {
                 [target_layer],
                 event_info.dynamic,
                 active_event,
+                false,
                 is_set
             );
             map_events[this_event_location_key].push(new_event);

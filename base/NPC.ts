@@ -1,6 +1,7 @@
 import {GameEvent} from "./game_events/GameEvent";
 import {mount_collision_polygon} from "./utils";
 import {ControllableChar} from "./ControllableChar";
+import {interaction_patterns} from "./game_events/GameEventManager";
 
 export enum npc_movement_types {
     IDLE = "idle",
@@ -33,6 +34,8 @@ export class NPC extends ControllableChar {
     public anchor_y: number;
     public scale_x: number;
     public scale_y: number;
+    public interaction_pattern: interaction_patterns;
+    public affected_by_reveal: boolean;
     public storage_keys: {
         position?: string;
         action?: string;
@@ -69,7 +72,9 @@ export class NPC extends ControllableChar {
         anchor_x,
         anchor_y,
         scale_x,
-        scale_y
+        scale_y,
+        interaction_pattern,
+        affected_by_reveal
     ) {
         super(
             game,
@@ -83,7 +88,8 @@ export class NPC extends ControllableChar {
             initial_y,
             initial_action,
             initial_direction,
-            storage_keys
+            storage_keys,
+            active
         );
         this.npc_type = npc_type;
         this.movement_type = movement_type;
@@ -103,6 +109,8 @@ export class NPC extends ControllableChar {
         this.anchor_y = anchor_y;
         this.scale_x = scale_x;
         this.scale_y = scale_y;
+        this.interaction_pattern = interaction_pattern ?? interaction_patterns.NO_INTERACTION;
+        this.affected_by_reveal = affected_by_reveal ?? false;
         this.events = [];
         this.set_events(events_info === undefined ? [] : events_info);
     }

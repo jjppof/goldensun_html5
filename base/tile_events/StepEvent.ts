@@ -9,7 +9,18 @@ export class StepEvent extends TileEvent {
     private next_y: number;
     private shift_y: number;
 
-    constructor(game, data, x, y, activation_directions, activation_collision_layers, dynamic, active, step_direction) {
+    constructor(
+        game,
+        data,
+        x,
+        y,
+        activation_directions,
+        activation_collision_layers,
+        dynamic,
+        active,
+        affected_by_reveal,
+        step_direction
+    ) {
         super(
             game,
             data,
@@ -20,7 +31,8 @@ export class StepEvent extends TileEvent {
             activation_collision_layers,
             dynamic,
             active,
-            null
+            null,
+            affected_by_reveal
         );
         this.step_direction = directions[step_direction as string];
         this.next_x = 0;

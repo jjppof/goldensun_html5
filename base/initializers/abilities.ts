@@ -3,6 +3,7 @@ import {MoveFieldPsynergy} from "../field_abilities/MoveFieldPsynergy";
 import {FrostFieldPsynergy} from "../field_abilities/FrostFieldPsynergy";
 import {GrowthFieldPsynergy} from "../field_abilities/GrowthFieldPsynergy";
 import {PoundFieldPsynergy} from "../field_abilities/PoundFieldPsynergy";
+import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 
 export function initialize_abilities(game, abilities_db, load_promise_resolve) {
     let abilities_list = {};
@@ -52,5 +53,6 @@ export function initialize_field_abilities(game, data) {
         frost: new FrostFieldPsynergy(game, data),
         growth: new GrowthFieldPsynergy(game, data),
         pound: new PoundFieldPsynergy(game, data),
+        reveal: new RevealFieldPsynergy(game, data),
     };
 }

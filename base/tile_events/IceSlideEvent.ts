@@ -14,6 +14,7 @@ export class IceSlideEvent extends TileEvent {
         activation_collision_layers,
         dynamic,
         active,
+        affected_by_reveal,
         start_sliding_direction
     ) {
         super(
@@ -26,7 +27,8 @@ export class IceSlideEvent extends TileEvent {
             activation_collision_layers,
             dynamic,
             active,
-            null
+            null,
+            affected_by_reveal
         );
         this.start_sliding_direction = directions[start_sliding_direction as string];
         this.ready_to_deactive = false;

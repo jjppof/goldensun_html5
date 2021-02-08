@@ -24,12 +24,15 @@ export class FrostFieldPsynergy extends FieldAbilities {
             game,
             data,
             FrostFieldPsynergy.ABILITY_KEY_NAME,
-            FrostFieldPsynergy.FROST_MAX_RANGE,
             FrostFieldPsynergy.ACTION_KEY_NAME,
-            true
+            true,
+            true,
+            FrostFieldPsynergy.FROST_MAX_RANGE
         );
         this.set_bootstrap_method(this.init_snowflakes.bind(this));
     }
+
+    update() {}
 
     /*Begins the snowflake effects
     Upon finishing, triggers the pillar's growth*/

@@ -38,6 +38,7 @@ export abstract class ControllableChar {
     public jumping: boolean;
     public sliding: boolean;
     public casting_psynergy: boolean;
+    public on_reveal: boolean;
     public teleporting: boolean;
     public idle_climbing: boolean;
     public ice_sliding_active: boolean;
@@ -113,6 +114,7 @@ export abstract class ControllableChar {
         this.jumping = false;
         this.sliding = false;
         this.casting_psynergy = false;
+        this.on_reveal = false;
         this.teleporting = false;
         this.idle_climbing = false;
         this.ice_sliding_active = false;

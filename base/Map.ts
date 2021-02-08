@@ -211,6 +211,7 @@ export class Map {
             const collision_layer_objects = this.sprite.objects[this.collision_layer];
             for (let i = 0; i < collision_layer_objects.length; ++i) {
                 const collision_object = collision_layer_objects[i];
+                let shape;
                 if (collision_object.polygon) {
                     const new_polygon = collision_object.polygon.map((point: number[]) => {
                         const new_point = [
@@ -219,7 +220,7 @@ export class Map {
                         ];
                         return new_point;
                     });
-                    this.collision_sprite.body.addPolygon(
+                    shape = this.collision_sprite.body.addPolygon(
                         {
                             optimalDecomp: false,
                             skipSimpleCheck: false,
@@ -230,18 +231,24 @@ export class Map {
                         new_polygon
                     );
                 } else if (collision_object.rectangle) {
-                    this.collision_sprite.body.addRectangle(
+                    shape = this.collision_sprite.body.addRectangle(
                         Math.round(collision_object.width),
                         Math.round(collision_object.height),
                         Math.round(collision_object.x) + (Math.round(collision_object.width) >> 1),
                         Math.round(collision_object.y) + (Math.round(collision_object.height) >> 1)
                     );
                 } else if (collision_object.ellipse) {
-                    this.collision_sprite.body.addCircle(
+                    shape = this.collision_sprite.body.addCircle(
                         collision_object.width >> 1,
                         Math.round(collision_object.x) + (Math.round(collision_object.width) >> 1),
                         Math.round(collision_object.y) + (Math.round(collision_object.height) >> 1)
                     );
+                }
+                if (collision_object.properties) {
+                    shape.properties = collision_object.properties;
+                    if (collision_object.properties.affected_by_reveal && !collision_object.properties.show_on_reveal) {
+                        shape.sensor = true;
+                    }
                 }
             }
         } else {
@@ -296,12 +303,9 @@ export class Map {
     create_npcs(raw_property) {
         const property_info = JSON.parse(raw_property);
         const npc_db = this.data.dbs.npc_db[property_info.key_name];
-        const initial_action =
-            property_info.initial_action !== undefined ? property_info.initial_action : npc_db.initial_action;
-        const initial_animation =
-            property_info.animation_key !== undefined
-                ? property_info.animation_key
-                : npc_db.actions[initial_action].initial_direction;
+        const initial_action = property_info.initial_action ?? npc_db.initial_action;
+        const initial_animation = property_info.animation_key ?? npc_db.actions[initial_action].initial_direction;
+        const interaction_pattern = property_info.interaction_pattern ?? npc_db.interaction_pattern;
         const npc = new NPC(
             this.game,
             this.data,
@@ -333,7 +337,9 @@ export class Map {
             property_info.anchor_x,
             property_info.anchor_y,
             property_info.scale_x,
-            property_info.scale_y
+            property_info.scale_y,
+            interaction_pattern,
+            property_info.affected_by_reveal
         );
         this.npcs.push(npc);
     }
@@ -420,6 +426,9 @@ export class Map {
                             npc.shadow.scale.setTo(1, 1);
                         }
                     }
+                    if (npc.affected_by_reveal) {
+                        npc.sprite.visible = false;
+                    }
                     npc.set_sprite_as_npc();
                     npc.play(npc.current_action, npc.current_animation);
                     resolve();
@@ -430,7 +439,7 @@ export class Map {
 
     config_layers(overlayer_group: Phaser.Group, underlayer_group: Phaser.Group) {
         for (let i = 0; i < this.layers.length; ++i) {
-            let layer = this.sprite.createLayer(this.layers[i].name);
+            const layer = this.sprite.createLayer(this.layers[i].name);
             this.layers[i].sprite = layer;
             layer.layer_z = this.layers[i].properties.z === undefined ? i : this.layers[i].properties.z;
             layer.resizeWorld();
@@ -439,6 +448,9 @@ export class Map {
             }
             if (this.layers[i].alpha !== undefined) {
                 layer.alpha = this.layers[i].alpha;
+            }
+            if (this.layers[i].properties.reveal_layer) {
+                layer.visible = false;
             }
 
             let is_over = false;

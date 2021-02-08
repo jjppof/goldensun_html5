@@ -8,13 +8,14 @@ import {ControllableChar} from "../ControllableChar";
 
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
-export class FieldAbilities {
+export abstract class FieldAbilities {
     public game: Phaser.Game;
     public ability_key_name: string;
     public data: GoldenSun;
     public target_max_range: number;
     public action_key_name: string;
     public need_target: boolean;
+    public tint_map: boolean;
     public bootstrap_method: Function;
     public cast_finisher: Function;
     public controllable_char: ControllableChar;
@@ -27,14 +28,15 @@ export class FieldAbilities {
     public field_intensity: number;
 
     constructor(
-        game,
-        data,
-        ability_key_name,
-        target_max_range,
-        action_key_name,
-        need_target,
-        field_color?,
-        field_intensity?
+        game: Phaser.Game,
+        data: GoldenSun,
+        ability_key_name: string,
+        action_key_name: string,
+        need_target: boolean,
+        tint_map?: boolean,
+        target_max_range?: number,
+        field_color?: number,
+        field_intensity?: number
     ) {
         this.game = game;
         this.ability_key_name = ability_key_name;
@@ -42,6 +44,7 @@ export class FieldAbilities {
         this.target_max_range = target_max_range;
         this.action_key_name = action_key_name;
         this.need_target = need_target;
+        this.tint_map = tint_map ?? true;
         this.bootstrap_method = () => {};
         this.cast_finisher = () => {};
         this.controllable_char = null;
@@ -52,6 +55,8 @@ export class FieldAbilities {
         this.field_color = field_color;
         this.field_intensity = field_intensity;
     }
+
+    abstract update(): void;
 
     /**
      * Sets the psynergy cast direction,
@@ -190,12 +195,14 @@ export class FieldAbilities {
             this.data.npc_group,
             this.controllable_char.color_filter,
             () => {
-                reset_map = FieldAbilities.tint_map_layers(
-                    this.game,
-                    this.data.map.color_filter,
-                    this.field_color,
-                    this.field_intensity
-                );
+                if (this.tint_map && !this.controllable_char.on_reveal) {
+                    reset_map = FieldAbilities.tint_map_layers(
+                        this.game,
+                        this.data.map.color_filter,
+                        this.field_color,
+                        this.field_intensity
+                    );
+                }
 
                 this.bootstrap_method();
             },
@@ -206,7 +213,9 @@ export class FieldAbilities {
             },
             () => {
                 this.cast_finisher();
-                reset_map();
+                if (reset_map) {
+                    reset_map();
+                }
             }
         );
     }

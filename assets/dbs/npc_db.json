@@ -99,6 +99,7 @@
         "anchor_y": 0.5,
         "initial_action": "towns",
         "no_shadow": true,
+        "interaction_pattern": "no_interaction",
         "ignore_world_map_scale": true,
         "actions": {
             "towns": {

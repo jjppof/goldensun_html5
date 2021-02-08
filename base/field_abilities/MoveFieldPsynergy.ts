@@ -24,9 +24,10 @@ export class MoveFieldPsynergy extends FieldAbilities {
             game,
             data,
             MoveFieldPsynergy.ABILITY_KEY_NAME,
-            MoveFieldPsynergy.MOVE_MAX_RANGE,
             MoveFieldPsynergy.ACTION_KEY_NAME,
-            true
+            true,
+            true,
+            MoveFieldPsynergy.MOVE_MAX_RANGE
         );
         this.set_bootstrap_method(this.init_move.bind(this));
         this.set_cast_finisher_method(this.unset_hue_shifter.bind(this));
@@ -38,6 +39,8 @@ export class MoveFieldPsynergy extends FieldAbilities {
         this.emitter = null;
         this.final_emitter = null;
     }
+
+    update() {}
 
     set_controls() {
         const turn_then_fire_push = direction => {

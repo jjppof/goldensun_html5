@@ -18,6 +18,7 @@ import {TileEvent} from "../tile_events/TileEvent";
 import * as _ from "lodash";
 
 export enum interaction_patterns {
+    NO_INTERACTION = "no_interaction",
     TIK_TAK_TOE = "tik_tak_toe",
     CROSS = "cross",
 }
@@ -79,7 +80,7 @@ export class GameEventManager {
         for (let i = 0; i < this.data.map.npcs.length; ++i) {
             const npc = this.data.map.npcs[i];
             if (
-                npc.npc_type === npc_types.SPRITE ||
+                npc.interaction_pattern === interaction_patterns.NO_INTERACTION ||
                 !npc.active ||
                 npc.base_collision_layer !== this.data.map.collision_layer
             )
@@ -136,7 +137,7 @@ export class GameEventManager {
     async set_npc_and_hero_directions(npc: NPC) {
         const npc_x = npc.sprite.x;
         const npc_y = npc.sprite.y;
-        const interaction_pattern = this.data.dbs.npc_db[npc.key_name].interaction_pattern;
+        const interaction_pattern = npc.interaction_pattern;
         const interaction_directions = GameEventManager.get_interaction_directions(
             this.data.hero.sprite.x,
             this.data.hero.sprite.y,

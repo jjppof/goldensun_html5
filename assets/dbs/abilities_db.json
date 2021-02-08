@@ -3034,5 +3034,23 @@
         "battle_animation_key": "fiery_blast",
         "priority_move": false,
         "msg_type": "cast"
+    },{
+        "key_name": "reveal",
+        "name": "Reveal",
+        "description": "Perceive hidden truths.",
+        "type": "utility",
+        "element": "mars",
+        "battle_target": "no_target",
+        "range": 1,
+        "pp_cost": 1,
+        "ability_power": 0,
+        "effects_outside_battle": false,
+        "is_battle_ability": false,
+        "is_field_psynergy": true,
+        "effects": [],
+        "ability_category": "normal",
+        "battle_animation_key": "no_animation",
+        "priority_move": false,
+        "msg_type": "no_msg"
     }
 ]
