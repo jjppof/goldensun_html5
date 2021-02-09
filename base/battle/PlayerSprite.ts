@@ -173,7 +173,7 @@ export class PlayerSprite {
         return this.battle_position;
     }
     get battle_key() {
-        return this.battle_action + "_" + this.battle_position;
+        return `${this.battle_action}_${this.battle_position}`;
     }
 
     get animations() {
@@ -188,6 +188,21 @@ export class PlayerSprite {
         this.char_sprite = this.group.create(0, 0, this.player_info.sprite_key);
         this.char_sprite.anchor.setTo(0.5, 1);
         this.char_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
+
+        if (this.is_ally) {
+            const player = this.player_instance as MainChar;
+            const weapon_slot = player.equip_slots.weapon;
+            if (weapon_slot !== null) {
+                this.current_weapon_type = this.data.info.items_list[weapon_slot.key_name].weapon_type;
+                if (player.weapons_sprite_base.hasAction(this.current_weapon_type)) {
+                    const weapon_sprite_key = player.weapons_sprite_base.getSpriteKey(this.current_weapon_type);
+                    this.weapon_sprite = this.group.create(0, 0, weapon_sprite_key);
+                    this.weapon_sprite.anchor.setTo(0.5, 1);
+                    this.weapon_sprite.y += player.weapon_sprite_shift;
+                    player.weapons_sprite_base.setAnimation(this.weapon_sprite, this.current_weapon_type);
+                }
+            }
+        }
 
         const status_key = this.status_sprite_base.getSpriteKey(STATUS_SPRITES_KEY_NAME);
         this.status_sprite = this.group.create(0, 0, status_key);
@@ -211,6 +226,14 @@ export class PlayerSprite {
         this.battle_position = position;
         const anim_key = this.sprite_base.getAnimationKey(base_actions.BATTLE, this.battle_key);
         this.char_sprite.animations.play(anim_key);
+        if (this.weapon_sprite) {
+            const player = this.player_instance as MainChar;
+            const weapon_anim_key = player.weapons_sprite_base.getAnimationKey(
+                this.current_weapon_type,
+                this.battle_key
+            );
+            this.weapon_sprite.animations.play(weapon_anim_key);
+        }
     }
 
     set_action(action: battle_actions) {
@@ -220,7 +243,7 @@ export class PlayerSprite {
     }
 
     get_animation_key(action: battle_actions, position: battle_positions) {
-        return this.sprite_base.getAnimationKey(base_actions.BATTLE, action + "_" + position);
+        return this.sprite_base.getAnimationKey(base_actions.BATTLE, `${action}_${position}`);
     }
 
     set_next_status_sprite() {

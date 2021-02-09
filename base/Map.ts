@@ -305,6 +305,7 @@ export class Map {
         const initial_animation = property_info.animation_key ?? npc_db.actions[initial_action].initial_direction;
         const interaction_pattern = property_info.interaction_pattern ?? npc_db.interaction_pattern;
         const ignore_physics = property_info.ignore_physics ?? npc_db.ignore_physics;
+        const ignore_world_map_scale = property_info.ignore_world_map_scale ?? npc_db.ignore_world_map_scale;
         const npc = new NPC(
             this.game,
             this.data,
@@ -330,9 +331,7 @@ export class Map {
             property_info.talk_range_factor,
             property_info.events,
             npc_db.no_shadow,
-            property_info.ignore_world_map_scale !== undefined
-                ? property_info.ignore_world_map_scale
-                : npc_db.ignore_world_map_scale,
+            ignore_world_map_scale,
             property_info.anchor_x,
             property_info.anchor_y,
             property_info.scale_x,

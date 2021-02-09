@@ -738,6 +738,9 @@ export class BattleStage {
             if (on_fade_complete) {
                 on_fade_complete();
             }
+            this.sprites.forEach(sprite => {
+                sprite.destroy();
+            });
             this.group_allies.destroy(true);
             this.group_enemies.destroy(true);
             this.battle_group.destroy(true);
@@ -776,8 +779,8 @@ export class BattleStage {
 
     static ellipse(angle: number, a: number, b: number) {
         //ellipse formula
-        a = a === undefined ? SEMI_MAJOR_AXIS : a;
-        b = b === undefined ? SEMI_MINOR_AXIS : b;
+        a = a ?? SEMI_MAJOR_AXIS;
+        b = b ?? SEMI_MINOR_AXIS;
         return (a * b) / Math.sqrt(Math.pow(b * Math.cos(angle), 2) + Math.pow(a * Math.sin(angle), 2));
     }
 

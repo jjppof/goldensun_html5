@@ -52,6 +52,7 @@ export class Item {
     public granted_ability: string;
     public equipable: boolean;
     public granted_class_type: number;
+    public weapon_type: weapon_types;
 
     constructor(
         key_name,
@@ -72,7 +73,8 @@ export class Item {
         equipable_chars,
         price,
         granted_ability,
-        granted_class_type
+        granted_class_type,
+        weapon_type
     ) {
         this.key_name = key_name;
         this.name = name;
@@ -94,5 +96,6 @@ export class Item {
         this.granted_ability = granted_ability;
         this.equipable = this.type === item_types.GENERAL_ITEM ? false : true;
         this.granted_class_type = granted_class_type;
+        this.weapon_type = weapon_type ?? weapon_types.NOT_A_WEAPON;
     }
 }

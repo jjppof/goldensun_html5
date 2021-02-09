@@ -39,10 +39,15 @@ export function initialize_main_chars(
         const char_data = main_chars_db[i];
         const char_db = npc_db[char_data.key_name];
         const sprite_base = new SpriteBase(char_data.key_name, Object.keys(char_db.actions));
+        const weapons_sprite_base = new SpriteBase(
+            `${char_data.key_name}_weapons`,
+            Object.keys(char_data.weapons_sprites)
+        );
         main_char_list[char_data.key_name] = new MainChar(
             char_data.key_name,
             info,
             sprite_base,
+            weapons_sprite_base,
             char_data.name,
             char_data.hp_curve,
             char_data.pp_curve,
@@ -64,11 +69,13 @@ export function initialize_main_chars(
             char_data.battle_animations_variations,
             char_data.battle_shadow_key,
             char_data.status_sprite_shift,
-            char_data.special_class_type
+            char_data.special_class_type,
+            char_data.weapon_sprite_shift
         );
         if (char_data.in_party) {
             info.party_data.members.push(main_char_list[char_data.key_name]);
         }
+
         for (let action_key in char_db.actions) {
             const action = char_db.actions[action_key];
             sprite_base.setActionSpritesheet(action_key, action.spritesheet.image, action.spritesheet.json);
@@ -77,13 +84,27 @@ export function initialize_main_chars(
             sprite_base.setActionLoop(action_key, action.loop);
         }
         sprite_base.generateAllFrames();
-
         let load_spritesheet_promise_resolve;
-        const load_spritesheet_promise = new Promise(resolve => {
-            load_spritesheet_promise_resolve = resolve;
-        });
-        load_promises.push(load_spritesheet_promise);
+        load_promises.push(new Promise(resolve => (load_spritesheet_promise_resolve = resolve)));
         sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
+
+        if (Object.keys(char_data.weapons_sprites).length) {
+            for (let weapon_type in char_data.weapons_sprites) {
+                const action = char_data.weapons_sprites[weapon_type];
+                weapons_sprite_base.setActionSpritesheet(
+                    weapon_type,
+                    action.spritesheet.image,
+                    action.spritesheet.json
+                );
+                weapons_sprite_base.setActionAnimations(weapon_type, action.animations, action.frames_count);
+                weapons_sprite_base.setActionFrameRate(weapon_type, action.frame_rate);
+                weapons_sprite_base.setActionLoop(weapon_type, action.loop);
+            }
+            weapons_sprite_base.generateAllFrames();
+            let weapons_promise_resolve;
+            load_promises.push(new Promise(resolve => (weapons_promise_resolve = resolve)));
+            weapons_sprite_base.loadSpritesheets(game, true, weapons_promise_resolve);
+        }
     }
     Promise.all(load_promises).then(load_promise_resolve);
     return main_char_list;

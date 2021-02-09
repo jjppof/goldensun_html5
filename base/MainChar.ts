@@ -49,6 +49,7 @@ export class MainChar extends Player {
 
     public info: GameInfo;
     public sprite_base: SpriteBase;
+    public weapons_sprite_base: SpriteBase;
     public starting_level: number;
     public class_table: any;
     public class: Classes;
@@ -74,11 +75,13 @@ export class MainChar extends Player {
     public in_party: boolean;
     public abilities: string[];
     public special_class_type: number;
+    public weapon_sprite_shift: number;
 
     constructor(
         key_name,
         info,
         sprite_base,
+        weapons_sprite_base,
         name,
         hp_curve,
         pp_curve,
@@ -100,11 +103,13 @@ export class MainChar extends Player {
         battle_animations_variations,
         battle_shadow_key,
         status_sprite_shift,
-        special_class_type
+        special_class_type,
+        weapon_sprite_shift
     ) {
         super(key_name, name);
         this.info = info;
         this.sprite_base = sprite_base;
+        this.weapons_sprite_base = weapons_sprite_base;
         this.starting_level = starting_level;
         this.level = this.starting_level;
         this.special_class_type = special_class_type ?? -1;
@@ -159,7 +164,8 @@ export class MainChar extends Player {
         this.fighter_type = fighter_types.ALLY;
         this.battle_animations_variations = Object.assign({}, battle_animations_variations);
         this.battle_shadow_key = battle_shadow_key;
-        this.status_sprite_shift = status_sprite_shift === undefined ? 0 : status_sprite_shift;
+        this.status_sprite_shift = status_sprite_shift ?? 0;
+        this.weapon_sprite_shift = weapon_sprite_shift ?? 0;
     }
 
     get djinni() {

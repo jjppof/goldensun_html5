@@ -21,6 +21,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet", "piers"],
         "price": 7000,
+        "weapon_type": "sword",
         "granted_ability": ""
     },{
         "key_name": "battle_mace",
@@ -44,6 +45,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet", "piers"],
         "price": 2600,
+        "weapon_type": "mace",
         "granted_ability": ""
     },{
         "key_name": "thunder_crown",
@@ -106,6 +108,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet", "piers"],
         "price": 17000,
+        "weapon_type": "sword",
         "granted_ability": ""
     },{
         "key_name": "elven_rapier",
@@ -131,6 +134,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet", "piers"],
         "price": 2200,
+        "weapon_type": "light_blade",
         "granted_ability": ""
     },{
         "key_name": "knights_shield",
@@ -420,6 +424,7 @@
         "use_ability": "",
         "equipable_chars": ["sheba"],
         "price": 5500,
+        "weapon_type": "staff",
         "granted_ability": ""
     },{
         "key_name": "adepts_clothes",
@@ -614,6 +619,7 @@
         "use_ability": "",
         "equipable_chars": ["isaac", "garet", "piers"],
         "price": 15200,
+        "weapon_type": "axe",
         "granted_ability": ""
     },
     {

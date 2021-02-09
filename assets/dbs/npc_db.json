@@ -205,8 +205,8 @@
             },
             "jump": {
                 "spritesheet": {
-                "json": "assets/images/spritesheets/main_chars/isaac_jump.json",
-                "image": "assets/images/spritesheets/main_chars/isaac_jump.png"
+                    "json": "assets/images/spritesheets/main_chars/isaac_jump.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_jump.png"
                 },
                 "animations": [
                     "down",
@@ -220,8 +220,8 @@
             },
             "push": {
                 "spritesheet": {
-                "json": "assets/images/spritesheets/main_chars/isaac_push.json",
-                "image": "assets/images/spritesheets/main_chars/isaac_push.png"
+                    "json": "assets/images/spritesheets/main_chars/isaac_push.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_push.png"
                 },
                 "animations": [
                     "down",
@@ -234,8 +234,8 @@
             },
             "cast": {
                 "spritesheet": {
-                "json": "assets/images/spritesheets/main_chars/isaac_cast.json",
-                "image": "assets/images/spritesheets/main_chars/isaac_cast.png"
+                    "json": "assets/images/spritesheets/main_chars/isaac_cast.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_cast.png"
                 },
                 "animations": [
                     "down",
@@ -253,8 +253,8 @@
             },
             "grant": {
                 "spritesheet": {
-                "json": "assets/images/spritesheets/main_chars/isaac_grant.json",
-                "image": "assets/images/spritesheets/main_chars/isaac_grant.png"
+                    "json": "assets/images/spritesheets/main_chars/isaac_grant.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_grant.png"
                 },
                 "animations": [
                     "down"
@@ -264,8 +264,8 @@
             },
             "battle": {
                 "spritesheet": {
-                "json": "assets/images/spritesheets/battle/isaac_battle.json",
-                "image": "assets/images/spritesheets/battle/isaac_battle.png"
+                    "json": "assets/images/spritesheets/battle/isaac_battle.json",
+                    "image": "assets/images/spritesheets/battle/isaac_battle.png"
                 },
                 "animations": [
                     "attack_back",

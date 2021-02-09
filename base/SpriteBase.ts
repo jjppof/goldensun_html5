@@ -60,6 +60,14 @@ export class SpriteBase {
         };
     }
 
+    hasAction(action: string) {
+        return action in this.actions;
+    }
+
+    hasAnimation(action: string, animation: string) {
+        return animation in this.animations[action];
+    }
+
     loadSpritesheets(game, force_load, on_load_complete) {
         for (let action in this.actions) {
             const spritesheet = this.actions[action].spritesheet;
