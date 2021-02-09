@@ -1,6 +1,7 @@
 import {Classes} from "../Classes";
 import {MainChar} from "../MainChar";
 import {SpriteBase} from "../SpriteBase";
+import {base_actions} from "../utils";
 import {GameInfo} from "./initialize_info";
 
 export function initialize_classes(classes_db) {
@@ -88,14 +89,11 @@ export function initialize_main_chars(
         load_promises.push(new Promise(resolve => (load_spritesheet_promise_resolve = resolve)));
         sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
 
-        if (Object.keys(char_data.weapons_sprites).length) {
+        if (Object.keys(char_data.weapons_sprites).length && base_actions.BATTLE in char_db.actions) {
+            const action = char_db.actions[base_actions.BATTLE];
             for (let weapon_type in char_data.weapons_sprites) {
-                const action = char_data.weapons_sprites[weapon_type];
-                weapons_sprite_base.setActionSpritesheet(
-                    weapon_type,
-                    action.spritesheet.image,
-                    action.spritesheet.json
-                );
+                const paths = char_data.weapons_sprites[weapon_type].spritesheet;
+                weapons_sprite_base.setActionSpritesheet(weapon_type, paths.image, paths.json);
                 weapons_sprite_base.setActionAnimations(weapon_type, action.animations, action.frames_count);
                 weapons_sprite_base.setActionFrameRate(weapon_type, action.frame_rate);
                 weapons_sprite_base.setActionLoop(weapon_type, action.loop);
