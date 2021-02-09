@@ -14,7 +14,7 @@ export function initialize_enemies(game, enemies_db, load_promise_resolve) {
         const action = info.data.battle_spritesheet;
         if (action !== undefined) {
             info.sprite_base.setActionSpritesheet(base_actions.BATTLE, action.spritesheet_img, action.spritesheet);
-            info.sprite_base.setActionDirections(base_actions.BATTLE, action.positions, action.frames_number);
+            info.sprite_base.setActionAnimations(base_actions.BATTLE, action.positions, action.frames_number);
             info.sprite_base.setActionFrameRate(base_actions.BATTLE, action.frame_rate);
             info.sprite_base.setActionLoop(base_actions.BATTLE, action.loop);
             info.sprite_base.generateAllFrames();

@@ -47,11 +47,6 @@ function load_misc(game) {
     game.load.atlasJSONHash("ranges", "assets/images/misc/ranges.png", "assets/images/misc/ranges.json");
     game.load.atlasJSONHash("stars", "assets/images/misc/stars.png", "assets/images/misc/stars.json");
     game.load.atlasJSONHash(
-        "psynergy_particle",
-        "assets/images/interactable_objects/psynergy_particle.png",
-        "assets/images/interactable_objects/psynergy_particle.json"
-    );
-    game.load.atlasJSONHash(
         "psynergy_ball",
         "assets/images/interactable_objects/psynergy_ball.png",
         "assets/images/interactable_objects/psynergy_ball.json"

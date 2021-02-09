@@ -38,12 +38,17 @@ export class NPC extends ControllableChar {
     public scale_y: number;
     public interaction_pattern: interaction_patterns;
     public affected_by_reveal: boolean;
+    public visible: boolean;
     public storage_keys: {
         position?: string;
         action?: string;
         direction?: string;
         base_collision_layer?: string;
+        affected_by_reveal?: string;
+        visible?: string;
     };
+    public sprite_misc_db_key: string;
+    public ignore_physics: boolean;
 
     constructor(
         game,
@@ -76,7 +81,10 @@ export class NPC extends ControllableChar {
         scale_x,
         scale_y,
         interaction_pattern,
-        affected_by_reveal
+        affected_by_reveal,
+        sprite_misc_db_key,
+        ignore_physics,
+        visible
     ) {
         super(
             game,
@@ -112,9 +120,39 @@ export class NPC extends ControllableChar {
         this.scale_x = scale_x;
         this.scale_y = scale_y;
         this.interaction_pattern = interaction_pattern ?? interaction_patterns.NO_INTERACTION;
+        if (this.storage_keys.affected_by_reveal !== undefined) {
+            affected_by_reveal = this.data.storage.get(this.storage_keys.affected_by_reveal);
+        }
         this.affected_by_reveal = affected_by_reveal ?? false;
+        if (this.storage_keys.visible !== undefined) {
+            visible = this.data.storage.get(this.storage_keys.visible);
+        }
+        this.visible = visible ?? true;
+        this.ignore_physics = ignore_physics ?? false;
         this.events = [];
         this.set_events(events_info ?? []);
+        this.sprite_misc_db_key = sprite_misc_db_key;
+    }
+
+    check_storage_keys() {
+        if (this.storage_keys.base_collision_layer !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.base_collision_layer);
+            if (this.base_collision_layer !== storage_value) {
+                this.base_collision_layer = storage_value;
+            }
+        }
+        if (this.storage_keys.affected_by_reveal !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.affected_by_reveal);
+            if (this.affected_by_reveal !== storage_value) {
+                this.affected_by_reveal = storage_value;
+            }
+        }
+        if (this.storage_keys.visible !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.visible);
+            if (this.visible !== storage_value) {
+                this.visible = storage_value;
+            }
+        }
     }
 
     set_sprite_as_npc() {
@@ -152,22 +190,17 @@ export class NPC extends ControllableChar {
 
     async init_npc(map: Map) {
         const npc_db = this.data.dbs.npc_db[this.key_name];
-        const actions = Object.keys(npc_db.actions);
-        const npc_sprite_info = new SpriteBase(this.key_name, actions);
+        const using_misc = this.sprite_misc_db_key !== undefined;
+        const misc_db = using_misc ? this.data.dbs.misc_animations_db[this.sprite_misc_db_key] : undefined;
+        const actions = Object.keys(using_misc ? misc_db.actions : npc_db.actions);
+        const npc_sprite_info = new SpriteBase(using_misc ? this.sprite_misc_db_key : this.key_name, actions);
         for (let j = 0; j < actions.length; ++j) {
-            const action = actions[j];
-            npc_sprite_info.setActionSpritesheet(
-                action,
-                npc_db.actions[action].spritesheet.image,
-                npc_db.actions[action].spritesheet.json
-            );
-            npc_sprite_info.setActionDirections(
-                action,
-                npc_db.actions[action].directions,
-                npc_db.actions[action].frames_count
-            );
-            npc_sprite_info.setActionFrameRate(action, npc_db.actions[action].frame_rate);
-            npc_sprite_info.setActionLoop(action, npc_db.actions[action].loop);
+            const action_key = actions[j];
+            const action_obj = using_misc ? misc_db.actions[action_key] : npc_db.actions[action_key];
+            npc_sprite_info.setActionSpritesheet(action_key, action_obj.spritesheet.image, action_obj.spritesheet.json);
+            npc_sprite_info.setActionAnimations(action_key, action_obj.animations, action_obj.frames_count);
+            npc_sprite_info.setActionFrameRate(action_key, action_obj.frame_rate);
+            npc_sprite_info.setActionLoop(action_key, action_obj.loop);
         }
         npc_sprite_info.generateAllFrames();
         await new Promise<void>(resolve => {
@@ -198,7 +231,7 @@ export class NPC extends ControllableChar {
                         this.shadow.scale.setTo(1, 1);
                     }
                 }
-                if (this.affected_by_reveal) {
+                if (this.affected_by_reveal || !this.visible) {
                     this.sprite.visible = false;
                 }
                 this.set_sprite_as_npc();
@@ -209,6 +242,7 @@ export class NPC extends ControllableChar {
     }
 
     config_body() {
+        if (this.ignore_physics) return;
         this.game.physics.p2.enable(this.sprite, false);
         //Important to be after the previous command
         if (this.data.dbs.npc_db[this.key_name].anchor_x !== undefined) {

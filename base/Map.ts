@@ -304,6 +304,7 @@ export class Map {
         const initial_action = property_info.initial_action ?? npc_db.initial_action;
         const initial_animation = property_info.animation_key ?? npc_db.actions[initial_action].initial_direction;
         const interaction_pattern = property_info.interaction_pattern ?? npc_db.interaction_pattern;
+        const ignore_physics = property_info.ignore_physics ?? npc_db.ignore_physics;
         const npc = new NPC(
             this.game,
             this.data,
@@ -337,7 +338,10 @@ export class Map {
             property_info.scale_x,
             property_info.scale_y,
             interaction_pattern,
-            property_info.affected_by_reveal
+            property_info.affected_by_reveal,
+            property_info.sprite_misc_db_key,
+            ignore_physics,
+            property_info.visible
         );
         this.npcs.push(npc);
     }

@@ -327,7 +327,7 @@ export class DjinnListWindow {
             const char_key_name = this_char.key_name;
 
             if (!(char_key_name in this.chars_sprites)) {
-                const action_key = this_char.sprite_base.getActionKey(base_actions.IDLE);
+                const action_key = this_char.sprite_base.getSpriteKey(base_actions.IDLE);
                 this.chars_sprites[char_key_name] = this.chars_sprites_group.create(0, 0, action_key);
                 this.chars_sprites[char_key_name].anchor.setTo(0.5, 1.0);
                 this_char.sprite_base.setAnimation(this.chars_sprites[char_key_name], base_actions.IDLE);

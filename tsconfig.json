@@ -6,7 +6,8 @@
         "noImplicitAny": false,
         "target": "es6",
         "allowJs": true,
-        "sourceMap": true
+        "sourceMap": true,
+        "experimentalDecorators": true
     },
     "exclude": [
         "./assets/filters/*.js",

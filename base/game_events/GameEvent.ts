@@ -1,3 +1,4 @@
+import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 import {GoldenSun} from "../GoldenSun";
 import {NPC} from "../NPC";
 
@@ -32,6 +33,18 @@ export enum event_types {
     PARTY_JOIN = "party_join",
 }
 
+function check_reveal(target: Object, property_key: string, descriptor: PropertyDescriptor) {
+    const original_method = descriptor.value;
+    descriptor.value = function (...args) {
+        const data: GoldenSun = this.data;
+        if (data.hero.on_reveal) {
+            (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
+        }
+        return original_method.apply(this, args);
+    };
+    return descriptor;
+}
+
 export abstract class GameEvent {
     public game: Phaser.Game;
     public data: GoldenSun;
@@ -52,7 +65,11 @@ export abstract class GameEvent {
         GameEvent.events[this.id] = this;
     }
 
-    abstract fire(origin_npc?: NPC): void;
+    @check_reveal
+    fire(origin_npc?: NPC) {
+        this._fire(origin_npc);
+    }
+    protected abstract _fire(origin_npc?: NPC): void;
 
     static get_event(id) {
         return GameEvent.events[id];

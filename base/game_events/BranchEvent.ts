@@ -52,7 +52,7 @@ export class BranchEvent extends GameEvent {
         }
     }
 
-    fire(origin_npc?: NPC) {
+    _fire(origin_npc?: NPC) {
         if (!this.active) return;
         this.origin_npc = origin_npc;
         let result: boolean;

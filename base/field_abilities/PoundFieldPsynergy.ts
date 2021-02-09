@@ -36,7 +36,7 @@ export class PoundFieldPsynergy extends FieldAbilities {
         );
         this.set_bootstrap_method(this.init_hand.bind(this));
         this.hand_sprite_base = this.data.info.misc_sprite_base_list[PoundFieldPsynergy.POUND_HAND_KEY_NAME];
-        const sprite_key = this.hand_sprite_base.getActionKey(PoundFieldPsynergy.POUND_HAND_KEY_NAME);
+        const sprite_key = this.hand_sprite_base.getSpriteKey(PoundFieldPsynergy.POUND_HAND_KEY_NAME);
         this.hand_sprite = this.game.add.sprite(0, 0, sprite_key);
         this.hand_sprite.visible = false;
         this.hand_sprite_base.setAnimation(this.hand_sprite, PoundFieldPsynergy.POUND_HAND_KEY_NAME);

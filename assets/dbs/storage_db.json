@@ -7,5 +7,6 @@
     "alex_direction": "down",
     "adepts_clothes_chest": "closed",
     "pound_cube_chest": "closed",
-    "piers_active": true
+    "piers_active": true,
+    "herb_box_madra": true
 }

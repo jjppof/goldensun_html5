@@ -614,7 +614,7 @@ export class BattleStatusWindow {
             BattleStatusWindow.GROUP_KEY
         );
 
-        const sprite_key = this.selected_char.sprite_base.getActionKey(base_actions.BATTLE);
+        const sprite_key = this.selected_char.sprite_base.getSpriteKey(base_actions.BATTLE);
         const sprite_base = this.data.info.main_char_list[this.selected_char.key_name].sprite_base;
 
         this.battle_sprite = this.window.create_at_group(

@@ -18,11 +18,27 @@ export class ChestEvent extends GameEvent {
     private promise: Promise<any>;
     private dialog_manager: DialogManager;
     private finish_events: GameEvent[] = [];
+    private custom_init_text: string;
+    private no_chest: boolean;
+    private hide_on_finish: boolean;
 
-    constructor(game, data, active, item_key_name, quantity, finish_events) {
+    constructor(
+        game,
+        data,
+        active,
+        item_key_name,
+        quantity,
+        finish_events,
+        custom_init_text,
+        no_chest,
+        hide_on_finish
+    ) {
         super(game, data, event_types.CHEST, active);
         this.item = this.data.info.items_list[item_key_name];
         this.quantity = quantity ?? 1;
+        this.no_chest = no_chest ?? false;
+        this.custom_init_text = custom_init_text;
+        this.hide_on_finish = hide_on_finish ?? false;
 
         this.data.control_manager.add_controls(
             [
@@ -53,7 +69,7 @@ export class ChestEvent extends GameEvent {
         });
     }
 
-    async fire(origin_npc?: NPC) {
+    async _fire(origin_npc?: NPC) {
         if (!this.active) return;
         this.origin_npc = origin_npc;
         ++this.data.game_event_manager.events_running_count;
@@ -62,7 +78,7 @@ export class ChestEvent extends GameEvent {
 
         const hero_name = this.data.info.party_data.members[0].name;
         this.dialog_manager = new DialogManager(this.game, this.data);
-        this.dialog_manager.set_dialog(INIT_TEXT(hero_name));
+        this.dialog_manager.set_dialog(this.custom_init_text ?? INIT_TEXT(hero_name));
         this.promise = new Promise(resolve => (this.resolve = resolve));
         this.next();
         await this.promise;
@@ -74,44 +90,53 @@ export class ChestEvent extends GameEvent {
         item_sprite.y = this.origin_npc.sprite.y;
 
         const item_sprite_pos_above_chest = item_sprite.y - 13;
-        const emitter = this.game.add.emitter(item_sprite.x, item_sprite_pos_above_chest, 3);
-        emitter.makeParticles("psynergy_particle");
+        const emitter = this.game.add.emitter(item_sprite.x, item_sprite_pos_above_chest, 15);
+        const psynergy_particle_base = this.data.info.misc_sprite_base_list["psynergy_particle"];
+        const sprite_key = psynergy_particle_base.getSpriteKey("psynergy_particle");
+        emitter.makeParticles(sprite_key);
         emitter.minParticleSpeed.setTo(-1, -1);
         emitter.maxParticleSpeed.setTo(1, 1);
         emitter.gravity = 100;
-        emitter.width = item_sprite.width;
-        emitter.height = item_sprite.height;
+        emitter.width = emitter.height = 20;
         emitter.forEach((particle: Phaser.Sprite) => {
-            particle.animations.add("vanish", null, 8, true, false);
+            psynergy_particle_base.setAnimation(particle, "psynergy_particle");
         });
 
         item_sprite.scale.setTo(0, 0);
-        let animation_key = this.origin_npc.sprite_info.getAnimationKey("chest", "opening");
-        let animation = this.origin_npc.sprite.animations.getAnimation(animation_key);
-        animation.play();
-        this.data.audio.play_se("misc/chest_open");
-        this.promise = new Promise(resolve => (this.resolve = resolve));
-        animation.onComplete.addOnce(() => {
-            const animation_key = this.origin_npc.sprite_info.getAnimationKey("chest", "shining");
+
+        if (!this.no_chest) {
+            const animation_key = this.origin_npc.sprite_info.getAnimationKey("chest", "opening");
             const animation = this.origin_npc.sprite.animations.getAnimation(animation_key);
             animation.play();
-            const tween_time = 100;
-            item_sprite.visible = true;
-            this.game.add
-                .tween(item_sprite)
-                .to({y: item_sprite_pos_above_chest}, tween_time, Phaser.Easing.Linear.None, true);
-            this.game.add
-                .tween(item_sprite.scale)
-                .to({x: 1, y: 1}, tween_time, Phaser.Easing.Linear.None, true)
-                .onComplete.addOnce(() => {
-                    emitter.start(false, 300, 250, 0);
-                    emitter.forEach(particle => {
-                        particle.animations.play("vanish");
-                        particle.animations.currentAnim.setFrame((Math.random() * particle.animations.frameTotal) | 0);
-                    });
-                    this.game.time.events.add(300, this.resolve);
+            this.data.audio.play_se("misc/chest_open");
+            this.promise = new Promise(resolve => (this.resolve = resolve));
+            animation.onComplete.addOnce(() => {
+                const animation_key = this.origin_npc.sprite_info.getAnimationKey("chest", "shining");
+                const animation = this.origin_npc.sprite.animations.getAnimation(animation_key);
+                animation.play();
+                this.resolve();
+            });
+            await this.promise;
+        }
+
+        this.promise = new Promise(resolve => (this.resolve = resolve));
+        const tween_time = 100;
+        item_sprite.visible = true;
+        this.game.add
+            .tween(item_sprite)
+            .to({y: item_sprite_pos_above_chest}, tween_time, Phaser.Easing.Linear.None, true);
+        this.game.add
+            .tween(item_sprite.scale)
+            .to({x: 1, y: 1}, tween_time, Phaser.Easing.Linear.None, true)
+            .onComplete.addOnce(() => {
+                emitter.start(false, 300, 250, 0);
+                const anim_key = psynergy_particle_base.getAnimationKey("psynergy_particle", "vanish");
+                emitter.forEach((particle: Phaser.Sprite) => {
+                    particle.animations.play(anim_key, 10);
+                    particle.animations.currentAnim.setFrame((Math.random() * particle.animations.frameTotal) | 0);
                 });
-        });
+                this.game.time.events.add(300, this.resolve);
+            });
         await this.promise;
 
         await this.data.hero.go_to_direction(directions.down);
@@ -127,9 +152,11 @@ export class ChestEvent extends GameEvent {
         item_sprite.y -= delta_y;
         emitter.x -= delta_x;
         emitter.y -= delta_y;
-        animation_key = this.origin_npc.sprite_info.getAnimationKey("chest", "empty");
-        animation = this.origin_npc.sprite.animations.getAnimation(animation_key);
-        animation.play();
+        if (!this.no_chest) {
+            const animation_key = this.origin_npc.sprite_info.getAnimationKey("chest", "empty");
+            const animation = this.origin_npc.sprite.animations.getAnimation(animation_key);
+            animation.play();
+        }
 
         const item_name = this.item.name;
         this.dialog_manager = new DialogManager(this.game, this.data);
@@ -138,6 +165,9 @@ export class ChestEvent extends GameEvent {
         this.next();
         await this.promise;
 
+        if (this.hide_on_finish) {
+            this.origin_npc.visible = false;
+        }
         item_sprite.destroy();
         emitter.destroy();
         this.data.hero.play(base_actions.IDLE);

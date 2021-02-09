@@ -3,19 +3,16 @@ import {SpriteBase} from "../SpriteBase";
 export function initialize_misc_data(game, misc_db, load_promise_resolve) {
     let misc_sprite_base_list = {};
     let load_promises = [];
-    for (let i = 0; i < misc_db.length; ++i) {
-        const misc_data = misc_db[i];
-        const sprite_base = new SpriteBase(
-            misc_data.key_name,
-            misc_data.actions.map(action => action.key_name)
-        );
+    for (let misc_key in misc_db) {
+        const misc_data = misc_db[misc_key];
+        const sprite_base = new SpriteBase(misc_data.key_name, Object.keys(misc_data.actions));
         misc_sprite_base_list[misc_data.key_name] = sprite_base;
-        for (let j = 0; j < misc_data.actions.length; ++j) {
-            const action = misc_data.actions[j];
-            sprite_base.setActionSpritesheet(action.key_name, action.spritesheet.image, action.spritesheet.json);
-            sprite_base.setActionDirections(action.key_name, action.animations, action.frames_count);
-            sprite_base.setActionFrameRate(action.key_name, action.frame_rate);
-            sprite_base.setActionLoop(action.key_name, action.loop);
+        for (let action_key in misc_data.actions) {
+            const action = misc_data.actions[action_key];
+            sprite_base.setActionSpritesheet(action_key, action.spritesheet.image, action.spritesheet.json);
+            sprite_base.setActionAnimations(action_key, action.animations, action.frames_count);
+            sprite_base.setActionFrameRate(action_key, action.frame_rate);
+            sprite_base.setActionLoop(action_key, action.loop);
         }
         sprite_base.generateAllFrames();
         let load_spritesheet_promise_resolve;

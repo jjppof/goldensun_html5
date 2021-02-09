@@ -193,7 +193,7 @@ export class CharsMenu {
             let sprite: Phaser.Sprite = null;
 
             let dead_idle = this.char_group.children.filter((s: Phaser.Sprite) => {
-                return s.alive === false && s.key === char.sprite_base.getActionKey(utils.base_actions.IDLE);
+                return s.alive === false && s.key === char.sprite_base.getSpriteKey(utils.base_actions.IDLE);
             });
 
             if (dead_idle.length > 0) sprite = (dead_idle[0] as Phaser.Sprite).reset(i * GAP_SIZE, 0);
@@ -201,7 +201,7 @@ export class CharsMenu {
                 sprite = this.char_group.create(
                     i * GAP_SIZE,
                     0,
-                    char.sprite_base.getActionKey(utils.base_actions.IDLE)
+                    char.sprite_base.getSpriteKey(utils.base_actions.IDLE)
                 );
 
             char.sprite_base.setAnimation(sprite, utils.base_actions.IDLE);

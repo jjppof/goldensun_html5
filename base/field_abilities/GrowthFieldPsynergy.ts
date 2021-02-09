@@ -155,7 +155,7 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         this.data.audio.play_se("battle/hit_1");
         const promises = new Array(GrowthFieldPsynergy.NO_TARGET_SPROUT_COUNT);
         const variation = 13;
-        const action_key = this.sprite_base.getActionKey(GrowthFieldPsynergy.ABILITY_KEY_NAME);
+        const action_key = this.sprite_base.getSpriteKey(GrowthFieldPsynergy.ABILITY_KEY_NAME);
         const anim_key = this.sprite_base.getAnimationKey(GrowthFieldPsynergy.ABILITY_KEY_NAME, "no_target");
         const first_frame_name = this.sprite_base.getFrameName(GrowthFieldPsynergy.ABILITY_KEY_NAME, "no_target", 0);
         for (let i = 0; i < GrowthFieldPsynergy.NO_TARGET_SPROUT_COUNT; ++i) {

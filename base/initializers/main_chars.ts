@@ -72,7 +72,7 @@ export function initialize_main_chars(
         for (let action_key in char_db.actions) {
             const action = char_db.actions[action_key];
             sprite_base.setActionSpritesheet(action_key, action.spritesheet.image, action.spritesheet.json);
-            sprite_base.setActionDirections(action_key, action.directions, action.frames_count);
+            sprite_base.setActionAnimations(action_key, action.animations, action.frames_count);
             sprite_base.setActionFrameRate(action_key, action.frame_rate);
             sprite_base.setActionLoop(action_key, action.loop);
         }

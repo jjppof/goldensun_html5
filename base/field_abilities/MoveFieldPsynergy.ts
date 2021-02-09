@@ -12,12 +12,13 @@ export class MoveFieldPsynergy extends FieldAbilities {
     private static readonly MOVE_MAX_RANGE = 26;
     private static readonly MOVE_HAND_KEY_NAME = "move_hand";
 
-    public hand_sprite_base: SpriteBase;
-    public hand_sprite: Phaser.Sprite;
-    public emitter: Phaser.Particles.Arcade.Emitter;
-    public final_emitter: Phaser.Particles.Arcade.Emitter;
-    public target_hueshift_timer: Phaser.Timer;
-    public final_emitter_particles_count: number;
+    private hand_sprite_base: SpriteBase;
+    private hand_sprite: Phaser.Sprite;
+    private emitter: Phaser.Particles.Arcade.Emitter;
+    private final_emitter: Phaser.Particles.Arcade.Emitter;
+    private target_hueshift_timer: Phaser.Timer;
+    private final_emitter_particles_count: number;
+    private psynergy_particle_base: SpriteBase;
 
     constructor(game, data) {
         super(
@@ -32,10 +33,11 @@ export class MoveFieldPsynergy extends FieldAbilities {
         this.set_bootstrap_method(this.init_move.bind(this));
         this.set_cast_finisher_method(this.unset_hue_shifter.bind(this));
         this.hand_sprite_base = this.data.info.misc_sprite_base_list[MoveFieldPsynergy.MOVE_HAND_KEY_NAME];
-        const sprite_key = this.hand_sprite_base.getActionKey(MoveFieldPsynergy.MOVE_HAND_KEY_NAME);
+        const sprite_key = this.hand_sprite_base.getSpriteKey(MoveFieldPsynergy.MOVE_HAND_KEY_NAME);
         this.hand_sprite = this.game.add.sprite(0, 0, sprite_key);
         this.hand_sprite.visible = false;
         this.hand_sprite_base.setAnimation(this.hand_sprite, MoveFieldPsynergy.MOVE_HAND_KEY_NAME);
+        this.psynergy_particle_base = this.data.info.misc_sprite_base_list["psynergy_particle"];
         this.emitter = null;
         this.final_emitter = null;
     }
@@ -310,21 +312,23 @@ export class MoveFieldPsynergy extends FieldAbilities {
             this.controllable_char.sprite.centerY + y_shift,
             150
         );
-        this.emitter.makeParticles("psynergy_particle");
+        const sprite_key = this.psynergy_particle_base.getSpriteKey("psynergy_particle");
+        this.emitter.makeParticles(sprite_key);
         this.emitter.minParticleSpeed.setTo(-15, -15);
         this.emitter.maxParticleSpeed.setTo(15, 15);
         this.emitter.gravity = 0;
         this.emitter.width = 2 * MoveFieldPsynergy.MOVE_MAX_RANGE;
         this.emitter.height = 2 * MoveFieldPsynergy.MOVE_MAX_RANGE;
-        this.emitter.forEach(particle => {
-            particle.animations.add("vanish", null, 4, true, false);
+        this.emitter.forEach((particle: Phaser.Sprite) => {
+            this.psynergy_particle_base.setAnimation(particle, "psynergy_particle");
         });
     }
 
     start_emitter() {
         this.emitter.start(false, Phaser.Timer.QUARTER, 15, 0);
-        this.emitter.forEach(particle => {
-            particle.animations.play("vanish");
+        const anim_key = this.psynergy_particle_base.getAnimationKey("psynergy_particle", "vanish");
+        this.emitter.forEach((particle: Phaser.Sprite) => {
+            particle.animations.play(anim_key);
             particle.animations.currentAnim.setFrame((Math.random() * particle.animations.frameTotal) | 0);
         });
     }
@@ -334,12 +338,13 @@ export class MoveFieldPsynergy extends FieldAbilities {
     }
 
     set_final_emitter() {
+        const sprite_key = this.psynergy_particle_base.getSpriteKey("psynergy_particle");
         this.final_emitter_particles_count = 8;
         this.final_emitter = this.game.add.emitter(0, 0, this.final_emitter_particles_count);
-        this.final_emitter.makeParticles("psynergy_particle");
+        this.final_emitter.makeParticles(sprite_key);
         this.final_emitter.gravity = 300;
-        this.final_emitter.forEach(particle => {
-            particle.animations.add("vanish", null, 4, true, false);
+        this.final_emitter.forEach((particle: Phaser.Sprite) => {
+            this.psynergy_particle_base.setAnimation(particle, "psynergy_particle");
         });
     }
 
@@ -349,8 +354,9 @@ export class MoveFieldPsynergy extends FieldAbilities {
         this.final_emitter.y = y;
         const lifetime = Phaser.Timer.QUARTER;
         this.final_emitter.start(true, lifetime, null, this.final_emitter_particles_count);
-        this.final_emitter.forEach(particle => {
-            particle.animations.play("vanish");
+        const anim_key = this.psynergy_particle_base.getAnimationKey("psynergy_particle", "vanish");
+        this.final_emitter.forEach((particle: Phaser.Sprite) => {
+            particle.animations.play(anim_key);
             particle.animations.currentAnim.setFrame((Math.random() * particle.animations.frameTotal) | 0);
         });
         this.game.time.events.add(lifetime, () => {

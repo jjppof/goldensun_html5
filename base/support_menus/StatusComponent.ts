@@ -151,7 +151,7 @@ export abstract class StatusComponent {
     }
 
     protected get_djinni_sprite(elem: elements, group: Phaser.Group, pos: {x: number; y: number}) {
-        const action_key = this.data.info.djinni_sprites[elem].getActionKey(djinn_status.SET);
+        const action_key = this.data.info.djinni_sprites[elem].getSpriteKey(djinn_status.SET);
         const sprite = group.create(pos.x, pos.y, action_key);
 
         sprite.anchor.setTo(0.5, 1.0);

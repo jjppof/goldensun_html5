@@ -189,7 +189,7 @@ export class PlayerSprite {
         this.char_sprite.anchor.setTo(0.5, 1);
         this.char_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
 
-        const status_key = this.status_sprite_base.getActionKey(STATUS_SPRITES_KEY_NAME);
+        const status_key = this.status_sprite_base.getSpriteKey(STATUS_SPRITES_KEY_NAME);
         this.status_sprite = this.group.create(0, 0, status_key);
         this.status_sprite.anchor.setTo(0.5, 0.5);
         this.status_sprite_base.setAnimation(this.status_sprite, STATUS_SPRITES_KEY_NAME);

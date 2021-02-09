@@ -97,7 +97,7 @@ export class Battle {
         this.allies_info = this.data.info.party_data.members.slice(0, Battle.MAX_CHARS_IN_BATTLE).map(char => {
             char.init_effect_turns_count();
             return {
-                sprite_key: char.sprite_base.getActionKey(base_actions.BATTLE),
+                sprite_key: char.sprite_base.getSpriteKey(base_actions.BATTLE),
                 instance: char,
                 entered_in_battle: true,
             } as PlayerInfo;

@@ -1,6 +1,6 @@
 {"frames": {
 
-"particle/00":
+"psynergy_particle/hidden_item/00":
 {
 	"frame": {"x":1,"y":1,"w":8,"h":8},
 	"rotated": false,
@@ -8,7 +8,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
 	"sourceSize": {"w":8,"h":8}
 },
-"particle/01":
+"psynergy_particle/hidden_item/01":
 {
 	"frame": {"x":11,"y":1,"w":8,"h":8},
 	"rotated": false,
@@ -16,7 +16,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
 	"sourceSize": {"w":8,"h":8}
 },
-"particle/02":
+"psynergy_particle/hidden_item/02":
 {
 	"frame": {"x":21,"y":1,"w":7,"h":6},
 	"rotated": false,
@@ -24,7 +24,31 @@
 	"spriteSourceSize": {"x":0,"y":1,"w":7,"h":6},
 	"sourceSize": {"w":8,"h":8}
 },
-"particle/03":
+"psynergy_particle/vanish/00":
+{
+	"frame": {"x":1,"y":1,"w":8,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
+	"sourceSize": {"w":8,"h":8}
+},
+"psynergy_particle/vanish/01":
+{
+	"frame": {"x":11,"y":1,"w":8,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
+	"sourceSize": {"w":8,"h":8}
+},
+"psynergy_particle/vanish/02":
+{
+	"frame": {"x":21,"y":1,"w":7,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":1,"w":7,"h":6},
+	"sourceSize": {"w":8,"h":8}
+},
+"psynergy_particle/vanish/03":
 {
 	"frame": {"x":24,"y":9,"w":6,"h":6},
 	"rotated": false,
@@ -32,7 +56,7 @@
 	"spriteSourceSize": {"x":1,"y":1,"w":6,"h":6},
 	"sourceSize": {"w":8,"h":8}
 },
-"particle/04":
+"psynergy_particle/vanish/04":
 {
 	"frame": {"x":1,"y":11,"w":4,"h":4},
 	"rotated": false,
@@ -40,7 +64,7 @@
 	"spriteSourceSize": {"x":2,"y":2,"w":4,"h":4},
 	"sourceSize": {"w":8,"h":8}
 },
-"particle/05":
+"psynergy_particle/vanish/05":
 {
 	"frame": {"x":7,"y":11,"w":4,"h":4},
 	"rotated": false,
@@ -48,7 +72,7 @@
 	"spriteSourceSize": {"x":2,"y":2,"w":4,"h":4},
 	"sourceSize": {"w":8,"h":8}
 },
-"particle/06":
+"psynergy_particle/vanish/06":
 {
 	"frame": {"x":13,"y":11,"w":4,"h":4},
 	"rotated": false,
@@ -56,7 +80,7 @@
 	"spriteSourceSize": {"x":2,"y":2,"w":4,"h":4},
 	"sourceSize": {"w":8,"h":8}
 },
-"particle/08":
+"psynergy_particle/vanish/08":
 {
 	"frame": {"x":19,"y":11,"w":3,"h":3},
 	"rotated": false,
@@ -67,7 +91,7 @@
 "meta": {
 	"app": "http://www.codeandweb.com/texturepacker",
 	"version": "1.0",
-	"image": "psynergy_particle.png",
+	"image": "psynergy_psynergy_particle/vanish.png",
 	"format": "RGBA8888",
 	"size": {"w":31,"h":16},
 	"scale": "1",

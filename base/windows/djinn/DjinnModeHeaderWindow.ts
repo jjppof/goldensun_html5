@@ -255,7 +255,7 @@ export class DjinnModeHeaderWindow {
                 djinn_x = DJINN_X;
                 djinn_y = DJINN_Y;
             }
-            const action_key = this_char.sprite_base.getActionKey(base_actions.IDLE);
+            const action_key = this_char.sprite_base.getSpriteKey(base_actions.IDLE);
             const char_sprite = this.base_window.create_at_group(CHARS_X[i], CHARS_Y[i], action_key);
             char_sprite.anchor.setTo(0.5, 1.0);
 

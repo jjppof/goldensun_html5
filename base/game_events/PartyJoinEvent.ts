@@ -50,7 +50,7 @@ export class PartyJoinEvent extends GameEvent {
         });
     }
 
-    async fire(origin_npc?: NPC) {
+    async _fire(origin_npc?: NPC) {
         if (!this.active) return;
         ++this.data.game_event_manager.events_running_count;
         this.origin_npc = origin_npc;

@@ -28,4 +28,5 @@ export function load_databases(game, dbs) {
     );
     dbs.enemies_parties_db = _.mapKeys(dbs.enemies_parties_db, enemy_party_data => enemy_party_data.key_name);
     dbs.npc_db = _.mapKeys(dbs.npc_db, npc_data => npc_data.key_name);
+    dbs.misc_animations_db = _.mapKeys(dbs.misc_animations_db, misc_data => misc_data.key_name);
 }

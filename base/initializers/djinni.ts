@@ -49,7 +49,7 @@ export function initialize_djinni_sprites(game, load_promise_resolve) {
                 `${base_path}${element}_djinn.png`,
                 `${base_path}${element}_djinn.json`
             );
-            djinni_sprites[element].setActionDirections(
+            djinni_sprites[element].setActionAnimations(
                 action,
                 directions[action],
                 new Array(directions[action].length).fill(frames_number)

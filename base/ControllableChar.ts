@@ -181,8 +181,8 @@ export abstract class ControllableChar {
         anchor_x = anchor_x === undefined ? ControllableChar.default_anchor.x : anchor_x;
         anchor_y = anchor_y === undefined ? ControllableChar.default_anchor.y : anchor_y;
         this.sprite_info = sprite_info;
-        const action_key = this.sprite_info.getActionKey(this.current_action);
-        this.sprite = group.create(0, 0, action_key);
+        const sprite_key = this.sprite_info.getSpriteKey(this.current_action);
+        this.sprite = group.create(0, 0, sprite_key);
         if (!this.active) {
             this.sprite.visible = false;
         }
@@ -274,8 +274,8 @@ export abstract class ControllableChar {
             }
         }
         if (this.sprite_info.getSpriteAction(this.sprite) !== action) {
-            const action_key = this.sprite_info.getActionKey(action);
-            this.sprite.loadTexture(action_key);
+            const sprite_key = this.sprite_info.getSpriteKey(action);
+            this.sprite.loadTexture(sprite_key);
         }
         const animation_key = this.sprite_info.getAnimationKey(action, animation);
         if (!this.sprite.animations.getAnimation(animation_key)) {

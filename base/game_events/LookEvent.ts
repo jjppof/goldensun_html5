@@ -13,7 +13,7 @@ export class LookEvent extends GameEvent {
         this.target = target;
     }
 
-    fire() {
+    _fire() {
         if (!this.active) return;
         const looker: ControllableChar = this.looker === "hero" ? this.data.hero : this.data.map.npcs[this.looker];
         const target: ControllableChar = this.target === "hero" ? this.data.hero : this.data.map.npcs[this.target];

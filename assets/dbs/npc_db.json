@@ -1,5 +1,10 @@
 [
     {
+        "key_name": "foo",
+        "interaction_pattern": "simple",
+        "no_shadow": true,
+        "ignore_physics": true
+    },{
         "key_name": "chest",
         "anchor_y": 0.6,
         "initial_action": "chest",
@@ -12,7 +17,7 @@
         "actions": {
             "chest": {
                 "frame_rate": [1,1,6,10,1],
-                "directions": ["closed", "open", "opening", "shining", "empty"],
+                "animations": ["closed", "open", "opening", "shining", "empty"],
                 "frames_count": [1,1,2,2,1],
                 "initial_direction": "closed",
                 "spritesheet": {
@@ -32,7 +37,7 @@
         "actions": {
             "idle": {
                 "frame_rate": [[0.2,3,1,1,1]],
-                "directions": ["down", "up", "left", "right"],
+                "animations": ["down", "up", "left", "right"],
                 "frames_count": 6,
                 "initial_direction": "down",
                 "spritesheet": {
@@ -52,7 +57,7 @@
         "actions": {
             "idle": {
                 "frame_rate": [[0.2,5,0.3,1,1,1]],
-                "directions": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 6,
                 "initial_direction": "down",
                 "spritesheet": {
@@ -72,7 +77,7 @@
         "actions": {
             "idle": {
                 "frame_rate": [[0.2,6,0.3,2,0.4,1,1]],
-                "directions": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 7,
                 "initial_direction": "down",
                 "spritesheet": {
@@ -83,7 +88,7 @@
             },
             "walk": {
                 "frame_rate": 7,
-                "directions": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 6,
                 "initial_direction": "down",
                 "spritesheet": {
@@ -104,7 +109,7 @@
         "actions": {
             "towns": {
                 "frame_rate": 1,
-                "directions": ["town_00", "town_01", "town_02", "cave_00", "tower_00"],
+                "animations": ["town_00", "town_01", "town_02", "cave_00", "tower_00"],
                 "frames_count": 1,
                 "initial_direction": "town_00",
                 "spritesheet": {
@@ -130,7 +135,7 @@
                     "image": "assets/images/spritesheets/main_chars/isaac_idle.png"
                 },
                 "initial_direction": "down",
-                "directions": [
+                "animations": [
                     "down",
                     "up",
                     "left",
@@ -148,7 +153,7 @@
                     "json": "assets/images/spritesheets/main_chars/isaac_walk.json",
                     "image": "assets/images/spritesheets/main_chars/isaac_walk.png"
                 },
-                "directions": [
+                "animations": [
                     "down",
                     "up",
                     "left",
@@ -166,7 +171,7 @@
                     "json": "assets/images/spritesheets/main_chars/isaac_dash.json",
                     "image": "assets/images/spritesheets/main_chars/isaac_dash.png"
                 },
-                "directions": [
+                "animations": [
                     "down",
                     "up",
                     "left",
@@ -184,7 +189,7 @@
                     "json": "assets/images/spritesheets/main_chars/isaac_climb.json",
                     "image": "assets/images/spritesheets/main_chars/isaac_climb.png"
                 },
-                "directions": [
+                "animations": [
                     "up",
                     "down",
                     "left",
@@ -203,7 +208,7 @@
                 "json": "assets/images/spritesheets/main_chars/isaac_jump.json",
                 "image": "assets/images/spritesheets/main_chars/isaac_jump.png"
                 },
-                "directions": [
+                "animations": [
                     "down",
                     "up",
                     "left",
@@ -218,7 +223,7 @@
                 "json": "assets/images/spritesheets/main_chars/isaac_push.json",
                 "image": "assets/images/spritesheets/main_chars/isaac_push.png"
                 },
-                "directions": [
+                "animations": [
                     "down",
                     "up",
                     "left",
@@ -232,7 +237,7 @@
                 "json": "assets/images/spritesheets/main_chars/isaac_cast.json",
                 "image": "assets/images/spritesheets/main_chars/isaac_cast.png"
                 },
-                "directions": [
+                "animations": [
                     "down",
                     "up",
                     "left",
@@ -251,7 +256,7 @@
                 "json": "assets/images/spritesheets/main_chars/isaac_grant.json",
                 "image": "assets/images/spritesheets/main_chars/isaac_grant.png"
                 },
-                "directions": [
+                "animations": [
                     "down"
                 ],
                 "frames_count": 1,
@@ -262,7 +267,7 @@
                 "json": "assets/images/spritesheets/battle/isaac_battle.json",
                 "image": "assets/images/spritesheets/battle/isaac_battle.png"
                 },
-                "directions": [
+                "animations": [
                     "attack_back",
                     "attack_front",
                     "idle_back",
@@ -298,7 +303,7 @@
                     "image": "assets/images/spritesheets/main_chars/garet_idle.png"
                 },
                 "initial_direction": "down",
-                "directions": [
+                "animations": [
                     "down",
                     "up",
                     "left",
@@ -316,7 +321,7 @@
                     "json": "assets/images/spritesheets/battle/garet_battle.json",
                     "image": "assets/images/spritesheets/battle/garet_battle.png"
                 },
-                "directions": [
+                "animations": [
                     "idle_back",
                     "idle_front"
                 ],
@@ -342,7 +347,7 @@
                     "image": "assets/images/spritesheets/main_chars/sheba_idle.png"
                 },
                 "initial_direction": "down",
-                "directions": [
+                "animations": [
                     "down",
                     "up",
                     "left",
@@ -360,7 +365,7 @@
                     "json": "assets/images/spritesheets/battle/sheba_battle.json",
                     "image": "assets/images/spritesheets/battle/sheba_battle.png"
                 },
-                "directions": [
+                "animations": [
                     "idle_back",
                     "idle_front"
                 ],
@@ -386,7 +391,7 @@
                     "image": "assets/images/spritesheets/main_chars/piers_idle.png"
                 },
                 "initial_direction": "down",
-                "directions": [
+                "animations": [
                     "down",
                     "up",
                     "left",
@@ -404,7 +409,7 @@
                     "json": "assets/images/spritesheets/main_chars/piers_walk.json",
                     "image": "assets/images/spritesheets/main_chars/piers_walk.png"
                 },
-                "directions": [
+                "animations": [
                     "down",
                     "up",
                     "left",
@@ -422,7 +427,7 @@
                     "json": "assets/images/spritesheets/battle/piers_battle.json",
                     "image": "assets/images/spritesheets/battle/piers_battle.png"
                 },
-                "directions": [
+                "animations": [
                     "idle_back",
                     "idle_front"
                 ],

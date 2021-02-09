@@ -12,7 +12,7 @@ export function initialize_interactable_objs_data(game, interactable_objects_db,
             iter_obj_data.spritesheet.image,
             iter_obj_data.spritesheet.json
         );
-        sprite_base.setActionDirections(
+        sprite_base.setActionAnimations(
             iter_obj_data.key_name,
             iter_obj_data.actions.animations,
             iter_obj_data.actions.frames_count

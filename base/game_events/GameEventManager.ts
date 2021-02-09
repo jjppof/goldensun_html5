@@ -19,6 +19,7 @@ import * as _ from "lodash";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
+    SIMPLE = "simple_interaction",
     TIK_TAK_TOE = "tik_tak_toe",
     CROSS = "cross",
 }
@@ -103,7 +104,7 @@ export class GameEventManager {
     }
 
     async set_npc_event(npc) {
-        if (npc.npc_type === npc_types.NORMAL) {
+        if ([npc_types.NORMAL, npc_types.SPRITE].includes(npc.npc_type)) {
             if (npc.message) {
                 this.manage_npc_dialog(npc);
             } else {
@@ -112,25 +113,37 @@ export class GameEventManager {
         } else if (npc.npc_type === npc_types.SHOP) {
             if (!this.data.shop_open) {
                 ++this.events_running_count;
-                const previous_npc_direction = npc.current_direction;
-                await this.set_npc_and_hero_directions(npc);
+                let previous_npc_direction;
+                if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
+                    previous_npc_direction = npc.current_direction;
+                    await this.set_npc_and_hero_directions(npc);
+                }
                 this.data.shop_menu.open_menu(npc.shop_key, async () => {
                     --this.events_running_count;
-                    await npc.go_to_direction(previous_npc_direction);
+                    if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
+                        await npc.go_to_direction(previous_npc_direction);
+                    }
                     this.control_enable = true;
                 });
             }
         } else if (npc.npc_type === npc_types.INN) {
             if (!this.data.inn_open) {
                 ++this.events_running_count;
-                const previous_npc_direction = npc.current_direction;
-                await this.set_npc_and_hero_directions(npc);
+                let previous_npc_direction;
+                if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
+                    previous_npc_direction = npc.current_direction;
+                    await this.set_npc_and_hero_directions(npc);
+                }
                 this.data.inn_menu.start(npc.inn_key, async () => {
                     --this.events_running_count;
-                    await npc.go_to_direction(previous_npc_direction);
+                    if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
+                        await npc.go_to_direction(previous_npc_direction);
+                    }
                     this.control_enable = true;
                 });
             }
+        } else {
+            this.control_enable = true;
         }
     }
 
@@ -156,7 +169,9 @@ export class GameEventManager {
         const dialog_manager = new DialogManager(this.game, this.data);
         dialog_manager.set_dialog(npc.message, npc.avatar, this.data.hero.current_direction);
         const previous_npc_direction = npc.current_direction;
-        await this.set_npc_and_hero_directions(npc);
+        if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
+            await this.set_npc_and_hero_directions(npc);
+        }
         this.fire_next_step = dialog_manager.next.bind(dialog_manager, async finished => {
             if (finished) {
                 this.fire_next_step = null;
@@ -194,7 +209,13 @@ export class GameEventManager {
                     info.else_events
                 );
             case event_types.SET_VALUE:
-                return new SetValueEvent(this.game, this.data, info.active, info.event_value);
+                return new SetValueEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.event_value,
+                    info.check_npc_storage_values
+                );
             case event_types.MOVE:
                 return new MoveEvent(
                     this.game,
@@ -228,7 +249,17 @@ export class GameEventManager {
             case event_types.LOOK:
                 return new LookEvent(this.game, this.data, info.active, info.look, info.looker, info.target);
             case event_types.CHEST:
-                return new ChestEvent(this.game, this.data, info.active, info.item, info.quantity, info.finish_events);
+                return new ChestEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.item,
+                    info.quantity,
+                    info.finish_events,
+                    info.custom_init_text,
+                    info.no_chest,
+                    info.hide_on_finish
+                );
             case event_types.TIMER:
                 return new TimerEvent(this.game, this.data, info.active, info.duration, info.finish_events);
             case event_types.PARTY_JOIN:

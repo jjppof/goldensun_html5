@@ -193,7 +193,7 @@ export class InteractableObjects {
                 this.psynergy_casted[psynergy_key] = false;
             }
         }
-        const interactable_object_key = this.sprite_info.getActionKey(this.key_name);
+        const interactable_object_key = this.sprite_info.getSpriteKey(this.key_name);
         const interactable_object_sprite = this.data.npc_group.create(0, 0, interactable_object_key);
         this.set_sprite(interactable_object_sprite);
         this.sprite.is_interactable_object = true;
