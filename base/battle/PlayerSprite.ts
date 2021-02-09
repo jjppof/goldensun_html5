@@ -218,28 +218,36 @@ export class PlayerSprite {
         this.ellipses_semi_minor = SEMI_MINOR_AXIS;
 
         this.sprite_base.setAnimation(this.char_sprite, base_actions.BATTLE);
-        const anim_key = this.sprite_base.getAnimationKey(base_actions.BATTLE, this.battle_key);
-        this.char_sprite.animations.play(anim_key);
+        this.play_position();
     }
 
-    set_position(position: battle_positions) {
-        this.battle_position = position;
+    play_position(frame_rate?: number, loop?: boolean) {
         const anim_key = this.sprite_base.getAnimationKey(base_actions.BATTLE, this.battle_key);
-        this.char_sprite.animations.play(anim_key);
+        this.char_sprite.animations.play(anim_key, frame_rate, loop);
+        this.char_sprite.animations.currentAnim.restart();
         if (this.weapon_sprite) {
             const player = this.player_instance as MainChar;
             const weapon_anim_key = player.weapons_sprite_base.getAnimationKey(
                 this.current_weapon_type,
                 this.battle_key
             );
-            this.weapon_sprite.animations.play(weapon_anim_key);
+            this.weapon_sprite.animations.play(weapon_anim_key, frame_rate, loop);
+            this.weapon_sprite.animations.currentAnim.restart();
         }
     }
 
-    set_action(action: battle_actions) {
+    set_position(position: battle_positions, play: boolean = true) {
+        this.battle_position = position;
+        if (play) {
+            this.play_position();
+        }
+    }
+
+    set_action(action: battle_actions, play: boolean = true) {
         this.battle_action = action;
-        const anim_key = this.sprite_base.getAnimationKey(base_actions.BATTLE, this.battle_key);
-        this.char_sprite.animations.play(anim_key);
+        if (play) {
+            this.play_position();
+        }
     }
 
     get_animation_key(action: battle_actions, position: battle_positions) {

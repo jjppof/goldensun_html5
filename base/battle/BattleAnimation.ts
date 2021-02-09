@@ -666,7 +666,12 @@ export class BattleAnimation {
                     if (anim) {
                         anim.reversed = play_seq.reverse === undefined ? false : play_seq.reverse;
                         anim.stop(true);
-                        sprite.animations.play(animation_key, play_seq.frame_rate, play_seq.repeat);
+                        if (sprite instanceof PlayerSprite && (sprite as PlayerSprite).is_ally) {
+                            sprite.set_action(play_seq.animation_key as battle_actions, false);
+                            sprite.play_position(play_seq.frame_rate, play_seq.repeat);
+                        } else {
+                            sprite.animations.play(animation_key, play_seq.frame_rate, play_seq.repeat);
+                        }
                         if (play_seq.wait) {
                             sprite.animations.currentAnim.onComplete.addOnce(() => {
                                 if (play_seq.hide_on_complete) {
