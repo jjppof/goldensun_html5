@@ -39,7 +39,25 @@ export enum ability_categories {
     NORMAL = "normal",
 }
 
+export enum ability_ranges {
+    ONE = 1,
+    THREE = 3,
+    FIVE = 5,
+    SEVEN = 7,
+    NINE = 9,
+    ELEVEN = 11,
+    ALL = "all",
+}
+
 export const diminishing_ratios = {
+    ALL: {
+        11: 1,
+        9: 1,
+        7: 1,
+        5: 1,
+        3: 1,
+        1: 1,
+    },
     STANDARD: {
         11: 0.1,
         9: 0.2,
@@ -81,7 +99,7 @@ export class Ability {
     public type: ability_types;
     public element: elements;
     public battle_target: string;
-    public range: number;
+    public range: ability_ranges;
     public pp_cost: number;
     public ability_power: number;
     public effects_outside_battle: boolean;
@@ -155,9 +173,15 @@ export class Ability {
         this.can_be_mirrored = can_be_mirrored === undefined ? false : can_be_mirrored;
     }
 
-    static get_diminishing_ratios(ability_type: ability_types, use_diminishing_ratio: boolean) {
+    static get_diminishing_ratios(
+        ability_type: ability_types,
+        ability_range: ability_ranges,
+        use_diminishing_ratio: boolean
+    ) {
         if (use_diminishing_ratio) {
             return diminishing_ratios.DIMINISH;
+        } else if (ability_range === ability_ranges.ALL) {
+            return diminishing_ratios.ALL;
         }
         switch (ability_type) {
             case ability_types.SUMMON:

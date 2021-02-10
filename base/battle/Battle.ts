@@ -6,9 +6,9 @@ import {Enemy, get_enemy_instance} from "../Enemy";
 import {ability_types, Ability, diminishing_ratios, ability_categories} from "../Ability";
 import {ChoosingTargetWindow} from "../windows/battle/ChoosingTargetWindow";
 import {EnemyAI} from "./EnemyAI";
-import {BattleFormulas, CRITICAL_CHANCE, EVASION_CHANCE, DELUSION_MISS_CHANCE} from "./BattleFormulas";
+import {BattleFormulas, EVASION_CHANCE, DELUSION_MISS_CHANCE} from "./BattleFormulas";
 import {effect_types, Effect, effect_usages, effect_names, effect_msg} from "../Effect";
-import {variation, ordered_elements, element_names, base_actions} from "../utils";
+import {ordered_elements, element_names, base_actions} from "../utils";
 import {djinn_status, Djinn} from "../Djinn";
 import {ItemSlot, MainChar} from "../MainChar";
 import {animation_availability, BattleAnimationManager} from "./BattleAnimationManager";
@@ -721,62 +721,18 @@ export class Battle {
                 }
             }
 
-            let damage = 0;
-            if (ability.has_critical && (Math.random() < CRITICAL_CHANCE || Math.random() < increased_crit / 2)) {
-                const mult_mod = ability.crit_mult_factor === undefined ? 1.25 : ability.crit_mult_factor;
-                const add_mod = 6.0 + target_instance.level / 5.0;
-
-                damage = BattleFormulas.physical_attack(
-                    action.caster,
-                    target_instance,
-                    mult_mod,
-                    add_mod,
-                    ability.element
-                );
-            } else {
-                switch (ability.type) {
-                    case ability_types.ADDED_DAMAGE:
-                        damage = BattleFormulas.physical_attack(
-                            action.caster,
-                            target_instance,
-                            1.0,
-                            ability.ability_power,
-                            ability.element
-                        );
-                        break;
-                    case ability_types.MULTIPLIER:
-                        damage = BattleFormulas.physical_attack(
-                            action.caster,
-                            target_instance,
-                            ability.ability_power / 10.0,
-                            0,
-                            ability.element
-                        );
-                        break;
-                    case ability_types.BASE_DAMAGE:
-                        damage = BattleFormulas.psynergy_damage(
-                            action.caster,
-                            target_instance,
-                            ability.ability_power,
-                            ability.element
-                        );
-                        break;
-                    case ability_types.HEALING:
-                        damage = -BattleFormulas.heal_ability(action.caster, ability.ability_power, ability.element);
-                        break;
-                    case ability_types.SUMMON:
-                        const djinn_used = _.sum(_.values(this.data.info.summons_list[ability.key_name].requirements));
-                        damage = BattleFormulas.summon_damage(target_instance, ability.ability_power, djinn_used);
-                        break;
-                    case ability_types.DIRECT_DAMAGE:
-                        damage = ability.ability_power;
-                        break;
-                }
+            let djinn_used;
+            if (ability.type === ability_types.SUMMON) {
+                djinn_used = _.sum(_.values(this.data.info.summons_list[ability.key_name].requirements));
             }
-
-            const ratios = Ability.get_diminishing_ratios(ability.type, ability.use_diminishing_ratio);
-            damage = (damage * ratios[target_info.magnitude]) | 0;
-            damage += variation();
+            let damage = BattleFormulas.get_damage(
+                ability,
+                action.caster,
+                target_instance,
+                target_info.magnitude,
+                djinn_used,
+                increased_crit
+            );
 
             if (damage >= 0) {
                 target_instance.effects.forEach(effect => {

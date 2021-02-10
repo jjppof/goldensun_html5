@@ -21,10 +21,11 @@
 [by Salanewt]
 */
 
-import {elements} from "../utils";
+import {elements, variation} from "../utils";
 import {permanent_status, Player} from "../Player";
 import {ELEM_ATTR_MAX, ELEM_ATTR_MIN} from "../magic_numbers";
 import * as _ from "lodash";
+import {Ability, ability_types} from "../Ability";
 
 export const CRITICAL_CHANCE = 1 / 32;
 
@@ -150,5 +151,60 @@ export class BattleFormulas {
     static summon_power(djinn_number) {
         djinn_number = _.clamp(djinn_number, 0, 4);
         return (djinn_number * djinn_number + djinn_number) * 5;
+    }
+
+    static get_damage(
+        ability: Ability,
+        caster: Player,
+        target: Player,
+        magnitude: number,
+        djinn_used?: number,
+        increased_critical?: number
+    ) {
+        let damage = 0;
+        if (ability.has_critical && (Math.random() < CRITICAL_CHANCE || Math.random() < increased_critical / 2)) {
+            const mult_mod = ability.crit_mult_factor === undefined ? 1.25 : ability.crit_mult_factor;
+            const add_mod = 6.0 + target.level / 5.0;
+
+            damage = BattleFormulas.physical_attack(caster, target, mult_mod, add_mod, ability.element);
+        } else {
+            switch (ability.type) {
+                case ability_types.ADDED_DAMAGE:
+                    damage = BattleFormulas.physical_attack(
+                        caster,
+                        target,
+                        1.0,
+                        ability.ability_power,
+                        ability.element
+                    );
+                    break;
+                case ability_types.MULTIPLIER:
+                    damage = BattleFormulas.physical_attack(
+                        caster,
+                        target,
+                        ability.ability_power / 10.0,
+                        0,
+                        ability.element
+                    );
+                    break;
+                case ability_types.BASE_DAMAGE:
+                    damage = BattleFormulas.psynergy_damage(caster, target, ability.ability_power, ability.element);
+                    break;
+                case ability_types.HEALING:
+                    damage = -BattleFormulas.heal_ability(caster, ability.ability_power, ability.element);
+                    break;
+                case ability_types.SUMMON:
+                    damage = BattleFormulas.summon_damage(target, ability.ability_power, djinn_used);
+                    break;
+                case ability_types.DIRECT_DAMAGE:
+                    damage = ability.ability_power;
+                    break;
+            }
+        }
+
+        const ratios = Ability.get_diminishing_ratios(ability.type, ability.range, ability.use_diminishing_ratio);
+        damage = (damage * ratios[magnitude]) | 0;
+        damage += variation();
+        return damage;
     }
 }

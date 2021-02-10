@@ -1,7 +1,7 @@
 import {CharsStatusWindow} from "../windows/CharsStatusWindow";
 import {capitalize, ordered_elements} from "../utils";
 import * as numbers from "../magic_numbers";
-import {Djinn, djinn_status} from "../Djinn";
+import {djinn_status} from "../Djinn";
 import {BattleDescriptionWindow} from "../windows/battle/BattleDescriptionWindow";
 import {BattlePsynergyWindow} from "../windows/battle/BattlePsynergyWindow";
 import {BattleDjinnWindow} from "../windows/battle/BattleDjinnWindow";

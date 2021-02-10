@@ -1,6 +1,6 @@
 import * as numbers from "../magic_numbers";
 import {range_360} from "../utils";
-import {ability_target_types} from "../Ability";
+import {ability_ranges, ability_target_types} from "../Ability";
 import {fighter_types, permanent_status, Player} from "../Player";
 import {GoldenSun} from "../GoldenSun";
 import {Button} from "../XGamepad";
@@ -110,7 +110,7 @@ export class BattleStage {
 
     public choosing_targets_callback: Function;
     public range_cursor_position: number;
-    public ability_range: string | number;
+    public ability_range: ability_ranges;
     public ability_type: string;
 
     public cursors_tweens: Phaser.Tween[];
@@ -191,7 +191,11 @@ export class BattleStage {
             ).reverse(),
             party_info,
             (magnitude, target) => {
-                let t: Target = {magnitude: magnitude > this.ability_range ? null : magnitude, target: target};
+                let t: Target = {
+                    magnitude:
+                        magnitude > (this.ability_range === "all" ? RANGES[0] : this.ability_range) ? null : magnitude,
+                    target: target,
+                };
                 return t;
             }
         );
@@ -471,8 +475,15 @@ export class BattleStage {
 
             if (target_info && !target_info.instance.has_permanent_status(permanent_status.DOWNED)) {
                 const target_sprite = target_info.sprite;
-                const this_scale =
-                    BATTLE_CURSOR_SCALES[this.range_cursor_position - center_shift - (this.cursors.length >> 1) + i];
+                let this_scale;
+                if (this.ability_range === ability_ranges.ALL) {
+                    this_scale = 1.0;
+                } else {
+                    this_scale =
+                        BATTLE_CURSOR_SCALES[
+                            this.range_cursor_position - center_shift - (this.cursors.length >> 1) + i
+                        ];
+                }
 
                 cursor_sprite.scale.setTo(this_scale, this_scale);
                 cursor_sprite.alpha = 1;
@@ -546,7 +557,7 @@ export class BattleStage {
     }
 
     choose_targets(
-        range: string | number,
+        range: ability_ranges,
         target_type: string,
         ability_type: string,
         ability_caster: Player,
@@ -555,7 +566,7 @@ export class BattleStage {
         this.choosing_targets_callback = callback;
         this.range_cursor_position = RANGES.length >> 1;
 
-        this.ability_range = range === "all" ? RANGES[0] : range;
+        this.ability_range = range;
         this.ability_type = ability_type;
         this.ability_caster = ability_caster;
 
@@ -578,7 +589,7 @@ export class BattleStage {
                     true
                 )
                 .onComplete.addOnce(() => {
-                    const cursor_count = this.ability_range;
+                    const cursor_count = this.ability_range === "all" ? RANGES[0] : this.ability_range;
 
                     this.cursors = new Array<Phaser.Sprite>(cursor_count as number);
                     this.cursors_tweens = new Array<Phaser.Tween>(cursor_count as number).fill(null);
