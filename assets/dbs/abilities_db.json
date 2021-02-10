@@ -339,7 +339,7 @@
         "range": 1,
         "pp_cost": 0,
         "ability_power": 0,
-        "effects_outside_battle": true,
+        "effects_outside_battle": false,
         "is_battle_ability": true,
         "is_field_psynergy": false,
         "effects": [{

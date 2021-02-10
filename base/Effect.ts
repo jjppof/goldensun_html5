@@ -1,8 +1,11 @@
-import {Ability} from "./Ability";
+import {Ability, diminishing_ratios} from "./Ability";
 import {Item} from "./Item";
 import {effect_type_stat, main_stats, permanent_status, Player, temporary_status} from "./Player";
 import {variation, elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
+import {BattleFormulas} from "./battle/BattleFormulas";
+import {MainChar} from "./MainChar";
+import {Enemy} from "./Enemy";
 
 export enum effect_types {
     MAX_HP = "max_hp",
@@ -125,22 +128,22 @@ export class Effect {
         this.quantity = quantity;
         this.operator = operator;
         this.effect_owner_instance = effect_owner_instance;
-        this.quantity_is_absolute = quantity_is_absolute === undefined ? false : quantity_is_absolute;
-        this.rate = rate === undefined ? 1.0 : rate;
-        this.chance = chance === undefined ? 1.0 : chance;
-        this.element = element === undefined ? elements.NO_ELEMENT : element;
+        this.quantity_is_absolute = quantity_is_absolute ?? false;
+        this.rate = rate ?? 1.0;
+        this.chance = chance ?? 1.0;
+        this.element = element ?? elements.NO_ELEMENT;
         this.add_status = add_status;
         this.remove_buff = remove_buff;
         this.status_key_name = status_key_name;
         this.turns_quantity = turns_quantity ?? -1;
         this.turn_count = turns_quantity;
-        this.variation_on_final_result = variation_on_final_result === undefined ? false : variation_on_final_result;
+        this.variation_on_final_result = variation_on_final_result ?? false;
         this.damage_formula_key_name = damage_formula_key_name;
-        this.usage = usage === undefined ? effect_usages.NOT_APPLY : usage;
-        this.on_caster = on_caster === undefined ? false : on_caster;
+        this.usage = usage ?? effect_usages.NOT_APPLY;
+        this.on_caster = on_caster ?? false;
         this.relative_to_property = relative_to_property;
         this.effect_msg = effect_msg;
-        this.show_msg = show_msg === undefined ? true : show_msg;
+        this.show_msg = show_msg ?? true;
         this.char = char;
         this.sub_effect = sub_effect;
         if (this.sub_effect !== undefined) {
@@ -162,15 +165,13 @@ export class Effect {
     }
 
     init_sub_effect() {
-        this.sub_effect.quantity_is_absolute =
-            this.sub_effect.quantity_is_absolute === undefined ? false : this.sub_effect.quantity_is_absolute;
-        this.sub_effect.rate = this.sub_effect.rate === undefined ? 1.0 : this.sub_effect.rate;
-        this.sub_effect.chance = this.sub_effect.chance === undefined ? 1.0 : this.sub_effect.chance;
-        this.sub_effect.element = this.sub_effect.element === undefined ? elements.NO_ELEMENT : this.sub_effect.element;
-        this.sub_effect.variation_on_final_result =
-            this.sub_effect.variation_on_final_result === undefined ? false : this.sub_effect.variation_on_final_result;
-        this.sub_effect.usage = this.sub_effect.usage === undefined ? effect_usages.NOT_APPLY : this.sub_effect.usage;
-        this.sub_effect.on_caster = this.sub_effect.on_caster === undefined ? false : this.sub_effect.on_caster;
+        this.sub_effect.quantity_is_absolute = this.sub_effect.quantity_is_absolute ?? false;
+        this.sub_effect.rate = this.sub_effect.rate ?? 1.0;
+        this.sub_effect.chance = this.sub_effect.chance ?? 1.0;
+        this.sub_effect.element = this.sub_effect.element ?? elements.NO_ELEMENT;
+        this.sub_effect.variation_on_final_result = this.sub_effect.variation_on_final_result ?? false;
+        this.sub_effect.usage = this.sub_effect.usage ?? effect_usages.NOT_APPLY;
+        this.sub_effect.on_caster = this.sub_effect.on_caster ?? false;
     }
 
     apply_general_value(property: string, direct_value?: number, element?: elements) {
@@ -369,5 +370,60 @@ export class Effect {
                 }
                 return result;
         }
+    }
+
+    add_status_to_player(player: MainChar | Enemy, ability: Ability, magnitude: number) {
+        let vulnerability = _.find(player.class.vulnerabilities, {
+            status_key_name: this.status_key_name,
+        });
+        vulnerability = vulnerability === undefined ? 0 : vulnerability.chance;
+        const ratio = diminishing_ratios.STATUS[magnitude];
+
+        let added_effect: Effect = null;
+        if (BattleFormulas.ailment_success(this.char, player, this.chance, ratio, ability.element, vulnerability)) {
+            added_effect = player.add_effect(this, ability, true).effect;
+            if (added_effect.type === effect_types.TEMPORARY_STATUS) {
+                if (
+                    added_effect.status_key_name === temporary_status.DEATH_CURSE &&
+                    player.has_temporary_status(temporary_status.DEATH_CURSE)
+                ) {
+                    player.set_effect_turns_count(added_effect);
+                } else {
+                    player.set_effect_turns_count(added_effect, added_effect.turn_count, false);
+                }
+            } else if (
+                added_effect.status_key_name === permanent_status.VENOM &&
+                player.has_permanent_status(permanent_status.POISON)
+            ) {
+                const poison_effect = _.find(player.effects, {
+                    status_key_name: permanent_status.POISON,
+                });
+                player.remove_effect(poison_effect, true);
+            }
+        }
+        return added_effect;
+    }
+
+    remove_status_from_player(player: Player) {
+        if (![effect_types.TEMPORARY_STATUS, effect_types.PERMANENT_STATUS].includes(this.type)) return;
+
+        const removed_effects: Effect[] = [];
+        if (Math.random() < this.chance) {
+            while (true) {
+                const this_effect = _.find(player.effects, {
+                    status_key_name: this.status_key_name,
+                });
+                if (this_effect) {
+                    player.remove_effect(this_effect, true);
+
+                    if (this_effect.status_key_name === permanent_status.DOWNED) {
+                        player.init_effect_turns_count();
+                    }
+
+                    removed_effects.push(this_effect);
+                } else break;
+            }
+        }
+        return removed_effects;
     }
 }

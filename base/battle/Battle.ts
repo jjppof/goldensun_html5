@@ -442,8 +442,8 @@ export class Battle {
         }
 
         let ability = this.data.info.abilities_list[action.key_name];
-        let item_name = action.item_slot ? this.data.info.items_list[action.item_slot.key_name].name : "";
 
+        let item_name = action.item_slot ? this.data.info.items_list[action.item_slot.key_name].name : "";
         if (
             action.caster.fighter_type === fighter_types.ALLY &&
             ability !== undefined &&
@@ -514,7 +514,7 @@ export class Battle {
                 this.data.info.djinni_list[action.key_name].set_status(djinn_status.STANDBY, action.caster as MainChar);
             }
         } else if (ability.ability_category === ability_categories.SUMMON) {
-            //some summon checks
+            //deal with summon ability type
             const requirements = this.data.info.summons_list[ability.key_name].requirements;
             const standby_djinni = Djinn.get_standby_djinni(
                 this.data.info.djinni_list,
@@ -562,6 +562,7 @@ export class Battle {
             action.caster_battle_key
         );
         if (anim_availability === animation_availability.AVAILABLE) {
+            //executes the animation of the current ability
             const caster_targets_sprites = {
                 caster:
                     action.caster.fighter_type === fighter_types.ALLY
@@ -617,13 +618,13 @@ export class Battle {
         }
 
         await this.battle_stage.set_stage_default_position();
-        //summon after cast power buff
+
         if (ability.ability_category === ability_categories.SUMMON) {
+            //summon's power buff after cast
             const requirements = this.data.info.summons_list[ability.key_name].requirements;
             for (let i = 0; i < ordered_elements.length; ++i) {
                 const element = ordered_elements[i];
                 const power = BattleFormulas.summon_power(requirements[element]);
-
                 if (power > 0) {
                     action.caster.add_effect(
                         {
@@ -637,7 +638,7 @@ export class Battle {
                     );
 
                     await this.battle_log.add(
-                        `${action.caster.name}'s ${element_names[element]} Power rises by ${power.toString()}!`
+                        `${action.caster.name}'s ${element_names[element]} Power rises by ${power}!`
                     );
                     await this.wait_for_key();
                 }
@@ -677,6 +678,7 @@ export class Battle {
             await this.check_downed(action.caster);
         }
 
+        //check for death curse end
         if (action.caster.has_temporary_status(temporary_status.DEATH_CURSE)) {
             const this_effect = _.find(action.caster.effects, {
                 status_key_name: temporary_status.DEATH_CURSE,
@@ -697,6 +699,7 @@ export class Battle {
         let increased_crit: number;
 
         if (ability.has_critical) {
+            //check for effects that increases critical chance
             increased_crit = action.caster.effects
                 .filter(effect => effect.type === effect_types.CRITICALS)
                 .reduce((acc, effect) => {
@@ -711,6 +714,7 @@ export class Battle {
 
             if (target_instance.has_permanent_status(permanent_status.DOWNED)) continue;
             if (ability.can_be_evaded) {
+                //check whether the target is going to evade the caster attack
                 if (
                     Math.random() < EVASION_CHANCE ||
                     (action.caster.temporary_status.has(temporary_status.DELUSION) &&
@@ -760,21 +764,24 @@ export class Battle {
             for (let j = 0; j < ability.effects.length; ++j) {
                 const effect_obj = ability.effects[j];
                 if (effect_obj.type === effect_types.DAMAGE_INPUT) {
+                    //apply effects of this ability that depends on the issued damage value
                     const player = effect_obj.on_caster ? action.caster : target_instance;
-                    const di_effect = player.add_effect(effect_obj, ability).effect;
-                    const effect_result = di_effect.apply_effect(damage);
+                    const damage_input_effect = player.add_effect(effect_obj, ability).effect;
+                    const effect_result = damage_input_effect.apply_effect(damage);
 
-                    if ([effect_types.CURRENT_HP, effect_types.CURRENT_PP].includes(di_effect.sub_effect.type)) {
+                    if (
+                        [effect_types.CURRENT_HP, effect_types.CURRENT_PP].includes(damage_input_effect.sub_effect.type)
+                    ) {
                         const effect_damage = effect_result.before - effect_result.after;
 
                         if (effect_damage !== 0) {
-                            if (di_effect.effect_msg) {
-                                await this.battle_log.add(effect_msg[di_effect.effect_msg](target_instance));
+                            if (damage_input_effect.effect_msg) {
+                                await this.battle_log.add(effect_msg[damage_input_effect.effect_msg](target_instance));
                             } else {
                                 await this.battle_log.add_damage(
                                     effect_damage,
                                     player,
-                                    di_effect.sub_effect.type === effect_types.CURRENT_PP
+                                    damage_input_effect.sub_effect.type === effect_types.CURRENT_PP
                                 );
                             }
 
@@ -783,7 +790,7 @@ export class Battle {
                         }
                         await this.check_downed(player);
                     }
-                    player.remove_effect(di_effect);
+                    player.remove_effect(damage_input_effect);
                 }
             }
         }
@@ -825,56 +832,24 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
                 case effect_types.TEMPORARY_STATUS:
                     if (effect.add_status) {
-                        let vulnerability = _.find(target_instance.class.vulnerabilities, {
-                            status_key_name: effect.status_key_name,
-                        });
-
-                        vulnerability = vulnerability === undefined ? 0 : vulnerability.chance;
-                        const magnitude = diminishing_ratios.STATUS[target_info.magnitude];
-
-                        if (
-                            BattleFormulas.ailment_success(
-                                action.caster,
-                                target_instance,
-                                effect.chance,
-                                magnitude,
-                                ability.element,
-                                vulnerability
-                            )
-                        ) {
-                            const this_effect = target_instance.add_effect(effect, ability, true).effect;
-
-                            if (this_effect.type === effect_types.TEMPORARY_STATUS) {
-                                if (
-                                    !target_instance.has_temporary_status(
-                                        this_effect.status_key_name as temporary_status
-                                    )
-                                ) {
-                                    this.on_going_effects.push(this_effect);
-                                }
-
-                                if (
-                                    this_effect.status_key_name === temporary_status.DEATH_CURSE &&
-                                    target_instance.has_temporary_status(temporary_status.DEATH_CURSE)
-                                ) {
-                                    target_instance.set_effect_turns_count(this_effect);
-                                } else {
-                                    target_instance.set_effect_turns_count(this_effect, this_effect.turn_count, false);
-                                    if (this_effect.status_key_name === temporary_status.STUN) {
-                                        const player_sprite = _.find(this.battle_stage.sprites, {
-                                            player_instance: this_effect.char,
-                                        });
-                                        player_sprite.set_action(battle_actions.DOWNED);
-                                    }
-                                }
-                            } else if (
-                                this_effect.status_key_name === permanent_status.VENOM &&
-                                target_instance.has_permanent_status(permanent_status.POISON)
+                        const added_effect = effect.add_status_to_player(
+                            target_instance,
+                            ability,
+                            target_info.magnitude
+                        );
+                        if (added_effect) {
+                            if (
+                                !target_instance.has_temporary_status(added_effect.status_key_name as temporary_status)
                             ) {
-                                const poison_effect = _.find(target_instance.effects, {
-                                    status_key_name: permanent_status.POISON,
+                                this.on_going_effects.push(added_effect);
+                            }
+                            if (
+                                [permanent_status.DOWNED, temporary_status.STUN].includes(added_effect.status_key_name)
+                            ) {
+                                const player_sprite = _.find(this.battle_stage.sprites, {
+                                    player_instance: added_effect.char,
                                 });
-                                target_instance.remove_effect(poison_effect, true);
+                                player_sprite.set_action(battle_actions.DOWNED);
                             }
                             await this.battle_log.add(on_catch_status_msg[effect.status_key_name](target_instance));
                         } else {
@@ -882,36 +857,26 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         }
                         await this.wait_for_key();
                     } else {
-                        if (Math.random() < effect.chance) {
-                            let removed = false;
-                            while (true) {
-                                const this_effect = _.find(target_instance.effects, {
-                                    status_key_name: effect.status_key_name,
+                        const removed_effects = effect.remove_status_from_player(target_instance);
+                        for (let i = 0; i < removed_effects.length; ++i) {
+                            const removed_effect = removed_effects[i];
+                            if (
+                                [permanent_status.DOWNED, temporary_status.STUN].includes(
+                                    removed_effect.status_key_name
+                                )
+                            ) {
+                                const player_sprite = _.find(this.battle_stage.sprites, {
+                                    player_instance: removed_effect.char,
                                 });
-                                if (this_effect) {
-                                    target_instance.remove_effect(this_effect, true);
-                                    removed = true;
-
-                                    if (this_effect.status_key_name === permanent_status.DOWNED) {
-                                        target_instance.init_effect_turns_count();
-                                    } else if (this_effect.status_key_name === temporary_status.STUN) {
-                                        const player_sprite = _.find(this.battle_stage.sprites, {
-                                            player_instance: this_effect.char,
-                                        });
-                                        player_sprite.set_action(battle_actions.IDLE);
-                                    }
-
-                                    if (this_effect.type === effect_types.TEMPORARY_STATUS) {
-                                        this.on_going_effects = this.on_going_effects.filter(effect => {
-                                            return effect !== this_effect;
-                                        });
-                                    }
-                                } else break;
+                                player_sprite.set_action(battle_actions.IDLE);
                             }
-                            if (removed) {
-                                this.battle_log.add_recover_effect(effect);
-                                await this.wait_for_key();
+                            if (removed_effect.type === effect_types.TEMPORARY_STATUS) {
+                                this.on_going_effects = this.on_going_effects.filter(effect => {
+                                    return effect !== effect;
+                                });
                             }
+                            this.battle_log.add_recover_effect(removed_effect);
+                            await this.wait_for_key();
                         }
                     }
                     break;
@@ -1020,6 +985,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
         for (let i = 0; i < this.on_going_effects.length; ++i) {
             const effect = this.on_going_effects[i];
             if (effect.char.has_permanent_status(permanent_status.DOWNED)) {
+                //clear this effect if the owner char is downed
                 effect.char.remove_effect(effect);
                 effect.char.update_all();
                 effects_to_remove.push(i);
@@ -1027,6 +993,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             }
             let avoid_msg = false;
             if (effect.turn_count !== -1) {
+                //deal with effects that depends on turn counting
                 if (effect.char.get_effect_turns_count(effect) !== null) {
                     if (
                         !(effect.char.key_name in effect_groups) ||
@@ -1062,7 +1029,6 @@ So, if a character will die after 5 turns and you land another Curse on them, it
         for (let char_key_name in effect_groups) {
             for (let effect_turn_key in effect_groups[char_key_name]) {
                 const effect = effect_groups[char_key_name][effect_turn_key];
-
                 if (effect.turn_count === 0) {
                     this.battle_log.add_recover_effect(effect);
                     await this.wait_for_key();
@@ -1075,6 +1041,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
         });
 
         for (let i = 0; i < Battle.MAX_CHARS_IN_BATTLE; ++i) {
+            //deal with djinn that are with recovery status
             const player = this.data.info.party_data.members[i];
             if (player === undefined) continue;
 
@@ -1093,6 +1060,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 }
             }
         }
+
         //Check if allies can recover HP or PP at the turn's end and show it in the log
         await this.apply_battle_recovery(this.allies_info, true);
         await this.apply_battle_recovery(this.allies_info, false);
@@ -1125,10 +1093,10 @@ So, if a character will die after 5 turns and you land another Curse on them, it
             }
         }
     }
+
     // Everyone gets equal experience with no division, but:
     // - Characters who do not participate get half;
     // - Downed characters get none.
-
     async battle_phase_end() {
         for (let i = 0; i < this.on_going_effects.length; ++i) {
             //remove all effects acquired in battle
@@ -1162,6 +1130,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                     //chars that not entered in battle, receive only hald exp
                     const change = char.add_exp(info.entered_in_battle ? total_exp : total_exp >> 1);
 
+                    //check whether this char evolved
                     if (change.before.level !== change.after.level) {
                         this.battle_log.add(`${char.name} is now a level ${char.level} ${char.class.name}!`);
                         await this.wait_for_key();
@@ -1238,7 +1207,6 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
     unset_battle() {
         this.battle_finishing = true;
-
         this.battle_stage.unset_stage(
             () => {
                 this.data.control_manager.reset();
@@ -1260,7 +1228,6 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
     update() {
         if (this.battle_finishing) return;
-
         this.battle_stage.update_stage();
         this.animation_manager.render();
     }
