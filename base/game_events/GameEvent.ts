@@ -33,6 +33,7 @@ export enum event_types {
     PARTY_JOIN = "party_join",
 }
 
+/* Everytime a game event is fired, it's checked whether reveal is casted, if yes, it stops the reveal psynergy. */
 function check_reveal(target: Object, property_key: string, descriptor: PropertyDescriptor) {
     const original_method = descriptor.value;
     descriptor.value = function (...args) {
@@ -60,15 +61,20 @@ export abstract class GameEvent {
         this.game = game;
         this.data = data;
         this.type = type;
-        this.active = active !== undefined ? active : true;
+        this.active = active ?? true;
         this.id = GameEvent.id_incrementer++;
         GameEvent.events[this.id] = this;
     }
 
+    /* the GameEvent.fire function is the one that should be called to start a event.
+       It should never be overriden. */
     @check_reveal
     fire(origin_npc?: NPC) {
         this._fire(origin_npc);
     }
+
+    /* the GameEvent._fire function is the one that GameEvent child classes should overriden.
+       It should never be called. */
     protected abstract _fire(origin_npc?: NPC): void;
 
     static get_event(id) {

@@ -77,6 +77,7 @@ export class GameEventManager {
         );
     }
 
+    //look for valid npcs in the nearby
     search_for_npc() {
         for (let i = 0; i < this.data.map.npcs.length; ++i) {
             const npc = this.data.map.npcs[i];
@@ -104,49 +105,55 @@ export class GameEventManager {
     }
 
     async set_npc_event(npc) {
-        if ([npc_types.NORMAL, npc_types.SPRITE].includes(npc.npc_type)) {
-            if (npc.message) {
-                this.manage_npc_dialog(npc);
-            } else {
-                this.fire_npc_events(npc);
-            }
-        } else if (npc.npc_type === npc_types.SHOP) {
-            if (!this.data.shop_open) {
-                ++this.events_running_count;
-                let previous_npc_direction;
-                if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
-                    previous_npc_direction = npc.current_direction;
-                    await this.set_npc_and_hero_directions(npc);
+        switch (npc.npc_type) {
+            case npc_types.NORMAL:
+            case npc_types.SPRITE:
+                if (npc.message) {
+                    this.manage_npc_dialog(npc);
+                } else {
+                    this.fire_npc_events(npc);
                 }
-                this.data.shop_menu.open_menu(npc.shop_key, async () => {
-                    --this.events_running_count;
-                    if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
-                        await npc.go_to_direction(previous_npc_direction);
-                    }
-                    this.control_enable = true;
-                });
-            }
-        } else if (npc.npc_type === npc_types.INN) {
-            if (!this.data.inn_open) {
-                ++this.events_running_count;
-                let previous_npc_direction;
-                if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
-                    previous_npc_direction = npc.current_direction;
-                    await this.set_npc_and_hero_directions(npc);
+                break;
+            case npc_types.SHOP:
+                if (!this.data.shop_open) {
+                    const previous_npc_direction = await this.handle_npc_interaction_start(npc);
+                    this.data.shop_menu.open_menu(npc.shop_key, async () => {
+                        await this.handle_npc_interaction_end(npc, previous_npc_direction);
+                    });
                 }
-                this.data.inn_menu.start(npc.inn_key, async () => {
-                    --this.events_running_count;
-                    if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
-                        await npc.go_to_direction(previous_npc_direction);
-                    }
-                    this.control_enable = true;
-                });
-            }
-        } else {
-            this.control_enable = true;
+                break;
+            case npc_types.INN:
+                if (!this.data.inn_open) {
+                    const previous_npc_direction = await this.handle_npc_interaction_start(npc);
+                    this.data.inn_menu.start(npc.inn_key, async () => {
+                        await this.handle_npc_interaction_end(npc, previous_npc_direction);
+                    });
+                }
+                break;
+            default:
+                this.control_enable = true;
         }
     }
 
+    async handle_npc_interaction_start(npc: NPC) {
+        ++this.events_running_count;
+        let previous_npc_direction;
+        if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
+            previous_npc_direction = npc.current_direction;
+            await this.set_npc_and_hero_directions(npc);
+        }
+        return previous_npc_direction;
+    }
+
+    async handle_npc_interaction_end(npc: NPC, previous_npc_direction: directions) {
+        --this.events_running_count;
+        if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
+            await npc.go_to_direction(previous_npc_direction);
+        }
+        this.control_enable = true;
+    }
+
+    //make hero and npc look each other
     async set_npc_and_hero_directions(npc: NPC) {
         const npc_x = npc.sprite.x;
         const npc_y = npc.sprite.y;
@@ -164,19 +171,15 @@ export class GameEventManager {
         await Promise.all([hero_promise, npc_promise]);
     }
 
+    // starts common npc dialogs
     async manage_npc_dialog(npc: NPC) {
-        ++this.events_running_count;
+        const previous_npc_direction = await this.handle_npc_interaction_start(npc);
         const dialog_manager = new DialogManager(this.game, this.data);
         dialog_manager.set_dialog(npc.message, npc.avatar, this.data.hero.current_direction);
-        const previous_npc_direction = npc.current_direction;
-        if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
-            await this.set_npc_and_hero_directions(npc);
-        }
         this.fire_next_step = dialog_manager.next.bind(dialog_manager, async finished => {
             if (finished) {
                 this.fire_next_step = null;
-                --this.events_running_count;
-                await npc.go_to_direction(previous_npc_direction);
+                await this.handle_npc_interaction_end(npc, previous_npc_direction);
                 this.fire_npc_events(npc);
             } else {
                 this.control_enable = true;
