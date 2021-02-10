@@ -31,7 +31,7 @@ export class GoldenSun {
     public shop_open: boolean = false;
     public inn_open: boolean = false;
     public in_battle: boolean = false;
-    public created: boolean = false;
+    public assets_loaded: boolean = false;
 
     //game objects
     public hero: Hero = null; //class responsible for the control of the main hero
@@ -172,16 +172,16 @@ export class GoldenSun {
         this.hero.play();
 
         //initializes collision system
-        this.collision = new Collision(this.game, this.hero);
+        this.collision = new Collision(this.game, this);
         this.hero.config_body(this.map.is_world_map ? numbers.HERO_BODY_RADIUS_M7 : numbers.HERO_BODY_RADIUS);
         this.collision.config_collision_groups(this.map);
         this.map.config_all_bodies(this.map.collision_layer);
-        this.collision.config_collisions(this.map, this.map.collision_layer, this.npc_group);
+        this.collision.config_collisions(this.map.collision_layer);
         this.game.physics.p2.updateBoundsCollisionGroup();
 
         this.initialize_utils_controls();
 
-        this.created = true;
+        this.assets_loaded = true;
         this.game.camera.resetFX();
     }
 
@@ -288,7 +288,7 @@ export class GoldenSun {
     }
 
     update() {
-        if (!this.created) {
+        if (!this.assets_loaded) {
             this.render_loading();
             return;
         }

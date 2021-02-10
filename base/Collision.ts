@@ -1,10 +1,9 @@
 import {GoldenSun} from "./GoldenSun";
-import {Hero} from "./Hero";
 import {Map} from "./Map";
 
 export class Collision {
     public game: Phaser.Game;
-    public hero: Hero;
+    public data: GoldenSun;
     public hero_collision_group: Phaser.Physics.P2.CollisionGroup;
     public dynamic_events_collision_group: Phaser.Physics.P2.CollisionGroup;
     public map_collision_group: Phaser.Physics.P2.CollisionGroup;
@@ -13,9 +12,9 @@ export class Collision {
     public max_layers_created: number;
     public dynamic_jump_events_bodies: Phaser.Physics.P2.Body[];
 
-    constructor(game: Phaser.Game, hero: Hero) {
+    constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
-        this.hero = hero;
+        this.data = data;
         this.config_world();
         this.hero_collision_group = this.game.physics.p2.createCollisionGroup();
         this.dynamic_events_collision_group = this.game.physics.p2.createCollisionGroup();
@@ -48,85 +47,50 @@ export class Collision {
 
     disable_npc_collision() {
         for (let collide_index in this.npc_collision_groups) {
-            this.hero.sprite.body.removeCollisionGroup(this.npc_collision_groups[collide_index], true);
+            this.data.hero.sprite.body.removeCollisionGroup(this.npc_collision_groups[collide_index], true);
         }
     }
 
     enable_npc_collision(collision_layer: number) {
         if (collision_layer in this.npc_collision_groups) {
-            this.hero.sprite.body.collides(this.npc_collision_groups[collision_layer]);
+            this.data.hero.sprite.body.collides(this.npc_collision_groups[collision_layer]);
         }
     }
 
-    config_collisions(map: Map, collision_layer: number, npc_group: Phaser.Group) {
-        this.hero.sprite.body.collides(this.map_collision_group);
-        map.collision_sprite.body.collides(this.hero_collision_group);
+    config_collisions(collision_layer: number) {
+        this.data.hero.sprite.body.collides(this.map_collision_group);
+        this.data.map.collision_sprite.body.collides(this.hero_collision_group);
 
         this.disable_npc_collision();
         this.enable_npc_collision(collision_layer);
 
         for (let collide_index in this.interactable_objs_collision_groups) {
-            this.hero.sprite.body.removeCollisionGroup(this.interactable_objs_collision_groups[collide_index], true);
+            this.data.hero.sprite.body.removeCollisionGroup(
+                this.interactable_objs_collision_groups[collide_index],
+                true
+            );
         }
         if (collision_layer in this.interactable_objs_collision_groups) {
-            this.hero.sprite.body.collides(this.interactable_objs_collision_groups[collision_layer]);
+            this.data.hero.sprite.body.collides(this.interactable_objs_collision_groups[collision_layer]);
         }
 
-        for (let i = 0; i < npc_group.children.length; ++i) {
-            const sprite = npc_group.children[i] as Phaser.Sprite;
+        for (let i = 0; i < this.data.npc_group.children.length; ++i) {
+            const sprite = this.data.npc_group.children[i] as Phaser.Sprite;
             if (!sprite.is_npc && !sprite.is_interactable_object) continue;
             if (!sprite.body) continue;
             sprite.body.collides(this.hero_collision_group);
         }
-        this.hero.sprite.body.collides(this.dynamic_events_collision_group);
+        this.data.hero.sprite.body.collides(this.dynamic_events_collision_group);
     }
 
-    change_map_body(data: GoldenSun, new_collision_layer_index: number) {
-        if (data.map.collision_layer === new_collision_layer_index) return;
-        data.map.collision_layer = new_collision_layer_index;
-        this.hero.shadow.base_collision_layer = data.map.collision_layer;
-        this.hero.sprite.base_collision_layer = data.map.collision_layer;
-        data.map.config_body(new_collision_layer_index);
-        this.config_collision_groups(data.map);
-        this.config_collisions(data.map, data.map.collision_layer, data.npc_group);
-        let layers = data.map.layers;
-        for (let i = 0; i < layers.length; ++i) {
-            let layer = layers[i];
-            if (layer.properties.over !== undefined) {
-                const is_over_prop = layer.properties.over
-                    .toString()
-                    .split(",")
-                    .map(over => parseInt(over));
-                if (is_over_prop.length <= data.map.collision_layer) continue;
-                const is_over = Boolean(is_over_prop[data.map.collision_layer]);
-                if (is_over) {
-                    data.underlayer_group.remove(layer.sprite, false, true);
-                    let index = 0;
-                    for (index = 0; index < data.overlayer_group.children.length; ++index) {
-                        let child = data.overlayer_group.children[index] as Phaser.TilemapLayer;
-                        if (child.layer_z > (layer.z === undefined ? i : layer.z)) {
-                            data.overlayer_group.addAt(layer.sprite, index, true);
-                            break;
-                        }
-                    }
-                    if (index === data.overlayer_group.children.length) {
-                        data.overlayer_group.add(layer.sprite, true);
-                    }
-                } else {
-                    data.overlayer_group.remove(layer.sprite, false, true);
-                    let index = 0;
-                    for (index = 0; index < data.underlayer_group.children.length; ++index) {
-                        let child = data.underlayer_group.children[index] as Phaser.TilemapLayer;
-                        if (child.layer_z > layer.z) {
-                            data.underlayer_group.addAt(layer.sprite, index, true);
-                            break;
-                        }
-                    }
-                    if (index === data.underlayer_group.children.length) {
-                        data.underlayer_group.add(layer.sprite, true);
-                    }
-                }
-            }
-        }
+    change_map_body(new_collision_layer_index: number) {
+        if (this.data.map.collision_layer === new_collision_layer_index) return;
+        this.data.map.collision_layer = new_collision_layer_index;
+        this.data.hero.shadow.base_collision_layer = this.data.map.collision_layer;
+        this.data.hero.sprite.base_collision_layer = this.data.map.collision_layer;
+        this.data.map.config_body(new_collision_layer_index);
+        this.config_collision_groups(this.data.map);
+        this.config_collisions(this.data.map.collision_layer);
+        this.data.map.reorganize_layers();
     }
 }

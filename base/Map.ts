@@ -94,10 +94,11 @@ export class Map {
             : this.sprite.tileHeight;
     }
 
+    //sort the sprites in the map by z index depending on hero position
     sort_sprites() {
-        let send_to_back_list = new Array(this.data.npc_group.children.length);
-        let send_to_front_list = new Array(this.data.npc_group.children.length);
-        let has_sort_function = new Array(this.data.npc_group.children.length);
+        const send_to_back_list = new Array(this.data.npc_group.children.length);
+        const send_to_front_list = new Array(this.data.npc_group.children.length);
+        const has_sort_function = new Array(this.data.npc_group.children.length);
         this.data.npc_group.children.forEach((sprite: Phaser.Sprite, index) => {
             sprite.y_sort = parseInt(sprite.base_collision_layer.toString() + sprite.y.toString());
             if (sprite.sort_function) {
@@ -151,6 +152,7 @@ export class Map {
         this.update_map_rotation();
     }
 
+    //if it's a world map, rotates de map on hero movement
     update_map_rotation() {
         if (this.is_world_map) {
             const value_check =
@@ -199,10 +201,12 @@ export class Map {
         }
     }
 
+    //create map collision bodies
     config_body(collision_layer: number) {
         this.game.physics.p2.enable(this.collision_sprite, false);
         this.collision_sprite.body.clearShapes();
         if (this.collision_embedded) {
+            //create collision bodies from object layer created on Tiled
             this.collision_sprite.width = this.sprite.widthInPixels;
             this.collision_sprite.height = this.sprite.heightInPixels;
             this.collision_sprite.anchor.setTo(0, 0);
@@ -245,13 +249,14 @@ export class Map {
                 if (collision_object.properties) {
                     shape.properties = collision_object.properties;
                     if (collision_object.properties.affected_by_reveal && !collision_object.properties.show_on_reveal) {
+                        //disable collision for this particular body
                         shape.sensor = true;
                     }
                 }
             }
         } else {
             this.collision_sprite.body.loadPolygon(
-                //load map physics data json files
+                //load map physics data from json files
                 this.physics_names[collision_layer],
                 this.physics_names[collision_layer]
             );
@@ -264,6 +269,7 @@ export class Map {
         this.collision_sprite.body.static = true;
     }
 
+    //config map, npc and interactable objects collision bodies
     config_all_bodies(collision_layer: number) {
         if (!this.is_world_map) {
             this.npcs.forEach(npc => npc.config_body());
@@ -272,6 +278,7 @@ export class Map {
         this.config_body(collision_layer);
     }
 
+    //returns a tile object (Phaser.Tile or Phaser.Tile[] if multiple layers) where the given ControllableChar is
     get_current_tile(controllable_char: ControllableChar, layer?) {
         if (layer !== undefined) {
             return this.sprite.getTile(controllable_char.tile_x_pos, controllable_char.tile_y_pos, layer);
@@ -384,7 +391,8 @@ export class Map {
         }
     }
 
-    config_layers(overlayer_group: Phaser.Group, underlayer_group: Phaser.Group) {
+    //create layers and organize them by z index
+    config_layers() {
         for (let i = 0; i < this.layers.length; ++i) {
             const layer = this.sprite.createLayer(this.layers[i].name);
             this.layers[i].sprite = layer;
@@ -413,25 +421,71 @@ export class Map {
                 }
             }
             if (is_over) {
-                overlayer_group.add(layer);
+                this.data.overlayer_group.add(layer);
             } else {
-                underlayer_group.add(layer);
+                this.data.underlayer_group.add(layer);
             }
         }
     }
 
+    //reorganize the existing layers. This can be called after changing the collision layer, for instance.
+    reorganize_layers() {
+        for (let i = 0; i < this.layers.length; ++i) {
+            const layer = this.layers[i];
+            if (layer.properties.over !== undefined) {
+                const is_over_prop = layer.properties.over
+                    .toString()
+                    .split(",")
+                    .map(over => parseInt(over));
+                if (is_over_prop.length <= this.collision_layer) continue;
+                const is_over = Boolean(is_over_prop[this.collision_layer]);
+                if (is_over) {
+                    this.data.underlayer_group.remove(layer.sprite, false, true);
+                    let index = 0;
+                    for (index = 0; index < this.data.overlayer_group.children.length; ++index) {
+                        const child = this.data.overlayer_group.children[index] as Phaser.TilemapLayer;
+                        if (child.layer_z > (layer.z === undefined ? i : layer.z)) {
+                            this.data.overlayer_group.addAt(layer.sprite, index, true);
+                            break;
+                        }
+                    }
+                    if (index === this.data.overlayer_group.children.length) {
+                        this.data.overlayer_group.add(layer.sprite, true);
+                    }
+                } else {
+                    this.data.overlayer_group.remove(layer.sprite, false, true);
+                    let index = 0;
+                    for (index = 0; index < this.data.underlayer_group.children.length; ++index) {
+                        const child = this.data.underlayer_group.children[index] as Phaser.TilemapLayer;
+                        if (child.layer_z > layer.z) {
+                            this.data.underlayer_group.addAt(layer.sprite, index, true);
+                            break;
+                        }
+                    }
+                    if (index === this.data.underlayer_group.children.length) {
+                        this.data.underlayer_group.add(layer.sprite, true);
+                    }
+                }
+            }
+        }
+    }
+
+    //this is the main function of this class. It mounts the map
     async mount_map(collision_layer: number) {
         if (!this.assets_loaded) {
+            //lazy assets load
             let load_promise_resolve;
             const load_promise = new Promise(resolve => (load_promise_resolve = resolve));
             this.load_map_assets(true, load_promise_resolve);
             await load_promise;
         }
-        this.collision_layer = collision_layer;
         this.events = {};
         TileEvent.reset();
         GameEvent.reset();
+
+        this.collision_layer = collision_layer;
         this.sprite = this.game.add.tilemap(this.key_name);
+
         if (this.sprite.properties?.world_map) {
             this.is_world_map = true;
         }
@@ -451,6 +505,7 @@ export class Map {
             }
         }
 
+        //read the map properties and creates events, npcs and interactable objects
         for (let property in this.sprite.properties) {
             const raw_property = this.sprite.properties[property];
             if (property.startsWith("event")) {
@@ -467,7 +522,7 @@ export class Map {
             if (a.properties.z !== b.properties.z) return a - b;
         });
 
-        this.config_layers(this.data.overlayer_group, this.data.underlayer_group);
+        this.config_layers();
         this.config_interactable_object();
         await this.config_npc();
 

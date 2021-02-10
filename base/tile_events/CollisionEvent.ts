@@ -56,7 +56,7 @@ export class CollisionEvent extends TileEvent {
     fire() {
         if (this.data.hero.tile_x_pos === this.next_x && this.data.hero.tile_y_pos === this.next_y) {
             this.data.tile_event_manager.unset_triggered_event(this);
-            this.data.collision.change_map_body(this.data, this.dest_collision_layer);
+            this.data.collision.change_map_body(this.dest_collision_layer);
         } else if (!this.check_position()) {
             this.data.tile_event_manager.unset_triggered_event(this);
         }

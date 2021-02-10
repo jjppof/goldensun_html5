@@ -65,7 +65,7 @@ export class ClimbEvent extends TileEvent {
     start_climbing(activation_direction) {
         this.game.physics.p2.pause();
         if (this.change_to_collision_layer !== null) {
-            this.data.collision.change_map_body(this.data, this.change_to_collision_layer);
+            this.data.collision.change_map_body(this.change_to_collision_layer);
         }
         this.data.tile_event_manager.on_event = true;
         if (activation_direction === directions.down) {
@@ -126,7 +126,7 @@ export class ClimbEvent extends TileEvent {
                 return;
             }
             if (this.change_to_collision_layer !== null) {
-                this.data.collision.change_map_body(this.data, this.change_to_collision_layer);
+                this.data.collision.change_map_body(this.change_to_collision_layer);
             }
             this.data.tile_event_manager.on_event = true;
             const end_animation = this.data.hero.play(base_actions.CLIMB, "end");
@@ -167,7 +167,7 @@ export class ClimbEvent extends TileEvent {
             });
         } else if (activation_direction === directions.down) {
             if (this.change_to_collision_layer !== null) {
-                this.data.collision.change_map_body(this.data, this.change_to_collision_layer);
+                this.data.collision.change_map_body(this.change_to_collision_layer);
             }
             this.data.tile_event_manager.on_event = true;
             this.data.hero.sprite.anchor.y += 0.1;

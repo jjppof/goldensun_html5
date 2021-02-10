@@ -91,7 +91,7 @@ export class SliderEvent extends TileEvent {
                                     this.data.hero.update_shadow();
                                     this.data.hero.shadow.visible = true;
                                     if (this.dest_collision_layer !== this.data.map.collision_layer) {
-                                        this.data.collision.change_map_body(this.data, this.dest_collision_layer);
+                                        this.data.collision.change_map_body(this.dest_collision_layer);
                                     }
                                     this.game.time.events.add(80, () => {
                                         this.data.hero.sliding = false;
