@@ -34,21 +34,13 @@
 },
 "climb/end/00":
 {
-	"frame": {"x":102,"y":32,"w":19,"h":28},
-	"rotated": false,
-	"trimmed": true,
-	"spriteSourceSize": {"x":6,"y":4,"w":19,"h":28},
-	"sourceSize": {"w":32,"h":32}
-},
-"climb/end/01":
-{
 	"frame": {"x":1,"y":31,"w":20,"h":32},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":6,"y":0,"w":20,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
-"climb/end/02":
+"climb/end/01":
 {
 	"frame": {"x":123,"y":32,"w":19,"h":24},
 	"rotated": false,
