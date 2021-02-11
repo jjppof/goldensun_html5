@@ -6,9 +6,14 @@ import {ItemOptionsWindow} from "../windows/item/ItemOptionsWindow";
 import {Item, item_types} from "../Item";
 import {GoldenSun} from "../GoldenSun";
 import {CharsMenu, CharsMenuModes} from "../support_menus/CharsMenu";
-import {ItemSlot} from "../MainChar";
+import {ItemSlot, MainChar} from "../MainChar";
 import {ItemQuantityManagerWindow} from "../windows/item/ItemQuantityManagerWindow";
 import {StatsOrClassCheckWithItemWindow} from "../windows/item/StatsOrClassCheckWithItemWindow";
+import {Ability, ability_types} from "../Ability";
+import {main_stats, permanent_status} from "../Player";
+import {Effect, effect_types} from "../Effect";
+import {BattleFormulas} from "../battle/BattleFormulas";
+import * as _ from "lodash";
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;
@@ -70,6 +75,7 @@ export class MainItemMenu {
     };
     public description_window: Window;
     public description_window_text: TextObj;
+    public description_window_tween: Phaser.Tween;
     public arrange_window: Window;
     public arrange_window_text: TextObj;
     public item_overview_window: Window;
@@ -113,6 +119,7 @@ export class MainItemMenu {
             DESCRIPTION_WINDOW_HEIGHT
         );
         this.description_window_text = this.description_window.set_single_line_text("");
+        this.description_window_tween = null;
         this.arrange_window = new Window(
             this.game,
             ARRANGE_WINDOW_X,
@@ -156,6 +163,97 @@ export class MainItemMenu {
             height: ITEM_OVERVIEW_WIN_HEIGHT + (down ? ITEM_OVERVIEW_HEIGHT_SHIFT : 0),
         });
         this.overview_shifted = down;
+    }
+
+    cast_ability(caster: MainChar, dest_char: MainChar, ability: Ability) {
+        if (ability.type === ability_types.HEALING) {
+            const value = BattleFormulas.get_damage(ability, caster, dest_char, 1);
+            const current_prop = ability.affects_pp ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
+            const max_prop = ability.affects_pp ? main_stats.MAX_PP : main_stats.MAX_HP;
+            if (dest_char[max_prop] > dest_char[current_prop]) {
+                dest_char.current_hp = _.clamp(dest_char[current_prop] - value, 0, dest_char[max_prop]);
+                if (dest_char[max_prop] === dest_char[current_prop]) {
+                    this.set_description_window_text("You recovered all HP!", true);
+                } else {
+                    this.set_description_window_text(`You recovered ${-value}HP!`, true);
+                }
+                this.data.audio.play_se("battle/heal_1");
+                return true;
+            } else {
+                this.set_description_window_text(`Your ${ability.affects_pp ? "PP" : "HP"} is maxed out!`, true);
+                return false;
+            }
+        } else if (ability.type === ability_types.EFFECT_ONLY) {
+            const extra_stat_label_map = {
+                [effect_types.EXTRA_ATTACK]: "ATK",
+                [effect_types.EXTRA_DEFENSE]: "DEF",
+                [effect_types.EXTRA_AGILITY]: "AGI",
+                [effect_types.EXTRA_LUCK]: "LUK",
+                [effect_types.EXTRA_MAX_HP]: "HP",
+                [effect_types.EXTRA_MAX_PP]: "PP",
+            };
+            const status_label_map = {
+                [permanent_status.DOWNED]: "downed",
+                [permanent_status.POISON]: "poisoned",
+                [permanent_status.VENOM]: "poisoned",
+                [permanent_status.EQUIP_CURSE]: "cursed",
+                [permanent_status.HAUNT]: "haunted",
+            };
+            const stats_boosted = [];
+            const status_removed = {removed: [], not_removed: []};
+            for (let i = 0; i < ability.effects.length; ++i) {
+                const effect_obj = ability.effects[i];
+                switch (effect_obj.type) {
+                    case effect_types.EXTRA_ATTACK:
+                    case effect_types.EXTRA_DEFENSE:
+                    case effect_types.EXTRA_AGILITY:
+                    case effect_types.EXTRA_LUCK:
+                    case effect_types.EXTRA_MAX_HP:
+                    case effect_types.EXTRA_MAX_PP:
+                        dest_char.add_effect(effect_obj, ability, true);
+                        dest_char.update_attributes();
+                        stats_boosted.push(extra_stat_label_map[effect_obj.type]);
+                        break;
+                    case effect_types.PERMANENT_STATUS:
+                        if (!effect_obj.add_status) {
+                            if (dest_char.has_permanent_status(effect_obj.status_key_name)) {
+                                Effect.remove_status_from_player(effect_obj, dest_char);
+                                status_removed.removed.push(status_label_map[effect_obj.status_key_name]);
+                            } else {
+                                status_removed.not_removed.push(status_label_map[effect_obj.status_key_name]);
+                            }
+                        }
+                        break;
+                }
+            }
+            let stats_description = "";
+            let status_description = "";
+            if (stats_boosted.length) {
+                stats_description = `Your ${stats_boosted.join("/")} increased!`;
+            }
+            if (status_removed.removed.length || status_removed.not_removed.length) {
+                if (status_removed.removed.length) {
+                    status_description = `${dest_char.name} is not ${_.uniq(status_removed.removed).join(
+                        "/"
+                    )} anymore!`;
+                } else {
+                    if (!stats_boosted.length) {
+                        this.set_description_window_text(
+                            `${dest_char.name} is not ${_.uniq(status_removed.not_removed).join("/")}.`,
+                            true
+                        );
+                        return false;
+                    }
+                }
+            }
+            const description = `${stats_description} ${status_description}`.trim();
+            if (description) {
+                this.set_description_window_text(description, true, true);
+                return true;
+            }
+        }
+        this.set_description_window_text("This ability can't be used here.", true);
+        return false;
     }
 
     char_change() {
@@ -286,9 +384,28 @@ export class MainItemMenu {
         }
     }
 
-    set_description_window_text(description?: string, force: boolean = false) {
+    set_description_window_text(description?: string, force: boolean = false, tween_if_necessary: boolean = false) {
+        if (this.description_window_tween) {
+            this.description_window_tween.stop();
+            this.description_window_tween = null;
+            this.description_window.reset_text_position(this.description_window_text);
+        }
         if (this.choosing_item || force) {
             this.description_window.update_text(description, this.description_window_text);
+            const pratical_text_width =
+                ((numbers.TOTAL_BORDER_WIDTH + numbers.WINDOW_PADDING_H) << 1) +
+                this.description_window_text.text.width +
+                1;
+            if (tween_if_necessary && pratical_text_width > numbers.GAME_WIDTH) {
+                this.description_window.briging_border_to_top();
+                const shift = -(
+                    this.description_window_text.text.width -
+                    numbers.GAME_WIDTH +
+                    numbers.TOTAL_BORDER_WIDTH +
+                    numbers.WINDOW_PADDING_H
+                );
+                this.description_window_tween = this.description_window.tween_text(this.description_window_text, shift);
+            }
         } else {
             this.description_window.update_text(
                 this.data.info.party_data.coins + "    Coins",

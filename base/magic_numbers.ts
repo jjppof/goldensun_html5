@@ -15,6 +15,7 @@ export const PURPLE_FONT_COLOR = 0xe070b0;
 export const FONT_SIZE = 8;
 export const INSIDE_BORDER_WIDTH = 3;
 export const OUTSIDE_BORDER_WIDTH = 1;
+export const TOTAL_BORDER_WIDTH = INSIDE_BORDER_WIDTH + OUTSIDE_BORDER_WIDTH;
 export const WINDOW_PADDING_H = 4;
 export const WINDOW_PADDING_TOP = 8;
 export const WINDOW_PADDING_BOTTOM = 4;

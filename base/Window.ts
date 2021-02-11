@@ -45,7 +45,8 @@ export class Window {
     public height: number;
     public color: number;
     public font_color: number;
-    public graphics: Phaser.Graphics;
+    public border_graphics: Phaser.Graphics;
+    public bg_graphics: Phaser.Graphics;
     public separators_graphics: Phaser.Graphics;
     public need_pos_update: boolean;
     public open: boolean;
@@ -82,12 +83,14 @@ export class Window {
         this.extra_sprites = [];
         this.internal_groups = {};
 
-        this.graphics = this.game.add.graphics(0, 0);
+        this.border_graphics = this.game.add.graphics(0, 0);
+        this.bg_graphics = this.game.add.graphics(0, 0);
         this.separators_graphics = this.game.add.graphics(0, 0);
 
         this.draw_background();
         this.draw_borders();
-        this.group.add(this.graphics);
+        this.group.add(this.bg_graphics);
+        this.group.add(this.border_graphics);
         this.group.add(this.separators_graphics);
 
         this.group.alpha = 0;
@@ -179,6 +182,10 @@ export class Window {
         }
     }
 
+    briging_border_to_top() {
+        this.group.bringToTop(this.border_graphics);
+    }
+
     /*Removes existing separator graphics*/
     clear_separators() {
         this.separators_graphics.clear();
@@ -203,9 +210,9 @@ export class Window {
     /*Creates the background
     Fills the window's space with the default window color*/
     draw_background() {
-        this.graphics.beginFill(this.color, 1);
-        this.graphics.drawRect(2, 2, this.width, this.height);
-        this.graphics.endFill();
+        this.bg_graphics.beginFill(this.color, 1);
+        this.bg_graphics.drawRect(2, 2, this.width, this.height);
+        this.bg_graphics.endFill();
     }
 
     /*Draws the window borders
@@ -219,109 +226,109 @@ export class Window {
     */
     draw_borders() {
         //Left
-        this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(0, 1);
-        this.graphics.lineTo(0, this.height + 1);
+        this.border_graphics.lineStyle(1, 0x525252);
+        this.border_graphics.moveTo(0, 1);
+        this.border_graphics.lineTo(0, this.height + 1);
 
-        this.graphics.lineStyle(1, 0xffffff);
-        this.graphics.moveTo(1, 1);
-        this.graphics.lineTo(1, this.height + 1);
+        this.border_graphics.lineStyle(1, 0xffffff);
+        this.border_graphics.moveTo(1, 1);
+        this.border_graphics.lineTo(1, this.height + 1);
 
-        this.graphics.lineStyle(1, 0xa5a5a5);
-        this.graphics.moveTo(2, 1);
-        this.graphics.lineTo(2, this.height);
+        this.border_graphics.lineStyle(1, 0xa5a5a5);
+        this.border_graphics.moveTo(2, 1);
+        this.border_graphics.lineTo(2, this.height);
 
-        this.graphics.lineStyle(1, 0x111111);
-        this.graphics.moveTo(3, 3);
-        this.graphics.lineTo(3, this.height - 1);
+        this.border_graphics.lineStyle(1, 0x111111);
+        this.border_graphics.moveTo(3, 3);
+        this.border_graphics.lineTo(3, this.height - 1);
 
         //Right
-        this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(this.width, 2);
-        this.graphics.lineTo(this.width, this.height);
+        this.border_graphics.lineStyle(1, 0x525252);
+        this.border_graphics.moveTo(this.width, 2);
+        this.border_graphics.lineTo(this.width, this.height);
 
-        this.graphics.lineStyle(1, 0xa5a5a5);
-        this.graphics.moveTo(this.width + 2, 1);
-        this.graphics.lineTo(this.width + 2, this.height + 1);
+        this.border_graphics.lineStyle(1, 0xa5a5a5);
+        this.border_graphics.moveTo(this.width + 2, 1);
+        this.border_graphics.lineTo(this.width + 2, this.height + 1);
 
-        this.graphics.lineStyle(1, 0xffffff);
-        this.graphics.moveTo(this.width + 1, 1);
-        this.graphics.lineTo(this.width + 1, this.height);
+        this.border_graphics.lineStyle(1, 0xffffff);
+        this.border_graphics.moveTo(this.width + 1, 1);
+        this.border_graphics.lineTo(this.width + 1, this.height);
 
-        this.graphics.lineStyle(1, 0x111111);
-        this.graphics.moveTo(this.width + 3, 1);
-        this.graphics.lineTo(this.width + 3, this.height + 1);
+        this.border_graphics.lineStyle(1, 0x111111);
+        this.border_graphics.moveTo(this.width + 3, 1);
+        this.border_graphics.lineTo(this.width + 3, this.height + 1);
 
         //Up
-        this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(2, 0);
-        this.graphics.lineTo(this.width + 2, 0);
+        this.border_graphics.lineStyle(1, 0x525252);
+        this.border_graphics.moveTo(2, 0);
+        this.border_graphics.lineTo(this.width + 2, 0);
 
-        this.graphics.lineStyle(1, 0xffffff);
-        this.graphics.moveTo(2, 1);
-        this.graphics.lineTo(this.width + 2, 1);
+        this.border_graphics.lineStyle(1, 0xffffff);
+        this.border_graphics.moveTo(2, 1);
+        this.border_graphics.lineTo(this.width + 2, 1);
 
-        this.graphics.lineStyle(1, 0xa5a5a5);
-        this.graphics.moveTo(3, 2);
-        this.graphics.lineTo(this.width + 1, 2);
+        this.border_graphics.lineStyle(1, 0xa5a5a5);
+        this.border_graphics.moveTo(3, 2);
+        this.border_graphics.lineTo(this.width + 1, 2);
 
-        this.graphics.lineStyle(1, 0x111111);
-        this.graphics.moveTo(3, 3);
-        this.graphics.lineTo(this.width, 3);
+        this.border_graphics.lineStyle(1, 0x111111);
+        this.border_graphics.moveTo(3, 3);
+        this.border_graphics.lineTo(this.width, 3);
 
         //Down
-        this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(3, this.height);
-        this.graphics.lineTo(this.width, this.height);
+        this.border_graphics.lineStyle(1, 0x525252);
+        this.border_graphics.moveTo(3, this.height);
+        this.border_graphics.lineTo(this.width, this.height);
 
-        this.graphics.lineStyle(1, 0xffffff);
-        this.graphics.moveTo(2, this.height + 1);
-        this.graphics.lineTo(this.width + 2, this.height + 1);
+        this.border_graphics.lineStyle(1, 0xffffff);
+        this.border_graphics.moveTo(2, this.height + 1);
+        this.border_graphics.lineTo(this.width + 2, this.height + 1);
 
-        this.graphics.lineStyle(1, 0xa5a5a5);
-        this.graphics.moveTo(2, this.height + 2);
-        this.graphics.lineTo(this.width + 2, this.height + 2);
+        this.border_graphics.lineStyle(1, 0xa5a5a5);
+        this.border_graphics.moveTo(2, this.height + 2);
+        this.border_graphics.lineTo(this.width + 2, this.height + 2);
 
-        this.graphics.lineStyle(1, 0x111111);
-        this.graphics.moveTo(2, this.height + 3);
-        this.graphics.lineTo(this.width + 2, this.height + 3);
+        this.border_graphics.lineStyle(1, 0x111111);
+        this.border_graphics.moveTo(2, this.height + 3);
+        this.border_graphics.lineTo(this.width + 2, this.height + 3);
 
         //Corners
-        this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(1, 1);
-        this.graphics.lineTo(2, 2);
+        this.border_graphics.lineStyle(1, 0x525252);
+        this.border_graphics.moveTo(1, 1);
+        this.border_graphics.lineTo(2, 2);
 
-        this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(1, this.height + 2);
-        this.graphics.lineTo(2, this.height + 3);
+        this.border_graphics.lineStyle(1, 0x525252);
+        this.border_graphics.moveTo(1, this.height + 2);
+        this.border_graphics.lineTo(2, this.height + 3);
 
-        this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(this.width + 2, this.height + 2);
-        this.graphics.lineTo(this.width + 3, this.height + 3);
+        this.border_graphics.lineStyle(1, 0x525252);
+        this.border_graphics.moveTo(this.width + 2, this.height + 2);
+        this.border_graphics.lineTo(this.width + 3, this.height + 3);
 
-        this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(this.width + 2, 1);
-        this.graphics.lineTo(this.width + 3, 2);
+        this.border_graphics.lineStyle(1, 0x525252);
+        this.border_graphics.moveTo(this.width + 2, 1);
+        this.border_graphics.lineTo(this.width + 3, 2);
 
-        this.graphics.lineStyle(1, 0x111111);
-        this.graphics.moveTo(4, 4);
-        this.graphics.lineTo(5, 5);
+        this.border_graphics.lineStyle(1, 0x111111);
+        this.border_graphics.moveTo(4, 4);
+        this.border_graphics.lineTo(5, 5);
 
-        this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(3, 3);
-        this.graphics.lineTo(4, 4);
+        this.border_graphics.lineStyle(1, 0x525252);
+        this.border_graphics.moveTo(3, 3);
+        this.border_graphics.lineTo(4, 4);
 
-        this.graphics.lineStyle(1, 0x525252);
-        this.graphics.moveTo(this.width - 1, this.height - 1);
-        this.graphics.lineTo(this.width, this.height);
+        this.border_graphics.lineStyle(1, 0x525252);
+        this.border_graphics.moveTo(this.width - 1, this.height - 1);
+        this.border_graphics.lineTo(this.width, this.height);
 
-        this.graphics.lineStyle(1, 0x111111);
-        this.graphics.moveTo(this.width - 1, 4);
-        this.graphics.lineTo(this.width, 5);
+        this.border_graphics.lineStyle(1, 0x111111);
+        this.border_graphics.moveTo(this.width - 1, 4);
+        this.border_graphics.lineTo(this.width, 5);
 
-        this.graphics.lineStyle(1, 0x111111);
-        this.graphics.moveTo(4, this.height - 1);
-        this.graphics.lineTo(5, this.height);
+        this.border_graphics.lineStyle(1, 0x111111);
+        this.border_graphics.moveTo(4, this.height - 1);
+        this.border_graphics.lineTo(5, this.height);
     }
 
     /*Changes the window's size and redraws it
@@ -336,7 +343,8 @@ export class Window {
         if (new_size.height !== undefined) {
             this.height = new_size.height;
         }
-        this.graphics.clear();
+        this.border_graphics.clear();
+        this.bg_graphics.clear();
         this.draw_background();
         this.draw_borders();
     }
@@ -429,7 +437,7 @@ export class Window {
             this.game.add
                 .tween(this.group)
                 .to(
-                    {width: this.graphics.width, height: this.graphics.height},
+                    {width: this.border_graphics.width, height: this.border_graphics.height},
                     Window.TRANSITION_TIME,
                     Phaser.Easing.Linear.None,
                     true
@@ -440,8 +448,8 @@ export class Window {
                 });
         } else {
             this.open = true;
-            this.group.width = this.graphics.width;
-            this.group.height = this.graphics.height;
+            this.group.width = this.border_graphics.width;
+            this.group.height = this.border_graphics.height;
             if (show_callback !== undefined) show_callback();
         }
     }
@@ -609,10 +617,10 @@ export class Window {
             initial_x [number] - The text's x value*/
     set_single_line_text(text, right_align = false, italic = false): TextObj {
         const x_pos = italic ? numbers.WINDOW_PADDING_H + 2 : numbers.WINDOW_PADDING_H + 4;
-        let y_pos = italic ? numbers.WINDOW_PADDING_TOP - 2 : numbers.WINDOW_PADDING_TOP;
+        const y_pos = italic ? numbers.WINDOW_PADDING_TOP - 2 : numbers.WINDOW_PADDING_TOP;
         const font_name = italic ? "gs-italic-bmp-font" : "gs-bmp-font";
-        let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, text, numbers.FONT_SIZE);
-        let text_sprite_shadow = this.game.add.bitmapText(x_pos + 1, y_pos + 1, font_name, text, numbers.FONT_SIZE);
+        const text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, text, numbers.FONT_SIZE);
+        const text_sprite_shadow = this.game.add.bitmapText(x_pos + 1, y_pos + 1, font_name, text, numbers.FONT_SIZE);
         if (right_align) {
             text_sprite.x -= text_sprite.width;
             text_sprite_shadow.x -= text_sprite_shadow.width;
@@ -632,6 +640,15 @@ export class Window {
             right_align: right_align,
             initial_x: x_pos,
         };
+    }
+
+    reset_text_position(text_shadow_pair: TextObj, italic: boolean = false) {
+        const x_pos = italic ? numbers.WINDOW_PADDING_H + 2 : numbers.WINDOW_PADDING_H + 4;
+        const y_pos = italic ? numbers.WINDOW_PADDING_TOP - 2 : numbers.WINDOW_PADDING_TOP;
+        text_shadow_pair.text.x = x_pos;
+        text_shadow_pair.text.y = y_pos;
+        text_shadow_pair.shadow.x = x_pos + 1;
+        text_shadow_pair.shadow.y = y_pos + 1;
     }
 
     /*Creates a sprite to represent a single line of text at a given location
@@ -707,6 +724,26 @@ export class Window {
             initial_x: x_pos,
             text_bg: text_bg,
         };
+    }
+
+    tween_text(text_shadow_pair: TextObj, x: number, duration: number = 2000) {
+        const foo = {x: text_shadow_pair.text.x};
+        const tween = this.game.add.tween(foo).to(
+            {
+                x: x,
+            },
+            duration,
+            Phaser.Easing.Linear.None,
+            true,
+            0,
+            -1,
+            true
+        );
+        tween.onUpdateCallback(() => {
+            text_shadow_pair.text.x = foo.x;
+            text_shadow_pair.shadow.x = foo.x + 1;
+        });
+        return tween;
     }
 
     /*Changes the text and repositions it

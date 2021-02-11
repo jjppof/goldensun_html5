@@ -7,10 +7,6 @@ import {Item} from "../../Item";
 import {ItemQuantityManagerWindow} from "./ItemQuantityManagerWindow";
 import {MainItemMenu} from "../../main_menus/MainItemMenu";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
-import {ability_types} from "../../Ability";
-import {BattleFormulas} from "../../battle/BattleFormulas";
-import {main_stats} from "../../Player";
-import * as _ from "lodash";
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 36;
@@ -249,7 +245,8 @@ export class UseGiveItemWindow {
     }
 
     init_use(dest_char: MainChar) {
-        const ability_used = this.cast_ability(dest_char);
+        const ability = this.data.info.abilities_list[this.item.use_ability];
+        const ability_used = this.item_menu.cast_ability(this.char, dest_char, ability);
         if (ability_used) {
             this.char.remove_item(this.item_obj, 1);
 
@@ -271,33 +268,6 @@ export class UseGiveItemWindow {
         } else {
             this.choosing_character(false);
         }
-    }
-
-    cast_ability(dest_char: MainChar) {
-        const ability = this.data.info.abilities_list[this.item.use_ability];
-        if (ability.type === ability_types.HEALING) {
-            const value = BattleFormulas.get_damage(ability, this.char, dest_char, 1);
-            const current_prop = ability.affects_pp ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
-            const max_prop = ability.affects_pp ? main_stats.MAX_PP : main_stats.MAX_HP;
-            if (dest_char[max_prop] > dest_char[current_prop]) {
-                dest_char.current_hp = _.clamp(dest_char[current_prop] - value, 0, dest_char[max_prop]);
-                if (dest_char[max_prop] === dest_char[current_prop]) {
-                    this.item_menu.set_description_window_text("You recovered all HP!", true);
-                } else {
-                    this.item_menu.set_description_window_text(`You recovered ${-value}HP!`, true);
-                }
-                this.data.audio.play_se("battle/heal_1");
-                return true;
-            } else {
-                this.item_menu.set_description_window_text(
-                    `Your ${ability.affects_pp ? "PP" : "HP"} is maxed out!`,
-                    true
-                );
-                return false;
-            }
-        }
-        this.item_menu.set_description_window_text("This ability can't be used here.", true);
-        return false;
     }
 
     on_character_select() {

@@ -608,7 +608,7 @@ export class Battle {
         //apply ability effects
         for (let i = 0; i < ability.effects.length; ++i) {
             const effect = ability.effects[i];
-            if (!effect_usages.ON_USE) continue;
+            if (effect.usage !== effect_usages.ON_USE) continue;
             const end_turn = await this.apply_effects(action, ability, effect);
             if (end_turn) {
                 this.battle_phase = battle_phases.ROUND_END;
@@ -836,7 +836,9 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
                 case effect_types.TEMPORARY_STATUS:
                     if (effect.add_status) {
-                        const added_effect = effect.add_status_to_player(
+                        const added_effect = Effect.add_status_to_player(
+                            effect,
+                            action.caster,
                             target_instance,
                             ability,
                             target_info.magnitude
@@ -861,7 +863,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         }
                         await this.wait_for_key();
                     } else {
-                        const removed_effects = effect.remove_status_from_player(target_instance);
+                        const removed_effects = Effect.remove_status_from_player(effect, target_instance);
                         for (let i = 0; i < removed_effects.length; ++i) {
                             const removed_effect = removed_effects[i];
                             if (

@@ -279,7 +279,7 @@
         "key_name": "cookie",
         "name": "Cookie",
         "description": "",
-        "type": "utility",
+        "type": "effect_only",
         "element": "no_element",
         "battle_target": "ally",
         "range": 1,
@@ -289,7 +289,7 @@
         "is_battle_ability": false,
         "is_field_psynergy": false,
         "effects": [{
-            "type": "max_pp",
+            "type": "extra_max_pp",
             "quantity": 6,
             "operator": "plus",
             "variation_on_final_result": true,

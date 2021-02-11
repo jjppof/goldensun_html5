@@ -35,6 +35,15 @@ export enum main_stats {
     LUCK = "luk",
 }
 
+export enum extra_main_stats {
+    MAX_HP = "hp_extra",
+    MAX_PP = "pp_extra",
+    ATTACK = "atk_extra",
+    DEFENSE = "def_extra",
+    AGILITY = "agi_extra",
+    LUCK = "luk_extra",
+}
+
 export const effect_type_stat: {[effect_type in effect_types]?: main_stats} = {
     [effect_types.MAX_HP]: main_stats.MAX_HP,
     [effect_types.MAX_PP]: main_stats.MAX_PP,
@@ -44,6 +53,15 @@ export const effect_type_stat: {[effect_type in effect_types]?: main_stats} = {
     [effect_types.LUCK]: main_stats.LUCK,
     [effect_types.CURRENT_HP]: main_stats.CURRENT_HP,
     [effect_types.CURRENT_PP]: main_stats.CURRENT_PP,
+};
+
+export const effect_type_extra_stat: {[effect_type in effect_types]?: extra_main_stats} = {
+    [effect_types.EXTRA_MAX_HP]: extra_main_stats.MAX_HP,
+    [effect_types.EXTRA_MAX_PP]: extra_main_stats.MAX_PP,
+    [effect_types.EXTRA_ATTACK]: extra_main_stats.ATTACK,
+    [effect_types.EXTRA_DEFENSE]: extra_main_stats.DEFENSE,
+    [effect_types.EXTRA_AGILITY]: extra_main_stats.AGILITY,
+    [effect_types.EXTRA_LUCK]: extra_main_stats.LUCK,
 };
 
 export const on_catch_status_msg = {

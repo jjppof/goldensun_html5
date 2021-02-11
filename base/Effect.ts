@@ -1,6 +1,13 @@
 import {Ability, diminishing_ratios} from "./Ability";
 import {Item} from "./Item";
-import {effect_type_stat, main_stats, permanent_status, Player, temporary_status} from "./Player";
+import {
+    effect_type_extra_stat,
+    effect_type_stat,
+    main_stats,
+    permanent_status,
+    Player,
+    temporary_status,
+} from "./Player";
 import {variation, elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
 import {BattleFormulas} from "./battle/BattleFormulas";
@@ -32,6 +39,12 @@ export enum effect_types {
     SET_DJINN = "set_djinn",
     DAMAGE_MODIFIER = "damage_modifier",
     DAMAGE_INPUT = "damage_input",
+    EXTRA_MAX_HP = "extra_max_hp",
+    EXTRA_MAX_PP = "extra_max_pp",
+    EXTRA_ATTACK = "extra_attack",
+    EXTRA_DEFENSE = "extra_defense",
+    EXTRA_AGILITY = "extra_agility",
+    EXTRA_LUCK = "extra_luck",
 }
 
 export const effect_names: {[effect_type in effect_types]?: string} = {
@@ -369,55 +382,68 @@ export class Effect {
                         break;
                 }
                 return result;
+            case effect_types.EXTRA_ATTACK:
+            case effect_types.EXTRA_DEFENSE:
+            case effect_types.EXTRA_AGILITY:
+            case effect_types.EXTRA_LUCK:
+            case effect_types.EXTRA_MAX_HP:
+            case effect_types.EXTRA_MAX_PP:
+                return this.apply_general_value(effect_type_extra_stat[this.type]);
         }
     }
 
-    add_status_to_player(player: MainChar | Enemy, ability: Ability, magnitude: number) {
-        let vulnerability = _.find(player.class.vulnerabilities, {
-            status_key_name: this.status_key_name,
+    static add_status_to_player(
+        effect_obj: any,
+        caster: MainChar | Enemy,
+        target: MainChar | Enemy,
+        ability: Ability,
+        magnitude: number
+    ) {
+        let vulnerability = _.find(target.class.vulnerabilities, {
+            status_key_name: effect_obj.status_key_name,
         });
         vulnerability = vulnerability === undefined ? 0 : vulnerability.chance;
         const ratio = diminishing_ratios.STATUS[magnitude];
 
         let added_effect: Effect = null;
-        if (BattleFormulas.ailment_success(this.char, player, this.chance, ratio, ability.element, vulnerability)) {
-            added_effect = player.add_effect(this, ability, true).effect;
+        if (BattleFormulas.ailment_success(caster, target, effect_obj.chance, ratio, ability.element, vulnerability)) {
+            added_effect = target.add_effect(this, ability, true).effect;
             if (added_effect.type === effect_types.TEMPORARY_STATUS) {
                 if (
                     added_effect.status_key_name === temporary_status.DEATH_CURSE &&
-                    player.has_temporary_status(temporary_status.DEATH_CURSE)
+                    target.has_temporary_status(temporary_status.DEATH_CURSE)
                 ) {
-                    player.set_effect_turns_count(added_effect);
+                    target.set_effect_turns_count(added_effect);
                 } else {
-                    player.set_effect_turns_count(added_effect, added_effect.turn_count, false);
+                    target.set_effect_turns_count(added_effect, added_effect.turn_count, false);
                 }
             } else if (
                 added_effect.status_key_name === permanent_status.VENOM &&
-                player.has_permanent_status(permanent_status.POISON)
+                target.has_permanent_status(permanent_status.POISON)
             ) {
-                const poison_effect = _.find(player.effects, {
+                const poison_effect = _.find(target.effects, {
                     status_key_name: permanent_status.POISON,
                 });
-                player.remove_effect(poison_effect, true);
+                target.remove_effect(poison_effect, true);
             }
         }
         return added_effect;
     }
 
-    remove_status_from_player(player: Player) {
-        if (![effect_types.TEMPORARY_STATUS, effect_types.PERMANENT_STATUS].includes(this.type)) return;
+    static remove_status_from_player(effect_obj: any, target: Player) {
+        if (![effect_types.TEMPORARY_STATUS, effect_types.PERMANENT_STATUS].includes(effect_obj.type)) return;
 
         const removed_effects: Effect[] = [];
-        if (Math.random() < this.chance) {
+        if (Math.random() < effect_obj.chance) {
             while (true) {
-                const this_effect = _.find(player.effects, {
-                    status_key_name: this.status_key_name,
+                const this_effect = _.find(target.effects, {
+                    status_key_name: effect_obj.status_key_name,
                 });
                 if (this_effect) {
-                    player.remove_effect(this_effect, true);
+                    target.remove_effect(this_effect, true);
 
                     if (this_effect.status_key_name === permanent_status.DOWNED) {
-                        player.init_effect_turns_count();
+                        target.init_effect_turns_count();
                     }
 
                     removed_effects.push(this_effect);

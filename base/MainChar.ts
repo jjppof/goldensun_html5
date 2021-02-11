@@ -126,16 +126,9 @@ export class MainChar extends Player {
             this.djinn_by_element[element] = [];
         });
         this.init_djinni(djinni);
-        this.equip_slots = {
-            [equip_slots.WEAPON]: null,
-            [equip_slots.HEAD]: null,
-            [equip_slots.CHEST]: null,
-            [equip_slots.BODY]: null,
-            [equip_slots.RING]: null,
-            [equip_slots.BOOTS]: null,
-            [equip_slots.UNDERWEAR]: null,
-            [equip_slots.CLASS_CHANGER]: null,
-        };
+        this.equip_slots = _.transform(equip_slots, (obj, value) => {
+            obj[value] = null;
+        });
         this.update_class();
         this.hp_curve = hp_curve;
         this.pp_curve = pp_curve;
@@ -169,7 +162,7 @@ export class MainChar extends Player {
     }
 
     get djinni() {
-        let this_djinni_list = ordered_elements.map(elem => this.djinn_by_element[elem]).flat();
+        const this_djinni_list = ordered_elements.map(elem => this.djinn_by_element[elem]).flat();
         return this_djinni_list.sort((a, b) => {
             return this.info.djinni_list[a].index - this.info.djinni_list[b].index;
         });
@@ -195,7 +188,7 @@ export class MainChar extends Player {
     }
 
     add_exp(value: number) {
-        let return_data = {
+        const return_data = {
             before: {
                 level: this.level,
                 abilities: this.abilities.slice(),
@@ -444,7 +437,7 @@ export class MainChar extends Player {
         //setting stats by current level and extra values
         this[stat_key] = (this[curve_key][this.level] * this.class[boost_key] + this[extra_key]) | 0;
 
-        let this_djinni = this.djinni;
+        const this_djinni = this.djinni;
         if (preview) {
             if (preview_obj.action === "Trade") {
                 const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
@@ -475,27 +468,7 @@ export class MainChar extends Player {
             )
                 return;
             if (preview && preview_obj.ignore_ability_effect && effect.effect_owner_instance instanceof Ability) return;
-            let effect_type;
-            switch (stat) {
-                case main_stats.MAX_HP:
-                    effect_type = effect_types.MAX_HP;
-                    break;
-                case main_stats.MAX_PP:
-                    effect_type = effect_types.MAX_PP;
-                    break;
-                case main_stats.ATTACK:
-                    effect_type = effect_types.ATTACK;
-                    break;
-                case main_stats.DEFENSE:
-                    effect_type = effect_types.DEFENSE;
-                    break;
-                case main_stats.AGILITY:
-                    effect_type = effect_types.AGILITY;
-                    break;
-                case main_stats.LUCK:
-                    effect_type = effect_types.LUCK;
-                    break;
-            }
+            const effect_type = _.invert(effect_type_stat)[stat];
             if (effect.type === effect_type) {
                 effect.apply_effect();
             }
