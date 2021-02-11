@@ -2,7 +2,7 @@ import {TextObj, Window} from "../../Window";
 import * as numbers from "../../magic_numbers";
 import {DropItemWindow} from "./DropItemWindow";
 import {ItemQuantityManagerWindow} from "./ItemQuantityManagerWindow";
-import {GiveItemWindow} from "./GiveItemWindow";
+import {UseGiveItemWindow} from "./UseGiveItemWindow";
 import {GoldenSun} from "../../GoldenSun";
 import {Button} from "../../XGamepad";
 import {ItemSlot, MainChar} from "../../MainChar";
@@ -81,7 +81,7 @@ export class ItemOptionsWindow {
         drop: boolean;
     };
 
-    public give_item_options_window: GiveItemWindow;
+    public give_item_options_window: UseGiveItemWindow;
     public item_quantity_manager_window: ItemQuantityManagerWindow;
     public drop_item_window: DropItemWindow;
     public action_message_window: Window;
@@ -155,7 +155,7 @@ export class ItemOptionsWindow {
             drop: true,
         };
 
-        this.give_item_options_window = new GiveItemWindow(this.game, this.data);
+        this.give_item_options_window = new UseGiveItemWindow(this.game, this.data);
         this.item_quantity_manager_window = new ItemQuantityManagerWindow(this.game, this.data);
         this.drop_item_window = new DropItemWindow(this.game, this.data);
         this.action_message_window = new Window(
@@ -213,10 +213,10 @@ export class ItemOptionsWindow {
         this.vertical_index = vertical;
         this.horizontal_index = horizontal;
 
-        let cursor_x = CURSOR_X_POS[this.horizontal_index];
-        let cursor_y = CURSOR_Y_POS[this.vertical_index];
+        const cursor_x = CURSOR_X_POS[this.horizontal_index];
+        const cursor_y = CURSOR_Y_POS[this.vertical_index];
 
-        let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
+        const tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
         this.on_change();
     }
@@ -332,11 +332,21 @@ export class ItemOptionsWindow {
 
     on_choose() {
         if (this.horizontal_index === 0) {
-            if (this.vertical_index === 1 && this.option_active.give) {
+            if (this.vertical_index === 0 && this.option_active.use) {
                 this.deactivate();
-                this.give_item_options_window.open(this.item_obj, this.item, this.char, this.item_menu, () => {
+                this.give_item_options_window.open(this.item_obj, this.item, this.char, this.item_menu, false, () => {
                     this.data.cursor_manager.show();
-                    this.item_menu.choosing_give_destination = false;
+                    this.item_menu.choosing_destination = false;
+                    this.item_menu.shift_item_overview(false);
+                    if (this.give_item_options_window.choosing_char) {
+                        this.open_options(this.vertical_index, this.horizontal_index);
+                    }
+                });
+            } else if (this.vertical_index === 1 && this.option_active.give) {
+                this.deactivate();
+                this.give_item_options_window.open(this.item_obj, this.item, this.char, this.item_menu, true, () => {
+                    this.data.cursor_manager.show();
+                    this.item_menu.choosing_destination = false;
                     this.item_menu.shift_item_overview(false);
                     if (this.give_item_options_window.choosing_char) {
                         this.open_options(this.vertical_index, this.horizontal_index);
@@ -416,6 +426,8 @@ export class ItemOptionsWindow {
         }
         this.item_menu.chars_menu.select_char(this.item_menu.item_choose_window.char_index);
         this.item_menu.item_options_window.stats_window.compare_items(true);
+
+        this.item_menu.set_description_window_text(this.item.description, true);
 
         this.choose_position(vertical, horizontal);
 

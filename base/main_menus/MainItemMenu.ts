@@ -57,7 +57,7 @@ export class MainItemMenu {
     public selected_char_index: number;
     public selected_item_pos: {page: number; index: number};
     public is_open: boolean;
-    public choosing_give_destination: boolean;
+    public choosing_destination: boolean;
     public overview_shifted: boolean;
     public close_callback: Function;
 
@@ -88,7 +88,7 @@ export class MainItemMenu {
         this.selected_char_index = 0;
         this.selected_item_pos = {page: 0, index: 0};
         this.is_open = false;
-        this.choosing_give_destination = false;
+        this.choosing_destination = false;
         this.overview_shifted = false;
         this.close_callback = null;
 
@@ -163,7 +163,7 @@ export class MainItemMenu {
         this.basic_info_window.set_char(this.data.info.party_data.members[this.selected_char_index]);
         this.set_item_icons();
 
-        if (this.choosing_give_destination) {
+        if (this.choosing_destination) {
             if (this.item_options_window.item.type === item_types.ABILITY_GRANTOR) {
             } else if (this.item_options_window.item.type !== item_types.GENERAL_ITEM) {
                 const preview_obj = Object.assign({}, this.item_options_window.item_obj, {equipped: false});
@@ -174,6 +174,7 @@ export class MainItemMenu {
                 );
                 this.item_change_stats_window.compare_items();
             }
+            this.set_description_window_text(this.item_options_window.item.description, true);
         } else {
             if (this.item_choose_window.window_open && !this.item_options_window.window_open) {
                 this.item_choose_window.close();
@@ -183,7 +184,7 @@ export class MainItemMenu {
     }
 
     char_choose() {
-        if (this.choosing_give_destination) {
+        if (this.choosing_destination) {
             if (
                 this.data.info.party_data.members[this.selected_char_index].key_name ===
                 this.item_options_window.char.key_name
@@ -285,8 +286,8 @@ export class MainItemMenu {
         }
     }
 
-    set_description_window_text(description?: string) {
-        if (this.choosing_item) {
+    set_description_window_text(description?: string, force: boolean = false) {
+        if (this.choosing_item || force) {
             this.description_window.update_text(description, this.description_window_text);
         } else {
             this.description_window.update_text(

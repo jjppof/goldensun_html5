@@ -293,8 +293,8 @@ export class CharsMenu {
             this.set_character(this.selected_index);
 
             if (this.on_change && !silent) {
-                let c = this.data.info.party_data.members[this.current_line * MAX_PER_LINE + this.selected_index];
-                this.on_change(c.key_name);
+                const char = this.data.info.party_data.members[this.current_line * MAX_PER_LINE + this.selected_index];
+                this.on_change(char.key_name);
             }
         };
 

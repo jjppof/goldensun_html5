@@ -7,6 +7,10 @@ import {Item} from "../../Item";
 import {ItemQuantityManagerWindow} from "./ItemQuantityManagerWindow";
 import {MainItemMenu} from "../../main_menus/MainItemMenu";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
+import {ability_types} from "../../Ability";
+import {BattleFormulas} from "../../battle/BattleFormulas";
+import {main_stats} from "../../Player";
+import * as _ from "lodash";
 
 const WIN_WIDTH = 132;
 const WIN_HEIGHT = 36;
@@ -34,7 +38,7 @@ const CURSOR_X = 194;
 const CURSOR_Y1 = 12;
 const CURSOR_Y2 = 28;
 
-export class GiveItemWindow {
+export class UseGiveItemWindow {
     public game: Phaser.Game;
     public data: GoldenSun;
     public close_callback: Function;
@@ -49,6 +53,7 @@ export class GiveItemWindow {
     public window_active: boolean;
     public choosing_char: boolean;
     public asking_for_equip: boolean;
+    public giving: boolean;
 
     public base_window: Window;
     public item_quantity_manager_window: ItemQuantityManagerWindow;
@@ -79,6 +84,7 @@ export class GiveItemWindow {
         this.window_active = false;
         this.choosing_char = false;
         this.asking_for_equip = false;
+        this.giving = false;
 
         this.base_window = new Window(this.game, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
         this.item_quantity_manager_window = null;
@@ -129,8 +135,10 @@ export class GiveItemWindow {
         );
         this.base_window.update_text(this.char.name, this.char_name, CHAR_NAME_X, CHAR_NAME_Y);
         this.base_window.update_text(this.item.name, this.item_name, ITEM_NAME_X, ITEM_NAME_Y);
-        if (this.choosing_char) {
+        if (this.choosing_char && this.giving) {
             this.base_window.update_text("Give it to whom?", this.action_text, ITEM_NAME_X, ACTION_TEXT_Y);
+        } else if (this.choosing_char && !this.giving) {
+            this.base_window.update_text("Use it to whom?", this.action_text, ITEM_NAME_X, ACTION_TEXT_Y);
         } else if (this.asking_for_equip) {
             this.yes_text.text.alpha = this.no_text.text.alpha = 1;
             this.yes_text.shadow.alpha = this.no_text.shadow.alpha = 1;
@@ -174,11 +182,13 @@ export class GiveItemWindow {
     }
 
     on_give(equip?: boolean) {
-        if (!equip) equip = this.answer_index === YES_Y ? true : false;
+        if (!equip) {
+            equip = this.answer_index === YES_Y ? true : false;
+        }
 
-        let chars_menu = this.item_menu.chars_menu;
-        let dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];
-        let dest_item_obj = {
+        const chars_menu = this.item_menu.chars_menu;
+        const dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];
+        const dest_item_obj = {
             key_name: this.item_obj.key_name,
             equipped: equip,
             quantity: this.item_quantity_manager_window.window_open
@@ -186,7 +196,9 @@ export class GiveItemWindow {
                 : this.item_obj.quantity,
         };
 
-        if (this.item_quantity_manager_window.window_open) this.item_quantity_manager_window.close();
+        if (this.item_quantity_manager_window.window_open) {
+            this.item_quantity_manager_window.close();
+        }
 
         this.char.remove_item(this.item_obj, dest_item_obj.quantity);
         dest_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, equip);
@@ -204,12 +216,8 @@ export class GiveItemWindow {
         });
     }
 
-    on_character_select() {
-        this.choosing_char = false;
-        this.item_menu.choosing_give_destination = false;
-
-        let chars_menu = this.item_menu.chars_menu;
-        let dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];
+    init_give(dest_char: MainChar) {
+        const chars_menu = this.item_menu.chars_menu;
         this.asking_for_equip = this.item.equipable_chars.includes(dest_char.key_name);
 
         if (this.asking_for_equip) {
@@ -222,26 +230,98 @@ export class GiveItemWindow {
                 {button: Button.A, on_down: this.on_give.bind(this), sfx: {down: "menu/positive_3"}},
                 {button: Button.B, on_down: this.on_give.bind(this, false), sfx: {down: "menu/negative"}},
             ];
-            this.data.control_manager.add_controls(controls, {loop_config: {vertical: true}});
+            this.data.control_manager.add_controls(controls, {
+                loop_config: {vertical: true},
+            });
         } else {
             if (this.item_obj.quantity > 1) {
-                let dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];
+                const dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];
 
                 this.item_quantity_manager_window.open(this.item_obj, this.item, this.char, undefined, dest_char);
                 this.item_quantity_manager_window.grant_control(() => {
                     this.item_quantity_manager_window.close();
                     this.choosing_character();
                 }, this.on_give.bind(this));
-            } else this.on_give(false);
+            } else {
+                this.on_give(false);
+            }
         }
     }
 
-    choosing_character() {
+    init_use(dest_char: MainChar) {
+        const ability_used = this.cast_ability(dest_char);
+        if (ability_used) {
+            this.char.remove_item(this.item_obj, 1);
+
+            this.data.cursor_manager.hide();
+            this.data.control_manager.add_controls([
+                {
+                    button: Button.A,
+                    on_down: () => {
+                        this.item_menu.set_description_window_text();
+                        const char_index = this.data.info.party_data.members.indexOf(this.char);
+                        this.item_menu.item_options_window.close(() => {
+                            this.item_menu.item_options_window.close_callback(true, char_index);
+                        });
+                        this.close();
+                    },
+                    sfx: {down: "menu/positive_3"},
+                },
+            ]);
+        } else {
+            this.choosing_character(false);
+        }
+    }
+
+    cast_ability(dest_char: MainChar) {
+        const ability = this.data.info.abilities_list[this.item.use_ability];
+        if (ability.type === ability_types.HEALING) {
+            const value = BattleFormulas.get_damage(ability, this.char, dest_char, 1);
+            const current_prop = ability.affects_pp ? main_stats.CURRENT_PP : main_stats.CURRENT_HP;
+            const max_prop = ability.affects_pp ? main_stats.MAX_PP : main_stats.MAX_HP;
+            if (dest_char[max_prop] > dest_char[current_prop]) {
+                dest_char.current_hp = _.clamp(dest_char[current_prop] - value, 0, dest_char[max_prop]);
+                if (dest_char[max_prop] === dest_char[current_prop]) {
+                    this.item_menu.set_description_window_text("You recovered all HP!", true);
+                } else {
+                    this.item_menu.set_description_window_text(`You recovered ${-value}HP!`, true);
+                }
+                this.data.audio.play_se("battle/heal_1");
+                return true;
+            } else {
+                this.item_menu.set_description_window_text(
+                    `Your ${ability.affects_pp ? "PP" : "HP"} is maxed out!`,
+                    true
+                );
+                return false;
+            }
+        }
+        this.item_menu.set_description_window_text("This ability can't be used here.", true);
+        return false;
+    }
+
+    on_character_select() {
+        this.choosing_char = false;
+        this.item_menu.choosing_destination = false;
+
+        const chars_menu = this.item_menu.chars_menu;
+        const dest_char = chars_menu.lines[chars_menu.current_line][chars_menu.selected_index];
+
+        if (this.giving) {
+            this.init_give(dest_char);
+        } else {
+            this.init_use(dest_char);
+        }
+    }
+
+    choosing_character(select_char: boolean = true) {
         this.choosing_char = true;
         this.set_header();
 
-        this.item_menu.choosing_give_destination = true;
-        this.item_menu.chars_menu.select_char(this.item_menu.chars_menu.selected_index);
+        this.item_menu.choosing_destination = true;
+        if (select_char) {
+            this.item_menu.chars_menu.select_char(this.item_menu.chars_menu.selected_index);
+        }
         this.item_menu.chars_menu.grant_control(this.close.bind(this), this.on_character_select.bind(this));
 
         this.item_menu.item_overview_window.show(undefined, false);
@@ -253,6 +333,7 @@ export class GiveItemWindow {
         item: Item,
         char: MainChar,
         item_menu: MainItemMenu,
+        giving: boolean,
         close_callback?: Function,
         open_callback?: Function
     ) {
@@ -262,6 +343,7 @@ export class GiveItemWindow {
 
         this.choosing_char = false;
         this.asking_for_equip = false;
+        this.giving = giving;
         this.item_menu = item_menu;
         this.item_quantity_manager_window = this.item_menu.item_quant_win;
 

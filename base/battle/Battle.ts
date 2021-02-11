@@ -3,7 +3,7 @@ import {BattleStage} from "./BattleStage";
 import {BattleLog} from "./BattleLog";
 import {MainBattleMenu, PlayerAbilities, PlayerAbility} from "../main_menus/MainBattleMenu";
 import {Enemy, get_enemy_instance} from "../Enemy";
-import {ability_types, Ability, diminishing_ratios, ability_categories} from "../Ability";
+import {ability_types, Ability, ability_categories} from "../Ability";
 import {ChoosingTargetWindow} from "../windows/battle/ChoosingTargetWindow";
 import {EnemyAI} from "./EnemyAI";
 import {BattleFormulas, EVASION_CHANCE, DELUSION_MISS_CHANCE} from "./BattleFormulas";
@@ -649,7 +649,11 @@ export class Battle {
             const item: Item = this.data.info.items_list[action.item_slot.key_name];
             if (item.use_type === use_types.SINGLE_USE) {
                 //consume item on usage
-                --action.item_slot.quantity;
+                if (action.caster.fighter_type === fighter_types.ALLY) {
+                    (action.caster as MainChar).remove_item(action.item_slot, 1);
+                } else {
+                    --action.item_slot.quantity;
+                }
             } else if (item.use_type === use_types.BREAKS_WHEN_USE) {
                 //check if item is going to break
                 if (Math.random() < Item.BREAKS_CHANCE) {
