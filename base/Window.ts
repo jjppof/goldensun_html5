@@ -726,11 +726,11 @@ export class Window {
         };
     }
 
-    tween_text(text_shadow_pair: TextObj, x: number, duration: number = 2000) {
+    tween_text(text_shadow_pair: TextObj, x: number, duration: number = 3000) {
         const foo = {x: text_shadow_pair.text.x};
         const tween = this.game.add.tween(foo).to(
             {
-                x: x,
+                x: [text_shadow_pair.text.x, x, x],
             },
             duration,
             Phaser.Easing.Linear.None,

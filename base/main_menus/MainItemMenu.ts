@@ -444,7 +444,7 @@ export class MainItemMenu {
                     );
                 }
                 if (item_obj.quantity > 1) {
-                    let item_count = this.game.add.bitmapText(
+                    const item_count = this.game.add.bitmapText(
                         x + SUB_ICON_X,
                         y + SUB_ICON_Y,
                         "gs-item-bmp-font",

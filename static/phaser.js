@@ -71987,6 +71987,14 @@ Phaser.TweenData.prototype = {
             var start = this.vStart[property];
             var end = this.vEnd[property];
 
+            if (Array.isArray(start))
+            {
+                const start_cpy = start.slice();
+                start = start[start.length - 1];
+                start_cpy[start.length - 1] = end;
+                end = start_cpy.reverse();
+            }
+
             if (Array.isArray(end))
             {
                 this.parent.target[property] = this.interpolationFunction.call(this.interpolationContext, end, this.value);
