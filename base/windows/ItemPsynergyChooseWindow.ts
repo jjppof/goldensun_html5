@@ -24,15 +24,17 @@ const PSY_PP_COST_Y = 8;
 const HIGHLIGHT_WIDTH = 114;
 const HIGHLIGHT_HEIGHT = numbers.FONT_SIZE;
 
-const SUB_ICON_X = 0;
-const SUB_ICON_Y = 0;
-
 const CURSOR_X = 98;
 const CURSOR_Y = 42;
 const CURSOR_GAP = 16;
 
 const HORIZONTAL_LOOP_TIME = 300;
 const SHOULDER_LOOP_TIME = 200;
+
+const SEPARATOR_X0 = 4;
+const SEPARATOR_X1 = PSY_OVERVIEW_WIN_WIDTH;
+const SEPARATOR_Y0 = 91;
+const SEPARATOR_Y1 = 91;
 
 /*Displays the character's Psynergy or Items
 Used in a selection-type menu, referring to the above
@@ -98,13 +100,15 @@ export class ItemPsynergyChooseWindow {
         this.close_callback = undefined;
         this.char = null;
         this.char_select_controls_sprites = [
-            this.window.create_at_group(9, 97, "keyboard_buttons", 0x0, "shift"),
-            this.window.create_at_group(8, 96, "keyboard_buttons", undefined, "shift"),
-            this.window.create_at_group(32, 97, "keyboard_buttons", 0x0, "tab"),
-            this.window.create_at_group(31, 96, "keyboard_buttons", undefined, "tab"),
+            this.window.create_at_group(9, 97, "keyboard_buttons", 0x0, "l_button"),
+            this.window.create_at_group(8, 96, "keyboard_buttons", undefined, "l_button"),
+            this.window.create_at_group(24, 97, "keyboard_buttons", 0x0, "r_button"),
+            this.window.create_at_group(23, 96, "keyboard_buttons", undefined, "r_button"),
         ];
-        const sprite_pair = this.window.set_text_in_position(": Change Char", 49, 96);
+        const sprite_pair = this.window.set_text_in_position(": Change Char", 40, 96);
         this.char_select_controls_sprites.push(sprite_pair.text, sprite_pair.shadow);
+
+        this.window.draw_separator(SEPARATOR_X0, SEPARATOR_Y0, SEPARATOR_X1, SEPARATOR_Y1, false);
 
         this.page_index = 0;
         this.page_number = 0;
@@ -426,6 +430,9 @@ export class ItemPsynergyChooseWindow {
         this.page_index = pos ? pos.page : 0;
         this.set_page_number();
         this.group.alpha = 1;
+        this.char_select_controls_sprites.forEach(sprite => {
+            sprite.alpha = 1;
+        });
         this.close_callback = close_callback;
         this.window.show(open_callback, false);
 

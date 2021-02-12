@@ -53,8 +53,6 @@ const ITEM_OVERVIEW_WIN_SPACE_BETWN_ICO =
         ITEM_OVERVIEW_WIN_ICONS_PER_LINE * numbers.ICON_WIDTH) /
     (ITEM_OVERVIEW_WIN_ICONS_PER_LINE - 1);
 
-const SUB_ICON_X = 7;
-const SUB_ICON_Y = 8;
 const ITEM_OVERVIEW_Y_SHIFT = 16;
 const ITEM_OVERVIEW_HEIGHT_SHIFT = 16;
 
@@ -449,7 +447,7 @@ export class MainItemMenu {
                     ((counter / ITEM_OVERVIEW_WIN_ICONS_PER_LINE) | 0) *
                         (ITEM_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
 
-                const group = this.item_overview_window.define_internal_group(item_key_name);
+                this.item_overview_window.define_internal_group(item_key_name);
                 const item = this.data.info.items_list[item_key_name];
                 this.item_overview_window.make_item_obj(
                     item_key_name,

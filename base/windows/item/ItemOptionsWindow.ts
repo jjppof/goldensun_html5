@@ -31,9 +31,6 @@ const ITEM_NAME_Y = CHAR_NAME_Y + numbers.FONT_SIZE;
 const ITEM_ICON_X = 8;
 const ITEM_ICON_Y = 8;
 
-const SUB_ICON_X = 7;
-const SUB_ICON_Y = 8;
-
 const DISABLE_COLOR = 0x606060;
 const ENABLE_COLOR = 0xffffff;
 
