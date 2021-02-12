@@ -450,7 +450,6 @@ export class MainItemMenu {
                         (ITEM_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
 
                 const group = this.item_overview_window.define_internal_group(item_key_name);
-                group.data["internal_group_key"] = item_key_name;
                 const item = this.data.info.items_list[item_key_name];
                 this.item_overview_window.make_item_obj(
                     item_key_name,
@@ -505,6 +504,9 @@ export class MainItemMenu {
         }
         if (item.important_item) {
             details_misc.push("An important item.");
+        }
+        if (item_slot.broken) {
+            details_misc.push("It's broken.");
         }
         if (item.carry_up_to_30) {
             details_misc.push(`You have ${item_slot.quantity}.`);

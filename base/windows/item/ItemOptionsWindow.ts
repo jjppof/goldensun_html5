@@ -51,6 +51,8 @@ const SEPARATOR_Y0 = (WIN_HEIGHT >> 1) + 1;
 const SEPARATOR_Y1 = (WIN_HEIGHT >> 1) + 1;
 
 export class ItemOptionsWindow {
+    private static readonly ICON_GROUP_KEY = "item_icon";
+
     public game: Phaser.Game;
     public data: GoldenSun;
     public item_obj: ItemSlot;
@@ -91,12 +93,8 @@ export class ItemOptionsWindow {
     public drop_item_window: DropItemWindow;
     public action_message_window: Window;
 
-    public icon_sprite: Phaser.Sprite;
     public char_name: TextObj;
     public item_name: TextObj;
-
-    public equip_sprite: Phaser.Sprite;
-    public item_count_sprite: Phaser.BitmapText;
 
     public stats_update_callback: Function;
     public stats_window: StatsOrClassCheckWithItemWindow;
@@ -271,47 +269,27 @@ export class ItemOptionsWindow {
     }
 
     set_header() {
-        this.icon_sprite = this.base_window.create_at_group(
-            ITEM_ICON_X,
-            ITEM_ICON_Y,
-            "items_icons",
-            undefined,
-            this.item.key_name
+        this.base_window.define_internal_group(ItemOptionsWindow.ICON_GROUP_KEY);
+        const item = this.data.info.items_list[this.item.key_name];
+        this.base_window.make_item_obj(
+            this.item.key_name,
+            {x: ITEM_ICON_X, y: ITEM_ICON_Y},
+            {
+                broken: this.item_obj.broken,
+                equipped: this.item_obj.equipped,
+                quantity: item.carry_up_to_30 ? this.item_obj.quantity : undefined,
+                internal_group: ItemOptionsWindow.ICON_GROUP_KEY,
+            }
         );
+
         this.char_name = this.base_window.set_text_in_position(this.char.name, CHAR_NAME_X, CHAR_NAME_Y);
         this.item_name = this.base_window.set_text_in_position(this.item.name, ITEM_NAME_X, ITEM_NAME_Y);
-        this.equip_sprite = null;
-        if (this.item_obj.equipped) {
-            this.equip_sprite = this.base_window.create_at_group(
-                ITEM_ICON_X + SUB_ICON_X,
-                ITEM_ICON_Y + SUB_ICON_Y,
-                "menu",
-                undefined,
-                "equipped"
-            );
-        }
-        this.item_count_sprite = null;
-        if (this.item_obj.quantity > 1) {
-            this.item_count_sprite = this.game.add.bitmapText(
-                ITEM_ICON_X + SUB_ICON_X,
-                ITEM_ICON_Y + SUB_ICON_Y,
-                "gs-item-bmp-font",
-                this.item_obj.quantity.toString()
-            );
-            this.base_window.add_sprite_to_group(this.item_count_sprite);
-        }
     }
 
     unset_header() {
-        this.base_window.remove_from_group(this.icon_sprite);
         this.base_window.remove_text(this.char_name);
         this.base_window.remove_text(this.item_name);
-        if (this.equip_sprite) {
-            this.base_window.remove_from_group(this.equip_sprite);
-        }
-        if (this.item_count_sprite) {
-            this.base_window.remove_from_group(this.item_count_sprite);
-        }
+        this.base_window.destroy_internal_group(ItemOptionsWindow.ICON_GROUP_KEY);
     }
 
     update_position() {
