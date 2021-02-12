@@ -430,7 +430,7 @@ export class MainItemMenu {
     }
 
     set_item_icons() {
-        this.item_overview_window.remove_from_group();
+        this.item_overview_window.destroy_all_internal_groups();
         let counter = 0;
         for (let i = 0; i < this.data.info.party_data.members[this.selected_char_index].items.length; ++i) {
             const item_obj = this.data.info.party_data.members[this.selected_char_index].items[i];
@@ -448,25 +448,20 @@ export class MainItemMenu {
                     ITEM_OVERVIEW_WIN_INSIDE_PADDING_V +
                     ((counter / ITEM_OVERVIEW_WIN_ICONS_PER_LINE) | 0) *
                         (ITEM_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
-                this.item_overview_window.create_at_group(x, y, "items_icons", undefined, item_key_name);
-                if (item_obj.equipped) {
-                    this.item_overview_window.create_at_group(
-                        x + SUB_ICON_X,
-                        y + SUB_ICON_Y,
-                        "menu",
-                        undefined,
-                        "equipped"
-                    );
-                }
-                if (item_obj.quantity > 1) {
-                    const item_count = this.game.add.bitmapText(
-                        x + SUB_ICON_X,
-                        y + SUB_ICON_Y,
-                        "gs-item-bmp-font",
-                        item_obj.quantity.toString()
-                    );
-                    this.item_overview_window.add_sprite_to_group(item_count);
-                }
+
+                const group = this.item_overview_window.define_internal_group(item_key_name);
+                group.data["internal_group_key"] = item_key_name;
+                const item = this.data.info.items_list[item_key_name];
+                this.item_overview_window.make_item_obj(
+                    item_key_name,
+                    {x: x, y: y},
+                    {
+                        broken: item_obj.broken,
+                        equipped: item_obj.equipped,
+                        quantity: item.carry_up_to_30 ? item_obj.quantity : undefined,
+                        internal_group: item_key_name,
+                    }
+                );
                 ++counter;
             }
         }
@@ -560,10 +555,7 @@ export class MainItemMenu {
             {
                 button: Button.B,
                 on_down: () => {
-                    if (callback) {
-                        callback();
-                    }
-                    this.details_window.close();
+                    this.details_window.close(callback);
                 },
             },
         ]);

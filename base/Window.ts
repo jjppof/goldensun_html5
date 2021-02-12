@@ -436,6 +436,14 @@ export class Window {
         }
     }
 
+    destroy_all_internal_groups() {
+        const internal_group_keys = Object.keys(this.internal_groups);
+        for (let key of internal_group_keys) {
+            this.internal_groups[key].destroy(true);
+            delete this.internal_groups[key];
+        }
+    }
+
     /*Displays this window
 
     Input: show_callback [function] - Callback function (Optional)
