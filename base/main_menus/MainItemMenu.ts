@@ -502,7 +502,7 @@ export class MainItemMenu {
             details_equip.push("  It's cursed.");
         }
         if (item.granted_class_type) {
-            details_equip.push(" Change class when equipped.");
+            details_equip.push(" Changes class when equipped.");
         }
         if (item.unleash_ability) {
             const ability_name = this.data.info.abilities_list[item.unleash_ability].name;

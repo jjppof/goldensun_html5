@@ -114,7 +114,14 @@ export class Window {
     make_item_obj(
         key_name: string,
         pos?: {x: number; y: number},
-        params?: {bg?: boolean; equipped?: boolean; broken?: boolean; quantity?: number; internal_group?: string}
+        params?: {
+            bg?: boolean;
+            equipped?: boolean;
+            broken?: boolean;
+            quantity?: number;
+            internal_group?: string;
+            center?: boolean;
+        }
     ) {
         const obj: ItemObj = {icon: null, background: null, equipped: null, broken: null, quantity: null};
         const base_x = pos ? pos.x : 0;
@@ -133,14 +140,21 @@ export class Window {
             }
 
             obj.icon = this.create_at_group(base_x, base_y, "items_icons", undefined, key_name, params.internal_group);
+            if (params.center) {
+                obj.icon.anchor.setTo(0.5, 0.5);
+            }
 
             if (params.broken) {
                 obj.broken = this.create_at_group(base_x, base_y, "menu", undefined, "broken", params.internal_group);
+                if (params.center) {
+                    obj.broken.anchor.setTo(0.5, 0.5);
+                }
             }
+            const shift = params.center ? -(numbers.ICON_WIDTH >> 1) : 0;
             if (params.equipped) {
                 obj.equipped = this.create_at_group(
-                    base_x + Window.ITEM_OBJ.EQUIPPED_X,
-                    base_y + Window.ITEM_OBJ.EQUIPPED_Y,
+                    base_x + Window.ITEM_OBJ.EQUIPPED_X + shift,
+                    base_y + Window.ITEM_OBJ.EQUIPPED_Y + shift,
                     "menu",
                     undefined,
                     "equipped",
@@ -149,8 +163,8 @@ export class Window {
             }
             if (params.quantity) {
                 obj.quantity = this.game.add.bitmapText(
-                    base_x + Window.ITEM_OBJ.QUANTITY_END_X,
-                    base_y + Window.ITEM_OBJ.QUANTITY_Y,
+                    base_x + Window.ITEM_OBJ.QUANTITY_END_X + shift,
+                    base_y + Window.ITEM_OBJ.QUANTITY_Y + shift,
                     "gs-item-bmp-font",
                     params.quantity.toString()
                 );
@@ -417,7 +431,8 @@ export class Window {
     Input: key [string] - The group's keys*/
     destroy_internal_group(key) {
         if (key in this.internal_groups && this.internal_groups[key]) {
-            this.internal_groups[key].destroy();
+            this.internal_groups[key].destroy(true);
+            delete this.internal_groups[key];
         }
     }
 

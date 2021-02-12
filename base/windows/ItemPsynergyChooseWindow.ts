@@ -3,7 +3,6 @@ import * as numbers from "../magic_numbers";
 import {GoldenSun} from "../GoldenSun";
 import {Button} from "../XGamepad";
 import {ItemSlot, MainChar} from "../MainChar";
-import {PageIndicator} from "../support_menus/PageIndicator";
 import {CursorManager, PointVariants} from "../utils/CursorManager";
 
 const PSY_OVERVIEW_WIN_X = 104;
@@ -259,28 +258,23 @@ export class ItemPsynergyChooseWindow {
                 );
                 (this.icon_sprites_in_window[i] as Phaser.Sprite).anchor.setTo(0.5, 0.5);
             } else {
-                let icon_group = this.game.add.group();
-                let icon_sprite = icon_group.create(0, 0, this.element_sprite_key, elem_key_name as string);
-
-                icon_sprite.anchor.setTo(0.5, 0.5);
-                if (this.item_objs[i].equipped) {
-                    icon_group.create(SUB_ICON_X, SUB_ICON_Y, "menu", "equipped");
-                }
-
-                if (this.item_objs[i].quantity > 1) {
-                    let item_count = this.game.add.bitmapText(
-                        SUB_ICON_X,
-                        SUB_ICON_Y,
-                        "gs-item-bmp-font",
-                        this.item_objs[i].quantity.toString()
-                    );
-                    icon_group.add(item_count);
-                }
-
-                this.window.add_sprite_to_group(icon_group);
-                icon_group.x = icon_x;
-                icon_group.y = icon_y;
-                this.icon_sprites_in_window.push(icon_group);
+                const group = this.window.define_internal_group(elem_key_name as string);
+                group.data["internal_group_key"] = elem_key_name;
+                this.icon_sprites_in_window.push(group);
+                const item = this.data.info.items_list[this.item_objs[i].key_name];
+                this.window.make_item_obj(
+                    elem_key_name as string,
+                    {x: 0, y: 0},
+                    {
+                        broken: this.item_objs[i].broken,
+                        equipped: this.item_objs[i].equipped,
+                        quantity: item.carry_up_to_30 ? this.item_objs[i].quantity : undefined,
+                        internal_group: elem_key_name as string,
+                        center: true,
+                    }
+                );
+                group.x = icon_x;
+                group.y = icon_y;
             }
             if (this.is_psynergy_window) {
                 const x_elem_pp_cost = PSY_PP_X;
@@ -310,6 +304,7 @@ export class ItemPsynergyChooseWindow {
 
     /*Sets the scaling effect for the selected item*/
     set_element_tween(index: number) {
+        this.window.group.bringToTop(this.icon_sprites_in_window[index]);
         this.selected_element_tween = this.game.add
             .tween(this.icon_sprites_in_window[index].scale)
             .to({x: 1.6, y: 1.6}, Phaser.Timer.QUARTER, Phaser.Easing.Linear.None, true, 0, -1, true);
@@ -359,7 +354,11 @@ export class ItemPsynergyChooseWindow {
     /*Removes all sprites from this window*/
     clear_sprites() {
         for (let i = 0; i < this.icon_sprites_in_window.length; ++i) {
-            this.window.remove_from_group(this.icon_sprites_in_window[i]);
+            if (this.is_psynergy_window) {
+                this.window.remove_from_group(this.icon_sprites_in_window[i]);
+            } else {
+                this.window.destroy_internal_group(this.icon_sprites_in_window[i].data.internal_group_key);
+            }
         }
         this.icon_sprites_in_window = [];
         for (let i = 0; i < this.text_sprites_in_window.length; ++i) {

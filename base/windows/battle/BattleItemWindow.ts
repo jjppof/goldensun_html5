@@ -8,7 +8,6 @@ import * as _ from "lodash";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
 import {PageIndicatorModes} from "../../support_menus/PageIndicator";
 
-//TO DO: decrement item quantity when using a consumable item
 //TO DO: use item sprite instead of ability sprite for items (Spirit Ring)
 //TO DO: show broken icon on broken items
 

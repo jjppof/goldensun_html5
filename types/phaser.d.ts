@@ -1906,6 +1906,7 @@ declare module Phaser {
         classType: any;
         cursor: any;
         cursorIndex: number;
+        data: any;
         send_to_back: boolean;
         base_collision_layer: number;
         enableBody: boolean;
