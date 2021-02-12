@@ -45,6 +45,11 @@ const ACTION_WINDOW_MSG_HEIGHT = 20;
 const CURSOR_X_POS = [96, 136, 176];
 const CURSOR_Y_POS = [36, 44];
 
+const SEPARATOR_X0 = 4;
+const SEPARATOR_X1 = WIN_WIDTH;
+const SEPARATOR_Y0 = (WIN_HEIGHT >> 1) + 1;
+const SEPARATOR_Y1 = (WIN_HEIGHT >> 1) + 1;
+
 export class ItemOptionsWindow {
     public game: Phaser.Game;
     public data: GoldenSun;
@@ -113,6 +118,7 @@ export class ItemOptionsWindow {
         this.y = WIN_Y;
         this.base_window = new Window(this.game, this.x, this.y, WIN_WIDTH, WIN_HEIGHT);
         this.group = this.game.add.group();
+        this.base_window.draw_separator(SEPARATOR_X0, SEPARATOR_Y0, SEPARATOR_X1, SEPARATOR_Y1, false);
 
         this.text_sprites = {
             use: this.base_window.set_text_in_position("Use", OPTION_TEXT_HORIZONTAL_PADDING, OPTION_TEXT_Y_POS),
@@ -367,7 +373,15 @@ export class ItemOptionsWindow {
                 });
             }
         } else if (this.horizontal_index === 2) {
-            if (this.vertical_index === 1 && this.option_active.drop) {
+            if (this.vertical_index === 0 && this.option_active.details) {
+                this.deactivate();
+                this.item_menu.show_details(this.item, this.item_obj, () => {
+                    this.data.cursor_manager.show();
+                    this.item_menu.choosing_destination = false;
+                    this.item_menu.shift_item_overview(false);
+                    this.open_options(this.vertical_index, this.horizontal_index);
+                });
+            } else if (this.vertical_index === 1 && this.option_active.drop) {
                 this.deactivate();
                 this.drop_item_window.open(this.item_obj, this.item, this.char, this.item_menu, () => {
                     if (this.drop_item_window.dropped) {

@@ -11,9 +11,11 @@ import {ItemQuantityManagerWindow} from "../windows/item/ItemQuantityManagerWind
 import {StatsOrClassCheckWithItemWindow} from "../windows/item/StatsOrClassCheckWithItemWindow";
 import {Ability, ability_types} from "../Ability";
 import {main_stats, permanent_status} from "../Player";
-import {Effect, effect_types} from "../Effect";
+import {Effect, effect_names, effect_operators_symbols, effect_types} from "../Effect";
 import {BattleFormulas} from "../battle/BattleFormulas";
 import * as _ from "lodash";
+import {Button} from "../XGamepad";
+import {element_names} from "../utils";
 
 const GUIDE_WINDOW_X = 104;
 const GUIDE_WINDOW_Y = 0;
@@ -24,6 +26,11 @@ const DESCRIPTION_WINDOW_X = 0;
 const DESCRIPTION_WINDOW_Y = 136;
 const DESCRIPTION_WINDOW_WIDTH = 236;
 const DESCRIPTION_WINDOW_HEIGHT = 20;
+
+const DETAILS_WINDOW_X = 0;
+const DETAILS_WINDOW_Y = 0;
+const DETAILS_WINDOW_WIDTH = 236;
+const DETAILS_WINDOW_HEIGHT = ((numbers.GAME_HEIGHT * 2) / 3) | 0;
 
 const ITEM_OVERVIEW_WIN_X = 104;
 const ITEM_OVERVIEW_WIN_Y = 24;
@@ -76,8 +83,8 @@ export class MainItemMenu {
     public description_window: Window;
     public description_window_text: TextObj;
     public description_window_tween: Phaser.Tween;
+    public details_window: Window;
     public arrange_window: Window;
-    public arrange_window_text: TextObj;
     public item_overview_window: Window;
     public item_choose_window: ItemPsynergyChooseWindow;
     public item_options_window: ItemOptionsWindow;
@@ -127,7 +134,7 @@ export class MainItemMenu {
             ARRANGE_WINDOW_WIDTH,
             ARRANGE_WINDOW_HEIGHT
         );
-        this.arrange_window_text = this.arrange_window.set_text(["Arrange info here..."], undefined, 7, 3);
+        this.arrange_window.set_text(["Arrange info here..."], undefined, 7, 3);
         this.item_overview_window = new Window(
             this.game,
             ITEM_OVERVIEW_WIN_X,
@@ -143,6 +150,14 @@ export class MainItemMenu {
         );
         this.item_options_window = new ItemOptionsWindow(this.game, this.data);
         this.item_quant_win = new ItemQuantityManagerWindow(this.game, this.data);
+
+        this.details_window = new Window(
+            this.game,
+            DETAILS_WINDOW_X,
+            DETAILS_WINDOW_Y,
+            DETAILS_WINDOW_WIDTH,
+            DETAILS_WINDOW_HEIGHT
+        );
     }
 
     shift_item_overview(down: boolean, hide_sub_menus: boolean = true) {
@@ -469,6 +484,90 @@ export class MainItemMenu {
 
         this.chars_menu.select_char(this.selected_char_index);
         this.chars_menu.grant_control(this.close_menu.bind(this), this.char_choose.bind(this));
+    }
+
+    show_details(item: Item, item_slot: ItemSlot, callback?: Function) {
+        const details_misc = [];
+        const details_equip = [];
+        const details_use = [];
+        if (item.type === item_types.ABILITY_GRANTOR) {
+            const ability_name = this.data.info.abilities_list[item.granted_ability].name;
+            details_equip.push(`  Bestows ${ability_name}.`);
+        }
+        if (item.use_ability) {
+            const ability_desciption = this.data.info.abilities_list[item.use_ability].description;
+            details_use.push(`  ${ability_desciption ? ability_desciption : item.description}`);
+        }
+        if (item.curses_when_equipped) {
+            details_equip.push("  It's cursed.");
+        }
+        if (item.granted_class_type) {
+            details_equip.push(" Change class when equipped.");
+        }
+        if (item.unleash_ability) {
+            const ability_name = this.data.info.abilities_list[item.unleash_ability].name;
+            details_misc.push(`Unleashes ${ability_name}.`);
+        }
+        if (item.important_item) {
+            details_misc.push("An important item.");
+        }
+        if (item.carry_up_to_30) {
+            details_misc.push(`You have ${item_slot.quantity}.`);
+        }
+        if (item.items_after_forge.length) {
+            details_misc.push(`Forgeable.`);
+        }
+        if (item_slot.addtional_details !== undefined && Object.keys(item_slot.addtional_details).length) {
+            for (let key in item_slot.addtional_details) {
+                details_misc.push(item_slot.addtional_details[key]);
+            }
+        }
+        item.effects.forEach(effect => {
+            switch (effect.type) {
+                case effect_types.MAX_HP:
+                case effect_types.MAX_PP:
+                case effect_types.ATTACK:
+                case effect_types.DEFENSE:
+                case effect_types.AGILITY:
+                case effect_types.LUCK:
+                case effect_types.HP_RECOVERY:
+                case effect_types.PP_RECOVERY:
+                    details_equip.push(
+                        `  ${effect_operators_symbols[effect.operator]}${effect.quantity} ${effect_names[effect.type]}`
+                    );
+                    break;
+                case effect_types.POWER:
+                case effect_types.RESIST:
+                    details_equip.push(
+                        `  ${effect_operators_symbols[effect.operator]}${effect.quantity} ${
+                            element_names[effect.element]
+                        } ${effect_names[effect.type]}`
+                    );
+                    break;
+                case effect_types.CRITICALS:
+                    details_equip.push(`  Impacts criticals chance.`);
+                    break;
+            }
+        });
+        if (details_equip.length) {
+            details_equip.unshift("Effects of equipping:");
+        }
+        if (details_use.length) {
+            details_use.unshift("Effects of using:");
+        }
+        this.details_window.set_text(details_equip.concat(details_use, details_misc), undefined, undefined, 2);
+        this.data.control_manager.add_controls([
+            {
+                button: Button.B,
+                on_down: () => {
+                    if (callback) {
+                        callback();
+                    }
+                    this.details_window.close();
+                },
+            },
+        ]);
+        this.details_window.show();
     }
 
     open_menu(close_callback?: Function) {

@@ -17,6 +17,7 @@ export type ItemSlot = {
     index?: number;
     equipped?: boolean;
     broken?: boolean;
+    addtional_details?: {[detail_key: string]: string};
 };
 
 export enum equip_slots {

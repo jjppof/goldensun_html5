@@ -56,6 +56,8 @@ export const effect_names: {[effect_type in effect_types]?: string} = {
     [effect_types.LUCK]: "Luck",
     [effect_types.POWER]: "Power",
     [effect_types.RESIST]: "Resist",
+    [effect_types.HP_RECOVERY]: "HP recovery",
+    [effect_types.PP_RECOVERY]: "PP recovery",
 };
 
 export enum effect_operators {
@@ -64,6 +66,13 @@ export enum effect_operators {
     TIMES = "times",
     DIVIDE = "divide",
 }
+
+export const effect_operators_symbols: {[effect_operator in effect_operators]: string} = {
+    [effect_operators.PLUS]: "+",
+    [effect_operators.MINUS]: "-",
+    [effect_operators.TIMES]: "*",
+    [effect_operators.DIVIDE]: "/",
+};
 
 export enum effect_usages {
     NOT_APPLY = "not_apply",

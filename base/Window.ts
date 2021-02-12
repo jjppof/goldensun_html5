@@ -534,27 +534,37 @@ export class Window {
            padding_x [number] - Padding on the x axis
            padding_y [number] - Padding on the y axis
            space_bewteen lines [number] - Offset between lines*/
-    set_text(lines, padding_x?, padding_y?, space_between_lines?, italic = false, animate = false) {
+    set_text(
+        lines: string[],
+        padding_x?: number,
+        padding_y?: number,
+        space_between_lines?: number,
+        italic = false,
+        animate = false
+    ) {
         for (let i = 0; i < this.lines_sprites.length; ++i) {
             this.lines_sprites[i].text.destroy();
             this.lines_sprites[i].shadow.destroy();
         }
         this.lines_sprites = [];
         const top_shift = italic ? -2 : 0;
-        const x_pos = padding_x === undefined ? numbers.WINDOW_PADDING_H + 4 : padding_x;
-        let y_pos = padding_y === undefined ? numbers.WINDOW_PADDING_TOP + top_shift : padding_y;
+        const x_pos = padding_x ?? numbers.WINDOW_PADDING_H + 4;
+        let y_pos = padding_y ?? numbers.WINDOW_PADDING_TOP + top_shift;
         const font_name = italic ? "gs-italic-bmp-font" : "gs-bmp-font";
 
-        let lines_promises = [];
-        let anim_promise;
+        const lines_promises = [];
         let anim_promise_resolve;
-        if (animate) {
-            anim_promise = new Promise(resolve => (anim_promise_resolve = resolve));
-        }
+        const anim_promise = animate ? new Promise<void>(resolve => (anim_promise_resolve = resolve)) : null;
         for (let i = 0; i < lines.length; ++i) {
-            let line = lines[i];
-            let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, animate ? "" : line, numbers.FONT_SIZE);
-            let text_sprite_shadow = this.game.add.bitmapText(
+            const line = lines[i];
+            const text_sprite = this.game.add.bitmapText(
+                x_pos,
+                y_pos,
+                font_name,
+                animate ? "" : line,
+                numbers.FONT_SIZE
+            );
+            const text_sprite_shadow = this.game.add.bitmapText(
                 x_pos + 1,
                 y_pos + 1,
                 font_name,
@@ -562,9 +572,7 @@ export class Window {
                 numbers.FONT_SIZE
             );
 
-            y_pos +=
-                numbers.FONT_SIZE +
-                (space_between_lines === undefined ? numbers.SPACE_BETWEEN_LINES : space_between_lines);
+            y_pos += numbers.FONT_SIZE + (space_between_lines ?? numbers.SPACE_BETWEEN_LINES);
 
             this.remove_smooth(text_sprite);
             text_sprite.tint = this.font_color;
@@ -819,7 +827,7 @@ export class Window {
 
     Input: callback [function] - Callback function (Optional)
            animate [boolean] - Plays a fading animation if true*/
-    close(callback?, animate = true) {
+    close(callback?: Function, animate = true) {
         if (animate) {
             this.game.add
                 .tween(this.group)

@@ -134,7 +134,7 @@ export class UseGiveItemWindow {
         if (this.choosing_char && this.giving) {
             this.base_window.update_text("Give it to whom?", this.action_text, ITEM_NAME_X, ACTION_TEXT_Y);
         } else if (this.choosing_char && !this.giving) {
-            this.base_window.update_text("Use it to whom?", this.action_text, ITEM_NAME_X, ACTION_TEXT_Y);
+            this.base_window.update_text("Use it on whom?", this.action_text, ITEM_NAME_X, ACTION_TEXT_Y);
         } else if (this.asking_for_equip) {
             this.yes_text.text.alpha = this.no_text.text.alpha = 1;
             this.yes_text.shadow.alpha = this.no_text.shadow.alpha = 1;

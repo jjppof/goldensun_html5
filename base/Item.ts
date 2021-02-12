@@ -53,6 +53,10 @@ export class Item {
     public equipable: boolean;
     public granted_class_type: number;
     public weapon_type: weapon_types;
+    public items_after_forge: {
+        key_name: string;
+        chance: number;
+    }[];
 
     constructor(
         key_name,
@@ -74,7 +78,8 @@ export class Item {
         price,
         granted_ability,
         granted_class_type,
-        weapon_type
+        weapon_type,
+        items_after_forge
     ) {
         this.key_name = key_name;
         this.name = name;
@@ -97,5 +102,6 @@ export class Item {
         this.equipable = this.type === item_types.GENERAL_ITEM ? false : true;
         this.granted_class_type = granted_class_type;
         this.weapon_type = weapon_type ?? weapon_types.NOT_A_WEAPON;
+        this.items_after_forge = items_after_forge ?? [];
     }
 }

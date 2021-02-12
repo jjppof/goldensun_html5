@@ -24,7 +24,8 @@ export function initialize_items(game, items_db, load_promise_resolve) {
             item_data.price,
             item_data.granted_ability,
             item_data.granted_class_type,
-            item_data.weapon_type
+            item_data.weapon_type,
+            item_data.items_after_forge
         );
     }
     const loader = game.load.atlasJSONHash(

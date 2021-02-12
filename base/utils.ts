@@ -20,7 +20,7 @@ export const element_names = {
     [elements.MERCURY]: "Water",
     [elements.MARS]: "Fire",
     [elements.JUPITER]: "Wind",
-    [elements.ALL_ELEMENTS]: "all elements",
+    [elements.ALL_ELEMENTS]: "All elements",
 };
 
 /*8-Directional direction values*/
