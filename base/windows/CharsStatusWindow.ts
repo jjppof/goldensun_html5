@@ -315,8 +315,8 @@ export class CharsStatusWindow {
             const x_number_pos = base_x_pos + STAT_X;
 
             this.status_window.update_text(char.name, info_sprite.name, base_x_pos);
-            this.status_window.update_text(char.current_hp, info_sprite.hp, x_number_pos);
-            this.status_window.update_text(char.current_pp, info_sprite.pp, x_number_pos);
+            this.status_window.update_text(String(char.current_hp), info_sprite.hp, x_number_pos);
+            this.status_window.update_text(String(char.current_pp), info_sprite.pp, x_number_pos);
 
             let hp_width = info_sprite.hp.text.textWidth;
             info_sprite.hp.text.x += hp_width / 2;

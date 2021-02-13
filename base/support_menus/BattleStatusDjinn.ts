@@ -166,7 +166,7 @@ export class BattleStatusDjinn extends StatusComponent {
                     y_pos = BattleStatusDjinn.DJINN.RECOVERY_Y + line_index * BattleStatusDjinn.SHIFT_Y;
 
                     const recovery_text = this.window.set_text_in_position(
-                        recovery,
+                        String(recovery),
                         x_pos,
                         y_pos,
                         true,

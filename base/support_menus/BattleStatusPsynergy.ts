@@ -202,7 +202,7 @@ export class BattleStatusPsynergy extends StatusComponent {
             y_pos = BattleStatusPsynergy.PSYNERGY.PP_VALUE_Y + index * BattleStatusPsynergy.SHIFT;
 
             const pp_value = this.window.set_text_in_position(
-                pp_cost,
+                String(pp_cost),
                 x_pos,
                 y_pos,
                 true,

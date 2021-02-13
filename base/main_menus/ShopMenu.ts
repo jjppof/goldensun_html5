@@ -272,7 +272,7 @@ export class ShopMenu {
 
         let price_val = custom_price ? custom_price : this_item.price;
         let price_text = custom_msg ? "" : price_val;
-        this.item_price_win.update_text(price_text, this.item_price_val_text);
+        this.item_price_win.update_text(String(price_text), this.item_price_val_text);
     }
 
     alternate_window_pos(mode: string) {

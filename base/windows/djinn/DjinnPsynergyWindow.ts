@@ -147,7 +147,7 @@ export class DjinnPsynergyWindow {
             );
             this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
             const psynergy_cost_sprite = this.base_window.set_text_in_position(
-                this.data.info.abilities_list[key_name].pp_cost,
+                String(this.data.info.abilities_list[key_name].pp_cost),
                 PSY_PP_X,
                 y + ELEM_NAME_ICON_SHIFT,
                 true

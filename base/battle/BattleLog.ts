@@ -1,7 +1,7 @@
 import * as numbers from "../magic_numbers";
 import {ability_msg_types} from "../Ability";
 import {Effect, effect_names, effect_types} from "../Effect";
-import {element_names} from "../utils";
+import {element_names, FONT_NAME} from "../utils";
 import {main_stats, on_remove_status_msg} from "../Player";
 
 const LOG_X = 3;
@@ -26,7 +26,7 @@ export class BattleLog {
     }
 
     create(y_pos) {
-        const log_text = this.game.add.bitmapText(this.x + LOG_X, y_pos, "gs-bmp-font", "", numbers.FONT_SIZE);
+        const log_text = this.game.add.bitmapText(this.x + LOG_X, y_pos, FONT_NAME, "", numbers.FONT_SIZE);
         log_text.tint = numbers.DEFAULT_FONT_COLOR;
         log_text.smoothed = false;
         log_text.autoRound = true;

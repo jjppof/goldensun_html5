@@ -1,6 +1,10 @@
 import * as numbers from "./magic_numbers";
 import * as _ from "lodash";
 
+/*Font names*/
+export const FONT_NAME = "gs-bmp-font";
+export const ITALIC_FONT_NAME = "gs-italic-bmp-font";
+
 /*Element keys*/
 export enum elements {
     VENUS = "venus",
@@ -301,7 +305,7 @@ Input: game [Phaser:Game] - Reference to the running game object
        text [string] - Text string*/
 export function get_text_width(game, text, italic = false) {
     //get text width in px (dirty way)
-    const font_name = italic ? "gs-italic-bmp-font" : "gs-bmp-font";
+    const font_name = italic ? ITALIC_FONT_NAME : FONT_NAME;
     let text_sprite = game.add.bitmapText(0, 0, font_name, text, numbers.FONT_SIZE);
     const text_width = text_sprite.width;
     text_sprite.destroy();

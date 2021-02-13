@@ -11,6 +11,7 @@ import {MainStatusStatistics} from "../support_menus/MainStatusStatistics";
 import {MainStatusDjinn} from "../support_menus/MainStatusDjinn";
 import {MainStatusPsynergy} from "../support_menus/MainStatusPsynergy";
 import {MainStatusItems} from "../support_menus/MainStatusItems";
+import {FONT_NAME, ITALIC_FONT_NAME} from "../utils";
 
 export enum MainStatusStates {
     CHARACTERS,
@@ -109,8 +110,8 @@ export class MainStatusMenu {
         [MainStatusStates.ITEMS]: MainStatusStates.STATISTICS,
     };
     private static readonly FONTS = {
-        NORMAL: "gs-bmp-font",
-        ITALIC: "gs-italic-bmp-font",
+        NORMAL: FONT_NAME,
+        ITALIC: ITALIC_FONT_NAME,
     };
 
     private static readonly GROUP_KEY = "main_status";
@@ -778,7 +779,7 @@ export class MainStatusMenu {
         );
 
         this.main_window.update_text(char.name, this.name);
-        this.main_window.update_text(char.level, this.level_value);
+        this.main_window.update_text(String(char.level), this.level_value);
         this.main_window.update_text(char.class.name, this.class_name);
 
         const names = {

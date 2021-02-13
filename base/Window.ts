@@ -573,7 +573,7 @@ export class Window {
         const top_shift = italic ? -2 : 0;
         const x_pos = padding_x ?? numbers.WINDOW_PADDING_H + 4;
         let y_pos = padding_y ?? numbers.WINDOW_PADDING_TOP + top_shift;
-        const font_name = italic ? "gs-italic-bmp-font" : "gs-bmp-font";
+        const font_name = italic ? utils.ITALIC_FONT_NAME : utils.FONT_NAME;
 
         const lines_promises = [];
         let anim_promise_resolve;
@@ -646,10 +646,10 @@ export class Window {
             shadow [Phaser:Sprite] - The text's shadow
             right_align [boolean] - The input value
             initial_x [number] - The text's x value*/
-    set_single_line_text(text, right_align = false, italic = false): TextObj {
+    set_single_line_text(text: string, right_align = false, italic = false): TextObj {
         const x_pos = italic ? numbers.WINDOW_PADDING_H + 2 : numbers.WINDOW_PADDING_H + 4;
         const y_pos = italic ? numbers.WINDOW_PADDING_TOP - 2 : numbers.WINDOW_PADDING_TOP;
-        const font_name = italic ? "gs-italic-bmp-font" : "gs-bmp-font";
+        const font_name = italic ? utils.ITALIC_FONT_NAME : utils.FONT_NAME;
         const text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, text, numbers.FONT_SIZE);
         const text_sprite_shadow = this.game.add.bitmapText(x_pos + 1, y_pos + 1, font_name, text, numbers.FONT_SIZE);
         if (right_align) {
@@ -698,19 +698,19 @@ export class Window {
             initial_x [number] - The text's x value
             text_bg [Phaser:Sprite] - The text's background*/
     set_text_in_position(
-        text,
-        x_pos,
-        y_pos,
+        text: string,
+        x_pos: number,
+        y_pos: number,
         right_align = false,
         is_center_pos = false,
         color = this.font_color,
         with_bg = false,
-        internal_group_key = undefined,
+        internal_group_key: string = undefined,
         italic = false
     ): TextObj {
-        const font_name = italic ? "gs-italic-bmp-font" : "gs-bmp-font";
-        let text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, text, numbers.FONT_SIZE);
-        let text_sprite_shadow = this.game.add.bitmapText(x_pos + 1, y_pos + 1, font_name, text, numbers.FONT_SIZE);
+        const font_name = italic ? utils.ITALIC_FONT_NAME : utils.FONT_NAME;
+        const text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, text, numbers.FONT_SIZE);
+        const text_sprite_shadow = this.game.add.bitmapText(x_pos + 1, y_pos + 1, font_name, text, numbers.FONT_SIZE);
         if (is_center_pos) {
             text_sprite.centerX = x_pos;
             text_sprite.centerY = y_pos;
@@ -784,7 +784,7 @@ export class Window {
                 text - The text to change
                 shadow - The shadow of the text
             new_x, new_y [number] - The x and y for the new position*/
-    update_text(new_text, text_shadow_pair, new_x?, new_y?) {
+    update_text(new_text: string, text_shadow_pair: TextObj, new_x?: number, new_y?: number) {
         text_shadow_pair.text.setText(new_text);
         text_shadow_pair.shadow.setText(new_text);
         this.update_text_position({x: new_x, y: new_y}, text_shadow_pair);
@@ -798,7 +798,7 @@ export class Window {
            text_shadow_pair [array] - Contains the text and its shadow
                 text - The text to change
                 shadow - The shadow of the text*/
-    update_text_position(new_position, text_shadow_pair) {
+    update_text_position(new_position: {x?: number; y?: number}, text_shadow_pair: TextObj) {
         if (new_position.x !== undefined) {
             text_shadow_pair.text.x = new_position.x;
             text_shadow_pair.shadow.x = new_position.x + 1;
@@ -829,7 +829,7 @@ export class Window {
            text_shadow_pair [array] - Contains the text and its shadow
                 text - The text to change
                 shadow - The shadow of the text*/
-    update_text_color(color, text_shadow_pair) {
+    update_text_color(color, text_shadow_pair: TextObj) {
         text_shadow_pair.text.tint = color;
     }
 
@@ -838,7 +838,7 @@ export class Window {
     Input: text_shadow_pair [array] - Contains the text and its shadow
                 text - The text to remove
                 shadow - The shadow of the text*/
-    remove_text(text_shadow_pair) {
+    remove_text(text_shadow_pair: TextObj) {
         text_shadow_pair.text.destroy();
         text_shadow_pair.shadow.destroy();
         if (text_shadow_pair.text_bg) {
@@ -889,7 +889,7 @@ export class Window {
 
     Input: animate [boolean] - Plays a fading animation if true
            destroy_callbcak [function] - Callback function (Optional)*/
-    destroy(animate, destroy_callback?) {
+    destroy(animate: boolean, destroy_callback?: Function) {
         let on_destroy = () => {
             if (this.page_indicator.is_set) {
                 this.page_indicator.terminante();

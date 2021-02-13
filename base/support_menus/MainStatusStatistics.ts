@@ -409,7 +409,7 @@ export class MainStatusStatistics extends StatusComponent {
             this.state_sprites.push(txt.text, txt.shadow);
 
             txt = this.window.set_text_in_position(
-                this.selected_char.current_exp,
+                String(this.selected_char.current_exp),
                 MainStatusStatistics.EXP.VALUE_END_X,
                 MainStatusStatistics.EXP.VALUE_Y,
                 true,
@@ -433,7 +433,7 @@ export class MainStatusStatistics extends StatusComponent {
             this.state_sprites.push(txt.text, txt.shadow);
 
             txt = this.window.set_text_in_position(
-                this.selected_char.max_hp,
+                String(this.selected_char.max_hp),
                 MainStatusStatistics.HP.MAX_END_X,
                 MainStatusStatistics.HP.MAX_Y,
                 true,
@@ -469,7 +469,7 @@ export class MainStatusStatistics extends StatusComponent {
             this.state_sprites.push(txt.text, txt.shadow);
 
             txt = this.window.set_text_in_position(
-                this.selected_char.max_pp,
+                String(this.selected_char.max_pp),
                 MainStatusStatistics.PP.MAX_END_X,
                 MainStatusStatistics.PP.MAX_Y,
                 true,
@@ -507,7 +507,7 @@ export class MainStatusStatistics extends StatusComponent {
             this.state_sprites.push(txt.text, txt.shadow);
 
             txt = this.window.set_text_in_position(
-                this.selected_char.atk,
+                String(this.selected_char.atk),
                 MainStatusStatistics.STATS.VALUE_END_X,
                 MainStatusStatistics.STATS.VALUE_Y,
                 true,
@@ -531,7 +531,7 @@ export class MainStatusStatistics extends StatusComponent {
             this.state_sprites.push(txt.text, txt.shadow);
 
             txt = this.window.set_text_in_position(
-                this.selected_char.def,
+                String(this.selected_char.def),
                 MainStatusStatistics.STATS.VALUE_END_X,
                 MainStatusStatistics.STATS.VALUE_Y + shift,
                 true,
@@ -555,7 +555,7 @@ export class MainStatusStatistics extends StatusComponent {
             this.state_sprites.push(txt.text, txt.shadow);
 
             txt = this.window.set_text_in_position(
-                this.selected_char.agi,
+                String(this.selected_char.agi),
                 MainStatusStatistics.STATS.VALUE_END_X,
                 MainStatusStatistics.STATS.VALUE_Y + 2 * shift,
                 true,
@@ -579,7 +579,7 @@ export class MainStatusStatistics extends StatusComponent {
             this.state_sprites.push(txt.text, txt.shadow);
 
             txt = this.window.set_text_in_position(
-                this.selected_char.luk,
+                String(this.selected_char.luk),
                 MainStatusStatistics.STATS.VALUE_END_X,
                 MainStatusStatistics.STATS.VALUE_Y + 3 * shift,
                 true,

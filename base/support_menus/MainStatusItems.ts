@@ -221,7 +221,7 @@ export class MainStatusItems extends StatusComponent {
         this.state_sprites.push(txt.text, txt.shadow);
 
         txt = this.window.set_text_in_position(
-            this.selected_char.atk,
+            String(this.selected_char.atk),
             MainStatusItems.STATS.VALUE_END_X,
             MainStatusItems.STATS.VALUE_Y,
             true,
@@ -245,7 +245,7 @@ export class MainStatusItems extends StatusComponent {
         this.state_sprites.push(txt.text, txt.shadow);
 
         txt = this.window.set_text_in_position(
-            this.selected_char.def,
+            String(this.selected_char.def),
             MainStatusItems.STATS.VALUE_END_X,
             MainStatusItems.STATS.VALUE_Y + MainStatusItems.STATS.LINE_SHIFT,
             true,

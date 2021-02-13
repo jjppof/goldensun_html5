@@ -172,7 +172,7 @@ export class MainStatusPsynergy extends StatusComponent {
             y_pos = MainStatusPsynergy.PSYNERGY.PP_VALUE_Y + index * MainStatusPsynergy.SHIFT;
 
             const pp_value = this.window.set_text_in_position(
-                pp_cost,
+                String(pp_cost),
                 x_pos,
                 y_pos,
                 true,

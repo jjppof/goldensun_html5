@@ -275,7 +275,7 @@ export class BattlePsynergyWindow {
             );
 
             const psynergy_cost_sprite = this.base_window.set_text_in_position(
-                this.data.info.abilities_list[key_name].pp_cost,
+                String(this.data.info.abilities_list[key_name].pp_cost),
                 PSY_PP_END_X,
                 y + ELEM_NAME_ICON_SHIFT,
                 true,

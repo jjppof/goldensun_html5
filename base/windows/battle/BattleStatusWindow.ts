@@ -462,8 +462,8 @@ export class BattleStatusWindow {
         }
 
         this.window.update_text(char.name, this.name);
-        this.window.update_text(char.level, this.level_value);
-        this.window.update_text(char.current_exp, this.exp_value);
+        this.window.update_text(String(char.level), this.level_value);
+        this.window.update_text(String(char.current_exp), this.exp_value);
 
         this.window.update_text(char.class.name, this.class_name);
         this.window.update_text(char_index >= Battle.MAX_CHARS_IN_BATTLE ? "In the back" : "", this.in_the_back);
@@ -471,15 +471,15 @@ export class BattleStatusWindow {
         if (this.update_effects() !== 0) this.window.update_text("", this.normal_status);
         else this.window.update_text("Normal", this.normal_status);
 
-        this.window.update_text(char.max_hp, this.max_hp);
+        this.window.update_text(String(char.max_hp), this.max_hp);
         this.window.update_text(char.current_hp + "/", this.curr_hp);
-        this.window.update_text(char.max_pp, this.max_pp);
+        this.window.update_text(String(char.max_pp), this.max_pp);
         this.window.update_text(char.current_pp + "/", this.curr_pp);
 
-        this.window.update_text(char.atk, this.atk_value);
-        this.window.update_text(char.def, this.def_value);
-        this.window.update_text(char.agi, this.agi_value);
-        this.window.update_text(char.luk, this.luk_value);
+        this.window.update_text(String(char.atk), this.atk_value);
+        this.window.update_text(String(char.def), this.def_value);
+        this.window.update_text(String(char.agi), this.agi_value);
+        this.window.update_text(String(char.luk), this.luk_value);
     }
 
     private update_effects() {
