@@ -58,10 +58,10 @@ export class Map {
         this.name = name;
         this.key_name = key_name;
         this.tileset_name = tileset_name;
-        this.physics_names = physics_names === undefined ? [] : physics_names;
+        this.physics_names = physics_names ?? [];
         this.tileset_image_url = tileset_image_url;
         this.tileset_json_url = tileset_json_url;
-        this.physics_jsons_url = physics_jsons_url === undefined ? [] : physics_jsons_url;
+        this.physics_jsons_url = physics_jsons_url ?? [];
         this.sprite = null;
         this.events = {};
         this.npcs = [];
@@ -74,24 +74,20 @@ export class Map {
         this.collision_layer = null;
         this.show_footsteps = false;
         this.assets_loaded = false;
-        this.lazy_load = lazy_load === undefined ? false : lazy_load;
+        this.lazy_load = lazy_load ?? false;
         this.layers = [];
-        this.collision_embedded = collision_embedded === undefined ? false : collision_embedded;
+        this.collision_embedded = collision_embedded ?? false;
         this.is_world_map = false;
         this.bgm_key = bgm_key;
         this.bgm_url = bgm_url;
     }
 
     get tile_width() {
-        return this.sprite.properties?.real_tile_width !== undefined
-            ? this.sprite.properties.real_tile_width
-            : this.sprite.tileWidth;
+        return this.sprite.properties?.real_tile_width ?? this.sprite.tileWidth;
     }
 
     get tile_height() {
-        return this.sprite.properties?.real_tile_height !== undefined
-            ? this.sprite.properties.real_tile_height
-            : this.sprite.tileHeight;
+        return this.sprite.properties?.real_tile_height ?? this.sprite.tileHeight;
     }
 
     //sort the sprites in the map by z index depending on hero position
@@ -590,9 +586,9 @@ export class Map {
             this.data.hero.footsteps.clean_all();
         }
 
-        let sprites_to_remove = [];
+        const sprites_to_remove = [];
         for (let i = 0; i < this.data.npc_group.children.length; ++i) {
-            let sprite = this.data.npc_group.children[i] as Phaser.Sprite;
+            const sprite = this.data.npc_group.children[i] as Phaser.Sprite;
             if (!sprite.is_npc && !sprite.is_interactable_object) continue;
             if (sprite.is_interactable_object && sprite.interactable_object.custom_data.blocking_stair_block) {
                 sprite.interactable_object.custom_data.blocking_stair_block.destroy();

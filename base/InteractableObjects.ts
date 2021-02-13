@@ -1,12 +1,11 @@
 import {SpriteBase} from "./SpriteBase";
-import {TileEvent, event_types as tile_event_types} from "./tile_events/TileEvent";
+import {TileEvent} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
 import {directions, get_surroundings, mount_collision_polygon, reverse_directions} from "./utils";
 import {JumpEvent} from "./tile_events/JumpEvent";
 import {ClimbEvent} from "./tile_events/ClimbEvent";
 import {GoldenSun} from "./GoldenSun";
 import {Map} from "./Map";
-import {Collision} from "./Collision";
 
 export enum interactable_object_interaction_types {
     ONCE = "once",
@@ -76,7 +75,7 @@ export class InteractableObjects {
         this.game = game;
         this.data = data;
         this.key_name = key_name;
-        this.storage_keys = storage_keys === undefined ? {} : storage_keys;
+        this.storage_keys = storage_keys ?? {};
         if (this.storage_keys.position !== undefined) {
             const position = this.data.storage.get(this.storage_keys.position);
             x = position.x;
@@ -85,13 +84,13 @@ export class InteractableObjects {
         this.x = x;
         this.y = y;
         this.sprite_info = null;
-        this.allowed_tiles = allowed_tiles === undefined ? [] : allowed_tiles;
+        this.allowed_tiles = allowed_tiles ?? [];
         if (this.storage_keys.base_collision_layer !== undefined) {
             base_collision_layer = this.data.storage.get(this.storage_keys.base_collision_layer);
         }
-        this.base_collision_layer = base_collision_layer === undefined ? 0 : base_collision_layer;
-        this.not_allowed_tiles = not_allowed_tiles === undefined ? [] : not_allowed_tiles;
-        this.object_drop_tiles = object_drop_tiles === undefined ? [] : object_drop_tiles;
+        this.base_collision_layer = base_collision_layer ?? 0;
+        this.not_allowed_tiles = not_allowed_tiles ?? [];
+        this.object_drop_tiles = object_drop_tiles ?? [];
         this.events = new Set();
         this.current_x = this.x;
         this.current_y = this.y;
@@ -125,7 +124,9 @@ export class InteractableObjects {
         }
         for (let i = 0; i < this.allowed_tiles.length; ++i) {
             const tile = this.allowed_tiles[i];
-            if (tile.x === x && tile.y === y && tile.collision_layer === this.data.map.collision_layer) return true;
+            if (tile.x === x && tile.y === y && tile.collision_layer === this.data.map.collision_layer) {
+                return true;
+            }
         }
         return false;
     }
@@ -164,7 +165,7 @@ export class InteractableObjects {
         const target_layer = this.base_collision_layer + this.block_climb_collision_layer_shift;
         const x_pos = (this.current_x + 0.5) * this.data.map.tile_width;
         const y_pos = (this.current_y + 1.5) * this.data.map.tile_height - 4;
-        let body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
+        const body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
         body.clearShapes();
         const width = this.data.dbs.interactable_objects_db[this.key_name].body_radius * 2;
         body.setRectangle(width, width, 0, 0);
@@ -223,8 +224,8 @@ export class InteractableObjects {
         } else if (interactable_object_db.scale_y !== undefined) {
             this.sprite.scale.y = interactable_object_db.scale_y;
         }
-        const shift_x = interactable_object_db.shift_x !== undefined ? interactable_object_db.shift_x : 0;
-        const shift_y = interactable_object_db.shift_y !== undefined ? interactable_object_db.shift_y : 0;
+        const shift_x = interactable_object_db.shift_x ?? 0;
+        const shift_y = interactable_object_db.shift_y ?? 0;
         this.sprite.centerX = (this.x + 1) * map.tile_width + shift_x;
         const anchor_shift = this.sprite.anchor.y * map.tile_width * 0.5;
         this.sprite.centerY = this.y * map.tile_width - anchor_shift + shift_y;
@@ -242,11 +243,8 @@ export class InteractableObjects {
             const event_info = this.data.dbs.interactable_objects_db[this.key_name].events[i];
             x_pos += event_info.x_shift !== undefined ? event_info.x_shift : 0;
             y_pos += event_info.y_shift !== undefined ? event_info.y_shift : 0;
-            const collision_layer_shift =
-                this.tile_events_info[i]?.collision_layer_shift !== undefined
-                    ? this.tile_events_info[i].collision_layer_shift
-                    : 0;
-            const active_event = event_info.active !== undefined ? event_info.active : true;
+            const collision_layer_shift = this.tile_events_info[i]?.collision_layer_shift ?? 0;
+            const active_event = event_info.active ?? true;
             const target_layer = this.base_collision_layer + collision_layer_shift;
             switch (event_info.type) {
                 case interactable_object_event_types.JUMP:
@@ -301,13 +299,11 @@ export class InteractableObjects {
             event_info.dynamic,
             active_event,
             false,
-            event_info.is_set === undefined ? true : event_info.is_set
+            event_info.is_set ?? true
         );
         map_events[this_event_location_key].push(new_event);
         this.insert_event(new_event.id);
-        const collision_layer_shift = this.tile_events_info[event_index]?.collision_layer_shift
-            ? this.tile_events_info[event_index].collision_layer_shift
-            : 0;
+        const collision_layer_shift = this.tile_events_info[event_index]?.collision_layer_shift ?? 0;
         new_event.collision_layer_shift_from_source = collision_layer_shift;
         this.collision_change_functions.push(() => {
             new_event.activation_collision_layers = [this.base_collision_layer + collision_layer_shift];
@@ -322,7 +318,7 @@ export class InteractableObjects {
         target_layer: number,
         map_events: Map["events"]
     ) {
-        let is_set = event_info.is_set === undefined ? true : event_info.is_set;
+        const is_set = event_info.is_set ?? true;
         get_surroundings(x_pos, y_pos).forEach((pos, index) => {
             if (this.not_allowed_tile_test(pos.x, pos.y)) return;
             const this_event_location_key = TileEvent.get_location_key(pos.x, pos.y);
@@ -363,13 +359,9 @@ export class InteractableObjects {
         target_layer: number,
         map_events: Map["events"]
     ) {
-        const collision_layer_shift = this.tile_events_info[event_index]?.collision_layer_shift
-            ? this.tile_events_info[event_index].collision_layer_shift
-            : 0;
-        const intermediate_collision_layer_shift = this.tile_events_info[event_index]
-            ?.intermediate_collision_layer_shift
-            ? this.tile_events_info[event_index].intermediate_collision_layer_shift
-            : 0;
+        const collision_layer_shift = this.tile_events_info[event_index]?.collision_layer_shift ?? 0;
+        const intermediate_collision_layer_shift =
+            this.tile_events_info[event_index]?.intermediate_collision_layer_shift ?? 0;
         const events_data = [
             {
                 x: x_pos,
@@ -456,17 +448,14 @@ export class InteractableObjects {
     }
 
     config_body() {
-        if (this.data.dbs.interactable_objects_db[this.key_name].body_radius === 0) return;
+        const db = this.data.dbs.interactable_objects_db[this.key_name];
+        if (db.body_radius === 0) return;
         const collision_groups = this.data.collision.interactable_objs_collision_groups;
         this.game.physics.p2.enable(this.sprite, false);
-        this.sprite.anchor.y = this.data.dbs.interactable_objects_db[this.key_name].anchor_y; //Important to be after the previous command
+        this.sprite.anchor.y = db.anchor_y; //Important to be after the previous command
         this.sprite.body.clearShapes();
-        const width = this.data.dbs.interactable_objects_db[this.key_name].body_radius << 1;
-        const polygon = mount_collision_polygon(
-            width,
-            -(width >> 1),
-            this.data.dbs.interactable_objects_db[this.key_name].collision_body_bevel
-        );
+        const width = db.body_radius << 1;
+        const polygon = mount_collision_polygon(width, -(width >> 1), db.collision_body_bevel);
         this.sprite.body.addPolygon(
             {
                 optimalDecomp: false,

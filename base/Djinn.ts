@@ -2,6 +2,7 @@ import * as numbers from "./magic_numbers";
 import {elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
 import {MainChar} from "./MainChar";
+import {Summon} from "./Summon";
 
 export enum djinn_status {
     SET = "set",
@@ -80,8 +81,8 @@ export class Djinn {
         );
     }
 
-    static get_standby_djinni(djinni_list, members) {
-        let standby_djinni = _.mapValues(
+    static get_standby_djinni(djinni_list: {[key: string]: Djinn}, members: MainChar[]) {
+        const standby_djinni = _.mapValues(
             _.groupBy(members.map(c => c.djinni).flat(), key => {
                 return djinni_list[key].element;
             }),
@@ -96,7 +97,11 @@ export class Djinn {
         return standby_djinni;
     }
 
-    static set_to_recovery(djinni_list, members, requirements) {
+    static set_to_recovery(
+        djinni_list: {[key: string]: Djinn},
+        members: MainChar[],
+        requirements: Summon["requirements"]
+    ) {
         let req_counter = Object.assign({}, requirements);
         let done = false;
         for (let i = 0; i < members.length; ++i) {

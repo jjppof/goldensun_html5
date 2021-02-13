@@ -178,8 +178,8 @@ export abstract class ControllableChar {
         scale_x?: number,
         scale_y?: number
     ) {
-        anchor_x = anchor_x === undefined ? ControllableChar.default_anchor.x : anchor_x;
-        anchor_y = anchor_y === undefined ? ControllableChar.default_anchor.y : anchor_y;
+        anchor_x = anchor_x ?? ControllableChar.default_anchor.x;
+        anchor_y = anchor_y ?? ControllableChar.default_anchor.y;
         this.sprite_info = sprite_info;
         const sprite_key = this.sprite_info.getSpriteKey(this.current_action);
         this.sprite = group.create(0, 0, sprite_key);
@@ -221,9 +221,9 @@ export abstract class ControllableChar {
         shadow_anchor_y?: number,
         is_world_map: boolean = false
     ) {
-        key_name = key_name === undefined ? ControllableChar.DEFAULT_SHADOW_KEYNAME : key_name;
-        shadow_anchor_x = shadow_anchor_x === undefined ? ControllableChar.DEFAULT_SHADOW_ANCHOR_X : shadow_anchor_x;
-        shadow_anchor_y = shadow_anchor_y === undefined ? ControllableChar.DEFAULT_SHADOW_ANCHOR_Y : shadow_anchor_y;
+        key_name = key_name ?? ControllableChar.DEFAULT_SHADOW_KEYNAME;
+        shadow_anchor_x = shadow_anchor_x ?? ControllableChar.DEFAULT_SHADOW_ANCHOR_X;
+        shadow_anchor_y = shadow_anchor_y ?? ControllableChar.DEFAULT_SHADOW_ANCHOR_Y;
         this.shadow = group.create(0, 0, key_name);
         if (!this.active) {
             this.shadow.visible = false;
@@ -265,7 +265,7 @@ export abstract class ControllableChar {
     }
 
     play(action?: string | base_actions, animation?: string | number, start: boolean = true, frame_rate?: number) {
-        action = action === undefined ? this.current_action : action;
+        action = action ?? this.current_action;
         if (animation === null || animation === undefined) {
             if (this.current_direction in reverse_directions) {
                 animation = reverse_directions[this.current_direction];
@@ -548,8 +548,8 @@ export abstract class ControllableChar {
     }
 
     set_speed(x_speed: number, y_speed: number) {
-        this.x_speed = x_speed === undefined ? this.x_speed : x_speed;
-        this.y_speed = y_speed === undefined ? this.y_speed : y_speed;
+        this.x_speed = x_speed ?? this.x_speed;
+        this.y_speed = y_speed ?? this.y_speed;
         this.calculate_speed();
         this.apply_speed();
     }

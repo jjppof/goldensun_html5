@@ -1,4 +1,3 @@
-import {SpriteBase} from "./SpriteBase";
 import {Player, fighter_types} from "./Player";
 import {ordered_elements} from "./utils";
 import * as _ from "lodash";
@@ -46,12 +45,12 @@ export class Enemy extends Player {
         this.base_resist = Object.assign({}, enemy_data.base_resist);
         this.battle_scale = enemy_data.battle_scale;
         this.battle_shadow_key = enemy_data.battle_shadow_key;
-        this.status_sprite_shift = enemy_data.status_sprite_shift === undefined ? 0 : enemy_data.status_sprite_shift;
+        this.status_sprite_shift = enemy_data.status_sprite_shift ?? 0;
         this.battle_animations_variations = Object.assign({}, enemy_data.battle_animations_variations);
         this.fighter_type = fighter_types.ENEMY;
         this.class = {
             name: "No Class",
-            vulnerabilities: enemy_data.vulnerabilities === undefined ? [] : enemy_data.vulnerabilities,
+            vulnerabilities: enemy_data.vulnerabilities ?? [],
         };
         this.current_exp = -1;
         this.effects = [];

@@ -82,8 +82,7 @@ export class MoveEvent extends GameEvent {
             y: this.dest_unit_in_tile ? (dest_value.y + 0.5) * this.data.map.tile_height : dest_value.y,
         };
         const direction = new Phaser.Point(dest.x - this.char.sprite.x, dest.y - this.char.sprite.y).normalize();
-        const follow_time =
-            this.camera_follow_time !== undefined ? this.camera_follow_time : MoveEvent.START_FOLLOW_TIME;
+        const follow_time = this.camera_follow_time ?? MoveEvent.START_FOLLOW_TIME;
         let follow_resolve;
         const follow_promise = new Promise(resolve => (follow_resolve = resolve));
         if (this.camera_follow) {
@@ -110,9 +109,7 @@ export class MoveEvent extends GameEvent {
         this.char.x_speed = direction.x;
         this.char.y_speed = direction.y;
         const sqr = x => x * x;
-        const minimal_distance_sqr = sqr(
-            this.minimal_distance !== undefined ? this.minimal_distance : MoveEvent.MINIMAL_DISTANCE
-        );
+        const minimal_distance_sqr = sqr(this.minimal_distance ?? MoveEvent.MINIMAL_DISTANCE);
         if (!this.is_npc) {
             this.data.game_event_manager.allow_char_to_move = true;
         }

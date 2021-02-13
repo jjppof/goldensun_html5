@@ -6,7 +6,7 @@ export class SpriteBase {
             frame_counts?: any;
             frame_rate?: {[animation: string]: any};
             loop?: boolean | boolean[];
-            spritesheet?: {spritesheet_image_url: string; spritesheet_json_url: string};
+            spritesheet?: {image: string; json: string};
         };
     };
     public animations: {[action: string]: {[animation: string]: string[]}};
@@ -55,8 +55,8 @@ export class SpriteBase {
 
     setActionSpritesheet(action, spritesheet_image_url, spritesheet_json_url) {
         this.actions[action].spritesheet = {
-            spritesheet_image_url: spritesheet_image_url,
-            spritesheet_json_url: spritesheet_json_url,
+            image: spritesheet_image_url,
+            json: spritesheet_json_url,
         };
     }
 
@@ -72,11 +72,7 @@ export class SpriteBase {
         for (let action in this.actions) {
             const spritesheet = this.actions[action].spritesheet;
             const action_key = this.getSpriteKey(action);
-            let loader = game.load.atlasJSONHash(
-                action_key,
-                spritesheet.spritesheet_image_url,
-                spritesheet.spritesheet_json_url
-            );
+            let loader = game.load.atlasJSONHash(action_key, spritesheet.image, spritesheet.json);
             if (force_load) {
                 loader.onLoadComplete.addOnce(on_load_complete, this);
                 game.load.start();

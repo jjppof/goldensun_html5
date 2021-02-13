@@ -10,16 +10,12 @@ const DUST_RADIUS = 18;
 const PUSH_SHIFT = 16;
 const DUST_KEY = "dust";
 
-export function normal_push(game, data, interactable_object) {
+export function normal_push(game: Phaser.Game, data: GoldenSun, interactable_object: InteractableObjects) {
     if (
         data.hero.trying_to_push &&
-        [directions.up, directions.down, directions.left, directions.right].includes(
-            data.hero.trying_to_push_direction
-        ) &&
+        (data.hero.trying_to_push_direction & 1) === 0 &&
         data.hero.trying_to_push_direction === data.hero.current_direction &&
-        !data.hero.casting_psynergy &&
-        !data.hero.jumping &&
-        !data.in_battle
+        !data.hero.in_action()
     ) {
         fire_push_movement(game, data, interactable_object);
     }
@@ -28,9 +24,9 @@ export function normal_push(game, data, interactable_object) {
 }
 
 export function target_only_push(
-    game,
-    data,
-    interactable_object,
+    game: Phaser.Game,
+    data: GoldenSun,
+    interactable_object: InteractableObjects,
     before_move,
     push_end,
     enable_physics_at_end = true,
@@ -60,8 +56,8 @@ export function fire_push_movement(
 ) {
     let expected_position;
     if (!target_only) {
-        let positive_limit = data.hero.sprite.x + (-interactable_object.sprite.y - interactable_object.sprite.x);
-        let negative_limit = -data.hero.sprite.x + (-interactable_object.sprite.y + interactable_object.sprite.x);
+        const positive_limit = data.hero.sprite.x + (-interactable_object.sprite.y - interactable_object.sprite.x);
+        const negative_limit = -data.hero.sprite.x + (-interactable_object.sprite.y + interactable_object.sprite.x);
         if (-data.hero.sprite.y >= positive_limit && -data.hero.sprite.y >= negative_limit) {
             expected_position = directions.down;
         } else if (-data.hero.sprite.y <= positive_limit && -data.hero.sprite.y >= negative_limit) {
@@ -105,7 +101,7 @@ export function fire_push_movement(
                 break;
         }
         shift_events(data, interactable_object, event_shift_x, event_shift_y);
-        let sprites = [interactable_object.sprite.body];
+        const sprites = [interactable_object.sprite.body];
         if (!target_only) {
             sprites.push(...[data.hero.shadow, data.hero.sprite.body]);
         }
@@ -113,7 +109,7 @@ export function fire_push_movement(
         const prev_y = interactable_object.current_y;
         interactable_object.current_x += event_shift_x;
         interactable_object.current_y += event_shift_y;
-        let promises = [];
+        const promises = [];
         if (before_move !== undefined) {
             before_move(tween_x, tween_y);
         }
@@ -122,7 +118,7 @@ export function fire_push_movement(
             interactable_object.custom_data.blocking_stair_block.y += tween_y;
         }
         for (let i = 0; i < sprites.length; ++i) {
-            let body = sprites[i];
+            const body = sprites[i];
             let dest_x = body.x + tween_x;
             let dest_y = body.y + tween_y;
             if (body === data.hero.shadow || body === data.hero.sprite.body) {
@@ -133,11 +129,7 @@ export function fire_push_movement(
                 }
             }
             let promise_resolve;
-            promises.push(
-                new Promise(resolve => {
-                    promise_resolve = resolve;
-                })
-            );
+            promises.push(new Promise(resolve => (promise_resolve = resolve)));
             const this_tween = game.add.tween(body).to(
                 {
                     x: dest_x,
@@ -265,8 +257,8 @@ function shift_events(data: GoldenSun, interactable_object: InteractableObjects,
 }
 
 function dust_animation(game: Phaser.Game, data: GoldenSun, interactable_object: InteractableObjects, promise_resolve) {
-    let promises = new Array(DUST_COUNT);
-    let sprites = new Array(DUST_COUNT);
+    const promises = new Array(DUST_COUNT);
+    const sprites = new Array(DUST_COUNT);
     const origin_x = (interactable_object.current_x + 0.5) * data.map.tile_width;
     const origin_y = (interactable_object.current_y + 0.5) * data.map.tile_height;
     const dust_sprite_base = data.info.misc_sprite_base_list[DUST_KEY];
@@ -274,7 +266,7 @@ function dust_animation(game: Phaser.Game, data: GoldenSun, interactable_object:
         const this_angle = ((Math.PI + numbers.degree60) * i) / (DUST_COUNT - 1) - numbers.degree30;
         const x = origin_x + DUST_RADIUS * Math.cos(this_angle);
         const y = origin_y + DUST_RADIUS * Math.sin(this_angle);
-        let dust_sprite = data.npc_group.create(origin_x, origin_y, DUST_KEY);
+        const dust_sprite = data.npc_group.create(origin_x, origin_y, DUST_KEY);
         if (this_angle < 0 || this_angle > Math.PI) {
             data.npc_group.setChildIndex(dust_sprite, data.npc_group.getChildIndex(interactable_object.sprite));
         }
@@ -292,9 +284,7 @@ function dust_animation(game: Phaser.Game, data: GoldenSun, interactable_object:
         dust_sprite_base.setAnimation(dust_sprite, DUST_KEY);
         const animation_key = dust_sprite_base.getAnimationKey(DUST_KEY, "spread");
         let resolve_func;
-        promises[i] = new Promise(resolve => {
-            resolve_func = resolve;
-        });
+        promises[i] = new Promise(resolve => (resolve_func = resolve));
         dust_sprite.animations.getAnimation(animation_key).onComplete.addOnce(resolve_func);
         dust_sprite.animations.play(animation_key);
     }

@@ -64,7 +64,7 @@ export abstract class FieldAbilities {
      * @param {number} direction - Current direction
      * @return {number} Non-diagonal cast direction
      */
-    get_cast_direction(direction) {
+    get_cast_direction(direction: directions) {
         return (direction % 2 ? direction + 1 : direction) % 8;
     }
 
@@ -114,14 +114,9 @@ export abstract class FieldAbilities {
         }
         let sqr_distance = Infinity;
         for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
-            let interactable_object = this.data.map.interactable_objects[i];
-            if (
-                !(
-                    this.ability_key_name in
-                    this.data.dbs.interactable_objects_db[interactable_object.key_name].psynergy_keys
-                )
-            )
-                continue;
+            const interactable_object = this.data.map.interactable_objects[i];
+            const db = this.data.dbs.interactable_objects_db[interactable_object.key_name];
+            if (!(this.ability_key_name in db.psynergy_keys)) continue;
             const item_x_px =
                 interactable_object.current_x * this.data.map.tile_width + (this.data.map.tile_width >> 1);
             const item_y_px =
@@ -133,7 +128,7 @@ export abstract class FieldAbilities {
                 y_condition &&
                 this.data.map.collision_layer === interactable_object.base_collision_layer
             ) {
-                let this_sqr_distance =
+                const this_sqr_distance =
                     Math.pow(item_x_px - this.controllable_char.sprite.x, 2) +
                     Math.pow(item_y_px - this.controllable_char.sprite.y, 2);
                 if (this_sqr_distance < sqr_distance) {
@@ -147,8 +142,8 @@ export abstract class FieldAbilities {
 
     set_target_casted() {
         if (this.target_object) {
-            const psynergy_properties = this.data.dbs.interactable_objects_db[this.target_object.key_name]
-                .psynergy_keys[this.ability_key_name];
+            const db = this.data.dbs.interactable_objects_db[this.target_object.key_name];
+            const psynergy_properties = db.psynergy_keys[this.ability_key_name];
             if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
                 if (this.target_object.psynergy_casted[this.ability_key_name]) {
                     this.target_found = false;
@@ -160,7 +155,7 @@ export abstract class FieldAbilities {
         }
     }
 
-    cast(controllable_char, caster_key_name) {
+    cast(controllable_char: ControllableChar, caster_key_name: string) {
         this.controllable_char = controllable_char;
         if (this.controllable_char.casting_psynergy) return;
         if (caster_key_name !== undefined && caster_key_name in this.data.info.main_char_list) {

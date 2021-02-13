@@ -3,7 +3,6 @@ import {MainChar} from "../MainChar";
 import {Button} from "../XGamepad";
 import {reverse_directions, ordered_elements} from "../utils";
 import * as _ from "lodash";
-import {RandomDataGenerator} from "phaser-ce";
 
 export class Debug {
     public game: Phaser.Game;

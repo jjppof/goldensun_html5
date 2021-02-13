@@ -211,14 +211,14 @@ export class GoldenSun {
 
         // Enable zoom and psynergies shortcuts for testing
 
-        const setupScale = (scaleFactor: number) => {
+        const setup_scale = (scaleFactor: number) => {
             if (this.fullscreen) return;
             this.scale_factor = scaleFactor;
             this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
             window.dispatchEvent(new Event("resize"));
         };
 
-        const quickAbility = (index: number) => {
+        const quick_ability = (index: number) => {
             if (!this.hero_movement_allowed(false)) return;
             // TODO Replace with ingame configuration
             const shortcut = this.dbs.init_db.initial_shortcuts[index];
@@ -228,15 +228,15 @@ export class GoldenSun {
         const controls = [
             {
                 button: Button.ZOOM1,
-                on_down: () => setupScale(1),
+                on_down: () => setup_scale(1),
             },
             {
                 button: Button.ZOOM2,
-                on_down: () => setupScale(2),
+                on_down: () => setup_scale(2),
             },
             {
                 button: Button.ZOOM3,
-                on_down: () => setupScale(3),
+                on_down: () => setup_scale(3),
             },
             {
                 button: Button.MUTE,
@@ -247,19 +247,19 @@ export class GoldenSun {
             },
             {
                 button: Button.PSY1,
-                on_down: () => quickAbility(0),
+                on_down: () => quick_ability(0),
             },
             {
                 button: Button.PSY2,
-                on_down: () => quickAbility(1),
+                on_down: () => quick_ability(1),
             },
             {
                 button: Button.PSY3,
-                on_down: () => quickAbility(2),
+                on_down: () => quick_ability(2),
             },
             {
                 button: Button.PSY4,
-                on_down: () => quickAbility(3),
+                on_down: () => quick_ability(3),
             },
             {
                 button: Button.VOL_UP,
