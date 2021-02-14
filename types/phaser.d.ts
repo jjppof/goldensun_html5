@@ -451,7 +451,7 @@ declare module Phaser {
         smoothed: boolean;
         textWidth: number;
         textHeight: number;
-        tint: number;
+        tint: number | number[];
         top: number;
         type: number;
         world: Phaser.Point;

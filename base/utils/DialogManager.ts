@@ -14,6 +14,7 @@ export class DialogManager {
     public data: GoldenSun;
     public parts: {
         lines: string[];
+        colors: number[][];
         width: number;
         height: number;
     }[];
@@ -144,7 +145,15 @@ export class DialogManager {
                 }
                 const padding_x = this.avatar_inside_window ? numbers.AVATAR_SIZE + 10 : undefined;
                 this.window
-                    .set_text(this.parts[step].lines, padding_x, undefined, undefined, italic_font, true)
+                    .set_text(
+                        this.parts[step].lines,
+                        padding_x,
+                        undefined,
+                        undefined,
+                        italic_font,
+                        true,
+                        this.parts[step].colors
+                    )
                     .then(() => {
                         if (step < this.parts.length - 1 || this.show_crystal) {
                             this.dialog_crystal.visible = true;
@@ -195,6 +204,13 @@ export class DialogManager {
         }
     }
 
+    private format_text(text: string) {
+        text = text.replace(/\${HERO}/g, this.data.info.main_char_list[this.data.hero.key_name].name);
+        text = text.replace(/( )?\${BREAK}( )?/g, " ${BREAK} ");
+        text = text.replace(/(?: )?(\${COLOR:(?:\w+|\/)})(?: )?/g, " $1 ");
+        return text;
+    }
+
     //Receives a text string and mount the the dialog sections that will go to each window of the dialog.
     //Optionally, also receives an initial avatar and the hero talking direction.
     //Use ${HERO} to replace by hero name. Use ${BREAK} to start a new window.
@@ -209,18 +225,21 @@ export class DialogManager {
         this.set_hero_direction(hero_direction);
         this.avatar_inside_window = avatar_inside_window ?? false;
         const max_dialog_width = custom_max_dialog_width ?? numbers.MAX_DIAG_WIN_WIDTH;
-        text = text.replace(/\${HERO}/g, this.data.info.main_char_list[this.data.hero.key_name].name);
-        text = text.replace(/( )?\${BREAK}( )?/g, " ${BREAK} ");
+        text = this.format_text(text);
         const max_efective_width = max_dialog_width - 2 * numbers.WINDOW_PADDING_H - numbers.INSIDE_BORDER_WIDTH;
-        let words = text.split(" ");
-        let windows = []; //array of lines
+        const words = text.split(" ");
+        const windows: DialogManager["parts"] = []; //array of lines
         let lines = []; //array of strings
         let line = []; //array of words
         let line_width = 0; //in px
         let max_window_width = 0;
+        let line_color = [];
+        let lines_color = [];
+        let this_color = numbers.DEFAULT_FONT_COLOR;
         const push_window = () => {
             windows.push({
                 lines: lines.slice(),
+                colors: lines_color.slice(),
                 width: max_window_width + 2 * numbers.WINDOW_PADDING_H + numbers.INSIDE_BORDER_WIDTH,
                 height:
                     numbers.WINDOW_PADDING_TOP +
@@ -231,27 +250,46 @@ export class DialogManager {
         };
         for (let i = 0; i < words.length; ++i) {
             const word = words[i];
+            const match = word.match(/\${COLOR:(?:(\w+)|(\/))}/);
+            if (match) {
+                if (match[2]) {
+                    this_color = numbers.DEFAULT_FONT_COLOR;
+                } else {
+                    this_color = parseInt(match[1], 16);
+                }
+                continue;
+            }
             line_width = utils.get_text_width(this.game, line.join(" ") + word, this.italic_font);
             if (line_width >= max_efective_width || word === "${BREAK}") {
                 //check if it's the end of the line
                 const line_text = line.join(" ");
                 lines.push(line_text);
+                for (let i = 0; i < line_text.length; ++i) {
+                    if (line_text.charAt(i) === " ") {
+                        line_color.splice(i, 0, this_color);
+                    }
+                }
+                lines_color.push(line_color);
                 max_window_width = Math.max(
                     max_window_width,
                     utils.get_text_width(this.game, line_text, this.italic_font)
                 );
                 line = [];
+                line_color = [];
                 if (word !== "${BREAK}") {
                     line.push(word);
+                    line_color.push(...new Array(word.length).fill(this_color));
                 }
                 if (lines.length === numbers.MAX_LINES_PER_DIAG_WIN || word === "${BREAK}") {
                     //check if it's the end of the window
                     push_window();
                     max_window_width = 0;
                     lines = [];
+                    lines_color = [];
                 }
             } else {
                 line.push(word);
+                line_color.push(...new Array(word.length).fill(this_color));
             }
         }
         if (line.length) {
@@ -260,7 +298,14 @@ export class DialogManager {
                 max_window_width,
                 utils.get_text_width(this.game, line.join(" "), this.italic_font)
             );
-            lines.push(line.join(" "));
+            const line_text = line.join(" ");
+            lines.push(line_text);
+            for (let i = 0; i < line_text.length; ++i) {
+                if (line_text.charAt(i) === " ") {
+                    line_color.splice(i, 0, this_color);
+                }
+            }
+            lines_color.push(line_color);
             push_window();
         }
         this.parts = windows;

@@ -63167,7 +63167,14 @@ Phaser.BitmapText.prototype.updateText = function ()
             g.position.y = (line.y + (charData.yOffset * scale)) - ay;
 
             g.scale.set(scale);
-            g.tint = this.tint;
+            if (Array.isArray(this.tint))
+            {
+                g.tint = this.tint[c];
+            }
+            else
+            {
+                g.tint = this.tint;
+            }
             g.texture.requiresReTint = true;
             g.cachedTint = 0xFFFFFF;
 

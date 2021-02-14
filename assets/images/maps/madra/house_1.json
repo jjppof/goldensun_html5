@@ -137,7 +137,7 @@
      "Name":"house_1",
      "event_01":"{\"type\": \"teleport\", \"x\": 12, \"y\": 20, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 23, \"y_target\": 20, \"advance_effect\": false, \"dest_collision_layer\": 0, \"activation_collision_layers\": [0]}",
      "event_02":"{\"type\": \"teleport\", \"x\": 13, \"y\": 20, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 23, \"y_target\": 20, \"advance_effect\": false, \"dest_collision_layer\": 0, \"activation_collision_layers\": [0]}",
-     "npc_01":"{\n    \"key_name\": \"village_1\",\n    \"initial_x\": 15,\n    \"initial_y\": 10,\n    \"npc_type\": \"normal\",\n    \"movement_type\": \"idle\",\n    \"message\": \"There are two extra Madra maps: one in the west side and the other one in the east side of the main Madra map. You can also try to reach Snowland by exitting Madra and getting into a cave in World Map.${BREAK}Good Luck!\",\n    \"thought_message\": \"Nothing to think about.\",\n    \"avatar\": \"\",\n    \"base_collision_layer\": 0\n}"
+     "npc_01":"{\n    \"key_name\": \"village_1\",\n    \"initial_x\": 15,\n    \"initial_y\": 10,\n    \"npc_type\": \"normal\",\n    \"movement_type\": \"idle\",\n    \"message\": \"There are two extra Madra maps: ${COLOR:0xe070b0}one in the west side and the other one in the east side of the main Madra map.${COLOR:\/} You can also try to reach Snowland by exitting Madra and getting into a cave in World Map.${BREAK}Good Luck!\",\n    \"thought_message\": \"Nothing to think about.\",\n    \"avatar\": \"\",\n    \"base_collision_layer\": 0\n}"
     },
  "propertytypes":
     {

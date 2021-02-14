@@ -563,7 +563,8 @@ export class Window {
         padding_y?: number,
         space_between_lines?: number,
         italic = false,
-        animate = false
+        animate = false,
+        colors?: number | number[][]
     ) {
         for (let i = 0; i < this.lines_sprites.length; ++i) {
             this.lines_sprites[i].text.destroy();
@@ -598,7 +599,7 @@ export class Window {
             y_pos += numbers.FONT_SIZE + (space_between_lines ?? numbers.SPACE_BETWEEN_LINES);
 
             this.remove_smooth(text_sprite);
-            text_sprite.tint = this.font_color;
+            text_sprite.tint = colors !== undefined ? colors[i] : this.font_color;
             this.remove_smooth(text_sprite_shadow);
             text_sprite_shadow.tint = 0x0;
 
