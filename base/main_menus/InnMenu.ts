@@ -83,8 +83,8 @@ export class InnMenu {
                     no: this.inn_cancel.bind(this),
                 },
                 {
-                    x: this.dialog_manager.window.width / 2 - this.choice_menu.menu.title_window_width / 2 - 2,
-                    y: this.dialog_manager.parts[0].height + 4,
+                    x: this.dialog_manager.current_width / 2 - this.choice_menu.menu.title_window_width / 2 - 2,
+                    y: this.dialog_manager.current_height + 4,
                 }
             );
         };

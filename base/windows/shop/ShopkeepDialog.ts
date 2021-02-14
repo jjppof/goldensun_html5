@@ -1,6 +1,5 @@
 import {DialogManager} from "../../utils/DialogManager";
 import {GoldenSun} from "../../GoldenSun";
-import {ShopMenu} from "../../main_menus/ShopMenu";
 import * as _ from "lodash";
 
 const FRAME_SIZE = 36;

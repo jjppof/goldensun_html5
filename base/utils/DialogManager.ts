@@ -3,6 +3,7 @@ import * as numbers from "../magic_numbers";
 import {SpriteBase} from "../SpriteBase";
 import * as utils from "../utils";
 import {Window} from "../Window";
+import * as _ from "lodash";
 
 const DIALOG_CRYSTAL_KEY = "dialog_crystal";
 
@@ -10,27 +11,27 @@ const DIALOG_CRYSTAL_KEY = "dialog_crystal";
 //To set a dialog, call the DialogManager.set_dialog function and pass the entire dialog text.
 //To advance the dialog (call next window), call the DialogManager.next function.
 export class DialogManager {
-    public game: Phaser.Game;
-    public data: GoldenSun;
-    public parts: {
+    private game: Phaser.Game;
+    private data: GoldenSun;
+    private parts: {
         lines: string[];
         colors: number[][];
         width: number;
         height: number;
     }[];
-    public step: number;
-    public finished: boolean;
-    public avatar: string;
-    public window: Window;
-    public avatar_window: Window;
-    public italic_font: boolean;
-    public hero_direction: utils.directions;
-    public dialog_crystal_sprite_base: SpriteBase;
-    public dialog_crystal: Phaser.Sprite;
-    public dialog_crystal_anim_key: string;
-    public dialog_crystal_tween: Phaser.Tween;
-    public show_crystal: boolean;
-    public avatar_inside_window: boolean;
+    private step: number;
+    private finished: boolean;
+    private avatar: string;
+    private window: Window;
+    private avatar_window: Window;
+    private italic_font: boolean;
+    private hero_direction: utils.directions;
+    private dialog_crystal_sprite_base: SpriteBase;
+    private dialog_crystal: Phaser.Sprite;
+    private dialog_crystal_anim_key: string;
+    private dialog_crystal_tween: Phaser.Tween;
+    private show_crystal: boolean;
+    private avatar_inside_window: boolean;
 
     constructor(game, data, italic_font = true) {
         this.game = game;
@@ -47,25 +48,47 @@ export class DialogManager {
         this.hero_direction = utils.directions.down;
 
         this.dialog_crystal_sprite_base = this.data.info.misc_sprite_base_list[DIALOG_CRYSTAL_KEY];
+        this.show_crystal = false;
+    }
+
+    get current_width() {
+        if (this.window) {
+            return this.window.width;
+        }
+        return null;
+    }
+
+    get current_height() {
+        if (this.window) {
+            return this.window.height;
+        }
+        return null;
+    }
+
+    get is_finished() {
+        return this.finished;
+    }
+
+    private set_dialog_crystal() {
         const sprite_key = this.dialog_crystal_sprite_base.getSpriteKey(DIALOG_CRYSTAL_KEY);
         this.dialog_crystal = this.game.add.sprite(0, 0, sprite_key);
         this.dialog_crystal_sprite_base.setAnimation(this.dialog_crystal, DIALOG_CRYSTAL_KEY);
         this.dialog_crystal_anim_key = this.dialog_crystal_sprite_base.getAnimationKey(DIALOG_CRYSTAL_KEY, "rotate");
-
         this.dialog_crystal.visible = false;
         this.dialog_crystal_tween = null;
-        this.show_crystal = false;
     }
 
     update_position() {
-        if (this.avatar) {
+        if (this.avatar && this.avatar_window) {
             this.avatar_window.update(true);
         }
-        this.window.update(true);
+        if (this.window) {
+            this.window.update(true);
+        }
     }
 
     //Internal method. Try to calculate the position of the dialog window
-    get_dialog_window_position(width, height) {
+    private get_dialog_window_position(width: number, height: number) {
         const x = (numbers.GAME_WIDTH - width) >> 1;
         let y = (numbers.MAX_DIAG_WIN_HEIGHT - height) >> 1;
         if (![utils.directions.up, utils.directions.up_left, utils.directions.up_right].includes(this.hero_direction)) {
@@ -75,7 +98,7 @@ export class DialogManager {
     }
 
     //Internal method. Try to calculate the position of the avatar window
-    get_avatar_position(win_pos) {
+    private get_avatar_position(win_pos: {x?: number; y?: number}) {
         const x = ((this.parts[this.step].width >> 2) + win_pos.x) | 0;
         let y;
         if (win_pos.y >= numbers.GAME_HEIGHT >> 1) {
@@ -86,20 +109,15 @@ export class DialogManager {
         return {x: x, y: y};
     }
 
-    //set current avatar key name
-    set_avatar(avatar) {
-        this.avatar = avatar;
-    }
-
     //set current hero direction
-    set_hero_direction(hero_direction: utils.directions) {
+    private set_hero_direction(hero_direction: utils.directions) {
         if (hero_direction !== undefined) {
             this.hero_direction = hero_direction;
         }
     }
 
     //Calls the next dialog window. If the dialog is finished, this function passes true to the callback.
-    next(callback, custom_pos?, custom_avatar_pos?) {
+    next(callback, custom_pos?: {x?: number; y?: number}, custom_avatar_pos?: {x?: number; y?: number}) {
         if (this.avatar_window) {
             this.avatar_window.destroy(false);
             this.avatar_window = null;
@@ -107,8 +125,14 @@ export class DialogManager {
         if (this.step >= this.parts.length) {
             //finishes the dialog
             this.finished = true;
-            this.window.destroy(true, callback.bind(this, this.finished));
+            this.window.destroy(true, () => {
+                this.window = null;
+                if (callback) {
+                    callback(this.finished);
+                }
+            });
             this.dialog_crystal.destroy();
+            this.dialog_crystal = null;
             return;
         }
         if (this.window) {
@@ -120,7 +144,7 @@ export class DialogManager {
         ++this.step;
     }
 
-    mount_window(callback, custom_pos, custom_avatar_pos) {
+    private mount_window(callback, custom_pos: {x?: number; y?: number}, custom_avatar_pos: {x?: number; y?: number}) {
         this.dialog_crystal.visible = false;
         let width = this.parts[this.step].width;
         let height = this.parts[this.step].height;
@@ -130,11 +154,11 @@ export class DialogManager {
                 height = numbers.AVATAR_SIZE + 4;
             }
         }
-        let win_pos = this.get_dialog_window_position(width, height);
-        if (custom_pos && custom_pos.x !== undefined) {
+        const win_pos = this.get_dialog_window_position(width, height);
+        if (custom_pos?.x !== undefined) {
             win_pos.x = custom_pos.x;
         }
-        if (custom_pos && custom_pos.y !== undefined) {
+        if (custom_pos?.y !== undefined) {
             win_pos.y = custom_pos.y;
         }
         this.window = new Window(this.game, win_pos.x, win_pos.y, width, height, false);
@@ -208,12 +232,21 @@ export class DialogManager {
         text = text.replace(/\${HERO}/g, this.data.info.main_char_list[this.data.hero.key_name].name);
         text = text.replace(/( )?\${BREAK}( )?/g, " ${BREAK} ");
         text = text.replace(/(?: )?(\${COLOR:(?:\w+|\/)})(?: )?/g, " $1 ");
+        let storage_match = /(?: )?\${STORAGE:(\w+)}(?: )?/g.exec(text);
+        while (storage_match !== null) {
+            const storage_key = storage_match[1];
+            const re = new RegExp(`( )?\\\${STORAGE:${_.escapeRegExp(storage_key)}}( )?`, "g");
+            text = text.replace(re, `$1${this.data.storage.get(storage_key)}$2`);
+            storage_match = /(?: )?\${STORAGE:(\w+)}(?: )?/g.exec(text);
+        }
         return text;
     }
 
     //Receives a text string and mount the the dialog sections that will go to each window of the dialog.
     //Optionally, also receives an initial avatar and the hero talking direction.
     //Use ${HERO} to replace by hero name. Use ${BREAK} to start a new window.
+    //Use ${STORAGE:storage_key} to replace by by a storage value with the given key.
+    //Place your text between ${COLOR:hex_value} and ${COLOR:/} to change it color.
     set_dialog(
         text: string,
         avatar?: string,
@@ -221,11 +254,14 @@ export class DialogManager {
         avatar_inside_window?: boolean,
         custom_max_dialog_width?: number
     ) {
-        this.set_avatar(avatar);
+        this.avatar = avatar;
         this.set_hero_direction(hero_direction);
         this.avatar_inside_window = avatar_inside_window ?? false;
-        const max_dialog_width = custom_max_dialog_width ?? numbers.MAX_DIAG_WIN_WIDTH;
+        if (!this.dialog_crystal) {
+            this.set_dialog_crystal();
+        }
         text = this.format_text(text);
+        const max_dialog_width = custom_max_dialog_width ?? numbers.MAX_DIAG_WIN_WIDTH;
         const max_efective_width = max_dialog_width - 2 * numbers.WINDOW_PADDING_H - numbers.INSIDE_BORDER_WIDTH;
         const words = text.split(" ");
         const windows: DialogManager["parts"] = []; //array of lines
@@ -248,6 +284,17 @@ export class DialogManager {
                     numbers.SPACE_BETWEEN_LINES,
             });
         };
+        const push_line = () => {
+            const line_text = line.join(" ");
+            lines.push(line_text);
+            for (let i = 0; i < line_text.length; ++i) {
+                if (line_text.charAt(i) === " ") {
+                    line_color.splice(i, 0, 0x0);
+                }
+            }
+            lines_color.push(line_color);
+            max_window_width = Math.max(max_window_width, utils.get_text_width(this.game, line_text, this.italic_font));
+        };
         for (let i = 0; i < words.length; ++i) {
             const word = words[i];
             const match = word.match(/\${COLOR:(?:(\w+)|(\/))}/);
@@ -262,18 +309,7 @@ export class DialogManager {
             line_width = utils.get_text_width(this.game, line.join(" ") + word, this.italic_font);
             if (line_width >= max_efective_width || word === "${BREAK}") {
                 //check if it's the end of the line
-                const line_text = line.join(" ");
-                lines.push(line_text);
-                for (let i = 0; i < line_text.length; ++i) {
-                    if (line_text.charAt(i) === " ") {
-                        line_color.splice(i, 0, this_color);
-                    }
-                }
-                lines_color.push(line_color);
-                max_window_width = Math.max(
-                    max_window_width,
-                    utils.get_text_width(this.game, line_text, this.italic_font)
-                );
+                push_line();
                 line = [];
                 line_color = [];
                 if (word !== "${BREAK}") {
@@ -294,25 +330,22 @@ export class DialogManager {
         }
         if (line.length) {
             //deal with the last window that does not have 3 lines
-            max_window_width = Math.max(
-                max_window_width,
-                utils.get_text_width(this.game, line.join(" "), this.italic_font)
-            );
-            const line_text = line.join(" ");
-            lines.push(line_text);
-            for (let i = 0; i < line_text.length; ++i) {
-                if (line_text.charAt(i) === " ") {
-                    line_color.splice(i, 0, this_color);
-                }
-            }
-            lines_color.push(line_color);
+            push_line();
             push_window();
         }
         this.parts = windows;
     }
 
     //Calls a window and let it open till you call quick_next again or call kill_dialog. Is expected that text fits in one window.
-    quick_next(text, callback, avatar, hero_direction, custom_pos, custom_avatar_pos, show_crystal = false) {
+    quick_next(
+        text: string,
+        callback: Function,
+        avatar: string,
+        hero_direction: utils.directions,
+        custom_pos: {x?: number; y?: number},
+        custom_avatar_pos: {x?: number; y?: number},
+        show_crystal = false
+    ) {
         this.parts = null;
         this.step = 0;
         if (this.window) {
@@ -329,15 +362,22 @@ export class DialogManager {
     }
 
     kill_dialog(callback, dialog_only = false, destroy_crystal = false) {
-        if (!dialog_only) {
-            if (this.avatar_window) {
-                this.avatar_window.destroy(false);
-            }
+        if (!dialog_only && this.avatar_window) {
+            this.avatar_window.destroy(false);
+            this.avatar_window = null;
         }
         if (this.window) {
             this.finished = true;
-            this.window.destroy(true, callback);
-            if (destroy_crystal) this.dialog_crystal.destroy();
+            this.window.destroy(true, () => {
+                this.window = null;
+                if (callback) {
+                    callback();
+                }
+            });
+            if (destroy_crystal && this.dialog_crystal) {
+                this.dialog_crystal.destroy();
+                this.dialog_crystal = null;
+            }
         }
     }
 }

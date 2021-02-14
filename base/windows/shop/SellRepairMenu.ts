@@ -99,10 +99,11 @@ export class SellRepairMenu {
             );
         };
 
-        if (this.npc_dialog.dialog_manager.window.open) {
-            this.npc_dialog.dialog_manager.dialog_crystal.visible = false;
-            this.npc_dialog.dialog_manager.window.close(exec);
-        } else exec();
+        if (!this.npc_dialog.dialog_manager.is_finished) {
+            this.npc_dialog.dialog_manager.kill_dialog(exec, false, true);
+        } else {
+            exec();
+        }
     }
 
     on_repair_item_select() {
