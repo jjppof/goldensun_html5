@@ -45,8 +45,8 @@ export class MoveFieldPsynergy extends FieldAbilities {
     update() {}
 
     set_controls() {
-        const turn_then_fire_push = direction => {
-            this.controllable_char.trying_to_push_direction = direction;
+        const turn_then_fire_push = (direction: directions) => {
+            this.controllable_char.set_trying_to_push_direction(direction);
             this.fire_push();
         };
 

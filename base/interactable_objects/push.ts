@@ -19,8 +19,6 @@ export function normal_push(game: Phaser.Game, data: GoldenSun, interactable_obj
     ) {
         fire_push_movement(game, data, interactable_object);
     }
-    data.hero.trying_to_push = false;
-    data.hero.push_timer = null;
 }
 
 export function target_only_push(
@@ -72,8 +70,8 @@ export function fire_push_movement(
         if (!target_only) {
             data.hero.pushing = true;
             data.audio.play_se("actions/push");
-            data.hero.current_action = base_actions.PUSH;
-            data.hero.set_action();
+            data.hero.force_action(base_actions.PUSH);
+            data.hero.play_current_action();
         } else {
             data.audio.play_se("menu/positive_4");
         }
@@ -174,7 +172,7 @@ export function fire_push_movement(
                                 .onComplete.addOnce(() => {
                                     data.audio.play_se("misc/rock_drop");
                                     if (drop_tile.dust_animation) {
-                                        data.hero.current_action = base_actions.IDLE;
+                                        data.hero.force_action(base_actions.IDLE);
                                         data.hero.play(
                                             data.hero.current_action,
                                             reverse_directions[data.hero.current_direction]

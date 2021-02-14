@@ -34,14 +34,14 @@ export class SpeedEvent extends TileEvent {
     unset() {
         if (this.data.tile_event_manager.event_triggered(this) && !this.check_position()) {
             this.data.tile_event_manager.unset_triggered_event(this);
-            this.data.hero.extra_speed -= this.speed;
+            this.data.hero.increase_extra_speed(-this.speed);
         }
     }
 
     fire() {
         if (!this.data.tile_event_manager.event_triggered(this)) {
             this.data.tile_event_manager.set_triggered_event(this);
-            this.data.hero.extra_speed += this.speed;
+            this.data.hero.increase_extra_speed(this.speed);
         }
     }
 }

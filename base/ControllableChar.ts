@@ -20,17 +20,22 @@ export abstract class ControllableChar {
         y: ControllableChar.DEFAULT_SPRITE_ANCHOR_Y,
     };
 
-    public game: Phaser.Game;
-    public data: GoldenSun;
-    public key_name: string;
-    public x_speed: number;
-    public y_speed: number;
-    public extra_speed: number;
-    public walk_speed: number;
-    public dash_speed: number;
-    public climb_speed: number;
+    protected game: Phaser.Game;
+    protected data: GoldenSun;
+    private _key_name: string;
+
+    /* properties the controls the movement speed */
+    protected _x_speed: number;
+    protected _y_speed: number;
+    private _extra_speed: number;
+    private walk_speed: number;
+    private dash_speed: number;
+    private climb_speed: number;
+    protected temp_velocity_x: number;
+    protected temp_velocity_y: number;
+
+    /* char states */
     public stop_by_colliding: boolean;
-    public colliding_directions: directions[];
     public force_direction: boolean;
     public dashing: boolean;
     public climbing: boolean;
@@ -43,43 +48,50 @@ export abstract class ControllableChar {
     public idle_climbing: boolean;
     public ice_sliding_active: boolean;
     public sliding_on_ice: boolean;
-    public storage_keys: {
+    public trying_to_push: boolean;
+
+    protected storage_keys: {
         position?: string;
         action?: string;
         direction?: string;
         active?: string;
     };
-    public sprite_info: SpriteBase;
+    protected _sprite_info: SpriteBase;
     public sprite: Phaser.Sprite;
     public shadow: Phaser.Sprite;
-    public body_radius: number;
-    public tile_x_pos: number;
-    public tile_y_pos: number;
-    public current_action: string | base_actions;
-    public current_animation: string;
-    public temp_velocity_x: number;
-    public temp_velocity_y: number;
+    protected _body_radius: number;
+    private _tile_x_pos: number;
+    private _tile_y_pos: number;
+
+    protected _current_action: string | base_actions;
+    protected _current_animation: string;
 
     /* The direction that the hero is moving. */
-    public current_direction: number;
+    protected _current_direction: number;
 
     /* The direction determined by the input. */
-    public required_direction: number;
+    protected _required_direction: number;
 
     /* When changing directions, the char smoothly changes to the target direction. This var holds the intermediate directions. */
-    public transition_direction: number;
+    protected _transition_direction: number;
 
-    public ice_slide_direction: number;
-    public color_filter: Phaser.Filter;
+    /* The direction of the ice sliding movement that can be different of hero direction. */
+    protected _ice_slide_direction: number;
+
+    /* The direction that the hero is trying to push an interactable object */
+    protected _trying_to_push_direction: number;
+
+    /* misc char states */
     public enable_footsteps: boolean;
-    public footsteps: Footsteps;
-    public trying_to_push: boolean;
-    public trying_to_push_direction: number;
-    public push_timer: Phaser.TimerEvent;
     public crop_texture: boolean;
     public shadow_following: boolean;
-    public look_target: ControllableChar = null;
-    public active: boolean;
+
+    private _color_filter: Phaser.Filter;
+    protected push_timer: Phaser.TimerEvent;
+    private _footsteps: Footsteps;
+    private look_target: ControllableChar = null;
+    protected _active: boolean;
+    protected colliding_directions: directions[];
 
     constructor(
         game: Phaser.Game,
@@ -98,10 +110,10 @@ export abstract class ControllableChar {
     ) {
         this.game = game;
         this.data = data;
-        this.key_name = key_name;
-        this.x_speed = 0;
-        this.y_speed = 0;
-        this.extra_speed = 0;
+        this._key_name = key_name;
+        this._x_speed = 0;
+        this._y_speed = 0;
+        this._extra_speed = 0;
         this.walk_speed = walk_speed;
         this.dash_speed = dash_speed;
         this.climb_speed = climb_speed;
@@ -119,41 +131,102 @@ export abstract class ControllableChar {
         this.idle_climbing = false;
         this.ice_sliding_active = false;
         this.sliding_on_ice = false;
-        this.sprite_info = null;
+        this._sprite_info = null;
         this.sprite = null;
         this.shadow = null;
-        this.body_radius = 0;
+        this._body_radius = 0;
         this.storage_keys = storage_keys === undefined ? {} : storage_keys;
-        this.active = active ?? true;
+        this._active = active ?? true;
         if (this.storage_keys.active !== undefined) {
-            this.active = this.data.storage.get(this.storage_keys.active);
+            this._active = this.data.storage.get(this.storage_keys.active);
         }
         if (this.storage_keys.position !== undefined) {
             const position = this.data.storage.get(this.storage_keys.position);
             initial_x = position.x;
             initial_y = position.y;
         }
-        this.tile_x_pos = initial_x;
-        this.tile_y_pos = initial_y;
-        this.current_action =
+        this._tile_x_pos = initial_x;
+        this._tile_y_pos = initial_y;
+        this._current_action =
             this.storage_keys.action !== undefined ? this.data.storage.get(this.storage_keys.action) : initial_action;
         initial_direction =
             this.storage_keys.direction !== undefined
                 ? this.data.storage.get(this.storage_keys.direction)
                 : initial_direction;
-        this.current_direction = initial_direction in directions ? directions[initial_direction] : null;
-        this.current_animation = initial_direction;
-        this.required_direction = null;
-        this.transition_direction = this.current_direction;
-        this.ice_slide_direction = null;
-        this.color_filter = this.game.add.filter("ColorFilters");
+        this._current_direction = initial_direction in directions ? directions[initial_direction] : null;
+        this._current_animation = initial_direction;
+        this._required_direction = null;
+        this._transition_direction = this.current_direction;
+        this._ice_slide_direction = null;
+        this._color_filter = this.game.add.filter("ColorFilters");
         this.trying_to_push = false;
-        this.trying_to_push_direction = null;
+        this._trying_to_push_direction = null;
         this.push_timer = null;
         this.enable_footsteps = enable_footsteps === undefined ? false : enable_footsteps;
-        this.footsteps = new Footsteps(this.game, this.data);
+        this._footsteps = new Footsteps(this.game, this.data);
         this.crop_texture = false;
         this.shadow_following = true;
+    }
+
+    get key_name() {
+        return this._key_name;
+    }
+
+    get tile_x_pos() {
+        return this._tile_x_pos;
+    }
+    get tile_y_pos() {
+        return this._tile_y_pos;
+    }
+
+    get body_radius() {
+        return this._body_radius;
+    }
+    get active() {
+        return this._active;
+    }
+
+    get current_direction() {
+        return this._current_direction;
+    }
+    get required_direction() {
+        return this._required_direction;
+    }
+    get transition_direction() {
+        return this._transition_direction;
+    }
+    get ice_slide_direction() {
+        return this._ice_slide_direction;
+    }
+    get trying_to_push_direction() {
+        return this._trying_to_push_direction;
+    }
+
+    get sprite_info() {
+        return this._sprite_info;
+    }
+    get color_filter() {
+        return this._color_filter;
+    }
+    get footsteps() {
+        return this._footsteps;
+    }
+
+    get x_speed() {
+        return this._x_speed;
+    }
+    get y_speed() {
+        return this._y_speed;
+    }
+    get extra_speed() {
+        return this._extra_speed;
+    }
+
+    get current_action() {
+        return this._current_action;
+    }
+    get current_animation() {
+        return this._current_animation;
     }
 
     in_action(allow_climbing: boolean = false) {
@@ -180,7 +253,7 @@ export abstract class ControllableChar {
     ) {
         anchor_x = anchor_x ?? ControllableChar.default_anchor.x;
         anchor_y = anchor_y ?? ControllableChar.default_anchor.y;
-        this.sprite_info = sprite_info;
+        this._sprite_info = sprite_info;
         const sprite_key = this.sprite_info.getSpriteKey(this.current_action);
         this.sprite = group.create(0, 0, sprite_key);
         if (!this.active) {
@@ -204,7 +277,7 @@ export abstract class ControllableChar {
         this.sprite.scale.setTo(scale_x, scale_y);
     }
 
-    reset_anchor(property?: "x" | "y") {
+    protected reset_anchor(property?: "x" | "y") {
         if (property !== undefined && ["x", "y"].includes(property)) {
             this.sprite.anchor[property] = ControllableChar.default_anchor[property];
         } else {
@@ -250,7 +323,7 @@ export abstract class ControllableChar {
         }
     }
 
-    look_to_target() {
+    private look_to_target() {
         if (!this.look_target) return;
         const x = this.look_target.sprite.x - this.sprite.x;
         const y = this.look_target.sprite.y - this.sprite.y;
@@ -290,17 +363,17 @@ export abstract class ControllableChar {
         return animation_obj;
     }
 
-    choose_direction_by_speed() {
+    private choose_direction_by_speed() {
         if (this.x_speed === 0 && this.y_speed === 0) {
-            this.required_direction = null;
+            this._required_direction = null;
             return;
         }
         const angle = range_360(Math.atan2(this.y_speed, this.x_speed));
-        this.required_direction = (1 + Math.floor((angle - numbers.degree45_half) / numbers.degree45)) & 7;
-        this.transition_direction = this.required_direction;
+        this._required_direction = (1 + Math.floor((angle - numbers.degree45_half) / numbers.degree45)) & 7;
+        this._transition_direction = this.required_direction;
     }
 
-    async go_to_direction(direction: number, time_between_frames: number = 40) {
+    async face_direction(direction: number, time_between_frames: number = 40) {
         let transition_resolve;
         const transition_promise = new Promise(resolve => (transition_resolve = resolve));
         const timer_function = next_direction => {
@@ -340,9 +413,9 @@ export abstract class ControllableChar {
         this.update_tile_position();
         this.choose_direction_by_speed();
         this.set_direction(this.transition_direction, false, false);
-        this.set_current_action();
+        this.choose_action_based_on_char_state();
         this.calculate_speed();
-        this.set_action();
+        this.play_current_action();
         this.apply_speed();
         this.update_shadow();
     }
@@ -370,7 +443,7 @@ export abstract class ControllableChar {
         }
     }
 
-    set_half_crop_mask(crop: boolean, force: boolean = false) {
+    private set_half_crop_mask(crop: boolean, force: boolean = false) {
         if (crop && (!this.crop_texture || force)) {
             this.sprite.mask.clear();
             this.sprite.mask.beginFill(0xffffff, 1);
@@ -388,7 +461,7 @@ export abstract class ControllableChar {
         }
     }
 
-    check_half_crop_tile(force: boolean = false) {
+    private check_half_crop_tile(force: boolean = false) {
         const tiles = this.data.map.get_current_tile(this) as Phaser.Tile[];
         for (let i = 0; i < tiles.length; ++i) {
             const tile = tiles[i];
@@ -417,29 +490,41 @@ export abstract class ControllableChar {
     abstract toggle_active(active: boolean): void;
 
     stop_char(change_sprite: boolean = true) {
-        this.x_speed = this.y_speed = 0;
+        this._x_speed = this._y_speed = 0;
         this.choose_direction_by_speed();
         if (this.sprite.body) {
             this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         }
         if (change_sprite) {
-            this.current_action = base_actions.IDLE;
-            this.set_action();
+            this._current_action = base_actions.IDLE;
+            this.play_current_action();
         }
     }
 
-    set_direction(direction: number, force_change: boolean = false, transition_also: boolean = true) {
-        this.current_direction = direction;
+    set_direction(direction: directions, force_change: boolean = false, transition_also: boolean = true) {
+        this._current_direction = direction;
         if (transition_also) {
-            this.transition_direction = direction;
+            this._transition_direction = direction;
         }
-        this.current_animation = reverse_directions[this.current_direction];
+        this._current_animation = reverse_directions[this.current_direction];
         if (force_change) {
-            this.set_action();
+            this.play_current_action();
         }
     }
 
-    set_action(check_on_event: boolean = false) {
+    set_ice_slide_direction(direction: directions) {
+        this._ice_slide_direction = direction;
+    }
+
+    set_trying_to_push_direction(direction: directions) {
+        this._trying_to_push_direction = direction;
+    }
+
+    force_action(action: base_actions) {
+        this._current_action = action;
+    }
+
+    play_current_action(check_on_event: boolean = false) {
         if (check_on_event && this.data.tile_event_manager.on_event) {
             return;
         }
@@ -462,7 +547,7 @@ export abstract class ControllableChar {
         this.play(action, animation, true, frame_rate);
     }
 
-    tile_able_to_show_footprint() {
+    private tile_able_to_show_footprint() {
         const tiles = this.data.map.get_current_tile(this) as Phaser.Tile[];
         for (let i = 0; i < tiles.length; ++i) {
             const tile = tiles[i];
@@ -476,21 +561,21 @@ export abstract class ControllableChar {
         return true;
     }
 
-    set_current_action(check_on_event: boolean = false) {
+    protected choose_action_based_on_char_state(check_on_event: boolean = false) {
         if (check_on_event && this.data.tile_event_manager.on_event) return;
         if (this.required_direction === null && this.current_action !== base_actions.IDLE && !this.climbing) {
-            this.current_action = base_actions.IDLE;
+            this._current_action = base_actions.IDLE;
         } else if (this.required_direction !== null && !this.climbing && !this.pushing) {
             this.check_footsteps();
             if (this.dashing && this.current_action !== base_actions.DASH) {
-                this.current_action = base_actions.DASH;
+                this._current_action = base_actions.DASH;
             } else if (!this.dashing && this.current_action !== base_actions.WALK) {
-                this.current_action = base_actions.WALK;
+                this._current_action = base_actions.WALK;
             }
         }
     }
 
-    check_footsteps() {
+    private check_footsteps() {
         const footsteps =
             this.enable_footsteps &&
             !this.ice_sliding_active &&
@@ -502,11 +587,15 @@ export abstract class ControllableChar {
     }
 
     update_tile_position() {
-        this.tile_x_pos = (this.sprite.x / this.data.map.tile_width) | 0;
-        this.tile_y_pos = (this.sprite.y / this.data.map.tile_height) | 0;
+        this._tile_x_pos = (this.sprite.x / this.data.map.tile_width) | 0;
+        this._tile_y_pos = (this.sprite.y / this.data.map.tile_height) | 0;
     }
 
-    calculate_speed() {
+    increase_extra_speed(delta_value: number) {
+        this._extra_speed += delta_value;
+    }
+
+    protected calculate_speed() {
         //when setting temp_velocity_x or temp_velocity_y, it means that these velocities will still be analyzed in collision_dealer function
         const delta_time = this.game.time.elapsedMS / numbers.DELTA_TIME_FACTOR;
         const apply_speed = (speed_factor: number) => {
@@ -536,7 +625,7 @@ export abstract class ControllableChar {
         }
     }
 
-    apply_speed() {
+    protected apply_speed() {
         if (
             [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action as base_actions) ||
             (this.sliding_on_ice && this.ice_sliding_active)
@@ -547,10 +636,12 @@ export abstract class ControllableChar {
         }
     }
 
-    set_speed(x_speed: number, y_speed: number) {
-        this.x_speed = x_speed ?? this.x_speed;
-        this.y_speed = y_speed ?? this.y_speed;
+    set_speed(x_speed: number, y_speed: number, apply_speed: boolean = true) {
+        this._x_speed = x_speed ?? this.x_speed;
+        this._y_speed = y_speed ?? this.y_speed;
         this.calculate_speed();
-        this.apply_speed();
+        if (apply_speed) {
+            this.apply_speed();
+        }
     }
 }

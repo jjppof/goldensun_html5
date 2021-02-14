@@ -104,7 +104,7 @@ export class GameEventManager {
         }
     }
 
-    async set_npc_event(npc) {
+    async set_npc_event(npc: NPC) {
         switch (npc.npc_type) {
             case npc_types.NORMAL:
             case npc_types.SPRITE:
@@ -148,7 +148,7 @@ export class GameEventManager {
     async handle_npc_interaction_end(npc: NPC, previous_npc_direction: directions) {
         --this.events_running_count;
         if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
-            await npc.go_to_direction(previous_npc_direction);
+            await npc.face_direction(previous_npc_direction);
         }
         this.control_enable = true;
     }
@@ -166,8 +166,8 @@ export class GameEventManager {
             interaction_pattern,
             npc.body_radius
         );
-        const hero_promise = this.data.hero.go_to_direction(interaction_directions.hero_direction);
-        const npc_promise = npc.go_to_direction(interaction_directions.target_direction);
+        const hero_promise = this.data.hero.face_direction(interaction_directions.hero_direction);
+        const npc_promise = npc.face_direction(interaction_directions.target_direction);
         await Promise.all([hero_promise, npc_promise]);
     }
 

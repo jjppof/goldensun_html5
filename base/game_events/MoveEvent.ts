@@ -106,8 +106,7 @@ export class MoveEvent extends GameEvent {
             follow_resolve();
         }
         await follow_promise;
-        this.char.x_speed = direction.x;
-        this.char.y_speed = direction.y;
+        this.char.set_speed(direction.x, direction.y, false);
         const sqr = x => x * x;
         const minimal_distance_sqr = sqr(this.minimal_distance ?? MoveEvent.MINIMAL_DISTANCE);
         if (!this.is_npc) {

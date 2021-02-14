@@ -48,7 +48,7 @@ export class DialogEvent extends GameEvent {
             this.control_enable = true;
             if (finished) {
                 if (this.origin_npc && this.npc_hero_reciprocal_look && this.reset_reciprocal_look) {
-                    await this.origin_npc.go_to_direction(this.previous_npc_direction);
+                    await this.origin_npc.face_direction(this.previous_npc_direction);
                 }
                 this.running = false;
                 --this.data.game_event_manager.events_running_count;

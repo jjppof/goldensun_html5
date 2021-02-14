@@ -50,7 +50,7 @@ export class IceSlideEvent extends TileEvent {
             if (!this.data.hero.ice_sliding_active && direction === this.start_sliding_direction) {
                 this.data.hero.ice_sliding_active = true;
                 this.data.hero.dashing = false;
-                this.data.hero.ice_slide_direction = this.start_sliding_direction;
+                this.data.hero.set_ice_slide_direction(this.start_sliding_direction);
                 this.data.hero.set_speed_factors(false, this.start_sliding_direction);
             } else if (
                 this.data.hero.ice_sliding_active &&
@@ -64,7 +64,7 @@ export class IceSlideEvent extends TileEvent {
             this.ready_to_deactive = false;
             this.data.hero.ice_sliding_active = false;
             this.data.hero.sliding_on_ice = false;
-            this.data.hero.ice_slide_direction = null;
+            this.data.hero.set_ice_slide_direction(null);
         }
     }
 }

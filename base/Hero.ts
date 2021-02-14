@@ -88,13 +88,13 @@ export class Hero extends ControllableChar {
         );
     }
 
-    check_control_inputs() {
+    private check_control_inputs() {
         const arrow_inputs =
             (1 * +this.data.gamepad.is_down(Button.RIGHT)) |
             (2 * +this.data.gamepad.is_down(Button.LEFT)) |
             (4 * +this.data.gamepad.is_down(Button.UP)) |
             (8 * +this.data.gamepad.is_down(Button.DOWN));
-        this.required_direction = Hero.ROTATION_KEY[arrow_inputs];
+        this._required_direction = Hero.ROTATION_KEY[arrow_inputs];
 
         if (!this.ice_sliding_active) {
             let stick_dashing = false;
@@ -109,7 +109,7 @@ export class Hero extends ControllableChar {
         desired_direction = desired_direction === undefined ? this.required_direction : desired_direction;
         if (this.climbing) {
             if (desired_direction === null) {
-                this.x_speed = this.y_speed = 0;
+                this._x_speed = this._y_speed = 0;
                 this.idle_climbing = true;
             } else {
                 if ((desired_direction & 1) === 1) {
@@ -118,8 +118,8 @@ export class Hero extends ControllableChar {
                 }
                 this.set_direction(desired_direction);
                 this.idle_climbing = false;
-                this.x_speed = Hero.SPEEDS[desired_direction].x;
-                this.y_speed = Hero.SPEEDS[desired_direction].y;
+                this._x_speed = Hero.SPEEDS[desired_direction].x;
+                this._y_speed = Hero.SPEEDS[desired_direction].y;
             }
         } else if (!this.ice_sliding_active) {
             //when force_direction is true, it means that the hero is going to face a different direction from the one specified in the keyboard arrows
@@ -128,7 +128,7 @@ export class Hero extends ControllableChar {
                     this.set_direction(desired_direction, false, false);
                     if (this.game.time.frames & 1) {
                         //this if controls the char turn frame rate, how fast is the transition
-                        this.transition_direction = get_transition_directions(
+                        this._transition_direction = get_transition_directions(
                             this.transition_direction,
                             desired_direction
                         );
@@ -138,19 +138,19 @@ export class Hero extends ControllableChar {
                 }
                 if (this.force_direction && (this.current_direction & 1) === 1) {
                     //sets the speed according to the collision slope
-                    this.x_speed = this.force_diagonal_speed.x;
-                    this.y_speed = this.force_diagonal_speed.y;
+                    this._x_speed = this.force_diagonal_speed.x;
+                    this._y_speed = this.force_diagonal_speed.y;
                 } else {
-                    this.x_speed = Hero.SPEEDS[desired_direction].x;
-                    this.y_speed = Hero.SPEEDS[desired_direction].y;
+                    this._x_speed = Hero.SPEEDS[desired_direction].x;
+                    this._y_speed = Hero.SPEEDS[desired_direction].y;
                 }
             } else {
-                this.x_speed = this.y_speed = 0;
+                this._x_speed = this._y_speed = 0;
             }
         } else {
             if (!this.sliding_on_ice) {
                 if (this.colliding_directions.includes(desired_direction) || desired_direction === null) {
-                    this.x_speed = this.y_speed = 0;
+                    this._x_speed = this._y_speed = 0;
                 } else {
                     //checks if a diagonal direction was asked
                     if ((desired_direction & 1) === 1) {
@@ -162,34 +162,34 @@ export class Hero extends ControllableChar {
                         }
                     }
                     //starts sliding
-                    this.x_speed = Hero.SPEEDS[desired_direction].x;
-                    this.y_speed = Hero.SPEEDS[desired_direction].y;
-                    this.ice_slide_direction = desired_direction;
+                    this._x_speed = Hero.SPEEDS[desired_direction].x;
+                    this._y_speed = Hero.SPEEDS[desired_direction].y;
+                    this._ice_slide_direction = desired_direction;
                     this.sliding_on_ice = true;
                 }
             } else if (this.sliding_on_ice && this.colliding_directions.includes(this.ice_slide_direction)) {
                 //stops sliding
-                this.x_speed = this.y_speed = 0;
-                this.ice_slide_direction = null;
+                this._x_speed = this._y_speed = 0;
+                this._ice_slide_direction = null;
                 this.sliding_on_ice = false;
             } else if (this.sliding_on_ice) {
                 if (desired_direction !== null) {
                     //changes the hero direction while sliding
                     this.set_direction(desired_direction, false, false);
                     if (this.game.time.frames & 1) {
-                        this.transition_direction = get_transition_directions(
+                        this._transition_direction = get_transition_directions(
                             this.transition_direction,
                             desired_direction
                         );
                     }
                 }
-                this.x_speed = Hero.SPEEDS[this.ice_slide_direction].x;
-                this.y_speed = Hero.SPEEDS[this.ice_slide_direction].y;
+                this._x_speed = Hero.SPEEDS[this.ice_slide_direction].x;
+                this._y_speed = Hero.SPEEDS[this.ice_slide_direction].y;
             }
         }
     }
 
-    check_interactable_objects(map: Map, contact: p2.ContactEquation) {
+    private check_interactable_objects(map: Map, contact: p2.ContactEquation) {
         let j = 0;
         for (j = 0; j < map.interactable_objects.length; ++j) {
             //check if hero is colliding with any interactable object
@@ -204,7 +204,7 @@ export class Hero extends ControllableChar {
                     ) {
                         this.trying_to_push = true;
                         if (this.push_timer === null) {
-                            this.trying_to_push_direction = this.current_direction;
+                            this._trying_to_push_direction = this.current_direction;
                             const events_in_pos =
                                 map.events[TileEvent.get_location_key(this.tile_x_pos, this.tile_y_pos)];
                             let has_stair = false;
@@ -237,10 +237,11 @@ export class Hero extends ControllableChar {
                                         break;
                                 }
                                 if (interactable_object.position_allowed(item_position.x, item_position.y)) {
-                                    this.push_timer = this.game.time.events.add(
-                                        Phaser.Timer.QUARTER,
-                                        normal_push.bind(this, this.game, this.data, interactable_object)
-                                    );
+                                    this.push_timer = this.game.time.events.add(Phaser.Timer.QUARTER, () => {
+                                        normal_push(this.game, this.data, interactable_object);
+                                        this.trying_to_push = false;
+                                        this.push_timer = null;
+                                    });
                                 }
                             }
                         }
@@ -254,7 +255,7 @@ export class Hero extends ControllableChar {
         }
     }
 
-    collision_dealer(map: Map) {
+    private collision_dealer(map: Map) {
         let normals = [];
         for (let i = 0; i < this.game.physics.p2.world.narrowphase.contactEquations.length; ++i) {
             const contact = this.game.physics.p2.world.narrowphase.contactEquations[i];
@@ -351,12 +352,12 @@ export class Hero extends ControllableChar {
             this.sprite.body.setCollisionGroup(this.data.collision.hero_collision_group);
             this.sprite.visible = true;
             this.shadow.visible = true;
-            this.active = true;
+            this._active = true;
         } else {
             this.sprite.body.removeCollisionGroup(this.data.collision.hero_collision_group);
             this.sprite.visible = false;
             this.shadow.visible = false;
-            this.active = false;
+            this._active = false;
         }
     }
 
@@ -364,11 +365,11 @@ export class Hero extends ControllableChar {
         if (!this.active) return;
         this.check_control_inputs(); //check which arrow keys are being pressed
         this.set_speed_factors(true); //sets the direction of the movement
-        this.set_current_action(true); //chooses which sprite the hero shall assume
+        this.choose_action_based_on_char_state(true); //chooses which sprite the hero shall assume
         this.calculate_speed(); //calculates the final speed
         this.collision_dealer(map); //check if the hero is colliding and its consequences
         this.apply_speed(); //applies the final speed
-        this.set_action(true); //sets the hero sprite
+        this.play_current_action(true); //sets the hero sprite
         this.update_shadow(); //updates the hero's shadow position
         this.update_half_crop(); //halves the hero texture if needed
     }
@@ -377,7 +378,7 @@ export class Hero extends ControllableChar {
         this.game.physics.p2.enable(this.sprite, false);
         this.reset_anchor(); //Important to be after the previous command
         this.sprite.body.clearShapes();
-        this.body_radius = body_radius;
+        this._body_radius = body_radius;
         this.sprite.body.setCircle(this.body_radius, 0, 0);
         this.sprite.body.setCollisionGroup(this.data.collision.hero_collision_group);
         this.sprite.body.mass = 1.0;

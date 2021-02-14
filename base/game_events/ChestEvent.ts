@@ -139,7 +139,7 @@ export class ChestEvent extends GameEvent {
             });
         await this.promise;
 
-        await this.data.hero.go_to_direction(directions.down);
+        await this.data.hero.face_direction(directions.down);
         this.data.game_event_manager.force_idle_action = false;
         this.data.hero.play(base_actions.GRANT);
         this.data.audio.pause_bgm();
