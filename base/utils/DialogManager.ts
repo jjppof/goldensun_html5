@@ -339,12 +339,16 @@ export class DialogManager {
     //Calls a window and let it open till you call quick_next again or call kill_dialog. Is expected that text fits in one window.
     quick_next(
         text: string,
-        callback: Function,
-        avatar: string,
-        hero_direction: utils.directions,
-        custom_pos: {x?: number; y?: number},
-        custom_avatar_pos: {x?: number; y?: number},
-        show_crystal = false
+        callback: Function, //on window ready callback
+        options: {
+            avatar?: string;
+            hero_direction?: utils.directions;
+            custom_pos?: {x?: number; y?: number};
+            custom_avatar_pos?: {x?: number; y?: number};
+            show_crystal?: boolean;
+        } = {
+            show_crystal: false,
+        }
     ) {
         this.parts = null;
         this.step = 0;
@@ -356,9 +360,9 @@ export class DialogManager {
             this.avatar_window.destroy(false);
             this.avatar_window = null;
         }
-        this.show_crystal = show_crystal;
-        this.set_dialog(text, avatar, hero_direction);
-        this.mount_window(callback, custom_pos, custom_avatar_pos);
+        this.show_crystal = options.show_crystal;
+        this.set_dialog(text, options.avatar, options.hero_direction);
+        this.mount_window(callback, options.custom_pos, options.custom_avatar_pos);
     }
 
     kill_dialog(callback, dialog_only = false, destroy_crystal = false) {

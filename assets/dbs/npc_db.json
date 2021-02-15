@@ -38,7 +38,7 @@
         "interaction_pattern": "simple_interaction",
         "actions": {
             "summon": {
-                "frame_rate": [[0.4,18,18,18,18], 18, 18, 1, 10],
+                "frame_rate": [[0.4,18,18,18,18], 45, 45, 1, 8],
                 "initial_animation": "stone",
                 "animations": [
                     "stone",

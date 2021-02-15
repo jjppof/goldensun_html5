@@ -72,6 +72,15 @@
             "jupiter": 2
         }
     },{
+        "key_name": "megaera",
+        "available": false,
+        "requirements": {
+            "venus": 0,
+            "mercury": 0,
+            "mars": 1,
+            "jupiter": 1
+        }
+    },{
         "key_name": "cybele",
         "available": true,
         "requirements": {

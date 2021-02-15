@@ -4870,6 +4870,7 @@ declare module Phaser {
         name: string;
         offsetX: number;
         offsetY: number;
+        onEmit: () => void;
         outOfBoundsKill: boolean;
         outOfCameraBoundsKill: boolean;
         pendingDestroy: boolean;

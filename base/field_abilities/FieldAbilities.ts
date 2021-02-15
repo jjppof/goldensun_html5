@@ -3,6 +3,7 @@ import {InteractableObjects, interactable_object_interaction_types} from "../Int
 import {FieldPsynergyWindow} from "../windows/FieldPsynergyWindow";
 import {GoldenSun} from "../GoldenSun";
 import {ControllableChar} from "../ControllableChar";
+import {Map} from "../Map";
 
 /*Defines and manages the usage of field psynergy
 
@@ -193,7 +194,7 @@ export abstract class FieldAbilities {
                 if (this.tint_map && !this.controllable_char.on_reveal) {
                     reset_map = FieldAbilities.tint_map_layers(
                         this.game,
-                        this.data.map.color_filter,
+                        this.data.map,
                         this.field_color,
                         this.field_intensity
                     );
@@ -365,7 +366,8 @@ export abstract class FieldAbilities {
         };
     }
 
-    static tint_map_layers(game: Phaser.Game, filter, color?, intensity?, after_destroy?) {
+    static tint_map_layers(game: Phaser.Game, map: Map, color?, intensity?, after_destroy?) {
+        const filter = map.color_filter;
         filter.colorize_intensity = 0;
         filter.gray = 0;
         filter.colorize = color ?? Math.random();

@@ -77,15 +77,12 @@ export class ShopkeepDialog {
         else this.current_message = message;
         this.is_active = true;
 
-        this.dialog_manager.quick_next(
-            this.current_message,
-            callback,
-            this.avatar_key,
-            undefined,
-            {x: FRAME_SIZE + 4, y: 0},
-            {x: 0, y: 0},
-            show_crystal
-        );
+        this.dialog_manager.quick_next(this.current_message, callback, {
+            avatar: this.avatar_key,
+            custom_pos: {x: FRAME_SIZE + 4, y: 0},
+            custom_avatar_pos: {x: 0, y: 0},
+            show_crystal: show_crystal,
+        });
     }
 
     close_dialog(callback?: Function, dialog_only: boolean = true) {

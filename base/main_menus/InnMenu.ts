@@ -58,15 +58,11 @@ export class InnMenu {
     update_dialogue(callback?: Function) {
         if (this.message.includes("${PRICE}")) this.message = this.message.replace("${PRICE}", String(this.cost));
 
-        this.dialog_manager.quick_next(
-            this.message,
-            callback,
-            this.avatar,
-            undefined,
-            {x: 40, y: 0},
-            {x: 0, y: 0},
-            false
-        );
+        this.dialog_manager.quick_next(this.message, callback, {
+            avatar: this.avatar,
+            custom_pos: {x: 40, y: 0},
+            custom_avatar_pos: {x: 0, y: 0},
+        });
     }
 
     //Show inn price dialogue

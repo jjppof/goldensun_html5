@@ -26,7 +26,7 @@ export class DialogEvent extends GameEvent {
                 {
                     button: Button.A,
                     on_down: () => {
-                        if (!this.running || !this.control_enable) return;
+                        if (!this.active || !this.running || !this.control_enable) return;
                         this.next();
                     },
                 },

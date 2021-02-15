@@ -1589,6 +1589,24 @@
         "priority_move": false,
         "msg_type": "summon"
     },{
+        "key_name": "megaera",
+        "name": "Megaera",
+        "description": "The goddess of vengeance.",
+        "type": "summon",
+        "element": "jupiter",
+        "battle_target": "enemy",
+        "range": 11,
+        "pp_cost": 0,
+        "ability_power": 40,
+        "effects_outside_battle": false,
+        "is_battle_ability": true,
+        "is_field_psynergy": false,
+        "effects": [],
+        "ability_category": "summon",
+        "battle_animation_key": "megaera",
+        "priority_move": false,
+        "msg_type": "summon"
+    },{
         "key_name": "cybele",
         "name": "Cybele",
         "description": "The great mother of the earth.",

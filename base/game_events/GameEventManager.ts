@@ -33,7 +33,7 @@ export class GameEventManager {
     public allow_char_to_move: boolean;
     public force_idle_action: boolean;
     public fire_next_step: Function;
-    public update_callbacks: Function[] = [];
+    private update_callbacks: Function[] = [];
 
     constructor(game, data) {
         this.game = game;
@@ -276,7 +276,7 @@ export class GameEventManager {
                     info.finish_events
                 );
             case event_types.SUMMON:
-                return new SummonEvent(this.game, this.data, info.active);
+                return new SummonEvent(this.game, this.data, info.active, info.summon_key, info.finish_events);
         }
     }
 
