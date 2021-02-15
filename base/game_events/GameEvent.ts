@@ -31,6 +31,7 @@ export enum event_types {
     CHEST = "chest",
     TIMER = "timer",
     PARTY_JOIN = "party_join",
+    SUMMON = "summon",
 }
 
 /* Everytime a game event is fired, it's checked whether reveal is casted, if yes, it stops the reveal psynergy. */

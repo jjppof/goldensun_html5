@@ -19,12 +19,40 @@
                 "frame_rate": [1,1,6,10,1],
                 "animations": ["closed", "open", "opening", "shining", "empty"],
                 "frames_count": [1,1,2,2,1],
-                "initial_direction": "closed",
+                "initial_animation": "closed",
                 "spritesheet": {
                     "image": "assets/images/misc/chest.png",
                     "json": "assets/images/misc/chest.json"
                 },
                 "loop": [false, false, false, true, false]
+            }
+        }
+    },{
+        "key_name": "summon",
+        "initial_action": "summon",
+        "collision_body_bevel": 2,
+        "no_shadow": true,
+        "anchor_x": 0.38,
+        "anchor_y": 0.7,
+        "body_radius": 7.0,
+        "interaction_pattern": "simple_interaction",
+        "actions": {
+            "summon": {
+                "frame_rate": [[0.4,18,18,18,18], 18, 18, 1, 10],
+                "initial_animation": "stone",
+                "animations": [
+                    "stone",
+                    "stone_continuos",
+                    "stone_shining",
+                    "letters",
+                    "particles"
+                ],
+                "frames_count": [5, 5, 5, 16, 4],
+                "loop": [true, true, true, false, false],
+                "spritesheet": {
+                    "image": "assets/images/misc/summon.png",
+                    "json": "assets/images/misc/summon.json"
+                }
             }
         }
     },{
@@ -39,7 +67,7 @@
                 "frame_rate": [[0.2,3,1,1,1]],
                 "animations": ["down", "up", "left", "right"],
                 "frames_count": 6,
-                "initial_direction": "down",
+                "initial_animation": "down",
                 "spritesheet": {
                     "image": "assets/images/spritesheets/npc/village_1_idle.png",
                     "json": "assets/images/spritesheets/npc/village_1_idle.json"
@@ -59,7 +87,7 @@
                 "frame_rate": [[0.2,5,0.3,1,1,1]],
                 "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 6,
-                "initial_direction": "down",
+                "initial_animation": "down",
                 "spritesheet": {
                     "image": "assets/images/spritesheets/npc/briggs_idle.png",
                     "json": "assets/images/spritesheets/npc/briggs_idle.json"
@@ -79,7 +107,7 @@
                 "frame_rate": [[0.2,6,0.3,2,0.4,1,1]],
                 "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 7,
-                "initial_direction": "down",
+                "initial_animation": "down",
                 "spritesheet": {
                     "image": "assets/images/spritesheets/npc/alex_idle.png",
                     "json": "assets/images/spritesheets/npc/alex_idle.json"
@@ -90,7 +118,7 @@
                 "frame_rate": 7,
                 "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 6,
-                "initial_direction": "down",
+                "initial_animation": "down",
                 "spritesheet": {
                     "image": "assets/images/spritesheets/npc/alex_walk.png",
                     "json": "assets/images/spritesheets/npc/alex_walk.json"
@@ -111,7 +139,7 @@
                 "frame_rate": 1,
                 "animations": ["town_00", "town_01", "town_02", "cave_00", "tower_00"],
                 "frames_count": 1,
-                "initial_direction": "town_00",
+                "initial_animation": "town_00",
                 "spritesheet": {
                     "image": "assets/images/spritesheets/places/towns.png",
                     "json": "assets/images/spritesheets/places/towns.json"
@@ -134,7 +162,7 @@
                     "json": "assets/images/spritesheets/main_chars/isaac_idle.json",
                     "image": "assets/images/spritesheets/main_chars/isaac_idle.png"
                 },
-                "initial_direction": "down",
+                "initial_animation": "down",
                 "animations": [
                     "down",
                     "up",
@@ -302,7 +330,7 @@
                     "json": "assets/images/spritesheets/main_chars/garet_idle.json",
                     "image": "assets/images/spritesheets/main_chars/garet_idle.png"
                 },
-                "initial_direction": "down",
+                "initial_animation": "down",
                 "animations": [
                     "down",
                     "up",
@@ -346,7 +374,7 @@
                     "json": "assets/images/spritesheets/main_chars/sheba_idle.json",
                     "image": "assets/images/spritesheets/main_chars/sheba_idle.png"
                 },
-                "initial_direction": "down",
+                "initial_animation": "down",
                 "animations": [
                     "down",
                     "up",
@@ -390,7 +418,7 @@
                     "json": "assets/images/spritesheets/main_chars/piers_idle.json",
                     "image": "assets/images/spritesheets/main_chars/piers_idle.png"
                 },
-                "initial_direction": "down",
+                "initial_animation": "down",
                 "animations": [
                     "down",
                     "up",

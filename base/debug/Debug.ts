@@ -236,6 +236,9 @@ export class Debug {
             "#key_debug table .stop_by_colliding"
         ).innerHTML = this.data.hero.stop_by_colliding.toString();
         document.querySelector("#key_debug table .sliding_on_ice").innerHTML = this.data.hero.sliding_on_ice.toString();
+        document.querySelector(
+            "#key_debug table .collision_layer"
+        ).innerHTML = this.data.map.collision_layer.toString();
     }
 
     //enable fps show

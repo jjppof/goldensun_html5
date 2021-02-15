@@ -104,7 +104,7 @@ export abstract class ControllableChar {
         initial_x?: number,
         initial_y?: number,
         initial_action?: string | base_actions,
-        initial_direction?: string,
+        initial_animation?: string,
         storage_keys?: ControllableChar["storage_keys"],
         active?: boolean
     ) {
@@ -149,12 +149,12 @@ export abstract class ControllableChar {
         this._tile_y_pos = initial_y;
         this._current_action =
             this.storage_keys.action !== undefined ? this.data.storage.get(this.storage_keys.action) : initial_action;
-        initial_direction =
+        initial_animation =
             this.storage_keys.direction !== undefined
                 ? this.data.storage.get(this.storage_keys.direction)
-                : initial_direction;
-        this._current_direction = initial_direction in directions ? directions[initial_direction] : null;
-        this._current_animation = initial_direction;
+                : initial_animation;
+        this._current_direction = initial_animation in directions ? directions[initial_animation] : null;
+        this._current_animation = initial_animation;
         this._required_direction = null;
         this._transition_direction = this.current_direction;
         this._ice_slide_direction = null;

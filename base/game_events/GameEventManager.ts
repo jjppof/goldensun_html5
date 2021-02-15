@@ -16,6 +16,7 @@ import {PartyJoinEvent} from "./PartyJoinEvent";
 import {storage_types} from "../Storage";
 import {TileEvent} from "../tile_events/TileEvent";
 import * as _ from "lodash";
+import {SummonEvent} from "./SummonEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -274,6 +275,8 @@ export class GameEventManager {
                     info.join,
                     info.finish_events
                 );
+            case event_types.SUMMON:
+                return new SummonEvent(this.game, this.data, info.active);
         }
     }
 

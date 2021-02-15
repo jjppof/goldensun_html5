@@ -59,7 +59,7 @@ export class NPC extends ControllableChar {
         initial_y,
         storage_keys,
         initial_action,
-        initial_direction,
+        initial_animation,
         enable_footsteps,
         walk_speed,
         dash_speed,
@@ -97,7 +97,7 @@ export class NPC extends ControllableChar {
             initial_x,
             initial_y,
             initial_action,
-            initial_direction,
+            initial_animation,
             storage_keys,
             active
         );
