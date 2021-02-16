@@ -231,6 +231,7 @@ export class DialogManager {
     private format_text(text: string) {
         text = text.replace(/\${HERO}/g, this.data.info.main_char_list[this.data.hero.key_name].name);
         text = text.replace(/( )?\${BREAK}( )?/g, " ${BREAK} ");
+        text = text.replace(/( )?\${BREAK_LINE}( )?/g, " ${BREAK_LINE} ");
         text = text.replace(/(?: )?(\${COLOR:(?:\w+|\/)})(?: )?/g, " $1 ");
         let storage_match = /(?: )?\${STORAGE:(\w+)}(?: )?/g.exec(text);
         while (storage_match !== null) {
@@ -244,7 +245,7 @@ export class DialogManager {
 
     //Receives a text string and mount the the dialog sections that will go to each window of the dialog.
     //Optionally, also receives an initial avatar and the hero talking direction.
-    //Use ${HERO} to replace by hero name. Use ${BREAK} to start a new window.
+    //Use ${HERO} to replace by hero name. Use ${BREAK} to start a new window. Use ${BREAK_LINE} to break line.
     //Use ${STORAGE:storage_key} to replace by by a storage value with the given key.
     //Place your text between ${COLOR:hex_value} and ${COLOR:/} to change it color.
     set_dialog(
@@ -285,7 +286,7 @@ export class DialogManager {
             });
         };
         const push_line = () => {
-            const line_text = line.join(" ");
+            const line_text = line.filter(Boolean).join(" ");
             lines.push(line_text);
             for (let i = 0; i < line_text.length; ++i) {
                 if (line_text.charAt(i) === " ") {
@@ -306,13 +307,13 @@ export class DialogManager {
                 }
                 continue;
             }
-            line_width = utils.get_text_width(this.game, line.join(" ") + word, this.italic_font);
-            if (line_width >= max_efective_width || word === "${BREAK}") {
+            line_width = utils.get_text_width(this.game, line.filter(Boolean).join(" ") + word, this.italic_font);
+            if (line_width >= max_efective_width || word === "${BREAK}" || word === "${BREAK_LINE}") {
                 //check if it's the end of the line
                 push_line();
                 line = [];
                 line_color = [];
-                if (word !== "${BREAK}") {
+                if (word !== "${BREAK}" && word !== "${BREAK_LINE}") {
                     line.push(word);
                     line_color.push(...new Array(word.length).fill(this_color));
                 }

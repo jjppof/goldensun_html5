@@ -5,8 +5,9 @@ import {Summon} from "../Summon";
 import {FieldAbilities} from "../field_abilities/FieldAbilities";
 import {Button} from "../XGamepad";
 import * as _ from "lodash";
-import {base_actions, directions, range_360} from "../utils";
+import {base_actions, directions, element_colors, element_names, ordered_elements, range_360} from "../utils";
 import {degree90} from "../magic_numbers";
+import * as numbers from "../magic_numbers";
 
 export class SummonEvent extends GameEvent {
     private static readonly ACTION = "summon";
@@ -89,14 +90,13 @@ export class SummonEvent extends GameEvent {
         }
     }
 
-    finish(reset_map) {
-        reset_map();
+    finish() {
         this.summon.available = true;
         this.running = false;
         this.control_enable = false;
         this.data.game_event_manager.force_idle_action = true;
+        this.data.hero.play(base_actions.IDLE);
         this.emitter.destroy();
-        this.letters.forEach(letter => letter.destroy());
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
@@ -174,7 +174,7 @@ export class SummonEvent extends GameEvent {
         const normal_color = 0xffffff;
         const blue_color = 0x0000ff;
         const sequence = 0b1100110000111;
-        const update_callback = () => {
+        const letter_shine_update_callback = () => {
             if (counter === 32) {
                 this.aux_resolve();
                 return;
@@ -196,15 +196,132 @@ export class SummonEvent extends GameEvent {
             }
             ++counter;
         };
-        this.data.game_event_manager.add_callback(update_callback);
+        this.data.game_event_manager.add_callback(letter_shine_update_callback);
 
         await this.aux_promise;
-        this.data.game_event_manager.remove_callback(update_callback);
+        this.data.game_event_manager.remove_callback(letter_shine_update_callback);
 
         await this.data.hero.face_direction(directions.down);
         this.data.game_event_manager.force_idle_action = false;
         this.data.hero.play(base_actions.GRANT);
 
-        this.finish(reset_map);
+        const total_phi = (Math.PI * 17) / 2;
+        const total_time = 4000;
+        const speed_factor = (total_phi * 1000) / this.game.time.fps / total_time;
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        let ref_phi = 0;
+        const PI = Math.PI;
+        const delta = 0.1;
+        const half_width = numbers.GAME_WIDTH >> 1;
+        const half_height = numbers.GAME_HEIGHT >> 1;
+        const time_to_join_track = 700;
+        const time_to_all_be_in_track = 2000;
+        const delta_time_to_be_in_track = time_to_all_be_in_track / SummonEvent.LETTERS_NUMBER;
+        const join_timers = new Array(SummonEvent.LETTERS_NUMBER).fill(time_to_join_track);
+        const ref_time = this.game.time.now;
+        const letter_spiral_update_callback = () => {
+            for (let i = 0; i < SummonEvent.LETTERS_NUMBER; ++i) {
+                const now = this.game.time.now - ref_time;
+                if (now < i * delta_time_to_be_in_track) {
+                    continue;
+                }
+                const letter = this.letters[i];
+                const phi = -delta * i + ref_phi;
+                let new_x, new_y;
+                if (phi < PI) {
+                    new_x = -Math.cos(phi);
+                    new_y = Math.sin(phi);
+                } else if (phi >= PI && phi < 2 * PI) {
+                    new_x = (-2 * Math.cos(phi)) / 3 + 1 / 3;
+                    new_y = (2 * Math.sin(phi)) / 3;
+                } else if (phi >= 2 * PI && phi < (5 * PI) / 2) {
+                    new_x = (-4 * Math.cos(phi)) / 3 + 1;
+                    new_y = 2 * Math.sin(phi);
+                } else if (phi >= (5 * PI) / 2 && phi < (11 * PI) / 2) {
+                    new_x = -Math.cos(phi) + 1;
+                    new_y = Math.sin(phi) + 1;
+                } else if (phi >= (11 * PI) / 2 && phi < (13 * PI) / 2) {
+                    new_x = -Math.cos(phi) / 2 + 1;
+                    new_y = Math.sin(phi) / 2 + 0.5;
+                } else if (phi >= (13 * PI) / 2 && phi < (17 * PI) / 2) {
+                    const _phi = phi - (12 * PI) / 2;
+                    new_x = -1.8 * Math.exp(-0.4 * _phi) * Math.cos(_phi) + 1;
+                    new_y = 2.4 * Math.exp(-0.4 * _phi) * Math.sin(_phi) - 0.1 - Math.pow(6, -1.52 * (-0.95 + _phi));
+                } else if (phi > total_phi) {
+                    if (letter.parent) {
+                        letter.destroy();
+                    }
+                    if (i === SummonEvent.LETTERS_NUMBER - 1) {
+                        this.aux_resolve();
+                    }
+                    continue;
+                }
+                new_x += 0.5;
+                new_y += 1.5;
+                new_x = new_x / 3;
+                new_y = new_y / 3;
+                new_y = 1 - new_y;
+                new_x = numbers.GAME_WIDTH * new_x + this.data.hero.sprite.centerX - half_width - 4;
+                new_y = numbers.GAME_HEIGHT * new_y + this.data.hero.sprite.centerY - half_height - 10;
+                const join_factor = join_timers[i] / time_to_join_track;
+                letter.x = letter.x * join_factor + (1 - join_factor) * new_x;
+                letter.y = letter.y * join_factor + (1 - join_factor) * new_y;
+                if (join_timers[i] > 0) {
+                    join_timers[i] -= this.game.time.elapsedMS;
+                } else {
+                    join_timers[i] = 0;
+                }
+            }
+            ref_phi += speed_factor;
+        };
+        this.data.game_event_manager.add_callback(letter_spiral_update_callback);
+        const scales = [1.15, 1.1, 1.0];
+        const repeats_number = 7;
+        counter = 0;
+        this.game.time.events.add(4000, () => {
+            this.game.time.events.repeat(40, scales.length * repeats_number, () => {
+                this.data.hero.sprite.scale.y = scales[counter % scales.length];
+                ++counter;
+            });
+        });
+
+        await this.aux_promise;
+        this.data.game_event_manager.remove_callback(letter_spiral_update_callback);
+
+        reset_map();
+        const summon_name = this.data.info.abilities_list[this.summon.key_name].name;
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        this.dialog.quick_next(
+            `${hero_name} can now summon ${summon_name}!`,
+            () => {
+                this.control_enable = true;
+            },
+            {show_crystal: true}
+        );
+
+        await this.aux_promise;
+
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        const requirements = [];
+        ordered_elements.forEach(element => {
+            const requirement = this.summon.requirements[element];
+            if (requirement) {
+                requirements.push(
+                    `\${COLOR:${element_colors[element].toString(16)}}${requirement} ${
+                        element_names[element]
+                    }\${COLOR:/}`
+                );
+            }
+        });
+        this.dialog.quick_next(
+            `To summon ${summon_name}\${BREAK_LINE}${requirements.join(" ")}\${BREAK_LINE}Standby Djinn are needed.`,
+            () => {
+                this.control_enable = true;
+            },
+            {show_crystal: false}
+        );
+
+        await this.aux_promise;
+        this.finish();
     }
 }

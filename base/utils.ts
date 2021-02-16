@@ -27,6 +27,14 @@ export const element_names = {
     [elements.ALL_ELEMENTS]: "All elements",
 };
 
+/*Element colors*/
+export const element_colors = {
+    [elements.VENUS]: 0xfef116,
+    [elements.MERCURY]: 0x0ad2ef,
+    [elements.MARS]: 0xf87000,
+    [elements.JUPITER]: 0xe070b0,
+};
+
 /*8-Directional direction values*/
 export enum directions {
     right = 0,
