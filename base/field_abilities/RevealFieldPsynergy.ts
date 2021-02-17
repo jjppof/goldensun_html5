@@ -75,7 +75,7 @@ export class RevealFieldPsynergy extends FieldAbilities {
         this.data.map.color_filter.gray = 0;
         this.end_timer.destroy();
         if (!force) {
-            this.game.camera.flash(0x0, 750);
+            this.game.camera.flash(0x0, 750, true);
         }
         this.data.super_group.mask.destroy();
         this.data.super_group.mask = null;

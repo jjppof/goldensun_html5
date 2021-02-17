@@ -100,7 +100,7 @@ export class TeleportEvent extends TileEvent {
 
     camera_fade_in() {
         this.data.hero.stop_char(true);
-        this.game.camera.fade();
+        this.game.camera.fade(undefined, undefined, true);
         this.game.camera.onFadeComplete.addOnce(() => {
             if (this.data.hero.on_reveal) {
                 (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(true);
@@ -145,7 +145,7 @@ export class TeleportEvent extends TileEvent {
         this.data.hero.update_half_crop(true);
         this.data.map.sort_sprites();
         this.data.map.npcs.forEach(npc => npc.update());
-        this.game.camera.flash(0x0);
+        this.game.camera.flash(0x0, undefined, true);
         this.game.camera.onFlashComplete.addOnce(() => {
             this.game.camera.lerp.setTo(numbers.CAMERA_LERP, numbers.CAMERA_LERP);
             this.data.tile_event_manager.on_event = false;
