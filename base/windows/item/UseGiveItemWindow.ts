@@ -23,8 +23,6 @@ const ACTION_TEXT_Y = ITEM_NAME_Y + numbers.FONT_SIZE;
 
 const ITEM_ICON_X = 8;
 const ITEM_ICON_Y = 8;
-const SUB_ICON_X = 7;
-const SUB_ICON_Y = 8;
 
 const ANSWER_X = 112;
 const YES_Y = 8;
@@ -35,6 +33,8 @@ const CURSOR_Y1 = 12;
 const CURSOR_Y2 = 28;
 
 export class UseGiveItemWindow {
+    private static readonly ICON_GROUP_KEY = "item_icon";
+
     public game: Phaser.Game;
     public data: GoldenSun;
     public close_callback: Function;
@@ -59,11 +59,8 @@ export class UseGiveItemWindow {
     public yes_text: TextObj;
     public no_text: TextObj;
 
-    public icon_sprite: Phaser.Sprite;
     public char_name: TextObj;
     public item_name: TextObj;
-    public equip_sprite: Phaser.Sprite;
-    public item_count_sprite: Phaser.BitmapText;
 
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
@@ -94,10 +91,6 @@ export class UseGiveItemWindow {
         this.no_text = this.base_window.set_text_in_position("No", ANSWER_X, NO_Y);
         this.yes_text.text.alpha = this.no_text.text.alpha = 0;
         this.yes_text.shadow.alpha = this.no_text.shadow.alpha = 0;
-
-        this.icon_sprite = null;
-        this.equip_sprite = null;
-        this.item_count_sprite = null;
     }
 
     change_answer() {
@@ -108,10 +101,10 @@ export class UseGiveItemWindow {
     set_answer_index(index: number) {
         this.answer_index = index;
 
-        let cursor_x = CURSOR_X;
-        let cursor_y = index === YES_Y ? CURSOR_Y1 : CURSOR_Y2;
+        const cursor_x = CURSOR_X;
+        const cursor_y = index === YES_Y ? CURSOR_Y1 : CURSOR_Y2;
 
-        let tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
+        const tween_config = {type: CursorManager.CursorTweens.POINT, variant: PointVariants.NORMAL};
         this.data.cursor_manager.move_to({x: cursor_x, y: cursor_y}, {animate: false, tween_config: tween_config});
     }
 
@@ -122,13 +115,6 @@ export class UseGiveItemWindow {
 
     set_header() {
         this.unset_header();
-        this.icon_sprite = this.base_window.create_at_group(
-            ITEM_ICON_X,
-            ITEM_ICON_Y,
-            "items_icons",
-            undefined,
-            this.item.key_name
-        );
         this.base_window.update_text(this.char.name, this.char_name, CHAR_NAME_X, CHAR_NAME_Y);
         this.base_window.update_text(this.item.name, this.item_name, ITEM_NAME_X, ITEM_NAME_Y);
         if (this.choosing_char && this.giving) {
@@ -140,41 +126,28 @@ export class UseGiveItemWindow {
             this.yes_text.shadow.alpha = this.no_text.shadow.alpha = 1;
             this.base_window.update_text("Equip this item?", this.action_text, ACTION_TEXT_X, ACTION_TEXT_Y);
         }
-        this.equip_sprite = null;
-        if (this.item_obj.equipped) {
-            this.equip_sprite = this.base_window.create_at_group(
-                ITEM_ICON_X + SUB_ICON_X,
-                ITEM_ICON_Y + SUB_ICON_Y,
-                "menu",
-                undefined,
-                "equipped"
-            );
-        }
-        this.item_count_sprite = null;
-        if (this.item_obj.quantity > 1) {
-            this.item_count_sprite = this.game.add.bitmapText(
-                ITEM_ICON_X + SUB_ICON_X,
-                ITEM_ICON_Y + SUB_ICON_Y,
-                "gs-item-bmp-font",
-                this.item_obj.quantity.toString()
-            );
-            this.base_window.add_sprite_to_group(this.item_count_sprite);
-        }
+
+        this.base_window.define_internal_group(UseGiveItemWindow.ICON_GROUP_KEY);
+        const item = this.data.info.items_list[this.item.key_name];
+        this.base_window.make_item_obj(
+            this.item.key_name,
+            {x: ITEM_ICON_X, y: ITEM_ICON_Y},
+            {
+                broken: this.item_obj.broken,
+                equipped: this.item_obj.equipped,
+                quantity: item.carry_up_to_30 ? this.item_obj.quantity : undefined,
+                internal_group: UseGiveItemWindow.ICON_GROUP_KEY,
+            }
+        );
     }
 
     unset_header() {
-        this.base_window.remove_from_group(this.icon_sprite);
         this.base_window.update_text("", this.char_name, CHAR_NAME_X, CHAR_NAME_Y);
         this.base_window.update_text("", this.item_name, ITEM_NAME_X, ITEM_NAME_Y);
         this.base_window.update_text("", this.action_text, ACTION_TEXT_X, ACTION_TEXT_Y);
         this.yes_text.text.alpha = this.no_text.text.alpha = 0;
         this.yes_text.shadow.alpha = this.no_text.shadow.alpha = 0;
-        if (this.equip_sprite) {
-            this.base_window.remove_from_group(this.equip_sprite);
-        }
-        if (this.item_count_sprite) {
-            this.base_window.remove_from_group(this.item_count_sprite);
-        }
+        this.base_window.destroy_internal_group(UseGiveItemWindow.ICON_GROUP_KEY);
     }
 
     on_give(equip?: boolean) {
