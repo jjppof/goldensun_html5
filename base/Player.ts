@@ -44,6 +44,12 @@ export enum extra_main_stats {
     LUCK = "luk_extra",
 }
 
+export enum elemental_stats {
+    CURRENT_POWER = "current_power",
+    CURRENT_RESIST = "current_resist",
+    CURRENT_LEVEL = "current_level",
+}
+
 export const effect_type_stat: {[effect_type in effect_types]?: main_stats} = {
     [effect_types.MAX_HP]: main_stats.MAX_HP,
     [effect_types.MAX_PP]: main_stats.MAX_PP,
@@ -62,6 +68,12 @@ export const effect_type_extra_stat: {[effect_type in effect_types]?: extra_main
     [effect_types.EXTRA_DEFENSE]: extra_main_stats.DEFENSE,
     [effect_types.EXTRA_AGILITY]: extra_main_stats.AGILITY,
     [effect_types.EXTRA_LUCK]: extra_main_stats.LUCK,
+};
+
+export const effect_type_elemental_stat: {[effect_type in effect_types]?: elemental_stats} = {
+    [effect_types.POWER]: elemental_stats.CURRENT_POWER,
+    [effect_types.RESIST]: elemental_stats.CURRENT_RESIST,
+    [effect_types.ELEMENTAL_LEVEL]: elemental_stats.CURRENT_LEVEL,
 };
 
 export const on_catch_status_msg = {
@@ -257,14 +269,14 @@ export abstract class Player {
     }
 
     add_effect(
-        effect_obj,
-        effect_owner_instance,
+        effect_obj: any,
+        effect_owner_instance: Effect["effect_owner_instance"],
         apply = false
     ): {
         effect: Effect;
         changes: ReturnType<Effect["apply_effect"]>;
     } {
-        let effect = new Effect(
+        const effect = new Effect(
             effect_obj.type,
             effect_obj.quantity,
             effect_obj.operator,

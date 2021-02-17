@@ -3,7 +3,7 @@ import {choose_right_class, Classes} from "./Classes";
 import {djinn_status} from "./Djinn";
 import {Effect, effect_types} from "./Effect";
 import {Item, item_types} from "./Item";
-import {Player, fighter_types, permanent_status, main_stats, effect_type_stat} from "./Player";
+import {Player, fighter_types, permanent_status, main_stats, effect_type_stat, extra_main_stats} from "./Player";
 import {elements, ordered_elements} from "./utils";
 import {ELEM_ATTR_MIN, ELEM_ATTR_MAX} from "./magic_numbers";
 import * as _ from "lodash";
@@ -200,7 +200,7 @@ export class MainChar extends Player {
                     {def: this.def},
                     {agi: this.agi},
                     {luk: this.luk},
-                ],
+                ] as {[main_stat in main_stats]?: number}[],
             },
             after: null,
         };
@@ -217,12 +217,12 @@ export class MainChar extends Player {
                 {def: this.def},
                 {agi: this.agi},
                 {luk: this.luk},
-            ],
+            ] as {[main_stat in main_stats]?: number}[],
         };
         return return_data;
     }
 
-    init_items() {
+    private init_items() {
         this.items.forEach((item_obj, index) => {
             item_obj.index = index;
             if (item_obj.equipped) {
@@ -329,7 +329,7 @@ export class MainChar extends Player {
         this.update_attributes();
     }
 
-    init_djinni(djinni: string[]) {
+    private init_djinni(djinni: string[]) {
         for (let i = 0; i < djinni.length; ++i) {
             const djinn = this.info.djinni_list[djinni[i]];
             this.djinn_by_element[djinn.element].push(djinn.key_name);
@@ -427,7 +427,7 @@ export class MainChar extends Player {
         return this.set_max_stat(stat, true, {ignore_ability_effect: true});
     }
 
-    set_max_stat(stat: main_stats, preview = false, preview_obj: any = {}) {
+    private set_max_stat(stat: main_stats, preview = false, preview_obj: any = {}) {
         const stat_prefix = [main_stats.MAX_HP, main_stats.MAX_PP].includes(stat) ? stat.split("_")[1] : stat;
         const stat_key = stat;
         const boost_key = stat_prefix + "_boost";
@@ -500,28 +500,8 @@ export class MainChar extends Player {
         this.set_max_stat(main_stats.LUCK);
     }
 
-    add_extra_max_hp(amount: number) {
-        this.hp_extra += amount;
-    }
-
-    add_extra_max_pp(amount: number) {
-        this.pp_extra += amount;
-    }
-
-    add_extra_max_atk(amount: number) {
-        this.atk_extra += amount;
-    }
-
-    add_extra_max_def(amount: number) {
-        this.def_extra += amount;
-    }
-
-    add_extra_max_agi(amount: number) {
-        this.agi_extra += amount;
-    }
-
-    add_extra_max_luk(amount: number) {
-        this.luk_extra += amount;
+    add_extra_stat(stat: extra_main_stats, amount: number) {
+        this[stat] += amount;
     }
 
     preview_elemental_stats_without_abilities_effect() {

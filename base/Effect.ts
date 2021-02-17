@@ -1,6 +1,7 @@
 import {Ability, diminishing_ratios} from "./Ability";
 import {Item} from "./Item";
 import {
+    effect_type_elemental_stat,
     effect_type_extra_stat,
     effect_type_stat,
     main_stats,
@@ -23,6 +24,7 @@ export enum effect_types {
     LUCK = "luck",
     POWER = "power",
     RESIST = "resist",
+    ELEMENTAL_LEVEL = "elemental_level",
     CURRENT_HP = "current_hp",
     CURRENT_PP = "current_pp",
     HP_RECOVERY = "hp_recovery",
@@ -329,7 +331,7 @@ export class Effect {
                 return result_current_pp;
             case effect_types.POWER:
             case effect_types.RESIST:
-                const property = this.type === effect_types.POWER ? "current_power" : "current_resist";
+                const property = effect_type_elemental_stat[this.type];
                 if (this.remove_buff) {
                     if (this.element === elements.ALL_ELEMENTS) {
                         const removed_effects = new Array(ordered_elements.length);
