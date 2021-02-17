@@ -181,14 +181,7 @@ export class BattleSummonWindow {
                 color = numbers.RED_FONT_COLOR;
             }
 
-            const name = this.base_window.set_text_in_position(
-                ability.name,
-                SUMMON_NAME_X,
-                base_y,
-                false,
-                false,
-                color
-            );
+            const name = this.base_window.set_text_in_position(ability.name, SUMMON_NAME_X, base_y, {color: color});
             this.summon_names.push(name);
         }
     }
@@ -239,7 +232,7 @@ export class BattleSummonWindow {
         });
 
         this.other_sprites.forEach(sprite => {
-            this.base_window.remove_from_group(sprite, true);
+            this.base_window.remove_from_this_window(sprite, true);
         });
     }
 

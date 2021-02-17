@@ -37,27 +37,27 @@ export class Window {
         QUANTITY_Y: 8,
     };
 
-    public game: Phaser.Game;
-    public group: Phaser.Group;
-    public x: number;
-    public y: number;
-    public width: number;
-    public height: number;
-    public color: number;
-    public font_color: number;
-    public border_graphics: Phaser.Graphics;
-    public bg_graphics: Phaser.Graphics;
-    public separators_graphics: Phaser.Graphics;
-    public need_pos_update: boolean;
-    public open: boolean;
-    public lines_sprites: {
+    private game: Phaser.Game;
+    private _group: Phaser.Group;
+    private _x: number;
+    private _y: number;
+    private _width: number;
+    private _height: number;
+    private _color: number;
+    private _font_color: number;
+    private border_graphics: Phaser.Graphics;
+    private bg_graphics: Phaser.Graphics;
+    private separators_graphics: Phaser.Graphics;
+    private need_pos_update: boolean;
+    private _open: boolean;
+    private lines_sprites: {
         text: Phaser.BitmapText;
         shadow: Phaser.BitmapText;
     }[];
-    public extra_sprites: Phaser.Sprite[];
-    public internal_groups: {[key: string]: Phaser.Group};
-    public close_callback: Function;
-    public page_indicator: PageIndicator;
+    private extra_sprites: Phaser.Sprite[];
+    private internal_groups: {[key: string]: Phaser.Group};
+    private close_callback: Function;
+    private _page_indicator: PageIndicator;
 
     constructor(
         game,
@@ -70,15 +70,15 @@ export class Window {
         font_color = numbers.DEFAULT_FONT_COLOR
     ) {
         this.game = game;
-        this.group = game.add.group();
+        this._group = game.add.group();
 
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        this._x = x;
+        this._y = y;
+        this._width = width;
+        this._height = height;
 
-        this.color = color;
-        this.font_color = font_color;
+        this._color = color;
+        this._font_color = font_color;
 
         this.extra_sprites = [];
         this.internal_groups = {};
@@ -98,15 +98,42 @@ export class Window {
         this.group.height = 0;
 
         this.need_pos_update = need_pos_update;
-        this.open = false;
+        this._open = false;
         this.lines_sprites = [];
-        this.page_indicator = new PageIndicator(this.game, this);
+        this._page_indicator = new PageIndicator(this.game, this);
+    }
+
+    get color() {
+        return this._color;
+    }
+    get font_color() {
+        return this._font_color;
+    }
+    get x() {
+        return this._x;
+    }
+    get y() {
+        return this._y;
+    }
+    get width() {
+        return this._width;
+    }
+    get height() {
+        return this._height;
+    }
+    get group() {
+        return this._group;
+    }
+    get page_indicator() {
+        return this._page_indicator;
+    }
+    get open() {
+        return this._open;
     }
 
     get real_x() {
         return this.group.x;
     }
-
     get real_y() {
         return this.group.y;
     }
@@ -223,7 +250,7 @@ export class Window {
 
     /*Creates the background
     Fills the window's space with the default window color*/
-    draw_background() {
+    private draw_background() {
         this.bg_graphics.beginFill(this.color, 1);
         this.bg_graphics.drawRect(2, 2, this.width, this.height);
         this.bg_graphics.endFill();
@@ -238,7 +265,7 @@ export class Window {
     0x525252 = Gray (Darker)
     0x111111 = Black
     */
-    draw_borders() {
+    private draw_borders() {
         //Left
         this.border_graphics.lineStyle(1, 0x525252);
         this.border_graphics.moveTo(0, 1);
@@ -352,10 +379,10 @@ export class Window {
                 height [number] - The new height*/
     update_size(new_size) {
         if (new_size.width !== undefined) {
-            this.width = new_size.width;
+            this._width = new_size.width;
         }
         if (new_size.height !== undefined) {
-            this.height = new_size.height;
+            this._height = new_size.height;
         }
         this.border_graphics.clear();
         this.bg_graphics.clear();
@@ -369,15 +396,15 @@ export class Window {
                 x [number] - The new x value
                 x [number] - The new y value
            relative [boolean] - If true, moves the window by the x and y offset values*/
-    update_position(new_position, relative = true) {
+    update_position(new_position: {x?: number; y?: number}, relative_to_camera_pos = true) {
         if (new_position.x !== undefined) {
-            this.x = new_position.x;
+            this._x = new_position.x;
         }
         if (new_position.y !== undefined) {
-            this.y = new_position.y;
+            this._y = new_position.y;
         }
-        this.group.x = (relative ? this.game.camera.x : 0) + this.x;
-        this.group.y = (relative ? this.game.camera.y : 0) + this.y;
+        this.group.x = (relative_to_camera_pos ? this.game.camera.x : 0) + this.x;
+        this.group.y = (relative_to_camera_pos ? this.game.camera.y : 0) + this.y;
     }
 
     /*Creates an internal group
@@ -466,11 +493,11 @@ export class Window {
                     true
                 )
                 .onComplete.addOnce(() => {
-                    this.open = true;
+                    this._open = true;
                     if (show_callback !== undefined) show_callback();
                 });
         } else {
-            this.open = true;
+            this._open = true;
             this.group.width = this.border_graphics.width;
             this.group.height = this.border_graphics.height;
             if (show_callback !== undefined) show_callback();
@@ -533,7 +560,7 @@ export class Window {
     
     Input: sprite [Phaser:Sprite] - The sprite to be removed
            destroy [boolean] - If true, the sprite is destroyed*/
-    remove_from_group(sprite?, destroy = true) {
+    remove_from_this_window(sprite?, destroy = true) {
         if (sprite !== undefined) {
             this.group.remove(sprite, destroy);
         } else {
@@ -541,14 +568,6 @@ export class Window {
                 this.group.remove(this.extra_sprites[i], destroy);
             }
         }
-    }
-
-    /*Removes smoothing effect from a text sprite
-
-    Input: text_sprite [Phaser:Sprite] - Text sprite to remove the effect from*/
-    remove_smooth(text_sprite) {
-        text_sprite.smoothed = false;
-        text_sprite.autoRound = true;
     }
 
     /*Creates a sprite to represent the given lines of text
@@ -598,9 +617,7 @@ export class Window {
 
             y_pos += numbers.FONT_SIZE + (space_between_lines ?? numbers.SPACE_BETWEEN_LINES);
 
-            this.remove_smooth(text_sprite);
-            text_sprite.tint = colors !== undefined ? colors[i] : this.font_color;
-            this.remove_smooth(text_sprite_shadow);
+            text_sprite.tint = colors !== undefined ? (Array.isArray(colors) ? colors[i] : colors) : this.font_color;
             text_sprite_shadow.tint = 0x0;
 
             if (animate) {
@@ -658,9 +675,7 @@ export class Window {
             text_sprite_shadow.x -= text_sprite_shadow.width;
         }
 
-        this.remove_smooth(text_sprite);
         text_sprite.tint = this.font_color;
-        this.remove_smooth(text_sprite_shadow);
         text_sprite_shadow.tint = 0x0;
 
         this.group.add(text_sprite_shadow);
@@ -702,47 +717,50 @@ export class Window {
         text: string,
         x_pos: number,
         y_pos: number,
-        right_align = false,
-        is_center_pos = false,
-        color = this.font_color,
-        with_bg = false,
-        internal_group_key: string = undefined,
-        italic = false
+        options?: {
+            right_align?: boolean;
+            is_center_pos?: boolean;
+            color?: number;
+            with_bg?: boolean;
+            internal_group_key?: string;
+            italic?: boolean;
+        }
     ): TextObj {
-        const font_name = italic ? utils.ITALIC_FONT_NAME : utils.FONT_NAME;
+        const font_name = options?.italic ? utils.ITALIC_FONT_NAME : utils.FONT_NAME;
         const text_sprite = this.game.add.bitmapText(x_pos, y_pos, font_name, text, numbers.FONT_SIZE);
         const text_sprite_shadow = this.game.add.bitmapText(x_pos + 1, y_pos + 1, font_name, text, numbers.FONT_SIZE);
-        if (is_center_pos) {
+        if (options?.is_center_pos) {
             text_sprite.centerX = x_pos;
             text_sprite.centerY = y_pos;
             text_sprite_shadow.centerX = x_pos + 1;
             text_sprite_shadow.centerY = y_pos + 1;
         }
-        if (right_align) {
+        if (options?.right_align) {
             text_sprite.x -= text_sprite.width;
             text_sprite_shadow.x -= text_sprite_shadow.width;
         }
         let text_bg;
-        if (with_bg) {
+        if (options?.with_bg) {
             text_bg = this.game.add.graphics(text_sprite.x - 1, text_sprite.y);
             text_bg.beginFill(this.color, 1);
             text_bg.drawRect(0, 0, text_sprite.width + 3, numbers.FONT_SIZE);
             text_bg.endFill();
-            if (internal_group_key === undefined || !this.add_to_internal_group(internal_group_key, text_bg)) {
+            if (
+                options?.internal_group_key === undefined ||
+                !this.add_to_internal_group(options?.internal_group_key, text_bg)
+            ) {
                 this.group.add(text_bg);
             }
         }
 
-        this.remove_smooth(text_sprite);
-        text_sprite.tint = color;
-        this.remove_smooth(text_sprite_shadow);
+        text_sprite.tint = options?.color ?? this.font_color;
         text_sprite_shadow.tint = 0x0;
 
         let added_to_internal = false;
-        if (internal_group_key !== undefined) {
+        if (options?.internal_group_key !== undefined) {
             added_to_internal =
-                this.add_to_internal_group(internal_group_key, text_sprite_shadow) &&
-                this.add_to_internal_group(internal_group_key, text_sprite);
+                this.add_to_internal_group(options?.internal_group_key, text_sprite_shadow) &&
+                this.add_to_internal_group(options?.internal_group_key, text_sprite);
         }
         if (!added_to_internal) {
             this.group.add(text_sprite_shadow);
@@ -752,7 +770,7 @@ export class Window {
         return {
             text: text_sprite,
             shadow: text_sprite_shadow,
-            right_align: right_align,
+            right_align: options?.right_align,
             initial_x: x_pos,
             text_bg: text_bg,
         };
@@ -830,7 +848,7 @@ export class Window {
            text_shadow_pair [array] - Contains the text and its shadow
                 text - The text to change
                 shadow - The shadow of the text*/
-    update_text_color(color, text_shadow_pair: TextObj) {
+    update_text_color(color: number, text_shadow_pair: TextObj) {
         text_shadow_pair.text.tint = color;
     }
 
@@ -858,7 +876,7 @@ export class Window {
                 .to({width: 0, height: 0}, Window.TRANSITION_TIME, Phaser.Easing.Linear.None, true)
                 .onComplete.addOnce(() => {
                     this.group.alpha = 0;
-                    this.open = false;
+                    this._open = false;
                     if (this.page_indicator.is_set) {
                         this.page_indicator.terminante();
                     }
@@ -871,7 +889,7 @@ export class Window {
                 });
         } else {
             this.group.alpha = 0;
-            this.open = false;
+            this._open = false;
             if (this.page_indicator.is_set) {
                 this.page_indicator.terminante();
             }

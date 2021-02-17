@@ -63,9 +63,11 @@ export class ShopItemQuantityWindow {
             String(this.chosen_quantity),
             QUANTITY_TEXT_END_X,
             QUANTITY_TEXT_Y,
-            true
+            {right_align: true}
         );
-        this.coins_val_text = this.window.set_text_in_position("", COINS_VALUE_END_X, COINS_VALUE_Y, true);
+        this.coins_val_text = this.window.set_text_in_position("", COINS_VALUE_END_X, COINS_VALUE_Y, {
+            right_align: true,
+        });
         this.coins_label_text = this.window.set_text_in_position("Coins", COINS_LABEL_X, COINS_LABEL_Y);
     }
 

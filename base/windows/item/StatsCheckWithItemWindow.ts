@@ -104,9 +104,9 @@ export class StatsCheckWithItemWindow {
             ),
         } as Arrows;
         this.preview_stats_texts = {
-            [effect_types.ATTACK]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 48, true),
-            [effect_types.DEFENSE]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 64, true),
-            [effect_types.AGILITY]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 80, true),
+            [effect_types.ATTACK]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 48, {right_align: true}),
+            [effect_types.DEFENSE]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 64, {right_align: true}),
+            [effect_types.AGILITY]: this.base_window.set_text_in_position("0", PREVIEW_TEXT_X, 80, {right_align: true}),
         } as Arrows;
         this.hide_arrows();
 
@@ -117,9 +117,9 @@ export class StatsCheckWithItemWindow {
 
         this.name_text = this.base_window.set_text_in_position("0", 40, 8);
         this.lv_text = this.base_window.set_text_in_position("0", 80, 24);
-        this.attack_text = this.base_window.set_text_in_position("0", 40, 48, true);
-        this.defense_text = this.base_window.set_text_in_position("0", 40, 64, true);
-        this.agility_text = this.base_window.set_text_in_position("0", 40, 80, true);
+        this.attack_text = this.base_window.set_text_in_position("0", 40, 48, {right_align: true});
+        this.defense_text = this.base_window.set_text_in_position("0", 40, 64, {right_align: true});
+        this.agility_text = this.base_window.set_text_in_position("0", 40, 80, {right_align: true});
     }
 
     update_position() {

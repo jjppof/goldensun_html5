@@ -30,7 +30,9 @@ export class InnMenu {
         this.choice_menu = new YesNoMenu(this.game, this.data);
         this.coin_window = new Window(this.game, 0, 128, 92, 28);
         this.coin_window.set_text_in_position("Your Coins: ", 8, 8);
-        this.coin_number = this.coin_window.set_text_in_position(String(this.data.info.party_data.coins), 85, 18, true);
+        this.coin_number = this.coin_window.set_text_in_position(String(this.data.info.party_data.coins), 85, 18, {
+            right_align: true,
+        });
 
         this.cost = 0;
         this.inn_id = null;

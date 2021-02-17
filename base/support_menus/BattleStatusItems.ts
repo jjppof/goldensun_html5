@@ -178,16 +178,10 @@ export class BattleStatusItems extends StatusComponent {
                 font_color = DEFAULT_FONT_COLOR;
             }
 
-            const name_text = this.window.set_text_in_position(
-                name,
-                x_pos,
-                y_pos,
-                false,
-                false,
-                font_color,
-                false,
-                BattleStatusItems.GROUP_KEY
-            );
+            const name_text = this.window.set_text_in_position(name, x_pos, y_pos, {
+                color: font_color,
+                internal_group_key: BattleStatusItems.GROUP_KEY,
+            });
             this.state_sprites.push(name_text.text, name_text.shadow);
         });
 

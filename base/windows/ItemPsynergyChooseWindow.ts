@@ -287,7 +287,7 @@ export class ItemPsynergyChooseWindow {
                         this.element_list[elem_key_name as string].pp_cost,
                         x_elem_pp_cost,
                         y + ELEM_NAME_ICON_SHIFT,
-                        true
+                        {right_align: true}
                     )
                 );
             }
@@ -359,7 +359,7 @@ export class ItemPsynergyChooseWindow {
     clear_sprites() {
         for (let i = 0; i < this.icon_sprites_in_window.length; ++i) {
             if (this.is_psynergy_window) {
-                this.window.remove_from_group(this.icon_sprites_in_window[i]);
+                this.window.remove_from_this_window(this.icon_sprites_in_window[i]);
             } else {
                 this.window.destroy_internal_group(this.icon_sprites_in_window[i].data.internal_group_key);
             }

@@ -104,7 +104,9 @@ export class ChoosingTargetWindow {
             this.window_sprites.push(icon);
         }
         if (this.action === "psynergy") {
-            const pp_value = this.base_window.set_text_in_position(this.quantities[0].toString(), PP_X, PP_Y, true);
+            const pp_value = this.base_window.set_text_in_position(this.quantities[0].toString(), PP_X, PP_Y, {
+                right_align: true,
+            });
             this.texts.push(pp_value);
             const pp_text = this.base_window.set_text_in_position("PP", PP_TEXT_X, PP_Y);
             this.texts.push(pp_text);
@@ -206,7 +208,7 @@ export class ChoosingTargetWindow {
             this.base_window.remove_text(text);
         });
         this.window_sprites.forEach(sprite => {
-            this.base_window.remove_from_group(sprite, true);
+            this.base_window.remove_from_this_window(sprite, true);
         });
         this.sprites = [];
         this.window_sprites = [];

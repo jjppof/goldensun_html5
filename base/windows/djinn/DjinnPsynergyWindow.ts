@@ -150,7 +150,7 @@ export class DjinnPsynergyWindow {
                 String(this.data.info.abilities_list[key_name].pp_cost),
                 PSY_PP_X,
                 y + ELEM_NAME_ICON_SHIFT,
-                true
+                {right_align: true}
             );
             this.text_sprites_in_window.push(psynergy_cost_sprite);
             if (this.gained_abilities.includes(key_name)) {
@@ -210,7 +210,7 @@ export class DjinnPsynergyWindow {
 
     clear_sprites() {
         for (let i = 0; i < this.icon_sprites_in_window.length; ++i) {
-            this.base_window.remove_from_group(this.icon_sprites_in_window[i]);
+            this.base_window.remove_from_this_window(this.icon_sprites_in_window[i]);
         }
         this.icon_sprites_in_window = [];
         for (let i = 0; i < this.text_sprites_in_window.length; ++i) {

@@ -165,12 +165,9 @@ export class ShopMenu {
             YOUR_COINS_LABEL_X,
             YOUR_COINS_LABEL_Y
         );
-        this.your_coins_text = this.your_coins_win.set_text_in_position(
-            "",
-            YOUR_COINS_VAL_END_X,
-            YOUR_COINS_VAL_Y,
-            true
-        );
+        this.your_coins_text = this.your_coins_win.set_text_in_position("", YOUR_COINS_VAL_END_X, YOUR_COINS_VAL_Y, {
+            right_align: true,
+        });
 
         this.item_name_text = this.item_price_win.set_text_in_position("", ITEM_PRICE_NAME_X, ITEM_PRICE_NAME_Y);
         this.item_price_label = this.item_price_win.set_text_in_position(
@@ -182,7 +179,7 @@ export class ShopMenu {
             "",
             ITEM_PRICE_VAL_END_X,
             ITEM_PRICE_VAL_Y,
-            true
+            {right_align: true}
         );
         this.item_price_coins_label = this.item_price_win.set_text_in_position(
             "Coins",

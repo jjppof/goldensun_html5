@@ -115,7 +115,7 @@ export class PageIndicator {
         for (let i = 1; i <= this.page_count; ++i) {
             const x = this.number_bar.x + PageIndicator.NUMBER_WIDTH * (i - 1) + (PageIndicator.NUMBER_WIDTH >> 1);
             const y = this.number_bar.y + (PageIndicator.NUMBER_HEIGHT >> 1);
-            this.page_numbers.push(this.window.set_text_in_position(i.toString(), x, y, false, true));
+            this.page_numbers.push(this.window.set_text_in_position(i.toString(), x, y, {is_center_pos: true}));
         }
 
         this.number_bar_highlight.alpha = 1;

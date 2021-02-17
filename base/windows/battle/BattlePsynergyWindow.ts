@@ -234,20 +234,13 @@ export class BattlePsynergyWindow {
                 this.data.info.abilities_list[key_name].name,
                 x_elem_name,
                 y + ELEM_NAME_ICON_SHIFT,
-                false,
-                false,
-                font_color
+                {color: font_color}
             );
             this.text_sprites_in_window.push(psynergy_name_sprite);
 
-            const pp_sprite = this.base_window.set_text_in_position(
-                "PP",
-                PP_X,
-                y + ELEM_NAME_ICON_SHIFT,
-                false,
-                false,
-                font_color
-            );
+            const pp_sprite = this.base_window.set_text_in_position("PP", PP_X, y + ELEM_NAME_ICON_SHIFT, {
+                color: font_color,
+            });
             this.text_sprites_in_window.push(pp_sprite);
 
             this.icon_sprites_in_window.push(
@@ -278,9 +271,10 @@ export class BattlePsynergyWindow {
                 String(this.data.info.abilities_list[key_name].pp_cost),
                 PSY_PP_END_X,
                 y + ELEM_NAME_ICON_SHIFT,
-                true,
-                false,
-                font_color
+                {
+                    right_align: true,
+                    color: font_color,
+                }
             );
             this.text_sprites_in_window.push(psynergy_cost_sprite);
 
@@ -365,12 +359,12 @@ export class BattlePsynergyWindow {
 
     clear_sprites(clear_psy_gain = true) {
         for (let i = 0; i < this.icon_sprites_in_window.length; ++i) {
-            this.base_window.remove_from_group(this.icon_sprites_in_window[i]);
+            this.base_window.remove_from_this_window(this.icon_sprites_in_window[i]);
         }
 
         this.icon_sprites_in_window = [];
         for (let i = 0; i < this.misc_sprites_in_window.length; ++i) {
-            this.base_window.remove_from_group(this.misc_sprites_in_window[i]);
+            this.base_window.remove_from_this_window(this.misc_sprites_in_window[i]);
         }
 
         this.misc_sprites_in_window = [];

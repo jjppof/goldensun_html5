@@ -297,16 +297,9 @@ export class MainStatusStatistics extends StatusComponent {
 
             if (this.state === MainStatusStates.CHARACTERS) y_pos += MainStatusStatistics.ELEM.DOWN_SHIFT;
 
-            const label = this.window.set_text_in_position(
-                labels[i],
-                x_pos,
-                y_pos,
-                false,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
-            );
+            const label = this.window.set_text_in_position(labels[i], x_pos, y_pos, {
+                internal_group_key: MainStatusStatistics.GROUP_KEY,
+            });
             this.state_sprites.push(label.text, label.shadow);
 
             if (this.state === MainStatusStates.CHARACTERS && i === 0) break;
@@ -325,62 +318,38 @@ export class MainStatusStatistics extends StatusComponent {
                 text = String(djinn_counts.total);
             }
 
-            let numbers = this.window.set_text_in_position(
-                text,
-                x_pos,
-                y_pos,
-                true,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
-            );
+            let numbers = this.window.set_text_in_position(text, x_pos, y_pos, {
+                right_align: true,
+                internal_group_key: MainStatusStatistics.GROUP_KEY,
+            });
             this.state_sprites.push(numbers.text, numbers.shadow);
 
             if (this.state !== MainStatusStates.CHARACTERS) {
                 y_pos += MainStatusStatistics.ELEM.NUMBERS.Y_SHIFT;
                 text = String(elemental_stats.level);
 
-                numbers = this.window.set_text_in_position(
-                    text,
-                    x_pos,
-                    y_pos,
-                    true,
-                    false,
-                    undefined,
-                    false,
-                    MainStatusStatistics.GROUP_KEY
-                );
+                numbers = this.window.set_text_in_position(text, x_pos, y_pos, {
+                    right_align: true,
+                    internal_group_key: MainStatusStatistics.GROUP_KEY,
+                });
                 this.state_sprites.push(numbers.text, numbers.shadow);
 
                 y_pos += MainStatusStatistics.ELEM.NUMBERS.Y_SHIFT;
                 text = String(elemental_stats.power);
 
-                numbers = this.window.set_text_in_position(
-                    text,
-                    x_pos,
-                    y_pos,
-                    true,
-                    false,
-                    undefined,
-                    false,
-                    MainStatusStatistics.GROUP_KEY
-                );
+                numbers = this.window.set_text_in_position(text, x_pos, y_pos, {
+                    right_align: true,
+                    internal_group_key: MainStatusStatistics.GROUP_KEY,
+                });
                 this.state_sprites.push(numbers.text, numbers.shadow);
 
                 y_pos += MainStatusStatistics.ELEM.NUMBERS.Y_SHIFT;
                 text = String(elemental_stats.resistance);
 
-                numbers = this.window.set_text_in_position(
-                    text,
-                    x_pos,
-                    y_pos,
-                    true,
-                    false,
-                    undefined,
-                    false,
-                    MainStatusStatistics.GROUP_KEY
-                );
+                numbers = this.window.set_text_in_position(text, x_pos, y_pos, {
+                    right_align: true,
+                    internal_group_key: MainStatusStatistics.GROUP_KEY,
+                });
                 this.state_sprites.push(numbers.text, numbers.shadow);
             }
 
@@ -400,11 +369,7 @@ export class MainStatusStatistics extends StatusComponent {
                 "Exp",
                 MainStatusStatistics.EXP.LABEL_X,
                 MainStatusStatistics.EXP.LABEL_Y,
-                false,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {internal_group_key: MainStatusStatistics.GROUP_KEY}
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -412,11 +377,10 @@ export class MainStatusStatistics extends StatusComponent {
                 String(this.selected_char.current_exp),
                 MainStatusStatistics.EXP.VALUE_END_X,
                 MainStatusStatistics.EXP.VALUE_Y,
-                true,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {
+                    right_align: true,
+                    internal_group_key: MainStatusStatistics.GROUP_KEY,
+                }
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -424,11 +388,7 @@ export class MainStatusStatistics extends StatusComponent {
                 "HP",
                 MainStatusStatistics.HP.LABEL_X,
                 MainStatusStatistics.HP.LABEL_Y,
-                false,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {internal_group_key: MainStatusStatistics.GROUP_KEY}
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -436,11 +396,10 @@ export class MainStatusStatistics extends StatusComponent {
                 String(this.selected_char.max_hp),
                 MainStatusStatistics.HP.MAX_END_X,
                 MainStatusStatistics.HP.MAX_Y,
-                true,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {
+                    right_align: true,
+                    internal_group_key: MainStatusStatistics.GROUP_KEY,
+                }
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -448,11 +407,10 @@ export class MainStatusStatistics extends StatusComponent {
                 this.selected_char.current_hp + "/",
                 MainStatusStatistics.HP.CURR_END_X,
                 MainStatusStatistics.HP.CURR_Y,
-                true,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {
+                    right_align: true,
+                    internal_group_key: MainStatusStatistics.GROUP_KEY,
+                }
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -460,11 +418,7 @@ export class MainStatusStatistics extends StatusComponent {
                 "PP",
                 MainStatusStatistics.PP.LABEL_X,
                 MainStatusStatistics.PP.LABEL_Y,
-                false,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {internal_group_key: MainStatusStatistics.GROUP_KEY}
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -472,11 +426,10 @@ export class MainStatusStatistics extends StatusComponent {
                 String(this.selected_char.max_pp),
                 MainStatusStatistics.PP.MAX_END_X,
                 MainStatusStatistics.PP.MAX_Y,
-                true,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {
+                    right_align: true,
+                    internal_group_key: MainStatusStatistics.GROUP_KEY,
+                }
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -484,11 +437,10 @@ export class MainStatusStatistics extends StatusComponent {
                 this.selected_char.current_pp + "/",
                 MainStatusStatistics.PP.CURR_END_X,
                 MainStatusStatistics.PP.CURR_Y,
-                true,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {
+                    right_align: true,
+                    internal_group_key: MainStatusStatistics.GROUP_KEY,
+                }
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -498,11 +450,7 @@ export class MainStatusStatistics extends StatusComponent {
                 "Attack",
                 MainStatusStatistics.STATS.LABEL_X,
                 MainStatusStatistics.STATS.LABEL_Y,
-                false,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {internal_group_key: MainStatusStatistics.GROUP_KEY}
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -510,11 +458,10 @@ export class MainStatusStatistics extends StatusComponent {
                 String(this.selected_char.atk),
                 MainStatusStatistics.STATS.VALUE_END_X,
                 MainStatusStatistics.STATS.VALUE_Y,
-                true,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {
+                    right_align: true,
+                    internal_group_key: MainStatusStatistics.GROUP_KEY,
+                }
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -522,11 +469,7 @@ export class MainStatusStatistics extends StatusComponent {
                 "Defense",
                 MainStatusStatistics.STATS.LABEL_X,
                 MainStatusStatistics.STATS.LABEL_Y + shift,
-                false,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {internal_group_key: MainStatusStatistics.GROUP_KEY}
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -534,11 +477,10 @@ export class MainStatusStatistics extends StatusComponent {
                 String(this.selected_char.def),
                 MainStatusStatistics.STATS.VALUE_END_X,
                 MainStatusStatistics.STATS.VALUE_Y + shift,
-                true,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {
+                    right_align: true,
+                    internal_group_key: MainStatusStatistics.GROUP_KEY,
+                }
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -546,11 +488,7 @@ export class MainStatusStatistics extends StatusComponent {
                 "Agility",
                 MainStatusStatistics.STATS.LABEL_X,
                 MainStatusStatistics.STATS.LABEL_Y + 2 * shift,
-                false,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {internal_group_key: MainStatusStatistics.GROUP_KEY}
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -558,11 +496,10 @@ export class MainStatusStatistics extends StatusComponent {
                 String(this.selected_char.agi),
                 MainStatusStatistics.STATS.VALUE_END_X,
                 MainStatusStatistics.STATS.VALUE_Y + 2 * shift,
-                true,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {
+                    right_align: true,
+                    internal_group_key: MainStatusStatistics.GROUP_KEY,
+                }
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -570,11 +507,7 @@ export class MainStatusStatistics extends StatusComponent {
                 "Luck",
                 MainStatusStatistics.STATS.LABEL_X,
                 MainStatusStatistics.STATS.LABEL_Y + 3 * shift,
-                false,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {internal_group_key: MainStatusStatistics.GROUP_KEY}
             );
             this.state_sprites.push(txt.text, txt.shadow);
 
@@ -582,11 +515,10 @@ export class MainStatusStatistics extends StatusComponent {
                 String(this.selected_char.luk),
                 MainStatusStatistics.STATS.VALUE_END_X,
                 MainStatusStatistics.STATS.VALUE_Y + 3 * shift,
-                true,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {
+                    right_align: true,
+                    internal_group_key: MainStatusStatistics.GROUP_KEY,
+                }
             );
             this.state_sprites.push(txt.text, txt.shadow);
         }
@@ -599,11 +531,7 @@ export class MainStatusStatistics extends StatusComponent {
                 "Normal",
                 MainStatusStatistics.NORMAL_STATUS.X,
                 MainStatusStatistics.NORMAL_STATUS.Y,
-                false,
-                false,
-                undefined,
-                false,
-                MainStatusStatistics.GROUP_KEY
+                {internal_group_key: MainStatusStatistics.GROUP_KEY}
             );
             this.state_sprites.push(txt.text, txt.shadow);
         } else {
@@ -617,11 +545,7 @@ export class MainStatusStatistics extends StatusComponent {
                     MainStatusStatistics.EFFECT_LABELS[effect.key],
                     x_pos,
                     y_pos,
-                    false,
-                    false,
-                    undefined,
-                    false,
-                    MainStatusStatistics.GROUP_KEY
+                    {internal_group_key: MainStatusStatistics.GROUP_KEY}
                 );
                 this.state_sprites.push(txt.text, txt.shadow);
 

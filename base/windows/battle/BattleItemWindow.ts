@@ -199,7 +199,7 @@ export class BattleItemWindow {
                 color = numbers.YELLOW_FONT_COLOR;
             }
 
-            const name = this.base_window.set_text_in_position(item.name, ITEM_NAME_X, base_y, false, false, color);
+            const name = this.base_window.set_text_in_position(item.name, ITEM_NAME_X, base_y, {color: color});
             this.item_names.push(name);
         }
     }
@@ -235,7 +235,7 @@ export class BattleItemWindow {
             this.base_window.remove_text(text);
         });
         this.other_sprites.forEach(sprite => {
-            this.base_window.remove_from_group(sprite, true);
+            this.base_window.remove_from_this_window(sprite, true);
         });
     }
 

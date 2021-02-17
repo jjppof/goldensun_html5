@@ -198,7 +198,7 @@ export class BattleDjinnWindow {
                     break;
             }
 
-            const name = this.base_window.set_text_in_position(djinn.name, DJINN_NAME_X, base_y, false, false, color);
+            const name = this.base_window.set_text_in_position(djinn.name, DJINN_NAME_X, base_y, {color: color});
             this.djinn_names.push(name);
 
             if (djinn.status === djinn_status.RECOVERY) {
@@ -206,9 +206,10 @@ export class BattleDjinnWindow {
                     (djinn.recovery_turn + 1).toString(),
                     RECOVERY_NUMBER_X,
                     base_y,
-                    true,
-                    false,
-                    djinn_font_colors[djinn_status.RECOVERY]
+                    {
+                        right_align: true,
+                        color: djinn_font_colors[djinn_status.RECOVERY],
+                    }
                 );
                 this.djinn_names.push(rec_number);
             }
@@ -259,7 +260,7 @@ export class BattleDjinnWindow {
 
     clear_sprites() {
         this.stars_sprites.forEach(sprite => {
-            this.base_window.remove_from_group(sprite, true);
+            this.base_window.remove_from_this_window(sprite, true);
         });
         this.djinn_names.forEach(text => {
             this.base_window.remove_text(text);

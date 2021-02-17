@@ -195,16 +195,9 @@ export class MainStatusItems extends StatusComponent {
             x_pos = MainStatusItems.ITEM.NAME_X;
             y_pos = MainStatusItems.ITEM.NAME_Y + index * MainStatusItems.SHIFT;
 
-            const name_text = this.window.set_text_in_position(
-                name,
-                x_pos,
-                y_pos,
-                false,
-                false,
-                undefined,
-                false,
-                MainStatusItems.GROUP_KEY
-            );
+            const name_text = this.window.set_text_in_position(name, x_pos, y_pos, {
+                internal_group_key: MainStatusItems.GROUP_KEY,
+            });
             this.state_sprites.push(name_text.text, name_text.shadow);
         });
 
@@ -212,11 +205,7 @@ export class MainStatusItems extends StatusComponent {
             "Attack",
             MainStatusItems.STATS.LABEL_X,
             MainStatusItems.STATS.LABEL_Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusItems.GROUP_KEY
+            {internal_group_key: MainStatusItems.GROUP_KEY}
         );
         this.state_sprites.push(txt.text, txt.shadow);
 
@@ -224,11 +213,10 @@ export class MainStatusItems extends StatusComponent {
             String(this.selected_char.atk),
             MainStatusItems.STATS.VALUE_END_X,
             MainStatusItems.STATS.VALUE_Y,
-            true,
-            false,
-            undefined,
-            false,
-            MainStatusItems.GROUP_KEY
+            {
+                right_align: true,
+                internal_group_key: MainStatusItems.GROUP_KEY,
+            }
         );
         this.state_sprites.push(txt.text, txt.shadow);
 
@@ -236,11 +224,7 @@ export class MainStatusItems extends StatusComponent {
             "Defense",
             MainStatusItems.STATS.LABEL_X,
             MainStatusItems.STATS.LABEL_Y + MainStatusItems.STATS.LINE_SHIFT,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusItems.GROUP_KEY
+            {internal_group_key: MainStatusItems.GROUP_KEY}
         );
         this.state_sprites.push(txt.text, txt.shadow);
 
@@ -248,11 +232,10 @@ export class MainStatusItems extends StatusComponent {
             String(this.selected_char.def),
             MainStatusItems.STATS.VALUE_END_X,
             MainStatusItems.STATS.VALUE_Y + MainStatusItems.STATS.LINE_SHIFT,
-            true,
-            false,
-            undefined,
-            false,
-            MainStatusItems.GROUP_KEY
+            {
+                right_align: true,
+                internal_group_key: MainStatusItems.GROUP_KEY,
+            }
         );
         this.state_sprites.push(txt.text, txt.shadow);
 

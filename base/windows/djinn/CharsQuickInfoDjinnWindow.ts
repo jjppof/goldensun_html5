@@ -38,7 +38,7 @@ export class CharsQuickInfoDjinnWindow {
         this.char_name = this.base_window.set_text_in_position("", NAME_X, NAME_Y);
         this.char_class = this.base_window.set_text_in_position("", NAME_X, CLASS_Y);
         this.base_window.set_text_in_position("Lv", LV_X, LV_Y);
-        this.level_number = this.base_window.set_text_in_position("", LV_NUMBER_RIGHT_X, LV_Y, true);
+        this.level_number = this.base_window.set_text_in_position("", LV_NUMBER_RIGHT_X, LV_Y, {right_align: true});
     }
 
     update_text() {

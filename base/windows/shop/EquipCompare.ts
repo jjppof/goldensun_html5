@@ -76,17 +76,10 @@ export class EquipCompare {
         this.text_group = this.window.define_internal_group("texts", {x: TXT_GROUP_X, y: TXT_GROUP_Y});
         this.arrow_group = this.window.define_internal_group("arrows", {x: ARROW_X, y: ARROW_Y});
 
-        this.cant_equip_text = this.window.set_text_in_position(
-            "Can't equip",
-            CANT_EQUIP_X,
-            CANT_EQUIP_Y,
-            false,
-            false,
-            this.window.font_color,
-            false,
-            undefined,
-            true
-        );
+        this.cant_equip_text = this.window.set_text_in_position("Can't equip", CANT_EQUIP_X, CANT_EQUIP_Y, {
+            italic: true,
+            color: this.window.font_color,
+        });
         this.cant_equip_text.text.alpha = 0;
         this.cant_equip_text.shadow.alpha = 0;
 
@@ -113,7 +106,7 @@ export class EquipCompare {
            x, y [number] - The text position
            right_align - If true, the text will be right-aligned*/
     init_text_sprite(text: string, x: number, y: number, right_align: boolean) {
-        let txt = this.window.set_text_in_position(text, x, y, right_align);
+        let txt = this.window.set_text_in_position(text, x, y, {right_align: right_align});
         this.window.add_to_internal_group("texts", txt.shadow);
         this.window.add_to_internal_group("texts", txt.text);
         return txt;

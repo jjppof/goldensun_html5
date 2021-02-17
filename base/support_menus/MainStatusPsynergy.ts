@@ -156,31 +156,18 @@ export class MainStatusPsynergy extends StatusComponent {
             x_pos = MainStatusPsynergy.PSYNERGY.NAME_X;
             y_pos = MainStatusPsynergy.PSYNERGY.NAME_Y + index * MainStatusPsynergy.SHIFT;
 
-            const name_text = this.window.set_text_in_position(
-                name,
-                x_pos,
-                y_pos,
-                false,
-                false,
-                undefined,
-                false,
-                MainStatusPsynergy.GROUP_KEY
-            );
+            const name_text = this.window.set_text_in_position(name, x_pos, y_pos, {
+                internal_group_key: MainStatusPsynergy.GROUP_KEY,
+            });
             this.state_sprites.push(name_text.text, name_text.shadow);
 
             x_pos = MainStatusPsynergy.PSYNERGY.PP_VALUE_END_X;
             y_pos = MainStatusPsynergy.PSYNERGY.PP_VALUE_Y + index * MainStatusPsynergy.SHIFT;
 
-            const pp_value = this.window.set_text_in_position(
-                String(pp_cost),
-                x_pos,
-                y_pos,
-                true,
-                false,
-                undefined,
-                false,
-                MainStatusPsynergy.GROUP_KEY
-            );
+            const pp_value = this.window.set_text_in_position(String(pp_cost), x_pos, y_pos, {
+                right_align: true,
+                internal_group_key: MainStatusPsynergy.GROUP_KEY,
+            });
             this.state_sprites.push(pp_value.text, pp_value.shadow);
 
             x_pos = MainStatusPsynergy.PSYNERGY.STAR_X;
@@ -214,31 +201,17 @@ export class MainStatusPsynergy extends StatusComponent {
         let x_pos = MainStatusPsynergy.PSYNERGY.PP_LABEL_X;
         let y_pos = MainStatusPsynergy.PSYNERGY.PP_LABEL_Y;
 
-        const pp_label = this.window.set_text_in_position(
-            "PP",
-            x_pos,
-            y_pos,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusPsynergy.GROUP_KEY
-        );
+        const pp_label = this.window.set_text_in_position("PP", x_pos, y_pos, {
+            internal_group_key: MainStatusPsynergy.GROUP_KEY,
+        });
         this.state_sprites.push(pp_label.text, pp_label.shadow);
 
         x_pos = MainStatusPsynergy.USE_TEXT.X;
         y_pos = MainStatusPsynergy.USE_TEXT.Y;
 
-        this.use_text = this.window.set_text_in_position(
-            "",
-            x_pos,
-            y_pos,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusPsynergy.GROUP_KEY
-        );
+        this.use_text = this.window.set_text_in_position("", x_pos, y_pos, {
+            internal_group_key: MainStatusPsynergy.GROUP_KEY,
+        });
         this.state_sprites.push(this.use_text.text, this.use_text.shadow);
 
         this.window.page_indicator.initialize(this.ability_pages.length, this.current_line);

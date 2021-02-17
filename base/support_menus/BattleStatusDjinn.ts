@@ -165,16 +165,11 @@ export class BattleStatusDjinn extends StatusComponent {
                     x_pos = BattleStatusDjinn.DJINN.RECOVERY_END_X + col_index * BattleStatusDjinn.SHIFT_X;
                     y_pos = BattleStatusDjinn.DJINN.RECOVERY_Y + line_index * BattleStatusDjinn.SHIFT_Y;
 
-                    const recovery_text = this.window.set_text_in_position(
-                        String(recovery),
-                        x_pos,
-                        y_pos,
-                        true,
-                        false,
-                        font_color,
-                        false,
-                        BattleStatusDjinn.GROUP_KEY
-                    );
+                    const recovery_text = this.window.set_text_in_position(String(recovery), x_pos, y_pos, {
+                        right_align: true,
+                        color: font_color,
+                        internal_group_key: BattleStatusDjinn.GROUP_KEY,
+                    });
                     this.state_sprites.push(recovery_text.text, recovery_text.shadow);
                 } else if (status === djinn_status.STANDBY) {
                     font_color = RED_FONT_COLOR;
@@ -183,16 +178,10 @@ export class BattleStatusDjinn extends StatusComponent {
                 x_pos = BattleStatusDjinn.DJINN.NAME_X + col_index * BattleStatusDjinn.SHIFT_X;
                 y_pos = BattleStatusDjinn.DJINN.NAME_Y + line_index * BattleStatusDjinn.SHIFT_Y;
 
-                const name_text = this.window.set_text_in_position(
-                    name,
-                    x_pos,
-                    y_pos,
-                    false,
-                    false,
-                    font_color,
-                    false,
-                    BattleStatusDjinn.GROUP_KEY
-                );
+                const name_text = this.window.set_text_in_position(name, x_pos, y_pos, {
+                    color: font_color,
+                    internal_group_key: BattleStatusDjinn.GROUP_KEY,
+                });
                 this.state_sprites.push(name_text.text, name_text.shadow);
             });
         });

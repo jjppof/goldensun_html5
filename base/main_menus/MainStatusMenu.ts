@@ -412,11 +412,7 @@ export class MainStatusMenu {
             "-",
             MainStatusMenu.DESC_GUIDE.HIFEN.X,
             MainStatusMenu.DESC_GUIDE.HIFEN.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.DESC_GUIDE_KEY
+            {internal_group_key: MainStatusMenu.DESC_GUIDE_KEY}
         );
         this.active_sprites.push(obj.text, obj.shadow);
 
@@ -424,11 +420,7 @@ export class MainStatusMenu {
             ": Switch  characters",
             MainStatusMenu.DESC_GUIDE.LR_TEXT.X,
             MainStatusMenu.DESC_GUIDE.LR_TEXT.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.DESC_GUIDE_KEY
+            {internal_group_key: MainStatusMenu.DESC_GUIDE_KEY}
         );
         this.active_sprites.push(obj.text, obj.shadow);
 
@@ -436,11 +428,7 @@ export class MainStatusMenu {
             "",
             MainStatusMenu.DESC_GUIDE.A_TEXT.X,
             MainStatusMenu.DESC_GUIDE.A_TEXT.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.DESC_GUIDE_KEY
+            {internal_group_key: MainStatusMenu.DESC_GUIDE_KEY}
         );
         this.active_sprites.push(obj.text, obj.shadow);
     }
@@ -456,27 +444,16 @@ export class MainStatusMenu {
         );
         this.active_sprites.push(this.avatar);
 
-        this.name = this.main_window.set_text_in_position(
-            "",
-            MainStatusMenu.NAME.X,
-            MainStatusMenu.NAME.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
-        );
+        this.name = this.main_window.set_text_in_position("", MainStatusMenu.NAME.X, MainStatusMenu.NAME.Y, {
+            internal_group_key: MainStatusMenu.GROUP_KEY,
+        });
         this.active_sprites.push(this.name.text, this.name.shadow);
 
         this.level_label = this.main_window.set_text_in_position(
             "Lv",
             MainStatusMenu.LEVEL.LABEL_X1,
             MainStatusMenu.LEVEL.LABEL_Y1,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(this.level_label.text, this.level_label.shadow);
 
@@ -484,11 +461,10 @@ export class MainStatusMenu {
             "",
             MainStatusMenu.LEVEL.VALUE_END_X1,
             MainStatusMenu.LEVEL.VALUE_Y1,
-            true,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {
+                right_align: true,
+                internal_group_key: MainStatusMenu.GROUP_KEY,
+            }
         );
         this.active_sprites.push(this.level_value.text, this.level_value.shadow);
 
@@ -496,11 +472,7 @@ export class MainStatusMenu {
             "",
             MainStatusMenu.CLASS_NAME.X,
             MainStatusMenu.CLASS_NAME.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(this.class_name.text, this.class_name.shadow);
 
@@ -588,11 +560,7 @@ export class MainStatusMenu {
             "-",
             MainStatusMenu.GUIDE.HIFEN.X,
             MainStatusMenu.GUIDE.HIFEN.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(this.hifen.text, this.hifen.shadow);
 
@@ -600,11 +568,7 @@ export class MainStatusMenu {
             ": Rearrange",
             MainStatusMenu.GUIDE.LR_TEXT.X,
             MainStatusMenu.GUIDE.LR_TEXT.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(this.lr_text.text, this.lr_text.shadow);
 
@@ -612,11 +576,7 @@ export class MainStatusMenu {
             ": Details",
             MainStatusMenu.GUIDE.A_TEXT.X,
             MainStatusMenu.GUIDE.A_TEXT.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(this.a_text.text, this.a_text.shadow);
 
@@ -624,11 +584,7 @@ export class MainStatusMenu {
             ": Djinn  list",
             MainStatusMenu.GUIDE.SELECT_TEXT.X,
             MainStatusMenu.GUIDE.SELECT_TEXT.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(this.select_text.text, this.select_text.shadow);
 
@@ -636,12 +592,10 @@ export class MainStatusMenu {
             "",
             MainStatusMenu.DESC.LINE1.X,
             MainStatusMenu.DESC.LINE1.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY,
-            true
+            {
+                internal_group_key: MainStatusMenu.GROUP_KEY,
+                italic: true,
+            }
         );
         this.active_sprites.push(this.desc_line1.text, this.desc_line1.shadow);
 
@@ -649,12 +603,10 @@ export class MainStatusMenu {
             "",
             MainStatusMenu.DESC.LINE2.X,
             MainStatusMenu.DESC.LINE2.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY,
-            true
+            {
+                internal_group_key: MainStatusMenu.GROUP_KEY,
+                italic: true,
+            }
         );
         this.active_sprites.push(this.desc_line2.text, this.desc_line2.shadow);
 
@@ -662,11 +614,7 @@ export class MainStatusMenu {
             "Weapon",
             MainStatusMenu.EQUIP_TEXT.LABEL.X,
             MainStatusMenu.EQUIP_TEXT.LABEL.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(text.text, text.shadow);
 
@@ -674,11 +622,7 @@ export class MainStatusMenu {
             "",
             MainStatusMenu.EQUIP_TEXT.NAME.X,
             MainStatusMenu.EQUIP_TEXT.NAME.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(this.eq_weapon_name.text, this.eq_weapon_name.shadow);
 
@@ -688,11 +632,7 @@ export class MainStatusMenu {
             "Head",
             MainStatusMenu.EQUIP_TEXT.LABEL.X,
             MainStatusMenu.EQUIP_TEXT.LABEL.Y + shift,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(text.text, text.shadow);
 
@@ -700,11 +640,7 @@ export class MainStatusMenu {
             "",
             MainStatusMenu.EQUIP_TEXT.NAME.X,
             MainStatusMenu.EQUIP_TEXT.NAME.Y + shift,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(this.eq_head_name.text, this.eq_head_name.shadow);
 
@@ -714,11 +650,7 @@ export class MainStatusMenu {
             "Shield",
             MainStatusMenu.EQUIP_TEXT.LABEL.X,
             MainStatusMenu.EQUIP_TEXT.LABEL.Y + shift,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(text.text, text.shadow);
 
@@ -726,11 +658,7 @@ export class MainStatusMenu {
             "",
             MainStatusMenu.EQUIP_TEXT.NAME.X,
             MainStatusMenu.EQUIP_TEXT.NAME.Y + shift,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(this.eq_shield_name.text, this.eq_shield_name.shadow);
 
@@ -740,11 +668,7 @@ export class MainStatusMenu {
             "Chest",
             MainStatusMenu.EQUIP_TEXT.LABEL.X,
             MainStatusMenu.EQUIP_TEXT.LABEL.Y + shift,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(text.text, text.shadow);
 
@@ -752,11 +676,7 @@ export class MainStatusMenu {
             "",
             MainStatusMenu.EQUIP_TEXT.NAME.X,
             MainStatusMenu.EQUIP_TEXT.NAME.Y + shift,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusMenu.GROUP_KEY
+            {internal_group_key: MainStatusMenu.GROUP_KEY}
         );
         this.active_sprites.push(this.eq_chest_name.text, this.eq_chest_name.shadow);
 

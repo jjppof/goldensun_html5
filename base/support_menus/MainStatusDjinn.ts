@@ -123,16 +123,9 @@ export class MainStatusDjinn extends StatusComponent {
                 x_pos = MainStatusDjinn.NAMES.X + i * MainStatusDjinn.NAMES.X_SHIFT;
                 y_pos = MainStatusDjinn.NAMES.Y + n * MainStatusDjinn.NAMES.Y_SHIFT;
 
-                const name = this.window.set_text_in_position(
-                    elem_djinn[n].name,
-                    x_pos,
-                    y_pos,
-                    false,
-                    false,
-                    undefined,
-                    false,
-                    MainStatusDjinn.GROUP_KEY
-                );
+                const name = this.window.set_text_in_position(elem_djinn[n].name, x_pos, y_pos, {
+                    internal_group_key: MainStatusDjinn.GROUP_KEY,
+                });
                 this.state_sprites.push(name.text, name.shadow);
             }
 
@@ -153,12 +146,10 @@ export class MainStatusDjinn extends StatusComponent {
             "Current Djinn",
             MainStatusDjinn.CURRENT_DJINN.X,
             MainStatusDjinn.CURRENT_DJINN.Y,
-            false,
-            false,
-            undefined,
-            false,
-            MainStatusDjinn.GROUP_KEY,
-            true
+            {
+                internal_group_key: MainStatusDjinn.GROUP_KEY,
+                italic: true,
+            }
         );
         this.state_sprites.push(txt.text, txt.shadow);
     }

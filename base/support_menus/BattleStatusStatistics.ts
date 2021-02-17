@@ -326,16 +326,9 @@ export class BattleStatusStatistics extends StatusComponent {
             const x_pos = BattleStatusStatistics.LABEL.X;
             const y_pos = BattleStatusStatistics.LABEL.Y + i * BattleStatusStatistics.LABEL_SHIFT;
 
-            const label = this.window.set_text_in_position(
-                labels[i],
-                x_pos,
-                y_pos,
-                false,
-                false,
-                undefined,
-                false,
-                BattleStatusStatistics.GROUP_KEY
-            );
+            const label = this.window.set_text_in_position(labels[i], x_pos, y_pos, {
+                internal_group_key: BattleStatusStatistics.GROUP_KEY,
+            });
             this.state_sprites.push(label.text, label.shadow);
         }
 
@@ -347,61 +340,37 @@ export class BattleStatusStatistics extends StatusComponent {
             let y_pos = BattleStatusStatistics.ELEM_NUMBERS.Y;
             let text = djinn_counts.set + "/" + djinn_counts.total;
 
-            let numbers = this.window.set_text_in_position(
-                text,
-                x_pos,
-                y_pos,
-                true,
-                false,
-                undefined,
-                false,
-                BattleStatusStatistics.GROUP_KEY
-            );
+            let numbers = this.window.set_text_in_position(text, x_pos, y_pos, {
+                right_align: true,
+                internal_group_key: BattleStatusStatistics.GROUP_KEY,
+            });
             this.state_sprites.push(numbers.text, numbers.shadow);
 
             y_pos += BattleStatusStatistics.ELEM_NUMBERS.Y_SHIFT;
             text = String(elemental_stats.level);
 
-            numbers = this.window.set_text_in_position(
-                text,
-                x_pos,
-                y_pos,
-                true,
-                false,
-                undefined,
-                false,
-                BattleStatusStatistics.GROUP_KEY
-            );
+            numbers = this.window.set_text_in_position(text, x_pos, y_pos, {
+                right_align: true,
+                internal_group_key: BattleStatusStatistics.GROUP_KEY,
+            });
             this.state_sprites.push(numbers.text, numbers.shadow);
 
             y_pos += BattleStatusStatistics.ELEM_NUMBERS.Y_SHIFT;
             text = String(elemental_stats.power);
 
-            numbers = this.window.set_text_in_position(
-                text,
-                x_pos,
-                y_pos,
-                true,
-                false,
-                undefined,
-                false,
-                BattleStatusStatistics.GROUP_KEY
-            );
+            numbers = this.window.set_text_in_position(text, x_pos, y_pos, {
+                right_align: true,
+                internal_group_key: BattleStatusStatistics.GROUP_KEY,
+            });
             this.state_sprites.push(numbers.text, numbers.shadow);
 
             y_pos += BattleStatusStatistics.ELEM_NUMBERS.Y_SHIFT;
             text = String(elemental_stats.resistance);
 
-            numbers = this.window.set_text_in_position(
-                text,
-                x_pos,
-                y_pos,
-                true,
-                false,
-                undefined,
-                false,
-                BattleStatusStatistics.GROUP_KEY
-            );
+            numbers = this.window.set_text_in_position(text, x_pos, y_pos, {
+                right_align: true,
+                internal_group_key: BattleStatusStatistics.GROUP_KEY,
+            });
             this.state_sprites.push(numbers.text, numbers.shadow);
         }
     }

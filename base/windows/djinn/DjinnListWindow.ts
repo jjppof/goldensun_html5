@@ -354,7 +354,7 @@ export class DjinnListWindow {
             this.base_window.remove_text(sprite);
         });
         this.stars[char_index].forEach(sprite => {
-            this.base_window.remove_from_group(sprite, true);
+            this.base_window.remove_from_this_window(sprite, true);
         });
 
         const this_char = this.data.info.party_data.members[char_index];
@@ -383,14 +383,7 @@ export class DjinnListWindow {
                     color = djinn_font_colors[djinn_status.RECOVERY];
                     break;
             }
-            const djinn_name = this.base_window.set_text_in_position(
-                this_djinn.name,
-                djinn_x,
-                djinn_y,
-                false,
-                false,
-                color
-            );
+            const djinn_name = this.base_window.set_text_in_position(this_djinn.name, djinn_x, djinn_y, {color: color});
             this_djinn_names.push(djinn_name);
         }
 
@@ -404,7 +397,7 @@ export class DjinnListWindow {
             this.chars_sprites[key].animations.stop();
             this.chars_sprites[key].alpha = 0;
         }
-        this.base_window.remove_from_group();
+        this.base_window.remove_from_this_window();
         for (let i = 0; i < this.djinn_names.length; ++i) {
             const names = this.djinn_names[i];
             for (let j = 0; j < names.length; ++j) {

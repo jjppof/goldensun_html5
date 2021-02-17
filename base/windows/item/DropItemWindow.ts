@@ -116,9 +116,9 @@ export class DropItemWindow {
     }
 
     unset_info() {
-        this.base_window.remove_from_group(this.icon);
+        this.base_window.remove_from_this_window(this.icon);
         if (this.item_count_sprite) {
-            this.base_window.remove_from_group(this.item_count_sprite);
+            this.base_window.remove_from_this_window(this.item_count_sprite);
         }
     }
 

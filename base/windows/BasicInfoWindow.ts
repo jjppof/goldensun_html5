@@ -54,11 +54,11 @@ export class BasicInfoWindow {
         this.name_text = this.base_window.set_text_in_position("0", 40, 8);
         this.lv_text = this.base_window.set_text_in_position("0", 80, 24);
         this.class_text = this.base_window.set_text_in_position("0", 8, 40);
-        this.hp_text = this.base_window.set_text_in_position("0", 51, 48, true);
-        this.pp_text = this.base_window.set_text_in_position("0", 51, 56, true);
-        this.max_hp_text = this.base_window.set_text_in_position("0", 94, 48, true);
-        this.max_pp_text = this.base_window.set_text_in_position("0", 94, 56, true);
-        this.exp_text = this.base_window.set_text_in_position("0", 94, 80, true);
+        this.hp_text = this.base_window.set_text_in_position("0", 51, 48, {right_align: true});
+        this.pp_text = this.base_window.set_text_in_position("0", 51, 56, {right_align: true});
+        this.max_hp_text = this.base_window.set_text_in_position("0", 94, 48, {right_align: true});
+        this.max_pp_text = this.base_window.set_text_in_position("0", 94, 56, {right_align: true});
+        this.exp_text = this.base_window.set_text_in_position("0", 94, 80, {right_align: true});
     }
 
     /* Places the avatar group correctly on screen */

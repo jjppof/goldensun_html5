@@ -45,7 +45,7 @@ export abstract class StatusComponent {
         if (this.mode === StatusModes.BATTLE) this.manager = this.manager as BattleStatusWindow;
         else if (this.mode === StatusModes.MENU) this.manager = this.manager as MainStatusMenu;
 
-        if (!this.window.internal_groups[StatusComponent.GROUP_KEY])
+        if (!this.window.get_internal_group(StatusComponent.GROUP_KEY))
             this.window.define_internal_group(StatusComponent.GROUP_KEY, {x: 0, y: 0});
 
         this.highlight = this.game.add.graphics(0, 0);

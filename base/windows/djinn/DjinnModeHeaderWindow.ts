@@ -312,7 +312,7 @@ export class DjinnModeHeaderWindow {
 
     unmount_window() {
         this.sprites.forEach(sprite => {
-            this.base_window.remove_from_group(sprite, true);
+            this.base_window.remove_from_this_window(sprite, true);
         });
         this.djinn_sprites.forEach(sprite => {
             sprite.destroy();

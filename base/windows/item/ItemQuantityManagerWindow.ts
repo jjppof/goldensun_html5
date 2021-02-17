@@ -88,20 +88,17 @@ export class ItemQuantityManagerWindow {
             "",
             REMAIN_TEXT_CHAR_COUNT_X,
             REMAIN_TEXT_CHAR_COUNT_Y,
-            true
+            {right_align: true}
         );
         this.new_amount_with_dest_char_count = this.base_window.set_text_in_position(
             "",
             REMAIN_TEXT_DEST_CHAR_COUNT_X,
             REMAIN_TEXT_CHAR_COUNT_Y,
-            true
+            {right_align: true}
         );
-        this.to_remove_count = this.base_window.set_text_in_position(
-            "",
-            REMOVE_TEXT_COUNT_X,
-            REMOVE_TEXT_COUNT_Y,
-            true
-        );
+        this.to_remove_count = this.base_window.set_text_in_position("", REMOVE_TEXT_COUNT_X, REMOVE_TEXT_COUNT_Y, {
+            right_align: true,
+        });
     }
 
     /**
@@ -184,7 +181,7 @@ export class ItemQuantityManagerWindow {
     }
 
     unset_header() {
-        this.base_window.remove_from_group(this.icon_sprite);
+        this.base_window.remove_from_this_window(this.icon_sprite);
         this.base_window.remove_text(this.char_name);
         if (this.destination_char) {
             this.base_window.remove_text(this.dest_char_name);
@@ -192,10 +189,10 @@ export class ItemQuantityManagerWindow {
         }
         this.base_window.remove_text(this.item_name);
         if (this.equip_sprite) {
-            this.base_window.remove_from_group(this.equip_sprite);
+            this.base_window.remove_from_this_window(this.equip_sprite);
         }
         if (this.item_count_sprite) {
-            this.base_window.remove_from_group(this.item_count_sprite);
+            this.base_window.remove_from_this_window(this.item_count_sprite);
         }
     }
 

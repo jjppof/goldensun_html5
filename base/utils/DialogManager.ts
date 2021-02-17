@@ -341,14 +341,12 @@ export class DialogManager {
     quick_next(
         text: string,
         callback: Function, //on window ready callback
-        options: {
+        options?: {
             avatar?: string;
             hero_direction?: utils.directions;
             custom_pos?: {x?: number; y?: number};
             custom_avatar_pos?: {x?: number; y?: number};
             show_crystal?: boolean;
-        } = {
-            show_crystal: false,
         }
     ) {
         this.parts = null;
@@ -361,9 +359,9 @@ export class DialogManager {
             this.avatar_window.destroy(false);
             this.avatar_window = null;
         }
-        this.show_crystal = options.show_crystal;
-        this.set_dialog(text, options.avatar, options.hero_direction);
-        this.mount_window(callback, options.custom_pos, options.custom_avatar_pos);
+        this.show_crystal = options?.show_crystal;
+        this.set_dialog(text, options?.avatar, options?.hero_direction);
+        this.mount_window(callback, options?.custom_pos, options?.custom_avatar_pos);
     }
 
     kill_dialog(callback, dialog_only = false, destroy_crystal = false) {

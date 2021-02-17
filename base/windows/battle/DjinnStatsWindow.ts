@@ -54,13 +54,13 @@ export class DjinnStatsWindow {
                 "",
                 BEFORE_STAT_X,
                 HP_LABEL_Y + i * numbers.FONT_SIZE,
-                true
+                {right_align: true}
             );
             this.after_stats[ordered_main_stats[i]] = this.base_window.set_text_in_position(
                 "",
                 AFTER_STAT_X,
                 HP_LABEL_Y + i * numbers.FONT_SIZE,
-                true
+                {right_align: true}
             );
             this.up_arrows[ordered_main_stats[i]] = this.base_window.create_at_group(
                 STAT_ARROW_X,

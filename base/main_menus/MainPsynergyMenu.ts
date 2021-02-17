@@ -190,7 +190,7 @@ export class MainPsynergyMenu {
     }
 
     set_psynergy_icons() {
-        this.psynergy_overview_window.remove_from_group();
+        this.psynergy_overview_window.remove_from_this_window();
 
         let counter = 0;
         for (let i = 0; i < this.data.info.party_data.members[this.selected_char_index].abilities.length; ++i) {

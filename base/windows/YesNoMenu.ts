@@ -3,8 +3,10 @@ import {HorizontalMenu} from "../support_menus/HorizontalMenu";
 import {capitalize} from "../utils";
 
 const TITLE_WINDOW_WIDTH = 36;
-const YES_ACTION = "yes";
-const NO_ACTION = "no";
+enum actions {
+    YES_ACTION = "yes",
+    NO_ACTION = "no",
+}
 
 export class YesNoMenu {
     public game: Phaser.Game;
@@ -16,6 +18,7 @@ export class YesNoMenu {
     public buttons_keys: string[];
     public is_open: boolean;
     public menu: HorizontalMenu;
+
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
@@ -23,7 +26,7 @@ export class YesNoMenu {
         this.yes_callback = null;
         this.no_callback = null;
 
-        this.buttons_keys = [YES_ACTION, NO_ACTION];
+        this.buttons_keys = [actions.YES_ACTION, actions.NO_ACTION];
 
         this.is_open = false;
 
@@ -39,13 +42,13 @@ export class YesNoMenu {
 
     update_position(new_x: number = undefined, new_y: number = undefined) {
         if (new_x !== undefined) {
-            let diff = this.menu.title_window.x - this.menu.x;
+            const diff = this.menu.title_window.x - this.menu.x;
             this.menu.x = new_x;
-            this.menu.title_window.x = new_x + diff;
+            this.menu.title_window.update_position({x: new_x + diff});
         }
         if (new_y !== undefined) {
             this.menu.y = new_y;
-            this.menu.title_window.y = new_y;
+            this.menu.title_window.update_position({y: new_y});
         }
         this.menu.update_position();
         this.menu.title_window.send_to_front();
@@ -53,10 +56,10 @@ export class YesNoMenu {
 
     button_press() {
         switch (this.buttons_keys[this.menu.selected_button_index]) {
-            case YES_ACTION:
+            case actions.YES_ACTION:
                 this.close(this.yes_callback);
                 break;
-            case NO_ACTION:
+            case actions.NO_ACTION:
                 this.close(this.no_callback);
                 break;
         }
@@ -89,5 +92,9 @@ export class YesNoMenu {
 
         this.menu.close(callback);
         this.is_open = false;
+    }
+
+    destroy() {
+        this.menu.destroy();
     }
 }

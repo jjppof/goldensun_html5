@@ -43,7 +43,7 @@ export class SummonDjinnStandbyWindow {
                 "",
                 TEXT_LEFT_PADDING + i * SPACE_BETWEEN_TEXTS,
                 TEXT_TOP_PADDING,
-                true
+                {right_align: true}
             );
             this.graphics[element] = this.game.add.graphics(0, 0);
             this.graphics[element].blendMode = PIXI.blendModes.SCREEN;

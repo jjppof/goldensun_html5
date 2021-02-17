@@ -80,13 +80,17 @@ export class DjinnCharStatsWindow {
 
         this.char_name_text = this.base_window.set_text_in_position("", CHAR_NAME_X, CHAR_NAME_Y);
         this.base_window.set_text_in_position("Lv", LV_X, LV_Y);
-        this.level_number_text = this.base_window.set_text_in_position("", LV_NUMBER_X, LV_NUMBER_Y, true);
+        this.level_number_text = this.base_window.set_text_in_position("", LV_NUMBER_X, LV_NUMBER_Y, {
+            right_align: true,
+        });
         this.class_text = this.base_window.set_text_in_position("", CLASS_X, CLASS_Y);
         this.new_class_text = this.base_window.set_text_in_position("", NEW_CLASS_X, NEW_CLASS_Y);
 
         elements_list.forEach((element, i) => {
             const x = DJINN_NUMBER_X - i * DJINN_NUMBER_SLOT_WIDTH;
-            this.djinn_number_texts[element] = this.base_window.set_text_in_position("", x, DJINN_NUMBER_Y, true);
+            this.djinn_number_texts[element] = this.base_window.set_text_in_position("", x, DJINN_NUMBER_Y, {
+                right_align: true,
+            });
         });
 
         stats.forEach((stat, i) => {
@@ -96,13 +100,12 @@ export class DjinnCharStatsWindow {
             if (["HP", "PP"].includes(stat)) {
                 shift = -8;
             }
-            this.stats_current_texts[stat] = this.base_window.set_text_in_position(
-                "",
-                STATS_CURRENT_X + shift,
-                y,
-                true
-            );
-            this.stats_next_texts[stat] = this.base_window.set_text_in_position("", STATS_NEXT_X, y, true);
+            this.stats_current_texts[stat] = this.base_window.set_text_in_position("", STATS_CURRENT_X + shift, y, {
+                right_align: true,
+            });
+            this.stats_next_texts[stat] = this.base_window.set_text_in_position("", STATS_NEXT_X, y, {
+                right_align: true,
+            });
         });
 
         this.class_name_arrow = this.base_window.create_at_group(

@@ -116,7 +116,7 @@ export class CharsStatusWindow {
                     "",
                     STANDBY_COUNT_X[x],
                     STANDBY_COUNT_SHIFT_Y[y],
-                    true
+                    {right_align: true}
                 );
             }
             this.status_window.add_sprite_to_group(this.stars_group);
@@ -155,16 +155,11 @@ export class CharsStatusWindow {
             const group_key = char.key_name + "_status";
 
             info_sprites_obj.group = this.status_window.define_internal_group(group_key);
-            info_sprites_obj.name = this.status_window.set_text_in_position(
-                char.name,
-                base_x_pos,
-                this.name_y,
-                false,
-                false,
-                this.status_window.font_color,
-                this.compact,
-                group_key
-            );
+            info_sprites_obj.name = this.status_window.set_text_in_position(char.name, base_x_pos, this.name_y, {
+                color: this.status_window.font_color,
+                with_bg: this.compact,
+                internal_group_key: group_key,
+            });
 
             let y_pos = this.name_y + numbers.FONT_SIZE;
             let y_pos_bar = y_pos + numbers.FONT_SIZE - STATUS_BAR_HEIGHT;
@@ -181,25 +176,19 @@ export class CharsStatusWindow {
 
             const x_number_pos = base_x_pos + STAT_X;
 
-            info_sprites_obj.hp_header = this.status_window.set_text_in_position(
-                "HP",
-                base_x_pos,
-                y_pos,
-                false,
-                false,
-                this.status_window.font_color,
-                false,
-                group_key
-            );
+            info_sprites_obj.hp_header = this.status_window.set_text_in_position("HP", base_x_pos, y_pos, {
+                color: this.status_window.font_color,
+                internal_group_key: group_key,
+            });
             info_sprites_obj.hp = this.status_window.set_text_in_position(
                 char.current_hp.toString(),
                 x_number_pos,
                 y_pos,
-                true,
-                false,
-                this.status_window.font_color,
-                false,
-                group_key
+                {
+                    right_align: true,
+                    color: this.status_window.font_color,
+                    internal_group_key: group_key,
+                }
             );
 
             y_pos = this.name_y + 2 * numbers.FONT_SIZE;
@@ -217,25 +206,19 @@ export class CharsStatusWindow {
 
             info_sprites_obj.group.add(info_sprites_obj.pp_bar_damage_graphics);
 
-            info_sprites_obj.pp_header = this.status_window.set_text_in_position(
-                "PP",
-                base_x_pos,
-                y_pos,
-                false,
-                false,
-                this.status_window.font_color,
-                false,
-                group_key
-            );
+            info_sprites_obj.pp_header = this.status_window.set_text_in_position("PP", base_x_pos, y_pos, {
+                color: this.status_window.font_color,
+                internal_group_key: group_key,
+            });
             info_sprites_obj.pp = this.status_window.set_text_in_position(
                 char.current_pp.toString(),
                 x_number_pos,
                 y_pos,
-                true,
-                false,
-                this.status_window.font_color,
-                false,
-                group_key
+                {
+                    right_align: true,
+                    color: this.status_window.font_color,
+                    internal_group_key: group_key,
+                }
             );
 
             this.info_sprites[char.key_name] = info_sprites_obj;

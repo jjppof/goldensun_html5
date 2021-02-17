@@ -185,7 +185,7 @@ export class BattleStatusWindow {
         this.battle_sprite = null;
         this.avatar = null;
 
-        this.window.group.bringToTop(this.window.internal_groups[BattleStatusWindow.GROUP_KEY]);
+        this.window.group.bringToTop(this.window.get_internal_group(BattleStatusWindow.GROUP_KEY));
         this.init_text();
     }
 
@@ -198,254 +198,170 @@ export class BattleStatusWindow {
     }
 
     private init_text() {
-        this.name = this.window.set_text_in_position(
-            "",
-            BattleStatusWindow.NAME.X,
-            BattleStatusWindow.NAME.Y,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
-        );
-        this.window.set_text_in_position(
-            "Lv",
-            BattleStatusWindow.LEVEL.LABEL_X,
-            BattleStatusWindow.LEVEL.LABEL_Y,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
-        );
+        this.name = this.window.set_text_in_position("", BattleStatusWindow.NAME.X, BattleStatusWindow.NAME.Y, {
+            internal_group_key: BattleStatusWindow.GROUP_KEY,
+        });
+        this.window.set_text_in_position("Lv", BattleStatusWindow.LEVEL.LABEL_X, BattleStatusWindow.LEVEL.LABEL_Y, {
+            internal_group_key: BattleStatusWindow.GROUP_KEY,
+        });
         this.level_value = this.window.set_text_in_position(
             "",
             BattleStatusWindow.LEVEL.VALUE_END_X,
             BattleStatusWindow.LEVEL.VALUE_Y,
-            true,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {
+                right_align: true,
+                internal_group_key: BattleStatusWindow.GROUP_KEY,
+            }
         );
 
-        this.window.set_text_in_position(
-            "Exp",
-            BattleStatusWindow.EXP.LABEL_X,
-            BattleStatusWindow.EXP.LABEL_Y,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
-        );
+        this.window.set_text_in_position("Exp", BattleStatusWindow.EXP.LABEL_X, BattleStatusWindow.EXP.LABEL_Y, {
+            internal_group_key: BattleStatusWindow.GROUP_KEY,
+        });
         this.exp_value = this.window.set_text_in_position(
             "",
             BattleStatusWindow.EXP.VALUE_END_X,
             BattleStatusWindow.EXP.VALUE_Y,
-            true,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {
+                right_align: true,
+                internal_group_key: BattleStatusWindow.GROUP_KEY,
+            }
         );
         this.normal_status = this.window.set_text_in_position(
             "",
             BattleStatusWindow.NORMAL_STATUS.X,
             BattleStatusWindow.NORMAL_STATUS.Y,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {internal_group_key: BattleStatusWindow.GROUP_KEY}
         );
 
-        this.window.set_text_in_position(
-            "HP",
-            BattleStatusWindow.HP.LABEL_X,
-            BattleStatusWindow.HP.LABEL_Y,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
-        );
+        this.window.set_text_in_position("HP", BattleStatusWindow.HP.LABEL_X, BattleStatusWindow.HP.LABEL_Y, {
+            internal_group_key: BattleStatusWindow.GROUP_KEY,
+        });
         this.max_hp = this.window.set_text_in_position(
             "",
             BattleStatusWindow.HP.MAX_END_X,
             BattleStatusWindow.HP.MAX_Y,
-            true,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {
+                right_align: true,
+                internal_group_key: BattleStatusWindow.GROUP_KEY,
+            }
         );
         this.curr_hp = this.window.set_text_in_position(
             "/",
             BattleStatusWindow.HP.CURR_END_X,
             BattleStatusWindow.HP.CURR_Y,
-            true,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {
+                right_align: true,
+                internal_group_key: BattleStatusWindow.GROUP_KEY,
+            }
         );
 
-        this.window.set_text_in_position(
-            "PP",
-            BattleStatusWindow.PP.LABEL_X,
-            BattleStatusWindow.PP.LABEL_Y,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
-        );
+        this.window.set_text_in_position("PP", BattleStatusWindow.PP.LABEL_X, BattleStatusWindow.PP.LABEL_Y, {
+            internal_group_key: BattleStatusWindow.GROUP_KEY,
+        });
         this.max_pp = this.window.set_text_in_position(
             "",
             BattleStatusWindow.PP.MAX_END_X,
             BattleStatusWindow.PP.MAX_Y,
-            true,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {
+                right_align: true,
+                internal_group_key: BattleStatusWindow.GROUP_KEY,
+            }
         );
         this.curr_pp = this.window.set_text_in_position(
             "/",
             BattleStatusWindow.PP.CURR_END_X,
             BattleStatusWindow.PP.CURR_Y,
-            true,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {
+                right_align: true,
+                internal_group_key: BattleStatusWindow.GROUP_KEY,
+            }
         );
 
         const shift = BattleStatusWindow.STATS.LINE_SHIFT;
 
-        this.window.set_text_in_position(
-            "Attack",
-            BattleStatusWindow.STATS.LABEL_X,
-            BattleStatusWindow.STATS.LABEL_Y,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
-        );
+        this.window.set_text_in_position("Attack", BattleStatusWindow.STATS.LABEL_X, BattleStatusWindow.STATS.LABEL_Y, {
+            internal_group_key: BattleStatusWindow.GROUP_KEY,
+        });
         this.atk_value = this.window.set_text_in_position(
             "",
             BattleStatusWindow.STATS.VALUE_END_X,
             BattleStatusWindow.STATS.VALUE_Y,
-            true,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {
+                right_align: true,
+                internal_group_key: BattleStatusWindow.GROUP_KEY,
+            }
         );
         this.window.set_text_in_position(
             "Defense",
             BattleStatusWindow.STATS.LABEL_X,
             BattleStatusWindow.STATS.LABEL_Y + shift,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {internal_group_key: BattleStatusWindow.GROUP_KEY}
         );
         this.def_value = this.window.set_text_in_position(
             "",
             BattleStatusWindow.STATS.VALUE_END_X,
             BattleStatusWindow.STATS.VALUE_Y + shift,
-            true,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {
+                right_align: true,
+                internal_group_key: BattleStatusWindow.GROUP_KEY,
+            }
         );
         this.window.set_text_in_position(
             "Agility",
             BattleStatusWindow.STATS.LABEL_X,
             BattleStatusWindow.STATS.LABEL_Y + 2 * shift,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {internal_group_key: BattleStatusWindow.GROUP_KEY}
         );
         this.agi_value = this.window.set_text_in_position(
             "",
             BattleStatusWindow.STATS.VALUE_END_X,
             BattleStatusWindow.STATS.VALUE_Y + 2 * shift,
-            true,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {
+                right_align: true,
+                internal_group_key: BattleStatusWindow.GROUP_KEY,
+            }
         );
         this.window.set_text_in_position(
             "Luck",
             BattleStatusWindow.STATS.LABEL_X,
             BattleStatusWindow.STATS.LABEL_Y + 3 * shift,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {internal_group_key: BattleStatusWindow.GROUP_KEY}
         );
         this.luk_value = this.window.set_text_in_position(
             "",
             BattleStatusWindow.STATS.VALUE_END_X,
             BattleStatusWindow.STATS.VALUE_Y + 3 * shift,
-            true,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {
+                right_align: true,
+                internal_group_key: BattleStatusWindow.GROUP_KEY,
+            }
         );
 
         this.class_name = this.window.set_text_in_position(
             "",
             BattleStatusWindow.CLASS_NAME.X,
             BattleStatusWindow.CLASS_NAME.Y,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {internal_group_key: BattleStatusWindow.GROUP_KEY}
         );
 
         this.in_the_back = this.window.set_text_in_position(
             "",
             BattleStatusWindow.IN_THE_BACK.X,
             BattleStatusWindow.IN_THE_BACK.Y,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {internal_group_key: BattleStatusWindow.GROUP_KEY}
         );
 
         this.desc_line1 = this.window.set_text_in_position(
             "",
             BattleStatusWindow.DESCRIPTION.X,
             BattleStatusWindow.DESCRIPTION.LINE1_Y,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {internal_group_key: BattleStatusWindow.GROUP_KEY}
         );
         this.desc_line2 = this.window.set_text_in_position(
             "",
             BattleStatusWindow.DESCRIPTION.X,
             BattleStatusWindow.DESCRIPTION.LINE2_Y,
-            false,
-            false,
-            undefined,
-            false,
-            BattleStatusWindow.GROUP_KEY
+            {internal_group_key: BattleStatusWindow.GROUP_KEY}
         );
     }
 
