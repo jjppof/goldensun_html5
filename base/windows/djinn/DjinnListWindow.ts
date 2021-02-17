@@ -235,20 +235,23 @@ export class DjinnListWindow {
         this.move_cursor(CURSOR_TEXT_X + COL_GAP * this.selected_char_index, CURSOR_TEXT_Y);
     }
 
-    select_djinn(char: number, index: number, force_change: boolean = false) {
+    select_djinn(char_index: number, djinn_index: number, force_change: boolean = false) {
         this.action_text_selected = false;
-        if (this.selected_djinn_index !== index || force_change) {
-            this.selected_djinn_index = index;
+        if (this.selected_djinn_index !== djinn_index || force_change) {
+            this.selected_djinn_index = djinn_index;
             this.on_djinn_change();
         }
 
-        if (this.selected_char_index !== char || force_change) {
-            this.selected_char_index = char;
-            this.on_char_change();
+        if (this.selected_char_index !== char_index || force_change) {
+            this.selected_char_index = char_index;
+            this.on_char_change(false);
         }
 
         this.data.cursor_manager.clear_tweens();
-        this.move_cursor(CURSOR_X + char * COL_GAP, CURSOR_Y + index * LINE_GAP);
+        this.move_cursor(
+            CURSOR_X + this.selected_char_index * COL_GAP,
+            CURSOR_Y + this.selected_djinn_index * LINE_GAP
+        );
     }
 
     init_djinn_sprites() {
@@ -447,16 +450,18 @@ export class DjinnListWindow {
         }
     }
 
-    on_char_change() {
+    on_char_change(move_cursor: boolean = true) {
         if (this.setting_djinn_status && this.selected_char_index === this.setting_djinn_status_char_index) {
             this.selected_djinn_index = this.setting_djinn_status_djinn_index;
         } else {
             if (this.selected_djinn_index >= this.sizes[this.selected_char_index]) {
                 this.selected_djinn_index = this.sizes[this.selected_char_index] - 1;
-                this.move_cursor(
-                    CURSOR_X + this.selected_char_index * COL_GAP,
-                    CURSOR_Y + this.selected_djinn_index * LINE_GAP
-                );
+                if (move_cursor) {
+                    this.move_cursor(
+                        CURSOR_X + this.selected_char_index * COL_GAP,
+                        CURSOR_Y + this.selected_djinn_index * LINE_GAP
+                    );
+                }
             }
         }
 

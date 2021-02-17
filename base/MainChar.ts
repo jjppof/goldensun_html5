@@ -1,5 +1,5 @@
 import {SpriteBase} from "./SpriteBase";
-import {choose_right_class, Classes} from "./Classes";
+import {Classes} from "./Classes";
 import {djinn_status} from "./Djinn";
 import {Effect, effect_types} from "./Effect";
 import {Item, item_types} from "./Item";
@@ -178,7 +178,7 @@ export class MainChar extends Player {
     }
 
     update_class() {
-        this.class = choose_right_class(
+        this.class = Classes.choose_right_class(
             this.info.classes_list,
             this.class_table,
             this.element_afinity,
@@ -375,7 +375,7 @@ export class MainChar extends Player {
             }
             lvls[djinn.element] += lv_shift;
         }
-        this.class = choose_right_class(
+        this.class = Classes.choose_right_class(
             this.info.classes_list,
             this.class_table,
             this.element_afinity,

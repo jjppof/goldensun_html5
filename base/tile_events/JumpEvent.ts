@@ -224,7 +224,7 @@ export class JumpEvent extends TileEvent {
             this.data.tile_event_manager.walking_on_pillars_tiles.clear();
             clear_bodies();
             this.data.tile_event_manager.walking_on_pillars_tiles.add(concat_keys);
-            let bodies_position = new Set(surroundings.concat(...bodies_positions).map(pos => pos.x + "_" + pos.y));
+            const bodies_position = new Set(surroundings.concat(...bodies_positions).map(pos => pos.x + "_" + pos.y));
             concat_keys.split("-").forEach(key => {
                 bodies_position.delete(key);
             });
@@ -234,7 +234,7 @@ export class JumpEvent extends TileEvent {
                 const pos_array = position.split("_");
                 const x_pos = (parseInt(pos_array[0]) + 0.5) * this.data.map.tile_width;
                 const y_pos = (parseInt(pos_array[1]) + 0.5) * this.data.map.tile_height;
-                let body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
+                const body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
                 body.clearShapes();
                 body.setRectangle(this.data.map.tile_width, this.data.map.tile_height, 0, 0);
                 body.setCollisionGroup(this.data.collision.dynamic_events_collision_group);
@@ -272,7 +272,7 @@ export class JumpEvent extends TileEvent {
                     event.is_set &&
                     event.activation_collision_layers.includes(data.map.collision_layer)
                 ) {
-                    let surroundings = [
+                    const surroundings = [
                         {x: event.x - 1, y: event.y},
                         {x: event.x + 1, y: event.y},
                         {x: event.x, y: event.y - 1},
@@ -296,9 +296,9 @@ export class JumpEvent extends TileEvent {
                             }
                             if (dynamic_found) continue;
                         }
-                        let x_pos = (surroundings[i].x + 0.5) * data.map.tile_width;
-                        let y_pos = (surroundings[i].y + 0.5) * data.map.tile_height;
-                        let body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
+                        const x_pos = (surroundings[i].x + 0.5) * data.map.tile_width;
+                        const y_pos = (surroundings[i].y + 0.5) * data.map.tile_height;
+                        const body = game.physics.p2.createBody(x_pos, y_pos, 0, true);
                         body.clearShapes();
                         body.setRectangle(data.map.tile_width, data.map.tile_height, 0, 0);
                         body.setCollisionGroup(data.collision.dynamic_events_collision_group);

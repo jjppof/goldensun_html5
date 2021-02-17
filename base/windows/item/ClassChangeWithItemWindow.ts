@@ -3,7 +3,7 @@ import {Item} from "../../Item";
 import {GoldenSun} from "../../GoldenSun";
 import {ItemSlot, MainChar} from "../../MainChar";
 import * as _ from "lodash";
-import {choose_right_class} from "../../Classes";
+import {Classes} from "../../Classes";
 
 const BASE_WIN_WIDTH = 100;
 const BASE_WIN_HEIGHT = 92;
@@ -93,7 +93,7 @@ export class ClassChangeWithItemWindow {
         this.base_window.update_text(this.char.level.toString(), this.lv_text);
         this.base_window.update_text(this.char.class.name, this.class_text);
 
-        const preview_class = choose_right_class(
+        const preview_class = Classes.choose_right_class(
             this.data.info.classes_list,
             this.data.dbs.classes_db.class_table,
             this.char.element_afinity,
