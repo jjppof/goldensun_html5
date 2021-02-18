@@ -3057,7 +3057,7 @@
         "name": "Reveal",
         "description": "Perceive hidden truths.",
         "type": "utility",
-        "element": "mars",
+        "element": "jupiter",
         "battle_target": "no_target",
         "range": 1,
         "pp_cost": 1,

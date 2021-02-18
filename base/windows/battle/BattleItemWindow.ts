@@ -9,7 +9,6 @@ import {CursorManager, PointVariants} from "../../utils/CursorManager";
 import {PageIndicatorModes} from "../../support_menus/PageIndicator";
 
 //TO DO: use item sprite instead of ability sprite for items (Spirit Ring)
-//TO DO: show broken icon on broken items
 
 const BASE_WINDOW_X = 120;
 const BASE_WINDOW_Y = 72;
@@ -33,8 +32,6 @@ const CURSOR_SHIFT = 16;
 
 const ITEM_NAME_X = 26;
 const ITEM_ICON_X = 8;
-const SUB_ICON_X = 7;
-const SUB_ICON_Y = 8;
 
 export class BattleItemWindow {
     public game: Phaser.Game;
@@ -47,7 +44,6 @@ export class BattleItemWindow {
     public highlight_bar: Phaser.Graphics;
 
     public item_names: TextObj[];
-    public other_sprites: (Phaser.Sprite | Phaser.Group | Phaser.BitmapText)[];
 
     public window_open: boolean;
     public window_active: boolean;
@@ -69,6 +65,8 @@ export class BattleItemWindow {
         this.game = game;
         this.data = data;
 
+        this.items = [];
+
         this.base_window = new Window(this.game, BASE_WINDOW_X, BASE_WINDOW_Y, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
         this.group = this.game.add.group();
         this.group.alpha = 0;
@@ -84,7 +82,6 @@ export class BattleItemWindow {
         this.highlight_bar.endFill();
 
         this.item_names = [];
-        this.other_sprites = [];
     }
 
     select_item(index: number) {
@@ -162,44 +159,31 @@ export class BattleItemWindow {
         this.items = this.all_items.slice(this.page_index * ELEM_PER_PAGE, (this.page_index + 1) * ELEM_PER_PAGE);
 
         for (let i = 0; i < this.items.length; ++i) {
-            const item = this.data.info.items_list[this.items[i].key_name];
+            const item_slot = this.items[i];
+            const item = this.data.info.items_list[item_slot.key_name];
             const base_y = TOP_PADDING + i * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
             const item_y = base_y - 4;
 
-            this.other_sprites.push(
-                this.base_window.create_at_group(ITEM_ICON_X, item_y, "items_icons", undefined, this.items[i].key_name)
+            this.base_window.define_internal_group(item_slot.key_name);
+            this.base_window.make_item_obj(
+                item_slot.key_name,
+                {x: ITEM_ICON_X, y: item_y},
+                {
+                    broken: item_slot.broken,
+                    equipped: item_slot.equipped,
+                    quantity: item.carry_up_to_30 ? item_slot.quantity : undefined,
+                    internal_group: item_slot.key_name,
+                }
             );
-            if (this.items[i].equipped) {
-                this.other_sprites.push(
-                    this.base_window.create_at_group(
-                        ITEM_ICON_X + SUB_ICON_X,
-                        item_y + SUB_ICON_Y,
-                        "menu",
-                        undefined,
-                        "equipped"
-                    )
-                );
-            }
-            if (this.items[i].quantity > 1) {
-                let item_count = this.game.add.bitmapText(
-                    ITEM_ICON_X + SUB_ICON_X,
-                    item_y + SUB_ICON_Y,
-                    "gs-item-bmp-font",
-                    this.items[i].quantity.toString()
-                );
-                this.base_window.add_sprite_to_group(item_count);
-                this.other_sprites.push(item_count);
+
+            let font_color = numbers.YELLOW_FONT_COLOR;
+            if (item_slot.broken) {
+                font_color = numbers.RED_FONT_COLOR;
+            } else if (item.use_ability && this.data.info.abilities_list[item.use_ability].is_battle_ability) {
+                font_color = numbers.DEFAULT_FONT_COLOR;
             }
 
-            let color = numbers.DEFAULT_FONT_COLOR;
-            if (
-                item.use_type === use_types.NO_USE ||
-                !this.data.info.abilities_list[item.use_ability].is_battle_ability
-            ) {
-                color = numbers.YELLOW_FONT_COLOR;
-            }
-
-            const name = this.base_window.set_text_in_position(item.name, ITEM_NAME_X, base_y, {color: color});
+            const name = this.base_window.set_text_in_position(item.name, ITEM_NAME_X, base_y, {color: font_color});
             this.item_names.push(name);
         }
     }
@@ -234,8 +218,8 @@ export class BattleItemWindow {
         this.item_names.forEach(text => {
             this.base_window.remove_text(text);
         });
-        this.other_sprites.forEach(sprite => {
-            this.base_window.remove_from_this_window(sprite, true);
+        this.items.forEach(item_slot => {
+            this.base_window.destroy_internal_group(item_slot.key_name);
         });
     }
 

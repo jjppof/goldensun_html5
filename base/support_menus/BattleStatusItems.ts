@@ -5,7 +5,6 @@ import {CursorManager, PointVariants} from "../utils/CursorManager";
 import {BattleStatusWindow} from "../windows/battle/BattleStatusWindow";
 import {PageIndicatorModes} from "./PageIndicator";
 import {ItemSlot} from "../MainChar";
-import {use_types} from "../Item";
 import {DEFAULT_FONT_COLOR, RED_FONT_COLOR, YELLOW_FONT_COLOR} from "../magic_numbers";
 
 export class BattleStatusItems extends StatusComponent {
@@ -144,12 +143,13 @@ export class BattleStatusItems extends StatusComponent {
         if (!this.char_items[this.current_col]) this.current_col = this.char_items.length - 1;
         const items = this.char_items[this.current_col];
 
-        items.forEach((item, index) => {
-            const item_key = item.key_name;
-            const name = this.data.info.items_list[item.key_name].name;
-            const broken = item.broken;
-            const equipped = item.equipped;
-            const quantity = item.quantity <= 1 ? undefined : item.quantity;
+        items.forEach((item_slot, index) => {
+            const item_key = item_slot.key_name;
+            const item = this.data.info.items_list[item_slot.key_name];
+            const name = item.name;
+            const broken = item_slot.broken;
+            const equipped = item_slot.equipped;
+            const quantity = item_slot.quantity <= 1 ? undefined : item_slot.quantity;
 
             let x_pos = BattleStatusItems.ITEM.ICON_X;
             let y_pos = BattleStatusItems.ITEM.ICON_Y + index * BattleStatusItems.SHIFT;
@@ -172,9 +172,9 @@ export class BattleStatusItems extends StatusComponent {
             y_pos = BattleStatusItems.ITEM.NAME_Y + index * BattleStatusItems.SHIFT;
 
             let font_color = YELLOW_FONT_COLOR;
-            if (item.broken) {
+            if (item_slot.broken) {
                 font_color = RED_FONT_COLOR;
-            } else if (this.data.info.items_list[item.key_name].use_type !== use_types.NO_USE) {
+            } else if (item.use_ability && this.data.info.abilities_list[item.use_ability].is_battle_ability) {
                 font_color = DEFAULT_FONT_COLOR;
             }
 
@@ -197,7 +197,8 @@ export class BattleStatusItems extends StatusComponent {
         let sorted_items = [];
 
         all_items.forEach((item_slot, index) => {
-            if (this.data.info.items_list[item_slot.key_name].use_type !== use_types.NO_USE) {
+            const item = this.data.info.items_list[item_slot.key_name];
+            if (item.use_ability && this.data.info.abilities_list[item.use_ability].is_battle_ability) {
                 sorted_items.push(all_items.splice(index, 1)[0]);
             }
         });
