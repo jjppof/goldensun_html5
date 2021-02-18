@@ -87,6 +87,7 @@ export class GoldenSun {
         this.game.stage.smoothed = false;
         this.game.camera.roundPx = true;
         this.game.renderer.renderSession.roundPixels = true;
+        this.game.stage.disableVisibilityChange = true;
 
         this.game.camera.fade(0x0, 1);
     }
@@ -105,7 +106,6 @@ export class GoldenSun {
 
         //init audio engine
         this.audio = new Audio(this.game);
-        this.game.sound.mute = true;
 
         //init storage
         this.storage = new Storage(this);
@@ -181,6 +181,8 @@ export class GoldenSun {
 
         this.initialize_utils_controls();
 
+        this.game.sound.mute = true;
+        this.game.stage.disableVisibilityChange = false;
         this.assets_loaded = true;
         this.game.camera.resetFX();
     }
