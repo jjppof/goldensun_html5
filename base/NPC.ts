@@ -257,10 +257,10 @@ export class NPC extends ControllableChar {
                     this.base_collision_layer,
                     map,
                     map.is_world_map,
-                    this.anchor_x !== undefined ? this.anchor_x : npc_db.anchor_x,
-                    this.anchor_y !== undefined ? this.anchor_y : npc_db.anchor_y,
-                    this.scale_x !== undefined ? this.scale_x : npc_db.scale_x,
-                    this.scale_y !== undefined ? this.scale_y : npc_db.scale_y
+                    this.anchor_x ?? npc_db.anchor_x,
+                    this.anchor_y ?? npc_db.anchor_y,
+                    this.scale_x ?? npc_db.scale_x,
+                    this.scale_y ?? npc_db.scale_y
                 );
                 if (this.ignore_world_map_scale) {
                     this.sprite.scale.setTo(1, 1);

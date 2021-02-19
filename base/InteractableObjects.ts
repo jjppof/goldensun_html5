@@ -187,6 +187,7 @@ export class InteractableObjects {
     }
 
     initial_config(map: Map) {
+        this.sprite_info = this.data.info.iter_objs_sprite_base_list[this.key_name];
         const interactable_object_db = this.data.dbs.interactable_objects_db[this.key_name];
         for (let psynergy_key in interactable_object_db.psynergy_keys) {
             const psynergy_properties = interactable_object_db.psynergy_keys[psynergy_key];

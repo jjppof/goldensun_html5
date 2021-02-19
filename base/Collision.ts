@@ -85,11 +85,10 @@ export class Collision {
 
     change_map_body(new_collision_layer_index: number) {
         if (this.data.map.collision_layer === new_collision_layer_index) return;
-        this.data.map.collision_layer = new_collision_layer_index;
-        this.data.hero.set_collision_layer(this.data.map.collision_layer);
         this.data.map.config_body(new_collision_layer_index);
+        this.data.hero.set_collision_layer(new_collision_layer_index);
         this.config_collision_groups(this.data.map);
-        this.config_collisions(this.data.map.collision_layer);
+        this.config_collisions(new_collision_layer_index);
         this.data.map.reorganize_layers();
     }
 }

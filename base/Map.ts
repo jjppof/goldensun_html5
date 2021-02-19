@@ -11,32 +11,32 @@ export class Map {
     private static readonly MAX_CAMERA_ROTATION = 0.035;
     private static readonly CAMERA_ROTATION_STEP = 0.003;
 
-    public game: Phaser.Game;
-    public data: GoldenSun;
-    public name: string;
-    public key_name: string;
-    public tileset_name: string;
-    public physics_names: string;
-    public tileset_image_url: string;
-    public tileset_json_url: string;
-    public physics_jsons_url: string;
-    public sprite: Phaser.Tilemap;
-    public events: {[location_key: string]: TileEvent[]};
-    public npcs: NPC[];
-    public interactable_objects: InteractableObjects[];
-    public collision_layers_number: number;
-    public collision_sprite: Phaser.Sprite;
-    public color_filter: any;
-    public mode7_filter: any;
-    public collision_layer: number;
-    public show_footsteps: boolean;
-    public assets_loaded: boolean;
-    public lazy_load: boolean;
-    public layers: any[];
-    public collision_embedded: boolean;
-    public is_world_map: boolean;
-    public bgm_key: string;
-    public bgm_url: string;
+    private game: Phaser.Game;
+    private data: GoldenSun;
+    private _name: string;
+    private _key_name: string;
+    private tileset_name: string;
+    private physics_names: string;
+    private tileset_image_url: string;
+    private tileset_json_url: string;
+    private physics_jsons_url: string;
+    private _sprite: Phaser.Tilemap;
+    private _events: {[location_key: string]: TileEvent[]};
+    private _npcs: NPC[];
+    private _interactable_objects: InteractableObjects[];
+    private _collision_layers_number: number;
+    private _collision_sprite: Phaser.Sprite;
+    private _color_filter: any;
+    private mode7_filter: any;
+    private _collision_layer: number;
+    private _show_footsteps: boolean;
+    private assets_loaded: boolean;
+    private _lazy_load: boolean;
+    private _layers: any[];
+    private collision_embedded: boolean;
+    private _is_world_map: boolean;
+    private bgm_key: string;
+    private bgm_url: string;
 
     constructor(
         game,
@@ -55,31 +55,74 @@ export class Map {
     ) {
         this.game = game;
         this.data = data;
-        this.name = name;
-        this.key_name = key_name;
+        this._name = name;
+        this._key_name = key_name;
         this.tileset_name = tileset_name;
         this.physics_names = physics_names ?? [];
         this.tileset_image_url = tileset_image_url;
         this.tileset_json_url = tileset_json_url;
         this.physics_jsons_url = physics_jsons_url ?? [];
-        this.sprite = null;
-        this.events = {};
-        this.npcs = [];
-        this.interactable_objects = [];
-        this.collision_layers_number = this.physics_names.length;
-        this.collision_sprite = this.game.add.sprite(0, 0);
-        this.collision_sprite.width = this.collision_sprite.height = 0;
-        this.color_filter = this.game.add.filter("ColorFilters");
+        this._sprite = null;
+        this._events = {};
+        this._npcs = [];
+        this._interactable_objects = [];
+        this._collision_layers_number = this.physics_names.length;
+        this._collision_sprite = this.game.add.sprite(0, 0);
+        this._collision_sprite.width = this.collision_sprite.height = 0;
+        this._color_filter = this.game.add.filter("ColorFilters");
         this.mode7_filter = this.game.add.filter("Mode7");
-        this.collision_layer = null;
-        this.show_footsteps = false;
+        this._collision_layer = null;
+        this._show_footsteps = false;
         this.assets_loaded = false;
-        this.lazy_load = lazy_load ?? false;
-        this.layers = [];
+        this._lazy_load = lazy_load ?? false;
+        this._layers = [];
         this.collision_embedded = collision_embedded ?? false;
-        this.is_world_map = false;
+        this._is_world_map = false;
         this.bgm_key = bgm_key;
         this.bgm_url = bgm_url;
+    }
+
+    get events() {
+        return this._events;
+    }
+    get npcs() {
+        return this._npcs;
+    }
+    get interactable_objects() {
+        return this._interactable_objects;
+    }
+    get collision_layer() {
+        return this._collision_layer;
+    }
+    get collision_sprite() {
+        return this._collision_sprite;
+    }
+    get collision_layers_number() {
+        return this._collision_layers_number;
+    }
+    get lazy_load() {
+        return this._lazy_load;
+    }
+    get is_world_map() {
+        return this._is_world_map;
+    }
+    get sprite() {
+        return this._sprite;
+    }
+    get show_footsteps() {
+        return this._show_footsteps;
+    }
+    get color_filter() {
+        return this._color_filter;
+    }
+    get name() {
+        return this._name;
+    }
+    get key_name() {
+        return this._key_name;
+    }
+    get layers() {
+        return this._layers;
     }
 
     get tile_width() {
@@ -133,7 +176,7 @@ export class Map {
         });
     }
 
-    freeze_body() {
+    private freeze_body() {
         this.collision_sprite.body.velocity.y = this.collision_sprite.body.velocity.x = 0;
     }
 
@@ -149,7 +192,7 @@ export class Map {
     }
 
     //if it's a world map, rotates de map on hero movement
-    update_map_rotation() {
+    private update_map_rotation() {
         if (this.is_world_map) {
             const value_check =
                 Math.abs(this.mode7_filter.angle) < Map.MAX_CAMERA_ROTATION * Math.abs(this.data.hero.x_speed);
@@ -162,7 +205,7 @@ export class Map {
         }
     }
 
-    load_map_assets(force_load: boolean, on_complete: () => void) {
+    private load_map_assets(force_load: boolean, on_complete: () => void) {
         const promises = [];
 
         let load_tilemap_promise_resolve;
@@ -199,6 +242,9 @@ export class Map {
 
     //create map collision bodies
     config_body(collision_layer: number) {
+        if (this.collision_layer !== collision_layer) {
+            this._collision_layer = collision_layer;
+        }
         this.game.physics.p2.enable(this.collision_sprite, false);
         this.collision_sprite.body.clearShapes();
         if (this.collision_embedded) {
@@ -291,7 +337,7 @@ export class Map {
         return _.find(this.layers, {name: name});
     }
 
-    create_tile_events(raw_property) {
+    private create_tile_events(raw_property) {
         const property_info = JSON.parse(raw_property);
         const this_event_location_key = TileEvent.get_location_key(property_info.x, property_info.y);
         if (!(this_event_location_key in this.events)) {
@@ -301,7 +347,7 @@ export class Map {
         this.events[this_event_location_key].push(event);
     }
 
-    create_npcs(raw_property) {
+    private create_npcs(raw_property) {
         const property_info = JSON.parse(raw_property);
         const npc_db = this.data.dbs.npc_db[property_info.key_name];
         const initial_action = property_info.initial_action ?? npc_db.initial_action;
@@ -348,7 +394,7 @@ export class Map {
         this.npcs.push(npc);
     }
 
-    create_interactable_objects(raw_property) {
+    private create_interactable_objects(raw_property) {
         const property_info = JSON.parse(raw_property);
         const interactable_object = new InteractableObjects(
             this.game,
@@ -371,16 +417,15 @@ export class Map {
         this.interactable_objects.push(interactable_object);
     }
 
-    config_interactable_object() {
+    private config_interactable_object() {
         for (let i = 0; i < this.interactable_objects.length; ++i) {
             const interactable_object = this.interactable_objects[i];
-            interactable_object.sprite_info = this.data.info.iter_objs_sprite_base_list[interactable_object.key_name];
             interactable_object.initial_config(this);
             interactable_object.initialize_related_events(this.events, this);
         }
     }
 
-    async config_npc() {
+    private async config_npc() {
         for (let i = 0; i < this.npcs.length; ++i) {
             const npc = this.npcs[i];
             await npc.init_npc(this);
@@ -388,7 +433,7 @@ export class Map {
     }
 
     //create layers and organize them by z index
-    config_layers() {
+    private config_layers() {
         for (let i = 0; i < this.layers.length; ++i) {
             const layer = this.sprite.createLayer(this.layers[i].name);
             this.layers[i].sprite = layer;
@@ -475,15 +520,15 @@ export class Map {
             this.load_map_assets(true, load_promise_resolve);
             await load_promise;
         }
-        this.events = {};
+        this._events = {};
         TileEvent.reset();
         GameEvent.reset();
 
-        this.collision_layer = collision_layer;
-        this.sprite = this.game.add.tilemap(this.key_name);
+        this._collision_layer = collision_layer;
+        this._sprite = this.game.add.tilemap(this.key_name);
 
         if (this.sprite.properties?.world_map) {
-            this.is_world_map = true;
+            this._is_world_map = true;
         }
 
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
@@ -491,7 +536,7 @@ export class Map {
             return parseInt(collision_index);
         }) as any;
         if (this.collision_embedded) {
-            this.collision_layers_number = Object.keys(this.sprite.objects).length;
+            this._collision_layers_number = Object.keys(this.sprite.objects).length;
         }
 
         for (let i = 0; i < this.sprite.tilesets.length; ++i) {
@@ -502,18 +547,44 @@ export class Map {
         }
 
         //read the map properties and creates events, npcs and interactable objects
-        for (let property in this.sprite.properties) {
-            const raw_property = this.sprite.properties[property];
-            if (property.startsWith("event")) {
-                this.create_tile_events(raw_property);
-            } else if (property.startsWith("npc")) {
-                this.create_npcs(raw_property);
-            } else if (property.startsWith("interactable_object")) {
-                this.create_interactable_objects(raw_property);
+        const sorted_props = Object.keys(this.sprite.properties)
+            .flatMap(property => {
+                if (
+                    property.startsWith("event") ||
+                    property.startsWith("npc") ||
+                    property.startsWith("interactable_object")
+                ) {
+                    const underscore_index = property.lastIndexOf("_");
+                    const type = property.substring(0, underscore_index);
+                    const index = +property.substring(underscore_index + 1, property.length);
+                    return [
+                        {
+                            type: type as "event" | "npc" | "interactable_object",
+                            index: index,
+                            key: property,
+                        },
+                    ];
+                } else {
+                    return [];
+                }
+            })
+            .sort((a, b) => a.index - b.index);
+        for (let property of sorted_props) {
+            const raw_property = this.sprite.properties[property.key];
+            switch (property.type) {
+                case "event":
+                    this.create_tile_events(raw_property);
+                    break;
+                case "npc":
+                    this.create_npcs(raw_property);
+                    break;
+                case "interactable_object":
+                    this.create_interactable_objects(raw_property);
+                    break;
             }
         }
 
-        this.layers = this.sprite.layers.sort((a, b) => {
+        this._layers = this.sprite.layers.sort((a, b) => {
             if (a.properties.over !== b.properties.over) return a - b;
             if (a.properties.z !== b.properties.z) return a - b;
         });
@@ -523,7 +594,7 @@ export class Map {
         await this.config_npc();
 
         if (this.sprite.properties?.footprint) {
-            this.show_footsteps = true;
+            this._show_footsteps = true;
         }
 
         this.config_world_map();
@@ -533,7 +604,7 @@ export class Map {
         return this;
     }
 
-    config_world_map() {
+    private config_world_map() {
         let next_body_radius = numbers.HERO_BODY_RADIUS;
         if (this.is_world_map) {
             this.layers.forEach(l => (l.sprite.filters = [this.mode7_filter, this.color_filter]));
@@ -601,8 +672,9 @@ export class Map {
             this.data.npc_group.remove(sprite, true);
         }
 
-        this.npcs = [];
-        this.interactable_objects = [];
+        this._npcs = [];
+        this._interactable_objects = [];
+        this._events = {};
         this.data.npc_group.removeAll();
         this.data.npc_group.add(this.data.hero.shadow);
         this.data.npc_group.add(this.data.hero.sprite);
