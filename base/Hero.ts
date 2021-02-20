@@ -349,11 +349,7 @@ export class Hero extends ControllableChar {
                 this.stop_by_colliding = false;
             }
         } else {
-            if (this.temp_velocity_x === 0 && this.temp_velocity_y === 0) {
-                this.stop_by_colliding = true;
-            } else {
-                this.stop_by_colliding = false;
-            }
+            this.stop_by_colliding = false;
             this.force_direction = false;
         }
     }
