@@ -8,6 +8,7 @@ import {
     split_direction,
     reverse_directions,
     base_actions,
+    direction_range,
 } from "../utils";
 import {GoldenSun} from "../GoldenSun";
 import {Map} from "../Map";
@@ -299,9 +300,45 @@ export class JumpEvent extends TileEvent {
             });
         }
         if (!this.dynamic && !right_direction && this.data.tile_event_manager.walking_on_pillars_tiles.size) {
-            //if the hero is not going toward an activation direction of this event, collision bodies are removed
-            this.data.tile_event_manager.walking_on_pillars_tiles.clear();
-            clear_bodies();
+            const event_x = (this.x + 0.5) * this.data.map.tile_width;
+            const event_y = (this.y + 0.5) * this.data.map.tile_height;
+            const distance_to_clear = this.data.map.tile_width / 4;
+
+            //calculates the minimal distance to clear the collision bodies
+            let clear_bodies_flag = false;
+            if (
+                this.activation_directions.includes(directions.up) &&
+                !_.intersection(possible_directions, direction_range(directions.up)).length
+            ) {
+                clear_bodies_flag = event_y - this.data.hero.sprite.y < distance_to_clear;
+            }
+            if (
+                !clear_bodies_flag &&
+                this.activation_directions.includes(directions.down) &&
+                !_.intersection(possible_directions, direction_range(directions.down)).length
+            ) {
+                clear_bodies_flag = this.data.hero.sprite.y - event_y < distance_to_clear;
+            }
+            if (
+                !clear_bodies_flag &&
+                this.activation_directions.includes(directions.right) &&
+                !_.intersection(possible_directions, direction_range(directions.right)).length
+            ) {
+                clear_bodies_flag = this.data.hero.sprite.x - event_x < distance_to_clear;
+            }
+            if (
+                !clear_bodies_flag &&
+                this.activation_directions.includes(directions.left) &&
+                !_.intersection(possible_directions, direction_range(directions.left)).length
+            ) {
+                clear_bodies_flag = event_x - this.data.hero.sprite.x < distance_to_clear;
+            }
+
+            if (clear_bodies_flag) {
+                //if the hero is not going toward an activation direction of this event, collision bodies are removed
+                this.data.tile_event_manager.walking_on_pillars_tiles.clear();
+                clear_bodies();
+            }
         }
     }
 

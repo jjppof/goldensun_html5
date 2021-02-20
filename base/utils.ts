@@ -126,6 +126,19 @@ export function join_directions(dir_1, dir_2) {
     return Math.min(dir_1, dir_2) + 1;
 }
 
+export function direction_range(direction: directions) {
+    switch (direction) {
+        case directions.up:
+            return [directions.up_left, directions.up, directions.up_right];
+        case directions.down:
+            return [directions.down_left, directions.down, directions.down_right];
+        case directions.right:
+            return [directions.up_right, directions.right, directions.down_right];
+        case directions.left:
+            return [directions.up_left, directions.left, directions.down_left];
+    }
+}
+
 /*Returns a random number (0,4)
 
 Output: [number] - Random number from 0 to 4*/
