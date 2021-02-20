@@ -1,6 +1,6 @@
 import {NPC} from "./NPC";
 import {InteractableObjects} from "./InteractableObjects";
-import {TileEvent} from "./tile_events/TileEvent";
+import {LocationKey, TileEvent} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
 import {GameEvent} from "./game_events/GameEvent";
 import {GoldenSun} from "./GoldenSun";
@@ -21,7 +21,7 @@ export class Map {
     private tileset_json_url: string;
     private physics_jsons_url: string;
     private _sprite: Phaser.Tilemap;
-    private _events: {[location_key: string]: TileEvent[]};
+    private _events: {[location_key: number]: TileEvent[]};
     private _npcs: NPC[];
     private _interactable_objects: InteractableObjects[];
     private _collision_layers_number: number;
@@ -339,7 +339,7 @@ export class Map {
 
     private create_tile_events(raw_property) {
         const property_info = JSON.parse(raw_property);
-        const this_event_location_key = TileEvent.get_location_key(property_info.x, property_info.y);
+        const this_event_location_key = LocationKey.get_key(property_info.x, property_info.y);
         if (!(this_event_location_key in this.events)) {
             this.events[this_event_location_key] = [];
         }

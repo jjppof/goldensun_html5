@@ -1,5 +1,5 @@
 import * as numbers from "../magic_numbers";
-import {TileEvent, event_types} from "../tile_events/TileEvent";
+import {event_types, LocationKey} from "../tile_events/TileEvent";
 import {get_surroundings, get_opposite_direction, directions, reverse_directions, base_actions} from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {GoldenSun} from "../GoldenSun";
@@ -217,7 +217,7 @@ function shift_events(data: GoldenSun, interactable_object: InteractableObjects,
         let old_y = event.y;
         let new_x = old_x + event_shift_x;
         let new_y = old_y + event_shift_y;
-        const new_event_location_key = TileEvent.get_location_key(new_x, new_y);
+        const new_event_location_key = LocationKey.get_key(new_x, new_y);
         event.x = new_x;
         event.y = new_y;
         event.location_key = new_event_location_key;
@@ -234,7 +234,7 @@ function shift_events(data: GoldenSun, interactable_object: InteractableObjects,
         const old_surroundings = get_surroundings(old_x, old_y, false, 2);
         for (let j = 0; j < old_surroundings.length; ++j) {
             const old_surrounding = old_surroundings[j];
-            const old_key = TileEvent.get_location_key(old_surrounding.x, old_surrounding.y);
+            const old_key = LocationKey.get_key(old_surrounding.x, old_surrounding.y);
             if (old_key in data.map.events) {
                 for (let k = 0; k < data.map.events[old_key].length; ++k) {
                     const old_surr_event = data.map.events[old_key][k];

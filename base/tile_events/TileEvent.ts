@@ -1,6 +1,6 @@
 import {GoldenSun} from "../GoldenSun";
 import {InteractableObjects} from "../InteractableObjects";
-import {get_directions, map_directions, split_direction} from "../utils";
+import {directions, get_directions, map_directions, split_direction} from "../utils";
 import * as _ from "lodash";
 
 export enum event_types {
@@ -15,13 +15,32 @@ export enum event_types {
     ICE_SLIDE = "ice_slide",
 }
 
+export class LocationKey {
+    private static readonly X_MASK = 0b1111111111111100000000000000;
+    private static readonly Y_MASK = 0b11111111111111;
+    private static readonly POS_BITS_NUMBER = 14;
+
+    private constructor() {}
+
+    static get_key(x: number, y: number) {
+        return (x << LocationKey.POS_BITS_NUMBER) | y;
+    }
+
+    static get_pos(key: number) {
+        return {
+            x: (key & LocationKey.X_MASK) >> LocationKey.POS_BITS_NUMBER,
+            y: key & LocationKey.Y_MASK,
+        };
+    }
+}
+
 export abstract class TileEvent {
     public game: Phaser.Game;
     public data: GoldenSun;
     public type: event_types;
     public x: number;
     public y: number;
-    public location_key: string;
+    public location_key: number;
     public id: number;
     public activation_collision_layers: number[];
     public activation_directions: number[];
@@ -51,7 +70,7 @@ export abstract class TileEvent {
         this.type = type;
         this.x = x;
         this.y = y;
-        this.location_key = TileEvent.get_location_key(this.x, this.y);
+        this.location_key = LocationKey.get_key(this.x, this.y);
         this.id = TileEvent.id_incrementer++;
         (activation_collision_layers = activation_collision_layers ? activation_collision_layers : [0]),
             (this.activation_collision_layers = Array.isArray(activation_collision_layers)
@@ -67,20 +86,18 @@ export abstract class TileEvent {
         this.dynamic = dynamic;
         this.active = Array.isArray(active)
             ? active
-            : new Array(this.activation_directions.length).fill(active === undefined ? true : active);
+            : new Array(this.activation_directions.length).fill(active ?? true);
         this.affected_by_reveal = Array.isArray(affected_by_reveal)
             ? affected_by_reveal
-            : new Array(this.activation_directions.length).fill(
-                  affected_by_reveal === undefined ? false : affected_by_reveal
-              );
-        this.origin_interactable_object = origin_interactable_object === undefined ? null : origin_interactable_object;
+            : new Array(this.activation_directions.length).fill(affected_by_reveal ?? false);
+        this.origin_interactable_object = origin_interactable_object ?? null;
         this.collision_layer_shift_from_source = 0;
         TileEvent.events[this.id] = this;
     }
 
     abstract fire(): void;
 
-    is_active(direction) {
+    is_active(direction: directions) {
         const possible_directions = split_direction(direction);
         for (let i = 0; i < possible_directions.length; ++i) {
             if (this.active[this.activation_directions.indexOf(possible_directions[i])]) {
@@ -90,11 +107,11 @@ export abstract class TileEvent {
         return false;
     }
 
-    activate_at(direction) {
+    activate_at(direction: directions) {
         this.active[this.activation_directions.indexOf(direction)] = true;
     }
 
-    deactivate_at(direction) {
+    deactivate_at(direction: directions) {
         this.active[this.activation_directions.indexOf(direction)] = false;
     }
 
@@ -110,15 +127,7 @@ export abstract class TileEvent {
         return this.data.hero.tile_x_pos === this.x && this.data.hero.tile_y_pos === this.y;
     }
 
-    static get_location_key(x, y) {
-        return `${x}_${y}`;
-    }
-
-    static get_event_by_id(events, id) {
-        return _.find(events, {id: id});
-    }
-
-    static get_event(id) {
+    static get_event(id: number) {
         return TileEvent.events[id];
     }
 

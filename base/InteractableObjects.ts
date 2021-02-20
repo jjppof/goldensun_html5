@@ -1,5 +1,5 @@
 import {SpriteBase} from "./SpriteBase";
-import {TileEvent} from "./tile_events/TileEvent";
+import {LocationKey, TileEvent} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
 import {directions, get_surroundings, mount_collision_polygon, reverse_directions} from "./utils";
 import {JumpEvent} from "./tile_events/JumpEvent";
@@ -29,7 +29,7 @@ export class InteractableObjects {
     public base_collision_layer: number;
     public not_allowed_tiles: {x: number; y: number}[];
     public object_drop_tiles: any;
-    public events: Set<TileEvent>;
+    public events_id: Set<TileEvent["id"]>;
     public current_x: number;
     public current_y: number;
     public custom_data: any;
@@ -91,7 +91,7 @@ export class InteractableObjects {
         this.base_collision_layer = base_collision_layer ?? 0;
         this.not_allowed_tiles = not_allowed_tiles ?? [];
         this.object_drop_tiles = object_drop_tiles ?? [];
-        this.events = new Set();
+        this.events_id = new Set();
         this.current_x = this.x;
         this.current_y = this.y;
         this.custom_data = {};
@@ -110,14 +110,10 @@ export class InteractableObjects {
         }
     }
 
-    set_sprite(sprite) {
-        this.sprite = sprite;
-    }
-
     position_allowed(x: number, y: number) {
         if (
-            this.data.map.interactable_objects.filter(item => {
-                return item.current_x === x && item.current_y === y;
+            this.data.map.interactable_objects.filter(io => {
+                return io.current_x === x && io.current_y === y;
             }).length
         ) {
             return false;
@@ -149,16 +145,16 @@ export class InteractableObjects {
         this.collision_change_functions.forEach(f => f());
     }
 
-    insert_event(id) {
-        this.events.add(id);
+    insert_event(id: number) {
+        this.events_id.add(id);
     }
 
     get_events() {
-        return [...this.events].map(id => TileEvent.get_event(id));
+        return [...this.events_id].map(id => TileEvent.get_event(id));
     }
 
-    remove_event(id) {
-        this.events.delete(id);
+    remove_event(id: number) {
+        this.events_id.delete(id);
     }
 
     creating_blocking_stair_block() {
@@ -197,7 +193,7 @@ export class InteractableObjects {
         }
         const interactable_object_key = this.sprite_info.getSpriteKey(this.key_name);
         const interactable_object_sprite = this.data.npc_group.create(0, 0, interactable_object_key);
-        this.set_sprite(interactable_object_sprite);
+        this.sprite = interactable_object_sprite;
         this.sprite.is_interactable_object = true;
         this.sprite.roundPx = true;
         this.sprite.base_collision_layer = this.base_collision_layer;
@@ -242,8 +238,8 @@ export class InteractableObjects {
         let y_pos = position.y;
         for (let i = 0; i < this.data.dbs.interactable_objects_db[this.key_name].events.length; ++i) {
             const event_info = this.data.dbs.interactable_objects_db[this.key_name].events[i];
-            x_pos += event_info.x_shift !== undefined ? event_info.x_shift : 0;
-            y_pos += event_info.y_shift !== undefined ? event_info.y_shift : 0;
+            x_pos += event_info.x_shift ?? 0;
+            y_pos += event_info.y_shift ?? 0;
             const collision_layer_shift = this.tile_events_info[i]?.collision_layer_shift ?? 0;
             const active_event = event_info.active ?? true;
             const target_layer = this.base_collision_layer + collision_layer_shift;
@@ -281,7 +277,7 @@ export class InteractableObjects {
         map_events: Map["events"]
     ) {
         if (this.not_allowed_tile_test(x_pos, y_pos)) return;
-        const this_event_location_key = TileEvent.get_location_key(x_pos, y_pos);
+        const this_event_location_key = LocationKey.get_key(x_pos, y_pos);
         if (!(this_event_location_key in map_events)) {
             map_events[this_event_location_key] = [];
         }
@@ -322,7 +318,7 @@ export class InteractableObjects {
         const is_set = event_info.is_set ?? true;
         get_surroundings(x_pos, y_pos).forEach((pos, index) => {
             if (this.not_allowed_tile_test(pos.x, pos.y)) return;
-            const this_event_location_key = TileEvent.get_location_key(pos.x, pos.y);
+            const this_event_location_key = LocationKey.get_key(pos.x, pos.y);
             if (!(this_event_location_key in map_events)) {
                 map_events[this_event_location_key] = [];
             }
@@ -422,7 +418,7 @@ export class InteractableObjects {
             },
         ];
         events_data.forEach(event_data => {
-            const this_location_key = TileEvent.get_location_key(event_data.x, event_data.y);
+            const this_location_key = LocationKey.get_key(event_data.x, event_data.y);
             if (!(this_location_key in map_events)) {
                 map_events[this_location_key] = [];
             }

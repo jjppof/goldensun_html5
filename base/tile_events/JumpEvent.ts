@@ -1,4 +1,4 @@
-import {event_types, TileEvent} from "./TileEvent";
+import {event_types, LocationKey, TileEvent} from "./TileEvent";
 import * as numbers from "../magic_numbers";
 import * as _ from "lodash";
 import {
@@ -81,7 +81,7 @@ export class JumpEvent extends TileEvent {
         if (jump_direction === undefined) {
             return;
         }
-        const side_pos_key = TileEvent.get_location_key(side_position.x, side_position.y);
+        const side_pos_key = LocationKey.get_key(side_position.x, side_position.y);
         if (side_pos_key in this.data.map.events) {
             for (let i = 0; i < this.data.map.events[side_pos_key].length; ++i) {
                 const event = this.data.map.events[side_pos_key][i];
@@ -108,7 +108,7 @@ export class JumpEvent extends TileEvent {
                 }
             }
         }
-        const next_pos_key = TileEvent.get_location_key(next_position.x, next_position.y);
+        const next_pos_key = LocationKey.get_key(next_position.x, next_position.y);
         for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
             const next_interactable_object = this.data.map.interactable_objects[i];
             if (
@@ -179,7 +179,6 @@ export class JumpEvent extends TileEvent {
     }
 
     create_collision_bodies_around_jump_events() {
-        const current_pos_key = TileEvent.get_location_key(this.data.hero.tile_x_pos, this.data.hero.tile_y_pos);
         const current_pos = {x: this.data.hero.tile_x_pos, y: this.data.hero.tile_y_pos};
         const surroundings = get_surroundings(current_pos.x, current_pos.y, true);
         let right_direction = false;
@@ -188,7 +187,7 @@ export class JumpEvent extends TileEvent {
         for (let i = 0; i < possible_directions.length; ++i) {
             let is_possible = this.activation_directions.includes(possible_directions[i]);
             const possible_pos = _.find(surroundings, {direction: possible_directions[i]});
-            const possible_pos_key = TileEvent.get_location_key(possible_pos.x, possible_pos.y);
+            const possible_pos_key = LocationKey.get_key(possible_pos.x, possible_pos.y);
             if (possible_pos_key in this.data.map.events) {
                 //this for is used to check whether a possible direction is a valid position
                 //because hero can walk over jump events that are set
@@ -215,13 +214,13 @@ export class JumpEvent extends TileEvent {
             this.data.collision.dynamic_jump_events_bodies = [];
         };
 
-        let concat_keys = current_pos_key;
+        let concat_keys = String(LocationKey.get_key(this.data.hero.tile_x_pos, this.data.hero.tile_y_pos));
         const bodies_positions = [];
         let at_least_one_dynamic_and_not_diag = false;
         for (let i = 0; i < surroundings.length; ++i) {
             //this for is used to find surrounding jump events.
             //collision events should not be created over these events.
-            const surrounding_key = TileEvent.get_location_key(surroundings[i].x, surroundings[i].y);
+            const surrounding_key = LocationKey.get_key(surroundings[i].x, surroundings[i].y);
             if (surrounding_key in this.data.map.events) {
                 for (let j = 0; j < this.data.map.events[surrounding_key].length; ++j) {
                     const surrounding_event = this.data.map.events[surrounding_key][j];
@@ -237,7 +236,7 @@ export class JumpEvent extends TileEvent {
                         }
                         const side_event_surroundings = get_surroundings(surroundings[i].x, surroundings[i].y, false);
                         bodies_positions.push(side_event_surroundings);
-                        concat_keys += "-" + surrounding_key;
+                        concat_keys = `${concat_keys}/${surrounding_key}`;
                     }
                 }
             }
@@ -250,10 +249,12 @@ export class JumpEvent extends TileEvent {
             this.data.tile_event_manager.walking_on_pillars_tiles.add(concat_keys);
             clear_bodies();
 
-            const bodies_position = new Set(surroundings.concat(...bodies_positions).map(pos => pos.x + "_" + pos.y));
-            concat_keys.split("-").forEach(key => {
+            const bodies_position = new Set(
+                surroundings.concat(...bodies_positions).map(pos => LocationKey.get_key(pos.x, pos.y))
+            );
+            concat_keys.split("/").forEach(key => {
                 //exclude the positions of the side jump events
-                bodies_position.delete(key);
+                bodies_position.delete(+key);
             });
 
             this.data.collision.disable_map_collision();
@@ -272,16 +273,14 @@ export class JumpEvent extends TileEvent {
             const opposite_position = _.find(surroundings, {direction: hero_opposite_dir});
 
             //creates the collision bodies
-            bodies_position.forEach(position => {
-                const pos_array = position.split("_");
-                const x_tile = +pos_array[0];
-                const y_tile = +pos_array[1];
-                if (x_tile === opposite_position.x && y_tile === opposite_position.y && !this.dynamic) {
+            bodies_position.forEach(key => {
+                const pos = LocationKey.get_pos(key);
+                if (pos.x === opposite_position.x && pos.y === opposite_position.y && !this.dynamic) {
                     //collision bodies should not be created behind the hero
                     return;
                 }
-                const x_pos = (x_tile + 0.5) * this.data.map.tile_width;
-                const y_pos = (y_tile + 0.5) * this.data.map.tile_height;
+                const x_pos = (pos.x + 0.5) * this.data.map.tile_width;
+                const y_pos = (pos.y + 0.5) * this.data.map.tile_height;
                 const body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
                 body.clearShapes();
                 body.setRectangle(this.data.map.tile_width, this.data.map.tile_height, 0, 0);
@@ -322,7 +321,7 @@ export class JumpEvent extends TileEvent {
                 ) {
                     const surroundings = get_surroundings(event.x, event.y);
                     for (let i = 0; i < surroundings.length; ++i) {
-                        const surrounding_key = TileEvent.get_location_key(surroundings[i].x, surroundings[i].y);
+                        const surrounding_key = LocationKey.get_key(surroundings[i].x, surroundings[i].y);
                         if (surrounding_key in data.map.events) {
                             let dynamic_found = false;
                             for (let k = 0; k < data.map.events[surrounding_key].length; ++k) {
@@ -375,7 +374,7 @@ export class JumpEvent extends TileEvent {
     ) {
         for (let j = 0; j < surroundings.length; ++j) {
             const surrounding = surroundings[j];
-            const this_key = TileEvent.get_location_key(surrounding.x, surrounding.y);
+            const this_key = LocationKey.get_key(surrounding.x, surrounding.y);
             if (this_key in data.map.events) {
                 for (let k = 0; k < data.map.events[this_key].length; ++k) {
                     const surr_event = data.map.events[this_key][k];

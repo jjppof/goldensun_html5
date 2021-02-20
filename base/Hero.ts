@@ -1,6 +1,6 @@
 import {ControllableChar} from "./ControllableChar";
 import * as numbers from "./magic_numbers";
-import {TileEvent, event_types} from "./tile_events/TileEvent";
+import {event_types, LocationKey} from "./tile_events/TileEvent";
 import {get_transition_directions, range_360, directions, base_actions, get_direction_mask} from "./utils";
 import {normal_push} from "./interactable_objects/push";
 import {Map} from "./Map";
@@ -211,8 +211,7 @@ export class Hero extends ControllableChar {
                         this.trying_to_push = true;
                         if (this.push_timer === null) {
                             this._trying_to_push_direction = this.current_direction;
-                            const events_in_pos =
-                                map.events[TileEvent.get_location_key(this.tile_x_pos, this.tile_y_pos)];
+                            const events_in_pos = map.events[LocationKey.get_key(this.tile_x_pos, this.tile_y_pos)];
                             let has_stair = false;
                             if (events_in_pos) {
                                 events_in_pos.forEach(event => {

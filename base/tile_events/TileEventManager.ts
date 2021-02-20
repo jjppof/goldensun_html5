@@ -113,10 +113,10 @@ export class TileEventManager {
         }
     }
 
-    check_tile_events(event_key: string, map: Map) {
+    check_tile_events(location_key: number, map: Map) {
         let event_queue: EventQueue;
-        for (let i = 0; i < map.events[event_key].length; ++i) {
-            const this_event = map.events[event_key][i];
+        for (let i = 0; i < map.events[location_key].length; ++i) {
+            const this_event = map.events[location_key][i];
             if (!this_event.activation_collision_layers.includes(map.collision_layer)) continue;
             if (this_event.type === event_types.JUMP) {
                 (this_event as JumpEvent).create_collision_bodies_around_jump_events();

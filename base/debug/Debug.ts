@@ -3,6 +3,7 @@ import {MainChar} from "../MainChar";
 import {Button} from "../XGamepad";
 import {reverse_directions, ordered_elements} from "../utils";
 import * as _ from "lodash";
+import {LocationKey} from "../tile_events/TileEvent";
 
 export class Debug {
     public game: Phaser.Game;
@@ -272,32 +273,33 @@ export class Debug {
             for (let y = 0; y < this.game.world.height; y += tile_height) {
                 this.game.debug.geom(new Phaser.Line(0, y, this.game.world.width, y), "rgba(0,255,255,0.35)", false, 4);
             }
-            let x_pos = this.data.hero.tile_x_pos * tile_width;
-            let y_pos = this.data.hero.tile_y_pos * tile_height;
+            const x_pos = this.data.hero.tile_x_pos * tile_width;
+            const y_pos = this.data.hero.tile_y_pos * tile_height;
             this.game.debug.geom(new Phaser.Rectangle(x_pos, y_pos, tile_width, tile_height), "rgba(255,0,0,0.5)");
             this.game.debug.geom(
                 new Phaser.Circle(this.data.hero.sprite.x, this.data.hero.sprite.y, 5),
                 "rgba(20,75,0,1.0)"
             );
             for (let point in this.data.map.events) {
-                let pos = point.split("_").map(p => parseInt(p));
+                const pos = LocationKey.get_pos(+point);
                 this.game.debug.geom(
-                    new Phaser.Rectangle(pos[0] * tile_width, pos[1] * tile_height, tile_width, tile_height),
+                    new Phaser.Rectangle(pos.x * tile_width, pos.y * tile_height, tile_width, tile_height),
                     "rgba(255,255,60,0.7)"
                 );
             }
 
             if (this.game.input.mousePointer.withinGame) {
-                const mouse_x =
-                    ((this.game.camera.x + this.game.input.mousePointer.x / this.data.scale_factor) /
-                        this.data.map.tile_width) |
-                    0;
-                const mouse_y =
-                    ((this.game.camera.y + this.game.input.mousePointer.y / this.data.scale_factor) /
-                        this.data.map.tile_height) |
-                    0;
-                this.game.debug.text(`x: ${mouse_x}, y: ${mouse_y}`, 140, 15, "#00ff00");
-                const event_key = mouse_x + "_" + mouse_y;
+                const mouse_x = this.game.camera.x + this.game.input.mousePointer.x / this.data.scale_factor;
+                const mouse_y = this.game.camera.y + this.game.input.mousePointer.y / this.data.scale_factor;
+                const mouse_x_tile = (mouse_x / this.data.map.tile_width) | 0;
+                const mouse_y_tile = (mouse_y / this.data.map.tile_height) | 0;
+                this.game.debug.text(
+                    `x: ${mouse_x_tile}/${mouse_x | 0}, y: ${mouse_y_tile}/${mouse_y | 0}`,
+                    90,
+                    15,
+                    "#00ff00"
+                );
+                const event_key = LocationKey.get_key(mouse_x_tile, mouse_y_tile);
                 if (event_key in this.data.map.events) {
                     const events = this.data.map.events[event_key].map(event => {
                         return Object.assign({}, event, {
@@ -312,7 +314,7 @@ export class Debug {
                     document.getElementById("object_inspector").innerText = JSON.stringify(events, null, 4);
                 }
             } else {
-                this.game.debug.text(`x: --, y: --`, 140, 15, "#00ff00");
+                this.game.debug.text(`x: --, y: --`, 90, 15, "#00ff00");
             }
         } else {
             document.getElementById("object_inspector").innerText = "";

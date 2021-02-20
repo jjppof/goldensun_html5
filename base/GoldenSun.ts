@@ -1,5 +1,5 @@
 import * as numbers from "./magic_numbers";
-import {TileEvent} from "./tile_events/TileEvent";
+import {LocationKey} from "./tile_events/TileEvent";
 import {Debug} from "./debug/Debug";
 import {load_all} from "./initializers/assets_loader";
 import {Collision} from "./Collision";
@@ -298,7 +298,7 @@ export class GoldenSun {
             this.hero.update_tile_position();
 
             this.tile_event_manager.fire_triggered_events(); //trigger any event that's waiting to be triggered
-            const location_key = TileEvent.get_location_key(this.hero.tile_x_pos, this.hero.tile_y_pos);
+            const location_key = LocationKey.get_key(this.hero.tile_x_pos, this.hero.tile_y_pos);
             if (location_key in this.map.events) {
                 //check if the actual tile has an event
                 this.tile_event_manager.check_tile_events(location_key, this.map);
