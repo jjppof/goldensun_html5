@@ -57,14 +57,22 @@ export class Collision {
         }
     }
 
-    disable_map_collision() {
-        this.data.hero.sprite.body.removeCollisionGroup(this.data.collision.map_collision_group);
-        this.data.map.collision_sprite.body.removeCollisionGroup(this.data.collision.hero_collision_group);
+    disable_map_collision(sensor_method = false) {
+        if (sensor_method) {
+            this.data.map.collision_sprite.body.data.shapes.forEach(shape => (shape.sensor = true));
+        } else {
+            this.data.hero.sprite.body.removeCollisionGroup(this.data.collision.map_collision_group);
+            this.data.map.collision_sprite.body.removeCollisionGroup(this.data.collision.hero_collision_group);
+        }
     }
 
-    enable_map_collision() {
-        this.data.hero.sprite.body.collides(this.data.collision.map_collision_group);
-        this.data.map.collision_sprite.body.collides(this.data.collision.hero_collision_group);
+    enable_map_collision(sensor_method = false) {
+        if (sensor_method) {
+            this.data.map.collision_sprite.body.data.shapes.forEach(shape => (shape.sensor = false));
+        } else {
+            this.data.hero.sprite.body.collides(this.data.collision.map_collision_group);
+            this.data.map.collision_sprite.body.collides(this.data.collision.hero_collision_group);
+        }
     }
 
     config_collisions(collision_layer: number) {

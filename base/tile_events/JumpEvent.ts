@@ -249,6 +249,7 @@ export class JumpEvent extends TileEvent {
             this.data.tile_event_manager.walking_on_pillars_tiles.add(concat_keys);
             clear_bodies();
 
+            //using Set to get unique positions and dont create bodies in same location
             const bodies_position = new Set(
                 surroundings.concat(...bodies_positions).map(pos => LocationKey.get_key(pos.x, pos.y))
             );
@@ -257,6 +258,7 @@ export class JumpEvent extends TileEvent {
                 bodies_position.delete(+key);
             });
 
+            //the hero now will collide with the dynamic bodies that will be created
             this.data.collision.disable_map_collision();
 
             //gets the position behind the hero (position of opposite direction)
