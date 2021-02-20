@@ -91,7 +91,7 @@ export abstract class ControllableChar {
     private _footsteps: Footsteps;
     private look_target: ControllableChar = null;
     protected _active: boolean;
-    protected colliding_directions: directions[];
+    protected colliding_directions_mask: number;
 
     constructor(
         game: Phaser.Game,
@@ -118,7 +118,7 @@ export abstract class ControllableChar {
         this.dash_speed = dash_speed;
         this.climb_speed = climb_speed;
         this.stop_by_colliding = false;
-        this.colliding_directions = [];
+        this.colliding_directions_mask = 0;
         this.force_direction = false;
         this.dashing = false;
         this.climbing = false;

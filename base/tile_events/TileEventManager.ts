@@ -1,5 +1,6 @@
 import {GoldenSun} from "../GoldenSun";
-import {base_actions} from "../utils";
+import {Map} from "../Map";
+import {base_actions, directions} from "../utils";
 import {ClimbEvent} from "./ClimbEvent";
 import {CollisionEvent} from "./CollisionEvent";
 import {EventTriggerEvent} from "./EventTriggerEvent";
@@ -12,8 +13,8 @@ import {TeleportEvent} from "./TeleportEvent";
 import {event_types, TileEvent} from "./TileEvent";
 
 class EventQueue {
-    public climb_event: boolean;
-    public queue: {
+    private climb_event: boolean;
+    private queue: {
         event: TileEvent;
         fire_function: Function;
     }[];
@@ -26,10 +27,14 @@ class EventQueue {
         return this.queue.length;
     }
 
-    add(event, this_activation_direction, fire_function, fire = false) {
+    add(event: TileEvent, this_activation_direction: directions, fire_function: Function, fire = false) {
         switch (event.type) {
             case event_types.CLIMB:
-                if (event.active && event.is_set && event.activation_directions.includes(this_activation_direction)) {
+                if (
+                    event.active &&
+                    (event as ClimbEvent).is_set &&
+                    event.activation_directions.includes(this_activation_direction)
+                ) {
                     this.climb_event = true;
                 }
                 break;
@@ -71,15 +76,15 @@ export class TileEventManager {
         this.triggered_events = {};
     }
 
-    set_triggered_event(event) {
+    set_triggered_event(event: TileEvent) {
         this.triggered_events[event.id] = event;
     }
 
-    unset_triggered_event(event) {
+    unset_triggered_event(event: TileEvent) {
         delete this.triggered_events[event.id];
     }
 
-    event_triggered(event) {
+    event_triggered(event: TileEvent) {
         return event.id in this.triggered_events;
     }
 
@@ -94,7 +99,7 @@ export class TileEventManager {
         });
     }
 
-    fire_event(current_event: TileEvent, this_activation_direction) {
+    fire_event(current_event: TileEvent, this_activation_direction: directions) {
         if (current_event.type === event_types.ICE_SLIDE && this.data.hero.ice_sliding_active) {
             current_event.fire();
             return;
@@ -108,20 +113,20 @@ export class TileEventManager {
         }
     }
 
-    check_tile_events(event_key, map) {
+    check_tile_events(event_key: string, map: Map) {
         let event_queue: EventQueue;
         for (let i = 0; i < map.events[event_key].length; ++i) {
             const this_event = map.events[event_key][i];
             if (!this_event.activation_collision_layers.includes(map.collision_layer)) continue;
             if (this_event.type === event_types.JUMP) {
-                this_event.jump_near_collision();
+                (this_event as JumpEvent).jump_near_collision();
             }
             if (!this_event.is_active(this.data.hero.current_direction)) continue;
             if (!event_queue) {
                 event_queue = new EventQueue();
             }
             if (this_event.type === event_types.SPEED) {
-                if (this.data.hero.extra_speed !== this_event.speed) {
+                if (this.data.hero.extra_speed !== (this_event as SpeedEvent).speed) {
                     event_queue.add(
                         this_event,
                         this.data.hero.current_direction,
@@ -131,7 +136,7 @@ export class TileEventManager {
                 }
             } else if (
                 this_event.type === event_types.ICE_SLIDE ||
-                (this_event.type === event_types.TELEPORT && !this_event.advance_effect)
+                (this_event.type === event_types.TELEPORT && !(this_event as TeleportEvent).advance_effect)
             ) {
                 event_queue.add(
                     this_event,
@@ -142,7 +147,11 @@ export class TileEventManager {
                 [event_types.STEP, event_types.COLLISION].includes(this_event.type) &&
                 !this.event_triggered(this_event)
             ) {
-                event_queue.add(this_event, this.data.hero.current_direction, this_event.set.bind(this_event));
+                event_queue.add(
+                    this_event,
+                    this.data.hero.current_direction,
+                    (this_event as StepEvent | CollisionEvent).set.bind(this_event)
+                );
             } else {
                 const right_direction = this_event.activation_directions.includes(this.data.hero.current_direction);
                 if (

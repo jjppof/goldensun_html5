@@ -57,6 +57,16 @@ export class Collision {
         }
     }
 
+    disable_map_collision() {
+        this.data.hero.sprite.body.removeCollisionGroup(this.data.collision.map_collision_group);
+        this.data.map.collision_sprite.body.removeCollisionGroup(this.data.collision.hero_collision_group);
+    }
+
+    enable_map_collision() {
+        this.data.hero.sprite.body.collides(this.data.collision.map_collision_group);
+        this.data.map.collision_sprite.body.collides(this.data.collision.hero_collision_group);
+    }
+
     config_collisions(collision_layer: number) {
         this.data.hero.sprite.body.collides(this.map_collision_group);
         this.data.map.collision_sprite.body.collides(this.hero_collision_group);

@@ -93,6 +93,11 @@ export function map_directions(arr) {
     return arr.map(key => directions[key]);
 }
 
+export function get_direction_mask(direction: directions) {
+    if (direction === null) return 0;
+    return direction === 0 ? 1 : 2 << (direction - 1);
+}
+
 /*Returns the direction values for diagonal directions
 Example: Input: 7 (up_right) / Output: [6,0]
 

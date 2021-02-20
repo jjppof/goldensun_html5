@@ -1,7 +1,7 @@
 import {ControllableChar} from "./ControllableChar";
 import * as numbers from "./magic_numbers";
 import {TileEvent, event_types} from "./tile_events/TileEvent";
-import {get_transition_directions, range_360, directions, base_actions} from "./utils";
+import {get_transition_directions, range_360, directions, base_actions, get_direction_mask} from "./utils";
 import {normal_push} from "./interactable_objects/push";
 import {Map} from "./Map";
 import {ClimbEvent} from "./tile_events/ClimbEvent";
@@ -149,13 +149,16 @@ export class Hero extends ControllableChar {
             }
         } else {
             if (!this.sliding_on_ice) {
-                if (this.colliding_directions.includes(desired_direction) || desired_direction === null) {
+                if (
+                    this.colliding_directions_mask & get_direction_mask(desired_direction) ||
+                    desired_direction === null
+                ) {
                     this._x_speed = this._y_speed = 0;
                 } else {
                     //checks if a diagonal direction was asked
                     if ((desired_direction & 1) === 1) {
                         //changes to a not diagonal direction
-                        if (this.colliding_directions.includes(desired_direction - 1)) {
+                        if (this.colliding_directions_mask & get_direction_mask(desired_direction - 1)) {
                             desired_direction = (desired_direction + 1) & 7;
                         } else {
                             --desired_direction;
@@ -167,7 +170,10 @@ export class Hero extends ControllableChar {
                     this._ice_slide_direction = desired_direction;
                     this.sliding_on_ice = true;
                 }
-            } else if (this.sliding_on_ice && this.colliding_directions.includes(this.ice_slide_direction)) {
+            } else if (
+                this.sliding_on_ice &&
+                this.colliding_directions_mask & get_direction_mask(this.ice_slide_direction)
+            ) {
                 //stops sliding
                 this._x_speed = this._y_speed = 0;
                 this._ice_slide_direction = null;
@@ -266,10 +272,11 @@ export class Hero extends ControllableChar {
             this.check_interactable_objects(map, contact);
         }
         //normals having length, means that a collision is happening
-        this.colliding_directions = normals.map(normal => {
+        this.colliding_directions_mask = normals.reduce((acc, normal) => {
             const angle = range_360(Math.atan2(-normal[1], -normal[0]));
-            return (1 + Math.floor((angle - numbers.degree45_half) / numbers.degree45)) & 7;
-        });
+            const direction = (1 + Math.floor((angle - numbers.degree45_half) / numbers.degree45)) & 7;
+            return acc | get_direction_mask(direction);
+        }, 0);
         if (
             normals.length &&
             [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action as base_actions)
@@ -342,7 +349,11 @@ export class Hero extends ControllableChar {
                 this.stop_by_colliding = false;
             }
         } else {
-            this.stop_by_colliding = false;
+            if (this.temp_velocity_x === 0 && this.temp_velocity_y === 0) {
+                this.stop_by_colliding = true;
+            } else {
+                this.stop_by_colliding = false;
+            }
             this.force_direction = false;
         }
     }
