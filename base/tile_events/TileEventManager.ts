@@ -119,7 +119,7 @@ export class TileEventManager {
             const this_event = map.events[event_key][i];
             if (!this_event.activation_collision_layers.includes(map.collision_layer)) continue;
             if (this_event.type === event_types.JUMP) {
-                (this_event as JumpEvent).jump_near_collision();
+                (this_event as JumpEvent).create_collision_bodies_around_jump_events();
             }
             if (!this_event.is_active(this.data.hero.current_direction)) continue;
             if (!event_queue) {

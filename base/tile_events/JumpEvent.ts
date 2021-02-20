@@ -178,20 +178,27 @@ export class JumpEvent extends TileEvent {
         });
     }
 
-    jump_near_collision() {
+    create_collision_bodies_around_jump_events() {
         const current_pos_key = TileEvent.get_location_key(this.data.hero.tile_x_pos, this.data.hero.tile_y_pos);
         const current_pos = {x: this.data.hero.tile_x_pos, y: this.data.hero.tile_y_pos};
         const surroundings = get_surroundings(current_pos.x, current_pos.y, true);
         let right_direction = false;
         const possible_directions = split_direction(this.data.hero.current_direction);
+        //this for is used to check whether the hero is going towards the event activation directions
         for (let i = 0; i < possible_directions.length; ++i) {
             let is_possible = this.activation_directions.includes(possible_directions[i]);
             const possible_pos = _.find(surroundings, {direction: possible_directions[i]});
             const possible_pos_key = TileEvent.get_location_key(possible_pos.x, possible_pos.y);
             if (possible_pos_key in this.data.map.events) {
+                //this for is used to check whether a possible direction is a valid position
+                //because hero can walk over jump events that are set
                 for (let j = 0; j < this.data.map.events[possible_pos_key].length; ++j) {
                     const surrounding_event = this.data.map.events[possible_pos_key][j];
-                    if (surrounding_event.type === event_types.JUMP && !(surrounding_event as JumpEvent).is_set) {
+                    if (
+                        surrounding_event.type === event_types.JUMP &&
+                        !(surrounding_event as JumpEvent).is_set &&
+                        surrounding_event.activation_collision_layers.includes(this.data.map.collision_layer)
+                    ) {
                         is_possible = false;
                         break;
                     }
@@ -207,10 +214,13 @@ export class JumpEvent extends TileEvent {
             }
             this.data.collision.dynamic_jump_events_bodies = [];
         };
+
         let concat_keys = current_pos_key;
         const bodies_positions = [];
         let at_least_one_dynamic_and_not_diag = false;
         for (let i = 0; i < surroundings.length; ++i) {
+            //this for is used to find surrounding jump events.
+            //collision events should not be created over these events.
             const surrounding_key = TileEvent.get_location_key(surroundings[i].x, surroundings[i].y);
             if (surrounding_key in this.data.map.events) {
                 for (let j = 0; j < this.data.map.events[surrounding_key].length; ++j) {
@@ -222,6 +232,7 @@ export class JumpEvent extends TileEvent {
                         surrounding_event.activation_collision_layers.includes(this.data.map.collision_layer)
                     ) {
                         if ((surrounding_event.dynamic || this.dynamic) && !surroundings[i].diag) {
+                            //needs at least one non diagonal position in order to create the collision bodies
                             at_least_one_dynamic_and_not_diag = true;
                         }
                         const side_event_surroundings = get_surroundings(surroundings[i].x, surroundings[i].y, false);
@@ -236,15 +247,21 @@ export class JumpEvent extends TileEvent {
             at_least_one_dynamic_and_not_diag
         ) {
             this.data.tile_event_manager.walking_on_pillars_tiles.clear();
-            clear_bodies();
             this.data.tile_event_manager.walking_on_pillars_tiles.add(concat_keys);
+            clear_bodies();
+
             const bodies_position = new Set(surroundings.concat(...bodies_positions).map(pos => pos.x + "_" + pos.y));
             concat_keys.split("-").forEach(key => {
+                //exclude the positions of the side jump events
                 bodies_position.delete(key);
             });
+
             this.data.collision.disable_map_collision();
+
+            //gets the position behind the hero (position of opposite direction)
             let hero_opposite_dir = this.data.hero.current_direction;
             if ((hero_opposite_dir & 1) === 1) {
+                //transforms diagonal positions in cardinal positions
                 if (this.activation_directions.includes(hero_opposite_dir - 1)) {
                     --hero_opposite_dir;
                 } else {
@@ -253,11 +270,14 @@ export class JumpEvent extends TileEvent {
             }
             hero_opposite_dir = get_opposite_direction(hero_opposite_dir);
             const opposite_position = _.find(surroundings, {direction: hero_opposite_dir});
+
+            //creates the collision bodies
             bodies_position.forEach(position => {
                 const pos_array = position.split("_");
                 const x_tile = +pos_array[0];
                 const y_tile = +pos_array[1];
                 if (x_tile === opposite_position.x && y_tile === opposite_position.y && !this.dynamic) {
+                    //collision bodies should not be created behind the hero
                     return;
                 }
                 const x_pos = (x_tile + 0.5) * this.data.map.tile_width;
@@ -278,6 +298,7 @@ export class JumpEvent extends TileEvent {
             });
         }
         if (!this.dynamic && !right_direction && this.data.tile_event_manager.walking_on_pillars_tiles.size) {
+            //if the hero is not going toward an activation direction of this event, collision bodies are removed
             this.data.tile_event_manager.walking_on_pillars_tiles.clear();
             clear_bodies();
         }
