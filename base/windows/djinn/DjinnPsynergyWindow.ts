@@ -4,6 +4,7 @@ import {GoldenSun} from "../../GoldenSun";
 import {Button} from "../../XGamepad";
 import {MainChar} from "../../MainChar";
 import {Djinn, djinn_status} from "../../Djinn";
+import {djinn_actions} from "../../main_menus/MainDjinnMenu";
 
 const BASE_WIN_WIDTH = 116;
 const BASE_WIN_HEIGHT = 116;
@@ -60,7 +61,7 @@ export class DjinnPsynergyWindow {
     public char: MainChar;
     public djinni: Djinn[];
     public next_djinni_status: djinn_status[];
-    public action: string;
+    public action: djinn_actions;
 
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
@@ -236,7 +237,7 @@ export class DjinnPsynergyWindow {
         close_callback: Function,
         hidden: boolean = false,
         next_state_callback?: Function,
-        action?: string,
+        action?: djinn_actions,
         callback?: Function
     ) {
         this.char = char;

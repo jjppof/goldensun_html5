@@ -4,6 +4,7 @@ import {ordered_elements} from "../../utils";
 import {MainChar} from "../../MainChar";
 import {Djinn, djinn_status} from "../../Djinn";
 import {ordered_main_stats} from "../../Player";
+import {djinn_actions} from "../../main_menus/MainDjinnMenu";
 
 const BASE_WIN_WIDTH = 116;
 const BASE_WIN_HEIGHT = 116;
@@ -65,7 +66,7 @@ export class DjinnCharStatsWindow {
     public char: MainChar;
     public djinni: Djinn[];
     public next_djinni_status: djinn_status[];
-    public action: string;
+    public action: djinn_actions;
 
     constructor(game, win_x = 0) {
         this.game = game;
@@ -205,7 +206,13 @@ export class DjinnCharStatsWindow {
         }
     }
 
-    open(char: MainChar, djinni: Djinn[], next_djinni_status: djinn_status[], action?: string, callback?: Function) {
+    open(
+        char: MainChar,
+        djinni: Djinn[],
+        next_djinni_status: djinn_status[],
+        action?: djinn_actions,
+        callback?: Function
+    ) {
         this.char = char;
         this.djinni = djinni;
         this.next_djinni_status = next_djinni_status;

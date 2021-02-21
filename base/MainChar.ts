@@ -10,6 +10,7 @@ import * as _ from "lodash";
 import {GameInfo, PartyData} from "./initializers/initialize_info";
 import {Ability} from "./Ability";
 import {GoldenSun} from "./GoldenSun";
+import {djinn_actions} from "./main_menus/MainDjinnMenu";
 
 export type ItemSlot = {
     key_name: string;
@@ -40,6 +41,33 @@ export const item_equip_slot = {
     [item_types.RING]: equip_slots.RING,
     [item_types.UNDERWEAR]: equip_slots.UNDERWEAR,
     [item_types.CLASS_CHANGER]: equip_slots.CLASS_CHANGER,
+};
+
+export const main_extra_stat_map = {
+    [main_stats.MAX_HP]: extra_main_stats.MAX_HP,
+    [main_stats.MAX_PP]: extra_main_stats.MAX_PP,
+    [main_stats.ATTACK]: extra_main_stats.ATTACK,
+    [main_stats.DEFENSE]: extra_main_stats.DEFENSE,
+    [main_stats.AGILITY]: extra_main_stats.AGILITY,
+    [main_stats.LUCK]: extra_main_stats.LUCK,
+};
+
+export const main_curve_stat_map = {
+    [main_stats.MAX_HP]: "hp_curve",
+    [main_stats.MAX_PP]: "pp_curve",
+    [main_stats.ATTACK]: "atk_curve",
+    [main_stats.DEFENSE]: "def_curve",
+    [main_stats.AGILITY]: "agi_curve",
+    [main_stats.LUCK]: "luk_curve",
+};
+
+export const main_boost_stat_map = {
+    [main_stats.MAX_HP]: "hp_boost",
+    [main_stats.MAX_PP]: "pp_boost",
+    [main_stats.ATTACK]: "atk_boost",
+    [main_stats.DEFENSE]: "def_boost",
+    [main_stats.AGILITY]: "agi_boost",
+    [main_stats.LUCK]: "luk_boost",
 };
 
 export class MainChar extends Player {
@@ -356,9 +384,14 @@ export class MainChar extends Player {
         this.add_djinn(new_djinn_key_name);
     }
 
-    preview_djinn_change(stats: main_stats[], djinni_key_name: string[], djinni_next_status: djinn_status[], action?) {
+    preview_djinn_change(
+        stats: main_stats[],
+        djinni_key_name: string[],
+        djinni_next_status: djinn_status[],
+        action?: djinn_actions
+    ) {
         const previous_class = this.class;
-        let lvls: Player["current_level"] = _.cloneDeep(this.current_level);
+        const lvls: Player["current_level"] = _.cloneDeep(this.current_level);
         for (let i = 0; i < djinni_key_name.length; ++i) {
             const djinn = this.info.djinni_list[djinni_key_name[i]];
             let lv_shift;
@@ -383,7 +416,7 @@ export class MainChar extends Player {
             this.granted_class_type,
             this.special_class_type
         );
-        let return_obj = {
+        const return_obj = {
             class_name: this.class.name,
             class_key_name: this.class.key_name,
             abilities: null,
@@ -406,60 +439,74 @@ export class MainChar extends Player {
         return return_obj;
     }
 
-    preview_stats_by_djinn(stat: main_stats, djinni_key_name: string[], djinni_next_status: djinn_status[], action) {
+    private preview_stats_by_djinn(
+        stat: main_stats,
+        djinni_key_name: string[],
+        djinni_next_status: djinn_status[],
+        action: djinn_actions
+    ) {
         const preview_obj = {
             djinni_key_name: djinni_key_name,
             djinni_next_status: djinni_next_status,
             action: action,
         };
-        return this.set_max_stat(stat, true, preview_obj);
+        return this.set_main_stat(stat, true, preview_obj);
     }
 
-    preview_stats_by_effect(effect_type: effect_types, effect_obj, item_key_name: string) {
+    preview_stats_by_effect(effect_type: effect_types, effect_obj: any, item_key_name: string) {
         const preview_obj = {
             effect_obj: effect_obj,
             item_key_name: item_key_name,
         };
-        return this.set_max_stat(effect_type_stat[effect_type], true, preview_obj);
+        return this.set_main_stat(effect_type_stat[effect_type], true, preview_obj);
     }
 
     preview_stat_without_abilities_effect(stat: main_stats) {
-        return this.set_max_stat(stat, true, {ignore_ability_effect: true});
+        return this.set_main_stat(stat, true, {ignore_ability_effect: true});
     }
 
-    private set_max_stat(stat: main_stats, preview = false, preview_obj: any = {}) {
-        const stat_prefix = [main_stats.MAX_HP, main_stats.MAX_PP].includes(stat) ? stat.split("_")[1] : stat;
-        const stat_key = stat;
-        const boost_key = stat_prefix + "_boost";
-        const curve_key = stat_prefix + "_curve";
-        const extra_key = stat_prefix + "_extra";
-        const previous_value = this[stat_key];
+    private set_main_stat(
+        stat: main_stats,
+        preview = false,
+        preview_obj: {
+            action?: djinn_actions;
+            djinni_key_name?: string[];
+            item_key_name?: string;
+            ignore_ability_effect?: boolean;
+            effect_obj?: any;
+            djinni_next_status?: djinn_status[];
+        } = {}
+    ) {
+        const boost_key = main_boost_stat_map[stat];
+        const curve_key = main_curve_stat_map[stat];
+        const extra_key = main_extra_stat_map[stat];
+        const previous_value = this[stat];
 
-        //setting stats by current level and extra values
-        this[stat_key] = (this[curve_key][this.level] * this.class[boost_key] + this[extra_key]) | 0;
+        //setting stats by current level, current class and extra values
+        this[stat] = (this[curve_key][this.level] * this.class[boost_key] + this[extra_key]) | 0;
 
         const this_djinni = this.djinni;
         if (preview) {
-            if (preview_obj.action === "Trade") {
+            if (preview_obj.action === djinn_actions.TRADE) {
                 const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
                 if (first_index >= 0) {
                     this_djinni[first_index] = preview_obj.djinni_key_name[1];
                 } else {
                     this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
                 }
-            } else if (preview_obj.action === "Give") {
+            } else if (preview_obj.action === djinn_actions.GIVE) {
                 this_djinni.push(preview_obj.djinni_key_name[0]);
             }
         }
         for (let i = 0; i < this_djinni.length; ++i) {
-            let djinn_key_name = this_djinni[i];
-            let djinn = this.info.djinni_list[djinn_key_name];
+            const djinn_key_name = this_djinni[i];
+            const djinn = this.info.djinni_list[djinn_key_name];
             let status = djinn.status;
             if (preview && preview_obj.djinni_key_name && preview_obj.djinni_key_name.includes(djinn_key_name)) {
                 status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
-            this[stat_key] += djinn[boost_key];
+            this[stat] += djinn[boost_key];
         }
         this.effects.forEach(effect => {
             if (
@@ -476,28 +523,28 @@ export class MainChar extends Player {
         });
         if (preview) {
             const preview_value = preview_obj.effect_obj
-                ? Effect.preview_value_applied(preview_obj.effect_obj, this[stat_key])
-                : this[stat_key];
-            this[stat_key] = previous_value;
+                ? Effect.preview_value_applied(preview_obj.effect_obj, this[stat])
+                : this[stat];
+            this[stat] = previous_value;
             return preview_value;
         }
         if ([main_stats.MAX_HP, main_stats.MAX_PP].includes(stat)) {
             const current_key = stat === main_stats.MAX_HP ? main_stats.CURRENT_HP : main_stats.CURRENT_PP;
             if (this[current_key] === undefined) {
-                this[current_key] = this[stat_key];
+                this[current_key] = this[stat];
             } else {
-                this[current_key] = Math.round((this[current_key] * this[stat_key]) / previous_value);
+                this[current_key] = Math.round((this[current_key] * this[stat]) / previous_value);
             }
         }
     }
 
     update_attributes() {
-        this.set_max_stat(main_stats.MAX_HP);
-        this.set_max_stat(main_stats.MAX_PP);
-        this.set_max_stat(main_stats.ATTACK);
-        this.set_max_stat(main_stats.DEFENSE);
-        this.set_max_stat(main_stats.AGILITY);
-        this.set_max_stat(main_stats.LUCK);
+        this.set_main_stat(main_stats.MAX_HP);
+        this.set_main_stat(main_stats.MAX_PP);
+        this.set_main_stat(main_stats.ATTACK);
+        this.set_main_stat(main_stats.DEFENSE);
+        this.set_main_stat(main_stats.AGILITY);
+        this.set_main_stat(main_stats.LUCK);
     }
 
     add_extra_stat(stat: extra_main_stats, amount: number) {

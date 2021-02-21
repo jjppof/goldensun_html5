@@ -3,6 +3,11 @@ import {DjinnListWindow} from "../windows/djinn/DjinnListWindow";
 import {DjinnActionWindow} from "../windows/djinn/DjinnActionWindow";
 import {GoldenSun} from "../GoldenSun";
 
+export enum djinn_actions {
+    TRADE = "trade",
+    GIVE = "give",
+}
+
 export class MainDjinnMenu {
     public game: Phaser.Game;
     public data: GoldenSun;

@@ -9,6 +9,7 @@ import {GoldenSun} from "../../GoldenSun";
 import {Button} from "../../XGamepad";
 import {DjinnActionWindow} from "./DjinnActionWindow";
 import {CharsQuickInfoDjinnWindow} from "./CharsQuickInfoDjinnWindow";
+import {djinn_actions} from "../../main_menus/MainDjinnMenu";
 
 const WIN_WIDTH = 236;
 const WIN_HEIGHT = 116;
@@ -531,7 +532,7 @@ export class DjinnListWindow {
                 next_statuses: djinn_status[],
                 this_djinni: Djinn[],
                 next_djinni: Djinn[];
-            let action_text: string, next_djinn: Djinn;
+            let action_text: string, next_djinn: Djinn, djinn_action: djinn_actions;
 
             if (this.action_text_selected) {
                 this_statuses = [this_djinn.status === djinn_status.STANDBY ? djinn_status.ANY : djinn_status.STANDBY];
@@ -539,6 +540,7 @@ export class DjinnListWindow {
                 this_djinni = [this_djinn];
                 next_djinni = [this_djinn];
                 action_text = "Give";
+                djinn_action = djinn_actions.GIVE;
             } else {
                 next_djinn = this.data.info.djinni_list[next_char.djinni[this.selected_djinn_index]];
                 this_statuses = [
@@ -552,17 +554,18 @@ export class DjinnListWindow {
                 this_djinni = [next_djinn, this_djinn];
                 next_djinni = [this_djinn, next_djinn];
                 action_text = "Trade";
+                djinn_action = djinn_actions.TRADE;
             }
 
-            this.djinn_char_stats_window_left.open(this_char, this_djinni, this_statuses, action_text);
-            this.djinn_char_stats_window_right.open(next_char, next_djinni, next_statuses, action_text);
+            this.djinn_char_stats_window_left.open(this_char, this_djinni, this_statuses, djinn_action);
+            this.djinn_char_stats_window_right.open(next_char, next_djinni, next_statuses, djinn_action);
 
             this.djinn_char_stats_window_right.base_window.update_position({x: DJINN_CHAR_WIN_STATS_RIGHT_X});
             this.djinn_status_change_header_window.open(
                 [this_char, next_char],
                 next_djinni,
                 this_statuses,
-                action_text
+                djinn_action
             );
 
             this.deactivate();
@@ -578,10 +581,10 @@ export class DjinnListWindow {
                     this.djinn_char_stats_window_right.close();
 
                     if (execute_operation) {
-                        if (action_text === "Trade") {
+                        if (djinn_action === djinn_actions.TRADE) {
                             this_char.replace_djinn(this_djinn.key_name, next_djinn.key_name);
                             next_char.replace_djinn(next_djinn.key_name, this_djinn.key_name);
-                        } else if (action_text === "Give") {
+                        } else if (djinn_action === djinn_actions.GIVE) {
                             this_char.remove_djinn(this_djinn.key_name);
                             next_char.add_djinn(this_djinn.key_name);
                             this.selected_djinn_index = 0;
@@ -629,7 +632,7 @@ export class DjinnListWindow {
                             break;
                     }
                 },
-                action_text
+                djinn_action
             );
             this.djinn_psynergy_window.grant_control();
         } else {
