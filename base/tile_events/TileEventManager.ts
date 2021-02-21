@@ -113,7 +113,7 @@ export class TileEventManager {
         }
     }
 
-    check_tile_events(location_key: number, map: Map) {
+    check_tile_events(location_key: TileEvent["location_key"], map: Map) {
         let event_queue: EventQueue;
         for (let i = 0; i < map.events[location_key].length; ++i) {
             const this_event = map.events[location_key][i];

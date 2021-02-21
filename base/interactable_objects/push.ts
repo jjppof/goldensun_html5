@@ -217,14 +217,11 @@ function shift_events(data: GoldenSun, interactable_object: InteractableObjects,
         let old_y = event.y;
         let new_x = old_x + event_shift_x;
         let new_y = old_y + event_shift_y;
-        const new_event_location_key = LocationKey.get_key(new_x, new_y);
-        event.x = new_x;
-        event.y = new_y;
-        event.location_key = new_event_location_key;
-        if (!(new_event_location_key in data.map.events)) {
-            data.map.events[new_event_location_key] = [];
+        event.set_position(new_x, new_y);
+        if (!(event.location_key in data.map.events)) {
+            data.map.events[event.location_key] = [];
         }
-        data.map.events[new_event_location_key].push(event);
+        data.map.events[event.location_key].push(event);
         const new_surroundings = get_surroundings(new_x, new_y, false, 2);
         JumpEvent.active_jump_surroundings(
             data,

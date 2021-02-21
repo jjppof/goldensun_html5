@@ -297,31 +297,31 @@ export class GameEventManager {
         this.update_callbacks.forEach(callback => callback());
     }
 
-    get_value(comparator_value: EventValue) {
-        switch (comparator_value.type) {
+    get_value(event_value: EventValue) {
+        switch (event_value.type) {
             case event_value_types.VALUE:
-                return comparator_value.value;
+                return event_value.value;
             case event_value_types.STORAGE:
-                const storage = this.data.storage.get_object(comparator_value.value.key_name);
+                const storage = this.data.storage.get_object(event_value.value.key_name);
                 return storage.type === storage_types.POSITION
                     ? `${storage.value.x}/${storage.value.y}`
                     : storage.value;
             case event_value_types.GAME_INFO:
-                switch (comparator_value.value.type) {
+                switch (event_value.value.type) {
                     case game_info_types.CHAR:
-                        const char = this.data.info.main_char_list[comparator_value.value.key_name];
-                        return _.get(char, comparator_value.value.property);
+                        const char = this.data.info.main_char_list[event_value.value.key_name];
+                        return _.get(char, event_value.value.property);
                     case game_info_types.HERO:
-                        return _.get(this.data.hero, comparator_value.value.property);
+                        return _.get(this.data.hero, event_value.value.property);
                     case game_info_types.NPC:
-                        const npc = this.data.map.npcs[comparator_value.value.index];
-                        return _.get(npc, comparator_value.value.property);
+                        const npc = this.data.map.npcs[event_value.value.index];
+                        return _.get(npc, event_value.value.property);
                     case game_info_types.INTERACTABLE_OBJECT:
-                        const interactable_object = this.data.map.interactable_objects[comparator_value.value.index];
-                        return _.get(interactable_object, comparator_value.value.property);
+                        const interactable_object = this.data.map.interactable_objects[event_value.value.index];
+                        return _.get(interactable_object, event_value.value.property);
                     case game_info_types.EVENT:
-                        const event = TileEvent.get_event(comparator_value.value.index);
-                        return _.get(event, comparator_value.value.property);
+                        const event = TileEvent.get_event(event_value.value.index);
+                        return _.get(event, event_value.value.property);
                     default:
                         return null;
                 }

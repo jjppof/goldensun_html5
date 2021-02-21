@@ -82,17 +82,6 @@ export function directions_angles(direction) {
     return (direction * Math.PI) / 4;
 }
 
-/*Maps direction keys to their values
-
-Input: arr [array] - Direction keys (array of string)
-
-Output: [array] - Direction values (array of number)*/
-export function map_directions(arr) {
-    if (arr === undefined || arr === "all") return arr;
-    arr = Array.isArray(arr) ? arr : [arr];
-    return arr.map(key => directions[key]);
-}
-
 export function get_direction_mask(direction: directions) {
     if (direction === null) return 0;
     return direction === 0 ? 1 : 2 << (direction - 1);
@@ -377,7 +366,7 @@ export function get_surroundings(x, y, with_diagonals = false, shift = 1) {
 
 Input: with_diagonals [boolean] - If true, includes diagonals*/
 export function get_directions(with_diagonals = false) {
-    let dirs = [directions.up, directions.down, directions.left, directions.right];
+    const dirs = [directions.up, directions.down, directions.left, directions.right];
     if (with_diagonals) {
         dirs.push(...[directions.up_left, directions.up_right, directions.down_left, directions.down_right]);
     }

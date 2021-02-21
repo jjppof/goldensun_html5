@@ -1,6 +1,6 @@
 import {GoldenSun} from "../GoldenSun";
 import {InteractableObjects} from "../InteractableObjects";
-import {directions, get_directions, map_directions, split_direction} from "../utils";
+import {directions, get_directions, split_direction} from "../utils";
 import * as _ from "lodash";
 
 export enum event_types {
@@ -35,22 +35,22 @@ export class LocationKey {
 }
 
 export abstract class TileEvent {
-    public game: Phaser.Game;
-    public data: GoldenSun;
-    public type: event_types;
-    public x: number;
-    public y: number;
-    public location_key: number;
-    public id: number;
-    public activation_collision_layers: number[];
-    public activation_directions: number[];
-    public dynamic: boolean;
-    public active: boolean[];
-    public affected_by_reveal: boolean[];
-    public origin_interactable_object: InteractableObjects;
+    protected game: Phaser.Game;
+    protected data: GoldenSun;
+    protected _type: event_types;
+    protected _x: number;
+    protected _y: number;
+    protected _location_key: number;
+    protected _id: number;
+    protected _activation_collision_layers: number[];
+    protected _activation_directions: number[];
+    protected _dynamic: boolean;
+    protected _active: boolean[];
+    protected _affected_by_reveal: boolean[];
+    protected _origin_interactable_object: InteractableObjects;
     public collision_layer_shift_from_source: number;
-    public static id_incrementer: number;
-    public static events: {[id: number]: TileEvent};
+    protected static id_incrementer: number;
+    protected static events: {[id: number]: TileEvent};
 
     constructor(
         game,
@@ -67,32 +67,59 @@ export abstract class TileEvent {
     ) {
         this.game = game;
         this.data = data;
-        this.type = type;
-        this.x = x;
-        this.y = y;
-        this.location_key = LocationKey.get_key(this.x, this.y);
-        this.id = TileEvent.id_incrementer++;
-        (activation_collision_layers = activation_collision_layers ? activation_collision_layers : [0]),
-            (this.activation_collision_layers = Array.isArray(activation_collision_layers)
-                ? activation_collision_layers
-                : [activation_collision_layers]);
-        activation_directions = map_directions(activation_directions);
-        if (activation_directions === undefined || activation_directions === "all") {
-            activation_directions = get_directions(true);
-        }
-        this.activation_directions = Array.isArray(activation_directions)
-            ? activation_directions
-            : [activation_directions];
-        this.dynamic = dynamic;
-        this.active = Array.isArray(active)
+        this._type = type;
+        this._x = x;
+        this._y = y;
+        this._location_key = LocationKey.get_key(this.x, this.y);
+        this._id = TileEvent.id_incrementer++;
+        this._activation_collision_layers = Array.isArray(activation_collision_layers)
+            ? activation_collision_layers
+            : [activation_collision_layers ?? 0];
+        this._activation_directions = TileEvent.format_activation_directions(activation_directions);
+        this._dynamic = dynamic;
+        this._active = Array.isArray(active)
             ? active
-            : new Array(this.activation_directions.length).fill(active ?? true);
-        this.affected_by_reveal = Array.isArray(affected_by_reveal)
+            : new Array(this._activation_directions.length).fill(active ?? true);
+        this._affected_by_reveal = Array.isArray(affected_by_reveal)
             ? affected_by_reveal
-            : new Array(this.activation_directions.length).fill(affected_by_reveal ?? false);
-        this.origin_interactable_object = origin_interactable_object ?? null;
+            : new Array(this._activation_directions.length).fill(affected_by_reveal ?? false);
+        this._origin_interactable_object = origin_interactable_object ?? null;
         this.collision_layer_shift_from_source = 0;
         TileEvent.events[this.id] = this;
+    }
+
+    get type() {
+        return this._type;
+    }
+    get x() {
+        return this._x;
+    }
+    get y() {
+        return this._y;
+    }
+    get location_key() {
+        return this._location_key;
+    }
+    get id() {
+        return this._id;
+    }
+    get activation_directions() {
+        return this._activation_directions;
+    }
+    get activation_collision_layers() {
+        return this._activation_collision_layers;
+    }
+    get dynamic() {
+        return this._dynamic;
+    }
+    get active() {
+        return this._active;
+    }
+    get origin_interactable_object() {
+        return this._origin_interactable_object;
+    }
+    get affected_by_reveal() {
+        return this._affected_by_reveal;
     }
 
     abstract fire(): void;
@@ -116,15 +143,33 @@ export abstract class TileEvent {
     }
 
     activate() {
-        this.active = this.active.map(() => true);
+        this._active = this.active.map(() => true);
     }
 
     deactivate() {
-        this.active = this.active.map(() => false);
+        this._active = this.active.map(() => false);
     }
 
     check_position() {
         return this.data.hero.tile_x_pos === this.x && this.data.hero.tile_y_pos === this.y;
+    }
+
+    set_position(x?: number, y?: number) {
+        this._x = x ?? this.x;
+        this._y = y ?? this.y;
+        this._location_key = LocationKey.get_key(this.x, this.y);
+    }
+
+    set_activation_collision_layers(...collision_layers_indexes: number[]) {
+        this._activation_collision_layers = [...collision_layers_indexes];
+    }
+
+    private static format_activation_directions(input) {
+        if (input === undefined || input === "all") {
+            return get_directions(true);
+        }
+        input = Array.isArray(input) ? input : [input];
+        return input.map(key => directions[key]);
     }
 
     static get_event(id: number) {
