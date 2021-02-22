@@ -15,12 +15,10 @@ export class PoundFieldPsynergy extends FieldAbilities {
     private static readonly POUND_FIELD_COLOR = 1.0;
     private static readonly POUND_FIELD_INTENSITY = 1.0;
 
-    public hand_sprite_base: SpriteBase;
-    public hand_sprite: Phaser.Sprite;
-    public emitter: Phaser.Particles.Arcade.Emitter;
-    public final_emitter: Phaser.Particles.Arcade.Emitter;
-    public hand_translate_x: number;
-    public hand_translate_y: number;
+    private hand_sprite_base: SpriteBase;
+    private hand_sprite: Phaser.Sprite;
+    private hand_translate_x: number;
+    private hand_translate_y: number;
 
     constructor(game, data) {
         super(

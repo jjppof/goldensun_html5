@@ -40,9 +40,9 @@ export class ClimbEvent extends TileEvent {
             origin_interactable_object,
             affected_by_reveal
         );
-        this.change_to_collision_layer = change_to_collision_layer === undefined ? null : change_to_collision_layer;
-        this.is_set = is_set === undefined ? true : is_set;
-        this.climbing_only = climbing_only === undefined ? false : climbing_only;
+        this.change_to_collision_layer = change_to_collision_layer ?? null;
+        this.is_set = is_set ?? true;
+        this.climbing_only = climbing_only ?? false;
     }
 
     fire() {

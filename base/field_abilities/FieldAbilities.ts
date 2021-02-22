@@ -10,23 +10,23 @@ import {Map} from "../Map";
 Input: game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
 export abstract class FieldAbilities {
-    public game: Phaser.Game;
-    public ability_key_name: string;
-    public data: GoldenSun;
-    public target_max_range: number;
-    public action_key_name: string;
-    public need_target: boolean;
-    public tint_map: boolean;
-    public bootstrap_method: Function;
-    public cast_finisher: Function;
-    public controllable_char: ControllableChar;
-    public target_found: boolean;
-    public target_object: InteractableObjects;
-    public stop_casting: Function;
-    public field_psynergy_window: FieldPsynergyWindow;
-    public cast_direction: number;
-    public field_color: number;
-    public field_intensity: number;
+    protected game: Phaser.Game;
+    protected data: GoldenSun;
+    private ability_key_name: string;
+    private target_max_range: number;
+    private action_key_name: string;
+    private need_target: boolean;
+    private tint_map: boolean;
+    private bootstrap_method: Function;
+    private cast_finisher: Function;
+    protected controllable_char: ControllableChar;
+    protected target_found: boolean;
+    protected target_object: InteractableObjects;
+    protected stop_casting: Function;
+    protected field_psynergy_window: FieldPsynergyWindow;
+    protected cast_direction: number;
+    private field_color: number;
+    private field_intensity: number;
 
     constructor(
         game: Phaser.Game,
@@ -234,16 +234,24 @@ export abstract class FieldAbilities {
         let stop_asked = false;
         const promises = [];
         for (let j = 0; j < auras_number; ++j) {
-            const back_aura = group.create(0, 0, "psynergy_aura");
-            const front_aura = group.create(0, 0, "psynergy_aura");
+            const back_aura: Phaser.Sprite = group.create(0, 0, "psynergy_aura");
+            const front_aura: Phaser.Sprite = group.create(0, 0, "psynergy_aura");
             back_aura.base_collision_layer = sprite.base_collision_layer;
             front_aura.base_collision_layer = sprite.base_collision_layer;
             back_aura.sort_function = () => {
-                group.setChildIndex(back_aura, group.getChildIndex(sprite));
+                if (group.getChildIndex(back_aura) > group.getChildIndex(sprite)) {
+                    group.setChildIndex(back_aura, group.getChildIndex(sprite));
+                } else {
+                    group.setChildIndex(back_aura, group.getChildIndex(sprite) - 1);
+                }
             };
             back_aura.sort_function();
             front_aura.sort_function = () => {
-                group.setChildIndex(front_aura, group.getChildIndex(sprite) + 1);
+                if (group.getChildIndex(front_aura) > group.getChildIndex(sprite)) {
+                    group.setChildIndex(front_aura, group.getChildIndex(sprite) + 1);
+                } else {
+                    group.setChildIndex(front_aura, group.getChildIndex(sprite));
+                }
             };
             front_aura.sort_function();
             const height = sprite.height + front_aura.height - 8;
