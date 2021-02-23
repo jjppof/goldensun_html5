@@ -68,11 +68,11 @@ export class SpriteBase {
         return animation in this.animations[action];
     }
 
-    loadSpritesheets(game, force_load, on_load_complete) {
+    loadSpritesheets(game: Phaser.Game, force_load: boolean, on_load_complete?: () => void) {
         for (let action in this.actions) {
             const spritesheet = this.actions[action].spritesheet;
             const action_key = this.getSpriteKey(action);
-            let loader = game.load.atlasJSONHash(action_key, spritesheet.image, spritesheet.json);
+            const loader = game.load.atlasJSONHash(action_key, spritesheet.image, spritesheet.json);
             if (force_load) {
                 loader.onLoadComplete.addOnce(on_load_complete, this);
                 game.load.start();

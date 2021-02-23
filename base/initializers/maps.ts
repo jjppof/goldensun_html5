@@ -1,7 +1,9 @@
+import {GoldenSun} from "../GoldenSun";
 import {Map} from "../Map";
+import {GameInfo} from "./initialize_info";
 
-export function initialize_maps(game, data, maps_db, load_promise_resolve) {
-    let maps = {};
+export function initialize_maps(game: Phaser.Game, data: GoldenSun, maps_db: any, load_promise_resolve: () => void) {
+    const maps: GameInfo["maps_list"] = {};
     for (let i = 0; i < maps_db.length; ++i) {
         const map_data = maps_db[i];
         maps[map_data.key_name] = new Map(
@@ -20,16 +22,12 @@ export function initialize_maps(game, data, maps_db, load_promise_resolve) {
             map_data.bgm?.path
         );
     }
-    let load_promises = [];
     for (let map in maps) {
         if (maps[map].lazy_load) continue;
-        let load_map_promise_resolve;
-        const load_map_promise = new Promise(resolve => {
-            load_map_promise_resolve = resolve;
-        });
-        load_promises.push(load_map_promise);
-        maps[map].load_map_assets(true, load_map_promise_resolve);
+        maps[map].load_map_assets(false);
     }
-    Promise.all(load_promises).then(load_promise_resolve);
+    game.load.start();
+    data.loading_what = "maps";
+    game.load.onLoadComplete.addOnce(load_promise_resolve);
     return maps;
 }

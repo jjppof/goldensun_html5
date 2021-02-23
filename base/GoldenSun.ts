@@ -25,6 +25,8 @@ export class GoldenSun {
     public info: GameInfo = {} as GameInfo;
     public particle_manager: Phaser.ParticleStorm = null;
     public camera_shake_enable: boolean = false;
+    public loading_progress: string = "";
+    public loading_what: string = "";
 
     //main game states
     public menu_open: boolean = false;
@@ -81,6 +83,7 @@ export class GoldenSun {
     }
 
     preload() {
+        this.loading_what = "initial database";
         load_all(this.game);
 
         this.game.time.advancedTiming = true;
@@ -93,7 +96,13 @@ export class GoldenSun {
     }
 
     render_loading() {
-        this.game.debug.text("Loading...", 5, 15, "#00ff00");
+        if (this.game.time.frames % 4 === 0) {
+            this.loading_progress = this.game.load.progress.toLocaleString("en-US", {
+                minimumIntegerDigits: 2,
+                useGrouping: false,
+            });
+        }
+        this.game.debug.text(`${this.loading_progress}% loading ${this.loading_what}...`, 5, 15, "#00ff00");
     }
 
     loadRender() {

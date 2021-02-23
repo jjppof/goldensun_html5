@@ -1,8 +1,8 @@
 import {Classes} from "../Classes";
+import {GoldenSun} from "../GoldenSun";
 import {MainChar} from "../MainChar";
 import {SpriteBase} from "../SpriteBase";
 import {base_actions} from "../utils";
-import {GameInfo} from "./initialize_info";
 
 export function initialize_classes(classes_db) {
     let classes_list = {};
@@ -28,14 +28,13 @@ export function initialize_classes(classes_db) {
 
 export function initialize_main_chars(
     game: Phaser.Game,
-    info: GameInfo,
+    data: GoldenSun,
     main_chars_db,
     classes_db,
     npc_db,
-    load_promise_resolve
+    load_promise_resolve: () => void
 ) {
-    let load_promises = [];
-    let main_char_list = {};
+    const main_char_list = {};
     for (let i = 0; i < main_chars_db.length; ++i) {
         const char_data = main_chars_db[i];
         const char_db = npc_db[char_data.key_name];
@@ -46,7 +45,7 @@ export function initialize_main_chars(
         );
         main_char_list[char_data.key_name] = new MainChar(
             char_data.key_name,
-            info,
+            data.info,
             sprite_base,
             weapons_sprite_base,
             char_data.name,
@@ -74,7 +73,7 @@ export function initialize_main_chars(
             char_data.weapon_sprite_shift
         );
         if (char_data.in_party) {
-            info.party_data.members.push(main_char_list[char_data.key_name]);
+            data.info.party_data.members.push(main_char_list[char_data.key_name]);
         }
 
         for (let action_key in char_db.actions) {
@@ -85,9 +84,7 @@ export function initialize_main_chars(
             sprite_base.setActionLoop(action_key, action.loop);
         }
         sprite_base.generateAllFrames();
-        let load_spritesheet_promise_resolve;
-        load_promises.push(new Promise(resolve => (load_spritesheet_promise_resolve = resolve)));
-        sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
+        sprite_base.loadSpritesheets(game, false);
 
         if (Object.keys(char_data.weapons_sprites).length && base_actions.BATTLE in char_db.actions) {
             const action = char_db.actions[base_actions.BATTLE];
@@ -99,11 +96,11 @@ export function initialize_main_chars(
                 weapons_sprite_base.setActionLoop(weapon_type, action.loop);
             }
             weapons_sprite_base.generateAllFrames();
-            let weapons_promise_resolve;
-            load_promises.push(new Promise(resolve => (weapons_promise_resolve = resolve)));
-            weapons_sprite_base.loadSpritesheets(game, true, weapons_promise_resolve);
+            weapons_sprite_base.loadSpritesheets(game, false);
         }
     }
-    Promise.all(load_promises).then(load_promise_resolve);
+    game.load.start();
+    data.loading_what = "main chars sprites";
+    game.load.onLoadComplete.addOnce(load_promise_resolve);
     return main_char_list;
 }

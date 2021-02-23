@@ -69,7 +69,7 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     const load_enemies_sprites_promise = new Promise(resolve => {
         load_enemies_sprites_promise_resolve = resolve;
     });
-    data.info.enemies_list = initialize_enemies(game, data.dbs.enemies_db, load_enemies_sprites_promise_resolve);
+    data.info.enemies_list = initialize_enemies(game, data, data.dbs.enemies_db, load_enemies_sprites_promise_resolve);
     await load_enemies_sprites_promise;
 
     data.info.djinni_list = initialize_djinni(data.dbs.djinni_db);
@@ -78,21 +78,21 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     const load_djinni_sprites_promise = new Promise(resolve => {
         load_djinni_sprites_promise_resolve = resolve;
     });
-    data.info.djinni_sprites = initialize_djinni_sprites(game, load_djinni_sprites_promise_resolve);
+    data.info.djinni_sprites = initialize_djinni_sprites(game, data, load_djinni_sprites_promise_resolve);
     await load_djinni_sprites_promise;
 
     let load_abilities_promise_resolve;
     const load_abilities_promise = new Promise(resolve => {
         load_abilities_promise_resolve = resolve;
     });
-    data.info.abilities_list = initialize_abilities(game, data.dbs.abilities_db, load_abilities_promise_resolve);
+    data.info.abilities_list = initialize_abilities(game, data, data.dbs.abilities_db, load_abilities_promise_resolve);
     await load_abilities_promise;
 
     let load_items_promise_resolve;
     const load_items_promise = new Promise(resolve => {
         load_items_promise_resolve = resolve;
     });
-    data.info.items_list = initialize_items(game, data.dbs.items_db, load_items_promise_resolve);
+    data.info.items_list = initialize_items(game, data, data.dbs.items_db, load_items_promise_resolve);
     await load_items_promise;
 
     data.info.party_data = {
@@ -107,7 +107,7 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     });
     data.info.main_char_list = initialize_main_chars(
         game,
-        data.info,
+        data,
         data.dbs.main_chars_db,
         data.dbs.classes_db,
         data.dbs.npc_db,
@@ -121,6 +121,7 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     });
     data.info.misc_sprite_base_list = initialize_misc_data(
         game,
+        data,
         data.dbs.misc_animations_db,
         load_misc_promise_resolve
     );
@@ -132,6 +133,7 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     });
     data.info.iter_objs_sprite_base_list = initialize_interactable_objs_data(
         game,
+        data,
         data.dbs.interactable_objects_db,
         load_iter_objs_promise_resolve
     );

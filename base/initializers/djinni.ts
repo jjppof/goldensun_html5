@@ -1,4 +1,5 @@
 import {Djinn} from "../Djinn";
+import {GoldenSun} from "../GoldenSun";
 import {SpriteBase} from "../SpriteBase";
 import {elements} from "../utils";
 
@@ -24,7 +25,7 @@ export function initialize_djinni(djinni_db) {
     return djinni_list;
 }
 
-export function initialize_djinni_sprites(game, load_promise_resolve) {
+export function initialize_djinni_sprites(game: Phaser.Game, data: GoldenSun, load_promise_resolve: () => void) {
     const actions = ["set", "standby"];
     const directions = {
         set: ["down"],
@@ -36,10 +37,9 @@ export function initialize_djinni_sprites(game, load_promise_resolve) {
         standby: 2,
     };
     const base_path = "assets/images/spritesheets/djinn/";
-    let load_promises = [];
-    let djinni_sprites = {};
+    const djinni_sprites: {[element in elements]?: SpriteBase} = {};
     for (let key in elements) {
-        const element = elements[key];
+        const element: elements = elements[key];
         if (element === elements.NO_ELEMENT || element === elements.ALL_ELEMENTS) continue;
         djinni_sprites[element] = new SpriteBase(element + "_djinn", actions);
         for (let j = 0; j < actions.length; ++j) {
@@ -57,14 +57,10 @@ export function initialize_djinni_sprites(game, load_promise_resolve) {
             djinni_sprites[element].setActionFrameRate(action, frames_rate[action]);
         }
         djinni_sprites[element].generateAllFrames();
-
-        let load_spritesheet_promise_resolve;
-        const load_spritesheet_promise = new Promise(resolve => {
-            load_spritesheet_promise_resolve = resolve;
-        });
-        load_promises.push(load_spritesheet_promise);
-        djinni_sprites[element].loadSpritesheets(game, true, load_spritesheet_promise_resolve);
+        djinni_sprites[element].loadSpritesheets(game, false);
     }
-    Promise.all(load_promises).then(load_promise_resolve);
+    game.load.start();
+    data.loading_what = "djinn sprites";
+    game.load.onLoadComplete.addOnce(load_promise_resolve);
     return djinni_sprites;
 }

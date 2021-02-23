@@ -1,8 +1,13 @@
+import {GoldenSun} from "../GoldenSun";
 import {SpriteBase} from "../SpriteBase";
 
-export function initialize_misc_data(game, misc_db, load_promise_resolve) {
-    let misc_sprite_base_list = {};
-    let load_promises = [];
+export function initialize_misc_data(
+    game: Phaser.Game,
+    data: GoldenSun,
+    misc_db: any,
+    load_promise_resolve: () => void
+) {
+    const misc_sprite_base_list = {};
     for (let misc_key in misc_db) {
         const misc_data = misc_db[misc_key];
         const sprite_base = new SpriteBase(misc_data.key_name, Object.keys(misc_data.actions));
@@ -15,13 +20,10 @@ export function initialize_misc_data(game, misc_db, load_promise_resolve) {
             sprite_base.setActionLoop(action_key, action.loop);
         }
         sprite_base.generateAllFrames();
-        let load_spritesheet_promise_resolve;
-        const load_spritesheet_promise = new Promise(resolve => {
-            load_spritesheet_promise_resolve = resolve;
-        });
-        load_promises.push(load_spritesheet_promise);
-        sprite_base.loadSpritesheets(game, true, load_spritesheet_promise_resolve);
+        sprite_base.loadSpritesheets(game, false);
     }
-    Promise.all(load_promises).then(load_promise_resolve);
+    game.load.start();
+    data.loading_what = "misc sprites";
+    game.load.onLoadComplete.addOnce(load_promise_resolve);
     return misc_sprite_base_list;
 }

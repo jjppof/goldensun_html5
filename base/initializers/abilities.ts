@@ -4,9 +4,15 @@ import {FrostFieldPsynergy} from "../field_abilities/FrostFieldPsynergy";
 import {GrowthFieldPsynergy} from "../field_abilities/GrowthFieldPsynergy";
 import {PoundFieldPsynergy} from "../field_abilities/PoundFieldPsynergy";
 import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
+import {GoldenSun} from "../GoldenSun";
 
-export function initialize_abilities(game, abilities_db, load_promise_resolve) {
-    let abilities_list = {};
+export function initialize_abilities(
+    game: Phaser.Game,
+    data: GoldenSun,
+    abilities_db: any,
+    load_promise_resolve: () => void
+) {
+    const abilities_list = {};
     for (let i = 0; i < abilities_db.length; ++i) {
         const ability_data = abilities_db[i];
         abilities_list[ability_data.key_name] = new Ability(
@@ -43,6 +49,7 @@ export function initialize_abilities(game, abilities_db, load_promise_resolve) {
         "assets/images/icons/abilities/abilities_icons.json"
     );
     loader.onLoadComplete.addOnce(load_promise_resolve);
+    data.loading_what = "abilities icons";
     game.load.start();
     return abilities_list;
 }

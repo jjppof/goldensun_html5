@@ -205,7 +205,7 @@ export class Map {
         }
     }
 
-    private load_map_assets(force_load: boolean, on_complete: () => void) {
+    load_map_assets(force_load: boolean, on_complete?: () => void) {
         const promises = [];
 
         let load_tilemap_promise_resolve;
@@ -231,11 +231,11 @@ export class Map {
                 .physics(this.physics_names[i], this.physics_jsons_url[i])
                 .onLoadComplete.addOnce(load_physics_promise_resolve);
         }
+
+        this.assets_loaded = true;
+
         if (force_load) {
-            Promise.all(promises).then(() => {
-                this.assets_loaded = true;
-                on_complete();
-            });
+            Promise.all(promises).then(on_complete);
             this.game.load.start();
         }
     }
