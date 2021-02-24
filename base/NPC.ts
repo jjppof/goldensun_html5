@@ -3,7 +3,6 @@ import {mount_collision_polygon} from "./utils";
 import {ControllableChar} from "./ControllableChar";
 import {interaction_patterns} from "./game_events/GameEventManager";
 import {Map} from "./Map";
-import {SpriteBase} from "./SpriteBase";
 
 export enum npc_movement_types {
     IDLE = "idle",
@@ -225,57 +224,43 @@ export class NPC extends ControllableChar {
         }
     }
 
-    async init_npc(map: Map) {
+    init_npc(map: Map) {
         const npc_db = this.data.dbs.npc_db[this.key_name];
-        const using_misc = this.sprite_misc_db_key !== undefined;
-        const misc_db = using_misc ? this.data.dbs.misc_animations_db[this.sprite_misc_db_key] : undefined;
-        const actions = Object.keys(using_misc ? misc_db.actions : npc_db.actions);
-        const npc_sprite_info = new SpriteBase(using_misc ? this.sprite_misc_db_key : this.key_name, actions);
-        for (let j = 0; j < actions.length; ++j) {
-            const action_key = actions[j];
-            const action_obj = using_misc ? misc_db.actions[action_key] : npc_db.actions[action_key];
-            npc_sprite_info.setActionSpritesheet(action_key, action_obj.spritesheet.image, action_obj.spritesheet.json);
-            npc_sprite_info.setActionAnimations(action_key, action_obj.animations, action_obj.frames_count);
-            npc_sprite_info.setActionFrameRate(action_key, action_obj.frame_rate);
-            npc_sprite_info.setActionLoop(action_key, action_obj.loop);
+        const npc_sprite_info =
+            this.sprite_misc_db_key !== undefined
+                ? this.data.info.misc_sprite_base_list[this.sprite_misc_db_key]
+                : this.data.info.npcs_sprite_base_list[this.key_name];
+        if (!this.no_shadow) {
+            this.set_shadow(
+                npc_db.shadow_key,
+                this.data.npc_group,
+                this.base_collision_layer,
+                npc_db.shadow_anchor_x,
+                npc_db.shadow_anchor_y
+            );
         }
-        npc_sprite_info.generateAllFrames();
-        await new Promise<void>(resolve => {
-            npc_sprite_info.loadSpritesheets(this.game, true, () => {
-                if (!this.no_shadow) {
-                    this.set_shadow(
-                        npc_db.shadow_key,
-                        this.data.npc_group,
-                        this.base_collision_layer,
-                        npc_db.shadow_anchor_x,
-                        npc_db.shadow_anchor_y
-                    );
-                }
-                this.set_sprite(
-                    this.data.npc_group,
-                    npc_sprite_info,
-                    this.base_collision_layer,
-                    map,
-                    map.is_world_map,
-                    this.anchor_x ?? npc_db.anchor_x,
-                    this.anchor_y ?? npc_db.anchor_y,
-                    this.scale_x ?? npc_db.scale_x,
-                    this.scale_y ?? npc_db.scale_y
-                );
-                if (this.ignore_world_map_scale) {
-                    this.sprite.scale.setTo(1, 1);
-                    if (this.shadow) {
-                        this.shadow.scale.setTo(1, 1);
-                    }
-                }
-                if (this.affected_by_reveal || !this.visible) {
-                    this.sprite.visible = false;
-                }
-                this.sprite.is_npc = true;
-                this.play(this.current_action, this.current_animation);
-                resolve();
-            });
-        });
+        this.set_sprite(
+            this.data.npc_group,
+            npc_sprite_info,
+            this.base_collision_layer,
+            map,
+            map.is_world_map,
+            this.anchor_x ?? npc_db.anchor_x,
+            this.anchor_y ?? npc_db.anchor_y,
+            this.scale_x ?? npc_db.scale_x,
+            this.scale_y ?? npc_db.scale_y
+        );
+        if (this.ignore_world_map_scale) {
+            this.sprite.scale.setTo(1, 1);
+            if (this.shadow) {
+                this.shadow.scale.setTo(1, 1);
+            }
+        }
+        if (this.affected_by_reveal || !this.visible) {
+            this.sprite.visible = false;
+        }
+        this.sprite.is_npc = true;
+        this.play(this.current_action, this.current_animation);
     }
 
     config_body() {

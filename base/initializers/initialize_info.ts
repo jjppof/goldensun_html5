@@ -22,6 +22,7 @@ import {Summon} from "../Summon";
 import {GoldenSun} from "../GoldenSun";
 import {initialize_summons} from "./summons";
 import {initialize_se} from "./sound_effects";
+import {initialize_npcs_data} from "./npcs";
 
 export type PartyData = {
     members: MainChar[];
@@ -49,6 +50,7 @@ export type GameInfo = {
     main_char_list: {[main_char_key: string]: MainChar};
     misc_sprite_base_list: {[misc_key: string]: SpriteBase};
     iter_objs_sprite_base_list: {[iter_obj_key: string]: SpriteBase};
+    npcs_sprite_base_list: {[npc_key: string]: SpriteBase};
     shops_list: {[shop_key: string]: Shop};
     inn_list: {[inn_id: string]: Inn};
     summons_list: {[summon_key: string]: Summon};
@@ -138,6 +140,13 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
         load_iter_objs_promise_resolve
     );
     await load_iter_objs_promise;
+
+    let load_npcs_promise_resolve;
+    const load_npcs_promise = new Promise(resolve => {
+        load_npcs_promise_resolve = resolve;
+    });
+    data.info.npcs_sprite_base_list = initialize_npcs_data(game, data, data.dbs.npc_db, load_npcs_promise_resolve);
+    await load_npcs_promise;
 
     data.info.shops_list = initialize_shops(data.dbs.shops_db);
 

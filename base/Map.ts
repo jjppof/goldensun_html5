@@ -425,10 +425,9 @@ export class Map {
         }
     }
 
-    private async config_npc() {
+    private config_npc() {
         for (let i = 0; i < this.npcs.length; ++i) {
-            const npc = this.npcs[i];
-            await npc.init_npc(this);
+            this.npcs[i].init_npc(this);
         }
     }
 
@@ -591,7 +590,7 @@ export class Map {
 
         this.config_layers();
         this.config_interactable_object();
-        await this.config_npc();
+        this.config_npc();
 
         if (this.sprite.properties?.footprint) {
             this._show_footsteps = true;
