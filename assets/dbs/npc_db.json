@@ -476,7 +476,7 @@
         "scale_y": 1.0,
         "actions": {
             "stone": {
-                "frame_rate": [[0.5,10,10,10,10,10,10],6],
+                "frame_rate": [[0.5,20,20,20,20,20,20],10],
                 "animations": ["normal", "shatter"],
                 "frames_count": [7,4],
                 "initial_animation": "normal",

@@ -265,15 +265,8 @@ export class GameEventManager {
                     info.no_chest,
                     info.hide_on_finish
                 );
-            case event_types.STONE:
-                return new PsynergyStoneEvent(
-                    this.game,
-                    this.data,
-                    info.active,
-                    info.finish_events,
-                    info.custom_init_text,
-                    info.hide_on_finish
-                );
+            case event_types.PSYNERGY_STONE:
+                return new PsynergyStoneEvent(this.game, this.data, info.active, info.finish_events);
             case event_types.TIMER:
                 return new TimerEvent(this.game, this.data, info.active, info.duration, info.finish_events);
             case event_types.PARTY_JOIN:

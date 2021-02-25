@@ -1,3 +1,4 @@
+import {MainChar} from "../MainChar";
 import {CharsStatusWindow} from "../windows/CharsStatusWindow";
 import {NPC} from "../NPC";
 import {base_actions, directions} from "../utils";
@@ -16,14 +17,13 @@ export class PsynergyStoneEvent extends GameEvent {
     private running: boolean = false;
     private resolve: Function;
     private promise: Promise<any>;
+    private aux_resolve: () => void;
     private dialog_manager: DialogManager;
-    private custom_init_text: string;
     private chars_status_window: CharsStatusWindow;
     private finish_events: GameEvent[] = [];
 
-    constructor(game, data, active, finish_events, custom_init_text, hide_on_finish) {
-        super(game, data, event_types.STONE, active);
-        this.custom_init_text = custom_init_text;
+    constructor(game, data, active, finish_events) {
+        super(game, data, event_types.PSYNERGY_STONE, active);
         this.chars_status_window = new CharsStatusWindow(this.game, this.data);
 
         this.data.control_manager.add_controls(
@@ -31,8 +31,9 @@ export class PsynergyStoneEvent extends GameEvent {
                 {
                     button: Button.A,
                     on_down: () => {
-                        if (!this.running || !this.control_enable) return;
-                        this.next();
+                        if (!this.active || !this.running || !this.control_enable) return;
+                        this.control_enable = false;
+                        this.dialog_manager.kill_dialog(this.aux_resolve, false, true);
                     },
                 },
             ],
@@ -45,16 +46,6 @@ export class PsynergyStoneEvent extends GameEvent {
         });
     }
 
-    next() {
-        this.control_enable = false;
-        this.dialog_manager.next(finished => {
-            this.control_enable = true;
-            if (finished) {
-                this.resolve();
-            }
-        });
-    }
-
     async _fire(origin_npc?: NPC) {
         if (!this.active) return;
         this.origin_npc = origin_npc;
@@ -63,8 +54,9 @@ export class PsynergyStoneEvent extends GameEvent {
         this.running = true;
 
         //Initial Text
-        const hero_name = this.data.info.party_data.members[0].name;
-        await this.set_text(this.custom_init_text ?? INIT_TEXT(hero_name));
+        const hero_name = this.data.info.main_char_list[this.data.hero.key_name].name;
+        this.dialog_manager = new DialogManager(this.game, this.data);
+        await this.set_text(INIT_TEXT(hero_name));
 
         await this.data.hero.face_direction(directions.down);
         this.data.game_event_manager.force_idle_action = false;
@@ -98,6 +90,8 @@ export class PsynergyStoneEvent extends GameEvent {
             particle.animations.currentAnim.setFrame((Math.random() * particle.animations.frameTotal) | 0);
         });
 
+        this.game.physics.p2.pause();
+        this.origin_npc.sprite.send_to_front = true;
         this.game.add
             .tween(this.origin_npc.sprite.body)
             .to({x: stone_sprite_x, y: stone_sprite_y}, 300, Phaser.Easing.Linear.None, true);
@@ -112,8 +106,7 @@ export class PsynergyStoneEvent extends GameEvent {
         await this.set_text(RECOVERY_TEXT(hero_name));
 
         emitter.destroy();
-        let closed: () => void;
-        this.chars_status_window.close(closed);
+        this.chars_status_window.close();
 
         this.data.audio.play_se("misc/psynergy_stone_shatter");
         const animation_key_shatter = this.origin_npc.sprite_info.getAnimationKey("stone", "shatter");
@@ -125,15 +118,15 @@ export class PsynergyStoneEvent extends GameEvent {
 
     //Hide Stone sprite and return control to character
     async finish() {
-        this.origin_npc.sprite.destroy();
+        this.origin_npc.toggle_active(false);
         await this.set_text(DISAPPEAR_TEXT);
 
-        this.origin_npc.visible = false;
         this.data.hero.play(base_actions.IDLE);
         this.running = false;
         this.control_enable = false;
         this.data.game_event_manager.force_idle_action = true;
         --this.data.game_event_manager.events_running_count;
+        this.game.physics.p2.resume();
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 
@@ -145,10 +138,14 @@ export class PsynergyStoneEvent extends GameEvent {
 
     //Write text
     async set_text(text) {
-        this.dialog_manager = new DialogManager(this.game, this.data);
-        this.dialog_manager.set_dialog(text);
-        this.promise = new Promise(resolve => (this.resolve = resolve));
-        this.next();
+        this.promise = new Promise(resolve => (this.aux_resolve = resolve));
+        this.dialog_manager.quick_next(
+            text,
+            () => {
+                this.control_enable = true;
+            },
+            {show_crystal: true}
+        );
         await this.promise;
     }
 }
