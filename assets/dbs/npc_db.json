@@ -464,5 +464,28 @@
                 "loop": [true,true]
             }
         }
+    },{
+        "key_name": "psynergy_stone",
+        "anchor_y": 0.5,
+        "initial_action": "stone",
+        "collision_body_bevel": 3,
+        "interaction_pattern": "tik_tak_toe",
+        "no_shadow": true,
+        "body_radius": 7.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "actions": {
+            "stone": {
+                "frame_rate": [[0.5,10,10,10,10,10,10],6],
+                "animations": ["normal", "shatter"],
+                "frames_count": [7,4],
+                "initial_animation": "normal",
+                "spritesheet": {
+                    "image": "assets/images/misc/psynergy_stone.png",
+                    "json": "assets/images/misc/psynergy_stone.json"
+                },
+                "loop": [true, false]
+            }
+        }
     }
 ]

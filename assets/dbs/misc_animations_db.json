@@ -138,5 +138,24 @@
                 }
             }
         }
+    },
+    {
+        "key_name": "psynergy_stone",
+        "initial_animation": "normal",
+        "actions": {
+            "psynergy_stone": {
+                "frame_rate": [[0.5,10,10,10,10,10,10], 6],
+                "animations": [
+                    "normal",
+                    "shatter"
+                ],
+                "frames_count": [7, 4],
+                "loop": [true, false],
+                "spritesheet": {
+                    "image": "assets/images/misc/psynergy_stone.png",
+                    "json": "assets/images/misc/psynergy_stone.json"
+                }
+            }
+        }
     }
 ]
