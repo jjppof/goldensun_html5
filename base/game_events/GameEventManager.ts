@@ -11,6 +11,7 @@ import {MoveEvent} from "./MoveEvent";
 import {DialogEvent} from "./DialogEvent";
 import {LookEvent} from "./LookEvent";
 import {ChestEvent} from "./ChestEvent";
+import {PsynergyStoneEvent} from "./PsynergyStoneEvent";
 import {TimerEvent} from "./TimerEvent";
 import {PartyJoinEvent} from "./PartyJoinEvent";
 import {storage_types} from "../Storage";
@@ -262,6 +263,15 @@ export class GameEventManager {
                     info.finish_events,
                     info.custom_init_text,
                     info.no_chest,
+                    info.hide_on_finish
+                );
+            case event_types.STONE:
+                return new PsynergyStoneEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.finish_events,
+                    info.custom_init_text,
                     info.hide_on_finish
                 );
             case event_types.TIMER:
