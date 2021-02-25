@@ -362,7 +362,7 @@ export class Hero extends ControllableChar {
             }
             this._active = true;
         } else {
-            this.sprite.body.removeCollisionGroup(this.data.collision.hero_collision_group);
+            this.sprite.body.clearCollision(this.data.collision.hero_collision_group);
             this.sprite.visible = false;
             if (this.shadow) {
                 this.shadow.visible = false;

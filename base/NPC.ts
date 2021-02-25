@@ -216,7 +216,7 @@ export class NPC extends ControllableChar {
             }
             this._active = true;
         } else {
-            this.sprite.body.removeCollisionGroup(this.data.collision.npc_collision_groups[this.base_collision_layer]);
+            this.sprite.body.clearCollision(this.data.collision.npc_collision_groups[this.base_collision_layer]);
             this.sprite.visible = false;
             if (this.shadow) {
                 this.shadow.visible = false;
