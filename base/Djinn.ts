@@ -71,6 +71,10 @@ export class Djinn {
         char.update_abilities();
     }
 
+    static sprite_base_key(element?: elements) {
+        return `${element}_djinn`;
+    }
+
     static has_standby_djinn(djinni_list, members) {
         return _.some(
             members

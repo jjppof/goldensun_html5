@@ -151,7 +151,8 @@ export abstract class StatusComponent {
     }
 
     protected get_djinni_sprite(elem: elements, group: Phaser.Group, pos: {x: number; y: number}) {
-        const action_key = this.data.info.djinni_sprites[elem].getSpriteKey(djinn_status.SET);
+        const djinn_sprite_base = this.data.info.npcs_sprite_base_list[Djinn.sprite_base_key(elem)];
+        const action_key = djinn_sprite_base.getSpriteKey(djinn_status.SET);
         const sprite = group.create(pos.x, pos.y, action_key);
 
         sprite.anchor.setTo(0.5, 1.0);
@@ -160,8 +161,8 @@ export abstract class StatusComponent {
         const direction = reverse_directions[directions.down];
         const action = djinn_status.SET;
 
-        this.data.info.djinni_sprites[elem].setAnimation(sprite, action);
-        sprite.animations.play(this.data.info.djinni_sprites[elem].getAnimationKey(action, direction));
+        djinn_sprite_base.setAnimation(sprite, action);
+        sprite.animations.play(djinn_sprite_base.getAnimationKey(action, direction));
 
         return sprite;
     }

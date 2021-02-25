@@ -301,21 +301,23 @@ export class DjinnListWindow {
         }
 
         this_sprite.alpha = 1;
-        let action: string, direction: string;
+        let direction: directions;
         switch (this_djinn.status) {
             case djinn_status.RECOVERY:
-                direction = "left";
+                direction = directions.left;
+                break;
             case djinn_status.STANDBY:
-                direction = "down";
-                action = "standby";
+                direction = directions.down;
                 break;
             case djinn_status.SET:
-                direction = "down";
-                action = "set";
+                direction = directions.down;
         }
 
-        this.data.info.djinni_sprites[this_djinn.element].setAnimation(this_sprite, action);
-        this_sprite.animations.play(action + "_" + direction);
+        const action = this_djinn.status === djinn_status.RECOVERY ? djinn_status.STANDBY : this_djinn.status;
+        const djinn_sprite_base = this.data.info.npcs_sprite_base_list[Djinn.sprite_base_key(this_djinn.element)];
+        djinn_sprite_base.setAnimation(this_sprite, action);
+        const anim_key = djinn_sprite_base.getAnimationKey(action, reverse_directions[direction]);
+        this_sprite.animations.play(anim_key);
     }
 
     load_page() {

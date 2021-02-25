@@ -1,7 +1,7 @@
 import {initialize_main_chars, initialize_classes} from "./main_chars";
 import {initialize_abilities, initialize_field_abilities} from "./abilities";
 import {initialize_items} from "./items";
-import {initialize_djinni, initialize_djinni_sprites} from "./djinni";
+import {initialize_djinni} from "./djinni";
 import {initialize_enemies} from "./enemies";
 import {initialize_maps} from "./maps";
 import {initialize_misc_data} from "./misc_data";
@@ -43,7 +43,6 @@ export type GameInfo = {
         };
     };
     djinni_list: {[djinn_key: string]: Djinn};
-    djinni_sprites: {[djinn_key: string]: SpriteBase};
     abilities_list: {[ability_key: string]: Ability};
     items_list: {[item_key: string]: Item};
     party_data: PartyData;
@@ -75,13 +74,6 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     await load_enemies_sprites_promise;
 
     data.info.djinni_list = initialize_djinni(data.dbs.djinni_db);
-
-    let load_djinni_sprites_promise_resolve;
-    const load_djinni_sprites_promise = new Promise(resolve => {
-        load_djinni_sprites_promise_resolve = resolve;
-    });
-    data.info.djinni_sprites = initialize_djinni_sprites(game, data, load_djinni_sprites_promise_resolve);
-    await load_djinni_sprites_promise;
 
     let load_abilities_promise_resolve;
     const load_abilities_promise = new Promise(resolve => {

@@ -278,17 +278,15 @@ export class DjinnModeHeaderWindow {
 
             if (this.action === djinn_actions.GIVE && i === 1) break;
 
-            const djinn_sprite = this.group.create(
-                djinn_x,
-                djinn_y,
-                this_djinn.element + "_djinn_" + this_djinn.status
-            );
+            const djinn_sprite_base = this.data.info.npcs_sprite_base_list[Djinn.sprite_base_key(this_djinn.element)];
+            const djinn_sprite = this.group.create(djinn_x, djinn_y, djinn_sprite_base.getSpriteKey(this_djinn.status));
             djinn_sprite.anchor.setTo(0.5, 1.0);
             djinn_sprite.scale.x = -0.8;
             djinn_sprite.scale.y = 0.8;
 
-            this.data.info.djinni_sprites[this_djinn.element].setAnimation(djinn_sprite, this_djinn.status);
-            djinn_sprite.animations.play(this_djinn.status + "_down");
+            djinn_sprite_base.setAnimation(djinn_sprite, this_djinn.status);
+            const anim_key = djinn_sprite_base.getAnimationKey(this_djinn.status, reverse_directions[directions.down]);
+            djinn_sprite.animations.play(anim_key);
             this.djinn_sprites.push(djinn_sprite);
 
             if ([djinn_actions.TRADE, djinn_actions.GIVE].includes(this.action)) {
