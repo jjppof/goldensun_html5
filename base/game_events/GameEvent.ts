@@ -29,6 +29,7 @@ export enum event_types {
     DIALOG = "dialog",
     LOOK = "look",
     CHEST = "chest",
+    PSYNERGY_STONE = "psynergy_stone",
     TIMER = "timer",
     PARTY_JOIN = "party_join",
     SUMMON = "summon",

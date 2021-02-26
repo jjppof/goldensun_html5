@@ -16,7 +16,7 @@ export class MainMenu {
     private buttons_keys: string[];
     private current_index: number;
 
-    private chars_status_window: CharsStatusWindow;
+    public chars_status_window: CharsStatusWindow;
     private horizontal_menu: HorizontalMenu;
     private psynergy_menu: MainPsynergyMenu;
     private item_menu: MainItemMenu;

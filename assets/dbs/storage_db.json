@@ -7,6 +7,7 @@
     "alex_direction": "down",
     "adepts_clothes_chest": "closed",
     "pound_cube_chest": "closed",
+    "psy_stone_madra_active": true,
     "piers_active": true,
     "herb_box_madra": true,
     "summon_megaera_stone": true

@@ -127,6 +127,10 @@
                 "party_join": {
                     "start": 10.906,
                     "end": 14.441
+                },
+                "psynergy_stone_shatter": {
+                    "start": 14.454,
+                    "end": 16.316
                 }
             }
         }
