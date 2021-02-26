@@ -1,5 +1,3 @@
-import {MainChar} from "../MainChar";
-import {CharsStatusWindow} from "../windows/CharsStatusWindow";
 import {NPC} from "../NPC";
 import {base_actions, directions} from "../utils";
 import {DialogManager} from "../utils/DialogManager";
@@ -15,16 +13,13 @@ const DISAPPEAR_TEXT = `The Psynergy Stone disappeared...`;
 export class PsynergyStoneEvent extends GameEvent {
     private control_enable: boolean = true;
     private running: boolean = false;
-    private resolve: Function;
-    private promise: Promise<any>;
+    private promise: Promise<void>;
     private aux_resolve: () => void;
     private dialog_manager: DialogManager;
-    private chars_status_window: CharsStatusWindow;
     private finish_events: GameEvent[] = [];
 
     constructor(game, data, active, finish_events) {
         super(game, data, event_types.PSYNERGY_STONE, active);
-        this.chars_status_window = new CharsStatusWindow(this.game, this.data);
 
         this.data.control_manager.add_controls(
             [
@@ -92,21 +87,22 @@ export class PsynergyStoneEvent extends GameEvent {
 
         this.game.physics.p2.pause();
         this.origin_npc.sprite.send_to_front = true;
+        this.data.map.sort_sprites();
         this.game.add
             .tween(this.origin_npc.sprite.body)
             .to({x: stone_sprite_x, y: stone_sprite_y}, 300, Phaser.Easing.Linear.None, true);
         await this.set_text(GET_TEXT(hero_name));
 
         //Recover PP and show status window
-        this.chars_status_window.show();
+        this.data.main_menu.chars_status_window.show();
         this.stone_pp_recovery();
-        this.chars_status_window.update_chars_info();
-        this.chars_status_window.update_position();
+        this.data.main_menu.chars_status_window.update_chars_info();
+        this.data.main_menu.chars_status_window.update_position();
         this.data.audio.play_se("battle/heal_1");
         await this.set_text(RECOVERY_TEXT(hero_name));
 
         emitter.destroy();
-        this.chars_status_window.close();
+        this.data.main_menu.chars_status_window.close();
 
         this.data.audio.play_se("misc/psynergy_stone_shatter");
         const animation_key_shatter = this.origin_npc.sprite_info.getAnimationKey("stone", "shatter");
@@ -119,14 +115,14 @@ export class PsynergyStoneEvent extends GameEvent {
     //Hide Stone sprite and return control to character
     async finish() {
         this.origin_npc.toggle_active(false);
-        await this.set_text(DISAPPEAR_TEXT);
+        await this.set_text(DISAPPEAR_TEXT, false);
 
         this.data.hero.play(base_actions.IDLE);
         this.running = false;
         this.control_enable = false;
         this.data.game_event_manager.force_idle_action = true;
-        --this.data.game_event_manager.events_running_count;
         this.game.physics.p2.resume();
+        --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 
@@ -137,14 +133,14 @@ export class PsynergyStoneEvent extends GameEvent {
     }
 
     //Write text
-    async set_text(text) {
-        this.promise = new Promise(resolve => (this.aux_resolve = resolve));
+    async set_text(text: string, show_crystal = true) {
+        this.promise = new Promise<void>(resolve => (this.aux_resolve = resolve));
         this.dialog_manager.quick_next(
             text,
             () => {
                 this.control_enable = true;
             },
-            {show_crystal: true}
+            {show_crystal: show_crystal}
         );
         await this.promise;
     }
