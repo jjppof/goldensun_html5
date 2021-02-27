@@ -6,10 +6,11 @@ export class SliderEvent extends TileEvent {
     private static readonly DUST_COUNT = 6;
     private static readonly DUST_KEY = "dust";
 
-    public x_target: number;
-    public y_target: number;
-    public dest_collision_layer: number;
-    public show_dust: boolean;
+    private x_target: number;
+    private y_target: number;
+    private dest_collision_layer: number;
+    private show_dust: boolean;
+
     constructor(
         game,
         data,
@@ -40,8 +41,8 @@ export class SliderEvent extends TileEvent {
         );
         this.x_target = x_target;
         this.y_target = y_target;
-        this.dest_collision_layer = dest_collision_layer !== undefined ? dest_collision_layer : 0;
-        this.show_dust = show_dust === undefined ? true : show_dust;
+        this.dest_collision_layer = dest_collision_layer ?? 0;
+        this.show_dust = show_dust ?? true;
     }
 
     fire() {
@@ -104,7 +105,7 @@ export class SliderEvent extends TileEvent {
         });
     }
 
-    dust_animation() {
+    private dust_animation() {
         const dust_sprite_base = this.data.info.misc_sprite_base_list[SliderEvent.DUST_KEY];
         const initial_x = this.data.map.tile_width * (this.x + 0.5);
         for (let i = 0; i < SliderEvent.DUST_COUNT; ++i) {

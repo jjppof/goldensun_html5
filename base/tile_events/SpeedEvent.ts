@@ -1,7 +1,7 @@
 import {TileEvent, event_types} from "./TileEvent";
 
 export class SpeedEvent extends TileEvent {
-    public speed: number;
+    private _speed: number;
 
     constructor(
         game,
@@ -28,7 +28,11 @@ export class SpeedEvent extends TileEvent {
             null,
             affected_by_reveal
         );
-        this.speed = speed;
+        this._speed = speed;
+    }
+
+    get speed() {
+        return this._speed;
     }
 
     unset() {

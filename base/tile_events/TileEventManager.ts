@@ -60,20 +60,24 @@ class EventQueue {
 export class TileEventManager {
     private static readonly EVENT_INIT_DELAY = 350;
 
-    public game: Phaser.Game;
-    public data: GoldenSun;
-    public event_timers: {[event_id: number]: Phaser.TimerEvent};
+    private game: Phaser.Game;
+    private data: GoldenSun;
+    private event_timers: {[event_id: number]: Phaser.TimerEvent};
     public on_event: boolean;
-    public walking_on_pillars_tiles: Set<string>;
-    public triggered_events: {[event_id: number]: TileEvent};
+    private _walking_on_pillars_tiles: Set<string>;
+    private triggered_events: {[event_id: number]: TileEvent};
 
     constructor(game, data) {
         this.game = game;
         this.data = data;
         this.event_timers = {};
         this.on_event = false;
-        this.walking_on_pillars_tiles = new Set();
+        this._walking_on_pillars_tiles = new Set();
         this.triggered_events = {};
+    }
+
+    get walking_on_pillars_tiles() {
+        return this._walking_on_pillars_tiles;
     }
 
     set_triggered_event(event: TileEvent) {
@@ -99,14 +103,14 @@ export class TileEventManager {
         });
     }
 
-    fire_event(current_event: TileEvent, this_activation_direction: directions) {
+    private fire_event(current_event: TileEvent, this_activation_direction: directions) {
         if (current_event.type === event_types.ICE_SLIDE && this.data.hero.ice_sliding_active) {
             current_event.fire();
             return;
         }
         if (this.data.hero.current_direction !== this_activation_direction) return;
         if (current_event.type === event_types.CLIMB && !this.data.hero.idle_climbing) {
-            (current_event as ClimbEvent).current_activation_direction = this_activation_direction;
+            (current_event as ClimbEvent).set_current_activation_direction(this_activation_direction);
             current_event.fire();
         } else if (![event_types.SPEED, event_types.STEP, event_types.COLLISION].includes(current_event.type)) {
             current_event.fire();

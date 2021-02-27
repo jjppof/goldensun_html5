@@ -2,9 +2,9 @@ import {directions} from "../utils";
 import {TileEvent, event_types} from "./TileEvent";
 
 export class CollisionEvent extends TileEvent {
-    public dest_collision_layer: number;
-    public next_x: number;
-    public next_y: number;
+    private dest_collision_layer: number;
+    private next_x: number;
+    private next_y: number;
 
     constructor(
         game,

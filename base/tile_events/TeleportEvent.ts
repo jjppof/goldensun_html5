@@ -5,12 +5,12 @@ import * as _ from "lodash";
 import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 
 export class TeleportEvent extends TileEvent {
-    public target: string;
-    public x_target: number;
-    public y_target: number;
-    public advance_effect: boolean;
-    public dest_collision_layer: number;
-    public destination_direction: string;
+    private target: string;
+    private x_target: number;
+    private y_target: number;
+    private _advance_effect: boolean;
+    private dest_collision_layer: number;
+    private destination_direction: string;
 
     constructor(
         game,
@@ -45,9 +45,13 @@ export class TeleportEvent extends TileEvent {
         this.target = target;
         this.x_target = x_target;
         this.y_target = y_target;
-        this.advance_effect = advance_effect;
+        this._advance_effect = advance_effect;
         this.dest_collision_layer = dest_collision_layer !== undefined ? dest_collision_layer : 0;
         this.destination_direction = destination_direction;
+    }
+
+    get advance_effect() {
+        return this._advance_effect;
     }
 
     fire() {
@@ -98,7 +102,7 @@ export class TeleportEvent extends TileEvent {
         }
     }
 
-    camera_fade_in() {
+    private camera_fade_in() {
         this.data.hero.stop_char(true);
         this.game.camera.fade(undefined, undefined, true);
         this.game.camera.onFadeComplete.addOnce(() => {
@@ -116,7 +120,7 @@ export class TeleportEvent extends TileEvent {
         });
     }
 
-    async change_map() {
+    private async change_map() {
         const next_map_key_name = this.target;
         const target_collision_layer = this.dest_collision_layer;
         this.data.hero.set_collision_layer(target_collision_layer);
@@ -140,7 +144,7 @@ export class TeleportEvent extends TileEvent {
         this.camera_fade_out();
     }
 
-    camera_fade_out() {
+    private camera_fade_out() {
         this.data.hero.update_shadow();
         this.data.hero.update_half_crop(true);
         this.data.map.sort_sprites();
@@ -153,7 +157,7 @@ export class TeleportEvent extends TileEvent {
         });
     }
 
-    open_door() {
+    private open_door() {
         const layer = _.find(this.data.map.sprite.layers, {
             name: this.data.map.sprite.properties.door_layer,
         });

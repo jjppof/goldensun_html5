@@ -369,7 +369,9 @@ export class InteractableObjects {
                 climbing_only: false,
                 collision_change_function: (event: ClimbEvent) => {
                     event.set_activation_collision_layers(this.base_collision_layer);
-                    event.change_to_collision_layer = this.base_collision_layer + intermediate_collision_layer_shift;
+                    event.change_collision_layer_destination(
+                        this.base_collision_layer + intermediate_collision_layer_shift
+                    );
                 },
                 collision_layer_shift_from_source: 0,
             },
@@ -384,7 +386,7 @@ export class InteractableObjects {
                     event.set_activation_collision_layers(
                         this.base_collision_layer + intermediate_collision_layer_shift
                     );
-                    event.change_to_collision_layer = this.base_collision_layer;
+                    event.change_collision_layer_destination(this.base_collision_layer);
                 },
                 collision_layer_shift_from_source: 0,
             },
@@ -399,7 +401,7 @@ export class InteractableObjects {
                     event.set_activation_collision_layers(
                         this.base_collision_layer + intermediate_collision_layer_shift
                     );
-                    event.change_to_collision_layer = this.base_collision_layer + collision_layer_shift;
+                    event.change_collision_layer_destination(this.base_collision_layer + collision_layer_shift);
                 },
                 collision_layer_shift_from_source: collision_layer_shift,
             },
@@ -412,7 +414,9 @@ export class InteractableObjects {
                 climbing_only: false,
                 collision_change_function: (event: ClimbEvent) => {
                     event.set_activation_collision_layers(this.base_collision_layer + collision_layer_shift);
-                    event.change_to_collision_layer = this.base_collision_layer + intermediate_collision_layer_shift;
+                    event.change_collision_layer_destination(
+                        this.base_collision_layer + intermediate_collision_layer_shift
+                    );
                 },
                 collision_layer_shift_from_source: collision_layer_shift,
             },

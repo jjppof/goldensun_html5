@@ -2,7 +2,7 @@ import {GameEvent} from "../game_events/GameEvent";
 import {event_types, TileEvent} from "./TileEvent";
 
 export class EventTriggerEvent extends TileEvent {
-    public events: GameEvent[] = [];
+    private events: GameEvent[] = [];
 
     constructor(
         game,
