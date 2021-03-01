@@ -66,7 +66,7 @@ type ParticleObject = {
     };
 };
 
-enum ZoneTypes {
+enum zone_types {
     RECTANGLE = "rectangle",
     POINT = "point",
     LINE = "line",
@@ -75,7 +75,7 @@ enum ZoneTypes {
 }
 
 type ParticlesZone = {
-    type: ZoneTypes;
+    type: zone_types;
     radius: number;
     width: number;
     height: number;
@@ -135,6 +135,21 @@ type Emitter = {
     };
 };
 
+enum sprite_types {
+    SPRITE = "sprite",
+    CIRCLE = "circle",
+    RECTANGLE = "rectangle",
+    RING = "ring",
+}
+
+type GeometryInfo = {
+    color: number;
+    radius: number;
+    width: number;
+    height: number;
+    thickness: number;
+};
+
 export class BattleAnimation {
     public game: Phaser.Game;
     public data: GoldenSun;
@@ -147,6 +162,8 @@ export class BattleAnimation {
         trails: boolean;
         trails_factor: number;
         frames_number: number;
+        type: sprite_types;
+        geometry_info: GeometryInfo;
     }[];
     public x_sequence: DefaultAttr[] = [];
     public y_sequence: DefaultAttr[] = [];
@@ -201,7 +218,7 @@ export class BattleAnimation {
         emission_finish: number;
     }[];
     public running: boolean;
-    public sprites: Phaser.Sprite[];
+    public sprites: (Phaser.Sprite | Phaser.Graphics)[];
     public sprites_prev_properties: {
         [key: string]: {
             [property: string]: any;
@@ -359,22 +376,52 @@ export class BattleAnimation {
             if (!sprite_info.per_target) {
                 const count = sprite_info.count ? sprite_info.count : 1;
                 for (let j = 0; j < count; ++j) {
-                    const psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_key);
+                    let psy_sprite: Phaser.Sprite | Phaser.Graphics;
+                    const sprite_type = sprite_info.type ?? sprite_types.SPRITE;
+                    switch (sprite_type) {
+                        case sprite_types.SPRITE:
+                            psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_key);
+                            const frames = Phaser.Animation.generateFrameNames(
+                                sprite_info.key_name + "/",
+                                0,
+                                sprite_info.frames_number ?? psy_sprite.animations.frameTotal,
+                                "",
+                                3
+                            );
+                            psy_sprite.animations.add(sprite_info.key_name, frames);
+                            psy_sprite.animations.frameName = frames[0];
+                            break;
+                        case sprite_types.RING:
+                            psy_sprite = this.game.add.graphics(this.x0, this.y0);
+                            psy_sprite.lineStyle(sprite_info.geometry_info.thickness, sprite_info.geometry_info.color);
+                            psy_sprite.arc(0, 0, sprite_info.geometry_info.radius, 0, numbers.degree360, false);
+                            break;
+                        case sprite_types.RECTANGLE:
+                            psy_sprite = this.game.add.graphics(this.x0, this.y0);
+                            psy_sprite.beginFill(sprite_info.geometry_info.color, 1);
+                            psy_sprite.drawRect(
+                                0,
+                                0,
+                                sprite_info.geometry_info.width,
+                                sprite_info.geometry_info.height
+                            );
+                            psy_sprite.endFill();
+                            break;
+                        case sprite_types.CIRCLE:
+                            psy_sprite = this.game.add.graphics(this.x0, this.y0);
+                            psy_sprite.beginFill(sprite_info.geometry_info.color, 1);
+                            psy_sprite.drawCircle(0, 0, sprite_info.geometry_info.radius << 1);
+                            psy_sprite.endFill();
+                            break;
+                    }
                     this.ability_sprites_groups[sprite_info.position].addChild(psy_sprite);
-                    const frames = Phaser.Animation.generateFrameNames(
-                        sprite_info.key_name + "/",
-                        0,
-                        sprite_info.frames_number ?? psy_sprite.animations.frameTotal,
-                        "",
-                        3
-                    );
-                    psy_sprite.animations.add(sprite_info.key_name, frames);
-                    psy_sprite.animations.frameName = frames[0];
                     psy_sprite.data.battle_index = this.sprites.length;
                     psy_sprite.data.trail_image = trail_image;
                     psy_sprite.data.ignore_trim = true;
                     this.sprites.push(psy_sprite);
                 }
+            } else {
+                //TODO: create one sprite for each target
             }
         }
         this.set_filters();
@@ -842,13 +889,13 @@ export class BattleAnimation {
                 const zone_info = adv_particles_seq.zones[key];
                 let zone: Phaser.ParticleStorm.Zones.Base;
                 switch (zone_info.type) {
-                    case ZoneTypes.CIRCLE:
+                    case zone_types.CIRCLE:
                         zone = this.data.particle_manager.createCircleZone(zone_info.radius);
                         break;
-                    case ZoneTypes.ELLIPSE:
+                    case zone_types.ELLIPSE:
                         zone = this.data.particle_manager.createEllipseZone(zone_info.width, zone_info.height);
                         break;
-                    case ZoneTypes.LINE:
+                    case zone_types.LINE:
                         zone = this.data.particle_manager.createLineZone(
                             zone_info.points[0].x,
                             zone_info.points[0].y,
@@ -856,10 +903,10 @@ export class BattleAnimation {
                             zone_info.points[1].y
                         );
                         break;
-                    case ZoneTypes.POINT:
+                    case zone_types.POINT:
                         zone = this.data.particle_manager.createPointZone(zone_info.points[0].x, zone_info.points[0].y);
                         break;
-                    case ZoneTypes.RECTANGLE:
+                    case zone_types.RECTANGLE:
                         zone = this.data.particle_manager.createRectangleZone(zone_info.width, zone_info.height);
                         break;
                 }
