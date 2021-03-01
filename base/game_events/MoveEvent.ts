@@ -152,11 +152,11 @@ export class MoveEvent extends GameEvent {
             this.data.game_event_manager.allow_char_to_move = false;
         }
         this.char.dashing = false;
-        if (!this.keep_npc_collision_disable) {
-            this.data.collision.enable_npc_collision(this.data.map.collision_layer);
-        }
         if (this.deactive_char_on_end) {
             this.char.toggle_active(false);
+        }
+        if (!this.keep_npc_collision_disable) {
+            this.data.collision.enable_npc_collision(this.data.map.collision_layer);
         }
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
