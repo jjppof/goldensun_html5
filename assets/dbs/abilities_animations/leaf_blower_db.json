@@ -173,6 +173,7 @@
         "start_delay": 3200,
         "value": [-1,-1,-1]
     }],
+    "cast_type": "psynergy_cast",
     "particles_sequence": [{
         "data": {
             "wind" : {

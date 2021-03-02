@@ -352,11 +352,12 @@ export class Battle {
 
             action.battle_animation_key = battle_animation_key;
             const mirrored_animation = ability.can_be_mirrored && action.caster.fighter_type === fighter_types.ENEMY;
-            await this.animation_manager.load_animation(
+            const battle_animation = await this.animation_manager.load_animation(
                 battle_animation_key,
                 action.caster_battle_key,
                 mirrored_animation
             );
+            action.cast_animation_type = battle_animation?.cast_type;
         }
         this.battle_phase = battle_phases.COMBAT;
         this.check_phases();
@@ -585,6 +586,23 @@ export class Battle {
                 action.caster.fighter_type === fighter_types.ALLY
                     ? this.battle_stage.group_enemies
                     : this.battle_stage.group_allies;
+            if (action.caster_battle_key) {
+                const animation_recipe = this.data.info.abilities_cast_recipes[action.cast_animation_type];
+                const cast_animation = BattleAnimationManager.get_animation_instance(
+                    this.game,
+                    this.data,
+                    animation_recipe,
+                    true
+                );
+                await this.animation_manager.play_animation(
+                    cast_animation,
+                    caster_sprite,
+                    target_sprites,
+                    group_caster,
+                    group_taker,
+                    this.battle_stage
+                );
+            }
             await this.animation_manager.play(
                 action.battle_animation_key,
                 action.caster_battle_key,

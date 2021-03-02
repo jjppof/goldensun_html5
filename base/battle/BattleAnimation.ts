@@ -229,7 +229,7 @@ export class BattleAnimation {
     public y0: number;
     public caster_sprite: PlayerSprite;
     public targets_sprites: PlayerSprite[];
-    public background_sprites: Phaser.Sprite[];
+    public background_sprites: Phaser.TileSprite[];
     public group_caster: Phaser.Group;
     public group_enemy: Phaser.Group;
     public super_group: Phaser.Group;
@@ -250,6 +250,7 @@ export class BattleAnimation {
     public promises: Promise<any>[];
     public render_callbacks: {[callback_key: string]: Function};
     public mirrored: boolean;
+    public cast_type: string;
 
     //tween type can be 'initial' for first position
     //sprite_index: "targets" is the target, "caster" is the caster, "background" is the background sprite, 0...n is the sprites_key_names index
@@ -282,35 +283,35 @@ export class BattleAnimation {
         set_frame_sequence, //{start_delay: value, frame: string, sprite_index: index}
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
         particles_sequence,
+        cast_type,
         mirrored
     ) {
         this.game = game;
         this.data = data;
         this.key_name = key_name;
-        this.sprites_keys = sprites_keys;
-        this.x_sequence = x_sequence === undefined ? [] : x_sequence;
-        this.y_sequence = y_sequence === undefined ? [] : y_sequence;
-        this.x_ellipse_axis_factor_sequence =
-            x_ellipse_axis_factor_sequence === undefined ? [] : x_ellipse_axis_factor_sequence;
-        this.y_ellipse_axis_factor_sequence =
-            y_ellipse_axis_factor_sequence === undefined ? [] : y_ellipse_axis_factor_sequence;
-        this.x_scale_sequence = x_scale_sequence === undefined ? [] : x_scale_sequence;
-        this.y_scale_sequence = y_scale_sequence === undefined ? [] : y_scale_sequence;
-        this.x_anchor_sequence = x_anchor_sequence === undefined ? [] : x_anchor_sequence;
-        this.y_anchor_sequence = y_anchor_sequence === undefined ? [] : y_anchor_sequence;
-        this.alpha_sequence = alpha_sequence === undefined ? [] : alpha_sequence;
-        this.rotation_sequence = rotation_sequence === undefined ? [] : rotation_sequence;
-        this.stage_angle_sequence = stage_angle_sequence === undefined ? [] : stage_angle_sequence;
-        this.hue_angle_sequence = hue_angle_sequence === undefined ? [] : hue_angle_sequence;
-        this.tint_sequence = tint_sequence === undefined ? [] : tint_sequence;
-        this.grayscale_sequence = grayscale_sequence === undefined ? [] : grayscale_sequence;
-        this.colorize_sequence = colorize_sequence === undefined ? [] : colorize_sequence;
-        this.custom_filter_sequence = custom_filter_sequence === undefined ? [] : custom_filter_sequence;
-        this.play_sequence = play_sequence === undefined ? [] : play_sequence;
-        this.set_frame_sequence = set_frame_sequence === undefined ? [] : set_frame_sequence;
-        this.blend_mode_sequence = blend_mode_sequence === undefined ? [] : blend_mode_sequence;
-        this.particles_sequence = particles_sequence === undefined ? [] : particles_sequence;
+        this.sprites_keys = sprites_keys ?? [];
+        this.x_sequence = x_sequence ?? [];
+        this.y_sequence = y_sequence ?? [];
+        this.x_ellipse_axis_factor_sequence = x_ellipse_axis_factor_sequence ?? [];
+        this.y_ellipse_axis_factor_sequence = y_ellipse_axis_factor_sequence ?? [];
+        this.x_scale_sequence = x_scale_sequence ?? [];
+        this.y_scale_sequence = y_scale_sequence ?? [];
+        this.x_anchor_sequence = x_anchor_sequence ?? [];
+        this.y_anchor_sequence = y_anchor_sequence ?? [];
+        this.alpha_sequence = alpha_sequence ?? [];
+        this.rotation_sequence = rotation_sequence ?? [];
+        this.stage_angle_sequence = stage_angle_sequence ?? [];
+        this.hue_angle_sequence = hue_angle_sequence ?? [];
+        this.tint_sequence = tint_sequence ?? [];
+        this.grayscale_sequence = grayscale_sequence ?? [];
+        this.colorize_sequence = colorize_sequence ?? [];
+        this.custom_filter_sequence = custom_filter_sequence ?? [];
+        this.play_sequence = play_sequence ?? [];
+        this.set_frame_sequence = set_frame_sequence ?? [];
+        this.blend_mode_sequence = blend_mode_sequence ?? [];
+        this.particles_sequence = particles_sequence ?? [];
         this.running = false;
+        this.cast_type = cast_type;
         this.mirrored = mirrored;
         this.render_callbacks = {};
         this.ability_sprites_groups = {
@@ -321,14 +322,14 @@ export class BattleAnimation {
     }
 
     initialize(
-        sprite_key,
-        caster_sprite,
-        targets_sprites,
-        group_caster,
-        group_enemy,
-        super_group,
-        stage_camera,
-        background_sprites
+        caster_sprite: PlayerSprite,
+        targets_sprites: PlayerSprite[],
+        group_caster: Phaser.Group,
+        group_enemy: Phaser.Group,
+        super_group: Phaser.Group,
+        stage_camera: CameraAngle,
+        background_sprites: Phaser.TileSprite[],
+        sprite_key?: string
     ) {
         this.sprites = [];
         this.sprites_prev_properties = {};

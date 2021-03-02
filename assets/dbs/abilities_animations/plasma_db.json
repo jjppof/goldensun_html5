@@ -151,6 +151,7 @@
         "start_delay": 1990,
         "value": [-1,-1,-1]
     }],
+    "cast_type": "psynergy_cast",
     "particles_sequence": [{
         "data": {
             "explosion" : {

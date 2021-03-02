@@ -33,6 +33,7 @@ export type PlayerAbility = {
     caster_battle_key?: string;
     battle_animation_key?: string;
     item_slot?: ItemSlot;
+    cast_animation_type?: string;
 };
 
 export type PlayerAbilities = {[char_key_name: string]: PlayerAbility[]};

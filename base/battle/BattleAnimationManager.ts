@@ -1,5 +1,7 @@
 import {GoldenSun} from "../GoldenSun";
 import {BattleAnimation} from "./BattleAnimation";
+import {BattleStage} from "./BattleStage";
+import {PlayerSprite} from "./PlayerSprite";
 
 export enum animation_availability {
     AVAILABLE,
@@ -27,9 +29,45 @@ export class BattleAnimationManager {
         this.render_function = null;
     }
 
+    static get_animation_instance(
+        game: Phaser.Game,
+        data: GoldenSun,
+        animation_recipe: any,
+        mirrored_animation: boolean
+    ) {
+        return new BattleAnimation(
+            game,
+            data,
+            animation_recipe.key_name,
+            animation_recipe.sprites,
+            animation_recipe.x_sequence,
+            animation_recipe.y_sequence,
+            animation_recipe.x_ellipse_axis_factor_sequence,
+            animation_recipe.y_ellipse_axis_factor_sequence,
+            animation_recipe.x_scale_sequence,
+            animation_recipe.y_scale_sequence,
+            animation_recipe.x_anchor_sequence,
+            animation_recipe.y_anchor_sequence,
+            animation_recipe.alpha_sequence,
+            animation_recipe.rotation_sequence,
+            animation_recipe.stage_angle_sequence,
+            animation_recipe.hue_angle_sequence,
+            animation_recipe.tint_sequence,
+            animation_recipe.grayscale_sequence,
+            animation_recipe.colorize_sequence,
+            animation_recipe.custom_filter_sequence,
+            animation_recipe.play_sequence,
+            animation_recipe.set_frame_sequence,
+            animation_recipe.blend_mode_sequence,
+            animation_recipe.particles_sequence,
+            animation_recipe.cast_type,
+            mirrored_animation
+        );
+    }
+
     async load_animation(battle_anim_key, caster_battle_key, mirrored_animation) {
         if (this.not_available.has(battle_anim_key) || battle_anim_key === "no_animation") {
-            return;
+            return null;
         }
         const sprite_key = battle_anim_key + ANIMATION_SUFFIX;
         const recipe_key = battle_anim_key + RECIPE_SUFFIX;
@@ -66,35 +104,16 @@ export class BattleAnimationManager {
         if (all_succeed) {
             const animation_recipe = this.game.cache.getJSON(battle_anim_key + RECIPE_SUFFIX);
             const key = battle_anim_key + "/" + caster_battle_key;
-            this.animations[key] = new BattleAnimation(
+            this.animations[key] = BattleAnimationManager.get_animation_instance(
                 this.game,
                 this.data,
-                animation_recipe.key_name,
-                animation_recipe.sprites,
-                animation_recipe.x_sequence,
-                animation_recipe.y_sequence,
-                animation_recipe.x_ellipse_axis_factor_sequence,
-                animation_recipe.y_ellipse_axis_factor_sequence,
-                animation_recipe.x_scale_sequence,
-                animation_recipe.y_scale_sequence,
-                animation_recipe.x_anchor_sequence,
-                animation_recipe.y_anchor_sequence,
-                animation_recipe.alpha_sequence,
-                animation_recipe.rotation_sequence,
-                animation_recipe.stage_angle_sequence,
-                animation_recipe.hue_angle_sequence,
-                animation_recipe.tint_sequence,
-                animation_recipe.grayscale_sequence,
-                animation_recipe.colorize_sequence,
-                animation_recipe.custom_filter_sequence,
-                animation_recipe.play_sequence,
-                animation_recipe.set_frame_sequence,
-                animation_recipe.blend_mode_sequence,
-                animation_recipe.particles_sequence,
+                animation_recipe,
                 mirrored_animation
             );
+            return this.animations[key];
         } else {
             this.not_available.add(battle_anim_key);
+            return null;
         }
     }
 
@@ -106,36 +125,56 @@ export class BattleAnimationManager {
     }
 
     async play(
-        battle_anim_key,
-        caster_battle_key,
-        caster_sprite,
-        targets_sprites,
-        group_caster,
-        group_taker,
-        battle_stage
+        battle_anim_key: string,
+        caster_battle_key: string,
+        caster_sprite: PlayerSprite,
+        targets_sprites: PlayerSprite[],
+        group_caster: Phaser.Group,
+        group_taker: Phaser.Group,
+        battle_stage: BattleStage
     ) {
         const key = battle_anim_key + "/" + caster_battle_key;
         if (!(key in this.animations)) return;
         const sprite_key = battle_anim_key + ANIMATION_SUFFIX;
-        this.animations[key].initialize(
-            sprite_key,
+        await this.play_animation(
+            this.animations[key],
+            caster_sprite,
+            targets_sprites,
+            group_caster,
+            group_taker,
+            battle_stage,
+            sprite_key
+        );
+        delete this.animations[key];
+    }
+
+    async play_animation(
+        animation: BattleAnimation,
+        caster_sprite: PlayerSprite,
+        targets_sprites: PlayerSprite[],
+        group_caster: Phaser.Group,
+        group_taker: Phaser.Group,
+        battle_stage: BattleStage,
+        sprite_key?: string
+    ) {
+        animation.initialize(
             caster_sprite,
             targets_sprites,
             group_caster,
             group_taker,
             battle_stage.battle_group,
             battle_stage.camera_angle,
-            [battle_stage.battle_bg, battle_stage.battle_bg2]
+            [battle_stage.battle_bg, battle_stage.battle_bg2],
+            sprite_key
         );
         let play_promise_resolve;
         const play_promise = new Promise(resolve => {
             play_promise_resolve = resolve;
         });
-        this.render_function = this.animations[key].render.bind(this.animations[key]);
-        this.animations[key].play(play_promise_resolve);
+        this.render_function = animation.render.bind(animation);
+        animation.play(play_promise_resolve);
         await play_promise;
         this.render_function = null;
-        delete this.animations[key];
     }
 
     render() {

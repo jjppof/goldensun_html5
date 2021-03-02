@@ -23,6 +23,7 @@ import {GoldenSun} from "../GoldenSun";
 import {initialize_summons} from "./summons";
 import {initialize_se} from "./sound_effects";
 import {initialize_npcs_data} from "./npcs";
+import {initialize_cast_recipes} from "./cast_recipes";
 
 export type PartyData = {
     members: MainChar[];
@@ -54,6 +55,7 @@ export type GameInfo = {
     inn_list: {[inn_id: string]: Inn};
     summons_list: {[summon_key: string]: Summon};
     field_abilities_list: {[field_psynergy_key: string]: FieldAbilities};
+    abilities_cast_recipes: {[ability_cast_key: string]: any};
 };
 
 export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
@@ -155,4 +157,16 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
     const se_data = game.cache.getJSON("se_data");
     initialize_se(game, data, se_data, load_se_promise_resolve);
     await load_se_promise;
+
+    let load_abilities_cast_anim_promise_resolve;
+    const load_abilities_cast_anim_promise = new Promise(resolve => {
+        load_abilities_cast_anim_promise_resolve = resolve;
+    });
+    data.info.abilities_cast_recipes = initialize_cast_recipes(
+        game,
+        data,
+        data.dbs.abilities_cast_db,
+        load_abilities_cast_anim_promise_resolve
+    );
+    await load_abilities_cast_anim_promise;
 }
