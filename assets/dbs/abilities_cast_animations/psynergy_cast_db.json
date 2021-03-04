@@ -1,3 +1,27 @@
 {
-    "key_name": "psynergy_cast"
+    "key_name": "psynergy_cast",
+    "sprites": [{
+        "type": "ring",
+        "per_target": false,
+        "position": "over",
+        "count": 3,
+        "trails": true,
+        "trails_factor": 0.35,
+        "geometry_info": {
+            "color": 16748544,
+            "thickness": 2,
+            "radius": 5
+        }
+    }],
+    "play_sequence": [{
+        "animation_key": "cast_init",
+        "start_delay": 0,
+        "sprite_index": "caster",
+        "wait": false
+    },{
+        "animation_key": "cast",
+        "sprite_index": "caster",
+        "wait": false,
+        "wait_for_index": 0
+    }]
 }

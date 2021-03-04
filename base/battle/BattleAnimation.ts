@@ -203,6 +203,7 @@ export class BattleAnimation {
         repeat: boolean;
         animation_key: string;
         wait: boolean;
+        wait_for_index: number;
         hide_on_complete: boolean;
     }[] = [];
     public set_frame_sequence: any[] = [];
@@ -414,6 +415,11 @@ export class BattleAnimation {
                             psy_sprite.drawCircle(0, 0, sprite_info.geometry_info.radius << 1);
                             psy_sprite.endFill();
                             break;
+                    }
+                    if (psy_sprite instanceof Phaser.Graphics) {
+                        const graphic = psy_sprite;
+                        psy_sprite = this.game.add.sprite(psy_sprite.x, psy_sprite.y, psy_sprite.generateTexture());
+                        graphic.destroy();
                     }
                     this.ability_sprites_groups[sprite_info.position].addChild(psy_sprite);
                     psy_sprite.data.battle_index = this.sprites.length;
@@ -689,19 +695,25 @@ export class BattleAnimation {
     }
 
     play_sprite_sequence() {
+        const index_promises_resolve = new Array<() => void>(this.play_sequence.length);
+        const index_promises = new Array<Promise<void>>(this.play_sequence.length).fill(null).map((foo, i) => {
+            return new Promise<void>(resolve => (index_promises_resolve[i] = resolve));
+        });
         for (let i = 0; i < this.play_sequence.length; ++i) {
             const play_seq = this.play_sequence[i];
-            let sprites = this.get_sprites(play_seq);
+            const sprites = this.get_sprites(play_seq);
             sprites.forEach((sprite: Phaser.Sprite | PlayerSprite, index) => {
                 let resolve_function;
-                let this_promise = new Promise(resolve => {
-                    resolve_function = resolve;
-                });
+                const this_promise = new Promise(resolve => (resolve_function = resolve));
                 this.promises.push(this_promise);
-                const start_delay = Array.isArray(play_seq.start_delay)
-                    ? play_seq.start_delay[index]
-                    : play_seq.start_delay;
-                this.game.time.events.add(start_delay, () => {
+                const start = async () => {
+                    if (
+                        _.isNumber(play_seq.wait_for_index) &&
+                        play_seq.wait_for_index >= 0 &&
+                        play_seq.wait_for_index < index_promises.length
+                    ) {
+                        await index_promises[play_seq.wait_for_index];
+                    }
                     let animation_key = play_seq.animation_key;
                     if (sprite instanceof PlayerSprite) {
                         const player = sprite as PlayerSprite;
@@ -712,7 +724,7 @@ export class BattleAnimation {
                     }
                     const anim = sprite.animations.getAnimation(animation_key);
                     if (anim) {
-                        anim.reversed = play_seq.reverse === undefined ? false : play_seq.reverse;
+                        anim.reversed = play_seq.reverse ?? false;
                         anim.stop(true);
                         if (sprite instanceof PlayerSprite && (sprite as PlayerSprite).is_ally) {
                             sprite.set_action(play_seq.animation_key as battle_actions, false);
@@ -720,20 +732,35 @@ export class BattleAnimation {
                         } else {
                             sprite.animations.play(animation_key, play_seq.frame_rate, play_seq.repeat);
                         }
-                        if (play_seq.wait) {
-                            sprite.animations.currentAnim.onComplete.addOnce(() => {
-                                if (play_seq.hide_on_complete) {
-                                    sprite.alpha = 0;
-                                }
+                        sprite.animations.currentAnim.onComplete.addOnce(() => {
+                            if (play_seq.hide_on_complete) {
+                                sprite.alpha = 0;
+                            }
+                            if (index === sprites.length - 1) {
+                                index_promises_resolve[i]();
+                            }
+                            if (play_seq.wait) {
                                 resolve_function();
-                            });
-                        } else {
+                            }
+                        });
+                        if (!play_seq.wait) {
                             resolve_function();
                         }
                     } else {
+                        if (index === sprites.length - 1) {
+                            index_promises_resolve[i]();
+                        }
                         resolve_function();
                     }
-                });
+                };
+                const start_delay = Array.isArray(play_seq.start_delay)
+                    ? play_seq.start_delay[index]
+                    : play_seq.start_delay;
+                if (start_delay) {
+                    this.game.time.events.add(start_delay, start);
+                } else {
+                    start();
+                }
             });
         }
     }

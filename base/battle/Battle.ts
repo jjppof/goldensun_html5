@@ -635,6 +635,12 @@ export class Battle {
             }
         }
 
+        const caster_sprite_map =
+            action.caster.fighter_type === fighter_types.ALLY ? this.allies_map_sprite : this.enemies_map_sprite;
+        const caster_sprite = caster_sprite_map[action.caster_battle_key];
+        if (caster_sprite.action !== battle_actions.IDLE) {
+            caster_sprite.set_action(battle_actions.IDLE);
+        }
         await this.battle_stage.set_stage_default_position();
 
         if (ability.ability_category === ability_categories.SUMMON) {
