@@ -1,6 +1,6 @@
 import {GoldenSun} from "../GoldenSun";
 import * as numbers from "../magic_numbers";
-import {range_360} from "../utils";
+import {elements, element_colors_in_battle, hex2rgb, range_360} from "../utils";
 import {CameraAngle, DEFAULT_POS_ANGLE} from "./BattleStage";
 import * as _ from "lodash";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
@@ -40,6 +40,7 @@ type AdvParticleValue =
 
 type ParticleObject = {
     lifespan: AdvParticleValue;
+    color: string;
     red: AdvParticleValue;
     green: AdvParticleValue;
     blue: AdvParticleValue;
@@ -152,7 +153,7 @@ enum sprite_types {
 }
 
 type GeometryInfo = {
-    color: number;
+    color: string;
     radius: number;
     width: number;
     height: number;
@@ -262,6 +263,7 @@ export class BattleAnimation {
     public render_callbacks: {[callback_key: string]: Function};
     public mirrored: boolean;
     public cast_type: string;
+    public element: elements;
 
     //tween type can be 'initial' for first position
     //sprite_index: "targets" is the target, "caster" is the caster, "background" is the background sprite, 0...n is the sprites_key_names index
@@ -295,7 +297,8 @@ export class BattleAnimation {
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
         particles_sequence,
         cast_type,
-        mirrored
+        mirrored,
+        element?
     ) {
         this.game = game;
         this.data = data;
@@ -324,6 +327,7 @@ export class BattleAnimation {
         this.running = false;
         this.cast_type = cast_type;
         this.mirrored = mirrored;
+        this.element = element;
         this.render_callbacks = {};
         this.ability_sprites_groups = {
             [positions.BEHIND]: this.game.add.group(),
@@ -391,6 +395,13 @@ export class BattleAnimation {
                     let psy_sprite: Phaser.Sprite | Phaser.Graphics;
                     const sprite_type = sprite_info.type ?? sprite_types.SPRITE;
                     let color;
+                    const get_color = (color: string) => {
+                        if (color === "element") {
+                            return element_colors_in_battle[this.element];
+                        } else {
+                            return parseInt(sprite_info.geometry_info.color, 16);
+                        }
+                    };
                     switch (sprite_type) {
                         case sprite_types.SPRITE:
                             psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_key);
@@ -408,7 +419,7 @@ export class BattleAnimation {
                             psy_sprite = this.game.add.graphics(this.x0, this.y0);
                             color = sprite_info.geometry_info.keep_core_white
                                 ? 0xffffff
-                                : sprite_info.geometry_info.color;
+                                : get_color(sprite_info.geometry_info.color);
                             psy_sprite.lineStyle(sprite_info.geometry_info.thickness, color);
                             psy_sprite.arc(0, 0, sprite_info.geometry_info.radius, 0, numbers.degree360, false);
                             break;
@@ -416,7 +427,7 @@ export class BattleAnimation {
                             psy_sprite = this.game.add.graphics(this.x0, this.y0);
                             color = sprite_info.geometry_info.keep_core_white
                                 ? 0xffffff
-                                : sprite_info.geometry_info.color;
+                                : get_color(sprite_info.geometry_info.color);
                             psy_sprite.beginFill(color, 1);
                             psy_sprite.drawRect(
                                 0,
@@ -430,7 +441,7 @@ export class BattleAnimation {
                             psy_sprite = this.game.add.graphics(this.x0, this.y0);
                             color = sprite_info.geometry_info.keep_core_white
                                 ? 0xffffff
-                                : sprite_info.geometry_info.color;
+                                : get_color(sprite_info.geometry_info.color);
                             psy_sprite.beginFill(color, 1);
                             psy_sprite.drawCircle(0, 0, sprite_info.geometry_info.radius << 1);
                             psy_sprite.endFill();
@@ -441,7 +452,7 @@ export class BattleAnimation {
                         psy_sprite = this.game.add.sprite(psy_sprite.x, psy_sprite.y, psy_sprite.generateTexture());
                         graphic.destroy();
                         psy_sprite.data.custom_key = `${sprite_info.type}/${i}/${j}`;
-                        psy_sprite.data.color = sprite_info.geometry_info.color;
+                        psy_sprite.data.color = get_color(sprite_info.geometry_info.color);
                         psy_sprite.data.keep_core_white = sprite_info.geometry_info.keep_core_white;
                     }
                     this.ability_sprites_groups[sprite_info.position].addChild(psy_sprite);
@@ -988,6 +999,17 @@ export class BattleAnimation {
                         data.target.x = x;
                         data.target.y = y;
                     }
+                }
+                if (data.color) {
+                    let rgb: ReturnType<typeof hex2rgb>;
+                    if (data.color === "element") {
+                        rgb = hex2rgb(element_colors_in_battle[this.element]);
+                    } else {
+                        rgb = hex2rgb(data.color);
+                    }
+                    data.red = rgb.r;
+                    data.green = rgb.g;
+                    data.blue = rgb.b;
                 }
                 this.data.particle_manager.addData(key, data);
             }

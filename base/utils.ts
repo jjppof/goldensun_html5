@@ -35,6 +35,15 @@ export const element_colors = {
     [elements.JUPITER]: 0xe070b0,
 };
 
+/*Element colors in battle*/
+export const element_colors_in_battle = {
+    [elements.VENUS]: 0xf8f848,
+    [elements.MERCURY]: 0x80f8f8,
+    [elements.MARS]: 0xf87038,
+    [elements.JUPITER]: 0xf7adf7,
+    [elements.NO_ELEMENT]: 0xc6c6c6,
+};
+
 /*8-Directional direction values*/
 export enum directions {
     right = 0,
@@ -383,13 +392,7 @@ export function capitalize(text, lower = false) {
     return (lower ? text.toLowerCase() : text).replace(/(?:^|\s|["'([{])+\S/g, match => match.toUpperCase());
 }
 
-/*Changes the brightness of a given color code
-
-Input: hex [number] - Input color
-       percent [number] - Brightness factor
-
-Output [number] - Output color*/
-export function change_brightness(hex, percent) {
+export function hex2rgb(hex: string | number) {
     if (typeof hex === "string") {
         hex = hex.replace(/^\s*#|\s*$/g, "");
     } else {
@@ -400,10 +403,20 @@ export function change_brightness(hex, percent) {
     } else {
         hex = ("000000" + hex).slice(-6);
     }
-    let r = parseInt(hex.substr(0, 2), 16);
-    let g = parseInt(hex.substr(2, 2), 16);
-    let b = parseInt(hex.substr(4, 2), 16);
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    return {r: r, g: g, b: b};
+}
 
+/*Changes the brightness of a given color code
+
+Input: hex [number] - Input color
+       percent [number] - Brightness factor
+
+Output [number] - Output color*/
+export function change_brightness(hex, percent) {
+    let {r, g, b} = hex2rgb(hex);
     let h, s, v;
     [h, s, v] = rgb2hsv(r, g, b);
     v = (v * percent) | 0;

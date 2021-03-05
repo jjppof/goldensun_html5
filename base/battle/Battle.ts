@@ -592,7 +592,8 @@ export class Battle {
                     this.game,
                     this.data,
                     animation_recipe,
-                    action.caster.fighter_type !== fighter_types.ALLY
+                    action.caster.fighter_type !== fighter_types.ALLY,
+                    ability.element
                 );
                 await this.animation_manager.play_animation(
                     cast_animation,

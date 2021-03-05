@@ -1,4 +1,5 @@
 import {GoldenSun} from "../GoldenSun";
+import {elements} from "../utils";
 import {BattleAnimation} from "./BattleAnimation";
 import {BattleStage} from "./BattleStage";
 import {PlayerSprite} from "./PlayerSprite";
@@ -33,7 +34,8 @@ export class BattleAnimationManager {
         game: Phaser.Game,
         data: GoldenSun,
         animation_recipe: any,
-        mirrored_animation: boolean
+        mirrored_animation: boolean,
+        element?: elements
     ) {
         return new BattleAnimation(
             game,
@@ -61,7 +63,8 @@ export class BattleAnimationManager {
             animation_recipe.blend_mode_sequence,
             animation_recipe.particles_sequence,
             animation_recipe.cast_type,
-            mirrored_animation
+            mirrored_animation,
+            element
         );
     }
 

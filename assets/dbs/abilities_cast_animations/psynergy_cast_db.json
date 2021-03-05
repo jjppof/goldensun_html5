@@ -8,7 +8,7 @@
         "trails": true,
         "trails_factor": 0.35,
         "geometry_info": {
-            "color": 16316488,
+            "color": "element",
             "thickness": 1,
             "radius": 11,
             "keep_core_white": true
@@ -72,6 +72,11 @@
         "sprite_index": [0, 1, 2]
     }],
     "alpha_sequence": [{
+        "to": [0.8, 0.8, 0.8],
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": [0, 1, 2]
+    },{
         "to": [0, 0, 0],
         "is_absolute": true,
         "start_delay": 350,
@@ -93,12 +98,10 @@
     "particles_sequence": [{
         "data": {
             "energy" : {
-                "red": 248,
-                "green": 248,
-                "blue": 72,
+                "color": "element",
                 "lifespan": 600,
                 "alpha": {
-                    "value": 1.0,
+                    "value": 0.8,
                     "control": [ { "x": 0.0, "y": 1.0 }, { "x": 0.4, "y": 0.7}, { "x": 0.5, "y": 0.0} ]
                 },
                 "target": {
