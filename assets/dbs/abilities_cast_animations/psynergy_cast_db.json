@@ -8,10 +8,76 @@
         "trails": true,
         "trails_factor": 0.35,
         "geometry_info": {
-            "color": 16748544,
-            "thickness": 2,
-            "radius": 5
+            "color": 16316488,
+            "thickness": 1,
+            "radius": 11,
+            "keep_core_white": true
         }
+    }],
+    "x_sequence": [{
+        "to": ["caster", "caster", "caster"],
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": [0, 1, 2]
+    },{
+        "to": 20,
+        "is_absolute": false,
+        "duration": 700,
+        "tween": "Quadratic.InOut",
+        "sprite_index": 0
+    },{
+        "to": -20,
+        "is_absolute": false,
+        "duration": 700,
+        "tween": "Quadratic.InOut",
+        "sprite_index": 1
+    },{
+        "to": -20,
+        "is_absolute": false,
+        "duration": 700,
+        "tween": "Quadratic.InOut",
+        "sprite_index": 2
+    }],
+    "y_sequence": [{
+        "to": ["caster", "caster", "caster"],
+        "shift": [-43, -43, -43],
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": [0, 1, 2]
+    },{
+        "to": -20,
+        "is_absolute": false,
+        "duration": 700,
+        "tween": "Quadratic.InOut",
+        "sprite_index": 1
+    },{
+        "to": 20,
+        "is_absolute": false,
+        "duration": 700,
+        "tween": "Quadratic.InOut",
+        "sprite_index": 2
+    }],
+    "x_anchor_sequence": [{
+        "to": [0.5, 0.5, 0.5],
+        "shift": [0, 0, 0],
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": [0, 1, 2]
+    }],
+    "y_anchor_sequence": [{
+        "to": [0.5, 0.5, 0.5],
+        "shift": [0, 0, 0],
+        "is_absolute": true,
+        "tween": "initial",
+        "sprite_index": [0, 1, 2]
+    }],
+    "alpha_sequence": [{
+        "to": [0, 0, 0],
+        "is_absolute": true,
+        "start_delay": 350,
+        "duration": 350,
+        "tween": "Quadratic.InOut",
+        "sprite_index": [0, 1, 2]
     }],
     "play_sequence": [{
         "animation_key": "cast_init",
@@ -23,5 +89,51 @@
         "sprite_index": "caster",
         "wait": false,
         "wait_for_index": 0
+    }],
+    "particles_sequence": [{
+        "data": {
+            "energy" : {
+                "red": 248,
+                "green": 248,
+                "blue": 72,
+                "lifespan": 600,
+                "alpha": {
+                    "value": 1.0,
+                    "control": [ { "x": 0.0, "y": 1.0 }, { "x": 0.4, "y": 0.7}, { "x": 0.5, "y": 0.0} ]
+                },
+                "target": {
+                    "x": "caster",
+                    "y": "caster",
+                    "shift_y": -43
+                }
+            }
+        },
+        "zones": {
+            "circle_zone": {
+                "type": "circle",
+                "radius": 60
+            }
+        },
+        "emitters": [{
+            "x": "caster",
+            "y": "caster",
+            "shift_y": -43,
+            "position": "over",
+            "render_type": "pixel",
+            "show_trails": true,
+            "trails_clear_factor": 0.2,
+            "pixel_size": 6,
+            "pixel_reducing_factor": 0.1,
+            "pixel_is_rect": false,
+            "particles_display_blend_mode": "screen",
+            "render_white_core": true,
+            "total": 15,
+            "repeat": 2,
+            "frequency": 200,
+            "random_in_zone": true,
+            "emitter_data_key": "energy",
+            "zone_key": "circle_zone"
+        }],
+        "emission_finish": 900
     }]
 }

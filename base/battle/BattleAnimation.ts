@@ -60,6 +60,8 @@ type ParticleObject = {
     target: {
         x: number;
         y: number;
+        shift_x: number;
+        shift_y: number;
         zone_key?: string;
         zone?: Phaser.ParticleStorm.Zones.Base;
         speed?: "yoyo" | "reverse" | "linear";
@@ -79,7 +81,12 @@ type ParticlesZone = {
     radius: number;
     width: number;
     height: number;
-    points: {x: number; y: number}[];
+    points: {
+        x: number;
+        y: number;
+        shift_x: number;
+        shift_y: number;
+    }[];
 };
 
 type Emitter = {
@@ -122,8 +129,10 @@ type Emitter = {
     pixel_reducing_factor: number;
     pixel_is_rect: boolean;
     gravity_well: {
-        x: number;
-        y: number;
+        x: number | string;
+        y: number | string;
+        shift_x: number;
+        shift_y: number;
         power: number;
         epsilon: number;
         gravity: number;
@@ -148,6 +157,7 @@ type GeometryInfo = {
     width: number;
     height: number;
     thickness: number;
+    keep_core_white: boolean;
 };
 
 export class BattleAnimation {
@@ -380,6 +390,7 @@ export class BattleAnimation {
                 for (let j = 0; j < count; ++j) {
                     let psy_sprite: Phaser.Sprite | Phaser.Graphics;
                     const sprite_type = sprite_info.type ?? sprite_types.SPRITE;
+                    let color;
                     switch (sprite_type) {
                         case sprite_types.SPRITE:
                             psy_sprite = this.game.add.sprite(this.x0, this.y0, sprite_key);
@@ -395,12 +406,18 @@ export class BattleAnimation {
                             break;
                         case sprite_types.RING:
                             psy_sprite = this.game.add.graphics(this.x0, this.y0);
-                            psy_sprite.lineStyle(sprite_info.geometry_info.thickness, sprite_info.geometry_info.color);
+                            color = sprite_info.geometry_info.keep_core_white
+                                ? 0xffffff
+                                : sprite_info.geometry_info.color;
+                            psy_sprite.lineStyle(sprite_info.geometry_info.thickness, color);
                             psy_sprite.arc(0, 0, sprite_info.geometry_info.radius, 0, numbers.degree360, false);
                             break;
                         case sprite_types.RECTANGLE:
                             psy_sprite = this.game.add.graphics(this.x0, this.y0);
-                            psy_sprite.beginFill(sprite_info.geometry_info.color, 1);
+                            color = sprite_info.geometry_info.keep_core_white
+                                ? 0xffffff
+                                : sprite_info.geometry_info.color;
+                            psy_sprite.beginFill(color, 1);
                             psy_sprite.drawRect(
                                 0,
                                 0,
@@ -411,7 +428,10 @@ export class BattleAnimation {
                             break;
                         case sprite_types.CIRCLE:
                             psy_sprite = this.game.add.graphics(this.x0, this.y0);
-                            psy_sprite.beginFill(sprite_info.geometry_info.color, 1);
+                            color = sprite_info.geometry_info.keep_core_white
+                                ? 0xffffff
+                                : sprite_info.geometry_info.color;
+                            psy_sprite.beginFill(color, 1);
                             psy_sprite.drawCircle(0, 0, sprite_info.geometry_info.radius << 1);
                             psy_sprite.endFill();
                             break;
@@ -420,6 +440,9 @@ export class BattleAnimation {
                         const graphic = psy_sprite;
                         psy_sprite = this.game.add.sprite(psy_sprite.x, psy_sprite.y, psy_sprite.generateTexture());
                         graphic.destroy();
+                        psy_sprite.data.custom_key = `${sprite_info.type}/${i}/${j}`;
+                        psy_sprite.data.color = sprite_info.geometry_info.color;
+                        psy_sprite.data.keep_core_white = sprite_info.geometry_info.keep_core_white;
                     }
                     this.ability_sprites_groups[sprite_info.position].addChild(psy_sprite);
                     psy_sprite.data.battle_index = this.sprites.length;
@@ -562,7 +585,7 @@ export class BattleAnimation {
     play_number_property_sequence(sequence, target_property: keyof PlayerSprite, inner_property?) {
         let chained_tweens = {};
         let auto_start_tween = {};
-        const property_to_set = inner_property !== undefined ? inner_property : target_property;
+        const property_to_set = inner_property ?? target_property;
         for (let i = 0; i < sequence.length; ++i) {
             const seq = sequence[i];
             if (!(seq.sprite_index in auto_start_tween)) auto_start_tween[seq.sprite_index] = true;
@@ -574,10 +597,12 @@ export class BattleAnimation {
             sprites.forEach((this_sprite, index) => {
                 const get_to_value = () => {
                     let uniq_key;
-                    if (this_sprite.data && this_sprite.data.hasOwnProperty("battle_index")) {
-                        uniq_key = this_sprite.key + "_" + this_sprite.data.battle_index;
+                    if (typeof this_sprite.key === "object") {
+                        uniq_key = this_sprite.data.custom_key; //potential bug. Maybe moving everything to this can be a good solution...
+                    } else if (this_sprite.data && this_sprite.data.hasOwnProperty("battle_index")) {
+                        uniq_key = `${this_sprite.key}/${this_sprite.data.battle_index}`;
                     } else {
-                        uniq_key = this_sprite.key + "_" + index; //potential bug
+                        uniq_key = `${this_sprite.key}/${index}`; //potential bug
                     }
                     if (this.sprites_prev_properties[uniq_key] === undefined) {
                         this.sprites_prev_properties[uniq_key] = {};
@@ -588,12 +613,12 @@ export class BattleAnimation {
                     const seq_to = Array.isArray(seq.to) ? seq.to[index] : seq.to;
                     let to_value = seq_to;
                     if (["targets", "caster"].includes(seq_to)) {
-                        let shift = Array.isArray(seq.shift) ? seq.shift[index] : seq.shift;
+                        const shift = Array.isArray(seq.shift) ? seq.shift[index] : seq.shift;
                         let player_sprite = this.caster_sprite;
                         if (seq_to === "targets") {
                             player_sprite = this.targets_sprites[this.targets_sprites.length >> 1];
                         }
-                        to_value = player_sprite[property_to_set] + (shift === undefined ? 0 : shift);
+                        to_value = player_sprite[property_to_set] + (shift ?? 0);
                         if (this.mirrored && property_to_set === "x") {
                             to_value = numbers.GAME_WIDTH - to_value;
                         }
@@ -932,7 +957,13 @@ export class BattleAnimation {
                         );
                         break;
                     case zone_types.POINT:
-                        zone = this.data.particle_manager.createPointZone(zone_info.points[0].x, zone_info.points[0].y);
+                        const {x, y} = this.get_sprite_xy_pos(
+                            zone_info.points[0].x,
+                            zone_info.points[0].y,
+                            zone_info.points[0].shift_x,
+                            zone_info.points[0].shift_y
+                        );
+                        zone = this.data.particle_manager.createPointZone(x, y);
                         break;
                     case zone_types.RECTANGLE:
                         zone = this.data.particle_manager.createRectangleZone(zone_info.width, zone_info.height);
@@ -943,8 +974,20 @@ export class BattleAnimation {
 
             for (let key in adv_particles_seq.data) {
                 const data = _.cloneDeep(adv_particles_seq.data[key]);
-                if (data.target?.zone_key !== undefined) {
-                    data.target.zone = zone_objs[data.target.zone_key];
+                if (data.target) {
+                    if (data.target.zone_key !== undefined) {
+                        data.target.zone = zone_objs[data.target.zone_key];
+                    }
+                    if (data.target.hasOwnProperty("x") && data.target.hasOwnProperty("y")) {
+                        const {x, y} = this.get_sprite_xy_pos(
+                            data.target.x,
+                            data.target.y,
+                            data.target.shift_x,
+                            data.target.shift_y
+                        );
+                        data.target.x = x;
+                        data.target.y = y;
+                    }
                 }
                 this.data.particle_manager.addData(key, data);
             }
@@ -958,8 +1001,8 @@ export class BattleAnimation {
                     undefined,
                     emitter_info.render_white_core
                 );
-                emitter.force.x = emitter_info.force?.x === undefined ? emitter.force.x : emitter_info.force.x;
-                emitter.force.y = emitter_info.force?.y === undefined ? emitter.force.y : emitter_info.force.y;
+                emitter.force.x = emitter_info.force?.x ?? emitter.force.x;
+                emitter.force.y = emitter_info.force?.y ?? emitter.force.y;
 
                 (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).autoClear = !emitter_info.show_trails;
                 if (emitter_info.show_trails || emitter_info.pixel_reducing_factor) {
@@ -1004,9 +1047,15 @@ export class BattleAnimation {
                     this.ability_sprites_groups[emitter_info.position].addChild(display);
                 });
                 if (emitter_info.gravity_well) {
-                    emitter.createGravityWell(
+                    const {x, y} = this.get_sprite_xy_pos(
                         emitter_info.gravity_well.x,
                         emitter_info.gravity_well.y,
+                        emitter_info.gravity_well.shift_x,
+                        emitter_info.gravity_well.shift_y
+                    );
+                    emitter.createGravityWell(
+                        x,
+                        y,
                         emitter_info.gravity_well.power,
                         emitter_info.gravity_well.epsilon,
                         emitter_info.gravity_well.gravity
@@ -1077,7 +1126,13 @@ export class BattleAnimation {
         this.sprites.forEach(sprite => {
             if (!sprite.data.trail_image) return;
             const bm_data = sprite.data.trail_image.key as Phaser.BitmapData;
+            if (sprite.data.keep_core_white) {
+                sprite.tint = sprite.data.color;
+            }
             bm_data.draw(sprite);
+            if (sprite.data.keep_core_white) {
+                sprite.tint = 0xffffff;
+            }
         });
         for (let key in this.render_callbacks) {
             this.render_callbacks[key]();
