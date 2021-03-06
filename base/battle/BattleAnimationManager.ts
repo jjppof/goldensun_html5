@@ -20,14 +20,14 @@ export class BattleAnimationManager {
     public data: GoldenSun;
     public animations: {[key: string]: BattleAnimation};
     public not_available: Set<string>;
-    public render_function: Function;
+    public render_functions: Function[];
 
     constructor(game, data) {
         this.game = game;
         this.data = data;
         this.animations = {};
         this.not_available = new Set();
-        this.render_function = null;
+        this.render_functions = [];
     }
 
     static get_animation_instance(
@@ -63,6 +63,8 @@ export class BattleAnimationManager {
             animation_recipe.blend_mode_sequence,
             animation_recipe.particles_sequence,
             animation_recipe.cast_type,
+            animation_recipe.wait_for_cast_animation,
+            animation_recipe.follow_caster,
             mirrored_animation,
             element
         );
@@ -106,7 +108,7 @@ export class BattleAnimationManager {
         await Promise.all([sprite_loader_promise, recipe_loader_promise, load_complete_promise]);
         if (all_succeed) {
             const animation_recipe = this.game.cache.getJSON(battle_anim_key + RECIPE_SUFFIX);
-            const key = battle_anim_key + "/" + caster_battle_key;
+            const key = `${battle_anim_key}/${caster_battle_key}`;
             this.animations[key] = BattleAnimationManager.get_animation_instance(
                 this.game,
                 this.data,
@@ -121,10 +123,16 @@ export class BattleAnimationManager {
     }
 
     animation_available(battle_anim_key, caster_battle_key) {
-        const key = battle_anim_key + "/" + caster_battle_key;
+        const key = `${battle_anim_key}/${caster_battle_key}`;
         if (key in this.animations) return animation_availability.AVAILABLE;
         else if (battle_anim_key === "no_animation") return animation_availability.NO_ANIMATION;
         else return animation_availability.NOT_AVAILABLE;
+    }
+
+    get_animation(battle_anim_key, caster_battle_key) {
+        const key = `${battle_anim_key}/${caster_battle_key}`;
+        if (key in this.animations) return this.animations[key];
+        return null;
     }
 
     async play(
@@ -136,7 +144,7 @@ export class BattleAnimationManager {
         group_taker: Phaser.Group,
         battle_stage: BattleStage
     ) {
-        const key = battle_anim_key + "/" + caster_battle_key;
+        const key = `${battle_anim_key}/${caster_battle_key}`;
         if (!(key in this.animations)) return;
         const sprite_key = battle_anim_key + ANIMATION_SUFFIX;
         await this.play_animation(
@@ -174,15 +182,16 @@ export class BattleAnimationManager {
         const play_promise = new Promise(resolve => {
             play_promise_resolve = resolve;
         });
-        this.render_function = animation.render.bind(animation);
+        const render_function = animation.render.bind(animation);
+        this.render_functions.push(render_function);
         animation.play(play_promise_resolve);
         await play_promise;
-        this.render_function = null;
+        this.render_functions = this.render_functions.filter(f => f !== render_function);
     }
 
     render() {
-        if (this.render_function) {
-            this.render_function();
+        if (this.render_functions.length) {
+            this.render_functions.forEach(f => f());
         }
     }
 

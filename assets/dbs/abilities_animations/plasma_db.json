@@ -9,7 +9,7 @@
         "start_delay": 0,
         "to": "cast_position",
         "is_absolute": true,
-        "tween": "Exponential.InOut",
+        "tween": "Quadratic.Out",
         "duration": 500,
         "direction": "closest"
     }],
@@ -152,6 +152,7 @@
         "value": [-1,-1,-1]
     }],
     "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": false,
     "particles_sequence": [{
         "data": {
             "explosion" : {

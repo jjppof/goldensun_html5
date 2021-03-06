@@ -270,6 +270,10 @@ export class BattleStage {
             this.background_key
         );
 
+        const bg_filter = this.game.add.filter("ColorFilters");
+        this.battle_bg.filters = [bg_filter];
+        this.battle_bg2.filters = [bg_filter];
+
         this.bg_height = this.battle_bg.height;
 
         this.battle_bg.scale.setTo(BG_DEFAULT_SCALE, BG_DEFAULT_SCALE);
@@ -415,8 +419,8 @@ export class BattleStage {
                 {
                     rad: dest_angle,
                 },
-                300,
-                Phaser.Easing.Linear.None,
+                500,
+                Phaser.Easing.Quadratic.Out,
                 true
             )
             .onComplete.addOnce(promise_resolve);

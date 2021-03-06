@@ -188,6 +188,7 @@ export class PlayerSprite {
         this.char_sprite = this.group.create(0, 0, this.player_info.sprite_key);
         this.char_sprite.anchor.setTo(0.5, 1);
         this.char_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
+        this.char_sprite.filters = [this.game.add.filter("ColorFilters")];
 
         if (this.is_ally) {
             const player = this.player_instance as MainChar;

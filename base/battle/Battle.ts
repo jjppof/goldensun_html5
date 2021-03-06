@@ -595,7 +595,11 @@ export class Battle {
                     action.caster.fighter_type !== fighter_types.ALLY,
                     ability.element
                 );
-                await this.animation_manager.play_animation(
+                const main_animation = this.animation_manager.get_animation(
+                    action.battle_animation_key,
+                    action.caster_battle_key
+                );
+                const cast_promise = this.animation_manager.play_animation(
                     cast_animation,
                     caster_sprite,
                     target_sprites,
@@ -603,6 +607,9 @@ export class Battle {
                     group_taker,
                     this.battle_stage
                 );
+                if (main_animation.wait_for_cast_animation) {
+                    await cast_promise;
+                }
             }
             await this.animation_manager.play(
                 action.battle_animation_key,

@@ -103,7 +103,7 @@
         "start_delay": 0,
         "to": "cast_position",
         "is_absolute": true,
-        "tween": "Exponential.InOut",
+        "tween": "Quadratic.Out",
         "duration": 500,
         "direction": "closest"
     }],
@@ -159,5 +159,6 @@
         "mode": "screen",
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     }],
-    "cast_type": "psynergy_cast"
+    "cast_type": "psynergy_cast",
+    "wait_for_cast_animation": false
 }

@@ -1,5 +1,6 @@
 {
     "key_name": "psynergy_cast",
+    "follow_caster": true,
     "sprites": [{
         "type": "ring",
         "per_target": false,

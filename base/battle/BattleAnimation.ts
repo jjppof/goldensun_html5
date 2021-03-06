@@ -256,14 +256,20 @@ export class BattleAnimation {
     public trails_objs: Phaser.Image[];
     public trails_bmps: Phaser.BitmapData[];
     public caster_filter: any;
-    public targets_filter: any;
+    public targets_filters: any[];
     public background_filter: any;
     public sprites_filters: any[];
     public promises: Promise<any>[];
     public render_callbacks: {[callback_key: string]: Function};
     public mirrored: boolean;
     public cast_type: string;
+    public wait_for_cast_animation: boolean;
     public element: elements;
+    public follow_caster: boolean;
+    public follow_caster_prev_pos: {
+        x: number;
+        y: number;
+    };
 
     //tween type can be 'initial' for first position
     //sprite_index: "targets" is the target, "caster" is the caster, "background" is the background sprite, 0...n is the sprites_key_names index
@@ -297,8 +303,10 @@ export class BattleAnimation {
         blend_mode_sequence, //{start_delay: value, mode: type, sprite_index: index}
         particles_sequence,
         cast_type,
+        wait_for_cast_animation,
+        follow_caster,
         mirrored,
-        element?
+        element
     ) {
         this.game = game;
         this.data = data;
@@ -326,8 +334,14 @@ export class BattleAnimation {
         this.particles_sequence = particles_sequence ?? [];
         this.running = false;
         this.cast_type = cast_type;
+        this.wait_for_cast_animation = wait_for_cast_animation;
         this.mirrored = mirrored;
         this.element = element;
+        this.follow_caster = follow_caster ?? false;
+        this.follow_caster_prev_pos = {
+            x: 0,
+            y: 0,
+        };
         this.render_callbacks = {};
         this.ability_sprites_groups = {
             [positions.BEHIND]: this.game.add.group(),
@@ -352,6 +366,10 @@ export class BattleAnimation {
         this.x0 = this.game.camera.x;
         this.y0 = this.game.camera.y;
         this.caster_sprite = caster_sprite;
+        this.follow_caster_prev_pos = {
+            x: this.caster_sprite.x,
+            y: this.caster_sprite.y,
+        };
         this.targets_sprites = targets_sprites;
         this.background_sprites = background_sprites;
         this.group_caster = group_caster;
@@ -469,16 +487,12 @@ export class BattleAnimation {
     }
 
     set_filters() {
-        this.caster_filter = this.game.add.filter("ColorFilters");
-        this.targets_filter = this.game.add.filter("ColorFilters");
-        this.background_filter = this.game.add.filter("ColorFilters");
+        this.background_filter = this.background_sprites[0].filters[0];
         this.sprites_filters = [];
-        this.caster_sprite.filters = [this.caster_filter];
+        this.caster_filter = this.caster_sprite.filters[0];
+        this.targets_filters = [];
         this.targets_sprites.forEach(sprite => {
-            sprite.filters = [this.targets_filter];
-        });
-        this.background_sprites.forEach(sprite => {
-            sprite.filters = [this.background_filter];
+            this.targets_filters.push(sprite.filters[0]);
         });
         this.sprites.forEach((sprite, index) => {
             this.sprites_filters.push(this.game.add.filter("ColorFilters"));
@@ -514,16 +528,9 @@ export class BattleAnimation {
     unmount_animation(finish_callback) {
         Promise.all(this.promises).then(() => {
             this.caster_filter = null;
-            this.targets_filter = null;
+            this.targets_filters = null;
             this.background_filter = null;
             this.sprites_filters = [];
-            this.caster_sprite.filters = undefined;
-            this.targets_sprites.forEach(sprite => {
-                sprite.filters = undefined;
-            });
-            this.background_sprites.forEach(sprite => {
-                sprite.filters = undefined;
-            });
             this.sprites.forEach(sprite => {
                 sprite.destroy();
             });
@@ -559,7 +566,7 @@ export class BattleAnimation {
                 }
             } else if (seq.sprite_index === "targets") {
                 if (obj_propety === "filters") {
-                    return [this.targets_filter];
+                    return this.targets_filters;
                 } else {
                     return this.targets_sprites.forEach(sprite => sprite[obj_propety]);
                 }
@@ -693,14 +700,12 @@ export class BattleAnimation {
                             auto_start_tween[seq.sprite_index],
                             start_delay,
                             0,
-                            seq.yoyo === undefined ? false : seq.yoyo,
+                            seq.yoyo ?? false,
                             true
                         );
                         if (!promises_set) {
                             let resolve_function;
-                            let this_promise = new Promise(resolve => {
-                                resolve_function = resolve;
-                            });
+                            const this_promise = new Promise(resolve => (resolve_function = resolve));
                             this.promises.push(this_promise);
                             tween.onStart.addOnce(() => {
                                 if (seq.force_stage_update) {
@@ -843,7 +848,7 @@ export class BattleAnimation {
                     ? filter_seq.start_delay[index]
                     : filter_seq.start_delay;
                 this.game.time.events.add(start_delay, () => {
-                    const this_property = filter_seq.filter !== undefined ? filter_seq.filter : property;
+                    const this_property = filter_seq.filter ?? property;
                     sprite.filters[0][this_property] = filter_seq.value;
                     secondary_properties.forEach(secondary_property => {
                         sprite.filters[0][secondary_property] = filter_seq[secondary_property];
@@ -1048,10 +1053,9 @@ export class BattleAnimation {
                 }
 
                 if (emitter_info.render_type === "pixel") {
-                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize =
-                        emitter_info.pixel_size === undefined ? 2 : emitter_info.pixel_size;
+                    (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize = emitter_info.pixel_size ?? 2;
                     (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).useRect =
-                        emitter_info.pixel_is_rect === undefined ? false : emitter_info.pixel_is_rect;
+                        emitter_info.pixel_is_rect ?? false;
 
                     if (emitter_info.particles_display_blend_mode === "screen") {
                         (emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).display.blendMode =
@@ -1156,6 +1160,15 @@ export class BattleAnimation {
                 sprite.tint = 0xffffff;
             }
         });
+        if (this.follow_caster) {
+            for (let pos in this.ability_sprites_groups) {
+                const group: Phaser.Group = this.ability_sprites_groups[pos];
+                group.x += this.caster_sprite.x - this.follow_caster_prev_pos.x;
+                group.y += this.caster_sprite.y - this.follow_caster_prev_pos.y;
+            }
+            this.follow_caster_prev_pos.x = this.caster_sprite.x;
+            this.follow_caster_prev_pos.y = this.caster_sprite.y;
+        }
         for (let key in this.render_callbacks) {
             this.render_callbacks[key]();
         }
