@@ -5356,6 +5356,7 @@ declare module Phaser {
         layers: any[];
         objects: any[];
         orientation: string;
+        pauseAnimation: boolean;
         properties: any;
         rayStepRate: number;
         tileHeight: number;

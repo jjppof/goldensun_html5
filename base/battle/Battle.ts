@@ -1256,6 +1256,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 this.animation_manager.destroy();
             },
             () => {
+                this.data.map.sprite.pauseAnimation = false;
                 this.data.in_battle = false;
                 this.data.battle_instance = undefined;
                 this.game.physics.p2.resume();
