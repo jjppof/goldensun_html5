@@ -469,12 +469,11 @@ export class BattleAnimation {
                         const graphic = psy_sprite;
                         psy_sprite = this.game.add.sprite(psy_sprite.x, psy_sprite.y, psy_sprite.generateTexture());
                         graphic.destroy();
-                        psy_sprite.data.custom_key = `${sprite_info.type}/${i}/${j}`;
                         psy_sprite.data.color = get_color(sprite_info.geometry_info.color);
                         psy_sprite.data.keep_core_white = sprite_info.geometry_info.keep_core_white;
                     }
                     this.ability_sprites_groups[sprite_info.position].addChild(psy_sprite);
-                    psy_sprite.data.battle_index = this.sprites.length;
+                    psy_sprite.data.custom_key = `${sprite_type}/${i}/${j}`;
                     psy_sprite.data.trail_image = trail_image;
                     psy_sprite.data.ignore_trim = true;
                     this.sprites.push(psy_sprite);
@@ -601,27 +600,28 @@ export class BattleAnimation {
     }
 
     play_number_property_sequence(sequence, target_property: keyof PlayerSprite, inner_property?) {
-        let chained_tweens = {};
-        let auto_start_tween = {};
+        const chained_tweens = {};
+        const auto_start_tween = {};
         const property_to_set = inner_property ?? target_property;
         for (let i = 0; i < sequence.length; ++i) {
             const seq = sequence[i];
-            if (!(seq.sprite_index in auto_start_tween)) auto_start_tween[seq.sprite_index] = true;
-            if (seq.sprite_index in chained_tweens) {
-                auto_start_tween[seq.sprite_index] = false;
-            }
-            let sprites = this.get_sprites(seq, inner_property !== undefined ? target_property : undefined);
+            const sprites = this.get_sprites(seq, inner_property !== undefined ? target_property : undefined);
             let promises_set = false;
             sprites.forEach((this_sprite, index) => {
+                let uniq_key;
+                if (this_sprite.data && this_sprite.data.hasOwnProperty("custom_key")) {
+                    uniq_key = this_sprite.data.custom_key;
+                } else {
+                    uniq_key = `${this_sprite.key}/${index}`; //potential bug
+                }
+                const property_uniq_key = `${uniq_key}/${target_property}/${inner_property ?? ""}`;
+                if (!(property_uniq_key in auto_start_tween)) {
+                    auto_start_tween[property_uniq_key] = true;
+                }
+                if (property_uniq_key in chained_tweens && chained_tweens[property_uniq_key].length) {
+                    auto_start_tween[property_uniq_key] = false;
+                }
                 const get_to_value = () => {
-                    let uniq_key;
-                    if (typeof this_sprite.key === "object") {
-                        uniq_key = this_sprite.data.custom_key; //potential bug. Maybe moving everything to this can be a good solution...
-                    } else if (this_sprite.data && this_sprite.data.hasOwnProperty("battle_index")) {
-                        uniq_key = `${this_sprite.key}/${this_sprite.data.battle_index}`;
-                    } else {
-                        uniq_key = `${this_sprite.key}/${index}`; //potential bug
-                    }
                     if (this.sprites_prev_properties[uniq_key] === undefined) {
                         this.sprites_prev_properties[uniq_key] = {};
                     }
@@ -668,8 +668,9 @@ export class BattleAnimation {
                 if (seq.tween === "initial") {
                     this_sprite[property_to_set] = get_to_value();
                 } else {
-                    if (!(seq.sprite_index in chained_tweens)) chained_tweens[seq.sprite_index] = {[index]: []};
-                    if (!(index in chained_tweens[seq.sprite_index])) chained_tweens[seq.sprite_index][index] = [];
+                    if (!(property_uniq_key in chained_tweens)) {
+                        chained_tweens[property_uniq_key] = [];
+                    }
                     const start_delay = Array.isArray(seq.start_delay) ? seq.start_delay[index] : seq.start_delay;
                     if (seq.duration === "instantly") {
                         let resolve_function;
@@ -697,7 +698,7 @@ export class BattleAnimation {
                             {[property_to_set]: get_to_value},
                             Array.isArray(seq.duration) ? seq.duration[index] : seq.duration,
                             seq.tween.split(".").reduce((p, prop) => p[prop], Phaser.Easing),
-                            auto_start_tween[seq.sprite_index],
+                            auto_start_tween[property_uniq_key],
                             start_delay,
                             0,
                             seq.yoyo ?? false,
@@ -723,12 +724,12 @@ export class BattleAnimation {
                             });
                             promises_set = true;
                         }
-                        if (chained_tweens[seq.sprite_index][index].length) {
-                            chained_tweens[seq.sprite_index][index][
-                                chained_tweens[seq.sprite_index][index].length - 1
-                            ].chain(tween);
+                        if (chained_tweens[property_uniq_key].length) {
+                            chained_tweens[property_uniq_key][chained_tweens[property_uniq_key].length - 1].chain(
+                                tween
+                            );
                         }
-                        chained_tweens[seq.sprite_index][index].push(tween);
+                        chained_tweens[property_uniq_key].push(tween);
                     }
                 }
             });
@@ -932,12 +933,12 @@ export class BattleAnimation {
         if (x === "caster") {
             x = this.caster_sprite.x;
         } else if (x === "targets") {
-            _.mean(this.targets_sprites.map(target => target.x));
+            x = _.mean(this.targets_sprites.map(target => target.x));
         }
         if (y === "caster") {
             y = this.caster_sprite.y;
         } else if (y === "targets") {
-            _.mean(this.targets_sprites.map(target => target.y));
+            y = _.mean(this.targets_sprites.map(target => target.y));
         }
         (x as number) += shift_x ? shift_x : 0;
         (y as number) += shift_y ? shift_y : 0;

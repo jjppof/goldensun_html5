@@ -173,6 +173,8 @@ Phaser.ParticleStorm.Controls = {};
 
 Phaser.ParticleStorm.Zones = {};
 
+Phaser.ParticleStorm.PI_180 = Math.PI / 180.0;
+
 /**
 * Creates a new Particle Emitter. You can specify the type of renderer the emitter will use. By default it uses
 * the Sprite emitter, meaning each particle it creates is its own sprite object.
@@ -2299,7 +2301,7 @@ Phaser.ParticleStorm.Particle.prototype = {
             v = parseFloat(this.emitter.game.rnd.pick(velocity), 10);
         }
 
-        var angle = (Math.random() * (to - from) + from) * Math.PI / 180.0;
+        var angle = (Math.random() * (to - from) + from) * Phaser.ParticleStorm.PI_180;
 
         this.transform.velocity.x.value = Math.sin(angle) * v;
         this.transform.velocity.y.value = -Math.cos(angle) * v;
@@ -3189,7 +3191,7 @@ Phaser.ParticleStorm.Graph = {
     */
     getClampedValue: function (obj, percent) {
 
-        return Phaser.Math.clamp(Math.floor(obj.initial + this.getValue(obj, percent)), obj.min, obj.max);
+        return Phaser.Math.clamp((obj.initial + this.getValue(obj, percent)) | 0, obj.min, obj.max);
 
     }
 
@@ -5017,7 +5019,7 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
                 if (arcs !== undefined && arce !== undefined)
                 {
                     //  Radiate within an arc
-                    var angle = (Math.random() * (arce - arcs) + arcs) * Math.PI / 180.0;
+                    var angle = (Math.random() * (arce - arcs) + arcs) * Phaser.ParticleStorm.PI_180;
                     var dx = Math.sin(angle);
                     var dy = -Math.cos(angle);
                     this.velocity.x.value = dx * v;
@@ -5243,7 +5245,7 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
 
         if (inherit.angularVelocity)
         {
-            var r = (parent.transform.rotation.initial + parent.transform.rotation.value) * Math.PI / 180;
+            var r = (parent.transform.rotation.initial + parent.transform.rotation.value) * Phaser.ParticleStorm.PI_180;
             this.velocity.x.initial = Math.sin(r);
             this.velocity.y.initial = -Math.cos(r);
         }
@@ -5265,7 +5267,7 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
 
         this.rotation.value += this.rotation.delta;
 
-        this.rotation.calc = (this.rotation.initial + this.graph.getValue(this.rotation, life)) * Math.PI / 180;
+        this.rotation.calc = (this.rotation.initial + this.graph.getValue(this.rotation, life)) * Phaser.ParticleStorm.PI_180;
 
         this.scale.x.calc = this.scale.x.initial + this.graph.getValue(this.scale.x, life);
         this.scale.y.calc = this.scale.y.initial + this.graph.getValue(this.scale.y, life);
@@ -5283,7 +5285,7 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
         {
             //  Add 90 degrees because particle rotation 0 is right-handed
             this.acceleration.facing.value += this.acceleration.facing.delta;
-            r = this.rotation.calc + ((90 + this.acceleration.facing.offset) * Math.PI / 180);
+            r = this.rotation.calc + ((90 + this.acceleration.facing.offset) * Phaser.ParticleStorm.PI_180);
             v = this.acceleration.facing.initial + this.graph.getValue(this.acceleration.facing, life);
             this.velocity.x.value += v * Math.sin(r);
             this.velocity.y.value += v * -Math.cos(r);
@@ -5299,7 +5301,7 @@ Phaser.ParticleStorm.Controls.Transform.prototype = {
         {
             //  Add 90 degrees because particle rotation 0 is right-handed
             this.velocity.facing.value += this.velocity.facing.delta;
-            r = this.rotation.calc + ((90 + this.velocity.facing.offset) * Math.PI / 180);
+            r = this.rotation.calc + ((90 + this.velocity.facing.offset) * Phaser.ParticleStorm.PI_180);
             v = this.velocity.facing.initial + this.graph.getValue(this.velocity.facing, life);
             this.x += v * Math.sin(r);
             this.y += v * -Math.cos(r);
@@ -6302,3 +6304,5 @@ Phaser.ParticleStorm.Renderer.SpriteBatch.prototype.destroy = function () {
     this.game = null;
 
 };
+
+//# sourceURL=assets/plugins/particle-storm.js
