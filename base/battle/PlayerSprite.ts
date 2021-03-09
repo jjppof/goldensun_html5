@@ -66,6 +66,7 @@ export class PlayerSprite {
     private group: Phaser.Group;
     public ellipses_semi_major: number;
     public ellipses_semi_minor: number;
+    public stage_angle: number;
     private status_sprite_base: SpriteBase;
     private status_timer: Phaser.Timer;
     private on_status_change_obs: Observable<Player["on_status_change"] extends Subject<infer T> ? T : never>;
@@ -217,6 +218,7 @@ export class PlayerSprite {
 
         this.ellipses_semi_major = SEMI_MAJOR_AXIS;
         this.ellipses_semi_minor = SEMI_MINOR_AXIS;
+        this.stage_angle = 0;
 
         this.sprite_base.setAnimation(this.char_sprite, base_actions.BATTLE);
         this.play_position();

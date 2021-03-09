@@ -649,7 +649,11 @@ export class BattleStage {
 
     update_stage() {
         if (this.choosing_actions) return;
+        this.update_stage_rotation();
+        this.update_sprite_properties();
+    }
 
+    update_stage_rotation() {
         if (this.data.gamepad.is_down(Button.DEBUG_CAM_MINUS) && !this.data.gamepad.is_down(Button.DEBUG_CAM_PLUS)) {
             this.camera_angle.rad -= CAMERA_SPEED;
             this.battle_bg.x -= BG_SPEED;
@@ -664,8 +668,6 @@ export class BattleStage {
             this.battle_bg.x += BG_SPIN_SPEED * this.battle_bg.width * delta; //tie bg x position with camera angle when spining
         }
 
-        this.old_camera_angle = this.camera_angle.rad;
-
         if (this.battle_bg.x > this.battle_bg.width || this.battle_bg.x < -this.battle_bg.width) {
             //check bg x position surplus
             this.battle_bg.x = this.battle_bg2.x;
@@ -677,6 +679,9 @@ export class BattleStage {
         } else if (this.battle_bg.x < 0) {
             this.battle_bg2.x = this.battle_bg.x + this.battle_bg.width;
         }
+
+        if (this.old_camera_angle === this.camera_angle.rad) return;
+        this.old_camera_angle = this.camera_angle.rad;
 
         if (
             Math.sin(this.camera_angle.rad) > 0 &&
@@ -704,8 +709,6 @@ export class BattleStage {
         } else if (Math.cos(this.camera_angle.rad) > 0 && this.first_enemy_char.z > this.last_enemy_char.z) {
             this.group_enemies.reverse();
         }
-
-        this.update_sprite_properties();
     }
 
     update_sprite_properties() {
@@ -713,9 +716,11 @@ export class BattleStage {
             const player_sprite = this.sprites[i];
             const relative_angle = player_sprite.is_ally ? this.camera_angle.rad : this.camera_angle.rad + Math.PI;
 
-            const angle_position = BattleStage.get_angle(relative_angle);
-            const pos_x = BattleStage.ellipse_position(player_sprite, angle_position, true);
-            const pos_y = BattleStage.ellipse_position(player_sprite, angle_position, false);
+            const previous_angle = player_sprite.stage_angle;
+            player_sprite.stage_angle = BattleStage.get_angle(relative_angle);
+            if (previous_angle === player_sprite.stage_angle) continue;
+            const pos_x = BattleStage.ellipse_position(player_sprite, player_sprite.stage_angle, true);
+            const pos_y = BattleStage.ellipse_position(player_sprite, player_sprite.stage_angle, false);
 
             const shift_from_middle = player_sprite.is_ally
                 ? this.shift_from_middle_ally

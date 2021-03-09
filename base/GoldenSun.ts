@@ -331,9 +331,11 @@ export class GoldenSun {
             }
         }
 
-        //updates whatever it is related to a field ability
-        for (let ability_key in this.info.field_abilities_list) {
-            this.info.field_abilities_list[ability_key].update();
+        if (!this.in_battle) {
+            //updates whatever it is related to a field ability
+            for (let ability_key in this.info.field_abilities_list) {
+                this.info.field_abilities_list[ability_key].update();
+            }
         }
 
         //fps adjustment for faster monitors since requestAnimationFrame follows monitor frame rate

@@ -15216,6 +15216,8 @@ PIXI.DisplayObject.prototype = {
         // temporary matrix variables
         var a, b, c, d, tx, ty, no_round_tx, no_round_ty;
 
+        const no_round_calculated = this.position.no_round_x !== undefined;
+
         // so if rotation is between 0 then we can simplify the multiplication process..
         if (this.rotation % Phaser.Math.PI2)
         {
@@ -15259,8 +15261,6 @@ PIXI.DisplayObject.prototype = {
             d = this.scale.y;
             tx = this.position.x - this.pivot.x * a;
             ty = this.position.y - this.pivot.y * d;
-            no_round_tx = this.position.no_round_x - this.pivot.x * a;
-            no_round_ty = this.position.no_round_y - this.pivot.y * d;
 
             wt.a = a * pt.a;
             wt.b = a * pt.b;
@@ -15268,8 +15268,13 @@ PIXI.DisplayObject.prototype = {
             wt.d = d * pt.d;
             wt.tx = tx * pt.a + ty * pt.c + pt.tx;
             wt.ty = tx * pt.b + ty * pt.d + pt.ty;
-            wt.no_round_tx = no_round_tx * pt.a + no_round_ty * pt.c + pt.tx;
-            wt.no_round_ty = no_round_tx * pt.b + no_round_ty * pt.d + pt.ty;
+
+            if (no_round_calculated) {
+                no_round_tx = this.position.no_round_x - this.pivot.x * a;
+                no_round_ty = this.position.no_round_y - this.pivot.y * d;
+                wt.no_round_tx = no_round_tx * pt.a + no_round_ty * pt.c + pt.tx;
+                wt.no_round_ty = no_round_tx * pt.b + no_round_ty * pt.d + pt.ty;
+            }
         }
 
         a = wt.a;
@@ -15305,8 +15310,10 @@ PIXI.DisplayObject.prototype = {
         this.worldAlpha = this.alpha * p.worldAlpha;
         this.worldPosition.x = wt.tx;
         this.worldPosition.y = wt.ty;
-        this.worldPosition.no_round_x = wt.no_round_tx;
-        this.worldPosition.no_round_y = wt.no_round_ty;
+        if (no_round_calculated) {
+            this.worldPosition.no_round_x = wt.no_round_tx;
+            this.worldPosition.no_round_y = wt.no_round_ty;
+        }
 
         // reset the bounds each time this is called!
         this._currentBounds = null;
