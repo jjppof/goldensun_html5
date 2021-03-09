@@ -716,9 +716,7 @@ export class BattleStage {
             const player_sprite = this.sprites[i];
             const relative_angle = player_sprite.is_ally ? this.camera_angle.rad : this.camera_angle.rad + Math.PI;
 
-            const previous_angle = player_sprite.stage_angle;
             player_sprite.stage_angle = BattleStage.get_angle(relative_angle);
-            if (previous_angle === player_sprite.stage_angle) continue;
             const pos_x = BattleStage.ellipse_position(player_sprite, player_sprite.stage_angle, true);
             const pos_y = BattleStage.ellipse_position(player_sprite, player_sprite.stage_angle, false);
 
