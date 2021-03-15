@@ -114,6 +114,7 @@ export class MoveEvent extends GameEvent {
         }
         const udpate_callback = () => {
             this.char.update_movement(true);
+            this.data.map.sort_sprites();
             if (sqr(dest.x - this.char.sprite.x) + sqr(dest.y - this.char.sprite.y) < minimal_distance_sqr) {
                 this.data.game_event_manager.remove_callback(udpate_callback);
                 this.char.stop_char();

@@ -355,6 +355,7 @@ export class Map {
         const interaction_pattern = property_info.interaction_pattern ?? npc_db.interaction_pattern;
         const ignore_physics = property_info.ignore_physics ?? npc_db.ignore_physics;
         const ignore_world_map_scale = property_info.ignore_world_map_scale ?? npc_db.ignore_world_map_scale;
+        const enable_footsteps = property_info.enable_footsteps ?? this._show_footsteps;
         const npc = new NPC(
             this.game,
             this.data,
@@ -365,7 +366,7 @@ export class Map {
             property_info.storage_keys,
             initial_action,
             initial_animation,
-            property_info.enable_footsteps,
+            enable_footsteps,
             npc_db.walk_speed,
             npc_db.dash_speed,
             npc_db.climb_speed,
@@ -568,6 +569,11 @@ export class Map {
                 }
             })
             .sort((a, b) => a.index - b.index);
+
+        if (this.sprite.properties?.footprint) {
+            this._show_footsteps = true;
+        }
+
         for (let property of sorted_props) {
             const raw_property = this.sprite.properties[property.key];
             switch (property.type) {
@@ -591,10 +597,6 @@ export class Map {
         this.config_layers();
         this.config_interactable_object();
         this.config_npc();
-
-        if (this.sprite.properties?.footprint) {
-            this._show_footsteps = true;
-        }
 
         this.config_world_map();
 
@@ -654,6 +656,9 @@ export class Map {
 
         if (this.show_footsteps) {
             this.data.hero.footsteps.clean_all();
+            this._npcs.forEach(npc => {
+                npc.footsteps?.clean_all();
+            });
         }
 
         const sprites_to_remove = [];
@@ -667,7 +672,7 @@ export class Map {
             sprites_to_remove.push(sprite);
         }
         for (let i = 0; i < sprites_to_remove.length; ++i) {
-            let sprite = sprites_to_remove[i];
+            const sprite = sprites_to_remove[i];
             this.data.npc_group.remove(sprite, true);
         }
 

@@ -1,3 +1,4 @@
+import {ControllableChar} from "../ControllableChar";
 import {GoldenSun} from "../GoldenSun";
 import {SpriteBase} from "../SpriteBase";
 import {base_actions, directions} from "../utils";
@@ -42,8 +43,9 @@ export class Footsteps {
     public new_step_timer: Phaser.Timer;
     public expire_timer: Phaser.Timer;
     public footsteps_sprite_base: SpriteBase;
+    public char: ControllableChar;
 
-    constructor(game, data) {
+    constructor(game, data, char) {
         this.game = game;
         this.data = data;
         this.x_pos = 0;
@@ -66,6 +68,7 @@ export class Footsteps {
         this.expire_timer = this.game.time.create(false);
 
         this.footsteps_sprite_base = this.data.info.misc_sprite_base_list[FOOTSTEPS_KEY_NAME];
+        this.char = char;
     }
 
     /*Sets the footprint interval timer*/
@@ -139,8 +142,8 @@ export class Footsteps {
         const animation_obj = footsteps_sprite.animations.getAnimation(animation_name);
         animation_obj.stop(true);
         this.group.base_collision_layer = this.data.map.collision_layer;
-        footsteps_sprite.x = this.data.hero.shadow.x;
-        footsteps_sprite.y = this.data.hero.shadow.y;
+        footsteps_sprite.x = this.char.sprite.x;
+        footsteps_sprite.y = this.char.sprite.y;
         this.position_footsteps(footsteps_sprite);
 
         animation_obj.onComplete.addOnce(() => {

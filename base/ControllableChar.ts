@@ -135,7 +135,7 @@ export abstract class ControllableChar {
         this.sprite = null;
         this.shadow = null;
         this._body_radius = 0;
-        this.storage_keys = storage_keys === undefined ? {} : storage_keys;
+        this.storage_keys = storage_keys ?? {};
         this._active = active ?? true;
         if (this.storage_keys.active !== undefined) {
             this._active = this.data.storage.get(this.storage_keys.active);
@@ -162,8 +162,8 @@ export abstract class ControllableChar {
         this.trying_to_push = false;
         this._trying_to_push_direction = null;
         this.push_timer = null;
-        this.enable_footsteps = enable_footsteps === undefined ? false : enable_footsteps;
-        this._footsteps = new Footsteps(this.game, this.data);
+        this.enable_footsteps = enable_footsteps ?? false;
+        this._footsteps = this.enable_footsteps ? new Footsteps(this.game, this.data, this) : null;
         this.crop_texture = false;
         this.shadow_following = true;
     }
