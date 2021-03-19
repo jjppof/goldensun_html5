@@ -152,13 +152,6 @@ export class Map {
             }
         });
         this.data.npc_group.sort("y_sort", Phaser.Group.SORT_ASCENDING);
-        let shadow_index = this.data.npc_group.getChildIndex(this.data.hero.sprite) - 1;
-        if (shadow_index >= -1 && shadow_index < this.data.npc_group.children.length) {
-            if (shadow_index === -1) {
-                shadow_index = 0;
-            }
-            this.data.npc_group.setChildIndex(this.data.hero.shadow, shadow_index); //making sure that shadow is always behind the hero
-        }
         send_to_back_list.forEach(sprite => {
             if (sprite) {
                 this.data.npc_group.sendToBack(sprite);

@@ -298,6 +298,7 @@ export abstract class ControllableChar {
         shadow_anchor_x = shadow_anchor_x ?? ControllableChar.DEFAULT_SHADOW_ANCHOR_X;
         shadow_anchor_y = shadow_anchor_y ?? ControllableChar.DEFAULT_SHADOW_ANCHOR_Y;
         this.shadow = group.create(0, 0, key_name);
+        this.shadow.send_to_back = true;
         if (!this.active) {
             this.shadow.visible = false;
         }
@@ -389,6 +390,21 @@ export abstract class ControllableChar {
         };
         timer_function(direction);
         await transition_promise;
+    }
+
+    async jump(jump_height: number = 12, duration: number = 65) {
+        let promise_resolve;
+        const promise = new Promise(resolve => (promise_resolve = resolve));
+        const previous_shadow_state = this.shadow_following;
+        this.shadow_following = false;
+        this.game.add
+            .tween(this.sprite.body)
+            .to({y: this.sprite.body.y - jump_height}, duration, Phaser.Easing.Linear.None, true, 0, 0, true)
+            .onComplete.addOnce(() => {
+                this.shadow_following = previous_shadow_state;
+                promise_resolve();
+            });
+        await promise;
     }
 
     set_frame(direction: number, frame_index: number = 0) {
