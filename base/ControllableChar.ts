@@ -581,7 +581,7 @@ export abstract class ControllableChar {
             !this.ice_sliding_active &&
             this.data.map.show_footsteps &&
             this.tile_able_to_show_footprint();
-        if (this.footsteps.can_make_footprint && footsteps) {
+        if (this.footsteps?.can_make_footprint && footsteps) {
             this.footsteps.create_step(this.current_direction, this.current_action);
         }
     }
