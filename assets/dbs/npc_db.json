@@ -131,9 +131,9 @@
         "body_radius": 7.0,
         "actions": {
             "set": {
-                "frame_rate": 6,
+                "frame_rate": 4,
                 "animations": ["down"],
-                "frames_count": 4,
+                "frames_count": 3,
                 "initial_animation": "down",
                 "spritesheet": {
                     "image": "assets/images/spritesheets/djinn/mercury_djinn.png",

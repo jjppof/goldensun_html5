@@ -9,7 +9,13 @@ module.exports = {
     compress: true,
     liveReload: true,
     open: true,
-    port: 9000
+    port: 9000,
+    watchOptions: {
+      ignored: [
+        path.resolve(__dirname, 'dist'),
+        '**/.*'
+      ]
+    }
   },
   module: {
     rules: [
