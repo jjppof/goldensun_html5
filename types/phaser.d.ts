@@ -653,6 +653,7 @@ declare module Phaser {
         removeTilemap(key: string): void;
         removeXML(key: string): void;
         removeVideo(key: string): void;
+        setCacheAlias(alias_key: string, reference_key: string, cache: number): any;
         updateFrameData(key: string, frameData: any, cache?: number): void;
         updateSound(key: string, property: string, value: Phaser.Sound): void;
 

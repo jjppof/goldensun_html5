@@ -121,6 +121,10 @@
                     "json": "assets/images/spritesheets/djinn/venus_djinn.json"
                 }
             }
+        },
+        "action_aliases": {
+            "idle": "standby",
+            "walk": "set"
         }
     },{
         "key_name": "mercury_djinn",
@@ -149,6 +153,10 @@
                     "json": "assets/images/spritesheets/djinn/mercury_djinn.json"
                 }
             }
+        },
+        "action_aliases": {
+            "idle": "standby",
+            "walk": "set"
         }
     },{
         "key_name": "mars_djinn",
@@ -177,6 +185,10 @@
                     "json": "assets/images/spritesheets/djinn/mars_djinn.json"
                 }
             }
+        },
+        "action_aliases": {
+            "idle": "standby",
+            "walk": "set"
         }
     },{
         "key_name": "jupiter_djinn",
@@ -205,6 +217,10 @@
                     "json": "assets/images/spritesheets/djinn/jupiter_djinn.json"
                 }
             }
+        },
+        "action_aliases": {
+            "idle": "standby",
+            "walk": "set"
         }
     },{
         "key_name": "alex",

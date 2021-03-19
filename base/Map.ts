@@ -351,7 +351,11 @@ export class Map {
         const property_info = JSON.parse(raw_property);
         const npc_db = this.data.dbs.npc_db[property_info.key_name];
         const initial_action = property_info.initial_action ?? npc_db.initial_action;
-        const initial_animation = property_info.animation_key ?? npc_db.actions[initial_action].initial_animation;
+        const actual_action =
+            (npc_db.actions && initial_action in npc_db.actions) || !npc_db.action_aliases
+                ? initial_action
+                : npc_db.action_aliases[initial_action];
+        const initial_animation = property_info.animation_key ?? npc_db.actions[actual_action].initial_animation;
         const interaction_pattern = property_info.interaction_pattern ?? npc_db.interaction_pattern;
         const ignore_physics = property_info.ignore_physics ?? npc_db.ignore_physics;
         const ignore_world_map_scale = property_info.ignore_world_map_scale ?? npc_db.ignore_world_map_scale;

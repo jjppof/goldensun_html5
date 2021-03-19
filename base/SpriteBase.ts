@@ -1,20 +1,19 @@
 export class SpriteBase {
     public key_name: string;
-    public actions: {
+    private actions: {
         [action: string]: {
             animations?: string[];
             frame_counts?: any;
             frame_rate?: {[animation: string]: any};
             loop?: boolean | boolean[];
             spritesheet?: {image: string; json: string};
+            frame_names?: {[animation: string]: string[]};
         };
     };
-    public animations: {[action: string]: {[animation: string]: string[]}};
 
     constructor(key_name, actions) {
         this.key_name = key_name;
         this.actions = {};
-        this.animations = {};
         for (let i = 0; i < actions.length; ++i) {
             this.actions[actions[i]] = {};
         }
@@ -23,6 +22,7 @@ export class SpriteBase {
     setActionAnimations(action, animations, frame_counts) {
         this.actions[action].animations = new Array(animations.length);
         this.actions[action].frame_counts = new Array(animations.length);
+        this.actions[action].frame_names = {};
         const frame_count_is_array = Array.isArray(frame_counts);
         for (let i = 0; i < animations.length; ++i) {
             const frame_count = frame_count_is_array ? frame_counts[i] : frame_counts;
@@ -60,12 +60,19 @@ export class SpriteBase {
         };
     }
 
+    setActionAlias(game: Phaser.Game, alias, reference_action) {
+        if (reference_action in this.actions) {
+            this.actions[alias] = this.actions[reference_action];
+            game.cache.setCacheAlias(this.getSpriteKey(alias), this.getSpriteKey(reference_action), Phaser.Cache.IMAGE);
+        }
+    }
+
     hasAction(action: string) {
         return action in this.actions;
     }
 
     hasAnimation(action: string, animation: string) {
-        return animation in this.animations[action];
+        return this.actions[action].animations.includes(animation);
     }
 
     loadSpritesheets(game: Phaser.Game, force_load: boolean, on_load_complete?: () => void) {
@@ -80,11 +87,8 @@ export class SpriteBase {
         }
     }
 
-    generateFrameNames(action, animation, start, stop, suffix, zeroPad) {
-        if (!(action in this.animations)) {
-            this.animations[action] = {};
-        }
-        this.animations[action][animation] = Phaser.Animation.generateFrameNames(
+    private generateFrameNames(action, animation, start, stop, suffix, zeroPad) {
+        this.actions[action].frame_names[animation] = Phaser.Animation.generateFrameNames(
             `${action}/${animation}/`,
             start,
             stop,
@@ -95,14 +99,14 @@ export class SpriteBase {
 
     setAnimation(sprite: Phaser.Sprite, action) {
         const animations = this.actions[action].animations;
-        const loop = this.actions[action].loop === undefined ? true : this.actions[action].loop;
+        const loop = this.actions[action].loop ?? true;
         for (let i = 0; i < animations.length; ++i) {
             const animation = animations[i];
             const frame_rate = this.actions[action].frame_rate[animation];
             const anim_key = this.getAnimationKey(action, animation);
             sprite.animations.add(
                 anim_key,
-                this.animations[action][animation],
+                this.actions[action].frame_names[animation],
                 frame_rate,
                 Array.isArray(loop) ? loop[i] : loop,
                 false
@@ -124,6 +128,10 @@ export class SpriteBase {
     getFrameName(action, animation, index) {
         const formatted_index = index.toLocaleString("en-US", {minimumIntegerDigits: 2, useGrouping: false});
         return `${action}/${animation}/${formatted_index}`;
+    }
+
+    getFrameRate(action, animation) {
+        return this.actions[action].frame_rate[animation];
     }
 
     getSpriteKey(action) {

@@ -267,13 +267,8 @@ export class DjinnModeHeaderWindow {
                 base_actions.IDLE,
                 reverse_directions[directions.down]
             );
-            char_sprite.animations.add(
-                animation_key,
-                this_char.sprite_base.animations.idle.down,
-                this_char.sprite_base.actions.idle.frame_rate,
-                true
-            );
-            char_sprite.animations.play(animation_key, this_char.sprite_base.actions.idle.frame_rate, true);
+            this_char.sprite_base.setAnimation(char_sprite, base_actions.IDLE);
+            char_sprite.animations.play(animation_key);
             this.sprites.push(char_sprite);
 
             if (this.action === djinn_actions.GIVE && i === 1) break;

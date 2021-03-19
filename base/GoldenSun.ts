@@ -91,6 +91,7 @@ export class GoldenSun {
         this.game.camera.roundPx = true;
         this.game.renderer.renderSession.roundPixels = true;
         this.game.stage.disableVisibilityChange = true;
+        this.game.sound.mute = true;
 
         this.game.camera.fade(0x0, 1);
     }
@@ -188,12 +189,11 @@ export class GoldenSun {
         this.collision.config_collisions(this.map.collision_layer);
         this.game.physics.p2.updateBoundsCollisionGroup();
 
-        this.initialize_utils_controls();
-
-        this.game.sound.mute = true;
         this.game.stage.disableVisibilityChange = false;
         this.assets_loaded = true;
         this.game.camera.resetFX();
+
+        this.initialize_utils_controls();
     }
 
     initialize_utils_controls() {

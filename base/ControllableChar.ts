@@ -541,7 +541,7 @@ export abstract class ControllableChar {
             if (this.ice_sliding_active) {
                 frame_rate = ControllableChar.SLIDE_ICE_WALK_FRAME_RATE;
             } else {
-                frame_rate = this.sprite_info.actions[base_actions.WALK].frame_rate[animation];
+                frame_rate = this.sprite_info.getFrameRate(base_actions.WALK, animation);
             }
         }
         this.play(action, animation, true, frame_rate);
