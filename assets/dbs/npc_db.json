@@ -99,12 +99,12 @@
         "anchor_y": 0.8,
         "initial_action": "set",
         "collision_body_bevel": 3,
-        "interaction_pattern": "cross",
+        "interaction_pattern": "tik_tak_toe",
         "body_radius": 7.0,
         "actions": {
             "set": {
-                "frame_rate": 6,
-                "animations": ["down"],
+                "frame_rate": 5,
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 4,
                 "initial_animation": "down",
                 "spritesheet": {
@@ -113,7 +113,7 @@
                 }
             },"standby": {
                 "frame_rate": 2,
-                "animations": ["down", "left"],
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 4,
                 "initial_animation": "down",
                 "spritesheet": {
@@ -127,12 +127,12 @@
         "anchor_y": 0.8,
         "initial_action": "set",
         "collision_body_bevel": 3,
-        "interaction_pattern": "cross",
+        "interaction_pattern": "tik_tak_toe",
         "body_radius": 7.0,
         "actions": {
             "set": {
-                "frame_rate": 4,
-                "animations": ["down"],
+                "frame_rate": [[3,5,4]],
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 3,
                 "initial_animation": "down",
                 "spritesheet": {
@@ -141,7 +141,7 @@
                 }
             },"standby": {
                 "frame_rate": 2,
-                "animations": ["down", "left"],
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 4,
                 "initial_animation": "down",
                 "spritesheet": {
@@ -155,12 +155,12 @@
         "anchor_y": 0.8,
         "initial_action": "set",
         "collision_body_bevel": 3,
-        "interaction_pattern": "cross",
+        "interaction_pattern": "tik_tak_toe",
         "body_radius": 7.0,
         "actions": {
             "set": {
-                "frame_rate": 6,
-                "animations": ["down"],
+                "frame_rate": 5,
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 4,
                 "initial_animation": "down",
                 "spritesheet": {
@@ -169,7 +169,7 @@
                 }
             },"standby": {
                 "frame_rate": 2,
-                "animations": ["down", "left"],
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 4,
                 "initial_animation": "down",
                 "spritesheet": {
@@ -183,22 +183,22 @@
         "anchor_y": 0.8,
         "initial_action": "set",
         "collision_body_bevel": 3,
-        "interaction_pattern": "cross",
+        "interaction_pattern": "tik_tak_toe",
         "body_radius": 7.0,
         "actions": {
             "set": {
                 "frame_rate": 6,
-                "animations": ["down"],
-                "frames_count": 4,
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 3,
                 "initial_animation": "down",
                 "spritesheet": {
                     "image": "assets/images/spritesheets/djinn/jupiter_djinn.png",
                     "json": "assets/images/spritesheets/djinn/jupiter_djinn.json"
                 }
             },"standby": {
-                "frame_rate": 2,
-                "animations": ["down", "left"],
-                "frames_count": 4,
+                "frame_rate": [[3,3,3,1,3,3,3]],
+                "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+                "frames_count": 7,
                 "initial_animation": "down",
                 "spritesheet": {
                     "image": "assets/images/spritesheets/djinn/jupiter_djinn.png",

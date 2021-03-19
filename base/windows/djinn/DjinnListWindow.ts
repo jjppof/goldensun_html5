@@ -264,7 +264,9 @@ export class DjinnListWindow {
                 if (elem === elements.NO_ELEMENT || elem === elements.ALL_ELEMENTS) continue;
 
                 const x = DJINN_SPRITE_X + i * CHAR_X_BETWEEN;
-                this.djinns_sprites[i][elem] = this.chars_sprites_group.create(x, CHAR_Y_PADDING, elem + "_djinn_set");
+                const sprite_base_key = Djinn.sprite_base_key(elem);
+                const sprite_key = this.data.info.npcs_sprite_base_list[sprite_base_key].getSpriteKey(djinn_status.SET);
+                this.djinns_sprites[i][elem] = this.chars_sprites_group.create(x, CHAR_Y_PADDING, sprite_key);
                 this.djinns_sprites[i][elem].anchor.setTo(0.5, 1.0);
                 this.djinns_sprites[i][elem].scale.x = -1;
                 this.djinns_sprites[i][elem].alpha = 0;
