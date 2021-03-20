@@ -298,7 +298,15 @@ export abstract class ControllableChar {
         shadow_anchor_x = shadow_anchor_x ?? ControllableChar.DEFAULT_SHADOW_ANCHOR_X;
         shadow_anchor_y = shadow_anchor_y ?? ControllableChar.DEFAULT_SHADOW_ANCHOR_Y;
         this.shadow = group.create(0, 0, key_name);
-        this.shadow.send_to_back = true;
+        this.shadow.sort_function = () => {
+            let shadow_index = this.data.npc_group.getChildIndex(this.sprite) - 1;
+            if (shadow_index >= -1 && shadow_index < this.data.npc_group.children.length) {
+                if (shadow_index === -1) {
+                    shadow_index = 0;
+                }
+                this.data.npc_group.setChildIndex(this.shadow, shadow_index);
+            }
+        };
         if (!this.active) {
             this.shadow.visible = false;
         }
