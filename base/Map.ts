@@ -351,6 +351,7 @@ export class Map {
         const initial_animation = property_info.animation_key ?? npc_db.actions[actual_action].initial_animation;
         const interaction_pattern = property_info.interaction_pattern ?? npc_db.interaction_pattern;
         const ignore_physics = property_info.ignore_physics ?? npc_db.ignore_physics;
+        const voice_key = property_info.voice_key ?? npc_db.voice_key;
         const ignore_world_map_scale = property_info.ignore_world_map_scale ?? npc_db.ignore_world_map_scale;
         const enable_footsteps = property_info.enable_footsteps ?? this._show_footsteps;
         const npc = new NPC(
@@ -387,7 +388,8 @@ export class Map {
             property_info.affected_by_reveal,
             property_info.sprite_misc_db_key,
             ignore_physics,
-            property_info.visible
+            property_info.visible,
+            voice_key
         );
         this.npcs.push(npc);
     }

@@ -164,5 +164,140 @@
                 }
             }
         }
+    },
+    "voices": {
+        "audio": "assets/sounds/se/voices.ogg",
+        "json": {
+            "spritemap": {
+                "child_male_1": {
+                    "start": 0,
+                    "end": 0.423
+                },
+                "child_male_2": {
+                    "start": 0.423,
+                    "end": 0.830
+                },
+                "child_male_3": {
+                    "start": 0.830,
+                    "end": 1.285
+                },
+                "child_male_4": {
+                    "start": 1.285,
+                    "end": 1.713
+                },
+                "child_female_1": {
+                    "start": 1.713,
+                    "end": 2.122
+                },
+                "child_female_2": {
+                    "start": 2.122,
+                    "end": 2.557
+                },
+                "child_female_3": {
+                    "start": 2.557,
+                    "end": 2.952
+                },
+                "child_female_4": {
+                    "start": 2.952,
+                    "end": 3.364
+                },
+                "teen_male_1": {
+                    "start": 3.364,
+                    "end": 3.738
+                },
+                "teen_male_2": {
+                    "start": 3.738,
+                    "end": 4.158
+                },
+                "teen_male_3": {
+                    "start": 4.158,
+                    "end": 4.571
+                },
+                "teen_male_4": {
+                    "start": 4.571,
+                    "end": 4.983
+                },
+                "teen_female_1": {
+                    "start": 4.983,
+                    "end": 5.303
+                },
+                "teen_female_2": {
+                    "start": 5.303,
+                    "end": 5.623
+                },
+                "teen_female_3": {
+                    "start": 5.623,
+                    "end": 5.981
+                },
+                "teen_female_4": {
+                    "start": 5.981,
+                    "end": 6.304
+                },
+                "adult_male_1": {
+                    "start": 6.304,
+                    "end": 6.721
+                },
+                "adult_male_2": {
+                    "start": 6.721,
+                    "end": 7.140
+                },
+                "adult_male_3": {
+                    "start": 7.140,
+                    "end": 7.547
+                },
+                "adult_male_4": {
+                    "start": 7.547,
+                    "end": 7.955
+                },
+                "adult_female_1": {
+                    "start": 7.955,
+                    "end": 8.340
+                },
+                "adult_female_2": {
+                    "start": 8.340,
+                    "end": 8.690
+                },
+                "adult_female_3": {
+                    "start": 8.690,
+                    "end": 9.029
+                },
+                "adult_female_4": {
+                    "start": 9.029,
+                    "end": 9.363
+                },
+                "elder_male_1": {
+                    "start": 9.363,
+                    "end": 9.855
+                },
+                "elder_male_2": {
+                    "start": 9.855,
+                    "end": 10.370
+                },
+                "elder_male_3": {
+                    "start": 10.370,
+                    "end": 10.885
+                },
+                "elder_male_4": {
+                    "start": 10.885,
+                    "end": 11.436
+                },
+                "elder_female_1": {
+                    "start": 11.436,
+                    "end": 11.836
+                },
+                "elder_female_2": {
+                    "start": 11.836,
+                    "end": 12.256
+                },
+                "elder_female_3": {
+                    "start": 12.256,
+                    "end": 12.667
+                },
+                "elder_female_4": {
+                    "start": 12.667,
+                    "end": 13.093
+                }
+            }
+        }
     }
 }

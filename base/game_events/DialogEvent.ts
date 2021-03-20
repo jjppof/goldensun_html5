@@ -6,6 +6,7 @@ import {Button} from "../XGamepad";
 export class DialogEvent extends GameEvent {
     private text: string;
     private avatar: string;
+    private voice_key: string;
     private dialog_manager: DialogManager = null;
     private running: boolean = false;
     private control_enable: boolean = true;
@@ -14,12 +15,23 @@ export class DialogEvent extends GameEvent {
     private finish_events: GameEvent[] = [];
     private previous_npc_direction: number;
 
-    constructor(game, data, active, text, avatar, npc_hero_reciprocal_look, reset_reciprocal_look, finish_events) {
+    constructor(
+        game,
+        data,
+        active,
+        text,
+        avatar,
+        npc_hero_reciprocal_look,
+        reset_reciprocal_look,
+        finish_events,
+        voice_key
+    ) {
         super(game, data, event_types.DIALOG, active);
         this.text = text;
         this.avatar = avatar;
         this.npc_hero_reciprocal_look = npc_hero_reciprocal_look ?? false;
         this.reset_reciprocal_look = reset_reciprocal_look ?? true;
+        this.voice_key = voice_key ?? "";
 
         this.data.control_manager.add_controls(
             [
@@ -68,7 +80,10 @@ export class DialogEvent extends GameEvent {
             await this.data.game_event_manager.set_npc_and_hero_directions(this.origin_npc);
         }
         this.dialog_manager = new DialogManager(this.game, this.data);
-        this.dialog_manager.set_dialog(this.text, this.avatar);
+        this.dialog_manager.set_dialog(this.text, {
+            avatar: this.avatar,
+            voice_key: this.voice_key ? this.voice_key : origin_npc.voice_key,
+        });
         this.next();
     }
 }

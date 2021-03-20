@@ -24,6 +24,7 @@ export class NPC extends ControllableChar {
     private _message: string;
     private _thought_message: string;
     private _avatar: string;
+    private _voice_key: string;
     private _base_collision_layer: number;
     private _talk_range_factor: number;
     private _events: GameEvent[];
@@ -83,7 +84,8 @@ export class NPC extends ControllableChar {
         affected_by_reveal,
         sprite_misc_db_key,
         ignore_physics,
-        visible
+        visible,
+        voice_key
     ) {
         super(
             game,
@@ -105,6 +107,7 @@ export class NPC extends ControllableChar {
         this._message = message;
         this._thought_message = thought_message;
         this._avatar = avatar ? avatar : null;
+        this._voice_key = voice_key ? voice_key : "";
         this._shop_key = shop_key;
         this._inn_key = inn_key;
         if (this.storage_keys.base_collision_layer !== undefined) {
@@ -144,6 +147,9 @@ export class NPC extends ControllableChar {
     }
     get avatar() {
         return this._avatar;
+    }
+    get voice_key() {
+        return this._voice_key;
     }
     get interaction_pattern() {
         return this._interaction_pattern;

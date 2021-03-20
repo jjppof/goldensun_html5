@@ -19,6 +19,7 @@ export class InnMenu {
 
     public inn_id: string;
     public avatar: string;
+    public voice_key: string;
     public cost: number;
     public message: string;
 
@@ -37,16 +38,18 @@ export class InnMenu {
         this.cost = 0;
         this.inn_id = null;
         this.avatar = null;
+        this.voice_key = "";
         this.message = null;
         this.callback = undefined;
         this.mask = undefined;
     }
 
     //Initial function, loads data from db, shows the welcome message, and opens an yes or no menu
-    start(inn_id: string, close_callback?: Function) {
+    start(inn_id: string, voice_key?: string, close_callback?: Function) {
         this.data.inn_open = true;
         this.inn_id = inn_id;
         this.avatar = this.data.info.inn_list[this.inn_id].avatar_key;
+        this.voice_key = voice_key;
         this.cost = this.data.info.inn_list[this.inn_id].cost;
         this.close_callback = close_callback;
 
@@ -62,6 +65,7 @@ export class InnMenu {
 
         this.dialog_manager.quick_next(this.message, callback, {
             avatar: this.avatar,
+            voice_key: this.voice_key,
             custom_pos: {x: 40, y: 0},
             custom_avatar_pos: {x: 0, y: 0},
         });

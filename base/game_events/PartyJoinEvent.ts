@@ -60,7 +60,11 @@ export class PartyJoinEvent extends GameEvent {
             const new_char = this.data.info.main_char_list[this.char_key_name];
             this.dialog_manager = new DialogManager(this.game, this.data);
             const text = `${new_char.name} joined your party.`;
-            this.dialog_manager.set_dialog(text, this.char_key_name, undefined, true, 165);
+            this.dialog_manager.set_dialog(text, {
+                avatar: this.char_key_name,
+                avatar_inside_window: true,
+                custom_max_dialog_width: 165,
+            });
             MainChar.add_member_to_party(this.data, this.data.info.party_data, this.char_key_name);
             this.data.audio.pause_bgm();
             this.data.audio.play_se("misc/party_join", () => {

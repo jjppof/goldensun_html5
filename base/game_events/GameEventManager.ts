@@ -119,7 +119,7 @@ export class GameEventManager {
             case npc_types.SHOP:
                 if (!this.data.shop_open) {
                     const previous_npc_direction = await this.handle_npc_interaction_start(npc);
-                    this.data.shop_menu.open_menu(npc.shop_key, async () => {
+                    this.data.shop_menu.open_menu(npc.shop_key, npc.voice_key, async () => {
                         await this.handle_npc_interaction_end(npc, previous_npc_direction);
                     });
                 }
@@ -127,7 +127,7 @@ export class GameEventManager {
             case npc_types.INN:
                 if (!this.data.inn_open) {
                     const previous_npc_direction = await this.handle_npc_interaction_start(npc);
-                    this.data.inn_menu.start(npc.inn_key, async () => {
+                    this.data.inn_menu.start(npc.inn_key, npc.voice_key, async () => {
                         await this.handle_npc_interaction_end(npc, previous_npc_direction);
                     });
                 }
@@ -177,7 +177,11 @@ export class GameEventManager {
     async manage_npc_dialog(npc: NPC) {
         const previous_npc_direction = await this.handle_npc_interaction_start(npc);
         const dialog_manager = new DialogManager(this.game, this.data);
-        dialog_manager.set_dialog(npc.message, npc.avatar, this.data.hero.current_direction);
+        dialog_manager.set_dialog(npc.message, {
+            avatar: npc.avatar,
+            voice_key: npc.voice_key,
+            hero_direction: this.data.hero.current_direction,
+        });
         this.fire_next_step = dialog_manager.next.bind(dialog_manager, async finished => {
             if (finished) {
                 this.fire_next_step = null;
@@ -249,7 +253,8 @@ export class GameEventManager {
                     info.avatar,
                     info.npc_hero_reciprocal_look,
                     info.reset_reciprocal_look,
-                    info.finish_events
+                    info.finish_events,
+                    info.voice_key
                 );
             case event_types.LOOK:
                 return new LookEvent(this.game, this.data, info.active, info.look, info.looker, info.target);

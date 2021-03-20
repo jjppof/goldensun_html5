@@ -5,12 +5,13 @@ import * as utils from "../utils";
 import {Window} from "../Window";
 import * as _ from "lodash";
 
-const DIALOG_CRYSTAL_KEY = "dialog_crystal";
-
 //A dialog can be divided in N windows. Each division has a step index.
 //To set a dialog, call the DialogManager.set_dialog function and pass the entire dialog text.
 //To advance the dialog (call next window), call the DialogManager.next function.
 export class DialogManager {
+    private static readonly DIALOG_CRYSTAL_KEY = "dialog_crystal";
+    private static readonly VOICE_MIN_INTERVAL: number = 50;
+
     private game: Phaser.Game;
     private data: GoldenSun;
     private parts: {
@@ -22,6 +23,7 @@ export class DialogManager {
     private step: number;
     private finished: boolean;
     private avatar: string;
+    private voice_key: string;
     private window: Window;
     private avatar_window: Window;
     private italic_font: boolean;
@@ -43,11 +45,12 @@ export class DialogManager {
         this.finished = false;
 
         this.avatar = null;
+        this.voice_key = "";
         this.window = null;
         this.avatar_window = null;
         this.hero_direction = utils.directions.down;
 
-        this.dialog_crystal_sprite_base = this.data.info.misc_sprite_base_list[DIALOG_CRYSTAL_KEY];
+        this.dialog_crystal_sprite_base = this.data.info.misc_sprite_base_list[DialogManager.DIALOG_CRYSTAL_KEY];
         this.show_crystal = false;
     }
 
@@ -70,10 +73,13 @@ export class DialogManager {
     }
 
     private set_dialog_crystal() {
-        const sprite_key = this.dialog_crystal_sprite_base.getSpriteKey(DIALOG_CRYSTAL_KEY);
+        const sprite_key = this.dialog_crystal_sprite_base.getSpriteKey(DialogManager.DIALOG_CRYSTAL_KEY);
         this.dialog_crystal = this.game.add.sprite(0, 0, sprite_key);
-        this.dialog_crystal_sprite_base.setAnimation(this.dialog_crystal, DIALOG_CRYSTAL_KEY);
-        this.dialog_crystal_anim_key = this.dialog_crystal_sprite_base.getAnimationKey(DIALOG_CRYSTAL_KEY, "rotate");
+        this.dialog_crystal_sprite_base.setAnimation(this.dialog_crystal, DialogManager.DIALOG_CRYSTAL_KEY);
+        this.dialog_crystal_anim_key = this.dialog_crystal_sprite_base.getAnimationKey(
+            DialogManager.DIALOG_CRYSTAL_KEY,
+            "rotate"
+        );
         this.dialog_crystal.visible = false;
         this.dialog_crystal_tween = null;
     }
@@ -168,6 +174,13 @@ export class DialogManager {
                     this.window.create_at_group(4, 4, "avatars", undefined, this.avatar);
                 }
                 const padding_x = this.avatar_inside_window ? numbers.AVATAR_SIZE + 10 : undefined;
+                let now = this.game.time.now;
+                const play_voice = () => {
+                    if (this.voice_key && this.game.time.now - now > DialogManager.VOICE_MIN_INTERVAL) {
+                        now = this.game.time.now;
+                        this.data.audio.play_se(`voices/${this.voice_key}`);
+                    }
+                };
                 this.window
                     .set_text(
                         this.parts[step].lines,
@@ -176,7 +189,8 @@ export class DialogManager {
                         undefined,
                         italic_font,
                         true,
-                        this.parts[step].colors
+                        this.parts[step].colors,
+                        play_voice
                     )
                     .then(() => {
                         if (step < this.parts.length - 1 || this.show_crystal) {
@@ -250,19 +264,23 @@ export class DialogManager {
     //Place your text between ${COLOR:hex_value} and ${COLOR:/} to change it color.
     set_dialog(
         text: string,
-        avatar?: string,
-        hero_direction?: utils.directions,
-        avatar_inside_window?: boolean,
-        custom_max_dialog_width?: number
+        options?: {
+            avatar?: string;
+            hero_direction?: utils.directions;
+            avatar_inside_window?: boolean;
+            custom_max_dialog_width?: number;
+            voice_key?: string;
+        }
     ) {
-        this.avatar = avatar;
-        this.set_hero_direction(hero_direction);
-        this.avatar_inside_window = avatar_inside_window ?? false;
+        this.avatar = options?.avatar;
+        this.voice_key = options?.voice_key;
+        this.set_hero_direction(options?.hero_direction);
+        this.avatar_inside_window = options?.avatar_inside_window ?? false;
         if (!this.dialog_crystal) {
             this.set_dialog_crystal();
         }
         text = this.format_text(text);
-        const max_dialog_width = custom_max_dialog_width ?? numbers.MAX_DIAG_WIN_WIDTH;
+        const max_dialog_width = options?.custom_max_dialog_width ?? numbers.MAX_DIAG_WIN_WIDTH;
         const max_efective_width = max_dialog_width - 2 * numbers.WINDOW_PADDING_H - numbers.INSIDE_BORDER_WIDTH;
         const words = text.split(" ");
         const windows: DialogManager["parts"] = []; //array of lines
@@ -343,6 +361,7 @@ export class DialogManager {
         callback: Function, //on window ready callback
         options?: {
             avatar?: string;
+            voice_key?: string;
             hero_direction?: utils.directions;
             custom_pos?: {x?: number; y?: number};
             custom_avatar_pos?: {x?: number; y?: number};
@@ -360,7 +379,11 @@ export class DialogManager {
             this.avatar_window = null;
         }
         this.show_crystal = options?.show_crystal;
-        this.set_dialog(text, options?.avatar, options?.hero_direction);
+        this.set_dialog(text, {
+            avatar: options?.avatar,
+            hero_direction: options?.hero_direction,
+            voice_key: options?.voice_key,
+        });
         this.mount_window(callback, options?.custom_pos, options?.custom_avatar_pos);
     }
 

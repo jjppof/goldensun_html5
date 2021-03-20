@@ -69,6 +69,7 @@ export class ShopMenu {
     public items_db: {[key_name: string]: Item};
     public shops_db: {[key_name: string]: Shop};
     public shopkeep_dialog_db: {[key_name: string]: DialogData};
+    public voice_key: string;
 
     public normal_item_list: {[key_name: string]: ShopItem};
     public artifact_list: {[key_name: string]: ShopItem};
@@ -106,6 +107,7 @@ export class ShopMenu {
         this.data = data;
         this.shop_key = null;
         this.close_callback = null;
+        this.voice_key = "";
 
         this.items_db = this.data.info.items_list;
         this.shops_db = _.mapKeys(this.data.dbs.shops_db, shop => shop.key_name) as {[key_name: string]: Shop};
@@ -335,7 +337,8 @@ export class ShopMenu {
             this.npc_dialog.open(
                 this.shop_key,
                 this.data.info.shops_list[this.shop_key].avatar_key,
-                this.data.info.shops_list[this.shop_key].dialog_key
+                this.data.info.shops_list[this.shop_key].dialog_key,
+                this.voice_key
             );
         } else {
             this.npc_dialog.update_dialog(message_key);
@@ -343,8 +346,9 @@ export class ShopMenu {
         this.horizontal_menu.open(undefined, this.current_index);
     }
 
-    open_menu(shop_key: string, close_callback?: Function) {
+    open_menu(shop_key: string, voice_key: string, close_callback?: Function) {
         this.shop_key = shop_key;
+        this.voice_key = voice_key;
         this.close_callback = close_callback;
 
         if (this.data.hero.in_action()) {

@@ -583,7 +583,8 @@ export class Window {
         space_between_lines?: number,
         italic = false,
         animate = false,
-        colors?: number | number[][]
+        colors?: number | number[][],
+        word_callback?: (word?: string, current_text?: string) => void
     ) {
         for (let i = 0; i < this.lines_sprites.length; ++i) {
             this.lines_sprites[i].text.destroy();
@@ -625,10 +626,13 @@ export class Window {
                 let words_index = 0;
                 let line_promise_resolve;
                 const repeater = () => {
-                    this.game.time.events.repeat(25, words.length, () => {
+                    this.game.time.events.repeat(30, words.length, () => {
                         text_sprite.text += words[words_index] + " ";
                         text_sprite_shadow.text += words[words_index] + " ";
                         ++words_index;
+                        if (word_callback) {
+                            word_callback(words[words_index], text_sprite.text);
+                        }
                         if (words_index === words.length) {
                             line_promise_resolve();
                         }
