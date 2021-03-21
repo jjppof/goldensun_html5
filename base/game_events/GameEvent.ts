@@ -33,6 +33,7 @@ export enum event_types {
     TIMER = "timer",
     PARTY_JOIN = "party_join",
     SUMMON = "summon",
+    DJINN_GET = "djinn_get",
 }
 
 /* Everytime a game event is fired, it's checked whether reveal is casted, if yes, it stops the reveal psynergy. */

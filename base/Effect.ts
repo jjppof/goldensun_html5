@@ -47,6 +47,7 @@ export enum effect_types {
     EXTRA_DEFENSE = "extra_defense",
     EXTRA_AGILITY = "extra_agility",
     EXTRA_LUCK = "extra_luck",
+    PARALYZE = "paralyze",
 }
 
 export const effect_names: {[effect_type in effect_types]?: string} = {
@@ -400,6 +401,11 @@ export class Effect {
             case effect_types.EXTRA_MAX_HP:
             case effect_types.EXTRA_MAX_PP:
                 return this.apply_general_value(effect_type_extra_stat[this.type]);
+            case effect_types.PARALYZE:
+                if (Math.random() < this.chance) {
+                    this.char.paralyzed_by_effect = true;
+                }
+                return;
         }
     }
 

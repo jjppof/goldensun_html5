@@ -30,7 +30,7 @@ export function initialize_npcs_data(
     game.load.onLoadComplete.addOnce(() => {
         for (let npc_key in npc_db) {
             const npc_info = npc_db[npc_key];
-            const npc_sprite_info = npc_sprite_base_list[npc_key];
+            const npc_sprite_info: SpriteBase = npc_sprite_base_list[npc_key];
             for (let action_alias in npc_info.action_aliases) {
                 npc_sprite_info.setActionAlias(game, action_alias, npc_info.action_aliases[action_alias]);
             }

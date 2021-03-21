@@ -163,6 +163,7 @@ export abstract class Player {
     public luk: number;
     public level: number;
     public current_exp: number;
+    public paralyzed_by_effect: boolean;
     public on_status_change: Subject<{
         status: permanent_status | temporary_status;
         added: boolean;
@@ -181,6 +182,7 @@ export abstract class Player {
         }, {});
         this.current_resist = _.cloneDeep(this.current_power);
         this.current_level = _.cloneDeep(this.current_power);
+        this.paralyzed_by_effect = false;
         this.init_effect_turns_count();
     }
 
@@ -348,7 +350,11 @@ export abstract class Player {
     }
 
     is_paralyzed() {
-        return this.temporary_status.has(temporary_status.SLEEP) || this.temporary_status.has(temporary_status.STUN);
+        return (
+            this.temporary_status.has(temporary_status.SLEEP) ||
+            this.temporary_status.has(temporary_status.STUN) ||
+            this.paralyzed_by_effect
+        );
     }
 
     is_poisoned() {

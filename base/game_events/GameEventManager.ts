@@ -18,6 +18,7 @@ import {storage_types} from "../Storage";
 import {TileEvent} from "../tile_events/TileEvent";
 import * as _ from "lodash";
 import {SummonEvent} from "./SummonEvent";
+import {DjinnGetEvent} from "./DjinnGetEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -285,6 +286,8 @@ export class GameEventManager {
                 );
             case event_types.SUMMON:
                 return new SummonEvent(this.game, this.data, info.active, info.summon_key, info.finish_events);
+            case event_types.DJINN_GET:
+                return new DjinnGetEvent(this.game, this.data, info.active, info.djinn_key, info.finish_events);
         }
     }
 

@@ -420,6 +420,9 @@ export class Battle {
                 await this.battle_log.add(`${action.caster.name} is asleep!`);
             } else if (action.caster.temporary_status.has(temporary_status.STUN)) {
                 await this.battle_log.add(`${action.caster.name} is paralyzed and cannot move!`);
+            } else if (action.caster.paralyzed_by_effect) {
+                await this.battle_log.add(`${action.caster.name} is paralyzed and cannot move!`);
+                action.caster.paralyzed_by_effect = false;
             }
 
             await this.wait_for_key();
@@ -984,6 +987,16 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                         }
                         break;
                     }
+
+                case effect_types.PARALYZE:
+                    target_instance.add_effect(effect, ability, true);
+                    if (target_instance.paralyzed_by_effect) {
+                        await this.battle_log.add(`${target_instance.name} has become unable to move!`);
+                    } else {
+                        await this.battle_log.add(`But it has no effect on ${target_instance.name}!`);
+                    }
+                    await this.wait_for_key();
+                    break;
 
                 case effect_types.END_THE_ROUND:
                     await this.battle_log.add(`Everybody is resting!`);

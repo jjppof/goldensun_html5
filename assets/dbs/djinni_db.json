@@ -60,6 +60,18 @@
         "agi_boost": 0,
         "luk_boost": 1
     },{
+        "key_name": "ground",
+        "name": "Ground",
+        "description": "Use gravity to hold a foe.",
+        "element": "venus",
+        "ability_key_name": "ground",
+        "hp_boost": 9,
+        "pp_boost": 3,
+        "atk_boost": 0,
+        "def_boost": 0,
+        "agi_boost": 3,
+        "luk_boost": 0
+    },{
         "key_name": "forge",
         "name": "Forge",
         "description": "Boost party Attack with flame's fury.",

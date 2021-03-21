@@ -1,6 +1,6 @@
 import {SpriteBase} from "./SpriteBase";
 import {Classes} from "./Classes";
-import {djinn_status} from "./Djinn";
+import {Djinn, djinn_status} from "./Djinn";
 import {Effect, effect_types} from "./Effect";
 import {Item, item_types} from "./Item";
 import {Player, fighter_types, permanent_status, main_stats, effect_type_stat, extra_main_stats} from "./Player";
@@ -647,6 +647,17 @@ export class MainChar extends Player {
             }
         }
         return false;
+    }
+
+    static add_djinn_to_party(party_data: PartyData, djinn: Djinn) {
+        let this_char = party_data.members[0];
+        for (let i = 0; i < party_data.members.length; ++i) {
+            if (party_data.members[i].djinni.length < this_char.djinni.length) {
+                this_char = party_data.members[i];
+                break;
+            }
+        }
+        this_char.add_djinn(djinn.key_name);
     }
 
     static add_member_to_party(data: GoldenSun, party_data: PartyData, char_key_name: string) {
