@@ -63,6 +63,7 @@ export class DjinnGetEvent extends GameEvent {
         MainChar.add_djinn_to_party(this.data.info.party_data, this.djinn);
         this.data.hero.play(base_actions.IDLE);
         this.data.game_event_manager.force_idle_action = true;
+        this.game.physics.p2.resume();
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
@@ -114,7 +115,7 @@ export class DjinnGetEvent extends GameEvent {
             vy: -7,
         };
         this.data.particle_manager.addData("out_of_ground", data);
-        const emitter = this.data.particle_manager.createEmitter("sprite");
+        const emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.SPRITE);
         const color_filter: any = this.game.add.filter("ColorFilters");
         color_filter.hue_adjust = DjinnGetEvent.ELEMENT_HUE[this.djinn.element];
         emitter.onEmit = new Phaser.Signal();
@@ -204,11 +205,19 @@ export class DjinnGetEvent extends GameEvent {
             },
         };
         this.data.particle_manager.addData("finish_data", finish_data);
-        const finish_emitter = this.data.particle_manager.createEmitter("pixel");
+        const finish_emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.PIXEL);
         (finish_emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).pixelSize = 3;
         (finish_emitter.renderer as Phaser.ParticleStorm.Renderer.Pixel).useRect = true;
-        finish_emitter.addToWorld();
-        finish_emitter.emit("finish_data", this.data.hero.sprite.x, this.data.hero.sprite.y - 20, {
+
+        const finish_particles_group = this.game.add.group();
+        finish_particles_group.x = this.game.camera.x;
+        finish_particles_group.y = this.game.camera.y;
+        finish_emitter.addToWorld(finish_particles_group);
+
+        const finish_emitter_x = this.data.hero.sprite.x - this.game.camera.x;
+        const finish_emitter_y = this.data.hero.sprite.y - 20 - this.game.camera.y;
+
+        finish_emitter.emit("finish_data", finish_emitter_x, finish_emitter_y, {
             total: 8,
             repeat: 0,
         });
@@ -220,6 +229,7 @@ export class DjinnGetEvent extends GameEvent {
         this.data.particle_manager.removeEmitter(finish_emitter);
         finish_emitter.destroy();
         this.data.particle_manager.clearData("finish_data");
+        finish_particles_group.destroy(true);
 
         reset_map();
     }
@@ -230,6 +240,7 @@ export class DjinnGetEvent extends GameEvent {
         this.origin_npc = oringin_npc;
         this.data.game_event_manager.force_idle_action = false;
         this.running = true;
+        this.game.physics.p2.pause();
 
         await this.data.game_event_manager.handle_npc_interaction_start(this.origin_npc, false);
 
