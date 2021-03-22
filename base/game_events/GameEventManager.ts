@@ -138,8 +138,10 @@ export class GameEventManager {
         }
     }
 
-    async handle_npc_interaction_start(npc: NPC) {
-        ++this.events_running_count;
+    async handle_npc_interaction_start(npc: NPC, increment_event_counter: boolean = true) {
+        if (increment_event_counter) {
+            ++this.events_running_count;
+        }
         let previous_npc_direction;
         if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
             previous_npc_direction = npc.current_direction;

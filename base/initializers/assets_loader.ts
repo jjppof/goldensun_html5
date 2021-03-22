@@ -33,6 +33,7 @@ function load_misc(game) {
     game.load.image("psynergy_aura", "assets/images/misc/psynergy_aura.png");
     game.load.atlasJSONHash("menu", "assets/images/misc/menu.png", "assets/images/misc/menu.json");
     game.load.image("frost_snowflake", "assets/images/interactable_objects/snowflake.png");
+    game.load.image("djinn_ball", "assets/images/misc/djinn_ball.png");
     game.load.image("star", "assets/images/interactable_objects/star.png");
     game.load.atlasJSONHash(
         "battle_effect_icons",

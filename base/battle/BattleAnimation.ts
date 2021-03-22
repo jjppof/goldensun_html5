@@ -1114,8 +1114,8 @@ export class BattleAnimation {
                         particle_key,
                         emitter_info.animation.animation_key
                     );
-                    emitter.forEach((particle: Phaser.Sprite) => {
-                        particle_sprite_base.setAnimation(particle, particle_key);
+                    emitter.forEach((particle: Phaser.ParticleStorm.Particle) => {
+                        particle_sprite_base.setAnimation(particle.sprite, particle_key);
                     }, this);
                     emitter.onEmit = new Phaser.Signal();
                     emitter.onEmit.add((emitter: Phaser.ParticleStorm.Emitter, particle: Phaser.Sprite) => {

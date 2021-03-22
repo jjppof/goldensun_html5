@@ -92,6 +92,9 @@ export abstract class ControllableChar {
     private look_target: ControllableChar = null;
     protected _active: boolean;
     protected colliding_directions_mask: number;
+    private _rotating: boolean;
+    private _rotating_interval: number;
+    private _rotating_elapsed: number;
 
     constructor(
         game: Phaser.Game,
@@ -134,6 +137,7 @@ export abstract class ControllableChar {
         this._sprite_info = null;
         this.sprite = null;
         this.shadow = null;
+        this._rotating = false;
         this._body_radius = 0;
         this.storage_keys = storage_keys ?? {};
         this._active = active ?? true;
@@ -400,7 +404,7 @@ export abstract class ControllableChar {
         await transition_promise;
     }
 
-    async jump(jump_height: number = 12, duration: number = 65) {
+    async jump(time_on_finish: number = 0, jump_height: number = 12, duration: number = 65) {
         let promise_resolve;
         const promise = new Promise(resolve => (promise_resolve = resolve));
         const previous_shadow_state = this.shadow_following;
@@ -413,6 +417,11 @@ export abstract class ControllableChar {
                 promise_resolve();
             });
         await promise;
+        if (time_on_finish) {
+            const time_promise = new Promise(resolve => (promise_resolve = resolve));
+            this.game.time.events.add(time_on_finish, promise_resolve);
+            await time_promise;
+        }
     }
 
     set_frame(direction: number, frame_index: number = 0) {
@@ -424,9 +433,29 @@ export abstract class ControllableChar {
         this.sprite.frameName = frame_name;
     }
 
+    set_rotation(rotate: boolean, interframe_interval: number = -1) {
+        this._rotating = rotate;
+        if (this._rotating) {
+            this._rotating_interval = interframe_interval;
+            this._rotating_elapsed = 0;
+        }
+    }
+
+    private rotate() {
+        if (this._rotating) {
+            if (this._rotating_interval === -1 || this._rotating_elapsed > this._rotating_interval) {
+                this.set_direction((this.current_direction + 1) & 7, true, true);
+                this._rotating_elapsed = 0;
+            } else {
+                this._rotating_elapsed += this.game.time.elapsedMS;
+            }
+        }
+    }
+
     update_on_event() {
         if (!this.active) return;
         this.look_to_target();
+        this.rotate();
     }
 
     update_movement(ignore_collide_action_change: boolean = false) {

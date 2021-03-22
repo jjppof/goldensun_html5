@@ -192,12 +192,10 @@ export abstract class FieldAbilities {
             this.controllable_char.color_filter,
             () => {
                 if (this.tint_map && !this.controllable_char.on_reveal) {
-                    reset_map = FieldAbilities.tint_map_layers(
-                        this.game,
-                        this.data.map,
-                        this.field_color,
-                        this.field_intensity
-                    );
+                    reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
+                        color: this.field_color,
+                        intensity: this.field_intensity,
+                    });
                 }
 
                 this.bootstrap_method();
@@ -374,20 +372,36 @@ export abstract class FieldAbilities {
         };
     }
 
-    static tint_map_layers(game: Phaser.Game, map: Map, color?, intensity?, after_destroy?) {
+    static tint_map_layers(
+        game: Phaser.Game,
+        map: Map,
+        options?: {
+            color?: number;
+            intensity?: number;
+            after_destroy?: () => void;
+            after_colorize?: () => void;
+        }
+    ) {
         const filter = map.color_filter;
         filter.colorize_intensity = 0;
         filter.gray = 0;
-        filter.colorize = color ?? Math.random();
-        game.add.tween(filter).to(
-            {
-                colorize_intensity: intensity ?? 0.4,
-                gray: 1,
-            },
-            Phaser.Timer.QUARTER,
-            Phaser.Easing.Linear.None,
-            true
-        );
+        filter.colorize = options?.color ?? Math.random();
+        game.add
+            .tween(filter)
+            .to(
+                {
+                    colorize_intensity: options?.intensity ?? 0.4,
+                    gray: 1,
+                },
+                Phaser.Timer.QUARTER,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(() => {
+                if (options?.after_colorize !== undefined) {
+                    options.after_colorize();
+                }
+            });
         return () => {
             game.add
                 .tween(filter)
@@ -402,8 +416,8 @@ export abstract class FieldAbilities {
                 )
                 .onComplete.addOnce(() => {
                     filter.colorize = -1;
-                    if (after_destroy !== undefined) {
-                        after_destroy();
+                    if (options?.after_destroy !== undefined) {
+                        options.after_destroy();
                     }
                 });
         };

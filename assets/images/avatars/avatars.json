@@ -260,7 +260,7 @@
 				"h": 32
 			}
 		},
-		"jupiter_djinni": {
+		"jupiter_djinn": {
 			"frame": {
 				"x": 96,
 				"y": 64,
@@ -320,7 +320,7 @@
 				"h": 32
 			}
 		},
-		"mars_djinni": {
+		"mars_djinn": {
 			"frame": {
 				"x": 32,
 				"y": 96,
@@ -360,7 +360,7 @@
 				"h": 32
 			}
 		},
-		"mercury_djinni": {
+		"mercury_djinn": {
 			"frame": {
 				"x": 96,
 				"y": 96,
@@ -480,7 +480,7 @@
 				"h": 32
 			}
 		},
-		"venus": {
+		"venus_djinn": {
 			"frame": {
 				"x": 128,
 				"y": 128,
