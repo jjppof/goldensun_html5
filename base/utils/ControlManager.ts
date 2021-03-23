@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 import {Audio} from "../Audio";
-import {Gamepad as XGamepad, Button, AnyButton} from "../XGamepad";
+import {Gamepad as XGamepad, Button} from "../XGamepad";
 
 const DEFAULT_LOOP_TIME = Phaser.Timer.QUARTER >> 1;
 
@@ -252,7 +252,6 @@ export class ControlManager {
      * @return {number} - A free usable index
      */
     make_key() {
-        let finished = false;
         let i = 0;
 
         do {
@@ -260,10 +259,9 @@ export class ControlManager {
                 i++;
                 continue;
             } else {
-                finished = true;
                 break;
             }
-        } while (!finished);
+        } while (true);
 
         this.signal_bindings[i] = [];
 
