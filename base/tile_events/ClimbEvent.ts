@@ -290,4 +290,8 @@ export class ClimbEvent extends TileEvent {
         }
         bodies = [];
     }
+
+    destroy() {
+        this._origin_interactable_object = null;
+    }
 }

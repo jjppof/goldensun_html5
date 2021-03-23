@@ -179,6 +179,10 @@ export class JumpEvent extends TileEvent {
         });
     }
 
+    destroy() {
+        this._origin_interactable_object = null;
+    }
+
     create_collision_bodies_around_jump_events() {
         const current_pos = {x: this.data.hero.tile_x_pos, y: this.data.hero.tile_y_pos};
         const surroundings = get_surroundings(current_pos.x, current_pos.y, true);

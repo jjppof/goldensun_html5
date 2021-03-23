@@ -61,4 +61,8 @@ export class CollisionEvent extends TileEvent {
             this.data.tile_event_manager.unset_triggered_event(this);
         }
     }
+
+    destroy() {
+        this._origin_interactable_object = null;
+    }
 }

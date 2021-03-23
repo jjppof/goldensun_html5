@@ -406,4 +406,19 @@ export class DialogManager {
             }
         }
     }
+
+    destroy() {
+        if (this.avatar_window) {
+            this.avatar_window.destroy(false);
+            this.avatar_window = null;
+        }
+        if (this.window) {
+            this.window.destroy(false);
+            this.window = null;
+        }
+        if (this.dialog_crystal) {
+            this.dialog_crystal.destroy();
+            this.dialog_crystal = null;
+        }
+    }
 }

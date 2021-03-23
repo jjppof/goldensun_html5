@@ -183,4 +183,8 @@ export class TeleportEvent extends TileEvent {
             this.data.map.sprite.replace(source_index, target_index, base_x, base_y, 1, 1, layer.name);
         }
     }
+
+    destroy() {
+        this._origin_interactable_object = null;
+    }
 }

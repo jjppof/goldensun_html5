@@ -48,4 +48,8 @@ export class SpeedEvent extends TileEvent {
             this.data.hero.increase_extra_speed(this.speed);
         }
     }
+
+    destroy() {
+        this._origin_interactable_object = null;
+    }
 }

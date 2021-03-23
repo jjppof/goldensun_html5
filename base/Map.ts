@@ -653,11 +653,11 @@ export class Map {
 
         this.collision_sprite.body.clearShapes();
 
+        this._npcs.forEach(npc => {
+            npc.unset_npc();
+        });
         if (this.show_footsteps) {
             this.data.hero.footsteps.clean_all();
-            this._npcs.forEach(npc => {
-                npc.footsteps?.clean_all();
-            });
         }
 
         const sprites_to_remove = [];
@@ -674,6 +674,9 @@ export class Map {
             const sprite = sprites_to_remove[i];
             this.data.npc_group.remove(sprite, true);
         }
+
+        TileEvent.reset();
+        GameEvent.reset();
 
         this._npcs = [];
         this._interactable_objects = [];

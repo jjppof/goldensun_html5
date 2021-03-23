@@ -14,6 +14,7 @@ export class DialogEvent extends GameEvent {
     private reset_reciprocal_look: boolean = true;
     private finish_events: GameEvent[] = [];
     private previous_npc_direction: number;
+    private control_key: number;
 
     constructor(
         game,
@@ -33,7 +34,7 @@ export class DialogEvent extends GameEvent {
         this.reset_reciprocal_look = reset_reciprocal_look ?? true;
         this.voice_key = voice_key ?? "";
 
-        this.data.control_manager.add_controls(
+        this.control_key = this.data.control_manager.add_controls(
             [
                 {
                     button: Button.A,
@@ -63,6 +64,7 @@ export class DialogEvent extends GameEvent {
                     await this.origin_npc.face_direction(this.previous_npc_direction);
                 }
                 this.running = false;
+                this.data.control_manager.detach_bindings(this.control_key);
                 --this.data.game_event_manager.events_running_count;
                 this.finish_events.forEach(event => event.fire(this.origin_npc));
             }
@@ -85,5 +87,12 @@ export class DialogEvent extends GameEvent {
             voice_key: this.voice_key ? this.voice_key : origin_npc.voice_key,
         });
         this.next();
+    }
+
+    destroy() {
+        this.finish_events.forEach(event => event.destroy());
+        this.origin_npc = null;
+        this.dialog_manager?.destroy();
+        this.data.control_manager.detach_bindings(this.control_key);
     }
 }

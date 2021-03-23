@@ -124,6 +124,8 @@ export abstract class TileEvent {
 
     abstract fire(): void;
 
+    abstract destroy(): void;
+
     is_active(direction: directions) {
         const possible_directions = split_direction(direction);
         for (let i = 0; i < possible_directions.length; ++i) {
@@ -178,6 +180,9 @@ export abstract class TileEvent {
 
     static reset() {
         TileEvent.id_incrementer = 0;
+        for (let id in TileEvent.events) {
+            TileEvent.events[id].destroy();
+        }
         TileEvent.events = {};
     }
 }

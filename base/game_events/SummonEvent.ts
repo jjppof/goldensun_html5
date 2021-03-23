@@ -26,12 +26,13 @@ export class SummonEvent extends GameEvent {
     private emitter: Phaser.Particles.Arcade.Emitter;
     private letters: Phaser.Sprite[];
     private finish_events: GameEvent[] = [];
+    private control_key: number;
 
     constructor(game, data, active, summon_key, finish_events) {
         super(game, data, event_types.SUMMON, active);
         this.summon = this.data.info.summons_list[summon_key];
 
-        this.data.control_manager.add_controls(
+        this.control_key = this.data.control_manager.add_controls(
             [
                 {
                     button: Button.A,
@@ -94,6 +95,7 @@ export class SummonEvent extends GameEvent {
         this.summon.available = true;
         this.running = false;
         this.control_enable = false;
+        this.data.control_manager.detach_bindings(this.control_key);
         this.data.game_event_manager.force_idle_action = true;
         this.data.hero.play(base_actions.IDLE);
         this.emitter.destroy();
@@ -323,5 +325,12 @@ export class SummonEvent extends GameEvent {
 
         await this.aux_promise;
         this.finish();
+    }
+
+    destroy() {
+        this.finish_events.forEach(event => event.destroy());
+        this.origin_npc = null;
+        this.dialog?.destroy();
+        this.data.control_manager.detach_bindings(this.control_key);
     }
 }

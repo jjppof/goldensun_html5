@@ -17,11 +17,12 @@ export class PsynergyStoneEvent extends GameEvent {
     private aux_resolve: () => void;
     private dialog_manager: DialogManager;
     private finish_events: GameEvent[] = [];
+    private control_key: number;
 
     constructor(game, data, active, finish_events) {
         super(game, data, event_types.PSYNERGY_STONE, active);
 
-        this.data.control_manager.add_controls(
+        this.control_key = this.data.control_manager.add_controls(
             [
                 {
                     button: Button.A,
@@ -120,6 +121,7 @@ export class PsynergyStoneEvent extends GameEvent {
         this.data.hero.play(base_actions.IDLE);
         this.running = false;
         this.control_enable = false;
+        this.data.control_manager.detach_bindings(this.control_key);
         this.data.game_event_manager.force_idle_action = true;
         this.game.physics.p2.resume();
         --this.data.game_event_manager.events_running_count;
@@ -143,5 +145,12 @@ export class PsynergyStoneEvent extends GameEvent {
             {show_crystal: show_crystal}
         );
         await this.promise;
+    }
+
+    destroy() {
+        this.finish_events.forEach(event => event.destroy());
+        this.origin_npc = null;
+        this.dialog_manager?.destroy();
+        this.data.control_manager.detach_bindings(this.control_key);
     }
 }

@@ -11,13 +11,14 @@ export class PartyJoinEvent extends GameEvent {
     private running: boolean = false;
     private control_enable: boolean = true;
     private finish_events: GameEvent[] = [];
+    private control_key: number;
 
     constructor(game, data, active, char_key_name, join, finish_events) {
         super(game, data, event_types.PARTY_JOIN, active);
         this.char_key_name = char_key_name;
         this.join = join;
 
-        this.data.control_manager.add_controls(
+        this.control_key = this.data.control_manager.add_controls(
             [
                 {
                     button: Button.A,
@@ -44,6 +45,7 @@ export class PartyJoinEvent extends GameEvent {
             this.control_enable = true;
             if (finished) {
                 this.running = false;
+                this.data.control_manager.detach_bindings(this.control_key);
                 --this.data.game_event_manager.events_running_count;
                 this.finish_events.forEach(event => event.fire(this.origin_npc));
             }
@@ -73,8 +75,16 @@ export class PartyJoinEvent extends GameEvent {
             this.next();
         } else {
             MainChar.remove_member_from_party(this.data, this.data.info.party_data, this.char_key_name);
+            this.data.control_manager.detach_bindings(this.control_key);
             --this.data.game_event_manager.events_running_count;
             this.finish_events.forEach(event => event.fire(this.origin_npc));
         }
+    }
+
+    destroy() {
+        this.finish_events.forEach(event => event.destroy());
+        this.origin_npc = null;
+        this.dialog_manager?.destroy();
+        this.data.control_manager.detach_bindings(this.control_key);
     }
 }

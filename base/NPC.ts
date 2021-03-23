@@ -309,4 +309,18 @@ export class NPC extends ControllableChar {
         this.sprite.body.dynamic = false;
         this.sprite.body.static = true;
     }
+
+    unset_npc() {
+        if (this.sprite) {
+            this.sprite.destroy();
+        }
+        if (this.shadow) {
+            this.shadow.destroy();
+        }
+        if (this.footsteps) {
+            this.footsteps.destroy();
+        }
+        this._events.forEach(event => event.destroy());
+        this.look_target = null;
+    }
 }

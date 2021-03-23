@@ -95,4 +95,9 @@ export class BranchEvent extends GameEvent {
             this.else_events.forEach(event => event.fire(this.origin_npc));
         }
     }
+
+    destroy() {
+        this.events.forEach(event => event.destroy());
+        this.origin_npc = null;
+    }
 }

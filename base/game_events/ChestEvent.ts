@@ -21,6 +21,7 @@ export class ChestEvent extends GameEvent {
     private custom_init_text: string;
     private no_chest: boolean;
     private hide_on_finish: boolean;
+    private control_key: number;
 
     constructor(
         game,
@@ -40,7 +41,7 @@ export class ChestEvent extends GameEvent {
         this.custom_init_text = custom_init_text;
         this.hide_on_finish = hide_on_finish ?? false;
 
-        this.data.control_manager.add_controls(
+        this.control_key = this.data.control_manager.add_controls(
             [
                 {
                     button: Button.A,
@@ -174,8 +175,16 @@ export class ChestEvent extends GameEvent {
         MainChar.add_item_to_party(this.data.info.party_data, this.item, this.quantity);
         this.running = false;
         this.control_enable = false;
+        this.data.control_manager.detach_bindings(this.control_key);
         this.data.game_event_manager.force_idle_action = true;
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
+    }
+
+    destroy() {
+        this.finish_events.forEach(event => event.destroy());
+        this.origin_npc = null;
+        this.dialog_manager?.destroy();
+        this.data.control_manager.detach_bindings(this.control_key);
     }
 }

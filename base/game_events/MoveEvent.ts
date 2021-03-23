@@ -67,7 +67,10 @@ export class MoveEvent extends GameEvent {
         this.origin_npc = origin_npc;
         ++this.data.game_event_manager.events_running_count;
         this.data.collision.disable_npc_collision();
-        if (this.is_npc) {
+        if (this.is_npc === undefined && this.npc_index === undefined) {
+            this.char = this.origin_npc;
+            this.is_npc = true;
+        } else if (this.is_npc) {
             this.char = this.data.map.npcs[this.npc_index];
         } else {
             this.char = this.data.hero;
@@ -161,5 +164,11 @@ export class MoveEvent extends GameEvent {
         }
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
+    }
+
+    destroy() {
+        this.finish_events.forEach(event => event.destroy());
+        this.origin_npc = null;
+        this.char = null;
     }
 }

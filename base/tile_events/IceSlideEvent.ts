@@ -67,4 +67,8 @@ export class IceSlideEvent extends TileEvent {
             this.data.hero.set_ice_slide_direction(null);
         }
     }
+
+    destroy() {
+        this._origin_interactable_object = null;
+    }
 }

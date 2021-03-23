@@ -19,4 +19,8 @@ export class LookEvent extends GameEvent {
         const target: ControllableChar = this.target === "hero" ? this.data.hero : this.data.map.npcs[this.target];
         looker.set_look_to_target(this.look, target);
     }
+
+    destroy() {
+        this.origin_npc = null;
+    }
 }

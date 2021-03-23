@@ -24,12 +24,13 @@ export class DjinnGetEvent extends GameEvent {
     private dialog_manager: DialogManager = null;
     private running: boolean = false;
     private control_enable: boolean = false;
+    private control_key: number;
 
     constructor(game, data, active, djinn_key, finish_events) {
         super(game, data, event_types.DJINN_GET, active);
         this.djinn = this.data.info.djinni_list[djinn_key];
 
-        this.data.control_manager.add_controls(
+        this.control_key = this.data.control_manager.add_controls(
             [
                 {
                     button: Button.A,
@@ -60,6 +61,7 @@ export class DjinnGetEvent extends GameEvent {
     finish() {
         this.control_enable = false;
         this.running = false;
+        this.data.control_manager.detach_bindings(this.control_key);
         MainChar.add_djinn_to_party(this.data.info.party_data, this.djinn);
         this.data.hero.play(base_actions.IDLE);
         this.data.game_event_manager.force_idle_action = true;
@@ -264,5 +266,12 @@ export class DjinnGetEvent extends GameEvent {
             this.data.audio.resume_bgm();
         });
         this.next();
+    }
+
+    destroy() {
+        this.finish_events.forEach(event => event.destroy());
+        this.origin_npc = null;
+        this.dialog_manager?.destroy();
+        this.data.control_manager.detach_bindings(this.control_key);
     }
 }

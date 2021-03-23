@@ -48,4 +48,8 @@ export class SetValueEvent extends GameEvent {
             this.origin_npc.check_storage_keys();
         }
     }
+
+    destroy() {
+        this.origin_npc = null;
+    }
 }

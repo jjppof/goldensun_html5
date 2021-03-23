@@ -89,7 +89,7 @@ export abstract class ControllableChar {
     private _color_filter: Phaser.Filter;
     protected push_timer: Phaser.TimerEvent;
     private _footsteps: Footsteps;
-    private look_target: ControllableChar = null;
+    protected look_target: ControllableChar = null;
     protected _active: boolean;
     protected colliding_directions_mask: number;
     private _rotating: boolean;

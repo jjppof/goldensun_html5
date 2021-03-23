@@ -80,12 +80,17 @@ export abstract class GameEvent {
        It should never be called. */
     protected abstract _fire(origin_npc?: NPC): void;
 
+    abstract destroy(): void;
+
     static get_event(id) {
         return GameEvent.events[id];
     }
 
     static reset() {
         GameEvent.id_incrementer = 0;
+        for (let id in GameEvent.events) {
+            GameEvent.events[id].destroy();
+        }
         GameEvent.events = {};
     }
 }
