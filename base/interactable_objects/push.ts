@@ -105,15 +105,17 @@ export function fire_push_movement(
         }
         const prev_x = interactable_object.current_x;
         const prev_y = interactable_object.current_y;
-        interactable_object.current_x += event_shift_x;
-        interactable_object.current_y += event_shift_y;
+        interactable_object.set_tile_position({
+            x: interactable_object.current_x + event_shift_x,
+            y: interactable_object.current_y + event_shift_y,
+        });
         const promises = [];
         if (before_move !== undefined) {
             before_move(tween_x, tween_y);
         }
-        if (interactable_object.custom_data.blocking_stair_block) {
-            interactable_object.custom_data.blocking_stair_block.x += tween_x;
-            interactable_object.custom_data.blocking_stair_block.y += tween_y;
+        if (interactable_object.blocking_stair_block) {
+            interactable_object.blocking_stair_block.x += tween_x;
+            interactable_object.blocking_stair_block.y += tween_y;
         }
         for (let i = 0; i < sprites.length; ++i) {
             const body = sprites[i];
@@ -157,7 +159,7 @@ export function fire_push_movement(
                                 0,
                                 drop_tile.dest_y - interactable_object.current_y
                             );
-                            interactable_object.current_y = drop_tile.dest_y;
+                            interactable_object.set_tile_position({y: drop_tile.dest_y});
                             interactable_object.change_collision_layer(data, drop_tile.destination_collision_layer);
                             game.add
                                 .tween(interactable_object.sprite.body)

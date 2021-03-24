@@ -123,16 +123,14 @@ export class FrostFieldPsynergy extends FieldAbilities {
         });
         this.target_object.sprite.send_to_back = false;
         this.data.map.sort_sprites();
-        this.target_object.custom_data.color_filters = this.game.add.filter("ColorFilters");
-        this.target_object.sprite.filters = [this.target_object.custom_data.color_filters];
         this.data.audio.play_se("psynergy/4");
         let blink_counter = 16;
         const blink_timer = this.game.time.create(false);
         blink_timer.loop(50, () => {
             if (blink_counter % 2 === 0) {
-                this.target_object.custom_data.color_filters.tint = [1, 1, 1];
+                this.target_object.color_filter.tint = [1, 1, 1];
             } else {
-                this.target_object.custom_data.color_filters.tint = [-1, -1, -1];
+                this.target_object.color_filter.tint = [-1, -1, -1];
             }
             --blink_counter;
             if (blink_counter === 0) {
@@ -159,9 +157,9 @@ export class FrostFieldPsynergy extends FieldAbilities {
         let blink_timer = this.game.time.create(false);
         let target_object = this.target_object;
         blink_timer.loop(150, () => {
-            target_object.custom_data.color_filters.hue_adjust = 5.3;
+            target_object.color_filter.hue_adjust = 5.3;
             this.game.time.events.add(20, () => {
-                target_object.custom_data.color_filters.hue_adjust = 0;
+                target_object.color_filter.hue_adjust = 0;
             });
         });
         blink_timer.start();

@@ -63,9 +63,8 @@ export class Debug {
         }
         for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
             const interactable_object = this.data.map.interactable_objects[i];
-            if (interactable_object.custom_data.blocking_stair_block) {
-                interactable_object.custom_data.blocking_stair_block.debug = !interactable_object.custom_data
-                    .blocking_stair_block.debug;
+            if (interactable_object.blocking_stair_block) {
+                interactable_object.blocking_stair_block.debug = !interactable_object.blocking_stair_block.debug;
             }
         }
         this.debug_physics = !this.debug_physics;

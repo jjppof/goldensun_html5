@@ -284,11 +284,7 @@ export class ClimbEvent extends TileEvent {
                 this.data.collision.interactable_objs_collision_groups[this.data.map.collision_layer]
             );
         }
-        let bodies = this.origin_interactable_object.collision_tiles_bodies;
-        for (let i = 0; i < bodies.length; ++i) {
-            bodies[i].destroy();
-        }
-        bodies = [];
+        this.origin_interactable_object.destroy_collision_tiles_bodies();
     }
 
     destroy() {

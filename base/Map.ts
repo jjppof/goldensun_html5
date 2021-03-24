@@ -654,25 +654,13 @@ export class Map {
         this.collision_sprite.body.clearShapes();
 
         this._npcs.forEach(npc => {
-            npc.unset_npc();
+            npc.unset();
+        });
+        this._interactable_objects.forEach(interactable_object => {
+            interactable_object.unset();
         });
         if (this.show_footsteps) {
             this.data.hero.footsteps.clean_all();
-        }
-
-        const sprites_to_remove = [];
-        for (let i = 0; i < this.data.npc_group.children.length; ++i) {
-            const sprite = this.data.npc_group.children[i] as Phaser.Sprite;
-            if (!sprite.is_npc && !sprite.is_interactable_object) continue;
-            if (sprite.is_interactable_object && sprite.interactable_object.custom_data.blocking_stair_block) {
-                sprite.interactable_object.custom_data.blocking_stair_block.destroy();
-                sprite.interactable_object.custom_data.blocking_stair_block = undefined;
-            }
-            sprites_to_remove.push(sprite);
-        }
-        for (let i = 0; i < sprites_to_remove.length; ++i) {
-            const sprite = sprites_to_remove[i];
-            this.data.npc_group.remove(sprite, true);
         }
 
         TileEvent.reset();

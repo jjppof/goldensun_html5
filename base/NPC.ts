@@ -310,7 +310,7 @@ export class NPC extends ControllableChar {
         this.sprite.body.static = true;
     }
 
-    unset_npc() {
+    unset(remove_from_npc_group: boolean = true) {
         if (this.sprite) {
             this.sprite.destroy();
         }
@@ -322,5 +322,8 @@ export class NPC extends ControllableChar {
         }
         this._events.forEach(event => event.destroy());
         this.look_target = null;
+        if (remove_from_npc_group) {
+            this.data.npc_group.removeChild(this.sprite);
+        }
     }
 }
