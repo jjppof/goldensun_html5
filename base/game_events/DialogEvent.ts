@@ -15,6 +15,7 @@ export class DialogEvent extends GameEvent {
     private finish_events: GameEvent[] = [];
     private previous_npc_direction: number;
     private control_key: number;
+    private disable_controls: number;
 
     constructor(
         game,
@@ -25,7 +26,8 @@ export class DialogEvent extends GameEvent {
         npc_hero_reciprocal_look,
         reset_reciprocal_look,
         finish_events,
-        voice_key
+        voice_key,
+        disable_controls
     ) {
         super(game, data, event_types.DIALOG, active);
         this.text = text;
@@ -33,6 +35,7 @@ export class DialogEvent extends GameEvent {
         this.npc_hero_reciprocal_look = npc_hero_reciprocal_look ?? false;
         this.reset_reciprocal_look = reset_reciprocal_look ?? true;
         this.voice_key = voice_key ?? "";
+        this.disable_controls = disable_controls ?? false;
 
         this.control_key = this.data.control_manager.add_controls(
             [
@@ -64,7 +67,9 @@ export class DialogEvent extends GameEvent {
                     await this.origin_npc.face_direction(this.previous_npc_direction);
                 }
                 this.running = false;
-                this.data.control_manager.detach_bindings(this.control_key);
+                if (this.disable_controls) {
+                    this.data.control_manager.detach_bindings(this.control_key);
+                }
                 --this.data.game_event_manager.events_running_count;
                 this.finish_events.forEach(event => event.fire(this.origin_npc));
             }
@@ -93,6 +98,8 @@ export class DialogEvent extends GameEvent {
         this.finish_events.forEach(event => event.destroy());
         this.origin_npc = null;
         this.dialog_manager?.destroy();
-        this.data.control_manager.detach_bindings(this.control_key);
+        if (this.disable_controls) {
+            this.data.control_manager.detach_bindings(this.control_key);
+        }
     }
 }

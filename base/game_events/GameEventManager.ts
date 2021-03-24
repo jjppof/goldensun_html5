@@ -257,7 +257,8 @@ export class GameEventManager {
                     info.npc_hero_reciprocal_look,
                     info.reset_reciprocal_look,
                     info.finish_events,
-                    info.voice_key
+                    info.voice_key,
+                    info.disable_controls
                 );
             case event_types.LOOK:
                 return new LookEvent(this.game, this.data, info.active, info.look, info.looker, info.target);
