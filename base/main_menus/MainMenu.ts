@@ -1,4 +1,3 @@
-import {capitalize} from "../utils";
 import {MainPsynergyMenu} from "./MainPsynergyMenu";
 import {MainItemMenu} from "./MainItemMenu";
 import {MainDjinnMenu} from "./MainDjinnMenu";
@@ -7,6 +6,7 @@ import {CharsStatusWindow} from "../windows/CharsStatusWindow";
 import {GoldenSun} from "../GoldenSun";
 import {Button} from "../XGamepad";
 import {HorizontalMenu} from "../support_menus/HorizontalMenu";
+import * as _ from "lodash";
 
 export class MainMenu {
     private static readonly TITLE_WINDOW_WIDTH = 70;
@@ -35,7 +35,7 @@ export class MainMenu {
             this.game,
             this.data,
             this.buttons_keys,
-            this.buttons_keys.map(b => capitalize(b)),
+            this.buttons_keys.map(b => _.capitalize(b)),
             {
                 on_press: this.button_press.bind(this),
                 on_cancel: this.close_menu.bind(this),

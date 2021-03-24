@@ -382,16 +382,6 @@ export function get_directions(with_diagonals = false) {
     return dirs;
 }
 
-/*Capitalizes the given text
-
-Input: text [string] - Text to change
-       lower [boolean] - Whether the full text should be lowercased
-
-Output: [string] - Capitalized text*/
-export function capitalize(text, lower = false) {
-    return (lower ? text.toLowerCase() : text).replace(/(?:^|\s|["'([{])+\S/g, match => match.toUpperCase());
-}
-
 export function hex2rgb(hex: string | number) {
     if (typeof hex === "string") {
         hex = hex.replace(/^\s*#|\s*$/g, "");

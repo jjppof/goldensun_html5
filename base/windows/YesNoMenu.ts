@@ -1,6 +1,6 @@
 import {GoldenSun} from "../GoldenSun";
 import {HorizontalMenu} from "../support_menus/HorizontalMenu";
-import {capitalize} from "../utils";
+import * as _ from "lodash";
 
 const TITLE_WINDOW_WIDTH = 36;
 enum actions {
@@ -34,7 +34,7 @@ export class YesNoMenu {
             this.game,
             this.data,
             this.buttons_keys,
-            this.buttons_keys.map(b => capitalize(b)),
+            this.buttons_keys.map(b => _.capitalize(b)),
             {on_press: this.button_press.bind(this), on_cancel: this.close.bind(this)}
         );
         this.menu.title_window.update_size({width: TITLE_WINDOW_WIDTH});

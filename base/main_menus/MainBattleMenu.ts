@@ -1,5 +1,5 @@
 import {CharsStatusWindow} from "../windows/CharsStatusWindow";
-import {capitalize, ordered_elements} from "../utils";
+import {ordered_elements} from "../utils";
 import * as numbers from "../magic_numbers";
 import {djinn_status} from "../Djinn";
 import {BattleDescriptionWindow} from "../windows/battle/BattleDescriptionWindow";
@@ -86,7 +86,7 @@ export class MainBattleMenu {
             this.game,
             this.data,
             this.start_buttons_keys,
-            this.start_buttons_keys.map(b => capitalize(b)),
+            this.start_buttons_keys.map(b => _.capitalize(b)),
             {on_press: this.start_button_press.bind(this)},
             START_TITLE_WINDOW_WIDTH,
             true
@@ -97,7 +97,7 @@ export class MainBattleMenu {
             this.game,
             this.data,
             this.inner_buttons_keys,
-            this.inner_buttons_keys.map(b => capitalize(b)),
+            this.inner_buttons_keys.map(b => _.capitalize(b)),
             {on_press: this.inner_button_press.bind(this), on_cancel: this.inner_menu_cancel.bind(this)},
             INNER_TITLE_WINDOW_WIDTH,
             true

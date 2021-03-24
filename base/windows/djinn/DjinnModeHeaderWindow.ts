@@ -1,10 +1,11 @@
 import {TextObj, Window} from "../../Window";
-import {base_actions, capitalize, directions, reverse_directions} from "../../utils";
+import {base_actions, directions, reverse_directions} from "../../utils";
 import {Djinn, djinn_font_colors, djinn_status} from "../../Djinn";
 import * as numbers from "../../magic_numbers";
 import {GoldenSun} from "../../GoldenSun";
 import {MainChar} from "../../MainChar";
 import {djinn_actions} from "../../main_menus/MainDjinnMenu";
+import * as _ from "lodash";
 
 const BASE_WIN_WIDTH = 236;
 const BASE_WIN_HEIGHT = 36;
@@ -146,7 +147,7 @@ export class DjinnModeHeaderWindow {
     mount_window() {
         this.update_position();
         if (this.chars.length === 1) {
-            const status_text = capitalize(this.next_djinni_status[0]);
+            const status_text = _.capitalize(this.next_djinni_status[0]);
 
             this.base_window.update_text(status_text, this.djinn_status_text, DJINN_STATUS_X);
             this.spacebar_key.text.alpha = this.spacebar_key.shadow.alpha = 0;

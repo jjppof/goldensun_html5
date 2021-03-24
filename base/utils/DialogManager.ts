@@ -11,6 +11,9 @@ import * as _ from "lodash";
 export class DialogManager {
     private static readonly DIALOG_CRYSTAL_KEY = "dialog_crystal";
     private static readonly VOICE_MIN_INTERVAL: number = 50;
+    private static readonly COLOR_START = /\${COLOR:(\w+)}/;
+    private static readonly COLOR_START_G = /\${COLOR:(\w+)}/g;
+    private static readonly COLOR_END = /\${COLOR:\/}/;
 
     private game: Phaser.Game;
     private data: GoldenSun;
@@ -246,7 +249,6 @@ export class DialogManager {
         text = text.replace(/\${HERO}/g, this.data.info.main_char_list[this.data.hero.key_name].name);
         text = text.replace(/( )?\${BREAK}( )?/g, " ${BREAK} ");
         text = text.replace(/( )?\${BREAK_LINE}( )?/g, " ${BREAK_LINE} ");
-        text = text.replace(/(?: )?(\${COLOR:(?:\w+|\/)})(?: )?/g, " $1 ");
         let storage_match = /(?: )?\${STORAGE:(\w+)}(?: )?/g.exec(text);
         while (storage_match !== null) {
             const storage_key = storage_match[1];
@@ -315,15 +317,48 @@ export class DialogManager {
             max_window_width = Math.max(max_window_width, utils.get_text_width(this.game, line_text, this.italic_font));
         };
         for (let i = 0; i < words.length; ++i) {
-            const word = words[i];
+            let word = words[i];
             const match = word.match(/\${COLOR:(?:(\w+)|(\/))}/);
+            let letter_colors: number[];
             if (match) {
-                if (match[2]) {
-                    this_color = numbers.DEFAULT_FONT_COLOR;
-                } else {
-                    this_color = parseInt(match[1], 16);
+                const colors_seq = [];
+                let current_start_idx = 0;
+                do {
+                    const start_matches = [...word.matchAll(DialogManager.COLOR_START_G)];
+                    const start_match = start_matches.length ? start_matches[0] : null;
+                    const end_match = word.match(DialogManager.COLOR_END);
+
+                    const matched_color = start_match ? parseInt(start_match[1], 16) : this_color;
+
+                    const start_idx = start_match ? start_match.index : 0;
+                    const end_idx = start_matches.length > 1 ? start_matches[1].index : word.length;
+                    const before_coloring_idx = start_match ? start_match.index + start_match[0].length : 0;
+                    const after_coloring_idx = end_match ? end_match.index : end_idx;
+                    const after_color_end_idx = end_match ? end_match.index + end_match[0].length : end_idx;
+
+                    const before_color_arr = new Array(start_idx - current_start_idx).fill(this_color);
+                    const after_color_init_arr = new Array(after_coloring_idx - before_coloring_idx).fill(
+                        matched_color
+                    );
+                    const after_color_end_arr = new Array(end_idx - after_color_end_idx).fill(
+                        numbers.DEFAULT_FONT_COLOR
+                    );
+                    colors_seq.push(before_color_arr.concat(after_color_init_arr, after_color_end_arr));
+
+                    current_start_idx =
+                        end_idx - (start_match ? start_match[0].length : 0) - (end_match ? end_match[0].length : 0);
+
+                    this_color = end_match ? numbers.DEFAULT_FONT_COLOR : matched_color;
+
+                    word = word.replace(DialogManager.COLOR_START, "").replace(DialogManager.COLOR_END, "");
+                } while (DialogManager.COLOR_START.test(word) || DialogManager.COLOR_END.test(word));
+
+                if (!word.length) {
+                    continue;
                 }
-                continue;
+                letter_colors = colors_seq.flat();
+            } else {
+                letter_colors = new Array(word.length).fill(this_color);
             }
             line_width = utils.get_text_width(this.game, line.filter(Boolean).join(" ") + word, this.italic_font);
             if (line_width >= max_efective_width || word === "${BREAK}" || word === "${BREAK_LINE}") {
@@ -333,7 +368,7 @@ export class DialogManager {
                 line_color = [];
                 if (word !== "${BREAK}" && word !== "${BREAK_LINE}") {
                     line.push(word);
-                    line_color.push(...new Array(word.length).fill(this_color));
+                    line_color.push(...letter_colors);
                 }
                 if (lines.length === numbers.MAX_LINES_PER_DIAG_WIN || word === "${BREAK}") {
                     //check if it's the end of the window
@@ -344,7 +379,7 @@ export class DialogManager {
                 }
             } else {
                 line.push(word);
-                line_color.push(...new Array(word.length).fill(this_color));
+                line_color.push(...letter_colors);
             }
         }
         if (line.length) {

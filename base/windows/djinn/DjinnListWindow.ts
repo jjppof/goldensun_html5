@@ -1,7 +1,7 @@
 import {TextObj, Window} from "../../Window";
 import {djinn_status, djinn_font_colors, Djinn} from "../../Djinn";
 import * as numbers from "../../magic_numbers";
-import {base_actions, capitalize, change_brightness, directions, elements, reverse_directions} from "../../utils";
+import {base_actions, change_brightness, directions, elements, reverse_directions} from "../../utils";
 import {DjinnModeHeaderWindow} from "./DjinnModeHeaderWindow";
 import {DjinnCharStatsWindow} from "./DjinnCharStatsWindow";
 import {DjinnPsynergyWindow} from "./DjinnPsynergyWindow";
@@ -10,6 +10,7 @@ import {Button} from "../../XGamepad";
 import {DjinnActionWindow} from "./DjinnActionWindow";
 import {CharsQuickInfoDjinnWindow} from "./CharsQuickInfoDjinnWindow";
 import {djinn_actions} from "../../main_menus/MainDjinnMenu";
+import * as _ from "lodash";
 
 const WIN_WIDTH = 236;
 const WIN_HEIGHT = 116;
@@ -762,10 +763,10 @@ export class DjinnListWindow {
             if (i === this.selected_char_index) {
                 switch (this_djinn.status) {
                     case djinn_status.SET:
-                        status_text = capitalize(djinn_status.STANDBY);
+                        status_text = _.capitalize(djinn_status.STANDBY);
                         break;
                     case djinn_status.STANDBY:
-                        status_text = capitalize(djinn_status.SET);
+                        status_text = _.capitalize(djinn_status.SET);
                         break;
                 }
             } else {

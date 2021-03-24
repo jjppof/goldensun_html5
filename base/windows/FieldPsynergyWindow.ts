@@ -1,7 +1,7 @@
 import {TextObj, Window} from "../Window";
-import {capitalize, get_text_width} from "../utils";
 import * as numbers from "../magic_numbers";
 import {GoldenSun} from "../GoldenSun";
+import * as _ from "lodash";
 
 const BASE_WIDTH = 10;
 const BASE_HEIGHT = 20;
@@ -40,7 +40,7 @@ export class FieldPsynergyWindow {
     Input: text [string] - The psynergy name to show
            callback [function] - Callback function (Optional)*/
     open(text, callback?) {
-        const new_text = capitalize(text);
+        const new_text = _.capitalize(text);
         this.window.update_text(new_text, this.text);
         this.window.update_size({width: BASE_WIDTH + this.text.text.width, height: BASE_HEIGHT});
         this.window.update_position({
