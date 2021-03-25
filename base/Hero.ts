@@ -106,7 +106,7 @@ export class Hero extends ControllableChar {
 
     set_speed_factors(check_on_event: boolean = false, desired_direction?: directions) {
         if (check_on_event && this.data.tile_event_manager.on_event) return;
-        desired_direction = desired_direction === undefined ? this.required_direction : desired_direction;
+        desired_direction = desired_direction ?? this.required_direction;
         if (this.climbing) {
             if (desired_direction === null) {
                 this._x_speed = this._y_speed = 0;

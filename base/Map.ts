@@ -152,11 +152,6 @@ export class Map {
             }
         });
         this.data.npc_group.sort("y_sort", Phaser.Group.SORT_ASCENDING);
-        send_to_back_list.forEach(sprite => {
-            if (sprite) {
-                this.data.npc_group.sendToBack(sprite);
-            }
-        });
         send_to_front_list.forEach(sprite => {
             if (sprite) {
                 this.data.npc_group.bringToTop(sprite);
@@ -165,6 +160,11 @@ export class Map {
         has_sort_function.forEach(sprite => {
             if (sprite) {
                 sprite.sort_function();
+            }
+        });
+        send_to_back_list.forEach(sprite => {
+            if (sprite) {
+                this.data.npc_group.sendToBack(sprite);
             }
         });
     }
