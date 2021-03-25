@@ -2066,6 +2066,31 @@
         "priority_move": false,
         "msg_type": "unleash"
     },{
+        "key_name": "ember",
+        "name": "Ember",
+        "description": "Restore party PP with passion's flames.",
+        "type": "effect_only",
+        "element": "mars",
+        "battle_target": "enemy",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 0,
+        "effects_outside_battle": false,
+        "is_battle_ability": true,
+        "is_field_psynergy": false,
+        "effects": [
+            {
+                "type": "current_pp",
+                "quantity": 1.07,
+                "operator": "times",
+                "usage": "on_use"
+            }
+        ],
+        "ability_category": "djinn",
+        "battle_animation_key": "ember",
+        "priority_move": false,
+        "msg_type": "unleash"
+    },{
         "key_name": "gust",
         "name": "Gust",
         "description": "Attack with mighty wind gusts.",

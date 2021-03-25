@@ -70,6 +70,13 @@ export class DjinnGetEvent extends GameEvent {
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 
+    async wait(time) {
+        let this_resolve;
+        const promise = new Promise(resolve => (this_resolve = resolve));
+        this.game.time.events.add(time, this_resolve);
+        await promise;
+    }
+
     async venus_djinn() {
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
         const reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
@@ -133,9 +140,7 @@ export class DjinnGetEvent extends GameEvent {
             random: true,
         });
 
-        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
-        this.game.time.events.add(2000, this.aux_resolve);
-        await this.aux_promise;
+        await this.wait(2000);
 
         this.data.particle_manager.removeEmitter(emitter);
         emitter.destroy();
@@ -224,15 +229,113 @@ export class DjinnGetEvent extends GameEvent {
             repeat: 0,
         });
 
-        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
-        this.game.time.events.add(200, this.aux_resolve);
-        await this.aux_promise;
+        await this.wait(200);
 
         this.data.particle_manager.removeEmitter(finish_emitter);
         finish_emitter.destroy();
         this.data.particle_manager.clearData("finish_data");
         finish_particles_group.destroy(true);
 
+        reset_map();
+    }
+
+    async mars_djinn() {
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        const reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
+            color: 0.35,
+            intensity: 1,
+            after_colorize: this.aux_resolve,
+        });
+        await this.aux_promise;
+
+        await this.origin_npc.face_direction(directions.down);
+        this.origin_npc.stop_animation();
+        await this.origin_npc.shake(3, 50);
+
+        await this.wait(500);
+        this.origin_npc.set_rotation(true, 10);
+        await this.wait(800);
+        this.origin_npc.set_rotation(true);
+        await this.wait(500);
+
+        this.game.add
+            .tween(this.origin_npc.sprite.scale)
+            .to(
+                {
+                    x: 0.2,
+                    y: 0,
+                },
+                1200,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(() => {
+                this.origin_npc.toggle_active(false);
+            });
+
+        /* particles getting out of the djinn */
+        const out_data = {
+            image: "djinn_ball",
+            alpha: 0.9,
+            lifespan: 500,
+            velocity: {
+                initial: {min: 4, max: 6},
+                radial: {arcStart: -18, arcEnd: 18},
+            },
+        };
+        this.data.particle_manager.addData("out_of_djinn", out_data);
+        const out_emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.SPRITE);
+        out_emitter.addToWorld();
+        out_emitter.emit("out_of_djinn", this.origin_npc.sprite.x, this.origin_npc.sprite.y, {
+            total: 3,
+            repeat: 23,
+            frequency: 60,
+            random: true,
+        });
+
+        await this.wait(800);
+        await this.data.hero.face_direction(directions.down);
+        this.data.hero.play(base_actions.GRANT);
+
+        await this.wait(1500);
+
+        this.data.particle_manager.removeEmitter(out_emitter);
+        out_emitter.destroy();
+        this.data.particle_manager.clearData("out_of_djinn");
+
+        /* particles getting into the hero */
+        const x1 = -50;
+        const x2 = 50;
+        const y1 = -this.game.camera.y - 20;
+        const y2 = y1;
+        const zone = this.data.particle_manager.createLineZone(x1, y1, x2, y2);
+        const in_data = {
+            image: "djinn_ball",
+            alpha: 0.9,
+            lifespan: 400,
+            target: {
+                x: this.data.hero.sprite.x,
+                y: this.data.hero.sprite.y - 17,
+            },
+        };
+        this.data.particle_manager.addData("into_hero", in_data);
+        const into_emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.SPRITE);
+        into_emitter.addToWorld();
+        into_emitter.emit("into_hero", this.data.hero.sprite.x, this.data.hero.sprite.y, {
+            total: 3,
+            repeat: 26,
+            frequency: 60,
+            random: true,
+            zone: zone,
+        });
+
+        await this.wait(400);
+        this.data.hero.shake(11);
+
+        await this.wait(1800);
+        this.data.particle_manager.removeEmitter(into_emitter);
+        into_emitter.destroy();
+        this.data.particle_manager.clearData("into_hero");
         reset_map();
     }
 
@@ -249,6 +352,9 @@ export class DjinnGetEvent extends GameEvent {
         switch (this.djinn.element) {
             case elements.VENUS:
                 await this.venus_djinn();
+                break;
+            case elements.MARS:
+                await this.mars_djinn();
                 break;
         }
 

@@ -418,7 +418,8 @@
      "event_04":"{\n\"type\": \"climb\",\n\"x\": 12,\n\"y\": 5,\n \"activation_directions\": \"down\",\n\"activation_collision_layers\": 1,\n\"change_to_collision_layer\": 0\n}",
      "event_05":"{\n\"type\": \"climb\",\n\"x\": 12,\n\"y\": 4,\n \"activation_directions\": \"up\",\n\"activation_collision_layers\": 1\n}",
      "event_06":"{\n\"type\": \"climb\",\n\"x\": 12,\n\"y\": 3,\n \"activation_directions\": \"down\",\n\"activation_collision_layers\": 1\n}",
-     "event_07":"{\n\"type\": \"slider\",\n\"x_target\": 5,\n\"y_target\": 8,\n\"activation_directions\": \"down\",\n\"x\": 5,\n\"y\": 5,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": [1]\n}"
+     "event_07":"{\n\"type\": \"slider\",\n\"x_target\": 5,\n\"y_target\": 8,\n\"activation_directions\": \"down\",\n\"x\": 5,\n\"y\": 5,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": [1]\n}",
+     "npc_01":"{\n    \"key_name\": \"mars_djinn\",\n    \"storage_keys\":{\n        \"active\": \"ember_djinn\"\n    },\n    \"initial_x\": 6,\n    \"initial_y\": 10,\n    \"npc_type\": \"normal\",\n    \"initial_action\": \"idle\",\n    \"movement_type\": \"idle\",\n    \"base_collision_layer\": 0,\n    \"events\": [{\n        \"type\": \"djinn_get\",\n        \"djinn_key\": \"ember\",\n        \"finish_events\": [{\n            \"type\": \"set_value\",\n            \"event_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                    \"key_name\": \"ember_djinn\",\n                    \"value\": false\n                }\n            }\n        }]\n    }]\n}"
     },
  "propertytypes":
     {
@@ -429,7 +430,8 @@
      "event_04":"string",
      "event_05":"string",
      "event_06":"string",
-     "event_07":"string"
+     "event_07":"string",
+     "npc_01":"string"
     },
  "renderorder":"right-down",
  "tiledversion":"1.3.3",

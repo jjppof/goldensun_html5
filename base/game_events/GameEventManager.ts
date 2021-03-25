@@ -88,8 +88,9 @@ export class GameEventManager {
                 npc.interaction_pattern === interaction_patterns.NO_INTERACTION ||
                 !npc.active ||
                 npc.base_collision_layer !== this.data.map.collision_layer
-            )
+            ) {
                 continue;
+            }
             const is_close_check = is_close(
                 this.data.hero.current_direction,
                 this.data.hero.sprite.x,

@@ -424,6 +424,22 @@ export abstract class ControllableChar {
         }
     }
 
+    async shake(repeats_number: number = 7, repeat_period: number = 40) {
+        let promise_resolve;
+        const promise = new Promise(resolve => (promise_resolve = resolve));
+        const scales = [1.15, 1.1, 1.0];
+        const total = scales.length * repeats_number;
+        let counter = 0;
+        this.game.time.events.repeat(repeat_period, total, () => {
+            this.sprite.scale.y = scales[counter % scales.length];
+            ++counter;
+            if (counter === total) {
+                promise_resolve();
+            }
+        });
+        await promise;
+    }
+
     set_frame(direction: number, frame_index: number = 0) {
         const frame_name = this.sprite_info.getFrameName(
             this.current_action,
@@ -552,6 +568,10 @@ export abstract class ControllableChar {
             this._current_action = base_actions.IDLE;
             this.play_current_action();
         }
+    }
+
+    stop_animation(reset_frame: boolean = true) {
+        this.sprite.animations.currentAnim.stop(reset_frame);
     }
 
     set_direction(direction: directions, force_change: boolean = false, transition_also: boolean = true) {

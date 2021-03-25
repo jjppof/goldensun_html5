@@ -120,6 +120,18 @@
         "agi_boost": 0,
         "luk_boost": 0
     },{
+        "key_name": "ember",
+        "name": "Ember",
+        "description": "Restore party PP with passion's flames.",
+        "element": "mars",
+        "ability_key_name": "ember",
+        "hp_boost": 9,
+        "pp_boost": 4,
+        "atk_boost": 0,
+        "def_boost": 2,
+        "agi_boost": 2,
+        "luk_boost": 0
+    },{
         "key_name": "gust",
         "name": "Gust",
         "description": "Attack with mighty wind gusts.",
