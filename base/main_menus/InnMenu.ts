@@ -176,7 +176,7 @@ export class InnMenu {
         this.avatar = null;
         this.message = null;
         this.callback = undefined;
-        this.mask.destroy();
+        this.mask?.destroy();
         this.mask = null;
 
         if (this.close_callback) this.close_callback();
