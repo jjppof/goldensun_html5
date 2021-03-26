@@ -210,6 +210,7 @@ export class NPC extends ControllableChar {
             this.stop_char(false);
             this.update_shadow();
         }
+        this.update_tile_position();
     }
 
     toggle_active(active: boolean) {

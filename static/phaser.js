@@ -78169,7 +78169,8 @@ Phaser.Cache.prototype = {
     setCacheAlias: function (alias_key, reference_key, cache)
     {
         if (reference_key in this._cacheMap[cache]) {
-            this._cacheMap[cache][alias_key] = this._cacheMap[cache][reference_key];
+            this._cacheMap[cache][alias_key] = Object.assign({}, this._cacheMap[cache][reference_key]);
+            this._cacheMap[cache][alias_key].key = alias_key;
         }
     },
 

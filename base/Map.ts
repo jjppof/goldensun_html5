@@ -510,6 +510,13 @@ export class Map {
         }
     }
 
+    remove_event(location_key: number, event_id: number) {
+        this.events[location_key] = this.events[location_key].filter(event => event.id !== event_id);
+        if (!this.events[location_key].length) {
+            delete this.events[location_key];
+        }
+    }
+
     //this is the main function of this class. It mounts the map
     async mount_map(collision_layer: number) {
         if (!this.assets_loaded) {

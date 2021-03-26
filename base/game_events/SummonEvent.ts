@@ -277,14 +277,8 @@ export class SummonEvent extends GameEvent {
             ref_phi += speed_factor;
         };
         this.data.game_event_manager.add_callback(letter_spiral_update_callback);
-        const scales = [1.15, 1.1, 1.0];
-        const repeats_number = 7;
-        counter = 0;
         this.game.time.events.add(4000, () => {
-            this.game.time.events.repeat(40, scales.length * repeats_number, () => {
-                this.data.hero.sprite.scale.y = scales[counter % scales.length];
-                ++counter;
-            });
+            this.data.hero.shake();
         });
 
         await this.aux_promise;

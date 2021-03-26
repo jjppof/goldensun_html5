@@ -1,15 +1,7 @@
 import {event_types, LocationKey, TileEvent} from "./TileEvent";
 import * as numbers from "../magic_numbers";
 import * as _ from "lodash";
-import {
-    get_surroundings,
-    get_opposite_direction,
-    directions,
-    split_direction,
-    reverse_directions,
-    base_actions,
-    direction_range,
-} from "../utils";
+import {get_surroundings, get_opposite_direction, directions, split_direction, direction_range} from "../utils";
 import {GoldenSun} from "../GoldenSun";
 import {Map} from "../Map";
 
@@ -28,6 +20,7 @@ export class JumpEvent extends TileEvent {
         activation_collision_layers,
         dynamic,
         active,
+        active_storage_key,
         affected_by_reveal,
         is_set
     ) {
@@ -41,6 +34,7 @@ export class JumpEvent extends TileEvent {
             activation_collision_layers,
             dynamic,
             active,
+            active_storage_key,
             null,
             affected_by_reveal
         );
@@ -120,6 +114,12 @@ export class JumpEvent extends TileEvent {
             if (this.data.map.collision_layer !== next_interactable_object.base_collision_layer) continue;
             return;
         }
+        for (let i = 0; i < this.data.map.npcs.length; ++i) {
+            const next_npc = this.data.map.npcs[i];
+            if (next_npc.tile_x_pos !== next_position.x || next_npc.tile_y_pos !== next_position.y) continue;
+            if (this.data.map.collision_layer !== next_npc.base_collision_layer) continue;
+            return;
+        }
         if (next_pos_key in this.data.map.events) {
             let active_jump_event_found = false;
             for (let i = 0; i < this.data.map.events[next_pos_key].length; ++i) {
@@ -145,38 +145,21 @@ export class JumpEvent extends TileEvent {
         } else if (this.dynamic) {
             return;
         }
-        this.data.hero.jumping = true;
-        this.data.audio.play_se("actions/jump");
         this.data.tile_event_manager.on_event = true;
-        const tween_obj: any = {};
-        tween_obj[direction] = this.data.hero.sprite[direction] + jump_offset;
-        const hero_x = this.data.map.tile_width * (next_position.x + 0.5);
-        const hero_y = this.data.map.tile_height * (next_position.y + 0.5);
-        if (direction === "x") {
-            tween_obj.y = [hero_y - 8, hero_y - 16, hero_y - 8, hero_y];
-        } else {
-            tween_obj.x = hero_x;
-        }
-        this.game.physics.p2.pause();
-        this.data.hero.play(base_actions.JUMP, reverse_directions[jump_direction]);
-        this.data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
-            this.data.hero.shadow.visible = false;
-            this.game.add
-                .tween(this.data.hero.sprite.body)
-                .to(tween_obj, JUMP_DURATION, Phaser.Easing.Linear.None, true)
-                .onComplete.addOnce(() => {
-                    this.data.hero.shadow.x = hero_x;
-                    this.data.hero.shadow.y = hero_y;
-                    this.data.hero.shadow.visible = true;
-                    this.data.hero.sprite.animations.currentAnim.reverseOnce();
-                    this.data.hero.play(base_actions.JUMP, reverse_directions[jump_direction]);
-                    this.data.hero.sprite.animations.currentAnim.onComplete.addOnce(() => {
-                        this.game.physics.p2.resume();
-                        this.data.hero.jumping = false;
-                        this.data.tile_event_manager.on_event = false;
-                    });
-                }, this);
-        });
+        this.data.hero
+            .jump({
+                jump_height: 16,
+                duration: JUMP_DURATION,
+                jump_direction: jump_direction,
+                dest: {
+                    tile_x: next_position.x,
+                    tile_y: next_position.y,
+                    distance: jump_offset,
+                },
+            })
+            .then(() => {
+                this.data.tile_event_manager.on_event = false;
+            });
     }
 
     destroy() {

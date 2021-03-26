@@ -3,6 +3,7 @@ import {event_types, TileEvent} from "./TileEvent";
 
 export class EventTriggerEvent extends TileEvent {
     private events: GameEvent[] = [];
+    private remove_from_field: boolean;
 
     constructor(
         game,
@@ -13,8 +14,10 @@ export class EventTriggerEvent extends TileEvent {
         activation_collision_layers,
         dynamic,
         active,
+        active_storage_key,
         affected_by_reveal,
-        events
+        events,
+        remove_from_field
     ) {
         super(
             game,
@@ -26,9 +29,11 @@ export class EventTriggerEvent extends TileEvent {
             activation_collision_layers,
             dynamic,
             active,
+            active_storage_key,
             null,
             affected_by_reveal
         );
+        this.remove_from_field = remove_from_field;
         events.forEach(event_info => {
             const event = this.data.game_event_manager.get_event_instance(event_info);
             this.events.push(event);
@@ -40,6 +45,9 @@ export class EventTriggerEvent extends TileEvent {
             return;
         }
         this.events.forEach(event => event.fire());
+        if (this.remove_from_field) {
+            this.data.map.remove_event(this.location_key, this.id);
+        }
     }
 
     destroy() {

@@ -102,6 +102,7 @@
         "collision_body_bevel": 3,
         "interaction_pattern": "tik_tak_toe",
         "body_radius": 7.0,
+        "walk_speed": 60,
         "actions": {
             "set": {
                 "frame_rate": 5,
@@ -134,6 +135,7 @@
         "collision_body_bevel": 3,
         "interaction_pattern": "tik_tak_toe",
         "body_radius": 7.0,
+        "walk_speed": 60,
         "actions": {
             "set": {
                 "frame_rate": [[3,5,4]],
@@ -166,9 +168,10 @@
         "collision_body_bevel": 3,
         "interaction_pattern": "tik_tak_toe",
         "body_radius": 7.0,
+        "walk_speed": 60,
         "actions": {
             "set": {
-                "frame_rate": 5,
+                "frame_rate": 6,
                 "animations": ["down", "up", "left", "right", "up_left", "up_right", "down_left", "down_right"],
                 "frames_count": 4,
                 "initial_animation": "down",
@@ -198,6 +201,7 @@
         "collision_body_bevel": 3,
         "interaction_pattern": "tik_tak_toe",
         "body_radius": 7.0,
+        "walk_speed": 60,
         "actions": {
             "set": {
                 "frame_rate": 6,

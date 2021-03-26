@@ -19,6 +19,8 @@ import {TileEvent} from "../tile_events/TileEvent";
 import * as _ from "lodash";
 import {SummonEvent} from "./SummonEvent";
 import {DjinnGetEvent} from "./DjinnGetEvent";
+import {JumpEvent} from "./JumpEvent";
+import {FaceDirectionEvent} from "./FaceDirectionEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -246,7 +248,9 @@ export class GameEventManager {
                     info.finish_events,
                     info.minimal_distance,
                     info.keep_npc_collision_disable,
-                    info.deactive_char_on_end
+                    info.deactive_char_on_end,
+                    info.keep_camera_follow,
+                    info.wait_after
                 );
             case event_types.DIALOG:
                 return new DialogEvent(
@@ -292,6 +296,40 @@ export class GameEventManager {
                 return new SummonEvent(this.game, this.data, info.active, info.summon_key, info.finish_events);
             case event_types.DJINN_GET:
                 return new DjinnGetEvent(this.game, this.data, info.active, info.djinn_key, info.finish_events);
+            case event_types.JUMP:
+                return new JumpEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.is_npc,
+                    info.npc_index,
+                    info.camera_follow,
+                    info.camera_follow_time,
+                    info.follow_hero_on_finish,
+                    info.finish_events,
+                    info.jump_height,
+                    info.duration,
+                    info.dest,
+                    info.jump_direction,
+                    info.keep_camera_follow,
+                    info.wait_after
+                );
+            case event_types.FACE_DIRECTION:
+                return new FaceDirectionEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.direction,
+                    info.is_npc,
+                    info.npc_index,
+                    info.time_between_frames,
+                    info.finish_events,
+                    info.camera_follow,
+                    info.camera_follow_time,
+                    info.follow_hero_on_finish,
+                    info.keep_camera_follow,
+                    info.wait_after
+                );
         }
     }
 

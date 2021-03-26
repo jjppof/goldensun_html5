@@ -28,6 +28,7 @@ export class ClimbEvent extends TileEvent {
         activation_collision_layers,
         dynamic,
         active,
+        active_storage_key,
         affected_by_reveal,
         change_to_collision_layer,
         is_set?,
@@ -44,6 +45,7 @@ export class ClimbEvent extends TileEvent {
             activation_collision_layers,
             dynamic,
             active,
+            active_storage_key,
             origin_interactable_object,
             affected_by_reveal
         );

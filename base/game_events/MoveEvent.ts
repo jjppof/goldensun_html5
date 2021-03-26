@@ -13,6 +13,7 @@ export class MoveEvent extends GameEvent {
     private dest_unit_in_tile: boolean;
     private camera_follow: boolean;
     private follow_hero_on_finish: boolean;
+    private keep_camera_follow: boolean;
     private camera_follow_time: number;
     private minimal_distance: number;
     private dest: {x: number | string; y: number | string};
@@ -21,6 +22,7 @@ export class MoveEvent extends GameEvent {
     private final_direction: number;
     private keep_npc_collision_disable: boolean;
     private deactive_char_on_end: boolean;
+    private wait_after: number;
     private finish_events: GameEvent[] = [];
 
     constructor(
@@ -39,7 +41,9 @@ export class MoveEvent extends GameEvent {
         finish_events,
         minimal_distance,
         keep_npc_collision_disable,
-        deactive_char_on_end
+        deactive_char_on_end,
+        keep_camera_follow,
+        wait_after
     ) {
         super(game, data, event_types.MOVE, active);
         this.is_npc = is_npc;
@@ -49,7 +53,9 @@ export class MoveEvent extends GameEvent {
         this.dest_unit_in_tile = dest_unit_in_tile ?? true;
         this.camera_follow = camera_follow;
         this.camera_follow_time = camera_follow_time;
+        this.keep_camera_follow = keep_camera_follow;
         this.minimal_distance = minimal_distance;
+        this.wait_after = wait_after;
         this.keep_npc_collision_disable = keep_npc_collision_disable ?? false;
         this.deactive_char_on_end = deactive_char_on_end ?? false;
         this.follow_hero_on_finish = follow_hero_on_finish ?? true;
@@ -124,8 +130,10 @@ export class MoveEvent extends GameEvent {
                 if (this.final_direction !== null) {
                     this.char.set_direction(this.final_direction, true);
                 }
-                if (this.camera_follow) {
-                    this.game.camera.unfollow();
+                const go_to_finish = () => {
+                    if (this.camera_follow && !this.keep_camera_follow) {
+                        this.game.camera.unfollow();
+                    }
                     if (this.follow_hero_on_finish) {
                         this.game.add
                             .tween(this.game.camera)
@@ -142,9 +150,14 @@ export class MoveEvent extends GameEvent {
                                 this.data.hero.camera_follow();
                                 this.finish();
                             });
+                    } else {
+                        this.finish();
                     }
+                };
+                if (this.wait_after) {
+                    this.game.time.events.add(this.wait_after, go_to_finish);
                 } else {
-                    this.finish();
+                    go_to_finish();
                 }
             }
         };

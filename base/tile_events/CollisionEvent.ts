@@ -15,6 +15,7 @@ export class CollisionEvent extends TileEvent {
         activation_collision_layers,
         dynamic,
         active,
+        active_storage_key,
         affected_by_reveal,
         dest_collision_layer
     ) {
@@ -28,6 +29,7 @@ export class CollisionEvent extends TileEvent {
             activation_collision_layers,
             dynamic,
             active,
+            active_storage_key,
             null,
             affected_by_reveal
         );

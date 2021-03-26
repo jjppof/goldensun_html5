@@ -358,6 +358,7 @@ export class InteractableObjects {
             [target_layer],
             event_info.dynamic,
             active_event,
+            undefined,
             false,
             event_info.is_set ?? true
         );
@@ -399,6 +400,7 @@ export class InteractableObjects {
                 [target_layer],
                 event_info.dynamic,
                 active_event,
+                undefined,
                 false,
                 is_set
             );
@@ -498,6 +500,7 @@ export class InteractableObjects {
                 event_data.activation_collision_layers,
                 event_info.dynamic,
                 active_event,
+                undefined,
                 false,
                 event_data.change_to_collision_layer,
                 event_info.is_set,

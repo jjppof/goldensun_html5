@@ -51,6 +51,7 @@ export abstract class TileEvent {
     public collision_layer_shift_from_source: number;
     protected static id_incrementer: number;
     protected static events: {[id: number]: TileEvent};
+    private active_storage_key: string;
 
     constructor(
         game,
@@ -62,6 +63,7 @@ export abstract class TileEvent {
         activation_collision_layers,
         dynamic,
         active,
+        active_storage_key,
         origin_interactable_object,
         affected_by_reveal
     ) {
@@ -80,6 +82,10 @@ export abstract class TileEvent {
         this._active = Array.isArray(active)
             ? active
             : new Array(this._activation_directions.length).fill(active ?? true);
+        this.active_storage_key = active_storage_key;
+        if (this.active_storage_key !== undefined && !this.data.storage.get(this.active_storage_key)) {
+            this._active = new Array(this._activation_directions.length).fill(active ?? false);
+        }
         this._affected_by_reveal = Array.isArray(affected_by_reveal)
             ? affected_by_reveal
             : new Array(this._activation_directions.length).fill(affected_by_reveal ?? false);

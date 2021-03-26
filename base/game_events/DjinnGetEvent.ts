@@ -5,7 +5,7 @@ import {Djinn} from "../Djinn";
 import {base_actions, directions, elements, element_colors, element_colors_in_battle, hex2rgb} from "../utils";
 import {MainChar} from "../MainChar";
 import {FieldAbilities} from "../field_abilities/FieldAbilities";
-import {degree360} from "../magic_numbers";
+import {degree360, GAME_HEIGHT} from "../magic_numbers";
 import {DialogManager} from "../utils/DialogManager";
 import {Button} from "../XGamepad";
 
@@ -87,10 +87,18 @@ export class DjinnGetEvent extends GameEvent {
         await this.aux_promise;
 
         /* initial djinn jumps */
-        await this.origin_npc.jump(70);
-        await this.origin_npc.jump(500);
+        await this.origin_npc.jump({
+            time_on_finish: 70,
+        });
+        await this.origin_npc.jump({
+            time_on_finish: 500,
+            duration: 65,
+        });
         this.origin_npc.set_rotation(true);
-        await this.origin_npc.jump(0, 40, 140);
+        await this.origin_npc.jump({
+            jump_height: 40,
+            duration: 140,
+        });
 
         /* rotation and penetration into the ground */
         this.data.camera_shake_enable = true;
@@ -306,7 +314,7 @@ export class DjinnGetEvent extends GameEvent {
         /* particles getting into the hero */
         const x1 = -50;
         const x2 = 50;
-        const y1 = -this.game.camera.y - 20;
+        const y1 = -(GAME_HEIGHT >> 1) - 20;
         const y2 = y1;
         const zone = this.data.particle_manager.createLineZone(x1, y1, x2, y2);
         const in_data = {

@@ -404,22 +404,87 @@ export abstract class ControllableChar {
         await transition_promise;
     }
 
-    async jump(time_on_finish: number = 0, jump_height: number = 12, duration: number = 65) {
+    async jump(options: {
+        time_on_finish?: number;
+        jump_height?: number;
+        duration?: number;
+        dest?: {
+            tile_x?: number;
+            tile_y?: number;
+            distance?: number;
+        };
+        jump_direction?: directions;
+        sfx_key?: string;
+    }) {
+        const duration = options?.duration ?? 65;
+        const jump_height = options?.jump_height ?? 12;
         let promise_resolve;
         const promise = new Promise(resolve => (promise_resolve = resolve));
-        const previous_shadow_state = this.shadow_following;
-        this.shadow_following = false;
-        this.game.add
-            .tween(this.sprite.body)
-            .to({y: this.sprite.body.y - jump_height}, duration, Phaser.Easing.Linear.None, true, 0, 0, true)
-            .onComplete.addOnce(() => {
-                this.shadow_following = previous_shadow_state;
-                promise_resolve();
-            });
+        this.data.audio.play_se(options?.sfx_key ?? "actions/jump");
+        if (options?.dest?.distance) {
+            const axis: "x" | "y" = options.dest.tile_x === this.tile_x_pos ? "y" : "x";
+            const tween_obj: {x?: number; y?: number | number[]} = {
+                [axis]: this.sprite[axis] + options.dest.distance,
+            };
+            const hero_x = this.data.map.tile_width * (options.dest.tile_x + 0.5);
+            const hero_y = this.data.map.tile_height * (options.dest.tile_y + 0.5);
+            const half_height = jump_height >> 1;
+            const jump_direction = options.jump_direction ?? this.current_direction;
+            if (axis === "x") {
+                tween_obj.y = [hero_y - half_height, hero_y - jump_height, hero_y - half_height, hero_y];
+            } else {
+                tween_obj.x = hero_x;
+            }
+            this.game.physics.p2.pause();
+            this.jumping = true;
+            if (this.sprite_info.hasAction(base_actions.JUMP)) {
+                let jump_init_resolve;
+                const jump_init_promise = new Promise(resolve => (jump_init_resolve = resolve));
+                this.play(base_actions.JUMP, reverse_directions[jump_direction]);
+                this.sprite.animations.currentAnim.onComplete.addOnce(jump_init_resolve);
+                await jump_init_promise;
+            }
+            if (this.shadow) {
+                this.shadow.visible = false;
+            }
+            this.game.add
+                .tween(this.sprite.body)
+                .to(tween_obj, duration, Phaser.Easing.Linear.None, true)
+                .onComplete.addOnce(() => {
+                    if (this.shadow) {
+                        this.shadow.x = hero_x;
+                        this.shadow.y = hero_y;
+                        this.shadow.visible = true;
+                    }
+                    if (this.sprite_info.hasAction(base_actions.JUMP)) {
+                        this.sprite.animations.currentAnim.reverseOnce();
+                        this.play(base_actions.JUMP, reverse_directions[jump_direction]);
+                        this.sprite.animations.currentAnim.onComplete.addOnce(() => {
+                            this.game.physics.p2.resume();
+                            this.jumping = false;
+                            promise_resolve();
+                        });
+                    } else {
+                        this.game.physics.p2.resume();
+                        this.jumping = false;
+                        promise_resolve();
+                    }
+                }, this);
+        } else {
+            const previous_shadow_state = this.shadow_following;
+            this.shadow_following = false;
+            this.game.add
+                .tween(this.sprite.body)
+                .to({y: this.sprite.body.y - jump_height}, duration, Phaser.Easing.Linear.None, true, 0, 0, true)
+                .onComplete.addOnce(() => {
+                    this.shadow_following = previous_shadow_state;
+                    promise_resolve();
+                });
+        }
         await promise;
-        if (time_on_finish) {
+        if (options?.time_on_finish) {
             const time_promise = new Promise(resolve => (promise_resolve = resolve));
-            this.game.time.events.add(time_on_finish, promise_resolve);
+            this.game.time.events.add(options.time_on_finish, promise_resolve);
             await time_promise;
         }
     }
