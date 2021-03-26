@@ -70,13 +70,6 @@ export class DjinnGetEvent extends GameEvent {
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 
-    async wait(time) {
-        let this_resolve;
-        const promise = new Promise(resolve => (this_resolve = resolve));
-        this.game.time.events.add(time, this_resolve);
-        await promise;
-    }
-
     async venus_djinn() {
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
         const reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {

@@ -71,6 +71,13 @@ export abstract class GameEvent {
         GameEvent.events[this.id] = this;
     }
 
+    async wait(time) {
+        let this_resolve;
+        const promise = new Promise(resolve => (this_resolve = resolve));
+        this.game.time.events.add(time, this_resolve);
+        await promise;
+    }
+
     /* the GameEvent.fire function is the one that should be called to start a event.
        It should never be overriden. */
     @check_reveal
