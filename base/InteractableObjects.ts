@@ -61,6 +61,7 @@ export class InteractableObjects {
     private _psynergy_casted: {[field_psynergy_key: string]: boolean};
     private block_climb_collision_layer_shift: number;
     private _blocking_stair_block: Phaser.Physics.P2.Body;
+    private _active: boolean;
 
     constructor(
         game,
@@ -111,6 +112,7 @@ export class InteractableObjects {
         this.scale_y = scale_y;
         this._psynergy_casted = {};
         this.block_climb_collision_layer_shift = block_climb_collision_layer_shift;
+        this._active = true;
         this.tile_events_info = {};
         for (let index in events_info) {
             this.tile_events_info[+index] = events_info[index];
@@ -155,6 +157,9 @@ export class InteractableObjects {
     }
     get collision_tiles_bodies() {
         return this._collision_tiles_bodies;
+    }
+    get active() {
+        return this._active;
     }
 
     position_allowed(x: number, y: number) {
@@ -512,6 +517,30 @@ export class InteractableObjects {
             new_event.collision_layer_shift_from_source = event_data.collision_layer_shift_from_source;
             this.collision_change_functions.push(event_data.collision_change_function.bind(null, new_event));
         });
+    }
+
+    toggle_active(active: boolean) {
+        if (active) {
+            this.sprite.body?.collides(this.data.collision.hero_collision_group);
+            this._collision_tiles_bodies.forEach(body => {
+                body.collides(this.data.collision.hero_collision_group);
+            });
+            if (this._blocking_stair_block) {
+                this._blocking_stair_block.collides(this.data.collision.hero_collision_group);
+            }
+            this.sprite.visible = true;
+            this._active = true;
+        } else {
+            this.sprite.body?.removeCollisionGroup(this.data.collision.hero_collision_group);
+            this._collision_tiles_bodies.forEach(body => {
+                body.removeCollisionGroup(this.data.collision.hero_collision_group);
+            });
+            if (this._blocking_stair_block) {
+                this._blocking_stair_block.removeCollisionGroup(this.data.collision.hero_collision_group);
+            }
+            this.sprite.visible = false;
+            this._active = false;
+        }
     }
 
     config_body() {

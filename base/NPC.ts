@@ -215,14 +215,14 @@ export class NPC extends ControllableChar {
 
     toggle_active(active: boolean) {
         if (active) {
-            this.sprite.body.setCollisionGroup(this.data.collision.npc_collision_groups[this.base_collision_layer]);
+            this.sprite.body.collides(this.data.collision.hero_collision_group);
             this.sprite.visible = true;
             if (this.shadow) {
                 this.shadow.visible = true;
             }
             this._active = true;
         } else {
-            this.sprite.body.clearCollision(this.data.collision.npc_collision_groups[this.base_collision_layer]);
+            this.sprite.body.removeCollisionGroup(this.data.collision.hero_collision_group);
             this.sprite.visible = false;
             if (this.shadow) {
                 this.shadow.visible = false;

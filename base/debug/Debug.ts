@@ -48,7 +48,7 @@ export class Debug {
         for (let i = 0; i < this.data.npc_group.children.length; ++i) {
             let sprite: Phaser.Sprite = this.data.npc_group.children[i] as Phaser.Sprite;
             if (!sprite.is_npc && !sprite.is_interactable_object) continue;
-            if (!sprite.body) continue;
+            if (!sprite.body || !sprite.body.collidesWith.length) continue;
             sprite.body.debug = flag;
         }
     }

@@ -198,6 +198,61 @@ export class Map {
         }
     }
 
+    pause() {
+        this.sprite.pauseAnimation = true;
+        const previously_inactive_npc = new Set<number>();
+        const previously_inactive_io = new Set<number>();
+        const previously_not_visible_layers = new Set<number>();
+        this.layers.forEach((layer, index) => {
+            if (layer.sprite.visible) {
+                layer.sprite.visible = false;
+            } else {
+                previously_not_visible_layers.add(index);
+            }
+        });
+        this.npcs.forEach((npc, index) => {
+            if (npc.active) {
+                npc.toggle_active(false);
+            } else {
+                previously_inactive_npc.add(index);
+            }
+        });
+        this.interactable_objects.forEach((interactable_object, index) => {
+            if (interactable_object.active) {
+                interactable_object.toggle_active(false);
+            } else {
+                previously_inactive_io.add(index);
+            }
+        });
+        return {
+            previously_inactive_npc: previously_inactive_npc,
+            previously_inactive_io: previously_inactive_io,
+            previously_not_visible_layers: previously_not_visible_layers,
+        };
+    }
+
+    resume(previous_state?: ReturnType<Map["pause"]>) {
+        this.sprite.pauseAnimation = false;
+        this.layers.forEach((layer, index) => {
+            if (previous_state?.previously_not_visible_layers.has(index)) {
+                return;
+            }
+            layer.sprite.visible = true;
+        });
+        this.npcs.forEach((npc, index) => {
+            if (previous_state?.previously_inactive_npc.has(index)) {
+                return;
+            }
+            npc.toggle_active(true);
+        });
+        this.interactable_objects.forEach((interactable_object, index) => {
+            if (previous_state?.previously_inactive_io.has(index)) {
+                return;
+            }
+            interactable_object.toggle_active(true);
+        });
+    }
+
     load_map_assets(force_load: boolean, on_complete?: () => void) {
         const promises = [];
 

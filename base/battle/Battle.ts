@@ -17,6 +17,7 @@ import * as _ from "lodash";
 import {Target} from "../battle/BattleStage";
 import {Item, use_types} from "../Item";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
+import {Map} from "../Map";
 
 /* ACTIONS:
 - Attack
@@ -89,6 +90,8 @@ export class Battle {
 
     public allies_map_sprite: {[player_key: string]: PlayerSprite};
     public enemies_map_sprite: {[player_key: string]: PlayerSprite};
+
+    public previous_map_state: ReturnType<Map["pause"]>;
 
     constructor(game: Phaser.Game, data: GoldenSun, background_key: string, enemy_party_key: string) {
         this.game = game;
@@ -244,7 +247,9 @@ export class Battle {
     }
 
     battle_phase_none() {
+        this.data.hero.stop_char(true);
         this.game.physics.p2.pause();
+        this.previous_map_state = this.data.map.pause();
         this.data.audio.stop_bgm();
 
         this.battle_phase = battle_phases.START;
@@ -1258,6 +1263,7 @@ So, if a character will die after 5 turns and you land another Curse on them, it
 
     unset_battle() {
         this.battle_finishing = true;
+        this.data.map.resume(this.previous_map_state);
         this.battle_stage.unset_stage(
             () => {
                 this.data.control_manager.reset();
@@ -1269,7 +1275,6 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 this.animation_manager.destroy();
             },
             () => {
-                this.data.map.sprite.pauseAnimation = false;
                 this.data.in_battle = false;
                 this.data.battle_instance = undefined;
                 this.game.physics.p2.resume();
