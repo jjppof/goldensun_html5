@@ -5,7 +5,7 @@ import {Djinn} from "../Djinn";
 import {base_actions, directions, elements, element_colors, element_colors_in_battle, hex2rgb} from "../utils";
 import {MainChar} from "../MainChar";
 import {FieldAbilities} from "../field_abilities/FieldAbilities";
-import {degree360, GAME_HEIGHT} from "../magic_numbers";
+import {degree360, GAME_HEIGHT, GAME_WIDTH} from "../magic_numbers";
 import {DialogManager} from "../utils/DialogManager";
 import {Button} from "../XGamepad";
 
@@ -240,6 +240,146 @@ export class DjinnGetEvent extends GameEvent {
         reset_map();
     }
 
+    async mercury_djinn() {
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        const reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
+            color: 0.95,
+            intensity: 1,
+            after_colorize: this.aux_resolve,
+        });
+        await this.aux_promise;
+
+        await this.wait(200);
+
+        await this.origin_npc.shake({
+            repeats_number: 2,
+            repeat_period: 65,
+            side_shake: true,
+            max_scale: 0.75,
+        });
+
+        await this.wait(500);
+
+        await this.origin_npc.jump({
+            duration: 70,
+            time_on_finish: 80,
+        });
+        await this.origin_npc.jump({
+            jump_height: 35,
+            duration: 120,
+            bounce: true,
+            time_on_finish: 80,
+        });
+        await this.origin_npc.jump({
+            jump_height: 60,
+            duration: 150,
+            bounce: true,
+            time_on_finish: 100,
+        });
+
+        /* final jump with trails */
+        const trail_bitmap_data = this.game.add.bitmapData(GAME_WIDTH, GAME_HEIGHT);
+        trail_bitmap_data.smoothed = false;
+        trail_bitmap_data.fill(0, 0, 0, 1);
+        const trail_image = this.game.add.image(this.game.camera.x, this.game.camera.y, trail_bitmap_data);
+        trail_image.blendMode = Phaser.blendModes.SCREEN;
+        this.origin_npc.shadow.visible = false;
+        const final_jump_tween = this.game.add.tween(this.origin_npc.sprite.body).to(
+            {
+                y: this.game.camera.y - 20,
+            },
+            250,
+            Phaser.Easing.Linear.None,
+            true
+        );
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        final_jump_tween.onComplete.addOnce(() => {
+            this.origin_npc.toggle_active(false);
+            trail_bitmap_data.destroy();
+            trail_image.destroy();
+            this.aux_resolve();
+        });
+        const shift_x = (this.origin_npc.sprite.width * this.origin_npc.sprite.anchor.x) >> 1;
+        const shift_y = (this.origin_npc.sprite.height * this.origin_npc.sprite.anchor.y) >> 1;
+        final_jump_tween.onUpdateCallback(() => {
+            trail_bitmap_data.fill(0, 0, 0, 0.2);
+            const x = this.origin_npc.sprite.x - this.game.camera.x + shift_x;
+            const y = this.origin_npc.sprite.y - this.game.camera.y + shift_y;
+            trail_bitmap_data.draw(this.origin_npc.sprite, x, y);
+        });
+        await this.aux_promise;
+
+        await this.data.hero.face_direction(directions.down);
+        this.data.hero.play(base_actions.GRANT);
+        await this.wait(350);
+
+        /* particles getting into the hero */
+        const x1_s = -8;
+        const x2_s = 8;
+        const y1_s = -(this.data.hero.sprite.y - this.game.camera.y) - 20;
+        const y2_s = y1_s;
+        const zone_source = this.data.particle_manager.createLineZone(x1_s, y1_s, x2_s, y2_s);
+        const x1_t = this.data.hero.sprite.x - 8;
+        const x2_t = this.data.hero.sprite.x + 8;
+        const y1_t = this.data.hero.sprite.y - 17;
+        const y2_t = y1_t;
+        const zone_target = this.data.particle_manager.createLineZone(x1_t, y1_t, x2_t, y2_t);
+        const in_data = {
+            image: "water_drop",
+            alpha: 0.9,
+            lifespan: 350,
+            target: {
+                zone: zone_target,
+            },
+        };
+        this.data.particle_manager.addData("into_hero", in_data);
+        const into_emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.SPRITE);
+        into_emitter.addToWorld();
+        into_emitter.emit("into_hero", this.data.hero.sprite.x, this.data.hero.sprite.y, {
+            total: 3,
+            repeat: 26,
+            frequency: 60,
+            random: true,
+            zone: zone_source,
+        });
+
+        await this.wait(250);
+
+        /* water particles that get out from hero's head */
+        const water_hit = {
+            image: "water_drop",
+            alpha: 0.9,
+            lifespan: 200,
+            ay: 0.01,
+            scale: 0.5,
+            velocity: {
+                initial: {min: 0.8, max: 1.2},
+                radial: {arcStart: -130, arcEnd: 130},
+            },
+        };
+        this.data.particle_manager.addData("water_hit", water_hit);
+        const water_hit_emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.SPRITE);
+        water_hit_emitter.addToWorld();
+        water_hit_emitter.emit("water_hit", this.data.hero.sprite.x, this.data.hero.sprite.y - 20, {
+            total: 2,
+            repeat: 26,
+            frequency: 60,
+            random: true,
+        });
+
+        await this.wait(2100);
+
+        this.data.particle_manager.removeEmitter(into_emitter);
+        into_emitter.destroy();
+        this.data.particle_manager.clearData("into_hero");
+
+        this.data.particle_manager.removeEmitter(water_hit_emitter);
+        water_hit_emitter.destroy();
+        this.data.particle_manager.clearData("water_hit");
+
+        reset_map();
+    }
+
     async mars_djinn() {
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
         const reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
@@ -251,7 +391,10 @@ export class DjinnGetEvent extends GameEvent {
 
         await this.origin_npc.face_direction(directions.down);
         this.origin_npc.stop_animation();
-        await this.origin_npc.shake(3, 50);
+        await this.origin_npc.shake({
+            repeats_number: 3,
+            repeat_period: 50,
+        });
 
         await this.wait(500);
         this.origin_npc.set_rotation(true, 10);
@@ -307,7 +450,7 @@ export class DjinnGetEvent extends GameEvent {
         /* particles getting into the hero */
         const x1 = -50;
         const x2 = 50;
-        const y1 = -(GAME_HEIGHT >> 1) - 20;
+        const y1 = -(this.data.hero.sprite.y - this.game.camera.y) - 20;
         const y2 = y1;
         const zone = this.data.particle_manager.createLineZone(x1, y1, x2, y2);
         const in_data = {
@@ -331,7 +474,7 @@ export class DjinnGetEvent extends GameEvent {
         });
 
         await this.wait(400);
-        this.data.hero.shake(11);
+        this.data.hero.shake({repeats_number: 11});
 
         await this.wait(1800);
         this.data.particle_manager.removeEmitter(into_emitter);
@@ -353,6 +496,9 @@ export class DjinnGetEvent extends GameEvent {
         switch (this.djinn.element) {
             case elements.VENUS:
                 await this.venus_djinn();
+                break;
+            case elements.MERCURY:
+                await this.mercury_djinn();
                 break;
             case elements.MARS:
                 await this.mars_djinn();

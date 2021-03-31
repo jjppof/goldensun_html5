@@ -32,7 +32,6 @@ export class Map {
     private _show_footsteps: boolean;
     private assets_loaded: boolean;
     private _lazy_load: boolean;
-    private _layers: any[];
     private collision_embedded: boolean;
     private _is_world_map: boolean;
     private bgm_key: string;
@@ -75,7 +74,6 @@ export class Map {
         this._show_footsteps = false;
         this.assets_loaded = false;
         this._lazy_load = lazy_load ?? false;
-        this._layers = [];
         this.collision_embedded = collision_embedded ?? false;
         this._is_world_map = false;
         this.bgm_key = bgm_key;
@@ -122,7 +120,7 @@ export class Map {
         return this._key_name;
     }
     get layers() {
-        return this._layers;
+        return this.sprite.layers;
     }
 
     get tile_width() {
@@ -198,6 +196,7 @@ export class Map {
         }
     }
 
+    //pause map activity, like collisions, npc and interactable objects animation etc.
     pause() {
         this.sprite.pauseAnimation = true;
         const previously_inactive_npc = new Set<number>();
@@ -231,6 +230,7 @@ export class Map {
         };
     }
 
+    //resume map activity, like collisions, npc and interactable objects animation etc.
     resume(previous_state?: ReturnType<Map["pause"]>) {
         this.sprite.pauseAnimation = false;
         this.layers.forEach((layer, index) => {
@@ -565,6 +565,7 @@ export class Map {
         }
     }
 
+    //remove a tile event in a custom location
     remove_event(location_key: number, event_id: number) {
         this.events[location_key] = this.events[location_key].filter(event => event.id !== event_id);
         if (!this.events[location_key].length) {
@@ -650,7 +651,7 @@ export class Map {
             }
         }
 
-        this._layers = this.sprite.layers.sort((a, b) => {
+        this.layers.sort((a, b) => {
             if (a.properties.over !== b.properties.over) return a - b;
             if (a.properties.z !== b.properties.z) return a - b;
         });

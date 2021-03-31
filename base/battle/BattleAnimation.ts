@@ -399,6 +399,7 @@ export class BattleAnimation {
             let trail_image: Phaser.Image;
             if (sprite_info.trails) {
                 const trail_bitmap_data = this.game.make.bitmapData(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+                trail_bitmap_data.smoothed = false;
                 trail_bitmap_data.fill(0, 0, 0, 1);
                 trail_bitmap_data.trail_factor = sprite_info.trails_factor;
                 trail_image = this.game.make.image(0, 0, trail_bitmap_data);

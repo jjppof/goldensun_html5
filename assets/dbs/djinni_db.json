@@ -227,5 +227,17 @@
         "def_boost": 3,
         "agi_boost": 0,
         "luk_boost": 2
+    },{
+        "key_name": "chill",
+        "name": "Chill",
+        "description": "Strike to reduce a foe's defense.",
+        "element": "mercury",
+        "ability_key_name": "chill",
+        "hp_boost": 10,
+        "pp_boost": 3,
+        "atk_boost": 0,
+        "def_boost": 2,
+        "agi_boost": 0,
+        "luk_boost": 0
     }
 ]

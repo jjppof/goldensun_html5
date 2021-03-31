@@ -415,6 +415,7 @@ export abstract class ControllableChar {
         };
         jump_direction?: directions;
         sfx_key?: string;
+        bounce?: boolean; //only for vertical jumps
     }) {
         const duration = options?.duration ?? 65;
         const jump_height = options?.jump_height ?? 12;
@@ -471,15 +472,31 @@ export abstract class ControllableChar {
                     }
                 }, this);
         } else {
+            const bounce = options?.bounce ?? false;
+            const yoyo = !bounce;
             const previous_shadow_state = this.shadow_following;
             this.shadow_following = false;
-            this.game.add
+            const previous_pos = this.sprite.body.y;
+            const tween = this.game.add
                 .tween(this.sprite.body)
-                .to({y: this.sprite.body.y - jump_height}, duration, Phaser.Easing.Linear.None, true, 0, 0, true)
-                .onComplete.addOnce(() => {
+                .to({y: previous_pos - jump_height}, duration, Phaser.Easing.Quadratic.Out, false, 0, 0, yoyo);
+            if (bounce) {
+                const bounce_tween = this.game.add
+                    .tween(this.sprite.body)
+                    .to({y: previous_pos}, duration << 1, Phaser.Easing.Bounce.Out, false);
+                tween.chain(bounce_tween);
+                tween.start();
+                bounce_tween.onComplete.addOnce(() => {
                     this.shadow_following = previous_shadow_state;
                     promise_resolve();
                 });
+            } else {
+                tween.start();
+                tween.onComplete.addOnce(() => {
+                    this.shadow_following = previous_shadow_state;
+                    promise_resolve();
+                });
+            }
         }
         await promise;
         if (options?.time_on_finish) {
@@ -489,14 +506,19 @@ export abstract class ControllableChar {
         }
     }
 
-    async shake(repeats_number: number = 7, repeat_period: number = 40) {
+    async shake(options?: {repeats_number?: number; repeat_period?: number; side_shake?: boolean; max_scale?: number}) {
+        const repeats_number = options?.repeats_number ?? 7;
+        const repeat_period = options?.repeat_period ?? 40;
+        const side_shake = options?.side_shake ?? false;
+        const max_scale = options?.max_scale ?? 1.15;
         let promise_resolve;
         const promise = new Promise(resolve => (promise_resolve = resolve));
-        const scales = [1.15, 1.1, 1.0];
+        const scales = [max_scale, (max_scale + 1.0) / 2, 1.0];
         const total = scales.length * repeats_number;
         let counter = 0;
+        const prop: "x" | "y" = side_shake ? "x" : "y";
         this.game.time.events.repeat(repeat_period, total, () => {
-            this.sprite.scale.y = scales[counter % scales.length];
+            this.sprite.scale[prop] = scales[counter % scales.length];
             ++counter;
             if (counter === total) {
                 promise_resolve();
