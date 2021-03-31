@@ -94,7 +94,7 @@ export class DjinnGetEvent extends GameEvent {
         });
 
         /* rotation and penetration into the ground */
-        this.data.camera_shake_enable = true;
+        this.data.camera.enable_shake();
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
         this.game.add
             .tween(this.origin_npc.sprite.scale)
@@ -147,7 +147,7 @@ export class DjinnGetEvent extends GameEvent {
         emitter.destroy();
         this.data.particle_manager.clearData("out_of_ground");
         emitter.onEmit.dispose();
-        this.data.camera_shake_enable = false;
+        this.data.camera.disable_shake();
 
         /* particles circle over the hero */
         const particles_circle_number = 25;

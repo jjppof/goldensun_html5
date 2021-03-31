@@ -312,7 +312,8 @@ export class GameEventManager {
                     info.dest,
                     info.jump_direction,
                     info.keep_camera_follow,
-                    info.wait_after
+                    info.wait_after,
+                    info.camera_follow_while_jumping
                 );
             case event_types.FACE_DIRECTION:
                 return new FaceDirectionEvent(

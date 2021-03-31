@@ -13,6 +13,7 @@ export class JumpEvent extends CharControlEvent {
         distance?: number;
     };
     private jump_direction: directions;
+    private camera_follow_while_jumping: boolean;
 
     constructor(
         game,
@@ -29,7 +30,8 @@ export class JumpEvent extends CharControlEvent {
         dest,
         jump_direction,
         keep_camera_follow,
-        wait_after
+        wait_after,
+        camera_follow_while_jumping
     ) {
         super(
             game,
@@ -47,6 +49,7 @@ export class JumpEvent extends CharControlEvent {
         this.jump_height = jump_height;
         this.duration = duration;
         this.wait_after = wait_after;
+        this.camera_follow_while_jumping = camera_follow_while_jumping;
         this.dest = dest;
         this.jump_direction = jump_direction !== undefined ? directions[jump_direction as string] : undefined;
     }
@@ -66,6 +69,7 @@ export class JumpEvent extends CharControlEvent {
             jump_direction: this.jump_direction,
             dest: this.dest,
             time_on_finish: this.wait_after,
+            camera_follow: this.camera_follow_while_jumping,
         });
 
         await this.camera_unfollow_char();

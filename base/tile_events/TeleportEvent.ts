@@ -153,7 +153,7 @@ export class TeleportEvent extends TileEvent {
         this.data.map.npcs.forEach(npc => npc.update());
         this.game.camera.flash(0x0, undefined, true);
         this.game.camera.onFlashComplete.addOnce(() => {
-            this.game.camera.lerp.setTo(numbers.CAMERA_LERP, numbers.CAMERA_LERP);
+            this.data.camera.reset_lerp();
             this.data.tile_event_manager.on_event = false;
             this.data.hero.teleporting = false;
         });

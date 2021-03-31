@@ -18,13 +18,13 @@ import {CursorManager} from "./utils/CursorManager";
 import {Gamepad as XGamepad, Button} from "./XGamepad";
 import {Audio} from "./Audio";
 import {Storage} from "./Storage";
+import {Camera} from "./Camera";
 
 export class GoldenSun {
     public game: Phaser.Game = null;
     public dbs: any = {};
     public info: GameInfo = {} as GameInfo;
     public particle_manager: Phaser.ParticleStorm = null;
-    public camera_shake_enable: boolean = false;
     public loading_progress: string = "";
     public loading_what: string = "";
 
@@ -48,6 +48,7 @@ export class GoldenSun {
     public battle_instance: Battle = null; //class responsible for a battle
     public audio: Audio = null; //class responsible for controlling the game audio engine
     public storage: Storage = null; //class responsible for storing the game custom states
+    public camera: Camera = null; //class responsible for some specific camera features for this engine
 
     //managers
     public control_manager: ControlManager = null;
@@ -117,6 +118,9 @@ export class GoldenSun {
         //init audio engine
         this.audio = new Audio(this.game);
 
+        //init camera custom features
+        this.camera = new Camera(this.game);
+
         //init storage
         this.storage = new Storage(this);
         this.storage.init();
@@ -178,7 +182,7 @@ export class GoldenSun {
         );
         this.hero.set_shadow("shadow", this.npc_group, this.map.collision_layer);
         this.hero.create_half_crop_mask(this.map.is_world_map);
-        this.hero.camera_follow();
+        this.camera.follow(this.hero);
         this.hero.play();
 
         //initializes collision system
@@ -338,14 +342,11 @@ export class GoldenSun {
             }
         }
 
+        this.camera.update();
+
         //fps adjustment for faster monitors since requestAnimationFrame follows monitor frame rate
         if (this.game.time.fps > 60 && Math.abs(this.game.time.suggestedFps - this.game.time.desiredFps) > 10) {
             this.game.time.desiredFps = this.game.time.suggestedFps;
-        }
-
-        if (this.camera_shake_enable) {
-            this.game.camera.x += (Math.random() - 0.5) * 3;
-            this.game.camera.y += (Math.random() - 0.5) * 3;
         }
     }
 

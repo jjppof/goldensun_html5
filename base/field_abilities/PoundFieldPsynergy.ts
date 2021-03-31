@@ -268,10 +268,10 @@ export class PoundFieldPsynergy extends FieldAbilities {
     }
 
     init_shake() {
-        this.data.camera_shake_enable = true;
+        this.data.camera.enable_shake();
         const shake_timer = this.game.time.create(true);
         shake_timer.add(1000, () => {
-            this.data.camera_shake_enable = false;
+            this.data.camera.disable_shake();
         });
         shake_timer.start();
     }

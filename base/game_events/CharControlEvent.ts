@@ -59,7 +59,7 @@ export abstract class CharControlEvent extends GameEvent {
                     true
                 )
                 .onComplete.addOnce(() => {
-                    this.char.camera_follow();
+                    this.data.camera.follow(this.char);
                     follow_resolve();
                 });
         } else {
@@ -89,7 +89,7 @@ export abstract class CharControlEvent extends GameEvent {
                     true
                 )
                 .onComplete.addOnce(() => {
-                    this.data.hero.camera_follow();
+                    this.data.camera.follow(this.data.hero);
                     follow_resolve();
                 });
         } else {

@@ -4,6 +4,7 @@ import {Footsteps} from "./utils/Footsteps";
 import {GoldenSun} from "./GoldenSun";
 import {SpriteBase} from "./SpriteBase";
 import {Map} from "./Map";
+import {Camera} from "./Camera";
 
 export abstract class ControllableChar {
     private static readonly DEFAULT_SHADOW_KEYNAME = "shadow";
@@ -323,11 +324,6 @@ export abstract class ControllableChar {
         this.shadow.scale.setTo(scale_x, scale_y);
     }
 
-    camera_follow() {
-        this.game.camera.follow(this.sprite, Phaser.Camera.FOLLOW_LOCKON, numbers.CAMERA_LERP, numbers.CAMERA_LERP);
-        this.game.camera.focusOn(this.sprite);
-    }
-
     set_look_to_target(active: boolean, target?: ControllableChar) {
         if (active) {
             this.look_target = target;
@@ -415,13 +411,19 @@ export abstract class ControllableChar {
         };
         jump_direction?: directions;
         sfx_key?: string;
+        camera_follow?: boolean;
         bounce?: boolean; //only for vertical jumps
     }) {
         const duration = options?.duration ?? 65;
         const jump_height = options?.jump_height ?? 12;
+        const camera_follow = options?.camera_follow ?? true;
         let promise_resolve;
         const promise = new Promise(resolve => (promise_resolve = resolve));
         this.data.audio.play_se(options?.sfx_key ?? "actions/jump");
+        let current_camera_target: Camera["target"];
+        if (!camera_follow) {
+            current_camera_target = this.data.camera.unfollow();
+        }
         if (options?.dest?.distance) {
             const axis: "x" | "y" = options.dest.tile_x === this.tile_x_pos ? "y" : "x";
             const tween_obj: {x?: number; y?: number | number[]} = {
@@ -463,11 +465,17 @@ export abstract class ControllableChar {
                         this.sprite.animations.currentAnim.onComplete.addOnce(() => {
                             this.game.physics.p2.resume();
                             this.jumping = false;
+                            if (!camera_follow) {
+                                this.data.camera.follow(current_camera_target);
+                            }
                             promise_resolve();
                         });
                     } else {
                         this.game.physics.p2.resume();
                         this.jumping = false;
+                        if (!camera_follow) {
+                            this.data.camera.follow(current_camera_target);
+                        }
                         promise_resolve();
                     }
                 }, this);
@@ -488,12 +496,18 @@ export abstract class ControllableChar {
                 tween.start();
                 bounce_tween.onComplete.addOnce(() => {
                     this.shadow_following = previous_shadow_state;
+                    if (!camera_follow) {
+                        this.data.camera.follow(current_camera_target);
+                    }
                     promise_resolve();
                 });
             } else {
                 tween.start();
                 tween.onComplete.addOnce(() => {
                     this.shadow_following = previous_shadow_state;
+                    if (!camera_follow) {
+                        this.data.camera.follow(current_camera_target);
+                    }
                     promise_resolve();
                 });
             }
