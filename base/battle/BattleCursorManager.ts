@@ -68,7 +68,9 @@ export class BattleCursorManager {
             (magnitude, target) => {
                 let t: Target = {
                     magnitude:
-                        magnitude > (this.ability_range === "all" ? RANGES[0] : this.ability_range) ? null : magnitude,
+                        magnitude > (this.ability_range === ability_ranges.ALL ? RANGES[0] : this.ability_range)
+                            ? null
+                            : magnitude,
                     target: target,
                 };
                 return t;
@@ -231,7 +233,7 @@ export class BattleCursorManager {
                     true
                 )
                 .onComplete.addOnce(() => {
-                    const cursor_count = this.ability_range === "all" ? RANGES[0] : this.ability_range;
+                    const cursor_count = this.ability_range === ability_ranges.ALL ? RANGES[0] : this.ability_range;
 
                     this.cursors = new Array<Phaser.Sprite>(cursor_count as number);
                     this.cursors_tweens = new Array<Phaser.Tween>(cursor_count as number).fill(null);

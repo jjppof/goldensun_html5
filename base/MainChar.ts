@@ -658,6 +658,7 @@ export class MainChar extends Player {
             }
         }
         this_char.add_djinn(djinn.key_name);
+        return this_char;
     }
 
     static add_member_to_party(data: GoldenSun, party_data: PartyData, char_key_name: string) {

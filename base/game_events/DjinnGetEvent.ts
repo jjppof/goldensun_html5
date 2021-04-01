@@ -1,7 +1,7 @@
 import {GameEvent, event_types} from "./GameEvent";
 import * as _ from "lodash";
 import {NPC} from "../NPC";
-import {Djinn} from "../Djinn";
+import {Djinn, djinn_status} from "../Djinn";
 import {base_actions, directions, elements, element_colors, element_colors_in_battle, hex2rgb} from "../utils";
 import {MainChar} from "../MainChar";
 import {FieldAbilities} from "../field_abilities/FieldAbilities";
@@ -62,7 +62,8 @@ export class DjinnGetEvent extends GameEvent {
         this.control_enable = false;
         this.running = false;
         this.data.control_manager.detach_bindings(this.control_key);
-        MainChar.add_djinn_to_party(this.data.info.party_data, this.djinn);
+        const char = MainChar.add_djinn_to_party(this.data.info.party_data, this.djinn);
+        this.djinn.set_status(djinn_status.STANDBY, char);
         this.data.hero.play(base_actions.IDLE);
         this.data.game_event_manager.force_idle_action = true;
         this.game.physics.p2.resume();

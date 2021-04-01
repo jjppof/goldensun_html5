@@ -102,11 +102,10 @@ Example: Input: 7 (up_right) / Output: [6,0]
 Input: direction [number] - Diagonal direction value
 
 Output: [array] - Array with split direction values*/
-export function split_direction(direction) {
+export function split_direction(direction: directions) {
     if (direction % 2 === 0) return [direction];
-
-    let vals = new Array(2);
-    vals[0] = direction === directions.right ? direction.up_right : direction - 1;
+    const vals = new Array(2);
+    vals[0] = direction === directions.right ? directions.up_right : direction - 1;
     vals[1] = direction === directions.up_right ? directions.right : direction + 1;
     return vals;
 }
@@ -148,7 +147,7 @@ export function variation() {
 
 Input: angle [number] - Angle in radians
 Output: [number] - Angle in the [0,2*PI] range*/
-export function range_360(angle) {
+export function range_360(angle: number) {
     angle = angle % numbers.degree360;
     angle = angle < 0 ? angle + numbers.degree360 : angle;
     return angle;
@@ -209,107 +208,13 @@ export function is_close(current_direction, x, y, target_x, target_y, range_fact
     }
 }
 
-/*Direction transitions
-Used being forced to change directions*/
-export const transitions = {
-    [directions.up]: {
-        [directions.up]: directions.up,
-        [directions.down]: directions.down_left,
-        [directions.left]: directions.up_left,
-        [directions.right]: directions.up_right,
-        [directions.down_left]: directions.left,
-        [directions.down_right]: directions.right,
-        [directions.up_left]: directions.up,
-        [directions.up_right]: directions.up,
-    },
-    [directions.down]: {
-        [directions.up]: directions.up_left,
-        [directions.down]: directions.down,
-        [directions.left]: directions.down_left,
-        [directions.right]: directions.down_right,
-        [directions.down_left]: directions.down,
-        [directions.down_right]: directions.down,
-        [directions.up_left]: directions.left,
-        [directions.up_right]: directions.right,
-    },
-    [directions.left]: {
-        [directions.up]: directions.up_left,
-        [directions.down]: directions.down_left,
-        [directions.left]: directions.left,
-        [directions.right]: directions.up_right,
-        [directions.down_left]: directions.left,
-        [directions.down_right]: directions.down,
-        [directions.up_left]: directions.left,
-        [directions.up_right]: directions.up,
-    },
-    [directions.right]: {
-        [directions.up]: directions.up_right,
-        [directions.down]: directions.down_right,
-        [directions.left]: directions.down_left,
-        [directions.right]: directions.right,
-        [directions.down_left]: directions.down,
-        [directions.down_right]: directions.right,
-        [directions.up_left]: directions.up,
-        [directions.up_right]: directions.right,
-    },
-    [directions.down_left]: {
-        [directions.up]: directions.up_left,
-        [directions.down]: directions.down_left,
-        [directions.left]: directions.down_left,
-        [directions.right]: directions.down_right,
-        [directions.down_left]: directions.down_left,
-        [directions.down_right]: directions.down,
-        [directions.up_left]: directions.left,
-        [directions.up_right]: directions.up,
-    },
-    [directions.down_right]: {
-        [directions.up]: directions.up_right,
-        [directions.down]: directions.down_right,
-        [directions.left]: directions.down_left,
-        [directions.right]: directions.down_right,
-        [directions.down_left]: directions.down,
-        [directions.down_right]: directions.down_right,
-        [directions.up_left]: directions.left,
-        [directions.up_right]: directions.right,
-    },
-    [directions.up_left]: {
-        [directions.up]: directions.up_left,
-        [directions.down]: directions.down_left,
-        [directions.left]: directions.up_left,
-        [directions.right]: directions.up_right,
-        [directions.down_left]: directions.left,
-        [directions.down_right]: directions.right,
-        [directions.up_left]: directions.up_left,
-        [directions.up_right]: directions.up,
-    },
-    [directions.up_right]: {
-        [directions.up]: directions.up_right,
-        [directions.down]: directions.down_right,
-        [directions.left]: directions.up_left,
-        [directions.right]: directions.up_right,
-        [directions.down_left]: directions.left,
-        [directions.down_right]: directions.right,
-        [directions.up_left]: directions.up,
-        [directions.up_right]: directions.up_right,
-    },
-};
-
 /*Returns the opposite of the given direction
 
 Input: direction [number] - Direction value
 
 Output: [number] - Opposite direction value*/
-export function get_opposite_direction(direction) {
-    switch (direction) {
-        case directions.up:
-            return directions.down;
-        case directions.down:
-            return directions.up;
-        case directions.left:
-            return directions.right;
-        case directions.right:
-            return directions.left;
-    }
+export function get_opposite_direction(direction: directions) {
+    return (direction + 4) % 8;
 }
 
 /*Apply the transition directions
@@ -319,8 +224,11 @@ Input: current_direction [number] - Current direction value
        desired_direction [number] - Desired direction value
 
 Output: [number] - The direction value to apply*/
-export function get_transition_directions(current_direction, desired_direction) {
-    return transitions[desired_direction][current_direction];
+export function get_transition_directions(current_direction: directions, desired_direction: directions) {
+    const diff = desired_direction - current_direction;
+    if (diff === 0) return current_direction;
+    const sign = diff === 4 ? -1 : Math.sign(diff);
+    return (current_direction + (Math.abs(diff) >= 4 ? -sign : sign) + 8) % 8;
 }
 
 /*Obtains the text width in pixels (INEFFICIENT)

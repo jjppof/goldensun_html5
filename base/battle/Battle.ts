@@ -490,19 +490,19 @@ export class Battle {
             action.item_slot !== undefined
         );
 
+        //check if is possible to cast ability due to seal
         if (
             action.caster.has_temporary_status(temporary_status.SEAL) &&
             ability.ability_category === ability_categories.PSYNERGY
         ) {
-            //check if is possible to cast ability due to seal
             await this.battle_log.add(`But the Psynergy was blocked!`);
             await this.wait_for_key();
             this.check_phases();
             return;
         }
 
+        //check if char has enough pp to cast ability
         if (ability.pp_cost > action.caster.current_pp) {
-            //check if char has enough pp to cast ability
             await this.battle_log.add(`... But doesn't have enough PP!`);
             await this.wait_for_key();
             this.check_phases();
@@ -511,8 +511,8 @@ export class Battle {
             action.caster.current_pp -= ability.pp_cost;
         }
 
+        //change djinn status
         if (ability.ability_category === ability_categories.DJINN) {
-            //change djinn status
             if (ability.effects.some(effect => effect.type === effect_types.SET_DJINN)) {
                 this.data.info.djinni_list[action.djinn_key_name].set_status(
                     djinn_status.SET,
@@ -533,8 +533,8 @@ export class Battle {
                 return standby_djinni[element] >= requirement;
             });
 
+            //check if is possible to cast a summon
             if (!has_available_djinni) {
-                //check if is possible to cast a summon
                 await this.battle_log.add(`${action.caster.name} summons ${ability.name} but`);
                 await this.battle_log.add(`doesn't have enough standby Djinn!`);
                 await this.wait_for_key();
@@ -550,8 +550,8 @@ export class Battle {
             }
         }
 
+        //check if item is broken
         if (action.item_slot) {
-            //check if item is broken
             if (action.item_slot.broken) {
                 await this.battle_log.add(`But ${item_name} is broken...`);
                 await this.wait_for_key();
@@ -560,17 +560,18 @@ export class Battle {
             }
         }
 
+        //updates chars status window
         this.battle_menu.chars_status_window.update_chars_info();
         if (ability.type === ability_types.UTILITY) {
             await this.wait_for_key();
         }
 
+        //executes the animation of the current ability
         const anim_availability = this.animation_manager.animation_available(
             action.battle_animation_key,
             action.caster_battle_key
         );
         if (anim_availability === animation_availability.AVAILABLE) {
-            //executes the animation of the current ability
             const caster_targets_sprites = {
                 caster:
                     action.caster.fighter_type === fighter_types.ALLY
@@ -658,8 +659,8 @@ export class Battle {
         }
         await this.battle_stage.set_stage_default_position();
 
+        //summon's power buff after cast
         if (ability.ability_category === ability_categories.SUMMON) {
-            //summon's power buff after cast
             const requirements = this.data.info.summons_list[ability.key_name].requirements;
             for (let i = 0; i < ordered_elements.length; ++i) {
                 const element = ordered_elements[i];
@@ -684,6 +685,7 @@ export class Battle {
             }
         }
 
+        //some checks related to items
         if (action.item_slot) {
             const item: Item = this.data.info.items_list[action.item_slot.key_name];
             if (item.use_type === use_types.SINGLE_USE) {
