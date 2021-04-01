@@ -80,17 +80,6 @@ export enum base_actions {
     GRANT = "grant",
 }
 
-/*Returns the angle for an 8-Directional value
-Works clockwise starting with "Right"
-
-Input: direction [number]: 0-7, clockwise starting with "Right"
-
-Output: [number] - Angle in radians*/
-export function directions_angles(direction) {
-    //clockwise from "right"
-    return (direction * Math.PI) / 4;
-}
-
 export function get_direction_mask(direction: directions) {
     if (direction === null) return 0;
     return direction === 0 ? 1 : 2 << (direction - 1);
@@ -124,16 +113,7 @@ export function join_directions(dir_1, dir_2) {
 }
 
 export function direction_range(direction: directions) {
-    switch (direction) {
-        case directions.up:
-            return [directions.up_left, directions.up, directions.up_right];
-        case directions.down:
-            return [directions.down_left, directions.down, directions.down_right];
-        case directions.right:
-            return [directions.up_right, directions.right, directions.down_right];
-        case directions.left:
-            return [directions.up_left, directions.left, directions.down_left];
-    }
+    return [(direction + 7) % 8, direction, (direction + 1) % 8];
 }
 
 /*Returns a random number (0,4)
