@@ -336,6 +336,38 @@ export class BattleStage {
         );
     }
 
+    async reset_chars_position() {
+        const promises = [];
+        for (let i = 0; i < this.sprites.length; ++i) {
+            const player = this.sprites[i];
+            if (player.player_instance.is_paralyzed(true, true)) {
+                player.set_action(battle_actions.DOWNED);
+            } else {
+                player.set_action(battle_actions.IDLE);
+            }
+            if (
+                Math.abs(player.ellipses_semi_major - SEMI_MAJOR_AXIS) > 1e-4 ||
+                Math.abs(player.ellipses_semi_minor - SEMI_MINOR_AXIS) > 1e-4
+            ) {
+                let promise_resolve;
+                promises.push(new Promise(resolve => (promise_resolve = resolve)));
+                this.game.add
+                    .tween(player)
+                    .to(
+                        {
+                            ellipses_semi_major: SEMI_MAJOR_AXIS,
+                            ellipses_semi_minor: SEMI_MINOR_AXIS,
+                        },
+                        250,
+                        Phaser.Easing.Quadratic.Out,
+                        true
+                    )
+                    .onComplete.addOnce(promise_resolve);
+            }
+        }
+        await Promise.all(promises);
+    }
+
     async set_stage_default_position() {
         let promise_resolve: Function;
         const promise = new Promise(resolve => {

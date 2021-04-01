@@ -126,7 +126,7 @@ export class Hero extends ControllableChar {
             if (desired_direction !== null || this.force_direction) {
                 if (!this.force_direction) {
                     this.set_direction(desired_direction, false, false);
-                    if (this.game.time.frames & 1) {
+                    if (this.game.time.frames % 3 === 0) {
                         //this if controls the char turn frame rate, how fast is the transition
                         this._transition_direction = get_transition_directions(
                             this.transition_direction,

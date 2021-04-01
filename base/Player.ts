@@ -349,11 +349,12 @@ export abstract class Player {
         return this.temporary_status.has(status);
     }
 
-    is_paralyzed() {
+    is_paralyzed(include_downed: boolean = false, exclude_no_downed_anim: boolean = false) {
         return (
-            this.temporary_status.has(temporary_status.SLEEP) ||
+            (!exclude_no_downed_anim && this.temporary_status.has(temporary_status.SLEEP)) ||
             this.temporary_status.has(temporary_status.STUN) ||
-            this.paralyzed_by_effect
+            (!exclude_no_downed_anim && this.paralyzed_by_effect) ||
+            (include_downed && this.permanent_status.has(permanent_status.DOWNED))
         );
     }
 

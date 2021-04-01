@@ -47,14 +47,6 @@
         "sprite_index": "targets",
         "duration": 350,
         "force_stage_update": true
-    },{
-        "start_delay": 2000,
-        "to": -20,
-        "is_absolute": false,
-        "tween": "Quadratic.Out",
-        "sprite_index": "targets",
-        "duration": 200,
-        "force_stage_update": true
     }],
     "x_anchor_sequence": [{
         "to": [0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6],
@@ -154,11 +146,6 @@
     },{
         "animation_key": "damage",
         "start_delay": 1700,
-        "sprite_index": "targets",
-        "wait": false
-    },{
-        "animation_key": "idle",
-        "start_delay": 3800,
         "sprite_index": "targets",
         "wait": false
     }],

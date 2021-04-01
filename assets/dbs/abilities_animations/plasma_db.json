@@ -60,11 +60,6 @@
         "start_delay": 1500,
         "sprite_index": "targets",
         "wait": false
-    },{
-        "animation_key": "idle",
-        "start_delay": 2500,
-        "sprite_index": "targets",
-        "wait": false
     }],
     "alpha_sequence": [{
         "to": 0.0,
@@ -116,14 +111,6 @@
         "tween": "Quadratic.Out",
         "sprite_index": "targets",
         "duration": 350,
-        "force_stage_update": true
-    },{
-        "start_delay": 1700,
-        "to": -20,
-        "is_absolute": false,
-        "tween": "Quadratic.Out",
-        "sprite_index": "targets",
-        "duration": 200,
         "force_stage_update": true
     }],
     "tint_sequence": [{

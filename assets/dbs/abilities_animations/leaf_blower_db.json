@@ -97,11 +97,6 @@
         "sprite_index": "targets",
         "wait": false
     },{
-        "animation_key": "idle",
-        "start_delay": 4200,
-        "sprite_index": "targets",
-        "wait": false
-    },{
         "animation_key": "slash",
         "start_delay": [1800, 2100, 2300, 2500, 2700, 2900, 3100, 3300, 3500, 3700],
         "sprite_index": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -118,14 +113,6 @@
         "tween": "Quadratic.Out",
         "sprite_index": "targets",
         "duration": 350,
-        "force_stage_update": true
-    },{
-        "start_delay": 3600,
-        "to": -20,
-        "is_absolute": false,
-        "tween": "Quadratic.Out",
-        "sprite_index": "targets",
-        "duration": 200,
         "force_stage_update": true
     }],
     "tint_sequence": [{
