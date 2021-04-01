@@ -15,6 +15,7 @@ export abstract class ControllableChar {
     private static readonly DEFAULT_SPRITE_ANCHOR_Y = 0.8;
     private static readonly SLIDE_ICE_SPEED = 95;
     private static readonly SLIDE_ICE_WALK_FRAME_RATE = 20;
+    private static readonly INTERACTION_RANGE_ANGLE = numbers.degree75;
 
     private static readonly default_anchor = {
         x: ControllableChar.DEFAULT_SPRITE_ANCHOR_X,
@@ -370,6 +371,28 @@ export abstract class ControllableChar {
             animation_obj.stop(true);
         }
         return animation_obj;
+    }
+
+    is_close(target_char: ControllableChar, distance: number) {
+        const reference_angle = (8 - this.transition_direction) * numbers.degree45;
+        let lower_limit = reference_angle - ControllableChar.INTERACTION_RANGE_ANGLE;
+        let upper_limit = reference_angle + ControllableChar.INTERACTION_RANGE_ANGLE;
+        const relative_point = {
+            x: target_char.sprite.x - this.sprite.x,
+            y: target_char.sprite.y - this.sprite.y,
+        };
+        let angle_shift = 0;
+        if (lower_limit < 0) {
+            angle_shift = ControllableChar.INTERACTION_RANGE_ANGLE;
+        } else if (upper_limit >= numbers.degree360) {
+            angle_shift = -ControllableChar.INTERACTION_RANGE_ANGLE;
+        }
+        lower_limit += angle_shift;
+        upper_limit += angle_shift;
+        const target_angle = range_360(-Math.atan2(relative_point.y, relative_point.x) + angle_shift);
+        const angle_condition = target_angle >= lower_limit && target_angle <= upper_limit;
+        const distance_condition = Math.pow(relative_point.x, 2) + Math.pow(relative_point.y, 2) <= distance * distance;
+        return angle_condition && distance_condition;
     }
 
     private choose_direction_by_speed() {

@@ -1,4 +1,4 @@
-import {directions, is_close} from "../utils";
+import {directions} from "../utils";
 import {DialogManager} from "../utils/DialogManager";
 import {NPC, npc_types} from "../NPC";
 import {GoldenSun} from "../GoldenSun";
@@ -93,14 +93,8 @@ export class GameEventManager {
             ) {
                 continue;
             }
-            const is_close_check = is_close(
-                this.data.hero.current_direction,
-                this.data.hero.sprite.x,
-                this.data.hero.sprite.y,
-                npc.sprite.x,
-                npc.sprite.y,
-                npc.talk_range_factor
-            );
+            const distance = this.data.hero.body_radius * npc.talk_range_factor;
+            const is_close_check = this.data.hero.is_close(npc, distance);
             if (is_close_check) {
                 this.data.hero.stop_char();
                 this.control_enable = false;

@@ -153,61 +153,6 @@ export function range_360(angle: number) {
     return angle;
 }
 
-/*Checks proximity in given quadrants
-
-Input: quadrants [array] - Quadrants to check (array of number)
-       radius [number] - Radius of the body
-       range_factor [number] - Additional range factor
-       x, y [number] - The body's coordinates
-       target_x, target_y [number] - The target's coordinates
-
-Output: [boolean]*/
-export function is_inside_sector(quadrants, radius, range_factor, x, y, target_x, target_y) {
-    const range_radius_squared = radius * range_factor * (radius * range_factor);
-    const target_radius_squared = Math.pow(target_x - x, 2) + Math.pow(target_y - y, 2);
-    const target_angle = range_360(Math.atan2(y - target_y, target_x - x));
-    const angles = [0, numbers.degree90, Math.PI, numbers.degree270, numbers.degree360];
-    let between_angles = false;
-    for (let i = 0; i < quadrants.length; ++i) {
-        let quadrant = quadrants[i];
-        let start_angle = angles[quadrant - 1];
-        let end_angle = angles[quadrant];
-        between_angles = end_angle >= target_angle && target_angle >= start_angle;
-        if (between_angles) break;
-    }
-
-    return target_radius_squared <= range_radius_squared && between_angles;
-}
-
-/*Checks proximity based on current direction
-
-Input: current_direction [number] - The current direction
-       x, y [number] - The body's coordinates
-       target_x, target_y [number] - The target's coordinates
-       range_factor [number] - Additional range factor
-
-Output: [boolean]*/
-export function is_close(current_direction, x, y, target_x, target_y, range_factor) {
-    switch (current_direction) {
-        case directions.up:
-            return is_inside_sector([1, 2], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case directions.up_right:
-            return is_inside_sector([1], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case directions.right:
-            return is_inside_sector([1, 4], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case directions.down_right:
-            return is_inside_sector([4], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case directions.down:
-            return is_inside_sector([3, 4], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case directions.down_left:
-            return is_inside_sector([3], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case directions.left:
-            return is_inside_sector([2, 3], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-        case directions.up_left:
-            return is_inside_sector([2], numbers.HERO_BODY_RADIUS, range_factor, x, y, target_x, target_y);
-    }
-}
-
 /*Returns the opposite of the given direction
 
 Input: direction [number] - Direction value

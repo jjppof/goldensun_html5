@@ -35,6 +35,7 @@ export const degree45_half = (22.5 * Math.PI) / 180;
 export const degree30 = (30 * Math.PI) / 180;
 export const degree45 = (45 * Math.PI) / 180;
 export const degree60 = (60 * Math.PI) / 180;
+export const degree75 = (75 * Math.PI) / 180;
 export const degree90 = Math.PI / 2;
 export const degree180 = Math.PI;
 export const degree270 = (3 * Math.PI) / 2;
