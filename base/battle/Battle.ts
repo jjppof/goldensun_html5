@@ -194,10 +194,9 @@ export class Battle {
             this.target_window.open(action, this_ability.name, this_ability.element, ability_key, quantities, item_obj);
         }
 
-        this.battle_stage.choose_targets(
+        this.battle_stage.cursor_manager.choose_targets(
             this_ability.range,
             this_ability.battle_target,
-            this_ability.type,
             caster,
             (targets: Target[]) => {
                 if (this.target_window.window_open) {
@@ -1132,11 +1131,11 @@ So, if a character will die after 5 turns and you land another Curse on them, it
     async apply_battle_recovery(party: PlayerInfo[], is_hp_recovery: boolean) {
         let recovery = "";
         for (let i = 0; i < party.length; i++) {
-            let player = party[i];
-            let recovery_stat = is_hp_recovery ? player.instance.hp_recovery : player.instance.pp_recovery;
+            const player = party[i];
+            const recovery_stat = is_hp_recovery ? player.instance.hp_recovery : player.instance.pp_recovery;
             let current_stat = is_hp_recovery ? player.instance.current_hp : player.instance.current_pp;
-            let max_stat = is_hp_recovery ? player.instance.max_hp : player.instance.max_pp;
-            let print_stat = is_hp_recovery ? "HP" : "PP";
+            const max_stat = is_hp_recovery ? player.instance.max_hp : player.instance.max_pp;
+            const print_stat = is_hp_recovery ? "HP" : "PP";
             if (recovery_stat !== 0) {
                 current_stat = _.clamp(current_stat + recovery_stat, 0, max_stat);
                 if (recovery_stat > 0) {

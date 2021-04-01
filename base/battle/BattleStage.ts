@@ -1,13 +1,11 @@
 import * as numbers from "../magic_numbers";
 import {range_360} from "../utils";
-import {ability_ranges, ability_target_types} from "../Ability";
-import {fighter_types, permanent_status, Player} from "../Player";
 import {GoldenSun} from "../GoldenSun";
 import {Button} from "../XGamepad";
 import {PlayerInfo} from "./Battle";
-import * as _ from "lodash";
 import {battle_actions, battle_positions, PlayerSprite} from "./PlayerSprite";
 import {BattleAnimation} from "./BattleAnimation";
+import {BattleCursorManager} from "./BattleCursorManager";
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
@@ -41,17 +39,10 @@ const ACTION_ENEMY_Y = 98;
 const ACTION_POS_SPACE_BETWEEN = 40;
 const ACTION_POS_SCALE_ADD = 0.2;
 
-const CHOOSE_TARGET_ENEMY_SHIFT = 15;
-const CHOOSE_TARGET_ALLY_SHIFT = -3;
-
-const CHOOSE_TARGET_RIGHT = 1;
-const CHOOSE_TARGET_LEFT = -1;
-
-const RANGES = [11, 9, 7, 5, 3, 1, 3, 5, 7, 9, 11];
-const BATTLE_CURSOR_SCALES = [0.1, 0.2, 0.3, 0.4, 0.6, 1, 0.6, 0.4, 0.3, 0.2, 0.1];
+export const CHOOSE_TARGET_ENEMY_SHIFT = 15;
+export const CHOOSE_TARGET_ALLY_SHIFT = -3;
 
 const INIT_TIME = 1500;
-const CHOOSING_TARGET_SCREEN_SHIFT_TIME = 150;
 
 export type CameraAngle = {
     rad: number;
@@ -65,57 +56,48 @@ export type Target = {
 };
 
 export class BattleStage {
-    public game: Phaser.Game;
-    public data: GoldenSun;
+    private game: Phaser.Game;
+    private data: GoldenSun;
+    private _cursor_manager: BattleCursorManager;
 
-    public camera_angle: CameraAngle;
+    private _camera_angle: CameraAngle;
 
-    public background_key: string;
-    public old_camera_angle: number;
+    private background_key: string;
+    private old_camera_angle: number;
 
-    public battle_group: Phaser.Group;
-    public crop_group: Phaser.Group;
-    public group_enemies: Phaser.Group;
-    public group_allies: Phaser.Group;
+    private _battle_group: Phaser.Group;
+    private crop_group: Phaser.Group;
+    private _group_enemies: Phaser.Group;
+    private _group_allies: Phaser.Group;
 
-    public allies_info: PlayerInfo[];
-    public enemies_info: PlayerInfo[];
-    public allies_count: number;
-    public enemies_count: number;
+    private _allies_info: PlayerInfo[];
+    private _enemies_info: PlayerInfo[];
+    private _allies_count: number;
+    private _enemies_count: number;
 
-    public shift_from_middle_enemy: number;
-    public shift_from_middle_ally: number;
+    private shift_from_middle_enemy: number;
+    private shift_from_middle_ally: number;
 
-    public sprites: PlayerSprite[];
+    private _sprites: PlayerSprite[];
 
-    public x: number;
-    public y: number;
+    private x: number;
+    private y: number;
 
     public choosing_actions: boolean;
-    public choosing_targets: boolean;
-    public target_type: string;
-    public ability_caster: Player;
 
-    public black_bg: Phaser.Graphics;
-    public battle_bg: Phaser.TileSprite;
-    public battle_bg2: Phaser.TileSprite;
+    private black_bg: Phaser.Graphics;
+    private _battle_bg: Phaser.TileSprite;
+    private _battle_bg2: Phaser.TileSprite;
 
-    public upper_rect: Phaser.Graphics;
-    public lower_rect: Phaser.Graphics;
+    private upper_rect: Phaser.Graphics;
+    private lower_rect: Phaser.Graphics;
 
-    public first_ally_char: Phaser.Sprite;
-    public last_ally_char: Phaser.Sprite;
-    public first_enemy_char: Phaser.Sprite;
-    public last_enemy_char: Phaser.Sprite;
+    private first_ally_char: Phaser.Sprite;
+    private last_ally_char: Phaser.Sprite;
+    private first_enemy_char: Phaser.Sprite;
+    private last_enemy_char: Phaser.Sprite;
 
-    public choosing_targets_callback: Function;
-    public range_cursor_position: number;
-    public ability_range: ability_ranges;
-    public ability_type: string;
-
-    public cursors_tweens: Phaser.Tween[];
-    public cursors: Phaser.Sprite[];
-    public bg_height: number;
+    private bg_height: number;
 
     constructor(
         game: Phaser.Game,
@@ -126,8 +108,9 @@ export class BattleStage {
     ) {
         this.game = game;
         this.data = data;
+        this._cursor_manager = new BattleCursorManager(this.game, this.data, this);
 
-        this.camera_angle = {
+        this._camera_angle = {
             rad: INITIAL_POS_ANGLE,
             spining: false,
             update: this.update_sprite_properties.bind(this),
@@ -136,20 +119,20 @@ export class BattleStage {
         this.background_key = background_key;
         this.old_camera_angle = this.camera_angle.rad;
 
-        this.battle_group = this.game.add.group();
+        this._battle_group = this.game.add.group();
         this.crop_group = this.game.add.group();
-        this.group_enemies = this.game.add.group();
-        this.group_allies = this.game.add.group();
+        this._group_enemies = this.game.add.group();
+        this._group_allies = this.game.add.group();
 
-        this.allies_info = allies_info;
-        this.enemies_info = enemies_info;
-        this.allies_count = allies_info.length;
-        this.enemies_count = enemies_info.length;
+        this._allies_info = allies_info;
+        this._enemies_info = enemies_info;
+        this._allies_count = allies_info.length;
+        this._enemies_count = enemies_info.length;
 
         this.shift_from_middle_enemy = SPACE_BETWEEN_CHARS * this.enemies_count * 0.5;
         this.shift_from_middle_ally = SPACE_BETWEEN_CHARS * this.allies_count * 0.5;
 
-        this.sprites = [];
+        this._sprites = [];
 
         this.x = this.game.camera.x;
         this.y = this.game.camera.y;
@@ -162,87 +145,41 @@ export class BattleStage {
         this.crop_group.y = this.y;
     }
 
-    set_targets() {
-        let party_count: number, party_info: PlayerInfo[];
-
-        switch (this.target_type) {
-            case ability_target_types.ALLY:
-                party_count = this.allies_count;
-                party_info = this.allies_info;
-                break;
-
-            case ability_target_types.ENEMY:
-                party_count = this.enemies_count;
-                party_info = this.enemies_info;
-                break;
-
-            case ability_target_types.USER:
-                party_count =
-                    this.ability_caster.fighter_type === fighter_types.ALLY ? this.allies_count : this.enemies_count;
-                party_info =
-                    this.ability_caster.fighter_type === fighter_types.ENEMY ? this.allies_info : this.enemies_info;
-                break;
-        }
-
-        const targets = _.zipWith(
-            RANGES.slice(
-                this.range_cursor_position - (party_count >> 1),
-                this.range_cursor_position + (party_count >> 1) + (party_count & 1)
-            ).reverse(),
-            party_info,
-            (magnitude, target) => {
-                let t: Target = {
-                    magnitude:
-                        magnitude > (this.ability_range === "all" ? RANGES[0] : this.ability_range) ? null : magnitude,
-                    target: target,
-                };
-                return t;
-            }
-        );
-
-        if (this.target_type === ability_target_types.USER) {
-            this.choosing_targets_callback(targets);
-        } else {
-            this.choosing_targets_finished(targets);
-        }
+    get cursor_manager() {
+        return this._cursor_manager;
     }
-
-    next_target() {
-        this.change_target(CHOOSE_TARGET_LEFT);
+    get sprites() {
+        return this._sprites;
     }
-
-    previous_target() {
-        this.change_target(CHOOSE_TARGET_RIGHT);
+    get group_allies() {
+        return this._group_allies;
     }
-
-    change_target(step: number, tween_to_pos: boolean = true) {
-        if (this.target_type === ability_target_types.ENEMY) {
-            step *= -1;
-        }
-
-        const group_info = this.target_type === ability_target_types.ALLY ? this.allies_info : this.enemies_info;
-        const group_length = group_info.length;
-        const group_half_length = group_length % 2 ? group_length >> 1 : (group_length >> 1) - 1;
-
-        let target_sprite_index: number;
-
-        do {
-            this.range_cursor_position += step;
-            if (step === 0) step = CHOOSE_TARGET_LEFT;
-
-            const center_shift = this.range_cursor_position - (RANGES.length >> 1);
-            target_sprite_index = group_half_length + center_shift;
-
-            if (target_sprite_index >= group_length) {
-                this.range_cursor_position = (RANGES.length >> 1) - group_half_length;
-                target_sprite_index = 0;
-            } else if (target_sprite_index < 0) {
-                this.range_cursor_position = (RANGES.length >> 1) + group_half_length + +!(group_length % 2);
-                target_sprite_index = group_length - 1;
-            }
-        } while (group_info[target_sprite_index].instance.has_permanent_status(permanent_status.DOWNED));
-
-        this.set_battle_cursors_position(tween_to_pos);
+    get group_enemies() {
+        return this._group_enemies;
+    }
+    get allies_info() {
+        return this._allies_info;
+    }
+    get enemies_info() {
+        return this._enemies_info;
+    }
+    get allies_count() {
+        return this._allies_count;
+    }
+    get enemies_count() {
+        return this._enemies_count;
+    }
+    get battle_group() {
+        return this._battle_group;
+    }
+    get camera_angle() {
+        return this._camera_angle;
+    }
+    get battle_bg() {
+        return this._battle_bg;
+    }
+    get battle_bg2() {
+        return this._battle_bg2;
     }
 
     initialize_sprites() {
@@ -253,7 +190,7 @@ export class BattleStage {
         this.black_bg.drawRect(0, 0, numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
         this.black_bg.endFill();
 
-        this.battle_bg = this.game.add.tileSprite(
+        this._battle_bg = this.game.add.tileSprite(
             BG_X,
             BG_Y,
             numbers.GAME_WIDTH,
@@ -261,7 +198,7 @@ export class BattleStage {
             "battle_backgrounds",
             this.background_key
         );
-        this.battle_bg2 = this.game.add.tileSprite(
+        this._battle_bg2 = this.game.add.tileSprite(
             BG_X,
             BG_Y,
             numbers.GAME_WIDTH,
@@ -344,7 +281,6 @@ export class BattleStage {
 
     initialize_stage(callback) {
         this.choosing_actions = false;
-        this.choosing_targets = false;
 
         this.initialize_sprites();
         this.intialize_crop_rectangles();
@@ -466,181 +402,6 @@ export class BattleStage {
 
             sprite.scale.setTo(this_scale_x, this_scale_y);
         }
-    }
-
-    set_battle_cursors_position(tween_to_pos: boolean = true) {
-        const group_info = this.target_type === ability_target_types.ALLY ? this.allies_info : this.enemies_info;
-        const group_half_length = group_info.length % 2 ? group_info.length >> 1 : (group_info.length >> 1) - 1;
-        const center_shift = this.range_cursor_position - (RANGES.length >> 1);
-
-        this.cursors.forEach((cursor_sprite, i) => {
-            let target_index = i - ((this.cursors.length >> 1) - group_half_length) + center_shift;
-            const target_info = group_info[target_index];
-
-            if (target_info && !target_info.instance.has_permanent_status(permanent_status.DOWNED)) {
-                const target_sprite = target_info.sprite;
-                let this_scale;
-                if (this.ability_range === ability_ranges.ALL) {
-                    this_scale = 1.0;
-                } else {
-                    this_scale =
-                        BATTLE_CURSOR_SCALES[
-                            this.range_cursor_position - center_shift - (this.cursors.length >> 1) + i
-                        ];
-                }
-
-                cursor_sprite.scale.setTo(this_scale, this_scale);
-                cursor_sprite.alpha = 1;
-
-                if (this.cursors_tweens[i]) {
-                    this.cursors_tweens[i].stop();
-                }
-
-                const dest_x = target_sprite.x;
-                const dest_y = target_sprite.y - target_sprite.height;
-
-                if (tween_to_pos) {
-                    this.game.add
-                        .tween(cursor_sprite)
-                        .to(
-                            {
-                                centerX: dest_x,
-                                y: dest_y,
-                            },
-                            85,
-                            Phaser.Easing.Linear.None,
-                            true
-                        )
-                        .onComplete.addOnce(() => {
-                            this.cursors_tweens[i] = this.game.add.tween(cursor_sprite).to(
-                                {
-                                    y: cursor_sprite.y - 4,
-                                },
-                                100,
-                                Phaser.Easing.Linear.None,
-                                true,
-                                0,
-                                -1,
-                                true
-                            );
-                        });
-                } else {
-                    cursor_sprite.centerX = dest_x;
-                    cursor_sprite.y = dest_y;
-
-                    this.cursors_tweens[i] = this.game.add.tween(cursor_sprite).to(
-                        {
-                            y: cursor_sprite.y - 4,
-                        },
-                        100,
-                        Phaser.Easing.Linear.None,
-                        true,
-                        0,
-                        -1,
-                        true
-                    );
-                }
-            } else {
-                cursor_sprite.alpha = 0;
-                target_index = target_index < 0 ? 0 : group_info.length - 1;
-
-                const target_sprite = group_info[target_index].sprite;
-                cursor_sprite.centerX = target_sprite.x;
-                cursor_sprite.y = target_sprite.y - target_sprite.height;
-            }
-        });
-    }
-
-    unset_battle_cursors() {
-        this.cursors.forEach((sprite, i) => {
-            sprite.destroy();
-            if (this.cursors_tweens[i]) {
-                this.cursors_tweens[i].stop();
-            }
-        });
-    }
-
-    choose_targets(
-        range: ability_ranges,
-        target_type: string,
-        ability_type: string,
-        ability_caster: Player,
-        callback: Function
-    ) {
-        this.choosing_targets_callback = callback;
-        this.range_cursor_position = RANGES.length >> 1;
-
-        this.ability_range = range;
-        this.ability_type = ability_type;
-        this.ability_caster = ability_caster;
-
-        this.target_type = target_type;
-        if (this.target_type === ability_target_types.USER) {
-            this.set_targets();
-        } else {
-            this.game.add
-                .tween(this.battle_group)
-                .to(
-                    {
-                        y:
-                            this.battle_group.y +
-                            (this.target_type === ability_target_types.ALLY
-                                ? CHOOSE_TARGET_ALLY_SHIFT
-                                : CHOOSE_TARGET_ENEMY_SHIFT),
-                    },
-                    CHOOSING_TARGET_SCREEN_SHIFT_TIME,
-                    Phaser.Easing.Linear.None,
-                    true
-                )
-                .onComplete.addOnce(() => {
-                    const cursor_count = this.ability_range === "all" ? RANGES[0] : this.ability_range;
-
-                    this.cursors = new Array<Phaser.Sprite>(cursor_count as number);
-                    this.cursors_tweens = new Array<Phaser.Tween>(cursor_count as number).fill(null);
-
-                    for (let i = 0; i < cursor_count; ++i) {
-                        this.cursors[i] = this.battle_group.create(0, 0, "battle_cursor");
-                        this.cursors[i].animations.add("anim");
-                        this.cursors[i].animations.play("anim", 40, true);
-                    }
-
-                    this.choosing_targets = true;
-                    this.change_target(0, false);
-
-                    // Sound for A key unavailable, using Menu Positive instead
-                    const controls = [
-                        {button: Button.LEFT, on_down: this.next_target.bind(this), sfx: {down: "menu/move"}},
-                        {button: Button.RIGHT, on_down: this.previous_target.bind(this), sfx: {down: "menu/move"}},
-                        {button: Button.A, on_down: this.set_targets.bind(this), sfx: {down: "menu/positive"}},
-                        {
-                            button: Button.B,
-                            on_down: this.choosing_targets_finished.bind(this, null),
-                            sfx: {down: "menu/negative"},
-                        },
-                    ];
-                    this.data.control_manager.add_controls(controls, {loop_config: {horizontal: true}});
-                });
-        }
-    }
-
-    choosing_targets_finished(targets: Target[]) {
-        this.choosing_targets = false;
-
-        this.game.add.tween(this.battle_group).to(
-            {
-                y:
-                    this.battle_group.y -
-                    (this.target_type === ability_target_types.ALLY
-                        ? CHOOSE_TARGET_ALLY_SHIFT
-                        : CHOOSE_TARGET_ENEMY_SHIFT),
-            },
-            CHOOSING_TARGET_SCREEN_SHIFT_TIME,
-            Phaser.Easing.Linear.None,
-            true
-        );
-
-        this.unset_battle_cursors();
-        this.choosing_targets_callback(targets);
     }
 
     prevent_camera_angle_overflow() {
