@@ -25,6 +25,7 @@ export class Wave {
         this.img = this.game.add.image(this.x, this.y);
         this.img.anchor.setTo(0.5, 0.5);
         this.bmp = this.game.add.bitmapData(this.width, this.height);
+        this.bmp.smoothed = false;
         this.bmp.add(this.img);
     }
 
@@ -66,16 +67,17 @@ export class Wave {
                 const rho =
                     (x - this.half_width) * (x - this.half_width) + (y - this.half_height) * (y - this.half_height);
                 if (rho > this.half_width_sqr || rho < transp_rad_sqr) {
-                    this.bmp.setPixel32(x, y, 0, 0, 0, 0);
+                    this.bmp.setPixel32(x, y, 0, 0, 0, 0, false);
                 } else {
                     const effect_color = (255 * (0.5 + Math.cos(freq_pi * Math.sqrt(rho) + this.phase) / 2)) | 0;
                     const red = Math.max(effect_color, this.red);
                     const green = Math.max(effect_color, this.green);
                     const blue = Math.max(effect_color, this.blue);
-                    this.bmp.setPixel32(x, y, red, green, blue, 255);
+                    this.bmp.setPixel32(x, y, red, green, blue, 255, false);
                 }
             }
         }
+        this.bmp.context.putImageData(this.bmp.imageData, 0, 0);
     }
 
     destroy() {

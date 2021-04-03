@@ -5642,8 +5642,10 @@ Phaser.ParticleStorm.Renderer.Pixel = function (emitter, width, height, render_w
     * @property {Phaser.BitmapData} bmd
     */
     this.bmd = this.game.make.bitmapData(width, height);
+    this.bmd.smoothed = false;
     if (render_white_core) {
         this.bmd2 = this.game.make.bitmapData(width, height);
+        this.bmd2.smoothed = false;
     }
 
     /**

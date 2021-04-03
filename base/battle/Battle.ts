@@ -375,13 +375,13 @@ export class Battle {
 
     async check_downed(target: Enemy | MainChar) {
         if (target.current_hp === 0) {
-            this.down_a_char(target);
+            await this.down_a_char(target);
             await this.battle_log.add(on_catch_status_msg[permanent_status.DOWNED](target));
             await this.wait_for_key();
         }
     }
 
-    down_a_char(target: Enemy | MainChar) {
+    async down_a_char(target: Enemy | MainChar) {
         this.on_going_effects = this.on_going_effects.filter(effect => {
             if (effect.char === target) {
                 target.remove_effect(effect);
@@ -393,6 +393,9 @@ export class Battle {
         target.add_permanent_status(permanent_status.DOWNED);
         const player_sprite = _.find(this.battle_stage.sprites, {player_instance: target});
         player_sprite.set_action(battle_actions.DOWNED);
+        if (target.fighter_type === fighter_types.ENEMY) {
+            await player_sprite.unmount_by_dissolving();
+        }
     }
 
     /*
@@ -413,13 +416,15 @@ export class Battle {
         }
 
         const action = this.turns_actions.pop();
+
+        //check whether this char is downed
         if (action.caster.has_permanent_status(permanent_status.DOWNED)) {
-            //check whether this char is downed
             this.check_phases();
             return;
         }
+
+        //check whether this char is paralyzed
         if (action.caster.is_paralyzed()) {
-            //check whether this char is paralyzed
             if (action.caster.temporary_status.has(temporary_status.SLEEP)) {
                 await this.battle_log.add(`${action.caster.name} is asleep!`);
             } else if (action.caster.temporary_status.has(temporary_status.STUN)) {
@@ -434,11 +439,25 @@ export class Battle {
             return;
         }
 
+        //check whether all targets are downed and change ability to "defend" in the case it's true
+        for (let i = 0; i < action.targets.length; ++i) {
+            const target = action.targets[i];
+            if (target.magnitude && target.target.instance.has_permanent_status(permanent_status.DOWNED)) {
+                target.magnitude = null;
+            }
+        }
+        if (action.targets.every(target => target.magnitude === null)) {
+            action.key_name = "defend";
+            action.djinn_key_name = "";
+            action.item_slot = null;
+            action.battle_animation_key = "";
+        }
+
+        //rerolls enemy ability
         if (
             action.caster.fighter_type === fighter_types.ENEMY &&
             !this.data.info.abilities_list[action.key_name].priority_move
         ) {
-            //reroll enemy ability
             Object.assign(
                 action,
                 EnemyAI.roll_action(
@@ -452,14 +471,14 @@ export class Battle {
         let ability = this.data.info.abilities_list[action.key_name];
 
         let item_name = action.item_slot ? this.data.info.items_list[action.item_slot.key_name].name : "";
+
+        //change the current ability to unleash ability from weapon
         if (
             action.caster.fighter_type === fighter_types.ALLY &&
             ability !== undefined &&
             ability.can_switch_to_unleash
         ) {
-            //change the current ability to unleash ability from weapon
             const caster = action.caster as MainChar;
-
             if (
                 caster.equip_slots.weapon &&
                 this.data.info.items_list[caster.equip_slots.weapon.key_name].unleash_ability
@@ -474,6 +493,7 @@ export class Battle {
             }
         }
 
+        //check whether this ability exists
         if (ability === undefined) {
             await this.battle_log.add(`${action.key_name} ability key not registered.`);
             await this.wait_for_key();
@@ -725,7 +745,7 @@ export class Battle {
 
             if (action.caster.get_effect_turns_count(this_effect) === 1) {
                 action.caster.current_hp = 0;
-                this.down_a_char(action.caster);
+                await this.down_a_char(action.caster);
                 await this.battle_log.add(`The Grim Reaper calls out to ${action.caster.name}`);
                 await this.wait_for_key();
             }

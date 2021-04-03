@@ -72,6 +72,8 @@ export class PlayerSprite {
     private on_status_change_obs: Observable<Player["on_status_change"] extends Subject<infer T> ? T : never>;
     private on_status_change_subs: Subscription;
     public player_instance: MainChar | Enemy;
+    private color_filter: any;
+    private _active: boolean;
 
     constructor(
         game: Phaser.Game,
@@ -102,6 +104,7 @@ export class PlayerSprite {
         this.current_status_index = 0;
         this.status_sprite_base = this.data.info.misc_sprite_base_list[STATUS_SPRITES_KEY_NAME];
         this.status_timer = this.game.time.create(false);
+        this._active = false;
     }
 
     get x() {
@@ -181,7 +184,13 @@ export class PlayerSprite {
         return this.char_sprite.animations;
     }
 
+    get active() {
+        return this._active;
+    }
+
     initialize_player() {
+        this._active = true;
+
         this.shadow_sprite = this.group.create(0, 0, "battle_shadows", this.player_instance.battle_shadow_key);
         this.shadow_sprite.anchor.setTo(0.5, 1);
         this.shadow_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
@@ -189,7 +198,8 @@ export class PlayerSprite {
         this.char_sprite = this.group.create(0, 0, this.player_info.sprite_key);
         this.char_sprite.anchor.setTo(0.5, 1);
         this.char_sprite.scale.setTo(this.player_instance.battle_scale, this.player_instance.battle_scale);
-        this.char_sprite.filters = [this.game.add.filter("ColorFilters")];
+        this.color_filter = this.game.add.filter("ColorFilters");
+        this.char_sprite.filters = [this.color_filter];
 
         if (this.is_ally) {
             const player = this.player_instance as MainChar;
@@ -225,6 +235,7 @@ export class PlayerSprite {
     }
 
     play_position(frame_rate?: number, loop?: boolean) {
+        if (!this.active) return;
         const anim_key = this.sprite_base.getAnimationKey(base_actions.BATTLE, this.battle_key);
         this.char_sprite.animations.play(anim_key, frame_rate, loop);
         this.char_sprite.animations.currentAnim.restart();
@@ -257,7 +268,61 @@ export class PlayerSprite {
         return this.sprite_base.getAnimationKey(base_actions.BATTLE, `${action}_${position}`);
     }
 
+    async unmount_by_dissolving() {
+        const bmd = this.game.add.bitmapData(this.char_sprite.width | 0, this.char_sprite.height | 0);
+        bmd.smoothed = false;
+        const x = this.group.x + this.parent_group.parent.x;
+        const y = this.group.y + this.parent_group.parent.y;
+        const img: Phaser.Image = this.game.add.image(x, y, bmd);
+        img.anchor.setTo(this.char_sprite.anchor.x, this.char_sprite.anchor.y);
+        img.scale.setTo(this.group.scale.x, this.group.scale.y);
+
+        const x_draw = (this.char_sprite.anchor.x * (this.char_sprite.width << 1)) / this.char_sprite.scale.x;
+        const y_draw = (this.char_sprite.anchor.y * (this.char_sprite.height << 1)) / this.char_sprite.scale.y;
+        bmd.draw(this.char_sprite, x_draw, y_draw);
+
+        this.deactive();
+
+        bmd.update();
+        bmd.shiftHSL(null, -1.0, null);
+
+        let resolve_promise;
+        const promise = new Promise(resolve => (resolve_promise = resolve));
+
+        const sections_number = 13;
+        const section_size = (bmd.pixels.length / sections_number) | 0;
+        let positions: Array<number> = [];
+        for (let i = sections_number - 1; i >= 0; --i) {
+            const start = i * section_size;
+            const end = i === sections_number - 1 ? bmd.pixels.length : (i + 1) * section_size;
+            positions = positions.concat(_.shuffle(_.range(start, end)));
+        }
+        let counter = 0;
+        const pixels_per_iter = 80;
+        this.game.time.events.repeat(15, positions.length, () => {
+            for (let i = 0; i < pixels_per_iter; ++i) {
+                const x = positions[counter] % bmd.imageData.width;
+                const y = (positions[counter] / bmd.imageData.height) | 0;
+                bmd.setPixel32(x, y, 0, 0, 0, 0, false);
+                ++counter;
+                if (counter >= positions.length) {
+                    break;
+                }
+            }
+            bmd.context.putImageData(bmd.imageData, 0, 0);
+            bmd.dirty = true;
+            if (counter >= positions.length) {
+                resolve_promise();
+            }
+        });
+
+        await promise;
+        bmd.destroy();
+        img.destroy();
+    }
+
     set_next_status_sprite() {
+        if (!this.active) return;
         for (let i = 0; i < status_sprites.length; ++i) {
             const status = status_sprites[this.current_status_index++];
             if (this.current_status_index === status_sprites.length) {
@@ -285,6 +350,16 @@ export class PlayerSprite {
             }
         }
         this.status_sprite.visible = false;
+    }
+
+    activate() {
+        this._active = true;
+        this.group.visible = true;
+    }
+
+    deactive() {
+        this.group.visible = false;
+        this._active = false;
     }
 
     destroy() {
