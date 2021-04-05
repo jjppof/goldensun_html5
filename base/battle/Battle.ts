@@ -449,8 +449,8 @@ export class Battle {
         if (action.targets.every(target => target.magnitude === null)) {
             action.key_name = "defend";
             action.djinn_key_name = "";
-            action.item_slot = null;
-            action.battle_animation_key = "";
+            action.item_slot = undefined;
+            action.battle_animation_key = "no_animation";
         }
 
         //rerolls enemy ability

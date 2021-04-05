@@ -395,6 +395,7 @@ declare module Phaser {
         text(text: string, x?: number, y?: number, font?: string, color?: string, shadow?: boolean): Phaser.BitmapData;
         textureLine(line: Phaser.Line, key: string, repeat?: string): Phaser.BitmapData;
         update(x?: number, y?: number, width?: number, height?: number): Phaser.BitmapData;
+        writeOnCanvas(source: Phaser.Sprite, dx: number, dy: number, scaleX: number, scaleY: number, alpha?: number, rotation?: number, blendMode?: string): Phaser.BitmapData;
         copyBitmapData(source: Phaser.BitmapData, x: number, y: number): Phaser.BitmapData;
 
     }

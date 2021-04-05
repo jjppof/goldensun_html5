@@ -54962,6 +54962,44 @@ Phaser.BitmapData.prototype = {
 
     },
 
+    writeOnCanvas(source, dx, dy, scaleX, scaleY, alpha, rotation, blendMode) {
+        this._image = source.texture.baseTexture.source;
+        var ctx = this.context;
+        if (typeof alpha === "number") {
+            this._alpha.current = alpha;
+        }
+        this._alpha.prev = ctx.globalAlpha;
+        ctx.save();
+        ctx.globalAlpha = this._alpha.current;
+        if (blendMode) {
+            this.op = blendMode;
+        }
+
+        if (rotation) {
+            this._rotate = rotation;
+            ctx.rotate(this._rotate);
+        }
+
+        this._pos.set(source.texture.crop.x, source.texture.crop.y);
+        this._size.set(source.texture.crop.width, source.texture.crop.height);
+        this._scale.set(scaleX, scaleY);
+
+        ctx.scale(this._scale.x, this._scale.y);
+
+        dx = (this._scale.x < 0 ? -dx - this._size.x : dx)/Math.abs(this._scale.x);
+        dy = (this._scale.y < 0 ? -dy - this._size.y : dy)/Math.abs(this._scale.y);
+
+        ctx.drawImage(this._image, this._pos.x, this._pos.y, this._size.x, this._size.y, dx, dy, this._size.x, this._size.y);
+
+        ctx.restore();
+
+        ctx.globalAlpha = this._alpha.prev;
+
+        this.dirty = true;
+
+        return this;
+    },
+
     /**
     * Draws the given `source` Game Object to this BitmapData, using its `worldTransform` property to set the
     * position, scale and rotation of where it is drawn. This function is used internally by `drawGroup`.

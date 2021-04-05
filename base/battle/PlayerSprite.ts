@@ -269,21 +269,29 @@ export class PlayerSprite {
     }
 
     async unmount_by_dissolving() {
-        const bmd = this.game.add.bitmapData(this.char_sprite.width | 0, this.char_sprite.height | 0);
+        const bmd_width = (this.group.width / this.group.scale.x) | 0;
+        const bmd_height = (this.group.height / this.group.scale.y) | 0;
+        const bmd = this.game.add.bitmapData(bmd_width, bmd_height);
         bmd.smoothed = false;
-        const x = this.group.x + this.parent_group.parent.x;
-        const y = this.group.y + this.parent_group.parent.y;
-        const img: Phaser.Image = this.game.add.image(x, y, bmd);
-        img.anchor.setTo(this.char_sprite.anchor.x, this.char_sprite.anchor.y);
-        img.scale.setTo(this.group.scale.x, this.group.scale.y);
+        const img: Phaser.Sprite = this.group.create(0, 0, bmd);
+        img.anchor.setTo(0.5, 1.0);
 
-        const x_draw = (this.char_sprite.anchor.x * (this.char_sprite.width << 1)) / this.char_sprite.scale.x;
-        const y_draw = (this.char_sprite.anchor.y * (this.char_sprite.height << 1)) / this.char_sprite.scale.y;
-        bmd.draw(this.char_sprite, x_draw, y_draw);
+        const sprites = [this.shadow_sprite, this.char_sprite];
+        for (let i = 0; i < sprites.length; ++i) {
+            const sprite = sprites[i] as Phaser.Sprite;
+            const x_pos = ((bmd_width - sprite.texture.crop.width * sprite.scale.x) * sprite.anchor.x) | 0;
+            const y_pos = ((bmd_height - sprite.texture.crop.height * sprite.scale.y) * sprite.anchor.y) | 0;
+            bmd.writeOnCanvas(sprite, x_pos, y_pos, sprite.scale.x, sprite.scale.y);
+        }
 
-        this.deactive();
+        this.group.children.forEach(sprite => {
+            if (sprite !== img) {
+                sprite.visible = false;
+            }
+        });
 
         bmd.update();
+
         bmd.shiftHSL(null, -1.0, null);
 
         let resolve_promise;
@@ -319,6 +327,7 @@ export class PlayerSprite {
         await promise;
         bmd.destroy();
         img.destroy();
+        this.deactive();
     }
 
     set_next_status_sprite() {
