@@ -39,7 +39,7 @@ export class GameEventManager {
     public fire_next_step: Function;
     private update_callbacks: Function[] = [];
 
-    constructor(game, data) {
+    constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
         this.data = data;
         this.events_running_count = 0;
@@ -139,7 +139,7 @@ export class GameEventManager {
         if (increment_event_counter) {
             ++this.events_running_count;
         }
-        let previous_npc_direction;
+        let previous_npc_direction: number;
         if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
             previous_npc_direction = npc.current_direction;
             await this.set_npc_and_hero_directions(npc);
@@ -182,7 +182,7 @@ export class GameEventManager {
             voice_key: npc.voice_key,
             hero_direction: this.data.hero.current_direction,
         });
-        this.fire_next_step = dialog_manager.next.bind(dialog_manager, async finished => {
+        this.fire_next_step = dialog_manager.next.bind(dialog_manager, async (finished: any) => {
             if (finished) {
                 this.fire_next_step = null;
                 await this.handle_npc_interaction_end(npc, previous_npc_direction);
@@ -328,11 +328,11 @@ export class GameEventManager {
         }
     }
 
-    add_callback(callback) {
+    add_callback(callback: Function) {
         this.update_callbacks.push(callback);
     }
 
-    remove_callback(callback) {
+    remove_callback(callback: Function) {
         this.update_callbacks = this.update_callbacks.filter(c => callback !== c);
     }
 
@@ -378,8 +378,8 @@ export class GameEventManager {
         }
     }
 
-    static get_interaction_directions(hero_x, hero_y, target_x, target_y, interaction_pattern, target_body_radius) {
-        let target_direction;
+    static get_interaction_directions(hero_x: number, hero_y: number, target_x: number, target_y: number, interaction_pattern: interaction_patterns, target_body_radius: number) {
+        let target_direction: directions;
         if (interaction_pattern === interaction_patterns.CROSS) {
             let positive_limit = hero_x + (-target_y - target_x);
             let negative_limit = -hero_x + (-target_y + target_x);
@@ -394,7 +394,7 @@ export class GameEventManager {
             }
         }
 
-        let hero_direction;
+        let hero_direction: directions;
         if (hero_x <= target_x - target_body_radius && hero_y >= target_y + target_body_radius) {
             hero_direction = directions.up_right;
             target_direction =
