@@ -182,7 +182,7 @@ export class GameEventManager {
             voice_key: npc.voice_key,
             hero_direction: this.data.hero.current_direction,
         });
-        this.fire_next_step = dialog_manager.next.bind(dialog_manager, async (finished: !!any) => {
+        this.fire_next_step = dialog_manager.next.bind(dialog_manager, async (finished: boolean) => {
             if (finished) {
                 this.fire_next_step = null;
                 await this.handle_npc_interaction_end(npc, previous_npc_direction);
@@ -378,7 +378,14 @@ export class GameEventManager {
         }
     }
 
-    static get_interaction_directions(hero_x: number, hero_y: number, target_x: number, target_y: number, interaction_pattern: interaction_patterns, target_body_radius: number) {
+    static get_interaction_directions(
+        hero_x: number,
+        hero_y: number,
+        target_x: number,
+        target_y: number,
+        interaction_pattern: interaction_patterns,
+        target_body_radius: number
+    ) {
         let target_direction: directions;
         if (interaction_pattern === interaction_patterns.CROSS) {
             let positive_limit = hero_x + (-target_y - target_x);
