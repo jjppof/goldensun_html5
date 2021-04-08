@@ -182,7 +182,7 @@ export class GameEventManager {
             voice_key: npc.voice_key,
             hero_direction: this.data.hero.current_direction,
         });
-        this.fire_next_step = dialog_manager.next.bind(dialog_manager, async (finished: any) => {
+        this.fire_next_step = dialog_manager.next.bind(dialog_manager, async (finished: !!any) => {
             if (finished) {
                 this.fire_next_step = null;
                 await this.handle_npc_interaction_end(npc, previous_npc_direction);
