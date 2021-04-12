@@ -353,8 +353,8 @@ export class Battle {
             if (ability.has_animation_variation && action.key_name in action.caster.battle_animations_variations) {
                 battle_animation_key = action.caster.battle_animations_variations[action.key_name];
             }
-
             action.battle_animation_key = battle_animation_key;
+
             const mirrored_animation = ability.can_be_mirrored && action.caster.fighter_type === fighter_types.ENEMY;
             const battle_animation = await this.animation_manager.load_animation(
                 battle_animation_key,
@@ -489,6 +489,15 @@ export class Battle {
                     item_name = weapon.name;
                     action.key_name = weapon.unleash_ability;
                     ability = this.data.info.abilities_list[weapon.unleash_ability];
+
+                    let battle_animation_key = this.data.info.abilities_list[ability.key_name].battle_animation_key;
+                    if (
+                        ability.has_animation_variation &&
+                        action.key_name in action.caster.battle_animations_variations
+                    ) {
+                        battle_animation_key = action.caster.battle_animations_variations[action.key_name];
+                    }
+                    action.battle_animation_key = battle_animation_key;
                 }
             }
         }
@@ -614,7 +623,8 @@ export class Battle {
                 action.caster.fighter_type === fighter_types.ALLY
                     ? this.battle_stage.group_enemies
                     : this.battle_stage.group_allies;
-            if (action.caster_battle_key) {
+            this.battle_stage.pause_players_update = true;
+            if (action.cast_animation_type && action.caster_battle_key) {
                 const animation_recipe = this.data.info.abilities_cast_recipes[action.cast_animation_type];
                 const cast_animation = BattleAnimationManager.get_animation_instance(
                     this.game,
@@ -672,6 +682,7 @@ export class Battle {
         }
 
         await Promise.all([this.battle_stage.reset_chars_position(), this.battle_stage.set_stage_default_position()]);
+        this.battle_stage.pause_players_update = false;
 
         //summon's power buff after cast
         if (ability.ability_category === ability_categories.SUMMON) {

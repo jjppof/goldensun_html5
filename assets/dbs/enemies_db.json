@@ -87,10 +87,12 @@
                 "attack_back",
                 "attack_front",
                 "damage_back",
-                "damage_front"
+                "damage_front",
+                "attack_init_back",
+                "attack_init_front"
             ],
-            "frames_number": [4,4,2,2,1,1],
-            "frame_rate": [3,3,1,1,1,1],
+            "frames_number": [4,4,2,2,1,1,1,1],
+            "frame_rate": [3,3,10,10,1,1,1,1],
             "loop": [true,true,false,false,false,false]
         }
     },{
@@ -178,10 +180,12 @@
                 "attack_back",
                 "attack_front",
                 "damage_back",
-                "damage_front"
+                "damage_front",
+                "attack_init_back",
+                "attack_init_front"
             ],
-            "frames_number": [4,4,2,2,1,1],
-            "frame_rate": [3,3,1,1,1,1],
+            "frames_number": [4,4,2,2,1,1,1,1],
+            "frame_rate": [3,3,10,10,1,1,1,1],
             "loop": [true,true,false,false,false,false]
         }
     }

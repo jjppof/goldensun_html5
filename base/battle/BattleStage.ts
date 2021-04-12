@@ -46,7 +46,6 @@ const INIT_TIME = 1500;
 
 export type CameraAngle = {
     rad: number;
-    spining: boolean;
     update: Function;
 };
 
@@ -84,6 +83,8 @@ export class BattleStage {
     private y: number;
 
     public choosing_actions: boolean;
+    public pause_update: boolean;
+    public pause_players_update: boolean;
 
     private black_bg: Phaser.Graphics;
     private _battle_bg: Phaser.TileSprite;
@@ -112,7 +113,6 @@ export class BattleStage {
 
         this._camera_angle = {
             rad: INITIAL_POS_ANGLE,
-            spining: false,
             update: this.update_sprite_properties.bind(this),
         };
 
@@ -143,6 +143,9 @@ export class BattleStage {
 
         this.crop_group.x = this.x;
         this.crop_group.y = this.y;
+
+        this.pause_update = false;
+        this.pause_players_update = false;
     }
 
     get cursor_manager() {
@@ -345,20 +348,26 @@ export class BattleStage {
             } else {
                 player.set_action(battle_actions.IDLE);
             }
+            const pos = this.get_player_position_in_stage(i, DEFAULT_POS_ANGLE);
             if (
                 Math.abs(player.ellipses_semi_major - SEMI_MAJOR_AXIS) > 1e-4 ||
-                Math.abs(player.ellipses_semi_minor - SEMI_MINOR_AXIS) > 1e-4
+                Math.abs(player.ellipses_semi_minor - SEMI_MINOR_AXIS) > 1e-4 ||
+                Math.abs(player.x - pos.x) > 1e-4 ||
+                Math.abs(player.y - pos.y) > 1e-4
             ) {
                 let promise_resolve;
                 promises.push(new Promise(resolve => (promise_resolve = resolve)));
+                player.ellipses_semi_major = SEMI_MAJOR_AXIS;
+                player.ellipses_semi_minor = SEMI_MINOR_AXIS;
+                const new_pos = this.get_player_position_in_stage(i, DEFAULT_POS_ANGLE);
                 this.game.add
                     .tween(player)
                     .to(
                         {
-                            ellipses_semi_major: SEMI_MAJOR_AXIS,
-                            ellipses_semi_minor: SEMI_MINOR_AXIS,
+                            x: new_pos.x,
+                            y: new_pos.y,
                         },
-                        250,
+                        300,
                         Phaser.Easing.Quadratic.Out,
                         true
                     )
@@ -395,6 +404,27 @@ export class BattleStage {
         await promise;
     }
 
+    private get_player_position_in_stage(sprite_index: number, target_angle?: number) {
+        const player_sprite = this.sprites[sprite_index];
+        target_angle = target_angle ?? this.camera_angle.rad;
+        const relative_angle = player_sprite.is_ally ? target_angle : target_angle + Math.PI;
+
+        player_sprite.stage_angle = BattleStage.get_angle(relative_angle);
+        const ellipse_pos_x = BattleStage.ellipse_position(player_sprite, player_sprite.stage_angle, true);
+        const ellipse_pos_y = BattleStage.ellipse_position(player_sprite, player_sprite.stage_angle, false);
+
+        const shift_from_middle = player_sprite.is_ally ? this.shift_from_middle_ally : this.shift_from_middle_enemy;
+        const index_shifted = player_sprite.is_ally ? sprite_index : sprite_index - this.allies_count;
+
+        const pos_x =
+            ellipse_pos_x +
+            (SPACE_BETWEEN_CHARS * index_shifted - shift_from_middle + (SPACE_BETWEEN_CHARS >> 1)) *
+                Math.sin(relative_angle); //shift party players from base point
+        const pos_y = ellipse_pos_y;
+
+        return {x: pos_x, y: pos_y};
+    }
+
     set_choosing_action_position() {
         this.choosing_actions = true;
 
@@ -404,6 +434,7 @@ export class BattleStage {
 
         for (let i = 0; i < this.sprites.length; ++i) {
             const player_prite = this.sprites[i];
+
             const index_shifted = player_prite.is_ally ? i : this.enemies_count - 1 - (i - this.allies_count);
             const x_shift = player_prite.is_ally
                 ? ACTION_POS_ALLY_X
@@ -411,7 +442,6 @@ export class BattleStage {
 
             const pos_x = x_shift + index_shifted * ACTION_POS_SPACE_BETWEEN;
             const pos_y = player_prite.is_ally ? ACTION_ALLY_Y : ACTION_ENEMY_Y;
-
             player_prite.x = pos_x;
             player_prite.y = pos_y;
 
@@ -441,7 +471,7 @@ export class BattleStage {
     }
 
     update_stage() {
-        if (this.choosing_actions) return;
+        if (this.choosing_actions || this.pause_update) return;
         this.update_stage_rotation();
         this.update_sprite_properties();
     }
@@ -507,23 +537,14 @@ export class BattleStage {
     update_sprite_properties() {
         for (let i = 0; i < this.sprites.length; ++i) {
             const player_sprite = this.sprites[i];
+
+            if (this.pause_players_update && !player_sprite.force_stage_update) continue;
+
+            const pos = this.get_player_position_in_stage(i);
+            player_sprite.x = pos.x;
+            player_sprite.y = pos.y;
+
             const relative_angle = player_sprite.is_ally ? this.camera_angle.rad : this.camera_angle.rad + Math.PI;
-
-            player_sprite.stage_angle = BattleStage.get_angle(relative_angle);
-            const pos_x = BattleStage.ellipse_position(player_sprite, player_sprite.stage_angle, true);
-            const pos_y = BattleStage.ellipse_position(player_sprite, player_sprite.stage_angle, false);
-
-            const shift_from_middle = player_sprite.is_ally
-                ? this.shift_from_middle_ally
-                : this.shift_from_middle_enemy;
-            const index_shifted = player_sprite.is_ally ? i : i - this.allies_count;
-
-            player_sprite.x =
-                pos_x +
-                (SPACE_BETWEEN_CHARS * index_shifted - shift_from_middle + (SPACE_BETWEEN_CHARS >> 1)) *
-                    Math.sin(relative_angle); //shift party players from base point
-            player_sprite.y = pos_y;
-
             const scale = BattleStage.get_scale(relative_angle);
             player_sprite.scale.setTo(scale, scale);
 

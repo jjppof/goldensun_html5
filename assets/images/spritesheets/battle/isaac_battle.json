@@ -1,5 +1,13 @@
 {"frames": {
 
+"battle/attack_init_back/00":
+{
+	"frame": {"x":1,"y":325,"w":35,"h":61},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":19,"y":3,"w":35,"h":61},
+	"sourceSize": {"w":64,"h":64}
+},
 "battle/attack_back/00":
 {
 	"frame": {"x":1,"y":325,"w":35,"h":61},
@@ -14,6 +22,14 @@
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":9,"y":14,"w":43,"h":47},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/attack_init_front/00":
+{
+	"frame": {"x":36,"y":193,"w":34,"h":60},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":4,"w":34,"h":60},
 	"sourceSize": {"w":64,"h":64}
 },
 "battle/attack_front/00":

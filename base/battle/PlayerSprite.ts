@@ -12,6 +12,7 @@ import {Enemy} from "../Enemy";
 
 export enum battle_actions {
     IDLE = "idle",
+    ATTACK_INIT = "attack_init",
     ATTACK = "attack",
     CAST_INIT = "cast_init",
     CAST = "cast",
@@ -74,6 +75,7 @@ export class PlayerSprite {
     public player_instance: MainChar | Enemy;
     private color_filter: any;
     private _active: boolean;
+    public force_stage_update: boolean;
 
     constructor(
         game: Phaser.Game,
@@ -105,6 +107,7 @@ export class PlayerSprite {
         this.status_sprite_base = this.data.info.misc_sprite_base_list[STATUS_SPRITES_KEY_NAME];
         this.status_timer = this.game.time.create(false);
         this._active = false;
+        this.force_stage_update = false;
     }
 
     get x() {
@@ -186,6 +189,10 @@ export class PlayerSprite {
 
     get active() {
         return this._active;
+    }
+
+    get key() {
+        return this.player_info.battle_key;
     }
 
     initialize_player() {

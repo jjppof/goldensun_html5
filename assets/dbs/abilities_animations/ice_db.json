@@ -45,8 +45,7 @@
         "is_absolute": false,
         "tween": "Quadratic.Out",
         "sprite_index": "targets",
-        "duration": 350,
-        "force_stage_update": true
+        "duration": 350
     }],
     "x_anchor_sequence": [{
         "to": [0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6],

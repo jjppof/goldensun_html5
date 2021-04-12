@@ -18,9 +18,9 @@ const RECIPE_SUFFIX = "_battle_recipe";
 export class BattleAnimationManager {
     public game: Phaser.Game;
     public data: GoldenSun;
-    public animations: {[key: string]: BattleAnimation};
-    public not_available: Set<string>;
-    public render_functions: Function[];
+    private animations: {[key: string]: BattleAnimation};
+    private not_available: Set<string>;
+    private render_functions: Function[];
 
     constructor(game, data) {
         this.game = game;
@@ -76,38 +76,20 @@ export class BattleAnimationManager {
         }
         const sprite_key = battle_anim_key + ANIMATION_SUFFIX;
         const recipe_key = battle_anim_key + RECIPE_SUFFIX;
-        const sprite_loader = this.game.load.atlasJSONHash(
+        this.game.load.atlasJSONHash(
             sprite_key,
             `${ANIMATIONS_BASE_PATH}${battle_anim_key}.png`,
             `${ANIMATIONS_BASE_PATH}${battle_anim_key}.json`
         );
-        const recipe_loader = this.game.load.json(recipe_key, `${ANIMATIONS_DB_PATH}${battle_anim_key}_db.json`);
-
-        let all_succeed = true;
-        let sprite_loader_promise_resolve;
-        const sprite_loader_promise = new Promise(resolve => {
-            sprite_loader_promise_resolve = resolve;
-        });
-        sprite_loader.onFileComplete.addOnce((progress, filekey, success) => {
-            all_succeed = all_succeed && success;
-            sprite_loader_promise_resolve();
-        });
-        let recipe_loader_promise_resolve;
-        const recipe_loader_promise = new Promise(resolve => {
-            recipe_loader_promise_resolve = resolve;
-        });
-        recipe_loader.onFileComplete.addOnce((progress, filekey, success) => {
-            all_succeed = all_succeed && success;
-            recipe_loader_promise_resolve();
-        });
+        this.game.load.json(recipe_key, `${ANIMATIONS_DB_PATH}${battle_anim_key}_db.json`);
 
         let load_complete_promise_resolve;
         const load_complete_promise = new Promise(resolve => (load_complete_promise_resolve = resolve));
         this.game.load.onLoadComplete.addOnce(load_complete_promise_resolve);
         this.game.load.start();
-        await Promise.all([sprite_loader_promise, recipe_loader_promise, load_complete_promise]);
-        if (all_succeed) {
-            const animation_recipe = this.game.cache.getJSON(battle_anim_key + RECIPE_SUFFIX);
+        await load_complete_promise;
+        const animation_recipe = this.game.cache.getJSON(recipe_key);
+        if (animation_recipe) {
             const key = `${battle_anim_key}/${caster_battle_key}`;
             this.animations[key] = BattleAnimationManager.get_animation_instance(
                 this.game,
@@ -174,7 +156,7 @@ export class BattleAnimationManager {
             group_caster,
             group_taker,
             battle_stage.battle_group,
-            battle_stage.camera_angle,
+            battle_stage,
             [battle_stage.battle_bg, battle_stage.battle_bg2],
             sprite_key
         );

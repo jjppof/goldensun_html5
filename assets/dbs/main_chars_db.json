@@ -75,7 +75,7 @@
             }
         ],
         "battle_animations_variations": {
-            "attack": "attack"
+            "attack": "attack_jumping"
         },
         "weapons_sprites": {
             "sword": {
@@ -150,7 +150,7 @@
             }
         ],
         "battle_animations_variations": {
-            "attack": "attack"
+            "attack": "attack_jumping"
         },
         "weapons_sprites": {}
     },{
@@ -209,7 +209,7 @@
             }
         ],
         "battle_animations_variations": {
-            "attack": "attack"
+            "attack": "attack_jumping"
         },
         "weapons_sprites": {}
     },{
@@ -269,7 +269,7 @@
             }
         ],
         "battle_animations_variations": {
-            "attack": "attack"
+            "attack": "attack_jumping"
         },
         "weapons_sprites": {}
     }

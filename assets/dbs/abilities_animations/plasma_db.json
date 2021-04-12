@@ -110,8 +110,7 @@
         "is_absolute": false,
         "tween": "Quadratic.Out",
         "sprite_index": "targets",
-        "duration": 350,
-        "force_stage_update": true
+        "duration": 350
     }],
     "tint_sequence": [{
         "sprite_index": "targets",

@@ -38139,7 +38139,7 @@ Phaser.Game.prototype = {
         if (!this.device.ie) // https://developer.mozilla.org/en-US/docs/Web/API/Console/log#Browser_compatibility
         {
             var args = [
-                '%c %c %c GS-HTML5 | Phaser CE v' + v + ' | Pixi.js | ' + r + ' | ' + a + '  %c %c ' + '%c http://phaser.io %c\u2665%c\u2665%c\u2665',
+                '%c %c %c GS-HTML5 | Phaser CE v' + v + ' | Pixi.js | ' + r + ' | ' + a + '  %c %c ' + '%c https://gshtml5.org/ %c\u2665%c\u2665%c\u2665',
                 'background: #fb8cb3',
                 'background: #d44a52',
                 'color: #ffffff; background: #871905;',
