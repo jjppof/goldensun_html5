@@ -36,6 +36,8 @@ export class Map {
     private _is_world_map: boolean;
     private bgm_key: string;
     private bgm_url: string;
+    private expected_party_level: number;
+    private encounter_cumulator: number;
 
     constructor(
         game,
@@ -50,7 +52,8 @@ export class Map {
         lazy_load,
         collision_embedded,
         bgm_key,
-        bgm_url
+        bgm_url,
+        expected_party_level
     ) {
         this.game = game;
         this.data = data;
@@ -78,6 +81,8 @@ export class Map {
         this._is_world_map = false;
         this.bgm_key = bgm_key;
         this.bgm_url = bgm_url;
+        this.expected_party_level = expected_party_level;
+        this.encounter_cumulator = 0;
     }
 
     get events() {
@@ -562,6 +567,30 @@ export class Map {
                     }
                 }
             }
+        }
+    }
+
+    //calculates whether it's time to start a battle
+    start_battle_encounter(zone_base_rate: number) {
+        const a = _.random(-0xffff, 0xffff);
+        const avg_level = this.data.info.party_data.avg_level;
+        const expected_level = this.expected_party_level ?? avg_level;
+        const b = _.clamp(avg_level - expected_level + 1, 0, 5);
+        const c = 5 * b + zone_base_rate;
+        const d = c * (0x10000 + a) - a;
+        const e = 1 + this.data.info.party_data.random_battle_extra_rate;
+        const speed_factor = this.data.hero.get_encounter_speed_factor();
+        this.encounter_cumulator += 64 * ((0x4000000 / d) | 0) * speed_factor + e;
+        if (this.encounter_cumulator >= 0x100000) {
+            this.encounter_cumulator = 0;
+            if (this.data.hero.avoid_encounter) {
+                this.data.hero.avoid_encounter = false;
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
         }
     }
 

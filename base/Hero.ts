@@ -60,6 +60,7 @@ export class Hero extends ControllableChar {
     };
 
     private force_diagonal_speed: {x: number; y: number} = {x: 0, y: 0};
+    public avoid_encounter: boolean;
 
     constructor(
         game,
@@ -86,6 +87,7 @@ export class Hero extends ControllableChar {
             initial_action,
             initial_direction
         );
+        this.avoid_encounter = false;
     }
 
     private check_control_inputs() {
@@ -368,6 +370,14 @@ export class Hero extends ControllableChar {
                 this.shadow.visible = false;
             }
             this._active = false;
+        }
+    }
+
+    get_encounter_speed_factor() {
+        if (this.data.map.is_world_map) {
+            return this.dashing ? 1 : 0.5;
+        } else {
+            return this.dashing ? 1.5 : 1;
         }
     }
 
