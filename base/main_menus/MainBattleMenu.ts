@@ -41,8 +41,7 @@ export type PlayerAbilities = {[char_key_name: string]: PlayerAbility[]};
 export class MainBattleMenu {
     public game: Phaser.Game;
     public data: GoldenSun;
-    public on_abilities_choose: Function;
-    public choose_targets: Function;
+    public battle_instance: Battle;
 
     public start_buttons_keys: string[];
     public start_horizontal_menu: HorizontalMenu;
@@ -65,21 +64,15 @@ export class MainBattleMenu {
     public current_char_index: number;
     public current_buttons: string[];
     public djinni_already_used: {[element: string]: number};
+    public flee_attemps: number;
 
-    constructor(
-        game: Phaser.Game,
-        data: GoldenSun,
-        on_abilities_choose: Function,
-        choose_targets: Function,
-        can_escape: boolean
-    ) {
+    constructor(game: Phaser.Game, data: GoldenSun, battle_instance: Battle) {
         this.game = game;
         this.data = data;
-        this.on_abilities_choose = on_abilities_choose;
-        this.choose_targets = choose_targets;
+        this.battle_instance = battle_instance;
 
         this.start_buttons_keys = ["fight", "flee", "status"];
-        if (can_escape === false) {
+        if (this.battle_instance.can_escape === false) {
             this.start_buttons_keys.splice(1, 1);
         }
         this.start_horizontal_menu = new HorizontalMenu(
@@ -114,6 +107,7 @@ export class MainBattleMenu {
         this.group = this.game.add.group();
         this.avatar_sprite = this.group.create(0, numbers.GAME_HEIGHT - numbers.AVATAR_SIZE);
         this.avatar_sprite.alpha = 0;
+        this.flee_attemps = 0;
     }
 
     start_button_press() {
@@ -128,7 +122,7 @@ export class MainBattleMenu {
                     this.djinni_already_used = ordered_elements.reduce((a, b) => ((a[b] = 0), a), {});
                     this.inner_horizontal_menu.open();
                     let this_char = this.data.info.party_data.members[this.current_char_index];
-                    while (this_char.is_paralyzed() || this_char.has_permanent_status(permanent_status.DOWNED)) {
+                    while (this_char.is_paralyzed(true)) {
                         this.abilities[this.data.info.party_data.members[this.current_char_index].key_name].push({
                             key_name: "",
                             targets: [],
@@ -140,12 +134,15 @@ export class MainBattleMenu {
                             this.current_char_index >= this.data.info.party_data.members.length
                         ) {
                             this.current_char_index = 0;
-                            this.on_abilities_choose(this.abilities);
+                            this.battle_instance.on_abilities_choose(this.abilities);
                             break;
                         }
                     }
                     this.set_avatar();
                 });
+                break;
+            case "flee":
+                this.battle_instance.flee(this.can_flee());
                 break;
             case "status":
                 this.start_horizontal_menu.close(() => {
@@ -153,6 +150,29 @@ export class MainBattleMenu {
                         this.start_horizontal_menu.open();
                     });
                 });
+                break;
+        }
+    }
+
+    can_flee() {
+        const front_pt_lvl =
+            _.mean(
+                this.data.info.party_data.members.slice(0, Battle.MAX_CHARS_IN_BATTLE).flatMap(char => {
+                    return char.has_permanent_status(permanent_status.DOWNED) ? [] : [char.level];
+                })
+            ) | 0;
+        const enemies_lvl =
+            _.mean(
+                this.battle_instance.enemies_info.flatMap(info => {
+                    return info.instance.has_permanent_status(permanent_status.DOWNED) ? [] : [info.instance.level];
+                })
+            ) | 0;
+        const rate = 500 * (1 + front_pt_lvl - enemies_lvl + 4 * this.flee_attemps);
+        if (_.random(9999) < rate) {
+            return true;
+        } else {
+            ++this.flee_attemps;
+            return false;
         }
     }
 
@@ -160,7 +180,7 @@ export class MainBattleMenu {
         switch (this.current_buttons[this.inner_horizontal_menu.selected_button_index]) {
             case "attack":
                 this.inner_horizontal_menu.deactivate(true);
-                this.choose_targets(
+                this.battle_instance.choose_targets(
                     "attack",
                     "attack",
                     (targets: Target[]) => {
@@ -192,7 +212,7 @@ export class MainBattleMenu {
                 break;
             case "defend":
                 this.inner_horizontal_menu.deactivate(true);
-                this.choose_targets(
+                this.battle_instance.choose_targets(
                     "defend",
                     "defend",
                     (targets: Target[]) => {
@@ -245,7 +265,7 @@ export class MainBattleMenu {
                     }
 
                     this.description_window.hide();
-                    this.choose_targets(
+                    this.battle_instance.choose_targets(
                         ability,
                         action_type,
                         (targets: Target[]) => {
@@ -302,7 +322,7 @@ export class MainBattleMenu {
             this.current_char_index >= this.data.info.party_data.members.length
         ) {
             this.current_char_index = 0;
-            this.on_abilities_choose(this.abilities);
+            this.battle_instance.on_abilities_choose(this.abilities);
         } else if (this.current_char_index >= 0) {
             const next_char = this.data.info.party_data.members[this.current_char_index];
             if (pop_ability) {
@@ -316,7 +336,7 @@ export class MainBattleMenu {
                     });
                 }
             }
-            if (next_char.is_paralyzed() || next_char.has_permanent_status(permanent_status.DOWNED)) {
+            if (next_char.is_paralyzed(true)) {
                 this.change_char(step, pop_ability);
             } else {
                 this.set_avatar();
@@ -388,6 +408,6 @@ export class MainBattleMenu {
         this.psynergy_window.destroy();
         this.item_window.destroy();
         this.summon_window.destroy();
-        this.group.destroy();
+        this.group.destroy(true);
     }
 }

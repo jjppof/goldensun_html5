@@ -41,6 +41,7 @@ enum battle_phases {
     ROUND_START, // Start (turn order is determined, enemies may commit to certain actions)
     COMBAT, // (all actions are queued and take place here, you could further break up combat actions into subactions, which should be governed by a separate sub-state variable)
     ROUND_END, // End (djinn recovery, status/buff/debuff timers decrement)
+    FLEE,
     END, // End (the last enemy has fallen, exp/gold/drops are awarded)
 }
 
@@ -181,7 +182,7 @@ export class Battle {
         this.check_phases();
     }
 
-    choose_targets(ability_key: string, action: string, callback: Function, caster: Player, item_obj: ItemSlot) {
+    choose_targets(ability_key: string, action: string, callback: Function, caster: Player, item_obj?: ItemSlot) {
         const this_ability = this.data.info.abilities_list[ability_key];
 
         let quantities: number[];
@@ -237,6 +238,9 @@ export class Battle {
             case battle_phases.ROUND_END:
                 this.battle_phase_round_end();
                 break;
+            case battle_phases.FLEE:
+                this.battle_phase_flee();
+                break;
             case battle_phases.END:
                 this.battle_phase_end();
                 break;
@@ -252,13 +256,7 @@ export class Battle {
             this.enemies_info
         );
         this.battle_log = new BattleLog(this.game);
-        this.battle_menu = new MainBattleMenu(
-            this.game,
-            this.data,
-            this.on_abilities_choose.bind(this),
-            this.choose_targets.bind(this),
-            this.can_escape
-        );
+        this.battle_menu = new MainBattleMenu(this.game, this.data, this);
 
         this.target_window = new ChoosingTargetWindow(this.game, this.data);
         this.animation_manager = new BattleAnimationManager(this.game, this.data);
@@ -305,6 +303,24 @@ export class Battle {
             });
         });
         await promise;
+    }
+
+    async flee(flee_succeed: boolean) {
+        this.battle_menu.close_menu();
+        this.battle_stage.reset_positions();
+        this.battle_stage.update_stage();
+        this.battle_stage.choosing_actions = false;
+        await this.battle_log.add(`${this.data.info.party_data.members[0].name} and friends run!`);
+        await this.wait_for_key();
+        if (flee_succeed) {
+            this.battle_phase = battle_phases.FLEE;
+        } else {
+            await this.battle_log.add(`But there's no escape!`);
+            await this.wait_for_key();
+            this.allies_abilities = {};
+            this.battle_phase = battle_phases.ROUND_START;
+        }
+        this.check_phases();
     }
 
     async battle_phase_none() {
@@ -1240,6 +1256,18 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 await this.wait_for_key();
             }
         }
+    }
+
+    async battle_phase_flee() {
+        for (let i = 0; i < this.on_going_effects.length; ++i) {
+            //remove all effects acquired in battle
+            const effect = this.on_going_effects[i];
+            if (effect.type !== effect_types.PERMANENT_STATUS) {
+                effect.char.remove_effect(effect);
+                effect.char.update_all();
+            }
+        }
+        this.unset_battle();
     }
 
     // Everyone gets equal experience with no division, but:
