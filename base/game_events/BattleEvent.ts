@@ -14,7 +14,10 @@ export class BattleEvent extends GameEvent {
 
     _fire() {
         if (!this.active) return;
-        this.battle = new Battle(this.game, this.data, this.background_key, this.enemy_party_key);
+        ++this.data.game_event_manager.events_running_count;
+        this.battle = new Battle(this.game, this.data, this.background_key, this.enemy_party_key, () => {
+            --this.data.game_event_manager.events_running_count;
+        });
         this.battle.start_battle();
     }
 

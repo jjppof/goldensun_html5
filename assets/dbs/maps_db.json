@@ -139,6 +139,8 @@
             "json":"assets/images/maps/cave/cave.json"
         },
         "lazy_load": true,
-        "collision_embedded": true
+        "collision_embedded": true,
+        "expected_party_level": 22,
+        "background_key": "bg_cave"
     }
 ]

@@ -20,7 +20,8 @@ export function initialize_maps(game: Phaser.Game, data: GoldenSun, maps_db: any
             map_data.collision_embedded,
             map_data.bgm?.key,
             map_data.bgm?.path,
-            map_data.expected_party_level
+            map_data.expected_party_level,
+            map_data.background_key
         );
     }
     for (let map in maps) {

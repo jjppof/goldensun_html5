@@ -2,10 +2,11 @@ import {NPC} from "./NPC";
 import {InteractableObjects} from "./InteractableObjects";
 import {LocationKey, TileEvent} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
-import {GameEvent} from "./game_events/GameEvent";
+import {event_types, GameEvent} from "./game_events/GameEvent";
 import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
 import {ControllableChar} from "./ControllableChar";
+import {base_actions} from "./utils";
 
 export class Map {
     private static readonly MAX_CAMERA_ROTATION = 0.035;
@@ -36,8 +37,14 @@ export class Map {
     private _is_world_map: boolean;
     private bgm_key: string;
     private bgm_url: string;
+    private background_key: string;
     private expected_party_level: number;
     private encounter_cumulator: number;
+    private encounter_zones: {
+        base_rate: number;
+        parties: string[];
+        rectangle: Phaser.Rectangle;
+    }[];
 
     constructor(
         game,
@@ -53,7 +60,8 @@ export class Map {
         collision_embedded,
         bgm_key,
         bgm_url,
-        expected_party_level
+        expected_party_level,
+        background_key
     ) {
         this.game = game;
         this.data = data;
@@ -83,6 +91,8 @@ export class Map {
         this.bgm_url = bgm_url;
         this.expected_party_level = expected_party_level;
         this.encounter_cumulator = 0;
+        this.encounter_zones = [];
+        this.background_key = background_key;
     }
 
     get events() {
@@ -185,6 +195,7 @@ export class Map {
         });
         this.sort_sprites();
         this.update_map_rotation();
+        this.zone_check();
     }
 
     //if it's a world map, rotates de map on hero movement
@@ -305,7 +316,7 @@ export class Map {
             this.collision_sprite.width = this.sprite.widthInPixels;
             this.collision_sprite.height = this.sprite.heightInPixels;
             this.collision_sprite.anchor.setTo(0, 0);
-            const collision_layer_objects = this.sprite.objects[this.collision_layer];
+            const collision_layer_objects = this.sprite.objects[this.collision_layer].objectsData;
             for (let i = 0; i < collision_layer_objects.length; ++i) {
                 const collision_object = collision_layer_objects[i];
                 let shape;
@@ -350,8 +361,8 @@ export class Map {
                 }
             }
         } else {
+            //load map physics data from json files
             this.collision_sprite.body.loadPolygon(
-                //load map physics data from json files
                 this.physics_names[collision_layer],
                 this.physics_names[collision_layer]
             );
@@ -570,8 +581,32 @@ export class Map {
         }
     }
 
+    private zone_check() {
+        if (
+            (this.data.hero.current_action as base_actions) !== base_actions.WALK &&
+            (this.data.hero.current_action as base_actions) !== base_actions.DASH
+        ) {
+            return;
+        }
+        for (let i = 0; i < this.encounter_zones.length; ++i) {
+            const zone = this.encounter_zones[i];
+            if (zone.rectangle.contains(this.data.hero.sprite.x, this.data.hero.sprite.y)) {
+                if (this.start_battle_encounter(zone.base_rate)) {
+                    const party = _.sample(zone.parties);
+                    const event = this.data.game_event_manager.get_event_instance({
+                        type: event_types.BATTLE,
+                        background_key: this.background_key,
+                        enemy_party_key: party,
+                    });
+                    event.fire();
+                }
+                break;
+            }
+        }
+    }
+
     //calculates whether it's time to start a battle
-    start_battle_encounter(zone_base_rate: number) {
+    private start_battle_encounter(zone_base_rate: number) {
         const a = _.random(-0xffff, 0xffff);
         const avg_level = this.data.info.party_data.avg_level;
         const expected_level = this.expected_party_level ?? avg_level;
@@ -614,6 +649,7 @@ export class Map {
         this._events = {};
         TileEvent.reset();
         GameEvent.reset();
+        this.encounter_cumulator = 0;
 
         this._collision_layer = collision_layer;
         this._sprite = this.game.add.tilemap(this.key_name);
@@ -623,11 +659,25 @@ export class Map {
         }
 
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
-        this.sprite.objects = _.mapKeys(this.sprite.objects, (obj: any, collision_index: string) => {
-            return parseInt(collision_index);
+        let collision_layers_counter = 0;
+        this.sprite.objects = _.mapKeys(this.sprite.objects, (objs: any, collision_index: string) => {
+            if (objs.properties?.encounter_zone) {
+                objs.objectsData.forEach(obj => {
+                    const zone = new Phaser.Rectangle(obj.x | 0, obj.y | 0, obj.width | 0, obj.height | 0);
+                    this.encounter_zones.push({
+                        rectangle: zone,
+                        base_rate: obj.properties.base_rate ?? objs.properties.base_rate,
+                        parties: JSON.parse(obj.properties.parties),
+                    });
+                });
+                return collision_index;
+            } else {
+                ++collision_layers_counter;
+                return parseInt(collision_index);
+            }
         }) as any;
         if (this.collision_embedded) {
-            this._collision_layers_number = Object.keys(this.sprite.objects).length;
+            this._collision_layers_number = collision_layers_counter;
         }
 
         for (let i = 0; i < this.sprite.tilesets.length; ++i) {

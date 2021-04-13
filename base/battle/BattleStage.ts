@@ -288,6 +288,8 @@ export class BattleStage {
         this.initialize_sprites();
         this.intialize_crop_rectangles();
 
+        this.data.game.camera.resetFX();
+
         this.battle_group.add(this.battle_bg);
         this.battle_group.add(this.battle_bg2);
         this.battle_group.add(this.group_enemies);

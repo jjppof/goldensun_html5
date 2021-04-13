@@ -447,7 +447,7 @@
                 ],
                 "frames_count": [2,2,4,4,2,2,3,3,1,1,1,1,1,1],
                 "frame_rate": [10,10,3,3,10,10,12,6,1,1,1,1,1,1],
-                "loop": [false,false,true,true,true,true,false,false,false,false,false,false]
+                "loop": [false,false,true,true,true,true,false,false,false,false,false,false,false,false]
             }
         }
     },{

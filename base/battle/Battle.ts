@@ -18,6 +18,7 @@ import {Target} from "../battle/BattleStage";
 import {Item, use_types} from "../Item";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
 import {Map} from "../Map";
+import {GAME_WIDTH} from "../magic_numbers";
 
 /* ACTIONS:
 - Attack
@@ -92,10 +93,20 @@ export class Battle {
     public enemies_map_sprite: {[player_key: string]: PlayerSprite};
 
     public previous_map_state: ReturnType<Map["pause"]>;
+    public finish_callback: Function;
+    public background_key: string;
 
-    constructor(game: Phaser.Game, data: GoldenSun, background_key: string, enemy_party_key: string) {
+    constructor(
+        game: Phaser.Game,
+        data: GoldenSun,
+        background_key: string,
+        enemy_party_key: string,
+        finish_callback?: Function
+    ) {
         this.game = game;
         this.data = data;
+        this.finish_callback = finish_callback;
+        this.background_key = background_key;
 
         this.allies_info = this.data.info.party_data.members.slice(0, Battle.MAX_CHARS_IN_BATTLE).map(char => {
             char.init_effect_turns_count();
@@ -146,19 +157,6 @@ export class Battle {
                 ++counter;
             }
         });
-
-        this.battle_stage = new BattleStage(this.game, this.data, background_key, this.allies_info, this.enemies_info);
-        this.battle_log = new BattleLog(this.game);
-        this.battle_menu = new MainBattleMenu(
-            this.game,
-            this.data,
-            this.on_abilities_choose.bind(this),
-            this.choose_targets.bind(this),
-            this.can_escape
-        );
-
-        this.target_window = new ChoosingTargetWindow(this.game, this.data);
-        this.animation_manager = new BattleAnimationManager(this.game, this.data);
 
         this.battle_phase = battle_phases.NONE;
         this.on_going_effects = [];
@@ -245,11 +243,79 @@ export class Battle {
         }
     }
 
-    battle_phase_none() {
+    initialize_battle_objs() {
+        this.battle_stage = new BattleStage(
+            this.game,
+            this.data,
+            this.background_key,
+            this.allies_info,
+            this.enemies_info
+        );
+        this.battle_log = new BattleLog(this.game);
+        this.battle_menu = new MainBattleMenu(
+            this.game,
+            this.data,
+            this.on_abilities_choose.bind(this),
+            this.choose_targets.bind(this),
+            this.can_escape
+        );
+
+        this.target_window = new ChoosingTargetWindow(this.game, this.data);
+        this.animation_manager = new BattleAnimationManager(this.game, this.data);
+    }
+
+    async battle_fadein() {
+        const graphic = this.game.add.graphics(this.data.hero.sprite.x, this.data.hero.sprite.y);
+        graphic.clear();
+        graphic.beginFill(0xfffffff);
+        const circle = graphic.drawCircle(0, 0, 3 * (GAME_WIDTH >> 1));
+        circle.scale.setTo(0, 0);
+        let resolve_promise;
+        const promise = new Promise(resolve => (resolve_promise = resolve));
+        const tween = this.game.add.tween(circle.scale).to({x: 1, y: 1}, 400, Phaser.Easing.Linear.None, true);
+        tween.onUpdateCallback(() => {
+            circle.visible = !circle.visible;
+        });
+        tween.onComplete.addOnce(() => {
+            circle.visible = true;
+            const color_obj = {
+                r: 0xff,
+                g: 0xff,
+                b: 0xff,
+            };
+            const color_tween = this.game.add.tween(color_obj).to(
+                {
+                    r: 0x0,
+                    g: 0x0,
+                    b: 0x0,
+                },
+                300,
+                Phaser.Easing.Linear.None,
+                true
+            );
+            color_tween.onUpdateCallback(() => {
+                circle.tint = (color_obj.r << 16) + (color_obj.g << 8) + color_obj.b;
+            });
+            color_tween.onComplete.addOnce(() => {
+                this.data.game.camera.fade(0x0, 0, true);
+                this.data.game.camera.fx.alpha = 1;
+                circle.destroy();
+                graphic.destroy();
+                resolve_promise();
+            });
+        });
+        await promise;
+    }
+
+    async battle_phase_none() {
         this.data.hero.stop_char(true);
         this.game.physics.p2.pause();
-        this.previous_map_state = this.data.map.pause();
         this.data.audio.stop_bgm();
+
+        await this.battle_fadein();
+
+        this.initialize_battle_objs();
+        this.previous_map_state = this.data.map.pause();
 
         this.battle_phase = battle_phases.START;
         this.data.in_battle = true;
@@ -442,7 +508,7 @@ export class Battle {
         //check whether all targets are downed and change ability to "defend" in the case it's true
         for (let i = 0; i < action.targets.length; ++i) {
             const target = action.targets[i];
-            if (target.magnitude && target.target.instance.has_permanent_status(permanent_status.DOWNED)) {
+            if (target.magnitude && target.target?.instance.has_permanent_status(permanent_status.DOWNED)) {
                 target.magnitude = null;
             }
         }
@@ -1305,6 +1371,9 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 this.data.battle_instance = undefined;
                 this.game.physics.p2.resume();
                 this.data.audio.play_bgm();
+                if (this.finish_callback) {
+                    this.finish_callback();
+                }
             }
         );
     }

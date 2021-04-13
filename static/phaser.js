@@ -108478,7 +108478,12 @@ Phaser.TilemapParser = {
             }
 
             var objectGroup = json.layers[i];
-            this.parseObjectGroup(objectGroup, objects, collision);
+            const thisObj = {};
+            this.parseObjectGroup(objectGroup, thisObj, collision);
+            objects[objectGroup.name] = {
+                objectsData: thisObj[objectGroup.name],
+                properties: objectGroup.properties
+            };
         }
 
         map.objects = objects;

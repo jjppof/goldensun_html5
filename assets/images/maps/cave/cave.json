@@ -1,11 +1,4 @@
 { "compressionlevel":-1,
- "editorsettings":
-    {
-     "export":
-        {
-         "target":"."
-        }
-    },
  "height":62,
  "infinite":false,
  "layers":[
@@ -82,6 +75,48 @@
          "type":"tilelayer",
          "visible":true,
          "width":217,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":9,
+         "name":"encounter_zones",
+         "objects":[
+                {
+                 "height":451.333333333333,
+                 "id":45,
+                 "name":"",
+                 "properties":
+                    {
+                     "base_rate":10,
+                     "parties":"[\"mini_goblin_party\"]"
+                    },
+                 "propertytypes":
+                    {
+                     "base_rate":"int",
+                     "parties":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":462.666666666667,
+                 "x":25.3333333333333,
+                 "y":14.6666666666667
+                }],
+         "opacity":1,
+         "properties":
+            {
+             "base_rate":5,
+             "encounter_zone":true
+            },
+         "propertytypes":
+            {
+             "base_rate":"int",
+             "encounter_zone":"bool"
+            },
+         "type":"objectgroup",
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -883,7 +918,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -1134,12 +1169,12 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }],
- "nextlayerid":9,
- "nextobjectid":45,
+ "nextlayerid":10,
+ "nextobjectid":46,
  "orientation":"orthogonal",
  "properties":
     {
@@ -1192,7 +1227,7 @@
      "real_tile_width":"int"
     },
  "renderorder":"right-down",
- "tiledversion":"1.4.2",
+ "tiledversion":"1.5.0",
  "tileheight":8,
  "tilesets":[
         {
