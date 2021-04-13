@@ -89,7 +89,7 @@
                  "name":"",
                  "properties":
                     {
-                     "base_rate":10,
+                     "base_rate":100,
                      "parties":"[\"mini_goblin_party\"]"
                     },
                  "propertytypes":
@@ -107,7 +107,7 @@
          "opacity":1,
          "properties":
             {
-             "base_rate":5,
+             "base_rate":50,
              "encounter_zone":true
             },
          "propertytypes":
@@ -918,7 +918,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -1169,7 +1169,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }],
