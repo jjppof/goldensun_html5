@@ -9,8 +9,9 @@ import {BattleCursorManager} from "./BattleCursorManager";
 
 const SCALE_FACTOR = 0.8334;
 const BG_X = 0;
-const BG_Y = 17;
-const BG_HEIGHT = 120;
+export const BG_Y = 17;
+const BG_WIDTH = 256;
+export const BG_HEIGHT = 120;
 
 const CENTER_X = numbers.GAME_WIDTH >> 1;
 const CENTER_Y = numbers.GAME_HEIGHT - 35;
@@ -196,7 +197,7 @@ export class BattleStage {
         this._battle_bg = this.game.add.tileSprite(
             BG_X,
             BG_Y,
-            numbers.GAME_WIDTH,
+            BG_WIDTH,
             BG_HEIGHT,
             "battle_backgrounds",
             this.background_key
@@ -204,7 +205,7 @@ export class BattleStage {
         this._battle_bg2 = this.game.add.tileSprite(
             BG_X,
             BG_Y,
-            numbers.GAME_WIDTH,
+            BG_WIDTH,
             BG_HEIGHT,
             "battle_backgrounds",
             this.background_key

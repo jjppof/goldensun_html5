@@ -3,6 +3,7 @@ import {ability_msg_types} from "../Ability";
 import {Effect, effect_names, effect_types} from "../Effect";
 import {element_names, FONT_NAME} from "../utils";
 import {main_stats, on_remove_status_msg} from "../Player";
+import {BG_Y, BG_HEIGHT} from "./BattleStage";
 
 const LOG_X = 3;
 const LOG_OUT_Y = 127;
@@ -11,18 +12,28 @@ const LOG_2_Y = 151;
 const ANIM_DURATION = 50;
 
 export class BattleLog {
-    public game: Phaser.Game;
-    public x: number;
-    public y: number;
-    public logs: Phaser.BitmapText[];
+    private game: Phaser.Game;
+    private x: number;
+    private y: number;
+    private logs: Phaser.BitmapText[];
+    private mask: Phaser.Graphics;
 
     constructor(game) {
         this.game = game;
-        this.x = game.camera.x;
-        this.y = game.camera.y;
+        this.x = this.game.camera.x;
+        this.y = this.game.camera.y;
         this.logs = [];
         this.logs.push(this.create(this.y + LOG_1_Y));
         this.logs.push(this.create(this.y + LOG_2_Y));
+
+        this.mask = this.game.add.graphics(this.x, this.y + BG_Y + BG_HEIGHT - 1);
+        this.logs[0].mask = this.mask;
+        this.logs[1].mask = this.mask;
+
+        this.mask.clear();
+        this.mask.beginFill(0xfffffff);
+        this.mask.drawRect(0, 0, numbers.GAME_WIDTH, numbers.GAME_HEIGHT - this.y + this.mask.y);
+        this.mask.endFill();
     }
 
     create(y_pos) {
@@ -154,5 +165,6 @@ export class BattleLog {
     destroy() {
         this.logs[0].destroy();
         this.logs[1].destroy();
+        this.mask.destroy();
     }
 }
