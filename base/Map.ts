@@ -607,7 +607,7 @@ export class Map {
 
     //calculates whether it's time to start a battle
     private start_battle_encounter(zone_base_rate: number) {
-        const a = _.random(-0xffff, 0xffff);
+        const a = (_.random(0xffff) - _.random(0xffff) + _.random(0xffff) - _.random(0xffff)) >> 1;
         const avg_level = this.data.info.party_data.avg_level;
         const expected_level = this.expected_party_level ?? avg_level;
         const b = _.clamp(avg_level - expected_level + 1, 0, 5);
@@ -615,7 +615,7 @@ export class Map {
         const d = c * (0x10000 + a) - a;
         const e = 1 + this.data.info.party_data.random_battle_extra_rate;
         const speed_factor = this.data.hero.get_encounter_speed_factor();
-        this.encounter_cumulator += 64 * ((0x4000000 / d) | 0) * speed_factor + e;
+        this.encounter_cumulator += 64 * ((0x4000000 / d) | 0) * speed_factor * e;
         if (this.encounter_cumulator >= 0x100000) {
             this.encounter_cumulator = 0;
             if (this.data.hero.avoid_encounter) {

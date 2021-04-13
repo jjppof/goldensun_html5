@@ -89,7 +89,7 @@
                  "name":"",
                  "properties":
                     {
-                     "base_rate":100,
+                     "base_rate":50,
                      "parties":"[\"mini_goblin_party\"]"
                     },
                  "propertytypes":
@@ -107,7 +107,7 @@
          "opacity":1,
          "properties":
             {
-             "base_rate":50,
+             "base_rate":70,
              "encounter_zone":true
             },
          "propertytypes":
