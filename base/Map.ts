@@ -581,26 +581,34 @@ export class Map {
         }
     }
 
+    //check whether it's time to start a random battle
     private zone_check() {
         if (
-            (this.data.hero.current_action as base_actions) !== base_actions.WALK &&
-            (this.data.hero.current_action as base_actions) !== base_actions.DASH
+            !this.encounter_zones.length ||
+            ((this.data.hero.current_action as base_actions) !== base_actions.WALK &&
+                (this.data.hero.current_action as base_actions) !== base_actions.DASH)
         ) {
             return;
         }
+        const zones = new Set<Map["encounter_zones"][0]>();
         for (let i = 0; i < this.encounter_zones.length; ++i) {
             const zone = this.encounter_zones[i];
             if (zone.rectangle.contains(this.data.hero.sprite.x, this.data.hero.sprite.y)) {
-                if (this.start_battle_encounter(zone.base_rate)) {
-                    const party = _.sample(zone.parties);
-                    const event = this.data.game_event_manager.get_event_instance({
-                        type: event_types.BATTLE,
-                        background_key: this.background_key,
-                        enemy_party_key: party,
-                    });
-                    event.fire();
-                }
-                break;
+                zones.add(zone);
+            }
+        }
+        if (zones.size) {
+            const zones_list = [...zones];
+            const base_rate = _.mean(zones_list.map(zone => zone.base_rate)) | 0;
+            if (this.start_battle_encounter(base_rate)) {
+                const parties = zones_list.map(zone => zone.parties).flat();
+                const party = _.sample(parties);
+                const event = this.data.game_event_manager.get_event_instance({
+                    type: event_types.BATTLE,
+                    background_key: this.background_key,
+                    enemy_party_key: party,
+                });
+                event.fire();
             }
         }
     }
