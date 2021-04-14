@@ -381,7 +381,12 @@ export class Battle {
             enemy_members.map((enemy, index) => {
                 let abilities = new Array(enemy.turns);
                 for (let i = 0; i < enemy.turns; ++i) {
-                    abilities[i] = EnemyAI.roll_action(enemy, this.data.info.party_data.members, enemy_members);
+                    abilities[i] = EnemyAI.roll_action(
+                        this.data,
+                        enemy as Enemy,
+                        enemy_members as Enemy[],
+                        this.data.info.party_data.members
+                    );
                 }
                 return [this.enemies_info[index].battle_key, abilities];
             })
@@ -543,9 +548,10 @@ export class Battle {
             Object.assign(
                 action,
                 EnemyAI.roll_action(
-                    action.caster,
-                    this.data.info.party_data.members,
-                    this.enemies_info.map(info => info.instance)
+                    this.data,
+                    action.caster as Enemy,
+                    this.enemies_info.map(info => info.instance) as Enemy[],
+                    this.data.info.party_data.members
                 )
             );
         }

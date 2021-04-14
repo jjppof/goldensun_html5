@@ -125,7 +125,9 @@
             "json":"assets/images/maps/world_map/world_map.json"
         },
         "lazy_load": true,
-        "collision_embedded": true
+        "collision_embedded": true,
+        "expected_party_level": 18,
+        "background_key": "bg_world_map"
     },{
         "name":"Cave",
         "key_name":"cave",
@@ -140,7 +142,7 @@
         },
         "lazy_load": true,
         "collision_embedded": true,
-        "expected_party_level": 22,
+        "expected_party_level": 21,
         "background_key": "bg_cave"
     }
 ]

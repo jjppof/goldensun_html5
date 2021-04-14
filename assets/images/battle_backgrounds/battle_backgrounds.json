@@ -15,14 +15,22 @@
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":120},
 	"sourceSize": {"w":256,"h":120}
+},
+"bg_world_map":
+{
+	"frame": {"x":517,"y":1,"w":256,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":120},
+	"sourceSize": {"w":256,"h":120}
 }},
 "meta": {
 	"app": "http://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "battle_backgrounds.png",
 	"format": "RGBA8888",
-	"size": {"w":516,"h":122},
+	"size": {"w":774,"h":122},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:229ecc3332a70810b32bf309de691185:c8d44b318945af79f554a5c95b266290:86ba059510f3c3b47da5c50a1445de84$"
+	"smartupdate": "$TexturePacker:SmartUpdate:dd613a6d0add5c3544973e1178794cc9:302d6d092d6d504a1af5799a057d5b68:86ba059510f3c3b47da5c50a1445de84$"
 }
 }

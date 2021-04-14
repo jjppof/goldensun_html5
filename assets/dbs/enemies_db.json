@@ -98,7 +98,7 @@
     },{
         "key_name": "sea_fighter",
         "name": "Sea Fighter",
-        "level": 21,
+        "level": 20,
         "turns": 1,
         "max_hp": 197,
         "max_pp": 0,
@@ -191,7 +191,7 @@
     },{
         "key_name": "mini_goblin",
         "name": "Mini Goblin",
-        "level": 20,
+        "level": 19,
         "turns": 1,
         "max_hp": 220,
         "max_pp": 0,
@@ -258,6 +258,76 @@
             ],
             "frames_number": [4,4,2,2,1,1,1,1],
             "frame_rate": [3,3,10,10,1,1,1,1],
+            "loop": [true,true,false,false,false,false,false,false]
+        }
+    },{
+        "key_name": "jupiter_djinn_kite",
+        "name": "Jupiter Djinn",
+        "level": 18,
+        "turns": 2,
+        "max_hp": 481,
+        "max_pp": 40,
+        "hp_recovery": 0,
+        "pp_recovery": 0,
+        "atk": 205,
+        "def": 45,
+        "agi": 120,
+        "luk": 14,
+        "battle_scale": 1.0,
+        "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
+        "items": [],
+        "abilities": [
+            {
+                "key_name": "attack",
+                "use_weight": 0.25
+            },
+            {
+                "key_name": "plasma",
+                "use_weight": 0.75
+            }
+        ],
+        "vulnerabilities": [],
+        "coins_reward": 352,
+        "item_reward": "",
+        "item_reward_chance": 0,
+        "exp_reward": 295,
+        "base_level": {
+            "venus": 0,
+            "mercury": 2,
+            "mars": 2,
+            "jupiter": 6
+        },
+        "base_power": {
+            "venus": 80,
+            "mercury": 95,
+            "mars": 95,
+            "jupiter": 120
+        },
+        "base_resist": {
+            "venus": 25,
+            "mercury": 100,
+            "mars": 100,
+            "jupiter": 193
+        },
+        "battle_animations_variations": {
+            "attack": "attack"
+        },
+        "battle_spritesheet": {
+            "spritesheet": "assets/images/spritesheets/battle/jupiter_djinn_battle.json",
+            "spritesheet_img": "assets/images/spritesheets/battle/jupiter_djinn_battle.png",
+            "positions": [
+                "idle_back", 
+                "idle_front",
+                "attack_back",
+                "attack_front",
+                "damage_back",
+                "damage_front",
+                "cast_back",
+                "cast_front"
+            ],
+            "frames_number": [3,3,1,1,1,1,1,1],
+            "frame_rate": [4,4,1,1,1,1,1,1],
             "loop": [true,true,false,false,false,false,false,false]
         }
     }

@@ -1,11 +1,4 @@
 { "compressionlevel":-1,
- "editorsettings":
-    {
-     "export":
-        {
-         "target":"."
-        }
-    },
  "height":66,
  "infinite":false,
  "layers":[
@@ -359,9 +352,68 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":5,
+         "name":"encounter_zone",
+         "objects":[
+                {
+                 "height":150.333333333333,
+                 "id":4,
+                 "name":"",
+                 "properties":
+                    {
+                     "parties":"[\"mini_goblin_party\"]"
+                    },
+                 "propertytypes":
+                    {
+                     "parties":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":217,
+                 "x":52.6666666666667,
+                 "y":315
+                }, 
+                {
+                 "height":24,
+                 "id":5,
+                 "name":"",
+                 "properties":
+                    {
+                     "parties":"[\"jupiter_djinn_kite_party\"]"
+                    },
+                 "propertytypes":
+                    {
+                     "parties":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":40,
+                 "x":80,
+                 "y":392
+                }],
+         "opacity":1,
+         "properties":
+            {
+             "base_rate":30,
+             "encounter_zone":true
+            },
+         "propertytypes":
+            {
+             "base_rate":"int",
+             "encounter_zone":"bool"
+            },
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":5,
- "nextobjectid":4,
+ "nextlayerid":6,
+ "nextobjectid":6,
  "orientation":"orthogonal",
  "properties":
     {
@@ -404,7 +456,7 @@
      "world_map":"bool"
     },
  "renderorder":"right-down",
- "tiledversion":"1.4.2",
+ "tiledversion":"1.5.0",
  "tileheight":8,
  "tilesets":[
         {
