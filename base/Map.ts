@@ -675,7 +675,7 @@ export class Map {
                     this.encounter_zones.push({
                         rectangle: zone,
                         base_rate: obj.properties.base_rate ?? objs.properties.base_rate,
-                        parties: JSON.parse(obj.properties.parties),
+                        parties: obj.properties.parties ? JSON.parse(obj.properties.parties) : [],
                     });
                 });
                 return collision_index;

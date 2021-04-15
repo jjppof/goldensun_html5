@@ -46,7 +46,7 @@ enum battle_phases {
 }
 
 export type PlayerInfo = {
-    sprite_key: string;
+    sprite_key?: string;
     instance?: Enemy | MainChar;
     entered_in_battle?: boolean;
     battle_key?: string;
@@ -425,6 +425,7 @@ export class Battle {
             }
         }
 
+        //sort actions by players speed
         this.turns_actions = _.sortBy(
             Object.values(this.allies_abilities).flat().concat(Object.values(this.enemies_abilities).flat()),
             action => {
@@ -436,22 +437,29 @@ export class Battle {
             const action = this.turns_actions[i];
             const ability = this.data.info.abilities_list[action.key_name];
 
-            let battle_animation_key = this.data.info.abilities_list[action.key_name].battle_animation_key;
-            if (ability.has_animation_variation && action.key_name in action.caster.battle_animations_variations) {
-                battle_animation_key = action.caster.battle_animations_variations[action.key_name];
-            }
-            action.battle_animation_key = battle_animation_key;
-
-            const mirrored_animation = ability.can_be_mirrored && action.caster.fighter_type === fighter_types.ENEMY;
-            const battle_animation = await this.animation_manager.load_animation(
-                battle_animation_key,
-                action.caster_battle_key,
-                mirrored_animation
-            );
-            action.cast_animation_type = battle_animation?.cast_type;
+            await this.set_action_animation_settings(action, ability);
         }
         this.battle_phase = battle_phases.COMBAT;
         this.check_phases();
+    }
+
+    async set_action_animation_settings(action: PlayerAbility, ability: Ability) {
+        //check whether the player of this action has a variation for this battle animation
+        let battle_animation_key = this.data.info.abilities_list[action.key_name].battle_animation_key;
+        if (ability.has_animation_variation && action.key_name in action.caster.battle_animations_variations) {
+            battle_animation_key = action.caster.battle_animations_variations[action.key_name];
+        }
+        action.battle_animation_key = battle_animation_key;
+
+        const mirrored_animation = ability.can_be_mirrored && action.caster.fighter_type === fighter_types.ENEMY;
+
+        //loads battle animation assets for this ability
+        const battle_animation = await this.animation_manager.load_animation(
+            battle_animation_key,
+            action.caster_battle_key,
+            mirrored_animation
+        );
+        action.cast_animation_type = battle_animation?.cast_type;
     }
 
     wait_for_key() {
@@ -540,6 +548,8 @@ export class Battle {
             action.battle_animation_key = "no_animation";
         }
 
+        let ability = this.data.info.abilities_list[action.key_name];
+
         //rerolls enemy ability
         if (
             action.caster.fighter_type === fighter_types.ENEMY &&
@@ -554,9 +564,9 @@ export class Battle {
                     this.data.info.party_data.members
                 )
             );
+            ability = this.data.info.abilities_list[action.key_name];
+            await this.set_action_animation_settings(action, ability);
         }
-
-        let ability = this.data.info.abilities_list[action.key_name];
 
         let item_name = action.item_slot ? this.data.info.items_list[action.item_slot.key_name].name : "";
 
@@ -578,14 +588,7 @@ export class Battle {
                     action.key_name = weapon.unleash_ability;
                     ability = this.data.info.abilities_list[weapon.unleash_ability];
 
-                    let battle_animation_key = this.data.info.abilities_list[ability.key_name].battle_animation_key;
-                    if (
-                        ability.has_animation_variation &&
-                        action.key_name in action.caster.battle_animations_variations
-                    ) {
-                        battle_animation_key = action.caster.battle_animations_variations[action.key_name];
-                    }
-                    action.battle_animation_key = battle_animation_key;
+                    await this.set_action_animation_settings(action, ability);
                 }
             }
         }

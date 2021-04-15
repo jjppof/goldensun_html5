@@ -955,16 +955,22 @@ export class BattleAnimation {
     ): {x: number; y: number} {
         if (x === "caster") {
             x = this.caster_sprite.x;
+            if (this.mirrored) {
+                x = numbers.GAME_WIDTH - (x as number);
+            }
         } else if (x === "targets") {
             x = _.mean(this.targets_sprites.map(target => target.x));
+            if (this.mirrored) {
+                x = numbers.GAME_WIDTH - (x as number);
+            }
         }
         if (y === "caster") {
             y = this.caster_sprite.y;
         } else if (y === "targets") {
             y = _.mean(this.targets_sprites.map(target => target.y));
         }
-        (x as number) += shift_x ? shift_x : 0;
-        (y as number) += shift_y ? shift_y : 0;
+        (x as number) += shift_x ?? 0;
+        (y as number) += shift_y ?? 0;
         return {x: x as number, y: y as number};
     }
 
