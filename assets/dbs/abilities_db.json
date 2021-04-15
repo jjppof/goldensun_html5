@@ -2224,6 +2224,32 @@
         "priority_move": false,
         "msg_type": "unleash"
     },{
+        "key_name": "kite",
+        "name": "Kite",
+        "description": "Attack twice next round.",
+        "type": "effect_only",
+        "element": "jupiter",
+        "battle_target": "ally",
+        "range": 1,
+        "pp_cost": 0,
+        "ability_power": 0,
+        "effects_outside_battle": false,
+        "is_battle_ability": true,
+        "is_field_psynergy": false,
+        "effects": [
+            {
+                "type": "turns",
+                "quantity": 1,
+                "operator": "plus",
+                "usage": "on_use",
+                "turns_quantity": 1
+            }
+        ],
+        "ability_category": "djinn",
+        "battle_animation_key": "kite",
+        "priority_move": true,
+        "msg_type": "unleash"
+    },{
         "key_name": "ice",
         "name": "Ice",
         "description": "Attack with spikes of ice.",

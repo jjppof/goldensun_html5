@@ -24,6 +24,7 @@
   "homepage": "https://github.com/jjppof/goldensun_html5#readme",
   "devDependencies": {
     "@types/lodash": "^4.14.161",
+    "@types/mathjs": "^6.0.11",
     "husky": "^5.0.0-beta.0",
     "pinst": "^2.0.0",
     "prettier": "2.1.2",
@@ -35,6 +36,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.20",
+    "mathjs": "^9.3.2",
     "rxjs": "^6.6.3"
   }
 }

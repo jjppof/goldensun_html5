@@ -180,6 +180,18 @@
         "agi_boost": 0,
         "luk_boost": 0
     },{
+        "key_name": "kite",
+        "name": "Kite",
+        "description": "Attack twice next round.",
+        "element": "jupiter",
+        "ability_key_name": "kite",
+        "hp_boost": 8,
+        "pp_boost": 4,
+        "atk_boost": 0,
+        "def_boost": 0,
+        "agi_boost": 3,
+        "luk_boost": 0
+    },{
         "key_name": "fog",
         "name": "Fog",
         "description": "Blind an enemy with fog.",

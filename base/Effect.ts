@@ -14,6 +14,7 @@ import * as _ from "lodash";
 import {BattleFormulas} from "./battle/BattleFormulas";
 import {MainChar} from "./MainChar";
 import {Enemy} from "./Enemy";
+import * as mathjs from "mathjs";
 
 export enum effect_types {
     MAX_HP = "max_hp",
@@ -96,6 +97,7 @@ export class Effect {
     public type: effect_types;
     public quantity: number;
     public operator: effect_operators;
+    public expression: string;
     public effect_owner_instance: Ability | Item;
     public quantity_is_absolute: boolean;
     public rate: number;
@@ -107,7 +109,6 @@ export class Effect {
     public turns_quantity: number;
     public turn_count: number;
     public variation_on_final_result: boolean;
-    public damage_formula_key_name: string;
     public usage: string;
     public on_caster: boolean;
     public relative_to_property: string;
@@ -124,12 +125,14 @@ export class Effect {
         usage: string;
         on_caster: boolean;
         operator: effect_operators;
+        expression: string;
     };
 
     constructor(
         type,
         quantity,
         operator,
+        expression, //Used instead of operator. x is the value involved, r is random number between 0 and 1
         effect_owner_instance,
         quantity_is_absolute, //default: false
         rate, //default: 1.0
@@ -140,7 +143,6 @@ export class Effect {
         status_key_name,
         turns_quantity,
         variation_on_final_result,
-        damage_formula_key_name, //instead of using the operator, uses a damage formula. Return value is not used.
         usage,
         on_caster, //boolean. default false. If true, the caster will take the effect.
         relative_to_property, //make the calculation based on a player property
@@ -152,6 +154,7 @@ export class Effect {
         this.type = type;
         this.quantity = quantity;
         this.operator = operator;
+        this.expression = expression;
         this.effect_owner_instance = effect_owner_instance;
         this.quantity_is_absolute = quantity_is_absolute ?? false;
         this.rate = rate ?? 1.0;
@@ -163,7 +166,6 @@ export class Effect {
         this.turns_quantity = turns_quantity ?? -1;
         this.turn_count = turns_quantity;
         this.variation_on_final_result = variation_on_final_result ?? false;
-        this.damage_formula_key_name = damage_formula_key_name;
         this.usage = usage ?? effect_usages.NOT_APPLY;
         this.on_caster = on_caster ?? false;
         this.relative_to_property = relative_to_property;
@@ -231,7 +233,16 @@ export class Effect {
             } else {
                 value_to_use = direct_value;
             }
-            const result = Effect.apply_operator(value_to_use, value, this.operator) | 0;
+            let result: number;
+            if (this.expression) {
+                const scope = {
+                    x: value_to_use,
+                    r: Math.random(),
+                };
+                result = mathjs.evaluate(this.expression, scope) | 0;
+            } else {
+                result = Effect.apply_operator(value_to_use, value, this.operator) | 0;
+            }
             if (property !== undefined) {
                 char[property] = result;
             }
@@ -252,7 +263,16 @@ export class Effect {
                 if (this.sub_effect.variation_on_final_result) {
                     value += variation();
                 }
-                this.char[property] = Effect.apply_operator(this.char[property], value, this.sub_effect.operator) | 0;
+                if (this.sub_effect.expression) {
+                    const scope = {
+                        x: this.char[property],
+                        r: Math.random(),
+                    };
+                    this.char[property] = mathjs.evaluate(this.expression, scope) | 0;
+                } else {
+                    this.char[property] =
+                        Effect.apply_operator(this.char[property], value, this.sub_effect.operator) | 0;
+                }
             }
         }
         return this.char[property];
@@ -268,7 +288,15 @@ export class Effect {
             }
             value *= effect_obj.rate;
             value = value | 0;
-            return Effect.apply_operator(base_value, value, effect_obj.operator);
+            if (effect_obj.expression) {
+                const scope = {
+                    x: base_value,
+                    r: Math.random(),
+                };
+                return mathjs.evaluate(effect_obj.expression, scope) | 0;
+            } else {
+                return Effect.apply_operator(base_value, value, effect_obj.operator);
+            }
         }
     }
 
@@ -362,7 +390,6 @@ export class Effect {
                     }
                 }
             case effect_types.TURNS:
-                this.turn_count = 1;
                 return this.apply_general_value("turns");
             case effect_types.PERMANENT_STATUS:
                 if (this.add_status) {

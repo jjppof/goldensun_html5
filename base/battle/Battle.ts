@@ -690,73 +690,7 @@ export class Battle {
         }
 
         //executes the animation of the current ability
-        const anim_availability = this.animation_manager.animation_available(
-            action.battle_animation_key,
-            action.caster_battle_key
-        );
-        if (anim_availability === animation_availability.AVAILABLE) {
-            const caster_targets_sprites = {
-                caster:
-                    action.caster.fighter_type === fighter_types.ALLY
-                        ? this.allies_map_sprite
-                        : this.enemies_map_sprite,
-                targets:
-                    action.caster.fighter_type === fighter_types.ALLY
-                        ? this.enemies_map_sprite
-                        : this.allies_map_sprite,
-            };
-            const caster_sprite = caster_targets_sprites.caster[action.caster_battle_key];
-            const target_sprites = action.targets.flatMap(info => {
-                return info.magnitude ? [caster_targets_sprites.targets[info.target.battle_key]] : [];
-            });
-            const group_caster =
-                action.caster.fighter_type === fighter_types.ALLY
-                    ? this.battle_stage.group_allies
-                    : this.battle_stage.group_enemies;
-            const group_taker =
-                action.caster.fighter_type === fighter_types.ALLY
-                    ? this.battle_stage.group_enemies
-                    : this.battle_stage.group_allies;
-            this.battle_stage.pause_players_update = true;
-            if (action.cast_animation_type && action.caster_battle_key) {
-                const animation_recipe = this.data.info.abilities_cast_recipes[action.cast_animation_type];
-                const cast_animation = BattleAnimationManager.get_animation_instance(
-                    this.game,
-                    this.data,
-                    animation_recipe,
-                    action.caster.fighter_type !== fighter_types.ALLY,
-                    ability.element
-                );
-                const main_animation = this.animation_manager.get_animation(
-                    action.battle_animation_key,
-                    action.caster_battle_key
-                );
-                const cast_promise = this.animation_manager.play_animation(
-                    cast_animation,
-                    caster_sprite,
-                    target_sprites,
-                    group_caster,
-                    group_taker,
-                    this.battle_stage
-                );
-                if (main_animation.wait_for_cast_animation) {
-                    await cast_promise;
-                }
-            }
-            await this.animation_manager.play(
-                action.battle_animation_key,
-                action.caster_battle_key,
-                caster_sprite,
-                target_sprites,
-                group_caster,
-                group_taker,
-                this.battle_stage
-            );
-            this.battle_stage.prevent_camera_angle_overflow();
-        } else if (anim_availability === animation_availability.NOT_AVAILABLE) {
-            await this.battle_log.add(`Animation for ${ability.name} not available...`);
-            await this.wait_for_key();
-        }
+        await this.play_battle_animation(action, ability);
 
         //apply ability damage
         if (![ability_types.UTILITY, ability_types.EFFECT_ONLY].includes(ability.type)) {
@@ -858,6 +792,76 @@ export class Battle {
         }
 
         this.check_phases();
+    }
+
+    async play_battle_animation(action: PlayerAbility, ability: Ability) {
+        const anim_availability = this.animation_manager.animation_available(
+            action.battle_animation_key,
+            action.caster_battle_key
+        );
+        if (anim_availability === animation_availability.AVAILABLE) {
+            const caster_targets_sprites = {
+                caster:
+                    action.caster.fighter_type === fighter_types.ALLY
+                        ? this.allies_map_sprite
+                        : this.enemies_map_sprite,
+                targets:
+                    action.caster.fighter_type === fighter_types.ALLY
+                        ? this.enemies_map_sprite
+                        : this.allies_map_sprite,
+            };
+            const caster_sprite = caster_targets_sprites.caster[action.caster_battle_key];
+            const target_sprites = action.targets.flatMap(info => {
+                return info.magnitude ? [caster_targets_sprites.targets[info.target.battle_key]] : [];
+            });
+            const group_caster =
+                action.caster.fighter_type === fighter_types.ALLY
+                    ? this.battle_stage.group_allies
+                    : this.battle_stage.group_enemies;
+            const group_taker =
+                action.caster.fighter_type === fighter_types.ALLY
+                    ? this.battle_stage.group_enemies
+                    : this.battle_stage.group_allies;
+            this.battle_stage.pause_players_update = true;
+            if (action.cast_animation_type && action.caster_battle_key) {
+                const animation_recipe = this.data.info.abilities_cast_recipes[action.cast_animation_type];
+                const cast_animation = BattleAnimationManager.get_animation_instance(
+                    this.game,
+                    this.data,
+                    animation_recipe,
+                    action.caster.fighter_type !== fighter_types.ALLY,
+                    ability.element
+                );
+                const main_animation = this.animation_manager.get_animation(
+                    action.battle_animation_key,
+                    action.caster_battle_key
+                );
+                const cast_promise = this.animation_manager.play_animation(
+                    cast_animation,
+                    caster_sprite,
+                    target_sprites,
+                    group_caster,
+                    group_taker,
+                    this.battle_stage
+                );
+                if (main_animation.wait_for_cast_animation) {
+                    await cast_promise;
+                }
+            }
+            await this.animation_manager.play(
+                action.battle_animation_key,
+                action.caster_battle_key,
+                caster_sprite,
+                target_sprites,
+                group_caster,
+                group_taker,
+                this.battle_stage
+            );
+            this.battle_stage.prevent_camera_angle_overflow();
+        } else if (anim_availability === animation_availability.NOT_AVAILABLE) {
+            await this.battle_log.add(`Animation for ${ability.name} not available...`);
+            await this.wait_for_key();
+        }
     }
 
     async apply_damage(action: PlayerAbility, ability: Ability) {
