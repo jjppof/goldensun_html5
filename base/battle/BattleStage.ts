@@ -100,6 +100,9 @@ export class BattleStage {
     private last_enemy_char: Phaser.Sprite;
 
     private bg_height: number;
+    private pos_update_factor: {
+        factor: number;
+    };
 
     constructor(
         game: Phaser.Game,
@@ -147,6 +150,8 @@ export class BattleStage {
 
         this.pause_update = false;
         this.pause_players_update = false;
+
+        this.pos_update_factor = {factor: 0};
     }
 
     get cursor_manager() {
@@ -342,8 +347,11 @@ export class BattleStage {
         );
     }
 
+    set_update_factor(factor: number) {
+        this.pos_update_factor.factor = factor;
+    }
+
     async reset_chars_position() {
-        const promises = [];
         for (let i = 0; i < this.sprites.length; ++i) {
             const player = this.sprites[i];
             if (player.player_instance.is_paralyzed(true, true)) {
@@ -351,33 +359,23 @@ export class BattleStage {
             } else {
                 player.set_action(battle_actions.IDLE);
             }
-            const pos = this.get_player_position_in_stage(i, DEFAULT_POS_ANGLE);
-            if (
-                Math.abs(player.ellipses_semi_major - SEMI_MAJOR_AXIS) > 1e-4 ||
-                Math.abs(player.ellipses_semi_minor - SEMI_MINOR_AXIS) > 1e-4 ||
-                Math.abs(player.x - pos.x) > 1e-4 ||
-                Math.abs(player.y - pos.y) > 1e-4
-            ) {
-                let promise_resolve;
-                promises.push(new Promise(resolve => (promise_resolve = resolve)));
-                player.ellipses_semi_major = SEMI_MAJOR_AXIS;
-                player.ellipses_semi_minor = SEMI_MINOR_AXIS;
-                const new_pos = this.get_player_position_in_stage(i, DEFAULT_POS_ANGLE);
-                this.game.add
-                    .tween(player)
-                    .to(
-                        {
-                            x: new_pos.x,
-                            y: new_pos.y,
-                        },
-                        300,
-                        Phaser.Easing.Quadratic.Out,
-                        true
-                    )
-                    .onComplete.addOnce(promise_resolve);
-            }
+            player.ellipses_semi_major = SEMI_MAJOR_AXIS;
+            player.ellipses_semi_minor = SEMI_MINOR_AXIS;
         }
-        await Promise.all(promises);
+        let promise_resolve;
+        const promise = new Promise(resolve => (promise_resolve = resolve));
+        this.game.add
+            .tween(this.pos_update_factor)
+            .to(
+                {
+                    factor: 0,
+                },
+                300,
+                Phaser.Easing.Quadratic.Out,
+                true
+            )
+            .onComplete.addOnce(promise_resolve);
+        await promise;
     }
 
     async set_stage_default_position() {
@@ -544,8 +542,10 @@ export class BattleStage {
             if (this.pause_players_update && !player_sprite.force_stage_update) continue;
 
             const pos = this.get_player_position_in_stage(i);
-            player_sprite.x = pos.x;
-            player_sprite.y = pos.y;
+            player_sprite.x =
+                this.pos_update_factor.factor * player_sprite.x + (1 - this.pos_update_factor.factor) * pos.x;
+            player_sprite.y =
+                this.pos_update_factor.factor * player_sprite.y + (1 - this.pos_update_factor.factor) * pos.y;
 
             const relative_angle = player_sprite.is_ally ? this.camera_angle.rad : this.camera_angle.rad + Math.PI;
             const scale = BattleStage.get_scale(relative_angle);

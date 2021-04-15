@@ -444,6 +444,9 @@ export class Battle {
     }
 
     async set_action_animation_settings(action: PlayerAbility, ability: Ability) {
+        if (action.caster.is_paralyzed(true)) {
+            return;
+        }
         //check whether the player of this action has a variation for this battle animation
         let battle_animation_key = this.data.info.abilities_list[action.key_name].battle_animation_key;
         if (ability.has_animation_variation && action.key_name in action.caster.battle_animations_variations) {
@@ -772,8 +775,9 @@ export class Battle {
             }
         }
 
-        await Promise.all([this.battle_stage.reset_chars_position(), this.battle_stage.set_stage_default_position()]);
         this.battle_stage.pause_players_update = false;
+        this.battle_stage.set_update_factor(1);
+        await Promise.all([this.battle_stage.reset_chars_position(), this.battle_stage.set_stage_default_position()]);
 
         //summon's power buff after cast
         if (ability.ability_category === ability_categories.SUMMON) {

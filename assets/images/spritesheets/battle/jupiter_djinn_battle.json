@@ -34,18 +34,18 @@
 },
 "battle/damage_back/00":
 {
-	"frame": {"x":31,"y":139,"w":31,"h":38},
+	"frame": {"x":1,"y":1,"w":36,"h":39},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":9,"y":14,"w":31,"h":38},
+	"spriteSourceSize": {"x":23,"y":13,"w":36,"h":39},
 	"sourceSize": {"w":64,"h":64}
 },
 "battle/damage_front/00":
 {
-	"frame": {"x":1,"y":1,"w":36,"h":39},
+	"frame": {"x":31,"y":139,"w":31,"h":38},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":5,"y":13,"w":36,"h":39},
+	"spriteSourceSize": {"x":24,"y":14,"w":31,"h":38},
 	"sourceSize": {"w":64,"h":64}
 },
 "battle/idle_back/00":
@@ -103,6 +103,6 @@
 	"format": "RGBA8888",
 	"size": {"w":64,"h":226},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:3d8646bd3e2e1857a31183478e624088:f43cbb57098cdba642d4aa30644e56b4:b7bcc326f02c77612a909c5002a3477c$"
+	"smartupdate": "$TexturePacker:SmartUpdate:2f7ee20f7946b988a572d3066a0554c2:33315d736443290104d56b3b5d07a3ad:b7bcc326f02c77612a909c5002a3477c$"
 }
 }
