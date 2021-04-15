@@ -7,6 +7,7 @@ import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
 import {ControllableChar} from "./ControllableChar";
 import {base_actions} from "./utils";
+import {BattleEvent} from "./game_events/BattleEvent";
 
 export class Map {
     private static readonly MAX_CAMERA_ROTATION = 0.035;
@@ -601,14 +602,35 @@ export class Map {
             const zones_list = [...zones];
             const base_rate = _.mean(zones_list.map(zone => zone.base_rate)) | 0;
             if (this.start_battle_encounter(base_rate)) {
-                const parties = zones_list.map(zone => zone.parties).flat();
-                const party = _.sample(parties);
-                const event = this.data.game_event_manager.get_event_instance({
-                    type: event_types.BATTLE,
-                    background_key: this.background_key,
-                    enemy_party_key: party,
-                });
-                event.fire();
+                const parties = zones_list
+                    .map(zone => zone.parties)
+                    .flat()
+                    .filter(party => {
+                        if (this.data.dbs.enemies_parties_db[party].active_storage_key) {
+                            return this.data.storage.get(this.data.dbs.enemies_parties_db[party].active_storage_key);
+                        } else {
+                            return true;
+                        }
+                    });
+                if (parties.length) {
+                    const party = _.sample(parties);
+                    const event = this.data.game_event_manager.get_event_instance({
+                        type: event_types.BATTLE,
+                        background_key: this.background_key,
+                        enemy_party_key: party,
+                    }) as BattleEvent;
+                    event.assign_finish_callback(victory => {
+                        if (victory) {
+                            if (this.data.dbs.enemies_parties_db[party].active_storage_key) {
+                                this.data.storage.set(
+                                    this.data.dbs.enemies_parties_db[party].active_storage_key,
+                                    false
+                                );
+                            }
+                        }
+                    });
+                    event.fire();
+                }
             }
         }
     }

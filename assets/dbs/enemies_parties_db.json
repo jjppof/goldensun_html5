@@ -42,6 +42,7 @@
         "name": "Jupiter Djinn",
         "can_escape": true,
         "djinn": "kite",
+        "active_storage_key": "kite_djinn",
         "members": [
             {
                 "key": "jupiter_djinn_kite",
