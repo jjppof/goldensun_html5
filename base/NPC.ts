@@ -238,13 +238,10 @@ export class NPC extends ControllableChar {
                 ? this.data.info.misc_sprite_base_list[this.sprite_misc_db_key]
                 : this.data.info.npcs_sprite_base_list[this.key_name];
         if (!this.no_shadow) {
-            this.set_shadow(
-                npc_db.shadow_key,
-                this.data.npc_group,
-                this.base_collision_layer,
-                npc_db.shadow_anchor_x,
-                npc_db.shadow_anchor_y
-            );
+            this.set_shadow(npc_db.shadow_key, this.data.npc_group, this.base_collision_layer, {
+                shadow_anchor_x: npc_db.shadow_anchor_x,
+                shadow_anchor_y: npc_db.shadow_anchor_y,
+            });
         }
         this.set_sprite(
             this.data.npc_group,

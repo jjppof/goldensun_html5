@@ -296,13 +296,15 @@ export abstract class ControllableChar {
         key_name: string,
         group: Phaser.Group,
         layer: number,
-        shadow_anchor_x?: number,
-        shadow_anchor_y?: number,
-        is_world_map: boolean = false
+        options: {
+            shadow_anchor_x?: number;
+            shadow_anchor_y?: number;
+            is_world_map?: boolean;
+        }
     ) {
         key_name = key_name ?? ControllableChar.DEFAULT_SHADOW_KEYNAME;
-        shadow_anchor_x = shadow_anchor_x ?? ControllableChar.DEFAULT_SHADOW_ANCHOR_X;
-        shadow_anchor_y = shadow_anchor_y ?? ControllableChar.DEFAULT_SHADOW_ANCHOR_Y;
+        const shadow_anchor_x = options?.shadow_anchor_x ?? ControllableChar.DEFAULT_SHADOW_ANCHOR_X;
+        const shadow_anchor_y = options?.shadow_anchor_y ?? ControllableChar.DEFAULT_SHADOW_ANCHOR_Y;
         this.shadow = group.create(0, 0, key_name);
         this.shadow.sort_function = () => {
             let shadow_index = this.data.npc_group.getChildIndex(this.sprite) - 1;
@@ -320,8 +322,8 @@ export abstract class ControllableChar {
         this.shadow.disableRoundPx = true;
         this.shadow.anchor.setTo(shadow_anchor_x, shadow_anchor_y);
         this.shadow.base_collision_layer = layer;
-        const scale_x = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
-        const scale_y = is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
+        const scale_x = options?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
+        const scale_y = options?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
         this.shadow.scale.setTo(scale_x, scale_y);
     }
 
@@ -543,19 +545,25 @@ export abstract class ControllableChar {
         }
     }
 
-    async shake(options?: {repeats_number?: number; repeat_period?: number; side_shake?: boolean; max_scale?: number}) {
+    async shake(options?: {
+        repeats_number?: number;
+        repeat_period?: number;
+        side_shake?: boolean;
+        max_scale_mult?: number;
+    }) {
         const repeats_number = options?.repeats_number ?? 7;
         const repeat_period = options?.repeat_period ?? 40;
         const side_shake = options?.side_shake ?? false;
-        const max_scale = options?.max_scale ?? 1.15;
+        const max_scale_mult = options?.max_scale_mult ?? 1.15;
         let promise_resolve;
         const promise = new Promise(resolve => (promise_resolve = resolve));
-        const scales = [max_scale, (max_scale + 1.0) / 2, 1.0];
-        const total = scales.length * repeats_number;
+        const scales_mult = [max_scale_mult, (max_scale_mult + 1.0) / 2, 1.0];
+        const total = scales_mult.length * repeats_number;
         let counter = 0;
         const prop: "x" | "y" = side_shake ? "x" : "y";
+        const base_scale = this.sprite.scale[prop];
         this.game.time.events.repeat(repeat_period, total, () => {
-            this.sprite.scale[prop] = scales[counter % scales.length];
+            this.sprite.scale[prop] = base_scale * scales_mult[counter % scales_mult.length];
             ++counter;
             if (counter === total) {
                 promise_resolve();

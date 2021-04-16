@@ -256,7 +256,7 @@ export class DjinnGetEvent extends GameEvent {
             repeats_number: 2,
             repeat_period: 65,
             side_shake: true,
-            max_scale: 0.75,
+            max_scale_mult: 0.75,
         });
 
         await this.wait(500);
@@ -500,7 +500,7 @@ export class DjinnGetEvent extends GameEvent {
             repeats_number: 2,
             repeat_period: 65,
             side_shake: true,
-            max_scale: 0.75,
+            max_scale_mult: 0.75,
         });
 
         await this.wait(500);
@@ -707,9 +707,11 @@ export class DjinnGetEvent extends GameEvent {
         }
 
         this.dialog_manager = new DialogManager(this.game, this.data);
-        const text = `${this.data.info.main_char_list[this.data.hero.key_name].name} found the ${_.capitalize(
-            this.djinn.element
-        )} Djinn \${COLOR:${element_colors[this.djinn.element].toString(16)}}${this.djinn.name}\${COLOR:/}!`;
+        const hero_name = this.data.info.main_char_list[this.data.hero.key_name].name;
+        const djinn_text_color = element_colors[this.djinn.element].toString(16);
+        const djinn_element_name = _.capitalize(this.djinn.element);
+        const djinn_name = this.djinn.name;
+        const text = `${hero_name} found the ${djinn_element_name} Djinn \${COLOR:${djinn_text_color}}${djinn_name}\${COLOR:/}!`;
         this.dialog_manager.set_dialog(text, {
             avatar: Djinn.sprite_base_key(this.djinn.element),
             avatar_inside_window: true,
