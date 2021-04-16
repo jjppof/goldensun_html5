@@ -285,7 +285,8 @@ export class DjinnGetEvent extends GameEvent {
         const trail_image = this.game.add.image(this.game.camera.x, this.game.camera.y, trail_bitmap_data);
         trail_image.blendMode = Phaser.blendModes.SCREEN;
         this.origin_npc.shadow.visible = false;
-        const final_jump_tween = this.game.add.tween(this.origin_npc.sprite.body).to(
+        const obj_to_tween = this.origin_npc.sprite.body ?? this.origin_npc.sprite;
+        const final_jump_tween = this.game.add.tween(obj_to_tween).to(
             {
                 y: this.game.camera.y - 20,
             },
@@ -484,6 +485,202 @@ export class DjinnGetEvent extends GameEvent {
         reset_map();
     }
 
+    async jupiter_djinn() {
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        const reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
+            color: 0.1,
+            intensity: 0.7,
+            after_colorize: this.aux_resolve,
+        });
+        await this.aux_promise;
+
+        await this.wait(200);
+
+        await this.origin_npc.shake({
+            repeats_number: 2,
+            repeat_period: 65,
+            side_shake: true,
+            max_scale: 0.75,
+        });
+
+        await this.wait(500);
+
+        this.origin_npc.set_rotation(true);
+        await this.wait(1000);
+
+        this.origin_npc.shadow.visible = false;
+        const obj_to_tween = this.origin_npc.sprite.body ?? this.origin_npc.sprite;
+        const final_djinn_position = {
+            x: obj_to_tween.x,
+            y: this.data.hero.sprite.y - this.data.hero.sprite.height - 10,
+        };
+        const jump_tween = this.game.add.tween(obj_to_tween).to(
+            {
+                y: [this.game.camera.y + 7, final_djinn_position.y],
+            },
+            350,
+            Phaser.Easing.Linear.None,
+            true
+        );
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        jump_tween.onComplete.addOnce(() => {
+            this.origin_npc.toggle_active(false);
+            this.aux_resolve();
+        });
+
+        await this.aux_promise;
+
+        //spiral init vars
+        const color_filters: any[] = [
+            this.game.add.filter("ColorFilters"),
+            this.game.add.filter("ColorFilters"),
+            this.game.add.filter("ColorFilters"),
+            this.game.add.filter("ColorFilters"),
+        ];
+        color_filters[0].hue_adjust = 0.6;
+        color_filters[1].hue_adjust = 2.6;
+        color_filters[2].hue_adjust = 4.5;
+        color_filters[3].hue_adjust = 5;
+        const spiral_particles_number = 25;
+        const spiral_particles_number_half = spiral_particles_number >> 1;
+        const get_scale = i => {
+            return (
+                0.8 + Math.abs(Math.abs((i - spiral_particles_number_half) / spiral_particles_number_half) - 1) * 0.2
+            );
+        };
+        const particles_group = this.game.add.group();
+        for (let i = 0; i < spiral_particles_number; ++i) {
+            const particle = this.game.add.sprite(0, 0, "djinn_ball");
+            particle.anchor.setTo(0.5, 0.5);
+            const scale = get_scale(i);
+            particle.scale.setTo(scale, scale);
+            particle.visible = false;
+            particle.filters = [_.sample(color_filters)];
+            particles_group.addChild(particle);
+        }
+        const spiral_time = {
+            time: 0,
+        };
+        const spiral_equation = (t: number, final_t: number, x0: number, y0: number, is_circle: boolean) => {
+            const width = 70;
+            const v = is_circle ? width * final_t : width * t;
+            const w = 17;
+            return {
+                x: x0 + v * Math.cos(w * t),
+                y: y0 + v * Math.sin(w * t),
+            };
+        };
+        const delta_particle_time = 0.012;
+        const final_spiral_time = Math.PI / 3.78;
+        const final_spiral_all_time = final_spiral_time + spiral_particles_number * delta_particle_time;
+
+        //spiral getting out of djinn
+        const spiral_open_tween = this.game.add.tween(spiral_time).to(
+            {
+                time: final_spiral_all_time,
+            },
+            2000,
+            Phaser.Easing.Linear.None,
+            true
+        );
+        spiral_open_tween.onUpdateCallback(() => {
+            particles_group.children.forEach((particle, i) => {
+                const t = spiral_time.time - i * delta_particle_time;
+                if (t >= 0) {
+                    particle.visible = true;
+                } else {
+                    return;
+                }
+                const is_circle = t >= final_spiral_time ? true : false;
+                const pos = spiral_equation(
+                    t,
+                    final_spiral_time,
+                    final_djinn_position.x,
+                    final_djinn_position.y,
+                    is_circle
+                );
+                particle.x = pos.x;
+                particle.y = pos.y;
+            });
+        });
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        spiral_open_tween.onComplete.addOnce(() => {
+            this.aux_resolve();
+        });
+        await this.aux_promise;
+
+        //circle translation from djinn to hero
+        const final_position = {
+            x: this.data.hero.sprite.x,
+            y: this.data.hero.sprite.y - this.data.hero.sprite.height + this.data.hero.sprite.anchor.y * 10,
+        };
+        const final_circle_time = 1.388 * final_spiral_all_time;
+        const translate_tween = this.game.add.tween(spiral_time).to(
+            {
+                time: final_circle_time,
+            },
+            1000,
+            Phaser.Easing.Linear.None,
+            true
+        );
+        const delta_time = final_circle_time - final_spiral_all_time;
+        translate_tween.onUpdateCallback(() => {
+            const distance_factor = (spiral_time.time - final_spiral_all_time) / delta_time;
+            const x0 = (1 - distance_factor) * final_djinn_position.x + distance_factor * final_position.x;
+            const y0 = (1 - distance_factor) * final_djinn_position.y + distance_factor * final_position.y;
+            particles_group.children.forEach((particle, i) => {
+                const t = spiral_time.time - i * delta_particle_time;
+                const pos = spiral_equation(t, final_spiral_time, x0, y0, true);
+                particle.x = pos.x;
+                particle.y = pos.y;
+            });
+        });
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        translate_tween.onComplete.addOnce(() => {
+            this.aux_resolve();
+        });
+        await this.aux_promise;
+
+        //final spiral closing at hero
+        spiral_time.time = -final_spiral_time;
+        const spiral_close_tween = this.game.add.tween(spiral_time).to(
+            {
+                time: spiral_particles_number * delta_particle_time,
+            },
+            2000,
+            Phaser.Easing.Linear.None,
+            true
+        );
+        spiral_close_tween.onUpdateCallback(() => {
+            particles_group.children.forEach((particle, i) => {
+                const t = spiral_time.time - i * delta_particle_time;
+                if (t >= 0) {
+                    particle.visible = false;
+                    return;
+                }
+                const is_circle = t <= -final_spiral_time ? true : false;
+                const pos = spiral_equation(t, -final_spiral_time, final_position.x, final_position.y, is_circle);
+                particle.x = pos.x;
+                particle.y = pos.y;
+            });
+        });
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        spiral_close_tween.onComplete.addOnce(() => {
+            this.aux_resolve();
+        });
+
+        await this.data.hero.face_direction(directions.down);
+        this.data.hero.play(base_actions.GRANT);
+
+        await this.wait(1200);
+        this.data.hero.shake({repeats_number: 7});
+
+        await this.aux_promise;
+        particles_group.destroy(true);
+
+        reset_map();
+    }
+
     async _fire(oringin_npc: NPC) {
         if (!this.active) return;
         ++this.data.game_event_manager.events_running_count;
@@ -503,6 +700,9 @@ export class DjinnGetEvent extends GameEvent {
                 break;
             case elements.MARS:
                 await this.mars_djinn();
+                break;
+            case elements.JUPITER:
+                await this.jupiter_djinn();
                 break;
         }
 

@@ -1,4 +1,4 @@
-import {NPC} from "./NPC";
+import {NPC, npc_movement_types, npc_types} from "./NPC";
 import {InteractableObjects} from "./InteractableObjects";
 import {LocationKey, TileEvent} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
@@ -8,6 +8,7 @@ import * as _ from "lodash";
 import {ControllableChar} from "./ControllableChar";
 import {base_actions} from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
+import {Djinn} from "./Djinn";
 
 export class Map {
     private static readonly MAX_CAMERA_ROTATION = 0.035;
@@ -402,7 +403,7 @@ export class Map {
         return _.find(this.layers, {name: name});
     }
 
-    private create_tile_events(raw_property) {
+    private create_tile_event(raw_property) {
         const property_info = JSON.parse(raw_property);
         const this_event_location_key = LocationKey.get_key(property_info.x, property_info.y);
         if (!(this_event_location_key in this.events)) {
@@ -410,10 +411,11 @@ export class Map {
         }
         const event = this.data.tile_event_manager.get_event_instance(property_info);
         this.events[this_event_location_key].push(event);
+        return event;
     }
 
-    private create_npcs(raw_property) {
-        const property_info = JSON.parse(raw_property);
+    private create_npc(properties: any, not_parsed: boolean = true) {
+        const property_info = not_parsed ? JSON.parse(properties) : properties;
         const npc_db = this.data.dbs.npc_db[property_info.key_name];
         const initial_action = property_info.initial_action ?? npc_db.initial_action;
         const actual_action =
@@ -464,9 +466,10 @@ export class Map {
             voice_key
         );
         this.npcs.push(npc);
+        return npc;
     }
 
-    private create_interactable_objects(raw_property) {
+    private create_interactable_object(raw_property) {
         const property_info = JSON.parse(raw_property);
         const interactable_object = new InteractableObjects(
             this.game,
@@ -487,6 +490,7 @@ export class Map {
             property_info.events_info
         );
         this.interactable_objects.push(interactable_object);
+        return interactable_object;
     }
 
     private config_interactable_object() {
@@ -619,6 +623,16 @@ export class Map {
                         background_key: this.background_key,
                         enemy_party_key: party,
                     }) as BattleEvent;
+                    let get_djinn_fire_event;
+                    event.assign_before_fade_finish_callback(victory => {
+                        if (victory) {
+                            if (this.data.dbs.enemies_parties_db[party].djinn) {
+                                get_djinn_fire_event = this.get_djinn_on_world_map(
+                                    this.data.dbs.enemies_parties_db[party].djinn
+                                );
+                            }
+                        }
+                    });
                     event.assign_finish_callback(victory => {
                         if (victory) {
                             if (this.data.dbs.enemies_parties_db[party].active_storage_key) {
@@ -626,6 +640,9 @@ export class Map {
                                     this.data.dbs.enemies_parties_db[party].active_storage_key,
                                     false
                                 );
+                            }
+                            if (get_djinn_fire_event !== undefined) {
+                                get_djinn_fire_event();
                             }
                         }
                     });
@@ -657,6 +674,31 @@ export class Map {
         } else {
             return false;
         }
+    }
+
+    //gets a djinn in map after a battle
+    private get_djinn_on_world_map(djinn_key: string) {
+        const djinn = this.data.info.djinni_list[djinn_key];
+        const npc = this.create_npc(
+            {
+                key_name: Djinn.sprite_base_key(djinn.element),
+                initial_x: this.data.hero.tile_x_pos - 2,
+                initial_y: this.data.hero.tile_y_pos - 2,
+                npc_type: npc_types.NORMAL,
+                initial_action: base_actions.IDLE,
+                movement_type: npc_movement_types.IDLE,
+                base_collision_layer: this.collision_layer,
+                events: [
+                    {
+                        type: event_types.DJINN_GET,
+                        djinn_key: djinn_key,
+                    },
+                ],
+            },
+            false
+        );
+        npc.init_npc(this);
+        return npc.events[0].fire.bind(npc.events[0], npc);
     }
 
     //remove a tile event in a custom location
@@ -749,13 +791,13 @@ export class Map {
             const raw_property = this.sprite.properties[property.key];
             switch (property.type) {
                 case "event":
-                    this.create_tile_events(raw_property);
+                    this.create_tile_event(raw_property);
                     break;
                 case "npc":
-                    this.create_npcs(raw_property);
+                    this.create_npc(raw_property);
                     break;
                 case "interactable_object":
-                    this.create_interactable_objects(raw_property);
+                    this.create_interactable_object(raw_property);
                     break;
             }
         }

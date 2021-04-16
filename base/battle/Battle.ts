@@ -94,6 +94,7 @@ export class Battle {
     public enemies_map_sprite: {[player_key: string]: PlayerSprite};
 
     public previous_map_state: ReturnType<Map["pause"]>;
+    public before_fade_finish_callback: (victory: boolean) => void;
     public finish_callback: (victory: boolean) => void;
     public background_key: string;
 
@@ -102,10 +103,12 @@ export class Battle {
         data: GoldenSun,
         background_key: string,
         enemy_party_key: string,
+        before_fade_finish_callback?: (victory: boolean) => void,
         finish_callback?: (victory: boolean) => void
     ) {
         this.game = game;
         this.data = data;
+        this.before_fade_finish_callback = before_fade_finish_callback;
         this.finish_callback = finish_callback;
         this.background_key = background_key;
 
@@ -1410,6 +1413,9 @@ So, if a character will die after 5 turns and you land another Curse on them, it
                 this.battle_menu.destroy_menu();
                 this.target_window.destroy();
                 this.animation_manager.destroy();
+                if (this.before_fade_finish_callback) {
+                    this.before_fade_finish_callback(!this.allies_defeated);
+                }
             },
             () => {
                 this.data.in_battle = false;
