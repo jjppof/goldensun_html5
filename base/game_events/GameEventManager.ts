@@ -21,6 +21,7 @@ import {SummonEvent} from "./SummonEvent";
 import {DjinnGetEvent} from "./DjinnGetEvent";
 import {JumpEvent} from "./JumpEvent";
 import {FaceDirectionEvent} from "./FaceDirectionEvent";
+import {EmoticonEvent} from "./EmoticonEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -324,6 +325,18 @@ export class GameEventManager {
                     info.follow_hero_on_finish,
                     info.keep_camera_follow,
                     info.wait_after
+                );
+            case event_types.EMOTICON:
+                return new EmoticonEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.emoticon,
+                    info.duration,
+                    info.sound_effect,
+                    info.is_npc,
+                    info.npc_index,
+                    info.finish_events
                 );
         }
     }

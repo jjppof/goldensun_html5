@@ -193,6 +193,11 @@ export class GoldenSun {
         this.collision.config_collisions(this.map.collision_layer);
         this.game.physics.p2.updateBoundsCollisionGroup();
 
+        //initialize screens
+        this.shop_menu = new ShopMenu(this.game, this);
+        this.inn_menu = new InnMenu(this.game, this);
+        this.main_menu = initialize_menu(this.game, this);
+
         this.game.stage.disableVisibilityChange = false;
         this.assets_loaded = true;
         this.game.camera.resetFX();
@@ -219,13 +224,7 @@ export class GoldenSun {
             window.dispatchEvent(new Event("resize"));
         });
 
-        //initialize screens
-        this.shop_menu = new ShopMenu(this.game, this);
-        this.inn_menu = new InnMenu(this.game, this);
-        this.main_menu = initialize_menu(this.game, this);
-
         // Enable zoom and psynergies shortcuts for testing
-
         const setup_scale = (scaleFactor: number) => {
             if (this.fullscreen) return;
             this.scale_factor = scaleFactor;

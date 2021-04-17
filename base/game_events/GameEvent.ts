@@ -36,6 +36,7 @@ export enum event_types {
     DJINN_GET = "djinn_get",
     JUMP = "jump",
     FACE_DIRECTION = "face_direction",
+    EMOTICON = "emoticon",
 }
 
 /* Everytime a game event is fired, it's checked whether reveal is casted, if yes, it stops the reveal psynergy. */
