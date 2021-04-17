@@ -81,6 +81,7 @@ export class JumpEvent extends CharControlEvent {
         if (!this.is_npc) {
             this.data.game_event_manager.allow_char_to_move = false;
         }
+        this.is_npc = undefined;
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }

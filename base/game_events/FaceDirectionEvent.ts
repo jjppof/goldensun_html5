@@ -58,6 +58,7 @@ export class FaceDirectionEvent extends CharControlEvent {
 
         await this.camera_unfollow_char();
 
+        this.is_npc = undefined;
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }

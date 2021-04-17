@@ -122,6 +122,7 @@ export class MoveEvent extends CharControlEvent {
         if (!this.keep_npc_collision_disable) {
             this.data.collision.enable_npc_collision(this.data.map.collision_layer);
         }
+        this.is_npc = undefined;
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }

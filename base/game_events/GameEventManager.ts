@@ -336,6 +336,8 @@ export class GameEventManager {
                     info.sound_effect,
                     info.is_npc,
                     info.npc_index,
+                    info.location,
+                    info.face_hero,
                     info.finish_events
                 );
         }
