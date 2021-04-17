@@ -30,7 +30,7 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0
 ## Development environment
 
 GS-HTML5 supports both Javascript and Typescript. We use [Webpack](https://webpack.js.org/) to build the bundle and serve the development environment.
-- I strongly reccomend using [Visual Studio Code](https://code.visualstudio.com/download) to develop.
+- I strongly recomend using [Visual Studio Code](https://code.visualstudio.com/download) to develop.
 - Install dev dependencies by running `npm install` in the root folder.
 - Use `npm start` to start the development server.
 - Use `npm run build` to generate a bundle.
