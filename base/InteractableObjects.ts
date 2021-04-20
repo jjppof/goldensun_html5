@@ -225,6 +225,34 @@ export class InteractableObjects {
         this._collision_tiles_bodies = [];
     }
 
+    private set_anchor() {
+        const interactable_object_db = this.data.dbs.interactable_objects_db[this.key_name];
+        if (this.anchor_x !== undefined) {
+            this.sprite.anchor.x = interactable_object_db.anchor_x;
+        } else if (interactable_object_db.anchor_x !== undefined) {
+            this.sprite.anchor.x = interactable_object_db.anchor_x;
+        }
+        if (this.anchor_y !== undefined) {
+            this.sprite.anchor.y = interactable_object_db.anchor_y;
+        } else if (interactable_object_db.anchor_y !== undefined) {
+            this.sprite.anchor.y = interactable_object_db.anchor_y;
+        }
+    }
+
+    private set_scale() {
+        const interactable_object_db = this.data.dbs.interactable_objects_db[this.key_name];
+        if (this.scale_x !== undefined) {
+            this.sprite.scale.x = interactable_object_db.scale_x;
+        } else if (interactable_object_db.scale_x !== undefined) {
+            this.sprite.scale.x = interactable_object_db.scale_x;
+        }
+        if (this.scale_y !== undefined) {
+            this.sprite.scale.y = interactable_object_db.scale_y;
+        } else if (interactable_object_db.scale_y !== undefined) {
+            this.sprite.scale.y = interactable_object_db.scale_y;
+        }
+    }
+
     private creating_blocking_stair_block() {
         const target_layer = this.base_collision_layer + this.block_climb_collision_layer_shift;
         const x_pos = (this.current_x + 0.5) * this.data.map.tile_width;
@@ -269,31 +297,12 @@ export class InteractableObjects {
         if (interactable_object_db.send_to_back !== undefined) {
             this.sprite.send_to_back = interactable_object_db.send_to_back;
         }
-        if (this.anchor_x !== undefined) {
-            this.sprite.anchor.x = interactable_object_db.anchor_x;
-        } else if (interactable_object_db.anchor_x !== undefined) {
-            this.sprite.anchor.x = interactable_object_db.anchor_x;
-        }
-        if (this.anchor_y !== undefined) {
-            this.sprite.anchor.y = interactable_object_db.anchor_y;
-        } else if (interactable_object_db.anchor_y !== undefined) {
-            this.sprite.anchor.y = interactable_object_db.anchor_y;
-        }
-        if (this.scale_x !== undefined) {
-            this.sprite.scale.x = interactable_object_db.scale_x;
-        } else if (interactable_object_db.scale_x !== undefined) {
-            this.sprite.scale.x = interactable_object_db.scale_x;
-        }
-        if (this.scale_y !== undefined) {
-            this.sprite.scale.y = interactable_object_db.scale_y;
-        } else if (interactable_object_db.scale_y !== undefined) {
-            this.sprite.scale.y = interactable_object_db.scale_y;
-        }
+        this.set_anchor();
+        this.set_scale();
         const shift_x = interactable_object_db.shift_x ?? 0;
         const shift_y = interactable_object_db.shift_y ?? 0;
-        this.sprite.centerX = (this.x + 1) * map.tile_width + shift_x;
-        const anchor_shift = this.sprite.anchor.y * map.tile_width * 0.5;
-        this.sprite.centerY = this.y * map.tile_width - anchor_shift + shift_y;
+        this.sprite.x = (this.x + 0.5) * map.tile_width + shift_x;
+        this.sprite.y = (this.y + 0.5) * map.tile_height + shift_y;
         this.sprite_info.setAnimation(this.sprite, this.key_name);
         const initial_animation = interactable_object_db.initial_animation;
         const anim_key = this.sprite_info.getAnimationKey(this.key_name, initial_animation);
@@ -545,10 +554,10 @@ export class InteractableObjects {
 
     config_body() {
         const db = this.data.dbs.interactable_objects_db[this.key_name];
-        if (db.body_radius === 0) return;
+        if (db.body_radius === 0 || this.base_collision_layer < 0) return;
         const collision_groups = this.data.collision.interactable_objs_collision_groups;
         this.game.physics.p2.enable(this.sprite, false);
-        this.sprite.anchor.y = db.anchor_y; //Important to be after the previous command
+        this.set_anchor(); //Important to be after the previous command
         this.sprite.body.clearShapes();
         const width = db.body_radius << 1;
         const polygon = mount_collision_polygon(width, -(width >> 1), db.collision_body_bevel);

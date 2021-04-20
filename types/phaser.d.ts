@@ -4840,7 +4840,6 @@ declare module Phaser {
         base_collision_layer: number;
         disableRoundPx: boolean;
         roundPx: boolean;
-        y_sort: number;
         sort_function: Function;
         send_to_back: boolean;
         send_to_front: boolean;

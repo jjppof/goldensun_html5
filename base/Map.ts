@@ -154,7 +154,6 @@ export class Map {
         const send_to_front_list = new Array(this.data.npc_group.children.length);
         const has_sort_function = new Array(this.data.npc_group.children.length);
         this.data.npc_group.children.forEach((sprite: Phaser.Sprite, index) => {
-            sprite.y_sort = +`${sprite.base_collision_layer}${sprite.y | 0}`;
             if (sprite.sort_function) {
                 has_sort_function[index] = sprite;
                 return;
@@ -166,7 +165,19 @@ export class Map {
                 return;
             }
         });
-        this.data.npc_group.sort("y_sort", Phaser.Group.SORT_ASCENDING);
+        this.data.npc_group.customSort((a, b) => {
+            if (a.base_collision_layer < b.base_collision_layer) {
+                return -1;
+            } else if (a.base_collision_layer > b.base_collision_layer) {
+                return 1;
+            } else {
+                if (a.y < b.y) {
+                    return -1;
+                } else if (a.y > b.y) {
+                    return 1;
+                }
+            }
+        });
         send_to_front_list.forEach(sprite => {
             if (sprite) {
                 this.data.npc_group.bringToTop(sprite);

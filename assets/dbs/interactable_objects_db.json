@@ -1,6 +1,7 @@
 [
     {
         "key_name": "pillar",
+        "anchor_x": 0.5,
         "anchor_y": 0.8,
         "body_radius": 7.0,
         "psynergy_keys": {
@@ -29,6 +30,7 @@
         }
     },{
         "key_name": "entangled_pillar",
+        "anchor_x": 0.5,
         "anchor_y": 0.8,
         "body_radius": 7.0,
         "psynergy_keys": {
@@ -71,8 +73,7 @@
         }
     },{
         "key_name": "frost_pool",
-        "shift_x": 8,
-        "shift_y": -8,
+        "anchor_x": 0.5,
         "anchor_y": 0.85,
         "body_radius": 7.0,
         "send_to_back": true,
@@ -109,8 +110,6 @@
         "key_name": "growth",
         "anchor_y": 0.8,
         "anchor_x": 0.5,
-        "shift_x": -8,
-        "shift_y": -6,
         "body_radius": 0,
         "psynergy_keys": {
             "growth": {
@@ -139,8 +138,7 @@
         }
     },{
         "key_name": "rock_pound_pillar",
-        "shift_x": 4,
-        "shift_y": -5,
+        "anchor_x": 0.5,
         "anchor_y": 0.9,
         "scale_x": 0.75,
         "scale_y": 0.78,
@@ -172,8 +170,7 @@
         }
     },{
         "key_name": "wood_pound_pillar",
-        "shift_x": 4,
-        "shift_y": -5,
+        "anchor_x": 0.5,
         "anchor_y": 0.9,
         "scale_x": 0.75,
         "scale_y": 0.78,

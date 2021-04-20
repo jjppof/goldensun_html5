@@ -307,12 +307,10 @@ export abstract class ControllableChar {
         const shadow_anchor_y = options?.shadow_anchor_y ?? ControllableChar.DEFAULT_SHADOW_ANCHOR_Y;
         this.shadow = group.create(0, 0, key_name);
         this.shadow.sort_function = () => {
-            let shadow_index = this.data.npc_group.getChildIndex(this.sprite) - 1;
-            if (shadow_index >= -1 && shadow_index < this.data.npc_group.children.length) {
-                if (shadow_index === -1) {
-                    shadow_index = 0;
-                }
-                this.data.npc_group.setChildIndex(this.shadow, shadow_index);
+            if (this.data.npc_group.getChildIndex(this.shadow) > this.data.npc_group.getChildIndex(this.sprite)) {
+                this.data.npc_group.setChildIndex(this.shadow, this.data.npc_group.getChildIndex(this.sprite));
+            } else {
+                this.data.npc_group.setChildIndex(this.shadow, this.data.npc_group.getChildIndex(this.sprite) - 1);
             }
         };
         if (!this.active) {
