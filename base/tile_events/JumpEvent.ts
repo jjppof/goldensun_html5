@@ -46,29 +46,24 @@ export class JumpEvent extends TileEvent {
             return;
         }
         let jump_offset = JUMP_OFFSET;
-        let direction;
         let jump_direction;
         let next_position = {x: this.x, y: this.y};
         let side_position = {x: this.x, y: this.y};
         if (this.data.hero.current_direction === directions.left) {
             jump_offset = -jump_offset;
-            direction = "x";
             next_position.x -= 2;
             side_position.x -= 1;
             jump_direction = directions.left;
         } else if (this.data.hero.current_direction === directions.right) {
-            direction = "x";
             next_position.x += 2;
             side_position.x += 1;
             jump_direction = directions.right;
         } else if (this.data.hero.current_direction === directions.up) {
             jump_offset = -jump_offset;
-            direction = "y";
             next_position.y -= 2;
             side_position.y -= 1;
             jump_direction = directions.up;
         } else if (this.data.hero.current_direction === directions.down) {
-            direction = "y";
             next_position.y += 2;
             side_position.y += 1;
             jump_direction = directions.down;
@@ -166,34 +161,22 @@ export class JumpEvent extends TileEvent {
         this._origin_interactable_object = null;
     }
 
+    /**
+     * This function creates and destroys collision bodies arround jump events while the hero
+     * walks over them. The collision bodies will be created only if the hero is going towards
+     * a dynamic jump event.
+     */
     create_collision_bodies_around_jump_events() {
         const current_pos = {x: this.data.hero.tile_x_pos, y: this.data.hero.tile_y_pos};
         const surroundings = get_surroundings(current_pos.x, current_pos.y, true);
-        let right_direction = false;
-        const possible_directions = split_direction(this.data.hero.current_direction);
-        //this for is used to check whether the hero is going towards the event activation directions
-        for (let i = 0; i < possible_directions.length; ++i) {
-            let is_possible = this.activation_directions.includes(possible_directions[i]);
-            const possible_pos = _.find(surroundings, {direction: possible_directions[i]});
-            const possible_pos_key = LocationKey.get_key(possible_pos.x, possible_pos.y);
-            if (possible_pos_key in this.data.map.events) {
-                //this for is used to check whether a possible direction is a valid position
-                //because hero can walk over jump events that are set
-                for (let j = 0; j < this.data.map.events[possible_pos_key].length; ++j) {
-                    const surrounding_event = this.data.map.events[possible_pos_key][j];
-                    if (
-                        surrounding_event.type === event_types.JUMP &&
-                        !(surrounding_event as JumpEvent).is_set &&
-                        surrounding_event.activation_collision_layers.includes(this.data.map.collision_layer)
-                    ) {
-                        is_possible = false;
-                        break;
-                    }
-                }
-            }
-            right_direction = right_direction || is_possible;
-        }
 
+        //possible directions that the hero is going
+        const possible_directions = split_direction(
+            this.data.hero.required_direction ?? this.data.hero.current_direction
+        );
+        const on_event_direction = _.intersection(possible_directions, this.activation_directions).length;
+
+        //just a function the clear the collision bodies created dynamically
         const clear_bodies = () => {
             this.data.collision.enable_map_collision();
             for (let j = 0; j < this.data.collision.dynamic_jump_events_bodies.length; ++j) {
@@ -202,71 +185,81 @@ export class JumpEvent extends TileEvent {
             this.data.collision.dynamic_jump_events_bodies = [];
         };
 
-        let concat_keys = String(LocationKey.get_key(this.data.hero.tile_x_pos, this.data.hero.tile_y_pos));
-        const bodies_positions = [];
+        //this variable will be used to identify a set of collision bodies created for this particular hero position/situation
+        let concatenated_position_keys = String(
+            LocationKey.get_key(this.data.hero.tile_x_pos, this.data.hero.tile_y_pos)
+        );
+        const bodies_positions: ReturnType<typeof get_surroundings>[] = [];
         let at_least_one_dynamic_and_not_diag = false;
+        let at_least_one_dynamic_and_not_diag_any_direction = false;
+        let on_dynamic_event_direction = false;
         for (let i = 0; i < surroundings.length; ++i) {
-            //this for is used to find surrounding jump events.
-            //collision events should not be created over these events.
+            //this for is used to find surrounding jump events that are set and in the same collision layer.
+            //collision bodies should not be created over these events.
             const surrounding_key = LocationKey.get_key(surroundings[i].x, surroundings[i].y);
             if (surrounding_key in this.data.map.events) {
                 for (let j = 0; j < this.data.map.events[surrounding_key].length; ++j) {
                     const surrounding_event = this.data.map.events[surrounding_key][j];
-                    if (
-                        surrounding_event.type === event_types.JUMP &&
-                        right_direction &&
-                        (surrounding_event as JumpEvent).is_set &&
-                        surrounding_event.activation_collision_layers.includes(this.data.map.collision_layer)
-                    ) {
-                        if ((surrounding_event.dynamic || this.dynamic) && !surroundings[i].diag) {
-                            //needs at least one non diagonal position in order to create the collision bodies
-                            at_least_one_dynamic_and_not_diag = true;
+                    if (surrounding_event.type === event_types.JUMP && (surrounding_event as JumpEvent).is_set) {
+                        if (surrounding_event.dynamic && !surroundings[i].diag) {
+                            at_least_one_dynamic_and_not_diag_any_direction = true;
                         }
-                        const side_event_surroundings = get_surroundings(surroundings[i].x, surroundings[i].y, false);
-                        bodies_positions.push(side_event_surroundings);
-                        concat_keys = `${concat_keys}/${surrounding_key}`;
+                        if (
+                            on_event_direction &&
+                            surrounding_event.activation_collision_layers.includes(this.data.map.collision_layer)
+                        ) {
+                            const going_toward_dynamic_event =
+                                surrounding_event.dynamic && possible_directions.includes(surroundings[i].direction);
+                            if ((this.dynamic || going_toward_dynamic_event) && !surroundings[i].diag) {
+                                //needs at least one non diagonal positioned dynamic event in order to create the collision bodies
+                                at_least_one_dynamic_and_not_diag = true;
+                                on_dynamic_event_direction ||= going_toward_dynamic_event;
+                            }
+                            const side_event_surroundings = get_surroundings(
+                                surroundings[i].x,
+                                surroundings[i].y,
+                                false
+                            );
+                            bodies_positions.push(side_event_surroundings);
+                            concatenated_position_keys = `${concatenated_position_keys}/${surrounding_key}`;
+                        }
                     }
                 }
             }
         }
+        //check whether this set of bodies already exists and
+        //at least one non diagonal positioned dynamic event is in this set
         if (
-            !this.data.tile_event_manager.walking_on_pillars_tiles.has(concat_keys) &&
+            !this.data.tile_event_manager.walking_on_pillars_tiles.has(concatenated_position_keys) &&
             at_least_one_dynamic_and_not_diag
         ) {
             this.data.tile_event_manager.walking_on_pillars_tiles.clear();
-            this.data.tile_event_manager.walking_on_pillars_tiles.add(concat_keys);
+            this.data.tile_event_manager.walking_on_pillars_tiles.add(concatenated_position_keys);
             clear_bodies();
 
             //using Set to get unique positions and dont create bodies in same location
-            const bodies_position = new Set(
+            const bodies_location_keys = new Set(
                 surroundings.concat(...bodies_positions).map(pos => LocationKey.get_key(pos.x, pos.y))
             );
-            concat_keys.split("/").forEach(key => {
+            concatenated_position_keys.split("/").forEach(key => {
                 //exclude the positions of the side jump events
-                bodies_position.delete(+key);
+                bodies_location_keys.delete(+key);
             });
 
             //the hero now will collide with the dynamic bodies that will be created
             this.data.collision.disable_map_collision();
 
-            //gets the position behind the hero (position of opposite direction)
-            let hero_opposite_dir = this.data.hero.current_direction;
-            if ((hero_opposite_dir & 1) === 1) {
-                //transforms diagonal positions in cardinal positions
-                if (this.activation_directions.includes(hero_opposite_dir - 1)) {
-                    --hero_opposite_dir;
-                } else {
-                    hero_opposite_dir = (hero_opposite_dir + 1) & 7;
-                }
-            }
-            hero_opposite_dir = get_opposite_direction(hero_opposite_dir);
-            const opposite_position = _.find(surroundings, {direction: hero_opposite_dir});
+            const hero_range = direction_range(this.data.hero.required_direction ?? this.data.hero.current_direction);
+            const hero_range_positions = surroundings.filter(surrounding => hero_range.includes(surrounding.direction));
 
             //creates the collision bodies
-            bodies_position.forEach(key => {
+            bodies_location_keys.forEach(key => {
                 const pos = LocationKey.get_pos(key);
-                if (pos.x === opposite_position.x && pos.y === opposite_position.y && !this.dynamic) {
-                    //collision bodies should not be created behind the hero
+                if (
+                    !hero_range_positions.filter(range_pos => range_pos.x === pos.x && range_pos.y === pos.y).length &&
+                    !this.dynamic
+                ) {
+                    //collision bodies should not be created out of the hero current direction range
                     return;
                 }
                 const x_pos = (pos.x + 0.5) * this.data.map.tile_width;
@@ -286,13 +279,21 @@ export class JumpEvent extends TileEvent {
                 this.data.collision.dynamic_jump_events_bodies.push(body);
             });
         }
-        if (!this.dynamic && !right_direction && this.data.tile_event_manager.walking_on_pillars_tiles.size) {
+        //if there are dynamic collision bodies created, the current event is not dynamic and the hero is not going
+        //toward a dynamic jump event, the dynamic collision bodies are removed.
+        if (
+            !this.dynamic &&
+            !on_dynamic_event_direction &&
+            this.data.tile_event_manager.walking_on_pillars_tiles.size
+        ) {
             const event_x = (this.x + 0.5) * this.data.map.tile_width;
             const event_y = (this.y + 0.5) * this.data.map.tile_height;
+            //calculates the minimal distance to clear the collision bodies
             const distance_to_clear = this.data.map.tile_width / 4;
 
-            //calculates the minimal distance to clear the collision bodies
-            let clear_bodies_flag = false;
+            //if there are no dynamic jump arrounds, no need to consider minimal distance, just remove the bodies
+            let clear_bodies_flag = !at_least_one_dynamic_and_not_diag_any_direction;
+
             if (
                 this.activation_directions.includes(directions.up) &&
                 !_.intersection(possible_directions, direction_range(directions.up)).length
