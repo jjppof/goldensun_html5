@@ -2957,8 +2957,8 @@ declare module Phaser {
         constructor(game: Phaser.Game, x: number, y: number, key?: any, frame?: any);
 
         fresh: boolean;
+        onEmit: () => void;
 
-        onEmit(): void;
         reset(x: number, y: number, health?: number): Phaser.Particle;
         setAlphaData(data: any[]): void;
         setScaleData(data: any[]): void;

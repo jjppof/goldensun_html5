@@ -148,7 +148,9 @@ export class Map {
         return this.sprite.properties?.real_tile_height ?? this.sprite.tileHeight;
     }
 
-    //sort the sprites in the map by z index depending on hero position
+    /**
+     * Sorts the sprites in the GoldenSun.npc_group by y position and collision layer.
+     */
     sort_sprites() {
         const send_to_back_list = new Array(this.data.npc_group.children.length);
         const send_to_front_list = new Array(this.data.npc_group.children.length);
@@ -195,12 +197,11 @@ export class Map {
         });
     }
 
-    private freeze_body() {
-        this.collision_sprite.body.velocity.y = this.collision_sprite.body.velocity.x = 0;
-    }
-
+    /**
+     * The map update function.
+     */
     update() {
-        this.freeze_body();
+        this.collision_sprite.body.velocity.y = this.collision_sprite.body.velocity.x = 0;
         this.npcs.forEach(npc => {
             if (npc.active) {
                 npc.update();
@@ -211,7 +212,9 @@ export class Map {
         this.zone_check();
     }
 
-    //if it's a world map, rotates de map on hero movement
+    /**
+     * If it's a world map, rotates the map on hero movement start.
+     */
     private update_map_rotation() {
         if (this.is_world_map) {
             const value_check =
@@ -225,7 +228,10 @@ export class Map {
         }
     }
 
-    //pause map activity, like collisions, npc and interactable objects animation etc.
+    /**
+     * Pauses map activity, like collisions, npc and interactable objects animation etc.
+     * @returns return the current map state.
+     */
     pause() {
         this.sprite.pauseAnimation = true;
         const previously_inactive_npc = new Set<number>();
@@ -259,7 +265,10 @@ export class Map {
         };
     }
 
-    //resume map activity, like collisions, npc and interactable objects animation etc.
+    /**
+     * Resumes map activity, like collisions, npc and interactable objects animation etc.
+     * @param previous_state the map state when it was paused.
+     */
     resume(previous_state?: ReturnType<Map["pause"]>) {
         this.sprite.pauseAnimation = false;
         this.layers.forEach((layer, index) => {
@@ -282,6 +291,11 @@ export class Map {
         });
     }
 
+    /**
+     * Loads the map assets like tileset and background music.
+     * @param force_load if true, forces the loading process to start.
+     * @param on_complete on load complete callback.
+     */
     load_map_assets(force_load: boolean, on_complete?: () => void) {
         const promises = [];
 
@@ -317,7 +331,11 @@ export class Map {
         }
     }
 
-    //create map collision bodies
+    /**
+     * Creates and setups the map collision bodies. Collision bodies for maps may come from
+     * physics json file or object layers from a Tiled map.
+     * @param collision_layer the collsion layer index.
+     */
     config_body(collision_layer: number) {
         if (this.collision_layer !== collision_layer) {
             this._collision_layer = collision_layer;
@@ -388,7 +406,10 @@ export class Map {
         this.collision_sprite.body.static = true;
     }
 
-    //config map, npc and interactable objects collision bodies
+    /**
+     * Configs map, npc and interactable objects collision bodies.
+     * @param collision_layer the collsion layer index.
+     */
     config_all_bodies(collision_layer: number) {
         if (!this.is_world_map) {
             this.npcs.forEach(npc => npc.config_body());
@@ -397,8 +418,13 @@ export class Map {
         this.config_body(collision_layer);
     }
 
-    //returns a tile object (Phaser.Tile or Phaser.Tile[] if multiple layers) where the given ControllableChar is
-    get_current_tile(controllable_char: ControllableChar, layer?) {
+    /**
+     * Get the tiles that a ControllableChar is over.
+     * @param controllable_char the ControllableChar.
+     * @param layer if this is not specified, it's returned all tiles for the char position.
+     * @returns returns a tile object: Phaser.Tile or Phaser.Tile[] if multiple layers.
+     */
+    get_current_tile(controllable_char: ControllableChar, layer?: Map["layers"]) {
         if (layer !== undefined) {
             return this.sprite.getTile(controllable_char.tile_x_pos, controllable_char.tile_y_pos, layer);
         } else {
@@ -410,10 +436,20 @@ export class Map {
         }
     }
 
+    /**
+     * Get a specific layer.
+     * @param name the layer name.
+     * @returns return the layer.
+     */
     get_layer(name: string) {
         return _.find(this.layers, {name: name});
     }
 
+    /**
+     * Creates a tile event.
+     * @param raw_property the properties of this event still not parsed.
+     * @returns returns the event created.
+     */
     private create_tile_event(raw_property) {
         const property_info = JSON.parse(raw_property);
         const this_event_location_key = LocationKey.get_key(property_info.x, property_info.y);
