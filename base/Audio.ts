@@ -1,29 +1,59 @@
 import * as _ from "lodash";
+import {GoldenSun} from "./GoldenSun";
+import {Button} from "./XGamepad";
 
 export class Audio {
+    /** Volume step to apply upon volume altering */
+    private static readonly VOLUME_STEP = 0.1;
+    /** Volume change held threshold */
+    private static readonly VOLUME_ALTER_LOOP_TIME = 100;
+    /** Default bgm volume */
+    private static readonly DEFAULT_BGM_VOLUME = 0.6;
+
     private game: Phaser.Game;
+    private data: GoldenSun;
     private se_data: {[se_key: string]: Phaser.AudioSprite} = {};
     private current_bgm: Phaser.Sound = null;
     private bgm_volume: number;
 
-    constructor(game: Phaser.Game) {
+    constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
+        this.data = data;
     }
-
-    /** Volume step to apply upon volume altering */
-    public static readonly VOLUME_STEP = 0.1;
-    /** Volume change held threshold */
-    public static readonly VOLUME_ALTER_LOOP_TIME = 100;
-    /** Default bgm volume */
-    public static readonly DEFAULT_BGM_VOLUME = 0.6;
 
     /**
      * Changes the game volume.
      * @param {number} delta - Delta to apply to the volume
      * @return {number} Final game volume
      */
-    alter_volume(delta: number) {
+    private alter_volume(delta: number) {
         return (this.game.sound.volume = _.clamp(this.game.sound.volume + delta, 0, 1));
+    }
+
+    /**
+     * Initialize mute and volume alter controls.
+     */
+    initialize_controls() {
+        const controls = [
+            {
+                button: Button.MUTE,
+                on_down: () => {
+                    this.game.sound.context.resume();
+                    this.game.sound.mute = !this.game.sound.mute;
+                },
+            },
+            {
+                button: Button.VOL_UP,
+                on_down: () => this.alter_volume(+Audio.VOLUME_STEP),
+                params: {loop_time: Audio.VOLUME_ALTER_LOOP_TIME},
+            },
+            {
+                button: Button.VOL_DOWN,
+                on_down: () => this.alter_volume(-Audio.VOLUME_STEP),
+                params: {loop_time: Audio.VOLUME_ALTER_LOOP_TIME},
+            },
+        ];
+        this.data.control_manager.add_controls(controls, {persist: true});
     }
 
     add_se(se_key: string) {

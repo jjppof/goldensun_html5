@@ -448,9 +448,9 @@ export class Map {
     /**
      * Creates a tile event.
      * @param raw_property the properties of this event still not parsed.
-     * @returns returns the event created.
+     * @returns returns the created event.
      */
-    private create_tile_event(raw_property) {
+    private create_tile_event(raw_property: string) {
         const property_info = JSON.parse(raw_property);
         const this_event_location_key = LocationKey.get_key(property_info.x, property_info.y);
         if (!(this_event_location_key in this.events)) {
@@ -461,6 +461,12 @@ export class Map {
         return event;
     }
 
+    /**
+     * Creates a NPC.
+     * @param properties the properties of this NPC, parsed or not.
+     * @param not_parsed whether the properties are parsed or not.
+     * @returns returns the created npc.
+     */
     private create_npc(properties: any, not_parsed: boolean = true) {
         const property_info = not_parsed ? JSON.parse(properties) : properties;
         const npc_db = this.data.dbs.npc_db[property_info.key_name];
@@ -516,7 +522,12 @@ export class Map {
         return npc;
     }
 
-    private create_interactable_object(raw_property) {
+    /**
+     * Creates an interactable object.
+     * @param raw_property the properties of this interactable object still not parsed.
+     * @returns return the created interactable object.
+     */
+    private create_interactable_object(raw_property: string) {
         const property_info = JSON.parse(raw_property);
         const interactable_object = new InteractableObjects(
             this.game,
@@ -540,6 +551,9 @@ export class Map {
         return interactable_object;
     }
 
+    /**
+     * Initializes all the interactable objects of this map.
+     */
     private config_interactable_object() {
         for (let i = 0; i < this.interactable_objects.length; ++i) {
             const interactable_object = this.interactable_objects[i];
@@ -548,13 +562,18 @@ export class Map {
         }
     }
 
+    /**
+     * Initializes all the NPCs of this map.
+     */
     private config_npc() {
         for (let i = 0; i < this.npcs.length; ++i) {
             this.npcs[i].init_npc(this);
         }
     }
 
-    //create layers and organize them by z index
+    /**
+     * Creates and initializes the map layers.
+     */
     private config_layers() {
         for (let i = 0; i < this.layers.length; ++i) {
             const layer = this.sprite.createLayer(this.layers[i].name);
@@ -591,8 +610,10 @@ export class Map {
         }
     }
 
-    //reorganize the existing layers. This can be called after changing the collision layer, for instance.
-    reorganize_layers() {
+    /**
+     * Resets the existing layers. This can be called after changing the collision layer, for instance.
+     */
+    reset_layers() {
         for (let i = 0; i < this.layers.length; ++i) {
             const layer = this.layers[i];
             if (layer.properties.over !== undefined) {
@@ -633,7 +654,9 @@ export class Map {
         }
     }
 
-    //check whether it's time to start a random battle
+    /**
+     * Checks whether it's time to start a random battle.
+     */
     private zone_check() {
         if (
             !this.encounter_zones.length ||
@@ -699,7 +722,11 @@ export class Map {
         }
     }
 
-    //calculates whether it's time to start a battle
+    /**
+     * Calculates whether it's time to start a random battle.
+     * @param zone_base_rate the encounter finding rate of the current battle zone.
+     * @returns returns true if it's time to start a random battle.
+     */
     private start_battle_encounter(zone_base_rate: number) {
         const a = (_.random(0xffff) - _.random(0xffff) + _.random(0xffff) - _.random(0xffff)) >> 1;
         const avg_level = this.data.info.party_data.avg_level;
@@ -723,7 +750,11 @@ export class Map {
         }
     }
 
-    //gets a djinn in map after a battle
+    /**
+     * Creates a NPC representing the djinn to be gotten and a game event to get this djinn.
+     * @param djinn_key the djinn key to be gotten.
+     * @returns return the fire event function of the DjinnEvent instance created in this function.
+     */
     private get_djinn_on_world_map(djinn_key: string) {
         const djinn = this.data.info.djinni_list[djinn_key];
         const npc = this.create_npc(
@@ -748,7 +779,11 @@ export class Map {
         return npc.events[0].fire.bind(npc.events[0], npc);
     }
 
-    //remove a tile event in a custom location
+    /**
+     * Removes a tile event in a custom location.
+     * @param location_key the LocationKey of the event.
+     * @param event_id the id of the event.
+     */
     remove_event(location_key: number, event_id: number) {
         this.events[location_key] = this.events[location_key].filter(event => event.id !== event_id);
         if (!this.events[location_key].length) {
@@ -756,7 +791,11 @@ export class Map {
         }
     }
 
-    //this is the main function of this class. It mounts the map
+    /**
+     * This is the main function of this class. It mounts the map.
+     * @param collision_layer the initial collision layer.
+     * @returns returns the mounted map.
+     */
     async mount_map(collision_layer: number) {
         if (!this.assets_loaded) {
             //lazy assets load
@@ -865,6 +904,9 @@ export class Map {
         return this;
     }
 
+    /**
+     * Initializes some world map custom features of this map in the case it's a world map.
+     */
     private config_world_map() {
         let next_body_radius = numbers.HERO_BODY_RADIUS;
         if (this.is_world_map) {
@@ -907,6 +949,9 @@ export class Map {
         }
     }
 
+    /**
+     * Unsets this map.
+     */
     unset_map() {
         this.sprite.destroy();
         this.data.underlayer_group.removeAll();

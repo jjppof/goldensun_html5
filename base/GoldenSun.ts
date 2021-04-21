@@ -36,19 +36,44 @@ export class GoldenSun {
     public assets_loaded: boolean = false;
 
     //game objects
-    public hero: Hero = null; //class responsible for the control of the main hero
-    public collision: Collision = null; //class responsible for the collision system
-    public debug: Debug = null; //class responsible for the debug systems
-    public main_menu: MainMenu = null; //class responbible for the main menu
-    public shop_menu: ShopMenu = null; //class responsible for the shop system
-    public inn_menu: InnMenu = null; //class responsible for the inn system
-    public map: Map = null; //the current active map
-    public tile_event_manager: TileEventManager = null; //class responsible for the tile events
-    public game_event_manager: GameEventManager = null; //class responsible for the game events
-    public battle_instance: Battle = null; //class responsible for a battle
-    public audio: Audio = null; //class responsible for controlling the game audio engine
-    public storage: Storage = null; //class responsible for storing the game custom states
-    public camera: Camera = null; //class responsible for some specific camera features for this engine
+    /** Class responsible for the control of the main hero */
+    public hero: Hero = null;
+
+    /** Class responsible for the collision system */
+    public collision: Collision = null;
+
+    /** Class responsible for the debug systems */
+    public debug: Debug = null;
+
+    /** Class responbible for the main menu */
+    public main_menu: MainMenu = null;
+
+    /** Class responsible for the shop system */
+    public shop_menu: ShopMenu = null;
+
+    /** Class responsible for the inn system */
+    public inn_menu: InnMenu = null;
+
+    /** The current active map */
+    public map: Map = null;
+
+    /** Class responsible for the tile events */
+    public tile_event_manager: TileEventManager = null;
+
+    /** Class responsible for the game events */
+    public game_event_manager: GameEventManager = null;
+
+    /** Class responsible for a battle */
+    public battle_instance: Battle = null;
+
+    /** Class responsible for controlling the game audio engine */
+    public audio: Audio = null;
+
+    /** Class responsible for storing the game custom states */
+    public storage: Storage = null;
+
+    /** Class responsible for some specific camera features for this engine */
+    public camera: Camera = null;
 
     //managers
     public control_manager: ControlManager = null;
@@ -116,7 +141,7 @@ export class GoldenSun {
         load_databases(this.game, this.dbs);
 
         //init audio engine
-        this.audio = new Audio(this.game);
+        this.audio = new Audio(this.game, this);
 
         //init camera custom features
         this.camera = new Camera(this.game);
@@ -202,6 +227,7 @@ export class GoldenSun {
         this.assets_loaded = true;
         this.game.camera.resetFX();
 
+        this.audio.initialize_controls();
         this.initialize_utils_controls();
     }
 
@@ -253,13 +279,6 @@ export class GoldenSun {
                 on_down: () => setup_scale(3),
             },
             {
-                button: Button.MUTE,
-                on_down: () => {
-                    this.game.sound.context.resume();
-                    this.game.sound.mute = !this.game.sound.mute;
-                },
-            },
-            {
                 button: Button.PSY1,
                 on_down: () => quick_ability(0),
             },
@@ -274,16 +293,6 @@ export class GoldenSun {
             {
                 button: Button.PSY4,
                 on_down: () => quick_ability(3),
-            },
-            {
-                button: Button.VOL_UP,
-                on_down: () => this.audio.alter_volume(+Audio.VOLUME_STEP),
-                params: {loop_time: Audio.VOLUME_ALTER_LOOP_TIME},
-            },
-            {
-                button: Button.VOL_DOWN,
-                on_down: () => this.audio.alter_volume(-Audio.VOLUME_STEP),
-                params: {loop_time: Audio.VOLUME_ALTER_LOOP_TIME},
             },
         ];
         this.control_manager.add_controls(controls, {persist: true});

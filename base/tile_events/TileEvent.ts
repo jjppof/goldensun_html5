@@ -15,12 +15,10 @@ export enum event_types {
     ICE_SLIDE = "ice_slide",
 }
 
-export class LocationKey {
+export abstract class LocationKey {
     private static readonly X_MASK = 0b1111111111111100000000000000;
     private static readonly Y_MASK = 0b11111111111111;
     private static readonly POS_BITS_NUMBER = 14;
-
-    private constructor() {}
 
     static get_key(x: number, y: number) {
         return (x << LocationKey.POS_BITS_NUMBER) | y;
