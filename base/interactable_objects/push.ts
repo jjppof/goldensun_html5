@@ -70,8 +70,7 @@ export function fire_push_movement(
         if (!target_only) {
             data.hero.pushing = true;
             data.audio.play_se("actions/push");
-            data.hero.force_action(base_actions.PUSH);
-            data.hero.play_current_action();
+            data.hero.change_action(base_actions.PUSH, true);
         } else {
             data.audio.play_se("menu/positive_4");
         }
@@ -174,7 +173,7 @@ export function fire_push_movement(
                                 .onComplete.addOnce(() => {
                                     data.audio.play_se("misc/rock_drop");
                                     if (drop_tile.dust_animation) {
-                                        data.hero.force_action(base_actions.IDLE);
+                                        data.hero.change_action(base_actions.IDLE);
                                         data.hero.play(
                                             data.hero.current_action,
                                             reverse_directions[data.hero.current_direction]

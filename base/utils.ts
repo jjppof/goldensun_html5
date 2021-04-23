@@ -180,7 +180,7 @@ export function get_transition_directions(current_direction: directions, desired
  * @param italic whether the text is in italic
  * @returns
  */
-export function get_text_width(game, text, italic = false) {
+export function get_text_width(game: Phaser.Game, text: string, italic = false) {
     //get text width in px (dirty way)
     const font_name = italic ? ITALIC_FONT_NAME : FONT_NAME;
     const text_sprite = game.add.bitmapText(0, 0, font_name, text, numbers.FONT_SIZE);

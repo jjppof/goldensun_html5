@@ -248,7 +248,6 @@ export class NPC extends ControllableChar {
             npc_sprite_info,
             this.base_collision_layer,
             map,
-            map.is_world_map,
             this.anchor_x ?? npc_db.anchor_x,
             this.anchor_y ?? npc_db.anchor_y,
             this.scale_x ?? npc_db.scale_x,

@@ -939,7 +939,9 @@ export class Map {
             if (this.is_world_map) {
                 this.data.hero.sprite.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
                 this.data.hero.shadow.scale.setTo(numbers.WORLD_MAP_SPRITE_SCALE_X, numbers.WORLD_MAP_SPRITE_SCALE_Y);
-                this.data.hero.create_half_crop_mask(this.is_world_map);
+                if (this.is_world_map) {
+                    this.data.hero.create_half_crop_mask();
+                }
             } else {
                 this.data.hero.sprite.scale.setTo(1, 1);
                 this.data.hero.shadow.scale.setTo(1, 1);

@@ -61,7 +61,7 @@ export class SliderEvent extends TileEvent {
         this.data.hero.play(base_actions.JUMP, reverse_directions[directions.down], false);
         this.game.time.events.add(200, () => {
             this.data.hero.shadow.visible = false;
-            this.data.hero.force_action(base_actions.IDLE);
+            this.data.hero.change_action(base_actions.IDLE);
             this.data.hero.play(base_actions.IDLE, reverse_directions[directions.down], false);
             this.game.add
                 .tween(this.data.hero.sprite.body)

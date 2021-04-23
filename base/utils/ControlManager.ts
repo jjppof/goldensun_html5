@@ -44,22 +44,22 @@ type SimpleControlParams = {
 };
 
 export class ControlManager {
-    game: Phaser.Game;
-    gamepad: XGamepad;
-    audio: Audio;
+    private game: Phaser.Game;
+    private gamepad: XGamepad;
+    private audio: Audio;
 
-    disabled: boolean;
+    private disabled: boolean;
 
     /** Current binding set, that will be reset upon demand. */
-    current_signal_bindings: Phaser.SignalBinding[];
+    private current_signal_bindings: Phaser.SignalBinding[];
     /** Key of the current binding set. */
-    current_set_key?: number;
+    private current_set_key?: number;
     /** Every currently listening signals (binding sets). */
-    signal_bindings: {[key: number]: Phaser.SignalBinding[]};
+    private signal_bindings: {[key: number]: Phaser.SignalBinding[]};
     /** Some timer */
-    loop_start_timer: Phaser.Timer;
+    private loop_start_timer: Phaser.Timer;
     /** Some timer */
-    loop_repeat_timer: Phaser.Timer;
+    private loop_repeat_timer: Phaser.Timer;
 
     constructor(game: Phaser.Game, gamepad: XGamepad, audio: Audio) {
         this.game = game;

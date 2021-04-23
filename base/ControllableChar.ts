@@ -68,19 +68,19 @@ export abstract class ControllableChar {
     protected _current_action: string | base_actions;
     protected _current_animation: string;
 
-    /* The direction that the hero is moving. */
+    /** The direction that the char is moving. */
     protected _current_direction: number;
 
-    /* The direction determined by the input. */
+    /** The direction determined by the input. */
     protected _required_direction: number;
 
-    /* When changing directions, the char smoothly changes to the target direction. This var holds the intermediate directions. */
+    /** When changing directions, the char smoothly changes to the target direction. This var holds the intermediate directions. */
     protected _transition_direction: number;
 
-    /* The direction of the ice sliding movement that can be different of hero direction. */
+    /** The direction of the ice sliding movement that can be different of char direction. */
     protected _ice_slide_direction: number;
 
-    /* The direction that the hero is trying to push an interactable object */
+    /** The direction that the char is trying to push an interactable object */
     protected _trying_to_push_direction: number;
 
     /* misc char states */
@@ -185,6 +185,20 @@ export abstract class ControllableChar {
         return this._tile_y_pos;
     }
 
+    get x(): number {
+        return this.sprite.body ? this.sprite.body.x : this.sprite.x;
+    }
+    get y(): number {
+        return this.sprite.body ? this.sprite.body.y : this.sprite.y;
+    }
+
+    get width() {
+        return this.sprite.width;
+    }
+    get height() {
+        return this.sprite.height;
+    }
+
     get body_radius() {
         return this._body_radius;
     }
@@ -235,6 +249,11 @@ export abstract class ControllableChar {
         return this._current_animation;
     }
 
+    /**
+     * Returns whether this char is in action;
+     * @param allow_climbing if true, clibimg won't be considered.
+     * @returns Returns whether this char is in action.
+     */
     in_action(allow_climbing: boolean = false) {
         return (
             this.casting_psynergy ||
@@ -246,12 +265,22 @@ export abstract class ControllableChar {
         );
     }
 
+    /**
+     * Initializes the char sprite.
+     * @param group the group that this is char is going to be inserted.
+     * @param sprite_info the frames and animations information of this char.
+     * @param layer the collision layer that this char is.
+     * @param map the map where this char is going to be in.
+     * @param anchor_x optional x anchor value of the sprite.
+     * @param anchor_y optional y anchor value of the sprite.
+     * @param scale_x optional x scale value of the sprite.
+     * @param scale_y optional y scale value of the sprite.
+     */
     set_sprite(
         group: Phaser.Group,
         sprite_info: SpriteBase,
         layer: number,
         map: Map,
-        is_world_map: boolean = false,
         anchor_x?: number,
         anchor_y?: number,
         scale_x?: number,
@@ -270,12 +299,12 @@ export abstract class ControllableChar {
         this.sprite.y = ((this.tile_y_pos + 0.5) * map.tile_height) | 0;
         this.sprite.base_collision_layer = layer;
         this.sprite.roundPx = true;
-        if (is_world_map) {
+        if (map.is_world_map) {
             scale_x = numbers.WORLD_MAP_SPRITE_SCALE_X;
         } else if (scale_x === undefined) {
             scale_x = 1;
         }
-        if (is_world_map) {
+        if (map.is_world_map) {
             scale_y = numbers.WORLD_MAP_SPRITE_SCALE_Y;
         } else if (scale_y === undefined) {
             scale_y = 1;
@@ -283,6 +312,10 @@ export abstract class ControllableChar {
         this.sprite.scale.setTo(scale_x, scale_y);
     }
 
+    /**
+     * Reset anchor values to default.
+     * @param property define whether it is y or x anchor property.
+     */
     protected reset_anchor(property?: "x" | "y") {
         if (property !== undefined && ["x", "y"].includes(property)) {
             this.sprite.anchor[property] = ControllableChar.default_anchor[property];
@@ -292,6 +325,13 @@ export abstract class ControllableChar {
         }
     }
 
+    /**
+     * Initialize the shadow sprite of this char.
+     * @param key_name the shadow sprite key name.
+     * @param group the group where the shadow sprite is going to be inserted.
+     * @param layer the collision layer where the shadow is.
+     * @param options optional options to be set like anchor values and whether it's a world map.
+     */
     set_shadow(
         key_name: string,
         group: Phaser.Group,
@@ -325,6 +365,11 @@ export abstract class ControllableChar {
         this.shadow.scale.setTo(scale_x, scale_y);
     }
 
+    /**
+     * Activate or deactivate target looking.
+     * @param active Whether you want to activate or deactivate.
+     * @param target The target char whether this char is going keep looking.
+     */
     set_look_to_target(active: boolean, target?: ControllableChar) {
         if (active) {
             this.look_target = target;
@@ -333,6 +378,9 @@ export abstract class ControllableChar {
         }
     }
 
+    /**
+     * If this char has look target set, this function make this look to it.
+     */
     private look_to_target() {
         if (!this.look_target) return;
         const x = this.look_target.sprite.x - this.sprite.x;
@@ -342,11 +390,23 @@ export abstract class ControllableChar {
         this.set_direction(direction, true);
     }
 
+    /**
+     * Changes the collision layer of this char.
+     * @param layer the collision layer index.
+     */
     set_collision_layer(layer: number) {
         this.sprite.base_collision_layer = layer;
         this.shadow.base_collision_layer = layer;
     }
 
+    /**
+     * Plays an animation of this char.
+     * @param action the action that this char is going to doing.
+     * @param animation an specific animation of the given action that this char is going to be executing.
+     * @param start whether you want the animation to start. Otherwise it will be stopped.
+     * @param frame_rate a custom frame rate value.
+     * @returns Returns the resulting Phaser.Animation object.
+     */
     play(action?: string | base_actions, animation?: string | number, start: boolean = true, frame_rate?: number) {
         action = action ?? this.current_action;
         if (animation === null || animation === undefined) {
@@ -373,6 +433,12 @@ export abstract class ControllableChar {
         return animation_obj;
     }
 
+    /**
+     * Returns if this char is enough close to a target char.
+     * @param target_char The target char.
+     * @param distance the minimal distance to be considered as close.
+     * @returns Returns whether it's close or not.
+     */
     is_close(target_char: ControllableChar, distance: number) {
         const reference_angle = (8 - this.transition_direction) * numbers.degree45;
         let lower_limit = reference_angle - ControllableChar.INTERACTION_RANGE_ANGLE;
@@ -395,6 +461,9 @@ export abstract class ControllableChar {
         return angle_condition && distance_condition;
     }
 
+    /**
+     * Sets this char direction from its speed values.
+     */
     private choose_direction_by_speed() {
         if (this.x_speed === 0 && this.y_speed === 0) {
             this._required_direction = null;
@@ -405,6 +474,11 @@ export abstract class ControllableChar {
         this._transition_direction = this.required_direction;
     }
 
+    /**
+     * Makes this char to face a given direction.
+     * @param direction the direction to be faced.
+     * @param time_between_frames time interval between transition directions.
+     */
     async face_direction(direction: number, time_between_frames: number = 40) {
         let transition_resolve;
         const transition_promise = new Promise(resolve => (transition_resolve = resolve));
@@ -423,19 +497,32 @@ export abstract class ControllableChar {
         await transition_promise;
     }
 
+    /**
+     * Makes this char to jump vertically or to a specific destination.
+     */
     async jump(options: {
+        /** A time to wait on jump finish in ms. */
         time_on_finish?: number;
+        /** The height of the jump in px. */
         jump_height?: number;
+        /** The duration of the jump in ms. */
         duration?: number;
         dest?: {
+            /** The x tile position destination. */
             tile_x?: number;
+            /** The y tile position destination. */
             tile_y?: number;
+            /** The jump distance the this char will perform. */
             distance?: number;
         };
+        /** The direction that the char is going to be while jumping. */
         jump_direction?: directions;
+        /** The sound effect to play while jumping. */
         sfx_key?: string;
+        /** Whether the camera should follow this char while jumping or not. */
         camera_follow?: boolean;
-        bounce?: boolean; //only for vertical jumps
+        /** Whether the char will bounce on jump finish. Only for vertical jumps. */
+        bounce?: boolean;
     }) {
         const duration = options?.duration ?? 65;
         const jump_height = options?.jump_height ?? 12;
@@ -448,18 +535,19 @@ export abstract class ControllableChar {
             current_camera_target = this.data.camera.unfollow();
         }
         if (options?.dest?.distance) {
+            //jumps that has a target position.
             const axis: "x" | "y" = options.dest.tile_x === this.tile_x_pos ? "y" : "x";
             const tween_obj: {x?: number; y?: number | number[]} = {
                 [axis]: this.sprite[axis] + options.dest.distance,
             };
-            const hero_x = this.data.map.tile_width * (options.dest.tile_x + 0.5);
-            const hero_y = this.data.map.tile_height * (options.dest.tile_y + 0.5);
+            const char_x = this.data.map.tile_width * (options.dest.tile_x + 0.5);
+            const char_y = this.data.map.tile_height * (options.dest.tile_y + 0.5);
             const half_height = jump_height >> 1;
             const jump_direction = options.jump_direction ?? this.current_direction;
             if (axis === "x") {
-                tween_obj.y = [hero_y - half_height, hero_y - jump_height, hero_y - half_height, hero_y];
+                tween_obj.y = [char_y - half_height, char_y - jump_height, char_y - half_height, char_y];
             } else {
-                tween_obj.x = hero_x;
+                tween_obj.x = char_x;
             }
             this.game.physics.p2.pause();
             this.jumping = true;
@@ -478,8 +566,8 @@ export abstract class ControllableChar {
                 .to(tween_obj, duration, Phaser.Easing.Linear.None, true)
                 .onComplete.addOnce(() => {
                     if (this.shadow) {
-                        this.shadow.x = hero_x;
-                        this.shadow.y = hero_y;
+                        this.shadow.x = char_x;
+                        this.shadow.y = char_y;
                         this.shadow.visible = true;
                     }
                     if (this.sprite_info.hasAction(base_actions.JUMP)) {
@@ -503,6 +591,7 @@ export abstract class ControllableChar {
                     }
                 }, this);
         } else {
+            //jumps the happens in current char position.
             const bounce = options?.bounce ?? false;
             const yoyo = !bounce;
             const previous_shadow_state = this.shadow_following;
@@ -543,10 +632,17 @@ export abstract class ControllableChar {
         }
     }
 
+    /**
+     * Shakes this char by changing its scale.
+     */
     async shake(options?: {
+        /** How many times the char should shake */
         repeats_number?: number;
+        /** Duration of each shake */
         repeat_period?: number;
+        /** If true, the char will shake horizontally */
         side_shake?: boolean;
+        /** Max scale multiplier */
         max_scale_mult?: number;
     }) {
         const repeats_number = options?.repeats_number ?? 7;
@@ -570,15 +666,24 @@ export abstract class ControllableChar {
         await promise;
     }
 
-    set_frame(direction: number, frame_index: number = 0) {
-        const frame_name = this.sprite_info.getFrameName(
-            this.current_action,
-            reverse_directions[direction],
-            frame_index
-        );
+    /**
+     * Set a specific frame for this char.
+     * @param animation the animation or direction of the target frame.
+     * @param frame_index the frame index.
+     * @param action the action of the target frame.
+     */
+    set_frame(animation: string | directions, frame_index: number = 0, action?: string) {
+        const this_animation = typeof animation === "string" ? animation : reverse_directions[animation];
+        action = action ?? this.current_action;
+        const frame_name = this.sprite_info.getFrameName(action, this_animation, frame_index);
         this.sprite.frameName = frame_name;
     }
 
+    /**
+     * Activates or deactivates this char rotation on z-axis.
+     * @param rotate if true, activates the rotation.
+     * @param interframe_interval frame change rate interval in ms. -1 to change every frame.
+     */
     set_rotation(rotate: boolean, interframe_interval: number = -1) {
         this._rotating = rotate;
         if (this._rotating) {
@@ -587,6 +692,9 @@ export abstract class ControllableChar {
         }
     }
 
+    /**
+     * Rotates the char on z-axis.
+     */
     private rotate() {
         if (this._rotating) {
             if (this._rotating_interval === -1 || this._rotating_elapsed > this._rotating_interval) {
@@ -598,12 +706,17 @@ export abstract class ControllableChar {
         }
     }
 
+    /** Update function in the game is in event state. */
     update_on_event() {
         if (!this.active) return;
         this.look_to_target();
         this.rotate();
     }
 
+    /**
+     * Updates the char movement.
+     * @param ignore_collide_action_change if true, ignores the collision impact on movement
+     */
     update_movement(ignore_collide_action_change: boolean = false) {
         if (!this.active) return;
         if (ignore_collide_action_change) {
@@ -619,6 +732,9 @@ export abstract class ControllableChar {
         this.update_shadow();
     }
 
+    /**
+     * The update function for the shadow sprite.
+     */
     update_shadow() {
         if (!this.shadow || !this.shadow_following || !this.active) return;
         if (this.sprite.body) {
@@ -630,18 +746,25 @@ export abstract class ControllableChar {
         }
     }
 
-    create_half_crop_mask(is_world_map: boolean = false) {
-        if (is_world_map) {
-            this.sprite.mask = this.game.add.graphics(
-                this.sprite.centerX - (this.sprite.width >> 1),
-                this.sprite.centerY - (this.sprite.height >> 1)
-            );
-            this.sprite.mask.beginFill(0xffffff, 1);
-            this.sprite.mask.drawRect(0, 0, this.sprite.width, this.sprite.height);
-            this.sprite.mask.endFill();
-        }
+    /**
+     * Creates an cropping mask for the lower half of the char when it's in a tile
+     * that has the half_crop property set to true.
+     */
+    create_half_crop_mask() {
+        this.sprite.mask = this.game.add.graphics(
+            this.sprite.centerX - (this.sprite.width >> 1),
+            this.sprite.centerY - (this.sprite.height >> 1)
+        );
+        this.sprite.mask.beginFill(0xffffff, 1);
+        this.sprite.mask.drawRect(0, 0, this.sprite.width, this.sprite.height);
+        this.sprite.mask.endFill();
     }
 
+    /**
+     * Sets or unsets the the cropping mask.
+     * @param crop if true, sets the cropping mask.
+     * @param force forces the setting/unsetting action.
+     */
     private set_half_crop_mask(crop: boolean, force: boolean = false) {
         if (crop && (!this.crop_texture || force)) {
             this.sprite.mask.clear();
@@ -660,6 +783,10 @@ export abstract class ControllableChar {
         }
     }
 
+    /**
+     * Checks whether is necessary to set or unset the cropping mask.
+     * @param force if true, forces the setting/unsetting action.
+     */
     private check_half_crop_tile(force: boolean = false) {
         const tiles = this.data.map.get_current_tile(this) as Phaser.Tile[];
         for (let i = 0; i < tiles.length; ++i) {
@@ -672,6 +799,10 @@ export abstract class ControllableChar {
         this.set_half_crop_mask(false, force);
     }
 
+    /**
+     * The half cropping mask update function.
+     * @param force if true, forces the mask appliance.
+     */
     update_half_crop(force: boolean = false) {
         if (this.sprite.mask && this.active) {
             if (force) {
@@ -686,8 +817,16 @@ export abstract class ControllableChar {
         }
     }
 
+    /**
+     * Activates or deactivates this char.
+     * @param active if true, activates it.
+     */
     abstract toggle_active(active: boolean): void;
 
+    /**
+     * Stops the char movement.
+     * @param change_sprite if true, sets idle animation.
+     */
     stop_char(change_sprite: boolean = true) {
         this._x_speed = this._y_speed = 0;
         this.choose_direction_by_speed();
@@ -700,10 +839,20 @@ export abstract class ControllableChar {
         }
     }
 
+    /**
+     * Stops the current animation of this char.
+     * @param reset_frame Resets the current animation to the first frame.
+     */
     stop_animation(reset_frame: boolean = true) {
         this.sprite.animations.currentAnim.stop(reset_frame);
     }
 
+    /**
+     * Changes the char current direction to the given direction.
+     * @param direction the direction to change.
+     * @param force_change plays this new direction.
+     * @param transition_also also change the transition direction.
+     */
     set_direction(direction: directions, force_change: boolean = false, transition_also: boolean = true) {
         this._current_direction = direction;
         if (transition_also) {
@@ -715,18 +864,38 @@ export abstract class ControllableChar {
         }
     }
 
+    /**
+     * Changes the ice slide direction.
+     * @param direction the direction to be set.
+     */
     set_ice_slide_direction(direction: directions) {
         this._ice_slide_direction = direction;
     }
 
+    /**
+     * Changes the direction that the char is trying to push.
+     * @param direction the direction to be set.
+     */
     set_trying_to_push_direction(direction: directions) {
         this._trying_to_push_direction = direction;
     }
 
-    force_action(action: base_actions) {
+    /**
+     * Changes this char action.
+     * @param action the action to be changed.
+     * @param play if true, plays the given action animation.
+     */
+    change_action(action: base_actions, play: boolean = false) {
         this._current_action = action;
+        if (play) {
+            this.play_current_action();
+        }
     }
 
+    /**
+     * Plays the current action of this char.
+     * @param check_on_event if true, will check whether the game has any event running.
+     */
     play_current_action(check_on_event: boolean = false) {
         if (check_on_event && this.data.tile_event_manager.on_event) {
             return;
@@ -750,6 +919,10 @@ export abstract class ControllableChar {
         this.play(action, animation, true, frame_rate);
     }
 
+    /**
+     * Checks whether the current tile forbids this char to don't show footprints.
+     * @returns whether the footprint will be shown or not.
+     */
     private tile_able_to_show_footprint() {
         const tiles = this.data.map.get_current_tile(this) as Phaser.Tile[];
         for (let i = 0; i < tiles.length; ++i) {
@@ -764,6 +937,10 @@ export abstract class ControllableChar {
         return true;
     }
 
+    /**
+     * Chooses this char action based on its states like climbing, walk, dash etc.
+     * @param check_on_event if true, will check whether the game has any event running.
+     */
     protected choose_action_based_on_char_state(check_on_event: boolean = false) {
         if (check_on_event && this.data.tile_event_manager.on_event) return;
         if (this.required_direction === null && this.current_action !== base_actions.IDLE && !this.climbing) {
@@ -778,6 +955,9 @@ export abstract class ControllableChar {
         }
     }
 
+    /**
+     * Checks whether this char is able to show footsteps, if yes, show them.
+     */
     private check_footsteps() {
         const footsteps =
             this.enable_footsteps &&
@@ -789,15 +969,25 @@ export abstract class ControllableChar {
         }
     }
 
+    /**
+     * Updates the tile positions.
+     */
     update_tile_position() {
         this._tile_x_pos = (this.sprite.x / this.data.map.tile_width) | 0;
         this._tile_y_pos = (this.sprite.y / this.data.map.tile_height) | 0;
     }
 
+    /**
+     * Increments the char extra speed value.
+     * @param delta_value the speed variation.
+     */
     increase_extra_speed(delta_value: number) {
         this._extra_speed += delta_value;
     }
 
+    /**
+     * Calculates this char speed based on its states like walk, dash etc.
+     */
     protected calculate_speed() {
         //when setting temp_velocity_x or temp_velocity_y, it means that these velocities will still be analyzed in collision_dealer function
         const delta_time = this.game.time.elapsedMS / numbers.DELTA_TIME_FACTOR;
@@ -828,6 +1018,9 @@ export abstract class ControllableChar {
         }
     }
 
+    /**
+     * Apply the calculated speed values.
+     */
     protected apply_speed() {
         if (
             [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action as base_actions) ||
@@ -839,6 +1032,12 @@ export abstract class ControllableChar {
         }
     }
 
+    /**
+     * Sets some speed values.
+     * @param x_speed the x speed value.
+     * @param y_speed the y speed value.
+     * @param apply_speed if true, the given speed will be applied.
+     */
     set_speed(x_speed: number, y_speed: number, apply_speed: boolean = true) {
         this._x_speed = x_speed ?? this.x_speed;
         this._y_speed = y_speed ?? this.y_speed;
