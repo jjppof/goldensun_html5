@@ -73,7 +73,7 @@ export function initialize_main_chars(
             char_data.weapon_sprite_shift
         );
         if (char_data.in_party) {
-            MainChar.add_member_to_party(data, data.info.party_data, main_char_list[char_data.key_name]);
+            MainChar.add_member_to_party(data.info.party_data, main_char_list[char_data.key_name]);
         }
 
         for (let action_key in char_db.actions) {

@@ -661,13 +661,13 @@ export class MainChar extends Player {
         return this_char;
     }
 
-    static add_member_to_party(data: GoldenSun, party_data: PartyData, char: MainChar) {
+    static add_member_to_party(party_data: PartyData, char: MainChar) {
         char.in_party = true;
         party_data.members.push(char);
         party_data.avg_level = _.mean(party_data.members.map(char => char.level)) | 0;
     }
 
-    static remove_member_from_party(data: GoldenSun, party_data: PartyData, char: MainChar) {
+    static remove_member_from_party(party_data: PartyData, char: MainChar) {
         char.in_party = false;
         party_data.members = party_data.members.filter(member => {
             return member.key_name !== char.key_name;
