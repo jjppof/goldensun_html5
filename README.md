@@ -33,7 +33,6 @@ GS-HTML5 supports both Javascript and Typescript. We use [Webpack](https://webpa
 - I strongly recomend using [Visual Studio Code](https://code.visualstudio.com/download) to develop.
 - Install dev dependencies by running `npm install` in the root folder.
 - Use `npm start` to start the development server.
-- Use `npm run format` to format your code or just make a local commit to format it automatically.
 - Check the [general guidelines](https://github.com/jjppof/goldensun_html5/wiki#some-coding-guidelines) in order to contribute.
 - Learn Phaser 2 by [examples](https://phaser.io/examples/v2) or by this [tutorial](https://phaser.io/tutorials/making-your-first-phaser-2-game). For reference, check their [API](http://phaser.io/docs/2.6.2/index).
 - Check our [API docs](https://gshtml5.org/docs/) in for quick reference.
