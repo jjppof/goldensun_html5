@@ -58,6 +58,16 @@ function check_reveal(target: Object, property_key: string, descriptor: Property
     return descriptor;
 }
 
+/**
+ * Every game event class must inherit from this class. Whenever a game event is instantiated,
+ * this event receives an unique id. These ids are reset whenever a map is destroyed. In order
+ * to fire a GameEvent, calls GameEvent.fire. In order to destroy a game event, calls GameEvent.destroy.
+ * Game events can be fired from TileEvents, NPC or Interactable Objects interaction, map changes or
+ * other game events.
+ * Whenever an asynchronous game event is fired, increments the GamEventManager.events_running_count, so the
+ * engine knows that there's an event going on. When the event is finished, decrements the same variable.
+ * If your event has internal states, does not forget to reset them on finish.
+ */
 export abstract class GameEvent {
     public game: Phaser.Game;
     public data: GoldenSun;
@@ -78,7 +88,11 @@ export abstract class GameEvent {
         GameEvent.events[this.id] = this;
     }
 
-    async wait(time) {
+    /**
+     * Promised way to create and wait a Phaser.Timer. Waits for the amount of time given.
+     * @param time the time in ms.
+     */
+    async wait(time: number) {
         let this_resolve;
         const promise = new Promise(resolve => (this_resolve = resolve));
         this.game.time.events.add(time, this_resolve);
@@ -104,12 +118,24 @@ export abstract class GameEvent {
      */
     protected abstract _fire(origin_npc?: NPC): void;
 
+    /**
+     * A child event should implement it in order to destroy the event instance.
+     * This is called whenever an associated entity is destroyed, like maps, NPCs etc.
+     */
     abstract destroy(): void;
 
+    /**
+     * Get a specific event by its id.
+     * @param id The event id.
+     * @returns Returns the event.
+     */
     static get_event(id) {
         return GameEvent.events[id];
     }
 
+    /**
+     * Destroys all game events and resets the id counter.
+     */
     static reset() {
         GameEvent.id_incrementer = 0;
         for (let id in GameEvent.events) {

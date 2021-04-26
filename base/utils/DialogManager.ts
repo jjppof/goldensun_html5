@@ -5,14 +5,16 @@ import * as utils from "../utils";
 import {Window} from "../Window";
 import * as _ from "lodash";
 
-//A dialog can be divided in N windows. Each division has a step index.
-//To set a dialog, call the DialogManager.set_dialog function and pass the entire dialog text.
-//To advance the dialog (call next window), call the DialogManager.next function.
+/**
+ * A dialog can be divided in N windows. Each division has a step index.
+ * To set a dialog, call the DialogManager.set_dialog function and pass the entire dialog text.
+ * To advance the dialog (call next window), call the DialogManager.next function.
+ */
 export class DialogManager {
     private static readonly DIALOG_CRYSTAL_KEY = "dialog_crystal";
     private static readonly VOICE_MIN_INTERVAL: number = 50;
     private static readonly COLOR_START = /\${COLOR:(\w+)}/;
-    private static readonly COLOR_START_G = /\${COLOR:(\w+)}/g;
+    private static readonly COLOR_START_GLOB = /\${COLOR:(\w+)}/g;
     private static readonly COLOR_END = /\${COLOR:\/}/;
 
     private game: Phaser.Game;
@@ -38,7 +40,7 @@ export class DialogManager {
     private show_crystal: boolean;
     private avatar_inside_window: boolean;
 
-    constructor(game, data, italic_font = true) {
+    constructor(game: Phaser.Game, data: GoldenSun, italic_font: boolean = true) {
         this.game = game;
         this.data = data;
         this.italic_font = italic_font;
@@ -75,6 +77,9 @@ export class DialogManager {
         return this.finished;
     }
 
+    /**
+     * Creates and configs the dialog crystal sprite.
+     */
     private set_dialog_crystal() {
         const sprite_key = this.dialog_crystal_sprite_base.getSpriteKey(DialogManager.DIALOG_CRYSTAL_KEY);
         this.dialog_crystal = this.game.add.sprite(0, 0, sprite_key);
@@ -87,6 +92,9 @@ export class DialogManager {
         this.dialog_crystal_tween = null;
     }
 
+    /**
+     * Updates the dialog and avatar windows.
+     */
     update_position() {
         if (this.avatar && this.avatar_window) {
             this.avatar_window.update(true);
@@ -96,7 +104,12 @@ export class DialogManager {
         }
     }
 
-    //Internal method. Try to calculate the position of the dialog window
+    /**
+     * Tries to calculate the position of the dialog window.
+     * @param width the window width.
+     * @param height the window height.
+     * @returns Returns the window position.
+     */
     private get_dialog_window_position(width: number, height: number) {
         const x = (numbers.GAME_WIDTH - width) >> 1;
         let y = (numbers.MAX_DIAG_WIN_HEIGHT - height) >> 1;
@@ -106,7 +119,11 @@ export class DialogManager {
         return {x: x, y: y};
     }
 
-    //Internal method. Try to calculate the position of the avatar window
+    /**
+     * Tries to calculate the position of the avatar window
+     * @param win_pos the window position object.
+     * @returns Returns the avatar position.
+     */
     private get_avatar_position(win_pos: {x?: number; y?: number}) {
         const x = ((this.parts[this.step].width >> 2) + win_pos.x) | 0;
         let y;
@@ -118,15 +135,27 @@ export class DialogManager {
         return {x: x, y: y};
     }
 
-    //set current hero direction
+    /**
+     * Sets current hero direction.
+     * @param hero_direction the hero direction.
+     */
     private set_hero_direction(hero_direction: utils.directions) {
         if (hero_direction !== undefined) {
             this.hero_direction = hero_direction;
         }
     }
 
-    //Calls the next dialog window. If the dialog is finished, this function passes true to the callback.
-    next(callback, custom_pos?: {x?: number; y?: number}, custom_avatar_pos?: {x?: number; y?: number}) {
+    /**
+     * Calls the next dialog window. If the dialog is finished, this function passes true to the callback.
+     * @param callback Every time a dialog section is shown, this function is called. If it's the last section, passes true to it.
+     * @param custom_pos Custom dialog window position object.
+     * @param custom_avatar_pos Custom avatar window position.
+     */
+    next(
+        callback: (finished: boolean) => void,
+        custom_pos?: {x?: number; y?: number},
+        custom_avatar_pos?: {x?: number; y?: number}
+    ) {
         if (this.avatar_window) {
             this.avatar_window.destroy(false);
             this.avatar_window = null;
@@ -153,7 +182,17 @@ export class DialogManager {
         ++this.step;
     }
 
-    private mount_window(callback, custom_pos: {x?: number; y?: number}, custom_avatar_pos: {x?: number; y?: number}) {
+    /**
+     * Mounts and shows the dialog.
+     * @param callback On window mount callback
+     * @param custom_pos Custom dialog window position object.
+     * @param custom_avatar_pos Custom avatar window position object.
+     */
+    private mount_window(
+        callback: (finished: boolean) => void,
+        custom_pos: {x?: number; y?: number},
+        custom_avatar_pos: {x?: number; y?: number}
+    ) {
         this.dialog_crystal.visible = false;
         let width = this.parts[this.step].width;
         let height = this.parts[this.step].height;
@@ -245,6 +284,16 @@ export class DialogManager {
         }
     }
 
+    /**
+     * Replaces custom tokens in text with their actual values.
+     * Use ${HERO} to replace by hero name.
+     * Use ${BREAK} to start a new window.
+     * Use ${BREAK_LINE} to break line.
+     * Use ${STORAGE:storage_key} to replace by by a storage value with the given key.
+     * Place your text between ${COLOR:hex_value} and ${COLOR:/} to change its color.
+     * @param text The text to be formatted.
+     * @returns Returns the text formetted.
+     */
     private format_text(text: string) {
         text = text.replace(/\${HERO}/g, this.data.info.main_char_list[this.data.hero.key_name].name);
         text = text.replace(/( )?\${BREAK}( )?/g, " ${BREAK} ");
@@ -259,18 +308,23 @@ export class DialogManager {
         return text;
     }
 
-    //Receives a text string and mount the the dialog sections that will go to each window of the dialog.
-    //Optionally, also receives an initial avatar and the hero talking direction.
-    //Use ${HERO} to replace by hero name. Use ${BREAK} to start a new window. Use ${BREAK_LINE} to break line.
-    //Use ${STORAGE:storage_key} to replace by by a storage value with the given key.
-    //Place your text between ${COLOR:hex_value} and ${COLOR:/} to change it color.
+    /**
+     * Receives a text string and mounts the the dialog sections that will go to each window of the dialog.
+     * @param text the dialog text.
+     * @param options the dialog options.
+     */
     set_dialog(
         text: string,
         options?: {
+            /** The avatar key name. */
             avatar?: string;
+            /** The current hero direction in order to better calculate window position. */
             hero_direction?: utils.directions;
+            /** Whether the avatar is going to be inside the dialog window or not. */
             avatar_inside_window?: boolean;
+            /** A custom max dialog width. */
             custom_max_dialog_width?: number;
+            /** The voice key sfx in order to be played while the text is shown. */
             voice_key?: string;
         }
     ) {
@@ -324,7 +378,7 @@ export class DialogManager {
                 const colors_seq = [];
                 let current_start_idx = 0;
                 do {
-                    const start_matches = [...word.matchAll(DialogManager.COLOR_START_G)];
+                    const start_matches = [...word.matchAll(DialogManager.COLOR_START_GLOB)];
                     const start_match = start_matches.length ? start_matches[0] : null;
                     const end_match = word.match(DialogManager.COLOR_END);
 
@@ -390,16 +444,29 @@ export class DialogManager {
         this.parts = windows;
     }
 
-    //Calls a window and let it open till you call quick_next again or call kill_dialog. Is expected that text fits in one window.
+    /**
+     * This is an optional way to invoke a dialog instead of set_dialog.
+     * It calls a window and let it open till you call quick_next again or call kill_dialog.
+     * It's expected that the given text fits in one window.
+     * @param text The text to be shown.
+     * @param callback The on window ready callback.
+     * @param options The dialog options.
+     */
     quick_next(
         text: string,
-        callback: Function, //on window ready callback
+        callback: (finished: boolean) => void,
         options?: {
+            /** The avatar key name. */
             avatar?: string;
+            /** The voice key sfx in order to be played while the text is shown. */
             voice_key?: string;
+            /** The current hero direction in order to better calculate window position. */
             hero_direction?: utils.directions;
+            /** Custom dialog window position object. */
             custom_pos?: {x?: number; y?: number};
+            /** Custom avatar window position object. */
             custom_avatar_pos?: {x?: number; y?: number};
+            /** Whether the dialog crystall will be shown or not. */
             show_crystal?: boolean;
         }
     ) {
@@ -422,7 +489,13 @@ export class DialogManager {
         this.mount_window(callback, options?.custom_pos, options?.custom_avatar_pos);
     }
 
-    kill_dialog(callback, dialog_only = false, destroy_crystal = false) {
+    /**
+     * If you started a dialog with quick_next, calls this function to kill it.
+     * @param callback on dialog kill callback.
+     * @param dialog_only if true, destroys only the dialog window and keeps the avatar window.
+     * @param destroy_crystal if true, destroys the dialog crystal.
+     */
+    kill_dialog(callback: () => void, dialog_only = false, destroy_crystal = false) {
         if (!dialog_only && this.avatar_window) {
             this.avatar_window.destroy(false);
             this.avatar_window = null;
@@ -442,6 +515,9 @@ export class DialogManager {
         }
     }
 
+    /**
+     * Unsets the everything related to a initialized dialog.
+     */
     destroy() {
         if (this.avatar_window) {
             this.avatar_window.destroy(false);

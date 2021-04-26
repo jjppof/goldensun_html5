@@ -13,7 +13,7 @@ export class InnMenu {
     public dialog_manager: DialogManager;
     public coin_window: Window;
     public coin_number: TextObj;
-    public callback: Function;
+    public callback: (finished: boolean) => void;
     public mask: Phaser.Graphics;
     public circle: Phaser.Graphics;
 
@@ -60,7 +60,7 @@ export class InnMenu {
     }
 
     //Dialogue function, replaces ${PRICE} with the inn cost and shows the message stored in this.message
-    update_dialogue(callback?: Function) {
+    update_dialogue(callback?: (finished: boolean) => void) {
         if (this.message.includes("${PRICE}")) this.message = this.message.replace("${PRICE}", String(this.cost));
 
         this.dialog_manager.quick_next(this.message, callback, {

@@ -74,7 +74,12 @@ export class ShopkeepDialog {
         return this.messages[message_key].text;
     }
 
-    update_dialog(message: string, show_crystal: boolean = false, is_key: boolean = true, callback?: Function) {
+    update_dialog(
+        message: string,
+        show_crystal: boolean = false,
+        is_key: boolean = true,
+        callback?: (finished: boolean) => void
+    ) {
         if (is_key) this.current_message = this.messages[message].text;
         else this.current_message = message;
         this.is_active = true;
@@ -88,12 +93,12 @@ export class ShopkeepDialog {
         });
     }
 
-    close_dialog(callback?: Function, dialog_only: boolean = true) {
+    close_dialog(callback?: () => void, dialog_only: boolean = true) {
         this.is_active = false;
         this.dialog_manager.kill_dialog(callback, dialog_only);
     }
 
-    close(callback?: Function) {
+    close(callback?: () => void) {
         this.close_dialog(callback, false);
 
         this.shop_key = null;
