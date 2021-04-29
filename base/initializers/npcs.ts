@@ -1,5 +1,6 @@
 import {GoldenSun} from "../GoldenSun";
 import {SpriteBase} from "../SpriteBase";
+import {GameInfo} from "./initialize_info";
 
 export function initialize_npcs_data(
     game: Phaser.Game,
@@ -7,7 +8,7 @@ export function initialize_npcs_data(
     npc_db: any,
     load_promise_resolve: () => void
 ) {
-    const npc_sprite_base_list = {};
+    const npc_sprite_base_list: GameInfo["npcs_sprite_base_list"] = {};
     for (let npc_key in npc_db) {
         const npc_info = npc_db[npc_key];
         if (npc_info.actions === undefined) continue;
@@ -26,7 +27,7 @@ export function initialize_npcs_data(
         npc_sprite_info.loadSpritesheets(game, false);
     }
     game.load.start();
-    data.loading_what = "npc sprites";
+    data.set_whats_loading("npc sprites");
     game.load.onLoadComplete.addOnce(() => {
         for (let npc_key in npc_db) {
             const npc_info = npc_db[npc_key];

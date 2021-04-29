@@ -251,7 +251,7 @@ export abstract class ControllableChar {
 
     /**
      * Returns whether this char is in action;
-     * @param allow_climbing if true, clibimg won't be considered.
+     * @param allow_climbing if true, climbing won't be considered.
      * @returns Returns whether this char is in action.
      */
     in_action(allow_climbing: boolean = false) {

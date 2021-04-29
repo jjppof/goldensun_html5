@@ -29,7 +29,7 @@ export function initialize_maps(game: Phaser.Game, data: GoldenSun, maps_db: any
         maps[map].load_map_assets(false);
     }
     game.load.start();
-    data.loading_what = "maps";
+    data.set_whats_loading("maps");
     game.load.onLoadComplete.addOnce(load_promise_resolve);
     return maps;
 }

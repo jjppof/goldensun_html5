@@ -3,6 +3,7 @@ import {GoldenSun} from "../GoldenSun";
 import {MainChar} from "../MainChar";
 import {SpriteBase} from "../SpriteBase";
 import {base_actions} from "../utils";
+import {GameInfo} from "./initialize_info";
 
 export function initialize_classes(classes_db) {
     let classes_list = {};
@@ -34,7 +35,7 @@ export function initialize_main_chars(
     npc_db,
     load_promise_resolve: () => void
 ) {
-    const main_char_list = {};
+    const main_char_list: GameInfo["main_char_list"] = {};
     for (let i = 0; i < main_chars_db.length; ++i) {
         const char_data = main_chars_db[i];
         const char_db = npc_db[char_data.key_name];
@@ -100,7 +101,7 @@ export function initialize_main_chars(
         }
     }
     game.load.start();
-    data.loading_what = "main chars sprites";
+    data.set_whats_loading("main chars sprites");
     game.load.onLoadComplete.addOnce(load_promise_resolve);
     return main_char_list;
 }

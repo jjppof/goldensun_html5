@@ -13,6 +13,6 @@ export function initialize_se(game: Phaser.Game, data: GoldenSun, se_data, load_
         });
     }
     game.load.start();
-    data.loading_what = "sounds";
+    data.set_whats_loading("sounds");
     Promise.all(promises).then(load_promise_resolve);
 }

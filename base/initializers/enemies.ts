@@ -1,6 +1,7 @@
 import {GoldenSun} from "../GoldenSun";
 import {SpriteBase} from "../SpriteBase";
 import {base_actions} from "../utils";
+import {GameInfo} from "./initialize_info";
 
 export function initialize_enemies(
     game: Phaser.Game,
@@ -8,7 +9,7 @@ export function initialize_enemies(
     enemies_db: any,
     load_promise_resolve: () => void
 ) {
-    const enemies_list = {};
+    const enemies_list: GameInfo["enemies_list"] = {};
     for (let i = 0; i < enemies_db.length; ++i) {
         const info = {
             data: enemies_db[i],
@@ -28,7 +29,7 @@ export function initialize_enemies(
         enemies_list[info.data.key_name] = info;
     }
     game.load.start();
-    data.loading_what = "enemies sprites";
+    data.set_whats_loading("enemies sprites");
     game.load.onLoadComplete.addOnce(load_promise_resolve);
     return enemies_list;
 }

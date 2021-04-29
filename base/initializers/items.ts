@@ -1,8 +1,9 @@
 import {GoldenSun} from "../GoldenSun";
 import {Item} from "../Item";
+import {GameInfo} from "./initialize_info";
 
 export function initialize_items(game: Phaser.Game, data: GoldenSun, items_db: any, load_promise_resolve: () => void) {
-    const items_list = {};
+    const items_list: GameInfo["items_list"] = {};
     for (let i = 0; i < items_db.length; ++i) {
         const item_data = items_db[i];
         items_list[item_data.key_name] = new Item(
@@ -36,6 +37,6 @@ export function initialize_items(game: Phaser.Game, data: GoldenSun, items_db: a
     );
     loader.onLoadComplete.addOnce(load_promise_resolve);
     game.load.start();
-    data.loading_what = "items icons";
+    data.set_whats_loading("items icons");
     return items_list;
 }

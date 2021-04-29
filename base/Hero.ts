@@ -7,12 +7,15 @@ import {Map} from "./Map";
 import {ClimbEvent} from "./tile_events/ClimbEvent";
 import {Button} from "./XGamepad";
 
+/**
+ * This class is responsible to control the hero that is controlled in the maps.
+ */
 export class Hero extends ControllableChar {
     private static readonly SPEED_LIMIT_TO_STOP = 13;
     private static readonly SPEED_LIMIT_TO_STOP_WORLD_MAP = 9;
     private static readonly MINIMAL_SLOPE = 0.1;
 
-    //ROTATION_KEY can convert from pressed_keys to the corresponding in-game rotation
+    /** This variable can convert from pressed keys to the corresponding in-game rotation. */
     private static readonly ROTATION_KEY = [
         null, //no keys pressed
         directions.right, //right
@@ -32,7 +35,7 @@ export class Hero extends ControllableChar {
         null, //down, up, left, and right
     ];
 
-    //ROTATION_NORMAL converts from normal_angle region (floor((angle-15)/30)) to in-game rotation
+    /** This variable converts from normal_angle region (floor((angle-15)/30)) to in-game rotation. */
     private static readonly ROTATION_NORMAL = [
         directions.right, //345-15 degrees
         directions.up_right, //15-45 degrees
@@ -48,6 +51,7 @@ export class Hero extends ControllableChar {
         directions.down_right, //315-345 degrees
     ];
 
+    /** Speed factor values for each standard direction. */
     private static readonly SPEEDS = {
         [directions.right]: {x: 1, y: 0},
         [directions.left]: {x: -1, y: 0},

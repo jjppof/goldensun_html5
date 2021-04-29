@@ -20,6 +20,15 @@ import {Audio} from "./Audio";
 import {Storage} from "./Storage";
 import {Camera} from "./Camera";
 
+/**
+ * The project has basically two important folders: assets and base. All the source code is located inside base folder.
+ * All the game assets (images, database files, sounds, etc) are located inside assets folder. An engine user will only
+ * modify the assets folder for instance. Any modification in assets folder files will automatically be reflected in the game.
+ *
+ * This class is the starting point to understand how the code works. It's the engine's main class. When the game starts,
+ * it will load database files in assets/dbs folder in order to instantiate the main classes of the game like Hero, Collision,
+ * Map, MainMenu, Audio, CursorManager etc.
+ */
 export class GoldenSun {
     public game: Phaser.Game = null;
     public dbs: any = {};
@@ -101,15 +110,16 @@ export class GoldenSun {
                 create: this.create.bind(this),
                 update: this.update.bind(this),
                 render: this.render.bind(this),
-                loadRender: this.loadRender.bind(this),
+                loadRender: this.load_render.bind(this),
             },
             false, //transparent
             false //antialias
         );
     }
 
-    preload() {
-        this.loading_what = "initial database";
+    private preload() {
+        this.set_whats_loading("initial database");
+
         load_all(this.game);
 
         this.game.time.advancedTiming = true;
@@ -122,7 +132,15 @@ export class GoldenSun {
         this.game.camera.fade(0x0, 1);
     }
 
-    render_loading() {
+    /**
+     * On loading phase, sets the loading message to be displayed.
+     * @param loading_what the message.
+     */
+    set_whats_loading(loading_what: string) {
+        this.loading_what = loading_what;
+    }
+
+    private render_loading() {
         if (this.game.time.frames % 4 === 0) {
             this.loading_progress = this.game.load.progress.toLocaleString("en-US", {
                 minimumIntegerDigits: 2,
@@ -132,11 +150,11 @@ export class GoldenSun {
         this.game.debug.text(`${this.loading_progress}% loading ${this.loading_what}...`, 5, 15, "#00ff00");
     }
 
-    loadRender() {
+    private load_render() {
         this.render_loading();
     }
 
-    async create() {
+    private async create() {
         //load some json files from assets folder
         load_databases(this.game, this.dbs);
 
@@ -227,7 +245,7 @@ export class GoldenSun {
         this.initialize_utils_controls();
     }
 
-    initialize_utils_controls() {
+    private initialize_utils_controls() {
         //set initial zoom
         this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
         window.dispatchEvent(new Event("resize"));
@@ -246,7 +264,7 @@ export class GoldenSun {
             window.dispatchEvent(new Event("resize"));
         });
 
-        // Enable zoom and psynergies shortcuts for testing
+        //enable zoom and psynergies shortcuts for testing
         const setup_scale = (scaleFactor: number) => {
             if (this.fullscreen) return;
             this.scale_factor = scaleFactor;
@@ -294,6 +312,11 @@ export class GoldenSun {
         this.control_manager.add_controls(controls, {persist: true});
     }
 
+    /**
+     * Checks whether the hero is allowed to move.
+     * @param allow_climbing if true, climbing won't be considered.
+     * @returns if true, the hero is allowed to move.
+     */
     hero_movement_allowed(allow_climbing = true) {
         return !(
             this.hero.in_action(allow_climbing) ||
@@ -306,7 +329,7 @@ export class GoldenSun {
         );
     }
 
-    update() {
+    private update() {
         if (!this.assets_loaded) {
             this.render_loading();
             return;
@@ -314,15 +337,17 @@ export class GoldenSun {
         if (this.hero_movement_allowed()) {
             this.hero.update_tile_position();
 
-            this.tile_event_manager.fire_triggered_events(); //trigger any event that's waiting to be triggered
+            //triggers any event that's waiting to be triggered
+            this.tile_event_manager.fire_triggered_events();
+
             const location_key = LocationKey.get_key(this.hero.tile_x_pos, this.hero.tile_y_pos);
             if (location_key in this.map.events) {
-                //check if the actual tile has an event
+                //checks if the actual tile has an event
                 this.tile_event_manager.check_tile_events(location_key, this.map);
             }
 
-            this.hero.update(this.map); //update hero position/velocity/sprite
-            this.map.update(); //update map and its objects position/velocity/sprite
+            this.hero.update(this.map); //updates hero position/velocity/sprite
+            this.map.update(); //updates map and its objects (NPC, Interact. Objs etc) position/velocity/sprite
         } else {
             if (this.game_event_manager.on_event) {
                 //updates whatever it is related to a game event
@@ -354,7 +379,7 @@ export class GoldenSun {
         }
     }
 
-    render() {
+    private render() {
         this.debug.set_debug_info();
         if (this.game.time.frames % 8 === 0) {
             this.debug.fill_key_debug_table();

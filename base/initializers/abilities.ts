@@ -5,6 +5,7 @@ import {GrowthFieldPsynergy} from "../field_abilities/GrowthFieldPsynergy";
 import {PoundFieldPsynergy} from "../field_abilities/PoundFieldPsynergy";
 import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 import {GoldenSun} from "../GoldenSun";
+import {GameInfo} from "./initialize_info";
 
 export function initialize_abilities(
     game: Phaser.Game,
@@ -12,7 +13,7 @@ export function initialize_abilities(
     abilities_db: any,
     load_promise_resolve: () => void
 ) {
-    const abilities_list = {};
+    const abilities_list: GameInfo["abilities_list"] = {};
     for (let i = 0; i < abilities_db.length; ++i) {
         const ability_data = abilities_db[i];
         abilities_list[ability_data.key_name] = new Ability(
@@ -49,7 +50,7 @@ export function initialize_abilities(
         "assets/images/icons/abilities/abilities_icons.json"
     );
     loader.onLoadComplete.addOnce(load_promise_resolve);
-    data.loading_what = "abilities icons";
+    data.set_whats_loading("abilities icons");
     game.load.start();
     return abilities_list;
 }
