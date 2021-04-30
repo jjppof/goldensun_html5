@@ -3,12 +3,11 @@ import * as numbers from "./magic_numbers";
 import {event_types, LocationKey} from "./tile_events/TileEvent";
 import {get_transition_directions, range_360, directions, base_actions, get_direction_mask} from "./utils";
 import {normal_push} from "./interactable_objects/push";
-import {Map} from "./Map";
 import {ClimbEvent} from "./tile_events/ClimbEvent";
 import {Button} from "./XGamepad";
 
 /**
- * This class is responsible to control the hero that is controlled in the maps.
+ * This class is responsible to control the hero that is controlled by the game player in the maps.
  */
 export class Hero extends ControllableChar {
     private static readonly SPEED_LIMIT_TO_STOP = 13;
@@ -94,6 +93,9 @@ export class Hero extends ControllableChar {
         this.avoid_encounter = false;
     }
 
+    /**
+     * Checks which hero controls are being pressed. Like arrows and dash buttons.
+     */
     private check_control_inputs() {
         const arrow_inputs =
             (1 * +this.data.gamepad.is_down(Button.RIGHT)) |
@@ -110,10 +112,16 @@ export class Hero extends ControllableChar {
         }
     }
 
+    /**
+     * Sets the normalized speed factors of the hero.
+     * @param check_on_event if true, it will calculate the factors only when not in a tile event.
+     * @param desired_direction a desired direction for the hero to go. If not passed, will pick the arrow inputs direction.
+     */
     set_speed_factors(check_on_event: boolean = false, desired_direction?: directions) {
         if (check_on_event && this.data.tile_event_manager.on_event) return;
         desired_direction = desired_direction ?? this.required_direction;
         if (this.climbing) {
+            //deals with climbing movement
             if (desired_direction === null) {
                 this._x_speed = this._y_speed = 0;
                 this.idle_climbing = true;
@@ -128,12 +136,17 @@ export class Hero extends ControllableChar {
                 this._y_speed = Hero.SPEEDS[desired_direction].y;
             }
         } else if (!this.ice_sliding_active) {
-            //when force_direction is true, it means that the hero is going to face a different direction from the one specified in the keyboard arrows
+            //Deals with walking/dashing movement.
+
+            //When force_direction is true, it means that the hero is going to face a
+            //different direction from the one specified in the keyboard arrows. Generally
+            //this is due to hero collision with something.
             if (desired_direction !== null || this.force_direction) {
                 if (!this.force_direction) {
                     this.set_direction(desired_direction, false, false);
                     if (this.game.time.frames % 3 === 0) {
-                        //this if controls the char turn frame rate, how fast is the transition
+                        //This if controls the char turn frame rate, how fast is the transition.
+                        //The hero doesn't face immediately the required directrion, there's a transition to it.
                         this._transition_direction = get_transition_directions(
                             this.transition_direction,
                             desired_direction
@@ -154,6 +167,7 @@ export class Hero extends ControllableChar {
                 this._x_speed = this._y_speed = 0;
             }
         } else {
+            //deals with ice sliding movement.
             if (!this.sliding_on_ice) {
                 if (
                     this.colliding_directions_mask & get_direction_mask(desired_direction) ||
@@ -163,7 +177,7 @@ export class Hero extends ControllableChar {
                 } else {
                     //checks if a diagonal direction was asked
                     if ((desired_direction & 1) === 1) {
-                        //changes to a not diagonal direction
+                        //changes to a not diagonal direction. Ice sliding only happens on cardinal directions.
                         if (this.colliding_directions_mask & get_direction_mask(desired_direction - 1)) {
                             desired_direction = (desired_direction + 1) & 7;
                         } else {
@@ -180,13 +194,13 @@ export class Hero extends ControllableChar {
                 this.sliding_on_ice &&
                 this.colliding_directions_mask & get_direction_mask(this.ice_slide_direction)
             ) {
-                //stops sliding
+                //stops sliding due to collision
                 this._x_speed = this._y_speed = 0;
                 this._ice_slide_direction = null;
                 this.sliding_on_ice = false;
             } else if (this.sliding_on_ice) {
                 if (desired_direction !== null) {
-                    //changes the hero direction while sliding
+                    //changes the hero facing direction while sliding according to arrows input.
                     this.set_direction(desired_direction, false, false);
                     if (this.game.time.frames & 1) {
                         this._transition_direction = get_transition_directions(
@@ -201,15 +215,19 @@ export class Hero extends ControllableChar {
         }
     }
 
-    private check_interactable_objects(map: Map, contact: p2.ContactEquation) {
+    /**
+     * Check if the hero is colliding with any interactable object and fire any possible interaction with it.
+     * @param contact the p2.ContactEquation in order to check if a collision is happening.
+     */
+    private check_interactable_objects(contact: p2.ContactEquation) {
         let j = 0;
-        for (j = 0; j < map.interactable_objects.length; ++j) {
+        for (j = 0; j < this.data.map.interactable_objects.length; ++j) {
             //check if hero is colliding with any interactable object
-            const interactable_object_body = map.interactable_objects[j].sprite.body;
+            const interactable_object_body = this.data.map.interactable_objects[j].sprite.body;
             if (!interactable_object_body) continue;
             if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
                 if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
-                    const interactable_object = map.interactable_objects[j];
+                    const interactable_object = this.data.map.interactable_objects[j];
                     if (
                         [base_actions.WALK, base_actions.DASH].includes(this.current_action as base_actions) &&
                         this.data.map.collision_layer === interactable_object.base_collision_layer
@@ -217,7 +235,9 @@ export class Hero extends ControllableChar {
                         this.trying_to_push = true;
                         if (this.push_timer === null) {
                             this._trying_to_push_direction = this.current_direction;
-                            const events_in_pos = map.events[LocationKey.get_key(this.tile_x_pos, this.tile_y_pos)];
+                            const events_in_pos = this.data.map.events[
+                                LocationKey.get_key(this.tile_x_pos, this.tile_y_pos)
+                            ];
                             let has_stair = false;
                             if (events_in_pos) {
                                 events_in_pos.forEach(event => {
@@ -232,7 +252,7 @@ export class Hero extends ControllableChar {
                                 });
                             }
                             if (!has_stair) {
-                                const item_position = interactable_object.get_current_position(map);
+                                const item_position = interactable_object.get_current_position(this.data.map);
                                 switch (this.trying_to_push_direction) {
                                     case directions.up:
                                         item_position.y -= 1;
@@ -261,12 +281,17 @@ export class Hero extends ControllableChar {
                 }
             }
         }
-        if (j === map.interactable_objects.length) {
+        if (j === this.data.map.interactable_objects.length) {
             this.trying_to_push = false;
         }
     }
 
-    private collision_dealer(map: Map) {
+    /**
+     * Checks everything related to hero collision. This function checks whether is necessary
+     * to stop when colliding or change the hero direction in order to adapt its movement to the
+     * collision slope.
+     */
+    private collision_dealer() {
         let normals = [];
         for (let i = 0; i < this.game.physics.p2.world.narrowphase.contactEquations.length; ++i) {
             const contact = this.game.physics.p2.world.narrowphase.contactEquations[i];
@@ -274,7 +299,7 @@ export class Hero extends ControllableChar {
                 //check if hero collided with something
                 normals.push(contact.normalA); //collision normals (one normal for each contact point)
             }
-            this.check_interactable_objects(map, contact);
+            this.check_interactable_objects(contact);
         }
         //normals having length, means that a collision is happening
         this.colliding_directions_mask = normals.reduce((acc, normal) => {
@@ -289,12 +314,13 @@ export class Hero extends ControllableChar {
             const speed_limit = this.data.map.is_world_map
                 ? Hero.SPEED_LIMIT_TO_STOP_WORLD_MAP
                 : Hero.SPEED_LIMIT_TO_STOP;
+            //speeds below SPEED_LIMIT_TO_STOP are not considered
             if (
                 Math.abs(this.sprite.body.velocity.x) < speed_limit &&
                 Math.abs(this.sprite.body.velocity.y) < speed_limit
             ) {
-                //speeds below SPEED_LIMIT_TO_STOP are not considered
-                const contact_point_directions = new Array(normals.length); // a contact point direction is the opposite direction of the contact normal vector
+                //a contact point direction is the opposite direction of the contact normal vector
+                const contact_point_direction_angles = new Array(normals.length);
                 normals.forEach((normal, index) => {
                     const abs_normal_x = Math.abs(normal[0]);
                     const abs_normal_y = Math.abs(normal[1]);
@@ -303,14 +329,17 @@ export class Hero extends ControllableChar {
                     if (abs_normal_y < Hero.MINIMAL_SLOPE) normal[1] = 0;
                     if (abs_normal_x > 1 - Hero.MINIMAL_SLOPE) normal[0] = Math.sign(normal[0]);
                     if (abs_normal_y > 1 - Hero.MINIMAL_SLOPE) normal[1] = Math.sign(normal[1]);
-                    contact_point_directions[index] = range_360(Math.atan2(normal[1], -normal[0])); //storing the angle as if it is in the 1st quadrant
+
+                    //storing the angle as if it is in the 1st quadrant
+                    contact_point_direction_angles[index] = range_360(Math.atan2(normal[1], -normal[0]));
                 });
-                const desired_direction = range_360(Math.atan2(-this.temp_velocity_y, this.temp_velocity_x)); //storing the angle as if it is in the 1st quadrant
-                contact_point_directions.forEach(direction => {
+                //storing the angle as if it is in the 1st quadrant
+                const desired_direction_angle = range_360(Math.atan2(-this.temp_velocity_y, this.temp_velocity_x));
+                contact_point_direction_angles.forEach(direction => {
                     //check if the desired direction is going towards at least one contact direction with a error margin of 30 degrees
                     if (
-                        direction >= desired_direction - numbers.degree15 &&
-                        direction <= desired_direction + numbers.degree15
+                        direction >= desired_direction_angle - numbers.degree15 &&
+                        direction <= desired_direction_angle + numbers.degree15
                     ) {
                         //if true, it means that the hero is going the in the direction of the collision obejct, then it must stop
                         this.temp_velocity_x = 0;
@@ -323,8 +352,8 @@ export class Hero extends ControllableChar {
             } else if (this.current_action !== base_actions.CLIMB) {
                 this.stop_by_colliding = false;
                 if (normals.length === 1) {
-                    //everything inside this if is to deal with direction changing when colliding
-                    //finds which 30 degree sector the normal angle lies within, and converts to a direction
+                    //Everything inside this if is to deal with direction changing when colliding.
+                    //Finds which 30 degree sector the normal angle lies within, and converts to a direction.
                     const normal = normals[0];
                     const wall_direction =
                         Hero.ROTATION_NORMAL[
@@ -359,6 +388,10 @@ export class Hero extends ControllableChar {
         }
     }
 
+    /**
+     * Activates or deactivates the hero.
+     * @param active whether you want to activate it or not.
+     */
     toggle_active(active: boolean) {
         if (active) {
             this.sprite.body.setCollisionGroup(this.data.collision.hero_collision_group);
@@ -377,6 +410,11 @@ export class Hero extends ControllableChar {
         }
     }
 
+    /**
+     * Gets the hero battle encounter factor that depends on the type of the map (if
+     * it's world map or not) and whether it's dashing or not.
+     * @returns the encounter factor.
+     */
     get_encounter_speed_factor() {
         if (this.data.map.is_world_map) {
             return this.dashing ? 1 : 0.5;
@@ -385,19 +423,26 @@ export class Hero extends ControllableChar {
         }
     }
 
-    update(map: Map) {
+    /**
+     * The main hero update function.
+     */
+    update() {
         if (!this.active) return;
-        this.check_control_inputs(); //check which arrow keys are being pressed
+        this.check_control_inputs(); //checks which arrow keys are being pressed
         this.set_speed_factors(true); //sets the direction of the movement
         this.choose_action_based_on_char_state(true); //chooses which sprite the hero shall assume
         this.calculate_speed(); //calculates the final speed
-        this.collision_dealer(map); //check if the hero is colliding and its consequences
+        this.collision_dealer(); //checks if the hero is colliding and its consequences
         this.apply_speed(); //applies the final speed
         this.play_current_action(true); //sets the hero sprite
         this.update_shadow(); //updates the hero's shadow position
         this.update_half_crop(); //halves the hero texture if needed
     }
 
+    /**
+     * Initializes and configs the hero collision body.
+     * @param body_radius the hero collision body radius.
+     */
     config_body(body_radius: number = numbers.HERO_BODY_RADIUS) {
         this.game.physics.p2.enable(this.sprite, false);
         this.reset_anchor(); //Important to be after the previous command

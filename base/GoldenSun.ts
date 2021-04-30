@@ -26,8 +26,8 @@ import {Camera} from "./Camera";
  * modify the assets folder for instance. Any modification in assets folder files will automatically be reflected in the game.
  *
  * This class is the starting point to understand how the code works. It's the engine's main class. When the game starts,
- * it will load database files in assets/dbs folder in order to instantiate the main classes of the game like Hero, Collision,
- * Map, MainMenu, Audio, CursorManager etc.
+ * it will load database files in assets/dbs folder in order to instantiate the main classes of the game like Hero,
+ * Map, MainMenu, Audio, ControlManager etc.
  */
 export class GoldenSun {
     public game: Phaser.Game = null;
@@ -117,6 +117,9 @@ export class GoldenSun {
         );
     }
 
+    /**
+     * Loads initial database files and other assets.
+     */
     private preload() {
         this.set_whats_loading("initial database");
 
@@ -140,6 +143,9 @@ export class GoldenSun {
         this.loading_what = loading_what;
     }
 
+    /**
+     * Renders loading info.
+     */
     private render_loading() {
         if (this.game.time.frames % 4 === 0) {
             this.loading_progress = this.game.load.progress.toLocaleString("en-US", {
@@ -154,6 +160,9 @@ export class GoldenSun {
         this.render_loading();
     }
 
+    /**
+     * Initializes the game main classes like Hero, Map, Audio, ControlManager, Storage etc.
+     */
     private async create() {
         //load some json files from assets folder
         load_databases(this.game, this.dbs);
@@ -245,6 +254,9 @@ export class GoldenSun {
         this.initialize_utils_controls();
     }
 
+    /**
+     * Initializes some utils controls like canvas scale control, fullscreen etc.
+     */
     private initialize_utils_controls() {
         //set initial zoom
         this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
@@ -329,6 +341,9 @@ export class GoldenSun {
         );
     }
 
+    /**
+     * The engine main update function.
+     */
     private update() {
         if (!this.assets_loaded) {
             this.render_loading();
@@ -346,7 +361,7 @@ export class GoldenSun {
                 this.tile_event_manager.check_tile_events(location_key, this.map);
             }
 
-            this.hero.update(this.map); //updates hero position/velocity/sprite
+            this.hero.update(); //updates hero position/velocity/sprite
             this.map.update(); //updates map and its objects (NPC, Interact. Objs etc) position/velocity/sprite
         } else {
             if (this.game_event_manager.on_event) {
@@ -379,6 +394,9 @@ export class GoldenSun {
         }
     }
 
+    /**
+     * Renders some debug info.
+     */
     private render() {
         this.debug.set_debug_info();
         if (this.game.time.frames % 8 === 0) {

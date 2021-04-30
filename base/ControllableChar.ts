@@ -93,6 +93,12 @@ export abstract class ControllableChar {
     private _footsteps: Footsteps;
     protected look_target: ControllableChar = null;
     protected _active: boolean;
+    /**
+     * A mask that contains in which directions the hero is colliding. Example:
+     *  - If the hero is colliding on left direction, which has 4 as value, then this variable will have this value: 00010000.
+     *  - If the hero is colliding on right direction, which has 0 as value, then this variable will have this value: 00000001.
+     *  - Colliding in both left and right direction: 00010001.
+     * */
     protected colliding_directions_mask: number;
     private _rotating: boolean;
     private _rotating_interval: number;
