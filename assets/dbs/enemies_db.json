@@ -330,5 +330,71 @@
             "frame_rate": [4,4,1,1,1,1,1,1],
             "loop": [true,true,false,false,false,false,false,false]
         }
+    },{
+        "key_name": "venus_djinn_ground",
+        "name": "Venus Djinn",
+        "level": 23,
+        "turns": 1,
+        "max_hp": 623,
+        "max_pp": 51,
+        "hp_recovery": 0,
+        "pp_recovery": 0,
+        "atk": 271,
+        "def": 71,
+        "agi": 160,
+        "luk": 18,
+        "battle_scale": 1.0,
+        "battle_shadow_key": "00",
+        "status_sprite_shift": 15,
+        "items": [],
+        "abilities": [
+            {
+                "key_name": "attack",
+                "use_weight": 1.0
+            }
+        ],
+        "vulnerabilities": [],
+        "coins_reward": 464,
+        "item_reward": "",
+        "item_reward_chance": 0,
+        "exp_reward": 534,
+        "base_level": {
+            "venus": 6,
+            "mercury": 2,
+            "mars": 2,
+            "jupiter": 0
+        },
+        "base_power": {
+            "venus": 120,
+            "mercury": 95,
+            "mars": 95,
+            "jupiter": 80
+        },
+        "base_resist": {
+            "venus": 193,
+            "mercury": 100,
+            "mars": 100,
+            "jupiter": 25
+        },
+        "battle_animations_variations": {
+            "attack": "attack"
+        },
+        "battle_spritesheet": {
+            "spritesheet": "assets/images/spritesheets/battle/venus_djinn_battle.json",
+            "spritesheet_img": "assets/images/spritesheets/battle/venus_djinn_battle.png",
+            "positions": [
+                "idle_back", 
+                "idle_front",
+                "attack_back",
+                "attack_front",
+                "damage_back",
+                "damage_front",
+                "cast_back",
+                "cast_front"
+            ],
+            "frames_number": [4,4,1,1,1,1,1,1],
+            "frame_rate": [[4,4,2,4],[4,4,2,4],1,1,1,1,1,1],
+            "loop": [true,true,false,false,false,false,false,false]
+        }
     }
 ]

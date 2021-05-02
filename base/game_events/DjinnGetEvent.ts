@@ -8,6 +8,7 @@ import {FieldAbilities} from "../field_abilities/FieldAbilities";
 import {degree360, GAME_HEIGHT, GAME_WIDTH} from "../magic_numbers";
 import {DialogManager} from "../utils/DialogManager";
 import {Button} from "../XGamepad";
+import {BattleEvent} from "./BattleEvent";
 
 export class DjinnGetEvent extends GameEvent {
     private static readonly ELEMENT_HUE = {
@@ -19,16 +20,35 @@ export class DjinnGetEvent extends GameEvent {
 
     private djinn: Djinn;
     private finish_events: GameEvent[] = [];
+    private on_battle_defeat_events: GameEvent[] = [];
     private aux_resolve: () => void;
     private aux_promise: Promise<void>;
     private dialog_manager: DialogManager = null;
     private running: boolean = false;
     private control_enable: boolean = false;
     private control_key: number;
+    private has_fight: number;
+    private enemy_party_key: string;
+    private custom_battle_bg: string;
+    private djinn_defeated: boolean;
 
-    constructor(game, data, active, djinn_key, finish_events) {
+    constructor(
+        game,
+        data,
+        active,
+        djinn_key,
+        has_fight,
+        enemy_party_key,
+        custom_battle_bg,
+        finish_events,
+        on_battle_defeat_events
+    ) {
         super(game, data, event_types.DJINN_GET, active);
         this.djinn = this.data.info.djinni_list[djinn_key];
+        this.has_fight = has_fight ?? false;
+        this.enemy_party_key = enemy_party_key;
+        this.custom_battle_bg = custom_battle_bg;
+        this.djinn_defeated = false;
 
         this.control_key = this.data.control_manager.add_controls(
             [
@@ -46,6 +66,10 @@ export class DjinnGetEvent extends GameEvent {
         finish_events?.forEach(event_info => {
             const event = this.data.game_event_manager.get_event_instance(event_info);
             this.finish_events.push(event);
+        });
+        on_battle_defeat_events?.forEach(event_info => {
+            const event = this.data.game_event_manager.get_event_instance(event_info);
+            this.on_battle_defeat_events.push(event);
         });
     }
 
@@ -69,6 +93,17 @@ export class DjinnGetEvent extends GameEvent {
         this.game.physics.p2.resume();
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
+    }
+
+    finish_on_defeat() {
+        this.control_enable = false;
+        this.running = false;
+        this.data.control_manager.detach_bindings(this.control_key);
+        this.data.hero.play(base_actions.IDLE);
+        this.data.game_event_manager.force_idle_action = true;
+        this.game.physics.p2.resume();
+        --this.data.game_event_manager.events_running_count;
+        this.on_battle_defeat_events.forEach(event => event.fire(this.origin_npc));
     }
 
     async venus_djinn() {
@@ -681,6 +716,120 @@ export class DjinnGetEvent extends GameEvent {
         reset_map();
     }
 
+    async start_a_fight() {
+        await this.origin_npc.shake({
+            repeats_number: 2,
+            repeat_period: 65,
+            side_shake: true,
+            max_scale_mult: 0.75,
+        });
+
+        await this.wait(500);
+
+        await this.origin_npc.show_emoticon("annoyed", {
+            location: {
+                y: this.origin_npc.y - this.origin_npc.height + 10,
+            },
+        });
+
+        const previous_npc_pos = {
+            x: this.origin_npc.x,
+            y: this.origin_npc.y,
+        };
+        const previous_npc_dir = this.origin_npc.current_direction;
+        this.origin_npc.set_rotation(true);
+
+        const bounce_height = this.data.hero.y - ((this.data.hero.height * 3) >> 2);
+        const bounce_height_2 = this.data.hero.y - this.data.hero.height;
+
+        const jump_height = bounce_height - this.data.hero.height;
+        const jump_height_2 = bounce_height_2 - this.data.hero.height;
+        const jump_height_3 = jump_height_2 - (this.data.hero.height >> 1);
+        const jump_height_4 = this.game.camera.y - 10;
+
+        const jump_softness = -0.07;
+        const easing = k => 4 * Math.pow(k - 0.5, 3) + 0.5 + jump_softness * Math.sin(2 * Math.PI * k);
+        const tween_target = this.origin_npc.sprite.body ?? this.origin_npc.sprite;
+        let tween = this.game.add.tween(tween_target).to({y: [jump_height, bounce_height]}, 500, easing, true);
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        tween.onComplete.addOnce(this.aux_resolve);
+        await this.aux_promise;
+
+        tween = this.game.add.tween(tween_target).to({y: [jump_height_2, bounce_height_2]}, 500, easing, true);
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        tween.onComplete.addOnce(this.aux_resolve);
+        await this.aux_promise;
+
+        tween = this.game.add.tween(tween_target).to({y: [jump_height_3, bounce_height_2]}, 500, easing, true);
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        tween.onComplete.addOnce(this.aux_resolve);
+        await this.aux_promise;
+
+        this.origin_npc.set_rotation(false);
+        this.origin_npc.set_direction(previous_npc_dir, true);
+
+        const trail_bitmap_data = this.game.add.bitmapData(GAME_WIDTH, GAME_HEIGHT);
+        trail_bitmap_data.smoothed = false;
+        trail_bitmap_data.fill(0, 0, 0, 1);
+        const trail_image = this.game.add.image(this.game.camera.x, this.game.camera.y, trail_bitmap_data);
+        trail_image.blendMode = Phaser.blendModes.SCREEN;
+
+        tween = this.game.add.tween(tween_target).to(
+            {
+                x: this.data.hero.x,
+                y: [jump_height_4, bounce_height],
+            },
+            600,
+            easing,
+            true
+        );
+        if (this.origin_npc.shadow) {
+            tween = this.game.add.tween(this.origin_npc.shadow).to(
+                {
+                    x: this.data.hero.x,
+                },
+                600,
+                Phaser.Easing.Linear.None,
+                true
+            );
+        }
+        const shift_x = (this.origin_npc.sprite.width * this.origin_npc.sprite.anchor.x) >> 1;
+        const shift_y = (this.origin_npc.sprite.height * this.origin_npc.sprite.anchor.y) >> 1;
+        tween.onUpdateCallback(() => {
+            trail_bitmap_data.fill(0, 0, 0, 0.05);
+            const x = this.origin_npc.sprite.x - this.game.camera.x + shift_x;
+            const y = this.origin_npc.sprite.y - this.game.camera.y + shift_y;
+            trail_bitmap_data.draw(this.origin_npc.sprite, x, y);
+        });
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        tween.onComplete.addOnce(() => {
+            trail_bitmap_data.destroy();
+            trail_image.destroy();
+            this.aux_resolve();
+        });
+        await this.aux_promise;
+
+        this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
+        const party = this.enemy_party_key;
+        const event = this.data.game_event_manager.get_event_instance({
+            type: event_types.BATTLE,
+            background_key: this.custom_battle_bg ?? this.data.map.background_key,
+            enemy_party_key: party,
+        }) as BattleEvent;
+        event.assign_before_fade_finish_callback(() => {
+            this.origin_npc.set_position({
+                x: previous_npc_pos.x,
+                y: previous_npc_pos.y,
+            });
+        });
+        event.assign_finish_callback(victory => {
+            this.djinn_defeated = victory;
+            this.aux_resolve();
+        });
+        event.fire();
+        await this.aux_promise;
+    }
+
     async _fire(oringin_npc: NPC) {
         if (!this.active) return;
         ++this.data.game_event_manager.events_running_count;
@@ -690,6 +839,14 @@ export class DjinnGetEvent extends GameEvent {
         this.game.physics.p2.pause();
 
         await this.data.game_event_manager.handle_npc_interaction_start(this.origin_npc, false);
+
+        if (this.has_fight) {
+            await this.start_a_fight();
+            if (!this.djinn_defeated) {
+                this.finish_on_defeat();
+                return;
+            }
+        }
 
         switch (this.djinn.element) {
             case elements.VENUS:
@@ -726,6 +883,7 @@ export class DjinnGetEvent extends GameEvent {
 
     destroy() {
         this.finish_events.forEach(event => event.destroy());
+        this.on_battle_defeat_events.forEach(event => event.destroy());
         this.origin_npc = null;
         this.dialog_manager?.destroy();
         this.data.control_manager.detach_bindings(this.control_key);

@@ -39,7 +39,7 @@ export class Map {
     private _is_world_map: boolean;
     private bgm_key: string;
     private bgm_url: string;
-    private background_key: string;
+    private _background_key: string;
     private expected_party_level: number;
     private encounter_cumulator: number;
     private encounter_zones: {
@@ -94,7 +94,7 @@ export class Map {
         this.expected_party_level = expected_party_level;
         this.encounter_cumulator = 0;
         this.encounter_zones = [];
-        this.background_key = background_key;
+        this._background_key = background_key;
     }
 
     get events() {
@@ -138,6 +138,9 @@ export class Map {
     }
     get layers() {
         return this.sprite.layers;
+    }
+    get background_key() {
+        return this._background_key;
     }
 
     get tile_width() {

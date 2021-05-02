@@ -673,6 +673,57 @@ export abstract class ControllableChar {
     }
 
     /**
+     * Shows an emoticon above this char.
+     * @param emoticon_key The emoticon key name.
+     * @param options Some custom options.
+     */
+    async show_emoticon(
+        emoticon_key: string,
+        options?: {
+            /** The duration that this emoticon is going to be shown. */
+            duration?: number;
+            /** A custom location for the emoticon. */
+            location?: {
+                x?: number;
+                y?: number;
+            };
+            /** Sound effect key to be played. */
+            sound_effect?: string;
+        }
+    ) {
+        const x = options?.location?.x ?? this.sprite.x;
+        const y = options?.location?.y ?? this.sprite.y - this.sprite.height + 5;
+        const emoticon_sprite = this.game.add.sprite(x, y, "emoticons", emoticon_key);
+        emoticon_sprite.anchor.setTo(0.5, 1);
+        emoticon_sprite.scale.x = 0;
+
+        const duration = options?.duration ?? 800;
+
+        let promise_resolve;
+        const promise = new Promise(resolve => (promise_resolve = resolve));
+        this.game.add
+            .tween(emoticon_sprite.scale)
+            .to(
+                {
+                    x: 1,
+                },
+                200,
+                Phaser.Easing.Elastic.Out,
+                true
+            )
+            .onComplete.addOnce(() => {
+                if (options?.sound_effect) {
+                    this.data.audio.play_se(options?.sound_effect);
+                }
+                this.game.time.events.add(duration, () => {
+                    emoticon_sprite.destroy();
+                    promise_resolve();
+                });
+            });
+        await promise;
+    }
+
+    /**
      * Set a specific frame for this char.
      * @param animation the animation or direction of the target frame.
      * @param frame_index the frame index.
@@ -981,6 +1032,19 @@ export abstract class ControllableChar {
     update_tile_position() {
         this._tile_x_pos = (this.sprite.x / this.data.map.tile_width) | 0;
         this._tile_y_pos = (this.sprite.y / this.data.map.tile_height) | 0;
+    }
+
+    /**
+     * Sets this char position.
+     * @param position the x/y positions in px.
+     */
+    set_position(position: {x?: number; y?: number}, update_shadow: boolean = true) {
+        const obj = this.sprite.body ?? this.sprite;
+        obj.x = position.x ?? obj.x;
+        obj.y = position.y ?? obj.y;
+        if (update_shadow) {
+            this.update_shadow();
+        }
     }
 
     /**

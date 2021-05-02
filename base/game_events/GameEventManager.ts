@@ -140,7 +140,7 @@ export class GameEventManager {
         if (increment_event_counter) {
             ++this.events_running_count;
         }
-        let previous_npc_direction: number;
+        let previous_npc_direction: directions;
         if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
             previous_npc_direction = npc.current_direction;
             await this.set_npc_and_hero_directions(npc);
@@ -290,7 +290,17 @@ export class GameEventManager {
             case event_types.SUMMON:
                 return new SummonEvent(this.game, this.data, info.active, info.summon_key, info.finish_events);
             case event_types.DJINN_GET:
-                return new DjinnGetEvent(this.game, this.data, info.active, info.djinn_key, info.finish_events);
+                return new DjinnGetEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.djinn_key,
+                    info.has_fight,
+                    info.enemy_party_key,
+                    info.custom_battle_bg,
+                    info.finish_events,
+                    info.on_battle_defeat_events
+                );
             case event_types.JUMP:
                 return new JumpEvent(
                     this.game,
