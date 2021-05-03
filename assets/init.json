@@ -1,11 +1,11 @@
 {
     "hero_key_name": "isaac",
     "initial_action": "idle",
-    "initial_direction": "right",
-    "map_key_name": "madra_side",
-    "initial_scale_factor": 3,
-    "x_tile_position": 18,
-    "y_tile_position": 25,
+    "initial_direction": "down",
+    "map_key_name": "madra",
+    "initial_scale_factor": 2,
+    "x_tile_position": 30,
+    "y_tile_position": 13,
     "map_z_index": 0,
     "coins": 10000,
     "initial_shortcuts": [
