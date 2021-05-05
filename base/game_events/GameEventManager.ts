@@ -31,14 +31,18 @@ export enum interaction_patterns {
 }
 
 export class GameEventManager {
-    public game: Phaser.Game;
-    public data: GoldenSun;
-    public events_running_count: number;
-    public control_enable: boolean;
-    public allow_char_to_move: boolean;
-    public force_idle_action: boolean;
-    public fire_next_step: Function;
+    private game: Phaser.Game;
+    private data: GoldenSun;
+    private control_enable: boolean;
+    private fire_next_step: Function;
     private update_callbacks: Function[] = [];
+
+    /** The game events counter. This variable shows how many game events are running at the moment. */
+    public events_running_count: number;
+    /** If true, the hero can move while in a game event. */
+    public allow_char_to_move: boolean;
+    /** If false, the hero can assume any action like walk, dash, grant etc. */
+    public force_idle_action: boolean;
 
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
@@ -55,7 +59,10 @@ export class GameEventManager {
         return this.events_running_count;
     }
 
-    set_controls() {
+    /**
+     * Initialize the controls tha allows interaction with NPCs.
+     */
+    private set_controls() {
         this.data.control_manager.add_controls(
             [
                 {
@@ -83,8 +90,10 @@ export class GameEventManager {
         );
     }
 
-    //look for valid npcs in the nearby
-    search_for_npc() {
+    /**
+     * Look for valid npcs in the nearby.
+     */
+    private search_for_npc() {
         for (let i = 0; i < this.data.map.npcs.length; ++i) {
             const npc = this.data.map.npcs[i];
             if (
@@ -105,7 +114,11 @@ export class GameEventManager {
         }
     }
 
-    async set_npc_event(npc: NPC) {
+    /**
+     * Checks and configs the type of interaction that the given NPC yields.
+     * @param npc the NPC.
+     */
+    private async set_npc_event(npc: NPC) {
         switch (npc.npc_type) {
             case npc_types.NORMAL:
             case npc_types.SPRITE:
@@ -136,10 +149,13 @@ export class GameEventManager {
         }
     }
 
-    async handle_npc_interaction_start(npc: NPC, increment_event_counter: boolean = true) {
-        if (increment_event_counter) {
-            ++this.events_running_count;
-        }
+    /**
+     * Initializes the hero and npc interaction.
+     * @param npc The NPC to interact.
+     * @returns returns the previous npc direction.
+     */
+    private async handle_npc_interaction_start(npc: NPC) {
+        ++this.events_running_count;
         let previous_npc_direction: directions;
         if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
             previous_npc_direction = npc.current_direction;
@@ -148,7 +164,12 @@ export class GameEventManager {
         return previous_npc_direction;
     }
 
-    async handle_npc_interaction_end(npc: NPC, previous_npc_direction: directions) {
+    /**
+     * Ends the hero and npc interaction.
+     * @param npc The NPC to end interaction.
+     * @param previous_npc_direction the previous npc interaction before it start.
+     */
+    private async handle_npc_interaction_end(npc: NPC, previous_npc_direction: directions) {
         --this.events_running_count;
         if (npc.interaction_pattern !== interaction_patterns.SIMPLE) {
             await npc.face_direction(previous_npc_direction);
@@ -156,7 +177,10 @@ export class GameEventManager {
         this.control_enable = true;
     }
 
-    //make hero and npc look each other
+    /**
+     * Make hero and npc look each other.
+     * @param npc The NPC that the hero is interacting with.
+     */
     async set_npc_and_hero_directions(npc: NPC) {
         const npc_x = npc.sprite.x;
         const npc_y = npc.sprite.y;
@@ -174,8 +198,11 @@ export class GameEventManager {
         await Promise.all([hero_promise, npc_promise]);
     }
 
-    // starts common npc dialogs
-    async manage_npc_dialog(npc: NPC) {
+    /**
+     * Starts common npc dialogs.
+     * @param npc The NPC to dialog with.
+     */
+    private async manage_npc_dialog(npc: NPC) {
         const previous_npc_direction = await this.handle_npc_interaction_start(npc);
         const dialog_manager = new DialogManager(this.game, this.data);
         dialog_manager.set_dialog(npc.message, {
@@ -195,13 +222,22 @@ export class GameEventManager {
         this.fire_next_step();
     }
 
-    fire_npc_events(npc: NPC) {
+    /**
+     * Starts all related game events to a NPC.
+     * @param npc The NPC.
+     */
+    private fire_npc_events(npc: NPC) {
         this.control_enable = true;
         npc.events.forEach(event => {
             event.fire(npc);
         });
     }
 
+    /**
+     * The GameEvent factory. Returns a specific GameEvent child instance depending on the input.
+     * @param info The parsed raw properties of a game event.
+     * @returns The GameEvent child class instance.
+     */
     get_event_instance(info: any) {
         switch (info.type) {
             case event_types.BATTLE:
@@ -353,14 +389,27 @@ export class GameEventManager {
         }
     }
 
+    /**
+     * Sets any custom callback to be called on update function while any game event is in action.
+     * @param callback the callback to be called.
+     */
     add_callback(callback: Function) {
         this.update_callbacks.push(callback);
     }
 
+    /**
+     * Removes the given callback of the list of callbacks that are called while any game event is in action.
+     * The given callback must be already added by calling GameEventManager.add_callback method.
+     * @param callback the callback to be removed.
+     */
     remove_callback(callback: Function) {
         this.update_callbacks = this.update_callbacks.filter(c => callback !== c);
     }
 
+    /**
+     * The main game event update function. Whenever a game event is running, this function is called
+     * every single frame.
+     */
     update() {
         if (!this.allow_char_to_move) {
             this.data.hero.stop_char(this.force_idle_action);
@@ -370,6 +419,13 @@ export class GameEventManager {
         this.update_callbacks.forEach(callback => callback());
     }
 
+    /**
+     * Gets any kind of engine value that the engine user may want use in game events.
+     * This function is used in BranchEvents, for instance. The values used for comparison
+     * in this kind of event are retrieved using this function.
+     * @param event_value The value specification.
+     * @returns The engine value issued by the user.
+     */
     get_value(event_value: EventValue) {
         switch (event_value.type) {
             case event_value_types.VALUE:

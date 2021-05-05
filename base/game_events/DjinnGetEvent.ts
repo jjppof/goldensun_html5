@@ -9,6 +9,7 @@ import {degree360, GAME_HEIGHT, GAME_WIDTH} from "../magic_numbers";
 import {DialogManager} from "../utils/DialogManager";
 import {Button} from "../XGamepad";
 import {BattleEvent} from "./BattleEvent";
+import {interaction_patterns} from "./GameEventManager";
 
 export class DjinnGetEvent extends GameEvent {
     private static readonly ELEMENT_HUE = {
@@ -838,7 +839,9 @@ export class DjinnGetEvent extends GameEvent {
         this.running = true;
         this.game.physics.p2.pause();
 
-        await this.data.game_event_manager.handle_npc_interaction_start(this.origin_npc, false);
+        if (this.origin_npc.interaction_pattern !== interaction_patterns.SIMPLE) {
+            await this.data.game_event_manager.set_npc_and_hero_directions(this.origin_npc);
+        }
 
         if (this.has_fight) {
             await this.start_a_fight();
