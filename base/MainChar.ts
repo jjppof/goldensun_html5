@@ -9,7 +9,6 @@ import {ELEM_ATTR_MIN, ELEM_ATTR_MAX} from "./magic_numbers";
 import * as _ from "lodash";
 import {GameInfo, PartyData} from "./initializers/initialize_info";
 import {Ability} from "./Ability";
-import {GoldenSun} from "./GoldenSun";
 import {djinn_actions} from "./main_menus/MainDjinnMenu";
 
 export type ItemSlot = {
@@ -43,7 +42,7 @@ export const item_equip_slot = {
     [item_types.CLASS_CHANGER]: equip_slots.CLASS_CHANGER,
 };
 
-export const main_extra_stat_map = {
+export const main_extra_stat_map: {[main_stat in main_stats]?: extra_main_stats} = {
     [main_stats.MAX_HP]: extra_main_stats.MAX_HP,
     [main_stats.MAX_PP]: extra_main_stats.MAX_PP,
     [main_stats.ATTACK]: extra_main_stats.ATTACK,
@@ -70,6 +69,10 @@ export const main_boost_stat_map = {
     [main_stats.LUCK]: "luk_boost",
 };
 
+/**
+ * This class represents a main char of the game, the ones that can be integrated
+ * into the party like Isaac, Felix, Jenna, Mia, Garet etc.
+ */
 export class MainChar extends Player {
     private static readonly ELEM_LV_DELTA = 1;
     private static readonly ELEM_POWER_DELTA = 5;
@@ -190,6 +193,9 @@ export class MainChar extends Player {
         this.weapon_sprite_shift = weapon_sprite_shift ?? 0;
     }
 
+    /**
+     * Returns a list of djinn sorted by djinn index that this char owns.
+     */
     get djinni() {
         const this_djinni_list = ordered_elements.map(elem => this.djinn_by_element[elem]).flat();
         return this_djinni_list.sort((a, b) => {
@@ -197,6 +203,10 @@ export class MainChar extends Player {
         });
     }
 
+    /**
+     * If this char is equipping an item that changes his class, this function returns the class
+     * type of the class that this item grants. If no class changer item is equipped, returns -1.
+     */
     get granted_class_type() {
         const equiped_class_changer = this.equip_slots[equip_slots.CLASS_CHANGER];
         if (equiped_class_changer) {
@@ -205,6 +215,9 @@ export class MainChar extends Player {
         return -1;
     }
 
+    /**
+     * Updates this char class.
+     */
     update_class() {
         this.class = Classes.choose_right_class(
             this.info.classes_list,
@@ -216,8 +229,22 @@ export class MainChar extends Player {
         );
     }
 
+    /**
+     * Adds an amount of experience to this char. This char level, class, abilities and attributes
+     * are also updated if needed.
+     * @param value the amount of experience to add.
+     * @returns returns the before and after exp add char status, like level, abilities and stats.
+     */
     add_exp(value: number) {
-        const return_data = {
+        type StatusType = {
+            level: MainChar["level"];
+            abilities: MainChar["abilities"];
+            stats: {[main_stat in main_stats]?: number}[];
+        };
+        const return_data: {
+            before: StatusType;
+            after: StatusType;
+        } = {
             before: {
                 level: this.level,
                 abilities: this.abilities.slice(),
@@ -250,6 +277,9 @@ export class MainChar extends Player {
         return return_data;
     }
 
+    /**
+     * Initializes this char items by equipping them.
+     */
     private init_items() {
         this.items.forEach((item_obj, index) => {
             item_obj.index = index;
@@ -259,6 +289,13 @@ export class MainChar extends Player {
         });
     }
 
+    /**
+     * Adds an item to this char. If this char already has the given item, this function will just
+     * increase this item quantity.
+     * @param item_key_name The item key name.
+     * @param quantity The amount of this item to add.
+     * @param equip if true, this item will be equipped.
+     */
     add_item(item_key_name: string, quantity: number, equip: boolean) {
         let found = false;
         if (this.info.items_list[item_key_name].type === item_types.GENERAL_ITEM) {
@@ -281,6 +318,13 @@ export class MainChar extends Player {
         }
     }
 
+    /**
+     * Removes/drops an item from this char. If the item is equipped, it will be
+     * unequipped. If the given quantity is smaller than the current quantity, the item slot
+     * for the given item will be kept.
+     * @param item_obj_to_remove
+     * @param quantity
+     */
     remove_item(item_obj_to_remove: ItemSlot, quantity: number) {
         let adjust_index = false;
         this.items = this.items.filter((item_obj, index) => {
@@ -302,6 +346,12 @@ export class MainChar extends Player {
         });
     }
 
+    /**
+     * Equips an item to this char. This char must already own the item. After equipping,
+     * all relevant updates are done like abilities, class, attributes, effects etc.
+     * @param index the item slot index of this char.
+     * @param initialize only sets this to true if constructing this char.
+     */
     equip_item(index: number, initialize: boolean = false) {
         const item_obj = this.items[index];
         if (item_obj.equipped && !initialize) return;
@@ -330,6 +380,11 @@ export class MainChar extends Player {
         this.update_attributes();
     }
 
+    /**
+     * Unequips an item to this char. After unequipping, all relevant updates are done
+     * like abilities, class, attributes, effects etc.
+     * @param index the item slot index of this char.
+     */
     unequip_item(index: number) {
         const item_obj = this.items[index];
         if (!item_obj.equipped) return;
@@ -357,6 +412,11 @@ export class MainChar extends Player {
         this.update_attributes();
     }
 
+    /**
+     * Initializes this char djinn list and updates this char elemental attributes.
+     * Call this function when constructing a char.
+     * @param djinni list of initial djinn key names.
+     */
     private init_djinni(djinni: string[]) {
         for (let i = 0; i < djinni.length; ++i) {
             const djinn = this.info.djinni_list[djinni[i]];
@@ -365,12 +425,20 @@ export class MainChar extends Player {
         this.update_elemental_attributes();
     }
 
+    /**
+     * Adds a specific djinn to this char and do all the necessary attribute updates.
+     * @param djinn_key_name The djinn key name.
+     */
     add_djinn(djinn_key_name: string) {
         const djinn = this.info.djinni_list[djinn_key_name];
         this.djinn_by_element[djinn.element].push(djinn.key_name);
         this.update_all();
     }
 
+    /**
+     * Removes a specific djinn to this char and do all the necessary attribute updates.
+     * @param djinn_key_name The djinn key name.
+     */
     remove_djinn(djinn_key_name: string) {
         const djinn = this.info.djinni_list[djinn_key_name];
         const this_djinni_list = this.djinn_by_element[djinn.element];
@@ -379,21 +447,35 @@ export class MainChar extends Player {
         this.update_all();
     }
 
+    /**
+     * Removes a specific djinni, then adds another specific djinni.
+     * @param old_djinn_key_name The key name of the djinni to be removed.
+     * @param new_djinn_key_name The key name of the djinni to be addeed.
+     */
     replace_djinn(old_djinn_key_name: string, new_djinn_key_name: string) {
         this.remove_djinn(old_djinn_key_name);
         this.add_djinn(new_djinn_key_name);
     }
 
+    /**
+     * Previews the changes of trading, giving, receiving and/or changing the status of a list of djinn.
+     * These changes are in class, abilities and stats.
+     * @param stats The stats the you want to analyze.
+     * @param djinni_key_names The djinn key names.
+     * @param djinni_next_status The next djinn status. Must match with djinni_key_names size.
+     * @param action Whether it's trading or giving a djinn.
+     * @returns Returns an object with the changes info.
+     */
     preview_djinn_change(
         stats: main_stats[],
-        djinni_key_name: string[],
+        djinni_key_names: string[],
         djinni_next_status: djinn_status[],
         action?: djinn_actions
     ) {
         const previous_class = this.class;
         const lvls: Player["current_level"] = _.cloneDeep(this.current_level);
-        for (let i = 0; i < djinni_key_name.length; ++i) {
-            const djinn = this.info.djinni_list[djinni_key_name[i]];
+        for (let i = 0; i < djinni_key_names.length; ++i) {
+            const djinn = this.info.djinni_list[djinni_key_names[i]];
             let lv_shift;
             switch (djinni_next_status[i]) {
                 case djinn_status.SET:
@@ -416,7 +498,13 @@ export class MainChar extends Player {
             this.granted_class_type,
             this.special_class_type
         );
-        const return_obj = {
+        const return_obj: {
+            class_name: string;
+            class_key_name: string;
+            abilities?: string[];
+        } & {
+            [stat in main_stats]?: ReturnType<MainChar["set_main_stat"]>;
+        } = {
             class_name: this.class.name,
             class_key_name: this.class.key_name,
             abilities: null,
@@ -433,27 +521,25 @@ export class MainChar extends Player {
             status === djinn_status.ANY ? djinn_status.STANDBY : status
         );
         stats.forEach(stat => {
-            return_obj[stat] = this.preview_stats_by_djinn(stat, djinni_key_name, djinni_next_status, action);
+            const preview_obj = {
+                djinni_key_names: djinni_key_names,
+                djinni_next_status: djinni_next_status,
+                action: action,
+            };
+            return_obj[stat] = this.set_main_stat(stat, true, preview_obj);
         });
         this.class = previous_class;
         return return_obj;
     }
 
-    private preview_stats_by_djinn(
-        stat: main_stats,
-        djinni_key_name: string[],
-        djinni_next_status: djinn_status[],
-        action: djinn_actions
-    ) {
-        const preview_obj = {
-            djinni_key_name: djinni_key_name,
-            djinni_next_status: djinni_next_status,
-            action: action,
-        };
-        return this.set_main_stat(stat, true, preview_obj);
-    }
-
-    preview_stats_by_effect(effect_type: effect_types, effect_obj: any, item_key_name: string) {
+    /**
+     * Previews a stat value without the given effect of an item.
+     * @param effect_type the effect type.
+     * @param effect_obj the item effect object.
+     * @param item_key_name the item key name.
+     * @returns returns the corresponding stat preview value of the given effect.
+     */
+    preview_stats_without_item_effect(effect_type: effect_types, effect_obj: any, item_key_name: string) {
         const preview_obj = {
             effect_obj: effect_obj,
             item_key_name: item_key_name,
@@ -461,6 +547,11 @@ export class MainChar extends Player {
         return this.set_main_stat(effect_type_stat[effect_type], true, preview_obj);
     }
 
+    /**
+     * Previews a stat value by ignoring all abilities effects.
+     * @param stat the stat to be previewed.
+     * @returns returns the stat preview value.
+     */
     preview_stat_without_abilities_effect(stat: main_stats) {
         return this.set_main_stat(stat, true, {ignore_ability_effect: true});
     }
@@ -470,13 +561,13 @@ export class MainChar extends Player {
         preview = false,
         preview_obj: {
             action?: djinn_actions;
-            djinni_key_name?: string[];
+            djinni_key_names?: string[];
             item_key_name?: string;
             ignore_ability_effect?: boolean;
             effect_obj?: any;
             djinni_next_status?: djinn_status[];
         } = {}
-    ) {
+    ): number {
         const boost_key = main_boost_stat_map[stat];
         const curve_key = main_curve_stat_map[stat];
         const extra_key = main_extra_stat_map[stat];
@@ -488,22 +579,22 @@ export class MainChar extends Player {
         const this_djinni = this.djinni;
         if (preview) {
             if (preview_obj.action === djinn_actions.TRADE) {
-                const first_index = this_djinni.indexOf(preview_obj.djinni_key_name[0]);
+                const first_index = this_djinni.indexOf(preview_obj.djinni_key_names[0]);
                 if (first_index >= 0) {
-                    this_djinni[first_index] = preview_obj.djinni_key_name[1];
+                    this_djinni[first_index] = preview_obj.djinni_key_names[1];
                 } else {
-                    this_djinni[this_djinni.indexOf(preview_obj.djinni_key_name[1])] = preview_obj.djinni_key_name[0];
+                    this_djinni[this_djinni.indexOf(preview_obj.djinni_key_names[1])] = preview_obj.djinni_key_names[0];
                 }
             } else if (preview_obj.action === djinn_actions.GIVE) {
-                this_djinni.push(preview_obj.djinni_key_name[0]);
+                this_djinni.push(preview_obj.djinni_key_names[0]);
             }
         }
         for (let i = 0; i < this_djinni.length; ++i) {
             const djinn_key_name = this_djinni[i];
             const djinn = this.info.djinni_list[djinn_key_name];
             let status = djinn.status;
-            if (preview && preview_obj.djinni_key_name && preview_obj.djinni_key_name.includes(djinn_key_name)) {
-                status = preview_obj.djinni_next_status[preview_obj.djinni_key_name.indexOf(djinn_key_name)];
+            if (preview && preview_obj.djinni_key_names && preview_obj.djinni_key_names.includes(djinn_key_name)) {
+                status = preview_obj.djinni_next_status[preview_obj.djinni_key_names.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
             this[stat] += djinn[boost_key];
@@ -513,9 +604,12 @@ export class MainChar extends Player {
                 preview &&
                 effect.effect_owner_instance &&
                 preview_obj.item_key_name === effect.effect_owner_instance.key_name
-            )
+            ) {
                 return;
-            if (preview && preview_obj.ignore_ability_effect && effect.effect_owner_instance instanceof Ability) return;
+            }
+            if (preview && preview_obj.ignore_ability_effect && effect.effect_owner_instance instanceof Ability) {
+                return;
+            }
             const effect_type = _.invert(effect_type_stat)[stat];
             if (effect.type === effect_type) {
                 effect.apply_effect();
@@ -538,6 +632,9 @@ export class MainChar extends Player {
         }
     }
 
+    /**
+     * Updates all main stats of this char.
+     */
     update_attributes() {
         this.set_main_stat(main_stats.MAX_HP);
         this.set_main_stat(main_stats.MAX_PP);
@@ -547,15 +644,44 @@ export class MainChar extends Player {
         this.set_main_stat(main_stats.LUCK);
     }
 
-    add_extra_stat(stat: extra_main_stats, amount: number) {
+    /**
+     * Increments by a value a given extra main stat of this char.
+     * @param stat the extra main stat.
+     * @param amount the quantity to increment.
+     * @param update whether the char correspondent main stat should be updated.
+     */
+    add_extra_stat(stat: extra_main_stats, amount: number, update: boolean = true) {
         this[stat] += amount;
+        if (update) {
+            const main_stat = _.invert(main_extra_stat_map)[stat];
+            this.set_main_stat(main_stat as main_stats);
+        }
     }
 
+    /**
+     * Previews the elemental stats values without abilities effects.
+     * @returns returns the preview values for power, resist and level for each element.
+     */
     preview_elemental_stats_without_abilities_effect() {
         return this.update_elemental_attributes(true, true);
     }
 
-    update_elemental_attributes(preview: boolean = false, ignore_ability_effects: boolean = false) {
+    /**
+     * Updates all elemental stats of this char.
+     * @param preview if true, the stats won't be updated and the calculated values returned.
+     * @param ignore_ability_effects if true, abilities effects won't be considered.
+     * @returns if preview is true, it returns the calculated stats.
+     */
+    update_elemental_attributes(
+        preview: boolean = false,
+        ignore_ability_effects: boolean = false
+    ): {
+        [element in elements]?: {
+            power: number;
+            resist: number;
+            level: number;
+        };
+    } {
         const previous_stats = {};
         ordered_elements.forEach(element => {
             if (preview) {
@@ -571,7 +697,7 @@ export class MainChar extends Player {
         });
 
         for (let i = 0; i < this.djinni.length; ++i) {
-            let djinn = this.info.djinni_list[this.djinni[i]];
+            const djinn = this.info.djinni_list[this.djinni[i]];
             if (djinn.status !== djinn_status.SET) continue;
             this.current_power[djinn.element] += MainChar.ELEM_POWER_DELTA;
             this.current_resist[djinn.element] += MainChar.ELEM_RESIST_DELTA;
@@ -614,6 +740,10 @@ export class MainChar extends Player {
         }
     }
 
+    /**
+     * Updates the abilities list of this char reggarding class, inate abilities
+     * and equipped items that grant abilities.
+     */
     update_abilities() {
         this.abilities = this.innate_abilities.concat(
             this.class.ability_level_pairs
@@ -625,6 +755,9 @@ export class MainChar extends Player {
         );
     }
 
+    /**
+     * Updates all important attributes of this char like stats, class, abilities etc.
+     */
     update_all() {
         this.update_elemental_attributes();
         this.update_class();
@@ -632,12 +765,25 @@ export class MainChar extends Player {
         this.update_abilities();
     }
 
+    /**
+     * Returns all the chars that are not downed.
+     * @param party_data the party data object.
+     * @param max the max char to be returned.
+     * @returns return the chars list that are not downed.
+     */
     static get_active_players(party_data: PartyData, max: number) {
         return party_data.members.slice(0, max).filter(char => {
             return !char.has_permanent_status(permanent_status.DOWNED);
         });
     }
 
+    /**
+     * Adds an item to the first item slot available among all party members.
+     * @param party_data the party data object.
+     * @param item the item to be added.
+     * @param quantity the amount of the given item to be added.
+     * @returns returns true if the item was added to a char.
+     */
     static add_item_to_party(party_data: PartyData, item: Item, quantity: number) {
         for (let i = 0; i < party_data.members.length; ++i) {
             const char = party_data.members[i];
@@ -649,6 +795,12 @@ export class MainChar extends Player {
         return false;
     }
 
+    /**
+     * Adds a djinni to the first available position among all party members.
+     * @param party_data the party data object.
+     * @param djinn the djinn to be added.
+     * @returns returns the char that received the djinni.
+     */
     static add_djinn_to_party(party_data: PartyData, djinn: Djinn) {
         let this_char = party_data.members[0];
         for (let i = 0; i < party_data.members.length; ++i) {
@@ -661,12 +813,22 @@ export class MainChar extends Player {
         return this_char;
     }
 
+    /**
+     * Adds a char to the party.
+     * @param party_data the party data object.
+     * @param char the char to be added.
+     */
     static add_member_to_party(party_data: PartyData, char: MainChar) {
         char.in_party = true;
         party_data.members.push(char);
         party_data.avg_level = _.mean(party_data.members.map(char => char.level)) | 0;
     }
 
+    /**
+     * Removes a char from the party.
+     * @param party_data the party data object.
+     * @param char the char to be removed.
+     */
     static remove_member_from_party(party_data: PartyData, char: MainChar) {
         char.in_party = false;
         party_data.members = party_data.members.filter(member => {
