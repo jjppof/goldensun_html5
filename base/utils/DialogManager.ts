@@ -97,10 +97,10 @@ export class DialogManager {
      */
     update_position() {
         if (this.avatar && this.avatar_window) {
-            this.avatar_window.update(true);
+            this.avatar_window.update();
         }
         if (this.window) {
-            this.window.update(true);
+            this.window.update();
         }
     }
 
@@ -209,7 +209,7 @@ export class DialogManager {
         if (custom_pos?.y !== undefined) {
             win_pos.y = custom_pos.y;
         }
-        this.window = new Window(this.game, win_pos.x, win_pos.y, width, height, false);
+        this.window = new Window(this.game, win_pos.x, win_pos.y, width, height);
         this.window.show(
             ((step, italic_font, next_callback) => {
                 if (this.avatar_inside_window) {

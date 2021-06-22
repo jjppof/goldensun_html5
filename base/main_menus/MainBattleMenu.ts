@@ -370,7 +370,7 @@ export class MainBattleMenu {
     }
 
     update_position() {
-        this.chars_status_window.update_position(true);
+        this.chars_status_window.update_position();
         this.start_horizontal_menu.update_position();
         this.inner_horizontal_menu.update_position();
 

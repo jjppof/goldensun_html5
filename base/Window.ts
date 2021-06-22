@@ -55,12 +55,7 @@ export class Window {
     private border_graphics: Phaser.Graphics;
     private bg_graphics: Phaser.Graphics;
     private separators_graphics: Phaser.Graphics;
-    private need_pos_update: boolean;
     private _open: boolean;
-    private lines_sprites: {
-        text: Phaser.BitmapText;
-        shadow: Phaser.BitmapText;
-    }[];
     private extra_sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.BitmapText | Phaser.Group)[];
     private internal_groups: {[key: string]: Phaser.Group};
     private close_callback: () => void;
@@ -72,7 +67,6 @@ export class Window {
         y: number,
         width: number,
         height: number,
-        need_pos_update = true,
         color = numbers.DEFAULT_WINDOW_COLOR,
         font_color = numbers.DEFAULT_FONT_COLOR
     ) {
@@ -104,9 +98,7 @@ export class Window {
         this.group.width = 0;
         this.group.height = 0;
 
-        this.need_pos_update = need_pos_update;
         this._open = false;
-        this.lines_sprites = [];
         this._page_indicator = new PageIndicator(this.game, this);
     }
 
@@ -552,11 +544,9 @@ export class Window {
      * Updates the window position if necessary.
      * @param force If true, forces an update.
      */
-    update(force = false) {
-        if (this.need_pos_update || force) {
-            this.group.x = this.game.camera.x + this.x;
-            this.group.y = this.game.camera.y + this.y;
-        }
+    update() {
+        this.group.x = this.game.camera.x + this.x;
+        this.group.y = this.game.camera.y + this.y;
     }
 
     /**
@@ -644,11 +634,6 @@ export class Window {
             word_callback?: (word?: string, current_text?: string) => void;
         }
     ) {
-        for (let i = 0; i < this.lines_sprites.length; ++i) {
-            this.lines_sprites[i].text.destroy();
-            this.lines_sprites[i].shadow.destroy();
-        }
-        this.lines_sprites = [];
         const top_shift = options?.italic ? -2 : 0;
         const x_pos = options?.padding_x ?? numbers.WINDOW_PADDING_H + 4;
         let y_pos = options?.padding_y ?? numbers.WINDOW_PADDING_TOP + top_shift;
@@ -711,10 +696,6 @@ export class Window {
 
             this.group.add(text_sprite_shadow);
             this.group.add(text_sprite);
-            this.lines_sprites.push({
-                text: text_sprite,
-                shadow: text_sprite_shadow,
-            });
         }
 
         Promise.all(lines_promises).then(anim_promise_resolve);
@@ -852,6 +833,13 @@ export class Window {
     update_text(new_text: string, text_obj: TextObj) {
         text_obj.text.setText(new_text);
         text_obj.shadow.setText(new_text);
+        if (text_obj.right_align) {
+            text_obj.text.x = text_obj.initial_x - text_obj.text.width;
+            text_obj.shadow.x = text_obj.initial_x - text_obj.shadow.width + 1;
+            if (text_obj.text_bg) {
+                text_obj.text_bg.x = text_obj.text.x - 1;
+            }
+        }
     }
 
     /**

@@ -825,6 +825,7 @@ export class DjinnGetEvent extends GameEvent {
         });
         event.assign_finish_callback(victory => {
             this.djinn_defeated = victory;
+            this.game.physics.p2.pause();
             this.aux_resolve();
         });
         event.fire();

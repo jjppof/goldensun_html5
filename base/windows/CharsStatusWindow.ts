@@ -91,14 +91,7 @@ export class CharsStatusWindow {
         this.status_win_width = chars_number * WIDTH_PER_CHAR + (INITIAL_PADDING_X >> 1);
         this.status_win_x =
             numbers.GAME_WIDTH - this.status_win_width - numbers.INSIDE_BORDER_WIDTH - numbers.OUTSIDE_BORDER_WIDTH;
-        this.status_window = new Window(
-            this.game,
-            this.status_win_x,
-            0,
-            this.status_win_width,
-            this.status_win_height,
-            false
-        );
+        this.status_window = new Window(this.game, this.status_win_x, 0, this.status_win_width, this.status_win_height);
         this.info_sprites = {};
 
         this.set_chars_info();
@@ -126,8 +119,8 @@ export class CharsStatusWindow {
     /*Updates the window's position
 
     Input: force [boolean] = If true, forces an update*/
-    update_position(force = false) {
-        this.status_window.update(force);
+    update_position() {
+        this.status_window.update();
     }
 
     /*Sets the characters' information and creates the graphics

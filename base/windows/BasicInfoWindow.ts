@@ -30,7 +30,7 @@ export class BasicInfoWindow {
     public max_pp_text: TextObj;
     public exp_text: TextObj;
 
-    constructor(game) {
+    constructor(game: Phaser.Game) {
         this.game = game;
         this.char = null;
         this.window_open = false;
@@ -61,7 +61,7 @@ export class BasicInfoWindow {
         this.exp_text = this.base_window.set_text_in_position("0", 94, 80, {right_align: true});
     }
 
-    /* Places the avatar group correctly on screen */
+    /** Places the avatar group correctly on screen */
     update_position() {
         this.avatar_group.x = this.game.camera.x + this.x_avatar;
         this.avatar_group.y = this.game.camera.y + this.y_avatar;
@@ -71,7 +71,7 @@ export class BasicInfoWindow {
     The character's avatar is loaded from cache
 
     Input: char [string] - The selected character's name*/
-    set_char(char) {
+    set_char(char: MainChar) {
         if (char !== undefined) {
             this.char = char;
         }
@@ -94,7 +94,7 @@ export class BasicInfoWindow {
 
     Input: initial_char [string] - The character selected by default
            callback [function] - Callback function (Optional)*/
-    open(initial_char, callback?) {
+    open(initial_char: MainChar, callback?) {
         this.update_position();
         this.avatar_group.alpha = 1;
         this.set_char(initial_char);

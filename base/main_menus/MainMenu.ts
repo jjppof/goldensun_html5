@@ -85,7 +85,7 @@ export class MainMenu {
     }
 
     public update_position() {
-        this.chars_status_window.update_position(true);
+        this.chars_status_window.update_position();
         this.horizontal_menu.update_position();
     }
 
