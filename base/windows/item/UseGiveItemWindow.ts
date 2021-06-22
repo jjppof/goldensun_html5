@@ -115,16 +115,51 @@ export class UseGiveItemWindow {
 
     set_header() {
         this.unset_header();
-        this.base_window.update_text(this.char.name, this.char_name, CHAR_NAME_X, CHAR_NAME_Y);
-        this.base_window.update_text(this.item.name, this.item_name, ITEM_NAME_X, ITEM_NAME_Y);
+        this.base_window.update_text(this.char.name, this.char_name);
+        this.base_window.update_text_position(
+            {
+                x: CHAR_NAME_X,
+                y: CHAR_NAME_Y,
+            },
+            this.char_name
+        );
+        this.base_window.update_text(this.item.name, this.item_name);
+        this.base_window.update_text_position(
+            {
+                x: ITEM_NAME_X,
+                y: ITEM_NAME_Y,
+            },
+            this.item_name
+        );
         if (this.choosing_char && this.giving) {
-            this.base_window.update_text("Give it to whom?", this.action_text, ITEM_NAME_X, ACTION_TEXT_Y);
+            this.base_window.update_text("Give it to whom?", this.action_text);
+            this.base_window.update_text_position(
+                {
+                    x: ITEM_NAME_X,
+                    y: ACTION_TEXT_Y,
+                },
+                this.action_text
+            );
         } else if (this.choosing_char && !this.giving) {
-            this.base_window.update_text("Use it on whom?", this.action_text, ITEM_NAME_X, ACTION_TEXT_Y);
+            this.base_window.update_text("Use it on whom?", this.action_text);
+            this.base_window.update_text_position(
+                {
+                    x: ITEM_NAME_X,
+                    y: ACTION_TEXT_Y,
+                },
+                this.action_text
+            );
         } else if (this.asking_for_equip) {
             this.yes_text.text.alpha = this.no_text.text.alpha = 1;
             this.yes_text.shadow.alpha = this.no_text.shadow.alpha = 1;
-            this.base_window.update_text("Equip this item?", this.action_text, ACTION_TEXT_X, ACTION_TEXT_Y);
+            this.base_window.update_text("Equip this item?", this.action_text);
+            this.base_window.update_text_position(
+                {
+                    x: ACTION_TEXT_X,
+                    y: ACTION_TEXT_Y,
+                },
+                this.action_text
+            );
         }
 
         this.base_window.define_internal_group(UseGiveItemWindow.ICON_GROUP_KEY);
@@ -142,9 +177,30 @@ export class UseGiveItemWindow {
     }
 
     unset_header() {
-        this.base_window.update_text("", this.char_name, CHAR_NAME_X, CHAR_NAME_Y);
-        this.base_window.update_text("", this.item_name, ITEM_NAME_X, ITEM_NAME_Y);
-        this.base_window.update_text("", this.action_text, ACTION_TEXT_X, ACTION_TEXT_Y);
+        this.base_window.update_text("", this.char_name);
+        this.base_window.update_text_position(
+            {
+                x: CHAR_NAME_X,
+                y: CHAR_NAME_Y,
+            },
+            this.char_name
+        );
+        this.base_window.update_text("", this.item_name);
+        this.base_window.update_text_position(
+            {
+                x: ITEM_NAME_X,
+                y: ITEM_NAME_Y,
+            },
+            this.item_name
+        );
+        this.base_window.update_text("", this.action_text);
+        this.base_window.update_text_position(
+            {
+                x: ACTION_TEXT_X,
+                y: ACTION_TEXT_Y,
+            },
+            this.action_text
+        );
         this.yes_text.text.alpha = this.no_text.text.alpha = 0;
         this.yes_text.shadow.alpha = this.no_text.shadow.alpha = 0;
         this.base_window.destroy_internal_group(UseGiveItemWindow.ICON_GROUP_KEY);
@@ -172,7 +228,14 @@ export class UseGiveItemWindow {
         this.char.remove_item(this.item_obj, dest_item_obj.quantity);
         dest_char.add_item(dest_item_obj.key_name, dest_item_obj.quantity, equip);
 
-        this.base_window.update_text("", this.action_text, ACTION_TEXT_X, ACTION_TEXT_Y);
+        this.base_window.update_text("", this.action_text);
+        this.base_window.update_text_position(
+            {
+                x: ACTION_TEXT_X,
+                y: ACTION_TEXT_Y,
+            },
+            this.action_text
+        );
         this.yes_text.text.alpha = this.no_text.text.alpha = 0;
         this.yes_text.shadow.alpha = this.no_text.shadow.alpha = 0;
 

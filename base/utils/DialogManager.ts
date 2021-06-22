@@ -224,16 +224,13 @@ export class DialogManager {
                     }
                 };
                 this.window
-                    .set_text(
-                        this.parts[step].lines,
-                        padding_x,
-                        undefined,
-                        undefined,
-                        italic_font,
-                        true,
-                        this.parts[step].colors,
-                        play_voice
-                    )
+                    .set_dialog_text(this.parts[step].lines, {
+                        padding_x: padding_x,
+                        italic: italic_font,
+                        animate: true,
+                        colors: this.parts[step].colors,
+                        word_callback: play_voice,
+                    })
                     .then(() => {
                         if (step < this.parts.length - 1 || this.show_crystal) {
                             this.dialog_crystal.visible = true;

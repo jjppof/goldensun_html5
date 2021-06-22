@@ -478,7 +478,7 @@ export class BuySelectMenu {
            index [number] - Initial selected item index
            page [number] - Initial selected page index
            open_callback [function] - Callback function (Optional)*/
-    open(items: {[key_name: string]: ShopItem}, index: number = 0, page: number = 0, open_callback?: Function) {
+    open(items: {[key_name: string]: ShopItem}, index: number = 0, page: number = 0, open_callback?: () => void) {
         this.items = items;
         this.current_page = page;
         this.selected_index = index;
@@ -496,7 +496,7 @@ export class BuySelectMenu {
     /*Clears information and closes the window
 
     Input: destroy [boolean] - If true, sprites are destroyed*/
-    close(callback?: Function, destroy: boolean = false) {
+    close(callback?: () => void, destroy: boolean = false) {
         this.unset_item(this.selected_index);
 
         kill_all_sprites(this.sprite_group, destroy);

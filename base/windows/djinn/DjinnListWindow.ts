@@ -360,7 +360,7 @@ export class DjinnListWindow {
 
     update_djinn_list(char_index: number) {
         this.djinn_names[char_index].forEach(sprite => {
-            this.base_window.remove_text(sprite);
+            this.base_window.destroy_text_obj(sprite);
         });
         this.stars[char_index].forEach(sprite => {
             this.base_window.remove_from_this_window(sprite, true);
@@ -410,7 +410,7 @@ export class DjinnListWindow {
         for (let i = 0; i < this.djinn_names.length; ++i) {
             const names = this.djinn_names[i];
             for (let j = 0; j < names.length; ++j) {
-                this.base_window.remove_text(names[j]);
+                this.base_window.destroy_text_obj(names[j]);
             }
         }
     }

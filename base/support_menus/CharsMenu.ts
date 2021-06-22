@@ -429,7 +429,7 @@ export class CharsMenu {
     open(
         select_index: number = 0,
         mode: CharsMenuModes = CharsMenuModes.SHOP,
-        open_callback?: Function,
+        open_callback?: () => void,
         silent?: boolean
     ) {
         this.current_line = 0;
@@ -448,7 +448,7 @@ export class CharsMenu {
         this.window.show(open_callback, false);
     }
 
-    close(callback?: Function, destroy: boolean = false) {
+    close(callback?: () => void, destroy: boolean = false) {
         this.is_open = false;
         this.deactivate();
         utils.kill_all_sprites(this.char_group, destroy);

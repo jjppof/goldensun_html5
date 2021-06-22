@@ -149,7 +149,8 @@ export class DjinnModeHeaderWindow {
         if (this.chars.length === 1) {
             const status_text = _.capitalize(this.next_djinni_status[0]);
 
-            this.base_window.update_text(status_text, this.djinn_status_text, DJINN_STATUS_X);
+            this.base_window.update_text(status_text, this.djinn_status_text);
+            this.base_window.update_text_position({x: DJINN_STATUS_X}, this.djinn_status_text);
             this.spacebar_key.text.alpha = this.spacebar_key.shadow.alpha = 0;
 
             this.base_window.update_text("", this.action_info_text);
@@ -188,7 +189,8 @@ export class DjinnModeHeaderWindow {
             let action_text = "";
             if (this.action === djinn_actions.GIVE) action_text = "Give";
             else if (this.action === djinn_actions.TRADE) action_text = "Trade";
-            this.base_window.update_text(action_text, this.djinn_status_text, DJINN_STATUS_X_2);
+            this.base_window.update_text(action_text, this.djinn_status_text);
+            this.base_window.update_text_position({x: DJINN_STATUS_X_2}, this.djinn_status_text);
             this.spacebar_key.text.alpha = this.spacebar_key.shadow.alpha = 1;
 
             this.base_window.update_text(`: ${this.chars[0].name}'s Psy`, this.action_info_text);

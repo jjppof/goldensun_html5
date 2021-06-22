@@ -72,14 +72,13 @@ export class PageIndicator {
 
     public initialize(page_count: number, page_index: number, mode?: PageIndicatorModes) {
         if (page_count <= 1) return;
-        if (this.is_set) {
-        }
+
         this.mode = mode ? mode : PageIndicatorModes.HIGHLIGHT;
         this.page_count = page_count;
 
         this.number_bar = this.game.add.graphics(0, 0);
         this.number_bar.alpha = 0;
-        this.window.add_sprite_to_group(this.number_bar, PageIndicator.GROUP_KEY);
+        this.window.add_to_internal_group(PageIndicator.GROUP_KEY, this.number_bar);
 
         this.number_bar.beginFill(this.window.color, 1);
         this.number_bar.drawRect(0, 0, PageIndicator.NUMBER_WIDTH, PageIndicator.NUMBER_HEIGHT);
@@ -89,7 +88,7 @@ export class PageIndicator {
         this.number_bar_highlight.blendMode = PIXI.blendModes.SCREEN;
         this.number_bar_highlight.alpha = 0;
 
-        this.window.add_sprite_to_group(this.number_bar_highlight, PageIndicator.GROUP_KEY);
+        this.window.add_to_internal_group(PageIndicator.GROUP_KEY, this.number_bar_highlight);
         this.number_bar_highlight.beginFill(this.window.color, 1);
         this.number_bar_highlight.drawRect(0, 0, PageIndicator.NUMBER_WIDTH, PageIndicator.NUMBER_HEIGHT);
         this.number_bar_highlight.endFill();
@@ -185,7 +184,7 @@ export class PageIndicator {
         }
     }
 
-    public terminante() {
+    public terminante(destroy: boolean = false) {
         if (!this.set) return;
 
         this.set = false;
@@ -197,12 +196,21 @@ export class PageIndicator {
         this.right_arrow.alpha = 0;
 
         for (let i = 0; i < this.page_numbers.length; ++i) {
-            this.window.remove_text(this.page_numbers[i]);
+            this.window.destroy_text_obj(this.page_numbers[i]);
         }
 
         this.page_numbers = [];
 
         this.arrow_timer.pause();
         this.flash_timer.pause();
+
+        if (destroy) {
+            this.number_bar.destroy();
+            this.number_bar_highlight.destroy();
+            this.left_arrow.destroy();
+            this.right_arrow.destroy();
+            this.arrow_timer.destroy();
+            this.flash_timer.destroy();
+        }
     }
 }

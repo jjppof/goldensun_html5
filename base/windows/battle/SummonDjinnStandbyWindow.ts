@@ -47,7 +47,7 @@ export class SummonDjinnStandbyWindow {
             );
             this.graphics[element] = this.game.add.graphics(0, 0);
             this.graphics[element].blendMode = PIXI.blendModes.SCREEN;
-            this.base_window.add_sprite_to_group(this.graphics[element]);
+            this.base_window.add_sprite_to_window_group(this.graphics[element]);
             this.graphics[element].beginFill(this.base_window.color, 1);
             this.graphics[element].drawRect(
                 HIGHLIGHT_LEFT_PADDING + i * HIGHLIGHT_WIDTH,

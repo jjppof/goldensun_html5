@@ -98,7 +98,7 @@ export class ShopItemQuantityWindow {
         this.item_counter.advance_step(-1);
     }
 
-    open(shop_item_obj: ShopItem, char_item_obj?: ItemSlot, use_coins: boolean = false, open_callback?: Function) {
+    open(shop_item_obj: ShopItem, char_item_obj?: ItemSlot, use_coins: boolean = false, open_callback?: () => void) {
         this.data.cursor_manager.move_to(
             {x: CURSOR_X, y: CURSOR_Y},
             {tween_config: {type: CursorManager.CursorTweens.WIGGLE}},
@@ -121,7 +121,7 @@ export class ShopItemQuantityWindow {
         );
     }
 
-    close(callback?: Function) {
+    close(callback?: () => void) {
         this.item_counter.deactivate();
         this.item_counter.clear();
         this.data.cursor_manager.clear_tweens();

@@ -60,7 +60,7 @@ export class ItemPsynergyChooseWindow {
 
     public window_open: boolean;
     public window_activated: boolean;
-    public close_callback: Function;
+    public close_callback: () => void;
     public char: MainChar;
     public char_select_controls_sprites: (Phaser.Sprite | Phaser.BitmapText)[];
 
@@ -122,7 +122,7 @@ export class ItemPsynergyChooseWindow {
 
         this.highlight_bar = this.game.add.graphics(0, 0);
         this.highlight_bar.blendMode = PIXI.blendModes.SCREEN;
-        this.window.add_sprite_to_group(this.highlight_bar);
+        this.window.add_sprite_to_window_group(this.highlight_bar);
 
         this.highlight_bar.beginFill(this.window.color, 1);
         this.highlight_bar.drawRect(
@@ -173,7 +173,7 @@ export class ItemPsynergyChooseWindow {
 
     Output: [string]*/
     get_element_key_name(index: number) {
-        return this.is_psynergy_window ? this.elements[index] : (this.elements[index] as ItemSlot).key_name;
+        return this.is_psynergy_window ? (this.elements[index] as string) : (this.elements[index] as ItemSlot).key_name;
     }
 
     /*Sets the total page number*/
@@ -366,7 +366,7 @@ export class ItemPsynergyChooseWindow {
         }
         this.icon_sprites_in_window = [];
         for (let i = 0; i < this.text_sprites_in_window.length; ++i) {
-            this.window.remove_text(this.text_sprites_in_window[i]);
+            this.window.destroy_text_obj(this.text_sprites_in_window[i]);
         }
         this.text_sprites_in_window = [];
     }
@@ -422,7 +422,12 @@ export class ItemPsynergyChooseWindow {
     Input: char_index [number] = The selected character's party index
            close_callback [function] = Closing callback (Optional)
            open_callback [function] = Opening callback (Optional)*/
-    open(char_index: number, close_callback?: Function, open_callback?: Function, pos?: {page: number; index: number}) {
+    open(
+        char_index: number,
+        close_callback?: () => void,
+        open_callback?: () => void,
+        pos?: {page: number; index: number}
+    ) {
         this.update_position();
         this.char_index = char_index;
         this.char = this.data.info.party_data.members[char_index];

@@ -307,7 +307,7 @@ export class EquipCompare {
     Input: char_key [string] - The character's key name
            item [string] - Key name of the item to compare
            open_callback [function] - Callback function (Optional)*/
-    open(char_key: string, item: string, open_callback?: Function) {
+    open(char_key: string, item: string, open_callback?: () => void) {
         this.selected_char = this.data.info.party_data.members.filter((c: MainChar) => {
             return c.key_name === char_key;
         })[0];
@@ -322,7 +322,7 @@ export class EquipCompare {
     /*Clears information and closes the window
 
     Input: destroy [boolean] - If true, sprites are destroyed*/
-    close(callback?: Function, destroy: boolean = false) {
+    close(callback?: () => void, destroy: boolean = false) {
         kill_all_sprites(this.arrow_group, destroy);
         if (destroy) kill_all_sprites(this.text_group, destroy);
 

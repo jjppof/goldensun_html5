@@ -110,7 +110,7 @@ export class BattlePsynergyWindow {
         this.highlight_bar.blendMode = PIXI.blendModes.SCREEN;
         this.highlight_bar.alpha = 0;
 
-        this.base_window.add_sprite_to_group(this.highlight_bar);
+        this.base_window.add_sprite_to_window_group(this.highlight_bar);
         this.highlight_bar.beginFill(this.base_window.color, 1);
         this.highlight_bar.drawRect(HIGHLIGHT_BAR_X, 0, HIGHLIGHT_BAR_WIDTH, HIGHLIGHT_BAR_HEIGHT);
         this.highlight_bar.endFill();
@@ -369,16 +369,16 @@ export class BattlePsynergyWindow {
 
         this.misc_sprites_in_window = [];
         for (let i = 0; i < this.text_sprites_in_window.length; ++i) {
-            this.base_window.remove_text(this.text_sprites_in_window[i]);
+            this.base_window.destroy_text_obj(this.text_sprites_in_window[i]);
         }
 
         if (clear_psy_gain) {
             if (this.psy_info_1_text) {
-                this.base_window.remove_text(this.psy_info_1_text);
+                this.base_window.destroy_text_obj(this.psy_info_1_text);
                 this.psy_info_1_text = null;
             }
             if (this.psy_info_2_text) {
-                this.base_window.remove_text(this.psy_info_2_text);
+                this.base_window.destroy_text_obj(this.psy_info_2_text);
                 this.psy_info_2_text = null;
             }
         }

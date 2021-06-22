@@ -119,7 +119,7 @@ export class CharsStatusWindow {
                     {right_align: true}
                 );
             }
-            this.status_window.add_sprite_to_group(this.stars_group);
+            this.status_window.add_sprite_to_window_group(this.stars_group);
         }
     }
 
@@ -260,11 +260,12 @@ export class CharsStatusWindow {
                 for (let i = 0; i < ordered_elements.length; ++i) {
                     const element = ordered_elements[i];
                     const text = element in this.standby_djinni ? this.standby_djinni[element].toString() : "0";
-                    this.status_window.update_text(
-                        text,
-                        this.standby_count_text[element],
-                        undefined,
-                        this.name_y + STANDBY_COUNT_SHIFT_Y[+(i > 1)]
+                    this.status_window.update_text(text, this.standby_count_text[element]);
+                    this.status_window.update_text_position(
+                        {
+                            y: this.name_y + STANDBY_COUNT_SHIFT_Y[+(i > 1)],
+                        },
+                        this.standby_count_text[element]
                     );
                 }
             } else {
@@ -297,9 +298,12 @@ export class CharsStatusWindow {
             const base_x_pos = i * WIDTH_PER_CHAR + INITIAL_PADDING_X + (show_djinn_info ? DJINN_INFO_WIDTH : 0);
             const x_number_pos = base_x_pos + STAT_X;
 
-            this.status_window.update_text(char.name, info_sprite.name, base_x_pos);
-            this.status_window.update_text(String(char.current_hp), info_sprite.hp, x_number_pos);
-            this.status_window.update_text(String(char.current_pp), info_sprite.pp, x_number_pos);
+            this.status_window.update_text(char.name, info_sprite.name);
+            this.status_window.update_text_position({x: base_x_pos}, info_sprite.name);
+            this.status_window.update_text(String(char.current_hp), info_sprite.hp);
+            this.status_window.update_text_position({x: x_number_pos}, info_sprite.hp);
+            this.status_window.update_text(String(char.current_pp), info_sprite.pp);
+            this.status_window.update_text_position({x: x_number_pos}, info_sprite.pp);
 
             let hp_width = info_sprite.hp.text.textWidth;
             info_sprite.hp.text.x += hp_width / 2;
@@ -360,7 +364,7 @@ export class CharsStatusWindow {
     }
 
     /*Closes this window*/
-    close(callback?: Function) {
+    close(callback?: () => void) {
         this.status_window.close(callback);
     }
 

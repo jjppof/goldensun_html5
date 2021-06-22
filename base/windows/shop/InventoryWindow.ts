@@ -416,7 +416,7 @@ export class InventoryWindow {
            item [string] - The item to check against
            expand [boolean] - If true, the window will be in expanded state
            open_callback [function] - Callback function (Optional)*/
-    open(char_key: string, item?: string, expand: boolean = false, open_callback?: Function) {
+    open(char_key: string, item?: string, expand: boolean = false, open_callback?: () => void) {
         this.char = this.data.info.party_data.members.filter(c => {
             return c.key_name === char_key;
         })[0];
@@ -433,7 +433,7 @@ export class InventoryWindow {
     /*Clears information and closes the window
 
     Input: destroy [boolean] - If true, sprites are destroyed*/
-    close(callback?: Function, destroy = false) {
+    close(callback?: () => void, destroy = false) {
         kill_all_sprites(this.sprite_group, destroy);
         kill_all_sprites(this.icon_group, destroy);
 

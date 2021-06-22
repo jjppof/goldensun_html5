@@ -69,7 +69,7 @@ export class MainItemMenu {
     public is_open: boolean;
     public choosing_destination: boolean;
     public overview_shifted: boolean;
-    public close_callback: Function;
+    public close_callback: (close_this_menu: boolean) => void;
 
     public guide_window: Window;
     public guide_window_text: TextObj;
@@ -110,7 +110,7 @@ export class MainItemMenu {
             GUIDE_WINDOW_WIDTH,
             GUIDE_WINDOW_HEIGHT
         );
-        this.guide_window_text = this.guide_window.set_single_line_text("");
+        this.guide_window_text = this.guide_window.set_text_in_position("");
         this.choosing_item = false;
         this.guide_window_msgs = {
             choosing_char: "Whose item?",
@@ -123,7 +123,7 @@ export class MainItemMenu {
             DESCRIPTION_WINDOW_WIDTH,
             DESCRIPTION_WINDOW_HEIGHT
         );
-        this.description_window_text = this.description_window.set_single_line_text("");
+        this.description_window_text = this.description_window.set_text_in_position("");
         this.description_window_tween = null;
         this.arrange_window = new Window(
             this.game,
@@ -132,7 +132,10 @@ export class MainItemMenu {
             ARRANGE_WINDOW_WIDTH,
             ARRANGE_WINDOW_HEIGHT
         );
-        this.arrange_window.set_text(["Arrange info here..."], undefined, 7, 3);
+        this.arrange_window.set_dialog_text(["Arrange info here..."], {
+            padding_y: 7,
+            space_between_lines: 3,
+        });
         this.item_overview_window = new Window(
             this.game,
             ITEM_OVERVIEW_WIN_X,
@@ -410,14 +413,17 @@ export class MainItemMenu {
                 this.description_window_text.text.width +
                 1;
             if (tween_if_necessary && pratical_text_width > numbers.GAME_WIDTH) {
-                this.description_window.briging_border_to_top();
+                this.description_window.bring_border_to_top();
                 const shift = -(
                     this.description_window_text.text.width -
                     numbers.GAME_WIDTH +
                     numbers.TOTAL_BORDER_WIDTH +
                     numbers.WINDOW_PADDING_H
                 );
-                this.description_window_tween = this.description_window.tween_text(this.description_window_text, shift);
+                this.description_window_tween = this.description_window.tween_text_horizontally(
+                    this.description_window_text,
+                    shift
+                );
             }
         } else {
             this.description_window.update_text(
@@ -478,7 +484,7 @@ export class MainItemMenu {
         this.chars_menu.grant_control(this.close_menu.bind(this), this.char_choose.bind(this));
     }
 
-    show_details(item: Item, item_slot: ItemSlot, callback?: Function) {
+    show_details(item: Item, item_slot: ItemSlot, callback?: () => void) {
         const details_misc = [];
         const details_equip = [];
         const details_use = [];
@@ -550,7 +556,7 @@ export class MainItemMenu {
         if (details_use.length) {
             details_use.unshift("Effects of using:");
         }
-        this.details_window.set_text(details_equip.concat(details_use, details_misc), undefined, undefined, 2);
+        this.details_window.set_dialog_text(details_equip.concat(details_use, details_misc), {space_between_lines: 2});
         this.data.control_manager.add_controls([
             {
                 button: Button.B,
@@ -562,7 +568,7 @@ export class MainItemMenu {
         this.details_window.show();
     }
 
-    open_menu(close_callback?: Function) {
+    open_menu(close_callback?: (close_this_menu: boolean) => void) {
         this.basic_info_window.open(this.data.info.party_data.members[this.selected_char_index]);
 
         this.close_callback = close_callback;

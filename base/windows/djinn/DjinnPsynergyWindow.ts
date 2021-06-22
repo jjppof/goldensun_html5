@@ -215,7 +215,7 @@ export class DjinnPsynergyWindow {
         }
         this.icon_sprites_in_window = [];
         for (let i = 0; i < this.text_sprites_in_window.length; ++i) {
-            this.base_window.remove_text(this.text_sprites_in_window[i]);
+            this.base_window.destroy_text_obj(this.text_sprites_in_window[i]);
         }
         this.text_sprites_in_window = [];
     }

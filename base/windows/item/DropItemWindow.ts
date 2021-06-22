@@ -69,7 +69,11 @@ export class DropItemWindow {
         this.quantity_to_remove = 0;
         this.answer_index = 0;
 
-        this.base_window.set_text(["Are you sure you", "want to drop it?"], INFO_X, QUESTION_Y, 1);
+        this.base_window.set_dialog_text(["Are you sure you", "want to drop it?"], {
+            padding_x: INFO_X,
+            padding_y: QUESTION_Y,
+            space_between_lines: 1,
+        });
         this.base_window.set_text_in_position("Yes", ANSWER_X, YES_Y);
         this.base_window.set_text_in_position("No", ANSWER_X, NO_Y);
 
@@ -111,7 +115,7 @@ export class DropItemWindow {
                 "gs-item-bmp-font",
                 this.quantity_to_remove.toString()
             );
-            this.base_window.add_sprite_to_group(this.item_count_sprite);
+            this.base_window.add_sprite_to_window_group(this.item_count_sprite);
         }
     }
 

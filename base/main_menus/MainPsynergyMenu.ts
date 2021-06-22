@@ -109,9 +109,12 @@ export class MainPsynergyMenu {
             SHORTCUTS_WINDOW_HEIGHT
         );
 
-        this.guide_window_text = this.guide_window.set_single_line_text("");
-        this.description_window_text = this.description_window.set_single_line_text("");
-        this.shortcuts_window.set_text(["Use a keyboard number", "to set a shorcut."], undefined, 7, 3);
+        this.guide_window_text = this.guide_window.set_text_in_position("");
+        this.description_window_text = this.description_window.set_text_in_position("");
+        this.shortcuts_window.set_dialog_text(["Use a keyboard number", "to set a shorcut."], {
+            padding_y: 7,
+            space_between_lines: 3,
+        });
     }
 
     char_change() {

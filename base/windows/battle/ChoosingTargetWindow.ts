@@ -142,7 +142,7 @@ export class ChoosingTargetWindow {
                 );
                 this.icon_group.add(item_count);
             }
-            this.base_window.add_sprite_to_group(this.icon_group);
+            this.base_window.add_sprite_to_window_group(this.icon_group);
             this.icon_group.x = ICON_X + (numbers.ICON_WIDTH >> 1);
             this.icon_group.y = ICON_Y + (numbers.ICON_HEIGHT >> 1);
             this.window_sprites.push(this.icon_group);
@@ -205,7 +205,7 @@ export class ChoosingTargetWindow {
             sprite.destroy();
         });
         this.texts.forEach(text => {
-            this.base_window.remove_text(text);
+            this.base_window.destroy_text_obj(text);
         });
         this.window_sprites.forEach(sprite => {
             this.base_window.remove_from_this_window(sprite, true);

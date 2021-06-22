@@ -5,6 +5,7 @@ import {get_transition_directions, range_360, directions, base_actions, get_dire
 import {normal_push} from "./interactable_objects/push";
 import {ClimbEvent} from "./tile_events/ClimbEvent";
 import {Button} from "./XGamepad";
+import {GoldenSun} from "./GoldenSun";
 
 /**
  * This class is responsible to control the hero that is controlled by the game player in the maps.
@@ -66,16 +67,16 @@ export class Hero extends ControllableChar {
     public avoid_encounter: boolean;
 
     constructor(
-        game,
-        data,
-        key_name,
-        initial_x,
-        initial_y,
-        initial_action,
-        initial_direction,
-        walk_speed,
-        dash_speed,
-        climb_speed
+        game: Phaser.Game,
+        data: GoldenSun,
+        key_name: string,
+        initial_x: number,
+        initial_y: number,
+        initial_action: string | base_actions,
+        initial_direction: string,
+        walk_speed: number,
+        dash_speed: number,
+        climb_speed: number
     ) {
         super(
             game,

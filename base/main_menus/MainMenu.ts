@@ -74,8 +74,9 @@ export class MainMenu {
     private button_press_action(menu: MainPsynergyMenu | MainDjinnMenu | MainItemMenu | MainStatusMenu) {
         this.horizontal_menu.close(() => {
             menu.open_menu((close_this_menu: boolean) => {
-                if (close_this_menu) this.close_menu();
-                else {
+                if (close_this_menu) {
+                    this.close_menu();
+                } else {
                     this.chars_status_window.update_chars_info();
                     this.horizontal_menu.open(undefined, this.current_index);
                 }

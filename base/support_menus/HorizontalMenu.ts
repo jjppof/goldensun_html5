@@ -160,7 +160,7 @@ export class HorizontalMenu {
             this.selected_button_index = this.buttons_number - 1;
         }
 
-        this.title_window.set_text([this.buttons[this.selected_button_index].title]);
+        this.title_window.set_dialog_text([this.buttons[this.selected_button_index].title]);
         this.set_button();
     }
 
@@ -176,7 +176,7 @@ export class HorizontalMenu {
         this.reset_button();
 
         this.selected_button_index = index;
-        this.title_window.set_text([this.buttons[this.selected_button_index].title]);
+        this.title_window.set_dialog_text([this.buttons[this.selected_button_index].title]);
 
         this.set_button();
     }
@@ -228,11 +228,11 @@ export class HorizontalMenu {
         this.selected_button_index = select_index;
 
         this.update_position();
-        this.title_window.set_text([this.buttons[this.selected_button_index].title]);
+        this.title_window.set_dialog_text([this.buttons[this.selected_button_index].title]);
 
-        let window_promise_resolve: Function;
+        let window_promise_resolve: () => void;
         let window_promise = new Promise(resolve => {
-            window_promise_resolve = resolve;
+            window_promise_resolve = resolve as () => void;
         });
         this.title_window.show(window_promise_resolve);
 
@@ -270,9 +270,9 @@ export class HorizontalMenu {
         this.group.alpha = 0;
 
         if (animate) {
-            let window_promise_resolve: Function;
+            let window_promise_resolve: () => void;
             let window_promise = new Promise(resolve => {
-                window_promise_resolve = resolve;
+                window_promise_resolve = resolve as () => void;
             });
             this.title_window.close(window_promise_resolve);
 
@@ -309,7 +309,7 @@ export class HorizontalMenu {
             this.title_window.show(undefined, false);
         }
 
-        this.title_window.set_text([this.buttons[this.selected_button_index].title]);
+        this.title_window.set_dialog_text([this.buttons[this.selected_button_index].title]);
         this.set_button();
         this.set_controls();
     }

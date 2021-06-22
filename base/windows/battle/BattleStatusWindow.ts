@@ -552,7 +552,7 @@ export class BattleStatusWindow {
         if (this.battle_effects.length > 0) {
             for (let index in this.battle_effects) {
                 const effect = this.battle_effects[index];
-                let key = effect.key as String;
+                let key = effect.key as string;
                 if (
                     effect.key in effect_type_stat ||
                     effect.key === effect_types.RESIST ||
@@ -717,7 +717,7 @@ export class BattleStatusWindow {
         this.current_component = null;
     }
 
-    public close(callback?: Function) {
+    public close(callback?: () => void) {
         this.data.control_manager.reset();
         this.clear_component();
         this.window.close(callback);

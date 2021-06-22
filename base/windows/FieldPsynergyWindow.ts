@@ -24,7 +24,7 @@ export class FieldPsynergyWindow {
         this.game = game;
         this.data = data;
         this.window = new Window(this.game, POS_X, POS_Y, BASE_WIDTH, BASE_HEIGHT);
-        this.text = this.window.set_single_line_text("", false, true);
+        this.text = this.window.set_text_in_position("", undefined, undefined, {italic: true});
     }
 
     /*Calculates a vertical offset so the window doesn't cover the hero

@@ -76,7 +76,7 @@ export class BattleSummonWindow {
         this.highlight_bar.blendMode = PIXI.blendModes.SCREEN;
         this.highlight_bar.alpha = 0;
 
-        this.base_window.add_sprite_to_group(this.highlight_bar);
+        this.base_window.add_sprite_to_window_group(this.highlight_bar);
         this.highlight_bar.beginFill(this.base_window.color, 1);
         this.highlight_bar.drawRect(HIGHLIGHT_BAR_X, 0, HIGHLIGHT_BAR_WIDTH, HIGHLIGHT_BAR_HEIGHT);
         this.highlight_bar.endFill();
@@ -228,7 +228,7 @@ export class BattleSummonWindow {
 
     clear_sprites() {
         this.summon_names.forEach(text => {
-            this.base_window.remove_text(text);
+            this.base_window.destroy_text_obj(text);
         });
 
         this.other_sprites.forEach(sprite => {

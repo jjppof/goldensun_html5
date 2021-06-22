@@ -288,8 +288,8 @@ export class ItemOptionsWindow {
     }
 
     unset_header() {
-        this.base_window.remove_text(this.char_name);
-        this.base_window.remove_text(this.item_name);
+        this.base_window.destroy_text_obj(this.char_name);
+        this.base_window.destroy_text_obj(this.item_name);
         this.base_window.destroy_internal_group(ItemOptionsWindow.ICON_GROUP_KEY);
     }
 
@@ -299,7 +299,7 @@ export class ItemOptionsWindow {
     }
 
     open_action_message_window(text: string, close_callback: Function) {
-        this.action_message_window.set_text([text]);
+        this.action_message_window.set_dialog_text([text]);
         this.data.cursor_manager.hide();
         if (this.stats_update_callback !== undefined) {
             this.stats_update_callback();

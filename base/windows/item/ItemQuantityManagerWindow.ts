@@ -176,18 +176,18 @@ export class ItemQuantityManagerWindow {
                 "gs-item-bmp-font",
                 this.item_obj.quantity.toString()
             );
-            this.base_window.add_sprite_to_group(this.item_count_sprite);
+            this.base_window.add_sprite_to_window_group(this.item_count_sprite);
         }
     }
 
     unset_header() {
         this.base_window.remove_from_this_window(this.icon_sprite);
-        this.base_window.remove_text(this.char_name);
+        this.base_window.destroy_text_obj(this.char_name);
         if (this.destination_char) {
-            this.base_window.remove_text(this.dest_char_name);
+            this.base_window.destroy_text_obj(this.dest_char_name);
             this.base_window.update_text("", this.new_amount_with_dest_char_count);
         }
-        this.base_window.remove_text(this.item_name);
+        this.base_window.destroy_text_obj(this.item_name);
         if (this.equip_sprite) {
             this.base_window.remove_from_this_window(this.equip_sprite);
         }
