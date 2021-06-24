@@ -52,7 +52,7 @@ export class StatsCheckWithItemWindow {
         this.y = BASE_WIN_Y;
         this.base_window = new Window(this.game, this.x, this.y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
         this.avatar_group = game.add.group();
-        this.avatar_group.alpha = 0;
+        this.avatar_group.visible = false;
         this.x_avatar = this.x + 8;
         this.y_avatar = this.y + 8;
         this.avatar = null;
@@ -128,14 +128,14 @@ export class StatsCheckWithItemWindow {
     }
 
     hide() {
-        this.base_window.group.alpha = 0;
-        this.avatar_group.alpha = 0;
+        this.base_window.group.visible = false;
+        this.avatar_group.visible = false;
     }
 
     show() {
         if (!this.window_open) return;
-        this.base_window.group.alpha = 1;
-        this.avatar_group.alpha = 1;
+        this.base_window.group.visible = true;
+        this.avatar_group.visible = true;
     }
 
     update_info(set_compare_arrows = true) {
@@ -166,7 +166,7 @@ export class StatsCheckWithItemWindow {
         if (this.char.equip_slots[equip_slot_property] === null) {
             if (effect_obj === undefined) return;
             this.update_preview_text(preview_stats, effect_type);
-            this.up_arrows[effect_type].alpha = 1;
+            this.up_arrows[effect_type].visible = true;
         } else {
             const equipped_effect_obj = _.find(
                 this.data.info.items_list[this.char.equip_slots[equip_slot_property].key_name].effects,
@@ -187,27 +187,27 @@ export class StatsCheckWithItemWindow {
             }
             const current_stats = this.char[current_stats_property];
             if (preview_stats > current_stats) {
-                this.up_arrows[effect_type].alpha = 1;
+                this.up_arrows[effect_type].visible = true;
                 this.update_preview_text(preview_stats, effect_type);
             } else if (preview_stats < current_stats) {
-                this.down_arrows[effect_type].alpha = 1;
+                this.down_arrows[effect_type].visible = true;
                 this.update_preview_text(preview_stats, effect_type);
             }
         }
     }
 
     update_preview_text(value, effect_type) {
-        this.preview_stats_texts[effect_type].text.alpha = 1;
-        this.preview_stats_texts[effect_type].shadow.alpha = 1;
+        this.preview_stats_texts[effect_type].text.visible = true;
+        this.preview_stats_texts[effect_type].shadow.visible = true;
         this.base_window.update_text(value.toString(), this.preview_stats_texts[effect_type]);
     }
 
     hide_arrows() {
         for (let key in this.up_arrows) {
-            this.up_arrows[key].alpha = 0;
-            this.down_arrows[key].alpha = 0;
-            this.preview_stats_texts[key].text.alpha = 0;
-            this.preview_stats_texts[key].shadow.alpha = 0;
+            this.up_arrows[key].visible = false;
+            this.down_arrows[key].visible = false;
+            this.preview_stats_texts[key].text.visible = false;
+            this.preview_stats_texts[key].shadow.visible = false;
         }
     }
 
@@ -239,7 +239,7 @@ export class StatsCheckWithItemWindow {
 
     open(char, item, item_obj, callback?) {
         this.update_position();
-        this.avatar_group.alpha = 1;
+        this.avatar_group.visible = true;
         this.char = char;
         this.item = item;
         this.item_obj = item_obj;
@@ -253,7 +253,7 @@ export class StatsCheckWithItemWindow {
     }
 
     close(callback?) {
-        this.avatar_group.alpha = 0;
+        this.avatar_group.visible = false;
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {

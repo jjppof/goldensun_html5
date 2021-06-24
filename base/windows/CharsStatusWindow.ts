@@ -246,7 +246,7 @@ export class CharsStatusWindow {
             show_djinn_info = _.some(this.standby_djinni, Boolean);
 
             if (show_djinn_info) {
-                this.stars_group.alpha = 1;
+                this.stars_group.visible = true;
                 this.stars_group.x = INITIAL_PADDING__DJINNI_X;
                 this.stars_group.y = INITIAL_PADDING__DJINNI_Y;
 
@@ -266,7 +266,7 @@ export class CharsStatusWindow {
                     const element = ordered_elements[i];
                     this.status_window.update_text("", this.standby_count_text[element]);
                 }
-                this.stars_group.alpha = 0;
+                this.stars_group.visible = false;
             }
         }
 

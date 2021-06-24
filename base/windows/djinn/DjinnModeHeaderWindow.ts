@@ -134,7 +134,7 @@ export class DjinnModeHeaderWindow {
     init_arrow_blinks() {
         this.djinn_status_arrow_blink_timer = this.game.time.create(false);
         this.djinn_status_arrow_blink_timer.loop(90, () => {
-            this.djinn_status_arrow.alpha = this.djinn_status_arrow.alpha ? 0 : 1;
+            this.djinn_status_arrow.visible = this.djinn_status_arrow.visible ? false : true;
         });
         this.djinn_status_arrow_blink_timer.start();
         this.djinn_status_arrow_blink_timer.pause();
@@ -151,7 +151,7 @@ export class DjinnModeHeaderWindow {
 
             this.base_window.update_text(status_text, this.djinn_status_text);
             this.base_window.update_text_position({x: DJINN_STATUS_X}, this.djinn_status_text);
-            this.spacebar_key.text.alpha = this.spacebar_key.shadow.alpha = 0;
+            this.spacebar_key.text.visible = this.spacebar_key.shadow.visible = false;
 
             this.base_window.update_text("", this.action_info_text);
             this.base_window.update_text_position({x: OK_MSG_X, y: OK_MSG_Y}, this.ok_msg_text);
@@ -183,7 +183,7 @@ export class DjinnModeHeaderWindow {
                 this.base_window.create_at_group(STAR_AFTER_X, STAR_AFTER_Y, "stars", undefined, this.djinni[0].element)
             );
 
-            this.djinn_status_arrow.alpha = 1;
+            this.djinn_status_arrow.visible = true;
             this.djinn_status_arrow_blink_timer.resume();
         } else {
             let action_text = "";
@@ -191,7 +191,7 @@ export class DjinnModeHeaderWindow {
             else if (this.action === djinn_actions.TRADE) action_text = "Trade";
             this.base_window.update_text(action_text, this.djinn_status_text);
             this.base_window.update_text_position({x: DJINN_STATUS_X_2}, this.djinn_status_text);
-            this.spacebar_key.text.alpha = this.spacebar_key.shadow.alpha = 1;
+            this.spacebar_key.text.visible = this.spacebar_key.shadow.visible = true;
 
             this.base_window.update_text(`: ${this.chars[0].name}'s Psy`, this.action_info_text);
             this.base_window.update_text_position({x: OK_MSG_X_2, y: OK_MSG_Y_2}, this.ok_msg_text);
@@ -244,7 +244,7 @@ export class DjinnModeHeaderWindow {
                     )
                 );
             }
-            this.djinn_status_arrow.alpha = 0;
+            this.djinn_status_arrow.visible = false;
         }
         this.set_char_and_djinn_sprite();
     }
@@ -324,7 +324,7 @@ export class DjinnModeHeaderWindow {
         this.sprites = [];
         this.djinn_sprites = [];
         this.tweens = [];
-        this.djinn_status_arrow.alpha = 0;
+        this.djinn_status_arrow.visible = false;
 
         if (!this.djinn_status_arrow_blink_timer.paused) {
             this.djinn_status_arrow_blink_timer.pause();

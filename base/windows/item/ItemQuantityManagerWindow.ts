@@ -74,7 +74,7 @@ export class ItemQuantityManagerWindow {
         this.y = WIN_Y;
         this.base_window = new Window(this.game, this.x, this.y, WIN_WIDTH, WIN_HEIGHT);
         this.group = this.game.add.group();
-        this.group.alpha = 0;
+        this.group.visible = false;
         this.base_window.set_text_in_position("How many?", QUESTION_TEXT_X, QUESTION_TEXT_Y);
         this.choosen_quantity = 1;
         this.item_counter = new ItemCounter(
@@ -237,7 +237,7 @@ export class ItemQuantityManagerWindow {
                 this.set_header();
                 this.item_counter.config(this.item_obj.quantity, this.choosen_quantity);
 
-                this.group.alpha = 1;
+                this.group.visible = true;
                 this.on_change(this.choosen_quantity);
 
                 this.base_window.show(() => {
@@ -256,7 +256,7 @@ export class ItemQuantityManagerWindow {
         this.unset_header();
         this.item_counter.deactivate();
 
-        this.group.alpha = 0;
+        this.group.visible = false;
         this.choosen_quantity = 0;
         this.base_window.close(() => {
             this.window_open = false;

@@ -122,12 +122,12 @@ export class DjinnCharStatsWindow {
     init_arrow_blinks() {
         this.class_name_arrow_blink_timer = this.game.time.create(false);
         this.class_name_arrow_blink_timer.loop(90, () => {
-            this.class_name_arrow.alpha = this.class_name_arrow.alpha ? 0 : 1;
+            this.class_name_arrow.visible = this.class_name_arrow.visible ? false : true;
         });
 
         this.class_name_arrow_blink_timer.start();
         this.class_name_arrow_blink_timer.pause();
-        this.class_name_arrow.alpha = 0;
+        this.class_name_arrow.visible = false;
     }
 
     mount_window() {
@@ -200,7 +200,7 @@ export class DjinnCharStatsWindow {
             sprite.destroy();
         });
 
-        this.class_name_arrow.alpha = 0;
+        this.class_name_arrow.visible = false;
         if (!this.class_name_arrow_blink_timer.paused) {
             this.class_name_arrow_blink_timer.pause();
         }

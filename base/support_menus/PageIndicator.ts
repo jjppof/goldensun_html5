@@ -77,7 +77,7 @@ export class PageIndicator {
         this.page_count = page_count;
 
         this.number_bar = this.game.add.graphics(0, 0);
-        this.number_bar.alpha = 0;
+        this.number_bar.visible = false;
         this.window.add_to_internal_group(PageIndicator.GROUP_KEY, this.number_bar);
 
         this.number_bar.beginFill(this.window.color, 1);
@@ -86,7 +86,7 @@ export class PageIndicator {
 
         this.number_bar_highlight = this.game.add.graphics(0, 0);
         this.number_bar_highlight.blendMode = PIXI.blendModes.SCREEN;
-        this.number_bar_highlight.alpha = 0;
+        this.number_bar_highlight.visible = false;
 
         this.window.add_to_internal_group(PageIndicator.GROUP_KEY, this.number_bar_highlight);
         this.number_bar_highlight.beginFill(this.window.color, 1);
@@ -99,17 +99,17 @@ export class PageIndicator {
         this.flash_timer = this.game.time.create(false);
 
         this.right_arrow = this.window.create_at_group(0, 0, "menu", undefined, "page_arrow", PageIndicator.GROUP_KEY);
-        this.right_arrow.alpha = 0;
+        this.right_arrow.visible = false;
 
         this.left_arrow = this.window.create_at_group(0, 0, "menu", undefined, "page_arrow", PageIndicator.GROUP_KEY);
-        this.left_arrow.alpha = 0;
+        this.left_arrow.visible = false;
 
         this.set = true;
 
         this.number_bar.width = this.page_count * PageIndicator.NUMBER_WIDTH;
         this.number_bar.x = this.anchor.x - this.number_bar.width - 2;
         this.number_bar.y = this.anchor.y;
-        this.number_bar.alpha = 1;
+        this.number_bar.visible = true;
 
         for (let i = 1; i <= this.page_count; ++i) {
             const x = this.number_bar.x + PageIndicator.NUMBER_WIDTH * (i - 1) + (PageIndicator.NUMBER_WIDTH >> 1);
@@ -117,7 +117,7 @@ export class PageIndicator {
             this.page_numbers.push(this.window.set_text_in_position(i.toString(), x, y, {is_center_pos: true}));
         }
 
-        this.number_bar_highlight.alpha = 1;
+        this.number_bar_highlight.visible = true;
         this.select_page(page_index);
         this.set_arrows();
     }
@@ -127,7 +127,7 @@ export class PageIndicator {
             this.number_bar_highlight.x = this.number_bar.x + page_index * PageIndicator.NUMBER_WIDTH;
             this.number_bar_highlight.y = this.number_bar.y;
         } else if (this.mode === PageIndicatorModes.FLASH) {
-            this.number_bar_highlight.alpha = 0;
+            this.number_bar_highlight.visible = false;
 
             if (this.flash_timer.running) {
                 this.flash_event.pendingDelete = true;
@@ -150,8 +150,8 @@ export class PageIndicator {
     }
 
     private set_arrows() {
-        this.left_arrow.alpha = 1;
-        this.right_arrow.alpha = 1;
+        this.left_arrow.visible = true;
+        this.right_arrow.visible = true;
 
         const left_arrow_x = this.number_bar.x - 8;
         this.left_arrow.x = left_arrow_x;
@@ -190,10 +190,10 @@ export class PageIndicator {
         this.set = false;
         this.mode = null;
 
-        this.number_bar.alpha = 0;
-        this.number_bar_highlight.alpha = 0;
-        this.left_arrow.alpha = 0;
-        this.right_arrow.alpha = 0;
+        this.number_bar.visible = false;
+        this.number_bar_highlight.visible = false;
+        this.left_arrow.visible = false;
+        this.right_arrow.visible = false;
 
         for (let i = 0; i < this.page_numbers.length; ++i) {
             this.window.destroy_text_obj(this.page_numbers[i]);

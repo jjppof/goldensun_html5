@@ -132,10 +132,6 @@ export class MainItemMenu {
             ARRANGE_WINDOW_WIDTH,
             ARRANGE_WINDOW_HEIGHT
         );
-        this.arrange_window.set_dialog_text(["Arrange info here..."], {
-            padding_y: 7,
-            space_between_lines: 3,
-        });
         this.item_overview_window = new Window(
             this.game,
             ITEM_OVERVIEW_WIN_X,
@@ -556,11 +552,14 @@ export class MainItemMenu {
         if (details_use.length) {
             details_use.unshift("Effects of using:");
         }
-        this.details_window.set_dialog_text(details_equip.concat(details_use, details_misc), {space_between_lines: 2});
+
+        const lines = details_equip.concat(details_use, details_misc);
+        const text_objs = this.details_window.set_lines_of_text(lines, {space_between_lines: 2});
         this.data.control_manager.add_controls([
             {
                 button: Button.B,
                 on_down: () => {
+                    text_objs.forEach(obj => this.details_window.destroy_text_obj(obj));
                     this.details_window.close(callback);
                 },
             },

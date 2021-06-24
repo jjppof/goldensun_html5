@@ -146,7 +146,7 @@ export class BattleCursorManager {
                 }
 
                 cursor_sprite.scale.setTo(this_scale, this_scale);
-                cursor_sprite.alpha = 1;
+                cursor_sprite.visible = true;
 
                 if (this.cursors_tweens[i]) {
                     this.cursors_tweens[i].stop();
@@ -197,7 +197,7 @@ export class BattleCursorManager {
                     );
                 }
             } else {
-                cursor_sprite.alpha = 0;
+                cursor_sprite.visible = false;
                 target_index = target_index < 0 ? 0 : group_info.length - 1;
 
                 const target_sprite = group_info[target_index].sprite;

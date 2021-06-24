@@ -89,8 +89,8 @@ export class UseGiveItemWindow {
 
         this.yes_text = this.base_window.set_text_in_position("Yes", ANSWER_X, YES_Y);
         this.no_text = this.base_window.set_text_in_position("No", ANSWER_X, NO_Y);
-        this.yes_text.text.alpha = this.no_text.text.alpha = 0;
-        this.yes_text.shadow.alpha = this.no_text.shadow.alpha = 0;
+        this.yes_text.text.visible = this.no_text.text.visible = false;
+        this.yes_text.shadow.visible = this.no_text.shadow.visible = false;
     }
 
     change_answer() {
@@ -150,8 +150,8 @@ export class UseGiveItemWindow {
                 this.action_text
             );
         } else if (this.asking_for_equip) {
-            this.yes_text.text.alpha = this.no_text.text.alpha = 1;
-            this.yes_text.shadow.alpha = this.no_text.shadow.alpha = 1;
+            this.yes_text.text.visible = this.no_text.text.visible = true;
+            this.yes_text.shadow.visible = this.no_text.shadow.visible = true;
             this.base_window.update_text("Equip this item?", this.action_text);
             this.base_window.update_text_position(
                 {
@@ -201,8 +201,8 @@ export class UseGiveItemWindow {
             },
             this.action_text
         );
-        this.yes_text.text.alpha = this.no_text.text.alpha = 0;
-        this.yes_text.shadow.alpha = this.no_text.shadow.alpha = 0;
+        this.yes_text.text.visible = this.no_text.text.visible = false;
+        this.yes_text.shadow.visible = this.no_text.shadow.visible = false;
         this.base_window.destroy_internal_group(UseGiveItemWindow.ICON_GROUP_KEY);
     }
 
@@ -236,8 +236,8 @@ export class UseGiveItemWindow {
             },
             this.action_text
         );
-        this.yes_text.text.alpha = this.no_text.text.alpha = 0;
-        this.yes_text.shadow.alpha = this.no_text.shadow.alpha = 0;
+        this.yes_text.text.visible = this.no_text.text.visible = false;
+        this.yes_text.shadow.visible = this.no_text.shadow.visible = false;
 
         this.item_menu.item_options_window.open_action_message_window("Given.", () => {
             const char_index = this.data.info.party_data.members.indexOf(this.char);

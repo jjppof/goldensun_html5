@@ -85,7 +85,7 @@ export class CharsMenu {
         this.char_group = this.game.add.group();
         this.char_group.x = CHAR_GROUP_X - SHIFT_X;
         this.char_group.y = CHAR_GROUP_Y - SHIFT_Y;
-        this.char_group.alpha = 1;
+        this.char_group.visible = true;
 
         this.arrow_group = this.game.add.group();
         this.arrow_group.x = ARROW_GROUP_X;
@@ -94,8 +94,8 @@ export class CharsMenu {
         this.up_arrow = this.arrow_group.create(UP_ARROW_X, UP_ARROW_Y, "menu", "green_arrow");
         this.up_arrow.rotation = Math.PI;
         this.down_arrow = this.arrow_group.create(DOWN_ARROW_X, DOWN_ARROW_Y, "menu", "green_arrow");
-        this.up_arrow.alpha = 0;
-        this.down_arrow.alpha = 0;
+        this.up_arrow.visible = false;
+        this.down_arrow.visible = false;
 
         this.arrow_tweens = [];
 
@@ -138,11 +138,11 @@ export class CharsMenu {
         this.up_arrow.y = UP_ARROW_Y;
         this.down_arrow.x = DOWN_ARROW_X;
         this.down_arrow.y = DOWN_ARROW_Y;
-        if (up) this.up_arrow.alpha = 1;
-        else this.up_arrow.alpha = 0;
+        if (up) this.up_arrow.visible = true;
+        else this.up_arrow.visible = false;
 
-        if (down) this.down_arrow.alpha = 1;
-        else this.down_arrow.alpha = 0;
+        if (down) this.down_arrow.visible = true;
+        else this.down_arrow.visible = false;
     }
 
     /*Checks which arrows to show or hide*/
@@ -441,7 +441,7 @@ export class CharsMenu {
         this.set_chars();
         this.select_char(select_index, undefined, silent);
 
-        this.char_group.alpha = 1;
+        this.char_group.visible = true;
         this.is_open = true;
 
         this.activate();
@@ -459,7 +459,7 @@ export class CharsMenu {
         this.selected_index = null;
         this.is_active = false;
         this.is_open = false;
-        this.char_group.alpha = 0;
+        this.char_group.visible = false;
         this.mode = null;
 
         this.set_arrows(false, false);

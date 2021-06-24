@@ -80,8 +80,8 @@ export class EquipCompare {
             italic: true,
             color: this.window.font_color,
         });
-        this.cant_equip_text.text.alpha = 0;
-        this.cant_equip_text.shadow.alpha = 0;
+        this.cant_equip_text.text.visible = false;
+        this.cant_equip_text.shadow.visible = false;
 
         this.atk_label_text = this.init_text_sprite("ATK", 0, 0, false);
         this.def_label_text = this.init_text_sprite("DEF", 0, LINE_SHIFT, false);
@@ -96,8 +96,8 @@ export class EquipCompare {
         this.new_def_text = this.init_text_sprite("", NEW_STAT_END_X, LINE_SHIFT, true);
         this.new_agi_text = this.init_text_sprite("", NEW_STAT_END_X, 2 * LINE_SHIFT, true);
 
-        this.text_group.alpha = 0;
-        this.arrow_group.alpha = 0;
+        this.text_group.visible = false;
+        this.arrow_group.visible = false;
     }
 
     /*Initializes a text-shadow pair
@@ -210,8 +210,8 @@ export class EquipCompare {
                 break;
         }
 
-        new_stat_text.text.alpha = stat_diff === 0 ? 0 : 1;
-        new_stat_text.shadow.alpha = stat_diff === 0 ? 0 : 1;
+        new_stat_text.text.visible = stat_diff === 0 ? false : true;
+        new_stat_text.shadow.visible = stat_diff === 0 ? false : true;
         this.window.update_text(String(curr_val), curr_stat_text);
         if (stat_diff === 0) return;
 
@@ -236,8 +236,8 @@ export class EquipCompare {
             return;
         }
 
-        this.cant_equip_text.text.alpha = 0;
-        this.cant_equip_text.shadow.alpha = 0;
+        this.cant_equip_text.text.visible = false;
+        this.cant_equip_text.shadow.visible = false;
 
         let selected_item_type = this.data.info.items_list[this.selected_item].type;
         let char_current_item = null;
@@ -288,18 +288,18 @@ export class EquipCompare {
             );
         }
 
-        this.text_group.alpha = 1;
-        this.arrow_group.alpha = 1;
+        this.text_group.visible = true;
+        this.arrow_group.visible = true;
     }
 
     /*Displays the "Can't equip" message*/
     show_cant_equip() {
-        this.text_group.alpha = 0;
-        this.arrow_group.alpha = 0;
+        this.text_group.visible = false;
+        this.arrow_group.visible = false;
         this.window.clear_separators();
 
-        this.cant_equip_text.text.alpha = 1;
-        this.cant_equip_text.shadow.alpha = 1;
+        this.cant_equip_text.text.visible = true;
+        this.cant_equip_text.shadow.visible = true;
     }
 
     /*Opens this window with the selected member

@@ -44,7 +44,7 @@ export class ClassChangeWithItemWindow {
         this.y = BASE_WIN_Y;
         this.base_window = new Window(this.game, this.x, this.y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
         this.avatar_group = game.add.group();
-        this.avatar_group.alpha = 0;
+        this.avatar_group.visible = false;
         this.x_avatar = this.x + 8;
         this.y_avatar = this.y + 8;
         this.avatar = null;
@@ -63,12 +63,12 @@ export class ClassChangeWithItemWindow {
     private init_arrow_blinks() {
         this.class_name_arrow_blink_timer = this.game.time.create(false);
         this.class_name_arrow_blink_timer.loop(90, () => {
-            this.class_name_arrow.alpha = this.class_name_arrow.alpha ? 0 : 1;
+            this.class_name_arrow.visible = this.class_name_arrow.visible ? false : true;
         });
 
         this.class_name_arrow_blink_timer.start();
         this.class_name_arrow_blink_timer.pause();
-        this.class_name_arrow.alpha = 0;
+        this.class_name_arrow.visible = false;
     }
 
     update_position() {
@@ -77,15 +77,15 @@ export class ClassChangeWithItemWindow {
     }
 
     hide() {
-        this.base_window.group.alpha = 0;
-        this.avatar_group.alpha = 0;
+        this.base_window.group.visible = false;
+        this.avatar_group.visible = false;
     }
 
     show() {
         if (!this.window_open) return;
         this.class_name_arrow_blink_timer.resume();
-        this.base_window.group.alpha = 1;
-        this.avatar_group.alpha = 1;
+        this.base_window.group.visible = true;
+        this.avatar_group.visible = true;
     }
 
     update_info() {
@@ -110,7 +110,7 @@ export class ClassChangeWithItemWindow {
     }
 
     private unmount_window() {
-        this.class_name_arrow.alpha = 0;
+        this.class_name_arrow.visible = false;
         if (!this.class_name_arrow_blink_timer.paused) {
             this.class_name_arrow_blink_timer.pause();
         }
@@ -118,7 +118,7 @@ export class ClassChangeWithItemWindow {
 
     open(char, item, item_obj, callback?) {
         this.update_position();
-        this.avatar_group.alpha = 1;
+        this.avatar_group.visible = true;
         this.char = char;
         this.item = item;
         this.item_obj = item_obj;
@@ -134,7 +134,7 @@ export class ClassChangeWithItemWindow {
 
     close(callback?) {
         this.unmount_window();
-        this.avatar_group.alpha = 0;
+        this.avatar_group.visible = false;
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {

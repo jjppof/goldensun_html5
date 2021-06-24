@@ -93,7 +93,7 @@ export class ItemPsynergyChooseWindow {
             PSY_OVERVIEW_WIN_HEIGHT
         );
         this.group = game.add.group();
-        this.group.alpha = 0;
+        this.group.visible = false;
 
         this.window_open = false;
         this.window_activated = false;
@@ -296,14 +296,14 @@ export class ItemPsynergyChooseWindow {
 
     /*Shows and positions the highlight bar*/
     set_highlight_bar() {
-        this.highlight_bar.alpha = 1;
+        this.highlight_bar.visible = true;
         this.highlight_bar.y =
             ELEM_PADDING_TOP + this.selected_element_index * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS) + 4;
     }
 
     /*Hides the highlight bar*/
     unset_highlight_bar() {
-        this.highlight_bar.alpha = 0;
+        this.highlight_bar.visible = false;
     }
 
     /*Sets the scaling effect for the selected item*/
@@ -409,12 +409,12 @@ export class ItemPsynergyChooseWindow {
 
     /*Hides this window*/
     hide() {
-        this.window.group.alpha = 0;
+        this.window.group.visible = false;
     }
 
     /*Shows this window*/
     show() {
-        this.window.group.alpha = 1;
+        this.window.group.visible = true;
     }
 
     /*Opens this window
@@ -434,9 +434,9 @@ export class ItemPsynergyChooseWindow {
 
         this.page_index = pos ? pos.page : 0;
         this.set_page_number();
-        this.group.alpha = 1;
+        this.group.visible = true;
         this.char_select_controls_sprites.forEach(sprite => {
-            sprite.alpha = 1;
+            sprite.visible = true;
         });
         this.close_callback = close_callback;
         this.window.show(open_callback, false);
@@ -460,7 +460,7 @@ export class ItemPsynergyChooseWindow {
     /*Closes this window*/
     close() {
         this.window.close(this.close_callback, false);
-        this.group.alpha = 1;
+        this.group.visible = true;
         this.clear_sprites();
         this.window.page_indicator.terminante();
         this.data.cursor_manager.hide();
@@ -483,7 +483,7 @@ export class ItemPsynergyChooseWindow {
 
         this.window_activated = true;
         this.char_select_controls_sprites.forEach(sprite => {
-            sprite.alpha = 1;
+            sprite.visible = true;
         });
     }
 
@@ -498,7 +498,7 @@ export class ItemPsynergyChooseWindow {
 
         this.window_activated = false;
         this.char_select_controls_sprites.forEach(sprite => {
-            sprite.alpha = 0;
+            sprite.visible = false;
         });
     }
 }

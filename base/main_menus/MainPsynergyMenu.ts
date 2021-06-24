@@ -111,7 +111,7 @@ export class MainPsynergyMenu {
 
         this.guide_window_text = this.guide_window.set_text_in_position("");
         this.description_window_text = this.description_window.set_text_in_position("");
-        this.shortcuts_window.set_dialog_text(["Use a keyboard number", "to set a shorcut."], {
+        this.shortcuts_window.set_lines_of_text(["Use a keyboard number", "to set a shorcut."], {
             padding_y: 7,
             space_between_lines: 3,
         });

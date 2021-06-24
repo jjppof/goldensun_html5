@@ -106,7 +106,7 @@ export class MainBattleMenu {
 
         this.group = this.game.add.group();
         this.avatar_sprite = this.group.create(0, numbers.GAME_HEIGHT - numbers.AVATAR_SIZE);
-        this.avatar_sprite.alpha = 0;
+        this.avatar_sprite.visible = false;
         this.flee_attemps = 0;
     }
 
@@ -350,12 +350,12 @@ export class MainBattleMenu {
     }
 
     set_avatar() {
-        this.avatar_sprite.alpha = 1;
+        this.avatar_sprite.visible = true;
         this.avatar_sprite.loadTexture("avatars", this.data.info.party_data.members[this.current_char_index].key_name);
     }
 
     hide_avatar() {
-        this.avatar_sprite.alpha = 0;
+        this.avatar_sprite.visible = false;
     }
 
     inner_menu_cancel() {

@@ -103,12 +103,12 @@ export class BattlePsynergyWindow {
 
         this.base_window = new Window(this.game, BASE_WIN_X, BASE_WIN_Y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
         this.group = this.game.add.group();
-        this.group.alpha = 0;
+        this.group.visible = false;
 
         this.button = this.group.create(BUTTON_X, BUTTON_Y, "buttons", "psynergy");
         this.highlight_bar = this.game.add.graphics(0, 0);
         this.highlight_bar.blendMode = PIXI.blendModes.SCREEN;
-        this.highlight_bar.alpha = 0;
+        this.highlight_bar.visible = false;
 
         this.base_window.add_sprite_to_window_group(this.highlight_bar);
         this.highlight_bar.beginFill(this.base_window.color, 1);
@@ -434,7 +434,7 @@ export class BattlePsynergyWindow {
 
         this.page_index = 0;
         this.ability_index = 0;
-        this.group.alpha = 1;
+        this.group.visible = true;
 
         this.update_position();
         this.mount_window();
@@ -444,11 +444,11 @@ export class BattlePsynergyWindow {
             this.select_ability(0);
             this.ability_choose();
 
-            this.button.alpha = 1;
-            this.highlight_bar.alpha = 1;
+            this.button.visible = true;
+            this.highlight_bar.visible = true;
         } else {
-            this.button.alpha = 0;
-            this.highlight_bar.alpha = 0;
+            this.button.visible = false;
+            this.highlight_bar.visible = false;
         }
 
         if (this.set_description) {
@@ -462,8 +462,8 @@ export class BattlePsynergyWindow {
     }
 
     show() {
-        this.group.alpha = 1;
-        this.highlight_bar.alpha = 1;
+        this.group.visible = true;
+        this.highlight_bar.visible = true;
 
         this.select_ability(this.ability_index);
         this.ability_choose();
@@ -475,8 +475,8 @@ export class BattlePsynergyWindow {
     }
 
     hide(callback?: Function) {
-        this.group.alpha = 0;
-        this.highlight_bar.alpha = 0;
+        this.group.visible = false;
+        this.highlight_bar.visible = false;
 
         this.data.cursor_manager.hide();
         this.base_window.close(() => {
@@ -491,8 +491,8 @@ export class BattlePsynergyWindow {
         this.clear_sprites();
         this.base_window.page_indicator.terminante();
 
-        this.group.alpha = 0;
-        this.highlight_bar.alpha = 0;
+        this.group.visible = false;
+        this.highlight_bar.visible = false;
 
         this.data.cursor_manager.hide();
         this.data.control_manager.reset();

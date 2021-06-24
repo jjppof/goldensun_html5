@@ -2,7 +2,6 @@ import {Window, TextObj} from "../../Window";
 import {kill_all_sprites} from "../../utils";
 import {GoldenSun} from "../../GoldenSun";
 import {Button} from "../../XGamepad";
-import {ShopMenu} from "../../main_menus/ShopMenu";
 import {MainChar, ItemSlot} from "../../MainChar";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
 
@@ -73,8 +72,8 @@ export class InventoryWindow {
 
         this.window = new Window(this.game, BASE_X, BASE_Y, BASE_WIDTH, BASE_HEIGHT);
         this.text = this.window.set_text_in_position("", TEXT_X, TEXT_Y);
-        this.text.text.alpha = 0;
-        this.text.shadow.alpha = 0;
+        this.text.text.visible = false;
+        this.text.shadow.visible = false;
 
         this.char = null;
         this.item_grid = [];
@@ -129,8 +128,8 @@ export class InventoryWindow {
         if (!found) this.window.update_text(MESSAGE_NO_ITEM, this.text);
         else this.window.update_text(MESSAGE_HAVE_ITEM + item_match.quantity, this.text);
 
-        this.text.text.alpha = 1;
-        this.text.shadow.alpha = 1;
+        this.text.text.visible = true;
+        this.text.shadow.visible = true;
     }
 
     /*Changes the character whose inventory is being shown
@@ -394,7 +393,7 @@ export class InventoryWindow {
             }
             if (finish) break;
         }
-        this.sprite_group.alpha = 1;
+        this.sprite_group.visible = true;
     }
 
     refresh(char_key: string, item?: string) {
@@ -437,8 +436,8 @@ export class InventoryWindow {
         kill_all_sprites(this.sprite_group, destroy);
         kill_all_sprites(this.icon_group, destroy);
 
-        this.text.text.alpha = 0;
-        this.text.shadow.alpha = 0;
+        this.text.text.visible = false;
+        this.text.shadow.visible = false;
         this.char = null;
         this.selected_item = null;
         this.cursor_pos = {line: 0, col: 0};

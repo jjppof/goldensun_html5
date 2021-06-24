@@ -1,6 +1,6 @@
 import {get_text_width} from "../utils";
 import * as numbers from "../magic_numbers";
-import {Window} from "../Window";
+import {TextObj, Window} from "../Window";
 import {GoldenSun} from "../GoldenSun";
 import {Button} from "../XGamepad";
 import * as _ from "lodash";
@@ -47,6 +47,7 @@ export class HorizontalMenu {
         sprite: Phaser.Sprite;
         title: string;
     }[];
+    public title_text_obj: TextObj;
 
     constructor(
         game: Phaser.Game,
@@ -106,9 +107,11 @@ export class HorizontalMenu {
             TITLE_WINDOW_HEIGHT
         );
         this.group = game.add.group();
-        this.group.alpha = 0;
+        this.group.visible = false;
         this.group.width = 0;
         this.group.height = 0;
+
+        this.title_text_obj = this.title_window.set_text_in_position("");
 
         this.mount_buttons();
     }
@@ -160,7 +163,7 @@ export class HorizontalMenu {
             this.selected_button_index = this.buttons_number - 1;
         }
 
-        this.title_window.set_dialog_text([this.buttons[this.selected_button_index].title]);
+        this.title_window.update_text(this.buttons[this.selected_button_index].title, this.title_text_obj);
         this.set_button();
     }
 
@@ -176,7 +179,7 @@ export class HorizontalMenu {
         this.reset_button();
 
         this.selected_button_index = index;
-        this.title_window.set_dialog_text([this.buttons[this.selected_button_index].title]);
+        this.title_window.update_text(this.buttons[this.selected_button_index].title, this.title_text_obj);
 
         this.set_button();
     }
@@ -224,11 +227,11 @@ export class HorizontalMenu {
         if (custom_scale) this.custom_scale = custom_scale;
 
         this.menu_active = start_active;
-        this.group.alpha = 1;
+        this.group.visible = true;
         this.selected_button_index = select_index;
 
         this.update_position();
-        this.title_window.set_dialog_text([this.buttons[this.selected_button_index].title]);
+        this.title_window.update_text(this.buttons[this.selected_button_index].title, this.title_text_obj);
 
         let window_promise_resolve: () => void;
         let window_promise = new Promise(resolve => {
@@ -267,7 +270,7 @@ export class HorizontalMenu {
         this.data.control_manager.reset();
 
         this.menu_open = false;
-        this.group.alpha = 0;
+        this.group.visible = false;
 
         if (animate) {
             let window_promise_resolve: () => void;
@@ -302,14 +305,14 @@ export class HorizontalMenu {
         this.menu_active = true;
 
         this.buttons.forEach(obj => {
-            obj.sprite.alpha = 1;
+            obj.sprite.visible = true;
         });
 
         if (!this.title_window.open) {
             this.title_window.show(undefined, false);
         }
 
-        this.title_window.set_dialog_text([this.buttons[this.selected_button_index].title]);
+        this.title_window.update_text(this.buttons[this.selected_button_index].title, this.title_text_obj);
         this.set_button();
         this.set_controls();
     }
@@ -321,7 +324,7 @@ export class HorizontalMenu {
 
         if (hide) {
             this.buttons.forEach(obj => {
-                obj.sprite.alpha = 0;
+                obj.sprite.visible = false;
             });
             this.title_window.close(undefined, false);
         }

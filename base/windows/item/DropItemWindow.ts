@@ -69,7 +69,7 @@ export class DropItemWindow {
         this.quantity_to_remove = 0;
         this.answer_index = 0;
 
-        this.base_window.set_dialog_text(["Are you sure you", "want to drop it?"], {
+        this.base_window.set_lines_of_text(["Are you sure you", "want to drop it?"], {
             padding_x: INFO_X,
             padding_y: QUESTION_Y,
             space_between_lines: 1,

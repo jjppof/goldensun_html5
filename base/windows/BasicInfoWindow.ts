@@ -39,7 +39,7 @@ export class BasicInfoWindow {
         this.base_window = new Window(this.game, this.x, this.y, BASE_WIN_WIDTH, BASE_WIN_HEIGHT);
 
         this.avatar_group = game.add.group();
-        this.avatar_group.alpha = 0;
+        this.avatar_group.visible = false;
         this.x_avatar = this.x + 8;
         this.y_avatar = this.y + 8;
         this.avatar = null;
@@ -96,7 +96,7 @@ export class BasicInfoWindow {
            callback [function] - Callback function (Optional)*/
     open(initial_char: MainChar, callback?) {
         this.update_position();
-        this.avatar_group.alpha = 1;
+        this.avatar_group.visible = true;
         this.set_char(initial_char);
         this.base_window.show(() => {
             this.window_open = true;
@@ -110,7 +110,7 @@ export class BasicInfoWindow {
 
     Input: callback [function] - Callback function (Optional)*/
     close(callback?) {
-        this.avatar_group.alpha = 0;
+        this.avatar_group.visible = false;
         this.base_window.close(() => {
             this.window_open = false;
             if (callback !== undefined) {

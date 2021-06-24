@@ -70,7 +70,7 @@ export class DjinnActionWindow {
         this.base_window.update_text("", this.char_name_text);
         this.base_window.update_text("", this.djinn_name_text);
 
-        this.shift_key.text.alpha = this.shift_key.shadow.alpha = 1;
+        this.shift_key.text.visible = this.shift_key.shadow.visible = true;
         if (this.star_sprite) {
             this.star_sprite.destroy();
             this.star_sprite = null;
@@ -100,7 +100,7 @@ export class DjinnActionWindow {
         this.base_window.update_text(this_djinn.name, this.djinn_name_text);
         this.base_window.update_text("", this.action_text);
 
-        this.shift_key.text.alpha = this.shift_key.shadow.alpha = 0;
+        this.shift_key.text.visible = this.shift_key.shadow.visible = false;
     }
 
     open(callback?: Function) {

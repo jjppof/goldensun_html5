@@ -96,8 +96,8 @@ export class DjinnStatsWindow {
 
     hide_arrows() {
         for (let i = 0; i < ordered_main_stats.length; ++i) {
-            this.down_arrows[ordered_main_stats[i]].alpha = 0;
-            this.up_arrows[ordered_main_stats[i]].alpha = 0;
+            this.down_arrows[ordered_main_stats[i]].visible = false;
+            this.up_arrows[ordered_main_stats[i]].visible = false;
         }
     }
 
@@ -116,9 +116,9 @@ export class DjinnStatsWindow {
             this.base_window.update_text(current_stat.toString(), this.before_stats[stat_key]);
             this.base_window.update_text(next_stat.toString(), this.after_stats[stat_key]);
             if (current_stat > next_stat) {
-                this.down_arrows[stat_key].alpha = 1;
+                this.down_arrows[stat_key].visible = true;
             } else if (current_stat < next_stat) {
-                this.up_arrows[stat_key].alpha = 1;
+                this.up_arrows[stat_key].visible = true;
             }
         }
     }

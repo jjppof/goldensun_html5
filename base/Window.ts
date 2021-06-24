@@ -94,7 +94,7 @@ export class Window {
         this.group.add(this.border_graphics);
         this.group.add(this.separators_graphics);
 
-        this.group.alpha = 0;
+        this.group.visible = false;
         this.group.width = 0;
         this.group.height = 0;
 
@@ -513,7 +513,7 @@ export class Window {
      * @param close_callback on window close callback.
      */
     show(show_callback?: () => void, animate = true, close_callback?: () => void) {
-        this.group.alpha = 1;
+        this.group.visible = true;
         this.group.x = this.game.camera.x + this.x;
         this.group.y = this.game.camera.y + this.y;
 
@@ -796,6 +796,37 @@ export class Window {
     }
 
     /**
+     * Sets in this window lines of text.
+     * @param lines An array of strings containing the texts.
+     * @param options Some optional parameters.
+     * @returns Returns an array of TextObjs that were inserted.
+     */
+    set_lines_of_text(
+        lines: string[],
+        options?: {
+            /** The x internal padding text position. */
+            padding_x?: number;
+            /** The y internal padding text position. */
+            padding_y?: number;
+            /** A custom value for the space between text lines. */
+            space_between_lines?: number;
+        } & Parameters<Window["set_text_in_position"]>[3]
+    ) {
+        const top_shift = options?.italic ? -2 : 0;
+        const x_pos = options?.padding_x ?? numbers.WINDOW_PADDING_H + 4;
+        let y_pos = options?.padding_y ?? numbers.WINDOW_PADDING_TOP + top_shift;
+
+        const lines_objs: TextObj[] = [];
+        for (let i = 0; i < lines.length; ++i) {
+            const line = lines[i];
+            const text_obj = this.set_text_in_position(line, x_pos, y_pos, options);
+            lines_objs.push(text_obj);
+            y_pos += numbers.FONT_SIZE + (options?.space_between_lines ?? numbers.SPACE_BETWEEN_LINES);
+        }
+        return lines_objs;
+    }
+
+    /**
      * Tweens the text horizontally back and forth. Use this when you expect
      * the text to be bigger than the window.
      * @param text_obj The text object to be tweened.
@@ -904,7 +935,7 @@ export class Window {
                 .tween(this.group)
                 .to({width: 0, height: 0}, Window.TRANSITION_TIME, Phaser.Easing.Linear.None, true)
                 .onComplete.addOnce(() => {
-                    this.group.alpha = 0;
+                    this.group.visible = false;
                     this._open = false;
                     if (this.page_indicator.is_set) {
                         this.page_indicator.terminante();
@@ -917,7 +948,7 @@ export class Window {
                     }
                 });
         } else {
-            this.group.alpha = 0;
+            this.group.visible = false;
             this._open = false;
             if (this.page_indicator.is_set) {
                 this.page_indicator.terminante();

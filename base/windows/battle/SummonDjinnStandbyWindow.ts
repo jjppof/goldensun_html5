@@ -63,7 +63,7 @@ export class SummonDjinnStandbyWindow {
     blink(element, sprite) {
         this.timers[element] = this.game.time.create(false);
         this.timers[element].loop(150, () => {
-            sprite.alpha = +!sprite.alpha;
+            sprite.visible = !sprite.visible;
         });
         this.timers[element].start();
     }
@@ -78,7 +78,7 @@ export class SummonDjinnStandbyWindow {
             if (djinn_number) {
                 this.blink(element, this.graphics[element]);
             } else {
-                this.graphics[element].alpha = 0;
+                this.graphics[element].visible = false;
             }
             this.base_window.update_text(djinn_number.toString(), this.texts[element]);
         }

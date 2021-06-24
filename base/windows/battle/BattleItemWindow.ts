@@ -69,12 +69,12 @@ export class BattleItemWindow {
 
         this.base_window = new Window(this.game, BASE_WINDOW_X, BASE_WINDOW_Y, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
         this.group = this.game.add.group();
-        this.group.alpha = 0;
+        this.group.visible = false;
 
         this.button = this.group.create(BUTTON_X, BUTTON_Y, "buttons", "item");
         this.highlight_bar = this.game.add.graphics(0, 0);
         this.highlight_bar.blendMode = PIXI.blendModes.SCREEN;
-        this.highlight_bar.alpha = 0;
+        this.highlight_bar.visible = false;
 
         this.base_window.add_sprite_to_window_group(this.highlight_bar);
         this.highlight_bar.beginFill(this.base_window.color, 1);
@@ -265,11 +265,11 @@ export class BattleItemWindow {
         this.close_callback = close_callback;
         this.set_description = set_description;
 
-        this.group.alpha = 1;
+        this.group.visible = true;
         this.item_index = 0;
         this.page_index = 0;
         this.choosen_ability = null;
-        this.highlight_bar.alpha = 1;
+        this.highlight_bar.visible = true;
 
         this.update_position();
         this.set_highlight_bar();
@@ -289,8 +289,8 @@ export class BattleItemWindow {
     }
 
     show() {
-        this.group.alpha = 1;
-        this.highlight_bar.alpha = 1;
+        this.group.visible = true;
+        this.highlight_bar.visible = true;
 
         this.select_item(this.item_index);
         this.item_choose();
@@ -301,8 +301,8 @@ export class BattleItemWindow {
     }
 
     hide(callback?: Function) {
-        this.group.alpha = 0;
-        this.highlight_bar.alpha = 0;
+        this.group.visible = false;
+        this.highlight_bar.visible = false;
         this.data.cursor_manager.hide();
 
         this.base_window.close(() => {
@@ -317,8 +317,8 @@ export class BattleItemWindow {
         this.clear_sprites();
         this.base_window.page_indicator.terminante();
 
-        this.group.alpha = 0;
-        this.highlight_bar.alpha = 0;
+        this.group.visible = false;
+        this.highlight_bar.visible = false;
         this.data.cursor_manager.hide();
         this.data.control_manager.reset();
 

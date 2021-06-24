@@ -92,6 +92,7 @@ export class ItemOptionsWindow {
 
     public char_name: TextObj;
     public item_name: TextObj;
+    public action_msg: TextObj;
 
     public stats_update_callback: Function;
     public stats_window: StatsOrClassCheckWithItemWindow;
@@ -166,25 +167,27 @@ export class ItemOptionsWindow {
             ACTION_WINDOW_MSG_WIDTH,
             ACTION_WINDOW_MSG_HEIGHT
         );
+
+        this.action_msg = this.action_message_window.set_text_in_position("");
     }
 
     hide() {
-        this.base_window.group.alpha = 0;
+        this.base_window.group.visible = false;
     }
 
     show() {
-        this.base_window.group.alpha = 1;
+        this.base_window.group.visible = true;
     }
 
     hide_text() {
         for (let key in this.text_sprites) {
-            this.text_sprites[key].text.alpha = this.text_sprites[key].shadow.alpha = 0;
+            this.text_sprites[key].text.visible = this.text_sprites[key].shadow.visible = false;
         }
     }
 
     show_text() {
         for (let key in this.text_sprites) {
-            this.text_sprites[key].text.alpha = this.text_sprites[key].shadow.alpha = 1;
+            this.text_sprites[key].text.visible = this.text_sprites[key].shadow.visible = true;
         }
     }
 
@@ -299,7 +302,7 @@ export class ItemOptionsWindow {
     }
 
     open_action_message_window(text: string, close_callback: Function) {
-        this.action_message_window.set_dialog_text([text]);
+        this.action_message_window.update_text(text, this.action_msg);
         this.data.cursor_manager.hide();
         if (this.stats_update_callback !== undefined) {
             this.stats_update_callback();
