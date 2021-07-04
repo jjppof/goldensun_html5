@@ -2,11 +2,10 @@
   "name": "goldensun_html5",
   "version": "0.0.1",
   "description": "An online Golden Sun Engine entirely built in HTML5 with Phaser 2.",
-  "type": "module",
   "private": true,
   "scripts": {
-    "start": "node esbuild.config.js -w",
-    "build": "node esbuild.config.js",
+    "start": "node scripts/build.js -watch",
+    "build": "node scripts/build.js",
     "format-check": "prettier --check \"base/**/*.ts\"",
     "format": "npx prettier --write \"base/**/*.ts\"",
     "docs": "node scripts/generate_docs.js",
@@ -27,12 +26,11 @@
   "devDependencies": {
     "@types/lodash": "^4.14.161",
     "@types/mathjs": "^6.0.11",
-    "esbuild": "^0.12.12",
-    "esbuild-serve": "^1.0.1",
+    "estrella": "^1.4.1",
     "husky": "^5.0.0-beta.0",
     "pinst": "^2.0.0",
     "prettier": "2.1.2",
-    "ts-loader": "^8.0.4",
+    "serve-http": "^1.0.6",
     "typedoc": "^0.20.35",
     "typescript": "^4.3.4"
   },
