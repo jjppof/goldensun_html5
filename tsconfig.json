@@ -4,7 +4,7 @@
         "lib": ["dom", "es2019", "es2020.string"],
         "module": "commonjs",
         "noImplicitAny": false,
-        "target": "es6",
+        "target": "es2017",
         "allowJs": true,
         "sourceMap": true,
         "experimentalDecorators": true

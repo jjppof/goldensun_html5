@@ -4,7 +4,7 @@ import {Button} from "./XGamepad";
 
 export class Audio {
     /** Volume step to apply upon volume altering */
-    private static readonly VOLUME_STEP = 0.1;
+    private static readonly VOLUME_STEP = 0.05;
     /** Volume change held threshold */
     private static readonly VOLUME_ALTER_LOOP_TIME = 100;
     /** Default bgm volume */
