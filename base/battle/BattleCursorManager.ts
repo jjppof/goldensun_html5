@@ -23,6 +23,7 @@ export class BattleCursorManager {
     private choosing_targets_callback: Function;
     private range_cursor_position: number;
     private ability_range: ability_ranges;
+    private bindings_key: number;
 
     private cursors_tweens: Phaser.Tween[];
     private cursors: Phaser.Sprite[];
@@ -257,7 +258,9 @@ export class BattleCursorManager {
                             sfx: {down: "menu/negative"},
                         },
                     ];
-                    this.data.control_manager.add_controls(controls, {loop_config: {horizontal: true}});
+                    this.bindings_key = this.data.control_manager.add_controls(controls, {
+                        loop_config: {horizontal: true},
+                    });
                 });
         }
     }
@@ -287,5 +290,6 @@ export class BattleCursorManager {
                 this.cursors_tweens[i].stop();
             }
         });
+        this.data.control_manager.detach_bindings(this.bindings_key);
     }
 }
