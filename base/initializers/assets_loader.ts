@@ -50,6 +50,7 @@ function load_misc(game) {
     game.load.atlasJSONHash("ranges", "assets/images/misc/ranges.png", "assets/images/misc/ranges.json");
     game.load.atlasJSONHash("stars", "assets/images/misc/stars.png", "assets/images/misc/stars.json");
     game.load.atlasJSONHash("emoticons", "assets/images/misc/emoticons.png", "assets/images/misc/emoticons.json");
+    game.load.atlasJSONHash("rope", "assets/images/misc/rope.png", "assets/images/misc/rope.json");
     game.load.atlasJSONHash(
         "psynergy_ball",
         "assets/images/interactable_objects/psynergy_ball.png",

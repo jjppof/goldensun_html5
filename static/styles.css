@@ -1,6 +1,7 @@
 body {
     margin: 0;
-    background-color: whitesmoke;
+    background-color: black;
+    color: whitesmoke;
 }
 .firefox-banner {
     background-color: #ec0040;
@@ -14,12 +15,15 @@ body {
     text-shadow: 2px 2px 0px #920000;
     display: none;
 }
+.logo {
+    margin: 1rem 20% 0rem 20%;
+    width: 400px;
+}
 .intro {
-    margin: 1rem 20%;
+    padding: 1rem 20% 0rem 20%;
 }
 #game {
-    padding: 2rem 20%;
-    background-color: black;
+    padding: 1rem 20%;
 }
 canvas {
     image-rendering: -moz-crisp-edges;
@@ -75,7 +79,7 @@ canvas {
     font-size: small;
     font-style: italic;
     margin-left: 20%;
-    color: #757575;
+    color: #9b9b9b;
     font-family: monospace;
     max-width: 500px;
 }
