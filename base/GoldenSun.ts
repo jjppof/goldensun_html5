@@ -357,8 +357,8 @@ export class GoldenSun {
 
             const location_key = LocationKey.get_key(this.hero.tile_x_pos, this.hero.tile_y_pos);
             if (location_key in this.map.events) {
-                //checks if the actual tile has an event
-                this.tile_event_manager.check_tile_events(location_key, this.map);
+                //checks if the current tile has tile events
+                this.tile_event_manager.check_tile_events(location_key);
             }
 
             this.hero.update(); //updates hero position/velocity/sprite

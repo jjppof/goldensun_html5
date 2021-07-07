@@ -1,5 +1,4 @@
 import {GoldenSun} from "../GoldenSun";
-import {Map} from "../Map";
 import {base_actions, directions} from "../utils";
 import {ClimbEvent} from "./ClimbEvent";
 import {CollisionEvent} from "./CollisionEvent";
@@ -18,9 +17,9 @@ class EventQueue {
         event: TileEvent;
         fire_function: Function;
     }[];
+
     constructor() {
-        this.climb_event = false;
-        this.queue = [];
+        this.reset();
     }
 
     get length() {
@@ -55,17 +54,29 @@ class EventQueue {
         }
         this.queue.forEach(item => item.fire_function());
     }
+
+    reset() {
+        this.climb_event = false;
+        this.queue = [];
+    }
 }
 
+/**
+ * This class manages all the Tile Events of the game like
+ * jump, climb, ice slide, etc. This class decides when to fire, trigger
+ * or unset a tile event. This class also has a tile event factory
+ * method.
+ */
 export class TileEventManager {
     private static readonly EVENT_INIT_DELAY = 350;
 
     private game: Phaser.Game;
     private data: GoldenSun;
-    private event_timers: {[event_id: number]: Phaser.TimerEvent};
+    private event_timers: {[event_id: number]: Phaser.Timer};
     public on_event: boolean;
     private _walking_on_pillars_tiles: Set<string>;
     private triggered_events: {[event_id: number]: TileEvent};
+    private event_queue: EventQueue;
 
     constructor(game, data) {
         this.game = game;
@@ -74,6 +85,7 @@ export class TileEventManager {
         this.on_event = false;
         this._walking_on_pillars_tiles = new Set();
         this.triggered_events = {};
+        this.event_queue = new EventQueue();
     }
 
     get walking_on_pillars_tiles() {
@@ -117,69 +129,112 @@ export class TileEventManager {
         }
     }
 
-    check_tile_events(location_key: TileEvent["location_key"], map: Map) {
-        let event_queue: EventQueue;
-        for (let i = 0; i < map.events[location_key].length; ++i) {
-            const this_event = map.events[location_key][i];
-            if (!this_event.activation_collision_layers.includes(map.collision_layer)) continue;
+    /**
+     * If there are any events in the current hero location, they'll be added to the
+     * event queue, then fired in sequence. Checks whether exists TileEvents in the current
+     * hero location and fire them.
+     * @param location_key the location key of the current position of the hero.
+     */
+    check_tile_events(location_key: TileEvent["location_key"]) {
+        for (let i = 0; i < this.data.map.events[location_key].length; ++i) {
+            const this_event = this.data.map.events[location_key][i];
+
+            //ignore events on different collision layers than the one that the hero is.
+            if (!this_event.activation_collision_layers.includes(this.data.map.collision_layer)) {
+                continue;
+            }
+
+            //creates and destroys collision bodies arround jump events while the hero walks over them.
             if (this_event.type === event_types.JUMP) {
                 (this_event as JumpEvent).create_collision_bodies_around_jump_events();
             }
-            if (!this_event.is_active(this.data.hero.current_direction)) continue;
-            if (!event_queue) {
-                event_queue = new EventQueue();
+
+            //ignore events that are not active in the direction that the hero is going.
+            if (!this_event.is_active(this.data.hero.current_direction)) {
+                continue;
             }
-            if (this_event.type === event_types.SPEED) {
-                if (this.data.hero.extra_speed !== (this_event as SpeedEvent).speed) {
-                    event_queue.add(
+
+            //activates different types of tile events.
+            switch (this_event.type) {
+                case event_types.SPEED:
+                    if (this.data.hero.extra_speed !== (this_event as SpeedEvent).speed) {
+                        this.event_queue.add(
+                            this_event,
+                            this.data.hero.current_direction,
+                            this_event.fire.bind(this_event),
+                            true
+                        );
+                    }
+                    break;
+                case event_types.STEP:
+                case event_types.COLLISION:
+                    if (!this.event_triggered(this_event)) {
+                        this.event_queue.add(
+                            this_event,
+                            this.data.hero.current_direction,
+                            (this_event as StepEvent | CollisionEvent).set.bind(this_event)
+                        );
+                    }
+                    break;
+                case event_types.ICE_SLIDE:
+                case event_types.EVENT_TRIGGER:
+                    this.event_queue.add(
                         this_event,
                         this.data.hero.current_direction,
-                        this_event.fire.bind(this_event),
-                        true
+                        this.fire_event.bind(this, this_event, this.data.hero.current_direction)
                     );
-                }
-            } else if (
-                this_event.type === event_types.ICE_SLIDE ||
-                this_event.type === event_types.EVENT_TRIGGER ||
-                (this_event.type === event_types.TELEPORT && !(this_event as TeleportEvent).advance_effect)
-            ) {
-                event_queue.add(
-                    this_event,
-                    this.data.hero.current_direction,
-                    this.fire_event.bind(this, this_event, this.data.hero.current_direction)
-                );
-            } else if (
-                [event_types.STEP, event_types.COLLISION].includes(this_event.type) &&
-                !this.event_triggered(this_event)
-            ) {
-                event_queue.add(
-                    this_event,
-                    this.data.hero.current_direction,
-                    (this_event as StepEvent | CollisionEvent).set.bind(this_event)
-                );
-            } else {
-                const right_direction = this_event.activation_directions.includes(this.data.hero.current_direction);
-                if (
-                    right_direction &&
-                    [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(
-                        this.data.hero.current_action as base_actions
-                    )
-                ) {
-                    if (this.event_timers[this_event.id] && !this.event_timers[this_event.id].timer.expired) {
-                        continue;
-                    }
-                    event_queue.add(this_event, this.data.hero.current_direction, () => {
-                        this.event_timers[this_event.id] = this.game.time.events.add(
-                            TileEventManager.EVENT_INIT_DELAY,
+                    break;
+                case event_types.TELEPORT:
+                case event_types.JUMP:
+                case event_types.CLIMB:
+                case event_types.SLIDER:
+                    if (this_event.type === event_types.TELEPORT && !(this_event as TeleportEvent).advance_effect) {
+                        this.event_queue.add(
+                            this_event,
+                            this.data.hero.current_direction,
                             this.fire_event.bind(this, this_event, this.data.hero.current_direction)
                         );
-                    });
-                }
+                    } else {
+                        const right_direction = this_event.activation_directions.includes(
+                            this.data.hero.current_direction
+                        );
+                        //the hero must be trying to walk/dash/climb towards the event activation direction.
+                        if (
+                            right_direction &&
+                            [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(
+                                this.data.hero.current_action as base_actions
+                            )
+                        ) {
+                            //these events take a little time to start, if the timer of this event already started,
+                            //this incoming event will be ignored.
+                            if (this.event_timers[this_event.id] && this.event_timers[this_event.id].running) {
+                                continue;
+                            }
+                            this.event_queue.add(this_event, this.data.hero.current_direction, () => {
+                                //creates a timer to activate this event. The event will be fired on this timer finish.
+                                this.event_timers[this_event.id] = this.game.time.create(true);
+                                this.event_timers[this_event.id].add(TileEventManager.EVENT_INIT_DELAY, () => {
+                                    this.fire_event(this_event, this.data.hero.current_direction);
+                                    if (this.event_timers[this_event.id]) {
+                                        if (!this.event_timers[this_event.id].autoDestroy) {
+                                            this.event_timers[this_event.id].destroy();
+                                        }
+                                        delete this.event_timers[this_event.id];
+                                    }
+                                });
+                                this.event_timers[this_event.id].start();
+                            });
+                        }
+                    }
+                    break;
+                default:
+                    break;
             }
         }
-        if (event_queue?.length) {
-            event_queue.process_queue();
+        if (this.event_queue?.length) {
+            this.event_queue.process_queue();
         }
+        this.event_queue.reset();
     }
 
     get_event_instance(info: any) {
