@@ -73,6 +73,12 @@ export class ClimbEvent extends TileEvent {
         if (this.data.hero.on_reveal) {
             (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
         }
+        if (
+            this.current_activation_direction !== directions.up &&
+            this.current_activation_direction !== directions.down
+        ) {
+            return;
+        }
         if (!this.data.hero.climbing && !this.climbing_only) {
             this.start_climbing(this.current_activation_direction);
         } else if (
