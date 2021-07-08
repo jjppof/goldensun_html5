@@ -490,7 +490,9 @@
      "event_23":"{\n\"type\": \"jump\",\n\"x\": 13,\n\"y\": 13,\n\"activation_directions\": \"down\",\n\"activation_collision_layers\": 0\n}",
      "interactable_object_01":"{\n\"key_name\": \"pillar\",\n\"x\": 11,\n\"y\": 19,\n\"allowed_tiles\": [],\n\"base_collision_layer\": -1,\n\"events_info\": {\n  \"0\": {\n    \"collision_layer_shift\": 1\n    }\n}\n}",
      "interactable_object_02":"{\n\"key_name\": \"pillar\",\n\"x\": 13,\n\"y\": 19,\n\"allowed_tiles\": [],\n\"base_collision_layer\": -1,\n\"events_info\": {\n  \"0\": {\n    \"collision_layer_shift\": 1\n    }\n}\n}",
-     "interactable_object_03":"{\n\"key_name\": \"pillar\",\n\"x\": 13,\n\"y\": 17,\n\"allowed_tiles\": [],\n\"base_collision_layer\": -1,\n\"events_info\": {\n  \"0\": {\n    \"collision_layer_shift\": 1\n    }\n}\n}"
+     "interactable_object_03":"{\n\"key_name\": \"pillar\",\n\"x\": 13,\n\"y\": 17,\n\"allowed_tiles\": [],\n\"base_collision_layer\": -1,\n\"events_info\": {\n  \"0\": {\n    \"collision_layer_shift\": 1\n    }\n}\n}",
+     "interactable_object_04":"{\n\"key_name\": \"rope_dock\",\n\"x\": 7,\n\"y\": 5,\n\"base_collision_layer\": 1,\n\"events_info\": {\n  \"0\": {\n    \"dest_x\": 16,\n    \"dest_y\": 5,\n    \"activation_directions\": [\"down\",\"right\"],\n    \"starting_dock\": true,\n    \"walk_over_rope\": true,\n    \"tied\": true\n  }\n}\n}",
+     "interactable_object_05":"{\n\"key_name\": \"rope_dock\",\n\"x\": 16,\n\"y\": 5,\n\"base_collision_layer\": 1,\n\"events_info\": {\n  \"0\": {\n    \"dest_x\": 7,\n    \"dest_y\": 5,\n    \"activation_directions\": [\"down\",\"left\"],\n    \"starting_dock\": false,\n    \"walk_over_rope\": true\n  }\n}\n}"
     },
  "propertytypes":
     {
@@ -520,7 +522,9 @@
      "event_23":"string",
      "interactable_object_01":"string",
      "interactable_object_02":"string",
-     "interactable_object_03":"string"
+     "interactable_object_03":"string",
+     "interactable_object_04":"string",
+     "interactable_object_05":"string"
     },
  "renderorder":"right-down",
  "tiledversion":"1.5.0",

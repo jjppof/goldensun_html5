@@ -13,6 +13,7 @@ export enum event_types {
     SLIDER = "slider",
     EVENT_TRIGGER = "event_trigger",
     ICE_SLIDE = "ice_slide",
+    ROPE = "rope",
 }
 
 export abstract class LocationKey {

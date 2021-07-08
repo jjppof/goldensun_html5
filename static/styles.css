@@ -15,10 +15,6 @@ body {
     text-shadow: 2px 2px 0px #920000;
     display: none;
 }
-.logo {
-    margin: 1rem 20% 0rem 20%;
-    width: 400px;
-}
 .intro {
     padding: 1rem 20% 0rem 20%;
 }

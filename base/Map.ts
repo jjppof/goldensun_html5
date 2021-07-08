@@ -561,7 +561,7 @@ export class Map {
         for (let i = 0; i < this.interactable_objects.length; ++i) {
             const interactable_object = this.interactable_objects[i];
             interactable_object.initial_config(this);
-            interactable_object.initialize_related_events(this.events, this);
+            interactable_object.initialize_related_events(this);
         }
     }
 

@@ -200,5 +200,36 @@
             "image": "assets/images/interactable_objects/psynergy_pound.png",
             "json": "assets/images/interactable_objects/psynergy_pound.json"
         }
+    },{
+        "key_name": "rope_dock",
+        "scale_x": 0.9,
+        "scale_y": 0.9,
+        "anchor_x": 0.45,
+        "anchor_y": 0.85,
+        "body_radius": 6.0,
+        "collision_body_bevel": 2,
+        "send_to_back": false,
+        "pushable": false,
+        "psynergy_keys": {
+            "lash": {
+                "interaction_type": "once"
+            }
+        },
+        "spritesheet": {
+            "image": "assets/images/misc/rope_dock.png",
+            "json": "assets/images/misc/rope_dock.json"
+        },
+        "events": [{
+            "type": "rope",
+            "active": true,
+            "dynamic": true
+        }],
+        "initial_animation": "dock",
+        "actions": {
+            "frame_rate": [0, 0],
+            "animations": ["dock", "rope_fragment"],
+            "frames_count": [1, 1],
+            "loop": [false, false]
+        }
     }
 ]

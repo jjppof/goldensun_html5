@@ -5,6 +5,7 @@ import {CollisionEvent} from "./CollisionEvent";
 import {EventTriggerEvent} from "./EventTriggerEvent";
 import {IceSlideEvent} from "./IceSlideEvent";
 import {JumpEvent} from "./JumpEvent";
+import { RopeEvent } from "./RopeEvent";
 import {SliderEvent} from "./SliderEvent";
 import {SpeedEvent} from "./SpeedEvent";
 import {StepEvent} from "./StepEvent";
@@ -120,7 +121,9 @@ export class TileEventManager {
             current_event.fire();
             return;
         }
-        if (this.data.hero.current_direction !== this_activation_direction) return;
+        if (this.data.hero.current_direction !== this_activation_direction) {
+            return;
+        }
         if (current_event.type === event_types.CLIMB && !this.data.hero.idle_climbing) {
             (current_event as ClimbEvent).set_current_activation_direction(this_activation_direction);
             current_event.fire();
@@ -188,6 +191,7 @@ export class TileEventManager {
                 case event_types.JUMP:
                 case event_types.CLIMB:
                 case event_types.SLIDER:
+                case event_types.ROPE:
                     if (this_event.type === event_types.TELEPORT && !(this_event as TeleportEvent).advance_effect) {
                         this.event_queue.add(
                             this_event,
@@ -372,6 +376,26 @@ export class TileEventManager {
                 info.active_storage_key,
                 info.affected_by_reveal,
                 info.start_sliding_direction
+            );
+        } else if (info.type === event_types.ROPE) {
+            return new RopeEvent(
+                this.game,
+                this.data,
+                info.x,
+                info.y,
+                info.activation_directions,
+                info.activation_collision_layers,
+                info.dynamic,
+                info.active,
+                info.active_storage_key,
+                info.affected_by_reveal,
+                info.origin_interactable_object,
+                info.dest_x,
+                info.dest_y,
+                info.starting_dock,
+                info.walk_over_rope,
+                info.dock_exit_collision_layer,
+                info.tied,
             );
         }
     }

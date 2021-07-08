@@ -529,10 +529,13 @@ export abstract class ControllableChar {
         camera_follow?: boolean;
         /** Whether the char will bounce on jump finish. Only for vertical jumps. */
         bounce?: boolean;
+        /** Whether the char shadow will remain hidden after jump. */
+        keep_shadow_hidden?: boolean
     }) {
         const duration = options?.duration ?? 65;
         const jump_height = options?.jump_height ?? 12;
         const camera_follow = options?.camera_follow ?? true;
+        const keep_shadow_hidden = options?.keep_shadow_hidden ?? false;
         let promise_resolve;
         const promise = new Promise(resolve => (promise_resolve = resolve));
         this.data.audio.play_se(options?.sfx_key ?? "actions/jump");
@@ -574,7 +577,9 @@ export abstract class ControllableChar {
                     if (this.shadow) {
                         this.shadow.x = char_x;
                         this.shadow.y = char_y;
-                        this.shadow.visible = true;
+                        if (!keep_shadow_hidden) {
+                            this.shadow.visible = true;
+                        }
                     }
                     if (this.sprite_info.hasAction(base_actions.JUMP)) {
                         this.sprite.animations.currentAnim.reverseOnce();
