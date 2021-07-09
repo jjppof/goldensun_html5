@@ -1,0 +1,76 @@
+{"frames": {
+
+"battle/idle_back/00":
+{
+	"frame": {"x":1,"y":1,"w":33,"h":56},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":8,"w":33,"h":56},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/01":
+{
+	"frame": {"x":36,"y":58,"w":34,"h":55},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":9,"w":34,"h":55},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/02":
+{
+	"frame": {"x":36,"y":1,"w":35,"h":55},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":9,"w":35,"h":55},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_back/03":
+{
+	"frame": {"x":36,"y":58,"w":34,"h":55},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":9,"w":34,"h":55},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/00":
+{
+	"frame": {"x":72,"y":58,"w":31,"h":55},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":15,"y":9,"w":31,"h":55},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/01":
+{
+	"frame": {"x":73,"y":1,"w":31,"h":55},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":15,"y":9,"w":31,"h":55},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/02":
+{
+	"frame": {"x":1,"y":59,"w":33,"h":54},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":15,"y":10,"w":33,"h":54},
+	"sourceSize": {"w":64,"h":64}
+},
+"battle/idle_front/03":
+{
+	"frame": {"x":73,"y":1,"w":31,"h":55},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":15,"y":9,"w":31,"h":55},
+	"sourceSize": {"w":64,"h":64}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "piers_battle.png",
+	"format": "RGBA8888",
+	"size": {"w":105,"h":114},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a797116ff8d5fbc1e829510ccc319690:1dfd4953f152549a02dbe7b555086b71:65f589cc24e000b04bcc8d71ddc9a5d3$"
+}
+}

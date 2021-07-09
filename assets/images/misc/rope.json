@@ -1,0 +1,36 @@
+{"frames": {
+
+"rope/dock_empty":
+{
+	"frame": {"x":19,"y":1,"w":12,"h":16},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":0,"w":12,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"rope/dock_with_rope_tied":
+{
+	"frame": {"x":1,"y":1,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"rope/rope_fragment":
+{
+	"frame": {"x":1,"y":19,"w":8,"h":6},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":1,"w":8,"h":6},
+	"sourceSize": {"w":8,"h":8}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "rope.png",
+	"format": "RGBA8888",
+	"size": {"w":32,"h":26},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:e936297f77ba2fb5b1c7561b21e52d0d:c949f2a7b247f63b97790f3d97f9e322:716f939365b4b15e2260d9d7260ed332$"
+}
+}

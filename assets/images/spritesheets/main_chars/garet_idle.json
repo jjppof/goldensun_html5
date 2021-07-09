@@ -1,0 +1,52 @@
+{"frames": {
+
+"idle/down/00":
+{
+	"frame": {"x":1,"y":1,"w":20,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":1,"w":20,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"idle/down/01":
+{
+	"frame": {"x":1,"y":34,"w":20,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":1,"w":20,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"idle/down/02":
+{
+	"frame": {"x":1,"y":67,"w":20,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":1,"w":20,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"idle/down/03":
+{
+	"frame": {"x":1,"y":100,"w":20,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":1,"w":20,"h":31},
+	"sourceSize": {"w":32,"h":32}
+},
+"idle/down/04":
+{
+	"frame": {"x":1,"y":133,"w":20,"h":31},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":1,"w":20,"h":31},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "garet_idle.png",
+	"format": "RGBA8888",
+	"size": {"w":22,"h":165},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a3d1d92adc4a9d7ddea737c90c36fe14:abdfc902e5a5848cae63c53d1771a26e:dd0bc8ce17ae6d1428a09c6221b44d23$"
+}
+}

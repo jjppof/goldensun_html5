@@ -1,0 +1,976 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>GoldenSun | GS-HTML5 API</title>
+	<meta name="description" content="Documentation for GS-HTML5 API">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">GS-HTML5 API</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../modules.html">GS-HTML5 API</a>
+				</li>
+				<li>
+					<a href="../modules/goldensun.html">GoldenSun</a>
+				</li>
+				<li>
+					<a href="goldensun.goldensun-1.html">GoldenSun</a>
+				</li>
+			</ul>
+			<h1>Class GoldenSun</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>The project has basically two important folders: assets and base. All the source code is located inside base folder.
+							All the game assets (images, database files, sounds, etc) are located inside assets folder. An engine user will only
+						modify the assets folder for instance. Any modification in assets folder files will automatically be reflected in the game.</p>
+					</div>
+					<p>This class is the starting point to understand how the code works. It&#39;s the engine&#39;s main class. When the game starts,
+						it will load database files in assets/dbs folder in order to instantiate the main classes of the game like Hero,
+					Map, MainMenu, Audio, ControlManager etc.</p>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">GoldenSun</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#assets_loaded" class="tsd-kind-icon">assets_<wbr>loaded</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#audio" class="tsd-kind-icon">audio</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#battle_instance" class="tsd-kind-icon">battle_<wbr>instance</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#camera" class="tsd-kind-icon">camera</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#collision" class="tsd-kind-icon">collision</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#control_manager" class="tsd-kind-icon">control_<wbr>manager</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#cursor_manager" class="tsd-kind-icon">cursor_<wbr>manager</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#dbs" class="tsd-kind-icon">dbs</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#debug" class="tsd-kind-icon">debug</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#fullscreen" class="tsd-kind-icon">fullscreen</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#game" class="tsd-kind-icon">game</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#game_event_manager" class="tsd-kind-icon">game_<wbr>event_<wbr>manager</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#gamepad" class="tsd-kind-icon">gamepad</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#hero" class="tsd-kind-icon">hero</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#in_battle" class="tsd-kind-icon">in_<wbr>battle</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#info" class="tsd-kind-icon">info</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#inn_menu" class="tsd-kind-icon">inn_<wbr>menu</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#inn_open" class="tsd-kind-icon">inn_<wbr>open</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#loading_progress" class="tsd-kind-icon">loading_<wbr>progress</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#loading_what" class="tsd-kind-icon">loading_<wbr>what</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#main_menu" class="tsd-kind-icon">main_<wbr>menu</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#map" class="tsd-kind-icon">map</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#menu_open" class="tsd-kind-icon">menu_<wbr>open</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#npc_group" class="tsd-kind-icon">npc_<wbr>group</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#overlayer_group" class="tsd-kind-icon">overlayer_<wbr>group</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#particle_manager" class="tsd-kind-icon">particle_<wbr>manager</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#scale_factor" class="tsd-kind-icon">scale_<wbr>factor</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#shop_menu" class="tsd-kind-icon">shop_<wbr>menu</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#shop_open" class="tsd-kind-icon">shop_<wbr>open</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#storage" class="tsd-kind-icon">storage</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#super_group" class="tsd-kind-icon">super_<wbr>group</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#tile_event_manager" class="tsd-kind-icon">tile_<wbr>event_<wbr>manager</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#underlayer_group" class="tsd-kind-icon">underlayer_<wbr>group</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="goldensun.goldensun-1.html#create" class="tsd-kind-icon">create</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#hero_movement_allowed" class="tsd-kind-icon">hero_<wbr>movement_<wbr>allowed</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="goldensun.goldensun-1.html#initialize_utils_controls" class="tsd-kind-icon">initialize_<wbr>utils_<wbr>controls</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="goldensun.goldensun-1.html#load_render" class="tsd-kind-icon">load_<wbr>render</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="goldensun.goldensun-1.html#preload" class="tsd-kind-icon">preload</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="goldensun.goldensun-1.html#render" class="tsd-kind-icon">render</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="goldensun.goldensun-1.html#render_loading" class="tsd-kind-icon">render_<wbr>loading</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="goldensun.goldensun-1.html#set_whats_loading" class="tsd-kind-icon">set_<wbr>whats_<wbr>loading</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="goldensun.goldensun-1.html#update" class="tsd-kind-icon">update</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Golden<wbr>Sun<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="goldensun.goldensun-1.html" class="tsd-signature-type" data-tsd-kind="Class">GoldenSun</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L100">GoldenSun.ts:100</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="goldensun.goldensun-1.html" class="tsd-signature-type" data-tsd-kind="Class">GoldenSun</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="assets_loaded" class="tsd-anchor"></a>
+					<h3>assets_<wbr>loaded</h3>
+					<div class="tsd-signature tsd-kind-icon">assets_<wbr>loaded<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L45">GoldenSun.ts:45</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="audio" class="tsd-anchor"></a>
+					<h3>audio</h3>
+					<div class="tsd-signature tsd-kind-icon">audio<span class="tsd-signature-symbol">:</span> <a href="audio.audio-1.html" class="tsd-signature-type" data-tsd-kind="Class">Audio</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L79">GoldenSun.ts:79</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Class responsible for controlling the game audio engine</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="battle_instance" class="tsd-anchor"></a>
+					<h3>battle_<wbr>instance</h3>
+					<div class="tsd-signature tsd-kind-icon">battle_<wbr>instance<span class="tsd-signature-symbol">:</span> <a href="battle_battle.battle.html" class="tsd-signature-type" data-tsd-kind="Class">Battle</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L76">GoldenSun.ts:76</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Class responsible for a battle</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="camera" class="tsd-anchor"></a>
+					<h3>camera</h3>
+					<div class="tsd-signature tsd-kind-icon">camera<span class="tsd-signature-symbol">:</span> <a href="camera.camera-1.html" class="tsd-signature-type" data-tsd-kind="Class">Camera</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L85">GoldenSun.ts:85</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Class responsible for some specific camera features for this engine</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="collision" class="tsd-anchor"></a>
+					<h3>collision</h3>
+					<div class="tsd-signature tsd-kind-icon">collision<span class="tsd-signature-symbol">:</span> <a href="collision.collision-1.html" class="tsd-signature-type" data-tsd-kind="Class">Collision</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L52">GoldenSun.ts:52</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Class responsible for the collision system</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="control_manager" class="tsd-anchor"></a>
+					<h3>control_<wbr>manager</h3>
+					<div class="tsd-signature tsd-kind-icon">control_<wbr>manager<span class="tsd-signature-symbol">:</span> <a href="utils_controlmanager.controlmanager.html" class="tsd-signature-type" data-tsd-kind="Class">ControlManager</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L88">GoldenSun.ts:88</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="cursor_manager" class="tsd-anchor"></a>
+					<h3>cursor_<wbr>manager</h3>
+					<div class="tsd-signature tsd-kind-icon">cursor_<wbr>manager<span class="tsd-signature-symbol">:</span> <a href="utils_cursormanager.cursormanager.html" class="tsd-signature-type" data-tsd-kind="Class">CursorManager</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L89">GoldenSun.ts:89</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="dbs" class="tsd-anchor"></a>
+					<h3>dbs</h3>
+					<div class="tsd-signature tsd-kind-icon">dbs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> = {}</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L34">GoldenSun.ts:34</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="debug" class="tsd-anchor"></a>
+					<h3>debug</h3>
+					<div class="tsd-signature tsd-kind-icon">debug<span class="tsd-signature-symbol">:</span> <a href="debug_debug.debug.html" class="tsd-signature-type" data-tsd-kind="Class">Debug</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L55">GoldenSun.ts:55</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Class responsible for the debug systems</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="fullscreen" class="tsd-anchor"></a>
+					<h3>fullscreen</h3>
+					<div class="tsd-signature tsd-kind-icon">fullscreen<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L93">GoldenSun.ts:93</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="game" class="tsd-anchor"></a>
+					<h3>game</h3>
+					<div class="tsd-signature tsd-kind-icon">game<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Game</span><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L33">GoldenSun.ts:33</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="game_event_manager" class="tsd-anchor"></a>
+					<h3>game_<wbr>event_<wbr>manager</h3>
+					<div class="tsd-signature tsd-kind-icon">game_<wbr>event_<wbr>manager<span class="tsd-signature-symbol">:</span> <a href="game_events_gameeventmanager.gameeventmanager.html" class="tsd-signature-type" data-tsd-kind="Class">GameEventManager</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L73">GoldenSun.ts:73</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Class responsible for the game events</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="gamepad" class="tsd-anchor"></a>
+					<h3>gamepad</h3>
+					<div class="tsd-signature tsd-kind-icon">gamepad<span class="tsd-signature-symbol">:</span> <a href="xgamepad.gamepad.html" class="tsd-signature-type" data-tsd-kind="Class">Gamepad</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L90">GoldenSun.ts:90</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="hero" class="tsd-anchor"></a>
+					<h3>hero</h3>
+					<div class="tsd-signature tsd-kind-icon">hero<span class="tsd-signature-symbol">:</span> <a href="hero.hero-1.html" class="tsd-signature-type" data-tsd-kind="Class">Hero</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L49">GoldenSun.ts:49</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Class responsible for the control of the main hero</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="in_battle" class="tsd-anchor"></a>
+					<h3>in_<wbr>battle</h3>
+					<div class="tsd-signature tsd-kind-icon">in_<wbr>battle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L44">GoldenSun.ts:44</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="info" class="tsd-anchor"></a>
+					<h3>info</h3>
+					<div class="tsd-signature tsd-kind-icon">info<span class="tsd-signature-symbol">:</span> <a href="../modules/initializers_initialize_info.html#gameinfo" class="tsd-signature-type" data-tsd-kind="Type alias">GameInfo</a><span class="tsd-signature-symbol"> = ...</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L35">GoldenSun.ts:35</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="inn_menu" class="tsd-anchor"></a>
+					<h3>inn_<wbr>menu</h3>
+					<div class="tsd-signature tsd-kind-icon">inn_<wbr>menu<span class="tsd-signature-symbol">:</span> <a href="main_menus_innmenu.innmenu.html" class="tsd-signature-type" data-tsd-kind="Class">InnMenu</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L64">GoldenSun.ts:64</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Class responsible for the inn system</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="inn_open" class="tsd-anchor"></a>
+					<h3>inn_<wbr>open</h3>
+					<div class="tsd-signature tsd-kind-icon">inn_<wbr>open<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L43">GoldenSun.ts:43</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="loading_progress" class="tsd-anchor"></a>
+					<h3>loading_<wbr>progress</h3>
+					<div class="tsd-signature tsd-kind-icon">loading_<wbr>progress<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L37">GoldenSun.ts:37</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="loading_what" class="tsd-anchor"></a>
+					<h3>loading_<wbr>what</h3>
+					<div class="tsd-signature tsd-kind-icon">loading_<wbr>what<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L38">GoldenSun.ts:38</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="main_menu" class="tsd-anchor"></a>
+					<h3>main_<wbr>menu</h3>
+					<div class="tsd-signature tsd-kind-icon">main_<wbr>menu<span class="tsd-signature-symbol">:</span> <a href="main_menus_mainmenu.mainmenu.html" class="tsd-signature-type" data-tsd-kind="Class">MainMenu</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L58">GoldenSun.ts:58</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Class responbible for the main menu</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="map" class="tsd-anchor"></a>
+					<h3>map</h3>
+					<div class="tsd-signature tsd-kind-icon">map<span class="tsd-signature-symbol">:</span> <a href="map.map-1.html" class="tsd-signature-type" data-tsd-kind="Class">Map</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L67">GoldenSun.ts:67</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The current active map</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="menu_open" class="tsd-anchor"></a>
+					<h3>menu_<wbr>open</h3>
+					<div class="tsd-signature tsd-kind-icon">menu_<wbr>open<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L41">GoldenSun.ts:41</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="npc_group" class="tsd-anchor"></a>
+					<h3>npc_<wbr>group</h3>
+					<div class="tsd-signature tsd-kind-icon">npc_<wbr>group<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Group</span><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L98">GoldenSun.ts:98</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="overlayer_group" class="tsd-anchor"></a>
+					<h3>overlayer_<wbr>group</h3>
+					<div class="tsd-signature tsd-kind-icon">overlayer_<wbr>group<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Group</span><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L99">GoldenSun.ts:99</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="particle_manager" class="tsd-anchor"></a>
+					<h3>particle_<wbr>manager</h3>
+					<div class="tsd-signature tsd-kind-icon">particle_<wbr>manager<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ParticleStorm</span><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L36">GoldenSun.ts:36</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="scale_factor" class="tsd-anchor"></a>
+					<h3>scale_<wbr>factor</h3>
+					<div class="tsd-signature tsd-kind-icon">scale_<wbr>factor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 1</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L94">GoldenSun.ts:94</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="shop_menu" class="tsd-anchor"></a>
+					<h3>shop_<wbr>menu</h3>
+					<div class="tsd-signature tsd-kind-icon">shop_<wbr>menu<span class="tsd-signature-symbol">:</span> <a href="main_menus_shopmenu.shopmenu.html" class="tsd-signature-type" data-tsd-kind="Class">ShopMenu</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L61">GoldenSun.ts:61</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Class responsible for the shop system</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="shop_open" class="tsd-anchor"></a>
+					<h3>shop_<wbr>open</h3>
+					<div class="tsd-signature tsd-kind-icon">shop_<wbr>open<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L42">GoldenSun.ts:42</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="storage" class="tsd-anchor"></a>
+					<h3>storage</h3>
+					<div class="tsd-signature tsd-kind-icon">storage<span class="tsd-signature-symbol">:</span> <a href="storage.storage-1.html" class="tsd-signature-type" data-tsd-kind="Class">Storage</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L82">GoldenSun.ts:82</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Class responsible for storing the game custom states</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="super_group" class="tsd-anchor"></a>
+					<h3>super_<wbr>group</h3>
+					<div class="tsd-signature tsd-kind-icon">super_<wbr>group<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Group</span><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L100">GoldenSun.ts:100</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="tile_event_manager" class="tsd-anchor"></a>
+					<h3>tile_<wbr>event_<wbr>manager</h3>
+					<div class="tsd-signature tsd-kind-icon">tile_<wbr>event_<wbr>manager<span class="tsd-signature-symbol">:</span> <a href="tile_events_tileeventmanager.tileeventmanager.html" class="tsd-signature-type" data-tsd-kind="Class">TileEventManager</a><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L70">GoldenSun.ts:70</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Class responsible for the tile events</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="underlayer_group" class="tsd-anchor"></a>
+					<h3>underlayer_<wbr>group</h3>
+					<div class="tsd-signature tsd-kind-icon">underlayer_<wbr>group<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Group</span><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L97">GoldenSun.ts:97</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="create" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> create</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">create<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L166">GoldenSun.ts:166</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Initializes the game main classes like Hero, Map, Audio, ControlManager, Storage etc.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="hero_movement_allowed" class="tsd-anchor"></a>
+					<h3>hero_<wbr>movement_<wbr>allowed</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">hero_<wbr>movement_<wbr>allowed<span class="tsd-signature-symbol">(</span>allow_climbing<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L332">GoldenSun.ts:332</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Checks whether the hero is allowed to move.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>allow_climbing: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = true</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>if true, climbing won&#39;t be considered.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p>if true, the hero is allowed to move.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="initialize_utils_controls" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> initialize_<wbr>utils_<wbr>controls</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">initialize_<wbr>utils_<wbr>controls<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L260">GoldenSun.ts:260</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Initializes some utils controls like canvas scale control, fullscreen etc.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="load_render" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> load_<wbr>render</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">load_<wbr>render<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L159">GoldenSun.ts:159</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="preload" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> preload</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">preload<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L123">GoldenSun.ts:123</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Loads initial database files and other assets.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="render" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> render</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">render<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L400">GoldenSun.ts:400</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Renders some debug info.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="render_loading" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> render_<wbr>loading</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">render_<wbr>loading<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L149">GoldenSun.ts:149</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Renders loading info.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="set_whats_loading" class="tsd-anchor"></a>
+					<h3>set_<wbr>whats_<wbr>loading</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set_<wbr>whats_<wbr>loading<span class="tsd-signature-symbol">(</span>loading_what<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L142">GoldenSun.ts:142</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>On loading phase, sets the loading message to be displayed.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>loading_what: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the message.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="update" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> update</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">update<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jjppof/goldensun_html5/blob/5423fcb/base/GoldenSun.ts#L347">GoldenSun.ts:347</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The engine main update function.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="../modules.html">Modules</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/goldensun.html">Golden<wbr>Sun</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-module">
+						<a href="goldensun.goldensun-1.html" class="tsd-kind-icon">Golden<wbr>Sun</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#assets_loaded" class="tsd-kind-icon">assets_<wbr>loaded</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#audio" class="tsd-kind-icon">audio</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#battle_instance" class="tsd-kind-icon">battle_<wbr>instance</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#camera" class="tsd-kind-icon">camera</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#collision" class="tsd-kind-icon">collision</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#control_manager" class="tsd-kind-icon">control_<wbr>manager</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#cursor_manager" class="tsd-kind-icon">cursor_<wbr>manager</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#dbs" class="tsd-kind-icon">dbs</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#debug" class="tsd-kind-icon">debug</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#fullscreen" class="tsd-kind-icon">fullscreen</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#game" class="tsd-kind-icon">game</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#game_event_manager" class="tsd-kind-icon">game_<wbr>event_<wbr>manager</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#gamepad" class="tsd-kind-icon">gamepad</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#hero" class="tsd-kind-icon">hero</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#in_battle" class="tsd-kind-icon">in_<wbr>battle</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#info" class="tsd-kind-icon">info</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#inn_menu" class="tsd-kind-icon">inn_<wbr>menu</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#inn_open" class="tsd-kind-icon">inn_<wbr>open</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#loading_progress" class="tsd-kind-icon">loading_<wbr>progress</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#loading_what" class="tsd-kind-icon">loading_<wbr>what</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#main_menu" class="tsd-kind-icon">main_<wbr>menu</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#map" class="tsd-kind-icon">map</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#menu_open" class="tsd-kind-icon">menu_<wbr>open</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#npc_group" class="tsd-kind-icon">npc_<wbr>group</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#overlayer_group" class="tsd-kind-icon">overlayer_<wbr>group</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#particle_manager" class="tsd-kind-icon">particle_<wbr>manager</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#scale_factor" class="tsd-kind-icon">scale_<wbr>factor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#shop_menu" class="tsd-kind-icon">shop_<wbr>menu</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#shop_open" class="tsd-kind-icon">shop_<wbr>open</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#storage" class="tsd-kind-icon">storage</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#super_group" class="tsd-kind-icon">super_<wbr>group</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#tile_event_manager" class="tsd-kind-icon">tile_<wbr>event_<wbr>manager</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#underlayer_group" class="tsd-kind-icon">underlayer_<wbr>group</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="goldensun.goldensun-1.html#create" class="tsd-kind-icon">create</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#hero_movement_allowed" class="tsd-kind-icon">hero_<wbr>movement_<wbr>allowed</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="goldensun.goldensun-1.html#initialize_utils_controls" class="tsd-kind-icon">initialize_<wbr>utils_<wbr>controls</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="goldensun.goldensun-1.html#load_render" class="tsd-kind-icon">load_<wbr>render</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="goldensun.goldensun-1.html#preload" class="tsd-kind-icon">preload</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="goldensun.goldensun-1.html#render" class="tsd-kind-icon">render</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="goldensun.goldensun-1.html#render_loading" class="tsd-kind-icon">render_<wbr>loading</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="goldensun.goldensun-1.html#set_whats_loading" class="tsd-kind-icon">set_<wbr>whats_<wbr>loading</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="goldensun.goldensun-1.html#update" class="tsd-kind-icon">update</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
