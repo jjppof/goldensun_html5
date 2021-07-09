@@ -1,5 +1,5 @@
 import {GoldenSun} from "../GoldenSun";
-import {InteractableObjects} from "../InteractableObjects";
+import {InteractableObjects} from "../interactable_objects/InteractableObjects";
 import {directions, get_directions, split_direction} from "../utils";
 import * as _ from "lodash";
 

@@ -2,7 +2,7 @@ import {base_actions, directions, reverse_directions} from "../utils";
 import {TileEvent, event_types} from "./TileEvent";
 import {JumpEvent} from "./JumpEvent";
 import * as numbers from "../magic_numbers";
-import {InteractableObjects, interactable_object_event_types} from "../InteractableObjects";
+import {InteractableObjects, interactable_object_event_types} from "../interactable_objects/InteractableObjects";
 import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 import {GoldenSun} from "../GoldenSun";
 

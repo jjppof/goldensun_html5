@@ -1,5 +1,5 @@
 import {NPC, npc_movement_types, npc_types} from "./NPC";
-import {InteractableObjects} from "./InteractableObjects";
+import {InteractableObjects} from "./interactable_objects/InteractableObjects";
 import {LocationKey, TileEvent} from "./tile_events/TileEvent";
 import * as numbers from "./magic_numbers";
 import {event_types, GameEvent} from "./game_events/GameEvent";
@@ -9,6 +9,7 @@ import {ControllableChar} from "./ControllableChar";
 import {base_actions} from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
+import { Pushable } from "./interactable_objects/Pushable";
 
 export class Map {
     private static readonly MAX_CAMERA_ROTATION = 0.035;
@@ -532,7 +533,12 @@ export class Map {
      */
     private create_interactable_object(raw_property: string) {
         const property_info = JSON.parse(raw_property);
-        const interactable_object = new InteractableObjects(
+        const interactable_object_db = this.data.dbs.interactable_objects_db[property_info.key_name];
+        let io_class: typeof InteractableObjects;
+        if (interactable_object_db.pushable) {
+            io_class = Pushable;
+        }
+        const interactable_object = new io_class(
             this.game,
             this.data,
             property_info.key_name,

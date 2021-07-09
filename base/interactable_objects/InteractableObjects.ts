@@ -1,12 +1,12 @@
-import {SpriteBase} from "./SpriteBase";
-import {event_types, LocationKey, TileEvent} from "./tile_events/TileEvent";
-import * as numbers from "./magic_numbers";
-import {directions, get_directions, get_surroundings, mount_collision_polygon, reverse_directions} from "./utils";
-import {JumpEvent} from "./tile_events/JumpEvent";
-import {ClimbEvent} from "./tile_events/ClimbEvent";
-import {GoldenSun} from "./GoldenSun";
-import {Map} from "./Map";
-import { RopeEvent } from "./tile_events/RopeEvent";
+import {SpriteBase} from "../SpriteBase";
+import {event_types, LocationKey, TileEvent} from "../tile_events/TileEvent";
+import * as numbers from "../magic_numbers";
+import {directions, get_directions, get_surroundings, mount_collision_polygon, reverse_directions} from "../utils";
+import {JumpEvent} from "../tile_events/JumpEvent";
+import {ClimbEvent} from "../tile_events/ClimbEvent";
+import {GoldenSun} from "../GoldenSun";
+import {Map} from "../Map";
+import { RopeEvent } from "../tile_events/RopeEvent";
 
 export enum interactable_object_interaction_types {
     ONCE = "once",
@@ -21,31 +21,13 @@ export enum interactable_object_event_types {
 }
 
 export class InteractableObjects {
-    private game: Phaser.Game;
-    private data: GoldenSun;
-    private _key_name: string;
-    private _x: number;
-    private _y: number;
-    private _sprite_info: SpriteBase;
+    protected game: Phaser.Game;
+    protected data: GoldenSun;
+
     private allowed_tiles: {x: number; y: number; collision_layer: number}[];
-    private _base_collision_layer: number;
     private not_allowed_tiles: {x: number; y: number}[];
-    private _object_drop_tiles: {
-        x: number;
-        y: number;
-        dest_x: number;
-        dest_y: number;
-        destination_collision_layer: number;
-        animation_duration: number;
-        dust_animation: boolean;
-    }[];
     private events_id: Set<TileEvent["id"]>;
-    private _current_x: number;
-    private _current_y: number;
-    private _collision_tiles_bodies: Phaser.Physics.P2.Body[];
     private collision_change_functions: Function[];
-    private _color_filter: any;
-    private _sprite: Phaser.Sprite;
     private anchor_x: number;
     private anchor_y: number;
     private scale_x: number;
@@ -60,10 +42,30 @@ export class InteractableObjects {
             intermediate_collision_layer_shift?: number;
         };
     };
-    private _psynergy_casted: {[field_psynergy_key: string]: boolean};
     private block_climb_collision_layer_shift: number;
+
+    private _key_name: string;
+    private _x: number;
+    private _y: number;
+    private _sprite_info: SpriteBase;
+    private _base_collision_layer: number;
+    private _current_x: number;
+    private _current_y: number;
+    private _collision_tiles_bodies: Phaser.Physics.P2.Body[];
+    private _color_filter: any;
+    private _sprite: Phaser.Sprite;
+    private _psynergy_casted: {[field_psynergy_key: string]: boolean};
     private _blocking_stair_block: Phaser.Physics.P2.Body;
     private _active: boolean;
+    private _object_drop_tiles: {
+        x: number;
+        y: number;
+        dest_x: number;
+        dest_y: number;
+        destination_collision_layer: number;
+        animation_duration: number;
+        dust_animation: boolean;
+    }[];
 
     constructor(
         game,
@@ -196,12 +198,12 @@ export class InteractableObjects {
         }
     }
 
-    change_collision_layer(data: GoldenSun, destination_collision_layer: number) {
+    change_collision_layer(destination_collision_layer: number) {
         this.sprite.body.removeCollisionGroup(
-            data.collision.interactable_objs_collision_groups[this.base_collision_layer]
+            this.data.collision.interactable_objs_collision_groups[this.base_collision_layer]
         );
         this.sprite.body.setCollisionGroup(
-            data.collision.interactable_objs_collision_groups[destination_collision_layer]
+            this.data.collision.interactable_objs_collision_groups[destination_collision_layer]
         );
         this._base_collision_layer = destination_collision_layer;
         this.sprite.base_collision_layer = destination_collision_layer;

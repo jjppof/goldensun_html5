@@ -1,9 +1,9 @@
 import * as numbers from "../magic_numbers";
-import {target_only_push} from "../interactable_objects/push";
 import {directions, reverse_directions, join_directions, base_actions} from "../utils";
 import {FieldAbilities} from "./FieldAbilities";
 import {SpriteBase} from "../SpriteBase";
 import {Button} from "../XGamepad";
+import { Pushable } from "../interactable_objects/Pushable";
 
 export class MoveFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "move";
@@ -93,10 +93,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                 )
             ) {
                 this.data.control_manager.reset();
-                target_only_push(
-                    this.game,
-                    this.data,
-                    this.target_object,
+                (this.target_object as Pushable).target_only_push(
                     (x_shift, y_shift) => {
                         const x_target = this.hand_sprite.x + x_shift;
                         const y_target = this.hand_sprite.y + y_shift;

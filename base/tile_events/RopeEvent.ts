@@ -1,5 +1,5 @@
 import { GoldenSun } from "../GoldenSun";
-import { InteractableObjects } from "../InteractableObjects";
+import { InteractableObjects } from "../interactable_objects/InteractableObjects";
 import { event_types, TileEvent } from "./TileEvent";
 
 /**

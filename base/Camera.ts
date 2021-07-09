@@ -1,5 +1,5 @@
 import {ControllableChar} from "./ControllableChar";
-import {InteractableObjects} from "./InteractableObjects";
+import {InteractableObjects} from "./interactable_objects/InteractableObjects";
 
 export class Camera {
     private static readonly CAMERA_LERP = 0.15;

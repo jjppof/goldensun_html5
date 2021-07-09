@@ -1,5 +1,5 @@
 import {base_actions, directions, reverse_directions} from "../utils";
-import {InteractableObjects, interactable_object_interaction_types} from "../InteractableObjects";
+import {InteractableObjects, interactable_object_interaction_types} from "../interactable_objects/InteractableObjects";
 import {FieldPsynergyWindow} from "../windows/FieldPsynergyWindow";
 import {GoldenSun} from "../GoldenSun";
 import {ControllableChar} from "../ControllableChar";

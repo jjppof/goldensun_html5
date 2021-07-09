@@ -2,7 +2,7 @@ import {ControllableChar} from "./ControllableChar";
 import * as numbers from "./magic_numbers";
 import {event_types, LocationKey} from "./tile_events/TileEvent";
 import {get_transition_directions, range_360, directions, base_actions, get_direction_mask} from "./utils";
-import {normal_push} from "./interactable_objects/push";
+import {Pushable} from "./interactable_objects/Pushable";
 import {ClimbEvent} from "./tile_events/ClimbEvent";
 import {Button} from "./XGamepad";
 import {GoldenSun} from "./GoldenSun";
@@ -270,7 +270,7 @@ export class Hero extends ControllableChar {
                                 }
                                 if (interactable_object.position_allowed(item_position.x, item_position.y)) {
                                     this.push_timer = this.game.time.events.add(Phaser.Timer.QUARTER, () => {
-                                        normal_push(this.game, this.data, interactable_object);
+                                        (interactable_object as Pushable).normal_push();
                                         this.trying_to_push = false;
                                         this.push_timer = null;
                                     });
