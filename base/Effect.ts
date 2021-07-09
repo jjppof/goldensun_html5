@@ -191,7 +191,7 @@ export class Effect {
         }
     }
 
-    init_sub_effect() {
+    private init_sub_effect() {
         this.sub_effect.quantity_is_absolute = this.sub_effect.quantity_is_absolute ?? false;
         this.sub_effect.rate = this.sub_effect.rate ?? 1.0;
         this.sub_effect.chance = this.sub_effect.chance ?? 1.0;
@@ -201,24 +201,24 @@ export class Effect {
         this.sub_effect.on_caster = this.sub_effect.on_caster ?? false;
     }
 
-    apply_general_value(property: string, direct_value?: number, element?: elements) {
+    private apply_general_value(property: keyof Player, direct_value?: number, sub_property?: elements | main_stats) {
         let char = this.char;
-        if (element !== undefined) {
-            char = this.char[this.relative_to_property !== undefined ? this.relative_to_property : property];
-            property = element;
+        if (sub_property !== undefined) {
+            char = this.char[this.relative_to_property ?? property];
+            property = sub_property as any;
         }
-        const before_value = property !== undefined ? char[property] : direct_value;
+        const before_value: number = property !== undefined ? (char[property] as number) : direct_value;
         if (Math.random() >= this.chance) {
             return {
                 before: before_value,
                 after: before_value,
             };
         }
-        let after_value;
+        let after_value: number;
         const quantity = Array.isArray(this.quantity) ? _.random(this.quantity[0], this.quantity[1]) : this.quantity;
         if (this.quantity_is_absolute) {
             if (property !== undefined) {
-                char[property] = quantity;
+                char[property as any] = quantity;
             }
             after_value = quantity;
         } else {
@@ -244,7 +244,7 @@ export class Effect {
                 result = Effect.apply_operator(value_to_use, value, this.operator) | 0;
             }
             if (property !== undefined) {
-                char[property] = result;
+                char[property as any] = result;
             }
             after_value = result;
         }
@@ -254,7 +254,7 @@ export class Effect {
         };
     }
 
-    apply_subeffect(property: string, value: number) {
+    private apply_subeffect(property: string, value: number) {
         if (Math.random() < this.sub_effect.chance) {
             if (this.sub_effect.quantity_is_absolute) {
                 this.char[property] = value;
@@ -300,7 +300,7 @@ export class Effect {
         }
     }
 
-    check_caps(current_prop, max_prop, min_value, result_obj) {
+    private check_caps(current_prop, max_prop, min_value, result_obj) {
         if (this.char[current_prop] > this.char[max_prop]) {
             if (result_obj) {
                 result_obj.after = this.char[max_prop];
@@ -314,7 +314,7 @@ export class Effect {
         }
     }
 
-    remove_char_buffs(type: effect_types, element?: elements) {
+    private remove_char_buffs(type: effect_types, element?: elements) {
         const removed_effects: Effect[] = [];
         this.char.effects.forEach(effect => {
             if (effect.type !== type || effect.turns_quantity === -1) return;
@@ -427,7 +427,7 @@ export class Effect {
             case effect_types.EXTRA_LUCK:
             case effect_types.EXTRA_MAX_HP:
             case effect_types.EXTRA_MAX_PP:
-                return this.apply_general_value(effect_type_extra_stat[this.type]);
+                return this.apply_general_value("extra_stats", undefined, effect_type_extra_stat[this.type]);
             case effect_types.PARALYZE:
                 if (Math.random() < this.chance) {
                     this.char.paralyzed_by_effect = true;

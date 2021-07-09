@@ -3,6 +3,7 @@ import {elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
 import {MainChar} from "./MainChar";
 import {Summon} from "./Summon";
+import {main_stats} from "./Player";
 
 export enum djinn_status {
     SET = "set",
@@ -23,12 +24,7 @@ export class Djinn {
     public description: string;
     public element: elements;
     public ability_key_name: string;
-    public hp_boost: number;
-    public pp_boost: number;
-    public atk_boost: number;
-    public def_boost: number;
-    public agi_boost: number;
-    public luk_boost: number;
+    public boost_stats: {[main_stat in main_stats]?: number};
     public status: djinn_status;
     public index: number;
     public recovery_turn: number;
@@ -52,12 +48,13 @@ export class Djinn {
         this.description = description;
         this.element = element;
         this.ability_key_name = ability_key_name;
-        this.hp_boost = hp_boost;
-        this.pp_boost = pp_boost;
-        this.atk_boost = atk_boost;
-        this.def_boost = def_boost;
-        this.agi_boost = agi_boost;
-        this.luk_boost = luk_boost;
+        this.boost_stats = {};
+        this.boost_stats[main_stats.MAX_HP] = hp_boost;
+        this.boost_stats[main_stats.MAX_PP] = pp_boost;
+        this.boost_stats[main_stats.ATTACK] = atk_boost;
+        this.boost_stats[main_stats.DEFENSE] = def_boost;
+        this.boost_stats[main_stats.AGILITY] = agi_boost;
+        this.boost_stats[main_stats.LUCK] = luk_boost;
         this.status = djinn_status.SET;
         this.index = index;
         this.recovery_turn = 0;
