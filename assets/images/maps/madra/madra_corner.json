@@ -193,6 +193,34 @@
                          "y":-96
                         }, 
                         {
+                         "x":-128,
+                         "y":-96
+                        }, 
+                        {
+                         "x":-128,
+                         "y":-128
+                        }, 
+                        {
+                         "x":-112,
+                         "y":-128
+                        }, 
+                        {
+                         "x":-111.99365942029,
+                         "y":-98.0036231884058
+                        }, 
+                        {
+                         "x":-126.005555555556,
+                         "y":-98.0020833333333
+                        }, 
+                        {
+                         "x":-125.979861111111,
+                         "y":-96.0055555555556
+                        }, 
+                        {
+                         "x":-112,
+                         "y":-96
+                        }, 
+                        {
                          "x":-80,
                          "y":-96
                         }, 
@@ -387,34 +415,6 @@
                          "y":64
                         }, 
                         {
-                         "x":208,
-                         "y":64
-                        }, 
-                        {
-                         "x":208,
-                         "y":96
-                        }, 
-                        {
-                         "x":192,
-                         "y":96
-                        }, 
-                        {
-                         "x":191.95652173913,
-                         "y":66.8260869565217
-                        }, 
-                        {
-                         "x":206,
-                         "y":66.7826086956522
-                        }, 
-                        {
-                         "x":206,
-                         "y":63.9565217391304
-                        }, 
-                        {
-                         "x":192,
-                         "y":64
-                        }, 
-                        {
                          "x":144,
                          "y":64
                         }, 
@@ -455,7 +455,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }],
@@ -467,10 +467,10 @@
      "event_00":"{\n\"type\": \"teleport\",\n\"x\": 19,\n\"y\": 9,\n\"target\": \"madra\",\n\"activation_directions\": \"right\",\n\"x_target\": 1,\n\"y_target\": 20,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
      "event_01":"{\n\"type\": \"teleport\",\n\"x\": 19,\n\"y\": 10,\n\"target\": \"madra\",\n\"activation_directions\": \"right\",\n\"x_target\": 1,\n\"y_target\": 20,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
      "event_02":"{\n\"type\": \"teleport\",\n\"x\": 19,\n\"y\": 11,\n\"target\": \"madra\",\n\"activation_directions\": \"right\",\n\"x_target\": 1,\n\"y_target\": 20,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
-     "event_03":"{\n\"type\": \"climb\",\n\"x\": 12,\n\"y\": 6,\n \"activation_directions\": \"up\",\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 1\n}",
-     "event_04":"{\n\"type\": \"climb\",\n\"x\": 12,\n\"y\": 5,\n \"activation_directions\": \"down\",\n\"activation_collision_layers\": 1,\n\"change_to_collision_layer\": 0\n}",
-     "event_05":"{\n\"type\": \"climb\",\n\"x\": 12,\n\"y\": 4,\n \"activation_directions\": \"up\",\n\"activation_collision_layers\": 1\n}",
-     "event_06":"{\n\"type\": \"climb\",\n\"x\": 12,\n\"y\": 3,\n \"activation_directions\": \"down\",\n\"activation_collision_layers\": 1\n}",
+     "event_03":"{\n\"type\": \"climb\",\n\"x\": 12,\n\"y\": 6,\n \"activation_directions\": \"up\",\n\"activation_collision_layers\": 0\n}",
+     "event_04":"{\n\"type\": \"climb\",\n\"x\": 12,\n\"y\": 5,\n \"activation_directions\": \"down\",\n\"activation_collision_layers\": 0\n}",
+     "event_05":"{\n\"type\": \"climb\",\n\"x\": 12,\n\"y\": 4,\n \"activation_directions\": \"up\",\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 1\n}",
+     "event_06":"{\n\"type\": \"climb\",\n\"x\": 12,\n\"y\": 3,\n \"activation_directions\": \"down\",\n\"activation_collision_layers\": 1,\n\"change_to_collision_layer\": 0\n}",
      "event_07":"{\n\"type\": \"slider\",\n\"x_target\": 5,\n\"y_target\": 8,\n\"activation_directions\": \"down\",\n\"x\": 5,\n\"y\": 5,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": [1]\n}",
      "event_08":"{\n\"type\": \"jump\",\n\"x\": 10,\n\"y\": 14,\n\"activation_directions\": \"right\",\n\"activation_collision_layers\": 0\n}",
      "event_09":"{\n\"type\": \"jump\",\n\"x\": 10,\n\"y\": 15,\n\"activation_directions\": \"right\",\n\"activation_collision_layers\": 0\n}",
@@ -491,8 +491,8 @@
      "interactable_object_01":"{\n\"key_name\": \"pillar\",\n\"x\": 11,\n\"y\": 19,\n\"allowed_tiles\": [],\n\"base_collision_layer\": -1,\n\"events_info\": {\n  \"0\": {\n    \"collision_layer_shift\": 1\n    }\n}\n}",
      "interactable_object_02":"{\n\"key_name\": \"pillar\",\n\"x\": 13,\n\"y\": 19,\n\"allowed_tiles\": [],\n\"base_collision_layer\": -1,\n\"events_info\": {\n  \"0\": {\n    \"collision_layer_shift\": 1\n    }\n}\n}",
      "interactable_object_03":"{\n\"key_name\": \"pillar\",\n\"x\": 13,\n\"y\": 17,\n\"allowed_tiles\": [],\n\"base_collision_layer\": -1,\n\"events_info\": {\n  \"0\": {\n    \"collision_layer_shift\": 1\n    }\n}\n}",
-     "interactable_object_04":"{\n\"key_name\": \"rope_dock\",\n\"x\": 7,\n\"y\": 5,\n\"base_collision_layer\": 1,\n\"events_info\": {\n  \"0\": {\n    \"dest_x\": 16,\n    \"dest_y\": 5,\n    \"activation_directions\": [\"down\",\"right\"],\n    \"starting_dock\": true,\n    \"walk_over_rope\": true,\n    \"tied\": true\n  }\n}\n}",
-     "interactable_object_05":"{\n\"key_name\": \"rope_dock\",\n\"x\": 16,\n\"y\": 5,\n\"base_collision_layer\": 1,\n\"events_info\": {\n  \"0\": {\n    \"dest_x\": 7,\n    \"dest_y\": 5,\n    \"activation_directions\": [\"down\",\"left\"],\n    \"starting_dock\": false,\n    \"walk_over_rope\": true\n  }\n}\n}"
+     "interactable_object_04":"{\n\"key_name\": \"rope_dock\",\n\"x\": 7,\n\"y\": 5,\n\"base_collision_layer\": 1,\n\"dest_x\": 16,\n\"dest_y\": 5,\n\"starting_dock\": true,\n\"tied\": true,\n\"events_info\": {\n  \"0\": {\n    \"activation_directions\": [\"down\",\"right\"],\n    \"walk_over_rope\": true\n  }\n}\n}",
+     "interactable_object_05":"{\n\"key_name\": \"rope_dock\",\n\"x\": 16,\n\"y\": 5,\n\"base_collision_layer\": 1,\n\"dest_x\": 7,\n\"dest_y\": 5,\n\"starting_dock\": false,\n\"events_info\": {\n  \"0\": {\n    \"activation_directions\": [\"down\",\"left\"],\n    \"walk_over_rope\": true\n  }\n}\n}"
     },
  "propertytypes":
     {

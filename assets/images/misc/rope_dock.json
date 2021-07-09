@@ -1,6 +1,6 @@
 {"frames": {
 
-"rope_dock/dock/00":
+"rope_dock/dock_empty/00":
 {
 	"frame": {"x":19,"y":1,"w":12,"h":16},
 	"rotated": false,
@@ -8,7 +8,7 @@
 	"spriteSourceSize": {"x":2,"y":0,"w":12,"h":16},
 	"sourceSize": {"w":16,"h":16}
 },
-"rope_dock/dock/01":
+"rope_dock/dock_tied/00":
 {
 	"frame": {"x":1,"y":1,"w":16,"h":16},
 	"rotated": false,
@@ -31,6 +31,6 @@
 	"format": "RGBA8888",
 	"size": {"w":32,"h":26},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:5bf9adfa33e2bda11c0ca52723aa9ba5:c949f2a7b247f63b97790f3d97f9e322:7cae869ef2773a660ce6a5aeeba667f7$"
+	"smartupdate": "$TexturePacker:SmartUpdate:0dcedd4b0fa2236071133d158c882758:c949f2a7b247f63b97790f3d97f9e322:7cae869ef2773a660ce6a5aeeba667f7$"
 }
 }

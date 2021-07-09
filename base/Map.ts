@@ -10,6 +10,7 @@ import {base_actions} from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
 import { Pushable } from "./interactable_objects/Pushable";
+import { RopeDock } from "./interactable_objects/RopeDock";
 
 export class Map {
     private static readonly MAX_CAMERA_ROTATION = 0.035;
@@ -534,9 +535,11 @@ export class Map {
     private create_interactable_object(raw_property: string) {
         const property_info = JSON.parse(raw_property);
         const interactable_object_db = this.data.dbs.interactable_objects_db[property_info.key_name];
-        let io_class: typeof InteractableObjects;
+        let io_class: typeof InteractableObjects = InteractableObjects;
         if (interactable_object_db.pushable) {
             io_class = Pushable;
+        } else if (interactable_object_db.is_rope_dock) {
+            io_class = RopeDock;
         }
         const interactable_object = new io_class(
             this.game,
@@ -556,6 +559,9 @@ export class Map {
             property_info.block_climb_collision_layer_shift,
             property_info.events_info
         );
+        if (interactable_object.is_rope_dock) {
+            (interactable_object as RopeDock).intialize_dock_info(property_info.dest_x, property_info.dest_y, property_info.starting_dock, property_info.tied);
+        }
         this.interactable_objects.push(interactable_object);
         return interactable_object;
     }
@@ -568,6 +574,9 @@ export class Map {
             const interactable_object = this.interactable_objects[i];
             interactable_object.initial_config(this);
             interactable_object.initialize_related_events(this);
+            if (interactable_object.is_rope_dock) {
+                (interactable_object as RopeDock).initialize_rope(this);
+            }
         }
     }
 

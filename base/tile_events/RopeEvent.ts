@@ -1,5 +1,5 @@
 import { GoldenSun } from "../GoldenSun";
-import { InteractableObjects } from "../interactable_objects/InteractableObjects";
+import { RopeDock } from "../interactable_objects/RopeDock";
 import { event_types, TileEvent } from "./TileEvent";
 
 /**
@@ -7,18 +7,12 @@ import { event_types, TileEvent } from "./TileEvent";
  * over a rope.
  */
 export class RopeEvent extends TileEvent {
-    /** The destiny dock x tile position. */
-    private _dest_x: number;
-    /** The destiny dock y tile position. */
-    private _dest_y: number;
-    /** Whether this event is the rope starting dock. */
-    private _starting_dock: boolean;
     /** Whether the hero will be walking over the rope. */
     private _walk_over_rope: boolean;
     /** Collision layer that the hero will be on dock exit. */
     private _dock_exit_collision_layer: number;
-    /** Whether the rope is tied or not. This variable is only used if it's a starting dock. */
-    private _tied: boolean;
+    /** The interactable object that originated this event. Overriding with appropriate inheritance. */
+    protected _origin_interactable_object: RopeDock;
 
     constructor(
         game: Phaser.Game,
@@ -31,13 +25,9 @@ export class RopeEvent extends TileEvent {
         active,
         active_storage_key,
         affected_by_reveal,
-        origin_interactable_object: InteractableObjects,
-        dest_x: number,
-        dest_y: number,
-        starting_dock: boolean,
+        origin_interactable_object: RopeDock,
         walk_over_rope: boolean,
         dock_exit_collision_layer: number,
-        tied: boolean
     ) {
         super(
             game,
@@ -53,12 +43,8 @@ export class RopeEvent extends TileEvent {
             origin_interactable_object,
             affected_by_reveal
         );
-        this._dest_x = dest_x;
-        this._dest_y = dest_y;
-        this._starting_dock = starting_dock ?? false;
         this._walk_over_rope = walk_over_rope ?? true;
         this._dock_exit_collision_layer = dock_exit_collision_layer ?? 0;
-        this._tied = tied ?? true;
     }
 
     async fire() {

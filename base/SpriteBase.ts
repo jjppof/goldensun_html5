@@ -125,7 +125,7 @@ export class SpriteBase {
         }
     }
 
-    getFrameName(action, animation, index) {
+    getFrameName(action, animation, index = 0) {
         const formatted_index = index.toLocaleString("en-US", {minimumIntegerDigits: 2, useGrouping: false});
         return `${action}/${animation}/${formatted_index}`;
     }

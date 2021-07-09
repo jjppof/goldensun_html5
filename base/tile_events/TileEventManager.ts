@@ -390,12 +390,8 @@ export class TileEventManager {
                 info.active_storage_key,
                 info.affected_by_reveal,
                 info.origin_interactable_object,
-                info.dest_x,
-                info.dest_y,
-                info.starting_dock,
                 info.walk_over_rope,
                 info.dock_exit_collision_layer,
-                info.tied,
             );
         }
     }

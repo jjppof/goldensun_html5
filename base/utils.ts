@@ -202,6 +202,34 @@ export function kill_all_sprites(group, destroy = false) {
 }
 
 /**
+ * Gets the center position of a tile in pixels.
+ * @param tile_pos the tile position.
+ * @param tile_width the tile width.
+ * @returns centered tile position in pixels.
+ */
+export function get_centered_pos_in_px(tile_pos: number, tile_width: number) {
+    return tile_pos * tile_width + (tile_width >> 1);
+}
+
+/**
+ * Calculates the distance between two points.
+ * @param x1 source x position.
+ * @param x2 dest x position.
+ * @param y1 source y position.
+ * @param y2 dest y position.
+ * @param square_root if false, returns the distance to the square.
+ * @returns return the distance value.
+ */
+export function get_distance(x1: number, x2: number, y1: number, y2:number, square_root: boolean = true) {
+    const sqr_distance = Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2);
+    if (square_root) {
+        return Math.sqrt(sqr_distance);
+    } else {
+        return sqr_distance;
+    }
+}
+
+/**
  * Returns the surrounding positions. Diagonals are optional.
  * @param x the x reference position.
  * @param y the y reference position.

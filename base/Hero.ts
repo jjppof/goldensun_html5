@@ -229,6 +229,9 @@ export class Hero extends ControllableChar {
             if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
                 if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
                     const interactable_object = this.data.map.interactable_objects[j];
+                    if (!interactable_object.pushable) {
+                        return;
+                    }
                     if (
                         [base_actions.WALK, base_actions.DASH].includes(this.current_action as base_actions) &&
                         this.data.map.collision_layer === interactable_object.base_collision_layer

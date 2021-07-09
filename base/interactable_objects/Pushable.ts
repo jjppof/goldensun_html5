@@ -4,12 +4,13 @@ import {get_surroundings, get_opposite_direction, directions, reverse_directions
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {InteractableObjects} from "./InteractableObjects";
 
-const DUST_COUNT = 7;
-const DUST_RADIUS = 18;
-const PUSH_SHIFT = 16;
-const DUST_KEY = "dust";
-
 export class Pushable extends InteractableObjects {
+    private static readonly DUST_COUNT = 7;
+    private static readonly DUST_RADIUS = 18;
+    private static readonly PUSH_SHIFT = 16;
+    private static readonly DUST_KEY = "dust";
+    private static readonly DUST_ANIM_KEY = "spread";
+
     constructor(
         game,
         data,
@@ -46,6 +47,7 @@ export class Pushable extends InteractableObjects {
             block_climb_collision_layer_shift,
             events_info,
         );
+        this._pushable = true;
     }
 
     normal_push() {
@@ -111,19 +113,19 @@ export class Pushable extends InteractableObjects {
             switch (this.data.hero.trying_to_push_direction) {
                 case directions.up:
                     event_shift_y = -1;
-                    tween_y = -PUSH_SHIFT;
+                    tween_y = -Pushable.PUSH_SHIFT;
                     break;
                 case directions.down:
                     event_shift_y = 1;
-                    tween_y = PUSH_SHIFT;
+                    tween_y = Pushable.PUSH_SHIFT;
                     break;
                 case directions.left:
                     event_shift_x = -1;
-                    tween_x = -PUSH_SHIFT;
+                    tween_x = -Pushable.PUSH_SHIFT;
                     break;
                 case directions.right:
                     event_shift_x = 1;
-                    tween_x = PUSH_SHIFT;
+                    tween_x = Pushable.PUSH_SHIFT;
                     break;
             }
             this.shift_events(event_shift_x, event_shift_y);
@@ -280,16 +282,16 @@ export class Pushable extends InteractableObjects {
     }
 
     dust_animation(promise_resolve) {
-        const promises = new Array(DUST_COUNT);
-        const sprites = new Array(DUST_COUNT);
+        const promises = new Array(Pushable.DUST_COUNT);
+        const sprites = new Array(Pushable.DUST_COUNT);
         const origin_x = (this.current_x + 0.5) * this.data.map.tile_width;
         const origin_y = (this.current_y + 0.5) * this.data.map.tile_height;
-        const dust_sprite_base = this.data.info.misc_sprite_base_list[DUST_KEY];
-        for (let i = 0; i < DUST_COUNT; ++i) {
-            const this_angle = ((Math.PI + numbers.degree60) * i) / (DUST_COUNT - 1) - numbers.degree30;
-            const x = origin_x + DUST_RADIUS * Math.cos(this_angle);
-            const y = origin_y + DUST_RADIUS * Math.sin(this_angle);
-            const dust_sprite = this.data.npc_group.create(origin_x, origin_y, DUST_KEY);
+        const dust_sprite_base = this.data.info.misc_sprite_base_list[Pushable.DUST_KEY];
+        for (let i = 0; i < Pushable.DUST_COUNT; ++i) {
+            const this_angle = ((Math.PI + numbers.degree60) * i) / (Pushable.DUST_COUNT - 1) - numbers.degree30;
+            const x = origin_x + Pushable.DUST_RADIUS * Math.cos(this_angle);
+            const y = origin_y + Pushable.DUST_RADIUS * Math.sin(this_angle);
+            const dust_sprite = this.data.npc_group.create(origin_x, origin_y, Pushable.DUST_KEY);
             if (this_angle < 0 || this_angle > Math.PI) {
                 this.data.npc_group.setChildIndex(dust_sprite, this.data.npc_group.getChildIndex(this.sprite));
             }
@@ -304,8 +306,8 @@ export class Pushable extends InteractableObjects {
                 true
             );
             sprites[i] = dust_sprite;
-            dust_sprite_base.setAnimation(dust_sprite, DUST_KEY);
-            const animation_key = dust_sprite_base.getAnimationKey(DUST_KEY, "spread");
+            dust_sprite_base.setAnimation(dust_sprite, Pushable.DUST_KEY);
+            const animation_key = dust_sprite_base.getAnimationKey(Pushable.DUST_KEY, Pushable.DUST_ANIM_KEY);
             let resolve_func;
             promises[i] = new Promise(resolve => (resolve_func = resolve));
             dust_sprite.animations.getAnimation(animation_key).onComplete.addOnce(resolve_func);

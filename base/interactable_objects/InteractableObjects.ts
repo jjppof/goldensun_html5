@@ -66,6 +66,9 @@ export class InteractableObjects {
         animation_duration: number;
         dust_animation: boolean;
     }[];
+    protected _pushable: boolean;
+    protected _is_rope_dock: boolean;
+    protected _extra_sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.Group)[];
 
     constructor(
         game,
@@ -117,10 +120,13 @@ export class InteractableObjects {
         this._psynergy_casted = {};
         this.block_climb_collision_layer_shift = block_climb_collision_layer_shift;
         this._active = true;
+        this._pushable = false;
+        this._is_rope_dock = false;
         this.tile_events_info = {};
         for (let index in events_info) {
             this.tile_events_info[+index] = events_info[index];
         }
+        this._extra_sprites = [];
     }
 
     get key_name() {
@@ -164,6 +170,12 @@ export class InteractableObjects {
     }
     get active() {
         return this._active;
+    }
+    get pushable() {
+        return this._pushable;
+    }
+    get is_rope_dock() {
+        return this._is_rope_dock;
     }
 
     position_allowed(x: number, y: number) {
@@ -339,6 +351,11 @@ export class InteractableObjects {
                     break;
             }
         }
+    }
+
+    play(action: string, animation: string, frame_rate?: number, loop?: boolean) {
+        const anim_key = this.sprite_info.getAnimationKey(action, animation);
+        return this.sprite.animations.play(anim_key, frame_rate, loop);
     }
 
     private not_allowed_tile_test(x: number, y: number) {
@@ -650,6 +667,7 @@ export class InteractableObjects {
         if (this.sprite) {
             this.sprite.destroy();
         }
+        this._extra_sprites.forEach(sprite => sprite.destroy());
         if (this.blocking_stair_block) {
             this.blocking_stair_block.destroy();
         }
