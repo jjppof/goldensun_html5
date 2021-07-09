@@ -35,15 +35,6 @@ export enum main_stats {
     LUCK = "luk",
 }
 
-export enum extra_main_stats {
-    MAX_HP = "hp_extra",
-    MAX_PP = "pp_extra",
-    ATTACK = "atk_extra",
-    DEFENSE = "def_extra",
-    AGILITY = "agi_extra",
-    LUCK = "luk_extra",
-}
-
 export enum elemental_stats {
     CURRENT_POWER = "current_power",
     CURRENT_RESIST = "current_resist",
@@ -61,13 +52,13 @@ export const effect_type_stat: {[effect_type in effect_types]?: main_stats} = {
     [effect_types.CURRENT_PP]: main_stats.CURRENT_PP,
 };
 
-export const effect_type_extra_stat: {[effect_type in effect_types]?: extra_main_stats} = {
-    [effect_types.EXTRA_MAX_HP]: extra_main_stats.MAX_HP,
-    [effect_types.EXTRA_MAX_PP]: extra_main_stats.MAX_PP,
-    [effect_types.EXTRA_ATTACK]: extra_main_stats.ATTACK,
-    [effect_types.EXTRA_DEFENSE]: extra_main_stats.DEFENSE,
-    [effect_types.EXTRA_AGILITY]: extra_main_stats.AGILITY,
-    [effect_types.EXTRA_LUCK]: extra_main_stats.LUCK,
+export const effect_type_extra_stat: {[effect_type in effect_types]?: main_stats} = {
+    [effect_types.EXTRA_MAX_HP]: main_stats.MAX_HP,
+    [effect_types.EXTRA_MAX_PP]: main_stats.MAX_PP,
+    [effect_types.EXTRA_ATTACK]: main_stats.ATTACK,
+    [effect_types.EXTRA_DEFENSE]: main_stats.DEFENSE,
+    [effect_types.EXTRA_AGILITY]: main_stats.AGILITY,
+    [effect_types.EXTRA_LUCK]: main_stats.LUCK,
 };
 
 export const effect_type_elemental_stat: {[effect_type in effect_types]?: elemental_stats} = {
@@ -168,6 +159,7 @@ export abstract class Player {
         status: permanent_status | temporary_status;
         added: boolean;
     }>;
+    public extra_stats: {[main_stat in main_stats]?: number};
 
     constructor(key_name, name) {
         this.key_name = key_name;
@@ -176,6 +168,13 @@ export abstract class Player {
         this.permanent_status = new Set();
         this.on_status_change = new Subject();
         this.effects = [];
+        this.extra_stats = {};
+        this.extra_stats[main_stats.MAX_HP] = 0;
+        this.extra_stats[main_stats.MAX_PP] = 0;
+        this.extra_stats[main_stats.ATTACK] = 0;
+        this.extra_stats[main_stats.DEFENSE] = 0;
+        this.extra_stats[main_stats.AGILITY] = 0;
+        this.extra_stats[main_stats.LUCK] = 0;
         this.current_power = ordered_elements.reduce((obj, elem) => {
             obj[elem] = 0;
             return obj;

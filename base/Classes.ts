@@ -3,18 +3,13 @@
 import {elements, ordered_elements} from "./utils";
 import * as _ from "lodash";
 import {GameInfo} from "./initializers/initialize_info";
-import {Player} from "./Player";
+import {main_stats, Player} from "./Player";
 
 export class Classes {
     public key_name: string;
     public name: string;
     public required_level: {[element in elements]?: number};
-    public hp_boost: number;
-    public pp_boost: number;
-    public atk_boost: number;
-    public def_boost: number;
-    public agi_boost: number;
-    public luk_boost: number;
+    public boost_stats: {[main_stat in main_stats]?: number};
     public ability_level_pairs: {
         ability: string;
         level: number;
@@ -39,12 +34,13 @@ export class Classes {
         this.key_name = key_name;
         this.name = name;
         this.required_level = required_level;
-        this.hp_boost = hp_boost;
-        this.pp_boost = pp_boost;
-        this.atk_boost = atk_boost;
-        this.def_boost = def_boost;
-        this.agi_boost = agi_boost;
-        this.luk_boost = luk_boost;
+        this.boost_stats = {};
+        this.boost_stats[main_stats.MAX_HP] = hp_boost;
+        this.boost_stats[main_stats.MAX_PP] = pp_boost;
+        this.boost_stats[main_stats.ATTACK] = atk_boost;
+        this.boost_stats[main_stats.DEFENSE] = def_boost;
+        this.boost_stats[main_stats.AGILITY] = agi_boost;
+        this.boost_stats[main_stats.LUCK] = luk_boost;
         this.ability_level_pairs = ability_level_pairs;
         this.class_type = class_type;
         this.vulnerabilities = vulnerabilities === undefined ? [] : vulnerabilities;

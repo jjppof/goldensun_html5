@@ -3,7 +3,7 @@ import {Classes} from "./Classes";
 import {Djinn, djinn_status} from "./Djinn";
 import {Effect, effect_types} from "./Effect";
 import {Item, item_types} from "./Item";
-import {Player, fighter_types, permanent_status, main_stats, effect_type_stat, extra_main_stats} from "./Player";
+import {Player, fighter_types, permanent_status, main_stats, effect_type_stat} from "./Player";
 import {elements, ordered_elements} from "./utils";
 import {ELEM_ATTR_MIN, ELEM_ATTR_MAX} from "./magic_numbers";
 import * as _ from "lodash";
@@ -42,33 +42,6 @@ export const item_equip_slot = {
     [item_types.CLASS_CHANGER]: equip_slots.CLASS_CHANGER,
 };
 
-export const main_extra_stat_map: {[main_stat in main_stats]?: extra_main_stats} = {
-    [main_stats.MAX_HP]: extra_main_stats.MAX_HP,
-    [main_stats.MAX_PP]: extra_main_stats.MAX_PP,
-    [main_stats.ATTACK]: extra_main_stats.ATTACK,
-    [main_stats.DEFENSE]: extra_main_stats.DEFENSE,
-    [main_stats.AGILITY]: extra_main_stats.AGILITY,
-    [main_stats.LUCK]: extra_main_stats.LUCK,
-};
-
-export const main_curve_stat_map = {
-    [main_stats.MAX_HP]: "hp_curve",
-    [main_stats.MAX_PP]: "pp_curve",
-    [main_stats.ATTACK]: "atk_curve",
-    [main_stats.DEFENSE]: "def_curve",
-    [main_stats.AGILITY]: "agi_curve",
-    [main_stats.LUCK]: "luk_curve",
-};
-
-export const main_boost_stat_map = {
-    [main_stats.MAX_HP]: "hp_boost",
-    [main_stats.MAX_PP]: "pp_boost",
-    [main_stats.ATTACK]: "atk_boost",
-    [main_stats.DEFENSE]: "def_boost",
-    [main_stats.AGILITY]: "agi_boost",
-    [main_stats.LUCK]: "luk_boost",
-};
-
 /**
  * This class represents a main char of the game, the ones that can be integrated
  * into the party like Isaac, Felix, Jenna, Mia, Garet etc.
@@ -79,35 +52,27 @@ export class MainChar extends Player {
     private static readonly ELEM_RESIST_DELTA = 5;
     public static readonly MAX_ITEMS_PER_CHAR = 30;
 
-    public info: GameInfo;
-    public sprite_base: SpriteBase;
-    public weapons_sprite_base: SpriteBase;
-    public starting_level: number;
-    public class_table: any;
-    public class: Classes;
-    public exp_curve: number[];
-    public element_afinity: elements;
-    public djinn_by_element: {[element in elements]?: string[]};
-    public hp_curve: number[];
-    public pp_curve: number[];
-    public atk_curve: number[];
-    public def_curve: number[];
-    public agi_curve: number[];
-    public luk_curve: number[];
-    public hp_extra: number;
-    public pp_extra: number;
-    public atk_extra: number;
-    public def_extra: number;
-    public agi_extra: number;
-    public luk_extra: number;
-    public items: ItemSlot[];
-    public equip_slots: {[slot in equip_slots]: ItemSlot};
-    public equipped_abilities: string[];
-    public innate_abilities: string[];
+    private info: GameInfo;
+    private starting_level: number;
+    private class_table: any;
+    private main_stats_curve: {[main_stat in main_stats]?: number[]};
+    private equipped_abilities: string[];
+    private innate_abilities: string[];
+
+    private _class: Classes;
+    private _abilities: string[];
+    private _equip_slots: {[slot in equip_slots]: ItemSlot};
+    private _items: ItemSlot[];
+    private _sprite_base: SpriteBase;
+    private _exp_curve: number[];
+    private _weapons_sprite_base: SpriteBase;
+    private _djinn_by_element: {[element in elements]?: string[]};
+    private _weapon_sprite_shift: number;
+    private _special_class_type: number;
+    private _element_afinity: elements;
+
+    /** Returns whether this char is in the party or not. */
     public in_party: boolean;
-    public abilities: string[];
-    public special_class_type: number;
-    public weapon_sprite_shift: number;
 
     constructor(
         key_name,
@@ -140,57 +105,129 @@ export class MainChar extends Player {
     ) {
         super(key_name, name);
         this.info = info;
-        this.sprite_base = sprite_base;
-        this.weapons_sprite_base = weapons_sprite_base;
+        this._sprite_base = sprite_base;
+        this._weapons_sprite_base = weapons_sprite_base;
         this.starting_level = starting_level;
         this.level = this.starting_level;
-        this.special_class_type = special_class_type ?? -1;
+        this._special_class_type = special_class_type ?? -1;
         this.class_table = class_table;
         this.battle_scale = battle_scale;
-        this.exp_curve = exp_curve;
+        this._exp_curve = exp_curve;
         this.current_exp = this.exp_curve[this.level - 1];
         this.base_level = _.cloneDeep(base_level);
         this.base_power = _.cloneDeep(base_power);
         this.base_resist = _.cloneDeep(base_resist);
-        this.element_afinity = _.maxBy(_.toPairs(this.base_level), pair => pair[1])[0] as elements;
-        this.djinn_by_element = {};
+        this._element_afinity = _.maxBy(_.toPairs(this.base_level), pair => pair[1])[0] as elements;
+        this._djinn_by_element = {};
         ordered_elements.forEach(element => {
             this.djinn_by_element[element] = [];
         });
         this.init_djinni(djinni);
-        this.equip_slots = _.transform(equip_slots, (obj, value) => {
+        this._equip_slots = _.transform(equip_slots, (obj, value) => {
             obj[value] = null;
         });
         this.update_class();
-        this.hp_curve = hp_curve;
-        this.pp_curve = pp_curve;
-        this.atk_curve = atk_curve;
-        this.def_curve = def_curve;
-        this.agi_curve = agi_curve;
-        this.luk_curve = luk_curve;
-        this.hp_extra = 0;
-        this.pp_extra = 0;
-        this.atk_extra = 0;
-        this.def_extra = 0;
-        this.agi_extra = 0;
-        this.luk_extra = 0;
+        this.main_stats_curve = {};
+        this.main_stats_curve[main_stats.MAX_HP] = hp_curve;
+        this.main_stats_curve[main_stats.MAX_PP] = pp_curve;
+        this.main_stats_curve[main_stats.ATTACK] = atk_curve;
+        this.main_stats_curve[main_stats.DEFENSE] = def_curve;
+        this.main_stats_curve[main_stats.AGILITY] = agi_curve;
+        this.main_stats_curve[main_stats.LUCK] = luk_curve;
         this.hp_recovery = 0;
         this.pp_recovery = 0;
-        this.items = items;
+        this._items = items;
         this.equipped_abilities = [];
         this.innate_abilities = innate_abilities;
         this.init_items();
         this.update_attributes();
         this.update_elemental_attributes();
         this.in_party = in_party;
-        this.abilities = [];
+        this._abilities = [];
         this.update_abilities();
         this.turns = 1;
         this.fighter_type = fighter_types.ALLY;
         this.battle_animations_variations = Object.assign({}, battle_animations_variations);
         this.battle_shadow_key = battle_shadow_key;
         this.status_sprite_shift = status_sprite_shift ?? 0;
-        this.weapon_sprite_shift = weapon_sprite_shift ?? 0;
+        this._weapon_sprite_shift = weapon_sprite_shift ?? 0;
+    }
+
+    /**
+     * Returns the element afinity of this char.
+     */
+    get element_afinity() {
+        return this._element_afinity;
+    }
+
+    /**
+     * Returns the special class family type of this char. Returns -1 of no special type.
+     */
+    get special_class_type() {
+        return this._special_class_type;
+    }
+
+    /**
+     * Returns the y-adjusment value that is used to fit the weapon sprite on char battle sprite.
+     */
+    get weapon_sprite_shift() {
+        return this._weapon_sprite_shift;
+    }
+
+    /**
+     * Returns a list of djinn separated by element type.
+     */
+    get djinn_by_element() {
+        return this._djinn_by_element;
+    }
+
+    /**
+     * Returns the experience curve points of this char.
+     */
+    get exp_curve() {
+        return this._exp_curve;
+    }
+
+    /**
+     * Returns the SpriteBase object of the weapons sprites of this char.
+     */
+    get weapons_sprite_base() {
+        return this._weapons_sprite_base;
+    }
+
+    /**
+     * Returns the SpriteBase object of this char.
+     */
+    get sprite_base() {
+        return this._sprite_base;
+    }
+
+    /**
+     * Returns the list of items of this char.
+     */
+    get items() {
+        return this._items;
+    }
+
+    /**
+     * Returns the equip slots of this char, like weapon slot, chest protect slot etc.
+     */
+    get equip_slots() {
+        return this._equip_slots;
+    }
+
+    /**
+     * Returns the class of this char.
+     */
+    get class() {
+        return this._class;
+    }
+
+    /**
+     * Returns a list of abilities of this char. This abilities can be of any nature.
+     */
+    get abilities() {
+        return this._abilities;
     }
 
     /**
@@ -219,7 +256,7 @@ export class MainChar extends Player {
      * Updates this char class.
      */
     update_class() {
-        this.class = Classes.choose_right_class(
+        this._class = Classes.choose_right_class(
             this.info.classes_list,
             this.class_table,
             this.element_afinity,
@@ -327,7 +364,7 @@ export class MainChar extends Player {
      */
     remove_item(item_obj_to_remove: ItemSlot, quantity: number) {
         let adjust_index = false;
-        this.items = this.items.filter((item_obj, index) => {
+        this._items = this.items.filter((item_obj, index) => {
             if (item_obj_to_remove.key_name === item_obj.key_name) {
                 if (item_obj.equipped) {
                     this.unequip_item(index);
@@ -490,7 +527,7 @@ export class MainChar extends Player {
             }
             lvls[djinn.element] += lv_shift;
         }
-        this.class = Classes.choose_right_class(
+        this._class = Classes.choose_right_class(
             this.info.classes_list,
             this.class_table,
             this.element_afinity,
@@ -528,7 +565,7 @@ export class MainChar extends Player {
             };
             return_obj[stat] = this.set_main_stat(stat, true, preview_obj);
         });
-        this.class = previous_class;
+        this._class = previous_class;
         return return_obj;
     }
 
@@ -568,13 +605,11 @@ export class MainChar extends Player {
             djinni_next_status?: djinn_status[];
         } = {}
     ): number {
-        const boost_key = main_boost_stat_map[stat];
-        const curve_key = main_curve_stat_map[stat];
-        const extra_key = main_extra_stat_map[stat];
         const previous_value = this[stat];
 
         //setting stats by current level, current class and extra values
-        this[stat] = (this[curve_key][this.level] * this.class[boost_key] + this[extra_key]) | 0;
+        this[stat] =
+            (this.main_stats_curve[stat][this.level] * this.class.boost_stats[stat] + this.extra_stats[stat]) | 0;
 
         const this_djinni = this.djinni;
         if (preview) {
@@ -597,7 +632,7 @@ export class MainChar extends Player {
                 status = preview_obj.djinni_next_status[preview_obj.djinni_key_names.indexOf(djinn_key_name)];
             }
             if (status !== djinn_status.SET) continue;
-            this[stat] += djinn[boost_key];
+            this[stat] += djinn.boost_stats[stat];
         }
         this.effects.forEach(effect => {
             if (
@@ -650,11 +685,10 @@ export class MainChar extends Player {
      * @param amount the quantity to increment.
      * @param update whether the char correspondent main stat should be updated.
      */
-    add_extra_stat(stat: extra_main_stats, amount: number, update: boolean = true) {
-        this[stat] += amount;
+    add_extra_stat(stat: main_stats, amount: number, update: boolean = true) {
+        this.extra_stats[stat] += amount;
         if (update) {
-            const main_stat = _.invert(main_extra_stat_map)[stat];
-            this.set_main_stat(main_stat as main_stats);
+            this.set_main_stat(stat);
         }
     }
 
@@ -745,7 +779,7 @@ export class MainChar extends Player {
      * and equipped items that grant abilities.
      */
     update_abilities() {
-        this.abilities = this.innate_abilities.concat(
+        this._abilities = this.innate_abilities.concat(
             this.class.ability_level_pairs
                 .filter(pair => {
                     return pair.level <= this.level && !this.innate_abilities.includes(pair.ability);
