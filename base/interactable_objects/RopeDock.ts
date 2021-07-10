@@ -2,6 +2,10 @@ import { Map } from "../Map";
 import { get_centered_pos_in_px, get_distance } from "../utils";
 import { InteractableObjects } from "./InteractableObjects";
 
+/**
+ * The rope dock interactable object. The rope fragments and rope events are
+ * created from this object.
+ */
 export class RopeDock extends InteractableObjects {
     private static readonly ROPE_DOCK_KEY = "rope_dock";
     private static readonly ROPE_DOCK_EMPTY = "dock_empty";
@@ -18,6 +22,8 @@ export class RopeDock extends InteractableObjects {
     private _starting_dock: boolean;
     /** Whether the rope is tied or not. This variable is only used if it's a starting dock. */
     private _tied: boolean;
+    /** Groups that holds the rope fragments. */
+    private _rope_fragments_group: Phaser.Group;
 
     constructor(
         game,
@@ -58,6 +64,13 @@ export class RopeDock extends InteractableObjects {
         this._is_rope_dock = true;
     }
 
+    /**
+     * Initializes this rope dock properties.
+     * @param dest_x The destiny dock x tile position.
+     * @param dest_y The destiny dock y tile position.
+     * @param starting_dock Whether this event is the rope starting dock.
+     * @param tied Whether the rope is tied or not. This variable is only used if it's a starting dock.
+     */
     intialize_dock_info(dest_x: number, dest_y: number, starting_dock: boolean, tied: boolean) {
         this._dest_x = dest_x;
         this._dest_y = dest_y;
@@ -65,6 +78,10 @@ export class RopeDock extends InteractableObjects {
         this._tied = tied ?? true;
     }
 
+    /**
+     * Initializes the dock and, if it's the starting dock, the rope fragments.
+     * @param map the map is currently being mounted.
+     */
     initialize_rope(map: Map) {
         if (this._tied) {
             this.play(RopeDock.ROPE_DOCK_KEY, RopeDock.ROPE_DOCK_TIED);
@@ -72,6 +89,11 @@ export class RopeDock extends InteractableObjects {
             this.play(RopeDock.ROPE_DOCK_KEY, RopeDock.ROPE_DOCK_EMPTY);
         }
 
+        if (!this._starting_dock) {
+            return;
+        }
+
+        //inserts the rope fragments
         const this_x_px = get_centered_pos_in_px(this.x, map.tile_width);
         const this_y_px = get_centered_pos_in_px(this.y, map.tile_height) + RopeDock.ROPE_Y_SHIFT;
         const dest_x_px = get_centered_pos_in_px(this._dest_x, map.tile_width);
@@ -82,22 +104,25 @@ export class RopeDock extends InteractableObjects {
         const fragment_angle = Math.atan2(dest_y_px - this_y_px, dest_x_px - this_x_px);
 
         const base_x = Math.cos(fragment_angle) * actual_rope_width;
-        const half_base_x = base_x / 2;
+        const half_base_x = base_x >> 1;
         const base_y = Math.sin(fragment_angle) * actual_rope_width;
-        const half_base_y = base_y / 2;
+        const half_base_y = base_y >> 1;
+
+        this._rope_fragments_group = this.game.add.group(this.data.npc_group);
+        this._rope_fragments_group.x = this_x_px + half_base_x;
+        this._rope_fragments_group.y = this_y_px + half_base_y;
+        this._rope_fragments_group.base_collision_layer = map.collision_layer;
 
         for (let i = 0; i < fragments_number; ++i) {
             const sprite_key = this.sprite_info.getSpriteKey(RopeDock.ROPE_DOCK_KEY);
             const frame_name = this.sprite_info.getFrameName(RopeDock.ROPE_DOCK_KEY, RopeDock.ROPE_FRAGMENT);
-            const sprite: Phaser.Sprite = this.data.npc_group.create(0, 0, sprite_key, frame_name);
-            sprite.base_collision_layer = map.collision_layer;
-            // create function to z sort
+            const sprite: Phaser.Sprite = this._rope_fragments_group.create(0, 0, sprite_key, frame_name);
 
             sprite.anchor.setTo(0.5, 0.5);
-            sprite.x = this_x_px + half_base_x + base_x * i;
-            sprite.y = this_y_px + half_base_y + base_y * i;
-
+            sprite.x = base_x * i;
+            sprite.y = base_y * i;
             sprite.rotation = fragment_angle;
+
             this._extra_sprites.push(sprite);
         }
     }

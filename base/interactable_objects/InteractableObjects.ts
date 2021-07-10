@@ -667,7 +667,7 @@ export class InteractableObjects {
         if (this.sprite) {
             this.sprite.destroy();
         }
-        this._extra_sprites.forEach(sprite => sprite.destroy());
+        this._extra_sprites.forEach(sprite => sprite.destroy(true));
         if (this.blocking_stair_block) {
             this.blocking_stair_block.destroy();
         }

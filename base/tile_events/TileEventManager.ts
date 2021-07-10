@@ -392,6 +392,7 @@ export class TileEventManager {
                 info.origin_interactable_object,
                 info.walk_over_rope,
                 info.dock_exit_collision_layer,
+                info.rope_collision_layer
             );
         }
     }

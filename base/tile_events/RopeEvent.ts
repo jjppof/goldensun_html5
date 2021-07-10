@@ -11,6 +11,8 @@ export class RopeEvent extends TileEvent {
     private _walk_over_rope: boolean;
     /** Collision layer that the hero will be on dock exit. */
     private _dock_exit_collision_layer: number;
+    /** Collision layer that the hero will be when walking over the rope. */
+    private _rope_collision_layer: number;
     /** The interactable object that originated this event. Overriding with appropriate inheritance. */
     protected _origin_interactable_object: RopeDock;
 
@@ -28,6 +30,7 @@ export class RopeEvent extends TileEvent {
         origin_interactable_object: RopeDock,
         walk_over_rope: boolean,
         dock_exit_collision_layer: number,
+        rope_collision_layer: number,
     ) {
         super(
             game,
@@ -45,6 +48,7 @@ export class RopeEvent extends TileEvent {
         );
         this._walk_over_rope = walk_over_rope ?? true;
         this._dock_exit_collision_layer = dock_exit_collision_layer ?? 0;
+        this._rope_collision_layer = rope_collision_layer;
     }
 
     async fire() {

@@ -814,7 +814,7 @@ export class Map {
      * @param collision_layer the initial collision layer.
      * @returns returns the mounted map.
      */
-    async mount_map(collision_layer: number) {
+    async mount_map(collision_layer: number = 0) {
         if (!this.assets_loaded) {
             //lazy assets load
             let load_promise_resolve;
