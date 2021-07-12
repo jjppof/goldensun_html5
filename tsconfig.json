@@ -17,6 +17,5 @@
         "./code_docs",
         "./scripts",
         "./static/*.js",
-        "webpack.config.js"
     ]
 }
