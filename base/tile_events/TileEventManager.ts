@@ -133,9 +133,9 @@ export class TileEventManager {
     }
 
     /**
-     * If there are any events in the current hero location, they'll be added to the
-     * event queue, then fired in sequence. Checks whether exists TileEvents in the current
-     * hero location and fire them.
+     * Checks whether exists TileEvents in the current hero location
+     * and fire them. If there are any events in the current hero location,
+     * they'll be added to the event queue, then fired in sequence.
      * @param location_key the location key of the current position of the hero.
      */
     check_tile_events(location_key: TileEvent["location_key"]) {
@@ -241,6 +241,11 @@ export class TileEventManager {
         this.event_queue.reset();
     }
 
+    /**
+     * Tile event factory.
+     * @param info object that contains TileEvent initializing data.
+     * @returns returns a TileEvent type object.
+     */
     get_event_instance(info: any) {
         if (info.type === event_types.CLIMB) {
             return new ClimbEvent(

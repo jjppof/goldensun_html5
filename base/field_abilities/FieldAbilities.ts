@@ -1,4 +1,4 @@
-import {base_actions, directions, reverse_directions} from "../utils";
+import {base_actions, directions, get_centered_pos_in_px, reverse_directions} from "../utils";
 import {InteractableObjects, interactable_object_interaction_types} from "../interactable_objects/InteractableObjects";
 import {FieldPsynergyWindow} from "../windows/FieldPsynergyWindow";
 import {GoldenSun} from "../GoldenSun";
@@ -118,10 +118,8 @@ export abstract class FieldAbilities {
             const interactable_object = this.data.map.interactable_objects[i];
             const db = this.data.dbs.interactable_objects_db[interactable_object.key_name];
             if (!(this.ability_key_name in db.psynergy_keys)) continue;
-            const item_x_px =
-                interactable_object.current_x * this.data.map.tile_width + (this.data.map.tile_width >> 1);
-            const item_y_px =
-                interactable_object.current_y * this.data.map.tile_height + (this.data.map.tile_height >> 1);
+            const item_x_px = get_centered_pos_in_px(interactable_object.tile_x_pos, this.data.map.tile_width);
+            const item_y_px = get_centered_pos_in_px(interactable_object.tile_y_pos, this.data.map.tile_height);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
             const y_condition = item_y_px >= min_y && item_y_px <= max_y;
             if (

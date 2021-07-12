@@ -12,7 +12,7 @@ export class RopeDock extends InteractableObjects {
     private static readonly ROPE_DOCK_TIED = "dock_tied";
     private static readonly ROPE_FRAGMENT = "rope_fragment";
     private static readonly ROPE_FRAGMENT_WIDTH = 8;
-    private static readonly ROPE_Y_SHIFT = -4;
+    private static readonly ROPE_Y_SHIFT = 1;
 
     /** The destiny dock x tile position. */
     private _dest_x: number;
@@ -94,8 +94,8 @@ export class RopeDock extends InteractableObjects {
         }
 
         //inserts the rope fragments
-        const this_x_px = get_centered_pos_in_px(this.x, map.tile_width);
-        const this_y_px = get_centered_pos_in_px(this.y, map.tile_height) + RopeDock.ROPE_Y_SHIFT;
+        const this_x_px = get_centered_pos_in_px(this.tile_x_pos, map.tile_width);
+        const this_y_px = get_centered_pos_in_px(this.tile_y_pos, map.tile_height) + RopeDock.ROPE_Y_SHIFT;
         const dest_x_px = get_centered_pos_in_px(this._dest_x, map.tile_width);
         const dest_y_px = get_centered_pos_in_px(this._dest_y, map.tile_height) + RopeDock.ROPE_Y_SHIFT;
         const distance = get_distance(dest_x_px, this_x_px, dest_y_px, this_y_px);
@@ -124,6 +124,13 @@ export class RopeDock extends InteractableObjects {
             sprite.rotation = fragment_angle;
 
             this._extra_sprites.push(sprite);
+        }
+    }
+
+    set_sprites_z_sorting(send_to_back: boolean) {
+        this.sprite.send_to_back = send_to_back;
+        if (this._rope_fragments_group) {
+            this._rope_fragments_group.send_to_back = send_to_back;
         }
     }
 }

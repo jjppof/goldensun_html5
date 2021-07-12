@@ -1,6 +1,6 @@
 import * as numbers from "../magic_numbers";
 import {event_types, LocationKey} from "../tile_events/TileEvent";
-import {get_surroundings, get_opposite_direction, directions, reverse_directions, base_actions} from "../utils";
+import {get_surroundings, get_opposite_direction, directions, reverse_directions, base_actions, get_centered_pos_in_px} from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {InteractableObjects} from "./InteractableObjects";
 
@@ -133,11 +133,11 @@ export class Pushable extends InteractableObjects {
             if (!target_only) {
                 sprites.push(...[this.data.hero.shadow, this.data.hero.sprite.body]);
             }
-            const prev_x = this.current_x;
-            const prev_y = this.current_y;
+            const prev_x = this.tile_x_pos;
+            const prev_y = this.tile_y_pos;
             this.set_tile_position({
-                x: this.current_x + event_shift_x,
-                y: this.current_y + event_shift_y,
+                x: this.tile_x_pos + event_shift_x,
+                y: this.tile_y_pos + event_shift_y,
             });
             const promises = [];
             if (before_move !== undefined) {
@@ -177,15 +177,15 @@ export class Pushable extends InteractableObjects {
                     if (i === sprites.length - 1) {
                         this.object_drop_tiles.forEach(drop_tile => {
                             if (
-                                drop_tile.x === this.current_x &&
-                                drop_tile.y === this.current_y
+                                drop_tile.x === this.tile_x_pos &&
+                                drop_tile.y === this.tile_y_pos
                             ) {
                                 drop_found = true;
                                 const dest_y_shift_px =
-                                    (drop_tile.dest_y - this.current_y) * this.data.map.tile_height;
+                                    (drop_tile.dest_y - this.tile_y_pos) * this.data.map.tile_height;
                                 this.shift_events(
                                     0,
-                                    drop_tile.dest_y - this.current_y
+                                    drop_tile.dest_y - this.tile_y_pos
                                 );
                                 this.set_tile_position({y: drop_tile.dest_y});
                                 this.change_collision_layer(drop_tile.destination_collision_layer);
@@ -284,8 +284,8 @@ export class Pushable extends InteractableObjects {
     dust_animation(promise_resolve) {
         const promises = new Array(Pushable.DUST_COUNT);
         const sprites = new Array(Pushable.DUST_COUNT);
-        const origin_x = (this.current_x + 0.5) * this.data.map.tile_width;
-        const origin_y = (this.current_y + 0.5) * this.data.map.tile_height;
+        const origin_x = get_centered_pos_in_px(this.tile_x_pos, this.data.map.tile_width);
+        const origin_y = get_centered_pos_in_px(this.tile_y_pos, this.data.map.tile_height);
         const dust_sprite_base = this.data.info.misc_sprite_base_list[Pushable.DUST_KEY];
         for (let i = 0; i < Pushable.DUST_COUNT; ++i) {
             const this_angle = ((Math.PI + numbers.degree60) * i) / (Pushable.DUST_COUNT - 1) - numbers.degree30;
@@ -309,7 +309,7 @@ export class Pushable extends InteractableObjects {
             dust_sprite_base.setAnimation(dust_sprite, Pushable.DUST_KEY);
             const animation_key = dust_sprite_base.getAnimationKey(Pushable.DUST_KEY, Pushable.DUST_ANIM_KEY);
             let resolve_func;
-            promises[i] = new Promise(resolve => (resolve_func = resolve));
+            promises[i] = new Promise(resolve => resolve_func = resolve);
             dust_sprite.animations.getAnimation(animation_key).onComplete.addOnce(resolve_func);
             dust_sprite.animations.play(animation_key);
         }

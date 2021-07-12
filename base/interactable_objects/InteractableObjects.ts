@@ -1,7 +1,7 @@
 import {SpriteBase} from "../SpriteBase";
 import {event_types, LocationKey, TileEvent} from "../tile_events/TileEvent";
 import * as numbers from "../magic_numbers";
-import {directions, get_directions, get_surroundings, mount_collision_polygon, reverse_directions} from "../utils";
+import {directions, get_centered_pos_in_px, get_directions, get_opposite_direction, get_surroundings, mount_collision_polygon, reverse_directions} from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {ClimbEvent} from "../tile_events/ClimbEvent";
 import {GoldenSun} from "../GoldenSun";
@@ -45,12 +45,12 @@ export class InteractableObjects {
     private block_climb_collision_layer_shift: number;
 
     private _key_name: string;
-    private _x: number;
-    private _y: number;
+    private _initial_tile_x: number;
+    private _initial_tile_y: number;
     private _sprite_info: SpriteBase;
     private _base_collision_layer: number;
-    private _current_x: number;
-    private _current_y: number;
+    private _tile_x_pos: number;
+    private _tile_y_pos: number;
     private _collision_tiles_bodies: Phaser.Physics.P2.Body[];
     private _color_filter: any;
     private _sprite: Phaser.Sprite;
@@ -97,8 +97,8 @@ export class InteractableObjects {
             x = position.x;
             y = position.y;
         }
-        this._x = x;
-        this._y = y;
+        this._initial_tile_x = x;
+        this._initial_tile_y = y;
         this._sprite_info = null;
         this.allowed_tiles = allowed_tiles ?? [];
         if (this.storage_keys.base_collision_layer !== undefined) {
@@ -108,8 +108,8 @@ export class InteractableObjects {
         this.not_allowed_tiles = not_allowed_tiles ?? [];
         this._object_drop_tiles = object_drop_tiles ?? [];
         this.events_id = new Set();
-        this._current_x = this.x;
-        this._current_y = this.y;
+        this._tile_x_pos = this.initial_tile_x;
+        this._tile_y_pos = this.initial_tile_y;
         this._collision_tiles_bodies = [];
         this.collision_change_functions = [];
         this._color_filter = this.game.add.filter("ColorFilters");
@@ -132,17 +132,29 @@ export class InteractableObjects {
     get key_name() {
         return this._key_name;
     }
-    get x() {
-        return this._x;
+    /** Gets the initial x tile position of this interactable object. */
+    get initial_tile_x() {
+        return this._initial_tile_x;
     }
-    get y() {
-        return this._y;
+    /** Gets the initial y tile position of this interactable object. */
+    get initial_tile_y() {
+        return this._initial_tile_y;
     }
-    get current_x() {
-        return this._current_x;
+    /** Gets the current x tile position of this interactable object. */
+    get tile_x_pos() {
+        return this._tile_x_pos;
     }
-    get current_y() {
-        return this._current_y;
+    /** Gets the current y tile position of this interactable object. */
+    get tile_y_pos() {
+        return this._tile_y_pos;
+    }
+    /** Gets the x position in px. */
+    get x(): number {
+        return this.sprite.body ? this.sprite.body.x : this.sprite.x;
+    }
+    /** Gets the y position in px. */
+    get y(): number {
+        return this.sprite.body ? this.sprite.body.y : this.sprite.y;
     }
     get base_collision_layer() {
         return this._base_collision_layer;
@@ -181,7 +193,7 @@ export class InteractableObjects {
     position_allowed(x: number, y: number) {
         if (
             this.data.map.interactable_objects.filter(io => {
-                return io.current_x === x && io.current_y === y;
+                return io.tile_x_pos === x && io.tile_y_pos === y;
             }).length
         ) {
             return false;
@@ -203,10 +215,10 @@ export class InteractableObjects {
 
     set_tile_position(pos: {x?: number; y?: number}) {
         if (pos.x) {
-            this._current_x = pos.x;
+            this._tile_x_pos = pos.x;
         }
         if (pos.y) {
-            this._current_y = pos.y;
+            this._tile_y_pos = pos.y;
         }
     }
 
@@ -271,8 +283,8 @@ export class InteractableObjects {
 
     private creating_blocking_stair_block() {
         const target_layer = this.base_collision_layer + this.block_climb_collision_layer_shift;
-        const x_pos = (this.current_x + 0.5) * this.data.map.tile_width;
-        const y_pos = (this.current_y + 1.5) * this.data.map.tile_height - 4;
+        const x_pos = (this.tile_x_pos + 0.5) * this.data.map.tile_width;
+        const y_pos = (this.tile_y_pos + 1.5) * this.data.map.tile_height - 4;
         const body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
         body.clearShapes();
         const width = this.data.dbs.interactable_objects_db[this.key_name].body_radius * 2;
@@ -317,8 +329,8 @@ export class InteractableObjects {
         this.set_scale();
         const shift_x = interactable_object_db.shift_x ?? 0;
         const shift_y = interactable_object_db.shift_y ?? 0;
-        this.sprite.x = (this.x + 0.5) * map.tile_width + shift_x;
-        this.sprite.y = (this.y + 0.5) * map.tile_height + shift_y;
+        this.sprite.x = get_centered_pos_in_px(this.tile_x_pos, map.tile_width) + shift_x;
+        this.sprite.y = get_centered_pos_in_px(this.tile_y_pos, map.tile_height) + shift_y;
         this.sprite_info.setAnimation(this.sprite, this.key_name);
         const initial_animation = interactable_object_db.initial_animation;
         const anim_key = this.sprite_info.getAnimationKey(this.key_name, initial_animation);
@@ -419,8 +431,10 @@ export class InteractableObjects {
         collision_layer: number
     ) {
         const activation_directions = event_info.activation_directions ?? get_directions(false).map(dir => reverse_directions[dir]);
-        activation_directions.forEach((direction_label: string) => {
-            const direction = directions[direction_label];
+        [null, ...activation_directions].forEach((direction_label: string) => {
+            let activation_collision_layer = target_layer;
+            let activation_direction = direction_label;
+            const direction = direction_label === null ? direction_label : directions[direction_label];
             let x = x_pos;
             let y = y_pos;
             switch(direction) {
@@ -436,6 +450,10 @@ export class InteractableObjects {
                 case directions.left:
                     ++x;
                     break;
+                case null:
+                    activation_direction = activation_directions.map(dir => reverse_directions[get_opposite_direction(directions[dir as string])]);
+                    activation_collision_layer = event_info.rope_collision_layer;
+                    break;
                 default:
                     return;
             }
@@ -448,8 +466,8 @@ export class InteractableObjects {
                 x: x,
                 y: y,
                 type: event_types.ROPE,
-                activation_directions: direction_label,
-                activation_collision_layers: [target_layer],
+                activation_directions: activation_direction,
+                activation_collision_layers: activation_collision_layer,
                 dynamic: event_info.dynamic,
                 active: active_event,
                 active_storage_key: undefined,
@@ -460,6 +478,7 @@ export class InteractableObjects {
                 starting_dock: event_info.starting_dock,
                 walk_over_rope: event_info.walk_over_rope,
                 dock_exit_collision_layer: event_info.dock_exit_collision_layer ?? collision_layer,
+                rope_collision_layer: event_info.rope_collision_layer,
                 tied: event_info.tied,
             }) as RopeEvent;
             map_events[this_event_location_key].push(new_event);

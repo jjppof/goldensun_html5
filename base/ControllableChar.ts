@@ -1,5 +1,5 @@
 import * as numbers from "./magic_numbers";
-import {reverse_directions, base_actions, directions, range_360, get_transition_directions} from "./utils";
+import {reverse_directions, base_actions, directions, range_360, get_transition_directions, get_centered_pos_in_px, get_distance, get_tile_position} from "./utils";
 import {Footsteps} from "./utils/Footsteps";
 import {GoldenSun} from "./GoldenSun";
 import {SpriteBase} from "./SpriteBase";
@@ -15,6 +15,8 @@ export abstract class ControllableChar {
     private static readonly DEFAULT_SPRITE_ANCHOR_Y = 0.8;
     private static readonly SLIDE_ICE_SPEED = 95;
     private static readonly SLIDE_ICE_WALK_FRAME_RATE = 20;
+    private static readonly WALK_OVER_ROPE_SPEED = 25;
+    private static readonly WALK_OVER_ROPE_FRAME_RATE = 4;
     private static readonly INTERACTION_RANGE_ANGLE = numbers.degree75;
 
     private static readonly default_anchor = {
@@ -51,6 +53,7 @@ export abstract class ControllableChar {
     public ice_sliding_active: boolean;
     public sliding_on_ice: boolean;
     public trying_to_push: boolean;
+    public walking_over_rope: boolean;
 
     protected storage_keys: {
         position?: string;
@@ -142,6 +145,7 @@ export abstract class ControllableChar {
         this.idle_climbing = false;
         this.ice_sliding_active = false;
         this.sliding_on_ice = false;
+        this.walking_over_rope = false;
         this._sprite_info = null;
         this.sprite = null;
         this.shadow = null;
@@ -513,13 +517,23 @@ export abstract class ControllableChar {
         jump_height?: number;
         /** The duration of the jump in ms. */
         duration?: number;
+        /** If this object is set, the char will perform a jump towards a given direction. */
         dest?: {
-            /** The x tile position destination. */
+            /** The x tile position destination. If position in px is defined, this one won't be used. */
             tile_x?: number;
-            /** The y tile position destination. */
+            /** The y tile position destination. If position in px is defined, this one won't be used. */
             tile_y?: number;
-            /** The jump distance the this char will perform. */
+            /** The x position destination in px. This position has preference over tile position. */
+            x?: number;
+            /** The y position destination in px. This position has preference over tile position. */
+            y?: number;
+            /**
+             * The jump distance that this char will perform. If not given,
+             * this char will jump into the center of the destination.
+            */
             distance?: number;
+            /** The distance multiplier that will be applied to the final jump distance. */
+            distance_multiplier?: number;
         };
         /** The direction that the char is going to be while jumping. */
         jump_direction?: directions;
@@ -543,20 +557,34 @@ export abstract class ControllableChar {
         if (!camera_follow) {
             current_camera_target = this.data.camera.unfollow();
         }
-        if (options?.dest?.distance) {
-            //jumps that has a target position.
-            const axis: "x" | "y" = options.dest.tile_x === this.tile_x_pos ? "y" : "x";
-            const tween_obj: {x?: number; y?: number | number[]} = {
-                [axis]: this.sprite[axis] + options.dest.distance,
+        if (options?.dest !== undefined) {
+            //deals with jumps that have a different position from the current char position.
+            const dest_char = {
+                x: options.dest.x ?? get_centered_pos_in_px(options.dest.tile_x, this.data.map.tile_width),
+                y: options.dest.y ?? get_centered_pos_in_px(options.dest.tile_y, this.data.map.tile_height)
             };
-            const char_x = this.data.map.tile_width * (options.dest.tile_x + 0.5);
-            const char_y = this.data.map.tile_height * (options.dest.tile_y + 0.5);
-            const half_height = jump_height >> 1;
+            const is_jump_over_x_axis = (options.dest.tile_x ?? get_tile_position(dest_char.x, this.data.map.tile_width)) === this.tile_x_pos;
+            const axis: "x" | "y" = is_jump_over_x_axis ? "y" : "x";
+            let distance: number;
+            if (options.dest.distance !== undefined) {
+                distance = options.dest.distance;
+            } else {
+                distance = get_distance(this.x, dest_char.x, this.y, dest_char.y);
+                if (this.sprite[axis] > dest_char[axis]) {
+                    distance *= -1;
+                }
+            }
+            const distance_multiplier = options.dest.distance_multiplier ?? 1.0;
+            const tween_obj: {x?: number; y?: number | number[]} = {
+                [axis]: this.sprite[axis] + (distance * distance_multiplier),
+            };
             const jump_direction = options.jump_direction ?? this.current_direction;
             if (axis === "x") {
-                tween_obj.y = [char_y - half_height, char_y - jump_height, char_y - half_height, char_y];
+                const half_height = jump_height >> 1;
+                const aux_height = dest_char.y - half_height;
+                tween_obj.y = [aux_height, dest_char.y - jump_height, aux_height, dest_char.y];
             } else {
-                tween_obj.x = char_x;
+                tween_obj.x = dest_char.x;
             }
             this.game.physics.p2.pause();
             this.jumping = true;
@@ -575,8 +603,8 @@ export abstract class ControllableChar {
                 .to(tween_obj, duration, Phaser.Easing.Linear.None, true)
                 .onComplete.addOnce(() => {
                     if (this.shadow) {
-                        this.shadow.x = char_x;
-                        this.shadow.y = char_y;
+                        this.shadow.x = dest_char.x;
+                        this.shadow.y = dest_char.y;
                         if (!keep_shadow_hidden) {
                             this.shadow.visible = true;
                         }
@@ -602,7 +630,7 @@ export abstract class ControllableChar {
                     }
                 }, this);
         } else {
-            //jumps the happens in current char position.
+            //deals with jumps that happen in current char position.
             const bounce = options?.bounce ?? false;
             const yoyo = !bounce;
             const previous_shadow_state = this.shadow_following;
@@ -974,6 +1002,8 @@ export abstract class ControllableChar {
         if (action === base_actions.WALK) {
             if (this.ice_sliding_active) {
                 frame_rate = ControllableChar.SLIDE_ICE_WALK_FRAME_RATE;
+            } else if (this.walking_over_rope) {
+                frame_rate = ControllableChar.WALK_OVER_ROPE_FRAME_RATE;
             } else {
                 frame_rate = this.sprite_info.getFrameRate(base_actions.WALK, animation);
             }
@@ -1009,7 +1039,9 @@ export abstract class ControllableChar {
             this._current_action = base_actions.IDLE;
         } else if (this.required_direction !== null && !this.climbing && !this.pushing) {
             this.check_footsteps();
-            if (this.dashing && this.current_action !== base_actions.DASH) {
+            if (this.walking_over_rope) {
+                this._current_action = base_actions.WALK;
+            } else if (this.dashing && this.current_action !== base_actions.DASH) {
                 this._current_action = base_actions.DASH;
             } else if (!this.dashing && this.current_action !== base_actions.WALK) {
                 this._current_action = base_actions.WALK;
@@ -1035,8 +1067,8 @@ export abstract class ControllableChar {
      * Updates the tile positions.
      */
     update_tile_position() {
-        this._tile_x_pos = (this.sprite.x / this.data.map.tile_width) | 0;
-        this._tile_y_pos = (this.sprite.y / this.data.map.tile_height) | 0;
+        this._tile_x_pos = get_tile_position(this.sprite.x, this.data.map.tile_width);
+        this._tile_y_pos = get_tile_position(this.sprite.y, this.data.map.tile_height);
     }
 
     /**
@@ -1073,6 +1105,9 @@ export abstract class ControllableChar {
         if (this.ice_sliding_active && this.sliding_on_ice) {
             const speed_factor = ControllableChar.SLIDE_ICE_SPEED + this.extra_speed;
             apply_speed(speed_factor);
+        } else if (this.walking_over_rope) {
+            const speed_factor = ControllableChar.WALK_OVER_ROPE_SPEED + this.extra_speed;
+            apply_speed(speed_factor);
         } else if (this.current_action === base_actions.DASH) {
             const speed_factor =
                 this.dash_speed +
@@ -1099,7 +1134,7 @@ export abstract class ControllableChar {
     protected apply_speed() {
         if (
             [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action as base_actions) ||
-            (this.sliding_on_ice && this.ice_sliding_active)
+            (this.sliding_on_ice && this.ice_sliding_active) || this.walking_over_rope
         ) {
             //sets the final velocity
             this.sprite.body.velocity.x = this.temp_velocity_x;

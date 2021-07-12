@@ -174,6 +174,36 @@ export function get_transition_directions(current_direction: directions, desired
 }
 
 /**
+ * Given a direction and a current position, returns the next front position.
+ * @param x_pos x tile position.
+ * @param y_pos y tile position.
+ * @param direction the direction that's going towards.
+ * @returns the front position.
+ */
+export function get_front_position(x_pos: number, y_pos: number, direction: directions) {
+    switch (direction) {
+        case directions.up:
+            --y_pos;
+            break;
+        case directions.down:
+            ++y_pos;
+            break;
+        case directions.right:
+            ++x_pos;
+            break;
+        case directions.left:
+            --x_pos;
+            break;
+        default:
+            return null;
+    }
+    return {
+        x: x_pos,
+        y: y_pos
+    };
+}
+
+/**
  * Obtains the text width in pixels (INEFFICIENT).
  * @param game the Phaser.Game instance
  * @param text the text string to measure width
@@ -204,11 +234,21 @@ export function kill_all_sprites(group, destroy = false) {
 /**
  * Gets the center position of a tile in pixels.
  * @param tile_pos the tile position.
- * @param tile_width the tile width.
+ * @param tile_size the tile size.
  * @returns centered tile position in pixels.
  */
-export function get_centered_pos_in_px(tile_pos: number, tile_width: number) {
-    return tile_pos * tile_width + (tile_width >> 1);
+export function get_centered_pos_in_px(tile_pos: number, tile_size: number) {
+    return tile_pos * tile_size + (tile_size >> 1);
+}
+
+/**
+ * Gets the tile position of a given position in px.
+ * @param pos the position in px.
+ * @param tile_size the tile size.
+ * @returns returns the tile position.
+ */
+export function get_tile_position(pos: number, tile_size: number) {
+    return (pos / tile_size) | 0;
 }
 
 /**

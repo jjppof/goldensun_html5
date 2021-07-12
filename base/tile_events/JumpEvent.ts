@@ -1,7 +1,7 @@
 import {event_types, LocationKey, TileEvent} from "./TileEvent";
 import * as numbers from "../magic_numbers";
 import * as _ from "lodash";
-import {get_surroundings, get_opposite_direction, directions, split_direction, direction_range} from "../utils";
+import {get_surroundings, get_opposite_direction, directions, split_direction, direction_range, get_centered_pos_in_px} from "../utils";
 import {GoldenSun} from "../GoldenSun";
 import {Map} from "../Map";
 
@@ -80,7 +80,7 @@ export class JumpEvent extends TileEvent {
                     const interactable_object = this.data.map.interactable_objects[j];
                     //if the side position has a interactable object, it does not cancel this jump event
                     if (this.data.map.collision_layer !== interactable_object.base_collision_layer) continue;
-                    if (event.x === interactable_object.current_x && event.y === interactable_object.current_y) {
+                    if (event.x === interactable_object.tile_x_pos && event.y === interactable_object.tile_y_pos) {
                         interactable_object_found = true;
                         break;
                     }
@@ -102,8 +102,8 @@ export class JumpEvent extends TileEvent {
         for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
             const next_interactable_object = this.data.map.interactable_objects[i];
             if (
-                next_interactable_object.current_x !== next_position.x ||
-                next_interactable_object.current_y !== next_position.y
+                next_interactable_object.tile_x_pos !== next_position.x ||
+                next_interactable_object.tile_y_pos !== next_position.y
             )
                 continue;
             if (this.data.map.collision_layer !== next_interactable_object.base_collision_layer) continue;
@@ -286,8 +286,8 @@ export class JumpEvent extends TileEvent {
             !on_dynamic_event_direction &&
             this.data.tile_event_manager.walking_on_pillars_tiles.size
         ) {
-            const event_x = (this.x + 0.5) * this.data.map.tile_width;
-            const event_y = (this.y + 0.5) * this.data.map.tile_height;
+            const event_x = get_centered_pos_in_px(this.x, this.data.map.tile_width);
+            const event_y = get_centered_pos_in_px(this.y, this.data.map.tile_height);
             //calculates the minimal distance to clear the collision bodies
             const distance_to_clear = this.data.map.tile_width / 4;
 

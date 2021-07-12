@@ -146,7 +146,7 @@ export class ClimbEvent extends TileEvent {
         if (activation_direction === directions.up) {
             for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
                 const next_interactable_object = this.data.map.interactable_objects[i];
-                if (next_interactable_object.current_x !== this.x || next_interactable_object.current_y !== this.y - 1)
+                if (next_interactable_object.tile_x_pos !== this.x || next_interactable_object.tile_y_pos !== this.y - 1)
                     continue;
                 if (this.change_to_collision_layer !== next_interactable_object.base_collision_layer) continue;
                 this.game.physics.p2.resume();
@@ -242,8 +242,8 @@ export class ClimbEvent extends TileEvent {
         });
         const positions = relative_positions.map(tile_shift => {
             return {
-                x: this.origin_interactable_object.current_x + tile_shift.x,
-                y: this.origin_interactable_object.current_y + tile_shift.y,
+                x: this.origin_interactable_object.tile_x_pos + tile_shift.x,
+                y: this.origin_interactable_object.tile_y_pos + tile_shift.y,
             };
         });
         JumpEvent.unset_set_jump_collision(this.data);
