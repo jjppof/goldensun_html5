@@ -180,7 +180,7 @@ export function get_transition_directions(current_direction: directions, desired
  * @param direction the direction that's going towards.
  * @returns the front position.
  */
-export function get_front_position(x_pos: number, y_pos: number, direction: directions) {
+export function get_front_position(x_pos: number, y_pos: number, direction: directions, strict_cardinal: boolean = true) {
     switch (direction) {
         case directions.up:
             --y_pos;
@@ -195,7 +195,9 @@ export function get_front_position(x_pos: number, y_pos: number, direction: dire
             --x_pos;
             break;
         default:
-            return null;
+            if (strict_cardinal) {
+                return null;
+            }
     }
     return {
         x: x_pos,

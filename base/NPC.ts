@@ -317,6 +317,7 @@ export class NPC extends ControllableChar {
         if (this.footsteps) {
             this.footsteps.destroy();
         }
+        this.unset_push_timer();
         this._events.forEach(event => event.destroy());
         this.look_target = null;
         if (remove_from_npc_group) {

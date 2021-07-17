@@ -92,7 +92,7 @@ export abstract class ControllableChar {
     public shadow_following: boolean;
 
     private _color_filter: Phaser.Filter;
-    protected push_timer: Phaser.TimerEvent;
+    protected _push_timer: Phaser.TimerEvent;
     private _footsteps: Footsteps;
     protected look_target: ControllableChar = null;
     protected _active: boolean;
@@ -177,7 +177,7 @@ export abstract class ControllableChar {
         this._color_filter = this.game.add.filter("ColorFilters");
         this.trying_to_push = false;
         this._trying_to_push_direction = null;
-        this.push_timer = null;
+        this._push_timer = null;
         this.enable_footsteps = enable_footsteps ?? false;
         this._footsteps = this.enable_footsteps ? new Footsteps(this.game, this.data, this) : null;
         this.crop_texture = false;
@@ -240,6 +240,9 @@ export abstract class ControllableChar {
     }
     get footsteps() {
         return this._footsteps;
+    }
+    get push_timer() {
+        return this._push_timer;
     }
 
     get x_speed() {
@@ -968,6 +971,29 @@ export abstract class ControllableChar {
      */
     set_trying_to_push_direction(direction: directions) {
         this._trying_to_push_direction = direction;
+    }
+
+    /**
+     * Sets the push timer for this char. This timer is used to start the object pushing.
+     * The char must wait for this timer before pushing.
+     * @param callback the timer callback.
+     * @param delay the initial delay.
+     * @param start forces the timer start if true.
+     */
+    set_push_timer(callback: () => void, delay: number = Phaser.Timer.QUARTER, start: boolean = true) {
+        this.unset_push_timer();
+        this._push_timer = this.game.time.events.add(delay, callback);
+        this._push_timer.timer.start();
+    }
+
+    /**
+     * Unsets the push timer.
+     */
+    unset_push_timer() {
+        if (this.push_timer?.timer) {
+            this.push_timer.timer.destroy();
+        }
+        this._push_timer = null;
     }
 
     /**

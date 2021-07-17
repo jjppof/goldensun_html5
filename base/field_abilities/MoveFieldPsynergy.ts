@@ -1,5 +1,5 @@
 import * as numbers from "../magic_numbers";
-import {directions, reverse_directions, join_directions, base_actions} from "../utils";
+import {directions, reverse_directions, join_directions, base_actions, get_front_position, get_distance, get_centered_pos_in_px} from "../utils";
 import {FieldAbilities} from "./FieldAbilities";
 import {SpriteBase} from "../SpriteBase";
 import {Button} from "../XGamepad";
@@ -69,22 +69,9 @@ export class MoveFieldPsynergy extends FieldAbilities {
 
     fire_push() {
         if (this.data.map.collision_layer === this.target_object.base_collision_layer) {
-            let item_position = this.target_object.get_current_position(this.data.map);
-            switch (this.controllable_char.trying_to_push_direction) {
-                case directions.up:
-                    item_position.y -= 1;
-                    break;
-                case directions.down:
-                    item_position.y += 1;
-                    break;
-                case directions.left:
-                    item_position.x -= 1;
-                    break;
-                case directions.right:
-                    item_position.x += 1;
-                    break;
-            }
-            let position_allowed = this.target_object.position_allowed(item_position.x, item_position.y);
+            const item_position = this.target_object.get_current_position(this.data.map);
+            const from_position = get_front_position(item_position.x, item_position.y, this.controllable_char.trying_to_push_direction, false);
+            const position_allowed = this.target_object.position_allowed(from_position.x, from_position.y);
             if (
                 position_allowed &&
                 !(
@@ -94,13 +81,15 @@ export class MoveFieldPsynergy extends FieldAbilities {
             ) {
                 this.data.control_manager.reset();
                 (this.target_object as Pushable).target_only_push(
+                    this.controllable_char,
                     (x_shift, y_shift) => {
                         const x_target = this.hand_sprite.x + x_shift;
                         const y_target = this.hand_sprite.y + y_shift;
                         this.game.add
                             .tween(this.hand_sprite)
                             .to({x: x_target, y: y_target}, numbers.PUSH_TIME, Phaser.Easing.Linear.None, true);
-                        this.game.time.events.add(numbers.PUSH_TIME >> 1, () => {
+                        const char_change_dir_timer = this.game.time.events.add(numbers.PUSH_TIME >> 1, () => {
+                            //changes char direction while moving on sides
                             let need_change = false;
                             if (
                                 [directions.up, directions.down].includes(this.cast_direction) &&
@@ -142,21 +131,19 @@ export class MoveFieldPsynergy extends FieldAbilities {
                             );
                             this.controllable_char.sprite.animations.frameName = frame_name;
                         });
+                        char_change_dir_timer.timer.autoDestroy = true;
+                        char_change_dir_timer.timer.start();
                     },
                     () => {
-                        const pos_sqr_distance =
-                            Math.pow(this.controllable_char.sprite.body.x - this.target_object.sprite.body.x, 2) +
-                            Math.pow(this.controllable_char.sprite.body.y - this.target_object.sprite.body.y, 2);
+                        const pos_sqr_distance = get_distance(this.controllable_char.sprite.body.x, this.target_object.sprite.body.x, this.controllable_char.sprite.body.y, this.target_object.sprite.body.y, false);
                         const rad_sqr_distance = Math.pow(
                             numbers.HERO_BODY_RADIUS +
                                 this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius,
                             2
                         );
                         if (pos_sqr_distance <= rad_sqr_distance) {
-                            this.controllable_char.sprite.body.x =
-                                (this.controllable_char.tile_x_pos + 0.5) * this.data.map.tile_width;
-                            this.controllable_char.sprite.body.y =
-                                (this.controllable_char.tile_y_pos + 0.5) * this.data.map.tile_height;
+                            this.controllable_char.sprite.body.x = get_centered_pos_in_px(this.controllable_char.tile_x_pos, this.data.map.tile_width);
+                            this.controllable_char.sprite.body.y = get_centered_pos_in_px(this.controllable_char.tile_y_pos, this.data.map.tile_height);
                             this.controllable_char.shadow.x = this.controllable_char.sprite.body.x;
                             this.controllable_char.shadow.y = this.controllable_char.sprite.body.y;
                         }
@@ -254,10 +241,12 @@ export class MoveFieldPsynergy extends FieldAbilities {
                     this.target_hueshift_timer.start();
                     this.set_controls();
                 } else {
-                    this.game.time.events.add(700, () => {
+                    const finish_timer = this.game.time.events.add(700, () => {
                         this.finish_hand();
                         this.unset_hero_cast_anim();
                     });
+                    finish_timer.timer.autoDestroy = true;
+                    finish_timer.timer.start();
                 }
             });
     }
@@ -356,9 +345,11 @@ export class MoveFieldPsynergy extends FieldAbilities {
             particle.animations.play(anim_key);
             particle.animations.currentAnim.setFrame((Math.random() * particle.animations.frameTotal) | 0);
         });
-        this.game.time.events.add(lifetime, () => {
+        const vanish_timer = this.game.time.events.add(lifetime, () => {
             this.unset_final_emitter();
         });
+        vanish_timer.timer.autoDestroy = true;
+        vanish_timer.timer.start();
     }
 
     unset_final_emitter() {

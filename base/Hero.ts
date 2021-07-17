@@ -1,9 +1,7 @@
 import {ControllableChar} from "./ControllableChar";
 import * as numbers from "./magic_numbers";
-import {event_types, LocationKey} from "./tile_events/TileEvent";
 import {get_transition_directions, range_360, directions, base_actions, get_direction_mask} from "./utils";
 import {Pushable} from "./interactable_objects/Pushable";
-import {ClimbEvent} from "./tile_events/ClimbEvent";
 import {Button} from "./XGamepad";
 import {GoldenSun} from "./GoldenSun";
 
@@ -224,64 +222,16 @@ export class Hero extends ControllableChar {
         let j = 0;
         for (j = 0; j < this.data.map.interactable_objects.length; ++j) {
             //check if hero is colliding with any interactable object
-            const interactable_object_body = this.data.map.interactable_objects[j].sprite.body;
-            if (!interactable_object_body) continue;
+            const interactable_object = this.data.map.interactable_objects[j];
+            const interactable_object_body = interactable_object.sprite.body;
+            if (!interactable_object_body) {
+                continue;
+            }
             if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
                 if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
-                    const interactable_object = this.data.map.interactable_objects[j];
-                    if (!interactable_object.pushable) {
-                        return;
-                    }
-                    if (
-                        [base_actions.WALK, base_actions.DASH].includes(this.current_action as base_actions) &&
-                        this.data.map.collision_layer === interactable_object.base_collision_layer
-                    ) {
-                        this.trying_to_push = true;
-                        if (this.push_timer === null) {
-                            this._trying_to_push_direction = this.current_direction;
-                            const events_in_pos = this.data.map.events[
-                                LocationKey.get_key(this.tile_x_pos, this.tile_y_pos)
-                            ];
-                            let has_stair = false;
-                            if (events_in_pos) {
-                                events_in_pos.forEach(event => {
-                                    if (
-                                        event.type === event_types.CLIMB &&
-                                        (event as ClimbEvent).is_set &&
-                                        event.activation_directions.includes(this.trying_to_push_direction)
-                                    ) {
-                                        has_stair = true;
-                                        return;
-                                    }
-                                });
-                            }
-                            if (!has_stair) {
-                                const item_position = interactable_object.get_current_position(this.data.map);
-                                switch (this.trying_to_push_direction) {
-                                    case directions.up:
-                                        item_position.y -= 1;
-                                        break;
-                                    case directions.down:
-                                        item_position.y += 1;
-                                        break;
-                                    case directions.left:
-                                        item_position.x -= 1;
-                                        break;
-                                    case directions.right:
-                                        item_position.x += 1;
-                                        break;
-                                }
-                                if (interactable_object.position_allowed(item_position.x, item_position.y)) {
-                                    this.push_timer = this.game.time.events.add(Phaser.Timer.QUARTER, () => {
-                                        (interactable_object as Pushable).normal_push();
-                                        this.trying_to_push = false;
-                                        this.push_timer = null;
-                                    });
-                                }
-                            }
-                        }
+                    if (interactable_object.pushable && (interactable_object as Pushable).check_and_start_push(this)) {
                         break;
-                    }
+                    };
                 }
             }
         }

@@ -1,8 +1,10 @@
 import * as numbers from "../magic_numbers";
 import {event_types, LocationKey} from "../tile_events/TileEvent";
-import {get_surroundings, get_opposite_direction, directions, reverse_directions, base_actions, get_centered_pos_in_px} from "../utils";
+import {get_surroundings, get_opposite_direction, directions, reverse_directions, base_actions, get_centered_pos_in_px, get_front_position} from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {InteractableObjects} from "./InteractableObjects";
+import { ControllableChar } from "../ControllableChar";
+import { ClimbEvent } from "../tile_events/ClimbEvent";
 
 export class Pushable extends InteractableObjects {
     private static readonly DUST_COUNT = 7;
@@ -50,24 +52,66 @@ export class Pushable extends InteractableObjects {
         this._pushable = true;
     }
 
-    normal_push() {
+    check_and_start_push(char: ControllableChar) {
         if (
-            this.data.hero.trying_to_push &&
-            (this.data.hero.trying_to_push_direction & 1) === 0 &&
-            this.data.hero.trying_to_push_direction === this.data.hero.current_direction &&
-            !this.data.hero.in_action()
+            [base_actions.WALK, base_actions.DASH].includes(char.current_action as base_actions) &&
+            this.data.map.collision_layer === this.base_collision_layer
         ) {
-            this.fire_push_movement();
+            char.trying_to_push = true;
+            if (char.push_timer === null) {
+                char.set_trying_to_push_direction(char.current_direction);
+                const events_in_pos = this.data.map.events[
+                    LocationKey.get_key(this.tile_x_pos, this.tile_y_pos)
+                ];
+                let has_stair = false;
+                if (events_in_pos) {
+                    events_in_pos.forEach(event => {
+                        if (
+                            event.type === event_types.CLIMB &&
+                            (event as ClimbEvent).is_set &&
+                            event.activation_directions.includes(char.trying_to_push_direction)
+                        ) {
+                            has_stair = true;
+                            return;
+                        }
+                    });
+                }
+                if (!has_stair) {
+                    const item_position = this.get_current_position(this.data.map);
+                    const front_pos = get_front_position(item_position.x, item_position.y, char.trying_to_push_direction, false);
+                    if (this.position_allowed(front_pos.x, front_pos.y)) {
+                        char.set_push_timer(() => {
+                            this.normal_push(char);
+                            char.trying_to_push = false;
+                            char.unset_push_timer();
+                        })
+                    }
+                }
+            }
+        }
+        return char.trying_to_push;
+    }
+
+    normal_push(char: ControllableChar) {
+        if (
+            char.trying_to_push &&
+            (char.trying_to_push_direction & 1) === 0 &&
+            char.trying_to_push_direction === char.current_direction &&
+            !char.in_action()
+        ) {
+            this.fire_push_movement(char);
         }
     }
 
     target_only_push(
-        before_move,
-        push_end,
+        char: ControllableChar,
+        before_move: (x_shift: number, y_shift: number) => void,
+        push_end: () => void,
         enable_physics_at_end = true,
-        on_push_update = undefined
+        on_push_update?: () => void
     ) {
         this.fire_push_movement(
+            char,
             push_end,
             before_move,
             true,
@@ -77,31 +121,32 @@ export class Pushable extends InteractableObjects {
     }
 
     fire_push_movement(
-        push_end?,
-        before_move?,
+        char: ControllableChar,
+        push_end?: () => void,
+        before_move?: (x_shift: number, y_shift: number) => void,
         target_only = false,
         enable_physics_at_end = true,
-        on_push_update = undefined
+        on_push_update?: () => void
     ) {
         let expected_position;
         if (!target_only) {
-            const positive_limit = this.data.hero.sprite.x + (-this.sprite.y - this.sprite.x);
-            const negative_limit = -this.data.hero.sprite.x + (-this.sprite.y + this.sprite.x);
-            if (-this.data.hero.sprite.y >= positive_limit && -this.data.hero.sprite.y >= negative_limit) {
+            const positive_limit = char.sprite.x + (-this.sprite.y - this.sprite.x);
+            const negative_limit = -char.sprite.x + (-this.sprite.y + this.sprite.x);
+            if (-char.sprite.y >= positive_limit && -char.sprite.y >= negative_limit) {
                 expected_position = directions.down;
-            } else if (-this.data.hero.sprite.y <= positive_limit && -this.data.hero.sprite.y >= negative_limit) {
+            } else if (-char.sprite.y <= positive_limit && -char.sprite.y >= negative_limit) {
                 expected_position = directions.left;
-            } else if (-this.data.hero.sprite.y <= positive_limit && -this.data.hero.sprite.y <= negative_limit) {
+            } else if (-char.sprite.y <= positive_limit && -char.sprite.y <= negative_limit) {
                 expected_position = directions.up;
-            } else if (-this.data.hero.sprite.y >= positive_limit && -this.data.hero.sprite.y <= negative_limit) {
+            } else if (-char.sprite.y >= positive_limit && -char.sprite.y <= negative_limit) {
                 expected_position = directions.right;
             }
         }
-        if (target_only || expected_position === this.data.hero.trying_to_push_direction) {
+        if (target_only || expected_position === char.trying_to_push_direction) {
             if (!target_only) {
-                this.data.hero.pushing = true;
+                char.pushing = true;
                 this.data.audio.play_se("actions/push");
-                this.data.hero.change_action(base_actions.PUSH, true);
+                char.change_action(base_actions.PUSH, true);
             } else {
                 this.data.audio.play_se("menu/positive_4");
             }
@@ -110,7 +155,7 @@ export class Pushable extends InteractableObjects {
                 tween_y = 0;
             let event_shift_x = 0,
                 event_shift_y = 0;
-            switch (this.data.hero.trying_to_push_direction) {
+            switch (char.trying_to_push_direction) {
                 case directions.up:
                     event_shift_y = -1;
                     tween_y = -Pushable.PUSH_SHIFT;
@@ -131,7 +176,7 @@ export class Pushable extends InteractableObjects {
             this.shift_events(event_shift_x, event_shift_y);
             const sprites = [this.sprite.body];
             if (!target_only) {
-                sprites.push(...[this.data.hero.shadow, this.data.hero.sprite.body]);
+                sprites.push(...[char.shadow, char.sprite.body]);
             }
             const prev_x = this.tile_x_pos;
             const prev_y = this.tile_y_pos;
@@ -151,7 +196,7 @@ export class Pushable extends InteractableObjects {
                 const body = sprites[i];
                 let dest_x = body.x + tween_x;
                 let dest_y = body.y + tween_y;
-                if (body === this.data.hero.shadow || body === this.data.hero.sprite.body) {
+                if (body === char.shadow || body === char.sprite.body) {
                     if (tween_x === 0) {
                         dest_x = this.data.map.tile_width * (prev_x + event_shift_x + 0.5);
                     } else if (tween_y === 0) {
@@ -202,10 +247,10 @@ export class Pushable extends InteractableObjects {
                                     .onComplete.addOnce(() => {
                                         this.data.audio.play_se("misc/rock_drop");
                                         if (drop_tile.dust_animation) {
-                                            this.data.hero.change_action(base_actions.IDLE);
-                                            this.data.hero.play(
-                                                this.data.hero.current_action,
-                                                reverse_directions[this.data.hero.current_direction]
+                                            char.change_action(base_actions.IDLE);
+                                            char.play(
+                                                char.current_action,
+                                                reverse_directions[char.current_direction]
                                             );
                                             this.dust_animation(promise_resolve);
                                         } else {
@@ -222,7 +267,7 @@ export class Pushable extends InteractableObjects {
                 });
             }
             Promise.all(promises).then(() => {
-                this.data.hero.pushing = false;
+                char.pushing = false;
                 if (enable_physics_at_end) {
                     this.game.physics.p2.resume();
                 }
