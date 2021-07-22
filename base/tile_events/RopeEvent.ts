@@ -9,7 +9,7 @@ import { event_types, TileEvent } from "./TileEvent";
  * over a rope.
  */
 export class RopeEvent extends TileEvent {
-    private static readonly SWING_SIZE = 3;
+    private static readonly SWING_SIZE = 2;
 
     /** Whether the char will be walking over the rope. */
     private _walk_over_rope: boolean;
@@ -108,12 +108,15 @@ export class RopeEvent extends TileEvent {
         const swing_tween = this.game.add.tween(swing_object).to({
             y: half_height
         }, 300, Phaser.Easing.Quadratic.InOut, true, 0, -1, true);
+        const position_ratio_formula = (relative_pos : number) => {
+            return 4 * relative_pos * (-relative_pos + 1);
+        };
         swing_tween.onUpdateCallback(() => {
             this.data.hero.sprite.x = this.data.hero.sprite.body.x;
 
             const relative_pos = (this.data.hero.sprite.x - this.origin_interactable_object.x)/this.origin_interactable_object.rope_width;
-            const position_ratio = 0.5 - Math.cos(degree360 * relative_pos) / 2;
-            this.data.hero.sprite.y += swing_object.y * position_ratio;
+            const position_ratio = position_ratio_formula(relative_pos);
+            this.data.hero.sprite.y += swing_object.y * position_ratio
 
             const rope_fragments_group = this.origin_interactable_object.rope_fragments_group;
             for (let i = 0; i < rope_fragments_group.children.length; ++i) {
@@ -123,7 +126,7 @@ export class RopeEvent extends TileEvent {
                 const distance_ratio = 1 - hero_frag_dist / this.origin_interactable_object.rope_width;
 
                 const relative_frag_pos = (rope_frag_x - this.origin_interactable_object.x)/this.origin_interactable_object.rope_width;
-                const position_penalty = 0.5 - Math.cos(degree360 * relative_frag_pos) / 2;
+                const position_penalty = position_ratio_formula(relative_frag_pos);
 
                 rope_frag.y += swing_object.y * distance_ratio * position_ratio * position_penalty;
             }
