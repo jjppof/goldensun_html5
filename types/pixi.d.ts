@@ -265,6 +265,7 @@ declare module PIXI {
 
         alpha: number;
         avoidFilterCapping: boolean;
+        bodyAttached: boolean;
         buttonMode: boolean;
         cacheAsBitmap: boolean;
         defaultCursor: string;

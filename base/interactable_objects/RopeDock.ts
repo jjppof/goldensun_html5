@@ -24,6 +24,8 @@ export class RopeDock extends InteractableObjects {
     private _tied: boolean;
     /** Groups that holds the rope fragments. */
     private _rope_fragments_group: Phaser.Group;
+    /** The rope width */
+    private _rope_width: number;
 
     constructor(
         game,
@@ -64,6 +66,16 @@ export class RopeDock extends InteractableObjects {
         this._is_rope_dock = true;
     }
 
+    /** Groups that holds the rope fragments. */
+    get rope_fragments_group() {
+        return this._rope_fragments_group;
+    }
+
+    /** The rope width */
+    get rope_width() {
+        return this._rope_width;
+    }
+
     /**
      * Initializes this rope dock properties.
      * @param dest_x The destiny dock x tile position.
@@ -99,6 +111,7 @@ export class RopeDock extends InteractableObjects {
         const dest_x_px = get_centered_pos_in_px(this._dest_x, map.tile_width);
         const dest_y_px = get_centered_pos_in_px(this._dest_y, map.tile_height) + RopeDock.ROPE_Y_SHIFT;
         const distance = get_distance(dest_x_px, this_x_px, dest_y_px, this_y_px);
+        this._rope_width = distance | 0;
         const actual_rope_width = RopeDock.ROPE_FRAGMENT_WIDTH - 2;
         const fragments_number = (distance / actual_rope_width) | 0;
         const fragment_angle = Math.atan2(dest_y_px - this_y_px, dest_x_px - this_x_px);

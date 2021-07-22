@@ -208,7 +208,7 @@ export class GoldenSun {
         this.game_event_manager = new GameEventManager(this.game, this);
 
         //configs map layers: creates sprites, interactable objects and npcs, lists events and sets the map layers
-        this.map = await this.info.maps_list[this.dbs.init_db.map_key_name].mount_map(this.dbs.init_db.map_z_index);
+        this.map = await this.info.maps_list[this.dbs.init_db.map_key_name].mount_map(this.dbs.init_db.collision_layer);
 
         //initializes the controllable hero
         const hero_key_name = this.dbs.init_db.hero_key_name;

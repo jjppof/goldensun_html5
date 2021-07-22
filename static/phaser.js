@@ -14969,6 +14969,8 @@ PIXI.DisplayObject = function ()
     */
     this.visible = true;
 
+    this.bodyAttached = true;
+
     /**
      * This is the defined area that will pick up mouse / touch events. It is null by default.
      * Setting it is a neat way of optimising the hitTest function that the interactionManager will use (as it will not need to hit test all the children)
@@ -101451,12 +101453,14 @@ Phaser.Physics.P2.Body.prototype = {
     postUpdate: function ()
     {
 
-        if (this.sprite.roundPx) {
-            this.sprite.x = (this.world.mpxi(this.data.position[0]) + this.offset.x) | 0;
-            this.sprite.y = (this.world.mpxi(this.data.position[1]) + this.offset.y) | 0;
-        } else {
-            this.sprite.x = this.world.mpxi(this.data.position[0]) + this.offset.x;
-            this.sprite.y = this.world.mpxi(this.data.position[1]) + this.offset.y;
+        if (this.sprite.bodyAttached) {
+            if (this.sprite.roundPx) {
+                this.sprite.x = (this.world.mpxi(this.data.position[0]) + this.offset.x) | 0;
+                this.sprite.y = (this.world.mpxi(this.data.position[1]) + this.offset.y) | 0;
+            } else {
+                this.sprite.x = this.world.mpxi(this.data.position[0]) + this.offset.x;
+                this.sprite.y = this.world.mpxi(this.data.position[1]) + this.offset.y;
+            }
         }
 
         if (!this.fixedRotation)

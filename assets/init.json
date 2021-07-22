@@ -6,7 +6,7 @@
     "initial_scale_factor": 3,
     "x_tile_position": 7,
     "y_tile_position": 3,
-    "map_z_index": 1,
+    "collision_layer": 1,
     "coins": 10000,
     "initial_shortcuts": [
         { "ability": "move", "adept": "isaac" },

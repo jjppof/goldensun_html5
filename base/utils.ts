@@ -178,6 +178,7 @@ export function get_transition_directions(current_direction: directions, desired
  * @param x_pos x tile position.
  * @param y_pos y tile position.
  * @param direction the direction that's going towards.
+ * @param strict_cardinal if true, returns null on diagonal input. Otherwise, returns input as is.
  * @returns the front position.
  */
 export function get_front_position(x_pos: number, y_pos: number, direction: directions, strict_cardinal: boolean = true) {

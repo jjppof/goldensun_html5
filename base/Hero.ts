@@ -231,7 +231,7 @@ export class Hero extends ControllableChar {
                 if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
                     if (interactable_object.pushable && (interactable_object as Pushable).check_and_start_push(this)) {
                         break;
-                    };
+                    }
                 }
             }
         }
