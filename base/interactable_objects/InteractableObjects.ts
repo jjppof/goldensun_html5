@@ -682,6 +682,11 @@ export class InteractableObjects {
         }
     }
 
+    /**
+     * Method to be overriden.
+     */
+    custom_unset() {};
+
     unset(remove_from_npc_group: boolean = true) {
         if (this.sprite) {
             this.sprite.destroy();
@@ -696,5 +701,6 @@ export class InteractableObjects {
         if (remove_from_npc_group) {
             this.data.npc_group.removeChild(this.sprite);
         }
+        this.custom_unset();
     }
 }

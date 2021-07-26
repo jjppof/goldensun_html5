@@ -22,6 +22,8 @@ export class RopeEvent extends TileEvent {
     private _hero_walking_factor: number;
     /** The interactable object that originated this event. Overriding with appropriate inheritance. */
     protected _origin_interactable_object: RopeDock;
+    /** The staring rope dock. */
+    private _starting_rope_dock: RopeDock;
 
     constructor(
         game: Phaser.Game,
@@ -70,37 +72,53 @@ export class RopeEvent extends TileEvent {
         this.data.tile_event_manager.on_event = true;
         this.game.physics.p2.pause();
 
-        if (this.data.hero.walking_over_rope) {
-            this.data.hero.sprite.bodyAttached = true;
-            this.data.collision.change_map_body(this._dock_exit_collision_layer);
-            const dest_pos = get_front_position(this.data.hero.tile_x_pos, this.data.hero.tile_y_pos, this.data.hero.current_direction);
-            await this.data.hero.jump({
-                dest: {
-                    tile_x: dest_pos.x,
-                    tile_y: dest_pos.y
-                }
-            });
-            this.origin_interactable_object.set_sprites_z_sorting(false);
-            this.data.map.sort_sprites();
-            this.data.hero.walking_over_rope = false;
+        if ((this.origin_interactable_object as RopeDock).is_starting_dock) {
+            this._starting_rope_dock = this.origin_interactable_object;
         } else {
-            this.data.collision.change_map_body(this._rope_collision_layer);
-            this.origin_interactable_object.set_sprites_z_sorting(true);
-            this.data.map.sort_sprites();
-            await this.data.hero.jump({
-                dest: {
-                    x: this.origin_interactable_object.sprite.centerX,
-                    y: this.origin_interactable_object.sprite.centerY - 5,
-                },
-                keep_shadow_hidden: true
-            });
-            this.data.hero.sprite.bodyAttached = false;
-            this.data.hero.walking_over_rope = true;
-            this.intialize_swing();
+            this._starting_rope_dock = this.origin_interactable_object.starting_rope_dock;
+        }
+
+        if (this.data.hero.walking_over_rope) {
+            await this.finish_walking();
+        } else {
+            await this.start_walking();
         }
 
         this.game.physics.p2.resume();
         this.data.tile_event_manager.on_event = false;
+    }
+
+    async start_walking() {
+        this.data.collision.change_map_body(this._rope_collision_layer);
+        this._starting_rope_dock.set_sprites_z_sorting(true);
+        this.data.map.sort_sprites();
+        await this.data.hero.jump({
+            dest: {
+                x: this.origin_interactable_object.sprite.centerX,
+                y: this.origin_interactable_object.sprite.centerY - 5,
+            },
+            keep_shadow_hidden: true
+        });
+        this.data.hero.sprite.bodyAttached = false;
+        this.data.hero.walking_over_rope = true;
+        this.intialize_swing();
+    }
+
+    async finish_walking() {
+        this.data.hero.sprite.bodyAttached = true;
+        this.data.collision.change_map_body(this._dock_exit_collision_layer);
+        const dest_pos = get_front_position(this.data.hero.tile_x_pos, this.data.hero.tile_y_pos, this.data.hero.current_direction);
+        await this.data.hero.jump({
+            dest: {
+                tile_x: dest_pos.x,
+                tile_y: dest_pos.y
+            }
+        });
+        this._starting_rope_dock.swing_tween.stop();
+        this._starting_rope_dock.swing_tween = null;
+        this._starting_rope_dock.set_sprites_z_sorting(false);
+        this.data.map.sort_sprites();
+        this.data.hero.walking_over_rope = false;
     }
 
     intialize_swing() {
@@ -108,14 +126,14 @@ export class RopeEvent extends TileEvent {
         const swing_object = {
             y: -half_height
         };
-        const swing_tween = this.game.add.tween(swing_object).to({
+        this._starting_rope_dock.swing_tween = this.game.add.tween(swing_object).to({
             y: half_height
         }, 300, Phaser.Easing.Quadratic.InOut, true, 0, -1, true);
         const position_ratio_formula = (relative_pos : number) => {
             return 4 * relative_pos * (-relative_pos + 1);
         };
         this._hero_walking_factor = 0;
-        swing_tween.onUpdateCallback(() => {
+        this._starting_rope_dock.swing_tween.onUpdateCallback(() => {
             this.data.hero.sprite.x = this.data.hero.sprite.body.x;
 
             if ([base_actions.WALK, base_actions.DASH].includes(this.data.hero.current_action as base_actions)) {
@@ -124,27 +142,29 @@ export class RopeEvent extends TileEvent {
                 this._hero_walking_factor = _.clamp(this._hero_walking_factor - RopeEvent.HERO_WALKING_DELTA, 0, 1);
             }
 
-            const relative_pos = (this.data.hero.sprite.x - this.origin_interactable_object.x)/this.origin_interactable_object.rope_width;
+            const relative_pos = (this.data.hero.sprite.x - this._starting_rope_dock.x)/this._starting_rope_dock.rope_width;
             const position_ratio = position_ratio_formula(relative_pos) * this._hero_walking_factor;
 
             this.data.hero.sprite.y += swing_object.y * position_ratio;
 
-            const rope_fragments_group = this.origin_interactable_object.rope_fragments_group;
+            const rope_fragments_group = this._starting_rope_dock.rope_fragments_group;
             for (let i = 0; i < rope_fragments_group.children.length; ++i) {
                 const rope_frag = rope_fragments_group.children[i];
                 const rope_frag_x = rope_fragments_group.x + rope_frag.x;
                 const hero_frag_dist = Math.abs(rope_frag_x - this.data.hero.sprite.x) | 0;
-                const distance_ratio = 1 - hero_frag_dist / this.origin_interactable_object.rope_width;
+                const distance_ratio = 1 - hero_frag_dist / this._starting_rope_dock.rope_width;
 
-                const relative_frag_pos = (rope_frag_x - this.origin_interactable_object.x)/this.origin_interactable_object.rope_width;
+                const relative_frag_pos = (rope_frag_x - this._starting_rope_dock.x)/this._starting_rope_dock.rope_width;
                 const position_penalty = position_ratio_formula(relative_frag_pos);
 
-                rope_frag.y += swing_object.y * distance_ratio * position_ratio * position_penalty;
+                const variation = swing_object.y * distance_ratio * position_ratio * position_penalty;
+                rope_frag.y += variation;
             }
         });
     }
 
     destroy() {
         this._origin_interactable_object = null;
+        this._starting_rope_dock = null;
     }
 }
