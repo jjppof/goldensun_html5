@@ -101,11 +101,12 @@ export class RopeDock extends InteractableObjects {
             this.play(RopeDock.ROPE_DOCK_KEY, RopeDock.ROPE_DOCK_EMPTY);
         }
 
-        if (!this._starting_dock) {
-            return;
+        if (this._starting_dock) {
+            this.set_rope_fragments(map);
         }
+    }
 
-        //inserts the rope fragments
+    set_rope_fragments(map: Map) {
         const this_x_px = get_centered_pos_in_px(this.tile_x_pos, map.tile_width);
         const this_y_px = get_centered_pos_in_px(this.tile_y_pos, map.tile_height) + RopeDock.ROPE_Y_SHIFT;
         const dest_x_px = get_centered_pos_in_px(this._dest_x, map.tile_width);

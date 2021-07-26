@@ -1,8 +1,8 @@
 import { GoldenSun } from "../GoldenSun";
 import { RopeDock } from "../interactable_objects/RopeDock";
-import { degree360 } from "../magic_numbers";
-import { get_front_position } from "../utils";
+import { base_actions, get_front_position } from "../utils";
 import { event_types, TileEvent } from "./TileEvent";
+import * as _ from "lodash";
 
 /**
  * An event that deals with walking or climbing (depending on the angle)
@@ -10,6 +10,7 @@ import { event_types, TileEvent } from "./TileEvent";
  */
 export class RopeEvent extends TileEvent {
     private static readonly SWING_SIZE = 2;
+    private static readonly HERO_WALKING_DELTA = 0.015;
 
     /** Whether the char will be walking over the rope. */
     private _walk_over_rope: boolean;
@@ -17,6 +18,8 @@ export class RopeEvent extends TileEvent {
     private _dock_exit_collision_layer: number;
     /** Collision layer that the char will be when walking over the rope. */
     private _rope_collision_layer: number;
+    /** Factor that will increase rope bounce on hero walk. */
+    private _hero_walking_factor: number;
     /** The interactable object that originated this event. Overriding with appropriate inheritance. */
     protected _origin_interactable_object: RopeDock;
 
@@ -111,12 +114,20 @@ export class RopeEvent extends TileEvent {
         const position_ratio_formula = (relative_pos : number) => {
             return 4 * relative_pos * (-relative_pos + 1);
         };
+        this._hero_walking_factor = 0;
         swing_tween.onUpdateCallback(() => {
             this.data.hero.sprite.x = this.data.hero.sprite.body.x;
 
+            if ([base_actions.WALK, base_actions.DASH].includes(this.data.hero.current_action as base_actions)) {
+                this._hero_walking_factor = _.clamp(this._hero_walking_factor + RopeEvent.HERO_WALKING_DELTA, 0, 1);
+            } else {
+                this._hero_walking_factor = _.clamp(this._hero_walking_factor - RopeEvent.HERO_WALKING_DELTA, 0, 1);
+            }
+
             const relative_pos = (this.data.hero.sprite.x - this.origin_interactable_object.x)/this.origin_interactable_object.rope_width;
-            const position_ratio = position_ratio_formula(relative_pos);
-            this.data.hero.sprite.y += swing_object.y * position_ratio
+            const position_ratio = position_ratio_formula(relative_pos) * this._hero_walking_factor;
+
+            this.data.hero.sprite.y += swing_object.y * position_ratio;
 
             const rope_fragments_group = this.origin_interactable_object.rope_fragments_group;
             for (let i = 0; i < rope_fragments_group.children.length; ++i) {
