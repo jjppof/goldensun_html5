@@ -5,11 +5,11 @@ import { event_types, TileEvent } from "./TileEvent";
 import * as _ from "lodash";
 
 /**
- * An event that deals with walking or climbing (depending on the angle)
+ * An event that deals with walking or climbing (depending on the rope angle)
  * over a rope.
  */
 export class RopeEvent extends TileEvent {
-    private static readonly SWING_SIZE = 2;
+    private static readonly SWING_SIZE = 8;
     private static readonly HERO_WALKING_DELTA = 0.015;
 
     /** Whether the char will be walking over the rope. */
@@ -78,10 +78,12 @@ export class RopeEvent extends TileEvent {
             this._starting_rope_dock = this.origin_interactable_object.starting_rope_dock;
         }
 
-        if (this.data.hero.walking_over_rope) {
-            await this.finish_walking();
-        } else {
-            await this.start_walking();
+        if (this._starting_rope_dock) {
+            if (this.data.hero.walking_over_rope) {
+                await this.finish_walking();
+            } else {
+                await this.start_walking();
+            }
         }
 
         this.game.physics.p2.resume();
@@ -116,6 +118,7 @@ export class RopeEvent extends TileEvent {
         });
         this._starting_rope_dock.swing_tween.stop();
         this._starting_rope_dock.swing_tween = null;
+        this._starting_rope_dock.reset_fragments_pos();
         this._starting_rope_dock.set_sprites_z_sorting(false);
         this.data.map.sort_sprites();
         this.data.hero.walking_over_rope = false;
@@ -133,6 +136,7 @@ export class RopeEvent extends TileEvent {
             return 4 * relative_pos * (-relative_pos + 1);
         };
         this._hero_walking_factor = 0;
+        const hero_base_pos_y = this.data.hero.sprite.y;
         this._starting_rope_dock.swing_tween.onUpdateCallback(() => {
             this.data.hero.sprite.x = this.data.hero.sprite.body.x;
 
@@ -145,7 +149,7 @@ export class RopeEvent extends TileEvent {
             const relative_pos = (this.data.hero.sprite.x - this._starting_rope_dock.x)/this._starting_rope_dock.rope_width;
             const position_ratio = position_ratio_formula(relative_pos) * this._hero_walking_factor;
 
-            this.data.hero.sprite.y += swing_object.y * position_ratio;
+            this.data.hero.sprite.y = hero_base_pos_y + swing_object.y * position_ratio;
 
             const rope_fragments_group = this._starting_rope_dock.rope_fragments_group;
             for (let i = 0; i < rope_fragments_group.children.length; ++i) {
@@ -158,7 +162,7 @@ export class RopeEvent extends TileEvent {
                 const position_penalty = position_ratio_formula(relative_frag_pos);
 
                 const variation = swing_object.y * distance_ratio * position_ratio * position_penalty;
-                rope_frag.y += variation;
+                rope_frag.y = this._starting_rope_dock.rope_frag_base_pos[i].y + variation;
             }
         });
     }

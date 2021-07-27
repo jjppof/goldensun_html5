@@ -28,6 +28,11 @@ export class RopeDock extends InteractableObjects {
     private _rope_width: number;
     /** The staring rope dock. null if it's the starting rope dock. */
     private _starting_rope_dock: RopeDock;
+    /** Rope fragments base positions. */
+    private _rope_frag_base_pos: {
+        x: number,
+        y: number
+    }[];
     /** The tween that controls the rope bounce. */
     public swing_tween: Phaser.Tween;
 
@@ -70,6 +75,7 @@ export class RopeDock extends InteractableObjects {
         this._is_rope_dock = true;
         this._starting_rope_dock = null;
         this.swing_tween = null;
+        this._rope_frag_base_pos = [];
     }
 
     /** Groups that holds the rope fragments. */
@@ -90,6 +96,11 @@ export class RopeDock extends InteractableObjects {
     /** Whether this event is the rope starting dock. */
     get is_starting_dock() {
         return this._is_starting_dock;
+    }
+
+    /** Rope fragments base positions. */
+    get rope_frag_base_pos() {
+        return this._rope_frag_base_pos;
     }
 
     /**
@@ -157,6 +168,10 @@ export class RopeDock extends InteractableObjects {
             sprite.anchor.setTo(0.5, 0.5);
             sprite.x = base_x * i;
             sprite.y = base_y * i;
+            this._rope_frag_base_pos.push({
+                x: sprite.x,
+                y: sprite.y
+            });
             sprite.rotation = fragment_angle;
 
             this._extra_sprites.push(sprite);
@@ -178,6 +193,17 @@ export class RopeDock extends InteractableObjects {
     }
 
     /**
+     * Resets fragments position.
+     */
+    reset_fragments_pos() {
+        for (let i = 0; i < this.rope_fragments_group.children.length; ++i) {
+            const rope_frag = this.rope_fragments_group.children[i];
+            rope_frag.x = this.rope_frag_base_pos[i].x;
+            rope_frag.y = this.rope_frag_base_pos[i].y;
+        }
+    }
+
+    /**
      * Sets the rope fragments z sorting order by sending them to back or not.
      * @param send_to_back if true, the rope fragments are sent to back.
      */
@@ -194,7 +220,7 @@ export class RopeDock extends InteractableObjects {
     custom_unset() {
         this._starting_rope_dock = null;
         if (this.swing_tween) {
-            this.swing_tween.stop;
+            this.swing_tween.stop();
             this.swing_tween = null;
         }
     }
