@@ -146,7 +146,10 @@ export class ClimbEvent extends TileEvent {
         if (activation_direction === directions.up) {
             for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
                 const next_interactable_object = this.data.map.interactable_objects[i];
-                if (next_interactable_object.tile_x_pos !== this.x || next_interactable_object.tile_y_pos !== this.y - 1)
+                if (
+                    next_interactable_object.tile_x_pos !== this.x ||
+                    next_interactable_object.tile_y_pos !== this.y - 1
+                )
                     continue;
                 if (this.change_to_collision_layer !== next_interactable_object.base_collision_layer) continue;
                 this.game.physics.p2.resume();

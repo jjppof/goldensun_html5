@@ -1,5 +1,14 @@
 import * as numbers from "./magic_numbers";
-import {reverse_directions, base_actions, directions, range_360, get_transition_directions, get_centered_pos_in_px, get_distance, get_tile_position} from "./utils";
+import {
+    reverse_directions,
+    base_actions,
+    directions,
+    range_360,
+    get_transition_directions,
+    get_centered_pos_in_px,
+    get_distance,
+    get_tile_position,
+} from "./utils";
 import {Footsteps} from "./utils/Footsteps";
 import {GoldenSun} from "./GoldenSun";
 import {SpriteBase} from "./SpriteBase";
@@ -533,7 +542,7 @@ export abstract class ControllableChar {
             /**
              * The jump distance that this char will perform. If not given,
              * this char will jump into the center of the destination.
-            */
+             */
             distance?: number;
             /** The distance multiplier that will be applied to the final jump distance. */
             distance_multiplier?: number;
@@ -547,7 +556,7 @@ export abstract class ControllableChar {
         /** Whether the char will bounce on jump finish. Only for vertical jumps. */
         bounce?: boolean;
         /** Whether the char shadow will remain hidden after jump. */
-        keep_shadow_hidden?: boolean
+        keep_shadow_hidden?: boolean;
     }) {
         const duration = options?.duration ?? 65;
         const jump_height = options?.jump_height ?? 12;
@@ -564,9 +573,10 @@ export abstract class ControllableChar {
             //deals with jumps that have a different position from the current char position.
             const dest_char = {
                 x: options.dest.x ?? get_centered_pos_in_px(options.dest.tile_x, this.data.map.tile_width),
-                y: options.dest.y ?? get_centered_pos_in_px(options.dest.tile_y, this.data.map.tile_height)
+                y: options.dest.y ?? get_centered_pos_in_px(options.dest.tile_y, this.data.map.tile_height),
             };
-            const is_jump_over_x_axis = (options.dest.tile_x ?? get_tile_position(dest_char.x, this.data.map.tile_width)) === this.tile_x_pos;
+            const is_jump_over_x_axis =
+                (options.dest.tile_x ?? get_tile_position(dest_char.x, this.data.map.tile_width)) === this.tile_x_pos;
             const axis: "x" | "y" = is_jump_over_x_axis ? "y" : "x";
             let distance: number;
             if (options.dest.distance !== undefined) {
@@ -579,7 +589,7 @@ export abstract class ControllableChar {
             }
             const distance_multiplier = options.dest.distance_multiplier ?? 1.0;
             const tween_obj: {x?: number; y?: number | number[]} = {
-                [axis]: this.sprite[axis] + (distance * distance_multiplier),
+                [axis]: this.sprite[axis] + distance * distance_multiplier,
             };
             const jump_direction = options.jump_direction ?? this.current_direction;
             if (axis === "x") {
@@ -1160,7 +1170,8 @@ export abstract class ControllableChar {
     protected apply_speed() {
         if (
             [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(this.current_action as base_actions) ||
-            (this.sliding_on_ice && this.ice_sliding_active) || this.walking_over_rope
+            (this.sliding_on_ice && this.ice_sliding_active) ||
+            this.walking_over_rope
         ) {
             //sets the final velocity
             this.sprite.body.velocity.x = this.temp_velocity_x;

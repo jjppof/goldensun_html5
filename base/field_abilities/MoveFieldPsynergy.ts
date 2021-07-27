@@ -1,9 +1,17 @@
 import * as numbers from "../magic_numbers";
-import {directions, reverse_directions, join_directions, base_actions, get_front_position, get_distance, get_centered_pos_in_px} from "../utils";
+import {
+    directions,
+    reverse_directions,
+    join_directions,
+    base_actions,
+    get_front_position,
+    get_distance,
+    get_centered_pos_in_px,
+} from "../utils";
 import {FieldAbilities} from "./FieldAbilities";
 import {SpriteBase} from "../SpriteBase";
 import {Button} from "../XGamepad";
-import { Pushable } from "../interactable_objects/Pushable";
+import {Pushable} from "../interactable_objects/Pushable";
 
 export class MoveFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "move";
@@ -70,7 +78,12 @@ export class MoveFieldPsynergy extends FieldAbilities {
     fire_push() {
         if (this.data.map.collision_layer === this.target_object.base_collision_layer) {
             const item_position = this.target_object.get_current_position(this.data.map);
-            const from_position = get_front_position(item_position.x, item_position.y, this.controllable_char.trying_to_push_direction, false);
+            const from_position = get_front_position(
+                item_position.x,
+                item_position.y,
+                this.controllable_char.trying_to_push_direction,
+                false
+            );
             const position_allowed = this.target_object.position_allowed(from_position.x, from_position.y);
             if (
                 position_allowed &&
@@ -135,15 +148,27 @@ export class MoveFieldPsynergy extends FieldAbilities {
                         char_change_dir_timer.timer.start();
                     },
                     () => {
-                        const pos_sqr_distance = get_distance(this.controllable_char.sprite.body.x, this.target_object.sprite.body.x, this.controllable_char.sprite.body.y, this.target_object.sprite.body.y, false);
+                        const pos_sqr_distance = get_distance(
+                            this.controllable_char.sprite.body.x,
+                            this.target_object.sprite.body.x,
+                            this.controllable_char.sprite.body.y,
+                            this.target_object.sprite.body.y,
+                            false
+                        );
                         const rad_sqr_distance = Math.pow(
                             numbers.HERO_BODY_RADIUS +
                                 this.data.dbs.interactable_objects_db[this.target_object.key_name].body_radius,
                             2
                         );
                         if (pos_sqr_distance <= rad_sqr_distance) {
-                            this.controllable_char.sprite.body.x = get_centered_pos_in_px(this.controllable_char.tile_x_pos, this.data.map.tile_width);
-                            this.controllable_char.sprite.body.y = get_centered_pos_in_px(this.controllable_char.tile_y_pos, this.data.map.tile_height);
+                            this.controllable_char.sprite.body.x = get_centered_pos_in_px(
+                                this.controllable_char.tile_x_pos,
+                                this.data.map.tile_width
+                            );
+                            this.controllable_char.sprite.body.y = get_centered_pos_in_px(
+                                this.controllable_char.tile_y_pos,
+                                this.data.map.tile_height
+                            );
                             this.controllable_char.shadow.x = this.controllable_char.sprite.body.x;
                             this.controllable_char.shadow.y = this.controllable_char.sprite.body.y;
                         }

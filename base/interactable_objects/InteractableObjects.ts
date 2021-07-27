@@ -1,12 +1,20 @@
 import {SpriteBase} from "../SpriteBase";
 import {event_types, LocationKey, TileEvent} from "../tile_events/TileEvent";
 import * as numbers from "../magic_numbers";
-import {directions, get_centered_pos_in_px, get_directions, get_opposite_direction, get_surroundings, mount_collision_polygon, reverse_directions} from "../utils";
+import {
+    directions,
+    get_centered_pos_in_px,
+    get_directions,
+    get_opposite_direction,
+    get_surroundings,
+    mount_collision_polygon,
+    reverse_directions,
+} from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {ClimbEvent} from "../tile_events/ClimbEvent";
 import {GoldenSun} from "../GoldenSun";
 import {Map} from "../Map";
-import { RopeEvent } from "../tile_events/RopeEvent";
+import {RopeEvent} from "../tile_events/RopeEvent";
 
 export enum interactable_object_interaction_types {
     ONCE = "once",
@@ -17,7 +25,7 @@ export enum interactable_object_event_types {
     JUMP = "jump",
     JUMP_AROUND = "jump_around",
     CLIMB = "climb",
-    ROPE = "rope"
+    ROPE = "rope",
 }
 
 export class InteractableObjects {
@@ -342,7 +350,10 @@ export class InteractableObjects {
         let x_pos = position.x;
         let y_pos = position.y;
         for (let i = 0; i < this.data.dbs.interactable_objects_db[this.key_name].events.length; ++i) {
-            const event_info = Object.assign(this.data.dbs.interactable_objects_db[this.key_name].events[i], this.tile_events_info[i] ?? {});
+            const event_info = Object.assign(
+                this.data.dbs.interactable_objects_db[this.key_name].events[i],
+                this.tile_events_info[i] ?? {}
+            );
             x_pos += event_info.x_shift ?? 0;
             y_pos += event_info.y_shift ?? 0;
             const collision_layer_shift = this.tile_events_info[i]?.collision_layer_shift ?? 0;
@@ -359,7 +370,15 @@ export class InteractableObjects {
                     this.set_stair_event(i, event_info, x_pos, y_pos, active_event, target_layer, map.events);
                     break;
                 case interactable_object_event_types.ROPE:
-                    this.set_rope_event(event_info, x_pos, y_pos, active_event, target_layer, map.events, map.collision_layer);
+                    this.set_rope_event(
+                        event_info,
+                        x_pos,
+                        y_pos,
+                        active_event,
+                        target_layer,
+                        map.events,
+                        map.collision_layer
+                    );
                     break;
             }
         }
@@ -430,14 +449,15 @@ export class InteractableObjects {
         map_events: Map["events"],
         collision_layer: number
     ) {
-        const activation_directions = event_info.activation_directions ?? get_directions(false).map(dir => reverse_directions[dir]);
+        const activation_directions =
+            event_info.activation_directions ?? get_directions(false).map(dir => reverse_directions[dir]);
         [null, ...activation_directions].forEach((direction_label: string) => {
             let activation_collision_layer = target_layer;
             let activation_direction = direction_label;
             const direction = direction_label === null ? direction_label : directions[direction_label];
             let x = x_pos;
             let y = y_pos;
-            switch(direction) {
+            switch (direction) {
                 case directions.up:
                     ++y;
                     break;
@@ -451,7 +471,9 @@ export class InteractableObjects {
                     ++x;
                     break;
                 case null:
-                    activation_direction = activation_directions.map(dir => reverse_directions[get_opposite_direction(directions[dir as string])]);
+                    activation_direction = activation_directions.map(
+                        dir => reverse_directions[get_opposite_direction(directions[dir as string])]
+                    );
                     activation_collision_layer = event_info.rope_collision_layer;
                     break;
                 default:
@@ -685,7 +707,7 @@ export class InteractableObjects {
     /**
      * Method to be overriden.
      */
-    custom_unset() {};
+    custom_unset() {}
 
     unset(remove_from_npc_group: boolean = true) {
         if (this.sprite) {

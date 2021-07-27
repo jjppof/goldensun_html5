@@ -181,7 +181,12 @@ export function get_transition_directions(current_direction: directions, desired
  * @param strict_cardinal if true, returns null on diagonal input. Otherwise, returns input as is.
  * @returns the front position.
  */
-export function get_front_position(x_pos: number, y_pos: number, direction: directions, strict_cardinal: boolean = true) {
+export function get_front_position(
+    x_pos: number,
+    y_pos: number,
+    direction: directions,
+    strict_cardinal: boolean = true
+) {
     switch (direction) {
         case directions.up:
             --y_pos;
@@ -202,7 +207,7 @@ export function get_front_position(x_pos: number, y_pos: number, direction: dire
     }
     return {
         x: x_pos,
-        y: y_pos
+        y: y_pos,
     };
 }
 
@@ -263,7 +268,7 @@ export function get_tile_position(pos: number, tile_size: number) {
  * @param square_root if false, returns the distance to the square.
  * @returns return the distance value.
  */
-export function get_distance(x1: number, x2: number, y1: number, y2:number, square_root: boolean = true) {
+export function get_distance(x1: number, x2: number, y1: number, y2: number, square_root: boolean = true) {
     const sqr_distance = Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2);
     if (square_root) {
         return Math.sqrt(sqr_distance);

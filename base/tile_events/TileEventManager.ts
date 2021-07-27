@@ -5,7 +5,7 @@ import {CollisionEvent} from "./CollisionEvent";
 import {EventTriggerEvent} from "./EventTriggerEvent";
 import {IceSlideEvent} from "./IceSlideEvent";
 import {JumpEvent} from "./JumpEvent";
-import { RopeEvent } from "./RopeEvent";
+import {RopeEvent} from "./RopeEvent";
 import {SliderEvent} from "./SliderEvent";
 import {SpeedEvent} from "./SpeedEvent";
 import {StepEvent} from "./StepEvent";

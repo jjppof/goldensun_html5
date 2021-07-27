@@ -1,6 +1,6 @@
-import { Map } from "../Map";
-import { get_centered_pos_in_px, get_distance } from "../utils";
-import { InteractableObjects } from "./InteractableObjects";
+import {Map} from "../Map";
+import {get_centered_pos_in_px, get_distance} from "../utils";
+import {InteractableObjects} from "./InteractableObjects";
 
 /**
  * The rope dock interactable object. The rope fragments and rope events are
@@ -30,8 +30,8 @@ export class RopeDock extends InteractableObjects {
     private _starting_rope_dock: RopeDock;
     /** Rope fragments base positions. */
     private _rope_frag_base_pos: {
-        x: number,
-        y: number
+        x: number;
+        y: number;
     }[];
     /** The tween that controls the rope bounce. */
     public swing_tween: Phaser.Tween;
@@ -70,7 +70,7 @@ export class RopeDock extends InteractableObjects {
             scale_x,
             scale_y,
             block_climb_collision_layer_shift,
-            events_info,
+            events_info
         );
         this._is_rope_dock = true;
         this._starting_rope_dock = null;
@@ -138,10 +138,15 @@ export class RopeDock extends InteractableObjects {
         }
 
         this.sprite.sort_function_end = () => {
-            if (this.data.npc_group.getChildIndex(this.sprite) > this.data.npc_group.getChildIndex(rope_fragments_group)) {
+            if (
+                this.data.npc_group.getChildIndex(this.sprite) > this.data.npc_group.getChildIndex(rope_fragments_group)
+            ) {
                 this.data.npc_group.setChildIndex(this.sprite, this.data.npc_group.getChildIndex(rope_fragments_group));
             } else {
-                this.data.npc_group.setChildIndex(this.sprite, this.data.npc_group.getChildIndex(rope_fragments_group) - 1);
+                this.data.npc_group.setChildIndex(
+                    this.sprite,
+                    this.data.npc_group.getChildIndex(rope_fragments_group) - 1
+                );
             }
         };
     }
@@ -181,7 +186,7 @@ export class RopeDock extends InteractableObjects {
             sprite.y = base_y * i;
             this._rope_frag_base_pos.push({
                 x: sprite.x,
-                y: sprite.y
+                y: sprite.y,
             });
             sprite.rotation = fragment_angle;
 

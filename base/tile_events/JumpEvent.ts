@@ -1,7 +1,14 @@
 import {event_types, LocationKey, TileEvent} from "./TileEvent";
 import * as numbers from "../magic_numbers";
 import * as _ from "lodash";
-import {get_surroundings, get_opposite_direction, directions, split_direction, direction_range, get_centered_pos_in_px} from "../utils";
+import {
+    get_surroundings,
+    get_opposite_direction,
+    directions,
+    split_direction,
+    direction_range,
+    get_centered_pos_in_px,
+} from "../utils";
 import {GoldenSun} from "../GoldenSun";
 import {Map} from "../Map";
 

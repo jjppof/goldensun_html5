@@ -9,8 +9,8 @@ import {ControllableChar} from "./ControllableChar";
 import {base_actions} from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
-import { Pushable } from "./interactable_objects/Pushable";
-import { RopeDock } from "./interactable_objects/RopeDock";
+import {Pushable} from "./interactable_objects/Pushable";
+import {RopeDock} from "./interactable_objects/RopeDock";
 
 export class Map {
     private static readonly MAX_CAMERA_ROTATION = 0.035;
@@ -572,7 +572,12 @@ export class Map {
             property_info.events_info
         );
         if (interactable_object.is_rope_dock) {
-            (interactable_object as RopeDock).intialize_dock_info(property_info.dest_x, property_info.dest_y, property_info.starting_dock, property_info.tied);
+            (interactable_object as RopeDock).intialize_dock_info(
+                property_info.dest_x,
+                property_info.dest_y,
+                property_info.starting_dock,
+                property_info.tied
+            );
         }
         this.interactable_objects.push(interactable_object);
         return interactable_object;

@@ -1,10 +1,18 @@
 import * as numbers from "../magic_numbers";
 import {event_types, LocationKey} from "../tile_events/TileEvent";
-import {get_surroundings, get_opposite_direction, directions, reverse_directions, base_actions, get_centered_pos_in_px, get_front_position} from "../utils";
+import {
+    get_surroundings,
+    get_opposite_direction,
+    directions,
+    reverse_directions,
+    base_actions,
+    get_centered_pos_in_px,
+    get_front_position,
+} from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {InteractableObjects} from "./InteractableObjects";
-import { ControllableChar } from "../ControllableChar";
-import { ClimbEvent } from "../tile_events/ClimbEvent";
+import {ControllableChar} from "../ControllableChar";
+import {ClimbEvent} from "../tile_events/ClimbEvent";
 
 export class Pushable extends InteractableObjects {
     private static readonly DUST_COUNT = 7;
@@ -47,7 +55,7 @@ export class Pushable extends InteractableObjects {
             scale_x,
             scale_y,
             block_climb_collision_layer_shift,
-            events_info,
+            events_info
         );
         this._pushable = true;
     }
@@ -60,9 +68,7 @@ export class Pushable extends InteractableObjects {
             char.trying_to_push = true;
             if (char.push_timer === null) {
                 char.set_trying_to_push_direction(char.current_direction);
-                const events_in_pos = this.data.map.events[
-                    LocationKey.get_key(this.tile_x_pos, this.tile_y_pos)
-                ];
+                const events_in_pos = this.data.map.events[LocationKey.get_key(this.tile_x_pos, this.tile_y_pos)];
                 let has_stair = false;
                 if (events_in_pos) {
                     events_in_pos.forEach(event => {
@@ -78,13 +84,18 @@ export class Pushable extends InteractableObjects {
                 }
                 if (!has_stair) {
                     const item_position = this.get_current_position(this.data.map);
-                    const front_pos = get_front_position(item_position.x, item_position.y, char.trying_to_push_direction, false);
+                    const front_pos = get_front_position(
+                        item_position.x,
+                        item_position.y,
+                        char.trying_to_push_direction,
+                        false
+                    );
                     if (this.position_allowed(front_pos.x, front_pos.y)) {
                         char.set_push_timer(() => {
                             this.normal_push(char);
                             char.trying_to_push = false;
                             char.unset_push_timer();
-                        })
+                        });
                     }
                 }
             }
@@ -110,14 +121,7 @@ export class Pushable extends InteractableObjects {
         enable_physics_at_end = true,
         on_push_update?: () => void
     ) {
-        this.fire_push_movement(
-            char,
-            push_end,
-            before_move,
-            true,
-            enable_physics_at_end,
-            on_push_update
-        );
+        this.fire_push_movement(char, push_end, before_move, true, enable_physics_at_end, on_push_update);
     }
 
     fire_push_movement(
@@ -221,17 +225,11 @@ export class Pushable extends InteractableObjects {
                     let drop_found = false;
                     if (i === sprites.length - 1) {
                         this.object_drop_tiles.forEach(drop_tile => {
-                            if (
-                                drop_tile.x === this.tile_x_pos &&
-                                drop_tile.y === this.tile_y_pos
-                            ) {
+                            if (drop_tile.x === this.tile_x_pos && drop_tile.y === this.tile_y_pos) {
                                 drop_found = true;
                                 const dest_y_shift_px =
                                     (drop_tile.dest_y - this.tile_y_pos) * this.data.map.tile_height;
-                                this.shift_events(
-                                    0,
-                                    drop_tile.dest_y - this.tile_y_pos
-                                );
+                                this.shift_events(0, drop_tile.dest_y - this.tile_y_pos);
                                 this.set_tile_position({y: drop_tile.dest_y});
                                 this.change_collision_layer(drop_tile.destination_collision_layer);
                                 this.game.add
@@ -248,10 +246,7 @@ export class Pushable extends InteractableObjects {
                                         this.data.audio.play_se("misc/rock_drop");
                                         if (drop_tile.dust_animation) {
                                             char.change_action(base_actions.IDLE);
-                                            char.play(
-                                                char.current_action,
-                                                reverse_directions[char.current_direction]
-                                            );
+                                            char.play(char.current_action, reverse_directions[char.current_direction]);
                                             this.dust_animation(promise_resolve);
                                         } else {
                                             promise_resolve();
@@ -311,8 +306,7 @@ export class Pushable extends InteractableObjects {
                     for (let k = 0; k < this.data.map.events[old_key].length; ++k) {
                         const old_surr_event = this.data.map.events[old_key][k];
                         if (old_surr_event.type === event_types.JUMP) {
-                            const target_layer =
-                                event.collision_layer_shift_from_source + this.base_collision_layer;
+                            const target_layer = event.collision_layer_shift_from_source + this.base_collision_layer;
                             if (
                                 old_surr_event.activation_collision_layers.includes(target_layer) &&
                                 old_surr_event.dynamic === false
@@ -354,7 +348,7 @@ export class Pushable extends InteractableObjects {
             dust_sprite_base.setAnimation(dust_sprite, Pushable.DUST_KEY);
             const animation_key = dust_sprite_base.getAnimationKey(Pushable.DUST_KEY, Pushable.DUST_ANIM_KEY);
             let resolve_func;
-            promises[i] = new Promise(resolve => resolve_func = resolve);
+            promises[i] = new Promise(resolve => (resolve_func = resolve));
             dust_sprite.animations.getAnimation(animation_key).onComplete.addOnce(resolve_func);
             dust_sprite.animations.play(animation_key);
         }
@@ -365,5 +359,4 @@ export class Pushable extends InteractableObjects {
             promise_resolve();
         });
     }
-
 }

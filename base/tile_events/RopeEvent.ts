@@ -1,7 +1,7 @@
-import { GoldenSun } from "../GoldenSun";
-import { RopeDock } from "../interactable_objects/RopeDock";
-import { base_actions, get_front_position } from "../utils";
-import { event_types, TileEvent } from "./TileEvent";
+import {GoldenSun} from "../GoldenSun";
+import {RopeDock} from "../interactable_objects/RopeDock";
+import {base_actions, get_front_position} from "../utils";
+import {event_types, TileEvent} from "./TileEvent";
 import * as _ from "lodash";
 
 /**
@@ -40,7 +40,7 @@ export class RopeEvent extends TileEvent {
         origin_interactable_object: RopeDock,
         walk_over_rope: boolean,
         dock_exit_collision_layer: number,
-        rope_collision_layer: number,
+        rope_collision_layer: number
     ) {
         super(
             game,
@@ -100,7 +100,7 @@ export class RopeEvent extends TileEvent {
                 x: this.origin_interactable_object.sprite.centerX,
                 y: this.origin_interactable_object.sprite.centerY - 5,
             },
-            keep_shadow_hidden: true
+            keep_shadow_hidden: true,
         });
         this.data.hero.sprite.bodyAttached = false;
         this.data.hero.walking_over_rope = true;
@@ -110,12 +110,16 @@ export class RopeEvent extends TileEvent {
     async finish_walking() {
         this.data.hero.sprite.bodyAttached = true;
         this.data.collision.change_map_body(this._dock_exit_collision_layer);
-        const dest_pos = get_front_position(this.data.hero.tile_x_pos, this.data.hero.tile_y_pos, this.data.hero.current_direction);
+        const dest_pos = get_front_position(
+            this.data.hero.tile_x_pos,
+            this.data.hero.tile_y_pos,
+            this.data.hero.current_direction
+        );
         await this.data.hero.jump({
             dest: {
                 tile_x: dest_pos.x,
-                tile_y: dest_pos.y
-            }
+                tile_y: dest_pos.y,
+            },
         });
         this._starting_rope_dock.swing_tween.stop();
         this._starting_rope_dock.swing_tween = null;
@@ -128,12 +132,20 @@ export class RopeEvent extends TileEvent {
     intialize_swing() {
         const half_height = RopeEvent.SWING_SIZE >> 1;
         const swing_object = {
-            y: -half_height
+            y: -half_height,
         };
-        this._starting_rope_dock.swing_tween = this.game.add.tween(swing_object).to({
-            y: half_height
-        }, RopeEvent.SWING_TIME, Phaser.Easing.Quadratic.InOut, true, 0, -1, true);
-        const position_ratio_formula = (relative_pos : number) => {
+        this._starting_rope_dock.swing_tween = this.game.add.tween(swing_object).to(
+            {
+                y: half_height,
+            },
+            RopeEvent.SWING_TIME,
+            Phaser.Easing.Quadratic.InOut,
+            true,
+            0,
+            -1,
+            true
+        );
+        const position_ratio_formula = (relative_pos: number) => {
             return 4 * relative_pos * (-relative_pos + 1);
         };
         this._hero_walking_factor = 0;
@@ -147,7 +159,8 @@ export class RopeEvent extends TileEvent {
                 this._hero_walking_factor = _.clamp(this._hero_walking_factor - RopeEvent.HERO_WALKING_DELTA, 0, 1);
             }
 
-            const relative_pos = (this.data.hero.sprite.x - this._starting_rope_dock.x)/this._starting_rope_dock.rope_width;
+            const relative_pos =
+                (this.data.hero.sprite.x - this._starting_rope_dock.x) / this._starting_rope_dock.rope_width;
             const position_ratio = position_ratio_formula(relative_pos) * this._hero_walking_factor;
 
             this.data.hero.sprite.y = hero_base_pos_y + swing_object.y * position_ratio;
@@ -159,7 +172,8 @@ export class RopeEvent extends TileEvent {
                 const hero_frag_dist = Math.abs(rope_frag_x - this.data.hero.sprite.x) | 0;
                 const distance_ratio = 1 - hero_frag_dist / this._starting_rope_dock.rope_width;
 
-                const relative_frag_pos = (rope_frag_x - this._starting_rope_dock.x)/this._starting_rope_dock.rope_width;
+                const relative_frag_pos =
+                    (rope_frag_x - this._starting_rope_dock.x) / this._starting_rope_dock.rope_width;
                 const position_penalty = position_ratio_formula(relative_frag_pos);
 
                 const variation = swing_object.y * distance_ratio * position_ratio * position_penalty;
