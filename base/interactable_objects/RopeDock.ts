@@ -128,11 +128,22 @@ export class RopeDock extends InteractableObjects {
             this.play(RopeDock.ROPE_DOCK_KEY, RopeDock.ROPE_DOCK_EMPTY);
         }
 
+        let rope_fragments_group: Phaser.Group;
         if (this._is_starting_dock) {
             this.set_rope_fragments(map);
+            rope_fragments_group = this.rope_fragments_group;
         } else {
             this.find_starting_dock(map);
+            rope_fragments_group = this._starting_rope_dock.rope_fragments_group;
         }
+
+        this.sprite.sort_function_end = () => {
+            if (this.data.npc_group.getChildIndex(this.sprite) > this.data.npc_group.getChildIndex(rope_fragments_group)) {
+                this.data.npc_group.setChildIndex(this.sprite, this.data.npc_group.getChildIndex(rope_fragments_group));
+            } else {
+                this.data.npc_group.setChildIndex(this.sprite, this.data.npc_group.getChildIndex(rope_fragments_group) - 1);
+            }
+        };
     }
 
     /**

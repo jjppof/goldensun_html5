@@ -9,7 +9,8 @@ import * as _ from "lodash";
  * over a rope.
  */
 export class RopeEvent extends TileEvent {
-    private static readonly SWING_SIZE = 8;
+    private static readonly SWING_SIZE = 6;
+    private static readonly SWING_TIME = 175;
     private static readonly HERO_WALKING_DELTA = 0.015;
 
     /** Whether the char will be walking over the rope. */
@@ -131,7 +132,7 @@ export class RopeEvent extends TileEvent {
         };
         this._starting_rope_dock.swing_tween = this.game.add.tween(swing_object).to({
             y: half_height
-        }, 300, Phaser.Easing.Quadratic.InOut, true, 0, -1, true);
+        }, RopeEvent.SWING_TIME, Phaser.Easing.Quadratic.InOut, true, 0, -1, true);
         const position_ratio_formula = (relative_pos : number) => {
             return 4 * relative_pos * (-relative_pos + 1);
         };

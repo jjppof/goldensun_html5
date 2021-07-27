@@ -15,8 +15,8 @@ export abstract class ControllableChar {
     private static readonly DEFAULT_SPRITE_ANCHOR_Y = 0.8;
     private static readonly SLIDE_ICE_SPEED = 95;
     private static readonly SLIDE_ICE_WALK_FRAME_RATE = 20;
-    private static readonly WALK_OVER_ROPE_SPEED = 25;
-    private static readonly WALK_OVER_ROPE_FRAME_RATE = 4;
+    private static readonly WALK_OVER_ROPE_SPEED = 30;
+    private static readonly WALK_OVER_ROPE_FRAME_RATE = 5;
     private static readonly INTERACTION_RANGE_ANGLE = numbers.degree75;
 
     private static readonly default_anchor = {

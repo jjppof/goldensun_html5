@@ -4841,6 +4841,7 @@ declare module Phaser {
         disableRoundPx: boolean;
         roundPx: boolean;
         sort_function: Function;
+        sort_function_end: Function;
         send_to_back: boolean;
         send_to_front: boolean;
         is_npc: boolean;

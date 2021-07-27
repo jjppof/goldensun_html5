@@ -154,15 +154,22 @@ export class Map {
     }
 
     /**
-     * Sorts the sprites in the GoldenSun.npc_group by y position and collision layer.
+     * Sorts the sprites in the GoldenSun.npc_group by y position and base_collision_layer
+     * properties. After this first sort, send_to_front, sort_function, send_to_back and sort_function_end
+     * are properties are checked in this order.
      */
     sort_sprites() {
+        //maybe these array initializations need a better performative approach...
         const send_to_back_list = new Array(this.data.npc_group.children.length);
         const send_to_front_list = new Array(this.data.npc_group.children.length);
         const has_sort_function = new Array(this.data.npc_group.children.length);
+        const has_sort_end_function = new Array(this.data.npc_group.children.length);
         this.data.npc_group.children.forEach((sprite: Phaser.Sprite, index) => {
             if (sprite.sort_function) {
                 has_sort_function[index] = sprite;
+                return;
+            } else if (sprite.sort_function_end) {
+                has_sort_end_function[index] = sprite;
                 return;
             } else if (sprite.send_to_back) {
                 send_to_back_list[index] = sprite;
@@ -198,6 +205,11 @@ export class Map {
         send_to_back_list.forEach(sprite => {
             if (sprite) {
                 this.data.npc_group.sendToBack(sprite);
+            }
+        });
+        has_sort_end_function.forEach(sprite => {
+            if (sprite) {
+                sprite.sort_function_end();
             }
         });
     }
