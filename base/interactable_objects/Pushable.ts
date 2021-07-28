@@ -75,7 +75,9 @@ export class Pushable extends InteractableObjects {
                         if (
                             event.type === event_types.CLIMB &&
                             (event as ClimbEvent).is_set &&
-                            event.activation_directions.includes(char.trying_to_push_direction)
+                            event.activation_directions.includes(char.trying_to_push_direction) &&
+                            event.activation_collision_layers.includes(this.data.map.collision_layer) &&
+                            !event.dynamic
                         ) {
                             has_stair = true;
                             return;

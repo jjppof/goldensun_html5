@@ -14,6 +14,7 @@ import {GoldenSun} from "./GoldenSun";
 import {SpriteBase} from "./SpriteBase";
 import {Map} from "./Map";
 import {Camera} from "./Camera";
+import {Pushable} from "./interactable_objects/Pushable";
 
 export abstract class ControllableChar {
     private static readonly DEFAULT_SHADOW_KEYNAME = "shadow";
@@ -38,14 +39,13 @@ export abstract class ControllableChar {
     private _key_name: string;
 
     /* properties the controls the movement speed */
-    protected _x_speed: number;
-    protected _y_speed: number;
+    protected _current_speed: {x: number; y: number};
+    protected _temp_speed: {x: number; y: number};
+    protected _force_diagonal_speed: {x: number; y: number};
     private _extra_speed: number;
     private walk_speed: number;
     private dash_speed: number;
     private climb_speed: number;
-    protected temp_velocity_x: number;
-    protected temp_velocity_y: number;
 
     /* char states */
     public stop_by_colliding: boolean;
@@ -111,7 +111,7 @@ export abstract class ControllableChar {
      *  - If the hero is colliding on right direction, which has 0 as value, then this variable will have this value: 00000001.
      *  - Colliding in both left and right direction: 00010001.
      * */
-    protected colliding_directions_mask: number;
+    public colliding_directions_mask: number;
     private _rotating: boolean;
     private _rotating_interval: number;
     private _rotating_elapsed: number;
@@ -134,8 +134,9 @@ export abstract class ControllableChar {
         this.game = game;
         this.data = data;
         this._key_name = key_name;
-        this._x_speed = 0;
-        this._y_speed = 0;
+        this._current_speed = {x: 0, y: 0};
+        this._temp_speed = {x: 0, y: 0};
+        this._force_diagonal_speed = {x: 0, y: 0};
         this._extra_speed = 0;
         this.walk_speed = walk_speed;
         this.dash_speed = dash_speed;
@@ -254,11 +255,14 @@ export abstract class ControllableChar {
         return this._push_timer;
     }
 
-    get x_speed() {
-        return this._x_speed;
+    get current_speed() {
+        return this._current_speed;
     }
-    get y_speed() {
-        return this._y_speed;
+    get temp_speed() {
+        return this._temp_speed;
+    }
+    get force_diagonal_speed() {
+        return this._force_diagonal_speed;
     }
     get extra_speed() {
         return this._extra_speed;
@@ -487,11 +491,11 @@ export abstract class ControllableChar {
      * Sets this char direction from its speed values.
      */
     private choose_direction_by_speed() {
-        if (this.x_speed === 0 && this.y_speed === 0) {
+        if (this.current_speed.x === 0 && this.current_speed.y === 0) {
             this._required_direction = null;
             return;
         }
-        const angle = range_360(Math.atan2(this.y_speed, this.x_speed));
+        const angle = range_360(Math.atan2(this.current_speed.y, this.current_speed.x));
         this._required_direction = (1 + Math.floor((angle - numbers.degree45_half) / numbers.degree45)) & 7;
         this._transition_direction = this.required_direction;
     }
@@ -931,7 +935,7 @@ export abstract class ControllableChar {
      * @param change_sprite if true, sets idle animation.
      */
     stop_char(change_sprite: boolean = true) {
-        this._x_speed = this._y_speed = 0;
+        this._current_speed.x = this._current_speed.y = 0;
         this.choose_direction_by_speed();
         if (this.sprite.body) {
             this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
@@ -1132,11 +1136,11 @@ export abstract class ControllableChar {
      * Calculates this char speed based on its states like walk, dash etc.
      */
     protected calculate_speed() {
-        //when setting temp_velocity_x or temp_velocity_y, it means that these velocities will still be analyzed in collision_dealer function
+        //when setting temp_speed.x or temp_speed.y, it means that these velocities will still be analyzed in Collision.check_char_collision function
         const delta_time = this.game.time.elapsedMS / numbers.DELTA_TIME_FACTOR;
         const apply_speed = (speed_factor: number) => {
-            this.temp_velocity_x = (delta_time * this.x_speed * speed_factor) | 0;
-            this.temp_velocity_y = (delta_time * this.y_speed * speed_factor) | 0;
+            this.temp_speed.x = (delta_time * this.current_speed.x * speed_factor) | 0;
+            this.temp_speed.y = (delta_time * this.current_speed.y * speed_factor) | 0;
         };
         if (this.ice_sliding_active && this.sliding_on_ice) {
             const speed_factor = ControllableChar.SLIDE_ICE_SPEED + this.extra_speed;
@@ -1157,8 +1161,8 @@ export abstract class ControllableChar {
                 (this.data.map.is_world_map ? numbers.WORLD_MAP_SPEED_WALK_REDUCE : 0);
             apply_speed(speed_factor);
         } else if (this.current_action === base_actions.CLIMB) {
-            this.temp_velocity_x = (delta_time * this.x_speed * this.climb_speed) | 0;
-            this.temp_velocity_y = (delta_time * this.y_speed * this.climb_speed) | 0;
+            this.temp_speed.x = (delta_time * this.current_speed.x * this.climb_speed) | 0;
+            this.temp_speed.y = (delta_time * this.current_speed.y * this.climb_speed) | 0;
         } else if (this.current_action === base_actions.IDLE) {
             this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         }
@@ -1174,8 +1178,8 @@ export abstract class ControllableChar {
             this.walking_over_rope
         ) {
             //sets the final velocity
-            this.sprite.body.velocity.x = this.temp_velocity_x;
-            this.sprite.body.velocity.y = this.temp_velocity_y;
+            this.sprite.body.velocity.x = this.temp_speed.x;
+            this.sprite.body.velocity.y = this.temp_speed.y;
         }
     }
 
@@ -1186,11 +1190,49 @@ export abstract class ControllableChar {
      * @param apply_speed if true, the given speed will be applied.
      */
     set_speed(x_speed: number, y_speed: number, apply_speed: boolean = true) {
-        this._x_speed = x_speed ?? this.x_speed;
-        this._y_speed = y_speed ?? this.y_speed;
+        this.current_speed.x = x_speed ?? this.current_speed.x;
+        this.current_speed.y = y_speed ?? this.current_speed.y;
         this.calculate_speed();
         if (apply_speed) {
             this.apply_speed();
+        }
+    }
+
+    /**
+     * Sets some temporary speed values. These temporary values are set before
+     * collision analysis and may suffer changes on it. After collision analysis, they
+     * are indeed applied to actual speed values.
+     * @param x_speed the x speed value.
+     * @param y_speed the y speed value.
+     */
+    set_temporary_speed(x_speed?: number, y_speed?: number) {
+        this.temp_speed.x = x_speed ?? this.temp_speed.x;
+        this.temp_speed.y = y_speed ?? this.temp_speed.y;
+    }
+
+    /**
+     * Checks if this char is colliding with any interactable object and fire any possible interaction with it.
+     * @param contact the p2.ContactEquation in order to check if a collision is happening.
+     */
+    check_interactable_objects(contact: p2.ContactEquation) {
+        let j = 0;
+        for (j = 0; j < this.data.map.interactable_objects.length; ++j) {
+            //check if hero is colliding with any interactable object
+            const interactable_object = this.data.map.interactable_objects[j];
+            const interactable_object_body = interactable_object.sprite.body;
+            if (!interactable_object_body) {
+                continue;
+            }
+            if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
+                if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
+                    if (interactable_object.pushable && (interactable_object as Pushable).check_and_start_push(this)) {
+                        break;
+                    }
+                }
+            }
+        }
+        if (j === this.data.map.interactable_objects.length) {
+            this.trying_to_push = false;
         }
     }
 }

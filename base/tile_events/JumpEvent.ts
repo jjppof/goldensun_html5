@@ -137,7 +137,7 @@ export class JumpEvent extends TileEvent {
                         JumpEvent.set_jump_collision(this.game, this.data);
                         break;
                     } else if (this.dynamic) {
-                        JumpEvent.unset_set_jump_collision(this.data);
+                        this.data.collision.clear_dynamic_events_bodies();
                     }
                 }
             }
@@ -182,15 +182,6 @@ export class JumpEvent extends TileEvent {
             this.data.hero.required_direction ?? this.data.hero.current_direction
         );
         const on_event_direction = _.intersection(possible_directions, this.activation_directions).length;
-
-        //just a function the clear the collision bodies created dynamically
-        const clear_bodies = () => {
-            this.data.collision.enable_map_collision();
-            for (let j = 0; j < this.data.collision.dynamic_jump_events_bodies.length; ++j) {
-                this.data.collision.dynamic_jump_events_bodies[j].destroy();
-            }
-            this.data.collision.dynamic_jump_events_bodies = [];
-        };
 
         //this variable will be used to identify a set of collision bodies created for this particular hero position/situation
         let concatenated_position_keys = String(
@@ -242,7 +233,7 @@ export class JumpEvent extends TileEvent {
         ) {
             this.data.tile_event_manager.walking_on_pillars_tiles.clear();
             this.data.tile_event_manager.walking_on_pillars_tiles.add(concatenated_position_keys);
-            clear_bodies();
+            this.data.collision.clear_dynamic_events_bodies();
 
             //using Set to get unique positions and dont create bodies in same location
             const bodies_location_keys = new Set(
@@ -283,7 +274,7 @@ export class JumpEvent extends TileEvent {
                 body.static = true;
                 body.debug = this.data.hero.sprite.body.debug;
                 body.collides(this.data.collision.hero_collision_group);
-                this.data.collision.dynamic_jump_events_bodies.push(body);
+                this.data.collision.dynamic_events_col_bodies.push(body);
             });
         }
         //if there are dynamic collision bodies created, the current event is not dynamic and the hero is not going
@@ -332,16 +323,16 @@ export class JumpEvent extends TileEvent {
             if (clear_bodies_flag) {
                 //if the hero is not going toward an activation direction of this event, collision bodies are removed
                 this.data.tile_event_manager.walking_on_pillars_tiles.clear();
-                clear_bodies();
+                this.data.collision.clear_dynamic_events_bodies();
             }
         }
     }
 
     static set_jump_collision(game: Phaser.Game, data: GoldenSun) {
-        for (let i = 0; i < data.collision.dynamic_jump_events_bodies.length; ++i) {
-            data.collision.dynamic_jump_events_bodies[i].destroy();
+        for (let i = 0; i < data.collision.dynamic_events_col_bodies.length; ++i) {
+            data.collision.dynamic_events_col_bodies[i].destroy();
         }
-        data.collision.dynamic_jump_events_bodies = [];
+        data.collision.clear_dynamic_events_bodies(false);
         data.tile_event_manager.walking_on_pillars_tiles.clear();
         data.collision.disable_map_collision();
         for (let event_key in data.map.events) {
@@ -386,19 +377,11 @@ export class JumpEvent extends TileEvent {
                         body.static = true;
                         body.debug = data.hero.sprite.body.debug;
                         body.collides(data.collision.hero_collision_group);
-                        data.collision.dynamic_jump_events_bodies.push(body);
+                        data.collision.dynamic_events_col_bodies.push(body);
                     }
                 }
             }
         }
-    }
-
-    static unset_set_jump_collision(data: GoldenSun) {
-        data.collision.enable_map_collision();
-        for (let i = 0; i < data.collision.dynamic_jump_events_bodies.length; ++i) {
-            data.collision.dynamic_jump_events_bodies[i].destroy();
-        }
-        data.collision.dynamic_jump_events_bodies = [];
     }
 
     static active_jump_surroundings(

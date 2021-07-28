@@ -158,9 +158,11 @@ export class FrostFieldPsynergy extends FieldAbilities {
         let target_object = this.target_object;
         blink_timer.loop(150, () => {
             target_object.color_filter.hue_adjust = 5.3;
-            this.game.time.events.add(20, () => {
+            const timer_event = this.game.time.events.add(20, () => {
                 target_object.color_filter.hue_adjust = 0;
             });
+            timer_event.timer.autoDestroy = true;
+            timer_event.timer.start();
         });
         blink_timer.start();
         target_object.sprite.events.onDestroy.add(() => {

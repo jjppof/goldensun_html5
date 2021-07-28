@@ -165,12 +165,14 @@ export class ClimbEvent extends TileEvent {
                 .tween(this.data.hero.sprite.body)
                 .to({y: this.data.hero.sprite.y - 17}, 170, Phaser.Easing.Linear.None, true);
             const final_shadow_pos = this.data.hero.sprite.y - 17;
-            this.game.time.events.add(170, () => {
+            const timer_event = this.game.time.events.add(170, () => {
                 this.data.hero.shadow.y = final_shadow_pos;
                 this.data.hero.shadow.visible = true;
             });
+            timer_event.timer.autoDestroy = true;
+            timer_event.timer.start();
             end_animation.onComplete.addOnce(() => {
-                this.game.time.events.add(
+                const timer_event = this.game.time.events.add(
                     150,
                     () => {
                         this.data.hero.sprite.anchor.y += 0.1;
@@ -179,7 +181,7 @@ export class ClimbEvent extends TileEvent {
                         if (this.dynamic) {
                             this.remove_climb_collision_bodies(false);
                         }
-                        this.game.time.events.add(
+                        const timer_event = this.game.time.events.add(
                             50,
                             () => {
                                 this.data.tile_event_manager.on_event = false;
@@ -191,9 +193,13 @@ export class ClimbEvent extends TileEvent {
                             },
                             this
                         );
+                        timer_event.timer.autoDestroy = true;
+                        timer_event.timer.start();
                     },
                     this
                 );
+                timer_event.timer.autoDestroy = true;
+                timer_event.timer.start();
             });
         } else if (activation_direction === directions.down) {
             if (this.change_to_collision_layer !== null) {
@@ -212,7 +218,7 @@ export class ClimbEvent extends TileEvent {
                     true
                 )
                 .onComplete.addOnce(() => {
-                    this.game.time.events.add(
+                    const timer_event = this.game.time.events.add(
                         50,
                         () => {
                             this.data.tile_event_manager.on_event = false;
@@ -222,6 +228,8 @@ export class ClimbEvent extends TileEvent {
                         },
                         this
                     );
+                    timer_event.timer.autoDestroy = true;
+                    timer_event.timer.start();
                 });
             if (this.dynamic) {
                 this.remove_climb_collision_bodies();
@@ -249,7 +257,7 @@ export class ClimbEvent extends TileEvent {
                 y: this.origin_interactable_object.tile_y_pos + tile_shift.y,
             };
         });
-        JumpEvent.unset_set_jump_collision(this.data);
+        this.data.collision.clear_dynamic_events_bodies();
         this.data.hero.sprite.body.removeCollisionGroup(this.data.collision.map_collision_group, true);
         this.data.map.collision_sprite.body.removeCollisionGroup(this.data.collision.hero_collision_group, true);
         for (let collide_index in this.data.collision.interactable_objs_collision_groups) {

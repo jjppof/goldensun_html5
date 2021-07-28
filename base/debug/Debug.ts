@@ -62,8 +62,8 @@ export class Debug {
     toggle_debug_physics() {
         this.data.hero.sprite.body.debug = !this.data.hero.sprite.body.debug;
         this.update_debug_physics(this.data.hero.sprite.body.debug);
-        for (let i = 0; i < this.data.collision.dynamic_jump_events_bodies.length; ++i) {
-            this.data.collision.dynamic_jump_events_bodies[i].debug = !this.data.collision.dynamic_jump_events_bodies[i]
+        for (let i = 0; i < this.data.collision.dynamic_events_col_bodies.length; ++i) {
+            this.data.collision.dynamic_events_col_bodies[i].debug = !this.data.collision.dynamic_events_col_bodies[i]
                 .debug;
         }
         for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {

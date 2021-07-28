@@ -235,11 +235,11 @@ export class Map {
     private update_map_rotation() {
         if (this.is_world_map) {
             const value_check =
-                Math.abs(this.mode7_filter.angle) < Map.MAX_CAMERA_ROTATION * Math.abs(this.data.hero.x_speed);
-            const sign_check = Math.sign(this.mode7_filter.angle) === this.data.hero.x_speed;
-            if (this.data.hero.x_speed && (value_check || sign_check)) {
-                this.mode7_filter.angle -= Math.sign(this.data.hero.x_speed) * Map.CAMERA_ROTATION_STEP;
-            } else if (!this.data.hero.x_speed && Math.abs(this.mode7_filter.angle) > 0) {
+                Math.abs(this.mode7_filter.angle) < Map.MAX_CAMERA_ROTATION * Math.abs(this.data.hero.current_speed.x);
+            const sign_check = Math.sign(this.mode7_filter.angle) === this.data.hero.current_speed.x;
+            if (this.data.hero.current_speed.x && (value_check || sign_check)) {
+                this.mode7_filter.angle -= Math.sign(this.data.hero.current_speed.x) * Map.CAMERA_ROTATION_STEP;
+            } else if (!this.data.hero.current_speed.x && Math.abs(this.mode7_filter.angle) > 0) {
                 this.mode7_filter.angle -= Math.sign(this.mode7_filter.angle) * Map.CAMERA_ROTATION_STEP;
             }
         }
