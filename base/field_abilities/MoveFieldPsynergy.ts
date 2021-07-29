@@ -144,7 +144,6 @@ export class MoveFieldPsynergy extends FieldAbilities {
                             );
                             this.controllable_char.sprite.animations.frameName = frame_name;
                         });
-                        char_change_dir_timer.timer.autoDestroy = true;
                         char_change_dir_timer.timer.start();
                     },
                     () => {
@@ -270,7 +269,6 @@ export class MoveFieldPsynergy extends FieldAbilities {
                         this.finish_hand();
                         this.unset_hero_cast_anim();
                     });
-                    finish_timer.timer.autoDestroy = true;
                     finish_timer.timer.start();
                 }
             });
@@ -373,7 +371,6 @@ export class MoveFieldPsynergy extends FieldAbilities {
         const vanish_timer = this.game.time.events.add(lifetime, () => {
             this.unset_final_emitter();
         });
-        vanish_timer.timer.autoDestroy = true;
         vanish_timer.timer.start();
     }
 

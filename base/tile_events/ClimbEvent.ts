@@ -169,7 +169,6 @@ export class ClimbEvent extends TileEvent {
                 this.data.hero.shadow.y = final_shadow_pos;
                 this.data.hero.shadow.visible = true;
             });
-            timer_event.timer.autoDestroy = true;
             timer_event.timer.start();
             end_animation.onComplete.addOnce(() => {
                 const timer_event = this.game.time.events.add(
@@ -193,12 +192,10 @@ export class ClimbEvent extends TileEvent {
                             },
                             this
                         );
-                        timer_event.timer.autoDestroy = true;
                         timer_event.timer.start();
                     },
                     this
                 );
-                timer_event.timer.autoDestroy = true;
                 timer_event.timer.start();
             });
         } else if (activation_direction === directions.down) {
@@ -228,7 +225,6 @@ export class ClimbEvent extends TileEvent {
                         },
                         this
                     );
-                    timer_event.timer.autoDestroy = true;
                     timer_event.timer.start();
                 });
             if (this.dynamic) {
