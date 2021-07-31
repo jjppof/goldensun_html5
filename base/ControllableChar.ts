@@ -63,6 +63,7 @@ export abstract class ControllableChar {
     public sliding_on_ice: boolean;
     public trying_to_push: boolean;
     public walking_over_rope: boolean;
+    public climbing_rope: boolean;
 
     protected storage_keys: {
         position?: string;
@@ -156,6 +157,7 @@ export abstract class ControllableChar {
         this.ice_sliding_active = false;
         this.sliding_on_ice = false;
         this.walking_over_rope = false;
+        this.climbing_rope = false;
         this._sprite_info = null;
         this.sprite = null;
         this.shadow = null;
@@ -289,6 +291,22 @@ export abstract class ControllableChar {
             this.teleporting ||
             this.sliding
         );
+    }
+
+    /**
+     * Checks whether this char is in movement.
+     * @returns returns true if in movement.
+     */
+    in_movement() {
+        if (
+            this._current_action === base_actions.WALK ||
+            this._current_action === base_actions.DASH ||
+            (this._current_action === base_actions.CLIMB && this.current_animation !== base_actions.IDLE) ||
+            (this._current_action === base_actions.ROPE && this.current_animation !== base_actions.IDLE)
+        ) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -1032,12 +1050,19 @@ export abstract class ControllableChar {
         }
         let action = this.current_action;
         let idle_climbing = this.idle_climbing;
-        if (this.stop_by_colliding && !this.pushing && !this.climbing) {
+        if (this.stop_by_colliding && !this.pushing && !this.climbing && !this.climbing_rope) {
             action = base_actions.IDLE;
         } else if (this.stop_by_colliding && !this.pushing && this.climbing) {
             idle_climbing = true;
         }
-        const animation = idle_climbing ? base_actions.IDLE : reverse_directions[this.transition_direction];
+        let animation;
+        if (idle_climbing) {
+            animation = base_actions.IDLE;
+        } else if (this.climbing_rope) {
+            animation = this.current_animation;
+        } else {
+            animation = reverse_directions[this.transition_direction];
+        }
         let frame_rate;
         if (action === base_actions.WALK) {
             if (this.ice_sliding_active) {
@@ -1075,7 +1100,14 @@ export abstract class ControllableChar {
      */
     protected choose_action_based_on_char_state(check_on_event: boolean = false) {
         if (check_on_event && this.data.tile_event_manager.on_event) return;
-        if (this.required_direction === null && this.current_action !== base_actions.IDLE && !this.climbing) {
+        if (this.climbing_rope) {
+            this._current_action = base_actions.ROPE;
+            if (this.required_direction !== null) {
+                this._current_animation = base_actions.CLIMB;
+            } else {
+                this._current_animation = base_actions.IDLE;
+            }
+        } else if (this.required_direction === null && this.current_action !== base_actions.IDLE && !this.climbing) {
             this._current_action = base_actions.IDLE;
         } else if (this.required_direction !== null && !this.climbing && !this.pushing) {
             this.check_footsteps();

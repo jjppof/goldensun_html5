@@ -207,7 +207,7 @@
         "anchor_x": 0.45,
         "anchor_y": 0.43,
         "body_radius": 5.0,
-        "collision_body_bevel": 3,
+        "collision_body_bevel": 2,
         "send_to_back": false,
         "pushable": false,
         "is_rope_dock": true,

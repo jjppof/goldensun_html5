@@ -1,5 +1,5 @@
 import {Map} from "../Map";
-import {get_centered_pos_in_px, get_distance} from "../utils";
+import {get_centered_pos_in_px, get_distance, range_360} from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
 
 /**
@@ -35,6 +35,8 @@ export class RopeDock extends InteractableObjects {
     }[];
     /** The tween that controls the rope bounce. */
     public swing_tween: Phaser.Tween;
+    /** The angle in which the rope fragments are. */
+    private _fragment_angle: number;
 
     constructor(
         game,
@@ -103,6 +105,11 @@ export class RopeDock extends InteractableObjects {
         return this._rope_frag_base_pos;
     }
 
+    /** The angle in which the rope fragments are. */
+    get fragment_angle() {
+        return this._fragment_angle;
+    }
+
     /**
      * Initializes this rope dock properties.
      * @param dest_x The destiny dock x tile position.
@@ -164,11 +171,11 @@ export class RopeDock extends InteractableObjects {
         this._rope_width = distance | 0;
         const actual_rope_width = RopeDock.ROPE_FRAGMENT_WIDTH - 2;
         const fragments_number = (distance / actual_rope_width) | 0;
-        const fragment_angle = Math.atan2(dest_y_px - this_y_px, dest_x_px - this_x_px);
+        this._fragment_angle = range_360(Math.atan2(dest_y_px - this_y_px, dest_x_px - this_x_px));
 
-        const base_x = Math.cos(fragment_angle) * actual_rope_width;
+        const base_x = Math.cos(this._fragment_angle) * actual_rope_width;
         const half_base_x = base_x >> 1;
-        const base_y = Math.sin(fragment_angle) * actual_rope_width;
+        const base_y = Math.sin(this._fragment_angle) * actual_rope_width;
         const half_base_y = base_y >> 1;
 
         this._rope_fragments_group = this.game.add.group(this.data.npc_group);
@@ -188,7 +195,7 @@ export class RopeDock extends InteractableObjects {
                 x: sprite.x,
                 y: sprite.y,
             });
-            sprite.rotation = fragment_angle;
+            sprite.rotation = this._fragment_angle;
 
             this._extra_sprites.push(sprite);
         }

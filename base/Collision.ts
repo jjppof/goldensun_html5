@@ -230,10 +230,7 @@ export class Collision {
             const direction = (1 + Math.floor((angle - numbers.degree45_half) / numbers.degree45)) & 7;
             return acc | get_direction_mask(direction);
         }, 0);
-        if (
-            normals.length &&
-            [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(char.current_action as base_actions)
-        ) {
+        if (normals.length && char.in_movement()) {
             const speed_limit = this.data.map.is_world_map
                 ? Collision.SPEED_LIMIT_TO_STOP_WORLD_MAP
                 : Collision.SPEED_LIMIT_TO_STOP;
@@ -271,7 +268,7 @@ export class Collision {
                 });
                 char.stop_by_colliding = true;
                 char.force_direction = false;
-            } else if (char.current_action !== base_actions.CLIMB) {
+            } else if (char.current_action !== base_actions.CLIMB && char.current_action !== base_actions.ROPE) {
                 char.stop_by_colliding = false;
                 if (normals.length === 1) {
                     //Everything inside this if is to deal with direction changing when colliding.

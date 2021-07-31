@@ -1,0 +1,36 @@
+{"frames": {
+
+"rope/idle/00":
+{
+	"frame": {"x":22,"y":1,"w":18,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":0,"w":18,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"rope/climb/00":
+{
+	"frame": {"x":1,"y":1,"w":19,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":0,"w":19,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"rope/climb/01":
+{
+	"frame": {"x":42,"y":1,"w":18,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":0,"w":18,"h":32},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "isaac_rope.png",
+	"format": "RGBA8888",
+	"size": {"w":61,"h":34},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:0265ceb47b16cf1b63de7f9883b35141:9ea6d864cba38d9058f7de2a8ac45aa1:c978884351c41cb365243496cf9721f7$"
+}
+}

@@ -1,6 +1,6 @@
 import {ControllableChar} from "./ControllableChar";
 import * as numbers from "./magic_numbers";
-import {get_transition_directions, directions, base_actions, get_direction_mask} from "./utils";
+import {get_transition_directions, directions, base_actions, get_direction_mask, range_360} from "./utils";
 import {Button} from "./XGamepad";
 import {GoldenSun} from "./GoldenSun";
 
@@ -193,6 +193,20 @@ export class Hero extends ControllableChar {
     }
 
     /**
+     * Checks whether there's a necessity to change hero direction due to
+     * any custom circumstances.
+     */
+    check_custom_directions_change(){
+        if (this.walking_over_rope && [base_actions.DASH, base_actions.WALK].includes(this.current_action as base_actions)) {
+            //transforms retrieved direction from speed in non diagonal direction
+            const angle_direction = range_360(Math.atan2(this.current_speed.y, this.current_speed.x));
+            const corresponding_dir = (angle_direction / numbers.degree45) | 0;
+            const non_diagonal_direction = (corresponding_dir + (corresponding_dir % 2)) % 8; //nearest even number
+            this.set_direction(non_diagonal_direction);
+        }
+    }
+
+    /**
      * Activates or deactivates the hero.
      * @param active whether you want to activate it or not.
      */
@@ -237,6 +251,7 @@ export class Hero extends ControllableChar {
         this.choose_action_based_on_char_state(true); //chooses which sprite the hero shall assume
         this.calculate_speed(); //calculates the final speed
         this.data.collision.check_char_collision(this); //checks if the hero is colliding and its consequences
+        this.check_custom_directions_change();
         this.apply_speed(); //applies the final speed
         this.play_current_action(true); //sets the hero sprite
         this.update_shadow(); //updates the hero's shadow position

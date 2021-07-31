@@ -205,7 +205,7 @@ export class TileEventManager {
                         //the hero must be trying to walk/dash/climb towards the event activation direction.
                         if (
                             right_direction &&
-                            [base_actions.WALK, base_actions.DASH, base_actions.CLIMB].includes(
+                            [base_actions.WALK, base_actions.DASH, base_actions.CLIMB, base_actions.ROPE].includes(
                                 this.data.hero.current_action as base_actions
                             )
                         ) {

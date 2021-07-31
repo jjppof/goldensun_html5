@@ -365,6 +365,19 @@
                 "frame_rate": [7,7,8,8,9,1,15,10],
                 "loop": [true,true,true,true,false,true,false,false]
             },
+            "rope": {
+                "spritesheet": {
+                    "json": "assets/images/spritesheets/main_chars/isaac_rope.json",
+                    "image": "assets/images/spritesheets/main_chars/isaac_rope.png"
+                },
+                "animations": [
+                    "climb",
+                    "idle"
+                ],
+                "frames_count": [2,1],
+                "frame_rate": [6,1],
+                "loop": [true,false]
+            },
             "jump": {
                 "spritesheet": {
                     "json": "assets/images/spritesheets/main_chars/isaac_jump.json",
