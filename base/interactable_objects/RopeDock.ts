@@ -24,7 +24,7 @@ export class RopeDock extends InteractableObjects {
     private _tied: boolean;
     /** Groups that holds the rope fragments. */
     private _rope_fragments_group: Phaser.Group;
-    /** The rope width */
+    /** The rope width. Only x axis. */
     private _rope_width: number;
     /** The staring rope dock. null if it's the starting rope dock. */
     private _starting_rope_dock: RopeDock;
@@ -82,10 +82,10 @@ export class RopeDock extends InteractableObjects {
 
     /** Groups that holds the rope fragments. */
     get rope_fragments_group() {
-        return this._rope_fragments_group;
+        return this._is_starting_dock ? this._rope_fragments_group : this._starting_rope_dock.rope_fragments_group;
     }
 
-    /** The rope width */
+    /** The rope width. Only x axis. */
     get rope_width() {
         return this._rope_width;
     }
@@ -135,24 +135,21 @@ export class RopeDock extends InteractableObjects {
             this.play(RopeDock.ROPE_DOCK_KEY, RopeDock.ROPE_DOCK_EMPTY);
         }
 
-        let rope_fragments_group: Phaser.Group;
         if (this._is_starting_dock) {
             this.set_rope_fragments(map);
-            rope_fragments_group = this.rope_fragments_group;
         } else {
             this.find_starting_dock(map);
-            rope_fragments_group = this._starting_rope_dock.rope_fragments_group;
         }
 
         this.sprite.sort_function_end = () => {
             if (
-                this.data.npc_group.getChildIndex(this.sprite) > this.data.npc_group.getChildIndex(rope_fragments_group)
+                this.data.npc_group.getChildIndex(this.sprite) > this.data.npc_group.getChildIndex(this.rope_fragments_group)
             ) {
-                this.data.npc_group.setChildIndex(this.sprite, this.data.npc_group.getChildIndex(rope_fragments_group));
+                this.data.npc_group.setChildIndex(this.sprite, this.data.npc_group.getChildIndex(this.rope_fragments_group));
             } else {
                 this.data.npc_group.setChildIndex(
                     this.sprite,
-                    this.data.npc_group.getChildIndex(rope_fragments_group) - 1
+                    this.data.npc_group.getChildIndex(this.rope_fragments_group) - 1
                 );
             }
         };
@@ -168,7 +165,7 @@ export class RopeDock extends InteractableObjects {
         const dest_x_px = get_centered_pos_in_px(this._dest_x, map.tile_width);
         const dest_y_px = get_centered_pos_in_px(this._dest_y, map.tile_height) + RopeDock.ROPE_Y_SHIFT;
         const distance = get_distance(dest_x_px, this_x_px, dest_y_px, this_y_px);
-        this._rope_width = distance | 0;
+        this._rope_width = Math.abs(dest_x_px - this_x_px) | 0;
         const actual_rope_width = RopeDock.ROPE_FRAGMENT_WIDTH - 2;
         const fragments_number = (distance / actual_rope_width) | 0;
         this._fragment_angle = range_360(Math.atan2(dest_y_px - this_y_px, dest_x_px - this_x_px));

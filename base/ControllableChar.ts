@@ -1059,7 +1059,7 @@ export abstract class ControllableChar {
         if (idle_climbing) {
             animation = base_actions.IDLE;
         } else if (this.climbing_rope) {
-            animation = this.current_animation;
+            animation = this.stop_by_colliding ? base_actions.IDLE : this.current_animation;
         } else {
             animation = reverse_directions[this.transition_direction];
         }

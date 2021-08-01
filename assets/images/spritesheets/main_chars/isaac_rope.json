@@ -1,27 +1,27 @@
 {"frames": {
 
-"rope/idle/00":
-{
-	"frame": {"x":22,"y":1,"w":18,"h":32},
-	"rotated": false,
-	"trimmed": true,
-	"spriteSourceSize": {"x":7,"y":0,"w":18,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
 "rope/climb/00":
 {
-	"frame": {"x":1,"y":1,"w":19,"h":32},
+	"frame": {"x":1,"y":1,"w":18,"h":32},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":7,"y":0,"w":19,"h":32},
+	"spriteSourceSize": {"x":8,"y":0,"w":18,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
 "rope/climb/01":
 {
-	"frame": {"x":42,"y":1,"w":18,"h":32},
+	"frame": {"x":1,"y":35,"w":18,"h":32},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":8,"y":0,"w":18,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"rope/idle/00":
+{
+	"frame": {"x":1,"y":69,"w":18,"h":32},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":7,"y":0,"w":18,"h":32},
 	"sourceSize": {"w":32,"h":32}
 }},
 "meta": {
@@ -29,8 +29,8 @@
 	"version": "1.0",
 	"image": "isaac_rope.png",
 	"format": "RGBA8888",
-	"size": {"w":61,"h":34},
+	"size": {"w":20,"h":102},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:0265ceb47b16cf1b63de7f9883b35141:9ea6d864cba38d9058f7de2a8ac45aa1:c978884351c41cb365243496cf9721f7$"
+	"smartupdate": "$TexturePacker:SmartUpdate:9ccef6a58ff57b12e8e45915d9c8f9b8:adcea6bf634dfd6cd849a5477c181d88:faf07e407ce64e0c475af1192bddc4f6$"
 }
 }
