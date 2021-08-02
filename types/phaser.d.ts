@@ -1910,7 +1910,6 @@ declare module Phaser {
         cursorIndex: number;
         data: any;
         send_to_back: boolean;
-        base_collision_layer: number;
         enableBody: boolean;
         enableBodyDebug: boolean;
         exists: boolean;

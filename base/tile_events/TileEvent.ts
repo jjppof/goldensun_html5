@@ -131,14 +131,19 @@ export abstract class TileEvent {
 
     abstract destroy(): void;
 
+    /**
+     * Tests whether a given direction is available to active this event.
+     * @param direction the direction to test if it's active.
+     * @returns The resulting dicretion that actives this event.
+     */
     is_active(direction: directions) {
         const possible_directions = split_direction(direction);
         for (let i = 0; i < possible_directions.length; ++i) {
             if (this.active[this.activation_directions.indexOf(possible_directions[i])]) {
-                return true;
+                return possible_directions[i];
             }
         }
-        return false;
+        return -1;
     }
 
     activate_at(direction: directions) {

@@ -3,7 +3,7 @@ import {RopeDock} from "../interactable_objects/RopeDock";
 import {get_front_position} from "../utils";
 import {event_types, TileEvent} from "./TileEvent";
 import * as _ from "lodash";
-import { degree180, degree270, degree90 } from "../magic_numbers";
+import {degree180, degree270, degree90} from "../magic_numbers";
 
 /**
  * An event that deals with walking or climbing (depending on the rope angle)
@@ -97,12 +97,14 @@ export class RopeEvent extends TileEvent {
         this.data.collision.change_map_body(this._rope_collision_layer);
         this._starting_rope_dock.set_sprites_z_sorting(true);
         this.data.map.sort_sprites();
+        const jump_direction = this.is_active(this.data.hero.current_direction);
         await this.data.hero.jump({
             dest: {
                 x: this.origin_interactable_object.sprite.centerX,
                 y: this.origin_interactable_object.sprite.centerY - 5,
             },
             keep_shadow_hidden: true,
+            jump_direction: jump_direction,
         });
         if (!this._walk_over_rope) {
             this.data.hero.climbing_rope = true;
@@ -177,7 +179,7 @@ export class RopeEvent extends TileEvent {
                 Math.abs(this.data.hero.sprite.x - this._starting_rope_dock.x) / this._starting_rope_dock.rope_width;
             const position_ratio = position_ratio_formula(relative_pos) * this._hero_walking_factor;
 
-            this.data.hero.sprite.y = (this.data.hero.sprite.body.y + y_shift) + swing_object.y * position_ratio;
+            this.data.hero.sprite.y = this.data.hero.sprite.body.y + y_shift + swing_object.y * position_ratio;
 
             const rope_fragments_group = this._starting_rope_dock.rope_fragments_group;
             for (let i = 0; i < rope_fragments_group.children.length; ++i) {

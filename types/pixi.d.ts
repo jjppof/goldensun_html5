@@ -265,6 +265,7 @@ declare module PIXI {
 
         alpha: number;
         avoidFilterCapping: boolean;
+        base_collision_layer: number;
         bodyAttached: boolean;
         buttonMode: boolean;
         cacheAsBitmap: boolean;
@@ -281,6 +282,7 @@ declare module PIXI {
         rotation: number;
         scale: Point;
         stage: DisplayObjectContainer;
+        useHeightWhenSorting: boolean;
         visible: boolean;
         worldAlpha: number;
         worldPosition: Point;

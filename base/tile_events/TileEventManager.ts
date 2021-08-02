@@ -153,7 +153,7 @@ export class TileEventManager {
             }
 
             //ignore events that are not active in the direction that the hero is going.
-            if (!this_event.is_active(this.data.hero.current_direction)) {
+            if (this_event.is_active(this.data.hero.current_direction) === -1) {
                 continue;
             }
 
@@ -219,7 +219,7 @@ export class TileEventManager {
                                 this.event_timers[this_event.id] = this.game.time.create(true);
                                 this.event_timers[this_event.id].add(TileEventManager.EVENT_INIT_DELAY, () => {
                                     //checks whether the hero is still going towards event activation direction.
-                                    if (this_event.is_active(this.data.hero.current_direction)) {
+                                    if (this_event.is_active(this.data.hero.current_direction) >= 0) {
                                         this.fire_event(this_event, this.data.hero.current_direction);
                                     }
                                     //kills the timer that started this event

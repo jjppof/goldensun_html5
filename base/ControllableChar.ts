@@ -469,6 +469,9 @@ export abstract class ControllableChar {
             this.sprite_info.setAnimation(this.sprite, action);
         }
         const animation_obj = this.sprite.animations.getAnimation(animation_key);
+        if (!animation_obj) {
+            console.warn("Invalid animation key:", animation_key);
+        }
         if (start) {
             this.sprite.animations.play(animation_key, frame_rate);
         } else {

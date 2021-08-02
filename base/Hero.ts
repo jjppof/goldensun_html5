@@ -196,8 +196,11 @@ export class Hero extends ControllableChar {
      * Checks whether there's a necessity to change hero direction due to
      * any custom circumstances.
      */
-    check_custom_directions_change(){
-        if (this.walking_over_rope && [base_actions.DASH, base_actions.WALK].includes(this.current_action as base_actions)) {
+    check_custom_directions_change() {
+        if (
+            this.walking_over_rope &&
+            [base_actions.DASH, base_actions.WALK].includes(this.current_action as base_actions)
+        ) {
             //transforms retrieved direction from speed in non diagonal direction
             const angle_direction = range_360(Math.atan2(this.current_speed.y, this.current_speed.x));
             const corresponding_dir = (angle_direction / numbers.degree45) | 0;

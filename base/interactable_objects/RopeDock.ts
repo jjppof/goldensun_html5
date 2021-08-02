@@ -143,9 +143,13 @@ export class RopeDock extends InteractableObjects {
 
         this.sprite.sort_function_end = () => {
             if (
-                this.data.npc_group.getChildIndex(this.sprite) > this.data.npc_group.getChildIndex(this.rope_fragments_group)
+                this.data.npc_group.getChildIndex(this.sprite) >
+                this.data.npc_group.getChildIndex(this.rope_fragments_group)
             ) {
-                this.data.npc_group.setChildIndex(this.sprite, this.data.npc_group.getChildIndex(this.rope_fragments_group));
+                this.data.npc_group.setChildIndex(
+                    this.sprite,
+                    this.data.npc_group.getChildIndex(this.rope_fragments_group)
+                );
             } else {
                 this.data.npc_group.setChildIndex(
                     this.sprite,
@@ -179,6 +183,9 @@ export class RopeDock extends InteractableObjects {
         this._rope_fragments_group.x = this_x_px + half_base_x;
         this._rope_fragments_group.y = this_y_px + half_base_y;
         this._rope_fragments_group.base_collision_layer = this.base_collision_layer;
+        if (dest_y_px > this_y_px) {
+            this._rope_fragments_group.useHeightWhenSorting = true;
+        }
 
         for (let i = 0; i < fragments_number; ++i) {
             const sprite_key = this.sprite_info.getSpriteKey(RopeDock.ROPE_DOCK_KEY);

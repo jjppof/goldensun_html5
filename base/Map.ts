@@ -179,15 +179,17 @@ export class Map {
                 return;
             }
         });
-        this.data.npc_group.customSort((a, b) => {
+        this.data.npc_group.customSort((a: PIXI.DisplayObjectContainer, b: PIXI.DisplayObjectContainer) => {
             if (a.base_collision_layer < b.base_collision_layer) {
                 return -1;
             } else if (a.base_collision_layer > b.base_collision_layer) {
                 return 1;
             } else {
-                if (a.y < b.y) {
+                const a_y = a.useHeightWhenSorting ? a.y + a.height : a.y;
+                const b_y = b.useHeightWhenSorting ? b.y + b.height : b.y;
+                if (a_y < b_y) {
                     return -1;
-                } else if (a.y > b.y) {
+                } else if (a_y > b_y) {
                     return 1;
                 }
             }
