@@ -37,6 +37,27 @@
         }
     },
     {
+        "key_name": "lash_hand",
+        "initial_animation": "open",
+        "actions": {
+            "lash_hand": {
+                "frame_rate": 1,
+                "animations": [
+                    "open",
+                    "down",
+                    "closed",
+                    "tie"
+                ],
+                "frames_count": 1,
+                "loop": false,
+                "spritesheet": {
+                    "image": "assets/images/misc/lash_psynergy_hand.png",
+                    "json": "assets/images/misc/lash_psynergy_hand.json"
+                }
+            }
+        }
+    },
+    {
         "key_name": "dialog_crystal",
         "initial_animation": "rotate",
         "actions": {

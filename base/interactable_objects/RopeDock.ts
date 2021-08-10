@@ -1,3 +1,4 @@
+import { degree90 } from "../magic_numbers";
 import {Map} from "../Map";
 import {get_centered_pos_in_px, get_distance, range_360} from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
@@ -142,18 +143,15 @@ export class RopeDock extends InteractableObjects {
         }
 
         this.sprite.sort_function_end = () => {
+            const back = this._tied ? this.sprite : this.rope_fragments_group;
+            const front = this._tied ? this.rope_fragments_group : this.sprite;
             if (
-                this.data.npc_group.getChildIndex(this.sprite) >
-                this.data.npc_group.getChildIndex(this.rope_fragments_group)
+                this.data.npc_group.getChildIndex(back) >
+                this.data.npc_group.getChildIndex(front)
             ) {
                 this.data.npc_group.setChildIndex(
-                    this.sprite,
-                    this.data.npc_group.getChildIndex(this.rope_fragments_group)
-                );
-            } else {
-                this.data.npc_group.setChildIndex(
-                    this.sprite,
-                    this.data.npc_group.getChildIndex(this.rope_fragments_group) - 1
+                    front,
+                    this.data.npc_group.getChildIndex(back)
                 );
             }
         };
@@ -193,13 +191,29 @@ export class RopeDock extends InteractableObjects {
             const sprite: Phaser.Sprite = this._rope_fragments_group.create(0, 0, sprite_key, frame_name);
 
             sprite.anchor.setTo(0.5, 0.5);
-            sprite.x = base_x * i;
-            sprite.y = base_y * i;
+            const default_x = base_x * i;
+            const default_y = base_y * i;
             this._rope_frag_base_pos.push({
-                x: sprite.x,
-                y: sprite.y,
+                x: default_x,
+                y: default_y,
             });
-            sprite.rotation = this._fragment_angle;
+
+            if (this._tied) {
+                sprite.x = default_x;
+                sprite.y = default_y;
+                sprite.rotation = this._fragment_angle;
+            } else {
+                const v = 10;
+                const w = 16;
+                const t = i/fragments_number; //change to max number
+                sprite.x = v * t * Math.cos(w * t);
+                sprite.y = v * t * Math.sin(w * t);
+                sprite.rotation = Math.atan2(sprite.y, sprite.x) + degree90;
+                sprite.x -= 2;
+                sprite.y += 4;
+            }
+
+            
 
             this._extra_sprites.push(sprite);
         }

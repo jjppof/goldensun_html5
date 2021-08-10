@@ -4,6 +4,7 @@ import {FrostFieldPsynergy} from "../field_abilities/FrostFieldPsynergy";
 import {GrowthFieldPsynergy} from "../field_abilities/GrowthFieldPsynergy";
 import {PoundFieldPsynergy} from "../field_abilities/PoundFieldPsynergy";
 import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
+import {LashFieldPsynergy} from "../field_abilities/LashFieldPsynergy";
 import {GoldenSun} from "../GoldenSun";
 import {GameInfo} from "./initialize_info";
 
@@ -62,5 +63,6 @@ export function initialize_field_abilities(game, data) {
         growth: new GrowthFieldPsynergy(game, data),
         pound: new PoundFieldPsynergy(game, data),
         reveal: new RevealFieldPsynergy(game, data),
+        lash: new LashFieldPsynergy(game, data),
     };
 }
