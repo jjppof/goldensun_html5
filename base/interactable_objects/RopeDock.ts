@@ -14,6 +14,11 @@ export class RopeDock extends InteractableObjects {
     private static readonly ROPE_FRAGMENT = "rope_fragment";
     private static readonly ROPE_FRAGMENT_WIDTH = 8;
     private static readonly ROPE_Y_SHIFT = 1;
+    private static readonly SPIRAL_VELOCITY = 10;
+    private static readonly SPIRAL_ANG_VELOCITY = 16;
+    private static readonly SPIRAL_X_SHIFT = -2;
+    private static readonly SPIRAL_Y_SHIFT = 4;
+    private static readonly MAX_FRAG_SPIRAL = 24;
 
     /** The destiny dock x tile position. */
     private _dest_x: number;
@@ -111,6 +116,11 @@ export class RopeDock extends InteractableObjects {
         return this._fragment_angle;
     }
 
+    /** Whether the rope is tied or not. This variable is only used if it's a starting dock. */
+    get tied() {
+        return this._tied;
+    }
+
     /**
      * Initializes this rope dock properties.
      * @param dest_x The destiny dock x tile position.
@@ -203,20 +213,15 @@ export class RopeDock extends InteractableObjects {
                 sprite.y = default_y;
                 sprite.rotation = this._fragment_angle;
             } else {
-                const v = 10;
-                const w = 16;
-                const t = i/fragments_number; //change to max number
-                sprite.x = v * t * Math.cos(w * t);
-                sprite.y = v * t * Math.sin(w * t);
+                const t = i/RopeDock.MAX_FRAG_SPIRAL;
+                sprite.x = RopeDock.SPIRAL_VELOCITY * t * Math.cos(RopeDock.SPIRAL_ANG_VELOCITY * t);
+                sprite.y = RopeDock.SPIRAL_VELOCITY * t * Math.sin(RopeDock.SPIRAL_ANG_VELOCITY * t);
                 sprite.rotation = Math.atan2(sprite.y, sprite.x) + degree90;
-                sprite.x -= 2;
-                sprite.y += 4;
+                sprite.x += RopeDock.SPIRAL_X_SHIFT;
+                sprite.y += RopeDock.SPIRAL_Y_SHIFT;
             }
-
-            
-
-            this._extra_sprites.push(sprite);
         }
+        this._extra_sprites.push(this._rope_fragments_group);
     }
 
     /**

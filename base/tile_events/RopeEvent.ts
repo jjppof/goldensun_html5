@@ -72,14 +72,18 @@ export class RopeEvent extends TileEvent {
             return;
         }
 
-        this.data.tile_event_manager.on_event = true;
-        this.game.physics.p2.pause();
-
         if ((this.origin_interactable_object as RopeDock).is_starting_dock) {
             this._starting_rope_dock = this.origin_interactable_object;
         } else {
             this._starting_rope_dock = this.origin_interactable_object.starting_rope_dock;
         }
+
+        if (!this._starting_rope_dock.tied) {
+            return;
+        }
+
+        this.data.tile_event_manager.on_event = true;
+        this.game.physics.p2.pause();
 
         if (this._starting_rope_dock) {
             if (this.data.hero.walking_over_rope) {
