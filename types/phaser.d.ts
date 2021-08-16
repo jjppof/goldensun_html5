@@ -1909,7 +1909,6 @@ declare module Phaser {
         cursor: any;
         cursorIndex: number;
         data: any;
-        send_to_back: boolean;
         enableBody: boolean;
         enableBodyDebug: boolean;
         exists: boolean;
@@ -4839,10 +4838,6 @@ declare module Phaser {
         base_collision_layer: number;
         disableRoundPx: boolean;
         roundPx: boolean;
-        sort_function: Function;
-        sort_function_end: Function;
-        send_to_back: boolean;
-        send_to_front: boolean;
         is_npc: boolean;
         is_interactable_object: boolean;
         data: any;

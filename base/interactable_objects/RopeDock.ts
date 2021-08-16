@@ -14,11 +14,11 @@ export class RopeDock extends InteractableObjects {
     private static readonly ROPE_FRAGMENT = "rope_fragment";
     private static readonly ROPE_FRAGMENT_WIDTH = 8;
     private static readonly ROPE_Y_SHIFT = 1;
-    private static readonly SPIRAL_VELOCITY = 10;
-    private static readonly SPIRAL_ANG_VELOCITY = 16;
+    private static readonly SPIRAL_VELOCITY = 60;
+    private static readonly SPIRAL_ANG_VELOCITY = 88;
     private static readonly SPIRAL_X_SHIFT = -2;
     private static readonly SPIRAL_Y_SHIFT = 4;
-    private static readonly MAX_FRAG_SPIRAL = 24;
+    private static readonly MAX_FRAG_SPIRAL = 20;
 
     /** The destiny dock x tile position. */
     private _dest_x: number;
@@ -43,6 +43,8 @@ export class RopeDock extends InteractableObjects {
     public swing_tween: Phaser.Tween;
     /** The angle in which the rope fragments are. */
     private _fragment_angle: number;
+    /** Not practical group. Holds a copy of the first OVERLAP_LIMIT frags to show over the dock. */
+    private _frag_overlap_group: Phaser.Group;
 
     constructor(
         game,
@@ -188,11 +190,22 @@ export class RopeDock extends InteractableObjects {
         const half_base_y = base_y >> 1;
 
         this._rope_fragments_group = this.game.add.group(this.data.npc_group);
+        this._extra_sprites.push(this._rope_fragments_group);
         this._rope_fragments_group.x = this_x_px + half_base_x;
         this._rope_fragments_group.y = this_y_px + half_base_y;
         this._rope_fragments_group.base_collision_layer = this.base_collision_layer;
         if (dest_y_px > this_y_px) {
             this._rope_fragments_group.useHeightWhenSorting = true;
+        }
+
+        if (!this._tied) {
+            this._frag_overlap_group = this.game.add.group(this.data.npc_group);
+            this._frag_overlap_group.x = this._rope_fragments_group.x;
+            this._frag_overlap_group.y = this._rope_fragments_group.y;
+            this._frag_overlap_group.base_collision_layer = this._rope_fragments_group.base_collision_layer;
+            this._frag_overlap_group.useHeightWhenSorting = this._rope_fragments_group.useHeightWhenSorting;
+            this._frag_overlap_group.send_to_front = true;
+            this._extra_sprites.push(this._frag_overlap_group);
         }
 
         for (let i = 0; i < fragments_number; ++i) {
@@ -213,15 +226,21 @@ export class RopeDock extends InteractableObjects {
                 sprite.y = default_y;
                 sprite.rotation = this._fragment_angle;
             } else {
-                const t = i/RopeDock.MAX_FRAG_SPIRAL;
+                const t = Math.log(i)/RopeDock.MAX_FRAG_SPIRAL;
                 sprite.x = RopeDock.SPIRAL_VELOCITY * t * Math.cos(RopeDock.SPIRAL_ANG_VELOCITY * t);
                 sprite.y = RopeDock.SPIRAL_VELOCITY * t * Math.sin(RopeDock.SPIRAL_ANG_VELOCITY * t);
-                sprite.rotation = Math.atan2(sprite.y, sprite.x) + degree90;
+                sprite.rotation = Math.atan2(sprite.y - RopeDock.SPIRAL_Y_SHIFT, sprite.x) + degree90;
                 sprite.x += RopeDock.SPIRAL_X_SHIFT;
-                sprite.y += RopeDock.SPIRAL_Y_SHIFT;
+
+                if (sprite.y >= 3) {
+                    const sprite_over: Phaser.Sprite = this._frag_overlap_group.create(0, 0, sprite_key, frame_name);
+                    sprite_over.anchor.setTo(0.5, 0.5);
+                    sprite_over.x = sprite.x;
+                    sprite_over.y = sprite.y;
+                    sprite_over.rotation = sprite.rotation;
+                }
             }
         }
-        this._extra_sprites.push(this._rope_fragments_group);
     }
 
     /**

@@ -280,6 +280,10 @@ declare module PIXI {
         position: Point;
         renderable: boolean;
         rotation: number;
+        sort_function: Function;
+        sort_function_end: Function;
+        send_to_back: boolean;
+        send_to_front: boolean;
         scale: Point;
         stage: DisplayObjectContainer;
         useHeightWhenSorting: boolean;
