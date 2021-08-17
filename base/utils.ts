@@ -161,6 +161,15 @@ export function get_opposite_direction(direction: directions): directions {
 }
 
 /**
+ * Transforms a direction into a non diagonal direction.
+ * @param direction the input direction.
+ * @returns returns the non diagonal direction.
+ */
+export function get_non_diagonal_direction(direction: directions) {
+    return (direction % 2 ? direction + 1 : direction) % 8;
+}
+
+/**
  * Gets the directions between the current direction and a desired/target direction.
  * Example of transition between left and right: left -> up left -> up -> up right -> right.
  * @param current_direction Current direction value
@@ -258,6 +267,16 @@ export function get_centered_pos_in_px(tile_pos: number, tile_size: number) {
  */
 export function get_tile_position(pos: number, tile_size: number) {
     return (pos / tile_size) | 0;
+}
+
+/**
+ * Gets the px position of a given position in tile.
+ * @param pos the position in tile.
+ * @param tile_size the tile size.
+ * @returns returns the px position.
+ */
+ export function get_px_position(tile_pos: number, tile_size: number) {
+    return tile_pos * tile_size;
 }
 
 /**
