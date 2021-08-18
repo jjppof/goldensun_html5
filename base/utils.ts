@@ -275,7 +275,7 @@ export function get_tile_position(pos: number, tile_size: number) {
  * @param tile_size the tile size.
  * @returns returns the px position.
  */
- export function get_px_position(tile_pos: number, tile_size: number) {
+export function get_px_position(tile_pos: number, tile_size: number) {
     return tile_pos * tile_size;
 }
 

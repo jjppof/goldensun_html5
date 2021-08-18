@@ -29990,8 +29990,8 @@ Phaser.Camera.prototype = {
 
         this._targetPosition.x = this.view.x + this.target.worldPosition.x;
         this._targetPosition.y = this.view.y + this.target.worldPosition.y;
-        this._targetPosition.no_round_x = this.view.no_round_x + this.target.body.x + this.target.parent.worldPosition.x;
-        this._targetPosition.no_round_y = this.view.no_round_y + this.target.body.y + this.target.parent.worldPosition.y;
+        this._targetPosition.no_round_x = this.view.no_round_x + (this.target.body ? this.target.body.x : this.target.x) + this.target.parent.worldPosition.x;
+        this._targetPosition.no_round_y = this.view.no_round_y + (this.target.body ? this.target.body.y : this.target.y) + this.target.parent.worldPosition.y;
 
         if (this.deadzone)
         {

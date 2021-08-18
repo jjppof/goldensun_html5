@@ -75,7 +75,7 @@ export class RopeEvent extends TileEvent {
         if ((this.origin_interactable_object as RopeDock).is_starting_dock) {
             this._starting_rope_dock = this.origin_interactable_object;
         } else {
-            this._starting_rope_dock = this.origin_interactable_object.starting_rope_dock;
+            this._starting_rope_dock = this.origin_interactable_object.dest_rope_dock;
         }
 
         if (!this._starting_rope_dock.tied) {

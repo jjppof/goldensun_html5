@@ -19,7 +19,7 @@ export class Camera {
         this.game.camera.lerp.setTo(Camera.CAMERA_LERP, Camera.CAMERA_LERP);
     }
 
-    follow(target?: Camera["target"]) {
+    follow(target?: Camera["target"], duration?: number) : Promise<void> {
         if (target) {
             this.target = target;
         }
@@ -30,7 +30,17 @@ export class Camera {
                 Camera.CAMERA_LERP,
                 Camera.CAMERA_LERP
             );
-            this.game.camera.focusOn(this.target.sprite);
+            if (duration === undefined) {
+                this.game.camera.focusOn(this.target.sprite);
+            } else {
+                let promise_resolve;
+                const promise = new Promise<void>(resolve => promise_resolve = resolve);
+                this.game.add.tween(this.game.camera).to({
+                    x: this.target.x - this.game.camera.width >> 1,
+                    y: this.target.y - this.game.camera.height >> 1,
+                }, duration, Phaser.Easing.Linear.None, true).onComplete.addOnce(promise_resolve);
+                return promise;
+            }
         }
     }
 

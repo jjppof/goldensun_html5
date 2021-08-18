@@ -33,7 +33,7 @@ export class RopeDock extends InteractableObjects {
     /** The rope width. Only x axis. */
     private _rope_width: number;
     /** The staring rope dock. null if it's the starting rope dock. */
-    private _starting_rope_dock: RopeDock;
+    private _dest_rope_dock: RopeDock;
     /** Rope fragments base positions. */
     private _rope_frag_base_pos: {
         x: number;
@@ -83,14 +83,14 @@ export class RopeDock extends InteractableObjects {
             events_info
         );
         this._is_rope_dock = true;
-        this._starting_rope_dock = null;
+        this._dest_rope_dock = null;
         this.swing_tween = null;
         this._rope_frag_base_pos = [];
     }
 
     /** Groups that holds the rope fragments. */
     get rope_fragments_group() {
-        return this._is_starting_dock ? this._rope_fragments_group : this._starting_rope_dock.rope_fragments_group;
+        return this._is_starting_dock ? this._rope_fragments_group : this._dest_rope_dock.rope_fragments_group;
     }
 
     /** The rope width. Only x axis. */
@@ -99,8 +99,8 @@ export class RopeDock extends InteractableObjects {
     }
 
     /** The staring rope dock. null if it's the starting rope dock. */
-    get starting_rope_dock() {
-        return this._starting_rope_dock;
+    get dest_rope_dock() {
+        return this._dest_rope_dock;
     }
 
     /** Whether this event is the rope starting dock. */
@@ -121,6 +121,16 @@ export class RopeDock extends InteractableObjects {
     /** Whether the rope is tied or not. This variable is only used if it's a starting dock. */
     get tied() {
         return this._tied;
+    }
+
+    /** The destiny dock x tile position. */
+    get dest_x() {
+        return this._dest_x;
+    }
+
+    /** The destiny dock y tile position. */
+    get dest_y() {
+        return this._dest_y;
     }
 
     /**
@@ -150,8 +160,10 @@ export class RopeDock extends InteractableObjects {
 
         if (this._is_starting_dock) {
             this.set_rope_fragments(map);
-        } else {
-            this.find_starting_dock(map);
+        }
+
+        if (!this.dest_rope_dock) {
+            this.find_dest_dock(map);
         }
 
         this.sprite.sort_function_end = () => {
@@ -167,6 +179,25 @@ export class RopeDock extends InteractableObjects {
                 );
             }
         };
+    }
+
+    /**
+     * Ties to rope into this dock.
+     */
+    tie() {
+        this._tied = true;
+        this.play(RopeDock.ROPE_DOCK_KEY, RopeDock.ROPE_DOCK_TIED);
+        if (!this.dest_rope_dock.tied) {
+            this.dest_rope_dock.tie();
+        }
+    }
+
+    /**
+     * Destroys overlapping rope frags when tying the rope.
+     */
+    destroy_overlapping_fragments() {
+        this._frag_overlap_group.destroy();
+        this._extra_sprites = this._extra_sprites.filter(obj => obj !== this._frag_overlap_group);
     }
 
     /**
@@ -247,11 +278,11 @@ export class RopeDock extends InteractableObjects {
      * If it's not a starting dock, finds the starting one.
      * @param map the current map.
      */
-    find_starting_dock(map: Map) {
+    find_dest_dock(map: Map) {
         for (let i = 0; i < map.interactable_objects.length; ++i) {
             const io = map.interactable_objects[i];
             if (io.is_rope_dock && io.tile_x_pos === this._dest_x && io.tile_y_pos === this._dest_y) {
-                this._starting_rope_dock = io as RopeDock;
+                this._dest_rope_dock = io as RopeDock;
                 break;
             }
         }
@@ -283,7 +314,7 @@ export class RopeDock extends InteractableObjects {
      * Unsets some objects of this rope dock.
      */
     custom_unset() {
-        this._starting_rope_dock = null;
+        this._dest_rope_dock = null;
         if (this.swing_tween) {
             this.swing_tween.stop();
             this.swing_tween = null;

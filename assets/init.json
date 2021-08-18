@@ -4,9 +4,9 @@
     "initial_direction": "down",
     "map_key_name": "madra_corner",
     "initial_scale_factor": 3,
-    "x_tile_position": 9,
-    "y_tile_position": 6,
-    "collision_layer": 0,
+    "x_tile_position": 7,
+    "y_tile_position": 4,
+    "collision_layer": 1,
     "coins": 10000,
     "initial_shortcuts": [
         { "ability": "move", "adept": "isaac" },
