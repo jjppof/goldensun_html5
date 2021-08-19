@@ -1,6 +1,6 @@
-import { RopeDock } from "../interactable_objects/RopeDock";
-import { SpriteBase } from "../SpriteBase";
-import { directions, get_centered_pos_in_px, get_distance, get_front_position } from "../utils";
+import {RopeDock} from "../interactable_objects/RopeDock";
+import {SpriteBase} from "../SpriteBase";
+import {directions, get_centered_pos_in_px, get_distance, get_front_position} from "../utils";
 import {FieldAbilities} from "./FieldAbilities";
 
 export class LashFieldPsynergy extends FieldAbilities {
@@ -15,6 +15,7 @@ export class LashFieldPsynergy extends FieldAbilities {
     private _hand_sprite: Phaser.Sprite;
     private _hand_side: number;
     private _default_emitter: Phaser.Particles.Arcade.Emitter;
+    private _placed_frag_index: number;
 
     constructor(game, data) {
         super(
@@ -29,6 +30,10 @@ export class LashFieldPsynergy extends FieldAbilities {
         this.set_bootstrap_method(this.init_hand.bind(this));
         this._hand_sprite_base = this.data.info.misc_sprite_base_list[LashFieldPsynergy.LASH_HAND_KEY_NAME];
         this._psynergy_particle_base = this.data.info.misc_sprite_base_list["psynergy_particle"];
+    }
+
+    private get _rope_dock() {
+        return this.target_object as RopeDock;
     }
 
     init_hand() {
@@ -58,41 +63,66 @@ export class LashFieldPsynergy extends FieldAbilities {
             target_y = this.target_object.sprite.centerY - this.controllable_char.height;
         } else {
             target_x = this.controllable_char.x + LashFieldPsynergy.LASH_MAX_RANGE * front_pos.x;
-            target_y = this.controllable_char.y + LashFieldPsynergy.LASH_MAX_RANGE * front_pos.y - this.controllable_char.height;
+            target_y =
+                this.controllable_char.y +
+                LashFieldPsynergy.LASH_MAX_RANGE * front_pos.y -
+                this.controllable_char.height;
         }
 
         const to_up_duration = 150;
-        this.game.add.tween(this._hand_sprite.scale).to({
-            x: 1 * this._hand_side,
-            y: 1
-        }, to_up_duration, Phaser.Easing.Linear.None, true);
-        const to_up_tween = this.game.add.tween(this._hand_sprite).to({
-            x: target_x,
-            y: target_y
-        }, to_up_duration, Phaser.Easing.Linear.None, true);
+        this.game.add.tween(this._hand_sprite.scale).to(
+            {
+                x: 1 * this._hand_side,
+                y: 1,
+            },
+            to_up_duration,
+            Phaser.Easing.Linear.None,
+            true
+        );
+        const to_up_tween = this.game.add.tween(this._hand_sprite).to(
+            {
+                x: target_x,
+                y: target_y,
+            },
+            to_up_duration,
+            Phaser.Easing.Linear.None,
+            true
+        );
 
         to_up_tween.onComplete.addOnce(() => {
             const open_hand_key = this._hand_sprite_base.getAnimationKey(LashFieldPsynergy.LASH_HAND_KEY_NAME, "open");
             this._hand_sprite.play(open_hand_key);
 
             let timer_event = this.game.time.events.add(180, () => {
-                const down_hand_key = this._hand_sprite_base.getAnimationKey(LashFieldPsynergy.LASH_HAND_KEY_NAME, "down");
+                const down_hand_key = this._hand_sprite_base.getAnimationKey(
+                    LashFieldPsynergy.LASH_HAND_KEY_NAME,
+                    "down"
+                );
                 this._hand_sprite.play(down_hand_key);
 
-                target_y = this.target_found ? this.target_object.sprite.centerY : target_y + this.controllable_char.height;
+                target_y = this.target_found
+                    ? this.target_object.sprite.centerY
+                    : target_y + this.controllable_char.height;
                 const to_down_duration = 350;
                 timer_event = this.game.time.events.add(to_down_duration >> 1, () => {
-                    const tie_hand_key = this._hand_sprite_base.getAnimationKey(LashFieldPsynergy.LASH_HAND_KEY_NAME, "tie");
+                    const tie_hand_key = this._hand_sprite_base.getAnimationKey(
+                        LashFieldPsynergy.LASH_HAND_KEY_NAME,
+                        "tie"
+                    );
                     this._hand_sprite.play(tie_hand_key);
                 });
                 timer_event.timer.start();
-                const to_down_tween = this.game.add.tween(this._hand_sprite).to({
-                    y: target_y
-                }, to_down_duration, Phaser.Easing.Linear.None, true);
+                const to_down_tween = this.game.add.tween(this._hand_sprite).to(
+                    {
+                        y: target_y,
+                    },
+                    to_down_duration,
+                    Phaser.Easing.Linear.None,
+                    true
+                );
 
                 to_down_tween.onComplete.addOnce(() => {
-                    const rope_dock = this.target_object as RopeDock;
-                    if (this.target_found && rope_dock.is_starting_dock && !rope_dock.tied) {
+                    if (this.target_found && this._rope_dock.is_starting_dock && !this._rope_dock.tied) {
                         this.tie();
                     } else {
                         this._hand_sprite.destroy();
@@ -161,15 +191,14 @@ export class LashFieldPsynergy extends FieldAbilities {
     }
 
     async tie() {
-        const rope_dock = this.target_object as RopeDock;
-        const dest_x_px = get_centered_pos_in_px(rope_dock.dest_x, this.data.map.tile_width);
-        const dest_y_px = get_centered_pos_in_px(rope_dock.dest_y, this.data.map.tile_height);
+        const dest_x_px = get_centered_pos_in_px(this._rope_dock.dest_x, this.data.map.tile_width);
+        const dest_y_px = get_centered_pos_in_px(this._rope_dock.dest_y, this.data.map.tile_height);
         const constains_dest = this.game.camera.view.contains(dest_x_px, dest_y_px);
 
         this._default_emitter = this.start_default_emitter(0, 0);
 
         let shake_promise_resolve;
-        const shake_promise = new Promise(resolve => shake_promise_resolve = resolve);
+        const shake_promise = new Promise(resolve => (shake_promise_resolve = resolve));
         const base_pos = {x: this._hand_sprite.x, y: this._hand_sprite.y};
         const shift = 4;
         const total_repeats = 20;
@@ -185,13 +214,21 @@ export class LashFieldPsynergy extends FieldAbilities {
         });
 
         let to_dock_promise_resolve;
-        const to_dock_promise = new Promise(resolve => to_dock_promise_resolve = resolve);
+        const to_dock_promise = new Promise(resolve => (to_dock_promise_resolve = resolve));
         if (!constains_dest) {
             this.game.camera.unfollow();
-            this.game.add.tween(this.game.camera).to({
-                x: this.target_object.x - this.game.camera.width >> 1,
-                y: this.target_object.y - this.game.camera.height >> 1
-            }, total_repeats * duration_unit, Phaser.Easing.Linear.None, true).onComplete.addOnce(to_dock_promise_resolve);
+            this.game.add
+                .tween(this.game.camera)
+                .to(
+                    {
+                        x: (this.target_object.x - this.game.camera.width >> 1),
+                        y: (this.target_object.y - this.game.camera.height >> 1),
+                    },
+                    total_repeats * duration_unit,
+                    Phaser.Easing.Linear.None,
+                    true
+                )
+                .onComplete.addOnce(to_dock_promise_resolve);
         } else {
             to_dock_promise_resolve();
         }
@@ -201,19 +238,35 @@ export class LashFieldPsynergy extends FieldAbilities {
         this._hand_sprite.x = base_pos.x;
         this._hand_sprite.y = base_pos.y;
 
+        this._placed_frag_index = 0;
         let to_dest_promise_resolve;
-        const to_dest_promise = new Promise(resolve => to_dest_promise_resolve = resolve);
-        const distance = get_distance(dest_x_px, rope_dock.x, dest_y_px, rope_dock.y);
+        const to_dest_promise = new Promise(resolve => (to_dest_promise_resolve = resolve));
+        const distance = get_distance(dest_x_px, this._rope_dock.x, dest_y_px, this._rope_dock.y);
         const hand_translate_duration = distance / LashFieldPsynergy.HAND_SPEED;
-        this.game.add.tween(this._hand_sprite).to({
-            x: dest_x_px,
-            y: dest_y_px
-        }, hand_translate_duration, Phaser.Easing.Linear.None, true).onComplete.addOnce(to_dest_promise_resolve);
+        const hand_translate_tween = this.game.add.tween(this._hand_sprite).to(
+            {
+                x: dest_x_px,
+                y: dest_y_px,
+            },
+            hand_translate_duration,
+            Phaser.Easing.Linear.None,
+            true
+        );
+        hand_translate_tween.onComplete.addOnce(to_dest_promise_resolve);
+        hand_translate_tween.onUpdateCallback((ctx, timeline_value: number) => {
+            this.update_rope_frags(timeline_value);
+        });
         if (!constains_dest) {
             this.game.camera.follow(this._hand_sprite, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
         }
-        rope_dock.destroy_overlapping_fragments();
+        this._rope_dock.destroy_overlapping_fragments();
+        this._rope_dock.intialize_swing(true);
+        this._rope_dock.set_sprites_z_sorting(false);
+        this.data.map.sort_sprites();
         await to_dest_promise;
+        this._rope_dock.reset_fragments_pos();
+        this._rope_dock.swing_tween.stop();
+        this._rope_dock.swing_tween = null;
 
         const timer_event = this.game.time.events.add(100, async () => {
             const down_hand_key = this._hand_sprite_base.getAnimationKey(LashFieldPsynergy.LASH_HAND_KEY_NAME, "down");
@@ -225,15 +278,23 @@ export class LashFieldPsynergy extends FieldAbilities {
             }
 
             let to_out_promise_resolve;
-            final_promises.push(new Promise(resolve => to_out_promise_resolve = resolve));
+            final_promises.push(new Promise(resolve => (to_out_promise_resolve = resolve)));
             const dest_y_out = this.game.camera.y - this._hand_sprite.height;
-            this.game.add.tween(this._hand_sprite).to({
-                y: dest_y_out
-            }, 150, Phaser.Easing.Linear.None, true).onComplete.addOnce(to_out_promise_resolve);
+            this.game.add
+                .tween(this._hand_sprite)
+                .to(
+                    {
+                        y: dest_y_out,
+                    },
+                    150,
+                    Phaser.Easing.Linear.None,
+                    true
+                )
+                .onComplete.addOnce(to_out_promise_resolve);
+
+            this._rope_dock.tie();
 
             await Promise.all(final_promises);
-
-            rope_dock.tie();
 
             this._default_emitter.destroy();
             this._default_emitter = null;
@@ -242,8 +303,20 @@ export class LashFieldPsynergy extends FieldAbilities {
 
             this.unset_hero_cast_anim();
             this.stop_casting();
-        })
+        });
         timer_event.timer.start();
+    }
+
+    update_rope_frags(completeness: number) {
+        const target_index = (this._rope_dock.rope_fragments_group.children.length * completeness) | 0;
+        for (let i = this._placed_frag_index; i < target_index; ++i) {
+            const frag = this._rope_dock.rope_fragments_group.children[i];
+            frag.rotation = this._rope_dock.fragment_angle;
+            frag.x = this._rope_dock.rope_frag_base_pos[i].x;
+            frag.y = this._rope_dock.rope_frag_base_pos[i].y;
+            this._rope_dock.frag_able_to_swing[i] = true;
+        }
+        this._placed_frag_index = target_index;
     }
 
     update() {

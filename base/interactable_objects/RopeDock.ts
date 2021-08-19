@@ -1,7 +1,8 @@
-import { degree90 } from "../magic_numbers";
+import {degree90} from "../magic_numbers";
 import {Map} from "../Map";
 import {get_centered_pos_in_px, get_distance, range_360} from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
+import * as _ from "lodash";
 
 /**
  * The rope dock interactable object. The rope fragments and rope events are
@@ -19,6 +20,10 @@ export class RopeDock extends InteractableObjects {
     private static readonly SPIRAL_X_SHIFT = -2;
     private static readonly SPIRAL_Y_SHIFT = 4;
     private static readonly MAX_FRAG_SPIRAL = 20;
+    private static readonly SWING_SIZE = 6;
+    private static readonly SWING_TIME = 175;
+    private static readonly HERO_WALKING_DELTA = 0.015;
+    private static readonly HERO_CLIMB_Y_SHIFT = -2;
 
     /** The destiny dock x tile position. */
     private _dest_x: number;
@@ -45,6 +50,10 @@ export class RopeDock extends InteractableObjects {
     private _fragment_angle: number;
     /** Not practical group. Holds a copy of the first OVERLAP_LIMIT frags to show over the dock. */
     private _frag_overlap_group: Phaser.Group;
+    /** Factor that will increase rope bounce on hero walk. */
+    private _hero_walking_factor: number;
+    /** Array of booleans that says whether a frag can swing or not. */
+    private _frag_able_to_swing: boolean[];
 
     constructor(
         game,
@@ -86,10 +95,11 @@ export class RopeDock extends InteractableObjects {
         this._dest_rope_dock = null;
         this.swing_tween = null;
         this._rope_frag_base_pos = [];
+        this._frag_able_to_swing = [];
     }
 
     /** Groups that holds the rope fragments. */
-    get rope_fragments_group() {
+    get rope_fragments_group(): Phaser.Group {
         return this._is_starting_dock ? this._rope_fragments_group : this._dest_rope_dock.rope_fragments_group;
     }
 
@@ -111,6 +121,11 @@ export class RopeDock extends InteractableObjects {
     /** Rope fragments base positions. */
     get rope_frag_base_pos() {
         return this._rope_frag_base_pos;
+    }
+
+    /** Array of booleans that says whether a frag can swing or not. */
+    get frag_able_to_swing() {
+        return this._frag_able_to_swing;
     }
 
     /** The angle in which the rope fragments are. */
@@ -169,14 +184,8 @@ export class RopeDock extends InteractableObjects {
         this.sprite.sort_function_end = () => {
             const back = this._tied ? this.sprite : this.rope_fragments_group;
             const front = this._tied ? this.rope_fragments_group : this.sprite;
-            if (
-                this.data.npc_group.getChildIndex(back) >
-                this.data.npc_group.getChildIndex(front)
-            ) {
-                this.data.npc_group.setChildIndex(
-                    front,
-                    this.data.npc_group.getChildIndex(back)
-                );
+            if (this.data.npc_group.getChildIndex(back) > this.data.npc_group.getChildIndex(front)) {
+                this.data.npc_group.setChildIndex(front, this.data.npc_group.getChildIndex(back));
             }
         };
     }
@@ -251,13 +260,14 @@ export class RopeDock extends InteractableObjects {
                 x: default_x,
                 y: default_y,
             });
+            this._frag_able_to_swing.push(this._tied);
 
             if (this._tied) {
                 sprite.x = default_x;
                 sprite.y = default_y;
                 sprite.rotation = this._fragment_angle;
             } else {
-                const t = Math.log(i)/RopeDock.MAX_FRAG_SPIRAL;
+                const t = Math.log(i) / RopeDock.MAX_FRAG_SPIRAL;
                 sprite.x = RopeDock.SPIRAL_VELOCITY * t * Math.cos(RopeDock.SPIRAL_ANG_VELOCITY * t);
                 sprite.y = RopeDock.SPIRAL_VELOCITY * t * Math.sin(RopeDock.SPIRAL_ANG_VELOCITY * t);
                 sprite.rotation = Math.atan2(sprite.y - RopeDock.SPIRAL_Y_SHIFT, sprite.x) + degree90;
@@ -296,6 +306,7 @@ export class RopeDock extends InteractableObjects {
             const rope_frag = this.rope_fragments_group.children[i];
             rope_frag.x = this.rope_frag_base_pos[i].x;
             rope_frag.y = this.rope_frag_base_pos[i].y;
+            rope_frag.rotation = this.fragment_angle;
         }
     }
 
@@ -308,6 +319,79 @@ export class RopeDock extends InteractableObjects {
         if (this._rope_fragments_group) {
             this._rope_fragments_group.send_to_back = send_to_back;
         }
+    }
+
+    /**
+     * Initializes the swing animation of the rope.
+     * @param force forces the swing to happen.
+     */
+    intialize_swing(force: boolean = false) {
+        const half_height = RopeDock.SWING_SIZE >> 1;
+        const swing_object = {
+            y: -half_height,
+        };
+        this.swing_tween = this.game.add.tween(swing_object).to(
+            {
+                y: half_height,
+            },
+            RopeDock.SWING_TIME,
+            Phaser.Easing.Quadratic.InOut,
+            true,
+            0,
+            -1,
+            true
+        );
+        const position_ratio_formula = (relative_pos: number) => {
+            return 4 * relative_pos * (-relative_pos + 1);
+        };
+        this._hero_walking_factor = 0;
+        const y_shift = this.data.hero.climbing_rope ? RopeDock.HERO_CLIMB_Y_SHIFT : 0;
+        this.swing_tween.onUpdateCallback(() => {
+            if (!force) {
+                this.data.hero.sprite.x = this.data.hero.sprite.body.x;
+            }
+
+            if (this.data.hero.in_movement() || force) {
+                this._hero_walking_factor = _.clamp(this._hero_walking_factor + RopeDock.HERO_WALKING_DELTA, 0, 1);
+            } else {
+                this._hero_walking_factor = _.clamp(this._hero_walking_factor - RopeDock.HERO_WALKING_DELTA, 0, 1);
+            }
+
+            let relative_pos: number;
+            if (force) {
+                relative_pos = 0.5;
+                this._hero_walking_factor *= 2;
+            } else {
+                relative_pos = Math.abs(this.data.hero.sprite.x - this.x) / this.rope_width;
+            }
+            const position_ratio = position_ratio_formula(relative_pos) * this._hero_walking_factor;
+
+            if (!force) {
+                this.data.hero.sprite.y = this.data.hero.sprite.body.y + y_shift + swing_object.y * position_ratio;
+            }
+
+            const rope_fragments_group = this.rope_fragments_group;
+            for (let i = 0; i < rope_fragments_group.children.length; ++i) {
+                if (!this._frag_able_to_swing[i]) {
+                    continue;
+                }
+
+                const rope_frag = rope_fragments_group.children[i];
+                const rope_frag_x = rope_fragments_group.x + rope_frag.x;
+
+                let distance_ratio: number = 1;
+                if (!force) {
+                    const hero_frag_dist = Math.abs(rope_frag_x - this.data.hero.sprite.x) | 0;
+                    distance_ratio = 1 - hero_frag_dist / this.rope_width;
+                }
+
+                const relative_frag_pos = Math.abs(rope_frag_x - this.x) / this.rope_width;
+                const position_penalty = position_ratio_formula(relative_frag_pos);
+
+                const variation = swing_object.y * distance_ratio * position_ratio * position_penalty;
+                rope_frag.y = this.rope_frag_base_pos[i].y + variation;
+            }
+        });
     }
 
     /**
