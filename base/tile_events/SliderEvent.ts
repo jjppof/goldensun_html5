@@ -109,6 +109,7 @@ export class SliderEvent extends TileEvent {
 
     private dust_animation() {
         const dust_sprite_base = this.data.info.misc_sprite_base_list[SliderEvent.DUST_KEY];
+        const dust_key = dust_sprite_base.getSpriteKey(SliderEvent.DUST_KEY);
         const initial_x = this.data.map.tile_width * (this.x + 0.5);
         for (let i = 0; i < SliderEvent.DUST_COUNT; ++i) {
             this.game.time.events.add(40 * i, () => {
@@ -120,7 +121,7 @@ export class SliderEvent extends TileEvent {
                     this.data.hero.sprite.body.y -
                     Math.random() * this.data.map.tile_height +
                     (this.data.map.tile_height >> 1);
-                const dust_sprite: Phaser.Sprite = this.data.npc_group.create(start_x, start_y, SliderEvent.DUST_KEY);
+                const dust_sprite: Phaser.Sprite = this.data.npc_group.create(start_x, start_y, dust_key);
                 dust_sprite.base_collision_layer = this.dest_collision_layer;
                 dust_sprite.anchor.setTo(0.5, 0.5);
                 this.game.add.tween(dust_sprite).to(

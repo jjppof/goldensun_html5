@@ -90,6 +90,22 @@
         }
     },
     {
+        "key_name": "whirlwind",
+        "initial_animation": "blow",
+        "actions": {
+            "whirlwind": {
+                "frame_rate": 18,
+                "animations": ["blow", "end"],
+                "frames_count": [5, 3],
+                "loop": [true, false],
+                "spritesheet": {
+                    "image": "assets/images/misc/whirlwind.png",
+                    "json": "assets/images/misc/whirlwind.json"
+                }
+            }
+        }
+    },
+    {
         "key_name": "battle_status_sprites",
         "initial_animation": "death_curse_0",
         "actions": {

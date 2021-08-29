@@ -15,7 +15,7 @@ import {Pushable} from "../interactable_objects/Pushable";
 
 export class MoveFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "move";
-    private static readonly ACTION_KEY_NAME = "cast";
+    private static readonly ACTION_KEY_NAME = base_actions.CAST;
     private static readonly MAX_HAND_TRANSLATE = 16;
     private static readonly MOVE_MAX_RANGE = 26;
     private static readonly MOVE_HAND_KEY_NAME = "move_hand";

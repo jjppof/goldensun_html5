@@ -328,11 +328,12 @@ export class Pushable extends InteractableObjects {
         const origin_x = get_centered_pos_in_px(this.tile_x_pos, this.data.map.tile_width);
         const origin_y = get_centered_pos_in_px(this.tile_y_pos, this.data.map.tile_height);
         const dust_sprite_base = this.data.info.misc_sprite_base_list[Pushable.DUST_KEY];
+        const dust_key = dust_sprite_base.getSpriteKey(Pushable.DUST_KEY);
         for (let i = 0; i < Pushable.DUST_COUNT; ++i) {
             const this_angle = ((Math.PI + numbers.degree60) * i) / (Pushable.DUST_COUNT - 1) - numbers.degree30;
             const x = origin_x + Pushable.DUST_RADIUS * Math.cos(this_angle);
             const y = origin_y + Pushable.DUST_RADIUS * Math.sin(this_angle);
-            const dust_sprite = this.data.npc_group.create(origin_x, origin_y, Pushable.DUST_KEY);
+            const dust_sprite = this.data.npc_group.create(origin_x, origin_y, dust_key);
             if (this_angle < 0 || this_angle > Math.PI) {
                 this.data.npc_group.setChildIndex(dust_sprite, this.data.npc_group.getChildIndex(this.sprite));
             }

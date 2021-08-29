@@ -1,11 +1,11 @@
-import {directions} from "../utils";
+import {base_actions, directions} from "../utils";
 import {FieldAbilities} from "./FieldAbilities";
 import * as _ from "lodash";
 import {SpriteBase} from "../SpriteBase";
 
 export class GrowthFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "growth";
-    private static readonly ACTION_KEY_NAME = "cast";
+    private static readonly ACTION_KEY_NAME = base_actions.CAST;
     private static readonly GROWTH_MAX_RANGE = 12;
     private static readonly MAX_PARTICLE_SPEED = 60;
     private static readonly MIN_PARTICLE_SPEED = 55;

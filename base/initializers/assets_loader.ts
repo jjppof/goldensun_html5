@@ -41,7 +41,6 @@ function load_misc(game) {
         "assets/images/icons/battle_effects/battle_effect_icons.png",
         "assets/images/icons/battle_effects/battle_effect_icons.json"
     );
-    game.load.atlasJSONHash("dust", "assets/images/misc/dust.png", "assets/images/misc/dust.json");
     game.load.atlasJSONHash(
         "battle_cursor",
         "assets/images/misc/battle_cursor.png",
@@ -54,6 +53,11 @@ function load_misc(game) {
         "psynergy_ball",
         "assets/images/interactable_objects/psynergy_ball.png",
         "assets/images/interactable_objects/psynergy_ball.json"
+    );
+    game.load.atlasJSONHash(
+        "whirlwind_leaves",
+        "assets/images/misc/whirlwind_leaves.png",
+        "assets/images/misc/whirlwind_leaves.json"
     );
 }
 

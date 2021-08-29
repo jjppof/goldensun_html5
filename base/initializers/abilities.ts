@@ -7,6 +7,7 @@ import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 import {LashFieldPsynergy} from "../field_abilities/LashFieldPsynergy";
 import {GoldenSun} from "../GoldenSun";
 import {GameInfo} from "./initialize_info";
+import {WhirlwindFieldPsynergy} from "../field_abilities/WhirlwindFieldPsynergy";
 
 export function initialize_abilities(
     game: Phaser.Game,
@@ -64,5 +65,6 @@ export function initialize_field_abilities(game, data) {
         pound: new PoundFieldPsynergy(game, data),
         reveal: new RevealFieldPsynergy(game, data),
         lash: new LashFieldPsynergy(game, data),
+        whirlwind: new WhirlwindFieldPsynergy(game, data),
     };
 }

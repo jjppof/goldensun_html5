@@ -1,9 +1,10 @@
 import {FieldAbilities} from "./FieldAbilities";
 import * as numbers from "../magic_numbers";
+import {base_actions} from "../utils";
 
 export class RevealFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "reveal";
-    private static readonly ACTION_KEY_NAME = "cast";
+    private static readonly ACTION_KEY_NAME = base_actions.CAST;
     private reveal_wave: Phaser.Image;
     private reveal_wave_filter: any;
     private end_timer: Phaser.Timer;

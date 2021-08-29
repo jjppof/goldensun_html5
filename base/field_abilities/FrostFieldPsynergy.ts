@@ -1,5 +1,5 @@
 import * as numbers from "../magic_numbers";
-import {get_surroundings, directions} from "../utils";
+import {get_surroundings, directions, base_actions} from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {FieldAbilities} from "./FieldAbilities";
 import * as _ from "lodash";
@@ -11,7 +11,7 @@ Input:game [Phaser:Game] - Reference to the running game object
        data [GoldenSun] - Reference to the main JS Class instance*/
 export class FrostFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "frost";
-    private static readonly ACTION_KEY_NAME = "cast";
+    private static readonly ACTION_KEY_NAME = base_actions.CAST;
     private static readonly FROST_MAX_RANGE = 12;
     private static readonly SNOWFLAKES_COUNT = 16;
     private static readonly TOTAL_TURNS_SNOWFLAKES = Math.PI * 7;

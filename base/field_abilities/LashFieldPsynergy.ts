@@ -1,11 +1,11 @@
 import {RopeDock} from "../interactable_objects/RopeDock";
 import {SpriteBase} from "../SpriteBase";
-import {directions, get_centered_pos_in_px, get_distance, get_front_position} from "../utils";
+import {directions, get_centered_pos_in_px, get_distance, get_front_position, base_actions} from "../utils";
 import {FieldAbilities} from "./FieldAbilities";
 
 export class LashFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "lash";
-    private static readonly ACTION_KEY_NAME = "cast";
+    private static readonly ACTION_KEY_NAME = base_actions.CAST;
     private static readonly LASH_MAX_RANGE = 12;
     private static readonly LASH_HAND_KEY_NAME = "lash_hand";
     private static readonly HAND_SPEED = 0.25;

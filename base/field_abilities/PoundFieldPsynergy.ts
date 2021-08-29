@@ -1,5 +1,5 @@
 import * as numbers from "../magic_numbers";
-import {directions, reverse_directions, get_surroundings} from "../utils";
+import {directions, reverse_directions, get_surroundings, base_actions} from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {FieldAbilities} from "./FieldAbilities";
 import {SpriteBase} from "../SpriteBase";
@@ -8,7 +8,7 @@ import * as _ from "lodash";
 
 export class PoundFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "pound";
-    private static readonly ACTION_KEY_NAME = "cast";
+    private static readonly ACTION_KEY_NAME = base_actions.CAST;
     private static readonly POUND_MAX_RANGE = 26;
     private static readonly STAR_MAX_COUNT = 12;
     private static readonly POUND_HAND_KEY_NAME = "pound_hand";
