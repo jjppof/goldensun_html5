@@ -571,7 +571,9 @@ export class Map {
             property_info.scale_x,
             property_info.scale_y,
             property_info.block_climb_collision_layer_shift,
-            property_info.events_info
+            property_info.events_info,
+            property_info.enable,
+            property_info.entangled_by_bush,
         );
         if (interactable_object.is_rope_dock) {
             (interactable_object as RopeDock).intialize_dock_info(

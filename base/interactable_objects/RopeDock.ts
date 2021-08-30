@@ -71,7 +71,9 @@ export class RopeDock extends InteractableObjects {
         scale_x,
         scale_y,
         block_climb_collision_layer_shift,
-        events_info
+        events_info,
+        enable,
+        entangled_by_bush
     ) {
         super(
             game,
@@ -89,7 +91,9 @@ export class RopeDock extends InteractableObjects {
             scale_x,
             scale_y,
             block_climb_collision_layer_shift,
-            events_info
+            events_info,
+            enable,
+            entangled_by_bush
         );
         this._is_rope_dock = true;
         this._dest_rope_dock = null;

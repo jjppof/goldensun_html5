@@ -29,6 +29,9 @@ export enum interactable_object_event_types {
 }
 
 export class InteractableObjects {
+    private static readonly BUSH_KEY = "bush";
+    private static readonly BUSH_FRAME = "leaves/bush/00";
+
     protected game: Phaser.Game;
     protected data: GoldenSun;
 
@@ -43,6 +46,8 @@ export class InteractableObjects {
     private storage_keys: {
         position?: string;
         base_collision_layer?: string;
+        enable?: string;
+        entangled_by_bush?: string;
     };
     private tile_events_info: {
         [event_id: number]: {
@@ -61,6 +66,8 @@ export class InteractableObjects {
     private _tile_y_pos: number;
     private _collision_tiles_bodies: Phaser.Physics.P2.Body[];
     private _color_filter: any;
+    private _enable: boolean;
+    private _entangled_by_bush: boolean;
     private _sprite: Phaser.Sprite;
     private _psynergy_casted: {[field_psynergy_key: string]: boolean};
     private _blocking_stair_block: Phaser.Physics.P2.Body;
@@ -74,6 +81,7 @@ export class InteractableObjects {
         animation_duration: number;
         dust_animation: boolean;
     }[];
+    private _bush_sprite: Phaser.Sprite;
     protected _pushable: boolean;
     protected _is_rope_dock: boolean;
     protected _extra_sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.Group)[];
@@ -94,7 +102,9 @@ export class InteractableObjects {
         scale_x,
         scale_y,
         block_climb_collision_layer_shift,
-        events_info
+        events_info,
+        enable,
+        entangled_by_bush,
     ) {
         this.game = game;
         this.data = data;
@@ -113,6 +123,14 @@ export class InteractableObjects {
             base_collision_layer = this.data.storage.get(this.storage_keys.base_collision_layer);
         }
         this._base_collision_layer = base_collision_layer ?? 0;
+        if (this.storage_keys.enable !== undefined) {
+            enable = this.data.storage.get(this.storage_keys.enable);
+        }
+        this._enable = enable ?? true;
+        if (this.storage_keys.entangled_by_bush !== undefined) {
+            entangled_by_bush = this.data.storage.get(this.storage_keys.entangled_by_bush);
+        }
+        this._entangled_by_bush = entangled_by_bush ?? false;
         this.not_allowed_tiles = not_allowed_tiles ?? [];
         this._object_drop_tiles = object_drop_tiles ?? [];
         this.events_id = new Set();
@@ -197,6 +215,12 @@ export class InteractableObjects {
     get is_rope_dock() {
         return this._is_rope_dock;
     }
+    get enable() {
+        return this._enable;
+    }
+    get entangled_by_bush() {
+        return this._entangled_by_bush;
+    }
 
     position_allowed(x: number, y: number) {
         if (
@@ -228,6 +252,14 @@ export class InteractableObjects {
         if (pos.y) {
             this._tile_y_pos = pos.y;
         }
+    }
+
+    set_enable(enable: boolean) {
+        this._enable = enable;
+    }
+
+    set_entangled_by_bush(entangled_by_bush: boolean) {
+        this._entangled_by_bush = entangled_by_bush;
     }
 
     change_collision_layer(destination_collision_layer: number) {
@@ -343,6 +375,23 @@ export class InteractableObjects {
         const initial_animation = interactable_object_db.initial_animation;
         const anim_key = this.sprite_info.getAnimationKey(this.key_name, initial_animation);
         this.sprite.animations.play(anim_key);
+        if (this.entangled_by_bush) {
+            this.init_bush();
+        }
+    }
+
+    init_bush() {
+        this._bush_sprite = this.data.npc_group.create(0, 0, InteractableObjects.BUSH_KEY);
+        this._bush_sprite.roundPx = true;
+        this._bush_sprite.base_collision_layer = this.base_collision_layer;
+        this._bush_sprite.anchor.setTo(0.5, 0.75);
+        this._bush_sprite.x = this.sprite.x;
+        this._bush_sprite.y = this.sprite.y;
+        console.log(this._bush_sprite.x, this._bush_sprite.y)
+        this._bush_sprite.frameName = InteractableObjects.BUSH_FRAME;
+        this._bush_sprite.sort_function = () => {
+            this.data.npc_group.setChildIndex(this._bush_sprite, this.data.npc_group.getChildIndex(this.sprite) + 1);
+        };
     }
 
     initialize_related_events(map: Map) {

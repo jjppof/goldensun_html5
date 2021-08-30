@@ -23,7 +23,10 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
             WhirlwindFieldPsynergy.ACTION_KEY_NAME,
             true,
             true,
-            WhirlwindFieldPsynergy.WHIRLWIND_MAX_RANGE
+            WhirlwindFieldPsynergy.WHIRLWIND_MAX_RANGE,
+            undefined,
+            undefined,
+            true
         );
         this.set_bootstrap_method(this.init.bind(this));
         this._whirlwind_sprite_base = this.data.info.misc_sprite_base_list[WhirlwindFieldPsynergy.ABILITY_KEY_NAME];
@@ -70,11 +73,16 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
                 true
             )
             .onComplete.addOnce(() => {
-                if (this.target_found) {
+                if (this.target_found && this.target_object.entangled_by_bush && !this.target_object.enable) {
+                    this.blow_leaves();
                 } else {
                     this.miss_target();
                 }
             });
+    }
+
+    blow_leaves() {
+
     }
 
     miss_target() {

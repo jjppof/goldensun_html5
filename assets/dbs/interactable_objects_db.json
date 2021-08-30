@@ -7,6 +7,9 @@
         "psynergy_keys": {
             "move": {
                 "interaction_type": "infinite"
+            },
+            "whirlwind": {
+                "interaction_type": "once"
             }
         },
         "pushable": true,

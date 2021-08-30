@@ -55,9 +55,9 @@ function load_misc(game) {
         "assets/images/interactable_objects/psynergy_ball.json"
     );
     game.load.atlasJSONHash(
-        "whirlwind_leaves",
-        "assets/images/misc/whirlwind_leaves.png",
-        "assets/images/misc/whirlwind_leaves.json"
+        "bush",
+        "assets/images/misc/bush.png",
+        "assets/images/misc/bush.json"
     );
 }
 

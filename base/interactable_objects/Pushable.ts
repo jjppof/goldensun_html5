@@ -37,7 +37,9 @@ export class Pushable extends InteractableObjects {
         scale_x,
         scale_y,
         block_climb_collision_layer_shift,
-        events_info
+        events_info,
+        enable,
+        entangled_by_bush
     ) {
         super(
             game,
@@ -55,7 +57,9 @@ export class Pushable extends InteractableObjects {
             scale_x,
             scale_y,
             block_climb_collision_layer_shift,
-            events_info
+            events_info,
+            enable,
+            entangled_by_bush
         );
         this._pushable = true;
     }

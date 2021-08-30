@@ -27,6 +27,7 @@ export abstract class FieldAbilities {
     protected cast_direction: number;
     private field_color: number;
     private field_intensity: number;
+    private works_on_disabled_io: boolean;
 
     constructor(
         game: Phaser.Game,
@@ -37,7 +38,8 @@ export abstract class FieldAbilities {
         tint_map?: boolean,
         target_max_range?: number,
         field_color?: number,
-        field_intensity?: number
+        field_intensity?: number,
+        works_on_disabled_io?: boolean
     ) {
         this.game = game;
         this.ability_key_name = ability_key_name;
@@ -55,6 +57,7 @@ export abstract class FieldAbilities {
         this.field_psynergy_window = new FieldPsynergyWindow(this.game, this.data);
         this.field_color = field_color;
         this.field_intensity = field_intensity;
+        this.works_on_disabled_io = works_on_disabled_io ?? false;
     }
 
     abstract update(): void;
@@ -116,8 +119,13 @@ export abstract class FieldAbilities {
         let sqr_distance = Infinity;
         for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
             const interactable_object = this.data.map.interactable_objects[i];
+            if (!interactable_object.enable && !this.works_on_disabled_io) {
+                continue;
+            }
             const db = this.data.dbs.interactable_objects_db[interactable_object.key_name];
-            if (!(this.ability_key_name in db.psynergy_keys)) continue;
+            if (!(this.ability_key_name in db.psynergy_keys)) {
+                continue
+            };
             const item_x_px = get_centered_pos_in_px(interactable_object.tile_x_pos, this.data.map.tile_width);
             const item_y_px = get_centered_pos_in_px(interactable_object.tile_y_pos, this.data.map.tile_height);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
