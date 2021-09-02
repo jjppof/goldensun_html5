@@ -11,6 +11,7 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
     private static readonly WHIRLWIND_SCALE_Y = 1.3;
     private static readonly INIT_DURATION = 250;
     private static readonly MISS_DURATION = 800;
+    private static readonly FOUND_DURATION = 4000;
 
     private _whirlwind_sprite_base: SpriteBase;
     private _whirlwind_sprite: Phaser.Sprite;
@@ -54,13 +55,18 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
             Phaser.Easing.Linear.None,
             true
         );
-        const front_pos = get_front_position(0, 0, this.cast_direction);
+        
         this._whirlwind_sprite.centerX = this.controllable_char.sprite.centerX;
         this._whirlwind_sprite.centerY = this.controllable_char.sprite.centerY;
-        const target_x =
-            this.controllable_char.sprite.centerX + front_pos.x * WhirlwindFieldPsynergy.WHIRLWIND_MISS_SHIFT;
-        const target_y =
-            this.controllable_char.sprite.centerY + front_pos.y * WhirlwindFieldPsynergy.WHIRLWIND_MISS_SHIFT;
+        let target_x, target_y;
+        if (this.target_found) {
+            target_x = this.target_object.bush_sprite.centerX;
+            target_y = this.target_object.bush_sprite.centerY;
+        } else {
+            const front_pos = get_front_position(0, 0, this.cast_direction);
+            target_x = this.controllable_char.sprite.centerX + front_pos.x * WhirlwindFieldPsynergy.WHIRLWIND_MISS_SHIFT;
+            target_y = this.controllable_char.sprite.centerY + front_pos.y * WhirlwindFieldPsynergy.WHIRLWIND_MISS_SHIFT;
+        }
         this.game.add
             .tween(this._whirlwind_sprite)
             .to(
@@ -82,7 +88,20 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
     }
 
     blow_leaves() {
+        this.target_object.set_entangled_by_bush(false);
+        this.target_object.set_enable(true);
+        this.target_object.destroy_bush();
 
+        const timer_event = this.game.time.events.add(WhirlwindFieldPsynergy.FOUND_DURATION, () => {
+            const end_key = this._whirlwind_sprite_base.getAnimationKey(WhirlwindFieldPsynergy.ABILITY_KEY_NAME, "end");
+            this._whirlwind_sprite.play(end_key).onComplete.addOnce(() => {
+                this._whirlwind_sprite.destroy();
+                this._whirlwind_sprite = null;
+                this.unset_hero_cast_anim();
+                this.stop_casting();
+            });
+        });
+        timer_event.timer.start();
     }
 
     miss_target() {

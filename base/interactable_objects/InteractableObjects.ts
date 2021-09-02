@@ -221,6 +221,9 @@ export class InteractableObjects {
     get entangled_by_bush() {
         return this._entangled_by_bush;
     }
+    get bush_sprite() {
+        return this._bush_sprite;
+    }
 
     position_allowed(x: number, y: number) {
         if (
@@ -256,10 +259,23 @@ export class InteractableObjects {
 
     set_enable(enable: boolean) {
         this._enable = enable;
+        if (this.storage_keys.enable !== undefined) {
+            this.data.storage.set(this.storage_keys.enable, enable);
+        }
     }
 
     set_entangled_by_bush(entangled_by_bush: boolean) {
         this._entangled_by_bush = entangled_by_bush;
+        if (this.storage_keys.entangled_by_bush !== undefined) {
+            this.data.storage.set(this.storage_keys.entangled_by_bush, entangled_by_bush);
+        }
+    }
+
+    destroy_bush() {
+        if (this._bush_sprite) {
+            this._bush_sprite.destroy();
+            this._bush_sprite = null;
+        }
     }
 
     change_collision_layer(destination_collision_layer: number) {
@@ -392,6 +408,7 @@ export class InteractableObjects {
         this._bush_sprite.sort_function = () => {
             this.data.npc_group.setChildIndex(this._bush_sprite, this.data.npc_group.getChildIndex(this.sprite) + 1);
         };
+        this._extra_sprites.push(this._bush_sprite);
     }
 
     initialize_related_events(map: Map) {
@@ -762,7 +779,11 @@ export class InteractableObjects {
         if (this.sprite) {
             this.sprite.destroy();
         }
-        this._extra_sprites.forEach(sprite => sprite.destroy(true));
+        this._extra_sprites.forEach(sprite => {
+            if (sprite) {
+                sprite.destroy(true);
+            }
+        });
         if (this.blocking_stair_block) {
             this.blocking_stair_block.destroy();
         }
