@@ -104,7 +104,7 @@ export class InteractableObjects {
         block_climb_collision_layer_shift,
         events_info,
         enable,
-        entangled_by_bush,
+        entangled_by_bush
     ) {
         this.game = game;
         this.data = data;
@@ -403,7 +403,6 @@ export class InteractableObjects {
         this._bush_sprite.anchor.setTo(0.5, 0.75);
         this._bush_sprite.x = this.sprite.x;
         this._bush_sprite.y = this.sprite.y;
-        console.log(this._bush_sprite.x, this._bush_sprite.y)
         this._bush_sprite.frameName = InteractableObjects.BUSH_FRAME;
         this._bush_sprite.sort_function = () => {
             this.data.npc_group.setChildIndex(this._bush_sprite, this.data.npc_group.getChildIndex(this.sprite) + 1);

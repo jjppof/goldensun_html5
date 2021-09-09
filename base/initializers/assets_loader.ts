@@ -54,11 +54,7 @@ function load_misc(game) {
         "assets/images/interactable_objects/psynergy_ball.png",
         "assets/images/interactable_objects/psynergy_ball.json"
     );
-    game.load.atlasJSONHash(
-        "bush",
-        "assets/images/misc/bush.png",
-        "assets/images/misc/bush.json"
-    );
+    game.load.atlasJSONHash("bush", "assets/images/misc/bush.png", "assets/images/misc/bush.json");
 }
 
 function load_assets(game) {

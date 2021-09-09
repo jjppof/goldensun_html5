@@ -420,3 +420,15 @@ export function mount_collision_polygon(width: number, shift: number, bevel: num
         ...(bevel === 0 ? [] : [[shift, bevel + shift]]),
     ];
 }
+
+/**
+ * Standard Normal variate using Box-Muller transform. Mean = 0, variance = 1.
+ * @returns returns a normal pseudo-random number.
+ */
+export function random_normal() {
+    let u = 0,
+        v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+}

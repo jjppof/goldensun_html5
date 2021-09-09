@@ -28,6 +28,7 @@ export abstract class FieldAbilities {
     private field_color: number;
     private field_intensity: number;
     private works_on_disabled_io: boolean;
+    private target_found_extra_check: (io: InteractableObjects) => boolean;
 
     constructor(
         game: Phaser.Game,
@@ -39,7 +40,8 @@ export abstract class FieldAbilities {
         target_max_range?: number,
         field_color?: number,
         field_intensity?: number,
-        works_on_disabled_io?: boolean
+        works_on_disabled_io?: boolean,
+        target_found_extra_check?: (io: InteractableObjects) => boolean
     ) {
         this.game = game;
         this.ability_key_name = ability_key_name;
@@ -58,6 +60,7 @@ export abstract class FieldAbilities {
         this.field_color = field_color;
         this.field_intensity = field_intensity;
         this.works_on_disabled_io = works_on_disabled_io ?? false;
+        this.target_found_extra_check = target_found_extra_check;
     }
 
     abstract update(): void;
@@ -122,10 +125,13 @@ export abstract class FieldAbilities {
             if (!interactable_object.enable && !this.works_on_disabled_io) {
                 continue;
             }
+            if (this.target_found_extra_check && !this.target_found_extra_check(interactable_object)) {
+                continue;
+            }
             const db = this.data.dbs.interactable_objects_db[interactable_object.key_name];
             if (!(this.ability_key_name in db.psynergy_keys)) {
-                continue
-            };
+                continue;
+            }
             const item_x_px = get_centered_pos_in_px(interactable_object.tile_x_pos, this.data.map.tile_width);
             const item_y_px = get_centered_pos_in_px(interactable_object.tile_y_pos, this.data.map.tile_height);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
