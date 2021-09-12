@@ -41,6 +41,7 @@ export abstract class TileEvent {
     protected _y: number;
     protected _location_key: number;
     protected _id: number;
+    protected _key_name: string;
     protected _activation_collision_layers: number[];
     protected _activation_directions: number[];
     protected _dynamic: boolean;
@@ -48,9 +49,11 @@ export abstract class TileEvent {
     protected _affected_by_reveal: boolean[];
     protected _origin_interactable_object: InteractableObjects;
     public collision_layer_shift_from_source: number;
+    private active_storage_key: string;
+
     protected static id_incrementer: number;
     protected static events: {[id: number]: TileEvent};
-    private active_storage_key: string;
+    protected static labeled_events: {[key_name: number]: TileEvent};
 
     constructor(
         game,
@@ -64,7 +67,8 @@ export abstract class TileEvent {
         active,
         active_storage_key,
         origin_interactable_object,
-        affected_by_reveal
+        affected_by_reveal,
+        key_name
     ) {
         this.game = game;
         this.data = data;
@@ -91,6 +95,10 @@ export abstract class TileEvent {
         this._origin_interactable_object = origin_interactable_object ?? null;
         this.collision_layer_shift_from_source = 0;
         TileEvent.events[this.id] = this;
+        this._key_name = key_name;
+        if (this._key_name) {
+            TileEvent.labeled_events[this._key_name] = this;
+        }
     }
 
     get type() {
@@ -125,6 +133,9 @@ export abstract class TileEvent {
     }
     get affected_by_reveal() {
         return this._affected_by_reveal;
+    }
+    get key_name() {
+        return this._key_name;
     }
 
     abstract fire(): void;
@@ -188,12 +199,17 @@ export abstract class TileEvent {
         return TileEvent.events[id];
     }
 
+    static get_labeled_event(key_name: string) {
+        return key_name in TileEvent.labeled_events ? TileEvent.labeled_events[key_name] : null;
+    }
+
     static reset() {
         TileEvent.id_incrementer = 0;
         for (let id in TileEvent.events) {
             TileEvent.events[id].destroy();
         }
         TileEvent.events = {};
+        TileEvent.labeled_events = {};
     }
 }
 

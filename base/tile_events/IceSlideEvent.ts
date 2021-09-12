@@ -16,6 +16,7 @@ export class IceSlideEvent extends TileEvent {
         active,
         active_storage_key,
         affected_by_reveal,
+        key_name: string,
         start_sliding_direction
     ) {
         super(
@@ -30,7 +31,8 @@ export class IceSlideEvent extends TileEvent {
             active,
             active_storage_key,
             null,
-            affected_by_reveal
+            affected_by_reveal,
+            key_name
         );
         this.start_sliding_direction = directions[start_sliding_direction as string];
         this.ready_to_deactive = false;

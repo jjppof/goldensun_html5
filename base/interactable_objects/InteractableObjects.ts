@@ -494,6 +494,7 @@ export class InteractableObjects {
             active_event,
             undefined,
             false,
+            undefined,
             event_info.is_set ?? true
         );
         map_events[this_event_location_key].push(new_event);
@@ -604,6 +605,7 @@ export class InteractableObjects {
                 active_event,
                 undefined,
                 false,
+                undefined,
                 is_set
             );
             map_events[this_event_location_key].push(new_event);
@@ -704,6 +706,7 @@ export class InteractableObjects {
                 active_event,
                 undefined,
                 false,
+                undefined,
                 event_data.change_to_collision_layer,
                 event_info.is_set,
                 this,

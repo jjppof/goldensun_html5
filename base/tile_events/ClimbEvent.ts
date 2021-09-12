@@ -30,6 +30,7 @@ export class ClimbEvent extends TileEvent {
         active,
         active_storage_key,
         affected_by_reveal,
+        key_name: string,
         change_to_collision_layer,
         is_set?,
         origin_interactable_object?: InteractableObjects,
@@ -47,7 +48,8 @@ export class ClimbEvent extends TileEvent {
             active,
             active_storage_key,
             origin_interactable_object,
-            affected_by_reveal
+            affected_by_reveal,
+            key_name
         );
         this.change_to_collision_layer = change_to_collision_layer ?? null;
         this._is_set = is_set ?? true;

@@ -22,6 +22,7 @@ export class SliderEvent extends TileEvent {
         active,
         active_storage_key,
         affected_by_reveal,
+        key_name: string,
         x_target,
         y_target,
         dest_collision_layer,
@@ -39,7 +40,8 @@ export class SliderEvent extends TileEvent {
             active,
             active_storage_key,
             null,
-            affected_by_reveal
+            affected_by_reveal,
+            key_name
         );
         this.x_target = x_target;
         this.y_target = y_target;

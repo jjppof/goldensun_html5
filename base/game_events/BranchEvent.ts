@@ -22,6 +22,7 @@ export class BranchEvent extends GameEvent {
         game,
         data,
         active,
+        key_name,
         condition,
         left_comparator_value,
         right_comparator_value,
@@ -29,7 +30,7 @@ export class BranchEvent extends GameEvent {
         events,
         else_events
     ) {
-        super(game, data, event_types.BRANCH, active);
+        super(game, data, event_types.BRANCH, active, key_name);
         this.condition = condition;
         this.left_comparator_value = left_comparator_value;
         this.right_comparator_value = right_comparator_value;

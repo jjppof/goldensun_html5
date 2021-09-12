@@ -13,8 +13,8 @@ export class PartyJoinEvent extends GameEvent {
     private finish_events: GameEvent[] = [];
     private control_key: number;
 
-    constructor(game, data, active, char_key_name, join, finish_events) {
-        super(game, data, event_types.PARTY_JOIN, active);
+    constructor(game, data, active, key_name, char_key_name, join, finish_events) {
+        super(game, data, event_types.PARTY_JOIN, active, key_name);
         this.char_key_name = char_key_name;
         this.join = join;
 

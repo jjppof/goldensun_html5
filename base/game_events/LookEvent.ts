@@ -6,8 +6,8 @@ export class LookEvent extends GameEvent {
     private looker: number | string;
     private target: number | string;
 
-    constructor(game, data, active, look, looker, target) {
-        super(game, data, event_types.LOOK, active);
+    constructor(game, data, active, key_name, look, looker, target) {
+        super(game, data, event_types.LOOK, active, key_name);
         this.look = look;
         this.looker = looker;
         this.target = target;

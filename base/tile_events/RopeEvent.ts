@@ -31,6 +31,7 @@ export class RopeEvent extends TileEvent {
         active,
         active_storage_key,
         affected_by_reveal,
+        key_name: string,
         origin_interactable_object: RopeDock,
         walk_over_rope: boolean,
         dock_exit_collision_layer: number,
@@ -48,7 +49,8 @@ export class RopeEvent extends TileEvent {
             active,
             active_storage_key,
             origin_interactable_object,
-            affected_by_reveal
+            affected_by_reveal,
+            key_name
         );
         this._walk_over_rope = walk_over_rope ?? true;
         this._dock_exit_collision_layer = dock_exit_collision_layer ?? 0;

@@ -21,6 +21,7 @@ export class DialogEvent extends GameEvent {
         game,
         data,
         active,
+        key_name,
         text,
         avatar,
         npc_hero_reciprocal_look,
@@ -29,7 +30,7 @@ export class DialogEvent extends GameEvent {
         voice_key,
         disable_controls
     ) {
-        super(game, data, event_types.DIALOG, active);
+        super(game, data, event_types.DIALOG, active, key_name);
         this.text = text;
         this.avatar = avatar;
         this.npc_hero_reciprocal_look = npc_hero_reciprocal_look ?? false;

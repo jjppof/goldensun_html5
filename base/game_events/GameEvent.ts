@@ -74,18 +74,24 @@ export abstract class GameEvent {
     public type: event_types;
     public id: number;
     public active: boolean;
+    public key_name: string;
     public origin_npc: NPC = null;
 
     public static id_incrementer: number;
     public static events: {[id: number]: GameEvent};
+    public static labeled_events: {[key_name: number]: GameEvent};
 
-    constructor(game: Phaser.Game, data: GoldenSun, type: event_types, active: boolean) {
+    constructor(game: Phaser.Game, data: GoldenSun, type: event_types, active: boolean, key_name: string) {
         this.game = game;
         this.data = data;
         this.type = type;
         this.active = active ?? true;
         this.id = GameEvent.id_incrementer++;
         GameEvent.events[this.id] = this;
+        this.key_name = key_name;
+        if (this.key_name) {
+            GameEvent.labeled_events[this.key_name] = this;
+        }
     }
 
     /**
@@ -134,6 +140,15 @@ export abstract class GameEvent {
     }
 
     /**
+     * Gets an event that was labeled.
+     * @param key_name The event key.
+     * @returns Returns the labeled event, if the given key wasn't found, returns null.
+     */
+    static get_labeled_event(key_name: string) {
+        return key_name in GameEvent.labeled_events ? GameEvent.labeled_events[key_name] : null;
+    }
+
+    /**
      * Destroys all game events and resets the id counter.
      */
     static reset() {
@@ -142,6 +157,7 @@ export abstract class GameEvent {
             GameEvent.events[id].destroy();
         }
         GameEvent.events = {};
+        GameEvent.labeled_events = {};
     }
 }
 

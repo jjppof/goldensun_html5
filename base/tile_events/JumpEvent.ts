@@ -29,6 +29,7 @@ export class JumpEvent extends TileEvent {
         active,
         active_storage_key,
         affected_by_reveal,
+        key_name: string,
         is_set
     ) {
         super(
@@ -43,7 +44,8 @@ export class JumpEvent extends TileEvent {
             active,
             active_storage_key,
             null,
-            affected_by_reveal
+            affected_by_reveal,
+            key_name
         );
         this.is_set = is_set ?? true;
     }

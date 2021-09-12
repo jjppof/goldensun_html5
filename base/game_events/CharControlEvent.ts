@@ -18,6 +18,7 @@ export abstract class CharControlEvent extends GameEvent {
         data,
         event_type,
         active,
+        key_name,
         is_npc,
         npc_index,
         camera_follow,
@@ -26,7 +27,7 @@ export abstract class CharControlEvent extends GameEvent {
         finish_events,
         keep_camera_follow
     ) {
-        super(game, data, event_type, active);
+        super(game, data, event_type, active, key_name);
         this.is_npc = is_npc;
         this.npc_index = npc_index;
         this.camera_follow = camera_follow;

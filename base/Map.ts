@@ -544,7 +544,7 @@ export class Map {
     /**
      * Creates an interactable object.
      * @param raw_property the properties of this interactable object still not parsed.
-     * @returns return the created interactable object.
+     * @returns returns the created interactable object.
      */
     private create_interactable_object(raw_property: string) {
         const property_info = JSON.parse(raw_property);

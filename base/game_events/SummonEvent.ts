@@ -28,8 +28,8 @@ export class SummonEvent extends GameEvent {
     private finish_events: GameEvent[] = [];
     private control_key: number;
 
-    constructor(game, data, active, summon_key, finish_events) {
-        super(game, data, event_types.SUMMON, active);
+    constructor(game, data, active, key_name, summon_key, finish_events) {
+        super(game, data, event_types.SUMMON, active, key_name);
         this.summon = this.data.info.summons_list[summon_key];
 
         this.control_key = this.data.control_manager.add_controls(

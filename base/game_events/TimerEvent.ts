@@ -5,8 +5,8 @@ export class TimerEvent extends GameEvent {
     private duration: number;
     private finish_events: GameEvent[] = [];
 
-    constructor(game, data, active, duration, finish_events) {
-        super(game, data, event_types.TIMER, active);
+    constructor(game, data, active, key_name, duration, finish_events) {
+        super(game, data, event_types.TIMER, active, key_name);
         this.duration = duration;
         if (finish_events !== undefined) {
             finish_events.forEach(event_info => {

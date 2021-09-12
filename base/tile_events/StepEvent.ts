@@ -20,6 +20,7 @@ export class StepEvent extends TileEvent {
         active,
         active_storage_key,
         affected_by_reveal,
+        key_name: string,
         step_direction
     ) {
         super(
@@ -34,7 +35,8 @@ export class StepEvent extends TileEvent {
             active,
             active_storage_key,
             null,
-            affected_by_reveal
+            affected_by_reveal,
+            key_name
         );
         this.step_direction = directions[step_direction as string];
         this.next_x = 0;

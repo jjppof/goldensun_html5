@@ -16,6 +16,7 @@ export class EventTriggerEvent extends TileEvent {
         active,
         active_storage_key,
         affected_by_reveal,
+        key_name: string,
         events,
         remove_from_field
     ) {
@@ -31,7 +32,8 @@ export class EventTriggerEvent extends TileEvent {
             active,
             active_storage_key,
             null,
-            affected_by_reveal
+            affected_by_reveal,
+            key_name
         );
         this.remove_from_field = remove_from_field;
         events.forEach(event_info => {

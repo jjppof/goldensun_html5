@@ -23,6 +23,7 @@ export class TeleportEvent extends TileEvent {
         active,
         active_storage_key,
         affected_by_reveal,
+        key_name: string,
         target,
         x_target,
         y_target,
@@ -42,7 +43,8 @@ export class TeleportEvent extends TileEvent {
             active,
             active_storage_key,
             null,
-            affected_by_reveal
+            affected_by_reveal,
+            key_name
         );
         this.target = target;
         this.x_target = x_target;

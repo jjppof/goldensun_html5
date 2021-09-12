@@ -14,6 +14,7 @@ export class SpeedEvent extends TileEvent {
         active,
         active_storage_key,
         affected_by_reveal,
+        key_name: string,
         speed
     ) {
         super(
@@ -28,7 +29,8 @@ export class SpeedEvent extends TileEvent {
             active,
             active_storage_key,
             null,
-            affected_by_reveal
+            affected_by_reveal,
+            key_name
         );
         this._speed = speed;
     }

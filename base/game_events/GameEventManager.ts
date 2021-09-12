@@ -241,12 +241,20 @@ export class GameEventManager {
     get_event_instance(info: any) {
         switch (info.type) {
             case event_types.BATTLE:
-                return new BattleEvent(this.game, this.data, info.active, info.background_key, info.enemy_party_key);
+                return new BattleEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.background_key,
+                    info.enemy_party_key
+                );
             case event_types.BRANCH:
                 return new BranchEvent(
                     this.game,
                     this.data,
                     info.active,
+                    info.key_name,
                     info.condition,
                     info.left_comparator_value,
                     info.right_comparator_value,
@@ -259,6 +267,7 @@ export class GameEventManager {
                     this.game,
                     this.data,
                     info.active,
+                    info.key_name,
                     info.event_value,
                     info.check_npc_storage_values
                 );
@@ -267,6 +276,7 @@ export class GameEventManager {
                     this.game,
                     this.data,
                     info.active,
+                    info.key_name,
                     info.is_npc,
                     info.dash,
                     info.dest_unit_in_tile,
@@ -288,6 +298,7 @@ export class GameEventManager {
                     this.game,
                     this.data,
                     info.active,
+                    info.key_name,
                     info.text,
                     info.avatar,
                     info.npc_hero_reciprocal_look,
@@ -297,12 +308,21 @@ export class GameEventManager {
                     info.disable_controls
                 );
             case event_types.LOOK:
-                return new LookEvent(this.game, this.data, info.active, info.look, info.looker, info.target);
+                return new LookEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.look,
+                    info.looker,
+                    info.target
+                );
             case event_types.CHEST:
                 return new ChestEvent(
                     this.game,
                     this.data,
                     info.active,
+                    info.key_name,
                     info.item,
                     info.quantity,
                     info.finish_events,
@@ -311,25 +331,41 @@ export class GameEventManager {
                     info.hide_on_finish
                 );
             case event_types.PSYNERGY_STONE:
-                return new PsynergyStoneEvent(this.game, this.data, info.active, info.finish_events);
+                return new PsynergyStoneEvent(this.game, this.data, info.active, info.key_name, info.finish_events);
             case event_types.TIMER:
-                return new TimerEvent(this.game, this.data, info.active, info.duration, info.finish_events);
+                return new TimerEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.duration,
+                    info.finish_events
+                );
             case event_types.PARTY_JOIN:
                 return new PartyJoinEvent(
                     this.game,
                     this.data,
                     info.active,
+                    info.key_name,
                     info.char_key_name,
                     info.join,
                     info.finish_events
                 );
             case event_types.SUMMON:
-                return new SummonEvent(this.game, this.data, info.active, info.summon_key, info.finish_events);
+                return new SummonEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.summon_key,
+                    info.finish_events
+                );
             case event_types.DJINN_GET:
                 return new DjinnGetEvent(
                     this.game,
                     this.data,
                     info.active,
+                    info.key_name,
                     info.djinn_key,
                     info.has_fight,
                     info.enemy_party_key,
@@ -342,6 +378,7 @@ export class GameEventManager {
                     this.game,
                     this.data,
                     info.active,
+                    info.key_name,
                     info.is_npc,
                     info.npc_index,
                     info.camera_follow,
@@ -361,6 +398,7 @@ export class GameEventManager {
                     this.game,
                     this.data,
                     info.active,
+                    info.key_name,
                     info.direction,
                     info.is_npc,
                     info.npc_index,
@@ -377,6 +415,7 @@ export class GameEventManager {
                     this.game,
                     this.data,
                     info.active,
+                    info.key_name,
                     info.emoticon,
                     info.duration,
                     info.sound_effect,

@@ -17,6 +17,7 @@ export class CollisionEvent extends TileEvent {
         active,
         active_storage_key,
         affected_by_reveal,
+        key_name: string,
         dest_collision_layer
     ) {
         super(
@@ -31,7 +32,8 @@ export class CollisionEvent extends TileEvent {
             active,
             active_storage_key,
             null,
-            affected_by_reveal
+            affected_by_reveal,
+            key_name
         );
         this.dest_collision_layer = dest_collision_layer;
         this.next_x = 0;

@@ -263,6 +263,7 @@ export class TileEventManager {
                 info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
+                info.key_name,
                 info.change_to_collision_layer
             );
         } else if (info.type === event_types.SPEED) {
@@ -277,6 +278,7 @@ export class TileEventManager {
                 info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
+                info.key_name,
                 info.speed
             );
         } else if (info.type === event_types.TELEPORT) {
@@ -291,6 +293,7 @@ export class TileEventManager {
                 info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
+                info.key_name,
                 info.target,
                 info.x_target,
                 info.y_target,
@@ -310,6 +313,7 @@ export class TileEventManager {
                 info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
+                info.key_name,
                 info.x_target,
                 info.y_target,
                 info.dest_collision_layer,
@@ -327,6 +331,7 @@ export class TileEventManager {
                 info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
+                info.key_name,
                 info.is_set
             );
         } else if (info.type === event_types.STEP) {
@@ -341,6 +346,7 @@ export class TileEventManager {
                 info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
+                info.key_name,
                 info.step_direction
             );
         } else if (info.type === event_types.COLLISION) {
@@ -355,6 +361,7 @@ export class TileEventManager {
                 info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
+                info.key_name,
                 info.dest_collision_layer
             );
         } else if (info.type === event_types.EVENT_TRIGGER) {
@@ -369,6 +376,7 @@ export class TileEventManager {
                 info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
+                info.key_name,
                 info.events,
                 info.remove_from_field
             );
@@ -384,6 +392,7 @@ export class TileEventManager {
                 info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
+                info.key_name,
                 info.start_sliding_direction
             );
         } else if (info.type === event_types.ROPE) {
@@ -398,6 +407,7 @@ export class TileEventManager {
                 info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
+                info.key_name,
                 info.origin_interactable_object,
                 info.walk_over_rope,
                 info.dock_exit_collision_layer,
