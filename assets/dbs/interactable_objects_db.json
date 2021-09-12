@@ -1,5 +1,14 @@
 [
     {
+        "key_name": "bush",
+        "body_radius": 0,
+        "psynergy_keys": {
+            "whirlwind": {
+                "interaction_type": "once"
+            }
+        }
+    },
+    {
         "key_name": "pillar",
         "anchor_x": 0.5,
         "anchor_y": 0.8,

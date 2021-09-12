@@ -14,5 +14,7 @@
     "ground_djinn": true,
     "ember_djinn": true,
     "chill_djinn": true,
-    "kite_djinn": true
+    "kite_djinn": true,
+    "door_bush": true,
+    "madra_door_teleport_enable": false
 }

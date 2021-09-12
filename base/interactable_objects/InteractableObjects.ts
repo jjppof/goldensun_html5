@@ -6,6 +6,7 @@ import {
     get_centered_pos_in_px,
     get_directions,
     get_opposite_direction,
+    get_px_position,
     get_surroundings,
     mount_collision_polygon,
     reverse_directions,
@@ -15,6 +16,7 @@ import {ClimbEvent} from "../tile_events/ClimbEvent";
 import {GoldenSun} from "../GoldenSun";
 import {Map} from "../Map";
 import {RopeEvent} from "../tile_events/RopeEvent";
+import {GameEvent} from "../game_events/GameEvent";
 
 export enum interactable_object_interaction_types {
     ONCE = "once",
@@ -85,6 +87,10 @@ export class InteractableObjects {
     protected _pushable: boolean;
     protected _is_rope_dock: boolean;
     protected _extra_sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.Group)[];
+    private toggle_enable_events: {
+        event: GameEvent;
+        on_enable: boolean;
+    }[];
 
     constructor(
         game,
@@ -104,7 +110,8 @@ export class InteractableObjects {
         block_climb_collision_layer_shift,
         events_info,
         enable,
-        entangled_by_bush
+        entangled_by_bush,
+        toggle_enable_events
     ) {
         this.game = game;
         this.data = data;
@@ -153,6 +160,17 @@ export class InteractableObjects {
             this.tile_events_info[+index] = events_info[index];
         }
         this._extra_sprites = [];
+        if (toggle_enable_events !== undefined) {
+            this.toggle_enable_events = toggle_enable_events.map(event_info => {
+                const event = this.data.game_event_manager.get_event_instance(event_info.event);
+                return {
+                    event: event,
+                    on_enable: event_info.on_enable,
+                };
+            });
+        } else {
+            this.toggle_enable_events = [];
+        }
     }
 
     get key_name() {
@@ -243,9 +261,16 @@ export class InteractableObjects {
     }
 
     get_current_position(map: Map) {
-        const x = (this.sprite.x / map.tile_width) | 0;
-        const y = (this.sprite.y / map.tile_height) | 0;
-        return {x: x, y: y};
+        if (this._sprite) {
+            const x = (this.sprite.x / map.tile_width) | 0;
+            const y = (this.sprite.y / map.tile_height) | 0;
+            return {x: x, y: y};
+        } else {
+            return {
+                x: this.tile_x_pos,
+                y: this.tile_y_pos,
+            };
+        }
     }
 
     set_tile_position(pos: {x?: number; y?: number}) {
@@ -262,6 +287,11 @@ export class InteractableObjects {
         if (this.storage_keys.enable !== undefined) {
             this.data.storage.set(this.storage_keys.enable, enable);
         }
+        this.toggle_enable_events.forEach(event_info => {
+            if (enable === event_info.on_enable) {
+                event_info.event.fire();
+            }
+        });
     }
 
     set_entangled_by_bush(entangled_by_bush: boolean) {
@@ -371,46 +401,59 @@ export class InteractableObjects {
                 this.psynergy_casted[psynergy_key] = false;
             }
         }
-        const interactable_object_key = this.sprite_info.getSpriteKey(this.key_name);
-        const interactable_object_sprite = this.data.npc_group.create(0, 0, interactable_object_key);
-        this._sprite = interactable_object_sprite;
-        this.sprite.is_interactable_object = true;
-        this.sprite.roundPx = true;
-        this.sprite.base_collision_layer = this.base_collision_layer;
-        this.sprite.filters = [this.color_filter];
-        if (interactable_object_db.send_to_back !== undefined) {
-            this.sprite.send_to_back = interactable_object_db.send_to_back;
+        if (this.sprite_info) {
+            const interactable_object_key = this.sprite_info.getSpriteKey(this.key_name);
+            const interactable_object_sprite = this.data.npc_group.create(0, 0, interactable_object_key);
+            this._sprite = interactable_object_sprite;
+            this.sprite.is_interactable_object = true;
+            this.sprite.roundPx = true;
+            this.sprite.base_collision_layer = this.base_collision_layer;
+            this.sprite.filters = [this.color_filter];
+            if (interactable_object_db.send_to_back !== undefined) {
+                this.sprite.send_to_back = interactable_object_db.send_to_back;
+            }
+            this.set_anchor();
+            this.set_scale();
+            const shift_x = interactable_object_db.shift_x ?? 0;
+            const shift_y = interactable_object_db.shift_y ?? 0;
+            this.sprite.x = get_centered_pos_in_px(this.tile_x_pos, map.tile_width) + shift_x;
+            this.sprite.y = get_centered_pos_in_px(this.tile_y_pos, map.tile_height) + shift_y;
+            this.sprite_info.setAnimation(this.sprite, this.key_name);
+            const initial_animation = interactable_object_db.initial_animation;
+            const anim_key = this.sprite_info.getAnimationKey(this.key_name, initial_animation);
+            this.sprite.animations.play(anim_key);
         }
-        this.set_anchor();
-        this.set_scale();
-        const shift_x = interactable_object_db.shift_x ?? 0;
-        const shift_y = interactable_object_db.shift_y ?? 0;
-        this.sprite.x = get_centered_pos_in_px(this.tile_x_pos, map.tile_width) + shift_x;
-        this.sprite.y = get_centered_pos_in_px(this.tile_y_pos, map.tile_height) + shift_y;
-        this.sprite_info.setAnimation(this.sprite, this.key_name);
-        const initial_animation = interactable_object_db.initial_animation;
-        const anim_key = this.sprite_info.getAnimationKey(this.key_name, initial_animation);
-        this.sprite.animations.play(anim_key);
         if (this.entangled_by_bush) {
-            this.init_bush();
+            this.init_bush(map);
         }
     }
 
-    init_bush() {
+    init_bush(map: Map) {
         this._bush_sprite = this.data.npc_group.create(0, 0, InteractableObjects.BUSH_KEY);
         this._bush_sprite.roundPx = true;
         this._bush_sprite.base_collision_layer = this.base_collision_layer;
         this._bush_sprite.anchor.setTo(0.5, 0.75);
-        this._bush_sprite.x = this.sprite.x;
-        this._bush_sprite.y = this.sprite.y;
         this._bush_sprite.frameName = InteractableObjects.BUSH_FRAME;
-        this._bush_sprite.sort_function = () => {
-            this.data.npc_group.setChildIndex(this._bush_sprite, this.data.npc_group.getChildIndex(this.sprite) + 1);
-        };
+        if (this.sprite) {
+            this._bush_sprite.x = this.sprite.x;
+            this._bush_sprite.y = this.sprite.y;
+            this._bush_sprite.sort_function = () => {
+                this.data.npc_group.setChildIndex(
+                    this._bush_sprite,
+                    this.data.npc_group.getChildIndex(this.sprite) + 1
+                );
+            };
+        } else {
+            this._bush_sprite.x = get_px_position(this.tile_x_pos, map.tile_width) + (map.tile_width >> 1);
+            this._bush_sprite.y = get_px_position(this.tile_y_pos, map.tile_height) + map.tile_height;
+        }
         this._extra_sprites.push(this._bush_sprite);
     }
 
     initialize_related_events(map: Map) {
+        if (!this.data.dbs.interactable_objects_db[this.key_name].events) {
+            return;
+        }
         const position = this.get_current_position(map);
         let x_pos = position.x;
         let y_pos = position.y;
@@ -791,6 +834,9 @@ export class InteractableObjects {
         }
         this.collision_tiles_bodies.forEach(body => {
             body.destroy();
+        });
+        this.toggle_enable_events.forEach(event_info => {
+            event_info.event.destroy();
         });
         if (remove_from_npc_group) {
             this.data.npc_group.removeChild(this.sprite);

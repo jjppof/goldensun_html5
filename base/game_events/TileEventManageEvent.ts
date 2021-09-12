@@ -17,7 +17,7 @@ export class TileEventManageEvent extends GameEvent {
     }
 
     _fire() {
-        if (!this.active || this.tile_event_key) return;
+        if (!this.active || !this.tile_event_key) return;
         const event = TileEvent.get_labeled_event(this.tile_event_key);
         if (!event) return;
 

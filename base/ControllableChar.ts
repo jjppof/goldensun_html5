@@ -1254,7 +1254,7 @@ export abstract class ControllableChar {
         for (j = 0; j < this.data.map.interactable_objects.length; ++j) {
             //check if hero is colliding with any interactable object
             const interactable_object = this.data.map.interactable_objects[j];
-            const interactable_object_body = interactable_object.sprite.body;
+            const interactable_object_body = interactable_object.sprite?.body;
             if (!interactable_object_body || !interactable_object.enable) {
                 continue;
             }
