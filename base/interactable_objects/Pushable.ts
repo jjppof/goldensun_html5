@@ -293,11 +293,7 @@ export class Pushable extends InteractableObjects {
             let old_y = event.y;
             let new_x = old_x + event_shift_x;
             let new_y = old_y + event_shift_y;
-            event.set_position(new_x, new_y);
-            if (!(event.location_key in this.data.map.events)) {
-                this.data.map.events[event.location_key] = [];
-            }
-            this.data.map.events[event.location_key].push(event);
+            event.set_position(new_x, new_y, true);
             const new_surroundings = get_surroundings(new_x, new_y, false, 2);
             JumpEvent.active_jump_surroundings(
                 this.data,

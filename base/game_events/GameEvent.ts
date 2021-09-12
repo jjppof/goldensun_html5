@@ -37,6 +37,7 @@ export enum event_types {
     JUMP = "jump",
     FACE_DIRECTION = "face_direction",
     EMOTICON = "emoticon",
+    TILE_EVENT_MANAGE = "tile_event_manage",
 }
 
 /**
@@ -144,7 +145,7 @@ export abstract class GameEvent {
      * @param key_name The event key.
      * @returns Returns the labeled event, if the given key wasn't found, returns null.
      */
-    static get_labeled_event(key_name: string) {
+    static get_labeled_event(key_name: string): GameEvent {
         return key_name in GameEvent.labeled_events ? GameEvent.labeled_events[key_name] : null;
     }
 

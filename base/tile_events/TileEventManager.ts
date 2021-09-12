@@ -413,6 +413,8 @@ export class TileEventManager {
                 info.dock_exit_collision_layer,
                 info.rope_collision_layer
             );
+        } else {
+            console.warn(`Tile event type ${info.type} not found.`);
         }
     }
 }

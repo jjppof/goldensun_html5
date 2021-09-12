@@ -104,9 +104,11 @@ export abstract class TileEvent {
     get type() {
         return this._type;
     }
+    /** The x tile position. */
     get x() {
         return this._x;
     }
+    /** The y tile position. */
     get y() {
         return this._y;
     }
@@ -157,30 +159,51 @@ export abstract class TileEvent {
         return -1;
     }
 
-    activate_at(direction: directions) {
-        this.active[this.activation_directions.indexOf(direction)] = true;
+    activate_at(direction: directions | "all") {
+        if (direction === "all") {
+            this.activate();
+        } else {
+            const index = this.activation_directions.indexOf(direction as directions);
+            if (index >= 0) {
+                this.active[index] = true;
+            }
+        }
     }
 
-    deactivate_at(direction: directions) {
-        this.active[this.activation_directions.indexOf(direction)] = false;
+    deactivate_at(direction: directions | "all") {
+        if (direction === "all") {
+            this.deactivate();
+        } else {
+            const index = this.activation_directions.indexOf(direction as directions);
+            if (index >= 0) {
+                this.active[index] = false;
+            }
+        }
     }
 
     activate() {
-        this._active = this.active.map(() => true);
+        this._active = this.active.fill(true);
     }
 
     deactivate() {
-        this._active = this.active.map(() => false);
+        this._active = this.active.fill(false);
     }
 
     check_position() {
         return this.data.hero.tile_x_pos === this.x && this.data.hero.tile_y_pos === this.y;
     }
 
-    set_position(x?: number, y?: number) {
-        this._x = x ?? this.x;
-        this._y = y ?? this.y;
+    set_position(x_tile?: number, y_tile?: number, change_in_map: boolean = false) {
+        this._x = x_tile ?? this.x;
+        this._y = y_tile ?? this.y;
+        const previous_location_key: number = this._location_key;
         this._location_key = LocationKey.get_key(this.x, this.y);
+        if (change_in_map && this.location_key !== previous_location_key) {
+            if (!(this.location_key in this.data.map.events)) {
+                this.data.map.events[this.location_key] = [];
+            }
+            this.data.map.events[this.location_key].push(this);
+        }
     }
 
     set_activation_collision_layers(...collision_layers_indexes: number[]) {
@@ -199,7 +222,7 @@ export abstract class TileEvent {
         return TileEvent.events[id];
     }
 
-    static get_labeled_event(key_name: string) {
+    static get_labeled_event(key_name: string): TileEvent {
         return key_name in TileEvent.labeled_events ? TileEvent.labeled_events[key_name] : null;
     }
 

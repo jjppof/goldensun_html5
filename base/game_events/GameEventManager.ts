@@ -22,6 +22,7 @@ import {DjinnGetEvent} from "./DjinnGetEvent";
 import {JumpEvent} from "./JumpEvent";
 import {FaceDirectionEvent} from "./FaceDirectionEvent";
 import {EmoticonEvent} from "./EmoticonEvent";
+import {TileEventManageEvent} from "./TileEventManageEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -425,6 +426,19 @@ export class GameEventManager {
                     info.face_hero,
                     info.finish_events
                 );
+            case event_types.TILE_EVENT_MANAGE:
+                return new TileEventManageEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.tile_event_key,
+                    info.activate_at,
+                    info.pos,
+                    info.collision_layers
+                );
+            default:
+                console.warn(`Game event type ${info.type} not found.`);
         }
     }
 
