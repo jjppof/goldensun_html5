@@ -7,20 +7,19 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0
 **See the [DEMO](https://jjppof.github.io/goldensun_html5/index).** Prefer to use Chrome based browsers.
 
 - **This repository is just the engine**. I'm not planning to do many maps, animations, items etc. Content here is just enough to show the functionalities.
-- People should be able to make a GS like game without any programming skills with this project.
+- With this project, **people should be able to make a GS like game without any programming skills**.
+- This project does not aim to do exactly the same engine as GS, but very similar.
 - **WE NEED HELP!** Please, feel free to reach me if you want to do so. Join our [**discord server**](https://discord.gg/fYFSxPMjmS).
 - If you found any bug, please create an [issue](https://github.com/jjppof/goldensun_html5/issues/new) for it.
 - Issues are not very well explained, feel free to reach me for details about them.
-- The goal of this project is not to do exactly the same engine as GS, but very similar.
-- Check the [wiki](https://github.com/jjppof/goldensun_html5/wiki) for database configuration, tutorials and project information.
-- There's no production environment for now, but I'm planning to do it with webpack and embed most of the assets.
-- In the future, it will also be possible to distribute it by Electron (desktop) and/or Ionic (mobile).
-- Use github [discussion](https://github.com/jjppof/goldensun_html5/discussions) to make questions.
+- Check the [wiki](https://github.com/jjppof/goldensun_html5/wiki) for database configuration, tutorials and project tech information.
+- There's no production environment for now, but I'm planning to deploy a desktop application.
+- Check the [latest updates](https://github.com/jjppof/goldensun_html5/discussions/categories/updates).
 
 ## Things that you can do without programming knowledge
 
 - Maps
-- Sprites
+- NPCs
 - Battle Animations
 - Shops
 - Djinn
@@ -29,6 +28,7 @@ An online **Golden Sun Engine** entirely built in HTML5 with [PhaserJS CE 2.15.0
 - Items
 - Main chars
 - Enemies
+- Djinn
 
 ## Development environment
 
@@ -38,7 +38,7 @@ GS-HTML5 supports both Javascript and Typescript. We use [Webpack](https://webpa
 - Use `npm start` to start the development server.
 - Check the [general guidelines](https://github.com/jjppof/goldensun_html5/wiki#some-coding-guidelines) in order to contribute.
 - Learn Phaser 2 by [examples](https://phaser.io/examples/v2) or by this [tutorial](https://phaser.io/tutorials/making-your-first-phaser-2-game). For reference, check their [API](http://phaser.io/docs/2.6.2/index).
-- Check our [API docs](https://gshtml5.org/docs/) in for quick reference.
+- Check our [API docs](https://gshtml5.org/docs/) for quick reference.
 
 ## Utils
 
