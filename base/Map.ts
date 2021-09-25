@@ -12,6 +12,7 @@ import {Djinn} from "./Djinn";
 import {Pushable} from "./interactable_objects/Pushable";
 import {RopeDock} from "./interactable_objects/RopeDock";
 
+/** The class reponsible for the maps of the engine. */
 export class Map {
     private static readonly MAX_CAMERA_ROTATION = 0.035;
     private static readonly CAMERA_ROTATION_STEP = 0.003;
@@ -99,67 +100,83 @@ export class Map {
         this._background_key = background_key;
     }
 
+    /** The list of TileEvents of this map. */
     get events() {
         return this._events;
     }
+    /** The list of NPCs of this map. */
     get npcs() {
         return this._npcs;
     }
+    /** The list of Interactable Objects of this map. */
     get interactable_objects() {
         return this._interactable_objects;
     }
+    /** The current active collision layer. */
     get collision_layer() {
         return this._collision_layer;
     }
+    /** The sprite without texture just responsible to enable the map collision body. */
     get collision_sprite() {
         return this._collision_sprite;
     }
+    /** The number of collision layers of this map. */
     get collision_layers_number() {
         return this._collision_layers_number;
     }
+    /** Whether this map will load its assets only when the hero reaches it. */
     get lazy_load() {
         return this._lazy_load;
     }
+    /** Whether this map is world map or not. */
     get is_world_map() {
         return this._is_world_map;
     }
+    /** The map main sprite. */
     get sprite() {
         return this._sprite;
     }
+    /** Whether this map has chars footprint system enabled. */
     get show_footsteps() {
         return this._show_footsteps;
     }
+    /** The Phaser.Filter object responsible for this map texture color control. */
     get color_filter() {
         return this._color_filter;
     }
+    /** The map name. */
     get name() {
         return this._name;
     }
+    /** The map key name. */
     get key_name() {
         return this._key_name;
     }
+    /** The list of layers of this map. */
     get layers() {
         return this.sprite.layers;
     }
+    /** The battle background key of this map. */
     get background_key() {
         return this._background_key;
     }
-
+    /** The tile width of this map. */
     get tile_width() {
         return this.sprite.properties?.real_tile_width ?? this.sprite.tileWidth;
     }
-
+    /** The tile height of this map. */
     get tile_height() {
         return this.sprite.properties?.real_tile_height ?? this.sprite.tileHeight;
     }
 
     /**
      * Sorts the sprites in the GoldenSun.npc_group by y position and base_collision_layer
-     * properties. After this first sort, send_to_front, sort_function, send_to_back and sort_function_end
-     * are properties are checked in this order.
+     * properties. After this first sort, send_to_front [boolean], sort_function [callable],
+     * send_to_back [boolean] and sort_function_end [callable] Phaser.DisplayObject properties
+     * are checked in this order.
      */
     sort_sprites() {
-        //maybe these array initializations need a better performative approach...
+        //these array initializations need a better performative approach...
         const send_to_back_list = new Array(this.data.npc_group.children.length);
         const send_to_front_list = new Array(this.data.npc_group.children.length);
         const has_sort_function = new Array(this.data.npc_group.children.length);
