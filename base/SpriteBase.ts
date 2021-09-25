@@ -1,3 +1,7 @@
+/**
+ * This class holds all the info related to spritesheet data, animations, actions
+ * and the appropriate methods to generate this info.
+ */
 export class SpriteBase {
     public key_name: string;
     private actions: {

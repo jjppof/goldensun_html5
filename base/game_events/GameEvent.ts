@@ -60,12 +60,13 @@ function check_reveal(target: Object, property_key: string, descriptor: Property
 }
 
 /**
+ * This is the class reponsible for general events of the game.
  * Every game event class must inherit from this class. Whenever a game event is instantiated,
  * this event receives an unique id. These ids are reset whenever a map is destroyed. In order
  * to fire a GameEvent, calls GameEvent.fire. In order to destroy a game event, calls GameEvent.destroy.
  * Game events can be fired from TileEvents, NPC or Interactable Objects interaction, map changes or
  * other game events.
- * Whenever an asynchronous game event is fired, increments the GamEventManager.events_running_count, so the
+ * Whenever an asynchronous game event is fired, increments the GameEventManager.events_running_count, so the
  * engine knows that there's an event going on. When the event is finished, decrements the same variable.
  * If your event has internal states, don't forget to reset them on finish.
  */

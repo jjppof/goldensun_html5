@@ -16,6 +16,11 @@ import {Map} from "./Map";
 import {Camera} from "./Camera";
 import {Pushable} from "./interactable_objects/Pushable";
 
+/**
+ * All chars that can be controlled by human (Hero) or code/event procedures (NPC)
+ * have this class as the parent class. This class gives a lot of resources to control
+ * a char in the engine.
+ */
 export abstract class ControllableChar {
     private static readonly DEFAULT_SHADOW_KEYNAME = "shadow";
 
@@ -47,22 +52,37 @@ export abstract class ControllableChar {
     private dash_speed: number;
     private climb_speed: number;
 
-    /* char states */
+    /** Whether the char is idle/stopped due to collision. */
     public stop_by_colliding: boolean;
+    /** Whether the char had its direction changed due to side collision. */
     public force_direction: boolean;
+    /** Whether this char is dashing. */
     public dashing: boolean;
+    /** Whether this char is climbing. */
     public climbing: boolean;
+    /** Whether this char is pushing an Interactable Object. */
     public pushing: boolean;
+    /** Whether this char is jumping. */
     public jumping: boolean;
+    /** Whether this char is cliff sliding. */
     public sliding: boolean;
+    /** Whether this char is casting psynergy. */
     public casting_psynergy: boolean;
+    /** Whether this char is under Reveal psynergy effect. */
     public on_reveal: boolean;
+    /** Whether this char is teleporting by the teleport TileEvent. */
     public teleporting: boolean;
+    /** Whether this char is idle during climbing state. */
     public idle_climbing: boolean;
+    /** Whether this char is under an ice sliding ground. */
     public ice_sliding_active: boolean;
+    /** Whether this char is sliding/moving over an ice ground. */
     public sliding_on_ice: boolean;
+    /** Whether thic char is trying to push an Interactable Object. */
     public trying_to_push: boolean;
+    /** Whether this char is walking over a rope. */
     public walking_over_rope: boolean;
+    /** Whether this char is climbing a rope. */
     public climbing_rope: boolean;
 
     protected storage_keys: {
@@ -72,7 +92,9 @@ export abstract class ControllableChar {
         active?: string;
     };
     protected _sprite_info: SpriteBase;
+    /** The char main sprite object. */
     public sprite: Phaser.Sprite;
+    /** The shadow sprite object. */
     public shadow: Phaser.Sprite;
     protected _body_radius: number;
     private _tile_x_pos: number;
@@ -96,9 +118,11 @@ export abstract class ControllableChar {
     /** The direction that the char is trying to push an interactable object */
     protected _trying_to_push_direction: number;
 
-    /* misc char states */
+    /** Whether the char will let footprints in the ground. */
     public enable_footsteps: boolean;
+    /** Whether the char is prone to have it's texture halved when going through forests. */
     public crop_texture: boolean;
+    /** Whether the shadow is following or not this char. */
     public shadow_following: boolean;
 
     private _color_filter: Phaser.Filter;
@@ -196,83 +220,113 @@ export abstract class ControllableChar {
         this.shadow_following = true;
     }
 
+    /** The char key. */
     get key_name() {
         return this._key_name;
     }
 
+    /** The current x tile position. */
     get tile_x_pos() {
         return this._tile_x_pos;
     }
+    /** The current y tile position. */
     get tile_y_pos() {
         return this._tile_y_pos;
     }
 
+    /** The current x position in px. */
     get x(): number {
         return this.sprite.body ? this.sprite.body.x : this.sprite.x;
     }
+    /** The current y position in px. */
     get y(): number {
         return this.sprite.body ? this.sprite.body.y : this.sprite.y;
     }
 
+    /** This char width. */
     get width() {
         return this.sprite.width;
     }
+    /** This char height. */
     get height() {
         return this.sprite.height;
     }
 
+    /** This char collision body radius. */
     get body_radius() {
         return this._body_radius;
     }
+    /** Whether this char is active. */
     get active() {
         return this._active;
     }
 
+    /** The current active direction of this char according to it movement. */
     get current_direction() {
         return this._current_direction;
     }
+    /** The directing that's being requested to this char to go. */
     get required_direction() {
         return this._required_direction;
     }
+    /**
+     * When changing direction, the char doesn't face immediately the requested direction.
+     * This property holds the transion directions till it reaches the requested direction.
+     */
     get transition_direction() {
         return this._transition_direction;
     }
+    /**
+     * The direction in which this char is sliding in the ice.
+     * It's not necessarily the direction that this char is facing.
+     */
     get ice_slide_direction() {
         return this._ice_slide_direction;
     }
+    /** The direction that this char is trying to push an Interactable Object. */
     get trying_to_push_direction() {
         return this._trying_to_push_direction;
     }
 
+    /** The SpriteBase object of this char. */
     get sprite_info() {
         return this._sprite_info;
     }
+    /** The Phaser.Filter that controls the color texture of this char sprite. */
     get color_filter() {
         return this._color_filter;
     }
+    /** The Footsteps object (in the case this char is letting footprints in the ground). */
     get footsteps() {
         return this._footsteps;
     }
+    /** The Phaser.TimerEvent used in the Interactable Object push process. */
     get push_timer() {
         return this._push_timer;
     }
 
+    /** This char current speed. */
     get current_speed() {
         return this._current_speed;
     }
+    /** This char pre-caculated speed. It might change due to collision. */
     get temp_speed() {
         return this._temp_speed;
     }
+    /** This char speed according to the collision slope. */
     get force_diagonal_speed() {
         return this._force_diagonal_speed;
     }
+    /** The extra char speed that might be applied to current speed. */
     get extra_speed() {
         return this._extra_speed;
     }
 
+    /** The char current action. */
     get current_action() {
         return this._current_action;
     }
+    /** The char current animation. */
     get current_animation() {
         return this._current_animation;
     }

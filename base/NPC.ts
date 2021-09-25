@@ -16,6 +16,7 @@ export enum npc_types {
     SPRITE = "sprite",
 }
 
+/** The NPC class. */
 export class NPC extends ControllableChar {
     private static readonly NPC_TALK_RANGE = 3.0;
 
@@ -136,46 +137,62 @@ export class NPC extends ControllableChar {
         this.sprite_misc_db_key = sprite_misc_db_key;
     }
 
+    /** The list of GameEvents related to this NPC. */
     get events() {
         return this._events;
     }
+    /** The default interaction message of this NPC. */
     get message() {
         return this._message;
     }
+    /** The default interaction message by using Mind Read of this NPC. */
     get thought_message() {
         return this._thought_message;
     }
+    /** The avatar key of this NPC. */
     get avatar() {
         return this._avatar;
     }
+    /** The voicec sound key of this NPC. */
     get voice_key() {
         return this._voice_key;
     }
+    /** The type of interaction that this NPC provides when interacting with the hero. */
     get interaction_pattern() {
         return this._interaction_pattern;
     }
+    /** The interaction range factor. Determines how far the hero need to be at least to start an interaction. */
     get talk_range_factor() {
         return this._talk_range_factor;
     }
+    /** The collision layer that this NPC is. */
     get base_collision_layer() {
         return this._base_collision_layer;
     }
+    /** Whether this NPC is affected by Reveal psynergy or not. */
     get affected_by_reveal() {
         return this._affected_by_reveal;
     }
+    /** If true, this NPC scale won't change when it's in World Map. */
     get ignore_world_map_scale() {
         return this._ignore_world_map_scale;
     }
+    /** The type of this NPC. */
     get npc_type() {
         return this._npc_type;
     }
+    /** If it's a shop NPC, returns the key of the shop that it owns. */
     get shop_key() {
         return this._shop_key;
     }
+    /** If it's a Inn NPC, returns the key of the inn that it owns. */
     get inn_key() {
         return this._inn_key;
     }
 
+    /**
+     * Updates this NPC properties according to current storage values.
+     */
     check_storage_keys() {
         if (this.storage_keys.base_collision_layer !== undefined) {
             const storage_value = this.data.storage.get(this.storage_keys.base_collision_layer);
@@ -197,6 +214,10 @@ export class NPC extends ControllableChar {
         }
     }
 
+    /**
+     * Initialize the Game Events related to this NPC.
+     * @param events_info the events info json.
+     */
     private set_events(events_info) {
         for (let i = 0; i < events_info.length; ++i) {
             const event = this.data.game_event_manager.get_event_instance(events_info[i]);
@@ -204,6 +225,9 @@ export class NPC extends ControllableChar {
         }
     }
 
+    /**
+     * The main update function of this NPC.
+     */
     update() {
         if (!this.active) return;
         if (this.movement_type === npc_movement_types.IDLE) {
@@ -213,6 +237,10 @@ export class NPC extends ControllableChar {
         this.update_tile_position();
     }
 
+    /**
+     * Activates or deactivates this NPC.
+     * @param active true, if you want to activate it.
+     */
     toggle_active(active: boolean) {
         if (active) {
             this.sprite.body?.collides(this.data.collision.hero_collision_group);
@@ -231,6 +259,10 @@ export class NPC extends ControllableChar {
         }
     }
 
+    /**
+     * Initializes this NPC.
+     * @param map the map that's being mounted.
+     */
     init_npc(map: Map) {
         const npc_db = this.data.dbs.npc_db[this.key_name];
         const npc_sprite_info =
@@ -266,6 +298,9 @@ export class NPC extends ControllableChar {
         this.play(this.current_action, this.current_animation);
     }
 
+    /**
+     * Initializes the collision body of this NPC.
+     */
     config_body() {
         if (this.ignore_physics) return;
         this.game.physics.p2.enable(this.sprite, false);
@@ -307,11 +342,16 @@ export class NPC extends ControllableChar {
         this.sprite.body.static = true;
     }
 
-    unset(remove_from_npc_group: boolean = true) {
+    /**
+     * Unsets this NPC.
+     */
+    unset() {
         if (this.sprite) {
+            this.data.npc_group.removeChild(this.sprite);
             this.sprite.destroy();
         }
         if (this.shadow) {
+            this.data.npc_group.removeChild(this.shadow);
             this.shadow.destroy();
         }
         if (this.footsteps) {
@@ -320,8 +360,5 @@ export class NPC extends ControllableChar {
         this.unset_push_timer();
         this._events.forEach(event => event.destroy());
         this.look_target = null;
-        if (remove_from_npc_group) {
-            this.data.npc_group.removeChild(this.sprite);
-        }
     }
 }

@@ -123,42 +123,76 @@ export const ordered_main_stats = [
     main_stats.LUCK,
 ];
 
+/** The base class of MainChar and Enemy. */
 export abstract class Player {
+    /** The player key name. */
     public key_name: string;
+    /** The player name. */
     public name: string;
+    /** The temporary status set. Use this property only to check whether the player has a given status. */
     public temporary_status: Set<temporary_status>;
+    /** The permanent status set. Use this property only to check whether the player has a given status. */
     public permanent_status: Set<permanent_status>;
+    /** The list of Effects that affect this player. */
     public effects: Effect[];
+    /** The effect: remaining turns to vanish dictionary. */
     public effect_turns_count: {[effect: string]: number | {[element: string]: number}};
+    /** The player battle scale. */
     public battle_scale: number;
+    /** The player battle shadow sprite key. */
     public battle_shadow_key: string;
+    /** The aditional shift added to status sprite in battle. */
     public status_sprite_shift: number;
+    /** Whether it's an ally or enemy in the main party point of view.*/
     public fighter_type: fighter_types;
+    /** The elemental level stats object. */
     public current_level: {[element in elements]?: number};
+    /** The elemental power stats object. */
     public current_power: {[element in elements]?: number};
+    /** The elemental resist stats object. */
     public current_resist: {[element in elements]?: number};
+    /** The elemental level base value stats object. */
     public base_level: {[element in elements]?: number};
+    /** The elemental power base value stats object. */
     public base_power: {[element in elements]?: number};
+    /** The elemental resist base value stats object. */
     public base_resist: {[element in elements]?: number};
+    /** The current amount of turns that this player has. */
     public turns: number;
+    /** This maps a given ability key to a non-default ability animation key. */
     public battle_animations_variations: {[ability_key: string]: string};
+    /** The player max HP. */
     public max_hp: number;
+    /** The player current HP. */
     public current_hp: number;
+    /** The player max PP. */
     public max_pp: number;
-    public hp_recovery: number;
-    public pp_recovery: number;
+    /** The player current PP. */
     public current_pp: number;
+    /** The player HP recovery points. */
+    public hp_recovery: number;
+    /** The player PP recovery points. */
+    public pp_recovery: number;
+    /** The player attack points. */
     public atk: number;
+    /** The player defense points. */
     public def: number;
+    /** The player agility points. */
     public agi: number;
+    /** The player luck points. */
     public luk: number;
+    /** The player current level. */
     public level: number;
+    /** The player current experience points. */
     public current_exp: number;
+    /** Whether the player is paralyzed by any Effect in battle. */
     public paralyzed_by_effect: boolean;
+    /** The rxjs Subject that's triggered when this player suffers a status change. */
     public on_status_change: Subject<{
         status: permanent_status | temporary_status;
         added: boolean;
     }>;
+    /** Any extra stats points added to the main stats of this player. */
     public extra_stats: {[main_stat in main_stats]?: number};
 
     constructor(key_name, name) {
@@ -185,6 +219,10 @@ export abstract class Player {
         this.init_effect_turns_count();
     }
 
+    /**
+     * When starting a battle, resets all temporary status and buffers
+     * turns count values.
+     */
     init_effect_turns_count() {
         this.effect_turns_count = {
             [temporary_status.DELUSION]: 0,
@@ -208,6 +246,7 @@ export abstract class Player {
         }
     }
 
+    /** Updates all stats, class info and abilities of this player. */
     abstract update_all();
 
     get_effect_turns_key(effect: Effect) {
