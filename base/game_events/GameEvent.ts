@@ -41,7 +41,7 @@ export enum event_types {
 }
 
 /**
- * Everytime a game event is fired, it's checked whether reveal is casted, if yes, it stops the reveal psynergy.
+ * Everytime a game event is fired, it's checked whether reveal is casted, if yes, it stops the reveal psynergy effect.
  * @param target not used.
  * @param property_key not used.
  * @param descriptor the function descriptor.
@@ -65,7 +65,7 @@ function check_reveal(target: Object, property_key: string, descriptor: Property
  * this event receives an unique id. These ids are reset whenever a map is destroyed. In order
  * to fire a GameEvent, calls GameEvent.fire. In order to destroy a game event, calls GameEvent.destroy.
  * Game events can be fired from TileEvents, NPC or Interactable Objects interaction, map changes or
- * other game events.
+ * other game events. For easy reference/example, check base/game_events/EmoriconEvent.ts.
  * Whenever an asynchronous game event is fired, increments the GameEventManager.events_running_count, so the
  * engine knows that there's an event going on. When the event is finished, decrements the same variable.
  * If your event has internal states, don't forget to reset them on finish.
@@ -73,14 +73,22 @@ function check_reveal(target: Object, property_key: string, descriptor: Property
 export abstract class GameEvent {
     public game: Phaser.Game;
     public data: GoldenSun;
+    /** The GameEvent type. */
     public type: event_types;
+    /** The GameEvent id number. */
     public id: number;
+    /** Whether this GameEvent is active or not. */
     public active: boolean;
+    /** An unique label that identifies this GameEvent. This is optional. */
     public key_name: string;
+    /** If this GameEvent was originated by a NPC, this var holds this NPC reference. */
     public origin_npc: NPC = null;
 
+    /** The GameEvents id incrementer. */
     public static id_incrementer: number;
+    /** The events object where the keys are the ids. */
     public static events: {[id: number]: GameEvent};
+    /** The events object where the keys are the events labels. */
     public static labeled_events: {[key_name: number]: GameEvent};
 
     constructor(game: Phaser.Game, data: GoldenSun, type: event_types, active: boolean, key_name: string) {

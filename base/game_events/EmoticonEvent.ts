@@ -2,18 +2,30 @@ import {GameEvent, event_types} from "./GameEvent";
 import {NPC} from "../NPC";
 import {ControllableChar} from "../ControllableChar";
 
+/**
+ * The GameEvent that shows an emoticon above a ControllableChar head.
+ */
 export class EmoticonEvent extends GameEvent {
     private static readonly DEFAULT_DURATION = 800;
 
+    /** INPUT. The emoticon key name. */
     private emoticon: string;
+    /** INPUT. The emoticon show duration. */
     private duration: number;
+    /** INPUT. A sfx to be played while on emoticon show. */
     private sound_effect: string;
+    /** INPUT. Whether the target char is a NPC. If not, it's the hero. */
     private is_npc: boolean;
+    /** INPUT. If the target char is a NPC, the npc index. */
     private npc_index: number;
-    private char: ControllableChar;
+    /** INPUT. The list of game events to be fired on this event end. */
     private finish_events: GameEvent[] = [];
+    /** INPUT. A custom location for the emoticon. */
     private location: {x: number; y: number};
+    /** INPUT. If target char is NPC, make hero and npc look each other. */
     private face_hero: boolean;
+    /** The target char that will show the emoticon. */
+    private char: ControllableChar;
 
     constructor(
         game,
@@ -45,6 +57,9 @@ export class EmoticonEvent extends GameEvent {
         }
     }
 
+    /**
+     * Defines the ControllableChar which is going to show the emoticon.
+     */
     set_char() {
         if (this.is_npc === undefined && this.npc_index === undefined) {
             this.char = this.origin_npc;
@@ -57,6 +72,10 @@ export class EmoticonEvent extends GameEvent {
         }
     }
 
+    /**
+     * Fires the EmoticonEvent.
+     * @param oringin_npc If it's the case, the origin NPC that originated this event.
+     */
     async _fire(oringin_npc: NPC) {
         if (!this.active) return;
         this.origin_npc = oringin_npc;
@@ -79,12 +98,18 @@ export class EmoticonEvent extends GameEvent {
         this.finish();
     }
 
+    /**
+     * Finishes this event by reducing GameEventManager.events_running_count and firing final events.
+     */
     finish() {
         this.is_npc = undefined;
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
     }
 
+    /**
+     * Unsets this event.
+     */
     destroy() {
         this.finish_events.forEach(event => event.destroy());
         this.origin_npc = null;
