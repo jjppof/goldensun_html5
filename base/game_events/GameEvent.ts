@@ -41,25 +41,6 @@ export enum event_types {
 }
 
 /**
- * Everytime a game event is fired, it's checked whether reveal is casted, if yes, it stops the reveal psynergy effect.
- * @param target not used.
- * @param property_key not used.
- * @param descriptor the function descriptor.
- * @returns returns a new descriptor.
- */
-function check_reveal(target: Object, property_key: string, descriptor: PropertyDescriptor) {
-    const original_method = descriptor.value;
-    descriptor.value = function (...args) {
-        const data: GoldenSun = this.data;
-        if (data.hero.on_reveal) {
-            (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
-        }
-        return original_method.apply(this, args);
-    };
-    return descriptor;
-}
-
-/**
  * This is the class reponsible for general events of the game.
  * Every game event class must inherit from this class. Whenever a game event is instantiated,
  * this event receives an unique id. These ids are reset whenever a map is destroyed. In order
@@ -118,13 +99,32 @@ export abstract class GameEvent {
     }
 
     /**
+     * Everytime a game event is fired, it's checked whether reveal is casted, if yes, it stops the reveal psynergy effect.
+     * @param target not used.
+     * @param property_key not used.
+     * @param descriptor the function descriptor.
+     * @returns returns a new descriptor.
+     */
+    static check_reveal(target: Object, property_key: string, descriptor: PropertyDescriptor) {
+        const original_method = descriptor.value;
+        descriptor.value = function (...args) {
+            const data: GoldenSun = this.data;
+            if (data.hero.on_reveal) {
+                (this.data.info.field_abilities_list.reveal as RevealFieldPsynergy).finish(false, false);
+            }
+            return original_method.apply(this, args);
+        };
+        return descriptor;
+    }
+
+    /**
      * This function is the one that should be called to start a event.
      * It should never be overriden.
      * Always before this function is called, it's checked whether Reveal psynergy
      * is being casted, if yes, it's stopped before this event start.
      * @param origin_npc the NPC that originated this game event.
      */
-    @check_reveal
+    @GameEvent.check_reveal
     fire(origin_npc?: NPC) {
         this._fire(origin_npc);
     }
