@@ -775,7 +775,7 @@ export class MainChar extends Player {
     }
 
     /**
-     * Updates the abilities list of this char reggarding class, inate abilities
+     * Updates the abilities list of this char reggarding class, innate abilities
      * and equipped items that grant abilities.
      */
     update_abilities() {

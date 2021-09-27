@@ -69,6 +69,8 @@ function check_reveal(target: Object, property_key: string, descriptor: Property
  * Whenever an asynchronous game event is fired, increments the GameEventManager.events_running_count, so the
  * engine knows that there's an event going on. When the event is finished, decrements the same variable.
  * If your event has internal states, don't forget to reset them on finish.
+ * When crating a new GameEvent class, add its instantiation in GameEventManager.get_event_instance factory
+ * method.
  */
 export abstract class GameEvent {
     public game: Phaser.Game;
