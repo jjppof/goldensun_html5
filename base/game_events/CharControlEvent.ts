@@ -10,6 +10,7 @@ export abstract class CharControlEvent extends GameEvent {
     protected keep_camera_follow: boolean;
     protected camera_follow_time: number;
     protected npc_index: number;
+    protected npc_label: string;
     protected char: ControllableChar;
     protected finish_events: GameEvent[] = [];
 
@@ -21,6 +22,7 @@ export abstract class CharControlEvent extends GameEvent {
         key_name,
         is_npc,
         npc_index,
+        npc_label,
         camera_follow,
         camera_follow_time,
         follow_hero_on_finish,
@@ -30,6 +32,7 @@ export abstract class CharControlEvent extends GameEvent {
         super(game, data, event_type, active, key_name);
         this.is_npc = is_npc;
         this.npc_index = npc_index;
+        this.npc_label = npc_label;
         this.camera_follow = camera_follow;
         this.camera_follow_time = camera_follow_time;
         this.follow_hero_on_finish = follow_hero_on_finish;
@@ -100,11 +103,15 @@ export abstract class CharControlEvent extends GameEvent {
     }
 
     set_char() {
-        if (this.is_npc === undefined && this.npc_index === undefined) {
+        if (this.is_npc === undefined && this.npc_index === undefined && this.npc_label === undefined) {
             this.char = this.origin_npc;
             this.is_npc = true;
         } else if (this.is_npc) {
-            this.char = this.data.map.npcs[this.npc_index];
+            if (this.npc_label) {
+                this.char = this.data.map.npcs_label_map[this.npc_label];
+            } else {
+                this.char = this.data.map.npcs[this.npc_index];
+            }
         } else {
             this.char = this.data.hero;
             this.data.game_event_manager.allow_char_to_move = true;

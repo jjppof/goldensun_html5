@@ -29,6 +29,7 @@ export class Map {
     private _sprite: Phaser.Tilemap;
     private _events: {[location_key: number]: TileEvent[]};
     private _npcs: NPC[];
+    private _npcs_label_map: {[label: string]: NPC};
     private _interactable_objects: InteractableObjects[];
     private _collision_layers_number: number;
     private _collision_sprite: Phaser.Sprite;
@@ -80,6 +81,7 @@ export class Map {
         this._sprite = null;
         this._events = {};
         this._npcs = [];
+        this._npcs_label_map = {};
         this._interactable_objects = [];
         this._collision_layers_number = this.physics_names.length;
         this._collision_sprite = this.game.add.sprite(0, 0);
@@ -107,6 +109,10 @@ export class Map {
     /** The list of NPCs of this map. */
     get npcs() {
         return this._npcs;
+    }
+    /** The object that holds the NPCs of this map that have a label. */
+    get npcs_label_map() {
+        return this._npcs_label_map;
     }
     /** The list of Interactable Objects of this map. */
     get interactable_objects() {
@@ -521,6 +527,7 @@ export class Map {
             this.game,
             this.data,
             property_info.key_name,
+            property_info.label,
             property_info.active,
             property_info.initial_x,
             property_info.initial_y,
@@ -555,6 +562,13 @@ export class Map {
             voice_key
         );
         this.npcs.push(npc);
+        if (npc.label) {
+            if (npc.label in this._npcs_label_map) {
+                console.warn(`NPC with ${npc.label} is already set in this map.`);
+            } else {
+                this._npcs_label_map[npc.label] = npc;
+            }
+        }
         return npc;
     }
 
@@ -1032,6 +1046,7 @@ export class Map {
         GameEvent.reset();
 
         this._npcs = [];
+        this._npcs_label_map = {};
         this._interactable_objects = [];
         this._events = {};
         this.data.npc_group.removeAll();

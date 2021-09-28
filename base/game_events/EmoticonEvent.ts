@@ -16,7 +16,9 @@ export class EmoticonEvent extends GameEvent {
     private sound_effect: string;
     /** INPUT. Whether the target char is a NPC. If not, it's the hero. */
     private is_npc: boolean;
-    /** INPUT. If the target char is a NPC, the npc index. */
+    /** INPUT. If the target char is a NPC, the npc unqie label. Use this or npc_index */
+    private npc_label: number;
+    /** INPUT. If the target char is a NPC, the npc index. Use this or npc_label */
     private npc_index: number;
     /** INPUT. The list of game events to be fired on this event end. */
     private finish_events: GameEvent[] = [];
@@ -37,6 +39,7 @@ export class EmoticonEvent extends GameEvent {
         sound_effect,
         is_npc,
         npc_index,
+        npc_label,
         location,
         face_hero,
         finish_events
@@ -47,6 +50,7 @@ export class EmoticonEvent extends GameEvent {
         this.sound_effect = sound_effect;
         this.is_npc = is_npc;
         this.npc_index = npc_index;
+        this.npc_label = npc_label;
         this.location = location;
         this.face_hero = face_hero ?? true;
         if (finish_events !== undefined) {
@@ -61,11 +65,15 @@ export class EmoticonEvent extends GameEvent {
      * Defines the ControllableChar which is going to show the emoticon.
      */
     set_char() {
-        if (this.is_npc === undefined && this.npc_index === undefined) {
+        if (this.is_npc === undefined && this.npc_index === undefined && this.npc_label === undefined) {
             this.char = this.origin_npc;
             this.is_npc = true;
         } else if (this.is_npc) {
-            this.char = this.data.map.npcs[this.npc_index];
+            if (this.npc_label) {
+                this.char = this.data.map.npcs_label_map[this.npc_label];
+            } else {
+                this.char = this.data.map.npcs[this.npc_index];
+            }
         } else {
             this.char = this.data.hero;
             this.data.game_event_manager.allow_char_to_move = true;
