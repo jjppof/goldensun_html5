@@ -39,6 +39,7 @@ export class NPC extends ControllableChar {
     private scale_y: number;
     private _interaction_pattern: interaction_patterns;
     private _affected_by_reveal: boolean;
+    private _label: string;
     public visible: boolean;
     protected storage_keys: {
         position?: string;
@@ -55,6 +56,7 @@ export class NPC extends ControllableChar {
         game,
         data,
         key_name,
+        label,
         active,
         initial_x,
         initial_y,
@@ -135,6 +137,7 @@ export class NPC extends ControllableChar {
         this._events = [];
         this.set_events(events_info ?? []);
         this.sprite_misc_db_key = sprite_misc_db_key;
+        this._label = label;
     }
 
     /** The list of GameEvents related to this NPC. */
@@ -152,6 +155,10 @@ export class NPC extends ControllableChar {
     /** The avatar key of this NPC. */
     get avatar() {
         return this._avatar;
+    }
+    /** The unique label that identifies this NPC. */
+    get label() {
+        return this._label;
     }
     /** The voicec sound key of this NPC. */
     get voice_key() {
