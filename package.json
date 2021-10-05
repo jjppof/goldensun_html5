@@ -9,7 +9,7 @@
     "format-check": "prettier --check \"base/**/*.ts\"",
     "format": "npx prettier --write \"base/**/*.ts\"",
     "docs": "node scripts/generate_docs.js",
-    "postinstall": "husky install",
+    "_postinstall": "husky install",
     "prepublish": "pinst --disable",
     "postpublish": "pinst --enable"
   },

@@ -23,6 +23,7 @@ import {JumpEvent} from "./JumpEvent";
 import {FaceDirectionEvent} from "./FaceDirectionEvent";
 import {EmoticonEvent} from "./EmoticonEvent";
 import {TileEventManageEvent} from "./TileEventManageEvent";
+import {DestroyerEvent} from "./DestroyerEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -441,6 +442,8 @@ export class GameEventManager {
                     info.pos,
                     info.collision_layers
                 );
+            case event_types.DESTROYER:
+                return new DestroyerEvent(this.game, this.data, info.active, info.key_name);
             default:
                 console.warn(`Game event type ${info.type} not found.`);
         }
