@@ -443,7 +443,7 @@ export class GameEventManager {
                     info.collision_layers
                 );
             case event_types.DESTROYER:
-                return new DestroyerEvent(this.game, this.data, info.active, info.key_name);
+                return new DestroyerEvent(this.game, this.data, info.active, info.key_name, info.target_event_key);
             default:
                 console.warn(`Game event type ${info.type} not found.`);
         }

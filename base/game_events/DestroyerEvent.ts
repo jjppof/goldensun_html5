@@ -6,17 +6,13 @@ export class DestroyerEvent extends GameEvent {
     //these were the basic things that every child class had, so I took it.
     //though the destroyer is just like a trigger, press it and it kills an event.
     //it only needs target_event_key imo.
-    constructor(game, data, active, key_name) {
+    constructor(game, data, active, key_name, target_event_key) {
         super(game, data, event_types.DESTROYER, active, key_name);
-    }
-
-    set_target_event(target_event_key: string) {
-        // i thought this would be a good way, idk if there is a way to check
-        // since a the engine does everything, i doubt there will be need to test it. tbh.
         this.target_event_key = target_event_key;
     }
 
     _fire() {
+        if (!this.active) return;
         if (this.target_event_key !== undefined) {
             let target_event = GameEvent.get_labeled_event(this.target_event_key);
             target_event.destroy();
@@ -28,6 +24,8 @@ export class DestroyerEvent extends GameEvent {
     }
 
     destroy() {
+        this.origin_npc = null;
+        this.active = false;
         this.target_event_key = null;
     }
 }
