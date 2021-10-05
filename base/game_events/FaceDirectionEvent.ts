@@ -71,5 +71,6 @@ export class FaceDirectionEvent extends CharControlEvent {
         this.finish_events.forEach(event => event.destroy());
         this.origin_npc = null;
         this.char = null;
+        this.active = false;
     }
 }

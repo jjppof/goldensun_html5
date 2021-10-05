@@ -122,5 +122,6 @@ export class EmoticonEvent extends GameEvent {
         this.finish_events.forEach(event => event.destroy());
         this.origin_npc = null;
         this.char = null;
+        this.active = false;
     }
 }

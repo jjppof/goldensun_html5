@@ -892,5 +892,6 @@ export class DjinnGetEvent extends GameEvent {
         this.origin_npc = null;
         this.dialog_manager?.destroy();
         this.data.control_manager.detach_bindings(this.control_key);
+        this.active = false;
     }
 }

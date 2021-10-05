@@ -48,5 +48,6 @@ export class BattleEvent extends GameEvent {
     destroy() {
         this.origin_npc = null;
         this.battle = null;
+        this.active = false;
     }
 }

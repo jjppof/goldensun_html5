@@ -29,5 +29,6 @@ export class TimerEvent extends GameEvent {
     destroy() {
         this.finish_events.forEach(event => event.destroy());
         this.origin_npc = null;
+        this.active = false;
     }
 }

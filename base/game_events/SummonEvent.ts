@@ -326,5 +326,6 @@ export class SummonEvent extends GameEvent {
         this.origin_npc = null;
         this.dialog?.destroy();
         this.data.control_manager.detach_bindings(this.control_key);
+        this.active = false;
     }
 }

@@ -52,5 +52,6 @@ export class TileEventManageEvent extends GameEvent {
 
     destroy() {
         this.origin_npc = null;
+        this.active = false;
     }
 }
