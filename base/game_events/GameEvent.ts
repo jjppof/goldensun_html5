@@ -38,6 +38,7 @@ export enum event_types {
     FACE_DIRECTION = "face_direction",
     EMOTICON = "emoticon",
     TILE_EVENT_MANAGE = "tile_event_manage",
+    DESTROYER = "destroyer",
 }
 
 /**
