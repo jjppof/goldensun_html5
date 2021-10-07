@@ -39,6 +39,7 @@ export enum event_types {
     EMOTICON = "emoticon",
     TILE_EVENT_MANAGE = "tile_event_manage",
     DESTROYER = "destroyer",
+    CHAR_LEVEL_CHANGE = "char_level_change",
 }
 
 /**

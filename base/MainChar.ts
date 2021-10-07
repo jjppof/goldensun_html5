@@ -870,4 +870,20 @@ export class MainChar extends Player {
         });
         party_data.avg_level = _.mean(party_data.members.map(char => char.level)) | 0;
     }
+
+    /**
+     * Changes level of a character. borrowed the implementation of MainChar.add_exp.
+     * @param value the target level value we want to set.
+     * @return returns the before and after exp add char status,
+     * like level, abilities and stats.
+     */
+    change_level(value: number): void {
+        if (value >= 1 && value < this.exp_curve.length) {
+            this.level = value;
+            this.current_exp = this.exp_curve[value - 1];
+            this.update_all();
+        } else {
+            console.warn("Target level out of range");
+        }
+    }
 }

@@ -24,6 +24,7 @@ import {FaceDirectionEvent} from "./FaceDirectionEvent";
 import {EmoticonEvent} from "./EmoticonEvent";
 import {TileEventManageEvent} from "./TileEventManageEvent";
 import {DestroyerEvent} from "./DestroyerEvent";
+import {CharLevelChangeEvent} from "./CharLevelChangeEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -444,6 +445,15 @@ export class GameEventManager {
                 );
             case event_types.DESTROYER:
                 return new DestroyerEvent(this.game, this.data, info.active, info.key_name, info.target_event_key);
+            case event_types.CHAR_LEVEL_CHANGE:
+                return new CharLevelChangeEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.target_char_key,
+                    info.target_level_value
+                );
             default:
                 console.warn(`Game event type ${info.type} not found.`);
         }
