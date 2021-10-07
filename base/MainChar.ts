@@ -10,6 +10,7 @@ import * as _ from "lodash";
 import {GameInfo, PartyData} from "./initializers/initialize_info";
 import {Ability} from "./Ability";
 import {djinn_actions} from "./main_menus/MainDjinnMenu";
+import {values} from "lodash";
 
 export type ItemSlot = {
     key_name: string;
@@ -869,5 +870,52 @@ export class MainChar extends Player {
             return member.key_name !== char.key_name;
         });
         party_data.avg_level = _.mean(party_data.members.map(char => char.level)) | 0;
+    }
+
+    /**
+     * Changes level of a character. borrowed the implementation of MainChar.add_exp.
+     * @param value the target level value we want to set.
+     * @return returns the before and after exp add char status,
+     * like level, abilities and stats.
+     */
+    change_level(value: number) {
+        type StatusType = {
+            level: MainChar["level"];
+            abilities: MainChar["abilities"];
+            stats: {[main_stat in main_stats]?: number}[];
+        };
+        const return_data: {
+            before: StatusType;
+            after: StatusType;
+        } = {
+            before: {
+                level: this.level,
+                abilities: this.abilities.slice(),
+                stats: [
+                    {max_hp: this.max_hp},
+                    {max_pp: this.max_pp},
+                    {atk: this.atk},
+                    {def: this.def},
+                    {agi: this.agi},
+                    {luk: this.luk},
+                ] as {[main_stat in main_stats]?: number}[],
+            },
+            after: null,
+        };
+        this.level = value;
+        this.update_all();
+        return_data.after = {
+            level: this.level,
+            abilities: this.abilities.slice(),
+            stats: [
+                {max_hp: this.max_hp},
+                {max_pp: this.max_pp},
+                {atk: this.atk},
+                {def: this.def},
+                {agi: this.agi},
+                {luk: this.luk},
+            ] as {[main_stat in main_stats]?: number}[],
+        };
+        return return_data;
     }
 }
