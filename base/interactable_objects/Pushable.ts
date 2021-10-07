@@ -40,7 +40,8 @@ export class Pushable extends InteractableObjects {
         events_info,
         enable,
         entangled_by_bush,
-        toggle_enable_events
+        toggle_enable_events,
+        label
     ) {
         super(
             game,
@@ -61,7 +62,8 @@ export class Pushable extends InteractableObjects {
             events_info,
             enable,
             entangled_by_bush,
-            toggle_enable_events
+            toggle_enable_events,
+            label
         );
         this._pushable = true;
     }

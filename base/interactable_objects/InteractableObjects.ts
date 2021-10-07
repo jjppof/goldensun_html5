@@ -74,6 +74,7 @@ export class InteractableObjects {
     private _psynergy_casted: {[field_psynergy_key: string]: boolean};
     private _blocking_stair_block: Phaser.Physics.P2.Body;
     private _active: boolean;
+    private _label: string;
     private _object_drop_tiles: {
         x: number;
         y: number;
@@ -111,7 +112,8 @@ export class InteractableObjects {
         events_info,
         enable,
         entangled_by_bush,
-        toggle_enable_events
+        toggle_enable_events,
+        label
     ) {
         this.game = game;
         this.data = data;
@@ -171,6 +173,7 @@ export class InteractableObjects {
         } else {
             this.toggle_enable_events = [];
         }
+        this._label = label;
     }
 
     get key_name() {
@@ -199,6 +202,10 @@ export class InteractableObjects {
     /** Gets the y position in px. */
     get y(): number {
         return this.sprite.body ? this.sprite.body.y : this.sprite.y;
+    }
+    /** The unique label that identifies this Interactable Object. */
+    get label() {
+        return this._label;
     }
     get base_collision_layer() {
         return this._base_collision_layer;

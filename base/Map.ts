@@ -31,6 +31,7 @@ export class Map {
     private _npcs: NPC[];
     private _npcs_label_map: {[label: string]: NPC};
     private _interactable_objects: InteractableObjects[];
+    private _interactable_objects_label_map: {[label: string]: InteractableObjects};
     private _collision_layers_number: number;
     private _collision_sprite: Phaser.Sprite;
     private _color_filter: any;
@@ -83,6 +84,7 @@ export class Map {
         this._npcs = [];
         this._npcs_label_map = {};
         this._interactable_objects = [];
+        this._interactable_objects_label_map = {};
         this._collision_layers_number = this.physics_names.length;
         this._collision_sprite = this.game.add.sprite(0, 0);
         this._collision_sprite.width = this.collision_sprite.height = 0;
@@ -113,6 +115,10 @@ export class Map {
     /** The object that holds the NPCs of this map that have a label. */
     get npcs_label_map() {
         return this._npcs_label_map;
+    }
+    /** The object that holds the Interactable Objects of this map that have a label. */
+    get interactable_objects_label_map() {
+        return this._interactable_objects_label_map;
     }
     /** The list of Interactable Objects of this map. */
     get interactable_objects() {
@@ -605,7 +611,8 @@ export class Map {
             property_info.events_info,
             property_info.enable,
             property_info.entangled_by_bush,
-            property_info.toggle_enable_events
+            property_info.toggle_enable_events,
+            property_info.label
         );
         if (interactable_object.is_rope_dock) {
             (interactable_object as RopeDock).intialize_dock_info(
@@ -616,6 +623,13 @@ export class Map {
             );
         }
         this.interactable_objects.push(interactable_object);
+        if (interactable_object.label) {
+            if (interactable_object.label in this.interactable_objects_label_map) {
+                console.warn(`NPC with ${interactable_object.label} is already set in this map.`);
+            } else {
+                this.interactable_objects_label_map[interactable_object.label] = interactable_object;
+            }
+        }
         return interactable_object;
     }
 
