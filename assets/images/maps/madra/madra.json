@@ -412,7 +412,7 @@
      "npc_06":"string"
     },
  "renderorder":"right-down",
- "tiledversion":"1.7.2",
+ "tiledversion":"1.5.0",
  "tileheight":16,
  "tilesets":[
         {
