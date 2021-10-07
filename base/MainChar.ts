@@ -10,7 +10,6 @@ import * as _ from "lodash";
 import {GameInfo, PartyData} from "./initializers/initialize_info";
 import {Ability} from "./Ability";
 import {djinn_actions} from "./main_menus/MainDjinnMenu";
-import {values} from "lodash";
 
 export type ItemSlot = {
     key_name: string;
