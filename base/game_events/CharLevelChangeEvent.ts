@@ -16,7 +16,6 @@ export class CharLevelChangeEvent extends GameEvent {
         if (this.target_char_key !== undefined) {
             let target_char = this.data.info.main_char_list[this.target_char_key];
             target_char.change_level(this.target_level_value);
-            this.destroy();
         } else {
             console.warn("Char is undefined");
         }

@@ -16,8 +16,6 @@ export class DestroyerEvent extends GameEvent {
         if (this.target_event_key !== undefined) {
             let target_event = GameEvent.get_labeled_event(this.target_event_key);
             target_event.destroy();
-            this.destroy();
-            //destroying cause it served the purpose, can now DIE. *flatlines*
         } else {
             console.warn("The Target event is undefined.");
         }
