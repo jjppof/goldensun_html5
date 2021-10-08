@@ -2,6 +2,10 @@ import * as _ from "lodash";
 import {GoldenSun} from "./GoldenSun";
 import {Button} from "./XGamepad";
 
+/**
+ * This class is responsible for manipulating background musics (BGM)
+ * and sound effect audios (SFX) of the engine.
+ */
 export class Audio {
     /** Volume step to apply upon volume altering */
     private static readonly VOLUME_STEP = 0.05;
@@ -31,7 +35,7 @@ export class Audio {
     }
 
     /**
-     * Initialize mute and volume alter controls.
+     * Initializes mute and volume alter controls.
      */
     initialize_controls() {
         const controls = [
@@ -56,10 +60,22 @@ export class Audio {
         this.data.control_manager.add_controls(controls, {persist: true});
     }
 
+    /**
+     * Registers a sound effect in the engine.
+     * @param se_key the sound effect key name.
+     */
     add_se(se_key: string) {
         this.se_data[se_key] = this.game.add.audioSprite(se_key);
     }
 
+    /**
+     * Plays a registered sound effect.
+     * @param key the sound effect key name.
+     * @param on_stop on sfx stop callback function.
+     * @param position_shift the amount of time in sec. to initially cut of this sfx.
+     * @param volume the volume that it will be plays. [0,1].
+     * @returns Returns the Phaser.Sound instance.
+     */
     play_se(key: string, on_stop?: Function, position_shift: number = 0, volume: number = 1) {
         const key_parts = key.split("/");
 
@@ -67,8 +83,15 @@ export class Audio {
         if (on_stop) {
             audio.onMarkerComplete.addOnce(on_stop);
         }
+
+        return audio;
     }
 
+    /**
+     * Registers a bgm sound in the engine.
+     * @param bgm_key The bgm key name.
+     * @param play whether is to already start playing.
+     */
     add_bgm(bgm_key: string, play: boolean = false) {
         if (bgm_key && (!this.current_bgm || this.current_bgm.key !== bgm_key)) {
             if (this.current_bgm) this.current_bgm.destroy();
@@ -81,6 +104,11 @@ export class Audio {
         }
     }
 
+    /**
+     * Plays a bgm sound.
+     * @param loop Whether the bgm should loop or not.
+     * @param volume The volume to be applied. [0,1]
+     */
     play_bgm(loop: boolean = true, volume?: number) {
         this.current_bgm.loop = loop;
         this.current_bgm.volume = volume ?? Audio.DEFAULT_BGM_VOLUME;
@@ -88,6 +116,9 @@ export class Audio {
         this.current_bgm.play();
     }
 
+    /**
+     * Resumes the current bgm sound that was paused.
+     */
     resume_bgm() {
         this.current_bgm.volume = 0;
         this.current_bgm.resume();
@@ -101,10 +132,16 @@ export class Audio {
         );
     }
 
+    /**
+     * Pauses the current bgm sound.
+     */
     pause_bgm() {
         this.current_bgm.pause();
     }
 
+    /**
+     * Stops the current bgm sound.
+     */
     stop_bgm() {
         this.current_bgm.stop();
     }
