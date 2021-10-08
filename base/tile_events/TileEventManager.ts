@@ -73,7 +73,7 @@ export class TileEventManager {
 
     private game: Phaser.Game;
     private data: GoldenSun;
-    private event_timers: {[event_id: number]: Phaser.Timer};
+    private _event_timers: {[event_id: number]: Phaser.Timer};
     public on_event: boolean;
     private _walking_on_pillars_tiles: Set<string>;
     private triggered_events: {[event_id: number]: TileEvent};
@@ -82,7 +82,7 @@ export class TileEventManager {
     constructor(game, data) {
         this.game = game;
         this.data = data;
-        this.event_timers = {};
+        this._event_timers = {};
         this.on_event = false;
         this._walking_on_pillars_tiles = new Set();
         this.triggered_events = {};
@@ -91,6 +91,10 @@ export class TileEventManager {
 
     get walking_on_pillars_tiles() {
         return this._walking_on_pillars_tiles;
+    }
+    /** An object that holds the timers of tile events that are up to happen. */
+    get event_timers() {
+        return this._event_timers;
     }
 
     set_triggered_event(event: TileEvent) {
