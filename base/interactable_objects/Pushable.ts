@@ -14,6 +14,9 @@ import {InteractableObjects} from "./InteractableObjects";
 import {ControllableChar} from "../ControllableChar";
 import {ClimbEvent} from "../tile_events/ClimbEvent";
 
+/**
+ * An interactable object that can be pushed by a ControllableChar.
+ */
 export class Pushable extends InteractableObjects {
     private static readonly DUST_COUNT = 7;
     private static readonly DUST_RADIUS = 18;
@@ -68,6 +71,12 @@ export class Pushable extends InteractableObjects {
         this._pushable = true;
     }
 
+    /**
+     * Checks if a given char is trying to push this interactable object, if it's trying, starts
+     * the push process.
+     * @param char the char that is trying to push this pushable interactable object.
+     * @returns returns whether the char is trying to push or not.
+     */
     check_and_start_push(char: ControllableChar) {
         if (
             [base_actions.WALK, base_actions.DASH].includes(char.current_action as base_actions) &&
@@ -113,6 +122,10 @@ export class Pushable extends InteractableObjects {
         return char.trying_to_push;
     }
 
+    /**
+     * Starts a manual push in which the char manually push it.
+     * @param char the char that is pushing this controllable object.
+     */
     normal_push(char: ControllableChar) {
         if (
             char.trying_to_push &&
@@ -124,6 +137,14 @@ export class Pushable extends InteractableObjects {
         }
     }
 
+    /**
+     * Starts the push process in which only this interactable object move.
+     * @param char the char that is pushing this controllable object.
+     * @param before_move before moving this interactable object callback.
+     * @param push_end after moving this interactable object callback.
+     * @param enable_physics_at_end whether you want to enable p2 physics at the end of the process or not.
+     * @param on_push_update the callback that is called while the push is happening.
+     */
     target_only_push(
         char: ControllableChar,
         before_move: (x_shift: number, y_shift: number) => void,
@@ -134,6 +155,15 @@ export class Pushable extends InteractableObjects {
         this.fire_push_movement(char, push_end, before_move, true, enable_physics_at_end, on_push_update);
     }
 
+    /**
+     *
+     * @param char the char that is pushing this controllable object.
+     * @param push_end after moving this interactable object callback.
+     * @param before_move before moving this interactable object callback.
+     * @param target_only if true, only this interactable object will move. False means physical move.
+     * @param enable_physics_at_end whether you want to enable p2 physics at the end of the process or not.
+     * @param on_push_update the callback that is called while the push is happening.
+     */
     fire_push_movement(
         char: ControllableChar,
         push_end?: () => void,
@@ -283,7 +313,13 @@ export class Pushable extends InteractableObjects {
         }
     }
 
-    shift_events(event_shift_x, event_shift_y) {
+    /**
+     * Shifts the related events of this interactable object according to the push
+     * destination position.
+     * @param event_shift_x
+     * @param event_shift_y
+     */
+    shift_events(event_shift_x: number, event_shift_y: number) {
         const object_events = this.get_events();
         for (let i = 0; i < object_events.length; ++i) {
             const event = object_events[i];
@@ -326,7 +362,11 @@ export class Pushable extends InteractableObjects {
         }
     }
 
-    dust_animation(promise_resolve) {
+    /**
+     * Starts the dust animation when this interactable object fall on the ground.
+     * @param on_animation_end the animation end callback.
+     */
+    dust_animation(on_animation_end: () => void) {
         const promises = new Array(Pushable.DUST_COUNT);
         const sprites = new Array(Pushable.DUST_COUNT);
         const origin_x = get_centered_pos_in_px(this.tile_x_pos, this.data.map.tile_width);
@@ -363,7 +403,7 @@ export class Pushable extends InteractableObjects {
             sprites.forEach(sprite => {
                 this.data.npc_group.remove(sprite, true);
             });
-            promise_resolve();
+            on_animation_end();
         });
     }
 }

@@ -33,6 +33,11 @@ export abstract class LocationKey {
     }
 }
 
+/**
+ * This class is responsible for the type of events that are placed in
+ * the map. Generally, this kind of events are fired when the hero reaches
+ * the position of where an event of this type is placed.
+ */
 export abstract class TileEvent {
     protected game: Phaser.Game;
     protected data: GoldenSun;
@@ -101,6 +106,7 @@ export abstract class TileEvent {
         }
     }
 
+    /** Returns the tile event type. */
     get type() {
         return this._type;
     }
@@ -115,33 +121,52 @@ export abstract class TileEvent {
     get location_key() {
         return this._location_key;
     }
+    /** This event id number. */
     get id() {
         return this._id;
     }
+    /** The list of directions that this event can be fire. */
     get activation_directions() {
         return this._activation_directions;
     }
+    /** The list of collision layers that this event can be fired. */
     get activation_collision_layers() {
         return this._activation_collision_layers;
     }
     get dynamic() {
         return this._dynamic;
     }
+    /**
+     * This array has the same size of activation directions.
+     * The indexes of this array matches activation_directions in the
+     * way that it tells whether a given activation_direction is active
+     * by checking this var in the same corresponding index. Example:
+     * if active[2] is false, it means that this event is not active in
+     * the direction holded in activation_directions[2].
+     */
     get active() {
         return this._active;
     }
+    /** The interactable object that created this event (in the case of it has been created from it). */
     get origin_interactable_object() {
         return this._origin_interactable_object;
     }
     get affected_by_reveal() {
         return this._affected_by_reveal;
     }
+    /** This event unique label/key name. */
     get key_name() {
         return this._key_name;
     }
 
+    /**
+     * Fires this tile event.
+     */
     abstract fire(): void;
 
+    /**
+     * Destroys this tile event.
+     */
     abstract destroy(): void;
 
     /**
@@ -159,6 +184,10 @@ export abstract class TileEvent {
         return -1;
     }
 
+    /**
+     * Activates this event in a given direction.
+     * @param direction the direction to activate this event.
+     */
     activate_at(direction: directions | "all") {
         if (direction === "all") {
             this.activate();
@@ -170,6 +199,10 @@ export abstract class TileEvent {
         }
     }
 
+    /**
+     * Deactivates this event in a given direction.
+     * @param direction the direction to deactivate this event.
+     */
     deactivate_at(direction: directions | "all") {
         if (direction === "all") {
             this.deactivate();
@@ -181,18 +214,34 @@ export abstract class TileEvent {
         }
     }
 
+    /**
+     * Activates this event in all directions.
+     */
     activate() {
         this._active = this.active.fill(true);
     }
 
+    /**
+     * Deactivates this event in all directions.
+     */
     deactivate() {
         this._active = this.active.fill(false);
     }
 
+    /**
+     * Checks whether the hero is iver this tile event.
+     * @returns whether the hero position is correct or not.
+     */
     check_position() {
         return this.data.hero.tile_x_pos === this.x && this.data.hero.tile_y_pos === this.y;
     }
 
+    /**
+     * Updates the position of this event.
+     * @param x_tile the new x tile position.
+     * @param y_tile the new y tile position
+     * @param change_in_map folow the position change up to map events list.
+     */
     set_position(x_tile?: number, y_tile?: number, change_in_map: boolean = false) {
         this._x = x_tile ?? this.x;
         this._y = y_tile ?? this.y;
@@ -206,6 +255,10 @@ export abstract class TileEvent {
         }
     }
 
+    /**
+     * Adds new collision layers that this event can active.
+     * @param collision_layers_indexes the collision layers index.
+     */
     set_activation_collision_layers(...collision_layers_indexes: number[]) {
         this._activation_collision_layers = [...collision_layers_indexes];
     }
@@ -218,14 +271,27 @@ export abstract class TileEvent {
         return input.map(key => directions[key]);
     }
 
+    /**
+     * Gets an event by its id number.
+     * @param id the event id.
+     * @returns returns the TileEvent instance.
+     */
     static get_event(id: number) {
         return TileEvent.events[id];
     }
 
+    /**
+     * Gets an event by its unique label/key name.
+     * @param key_name the event unique label/key name.
+     * @returns returns the TileEvent instance.
+     */
     static get_labeled_event(key_name: string): TileEvent {
         return key_name in TileEvent.labeled_events ? TileEvent.labeled_events[key_name] : null;
     }
 
+    /**
+     * Destroys and resets all tile events that are instantiated currently.
+     */
     static reset() {
         TileEvent.id_incrementer = 0;
         for (let id in TileEvent.events) {
