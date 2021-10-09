@@ -1,4 +1,4 @@
-import {event_types} from "./GameEvent";
+import {event_types, GameEvent} from "./GameEvent";
 import {NPC} from "../NPC";
 import {directions} from "../utils";
 import {CharControlEvent} from "./CharControlEvent";
@@ -63,7 +63,17 @@ export class JumpEvent extends CharControlEvent {
         this.origin_npc = oringin_npc;
         ++this.data.game_event_manager.events_running_count;
 
-        this.set_char();
+        this.char = GameEvent.get_char(this.data, {
+            is_npc: this.is_npc,
+            npc_index: this.npc_index,
+            npc_label: this.npc_label,
+        });
+        if (!this.char) {
+            this.char = this.origin_npc;
+            this.is_npc = true;
+        } else if (!this.char.is_npc) {
+            this.data.game_event_manager.allow_char_to_move = true;
+        }
 
         await this.camera_follow_char();
 

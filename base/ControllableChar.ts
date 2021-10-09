@@ -42,6 +42,7 @@ export abstract class ControllableChar {
     protected game: Phaser.Game;
     protected data: GoldenSun;
     private _key_name: string;
+    private _is_npc: boolean;
 
     /* properties the controls the movement speed */
     protected _current_speed: {x: number; y: number};
@@ -149,6 +150,7 @@ export abstract class ControllableChar {
         walk_speed: number,
         dash_speed: number,
         climb_speed: number,
+        is_npc: boolean,
         initial_x?: number,
         initial_y?: number,
         initial_action?: string | base_actions,
@@ -182,6 +184,7 @@ export abstract class ControllableChar {
         this.sliding_on_ice = false;
         this.walking_over_rope = false;
         this.climbing_rope = false;
+        this._is_npc = is_npc;
         this._sprite_info = null;
         this.sprite = null;
         this.shadow = null;
@@ -223,6 +226,10 @@ export abstract class ControllableChar {
     /** The char key. */
     get key_name() {
         return this._key_name;
+    }
+    /** Whether the char is npc or hero. */
+    get is_npc() {
+        return this._is_npc;
     }
 
     /** The current x tile position. */

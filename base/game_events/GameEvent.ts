@@ -145,6 +145,37 @@ export abstract class GameEvent {
     abstract destroy(): void;
 
     /**
+     * A helper function that defines the ControllableChar based on inputs.
+     * The controllable char can be a hero or a npc.
+     * @param data The GoldenSun instance.
+     * @param options Some options to help defining the char.
+     * @returns the defined char.
+     */
+    static get_char(
+        data: GoldenSun,
+        options: {
+            /** Whether it's a npc or not. */
+            is_npc?: boolean;
+            /** The npc index number. */
+            npc_index?: number;
+            /** The npc unique label identifier. */
+            npc_label?: string;
+        }
+    ) {
+        if (options.is_npc === undefined && options.npc_index === undefined && options.npc_label === undefined) {
+            return null;
+        } else if (options.is_npc) {
+            if (options.npc_label) {
+                return data.map.npcs_label_map[options.npc_label];
+            } else {
+                return data.map.npcs[options.npc_index];
+            }
+        } else {
+            return data.hero;
+        }
+    }
+
+    /**
      * Get a specific event by its id.
      * @param id The event id.
      * @returns Returns the event.

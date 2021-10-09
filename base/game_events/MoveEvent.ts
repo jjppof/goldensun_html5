@@ -1,4 +1,4 @@
-import {event_types} from "./GameEvent";
+import {event_types, GameEvent} from "./GameEvent";
 import * as _ from "lodash";
 import {directions} from "../utils";
 import {NPC} from "../NPC";
@@ -84,7 +84,17 @@ export class MoveEvent extends CharControlEvent {
         this.origin_npc = origin_npc;
         ++this.data.game_event_manager.events_running_count;
         this.data.collision.disable_npc_collision();
-        this.set_char();
+        this.char = GameEvent.get_char(this.data, {
+            is_npc: this.is_npc,
+            npc_index: this.npc_index,
+            npc_label: this.npc_label,
+        });
+        if (!this.char) {
+            this.char = this.origin_npc;
+            this.is_npc = true;
+        } else if (!this.char.is_npc) {
+            this.data.game_event_manager.allow_char_to_move = true;
+        }
         this.char.dashing = this.dash;
         const dest_value = {
             x: typeof this.dest.x === "object" ? this.data.game_event_manager.get_value(this.dest.x) : this.dest.x,

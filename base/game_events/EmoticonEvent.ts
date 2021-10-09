@@ -17,7 +17,7 @@ export class EmoticonEvent extends GameEvent {
     /** INPUT. Whether the target char is a NPC. If not, it's the hero. */
     private is_npc: boolean;
     /** INPUT. If the target char is a NPC, the npc unqie label. Use this or npc_index */
-    private npc_label: number;
+    private npc_label: string;
     /** INPUT. If the target char is a NPC, the npc index. Use this or npc_label */
     private npc_index: number;
     /** INPUT. The list of game events to be fired on this event end. */
@@ -62,25 +62,6 @@ export class EmoticonEvent extends GameEvent {
     }
 
     /**
-     * Defines the ControllableChar which is going to show the emoticon.
-     */
-    set_char() {
-        if (this.is_npc === undefined && this.npc_index === undefined && this.npc_label === undefined) {
-            this.char = this.origin_npc;
-            this.is_npc = true;
-        } else if (this.is_npc) {
-            if (this.npc_label) {
-                this.char = this.data.map.npcs_label_map[this.npc_label];
-            } else {
-                this.char = this.data.map.npcs[this.npc_index];
-            }
-        } else {
-            this.char = this.data.hero;
-            this.data.game_event_manager.allow_char_to_move = true;
-        }
-    }
-
-    /**
      * Fires the EmoticonEvent.
      * @param oringin_npc If it's the case, the origin NPC that originated this event.
      */
@@ -88,7 +69,16 @@ export class EmoticonEvent extends GameEvent {
         if (!this.active) return;
         this.origin_npc = oringin_npc;
         ++this.data.game_event_manager.events_running_count;
-        this.set_char();
+
+        this.char = GameEvent.get_char(this.data, {
+            is_npc: this.is_npc,
+            npc_index: this.npc_index,
+            npc_label: this.npc_label,
+        });
+        if (!this.char) {
+            this.char = this.origin_npc;
+            this.is_npc = true;
+        }
 
         if (this.face_hero && this.char !== this.data.hero) {
             await this.data.game_event_manager.set_npc_and_hero_directions(this.origin_npc);

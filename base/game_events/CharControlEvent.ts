@@ -101,20 +101,4 @@ export abstract class CharControlEvent extends GameEvent {
         }
         await follow_promise;
     }
-
-    set_char() {
-        if (this.is_npc === undefined && this.npc_index === undefined && this.npc_label === undefined) {
-            this.char = this.origin_npc;
-            this.is_npc = true;
-        } else if (this.is_npc) {
-            if (this.npc_label) {
-                this.char = this.data.map.npcs_label_map[this.npc_label];
-            } else {
-                this.char = this.data.map.npcs[this.npc_index];
-            }
-        } else {
-            this.char = this.data.hero;
-            this.data.game_event_manager.allow_char_to_move = true;
-        }
-    }
 }

@@ -52,7 +52,8 @@ export class Hero extends ControllableChar {
         initial_direction: string,
         walk_speed: number,
         dash_speed: number,
-        climb_speed: number
+        climb_speed: number,
+        is_npc: boolean
     ) {
         super(
             game,
@@ -62,12 +63,18 @@ export class Hero extends ControllableChar {
             walk_speed,
             dash_speed,
             climb_speed,
+            is_npc,
             initial_x,
             initial_y,
             initial_action,
             initial_direction
         );
         this.avoid_encounter = false;
+    }
+
+    /** Gets the collision layer that the hero is. */
+    get collision_layer() {
+        return this.data.map.collision_layer;
     }
 
     /**
