@@ -74,5 +74,6 @@ export class IceSlideEvent extends TileEvent {
 
     destroy() {
         this._origin_interactable_object = null;
+        this.deactivate();
     }
 }

@@ -146,5 +146,6 @@ export class RopeEvent extends TileEvent {
     destroy() {
         this._origin_interactable_object = null;
         this._starting_rope_dock = null;
+        this.deactivate();
     }
 }

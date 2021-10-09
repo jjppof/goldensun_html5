@@ -151,5 +151,6 @@ export class SliderEvent extends TileEvent {
 
     destroy() {
         this._origin_interactable_object = null;
+        this.deactivate();
     }
 }

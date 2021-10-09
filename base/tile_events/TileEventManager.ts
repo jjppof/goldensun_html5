@@ -283,7 +283,8 @@ export class TileEventManager {
                 info.active_storage_key,
                 info.affected_by_reveal,
                 info.key_name,
-                info.speed
+                info.speed,
+                info.speed_activate_directions
             );
         } else if (info.type === event_types.TELEPORT) {
             return new TeleportEvent(
