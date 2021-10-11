@@ -80,7 +80,8 @@ export class Pushable extends InteractableObjects {
     check_and_start_push(char: ControllableChar) {
         if (
             [base_actions.WALK, base_actions.DASH].includes(char.current_action as base_actions) &&
-            this.data.map.collision_layer === this.base_collision_layer
+            this.data.map.collision_layer === this.base_collision_layer &&
+            !this.check_if_trying_to_climb(char)
         ) {
             char.trying_to_push = true;
             if (char.push_timer === null) {
@@ -120,6 +121,36 @@ export class Pushable extends InteractableObjects {
             }
         }
         return char.trying_to_push;
+    }
+
+    /**
+     * Checks if a given char is trying to climb this interactable object, if it's trying, starts
+     * the climb process.
+     * @param char the char that is trying to climb this climbable interactable object.
+     * @returns returns whether the char is trying to climb or not.
+     */
+    check_if_trying_to_climb(char: ControllableChar) {
+        if (char.is_npc) {
+            return false;
+        }
+
+        const pos_key = LocationKey.get_key(char.tile_x_pos, char.tile_y_pos);
+        const events = this.data.map.events[pos_key];
+
+        if (!events) return false;
+
+        for (let i = 0; i < events.length; ++i) {
+            const event = events[i];
+            if (
+                event.type === event_types.CLIMB &&
+                event.activation_directions.includes(char.current_direction) &&
+                event.activation_collision_layers.includes(this.data.map.collision_layer) &&
+                event.is_active(char.current_direction) > -1
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
