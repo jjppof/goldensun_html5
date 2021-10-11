@@ -260,7 +260,8 @@ export class Debug {
         this.game.debug.text("", 0, 0);
 
         if (this.show_fps) {
-            this.game.debug.text("FPS: " + this.game.time.fps || "FPS: --", 5, 15, "#00ff00");
+            this.game.debug.text("RPS: " + this.game.time.rps || "RPS: --", 5, 15, "#00ff00");
+            this.game.debug.text("UPS: " + this.game.time.rps || "UPS: --", 5, 27, "#00ff00");
         }
 
         if (this.grid) {

@@ -243,6 +243,7 @@ declare module PIXI {
         renderSession: RenderSession;
 
         render(stage: DisplayObjectContainer): void;
+        postRender(): void;
         resize(width: number, height: number): void;
         setTexturePriority(textureNameCollection: string[]): string[];
         destroy(removeView?: boolean): void;
@@ -522,7 +523,6 @@ declare module PIXI {
 
     // Overwritten by Phaser.Point
     export class Point {
-        setTo(x: number, y: number): void;
 
         constructor(x?: number, y?: number);
 
@@ -530,6 +530,8 @@ declare module PIXI {
         y: number;
 
         clone(): Point;
+        set(x: number, y: number): void;
+        setTo(x: number, y: number): void;
 
     }
 
@@ -844,6 +846,7 @@ declare module PIXI {
 
         initContext(): void;
         render(stage: DisplayObjectContainer): void;
+        postRender(): void;
         renderDisplayObject(displayObject: DisplayObject, projection: Point, buffer: WebGLBuffer): void;
         resize(width: number, height: number): void;
         updateTexture(texture: Texture): void;

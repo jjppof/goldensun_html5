@@ -2392,8 +2392,8 @@ Phaser.ParticleStorm.Particle.prototype = {
 
         var speed = Math.sqrt(dx * dx + dy * dy) / (this.lifespan / 1000);
 
-        var vx = (Math.cos(angle) * speed) * t.time.physicsElapsed;
-        var vy = (Math.sin(angle) * speed) * t.time.physicsElapsed;
+        var vx = (Math.cos(angle) * speed) * t.time.delta * 0.001;
+        var vy = (Math.sin(angle) * speed) * t.time.delta * 0.001;
 
         if (data.speed)
         {

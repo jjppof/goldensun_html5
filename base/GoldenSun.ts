@@ -100,21 +100,22 @@ export class GoldenSun {
     public super_group: Phaser.Group = null;
 
     constructor() {
-        this.game = new Phaser.Game(
-            numbers.GAME_WIDTH,
-            numbers.GAME_HEIGHT,
-            Phaser.WEBGL,
-            "game", //dom element id
-            {
+        const config: Phaser.IGameConfig = {
+            width: numbers.GAME_WIDTH,
+            height: numbers.GAME_HEIGHT,
+            renderer: Phaser.WEBGL,
+            parent: "game",
+            transparent: false,
+            antialias: false,
+            state: {
                 preload: this.preload.bind(this),
                 create: this.create.bind(this),
                 update: this.update.bind(this),
                 render: this.render.bind(this),
                 loadRender: this.load_render.bind(this),
             },
-            false, //transparent
-            false //antialias
-        );
+        };
+        this.game = new Phaser.Game(config);
     }
 
     /**
@@ -390,7 +391,10 @@ export class GoldenSun {
         this.camera.update();
 
         //fps adjustment for faster monitors since requestAnimationFrame follows monitor frame rate
-        if (this.game.time.fps > 60 && Math.abs(this.game.time.suggestedFps - this.game.time.desiredFps) > 10) {
+        if (
+            this.game.time.fps > numbers.TARGET_FPS &&
+            Math.abs(this.game.time.suggestedFps - this.game.time.desiredFps) > 10
+        ) {
             this.game.time.desiredFps = this.game.time.suggestedFps;
         }
     }
