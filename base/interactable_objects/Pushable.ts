@@ -187,7 +187,7 @@ export class Pushable extends InteractableObjects {
     }
 
     /**
-     *
+     * The main push related method. This actually executes the push process.
      * @param char the char that is pushing this controllable object.
      * @param push_end after moving this interactable object callback.
      * @param before_move before moving this interactable object callback.
