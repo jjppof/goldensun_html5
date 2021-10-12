@@ -253,7 +253,9 @@ export class InteractableObjects {
     position_allowed(x: number, y: number) {
         if (
             this.data.map.interactable_objects.filter(io => {
-                return io.tile_x_pos === x && io.tile_y_pos === y;
+                return (
+                    io.tile_x_pos === x && io.tile_y_pos === y && io.base_collision_layer === this.base_collision_layer
+                );
             }).length
         ) {
             return false;

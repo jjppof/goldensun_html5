@@ -31,7 +31,7 @@ class EventQueue {
         switch (event.type) {
             case event_types.CLIMB:
                 if (
-                    event.active &&
+                    event.is_active(this_activation_direction) > -1 &&
                     (event as ClimbEvent).is_set &&
                     event.activation_directions.includes(this_activation_direction)
                 ) {
@@ -222,8 +222,11 @@ export class TileEventManager {
                                 //creates a timer to activate this event. The event will be fired on this timer finish.
                                 this.event_timers[this_event.id] = this.game.time.create(true);
                                 this.event_timers[this_event.id].add(TileEventManager.EVENT_INIT_DELAY, () => {
-                                    //checks whether the hero is still going towards event activation direction.
-                                    if (this_event.is_active(this.data.hero.current_direction) >= 0) {
+                                    //checks whether the hero is still going towards event activation direction and is in the same collision layer.
+                                    if (
+                                        this_event.is_active(this.data.hero.current_direction) >= 0 &&
+                                        this_event.activation_collision_layers.includes(this.data.hero.collision_layer)
+                                    ) {
                                         this.fire_event(this_event, this.data.hero.current_direction);
                                     }
                                     //kills the timer that started this event

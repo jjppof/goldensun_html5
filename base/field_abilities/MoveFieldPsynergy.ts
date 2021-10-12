@@ -78,18 +78,18 @@ export class MoveFieldPsynergy extends FieldAbilities {
     fire_push() {
         if (this.data.map.collision_layer === this.target_object.base_collision_layer) {
             const item_position = this.target_object.get_current_position(this.data.map);
-            const from_position = get_front_position(
+            const target_position = get_front_position(
                 item_position.x,
                 item_position.y,
                 this.controllable_char.trying_to_push_direction,
                 false
             );
-            const position_allowed = this.target_object.position_allowed(from_position.x, from_position.y);
+            const position_allowed = this.target_object.position_allowed(target_position.x, target_position.y);
             if (
                 position_allowed &&
                 !(
-                    this.controllable_char.tile_x_pos === item_position.x &&
-                    this.controllable_char.tile_y_pos === item_position.y
+                    this.controllable_char.tile_x_pos === target_position.x &&
+                    this.controllable_char.tile_y_pos === target_position.y
                 )
             ) {
                 this.data.control_manager.reset();
