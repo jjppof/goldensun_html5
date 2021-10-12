@@ -172,7 +172,7 @@ export abstract class TileEvent {
     /**
      * Tests whether a given direction is available to active this event.
      * @param direction the direction to test if it's active.
-     * @returns The resulting dicretion that actives this event. Returns -1 if there no active direction.
+     * @returns The resulting dicretion that actives this event. Returns -1 if there's no active direction.
      */
     is_active(direction: directions) {
         const possible_directions = split_direction(direction);

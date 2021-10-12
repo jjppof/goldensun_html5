@@ -19,6 +19,7 @@ import {Item, use_types} from "../Item";
 import {battle_actions, PlayerSprite} from "./PlayerSprite";
 import {Map} from "../Map";
 import {GAME_WIDTH} from "../magic_numbers";
+import {SpriteBase} from "../SpriteBase";
 
 /* ACTIONS:
 - Attack
@@ -134,7 +135,7 @@ export class Battle {
             const qtd = _.random(member_info.min, member_info.max);
             for (let i = 0; i < qtd; ++i) {
                 this.enemies_info.push({
-                    sprite_key: member_info.key + "_battle",
+                    sprite_key: member_info.key + SpriteBase.ACTION_ANIM_SEPARATOR + base_actions.BATTLE,
                 });
 
                 if (this.enemies_info[counter].sprite_key in battle_keys_count) {
@@ -146,7 +147,9 @@ export class Battle {
                 let battle_key_suffix = "",
                     name_suffix = "";
                 if (battle_keys_count[this.enemies_info[counter].sprite_key] > 1) {
-                    battle_key_suffix = "_" + battle_keys_count[this.enemies_info[counter].sprite_key].toString();
+                    battle_key_suffix =
+                        SpriteBase.ACTION_ANIM_SEPARATOR +
+                        battle_keys_count[this.enemies_info[counter].sprite_key].toString();
                     name_suffix = " " + battle_keys_count[this.enemies_info[counter].sprite_key].toString();
                 }
 

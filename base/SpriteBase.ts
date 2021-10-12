@@ -3,6 +3,8 @@
  * and the appropriate methods to generate this info.
  */
 export class SpriteBase {
+    public static readonly ACTION_ANIM_SEPARATOR = "/";
+
     public key_name: string;
     private actions: {
         [action: string]: {
@@ -139,15 +141,15 @@ export class SpriteBase {
     }
 
     getSpriteKey(action) {
-        return `${this.key_name}_${action}`;
+        return `${this.key_name}${SpriteBase.ACTION_ANIM_SEPARATOR}${action}`;
     }
 
     getAnimationKey(action, animation) {
-        return `${action}_${animation}`;
+        return `${action}${SpriteBase.ACTION_ANIM_SEPARATOR}${animation}`;
     }
 
     getSpriteAction(sprite) {
         const key = sprite.key;
-        return key.substring(key.lastIndexOf("_") + 1, key.length);
+        return key.substring(key.lastIndexOf(SpriteBase.ACTION_ANIM_SEPARATOR) + 1, key.length);
     }
 }

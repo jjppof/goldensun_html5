@@ -97,6 +97,11 @@ export class TileEventManager {
         return this._event_timers;
     }
 
+    /** Checks whether there are events that are up to happen. */
+    get timers_running() {
+        return Boolean(Object.keys(this.event_timers).length);
+    }
+
     set_triggered_event(event: TileEvent) {
         this.triggered_events[event.id] = event;
     }
