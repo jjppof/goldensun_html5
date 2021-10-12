@@ -3,6 +3,9 @@ body {
     background-color: black;
     color: whitesmoke;
 }
+body.electron {
+    overflow: hidden;
+}
 .firefox-banner {
     background-color: #ec0040;
     text-align: center;
@@ -20,6 +23,9 @@ body {
 }
 #game {
     padding: 1rem 20%;
+}
+body.electron #game {
+    padding: 0 !important;
 }
 canvas {
     image-rendering: -moz-crisp-edges;

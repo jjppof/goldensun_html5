@@ -37,6 +37,9 @@ export class GoldenSun {
     public loading_progress: string = "";
     public loading_what: string = "";
 
+    public electron_app: boolean;
+    private ipcRenderer: any;
+
     //main game states
     public menu_open: boolean = false;
     public shop_open: boolean = false;
@@ -100,6 +103,7 @@ export class GoldenSun {
     public super_group: Phaser.Group = null;
 
     constructor() {
+        this.init_electron();
         const config: Phaser.IGameConfig = {
             width: numbers.GAME_WIDTH,
             height: numbers.GAME_HEIGHT,
@@ -116,6 +120,16 @@ export class GoldenSun {
             },
         };
         this.game = new Phaser.Game(config);
+    }
+
+    /**
+     * If it's running under electron's engine, initializes it.
+     */
+    private init_electron() {
+        this.electron_app = (window as any).is_electron_env ?? false;
+        if (this.electron_app) {
+            this.ipcRenderer = (window as any).ipcRenderer;
+        }
     }
 
     /**
@@ -282,8 +296,13 @@ export class GoldenSun {
         const setup_scale = (scaleFactor: number) => {
             if (this.fullscreen) return;
             this.scale_factor = scaleFactor;
-            this.game.scale.setupScale(this.scale_factor * numbers.GAME_WIDTH, this.scale_factor * numbers.GAME_HEIGHT);
+            const width = this.scale_factor * numbers.GAME_WIDTH;
+            const height = this.scale_factor * numbers.GAME_HEIGHT;
+            this.game.scale.setupScale(width, height);
             window.dispatchEvent(new Event("resize"));
+            if (this.ipcRenderer) {
+                this.ipcRenderer.send("resize-window", width, height);
+            }
         };
 
         const quick_ability = (index: number) => {

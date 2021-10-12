@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "start": "webpack-dev-server",
+    "start-desktop": "electron ./electron/main.js",
     "build": "webpack",
     "format-check": "prettier --check \"base/**/*.ts\"",
     "format": "npx prettier --write \"base/**/*.ts\"",
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.161",
     "@types/mathjs": "^6.0.11",
+    "electron": "^15.1.2",
     "husky": "^5.0.0-beta.0",
     "pinst": "^2.0.0",
     "prettier": "2.1.2",
