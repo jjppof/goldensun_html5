@@ -15,7 +15,8 @@ module.exports = {
         path.resolve(__dirname, 'dist'),
         path.resolve(__dirname, '.git'),
         path.resolve(__dirname, 'code_docs'),
-        path.resolve(__dirname, 'scripts')
+        path.resolve(__dirname, 'scripts'),
+        path.resolve(__dirname, 'electron'),
       ]
     }
   },

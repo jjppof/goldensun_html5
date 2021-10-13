@@ -16,6 +16,7 @@
         "./node_modules",
         "./code_docs",
         "./scripts",
+        "./electron",
         "./static/*.js",
         "webpack.config.js"
     ]
