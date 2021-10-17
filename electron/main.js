@@ -27,6 +27,7 @@ function createWindow() {
 }
 
 app.commandLine.appendSwitch(
+    // would be nice if we could limit fps to 60.
     // "--disable-frame-rate-limit",
     // "--disable-gpu-vsync",
     // "--max-gum-fps=\"60\"",
@@ -45,5 +46,5 @@ app.on('window-all-closed', function () {
 
 ipcMain.on('resize-window', (event, width, height) => {
     const win = BrowserWindow.fromWebContents(event.sender);
-    win.setSize(width, height);
+    win.setContentSize(width, height);
 });

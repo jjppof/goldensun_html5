@@ -290,6 +290,9 @@ export class GoldenSun {
             this.scale_factor = 1;
             this.game.scale.setupScale(numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
             window.dispatchEvent(new Event("resize"));
+            if (this.ipcRenderer) {
+                this.ipcRenderer.send("resize-window", numbers.GAME_WIDTH, numbers.GAME_HEIGHT);
+            }
         });
 
         //enable zoom and psynergies shortcuts for testing
