@@ -203,8 +203,10 @@ export class GoldenSun {
         this.particle_manager = this.game.plugins.add(Phaser.ParticleStorm);
 
         //init debug systems
-        this.debug = new Debug(this.game, this);
-        this.debug.initialize_controls();
+        if (!this.electron_app) {
+            this.debug = new Debug(this.game, this);
+            this.debug.initialize_controls();
+        }
 
         //creating groups. Order here is important
         this.underlayer_group = this.game.add.group();
@@ -425,12 +427,14 @@ export class GoldenSun {
      * Renders some debug info.
      */
     private render() {
-        this.debug.set_debug_info();
-        if (this.game.time.frames % 8 === 0) {
-            this.debug.fill_key_debug_table();
-        }
-        if (this.game.time.frames % 30 === 0) {
-            this.debug.fill_stats_debug_table();
+        if (!this.electron_app) {
+            this.debug.set_debug_info();
+            if (this.game.time.frames % 8 === 0) {
+                this.debug.fill_key_debug_table();
+            }
+            if (this.game.time.frames % 30 === 0) {
+                this.debug.fill_stats_debug_table();
+            }
         }
     }
 }

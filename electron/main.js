@@ -23,7 +23,7 @@ function createWindow() {
         }
     });
 
-    win.loadFile('../index.html');
+    win.loadFile('../index-electron.html');
 }
 
 app.commandLine.appendSwitch(

@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "webpack-dev-server",
-    "start-desktop": "npm run build && electron ./electron/main.js",
+    "start-desktop": "npm run build && npx electron ./electron/main.js",
     "build": "webpack",
     "format-check": "prettier --check \"base/**/*.ts\"",
     "format": "npx prettier --write \"base/**/*.ts\"",
