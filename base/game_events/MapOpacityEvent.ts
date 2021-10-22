@@ -8,16 +8,7 @@ export class MapOpacityEvent extends GameEvent {
     private opacity: number;
     private duration: number;
 
-    constructor(
-        game,
-        data,
-        active,
-        key_name,
-        map_layer_name,
-        finish_events,
-        opacity,
-        duration
-    ) {
+    constructor(game, data, active, key_name, map_layer_name, finish_events, opacity, duration) {
         super(game, data, event_types.MAP_OPACITY, active, key_name);
         this.map_layer_name = map_layer_name;
         if (finish_events !== undefined) {
@@ -45,14 +36,14 @@ export class MapOpacityEvent extends GameEvent {
         ++this.data.game_event_manager.events_running_count;
 
         if (this.duration > 0) {
-            this.game.add.tween(this.map_layer.sprite)
-                .to({"alpha": this.opacity}, this.duration, Phaser.Easing.Linear.None, true)
+            this.game.add
+                .tween(this.map_layer.sprite)
+                .to({alpha: this.opacity}, this.duration, Phaser.Easing.Linear.None, true)
                 .onComplete.add(() => {
                     this.map_layer.visible = this.map_layer.sprite.alpha > 0;
                     this.finish();
                 });
-        }
-        else {
+        } else {
             this.map_layer.sprite.alpha = this.opacity;
             this.map_layer.visible = this.map_layer.sprite.alpha > 0;
             this.finish();
