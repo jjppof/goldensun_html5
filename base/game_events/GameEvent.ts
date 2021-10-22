@@ -40,7 +40,7 @@ export enum event_types {
     TILE_EVENT_MANAGE = "tile_event_manage",
     DESTROYER = "destroyer",
     CHAR_LEVEL_CHANGE = "char_level_change",
-    MAP_OPACITY = "map_opacity"
+    MAP_OPACITY = "map_opacity",
 }
 
 /**
