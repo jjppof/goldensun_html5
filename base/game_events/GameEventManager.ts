@@ -464,7 +464,7 @@ export class GameEventManager {
                     info.map_layer_name,
                     info.finish_events,
                     info.opacity,
-                    info.animation_time
+                    info.duration
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);
