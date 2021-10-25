@@ -6,7 +6,7 @@ import {event_types, GameEvent} from "./game_events/GameEvent";
 import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
 import {ControllableChar} from "./ControllableChar";
-import {base_actions} from "./utils";
+import {base_actions, parse_blend_mode} from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
 import {Pushable} from "./interactable_objects/Pushable";
@@ -667,7 +667,7 @@ export class Map {
             layer.layer_z = this.layers[i].properties.z === undefined ? i : this.layers[i].properties.z;
             layer.resizeWorld();
             if (this.layers[i].properties.blendMode !== undefined) {
-                layer.blendMode = (PIXI.blendModes[this.layers[i].properties.blendMode] as unknown) as PIXI.blendModes;
+                layer.blendMode = parse_blend_mode(this.layers[i].properties.blendMode);
             }
             if (this.layers[i].alpha !== undefined) {
                 layer.alpha = this.layers[i].alpha;

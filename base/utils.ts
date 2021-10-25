@@ -432,3 +432,12 @@ export function random_normal() {
     while (v === 0) v = Math.random();
     return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
 }
+
+/**
+ * Convert a string to a `PIXI.blendModes` enum value
+ * @param blendMode Desired blend mode string
+ * @returns returns a `PIXI.blendModes` enum value
+ */
+export function parse_blend_mode(blendMode: string) {
+    return (PIXI.blendModes[blendMode] as unknown) as PIXI.blendModes;
+}
