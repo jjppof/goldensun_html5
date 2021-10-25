@@ -12,7 +12,7 @@ export class MapBlendModeEvent extends GameEvent {
         this.blend_mode = parse_blend_mode(blend_mode);
     }
 
-    async _fire(origin_npc?: NPC) {
+    _fire(origin_npc?: NPC) {
         if (!this.active) return;
         const map_layer = this.data.map.get_layer(this.map_layer_name);
 
@@ -20,18 +20,11 @@ export class MapBlendModeEvent extends GameEvent {
             return;
         }
 
-        ++this.data.game_event_manager.events_running_count;
-
         map_layer.sprite.blendMode = this.blend_mode;
-
-        this.finish();
-    }
-
-    finish() {
-        --this.data.game_event_manager.events_running_count;
     }
 
     destroy() {
         this.active = false;
+        this.origin_npc = null;
     }
 }
