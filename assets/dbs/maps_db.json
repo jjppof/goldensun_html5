@@ -129,20 +129,20 @@
         "expected_party_level": 18,
         "background_key": "bg_world_map"
     },{
-        "name":"Cave",
-        "key_name":"cave",
-        "tileset_key_name":"cave",
+        "name":"Nyungwe",
+        "key_name":"nyungwe",
+        "tileset_key_name":"forest",
         "bgm": {
             "key": "cave_bgm",
             "path": "assets/sounds/bgm/cave.ogg"
         },
         "tileset_files": {
-            "image":"assets/images/maps/cave/cave.png",
-            "json":"assets/images/maps/cave/cave.json"
+            "image":"assets/images/maps/forest/forest.png",
+            "json":"assets/images/maps/forest/forest.json"
         },
         "lazy_load": true,
         "collision_embedded": true,
         "expected_party_level": 21,
-        "background_key": "bg_cave"
+        "background_key": "forest"
     }
 ]

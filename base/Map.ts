@@ -395,7 +395,7 @@ export class Map {
             this.collision_sprite.width = this.sprite.widthInPixels;
             this.collision_sprite.height = this.sprite.heightInPixels;
             this.collision_sprite.anchor.setTo(0, 0);
-            const collision_layer_objects = this.sprite.objects[this.collision_layer].objectsData;
+            const collision_layer_objects = this.sprite.objects[this.collision_layer]?.objectsData ?? [];
             for (let i = 0; i < collision_layer_objects.length; ++i) {
                 const collision_object = collision_layer_objects[i];
                 let shape;
@@ -1031,6 +1031,7 @@ export class Map {
             } else {
                 this.data.hero.sprite.scale.setTo(1, 1);
                 this.data.hero.shadow.scale.setTo(1, 1);
+                this.data.hero.shadow.visible = true;
                 this.data.hero.sprite.mask.destroy();
                 this.data.hero.sprite.mask = null;
             }

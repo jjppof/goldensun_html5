@@ -271,7 +271,7 @@
         "actions": {
             "towns": {
                 "frame_rate": 1,
-                "animations": ["town_00", "town_01", "town_02", "cave_00", "tower_00"],
+                "animations": ["town_00", "town_01", "town_02", "cave_00", "tower_00", "forest_00"],
                 "frames_count": 1,
                 "initial_animation": "town_00",
                 "spritesheet": {

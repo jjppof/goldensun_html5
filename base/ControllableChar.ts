@@ -1203,8 +1203,8 @@ export abstract class ControllableChar {
      * Updates the tile positions.
      */
     update_tile_position() {
-        this._tile_x_pos = get_tile_position(this.sprite.x, this.data.map.tile_width);
-        this._tile_y_pos = get_tile_position(this.sprite.y, this.data.map.tile_height);
+        this._tile_x_pos = get_tile_position(this.x, this.data.map.tile_width);
+        this._tile_y_pos = get_tile_position(this.y, this.data.map.tile_height);
     }
 
     /**

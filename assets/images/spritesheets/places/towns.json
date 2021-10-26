@@ -2,15 +2,23 @@
 
 "towns/cave_00/00":
 {
-	"frame": {"x":35,"y":1,"w":28,"h":27},
+	"frame": {"x":1,"y":1,"w":28,"h":27},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":0,"y":0,"w":28,"h":27},
 	"sourceSize": {"w":28,"h":28}
 },
+"towns/forest_00/00":
+{
+	"frame": {"x":65,"y":1,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
 "towns/tower_00/00":
 {
-	"frame": {"x":35,"y":30,"w":21,"h":46},
+	"frame": {"x":99,"y":1,"w":21,"h":46},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":6,"y":17,"w":21,"h":46},
@@ -18,7 +26,7 @@
 },
 "towns/town_00/00":
 {
-	"frame": {"x":1,"y":1,"w":32,"h":32},
+	"frame": {"x":1,"y":34,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -26,7 +34,7 @@
 },
 "towns/town_01/00":
 {
-	"frame": {"x":1,"y":69,"w":32,"h":31},
+	"frame": {"x":31,"y":1,"w":32,"h":31},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":0,"y":1,"w":32,"h":31},
@@ -34,7 +42,7 @@
 },
 "towns/town_02/00":
 {
-	"frame": {"x":1,"y":35,"w":32,"h":32},
+	"frame": {"x":35,"y":35,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -45,8 +53,8 @@
 	"version": "1.0",
 	"image": "towns.png",
 	"format": "RGBA8888",
-	"size": {"w":64,"h":101},
+	"size": {"w":121,"h":68},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:e3ce6ad4ec83050814ef9adf81849865:7593197adcd69aafe18d84be9a601d6a:83ad9e04c96c98a4967eb099ace18c94$"
+	"smartupdate": "$TexturePacker:SmartUpdate:122b93ecc987dca46a9c1585f495af1f:f0ba9a2163f27551c56168e2147ff5af:83ad9e04c96c98a4967eb099ace18c94$"
 }
 }

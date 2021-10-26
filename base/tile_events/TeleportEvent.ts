@@ -152,6 +152,7 @@ export class TeleportEvent extends TileEvent {
 
     private camera_fade_out() {
         this.data.hero.update_shadow();
+        this.data.hero.update_tile_position();
         this.data.hero.update_half_crop(true);
         this.data.map.sort_sprites();
         this.data.map.npcs.forEach(npc => npc.update());
