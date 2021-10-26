@@ -133,8 +133,8 @@
         "key_name":"nyungwe",
         "tileset_key_name":"forest",
         "bgm": {
-            "key": "cave_bgm",
-            "path": "assets/sounds/bgm/cave.ogg"
+            "key": "forest_bgm",
+            "path": "assets/sounds/bgm/happy_town.ogg"
         },
         "tileset_files": {
             "image":"assets/images/maps/forest/forest.png",
