@@ -41,6 +41,7 @@ export enum event_types {
     DESTROYER = "destroyer",
     CHAR_LEVEL_CHANGE = "char_level_change",
     MAP_OPACITY = "map_opacity",
+    MAP_BLEND_MODE = "map_blend_mode",
 }
 
 /**

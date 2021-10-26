@@ -26,6 +26,7 @@ import {TileEventManageEvent} from "./TileEventManageEvent";
 import {DestroyerEvent} from "./DestroyerEvent";
 import {CharLevelChangeEvent} from "./CharLevelChangeEvent";
 import {MapOpacityEvent} from "./MapOpacityEvent";
+import {MapBlendModeEvent} from "./MapBlendModeEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -465,6 +466,15 @@ export class GameEventManager {
                     info.finish_events,
                     info.opacity,
                     info.duration
+                );
+            case event_types.MAP_BLEND_MODE:
+                return new MapBlendModeEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.map_layer_name,
+                    info.blend_mode
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);
