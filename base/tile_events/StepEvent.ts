@@ -45,7 +45,7 @@ export class StepEvent extends TileEvent {
     }
 
     set() {
-        let next_x,
+        let next_x = this.x,
             next_y = this.y,
             shift_y;
         if (this.step_direction === directions.up) {
@@ -57,6 +57,10 @@ export class StepEvent extends TileEvent {
             next_x = this.x - 1;
         } else if (this.activation_directions[0] === directions.right) {
             next_x = this.x + 1;
+        } else if (this.activation_directions[0] === directions.up) {
+            next_y = this.y - 1;
+        } else if (this.activation_directions[0] === directions.down) {
+            next_y = this.y + 1;
         }
         this.next_x = next_x;
         this.next_y = next_y;

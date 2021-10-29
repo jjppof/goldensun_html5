@@ -244,5 +244,51 @@
             "frames_count": [1, 1, 1],
             "loop": [false, false, false]
         }
+    },{
+        "key_name": "trunk_tree_horizontal",
+        "anchor_x": 0.5,
+        "anchor_y": 0.75,
+        "custom_body_polygon": [
+            [0, 0],
+            ["sprite_width", 0],
+            ["sprite_width", 14],
+            [0, 14]
+        ],
+        "rollable": true,
+        "spritesheet": {
+            "image": "assets/images/interactable_objects/trunk_tree_horizontal.png",
+            "json": "assets/images/interactable_objects/trunk_tree_horizontal.json"
+        },
+        "initial_animation": "rolling",
+        "stop_animation_on_start": true,
+        "actions": {
+            "frame_rate": [8, 8, 8],
+            "animations": ["falling", "floating", "rolling"],
+            "frames_count": [5, 4, 4],
+            "loop": [false, true, true]
+        }
+    },{
+        "key_name": "trunk_tree_vertical",
+        "anchor_x": 0.5,
+        "anchor_y": 0.5,
+        "custom_body_polygon": [
+            [0, 0],
+            [14, 0],
+            [14, "sprite_height"],
+            [0, "sprite_height"]
+        ],
+        "rollable": true,
+        "spritesheet": {
+            "image": "assets/images/interactable_objects/trunk_tree_vertical.png",
+            "json": "assets/images/interactable_objects/trunk_tree_vertical.json"
+        },
+        "initial_animation": "rolling",
+        "stop_animation_on_start": true,
+        "actions": {
+            "frame_rate": [8, 8, 8],
+            "animations": ["falling", "floating", "rolling"],
+            "frames_count": [5, 4, 4],
+            "loop": [false, true, true]
+        }
     }
 ]

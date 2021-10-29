@@ -423,6 +423,7 @@ export class InteractableObjects {
             }
             this.set_anchor();
             this.set_scale();
+            //is this shift property necessary?
             const shift_x = interactable_object_db.shift_x ?? 0;
             const shift_y = interactable_object_db.shift_y ?? 0;
             this.sprite.x = get_centered_pos_in_px(this.tile_x_pos, map.tile_width) + shift_x;
@@ -431,6 +432,10 @@ export class InteractableObjects {
             const initial_animation = interactable_object_db.initial_animation;
             const anim_key = this.sprite_info.getAnimationKey(this.key_name, initial_animation);
             this.sprite.animations.play(anim_key);
+            if (interactable_object_db.stop_animation_on_start) {
+                //yes, is necessary to play before stopping it.
+                this.sprite.animations.stop();
+            }
         }
         if (this.entangled_by_bush) {
             this.init_bush(map);
@@ -802,8 +807,24 @@ export class InteractableObjects {
         this.game.physics.p2.enable(this.sprite, false);
         this.set_anchor(); //Important to be after the previous command
         this.sprite.body.clearShapes();
-        const width = db.body_radius << 1;
-        const polygon = mount_collision_polygon(width, -(width >> 1), db.collision_body_bevel);
+        let polygon;
+        if (db.custom_body_polygon) {
+            polygon = db.custom_body_polygon.map(vertex => {
+                return vertex.map(point => {
+                    if (point === "sprite_width") {
+                        point = this.sprite.width;
+                    } else if (point === "sprite_height") {
+                        point = this.sprite.height;
+                    }
+                    return point;
+                });
+            });
+        } else {
+            const width = db.body_radius << 1;
+            polygon = mount_collision_polygon(width, -(width >> 1), db.collision_body_bevel);
+        }
+        const x = this.sprite.body.x;
+        const y = this.sprite.body.y;
         this.sprite.body.addPolygon(
             {
                 optimalDecomp: false,
@@ -812,6 +833,8 @@ export class InteractableObjects {
             },
             polygon
         );
+        this.sprite.body.x = x;
+        this.sprite.body.y = y;
         this.sprite.body.setCollisionGroup(collision_groups[this.base_collision_layer]);
         this.sprite.body.damping = 1;
         this.sprite.body.angularDamping = 1;
