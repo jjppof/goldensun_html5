@@ -1,5 +1,5 @@
 import { ControllableChar } from "../ControllableChar";
-import { base_actions, get_centered_pos_in_px, get_distance, get_px_position } from "../utils";
+import { base_actions, get_centered_pos_in_px, get_distance, get_vector_direction } from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
 
 enum pillar_directions {
@@ -75,12 +75,14 @@ export class RollablePillar extends InteractableObjects {
             this.data.map.collision_layer === this.base_collision_layer
         ) {
             char.trying_to_push = true;
-            char.set_trying_to_push_direction(char.current_direction);
-            char.set_push_timer(() => {
-                this.define_pillar_direction(char);
-                char.trying_to_push = false;
-                char.unset_push_timer();
-            });
+            if (char.push_timer === null) {
+                char.set_trying_to_push_direction(char.current_direction);
+                char.set_push_timer(() => {
+                    this.define_pillar_direction(char);
+                    char.trying_to_push = false;
+                    char.unset_push_timer();
+                });
+            }
         }
         return char.trying_to_push;
     }
@@ -91,9 +93,9 @@ export class RollablePillar extends InteractableObjects {
             (char.trying_to_push_direction & 1) === 0 &&
             char.trying_to_push_direction === char.current_direction &&
             !char.in_action() &&
-            !this._pillar_is_stuck
+            !this._pillar_is_stuck &&
+            char.stop_by_colliding
         ) {
-            //still need to check if char is not pushing in the laterals...
             let next_contact: RollablePillar["_contact_points"][0] = null;
             let last_distance = Infinity;
             for (let i = 0; i < this._contact_points.length; ++i) {
@@ -111,6 +113,10 @@ export class RollablePillar extends InteractableObjects {
             if (next_contact === null) {
                 next_contact = this._falling_pos;
                 rolling_pillar_will_fall = true;
+            }
+            const rolling_direction = get_vector_direction(this.tile_x_pos, next_contact.x, this.tile_y_pos, next_contact.y);
+            if (rolling_direction !== char.trying_to_push_direction) {
+                return;
             }
             char.pushing = true;
             this.game.physics.p2.pause();
@@ -193,6 +199,15 @@ export class RollablePillar extends InteractableObjects {
                 extra_shift_x -= 2;
             }
             extra_shift_y += this.data.map.tile_height >> 1;
+        } else {
+            if (next_contact.y > this.tile_y_pos) {
+                next_contact.y += 1;
+                extra_shift_y += 0;
+            } else {
+                next_contact.y -= 1;
+                extra_shift_y -= 0;
+            }
+            extra_shift_y += this.data.map.tile_height;
         }
 
         let promise_resolve_anim;
@@ -201,7 +216,6 @@ export class RollablePillar extends InteractableObjects {
         fall_anim_timer.add(3 * RollablePillar.ROLLING_SPEED_PER_TILE / 4, () => {
             const falling_anim_key = this.sprite_info.getAnimationKey(action_name, "falling");
             const anim = this.sprite.animations.play(falling_anim_key);
-            
             anim.onComplete.addOnce(promise_resolve_anim);
         });
         fall_anim_timer.start();

@@ -162,7 +162,8 @@ export class Pushable extends InteractableObjects {
             char.trying_to_push &&
             (char.trying_to_push_direction & 1) === 0 &&
             char.trying_to_push_direction === char.current_direction &&
-            !char.in_action()
+            !char.in_action() &&
+            char.stop_by_colliding
         ) {
             this.fire_push_movement(char);
         }

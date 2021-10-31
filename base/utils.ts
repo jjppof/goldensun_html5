@@ -184,6 +184,19 @@ export function get_transition_directions(current_direction: directions, desired
 }
 
 /**
+ * Gets the direction of a given vector.
+ * @param x1 x source pos.
+ * @param x2 x dest pos.
+ * @param y1 y source pos.
+ * @param y2 y dest pos.
+ * @returns The direction of the given vector.
+ */
+export function get_vector_direction(x1: number, x2: number, y1: number, y2: number): directions {
+    const angle = range_360(Math.atan2(y2 - y1, x2 - x1));
+    return ((8 * (angle + numbers.degree45_half)/numbers.degree360) | 0) % 8;
+}
+
+/**
  * Given a direction and a current position, returns the next front position.
  * @param x_pos x tile position.
  * @param y_pos y tile position.

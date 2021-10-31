@@ -128,7 +128,7 @@ export abstract class ControllableChar {
     public shadow_following: boolean;
 
     private _color_filter: Phaser.Filter;
-    protected _push_timer: Phaser.TimerEvent;
+    protected _push_timer: Phaser.Timer;
     private _footsteps: Footsteps;
     protected look_target: ControllableChar = null;
     protected _active: boolean;
@@ -1078,16 +1078,17 @@ export abstract class ControllableChar {
      */
     set_push_timer(callback: () => void, delay: number = Phaser.Timer.QUARTER) {
         this.unset_push_timer();
-        this._push_timer = this.game.time.events.add(delay, callback);
-        this._push_timer.timer.start();
+        this._push_timer = this.game.time.create(true);
+        this._push_timer.add(delay, callback);
+        this._push_timer.start();
     }
 
     /**
      * Unsets the push timer.
      */
     unset_push_timer() {
-        if (this.push_timer?.timer) {
-            this.push_timer.timer.destroy();
+        if (this.push_timer) {
+            this.push_timer.destroy();
         }
         this._push_timer = null;
     }
