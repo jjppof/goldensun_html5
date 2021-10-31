@@ -262,7 +262,7 @@
         "initial_animation": "rolling",
         "stop_animation_on_start": true,
         "actions": {
-            "frame_rate": [8, 8, 8],
+            "frame_rate": [6, 3, 8],
             "animations": ["falling", "floating", "rolling"],
             "frames_count": [5, 4, 4],
             "loop": [false, true, true]
@@ -285,7 +285,7 @@
         "initial_animation": "rolling",
         "stop_animation_on_start": true,
         "actions": {
-            "frame_rate": [8, 8, 8],
+            "frame_rate": [6, 3, 8],
             "animations": ["falling", "floating", "rolling"],
             "frames_count": [5, 4, 4],
             "loop": [false, true, true]

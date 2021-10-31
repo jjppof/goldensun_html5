@@ -87,6 +87,7 @@ export class InteractableObjects {
     private _bush_sprite: Phaser.Sprite;
     protected _pushable: boolean;
     protected _is_rope_dock: boolean;
+    protected _rollable: boolean;
     protected _extra_sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.Group)[];
     private toggle_enable_events: {
         event: GameEvent;
@@ -157,6 +158,7 @@ export class InteractableObjects {
         this._active = true;
         this._pushable = false;
         this._is_rope_dock = false;
+        this._rollable = false;
         this.tile_events_info = {};
         for (let index in events_info) {
             this.tile_events_info[+index] = events_info[index];
@@ -239,6 +241,9 @@ export class InteractableObjects {
     }
     get is_rope_dock() {
         return this._is_rope_dock;
+    }
+    get rollable() {
+        return this._rollable;
     }
     get enable() {
         return this._enable;
@@ -404,10 +409,12 @@ export class InteractableObjects {
     initial_config(map: Map) {
         this._sprite_info = this.data.info.iter_objs_sprite_base_list[this.key_name];
         const interactable_object_db = this.data.dbs.interactable_objects_db[this.key_name];
-        for (let psynergy_key in interactable_object_db.psynergy_keys) {
-            const psynergy_properties = interactable_object_db.psynergy_keys[psynergy_key];
-            if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
-                this.psynergy_casted[psynergy_key] = false;
+        if (interactable_object_db.psynergy_keys) {
+            for (let psynergy_key in interactable_object_db.psynergy_keys) {
+                const psynergy_properties = interactable_object_db.psynergy_keys[psynergy_key];
+                if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
+                    this.psynergy_casted[psynergy_key] = false;
+                }
             }
         }
         if (this.sprite_info) {

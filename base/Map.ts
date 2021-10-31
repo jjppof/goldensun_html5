@@ -11,6 +11,7 @@ import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
 import {Pushable} from "./interactable_objects/Pushable";
 import {RopeDock} from "./interactable_objects/RopeDock";
+import { RollablePillar } from "./interactable_objects/RollingPillar";
 
 /** The class reponsible for the maps of the engine. */
 export class Map {
@@ -592,6 +593,8 @@ export class Map {
             io_class = Pushable;
         } else if (interactable_object_db.is_rope_dock) {
             io_class = RopeDock;
+        } else if (interactable_object_db.rollable) {
+            io_class = RollablePillar;
         }
         const interactable_object = new io_class(
             this.game,
@@ -621,6 +624,12 @@ export class Map {
                 property_info.dest_y,
                 property_info.starting_dock,
                 property_info.tied
+            );
+        } else if (interactable_object.rollable) {
+            (interactable_object as RollablePillar).initialize_rolling_pillar(
+                property_info.falling_pos,
+                property_info.contact_points,
+                property_info.pillar_direction,
             );
         }
         this.interactable_objects.push(interactable_object);
@@ -904,6 +913,7 @@ export class Map {
 
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
         let collision_layers_counter = 0;
+        const layers_to_join: {[layer: number]: Array<any>} = {};
         this.sprite.objects = _.mapKeys(this.sprite.objects, (objs: any, collision_index: string) => {
             if (objs.properties?.encounter_zone) {
                 objs.objectsData.forEach(obj => {
@@ -915,6 +925,17 @@ export class Map {
                     });
                 });
                 return collision_index;
+            } else if (objs.properties?.join_with_layer !== undefined) {
+                if (objs.properties.join_with_layer in layers_to_join) {
+                    layers_to_join[objs.properties.join_with_layer] = layers_to_join[objs.properties.join_with_layer].concat(objs.objectsData);
+                } else {
+                    layers_to_join[objs.properties.join_with_layer] = objs.objectsData;
+                }
+                objs.objectsData = null;
+                return collision_index;
+            } else if (objs.properties?.layer_index !== undefined) {
+                ++collision_layers_counter;
+                return objs.properties.layer_index;
             } else {
                 ++collision_layers_counter;
                 return parseInt(collision_index);
@@ -922,6 +943,9 @@ export class Map {
         }) as any;
         if (this.collision_embedded) {
             this._collision_layers_number = collision_layers_counter;
+        }
+        for (let layer in layers_to_join) {
+            this.sprite.objects[layer].objectsData = this.sprite.objects[layer].objectsData.concat(layers_to_join[layer]);
         }
 
         for (let i = 0; i < this.sprite.tilesets.length; ++i) {

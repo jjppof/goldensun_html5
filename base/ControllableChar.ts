@@ -15,6 +15,7 @@ import {SpriteBase} from "./SpriteBase";
 import {Map} from "./Map";
 import {Camera} from "./Camera";
 import {Pushable} from "./interactable_objects/Pushable";
+import { RollablePillar } from "./interactable_objects/RollingPillar";
 
 /**
  * All chars that can be controlled by human (Hero) or code/event procedures (NPC)
@@ -1074,9 +1075,8 @@ export abstract class ControllableChar {
      * The char must wait for this timer before pushing.
      * @param callback the timer callback.
      * @param delay the initial delay.
-     * @param start forces the timer start if true.
      */
-    set_push_timer(callback: () => void, delay: number = Phaser.Timer.QUARTER, start: boolean = true) {
+    set_push_timer(callback: () => void, delay: number = Phaser.Timer.QUARTER) {
         this.unset_push_timer();
         this._push_timer = this.game.time.events.add(delay, callback);
         this._push_timer.timer.start();
@@ -1322,6 +1322,8 @@ export abstract class ControllableChar {
             if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
                 if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
                     if (interactable_object.pushable && (interactable_object as Pushable).check_and_start_push(this)) {
+                        break;
+                    } else if (interactable_object.rollable && (interactable_object as RollablePillar).check_and_start_rolling(this)) {
                         break;
                     }
                 }

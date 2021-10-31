@@ -79,6 +79,7 @@
          "y":0
         }, 
         {
+         "color":"#ff0000",
          "draworder":"topdown",
          "id":9,
          "name":"encounter_zones",
@@ -923,6 +924,7 @@
          "y":0
         }, 
         {
+         "color":"#55ffff",
          "draworder":"topdown",
          "id":6,
          "name":"01",
@@ -1227,7 +1229,7 @@
      "real_tile_width":"int"
     },
  "renderorder":"right-down",
- "tiledversion":"1.5.0",
+ "tiledversion":"1.7.2",
  "tileheight":8,
  "tilesets":[
         {

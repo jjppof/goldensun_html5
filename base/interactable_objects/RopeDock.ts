@@ -199,7 +199,7 @@ export class RopeDock extends InteractableObjects {
     }
 
     /**
-     * Ties to rope into this dock.
+     * Ties the rope into this dock.
      */
     tie() {
         this._tied = true;

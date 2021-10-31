@@ -129,7 +129,7 @@ export abstract class FieldAbilities {
                 continue;
             }
             const db = this.data.dbs.interactable_objects_db[interactable_object.key_name];
-            if (!(this.ability_key_name in db.psynergy_keys)) {
+            if (!db.psynergy_keys || !(this.ability_key_name in db.psynergy_keys)) {
                 continue;
             }
             const item_x_px = get_centered_pos_in_px(interactable_object.tile_x_pos, this.data.map.tile_width);
@@ -156,13 +156,15 @@ export abstract class FieldAbilities {
     set_target_casted() {
         if (this.target_object) {
             const db = this.data.dbs.interactable_objects_db[this.target_object.key_name];
-            const psynergy_properties = db.psynergy_keys[this.ability_key_name];
-            if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
-                if (this.target_object.psynergy_casted[this.ability_key_name]) {
-                    this.target_found = false;
-                    this.target_object = null;
-                } else if (this.target_found) {
-                    this.target_object.psynergy_casted[this.ability_key_name] = true;
+            if (db.psynergy_keys) {
+                const psynergy_properties = db.psynergy_keys[this.ability_key_name];
+                if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
+                    if (this.target_object.psynergy_casted[this.ability_key_name]) {
+                        this.target_found = false;
+                        this.target_object = null;
+                    } else if (this.target_found) {
+                        this.target_object.psynergy_casted[this.ability_key_name] = true;
+                    }
                 }
             }
         }

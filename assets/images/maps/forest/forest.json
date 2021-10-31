@@ -155,9 +155,10 @@
          "y":0
         }, 
         {
+         "color":"#ff0000",
          "draworder":"topdown",
          "id":10,
-         "name":"00",
+         "name":"collision_A",
          "objects":[
                 {
                  "ellipse":true,
@@ -202,130 +203,6 @@
                  "width":0,
                  "x":88,
                  "y":328
-                }, 
-                {
-                 "height":0,
-                 "id":10,
-                 "name":"",
-                 "polygon":[
-                        {
-                         "x":0,
-                         "y":0
-                        }, 
-                        {
-                         "x":80,
-                         "y":0
-                        }, 
-                        {
-                         "x":80,
-                         "y":24
-                        }, 
-                        {
-                         "x":96,
-                         "y":24
-                        }, 
-                        {
-                         "x":96,
-                         "y":0
-                        }, 
-                        {
-                         "x":120,
-                         "y":0
-                        }, 
-                        {
-                         "x":120,
-                         "y":24
-                        }, 
-                        {
-                         "x":112,
-                         "y":32
-                        }, 
-                        {
-                         "x":112,
-                         "y":120
-                        }, 
-                        {
-                         "x":24,
-                         "y":120
-                        }, 
-                        {
-                         "x":24,
-                         "y":104
-                        }, 
-                        {
-                         "x":8,
-                         "y":104
-                        }, 
-                        {
-                         "x":0,
-                         "y":96
-                        }, 
-                        {
-                         "x":0,
-                         "y":80
-                        }, 
-                        {
-                         "x":-8,
-                         "y":72
-                        }, 
-                        {
-                         "x":-32,
-                         "y":72
-                        }, 
-                        {
-                         "x":-32,
-                         "y":48
-                        }, 
-                        {
-                         "x":-40,
-                         "y":40
-                        }, 
-                        {
-                         "x":-3.02222222222221,
-                         "y":3
-                        }, 
-                        {
-                         "x":-8,
-                         "y":-8
-                        }, 
-                        {
-                         "x":-48,
-                         "y":-8
-                        }, 
-                        {
-                         "x":-48,
-                         "y":96
-                        }, 
-                        {
-                         "x":-16,
-                         "y":96
-                        }, 
-                        {
-                         "x":8,
-                         "y":128
-                        }, 
-                        {
-                         "x":120,
-                         "y":128
-                        }, 
-                        {
-                         "x":128,
-                         "y":128
-                        }, 
-                        {
-                         "x":128,
-                         "y":-8
-                        }, 
-                        {
-                         "x":0,
-                         "y":-8
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":192,
-                 "y":8
                 }, 
                 {
                  "height":0,
@@ -576,8 +453,100 @@
                  "y":360
                 }, 
                 {
+                 "ellipse":true,
+                 "height":14.5,
+                 "id":13,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":14.5,
+                 "x":400,
+                 "y":126
+                }, 
+                {
+                 "ellipse":true,
+                 "height":14.5,
+                 "id":14,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":14.5,
+                 "x":432,
+                 "y":80
+                }, 
+                {
+                 "ellipse":true,
+                 "height":14.5,
+                 "id":15,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":14.5,
+                 "x":272,
+                 "y":96
+                }, 
+                {
+                 "ellipse":true,
+                 "height":14.5,
+                 "id":16,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":14.5,
+                 "x":232,
+                 "y":56
+                }, 
+                {
+                 "ellipse":true,
+                 "height":14.5,
+                 "id":17,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":14.5,
+                 "x":368,
+                 "y":224
+                }, 
+                {
+                 "ellipse":true,
+                 "height":14.5,
+                 "id":18,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":14.5,
+                 "x":336,
+                 "y":224
+                }],
+         "opacity":1,
+         "properties":
+            {
+             "layer_index":0
+            },
+         "propertytypes":
+            {
+             "layer_index":"int"
+            },
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "color":"#ff55ff",
+         "draworder":"topdown",
+         "id":12,
+         "name":"collision_B",
+         "objects":[
+                {
                  "height":0,
-                 "id":12,
+                 "id":19,
                  "name":"",
                  "polygon":[
                         {
@@ -714,7 +683,7 @@
                         }, 
                         {
                          "x":-0.0078125,
-                         "y":3.015625
+                         "y":3.01563
                         }, 
                         {
                          "x":-8,
@@ -762,87 +731,167 @@
                  "width":0,
                  "x":176,
                  "y":264
-                }, 
-                {
-                 "ellipse":true,
-                 "height":14.5,
-                 "id":13,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":14.5,
-                 "x":400,
-                 "y":126
-                }, 
-                {
-                 "ellipse":true,
-                 "height":14.5,
-                 "id":14,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":14.5,
-                 "x":432,
-                 "y":80
-                }, 
-                {
-                 "ellipse":true,
-                 "height":14.5,
-                 "id":15,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":14.5,
-                 "x":272,
-                 "y":96
-                }, 
-                {
-                 "ellipse":true,
-                 "height":14.5,
-                 "id":16,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":14.5,
-                 "x":232,
-                 "y":56
-                }, 
-                {
-                 "ellipse":true,
-                 "height":14.5,
-                 "id":17,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":14.5,
-                 "x":368,
-                 "y":224
-                }, 
-                {
-                 "ellipse":true,
-                 "height":14.5,
-                 "id":18,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":14.5,
-                 "x":336,
-                 "y":224
                 }],
          "opacity":1,
+         "properties":
+            {
+             "join_with_layer":0
+            },
+         "propertytypes":
+            {
+             "join_with_layer":"int"
+            },
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "color":"#fbff00",
+         "draworder":"topdown",
+         "id":13,
+         "name":"collision_C",
+         "objects":[
+                {
+                 "height":0,
+                 "id":20,
+                 "name":"",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":80,
+                         "y":0
+                        }, 
+                        {
+                         "x":80,
+                         "y":24
+                        }, 
+                        {
+                         "x":96,
+                         "y":24
+                        }, 
+                        {
+                         "x":96,
+                         "y":0
+                        }, 
+                        {
+                         "x":120,
+                         "y":0
+                        }, 
+                        {
+                         "x":120,
+                         "y":24
+                        }, 
+                        {
+                         "x":112,
+                         "y":32
+                        }, 
+                        {
+                         "x":112,
+                         "y":120
+                        }, 
+                        {
+                         "x":24,
+                         "y":120
+                        }, 
+                        {
+                         "x":24,
+                         "y":104
+                        }, 
+                        {
+                         "x":8,
+                         "y":104
+                        }, 
+                        {
+                         "x":0,
+                         "y":96
+                        }, 
+                        {
+                         "x":0,
+                         "y":80
+                        }, 
+                        {
+                         "x":-8,
+                         "y":72
+                        }, 
+                        {
+                         "x":-32,
+                         "y":72
+                        }, 
+                        {
+                         "x":-32,
+                         "y":48
+                        }, 
+                        {
+                         "x":-40,
+                         "y":40
+                        }, 
+                        {
+                         "x":-3.02222,
+                         "y":3
+                        }, 
+                        {
+                         "x":-8,
+                         "y":-8
+                        }, 
+                        {
+                         "x":-48,
+                         "y":-8
+                        }, 
+                        {
+                         "x":-48,
+                         "y":96
+                        }, 
+                        {
+                         "x":-16,
+                         "y":96
+                        }, 
+                        {
+                         "x":8,
+                         "y":128
+                        }, 
+                        {
+                         "x":120,
+                         "y":128
+                        }, 
+                        {
+                         "x":128,
+                         "y":128
+                        }, 
+                        {
+                         "x":128,
+                         "y":-8
+                        }, 
+                        {
+                         "x":0,
+                         "y":-8
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":192,
+                 "y":8
+                }],
+         "opacity":1,
+         "properties":
+            {
+             "join_with_layer":0
+            },
+         "propertytypes":
+            {
+             "join_with_layer":"int"
+            },
          "type":"objectgroup",
          "visible":true,
          "x":0,
          "y":0
         }],
- "nextlayerid":12,
- "nextobjectid":19,
+ "nextlayerid":14,
+ "nextobjectid":21,
  "orientation":"orthogonal",
  "properties":
     {
@@ -862,9 +911,9 @@
      "event_14":"{\n\"type\": \"step\",\n\"x\": 8,\n\"y\": 14,\n\"activation_directions\": \"left\",\n\"step_direction\": \"down\",\n\"activation_collision_layers\": 0\n}",
      "event_15":"{\n\"type\": \"step\",\n\"x\": 8,\n\"y\": 14,\n\"activation_directions\": \"up\",\n\"step_direction\": \"up\",\n\"activation_collision_layers\": 0\n}",
      "event_16":"{\n\"type\": \"step\",\n\"x\": 8,\n\"y\": 14,\n\"activation_directions\": \"right\",\n\"step_direction\": \"down\",\n\"activation_collision_layers\": 0\n}",
-     "interactable_object_01":"{\n\"key_name\": \"trunk_tree_horizontal\",\n\"x\": 15,\n\"y\": 10,\n\"base_collision_layer\": 0\n}",
-     "interactable_object_02":"{\n\"key_name\": \"trunk_tree_vertical\",\n\"x\": 26,\n\"y\": 5,\n\"base_collision_layer\": 0\n}",
-     "interactable_object_03":"{\n\"key_name\": \"trunk_tree_horizontal\",\n\"x\": 24,\n\"y\": 13,\n\"base_collision_layer\": 0\n}",
+     "interactable_object_01":"{\n\"key_name\": \"trunk_tree_horizontal\",\n\"x\": 15,\n\"y\": 10,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"horizontal\",\n\"contact_points\": [{\n  \"x\": 15,\n  \"y\": 10\n}],\n\"falling_pos\": {\n  \"x\": 15,\n  \"y\": 11\n}\n}",
+     "interactable_object_02":"{\n\"key_name\": \"trunk_tree_vertical\",\n\"x\": 26,\n\"y\": 5,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"vertical\",\n\"contact_points\": [{\n  \"x\": 26,\n  \"y\": 5\n}],\n\"falling_pos\": {\n  \"x\": 21,\n  \"y\": 5\n}\n}",
+     "interactable_object_03":"{\n\"key_name\": \"trunk_tree_horizontal\",\n\"x\": 24,\n\"y\": 13,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"horizontal\",\n\"contact_points\": [{\n  \"x\": 24,\n  \"y\": 13\n},{\n  \"x\": 24,\n  \"y\": 11\n}]\n}",
      "real_tile_height":16,
      "real_tile_width":16
     },
@@ -893,7 +942,7 @@
      "real_tile_width":"int"
     },
  "renderorder":"right-down",
- "tiledversion":"1.5.0",
+ "tiledversion":"1.7.2",
  "tileheight":8,
  "tilesets":[
         {
