@@ -4,8 +4,8 @@
     "initial_direction": "down",
     "map_key_name": "nyungwe",
     "initial_scale_factor": 2,
-    "x_tile_position": 17,
-    "y_tile_position": 15,
+    "x_tile_position": 8,
+    "y_tile_position": 12,
     "collision_layer": 0,
     "coins": 10000,
     "initial_shortcuts": [

@@ -11,6 +11,8 @@ export class RollablePillar extends InteractableObjects {
     private static readonly ROLLING_SPEED_PER_TILE = 500;
 
     private _falling_pos: {x: number, y: number};
+    private _dest_pos_after_fall: {x: number, y: number};
+    private _dest_collision_layer: number;
     private _contact_points: {x: number, y: number}[];
     private _pillar_direction: pillar_directions;
     private _pillar_is_stuck: boolean;
@@ -63,10 +65,18 @@ export class RollablePillar extends InteractableObjects {
         this._pillar_is_stuck = false;
     }
 
-    initialize_rolling_pillar(falling_pos: RollablePillar["_falling_pos"], contact_points: RollablePillar["_contact_points"], pillar_direction: pillar_directions) {
+    initialize_rolling_pillar(
+        falling_pos: RollablePillar["_falling_pos"],
+        contact_points: RollablePillar["_contact_points"],
+        pillar_direction: pillar_directions,
+        dest_pos_after_fall: RollablePillar["_dest_pos_after_fall"],
+        dest_collision_layer: number
+    ) {
         this._falling_pos = falling_pos;
         this._contact_points = contact_points;
         this._pillar_direction = pillar_direction;
+        this._dest_pos_after_fall = dest_pos_after_fall;
+        this._dest_collision_layer = dest_collision_layer ?? this.base_collision_layer;
     }
 
     check_and_start_rolling(char: ControllableChar) {
@@ -118,6 +128,7 @@ export class RollablePillar extends InteractableObjects {
             if (rolling_direction !== char.trying_to_push_direction) {
                 return;
             }
+            //TODO: also check if hero is behind the log. Checking position is a possibility.
             char.pushing = true;
             this.game.physics.p2.pause();
             this.fire_rolling(char, next_contact, rolling_pillar_will_fall);
@@ -174,10 +185,21 @@ export class RollablePillar extends InteractableObjects {
 
         if (rolling_pillar_will_fall) {
             await this.fall_pillar(next_contact, action_name);
+            const object_events = this.get_events();
+            for (let i = 0; i < object_events.length; ++i) {
+                const event = object_events[i];
+                event.activate_at("all");
+            }
+            //disables collision for this log/pillar
+            this.sprite.body.data.shapes[0].sensor = true;
+            this.sprite.send_to_back = true;
+            this._allow_jumping_over_it = true;
+            this.change_collision_layer(this._dest_collision_layer);
         } else {
             this.sprite.animations.stop(undefined, false);
         }
 
+        this.shift_events(next_contact.x - this.tile_x_pos, next_contact.y - this.tile_y_pos);
         this.set_tile_position({
             x: next_contact.x,
             y: next_contact.y,
@@ -207,7 +229,7 @@ export class RollablePillar extends InteractableObjects {
                 next_contact.y -= 1;
                 extra_shift_y -= 0;
             }
-            extra_shift_y += this.data.map.tile_height;
+            // extra_shift_y += this.data.map.tile_height >> 1;
         }
 
         let promise_resolve_anim;

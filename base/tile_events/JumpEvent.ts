@@ -113,9 +113,15 @@ export class JumpEvent extends TileEvent {
             if (
                 next_interactable_object.tile_x_pos !== next_position.x ||
                 next_interactable_object.tile_y_pos !== next_position.y
-            )
+            ) {
                 continue;
-            if (this.data.map.collision_layer !== next_interactable_object.base_collision_layer) continue;
+            }
+            if (this.data.map.collision_layer !== next_interactable_object.base_collision_layer) {
+                continue;
+            }
+            if (next_interactable_object.allow_jumping_over_it) {
+                continue;
+            }
             return;
         }
         for (let i = 0; i < this.data.map.npcs.length; ++i) {

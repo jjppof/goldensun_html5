@@ -89,6 +89,7 @@ export class InteractableObjects {
     protected _is_rope_dock: boolean;
     protected _rollable: boolean;
     protected _extra_sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.Group)[];
+    protected _allow_jumping_over_it: boolean;
     private toggle_enable_events: {
         event: GameEvent;
         on_enable: boolean;
@@ -176,6 +177,7 @@ export class InteractableObjects {
             this.toggle_enable_events = [];
         }
         this._label = label;
+        this._allow_jumping_over_it = false;
     }
 
     get key_name() {
@@ -253,6 +255,9 @@ export class InteractableObjects {
     }
     get bush_sprite() {
         return this._bush_sprite;
+    }
+    get allow_jumping_over_it() {
+        return this._allow_jumping_over_it;;
     }
 
     position_allowed(x: number, y: number) {
@@ -476,10 +481,11 @@ export class InteractableObjects {
             return;
         }
         const position = this.get_current_position(map);
-        let x_pos = position.x;
-        let y_pos = position.y;
         for (let i = 0; i < this.data.dbs.interactable_objects_db[this.key_name].events.length; ++i) {
+            let x_pos = position.x;
+            let y_pos = position.y;
             const event_info = Object.assign(
+                {},
                 this.data.dbs.interactable_objects_db[this.key_name].events[i],
                 this.tile_events_info[i] ?? {}
             );
@@ -851,6 +857,56 @@ export class InteractableObjects {
         this.sprite.body.static = true;
         if (this.block_climb_collision_layer_shift !== undefined) {
             this.creating_blocking_stair_block();
+        }
+    }
+
+    /**
+     * Shifts the related events of this interactable object.
+     * @param event_shift_x the x shift amount.
+     * @param event_shift_y the y shift amount.
+     */
+    shift_events(event_shift_x: number, event_shift_y: number) {
+        const object_events = this.get_events();
+        for (let i = 0; i < object_events.length; ++i) {
+            const event = object_events[i];
+            this.data.map.events[event.location_key] = this.data.map.events[event.location_key].filter(e => {
+                return e.id !== event.id;
+            });
+            if (this.data.map.events[event.location_key].length === 0) {
+                delete this.data.map.events[event.location_key];
+            }
+            let old_x = event.x;
+            let old_y = event.y;
+            let new_x = old_x + event_shift_x;
+            let new_y = old_y + event_shift_y;
+            event.set_position(new_x, new_y, true);
+            if (event.type === event_types.JUMP) {
+                const new_surroundings = get_surroundings(new_x, new_y, false, 2);
+                JumpEvent.active_jump_surroundings(
+                    this.data,
+                    new_surroundings,
+                    event.collision_layer_shift_from_source + this.base_collision_layer
+                );
+                const old_surroundings = get_surroundings(old_x, old_y, false, 2);
+                for (let j = 0; j < old_surroundings.length; ++j) {
+                    const old_surrounding = old_surroundings[j];
+                    const old_key = LocationKey.get_key(old_surrounding.x, old_surrounding.y);
+                    if (old_key in this.data.map.events) {
+                        for (let k = 0; k < this.data.map.events[old_key].length; ++k) {
+                            const old_surr_event = this.data.map.events[old_key][k];
+                            if (old_surr_event.type === event_types.JUMP) {
+                                const target_layer = event.collision_layer_shift_from_source + this.base_collision_layer;
+                                if (
+                                    old_surr_event.activation_collision_layers.includes(target_layer) &&
+                                    old_surr_event.dynamic === false
+                                ) {
+                                    old_surr_event.deactivate_at(get_opposite_direction(old_surrounding.direction));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

@@ -255,6 +255,25 @@
             [0, 14]
         ],
         "rollable": true,
+        "events": [{
+            "type": "jump",
+            "active": false,
+            "x_shift": -1,
+            "y_shift": 0,
+            "dynamic": true
+        },{
+            "type": "jump",
+            "active": false,
+            "x_shift": 0,
+            "y_shift": 0,
+            "dynamic": true
+        },{
+            "type": "jump",
+            "active": false,
+            "x_shift": 1,
+            "y_shift": 0,
+            "dynamic": true
+        }],
         "spritesheet": {
             "image": "assets/images/interactable_objects/trunk_tree_horizontal.png",
             "json": "assets/images/interactable_objects/trunk_tree_horizontal.json"
@@ -262,7 +281,7 @@
         "initial_animation": "rolling",
         "stop_animation_on_start": true,
         "actions": {
-            "frame_rate": [6, 3, 8],
+            "frame_rate": [9, 3, 8],
             "animations": ["falling", "floating", "rolling"],
             "frames_count": [5, 4, 4],
             "loop": [false, true, true]
@@ -278,6 +297,31 @@
             [0, "sprite_height"]
         ],
         "rollable": true,
+        "events": [{
+            "type": "jump",
+            "active": false,
+            "x_shift": 0,
+            "y_shift": -1,
+            "dynamic": true
+        },{
+            "type": "jump",
+            "active": false,
+            "x_shift": 0,
+            "y_shift": 0,
+            "dynamic": true
+        },{
+            "type": "jump",
+            "active": false,
+            "x_shift": 0,
+            "y_shift": 1,
+            "dynamic": true
+        },{
+            "type": "jump",
+            "active": false,
+            "x_shift": 0,
+            "y_shift": 2,
+            "dynamic": true
+        }],
         "spritesheet": {
             "image": "assets/images/interactable_objects/trunk_tree_vertical.png",
             "json": "assets/images/interactable_objects/trunk_tree_vertical.json"
@@ -285,7 +329,7 @@
         "initial_animation": "rolling",
         "stop_animation_on_start": true,
         "actions": {
-            "frame_rate": [6, 3, 8],
+            "frame_rate": [9, 3, 8],
             "animations": ["falling", "floating", "rolling"],
             "frames_count": [5, 4, 4],
             "loop": [false, true, true]

@@ -630,6 +630,8 @@ export class Map {
                 property_info.falling_pos,
                 property_info.contact_points,
                 property_info.pillar_direction,
+                property_info.dest_pos_after_fall,
+                property_info.dest_collision_layer,
             );
         }
         this.interactable_objects.push(interactable_object);

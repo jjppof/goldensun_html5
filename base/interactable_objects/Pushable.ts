@@ -1,15 +1,12 @@
 import * as numbers from "../magic_numbers";
 import {event_types, LocationKey} from "../tile_events/TileEvent";
 import {
-    get_surroundings,
-    get_opposite_direction,
     directions,
     reverse_directions,
     base_actions,
     get_centered_pos_in_px,
     get_front_position,
 } from "../utils";
-import {JumpEvent} from "../tile_events/JumpEvent";
 import {InteractableObjects} from "./InteractableObjects";
 import {ControllableChar} from "../ControllableChar";
 import {ClimbEvent} from "../tile_events/ClimbEvent";
@@ -342,55 +339,6 @@ export class Pushable extends InteractableObjects {
                     push_end();
                 }
             });
-        }
-    }
-
-    /**
-     * Shifts the related events of this interactable object according to the push
-     * destination position.
-     * @param event_shift_x
-     * @param event_shift_y
-     */
-    shift_events(event_shift_x: number, event_shift_y: number) {
-        const object_events = this.get_events();
-        for (let i = 0; i < object_events.length; ++i) {
-            const event = object_events[i];
-            this.data.map.events[event.location_key] = this.data.map.events[event.location_key].filter(e => {
-                return e.id !== event.id;
-            });
-            if (this.data.map.events[event.location_key].length === 0) {
-                delete this.data.map.events[event.location_key];
-            }
-            let old_x = event.x;
-            let old_y = event.y;
-            let new_x = old_x + event_shift_x;
-            let new_y = old_y + event_shift_y;
-            event.set_position(new_x, new_y, true);
-            const new_surroundings = get_surroundings(new_x, new_y, false, 2);
-            JumpEvent.active_jump_surroundings(
-                this.data,
-                new_surroundings,
-                event.collision_layer_shift_from_source + this.base_collision_layer
-            );
-            const old_surroundings = get_surroundings(old_x, old_y, false, 2);
-            for (let j = 0; j < old_surroundings.length; ++j) {
-                const old_surrounding = old_surroundings[j];
-                const old_key = LocationKey.get_key(old_surrounding.x, old_surrounding.y);
-                if (old_key in this.data.map.events) {
-                    for (let k = 0; k < this.data.map.events[old_key].length; ++k) {
-                        const old_surr_event = this.data.map.events[old_key][k];
-                        if (old_surr_event.type === event_types.JUMP) {
-                            const target_layer = event.collision_layer_shift_from_source + this.base_collision_layer;
-                            if (
-                                old_surr_event.activation_collision_layers.includes(target_layer) &&
-                                old_surr_event.dynamic === false
-                            ) {
-                                old_surr_event.deactivate_at(get_opposite_direction(old_surrounding.direction));
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 
