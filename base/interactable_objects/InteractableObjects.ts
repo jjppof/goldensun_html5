@@ -60,8 +60,6 @@ export class InteractableObjects {
     private block_climb_collision_layer_shift: number;
 
     private _key_name: string;
-    private _initial_tile_x: number;
-    private _initial_tile_y: number;
     private _sprite_info: SpriteBase;
     private _base_collision_layer: number;
     private _tile_x_pos: number;
@@ -126,8 +124,8 @@ export class InteractableObjects {
             x = position.x;
             y = position.y;
         }
-        this._initial_tile_x = x;
-        this._initial_tile_y = y;
+        this._tile_x_pos = x;
+        this._tile_y_pos = y;
         this._sprite_info = null;
         this.allowed_tiles = allowed_tiles ?? [];
         if (this.storage_keys.base_collision_layer !== undefined) {
@@ -145,8 +143,6 @@ export class InteractableObjects {
         this.not_allowed_tiles = not_allowed_tiles ?? [];
         this._object_drop_tiles = object_drop_tiles ?? [];
         this.events_id = new Set();
-        this._tile_x_pos = this.initial_tile_x;
-        this._tile_y_pos = this.initial_tile_y;
         this._collision_tiles_bodies = [];
         this.collision_change_functions = [];
         this._color_filter = this.game.add.filter("ColorFilters");
@@ -182,14 +178,6 @@ export class InteractableObjects {
 
     get key_name() {
         return this._key_name;
-    }
-    /** Gets the initial x tile position of this interactable object. */
-    get initial_tile_x() {
-        return this._initial_tile_x;
-    }
-    /** Gets the initial y tile position of this interactable object. */
-    get initial_tile_y() {
-        return this._initial_tile_y;
     }
     /** Gets the current x tile position of this interactable object. */
     get tile_x_pos() {
@@ -474,6 +462,10 @@ export class InteractableObjects {
             this._bush_sprite.y = get_px_position(this.tile_y_pos, map.tile_height) + map.tile_height;
         }
         this._extra_sprites.push(this._bush_sprite);
+    }
+
+    toggle_collision(enable: boolean) {
+        this.sprite.body.data.shapes.forEach(shape => shape.sensor = !enable);
     }
 
     initialize_related_events(map: Map) {

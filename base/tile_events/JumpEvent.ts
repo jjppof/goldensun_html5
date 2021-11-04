@@ -183,6 +183,10 @@ export class JumpEvent extends TileEvent {
      * a dynamic jump event.
      */
     create_collision_bodies_around_jump_events() {
+        if (!this.is_set) {
+            return;
+        }
+
         const current_pos = {x: this.data.hero.tile_x_pos, y: this.data.hero.tile_y_pos};
         const surroundings = get_surroundings(current_pos.x, current_pos.y, true);
 
@@ -234,6 +238,10 @@ export class JumpEvent extends TileEvent {
                 }
             }
         }
+
+        //TODO: concatenated_position_keys seems not to be a good choice as string type...
+        //also, what happens if the order of keys is changed?
+
         //check whether this set of bodies already exists and
         //at least one non diagonal positioned dynamic event is in this set
         if (

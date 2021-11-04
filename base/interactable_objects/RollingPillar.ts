@@ -1,5 +1,6 @@
 import { ControllableChar } from "../ControllableChar";
-import { base_actions, get_centered_pos_in_px, get_distance, get_vector_direction } from "../utils";
+import { JumpEvent } from "../tile_events/JumpEvent";
+import { base_actions, directions, get_centered_pos_in_px, get_distance, get_vector_direction } from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
 
 enum pillar_directions {
@@ -128,7 +129,12 @@ export class RollablePillar extends InteractableObjects {
             if (rolling_direction !== char.trying_to_push_direction) {
                 return;
             }
-            //TODO: also check if hero is behind the log. Checking position is a possibility.
+
+            if (rolling_direction === directions.up && char.tile_y_pos <= this.tile_y_pos) return;
+            if (rolling_direction === directions.down && char.tile_y_pos >= this.tile_y_pos) return;
+            if (rolling_direction === directions.right && char.tile_x_pos >= this.tile_x_pos) return;
+            if (rolling_direction === directions.left && char.tile_x_pos <= this.tile_x_pos) return;
+
             char.pushing = true;
             this.game.physics.p2.pause();
             this.fire_rolling(char, next_contact, rolling_pillar_will_fall);
@@ -187,11 +193,11 @@ export class RollablePillar extends InteractableObjects {
             await this.fall_pillar(next_contact, action_name);
             const object_events = this.get_events();
             for (let i = 0; i < object_events.length; ++i) {
-                const event = object_events[i];
+                const event = object_events[i] as JumpEvent;
                 event.activate_at("all");
+                event.is_set = true;
             }
-            //disables collision for this log/pillar
-            this.sprite.body.data.shapes[0].sensor = true;
+            this.toggle_collision(false);
             this.sprite.send_to_back = true;
             this._allow_jumping_over_it = true;
             this.change_collision_layer(this._dest_collision_layer);
@@ -229,7 +235,6 @@ export class RollablePillar extends InteractableObjects {
                 next_contact.y -= 1;
                 extra_shift_y -= 0;
             }
-            // extra_shift_y += this.data.map.tile_height >> 1;
         }
 
         let promise_resolve_anim;

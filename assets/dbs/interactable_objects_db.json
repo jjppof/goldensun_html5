@@ -258,18 +258,21 @@
         "events": [{
             "type": "jump",
             "active": false,
+            "is_set": false,
             "x_shift": -1,
             "y_shift": 0,
             "dynamic": true
         },{
             "type": "jump",
             "active": false,
+            "is_set": false,
             "x_shift": 0,
             "y_shift": 0,
             "dynamic": true
         },{
             "type": "jump",
             "active": false,
+            "is_set": false,
             "x_shift": 1,
             "y_shift": 0,
             "dynamic": true
@@ -300,24 +303,28 @@
         "events": [{
             "type": "jump",
             "active": false,
+            "is_set": false,
             "x_shift": 0,
             "y_shift": -1,
             "dynamic": true
         },{
             "type": "jump",
             "active": false,
+            "is_set": false,
             "x_shift": 0,
             "y_shift": 0,
             "dynamic": true
         },{
             "type": "jump",
             "active": false,
+            "is_set": false,
             "x_shift": 0,
             "y_shift": 1,
             "dynamic": true
         },{
             "type": "jump",
             "active": false,
+            "is_set": false,
             "x_shift": 0,
             "y_shift": 2,
             "dynamic": true
