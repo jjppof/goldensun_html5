@@ -11,7 +11,7 @@ import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
 import {Pushable} from "./interactable_objects/Pushable";
 import {RopeDock} from "./interactable_objects/RopeDock";
-import { RollablePillar } from "./interactable_objects/RollingPillar";
+import {RollablePillar} from "./interactable_objects/RollingPillar";
 
 /** The class reponsible for the maps of the engine. */
 export class Map {
@@ -631,7 +631,7 @@ export class Map {
                 property_info.contact_points,
                 property_info.pillar_direction,
                 property_info.dest_pos_after_fall,
-                property_info.dest_collision_layer,
+                property_info.dest_collision_layer
             );
         }
         this.interactable_objects.push(interactable_object);
@@ -929,7 +929,9 @@ export class Map {
                 return collision_index;
             } else if (objs.properties?.join_with_layer !== undefined) {
                 if (objs.properties.join_with_layer in layers_to_join) {
-                    layers_to_join[objs.properties.join_with_layer] = layers_to_join[objs.properties.join_with_layer].concat(objs.objectsData);
+                    layers_to_join[objs.properties.join_with_layer] = layers_to_join[
+                        objs.properties.join_with_layer
+                    ].concat(objs.objectsData);
                 } else {
                     layers_to_join[objs.properties.join_with_layer] = objs.objectsData;
                 }
@@ -947,7 +949,9 @@ export class Map {
             this._collision_layers_number = collision_layers_counter;
         }
         for (let layer in layers_to_join) {
-            this.sprite.objects[layer].objectsData = this.sprite.objects[layer].objectsData.concat(layers_to_join[layer]);
+            this.sprite.objects[layer].objectsData = this.sprite.objects[layer].objectsData.concat(
+                layers_to_join[layer]
+            );
         }
 
         for (let i = 0; i < this.sprite.tilesets.length; ++i) {

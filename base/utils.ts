@@ -193,7 +193,7 @@ export function get_transition_directions(current_direction: directions, desired
  */
 export function get_vector_direction(x1: number, x2: number, y1: number, y2: number): directions {
     const angle = range_360(Math.atan2(y2 - y1, x2 - x1));
-    return ((8 * (angle + numbers.degree45_half)/numbers.degree360) | 0) % 8;
+    return (((8 * (angle + numbers.degree45_half)) / numbers.degree360) | 0) % 8;
 }
 
 /**

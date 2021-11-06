@@ -1,6 +1,6 @@
-import { ControllableChar } from "../ControllableChar";
-import { JumpEvent } from "../tile_events/JumpEvent";
-import { base_actions, directions, get_centered_pos_in_px, get_distance, get_vector_direction } from "../utils";
+import {ControllableChar} from "../ControllableChar";
+import {JumpEvent} from "../tile_events/JumpEvent";
+import {base_actions, directions, get_centered_pos_in_px, get_distance, get_vector_direction} from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
 
 enum pillar_directions {
@@ -11,10 +11,10 @@ enum pillar_directions {
 export class RollablePillar extends InteractableObjects {
     private static readonly ROLLING_SPEED_PER_TILE = 500;
 
-    private _falling_pos: {x: number, y: number};
-    private _dest_pos_after_fall: {x: number, y: number};
+    private _falling_pos: {x: number; y: number};
+    private _dest_pos_after_fall: {x: number; y: number};
     private _dest_collision_layer: number;
-    private _contact_points: {x: number, y: number}[];
+    private _contact_points: {x: number; y: number}[];
     private _pillar_direction: pillar_directions;
     private _pillar_is_stuck: boolean;
 
@@ -125,7 +125,12 @@ export class RollablePillar extends InteractableObjects {
                 next_contact = this._falling_pos;
                 rolling_pillar_will_fall = true;
             }
-            const rolling_direction = get_vector_direction(this.tile_x_pos, next_contact.x, this.tile_y_pos, next_contact.y);
+            const rolling_direction = get_vector_direction(
+                this.tile_x_pos,
+                next_contact.x,
+                this.tile_y_pos,
+                next_contact.y
+            );
             if (rolling_direction !== char.trying_to_push_direction) {
                 return;
             }
@@ -141,23 +146,34 @@ export class RollablePillar extends InteractableObjects {
         }
     }
 
-    async fire_rolling(char: ControllableChar, next_contact: RollablePillar["_contact_points"][0], rolling_pillar_will_fall: boolean) {
+    async fire_rolling(
+        char: ControllableChar,
+        next_contact: RollablePillar["_contact_points"][0],
+        rolling_pillar_will_fall: boolean
+    ) {
         const action_name = this.sprite_info.getSpriteAction(this.sprite);
         const anim_key = this.sprite_info.getAnimationKey(action_name, "rolling");
         this.sprite.animations.play(anim_key);
 
         char.change_action(base_actions.PUSH, true);
-        
+
         let promise_resolve;
-        let promise = new Promise(resolve => promise_resolve = resolve);
+        let promise = new Promise(resolve => (promise_resolve = resolve));
 
         const dest_x = get_centered_pos_in_px(next_contact.x, this.data.map.tile_width);
         const dest_y = get_centered_pos_in_px(next_contact.y, this.data.map.tile_height);
-        const rolling_time = get_distance(next_contact.x, this.tile_x_pos, next_contact.y, this.tile_y_pos) * RollablePillar.ROLLING_SPEED_PER_TILE;
-        const pillar_tween = this.game.add.tween(this.sprite.body).to({
-            x: dest_x,
-            y: dest_y
-        }, rolling_time, Phaser.Easing.Linear.None, true);
+        const rolling_time =
+            get_distance(next_contact.x, this.tile_x_pos, next_contact.y, this.tile_y_pos) *
+            RollablePillar.ROLLING_SPEED_PER_TILE;
+        const pillar_tween = this.game.add.tween(this.sprite.body).to(
+            {
+                x: dest_x,
+                y: dest_y,
+            },
+            rolling_time,
+            Phaser.Easing.Linear.None,
+            true
+        );
         pillar_tween.onComplete.addOnce(promise_resolve);
         const last_pillar_pos = {
             x: this.sprite.body.x,
@@ -218,6 +234,7 @@ export class RollablePillar extends InteractableObjects {
     async fall_pillar(next_contact: RollablePillar["_contact_points"][0], action_name: string) {
         let extra_shift_x = 0;
         let extra_shift_y = 0;
+        let fall_speed_multiplier = 1;
         if (this._pillar_direction === pillar_directions.VERTICAL) {
             if (next_contact.x > this.tile_x_pos) {
                 next_contact.x += 1;
@@ -228,19 +245,23 @@ export class RollablePillar extends InteractableObjects {
             }
             extra_shift_y += this.data.map.tile_height >> 1;
         } else {
-            if (next_contact.y > this.tile_y_pos) {
+            if (this._dest_pos_after_fall !== undefined) {
+                fall_speed_multiplier = (this._dest_pos_after_fall.y - this._falling_pos.y) / 3;
+                next_contact.x = this._dest_pos_after_fall.x;
+                next_contact.y = this._dest_pos_after_fall.y;
+            } else if (next_contact.y > this.tile_y_pos) {
                 next_contact.y += 1;
-                extra_shift_y += 0;
             } else {
                 next_contact.y -= 1;
-                extra_shift_y -= 0;
+                extra_shift_y -= 1;
             }
         }
 
         let promise_resolve_anim;
-        const promise_anim = new Promise(resolve => promise_resolve_anim = resolve);
+        const promise_anim = new Promise(resolve => (promise_resolve_anim = resolve));
         const fall_anim_timer = this.game.time.create(true);
-        fall_anim_timer.add(3 * RollablePillar.ROLLING_SPEED_PER_TILE / 4, () => {
+        const anim_start_delay = RollablePillar.ROLLING_SPEED_PER_TILE * fall_speed_multiplier;
+        fall_anim_timer.add(anim_start_delay, () => {
             const falling_anim_key = this.sprite_info.getAnimationKey(action_name, "falling");
             const anim = this.sprite.animations.play(falling_anim_key);
             anim.onComplete.addOnce(promise_resolve_anim);
@@ -248,13 +269,18 @@ export class RollablePillar extends InteractableObjects {
         fall_anim_timer.start();
 
         let promise_resolve_tween;
-        const promise_tween = new Promise(resolve => promise_resolve_tween = resolve);
+        const promise_tween = new Promise(resolve => (promise_resolve_tween = resolve));
         const dest_x = get_centered_pos_in_px(next_contact.x, this.data.map.tile_width) + extra_shift_x;
         const dest_y = get_centered_pos_in_px(next_contact.y, this.data.map.tile_height) + extra_shift_y;
-        const fall_tween = this.game.add.tween(this.sprite.body).to({
-            x: dest_x,
-            y: dest_y
-        }, RollablePillar.ROLLING_SPEED_PER_TILE, Phaser.Easing.Linear.None, true);
+        const fall_tween = this.game.add.tween(this.sprite.body).to(
+            {
+                x: dest_x,
+                y: dest_y,
+            },
+            RollablePillar.ROLLING_SPEED_PER_TILE * fall_speed_multiplier,
+            Phaser.Easing.Linear.None,
+            true
+        );
         fall_tween.onComplete.addOnce(promise_resolve_tween);
 
         await Promise.all([promise_tween, promise_anim]);

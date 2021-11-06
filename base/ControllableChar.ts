@@ -15,7 +15,7 @@ import {SpriteBase} from "./SpriteBase";
 import {Map} from "./Map";
 import {Camera} from "./Camera";
 import {Pushable} from "./interactable_objects/Pushable";
-import { RollablePillar } from "./interactable_objects/RollingPillar";
+import {RollablePillar} from "./interactable_objects/RollingPillar";
 
 /**
  * All chars that can be controlled by human (Hero) or code/event procedures (NPC)
@@ -1324,7 +1324,10 @@ export abstract class ControllableChar {
                 if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
                     if (interactable_object.pushable && (interactable_object as Pushable).check_and_start_push(this)) {
                         break;
-                    } else if (interactable_object.rollable && (interactable_object as RollablePillar).check_and_start_rolling(this)) {
+                    } else if (
+                        interactable_object.rollable &&
+                        (interactable_object as RollablePillar).check_and_start_rolling(this)
+                    ) {
                         break;
                     }
                 }

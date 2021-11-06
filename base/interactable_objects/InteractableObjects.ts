@@ -245,7 +245,7 @@ export class InteractableObjects {
         return this._bush_sprite;
     }
     get allow_jumping_over_it() {
-        return this._allow_jumping_over_it;;
+        return this._allow_jumping_over_it;
     }
 
     position_allowed(x: number, y: number) {
@@ -465,7 +465,7 @@ export class InteractableObjects {
     }
 
     toggle_collision(enable: boolean) {
-        this.sprite.body.data.shapes.forEach(shape => shape.sensor = !enable);
+        this.sprite.body.data.shapes.forEach(shape => (shape.sensor = !enable));
     }
 
     initialize_related_events(map: Map) {
@@ -887,7 +887,8 @@ export class InteractableObjects {
                         for (let k = 0; k < this.data.map.events[old_key].length; ++k) {
                             const old_surr_event = this.data.map.events[old_key][k];
                             if (old_surr_event.type === event_types.JUMP) {
-                                const target_layer = event.collision_layer_shift_from_source + this.base_collision_layer;
+                                const target_layer =
+                                    event.collision_layer_shift_from_source + this.base_collision_layer;
                                 if (
                                     old_surr_event.activation_collision_layers.includes(target_layer) &&
                                     old_surr_event.dynamic === false
