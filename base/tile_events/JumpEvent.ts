@@ -56,8 +56,8 @@ export class JumpEvent extends TileEvent {
         }
         let jump_offset = JUMP_OFFSET;
         let jump_direction;
-        let next_position = {x: this.x, y: this.y};
-        let side_position = {x: this.x, y: this.y};
+        const next_position = {x: this.x, y: this.y};
+        const side_position = {x: this.x, y: this.y};
         if (this.data.hero.current_direction === directions.left) {
             jump_offset = -jump_offset;
             next_position.x -= 2;

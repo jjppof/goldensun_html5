@@ -324,6 +324,7 @@ export class InteractableObjects {
         );
         this._base_collision_layer = destination_collision_layer;
         this.sprite.base_collision_layer = destination_collision_layer;
+        //the below statement may change the events activation layers too
         this.collision_change_functions.forEach(f => f());
     }
 
@@ -872,6 +873,8 @@ export class InteractableObjects {
             let new_x = old_x + event_shift_x;
             let new_y = old_y + event_shift_y;
             event.set_position(new_x, new_y, true);
+
+            //check for surrounding jump events, some of them may start working now.
             if (event.type === event_types.JUMP) {
                 const new_surroundings = get_surroundings(new_x, new_y, false, 2);
                 JumpEvent.active_jump_surroundings(

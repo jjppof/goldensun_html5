@@ -363,7 +363,7 @@ export abstract class ControllableChar {
         if (
             this._current_action === base_actions.WALK ||
             this._current_action === base_actions.DASH ||
-            (this._current_action === base_actions.CLIMB && this.current_animation !== base_actions.IDLE) ||
+            (this._current_action === base_actions.CLIMB && !this.idle_climbing) ||
             (this._current_action === base_actions.ROPE && this.current_animation !== base_actions.IDLE)
         ) {
             return true;
