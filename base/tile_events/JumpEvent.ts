@@ -180,9 +180,11 @@ export class JumpEvent extends TileEvent {
     /**
      * This function creates and destroys collision bodies arround jump events while the hero
      * walks over them. The collision bodies will be created only if the hero is going towards
-     * a dynamic jump event.
+     * a dynamic jump event. Dynamic events are the ones that can be moved and are somehow probably
+     * attached with an interactable object.
      */
     create_collision_bodies_around_jump_events() {
+        //jump events that are not set is like they don't exist, so ignoring...
         if (!this.is_set) {
             return;
         }
@@ -205,19 +207,22 @@ export class JumpEvent extends TileEvent {
         let at_least_one_dynamic_and_not_diag_any_direction = false;
         let on_dynamic_event_direction = false;
         for (let i = 0; i < surroundings.length; ++i) {
-            //this for is used to find surrounding jump events that are set and in the same collision layer.
+            //this for loop is used to find surrounding jump events that are set and in the same collision layer.
             //collision bodies should not be created over these events.
             const surrounding_key = LocationKey.get_key(surroundings[i].x, surroundings[i].y);
             if (surrounding_key in this.data.map.events) {
                 for (let j = 0; j < this.data.map.events[surrounding_key].length; ++j) {
                     const surrounding_event = this.data.map.events[surrounding_key][j];
                     if (surrounding_event.type === event_types.JUMP && (surrounding_event as JumpEvent).is_set) {
+                        //checks if the surrounding event is dynamic and whether the surrounding pos is not a diagonal one.
                         if (surrounding_event.dynamic && !surroundings[i].diag) {
+                            //we have at least one dynamic surrouding event not in diagonal position regardless
+                            //of the activation direction. This is going to be used when clearing collision bodies.
                             at_least_one_dynamic_and_not_diag_any_direction = true;
                         }
                         if (
                             on_event_direction &&
-                            surrounding_event.activation_collision_layers.includes(this.data.map.collision_layer)
+                            surrounding_event.activation_collision_layers.includes(this.data.hero.collision_layer)
                         ) {
                             const going_toward_dynamic_event =
                                 surrounding_event.dynamic && possible_directions.includes(surroundings[i].direction);
