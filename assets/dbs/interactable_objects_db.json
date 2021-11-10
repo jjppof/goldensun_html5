@@ -261,21 +261,21 @@
             "is_set": false,
             "x_shift": -1,
             "y_shift": 0,
-            "dynamic": true
+            "dynamic": false
         },{
             "type": "jump",
             "active": false,
             "is_set": false,
             "x_shift": 0,
             "y_shift": 0,
-            "dynamic": true
+            "dynamic": false
         },{
             "type": "jump",
             "active": false,
             "is_set": false,
             "x_shift": 1,
             "y_shift": 0,
-            "dynamic": true
+            "dynamic": false
         }],
         "spritesheet": {
             "image": "assets/images/interactable_objects/trunk_tree_horizontal.png",
@@ -306,28 +306,28 @@
             "is_set": false,
             "x_shift": 0,
             "y_shift": -1,
-            "dynamic": true
+            "dynamic": false
         },{
             "type": "jump",
             "active": false,
             "is_set": false,
             "x_shift": 0,
             "y_shift": 0,
-            "dynamic": true
+            "dynamic": false
         },{
             "type": "jump",
             "active": false,
             "is_set": false,
             "x_shift": 0,
             "y_shift": 1,
-            "dynamic": true
+            "dynamic": false
         },{
             "type": "jump",
             "active": false,
             "is_set": false,
             "x_shift": 0,
             "y_shift": 2,
-            "dynamic": true
+            "dynamic": false
         }],
         "spritesheet": {
             "image": "assets/images/interactable_objects/trunk_tree_vertical.png",

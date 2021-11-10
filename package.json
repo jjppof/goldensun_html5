@@ -39,6 +39,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "@turf/turf": "^6.5.0",
     "lodash": "^4.17.21",
     "mathjs": "^9.3.2",
     "rxjs": "^6.6.3"

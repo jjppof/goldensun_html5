@@ -5,8 +5,9 @@ import * as numbers from "./magic_numbers";
 import {event_types, GameEvent} from "./game_events/GameEvent";
 import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
+import * as turf from "@turf/turf";
 import {ControllableChar} from "./ControllableChar";
-import {base_actions, parse_blend_mode} from "./utils";
+import {base_actions, get_tile_position, parse_blend_mode} from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
 import {Pushable} from "./interactable_objects/Pushable";
@@ -29,6 +30,7 @@ export class Map {
     private physics_jsons_url: string;
     private _sprite: Phaser.Tilemap;
     private _events: {[location_key: number]: TileEvent[]};
+    private _shapes: {[collision_index: number]: {[location_key: number]: p2.Shape[]}};
     private _npcs: NPC[];
     private _npcs_label_map: {[label: string]: NPC};
     private _interactable_objects: InteractableObjects[];
@@ -82,6 +84,7 @@ export class Map {
         this.physics_jsons_url = physics_jsons_url ?? [];
         this._sprite = null;
         this._events = {};
+        this._shapes = {};
         this._npcs = [];
         this._npcs_label_map = {};
         this._interactable_objects = [];
@@ -108,6 +111,10 @@ export class Map {
     /** The list of TileEvents of this map. */
     get events() {
         return this._events;
+    }
+    /** The list of Shapes of this map. */
+    get shapes() {
+        return this._shapes;
     }
     /** The list of NPCs of this map. */
     get npcs() {
@@ -392,6 +399,7 @@ export class Map {
         this.game.physics.p2.enable(this.collision_sprite, false);
         this.collision_sprite.body.clearShapes();
         if (this.collision_embedded) {
+            this._shapes[collision_layer] = {};
             //create collision bodies from object layer created on Tiled
             this.collision_sprite.width = this.sprite.widthInPixels;
             this.collision_sprite.height = this.sprite.heightInPixels;
@@ -399,49 +407,91 @@ export class Map {
             const collision_layer_objects = this.sprite.objects[this.collision_layer]?.objectsData ?? [];
             for (let i = 0; i < collision_layer_objects.length; ++i) {
                 const collision_object = collision_layer_objects[i];
-                let shape;
                 if (collision_object.polygon) {
-                    const new_polygon = collision_object.polygon.map((point: number[]) => {
-                        const new_point = [
-                            Math.round(collision_object.x + point[0]),
-                            Math.round(collision_object.y + point[1]),
-                        ];
+                    let sensor_active = false;
+                    if (collision_object.properties) {
+                        sensor_active = this.check_if_shape_is_affected_by_reveal(collision_object.properties.affected_by_reveal, collision_object.properties.show_on_reveal);
+                    }
+                    let max_x = -Infinity, max_y = -Infinity;
+                    let min_x = Infinity, min_y = Infinity;
+                    const rounded_polygon = collision_object.polygon.map((point: number[]) => {
+                        const x = Math.round(collision_object.x + point[0]);
+                        const y = Math.round(collision_object.y + point[1]);
+                        max_x = Math.max(max_x, x);
+                        max_y = Math.max(max_y, y);
+                        min_x = Math.min(min_x, x);
+                        min_y = Math.min(min_y, y);
+                        const new_point = [x, y];
                         return new_point;
                     });
-                    shape = this.collision_sprite.body.addPolygon(
-                        {
-                            optimalDecomp: false,
-                            skipSimpleCheck: false,
-                            removeCollinearPoints: false,
-                            remove: false,
-                            adjustCenterOfMass: false,
-                        },
-                        new_polygon
-                    );
+                    rounded_polygon.push(rounded_polygon[0]);
+                    const turf_poly = turf.polygon([rounded_polygon]);
+                    min_x = min_x - (min_x % this.tile_width);
+                    max_x = (max_x + this.tile_width) - (max_x % this.tile_width);
+                    min_y = min_y - (min_y % this.tile_height);
+                    max_y = (max_y + this.tile_height) - (max_y % this.tile_height);
+                    for (let x = min_x; x < max_x; x += this.tile_width) {
+                        for (let y = min_y; y < max_y; y += this.tile_height) {
+                            const this_max_x = x + this.tile_width;
+                            const this_max_y = y + this.tile_height;
+                            const turf_tile_poly = turf.polygon([[
+                                [x, y],
+                                [this_max_x, y],
+                                [this_max_x, this_max_y],
+                                [x, this_max_y],
+                                [x, y]
+                            ]]);
+                            const intersection_poly = turf.intersect(turf_poly, turf_tile_poly);
+                            if (intersection_poly) {
+                                const tile_x = get_tile_position(x, this.tile_width);
+                                const tile_y = get_tile_position(y, this.tile_height);
+                                const location_key = LocationKey.get_key(tile_x, tile_y);
+                                this._shapes[collision_layer][location_key] = new Array(intersection_poly.geometry.coordinates.length);
+                                for (let i = 0; i < intersection_poly.geometry.coordinates.length; ++i) {
+                                    const polygon_section = intersection_poly.geometry.coordinates[i];
+                                    this.collision_sprite.body.addPolygon(
+                                        {
+                                            optimalDecomp: false,
+                                            skipSimpleCheck: false,
+                                            removeCollinearPoints: false,
+                                            remove: false,
+                                            adjustCenterOfMass: false,
+                                        },
+                                        polygon_section
+                                    );
+                                    const shape = this.collision_sprite.body.data.shapes[this.collision_sprite.body.data.shapes.length - 1];
+                                    this._shapes[collision_layer][location_key][i] = shape;
+                                    shape.properties = collision_object.properties;
+                                    shape.sensor = sensor_active;
+                                }
+                            }
+                        }
+                    }
                 } else if (collision_object.rectangle) {
-                    shape = this.collision_sprite.body.addRectangle(
+                    const shape = this.collision_sprite.body.addRectangle(
                         Math.round(collision_object.width),
                         Math.round(collision_object.height),
                         Math.round(collision_object.x) + (Math.round(collision_object.width) >> 1),
                         Math.round(collision_object.y) + (Math.round(collision_object.height) >> 1)
                     );
+                    if (collision_object.properties) {
+                        shape.properties = collision_object.properties;
+                        shape.sensor = this.check_if_shape_is_affected_by_reveal(collision_object.properties.affected_by_reveal, collision_object.properties.show_on_reveal);
+                    }
                 } else if (collision_object.ellipse) {
-                    shape = this.collision_sprite.body.addCircle(
+                    const shape = this.collision_sprite.body.addCircle(
                         collision_object.width >> 1,
                         Math.round(collision_object.x) + (Math.round(collision_object.width) >> 1),
                         Math.round(collision_object.y) + (Math.round(collision_object.height) >> 1)
                     );
-                }
-                if (collision_object.properties) {
-                    shape.properties = collision_object.properties;
-                    if (collision_object.properties.affected_by_reveal && !collision_object.properties.show_on_reveal) {
-                        //disable collision for this particular body
-                        shape.sensor = true;
+                    if (collision_object.properties) {
+                        shape.properties = collision_object.properties;
+                        shape.sensor = this.check_if_shape_is_affected_by_reveal(collision_object.properties.affected_by_reveal, collision_object.properties.show_on_reveal);
                     }
                 }
             }
         } else {
-            //load map physics data from json files
+            //[DEPRECATED] load map physics data from json files
             this.collision_sprite.body.loadPolygon(
                 this.physics_names[collision_layer],
                 this.physics_names[collision_layer]
@@ -453,6 +503,10 @@ export class Map {
         this.collision_sprite.body.setZeroRotation();
         this.collision_sprite.body.dynamic = false;
         this.collision_sprite.body.static = true;
+    }
+
+    private check_if_shape_is_affected_by_reveal(affected_by_reveal: boolean, show_on_reveal: boolean) {
+        return affected_by_reveal && !show_on_reveal;
     }
 
     /**

@@ -207,12 +207,6 @@ export class RollablePillar extends InteractableObjects {
 
         if (rolling_pillar_will_fall) {
             await this.fall_pillar(next_contact, action_name);
-            const object_events = this.get_events();
-            for (let i = 0; i < object_events.length; ++i) {
-                const event = object_events[i] as JumpEvent;
-                event.activate_at("all");
-                event.is_set = true;
-            }
             this.toggle_collision(false);
             this.sprite.send_to_back = true;
             this._allow_jumping_over_it = true;
@@ -226,6 +220,20 @@ export class RollablePillar extends InteractableObjects {
             x: next_contact.x,
             y: next_contact.y,
         });
+
+        if (rolling_pillar_will_fall) {
+            const object_events = this.get_events();
+            for (let i = 0; i < object_events.length; ++i) {
+                const event = object_events[i] as JumpEvent;
+                event.activate_at("all");
+                event.is_set = true;
+                if (event.location_key in this.data.map.shapes[this.data.map.collision_layer]) {
+                    this.data.map.shapes[this.data.map.collision_layer][event.location_key].forEach(shape => {
+                        shape.sensor = true;
+                    });
+                }
+            }
+        }
 
         this.game.physics.p2.resume();
         char.pushing = false;
