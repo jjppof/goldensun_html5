@@ -27547,7 +27547,7 @@ Phaser.Polygon.prototype = {
             //  Allows for mixed-type arguments
             for (var i = 0, len = points.length; i < len; i++)
             {
-                if (typeof points[i] === 'number')
+                if (Number.isFinite(points[i]))
                 {
                     var p = new PIXI.Point(points[i], points[i + 1]);
                     i++;
