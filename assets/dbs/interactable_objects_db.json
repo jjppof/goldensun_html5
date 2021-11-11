@@ -56,7 +56,6 @@
             "type": "climb",
             "active": true,
             "dynamic": true,
-            "is_set": true,
             "collision_tiles_relative_pos": [
                 {"x": -1, "y": 0},
                 {"x": -1, "y": -1},
@@ -95,6 +94,7 @@
             }
         },
         "pushable": false,
+        "allow_jumping_through_it": true,
         "events": [{
             "type": "jump_around",
             "active": true,
@@ -104,8 +104,7 @@
             "active": false,
             "x_shift": 0,
             "y_shift": -2,
-            "dynamic": true,
-            "is_set": false
+            "dynamic": true
         }],
         "initial_animation": "pool",
         "actions": {
@@ -129,11 +128,11 @@
             }
         },
         "pushable": false,
+        "allow_jumping_through_it": true,
         "events": [{
             "type": "climb",
             "active": false,
             "dynamic": false,
-            "is_set": true,
             "collision_tiles_relative_pos": [],
             "top_event_y_shift": -4
         }],
@@ -223,6 +222,7 @@
         "send_to_back": false,
         "pushable": false,
         "is_rope_dock": true,
+        "allow_jumping_through_it": true,
         "psynergy_keys": {
             "lash": {
                 "interaction_type": "once"
@@ -258,21 +258,18 @@
         "events": [{
             "type": "jump",
             "active": false,
-            "is_set": false,
             "x_shift": -1,
             "y_shift": 0,
             "dynamic": false
         },{
             "type": "jump",
             "active": false,
-            "is_set": false,
             "x_shift": 0,
             "y_shift": 0,
             "dynamic": false
         },{
             "type": "jump",
             "active": false,
-            "is_set": false,
             "x_shift": 1,
             "y_shift": 0,
             "dynamic": false
@@ -303,28 +300,24 @@
         "events": [{
             "type": "jump",
             "active": false,
-            "is_set": false,
             "x_shift": 0,
             "y_shift": -1,
             "dynamic": false
         },{
             "type": "jump",
             "active": false,
-            "is_set": false,
             "x_shift": 0,
             "y_shift": 0,
             "dynamic": false
         },{
             "type": "jump",
             "active": false,
-            "is_set": false,
             "x_shift": 0,
             "y_shift": 1,
             "dynamic": false
         },{
             "type": "jump",
             "active": false,
-            "is_set": false,
             "x_shift": 0,
             "y_shift": 2,
             "dynamic": false

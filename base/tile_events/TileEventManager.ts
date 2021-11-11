@@ -156,11 +156,6 @@ export class TileEventManager {
                 continue;
             }
 
-            //creates and destroys collision bodies arround jump events while the hero walks over them.
-            if (this_event.type === event_types.JUMP) {
-                (this_event as JumpEvent).create_collision_bodies_around_jump_events();
-            }
-
             //ignore events that are not active in the direction that the hero is going.
             if (this_event.is_active(this.data.hero.current_direction) === -1) {
                 continue;
@@ -344,8 +339,7 @@ export class TileEventManager {
                 info.active,
                 info.active_storage_key,
                 info.affected_by_reveal,
-                info.key_name,
-                info.is_set
+                info.key_name
             );
         } else if (info.type === event_types.STEP) {
             return new StepEvent(

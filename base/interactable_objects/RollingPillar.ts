@@ -38,7 +38,9 @@ export class RollablePillar extends InteractableObjects {
         enable,
         entangled_by_bush,
         toggle_enable_events,
-        label
+        label,
+        allow_jumping_over_it,
+        allow_jumping_through_it
     ) {
         super(
             game,
@@ -60,7 +62,9 @@ export class RollablePillar extends InteractableObjects {
             enable,
             entangled_by_bush,
             toggle_enable_events,
-            label
+            label,
+            allow_jumping_over_it,
+            allow_jumping_through_it
         );
         this._rollable = true;
         this._pillar_is_stuck = false;
@@ -209,7 +213,7 @@ export class RollablePillar extends InteractableObjects {
             await this.fall_pillar(next_contact, action_name);
             this.toggle_collision(false);
             this.sprite.send_to_back = true;
-            this._allow_jumping_over_it = true;
+            this.allow_jumping_over_it = true;
             this.change_collision_layer(this._dest_collision_layer);
         } else {
             this.sprite.animations.stop(undefined, false);
@@ -226,12 +230,7 @@ export class RollablePillar extends InteractableObjects {
             for (let i = 0; i < object_events.length; ++i) {
                 const event = object_events[i] as JumpEvent;
                 event.activate_at("all");
-                event.is_set = true;
-                if (event.location_key in this.data.map.shapes[this.data.map.collision_layer]) {
-                    this.data.map.shapes[this.data.map.collision_layer][event.location_key].forEach(shape => {
-                        shape.sensor = true;
-                    });
-                }
+                this.data.map.set_collision_in_tile(event.x, event.y, false, this._dest_collision_layer);
             }
         }
 

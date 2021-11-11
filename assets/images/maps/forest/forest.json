@@ -1182,15 +1182,11 @@
                          "y":88
                         }, 
                         {
-                         "x":120,
+                         "x":112,
                          "y":88
                         }, 
                         {
-                         "x":48,
-                         "y":16
-                        }, 
-                        {
-                         "x":48,
+                         "x":112,
                          "y":-16
                         }, 
                         {
@@ -1559,8 +1555,8 @@
      "event_42":"{\n\"type\": \"climb\",\n\"x\": 47,\n\"y\": 4,\n \"activation_directions\": \"down\",\n\"activation_collision_layers\": 1\n}",
      "event_43":"{\n\"type\": \"teleport\",\n\"x\": 31,\n\"y\": 10,\n\"target\": \"nyungwe\",\n\"activation_directions\": \"right\",\n\"x_target\": 47,\n\"y_target\": 8,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"right\"\n}",
      "event_44":"{\n\"type\": \"teleport\",\n\"x\": 46,\n\"y\": 8,\n\"target\": \"nyungwe\",\n\"activation_directions\": \"left\",\n\"x_target\": 30,\n\"y_target\": 10,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"left\"\n}",
-     "event_45":"{\n\"type\": \"jump\",\n\"x\": 47,\n\"y\": 7,\n\"activation_directions\": \"right\",\n\"activation_collision_layers\": 0,\n\"active\": false\n}",
-     "event_46":"{\n\"type\": \"jump\",\n\"x\": 53,\n\"y\": 7,\n\"activation_directions\": \"left\",\n\"activation_collision_layers\": 0,\n\"active\": false\n}",
+     "event_45":"{\n\"type\": \"jump\",\n\"x\": 47,\n\"y\": 7,\n\"activation_directions\": \"right\",\n\"activation_collision_layers\": 0,\n\"active\": true\n}",
+     "event_46":"{\n\"type\": \"jump\",\n\"x\": 53,\n\"y\": 7,\n\"activation_directions\": \"left\",\n\"activation_collision_layers\": 0,\n\"active\": true\n}",
      "interactable_object_01":"{\n\"key_name\": \"trunk_tree_horizontal\",\n\"x\": 17,\n\"y\": 10,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"horizontal\",\n\"contact_points\": [{\n  \"x\": 17,\n  \"y\": 10\n}],\n\"falling_pos\": {\n  \"x\": 17,\n  \"y\": 11\n}\n}",
      "interactable_object_02":"{\n\"key_name\": \"trunk_tree_vertical\",\n\"x\": 28,\n\"y\": 5,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"vertical\",\n\"contact_points\": [{\n  \"x\": 28,\n  \"y\": 5\n}],\n\"falling_pos\": {\n  \"x\": 23,\n  \"y\": 5\n}\n}",
      "interactable_object_03":"{\n\"key_name\": \"trunk_tree_horizontal\",\n\"x\": 26,\n\"y\": 13,\n\"base_collision_layer\": 0,\n\"pillar_direction\": \"horizontal\",\n\"contact_points\": [{\n  \"x\": 26,\n  \"y\": 13\n},{\n  \"x\": 26,\n  \"y\": 11\n}]\n}",

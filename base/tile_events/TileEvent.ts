@@ -170,15 +170,20 @@ export abstract class TileEvent {
     abstract destroy(): void;
 
     /**
-     * Tests whether a given direction is available to active this event.
+     * Tests whether a given direction is available to active this event. If no directions given,
+     * tests if at least one direction is active.
      * @param direction the direction to test if it's active.
-     * @returns The resulting dicretion that actives this event. Returns -1 if there's no active direction.
+     * @returns The resulting direction that actives this event. Returns -1 if there's no active direction.
      */
-    is_active(direction: directions) {
-        const possible_directions = split_direction(direction);
-        for (let i = 0; i < possible_directions.length; ++i) {
-            if (this.active[this.activation_directions.indexOf(possible_directions[i])]) {
-                return possible_directions[i];
+    is_active(direction?: directions) : directions | -1 {
+        if (direction === undefined) {
+            return _.findIndex(this.active, v => v) ?? -1;
+        } else {
+            const possible_directions = split_direction(direction);
+            for (let i = 0; i < possible_directions.length; ++i) {
+                if (this.active[this.activation_directions.indexOf(possible_directions[i])]) {
+                    return possible_directions[i];
+                }
             }
         }
         return -1;

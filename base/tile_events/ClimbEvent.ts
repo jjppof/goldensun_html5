@@ -285,7 +285,6 @@ export class ClimbEvent extends TileEvent {
 
     private remove_climb_collision_bodies(collide_with_map = true) {
         this.origin_interactable_object.sprite.send_to_back = false;
-        JumpEvent.set_jump_collision(this.game, this.data);
         if (collide_with_map) {
             this.data.hero.sprite.body.collides(this.data.collision.map_collision_group);
             this.data.map.collision_sprite.body.collides(this.data.collision.hero_collision_group);

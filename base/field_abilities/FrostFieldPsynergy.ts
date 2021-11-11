@@ -108,19 +108,13 @@ export class FrostFieldPsynergy extends FieldAbilities {
     Will change its properties and animation*/
     init_pillar() {
         this.target_object.get_events().forEach((event: JumpEvent) => {
-            if (event.is_set) {
+            if (event.is_active()) {
                 event.deactivate();
-                event.is_set = false;
             } else {
                 event.activate();
-                event.is_set = true;
-                JumpEvent.active_jump_surroundings(
-                    this.data,
-                    get_surroundings(event.x, event.y, false, 2),
-                    event.collision_layer_shift_from_source + this.target_object.base_collision_layer
-                );
             }
         });
+        this.target_object.allow_jumping_through_it = false;
         this.target_object.sprite.send_to_back = false;
         this.data.map.sort_sprites();
         this.data.audio.play_se("psynergy/4");

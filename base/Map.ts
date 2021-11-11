@@ -505,6 +505,24 @@ export class Map {
         this.collision_sprite.body.static = true;
     }
 
+    /**
+     * Sets whether a tile should collide or not. Onlyy works if there's at least
+     * on collision body in the given tile position.
+     * @param tile_x_pos the x tile position.
+     * @param tile_y_pos the y tile position.
+     * @param collide whether it should collide or not.
+     * @param collision_layer the collision layer of tile. If not passed, gets the current one.
+     */
+    set_collision_in_tile(tile_x_pos: number, tile_y_pos: number, collide: boolean, collision_layer?: number) {
+        const location_key = LocationKey.get_key(tile_x_pos, tile_y_pos);
+        const this_collision_layer = collision_layer ?? this.collision_layer;
+        if (location_key in this.shapes[this_collision_layer]) {
+            this.shapes[this_collision_layer][location_key].forEach(shape => {
+                shape.sensor = !collide;
+            });
+        }
+    }
+
     private check_if_shape_is_affected_by_reveal(affected_by_reveal: boolean, show_on_reveal: boolean) {
         return affected_by_reveal && !show_on_reveal;
     }
@@ -650,6 +668,8 @@ export class Map {
         } else if (interactable_object_db.rollable) {
             io_class = RollablePillar;
         }
+        const allow_jumping_over_it = property_info.allow_jumping_over_it ?? interactable_object_db.allow_jumping_over_it;
+        const allow_jumping_through_it = property_info.allow_jumping_through_it ?? interactable_object_db.allow_jumping_through_it;
         const interactable_object = new io_class(
             this.game,
             this.data,
@@ -670,7 +690,9 @@ export class Map {
             property_info.enable,
             property_info.entangled_by_bush,
             property_info.toggle_enable_events,
-            property_info.label
+            property_info.label,
+            allow_jumping_over_it,
+            allow_jumping_through_it,
         );
         if (interactable_object.is_rope_dock) {
             (interactable_object as RopeDock).intialize_dock_info(

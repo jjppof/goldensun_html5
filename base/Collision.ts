@@ -37,7 +37,6 @@ export class Collision {
     private _npc_collision_groups: {[layer_index: number]: Phaser.Physics.P2.CollisionGroup};
     private _interactable_objs_collision_groups: {[layer_index: number]: Phaser.Physics.P2.CollisionGroup};
     private max_layers_created: number;
-    private _dynamic_events_col_bodies: Phaser.Physics.P2.Body[];
 
     constructor(game: Phaser.Game, data: GoldenSun) {
         this.game = game;
@@ -49,7 +48,6 @@ export class Collision {
         this._npc_collision_groups = {};
         this._interactable_objs_collision_groups = {};
         this.max_layers_created = 0;
-        this._dynamic_events_col_bodies = [];
     }
 
     get hero_collision_group() {
@@ -66,9 +64,6 @@ export class Collision {
     }
     get interactable_objs_collision_groups() {
         return this._interactable_objs_collision_groups;
-    }
-    get dynamic_events_col_bodies() {
-        return this._dynamic_events_col_bodies;
     }
 
     /**
@@ -203,10 +198,6 @@ export class Collision {
         if (enable_map_collision) {
             this.enable_map_collision();
         }
-        for (let j = 0; j < this.dynamic_events_col_bodies.length; ++j) {
-            this.dynamic_events_col_bodies[j].destroy();
-        }
-        this._dynamic_events_col_bodies = [];
     }
 
     /**

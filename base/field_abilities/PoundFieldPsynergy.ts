@@ -151,19 +151,14 @@ export class PoundFieldPsynergy extends FieldAbilities {
             const anim_key = this.target_object.sprite_info.getAnimationKey(key_name, "down");
             this.target_object.sprite.animations.play(anim_key);
             this.target_object.get_events().forEach((event: JumpEvent) => {
-                if (event.is_set) {
+                if (event.is_active()) {
                     event.deactivate();
-                    event.is_set = false;
                 } else {
                     event.activate();
-                    event.is_set = true;
-                    JumpEvent.active_jump_surroundings(
-                        this.data,
-                        get_surroundings(event.x, event.y, false, 2),
-                        event.collision_layer_shift_from_source + this.target_object.base_collision_layer
-                    );
                 }
             });
+            this.target_object.allow_jumping_through_it = true;
+            this.target_object.allow_jumping_over_it = true;
             this.target_object.sprite.send_to_back = true;
             this.target_object.sprite.body.destroy();
         }

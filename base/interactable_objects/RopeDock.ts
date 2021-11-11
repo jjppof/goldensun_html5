@@ -75,7 +75,9 @@ export class RopeDock extends InteractableObjects {
         enable,
         entangled_by_bush,
         toggle_enable_events,
-        label
+        label,
+        allow_jumping_over_it,
+        allow_jumping_through_it
     ) {
         super(
             game,
@@ -97,7 +99,9 @@ export class RopeDock extends InteractableObjects {
             enable,
             entangled_by_bush,
             toggle_enable_events,
-            label
+            label,
+            allow_jumping_over_it,
+            allow_jumping_through_it
         );
         this._is_rope_dock = true;
         this._dest_rope_dock = null;

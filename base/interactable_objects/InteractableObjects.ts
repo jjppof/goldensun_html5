@@ -87,7 +87,8 @@ export class InteractableObjects {
     protected _is_rope_dock: boolean;
     protected _rollable: boolean;
     protected _extra_sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.Group)[];
-    protected _allow_jumping_over_it: boolean;
+    public allow_jumping_over_it: boolean;
+    public allow_jumping_through_it: boolean;
     private toggle_enable_events: {
         event: GameEvent;
         on_enable: boolean;
@@ -113,7 +114,9 @@ export class InteractableObjects {
         enable,
         entangled_by_bush,
         toggle_enable_events,
-        label
+        label,
+        allow_jumping_over_it,
+        allow_jumping_through_it
     ) {
         this.game = game;
         this.data = data;
@@ -173,7 +176,8 @@ export class InteractableObjects {
             this.toggle_enable_events = [];
         }
         this._label = label;
-        this._allow_jumping_over_it = false;
+        this.allow_jumping_over_it = allow_jumping_over_it ?? false;
+        this.allow_jumping_through_it = allow_jumping_through_it ?? false;
     }
 
     get key_name() {
@@ -243,9 +247,6 @@ export class InteractableObjects {
     }
     get bush_sprite() {
         return this._bush_sprite;
-    }
-    get allow_jumping_over_it() {
-        return this._allow_jumping_over_it;
     }
 
     position_allowed(x: number, y: number) {
@@ -557,8 +558,7 @@ export class InteractableObjects {
             active_event,
             undefined,
             false,
-            undefined,
-            event_info.is_set ?? true
+            undefined
         );
         map_events[this_event_location_key].push(new_event);
         this.insert_event(new_event.id);
@@ -645,7 +645,6 @@ export class InteractableObjects {
         target_layer: number,
         map_events: Map["events"]
     ) {
-        const is_set = event_info.is_set ?? true;
         get_surroundings(x_pos, y_pos).forEach((pos, index) => {
             if (this.not_allowed_tile_test(pos.x, pos.y)) return;
             const this_event_location_key = LocationKey.get_key(pos.x, pos.y);
@@ -668,8 +667,7 @@ export class InteractableObjects {
                 active_event,
                 undefined,
                 false,
-                undefined,
-                is_set
+                undefined
             );
             map_events[this_event_location_key].push(new_event);
             this.insert_event(new_event.id);
@@ -873,36 +871,6 @@ export class InteractableObjects {
             let new_x = old_x + event_shift_x;
             let new_y = old_y + event_shift_y;
             event.set_position(new_x, new_y, true);
-
-            //check for surrounding jump events, some of them may start working now.
-            if (event.type === event_types.JUMP) {
-                const new_surroundings = get_surroundings(new_x, new_y, false, 2);
-                JumpEvent.active_jump_surroundings(
-                    this.data,
-                    new_surroundings,
-                    event.collision_layer_shift_from_source + this.base_collision_layer
-                );
-                const old_surroundings = get_surroundings(old_x, old_y, false, 2);
-                for (let j = 0; j < old_surroundings.length; ++j) {
-                    const old_surrounding = old_surroundings[j];
-                    const old_key = LocationKey.get_key(old_surrounding.x, old_surrounding.y);
-                    if (old_key in this.data.map.events) {
-                        for (let k = 0; k < this.data.map.events[old_key].length; ++k) {
-                            const old_surr_event = this.data.map.events[old_key][k];
-                            if (old_surr_event.type === event_types.JUMP) {
-                                const target_layer =
-                                    event.collision_layer_shift_from_source + this.base_collision_layer;
-                                if (
-                                    old_surr_event.activation_collision_layers.includes(target_layer) &&
-                                    old_surr_event.dynamic === false
-                                ) {
-                                    old_surr_event.deactivate_at(get_opposite_direction(old_surrounding.direction));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 
