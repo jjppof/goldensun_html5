@@ -4,10 +4,9 @@
     "initial_direction": "down",
     "map_key_name": "nyungwe",
     "initial_scale_factor": 2,
-    "x_tile_position": 49,
-    "y_tile_position": 1
-    ,
-    "collision_layer": 1,
+    "x_tile_position": 20,
+    "y_tile_position": 10,
+    "collision_layer": 0,
     "coins": 10000,
     "initial_shortcuts": [
         { "ability": "move", "adept": "isaac" },

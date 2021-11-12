@@ -557,9 +557,14 @@ export class Map {
      */
     set_collision_in_tile(tile_x_pos: number, tile_y_pos: number, collide: boolean, collision_layer?: number) {
         const location_key = LocationKey.get_key(tile_x_pos, tile_y_pos);
-        const this_collision_layer = collision_layer ?? this.collision_layer;
-        if (location_key in this.shapes[this_collision_layer]) {
-            this.shapes[this_collision_layer][location_key].forEach(shape => {
+        collision_layer = collision_layer ?? this.collision_layer;
+        this.processed_polygons[collision_layer].forEach(polygon_data => {
+            if (polygon_data.location_key === location_key) {
+                polygon_data.sensor_active = !collide;
+            }
+        });
+        if (this.collision_layer === collision_layer) {
+            this.shapes[this.collision_layer][location_key].forEach(shape => {
                 shape.sensor = !collide;
             });
         }
