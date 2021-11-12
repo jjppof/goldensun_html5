@@ -244,25 +244,30 @@ export class Pushable extends InteractableObjects {
                     tween_x = Pushable.PUSH_SHIFT;
                     break;
             }
-            this.shift_events(event_shift_x, event_shift_y);
-            const sprites = [this.sprite.body];
-            if (!target_only) {
-                sprites.push(...[char.shadow, char.sprite.body]);
-            }
+
+            this.shift_events_and_check_collision(event_shift_x, event_shift_y);
+
             const prev_x = this.tile_x_pos;
             const prev_y = this.tile_y_pos;
             this.set_tile_position({
-                x: this.tile_x_pos + event_shift_x,
-                y: this.tile_y_pos + event_shift_y,
+                x: prev_x + event_shift_x,
+                y: prev_y + event_shift_y,
             });
-            const promises = [];
+
             if (before_move !== undefined) {
                 before_move(tween_x, tween_y);
             }
+
             if (this.blocking_stair_block) {
                 this.blocking_stair_block.x += tween_x;
                 this.blocking_stair_block.y += tween_y;
             }
+
+            const sprites = [this.sprite.body];
+            if (!target_only) {
+                sprites.push(...[char.shadow, char.sprite.body]);
+            }
+            const promises = [];
             for (let i = 0; i < sprites.length; ++i) {
                 const body = sprites[i];
                 let dest_x = body.x + tween_x;
@@ -296,9 +301,9 @@ export class Pushable extends InteractableObjects {
                                 drop_found = true;
                                 const dest_y_shift_px =
                                     (drop_tile.dest_y - this.tile_y_pos) * this.data.map.tile_height;
-                                this.shift_events(0, drop_tile.dest_y - this.tile_y_pos);
-                                this.set_tile_position({y: drop_tile.dest_y});
                                 this.change_collision_layer(drop_tile.destination_collision_layer);
+                                this.shift_events_and_check_collision(0, drop_tile.dest_y - this.tile_y_pos);
+                                this.set_tile_position({y: drop_tile.dest_y});
                                 this.game.add
                                     .tween(this.sprite.body)
                                     .to(
@@ -341,10 +346,40 @@ export class Pushable extends InteractableObjects {
     }
 
     /**
+     * Shift related events to this IO and also set according collision
+     * in tiles in the case of jump events.
+     * @param event_shift_x the x shift tile value.
+     * @param event_shift_y the y shift tile value.
+     */
+    private shift_events_and_check_collision(event_shift_x: number, event_shift_y: number) {
+        const object_events = this.get_events();
+        //enables collision in the location of jump events before shifting them
+        for (let i = 0; i < object_events.length; ++i) {
+            const event = object_events[i];
+            if (event.type === event_types.JUMP) {
+                event.activation_collision_layers.forEach(collision_layer => {
+                    this.data.map.set_collision_in_tile(event.x, event.y, true, collision_layer);
+                });
+            }
+        }
+        //shifting events
+        this.shift_events(event_shift_x, event_shift_y);
+        //disables collision in the location of jump events after shifting them
+        for (let i = 0; i < object_events.length; ++i) {
+            const event = object_events[i];
+            if (event.type === event_types.JUMP) {
+                event.activation_collision_layers.forEach(collision_layer => {
+                    this.data.map.set_collision_in_tile(event.x, event.y, false, collision_layer);
+                });
+            }
+        }
+    }
+
+    /**
      * Starts the dust animation when this interactable object fall on the ground.
      * @param on_animation_end the animation end callback.
      */
-    dust_animation(on_animation_end: () => void) {
+    private dust_animation(on_animation_end: () => void) {
         const promises = new Array(Pushable.DUST_COUNT);
         const sprites = new Array(Pushable.DUST_COUNT);
         const origin_x = get_centered_pos_in_px(this.tile_x_pos, this.data.map.tile_width);

@@ -62,6 +62,14 @@ export class JumpEvent extends TileEvent {
         }
 
         const next_pos_key = LocationKey.get_key(next_position.x, next_position.y);
+        if (next_pos_key in this.data.map.shapes[this.data.map.collision_layer]) {
+            const shapes = this.data.map.shapes[this.data.map.collision_layer][next_pos_key];
+            //cancels jumping if there's collision in the jump target position
+            if (shapes.some(s => !s.sensor)) {
+                return;
+            }
+        }
+
         for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
             const interactable_object = this.data.map.interactable_objects[i];
             if (this.data.map.collision_layer === interactable_object.base_collision_layer) {

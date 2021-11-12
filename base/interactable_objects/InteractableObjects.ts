@@ -1,5 +1,5 @@
 import {SpriteBase} from "../SpriteBase";
-import {event_types, LocationKey, TileEvent} from "../tile_events/TileEvent";
+import {LocationKey, TileEvent} from "../tile_events/TileEvent";
 import * as numbers from "../magic_numbers";
 import {
     directions,
@@ -490,13 +490,13 @@ export class InteractableObjects {
             const target_layer = this.base_collision_layer + collision_layer_shift;
             switch (event_info.type) {
                 case interactable_object_event_types.JUMP:
-                    this.set_jump_type_event(i, event_info, x_pos, y_pos, active_event, target_layer, map.events);
+                    this.set_jump_type_event(i, event_info, x_pos, y_pos, active_event, target_layer, map);
                     break;
                 case interactable_object_event_types.JUMP_AROUND:
-                    this.set_jump_around_event(event_info, x_pos, y_pos, active_event, target_layer, map.events);
+                    this.set_jump_around_event(event_info, x_pos, y_pos, active_event, target_layer, map);
                     break;
                 case interactable_object_event_types.CLIMB:
-                    this.set_stair_event(i, event_info, x_pos, y_pos, active_event, target_layer, map.events);
+                    this.set_stair_event(i, event_info, x_pos, y_pos, active_event, target_layer, map);
                     break;
                 case interactable_object_event_types.ROPE:
                     this.set_rope_event(
@@ -505,8 +505,7 @@ export class InteractableObjects {
                         y_pos,
                         active_event,
                         target_layer,
-                        map.events,
-                        map.collision_layer
+                        map
                     );
                     break;
             }
@@ -535,12 +534,12 @@ export class InteractableObjects {
         y_pos: number,
         active_event: boolean,
         target_layer: number,
-        map_events: Map["events"]
+        map: Map
     ) {
         if (this.not_allowed_tile_test(x_pos, y_pos)) return;
         const this_event_location_key = LocationKey.get_key(x_pos, y_pos);
-        if (!(this_event_location_key in map_events)) {
-            map_events[this_event_location_key] = [];
+        if (!(this_event_location_key in map.events)) {
+            map.events[this_event_location_key] = [];
         }
         const new_event = new JumpEvent(
             this.game,
@@ -560,13 +559,21 @@ export class InteractableObjects {
             false,
             undefined
         );
-        map_events[this_event_location_key].push(new_event);
+        map.events[this_event_location_key].push(new_event);
         this.insert_event(new_event.id);
         const collision_layer_shift = this.tile_events_info[event_index]?.collision_layer_shift ?? 0;
         new_event.collision_layer_shift_from_source = collision_layer_shift;
         this.collision_change_functions.push(() => {
             new_event.set_activation_collision_layers(this.base_collision_layer + collision_layer_shift);
         });
+
+        if (new_event.is_active() >= 0) {
+            new_event.activation_collision_layers.forEach(collision_layer => {
+                if (collision_layer !== this.base_collision_layer) {
+                    map.set_collision_in_tile(new_event.x, new_event.y, false, collision_layer);
+                }
+            });
+        }
     }
 
     private set_rope_event(
@@ -575,8 +582,7 @@ export class InteractableObjects {
         y_pos: number,
         active_event: boolean,
         target_layer: number,
-        map_events: Map["events"],
-        collision_layer: number
+        map: Map
     ) {
         const activation_directions =
             event_info.activation_directions ?? get_directions(false).map(dir => reverse_directions[dir]);
@@ -610,29 +616,27 @@ export class InteractableObjects {
             }
             if (this.not_allowed_tile_test(x, y)) return;
             const this_event_location_key = LocationKey.get_key(x, y);
-            if (!(this_event_location_key in map_events)) {
-                map_events[this_event_location_key] = [];
+            if (!(this_event_location_key in map.events)) {
+                map.events[this_event_location_key] = [];
             }
-            const new_event: RopeEvent = this.data.tile_event_manager.get_event_instance({
-                x: x,
-                y: y,
-                type: event_types.ROPE,
-                activation_directions: activation_direction,
-                activation_collision_layers: activation_collision_layer,
-                dynamic: event_info.dynamic,
-                active: active_event,
-                active_storage_key: undefined,
-                affected_by_reveal: false,
-                origin_interactable_object: this,
-                dest_x: event_info.dest_x,
-                dest_y: event_info.dest_y,
-                starting_dock: event_info.starting_dock,
-                walk_over_rope: event_info.walk_over_rope,
-                dock_exit_collision_layer: event_info.dock_exit_collision_layer ?? collision_layer,
-                rope_collision_layer: event_info.rope_collision_layer,
-                tied: event_info.tied,
-            }) as RopeEvent;
-            map_events[this_event_location_key].push(new_event);
+            const new_event = new RopeEvent(
+                this.game,
+                this.data,
+                x,
+                y,
+                activation_direction,
+                activation_collision_layer,
+                event_info.dynamic,
+                active_event,
+                undefined,
+                false,
+                event_info.key_name,
+                this,
+                event_info.walk_over_rope,
+                event_info.dock_exit_collision_layer ?? map.collision_layer,
+                event_info.rope_collision_layer,
+            );
+            map.events[this_event_location_key].push(new_event);
             this.insert_event(new_event.id);
         });
     }
@@ -643,13 +647,13 @@ export class InteractableObjects {
         y_pos: number,
         active_event: boolean,
         target_layer: number,
-        map_events: Map["events"]
+        map: Map
     ) {
         get_surroundings(x_pos, y_pos).forEach((pos, index) => {
             if (this.not_allowed_tile_test(pos.x, pos.y)) return;
             const this_event_location_key = LocationKey.get_key(pos.x, pos.y);
-            if (!(this_event_location_key in map_events)) {
-                map_events[this_event_location_key] = [];
+            if (!(this_event_location_key in map.events)) {
+                map.events[this_event_location_key] = [];
             }
             const new_event = new JumpEvent(
                 this.game,
@@ -668,8 +672,8 @@ export class InteractableObjects {
                 undefined,
                 false,
                 undefined
-            );
-            map_events[this_event_location_key].push(new_event);
+            ) as JumpEvent;
+            map.events[this_event_location_key].push(new_event);
             this.insert_event(new_event.id);
             this.collision_change_functions.push(() => {
                 new_event.set_activation_collision_layers(this.base_collision_layer);
@@ -684,7 +688,7 @@ export class InteractableObjects {
         y_pos: number,
         active_event: boolean,
         target_layer: number,
-        map_events: Map["events"]
+        map: Map
     ) {
         const collision_layer_shift = this.tile_events_info[event_index]?.collision_layer_shift ?? 0;
         const intermediate_collision_layer_shift =
@@ -753,8 +757,8 @@ export class InteractableObjects {
         ];
         events_data.forEach(event_data => {
             const this_location_key = LocationKey.get_key(event_data.x, event_data.y);
-            if (!(this_location_key in map_events)) {
-                map_events[this_location_key] = [];
+            if (!(this_location_key in map.events)) {
+                map.events[this_location_key] = [];
             }
             const new_event = new ClimbEvent(
                 this.game,
@@ -773,7 +777,7 @@ export class InteractableObjects {
                 this,
                 event_data.climbing_only
             );
-            map_events[this_location_key].push(new_event);
+            map.events[this_location_key].push(new_event);
             this.insert_event(new_event.id);
             new_event.collision_layer_shift_from_source = event_data.collision_layer_shift_from_source;
             this.collision_change_functions.push(event_data.collision_change_function.bind(null, new_event));
