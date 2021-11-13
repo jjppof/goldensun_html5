@@ -3,7 +3,6 @@
         "name":"Madra",
         "key_name":"madra",
         "tileset_key_name":"madra",
-        "collision_key_names":["madra", "madra_2"],
         "bgm": {
             "key": "madra_bgm",
             "path": "assets/sounds/bgm/little_madra.ogg"
@@ -12,7 +11,8 @@
             "image":"assets/images/maps/madra/madra.png",
             "json":"assets/images/maps/madra/madra.json"
         },
-        "collision_files":["assets/images/maps/madra/madra_physics.json", "assets/images/maps/madra/madra_2_physics.json"]
+        "lazy_load": true,
+        "collision_embedded": true
     },{
         "name":"inn_down",
         "key_name":"madra_inn",

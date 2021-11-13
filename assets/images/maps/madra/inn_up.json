@@ -1,11 +1,4 @@
 { "compressionlevel":-1,
- "editorsettings":
-    {
-     "export":
-        {
-         "target":"."
-        }
-    },
  "height":21,
  "infinite":false,
  "layers":[
@@ -209,8 +202,8 @@
      "Name":"inn_up",
      "event_01":"{\"type\": \"teleport\", \"x\": 17, \"y\": 4, \"target\": \"madra_inn_up_stair\", \"activation_directions\": \"up\", \"x_target\": 13.5, \"y_target\": 12, \"advance_effect\": false, \"dest_collision_layer\": 0, \"activation_collision_layers\": [0]}",
      "event_02":"{\"type\": \"teleport\", \"x\": 18, \"y\": 4, \"target\": \"madra_inn_up_stair\", \"activation_directions\": \"up\", \"x_target\": 13.5, \"y_target\": 12, \"advance_effect\": false, \"dest_collision_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_03":"{\"type\": \"teleport\", \"x\": 17, \"y\": 20, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 8, \"advance_effect\": false, \"dest_collision_layer\": 1, \"activation_collision_layers\": [0]}",
-     "event_04":"{\"type\": \"teleport\", \"x\": 18, \"y\": 20, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 8, \"advance_effect\": false, \"dest_collision_layer\": 1, \"activation_collision_layers\": [0]}"
+     "event_03":"{\"type\": \"teleport\", \"x\": 17, \"y\": 20, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 8, \"advance_effect\": false, \"dest_collision_layer\": 2, \"activation_collision_layers\": [0]}",
+     "event_04":"{\"type\": \"teleport\", \"x\": 18, \"y\": 20, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 8, \"advance_effect\": false, \"dest_collision_layer\": 2, \"activation_collision_layers\": [0]}"
     },
  "propertytypes":
     {
@@ -221,7 +214,7 @@
      "event_04":"string"
     },
  "renderorder":"right-down",
- "tiledversion":"1.3.3",
+ "tiledversion":"1.7.2",
  "tileheight":8,
  "tilesets":[
         {

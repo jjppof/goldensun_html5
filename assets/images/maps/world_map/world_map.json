@@ -417,10 +417,10 @@
  "orientation":"orthogonal",
  "properties":
     {
-     "event_01":"{\n\"type\": \"teleport\",\n\"x\": 16,\n\"y\": 47,\n\"target\": \"madra\",\n\"activation_directions\": \"all\",\n\"x_target\": 29,\n\"y_target\": 32,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
-     "event_02":"{\n\"type\": \"teleport\",\n\"x\": 16,\n\"y\": 48,\n\"target\": \"madra\",\n\"activation_directions\": \"all\",\n\"x_target\": 29,\n\"y_target\": 32,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
-     "event_03":"{\n\"type\": \"teleport\",\n\"x\": 15,\n\"y\": 47,\n\"target\": \"madra\",\n\"activation_directions\": \"all\",\n\"x_target\": 29,\n\"y_target\": 32,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
-     "event_04":"{\n\"type\": \"teleport\",\n\"x\": 17,\n\"y\": 47,\n\"target\": \"madra\",\n\"activation_directions\": \"all\",\n\"x_target\": 29,\n\"y_target\": 32,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0\n}",
+     "event_01":"{\n\"type\": \"teleport\",\n\"x\": 16,\n\"y\": 47,\n\"target\": \"madra\",\n\"activation_directions\": \"all\",\n\"x_target\": 29,\n\"y_target\": 32,\n\"dest_collision_layer\": 1,\n\"activation_collision_layers\": 0\n}",
+     "event_02":"{\n\"type\": \"teleport\",\n\"x\": 16,\n\"y\": 48,\n\"target\": \"madra\",\n\"activation_directions\": \"all\",\n\"x_target\": 29,\n\"y_target\": 32,\n\"dest_collision_layer\": 1,\n\"activation_collision_layers\": 0\n}",
+     "event_03":"{\n\"type\": \"teleport\",\n\"x\": 15,\n\"y\": 47,\n\"target\": \"madra\",\n\"activation_directions\": \"all\",\n\"x_target\": 29,\n\"y_target\": 32,\n\"dest_collision_layer\": 1,\n\"activation_collision_layers\": 0\n}",
+     "event_04":"{\n\"type\": \"teleport\",\n\"x\": 17,\n\"y\": 47,\n\"target\": \"madra\",\n\"activation_directions\": \"all\",\n\"x_target\": 29,\n\"y_target\": 32,\n\"dest_collision_layer\": 1,\n\"activation_collision_layers\": 0\n}",
      "event_05":"{\n\"type\": \"teleport\",\n\"x\": 22,\n\"y\": 8,\n\"target\": \"snowland\",\n\"activation_directions\": \"all\",\n\"x_target\": 1,\n\"y_target\": 18,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"right\"\n}",
      "event_06":"{\n\"type\": \"teleport\",\n\"x\": 21,\n\"y\": 8,\n\"target\": \"snowland\",\n\"activation_directions\": \"all\",\n\"x_target\": 1,\n\"y_target\": 18,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"right\"\n}",
      "event_07":"{\n\"type\": \"teleport\",\n\"x\": 23,\n\"y\": 8,\n\"target\": \"snowland\",\n\"activation_directions\": \"all\",\n\"x_target\": 1,\n\"y_target\": 18,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": 0,\n\"destination_direction\": \"right\"\n}",
