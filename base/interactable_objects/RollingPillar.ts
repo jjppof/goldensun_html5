@@ -253,7 +253,7 @@ export class RollablePillar extends InteractableObjects {
             extra_shift_y += this.data.map.tile_height >> 1;
         } else {
             if (this._dest_pos_after_fall !== undefined) {
-                fall_speed_multiplier = (this._dest_pos_after_fall.y - this._falling_pos.y) / 3;
+                fall_speed_multiplier = (this._dest_pos_after_fall.y - this._falling_pos.y) / 3.5;
                 next_contact.x = this._dest_pos_after_fall.x;
                 next_contact.y = this._dest_pos_after_fall.y;
             } else if (next_contact.y > this.tile_y_pos) {

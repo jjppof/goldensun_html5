@@ -945,7 +945,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -1278,6 +1278,14 @@
                          "x":0,
                          "y":-48
                         }],
+                 "properties":
+                    {
+                     "split_polygon":true
+                    },
+                 "propertytypes":
+                    {
+                     "split_polygon":"bool"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -1447,7 +1455,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }],

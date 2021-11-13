@@ -2,10 +2,10 @@
     "hero_key_name": "isaac",
     "initial_action": "idle",
     "initial_direction": "down",
-    "map_key_name": "madra",
+    "map_key_name": "nyungwe",
     "initial_scale_factor": 2,
-    "x_tile_position": 30,
-    "y_tile_position": 13,
+    "x_tile_position": 48,
+    "y_tile_position": 3,
     "collision_layer": 1,
     "coins": 10000,
     "initial_shortcuts": [

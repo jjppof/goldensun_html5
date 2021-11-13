@@ -58,9 +58,12 @@ export class Map {
     private processed_polygons: {[collision_layer: number]: Array<{
         polygon: Array<Array<number>>,
         sensor_active: boolean,
-        location_key: number,
+        readonly sensor_active_original: boolean,
+        location_key?: number,
+        split_polygon: boolean,
         properties: any
     }>};
+    private polygons_processed: boolean;
 
     constructor(
         game,
@@ -113,6 +116,7 @@ export class Map {
         this.encounter_cumulator = 0;
         this.encounter_zones = [];
         this._background_key = background_key;
+        this.polygons_processed = false;;
     }
 
     /** The list of TileEvents of this map. */
@@ -426,7 +430,9 @@ export class Map {
                         _.cloneDeep(polygon_data.polygon)
                     );
                     const shape = this.collision_sprite.body.data.shapes[this.collision_sprite.body.data.shapes.length - 1];
-                    this._shapes[collision_layer][polygon_data.location_key][i] = shape;
+                    if (polygon_data.split_polygon) {
+                        this._shapes[collision_layer][polygon_data.location_key][i] = shape;
+                    }
                     shape.properties = polygon_data.properties;
                     shape.sensor = polygon_data.sensor_active;
                 }
@@ -437,7 +443,7 @@ export class Map {
                 const collision_object = collision_layer_objects[i];
                 let sensor_active = false;
                 if (collision_object.properties) {
-                    sensor_active = collision_object.affected_by_reveal && !collision_object.show_on_reveal;
+                    sensor_active = collision_object.properties.affected_by_reveal && !collision_object.properties.show_on_reveal;
                 }
                 if (collision_object.rectangle) {
                     const shape = this.collision_sprite.body.addRectangle(
@@ -482,6 +488,15 @@ export class Map {
      * size to a tile size.
      */
     private pre_processor_polygons() {
+        if (this.polygons_processed) {
+            for (let collision_layer in this.processed_polygons) {
+                for (let i = 0; i < this.processed_polygons[collision_layer].length; ++i) {
+                    const polygon_data = this.processed_polygons[collision_layer][i];
+                    polygon_data.sensor_active = polygon_data.sensor_active_original;
+                }
+            }
+            return;
+        }
         for (let j = 0; j < this.collision_layers_number; ++j) {
             const collision_layer = j;
             this._shapes[collision_layer] = {};
@@ -491,8 +506,10 @@ export class Map {
             for (let i = 0; i < collision_layer_objects.length; ++i) {
                 const collision_object = collision_layer_objects[i];
                 let sensor_active = false;
+                let split_polygon = false;
                 if (collision_object.properties) {
-                    sensor_active = collision_object.affected_by_reveal && !collision_object.show_on_reveal;
+                    sensor_active = collision_object.properties.affected_by_reveal && !collision_object.properties.show_on_reveal;
+                    split_polygon = collision_object.properties.split_polygon ?? false;
                 }
                 if (collision_object.polygon) {
                     let max_x = -Infinity, max_y = -Infinity;
@@ -507,6 +524,16 @@ export class Map {
                         const new_point = [x, y];
                         return new_point;
                     });
+                    if (!split_polygon) {
+                        this.processed_polygons[collision_layer].push({
+                            polygon: rounded_polygon as number[][],
+                            sensor_active: sensor_active,
+                            sensor_active_original: sensor_active,
+                            split_polygon: split_polygon,
+                            properties: collision_object.properties
+                        });
+                        continue;
+                    }
                     rounded_polygon.push(rounded_polygon[0]);
                     const turf_poly = turf.polygon([rounded_polygon]);
                     min_x = min_x - (min_x % this.tile_width);
@@ -535,7 +562,9 @@ export class Map {
                                     this.processed_polygons[collision_layer].push({
                                         polygon: polygon_section as number[][],
                                         sensor_active: sensor_active,
+                                        sensor_active_original: sensor_active,
                                         location_key: location_key,
+                                        split_polygon: split_polygon,
                                         properties: collision_object.properties
                                     });
                                 }
@@ -545,6 +574,7 @@ export class Map {
                 }
             }
         }
+        this.polygons_processed = true;
     }
 
     /**

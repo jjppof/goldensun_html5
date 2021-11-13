@@ -529,6 +529,14 @@
                          "x":8,
                          "y":0
                         }],
+                 "properties":
+                    {
+                     "split_polygon":true
+                    },
+                 "propertytypes":
+                    {
+                     "split_polygon":"bool"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -903,11 +911,15 @@
                         }, 
                         {
                          "x":8,
-                         "y":96
+                         "y":72
+                        }, 
+                        {
+                         "x":192,
+                         "y":72
                         }, 
                         {
                          "x":304,
-                         "y":96
+                         "y":-40
                         }, 
                         {
                          "x":304,
@@ -929,6 +941,14 @@
                          "x":0,
                          "y":-16
                         }],
+                 "properties":
+                    {
+                     "split_polygon":true
+                    },
+                 "propertytypes":
+                    {
+                     "split_polygon":"bool"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -1195,11 +1215,11 @@
                         }, 
                         {
                          "x":-16,
-                         "y":160
+                         "y":128
                         }, 
                         {
                          "x":144,
-                         "y":160
+                         "y":128
                         }, 
                         {
                          "x":144,
@@ -1257,6 +1277,14 @@
                          "x":0,
                          "y":32
                         }],
+                 "properties":
+                    {
+                     "split_polygon":true
+                    },
+                 "propertytypes":
+                    {
+                     "split_polygon":"bool"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
