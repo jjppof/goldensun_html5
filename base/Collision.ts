@@ -182,22 +182,14 @@ export class Collision {
      * @param new_collision_layer_index Target collision layer.
      */
     change_map_body(new_collision_layer_index: number) {
-        if (this.data.map.collision_layer === new_collision_layer_index) return;
+        if (this.data.map.collision_layer === new_collision_layer_index) {
+            return;
+        }
         this.data.map.config_body(new_collision_layer_index);
         this.data.hero.set_collision_layer(new_collision_layer_index);
         this.config_collision_groups(this.data.map);
         this.config_collisions(new_collision_layer_index);
         this.data.map.reset_layers();
-    }
-
-    /**
-     * Clears the collision bodies created dynamically
-     * @param enable_map_collision if true, enables map collision.
-     */
-    clear_dynamic_events_bodies(enable_map_collision: boolean = true) {
-        if (enable_map_collision) {
-            this.enable_map_collision();
-        }
     }
 
     /**

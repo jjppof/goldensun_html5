@@ -26,7 +26,6 @@ export class ClimbEvent extends TileEvent {
         y: number,
         activation_directions,
         activation_collision_layers,
-        dynamic,
         active,
         active_storage_key,
         affected_by_reveal,
@@ -44,7 +43,6 @@ export class ClimbEvent extends TileEvent {
             y,
             activation_directions,
             activation_collision_layers,
-            dynamic,
             active,
             active_storage_key,
             origin_interactable_object,
@@ -114,7 +112,7 @@ export class ClimbEvent extends TileEvent {
                     this.data.hero.climbing = true;
                     this.data.hero.change_action(base_actions.CLIMB);
                     this.data.hero.idle_climbing = true;
-                    if (this.dynamic) {
+                    if (this.origin_interactable_object) {
                         this.create_climb_collision_bodies();
                     }
                     this.game.physics.p2.resume();
@@ -125,7 +123,7 @@ export class ClimbEvent extends TileEvent {
             const out_time = Phaser.Timer.QUARTER / 3;
             const x_tween = this.data.map.tile_width * (this.x + 0.5);
             const y_tween = this.data.hero.sprite.y - 15;
-            if (this.dynamic) {
+            if (this.origin_interactable_object) {
                 this.create_climb_collision_bodies();
             }
             this.game.add
@@ -179,7 +177,7 @@ export class ClimbEvent extends TileEvent {
                         this.data.hero.sprite.anchor.y += 0.1;
                         this.data.hero.shadow.y = this.data.hero.sprite.y;
                         this.data.hero.play(base_actions.IDLE, reverse_directions[directions.up]);
-                        if (this.dynamic) {
+                        if (this.origin_interactable_object) {
                             this.remove_climb_collision_bodies(false);
                         }
                         const timer_event = this.game.time.events.add(
@@ -229,7 +227,7 @@ export class ClimbEvent extends TileEvent {
                     );
                     timer_event.timer.start();
                 });
-            if (this.dynamic) {
+            if (this.origin_interactable_object) {
                 this.remove_climb_collision_bodies();
             }
             this.data.hero.shadow.y = this.data.hero.sprite.y + 15;
@@ -255,7 +253,6 @@ export class ClimbEvent extends TileEvent {
                 y: this.origin_interactable_object.tile_y_pos + tile_shift.y,
             };
         });
-        this.data.collision.clear_dynamic_events_bodies();
         this.data.hero.sprite.body.removeCollisionGroup(this.data.collision.map_collision_group, true);
         this.data.map.collision_sprite.body.removeCollisionGroup(this.data.collision.hero_collision_group, true);
         for (let collide_index in this.data.collision.interactable_objs_collision_groups) {
@@ -267,7 +264,7 @@ export class ClimbEvent extends TileEvent {
         for (let i = 0; i < positions.length; ++i) {
             const x_pos = (positions[i].x + 0.5) * this.data.map.tile_width;
             const y_pos = (positions[i].y + 0.5) * this.data.map.tile_height;
-            let body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
+            const body = this.game.physics.p2.createBody(x_pos, y_pos, 0, true);
             body.clearShapes();
             body.setRectangle(this.data.map.tile_width, this.data.map.tile_height, 0, 0);
             body.setCollisionGroup(this.data.collision.dynamic_events_collision_group);

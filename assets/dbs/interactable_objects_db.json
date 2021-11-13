@@ -27,8 +27,7 @@
             "type": "jump",
             "active": true,
             "x_shift": 0,
-            "y_shift": -2,
-            "dynamic": true
+            "y_shift": -2
         }],
         "initial_animation": "idle",
         "actions": {
@@ -55,7 +54,6 @@
         "events": [{
             "type": "climb",
             "active": true,
-            "dynamic": true,
             "collision_tiles_relative_pos": [
                 {"x": -1, "y": 0},
                 {"x": -1, "y": -1},
@@ -69,8 +67,7 @@
             "type": "jump",
             "active": true,
             "x_shift": 0,
-            "y_shift": -2,
-            "dynamic": true
+            "y_shift": -2
         }],
         "initial_animation": "idle",
         "actions": {
@@ -97,14 +94,12 @@
         "allow_jumping_through_it": true,
         "events": [{
             "type": "jump_around",
-            "active": true,
-            "dynamic": false
+            "active": true
         },{
             "type": "jump",
             "active": false,
             "x_shift": 0,
-            "y_shift": -2,
-            "dynamic": true
+            "y_shift": -2
         }],
         "initial_animation": "pool",
         "actions": {
@@ -132,7 +127,6 @@
         "events": [{
             "type": "climb",
             "active": false,
-            "dynamic": false,
             "collision_tiles_relative_pos": [],
             "top_event_y_shift": -4
         }],
@@ -166,8 +160,7 @@
             "type": "jump",
             "active": true,
             "x_shift": 0,
-            "y_shift": -2,
-            "dynamic": true
+            "y_shift": -2
         }],
         "initial_animation": "up",
         "actions": {
@@ -198,8 +191,7 @@
             "type": "jump",
             "active": true,
             "x_shift": 0,
-            "y_shift": -2,
-            "dynamic": true
+            "y_shift": -2
         }],
         "initial_animation": "up",
         "actions": {
@@ -234,8 +226,7 @@
         },
         "events": [{
             "type": "rope",
-            "active": true,
-            "dynamic": true
+            "active": true
         }],
         "initial_animation": "dock_empty",
         "actions": {
@@ -259,20 +250,17 @@
             "type": "jump",
             "active": false,
             "x_shift": -1,
-            "y_shift": 0,
-            "dynamic": false
+            "y_shift": 0
         },{
             "type": "jump",
             "active": false,
             "x_shift": 0,
-            "y_shift": 0,
-            "dynamic": false
+            "y_shift": 0
         },{
             "type": "jump",
             "active": false,
             "x_shift": 1,
-            "y_shift": 0,
-            "dynamic": false
+            "y_shift": 0
         }],
         "spritesheet": {
             "image": "assets/images/interactable_objects/trunk_tree_horizontal.png",
@@ -301,26 +289,22 @@
             "type": "jump",
             "active": false,
             "x_shift": 0,
-            "y_shift": -1,
-            "dynamic": false
+            "y_shift": -1
         },{
             "type": "jump",
             "active": false,
             "x_shift": 0,
-            "y_shift": 0,
-            "dynamic": false
+            "y_shift": 0
         },{
             "type": "jump",
             "active": false,
             "x_shift": 0,
-            "y_shift": 1,
-            "dynamic": false
+            "y_shift": 1
         },{
             "type": "jump",
             "active": false,
             "x_shift": 0,
-            "y_shift": 2,
-            "dynamic": false
+            "y_shift": 2
         }],
         "spritesheet": {
             "image": "assets/images/interactable_objects/trunk_tree_vertical.png",

@@ -48,8 +48,7 @@ export abstract class TileEvent {
     protected _id: number;
     protected _key_name: string;
     protected _activation_collision_layers: number[];
-    protected _activation_directions: number[];
-    protected _dynamic: boolean;
+    protected _activation_directions: number[]
     protected _active: boolean[];
     protected _affected_by_reveal: boolean[];
     protected _origin_interactable_object: InteractableObjects;
@@ -68,7 +67,6 @@ export abstract class TileEvent {
         y,
         activation_directions,
         activation_collision_layers,
-        dynamic,
         active,
         active_storage_key,
         origin_interactable_object,
@@ -86,7 +84,6 @@ export abstract class TileEvent {
             ? activation_collision_layers
             : [activation_collision_layers ?? 0];
         this._activation_directions = TileEvent.format_activation_directions(activation_directions);
-        this._dynamic = dynamic;
         this._active = Array.isArray(active)
             ? active
             : new Array(this._activation_directions.length).fill(active ?? true);
@@ -132,9 +129,6 @@ export abstract class TileEvent {
     /** The list of collision layers that this event can be fired. */
     get activation_collision_layers() {
         return this._activation_collision_layers;
-    }
-    get dynamic() {
-        return this._dynamic;
     }
     /**
      * This array has the same size of activation directions.

@@ -81,37 +81,19 @@ export class Pushable extends InteractableObjects {
             char.trying_to_push = true;
             if (char.push_timer === null) {
                 char.set_trying_to_push_direction(char.current_direction);
-                const events_in_pos = this.data.map.events[LocationKey.get_key(this.tile_x_pos, this.tile_y_pos)];
-                let has_stair = false;
-                if (events_in_pos) {
-                    events_in_pos.forEach(event => {
-                        if (
-                            event.type === event_types.CLIMB &&
-                            (event as ClimbEvent).is_set &&
-                            event.activation_directions.includes(char.trying_to_push_direction) &&
-                            event.activation_collision_layers.includes(this.data.map.collision_layer) &&
-                            !event.dynamic
-                        ) {
-                            has_stair = true;
-                            return;
-                        }
+                const item_position = this.get_current_position(this.data.map);
+                const front_pos = get_front_position(
+                    item_position.x,
+                    item_position.y,
+                    char.trying_to_push_direction,
+                    false
+                );
+                if (this.position_allowed(front_pos.x, front_pos.y)) {
+                    char.set_push_timer(() => {
+                        this.normal_push(char);
+                        char.trying_to_push = false;
+                        char.unset_push_timer();
                     });
-                }
-                if (!has_stair) {
-                    const item_position = this.get_current_position(this.data.map);
-                    const front_pos = get_front_position(
-                        item_position.x,
-                        item_position.y,
-                        char.trying_to_push_direction,
-                        false
-                    );
-                    if (this.position_allowed(front_pos.x, front_pos.y)) {
-                        char.set_push_timer(() => {
-                            this.normal_push(char);
-                            char.trying_to_push = false;
-                            char.unset_push_timer();
-                        });
-                    }
                 }
             }
         }
