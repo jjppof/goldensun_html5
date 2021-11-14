@@ -30,7 +30,7 @@ export class Map {
     private physics_jsons_url: string;
     private _sprite: Phaser.Tilemap;
     private _events: {[location_key: number]: TileEvent[]};
-    private _shapes: {[collision_index: number]: {[location_key: number]: p2.Shape[]}};
+    private _shapes: {[collision_index: number]: {[location_key: number]: p2.Convex[]}};
     private _npcs: NPC[];
     private _npcs_label_map: {[label: string]: NPC};
     private _interactable_objects: InteractableObjects[];
@@ -55,14 +55,16 @@ export class Map {
         parties: string[];
         rectangle: Phaser.Rectangle;
     }[];
-    private processed_polygons: {[collision_layer: number]: Array<{
-        polygon: Array<Array<number>>,
-        sensor_active: boolean,
-        readonly sensor_active_original: boolean,
-        location_key?: number,
-        split_polygon: boolean,
-        properties: any
-    }>};
+    private processed_polygons: {
+        [collision_layer: number]: Array<{
+            polygon: Array<Array<number>>;
+            sensor_active: boolean;
+            readonly sensor_active_original: boolean;
+            location_key?: number;
+            split_polygon: boolean;
+            properties: any;
+        }>;
+    };
     private polygons_processed: boolean;
 
     constructor(
@@ -116,7 +118,7 @@ export class Map {
         this.encounter_cumulator = 0;
         this.encounter_zones = [];
         this._background_key = background_key;
-        this.polygons_processed = false;;
+        this.polygons_processed = false;
     }
 
     /** The list of TileEvents of this map. */
@@ -429,7 +431,9 @@ export class Map {
                         },
                         _.cloneDeep(polygon_data.polygon)
                     );
-                    const shape = this.collision_sprite.body.data.shapes[this.collision_sprite.body.data.shapes.length - 1];
+                    const shape: p2.Convex = this.collision_sprite.body.data.shapes[
+                        this.collision_sprite.body.data.shapes.length - 1
+                    ];
                     if (polygon_data.split_polygon) {
                         this._shapes[collision_layer][polygon_data.location_key][i] = shape;
                     }
@@ -443,7 +447,8 @@ export class Map {
                 const collision_object = collision_layer_objects[i];
                 let sensor_active = false;
                 if (collision_object.properties) {
-                    sensor_active = collision_object.properties.affected_by_reveal && !collision_object.properties.show_on_reveal;
+                    sensor_active =
+                        collision_object.properties.affected_by_reveal && !collision_object.properties.show_on_reveal;
                 }
                 if (collision_object.rectangle) {
                     const shape = this.collision_sprite.body.addRectangle(
@@ -508,12 +513,15 @@ export class Map {
                 let sensor_active = false;
                 let split_polygon = false;
                 if (collision_object.properties) {
-                    sensor_active = collision_object.properties.affected_by_reveal && !collision_object.properties.show_on_reveal;
+                    sensor_active =
+                        collision_object.properties.affected_by_reveal && !collision_object.properties.show_on_reveal;
                     split_polygon = collision_object.properties.split_polygon ?? false;
                 }
                 if (collision_object.polygon) {
-                    let max_x = -Infinity, max_y = -Infinity;
-                    let min_x = Infinity, min_y = Infinity;
+                    let max_x = -Infinity,
+                        max_y = -Infinity;
+                    let min_x = Infinity,
+                        min_y = Infinity;
                     const rounded_polygon = collision_object.polygon.map((point: number[]) => {
                         const x = Math.round(collision_object.x + point[0]);
                         const y = Math.round(collision_object.y + point[1]);
@@ -530,33 +538,37 @@ export class Map {
                             sensor_active: sensor_active,
                             sensor_active_original: sensor_active,
                             split_polygon: split_polygon,
-                            properties: collision_object.properties
+                            properties: collision_object.properties,
                         });
                         continue;
                     }
                     rounded_polygon.push(rounded_polygon[0]);
                     const turf_poly = turf.polygon([rounded_polygon]);
                     min_x = min_x - (min_x % this.tile_width);
-                    max_x = (max_x + this.tile_width) - (max_x % this.tile_width);
+                    max_x = max_x + this.tile_width - (max_x % this.tile_width);
                     min_y = min_y - (min_y % this.tile_height);
-                    max_y = (max_y + this.tile_height) - (max_y % this.tile_height);
+                    max_y = max_y + this.tile_height - (max_y % this.tile_height);
                     for (let x = min_x; x < max_x; x += this.tile_width) {
                         for (let y = min_y; y < max_y; y += this.tile_height) {
                             const this_max_x = x + this.tile_width;
                             const this_max_y = y + this.tile_height;
-                            const turf_tile_poly = turf.polygon([[
-                                [x, y],
-                                [this_max_x, y],
-                                [this_max_x, this_max_y],
-                                [x, this_max_y],
-                                [x, y]
-                            ]]);
+                            const turf_tile_poly = turf.polygon([
+                                [
+                                    [x, y],
+                                    [this_max_x, y],
+                                    [this_max_x, this_max_y],
+                                    [x, this_max_y],
+                                    [x, y],
+                                ],
+                            ]);
                             const intersection_poly = turf.intersect(turf_poly, turf_tile_poly);
                             if (intersection_poly) {
                                 const tile_x = get_tile_position(x, this.tile_width);
                                 const tile_y = get_tile_position(y, this.tile_height);
                                 const location_key = LocationKey.get_key(tile_x, tile_y);
-                                this._shapes[collision_layer][location_key] = new Array(intersection_poly.geometry.coordinates.length);
+                                this._shapes[collision_layer][location_key] = new Array(
+                                    intersection_poly.geometry.coordinates.length
+                                );
                                 for (let k = 0; k < intersection_poly.geometry.coordinates.length; ++k) {
                                     const polygon_section = intersection_poly.geometry.coordinates[k];
                                     this.processed_polygons[collision_layer].push({
@@ -565,7 +577,7 @@ export class Map {
                                         sensor_active_original: sensor_active,
                                         location_key: location_key,
                                         split_polygon: split_polygon,
-                                        properties: collision_object.properties
+                                        properties: collision_object.properties,
                                     });
                                 }
                             }
@@ -745,8 +757,10 @@ export class Map {
         } else if (interactable_object_db.rollable) {
             io_class = RollablePillar;
         }
-        const allow_jumping_over_it = property_info.allow_jumping_over_it ?? interactable_object_db.allow_jumping_over_it;
-        const allow_jumping_through_it = property_info.allow_jumping_through_it ?? interactable_object_db.allow_jumping_through_it;
+        const allow_jumping_over_it =
+            property_info.allow_jumping_over_it ?? interactable_object_db.allow_jumping_over_it;
+        const allow_jumping_through_it =
+            property_info.allow_jumping_through_it ?? interactable_object_db.allow_jumping_through_it;
         const interactable_object = new io_class(
             this.game,
             this.data,
@@ -769,7 +783,7 @@ export class Map {
             property_info.toggle_enable_events,
             property_info.label,
             allow_jumping_over_it,
-            allow_jumping_through_it,
+            allow_jumping_through_it
         );
         if (interactable_object.is_rope_dock) {
             (interactable_object as RopeDock).intialize_dock_info(

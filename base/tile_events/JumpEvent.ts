@@ -1,9 +1,5 @@
 import {event_types, LocationKey, TileEvent} from "./TileEvent";
-import {
-    get_opposite_direction,
-    directions,
-    get_front_position,
-} from "../utils";
+import {get_opposite_direction, directions, get_front_position} from "../utils";
 
 export class JumpEvent extends TileEvent {
     private static readonly JUMP_OFFSET = 30;
@@ -48,7 +44,8 @@ export class JumpEvent extends TileEvent {
             return;
         }
         const next_position = get_front_position(side_position.x, side_position.y, jump_direction);
-        const jump_offset = ([directions.left, directions.up].includes(jump_direction) ? -1 : 1) * JumpEvent.JUMP_OFFSET;
+        const jump_offset =
+            ([directions.left, directions.up].includes(jump_direction) ? -1 : 1) * JumpEvent.JUMP_OFFSET;
 
         const side_pos_key = LocationKey.get_key(side_position.x, side_position.y);
         if (side_pos_key in this.data.map.shapes[this.data.map.collision_layer]) {

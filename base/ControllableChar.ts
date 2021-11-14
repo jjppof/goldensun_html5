@@ -339,6 +339,11 @@ export abstract class ControllableChar {
         return this._current_animation;
     }
 
+    /** This char body if available. */
+    get body() {
+        return this.sprite?.body ? this.sprite.body : null;
+    }
+
     /**
      * Returns whether this char is in action;
      * @param allow_climbing if true, climbing won't be considered.

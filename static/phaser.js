@@ -2473,7 +2473,8 @@ Narrowphase.prototype.circleConvex = function (
         vec2.rotate90cw(worldNormal, worldEdgeUnit);
 
         // Get point on circle, closest to the polygon
-        vec2.scale(candidate,worldNormal,-circleShape.radius);
+        const extra_radius = circleShape.extra_radius ? circleShape.extra_radius : 0;
+        vec2.scale(candidate,worldNormal,-(circleShape.radius + extra_radius));
         add(candidate,candidate,circleOffset);
 
         if(pointInConvex(candidate,convexShape,convexOffset,convexAngle))

@@ -496,14 +496,7 @@ export class InteractableObjects {
                     this.set_stair_event(i, event_info, x_pos, y_pos, active_event, target_layer, map);
                     break;
                 case interactable_object_event_types.ROPE:
-                    this.set_rope_event(
-                        event_info,
-                        x_pos,
-                        y_pos,
-                        active_event,
-                        target_layer,
-                        map
-                    );
+                    this.set_rope_event(event_info, x_pos, y_pos, active_event, target_layer, map);
                     break;
             }
         }
@@ -629,7 +622,7 @@ export class InteractableObjects {
                 this,
                 event_info.walk_over_rope,
                 event_info.dock_exit_collision_layer ?? map.collision_layer,
-                event_info.rope_collision_layer,
+                event_info.rope_collision_layer
             );
             map.events[this_event_location_key].push(new_event);
             this.insert_event(new_event.id);

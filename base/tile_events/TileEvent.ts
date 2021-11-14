@@ -48,7 +48,7 @@ export abstract class TileEvent {
     protected _id: number;
     protected _key_name: string;
     protected _activation_collision_layers: number[];
-    protected _activation_directions: number[]
+    protected _activation_directions: number[];
     protected _active: boolean[];
     protected _affected_by_reveal: boolean[];
     protected _origin_interactable_object: InteractableObjects;
@@ -169,7 +169,7 @@ export abstract class TileEvent {
      * @param direction the direction to test if it's active.
      * @returns The resulting direction that actives this event. Returns -1 if there's no active direction.
      */
-    is_active(direction?: directions) : directions | -1 {
+    is_active(direction?: directions): directions | -1 {
         if (direction === undefined) {
             return _.findIndex(this.active, v => v) ?? -1;
         } else {

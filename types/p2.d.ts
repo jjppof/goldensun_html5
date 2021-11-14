@@ -623,6 +623,7 @@ declare module p2 {
         centerOfMass: number[];
         triangles: number[];
         boundingRadius: number;
+        position: Float32Array;
 
         projectOntoLocalAxis(localAxis: number[], result: number[]): void;
         projectOntoWorldAxis(localAxis: number[], shapeOffset: number[], shapeAngle: number, result: number[]): void;
@@ -685,6 +686,7 @@ declare module p2 {
         material: Material;
         area: number;
         sensor: boolean;
+        properties: any;
 
         computeMomentOfInertia(mass: number): number;
         updateBoundingRadius(): number;

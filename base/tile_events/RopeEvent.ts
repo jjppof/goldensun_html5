@@ -3,7 +3,7 @@ import {RopeDock} from "../interactable_objects/RopeDock";
 import {get_front_position} from "../utils";
 import {event_types, TileEvent} from "./TileEvent";
 import {degree180, degree270, degree90} from "../magic_numbers";
-import { InteractableObjects } from "../interactable_objects/InteractableObjects";
+import {InteractableObjects} from "../interactable_objects/InteractableObjects";
 
 /**
  * An event that deals with walking or climbing (depending on the rope angle)
@@ -56,7 +56,7 @@ export class RopeEvent extends TileEvent {
         this._rope_collision_layer = rope_collision_layer;
     }
 
-    get origin_interactable_object() : RopeDock {
+    get origin_interactable_object(): RopeDock {
         return this._origin_interactable_object;
     }
 

@@ -288,5 +288,6 @@ export class Hero extends ControllableChar {
         this.sprite.body.inertia = 0;
         this.sprite.body.setZeroRotation();
         this.sprite.body.fixedRotation = true;
+        this.sprite.body.data.shapes[0].extra_radius = 0.05;
     }
 }
