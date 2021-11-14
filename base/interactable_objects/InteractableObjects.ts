@@ -425,11 +425,8 @@ export class InteractableObjects {
             }
             this.set_anchor();
             this.set_scale();
-            //is this shift property necessary?
-            const shift_x = interactable_object_db.shift_x ?? 0;
-            const shift_y = interactable_object_db.shift_y ?? 0;
-            this.sprite.x = get_centered_pos_in_px(this.tile_x_pos, map.tile_width) + shift_x;
-            this.sprite.y = get_centered_pos_in_px(this.tile_y_pos, map.tile_height) + shift_y;
+            this.sprite.x = get_centered_pos_in_px(this.tile_x_pos, map.tile_width);
+            this.sprite.y = get_centered_pos_in_px(this.tile_y_pos, map.tile_height);
             this.sprite_info.setAnimation(this.sprite, this.key_name);
             const initial_animation = interactable_object_db.initial_animation;
             const anim_key = this.sprite_info.getAnimationKey(this.key_name, initial_animation);

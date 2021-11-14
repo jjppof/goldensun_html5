@@ -90,8 +90,11 @@ export class Hero extends ControllableChar {
 
         if (!this.ice_sliding_active) {
             let stick_dashing = false;
-            if (!arrow_inputs) stick_dashing = false;
-            else if (this.data.gamepad.is_down(Button.STICK_DASHING)) stick_dashing = true;
+            if (!arrow_inputs) {
+                stick_dashing = false;
+            } else if (this.data.gamepad.is_down(Button.STICK_DASHING)) {
+                stick_dashing = true;
+            }
             this.dashing = stick_dashing || this.data.gamepad.is_down(Button.B);
         }
     }
