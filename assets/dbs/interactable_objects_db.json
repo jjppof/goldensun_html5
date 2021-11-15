@@ -54,6 +54,7 @@
         "events": [{
             "type": "climb",
             "active": true,
+            "dynamic": true,
             "collision_tiles_relative_pos": [
                 {"x": -1, "y": 0},
                 {"x": -1, "y": -1},

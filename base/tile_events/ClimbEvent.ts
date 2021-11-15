@@ -1,6 +1,5 @@
 import {base_actions, directions, reverse_directions} from "../utils";
 import {TileEvent, event_types} from "./TileEvent";
-import {JumpEvent} from "./JumpEvent";
 import * as numbers from "../magic_numbers";
 import {InteractableObjects, interactable_object_event_types} from "../interactable_objects/InteractableObjects";
 import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
@@ -18,6 +17,7 @@ export class ClimbEvent extends TileEvent {
     private _is_set: boolean;
     private climbing_only: boolean;
     private current_activation_direction: directions;
+    private dynamic: boolean;
 
     constructor(
         game: Phaser.Game,
@@ -33,7 +33,8 @@ export class ClimbEvent extends TileEvent {
         change_to_collision_layer,
         is_set?,
         origin_interactable_object?: InteractableObjects,
-        climbing_only?
+        climbing_only?,
+        dynamic?
     ) {
         super(
             game,
@@ -52,6 +53,7 @@ export class ClimbEvent extends TileEvent {
         this.change_to_collision_layer = change_to_collision_layer ?? null;
         this._is_set = is_set ?? true;
         this.climbing_only = climbing_only ?? false;
+        this.dynamic = dynamic ?? false;
     }
 
     get is_set() {
@@ -112,7 +114,7 @@ export class ClimbEvent extends TileEvent {
                     this.data.hero.climbing = true;
                     this.data.hero.change_action(base_actions.CLIMB);
                     this.data.hero.idle_climbing = true;
-                    if (this.origin_interactable_object) {
+                    if (this.origin_interactable_object && this.dynamic) {
                         this.create_climb_collision_bodies();
                     }
                     this.game.physics.p2.resume();
@@ -123,7 +125,7 @@ export class ClimbEvent extends TileEvent {
             const out_time = Phaser.Timer.QUARTER / 3;
             const x_tween = this.data.map.tile_width * (this.x + 0.5);
             const y_tween = this.data.hero.sprite.y - 15;
-            if (this.origin_interactable_object) {
+            if (this.origin_interactable_object && this.dynamic) {
                 this.create_climb_collision_bodies();
             }
             this.game.add
@@ -177,7 +179,7 @@ export class ClimbEvent extends TileEvent {
                         this.data.hero.sprite.anchor.y += 0.1;
                         this.data.hero.shadow.y = this.data.hero.sprite.y;
                         this.data.hero.play(base_actions.IDLE, reverse_directions[directions.up]);
-                        if (this.origin_interactable_object) {
+                        if (this.origin_interactable_object && this.dynamic) {
                             this.remove_climb_collision_bodies(false);
                         }
                         const timer_event = this.game.time.events.add(
@@ -227,7 +229,7 @@ export class ClimbEvent extends TileEvent {
                     );
                     timer_event.timer.start();
                 });
-            if (this.origin_interactable_object) {
+            if (this.origin_interactable_object && this.dynamic) {
                 this.remove_climb_collision_bodies();
             }
             this.data.hero.shadow.y = this.data.hero.sprite.y + 15;

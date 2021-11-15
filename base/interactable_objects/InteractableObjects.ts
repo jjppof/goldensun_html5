@@ -761,7 +761,8 @@ export class InteractableObjects {
                 event_data.change_to_collision_layer,
                 event_info.is_set,
                 this,
-                event_data.climbing_only
+                event_data.climbing_only,
+                event_info.dynamic
             );
             map.events[this_location_key].push(new_event);
             this.insert_event(new_event.id);

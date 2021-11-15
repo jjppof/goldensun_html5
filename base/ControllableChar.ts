@@ -341,7 +341,7 @@ export abstract class ControllableChar {
 
     /** This char body if available. */
     get body() {
-        return this.sprite?.body ? this.sprite.body : null;
+        return this.sprite?.body ?? null;
     }
 
     /**
