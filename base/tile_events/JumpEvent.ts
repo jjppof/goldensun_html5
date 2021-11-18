@@ -47,22 +47,14 @@ export class JumpEvent extends TileEvent {
         const jump_offset =
             ([directions.left, directions.up].includes(jump_direction) ? -1 : 1) * JumpEvent.JUMP_OFFSET;
 
-        const side_pos_key = LocationKey.get_key(side_position.x, side_position.y);
-        if (side_pos_key in this.data.map.shapes[this.data.map.collision_layer]) {
-            const shapes = this.data.map.shapes[this.data.map.collision_layer][side_pos_key];
-            //cancels jumping if there's no collision in the next side position
-            if (shapes.every(s => s.sensor)) {
-                return;
-            }
+        //cancels jumping if there's no collision in the next side position
+        if (!this.data.map.is_tile_blocked(side_position.x, side_position.y)) {
+            return;
         }
 
-        const next_pos_key = LocationKey.get_key(next_position.x, next_position.y);
-        if (next_pos_key in this.data.map.shapes[this.data.map.collision_layer]) {
-            const shapes = this.data.map.shapes[this.data.map.collision_layer][next_pos_key];
-            //cancels jumping if there's collision in the jump target position
-            if (shapes.some(s => !s.sensor)) {
-                return;
-            }
+        //cancels jumping if there's collision in the jump target position
+        if (this.data.map.is_tile_blocked(next_position.x, next_position.y)) {
+            return;
         }
 
         for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
@@ -103,6 +95,7 @@ export class JumpEvent extends TileEvent {
         }
 
         //jump only happens if the jump target position also has an active jump event in the opposite direction
+        const next_pos_key = LocationKey.get_key(next_position.x, next_position.y);
         let active_jump_event_found = false;
         if (next_pos_key in this.data.map.events) {
             for (let i = 0; i < this.data.map.events[next_pos_key].length; ++i) {

@@ -5,14 +5,14 @@ import * as numbers from "./magic_numbers";
 import {event_types, GameEvent} from "./game_events/GameEvent";
 import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
-import * as turf from "@turf/turf";
 import {ControllableChar} from "./ControllableChar";
-import {base_actions, get_tile_position, parse_blend_mode} from "./utils";
+import {base_actions, parse_blend_mode} from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
 import {Pushable} from "./interactable_objects/Pushable";
 import {RopeDock} from "./interactable_objects/RopeDock";
 import {RollablePillar} from "./interactable_objects/RollingPillar";
+import {Collision} from "./Collision";
 
 /** The class reponsible for the maps of the engine. */
 export class Map {
@@ -31,6 +31,7 @@ export class Map {
     private _sprite: Phaser.Tilemap;
     private _events: {[location_key: number]: TileEvent[]};
     private _shapes: {[collision_index: number]: {[location_key: number]: p2.Convex[]}};
+    private _big_shapes_tiles: {[collision_index: number]: Set<number>};
     private _npcs: NPC[];
     private _npcs_label_map: {[label: string]: NPC};
     private _interactable_objects: InteractableObjects[];
@@ -96,6 +97,7 @@ export class Map {
         this._sprite = null;
         this._events = {};
         this._shapes = {};
+        this._big_shapes_tiles = {};
         this.processed_polygons = {};
         this._npcs = [];
         this._npcs_label_map = {};
@@ -124,10 +126,6 @@ export class Map {
     /** The list of TileEvents of this map. */
     get events() {
         return this._events;
-    }
-    /** The list of Shapes of this map. */
-    get shapes() {
-        return this._shapes;
     }
     /** The list of NPCs of this map. */
     get npcs() {
@@ -200,6 +198,10 @@ export class Map {
     /** The tile height of this map. */
     get tile_height() {
         return this.sprite.properties?.real_tile_height ?? this.sprite.tileHeight;
+    }
+    /** Gets the map collision body for current collision layer. */
+    get body(): Phaser.Physics.P2.Body {
+        return this.collision_sprite.body;
     }
 
     /**
@@ -451,17 +453,17 @@ export class Map {
                         collision_object.properties.affected_by_reveal && !collision_object.properties.show_on_reveal;
                 }
                 if (collision_object.rectangle) {
-                    const shape = this.collision_sprite.body.addRectangle(
-                        Math.round(collision_object.width),
-                        Math.round(collision_object.height),
-                        Math.round(collision_object.x) + (Math.round(collision_object.width) >> 1),
-                        Math.round(collision_object.y) + (Math.round(collision_object.height) >> 1)
-                    );
+                    const width = Math.round(collision_object.width);
+                    const height = Math.round(collision_object.height);
+                    const x = Math.round(collision_object.x);
+                    const y = Math.round(collision_object.y);
+                    const shape = this.body.addRectangle(width, height, x + (width >> 1), y + (height >> 1));
                     if (collision_object.properties) {
                         shape.properties = collision_object.properties;
                         shape.sensor = sensor_active;
                     }
                 } else if (collision_object.ellipse) {
+                    //even though this is an ellipse, gshtml5 only supports circles
                     const shape = this.collision_sprite.body.addCircle(
                         collision_object.width >> 1,
                         Math.round(collision_object.x) + (Math.round(collision_object.width) >> 1),
@@ -474,7 +476,8 @@ export class Map {
                 }
             }
         } else {
-            //[DEPRECATED] load map physics data from json files
+            //[DEPRECATED] load map physics data from json files.
+            //will remove this after migrating all maps to new system
             this.collision_sprite.body.loadPolygon(
                 this.physics_names[collision_layer],
                 this.physics_names[collision_layer]
@@ -505,6 +508,7 @@ export class Map {
         for (let j = 0; j < this.collision_layers_number; ++j) {
             const collision_layer = j;
             this._shapes[collision_layer] = {};
+            this._big_shapes_tiles[collision_layer] = new Set<number>();
             const collision_layer_objects = this.sprite.objects[collision_layer]?.objectsData ?? [];
             this.processed_polygons[collision_layer] = [];
             collision_layer_objects.processed_polygons = [];
@@ -517,12 +521,13 @@ export class Map {
                         collision_object.properties.affected_by_reveal && !collision_object.properties.show_on_reveal;
                     split_polygon = collision_object.properties.split_polygon ?? false;
                 }
+                let max_x = -Infinity,
+                    max_y = -Infinity;
+                let min_x = Infinity,
+                    min_y = Infinity;
+                let parsed_polygon;
                 if (collision_object.polygon) {
-                    let max_x = -Infinity,
-                        max_y = -Infinity;
-                    let min_x = Infinity,
-                        min_y = Infinity;
-                    const rounded_polygon = collision_object.polygon.map((point: number[]) => {
+                    parsed_polygon = collision_object.polygon.map((point: number[]) => {
                         const x = Math.round(collision_object.x + point[0]);
                         const y = Math.round(collision_object.y + point[1]);
                         max_x = Math.max(max_x, x);
@@ -534,52 +539,57 @@ export class Map {
                     });
                     if (!split_polygon) {
                         this.processed_polygons[collision_layer].push({
-                            polygon: rounded_polygon as number[][],
+                            polygon: parsed_polygon as number[][],
                             sensor_active: sensor_active,
                             sensor_active_original: sensor_active,
                             split_polygon: split_polygon,
                             properties: collision_object.properties,
                         });
-                        continue;
                     }
-                    rounded_polygon.push(rounded_polygon[0]);
-                    const turf_poly = turf.polygon([rounded_polygon]);
-                    min_x = min_x - (min_x % this.tile_width);
-                    max_x = max_x + this.tile_width - (max_x % this.tile_width);
-                    min_y = min_y - (min_y % this.tile_height);
-                    max_y = max_y + this.tile_height - (max_y % this.tile_height);
-                    for (let x = min_x; x < max_x; x += this.tile_width) {
-                        for (let y = min_y; y < max_y; y += this.tile_height) {
-                            const this_max_x = x + this.tile_width;
-                            const this_max_y = y + this.tile_height;
-                            const turf_tile_poly = turf.polygon([
-                                [
-                                    [x, y],
-                                    [this_max_x, y],
-                                    [this_max_x, this_max_y],
-                                    [x, this_max_y],
-                                    [x, y],
-                                ],
-                            ]);
-                            const intersection_poly = turf.intersect(turf_poly, turf_tile_poly);
-                            if (intersection_poly) {
-                                const tile_x = get_tile_position(x, this.tile_width);
-                                const tile_y = get_tile_position(y, this.tile_height);
-                                const location_key = LocationKey.get_key(tile_x, tile_y);
-                                this._shapes[collision_layer][location_key] = new Array(
-                                    intersection_poly.geometry.coordinates.length
-                                );
-                                for (let k = 0; k < intersection_poly.geometry.coordinates.length; ++k) {
-                                    const polygon_section = intersection_poly.geometry.coordinates[k];
-                                    this.processed_polygons[collision_layer].push({
-                                        polygon: polygon_section as number[][],
-                                        sensor_active: sensor_active,
-                                        sensor_active_original: sensor_active,
-                                        location_key: location_key,
-                                        split_polygon: split_polygon,
-                                        properties: collision_object.properties,
-                                    });
-                                }
+                    parsed_polygon.push(parsed_polygon[0]);
+                } else if (collision_object.rectangle) {
+                    const width = Math.round(collision_object.width);
+                    const height = Math.round(collision_object.height);
+                    const x = Math.round(collision_object.x);
+                    const y = Math.round(collision_object.y);
+                    min_x = x;
+                    max_x = x + width;
+                    min_y = y;
+                    max_y = y + height;
+                } else if (collision_object.ellipse) {
+                    //even though this is an ellipse, gshtml5 only supports circles
+                    const width = Math.round(collision_object.width);
+                    const x = Math.round(collision_object.x);
+                    const y = Math.round(collision_object.y);
+                    min_x = x;
+                    max_x = x + width;
+                    min_y = y;
+                    max_y = y + width;
+                }
+                if (collision_object.polygon || collision_object.rectangle || collision_object.ellipse) {
+                    const intersections = Collision.get_polygon_tile_intersection(
+                        this,
+                        min_x,
+                        max_x,
+                        min_y,
+                        max_y,
+                        parsed_polygon
+                    );
+                    for (const [location_key, polygons] of intersections) {
+                        if (!split_polygon) {
+                            this._big_shapes_tiles[collision_layer].add(location_key);
+                        } else {
+                            this._shapes[collision_layer][location_key] = new Array(polygons.length);
+                            for (let k = 0; k < polygons.length; ++k) {
+                                const polygon_section = polygons[k];
+                                this.processed_polygons[collision_layer].push({
+                                    polygon: polygon_section,
+                                    sensor_active: sensor_active,
+                                    sensor_active_original: sensor_active,
+                                    location_key: location_key,
+                                    split_polygon: split_polygon,
+                                    properties: collision_object.properties,
+                                });
                             }
                         }
                     }
@@ -607,13 +617,32 @@ export class Map {
                 }
             });
             if (this.collision_layer === collision_layer) {
-                if (this.collision_layer in this.shapes && location_key in this.shapes[this.collision_layer]) {
-                    this.shapes[this.collision_layer][location_key].forEach(shape => {
+                if (this.collision_layer in this._shapes && location_key in this._shapes[this.collision_layer]) {
+                    this._shapes[this.collision_layer][location_key].forEach(shape => {
                         shape.sensor = !collide;
                     });
                 }
             }
         }
+    }
+
+    /**
+     * Checks if a given tile position is blocked by a collision object.
+     * @param tile_x_pos the x tile position.
+     * @param tile_y_pos the y tile position.
+     * @param collision_layer the collision layer of tile. If not passed, gets the current one.
+     * @returns Returns whether the given position is blocked or not.
+     */
+    is_tile_blocked(tile_x_pos: number, tile_y_pos: number, collision_layer?: number) {
+        const location_key = LocationKey.get_key(tile_x_pos, tile_y_pos);
+        collision_layer = collision_layer ?? this.collision_layer;
+        if (location_key in this._shapes[collision_layer]) {
+            const shapes = this._shapes[collision_layer][location_key];
+            if (shapes.some(s => !s.sensor)) {
+                return true;
+            }
+        }
+        return this._big_shapes_tiles[collision_layer].has(location_key);
     }
 
     /**
@@ -832,6 +861,55 @@ export class Map {
     private config_npc() {
         for (let i = 0; i < this.npcs.length; ++i) {
             this.npcs[i].init_npc(this);
+        }
+    }
+
+    /**
+     * Processes Tiled layers to check whether they're collision, encounter zones etc.
+     */
+    private process_tiled_layers() {
+        let collision_layers_counter = 0;
+        const layers_to_join: {[layer: number]: Array<any>} = {};
+        this.sprite.objects = _.mapKeys(this.sprite.objects, (objs: any, collision_index: string) => {
+            if (objs.properties?.encounter_zone) {
+                //creates encounter zones
+                objs.objectsData.forEach(obj => {
+                    const zone = new Phaser.Rectangle(obj.x | 0, obj.y | 0, obj.width | 0, obj.height | 0);
+                    this.encounter_zones.push({
+                        rectangle: zone,
+                        base_rate: obj.properties.base_rate ?? objs.properties.base_rate,
+                        parties: obj.properties.parties ? JSON.parse(obj.properties.parties) : [],
+                    });
+                });
+                return collision_index;
+            } else if (objs.properties?.join_with_layer !== undefined) {
+                //checks if this layer is going to be joined with another one
+                if (objs.properties.join_with_layer in layers_to_join) {
+                    layers_to_join[objs.properties.join_with_layer] = layers_to_join[
+                        objs.properties.join_with_layer
+                    ].concat(objs.objectsData);
+                } else {
+                    layers_to_join[objs.properties.join_with_layer] = objs.objectsData;
+                }
+                objs.objectsData = null;
+                return collision_index;
+            } else if (objs.properties?.layer_index !== undefined) {
+                //checks if this layer has the collision layer index specified
+                ++collision_layers_counter;
+                return objs.properties.layer_index;
+            } else {
+                ++collision_layers_counter;
+                return parseInt(collision_index);
+            }
+        }) as any;
+        if (this.collision_embedded) {
+            this._collision_layers_number = collision_layers_counter;
+        }
+        for (let layer in layers_to_join) {
+            //joins collision layers
+            this.sprite.objects[layer].objectsData = this.sprite.objects[layer].objectsData.concat(
+                layers_to_join[layer]
+            );
         }
     }
 
@@ -1081,45 +1159,8 @@ export class Map {
         }
 
         this.sprite.addTilesetImage(this.tileset_name, this.key_name);
-        let collision_layers_counter = 0;
-        const layers_to_join: {[layer: number]: Array<any>} = {};
-        this.sprite.objects = _.mapKeys(this.sprite.objects, (objs: any, collision_index: string) => {
-            if (objs.properties?.encounter_zone) {
-                objs.objectsData.forEach(obj => {
-                    const zone = new Phaser.Rectangle(obj.x | 0, obj.y | 0, obj.width | 0, obj.height | 0);
-                    this.encounter_zones.push({
-                        rectangle: zone,
-                        base_rate: obj.properties.base_rate ?? objs.properties.base_rate,
-                        parties: obj.properties.parties ? JSON.parse(obj.properties.parties) : [],
-                    });
-                });
-                return collision_index;
-            } else if (objs.properties?.join_with_layer !== undefined) {
-                if (objs.properties.join_with_layer in layers_to_join) {
-                    layers_to_join[objs.properties.join_with_layer] = layers_to_join[
-                        objs.properties.join_with_layer
-                    ].concat(objs.objectsData);
-                } else {
-                    layers_to_join[objs.properties.join_with_layer] = objs.objectsData;
-                }
-                objs.objectsData = null;
-                return collision_index;
-            } else if (objs.properties?.layer_index !== undefined) {
-                ++collision_layers_counter;
-                return objs.properties.layer_index;
-            } else {
-                ++collision_layers_counter;
-                return parseInt(collision_index);
-            }
-        }) as any;
-        if (this.collision_embedded) {
-            this._collision_layers_number = collision_layers_counter;
-        }
-        for (let layer in layers_to_join) {
-            this.sprite.objects[layer].objectsData = this.sprite.objects[layer].objectsData.concat(
-                layers_to_join[layer]
-            );
-        }
+
+        this.process_tiled_layers();
         this.pre_processor_polygons();
 
         for (let i = 0; i < this.sprite.tilesets.length; ++i) {

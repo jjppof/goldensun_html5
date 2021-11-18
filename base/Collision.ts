@@ -1,8 +1,10 @@
 import {ControllableChar} from "./ControllableChar";
 import {GoldenSun} from "./GoldenSun";
-import {Map} from "./Map";
+import {Map as GameMap} from "./Map";
 import * as numbers from "./magic_numbers";
-import {range_360, base_actions, get_direction_mask, directions} from "./utils";
+import {range_360, base_actions, get_direction_mask, directions, get_tile_position} from "./utils";
+import * as turf from "@turf/turf";
+import {LocationKey} from "./tile_events/TileEvent";
 
 /**
  * This class manages collision between the main concepts of the engine:
@@ -84,7 +86,7 @@ export class Collision {
      * Creates npcs and interactable objects collision groups.
      * @param map the current map.
      */
-    config_collision_groups(map: Map) {
+    config_collision_groups(map: GameMap) {
         //p2 has a limit number of collision groups that can be created. Then, NPCs and I. Objs. groups will be created on demand.
         for (let layer_index = this.max_layers_created; layer_index < map.collision_layers_number; ++layer_index) {
             this._npc_collision_groups[layer_index] = this.game.physics.p2.createCollisionGroup();
@@ -288,5 +290,67 @@ export class Collision {
             char.stop_by_colliding = false;
             char.force_direction = false;
         }
+    }
+
+    /**
+     * Given a surface range, loop over the tiles in this range and find the intersection polygons for each tile.
+     * @param map the current map object.
+     * @param min_x the min x range in px.
+     * @param max_x the max x range in px.
+     * @param min_y the min y range in px.
+     * @param max_y the max y range in px.
+     * @param polygon The polygon. The first and last positions are equivalent, and they MUST contain identical values.
+     * @returns Returns a JS Map where its key is a location key and its value is the list of polygons for this location key.
+     */
+    static get_polygon_tile_intersection(
+        map: GameMap,
+        min_x: number,
+        max_x: number,
+        min_y: number,
+        max_y: number,
+        polygon?: number[][]
+    ) {
+        let turf_poly;
+        if (polygon === undefined) {
+            turf_poly = turf.polygon([
+                [
+                    [min_x, min_y],
+                    [max_x, min_y],
+                    [max_x, max_y],
+                    [min_x, max_y],
+                    [min_x, min_y],
+                ],
+            ]);
+        } else {
+            turf_poly = turf.polygon([polygon]);
+        }
+        min_x = min_x - (min_x % map.tile_width);
+        max_x = max_x + map.tile_width - (max_x % map.tile_width);
+        min_y = min_y - (min_y % map.tile_height);
+        max_y = max_y + map.tile_height - (max_y % map.tile_height);
+        const intersections = new Map<number, number[][][]>();
+        for (let x = min_x; x < max_x; x += map.tile_width) {
+            for (let y = min_y; y < max_y; y += map.tile_height) {
+                const this_max_x = x + map.tile_width;
+                const this_max_y = y + map.tile_height;
+                const turf_tile_poly = turf.polygon([
+                    [
+                        [x, y],
+                        [this_max_x, y],
+                        [this_max_x, this_max_y],
+                        [x, this_max_y],
+                        [x, y],
+                    ],
+                ]);
+                const intersection_poly = turf.intersect(turf_poly, turf_tile_poly);
+                if (intersection_poly) {
+                    const tile_x = get_tile_position(x, map.tile_width);
+                    const tile_y = get_tile_position(y, map.tile_height);
+                    const location_key = LocationKey.get_key(tile_x, tile_y);
+                    intersections.set(location_key, intersection_poly.geometry.coordinates as any);
+                }
+            }
+        }
+        return intersections;
     }
 }

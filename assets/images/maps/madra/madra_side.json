@@ -315,6 +315,7 @@
          "y":0
         }, 
         {
+         "color":"#ff0000",
          "draworder":"topdown",
          "id":14,
          "name":"00",
@@ -945,11 +946,12 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
         {
+         "color":"#55ffff",
          "draworder":"topdown",
          "id":15,
          "name":"01",
@@ -1168,11 +1170,12 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
         {
+         "color":"#aa00ff",
          "draworder":"topdown",
          "id":16,
          "name":"02",
