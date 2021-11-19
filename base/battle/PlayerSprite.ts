@@ -336,7 +336,6 @@ export class PlayerSprite {
         });
 
         await promise;
-        bmd.destroy();
         img.destroy();
         this.deactive();
     }
