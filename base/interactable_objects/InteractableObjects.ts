@@ -203,6 +203,10 @@ export class InteractableObjects {
     get label() {
         return this._label;
     }
+    /** This IO body if available. */
+    get body() {
+        return this.sprite?.body ?? null;
+    }
     get base_collision_layer() {
         return this._base_collision_layer;
     }
@@ -281,13 +285,22 @@ export class InteractableObjects {
         }
     }
 
-    set_tile_position(pos: {x?: number; y?: number}) {
-        if (pos.x) {
-            this._tile_x_pos = pos.x;
+    set_tile_position(pos: {x?: number; y?: number}, update_on_map: boolean = true) {
+        const new_x_pos = pos.x ?? this.tile_x_pos;
+        const new_y_pos = pos.y ?? this.tile_y_pos;
+        if (update_on_map) {
+            this.data.map.update_body_tile(
+                this.tile_x_pos,
+                this.tile_y_pos,
+                new_x_pos,
+                new_y_pos,
+                this.base_collision_layer,
+                this.base_collision_layer,
+                this
+            );
         }
-        if (pos.y) {
-            this._tile_y_pos = pos.y;
-        }
+        this._tile_x_pos = new_x_pos;
+        this._tile_y_pos = new_y_pos;
     }
 
     set_enable(enable: boolean) {
@@ -316,13 +329,24 @@ export class InteractableObjects {
         }
     }
 
-    change_collision_layer(destination_collision_layer: number) {
+    change_collision_layer(destination_collision_layer: number, update_on_map: boolean = true) {
         this.sprite.body.removeCollisionGroup(
             this.data.collision.interactable_objs_collision_groups[this.base_collision_layer]
         );
         this.sprite.body.setCollisionGroup(
             this.data.collision.interactable_objs_collision_groups[destination_collision_layer]
         );
+        if (update_on_map) {
+            this.data.map.update_body_tile(
+                this.tile_x_pos,
+                this.tile_y_pos,
+                this.tile_x_pos,
+                this.tile_y_pos,
+                this.base_collision_layer,
+                destination_collision_layer,
+                this
+            );
+        }
         this._base_collision_layer = destination_collision_layer;
         this.sprite.base_collision_layer = destination_collision_layer;
         //the below statement may change the events activation layers too

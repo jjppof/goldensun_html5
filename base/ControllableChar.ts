@@ -99,8 +99,8 @@ export abstract class ControllableChar {
     /** The shadow sprite object. */
     public shadow: Phaser.Sprite;
     protected _body_radius: number;
-    private _tile_x_pos: number;
-    private _tile_y_pos: number;
+    protected _tile_x_pos: number;
+    protected _tile_y_pos: number;
 
     protected _current_action: string | base_actions;
     protected _current_animation: string;

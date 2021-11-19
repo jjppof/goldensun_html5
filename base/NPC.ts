@@ -1,5 +1,5 @@
 import {GameEvent} from "./game_events/GameEvent";
-import {mount_collision_polygon} from "./utils";
+import {get_tile_position, mount_collision_polygon} from "./utils";
 import {ControllableChar} from "./ControllableChar";
 import {interaction_patterns} from "./game_events/GameEventManager";
 import {Map} from "./Map";
@@ -232,6 +232,50 @@ export class NPC extends ControllableChar {
             const event = this.data.game_event_manager.get_event_instance(events_info[i]);
             this.events.push(event);
         }
+    }
+
+    /**
+     * Changes the collision layer of this NPC.
+     * @param destination_collision_layer the desitination collision layer index.
+     * @param update_on_map whether you want this modification to propagate to map structure.
+     */
+    change_collision_layer(destination_collision_layer: number, update_on_map: boolean = true) {
+        this.sprite.body.removeCollisionGroup(this.data.collision.npc_collision_groups[this.base_collision_layer]);
+        this.sprite.body.setCollisionGroup(this.data.collision.npc_collision_groups[destination_collision_layer]);
+        if (update_on_map) {
+            this.data.map.update_body_tile(
+                this.tile_x_pos,
+                this.tile_y_pos,
+                this.tile_x_pos,
+                this.tile_y_pos,
+                this.base_collision_layer,
+                destination_collision_layer,
+                this
+            );
+        }
+        this._base_collision_layer = destination_collision_layer;
+        this.sprite.base_collision_layer = destination_collision_layer;
+    }
+
+    /**
+     * Updates the tile positions.
+     */
+    update_tile_position(update_on_map: boolean = true) {
+        const new_x_pos = get_tile_position(this.x, this.data.map.tile_width);
+        const new_y_pos = get_tile_position(this.y, this.data.map.tile_height);
+        if (update_on_map) {
+            this.data.map.update_body_tile(
+                this.tile_x_pos,
+                this.tile_y_pos,
+                new_x_pos,
+                new_y_pos,
+                this.base_collision_layer,
+                this.base_collision_layer,
+                this
+            );
+        }
+        this._tile_x_pos = new_x_pos;
+        this._tile_y_pos = new_y_pos;
     }
 
     /**

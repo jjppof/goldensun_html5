@@ -33,6 +33,9 @@ export abstract class LocationKey {
     }
 }
 
+//debugging purpose
+(window as any).get_key = LocationKey.get_key;
+
 /**
  * This class is responsible for the type of events that are placed in
  * the map. Generally, this kind of events are fired when the hero reaches

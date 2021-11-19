@@ -37,6 +37,7 @@ export class Map {
     private _npcs_label_map: {[label: string]: NPC};
     private _interactable_objects: InteractableObjects[];
     private _interactable_objects_label_map: {[label: string]: InteractableObjects};
+    private _bodies_positions: {[collision_index: number]: {[location_key: number]: (NPC | InteractableObjects)[]}};
     private _collision_layers_number: number;
     private _collision_sprite: Phaser.Sprite;
     private _color_filter: any;
@@ -104,6 +105,7 @@ export class Map {
         this._npcs_label_map = {};
         this._interactable_objects = [];
         this._interactable_objects_label_map = {};
+        this._bodies_positions = {};
         this._collision_layers_number = this.physics_names.length;
         this._collision_sprite = this.game.add.sprite(0, 0);
         this._collision_sprite.width = this.collision_sprite.height = 0;
@@ -514,6 +516,7 @@ export class Map {
             const collision_layer = j;
             this._shapes[collision_layer] = {};
             this._big_shapes_tiles[collision_layer] = new Set<number>();
+            this._bodies_positions[collision_layer] = {};
             const collision_layer_objects = this.sprite.objects[collision_layer]?.objectsData ?? [];
             this.processed_polygons[collision_layer] = [];
             collision_layer_objects.processed_polygons = [];
@@ -648,6 +651,63 @@ export class Map {
             }
         }
         return this._big_shapes_tiles[collision_layer].has(location_key);
+    }
+
+    /**
+     * Checks if a given tile position has IOs or NPCs, if yes return a list of them.
+     * @param tile_x_pos the x tile position.
+     * @param tile_y_pos the y tile position.
+     * @param collision_layer the collision layer of tile. If not passed, gets the current one.
+     * @returns Returns a list of NPCs and IOs based on constraints given.
+     */
+    get_tile_bodies(tile_x_pos: number, tile_y_pos: number, collision_layer?: number) {
+        const location_key = LocationKey.get_key(tile_x_pos, tile_y_pos);
+        collision_layer = collision_layer ?? this.collision_layer;
+        let objects: (NPC | InteractableObjects)[] = [];
+        if (collision_layer in this._bodies_positions) {
+            if (location_key in this._bodies_positions[collision_layer]) {
+                objects = this._bodies_positions[collision_layer][location_key];
+            }
+        }
+        return objects;
+    }
+
+    /**
+     * Updates the new position of an IO or NPC in this map structure.
+     * @param old_x the old x tile position.
+     * @param old_y the old y tile position.
+     * @param new_x the new x tile position.
+     * @param new_y the new y tile position.
+     * @param old_col_index the old collision index.
+     * @param new_col_index the new collision index.
+     * @param instance the NPC or IO instance.
+     */
+    update_body_tile(
+        old_x: number,
+        old_y: number,
+        new_x: number,
+        new_y: number,
+        old_col_index: number,
+        new_col_index: number,
+        instance: NPC | InteractableObjects
+    ) {
+        if (old_col_index in this._bodies_positions) {
+            const old_location_key = LocationKey.get_key(old_x, old_y);
+            this._bodies_positions[old_col_index][old_location_key] = this._bodies_positions[old_col_index][
+                old_location_key
+            ].filter(inst => inst !== instance);
+            if (!this._bodies_positions[old_col_index][old_location_key].length) {
+                delete this._bodies_positions[old_col_index][old_location_key];
+            }
+        }
+        if (new_col_index in this._bodies_positions) {
+            const new_location_key = LocationKey.get_key(new_x, new_y);
+            if (new_location_key in this._bodies_positions[new_col_index]) {
+                this._bodies_positions[new_col_index][new_location_key].push(instance);
+            } else {
+                this._bodies_positions[new_col_index][new_location_key] = [instance];
+            }
+        }
     }
 
     /**
@@ -857,6 +917,18 @@ export class Map {
             if (interactable_object.is_rope_dock) {
                 (interactable_object as RopeDock).initialize_rope(this);
             }
+            if (interactable_object.base_collision_layer in this._bodies_positions) {
+                const bodies_positions = this._bodies_positions[interactable_object.base_collision_layer];
+                const location_key = LocationKey.get_key(
+                    interactable_object.tile_x_pos,
+                    interactable_object.tile_y_pos
+                );
+                if (location_key in bodies_positions) {
+                    bodies_positions[location_key].push(interactable_object);
+                } else {
+                    bodies_positions[location_key] = [interactable_object];
+                }
+            }
         }
     }
 
@@ -865,7 +937,17 @@ export class Map {
      */
     private config_npc() {
         for (let i = 0; i < this.npcs.length; ++i) {
-            this.npcs[i].init_npc(this);
+            const npc = this.npcs[i];
+            npc.init_npc(this);
+            if (npc.base_collision_layer in this._bodies_positions) {
+                const bodies_positions = this._bodies_positions[npc.base_collision_layer];
+                const location_key = LocationKey.get_key(npc.tile_x_pos, npc.tile_y_pos);
+                if (location_key in bodies_positions) {
+                    bodies_positions[location_key].push(npc);
+                } else {
+                    bodies_positions[location_key] = [npc];
+                }
+            }
         }
     }
 
