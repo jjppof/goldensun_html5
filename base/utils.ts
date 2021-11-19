@@ -69,6 +69,18 @@ export const reverse_directions = {
     [directions.down_right]: "down_right",
 };
 
+/** The directions angles */
+export const directions_angles = {
+    [directions.right]: 0,
+    [directions.up_right]: numbers.degree360 - numbers.degree45,
+    [directions.up]: numbers.degree270,
+    [directions.up_left]: numbers.degree270 - numbers.degree45,
+    [directions.left]: Math.PI,
+    [directions.down_left]: Math.PI - numbers.degree45,
+    [directions.down]: numbers.degree90,
+    [directions.down_right]: numbers.degree45,
+};
+
 /** Base actions of a controllable char */
 export enum base_actions {
     IDLE = "idle",
@@ -290,6 +302,21 @@ export function get_tile_position(pos: number, tile_size: number) {
  */
 export function get_px_position(tile_pos: number, tile_size: number) {
     return tile_pos * tile_size;
+}
+
+/**
+ * Advances a step in a given direction.
+ * @param current_x the current x pos in px.
+ * @param current_y the current x pos in px.
+ * @param distance the step distance.
+ * @param angle_direction the angle of the new direction.
+ * @returns Returns the new x and y position.
+ */
+export function next_px_step(current_x: number, current_y: number, distance: number, angle_direction: number) {
+    return {
+        x: (current_x + distance * Math.cos(angle_direction)) | 0,
+        y: (current_y + distance * Math.sin(angle_direction)) | 0
+    };
 }
 
 /**

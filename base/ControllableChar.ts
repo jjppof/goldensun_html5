@@ -49,10 +49,10 @@ export abstract class ControllableChar {
     protected _current_speed: {x: number; y: number};
     protected _temp_speed: {x: number; y: number};
     protected _force_diagonal_speed: {x: number; y: number};
-    private _extra_speed: number;
-    private walk_speed: number;
-    private dash_speed: number;
-    private climb_speed: number;
+    protected _extra_speed: number;
+    protected walk_speed: number;
+    protected dash_speed: number;
+    protected climb_speed: number;
 
     /** Whether the char is idle/stopped due to collision. */
     public stop_by_colliding: boolean;
@@ -578,7 +578,7 @@ export abstract class ControllableChar {
     /**
      * Sets this char direction from its speed values.
      */
-    private choose_direction_by_speed() {
+    protected choose_direction_by_speed() {
         if (this.current_speed.x === 0 && this.current_speed.y === 0) {
             this._required_direction = null;
             return;
@@ -1048,8 +1048,8 @@ export abstract class ControllableChar {
      * @param force_change plays this new direction.
      * @param transition_also also change the transition direction.
      */
-    set_direction(direction: directions, force_change: boolean = false, transition_also: boolean = true) {
-        this._current_direction = direction;
+    set_direction(direction?: directions, force_change: boolean = false, transition_also: boolean = true) {
+        this._current_direction = direction ?? this.required_direction;
         if (transition_also) {
             this._transition_direction = direction;
         }

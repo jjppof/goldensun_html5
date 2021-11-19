@@ -660,7 +660,7 @@ export class Map {
      * @param collision_layer the collision layer of tile. If not passed, gets the current one.
      * @returns Returns a list of NPCs and IOs based on constraints given.
      */
-    get_tile_bodies(tile_x_pos: number, tile_y_pos: number, collision_layer?: number) {
+     get_tile_bodies(tile_x_pos: number, tile_y_pos: number, collision_layer?: number) {
         const location_key = LocationKey.get_key(tile_x_pos, tile_y_pos);
         collision_layer = collision_layer ?? this.collision_layer;
         let objects: (NPC | InteractableObjects)[] = [];
@@ -785,6 +785,9 @@ export class Map {
         const voice_key = property_info.voice_key ?? npc_db.voice_key;
         const ignore_world_map_scale = property_info.ignore_world_map_scale ?? npc_db.ignore_world_map_scale;
         const enable_footsteps = property_info.enable_footsteps ?? this._show_footsteps;
+        const max_distance = property_info.max_distance ?? npc_db.max_distance;
+        const step_duration = property_info.step_duration ?? npc_db.step_duration;
+        const wait_duration = property_info.wait_duration ?? npc_db.wait_duration;
         const npc = new NPC(
             this.game,
             this.data,
@@ -822,7 +825,10 @@ export class Map {
             property_info.sprite_misc_db_key,
             ignore_physics,
             property_info.visible,
-            voice_key
+            voice_key,
+            max_distance,
+            step_duration,
+            wait_duration,
         );
         this.npcs.push(npc);
         if (npc.label) {
@@ -1236,7 +1242,7 @@ export class Map {
      * @param collision_layer the initial collision layer.
      * @returns returns the mounted map.
      */
-    async mount_map(collision_layer: number = 0, encounter_cumulator?: number) {
+     async mount_map(collision_layer: number = 0, encounter_cumulator?: number) {
         if (!this.assets_loaded) {
             //lazy assets load
             let load_promise_resolve;

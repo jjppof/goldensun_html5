@@ -1,12 +1,14 @@
 import {GameEvent} from "./game_events/GameEvent";
-import {get_tile_position, mount_collision_polygon} from "./utils";
+import {directions_angles, get_distance, get_tile_position, mount_collision_polygon, next_px_step, range_360} from "./utils";
 import {ControllableChar} from "./ControllableChar";
 import {interaction_patterns} from "./game_events/GameEventManager";
 import {Map} from "./Map";
+import * as numbers from "./magic_numbers";
+import * as _ from "lodash";
 
 export enum npc_movement_types {
     IDLE = "idle",
-    WALK_AROUND = "walk_around",
+    RANDOM = "random",
 }
 
 export enum npc_types {
@@ -19,6 +21,8 @@ export enum npc_types {
 /** The NPC class. */
 export class NPC extends ControllableChar {
     private static readonly NPC_TALK_RANGE = 3.0;
+    private static readonly MAX_DIR_GET_TRIES = 7;
+    private static readonly STEP_CALC_FACTOR = 0.005;
 
     private movement_type: npc_movement_types;
     private _npc_type: npc_types;
@@ -51,6 +55,14 @@ export class NPC extends ControllableChar {
     };
     private sprite_misc_db_key: string;
     private ignore_physics: boolean;
+    private _initial_x: number;
+    private _initial_y: number;
+    private _angle_direction: number;
+    private _max_distance: number;
+    private _step_duration: number;
+    private _wait_duration: number;
+    private _step_frame_counter: number;
+    private _stepping: boolean;
 
     constructor(
         game,
@@ -89,7 +101,10 @@ export class NPC extends ControllableChar {
         sprite_misc_db_key,
         ignore_physics,
         visible,
-        voice_key
+        voice_key,
+        max_distance,
+        step_duration,
+        wait_duration,
     ) {
         super(
             game,
@@ -140,6 +155,11 @@ export class NPC extends ControllableChar {
         this.set_events(events_info ?? []);
         this.sprite_misc_db_key = sprite_misc_db_key;
         this._label = label;
+        this._max_distance = max_distance;
+        this._step_duration = step_duration;
+        this._wait_duration = wait_duration ?? this._step_duration;
+        this._step_frame_counter = 0;
+        this._stepping = false;
     }
 
     /** The list of GameEvents related to this NPC. */
@@ -282,12 +302,102 @@ export class NPC extends ControllableChar {
      * The main update function of this NPC.
      */
     update() {
-        if (!this.active) return;
+        if (!this.active) {
+            return;
+        }
         if (this.movement_type === npc_movement_types.IDLE) {
             this.stop_char(false);
-            this.update_shadow();
+        } else if (this.movement_type === npc_movement_types.RANDOM) {
+            if (this._stepping && this._step_frame_counter < this._step_duration) {
+                this.set_speed_factors();
+                this.choose_direction_by_speed();
+                this.set_direction();
+                this.choose_action_based_on_char_state();
+                this.calculate_speed();
+                this.apply_speed();
+                this.play_current_action(true);
+            } else if (!this._stepping && this._step_frame_counter < this._wait_duration) {
+                this.stop_char(true);
+            } else if (this._step_frame_counter >= (this._stepping ? this._step_duration : this._wait_duration)) {
+                this._stepping = !this._stepping;
+                if (this._stepping) {
+                    if (!this.update_random_walk()) {
+                        this._stepping = false;
+                    }
+                }
+                this._step_frame_counter = 0;
+            }
+            this._step_frame_counter += 1;
         }
+        this.update_shadow();
         this.update_tile_position();
+    }
+
+    private set_speed_factors() {
+        this.current_speed.x = this.force_diagonal_speed.x;
+        this.current_speed.y = this.force_diagonal_speed.y;
+    }
+
+    private update_random_walk(flip_direction: boolean = false) {
+        if (flip_direction || get_distance(this.x, this._initial_x, this.y,this._initial_y, false) <= Math.pow(this._max_distance, 2)) {
+            for (let tries = 0; tries < NPC.MAX_DIR_GET_TRIES; ++tries) {
+                const step_size = (this.dashing ? this.dash_speed : this.walk_speed) * this._step_duration * NPC.STEP_CALC_FACTOR;
+                let desired_direction;
+                if (flip_direction) {
+                    desired_direction = this._angle_direction + Math.PI;
+                } else {
+                    const r1 = Math.random() * numbers.degree360 / 4;
+                    const r2 = Math.random() * numbers.degree360 / 4;
+                    desired_direction = this._angle_direction + r1 - r2;
+                }
+                const next_pos: {x: number, y: number} = next_px_step(this.x, this.y, step_size, desired_direction);
+
+                const wall_avoiding_dist = _.mean([this.data.map.tile_width, this.data.map.tile_height]) / 2;
+
+                const surrounding_constraints = [
+                    {direction: desired_direction, step_size: step_size},
+                    {direction: desired_direction, step_size: step_size + wall_avoiding_dist},
+                    ... flip_direction ? [] : [{direction: desired_direction + numbers.degree45, step_size: step_size}],
+                    ... flip_direction ? [] : [{direction: desired_direction - numbers.degree45, step_size: step_size}],
+                ];
+
+                surrounding_tests: {
+                    for (let i = 0; i < surrounding_constraints.length; ++i) {
+                        const constraint = surrounding_constraints[i];
+                        const test_pos: {x: number, y: number} = next_px_step(this.x, this.y, constraint.step_size, constraint.direction);
+                        const test_pos_x_tile = get_tile_position(test_pos.x, this.data.map.tile_width);
+                        const test_pos_y_tile = get_tile_position(test_pos.y, this.data.map.tile_height);
+                        if (this.is_pos_colliding(test_pos_x_tile, test_pos_y_tile)) {
+                            break surrounding_tests;
+                        }
+                    }
+                    if (get_distance(next_pos.x, this._initial_x, next_pos.y,this._initial_y, false) > Math.pow(this._max_distance, 2)) {
+                        break surrounding_tests;
+                    }
+
+                    this._angle_direction = range_360(desired_direction);
+                    const speed_vector = new Phaser.Point(next_pos.x - this.x, next_pos.y - this.y).normalize();
+                    this.force_diagonal_speed.x = speed_vector.x;
+                    this.force_diagonal_speed.y = speed_vector.y;
+                    return true;
+                }
+            }
+        }
+        if (!flip_direction) {
+            return this.update_random_walk(true);
+        }
+        return false;
+    }
+
+    is_pos_colliding(tile_x_pos: number, tile_y_pos: number) {
+        if (this.data.map.is_tile_blocked(tile_x_pos, tile_y_pos, this.base_collision_layer)){
+            return true;
+        }
+        const instances_in_tile = this.data.map.get_tile_bodies(tile_x_pos, tile_y_pos);
+        if (instances_in_tile.length && !instances_in_tile.includes(this)) {
+            return true;
+        }
+        return this.tile_x_pos === this.data.hero.tile_x_pos && this.tile_y_pos === this.data.hero.tile_y_pos;
     }
 
     /**
@@ -338,6 +448,9 @@ export class NPC extends ControllableChar {
             this.scale_x ?? npc_db.scale_x,
             this.scale_y ?? npc_db.scale_y
         );
+        this._initial_x = this.sprite.x;
+        this._initial_y = this.sprite.y;
+        this._angle_direction = directions_angles[this.current_direction];
         if (this.ignore_world_map_scale) {
             this.sprite.scale.setTo(1, 1);
             if (this.shadow) {
@@ -415,3 +528,4 @@ export class NPC extends ControllableChar {
         this.look_target = null;
     }
 }
+
