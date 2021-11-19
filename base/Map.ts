@@ -13,6 +13,7 @@ import {Pushable} from "./interactable_objects/Pushable";
 import {RopeDock} from "./interactable_objects/RopeDock";
 import {RollablePillar} from "./interactable_objects/RollingPillar";
 import {Collision} from "./Collision";
+import {DjinnGetEvent} from "./game_events/DjinnGetEvent";
 
 /** The class reponsible for the maps of the engine. */
 export class Map {
@@ -50,7 +51,7 @@ export class Map {
     private bgm_url: string;
     private _background_key: string;
     private expected_party_level: number;
-    private encounter_cumulator: number;
+    private _encounter_cumulator: number;
     private encounter_zones: {
         base_rate: number;
         parties: string[];
@@ -117,7 +118,7 @@ export class Map {
         this.bgm_key = bgm_key;
         this.bgm_url = bgm_url;
         this.expected_party_level = expected_party_level;
-        this.encounter_cumulator = 0;
+        this._encounter_cumulator = 0;
         this.encounter_zones = [];
         this._background_key = background_key;
         this.polygons_processed = false;
@@ -202,6 +203,10 @@ export class Map {
     /** Gets the map collision body for current collision layer. */
     get body(): Phaser.Physics.P2.Body {
         return this.collision_sprite.body;
+    }
+    /** Gets the enemy party encounter cumulator value. */
+    get encounter_cumulator() {
+        return this._encounter_cumulator;
     }
 
     /**
@@ -833,7 +838,7 @@ export class Map {
         this.interactable_objects.push(interactable_object);
         if (interactable_object.label) {
             if (interactable_object.label in this.interactable_objects_label_map) {
-                console.warn(`NPC with ${interactable_object.label} is already set in this map.`);
+                console.warn(`Interactable Object with ${interactable_object.label} is already set in this map.`);
             } else {
                 this.interactable_objects_label_map[interactable_object.label] = interactable_object;
             }
@@ -865,7 +870,7 @@ export class Map {
     }
 
     /**
-     * Processes Tiled layers to check whether they're collision, encounter zones etc.
+     * Processes Tiled layers to check whether they have configs related to collision and encounter zones.
      */
     private process_tiled_layers() {
         let collision_layers_counter = 0;
@@ -873,12 +878,17 @@ export class Map {
         this.sprite.objects = _.mapKeys(this.sprite.objects, (objs: any, collision_index: string) => {
             if (objs.properties?.encounter_zone) {
                 //creates encounter zones
-                objs.objectsData.forEach(obj => {
-                    const zone = new Phaser.Rectangle(obj.x | 0, obj.y | 0, obj.width | 0, obj.height | 0);
+                objs.objectsData.forEach(this_obj => {
+                    const zone = new Phaser.Rectangle(
+                        this_obj.x | 0,
+                        this_obj.y | 0,
+                        this_obj.width | 0,
+                        this_obj.height | 0
+                    );
                     this.encounter_zones.push({
                         rectangle: zone,
-                        base_rate: obj.properties.base_rate ?? objs.properties.base_rate,
-                        parties: obj.properties.parties ? JSON.parse(obj.properties.parties) : [],
+                        base_rate: this_obj.properties?.base_rate ?? objs.properties?.base_rate ?? 0,
+                        parties: this_obj.properties?.parties ? JSON.parse(this_obj.properties.parties) : [],
                     });
                 });
                 return collision_index;
@@ -1078,9 +1088,9 @@ export class Map {
         const d = c * (0x10000 + a) - a;
         const e = 1 + this.data.info.party_data.random_battle_extra_rate;
         const speed_factor = this.data.hero.get_encounter_speed_factor();
-        this.encounter_cumulator += 64 * ((0x4000000 / d) | 0) * speed_factor * e;
+        this._encounter_cumulator += 64 * ((0x4000000 / d) | 0) * speed_factor * e;
         if (this.encounter_cumulator >= 0x100000) {
-            this.encounter_cumulator = 0;
+            this._encounter_cumulator = 0;
             if (this.data.hero.avoid_encounter) {
                 this.data.hero.avoid_encounter = false;
                 return false;
@@ -1118,7 +1128,13 @@ export class Map {
             false
         );
         npc.init_npc(this);
-        return npc.events[0].fire.bind(npc.events[0], npc);
+        return () => {
+            const event = npc.events[0] as DjinnGetEvent;
+            event.set_on_event_finish(() => {
+                npc.unset();
+            });
+            event.fire(npc);
+        };
     }
 
     /**
@@ -1138,7 +1154,7 @@ export class Map {
      * @param collision_layer the initial collision layer.
      * @returns returns the mounted map.
      */
-    async mount_map(collision_layer: number = 0) {
+    async mount_map(collision_layer: number = 0, encounter_cumulator?: number) {
         if (!this.assets_loaded) {
             //lazy assets load
             let load_promise_resolve;
@@ -1149,7 +1165,7 @@ export class Map {
         this._events = {};
         TileEvent.reset();
         GameEvent.reset();
-        this.encounter_cumulator = 0;
+        this._encounter_cumulator = encounter_cumulator ?? 0;
 
         this._collision_layer = collision_layer;
         this._sprite = this.game.add.tilemap(this.key_name);

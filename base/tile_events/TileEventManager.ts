@@ -304,7 +304,8 @@ export class TileEventManager {
                 info.y_target,
                 info.advance_effect,
                 info.dest_collision_layer,
-                info.destination_direction
+                info.destination_direction,
+                info.keep_encounter_cumulator
             );
         } else if (info.type === event_types.SLIDER) {
             return new SliderEvent(

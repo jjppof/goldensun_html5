@@ -128,10 +128,11 @@ export abstract class GameEvent {
      * Always before this function is called, it's checked whether Reveal psynergy
      * is being casted, if yes, it's stopped before this event start.
      * @param origin_npc the NPC that originated this game event.
+     * @returns if the child class has an async fire function, returns its Promise.
      */
     @GameEvent.check_reveal
     fire(origin_npc?: NPC) {
-        this._fire(origin_npc);
+        return this._fire(origin_npc);
     }
 
     /**

@@ -32,6 +32,7 @@ export class DjinnGetEvent extends GameEvent {
     private enemy_party_key: string;
     private custom_battle_bg: string;
     private djinn_defeated: boolean;
+    private on_event_finish: () => void;
 
     constructor(
         game,
@@ -84,6 +85,10 @@ export class DjinnGetEvent extends GameEvent {
         });
     }
 
+    set_on_event_finish(on_event_finish: () => void) {
+        this.on_event_finish = on_event_finish;
+    }
+
     finish() {
         this.control_enable = false;
         this.running = false;
@@ -95,6 +100,9 @@ export class DjinnGetEvent extends GameEvent {
         this.game.physics.p2.resume();
         --this.data.game_event_manager.events_running_count;
         this.finish_events.forEach(event => event.fire(this.origin_npc));
+        if (this.on_event_finish) {
+            this.on_event_finish();
+        }
     }
 
     finish_on_defeat() {

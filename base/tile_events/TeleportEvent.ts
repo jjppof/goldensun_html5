@@ -11,6 +11,7 @@ export class TeleportEvent extends TileEvent {
     private _advance_effect: boolean;
     private dest_collision_layer: number;
     private destination_direction: string;
+    private keep_encounter_cumulator: boolean;
 
     constructor(
         game,
@@ -28,7 +29,8 @@ export class TeleportEvent extends TileEvent {
         y_target,
         advance_effect,
         dest_collision_layer,
-        destination_direction
+        destination_direction,
+        keep_encounter_cumulator
     ) {
         super(
             game,
@@ -50,6 +52,7 @@ export class TeleportEvent extends TileEvent {
         this._advance_effect = advance_effect;
         this.dest_collision_layer = dest_collision_layer !== undefined ? dest_collision_layer : 0;
         this.destination_direction = destination_direction;
+        this.keep_encounter_cumulator = keep_encounter_cumulator;
     }
 
     get advance_effect() {
@@ -127,7 +130,11 @@ export class TeleportEvent extends TileEvent {
         const target_collision_layer = this.dest_collision_layer;
         this.data.hero.set_collision_layer(target_collision_layer);
         this.data.map.unset_map();
-        this.data.map = await this.data.info.maps_list[next_map_key_name].mount_map(target_collision_layer);
+        const encounter_cumulator = this.keep_encounter_cumulator ? this.data.map.encounter_cumulator : undefined;
+        this.data.map = await this.data.info.maps_list[next_map_key_name].mount_map(
+            target_collision_layer,
+            encounter_cumulator
+        );
         this.game.camera.setBoundsToWorld();
         if (this.game.camera.bounds?.width < numbers.GAME_WIDTH) {
             this.game.camera.bounds.width = numbers.GAME_WIDTH;
