@@ -22,7 +22,7 @@ export enum npc_types {
 export class NPC extends ControllableChar {
     private static readonly NPC_TALK_RANGE = 3.0;
     private static readonly MAX_DIR_GET_TRIES = 7;
-    private static readonly STEP_CALC_FACTOR = 0.005;
+    private static readonly STOP_MINIMAL_DISTANCE_SQR = 2 * 2;
 
     private movement_type: npc_movement_types;
     private _npc_type: npc_types;
@@ -63,6 +63,9 @@ export class NPC extends ControllableChar {
     private _wait_duration: number;
     private _step_frame_counter: number;
     private _stepping: boolean;
+    private _base_step: number;
+    private _step_max_variation: number;
+    private _step_destination: {x: number, y: number};
 
     constructor(
         game,
@@ -105,6 +108,8 @@ export class NPC extends ControllableChar {
         max_distance,
         step_duration,
         wait_duration,
+        base_step,
+        step_max_variation,
     ) {
         super(
             game,
@@ -160,6 +165,8 @@ export class NPC extends ControllableChar {
         this._wait_duration = wait_duration ?? this._step_duration;
         this._step_frame_counter = 0;
         this._stepping = false;
+        this._base_step = base_step;
+        this._step_max_variation = step_max_variation;
     }
 
     /** The list of GameEvents related to this NPC. */
@@ -309,13 +316,19 @@ export class NPC extends ControllableChar {
             this.stop_char(false);
         } else if (this.movement_type === npc_movement_types.RANDOM) {
             if (this._stepping && this._step_frame_counter < this._step_duration) {
-                this.set_speed_factors();
-                this.choose_direction_by_speed();
-                this.set_direction();
-                this.choose_action_based_on_char_state();
-                this.calculate_speed();
-                this.apply_speed();
-                this.play_current_action(true);
+                if (!this.set_speed_factors()) {
+                    this._step_frame_counter = this._step_duration;
+                } else {
+                    this.choose_direction_by_speed();
+                    this.set_direction();
+                    this.choose_action_based_on_char_state();
+                    this.calculate_speed();
+                    this.apply_speed();
+                    this.play_current_action(true);
+                    if (get_distance(this.x, this._step_destination.x, this.y, this._step_destination.y, false) < NPC.STOP_MINIMAL_DISTANCE_SQR) {
+                        this._step_frame_counter = this._step_duration;
+                    }
+                }
             } else if (!this._stepping && this._step_frame_counter < this._wait_duration) {
                 this.stop_char(true);
             } else if (this._step_frame_counter >= (this._stepping ? this._step_duration : this._wait_duration)) {
@@ -334,20 +347,27 @@ export class NPC extends ControllableChar {
     }
 
     private set_speed_factors() {
+        for (let i = 0; i < this.game.physics.p2.world.narrowphase.contactEquations.length; ++i) {
+            const contact = this.game.physics.p2.world.narrowphase.contactEquations[i];
+            if (contact.bodyB === this.body.data && contact.bodyA === this.data.hero.body.data) {
+                return false;
+            }
+        }
         this.current_speed.x = this.force_diagonal_speed.x;
         this.current_speed.y = this.force_diagonal_speed.y;
+        return true;
     }
 
     private update_random_walk(flip_direction: boolean = false) {
         if (flip_direction || get_distance(this.x, this._initial_x, this.y,this._initial_y, false) <= Math.pow(this._max_distance, 2)) {
             for (let tries = 0; tries < NPC.MAX_DIR_GET_TRIES; ++tries) {
-                const step_size = (this.dashing ? this.dash_speed : this.walk_speed) * this._step_duration * NPC.STEP_CALC_FACTOR;
+                const step_size = this._base_step + _.random(this._step_max_variation);
                 let desired_direction;
+                const r1 = Math.random() * numbers.degree360 / 4;
+                const r2 = Math.random() * numbers.degree360 / 4;
                 if (flip_direction) {
-                    desired_direction = this._angle_direction + Math.PI;
+                    desired_direction = this._angle_direction + Math.PI  + r1 - r2;
                 } else {
-                    const r1 = Math.random() * numbers.degree360 / 4;
-                    const r2 = Math.random() * numbers.degree360 / 4;
                     desired_direction = this._angle_direction + r1 - r2;
                 }
                 const next_pos: {x: number, y: number} = next_px_step(this.x, this.y, step_size, desired_direction);
@@ -375,6 +395,7 @@ export class NPC extends ControllableChar {
                         break surrounding_tests;
                     }
 
+                    this._step_destination = next_pos;
                     this._angle_direction = range_360(desired_direction);
                     const speed_vector = new Phaser.Point(next_pos.x - this.x, next_pos.y - this.y).normalize();
                     this.force_diagonal_speed.x = speed_vector.x;
@@ -397,7 +418,7 @@ export class NPC extends ControllableChar {
         if (instances_in_tile.length && !instances_in_tile.includes(this)) {
             return true;
         }
-        return this.tile_x_pos === this.data.hero.tile_x_pos && this.tile_y_pos === this.data.hero.tile_y_pos;
+        return tile_x_pos === this.data.hero.tile_x_pos && tile_y_pos === this.data.hero.tile_y_pos;
     }
 
     /**

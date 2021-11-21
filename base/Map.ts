@@ -788,6 +788,8 @@ export class Map {
         const max_distance = property_info.max_distance ?? npc_db.max_distance;
         const step_duration = property_info.step_duration ?? npc_db.step_duration;
         const wait_duration = property_info.wait_duration ?? npc_db.wait_duration;
+        const base_step = property_info.base_step ?? npc_db.base_step;
+        const step_max_variation = property_info.step_max_variation ?? npc_db.step_max_variation;
         const npc = new NPC(
             this.game,
             this.data,
@@ -829,6 +831,8 @@ export class Map {
             max_distance,
             step_duration,
             wait_duration,
+            base_step,
+            step_max_variation,
         );
         this.npcs.push(npc);
         if (npc.label) {

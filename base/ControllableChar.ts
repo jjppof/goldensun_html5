@@ -340,7 +340,7 @@ export abstract class ControllableChar {
     }
 
     /** This char body if available. */
-    get body() {
+    get body(): Phaser.Physics.P2.Body {
         return this.sprite?.body ?? null;
     }
 

@@ -195,9 +195,8 @@ export class Collision {
     }
 
     /**
-     * Checks everything related to char collision. This function checks whether is necessary
-     * to stop when colliding or change the char direction in order to adapt its movement to the
-     * collision slope.
+     * This function checks whether is necessary to stop when colliding or change the char
+     * direction in order to adapt its movement to the collision slope.
      */
     check_char_collision(char: ControllableChar) {
         let normals = [];
