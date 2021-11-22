@@ -297,7 +297,8 @@ export class GameEventManager {
                     info.keep_npc_collision_disable,
                     info.deactive_char_on_end,
                     info.keep_camera_follow,
-                    info.wait_after
+                    info.wait_after,
+                    info.update_initial_position
                 );
             case event_types.DIALOG:
                 return new DialogEvent(

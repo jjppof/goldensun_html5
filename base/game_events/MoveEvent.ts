@@ -14,6 +14,7 @@ export class MoveEvent extends CharControlEvent {
     private keep_npc_collision_disable: boolean;
     private deactive_char_on_end: boolean;
     private wait_after: number;
+    private update_initial_position: boolean;
 
     constructor(
         game,
@@ -35,7 +36,8 @@ export class MoveEvent extends CharControlEvent {
         keep_npc_collision_disable,
         deactive_char_on_end,
         keep_camera_follow,
-        wait_after
+        wait_after,
+        update_initial_position
     ) {
         super(
             game,
@@ -60,6 +62,7 @@ export class MoveEvent extends CharControlEvent {
         this.keep_npc_collision_disable = keep_npc_collision_disable ?? false;
         this.deactive_char_on_end = deactive_char_on_end ?? false;
         this.final_direction = final_direction !== undefined ? directions[final_direction as string] : null;
+        this.update_initial_position = update_initial_position ?? false;
     }
 
     on_position_reach() {
@@ -132,6 +135,9 @@ export class MoveEvent extends CharControlEvent {
         this.char.dashing = false;
         if (this.deactive_char_on_end) {
             this.char.toggle_active(false);
+        }
+        if (this.update_initial_position && this.is_npc) {
+            (this.char as NPC).update_initial_position(this.char.x, this.char.y);
         }
         if (!this.keep_npc_collision_disable) {
             this.data.collision.enable_npc_collision(this.data.map.collision_layer);

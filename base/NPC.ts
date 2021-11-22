@@ -52,6 +52,7 @@ export class NPC extends ControllableChar {
         base_collision_layer?: string;
         affected_by_reveal?: string;
         visible?: string;
+        movement_type?: npc_movement_types;
     };
     private sprite_misc_db_key: string;
     private ignore_physics: boolean;
@@ -128,7 +129,10 @@ export class NPC extends ControllableChar {
             active
         );
         this._npc_type = npc_type;
-        this.movement_type = movement_type;
+        if (this.storage_keys.movement_type !== undefined) {
+            movement_type = this.data.storage.get(this.storage_keys.movement_type);
+        }
+        this.movement_type = movement_type ?? npc_movement_types.IDLE;
         this._message = message;
         this._thought_message = thought_message;
         this._avatar = avatar ? avatar : null;
@@ -248,6 +252,12 @@ export class NPC extends ControllableChar {
                 this.visible = storage_value;
             }
         }
+        if (this.storage_keys.movement_type !== undefined) {
+            const storage_value = this.data.storage.get(this.storage_keys.movement_type);
+            if (this.movement_type !== storage_value) {
+                this.movement_type = storage_value;
+            }
+        }
     }
 
     /**
@@ -306,6 +316,16 @@ export class NPC extends ControllableChar {
     }
 
     /**
+     * Updates this NPC initial position.
+     * @param x the x pos in px.
+     * @param y the y pos in px.
+     */
+     update_initial_position(x: number, y: number) {
+        this._initial_x = x;
+        this._initial_y = y;
+    }
+
+    /**
      * The main update function of this NPC.
      */
     update() {
@@ -346,11 +366,20 @@ export class NPC extends ControllableChar {
         this.update_tile_position();
     }
 
+    /**
+     * Sets the x-y speed values that this NPC is going to be using to move.
+     * @returns Returns true if the values were set. Going towards a collision direction is not acceptable, then returns false.
+     */
     private set_speed_factors() {
         for (let i = 0; i < this.game.physics.p2.world.narrowphase.contactEquations.length; ++i) {
             const contact = this.game.physics.p2.world.narrowphase.contactEquations[i];
             if (contact.bodyB === this.body.data && contact.bodyA === this.data.hero.body.data) {
-                return false;
+                const normal = contact.normalA;
+                const collision_angle = range_360(Math.atan2(normal[1], normal[0]));
+                if (this._angle_direction > collision_angle - numbers.degree90 && this._angle_direction < collision_angle + numbers.degree90) {
+                    //going towards the collision direction is not acceptable.
+                    return false;
+                }
             }
         }
         this.current_speed.x = this.force_diagonal_speed.x;
@@ -358,6 +387,11 @@ export class NPC extends ControllableChar {
         return true;
     }
 
+    /**
+     * Tries to find a direction for this NPC to move in the random walk.
+     * @param flip_direction If true, this function will try to find directions in the opposite direction.
+     * @returns Returns true if a direction to move was found.
+     */
     private update_random_walk(flip_direction: boolean = false) {
         if (flip_direction || get_distance(this.x, this._initial_x, this.y,this._initial_y, false) <= Math.pow(this._max_distance, 2)) {
             for (let tries = 0; tries < NPC.MAX_DIR_GET_TRIES; ++tries) {
@@ -410,6 +444,12 @@ export class NPC extends ControllableChar {
         return false;
     }
 
+    /**
+     * Tests whether this NPC would collide in a given position.
+     * @param tile_x_pos the tile x position.
+     * @param tile_y_pos the tile y position.
+     * @returns returns true if the NPC is going to collide.
+     */
     is_pos_colliding(tile_x_pos: number, tile_y_pos: number) {
         if (this.data.map.is_tile_blocked(tile_x_pos, tile_y_pos, this.base_collision_layer)){
             return true;
@@ -521,11 +561,12 @@ export class NPC extends ControllableChar {
         if (this.active) {
             this.sprite.body.setCollisionGroup(this.data.collision.npc_collision_groups[this.base_collision_layer]);
         }
-        this.sprite.body.damping = 1;
-        this.sprite.body.angularDamping = 1;
+        this.sprite.body.damping = 0;
+        this.sprite.body.angularDamping = 0;
+        this.sprite.body.inertia = 0;
         this.sprite.body.setZeroRotation();
         this.sprite.body.fixedRotation = true;
-        this.sprite.body.dynamic = false;
+        this.sprite.body.mass = 1;
         this.sprite.body.static = true;
     }
 
