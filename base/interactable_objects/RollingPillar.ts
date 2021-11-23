@@ -1,6 +1,13 @@
 import {ControllableChar} from "../ControllableChar";
 import {JumpEvent} from "../tile_events/JumpEvent";
-import {base_actions, directions, get_centered_pos_in_px, get_distance, get_vector_direction} from "../utils";
+import {
+    base_actions,
+    directions,
+    get_centered_pos_in_px,
+    get_distance,
+    get_sqr_distance,
+    get_vector_direction,
+} from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
 
 enum pillar_directions {
@@ -118,7 +125,7 @@ export class RollablePillar extends InteractableObjects {
                 if (point.x === this.tile_x_pos && point.y === this.tile_y_pos) {
                     continue;
                 }
-                const distance = get_distance(point.x, this.tile_x_pos, point.y, this.tile_y_pos, false);
+                const distance = get_sqr_distance(point.x, this.tile_x_pos, point.y, this.tile_y_pos);
                 if (distance < last_distance) {
                     next_contact = point;
                     last_distance = distance;

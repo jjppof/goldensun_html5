@@ -1,7 +1,7 @@
 import {GameEvent} from "./game_events/GameEvent";
 import {
     directions_angles,
-    get_distance,
+    get_sqr_distance,
     get_tile_position,
     mount_collision_polygon,
     next_px_step,
@@ -353,7 +353,7 @@ export class NPC extends ControllableChar {
                     this.apply_speed();
                     this.play_current_action(true);
                     if (
-                        get_distance(this.x, this._step_destination.x, this.y, this._step_destination.y, false) <
+                        get_sqr_distance(this.x, this._step_destination.x, this.y, this._step_destination.y) <
                         NPC.STOP_MINIMAL_DISTANCE_SQR
                     ) {
                         this._step_frame_counter = this._step_duration;
@@ -408,7 +408,7 @@ export class NPC extends ControllableChar {
     private update_random_walk(flip_direction: boolean = false) {
         if (
             flip_direction ||
-            get_distance(this.x, this._initial_x, this.y, this._initial_y, false) <= Math.pow(this._max_distance, 2)
+            get_sqr_distance(this.x, this._initial_x, this.y, this._initial_y) <= Math.pow(this._max_distance, 2)
         ) {
             for (let tries = 0; tries < NPC.MAX_DIR_GET_TRIES; ++tries) {
                 const step_size = this._base_step + _.random(this._step_max_variation);
@@ -451,7 +451,7 @@ export class NPC extends ControllableChar {
                         }
                     }
                     if (
-                        get_distance(next_pos.x, this._initial_x, next_pos.y, this._initial_y, false) >
+                        get_sqr_distance(next_pos.x, this._initial_x, next_pos.y, this._initial_y) >
                         Math.pow(this._max_distance, 2)
                     ) {
                         break surrounding_tests;

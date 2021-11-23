@@ -325,16 +325,22 @@ export function next_px_step(current_x: number, current_y: number, distance: num
  * @param x2 dest x position.
  * @param y1 source y position.
  * @param y2 dest y position.
- * @param square_root if false, returns the distance to the square.
  * @returns return the distance value.
  */
-export function get_distance(x1: number, x2: number, y1: number, y2: number, square_root: boolean = true) {
-    const sqr_distance = Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2);
-    if (square_root) {
-        return Math.sqrt(sqr_distance);
-    } else {
-        return sqr_distance;
-    }
+export function get_distance(x1: number, x2: number, y1: number, y2: number) {
+    return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+}
+
+/**
+ * Calculates the squared distance between two points.
+ * @param x1 source x position.
+ * @param x2 dest x position.
+ * @param y1 source y position.
+ * @param y2 dest y position.
+ * @returns return the squared distance value.
+ */
+export function get_sqr_distance(x1: number, x2: number, y1: number, y2: number) {
+    return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
 }
 
 /**

@@ -1,6 +1,6 @@
 import {SpriteBase} from "../SpriteBase";
 import {FieldAbilities} from "./FieldAbilities";
-import {base_actions, get_distance, get_front_position, random_normal} from "../utils";
+import {base_actions, get_front_position, get_sqr_distance, random_normal} from "../utils";
 import * as _ from "lodash";
 import {degree360, degree90} from "../magic_numbers";
 
@@ -224,7 +224,7 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
             this._previous_angles[i] = new_angle;
             leaf.centerX += this._blow_gradient.gradient * Math.cos(new_angle);
             leaf.centerY += this._blow_gradient.gradient * Math.sin(new_angle);
-            const leaf_distance = get_distance(leaf.centerX, 0, leaf.centerY, 0, false);
+            const leaf_distance = get_sqr_distance(leaf.centerX, 0, leaf.centerY, 0);
             if (leaf_distance > WhirlwindFieldPsynergy.KILL_DISTANCE_SQR) {
                 leaf.visible = false;
             }

@@ -5,8 +5,8 @@ import {
     join_directions,
     base_actions,
     get_front_position,
-    get_distance,
     get_centered_pos_in_px,
+    get_sqr_distance,
 } from "../utils";
 import {FieldAbilities} from "./FieldAbilities";
 import {SpriteBase} from "../SpriteBase";
@@ -147,12 +147,11 @@ export class MoveFieldPsynergy extends FieldAbilities {
                         char_change_dir_timer.timer.start();
                     },
                     () => {
-                        const pos_sqr_distance = get_distance(
+                        const pos_sqr_distance = get_sqr_distance(
                             this.controllable_char.sprite.body.x,
                             this.target_object.sprite.body.x,
                             this.controllable_char.sprite.body.y,
-                            this.target_object.sprite.body.y,
-                            false
+                            this.target_object.sprite.body.y
                         );
                         const rad_sqr_distance = Math.pow(
                             numbers.HERO_BODY_RADIUS +
