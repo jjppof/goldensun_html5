@@ -1,5 +1,12 @@
 import {GameEvent} from "./game_events/GameEvent";
-import {directions_angles, get_distance, get_tile_position, mount_collision_polygon, next_px_step, range_360} from "./utils";
+import {
+    directions_angles,
+    get_distance,
+    get_tile_position,
+    mount_collision_polygon,
+    next_px_step,
+    range_360,
+} from "./utils";
 import {ControllableChar} from "./ControllableChar";
 import {interaction_patterns} from "./game_events/GameEventManager";
 import {Map} from "./Map";
@@ -66,7 +73,7 @@ export class NPC extends ControllableChar {
     private _stepping: boolean;
     private _base_step: number;
     private _step_max_variation: number;
-    private _step_destination: {x: number, y: number};
+    private _step_destination: {x: number; y: number};
 
     constructor(
         game,
@@ -110,7 +117,7 @@ export class NPC extends ControllableChar {
         step_duration,
         wait_duration,
         base_step,
-        step_max_variation,
+        step_max_variation
     ) {
         super(
             game,
@@ -320,7 +327,7 @@ export class NPC extends ControllableChar {
      * @param x the x pos in px.
      * @param y the y pos in px.
      */
-     update_initial_position(x: number, y: number) {
+    update_initial_position(x: number, y: number) {
         this._initial_x = x;
         this._initial_y = y;
     }
@@ -345,7 +352,10 @@ export class NPC extends ControllableChar {
                     this.calculate_speed();
                     this.apply_speed();
                     this.play_current_action(true);
-                    if (get_distance(this.x, this._step_destination.x, this.y, this._step_destination.y, false) < NPC.STOP_MINIMAL_DISTANCE_SQR) {
+                    if (
+                        get_distance(this.x, this._step_destination.x, this.y, this._step_destination.y, false) <
+                        NPC.STOP_MINIMAL_DISTANCE_SQR
+                    ) {
                         this._step_frame_counter = this._step_duration;
                     }
                 }
@@ -368,7 +378,7 @@ export class NPC extends ControllableChar {
 
     /**
      * Sets the x-y speed values that this NPC is going to be using to move.
-     * @returns Returns true if the values were set. Going towards a collision direction is not acceptable, then returns false.
+     * @returns Returns true if the speed values were set. Going towards a collision direction is not acceptable, then returns false.
      */
     private set_speed_factors() {
         for (let i = 0; i < this.game.physics.p2.world.narrowphase.contactEquations.length; ++i) {
@@ -376,7 +386,10 @@ export class NPC extends ControllableChar {
             if (contact.bodyB === this.body.data && contact.bodyA === this.data.hero.body.data) {
                 const normal = contact.normalA;
                 const collision_angle = range_360(Math.atan2(normal[1], normal[0]));
-                if (this._angle_direction > collision_angle - numbers.degree90 && this._angle_direction < collision_angle + numbers.degree90) {
+                if (
+                    this._angle_direction > collision_angle - numbers.degree90 &&
+                    this._angle_direction < collision_angle + numbers.degree90
+                ) {
                     //going towards the collision direction is not acceptable.
                     return false;
                 }
@@ -393,39 +406,54 @@ export class NPC extends ControllableChar {
      * @returns Returns true if a direction to move was found.
      */
     private update_random_walk(flip_direction: boolean = false) {
-        if (flip_direction || get_distance(this.x, this._initial_x, this.y,this._initial_y, false) <= Math.pow(this._max_distance, 2)) {
+        if (
+            flip_direction ||
+            get_distance(this.x, this._initial_x, this.y, this._initial_y, false) <= Math.pow(this._max_distance, 2)
+        ) {
             for (let tries = 0; tries < NPC.MAX_DIR_GET_TRIES; ++tries) {
                 const step_size = this._base_step + _.random(this._step_max_variation);
                 let desired_direction;
-                const r1 = Math.random() * numbers.degree360 / 4;
-                const r2 = Math.random() * numbers.degree360 / 4;
+                const r1 = (Math.random() * numbers.degree360) / 4;
+                const r2 = (Math.random() * numbers.degree360) / 4;
                 if (flip_direction) {
-                    desired_direction = this._angle_direction + Math.PI  + r1 - r2;
+                    desired_direction = this._angle_direction + Math.PI + r1 - r2;
                 } else {
                     desired_direction = this._angle_direction + r1 - r2;
                 }
-                const next_pos: {x: number, y: number} = next_px_step(this.x, this.y, step_size, desired_direction);
+                const next_pos: {x: number; y: number} = next_px_step(this.x, this.y, step_size, desired_direction);
 
                 const wall_avoiding_dist = _.mean([this.data.map.tile_width, this.data.map.tile_height]) / 2;
 
                 const surrounding_constraints = [
                     {direction: desired_direction, step_size: step_size},
                     {direction: desired_direction, step_size: step_size + wall_avoiding_dist},
-                    ... flip_direction ? [] : [{direction: desired_direction + numbers.degree45, step_size: step_size}],
-                    ... flip_direction ? [] : [{direction: desired_direction - numbers.degree45, step_size: step_size}],
+                    ...(flip_direction
+                        ? []
+                        : [{direction: desired_direction + numbers.degree45, step_size: step_size}]),
+                    ...(flip_direction
+                        ? []
+                        : [{direction: desired_direction - numbers.degree45, step_size: step_size}]),
                 ];
 
                 surrounding_tests: {
                     for (let i = 0; i < surrounding_constraints.length; ++i) {
                         const constraint = surrounding_constraints[i];
-                        const test_pos: {x: number, y: number} = next_px_step(this.x, this.y, constraint.step_size, constraint.direction);
+                        const test_pos: {x: number; y: number} = next_px_step(
+                            this.x,
+                            this.y,
+                            constraint.step_size,
+                            constraint.direction
+                        );
                         const test_pos_x_tile = get_tile_position(test_pos.x, this.data.map.tile_width);
                         const test_pos_y_tile = get_tile_position(test_pos.y, this.data.map.tile_height);
                         if (this.is_pos_colliding(test_pos_x_tile, test_pos_y_tile)) {
                             break surrounding_tests;
                         }
                     }
-                    if (get_distance(next_pos.x, this._initial_x, next_pos.y,this._initial_y, false) > Math.pow(this._max_distance, 2)) {
+                    if (
+                        get_distance(next_pos.x, this._initial_x, next_pos.y, this._initial_y, false) >
+                        Math.pow(this._max_distance, 2)
+                    ) {
                         break surrounding_tests;
                     }
 
@@ -439,7 +467,11 @@ export class NPC extends ControllableChar {
             }
         }
         if (!flip_direction) {
-            return this.update_random_walk(true);
+            const dir_found = this.update_random_walk(true);
+            if (!dir_found) {
+                this._angle_direction = range_360(this._angle_direction + Math.PI);
+            }
+            return dir_found;
         }
         return false;
     }
@@ -451,7 +483,7 @@ export class NPC extends ControllableChar {
      * @returns returns true if the NPC is going to collide.
      */
     is_pos_colliding(tile_x_pos: number, tile_y_pos: number) {
-        if (this.data.map.is_tile_blocked(tile_x_pos, tile_y_pos, this.base_collision_layer)){
+        if (this.data.map.is_tile_blocked(tile_x_pos, tile_y_pos, this.base_collision_layer)) {
             return true;
         }
         const instances_in_tile = this.data.map.get_tile_bodies(tile_x_pos, tile_y_pos);
@@ -568,6 +600,7 @@ export class NPC extends ControllableChar {
         this.sprite.body.fixedRotation = true;
         this.sprite.body.mass = 1;
         this.sprite.body.static = true;
+        this.sprite.body.collides(this.data.collision.hero_collision_group);
     }
 
     /**
@@ -590,4 +623,3 @@ export class NPC extends ControllableChar {
         this.look_target = null;
     }
 }
-

@@ -494,8 +494,8 @@ export class Map {
         this.collision_sprite.body.damping = numbers.MAP_DAMPING;
         this.collision_sprite.body.angularDamping = numbers.MAP_DAMPING;
         this.collision_sprite.body.setZeroRotation();
-        this.collision_sprite.body.dynamic = false;
         this.collision_sprite.body.static = true;
+        this.collision_sprite.body.data.ccdIterations = 1;
     }
 
     /**
@@ -660,7 +660,7 @@ export class Map {
      * @param collision_layer the collision layer of tile. If not passed, gets the current one.
      * @returns Returns a list of NPCs and IOs based on constraints given.
      */
-     get_tile_bodies(tile_x_pos: number, tile_y_pos: number, collision_layer?: number) {
+    get_tile_bodies(tile_x_pos: number, tile_y_pos: number, collision_layer?: number) {
         const location_key = LocationKey.get_key(tile_x_pos, tile_y_pos);
         collision_layer = collision_layer ?? this.collision_layer;
         let objects: (NPC | InteractableObjects)[] = [];
@@ -832,7 +832,7 @@ export class Map {
             step_duration,
             wait_duration,
             base_step,
-            step_max_variation,
+            step_max_variation
         );
         this.npcs.push(npc);
         if (npc.label) {
@@ -1246,7 +1246,7 @@ export class Map {
      * @param collision_layer the initial collision layer.
      * @returns returns the mounted map.
      */
-     async mount_map(collision_layer: number = 0, encounter_cumulator?: number) {
+    async mount_map(collision_layer: number = 0, encounter_cumulator?: number) {
         if (!this.assets_loaded) {
             //lazy assets load
             let load_promise_resolve;

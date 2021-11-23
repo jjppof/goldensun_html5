@@ -859,11 +859,11 @@ export class InteractableObjects {
         this.sprite.body.angularDamping = 1;
         this.sprite.body.setZeroRotation();
         this.sprite.body.fixedRotation = true;
-        this.sprite.body.dynamic = false;
         this.sprite.body.static = true;
         if (this.block_climb_collision_layer_shift !== undefined) {
             this.creating_blocking_stair_block();
         }
+        this.sprite.body.collides(this.data.collision.hero_collision_group);
     }
 
     /**

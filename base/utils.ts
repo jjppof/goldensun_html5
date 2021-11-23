@@ -315,7 +315,7 @@ export function get_px_position(tile_pos: number, tile_size: number) {
 export function next_px_step(current_x: number, current_y: number, distance: number, angle_direction: number) {
     return {
         x: (current_x + distance * Math.cos(angle_direction)) | 0,
-        y: (current_y + distance * Math.sin(angle_direction)) | 0
+        y: (current_y + distance * Math.sin(angle_direction)) | 0,
     };
 }
 

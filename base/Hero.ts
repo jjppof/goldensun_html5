@@ -286,8 +286,10 @@ export class Hero extends ControllableChar {
         this.sprite.body.damping = 0;
         this.sprite.body.angularDamping = 0;
         this.sprite.body.inertia = 0;
+        this.sprite.body.dynamic = true;
         this.sprite.body.setZeroRotation();
         this.sprite.body.fixedRotation = true;
         this.sprite.body.data.shapes[0].extra_radius = 0.05;
+        this.sprite.body.data.ccdIterations = 1;
     }
 }

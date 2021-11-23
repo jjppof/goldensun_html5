@@ -516,6 +516,7 @@ declare module p2 {
         sleepSpeedLimit: number;
         sleepTimeLimit: number;
         gravityScale: number;
+        ccdIterations: number;
 
         updateSolveMassProperties(): void;
         setDensity(density: number): void;
@@ -687,6 +688,7 @@ declare module p2 {
         area: number;
         sensor: boolean;
         properties: any;
+        extra_radius: number;
 
         computeMomentOfInertia(mass: number): number;
         updateBoundingRadius(): number;

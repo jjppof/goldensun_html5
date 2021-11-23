@@ -78,7 +78,10 @@ export class Collision {
         this.game.physics.p2.world.defaultContactMaterial.relaxation = 8;
         this.game.physics.p2.world.defaultContactMaterial.friction = 0;
         this.game.physics.p2.world.defaultContactMaterial.contactSkinSize = 1e-3;
-        this.game.physics.p2.world.setGlobalStiffness(1e5);
+        this.game.physics.p2.world.defaultContactMaterial.stiffness = 1e8;
+        this.game.physics.p2.world.applyDamping = false;
+        this.game.physics.p2.world.applyGravity = false;
+        this.game.physics.p2.world.applySpringForces = false;
         this.game.physics.p2.restitution = 0;
     }
 
@@ -157,6 +160,8 @@ export class Collision {
         this.data.hero.sprite.body.collides(this._map_collision_group);
         this.data.map.collision_sprite.body.collides(this._hero_collision_group);
 
+        this.data.hero.sprite.body.collides(this._dynamic_events_collision_group);
+
         this.disable_npc_collision();
         this.enable_npc_collision(collision_layer);
 
@@ -169,14 +174,6 @@ export class Collision {
         if (collision_layer in this._interactable_objs_collision_groups) {
             this.data.hero.sprite.body.collides(this._interactable_objs_collision_groups[collision_layer]);
         }
-
-        for (let i = 0; i < this.data.npc_group.children.length; ++i) {
-            const sprite = this.data.npc_group.children[i] as Phaser.Sprite;
-            if (!sprite.is_npc && !sprite.is_interactable_object) continue;
-            if (!sprite.body) continue;
-            sprite.body.collides(this._hero_collision_group);
-        }
-        this.data.hero.sprite.body.collides(this._dynamic_events_collision_group);
     }
 
     /**
