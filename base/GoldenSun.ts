@@ -226,6 +226,7 @@ export class GoldenSun {
 
         //configs map layers: creates sprites, interactable objects and npcs, lists events and sets the map layers
         this.map = await this.info.maps_list[this.dbs.init_db.map_key_name].mount_map(this.dbs.init_db.collision_layer);
+        this.map.set_map_bounds(this.dbs.init_db.x_tile_position, this.dbs.init_db.y_tile_position);
 
         //initializes the controllable hero
         const hero_key_name = this.dbs.init_db.hero_key_name;

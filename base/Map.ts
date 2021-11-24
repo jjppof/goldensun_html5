@@ -6,7 +6,7 @@ import {event_types, GameEvent} from "./game_events/GameEvent";
 import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
 import {ControllableChar} from "./ControllableChar";
-import {base_actions, parse_blend_mode} from "./utils";
+import {base_actions, get_px_position, parse_blend_mode} from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
 import {Pushable} from "./interactable_objects/Pushable";
@@ -69,6 +69,7 @@ export class Map {
         }>;
     };
     private polygons_processed: boolean;
+    private bounding_boxes: Phaser.Rectangle[];
 
     constructor(
         game,
@@ -124,6 +125,7 @@ export class Map {
         this.encounter_zones = [];
         this._background_key = background_key;
         this.polygons_processed = false;
+        this.bounding_boxes = [];
     }
 
     /** The list of TileEvents of this map. */
@@ -962,12 +964,32 @@ export class Map {
     }
 
     /**
-     * Processes Tiled layers to check whether they have configs related to collision and encounter zones.
+     * Checks what is the suitable bounding box for the given position.
+     * If no bounding box found, will fit map bounds to world size.
+     * @param tile_x_pos the x tile position.
+     * @param tile_y_pos the y tile position.
+     */
+    set_map_bounds(tile_x_pos: number, tile_y_pos: number) {
+        const x = get_px_position(tile_x_pos, this.tile_width);
+        const y = get_px_position(tile_y_pos, this.tile_height);
+        for (let i = 0; i < this.bounding_boxes.length; ++i) {
+            const bounding_box = this.bounding_boxes[i];
+            if (bounding_box.contains(x, y)) {
+                this.game.camera.bounds.setTo(bounding_box.x, bounding_box.y, bounding_box.width, bounding_box.height);
+                return;
+            }
+        }
+        this.game.camera.setBoundsToWorld();
+    }
+
+    /**
+     * Processes Tiled layers to check whether they have configs related to collision,
+     * encounter zones and bounding boxes.
      */
     private process_tiled_layers() {
         let collision_layers_counter = 0;
         const layers_to_join: {[layer: number]: Array<any>} = {};
-        this.sprite.objects = _.mapKeys(this.sprite.objects, (objs: any, collision_index: string) => {
+        this.sprite.objects = _.mapKeys(this.sprite.objects, (objs: any, layer_name: string) => {
             if (objs.properties?.encounter_zone) {
                 //creates encounter zones
                 objs.objectsData.forEach(this_obj => {
@@ -983,7 +1005,7 @@ export class Map {
                         parties: this_obj.properties?.parties ? JSON.parse(this_obj.properties.parties) : [],
                     });
                 });
-                return collision_index;
+                return layer_name;
             } else if (objs.properties?.join_with_layer !== undefined) {
                 //checks if this layer is going to be joined with another one
                 if (objs.properties.join_with_layer in layers_to_join) {
@@ -994,14 +1016,27 @@ export class Map {
                     layers_to_join[objs.properties.join_with_layer] = objs.objectsData;
                 }
                 objs.objectsData = null;
-                return collision_index;
+                return layer_name;
             } else if (objs.properties?.layer_index !== undefined) {
                 //checks if this layer has the collision layer index specified
                 ++collision_layers_counter;
                 return objs.properties.layer_index;
+            } else if (objs.properties?.bounding_box) {
+                //checks if this layer has bounding boxes
+                objs.objectsData.forEach(this_obj => {
+                    const bounding_box = new Phaser.Rectangle(
+                        this_obj.x | 0,
+                        this_obj.y | 0,
+                        this_obj.width | 0,
+                        this_obj.height | 0
+                    );
+                    this.bounding_boxes.push(bounding_box);
+                });
+                return layer_name;
             } else {
+                //the default behavior is to treat the layer name as a collision index.
                 ++collision_layers_counter;
-                return parseInt(collision_index);
+                return parseInt(layer_name);
             }
         }) as any;
         if (this.collision_embedded) {
@@ -1413,6 +1448,8 @@ export class Map {
         this._interactable_objects = [];
         this._events = {};
         this.data.npc_group.removeAll();
+        this.encounter_zones = [];
+        this.bounding_boxes = [];
         this.data.npc_group.add(this.data.hero.shadow);
         this.data.npc_group.add(this.data.hero.sprite);
     }
