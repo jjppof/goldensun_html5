@@ -269,6 +269,7 @@ export class GoldenSun {
         this.assets_loaded = true;
         this.game.camera.resetFX();
 
+        this.map.fire_game_events();
         this.audio.initialize_controls();
         this.initialize_utils_controls();
     }

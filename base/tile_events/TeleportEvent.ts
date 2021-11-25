@@ -1,4 +1,4 @@
-import {base_actions, directions, reverse_directions} from "../utils";
+import {base_actions, directions, get_centered_pos_in_px, reverse_directions} from "../utils";
 import {event_types, TileEvent} from "./TileEvent";
 import * as numbers from "../magic_numbers";
 import * as _ from "lodash";
@@ -149,8 +149,8 @@ export class TeleportEvent extends TileEvent {
         if (!this.data.electron_app) {
             this.data.debug.update_debug_physics(this.data.hero.sprite.body.debug);
         }
-        this.data.hero.sprite.body.x = (this.x_target + 0.5) * this.data.map.tile_width;
-        this.data.hero.sprite.body.y = (this.y_target + 0.5) * this.data.map.tile_height;
+        this.data.hero.sprite.body.x = get_centered_pos_in_px(this.x_target, this.data.map.tile_width);
+        this.data.hero.sprite.body.y = get_centered_pos_in_px(this.y_target, this.data.map.tile_height);
         this.game.physics.p2.resume();
         this.camera_fade_out();
     }
@@ -166,6 +166,7 @@ export class TeleportEvent extends TileEvent {
             this.data.camera.reset_lerp();
             this.data.tile_event_manager.on_event = false;
             this.data.hero.teleporting = false;
+            this.data.map.fire_game_events();
         });
     }
 

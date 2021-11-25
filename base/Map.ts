@@ -70,6 +70,7 @@ export class Map {
     };
     private polygons_processed: boolean;
     private bounding_boxes: Phaser.Rectangle[];
+    private game_events: GameEvent[];
 
     constructor(
         game,
@@ -126,6 +127,7 @@ export class Map {
         this._background_key = background_key;
         this.polygons_processed = false;
         this.bounding_boxes = [];
+        this.game_events = [];
     }
 
     /** The list of TileEvents of this map. */
@@ -1265,6 +1267,24 @@ export class Map {
     }
 
     /**
+     * Initializes game events of this map.
+     * @param events list of input events
+     */
+    init_game_events(events: any) {
+        events.forEach(event_info => {
+            const event = this.data.game_event_manager.get_event_instance(event_info);
+            this.game_events.push(event);
+        });
+    }
+
+    /**
+     * Fires this map game events.
+     */
+    fire_game_events() {
+        this.game_events.forEach(event => event.fire());
+    }
+
+    /**
      * Removes a tile event in a custom location.
      * @param location_key the LocationKey of the event.
      * @param event_id the id of the event.
@@ -1339,6 +1359,10 @@ export class Map {
 
         if (this.sprite.properties?.footprint) {
             this._show_footsteps = true;
+        }
+
+        if (this.sprite.properties?.game_events) {
+            this.init_game_events(this.sprite.properties.game_events);
         }
 
         for (let property of sorted_props) {
@@ -1427,9 +1451,7 @@ export class Map {
         this.sprite.destroy();
         this.data.underlayer_group.removeAll();
         this.data.overlayer_group.removeAll();
-
         this.collision_sprite.body.clearShapes();
-
         this._npcs.forEach(npc => {
             npc.unset();
         });
@@ -1439,6 +1461,7 @@ export class Map {
         if (this.show_footsteps) {
             this.data.hero.footsteps.clean_all();
         }
+        this.game_events.forEach(event => event.destroy());
 
         TileEvent.reset();
         GameEvent.reset();
@@ -1450,6 +1473,7 @@ export class Map {
         this.data.npc_group.removeAll();
         this.encounter_zones = [];
         this.bounding_boxes = [];
+        this.game_events = [];
         this.data.npc_group.add(this.data.hero.shadow);
         this.data.npc_group.add(this.data.hero.sprite);
     }
