@@ -107,6 +107,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
     /*Changes the pool into a pillar
     Will change its properties and animation*/
     init_pillar() {
+        this.target_object.set_color_filter();
         this.target_object.get_events().forEach((event: JumpEvent) => {
             if (event.is_active() >= 0) {
                 event.deactivate();

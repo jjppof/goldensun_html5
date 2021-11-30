@@ -334,6 +334,7 @@ export class TileEventManager {
                 info.activation_collision_layers,
                 info.active,
                 info.active_storage_key,
+                null,
                 info.affected_by_reveal,
                 info.key_name
             );

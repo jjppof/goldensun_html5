@@ -86,6 +86,7 @@ export class InteractableObjects {
     protected _pushable: boolean;
     protected _is_rope_dock: boolean;
     protected _rollable: boolean;
+    protected _breakable: boolean;
     protected _extra_sprites: (Phaser.Sprite | Phaser.Graphics | Phaser.Group)[];
     public allow_jumping_over_it: boolean;
     public allow_jumping_through_it: boolean;
@@ -159,6 +160,7 @@ export class InteractableObjects {
         this._pushable = false;
         this._is_rope_dock = false;
         this._rollable = false;
+        this._breakable = false;
         this.tile_events_info = {};
         for (let index in events_info) {
             this.tile_events_info[+index] = events_info[index];
@@ -243,6 +245,9 @@ export class InteractableObjects {
     get rollable() {
         return this._rollable;
     }
+    get breakable() {
+        return this._breakable;
+    }
     get enable() {
         return this._enable;
     }
@@ -251,6 +256,12 @@ export class InteractableObjects {
     }
     get bush_sprite() {
         return this._bush_sprite;
+    }
+    get width() {
+        return this.sprite.width;
+    }
+    get height() {
+        return this.sprite.height;
     }
 
     position_allowed(x: number, y: number) {
@@ -443,7 +454,6 @@ export class InteractableObjects {
             this.sprite.is_interactable_object = true;
             this.sprite.roundPx = true;
             this.sprite.base_collision_layer = this.base_collision_layer;
-            this.sprite.filters = [this.color_filter];
             if (interactable_object_db.send_to_back !== undefined) {
                 this.sprite.send_to_back = interactable_object_db.send_to_back;
             }
@@ -487,6 +497,14 @@ export class InteractableObjects {
         this._extra_sprites.push(this._bush_sprite);
     }
 
+    set_color_filter() {
+        this.sprite.filters = [this.color_filter];
+    }
+
+    unset_color_filter() {
+        this.sprite.filters = undefined;
+    }
+
     toggle_collision(enable: boolean) {
         this.sprite.body.data.shapes.forEach(shape => (shape.sensor = !enable));
     }
@@ -514,7 +532,7 @@ export class InteractableObjects {
                     this.set_jump_type_event(i, event_info, x_pos, y_pos, active_event, target_layer, map);
                     break;
                 case interactable_object_event_types.JUMP_AROUND:
-                    this.set_jump_around_event(event_info, x_pos, y_pos, active_event, target_layer, map);
+                    this.set_jump_around_event(x_pos, y_pos, active_event, target_layer, map);
                     break;
                 case interactable_object_event_types.CLIMB:
                     this.set_stair_event(i, event_info, x_pos, y_pos, active_event, target_layer, map);
@@ -569,6 +587,7 @@ export class InteractableObjects {
             [target_layer],
             active_event,
             undefined,
+            this,
             false,
             undefined
         );
@@ -653,14 +672,7 @@ export class InteractableObjects {
         });
     }
 
-    private set_jump_around_event(
-        event_info: any,
-        x_pos: number,
-        y_pos: number,
-        active_event: boolean,
-        target_layer: number,
-        map: Map
-    ) {
+    private set_jump_around_event(x_pos: number, y_pos: number, active_event: boolean, target_layer: number, map: Map) {
         get_surroundings(x_pos, y_pos).forEach((pos, index) => {
             if (this.not_allowed_tile_test(pos.x, pos.y)) return;
             const this_event_location_key = LocationKey.get_key(pos.x, pos.y);
@@ -681,6 +693,7 @@ export class InteractableObjects {
                 [target_layer],
                 active_event,
                 undefined,
+                this,
                 false,
                 undefined
             ) as JumpEvent;
@@ -886,6 +899,15 @@ export class InteractableObjects {
             let new_x = old_x + event_shift_x;
             let new_y = old_y + event_shift_y;
             event.set_position(new_x, new_y, true);
+        }
+    }
+
+    destroy_body(update_map: boolean = true) {
+        if (this.body) {
+            this.body.destroy();
+            if (update_map) {
+                this.data.map.remove_body_tile(this.tile_x_pos, this.tile_y_pos, this.base_collision_layer, this);
+            }
         }
     }
 

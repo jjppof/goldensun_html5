@@ -14,6 +14,7 @@ import {RopeDock} from "./interactable_objects/RopeDock";
 import {RollablePillar} from "./interactable_objects/RollingPillar";
 import {Collision} from "./Collision";
 import {DjinnGetEvent} from "./game_events/DjinnGetEvent";
+import {Breakable} from "./interactable_objects/Breakable";
 
 /** The class reponsible for the maps of the engine. */
 export class Map {
@@ -695,21 +696,32 @@ export class Map {
         new_col_index: number,
         instance: NPC | InteractableObjects
     ) {
-        if (old_col_index in this._bodies_positions) {
-            const old_location_key = LocationKey.get_key(old_x, old_y);
-            this._bodies_positions[old_col_index][old_location_key] = this._bodies_positions[old_col_index][
-                old_location_key
-            ].filter(inst => inst !== instance);
-            if (!this._bodies_positions[old_col_index][old_location_key].length) {
-                delete this._bodies_positions[old_col_index][old_location_key];
-            }
-        }
+        this.remove_body_tile(old_x, old_y, old_col_index, instance);
         if (new_col_index in this._bodies_positions) {
             const new_location_key = LocationKey.get_key(new_x, new_y);
             if (new_location_key in this._bodies_positions[new_col_index]) {
                 this._bodies_positions[new_col_index][new_location_key].push(instance);
             } else {
                 this._bodies_positions[new_col_index][new_location_key] = [instance];
+            }
+        }
+    }
+
+    /**
+     * Removes a NPC or an IO collision track from this map.
+     * @param x_tile the x tile position.
+     * @param y_tile the y tile position.
+     * @param collision_layer the collision index.
+     * @param instance the NPC or IO instance.
+     */
+    remove_body_tile(x_tile: number, y_tile: number, collision_layer: number, instance: NPC | InteractableObjects) {
+        if (collision_layer in this._bodies_positions) {
+            const location_key = LocationKey.get_key(x_tile, y_tile);
+            this._bodies_positions[collision_layer][location_key] = this._bodies_positions[collision_layer][
+                location_key
+            ].filter(inst => inst !== instance);
+            if (!this._bodies_positions[collision_layer][location_key].length) {
+                delete this._bodies_positions[collision_layer][location_key];
             }
         }
     }
@@ -864,6 +876,8 @@ export class Map {
             io_class = RopeDock;
         } else if (interactable_object_db.rollable) {
             io_class = RollablePillar;
+        } else if (interactable_object_db.breakable) {
+            io_class = Breakable;
         }
         const allow_jumping_over_it =
             property_info.allow_jumping_over_it ?? interactable_object_db.allow_jumping_over_it;

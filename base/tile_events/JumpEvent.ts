@@ -1,9 +1,11 @@
 import {event_types, LocationKey, TileEvent} from "./TileEvent";
 import {get_opposite_direction, directions, get_front_position} from "../utils";
+import {Breakable} from "../interactable_objects/Breakable";
 
 export class JumpEvent extends TileEvent {
     private static readonly JUMP_OFFSET = 30;
     private static readonly JUMP_DURATION = 150;
+    private static readonly JUMP_HEIGHT = 16;
 
     constructor(
         game,
@@ -14,6 +16,7 @@ export class JumpEvent extends TileEvent {
         activation_collision_layers,
         active,
         active_storage_key,
+        origin_interactable_object,
         affected_by_reveal,
         key_name: string
     ) {
@@ -27,7 +30,7 @@ export class JumpEvent extends TileEvent {
             activation_collision_layers,
             active,
             active_storage_key,
-            null,
+            origin_interactable_object,
             affected_by_reveal,
             key_name
         );
@@ -48,12 +51,18 @@ export class JumpEvent extends TileEvent {
             ([directions.left, directions.up].includes(jump_direction) ? -1 : 1) * JumpEvent.JUMP_OFFSET;
 
         //cancels jumping if there's no collision in the next side position
-        if (!this.data.map.is_tile_blocked(side_position.x, side_position.y)) {
+        if (
+            !this.data.map.is_tile_blocked(side_position.x, side_position.y) &&
+            !this.data.map.get_tile_bodies(side_position.x, side_position.y).length
+        ) {
             return;
         }
 
         //cancels jumping if there's collision in the jump target position
-        if (this.data.map.is_tile_blocked(next_position.x, next_position.y)) {
+        if (
+            this.data.map.is_tile_blocked(next_position.x, next_position.y) ||
+            this.data.map.get_tile_bodies(next_position.x, next_position.y).length
+        ) {
             return;
         }
 
@@ -97,6 +106,7 @@ export class JumpEvent extends TileEvent {
         //jump only happens if the jump target position also has an active jump event in the opposite direction
         const next_pos_key = LocationKey.get_key(next_position.x, next_position.y);
         let active_jump_event_found = false;
+        let breakable: Breakable = null;
         if (next_pos_key in this.data.map.events) {
             for (let i = 0; i < this.data.map.events[next_pos_key].length; ++i) {
                 const event = this.data.map.events[next_pos_key][i];
@@ -106,6 +116,9 @@ export class JumpEvent extends TileEvent {
                     event.activation_collision_layers.includes(this.data.map.collision_layer)
                 ) {
                     active_jump_event_found = true;
+                    if (event.origin_interactable_object?.breakable) {
+                        breakable = event.origin_interactable_object as Breakable;
+                    }
                     break;
                 }
             }
@@ -118,7 +131,7 @@ export class JumpEvent extends TileEvent {
         this.data.tile_event_manager.on_event = true;
         this.data.hero
             .jump({
-                jump_height: 16,
+                jump_height: JumpEvent.JUMP_HEIGHT,
                 duration: JumpEvent.JUMP_DURATION,
                 jump_direction: jump_direction,
                 dest: {
@@ -129,6 +142,9 @@ export class JumpEvent extends TileEvent {
             })
             .then(() => {
                 this.data.tile_event_manager.on_event = false;
+                if (breakable) {
+                    breakable.break(this.data.hero);
+                }
             });
     }
 

@@ -163,7 +163,7 @@ export class PoundFieldPsynergy extends FieldAbilities {
             this.target_object.allow_jumping_through_it = true;
             this.target_object.allow_jumping_over_it = true;
             this.target_object.sprite.send_to_back = true;
-            this.target_object.sprite.body.destroy();
+            this.target_object.destroy_body();
         }
         this.init_shake();
         this.init_stars();

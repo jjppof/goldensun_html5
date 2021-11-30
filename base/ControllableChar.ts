@@ -68,6 +68,8 @@ export abstract class ControllableChar {
     public jumping: boolean;
     /** Whether this char is cliff sliding. */
     public sliding: boolean;
+    /** Whether this char is busy by any misc. reason. */
+    public misc_busy: boolean;
     /** Whether this char is casting psynergy. */
     public casting_psynergy: boolean;
     /** Whether this char is under Reveal psynergy effect. */
@@ -177,6 +179,7 @@ export abstract class ControllableChar {
         this.pushing = false;
         this.jumping = false;
         this.sliding = false;
+        this.misc_busy = false;
         this.casting_psynergy = false;
         this.on_reveal = false;
         this.teleporting = false;
@@ -344,6 +347,9 @@ export abstract class ControllableChar {
         return this.sprite?.body ?? null;
     }
 
+    /** The collision layer that this NPC is. */
+    abstract get collision_layer();
+
     /**
      * Returns whether this char is in action;
      * @param allow_climbing if true, climbing won't be considered.
@@ -356,7 +362,8 @@ export abstract class ControllableChar {
             (this.climbing && !allow_climbing) ||
             this.jumping ||
             this.teleporting ||
-            this.sliding
+            this.sliding ||
+            this.misc_busy
         );
     }
 

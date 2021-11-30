@@ -216,6 +216,10 @@ export class NPC extends ControllableChar {
     get base_collision_layer() {
         return this._base_collision_layer;
     }
+    /** The collision layer that this NPC is. */
+    get collision_layer() {
+        return this.base_collision_layer;
+    }
     /** Whether this NPC is affected by Reveal psynergy or not. */
     get affected_by_reveal() {
         return this._affected_by_reveal;

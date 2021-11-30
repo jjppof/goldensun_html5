@@ -7,8 +7,7 @@
                 "interaction_type": "once"
             }
         }
-    },
-    {
+    },{
         "key_name": "pillar",
         "anchor_x": 0.5,
         "anchor_y": 0.8,
@@ -38,6 +37,31 @@
         "spritesheet": {
             "image": "assets/images/interactable_objects/psynergy_move.png",
             "json": "assets/images/interactable_objects/psynergy_move.json"
+        }
+    },{
+        "key_name": "breaking_pillar",
+        "anchor_x": 0.5,
+        "anchor_y": 0.8,
+        "scale_x": 0.9,
+        "scale_y": 0.95,
+        "body_radius": 7.0,
+        "breakable": true,
+        "collision_body_bevel": 3,
+        "events": [{
+            "type": "jump",
+            "active": true,
+            "x_shift": 0,
+            "y_shift": -2
+        }],
+        "initial_animation": "standard",
+        "actions": {
+            "frame_rate": 1,
+            "animations": ["standard", "to_break", "broken"],
+            "frames_count": 1
+        },
+        "spritesheet": {
+            "image": "assets/images/interactable_objects/breaking_pillar.png",
+            "json": "assets/images/interactable_objects/breaking_pillar.json"
         }
     },{
         "key_name": "entangled_pillar",

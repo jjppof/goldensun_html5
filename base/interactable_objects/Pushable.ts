@@ -3,7 +3,6 @@ import {event_types, LocationKey} from "../tile_events/TileEvent";
 import {directions, reverse_directions, base_actions, get_centered_pos_in_px, get_front_position} from "../utils";
 import {InteractableObjects} from "./InteractableObjects";
 import {ControllableChar} from "../ControllableChar";
-import {ClimbEvent} from "../tile_events/ClimbEvent";
 
 /**
  * An interactable object that can be pushed by a ControllableChar.
