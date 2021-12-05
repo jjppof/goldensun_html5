@@ -40,7 +40,7 @@ export class YesNoMenu {
         this.menu.title_window.update_size({width: TITLE_WINDOW_WIDTH});
     }
 
-    update_position(new_x: number = undefined, new_y: number = undefined) {
+    update_position(new_x?: number, new_y?: number) {
         if (new_x !== undefined) {
             const diff = this.menu.title_window.x - this.menu.x;
             this.menu.x = new_x;
@@ -69,9 +69,9 @@ export class YesNoMenu {
         return this.menu.menu_active;
     }
 
-    open(callbacks: {yes: Function; no: Function}, custom_pos?: {x: number; y: number}, open_callback?: Function) {
-        this.yes_callback = callbacks.yes;
-        this.no_callback = callbacks.no;
+    open(callbacks: {yes?: Function; no?: Function}, custom_pos?: {x: number; y: number}, open_callback?: Function) {
+        this.yes_callback = callbacks.yes ?? (() => {});
+        this.no_callback = callbacks.no ?? (() => {});
 
         if (this.data.hero.in_action()) {
             this.data.hero.stop_char();

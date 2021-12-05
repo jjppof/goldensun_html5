@@ -72,6 +72,7 @@ export class Map {
     private polygons_processed: boolean;
     private bounding_boxes: Phaser.Rectangle[];
     private game_events: GameEvent[];
+    private _retreat_pos: {x: number, y: number};
 
     constructor(
         game,
@@ -129,6 +130,7 @@ export class Map {
         this.polygons_processed = false;
         this.bounding_boxes = [];
         this.game_events = [];
+        this._retreat_pos = null;
     }
 
     /** The list of TileEvents of this map. */
@@ -214,6 +216,10 @@ export class Map {
     /** Gets the enemy party encounter cumulator value. */
     get encounter_cumulator() {
         return this._encounter_cumulator;
+    }
+    /** Gets the location to retreat in the case of Retreat psynergy. */
+    get retreat_pos() {
+        return this._retreat_pos;
     }
 
     /**
@@ -1373,6 +1379,10 @@ export class Map {
 
         if (this.sprite.properties?.footprint) {
             this._show_footsteps = true;
+        }
+
+        if (this.sprite.properties?.retreat_pos) {
+            this._retreat_pos = JSON.parse(this.sprite.properties.retreat_pos);
         }
 
         if (this.sprite.properties?.game_events) {

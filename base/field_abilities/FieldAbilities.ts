@@ -4,6 +4,7 @@ import {FieldPsynergyWindow} from "../windows/FieldPsynergyWindow";
 import {GoldenSun} from "../GoldenSun";
 import {ControllableChar} from "../ControllableChar";
 import {Map} from "../Map";
+import { YesNoMenu } from "../windows/YesNoMenu";
 
 /*Defines and manages the usage of field psynergy
 
@@ -29,6 +30,8 @@ export abstract class FieldAbilities {
     private field_intensity: number;
     private works_on_disabled_io: boolean;
     private target_found_extra_check: (io: InteractableObjects) => boolean;
+    private ask_before_cast: boolean;
+    private ask_before_cast_yes_no_menu: YesNoMenu;
 
     constructor(
         game: Phaser.Game,
@@ -41,7 +44,9 @@ export abstract class FieldAbilities {
         field_color?: number,
         field_intensity?: number,
         works_on_disabled_io?: boolean,
-        target_found_extra_check?: (io: InteractableObjects) => boolean
+        target_found_extra_check?: (io: InteractableObjects) => boolean,
+        ask_before_cast?: boolean
+
     ) {
         this.game = game;
         this.ability_key_name = ability_key_name;
@@ -61,6 +66,8 @@ export abstract class FieldAbilities {
         this.field_intensity = field_intensity;
         this.works_on_disabled_io = works_on_disabled_io ?? false;
         this.target_found_extra_check = target_found_extra_check;
+        this.ask_before_cast = ask_before_cast ?? false;
+        this.ask_before_cast_yes_no_menu = new YesNoMenu(this.game, this.data);
     }
 
     abstract update(): void;
@@ -170,22 +177,19 @@ export abstract class FieldAbilities {
         }
     }
 
-    cast(controllable_char: ControllableChar, caster_key_name: string) {
-        this.controllable_char = controllable_char;
-        if (this.controllable_char.casting_psynergy) return;
-        if (caster_key_name !== undefined && caster_key_name in this.data.info.main_char_list) {
-            const caster = this.data.info.main_char_list[caster_key_name];
-            const ability = this.data.info.abilities_list[this.ability_key_name];
-            if (caster.current_pp < ability.pp_cost || !caster.abilities.includes(this.ability_key_name)) {
-                return;
-            }
-            caster.current_pp -= ability.pp_cost;
+    init_cast(caster_key_name: string) {
+        const caster = this.data.info.main_char_list[caster_key_name];
+        const ability = this.data.info.abilities_list[this.ability_key_name];
+        if (caster.current_pp < ability.pp_cost || !caster.abilities.includes(this.ability_key_name)) {
+            return;
         }
+        caster.current_pp -= ability.pp_cost;
 
         this.field_psynergy_window.window.send_to_front();
         this.field_psynergy_window.open(this.ability_key_name);
 
         this.controllable_char.casting_psynergy = true;
+        this.controllable_char.misc_busy = false;
         this.data.audio.play_se("psynergy/4");
         this.game.physics.p2.pause();
         this.controllable_char.stop_char(false);
@@ -226,6 +230,27 @@ export abstract class FieldAbilities {
                 }
             }
         );
+    }
+
+    cast(controllable_char: ControllableChar, caster_key_name: string) {
+        this.controllable_char = controllable_char;
+        if (this.controllable_char.casting_psynergy || caster_key_name === undefined || !(caster_key_name in this.data.info.main_char_list)) {
+            return;
+        }
+
+        if (this.ask_before_cast) {
+            this.controllable_char.misc_busy = true;
+            this.ask_before_cast_yes_no_menu.open(
+                {
+                    yes: this.init_cast.bind(this, caster_key_name),
+                    no: () => {
+                        this.controllable_char.misc_busy = false;
+                    }
+                }
+            );
+        } else {
+            this.init_cast(caster_key_name);
+        }
     }
 
     static init_cast_aura(

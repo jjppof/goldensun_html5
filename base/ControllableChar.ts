@@ -908,7 +908,7 @@ export abstract class ControllableChar {
         }
     }
 
-    /** Update function in the game is in event state. */
+    /** Update function when the game is in event state. */
     update_on_event() {
         if (!this.active) return;
         this.look_to_target();

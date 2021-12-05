@@ -8,6 +8,7 @@ import {LashFieldPsynergy} from "../field_abilities/LashFieldPsynergy";
 import {GoldenSun} from "../GoldenSun";
 import {GameInfo} from "./initialize_info";
 import {WhirlwindFieldPsynergy} from "../field_abilities/WhirlwindFieldPsynergy";
+import { RetreatFieldPsynergy } from "../field_abilities/RetreatFieldPsynergy";
 
 export function initialize_abilities(
     game: Phaser.Game,
@@ -66,5 +67,6 @@ export function initialize_field_abilities(game, data) {
         reveal: new RevealFieldPsynergy(game, data),
         lash: new LashFieldPsynergy(game, data),
         whirlwind: new WhirlwindFieldPsynergy(game, data),
+        retreat: new RetreatFieldPsynergy(game, data),
     };
 }

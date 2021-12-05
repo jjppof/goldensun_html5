@@ -487,3 +487,24 @@ export function random_normal() {
 export function parse_blend_mode(blendMode: string) {
     return (PIXI.blendModes[blendMode] as unknown) as PIXI.blendModes;
 }
+
+/**
+ * Promised way to create and wait a Phaser.Timer. Waits for the amount of time given.
+ * @param game the Phaser game object.
+ * @param time the time in ms.
+ * @param callback on timer finish callback.
+ */
+export async function promised_wait(game: Phaser.Game, time: number, callback?: () => void) {
+    let this_resolve;
+    const promise = new Promise(resolve => (this_resolve = resolve));
+    const timer = game.time.create(true);
+    timer.add(time, () => {
+        if (callback) {
+            callback();
+        }
+        this_resolve();
+        timer.destroy();
+    });
+    timer.start();
+    await promise;
+}

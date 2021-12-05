@@ -1,5 +1,5 @@
 import * as numbers from "../magic_numbers";
-import {directions, reverse_directions, get_surroundings, base_actions} from "../utils";
+import {directions, reverse_directions, base_actions} from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {FieldAbilities} from "./FieldAbilities";
 import {SpriteBase} from "../SpriteBase";
