@@ -1,7 +1,6 @@
 import {TextObj, Window} from "../Window";
 import * as numbers from "../magic_numbers";
 import {GoldenSun} from "../GoldenSun";
-import * as _ from "lodash";
 
 const BASE_WIDTH = 10;
 const BASE_HEIGHT = 20;
@@ -18,13 +17,13 @@ export class FieldPsynergyWindow {
     public game: Phaser.Game;
     public data: GoldenSun;
     public window: Window;
-    public text: TextObj;
+    public text_obj: TextObj;
 
     constructor(game, data) {
         this.game = game;
         this.data = data;
         this.window = new Window(this.game, POS_X, POS_Y, BASE_WIDTH, BASE_HEIGHT);
-        this.text = this.window.set_text_in_position("", undefined, undefined, {italic: true});
+        this.text_obj = this.window.set_text_in_position("", undefined, undefined, {italic: true});
     }
 
     /*Calculates a vertical offset so the window doesn't cover the hero
@@ -40,11 +39,11 @@ export class FieldPsynergyWindow {
     Input: text [string] - The psynergy name to show
            callback [function] - Callback function (Optional)*/
     open(text, callback?) {
-        const new_text = _.capitalize(text);
-        this.window.update_text(new_text, this.text);
-        this.window.update_size({width: BASE_WIDTH + this.text.text.width, height: BASE_HEIGHT});
+        this.window.send_to_front();
+        this.window.update_text(text, this.text_obj);
+        this.window.update_size({width: BASE_WIDTH + this.text_obj.text.width, height: BASE_HEIGHT});
         this.window.update_position({
-            x: (POS_X - (this.text.text.width >> 1)) | 0,
+            x: (POS_X - (this.text_obj.text.width >> 1)) | 0,
             y: (POS_Y + this.vertical_adjust()) | 0,
         });
 

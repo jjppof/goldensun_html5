@@ -23,7 +23,7 @@ export abstract class FieldAbilities {
     protected controllable_char: ControllableChar;
     protected target_found: boolean;
     protected target_object: InteractableObjects;
-    protected stop_casting: Function;
+    protected stop_casting: () => Promise<void>;
     protected field_psynergy_window: FieldPsynergyWindow;
     protected cast_direction: number;
     private field_color: number;
@@ -178,6 +178,7 @@ export abstract class FieldAbilities {
     }
 
     init_cast(caster_key_name: string) {
+        this.field_psynergy_window.close();
         const caster = this.data.info.main_char_list[caster_key_name];
         const ability = this.data.info.abilities_list[this.ability_key_name];
         if (caster.current_pp < ability.pp_cost || !caster.abilities.includes(this.ability_key_name)) {
@@ -185,8 +186,7 @@ export abstract class FieldAbilities {
         }
         caster.current_pp -= ability.pp_cost;
 
-        this.field_psynergy_window.window.send_to_front();
-        this.field_psynergy_window.open(this.ability_key_name);
+        this.field_psynergy_window.open(ability.name);
 
         this.controllable_char.casting_psynergy = true;
         this.controllable_char.misc_busy = false;
@@ -239,11 +239,14 @@ export abstract class FieldAbilities {
         }
 
         if (this.ask_before_cast) {
+            const ability = this.data.info.abilities_list[this.ability_key_name];
+            this.field_psynergy_window.open(`Use ${ability.name}?`);
             this.controllable_char.misc_busy = true;
             this.ask_before_cast_yes_no_menu.open(
                 {
                     yes: this.init_cast.bind(this, caster_key_name),
                     no: () => {
+                        this.field_psynergy_window.close();
                         this.controllable_char.misc_busy = false;
                     }
                 }
