@@ -23,7 +23,7 @@ export abstract class FieldAbilities {
     protected controllable_char: ControllableChar;
     protected target_found: boolean;
     protected target_object: InteractableObjects;
-    protected stop_casting: () => Promise<void>;
+    protected stop_casting: (reset_casting_psy_flag?: boolean) => Promise<void>;
     protected field_psynergy_window: FieldPsynergyWindow;
     protected cast_direction: number;
     private field_color: number;
@@ -32,6 +32,7 @@ export abstract class FieldAbilities {
     private target_found_extra_check: (io: InteractableObjects) => boolean;
     private ask_before_cast: boolean;
     private ask_before_cast_yes_no_menu: YesNoMenu;
+    private extra_cast_check: () => boolean;
 
     constructor(
         game: Phaser.Game,
@@ -96,6 +97,10 @@ export abstract class FieldAbilities {
 
     set_bootstrap_method(method) {
         this.bootstrap_method = method;
+    }
+
+    set_extra_cast_check(method) {
+        this.extra_cast_check = method;
     }
 
     set_cast_finisher_method(method) {
@@ -218,9 +223,11 @@ export abstract class FieldAbilities {
 
                 this.bootstrap_method();
             },
-            () => {
+            (reset_casting_psy_flag: boolean = true) => {
                 this.game.physics.p2.resume();
-                this.controllable_char.casting_psynergy = false;
+                if (reset_casting_psy_flag) {
+                    this.controllable_char.casting_psynergy = false;
+                }
                 this.target_object = null;
             },
             () => {
@@ -235,6 +242,10 @@ export abstract class FieldAbilities {
     cast(controllable_char: ControllableChar, caster_key_name: string) {
         this.controllable_char = controllable_char;
         if (this.controllable_char.casting_psynergy || caster_key_name === undefined || !(caster_key_name in this.data.info.main_char_list)) {
+            return;
+        }
+
+        if (this.extra_cast_check && !this.extra_cast_check()){
             return;
         }
 
@@ -386,7 +397,7 @@ export abstract class FieldAbilities {
             filter.hue_adjust = Math.random() * 2 * Math.PI;
         });
         blink_timer.start();
-        return async () => {
+        return async (reset_casting_psy_flag?: boolean) => {
             if (before_destroy !== undefined) {
                 before_destroy();
             }
@@ -409,7 +420,7 @@ export abstract class FieldAbilities {
                 }
             }
             if (after_destroy !== undefined) {
-                after_destroy();
+                after_destroy(reset_casting_psy_flag);
             }
         };
     }

@@ -1,6 +1,8 @@
 import {FieldAbilities} from "./FieldAbilities";
-import {base_actions, directions, promised_wait} from "../utils";
+import {base_actions, directions, get_centered_pos_in_px, promised_wait} from "../utils";
 import * as numbers from "../magic_numbers";
+import { DialogManager } from "../utils/DialogManager";
+import { Button } from "../XGamepad";
 
 export class RetreatFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "retreat";
@@ -12,6 +14,7 @@ export class RetreatFieldPsynergy extends FieldAbilities {
     constructor(game, data) {
         super(game, data, RetreatFieldPsynergy.ABILITY_KEY_NAME, RetreatFieldPsynergy.ACTION_KEY_NAME, false, false, undefined, undefined, undefined, undefined, undefined, true);
         this.set_bootstrap_method(this.init.bind(this));
+        this.set_extra_cast_check(this.check_if_can_retreat.bind(this));
         this.enable_update = false;
     }
 
@@ -19,6 +22,42 @@ export class RetreatFieldPsynergy extends FieldAbilities {
         if (this.enable_update) {
             this.controllable_char.update_on_event();
         }
+    }
+
+    check_if_can_retreat() {
+        if (this.data.map.get_retreat_data()) {
+            return true;
+        }
+        this.controllable_char.misc_busy = true;
+        const dialog = new DialogManager(this.game, this.data);
+        let next = false;
+        let kill_dialog = false;
+        const control_key = this.data.control_manager.add_controls(
+            [
+                {
+                    button: Button.A,
+                    on_down: () => {
+                        if (next) {
+                            dialog.quick_next(`It doesn't work here.`, () => {
+                                next = false;
+                                kill_dialog = true;
+                            });
+                        } else if (kill_dialog) {
+                            dialog.kill_dialog(() => {
+                                this.data.control_manager.detach_bindings(control_key);
+                                this.controllable_char.misc_busy = false;
+                            }, false, true);
+                        }
+                    },
+                },
+            ],
+            {persist: true}
+        );
+        const ability_name = this.data.info.abilities_list[RetreatFieldPsynergy.ABILITY_KEY_NAME].name;
+        dialog.quick_next(`${ability_name}...`, () => {
+            next = true;
+        }, {show_crystal: true});
+        return false;
     }
 
     async init() {
@@ -32,7 +71,7 @@ export class RetreatFieldPsynergy extends FieldAbilities {
         this.unset_hero_cast_anim();
         this.controllable_char.set_rotation(true);
         this.enable_update = true;
-        await this.stop_casting();
+        await this.stop_casting(false);
 
         await promised_wait(this.game, Phaser.Timer.HALF);
 
@@ -42,17 +81,29 @@ export class RetreatFieldPsynergy extends FieldAbilities {
         this.data.camera.unfollow();
         this.game.physics.p2.pause();
 
-        this.start_particles_emitter();
+        const emitter = this.start_particles_emitter();
 
+        let tween_pos_resolve;
+        const promise_tween_pos = new Promise(resolve => tween_pos_resolve = resolve);
         this.game.add.tween(this.controllable_char.body).to({
             y: this.controllable_char.y - (numbers.GAME_HEIGHT >> 1)
-        }, RetreatFieldPsynergy.RISE_TIME, Phaser.Easing.Linear.None, true);
+        }, RetreatFieldPsynergy.RISE_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(tween_pos_resolve);
+
+        let tween_scale_resolve;
+        const promise_tween_scale = new Promise(resolve => tween_scale_resolve = resolve);
         this.game.add.tween(this.controllable_char.sprite.scale).to({
             x: 0,
             y: 0,
-        }, RetreatFieldPsynergy.RISE_TIME, Phaser.Easing.Linear.None, true);
+        }, RetreatFieldPsynergy.RISE_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(tween_scale_resolve);
 
-        // this.finish();
+        await Promise.all([promise_tween_pos, promise_tween_scale]);
+
+        this.data.particle_manager.removeEmitter(emitter);
+        emitter.destroy();
+        this.data.particle_manager.clearData(RetreatFieldPsynergy.EMITTER_DATA_NAME);
+
+        this.game.camera.fade(undefined, undefined, true);
+        this.game.camera.onFadeComplete.addOnce(this.move_char.bind(this));
     }
 
     start_particles_emitter() {
@@ -60,27 +111,46 @@ export class RetreatFieldPsynergy extends FieldAbilities {
             image: "psynergy_ball",
             alpha: 0.9,
             lifespan: 500,
-            hsv: { min: 0, max: 359 },
+            // hsv: { min: 0, max: 359 },
             frame: "ball/03",
-            scale: { min: 0.4, max: 0.5 },
+            scale: { min: 0.5, max: 0.6 },
             velocity: {
-                initial: {min: 4, max: 6},
+                initial: {min: 3, max: 5},
                 radial: {arcStart: -18, arcEnd: 18},
             },
         };
         this.data.particle_manager.addData(RetreatFieldPsynergy.EMITTER_DATA_NAME, out_data);
-        const out_emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.SPRITE);
-        out_emitter.addToWorld();
-        out_emitter.emit(RetreatFieldPsynergy.EMITTER_DATA_NAME, this.controllable_char.x, this.controllable_char.y, {
+        const emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.SPRITE);
+        emitter.addToWorld();
+        emitter.emit(RetreatFieldPsynergy.EMITTER_DATA_NAME, () => this.controllable_char.x, () => this.controllable_char.y, {
             total: 3,
             repeat: 23,
             frequency: 60,
             random: true,
         });
+        return emitter;
     }
 
-    finish() {
-        
-        
+    async move_char() {
+        this.enable_update = false;
+        this.controllable_char.set_rotation(false);
+        const retreat_info = this.data.map.get_retreat_data();
+        this.data.map.set_map_bounds(retreat_info.x, retreat_info.y);
+        this.data.collision.change_map_body(retreat_info.collision_layer);
+        this.controllable_char.body.x = get_centered_pos_in_px(retreat_info.x, this.data.map.tile_width);
+        this.controllable_char.body.y = get_centered_pos_in_px(retreat_info.y, this.data.map.tile_height);
+        this.controllable_char.set_direction(retreat_info.direction, true);
+        this.controllable_char.reset_scale();
+        this.controllable_char.update_shadow();
+        this.controllable_char.update_tile_position();
+        if (this.controllable_char.shadow) {
+            this.controllable_char.shadow.visible = true;
+        }
+        this.game.physics.p2.resume();
+        this.data.camera.follow(this.controllable_char);
+        this.game.camera.flash(0x0, undefined, true);
+        this.game.camera.onFlashComplete.addOnce(() => {
+            this.controllable_char.casting_psynergy = false;
+        });
     }
 }

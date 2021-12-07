@@ -1360,6 +1360,19 @@ Phaser.ParticleStorm.Emitter.prototype = {
         }
 
         //  ------------------------------------------------
+        //  If the coordinates are callables it calls them to get the values
+        //  ------------------------------------------------
+        if (x instanceof Function)
+        {
+            x = x();
+        }
+
+        if (y instanceof Function)
+        {
+            y = y();
+        }
+
+        //  ------------------------------------------------
         //  If the coordinates are sequential based on previous particle
         //  ------------------------------------------------
 

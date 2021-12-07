@@ -136,12 +136,6 @@ export class TeleportEvent extends TileEvent {
             encounter_cumulator
         );
         this.data.map.set_map_bounds(this.x_target, this.y_target);
-        if (this.game.camera.bounds?.width < numbers.GAME_WIDTH) {
-            this.game.camera.bounds.width = numbers.GAME_WIDTH;
-        }
-        if (this.game.camera.bounds?.height < numbers.GAME_HEIGHT) {
-            this.game.camera.bounds.height = numbers.GAME_HEIGHT;
-        }
         this.data.collision.config_collision_groups(this.data.map);
         this.data.map.config_all_bodies(this.data.map.collision_layer);
         this.data.collision.config_collisions(this.data.map.collision_layer);

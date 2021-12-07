@@ -144,6 +144,7 @@ export abstract class ControllableChar {
     private _rotating: boolean;
     private _rotating_interval: number;
     private _rotating_elapsed: number;
+    private _default_scale: {x: number, y: number};
 
     constructor(
         game: Phaser.Game,
@@ -427,6 +428,7 @@ export abstract class ControllableChar {
         } else if (scale_y === undefined) {
             scale_y = 1;
         }
+        this._default_scale = {x: scale_x, y: scale_y};
         this.sprite.scale.setTo(scale_x, scale_y);
     }
 
@@ -441,6 +443,13 @@ export abstract class ControllableChar {
             this.sprite.anchor.x = ControllableChar.default_anchor.x;
             this.sprite.anchor.y = ControllableChar.default_anchor.y;
         }
+    }
+
+    /**
+     * Resets the scale of this char to default values.
+     */
+    reset_scale() {
+        this.sprite.scale.setTo(this._default_scale.x, this._default_scale.y);
     }
 
     /**

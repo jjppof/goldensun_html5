@@ -210,7 +210,7 @@ declare module Phaser {
             createGravityWell(x?: number, y?: number, power?: number, epsilon?: number, gravity?: number): Phaser.ParticleStorm.GravityWell;
             seed(qty: number): Phaser.ParticleStorm.Emitter;
             emitDelayed(delay: number, key: string, x?: number | number[], y?: number | number[], config?: EmitterConfig): Phaser.TimerEvent;
-            emit(key: string, x: number, y: number, config?: EmitterConfig): Phaser.ParticleStorm.Particle | Phaser.ParticleStorm.Particle[];
+            emit(key: string, x: number | number[] | (() => number), y: number | number[] | (() => number), config?: EmitterConfig): Phaser.ParticleStorm.Particle | Phaser.ParticleStorm.Particle[];
             emitParticle(key: string, x?: number | number[], y?: number | number[], parent?: Phaser.ParticleStorm.Particle): Phaser.ParticleStorm.Particle;
             update(): number;
             updateFrequency(emit: any, elapsedTime: number, lastPercent: number, lifePercent: number): number;

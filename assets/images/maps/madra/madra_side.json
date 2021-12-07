@@ -943,10 +943,22 @@
                  "width":0,
                  "x":256,
                  "y":288
+                }, 
+                {
+                 "ellipse":true,
+                 "height":16,
+                 "id":30,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":48,
+                 "y":288
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -1170,7 +1182,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -1463,7 +1475,7 @@
          "y":0
         }],
  "nextlayerid":17,
- "nextobjectid":30,
+ "nextobjectid":31,
  "orientation":"orthogonal",
  "properties":
     {
@@ -1524,7 +1536,7 @@
      "npc_02":"{\n\"key_name\": \"briggs\",\n\"initial_x\": 14,\n\"initial_y\": 4,\n\"npc_type\": \"normal\",\n\"movement_type\": \"idle\",\n\"message\": \"Battle system is still under development. Some builtin animations will be done, but now we only have animations for Ice and Plasma. Check it out...\",\n\"thought_message\": \"Nothing to think about.\",\n\"avatar\": \"\",\n\"base_collision_layer\": 0,\n\"events\": [{\n  \"type\": \"battle\",\n  \"background_key\": \"bg_cliffs\",\n  \"enemy_party_key\": \"briggs_party\"\n}]\n}",
      "npc_03":"{\n    \"key_name\": \"chest\",\n    \"storage_keys\":{\n        \"direction\": \"pound_cube_chest\"\n    },\n    \"initial_x\": 28,\n    \"initial_y\": 10,\n    \"npc_type\": \"normal\",\n    \"movement_type\": \"idle\",\n    \"base_collision_layer\": 2,\n    \"events\": [\n        {\n            \"type\": \"branch\",\n            \"condition\": \"=\",\n            \"has_else\": true,\n            \"left_comparator_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                    \"key_name\": \"pound_cube_chest\"\n                }\n            },\n            \"right_comparator_value\": {\n                \"type\": \"value\",\n                \"value\": \"closed\"\n            },\n            \"events\": [{\n                \"type\": \"chest\",\n                \"item\": \"pound_cube\",\n                \"finish_events\": [{\n                    \"type\": \"set_value\",\n                    \"event_value\": {\n                        \"type\": \"storage\",\n                        \"value\": {\n                            \"key_name\": \"pound_cube_chest\",\n                            \"value\": \"empty\"\n                        }\n                    }\n                }]\n            }],\n            \"else_events\": [{\n                \"type\": \"dialog\",\n                \"text\": \"${HERO} checked the chest...${BREAK}but the chest was empty.\"\n            }]\n        }\n    ]\n}",
      "npc_04":"{\n    \"key_name\": \"venus_djinn\",\n    \"storage_keys\":{\n        \"active\": \"ground_djinn\"\n    },\n    \"initial_x\": 20,\n    \"initial_y\": 25,\n    \"npc_type\": \"normal\",\n    \"initial_action\": \"idle\",\n    \"movement_type\": \"idle\",\n    \"base_collision_layer\": 0,\n    \"events\": [{\n        \"type\": \"djinn_get\",\n        \"djinn_key\": \"ground\",\n        \"has_fight\": true,\n        \"enemy_party_key\": \"venus_djinn_ground_party\",\n        \"custom_battle_bg\": \"bg_cliffs\",\n        \"finish_events\": [{\n            \"type\": \"set_value\",\n            \"event_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                    \"key_name\": \"ground_djinn\",\n                    \"value\": false\n                }\n            }\n        }]\n    }]\n}",
-     "retreat_pos":"{\"x\": 1, \"y\": 17}"
+     "retreat_data":"{\"x\": 1, \"y\": 17, \"collision_layer\": 0, \"direction\": \"right\"}"
     },
  "propertytypes":
     {
@@ -1585,7 +1597,7 @@
      "npc_02":"string",
      "npc_03":"string",
      "npc_04":"string",
-     "retreat_pos":"string"
+     "retreat_data":"string"
     },
  "renderorder":"right-down",
  "tiledversion":"1.7.2",

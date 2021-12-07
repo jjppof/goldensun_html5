@@ -6,7 +6,7 @@ import {event_types, GameEvent} from "./game_events/GameEvent";
 import {GoldenSun} from "./GoldenSun";
 import * as _ from "lodash";
 import {ControllableChar} from "./ControllableChar";
-import {base_actions, get_px_position, parse_blend_mode} from "./utils";
+import {base_actions, directions, get_px_position, parse_blend_mode} from "./utils";
 import {BattleEvent} from "./game_events/BattleEvent";
 import {Djinn} from "./Djinn";
 import {Pushable} from "./interactable_objects/Pushable";
@@ -72,7 +72,12 @@ export class Map {
     private polygons_processed: boolean;
     private bounding_boxes: Phaser.Rectangle[];
     private game_events: GameEvent[];
-    private _retreat_pos: {x: number, y: number};
+    private _retreat_data: {
+        x: number,
+        y: number,
+        collision_layer: number,
+        direction: directions
+    };
 
     constructor(
         game,
@@ -130,7 +135,7 @@ export class Map {
         this.polygons_processed = false;
         this.bounding_boxes = [];
         this.game_events = [];
-        this._retreat_pos = null;
+        this._retreat_data = null;
     }
 
     /** The list of TileEvents of this map. */
@@ -217,9 +222,13 @@ export class Map {
     get encounter_cumulator() {
         return this._encounter_cumulator;
     }
-    /** Gets the location to retreat in the case of Retreat psynergy. */
-    get retreat_pos() {
-        return this._retreat_pos;
+
+    /**
+     * Gets Retreat psynergy info.
+     * @returns returns the x and y tile posoition to retreat and the destination collision index and direction.
+     */
+    get_retreat_data() {
+        return this._retreat_data;
     }
 
     /**
@@ -994,14 +1003,24 @@ export class Map {
     set_map_bounds(tile_x_pos: number, tile_y_pos: number) {
         const x = get_px_position(tile_x_pos, this.tile_width);
         const y = get_px_position(tile_y_pos, this.tile_height);
+        let bound_set = false;
         for (let i = 0; i < this.bounding_boxes.length; ++i) {
             const bounding_box = this.bounding_boxes[i];
             if (bounding_box.contains(x, y)) {
                 this.game.camera.bounds.setTo(bounding_box.x, bounding_box.y, bounding_box.width, bounding_box.height);
-                return;
+                bound_set = true;
+                break;
             }
         }
-        this.game.camera.setBoundsToWorld();
+        if (!bound_set) {
+            this.game.camera.setBoundsToWorld();
+        }
+        if (this.game.camera.bounds?.width < numbers.GAME_WIDTH) {
+            this.game.camera.bounds.width = numbers.GAME_WIDTH;
+        }
+        if (this.game.camera.bounds?.height < numbers.GAME_HEIGHT) {
+            this.game.camera.bounds.height = numbers.GAME_HEIGHT;
+        }
     }
 
     /**
@@ -1381,8 +1400,10 @@ export class Map {
             this._show_footsteps = true;
         }
 
-        if (this.sprite.properties?.retreat_pos) {
-            this._retreat_pos = JSON.parse(this.sprite.properties.retreat_pos);
+        if (this.sprite.properties?.retreat_data) {
+            const parsed_data = JSON.parse(this.sprite.properties.retreat_data);
+            this._retreat_data = parsed_data;
+            this._retreat_data.direction = directions[parsed_data.direction as string];
         }
 
         if (this.sprite.properties?.game_events) {

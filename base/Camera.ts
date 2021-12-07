@@ -59,7 +59,7 @@ export class Camera {
                     Camera.CAMERA_LERP,
                     Camera.CAMERA_LERP
                 );
-                this.game.camera.focusOn(this.target.sprite);
+                this.game.camera.focusOn(this.target.body ?? this.target.sprite);
             } else {
                 this.game.camera.unfollow();
                 let promise_resolve;
