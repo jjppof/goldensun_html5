@@ -6,6 +6,7 @@ export class RetreatFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "retreat";
     private static readonly ACTION_KEY_NAME = base_actions.CAST;
     private static readonly RISE_TIME = 1500;
+    private static readonly EMITTER_DATA_NAME = "retreat_particles";
     private enable_update: boolean;
 
     constructor(game, data) {
@@ -41,6 +42,8 @@ export class RetreatFieldPsynergy extends FieldAbilities {
         this.data.camera.unfollow();
         this.game.physics.p2.pause();
 
+        this.start_particles_emitter();
+
         this.game.add.tween(this.controllable_char.body).to({
             y: this.controllable_char.y - (numbers.GAME_HEIGHT >> 1)
         }, RetreatFieldPsynergy.RISE_TIME, Phaser.Easing.Linear.None, true);
@@ -50,6 +53,30 @@ export class RetreatFieldPsynergy extends FieldAbilities {
         }, RetreatFieldPsynergy.RISE_TIME, Phaser.Easing.Linear.None, true);
 
         // this.finish();
+    }
+
+    start_particles_emitter() {
+        const out_data = {
+            image: "psynergy_ball",
+            alpha: 0.9,
+            lifespan: 500,
+            hsv: { min: 0, max: 359 },
+            frame: "ball/03",
+            scale: { min: 0.4, max: 0.5 },
+            velocity: {
+                initial: {min: 4, max: 6},
+                radial: {arcStart: -18, arcEnd: 18},
+            },
+        };
+        this.data.particle_manager.addData(RetreatFieldPsynergy.EMITTER_DATA_NAME, out_data);
+        const out_emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.SPRITE);
+        out_emitter.addToWorld();
+        out_emitter.emit(RetreatFieldPsynergy.EMITTER_DATA_NAME, this.controllable_char.x, this.controllable_char.y, {
+            total: 3,
+            repeat: 23,
+            frequency: 60,
+            random: true,
+        });
     }
 
     finish() {
