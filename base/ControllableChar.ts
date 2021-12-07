@@ -144,7 +144,7 @@ export abstract class ControllableChar {
     private _rotating: boolean;
     private _rotating_interval: number;
     private _rotating_elapsed: number;
-    private _default_scale: {x: number, y: number};
+    private _default_scale: {x: number; y: number};
 
     constructor(
         game: Phaser.Game,

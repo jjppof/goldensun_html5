@@ -8,7 +8,7 @@ import {LashFieldPsynergy} from "../field_abilities/LashFieldPsynergy";
 import {GoldenSun} from "../GoldenSun";
 import {GameInfo} from "./initialize_info";
 import {WhirlwindFieldPsynergy} from "../field_abilities/WhirlwindFieldPsynergy";
-import { RetreatFieldPsynergy } from "../field_abilities/RetreatFieldPsynergy";
+import {RetreatFieldPsynergy} from "../field_abilities/RetreatFieldPsynergy";
 
 export function initialize_abilities(
     game: Phaser.Game,

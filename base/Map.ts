@@ -73,10 +73,10 @@ export class Map {
     private bounding_boxes: Phaser.Rectangle[];
     private game_events: GameEvent[];
     private _retreat_data: {
-        x: number,
-        y: number,
-        collision_layer: number,
-        direction: directions
+        x: number;
+        y: number;
+        collision_layer: number;
+        direction: directions;
     };
 
     constructor(

@@ -175,7 +175,7 @@
                     }
                 },
                 "lifespan": 1850,
-                "vy": { "min": -1.5, "max": 0.4 },
+                "vy": { "min": -1.5, "max": 0.3 },
                 "vx": {
                     "value": 0,
                     "control": [ { "x": 0, "y": 0.7 }, { "x": 0.3, "y": 1 }, { "x": 0.7, "y": 0.4 }, { "x": 1, "y": 0.1 } ]
@@ -200,7 +200,7 @@
             "frequency": 70,
             "emitter_data_key": "wind",
             "force": {
-                "x": -0.12
+                "x": -0.2
             },
             "delay": {
                 "start": 700,

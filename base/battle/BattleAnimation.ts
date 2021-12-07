@@ -1147,13 +1147,15 @@ export class BattleAnimation {
                         particle_sprite_base.setAnimation(particle.sprite, particle_key);
                     }, this);
                     emitter.onEmit = new Phaser.Signal();
-                    emitter.onEmit.add((emitter: Phaser.ParticleStorm.Emitter, particle: Phaser.Sprite) => {
-                        particle.animations.play(
-                            anim_key,
-                            emitter_info.animation.frame_rate,
-                            emitter_info.animation.loop
-                        );
-                    });
+                    emitter.onEmit.add(
+                        (emitter: Phaser.ParticleStorm.Emitter, particle: Phaser.ParticleStorm.Particle) => {
+                            particle.sprite.animations.play(
+                                anim_key,
+                                emitter_info.animation.frame_rate,
+                                emitter_info.animation.loop
+                            );
+                        }
+                    );
                 }
                 emitters.push(emitter);
             });

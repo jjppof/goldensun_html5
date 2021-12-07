@@ -4,7 +4,7 @@ import {FieldPsynergyWindow} from "../windows/FieldPsynergyWindow";
 import {GoldenSun} from "../GoldenSun";
 import {ControllableChar} from "../ControllableChar";
 import {Map} from "../Map";
-import { YesNoMenu } from "../windows/YesNoMenu";
+import {YesNoMenu} from "../windows/YesNoMenu";
 
 /*Defines and manages the usage of field psynergy
 
@@ -47,7 +47,6 @@ export abstract class FieldAbilities {
         works_on_disabled_io?: boolean,
         target_found_extra_check?: (io: InteractableObjects) => boolean,
         ask_before_cast?: boolean
-
     ) {
         this.game = game;
         this.ability_key_name = ability_key_name;
@@ -241,11 +240,15 @@ export abstract class FieldAbilities {
 
     cast(controllable_char: ControllableChar, caster_key_name: string) {
         this.controllable_char = controllable_char;
-        if (this.controllable_char.casting_psynergy || caster_key_name === undefined || !(caster_key_name in this.data.info.main_char_list)) {
+        if (
+            this.controllable_char.casting_psynergy ||
+            caster_key_name === undefined ||
+            !(caster_key_name in this.data.info.main_char_list)
+        ) {
             return;
         }
 
-        if (this.extra_cast_check && !this.extra_cast_check()){
+        if (this.extra_cast_check && !this.extra_cast_check()) {
             return;
         }
 
@@ -253,15 +256,13 @@ export abstract class FieldAbilities {
             const ability = this.data.info.abilities_list[this.ability_key_name];
             this.field_psynergy_window.open(`Use ${ability.name}?`);
             this.controllable_char.misc_busy = true;
-            this.ask_before_cast_yes_no_menu.open(
-                {
-                    yes: this.init_cast.bind(this, caster_key_name),
-                    no: () => {
-                        this.field_psynergy_window.close();
-                        this.controllable_char.misc_busy = false;
-                    }
-                }
-            );
+            this.ask_before_cast_yes_no_menu.open({
+                yes: this.init_cast.bind(this, caster_key_name),
+                no: () => {
+                    this.field_psynergy_window.close();
+                    this.controllable_char.misc_busy = false;
+                },
+            });
         } else {
             this.init_cast(caster_key_name);
         }

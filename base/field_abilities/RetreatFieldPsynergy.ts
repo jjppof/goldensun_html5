@@ -1,8 +1,9 @@
 import {FieldAbilities} from "./FieldAbilities";
 import {base_actions, directions, get_centered_pos_in_px, promised_wait} from "../utils";
 import * as numbers from "../magic_numbers";
-import { DialogManager } from "../utils/DialogManager";
-import { Button } from "../XGamepad";
+import {DialogManager} from "../utils/DialogManager";
+import {Button} from "../XGamepad";
+import * as _ from "lodash";
 
 export class RetreatFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "retreat";
@@ -12,7 +13,20 @@ export class RetreatFieldPsynergy extends FieldAbilities {
     private enable_update: boolean;
 
     constructor(game, data) {
-        super(game, data, RetreatFieldPsynergy.ABILITY_KEY_NAME, RetreatFieldPsynergy.ACTION_KEY_NAME, false, false, undefined, undefined, undefined, undefined, undefined, true);
+        super(
+            game,
+            data,
+            RetreatFieldPsynergy.ABILITY_KEY_NAME,
+            RetreatFieldPsynergy.ACTION_KEY_NAME,
+            false,
+            false,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            true
+        );
         this.set_bootstrap_method(this.init.bind(this));
         this.set_extra_cast_check(this.check_if_can_retreat.bind(this));
         this.enable_update = false;
@@ -43,10 +57,14 @@ export class RetreatFieldPsynergy extends FieldAbilities {
                                 kill_dialog = true;
                             });
                         } else if (kill_dialog) {
-                            dialog.kill_dialog(() => {
-                                this.data.control_manager.detach_bindings(control_key);
-                                this.controllable_char.misc_busy = false;
-                            }, false, true);
+                            dialog.kill_dialog(
+                                () => {
+                                    this.data.control_manager.detach_bindings(control_key);
+                                    this.controllable_char.misc_busy = false;
+                                },
+                                false,
+                                true
+                            );
                         }
                     },
                 },
@@ -54,9 +72,13 @@ export class RetreatFieldPsynergy extends FieldAbilities {
             {persist: true}
         );
         const ability_name = this.data.info.abilities_list[RetreatFieldPsynergy.ABILITY_KEY_NAME].name;
-        dialog.quick_next(`${ability_name}...`, () => {
-            next = true;
-        }, {show_crystal: true});
+        dialog.quick_next(
+            `${ability_name}...`,
+            () => {
+                next = true;
+            },
+            {show_crystal: true}
+        );
         return false;
     }
 
@@ -84,17 +106,33 @@ export class RetreatFieldPsynergy extends FieldAbilities {
         const emitter = this.start_particles_emitter();
 
         let tween_pos_resolve;
-        const promise_tween_pos = new Promise(resolve => tween_pos_resolve = resolve);
-        this.game.add.tween(this.controllable_char.body).to({
-            y: this.controllable_char.y - (numbers.GAME_HEIGHT >> 1)
-        }, RetreatFieldPsynergy.RISE_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(tween_pos_resolve);
+        const promise_tween_pos = new Promise(resolve => (tween_pos_resolve = resolve));
+        this.game.add
+            .tween(this.controllable_char.body)
+            .to(
+                {
+                    y: this.controllable_char.y - (numbers.GAME_HEIGHT >> 1),
+                },
+                RetreatFieldPsynergy.RISE_TIME,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(tween_pos_resolve);
 
         let tween_scale_resolve;
-        const promise_tween_scale = new Promise(resolve => tween_scale_resolve = resolve);
-        this.game.add.tween(this.controllable_char.sprite.scale).to({
-            x: 0,
-            y: 0,
-        }, RetreatFieldPsynergy.RISE_TIME, Phaser.Easing.Linear.None, true).onComplete.addOnce(tween_scale_resolve);
+        const promise_tween_scale = new Promise(resolve => (tween_scale_resolve = resolve));
+        this.game.add
+            .tween(this.controllable_char.sprite.scale)
+            .to(
+                {
+                    x: 0,
+                    y: 0,
+                },
+                RetreatFieldPsynergy.RISE_TIME,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(tween_scale_resolve);
 
         await Promise.all([promise_tween_pos, promise_tween_scale]);
 
@@ -111,9 +149,8 @@ export class RetreatFieldPsynergy extends FieldAbilities {
             image: "psynergy_ball",
             alpha: 0.9,
             lifespan: 500,
-            // hsv: { min: 0, max: 359 },
             frame: "ball/03",
-            scale: { min: 0.5, max: 0.6 },
+            scale: {min: 0.4, max: 0.7},
             velocity: {
                 initial: {min: 3, max: 5},
                 radial: {arcStart: -18, arcEnd: 18},
@@ -122,11 +159,20 @@ export class RetreatFieldPsynergy extends FieldAbilities {
         this.data.particle_manager.addData(RetreatFieldPsynergy.EMITTER_DATA_NAME, out_data);
         const emitter = this.data.particle_manager.createEmitter(Phaser.ParticleStorm.SPRITE);
         emitter.addToWorld();
-        emitter.emit(RetreatFieldPsynergy.EMITTER_DATA_NAME, () => this.controllable_char.x, () => this.controllable_char.y, {
-            total: 3,
-            repeat: 23,
-            frequency: 60,
-            random: true,
+        emitter.emit(
+            RetreatFieldPsynergy.EMITTER_DATA_NAME,
+            () => this.controllable_char.x,
+            () => this.controllable_char.y + 5,
+            {
+                total: 3,
+                repeat: 23,
+                frequency: 60,
+                random: true,
+            }
+        );
+        emitter.onEmit = new Phaser.Signal();
+        emitter.onEmit.add((emitter: Phaser.ParticleStorm.Emitter, particle: Phaser.ParticleStorm.Particle) => {
+            particle.sprite.tint = _.sample([16776470, 190960, 16777215, 5700990]);
         });
         return emitter;
     }
