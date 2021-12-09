@@ -2,7 +2,6 @@
     {
         "name":"Madra",
         "key_name":"madra",
-        "tileset_key_name":"madra",
         "bgm": {
             "key": "madra_bgm",
             "path": "assets/sounds/bgm/little_madra.ogg"
@@ -14,9 +13,8 @@
         "lazy_load": true,
         "collision_embedded": true
     },{
-        "name":"inn_down",
+        "name":"Madra",
         "key_name":"madra_inn",
-        "tileset_key_name":"Inside_town",
         "collision_key_names":["madra_inn_down"],
         "bgm": {
             "key": "madra_bgm",
@@ -26,11 +24,11 @@
             "image":"assets/images/maps/madra/Inside_town_00.png",
             "json":"assets/images/maps/madra/inn_down.json"
         },
-        "collision_files":["assets/images/maps/madra/madra_physics_inn.json"]
+        "collision_files":["assets/images/maps/madra/madra_physics_inn.json"],
+        "collision_embedded": false
     },{
-        "name":"inn_up_stair",
+        "name":"Madra",
         "key_name":"madra_inn_up_stair",
-        "tileset_key_name":"Inside_town",
         "collision_key_names":["madra_inn_up_stair"],
         "bgm": {
             "key": "madra_bgm",
@@ -40,11 +38,11 @@
             "image":"assets/images/maps/madra/Inside_town_00.png",
             "json":"assets/images/maps/madra/inn_up_stair.json"
         },
-        "collision_files":["assets/images/maps/madra/madra_physics_inn_up_stair.json"]
+        "collision_files":["assets/images/maps/madra/madra_physics_inn_up_stair.json"],
+        "collision_embedded": false
     },{
-        "name":"inn_up",
+        "name":"Madra",
         "key_name":"madra_inn_up",
-        "tileset_key_name":"Inside_town",
         "collision_key_names":["madra_inn_up"],
         "bgm": {
             "key": "madra_bgm",
@@ -54,11 +52,11 @@
             "image":"assets/images/maps/madra/Inside_town_00.png",
             "json":"assets/images/maps/madra/inn_up.json"
         },
-        "collision_files":["assets/images/maps/madra/madra_physics_inn_up.json"]
+        "collision_files":["assets/images/maps/madra/madra_physics_inn_up.json"],
+        "collision_embedded": false
     },{
-        "name":"house_1",
+        "name":"Madra",
         "key_name":"madra_house_1",
-        "tileset_key_name":"Inside_town",
         "collision_key_names":["madra_house_1"],
         "bgm": {
             "key": "madra_bgm",
@@ -68,11 +66,11 @@
             "image":"assets/images/maps/madra/Inside_town_00.png",
             "json":"assets/images/maps/madra/house_1.json"
         },
-        "collision_files":["assets/images/maps/madra/madra_physics_house_1.json"]
+        "collision_files":["assets/images/maps/madra/madra_physics_house_1.json"],
+        "collision_embedded": false
     },{
         "name":"Madra",
         "key_name":"madra_side",
-        "tileset_key_name":"madra",
         "bgm": {
             "key": "madra_bgm",
             "path": "assets/sounds/bgm/little_madra.ogg"
@@ -86,7 +84,6 @@
     },{
         "name":"Madra",
         "key_name":"madra_corner",
-        "tileset_key_name":"madra",
         "bgm": {
             "key": "madra_bgm",
             "path": "assets/sounds/bgm/little_madra.ogg"
@@ -100,7 +97,6 @@
     },{
         "name":"Snowland",
         "key_name":"snowland",
-        "tileset_key_name":"snowland",
         "collision_key_names":["snowland_col"],
         "bgm": {
             "key": "snowland",
@@ -111,11 +107,11 @@
             "json":"assets/images/maps/snowland/snowland.json"
         },
         "collision_files":["assets/images/maps/snowland/snowland_physics.json"],
+        "collision_embedded": false,
         "lazy_load": true
     },{
         "name":"World Map",
         "key_name":"world_map",
-        "tileset_key_name":"world_map",
         "bgm": {
             "key": "world_map",
             "path": "assets/sounds/bgm/world_map.ogg"
@@ -131,7 +127,6 @@
     },{
         "name":"Cave",
         "key_name":"cave",
-        "tileset_key_name":"cave",
         "bgm": {
             "key": "cave_bgm",
             "path": "assets/sounds/bgm/cave.ogg"
@@ -147,7 +142,6 @@
     },{
         "name":"Nyungwe",
         "key_name":"nyungwe",
-        "tileset_key_name":"forest",
         "bgm": {
             "key": "forest_bgm",
             "path": "assets/sounds/bgm/happy_town.ogg"

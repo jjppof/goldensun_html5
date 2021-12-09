@@ -25,7 +25,6 @@ export class Map {
     private data: GoldenSun;
     private _name: string;
     private _key_name: string;
-    private tileset_name: string;
     private physics_names: string;
     private tileset_image_url: string;
     private tileset_json_url: string;
@@ -84,7 +83,6 @@ export class Map {
         data,
         name,
         key_name,
-        tileset_name,
         physics_names,
         tileset_image_url,
         tileset_json_url,
@@ -100,7 +98,6 @@ export class Map {
         this.data = data;
         this._name = name;
         this._key_name = key_name;
-        this.tileset_name = tileset_name;
         this.physics_names = physics_names ?? [];
         this.tileset_image_url = tileset_image_url;
         this.tileset_json_url = tileset_json_url;
@@ -123,8 +120,8 @@ export class Map {
         this._collision_layer = null;
         this._show_footsteps = false;
         this.assets_loaded = false;
-        this._lazy_load = lazy_load ?? false;
-        this.collision_embedded = collision_embedded ?? false;
+        this._lazy_load = lazy_load ?? true;
+        this.collision_embedded = collision_embedded ?? true;
         this._is_world_map = false;
         this.bgm_key = bgm_key;
         this.bgm_url = bgm_url;
@@ -477,7 +474,7 @@ export class Map {
                 let sensor_active = false;
                 if (collision_object.properties) {
                     sensor_active =
-                        collision_object.properties.affected_by_reveal && !collision_object.properties.show_on_reveal;
+                        collision_object.properties.affected_by_reveal && collision_object.properties.collide_on_reveal;
                 }
                 if (collision_object.rectangle) {
                     const width = Math.round(collision_object.width);
@@ -546,7 +543,7 @@ export class Map {
                 let split_polygon = false;
                 if (collision_object.properties) {
                     sensor_active =
-                        collision_object.properties.affected_by_reveal && !collision_object.properties.show_on_reveal;
+                        collision_object.properties.affected_by_reveal && collision_object.properties.collide_on_reveal;
                     split_polygon = collision_object.properties.split_polygon ?? false;
                 }
                 let max_x = -Infinity,
@@ -1390,7 +1387,8 @@ export class Map {
             this._is_world_map = true;
         }
 
-        this.sprite.addTilesetImage(this.tileset_name, this.key_name);
+        const tileset_name = this.sprite.tilesets[0].name;
+        this.sprite.addTilesetImage(tileset_name, this.key_name);
 
         this.process_tiled_layers();
         this.pre_processor_polygons();
@@ -1404,6 +1402,14 @@ export class Map {
 
         if (this.sprite.properties?.footprint) {
             this._show_footsteps = true;
+        }
+
+        if (this.sprite.properties?.background_key) {
+            this._background_key = this.sprite.properties.background_key;
+        }
+
+        if (this.sprite.properties?.expected_party_level) {
+            this.expected_party_level = this.sprite.properties.expected_party_level;
         }
 
         if (this.sprite.properties?.retreat_data) {

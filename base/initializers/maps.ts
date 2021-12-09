@@ -11,7 +11,6 @@ export function initialize_maps(game: Phaser.Game, data: GoldenSun, maps_db: any
             data,
             map_data.name,
             map_data.key_name,
-            map_data.tileset_key_name,
             map_data.collision_key_names,
             map_data.tileset_files.image,
             map_data.tileset_files.json,
@@ -24,12 +23,18 @@ export function initialize_maps(game: Phaser.Game, data: GoldenSun, maps_db: any
             map_data.background_key
         );
     }
+    let at_least_one_map_loaded = false;
     for (let map in maps) {
         if (maps[map].lazy_load) continue;
         maps[map].load_map_assets(false);
+        at_least_one_map_loaded = true;
     }
-    game.load.start();
-    data.set_whats_loading("maps");
-    game.load.onLoadComplete.addOnce(load_promise_resolve);
+    if (at_least_one_map_loaded) {
+        game.load.start();
+        data.set_whats_loading("maps");
+        game.load.onLoadComplete.addOnce(load_promise_resolve);
+    } else {
+        load_promise_resolve();
+    }
     return maps;
 }

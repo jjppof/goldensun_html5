@@ -1039,12 +1039,12 @@
                  "properties":
                     {
                      "affected_by_reveal":true,
-                     "show_on_reveal":true
+                     "collide_on_reveal":false
                     },
                  "propertytypes":
                     {
                      "affected_by_reveal":"bool",
-                     "show_on_reveal":"bool"
+                     "collide_on_reveal":"bool"
                     },
                  "rotation":0,
                  "type":"",
