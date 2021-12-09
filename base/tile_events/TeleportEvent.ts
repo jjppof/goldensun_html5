@@ -1,6 +1,5 @@
 import {base_actions, directions, get_centered_pos_in_px, reverse_directions} from "../utils";
 import {event_types, TileEvent} from "./TileEvent";
-import * as numbers from "../magic_numbers";
 import * as _ from "lodash";
 import {RevealFieldPsynergy} from "../field_abilities/RevealFieldPsynergy";
 
@@ -8,7 +7,7 @@ export class TeleportEvent extends TileEvent {
     private target: string;
     private x_target: number;
     private y_target: number;
-    private _advance_effect: boolean;
+    private _open_door: boolean;
     private dest_collision_layer: number;
     private destination_direction: string;
     private keep_encounter_cumulator: boolean;
@@ -27,7 +26,7 @@ export class TeleportEvent extends TileEvent {
         target,
         x_target,
         y_target,
-        advance_effect,
+        open_door,
         dest_collision_layer,
         destination_direction,
         keep_encounter_cumulator
@@ -49,14 +48,14 @@ export class TeleportEvent extends TileEvent {
         this.target = target;
         this.x_target = x_target;
         this.y_target = y_target;
-        this._advance_effect = advance_effect;
-        this.dest_collision_layer = dest_collision_layer !== undefined ? dest_collision_layer : 0;
+        this._open_door = open_door ?? false;
+        this.dest_collision_layer = dest_collision_layer ?? 0;
         this.destination_direction = destination_direction;
         this.keep_encounter_cumulator = keep_encounter_cumulator;
     }
 
-    get advance_effect() {
-        return this._advance_effect;
+    get open_door() {
+        return this._open_door;
     }
 
     fire() {
@@ -65,7 +64,7 @@ export class TeleportEvent extends TileEvent {
         }
         this.data.tile_event_manager.on_event = true;
         this.data.hero.teleporting = true;
-        if (this.advance_effect) {
+        if (this.open_door) {
             this.data.audio.play_se("door/open_door");
             if (!this.data.hero.stop_by_colliding) {
                 this.data.tile_event_manager.on_event = false;
@@ -73,7 +72,7 @@ export class TeleportEvent extends TileEvent {
                 return;
             }
             this.data.hero.play(base_actions.WALK, reverse_directions[directions.up]);
-            this.open_door();
+            this.set_open_door_tile();
             this.game.physics.p2.pause();
             const time = 400;
             const tween_x = this.data.map.tile_width * (this.x + 0.5);
@@ -164,7 +163,7 @@ export class TeleportEvent extends TileEvent {
         });
     }
 
-    private open_door() {
+    private set_open_door_tile() {
         const layer = _.find(this.data.map.sprite.layers, {
             name: this.data.map.sprite.properties.door_layer,
         });

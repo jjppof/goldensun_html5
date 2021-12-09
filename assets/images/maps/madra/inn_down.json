@@ -110,11 +110,11 @@
  "properties":
     {
      "Name":"inn_down",
-     "tile_event/01":"{\"type\": \"teleport\", \"x\": 27, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 12, \"advance_effect\": false, \"dest_collision_layer\": 1, \"activation_collision_layers\": [0]}",
-     "tile_event/02":"{\"type\": \"teleport\", \"x\": 28, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 12, \"advance_effect\": false, \"dest_collision_layer\": 1, \"activation_collision_layers\": [0]}",
-     "tile_event/03":"{\"type\": \"teleport\", \"x\": 29, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 12, \"advance_effect\": false, \"dest_collision_layer\": 1, \"activation_collision_layers\": [0]}",
-     "tile_event/04":"{\"type\": \"teleport\", \"x\": 30, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 12, \"advance_effect\": false, \"dest_collision_layer\": 1, \"activation_collision_layers\": [0]}",
-     "tile_event/05":"{\"type\": \"teleport\", \"x\": 17, \"y\": 7, \"target\": \"madra_inn_up_stair\", \"activation_directions\": \"right\", \"x_target\": 15, \"y_target\": 7, \"advance_effect\": false, \"dest_collision_layer\": 0, \"activation_collision_layers\": [0]}",
+     "tile_event/01":"{\"type\": \"teleport\", \"x\": 27, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 12, \"open_door\": false, \"dest_collision_layer\": 1, \"activation_collision_layers\": [0]}",
+     "tile_event/02":"{\"type\": \"teleport\", \"x\": 28, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 12, \"open_door\": false, \"dest_collision_layer\": 1, \"activation_collision_layers\": [0]}",
+     "tile_event/03":"{\"type\": \"teleport\", \"x\": 29, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 12, \"open_door\": false, \"dest_collision_layer\": 1, \"activation_collision_layers\": [0]}",
+     "tile_event/04":"{\"type\": \"teleport\", \"x\": 30, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 12, \"open_door\": false, \"dest_collision_layer\": 1, \"activation_collision_layers\": [0]}",
+     "tile_event/05":"{\"type\": \"teleport\", \"x\": 17, \"y\": 7, \"target\": \"madra_inn_up_stair\", \"activation_directions\": \"right\", \"x_target\": 15, \"y_target\": 7, \"open_door\": false, \"dest_collision_layer\": 0, \"activation_collision_layers\": [0]}",
      "npc/01":"{\n    \"key_name\": \"village_1\",\n    \"initial_x\": 30,\n    \"initial_y\": 11,\n    \"npc_type\": \"inn\",\n    \"movement_type\": \"idle\",\n    \"message\": \"I'm everywhere!\",\n    \"thought_message\": \"Nothing to think about.\",\n    \"avatar\": \"\",\n    \"inn_key\": \"madra_inn\",\n    \"base_collision_layer\": 0,\n    \"talk_range_factor\": 5\n}"
     },
  "propertytypes":

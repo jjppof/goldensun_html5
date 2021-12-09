@@ -147,7 +147,7 @@
  "orientation":"orthogonal",
  "properties":
     {
-     "tile_event/01":"{\n\"type\": \"teleport\",\n\"x_target\": 22,\n\"y_target\": 10,\n\"target\": \"world_map\",\n\"activation_directions\": \"left\",\n\"x\": 0,\n\"y\": 18,\n\"advance_effect\": false,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": [0],\n\"destination_direction\": \"down\"\n}",
+     "tile_event/01":"{\n\"type\": \"teleport\",\n\"x_target\": 22,\n\"y_target\": 10,\n\"target\": \"world_map\",\n\"activation_directions\": \"left\",\n\"x\": 0,\n\"y\": 18,\n\"open_door\": false,\n\"dest_collision_layer\": 0,\n\"activation_collision_layers\": [0],\n\"destination_direction\": \"down\"\n}",
      "tile_event/02":"{\n\"type\": \"climb\",\n\"x\": 22,\n\"y\": 10,\n \"activation_directions\": \"down\",\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 0\n}",
      "tile_event/03":"{\n\"type\": \"climb\",\n\"x\": 22,\n\"y\": 11,\n \"activation_directions\": \"up\",\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 0\n}",
      "tile_event/04":"{\n\"type\": \"climb\",\n\"x\": 22,\n\"y\": 12,\n \"activation_directions\": \"down\",\n\"activation_collision_layers\": 0,\n\"change_to_collision_layer\": 0\n}",

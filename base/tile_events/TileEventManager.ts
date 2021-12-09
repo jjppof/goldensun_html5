@@ -196,7 +196,7 @@ export class TileEventManager {
                 case event_types.CLIMB:
                 case event_types.SLIDER:
                 case event_types.ROPE:
-                    if (this_event.type === event_types.TELEPORT && !(this_event as TeleportEvent).advance_effect) {
+                    if (this_event.type === event_types.TELEPORT && !(this_event as TeleportEvent).open_door) {
                         this.event_queue.add(
                             this_event,
                             this.data.hero.current_direction,
@@ -302,7 +302,7 @@ export class TileEventManager {
                 info.target,
                 info.x_target,
                 info.y_target,
-                info.advance_effect,
+                info.open_door,
                 info.dest_collision_layer,
                 info.destination_direction,
                 info.keep_encounter_cumulator
