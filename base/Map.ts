@@ -1092,6 +1092,36 @@ export class Map {
     }
 
     /**
+     * Parses the over property of a given layer.
+     * @param property_value the over value
+     * @returns returns whether the layer that owns this over property is over npcs group or not.
+     */
+    private parse_over_prop(property_value: any): boolean {
+        const property_type = typeof property_value;
+        switch (property_type) {
+            case "boolean":
+                return property_value;
+            case "number":
+                return property_value === this.collision_layer;
+            case "string":
+                try {
+                    const indexes = JSON.parse(property_value);
+                    if (Array.isArray(indexes)) {
+                        return indexes.includes(this.collision_layer);
+                    } else {
+                        console.warn("Map property 'over' was set as a string type, but it's not an Array type.");
+                        return false;
+                    }
+                } catch {
+                    console.warn("Map property 'over' was set as a string type, but it's not a valid JSON.");
+                    return false;
+                }
+            default:
+                console.warn(`'${property_type}' is not a valid type for 'over'.`);
+        }
+    }
+
+    /**
      * Creates and initializes the map layers.
      */
     private config_layers() {
@@ -1100,8 +1130,8 @@ export class Map {
             this.layers[i].sprite = layer;
             layer.layer_z = this.layers[i].properties.z === undefined ? i : this.layers[i].properties.z;
             layer.resizeWorld();
-            if (this.layers[i].properties.blendMode !== undefined) {
-                layer.blendMode = parse_blend_mode(this.layers[i].properties.blendMode);
+            if (this.layers[i].properties.blend_mode !== undefined) {
+                layer.blendMode = parse_blend_mode(this.layers[i].properties.blend_mode);
             }
             if (this.layers[i].alpha !== undefined) {
                 layer.alpha = this.layers[i].alpha;
@@ -1112,15 +1142,7 @@ export class Map {
 
             let is_over = false;
             if (this.layers[i].properties.over !== undefined) {
-                const is_over_prop = this.layers[i].properties.over
-                    .toString()
-                    .split(",")
-                    .map(over => parseInt(over));
-                if (is_over_prop.length > this.collision_layer) {
-                    is_over = Boolean(is_over_prop[this.collision_layer]);
-                } else {
-                    is_over = Boolean(is_over_prop[0]);
-                }
+                is_over = this.parse_over_prop(this.layers[i].properties.over);
             }
             if (is_over) {
                 this.data.overlayer_group.add(layer);
@@ -1137,12 +1159,7 @@ export class Map {
         for (let i = 0; i < this.layers.length; ++i) {
             const layer = this.layers[i];
             if (layer.properties.over !== undefined) {
-                const is_over_prop = layer.properties.over
-                    .toString()
-                    .split(",")
-                    .map(over => parseInt(over));
-                if (is_over_prop.length <= this.collision_layer) continue;
-                const is_over = Boolean(is_over_prop[this.collision_layer]);
+                const is_over = this.parse_over_prop(layer.properties.over);
                 if (is_over) {
                     this.data.underlayer_group.remove(layer.sprite, false, true);
                     let index = 0;

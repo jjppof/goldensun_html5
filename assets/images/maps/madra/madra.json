@@ -114,7 +114,7 @@
          "opacity":1,
          "properties":
             {
-             "over":"1,1,0"
+             "over":"[0,1]"
             },
          "propertytypes":
             {
@@ -134,11 +134,11 @@
          "opacity":1,
          "properties":
             {
-             "over":1
+             "over":true
             },
          "propertytypes":
             {
-             "over":"int"
+             "over":"bool"
             },
          "type":"tilelayer",
          "visible":true,

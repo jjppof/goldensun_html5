@@ -8,18 +8,6 @@
          "id":1,
          "name":"ground_00",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0,
-             "z":0
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int",
-             "z":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":30,
@@ -32,18 +20,6 @@
          "id":2,
          "name":"ground_01",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0,
-             "z":1
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int",
-             "z":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":30,
@@ -56,18 +32,6 @@
          "id":10,
          "name":"ground_col_00",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0,
-             "z":2
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int",
-             "z":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":30,
@@ -80,18 +44,6 @@
          "id":13,
          "name":"ground_col_01",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0,
-             "z":3
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int",
-             "z":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":30,
@@ -104,18 +56,6 @@
          "id":11,
          "name":"ground_02",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0,
-             "z":4
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int",
-             "z":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":30,
@@ -128,18 +68,6 @@
          "id":12,
          "name":"ground_03",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0,
-             "z":5
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int",
-             "z":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":30,
@@ -154,15 +82,11 @@
          "opacity":1,
          "properties":
             {
-             "blendMode":"NORMAL",
-             "over":"1,0,0",
-             "z":6
+             "over":0
             },
          "propertytypes":
             {
-             "blendMode":"string",
-             "over":"string",
-             "z":"int"
+             "over":"int"
             },
          "type":"tilelayer",
          "visible":true,
@@ -176,18 +100,6 @@
          "id":3,
          "name":"buildings_00",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0,
-             "z":7
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int",
-             "z":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":30,
@@ -200,18 +112,6 @@
          "id":5,
          "name":"buildings_01",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0,
-             "z":8
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int",
-             "z":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":30,
@@ -226,15 +126,11 @@
          "opacity":1,
          "properties":
             {
-             "blendMode":"NORMAL",
-             "over":"1,0,0",
-             "z":9
+             "over":0
             },
          "propertytypes":
             {
-             "blendMode":"string",
-             "over":"string",
-             "z":"int"
+             "over":"int"
             },
          "type":"tilelayer",
          "visible":true,
@@ -248,18 +144,6 @@
          "id":7,
          "name":"tree_col_00",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0,
-             "z":10
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int",
-             "z":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":30,
@@ -272,18 +156,6 @@
          "id":9,
          "name":"tree_shadow_00",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0,
-             "z":11
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int",
-             "z":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":30,
@@ -298,15 +170,11 @@
          "opacity":1,
          "properties":
             {
-             "blendMode":"NORMAL",
-             "over":1,
-             "z":12
+             "over":true
             },
          "propertytypes":
             {
-             "blendMode":"string",
-             "over":"int",
-             "z":"int"
+             "over":"bool"
             },
          "type":"tilelayer",
          "visible":true,

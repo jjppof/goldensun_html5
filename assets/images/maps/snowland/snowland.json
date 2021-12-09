@@ -8,16 +8,6 @@
          "id":1,
          "name":"ground_00",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":29,
@@ -42,16 +32,6 @@
          "id":2,
          "name":"ground_col_00",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":29,
@@ -64,16 +44,6 @@
          "id":3,
          "name":"ground_col_01",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":29,
@@ -86,16 +56,6 @@
          "id":4,
          "name":"ground_col_02",
          "opacity":1,
-         "properties":
-            {
-             "blendMode":"NORMAL",
-             "over":0
-            },
-         "propertytypes":
-            {
-             "blendMode":"string",
-             "over":"int"
-            },
          "type":"tilelayer",
          "visible":true,
          "width":29,
@@ -110,13 +70,11 @@
          "opacity":1,
          "properties":
             {
-             "blendMode":"NORMAL",
-             "over":1
+             "over":true
             },
          "propertytypes":
             {
-             "blendMode":"string",
-             "over":"int"
+             "over":"bool"
             },
          "type":"tilelayer",
          "visible":true,
@@ -132,13 +90,11 @@
          "opacity":1,
          "properties":
             {
-             "blendMode":"NORMAL",
-             "over":1
+             "over":true
             },
          "propertytypes":
             {
-             "blendMode":"string",
-             "over":"int"
+             "over":"bool"
             },
          "type":"tilelayer",
          "visible":true,
@@ -154,13 +110,11 @@
          "opacity":1,
          "properties":
             {
-             "blendMode":"NORMAL",
-             "over":1
+             "over":true
             },
          "propertytypes":
             {
-             "blendMode":"string",
-             "over":"int"
+             "over":"bool"
             },
          "type":"tilelayer",
          "visible":true,
@@ -176,13 +130,11 @@
          "opacity":1,
          "properties":
             {
-             "blendMode":"NORMAL",
-             "over":1
+             "over":true
             },
          "propertytypes":
             {
-             "blendMode":"string",
-             "over":"int"
+             "over":"bool"
             },
          "type":"tilelayer",
          "visible":true,
@@ -220,7 +172,7 @@
      "npc_02":"string"
     },
  "renderorder":"right-down",
- "tiledversion":"1.5.0",
+ "tiledversion":"1.7.2",
  "tileheight":16,
  "tilesets":[
         {

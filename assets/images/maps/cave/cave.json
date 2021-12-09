@@ -66,12 +66,12 @@
          "opacity":1,
          "properties":
             {
-             "over":1,
+             "over":true,
              "reveal_layer":true
             },
          "propertytypes":
             {
-             "over":"int",
+             "over":"bool",
              "reveal_layer":"bool"
             },
          "type":"tilelayer",
@@ -88,13 +88,13 @@
          "opacity":0.9,
          "properties":
             {
-             "blendMode":"SCREEN",
-             "over":1
+             "blend_mode":"SCREEN",
+             "over":true
             },
          "propertytypes":
             {
-             "blendMode":"string",
-             "over":"int"
+             "blend_mode":"string",
+             "over":"bool"
             },
          "type":"tilelayer",
          "visible":true,
@@ -110,11 +110,11 @@
          "opacity":1,
          "properties":
             {
-             "over":"1"
+             "over":true
             },
          "propertytypes":
             {
-             "over":"string"
+             "over":"bool"
             },
          "type":"tilelayer",
          "visible":true,

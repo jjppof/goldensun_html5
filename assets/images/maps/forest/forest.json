@@ -46,11 +46,11 @@
          "opacity":1,
          "properties":
             {
-             "over":"1"
+             "over":true
             },
          "propertytypes":
             {
-             "over":"string"
+             "over":"bool"
             },
          "type":"tilelayer",
          "visible":true,
@@ -78,11 +78,11 @@
          "opacity":1,
          "properties":
             {
-             "over":"1"
+             "over":true
             },
          "propertytypes":
             {
-             "over":"string"
+             "over":"bool"
             },
          "type":"tilelayer",
          "visible":true,
@@ -110,11 +110,11 @@
          "opacity":1,
          "properties":
             {
-             "over":"1"
+             "over":true
             },
          "propertytypes":
             {
-             "over":"string"
+             "over":"bool"
             },
          "type":"tilelayer",
          "visible":true,
@@ -142,11 +142,11 @@
          "opacity":1,
          "properties":
             {
-             "over":"1"
+             "over":true
             },
          "propertytypes":
             {
-             "over":"string"
+             "over":"bool"
             },
          "type":"tilelayer",
          "visible":true,

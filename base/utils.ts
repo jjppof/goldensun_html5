@@ -481,11 +481,11 @@ export function random_normal() {
 
 /**
  * Convert a string to a `PIXI.blendModes` enum value
- * @param blendMode Desired blend mode string
+ * @param blend_mode Desired blend mode string
  * @returns returns a `PIXI.blendModes` enum value
  */
-export function parse_blend_mode(blendMode: string) {
-    return (PIXI.blendModes[blendMode] as unknown) as PIXI.blendModes;
+export function parse_blend_mode(blend_mode: string) {
+    return (PIXI.blendModes[blend_mode] as unknown) as PIXI.blendModes;
 }
 
 /**
