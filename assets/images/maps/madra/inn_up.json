@@ -122,18 +122,18 @@
  "properties":
     {
      "Name":"inn_up",
-     "event_01":"{\"type\": \"teleport\", \"x\": 17, \"y\": 4, \"target\": \"madra_inn_up_stair\", \"activation_directions\": \"up\", \"x_target\": 13.5, \"y_target\": 12, \"advance_effect\": false, \"dest_collision_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_02":"{\"type\": \"teleport\", \"x\": 18, \"y\": 4, \"target\": \"madra_inn_up_stair\", \"activation_directions\": \"up\", \"x_target\": 13.5, \"y_target\": 12, \"advance_effect\": false, \"dest_collision_layer\": 0, \"activation_collision_layers\": [0]}",
-     "event_03":"{\"type\": \"teleport\", \"x\": 17, \"y\": 20, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 8, \"advance_effect\": false, \"dest_collision_layer\": 2, \"activation_collision_layers\": [0]}",
-     "event_04":"{\"type\": \"teleport\", \"x\": 18, \"y\": 20, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 8, \"advance_effect\": false, \"dest_collision_layer\": 2, \"activation_collision_layers\": [0]}"
+     "tile_event\/01":"{\"type\": \"teleport\", \"x\": 17, \"y\": 4, \"target\": \"madra_inn_up_stair\", \"activation_directions\": \"up\", \"x_target\": 13.5, \"y_target\": 12, \"advance_effect\": false, \"dest_collision_layer\": 0, \"activation_collision_layers\": [0]}",
+     "tile_event\/02":"{\"type\": \"teleport\", \"x\": 18, \"y\": 4, \"target\": \"madra_inn_up_stair\", \"activation_directions\": \"up\", \"x_target\": 13.5, \"y_target\": 12, \"advance_effect\": false, \"dest_collision_layer\": 0, \"activation_collision_layers\": [0]}",
+     "tile_event\/03":"{\"type\": \"teleport\", \"x\": 17, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 8, \"advance_effect\": false, \"dest_collision_layer\": 2, \"activation_collision_layers\": [0]}",
+     "tile_event\/04":"{\"type\": \"teleport\", \"x\": 18, \"y\": 19, \"target\": \"madra\", \"activation_directions\": \"down\", \"x_target\": 28, \"y_target\": 8, \"advance_effect\": false, \"dest_collision_layer\": 2, \"activation_collision_layers\": [0]}"
     },
  "propertytypes":
     {
      "Name":"string",
-     "event_01":"string",
-     "event_02":"string",
-     "event_03":"string",
-     "event_04":"string"
+     "tile_event\/01":"string",
+     "tile_event\/02":"string",
+     "tile_event\/03":"string",
+     "tile_event\/04":"string"
     },
  "renderorder":"right-down",
  "tiledversion":"1.7.2",

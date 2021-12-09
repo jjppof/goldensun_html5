@@ -1324,13 +1324,22 @@ export class Map {
 
     /**
      * Initializes game events of this map.
-     * @param events list of input events
+     * @param events list of input events before parse.
      */
-    init_game_events(events: any) {
-        events.forEach(event_info => {
-            const event = this.data.game_event_manager.get_event_instance(event_info);
-            this.game_events.push(event);
-        });
+    init_game_events(events: string) {
+        try {
+            const events_arr = JSON.parse(events);
+            if (Array.isArray(events_arr)) {
+                events_arr.forEach(event_info => {
+                    const event = this.data.game_event_manager.get_event_instance(event_info);
+                    this.game_events.push(event);
+                });
+            } else {
+                console.warn("Map Game Events list is not an Array type.");
+            }
+        } catch {
+            console.warn("Map Game Events list is not a valid JSON.");
+        }
     }
 
     /**
@@ -1355,19 +1364,23 @@ export class Map {
     /**
      * This is the main function of this class. It mounts the map.
      * @param collision_layer the initial collision layer.
+     * @param encounter_cumulator the initial encounter cumulator. If not passed, it's reset.
      * @returns returns the mounted map.
      */
     async mount_map(collision_layer: number = 0, encounter_cumulator?: number) {
         if (!this.assets_loaded) {
-            //lazy assets load
+            //lazy load assets
             let load_promise_resolve;
             const load_promise = new Promise(resolve => (load_promise_resolve = resolve));
             this.load_map_assets(true, load_promise_resolve);
             await load_promise;
         }
+
+        //resets all events
         this._events = {};
         TileEvent.reset();
         GameEvent.reset();
+
         this._encounter_cumulator = encounter_cumulator ?? 0;
 
         this._collision_layer = collision_layer;
@@ -1389,63 +1402,37 @@ export class Map {
             }
         }
 
-        //read the map properties and creates events, npcs and interactable objects
-        const sorted_props = Object.keys(this.sprite.properties)
-            .flatMap(property => {
-                if (
-                    property.startsWith("event") ||
-                    property.startsWith("npc") ||
-                    property.startsWith("interactable_object")
-                ) {
-                    const underscore_index = property.lastIndexOf("_");
-                    const type = property.substring(0, underscore_index);
-                    const index = +property.substring(underscore_index + 1, property.length);
-                    return [
-                        {
-                            type: type as "event" | "npc" | "interactable_object",
-                            index: index,
-                            key: property,
-                        },
-                    ];
-                } else {
-                    return [];
-                }
-            })
-            .sort((a, b) => a.index - b.index);
-
         if (this.sprite.properties?.footprint) {
             this._show_footsteps = true;
         }
 
         if (this.sprite.properties?.retreat_data) {
-            const parsed_data = JSON.parse(this.sprite.properties.retreat_data);
-            this._retreat_data = parsed_data;
-            this._retreat_data.direction = directions[parsed_data.direction as string];
+            try {
+                const parsed_data = JSON.parse(this.sprite.properties.retreat_data);
+                this._retreat_data = parsed_data;
+                this._retreat_data.direction = directions[parsed_data.direction as string];
+            } catch {
+                console.warn("The Retreat data is not a valid JSON.");
+            }
         }
 
         if (this.sprite.properties?.game_events) {
             this.init_game_events(this.sprite.properties.game_events);
         }
 
-        for (let property of sorted_props) {
-            const raw_property = this.sprite.properties[property.key];
-            switch (property.type) {
-                case "event":
-                    this.create_tile_event(raw_property);
-                    break;
-                case "npc":
-                    this.create_npc(raw_property);
-                    break;
-                case "interactable_object":
-                    this.create_interactable_object(raw_property);
-                    break;
+        //read the map properties and creates tile events, npcs and interactable objects
+        if (this.sprite.properties) {
+            for (let property_key in this.sprite.properties) {
+                const property = this.sprite.properties[property_key];
+                if (property_key.startsWith("tile_event/")) {
+                    this.create_tile_event(property);
+                } else if (property_key.startsWith("npc/")) {
+                    this.create_npc(property);
+                } else if (property_key.startsWith("interactable_object/")) {
+                    this.create_interactable_object(property);
+                }
             }
         }
-
-        this.layers.sort((a, b) => {
-            if (a.properties.over !== b.properties.over) return a - b;
-            if (a.properties.z !== b.properties.z) return a - b;
-        });
 
         this.config_layers();
         this.config_interactable_object();
