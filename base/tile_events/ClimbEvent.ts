@@ -14,7 +14,6 @@ enum climb_actions {
 
 export class ClimbEvent extends TileEvent {
     private change_to_collision_layer: number;
-    private _is_set: boolean;
     private climbing_only: boolean;
     private current_activation_direction: directions;
     private dynamic: boolean;
@@ -31,7 +30,6 @@ export class ClimbEvent extends TileEvent {
         affected_by_reveal,
         key_name: string,
         change_to_collision_layer,
-        is_set?,
         origin_interactable_object?: InteractableObjects,
         climbing_only?,
         dynamic?
@@ -51,13 +49,8 @@ export class ClimbEvent extends TileEvent {
             key_name
         );
         this.change_to_collision_layer = change_to_collision_layer ?? null;
-        this._is_set = is_set ?? true;
         this.climbing_only = climbing_only ?? false;
         this.dynamic = dynamic ?? false;
-    }
-
-    get is_set() {
-        return this._is_set;
     }
 
     change_collision_layer_destination(collision_layer: number) {

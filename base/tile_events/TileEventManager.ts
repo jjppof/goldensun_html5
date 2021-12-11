@@ -32,7 +32,6 @@ class EventQueue {
             case event_types.CLIMB:
                 if (
                     event.is_active(this_activation_direction) > -1 &&
-                    (event as ClimbEvent).is_set &&
                     event.activation_directions.includes(this_activation_direction)
                 ) {
                     this.climb_event = true;

@@ -383,34 +383,6 @@ export class InteractableObjects {
         this._collision_tiles_bodies = [];
     }
 
-    private set_anchor() {
-        const interactable_object_db = this.data.dbs.interactable_objects_db[this.key_name];
-        if (this.anchor_x !== undefined) {
-            this.sprite.anchor.x = interactable_object_db.anchor_x;
-        } else if (interactable_object_db.anchor_x !== undefined) {
-            this.sprite.anchor.x = interactable_object_db.anchor_x;
-        }
-        if (this.anchor_y !== undefined) {
-            this.sprite.anchor.y = interactable_object_db.anchor_y;
-        } else if (interactable_object_db.anchor_y !== undefined) {
-            this.sprite.anchor.y = interactable_object_db.anchor_y;
-        }
-    }
-
-    private set_scale() {
-        const interactable_object_db = this.data.dbs.interactable_objects_db[this.key_name];
-        if (this.scale_x !== undefined) {
-            this.sprite.scale.x = interactable_object_db.scale_x;
-        } else if (interactable_object_db.scale_x !== undefined) {
-            this.sprite.scale.x = interactable_object_db.scale_x;
-        }
-        if (this.scale_y !== undefined) {
-            this.sprite.scale.y = interactable_object_db.scale_y;
-        } else if (interactable_object_db.scale_y !== undefined) {
-            this.sprite.scale.y = interactable_object_db.scale_y;
-        }
-    }
-
     private creating_blocking_stair_block() {
         const target_layer = this.base_collision_layer + this.block_climb_collision_layer_shift;
         const x_pos = (this.tile_x_pos + 0.5) * this.data.map.tile_width;
@@ -457,8 +429,8 @@ export class InteractableObjects {
             if (interactable_object_db.send_to_back !== undefined) {
                 this.sprite.send_to_back = interactable_object_db.send_to_back;
             }
-            this.set_anchor();
-            this.set_scale();
+            this.sprite.anchor.setTo(this.anchor_x ?? 0.0, this.anchor_y ?? 0.0);
+            this.sprite.scale.setTo(this.scale_x ?? 1.0, this.scale_y ?? 1.0);
             this.sprite.x = get_centered_pos_in_px(this.tile_x_pos, map.tile_width);
             this.sprite.y = get_centered_pos_in_px(this.tile_y_pos, map.tile_height);
             this.sprite_info.setAnimation(this.sprite, this.key_name);
@@ -466,7 +438,7 @@ export class InteractableObjects {
             const anim_key = this.sprite_info.getAnimationKey(this.key_name, initial_animation);
             this.sprite.animations.play(anim_key);
             if (interactable_object_db.stop_animation_on_start) {
-                //yes, is necessary to play before stopping it.
+                //yes, it's necessary to play before stopping it.
                 this.sprite.animations.stop();
             }
         }
@@ -529,7 +501,7 @@ export class InteractableObjects {
             const target_layer = this.base_collision_layer + collision_layer_shift;
             switch (event_info.type) {
                 case interactable_object_event_types.JUMP:
-                    this.set_jump_type_event(i, event_info, x_pos, y_pos, active_event, target_layer, map);
+                    this.set_jump_type_event(i, x_pos, y_pos, active_event, target_layer, map);
                     break;
                 case interactable_object_event_types.JUMP_AROUND:
                     this.set_jump_around_event(x_pos, y_pos, active_event, target_layer, map);
@@ -561,7 +533,6 @@ export class InteractableObjects {
 
     private set_jump_type_event(
         event_index: number,
-        event_info: any,
         x_pos: number,
         y_pos: number,
         active_event: boolean,
@@ -796,7 +767,6 @@ export class InteractableObjects {
                 false,
                 undefined,
                 event_data.change_to_collision_layer,
-                event_info.is_set,
                 this,
                 event_data.climbing_only,
                 event_info.dynamic
@@ -837,7 +807,7 @@ export class InteractableObjects {
         if (db.body_radius === 0 || this.base_collision_layer < 0) return;
         const collision_groups = this.data.collision.interactable_objs_collision_groups;
         this.game.physics.p2.enable(this.sprite, false);
-        this.set_anchor(); //Important to be after the previous command
+        this.sprite.anchor.setTo(this.anchor_x ?? 0.0, this.anchor_y ?? 0.0); //Important to be after enabling physics
         this.sprite.body.clearShapes();
         let polygon;
         if (db.custom_body_polygon) {

@@ -303,14 +303,23 @@ export class Debug {
                 const event_key = LocationKey.get_key(mouse_x_tile, mouse_y_tile);
                 if (event_key in this.data.map.events) {
                     const events = this.data.map.events[event_key].map(event => {
-                        return Object.assign({}, event, {
-                            game: "[Phaser.Game]",
-                            data: "[GoldenSun]",
-                            activation_directions: event.activation_directions.map(dir => reverse_directions[dir]),
-                            ...(event.origin_interactable_object && {
-                                origin_interactable_object: `[${event.origin_interactable_object.key_name}]`,
+                        return _.omitBy(
+                            Object.assign({}, event, {
+                                game: "[Phaser.Game]",
+                                data: "[GoldenSun]",
+                                activation_directions: event.activation_directions.map(dir => reverse_directions[dir]),
+                                ...(event.origin_interactable_object && {
+                                    origin_interactable_object: `[${event.origin_interactable_object.key_name}${
+                                        event.origin_interactable_object.label
+                                            ? `/${event.origin_interactable_object.label}`
+                                            : ""
+                                    }]`,
+                                }),
                             }),
-                        });
+                            (value, key) => {
+                                return key.startsWith("_");
+                            }
+                        );
                     });
                     document.getElementById("object_inspector").innerText = JSON.stringify(events, null, 4);
                 }

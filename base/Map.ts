@@ -895,6 +895,10 @@ export class Map {
             property_info.allow_jumping_over_it ?? interactable_object_db.allow_jumping_over_it;
         const allow_jumping_through_it =
             property_info.allow_jumping_through_it ?? interactable_object_db.allow_jumping_through_it;
+        const anchor_x = property_info.anchor_x ?? interactable_object_db.anchor_x;
+        const anchor_y = property_info.anchor_y ?? interactable_object_db.anchor_y;
+        const scale_x = property_info.scale_x ?? interactable_object_db.scale_x;
+        const scale_y = property_info.scale_y ?? interactable_object_db.scale_y;
         const interactable_object = new io_class(
             this.game,
             this.data,
@@ -906,10 +910,10 @@ export class Map {
             property_info.base_collision_layer,
             property_info.not_allowed_tiles,
             property_info.object_drop_tiles,
-            property_info.anchor_x,
-            property_info.anchor_y,
-            property_info.scale_x,
-            property_info.scale_y,
+            anchor_x,
+            anchor_y,
+            scale_x,
+            scale_y,
             property_info.block_climb_collision_layer_shift,
             property_info.events_info,
             property_info.enable,
