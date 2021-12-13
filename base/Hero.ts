@@ -52,8 +52,7 @@ export class Hero extends ControllableChar {
         initial_direction: string,
         walk_speed: number,
         dash_speed: number,
-        climb_speed: number,
-        is_npc: boolean
+        climb_speed: number
     ) {
         super(
             game,
@@ -63,7 +62,7 @@ export class Hero extends ControllableChar {
             walk_speed,
             dash_speed,
             climb_speed,
-            is_npc,
+            false,
             initial_x,
             initial_y,
             initial_action,

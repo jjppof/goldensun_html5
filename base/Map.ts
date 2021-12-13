@@ -779,175 +779,197 @@ export class Map {
 
     /**
      * Creates a tile event.
+     * @param property_key the property name.
      * @param raw_property the properties of this event still not parsed.
      * @returns returns the created event.
      */
-    private create_tile_event(raw_property: string) {
-        const property_info = JSON.parse(raw_property);
-        const this_event_location_key = LocationKey.get_key(property_info.x, property_info.y);
-        if (!(this_event_location_key in this.events)) {
-            this.events[this_event_location_key] = [];
+    private create_tile_event(property_key: string, raw_property: string) {
+        try {
+            const property_info = JSON.parse(raw_property);
+            const this_event_location_key = LocationKey.get_key(property_info.x, property_info.y);
+            if (!(this_event_location_key in this.events)) {
+                this.events[this_event_location_key] = [];
+            }
+            const event = this.data.tile_event_manager.get_event_instance(property_info);
+            this.events[this_event_location_key].push(event);
+        } catch {
+            console.warn(`Tile Event "${property_key}" is not a valid JSON.`);
         }
-        const event = this.data.tile_event_manager.get_event_instance(property_info);
-        this.events[this_event_location_key].push(event);
-        return event;
     }
 
     /**
      * Creates a NPC.
+     * @param property_key the property name.
      * @param properties the properties of this NPC, parsed or not.
      * @param not_parsed whether the properties are parsed or not.
      * @returns returns the created npc.
      */
-    private create_npc(properties: any, not_parsed: boolean = true) {
-        const property_info = not_parsed ? JSON.parse(properties) : properties;
-        const npc_db = this.data.dbs.npc_db[property_info.key_name];
-        const initial_action = property_info.initial_action ?? npc_db.initial_action;
-        const actual_action =
-            (npc_db.actions && initial_action in npc_db.actions) || !npc_db.action_aliases
-                ? initial_action
-                : npc_db.action_aliases[initial_action];
-        const initial_animation = property_info.animation_key ?? npc_db.actions[actual_action].initial_animation;
-        const interaction_pattern = property_info.interaction_pattern ?? npc_db.interaction_pattern;
-        const ignore_physics = property_info.ignore_physics ?? npc_db.ignore_physics;
-        const voice_key = property_info.voice_key ?? npc_db.voice_key;
-        const ignore_world_map_scale = property_info.ignore_world_map_scale ?? npc_db.ignore_world_map_scale;
-        const enable_footsteps = property_info.enable_footsteps ?? this._show_footsteps;
-        const max_distance = property_info.max_distance ?? npc_db.max_distance;
-        const step_duration = property_info.step_duration ?? npc_db.step_duration;
-        const wait_duration = property_info.wait_duration ?? npc_db.wait_duration;
-        const base_step = property_info.base_step ?? npc_db.base_step;
-        const step_max_variation = property_info.step_max_variation ?? npc_db.step_max_variation;
-        const npc = new NPC(
-            this.game,
-            this.data,
-            property_info.key_name,
-            property_info.label,
-            property_info.active,
-            property_info.initial_x,
-            property_info.initial_y,
-            property_info.storage_keys,
-            initial_action,
-            initial_animation,
-            enable_footsteps,
-            npc_db.walk_speed,
-            npc_db.dash_speed,
-            npc_db.climb_speed,
-            true,
-            property_info.npc_type,
-            property_info.movement_type,
-            property_info.message,
-            property_info.thought_message,
-            property_info.avatar,
-            property_info.shop_key,
-            property_info.inn_key,
-            property_info.base_collision_layer,
-            property_info.talk_range_factor,
-            property_info.events,
-            npc_db.no_shadow,
-            ignore_world_map_scale,
-            property_info.anchor_x,
-            property_info.anchor_y,
-            property_info.scale_x,
-            property_info.scale_y,
-            interaction_pattern,
-            property_info.affected_by_reveal,
-            property_info.sprite_misc_db_key,
-            ignore_physics,
-            property_info.visible,
-            voice_key,
-            max_distance,
-            step_duration,
-            wait_duration,
-            base_step,
-            step_max_variation
-        );
-        this.npcs.push(npc);
-        if (npc.label) {
-            if (npc.label in this._npcs_label_map) {
-                console.warn(`NPC with ${npc.label} is already set in this map.`);
-            } else {
-                this._npcs_label_map[npc.label] = npc;
+    private create_npc(property_key: string, properties: any, not_parsed: boolean = true) {
+        try {
+            const property_info = not_parsed ? JSON.parse(properties) : properties;
+            const npc_db = this.data.dbs.npc_db[property_info.key_name];
+            const initial_action = property_info.initial_action ?? npc_db.initial_action;
+            const actual_action =
+                (npc_db.actions && initial_action in npc_db.actions) || !npc_db.action_aliases
+                    ? initial_action
+                    : npc_db.action_aliases[initial_action];
+            const initial_animation = property_info.animation_key ?? npc_db.actions[actual_action].initial_animation;
+            const interaction_pattern = property_info.interaction_pattern ?? npc_db.interaction_pattern;
+            const ignore_physics = property_info.ignore_physics ?? npc_db.ignore_physics;
+            const voice_key = property_info.voice_key ?? npc_db.voice_key;
+            const ignore_world_map_scale = property_info.ignore_world_map_scale ?? npc_db.ignore_world_map_scale;
+            const enable_footsteps = property_info.enable_footsteps ?? this._show_footsteps;
+            const max_distance = property_info.max_distance ?? npc_db.max_distance;
+            const step_duration = property_info.step_duration ?? npc_db.step_duration;
+            const wait_duration = property_info.wait_duration ?? npc_db.wait_duration;
+            const base_step = property_info.base_step ?? npc_db.base_step;
+            const step_max_variation = property_info.step_max_variation ?? npc_db.step_max_variation;
+            const walk_speed = property_info.walk_speed ?? npc_db.walk_speed;
+            const dash_speed = property_info.dash_speed ?? npc_db.dash_speed;
+            const climb_speed = property_info.climb_speed ?? npc_db.climb_speed;
+            const avatar = property_info.avatar ?? npc_db.avatar;
+            const talk_range_factor = property_info.talk_range_factor ?? npc_db.talk_range_factor;
+            const anchor_x = property_info.anchor_x ?? npc_db.anchor_x;
+            const anchor_y = property_info.anchor_y ?? npc_db.anchor_y;
+            const scale_x = property_info.scale_x ?? npc_db.scale_x;
+            const scale_y = property_info.scale_y ?? npc_db.scale_y;
+            const npc = new NPC(
+                this.game,
+                this.data,
+                property_info.key_name,
+                property_info.label,
+                property_info.active,
+                property_info.initial_x,
+                property_info.initial_y,
+                property_info.storage_keys,
+                initial_action,
+                initial_animation,
+                enable_footsteps,
+                walk_speed,
+                dash_speed,
+                climb_speed,
+                property_info.npc_type,
+                property_info.movement_type,
+                property_info.message,
+                property_info.thought_message,
+                avatar,
+                property_info.shop_key,
+                property_info.inn_key,
+                property_info.base_collision_layer,
+                talk_range_factor,
+                property_info.events,
+                npc_db.no_shadow,
+                ignore_world_map_scale,
+                anchor_x,
+                anchor_y,
+                scale_x,
+                scale_y,
+                interaction_pattern,
+                property_info.affected_by_reveal,
+                property_info.sprite_misc_db_key,
+                ignore_physics,
+                property_info.visible,
+                voice_key,
+                max_distance,
+                step_duration,
+                wait_duration,
+                base_step,
+                step_max_variation
+            );
+            this.npcs.push(npc);
+            if (npc.label) {
+                if (npc.label in this._npcs_label_map) {
+                    console.warn(`NPC with ${npc.label} is already set in this map.`);
+                } else {
+                    this._npcs_label_map[npc.label] = npc;
+                }
             }
+            return npc;
+        } catch {
+            console.warn(`NPC "${property_key}" is not a valid JSON.`);
+            return null;
         }
-        return npc;
     }
 
     /**
      * Creates an interactable object.
+     * @param property_key the property name.
      * @param raw_property the properties of this interactable object still not parsed.
      * @returns returns the created interactable object.
      */
-    private create_interactable_object(raw_property: string) {
-        const property_info = JSON.parse(raw_property);
-        const interactable_object_db = this.data.dbs.interactable_objects_db[property_info.key_name];
-        let io_class: typeof InteractableObjects = InteractableObjects;
-        if (interactable_object_db.pushable) {
-            io_class = Pushable;
-        } else if (interactable_object_db.is_rope_dock) {
-            io_class = RopeDock;
-        } else if (interactable_object_db.rollable) {
-            io_class = RollablePillar;
-        } else if (interactable_object_db.breakable) {
-            io_class = Breakable;
-        }
-        const allow_jumping_over_it =
-            property_info.allow_jumping_over_it ?? interactable_object_db.allow_jumping_over_it;
-        const allow_jumping_through_it =
-            property_info.allow_jumping_through_it ?? interactable_object_db.allow_jumping_through_it;
-        const anchor_x = property_info.anchor_x ?? interactable_object_db.anchor_x;
-        const anchor_y = property_info.anchor_y ?? interactable_object_db.anchor_y;
-        const scale_x = property_info.scale_x ?? interactable_object_db.scale_x;
-        const scale_y = property_info.scale_y ?? interactable_object_db.scale_y;
-        const interactable_object = new io_class(
-            this.game,
-            this.data,
-            property_info.key_name,
-            property_info.x,
-            property_info.y,
-            property_info.storage_keys,
-            property_info.allowed_tiles,
-            property_info.base_collision_layer,
-            property_info.not_allowed_tiles,
-            property_info.object_drop_tiles,
-            anchor_x,
-            anchor_y,
-            scale_x,
-            scale_y,
-            property_info.block_climb_collision_layer_shift,
-            property_info.events_info,
-            property_info.enable,
-            property_info.entangled_by_bush,
-            property_info.toggle_enable_events,
-            property_info.label,
-            allow_jumping_over_it,
-            allow_jumping_through_it
-        );
-        if (interactable_object.is_rope_dock) {
-            (interactable_object as RopeDock).intialize_dock_info(
-                property_info.dest_x,
-                property_info.dest_y,
-                property_info.starting_dock,
-                property_info.tied
-            );
-        } else if (interactable_object.rollable) {
-            (interactable_object as RollablePillar).initialize_rolling_pillar(
-                property_info.falling_pos,
-                property_info.contact_points,
-                property_info.pillar_direction,
-                property_info.dest_pos_after_fall,
-                property_info.dest_collision_layer
-            );
-        }
-        this.interactable_objects.push(interactable_object);
-        if (interactable_object.label) {
-            if (interactable_object.label in this.interactable_objects_label_map) {
-                console.warn(`Interactable Object with ${interactable_object.label} is already set in this map.`);
-            } else {
-                this.interactable_objects_label_map[interactable_object.label] = interactable_object;
+    private create_interactable_object(property_key: string, raw_property: string) {
+        try {
+            const property_info = JSON.parse(raw_property);
+            const interactable_object_db = this.data.dbs.interactable_objects_db[property_info.key_name];
+            let io_class: typeof InteractableObjects = InteractableObjects;
+            if (interactable_object_db.pushable) {
+                io_class = Pushable;
+            } else if (interactable_object_db.is_rope_dock) {
+                io_class = RopeDock;
+            } else if (interactable_object_db.rollable) {
+                io_class = RollablePillar;
+            } else if (interactable_object_db.breakable) {
+                io_class = Breakable;
             }
+            const allow_jumping_over_it =
+                property_info.allow_jumping_over_it ?? interactable_object_db.allow_jumping_over_it;
+            const allow_jumping_through_it =
+                property_info.allow_jumping_through_it ?? interactable_object_db.allow_jumping_through_it;
+            const anchor_x = property_info.anchor_x ?? interactable_object_db.anchor_x;
+            const anchor_y = property_info.anchor_y ?? interactable_object_db.anchor_y;
+            const scale_x = property_info.scale_x ?? interactable_object_db.scale_x;
+            const scale_y = property_info.scale_y ?? interactable_object_db.scale_y;
+            const interactable_object = new io_class(
+                this.game,
+                this.data,
+                property_info.key_name,
+                property_info.x,
+                property_info.y,
+                property_info.storage_keys,
+                property_info.allowed_tiles,
+                property_info.base_collision_layer,
+                property_info.not_allowed_tiles,
+                property_info.object_drop_tiles,
+                anchor_x,
+                anchor_y,
+                scale_x,
+                scale_y,
+                property_info.block_climb_collision_layer_shift,
+                property_info.events_info,
+                property_info.enable,
+                property_info.entangled_by_bush,
+                property_info.toggle_enable_events,
+                property_info.label,
+                allow_jumping_over_it,
+                allow_jumping_through_it
+            );
+            if (interactable_object.is_rope_dock) {
+                (interactable_object as RopeDock).intialize_dock_info(
+                    property_info.dest_x,
+                    property_info.dest_y,
+                    property_info.starting_dock,
+                    property_info.tied
+                );
+            } else if (interactable_object.rollable) {
+                (interactable_object as RollablePillar).initialize_rolling_pillar(
+                    property_info.falling_pos,
+                    property_info.contact_points,
+                    property_info.pillar_direction,
+                    property_info.dest_pos_after_fall,
+                    property_info.dest_collision_layer
+                );
+            }
+            this.interactable_objects.push(interactable_object);
+            if (interactable_object.label) {
+                if (interactable_object.label in this.interactable_objects_label_map) {
+                    console.warn(`Interactable Object with ${interactable_object.label} is already set in this map.`);
+                } else {
+                    this.interactable_objects_label_map[interactable_object.label] = interactable_object;
+                }
+            }
+        } catch {
+            console.warn(`Interactable Object "${property_key}" is not a valid JSON.`);
         }
-        return interactable_object;
     }
 
     /**
@@ -1041,11 +1063,15 @@ export class Map {
                         this_obj.width | 0,
                         this_obj.height | 0
                     );
-                    this.encounter_zones.push({
-                        rectangle: zone,
-                        base_rate: this_obj.properties?.base_rate ?? objs.properties?.base_rate ?? 0,
-                        parties: this_obj.properties?.parties ? JSON.parse(this_obj.properties.parties) : [],
-                    });
+                    try {
+                        this.encounter_zones.push({
+                            rectangle: zone,
+                            base_rate: this_obj.properties?.base_rate ?? objs.properties?.base_rate ?? 0,
+                            parties: this_obj.properties?.parties ? JSON.parse(this_obj.properties.parties) : [],
+                        });
+                    } catch {
+                        console.warn(`Parties data is not a valid JSON in ${layer_name} layer.`);
+                    }
                 });
                 return layer_name;
             } else if (objs.properties?.join_with_layer !== undefined) {
@@ -1296,6 +1322,7 @@ export class Map {
     private get_djinn_on_world_map(djinn_key: string) {
         const djinn = this.data.info.djinni_list[djinn_key];
         const npc = this.create_npc(
+            null,
             {
                 key_name: Djinn.sprite_base_key(djinn.element),
                 initial_x: this.data.hero.tile_x_pos - 2,
@@ -1313,14 +1340,18 @@ export class Map {
             },
             false
         );
-        npc.init_npc(this);
-        return () => {
-            const event = npc.events[0] as DjinnGetEvent;
-            event.set_on_event_finish(() => {
-                npc.unset();
-            });
-            event.fire(npc);
-        };
+        if (npc) {
+            npc.init_npc(this);
+            return () => {
+                const event = npc.events[0] as DjinnGetEvent;
+                event.set_on_event_finish(() => {
+                    npc.unset();
+                });
+                event.fire(npc);
+            };
+        } else {
+            console.warn("Null NPC gotten...");
+        }
     }
 
     /**
@@ -1435,11 +1466,11 @@ export class Map {
             for (let property_key in this.sprite.properties) {
                 const property = this.sprite.properties[property_key];
                 if (property_key.startsWith("tile_event/")) {
-                    this.create_tile_event(property);
+                    this.create_tile_event(property_key, property);
                 } else if (property_key.startsWith("npc/")) {
-                    this.create_npc(property);
+                    this.create_npc(property_key, property);
                 } else if (property_key.startsWith("interactable_object/")) {
-                    this.create_interactable_object(property);
+                    this.create_interactable_object(property_key, property);
                 }
             }
         }
