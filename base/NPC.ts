@@ -134,15 +134,15 @@ export class NPC extends ControllableChar {
             storage_keys,
             active
         );
-        this._npc_type = npc_type;
+        this._npc_type = npc_type ?? npc_types.NORMAL;
         if (this.storage_keys.movement_type !== undefined) {
             movement_type = this.data.storage.get(this.storage_keys.movement_type);
         }
         this.movement_type = movement_type ?? npc_movement_types.IDLE;
-        this._message = message;
-        this._thought_message = thought_message;
-        this._avatar = avatar ? avatar : null;
-        this._voice_key = voice_key ? voice_key : "";
+        this._message = message ?? "";
+        this._thought_message = thought_message ?? "";
+        this._avatar = avatar ?? null;
+        this._voice_key = voice_key ?? "";
         this._shop_key = shop_key;
         this._inn_key = inn_key;
         if (this.storage_keys.base_collision_layer !== undefined) {
