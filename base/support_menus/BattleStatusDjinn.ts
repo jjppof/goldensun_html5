@@ -147,14 +147,10 @@ export class BattleStatusDjinn extends StatusComponent {
                 let x_pos = BattleStatusDjinn.DJINN.STAR_X + col_index * BattleStatusDjinn.SHIFT_X;
                 let y_pos = BattleStatusDjinn.DJINN.STAR_Y + line_index * BattleStatusDjinn.SHIFT_Y;
 
-                const star = this.window.create_at_group(
-                    x_pos,
-                    y_pos,
-                    "stars",
-                    undefined,
-                    djinn.element,
-                    BattleStatusDjinn.GROUP_KEY
-                );
+                const star = this.window.create_at_group(x_pos, y_pos, "stars", {
+                    frame: djinn.element,
+                    internal_group_key: BattleStatusDjinn.GROUP_KEY,
+                });
                 this.state_sprites.push(star);
 
                 let font_color = DEFAULT_FONT_COLOR;

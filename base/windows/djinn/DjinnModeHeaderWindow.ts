@@ -95,28 +95,17 @@ export class DjinnModeHeaderWindow {
         );
         this.djinn_name_after_text = this.base_window.set_text_in_position("", DJINN_NAME_AFTER_X, DJINN_NAME_AFTER_Y);
 
-        this.djinn_status_arrow = this.base_window.create_at_group(
-            ARROW_CHANGE_DJINN_X,
-            ARROW_CHANGE_DJINN_Y,
-            "menu",
-            undefined,
-            "arrow_change"
-        );
+        this.djinn_status_arrow = this.base_window.create_at_group(ARROW_CHANGE_DJINN_X, ARROW_CHANGE_DJINN_Y, "menu", {
+            frame: "arrow_change",
+        });
         this.spacebar_key = {
-            shadow: this.base_window.create_at_group(
-                SPACEBAR_KEY_X + 1,
-                SPACEBAR_KEY_Y + 1,
-                "keyboard_buttons",
-                0x0,
-                "spacebar"
-            ),
-            text: this.base_window.create_at_group(
-                SPACEBAR_KEY_X,
-                SPACEBAR_KEY_Y,
-                "keyboard_buttons",
-                undefined,
-                "spacebar"
-            ),
+            shadow: this.base_window.create_at_group(SPACEBAR_KEY_X + 1, SPACEBAR_KEY_Y + 1, "keyboard_buttons", {
+                color: 0x0,
+                frame: "spacebar",
+            }),
+            text: this.base_window.create_at_group(SPACEBAR_KEY_X, SPACEBAR_KEY_Y, "keyboard_buttons", {
+                frame: "spacebar",
+            }),
         };
         this.action_info_text = this.base_window.set_text_in_position(
             "",
@@ -171,16 +160,12 @@ export class DjinnModeHeaderWindow {
             );
 
             this.sprites.push(
-                this.base_window.create_at_group(
-                    STAR_BEFORE_X,
-                    STAR_BEFORE_Y,
-                    "stars",
-                    undefined,
-                    this.djinni[0].element
-                )
+                this.base_window.create_at_group(STAR_BEFORE_X, STAR_BEFORE_Y, "stars", {
+                    frame: this.djinni[0].element,
+                })
             );
             this.sprites.push(
-                this.base_window.create_at_group(STAR_AFTER_X, STAR_AFTER_Y, "stars", undefined, this.djinni[0].element)
+                this.base_window.create_at_group(STAR_AFTER_X, STAR_AFTER_Y, "stars", {frame: this.djinni[0].element})
             );
 
             this.djinn_status_arrow.visible = true;
@@ -200,13 +185,9 @@ export class DjinnModeHeaderWindow {
 
             if (this.action === djinn_actions.TRADE) {
                 this.sprites.push(
-                    this.base_window.create_at_group(
-                        STAR_BEFORE_X - 5,
-                        STAR_BEFORE_Y,
-                        "stars",
-                        undefined,
-                        this.djinni[0].element
-                    )
+                    this.base_window.create_at_group(STAR_BEFORE_X - 5, STAR_BEFORE_Y, "stars", {
+                        frame: this.djinni[0].element,
+                    })
                 );
                 this.base_window.update_text(this.djinni[1].name, this.djinn_name_after_text);
                 this.base_window.update_text_color(
@@ -215,13 +196,9 @@ export class DjinnModeHeaderWindow {
                 );
 
                 this.sprites.push(
-                    this.base_window.create_at_group(
-                        STAR_AFTER_X - 5,
-                        STAR_AFTER_Y,
-                        "stars",
-                        undefined,
-                        this.djinni[1].element
-                    )
+                    this.base_window.create_at_group(STAR_AFTER_X - 5, STAR_AFTER_Y, "stars", {
+                        frame: this.djinni[1].element,
+                    })
                 );
                 this.base_window.update_text_position({x: DJINN_NAME_AFTER_X - 5}, this.djinn_name_after_text);
                 this.base_window.update_text_position(
@@ -235,13 +212,9 @@ export class DjinnModeHeaderWindow {
                     this.djinn_name_before_text
                 );
                 this.sprites.push(
-                    this.base_window.create_at_group(
-                        STAR_BEFORE_X - 5,
-                        STAR_BEFORE_Y + numbers.FONT_SIZE,
-                        "stars",
-                        undefined,
-                        this.djinni[0].element
-                    )
+                    this.base_window.create_at_group(STAR_BEFORE_X - 5, STAR_BEFORE_Y + numbers.FONT_SIZE, "stars", {
+                        frame: this.djinni[0].element,
+                    })
                 );
             }
             this.djinn_status_arrow.visible = false;

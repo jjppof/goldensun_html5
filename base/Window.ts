@@ -170,23 +170,25 @@ export class Window {
 
         if (params) {
             if (params.bg) {
-                obj.background = this.create_at_group(
-                    base_x,
-                    base_y,
-                    "menu",
-                    undefined,
-                    "item_border",
-                    params.internal_group
-                );
+                obj.background = this.create_at_group(base_x, base_y, "menu", {
+                    frame: "item_border",
+                    internal_group_key: params.internal_group,
+                });
             }
 
-            obj.icon = this.create_at_group(base_x, base_y, "items_icons", undefined, key_name, params.internal_group);
+            obj.icon = this.create_at_group(base_x, base_y, "items_icons", {
+                frame: key_name,
+                internal_group_key: params.internal_group,
+            });
             if (params.center) {
                 obj.icon.anchor.setTo(0.5, 0.5);
             }
 
             if (params.broken) {
-                obj.broken = this.create_at_group(base_x, base_y, "menu", undefined, "broken", params.internal_group);
+                obj.broken = this.create_at_group(base_x, base_y, "menu", {
+                    frame: "broken",
+                    internal_group_key: params.internal_group,
+                });
                 if (params.center) {
                     obj.broken.anchor.setTo(0.5, 0.5);
                 }
@@ -197,9 +199,10 @@ export class Window {
                     base_x + Window.ITEM_OBJ.EQUIPPED_X + shift,
                     base_y + Window.ITEM_OBJ.EQUIPPED_Y + shift,
                     "menu",
-                    undefined,
-                    "equipped",
-                    params.internal_group
+                    {
+                        frame: "equipped",
+                        internal_group_key: params.internal_group,
+                    }
                 );
             }
             if (params.quantity && params.quantity > 1) {
@@ -218,7 +221,7 @@ export class Window {
                 }
             }
         } else {
-            obj.icon = this.create_at_group(base_x, base_y, "items_icons", undefined, key_name);
+            obj.icon = this.create_at_group(base_x, base_y, "items_icons", {frame: key_name});
         }
         return obj;
     }
@@ -563,22 +566,32 @@ export class Window {
      * @param x the x position of the sprite.
      * @param y the y position of the sprite.
      * @param key the sprite key name.
-     * @param color the color of the sprite (tint property).
-     * @param frame the sprite frame name.
-     * @param internal_group_key the internal group key in the case the sprite should be added in an internal group.
+     * @param options some optional options.
      * @returns Returns the added sprite.
      */
-    create_at_group(x: number, y: number, key: string, color?: number, frame?: string, internal_group_key?: string) {
+    create_at_group(
+        x: number,
+        y: number,
+        key: string,
+        options?: {
+            /** The color of the sprite (tint property). */
+            color?: number;
+            /** The sprite frame name. */
+            frame?: string;
+            /** The internal group key in the case the sprite should be added in an internal group. */
+            internal_group_key?: string;
+        }
+    ): Phaser.Sprite {
         let group = this.group;
-        if (internal_group_key !== undefined) {
-            const internal_group = this.get_internal_group(internal_group_key);
+        if (options?.internal_group_key !== undefined) {
+            const internal_group = this.get_internal_group(options.internal_group_key);
             if (internal_group) {
                 group = internal_group;
             }
         }
-        const sprite = group.create(x, y, key, frame);
-        if (color !== undefined) {
-            sprite.tint = color;
+        const sprite = group.create(x, y, key, options?.frame);
+        if (options?.color !== undefined) {
+            sprite.tint = options.color;
         }
         this.extra_sprites.push(sprite);
         return sprite;

@@ -213,7 +213,7 @@ export class MainPsynergyMenu {
                         PSY_OVERVIEW_WIN_INSIDE_PADDING_V +
                         ((counter / PSY_OVERVIEW_WIN_ICONS_PER_LINE) | 0) *
                             (PSY_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
-                    this.psynergy_overview_window.create_at_group(x, y, "abilities_icons", undefined, ability_key_name);
+                    this.psynergy_overview_window.create_at_group(x, y, "abilities_icons", {frame: ability_key_name});
                     ++counter;
                 }
             }

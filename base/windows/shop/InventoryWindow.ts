@@ -319,22 +319,14 @@ export class InventoryWindow {
                     (dead_items[0] as Phaser.Sprite).reset(col * ICON_SIZE, line * ICON_SIZE);
                     (dead_items[0] as Phaser.Sprite).frameName = this_item.key_name;
                 } else {
-                    this.window.create_at_group(
-                        col * ICON_SIZE,
-                        line * ICON_SIZE,
-                        "menu",
-                        undefined,
-                        BACKGROUND_IMG_KEY,
-                        SPRITE_GROUP_KEY
-                    );
-                    this.window.create_at_group(
-                        col * ICON_SIZE,
-                        line * ICON_SIZE,
-                        ITEMS_IMG_KEY,
-                        undefined,
-                        this_item.key_name,
-                        SPRITE_GROUP_KEY
-                    );
+                    this.window.create_at_group(col * ICON_SIZE, line * ICON_SIZE, "menu", {
+                        frame: BACKGROUND_IMG_KEY,
+                        internal_group_key: SPRITE_GROUP_KEY,
+                    });
+                    this.window.create_at_group(col * ICON_SIZE, line * ICON_SIZE, ITEMS_IMG_KEY, {
+                        frame: this_item.key_name,
+                        internal_group_key: SPRITE_GROUP_KEY,
+                    });
                 }
 
                 if (this.item_grid[line][col].broken) {
@@ -344,14 +336,10 @@ export class InventoryWindow {
                     if (dead_broken.length > 0)
                         (dead_broken[0] as Phaser.Sprite).reset(col * ICON_SIZE, line * ICON_SIZE);
                     else
-                        this.window.create_at_group(
-                            col * ICON_SIZE,
-                            line * ICON_SIZE,
-                            "menu",
-                            undefined,
-                            BROKEN_IMG_KEY,
-                            SPRITE_GROUP_KEY
-                        );
+                        this.window.create_at_group(col * ICON_SIZE, line * ICON_SIZE, "menu", {
+                            frame: BROKEN_IMG_KEY,
+                            internal_group_key: SPRITE_GROUP_KEY,
+                        });
                 }
 
                 if (this.item_grid[line][col].equipped) {
@@ -361,14 +349,10 @@ export class InventoryWindow {
                     if (dead_icons.length > 0)
                         (dead_icons[0] as Phaser.Sprite).reset(col * ICON_SIZE, line * ICON_SIZE);
                     else
-                        this.window.create_at_group(
-                            col * ICON_SIZE,
-                            line * ICON_SIZE,
-                            "menu",
-                            undefined,
-                            EQUIPPED_IMG_KEY,
-                            ICON_GROUP_KEY
-                        );
+                        this.window.create_at_group(col * ICON_SIZE, line * ICON_SIZE, "menu", {
+                            frame: EQUIPPED_IMG_KEY,
+                            internal_group_key: ICON_GROUP_KEY,
+                        });
                 }
 
                 if (this.item_grid[line][col].quantity > 1) {

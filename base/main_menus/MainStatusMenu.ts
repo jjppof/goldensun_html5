@@ -352,9 +352,11 @@ export class MainStatusMenu {
             MainStatusMenu.DESC_GUIDE.L.X + 1,
             MainStatusMenu.DESC_GUIDE.L.Y + 1,
             "keyboard_buttons",
-            0x0,
-            "l_button",
-            MainStatusMenu.DESC_GUIDE_KEY
+            {
+                color: 0x0,
+                frame: "l_button",
+                internal_group_key: MainStatusMenu.DESC_GUIDE_KEY,
+            }
         );
         this.active_sprites.push(sprite);
 
@@ -362,9 +364,10 @@ export class MainStatusMenu {
             MainStatusMenu.DESC_GUIDE.L.X,
             MainStatusMenu.DESC_GUIDE.L.Y,
             "keyboard_buttons",
-            undefined,
-            "l_button",
-            MainStatusMenu.DESC_GUIDE_KEY
+            {
+                frame: "l_button",
+                internal_group_key: MainStatusMenu.DESC_GUIDE_KEY,
+            }
         );
         this.active_sprites.push(sprite);
 
@@ -372,9 +375,11 @@ export class MainStatusMenu {
             MainStatusMenu.DESC_GUIDE.R.X + 1,
             MainStatusMenu.DESC_GUIDE.R.Y + 1,
             "keyboard_buttons",
-            0x0,
-            "r_button",
-            MainStatusMenu.DESC_GUIDE_KEY
+            {
+                color: 0x0,
+                frame: "r_button",
+                internal_group_key: MainStatusMenu.DESC_GUIDE_KEY,
+            }
         );
         this.active_sprites.push(sprite);
 
@@ -382,9 +387,10 @@ export class MainStatusMenu {
             MainStatusMenu.DESC_GUIDE.R.X,
             MainStatusMenu.DESC_GUIDE.R.Y,
             "keyboard_buttons",
-            undefined,
-            "r_button",
-            MainStatusMenu.DESC_GUIDE_KEY
+            {
+                frame: "r_button",
+                internal_group_key: MainStatusMenu.DESC_GUIDE_KEY,
+            }
         );
         this.active_sprites.push(sprite);
 
@@ -392,9 +398,11 @@ export class MainStatusMenu {
             MainStatusMenu.DESC_GUIDE.A.X + 1,
             MainStatusMenu.DESC_GUIDE.A.Y + 1,
             "keyboard_buttons",
-            0x0,
-            "a_button",
-            MainStatusMenu.DESC_GUIDE_KEY
+            {
+                color: 0x0,
+                frame: "a_button",
+                internal_group_key: MainStatusMenu.DESC_GUIDE_KEY,
+            }
         );
         this.active_sprites.push(sprite);
 
@@ -402,9 +410,10 @@ export class MainStatusMenu {
             MainStatusMenu.DESC_GUIDE.A.X,
             MainStatusMenu.DESC_GUIDE.A.Y,
             "keyboard_buttons",
-            undefined,
-            "a_button",
-            MainStatusMenu.DESC_GUIDE_KEY
+            {
+                frame: "a_button",
+                internal_group_key: MainStatusMenu.DESC_GUIDE_KEY,
+            }
         );
         this.active_sprites.push(sprite);
 
@@ -434,14 +443,10 @@ export class MainStatusMenu {
     }
 
     private initialize() {
-        this.avatar = this.main_window.create_at_group(
-            MainStatusMenu.AVATAR.X,
-            MainStatusMenu.AVATAR.Y,
-            "avatars",
-            undefined,
-            this.selected_char.key_name,
-            MainStatusMenu.GROUP_KEY
-        );
+        this.avatar = this.main_window.create_at_group(MainStatusMenu.AVATAR.X, MainStatusMenu.AVATAR.Y, "avatars", {
+            frame: this.selected_char.key_name,
+            internal_group_key: MainStatusMenu.GROUP_KEY,
+        });
         this.active_sprites.push(this.avatar);
 
         this.name = this.main_window.set_text_in_position("", MainStatusMenu.NAME.X, MainStatusMenu.NAME.Y, {
@@ -481,17 +486,20 @@ export class MainStatusMenu {
                 MainStatusMenu.GUIDE.L.X + 1,
                 MainStatusMenu.GUIDE.L.Y + 1,
                 "keyboard_buttons",
-                0x0,
-                "l_button",
-                MainStatusMenu.GROUP_KEY
+                {
+                    color: 0x0,
+                    frame: "l_button",
+                    internal_group_key: MainStatusMenu.GROUP_KEY,
+                }
             ),
             sprite: this.guide_window.create_at_group(
                 MainStatusMenu.GUIDE.L.X,
                 MainStatusMenu.GUIDE.L.Y,
                 "keyboard_buttons",
-                undefined,
-                "l_button",
-                MainStatusMenu.GROUP_KEY
+                {
+                    frame: "l_button",
+                    internal_group_key: MainStatusMenu.GROUP_KEY,
+                }
             ),
         };
         this.active_sprites.push(this.l_button.sprite, this.l_button.shadow);
@@ -501,17 +509,20 @@ export class MainStatusMenu {
                 MainStatusMenu.GUIDE.R.X + 1,
                 MainStatusMenu.GUIDE.R.Y + 1,
                 "keyboard_buttons",
-                0x0,
-                "r_button",
-                MainStatusMenu.GROUP_KEY
+                {
+                    color: 0x0,
+                    frame: "r_button",
+                    internal_group_key: MainStatusMenu.GROUP_KEY,
+                }
             ),
             sprite: this.guide_window.create_at_group(
                 MainStatusMenu.GUIDE.R.X,
                 MainStatusMenu.GUIDE.R.Y,
                 "keyboard_buttons",
-                undefined,
-                "r_button",
-                MainStatusMenu.GROUP_KEY
+                {
+                    frame: "r_button",
+                    internal_group_key: MainStatusMenu.GROUP_KEY,
+                }
             ),
         };
         this.active_sprites.push(this.r_button.sprite, this.r_button.shadow);
@@ -521,17 +532,20 @@ export class MainStatusMenu {
                 MainStatusMenu.GUIDE.A.X + 1,
                 MainStatusMenu.GUIDE.A.Y + 1,
                 "keyboard_buttons",
-                0x0,
-                "a_button",
-                MainStatusMenu.GROUP_KEY
+                {
+                    color: 0x0,
+                    frame: "a_button",
+                    internal_group_key: MainStatusMenu.GROUP_KEY,
+                }
             ),
             sprite: this.guide_window.create_at_group(
                 MainStatusMenu.GUIDE.A.X,
                 MainStatusMenu.GUIDE.A.Y,
                 "keyboard_buttons",
-                undefined,
-                "a_button",
-                MainStatusMenu.GROUP_KEY
+                {
+                    frame: "a_button",
+                    internal_group_key: MainStatusMenu.GROUP_KEY,
+                }
             ),
         };
         this.active_sprites.push(this.a_button.sprite, this.a_button.shadow);
@@ -541,17 +555,20 @@ export class MainStatusMenu {
                 MainStatusMenu.GUIDE.SELECT.X + 1,
                 MainStatusMenu.GUIDE.SELECT.Y + 1,
                 "keyboard_buttons",
-                0x0,
-                "select_button",
-                MainStatusMenu.GROUP_KEY
+                {
+                    color: 0x0,
+                    frame: "select_button",
+                    internal_group_key: MainStatusMenu.GROUP_KEY,
+                }
             ),
             sprite: this.guide_window.create_at_group(
                 MainStatusMenu.GUIDE.SELECT.X,
                 MainStatusMenu.GUIDE.SELECT.Y,
                 "keyboard_buttons",
-                undefined,
-                "select_button",
-                MainStatusMenu.GROUP_KEY
+                {
+                    frame: "select_button",
+                    internal_group_key: MainStatusMenu.GROUP_KEY,
+                }
             ),
         };
         this.active_sprites.push(this.select_button.sprite, this.select_button.shadow);
@@ -689,14 +706,10 @@ export class MainStatusMenu {
         const char = this.selected_char;
         this.set_battle_effects();
 
-        this.avatar = this.main_window.create_at_group(
-            MainStatusMenu.AVATAR.X,
-            MainStatusMenu.AVATAR.Y,
-            "avatars",
-            undefined,
-            char.key_name,
-            MainStatusMenu.GROUP_KEY
-        );
+        this.avatar = this.main_window.create_at_group(MainStatusMenu.AVATAR.X, MainStatusMenu.AVATAR.Y, "avatars", {
+            frame: char.key_name,
+            internal_group_key: MainStatusMenu.GROUP_KEY,
+        });
 
         this.main_window.update_text(char.name, this.name);
         this.main_window.update_text(String(char.level), this.level_value);

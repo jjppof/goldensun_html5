@@ -1793,6 +1793,30 @@
         "priority_move": false,
         "msg_type": "item_unleash"
     },{
+        "key_name": "haunt",
+        "name": "Haunt",
+        "description": "",
+        "type": "effect_only",
+        "element": "venus",
+        "battle_target": "enemy",
+        "range": 3,
+        "pp_cost": 5,
+        "ability_power": 0,
+        "effects_outside_battle": false,
+        "is_battle_ability": true,
+        "is_field_psynergy": false,
+        "effects": [{
+            "type": "permanent_status",
+            "chance": 0.25,
+            "add_status": true,
+            "status_key_name": "haunt",
+            "usage": "on_use"
+        }],
+        "ability_category": "psynergy",
+        "battle_animation_key": "haunt",
+        "priority_move": false,
+        "msg_type": "cast"
+    },{
         "key_name": "flare_burst",
         "name": "Flare Burst",
         "description": "",

@@ -521,14 +521,10 @@ export class BattleStatusWindow {
             this.effect_sprites = [];
         }
 
-        this.avatar = this.window.create_at_group(
-            BattleStatusWindow.AVATAR.X,
-            BattleStatusWindow.AVATAR.Y,
-            "avatars",
-            undefined,
-            this.selected_char.key_name,
-            BattleStatusWindow.GROUP_KEY
-        );
+        this.avatar = this.window.create_at_group(BattleStatusWindow.AVATAR.X, BattleStatusWindow.AVATAR.Y, "avatars", {
+            frame: this.selected_char.key_name,
+            internal_group_key: BattleStatusWindow.GROUP_KEY,
+        });
 
         const sprite_key = this.selected_char.sprite_base.getSpriteKey(base_actions.BATTLE);
         const sprite_base = this.data.info.main_char_list[this.selected_char.key_name].sprite_base;
@@ -537,9 +533,9 @@ export class BattleStatusWindow {
             BattleStatusWindow.BATTLESPRITE.CENTER_X,
             BattleStatusWindow.BATTLESPRITE.END_Y,
             sprite_key,
-            undefined,
-            undefined,
-            BattleStatusWindow.GROUP_KEY
+            {
+                internal_group_key: BattleStatusWindow.GROUP_KEY,
+            }
         );
         this.battle_sprite.anchor.setTo(0.5, 1);
 
@@ -564,14 +560,10 @@ export class BattleStatusWindow {
                 const x_pos = BattleStatusWindow.EFFECTS.X + parseInt(index) * BattleStatusWindow.EFFECTS.SHIFT;
                 const y_pos = BattleStatusWindow.EFFECTS.Y;
 
-                const sprite = this.window.create_at_group(
-                    x_pos,
-                    y_pos,
-                    "battle_effect_icons",
-                    undefined,
-                    key,
-                    BattleStatusWindow.GROUP_KEY
-                );
+                const sprite = this.window.create_at_group(x_pos, y_pos, "battle_effect_icons", {
+                    frame: key,
+                    internal_group_key: BattleStatusWindow.GROUP_KEY,
+                });
                 this.effect_sprites.push(sprite);
             }
         }

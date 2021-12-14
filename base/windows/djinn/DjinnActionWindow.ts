@@ -54,14 +54,11 @@ export class DjinnActionWindow {
         this.action_text = this.base_window.set_text_in_position("", DJINN_ACTION_X, DJINN_ACTION_Y);
 
         this.shift_key = {
-            shadow: this.base_window.create_at_group(
-                SHIFT_KEY_X + 1,
-                SHIFT_KEY_Y + 1,
-                "keyboard_buttons",
-                0x0,
-                "shift"
-            ),
-            text: this.base_window.create_at_group(SHIFT_KEY_X, SHIFT_KEY_Y, "keyboard_buttons", undefined, "shift"),
+            shadow: this.base_window.create_at_group(SHIFT_KEY_X + 1, SHIFT_KEY_Y + 1, "keyboard_buttons", {
+                color: 0x0,
+                frame: "shift",
+            }),
+            text: this.base_window.create_at_group(SHIFT_KEY_X, SHIFT_KEY_Y, "keyboard_buttons", {frame: "shift"}),
         };
     }
 
@@ -87,13 +84,9 @@ export class DjinnActionWindow {
     }
 
     set_action_for_specific_djinn(this_char: MainChar, this_djinn: Djinn) {
-        this.star_sprite = this.base_window.create_at_group(
-            DJINN_NAME_X - 7,
-            DJINN_NAME_Y + 1,
-            "stars",
-            undefined,
-            this_djinn.element
-        );
+        this.star_sprite = this.base_window.create_at_group(DJINN_NAME_X - 7, DJINN_NAME_Y + 1, "stars", {
+            frame: this_djinn.element,
+        });
 
         this.base_window.update_text("What will you do?", this.action_description_text);
         this.base_window.update_text(this_char.name + "'s", this.char_name_text);

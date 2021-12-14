@@ -32,13 +32,9 @@ export class SummonDjinnStandbyWindow {
         this.timers = {};
         for (let i = 0; i < ordered_elements.length; ++i) {
             const element = ordered_elements[i];
-            this.base_window.create_at_group(
-                STAR_LEFT_PADDING + i * SPACE_BETWEEN_STARS,
-                STAR_TOP_PADDING,
-                "stars",
-                undefined,
-                element
-            );
+            this.base_window.create_at_group(STAR_LEFT_PADDING + i * SPACE_BETWEEN_STARS, STAR_TOP_PADDING, "stars", {
+                frame: element,
+            });
             this.texts[element] = this.base_window.set_text_in_position(
                 "",
                 TEXT_LEFT_PADDING + i * SPACE_BETWEEN_TEXTS,

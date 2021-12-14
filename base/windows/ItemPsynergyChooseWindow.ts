@@ -100,10 +100,10 @@ export class ItemPsynergyChooseWindow {
         this.close_callback = undefined;
         this.char = null;
         this.char_select_controls_sprites = [
-            this.window.create_at_group(9, 97, "keyboard_buttons", 0x0, "l_button"),
-            this.window.create_at_group(8, 96, "keyboard_buttons", undefined, "l_button"),
-            this.window.create_at_group(24, 97, "keyboard_buttons", 0x0, "r_button"),
-            this.window.create_at_group(23, 96, "keyboard_buttons", undefined, "r_button"),
+            this.window.create_at_group(9, 97, "keyboard_buttons", {color: 0x0, frame: "l_button"}),
+            this.window.create_at_group(8, 96, "keyboard_buttons", {frame: "l_button"}),
+            this.window.create_at_group(24, 97, "keyboard_buttons", {color: 0x0, frame: "r_button"}),
+            this.window.create_at_group(23, 96, "keyboard_buttons", {frame: "r_button"}),
         ];
         const sprite_pair = this.window.set_text_in_position(": Change Char", 40, 96);
         this.char_select_controls_sprites.push(sprite_pair.text, sprite_pair.shadow);
@@ -258,7 +258,7 @@ export class ItemPsynergyChooseWindow {
 
             if (this.is_psynergy_window) {
                 this.icon_sprites_in_window.push(
-                    this.window.create_at_group(icon_x, icon_y, this.element_sprite_key, undefined, elem_key_name)
+                    this.window.create_at_group(icon_x, icon_y, this.element_sprite_key, {frame: elem_key_name})
                 );
                 (this.icon_sprites_in_window[i] as Phaser.Sprite).anchor.setTo(0.5, 0.5);
             } else {

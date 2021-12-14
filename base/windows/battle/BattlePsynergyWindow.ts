@@ -244,27 +244,19 @@ export class BattlePsynergyWindow {
             this.text_sprites_in_window.push(pp_sprite);
 
             this.icon_sprites_in_window.push(
-                this.base_window.create_at_group(icon_x, icon_y, "abilities_icons", undefined, key_name)
+                this.base_window.create_at_group(icon_x, icon_y, "abilities_icons", {frame: key_name})
             );
             this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
 
             this.misc_sprites_in_window.push(
-                this.base_window.create_at_group(
-                    START_X,
-                    y + 5,
-                    "stars",
-                    undefined,
-                    this.data.info.abilities_list[key_name].element
-                )
+                this.base_window.create_at_group(START_X, y + 5, "stars", {
+                    frame: this.data.info.abilities_list[key_name].element,
+                })
             );
             this.misc_sprites_in_window.push(
-                this.base_window.create_at_group(
-                    RANGE_X,
-                    y + 4,
-                    "ranges",
-                    undefined,
-                    this.data.info.abilities_list[key_name].range.toString()
-                )
+                this.base_window.create_at_group(RANGE_X, y + 4, "ranges", {
+                    frame: this.data.info.abilities_list[key_name].range.toString(),
+                })
             );
 
             const psynergy_cost_sprite = this.base_window.set_text_in_position(

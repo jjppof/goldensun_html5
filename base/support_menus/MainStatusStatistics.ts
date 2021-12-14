@@ -278,14 +278,10 @@ export class MainStatusStatistics extends StatusComponent {
 
             if (this.state === MainStatusStates.CHARACTERS) y_pos += MainStatusStatistics.ELEM.DOWN_SHIFT;
 
-            const star = this.window.create_at_group(
-                x_pos,
-                y_pos,
-                "stars",
-                undefined,
-                ordered_elements[i],
-                MainStatusStatistics.GROUP_KEY
-            );
+            const star = this.window.create_at_group(x_pos, y_pos, "stars", {
+                frame: ordered_elements[i],
+                internal_group_key: MainStatusStatistics.GROUP_KEY,
+            });
             this.state_sprites.push(star);
         }
 
@@ -552,14 +548,10 @@ export class MainStatusStatistics extends StatusComponent {
                 x_pos = MainStatusStatistics.EFFECTS.ICON_X;
                 y_pos = MainStatusStatistics.EFFECTS.ICON_Y + i * MainStatusStatistics.EFFECTS.SHIFT;
 
-                const sprite = this.window.create_at_group(
-                    x_pos,
-                    y_pos,
-                    "battle_effect_icons",
-                    undefined,
-                    effect.key,
-                    MainStatusStatistics.GROUP_KEY
-                );
+                const sprite = this.window.create_at_group(x_pos, y_pos, "battle_effect_icons", {
+                    frame: effect.key,
+                    internal_group_key: MainStatusStatistics.GROUP_KEY,
+                });
                 this.state_sprites.push(sprite);
             }
         }

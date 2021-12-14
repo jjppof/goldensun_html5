@@ -66,30 +66,31 @@ export class DjinnStatsWindow {
                 STAT_ARROW_X,
                 STAT_ARROW_Y + i * numbers.FONT_SIZE,
                 "menu",
-                undefined,
-                "stat_up"
+                {
+                    frame: "stat_up",
+                }
             );
             this.down_arrows[ordered_main_stats[i]] = this.base_window.create_at_group(
                 STAT_ARROW_X,
                 STAT_ARROW_Y + i * numbers.FONT_SIZE,
                 "menu",
-                undefined,
-                "stat_down"
+                {
+                    frame: "stat_down",
+                }
             );
         }
         this.hide_arrows();
         this.before_class_text = this.base_window.set_text_in_position("", HP_LABEL_X, CLASS_NAME_Y);
         this.after_class_text = this.base_window.set_text_in_position("", AFTER_CLASS_X, CLASS_NAME_Y);
-        let arrow_change = this.base_window.create_at_group(
-            CLASS_ARROW_X,
-            CLASS_ARROW_Y,
-            "menu",
-            undefined,
-            "arrow_change"
-        );
+        let arrow_change = this.base_window.create_at_group(CLASS_ARROW_X, CLASS_ARROW_Y, "menu", {
+            frame: "arrow_change",
+        });
         arrow_change.rotation = -numbers.degree90;
-        this.base_window.create_at_group(SHIFT_BUTTON_X + 1, SHIFT_BUTTON_Y + 1, "keyboard_buttons", 0x0, "shift");
-        this.base_window.create_at_group(SHIFT_BUTTON_X, SHIFT_BUTTON_Y, "keyboard_buttons", undefined, "shift");
+        this.base_window.create_at_group(SHIFT_BUTTON_X + 1, SHIFT_BUTTON_Y + 1, "keyboard_buttons", {
+            color: 0x0,
+            frame: "shift",
+        });
+        this.base_window.create_at_group(SHIFT_BUTTON_X, SHIFT_BUTTON_Y, "keyboard_buttons", {frame: "shift"});
         this.base_window.set_text_in_position(": Psy. Gained", SHIFT_DESCRIPTION_X, SHIFT_DESCRIPTION_Y);
         this.window_open = false;
     }

@@ -143,14 +143,10 @@ export class MainStatusPsynergy extends StatusComponent {
             let x_pos = MainStatusPsynergy.PSYNERGY.ICON_X;
             let y_pos = MainStatusPsynergy.PSYNERGY.ICON_Y + index * MainStatusPsynergy.SHIFT;
 
-            const icon = this.window.create_at_group(
-                x_pos,
-                y_pos,
-                "abilities_icons",
-                undefined,
-                icon_key,
-                MainStatusPsynergy.GROUP_KEY
-            );
+            const icon = this.window.create_at_group(x_pos, y_pos, "abilities_icons", {
+                frame: icon_key,
+                internal_group_key: MainStatusPsynergy.GROUP_KEY,
+            });
             this.state_sprites.push(icon);
 
             x_pos = MainStatusPsynergy.PSYNERGY.NAME_X;
@@ -173,27 +169,19 @@ export class MainStatusPsynergy extends StatusComponent {
             x_pos = MainStatusPsynergy.PSYNERGY.STAR_X;
             y_pos = MainStatusPsynergy.PSYNERGY.STAR_Y + index * MainStatusPsynergy.SHIFT;
 
-            const star = this.window.create_at_group(
-                x_pos,
-                y_pos,
-                "stars",
-                undefined,
-                ability.element,
-                MainStatusPsynergy.GROUP_KEY
-            );
+            const star = this.window.create_at_group(x_pos, y_pos, "stars", {
+                frame: ability.element,
+                internal_group_key: MainStatusPsynergy.GROUP_KEY,
+            });
             this.state_sprites.push(star);
 
             x_pos = MainStatusPsynergy.PSYNERGY.RANGE_CENTER_X;
             y_pos = MainStatusPsynergy.PSYNERGY.RANGE_Y + index * MainStatusPsynergy.SHIFT;
 
-            const range_icon = this.window.create_at_group(
-                x_pos,
-                y_pos,
-                "ranges",
-                undefined,
-                range,
-                MainStatusPsynergy.GROUP_KEY
-            );
+            const range_icon = this.window.create_at_group(x_pos, y_pos, "ranges", {
+                frame: range,
+                internal_group_key: MainStatusPsynergy.GROUP_KEY,
+            });
             range_icon.x -= (range_icon.width / 2) | 0;
             this.state_sprites.push(range_icon);
         });

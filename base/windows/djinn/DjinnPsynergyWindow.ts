@@ -144,7 +144,7 @@ export class DjinnPsynergyWindow {
             );
             this.text_sprites_in_window.push(psynergy_name_sprite);
             this.icon_sprites_in_window.push(
-                this.base_window.create_at_group(icon_x, icon_y, "abilities_icons", undefined, key_name)
+                this.base_window.create_at_group(icon_x, icon_y, "abilities_icons", {frame: key_name})
             );
             this.icon_sprites_in_window[i].anchor.setTo(0.5, 0.5);
             const psynergy_cost_sprite = this.base_window.set_text_in_position(

@@ -110,14 +110,10 @@ export class MainStatusDjinn extends StatusComponent {
                 let x_pos = MainStatusDjinn.STARS.X + i * MainStatusDjinn.STARS.X_SHIFT;
                 let y_pos = MainStatusDjinn.STARS.Y + n * MainStatusDjinn.STARS.Y_SHIFT;
 
-                const star = this.window.create_at_group(
-                    x_pos,
-                    y_pos,
-                    "stars",
-                    undefined,
-                    ordered_elements[i],
-                    MainStatusDjinn.GROUP_KEY
-                );
+                const star = this.window.create_at_group(x_pos, y_pos, "stars", {
+                    frame: ordered_elements[i],
+                    internal_group_key: MainStatusDjinn.GROUP_KEY,
+                });
                 this.state_sprites.push(star);
 
                 x_pos = MainStatusDjinn.NAMES.X + i * MainStatusDjinn.NAMES.X_SHIFT;

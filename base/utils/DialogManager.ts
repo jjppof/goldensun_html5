@@ -213,7 +213,7 @@ export class DialogManager {
         this.window.show(
             ((step, italic_font, next_callback) => {
                 if (this.avatar_inside_window) {
-                    this.window.create_at_group(4, 4, "avatars", undefined, this.avatar);
+                    this.window.create_at_group(4, 4, "avatars", {frame: this.avatar});
                 }
                 const padding_x = this.avatar_inside_window ? numbers.AVATAR_SIZE + 10 : undefined;
                 let now = this.game.time.now;
@@ -276,7 +276,7 @@ export class DialogManager {
             }
             const window_size = numbers.AVATAR_SIZE + 4;
             this.avatar_window = new Window(this.game, avatar_pos.x, avatar_pos.y, window_size, window_size);
-            this.avatar_window.create_at_group(4, 4, "avatars", undefined, this.avatar);
+            this.avatar_window.create_at_group(4, 4, "avatars", {frame: this.avatar});
             this.avatar_window.show();
         }
     }

@@ -142,13 +142,9 @@ export class ItemQuantityManagerWindow {
     }
 
     set_header() {
-        this.icon_sprite = this.base_window.create_at_group(
-            ITEM_ICON_X,
-            ITEM_ICON_Y,
-            "items_icons",
-            undefined,
-            this.item.key_name
-        );
+        this.icon_sprite = this.base_window.create_at_group(ITEM_ICON_X, ITEM_ICON_Y, "items_icons", {
+            frame: this.item.key_name,
+        });
         this.char_name = this.base_window.set_text_in_position(this.char.name, CHAR_NAME_X, CHAR_NAME_Y);
         if (this.destination_char) {
             this.dest_char_name = this.base_window.set_text_in_position(
@@ -164,8 +160,7 @@ export class ItemQuantityManagerWindow {
                 ITEM_ICON_X + SUB_ICON_X,
                 ITEM_ICON_Y + SUB_ICON_Y,
                 "menu",
-                undefined,
-                "equipped"
+                {frame: "equipped"}
             );
         }
         this.item_count_sprite = null;

@@ -158,14 +158,10 @@ export class BattleStatusPsynergy extends StatusComponent {
             let x_pos = BattleStatusPsynergy.PSYNERGY.ICON_X;
             let y_pos = BattleStatusPsynergy.PSYNERGY.ICON_Y + index * BattleStatusPsynergy.SHIFT;
 
-            const icon = this.window.create_at_group(
-                x_pos,
-                y_pos,
-                "abilities_icons",
-                undefined,
-                icon_key,
-                BattleStatusPsynergy.GROUP_KEY
-            );
+            const icon = this.window.create_at_group(x_pos, y_pos, "abilities_icons", {
+                frame: icon_key,
+                internal_group_key: BattleStatusPsynergy.GROUP_KEY,
+            });
             this.state_sprites.push(icon);
 
             x_pos = BattleStatusPsynergy.PSYNERGY.NAME_X;
@@ -196,27 +192,19 @@ export class BattleStatusPsynergy extends StatusComponent {
             x_pos = BattleStatusPsynergy.PSYNERGY.STAR_X;
             y_pos = BattleStatusPsynergy.PSYNERGY.STAR_Y + index * BattleStatusPsynergy.SHIFT;
 
-            const star = this.window.create_at_group(
-                x_pos,
-                y_pos,
-                "stars",
-                undefined,
-                ability.element,
-                BattleStatusPsynergy.GROUP_KEY
-            );
+            const star = this.window.create_at_group(x_pos, y_pos, "stars", {
+                frame: ability.element,
+                internal_group_key: BattleStatusPsynergy.GROUP_KEY,
+            });
             this.state_sprites.push(star);
 
             x_pos = BattleStatusPsynergy.PSYNERGY.RANGE_CENTER_X;
             y_pos = BattleStatusPsynergy.PSYNERGY.RANGE_Y + index * BattleStatusPsynergy.SHIFT;
 
-            const range_icon = this.window.create_at_group(
-                x_pos,
-                y_pos,
-                "ranges",
-                undefined,
-                range,
-                BattleStatusPsynergy.GROUP_KEY
-            );
+            const range_icon = this.window.create_at_group(x_pos, y_pos, "ranges", {
+                frame: range,
+                internal_group_key: BattleStatusPsynergy.GROUP_KEY,
+            });
             range_icon.x -= (range_icon.width / 2) | 0;
             this.state_sprites.push(range_icon);
         });

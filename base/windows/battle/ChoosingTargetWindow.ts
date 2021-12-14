@@ -90,17 +90,13 @@ export class ChoosingTargetWindow {
             ![elements.NO_ELEMENT, elements.ALL_ELEMENTS].includes(this.element) &&
             !["summon", "item"].includes(this.action)
         ) {
-            const star = this.base_window.create_at_group(this.star_x, STAR_Y, "stars", undefined, this.element);
+            const star = this.base_window.create_at_group(this.star_x, STAR_Y, "stars", {frame: this.element});
             this.window_sprites.push(star);
         }
         if (this.icon_sprite_sheet && this.action !== "item") {
-            const icon = this.base_window.create_at_group(
-                ICON_X,
-                ICON_Y,
-                this.icon_sprite_sheet,
-                undefined,
-                this.ability_key_name
-            );
+            const icon = this.base_window.create_at_group(ICON_X, ICON_Y, this.icon_sprite_sheet, {
+                frame: this.ability_key_name,
+            });
             this.window_sprites.push(icon);
         }
         if (this.action === "psynergy") {
@@ -116,7 +112,7 @@ export class ChoosingTargetWindow {
             ordered_elements.forEach(element => {
                 if (!(element in reqs)) return;
                 const star_x = counter === 0 ? STAR_X_SUMOON_1 : STAR_X_SUMOON_2;
-                const star = this.base_window.create_at_group(star_x, STAR_Y, "stars", undefined, element);
+                const star = this.base_window.create_at_group(star_x, STAR_Y, "stars", {frame: element});
                 this.window_sprites.push(star);
                 const req_text = this.base_window.set_text_in_position(
                     reqs[element].toString(),

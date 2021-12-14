@@ -127,7 +127,7 @@ export class EquipCompare {
             return a.alive === false && a.frameName === key;
         });
         if (dead_arrows.length > 0) (dead_arrows[0] as Phaser.Sprite).reset(arrow_x, arrow_y);
-        else this.window.create_at_group(arrow_x, arrow_y, "menu", undefined, key, "arrows");
+        else this.window.create_at_group(arrow_x, arrow_y, "menu", {frame: key, internal_group_key: "arrows"});
     }
 
     /*Finds the statistical difference in a stat for two items

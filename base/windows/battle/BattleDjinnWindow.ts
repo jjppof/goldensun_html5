@@ -181,7 +181,7 @@ export class BattleDjinnWindow {
         for (let i = 0; i < this.djinni.length; ++i) {
             const djinn = this.data.info.djinni_list[this.djinni[i]];
             const base_y = TOP_PADDING + i * (SPACE_BETWEEN_ITEMS + HIGHLIGHT_BAR_HEIGHT);
-            const star = this.base_window.create_at_group(STAR_X, base_y + 1, "stars", undefined, djinn.element);
+            const star = this.base_window.create_at_group(STAR_X, base_y + 1, "stars", {frame: djinn.element});
 
             this.stars_sprites.push(star);
             let color;

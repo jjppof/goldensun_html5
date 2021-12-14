@@ -168,13 +168,9 @@ export class BattleSummonWindow {
             const summon_y = base_y - 3;
 
             this.other_sprites.push(
-                this.base_window.create_at_group(
-                    SUMMON_ICON_X,
-                    summon_y,
-                    "abilities_icons",
-                    undefined,
-                    this.summons[i].key_name
-                )
+                this.base_window.create_at_group(SUMMON_ICON_X, summon_y, "abilities_icons", {
+                    frame: this.summons[i].key_name,
+                })
             );
             let color = numbers.DEFAULT_FONT_COLOR;
             if (!this.summons[i].can_be_summoned) {

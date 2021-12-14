@@ -107,7 +107,7 @@ export class DropItemWindow {
 
     set_info() {
         this.base_window.update_text(this.item.name, this.icon_name);
-        this.icon = this.base_window.create_at_group(INFO_X, ICON_Y, "items_icons", undefined, this.item.key_name);
+        this.icon = this.base_window.create_at_group(INFO_X, ICON_Y, "items_icons", {frame: this.item.key_name});
         if (this.quantity_to_remove > 1) {
             this.item_count_sprite = this.game.add.bitmapText(
                 INFO_X + SUB_ICON_X,

@@ -109,13 +109,9 @@ export class DjinnCharStatsWindow {
             });
         });
 
-        this.class_name_arrow = this.base_window.create_at_group(
-            ARROW_CHANGE_CLASS_X,
-            ARROW_CHANGE_CLASS_Y,
-            "menu",
-            undefined,
-            "arrow_change"
-        );
+        this.class_name_arrow = this.base_window.create_at_group(ARROW_CHANGE_CLASS_X, ARROW_CHANGE_CLASS_Y, "menu", {
+            frame: "arrow_change",
+        });
         this.init_arrow_blinks();
     }
 
@@ -131,13 +127,9 @@ export class DjinnCharStatsWindow {
     }
 
     mount_window() {
-        const avatar_sprite = this.base_window.create_at_group(
-            AVATAR_X,
-            AVATAR_Y,
-            "avatars",
-            undefined,
-            this.char.key_name
-        );
+        const avatar_sprite = this.base_window.create_at_group(AVATAR_X, AVATAR_Y, "avatars", {
+            frame: this.char.key_name,
+        });
         this.sprites.push(avatar_sprite);
 
         this.base_window.update_text(this.char.name, this.char_name_text);
@@ -152,7 +144,7 @@ export class DjinnCharStatsWindow {
             const star_width = 6,
                 char_width = 6;
             const x = DJINN_NUMBER_X - star_width - char_width - 1 - i * DJINN_NUMBER_SLOT_WIDTH;
-            const star_sprite = this.base_window.create_at_group(x, DJINN_NUMBER_Y + 1, "stars", undefined, element);
+            const star_sprite = this.base_window.create_at_group(x, DJINN_NUMBER_Y + 1, "stars", {frame: element});
             this.sprites.push(star_sprite);
         });
 
@@ -183,13 +175,9 @@ export class DjinnCharStatsWindow {
                 shift = -8;
             }
             if (current_stat !== next_stat) {
-                const arrow_sprite = this.base_window.create_at_group(
-                    STATS_CURRENT_X + shift,
-                    y,
-                    "menu",
-                    undefined,
-                    "stat_" + (next_stat > current_stat ? "up" : "down")
-                );
+                const arrow_sprite = this.base_window.create_at_group(STATS_CURRENT_X + shift, y, "menu", {
+                    frame: "stat_" + (next_stat > current_stat ? "up" : "down"),
+                });
                 this.sprites.push(arrow_sprite);
             }
         });
