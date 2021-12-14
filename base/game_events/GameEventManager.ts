@@ -108,8 +108,7 @@ export class GameEventManager {
             ) {
                 continue;
             }
-            const distance = this.data.hero.body_radius * npc.talk_range_factor;
-            const is_close_check = this.data.hero.is_close(npc, distance);
+            const is_close_check = this.data.hero.is_close(npc, npc.talk_range);
             if (is_close_check) {
                 this.data.hero.stop_char();
                 this.control_enable = false;

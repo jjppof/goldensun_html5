@@ -808,12 +808,12 @@ export class Map {
         try {
             const property_info = not_parsed ? JSON.parse(properties) : properties;
             const npc_db = this.data.dbs.npc_db[property_info.key_name];
-            const initial_action = property_info.initial_action ?? npc_db.initial_action;
+            const initial_action = property_info.action ?? npc_db.initial_action;
             const actual_action =
                 (npc_db.actions && initial_action in npc_db.actions) || !npc_db.action_aliases
                     ? initial_action
                     : npc_db.action_aliases[initial_action];
-            const initial_animation = property_info.animation_key ?? npc_db.actions[actual_action].initial_animation;
+            const initial_animation = property_info.animation ?? npc_db.actions[actual_action].initial_animation;
             const interaction_pattern = property_info.interaction_pattern ?? npc_db.interaction_pattern;
             const ignore_physics = property_info.ignore_physics ?? npc_db.ignore_physics;
             const voice_key = property_info.voice_key ?? npc_db.voice_key;
@@ -828,7 +828,7 @@ export class Map {
             const dash_speed = property_info.dash_speed ?? npc_db.dash_speed;
             const climb_speed = property_info.climb_speed ?? npc_db.climb_speed;
             const avatar = property_info.avatar ?? npc_db.avatar;
-            const talk_range_factor = property_info.talk_range_factor ?? npc_db.talk_range_factor;
+            const talk_range = property_info.talk_range ?? npc_db.talk_range;
             const anchor_x = property_info.anchor_x ?? npc_db.anchor_x;
             const anchor_y = property_info.anchor_y ?? npc_db.anchor_y;
             const scale_x = property_info.scale_x ?? npc_db.scale_x;
@@ -855,8 +855,9 @@ export class Map {
                 avatar,
                 property_info.shop_key,
                 property_info.inn_key,
+                property_info.healer_key,
                 property_info.base_collision_layer,
-                talk_range_factor,
+                talk_range,
                 property_info.events,
                 npc_db.no_shadow,
                 ignore_world_map_scale,

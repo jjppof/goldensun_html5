@@ -23,11 +23,12 @@ export enum npc_types {
     INN = "inn",
     SHOP = "shop",
     SPRITE = "sprite",
+    HEALER = "healer",
 }
 
 /** The NPC class. */
 export class NPC extends ControllableChar {
-    private static readonly NPC_TALK_RANGE = 3.0;
+    private static readonly NPC_TALK_RANGE = 21;
     private static readonly MAX_DIR_GET_TRIES = 7;
     private static readonly STOP_MINIMAL_DISTANCE_SQR = 2 * 2;
 
@@ -38,10 +39,11 @@ export class NPC extends ControllableChar {
     private _avatar: string;
     private _voice_key: string;
     private _base_collision_layer: number;
-    private _talk_range_factor: number;
+    private _talk_range: number;
     private _events: GameEvent[];
     private _shop_key: string;
     private _inn_key: string;
+    private _healer_key: string;
     private no_shadow: boolean;
     private _ignore_world_map_scale: boolean;
     private anchor_x: number;
@@ -55,7 +57,7 @@ export class NPC extends ControllableChar {
     protected storage_keys: {
         position?: string;
         action?: string;
-        direction?: string;
+        animation?: string;
         base_collision_layer?: string;
         affected_by_reveal?: string;
         visible?: string;
@@ -97,8 +99,9 @@ export class NPC extends ControllableChar {
         avatar,
         shop_key,
         inn_key,
+        healer_key,
         base_collision_layer,
-        talk_range_factor,
+        talk_range,
         events_info,
         no_shadow,
         ignore_world_map_scale,
@@ -145,11 +148,12 @@ export class NPC extends ControllableChar {
         this._voice_key = voice_key ?? "";
         this._shop_key = shop_key;
         this._inn_key = inn_key;
+        this._healer_key = healer_key;
         if (this.storage_keys.base_collision_layer !== undefined) {
             base_collision_layer = this.data.storage.get(this.storage_keys.base_collision_layer);
         }
         this._base_collision_layer = base_collision_layer ?? 0;
-        this._talk_range_factor = talk_range_factor ?? NPC.NPC_TALK_RANGE;
+        this._talk_range = talk_range ?? NPC.NPC_TALK_RANGE;
         this.no_shadow = no_shadow ?? false;
         this._ignore_world_map_scale = ignore_world_map_scale ?? false;
         this.anchor_x = anchor_x;
@@ -208,8 +212,8 @@ export class NPC extends ControllableChar {
         return this._interaction_pattern;
     }
     /** The interaction range factor. Determines how far the hero need to be at least to start an interaction. */
-    get talk_range_factor() {
-        return this._talk_range_factor;
+    get talk_range() {
+        return this._talk_range;
     }
     /** The collision layer that this NPC is. */
     get base_collision_layer() {
@@ -238,6 +242,10 @@ export class NPC extends ControllableChar {
     /** If it's a Inn NPC, returns the key of the inn that it owns. */
     get inn_key() {
         return this._inn_key;
+    }
+    /** If it's a Healer NPC, returns the key of the healer establishment that it owns. */
+    get healer_key() {
+        return this._healer_key;
     }
 
     /**

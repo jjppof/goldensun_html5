@@ -92,7 +92,7 @@ export abstract class ControllableChar {
     protected storage_keys: {
         position?: string;
         action?: string;
-        direction?: string;
+        animation?: string;
         active?: string;
     };
     protected _sprite_info: SpriteBase;
@@ -210,8 +210,8 @@ export abstract class ControllableChar {
         this._current_action =
             this.storage_keys.action !== undefined ? this.data.storage.get(this.storage_keys.action) : initial_action;
         initial_animation =
-            this.storage_keys.direction !== undefined
-                ? this.data.storage.get(this.storage_keys.direction)
+            this.storage_keys.animation !== undefined
+                ? this.data.storage.get(this.storage_keys.animation)
                 : initial_animation;
         this._current_direction = initial_animation in directions ? directions[initial_animation] : null;
         this._current_animation = initial_animation;
