@@ -1,3 +1,4 @@
+import { GoldenSun } from "./GoldenSun";
 import * as numbers from "./magic_numbers";
 import {PageIndicator} from "./support_menus/PageIndicator";
 import * as utils from "./utils";
@@ -36,6 +37,12 @@ export type ItemObj = {
  * icons positioning.
  */
 export class Window {
+    private static readonly DEFAULT_WINDOW_COLOR = 0x006080;
+    private static readonly BG_SHIFT = 2;
+    private static readonly MIND_READ_WINDOW_COLOR = 0xFFFFFF;
+    private static readonly MIND_READ_FONT_COLOR = 0x0000F8;
+    private static readonly MIND_READ_AMPLITUDE = 6;
+    private static readonly MIND_READ_PERIOD = 20;
     private static readonly TRANSITION_TIME = Phaser.Timer.QUARTER >> 2;
     private static readonly ITEM_OBJ = {
         EQUIPPED_X: 7,
@@ -50,8 +57,11 @@ export class Window {
     private _y: number;
     private _width: number;
     private _height: number;
+    private _resulting_width: number;
+    private _resulting_height: number;
     private _color: number;
     private _font_color: number;
+    private _mind_read_window: boolean;
     private border_graphics: Phaser.Graphics;
     private bg_graphics: Phaser.Graphics;
     private separators_graphics: Phaser.Graphics;
@@ -60,6 +70,10 @@ export class Window {
     private internal_groups: {[key: string]: Phaser.Group};
     private close_callback: () => void;
     private _page_indicator: PageIndicator;
+    private _mind_read_borders: {
+        left: Phaser.BitmapData,
+        right: Phaser.BitmapData,
+    };
 
     constructor(
         game: Phaser.Game,
@@ -67,8 +81,9 @@ export class Window {
         y: number,
         width: number,
         height: number,
-        color = numbers.DEFAULT_WINDOW_COLOR,
-        font_color = numbers.DEFAULT_FONT_COLOR
+        color?: number,
+        font_color?: number,
+        mind_read_window: boolean = false
     ) {
         this.game = game;
         this._group = game.add.group();
@@ -78,21 +93,30 @@ export class Window {
         this._width = width;
         this._height = height;
 
-        this._color = color;
-        this._font_color = font_color;
+        this._mind_read_window = mind_read_window;
+
+        this._color = color ?? (this._mind_read_window ? Window.MIND_READ_WINDOW_COLOR : Window.DEFAULT_WINDOW_COLOR);
+        this._font_color = font_color ?? (this._mind_read_window ? Window.MIND_READ_FONT_COLOR : numbers.DEFAULT_FONT_COLOR);
 
         this.extra_sprites = [];
         this.internal_groups = {};
 
-        this.border_graphics = this.game.add.graphics(0, 0);
         this.bg_graphics = this.game.add.graphics(0, 0);
-        this.separators_graphics = this.game.add.graphics(0, 0);
 
         this.draw_background();
-        this.draw_borders();
         this.group.add(this.bg_graphics);
-        this.group.add(this.border_graphics);
-        this.group.add(this.separators_graphics);
+
+        if (this._mind_read_window) {
+            this.init_mind_read_borders();
+        } else {
+            this.separators_graphics = this.game.add.graphics(0, 0);
+            this.border_graphics = this.game.add.graphics(0, 0);
+            this.draw_borders();
+            this.group.add(this.border_graphics);
+            this.group.add(this.separators_graphics);
+        }
+
+        this.set_resulting_window_size();
 
         this.group.visible = false;
         this.group.width = 0;
@@ -120,6 +144,14 @@ export class Window {
     get height() {
         return this._height;
     }
+    /** The resulting_ idth of the window just after mount of resize. */
+    get resulting_width() {
+        return this._resulting_width;
+    }
+    /** The resulting height of the window just after mount of resize. */
+    get resulting_height() {
+        return this._resulting_height;
+    }
     get group() {
         return this._group;
     }
@@ -129,7 +161,6 @@ export class Window {
     get open() {
         return this._open;
     }
-
     get real_x() {
         return this.group.x;
     }
@@ -290,8 +321,46 @@ export class Window {
      */
     private draw_background() {
         this.bg_graphics.beginFill(this.color, 1);
-        this.bg_graphics.drawRect(2, 2, this.width, this.height);
+        // if (this._mind_read_window) {
+        //     //Phaser.RoundedRectangle
+        //     this.bg_graphics.fillRoundedRect(Window.BG_SHIFT, Window.BG_SHIFT, this.width, this.height);
+        // } else {
+            this.bg_graphics.drawRect(Window.BG_SHIFT, Window.BG_SHIFT, this.width, this.height);
+        // }
         this.bg_graphics.endFill();
+    }
+
+    init_mind_read_borders() {
+        this._mind_read_borders = {
+            right: null,
+            left: null
+        };
+        const img = this.game.add.image(0, 0);
+        this.group.addChild(img);
+        img.x = -(Window.MIND_READ_AMPLITUDE << 1) + Window.BG_SHIFT;
+        img.y = Window.BG_SHIFT;
+        this._mind_read_borders.left = this.game.add.bitmapData(Window.MIND_READ_AMPLITUDE << 1, this.height);
+        this._mind_read_borders.left.smoothed = false;
+        this._mind_read_borders.left.add(img);
+
+        this._mind_read_borders.left.fill(0, 0, 0, 0.65);
+    }
+
+    update_mind_read_borders() {
+        this._mind_read_borders.left.clear();
+        const t = 0;
+        const k = 2 * Math.PI / Window.MIND_READ_PERIOD;
+        for (let x = 0; x < this._mind_read_borders.left.width; ++x) {
+            for (let y = 0; y < this._mind_read_borders.left.height; ++y) {
+                const wave_x = Window.MIND_READ_AMPLITUDE * Math.sin(k * y - t) + Window.MIND_READ_AMPLITUDE;
+                if (wave_x >= x ) {
+                    this._mind_read_borders.left.setPixel32(x, y, 0, 0, 0, 0, false);
+                } else {
+                    this._mind_read_borders.left.setPixel32(x, y, 255, 0, 0, 255, false);
+                }
+            }
+        }
+        this._mind_read_borders.left.context.putImageData(this._mind_read_borders.left.imageData, 0, 0);
     }
 
     /**
@@ -410,6 +479,16 @@ export class Window {
         this.border_graphics.lineTo(5, this.height);
     }
 
+    private set_resulting_window_size() {
+        if (this._mind_read_window) {
+            this._resulting_width = this.width + (this._mind_read_borders.left?.width ?? 0) + (this._mind_read_borders.right?.width ?? 0);
+            this._resulting_height = this.height;
+        } else {
+            this._resulting_width = this.border_graphics.width;
+            this._resulting_height = this.border_graphics.height;
+        }
+    }
+
     /**
      * Changes the window's size and redraws it.
      * @param new_size The new width and height parameters.
@@ -421,10 +500,14 @@ export class Window {
         if (new_size.height !== undefined) {
             this._height = new_size.height;
         }
-        this.border_graphics.clear();
         this.bg_graphics.clear();
         this.draw_background();
-        this.draw_borders();
+        if (this._mind_read_window) {
+        } else {
+            this.border_graphics.clear();
+            this.draw_borders();
+        }
+        this.set_resulting_window_size();
     }
 
     /**
@@ -526,7 +609,7 @@ export class Window {
             this.game.add
                 .tween(this.group)
                 .to(
-                    {width: this.border_graphics.width, height: this.border_graphics.height},
+                    {width: this.resulting_width, height: this.resulting_height},
                     Window.TRANSITION_TIME,
                     Phaser.Easing.Linear.None,
                     true
@@ -537,8 +620,8 @@ export class Window {
                 });
         } else {
             this._open = true;
-            this.group.width = this.border_graphics.width;
-            this.group.height = this.border_graphics.height;
+            this.group.width = this.resulting_width;
+            this.group.height = this.resulting_height;
             if (show_callback !== undefined) show_callback();
         }
     }
@@ -1002,4 +1085,13 @@ export class Window {
             on_destroy();
         }
     }
+}
+
+(window as any).test_mind_read_win = () => {
+    const game = (window as any).data.game as Phaser.Game;
+    const data = (window as any).data as GoldenSun;
+    const win = new Window(game, 45, 45, 100, 70, undefined, undefined, true);
+    win.show(() => {
+        win.update_mind_read_borders()
+    });
 }

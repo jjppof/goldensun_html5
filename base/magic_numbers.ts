@@ -6,7 +6,6 @@ export const HERO_BODY_RADIUS_M7 = 6.5;
 export const INV_SQRT2 = 1 / Math.sqrt(2);
 export const DELTA_TIME_FACTOR = 50.0 / 3.0;
 export const MAP_DAMPING = 1;
-export const DEFAULT_WINDOW_COLOR = 0x006080;
 export const DEFAULT_FONT_COLOR = 0xf8f8f8;
 export const INACTIVE_FONT_COLOR = 0x088dbd;
 export const YELLOW_FONT_COLOR = 0xf8f840;
