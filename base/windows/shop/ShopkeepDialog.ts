@@ -84,7 +84,7 @@ export class ShopkeepDialog {
         else this.current_message = message;
         this.is_active = true;
 
-        this.dialog_manager.quick_next(this.current_message, callback, {
+        this.dialog_manager.next_dialog(this.current_message, callback, {
             avatar: this.avatar_key,
             voice_key: this.voice_key,
             custom_pos: {x: FRAME_SIZE + 4, y: 0},

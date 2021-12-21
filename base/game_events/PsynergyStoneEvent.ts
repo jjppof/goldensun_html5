@@ -137,7 +137,7 @@ export class PsynergyStoneEvent extends GameEvent {
     //Write text
     async set_text(text: string, show_crystal = true) {
         this.promise = new Promise<void>(resolve => (this.aux_resolve = resolve));
-        this.dialog_manager.quick_next(
+        this.dialog_manager.next_dialog(
             text,
             () => {
                 this.control_enable = true;

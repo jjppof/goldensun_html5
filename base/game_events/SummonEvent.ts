@@ -119,7 +119,7 @@ export class SummonEvent extends GameEvent {
         const hero_name = this.data.info.main_char_list[this.data.hero.key_name].name;
         this.dialog = new DialogManager(this.game, this.data);
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
-        this.dialog.quick_next(
+        this.dialog.next_dialog(
             `${hero_name} examined the stone tablet...`,
             () => {
                 this.control_enable = true;
@@ -287,7 +287,7 @@ export class SummonEvent extends GameEvent {
         reset_map();
         const summon_name = this.data.info.abilities_list[this.summon.key_name].name;
         this.aux_promise = new Promise(resolve => (this.aux_resolve = resolve));
-        this.dialog.quick_next(
+        this.dialog.next_dialog(
             `${hero_name} can now summon ${summon_name}!`,
             () => {
                 this.control_enable = true;
@@ -309,7 +309,7 @@ export class SummonEvent extends GameEvent {
                 );
             }
         });
-        this.dialog.quick_next(
+        this.dialog.next_dialog(
             `To summon ${summon_name}\${BREAK_LINE}${requirements.join(" ")}\${BREAK_LINE}Standby Djinn are needed.`,
             () => {
                 this.control_enable = true;

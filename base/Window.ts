@@ -333,47 +333,73 @@ export class Window {
         this.bg_graphics.endFill();
     }
 
+    /**
+     * Initializes the waving borders of the mind read window.
+     */
     init_mind_read_borders() {
         this._mind_read_borders = {
             right: null,
             left: null
         };
-        const img = this.game.add.image(0, 0);
-        this.group.addChild(img);
-        img.x = -(Window.MIND_READ_AMPLITUDE << 1) + Window.BG_SHIFT;
-        img.y = Window.BG_SHIFT;
-        this._mind_read_borders.left = this.game.add.bitmapData(Window.MIND_READ_AMPLITUDE << 2, this.height);
+        const left_img = this.game.add.image(0, 0);
+        this.group.addChild(left_img);
+        left_img.x = -(Window.MIND_READ_AMPLITUDE << 1) + Window.BG_SHIFT;
+        left_img.y = Window.BG_SHIFT;
+        const width = Window.MIND_READ_AMPLITUDE << 2;
+        this._mind_read_borders.left = this.game.add.bitmapData(width, this.height);
         this._mind_read_borders.left.smoothed = false;
-        this._mind_read_borders.left.add(img);
+        this._mind_read_borders.left.add(left_img);
+
+        const right_img = this.game.add.image(0, 0);
+        this.group.addChild(right_img);
+        right_img.x = this.width -(Window.MIND_READ_AMPLITUDE << 1) + Window.BG_SHIFT;
+        right_img.y = Window.BG_SHIFT;
+        this._mind_read_borders.right = this.game.add.bitmapData(width, this.height);
+        this._mind_read_borders.right.smoothed = false;
+        this._mind_read_borders.right.add(right_img);
     }
 
+    /**
+     * Updates the waving borders of the mind read window.
+     */
     update_mind_read_borders() {
         const color = utils.hex2rgb(this.color);
         this._mind_read_borders.left.clear();
+        this._mind_read_borders.right.clear();
         this._mind_read_time += this.game.time.elapsedMS * Window.MIND_READ_WAVE_SPEED;
         const k = 2 * Math.PI / Window.MIND_READ_PERIOD;
-        const HALF_RADIUS = Window.MIND_READ_CORNER_RADIUS >> 1;
-        const corner_ratio = HALF_RADIUS / this._mind_read_borders.left.height;
+        const height = this._mind_read_borders.left.height;
+        const half_radius = Window.MIND_READ_CORNER_RADIUS >> 1;
+        const quad_amplitude = Window.MIND_READ_AMPLITUDE << 2;
+        const corner_ratio = half_radius / height;
         for (let x = 0; x < this._mind_read_borders.left.width; ++x) {
-            for (let y = 0; y < this._mind_read_borders.left.height; ++y) {
-                const y_ratio = y / this._mind_read_borders.left.height;
-                let shift = Window.MIND_READ_AMPLITUDE;
+            for (let y = 0; y < height; ++y) {
+                const y_ratio = y / height;
+                let shift = 0;
                 if (y_ratio <= corner_ratio) {
-                    const border_ratio = Phaser.Easing.Cubic.Out(y / HALF_RADIUS);
-                    shift += (Window.MIND_READ_AMPLITUDE << 2) * (1 - border_ratio);
+                    const border_ratio = Phaser.Easing.Cubic.Out(y / half_radius);
+                    shift = quad_amplitude * (1 - border_ratio);
                 } else if (y_ratio >= 1 - corner_ratio) {
-                    const border_ratio = Phaser.Easing.Cubic.Out((this._mind_read_borders.left.height - y) / HALF_RADIUS);
-                    shift += (Window.MIND_READ_AMPLITUDE << 2) * (1 - border_ratio);
+                    const border_ratio = Phaser.Easing.Cubic.Out((height - y) / half_radius);
+                    shift = quad_amplitude * (1 - border_ratio);
                 }
-                const wave_x = Window.MIND_READ_AMPLITUDE * Math.sin(-k * y - this._mind_read_time) + shift;
-                if (wave_x >= x ) {
+                const wave_x = Window.MIND_READ_AMPLITUDE * Math.sin(-k * y - this._mind_read_time) + Window.MIND_READ_AMPLITUDE;
+                const l_wave_x = wave_x + shift;
+                const r_wave_x = wave_x - shift + (Window.MIND_READ_AMPLITUDE << 1);
+                if (l_wave_x >= x ) {
                     this._mind_read_borders.left.setPixel32(x, y, 0, 0, 0, 0, false);
                 } else {
                     this._mind_read_borders.left.setPixel32(x, y, color.r, color.g, color.b, 255, false);
                 }
+                if (r_wave_x >= x ) {
+                    this._mind_read_borders.right.setPixel32(x, y, color.r, color.g, color.b, 255, false);
+                } else {
+                    this._mind_read_borders.right.setPixel32(x, y, 0, 0, 0, 0, false);
+                }
             }
         }
         this._mind_read_borders.left.context.putImageData(this._mind_read_borders.left.imageData, 0, 0);
+        this._mind_read_borders.right.context.putImageData(this._mind_read_borders.right.imageData, 0, 0);
     }
 
     /**

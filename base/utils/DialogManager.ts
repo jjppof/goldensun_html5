@@ -6,9 +6,10 @@ import {Window} from "../Window";
 import * as _ from "lodash";
 
 /**
- * A dialog can be divided in N windows. Each division has a step index.
+ * A dialog can be divided in N windows depending on the dialog text size.
  * To set a dialog, call the DialogManager.set_dialog function and pass the entire dialog text.
  * To advance the dialog (call next window), call the DialogManager.next function.
+ * Optionallly, if you know that the given text fits in one window, you can use DialogManager.next_dialog.
  */
 export class DialogManager {
     private static readonly DIALOG_CRYSTAL_KEY = "dialog_crystal";
@@ -39,8 +40,9 @@ export class DialogManager {
     private dialog_crystal_tween: Phaser.Tween;
     private show_crystal: boolean;
     private avatar_inside_window: boolean;
+    private mind_read_window: boolean;
 
-    constructor(game: Phaser.Game, data: GoldenSun, italic_font: boolean = true) {
+    constructor(game: Phaser.Game, data: GoldenSun, italic_font: boolean = true, mind_read_window: boolean = false) {
         this.game = game;
         this.data = data;
         this.italic_font = italic_font;
@@ -57,6 +59,7 @@ export class DialogManager {
 
         this.dialog_crystal_sprite_base = this.data.info.misc_sprite_base_list[DialogManager.DIALOG_CRYSTAL_KEY];
         this.show_crystal = false;
+        this.mind_read_window = mind_read_window;
     }
 
     get current_width() {
@@ -209,7 +212,7 @@ export class DialogManager {
         if (custom_pos?.y !== undefined) {
             win_pos.y = custom_pos.y;
         }
-        this.window = new Window(this.game, win_pos.x, win_pos.y, width, height);
+        this.window = new Window(this.game, win_pos.x, win_pos.y, width, height, undefined, undefined, this.mind_read_window);
         this.window.show(
             ((step, italic_font, next_callback) => {
                 if (this.avatar_inside_window) {
@@ -443,13 +446,13 @@ export class DialogManager {
 
     /**
      * This is an optional way to invoke a dialog instead of set_dialog.
-     * It calls a window and let it open till you call quick_next again or call kill_dialog.
+     * It calls a window and let it open till you call next_dialog again or call kill_dialog.
      * It's expected that the given text fits in one window.
      * @param text The text to be shown.
      * @param callback The on window ready callback.
      * @param options The dialog options.
      */
-    quick_next(
+    next_dialog(
         text: string,
         callback: (finished: boolean) => void,
         options?: {
@@ -487,7 +490,7 @@ export class DialogManager {
     }
 
     /**
-     * If you started a dialog with quick_next, calls this function to kill it.
+     * If you started a dialog with next_dialog, calls this function to kill it.
      * @param callback on dialog kill callback.
      * @param dialog_only if true, destroys only the dialog window and keeps the avatar window.
      * @param destroy_crystal if true, destroys the dialog crystal.

@@ -52,7 +52,7 @@ export class RetreatFieldPsynergy extends FieldAbilities {
                     button: Button.A,
                     on_down: () => {
                         if (next) {
-                            dialog.quick_next(`It doesn't work here.`, () => {
+                            dialog.next_dialog(`It doesn't work here.`, () => {
                                 next = false;
                                 kill_dialog = true;
                             });
@@ -72,7 +72,7 @@ export class RetreatFieldPsynergy extends FieldAbilities {
             {persist: true}
         );
         const ability_name = this.data.info.abilities_list[RetreatFieldPsynergy.ABILITY_KEY_NAME].name;
-        dialog.quick_next(
+        dialog.next_dialog(
             `${ability_name}...`,
             () => {
                 next = true;
