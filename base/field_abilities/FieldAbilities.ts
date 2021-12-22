@@ -5,12 +5,14 @@ import {GoldenSun} from "../GoldenSun";
 import {ControllableChar} from "../ControllableChar";
 import {Map} from "../Map";
 import {YesNoMenu} from "../windows/YesNoMenu";
+import { NPC } from "../NPC";
 
-/*Defines and manages the usage of field psynergy
-
-Input: game [Phaser:Game] - Reference to the running game object
-       data [GoldenSun] - Reference to the main JS Class instance*/
+/**
+ * Defines and manages the usage of field psynergy.
+ */
 export abstract class FieldAbilities {
+    private static readonly DEFAULT_RANGE = 12;
+
     protected game: Phaser.Game;
     protected data: GoldenSun;
     private ability_key_name: string;
@@ -22,18 +24,36 @@ export abstract class FieldAbilities {
     private cast_finisher: Function;
     protected controllable_char: ControllableChar;
     protected target_found: boolean;
-    protected target_object: InteractableObjects;
+    protected target_object: InteractableObjects | NPC;
     protected stop_casting: (reset_casting_psy_flag?: boolean) => Promise<void>;
     protected field_psynergy_window: FieldPsynergyWindow;
     protected cast_direction: number;
     private field_color: number;
     private field_intensity: number;
-    private works_on_disabled_io: boolean;
-    private target_found_extra_check: (io: InteractableObjects) => boolean;
+    private works_on_disabled_target: boolean;
+    private target_found_extra_check: (target: FieldAbilities["target_object"]) => boolean;
     private ask_before_cast: boolean;
     private ask_before_cast_yes_no_menu: YesNoMenu;
     private extra_cast_check: () => boolean;
+    private target_is_npc: boolean;
 
+    /**
+     * FieldAbilities Ctor.
+     * @param game The Phaser.Game object.
+     * @param data The GoldenSun object.
+     * @param ability_key_name The ability key_name.
+     * @param action_key_name The action that the char will assume when casting this ability.
+     * @param need_target Whether this ability need a target or not.
+     * @param tint_map Whether this ability will tint the map when casting.
+     * @param target_max_range If this ability need a target, the max distance range from the caster to find a target.
+     * @param field_color A custom color to tint the map.
+     * @param field_intensity A custom intensity of a color when tintint the map.
+     * @param works_on_disabled_target Only for IO targets. If true, this field ability also works for disabled targets.
+     * @param target_found_extra_check A function that receives a target. This called before casting.
+     * Execute some custom extra checks. If this funuction returns true, the char will cast this abiliy.
+     * @param ask_before_cast If true, it opens an YesNo menu asking if the char really wants to cast this ability.
+     * @param target_is_npc If true, the target is a NPC instead of an IO.
+     */
     constructor(
         game: Phaser.Game,
         data: GoldenSun,
@@ -44,14 +64,15 @@ export abstract class FieldAbilities {
         target_max_range?: number,
         field_color?: number,
         field_intensity?: number,
-        works_on_disabled_io?: boolean,
-        target_found_extra_check?: (io: InteractableObjects) => boolean,
-        ask_before_cast?: boolean
+        works_on_disabled_target?: boolean,
+        target_found_extra_check?: (target: FieldAbilities["target_object"]) => boolean,
+        ask_before_cast?: boolean,
+        target_is_npc?: boolean
     ) {
         this.game = game;
         this.ability_key_name = ability_key_name;
         this.data = data;
-        this.target_max_range = target_max_range;
+        this.target_max_range = target_max_range ?? FieldAbilities.DEFAULT_RANGE;
         this.action_key_name = action_key_name;
         this.need_target = need_target;
         this.tint_map = tint_map ?? true;
@@ -64,10 +85,11 @@ export abstract class FieldAbilities {
         this.field_psynergy_window = new FieldPsynergyWindow(this.game, this.data);
         this.field_color = field_color;
         this.field_intensity = field_intensity;
-        this.works_on_disabled_io = works_on_disabled_io ?? false;
+        this.works_on_disabled_target = works_on_disabled_target ?? false;
         this.target_found_extra_check = target_found_extra_check;
         this.ask_before_cast = ask_before_cast ?? false;
         this.ask_before_cast_yes_no_menu = new YesNoMenu(this.game, this.data);
+        this.target_is_npc = target_is_npc ?? false;
     }
 
     abstract update(): void;
@@ -131,26 +153,31 @@ export abstract class FieldAbilities {
             }
         }
         let sqr_distance = Infinity;
-        for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
-            const interactable_object = this.data.map.interactable_objects[i];
-            if (!interactable_object.enable && !this.works_on_disabled_io) {
+        const targets_list = this.target_is_npc ? this.data.map.npcs : this.data.map.interactable_objects;
+        for (let i = 0; i < targets_list.length; ++i) {
+            const target_object = targets_list[i];
+            if (target_object.is_interactable_object) {
+                if (!(target_object as InteractableObjects).enable && !this.works_on_disabled_target) {
+                    continue;
+                }
+            }
+            if (this.target_found_extra_check && !this.target_found_extra_check(target_object)) {
                 continue;
             }
-            if (this.target_found_extra_check && !this.target_found_extra_check(interactable_object)) {
-                continue;
+            if (target_object.is_interactable_object) {
+                const db = this.data.dbs.interactable_objects_db[target_object.key_name];
+                if (!db.psynergy_keys || !(this.ability_key_name in db.psynergy_keys)) {
+                    continue;
+                }
             }
-            const db = this.data.dbs.interactable_objects_db[interactable_object.key_name];
-            if (!db.psynergy_keys || !(this.ability_key_name in db.psynergy_keys)) {
-                continue;
-            }
-            const item_x_px = get_centered_pos_in_px(interactable_object.tile_x_pos, this.data.map.tile_width);
-            const item_y_px = get_centered_pos_in_px(interactable_object.tile_y_pos, this.data.map.tile_height);
+            const item_x_px = get_centered_pos_in_px(target_object.tile_x_pos, this.data.map.tile_width);
+            const item_y_px = get_centered_pos_in_px(target_object.tile_y_pos, this.data.map.tile_height);
             const x_condition = item_x_px >= min_x && item_x_px <= max_x;
             const y_condition = item_y_px >= min_y && item_y_px <= max_y;
             if (
                 x_condition &&
                 y_condition &&
-                this.data.map.collision_layer === interactable_object.base_collision_layer
+                this.data.map.collision_layer === target_object.base_collision_layer
             ) {
                 const this_sqr_distance =
                     Math.pow(item_x_px - this.controllable_char.sprite.x, 2) +
@@ -158,23 +185,24 @@ export abstract class FieldAbilities {
                 if (this_sqr_distance < sqr_distance) {
                     sqr_distance = this_sqr_distance;
                     this.target_found = true;
-                    this.target_object = interactable_object;
+                    this.target_object = target_object;
                 }
             }
         }
     }
 
     set_target_casted() {
-        if (this.target_object) {
+        if (this.target_object && this.target_object.is_interactable_object) {
+            const target_object = this.target_object as InteractableObjects;
             const db = this.data.dbs.interactable_objects_db[this.target_object.key_name];
             if (db.psynergy_keys) {
                 const psynergy_properties = db.psynergy_keys[this.ability_key_name];
                 if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
-                    if (this.target_object.psynergy_casted[this.ability_key_name]) {
+                    if (target_object.psynergy_casted[this.ability_key_name]) {
                         this.target_found = false;
                         this.target_object = null;
                     } else if (this.target_found) {
-                        this.target_object.psynergy_casted[this.ability_key_name] = true;
+                        target_object.psynergy_casted[this.ability_key_name] = true;
                     }
                 }
             }

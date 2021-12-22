@@ -3,6 +3,7 @@ import {get_surroundings, directions, base_actions} from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {FieldAbilities} from "./FieldAbilities";
 import * as _ from "lodash";
+import { InteractableObjects } from "../interactable_objects/InteractableObjects";
 
 /*Handles the "Frost" field psynergy
 Does not handle the in-battle command
@@ -18,6 +19,8 @@ export class FrostFieldPsynergy extends FieldAbilities {
     private static readonly POLAR_SLOPE = 0.15;
     private static readonly SPIRAL_INTENSITY = 8;
     private static readonly SNOWFLAKE_DURATION = 1650;
+
+    protected target_object: InteractableObjects;
 
     constructor(game, data) {
         super(

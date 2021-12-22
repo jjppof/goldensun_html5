@@ -348,6 +348,11 @@ export abstract class ControllableChar {
         return this.sprite?.body ?? null;
     }
 
+    /** Returns whether it's an IO. Always returns false. */
+    get is_interactable_object() {
+        return false;
+    }
+
     /** The collision layer that this NPC is. */
     abstract get collision_layer();
 

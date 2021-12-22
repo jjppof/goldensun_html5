@@ -12,6 +12,7 @@ import {FieldAbilities} from "./FieldAbilities";
 import {SpriteBase} from "../SpriteBase";
 import {Button} from "../XGamepad";
 import {Pushable} from "../interactable_objects/Pushable";
+import { InteractableObjects } from "../interactable_objects/InteractableObjects";
 
 export class MoveFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "move";
@@ -27,6 +28,8 @@ export class MoveFieldPsynergy extends FieldAbilities {
     private target_hueshift_timer: Phaser.Timer;
     private final_emitter_particles_count: number;
     private psynergy_particle_base: SpriteBase;
+
+    protected target_object: InteractableObjects;
 
     constructor(game, data) {
         super(

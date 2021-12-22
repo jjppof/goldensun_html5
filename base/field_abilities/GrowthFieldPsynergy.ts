@@ -2,6 +2,7 @@ import {base_actions, directions} from "../utils";
 import {FieldAbilities} from "./FieldAbilities";
 import * as _ from "lodash";
 import {SpriteBase} from "../SpriteBase";
+import { InteractableObjects } from "../interactable_objects/InteractableObjects";
 
 export class GrowthFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "growth";
@@ -17,6 +18,8 @@ export class GrowthFieldPsynergy extends FieldAbilities {
     private emitter: Phaser.Particles.Arcade.Emitter;
     private particle_filter: any;
     private sprite_base: SpriteBase;
+
+    protected target_object: InteractableObjects;
 
     constructor(game, data) {
         super(

@@ -3,6 +3,7 @@ import {FieldAbilities} from "./FieldAbilities";
 import {base_actions, get_front_position, get_sqr_distance, random_normal} from "../utils";
 import * as _ from "lodash";
 import {degree360, degree90} from "../magic_numbers";
+import { InteractableObjects } from "../interactable_objects/InteractableObjects";
 
 export class WhirlwindFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "whirlwind";
@@ -30,6 +31,8 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
     private _previous_angles: Array<number>;
     private _blow_gradient: {gradient: number};
 
+    protected target_object: InteractableObjects;
+
     constructor(game, data) {
         super(
             game,
@@ -42,7 +45,7 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
             undefined,
             undefined,
             true,
-            io => io.entangled_by_bush && !io.enable
+            (io: InteractableObjects) => io.entangled_by_bush && !io.enable
         );
         this.set_bootstrap_method(this.init.bind(this));
         this._whirlwind_sprite_base = this.data.info.misc_sprite_base_list[WhirlwindFieldPsynergy.ABILITY_KEY_NAME];

@@ -233,6 +233,7 @@ export class InteractableObjects {
     get collision_tiles_bodies() {
         return this._collision_tiles_bodies;
     }
+    /** When active is false, the io is removed from the map. */
     get active() {
         return this._active;
     }
@@ -248,6 +249,7 @@ export class InteractableObjects {
     get breakable() {
         return this._breakable;
     }
+    /** When enable is false, the io is on the map, but a char can't interact with it. */
     get enable() {
         return this._enable;
     }
@@ -262,6 +264,9 @@ export class InteractableObjects {
     }
     get height() {
         return this.sprite.height;
+    }
+    get is_interactable_object() {
+        return true;
     }
 
     position_allowed(x: number, y: number) {

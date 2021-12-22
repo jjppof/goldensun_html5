@@ -5,6 +5,7 @@ import {FieldAbilities} from "./FieldAbilities";
 import {SpriteBase} from "../SpriteBase";
 import {Wave} from "./Wave";
 import * as _ from "lodash";
+import { InteractableObjects } from "../interactable_objects/InteractableObjects";
 
 export class PoundFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "pound";
@@ -19,6 +20,8 @@ export class PoundFieldPsynergy extends FieldAbilities {
     private hand_sprite: Phaser.Sprite;
     private hand_translate_x: number;
     private hand_translate_y: number;
+
+    protected target_object: InteractableObjects;
 
     constructor(game, data) {
         super(
