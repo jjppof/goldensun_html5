@@ -41,6 +41,7 @@ export class DialogManager {
     private show_crystal: boolean;
     private avatar_inside_window: boolean;
     private mind_read_window: boolean;
+    private font_color: number;
 
     constructor(game: Phaser.Game, data: GoldenSun, italic_font: boolean = true, mind_read_window: boolean = false) {
         this.game = game;
@@ -60,6 +61,7 @@ export class DialogManager {
         this.dialog_crystal_sprite_base = this.data.info.misc_sprite_base_list[DialogManager.DIALOG_CRYSTAL_KEY];
         this.show_crystal = false;
         this.mind_read_window = mind_read_window;
+        this.font_color = this.mind_read_window ? Window.MIND_READ_FONT_COLOR : numbers.DEFAULT_FONT_COLOR;
     }
 
     get current_width() {
@@ -108,6 +110,16 @@ export class DialogManager {
     }
 
     /**
+     * Updates the borders in the case of a Mind Read window.
+     */
+    update_borders() {
+        if (this.mind_read_window) {
+            this.window?.update_mind_read_borders();
+            this.avatar_window?.update_mind_read_borders();
+        }
+    }
+
+    /**
      * Tries to calculate the position of the dialog window.
      * @param width the window width.
      * @param height the window height.
@@ -131,7 +143,7 @@ export class DialogManager {
         const x = ((this.parts[this.step].width >> 2) + win_pos.x) | 0;
         let y;
         if (win_pos.y >= numbers.GAME_HEIGHT >> 1) {
-            y = win_pos.y - numbers.AVATAR_SIZE - 8;
+            y = win_pos.y - numbers.AVATAR_SIZE - (this.mind_read_window ? 10 : 8);
         } else {
             y = win_pos.y + this.parts[this.step].height + 4;
         }
@@ -277,9 +289,10 @@ export class DialogManager {
             if (custom_avatar_pos && custom_avatar_pos.y !== undefined) {
                 avatar_pos.y = custom_avatar_pos.y;
             }
-            const window_size = numbers.AVATAR_SIZE + 4;
-            this.avatar_window = new Window(this.game, avatar_pos.x, avatar_pos.y, window_size, window_size);
-            this.avatar_window.create_at_group(4, 4, "avatars", {frame: this.avatar});
+            const window_size = numbers.AVATAR_SIZE + (this.mind_read_window ? 10 : 4);
+            this.avatar_window = new Window(this.game, avatar_pos.x, avatar_pos.y, window_size, window_size, undefined, undefined, this.mind_read_window);
+            const base_pos = this.mind_read_window ? 8 : 4;
+            this.avatar_window.create_at_group(base_pos, base_pos, "avatars", {frame: this.avatar});
             this.avatar_window.show();
         }
     }
@@ -346,7 +359,7 @@ export class DialogManager {
         let max_window_width = 0;
         let line_color = [];
         let lines_color = [];
-        let this_color = numbers.DEFAULT_FONT_COLOR;
+        let this_color = this.font_color;
         const push_window = () => {
             windows.push({
                 lines: lines.slice(),
@@ -395,14 +408,14 @@ export class DialogManager {
                         matched_color
                     );
                     const after_color_end_arr = new Array(end_idx - after_color_end_idx).fill(
-                        numbers.DEFAULT_FONT_COLOR
+                        this.font_color
                     );
                     colors_seq.push(before_color_arr.concat(after_color_init_arr, after_color_end_arr));
 
                     current_start_idx =
                         end_idx - (start_match ? start_match[0].length : 0) - (end_match ? end_match[0].length : 0);
 
-                    this_color = end_match ? numbers.DEFAULT_FONT_COLOR : matched_color;
+                    this_color = end_match ? this.font_color : matched_color;
 
                     word = word.replace(DialogManager.COLOR_START, "").replace(DialogManager.COLOR_END, "");
                 } while (DialogManager.COLOR_START.test(word) || DialogManager.COLOR_END.test(word));

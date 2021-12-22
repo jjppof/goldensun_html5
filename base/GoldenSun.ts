@@ -372,9 +372,6 @@ export class GoldenSun {
      * The engine main update function.
      */
     private update() {
-        if ((window as any).test_win_update) {
-            (window as any).test_win_update();
-        }
         if (!this.assets_loaded) {
             this.render_loading();
             return;

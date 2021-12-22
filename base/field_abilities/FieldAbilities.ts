@@ -16,7 +16,7 @@ export abstract class FieldAbilities {
     protected game: Phaser.Game;
     protected data: GoldenSun;
     private ability_key_name: string;
-    private target_max_range: number;
+    private target_max_range: number | ((target: FieldAbilities["target_object"]) => number);
     private action_key_name: string;
     private need_target: boolean;
     private tint_map: boolean;
@@ -46,6 +46,7 @@ export abstract class FieldAbilities {
      * @param need_target Whether this ability need a target or not.
      * @param tint_map Whether this ability will tint the map when casting.
      * @param target_max_range If this ability need a target, the max distance range from the caster to find a target.
+     * This can also be a function that receives a target candidate, this function must return a range.
      * @param field_color A custom color to tint the map.
      * @param field_intensity A custom intensity of a color when tintint the map.
      * @param works_on_disabled_target Only for IO targets. If true, this field ability also works for disabled targets.
@@ -61,7 +62,7 @@ export abstract class FieldAbilities {
         action_key_name: string,
         need_target: boolean,
         tint_map?: boolean,
-        target_max_range?: number,
+        target_max_range?: FieldAbilities["target_max_range"],
         field_color?: number,
         field_intensity?: number,
         works_on_disabled_target?: boolean,
@@ -135,21 +136,17 @@ export abstract class FieldAbilities {
             min_x = this.controllable_char.sprite.x - this.controllable_char.body_radius;
             max_x = this.controllable_char.sprite.x + this.controllable_char.body_radius;
             if (this.cast_direction === directions.up) {
-                min_y = this.controllable_char.sprite.y - this.controllable_char.body_radius - this.target_max_range;
-                max_y = this.controllable_char.sprite.y - this.controllable_char.body_radius;
+                max_y = min_y = this.controllable_char.sprite.y - this.controllable_char.body_radius;
             } else {
-                min_y = this.controllable_char.sprite.y + this.controllable_char.body_radius;
-                max_y = this.controllable_char.sprite.y + this.controllable_char.body_radius + this.target_max_range;
+                max_y = min_y = this.controllable_char.sprite.y + this.controllable_char.body_radius;
             }
         } else {
             min_y = this.controllable_char.sprite.y - this.controllable_char.body_radius;
             max_y = this.controllable_char.sprite.y + this.controllable_char.body_radius;
             if (this.cast_direction === directions.left) {
-                min_x = this.controllable_char.sprite.x - this.controllable_char.body_radius - this.target_max_range;
-                max_x = this.controllable_char.sprite.x - this.controllable_char.body_radius;
+                max_x = min_x = this.controllable_char.sprite.x - this.controllable_char.body_radius;
             } else {
-                min_x = this.controllable_char.sprite.x + this.controllable_char.body_radius;
-                max_x = this.controllable_char.sprite.x + this.controllable_char.body_radius + this.target_max_range;
+                max_x = min_x = this.controllable_char.sprite.x + this.controllable_char.body_radius;
             }
         }
         let sqr_distance = Infinity;
@@ -172,8 +169,29 @@ export abstract class FieldAbilities {
             }
             const item_x_px = get_centered_pos_in_px(target_object.tile_x_pos, this.data.map.tile_width);
             const item_y_px = get_centered_pos_in_px(target_object.tile_y_pos, this.data.map.tile_height);
-            const x_condition = item_x_px >= min_x && item_x_px <= max_x;
-            const y_condition = item_y_px >= min_y && item_y_px <= max_y;
+            const max_range = Number.isFinite(this.target_max_range as unknown) ? this.target_max_range as number : (this.target_max_range as Function)(target_object);
+            const bounds = {
+                min_y: min_y,
+                max_y: max_y,
+                min_x: min_x,
+                max_x: max_x,
+            }
+            switch (this.cast_direction) {
+                case directions.up:
+                    bounds.min_y -= max_range;
+                    break;
+                case directions.down:
+                    bounds.max_y += max_range;
+                    break;
+                case directions.left:
+                    bounds.min_x -= max_range;
+                    break;
+                case directions.right:
+                    bounds.max_x += max_range;
+                    break;
+            }
+            const x_condition = item_x_px >= bounds.min_x && item_x_px <= bounds.max_x;
+            const y_condition = item_y_px >= bounds.min_y && item_y_px <= bounds.max_y;
             if (
                 x_condition &&
                 y_condition &&
