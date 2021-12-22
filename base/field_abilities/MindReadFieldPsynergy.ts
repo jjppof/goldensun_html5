@@ -1,8 +1,8 @@
 import {FieldAbilities} from "./FieldAbilities";
-import {base_actions, directions} from "../utils";
+import {base_actions} from "../utils";
 import { NPC } from "../NPC";
 import { Button } from "../XGamepad";
-import { GameEventManager, interaction_patterns } from "../game_events/GameEventManager";
+import { interaction_patterns } from "../game_events/GameEventManager";
 import { DialogManager } from "../utils/DialogManager";
 
 export class MindReadFieldPsynergy extends FieldAbilities {
@@ -14,6 +14,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
     private control_id: number;
     private fire_next_step: () => void;
     private dialog_manager: DialogManager;
+    private cast_finish_promise: Promise<void>;
 
     protected target_object: NPC;
 
@@ -31,6 +32,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
             undefined,
             undefined,
             undefined,
+            true,
             true
         );
         this.set_bootstrap_method(this.init.bind(this));
@@ -55,34 +57,25 @@ export class MindReadFieldPsynergy extends FieldAbilities {
         );
     }
 
-    finish() {
+    async finish() {
+        await this.cast_finish_promise;
         this.data.control_manager.detach_bindings(this.control_id);
-        this.unset_hero_cast_anim();
-        this.stop_casting();
+        this.target_object = null;
+        this.dialog_manager.destroy();
+        this.reset_map();
+        this.controllable_char.casting_psynergy = false;
     }
 
     update() {
         this.dialog_manager?.update_borders();
     }
 
-    set_npc_and_char_directions() {
-        const npc_x = this.target_object.sprite.x;
-        const npc_y = this.target_object.sprite.y;
-        const interaction_pattern = this.target_object.interaction_pattern;
-        const interaction_directions = GameEventManager.get_interaction_directions(
-            this.data.hero.sprite.x,
-            this.data.hero.sprite.y,
-            npc_x,
-            npc_y,
-            interaction_pattern,
-            this.target_object.body_radius
-        );
-        return this.data.hero.face_direction(interaction_directions.hero_direction);
-    }
-
     async init() {
         this.field_psynergy_window.close();
         this.set_controls();
+
+        this.cast_finish_promise = this.unset_hero_cast_anim();
+        this.stop_casting(false, false);
 
         if (
             !this.target_object ||
@@ -93,10 +86,6 @@ export class MindReadFieldPsynergy extends FieldAbilities {
         ) {
             this.finish();
             return;
-        }
-
-        if (this.target_object.interaction_pattern !== interaction_patterns.SIMPLE) {
-            await this.set_npc_and_char_directions();
         }
 
         this.dialog_manager = new DialogManager(this.game, this.data, undefined, true);

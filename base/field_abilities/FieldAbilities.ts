@@ -6,6 +6,7 @@ import {ControllableChar} from "../ControllableChar";
 import {Map} from "../Map";
 import {YesNoMenu} from "../windows/YesNoMenu";
 import { NPC } from "../NPC";
+import * as _ from "lodash";
 
 /**
  * Defines and manages the usage of field psynergy.
@@ -25,9 +26,10 @@ export abstract class FieldAbilities {
     protected controllable_char: ControllableChar;
     protected target_found: boolean;
     protected target_object: InteractableObjects | NPC;
-    protected stop_casting: (reset_casting_psy_flag?: boolean) => Promise<void>;
+    protected stop_casting: (reset_casting_psy_flag?: boolean, reset_map_tint?: boolean) => Promise<void>;
     protected field_psynergy_window: FieldPsynergyWindow;
     protected cast_direction: number;
+    protected reset_map: () => void;
     private field_color: number;
     private field_intensity: number;
     private works_on_disabled_target: boolean;
@@ -36,6 +38,7 @@ export abstract class FieldAbilities {
     private ask_before_cast_yes_no_menu: YesNoMenu;
     private extra_cast_check: () => boolean;
     private target_is_npc: boolean;
+    private map_random_colors: boolean;
 
     /**
      * FieldAbilities Ctor.
@@ -48,12 +51,13 @@ export abstract class FieldAbilities {
      * @param target_max_range If this ability need a target, the max distance range from the caster to find a target.
      * This can also be a function that receives a target candidate, this function must return a range.
      * @param field_color A custom color to tint the map.
-     * @param field_intensity A custom intensity of a color when tintint the map.
+     * @param field_intensity A custom intensity of a color when tinting the map.
      * @param works_on_disabled_target Only for IO targets. If true, this field ability also works for disabled targets.
      * @param target_found_extra_check A function that receives a target. This called before casting.
      * Execute some custom extra checks. If this funuction returns true, the char will cast this abiliy.
      * @param ask_before_cast If true, it opens an YesNo menu asking if the char really wants to cast this ability.
      * @param target_is_npc If true, the target is a NPC instead of an IO.
+     * @param map_random_colors If true, the map will be tinted sequentially with random colors.
      */
     constructor(
         game: Phaser.Game,
@@ -68,7 +72,8 @@ export abstract class FieldAbilities {
         works_on_disabled_target?: boolean,
         target_found_extra_check?: (target: FieldAbilities["target_object"]) => boolean,
         ask_before_cast?: boolean,
-        target_is_npc?: boolean
+        target_is_npc?: boolean,
+        map_random_colors?: boolean
     ) {
         this.game = game;
         this.ability_key_name = ability_key_name;
@@ -91,6 +96,7 @@ export abstract class FieldAbilities {
         this.ask_before_cast = ask_before_cast ?? false;
         this.ask_before_cast_yes_no_menu = new YesNoMenu(this.game, this.data);
         this.target_is_npc = target_is_npc ?? false;
+        this.map_random_colors = map_random_colors ?? false;
     }
 
     abstract update(): void;
@@ -110,11 +116,15 @@ export abstract class FieldAbilities {
     }
 
     unset_hero_cast_anim() {
+        let promise_resolve;
+        const promise = new Promise<void>(resolve => promise_resolve = resolve);
         this.controllable_char.sprite.animations.currentAnim.reverseOnce();
         this.controllable_char.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.controllable_char.play(base_actions.IDLE, reverse_directions[this.cast_direction]);
+            promise_resolve();
         });
         this.controllable_char.play(this.action_key_name, reverse_directions[this.cast_direction]);
+        return promise;
     }
 
     set_bootstrap_method(method) {
@@ -252,33 +262,37 @@ export abstract class FieldAbilities {
         }
 
         this.set_hero_cast_anim();
-        let reset_map;
+        //stop_casting calls after_destroy and before_destroy.
         this.stop_casting = FieldAbilities.init_cast_aura(
             this.game,
             this.controllable_char.sprite,
             this.data.npc_group,
             this.controllable_char.color_filter,
+            //after_init
             () => {
                 if (this.tint_map && !this.controllable_char.on_reveal) {
-                    reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
+                    this.reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
                         color: this.field_color,
                         intensity: this.field_intensity,
+                        map_random_colors: this.map_random_colors
                     });
                 }
 
                 this.bootstrap_method();
             },
+            //after_destroy
             (reset_casting_psy_flag: boolean = true) => {
                 this.game.physics.p2.resume();
                 if (reset_casting_psy_flag) {
                     this.controllable_char.casting_psynergy = false;
+                    this.target_object = null;
                 }
-                this.target_object = null;
             },
-            () => {
+            //before_destroy
+            (reset_map_tint: boolean = true) => {
                 this.cast_finisher();
-                if (reset_map) {
-                    reset_map();
+                if (this.reset_map && reset_map_tint) {
+                    this.reset_map();
                 }
             }
         );
@@ -444,9 +458,9 @@ export abstract class FieldAbilities {
             filter.hue_adjust = Math.random() * 2 * Math.PI;
         });
         blink_timer.start();
-        return async (reset_casting_psy_flag?: boolean) => {
+        return async (reset_casting_psy_flag?: boolean, reset_map_tint?: boolean) => {
             if (before_destroy !== undefined) {
-                before_destroy();
+                before_destroy(reset_map_tint);
             }
             stop_asked = true;
             hue_timer.stop();
@@ -480,29 +494,51 @@ export abstract class FieldAbilities {
             intensity?: number;
             after_destroy?: () => void;
             after_colorize?: () => void;
+            map_random_colors?: boolean;
         }
     ) {
         const filter = map.color_filter;
+        const target_intensity = options?.intensity ?? 0.4;
         filter.colorize_intensity = 0;
         filter.gray = 0;
         filter.colorize = options?.color ?? Math.random();
+        let random_color_running: boolean = false;
         game.add
-            .tween(filter)
-            .to(
-                {
-                    colorize_intensity: options?.intensity ?? 0.4,
-                    gray: 1,
-                },
-                Phaser.Timer.QUARTER,
-                Phaser.Easing.Linear.None,
-                true
-            )
-            .onComplete.addOnce(() => {
-                if (options?.after_colorize !== undefined) {
-                    options.after_colorize();
-                }
-            });
+                .tween(filter)
+                .to(
+                    {
+                        colorize_intensity: target_intensity,
+                        gray: 1,
+                    },
+                    Phaser.Timer.QUARTER,
+                    Phaser.Easing.Linear.None,
+                    true
+                ).onComplete.addOnce(() => {
+                    if (options?.after_colorize !== undefined) {
+                        options.after_colorize();
+                    }
+                    if (options?.map_random_colors) {
+                        const colors_amount = 5;
+                        const colors = _.times(colors_amount, Math.random).sort();
+
+                        const tween_factory = (color_index) => {
+                            if (!random_color_running) {
+                                return;
+                            }
+                            game.add.tween(filter).to({
+                                colorize: colors[color_index]
+                            }, Phaser.Timer.SECOND, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
+                                color_index = (color_index + 1) % colors.length;
+                                tween_factory(color_index);
+                            });
+                        }
+
+                        random_color_running = true;
+                        tween_factory(0);
+                    }
+                });
         return () => {
+            random_color_running = false;
             game.add
                 .tween(filter)
                 .to(
