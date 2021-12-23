@@ -38,7 +38,7 @@ export abstract class FieldAbilities {
     private ask_before_cast_yes_no_menu: YesNoMenu;
     private extra_cast_check: () => boolean;
     private target_is_npc: boolean;
-    private map_random_colors: boolean;
+    private map_colors_sequence: boolean;
 
     /**
      * FieldAbilities Ctor.
@@ -57,7 +57,7 @@ export abstract class FieldAbilities {
      * Execute some custom extra checks. If this funuction returns true, the char will cast this abiliy.
      * @param ask_before_cast If true, it opens an YesNo menu asking if the char really wants to cast this ability.
      * @param target_is_npc If true, the target is a NPC instead of an IO.
-     * @param map_random_colors If true, the map will be tinted sequentially with random colors.
+     * @param map_colors_sequence If true, the map will be tinted sequentially with random colors.
      */
     constructor(
         game: Phaser.Game,
@@ -73,7 +73,7 @@ export abstract class FieldAbilities {
         target_found_extra_check?: (target: FieldAbilities["target_object"]) => boolean,
         ask_before_cast?: boolean,
         target_is_npc?: boolean,
-        map_random_colors?: boolean
+        map_colors_sequence?: boolean
     ) {
         this.game = game;
         this.ability_key_name = ability_key_name;
@@ -96,7 +96,7 @@ export abstract class FieldAbilities {
         this.ask_before_cast = ask_before_cast ?? false;
         this.ask_before_cast_yes_no_menu = new YesNoMenu(this.game, this.data);
         this.target_is_npc = target_is_npc ?? false;
-        this.map_random_colors = map_random_colors ?? false;
+        this.map_colors_sequence = map_colors_sequence ?? false;
     }
 
     abstract update(): void;
@@ -274,7 +274,7 @@ export abstract class FieldAbilities {
                     this.reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
                         color: this.field_color,
                         intensity: this.field_intensity,
-                        map_random_colors: this.map_random_colors
+                        map_colors_sequence: this.map_colors_sequence
                     });
                 }
 
@@ -494,7 +494,7 @@ export abstract class FieldAbilities {
             intensity?: number;
             after_destroy?: () => void;
             after_colorize?: () => void;
-            map_random_colors?: boolean;
+            map_colors_sequence?: boolean;
         }
     ) {
         const filter = map.color_filter;
@@ -517,10 +517,8 @@ export abstract class FieldAbilities {
                     if (options?.after_colorize !== undefined) {
                         options.after_colorize();
                     }
-                    if (options?.map_random_colors) {
-                        const colors_amount = 5;
-                        const colors = _.times(colors_amount, Math.random).sort();
-
+                    if (options?.map_colors_sequence) {
+                        const colors = _.range(0, 1.0, 0.1).concat(_.range(0.1, 0.9, 0.1).reverse());
                         const tween_factory = (color_index) => {
                             if (!random_color_running) {
                                 return;
@@ -534,7 +532,7 @@ export abstract class FieldAbilities {
                         }
 
                         random_color_running = true;
-                        tween_factory(0);
+                        tween_factory(colors.findIndex(v => v > filter.colorize));
                     }
                 });
         return () => {
