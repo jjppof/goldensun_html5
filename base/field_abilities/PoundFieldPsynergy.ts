@@ -5,7 +5,7 @@ import {FieldAbilities} from "./FieldAbilities";
 import {SpriteBase} from "../SpriteBase";
 import {Wave} from "./Wave";
 import * as _ from "lodash";
-import { InteractableObjects } from "../interactable_objects/InteractableObjects";
+import {InteractableObjects} from "../interactable_objects/InteractableObjects";
 
 export class PoundFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "pound";

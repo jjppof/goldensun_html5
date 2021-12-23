@@ -9,7 +9,7 @@ import {GoldenSun} from "../GoldenSun";
 import {GameInfo} from "./initialize_info";
 import {WhirlwindFieldPsynergy} from "../field_abilities/WhirlwindFieldPsynergy";
 import {RetreatFieldPsynergy} from "../field_abilities/RetreatFieldPsynergy";
-import { MindReadFieldPsynergy } from "../field_abilities/MindReadFieldPsynergy";
+import {MindReadFieldPsynergy} from "../field_abilities/MindReadFieldPsynergy";
 
 export function initialize_abilities(
     game: Phaser.Game,

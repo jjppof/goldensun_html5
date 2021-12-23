@@ -3,7 +3,7 @@ import {get_surroundings, directions, base_actions} from "../utils";
 import {JumpEvent} from "../tile_events/JumpEvent";
 import {FieldAbilities} from "./FieldAbilities";
 import * as _ from "lodash";
-import { InteractableObjects } from "../interactable_objects/InteractableObjects";
+import {InteractableObjects} from "../interactable_objects/InteractableObjects";
 
 /*Handles the "Frost" field psynergy
 Does not handle the in-battle command

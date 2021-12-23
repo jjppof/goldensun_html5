@@ -3,7 +3,7 @@ import {FieldAbilities} from "./FieldAbilities";
 import {base_actions, get_front_position, get_sqr_distance, random_normal} from "../utils";
 import * as _ from "lodash";
 import {degree360, degree90} from "../magic_numbers";
-import { InteractableObjects } from "../interactable_objects/InteractableObjects";
+import {InteractableObjects} from "../interactable_objects/InteractableObjects";
 
 export class WhirlwindFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "whirlwind";

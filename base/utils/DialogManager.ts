@@ -224,7 +224,16 @@ export class DialogManager {
         if (custom_pos?.y !== undefined) {
             win_pos.y = custom_pos.y;
         }
-        this.window = new Window(this.game, win_pos.x, win_pos.y, width, height, undefined, undefined, this.mind_read_window);
+        this.window = new Window(
+            this.game,
+            win_pos.x,
+            win_pos.y,
+            width,
+            height,
+            undefined,
+            undefined,
+            this.mind_read_window
+        );
         this.window.show(
             ((step, italic_font, next_callback) => {
                 if (this.avatar_inside_window) {
@@ -290,7 +299,16 @@ export class DialogManager {
                 avatar_pos.y = custom_avatar_pos.y;
             }
             const window_size = numbers.AVATAR_SIZE + (this.mind_read_window ? 10 : 4);
-            this.avatar_window = new Window(this.game, avatar_pos.x, avatar_pos.y, window_size, window_size, undefined, undefined, this.mind_read_window);
+            this.avatar_window = new Window(
+                this.game,
+                avatar_pos.x,
+                avatar_pos.y,
+                window_size,
+                window_size,
+                undefined,
+                undefined,
+                this.mind_read_window
+            );
             const base_pos = this.mind_read_window ? 8 : 4;
             this.avatar_window.create_at_group(base_pos, base_pos, "avatars", {frame: this.avatar});
             this.avatar_window.show();
@@ -407,9 +425,7 @@ export class DialogManager {
                     const after_color_init_arr = new Array(after_coloring_idx - before_coloring_idx).fill(
                         matched_color
                     );
-                    const after_color_end_arr = new Array(end_idx - after_color_end_idx).fill(
-                        this.font_color
-                    );
+                    const after_color_end_arr = new Array(end_idx - after_color_end_idx).fill(this.font_color);
                     colors_seq.push(before_color_arr.concat(after_color_init_arr, after_color_end_arr));
 
                     current_start_idx =

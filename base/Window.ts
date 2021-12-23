@@ -38,8 +38,8 @@ export type ItemObj = {
 export class Window {
     private static readonly DEFAULT_WINDOW_COLOR = 0x006080;
     private static readonly BG_SHIFT = 2;
-    private static readonly MIND_READ_WINDOW_COLOR = 0xFFFFFF;
-    public static readonly MIND_READ_FONT_COLOR = 0x0000F8;
+    private static readonly MIND_READ_WINDOW_COLOR = 0xffffff;
+    public static readonly MIND_READ_FONT_COLOR = 0x0000f8;
     private static readonly MIND_READ_AMPLITUDE = 4;
     private static readonly MIND_READ_PERIOD = 20;
     private static readonly MIND_READ_CORNER_RADIUS = 12;
@@ -71,8 +71,8 @@ export class Window {
     private _page_indicator: PageIndicator;
     private _mind_read_time: number;
     private _mind_read_borders: {
-        left: Phaser.BitmapData,
-        right: Phaser.BitmapData,
+        left: Phaser.BitmapData;
+        right: Phaser.BitmapData;
     };
 
     constructor(
@@ -96,7 +96,8 @@ export class Window {
         this._mind_read_window = mind_read_window;
 
         this._color = color ?? (this._mind_read_window ? Window.MIND_READ_WINDOW_COLOR : Window.DEFAULT_WINDOW_COLOR);
-        this._font_color = font_color ?? (this._mind_read_window ? Window.MIND_READ_FONT_COLOR : numbers.DEFAULT_FONT_COLOR);
+        this._font_color =
+            font_color ?? (this._mind_read_window ? Window.MIND_READ_FONT_COLOR : numbers.DEFAULT_FONT_COLOR);
 
         this.extra_sprites = [];
         this.internal_groups = {};
@@ -313,7 +314,13 @@ export class Window {
     private draw_background() {
         this.bg_graphics.beginFill(this.color, 1);
         if (this._mind_read_window) {
-            this.bg_graphics.drawRoundedRect(Window.BG_SHIFT, Window.BG_SHIFT, this.width, this.height, Window.MIND_READ_CORNER_RADIUS);
+            this.bg_graphics.drawRoundedRect(
+                Window.BG_SHIFT,
+                Window.BG_SHIFT,
+                this.width,
+                this.height,
+                Window.MIND_READ_CORNER_RADIUS
+            );
         } else {
             this.bg_graphics.drawRect(Window.BG_SHIFT, Window.BG_SHIFT, this.width, this.height);
         }
@@ -326,7 +333,7 @@ export class Window {
     init_mind_read_borders() {
         this._mind_read_borders = {
             right: null,
-            left: null
+            left: null,
         };
         const left_img = this.game.add.image(0, 0);
         this.group.addChild(left_img);
@@ -339,7 +346,7 @@ export class Window {
 
         const right_img = this.game.add.image(0, 0);
         this.group.addChild(right_img);
-        right_img.x = this.width -(Window.MIND_READ_AMPLITUDE << 1) + Window.BG_SHIFT;
+        right_img.x = this.width - (Window.MIND_READ_AMPLITUDE << 1) + Window.BG_SHIFT;
         right_img.y = Window.BG_SHIFT;
         this._mind_read_borders.right = this.game.add.bitmapData(width, this.height);
         this._mind_read_borders.right.smoothed = false;
@@ -354,7 +361,7 @@ export class Window {
         this._mind_read_borders.left.clear();
         this._mind_read_borders.right.clear();
         this._mind_read_time += this.game.time.elapsedMS * Window.MIND_READ_WAVE_SPEED;
-        const k = 2 * Math.PI / Window.MIND_READ_PERIOD;
+        const k = (2 * Math.PI) / Window.MIND_READ_PERIOD;
         const height = this._mind_read_borders.left.height;
         const half_radius = Window.MIND_READ_CORNER_RADIUS >> 1;
         const quad_amplitude = Window.MIND_READ_AMPLITUDE << 2;
@@ -370,15 +377,16 @@ export class Window {
                     const border_ratio = Phaser.Easing.Cubic.Out((height - y) / half_radius);
                     shift = quad_amplitude * (1 - border_ratio);
                 }
-                const wave_x = Window.MIND_READ_AMPLITUDE * Math.sin(-k * y - this._mind_read_time) + Window.MIND_READ_AMPLITUDE;
+                const wave_x =
+                    Window.MIND_READ_AMPLITUDE * Math.sin(-k * y - this._mind_read_time) + Window.MIND_READ_AMPLITUDE;
                 const l_wave_x = wave_x + shift;
                 const r_wave_x = wave_x - shift + (Window.MIND_READ_AMPLITUDE << 1);
-                if (l_wave_x >= x ) {
+                if (l_wave_x >= x) {
                     this._mind_read_borders.left.setPixel32(x, y, 0, 0, 0, 0, false);
                 } else {
                     this._mind_read_borders.left.setPixel32(x, y, color.r, color.g, color.b, 255, false);
                 }
-                if (r_wave_x >= x ) {
+                if (r_wave_x >= x) {
                     this._mind_read_borders.right.setPixel32(x, y, color.r, color.g, color.b, 255, false);
                 } else {
                     this._mind_read_borders.right.setPixel32(x, y, 0, 0, 0, 0, false);
@@ -623,12 +631,7 @@ export class Window {
         if (animate) {
             this.game.add
                 .tween(this.group.scale)
-                .to(
-                    {x: 1, y: 1},
-                    Window.TRANSITION_TIME,
-                    Phaser.Easing.Linear.None,
-                    true
-                )
+                .to({x: 1, y: 1}, Window.TRANSITION_TIME, Phaser.Easing.Linear.None, true)
                 .onComplete.addOnce(() => {
                     this._open = true;
                     if (show_callback !== undefined) show_callback();
@@ -780,7 +783,7 @@ export class Window {
                         ? options.colors[i]
                         : options.colors
                     : this.font_color;
-                    if (text_sprite_shadow) {
+            if (text_sprite_shadow) {
                 text_sprite_shadow.tint = 0x0;
             }
 

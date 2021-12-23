@@ -5,7 +5,7 @@ import {GoldenSun} from "../GoldenSun";
 import {ControllableChar} from "../ControllableChar";
 import {Map} from "../Map";
 import {YesNoMenu} from "../windows/YesNoMenu";
-import { NPC } from "../NPC";
+import {NPC} from "../NPC";
 import * as _ from "lodash";
 
 /**
@@ -117,7 +117,7 @@ export abstract class FieldAbilities {
 
     unset_hero_cast_anim() {
         let promise_resolve;
-        const promise = new Promise<void>(resolve => promise_resolve = resolve);
+        const promise = new Promise<void>(resolve => (promise_resolve = resolve));
         this.controllable_char.sprite.animations.currentAnim.reverseOnce();
         this.controllable_char.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.controllable_char.play(base_actions.IDLE, reverse_directions[this.cast_direction]);
@@ -179,13 +179,15 @@ export abstract class FieldAbilities {
             }
             const item_x_px = get_centered_pos_in_px(target_object.tile_x_pos, this.data.map.tile_width);
             const item_y_px = get_centered_pos_in_px(target_object.tile_y_pos, this.data.map.tile_height);
-            const max_range = Number.isFinite(this.target_max_range as unknown) ? this.target_max_range as number : (this.target_max_range as Function)(target_object);
+            const max_range = Number.isFinite(this.target_max_range as unknown)
+                ? (this.target_max_range as number)
+                : (this.target_max_range as Function)(target_object);
             const bounds = {
                 min_y: min_y,
                 max_y: max_y,
                 min_x: min_x,
                 max_x: max_x,
-            }
+            };
             switch (this.cast_direction) {
                 case directions.up:
                     bounds.min_y -= max_range;
@@ -202,11 +204,7 @@ export abstract class FieldAbilities {
             }
             const x_condition = item_x_px >= bounds.min_x && item_x_px <= bounds.max_x;
             const y_condition = item_y_px >= bounds.min_y && item_y_px <= bounds.max_y;
-            if (
-                x_condition &&
-                y_condition &&
-                this.data.map.collision_layer === target_object.base_collision_layer
-            ) {
+            if (x_condition && y_condition && this.data.map.collision_layer === target_object.base_collision_layer) {
                 const this_sqr_distance =
                     Math.pow(item_x_px - this.controllable_char.sprite.x, 2) +
                     Math.pow(item_y_px - this.controllable_char.sprite.y, 2);
@@ -274,7 +272,7 @@ export abstract class FieldAbilities {
                     this.reset_map = FieldAbilities.tint_map_layers(this.game, this.data.map, {
                         color: this.field_color,
                         intensity: this.field_intensity,
-                        map_colors_sequence: this.map_colors_sequence
+                        map_colors_sequence: this.map_colors_sequence,
                     });
                 }
 
@@ -504,37 +502,46 @@ export abstract class FieldAbilities {
         filter.colorize = options?.color ?? Math.random();
         let random_color_running: boolean = false;
         game.add
-                .tween(filter)
-                .to(
-                    {
-                        colorize_intensity: target_intensity,
-                        gray: 1,
-                    },
-                    Phaser.Timer.QUARTER,
-                    Phaser.Easing.Linear.None,
-                    true
-                ).onComplete.addOnce(() => {
-                    if (options?.after_colorize !== undefined) {
-                        options.after_colorize();
-                    }
-                    if (options?.map_colors_sequence) {
-                        const colors = _.range(0, 1.0, 0.1).concat(_.range(0.1, 0.9, 0.1).reverse());
-                        const tween_factory = (color_index) => {
-                            if (!random_color_running) {
-                                return;
-                            }
-                            game.add.tween(filter).to({
-                                colorize: colors[color_index]
-                            }, Phaser.Timer.SECOND, Phaser.Easing.Linear.None, true).onComplete.addOnce(() => {
+            .tween(filter)
+            .to(
+                {
+                    colorize_intensity: target_intensity,
+                    gray: 1,
+                },
+                Phaser.Timer.QUARTER,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(() => {
+                if (options?.after_colorize !== undefined) {
+                    options.after_colorize();
+                }
+                if (options?.map_colors_sequence) {
+                    const colors = _.range(0, 1.0, 0.1).concat(_.range(0.1, 0.9, 0.1).reverse());
+                    const tween_factory = color_index => {
+                        if (!random_color_running) {
+                            return;
+                        }
+                        game.add
+                            .tween(filter)
+                            .to(
+                                {
+                                    colorize: colors[color_index],
+                                },
+                                Phaser.Timer.SECOND,
+                                Phaser.Easing.Linear.None,
+                                true
+                            )
+                            .onComplete.addOnce(() => {
                                 color_index = (color_index + 1) % colors.length;
                                 tween_factory(color_index);
                             });
-                        }
+                    };
 
-                        random_color_running = true;
-                        tween_factory(colors.findIndex(v => v > filter.colorize));
-                    }
-                });
+                    random_color_running = true;
+                    tween_factory(colors.findIndex(v => v > filter.colorize));
+                }
+            });
         return () => {
             random_color_running = false;
             game.add

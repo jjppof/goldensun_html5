@@ -12,7 +12,7 @@ import {FieldAbilities} from "./FieldAbilities";
 import {SpriteBase} from "../SpriteBase";
 import {Button} from "../XGamepad";
 import {Pushable} from "../interactable_objects/Pushable";
-import { InteractableObjects } from "../interactable_objects/InteractableObjects";
+import {InteractableObjects} from "../interactable_objects/InteractableObjects";
 
 export class MoveFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "move";

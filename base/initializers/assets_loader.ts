@@ -36,7 +36,7 @@ function load_misc(game) {
     game.load.image("djinn_ball", "assets/images/misc/djinn_ball.png");
     game.load.image("water_drop", "assets/images/misc/water_drop.png");
     game.load.image("star", "assets/images/interactable_objects/star.png");
-    game.load.image("star", "assets/images/misc/mind_read_arrow.png");
+    game.load.image("mind_read_arrow", "assets/images/misc/mind_read_arrow.png");
     game.load.atlasJSONHash(
         "battle_effect_icons",
         "assets/images/icons/battle_effects/battle_effect_icons.png",
