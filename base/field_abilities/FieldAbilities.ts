@@ -264,7 +264,7 @@ export abstract class FieldAbilities {
         this.stop_casting = FieldAbilities.init_cast_aura(
             this.game,
             this.controllable_char.sprite,
-            this.data.npc_group,
+            this.data.middlelayer_group,
             this.controllable_char.color_filter,
             //after_init
             () => {

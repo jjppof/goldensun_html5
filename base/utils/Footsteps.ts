@@ -120,8 +120,8 @@ export class Footsteps {
     Input: direction [number] = The parent's current direction
            action [string] = The parent's current action*/
     create_step(direction, action) {
-        if (this.data.npc_group.getIndex(this.group) < 0) {
-            this.data.npc_group.add(this.group);
+        if (this.data.middlelayer_group.getIndex(this.group) < 0) {
+            this.data.middlelayer_group.add(this.group);
         }
         this.current_direction = direction;
         this.current_action = action;

@@ -98,7 +98,7 @@ export class GoldenSun {
 
     //groups that will hold the sprites that are below the hero, same level than hero and above the hero
     public underlayer_group: Phaser.Group = null;
-    public npc_group: Phaser.Group = null;
+    public middlelayer_group: Phaser.Group = null;
     public overlayer_group: Phaser.Group = null;
     public super_group: Phaser.Group = null;
 
@@ -210,11 +210,11 @@ export class GoldenSun {
 
         //creating groups. Order here is important
         this.underlayer_group = this.game.add.group();
-        this.npc_group = this.game.add.group();
+        this.middlelayer_group = this.game.add.group();
         this.overlayer_group = this.game.add.group();
         this.super_group = this.game.add.group();
         this.super_group.addChild(this.underlayer_group);
-        this.super_group.addChild(this.npc_group);
+        this.super_group.addChild(this.middlelayer_group);
         this.super_group.addChild(this.overlayer_group);
 
         //use the data loaded from json files to initialize some data
@@ -243,8 +243,10 @@ export class GoldenSun {
             this.dbs.npc_db[hero_key_name].climb_speed
         );
         const hero_sprite_base = this.info.main_char_list[hero_key_name].sprite_base;
-        this.hero.set_sprite(this.npc_group, hero_sprite_base, this.map.collision_layer, this.map);
-        this.hero.set_shadow("shadow", this.npc_group, this.map.collision_layer, {is_world_map: this.map.is_world_map});
+        this.hero.set_sprite(this.middlelayer_group, hero_sprite_base, this.map.collision_layer, this.map);
+        this.hero.set_shadow("shadow", this.middlelayer_group, this.map.collision_layer, {
+            is_world_map: this.map.is_world_map,
+        });
         if (this.map.is_world_map) {
             this.hero.create_half_crop_mask();
         }

@@ -114,11 +114,11 @@
          "opacity":1,
          "properties":
             {
-             "over":"[0,1]"
+             "over":2
             },
          "propertytypes":
             {
-             "over":"string"
+             "over":"int"
             },
          "type":"tilelayer",
          "visible":true,
@@ -1725,6 +1725,7 @@
      "npc\/04":"{\n    \"key_name\": \"foo\",\n    \"x\": 25,\n    \"y\": 15,\n    \"base_collision_layer\": 1,\n    \"storage_keys\":{\n        \"affected_by_reveal\": \"herb_box_madra\",\n        \"visible\": \"herb_box_madra\"\n    },\n    \"npc_type\": \"sprite\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"hidden_item\",\n    \"sprite_misc_db_key\": \"psynergy_particle\",\n    \"action\": \"psynergy_particle\",\n    \"affected_by_reveal\": true,\n    \"events\": [\n        {\n            \"type\": \"branch\",\n            \"condition\": \"=\",\n            \"has_else\": true,\n            \"left_comparator_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                    \"key_name\": \"herb_box_madra\"\n                }\n            },\n            \"right_comparator_value\": {\n                \"type\": \"value\",\n                \"value\": true\n            },\n            \"events\": [{\n                \"type\": \"chest\",\n                \"custom_init_text\": \"${HERO} checked the wooden box...\",\n                \"item\": \"herb\",\n                \"no_chest\": true,\n                \"hide_on_finish\": true,\n                \"finish_events\": [{\n                    \"type\": \"set_value\",\n                    \"check_npc_storage_values\": true,\n                    \"event_value\": {\n                        \"type\": \"storage\",\n                        \"value\": {\n                            \"key_name\": \"herb_box_madra\",\n                            \"value\": false\n                        }\n                    }\n                }]\n            }],\n            \"else_events\": [{\n                \"type\": \"dialog\",\n                \"text\": \"${HERO} checked the wooden box...${BREAK}but didn't find anything.\"\n            }]\n        }\n    ]\n}",
      "npc\/05":"{\n    \"key_name\": \"psynergy_stone\",\n    \"storage_keys\":{\n        \"active\": \"psy_stone_madra_active\"\n    },\n    \"x\": 33,\n    \"y\": 15,\n    \"npc_type\": \"normal\",\n    \"movement_type\": \"idle\",\n    \"animation\": \"normal\",\n    \"base_collision_layer\": 1,\n    \"events\": [\n        {\n            \"type\": \"psynergy_stone\",\n                \"finish_events\": [{\n                    \"type\": \"set_value\",\n                    \"event_value\": {\n                        \"type\": \"storage\",\n                        \"value\": {\n                            \"key_name\": \"psy_stone_madra_active\",\n                            \"value\": false\n                        }\n                    }\n                 }]\n        }]\n}",
      "npc\/06":"{\n    \"key_name\": \"mars_djinn\",\n    \"label\": \"ember_djinn\",\n    \"storage_keys\":{\n        \"active\": \"ember_djinn\"\n    },\n    \"x\": 7,\n    \"y\": 15,\n    \"npc_type\": \"normal\",\n    \"action\": \"idle\",\n    \"movement_type\": \"idle\",\n    \"base_collision_layer\": 2,\n    \"events\": [{\n        \"type\": \"djinn_get\",\n        \"djinn_key\": \"ember\",\n        \"finish_events\": [{\n            \"type\": \"set_value\",\n            \"event_value\": {\n                \"type\": \"storage\",\n                \"value\": {\n                    \"key_name\": \"ember_djinn\",\n                    \"value\": false\n                }\n            }\n        }]\n    }]\n}",
+     "npc\/07":"{\n    \"key_name\": \"village_1\",\n    \"x\": 24,\n    \"y\": 7,\n    \"movement_type\": \"idle\",\n    \"message\": \"Testing layer features...\",\n    \"thought_message\": \"Nothing to think about.\",\n    \"base_collision_layer\": 2\n}",
      "tile_event\/01":"{\"type\": \"climb\", \"x\": 33, \"y\": 8, \"activation_directions\": \"down\", \"activation_collision_layers\": 1, \"change_to_collision_layer\": 0}",
      "tile_event\/02":"{\"type\": \"climb\", \"x\": 33, \"y\": 9, \"activation_directions\": \"up\", \"activation_collision_layers\": 0, \"change_to_collision_layer\": 1}",
      "tile_event\/03":"{\"type\": \"climb\", \"x\": 10, \"y\": 13, \"activation_directions\": \"down\", \"activation_collision_layers\": 1, \"change_to_collision_layer\": 0}",
@@ -1804,6 +1805,7 @@
      "npc\/04":"string",
      "npc\/05":"string",
      "npc\/06":"string",
+     "npc\/07":"string",
      "tile_event\/01":"string",
      "tile_event\/02":"string",
      "tile_event\/03":"string",

@@ -121,7 +121,7 @@ export class SliderEvent extends TileEvent {
                     this.data.hero.sprite.body.y -
                     Math.random() * this.data.map.tile_height +
                     (this.data.map.tile_height >> 1);
-                const dust_sprite: Phaser.Sprite = this.data.npc_group.create(start_x, start_y, dust_key);
+                const dust_sprite: Phaser.Sprite = this.data.middlelayer_group.create(start_x, start_y, dust_key);
                 dust_sprite.base_collision_layer = this.dest_collision_layer;
                 dust_sprite.anchor.setTo(0.5, 0.5);
                 this.game.add.tween(dust_sprite).to(
@@ -133,9 +133,9 @@ export class SliderEvent extends TileEvent {
                     Phaser.Easing.Linear.None,
                     true
                 );
-                this.data.npc_group.setChildIndex(
+                this.data.middlelayer_group.setChildIndex(
                     dust_sprite,
-                    this.data.npc_group.getChildIndex(this.data.hero.sprite)
+                    this.data.middlelayer_group.getChildIndex(this.data.hero.sprite)
                 );
                 dust_sprite_base.setAnimation(dust_sprite, SliderEvent.DUST_KEY);
                 const animation_key = dust_sprite_base.getAnimationKey(SliderEvent.DUST_KEY, "spread");

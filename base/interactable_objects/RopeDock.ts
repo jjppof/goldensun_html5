@@ -196,8 +196,8 @@ export class RopeDock extends InteractableObjects {
         this.sprite.sort_function_end = () => {
             const back = this._tied ? this.sprite : this.rope_fragments_group;
             const front = this._tied ? this.rope_fragments_group : this.sprite;
-            if (this.data.npc_group.getChildIndex(back) > this.data.npc_group.getChildIndex(front)) {
-                this.data.npc_group.setChildIndex(front, this.data.npc_group.getChildIndex(back));
+            if (this.data.middlelayer_group.getChildIndex(back) > this.data.middlelayer_group.getChildIndex(front)) {
+                this.data.middlelayer_group.setChildIndex(front, this.data.middlelayer_group.getChildIndex(back));
             }
         };
     }
@@ -241,7 +241,7 @@ export class RopeDock extends InteractableObjects {
         const base_y = Math.sin(this._fragment_angle) * actual_rope_width;
         const half_base_y = base_y >> 1;
 
-        this._rope_fragments_group = this.game.add.group(this.data.npc_group);
+        this._rope_fragments_group = this.game.add.group(this.data.middlelayer_group);
         this._extra_sprites.push(this._rope_fragments_group);
         this._rope_fragments_group.x = this_x_px + half_base_x;
         this._rope_fragments_group.y = this_y_px + half_base_y;
@@ -251,7 +251,7 @@ export class RopeDock extends InteractableObjects {
         }
 
         if (!this._tied) {
-            this._frag_overlap_group = this.game.add.group(this.data.npc_group);
+            this._frag_overlap_group = this.game.add.group(this.data.middlelayer_group);
             this._frag_overlap_group.x = this._rope_fragments_group.x;
             this._frag_overlap_group.y = this._rope_fragments_group.y;
             this._frag_overlap_group.base_collision_layer = this._rope_fragments_group.base_collision_layer;

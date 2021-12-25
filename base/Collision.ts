@@ -188,7 +188,7 @@ export class Collision {
         this.data.hero.set_collision_layer(new_collision_layer_index);
         this.config_collision_groups(this.data.map);
         this.config_collisions(new_collision_layer_index);
-        this.data.map.reset_layers();
+        this.data.map.config_layers(true);
     }
 
     /**

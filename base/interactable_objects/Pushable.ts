@@ -371,9 +371,12 @@ export class Pushable extends InteractableObjects {
             const this_angle = ((Math.PI + numbers.degree60) * i) / (Pushable.DUST_COUNT - 1) - numbers.degree30;
             const x = origin_x + Pushable.DUST_RADIUS * Math.cos(this_angle);
             const y = origin_y + Pushable.DUST_RADIUS * Math.sin(this_angle);
-            const dust_sprite = this.data.npc_group.create(origin_x, origin_y, dust_key);
+            const dust_sprite = this.data.middlelayer_group.create(origin_x, origin_y, dust_key);
             if (this_angle < 0 || this_angle > Math.PI) {
-                this.data.npc_group.setChildIndex(dust_sprite, this.data.npc_group.getChildIndex(this.sprite));
+                this.data.middlelayer_group.setChildIndex(
+                    dust_sprite,
+                    this.data.middlelayer_group.getChildIndex(this.sprite)
+                );
             }
             dust_sprite.anchor.setTo(0.5, 0.5);
             this.game.add.tween(dust_sprite).to(
@@ -395,7 +398,7 @@ export class Pushable extends InteractableObjects {
         }
         Promise.all(promises).then(() => {
             sprites.forEach(sprite => {
-                this.data.npc_group.remove(sprite, true);
+                this.data.middlelayer_group.remove(sprite, true);
             });
             on_animation_end();
         });

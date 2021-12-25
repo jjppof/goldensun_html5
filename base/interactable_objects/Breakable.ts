@@ -157,7 +157,7 @@ export class Breakable extends InteractableObjects {
         for (let i = 0; i < Breakable.DOWN_DUST_COUNT; ++i) {
             const start_x = char.x - (this.data.map.tile_width >> 1) + Math.random() * this.data.map.tile_width;
             const start_y = char.y + Math.random() * this.data.map.tile_height + (this.data.map.tile_height >> 1);
-            const dust_sprite: Phaser.Sprite = this.data.npc_group.create(start_x, start_y, dust_key);
+            const dust_sprite: Phaser.Sprite = this.data.middlelayer_group.create(start_x, start_y, dust_key);
             dust_sprite.base_collision_layer = char.collision_layer;
             dust_sprite.anchor.setTo(0.5, 0.5);
             dust_sprite.scale.setTo(0.7, 0.7);
@@ -196,9 +196,12 @@ export class Breakable extends InteractableObjects {
             const this_angle = ((Math.PI + degree60) * i) / (Breakable.BROKEN_DUST_COUNT - 1) - degree30;
             const x = origin_x + Breakable.BROKEN_DUST_RADIUS * Math.cos(this_angle);
             const y = origin_y + Breakable.BROKEN_DUST_RADIUS * Math.sin(this_angle);
-            const dust_sprite = this.data.npc_group.create(origin_x, origin_y, dust_key);
+            const dust_sprite = this.data.middlelayer_group.create(origin_x, origin_y, dust_key);
             if (this_angle < 0 || this_angle > Math.PI) {
-                this.data.npc_group.setChildIndex(dust_sprite, this.data.npc_group.getChildIndex(this.sprite));
+                this.data.middlelayer_group.setChildIndex(
+                    dust_sprite,
+                    this.data.middlelayer_group.getChildIndex(this.sprite)
+                );
             }
             dust_sprite.anchor.setTo(0.5, 0.5);
             this.game.add.tween(dust_sprite).to(

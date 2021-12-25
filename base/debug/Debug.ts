@@ -45,8 +45,8 @@ export class Debug {
 
     update_debug_physics(flag) {
         this.data.map.collision_sprite.body.debug = flag;
-        for (let i = 0; i < this.data.npc_group.children.length; ++i) {
-            let sprite: Phaser.Sprite = this.data.npc_group.children[i] as Phaser.Sprite;
+        for (let i = 0; i < this.data.middlelayer_group.children.length; ++i) {
+            let sprite: Phaser.Sprite = this.data.middlelayer_group.children[i] as Phaser.Sprite;
             if (!sprite.is_npc && !sprite.is_interactable_object) continue;
             if (!sprite.body || !sprite.body.collidesWith.length) {
                 if (sprite.body?.debug) {

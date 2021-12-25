@@ -229,18 +229,18 @@ export class Map {
     }
 
     /**
-     * Sorts the sprites in the GoldenSun.npc_group by y position and base_collision_layer
+     * Sorts the sprites in the GoldenSun.middlelayer_group by y position and base_collision_layer
      * properties. After this first sort, send_to_front [boolean], sort_function [callable],
      * send_to_back [boolean] and sort_function_end [callable] Phaser.DisplayObject properties
      * are checked in this order.
      */
     sort_sprites() {
         //these array initializations need a better performative approach...
-        const send_to_back_list = new Array(this.data.npc_group.children.length);
-        const send_to_front_list = new Array(this.data.npc_group.children.length);
-        const has_sort_function = new Array(this.data.npc_group.children.length);
-        const has_sort_end_function = new Array(this.data.npc_group.children.length);
-        this.data.npc_group.children.forEach((sprite: Phaser.Sprite, index) => {
+        const send_to_back_list = new Array(this.data.middlelayer_group.children.length);
+        const send_to_front_list = new Array(this.data.middlelayer_group.children.length);
+        const has_sort_function = new Array(this.data.middlelayer_group.children.length);
+        const has_sort_end_function = new Array(this.data.middlelayer_group.children.length);
+        this.data.middlelayer_group.children.forEach((sprite: PIXI.DisplayObjectContainer, index) => {
             if (sprite.sort_function) {
                 has_sort_function[index] = sprite;
                 return;
@@ -255,12 +255,25 @@ export class Map {
                 return;
             }
         });
-        this.data.npc_group.customSort((a: PIXI.DisplayObjectContainer, b: PIXI.DisplayObjectContainer) => {
+        this.data.middlelayer_group.customSort((a: PIXI.DisplayObjectContainer, b: PIXI.DisplayObjectContainer) => {
             if (a.base_collision_layer < b.base_collision_layer) {
                 return -1;
             } else if (a.base_collision_layer > b.base_collision_layer) {
                 return 1;
             } else {
+                const a_is_layer = a.hasOwnProperty("map");
+                const b_is_layer = b.hasOwnProperty("map");
+                if (a_is_layer && b_is_layer) {
+                    const a_layer = a as Phaser.TilemapLayer;
+                    const b_layer = b as Phaser.TilemapLayer;
+                    if (a_layer.layer_z < b_layer.layer_z) {
+                        return -1;
+                    } else if (a_layer.layer_z > b_layer.layer_z) {
+                        return 1;
+                    }
+                } else if (a_is_layer || b_is_layer) {
+                    return 1;
+                }
                 const a_y = a.useHeightWhenSorting ? a.y + a.height : a.y;
                 const b_y = b.useHeightWhenSorting ? b.y + b.height : b.y;
                 if (a_y < b_y) {
@@ -272,7 +285,7 @@ export class Map {
         });
         send_to_front_list.forEach(sprite => {
             if (sprite) {
-                this.data.npc_group.bringToTop(sprite);
+                this.data.middlelayer_group.bringToTop(sprite);
             }
         });
         has_sort_function.forEach(sprite => {
@@ -282,7 +295,7 @@ export class Map {
         });
         send_to_back_list.forEach(sprite => {
             if (sprite) {
-                this.data.npc_group.sendToBack(sprite);
+                this.data.middlelayer_group.sendToBack(sprite);
             }
         });
         has_sort_end_function.forEach(sprite => {
@@ -880,7 +893,7 @@ export class Map {
             this.npcs.push(npc);
             if (npc.label) {
                 if (npc.label in this._npcs_label_map) {
-                    console.warn(`NPC with ${npc.label} is already set in this map.`);
+                    console.warn(`NPC with '${npc.label}' label is already set in this map.`);
                 } else {
                     this._npcs_label_map[npc.label] = npc;
                 }
@@ -963,7 +976,9 @@ export class Map {
             this.interactable_objects.push(interactable_object);
             if (interactable_object.label) {
                 if (interactable_object.label in this.interactable_objects_label_map) {
-                    console.warn(`Interactable Object with ${interactable_object.label} is already set in this map.`);
+                    console.warn(
+                        `Interactable Object with '${interactable_object.label}' label is already set in this map.`
+                    );
                 } else {
                     this.interactable_objects_label_map[interactable_object.label] = interactable_object;
                 }
@@ -1121,100 +1136,58 @@ export class Map {
 
     /**
      * Parses the over property of a given layer.
-     * @param property_value the over value
-     * @returns returns whether the layer that owns this over property is over npcs group or not.
+     * @param property_value the over property value.
+     * @returns returns -1 if under the hero or the threshold collision layer to be under.
      */
-    private parse_over_prop(property_value: any): boolean {
+    private parse_over_prop(property_value: any): number {
         const property_type = typeof property_value;
         switch (property_type) {
             case "boolean":
-                return property_value;
+                return property_value ? this.collision_layers_number : -1;
             case "number":
-                return property_value === this.collision_layer;
-            case "string":
-                try {
-                    const indexes = JSON.parse(property_value);
-                    if (Array.isArray(indexes)) {
-                        return indexes.includes(this.collision_layer);
-                    } else {
-                        console.warn("Map property 'over' was set as a string type, but it's not an Array type.");
-                        return false;
-                    }
-                } catch {
-                    console.warn("Map property 'over' was set as a string type, but it's not a valid JSON.");
-                    return false;
-                }
+                return property_value > this.collision_layer ? property_value : -1;
             default:
                 console.warn(`'${property_type}' is not a valid type for 'over'.`);
         }
     }
 
     /**
-     * Creates and initializes the map layers.
+     * Creates, initializes and organize the map layers sprites.
+     * @param reorganize if true, it will only reorganize the layers. It's expected that the layers were already created.
      */
-    private config_layers() {
+    config_layers(reorganize: boolean = false) {
+        this.data.underlayer_group.removeAll(false, true, false);
+        this.data.overlayer_group.removeAll(false, true, false);
         for (let i = 0; i < this.layers.length; ++i) {
-            const layer = this.sprite.createLayer(this.layers[i].name);
-            this.layers[i].sprite = layer;
-            layer.layer_z = this.layers[i].properties.z === undefined ? i : this.layers[i].properties.z;
-            layer.resizeWorld();
-            if (this.layers[i].properties.blend_mode !== undefined) {
-                layer.blendMode = parse_blend_mode(this.layers[i].properties.blend_mode);
-            }
-            if (this.layers[i].alpha !== undefined) {
-                layer.alpha = this.layers[i].alpha;
-            }
-            if (this.layers[i].properties.reveal_layer) {
-                layer.visible = false;
-            }
-
-            let is_over = false;
-            if (this.layers[i].properties.over !== undefined) {
-                is_over = this.parse_over_prop(this.layers[i].properties.over);
-            }
-            if (is_over) {
-                this.data.overlayer_group.add(layer);
-            } else {
-                this.data.underlayer_group.add(layer);
-            }
-        }
-    }
-
-    /**
-     * Resets the existing layers. This can be called after changing the collision layer, for instance.
-     */
-    reset_layers() {
-        for (let i = 0; i < this.layers.length; ++i) {
-            const layer = this.layers[i];
-            if (layer.properties.over !== undefined) {
-                const is_over = this.parse_over_prop(layer.properties.over);
-                if (is_over) {
-                    this.data.underlayer_group.remove(layer.sprite, false, true);
-                    let index = 0;
-                    for (index = 0; index < this.data.overlayer_group.children.length; ++index) {
-                        const child = this.data.overlayer_group.children[index] as Phaser.TilemapLayer;
-                        if (child.layer_z > (layer.z === undefined ? i : layer.z)) {
-                            this.data.overlayer_group.addAt(layer.sprite, index, true);
-                            break;
-                        }
-                    }
-                    if (index === this.data.overlayer_group.children.length) {
-                        this.data.overlayer_group.add(layer.sprite, true);
-                    }
-                } else {
-                    this.data.overlayer_group.remove(layer.sprite, false, true);
-                    let index = 0;
-                    for (index = 0; index < this.data.underlayer_group.children.length; ++index) {
-                        const child = this.data.underlayer_group.children[index] as Phaser.TilemapLayer;
-                        if (child.layer_z > layer.z) {
-                            this.data.underlayer_group.addAt(layer.sprite, index, true);
-                            break;
-                        }
-                    }
-                    if (index === this.data.underlayer_group.children.length) {
-                        this.data.underlayer_group.add(layer.sprite, true);
-                    }
+            const layer_obj = this.layers[i];
+            let layer_sprite: Phaser.TilemapLayer = null;
+            if (!reorganize) {
+                layer_sprite = this.sprite.createLayer(layer_obj.name);
+                layer_sprite.layer_z = i;
+                layer_obj.sprite = layer_sprite;
+                layer_sprite.resizeWorld();
+                if (layer_obj.properties.blend_mode !== undefined) {
+                    layer_sprite.blendMode = parse_blend_mode(layer_obj.properties.blend_mode);
                 }
+                if (layer_obj.alpha !== undefined) {
+                    layer_sprite.alpha = layer_obj.alpha;
+                }
+                if (layer_obj.properties.reveal_layer) {
+                    layer_sprite.visible = false;
+                }
+            } else {
+                layer_sprite = layer_obj.sprite;
+            }
+
+            let target_collision_layer = -1;
+            if (layer_obj.properties.over !== undefined) {
+                target_collision_layer = this.parse_over_prop(layer_obj.properties.over);
+            }
+            if (target_collision_layer > -1) {
+                layer_sprite.base_collision_layer = target_collision_layer;
+                this.data.middlelayer_group.add(layer_sprite);
+            } else {
+                this.data.underlayer_group.add(layer_sprite);
             }
         }
     }
@@ -1561,11 +1534,11 @@ export class Map {
         this._npcs_label_map = {};
         this._interactable_objects = [];
         this._events = {};
-        this.data.npc_group.removeAll();
+        this.data.middlelayer_group.removeAll();
         this.encounter_zones = [];
         this.bounding_boxes = [];
         this.game_events = [];
-        this.data.npc_group.add(this.data.hero.shadow);
-        this.data.npc_group.add(this.data.hero.sprite);
+        this.data.middlelayer_group.add(this.data.hero.shadow);
+        this.data.middlelayer_group.add(this.data.hero.sprite);
     }
 }

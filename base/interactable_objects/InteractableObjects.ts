@@ -426,7 +426,7 @@ export class InteractableObjects {
         }
         if (this.sprite_info) {
             const interactable_object_key = this.sprite_info.getSpriteKey(this.key_name);
-            const interactable_object_sprite = this.data.npc_group.create(0, 0, interactable_object_key);
+            const interactable_object_sprite = this.data.middlelayer_group.create(0, 0, interactable_object_key);
             this._sprite = interactable_object_sprite;
             this.sprite.is_interactable_object = true;
             this.sprite.roundPx = true;
@@ -453,7 +453,7 @@ export class InteractableObjects {
     }
 
     init_bush(map: Map) {
-        this._bush_sprite = this.data.npc_group.create(0, 0, InteractableObjects.BUSH_KEY);
+        this._bush_sprite = this.data.middlelayer_group.create(0, 0, InteractableObjects.BUSH_KEY);
         this._bush_sprite.roundPx = true;
         this._bush_sprite.base_collision_layer = this.base_collision_layer;
         this._bush_sprite.anchor.setTo(0.5, 0.75);
@@ -462,9 +462,9 @@ export class InteractableObjects {
             this._bush_sprite.x = this.sprite.x;
             this._bush_sprite.y = this.sprite.y;
             this._bush_sprite.sort_function = () => {
-                this.data.npc_group.setChildIndex(
+                this.data.middlelayer_group.setChildIndex(
                     this._bush_sprite,
-                    this.data.npc_group.getChildIndex(this.sprite) + 1
+                    this.data.middlelayer_group.getChildIndex(this.sprite) + 1
                 );
             };
         } else {
@@ -891,7 +891,7 @@ export class InteractableObjects {
      */
     custom_unset() {}
 
-    unset(remove_from_npc_group: boolean = true) {
+    unset(remove_from_middlelayer_group: boolean = true) {
         if (this.sprite) {
             this.sprite.destroy();
         }
@@ -909,8 +909,8 @@ export class InteractableObjects {
         this.toggle_enable_events.forEach(event_info => {
             event_info.event.destroy();
         });
-        if (remove_from_npc_group) {
-            this.data.npc_group.removeChild(this.sprite);
+        if (remove_from_middlelayer_group) {
+            this.data.middlelayer_group.removeChild(this.sprite);
         }
         this.custom_unset();
     }

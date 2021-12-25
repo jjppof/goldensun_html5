@@ -244,9 +244,9 @@ export class PoundFieldPsynergy extends FieldAbilities {
         const wave = new Wave(this.game, x_pos, y_pos, 0, 0);
         wave.phase = 0;
         wave.transparent_radius = 0;
-        this.data.npc_group.add(wave.sprite);
-        const wave_index = this.data.npc_group.getChildIndex(this.data.hero.sprite) - 1;
-        this.data.npc_group.setChildIndex(wave.sprite, wave_index);
+        this.data.middlelayer_group.add(wave.sprite);
+        const wave_index = this.data.middlelayer_group.getChildIndex(this.data.hero.sprite) - 1;
+        this.data.middlelayer_group.setChildIndex(wave.sprite, wave_index);
         wave.update();
 
         const wave_animation = this.game.add.tween(wave).to({size: size}, 400, Phaser.Easing.Linear.None);
