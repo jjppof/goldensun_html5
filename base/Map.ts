@@ -271,7 +271,9 @@ export class Map {
                     } else if (a_layer.layer_z > b_layer.layer_z) {
                         return 1;
                     }
-                } else if (a_is_layer || b_is_layer) {
+                } else if (a_is_layer) {
+                    return -1;
+                } else if (b_is_layer) {
                     return 1;
                 }
                 const a_y = a.useHeightWhenSorting ? a.y + a.height : a.y;
