@@ -242,16 +242,7 @@ export class GoldenSun {
             this.dbs.npc_db[hero_key_name].dash_speed,
             this.dbs.npc_db[hero_key_name].climb_speed
         );
-        const hero_sprite_base = this.info.main_char_list[hero_key_name].sprite_base;
-        this.hero.set_sprite(this.middlelayer_group, hero_sprite_base, this.map.collision_layer, this.map);
-        this.hero.set_shadow("shadow", this.middlelayer_group, this.map.collision_layer, {
-            is_world_map: this.map.is_world_map,
-        });
-        if (this.map.is_world_map) {
-            this.hero.create_half_crop_mask();
-        }
-        this.camera.follow(this.hero);
-        this.hero.play();
+        this.hero.initialize();
 
         //initializes collision system
         this.collision = new Collision(this.game, this);
@@ -261,7 +252,7 @@ export class GoldenSun {
         this.collision.config_collisions(this.map.collision_layer);
         this.game.physics.p2.updateBoundsCollisionGroup();
 
-        //initialize screens
+        //initializes main menus
         this.shop_menu = new ShopMenu(this.game, this);
         this.inn_menu = new InnMenu(this.game, this);
         this.main_menu = initialize_menu(this.game, this);
@@ -420,6 +411,7 @@ export class GoldenSun {
         this.camera.update();
 
         //fps adjustment for faster monitors since requestAnimationFrame follows monitor frame rate
+        //(is this still necessary after Phaser update to 2.19?)
         if (
             this.game.time.fps > numbers.TARGET_FPS &&
             Math.abs(this.game.time.suggestedFps - this.game.time.desiredFps) > 10

@@ -254,6 +254,22 @@ export class Hero extends ControllableChar {
     }
 
     /**
+     * Initializes the hero.
+     */
+    initialize() {
+        const hero_sprite_base = this.data.info.main_char_list[this.key_name].sprite_base;
+        this.set_sprite(this.data.middlelayer_group, hero_sprite_base, this.data.map.collision_layer, this.data.map);
+        this.set_shadow("shadow", this.data.middlelayer_group, this.data.map.collision_layer, {
+            is_world_map: this.data.map.is_world_map,
+        });
+        if (this.data.map.is_world_map) {
+            this.create_half_crop_mask();
+        }
+        this.data.camera.follow(this);
+        this.play();
+    }
+
+    /**
      * The main hero update function.
      */
     update() {

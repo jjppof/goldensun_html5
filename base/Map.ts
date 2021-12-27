@@ -261,9 +261,7 @@ export class Map {
             } else if (a.base_collision_layer > b.base_collision_layer) {
                 return 1;
             } else {
-                const a_is_layer = a.hasOwnProperty("map");
-                const b_is_layer = b.hasOwnProperty("map");
-                if (a_is_layer && b_is_layer) {
+                if (a.is_tilemap_layer && b.is_tilemap_layer) {
                     const a_layer = a as Phaser.TilemapLayer;
                     const b_layer = b as Phaser.TilemapLayer;
                     if (a_layer.layer_z < b_layer.layer_z) {
@@ -271,9 +269,9 @@ export class Map {
                     } else if (a_layer.layer_z > b_layer.layer_z) {
                         return 1;
                     }
-                } else if (a_is_layer) {
+                } else if (a.is_tilemap_layer) {
                     return -1;
-                } else if (b_is_layer) {
+                } else if (b.is_tilemap_layer) {
                     return 1;
                 }
                 const a_y = a.useHeightWhenSorting ? a.y + a.height : a.y;
@@ -1166,6 +1164,7 @@ export class Map {
             if (!reorganize) {
                 layer_sprite = this.sprite.createLayer(layer_obj.name);
                 layer_sprite.layer_z = i;
+                layer_sprite.is_tilemap_layer = true;
                 layer_obj.sprite = layer_sprite;
                 layer_sprite.resizeWorld();
                 if (layer_obj.properties.blend_mode !== undefined) {

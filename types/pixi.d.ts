@@ -275,6 +275,7 @@ declare module PIXI {
         filters: AbstractFilter[];
         hitArea: HitArea;
         interactive: boolean;
+        is_tilemap_layer: boolean;
         mask: Phaser.Graphics;
         parent: DisplayObjectContainer;
         pivot: Point;
