@@ -30,13 +30,14 @@ function load_db_files(game) {
 
 function load_misc(game) {
     game.load.image("shadow", "assets/images/misc/shadow.jpg");
-    game.load.image("psynergy_aura", "assets/images/misc/psynergy_aura.png");
+    game.load.image("psynergy_aura", "assets/images/psynergies/psynergy_aura.png");
     game.load.atlasJSONHash("menu", "assets/images/misc/menu.png", "assets/images/misc/menu.json");
     game.load.image("frost_snowflake", "assets/images/interactable_objects/snowflake.png");
     game.load.image("djinn_ball", "assets/images/misc/djinn_ball.png");
     game.load.image("water_drop", "assets/images/misc/water_drop.png");
     game.load.image("star", "assets/images/interactable_objects/star.png");
-    game.load.image("mind_read_arrow", "assets/images/misc/mind_read_arrow.png");
+    game.load.image("mind_read_arrow", "assets/images/psynergies/mind_read_arrow.png");
+    game.load.image("lift_rock", "assets/images/interactable_objects/lift_rock.png");
     game.load.atlasJSONHash(
         "battle_effect_icons",
         "assets/images/icons/battle_effects/battle_effect_icons.png",

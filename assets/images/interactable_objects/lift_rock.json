@@ -1,0 +1,20 @@
+{"frames": {
+
+"lift/rock/00":
+{
+	"frame": {"x":1,"y":1,"w":25,"h":27},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":5,"w":25,"h":27},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "lift_rock.png",
+	"format": "RGBA8888",
+	"size": {"w":27,"h":29},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:07676d0d1125f87421f3850e9cccb610:0dcd61996999a4764658f178983ec982:04139db79a7dac57d6e0e2396631c7f8$"
+}
+}

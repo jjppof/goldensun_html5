@@ -30,8 +30,8 @@
                 "frames_count": 2,
                 "loop": true,
                 "spritesheet": {
-                    "image": "assets/images/misc/move_psynergy_hand.png",
-                    "json": "assets/images/misc/move_psynergy_hand.json"
+                    "image": "assets/images/psynergies/move_psynergy_hand.png",
+                    "json": "assets/images/psynergies/move_psynergy_hand.json"
                 }
             }
         }
@@ -51,8 +51,8 @@
                 "frames_count": 1,
                 "loop": false,
                 "spritesheet": {
-                    "image": "assets/images/misc/lash_psynergy_hand.png",
-                    "json": "assets/images/misc/lash_psynergy_hand.json"
+                    "image": "assets/images/psynergies/lash_psynergy_hand.png",
+                    "json": "assets/images/psynergies/lash_psynergy_hand.json"
                 }
             }
         }
@@ -99,8 +99,8 @@
                 "frames_count": [5, 3],
                 "loop": [true, false],
                 "spritesheet": {
-                    "image": "assets/images/misc/whirlwind.png",
-                    "json": "assets/images/misc/whirlwind.json"
+                    "image": "assets/images/psynergies/whirlwind.png",
+                    "json": "assets/images/psynergies/whirlwind.json"
                 }
             }
         }
@@ -151,8 +151,8 @@
                 "frames_count": 2,
                 "loop": false,
                 "spritesheet": {
-                    "image": "assets/images/misc/pound_psynergy_hand.png",
-                    "json": "assets/images/misc/pound_psynergy_hand.json"
+                    "image": "assets/images/psynergies/pound_psynergy_hand.png",
+                    "json": "assets/images/psynergies/pound_psynergy_hand.json"
                 }
             }
         }
@@ -172,6 +172,22 @@
                 "spritesheet": {
                     "image": "assets/images/interactable_objects/psynergy_particle.png",
                     "json": "assets/images/interactable_objects/psynergy_particle.json"
+                }
+            }
+        }
+    },
+    {
+        "key_name": "douse_cloud",
+        "initial_animation": "douse_cloud",
+        "actions": {
+            "psynergy_particle": {
+                "frame_rate": 5,
+                "animations": ["douse_cloud"],
+                "frames_count": 3,
+                "loop": true,
+                "spritesheet": {
+                    "image": "assets/images/psynergies/douse.png",
+                    "json": "assets/images/psynergies/douse.json"
                 }
             }
         }

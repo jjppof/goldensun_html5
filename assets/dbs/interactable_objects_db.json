@@ -246,8 +246,8 @@
             }
         },
         "spritesheet": {
-            "image": "assets/images/misc/rope_dock.png",
-            "json": "assets/images/misc/rope_dock.json"
+            "image": "assets/images/interactable_objects/rope_dock.png",
+            "json": "assets/images/interactable_objects/rope_dock.json"
         },
         "events": [{
             "type": "rope",
