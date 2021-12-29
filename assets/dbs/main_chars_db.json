@@ -242,7 +242,7 @@
             "jupiter": 86
         },
         "innate_abilities": ["frost", "douse"],
-        "in_party": false,
+        "in_party": true,
         "battle_scale": 0.95,
         "battle_shadow_key": "00",
         "status_sprite_shift": 15,
@@ -256,6 +256,10 @@
                 "equipped": true
             },{
                 "key_name": "thunder_crown",
+                "quantity": 1,
+                "equipped": true
+            },{
+                "key_name": "lifting_gem",
                 "quantity": 1,
                 "equipped": true
             },{

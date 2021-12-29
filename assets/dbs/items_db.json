@@ -225,7 +225,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet", "sheba"],
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
         "price": 20,
         "granted_ability": ""
     },{
@@ -353,9 +353,28 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet", "sheba"],
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
         "price": 0,
         "granted_ability": "frost"
+    },{
+        "key_name": "lifting_gem",
+        "name": "Lifting Gem",
+        "type": "ability_grantor",
+        "description": "Bestows Lift when equipped",
+        "use_type": "no_use",
+        "curses_when_equipped": false,
+        "cant_be_removed": false,
+        "rare_item": false,
+        "important_item": true,
+        "carry_up_to_30": false,
+        "effects": [],
+        "element": "no_element",
+        "unleash_ability": "",
+        "unleash_rate": 0,
+        "use_ability": "",
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
+        "price": 0,
+        "granted_ability": "lift"
     },{
         "key_name": "ice_crystal",
         "name": "Ice Crystal",
@@ -451,7 +470,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet", "sheba"],
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
         "price": 850,
         "granted_ability": ""
     },
@@ -471,7 +490,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "wish_well",
-        "equipable_chars": ["isaac", "garet", "sheba"],
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
         "price": 3600,
         "granted_ability": ""
     },
@@ -515,7 +534,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet", "sheba"],
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
         "price": 270,
         "granted_ability": ""
     },
@@ -539,7 +558,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet", "sheba"],
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
         "price": 30,
         "granted_ability": ""
     },
@@ -566,7 +585,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet", "sheba"],
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
         "price": 600,
         "granted_ability": ""
     },
@@ -593,7 +612,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet", "sheba"],
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
         "price": 2800,
         "granted_ability": ""
     },
@@ -638,7 +657,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet", "sheba"],
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
         "price": 30,
         "granted_ability": "",
         "granted_class_type": 15
@@ -658,7 +677,7 @@
         "unleash_ability": "",
         "unleash_rate": 0,
         "use_ability": "",
-        "equipable_chars": ["isaac", "garet", "sheba"],
+        "equipable_chars": ["isaac", "garet", "sheba", "piers"],
         "price": 0,
         "granted_ability": "pound"
     }

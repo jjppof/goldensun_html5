@@ -343,5 +343,21 @@
             "frames_count": [5, 4, 4],
             "loop": [false, true, true]
         }
+    },{
+        "key_name": "lift_rock",
+        "anchor_x": 0.5,
+        "anchor_y": 0.6,
+        "body_radius": 7.0,
+        "spritesheet": {
+            "image": "assets/images/interactable_objects/lift_rock.png",
+            "json": "assets/images/interactable_objects/lift_rock.json"
+        },
+        "initial_animation": "rock",
+        "actions": {
+            "frame_rate": 1,
+            "animations": ["rock"],
+            "frames_count": 1,
+            "loop": false
+        }
     }
 ]
