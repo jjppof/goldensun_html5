@@ -36,7 +36,8 @@ export class Pushable extends InteractableObjects {
         toggle_enable_events,
         label,
         allow_jumping_over_it,
-        allow_jumping_through_it
+        allow_jumping_through_it,
+        psynergies_info
     ) {
         super(
             game,
@@ -60,7 +61,8 @@ export class Pushable extends InteractableObjects {
             toggle_enable_events,
             label,
             allow_jumping_over_it,
-            allow_jumping_through_it
+            allow_jumping_through_it,
+            psynergies_info
         );
         this._pushable = true;
     }

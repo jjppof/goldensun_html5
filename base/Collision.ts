@@ -197,14 +197,15 @@ export class Collision {
      */
     check_char_collision(char: ControllableChar) {
         let normals = [];
-        for (let i = 0; i < this.game.physics.p2.world.narrowphase.contactEquations.length; ++i) {
-            const contact = this.game.physics.p2.world.narrowphase.contactEquations[i];
+        const contacts = this.game.physics.p2.world.narrowphase.contactEquations;
+        for (let i = 0; i < contacts.length; ++i) {
+            const contact = contacts[i];
             if (contact.bodyA === char.sprite.body.data) {
                 //check if char collided with something
                 normals.push(contact.normalA); //collision normals (one normal for each contact point)
             }
-            char.check_interactable_objects(contact);
         }
+        char.check_interactable_objects(contacts);
         //normals having length, means that a collision is happening
         char.colliding_directions_mask = normals.reduce((acc, normal) => {
             const angle = range_360(Math.atan2(-normal[1], -normal[0]));

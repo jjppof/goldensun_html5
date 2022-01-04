@@ -38,7 +38,8 @@ export class Breakable extends InteractableObjects {
         toggle_enable_events,
         label,
         allow_jumping_over_it,
-        allow_jumping_through_it
+        allow_jumping_through_it,
+        psynergies_info
     ) {
         super(
             game,
@@ -62,7 +63,8 @@ export class Breakable extends InteractableObjects {
             toggle_enable_events,
             label,
             allow_jumping_over_it,
-            allow_jumping_through_it
+            allow_jumping_through_it,
+            psynergies_info
         );
         this._breakable = true;
         this.one_level_broken = false;

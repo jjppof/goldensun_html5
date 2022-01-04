@@ -172,8 +172,7 @@ export abstract class FieldAbilities {
                 continue;
             }
             if (target_object.is_interactable_object) {
-                const db = this.data.dbs.interactable_objects_db[target_object.key_name];
-                if (!db.psynergy_keys || !(this.ability_key_name in db.psynergy_keys)) {
+                if (!(target_object as InteractableObjects).psynergies_info || !(this.ability_key_name in (target_object as InteractableObjects).psynergies_info)) {
                     continue;
                 }
             }
@@ -220,9 +219,8 @@ export abstract class FieldAbilities {
     set_target_casted() {
         if (this.target_object && this.target_object.is_interactable_object) {
             const target_object = this.target_object as InteractableObjects;
-            const db = this.data.dbs.interactable_objects_db[this.target_object.key_name];
-            if (db.psynergy_keys) {
-                const psynergy_properties = db.psynergy_keys[this.ability_key_name];
+            if (target_object.psynergies_info) {
+                const psynergy_properties = target_object.psynergies_info[this.ability_key_name];
                 if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
                     if (target_object.psynergy_casted[this.ability_key_name]) {
                         this.target_found = false;

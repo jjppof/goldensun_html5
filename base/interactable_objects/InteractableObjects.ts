@@ -94,6 +94,12 @@ export class InteractableObjects {
         event: GameEvent;
         on_enable: boolean;
     }[];
+    private _psynergies_info: {
+        [psynergy_key: string] : {
+            interaction_type: interactable_object_interaction_types,
+            [psynergy_specific_properties: string]: any
+        }
+    };
 
     constructor(
         game,
@@ -117,7 +123,8 @@ export class InteractableObjects {
         toggle_enable_events,
         label,
         allow_jumping_over_it,
-        allow_jumping_through_it
+        allow_jumping_through_it,
+        psynergies_info
     ) {
         this.game = game;
         this.data = data;
@@ -180,6 +187,7 @@ export class InteractableObjects {
         this._label = label;
         this.allow_jumping_over_it = allow_jumping_over_it ?? false;
         this.allow_jumping_through_it = allow_jumping_through_it ?? false;
+        this._psynergies_info = psynergies_info ?? {};
     }
 
     get key_name() {
@@ -267,6 +275,9 @@ export class InteractableObjects {
     }
     get is_interactable_object() {
         return true;
+    }
+    get psynergies_info() {
+        return this._psynergies_info;
     }
 
     position_allowed(x: number, y: number) {
@@ -415,16 +426,16 @@ export class InteractableObjects {
 
     initial_config(map: Map) {
         this._sprite_info = this.data.info.iter_objs_sprite_base_list[this.key_name];
-        const interactable_object_db = this.data.dbs.interactable_objects_db[this.key_name];
-        if (interactable_object_db.psynergy_keys) {
-            for (let psynergy_key in interactable_object_db.psynergy_keys) {
-                const psynergy_properties = interactable_object_db.psynergy_keys[psynergy_key];
+        if (this.psynergies_info) {
+            for (let psynergy_key in this.psynergies_info) {
+                const psynergy_properties = this.psynergies_info[psynergy_key];
                 if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
                     this.psynergy_casted[psynergy_key] = false;
                 }
             }
         }
         if (this.sprite_info) {
+            const interactable_object_db = this.data.dbs.interactable_objects_db[this.key_name];
             const interactable_object_key = this.sprite_info.getSpriteKey(this.key_name);
             const interactable_object_sprite = this.data.middlelayer_group.create(0, 0, interactable_object_key);
             this._sprite = interactable_object_sprite;

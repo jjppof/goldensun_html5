@@ -1346,29 +1346,31 @@ export abstract class ControllableChar {
      * Checks if this char is colliding with any interactable object and fire any possible interaction with it.
      * @param contact the p2.ContactEquation in order to check if a collision is happening.
      */
-    check_interactable_objects(contact: p2.ContactEquation) {
-        let j = 0;
-        for (j = 0; j < this.data.map.interactable_objects.length; ++j) {
-            //check if hero is colliding with any interactable object
-            const interactable_object = this.data.map.interactable_objects[j];
-            const interactable_object_body = interactable_object.sprite?.body;
-            if (!interactable_object_body || !interactable_object.enable) {
-                continue;
-            }
-            if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
-                if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
-                    if (interactable_object.pushable && (interactable_object as Pushable).check_and_start_push(this)) {
-                        break;
-                    } else if (
-                        interactable_object.rollable &&
-                        (interactable_object as RollablePillar).check_and_start_rolling(this)
-                    ) {
-                        break;
+    check_interactable_objects(contacts: p2.ContactEquation[]) {
+        contacts_check: {
+            for (let i = 0; i < this.data.map.interactable_objects.length; ++i) {
+                //check if hero is colliding with any interactable object
+                const interactable_object = this.data.map.interactable_objects[i];
+                const interactable_object_body = interactable_object.sprite?.body;
+                if (!interactable_object_body || !interactable_object.enable) {
+                    continue;
+                }
+                for (let j = 0; j < contacts.length; ++j) {
+                    const contact = contacts[j];
+                    if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
+                        if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
+                            if (interactable_object.pushable && (interactable_object as Pushable).check_and_start_push(this)) {
+                                break contacts_check;
+                            } else if (
+                                interactable_object.rollable &&
+                                (interactable_object as RollablePillar).check_and_start_rolling(this)
+                            ) {
+                                break contacts_check;
+                            }
+                        }
                     }
                 }
             }
-        }
-        if (j === this.data.map.interactable_objects.length) {
             this.trying_to_push = false;
         }
     }

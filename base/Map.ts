@@ -933,6 +933,7 @@ export class Map {
             const anchor_y = property_info.anchor_y ?? interactable_object_db.anchor_y;
             const scale_x = property_info.scale_x ?? interactable_object_db.scale_x;
             const scale_y = property_info.scale_y ?? interactable_object_db.scale_y;
+            const psynergies_info = _.merge(interactable_object_db.psynergies_info ?? {}, property_info.psynergies_info ?? {});
             const interactable_object = new io_class(
                 this.game,
                 this.data,
@@ -955,7 +956,8 @@ export class Map {
                 property_info.toggle_enable_events,
                 property_info.label,
                 allow_jumping_over_it,
-                allow_jumping_through_it
+                allow_jumping_through_it,
+                psynergies_info
             );
             if (interactable_object.is_rope_dock) {
                 (interactable_object as RopeDock).intialize_dock_info(

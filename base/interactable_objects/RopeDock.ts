@@ -77,7 +77,8 @@ export class RopeDock extends InteractableObjects {
         toggle_enable_events,
         label,
         allow_jumping_over_it,
-        allow_jumping_through_it
+        allow_jumping_through_it,
+        psynergies_info
     ) {
         super(
             game,
@@ -101,7 +102,8 @@ export class RopeDock extends InteractableObjects {
             toggle_enable_events,
             label,
             allow_jumping_over_it,
-            allow_jumping_through_it
+            allow_jumping_through_it,
+            psynergies_info
         );
         this._is_rope_dock = true;
         this._dest_rope_dock = null;

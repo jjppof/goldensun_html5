@@ -2,7 +2,7 @@
     {
         "key_name": "bush",
         "body_radius": 0,
-        "psynergy_keys": {
+        "psynergies_info": {
             "whirlwind": {
                 "interaction_type": "once"
             }
@@ -12,7 +12,7 @@
         "anchor_x": 0.5,
         "anchor_y": 0.8,
         "body_radius": 7.0,
-        "psynergy_keys": {
+        "psynergies_info": {
             "move": {
                 "interaction_type": "infinite"
             },
@@ -68,7 +68,7 @@
         "anchor_x": 0.5,
         "anchor_y": 0.8,
         "body_radius": 7.0,
-        "psynergy_keys": {
+        "psynergies_info": {
             "move": {
                 "interaction_type": "infinite"
             }
@@ -110,7 +110,7 @@
         "anchor_y": 0.85,
         "body_radius": 7.0,
         "send_to_back": true,
-        "psynergy_keys": {
+        "psynergies_info": {
             "frost": {
                 "interaction_type": "once"
             }
@@ -142,7 +142,7 @@
         "anchor_y": 0.8,
         "anchor_x": 0.5,
         "body_radius": 0,
-        "psynergy_keys": {
+        "psynergies_info": {
             "growth": {
                 "interaction_type": "once"
             }
@@ -174,7 +174,7 @@
         "scale_y": 0.78,
         "body_radius": 7.0,
         "send_to_back": false,
-        "psynergy_keys": {
+        "psynergies_info": {
             "pound": {
                 "interaction_type": "once"
             }
@@ -205,7 +205,7 @@
         "scale_y": 0.78,
         "body_radius": 7.0,
         "send_to_back": false,
-        "psynergy_keys": {
+        "psynergies_info": {
             "pound": {
                 "interaction_type": "once"
             }
@@ -240,7 +240,7 @@
         "pushable": false,
         "is_rope_dock": true,
         "allow_jumping_through_it": true,
-        "psynergy_keys": {
+        "psynergies_info": {
             "lash": {
                 "interaction_type": "once"
             }
@@ -348,6 +348,11 @@
         "anchor_x": 0.5,
         "anchor_y": 0.6,
         "body_radius": 7.0,
+        "psynergies_info": {
+            "lift": {
+                "interaction_type": "once"
+            }
+        },
         "spritesheet": {
             "image": "assets/images/interactable_objects/lift_rock.png",
             "json": "assets/images/interactable_objects/lift_rock.json"
