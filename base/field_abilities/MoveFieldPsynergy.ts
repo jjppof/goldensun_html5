@@ -297,7 +297,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                 this.stop_casting();
                 flip_timer.stop();
                 this.data.overlayer_group.remove(this.hand_sprite, false);
-                this.unset_emitter();
+                this.emitter.destroy();
             });
     }
 
@@ -344,10 +344,6 @@ export class MoveFieldPsynergy extends FieldAbilities {
         });
     }
 
-    unset_emitter() {
-        this.emitter.destroy();
-    }
-
     set_final_emitter() {
         const sprite_key = this.psynergy_particle_base.getSpriteKey("psynergy_particle");
         this.final_emitter_particles_count = 8;
@@ -371,13 +367,9 @@ export class MoveFieldPsynergy extends FieldAbilities {
             particle.animations.currentAnim.setFrame((Math.random() * particle.animations.frameTotal) | 0);
         });
         const vanish_timer = this.game.time.events.add(lifetime, () => {
-            this.unset_final_emitter();
+            this.final_emitter.destroy();
         });
         vanish_timer.timer.start();
-    }
-
-    unset_final_emitter() {
-        this.final_emitter.destroy();
     }
 
     unset_hue_shifter() {

@@ -638,7 +638,7 @@ export class Map {
     }
 
     /**
-     * Sets whether a tile should collide or not. Onlyy works if there's at least
+     * Sets whether a tile should collide or not. Only works if there's at least
      * on collision body in the given tile position.
      * @param tile_x_pos the x tile position.
      * @param tile_y_pos the y tile position.
