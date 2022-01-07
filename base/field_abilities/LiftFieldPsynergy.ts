@@ -51,8 +51,12 @@ export class LiftFieldPsynergy extends FieldAbilities {
         }
 
         this.init_hand_sprites();
+        await this.scale_hand_sprite_init(this.left_hand_sprite);
+        await this.scale_hand_sprite_init(this.right_hand_sprite);
         await this.hold_target_obj();
         await this.lift_target_obj();
+        await this.scale_hand_sprite_end(this.left_hand_sprite);
+        await this.scale_hand_sprite_end(this.right_hand_sprite);
 
         this.finish();
     }
@@ -68,6 +72,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
             0
         );
         this.left_hand_sprite.anchor.setTo(0.5, 0.5);
+        this.left_hand_sprite.scale.setTo(0, 0);
 
         this.right_hand_sprite = this.data.overlayer_group.create(0, 0, sprite_key);
         this.hand_sprite_base.setAnimation(this.right_hand_sprite, LiftFieldPsynergy.MOVE_HAND_KEY_NAME);
@@ -77,12 +82,54 @@ export class LiftFieldPsynergy extends FieldAbilities {
             0
         );
         this.right_hand_sprite.anchor.setTo(0.5, 0.5);
+        this.right_hand_sprite.scale.setTo(0, 0);
 
         this.left_hand_sprite.x = this.target_object.x - (this.target_object.width);
         this.left_hand_sprite.centerY = this.target_object.sprite.centerY;
 
         this.right_hand_sprite.x = this.target_object.x + (this.target_object.width);
         this.right_hand_sprite.centerY = this.target_object.sprite.centerY;
+    }
+
+    async scale_hand_sprite_init(hand_sprite: Phaser.Sprite) {
+        const flip_timer = this.game.time.create(false);
+        const fake_hand_scale = {x: 0};
+        flip_timer.loop(40, () => {
+            hand_sprite.scale.x = hand_sprite.scale.x > 0 ? -fake_hand_scale.x : fake_hand_scale.x;
+        });
+        flip_timer.start();
+        const time_value = 400;
+        this.game.add.tween(fake_hand_scale).to({x: 1}, time_value, Phaser.Easing.Linear.None, true);
+        let flip_resolve;
+        const flip_promise = new Promise(resolve => flip_resolve = resolve);
+        this.game.add
+            .tween(hand_sprite.scale)
+            .to({y: 1}, time_value, Phaser.Easing.Linear.None, true)
+            .onComplete.addOnce(flip_resolve);
+        await flip_promise;
+        flip_timer.destroy();
+        hand_sprite.scale.setTo(1, 1);
+    }
+
+    async scale_hand_sprite_end(hand_sprite: Phaser.Sprite) {
+        const flip_timer = this.game.time.create(false);
+        const fake_hand_scale = {x: 1};
+        flip_timer.loop(40, () => {
+            hand_sprite.scale.x = hand_sprite.scale.x > 0 ? -fake_hand_scale.x : fake_hand_scale.x;
+        });
+        flip_timer.start();
+        const y_shift = hand_sprite.y - 10;
+        const time_value = 400;
+        this.game.add.tween(hand_sprite).to({y: y_shift}, time_value, Phaser.Easing.Linear.None, true);
+        this.game.add.tween(fake_hand_scale).to({x: 0}, time_value, Phaser.Easing.Linear.None, true);
+        let flip_resolve;
+        const flip_promise = new Promise(resolve => flip_resolve = resolve);
+        this.game.add
+            .tween(hand_sprite.scale)
+            .to({y: 0}, time_value, Phaser.Easing.Linear.None, true)
+            .onComplete.addOnce(flip_resolve);
+        await flip_promise;
+        flip_timer.destroy();
     }
 
     async hold_target_obj() {
@@ -135,6 +182,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
             y: this.destination_y_pos
         }, true);
         this.target_object.change_collision_layer(this.destination_collision_layer, true);
+        this.target_object.allow_jumping_through_it = false;
         this.unset_hero_cast_anim();
         this.stop_casting();
     }
