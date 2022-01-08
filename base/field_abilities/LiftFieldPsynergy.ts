@@ -1,7 +1,8 @@
 import {FieldAbilities} from "./FieldAbilities";
-import {base_actions, directions, get_centered_pos_in_px, reverse_directions} from "../utils";
+import {base_actions, directions, get_centered_pos_in_px, promised_wait, reverse_directions} from "../utils";
 import {InteractableObjects} from "../interactable_objects/InteractableObjects";
 import { SpriteBase } from "../SpriteBase";
+import { degree360 } from "../magic_numbers";
 
 export class LiftFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "lift";
@@ -94,7 +95,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
     async scale_hand_sprite_init(hand_sprite: Phaser.Sprite) {
         const flip_timer = this.game.time.create(false);
         const fake_hand_scale = {x: 0};
-        flip_timer.loop(40, () => {
+        flip_timer.loop(50, () => {
             hand_sprite.scale.x = hand_sprite.scale.x > 0 ? -fake_hand_scale.x : fake_hand_scale.x;
         });
         flip_timer.start();
@@ -130,6 +131,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
             .onComplete.addOnce(flip_resolve);
         await flip_promise;
         flip_timer.destroy();
+        await this.set_final_emitter(hand_sprite);
     }
 
     async hold_target_obj() {
@@ -147,6 +149,17 @@ export class LiftFieldPsynergy extends FieldAbilities {
         }, hold_time, Phaser.Easing.Linear.None, true).onComplete.addOnce(right_resolve);
 
         await Promise.all([left_promise, right_promise]);
+
+        this.target_object.set_color_filter();
+        const target_hueshift_timer = this.game.time.create(false);
+        const target_object = this.target_object;
+        target_hueshift_timer.loop(5, () => {
+            target_object.color_filter.hue_adjust = Math.random() * degree360;
+        });
+        target_hueshift_timer.start();
+        this.target_object.add_unset_callback(() => {
+            target_hueshift_timer?.destroy();
+        });
     }
 
     async lift_target_obj() {
@@ -171,6 +184,38 @@ export class LiftFieldPsynergy extends FieldAbilities {
         }, lift_time, Phaser.Easing.Linear.None, true).onComplete.addOnce(right_resolve);
 
         await Promise.all([target_promise, left_promise, right_promise]);
+        this.set_permanent_tween();
+    }
+
+    async set_final_emitter(hand_sprite: Phaser.Sprite) {
+        const sprite_key = this.psynergy_particle_base.getSpriteKey("psynergy_particle");
+        const final_emitter_particles_count = 8;
+        const final_emitter = this.game.add.emitter(0, 0, final_emitter_particles_count);
+        final_emitter.makeParticles(sprite_key);
+        final_emitter.gravity = 300;
+        final_emitter.forEach((particle: Phaser.Sprite) => {
+            this.psynergy_particle_base.setAnimation(particle, "psynergy_particle");
+        });
+        final_emitter.x = hand_sprite.centerX;
+        final_emitter.y = hand_sprite.centerY;
+        const lifetime = Phaser.Timer.QUARTER;
+        final_emitter.start(true, lifetime, null, final_emitter_particles_count);
+        const anim_key = this.psynergy_particle_base.getAnimationKey("psynergy_particle", "vanish");
+        final_emitter.forEach((particle: Phaser.Sprite) => {
+            particle.animations.play(anim_key);
+            particle.animations.currentAnim.setFrame((Math.random() * particle.animations.frameTotal) | 0);
+        });
+        await promised_wait(this.game, lifetime);
+        final_emitter.destroy();
+    }
+
+    set_permanent_tween() {
+        const tween = this.game.add.tween(this.target_object.body).to({
+            y: this.target_object.y + 2
+        }, 500, Phaser.Easing.Linear.None, true, 0, -1, true);
+        this.target_object.add_unset_callback(() => {
+            tween?.stop();
+        });
     }
 
     update() {}

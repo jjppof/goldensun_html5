@@ -100,6 +100,7 @@ export class InteractableObjects {
             [psynergy_specific_properties: string]: any
         }
     };
+    private on_unset_callbacks: (() => void)[];
 
     constructor(
         game,
@@ -188,6 +189,7 @@ export class InteractableObjects {
         this.allow_jumping_over_it = allow_jumping_over_it ?? false;
         this.allow_jumping_through_it = allow_jumping_through_it ?? false;
         this._psynergies_info = psynergies_info ?? {};
+        this.on_unset_callbacks = [];
     }
 
     get key_name() {
@@ -902,6 +904,10 @@ export class InteractableObjects {
      */
     custom_unset() {}
 
+    add_unset_callback(callback: () => void) {
+        this.on_unset_callbacks.push(callback);
+    }
+
     unset(remove_from_middlelayer_group: boolean = true) {
         if (this.sprite) {
             this.sprite.destroy();
@@ -923,6 +929,7 @@ export class InteractableObjects {
         if (remove_from_middlelayer_group) {
             this.data.middlelayer_group.removeChild(this.sprite);
         }
+        this.on_unset_callbacks.forEach(c => c());
         this.custom_unset();
     }
 }
