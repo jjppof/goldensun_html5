@@ -196,7 +196,7 @@ export class InteractableObjects {
         this.allow_jumping_through_it = allow_jumping_through_it ?? false;
         this._psynergies_info = psynergies_info ?? {};
         this.on_unset_callbacks = [];
-        this._has_shadow = has_shadow;
+        this._has_shadow = has_shadow ?? false;
     }
 
     get key_name() {
