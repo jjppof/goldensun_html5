@@ -465,7 +465,7 @@ export abstract class ControllableChar {
     set_shadow(
         group: Phaser.Group,
         options?: {
-            key_name?: string,
+            key_name?: string;
             shadow_anchor_x?: number;
             shadow_anchor_y?: number;
             is_world_map?: boolean;
@@ -1354,9 +1354,15 @@ export abstract class ControllableChar {
                 }
                 for (let j = 0; j < contacts.length; ++j) {
                     const contact = contacts[j];
-                    if (contact.bodyA === interactable_object_body.data || contact.bodyB === interactable_object_body.data) {
+                    if (
+                        contact.bodyA === interactable_object_body.data ||
+                        contact.bodyB === interactable_object_body.data
+                    ) {
                         if (contact.bodyA === this.sprite.body.data || contact.bodyB === this.sprite.body.data) {
-                            if (interactable_object.pushable && (interactable_object as Pushable).check_and_start_push(this)) {
+                            if (
+                                interactable_object.pushable &&
+                                (interactable_object as Pushable).check_and_start_push(this)
+                            ) {
                                 break contacts_check;
                             } else if (
                                 interactable_object.rollable &&

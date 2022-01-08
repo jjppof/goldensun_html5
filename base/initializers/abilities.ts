@@ -10,7 +10,7 @@ import {GameInfo} from "./initialize_info";
 import {WhirlwindFieldPsynergy} from "../field_abilities/WhirlwindFieldPsynergy";
 import {RetreatFieldPsynergy} from "../field_abilities/RetreatFieldPsynergy";
 import {MindReadFieldPsynergy} from "../field_abilities/MindReadFieldPsynergy";
-import { LiftFieldPsynergy } from "../field_abilities/LiftFieldPsynergy";
+import {LiftFieldPsynergy} from "../field_abilities/LiftFieldPsynergy";
 
 export function initialize_abilities(
     game: Phaser.Game,

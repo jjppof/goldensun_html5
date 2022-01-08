@@ -100,10 +100,10 @@ export class InteractableObjects {
         on_enable: boolean;
     }[];
     private _psynergies_info: {
-        [psynergy_key: string] : {
-            interaction_type: interactable_object_interaction_types,
-            [psynergy_specific_properties: string]: any
-        }
+        [psynergy_key: string]: {
+            interaction_type: interactable_object_interaction_types;
+            [psynergy_specific_properties: string]: any;
+        };
     };
     private on_unset_callbacks: (() => void)[];
 
@@ -492,7 +492,7 @@ export class InteractableObjects {
     set_shadow(
         group: Phaser.Group,
         options?: {
-            key_name?: string,
+            key_name?: string;
             shadow_anchor_x?: number;
             shadow_anchor_y?: number;
             is_world_map?: boolean;

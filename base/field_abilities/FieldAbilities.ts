@@ -172,7 +172,10 @@ export abstract class FieldAbilities {
                 continue;
             }
             if (target_object.is_interactable_object) {
-                if (!(target_object as InteractableObjects).psynergies_info || !(this.ability_key_name in (target_object as InteractableObjects).psynergies_info)) {
+                if (
+                    !(target_object as InteractableObjects).psynergies_info ||
+                    !(this.ability_key_name in (target_object as InteractableObjects).psynergies_info)
+                ) {
                     continue;
                 }
             }

@@ -1,8 +1,15 @@
 import {FieldAbilities} from "./FieldAbilities";
-import {base_actions, directions, get_centered_pos_in_px, promised_wait, reverse_directions} from "../utils";
+import {
+    base_actions,
+    directions,
+    get_centered_pos_in_px,
+    get_front_position,
+    promised_wait,
+    reverse_directions,
+} from "../utils";
 import {InteractableObjects} from "../interactable_objects/InteractableObjects";
-import { SpriteBase } from "../SpriteBase";
-import { degree360 } from "../magic_numbers";
+import {SpriteBase} from "../SpriteBase";
+import {degree360} from "../magic_numbers";
 
 export class LiftFieldPsynergy extends FieldAbilities {
     private static readonly ABILITY_KEY_NAME = "lift";
@@ -39,31 +46,38 @@ export class LiftFieldPsynergy extends FieldAbilities {
     async init() {
         this.field_psynergy_window.close();
 
-        if (this.target_object.psynergies_info?.lift?.destination_y_pos) {
-            this.destination_y_pos = this.target_object.psynergies_info.lift.destination_y_pos;
+        if (this.target_found) {
+            if (this.target_object.psynergies_info?.lift?.destination_y_pos) {
+                this.destination_y_pos = this.target_object.psynergies_info.lift.destination_y_pos;
+            } else {
+                this.destination_y_pos = this.target_object.tile_y_pos - 2;
+            }
+
+            if (this.target_object.psynergies_info?.lift?.destination_collision_layer) {
+                this.destination_collision_layer = this.target_object.psynergies_info.lift.destination_collision_layer;
+            } else {
+                this.destination_collision_layer = this.target_object.base_collision_layer + 1;
+            }
+
+            this.init_hand_sprites();
+            await this.scale_hand_sprite_init(this.left_hand_sprite);
+            await this.scale_hand_sprite_init(this.right_hand_sprite);
+            await this.hold_target_obj();
+
+            if (this.target_object.has_shadow) {
+                this.target_object.shadow.sort_function = null;
+                this.target_object.shadow.send_to_back = true;
+            }
+
+            await this.lift_target_obj();
+            await this.scale_hand_sprite_end(this.left_hand_sprite);
+            await this.scale_hand_sprite_end(this.right_hand_sprite);
         } else {
-            this.destination_y_pos = this.target_object.tile_y_pos - 2;
+            this.init_hand_sprites();
+            await this.scale_hand_sprite_init(this.left_hand_sprite);
+            await this.scale_hand_sprite_init(this.right_hand_sprite);
+            await this.hold_target_obj();
         }
-
-        if (this.target_object.psynergies_info?.lift?.destination_collision_layer) {
-            this.destination_collision_layer = this.target_object.psynergies_info.lift.destination_collision_layer;
-        } else {
-            this.destination_collision_layer = this.target_object.base_collision_layer + 1;
-        }
-
-        this.init_hand_sprites();
-        await this.scale_hand_sprite_init(this.left_hand_sprite);
-        await this.scale_hand_sprite_init(this.right_hand_sprite);
-        await this.hold_target_obj();
-
-        if (this.target_object.has_shadow) {
-            this.target_object.shadow.sort_function = null;
-            this.target_object.shadow.send_to_back = true;
-        }
-
-        await this.lift_target_obj();
-        await this.scale_hand_sprite_end(this.left_hand_sprite);
-        await this.scale_hand_sprite_end(this.right_hand_sprite);
 
         this.finish();
     }
@@ -91,11 +105,28 @@ export class LiftFieldPsynergy extends FieldAbilities {
         this.right_hand_sprite.anchor.setTo(0.5, 0.5);
         this.right_hand_sprite.scale.setTo(0, 0);
 
-        this.left_hand_sprite.x = this.target_object.x - (this.target_object.width);
-        this.left_hand_sprite.centerY = this.target_object.sprite.centerY;
+        let left_x, right_x, y_pos;
+        if (this.target_found) {
+            left_x = this.target_object.x - this.target_object.width;
+            right_x = this.target_object.x + this.target_object.width;
+            y_pos = this.target_object.sprite.centerY;
+        } else {
+            const front_pos = get_front_position(
+                this.controllable_char.tile_x_pos,
+                this.controllable_char.tile_y_pos,
+                this.cast_direction
+            );
+            const front_pos_x_px = get_centered_pos_in_px(front_pos.x, this.data.map.tile_width);
+            left_x = front_pos_x_px - (this.data.map.tile_width << 1);
+            right_x = front_pos_x_px + (this.data.map.tile_width << 1);
+            y_pos = get_centered_pos_in_px(front_pos.y, this.data.map.tile_height) - (this.data.map.tile_height >> 1);
+        }
 
-        this.right_hand_sprite.x = this.target_object.x + (this.target_object.width);
-        this.right_hand_sprite.centerY = this.target_object.sprite.centerY;
+        this.left_hand_sprite.x = left_x;
+        this.left_hand_sprite.centerY = y_pos;
+
+        this.right_hand_sprite.x = right_x;
+        this.right_hand_sprite.centerY = y_pos;
     }
 
     async scale_hand_sprite_init(hand_sprite: Phaser.Sprite) {
@@ -108,7 +139,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
         const time_value = 400;
         this.game.add.tween(fake_hand_scale).to({x: 1}, time_value, Phaser.Easing.Linear.None, true);
         let flip_resolve;
-        const flip_promise = new Promise(resolve => flip_resolve = resolve);
+        const flip_promise = new Promise(resolve => (flip_resolve = resolve));
         this.game.add
             .tween(hand_sprite.scale)
             .to({y: 1}, time_value, Phaser.Easing.Linear.None, true)
@@ -130,7 +161,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
         this.game.add.tween(hand_sprite).to({y: y_shift}, time_value, Phaser.Easing.Linear.None, true);
         this.game.add.tween(fake_hand_scale).to({x: 0}, time_value, Phaser.Easing.Linear.None, true);
         let flip_resolve;
-        const flip_promise = new Promise(resolve => flip_resolve = resolve);
+        const flip_promise = new Promise(resolve => (flip_resolve = resolve));
         this.game.add
             .tween(hand_sprite.scale)
             .to({y: 0}, time_value, Phaser.Easing.Linear.None, true)
@@ -141,31 +172,67 @@ export class LiftFieldPsynergy extends FieldAbilities {
     }
 
     async hold_target_obj() {
+        let left_x, right_x;
+        if (this.target_found) {
+            left_x = this.target_object.x - (this.target_object.width >> 1);
+            right_x = this.target_object.x + (this.target_object.width >> 1);
+        } else {
+            const front_pos = get_front_position(
+                this.controllable_char.tile_x_pos,
+                this.controllable_char.tile_y_pos,
+                this.cast_direction
+            );
+            right_x = left_x = get_centered_pos_in_px(front_pos.x, this.data.map.tile_width);
+        }
         const hold_time = 150;
         let left_resolve;
-        const left_promise = new Promise(resolve => left_resolve = resolve);
-        this.game.add.tween(this.left_hand_sprite).to({
-            x: this.target_object.x - (this.target_object.width >> 1)
-        }, hold_time, Phaser.Easing.Linear.None, true).onComplete.addOnce(left_resolve);
+        const left_promise = new Promise(resolve => (left_resolve = resolve));
+        this.game.add
+            .tween(this.left_hand_sprite)
+            .to(
+                {
+                    x: left_x,
+                },
+                hold_time,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(left_resolve);
 
         let right_resolve;
-        const right_promise = new Promise(resolve => right_resolve = resolve);
-        this.game.add.tween(this.right_hand_sprite).to({
-            x: this.target_object.x + (this.target_object.width >> 1)
-        }, hold_time, Phaser.Easing.Linear.None, true).onComplete.addOnce(right_resolve);
+        const right_promise = new Promise(resolve => (right_resolve = resolve));
+        this.game.add
+            .tween(this.right_hand_sprite)
+            .to(
+                {
+                    x: right_x,
+                },
+                hold_time,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(right_resolve);
 
         await Promise.all([left_promise, right_promise]);
 
-        this.target_object.set_color_filter();
-        const target_hueshift_timer = this.game.time.create(false);
-        const target_object = this.target_object;
-        target_hueshift_timer.loop(5, () => {
-            target_object.color_filter.hue_adjust = Math.random() * degree360;
-        });
-        target_hueshift_timer.start();
-        this.target_object.add_unset_callback(() => {
-            target_hueshift_timer?.destroy();
-        });
+        if (this.target_found) {
+            this.target_object.set_color_filter();
+            const target_hueshift_timer = this.game.time.create(false);
+            const target_object = this.target_object;
+            target_hueshift_timer.loop(5, () => {
+                target_object.color_filter.hue_adjust = Math.random() * degree360;
+            });
+            target_hueshift_timer.start();
+            this.target_object.add_unset_callback(() => {
+                target_hueshift_timer?.destroy();
+            });
+        } else {
+            this.left_hand_sprite.destroy();
+            this.right_hand_sprite.destroy();
+            const left_prom = this.set_final_emitter(this.left_hand_sprite);
+            const right_prom = this.set_final_emitter(this.right_hand_sprite);
+            await Promise.all([left_prom, right_prom]);
+        }
     }
 
     async lift_target_obj() {
@@ -174,20 +241,44 @@ export class LiftFieldPsynergy extends FieldAbilities {
         const delta_y = this.left_hand_sprite.centerY - target_y;
 
         let target_resolve;
-        const target_promise = new Promise(resolve => target_resolve = resolve);
-        this.game.add.tween(this.target_object.body).to({
-            y: this.target_object.sprite.y - delta_y
-        }, lift_time, Phaser.Easing.Linear.None, true).onComplete.addOnce(target_resolve);
+        const target_promise = new Promise(resolve => (target_resolve = resolve));
+        this.game.add
+            .tween(this.target_object.body)
+            .to(
+                {
+                    y: this.target_object.sprite.y - delta_y,
+                },
+                lift_time,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(target_resolve);
         let left_resolve;
-        const left_promise = new Promise(resolve => left_resolve = resolve);
-        this.game.add.tween(this.left_hand_sprite).to({
-            centerY: target_y
-        }, lift_time, Phaser.Easing.Linear.None, true).onComplete.addOnce(left_resolve);
+        const left_promise = new Promise(resolve => (left_resolve = resolve));
+        this.game.add
+            .tween(this.left_hand_sprite)
+            .to(
+                {
+                    centerY: target_y,
+                },
+                lift_time,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(left_resolve);
         let right_resolve;
-        const right_promise = new Promise(resolve => right_resolve = resolve);
-        this.game.add.tween(this.right_hand_sprite).to({
-            centerY: target_y
-        }, lift_time, Phaser.Easing.Linear.None, true).onComplete.addOnce(right_resolve);
+        const right_promise = new Promise(resolve => (right_resolve = resolve));
+        this.game.add
+            .tween(this.right_hand_sprite)
+            .to(
+                {
+                    centerY: target_y,
+                },
+                lift_time,
+                Phaser.Easing.Linear.None,
+                true
+            )
+            .onComplete.addOnce(right_resolve);
 
         await Promise.all([target_promise, left_promise, right_promise]);
         this.set_permanent_tween();
@@ -198,7 +289,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
         const final_emitter_particles_count = 8;
         const final_emitter = this.game.add.emitter(0, 0, final_emitter_particles_count);
         final_emitter.makeParticles(sprite_key);
-        final_emitter.gravity = 300;
+        final_emitter.gravity = 200;
         final_emitter.forEach((particle: Phaser.Sprite) => {
             this.psynergy_particle_base.setAnimation(particle, "psynergy_particle");
         });
@@ -216,9 +307,17 @@ export class LiftFieldPsynergy extends FieldAbilities {
     }
 
     set_permanent_tween() {
-        const tween = this.game.add.tween(this.target_object.body).to({
-            y: this.target_object.y + 2
-        }, 500, Phaser.Easing.Linear.None, true, 0, -1, true);
+        const tween = this.game.add.tween(this.target_object.body).to(
+            {
+                y: this.target_object.y + 2,
+            },
+            500,
+            Phaser.Easing.Linear.None,
+            true,
+            0,
+            -1,
+            true
+        );
         this.target_object.add_unset_callback(() => {
             tween?.stop();
         });
@@ -229,11 +328,16 @@ export class LiftFieldPsynergy extends FieldAbilities {
     finish() {
         this.left_hand_sprite?.destroy();
         this.right_hand_sprite?.destroy();
-        this.target_object.set_tile_position({
-            y: this.destination_y_pos
-        }, true);
-        this.target_object.change_collision_layer(this.destination_collision_layer, true);
-        this.target_object.allow_jumping_through_it = false;
+        if (this.target_found) {
+            this.target_object.set_tile_position(
+                {
+                    y: this.destination_y_pos,
+                },
+                true
+            );
+            this.target_object.change_collision_layer(this.destination_collision_layer, true);
+            this.target_object.allow_jumping_through_it = false;
+        }
         this.unset_hero_cast_anim();
         this.stop_casting();
     }

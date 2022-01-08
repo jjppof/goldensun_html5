@@ -934,7 +934,10 @@ export class Map {
             const scale_x = property_info.scale_x ?? interactable_object_db.scale_x;
             const scale_y = property_info.scale_y ?? interactable_object_db.scale_y;
             const has_shadow = property_info.has_shadow ?? interactable_object_db.has_shadow;
-            const psynergies_info = _.merge(interactable_object_db.psynergies_info ?? {}, property_info.psynergies_info ?? {});
+            const psynergies_info = _.merge(
+                interactable_object_db.psynergies_info ?? {},
+                property_info.psynergies_info ?? {}
+            );
             const interactable_object = new io_class(
                 this.game,
                 this.data,
