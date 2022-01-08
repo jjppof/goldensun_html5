@@ -1056,8 +1056,10 @@ export abstract class ControllableChar {
             this.sprite.body.velocity.y = this.sprite.body.velocity.x = 0;
         }
         if (change_sprite) {
-            this._current_action = base_actions.IDLE;
-            this.play_current_action();
+            if (this.sprite_info.hasAction(base_actions.IDLE)) {
+                this._current_action = base_actions.IDLE;
+                this.play_current_action();
+            }
         }
     }
 
