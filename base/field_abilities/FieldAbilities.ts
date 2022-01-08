@@ -276,7 +276,12 @@ export abstract class FieldAbilities {
                         map_colors_sequence: this.map_colors_sequence,
                     });
                 }
-
+                if (this.target_found && this.target_object.is_interactable_object) {
+                    const events = (this.target_object as InteractableObjects).before_psynergy_cast_events[
+                        this.ability_key_name
+                    ];
+                    events?.forEach(e => e.fire());
+                }
                 this.bootstrap_method();
             },
             //after_destroy
@@ -284,6 +289,14 @@ export abstract class FieldAbilities {
                 this.game.physics.p2.resume();
                 if (reset_casting_psy_flag) {
                     this.controllable_char.casting_psynergy = false;
+                }
+                if (this.target_found && this.target_object.is_interactable_object) {
+                    const events = (this.target_object as InteractableObjects).after_psynergy_cast_events[
+                        this.ability_key_name
+                    ];
+                    events?.forEach(e => e.fire());
+                }
+                if (reset_casting_psy_flag) {
                     this.target_object = null;
                 }
             },

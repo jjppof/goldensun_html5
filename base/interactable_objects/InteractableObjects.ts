@@ -17,6 +17,7 @@ import {GoldenSun} from "../GoldenSun";
 import {Map} from "../Map";
 import {RopeEvent} from "../tile_events/RopeEvent";
 import {GameEvent} from "../game_events/GameEvent";
+import {LiftFieldPsynergy} from "../field_abilities/LiftFieldPsynergy";
 
 export enum interactable_object_interaction_types {
     ONCE = "once",
@@ -102,10 +103,20 @@ export class InteractableObjects {
     private _psynergies_info: {
         [psynergy_key: string]: {
             interaction_type: interactable_object_interaction_types;
+            destination_y_pos: LiftFieldPsynergy["destination_y_pos"];
+            destination_collision_layer: LiftFieldPsynergy["destination_collision_layer"];
+            before_psynergy_cast_events: any[];
+            after_psynergy_cast_events: any[];
             [psynergy_specific_properties: string]: any;
         };
     };
     private on_unset_callbacks: (() => void)[];
+    private _before_psynergy_cast_events: {
+        [psynergy_key: string]: GameEvent[];
+    };
+    private _after_psynergy_cast_events: {
+        [psynergy_key: string]: GameEvent[];
+    };
 
     constructor(
         game,
@@ -197,6 +208,8 @@ export class InteractableObjects {
         this._psynergies_info = psynergies_info ?? {};
         this.on_unset_callbacks = [];
         this._has_shadow = has_shadow ?? false;
+        this._before_psynergy_cast_events = {};
+        this._after_psynergy_cast_events = {};
     }
 
     get key_name() {
@@ -293,6 +306,12 @@ export class InteractableObjects {
     }
     get has_shadow() {
         return this._has_shadow;
+    }
+    get before_psynergy_cast_events() {
+        return this._before_psynergy_cast_events;
+    }
+    get after_psynergy_cast_events() {
+        return this._after_psynergy_cast_events;
     }
 
     position_allowed(x: number, y: number) {
@@ -449,6 +468,26 @@ export class InteractableObjects {
                 const psynergy_properties = this.psynergies_info[psynergy_key];
                 if (psynergy_properties.interaction_type === interactable_object_interaction_types.ONCE) {
                     this.psynergy_casted[psynergy_key] = false;
+                }
+                if (psynergy_properties.after_psynergy_cast_events) {
+                    if (!this.after_psynergy_cast_events.hasOwnProperty(psynergy_key)) {
+                        this.after_psynergy_cast_events[psynergy_key] = [];
+                    }
+                    psynergy_properties.after_psynergy_cast_events.forEach(event_info => {
+                        this.after_psynergy_cast_events[psynergy_key].push(
+                            this.data.game_event_manager.get_event_instance(event_info)
+                        );
+                    });
+                }
+                if (psynergy_properties.before_psynergy_cast_events) {
+                    if (!this.before_psynergy_cast_events.hasOwnProperty(psynergy_key)) {
+                        this.before_psynergy_cast_events[psynergy_key] = [];
+                    }
+                    psynergy_properties.before_psynergy_cast_events.forEach(event_info => {
+                        this.before_psynergy_cast_events[psynergy_key].push(
+                            this.data.game_event_manager.get_event_instance(event_info)
+                        );
+                    });
                 }
             }
         }
@@ -997,6 +1036,14 @@ export class InteractableObjects {
             this.data.middlelayer_group.removeChild(this.sprite);
         }
         this.on_unset_callbacks.forEach(c => c());
+        for (let psynergy_key in this.after_psynergy_cast_events) {
+            this.after_psynergy_cast_events[psynergy_key].forEach(e => e.destroy());
+        }
+        this._after_psynergy_cast_events = null;
+        for (let psynergy_key in this.before_psynergy_cast_events) {
+            this.before_psynergy_cast_events[psynergy_key].forEach(e => e.destroy());
+        }
+        this._before_psynergy_cast_events = null;
         this.custom_unset();
     }
 }
