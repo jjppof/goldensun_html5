@@ -347,6 +347,7 @@
         "key_name": "lift_rock",
         "anchor_x": 0.5,
         "anchor_y": 0.6,
+        "has_shadow": true,
         "body_radius": 7.0,
         "psynergies_info": {
             "lift": {

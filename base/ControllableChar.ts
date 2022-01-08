@@ -459,22 +459,19 @@ export abstract class ControllableChar {
 
     /**
      * Initialize the shadow sprite of this char.
-     * @param key_name the shadow sprite key name.
      * @param group the group where the shadow sprite is going to be inserted.
-     * @param layer the collision layer where the shadow is.
-     * @param options optional options to be set like anchor values and whether it's a world map.
+     * @param options options to be set like anchor values and whether it's a world map.
      */
     set_shadow(
-        key_name: string,
         group: Phaser.Group,
-        layer: number,
-        options: {
+        options?: {
+            key_name?: string,
             shadow_anchor_x?: number;
             shadow_anchor_y?: number;
             is_world_map?: boolean;
         }
     ) {
-        key_name = key_name ?? ControllableChar.DEFAULT_SHADOW_KEYNAME;
+        const key_name = options?.key_name ?? ControllableChar.DEFAULT_SHADOW_KEYNAME;
         const shadow_anchor_x = options?.shadow_anchor_x ?? ControllableChar.DEFAULT_SHADOW_ANCHOR_X;
         const shadow_anchor_y = options?.shadow_anchor_y ?? ControllableChar.DEFAULT_SHADOW_ANCHOR_Y;
         this.shadow = group.create(0, 0, key_name);
@@ -500,7 +497,7 @@ export abstract class ControllableChar {
         this.shadow.blendMode = PIXI.blendModes.MULTIPLY;
         this.shadow.disableRoundPx = true;
         this.shadow.anchor.setTo(shadow_anchor_x, shadow_anchor_y);
-        this.shadow.base_collision_layer = layer;
+        this.shadow.base_collision_layer = this.collision_layer;
         const scale_x = options?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
         const scale_y = options?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
         this.shadow.scale.setTo(scale_x, scale_y);

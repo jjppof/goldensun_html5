@@ -55,6 +55,12 @@ export class LiftFieldPsynergy extends FieldAbilities {
         await this.scale_hand_sprite_init(this.left_hand_sprite);
         await this.scale_hand_sprite_init(this.right_hand_sprite);
         await this.hold_target_obj();
+
+        if (this.target_object.has_shadow) {
+            this.target_object.shadow.sort_function = null;
+            this.target_object.shadow.send_to_back = true;
+        }
+
         await this.lift_target_obj();
         await this.scale_hand_sprite_end(this.left_hand_sprite);
         await this.scale_hand_sprite_end(this.right_hand_sprite);

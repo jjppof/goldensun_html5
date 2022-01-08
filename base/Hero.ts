@@ -259,7 +259,7 @@ export class Hero extends ControllableChar {
     initialize() {
         const hero_sprite_base = this.data.info.main_char_list[this.key_name].sprite_base;
         this.set_sprite(this.data.middlelayer_group, hero_sprite_base, this.data.map.collision_layer, this.data.map);
-        this.set_shadow("shadow", this.data.middlelayer_group, this.data.map.collision_layer, {
+        this.set_shadow(this.data.middlelayer_group, {
             is_world_map: this.data.map.is_world_map,
         });
         if (this.data.map.is_world_map) {

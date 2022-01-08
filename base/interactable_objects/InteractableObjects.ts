@@ -33,6 +33,9 @@ export enum interactable_object_event_types {
 export class InteractableObjects {
     private static readonly BUSH_KEY = "bush";
     private static readonly BUSH_FRAME = "leaves/bush/00";
+    private static readonly DEFAULT_SHADOW_KEYNAME = "shadow";
+    private static readonly DEFAULT_SHADOW_ANCHOR_X = 0.45;
+    private static readonly DEFAULT_SHADOW_ANCHOR_Y = 0.05;
 
     protected game: Phaser.Game;
     protected data: GoldenSun;
@@ -41,6 +44,8 @@ export class InteractableObjects {
     private not_allowed_tiles: {x: number; y: number}[];
     private events_id: Set<TileEvent["id"]>;
     private collision_change_functions: Function[];
+    private _shadow: Phaser.Sprite;
+    private _has_shadow: boolean;
     private anchor_x: number;
     private anchor_y: number;
     private scale_x: number;
@@ -125,7 +130,8 @@ export class InteractableObjects {
         label,
         allow_jumping_over_it,
         allow_jumping_through_it,
-        psynergies_info
+        psynergies_info,
+        has_shadow
     ) {
         this.game = game;
         this.data = data;
@@ -190,6 +196,7 @@ export class InteractableObjects {
         this.allow_jumping_through_it = allow_jumping_through_it ?? false;
         this._psynergies_info = psynergies_info ?? {};
         this.on_unset_callbacks = [];
+        this._has_shadow = has_shadow;
     }
 
     get key_name() {
@@ -280,6 +287,12 @@ export class InteractableObjects {
     }
     get psynergies_info() {
         return this._psynergies_info;
+    }
+    get shadow() {
+        return this._shadow;
+    }
+    get has_shadow() {
+        return this._has_shadow;
     }
 
     position_allowed(x: number, y: number) {
@@ -378,6 +391,9 @@ export class InteractableObjects {
         }
         this._base_collision_layer = destination_collision_layer;
         this.sprite.base_collision_layer = destination_collision_layer;
+        if (this.has_shadow) {
+            this.shadow.base_collision_layer = destination_collision_layer;
+        }
         //the below statement may change the events activation layers too
         this.collision_change_functions.forEach(f => f());
     }
@@ -463,6 +479,57 @@ export class InteractableObjects {
         if (this.entangled_by_bush) {
             this.init_bush(map);
         }
+        if (this.has_shadow) {
+            this.set_shadow(this.data.middlelayer_group);
+        }
+    }
+
+    /**
+     * Initialize the shadow sprite of this IO.
+     * @param group the group where the shadow sprite is going to be inserted.
+     * @param options options to be set like anchor values and whether it's a world map.
+     */
+    set_shadow(
+        group: Phaser.Group,
+        options?: {
+            key_name?: string,
+            shadow_anchor_x?: number;
+            shadow_anchor_y?: number;
+            is_world_map?: boolean;
+        }
+    ) {
+        const key_name = options?.key_name ?? InteractableObjects.DEFAULT_SHADOW_KEYNAME;
+        const shadow_anchor_x = options?.shadow_anchor_x ?? InteractableObjects.DEFAULT_SHADOW_ANCHOR_X;
+        const shadow_anchor_y = options?.shadow_anchor_y ?? InteractableObjects.DEFAULT_SHADOW_ANCHOR_Y;
+        this._shadow = group.create(0, 0, key_name);
+        this.shadow.sort_function = () => {
+            if (
+                this.data.middlelayer_group.getChildIndex(this.shadow) >
+                this.data.middlelayer_group.getChildIndex(this.sprite)
+            ) {
+                this.data.middlelayer_group.setChildIndex(
+                    this.shadow,
+                    this.data.middlelayer_group.getChildIndex(this.sprite)
+                );
+            } else {
+                this.data.middlelayer_group.setChildIndex(
+                    this.shadow,
+                    this.data.middlelayer_group.getChildIndex(this.sprite) - 1
+                );
+            }
+        };
+        if (!this.active) {
+            this.shadow.visible = false;
+        }
+        this.shadow.blendMode = PIXI.blendModes.MULTIPLY;
+        this.shadow.disableRoundPx = true;
+        this.shadow.anchor.setTo(shadow_anchor_x, shadow_anchor_y);
+        this.shadow.base_collision_layer = this.base_collision_layer;
+        const scale_x = options?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_X : 1;
+        const scale_y = options?.is_world_map ? numbers.WORLD_MAP_SPRITE_SCALE_Y : 1;
+        this.shadow.scale.setTo(scale_x, scale_y);
+        this.shadow.x = this.x;
+        this.shadow.y = this.y;
     }
 
     init_bush(map: Map) {

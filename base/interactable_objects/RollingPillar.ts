@@ -48,7 +48,8 @@ export class RollablePillar extends InteractableObjects {
         label,
         allow_jumping_over_it,
         allow_jumping_through_it,
-        psynergies_info
+        psynergies_info,
+        has_shadow
     ) {
         super(
             game,
@@ -73,7 +74,8 @@ export class RollablePillar extends InteractableObjects {
             label,
             allow_jumping_over_it,
             allow_jumping_through_it,
-            psynergies_info
+            psynergies_info,
+            has_shadow
         );
         this._rollable = true;
         this._pillar_is_stuck = false;
