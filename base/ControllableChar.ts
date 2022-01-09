@@ -129,7 +129,8 @@ export abstract class ControllableChar {
     /** Whether the shadow is following or not this char. */
     public shadow_following: boolean;
 
-    private _color_filter: Phaser.Filter;
+    private _color_filter: any;
+    private _outline_filter: any;
     protected _push_timer: Phaser.Timer;
     private _footsteps: Footsteps;
     protected look_target: ControllableChar = null;
@@ -219,6 +220,7 @@ export abstract class ControllableChar {
         this._transition_direction = this.current_direction;
         this._ice_slide_direction = null;
         this._color_filter = this.game.add.filter("ColorFilters");
+        this._outline_filter = this.game.add.filter("Outline");
         this.trying_to_push = false;
         this._trying_to_push_direction = null;
         this._push_timer = null;
@@ -307,6 +309,10 @@ export abstract class ControllableChar {
     /** The Phaser.Filter that controls the color texture of this char sprite. */
     get color_filter() {
         return this._color_filter;
+    }
+    /** The Phaser.Filter that avtivates an oouotline in this char sprite. */
+    get outline_filter() {
+        return this._outline_filter;
     }
     /** The Footsteps object (in the case this char is letting footprints in the ground). */
     get footsteps() {
@@ -1035,6 +1041,56 @@ export abstract class ControllableChar {
             this.sprite.mask.y = this.sprite.centerY - (this.sprite.height >> 1);
             if (this.data.map.is_world_map) {
                 this.check_half_crop_tile(force);
+            }
+        }
+    }
+
+    /**
+     * Sets or unsets an outline in this char. You can also use this function to update options.
+     * Otherwise, use ControllableChar.outline_filter directly.
+     * @param activate whether you want to activate the outline or not.
+     * @param options some options.
+     */
+    set_outline(
+        activate: boolean,
+        options?: {
+            /** The red color component of the outline. 0 to 1. Default 1. */
+            r?: number;
+            /** The green color component of the outline. 0 to 1. Default 1. */
+            g?: number;
+            /** The blue color component of the outline. 0 to 1. Default 1. */
+            b?: number;
+            /** If this property is true, the char will be transparent expect by the outline. Default false. */
+            keep_transparent?: boolean;
+        }
+    ) {
+        if (activate) {
+            if (this.sprite.filters && !this.sprite.filters.includes(this.outline_filter)) {
+                this.sprite.filters.push(this.outline_filter);
+            } else if (!this.sprite.filters) {
+                this.sprite.filters = [this.outline_filter];
+            }
+            this.outline_filter.texture_width = this.sprite.texture.baseTexture.width;
+            this.outline_filter.texture_height = this.sprite.texture.baseTexture.height;
+            if (options?.r !== undefined) {
+                this.outline_filter.r = options.r;
+            }
+            if (options?.g !== undefined) {
+                this.outline_filter.g = options.g;
+            }
+            if (options?.b !== undefined) {
+                this.outline_filter.b = options.b;
+            }
+            if (options?.keep_transparent !== undefined) {
+                this.outline_filter.keep_transparent = options.keep_transparent;
+            }
+        } else {
+            if (this.sprite.filters.includes(this.outline_filter)) {
+                if (this.sprite.filters.length === 1) {
+                    this.sprite.filters = undefined;
+                } else {
+                    this.sprite.filters = this.sprite.filters.filter(f => f !== this.outline_filter);
+                }
             }
         }
     }
