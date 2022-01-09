@@ -29,7 +29,7 @@ export class IOAnimPlayEvent extends GameEvent {
         this.origin_npc = oringin_npc;
 
         const interactable_object = this.data.map.interactable_objects_label_map[this.io_label];
-        const animation = interactable_object.play(this.action, this.animation, this.frame_rate, this.loop);
+        const animation = interactable_object.play(this.animation, this.action, this.frame_rate, this.loop);
         if (!animation.loop) {
             ++this.data.game_event_manager.events_running_count;
             animation.onComplete.addOnce(() => {

@@ -79,7 +79,9 @@ export class RopeDock extends InteractableObjects {
         allow_jumping_over_it,
         allow_jumping_through_it,
         psynergies_info,
-        has_shadow
+        has_shadow,
+        animation,
+        action
     ) {
         super(
             game,
@@ -105,7 +107,9 @@ export class RopeDock extends InteractableObjects {
             allow_jumping_over_it,
             allow_jumping_through_it,
             psynergies_info,
-            has_shadow
+            has_shadow,
+            animation,
+            action
         );
         this._is_rope_dock = true;
         this._dest_rope_dock = null;
@@ -184,9 +188,9 @@ export class RopeDock extends InteractableObjects {
      */
     initialize_rope(map: Map) {
         if (this._tied) {
-            this.play(RopeDock.ROPE_DOCK_KEY, RopeDock.ROPE_DOCK_TIED);
+            this.play(RopeDock.ROPE_DOCK_TIED, RopeDock.ROPE_DOCK_KEY);
         } else {
-            this.play(RopeDock.ROPE_DOCK_KEY, RopeDock.ROPE_DOCK_EMPTY);
+            this.play(RopeDock.ROPE_DOCK_EMPTY, RopeDock.ROPE_DOCK_KEY);
         }
 
         if (this._is_starting_dock) {
@@ -211,7 +215,7 @@ export class RopeDock extends InteractableObjects {
      */
     tie() {
         this._tied = true;
-        this.play(RopeDock.ROPE_DOCK_KEY, RopeDock.ROPE_DOCK_TIED);
+        this.play(RopeDock.ROPE_DOCK_TIED, RopeDock.ROPE_DOCK_KEY);
         if (!this.dest_rope_dock.tied) {
             this.dest_rope_dock.tie();
         }

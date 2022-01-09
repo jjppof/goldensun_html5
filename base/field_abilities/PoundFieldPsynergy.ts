@@ -150,9 +150,7 @@ export class PoundFieldPsynergy extends FieldAbilities {
         this.data.audio.play_se("psynergy/8");
         if (this.target_found) {
             this.target_object.sprite.scale.y = 1;
-            const key_name = this.target_object.sprite_info.key_name;
-            const anim_key = this.target_object.sprite_info.getAnimationKey(key_name, "down");
-            this.target_object.sprite.animations.play(anim_key);
+            this.target_object.play("down");
             this.target_object.get_events().forEach((event: JumpEvent) => {
                 if (event.is_active() >= 0) {
                     event.deactivate();

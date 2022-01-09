@@ -9,29 +9,36 @@ export function initialize_interactable_objs_data(
     load_promise_resolve: () => void
 ) {
     const iter_obj_sprite_base_list: GameInfo["iter_objs_sprite_base_list"] = {};
+    let at_least_one_to_laod = false;
     for (let interactable_objects_key in interactable_objects_db) {
         const iter_obj_data = interactable_objects_db[interactable_objects_key];
-        if (iter_obj_data.spritesheet) {
-            const sprite_base = new SpriteBase(iter_obj_data.key_name, [iter_obj_data.key_name]);
+        if (iter_obj_data.actions) {
+            const actions = Object.keys(iter_obj_data.actions);
+            const sprite_base = new SpriteBase(iter_obj_data.key_name, actions);
             iter_obj_sprite_base_list[iter_obj_data.key_name] = sprite_base;
-            sprite_base.setActionSpritesheet(
-                iter_obj_data.key_name,
-                iter_obj_data.spritesheet.image,
-                iter_obj_data.spritesheet.json
-            );
-            sprite_base.setActionAnimations(
-                iter_obj_data.key_name,
-                iter_obj_data.actions.animations,
-                iter_obj_data.actions.frames_count
-            );
-            sprite_base.setActionFrameRate(iter_obj_data.key_name, iter_obj_data.actions.frame_rate);
-            sprite_base.setActionLoop(iter_obj_data.key_name, iter_obj_data.actions.loop);
+            for (let i = 0; i < actions.length; ++i) {
+                const action_key = actions[i];
+                let action_obj;
+                if ("same_as" in iter_obj_data.actions[action_key]) {
+                    const reference_key = iter_obj_data.actions[action_key].same_as;
+                    action_obj = iter_obj_data.actions[reference_key];
+                } else {
+                    action_obj = iter_obj_data.actions[action_key];
+                }
+                sprite_base.setActionSpritesheet(action_key, action_obj.spritesheet.image, action_obj.spritesheet.json);
+                sprite_base.setActionAnimations(action_key, action_obj.animations, action_obj.frames_count);
+                sprite_base.setActionFrameRate(action_key, action_obj.frame_rate);
+                sprite_base.setActionLoop(action_key, action_obj.loop);
+            }
             sprite_base.generateAllFrames();
             sprite_base.loadSpritesheets(game, false);
+            at_least_one_to_laod = true;
         }
     }
-    game.load.start();
-    data.set_whats_loading("interactable objects sprites");
-    game.load.onLoadComplete.addOnce(load_promise_resolve);
+    if (at_least_one_to_laod) {
+        game.load.start();
+        data.set_whats_loading("interactable objects sprites");
+        game.load.onLoadComplete.addOnce(load_promise_resolve);
+    }
     return iter_obj_sprite_base_list;
 }

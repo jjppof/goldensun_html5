@@ -938,6 +938,20 @@ export class Map {
                 interactable_object_db.psynergies_info ?? {},
                 property_info.psynergies_info ?? {}
             );
+            const action = property_info.action ?? interactable_object_db.initial_action;
+            let animation;
+            if (interactable_object_db.actions) {
+                if (property_info.animation) {
+                    animation = property_info.animation;
+                } else {
+                    if ("same_as" in interactable_object_db.actions[action]) {
+                        const same_as_key = interactable_object_db.actions[action].same_as;
+                        animation = interactable_object_db.actions[same_as_key].initial_animation;
+                    } else {
+                        animation = interactable_object_db.actions[action].initial_animation;
+                    }
+                }
+            }
             const interactable_object = new io_class(
                 this.game,
                 this.data,
@@ -962,7 +976,9 @@ export class Map {
                 allow_jumping_over_it,
                 allow_jumping_through_it,
                 psynergies_info,
-                has_shadow
+                has_shadow,
+                animation,
+                action
             );
             if (interactable_object.is_rope_dock) {
                 (interactable_object as RopeDock).intialize_dock_info(
@@ -1541,6 +1557,7 @@ export class Map {
         this._npcs = [];
         this._npcs_label_map = {};
         this._interactable_objects = [];
+        this._interactable_objects_label_map = {};
         this._events = {};
         this.data.middlelayer_group.removeAll();
         this.encounter_zones = [];

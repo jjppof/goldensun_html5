@@ -40,7 +40,9 @@ export class Breakable extends InteractableObjects {
         allow_jumping_over_it,
         allow_jumping_through_it,
         psynergies_info,
-        has_shadow
+        has_shadow,
+        animation,
+        action
     ) {
         super(
             game,
@@ -66,7 +68,9 @@ export class Breakable extends InteractableObjects {
             allow_jumping_over_it,
             allow_jumping_through_it,
             psynergies_info,
-            has_shadow
+            has_shadow,
+            animation,
+            action
         );
         this._breakable = true;
         this.one_level_broken = false;
@@ -85,7 +89,7 @@ export class Breakable extends InteractableObjects {
         this.one_level_broken = true;
 
         char.play(base_actions.IDLE);
-        this.play(Breakable.ACTION_KEY, "to_break");
+        this.play("to_break", Breakable.ACTION_KEY);
 
         this.set_color_filter();
         let blink_counter = 4;
@@ -115,7 +119,7 @@ export class Breakable extends InteractableObjects {
         await this.down_dust_animation(char);
         this.data.camera.disable_shake();
 
-        this.play(Breakable.ACTION_KEY, "broken");
+        this.play("broken", Breakable.ACTION_KEY);
 
         let fall_resolve;
         const fall_promise = new Promise(resolve => (fall_resolve = resolve));

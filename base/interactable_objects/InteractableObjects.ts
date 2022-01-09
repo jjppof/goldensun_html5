@@ -117,6 +117,8 @@ export class InteractableObjects {
     private _after_psynergy_cast_events: {
         [psynergy_key: string]: GameEvent[];
     };
+    private _current_animation: string;
+    private _current_action: string;
 
     constructor(
         game,
@@ -142,7 +144,9 @@ export class InteractableObjects {
         allow_jumping_over_it,
         allow_jumping_through_it,
         psynergies_info,
-        has_shadow
+        has_shadow,
+        animation,
+        action
     ) {
         this.game = game;
         this.data = data;
@@ -210,6 +214,8 @@ export class InteractableObjects {
         this._has_shadow = has_shadow ?? false;
         this._before_psynergy_cast_events = {};
         this._after_psynergy_cast_events = {};
+        this._current_animation = animation;
+        this._current_action = action;
     }
 
     get key_name() {
@@ -312,6 +318,12 @@ export class InteractableObjects {
     }
     get after_psynergy_cast_events() {
         return this._after_psynergy_cast_events;
+    }
+    get current_animation() {
+        return this._current_animation;
+    }
+    get current_action() {
+        return this._current_action;
     }
 
     position_allowed(x: number, y: number) {
@@ -493,7 +505,7 @@ export class InteractableObjects {
         }
         if (this.sprite_info) {
             const interactable_object_db = this.data.dbs.interactable_objects_db[this.key_name];
-            const interactable_object_key = this.sprite_info.getSpriteKey(this.key_name);
+            const interactable_object_key = this.sprite_info.getSpriteKey(this.current_action);
             const interactable_object_sprite = this.data.middlelayer_group.create(0, 0, interactable_object_key);
             this._sprite = interactable_object_sprite;
             this.sprite.is_interactable_object = true;
@@ -506,9 +518,8 @@ export class InteractableObjects {
             this.sprite.scale.setTo(this.scale_x ?? 1.0, this.scale_y ?? 1.0);
             this.sprite.x = get_centered_pos_in_px(this.tile_x_pos, map.tile_width);
             this.sprite.y = get_centered_pos_in_px(this.tile_y_pos, map.tile_height);
-            this.sprite_info.setAnimation(this.sprite, this.key_name);
-            const initial_animation = interactable_object_db.initial_animation;
-            const anim_key = this.sprite_info.getAnimationKey(this.key_name, initial_animation);
+            this.sprite_info.setAnimation(this.sprite, this.current_action);
+            const anim_key = this.sprite_info.getAnimationKey(this.current_action, this.current_animation);
             this.sprite.animations.play(anim_key);
             if (interactable_object_db.stop_animation_on_start) {
                 //yes, it's necessary to play before stopping it.
@@ -640,8 +651,20 @@ export class InteractableObjects {
         }
     }
 
-    play(action: string, animation: string, frame_rate?: number, loop?: boolean) {
-        const anim_key = this.sprite_info.getAnimationKey(action, animation);
+    play(animation: string, action?: string, frame_rate?: number, loop?: boolean) {
+        this._current_animation = animation;
+        this._current_action = action ?? this._current_action;
+
+        if (this.sprite_info.getSpriteAction(this.sprite) !== this.current_action) {
+            const sprite_key = this.sprite_info.getSpriteKey(this.current_action);
+            this.sprite.loadTexture(sprite_key);
+        }
+
+        const anim_key = this.sprite_info.getAnimationKey(this.current_action, this.current_animation);
+        if (!this.sprite.animations.getAnimation(anim_key)) {
+            this.sprite_info.setAnimation(this.sprite, this.current_action);
+        }
+
         return this.sprite.animations.play(anim_key, frame_rate, loop);
     }
 

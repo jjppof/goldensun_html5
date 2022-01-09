@@ -8,7 +8,7 @@
             }
         }
     },{
-        "key_name": "pillar",
+        "key_name": "push_pillar",
         "anchor_x": 0.5,
         "anchor_y": 0.8,
         "body_radius": 7.0,
@@ -28,15 +28,18 @@
             "x_shift": 0,
             "y_shift": -2
         }],
-        "initial_animation": "idle",
+        "initial_action": "push_pillar",
         "actions": {
-            "frame_rate": 1,
-            "animations": ["idle"],
-            "frames_count": 1
-        },
-        "spritesheet": {
-            "image": "assets/images/interactable_objects/psynergy_move.png",
-            "json": "assets/images/interactable_objects/psynergy_move.json"
+            "push_pillar": {
+                "frame_rate": 1,
+                "animations": ["column", "pillar", "wooden_box"],
+                "frames_count": 1,
+                "initial_animation": "pillar",
+                "spritesheet": {
+                    "image": "assets/images/interactable_objects/push_pillars.png",
+                    "json": "assets/images/interactable_objects/push_pillars.json"
+                }
+            }
         }
     },{
         "key_name": "breaking_pillar",
@@ -53,15 +56,18 @@
             "x_shift": 0,
             "y_shift": -2
         }],
-        "initial_animation": "standard",
+        "initial_action": "breaking_pillar",
         "actions": {
-            "frame_rate": 1,
-            "animations": ["standard", "to_break", "broken"],
-            "frames_count": 1
-        },
-        "spritesheet": {
-            "image": "assets/images/interactable_objects/breaking_pillar.png",
-            "json": "assets/images/interactable_objects/breaking_pillar.json"
+            "breaking_pillar": {
+                "frame_rate": 1,
+                "animations": ["standard", "to_break", "broken"],
+                "frames_count": 1,
+                "initial_animation": "standard",
+                "spritesheet": {
+                    "image": "assets/images/interactable_objects/breaking_pillar.png",
+                    "json": "assets/images/interactable_objects/breaking_pillar.json"
+                }
+            }
         }
     },{
         "key_name": "entangled_pillar",
@@ -94,15 +100,18 @@
             "x_shift": 0,
             "y_shift": -2
         }],
-        "initial_animation": "idle",
+        "initial_action": "entangled_pillar",
         "actions": {
-            "frame_rate": 1,
-            "animations": ["idle"],
-            "frames_count": 1
-        },
-        "spritesheet": {
-            "image": "assets/images/interactable_objects/psynergy_move.png",
-            "json": "assets/images/interactable_objects/psynergy_move.json"
+            "entangled_pillar": {
+                "frame_rate": 1,
+                "animations": ["standard"],
+                "frames_count": 1,
+                "initial_animation": "standard",
+                "spritesheet": {
+                    "image": "assets/images/interactable_objects/entangled_pillars.png",
+                    "json": "assets/images/interactable_objects/entangled_pillars.json"
+                }
+            }
         }
     },{
         "key_name": "frost_pool",
@@ -126,16 +135,19 @@
             "x_shift": 0,
             "y_shift": -2
         }],
-        "initial_animation": "pool",
+        "initial_action": "frost_pool",
         "actions": {
-            "frame_rate": [5, 8],
-            "animations": ["pool", "pillar"],
-            "frames_count": [2, 6],
-            "loop": [true, false]
-        },
-        "spritesheet": {
-            "image": "assets/images/interactable_objects/psynergy_frost.png",
-            "json": "assets/images/interactable_objects/psynergy_frost.json"
+            "frost_pool": {
+                "frame_rate": [5, 8],
+                "animations": ["pool", "pillar"],
+                "frames_count": [2, 6],
+                "loop": [true, false],
+                "initial_animation": "pool",
+                "spritesheet": {
+                    "image": "assets/images/interactable_objects/psynergy_frost.png",
+                    "json": "assets/images/interactable_objects/psynergy_frost.json"
+                }
+            }
         }
     },{
         "key_name": "growth",
@@ -155,19 +167,22 @@
             "collision_tiles_relative_pos": [],
             "top_event_y_shift": -4
         }],
-        "initial_animation": "sprout",
+        "initial_action": "growth",
         "actions": {
-            "frame_rate": [[0.4, 2], 8, 10],
-            "animations": ["sprout", "growing", "no_target"],
-            "frames_count": [2, 6, 7],
-            "loop": [true, false, false]
-        },
-        "spritesheet": {
-            "image": "assets/images/interactable_objects/psynergy_growth.png",
-            "json": "assets/images/interactable_objects/psynergy_growth.json"
+            "growth": {
+                "frame_rate": [[0.4, 2], 8, 10],
+                "animations": ["sprout", "growing", "no_target"],
+                "frames_count": [2, 6, 7],
+                "loop": [true, false, false],
+                "initial_animation": "sprout",
+                "spritesheet": {
+                    "image": "assets/images/interactable_objects/psynergy_growth.png",
+                    "json": "assets/images/interactable_objects/psynergy_growth.json"
+                }
+            }
         }
     },{
-        "key_name": "rock_pound_pillar",
+        "key_name": "pound_pillar",
         "anchor_x": 0.5,
         "anchor_y": 0.9,
         "scale_x": 0.75,
@@ -179,7 +194,6 @@
                 "interaction_type": "once"
             }
         },
-        "pushable": false,
         "collision_body_bevel": 3,
         "events": [{
             "type": "jump",
@@ -187,46 +201,27 @@
             "x_shift": 0,
             "y_shift": -2
         }],
-        "initial_animation": "up",
+        "initial_action": "wood_pound_pillar",
         "actions": {
-            "frame_rate": [1, 1],
-            "animations": ["up", "down"],
-            "frames_count": [1, 1]
-        },
-        "spritesheet": {
-            "image": "assets/images/interactable_objects/psynergy_pound.png",
-            "json": "assets/images/interactable_objects/psynergy_pound.json"
-        }
-    },{
-        "key_name": "wood_pound_pillar",
-        "anchor_x": 0.5,
-        "anchor_y": 0.9,
-        "scale_x": 0.75,
-        "scale_y": 0.78,
-        "body_radius": 7.0,
-        "send_to_back": false,
-        "psynergies_info": {
-            "pound": {
-                "interaction_type": "once"
+            "wood_pound_pillar": {
+                "frame_rate": 1,
+                "animations": ["up", "down"],
+                "frames_count": 1,
+                "initial_animation": "up",
+                "spritesheet": {
+                    "image": "assets/images/interactable_objects/psynergy_pound.png",
+                    "json": "assets/images/interactable_objects/psynergy_pound.json"
+                }
+            },
+            "rock_pound_pillar": {
+                "same_as": "wood_pound_pillar"
+            },
+            "stone_pound_pillar": {
+                "same_as": "wood_pound_pillar"
+            },
+            "ice_pillar": {
+                "same_as": "wood_pound_pillar"
             }
-        },
-        "pushable": false,
-        "collision_body_bevel": 3,
-        "events": [{
-            "type": "jump",
-            "active": true,
-            "x_shift": 0,
-            "y_shift": -2
-        }],
-        "initial_animation": "up",
-        "actions": {
-            "frame_rate": [1, 1],
-            "animations": ["up", "down"],
-            "frames_count": [1, 1]
-        },
-        "spritesheet": {
-            "image": "assets/images/interactable_objects/psynergy_pound.png",
-            "json": "assets/images/interactable_objects/psynergy_pound.json"
         }
     },{
         "key_name": "rope_dock",
@@ -245,20 +240,23 @@
                 "interaction_type": "once"
             }
         },
-        "spritesheet": {
-            "image": "assets/images/interactable_objects/rope_dock.png",
-            "json": "assets/images/interactable_objects/rope_dock.json"
-        },
         "events": [{
             "type": "rope",
             "active": true
         }],
-        "initial_animation": "dock_empty",
+        "initial_action": "rope_dock",
         "actions": {
-            "frame_rate": [0, 0, 0],
-            "animations": ["dock_empty", "dock_tied", "rope_fragment"],
-            "frames_count": [1, 1, 1],
-            "loop": [false, false, false]
+            "rope_dock": {
+                "frame_rate": [0, 0, 0],
+                "animations": ["dock_empty", "dock_tied", "rope_fragment"],
+                "frames_count": [1, 1, 1],
+                "loop": [false, false, false],
+                "initial_animation": "dock_empty",
+                "spritesheet": {
+                    "image": "assets/images/interactable_objects/rope_dock.png",
+                    "json": "assets/images/interactable_objects/rope_dock.json"
+                }
+            }
         }
     },{
         "key_name": "trunk_tree_horizontal",
@@ -287,17 +285,20 @@
             "x_shift": 1,
             "y_shift": 0
         }],
-        "spritesheet": {
-            "image": "assets/images/interactable_objects/trunk_tree_horizontal.png",
-            "json": "assets/images/interactable_objects/trunk_tree_horizontal.json"
-        },
-        "initial_animation": "rolling",
         "stop_animation_on_start": true,
+        "initial_action": "trunk_tree_horizontal",
         "actions": {
-            "frame_rate": [9, 3, 8],
-            "animations": ["falling", "floating", "rolling"],
-            "frames_count": [5, 4, 4],
-            "loop": [false, true, true]
+            "trunk_tree_horizontal": {
+                "frame_rate": [9, 3, 8],
+                "animations": ["falling", "floating", "rolling"],
+                "frames_count": [5, 4, 4],
+                "loop": [false, true, true],
+                "initial_animation": "rolling",
+                "spritesheet": {
+                    "image": "assets/images/interactable_objects/trunk_tree_horizontal.png",
+                    "json": "assets/images/interactable_objects/trunk_tree_horizontal.json"
+                }
+            }
         }
     },{
         "key_name": "trunk_tree_vertical",
@@ -331,17 +332,20 @@
             "x_shift": 0,
             "y_shift": 2
         }],
-        "spritesheet": {
-            "image": "assets/images/interactable_objects/trunk_tree_vertical.png",
-            "json": "assets/images/interactable_objects/trunk_tree_vertical.json"
-        },
-        "initial_animation": "rolling",
         "stop_animation_on_start": true,
+        "initial_action": "trunk_tree_vertical",
         "actions": {
-            "frame_rate": [9, 3, 8],
-            "animations": ["falling", "floating", "rolling"],
-            "frames_count": [5, 4, 4],
-            "loop": [false, true, true]
+            "trunk_tree_vertical": {
+                "frame_rate": [9, 3, 8],
+                "animations": ["falling", "floating", "rolling"],
+                "frames_count": [5, 4, 4],
+                "loop": [false, true, true],
+                "initial_animation": "rolling",
+                "spritesheet": {
+                    "image": "assets/images/interactable_objects/trunk_tree_vertical.png",
+                    "json": "assets/images/interactable_objects/trunk_tree_vertical.json"
+                }
+            }
         }
     },{
         "key_name": "lift_rock",
@@ -354,16 +358,19 @@
                 "interaction_type": "once"
             }
         },
-        "spritesheet": {
-            "image": "assets/images/interactable_objects/lift_rock.png",
-            "json": "assets/images/interactable_objects/lift_rock.json"
-        },
-        "initial_animation": "rock",
+        "initial_action": "lift_rock",
         "actions": {
-            "frame_rate": 1,
-            "animations": ["rock"],
-            "frames_count": 1,
-            "loop": false
+            "lift_rock": {
+                "frame_rate": 1,
+                "animations": ["rock"],
+                "frames_count": 1,
+                "loop": false,
+                "initial_animation": "rock",
+                "spritesheet": {
+                    "image": "assets/images/interactable_objects/lift_rock.png",
+                    "json": "assets/images/interactable_objects/lift_rock.json"
+                }
+            }
         }
     },{
         "key_name": "douse_pillar",
@@ -376,16 +383,19 @@
                 "interaction_type": "once"
             }
         },
-        "spritesheet": {
-            "image": "assets/images/interactable_objects/douse_pillar.png",
-            "json": "assets/images/interactable_objects/douse_pillar.json"
-        },
-        "initial_animation": "empty",
+        "initial_action": "douse_pillar",
         "actions": {
-            "frame_rate": 1,
-            "animations": ["empty", "filled"],
-            "frames_count": 1,
-            "loop": false
+            "douse_pillar": {
+                "frame_rate": 1,
+                "animations": ["empty", "filled"],
+                "frames_count": 1,
+                "loop": false,
+                "initial_animation": "empty",
+                "spritesheet": {
+                    "image": "assets/images/interactable_objects/douse_pillar.png",
+                    "json": "assets/images/interactable_objects/douse_pillar.json"
+                }
+            }
         }
     }
 ]

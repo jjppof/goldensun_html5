@@ -49,7 +49,9 @@ export class RollablePillar extends InteractableObjects {
         allow_jumping_over_it,
         allow_jumping_through_it,
         psynergies_info,
-        has_shadow
+        has_shadow,
+        animation,
+        action
     ) {
         super(
             game,
@@ -75,7 +77,9 @@ export class RollablePillar extends InteractableObjects {
             allow_jumping_over_it,
             allow_jumping_through_it,
             psynergies_info,
-            has_shadow
+            has_shadow,
+            animation,
+            action
         );
         this._rollable = true;
         this._pillar_is_stuck = false;
