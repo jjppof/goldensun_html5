@@ -103,6 +103,7 @@ export class Breakable extends InteractableObjects {
             --blink_counter;
             if (blink_counter === 0) {
                 blink_timer.stop();
+                blink_timer.destroy();
                 await this.down_dust_animation(char);
                 char.misc_busy = false;
                 this.unset_color_filter();

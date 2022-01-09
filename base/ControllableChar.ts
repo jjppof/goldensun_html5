@@ -1046,6 +1046,29 @@ export abstract class ControllableChar {
     }
 
     /**
+     * Sets or unsets a Phaser.Filter in this char.
+     * @param filter the filter you want to set.
+     * @param set whether it's to set or unset the filter.
+     */
+    manage_filter(filter: Phaser.Filter, set: boolean) {
+        if (set) {
+            if (this.sprite.filters && !this.sprite.filters.includes(filter)) {
+                this.sprite.filters.push(filter);
+            } else if (!this.sprite.filters) {
+                this.sprite.filters = [filter];
+            }
+        } else {
+            if (this.sprite.filters.includes(filter)) {
+                if (this.sprite.filters.length === 1) {
+                    this.sprite.filters = undefined;
+                } else {
+                    this.sprite.filters = this.sprite.filters.filter(f => f !== filter);
+                }
+            }
+        }
+    }
+
+    /**
      * Sets or unsets an outline in this char. You can also use this function to update options.
      * Otherwise, use ControllableChar.outline_filter directly.
      * @param activate whether you want to activate the outline or not.
@@ -1065,11 +1088,7 @@ export abstract class ControllableChar {
         }
     ) {
         if (activate) {
-            if (this.sprite.filters && !this.sprite.filters.includes(this.outline_filter)) {
-                this.sprite.filters.push(this.outline_filter);
-            } else if (!this.sprite.filters) {
-                this.sprite.filters = [this.outline_filter];
-            }
+            this.manage_filter(this.outline_filter, true);
             this.outline_filter.texture_width = this.sprite.texture.baseTexture.width;
             this.outline_filter.texture_height = this.sprite.texture.baseTexture.height;
             if (options?.r !== undefined) {
@@ -1085,14 +1104,52 @@ export abstract class ControllableChar {
                 this.outline_filter.keep_transparent = options.keep_transparent;
             }
         } else {
-            if (this.sprite.filters.includes(this.outline_filter)) {
-                if (this.sprite.filters.length === 1) {
-                    this.sprite.filters = undefined;
-                } else {
-                    this.sprite.filters = this.sprite.filters.filter(f => f !== this.outline_filter);
-                }
-            }
+            this.manage_filter(this.outline_filter, false);
         }
+    }
+
+    /**
+     * Blinks this char by tintint and untinting it.
+     * @param count how many times this char will blink.
+     * @param interval the time interval between each blink.
+     * @param color the color to tint the char.
+     */
+    async blink(
+        count: number,
+        interval: number,
+        color?: {
+            /** The red color component to tint. 0 to 1. Default 1. */
+            r: number;
+            /** The green color component to tint. 0 to 1. Default 1. */
+            g: number;
+            /** The blue color component to tint. 0 to 1. Default 1. */
+            b: number;
+        }
+    ) {
+        this.manage_filter(this.color_filter, true);
+        let counter = count << 1;
+        const blink_timer = this.game.time.create(false);
+        let timer_resolve;
+        const timer_promise = new Promise(resolve => (timer_resolve = resolve));
+        const r = color?.r ?? 1.0;
+        const g = color?.g ?? 1.0;
+        const b = color?.b ?? 1.0;
+        blink_timer.loop(interval, () => {
+            if (counter % 2 === 0) {
+                this.color_filter.tint = [r, g, b];
+            } else {
+                this.color_filter.tint = [-1, -1, -1];
+            }
+            --counter;
+            if (counter === 0) {
+                blink_timer.stop();
+                timer_resolve();
+            }
+        });
+        blink_timer.start();
+        await timer_promise;
+        blink_timer.destroy();
+        this.manage_filter(this.color_filter, false);
     }
 
     /**
