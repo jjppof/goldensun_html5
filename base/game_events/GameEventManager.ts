@@ -27,6 +27,7 @@ import {DestroyerEvent} from "./DestroyerEvent";
 import {CharLevelChangeEvent} from "./CharLevelChangeEvent";
 import {MapOpacityEvent} from "./MapOpacityEvent";
 import {MapBlendModeEvent} from "./MapBlendModeEvent";
+import {IOAnimPlayEvent} from "./IOAnimPlayEvent";
 
 export enum interaction_patterns {
     NO_INTERACTION = "no_interaction",
@@ -476,6 +477,19 @@ export class GameEventManager {
                     info.key_name,
                     info.map_layer_name,
                     info.blend_mode
+                );
+            case event_types.IO_ANIM_PLAY:
+                return new IOAnimPlayEvent(
+                    this.game,
+                    this.data,
+                    info.active,
+                    info.key_name,
+                    info.io_label,
+                    info.action,
+                    info.animation,
+                    info.frame_rate,
+                    info.loop,
+                    info.finish_events
                 );
             default:
                 console.warn(`Game event type ${info.type} not found.`);

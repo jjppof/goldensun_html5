@@ -365,5 +365,27 @@
             "frames_count": 1,
             "loop": false
         }
+    },{
+        "key_name": "douse_pillar",
+        "anchor_x": 0.5,
+        "anchor_y": 0.77,
+        "body_radius": 7.0,
+        "collision_body_bevel": 3,
+        "psynergies_info": {
+            "douse": {
+                "interaction_type": "once"
+            }
+        },
+        "spritesheet": {
+            "image": "assets/images/interactable_objects/douse_pillar.png",
+            "json": "assets/images/interactable_objects/douse_pillar.json"
+        },
+        "initial_animation": "empty",
+        "actions": {
+            "frame_rate": 1,
+            "animations": ["empty", "filled"],
+            "frames_count": 1,
+            "loop": false
+        }
     }
 ]

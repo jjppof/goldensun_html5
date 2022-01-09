@@ -42,6 +42,7 @@ export enum event_types {
     CHAR_LEVEL_CHANGE = "char_level_change",
     MAP_OPACITY = "map_opacity",
     MAP_BLEND_MODE = "map_blend_mode",
+    IO_ANIM_PLAY = "io_animation_play",
 }
 
 /**

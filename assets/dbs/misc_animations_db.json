@@ -177,12 +177,12 @@
         }
     },
     {
-        "key_name": "douse_cloud",
-        "initial_animation": "douse_cloud",
+        "key_name": "douse",
+        "initial_animation": "cloud",
         "actions": {
-            "psynergy_particle": {
+            "douse": {
                 "frame_rate": 5,
-                "animations": ["douse_cloud"],
+                "animations": ["cloud"],
                 "frames_count": 3,
                 "loop": true,
                 "spritesheet": {
