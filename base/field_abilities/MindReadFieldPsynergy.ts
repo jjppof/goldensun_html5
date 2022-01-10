@@ -66,7 +66,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
         await this.cast_finish_promise;
         this.data.control_manager.detach_bindings(this.control_id);
         this.target_object = null;
-        this.dialog_manager.destroy();
+        this.dialog_manager?.destroy();
         this.reset_map();
         this.arrows?.forEach(arrow => {
             arrow?.destroy();
@@ -95,6 +95,8 @@ export class MindReadFieldPsynergy extends FieldAbilities {
             this.finish();
             return;
         }
+
+        this.target_object.stop_char();
 
         this.set_arrows();
 

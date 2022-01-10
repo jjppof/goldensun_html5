@@ -382,7 +382,6 @@ export class GoldenSun {
             }
 
             this.hero.update(); //updates hero position/velocity/sprite
-            this.map.update(); //updates map and its objects (NPC, Interact. Objs etc) position/velocity/sprite
         } else {
             if (this.game_event_manager.on_event) {
                 //updates whatever it is related to a game event
@@ -392,14 +391,14 @@ export class GoldenSun {
             }
             if (this.menu_open && this.main_menu.is_active) {
                 this.main_menu.update_position();
-                this.map.update();
             } else if (this.shop_open && this.shop_menu.horizontal_menu.menu_active) {
                 this.shop_menu.update_position();
-                this.map.update();
             } else if (this.in_battle) {
                 this.battle_instance.update();
             }
         }
+
+        this.map.update(); //updates map and its objects (NPC, Interact. Objs etc) position/velocity/sprite
 
         if (!this.in_battle) {
             //updates whatever it is related to a field ability

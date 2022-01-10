@@ -77,6 +77,7 @@ export class Map {
         collision_layer: number;
         direction: directions;
     };
+    private _paused: boolean;
 
     constructor(
         game,
@@ -133,6 +134,7 @@ export class Map {
         this.bounding_boxes = [];
         this.game_events = [];
         this._retreat_data = null;
+        this._paused = false;
     }
 
     /** The list of TileEvents of this map. */
@@ -218,6 +220,10 @@ export class Map {
     /** Gets the enemy party encounter cumulator value. */
     get encounter_cumulator() {
         return this._encounter_cumulator;
+    }
+    /** Whether the map is paused or not. */
+    get paused() {
+        return this._paused;
     }
 
     /**
@@ -309,12 +315,11 @@ export class Map {
      * The map update function.
      */
     update() {
+        if (this.paused || this.data.game_event_manager.on_event) {
+            return;
+        }
         this.collision_sprite.body.velocity.y = this.collision_sprite.body.velocity.x = 0;
-        this.npcs.forEach(npc => {
-            if (npc.active) {
-                npc.update();
-            }
-        });
+        this.npcs.forEach(npc => npc.update());
         this.sort_sprites();
         this.update_map_rotation();
         this.zone_check();
@@ -366,6 +371,7 @@ export class Map {
                 previously_inactive_io.add(index);
             }
         });
+        this._paused = true;
         return {
             previously_inactive_npc: previously_inactive_npc,
             previously_inactive_io: previously_inactive_io,
@@ -397,6 +403,7 @@ export class Map {
             }
             interactable_object.toggle_active(true);
         });
+        this._paused = false;
     }
 
     /**
