@@ -157,7 +157,7 @@ export class RevealFieldPsynergy extends FieldAbilities {
                 true
             )
             .onComplete.addOnce(() => {
-                this.unset_hero_cast_anim();
+                this.return_to_idle_anim();
                 this.stop_casting();
             });
 

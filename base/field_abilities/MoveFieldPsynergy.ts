@@ -70,7 +70,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                 button: Button.B,
                 on_down: () => {
                     this.finish_hand();
-                    this.unset_hero_cast_anim();
+                    this.return_to_idle_anim();
                 },
             },
         ];
@@ -175,7 +175,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                         }
                         this.controllable_char.sprite.body.velocity.x = this.controllable_char.sprite.body.velocity.y = 0;
                         this.finish_hand();
-                        this.unset_hero_cast_anim();
+                        this.return_to_idle_anim();
                     },
                     false,
                     () => {
@@ -269,7 +269,7 @@ export class MoveFieldPsynergy extends FieldAbilities {
                 } else {
                     const finish_timer = this.game.time.events.add(700, () => {
                         this.finish_hand();
-                        this.unset_hero_cast_anim();
+                        this.return_to_idle_anim();
                     });
                     finish_timer.timer.start();
                 }

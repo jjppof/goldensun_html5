@@ -138,7 +138,7 @@ export class DouseFieldPsynergy extends FieldAbilities {
         const duration = repeat * Math.max(ellapse_between_repeats, lifespan);
         await promised_wait(this.game, duration);
 
-        this.unset_hero_cast_anim();
+        this.return_to_idle_anim();
         if (this.target_found) {
             await this.stop_casting(false);
         } else {

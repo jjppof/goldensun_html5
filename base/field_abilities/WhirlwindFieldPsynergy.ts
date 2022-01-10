@@ -209,7 +209,7 @@ export class WhirlwindFieldPsynergy extends FieldAbilities {
             this._previous_angles = null;
             this._whirlwind_sprite.destroy();
             this._whirlwind_sprite = null;
-            this.unset_hero_cast_anim();
+            this.return_to_idle_anim();
             this.stop_casting();
         });
     }

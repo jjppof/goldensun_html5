@@ -180,7 +180,7 @@ export class PoundFieldPsynergy extends FieldAbilities {
                 this.hand_translate_x = this.controllable_char.sprite.centerX;
                 this.hand_translate_y = this.controllable_char.sprite.centerY;
                 this.hand_tween(this.hand_translate_x, this.hand_translate_y, 350, () => {
-                    this.unset_hero_cast_anim();
+                    this.return_to_idle_anim();
                     this.stop_casting();
                     this.data.overlayer_group.remove(this.hand_sprite, false);
                 });

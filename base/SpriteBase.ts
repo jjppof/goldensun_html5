@@ -140,6 +140,10 @@ export class SpriteBase {
         return this.actions[action].frame_rate[animation];
     }
 
+    getFrameNumber(action, animation) {
+        return this.actions[action].frame_names[animation].length;
+    }
+
     getSpriteKey(action) {
         return `${this.key_name}${SpriteBase.ACTION_ANIM_SEPARATOR}${action}`;
     }

@@ -132,7 +132,7 @@ export class GrowthFieldPsynergy extends FieldAbilities {
         this.target_object.sprite.animations.play(anim_key);
         this.target_object.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.target_object.sprite.send_to_back = true;
-            this.unset_hero_cast_anim();
+            this.return_to_idle_anim();
             this.stop_casting();
         });
     }
@@ -183,7 +183,7 @@ export class GrowthFieldPsynergy extends FieldAbilities {
             });
         }
         Promise.all(promises).then(() => {
-            this.unset_hero_cast_anim();
+            this.return_to_idle_anim();
             this.stop_casting();
         });
     }

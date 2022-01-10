@@ -338,7 +338,7 @@ export class LiftFieldPsynergy extends FieldAbilities {
             this.target_object.change_collision_layer(this.destination_collision_layer, true);
             this.target_object.allow_jumping_through_it = false;
         }
-        this.unset_hero_cast_anim();
+        this.return_to_idle_anim();
         this.stop_casting();
     }
 }

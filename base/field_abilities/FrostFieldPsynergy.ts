@@ -99,7 +99,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
                     if (this.target_found) {
                         this.init_pillar();
                     } else {
-                        this.unset_hero_cast_anim();
+                        this.return_to_idle_anim();
                         this.stop_casting();
                     }
                 }
@@ -149,7 +149,7 @@ export class FrostFieldPsynergy extends FieldAbilities {
         this.target_object.sprite.animations.play(anim_key);
         this.target_object.sprite.animations.currentAnim.onComplete.addOnce(() => {
             this.set_permanent_blink();
-            this.unset_hero_cast_anim();
+            this.return_to_idle_anim();
             this.stop_casting();
         });
     }

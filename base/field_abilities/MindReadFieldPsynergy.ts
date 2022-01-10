@@ -82,7 +82,7 @@ export class MindReadFieldPsynergy extends FieldAbilities {
         this.field_psynergy_window.close();
         this.set_controls();
 
-        this.cast_finish_promise = this.unset_hero_cast_anim();
+        this.cast_finish_promise = this.return_to_idle_anim();
         this.stop_casting(false, false);
 
         if (

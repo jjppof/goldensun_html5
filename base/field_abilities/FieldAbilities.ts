@@ -115,7 +115,7 @@ export abstract class FieldAbilities {
         this.controllable_char.play(this.action_key_name, reverse_directions[this.cast_direction]);
     }
 
-    unset_hero_cast_anim() {
+    return_to_idle_anim() {
         let promise_resolve;
         const promise = new Promise<void>(resolve => (promise_resolve = resolve));
         this.controllable_char.sprite.animations.currentAnim.reverseOnce();

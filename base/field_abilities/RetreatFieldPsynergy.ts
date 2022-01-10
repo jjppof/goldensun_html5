@@ -90,7 +90,7 @@ export class RetreatFieldPsynergy extends FieldAbilities {
 
         await promised_wait(this.game, Phaser.Timer.HALF);
 
-        this.unset_hero_cast_anim();
+        this.return_to_idle_anim();
         this.controllable_char.set_rotation(true);
         this.enable_update = true;
         await this.stop_casting(false);

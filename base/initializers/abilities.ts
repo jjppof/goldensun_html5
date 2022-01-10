@@ -12,6 +12,7 @@ import {RetreatFieldPsynergy} from "../field_abilities/RetreatFieldPsynergy";
 import {MindReadFieldPsynergy} from "../field_abilities/MindReadFieldPsynergy";
 import {LiftFieldPsynergy} from "../field_abilities/LiftFieldPsynergy";
 import {DouseFieldPsynergy} from "../field_abilities/DouseFieldPsynergy";
+import {AvoidFieldPsynergy} from "../field_abilities/AvoidFieldPsynergy";
 
 export function initialize_abilities(
     game: Phaser.Game,
@@ -74,5 +75,6 @@ export function initialize_field_abilities(game, data) {
         mind_read: new MindReadFieldPsynergy(game, data),
         lift: new LiftFieldPsynergy(game, data),
         douse: new DouseFieldPsynergy(game, data),
+        avoid: new AvoidFieldPsynergy(game, data),
     };
 }

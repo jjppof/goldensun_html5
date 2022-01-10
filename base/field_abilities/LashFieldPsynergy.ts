@@ -127,7 +127,7 @@ export class LashFieldPsynergy extends FieldAbilities {
                     } else {
                         this._hand_sprite.destroy();
                         this.start_final_emitter(this._hand_sprite.x, this._hand_sprite.y);
-                        this.unset_hero_cast_anim();
+                        this.return_to_idle_anim();
                         this.stop_casting();
                     }
                 });
@@ -301,7 +301,7 @@ export class LashFieldPsynergy extends FieldAbilities {
             this._hand_sprite.destroy();
             this._hand_sprite = null;
 
-            this.unset_hero_cast_anim();
+            this.return_to_idle_anim();
             this.stop_casting();
         });
         timer_event.timer.start();

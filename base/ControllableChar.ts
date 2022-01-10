@@ -145,6 +145,7 @@ export abstract class ControllableChar {
     private _rotating: boolean;
     private _rotating_interval: number;
     private _rotating_elapsed: number;
+    private _rotating_frame_index: number;
     private _default_scale: {x: number; y: number};
 
     constructor(
@@ -911,12 +912,16 @@ export abstract class ControllableChar {
      * Activates or deactivates this char rotation on z-axis.
      * @param rotate if true, activates the rotation.
      * @param interframe_interval frame change rate interval in ms. -1 to change every frame.
+     * @param frame_index optionally specifies a frame index to be in when rotating.
      */
-    set_rotation(rotate: boolean, interframe_interval: number = -1) {
+    set_rotation(rotate: boolean, interframe_interval: number = -1, frame_index?: number) {
         this._rotating = rotate;
         if (this._rotating) {
             this._rotating_interval = interframe_interval;
             this._rotating_elapsed = 0;
+            this._rotating_frame_index = frame_index;
+        } else {
+            this._rotating_frame_index = null;
         }
     }
 
@@ -926,7 +931,12 @@ export abstract class ControllableChar {
     private rotate() {
         if (this._rotating) {
             if (this._rotating_interval === -1 || this._rotating_elapsed > this._rotating_interval) {
-                this.set_direction((this.current_direction + 1) & 7, true, true);
+                if (this._rotating_frame_index) {
+                    this.set_direction((this.current_direction + 1) & 7, false, true);
+                    this.set_frame(this.current_animation, this._rotating_frame_index);
+                } else {
+                    this.set_direction((this.current_direction + 1) & 7, true, true);
+                }
                 this._rotating_elapsed = 0;
             } else {
                 this._rotating_elapsed += this.game.time.elapsedMS;
@@ -1109,36 +1119,60 @@ export abstract class ControllableChar {
     }
 
     /**
-     * Blinks this char by tintint and untinting it.
+     * Blinks this char by tintint and untinting it or outlining it.
      * @param count how many times this char will blink.
      * @param interval the time interval between each blink.
-     * @param color the color to tint the char.
+     * @param options some options.
      */
     async blink(
         count: number,
         interval: number,
-        color?: {
-            /** The red color component to tint. 0 to 1. Default 1. */
-            r: number;
-            /** The green color component to tint. 0 to 1. Default 1. */
-            g: number;
-            /** The blue color component to tint. 0 to 1. Default 1. */
-            b: number;
+        options?: {
+            /** If true, the char will be outlined instead of tinted. Default is false. */
+            outline_blink?: boolean;
+            /** If 'outline_blink' is true, whether the char will be transparent or not when outlined. Default is true. */
+            transparent_outline?: boolean;
+            /** The color to tint/outline the char. */
+            color?: {
+                /** The red color component to tint. 0 to 1. Default 1. */
+                r: number;
+                /** The green color component to tint. 0 to 1. Default 1. */
+                g: number;
+                /** The blue color component to tint. 0 to 1. Default 1. */
+                b: number;
+            };
         }
     ) {
-        this.manage_filter(this.color_filter, true);
+        const outline = options?.outline_blink ?? false;
+        const transparent_outline = options?.transparent_outline ?? true;
+        if (!outline) {
+            this.manage_filter(this.color_filter, true);
+        }
         let counter = count << 1;
         const blink_timer = this.game.time.create(false);
         let timer_resolve;
         const timer_promise = new Promise(resolve => (timer_resolve = resolve));
-        const r = color?.r ?? 1.0;
-        const g = color?.g ?? 1.0;
-        const b = color?.b ?? 1.0;
+        const r = options?.color?.r ?? 1.0;
+        const g = options?.color?.g ?? 1.0;
+        const b = options?.color?.b ?? 1.0;
         blink_timer.loop(interval, () => {
             if (counter % 2 === 0) {
-                this.color_filter.tint = [r, g, b];
+                if (outline) {
+                    this.set_outline(true, {
+                        keep_transparent: transparent_outline,
+                        r: r,
+                        g: g,
+                        b: b,
+                    });
+                } else {
+                    this.color_filter.tint = [r, g, b];
+                }
             } else {
-                this.color_filter.tint = [-1, -1, -1];
+                if (outline) {
+                    this.set_outline(false);
+                } else {
+                    this.color_filter.tint = [-1, -1, -1];
+                }
             }
             --counter;
             if (counter === 0) {
@@ -1149,7 +1183,9 @@ export abstract class ControllableChar {
         blink_timer.start();
         await timer_promise;
         blink_timer.destroy();
-        this.manage_filter(this.color_filter, false);
+        if (!outline) {
+            this.manage_filter(this.color_filter, false);
+        }
     }
 
     /**
