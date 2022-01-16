@@ -1,6 +1,6 @@
 import {GoldenSun} from "../../GoldenSun";
 import {Item, item_types} from "../../Item";
-import {ShopMenu} from "../../main_menus/ShopMenu";
+import {ShopItem, ShopMenu} from "../../main_menus/ShopMenu";
 import {InventoryWindow} from "./InventoryWindow";
 import {CharsMenu, CharsMenuModes} from "../../support_menus/CharsMenu";
 import {Window} from "../../Window";
@@ -9,8 +9,7 @@ import {BuySelectMenu} from "./BuySelectMenu";
 import {EquipCompare} from "./EquipCompare";
 import {YesNoMenu} from "../YesNoMenu";
 import {ShopkeepDialog} from "./ShopkeepDialog";
-import {ShopItem} from "../../Shop";
-import {ItemSlot, MainChar} from "../../MainChar";
+import {ItemSlot, item_equip_slot, MainChar} from "../../MainChar";
 
 const MAX_INVENTORY_SIZE = 15;
 const MAX_ITEMS_PER_PAGE = 7;
@@ -160,23 +159,17 @@ export class BuyArtifactsMenu {
     }
 
     equip_new_item() {
-        let item_type = this.data.info.items_list[this.selected_item.key_name].type;
-        let eq_slots = this.selected_character.equip_slots;
+        const item_type = this.data.info.items_list[this.selected_item.key_name].type;
+        const char_slots = this.selected_character.equip_slots;
 
         this.npc_dialog.update_dialog("equip_compliment", true);
 
         this.old_item = null;
-        let slot: ItemSlot = null;
+        const slot: ItemSlot = char_slots[item_equip_slot[item_type]];
 
-        let eq_types = ["WEAPONS", "ARMOR", "CHEST_PROTECTOR", "HEAD_PROTECTOR", "RING", "LEG_PROTECTOR", "UNDERWEAR"];
-
-        let slot_types = ["weapon", "body", "chest", "head", "ring", "boots", "underwear"];
-
-        for (let i = 0; i < eq_types.length; i++) {
-            if (item_type === item_types[eq_types[i]] && eq_slots[slot_types[i]]) slot = eq_slots[slot_types[i]];
+        if (slot) {
+            this.old_item = this.data.info.items_list[slot.key_name];
         }
-
-        if (slot) this.old_item = this.data.info.items_list[slot.key_name];
 
         if (this.old_item) {
             for (let i = 0; i < this.selected_character.items.length; i++) {
@@ -250,19 +243,35 @@ export class BuyArtifactsMenu {
             this.data.cursor_manager.hide();
 
             let process_purchase = () => {
-                if (!game_ticket)
-                    this.data.info.party_data.coins -=
-                        this.data.info.items_list[this.selected_item.key_name].price * quantity;
+                const item = this.data.info.items_list[this.selected_item.key_name];
+                if (!game_ticket) {
+                    this.data.info.party_data.coins -= item.price * quantity;
+                }
+
+                if (this.selected_item.global_artifact) {
+                    const global_item = this.data.info.artifacts_global_list.find(item_data => {
+                        return item_data.key_name === item.key_name;
+                    });
+                    if (global_item) {
+                        if (global_item.quantity > quantity) {
+                            global_item.quantity -= quantity;
+                        } else {
+                            this.data.info.artifacts_global_list = this.data.info.artifacts_global_list.filter(item_data => {
+                                return item_data.key_name !== item.key_name;
+                            });
+                        }
+                    }
+                }
 
                 let exists = false;
                 for (let i = 0; i < this.selected_character.items.length; i++) {
-                    let itm = this.selected_character.items[i];
+                    const item_obj = this.selected_character.items[i];
                     if (
-                        itm.key_name === item_to_add.key_name &&
+                        item_obj.key_name === item_to_add.key_name &&
                         this.data.info.items_list[item_to_add.key_name].carry_up_to_30
                     ) {
                         exists = true;
-                        this.selected_character.items[i].quantity += quantity;
+                        item_obj.quantity += quantity;
                     }
                 }
 

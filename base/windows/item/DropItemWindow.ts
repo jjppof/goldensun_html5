@@ -129,6 +129,20 @@ export class DropItemWindow {
     on_drop() {
         if (this.answer_index === YES_Y) {
             this.char.remove_item(this.item_obj, this.quantity_to_remove);
+            if (this.item.rare_item) {
+                const shop_item = this.data.info.artifacts_global_list.find(item_data => {
+                    return item_data.key_name === this.item.key_name;
+                });
+                if (shop_item) {
+                    shop_item.quantity += this.quantity_to_remove;
+                } else {
+                    this.data.info.artifacts_global_list.push({
+                        key_name: this.item.key_name,
+                        quantity: this.quantity_to_remove,
+                        global_artifact: true
+                    });
+                }
+            }
             this.dropped = true;
         }
         this.close();

@@ -8,6 +8,12 @@
     "y_tile_position": 13,
     "collision_layer": 1,
     "coins": 10000,
+    "artifacts_global_list": [
+        {
+            "key_name":"apollos_axe",
+            "quantity": 1
+        }
+    ],
     "initial_shortcuts": [
         { "ability": "move", "adept": "isaac" },
         { "ability": "frost", "adept": "sheba" },

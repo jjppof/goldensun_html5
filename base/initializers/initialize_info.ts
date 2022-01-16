@@ -16,7 +16,6 @@ import {Djinn} from "../Djinn";
 import {Ability} from "../Ability";
 import {Item} from "../Item";
 import {Inn} from "../Inn";
-import {Shop} from "../Shop";
 import {FieldAbilities} from "../field_abilities/FieldAbilities";
 import {Summon} from "../Summon";
 import {GoldenSun} from "../GoldenSun";
@@ -24,6 +23,7 @@ import {initialize_summons} from "./summons";
 import {initialize_se} from "./sound_effects";
 import {initialize_npcs_data} from "./npcs";
 import {initialize_cast_recipes} from "./cast_recipes";
+import { ShopItem, Shop } from "../main_menus/ShopMenu";
 
 export type PartyData = {
     members: MainChar[];
@@ -37,6 +37,7 @@ export type PartyData = {
 };
 
 export type GameInfo = {
+    artifacts_global_list: ShopItem[];
     maps_list: {[map_key: string]: Map};
     classes_list: {[class_key: string]: Classes};
     enemies_list: {
@@ -98,7 +99,7 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
         coins: data.dbs.init_db.coins,
         avg_level: 0,
         random_battle_extra_rate: 0,
-        game_tickets: {coins_remaining: 300, tickets_bought: 0},
+        game_tickets: {coins_remaining: 300, tickets_bought: 0}
     };
 
     let load_chars_promise_resolve;
@@ -173,4 +174,7 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
         load_abilities_cast_anim_promise_resolve
     );
     await load_abilities_cast_anim_promise;
+
+    data.info.artifacts_global_list = data.dbs.init_db.artifacts_global_list;
+    data.info.artifacts_global_list.forEach(item_data => item_data.global_artifact = true);
 }

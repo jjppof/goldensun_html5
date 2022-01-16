@@ -2,8 +2,8 @@ import {Window} from "../../Window";
 import {kill_all_sprites} from "../../utils";
 import {GoldenSun} from "../../GoldenSun";
 import {Button} from "../../XGamepad";
-import {ShopItem} from "../../Shop.js";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
+import { ShopItem } from "../../main_menus/ShopMenu";
 
 const MAX_PER_PAGE = 7;
 
