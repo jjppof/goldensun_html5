@@ -449,7 +449,8 @@ export class MainItemMenu {
                     ((counter / ITEM_OVERVIEW_WIN_ICONS_PER_LINE) | 0) *
                         (ITEM_OVERVIEW_WIN_SPACE_BETWN_LINE + numbers.ICON_HEIGHT);
 
-                this.item_overview_window.define_internal_group(item_key_name);
+                const internal_group_key = `${item_key_name}/${item_obj.index}`;
+                this.item_overview_window.define_internal_group(internal_group_key);
                 const item = this.data.info.items_list[item_key_name];
                 this.item_overview_window.make_item_obj(
                     item_key_name,
@@ -458,7 +459,7 @@ export class MainItemMenu {
                         broken: item_obj.broken,
                         equipped: item_obj.equipped,
                         quantity: item.carry_up_to_30 ? item_obj.quantity : undefined,
-                        internal_group: item_key_name,
+                        internal_group: internal_group_key,
                     }
                 );
                 ++counter;

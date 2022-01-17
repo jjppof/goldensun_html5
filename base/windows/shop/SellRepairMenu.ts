@@ -163,12 +163,11 @@ export class SellRepairMenu {
     on_sale_success(quantity = 1) {
         let exec = () => {
             const item = this.data.info.items_list[this.selected_item.key_name];
-            const msg_key = item.rare_item
-                ? "after_sell_artifact"
-                : "after_sell_normal";
+            const msg_key = item.rare_item ? "after_sell_artifact" : "after_sell_normal";
             this.npc_dialog.update_dialog(msg_key, true);
 
-            const item_price = (item.price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0;
+            const item_price =
+                (item.price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0;
             this.data.info.party_data.coins += item_price * quantity;
             this.parent.update_your_coins();
 
@@ -192,7 +191,7 @@ export class SellRepairMenu {
                     this.data.info.artifacts_global_list.push({
                         key_name: item.key_name,
                         quantity: quantity,
-                        global_artifact: true
+                        global_artifact: true,
                     });
                 }
             }

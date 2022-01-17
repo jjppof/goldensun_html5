@@ -24,7 +24,7 @@ export type Shop = {
     dialog_key: string;
     avatar_key: string;
     item_list: ShopItem[];
-}
+};
 
 const ITEM_PRICE_WIN_X = 0;
 const ITEM_PRICE_WIN_Y = 64;

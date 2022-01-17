@@ -1,4 +1,4 @@
-import { Shop } from "../main_menus/ShopMenu";
+import {Shop} from "../main_menus/ShopMenu";
 
 export function initialize_shops(shops_db) {
     let shops_list = {};

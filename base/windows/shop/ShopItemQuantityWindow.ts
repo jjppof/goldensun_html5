@@ -4,7 +4,7 @@ import {GoldenSun} from "../../GoldenSun";
 import {Button} from "../../XGamepad";
 import {ItemSlot} from "../../MainChar";
 import {CursorManager} from "../../utils/CursorManager";
-import { ShopItem } from "../../main_menus/ShopMenu";
+import {ShopItem} from "../../main_menus/ShopMenu";
 
 const QUANTITY_WIN_X = 56;
 const QUANTITY_WIN_Y = 32;

@@ -139,7 +139,7 @@ export class DropItemWindow {
                     this.data.info.artifacts_global_list.push({
                         key_name: this.item.key_name,
                         quantity: this.quantity_to_remove,
-                        global_artifact: true
+                        global_artifact: true,
                     });
                 }
             }

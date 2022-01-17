@@ -256,9 +256,11 @@ export class BuyArtifactsMenu {
                         if (global_item.quantity > quantity) {
                             global_item.quantity -= quantity;
                         } else {
-                            this.data.info.artifacts_global_list = this.data.info.artifacts_global_list.filter(item_data => {
-                                return item_data.key_name !== item.key_name;
-                            });
+                            this.data.info.artifacts_global_list = this.data.info.artifacts_global_list.filter(
+                                item_data => {
+                                    return item_data.key_name !== item.key_name;
+                                }
+                            );
                         }
                     }
                 }

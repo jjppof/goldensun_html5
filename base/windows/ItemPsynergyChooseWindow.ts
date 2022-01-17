@@ -262,8 +262,9 @@ export class ItemPsynergyChooseWindow {
                 );
                 (this.icon_sprites_in_window[i] as Phaser.Sprite).anchor.setTo(0.5, 0.5);
             } else {
-                const group = this.window.define_internal_group(elem_key_name as string);
-                group.data["internal_group_key"] = elem_key_name;
+                const internal_group_key = `${elem_key_name}/${this.item_objs[i].index}`;
+                const group = this.window.define_internal_group(internal_group_key);
+                group.data["internal_group_key"] = internal_group_key;
                 this.icon_sprites_in_window.push(group);
                 const item = this.data.info.items_list[this.item_objs[i].key_name];
                 this.window.make_item_obj(
@@ -273,7 +274,7 @@ export class ItemPsynergyChooseWindow {
                         broken: this.item_objs[i].broken,
                         equipped: this.item_objs[i].equipped,
                         quantity: item.carry_up_to_30 ? this.item_objs[i].quantity : undefined,
-                        internal_group: elem_key_name as string,
+                        internal_group: internal_group_key,
                         center: true,
                     }
                 );
@@ -294,14 +295,14 @@ export class ItemPsynergyChooseWindow {
         }
     }
 
-    /*Shows and positions the highlight bar*/
+    /** Shows and positions the highlight bar. */
     set_highlight_bar() {
         this.highlight_bar.visible = true;
         this.highlight_bar.y =
             ELEM_PADDING_TOP + this.selected_element_index * (numbers.ICON_HEIGHT + SPACE_BETWEEN_ITEMS) + 4;
     }
 
-    /*Hides the highlight bar*/
+    /** Hides the highlight bar. */
     unset_highlight_bar() {
         this.highlight_bar.visible = false;
     }
