@@ -34,6 +34,7 @@ export type PartyData = {
         coins_remaining: number;
         tickets_bought: number;
     };
+    visited_shops: Set<string>;
 };
 
 export type GameInfo = {
@@ -100,6 +101,7 @@ export async function initialize_game_data(game: Phaser.Game, data: GoldenSun) {
         avg_level: 0,
         random_battle_extra_rate: 0,
         game_tickets: {coins_remaining: 300, tickets_bought: 0},
+        visited_shops: new Set<string>(),
     };
 
     let load_chars_promise_resolve;

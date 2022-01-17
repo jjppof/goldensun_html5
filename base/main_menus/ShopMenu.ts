@@ -239,18 +239,30 @@ export class ShopMenu {
     }
 
     set_item_lists() {
-        const normal_list: ShopItem[] = [];
-        const artifact_list: ShopItem[] = [];
-
-        let item_list = this.shops_db[this.shop_key].item_list;
-        item_list = item_list.concat(this.data.info.artifacts_global_list);
-        for (let i = 0; i < item_list.length; i++) {
-            let item = this.items_db[item_list[i].key_name];
-            if (item_list[i].quantity === 0) continue;
-
-            if (item.rare_item === true) artifact_list.push(item_list[i]);
-            else normal_list.push(item_list[i]);
-        }
+        const shop_visited = this.data.info.party_data.visited_shops.has(this.shop_key);
+        const item_list = this.shops_db[this.shop_key].item_list;
+        item_list.forEach(item_data => {
+            if (item_data.quantity && this.items_db[item_data.key_name].rare_item) {
+                if (!shop_visited) {
+                    const global_items = this.data.info.artifacts_global_list.find(global_item_data => {
+                        return item_data.key_name === global_item_data.key_name;
+                    });
+                    if (global_items) {
+                        global_items.quantity += item_data.quantity;
+                    } else {
+                        this.data.info.artifacts_global_list.push({
+                            key_name: item_data.key_name,
+                            quantity: item_data.quantity,
+                            global_artifact: true,
+                        });
+                    }
+                }
+            }
+        });
+        const artifact_list = _.cloneDeep(this.data.info.artifacts_global_list);
+        const normal_list = item_list.filter(item_data => {
+            return item_data.quantity && !this.items_db[item_data.key_name].rare_item;
+        });
 
         this.normal_item_list = _.mapKeys(normal_list, item => item.key_name) as {[key_name: string]: ShopItem};
         this.artifact_list = _.mapKeys(artifact_list, item => item.key_name) as {[key_name: string]: ShopItem};
@@ -368,6 +380,8 @@ export class ShopMenu {
         }
 
         this.set_item_lists();
+        this.data.info.party_data.visited_shops.add(this.shop_key);
+
         this.data.shop_open = true;
         this.open_horizontal_menu();
     }
