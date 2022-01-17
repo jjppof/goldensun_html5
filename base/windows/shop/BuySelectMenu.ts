@@ -2,8 +2,8 @@ import {Window} from "../../Window";
 import {kill_all_sprites} from "../../utils";
 import {GoldenSun} from "../../GoldenSun";
 import {Button} from "../../XGamepad";
-import {ShopItem} from "../../Shop.js";
 import {CursorManager, PointVariants} from "../../utils/CursorManager";
+import {ShopItem} from "../../main_menus/ShopMenu";
 
 const MAX_PER_PAGE = 7;
 
@@ -235,13 +235,13 @@ export class BuySelectMenu {
 
     /*Splits the shopkeeper's wares into pages*/
     make_pages() {
-        let items_length = Object.keys(this.items).length;
-        let keys = Array.from(Object.keys(this.items));
-        let page_number =
+        const items_length = Object.keys(this.items).length;
+        const keys = Array.from(Object.keys(this.items));
+        const page_number =
             items_length % MAX_PER_PAGE === 0
                 ? (items_length / MAX_PER_PAGE) | 0
                 : ((items_length / MAX_PER_PAGE) | 0) + 1;
-
+        this.current_page = this.current_page < page_number ? this.current_page : 0;
         for (let i = 0; i < page_number; i++) {
             let wares = [];
             for (let n = i * MAX_PER_PAGE; n < (i + 1) * MAX_PER_PAGE; n++) {
@@ -481,9 +481,9 @@ export class BuySelectMenu {
     open(items: {[key_name: string]: ShopItem}, index: number = 0, page: number = 0, open_callback?: () => void) {
         this.items = items;
         this.current_page = page;
-        this.selected_index = index;
         this.is_open = true;
         this.make_pages();
+        this.selected_index = index < this.pages[this.current_page].length ? index : 0;
 
         this.check_arrows();
         this.set_sprites(this.current_page);

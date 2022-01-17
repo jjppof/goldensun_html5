@@ -10,10 +10,21 @@ import {Window, TextObj} from "../Window";
 import {CharsMenu} from "../support_menus/CharsMenu";
 import {HorizontalMenu} from "../support_menus/HorizontalMenu";
 import {GoldenSun} from "../GoldenSun";
-import {ShopItem} from "../Shop";
 import * as _ from "lodash";
-import {Shop} from "../Shop";
 import {Item} from "../Item";
+
+export type ShopItem = {
+    key_name: string;
+    quantity: number;
+    global_artifact?: boolean;
+};
+
+export type Shop = {
+    key_name: string;
+    dialog_key: string;
+    avatar_key: string;
+    item_list: ShopItem[];
+};
 
 const ITEM_PRICE_WIN_X = 0;
 const ITEM_PRICE_WIN_Y = 64;
@@ -228,10 +239,11 @@ export class ShopMenu {
     }
 
     set_item_lists() {
-        let normal_list: ShopItem[] = [];
-        let artifact_list: ShopItem[] = [];
+        const normal_list: ShopItem[] = [];
+        const artifact_list: ShopItem[] = [];
 
         let item_list = this.shops_db[this.shop_key].item_list;
+        item_list = item_list.concat(this.data.info.artifacts_global_list);
         for (let i = 0; i < item_list.length; i++) {
             let item = this.items_db[item_list[i].key_name];
             if (item_list[i].quantity === 0) continue;

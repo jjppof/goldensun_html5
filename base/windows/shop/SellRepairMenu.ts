@@ -162,15 +162,12 @@ export class SellRepairMenu {
 
     on_sale_success(quantity = 1) {
         let exec = () => {
-            let msg_key = this.data.info.items_list[this.selected_item.key_name].rare_item
-                ? "after_sell_artifact"
-                : "after_sell_normal";
+            const item = this.data.info.items_list[this.selected_item.key_name];
+            const msg_key = item.rare_item ? "after_sell_artifact" : "after_sell_normal";
             this.npc_dialog.update_dialog(msg_key, true);
 
-            let item_price =
-                (this.data.info.items_list[this.selected_item.key_name].price *
-                    (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) |
-                0;
+            const item_price =
+                (item.price * (this.selected_item.broken ? SELL_BROKEN_MULTIPLIER : SELL_MULTIPLIER)) | 0;
             this.data.info.party_data.coins += item_price * quantity;
             this.parent.update_your_coins();
 
@@ -184,16 +181,19 @@ export class SellRepairMenu {
                 }
             }
 
-            if (this.data.info.items_list[this.selected_item.key_name].rare_item) {
-                let exists = false;
-                let shop_list = this.data.info.shops_list[this.parent.shop_key].item_list;
-                for (let i = 0; i < shop_list.length; i++) {
-                    if (shop_list[i].key_name === this.selected_item.key_name) {
-                        exists = true;
-                        this.data.info.shops_list[this.parent.shop_key].item_list[i].quantity += quantity;
-                    }
+            if (item.rare_item) {
+                const shop_item = this.data.info.artifacts_global_list.find(item_data => {
+                    return item_data.key_name === item.key_name;
+                });
+                if (shop_item) {
+                    shop_item.quantity += quantity;
+                } else {
+                    this.data.info.artifacts_global_list.push({
+                        key_name: item.key_name,
+                        quantity: quantity,
+                        global_artifact: true,
+                    });
                 }
-                if (!exists) shop_list.push({key_name: this.selected_item.key_name, quantity: quantity});
             }
 
             this.parent.set_item_lists();
@@ -299,8 +299,11 @@ export class SellRepairMenu {
                     );
                 };
 
-                if (!this.quant_win.is_open) this.quant_win.open(char_item, undefined, false, quant_control);
-                else quant_control();
+                if (!this.quant_win.is_open) {
+                    this.quant_win.open(char_item, undefined, false, quant_control);
+                } else {
+                    quant_control();
+                }
             }
         };
 

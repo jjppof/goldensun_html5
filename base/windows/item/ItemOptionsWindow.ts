@@ -321,6 +321,7 @@ export class ItemOptionsWindow {
     on_choose() {
         if (this.horizontal_index === 0) {
             if (this.vertical_index === 0 && this.option_active.use) {
+                //Use
                 this.deactivate();
                 this.give_item_options_window.open(this.item_obj, this.item, this.char, this.item_menu, false, () => {
                     this.data.cursor_manager.show();
@@ -331,6 +332,7 @@ export class ItemOptionsWindow {
                     }
                 });
             } else if (this.vertical_index === 1 && this.option_active.give) {
+                //Give
                 this.deactivate();
                 this.give_item_options_window.open(this.item_obj, this.item, this.char, this.item_menu, true, () => {
                     this.data.cursor_manager.show();
@@ -343,12 +345,14 @@ export class ItemOptionsWindow {
             }
         } else if (this.horizontal_index === 1) {
             if (this.vertical_index === 0 && this.option_active.equip) {
+                //Equip
                 this.char.equip_item(this.item_obj.index);
                 this.open_action_message_window("Equipped.", () => {
                     this.close(this.close_callback);
                 });
             }
             if (this.vertical_index === 1 && this.option_active.remove) {
+                //Remove
                 this.char.unequip_item(this.item_obj.index);
                 this.open_action_message_window("Removed.", () => {
                     this.close(this.close_callback);
@@ -356,6 +360,7 @@ export class ItemOptionsWindow {
             }
         } else if (this.horizontal_index === 2) {
             if (this.vertical_index === 0 && this.option_active.details) {
+                //Details
                 this.deactivate();
                 this.item_menu.show_details(this.item, this.item_obj, () => {
                     this.data.cursor_manager.show();
@@ -364,6 +369,7 @@ export class ItemOptionsWindow {
                     this.open_options(this.vertical_index, this.horizontal_index);
                 });
             } else if (this.vertical_index === 1 && this.option_active.drop) {
+                //Drop
                 this.deactivate();
                 this.drop_item_window.open(this.item_obj, this.item, this.char, this.item_menu, () => {
                     if (this.drop_item_window.dropped) {
